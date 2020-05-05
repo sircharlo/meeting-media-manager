@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JW Meeting and Media Fetcher</title>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div class="form-group">
+    <label for="usr">Language code:</label>
+    <input type="text" class="form-control" id="lang" autocomplete="off" value="U">
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <button type="button" class="btn btn-primary" id="mediaSync">Update media</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="alert alert-info" id="mainStatus" role="alert">
+      </div>
+      <div class="progress" id="mainProgress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+          0% Complete
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="alert alert-info" id="filesDownloadedStatus" role="alert">
+      </div>
+      <div class="progress" id="filesDownloadedProgress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+          ...
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="alert alert-info" id="filesSavedStatus" role="alert">
+      </div>
+      <div class="progress" id="filesSavedProgress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+          ...
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      DB lookups here
+      <div class="progress" id="dbProgress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+          ...
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    window.$ = window.jQuery = require('jquery')
+    window.popperjs = require('popper.js')
+    window.Bootstrap = require('bootstrap')
+  </script>
+  <script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@master/dist/latest/bootstrap-autocomplete.min.js"></script>
+  <script>
+    $('#lang').autoComplete({
+      resolverSettings: {
+        url: 'https://www.jw.org/en/languages/'
+      },
+      events: {
+        searchPost: function(data) {
+          var languages = data.languages;
+          languages = languages.filter(function(elem) {
+            if (elem.hasWebContent) {
+              return elem;
+            }
+          })
+          var formattedLanguages = [];
+          for (var l = 0; l < languages.length; l++) {
+            formattedLanguages.push({
+              text: languages[l].name,
+              value: languages[l].langcode
+            });
+          }
+          return formattedLanguages;
+        }
+      }
+    });
+  </script>
+  <script src="./media-updater.js"></script>
+</body>
+
+</html>
