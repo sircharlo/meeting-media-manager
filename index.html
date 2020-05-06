@@ -49,11 +49,14 @@
           </select>
         </div>
       </div>
-      <button type="button" class="btn btn-primary" id="mediaSync">Update media</button>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
+      <div class="form-group row">
+        <div class="col">
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-primary" id="mediaSync">Update media</button>
+        </div>
+      </div>
+      <hr/>
       <div class="alert alert-info" id="mainStatus" role="alert">
         Main progress
       </div>
@@ -62,10 +65,7 @@
           0% Complete
         </div>
       </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
+      <hr/>
       <div class="alert alert-info" id="filesDownloadedStatus" role="alert">
         Remote files
       </div>
@@ -74,10 +74,7 @@
           ...
         </div>
       </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
+      <hr/>
       <div class="alert alert-info" id="filesSavedStatus" role="alert">
         Local file copies:
       </div>
@@ -86,10 +83,7 @@
           ...
         </div>
       </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
+      <hr/>
       <div class="alert alert-info" id="dbStatus" role="alert">
         Internal publication lookups:
       </div>
@@ -98,6 +92,8 @@
           ...
         </div>
       </div>
+      <hr/>
+      <span id="version" class="badge badge-secondary"></span>
     </div>
   </div>
   <script>
@@ -120,6 +116,7 @@
               $('#langSelect').select2();
               //.typeahead( { source: langs.names } );
           } );
+          $("#version").html("Version " + window.require('electron').remote.app.getVersion());
   </script>
   <script src="./media-updater.js"></script>
 </body>

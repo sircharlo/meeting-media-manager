@@ -107,13 +107,7 @@ if (isElectron) {
     $("#mediaSync").html("Update in progress...");
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
     await progressInitialize();
-
-    await setVars();
-    await updateSongs();
-    await updateWeMeeting();
-    await updateMwMeeting();
-    await cleanUp();
-
+    await nodeStart();
     await progressReset();
     $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
     $("#mediaSync").html(buttonLabel);
