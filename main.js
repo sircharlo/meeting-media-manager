@@ -7,14 +7,6 @@ const {
   autoUpdater
 } = require("electron-updater");
 
-autoUpdater.checkForUpdatesAndNotify();
-
-/*const DownloadManager = require("electron-download-manager");
-DownloadManager.register({
-  downloadFolder: app.getPath("desktop") + "/Meeting Media/"
-});*/
-
-//const {download} = require('electron-dl');
 
 function createWindow() {
   // Create the browser window.
@@ -27,6 +19,8 @@ function createWindow() {
   // and load the index.html of the app.
   win.loadFile('index.html')
   win.setMenuBarVisibility(false)
+
+  autoUpdater.checkForUpdatesAndNotify();
 
   // Open the DevTools.
   win.webContents.openDevTools()
