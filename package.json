@@ -12,6 +12,7 @@
     "axios": "^0.19.2",
     "better-sqlite3": "latest",
     "bootstrap": "^4.4.1",
+    "electron-updater": "^4.3.1",
     "extract-zip": "^2.0.0",
     "glob": "^7.1.6",
     "graceful-fs": "^4.2.4",
@@ -25,7 +26,9 @@
     "appId": "sircharlo.jw-meeting-media-fetcher",
     "win": {
       "target": "NSIS",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "buildDependenciesFromSource": true
   },

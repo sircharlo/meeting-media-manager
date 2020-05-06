@@ -7,6 +7,7 @@ const {
   autoUpdater
 } = require("electron-updater");
 
+autoUpdater.checkForUpdatesAndNotify();
 
 function createWindow() {
   // Create the browser window.
@@ -19,8 +20,6 @@ function createWindow() {
   // and load the index.html of the app.
   win.loadFile('index.html')
   win.setMenuBarVisibility(false)
-
-  autoUpdater.checkForUpdatesAndNotify();
 
   // Open the DevTools.
   win.webContents.openDevTools()
