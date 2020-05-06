@@ -1,8 +1,12 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
+  },
   "dependencies": {
     "async": "^3.2.0",
     "axios": "^0.19.2",
@@ -34,6 +38,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "pack-win": "electron-builder --win",
     "pack-win-test": "electron-builder --dir --win",
+    "publish": "electron-builder --win -p always",
     "postinstall": "electron-builder install-app-deps",
     "release": "build"
   },
