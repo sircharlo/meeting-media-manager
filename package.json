@@ -1,7 +1,7 @@
 {
-  "name": "electron-test",
+  "name": "jw-meeting-media-fetcher",
   "version": "1.0.0",
-  "description": "Testing electron app",
+  "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "dependencies": {
     "async": "^3.2.0",
@@ -20,20 +20,22 @@
   "build": {
     "appId": "sircharlo.jw-meeting-media-fetcher",
     "win": {
-      "target": "NSIS"
+      "target": "NSIS",
+      "publish": ["github"]
     },
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
     "electron": "^8.2.5",
-    "electron-builder": "^22.6.0",
-    "electron-rebuild": "^1.10.1"
+    "electron-builder": "^22.6.0"
   },
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "pack-win": "electron-builder --win",
-    "pack-win-test": "electron-builder --dir --win"
+    "pack-win-test": "electron-builder --dir --win",
+    "postinstall": "electron-builder install-app-deps",
+    "release": "build"
   },
   "author": "",
   "license": "ISC"

@@ -3,6 +3,11 @@ const {
   BrowserWindow,
   ipcMain
 } = require('electron');
+const {
+  autoUpdater
+} = require("electron-updater");
+
+autoUpdater.checkForUpdatesAndNotify();
 
 /*const DownloadManager = require("electron-download-manager");
 DownloadManager.register({

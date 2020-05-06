@@ -20,6 +20,9 @@ const path = require("path");
 const sqlite3 = require('better-sqlite3');
 const extract = require('extract-zip');
 
+const outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
+mkdirSync(outputPath);
+
 const pubs = {
   wt: "w",
   mwb: "mwb"
@@ -44,26 +47,50 @@ var progress = {
   }
 };
 
+var prefs = {
+  lang: $("#lang").val(),
+  mwDay: $("#mwDay").val(),
+  weDay: $("#mwDay").val()
+};
+const prefsFile = outputPath + "/prefs.json";
+if (fs.existsSync(prefsFile)) {
+  prefs = JSON.parse(fs.readFileSync(prefsFile));
+  $("#lang").val(prefs.lang);
+  $("#mwDay").val(prefs.mwDay).change();
+  $("#weDay").val(prefs.weDay).change();
+} else {
+  fs.writeFileSync(prefsFile, JSON.stringify(prefs));
+}
+
+$("#lang, #mwDay, #weDay").on('change', function() {
+  prefs = {
+    lang: $("#lang").val(),
+    mwDay: $("#mwDay").val(),
+    weDay: $("#weDay").val()
+  };
+  fs.writeFileSync(prefsFile, JSON.stringify(prefs));
+});
+
 var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
 
 if (isElectron) {
-$("#mediaSync").on('click', async function() {
-  $("#mediaSync").addClass('disabled');
-  var buttonLabel = $("#mediaSync").html();
-  $("#mediaSync").html("Update in progress...");
-  $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
+  $("#mediaSync").on('click', async function() {
+    $("#mediaSync").addClass('disabled');
+    var buttonLabel = $("#mediaSync").html();
+    $("#mediaSync").html("Update in progress...");
+    $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
 
-  await setVars();
-  await updateSongs();
-  await updateWeMeeting();
-  await updateMwMeeting();
-  await cleanUp();
+    await setVars();
+    await updateSongs();
+    await updateWeMeeting();
+    await updateMwMeeting();
+    await cleanUp();
 
-  progressReset();
-  $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
-  $("#mediaSync").html(buttonLabel);
-  $("#mediaSync").removeClass('disabled');
-});
+    progressReset();
+    $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
+    $("#mediaSync").html(buttonLabel);
+    $("#mediaSync").removeClass('disabled');
+  });
 } else {
   nodeStart();
 }
@@ -78,13 +105,7 @@ async function nodeStart() {
 
 async function setVars() {
   baseDate = moment().startOf('isoWeek');
-  if (isElectron) {
-    chosenLang = $("#lang").val();
-  } else {
-    chosenLang = process.argv[2]
-  }
-  outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
-  mkdirSync(outputPath);
+  chosenLang = prefs.lang;
   langPath = outputPath + "/" + chosenLang;
   mkdirSync(langPath);
   songsPath = langPath + "/Songs";
@@ -106,8 +127,8 @@ function mkdirSync(dirPath) {
 
 function status(dest, message) {
   if (isElectron) {
-  $("#" + dest + "Status").html(message);
-}
+    $("#" + dest + "Status").html(message);
+  }
 }
 
 const downloadFile = async url => {
@@ -126,26 +147,26 @@ const downloadFile = async url => {
 
 function progressUpdate(bar) {
   if (isElectron) {
-  var progressBar = "#" + bar + "Progress div";
-  var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
-  $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
-  $(progressBar).width(percentage);
-  var progressAlert = "#" + bar + "Status";
-  $(progressAlert).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
-}
+    var progressBar = "#" + bar + "Progress div";
+    var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
+    $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
+    $(progressBar).width(percentage);
+    var progressAlert = "#" + bar + "Status";
+    $(progressAlert).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
+  }
 }
 
 function progressReset() {
   if (isElectron) {
-  for (var bar of Object.keys(progress)) {
-    progress[bar].current = 0;
-    progress[bar].total = 0;
-    var element = "#" + bar + "Progress div";
-    $(element).html("");
-    $(element).width("0%");
+    for (var bar of Object.keys(progress)) {
+      progress[bar].current = 0;
+      progress[bar].total = 0;
+      var element = "#" + bar + "Progress div";
+      $(element).html("");
+      $(element).width("0%");
+    }
+    progressIncrement("main", "total", 7);
   }
-  progressIncrement("main", "total", 7);
-}
 }
 
 function progressIncrement(bar, type, amount) {
@@ -480,7 +501,7 @@ async function updateWeMeeting(weDate) {
     }
     for (var w = 0; w < weeks.length; w++) {
       var week = weeks[w];
-      var studyDate = moment(week, "YYYYMMDD").add(6, "days");
+      var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
       if (studyDate.isSameOrAfter(moment(), "day")) {
         var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
         mkdirSync(weekPath);
@@ -548,25 +569,26 @@ async function updateMwMeeting() {
     }
     for (w = 0; w < weeks.length; w++) {
       var week = weeks[w];
+      var weekDay = moment(weeks[w], "YYYYMMDD").add(prefs.mwDay, "day");
       mwMediaForWeek = {};
-      if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isSameOrBefore(baseDate.add(1, "week"), "day")) {
+      if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
         var docId = db.prepare("SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "").get().DocumentId;
-        var weekPath = mediaPath + "/" + moment(week, "YYYYMMDD").format("YYYY-MM-DD");
+        var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
         mkdirSync(weekPath);
         var mediaExternal = await getDocumentMultimedia({
-          week: week,
+          week: weekDay.format("YYYYMMDD"),
           db: db,
           destDocId: docId
         });
         var mediaReferenced = await getDocumentExtract({
-          week: week,
+          week: weekDay.format("YYYYMMDD"),
           db: db,
           docId: docId
         });
         var internalRefs = db.prepare("SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94").all();
         for (var internalRef of internalRefs) {
           await getDocumentMultimedia({
-            week: week,
+            week: weekDay.format("YYYYMMDD"),
             db: db,
             destDocId: internalRef.DocumentId,
             srcDocId: internalRef.SourceDocumentId,
