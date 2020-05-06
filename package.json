@@ -20,7 +20,8 @@
     "moment": "^2.25.3",
     "os": "^0.1.1",
     "path": "^0.12.7",
-    "popper.js": "^1.16.1"
+    "popper.js": "^1.16.1",
+    "select2": "^4.0.13"
   },
   "build": {
     "appId": "sircharlo.jw-meeting-media-fetcher",

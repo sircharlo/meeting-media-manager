@@ -47,38 +47,66 @@ var progress = {
   }
 };
 
-var prefs = {
-  lang: $("#lang").val(),
-  mwDay: $("#mwDay").val(),
-  weDay: $("#mwDay").val()
-};
+var prefs = {};
 const prefsFile = outputPath + "/prefs.json";
 if (fs.existsSync(prefsFile)) {
   prefs = JSON.parse(fs.readFileSync(prefsFile));
-  $("#lang").val(prefs.lang);
-  $("#mwDay").val(prefs.mwDay).change();
-  $("#weDay").val(prefs.weDay).change();
+  if (isElectron) {
+    $("#lang").val(prefs.lang);
+    $("#mwDay").val(prefs.mwDay).change();
+    $("#weDay").val(prefs.weDay).change();
+    if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val()) {
+      $("#mediaSync").prop("disabled", true)
+      $("#mediaSync").addClass("btn-secondary");
+    }
+  }
 } else {
-  fs.writeFileSync(prefsFile, JSON.stringify(prefs));
+  if (isElectron) {
+    $("#mediaSync").prop("disabled", true);
+    $("#mediaSync").addClass("btn-secondary");
+  }
 }
 
-$("#lang, #mwDay, #weDay").on('change', function() {
-  prefs = {
-    lang: $("#lang").val(),
-    mwDay: $("#mwDay").val(),
-    weDay: $("#weDay").val()
-  };
-  fs.writeFileSync(prefsFile, JSON.stringify(prefs));
-});
+if (!isElectron) {
+  var args = process.argv.slice(2);
+  if (!fs.existsSync(prefsFile) && (!args[0] || !args[1] || !args[2])) {
+    throw ("insufficient args (LANG MWDAY WEDAY)")
+  } else {
+    prefs = {
+      lang: args[0],
+      mwDay: args[1],
+      weDay: args[2]
+    };
+    fs.writeFileSync(prefsFile, JSON.stringify(prefs));
+  }
+}
 
 var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
 
 if (isElectron) {
+  $("#langSelect, #mwDay, #weDay").on('change', function() {
+    $("#lang").val($("#langSelect").val());
+    prefs = {
+      lang: $("#langSelect").val(),
+      mwDay: $("#mwDay").val(),
+      weDay: $("#weDay").val()
+    };
+    fs.writeFileSync(prefsFile, JSON.stringify(prefs));
+    if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val()) {
+      $("#mediaSync").prop("disabled", true);
+      $("#mediaSync").addClass("btn-secondary");
+    } else {
+      $("#mediaSync").prop("disabled", false)
+      $("#mediaSync").removeClass("btn-secondary");
+    }
+  });
   $("#mediaSync").on('click', async function() {
-    $("#mediaSync").addClass('disabled');
+    $("#mediaSync").prop("disabled", true);
+    $("#mediaSync").addClass("btn-secondary");
     var buttonLabel = $("#mediaSync").html();
     $("#mediaSync").html("Update in progress...");
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
+    await progressInitialize();
 
     await setVars();
     await updateSongs();
@@ -86,10 +114,11 @@ if (isElectron) {
     await updateMwMeeting();
     await cleanUp();
 
-    progressReset();
+    await progressReset();
     $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
     $("#mediaSync").html(buttonLabel);
-    $("#mediaSync").removeClass('disabled');
+    $("#mediaSync").prop("disabled", false);
+    $("#mediaSync").removeClass("btn-secondary");
   });
 } else {
   nodeStart();
@@ -156,6 +185,15 @@ function progressUpdate(bar) {
   }
 }
 
+function progressInitialize() {
+  if (isElectron) {
+    for (var bar of Object.keys(progress)) {
+      progress[bar].initialStatus = $("#" + bar + "Status").html();
+      log(progress[bar].initialStatus)
+    }
+  }
+}
+
 function progressReset() {
   if (isElectron) {
     for (var bar of Object.keys(progress)) {
@@ -164,8 +202,11 @@ function progressReset() {
       var element = "#" + bar + "Progress div";
       $(element).html("");
       $(element).width("0%");
+      element = "#" + bar + "Status";
+      $(element).html(progress[bar].initialStatus);
+      log(progress[bar].initialStatus)
     }
-    progressIncrement("main", "total", 7);
+    //progressIncrement("main", "total", 7);
   }
 }
 
