@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -21,13 +21,15 @@
     "os": "^0.1.1",
     "path": "^0.12.7",
     "popper.js": "^1.16.1",
-    "select2": "^4.0.13"
+    "select2": "^4.0.13",
+    "ssh2-sftp-client": "^5.1.2"
   },
   "build": {
     "appId": "sircharlo.jw-meeting-media-fetcher",
     "productName": "JW Meeting Media Fetcher",
     "win": {
       "target": "NSIS",
+      "icon": "build/icon.png"
       "publish": [
         "github"
       ]

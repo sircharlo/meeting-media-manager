@@ -1,10 +1,9 @@
 /*jshint esversion: 8, node: true */
 
 /*    TODO:
-      Fix style and labels
+      Fix style and labels?
       Alphabetize functions and vars when possible
-      Implement clean-up function
-
+      Fix congregation fetch logic
 */
 
 const isElectron = (process.versions['electron'] ? true : false);
@@ -19,6 +18,19 @@ const os = require("os");
 const path = require("path");
 const sqlite3 = require('better-sqlite3');
 const extract = require('extract-zip');
+const sftpConfig = {
+  host: 'sircharlo.hopto.org',
+  port: '43234',
+  username: 'plex',
+  password: 'plex',
+  keepaliveInterval: 2000,
+  keepaliveCountMax: 20
+};
+const sftpRootDir = "/media/plex/Media-Linux/Public/files/MW-Media-Fetcher/U/";
+
+let Client = require('ssh2-sftp-client');
+let sftp = new Client();
+
 
 const outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
 mkdirSync(outputPath);
@@ -49,12 +61,14 @@ var progress = {
 
 var prefs = {};
 const prefsFile = outputPath + "/prefs.json";
+const langsFile = outputPath + "/langs.json";
 if (fs.existsSync(prefsFile)) {
   prefs = JSON.parse(fs.readFileSync(prefsFile));
   if (isElectron) {
     $("#lang").val(prefs.lang);
     $("#mwDay").val(prefs.mwDay).change();
     $("#weDay").val(prefs.weDay).change();
+    $("#cong").val(prefs.cong).change();
     if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val()) {
       $("#mediaSync").prop("disabled", true)
       $("#mediaSync").addClass("btn-secondary");
@@ -69,30 +83,79 @@ if (fs.existsSync(prefsFile)) {
 
 if (!isElectron) {
   var args = process.argv.slice(2);
-  if (!fs.existsSync(prefsFile) && (!args[0] || !args[1] || !args[2])) {
-    throw ("insufficient args (LANG MWDAY WEDAY)")
-  } else {
+  if ((!args[0] || !args[1] || !args[2]) && (!prefs.lang || !prefs.weDay || !prefs.mwDay)) {
+    throw ("insufficient args (LANG MWDAY WEDAY CONG)")
+  } else if (!prefs.lang || !prefs.weDay || !prefs.mwDay) {
     prefs = {
       lang: args[0],
       mwDay: args[1],
-      weDay: args[2]
+      weDay: args[2],
+      cong: args[3]
     };
-    fs.writeFileSync(prefsFile, JSON.stringify(prefs));
+    fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
   }
+}
+
+async function congFetch() {
+  var congs = await sftpLs("Congregations");
+  $.each(congs, function(index, cong) {
+    $('#congSelect').append($("<option>", {
+      value: cong,
+      text: cong
+    }));
+  });
+  $('#congSelect').val($('#cong').val());
+  $('#congSelect').select2();
+}
+
+function hideOverlay() {
+  $("#overlay").fadeOut();
+  log("hideme")
+}
+
+async function getLanguages() {
+  if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || moment(prefs.langUpdatedLast).isSameOrBefore(moment().subtract(6, "months"))) {
+    await $.getJSON("https://www.jw.org/en/languages/", null, function(jsonData) {
+      fs.writeFileSync(langsFile, JSON.stringify(jsonData.languages, null, 2));
+    });
+    prefs.langUpdatedLast = moment();
+    fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
+  }
+  var jsonLangs = JSON.parse(fs.readFileSync(langsFile));
+  $.each(jsonLangs, function(index, lang) {
+    $('#langSelect').append($("<option>", {
+      value: lang.langcode,
+      text: lang.name
+    }));
+  });
+  $('#langSelect').val($('#lang').val());
+  $('#langSelect').select2();
+}
+
+async function getInitialData() {
+  await getLanguages();
+  $("#version").html("Version " + window.require('electron').remote.app.getVersion());
+  //if (!prefs.cong) {
+  await congFetch();
+  //}
+  $('#mwDay').select2();
+  $('#weDay').select2();
+  await hideOverlay();
 }
 
 var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
 
 if (isElectron) {
-  $("#langSelect, #mwDay, #weDay").on('change', function() {
+  getInitialData();
+  $("#langSelect, #mwDay, #weDay, #congSelect").on('change', function() {
     $("#lang").val($("#langSelect").val());
-    prefs = {
-      lang: $("#langSelect").val(),
-      mwDay: $("#mwDay").val(),
-      weDay: $("#weDay").val()
-    };
-    fs.writeFileSync(prefsFile, JSON.stringify(prefs));
-    if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val()) {
+    $("#cong").val($("#congSelect").val());
+    prefs.lang = $("#langSelect").val();
+    prefs.mwDay = $("#mwDay").val();
+    prefs.weDay = $("#weDay").val();;
+    prefs.cong = $("#congSelect").val()
+    fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
+    if (!$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val()) {
       $("#mediaSync").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
     } else {
@@ -107,7 +170,7 @@ if (isElectron) {
     $("#mediaSync").html("Update in progress...");
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
     await progressInitialize();
-    await nodeStart();
+    await startMediaUpdate();
     await progressReset();
     $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
     $("#mediaSync").html(buttonLabel);
@@ -115,21 +178,31 @@ if (isElectron) {
     $("#mediaSync").removeClass("btn-secondary");
   });
 } else {
-  nodeStart();
+  startMediaUpdate();
 }
 
-async function nodeStart() {
+async function startMediaUpdate() {
   await setVars();
   await updateSongs();
   await updateWeMeeting();
   await updateMwMeeting();
+  await updateCongSpecific();
   await cleanUp();
+}
+
+async function updateCongSpecific() {
+  var congSpecificFolders = await sftpLs("Congregations/" + prefs.cong + "/" + moment().year());
+  var dirs = [];
+  congSpecificFolders.forEach((folder, f) => {
+    dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/" + moment().year() + "/" + folder, mediaPath + "/" + folder])
+  });
+  sftpDownloadDirs(dirs);
+  log()
 }
 
 async function setVars() {
   baseDate = moment().startOf('isoWeek');
-  chosenLang = prefs.lang;
-  langPath = outputPath + "/" + chosenLang;
+  langPath = outputPath + "/" + prefs.lang;
   mkdirSync(langPath);
   songsPath = langPath + "/Songs";
   mkdirSync(songsPath);
@@ -146,6 +219,36 @@ function mkdirSync(dirPath) {
   } catch (err) {
     if (err.code !== 'EEXIST') throw err;
   }
+}
+
+async function sftpLs(dir) {
+  var result = [];
+  await sftp.connect(sftpConfig).then(() => {
+    return sftp.list(sftpRootDir + dir);
+  }).then(await
+    function(data) {
+      data.filter(function(el) {
+        result.push(el.name)
+      });
+    }).then(await
+    function() {
+      return sftp.end();
+    }).catch(err => {
+    console.log(err, 'catch error');
+  });
+  return result
+}
+
+async function sftpDownloadDirs(dirs) {
+  await sftp.connect(sftpConfig);
+  //dirs.forEach(function(dir, d) {
+  for (var d = 0; d < dirs.length; d++) {
+    let rslt = await sftp.downloadDir(dirs[d][0], dirs[d][1])
+    //let rslt = dir
+    log(rslt);
+  }
+  sftp.end();
+  //});
 }
 
 function status(dest, message) {
@@ -183,7 +286,6 @@ function progressInitialize() {
   if (isElectron) {
     for (var bar of Object.keys(progress)) {
       progress[bar].initialStatus = $("#" + bar + "Status").html();
-      log(progress[bar].initialStatus)
     }
   }
 }
@@ -198,7 +300,6 @@ function progressReset() {
       $(element).width("0%");
       element = "#" + bar + "Status";
       $(element).html(progress[bar].initialStatus);
-      log(progress[bar].initialStatus)
     }
     //progressIncrement("main", "total", 7);
   }
@@ -219,7 +320,7 @@ async function getJson(opts) {
     if (opts.pub == "w" && parseInt(opts.issue) >= 20080801 && opts.issue.slice(-2) == "01") {
       opts.pub = "wp";
     }
-    var jsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + chosenLang + (opts.issue ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
+    var jsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + prefs.lang + (opts.issue ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
   }
   let payload = null;
   try {
@@ -246,7 +347,7 @@ async function downloadRequired(remoteOpts, destFile, method) {
           return item.track == remoteOpts.track;
         });
       } else if (!remoteOpts.onlyFile) {
-        var remoteHash = json.files[chosenLang][remoteOpts.type];
+        var remoteHash = json.files[prefs.lang][remoteOpts.type];
       } else {
         var remoteHash = json;
       }
@@ -258,7 +359,7 @@ async function downloadRequired(remoteOpts, destFile, method) {
         filetype: remoteOpts.type,
         track: remoteOpts.track
       });
-      var remoteHash = json.files[chosenLang][remoteOpts.type];
+      var remoteHash = json.files[prefs.lang][remoteOpts.type];
     }
     //if (method == "md5") {
     //  remoteHash = remoteHash.file.checksum;
@@ -288,7 +389,7 @@ async function updateSongs() {
     });
     if (songs) {
       mkdirSync(songsPath + "/" + filetype);
-      songs = songs.files[chosenLang][filetype].filter(function(item) {
+      songs = songs.files[prefs.lang][filetype].filter(function(item) {
         if (filetype == "MP4") {
           return item.track > 0 && item.label == "720p";
         } else if (filetype == "MP3") {
@@ -390,9 +491,9 @@ async function getDocumentMultimedia(opts) {
         if ((media.MimeType.includes("audio") || media.MimeType.includes("video")) && media.KeySymbol !== "sjjm") {
           if (media.KeySymbol == null) {
             media.JsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&docid=" +
-              media.MepsDocumentId + "&langwritten=" + chosenLang;
+              media.MepsDocumentId + "&langwritten=" + prefs.lang;
           } else {
-            media.JsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + media.KeySymbol + "&langwritten=" + chosenLang + "&issue=" + media.IssueTagNumber + "&track=" + media.Track;
+            media.JsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + media.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + media.IssueTagNumber + "&track=" + media.Track;
           }
           if (media.MimeType.includes("video")) {
             media.JsonUrl = media.JsonUrl + "&fileformat=MP4";
@@ -402,7 +503,7 @@ async function getDocumentMultimedia(opts) {
           var json = await getJson({
             url: media.JsonUrl
           });
-          media.Json = Object.values(json.files[chosenLang])[0];
+          media.Json = Object.values(json.files[prefs.lang])[0];
           if (media.MimeType.includes("video")) {
             media.Json = media.Json.filter(function(item) {
               return item.label == "720p";
@@ -425,7 +526,7 @@ async function getDocumentMultimedia(opts) {
         }
         if (media.KeySymbol == "sjjm") {
           delete media.JsonUrl;
-          media.Filename = "sjjm_" + chosenLang + "_" + media.Track.toString().padStart(3, '0') + "_r720P.mp4";
+          media.Filename = "sjjm_" + prefs.lang + "_" + media.Track.toString().padStart(3, '0') + "_r720P.mp4";
           media.LocalPath = songsPath + "/MP4/" + media.Filename;
         } else if (!media.JsonUrl) {
           media.LocalPath = pubsPath + "/" + media.KeySymbol + "/" + media.IssueTagNumber + "/JWPUB/contents-decompressed/" + media.FilePath;
@@ -486,7 +587,7 @@ async function getDbFromJwpub(opts) {
     filetype: "JWPUB"
   });
   if (json) {
-    var url = json.files[chosenLang].JWPUB[0].file.url;
+    var url = json.files[prefs.lang].JWPUB[0].file.url;
     var basename = path.basename(url);
     var workingDirectory = pubsPath + "/" + opts.pub + "/" + opts.issue + "/";
     var workingUnzipDirectory = workingDirectory + "JWPUB/contents-decompressed/";
@@ -545,7 +646,7 @@ async function updateWeMeeting(weDate) {
         for (var s = 0; s < qrySongs.length; s++) {
           var song = qrySongs[s];
           song.SongNumber = song.Caption.replace(/\D/g, "");
-          song.Filename = "sjjm_" + chosenLang + "_" + song.SongNumber.toString().padStart(3, '0') + "_r720P.mp4";
+          song.Filename = "sjjm_" + prefs.lang + "_" + song.SongNumber.toString().padStart(3, '0') + "_r720P.mp4";
           var songPath = songsPath + "/MP4/" + song.Filename;
           song.Filename = ((s + 1) * 50).toString().padStart(3, '0') + " " + song.Filename;
           song.LocalPath = songPath;
@@ -668,6 +769,20 @@ async function updateMwMeeting() {
 }
 
 function cleanUp() {
-  log("cleanUp()");
+  const getDirectories = source =>
+    fs.readdirSync(source, {
+      withFileTypes: true
+    })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name);
+  var mediaSubDirs = getDirectories(mediaPath);
+  for (var mediaSubDir of mediaSubDirs) {
+    var deleteMediaSubDir = moment(mediaSubDir).isBefore(baseDate.clone().subtract(1, "week"));
+    if (deleteMediaSubDir) {
+      var deleteDir = path.join(mediaPath, mediaSubDir);
+      log("Deleting: ", deleteDir);
+      fs.rmdirSync(deleteDir, { recursive: true });
+    }
+  }
   progressIncrement("main", "current");
 }

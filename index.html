@@ -5,16 +5,33 @@
   <title>JW Meeting and Media Fetcher</title>
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
+  <style>
+    #overlay {
+      background: #fff;
+      position: fixed;
+      height: 100%;
+      width: 100%;
+      z-index: 5000;
+      top: 0;
+      left: 0;
+      float: left;
+      text-align: center;
+      display: flex;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="overlay" class="justify-content-center">
+    <div class="spinner-grow text-primary align-self-center" role="status"></div>
+  </div>
   <div class="card">
     <div class="card-body">
       <div class="form-group row">
-        <label for="usr" class="col col-form-label">Language code:</label>
+        <label for="lang" class="col col-form-label">Language code:</label>
         <div class="col">
           <input type="text" class="form-control" id="lang" required hidden />
-          <select id="langSelect">
+          <select id="langSelect" class="form-control">
             <option disabled selected value hidden></option>
           </select>
         </div>
@@ -46,6 +63,15 @@
             <option value="4">Friday</option>
             <option value="5">Saturday</option>
             <option value="6">Sunday</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="cong" class="col col-form-label">Congregation/group:</label>
+        <div class="col">
+          <input type="text" id="cong" required hidden />
+          <select id="congSelect" class="form-control">
+            <option selected value="">None</option>
           </select>
         </div>
       </div>
@@ -101,22 +127,6 @@
     window.popperjs = require('popper.js');
     window.Bootstrap = require('bootstrap');
     window.select2 = require('select2')(jQuery);
-  </script>
-
-  <script>
-  $.getJSON( "https://www.jw.org/en/languages/", null,
-          function (jsonData) {
-              $.each(jsonData.languages, function (index, lang) {
-                  $('#langSelect').append($("<option>", {
-                    value: lang.langcode,
-                    text: lang.name
-                  }));
-              });
-              $('#langSelect').val($('#lang').val());
-              $('#langSelect').select2();
-              //.typeahead( { source: langs.names } );
-          } );
-          $("#version").html("Version " + window.require('electron').remote.app.getVersion());
   </script>
   <script src="./media-updater.js"></script>
 </body>
