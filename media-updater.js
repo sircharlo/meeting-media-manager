@@ -57,22 +57,30 @@ var progress = {
 var prefs = {};
 const prefsFile = outputPath + "/prefs.json";
 const langsFile = outputPath + "/langs.json";
+
+function prefsInitialize() {
+  for (var pref of ["lang", "mwDay", "weDay", "cong", "autoStartUpdate", "autoRunAtBoot", "autoQuitWhenDone"]) {
+    if (!prefs[pref]) {
+      prefs[pref] = false;
+    }
+  }
+}
+
 if (fs.existsSync(prefsFile)) {
   try {
     prefs = JSON.parse(fs.readFileSync(prefsFile));
   } catch {
-    prefs = {
-      lang: null,
-      mwDay: null,
-      weDay: null,
-      cong: null
-    };
+    prefsInitialize();
   }
   if (isElectron) {
+    prefsInitialize();
     $("#lang").val(prefs.lang);
     $("#mwDay").val(prefs.mwDay).change();
     $("#weDay").val(prefs.weDay).change();
     $("#cong").val(prefs.cong).change();
+    $("#autoStartUpdate").val(prefs.autoStartUpdate.toString()).change();
+    $("#autoRunAtBoot").val(prefs.autoRunAtBoot.toString()).change();
+    $("#autoQuitWhenDone").val(prefs.autoQuitWhenDone.toString()).change();
     if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val()) {
       settingsRequired();
     }
@@ -138,6 +146,9 @@ async function getInitialData() {
   //}
   $('#mwDay').select2();
   $('#weDay').select2();
+  $('#autoStartUpdate').select2();
+  $('#autoRunAtBoot').select2();
+  $('#autoQuitWhenDone').select2();
   $(".select2-selection").each(function() {
     if ($(this).text().trim() == "") {
       $(this).addClass("invalid");
@@ -155,7 +166,7 @@ function settingsRequired(bool) {
     $("#mediaSync").prop("disabled", false);
     $("#mediaSync").removeClass("btn-secondary");
     $("#btnSettings").removeClass("btn-danger");
-    $("#settings").collapse('hide');
+    //$("#settings").collapse('hide');
   } else {
     $("#mediaSync").prop("disabled", true);
     $("#mediaSync").addClass("btn-secondary");
@@ -178,9 +189,15 @@ if (isElectron) {
     $("#cong").val($("#congSelect").val());
     prefs.lang = $("#langSelect").val();
     prefs.mwDay = $("#mwDay").val();
-    prefs.weDay = $("#weDay").val();;
-    prefs.cong = $("#congSelect").val()
+    prefs.weDay = $("#weDay").val();
+    prefs.cong = $("#congSelect").val();
+    prefs.autoStartUpdate = ($("#autoStartUpdate").val() === "false" ? false : true);
+    prefs.autoRunAtBoot = ($("#autoRunAtBoot").val() === "false" ? false : true);
+    prefs.autoQuitWhenDone = ($("#autoQuitWhenDone").val() === "false" ? false : true);
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
+    window.require('electron').remote.app.setLoginItemSettings({
+      openAtLogin: prefs.autoRunAtBoot
+    });
     if (!$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val()) {
       settingsRequired();
     } else {
@@ -188,8 +205,8 @@ if (isElectron) {
     }
   });
   $("#mediaSync").on('click', async function() {
-    $("#mediaSync").prop("disabled", true);
-    $("#mediaSync").addClass("btn-secondary");
+    $("#mediaSync, #btnSettings").prop("disabled", true);
+    $("#mediaSync, #btnSettings").addClass("btn-secondary");
     var buttonLabel = $("#mediaSync").html();
     $("#mediaSync").html("Update in progress...");
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
@@ -198,9 +215,15 @@ if (isElectron) {
     await progressReset();
     $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
     $("#mediaSync").html(buttonLabel);
-    $("#mediaSync").prop("disabled", false);
-    $("#mediaSync").removeClass("btn-secondary");
+    $("#mediaSync, #btnSettings").prop("disabled", false);
+    $("#mediaSync, #btnSettings").removeClass("btn-secondary");
+    if (prefs.autoQuitWhenDone) {
+      window.require('electron').remote.app.quit();
+    }
   });
+  if (prefs.autoStartUpdate && $("#langSelect").val() && $("#mwDay").val() && $("#weDay").val()) {
+    $("#mediaSync").click();
+  }
 } else {
   startMediaUpdate();
 }
