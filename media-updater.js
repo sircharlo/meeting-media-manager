@@ -6,14 +6,13 @@
       Fix congregation fetch logic
 */
 
+const log = console.log;
+const moment = require("moment")
 const isElectron = (process.versions['electron'] ? true : false);
-const async = require('async');
 const axios = require('axios');
 const fs = require("graceful-fs");
 const glob = require("glob");
-const log = console.log;
 //const md5 = require("md5-file");
-const moment = require("moment");
 const os = require("os");
 const path = require("path");
 const sqlite3 = require('better-sqlite3');
@@ -27,10 +26,6 @@ const sftpConfig = {
   keepaliveCountMax: 20
 };
 const sftpRootDir = "/media/plex/Media-Linux/Public/files/MW-Media-Fetcher/U/";
-
-let Client = require('ssh2-sftp-client');
-let sftp = new Client();
-
 
 const outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
 mkdirSync(outputPath);
@@ -63,21 +58,28 @@ var prefs = {};
 const prefsFile = outputPath + "/prefs.json";
 const langsFile = outputPath + "/langs.json";
 if (fs.existsSync(prefsFile)) {
-  prefs = JSON.parse(fs.readFileSync(prefsFile));
+  try {
+    prefs = JSON.parse(fs.readFileSync(prefsFile));
+  } catch {
+    prefs = {
+      lang: null,
+      mwDay: null,
+      weDay: null,
+      cong: null
+    };
+  }
   if (isElectron) {
     $("#lang").val(prefs.lang);
     $("#mwDay").val(prefs.mwDay).change();
     $("#weDay").val(prefs.weDay).change();
     $("#cong").val(prefs.cong).change();
     if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val()) {
-      $("#mediaSync").prop("disabled", true)
-      $("#mediaSync").addClass("btn-secondary");
+      settingsRequired();
     }
   }
 } else {
   if (isElectron) {
-    $("#mediaSync").prop("disabled", true);
-    $("#mediaSync").addClass("btn-secondary");
+    settingsRequired();
   }
 }
 
@@ -108,11 +110,6 @@ async function congFetch() {
   $('#congSelect').select2();
 }
 
-function hideOverlay() {
-  $("#overlay").fadeOut();
-  log("hideme")
-}
-
 async function getLanguages() {
   if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || moment(prefs.langUpdatedLast).isSameOrBefore(moment().subtract(6, "months"))) {
     await $.getJSON("https://www.jw.org/en/languages/", null, function(jsonData) {
@@ -135,19 +132,48 @@ async function getLanguages() {
 async function getInitialData() {
   await getLanguages();
   $("#version").html("Version " + window.require('electron').remote.app.getVersion());
+  log(window.require('electron').remote.auResult)
   //if (!prefs.cong) {
   await congFetch();
   //}
   $('#mwDay').select2();
   $('#weDay').select2();
-  await hideOverlay();
+  $(".select2-selection").each(function() {
+    if ($(this).text().trim() == "") {
+      $(this).addClass("invalid");
+    } else {
+      $(this).removeClass("invalid");
+    }
+  });
+  $("#overlay").fadeOut();
 }
 
 var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
 
+function settingsRequired(bool) {
+  if (bool == false) {
+    $("#mediaSync").prop("disabled", false);
+    $("#mediaSync").removeClass("btn-secondary");
+    $("#btnSettings").removeClass("btn-danger");
+    $("#settings").collapse('hide');
+  } else {
+    $("#mediaSync").prop("disabled", true);
+    $("#mediaSync").addClass("btn-secondary");
+    $("#btnSettings").addClass("btn-danger");
+    $("#settings").collapse('show');
+  }
+}
+
 if (isElectron) {
   getInitialData();
-  $("#langSelect, #mwDay, #weDay, #congSelect").on('change', function() {
+  $("#settings *").on('change', function() {
+    $(".select2-selection").each(function() {
+      if ($(this).text().trim() == "") {
+        $(this).addClass("invalid");
+      } else {
+        $(this).removeClass("invalid");
+      }
+    });
     $("#lang").val($("#langSelect").val());
     $("#cong").val($("#congSelect").val());
     prefs.lang = $("#langSelect").val();
@@ -156,11 +182,9 @@ if (isElectron) {
     prefs.cong = $("#congSelect").val()
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     if (!$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val()) {
-      $("#mediaSync").prop("disabled", true);
-      $("#mediaSync").addClass("btn-secondary");
+      settingsRequired();
     } else {
-      $("#mediaSync").prop("disabled", false)
-      $("#mediaSync").removeClass("btn-secondary");
+      settingsRequired(false);
     }
   });
   $("#mediaSync").on('click', async function() {
@@ -223,6 +247,8 @@ function mkdirSync(dirPath) {
 
 async function sftpLs(dir) {
   var result = [];
+  let Client = require('ssh2-sftp-client');
+  let sftp = new Client();
   await sftp.connect(sftpConfig).then(() => {
     return sftp.list(sftpRootDir + dir);
   }).then(await
@@ -240,6 +266,8 @@ async function sftpLs(dir) {
 }
 
 async function sftpDownloadDirs(dirs) {
+  let Client = require('ssh2-sftp-client');
+  let sftp = new Client();
   await sftp.connect(sftpConfig);
   //dirs.forEach(function(dir, d) {
   for (var d = 0; d < dirs.length; d++) {
@@ -278,7 +306,7 @@ function progressUpdate(bar) {
     $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
     $(progressBar).width(percentage);
     var progressAlert = "#" + bar + "Status";
-    $(progressAlert).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
+    //$(progressAlert).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
   }
 }
 
@@ -781,7 +809,9 @@ function cleanUp() {
     if (deleteMediaSubDir) {
       var deleteDir = path.join(mediaPath, mediaSubDir);
       log("Deleting: ", deleteDir);
-      fs.rmdirSync(deleteDir, { recursive: true });
+      fs.rmdirSync(deleteDir, {
+        recursive: true
+      });
     }
   }
   progressIncrement("main", "current");

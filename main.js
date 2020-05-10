@@ -7,7 +7,8 @@ const {
   autoUpdater
 } = require("electron-updater");
 
-autoUpdater.checkForUpdatesAndNotify();
+var auResult = autoUpdater.checkForUpdatesAndNotify();
+console.log(auResult)
 
 function createWindow() {
   // Create the browser window.
@@ -16,7 +17,7 @@ function createWindow() {
       nodeIntegration: true
     },
     width: 800,
-    height: 600,
+    height: 700,
     icon: __dirname + '/icon.png'
   })
 
@@ -25,7 +26,7 @@ function createWindow() {
   win.setMenuBarVisibility(false)
 
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished

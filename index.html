@@ -18,109 +18,134 @@
       text-align: center;
       display: flex;
     }
+
+    .select2-container {
+      width: 100% !important;
+    }
+
+    .invalid {
+      border-color: #bd2130 !important;
+    }
   </style>
 </head>
 
 <body>
   <div id="overlay" class="justify-content-center">
-    <div class="spinner-grow text-primary align-self-center" role="status"></div>
-  </div>
-  <div class="card">
-    <div class="card-body">
-      <div class="form-group row">
-        <label for="lang" class="col col-form-label">Language code:</label>
-        <div class="col">
-          <input type="text" class="form-control" id="lang" required hidden />
-          <select id="langSelect" class="form-control">
-            <option disabled selected value hidden></option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="mwDay" class="col col-form-label">Midweek meeting day:</label>
-        <div class="col">
-          <select class="form-control" id="mwDay" required>
-            <option disabled selected value hidden></option>
-            <option value="0">Monday</option>
-            <option value="1">Tuesday</option>
-            <option value="2">Wednesday</option>
-            <option value="3">Thursday</option>
-            <option value="4">Friday</option>
-            <option value="5">Saturday</option>
-            <option value="6">Sunday</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="weDay" class="col col-form-label">Weekend meeting day:</label>
-        <div class="col">
-          <select class="form-control" id="weDay" required>
-            <option disabled selected value hidden></option>
-            <option value="0">Monday</option>
-            <option value="1">Tuesday</option>
-            <option value="2">Wednesday</option>
-            <option value="3">Thursday</option>
-            <option value="4">Friday</option>
-            <option value="5">Saturday</option>
-            <option value="6">Sunday</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="cong" class="col col-form-label">Congregation/group:</label>
-        <div class="col">
-          <input type="text" id="cong" required hidden />
-          <select id="congSelect" class="form-control">
-            <option selected value="">None</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <div class="col">
-        </div>
-        <div class="col">
-          <button type="button" class="btn btn-primary" id="mediaSync">Update media</button>
-        </div>
-      </div>
-      <hr/>
-      <div class="alert alert-info" id="mainStatus" role="alert">
-        Main progress
-      </div>
-      <div class="progress" id="mainProgress">
-        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-          0% Complete
-        </div>
-      </div>
-      <hr/>
-      <div class="alert alert-info" id="filesDownloadedStatus" role="alert">
-        Remote files
-      </div>
-      <div class="progress" id="filesDownloadedProgress">
-        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-          ...
-        </div>
-      </div>
-      <hr/>
-      <div class="alert alert-info" id="filesSavedStatus" role="alert">
-        Local file copies:
-      </div>
-      <div class="progress" id="filesSavedProgress">
-        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-          ...
-        </div>
-      </div>
-      <hr/>
-      <div class="alert alert-info" id="dbStatus" role="alert">
-        Internal publication lookups:
-      </div>
-      <div class="progress" id="dbProgress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-          ...
-        </div>
-      </div>
-      <hr/>
-      <span id="version" class="badge badge-secondary"></span>
+    <div class="align-self-center text-primary">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="text-primary align-self-center" role="status">Please wait, getting things ready...</div>
     </div>
+  </div>
+  <div class="card card-body">
+    <div class="row mb-3">
+      <div class="col">
+        <button class="btn btn-success" id="btnSettings" type="button" data-toggle="collapse" data-target="#settings" aria-expanded="false" aria-controls="settings">
+          Settings
+        </button>
+      </div>
+      <div class="col">
+        <button type="button" class="btn btn-primary" id="mediaSync">Update media</button>
+      </div>
+    </div>
+    <div class="collapse" id="settings">
+      <div class="card card-body">
+        <div class="form-group row">
+          <label for="langSelect" class="col col-form-label">Language</label>
+          <div class="col">
+            <input type="text" class="form-control" id="lang" required hidden />
+            <select id="langSelect" class="form-control" required>
+              <option disabled selected value hidden></option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="mwDay" class="col col-form-label">Midweek meeting day</label>
+          <div class="col">
+            <select class="form-control" id="mwDay" required>
+              <option disabled selected value hidden></option>
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <option value="5">Saturday</option>
+              <option value="6">Sunday</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="weDay" class="col col-form-label">Weekend meeting day</label>
+          <div class="col">
+            <select class="form-control" id="weDay" required>
+              <option disabled selected value hidden></option>
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <option value="5">Saturday</option>
+              <option value="6">Sunday</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="congSelect" class="col col-form-label">Congregation/group</label>
+          <div class="col">
+            <input type="text" id="cong" required hidden />
+            <select id="congSelect" class="form-control">
+              <option selected value="">None</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card card-body my-3">
+      <div class="row py-3">
+        <div class="col">
+          <span id="mainStatus">
+            Currently inactive
+          </span>
+          <!--<div class="progress" id="mainProgress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+              0% Complete
+            </div>
+          </div>-->
+        </div>
+        <div class="col">
+          <span id="filesDownloadedStatus">
+            Downloads
+          </span>
+          <div class="progress" id="filesDownloadedProgress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+              ...
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row py-3">
+        <div class="col">
+          <span id="filesSavedProgress">
+            Local file copies
+          </span>
+          <div class="progress" id="filesSavedProgress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+              ...
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <span id="dbStatus">
+            Internal publication lookups
+          </span>
+          <div class="progress" id="dbProgress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+              ...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span id="version" class="badge badge-secondary"></span>
   </div>
   <script>
     window.$ = window.jQuery = require('jquery');
