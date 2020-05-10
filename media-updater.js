@@ -706,6 +706,7 @@ async function updateWeMeeting(weDate) {
           song.KeySymbol = "sjjm";
           song.bar = "local";
           writeFile({
+            sync: true,
             bar: "filesSaved",
             file: song.LocalPath,
             destFile: song.DestPath,
@@ -727,6 +728,7 @@ async function updateWeMeeting(weDate) {
           localMedia.SourceDocumentId = qryDocuments[w].DocumentId;
           writeFile({
             bar: "filesSaved",
+            sync: true,
             file: localMedia.LocalPath,
             destFile: localMedia.DestPath,
             type: "copy"
@@ -800,6 +802,7 @@ async function updateMwMeeting() {
                 var file = await downloadFile(weekMediaItem.Json[0].file.url);
                 writeFile({
                   bar: "filesSaved",
+                  sync: true,
                   file: new Buffer(file),
                   destFile: weekMediaItem.DestPath
                 });
@@ -807,6 +810,7 @@ async function updateMwMeeting() {
             } else {
               writeFile({
                 bar: "filesSaved",
+                sync: true,
                 file: weekMediaItem.LocalPath,
                 destFile: weekMediaItem.DestPath,
                 type: "copy"
