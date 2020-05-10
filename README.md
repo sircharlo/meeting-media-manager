@@ -6,15 +6,17 @@ This is app can be run as a normal user; settings allow for automatic execution 
 
 ## Prerequisites
 
-The prerequisites are simple enough. You need a Windows computer. Work is underway to release Linux and Mac installers as well; contact me if this is something you'd be interested in.
+The prerequisites are simple enough. For now, you need a 64-bit Windows computer; this covers most computers being used in the wild today.
+
+Work is underway to release Linux and Mac installers as well; contact me if this is something you'd be interested in.
 
 
 ## Usage
 
-Simply download the installer and run it. A shortcut to the app will be placed on your desktop. Downloaded media is placed on your desktop, in the "Meeting Media" folder.
+Simply download the latest [installer](/sircharlo/jw-meeting-media-fetcher/releases) and run it. A shortcut to the app will be placed on your desktop. Downloaded media is placed on your desktop, in the "Meeting Media" folder.
 
 
-## Does this infringe the JW.org Terms of Use?
+## Does this app infringe the JW.org Terms of Use?
 
 No, the JW.org [Terms of Use](https://www.jw.org/en/terms-of-use) actually *explicitly allow* this. Here is the relevant excerpt (emphasis mine):
 
@@ -24,6 +26,6 @@ No, the JW.org [Terms of Use](https://www.jw.org/en/terms-of-use) actually *expl
 
 ## Help!
 
-If ever you run into any issues with the script, please feel free to let me know.
+If ever you run into any issues with the app or the underlying script, please feel free to let me know.
 
 *- COS*
