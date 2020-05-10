@@ -13,7 +13,7 @@ Work is underway to release Linux and Mac installers as well; contact me if this
 
 ## Usage
 
-Simply download the latest [installer](/sircharlo/jw-meeting-media-fetcher/releases) and run it. A shortcut to the app will be placed on your desktop. Downloaded media is placed on your desktop, in the "Meeting Media" folder.
+Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases) and run it. A shortcut to the app will be placed on your desktop. Downloaded media is placed on your desktop, in the "Meeting Media" folder.
 
 
 ## Does this app infringe the JW.org Terms of Use?
