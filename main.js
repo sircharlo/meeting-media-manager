@@ -1,16 +1,12 @@
 const {
   app,
-  BrowserWindow,
-  ipcMain,
-  dialog
-} = require('electron');
-const {
+  BrowserWindow
+} = require('electron'), {
   autoUpdater
 } = require("electron-updater");
+var win = {};
 
 app.whenReady().then(createUpdateWindow);
-
-var win = {};
 
 function createUpdateWindow() {
   win = new BrowserWindow({
@@ -26,6 +22,10 @@ function createUpdateWindow() {
   //win.webContents.openDevTools()
 }
 
+function goAhead() {
+  win.loadFile('index.html')
+}
+
 autoUpdater.on('update-available', () => {
   win.loadFile('updateAvailable.html')
   autoUpdater.downloadUpdate();
@@ -33,15 +33,6 @@ autoUpdater.on('update-available', () => {
 
 autoUpdater.on('update-not-available', () => {
   goAhead();
-
-  /*dialog.showMessageBox({
-    title: 'No updates available',
-    message: 'Current version is up-to-date.'
-  })
-  updater.enabled = true
-  updater = null*/
-
-  //  win.close();
 });
 
 autoUpdater.on('update-downloaded', () => {
@@ -49,53 +40,12 @@ autoUpdater.on('update-downloaded', () => {
   setInterval(() => {
     autoUpdater.quitAndInstall();
   }, 5000);
-  //win.webContents.openDevTools()
-
-  /*dialog.showMessageBox({
-    title: 'Install update',
-    message: 'Update downloaded, application will now quit and update...'
-  }, () => {
-    setImmediate(() => */
-
-  /*)
-    })*/
 })
 
 autoUpdater.checkForUpdates();
 
-/*function goAhead() {
-  // This method will be called when Electron has finished
-  // initialization and is ready to create browser windows.
-  // Some APIs can only be used after this event occurs.
-  app.whenReady().then(createWindow)
-}*/
-
-function goAhead() {
-  // Create the browser window.
-  /*  const win = new BrowserWindow({
-      webPreferences: {
-        nodeIntegration: true
-      },
-      width: 800,
-      height: 700,
-      icon: __dirname + '/icon.png'
-    })*/
-
-  // and load the index.html of the app.
-  win.loadFile('index.html')
-  //win.setMenuBarVisibility(false)
-
-  // Open the DevTools.
-  //win.webContents.openDevTools()
-}
-
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  //  if (process.platform !== 'darwin') {
   app.quit()
-  //  }
 })
 
 /*app.on('activate', () => {
@@ -105,6 +55,3 @@ app.on('window-all-closed', () => {
     createWindow()
   }
 })*/
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
