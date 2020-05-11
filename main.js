@@ -41,7 +41,7 @@ autoUpdater.on('update-downloaded', () => {
     autoUpdater.quitAndInstall();
   }, 5000);
 })
-
+autoUpdater.autoDownload = false;
 autoUpdater.checkForUpdates();
 
 /*app.on('window-all-closed', () => {
