@@ -6,7 +6,7 @@
       Fix congregation fetch logic
 */
 
-const log = console.log;
+//const log = console.log;
 const moment = require("moment")
 const isElectron = (process.versions['electron'] ? true : false);
 const axios = require('axios');
@@ -204,6 +204,7 @@ if (isElectron) {
     }
   });
   $("#mediaSync").on('click', async function() {
+    prefs.stayAlive = false;
     $("#settings").collapse('hide');
     $("#mediaSync, #btnSettings").prop("disabled", true);
     $("#mediaSync, #btnSettings").addClass("btn-secondary");
@@ -215,7 +216,6 @@ if (isElectron) {
     await progressReset();
     if ($("#stayAlive").length !== 0) {
       $("#stayAlive").remove();
-      prefs.stayAlive = false;
     }
     if (prefs.autoQuitWhenDone) {
       $("#overlayComplete").append('<div class="align-self-center pt-3" id="stayAlive" role="status"><button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don\'t close automatically!</button></div>');
@@ -258,7 +258,6 @@ async function updateCongSpecific() {
     dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/" + moment().year() + "/" + folder, mediaPath + "/" + folder])
   });
   sftpDownloadDirs(dirs);
-  log()
 }
 
 async function setVars() {
@@ -310,7 +309,7 @@ async function sftpDownloadDirs(dirs) {
   for (var d = 0; d < dirs.length; d++) {
     let rslt = await sftp.downloadDir(dirs[d][0], dirs[d][1])
     //let rslt = dir
-    log(rslt);
+    console.log(rslt);
   }
   sftp.end();
   //});
@@ -392,7 +391,7 @@ async function getJson(opts) {
     payload = await axios.get(jsonUrl);
     payload = payload.data;
   } catch (err) {
-    //log(err, payload);
+    //console.log(err, payload);
   } finally {
     return payload;
   }
@@ -474,7 +473,7 @@ async function updateSongs() {
               type: filetype,
               track: song.track
             }, destFile)) {
-            log(song.file.url);
+            console.log(song.file.url);
             var file = await downloadFile(song.file.url);
             await writeFile({
               bar: "filesDownloaded",
@@ -611,7 +610,7 @@ async function getDocumentMultimedia(opts) {
         if (!mwMediaForWeek[media.BeginParagraphOrdinal]) {
           mwMediaForWeek[media.BeginParagraphOrdinal] = [];
         }
-        //log(opts.week, media.KeySymbol, media.IssueTagNumber, media.MultimediaId)
+        //console.log(opts.week, media.KeySymbol, media.IssueTagNumber, media.MultimediaId)
         if (!weekMediaFilesCopied.includes(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId)) {
           mwMediaForWeek[media.BeginParagraphOrdinal].push(media);
           weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
@@ -619,7 +618,7 @@ async function getDocumentMultimedia(opts) {
       }
     }
   } catch (err) {
-    //log(err, opts);
+    //console.log(err, opts);
   }
   progressIncrement("db", "current");
 }
@@ -851,7 +850,7 @@ function cleanUp() {
     var deleteMediaSubDir = moment(mediaSubDir).isBefore(baseDate.clone().subtract(1, "week"));
     if (deleteMediaSubDir) {
       var deleteDir = path.join(mediaPath, mediaSubDir);
-      log("Deleting: ", deleteDir);
+      console.log("Deleting: ", deleteDir);
       fs.rmdirSync(deleteDir, {
         recursive: true
       });
