@@ -37,16 +37,16 @@ autoUpdater.on('update-not-available', () => {
 
 autoUpdater.on('update-downloaded', () => {
   win.loadFile('updateDownloaded.html');
-  setImmediate(() => {
+  setInterval(() => {
     autoUpdater.quitAndInstall();
-  })
+  }, 5000);
 })
 
 autoUpdater.checkForUpdates();
 
-app.on('window-all-closed', () => {
+/*app.on('window-all-closed', () => {
   app.quit()
-})
+})*/
 
 /*app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
