@@ -204,6 +204,7 @@ if (isElectron) {
     }
   });
   $("#mediaSync").on('click', async function() {
+    $("#settings").collapse('hide');
     $("#mediaSync, #btnSettings").prop("disabled", true);
     $("#mediaSync, #btnSettings").addClass("btn-secondary");
     var buttonLabel = $("#mediaSync").html();
@@ -212,10 +213,6 @@ if (isElectron) {
     await progressInitialize();
     await startMediaUpdate();
     await progressReset();
-    $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
-    $("#mediaSync").html(buttonLabel);
-    $("#mediaSync, #btnSettings").prop("disabled", false);
-    $("#mediaSync, #btnSettings").removeClass("btn-secondary");
     if ($("#stayAlive").length !== 0) {
       $("#stayAlive").remove();
       prefs.stayAlive = false;
@@ -233,6 +230,10 @@ if (isElectron) {
       }
       $("#overlay").fadeOut();
     });
+    $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
+    $("#mediaSync").html(buttonLabel);
+    $("#mediaSync, #btnSettings").prop("disabled", false);
+    $("#mediaSync, #btnSettings").removeClass("btn-secondary");
   });
   if (prefs.autoStartUpdate && $("#langSelect").val() && $("#mwDay").val() && $("#weDay").val()) {
     $("#mediaSync").click();
@@ -433,9 +434,11 @@ async function downloadRequired(remoteOpts, destFile, method) {
     if (remoteHash == localHash) {
       return false;
     } else {
+      progressIncrement("filesDownloaded", "total");
       return true;
     }
   } else {
+    progressIncrement("filesDownloaded", "total");
     return true;
   }
 }
@@ -460,7 +463,7 @@ async function updateSongs() {
           return item.track > 0;
         }
       });
-      progressIncrement("filesDownloaded", "total", songs.length);
+      //progressIncrement("filesDownloaded", "total", songs.length);
       for (var song of songs) {
         if (song.track > 0 && (filetype == "MP3" || song.label == "720p")) {
           var filename = song.file.url.split("/").pop();
@@ -474,14 +477,14 @@ async function updateSongs() {
             log(song.file.url);
             var file = await downloadFile(song.file.url);
             await writeFile({
-              bar: "filesSaved",
+              bar: "filesDownloaded",
               sync: true,
               file: new Buffer(file),
               destFile: destFile
             });
           }
         }
-        progressIncrement("filesDownloaded", "current");
+        //progressIncrement("filesDownloaded", "current");
       }
     }
   }
@@ -663,7 +666,7 @@ async function getDbFromJwpub(opts) {
       }, workingDirectory + basename) || !glob.sync(workingUnzipDirectory + "/*.db")[0]) {
       var file = await downloadFile(url);
       await writeFile({
-        bar: "filesSaved",
+        bar: "filesDownloaded",
         sync: true,
         file: new Buffer(file),
         destFile: workingDirectory + basename
@@ -814,7 +817,7 @@ async function updateMwMeeting() {
                 }, weekMediaItem.DestPath)) {
                 var file = await downloadFile(weekMediaItem.Json[0].file.url);
                 writeFile({
-                  bar: "filesSaved",
+                  bar: "filesDownloaded",
                   sync: true,
                   file: new Buffer(file),
                   destFile: weekMediaItem.DestPath
