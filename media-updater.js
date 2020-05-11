@@ -4,6 +4,7 @@
       Fix style and labels?
       Alphabetize functions and vars when possible
       Fix congregation fetch logic
+      Add delay before autoquit
 */
 
 const log = console.log;
@@ -140,7 +141,6 @@ async function getLanguages() {
 async function getInitialData() {
   await getLanguages();
   $("#version").html("Version " + window.require('electron').remote.app.getVersion());
-  log(window.require('electron').remote.auResult)
   //if (!prefs.cong) {
   await congFetch();
   //}
@@ -208,7 +208,7 @@ if (isElectron) {
     $("#mediaSync, #btnSettings").prop("disabled", true);
     $("#mediaSync, #btnSettings").addClass("btn-secondary");
     var buttonLabel = $("#mediaSync").html();
-    $("#mediaSync").html("Update in progress...");
+    $("#mediaSync").html('Update in progress... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
     await progressInitialize();
     await startMediaUpdate();
@@ -217,9 +217,11 @@ if (isElectron) {
     $("#mediaSync").html(buttonLabel);
     $("#mediaSync, #btnSettings").prop("disabled", false);
     $("#mediaSync, #btnSettings").removeClass("btn-secondary");
-    if (prefs.autoQuitWhenDone) {
-      window.require('electron').remote.app.quit();
-    }
+    $("#overlayComplete").fadeIn().delay(3000).fadeOut(400, () => {
+      if (prefs.autoQuitWhenDone) {
+        window.require('electron').remote.app.quit();
+      }
+    });
   });
   if (prefs.autoStartUpdate && $("#langSelect").val() && $("#mwDay").val() && $("#weDay").val()) {
     $("#mediaSync").click();
