@@ -37,9 +37,9 @@ autoUpdater.on('update-not-available', () => {
 
 autoUpdater.on('update-downloaded', () => {
   win.loadFile('updateDownloaded.html');
-  setInterval(() => {
+  setImmediate(() => {
     autoUpdater.quitAndInstall();
-  }, 5000);
+  });
 })
 autoUpdater.autoDownload = false;
 autoUpdater.checkForUpdates();

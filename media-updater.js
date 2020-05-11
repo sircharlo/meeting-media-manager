@@ -204,7 +204,7 @@ if (isElectron) {
     }
   });
   $("#mediaSync").on('click', async function() {
-    prefs.stayAlive = false;
+    var stayAlive = false;
     $("#settings").collapse('hide');
     $("#mediaSync, #btnSettings").prop("disabled", true);
     $("#mediaSync, #btnSettings").addClass("btn-secondary");
@@ -221,11 +221,11 @@ if (isElectron) {
       $("#overlayComplete").append('<div class="align-self-center pt-3" id="stayAlive" role="status"><button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don\'t close automatically!</button></div>');
     }
     $("#btnStayAlive").on("click", function() {
-      prefs.stayAlive = true;
+      stayAlive = true;
     });
     $("#overlay").fadeIn();
     $("#overlayComplete").fadeIn().delay(3000).fadeOut(400, () => {
-      if (prefs.autoQuitWhenDone && !prefs.stayAlive) {
+      if (prefs.autoQuitWhenDone && !stayAlive) {
         window.require('electron').remote.app.quit();
       }
       $("#overlay").fadeOut();
