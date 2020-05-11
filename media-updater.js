@@ -208,7 +208,7 @@ if (isElectron) {
     $("#mediaSync, #btnSettings").prop("disabled", true);
     $("#mediaSync, #btnSettings").addClass("btn-secondary");
     var buttonLabel = $("#mediaSync").html();
-    $("#mediaSync").html('Update in progress... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+    $("#mediaSync").html('Update in progress... <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
     await progressInitialize();
     await startMediaUpdate();
