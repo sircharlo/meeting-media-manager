@@ -6,8 +6,7 @@
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
   <style>
-    #overlay,
-    #overlayComplete {
+    #overlay {
       background: #fff;
       position: fixed;
       height: 100%;
@@ -32,14 +31,12 @@
 
 <body>
   <div id="overlay" class="justify-content-center">
-    <div class="align-self-center text-primary">
+    <div class="align-self-center text-primary" id="overlayPleaseWait">
       <div class="spinner-grow mb-3" role="status"></div>
       <div class="align-self-center" id="upToDate" role="status">You are running the latest version, let's proceed!</div>
       <div class="align-self-center" id="pleaseWait" role="status">Please wait, getting things ready...</div>
     </div>
-  </div>
-  <div id="overlayComplete" class="justify-content-center" style="display: none;">
-    <div class="align-self-center text-success">
+    <div class="align-self-center text-success" id="overlayComplete" style="display: none;">
       <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder been successfully updated!</div>
     </div>
   </div>

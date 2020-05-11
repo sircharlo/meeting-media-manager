@@ -4,7 +4,6 @@
       Fix style and labels?
       Alphabetize functions and vars when possible
       Fix congregation fetch logic
-      Add delay before autoquit
 */
 
 const log = console.log;
@@ -156,7 +155,7 @@ async function getInitialData() {
       $(this).removeClass("invalid");
     }
   });
-  $("#overlay").fadeOut();
+  $("#overlay, #overlayPleaseWait").fadeOut();
 }
 
 var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
@@ -217,10 +216,22 @@ if (isElectron) {
     $("#mediaSync").html(buttonLabel);
     $("#mediaSync, #btnSettings").prop("disabled", false);
     $("#mediaSync, #btnSettings").removeClass("btn-secondary");
+    if ($("#stayAlive").length !== 0) {
+      $("#stayAlive").remove();
+      prefs.stayAlive = false;
+    }
+    if (prefs.autoQuitWhenDone) {
+      $("#overlayComplete").append('<div class="align-self-center pt-3" id="stayAlive" role="status"><button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don\'t close automatically!</button></div>');
+    }
+    $("#btnStayAlive").on("click", function() {
+      prefs.stayAlive = true;
+    });
+    $("#overlay").fadeIn();
     $("#overlayComplete").fadeIn().delay(3000).fadeOut(400, () => {
-      if (prefs.autoQuitWhenDone) {
+      if (prefs.autoQuitWhenDone && !prefs.stayAlive) {
         window.require('electron').remote.app.quit();
       }
+      $("#overlay").fadeOut();
     });
   });
   if (prefs.autoStartUpdate && $("#langSelect").val() && $("#mwDay").val() && $("#weDay").val()) {
