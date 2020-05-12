@@ -41,6 +41,7 @@ autoUpdater.on('update-downloaded', () => {
     autoUpdater.quitAndInstall();
   });
 })
+autoUpdater.logger = console;
 autoUpdater.autoDownload = false;
 autoUpdater.checkForUpdates();
 
