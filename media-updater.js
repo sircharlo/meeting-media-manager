@@ -6,13 +6,11 @@
       Fix congregation fetch logic
 */
 
-//const log = console.log;
 const moment = require("moment")
 const isElectron = (process.versions['electron'] ? true : false);
 const axios = require('axios');
 const fs = require("graceful-fs");
 const glob = require("glob");
-//const md5 = require("md5-file");
 const os = require("os");
 const path = require("path");
 const sqlite3 = require('better-sqlite3');
@@ -36,11 +34,16 @@ const pubs = {
 };
 
 var progress = {
-  main: {
+  /*main: {
     current: 0,
     total: 7
+  },*/
+  tasksToDo: {
+    current: 0,
+    total: 0
   },
-  filesDownloaded: {
+  download: {}
+  /*filesDownloaded: {
     current: 0,
     total: 0
   },
@@ -51,7 +54,7 @@ var progress = {
   db: {
     current: 0,
     total: 0
-  }
+  }*/
 };
 
 var prefs = {};
@@ -211,6 +214,7 @@ if (isElectron) {
     var buttonLabel = $("#mediaSync").html();
     $("#mediaSync").html('Update in progress... <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
+    $("div.progress").parent().css('visibility', 'visible').hide().fadeIn();
     await progressInitialize();
     await startMediaUpdate();
     await progressReset();
@@ -222,6 +226,7 @@ if (isElectron) {
     }
     $("#btnStayAlive").on("click", function() {
       stayAlive = true;
+      $("#btnStayAlive").removeClass("btn-warning").addClass("btn-success");
     });
     $("#overlay").fadeIn();
     $("#overlayComplete").fadeIn().delay(3000).fadeOut(400, () => {
@@ -230,10 +235,14 @@ if (isElectron) {
       }
       $("#overlay").fadeOut();
     });
+    $("div.progress").parent().fadeOut(400, function() {
+      $(this).css('visibility', 'hidden').css("display", "block");
+    })
     $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
     $("#mediaSync").html(buttonLabel);
     $("#mediaSync, #btnSettings").prop("disabled", false);
     $("#mediaSync, #btnSettings").removeClass("btn-secondary");
+    status("main", "Currently inactive")
   });
   if (prefs.autoStartUpdate && $("#langSelect").val() && $("#mwDay").val() && $("#weDay").val()) {
     $("#mediaSync").click();
@@ -324,7 +333,11 @@ function status(dest, message) {
 const downloadFile = async url => {
   try {
     const response = await axios.get(url, {
-      responseType: 'arraybuffer'
+      responseType: 'arraybuffer',
+      onDownloadProgress: function(progressEvent) {
+        var percent = progressEvent.loaded / progressEvent.total * 100;
+        progressSet("download", percent);
+      }
     });
     var data;
     data = response.data;
@@ -342,6 +355,17 @@ function progressUpdate(bar) {
     $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
     $(progressBar).width(percentage);
     var progressAlert = "#" + bar + "Status";
+    //$(progressAlert).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
+  }
+}
+
+function progressSet(bar, percent) {
+  if (isElectron) {
+    var progressBar = "#" + bar + "Progress div";
+    //var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
+    $(progressBar).html(percent.toFixed(2) + "%");
+    $(progressBar).width(percent + "%");
+    //var progressAlert = "#" + bar + "Status";
     //$(progressAlert).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
   }
 }
@@ -391,7 +415,7 @@ async function getJson(opts) {
     payload = await axios.get(jsonUrl);
     payload = payload.data;
   } catch (err) {
-    //console.log(err, payload);
+    console.log(err, payload);
   } finally {
     return payload;
   }
@@ -399,11 +423,7 @@ async function getJson(opts) {
 
 async function downloadRequired(remoteOpts, destFile, method) {
   if (fs.existsSync(destFile)) {
-    //if (method == "md5") {
-    //  var localHash = md5.sync(destFile);
-    //} else {
     var localHash = fs.statSync(destFile).size;
-    //}
     if (remoteOpts.json) {
       var json = remoteOpts.json;
       if (remoteOpts.track) {
@@ -425,19 +445,15 @@ async function downloadRequired(remoteOpts, destFile, method) {
       });
       var remoteHash = json.files[prefs.lang][remoteOpts.type];
     }
-    //if (method == "md5") {
-    //  remoteHash = remoteHash.file.checksum;
-    //} else {
     remoteHash = remoteHash.filesize;
-    //}
     if (remoteHash == localHash) {
       return false;
     } else {
-      progressIncrement("filesDownloaded", "total");
+      progressIncrement("tasksToDo", "total");
       return true;
     }
   } else {
-    progressIncrement("filesDownloaded", "total");
+    progressIncrement("tasksToDo", "total");
     return true;
   }
 }
@@ -446,7 +462,7 @@ async function downloadRequired(remoteOpts, destFile, method) {
 async function updateSongs() {
   var pub = "sjjm";
   for (var filetype of ["MP4", "MP3"]) {
-    progress.main.current++;
+    //progress.main.current++;
     status("main", "Checking for updated " + filetype + " songs...");
     var songs = await getJson({
       pub: pub,
@@ -473,10 +489,9 @@ async function updateSongs() {
               type: filetype,
               track: song.track
             }, destFile)) {
-            console.log(song.file.url);
             var file = await downloadFile(song.file.url);
             await writeFile({
-              bar: "filesDownloaded",
+              //bar: "filesDownloaded",
               sync: true,
               file: new Buffer(file),
               destFile: destFile
@@ -490,6 +505,7 @@ async function updateSongs() {
 }
 
 function writeFile(opts) {
+  opts.bar = "tasksToDo";
   progressIncrement(opts.bar, "total");
   if (!opts.type) {
     if (!opts.sync) {
@@ -517,10 +533,10 @@ function writeFile(opts) {
 }
 
 async function getDocumentExtract(opts) {
-  progressIncrement("db", "total");
+  progressIncrement("tasksToDo", "total");
   var statement = "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + opts.docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' ORDER BY DocumentExtract.BeginParagraphOrdinal";
   var extractItems = opts.db.prepare(statement).all();
-  progressIncrement("db", "current");
+  progressIncrement("tasksToDo", "current");
   for (var extractItem of extractItems) {
     mkdirSync(pubsPath + "/" + extractItem.UndatedSymbol);
     mkdirSync(pubsPath + "/" + extractItem.UndatedSymbol + "/" + extractItem.IssueTagNumber);
@@ -542,7 +558,7 @@ async function getDocumentExtract(opts) {
 }
 
 async function getDocumentMultimedia(opts) {
-  progressIncrement("db", "total");
+  progressIncrement("tasksToDo", "total");
   try {
     var tableDocumentMultimedia = Object.values(opts.db.prepare("SELECT EXISTS (SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia')").get())[0];
     var tableMultimedia = "Multimedia";
@@ -610,7 +626,6 @@ async function getDocumentMultimedia(opts) {
         if (!mwMediaForWeek[media.BeginParagraphOrdinal]) {
           mwMediaForWeek[media.BeginParagraphOrdinal] = [];
         }
-        //console.log(opts.week, media.KeySymbol, media.IssueTagNumber, media.MultimediaId)
         if (!weekMediaFilesCopied.includes(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId)) {
           mwMediaForWeek[media.BeginParagraphOrdinal].push(media);
           weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
@@ -618,9 +633,9 @@ async function getDocumentMultimedia(opts) {
       }
     }
   } catch (err) {
-    //console.log(err, opts);
+    console.log(err, opts);
   }
-  progressIncrement("db", "current");
+  progressIncrement("tasksToDo", "current");
 }
 
 function sanitizeFilename(filename) {
@@ -665,7 +680,7 @@ async function getDbFromJwpub(opts) {
       }, workingDirectory + basename) || !glob.sync(workingUnzipDirectory + "/*.db")[0]) {
       var file = await downloadFile(url);
       await writeFile({
-        bar: "filesDownloaded",
+        //bar: "filesDownloaded",
         sync: true,
         file: new Buffer(file),
         destFile: workingDirectory + basename
@@ -684,7 +699,7 @@ async function getDbFromJwpub(opts) {
 }
 
 async function updateWeMeeting(weDate) {
-  progressIncrement("main", "current");
+  //progressIncrement("main", "current");
   var weDates = [baseDate.clone().subtract(2, "months"), baseDate.clone().subtract(1, "months")];
   for (var weDate of weDates) {
     status("main", "Retrieving the " + weDate.format("MMMM YYYY") + " Watchtower...");
@@ -722,7 +737,7 @@ async function updateWeMeeting(weDate) {
           song.bar = "local";
           writeFile({
             sync: true,
-            bar: "filesSaved",
+            //bar: "filesSaved",
             file: song.LocalPath,
             destFile: song.DestPath,
             type: "copy"
@@ -742,7 +757,7 @@ async function updateWeMeeting(weDate) {
           localMedia.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/" + localMedia.FileName;
           localMedia.SourceDocumentId = qryDocuments[w].DocumentId;
           writeFile({
-            bar: "filesSaved",
+            //bar: "filesSaved",
             sync: true,
             file: localMedia.LocalPath,
             destFile: localMedia.DestPath,
@@ -755,7 +770,7 @@ async function updateWeMeeting(weDate) {
 }
 
 async function updateMwMeeting() {
-  progressIncrement("main", "current");
+  //progressIncrement("main", "current");
   var mwDates = [baseDate, baseDate.clone().add(1, "months")];
   for (var mwDate of mwDates) {
     status("main", "Retrieving the " + mwDate.format("MMMM YYYY") + " Meeting Workbook...");
@@ -773,9 +788,11 @@ async function updateMwMeeting() {
     }
     for (w = 0; w < weeks.length; w++) {
       var week = weeks[w];
+      status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"))
       var weekDay = moment(weeks[w], "YYYYMMDD").add(prefs.mwDay, "day");
-      mwMediaForWeek = {};
+      mwMediaForWeek = {}, weekMediaFilesCopied = [];
       if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
+        //onsole.log(moment(week, "YYYYMMDD"), baseDate)
         var docId = db.prepare("SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "").get().DocumentId;
         var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
         mkdirSync(weekPath);
@@ -816,7 +833,7 @@ async function updateMwMeeting() {
                 }, weekMediaItem.DestPath)) {
                 var file = await downloadFile(weekMediaItem.Json[0].file.url);
                 writeFile({
-                  bar: "filesDownloaded",
+                  //bar: "filesDownloaded",
                   sync: true,
                   file: new Buffer(file),
                   destFile: weekMediaItem.DestPath
@@ -824,7 +841,7 @@ async function updateMwMeeting() {
               }
             } else {
               writeFile({
-                bar: "filesSaved",
+                //  bar: "filesSaved",
                 sync: true,
                 file: weekMediaItem.LocalPath,
                 destFile: weekMediaItem.DestPath,
@@ -849,12 +866,12 @@ function cleanUp() {
   for (var mediaSubDir of mediaSubDirs) {
     var deleteMediaSubDir = moment(mediaSubDir).isBefore(baseDate.clone().subtract(1, "week"));
     if (deleteMediaSubDir) {
+      status("main", "Cleaing up: " + mediaSubDir);
       var deleteDir = path.join(mediaPath, mediaSubDir);
-      console.log("Deleting: ", deleteDir);
       fs.rmdirSync(deleteDir, {
         recursive: true
       });
     }
   }
-  progressIncrement("main", "current");
+  //progressIncrement("main", "current");
 }
