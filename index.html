@@ -19,6 +19,11 @@
       display: flex;
     }
 
+    #settings,
+    span.select2-dropdown {
+      font-size: 0.9em
+    }
+
     .select2-container {
       width: 100% !important;
     }
@@ -26,12 +31,41 @@
     .invalid {
       border-color: #bd2130 !important;
     }
+
+    #version {
+      position: fixed;
+      bottom: 0;
+    }
+
+    #version span.badge {
+      color: #999;
+      font-weight: normal;
+    }
   </style>
+  <script>
+    window.$ = window.jQuery = require('jquery');
+    window.popperjs = require('popper.js');
+    window.Bootstrap = require('bootstrap');
+    window.select2 = require('select2')(jQuery);
+  </script>
 </head>
 
 <body>
   <div id="overlay" class="justify-content-center">
-    <div class="align-self-center text-primary" id="overlayPleaseWait">
+    <div class="align-self-center text-dark" id="overlayUpdateCheck">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center" role="status">Hang tight, checking for updates...</div>
+    </div>
+    <div class="align-self-center text-info" id="overlayUpdateAvailable" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center" role="status">Update available, please wait while we download it...</div>
+      <div class="align-self-center" role="status" id="updatePercent"></div>
+    </div>
+    <div class="align-self-center text-success" id="overlayUpdateDownloaded" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center" role="status">Update downloaded, the app will now close and install it...</div>
+    </div>
+    <div class="align-self-center text-primary" id="overlayPleaseWait" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
       <div class="align-self-center" id="upToDate" role="status">You are running the latest version, let's proceed!</div>
       <div class="align-self-center" id="pleaseWait" role="status">Please wait, getting things ready...</div>
@@ -40,21 +74,53 @@
       <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder has been successfully updated!</div>
     </div>
   </div>
-  <div class="card card-body">
-    <div class="row mb-3">
-      <div class="col">
-        <button class="btn btn-success" id="btnSettings" type="button" data-toggle="collapse" data-target="#settings" aria-expanded="false" aria-controls="settings">
-          Settings
-        </button>
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Media update</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="Settings-tab" data-toggle="tab" href="#Settings" role="tab" aria-controls="Settings" aria-selected="false">Settings</a>
+    </li>
+  </ul>
+  <div class="tab-content p-3" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+      <div class="row py-5 justify-content-center">
+        <blockquote id="mainStatus" class="blockquote text-center my-0">
+          Currently inactive
+        </blockquote>
       </div>
-      <div class="col">
-        <button type="button" class="btn btn-primary" id="mediaSync">Update media</button>
+      <div class="row py-5 justify-content-center">
+        <button type="button" class="btn btn-primary" id="mediaSync">Start!</button>
+      </div>
+      <div class="row py-3 justify-content-center">
+        <div class="col" style="visibility: hidden">
+          <div class="text-center">
+            Overall progress
+          </div>
+          <div class="progress" id="tasksToDoProgress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+              ...
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row py-3">
+        <div class="col" style="visibility: hidden">
+          <div class="text-center">
+            Current download progress
+          </div>
+          <div class="progress" id="downloadProgress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+              ...
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="collapse" id="settings">
-      <div class="card card-body">
+    <div class="tab-pane fade" id="Settings" role="tabpanel" aria-labelledby="Settings-tab">
+      <div id="settings">
         <div class="form-group row">
-          <label for="langSelect" class="col col-form-label">Language</label>
+          <label for="langSelect" class="col col-form-label text-right">Language</label>
           <div class="col">
             <input type="text" class="form-control" id="lang" required hidden />
             <select id="langSelect" class="form-control" required>
@@ -63,7 +129,7 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="mwDay" class="col col-form-label">Midweek meeting day</label>
+          <label for="mwDay" class="col col-form-label text-right">Midweek meeting day</label>
           <div class="col">
             <select class="form-control" id="mwDay" required>
               <option disabled selected value hidden></option>
@@ -78,7 +144,7 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="weDay" class="col col-form-label">Weekend meeting day</label>
+          <label for="weDay" class="col col-form-label text-right">Weekend meeting day</label>
           <div class="col">
             <select class="form-control" id="weDay" required>
               <option disabled selected value hidden></option>
@@ -93,7 +159,7 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="congSelect" class="col col-form-label">Congregation/group</label>
+          <label for="congSelect" class="col col-form-label text-right">Congregation/group</label>
           <div class="col">
             <input type="text" id="cong" required hidden />
             <select id="congSelect" class="form-control">
@@ -102,7 +168,7 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="autoStartUpdate" class="col col-form-label">Update media on app launch</label>
+          <label for="autoStartUpdate" class="col col-form-label text-right">Update media on app launch</label>
           <div class="col">
             <select class="form-control" id="autoStartUpdate">
               <option value="false">No</option>
@@ -111,7 +177,7 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="autoQuitWhenDone" class="col col-form-label">Quit app after media update</label>
+          <label for="autoQuitWhenDone" class="col col-form-label text-right">Quit app after media update</label>
           <div class="col">
             <select class="form-control" id="autoQuitWhenDone">
               <option value="false">No</option>
@@ -120,7 +186,7 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="autoRunAtBoot" class="col col-form-label">Run app at system startup</label>
+          <label for="autoRunAtBoot" class="col col-form-label text-right">Run app at system startup</label>
           <div class="col">
             <select class="form-control" id="autoRunAtBoot">
               <option value="false">No</option>
@@ -130,84 +196,10 @@
         </div>
       </div>
     </div>
-    <div class="card card-body my-3">
-      <div class="row py-3">
-        <div class="col">
-          <span id="mainStatus">
-            Currently inactive
-          </span>
-          <!--<div class="progress" id="mainProgress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-              0% Complete
-            </div>
-          </div>-->
-        </div>
-        <!--<div class="col">
-          <span id="filesDownloadedStatus">
-            Downloads
-          </span>
-          <div class="progress" id="filesDownloadedProgress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-              ...
-            </div>
-          </div>
-        </div>-->
-      </div>
-      <div class="row py-3">
-        <div class="col">
-          <span id="tasksToDoProgress">
-            Overall progress
-          </span>
-          <div class="progress" id="tasksToDoProgress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-              ...
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row py-3">
-        <div class="col">
-          <span id="downloadProgress">
-            Current download progress
-          </span>
-          <div class="progress" id="downloadProgress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-              ...
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--<div class="row py-3">
-        <div class="col">
-          <span id="filesSavedProgress">
-            Local file copies
-          </span>
-          <div class="progress" id="filesSavedProgress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-              ...
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <span id="dbStatus">
-            Internal publication lookups
-          </span>
-          <div class="progress" id="dbProgress">
-            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-              ...
-            </div>
-          </div>
-        </div>
-      </div>-->
-    </div>
-    <span id="version" class="badge badge-secondary"></span>
   </div>
-  <script>
-    window.$ = window.jQuery = require('jquery');
-    window.popperjs = require('popper.js');
-    window.Bootstrap = require('bootstrap');
-    window.select2 = require('select2')(jQuery);
-  </script>
+  <div id="version" class="col text-center">
+    <span class="badge badge-light"></span>
+  </div>
   <script src="./media-updater.js"></script>
 </body>
 

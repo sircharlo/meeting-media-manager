@@ -1,49 +1,62 @@
 const {
   app,
-  BrowserWindow
+  BrowserWindow,
+  ipcMain
 } = require('electron'), {
   autoUpdater
 } = require("electron-updater");
 var win = {};
-
-app.whenReady().then(createUpdateWindow);
 
 function createUpdateWindow() {
   win = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true
     },
-    width: 800,
-    height: 700,
+    width: 600,
+    height: 600,
+    resizable: false,
     icon: __dirname + '/icon.png'
   })
-  win.loadFile('updateCheck.html')
   win.setMenuBarVisibility(false)
+  win.loadFile('index.html')
   //win.webContents.openDevTools()
 }
 
-function goAhead() {
-  win.loadFile('index.html')
-}
+ipcMain.on('autoUpdate', () => {
+  autoUpdater.checkForUpdates();
+})
+
+autoUpdater.on('update-not-available', () => {
+  win.webContents.send('hideThenShow', ['UpdateCheck', 'PleaseWait']);
+  win.webContents.send('goAhead');
+});
 
 autoUpdater.on('update-available', () => {
-  win.loadFile('updateAvailable.html')
+  win.webContents.send('hideThenShow', ['UpdateCheck', 'UpdateAvailable'])
   autoUpdater.downloadUpdate();
 });
 
-autoUpdater.on('update-not-available', () => {
-  goAhead();
+autoUpdater.on('download-progress', (prog) => {
+  var timeleft = "...";
+  try {
+    var timeleft = ((prog.total - prog.transferred) / prog.bytesPerSecond).toFixed(0);
+  } catch (err) {
+    console.log(err)
+  }
+  win.webContents.send('updateDownloadProgress', [prog.percent, timeleft])
 });
 
 autoUpdater.on('update-downloaded', () => {
-  win.loadFile('updateDownloaded.html');
+  win.webContents.send('hideThenShow', ['UpdateAvailable', 'UpdateDownloaded']);
   setImmediate(() => {
     autoUpdater.quitAndInstall();
   });
 })
+
 autoUpdater.logger = console;
 autoUpdater.autoDownload = false;
-autoUpdater.checkForUpdates();
+
+app.whenReady().then(createUpdateWindow);
 
 /*app.on('window-all-closed', () => {
   app.quit()
