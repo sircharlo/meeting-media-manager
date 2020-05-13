@@ -147,10 +147,12 @@ function goAhead() {
     }
     var jsonLangs = JSON.parse(fs.readFileSync(langsFile));
     $.each(jsonLangs, function(index, lang) {
-      $('#langSelect').append($("<option>", {
-        value: lang.langcode,
-        text: lang.name
-      }));
+      if (lang.hasWebContent) {
+        $('#langSelect').append($("<option>", {
+          value: lang.langcode,
+          text: lang.name
+        }));
+      }
     });
     $('#langSelect').val($('#lang').val());
     $('#langSelect').select2();
