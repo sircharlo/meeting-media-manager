@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -28,6 +28,14 @@
     "productName": "JW Meeting Media Fetcher",
     "win": {
       "target": "NSIS",
+      "icon": "build/icon.ico",
+      "publish": [
+        "github"
+      ]
+    },
+    "linux": {
+      "category": "Utilities",
+      "target": "AppImage",
       "icon": "build/icon.png",
       "publish": [
         "github"
@@ -45,6 +53,7 @@
     "pack-win": "electron-builder --win",
     "pack-win-test": "electron-builder --dir --win",
     "publish": "electron-builder --win -p always",
+    "publish-linux": "electron-builder --linux -p always",
     "postinstall": "electron-builder install-app-deps",
     "release": "build"
   },

@@ -15,6 +15,7 @@ function createUpdateWindow() {
     width: 600,
     height: 600,
     resizable: false,
+    title: "JW Meeting Media Fetcher",
     icon: __dirname + '/icon.png'
   })
   win.setMenuBarVisibility(false)
@@ -25,6 +26,13 @@ function createUpdateWindow() {
 ipcMain.on('autoUpdate', () => {
   autoUpdater.checkForUpdates();
 })
+
+autoUpdater.on('error', (err) => {
+  console.log(err);
+  win.webContents.send('hideThenShow', ['UpdateCheck', 'PleaseWait']);
+  win.webContents.send('goAhead');
+});
+
 
 autoUpdater.on('update-not-available', () => {
   win.webContents.send('hideThenShow', ['UpdateCheck', 'PleaseWait']);
