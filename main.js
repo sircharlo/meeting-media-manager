@@ -24,7 +24,15 @@ function createUpdateWindow() {
 }
 
 ipcMain.on('autoUpdate', () => {
+  win.webContents.send('hideThenShow', ['InternetCheck', 'UpdateCheck']);
   autoUpdater.checkForUpdates();
+})
+
+ipcMain.on('noInternet', () => {
+  win.webContents.send('hideThenShow', ['InternetCheck', 'InternetFail']);
+  setInterval(() => {
+    win.webContents.send('checkInternet');
+  }, 10000)
 })
 
 autoUpdater.on('error', (err) => {

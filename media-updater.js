@@ -5,7 +5,26 @@
       Fix congregation fetch logic
 */
 
-require('electron').ipcRenderer.send('autoUpdate');
+const ping = require('ping');
+
+async function checkInternet() {
+  try {
+    let res = await ping.promise.probe("www.google.com");
+    if (res.alive) {
+      require('electron').ipcRenderer.send('autoUpdate');
+    } else {
+      require('electron').ipcRenderer.send('noInternet');
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+checkInternet();
+
+require('electron').ipcRenderer.on('checkInternet', () => {
+  checkInternet();
+})
 
 require('electron').ipcRenderer.on('hideThenShow', (event, message) => {
   $("#overlay" + message[0]).fadeOut(400, () => {

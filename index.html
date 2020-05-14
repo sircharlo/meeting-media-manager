@@ -52,23 +52,31 @@
 
 <body>
   <div id="overlay" class="justify-content-center">
-    <div class="align-self-center text-dark" id="overlayUpdateCheck">
+    <div class="align-self-center text-dark" id="overlayInternetCheck">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" role="status">Hang tight, checking for updates...</div>
+      <div class="align-self-center" role="status">Hang tight, looking for Internet connectivity...</div>
+    </div>
+    <div class="align-self-center text-danger" id="overlayInternetFail" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center" role="status">I can't find the Internet! I'll try again in a few seconds.</div>
+    </div>
+    <div class="align-self-center text-dark" id="overlayUpdateCheck" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center" role="status">Internet's all good; let's check for updates...</div>
     </div>
     <div class="align-self-center text-info" id="overlayUpdateAvailable" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" role="status">Update available, please wait while we download it...</div>
+      <div class="align-self-center" role="status">Update available, hold on...</div>
       <div class="align-self-center" role="status" id="updatePercent"></div>
     </div>
     <div class="align-self-center text-success" id="overlayUpdateDownloaded" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" role="status">Update downloaded, the app will now close and install it...</div>
+      <div class="align-self-center" role="status">All done! Now let's install that update...</div>
     </div>
     <div class="align-self-center text-primary" id="overlayPleaseWait" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" id="upToDate" role="status">You are running the latest version, let's proceed!</div>
-      <div class="align-self-center" id="pleaseWait" role="status">Please wait, getting things ready...</div>
+      <div class="align-self-center" id="upToDate" role="status">No updates available, so let's proceed!</div>
+      <div class="align-self-center" id="pleaseWait" role="status">Hold on, getting things a few ready...</div>
     </div>
     <div class="align-self-center text-success" id="overlayComplete" style="display: none;">
       <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder has been successfully updated!</div>
