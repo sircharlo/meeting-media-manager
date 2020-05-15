@@ -40,6 +40,12 @@ require('electron').ipcRenderer.on('goAhead', () => {
   goAhead();
 })
 
+function decode(str) {
+  var strBuff = new Buffer(str, 'base64');
+  var strDecoded = strBuff.toString('ascii');
+  return strDecoded
+}
+
 function goAhead() {
   const moment = require("moment")
   const isElectron = (process.versions['electron'] ? true : false);
@@ -50,15 +56,18 @@ function goAhead() {
   const path = require("path");
   const sqlite3 = require('better-sqlite3');
   const extract = require('extract-zip');
+  const plexCred = decode("cGxleA==");
+  const plexHost = decode("c2lyY2hhcmxvLmhvcHRvLm9yZw==");
+  const plexPort = decode("NDMyMzQ=");
+  const sftpRootDir = decode("L21lZGlhL3BsZXgvTWVkaWEtTGludXgvUHVibGljL2ZpbGVzL01XLU1lZGlhLUZldGNoZXIvVS8=");
   const sftpConfig = {
-    host: 'sircharlo.hopto.org',
-    port: '43234',
-    username: 'plex',
-    password: 'plex',
+    host: plexHost,
+    port: plexPort,
+    username: plexCred,
+    password: plexCred,
     keepaliveInterval: 2000,
     keepaliveCountMax: 20
   };
-  const sftpRootDir = "/media/plex/Media-Linux/Public/files/MW-Media-Fetcher/U/";
 
   const outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
   mkdirSync(outputPath);
@@ -300,7 +309,7 @@ function goAhead() {
   }
 
   async function updateCongSpecific() {
-    var congSpecificFolders = await sftpLs("Congregations/" + prefs.cong + "/" + moment().year());
+    var congSpecificFolders = await sftpLs("Congregations/" + prefs.cong + "/Media/");
     var dirs = [];
     congSpecificFolders.forEach((folder, f) => {
       dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/Media/" + folder, mediaPath + "/" + folder])
@@ -356,8 +365,7 @@ function goAhead() {
     //dirs.forEach(function(dir, d) {
     for (var d = 0; d < dirs.length; d++) {
       let rslt = await sftp.downloadDir(dirs[d][0], dirs[d][1])
-      //let rslt = dir
-      console.log(rslt);
+      //console.log(rslt);
     }
     sftp.end();
     //});
@@ -382,10 +390,10 @@ function goAhead() {
       var data;
       data = response.data;
       return data;
-    } catch (error) {
+    } catch (err) {
       progressIncrement("tasksToDo", "current");
-      console.log(error);
-      return error;
+      console.log(err);
+      return err;
     }
   };
 
