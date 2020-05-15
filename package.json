@@ -50,7 +50,6 @@
   },
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "pack-win": "electron-builder --win",
     "pack-win-test": "electron-builder --dir --win",
     "pack-linux-test": "electron-builder --dir --linux",
