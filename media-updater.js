@@ -2,9 +2,7 @@
 
 /*    TODO:
       Alphabetize functions and vars when possible
-      Fix congregation fetch logic
 */
-
 const ping = require('ping');
 
 async function checkInternet() {
@@ -154,7 +152,7 @@ function goAhead() {
   }
 
   async function congFetch() {
-    var congs = await sftpLs("Congregations");
+    var congs = await sftpLs(sftpRootDir + "Congregations");
     $.each(congs, function(index, cong) {
       $('#congSelect').append($("<option>", {
         value: cong,
@@ -309,12 +307,17 @@ function goAhead() {
   }
 
   async function updateCongSpecific() {
-    var congSpecificFolders = await sftpLs("Congregations/" + prefs.cong + "/Media/");
-    var dirs = [];
-    congSpecificFolders.forEach((folder, f) => {
-      dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/Media/" + folder, mediaPath + "/" + folder])
-    });
-    sftpDownloadDirs(dirs);
+    status("main", "Retrieving any congregation-speficic files...");
+    try {
+      var congSpecificFolders = await sftpLs(sftpRootDir + "Congregations/" + prefs.cong + "/Media/");
+      var dirs = [];
+      congSpecificFolders.forEach((folder, f) => {
+        dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/Media/" + folder.name, mediaPath + "/" + folder.name])
+      });
+      await sftpDownloadDirs(dirs);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async function setVars() {
@@ -339,36 +342,64 @@ function goAhead() {
   }
 
   async function sftpLs(dir) {
-    var result = [];
-    let Client = require('ssh2-sftp-client');
-    let sftp = new Client();
-    await sftp.connect(sftpConfig).then(() => {
-      return sftp.list(sftpRootDir + dir);
-    }).then(await
-      function(data) {
-        data.filter(function(el) {
-          result.push(el.name)
-        });
+    try {
+      var result = [];
+      let Client = require('ssh2-sftp-client');
+      let sftp = new Client();
+      await sftp.connect(sftpConfig).then(() => {
+        return sftp.list(dir);
       }).then(await
-      function() {
-        return sftp.end();
-      }).catch(err => {
-      console.log(err, 'catch error');
-    });
-    return result
+        function(data) {
+          data.filter(function(el) {
+            result.push(el)
+          });
+        }).then(await
+        function() {
+          return sftp.end();
+        }).catch(err => {
+        console.log(err, 'catch error');
+      });
+      return result
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   async function sftpDownloadDirs(dirs) {
-    let Client = require('ssh2-sftp-client');
-    let sftp = new Client();
-    await sftp.connect(sftpConfig);
-    //dirs.forEach(function(dir, d) {
-    for (var d = 0; d < dirs.length; d++) {
-      let rslt = await sftp.downloadDir(dirs[d][0], dirs[d][1])
-      //console.log(rslt);
+    try {
+      let Client = require('ssh2-sftp-client');
+      let sftpDownloadDir = new Client();
+
+      await sftpDownloadDir.connect(sftpConfig);
+      for (var d = 0; d < dirs.length; d++) {
+        //  let rslt = await sftpDownloadDir.downloadDir(dirs[d][0], dirs[d][1])
+        //  return rslt;//console.log(rslt);
+        var files = await sftpLs(dirs[d][0]);
+        for (var file of files) {
+          var downloadNeeded = true;
+          if (fs.existsSync(dirs[d][1] + "/" + file.name)) {
+            var localSize = fs.statSync(dirs[d][1] + "/" + file.name).size;
+            var remoteSize = file.size;
+            if (remoteSize == localSize) {
+              downloadNeeded = false;
+            }
+          }
+          if (downloadNeeded) {
+            progressIncrement("tasksToDo", "total");
+            await sftpDownloadDir.fastGet(dirs[d][0] + "/" + file.name, dirs[d][1] + "/" + file.name, {
+              step: function(totalTransferred, chunk, total) {
+                var percent = totalTransferred / total * 100;
+                progressSet("download", percent);
+              }
+            });
+            progressIncrement("tasksToDo", "current");
+          }
+        }
+      }
+      await sftpDownloadDir.end();
+    } catch (err) {
+      console.log(err)
     }
-    sftp.end();
-    //});
   }
 
   function status(dest, message) {
