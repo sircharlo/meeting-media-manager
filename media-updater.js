@@ -52,7 +52,8 @@ function goAhead() {
   const glob = require("glob");
   const os = require("os");
   const path = require("path");
-  const sqlite3 = require('better-sqlite3');
+  //const sqlite3 = require('better-sqlite3');
+  const sqljs = require('sql.js');
   const extract = require('extract-zip');
   const plexCred = decode("cGxleA==");
   const plexHost = decode("c2lyY2hhcmxvLmhvcHRvLm9yZw==");
@@ -307,7 +308,7 @@ function goAhead() {
   }
 
   async function updateCongSpecific() {
-    status("main", "Retrieving any congregation-speficic files...");
+    status("main", "Retrieving any congregation-specific files...");
     try {
       var congSpecificFolders = await sftpLs(sftpRootDir + "Congregations/" + prefs.cong + "/Media/");
       var dirs = [];
@@ -610,7 +611,8 @@ function goAhead() {
   async function getDocumentExtract(opts) {
     progressIncrement("tasksToDo", "total");
     var statement = "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + opts.docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' ORDER BY DocumentExtract.BeginParagraphOrdinal";
-    var extractItems = opts.db.prepare(statement).all();
+    var extractItems = await executeStatement(opts.db, statement);
+    //var extractItems = opts.db.prepare(statement).all();
     for (var extractItem of extractItems) {
       mkdirSync(pubsPath + "/" + extractItem.UndatedSymbol);
       mkdirSync(pubsPath + "/" + extractItem.UndatedSymbol + "/" + extractItem.IssueTagNumber);
@@ -635,13 +637,21 @@ function goAhead() {
   async function getDocumentMultimedia(opts) {
     progressIncrement("tasksToDo", "total");
     try {
+      var tableDocumentMultimedia = await executeStatement(opts.db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'");
+      if (tableDocumentMultimedia.length == 0) {
+        var tableMultimedia = "Multimedia";
+      } else {
+        var tableMultimedia = "DocumentMultimedia";
+      }
+      /*console.log(await executeStatement(opts.db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'"))
       var tableDocumentMultimedia = Object.values(opts.db.prepare("SELECT EXISTS (SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia')").get())[0];
       var tableMultimedia = "Multimedia";
       if (tableDocumentMultimedia == 1) {
         tableMultimedia = "DocumentMultimedia";
-      }
+      }*/
       var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType='video/mp4' OR Multimedia.MimeType='audio/mpeg') " + (tableMultimedia == "DocumentMultimedia" ? "AND NOT Multimedia.KeySymbol='sjj' AND NOT Multimedia.KeySymbol='th'" : "") + ") OR (Multimedia.MimeType='image/jpeg' AND Multimedia.CategoryType <> 9" + (opts.pub == "th" ? " AND Multimedia.Width <> ''" : "") + "))";
-      var mediaItems = opts.db.prepare(statement).all();
+      var mediaItems = await executeStatement(opts.db, statement);
+      //var mediaItems = opts.db.prepare(statement).all();
       if (mediaItems) {
         for (media of mediaItems) {
           media.FileType = media.FilePath.split(".").pop();
@@ -678,8 +688,12 @@ function goAhead() {
           if (opts.srcKeySymbol) {
             media.KeySymbol = opts.srcKeySymbol;
           } else if (media.KeySymbol == null) {
-            media.KeySymbol = opts.db.prepare("SELECT UndatedSymbol FROM Publication").get().UndatedSymbol;
-            media.IssueTagNumber = opts.db.prepare("SELECT IssueTagNumber FROM Publication").get().IssueTagNumber;
+            media.KeySymbol = await executeStatement(opts.db, "SELECT UndatedSymbol FROM Publication");
+            media.KeySymbol = media.KeySymbol[0].UndatedSymbol;
+            media.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
+            media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
+            // media.KeySymbol = opts.db.prepare("SELECT UndatedSymbol FROM Publication").get().UndatedSymbol;
+            // media.IssueTagNumber = opts.db.prepare("SELECT IssueTagNumber FROM Publication").get().IssueTagNumber;
           }
           if (media.KeySymbol == "sjjm") {
             delete media.JsonUrl;
@@ -769,8 +783,31 @@ function goAhead() {
           dir: workingUnzipDirectory
         });
       }
-      return sqlite3(glob.sync(workingUnzipDirectory + "/*.db")[0]);
+
+      /*sqljs().then(await
+        function(SQL) {
+          var sqldb = new SQL.Database(fs.readFileSync(glob.sync(workingUnzipDirectory + "/*.db")[0]));
+          return sqldb;
+        })*/
+      var SQL = await sqljs();
+      var sqldb = new SQL.Database(fs.readFileSync(glob.sync(workingUnzipDirectory + "/*.db")[0]));
+      return sqldb;
+      //return sqlite3(glob.sync(workingUnzipDirectory + "/*.db")[0]);
     }
+  }
+
+  async function executeStatement(db, statement) {
+    var vals = await db.exec(statement)[0];
+    var valObj = [];
+    if (vals) {
+      for (var v = 0; v < vals.values.length; v++) {
+        valObj[v] = {};
+        for (var c = 0; c < vals.columns.length; c++) {
+          valObj[v][vals.columns[c]] = vals.values[v][c];
+        }
+      }
+    }
+    return valObj
   }
 
   async function updateWeMeeting(weDate) {
@@ -784,21 +821,27 @@ function goAhead() {
         pub: pubs.wt,
         issue: issue
       });
-      var qryWeeks = db.prepare("SELECT FirstDateOffset FROM DatedText").all();
-      var qryDocuments = db.prepare("SELECT Document.DocumentId FROM Document WHERE Document.Class=40").all();
+      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
+      var qryDocuments = await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40");
+      //var qryWeeks = db.prepare("SELECT FirstDateOffset FROM DatedText").all();
+      //var qryDocuments = db.prepare("SELECT Document.DocumentId FROM Document WHERE Document.Class=40").all();
+      //var weeks = qryWeeks.FirstDateOffset;
       var weeks = [];
       for (var line of qryWeeks) {
         weeks.push(line.FirstDateOffset);
       }
       for (var w = 0; w < weeks.length; w++) {
         var week = weeks[w];
+        //for (var week of weeks) {
         var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
         if (studyDate.isSameOrAfter(moment(), "day")) {
           status("main", "Weekend meeting: " + moment(studyDate).format("YYYY-MM-DD"))
           var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
           mkdirSync(weekPath);
-          var qryLocalMedia = db.prepare("SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9").all();
-          var qrySongs = db.prepare("SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal").all();
+          var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
+          var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal");
+          //var qryLocalMedia = db.prepare("SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9").all();
+          //var qrySongs = db.prepare("SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal").all();
           for (var s = 0; s < qrySongs.length; s++) {
             var song = qrySongs[s];
             song.SongNumber = song.Caption.replace(/\D/g, "");
@@ -855,7 +898,8 @@ function goAhead() {
         pub: pubs.mwb,
         issue: issue
       });
-      var qryWeeks = db.prepare("SELECT FirstDateOffset FROM DatedText").all();
+      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
+      //var qryWeeks = db.prepare("SELECT FirstDateOffset FROM DatedText").all();
       var weeks = [];
       for (var line of qryWeeks) {
         weeks.push(line.FirstDateOffset);
@@ -866,7 +910,9 @@ function goAhead() {
         mwMediaForWeek = {}, weekMediaFilesCopied = [];
         if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
           status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"))
-          var docId = db.prepare("SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "").get().DocumentId;
+          var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
+          docId = docId[0].DocumentId;
+          //var docId = db.prepare("SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "").get().DocumentId;
           var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
           mkdirSync(weekPath);
           var mediaExternal = await getDocumentMultimedia({
@@ -879,7 +925,8 @@ function goAhead() {
             db: db,
             docId: docId
           });
-          var internalRefs = db.prepare("SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94").all();
+          var internalRefs = await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94");
+          // var internalRefs = db.prepare("SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94").all();
           for (var internalRef of internalRefs) {
             await getDocumentMultimedia({
               week: weekDay.format("YYYYMMDD"),
