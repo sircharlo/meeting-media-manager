@@ -1,8 +1,5 @@
 /*jshint esversion: 8, node: true */
 
-/*    TODO:
-      Alphabetize functions and vars when possible
-*/
 const ping = require('ping');
 
 async function checkInternet() {
@@ -45,64 +42,48 @@ function decode(str) {
 }
 
 function goAhead() {
-  const moment = require("moment")
-  const isElectron = (process.versions['electron'] ? true : false);
   const axios = require('axios');
+  const extract = require('extract-zip');
   const fs = require("graceful-fs");
   const glob = require("glob");
+  const moment = require("moment")
   const os = require("os");
   const path = require("path");
-  //const sqlite3 = require('better-sqlite3');
   const sqljs = require('sql.js');
-  const extract = require('extract-zip');
-  const plexCred = decode("cGxleA==");
-  const plexHost = decode("c2lyY2hhcmxvLmhvcHRvLm9yZw==");
-  const plexPort = decode("NDMyMzQ=");
-  const sftpRootDir = decode("L21lZGlhL3BsZXgvTWVkaWEtTGludXgvUHVibGljL2ZpbGVzL01XLU1lZGlhLUZldGNoZXIvVS8=");
-  const sftpConfig = {
-    host: plexHost,
-    port: plexPort,
-    username: plexCred,
-    password: plexCred,
-    keepaliveInterval: 2000,
-    keepaliveCountMax: 20
-  };
 
-  const outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
-  mkdirSync(outputPath);
-
+  const isElectron = (process.versions['electron'] ? true : false);
+  const plex = {
+    cred: decode("cGxleA=="),
+    host: decode("c2lyY2hhcmxvLmhvcHRvLm9yZw=="),
+    port: decode("NDMyMzQ=")
+  }
   const pubs = {
     wt: "w",
     mwb: "mwb"
   };
+  const sftpConfig = {
+    host: plex.host,
+    port: plex.port,
+    username: plex.cred,
+    password: plex.cred,
+    keepaliveInterval: 2000,
+    keepaliveCountMax: 20
+  };
+  const sftpRootDir = decode("L21lZGlhL3BsZXgvTWVkaWEtTGludXgvUHVibGljL2ZpbGVzL01XLU1lZGlhLUZldGNoZXIvVS8=");
+  const outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
+  const langsFile = outputPath + "/langs.json";
+  const prefsFile = outputPath + "/prefs.json";
+  mkdirSync(outputPath);
 
+  var prefs = {};
   var progress = {
-    /*main: {
-      current: 0,
-      total: 7
-    },*/
     tasksToDo: {
       current: 0,
       total: 0
     },
     download: {}
-    /*filesDownloaded: {
-      current: 0,
-      total: 0
-    },
-    filesSaved: {
-      current: 0,
-      total: 0
-    },
-    db: {
-      current: 0,
-      total: 0
-    }*/
   };
 
-  var prefs = {};
-  const prefsFile = outputPath + "/prefs.json";
-  const langsFile = outputPath + "/langs.json";
 
   function prefsInitialize() {
     for (var pref of ["lang", "mwDay", "weDay", "cong", "autoStartUpdate", "autoRunAtBoot", "autoQuitWhenDone"]) {
@@ -115,8 +96,8 @@ function goAhead() {
   if (fs.existsSync(prefsFile)) {
     try {
       prefs = JSON.parse(fs.readFileSync(prefsFile));
-    } catch {
-      //prefsInitialize();
+    } catch (err) {
+      console.log(err)
     }
     if (isElectron) {
       prefsInitialize();
@@ -127,13 +108,15 @@ function goAhead() {
       $("#autoStartUpdate").val(prefs.autoStartUpdate.toString()).change();
       $("#autoRunAtBoot").val(prefs.autoRunAtBoot.toString()).change();
       $("#autoQuitWhenDone").val(prefs.autoQuitWhenDone.toString()).change();
-      if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val()) {
+      /*if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val() || !$("#cong").val()) {
         settingsRequired();
-      }
+      */
+      configIsValid(114);
     }
   } else {
     if (isElectron) {
-      settingsRequired();
+      /*settingsRequired();*/
+      configIsValid(119);
     }
   }
 
@@ -154,19 +137,44 @@ function goAhead() {
 
   async function congFetch() {
     var congs = await sftpLs(sftpRootDir + "Congregations");
-    $.each(congs, function(index, cong) {
+    for (var cong of congs) {
       $('#congSelect').append($("<option>", {
-        value: cong,
-        text: cong
+        value: cong.name,
+        text: cong.name
       }));
-    });
+    }
     $('#congSelect').val($('#cong').val());
     $('#congSelect').select2();
+    await configIsValid(153);
   }
 
-  async function getLanguages() {
+  async function getInitialData() {
+    await getLanguages();
+    $("#version span.badge").html("Version " + window.require('electron').remote.app.getVersion());
+    await congFetch();
+    $('#mwDay').select2();
+    $('#weDay').select2();
+    $('#autoStartUpdate').select2();
+    $('#autoRunAtBoot').select2();
+    $('#autoQuitWhenDone').select2();
+    $(".select2-container").addClass("pt-1");
+    $(".select2-selection").each(function() {
+      if ($(this).text().trim() == "") {
+        $(this).addClass("invalid");
+      } else {
+        $(this).removeClass("invalid");
+      }
+    });
+    $("#overlay, #overlayPleaseWait").fadeOut();
+    if (prefs.autoStartUpdate && configIsValid(286)) {
+      $("#home-tab").tab('show');
+      $("#mediaSync").click();
+    }
+  }
+
+  function getLanguages() {
     if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || moment(prefs.langUpdatedLast).isSameOrBefore(moment().subtract(6, "months"))) {
-      await $.getJSON("https://www.jw.org/en/languages/", null, function(jsonData) {
+      $.getJSON("https://www.jw.org/en/languages/", null, function(jsonData) {
         fs.writeFileSync(langsFile, JSON.stringify(jsonData.languages, null, 2));
       });
       prefs.langUpdatedLast = moment();
@@ -185,43 +193,23 @@ function goAhead() {
     $('#langSelect').select2();
   }
 
-  async function getInitialData() {
-    await getLanguages();
-    $("#version span.badge").html("Version " + window.require('electron').remote.app.getVersion());
-    //if (!prefs.cong) {
-    await congFetch();
-    //}
-    $('#mwDay').select2();
-    $('#weDay').select2();
-    $('#autoStartUpdate').select2();
-    $('#autoRunAtBoot').select2();
-    $('#autoQuitWhenDone').select2();
-    $(".select2-container").addClass("pt-1");
-    $(".select2-selection").each(function() {
-      if ($(this).text().trim() == "") {
-        $(this).addClass("invalid");
-      } else {
-        $(this).removeClass("invalid");
-      }
-    });
-    $("#overlay, #overlayPleaseWait").fadeOut();
-  }
-
-  var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
-
-  function settingsRequired(bool) {
-    if (bool == false) {
-      $("#mediaSync").prop("disabled", false);
-      $("#mediaSync").removeClass("btn-secondary");
-      $("#Settings-tab").removeClass("text-danger");
-      $("#home-tab").removeClass("disabled");
-    } else {
+  function configIsValid(line) {
+    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || !$("#cong").val() || !$("#congSelect").val() || ($("#lang").val() !== $("#langSelect").val()) || ($("#cong").val() !== $("#congSelect").val())) {
       $("#mediaSync").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
       $("#Settings-tab").addClass("text-danger").tab('show');
       $("#home-tab").addClass("disabled");
+      return false
+    } else {
+      $("#mediaSync").prop("disabled", false);
+      $("#mediaSync").removeClass("btn-secondary");
+      $("#Settings-tab").removeClass("text-danger");
+      $("#home-tab").removeClass("disabled");
+      return true
     }
   }
+
+  var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
 
   if (isElectron) {
     getInitialData();
@@ -246,11 +234,12 @@ function goAhead() {
       window.require('electron').remote.app.setLoginItemSettings({
         openAtLogin: prefs.autoRunAtBoot
       });
-      if (!$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val()) {
+      /*if (!$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || !$("#congSelect").val()) {
         settingsRequired();
       } else {
         settingsRequired(false);
-      }
+      }*/
+      configIsValid(244);
     });
     $("#mediaSync").on('click', async function() {
       var stayAlive = false;
@@ -258,7 +247,7 @@ function goAhead() {
       $("#mediaSync").addClass("btn-secondary");
       $("#Settings-tab").addClass("disabled");
       var buttonLabel = $("#mediaSync").html();
-      $("#mediaSync").html('Update in progress... <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
+      $("#mediaSync").addClass("loading").html('Update in progress<span>.</span><span>.</span><span>.</span>');
       $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
       $("div.progress").parent().css('visibility', 'visible').hide().fadeIn();
       await progressInitialize();
@@ -287,13 +276,10 @@ function goAhead() {
       $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
       $("#mediaSync").html(buttonLabel);
       $("#mediaSync").prop("disabled", false);
-      $("#mediaSync").removeClass("btn-secondary");
+      $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
       $("#Settings-tab").removeClass("disabled");
       status("main", "Currently inactive")
     });
-    if (prefs.autoStartUpdate && $("#langSelect").val() && $("#mwDay").val() && $("#weDay").val()) {
-      $("#mediaSync").click();
-    }
   } else {
     startMediaUpdate();
   }
@@ -307,19 +293,7 @@ function goAhead() {
     await cleanUp();
   }
 
-  async function updateCongSpecific() {
-    status("main", "Retrieving any congregation-specific files...");
-    try {
-      var congSpecificFolders = await sftpLs(sftpRootDir + "Congregations/" + prefs.cong + "/Media/");
-      var dirs = [];
-      congSpecificFolders.forEach((folder, f) => {
-        dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/Media/" + folder.name, mediaPath + "/" + folder.name])
-      });
-      await sftpDownloadDirs(dirs);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  // Main functions
 
   async function setVars() {
     baseDate = moment().startOf('isoWeek');
@@ -334,80 +308,236 @@ function goAhead() {
     progressReset();
   }
 
-  function mkdirSync(dirPath) {
-    try {
-      fs.mkdirSync(dirPath);
-    } catch (err) {
-      if (err.code !== 'EEXIST') throw err;
-    }
-  }
-
-  async function sftpLs(dir) {
-    try {
-      var result = [];
-      let Client = require('ssh2-sftp-client');
-      let sftp = new Client();
-      await sftp.connect(sftpConfig).then(() => {
-        return sftp.list(dir);
-      }).then(await
-        function(data) {
-          data.filter(function(el) {
-            result.push(el)
-          });
-        }).then(await
-        function() {
-          return sftp.end();
-        }).catch(err => {
-        console.log(err, 'catch error');
+  async function updateSongs() {
+    var pub = "sjjm";
+    for (var filetype of ["MP4", "MP3"]) {
+      status("main", "Checking for updated " + filetype + " songs...");
+      var songs = await getJson({
+        pub: pub,
+        issue: "0",
+        filetype: filetype
       });
-      return result
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  async function sftpDownloadDirs(dirs) {
-    try {
-      let Client = require('ssh2-sftp-client');
-      let sftpDownloadDir = new Client();
-
-      await sftpDownloadDir.connect(sftpConfig);
-      for (var d = 0; d < dirs.length; d++) {
-        //  let rslt = await sftpDownloadDir.downloadDir(dirs[d][0], dirs[d][1])
-        //  return rslt;//console.log(rslt);
-        var files = await sftpLs(dirs[d][0]);
-        for (var file of files) {
-          var downloadNeeded = true;
-          if (fs.existsSync(dirs[d][1] + "/" + file.name)) {
-            var localSize = fs.statSync(dirs[d][1] + "/" + file.name).size;
-            var remoteSize = file.size;
-            if (remoteSize == localSize) {
-              downloadNeeded = false;
-            }
+      if (songs) {
+        mkdirSync(songsPath + "/" + filetype);
+        songs = songs.files[prefs.lang][filetype].filter(function(item) {
+          if (filetype == "MP4") {
+            return item.track > 0 && item.label == "720p";
+          } else if (filetype == "MP3") {
+            return item.track > 0;
           }
-          if (downloadNeeded) {
-            progressIncrement("tasksToDo", "total");
-            await sftpDownloadDir.fastGet(dirs[d][0] + "/" + file.name, dirs[d][1] + "/" + file.name, {
-              step: function(totalTransferred, chunk, total) {
-                var percent = totalTransferred / total * 100;
-                progressSet("download", percent);
-              }
-            });
-            progressIncrement("tasksToDo", "current");
+        });
+        for (var song of songs) {
+          if (song.track > 0 && (filetype == "MP3" || song.label == "720p")) {
+            var filename = song.file.url.split("/").pop();
+            var destFile = songsPath + "/" + filetype + "/" + filename;
+            if (await downloadRequired({
+                json: songs,
+                pub: pub,
+                type: filetype,
+                track: song.track
+              }, destFile)) {
+              var file = await downloadFile(song.file.url);
+              await writeFile({
+                sync: true,
+                file: new Buffer(file),
+                destFile: destFile
+              });
+            }
           }
         }
       }
-      await sftpDownloadDir.end();
-    } catch (err) {
-      console.log(err)
     }
   }
 
-  function status(dest, message) {
-    if (isElectron) {
-      $("#" + dest + "Status").html(message);
+  async function updateWeMeeting(weDate) {
+    var weDates = [baseDate.clone().subtract(2, "months"), baseDate.clone().subtract(1, "months")];
+    for (var weDate of weDates) {
+      status("main", "Retrieving the " + weDate.format("MMMM YYYY") + " Watchtower...");
+      mkdirSync(pubsPath + "/" + pubs.wt);
+      var issue = weDate.format("YYYYMM") + "00";
+      mkdirSync(pubsPath + "/" + pubs.wt + "/" + issue);
+      var db = await getDbFromJwpub({
+        pub: pubs.wt,
+        issue: issue
+      });
+      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
+      var qryDocuments = await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40");
+      var weeks = [];
+      for (var line of qryWeeks) {
+        weeks.push(line.FirstDateOffset);
+      }
+      for (var w = 0; w < weeks.length; w++) {
+        var week = weeks[w];
+        var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
+        if (studyDate.isSameOrAfter(moment(), "day")) {
+          status("main", "Weekend meeting: " + moment(studyDate).format("YYYY-MM-DD"))
+          var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
+          mkdirSync(weekPath);
+          var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
+          var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal");
+          for (var s = 0; s < qrySongs.length; s++) {
+            var song = qrySongs[s];
+            song.SongNumber = song.Caption.replace(/\D/g, "");
+            song.Filename = "sjjm_" + prefs.lang + "_" + song.SongNumber.toString().padStart(3, '0') + "_r720P.mp4";
+            var songPath = songsPath + "/MP4/" + song.Filename;
+            song.Filename = ((s + 1) * 50).toString().padStart(3, '0') + " " + song.Filename;
+            song.LocalPath = songPath;
+            song.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/" + song.Filename;
+            song.SourceDocumentId = qryDocuments[w].DocumentId;
+            song.KeySymbol = "sjjm";
+            song.bar = "local";
+            writeFile({
+              sync: true,
+              file: song.LocalPath,
+              destFile: song.DestPath,
+              type: "copy"
+            });
+          }
+          qryLocalMedia.forEach(function(localMedia, l) {
+            localMedia.FileType = localMedia.FilePath.split(".").pop();
+            localMedia.FileName = localMedia.Caption;
+            if (localMedia.Label.length == 0 && localMedia.Caption.length == 0) {
+              localMedia.FileName = "Media";
+            } else if (localMedia.Label.length > localMedia.Caption.length) {
+              localMedia.FileName = localMedia.Label;
+            }
+            localMedia.FileName = localMedia.FileName + "." + localMedia.FileType;
+            localMedia.LocalPath = pubsPath + "/" + pubs.wt + "/" + issue + "/JWPUB/contents-decompressed/" + localMedia.FilePath;
+            localMedia.FileName = sanitizeFilename((l + 1 + 50).toString().padStart(3, '0') + " " + localMedia.FileName);
+            localMedia.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/" + localMedia.FileName;
+            localMedia.SourceDocumentId = qryDocuments[w].DocumentId;
+            writeFile({
+              sync: true,
+              file: localMedia.LocalPath,
+              destFile: localMedia.DestPath,
+              type: "copy"
+            });
+          });
+        }
+      }
     }
   }
+
+  async function updateMwMeeting() {
+    var mwDates = [baseDate, baseDate.clone().add(1, "months")];
+    for (var mwDate of mwDates) {
+      status("main", "Retrieving the " + mwDate.format("MMMM YYYY") + " Meeting Workbook...");
+      mkdirSync(pubsPath + "/" + pubs.mwb);
+      var issue = mwDate.format("YYYYMM") + "00";
+      mkdirSync(pubsPath + "/" + pubs.mwb + "/" + issue);
+      var db = await getDbFromJwpub({
+        pub: pubs.mwb,
+        issue: issue
+      });
+      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
+      var weeks = [];
+      for (var line of qryWeeks) {
+        weeks.push(line.FirstDateOffset);
+      }
+      for (w = 0; w < weeks.length; w++) {
+        var week = weeks[w];
+        var weekDay = moment(weeks[w], "YYYYMMDD").add(prefs.mwDay, "day");
+        mwMediaForWeek = {}, weekMediaFilesCopied = [];
+        if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
+          status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"))
+          var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
+          docId = docId[0].DocumentId;
+          var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
+          mkdirSync(weekPath);
+          var mediaExternal = await getDocumentMultimedia({
+            week: weekDay.format("YYYYMMDD"),
+            db: db,
+            destDocId: docId
+          });
+          var mediaReferenced = await getDocumentExtract({
+            week: weekDay.format("YYYYMMDD"),
+            db: db,
+            docId: docId
+          });
+          var internalRefs = await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94");
+          for (var internalRef of internalRefs) {
+            await getDocumentMultimedia({
+              week: weekDay.format("YYYYMMDD"),
+              db: db,
+              destDocId: internalRef.DocumentId,
+              srcDocId: internalRef.SourceDocumentId,
+              srcParId: internalRef.BeginParagraphOrdinal
+            });
+          }
+          for (var wM = 0; wM < Object.keys(mwMediaForWeek).length; wM++) {
+            for (var wMI = 0; wMI < Object.values(mwMediaForWeek)[wM].length; wMI++) {
+              var weekMediaItem = Object.values(mwMediaForWeek)[wM][wMI];
+              if (weekMediaItem.Json) {
+                weekMediaItem.FileName = weekMediaItem.Json[0].title + "." + path.extname(weekMediaItem.Json[0].file.url);
+              } else if (weekMediaItem.KeySymbol == "sjjm") {
+                weekMediaItem.FileName = weekMediaItem.Filename;
+              }
+              weekMediaItem.FileName = sanitizeFilename((wM + 1).toString().padStart(2, '0') + "-" + (wMI + 1).toString().padStart(2, '0') + " " + weekMediaItem.FileName);
+              weekMediaItem.DestPath = path.dirname(weekMediaItem.DestPath) + "/" + weekMediaItem.FileName;
+              if (weekMediaItem.Json) {
+                if (await downloadRequired({
+                    json: weekMediaItem.Json,
+                    onlyFile: true
+                  }, weekMediaItem.DestPath)) {
+                  var file = await downloadFile(weekMediaItem.Json[0].file.url);
+                  writeFile({
+                    sync: true,
+                    file: new Buffer(file),
+                    destFile: weekMediaItem.DestPath
+                  });
+                }
+              } else {
+                writeFile({
+                  sync: true,
+                  file: weekMediaItem.LocalPath,
+                  destFile: weekMediaItem.DestPath,
+                  type: "copy"
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  async function updateCongSpecific() {
+    if (prefs.cong !== "None") {
+      status("main", "Retrieving any congregation-specific files...");
+      try {
+        var congSpecificFolders = await sftpLs(sftpRootDir + "Congregations/" + prefs.cong + "/Media/");
+        var dirs = [];
+        congSpecificFolders.forEach((folder, f) => {
+          dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/Media/" + folder.name, mediaPath + "/" + folder.name])
+        });
+        await sftpDownloadDirs(dirs);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
+
+  function cleanUp() {
+    const getDirectories = source =>
+      fs.readdirSync(source, {
+        withFileTypes: true
+      })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+    var mediaSubDirs = getDirectories(mediaPath);
+    for (var mediaSubDir of mediaSubDirs) {
+      var deleteMediaSubDir = moment(mediaSubDir).isBefore(baseDate.clone().subtract(1, "week"));
+      if (deleteMediaSubDir) {
+        status("main", "Cleaing up: " + mediaSubDir);
+        var deleteDir = path.join(mediaPath, mediaSubDir);
+        fs.rmdirSync(deleteDir, {
+          recursive: true
+        });
+      }
+    }
+  }
+
+  // Support functions
 
   const downloadFile = async url => {
     try {
@@ -428,75 +558,6 @@ function goAhead() {
       return err;
     }
   };
-
-  function progressUpdate(bar) {
-    if (isElectron) {
-      var progressBar = "#" + bar + "Progress div";
-      var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
-      $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
-      $(progressBar).width(percentage);
-      var progressAlert = "#" + bar + "Status";
-      //$(progressAlert).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
-    }
-  }
-
-  function progressSet(bar, percent) {
-    if (isElectron) {
-      var progressBar = "#" + bar + "Progress div";
-      //var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
-      $(progressBar).html(percent.toFixed(2) + "%");
-      $(progressBar).width(percent + "%");
-      //var progressAlert = "#" + bar + "Status";
-      //$(progressAlert).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
-    }
-  }
-
-  function progressInitialize() {
-    if (isElectron) {
-      for (var bar of Object.keys(progress)) {
-        progress[bar].initialStatus = $("#" + bar + "Status").html();
-      }
-    }
-  }
-
-  function progressReset() {
-    if (isElectron) {
-      for (var bar of Object.keys(progress)) {
-        progress[bar].current = 0;
-        progress[bar].total = 0;
-        var element = "#" + bar + "Progress div";
-        $(element).html("");
-        $(element).width("0%");
-        element = "#" + bar + "Status";
-        $(element).html(progress[bar].initialStatus);
-      }
-    }
-  }
-
-  function progressIncrement(bar, type) {
-    progress[bar][type] = progress[bar][type] + 1;
-    progressUpdate(bar);
-  }
-
-  async function getJson(opts) {
-    if (opts.url) {
-      var jsonUrl = opts.url;
-    } else {
-      if (opts.pub == "w" && parseInt(opts.issue) >= 20080801 && opts.issue.slice(-2) == "01") {
-        opts.pub = "wp";
-      }
-      var jsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + prefs.lang + (opts.issue ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
-    }
-    let payload = null;
-    try {
-      payload = await axios.get(jsonUrl);
-      payload = payload.data;
-    } catch (err) {
-      console.log(err, payload);
-    } finally {
-      return payload;
-    }
-  }
 
   async function downloadRequired(remoteOpts, destFile, method) {
     if (fs.existsSync(destFile)) {
@@ -535,76 +596,55 @@ function goAhead() {
     }
   }
 
-
-  async function updateSongs() {
-    var pub = "sjjm";
-    for (var filetype of ["MP4", "MP3"]) {
-      //progress.main.current++;
-      status("main", "Checking for updated " + filetype + " songs...");
-      var songs = await getJson({
-        pub: pub,
-        issue: "0",
-        filetype: filetype
-      });
-      if (songs) {
-        mkdirSync(songsPath + "/" + filetype);
-        songs = songs.files[prefs.lang][filetype].filter(function(item) {
-          if (filetype == "MP4") {
-            return item.track > 0 && item.label == "720p";
-          } else if (filetype == "MP3") {
-            return item.track > 0;
-          }
-        });
-        for (var song of songs) {
-          if (song.track > 0 && (filetype == "MP3" || song.label == "720p")) {
-            var filename = song.file.url.split("/").pop();
-            var destFile = songsPath + "/" + filetype + "/" + filename;
-            if (await downloadRequired({
-                json: songs,
-                pub: pub,
-                type: filetype,
-                track: song.track
-              }, destFile)) {
-              var file = await downloadFile(song.file.url);
-              await writeFile({
-                //bar: "filesDownloaded",
-                sync: true,
-                file: new Buffer(file),
-                destFile: destFile
-              });
-            }
-          }
+  async function executeStatement(db, statement) {
+    var vals = await db.exec(statement)[0];
+    var valObj = [];
+    if (vals) {
+      for (var v = 0; v < vals.values.length; v++) {
+        valObj[v] = {};
+        for (var c = 0; c < vals.columns.length; c++) {
+          valObj[v][vals.columns[c]] = vals.values[v][c];
         }
       }
     }
+    return valObj
   }
 
-  function writeFile(opts) {
-    opts.bar = "tasksToDo";
-    if (!opts.type) {
-      progressIncrement(opts.bar, "total");
-      if (!opts.sync) {
-        fs.writeFile(opts.destFile, opts.file, function(err) {
-          if (err) throw err;
-          progressIncrement(opts.bar, "current");
+  async function getDbFromJwpub(opts) {
+    var json = await getJson({
+      pub: opts.pub,
+      issue: opts.issue,
+      filetype: "JWPUB"
+    });
+    if (json) {
+      var url = json.files[prefs.lang].JWPUB[0].file.url;
+      var basename = path.basename(url);
+      var workingDirectory = pubsPath + "/" + opts.pub + "/" + opts.issue + "/";
+      var workingUnzipDirectory = workingDirectory + "JWPUB/contents-decompressed/";
+      if (await downloadRequired({
+          json: json,
+          pub: opts.pub,
+          issue: opts.issue,
+          type: "JWPUB"
+        }, workingDirectory + basename) || !glob.sync(workingUnzipDirectory + "/*.db")[0]) {
+        var file = await downloadFile(url);
+        await writeFile({
+          sync: true,
+          file: new Buffer(file),
+          destFile: workingDirectory + basename
         });
-      } else {
-        fs.writeFileSync(opts.destFile, opts.file);
-        progressIncrement(opts.bar, "current");
+        mkdirSync(workingDirectory + "JWPUB");
+        await extract(glob.sync(workingDirectory + "/*.jwpub")[0], {
+          dir: workingDirectory + "JWPUB"
+        });
+        mkdirSync(workingUnzipDirectory);
+        await extract(workingDirectory + "JWPUB/contents", {
+          dir: workingUnzipDirectory
+        });
       }
-    } else { // it's a copy
-      if ((fs.existsSync(opts.destFile) && fs.existsSync(opts.file) && fs.statSync(opts.destFile).size !== fs.statSync(opts.file).size) || !fs.existsSync(opts.destFile)) {
-        progressIncrement(opts.bar, "total");
-        if (!opts.sync) {
-          fs.copyFile(opts.file, opts.destFile, function(err) {
-            if (err) throw err;
-            progressIncrement(opts.bar, "current");
-          });
-        } else {
-          fs.copyFileSync(opts.file, opts.destFile);
-          progressIncrement(opts.bar, "current");
-        }
-      }
+      var SQL = await sqljs();
+      var sqldb = new SQL.Database(fs.readFileSync(glob.sync(workingUnzipDirectory + "/*.db")[0]));
+      return sqldb;
     }
   }
 
@@ -612,7 +652,6 @@ function goAhead() {
     progressIncrement("tasksToDo", "total");
     var statement = "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + opts.docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' ORDER BY DocumentExtract.BeginParagraphOrdinal";
     var extractItems = await executeStatement(opts.db, statement);
-    //var extractItems = opts.db.prepare(statement).all();
     for (var extractItem of extractItems) {
       mkdirSync(pubsPath + "/" + extractItem.UndatedSymbol);
       mkdirSync(pubsPath + "/" + extractItem.UndatedSymbol + "/" + extractItem.IssueTagNumber);
@@ -643,15 +682,8 @@ function goAhead() {
       } else {
         var tableMultimedia = "DocumentMultimedia";
       }
-      /*console.log(await executeStatement(opts.db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'"))
-      var tableDocumentMultimedia = Object.values(opts.db.prepare("SELECT EXISTS (SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia')").get())[0];
-      var tableMultimedia = "Multimedia";
-      if (tableDocumentMultimedia == 1) {
-        tableMultimedia = "DocumentMultimedia";
-      }*/
       var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType='video/mp4' OR Multimedia.MimeType='audio/mpeg') " + (tableMultimedia == "DocumentMultimedia" ? "AND NOT Multimedia.KeySymbol='sjj' AND NOT Multimedia.KeySymbol='th'" : "") + ") OR (Multimedia.MimeType='image/jpeg' AND Multimedia.CategoryType <> 9" + (opts.pub == "th" ? " AND Multimedia.Width <> ''" : "") + "))";
       var mediaItems = await executeStatement(opts.db, statement);
-      //var mediaItems = opts.db.prepare(statement).all();
       if (mediaItems) {
         for (media of mediaItems) {
           media.FileType = media.FilePath.split(".").pop();
@@ -692,8 +724,6 @@ function goAhead() {
             media.KeySymbol = media.KeySymbol[0].UndatedSymbol;
             media.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
             media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
-            // media.KeySymbol = opts.db.prepare("SELECT UndatedSymbol FROM Publication").get().UndatedSymbol;
-            // media.IssueTagNumber = opts.db.prepare("SELECT IssueTagNumber FROM Publication").get().IssueTagNumber;
           }
           if (media.KeySymbol == "sjjm") {
             delete media.JsonUrl;
@@ -727,6 +757,79 @@ function goAhead() {
     progressIncrement("tasksToDo", "current");
   }
 
+  async function getJson(opts) {
+    if (opts.url) {
+      var jsonUrl = opts.url;
+    } else {
+      if (opts.pub == "w" && parseInt(opts.issue) >= 20080801 && opts.issue.slice(-2) == "01") {
+        opts.pub = "wp";
+      }
+      var jsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + prefs.lang + (opts.issue ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
+    }
+    let payload = null;
+    try {
+      payload = await axios.get(jsonUrl);
+      payload = payload.data;
+    } catch (err) {
+      console.log(err, payload);
+    } finally {
+      return payload;
+    }
+  }
+
+  function mkdirSync(dirPath) {
+    try {
+      fs.mkdirSync(dirPath);
+    } catch (err) {
+      if (err.code !== 'EEXIST') throw err;
+    }
+  }
+
+  function progressIncrement(bar, type) {
+    progress[bar][type] = progress[bar][type] + 1;
+    progressUpdate(bar);
+  }
+
+  function progressInitialize() {
+    if (isElectron) {
+      for (var bar of Object.keys(progress)) {
+        progress[bar].initialStatus = $("#" + bar + "Status").html();
+      }
+    }
+  }
+
+  function progressReset() {
+    if (isElectron) {
+      for (var bar of Object.keys(progress)) {
+        progress[bar].current = 0;
+        progress[bar].total = 0;
+        var element = "#" + bar + "Progress div";
+        $(element).html("");
+        $(element).width("0%");
+        element = "#" + bar + "Status";
+        $(element).html(progress[bar].initialStatus);
+      }
+    }
+  }
+
+  function progressSet(bar, percent) {
+    if (isElectron) {
+      var progressBar = "#" + bar + "Progress div";
+      $(progressBar).html(percent.toFixed(2) + "%");
+      $(progressBar).width(percent + "%");
+    }
+  }
+
+  function progressUpdate(bar) {
+    if (isElectron) {
+      var progressBar = "#" + bar + "Progress div";
+      var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
+      $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
+      $(progressBar).width(percentage);
+      var progressAlert = "#" + bar + "Status";
+    }
+  }
+
   function sanitizeFilename(filename) {
     filename = filename.replace(/[?!"»«\(\)\\\[\]№—\$]*/g, "").replace(/[;:,|/]+/g, " - ").replace(/ +/g, " ").replace(/\.+/g, ".").replace(/\r?\n/g, " - ");
     var bytes = Buffer.byteLength(filename, 'utf8');
@@ -750,247 +853,96 @@ function goAhead() {
     return filename;
   }
 
-  async function getDbFromJwpub(opts) {
-    var json = await getJson({
-      pub: opts.pub,
-      issue: opts.issue,
-      filetype: "JWPUB"
-    });
-    if (json) {
-      var url = json.files[prefs.lang].JWPUB[0].file.url;
-      var basename = path.basename(url);
-      var workingDirectory = pubsPath + "/" + opts.pub + "/" + opts.issue + "/";
-      var workingUnzipDirectory = workingDirectory + "JWPUB/contents-decompressed/";
-      if (await downloadRequired({
-          json: json,
-          pub: opts.pub,
-          issue: opts.issue,
-          type: "JWPUB"
-        }, workingDirectory + basename) || !glob.sync(workingUnzipDirectory + "/*.db")[0]) {
-        var file = await downloadFile(url);
-        await writeFile({
-          //bar: "filesDownloaded",
-          sync: true,
-          file: new Buffer(file),
-          destFile: workingDirectory + basename
-        });
-        mkdirSync(workingDirectory + "JWPUB");
-        await extract(glob.sync(workingDirectory + "/*.jwpub")[0], {
-          dir: workingDirectory + "JWPUB"
-        });
-        mkdirSync(workingUnzipDirectory);
-        await extract(workingDirectory + "JWPUB/contents", {
-          dir: workingUnzipDirectory
-        });
-      }
+  async function sftpDownloadDirs(dirs) {
+    try {
+      let Client = require('ssh2-sftp-client');
+      let sftpDownloadDir = new Client();
 
-      /*sqljs().then(await
-        function(SQL) {
-          var sqldb = new SQL.Database(fs.readFileSync(glob.sync(workingUnzipDirectory + "/*.db")[0]));
-          return sqldb;
-        })*/
-      var SQL = await sqljs();
-      var sqldb = new SQL.Database(fs.readFileSync(glob.sync(workingUnzipDirectory + "/*.db")[0]));
-      return sqldb;
-      //return sqlite3(glob.sync(workingUnzipDirectory + "/*.db")[0]);
-    }
-  }
-
-  async function executeStatement(db, statement) {
-    var vals = await db.exec(statement)[0];
-    var valObj = [];
-    if (vals) {
-      for (var v = 0; v < vals.values.length; v++) {
-        valObj[v] = {};
-        for (var c = 0; c < vals.columns.length; c++) {
-          valObj[v][vals.columns[c]] = vals.values[v][c];
-        }
-      }
-    }
-    return valObj
-  }
-
-  async function updateWeMeeting(weDate) {
-    var weDates = [baseDate.clone().subtract(2, "months"), baseDate.clone().subtract(1, "months")];
-    for (var weDate of weDates) {
-      status("main", "Retrieving the " + weDate.format("MMMM YYYY") + " Watchtower...");
-      mkdirSync(pubsPath + "/" + pubs.wt);
-      var issue = weDate.format("YYYYMM") + "00";
-      mkdirSync(pubsPath + "/" + pubs.wt + "/" + issue);
-      var db = await getDbFromJwpub({
-        pub: pubs.wt,
-        issue: issue
-      });
-      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
-      var qryDocuments = await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40");
-      //var qryWeeks = db.prepare("SELECT FirstDateOffset FROM DatedText").all();
-      //var qryDocuments = db.prepare("SELECT Document.DocumentId FROM Document WHERE Document.Class=40").all();
-      //var weeks = qryWeeks.FirstDateOffset;
-      var weeks = [];
-      for (var line of qryWeeks) {
-        weeks.push(line.FirstDateOffset);
-      }
-      for (var w = 0; w < weeks.length; w++) {
-        var week = weeks[w];
-        //for (var week of weeks) {
-        var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
-        if (studyDate.isSameOrAfter(moment(), "day")) {
-          status("main", "Weekend meeting: " + moment(studyDate).format("YYYY-MM-DD"))
-          var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
-          mkdirSync(weekPath);
-          var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
-          var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal");
-          //var qryLocalMedia = db.prepare("SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9").all();
-          //var qrySongs = db.prepare("SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal").all();
-          for (var s = 0; s < qrySongs.length; s++) {
-            var song = qrySongs[s];
-            song.SongNumber = song.Caption.replace(/\D/g, "");
-            song.Filename = "sjjm_" + prefs.lang + "_" + song.SongNumber.toString().padStart(3, '0') + "_r720P.mp4";
-            var songPath = songsPath + "/MP4/" + song.Filename;
-            song.Filename = ((s + 1) * 50).toString().padStart(3, '0') + " " + song.Filename;
-            song.LocalPath = songPath;
-            song.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/" + song.Filename;
-            song.SourceDocumentId = qryDocuments[w].DocumentId;
-            song.KeySymbol = "sjjm";
-            song.bar = "local";
-            writeFile({
-              sync: true,
-              //bar: "filesSaved",
-              file: song.LocalPath,
-              destFile: song.DestPath,
-              type: "copy"
-            });
-          }
-          qryLocalMedia.forEach(function(localMedia, l) {
-            localMedia.FileType = localMedia.FilePath.split(".").pop();
-            localMedia.FileName = localMedia.Caption;
-            if (localMedia.Label.length == 0 && localMedia.Caption.length == 0) {
-              localMedia.FileName = "Media";
-            } else if (localMedia.Label.length > localMedia.Caption.length) {
-              localMedia.FileName = localMedia.Label;
-            }
-            localMedia.FileName = localMedia.FileName + "." + localMedia.FileType;
-            localMedia.LocalPath = pubsPath + "/" + pubs.wt + "/" + issue + "/JWPUB/contents-decompressed/" + localMedia.FilePath;
-            localMedia.FileName = sanitizeFilename((l + 1 + 50).toString().padStart(3, '0') + " " + localMedia.FileName);
-            localMedia.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/" + localMedia.FileName;
-            localMedia.SourceDocumentId = qryDocuments[w].DocumentId;
-            writeFile({
-              //bar: "filesSaved",
-              sync: true,
-              file: localMedia.LocalPath,
-              destFile: localMedia.DestPath,
-              type: "copy"
-            });
-          });
-        }
-      }
-    }
-  }
-
-  async function updateMwMeeting() {
-    var mwDates = [baseDate, baseDate.clone().add(1, "months")];
-    for (var mwDate of mwDates) {
-      status("main", "Retrieving the " + mwDate.format("MMMM YYYY") + " Meeting Workbook...");
-      mkdirSync(pubsPath + "/" + pubs.mwb);
-      var issue = mwDate.format("YYYYMM") + "00";
-      mkdirSync(pubsPath + "/" + pubs.mwb + "/" + issue);
-      var db = await getDbFromJwpub({
-        pub: pubs.mwb,
-        issue: issue
-      });
-      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
-      //var qryWeeks = db.prepare("SELECT FirstDateOffset FROM DatedText").all();
-      var weeks = [];
-      for (var line of qryWeeks) {
-        weeks.push(line.FirstDateOffset);
-      }
-      for (w = 0; w < weeks.length; w++) {
-        var week = weeks[w];
-        var weekDay = moment(weeks[w], "YYYYMMDD").add(prefs.mwDay, "day");
-        mwMediaForWeek = {}, weekMediaFilesCopied = [];
-        if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
-          status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"))
-          var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
-          docId = docId[0].DocumentId;
-          //var docId = db.prepare("SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "").get().DocumentId;
-          var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
-          mkdirSync(weekPath);
-          var mediaExternal = await getDocumentMultimedia({
-            week: weekDay.format("YYYYMMDD"),
-            db: db,
-            destDocId: docId
-          });
-          var mediaReferenced = await getDocumentExtract({
-            week: weekDay.format("YYYYMMDD"),
-            db: db,
-            docId: docId
-          });
-          var internalRefs = await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94");
-          // var internalRefs = db.prepare("SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94").all();
-          for (var internalRef of internalRefs) {
-            await getDocumentMultimedia({
-              week: weekDay.format("YYYYMMDD"),
-              db: db,
-              destDocId: internalRef.DocumentId,
-              srcDocId: internalRef.SourceDocumentId,
-              srcParId: internalRef.BeginParagraphOrdinal
-            });
-          }
-          for (var wM = 0; wM < Object.keys(mwMediaForWeek).length; wM++) {
-            for (var wMI = 0; wMI < Object.values(mwMediaForWeek)[wM].length; wMI++) {
-              var weekMediaItem = Object.values(mwMediaForWeek)[wM][wMI];
-              if (weekMediaItem.Json) {
-                weekMediaItem.FileName = weekMediaItem.Json[0].title + "." + path.extname(weekMediaItem.Json[0].file.url);
-              } else if (weekMediaItem.KeySymbol == "sjjm") {
-                weekMediaItem.FileName = weekMediaItem.Filename;
-              }
-              weekMediaItem.FileName = sanitizeFilename((wM + 1).toString().padStart(2, '0') + "-" + (wMI + 1).toString().padStart(2, '0') + " " + weekMediaItem.FileName);
-              weekMediaItem.DestPath = path.dirname(weekMediaItem.DestPath) + "/" + weekMediaItem.FileName;
-              if (weekMediaItem.Json) {
-                if (await downloadRequired({
-                    json: weekMediaItem.Json,
-                    onlyFile: true
-                  }, weekMediaItem.DestPath)) {
-                  var file = await downloadFile(weekMediaItem.Json[0].file.url);
-                  writeFile({
-                    //bar: "filesDownloaded",
-                    sync: true,
-                    file: new Buffer(file),
-                    destFile: weekMediaItem.DestPath
-                  });
-                }
-              } else {
-                writeFile({
-                  //  bar: "filesSaved",
-                  sync: true,
-                  file: weekMediaItem.LocalPath,
-                  destFile: weekMediaItem.DestPath,
-                  type: "copy"
-                });
-              }
+      await sftpDownloadDir.connect(sftpConfig);
+      for (var d = 0; d < dirs.length; d++) {
+        var files = await sftpLs(dirs[d][0]);
+        for (var file of files) {
+          var downloadNeeded = true;
+          if (fs.existsSync(dirs[d][1] + "/" + file.name)) {
+            var localSize = fs.statSync(dirs[d][1] + "/" + file.name).size;
+            var remoteSize = file.size;
+            if (remoteSize == localSize) {
+              downloadNeeded = false;
             }
           }
+          if (downloadNeeded) {
+            progressIncrement("tasksToDo", "total");
+            await sftpDownloadDir.fastGet(dirs[d][0] + "/" + file.name, dirs[d][1] + "/" + file.name, {
+              step: function(totalTransferred, chunk, total) {
+                var percent = totalTransferred / total * 100;
+                progressSet("download", percent);
+              }
+            });
+            progressIncrement("tasksToDo", "current");
+          }
         }
       }
+      await sftpDownloadDir.end();
+    } catch (err) {
+      console.log(err)
     }
   }
 
-  function cleanUp() {
-    const getDirectories = source =>
-      fs.readdirSync(source, {
-        withFileTypes: true
-      })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name);
-    var mediaSubDirs = getDirectories(mediaPath);
-    for (var mediaSubDir of mediaSubDirs) {
-      var deleteMediaSubDir = moment(mediaSubDir).isBefore(baseDate.clone().subtract(1, "week"));
-      if (deleteMediaSubDir) {
-        status("main", "Cleaing up: " + mediaSubDir);
-        var deleteDir = path.join(mediaPath, mediaSubDir);
-        fs.rmdirSync(deleteDir, {
-          recursive: true
+  async function sftpLs(dir) {
+    try {
+      var result = [];
+      let Client = require('ssh2-sftp-client');
+      let sftp = new Client();
+      await sftp.connect(sftpConfig).then(() => {
+        return sftp.list(dir);
+      }).then(await
+        function(data) {
+          data.filter(function(el) {
+            result.push(el)
+          });
+        }).then(await
+        function() {
+          return sftp.end();
+        }).catch(err => {
+        console.log(err);
+      });
+      return result
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  function status(dest, message) {
+    if (isElectron) {
+      $("#" + dest + "Status").html(message);
+    }
+  }
+
+  function writeFile(opts) {
+    opts.bar = "tasksToDo";
+    if (!opts.type) {
+      progressIncrement(opts.bar, "total");
+      if (!opts.sync) {
+        fs.writeFile(opts.destFile, opts.file, function(err) {
+          if (err) throw err;
+          progressIncrement(opts.bar, "current");
         });
+      } else {
+        fs.writeFileSync(opts.destFile, opts.file);
+        progressIncrement(opts.bar, "current");
+      }
+    } else { // it's a copy
+      if ((fs.existsSync(opts.destFile) && fs.existsSync(opts.file) && fs.statSync(opts.destFile).size !== fs.statSync(opts.file).size) || !fs.existsSync(opts.destFile)) {
+        progressIncrement(opts.bar, "total");
+        if (!opts.sync) {
+          fs.copyFile(opts.file, opts.destFile, function(err) {
+            if (err) throw err;
+            progressIncrement(opts.bar, "current");
+          });
+        } else {
+          fs.copyFileSync(opts.file, opts.destFile);
+          progressIncrement(opts.bar, "current");
+        }
       }
     }
   }

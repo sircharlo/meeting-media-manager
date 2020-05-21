@@ -19,6 +19,35 @@
       display: flex;
     }
 
+    @keyframes blink {
+      0% {
+        opacity: .2;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: .2;
+      }
+    }
+
+    .loading span {
+      animation-name: blink;
+      animation-duration: 1.4s;
+      animation-iteration-count: infinite;
+      animation-fill-mode: both;
+    }
+
+    .loading span:nth-child(2) {
+      animation-delay: .2s;
+    }
+
+    .loading span:nth-child(3) {
+      animation-delay: .4s;
+    }
+
     #settings,
     span.select2-dropdown {
       font-size: 0.9em
@@ -54,29 +83,29 @@
   <div id="overlay" class="justify-content-center">
     <div class="align-self-center text-dark" id="overlayInternetCheck">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" role="status">Hang tight, looking for Internet connectivity...</div>
+      <div class="align-self-center loading" role="status">Hang tight, looking for Internet connectivity<span>.</span><span>.</span><span>.</span></div>
     </div>
     <div class="align-self-center text-danger" id="overlayInternetFail" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" role="status">I can't find the Internet! I'll try again in a few seconds.</div>
+      <div class="align-self-center loading" role="status">I can't find the Internet! I'll try again in a few seconds<span>.</span><span>.</span><span>.</span></div>
     </div>
     <div class="align-self-center text-dark" id="overlayUpdateCheck" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" role="status">Internet's all good; let's check for updates...</div>
+      <div class="align-self-center loading" role="status">Internet's all good; let's check for updates<span>.</span><span>.</span><span>.</span></div>
     </div>
     <div class="align-self-center text-info" id="overlayUpdateAvailable" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" role="status">Update available, hold on...</div>
+      <div class="align-self-center loading" role="status">Update available, hold on<span>.</span><span>.</span><span>.</span></div>
       <div class="align-self-center" role="status" id="updatePercent"></div>
     </div>
     <div class="align-self-center text-success" id="overlayUpdateDownloaded" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" role="status">All done! Now let's install that update...</div>
+      <div class="align-self-center loading" role="status">All done! Now let's install that update<span>.</span><span>.</span><span>.</span></div>
     </div>
     <div class="align-self-center text-primary" id="overlayPleaseWait" style="display: none;">
       <div class="spinner-grow mb-3" role="status"></div>
       <div class="align-self-center" id="upToDate" role="status">No updates available, so let's proceed!</div>
-      <div class="align-self-center" id="pleaseWait" role="status">Hold on, getting things a few ready...</div>
+      <div class="align-self-center loading" id="pleaseWait" role="status">Hold on, getting things a few ready<span>.</span><span>.</span><span>.</span></div>
     </div>
     <div class="align-self-center text-success" id="overlayComplete" style="display: none;">
       <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder has been successfully updated!</div>
@@ -171,7 +200,7 @@
           <div class="col">
             <input type="text" id="cong" required hidden />
             <select id="congSelect" class="form-control">
-              <option selected value="">None</option>
+              <option selected value="None">None</option>
             </select>
           </div>
         </div>
