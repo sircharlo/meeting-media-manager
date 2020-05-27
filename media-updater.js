@@ -35,10 +35,8 @@ require('electron').ipcRenderer.on('goAhead', () => {
   goAhead();
 })
 
-function decode(str) {
-  var strBuff = new Buffer(str, 'base64');
-  var strDecoded = strBuff.toString('ascii');
-  return strDecoded
+function decode(e) {
+  return new Buffer(e, "base64").toString("ascii")
 }
 
 function goAhead() {
@@ -108,15 +106,11 @@ function goAhead() {
       $("#autoStartUpdate").val(prefs.autoStartUpdate.toString()).change();
       $("#autoRunAtBoot").val(prefs.autoRunAtBoot.toString()).change();
       $("#autoQuitWhenDone").val(prefs.autoQuitWhenDone.toString()).change();
-      /*if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val() || !$("#cong").val()) {
-        settingsRequired();
-      */
-      configIsValid(114);
+      configIsValid();
     }
   } else {
     if (isElectron) {
-      /*settingsRequired();*/
-      configIsValid(119);
+      configIsValid();
     }
   }
 
@@ -145,7 +139,7 @@ function goAhead() {
     }
     $('#congSelect').val($('#cong').val());
     $('#congSelect').select2();
-    await configIsValid(153);
+    await configIsValid();
   }
 
   async function getInitialData() {
@@ -166,34 +160,35 @@ function goAhead() {
       }
     });
     $("#overlay, #overlayPleaseWait").fadeOut();
-    if (prefs.autoStartUpdate && configIsValid(286)) {
+    if (prefs.autoStartUpdate && configIsValid()) {
       $("#home-tab").tab('show');
       $("#mediaSync").click();
     }
   }
 
-  function getLanguages() {
+  async function getLanguages() {
     if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || moment(prefs.langUpdatedLast).isSameOrBefore(moment().subtract(6, "months"))) {
-      $.getJSON("https://www.jw.org/en/languages/", null, function(jsonData) {
-        fs.writeFileSync(langsFile, JSON.stringify(jsonData.languages, null, 2));
+      var jwLangs = await getJson({
+        url: "https://www.jw.org/en/languages/"
       });
+      fs.writeFileSync(langsFile, JSON.stringify(jwLangs.languages, null, 2));
       prefs.langUpdatedLast = moment();
       fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     }
     var jsonLangs = JSON.parse(fs.readFileSync(langsFile));
-    $.each(jsonLangs, function(index, lang) {
+    for (var lang of jsonLangs) {
       if (lang.hasWebContent) {
         $('#langSelect').append($("<option>", {
           value: lang.langcode,
           text: lang.name
         }));
       }
-    });
+    }
     $('#langSelect').val($('#lang').val());
     $('#langSelect').select2();
   }
 
-  function configIsValid(line) {
+  function configIsValid() {
     if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || !$("#cong").val() || !$("#congSelect").val() || ($("#lang").val() !== $("#langSelect").val()) || ($("#cong").val() !== $("#congSelect").val())) {
       $("#mediaSync").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
@@ -234,12 +229,7 @@ function goAhead() {
       window.require('electron').remote.app.setLoginItemSettings({
         openAtLogin: prefs.autoRunAtBoot
       });
-      /*if (!$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || !$("#congSelect").val()) {
-        settingsRequired();
-      } else {
-        settingsRequired(false);
-      }*/
-      configIsValid(244);
+      configIsValid();
     });
     $("#mediaSync").on('click', async function() {
       var stayAlive = false;
