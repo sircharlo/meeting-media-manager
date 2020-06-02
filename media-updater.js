@@ -853,7 +853,9 @@ function goAhead() {
         var files = await sftpLs(dirs[d][0]);
         for (var file of files) {
           var downloadNeeded = true;
-          if (fs.existsSync(dirs[d][1] + "/" + file.name)) {
+          if (!fs.existsSync(dirs[d][1])) {
+            downloadNeeded = false;
+          } else if (fs.existsSync(dirs[d][1] + "/" + file.name)) {
             var localSize = fs.statSync(dirs[d][1] + "/" + file.name).size;
             var remoteSize = file.size;
             if (remoteSize == localSize) {
