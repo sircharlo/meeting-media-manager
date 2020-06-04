@@ -1,24 +1,21 @@
 # JW Meeting Media Fetcher
 
-Welcome! Here is an app that facilitates the downloading of media for personal study when access to [JW.org](https://www.jw.org) or JW Library is limited, or for playback during congregation meetings.
+Welcome! Here is an app that facilitates the downloading of media that will be considered during congregation meetings, for example for personal study, or when using JW Library is not possible for various reasons.
 
-This is app can be run as a normal user; settings allow for automatic execution at system startup, making this a practical app for those who prefer to keep things simple.
+This app can be run as a normal user; settings allow for automatic execution at system startup, making this a practical app for those who like to keep things simple.
 
 ## Prerequisites
 
-The prerequisites are simple enough. For now, you need a 64-bit Windows computer; this covers most computers being used in the wild today.
-
-Work is underway to release Linux and Mac installers as well; contact me if this is something you'd be interested in.
-
+The app should run as is on mot modern computers running Windows or Linux. Although a Mac version has been compiled, it is as of yet untested and probably doesn't work very well. Feedback from a Mac user would be appreciated!
 
 ## Usage
 
-Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases) and run it. A shortcut to the app will be placed on your desktop. Downloaded media is placed on your desktop, in the "Meeting Media" folder.
+Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Downloaded media is placed on your desktop, in a folder named "Meeting Media".
 
 
 ## Does this app infringe the JW.org Terms of Use?
 
-No, the JW.org [Terms of Use](https://www.jw.org/en/terms-of-use) actually *explicitly allow* this. Here is the relevant excerpt (emphasis mine):
+No, the JW.org [Terms of Use](https://www.jw.org/en/terms-of-use) actually *explicitly allow* this kind of usage. Here is the relevant excerpt from those terms(emphasis mine):
 
 >You may not:
 >
@@ -26,6 +23,6 @@ No, the JW.org [Terms of Use](https://www.jw.org/en/terms-of-use) actually *expl
 
 ## Help!
 
-If ever you run into any issues with the app or the underlying script, please feel free to let me know.
+If ever you run into any issues with the app or the underlying script, please let me know.
 
 *- COS*
