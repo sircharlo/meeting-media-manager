@@ -359,7 +359,7 @@ function goAhead() {
       for (var w = 0; w < weeks.length; w++) {
         var week = weeks[w];
         var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
-        if (studyDate.isSameOrAfter(moment(), "day")) {
+        if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
           status("main", "Weekend meeting: " + moment(studyDate).format("YYYY-MM-DD"))
           var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
           mkdirSync(weekPath);
@@ -428,7 +428,7 @@ function goAhead() {
         var week = weeks[w];
         var weekDay = moment(weeks[w], "YYYYMMDD").add(prefs.mwDay, "day");
         mwMediaForWeek = {}, weekMediaFilesCopied = [];
-        if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
+        if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
           status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"))
           var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
           docId = docId[0].DocumentId;
@@ -516,7 +516,7 @@ function goAhead() {
       .map(dirent => dirent.name);
     var mediaSubDirs = getDirectories(mediaPath);
     for (var mediaSubDir of mediaSubDirs) {
-      var deleteMediaSubDir = moment(mediaSubDir).isBefore(baseDate.clone().subtract(1, "week"));
+      var deleteMediaSubDir = moment(mediaSubDir).isBefore(baseDate); //.clone().subtract(1, "week"));
       if (deleteMediaSubDir) {
         status("main", "Cleaing up: " + mediaSubDir);
         var deleteDir = path.join(mediaPath, mediaSubDir);
