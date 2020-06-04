@@ -516,9 +516,8 @@ function goAhead() {
       .map(dirent => dirent.name);
     var mediaSubDirs = getDirectories(mediaPath);
     for (var mediaSubDir of mediaSubDirs) {
-      var deleteMediaSubDir = moment(mediaSubDir).isBefore(baseDate); //.clone().subtract(1, "week"));
-      if (deleteMediaSubDir) {
-        status("main", "Cleaing up: " + mediaSubDir);
+      if (moment(mediaSubDir, "YYYY-MM-DD").isValid() && moment(mediaSubDir, "YYYY-MM-DD").isBefore(baseDate)) {
+        status("main", "Cleaning up: " + mediaSubDir);
         var deleteDir = path.join(mediaPath, mediaSubDir);
         fs.rmdirSync(deleteDir, {
           recursive: true
