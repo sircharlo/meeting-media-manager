@@ -276,11 +276,10 @@ function goAhead() {
 
   async function startMediaUpdate() {
     await setVars();
-    await updateSongs();
+    await cleanUp();
     await updateWeMeeting();
     await updateMwMeeting();
     await updateCongSpecific();
-    await cleanUp();
   }
 
   // Main functions
@@ -289,54 +288,11 @@ function goAhead() {
     baseDate = moment().startOf('isoWeek');
     langPath = outputPath + "/" + prefs.lang;
     mkdirSync(langPath);
-    songsPath = langPath + "/Songs";
-    mkdirSync(songsPath);
     pubsPath = langPath + "/Publications";
     mkdirSync(pubsPath);
     mediaPath = langPath + "/Media";
     mkdirSync(mediaPath);
     progressReset();
-  }
-
-  async function updateSongs() {
-    var pub = "sjjm";
-    for (var filetype of ["MP4", "MP3"]) {
-      status("main", "Checking for updated " + filetype + " songs...");
-      var songs = await getJson({
-        pub: pub,
-        issue: "0",
-        filetype: filetype
-      });
-      if (songs) {
-        mkdirSync(songsPath + "/" + filetype);
-        songs = songs.files[prefs.lang][filetype].filter(function(item) {
-          if (filetype == "MP4") {
-            return item.track > 0 && item.label == "720p";
-          } else if (filetype == "MP3") {
-            return item.track > 0;
-          }
-        });
-        for (var song of songs) {
-          if (song.track > 0 && (filetype == "MP3" || song.label == "720p")) {
-            var filename = song.file.url.split("/").pop();
-            var destFile = songsPath + "/" + filetype + "/" + filename;
-            if (await downloadRequired({
-                json: songs,
-                pub: pub,
-                type: filetype,
-                track: song.track
-              }, destFile)) {
-              var file = await downloadFile(song.file.url);
-              await writeFile({
-                sync: true,
-                file: new Buffer(file),
-                destFile: destFile
-              });
-            }
-          }
-        }
-      }
-    }
   }
 
   async function updateWeMeeting(weDate) {
@@ -368,20 +324,9 @@ function goAhead() {
           for (var s = 0; s < qrySongs.length; s++) {
             var song = qrySongs[s];
             song.SongNumber = song.Caption.replace(/\D/g, "");
-            song.Filename = "sjjm_" + prefs.lang + "_" + song.SongNumber.toString().padStart(3, '0') + "_r720P.mp4";
-            var songPath = songsPath + "/MP4/" + song.Filename;
-            song.Filename = ((s + 1) * 50).toString().padStart(3, '0') + " " + song.Filename;
-            song.LocalPath = songPath;
-            song.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/" + song.Filename;
-            song.SourceDocumentId = qryDocuments[w].DocumentId;
-            song.KeySymbol = "sjjm";
-            song.bar = "local";
-            writeFile({
-              sync: true,
-              file: song.LocalPath,
-              destFile: song.DestPath,
-              type: "copy"
-            });
+            song.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/";
+            song.FileOrder = s;
+            await getSong(song);
           }
           qryLocalMedia.forEach(function(localMedia, l) {
             localMedia.FileType = localMedia.FilePath.split(".").pop();
@@ -459,8 +404,6 @@ function goAhead() {
               var weekMediaItem = Object.values(mwMediaForWeek)[wM][wMI];
               if (weekMediaItem.Json) {
                 weekMediaItem.FileName = weekMediaItem.Json[0].title + "." + path.extname(weekMediaItem.Json[0].file.url);
-              } else if (weekMediaItem.KeySymbol == "sjjm") {
-                weekMediaItem.FileName = weekMediaItem.Filename;
               }
               weekMediaItem.FileName = sanitizeFilename((wM + 1).toString().padStart(2, '0') + "-" + (wMI + 1).toString().padStart(2, '0') + " " + weekMediaItem.FileName);
               weekMediaItem.DestPath = path.dirname(weekMediaItem.DestPath) + "/" + weekMediaItem.FileName;
@@ -508,6 +451,21 @@ function goAhead() {
   }
 
   function cleanUp() {
+    if (!prefs.lastMaintenance || moment(prefs.lastMaintenance).isBefore(moment("2020-06-07", "YYYY-MM-DD"))) {
+
+      // 2020.06.07 one-time maintenance start
+      status("main", "Performing one-time maintenance functions...");
+      for (var delDir of [mediaPath, langPath + "/Songs"]) {
+        fs.rmdirSync(delDir, {
+          recursive: true
+        });
+      }
+      mkdirSync(mediaPath);
+      // 2020.06.07 one-time maintenance end
+
+      prefs.lastMaintenance = moment();
+      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
+    }
     const getDirectories = source =>
       fs.readdirSync(source, {
         withFileTypes: true
@@ -676,7 +634,7 @@ function goAhead() {
       if (mediaItems) {
         for (media of mediaItems) {
           media.FileType = media.FilePath.split(".").pop();
-          if ((media.MimeType.includes("audio") || media.MimeType.includes("video")) && media.KeySymbol !== "sjjm") {
+          if ((media.MimeType.includes("audio") || media.MimeType.includes("video"))) {
             if (media.KeySymbol == null) {
               media.JsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&docid=" +
                 media.MepsDocumentId + "&langwritten=" + prefs.lang;
@@ -714,11 +672,7 @@ function goAhead() {
             media.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
             media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
           }
-          if (media.KeySymbol == "sjjm") {
-            delete media.JsonUrl;
-            media.Filename = "sjjm_" + prefs.lang + "_" + media.Track.toString().padStart(3, '0') + "_r720P.mp4";
-            media.LocalPath = songsPath + "/MP4/" + media.Filename;
-          } else if (!media.JsonUrl) {
+          if (!media.JsonUrl) {
             media.LocalPath = pubsPath + "/" + media.KeySymbol + "/" + media.IssueTagNumber + "/JWPUB/contents-decompressed/" + media.FilePath;
           }
           media.FileType = media.FilePath.split(".").pop();
@@ -763,6 +717,30 @@ function goAhead() {
       console.log(err, payload);
     } finally {
       return payload;
+    }
+  }
+
+  async function getSong(song) {
+    var ks = "sjjm";
+    song.JsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + ks + "&langwritten=" + prefs.lang + "&track=" + song.SongNumber + "&fileformat=MP4";
+    song.Json = await getJson({
+      url: song.JsonUrl
+    });
+    song.Json = Object.values(song.Json.files[prefs.lang])[0].filter(function(item) {
+      return item.label == "720p";
+    });
+    song.Filename = ((song.FileOrder + 1) * 50).toString().padStart(3, '0') + " " + song.Json[0].title + ".mp4";
+    song.DestPath = song.DestPath + song.Filename;
+    if (await downloadRequired({
+        json: song.Json,
+        onlyFile: true
+      }, song.DestPath)) {
+      var file = await downloadFile(song.Json[0].file.url);
+      writeFile({
+        sync: true,
+        file: new Buffer(file),
+        destFile: song.DestPath
+      });
     }
   }
 
