@@ -4,7 +4,7 @@ const {
   ipcMain
 } = require('electron'), {
   autoUpdater
-} = require("electron-updater");
+} = require("electron-updater"), os = require("os");
 var win = {};
 
 function createUpdateWindow() {
@@ -25,7 +25,17 @@ function createUpdateWindow() {
 
 ipcMain.on('autoUpdate', () => {
   win.webContents.send('hideThenShow', ['InternetCheck', 'UpdateCheck']);
+//  if (os.type() !== "Darwin") {
   autoUpdater.checkForUpdates();
+//  } else {
+//    var curVersion = app.getVersion().replace(".", "") to integer;
+//    var latestVersion = get latest version from github releases api (https://api.github.com/repos/sircharlo/jw-meeting-media-fetcher/releases/latest)
+//    if (curVersion < latestVersion) {
+//      download latest Mac zip to desktop
+//      alert user
+//      quit after delay
+//    }
+//  }
 })
 
 ipcMain.on('noInternet', () => {
