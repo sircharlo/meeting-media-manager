@@ -6,11 +6,11 @@ This app can be run as a normal user; settings allow for automatic execution at 
 
 ## Prerequisites
 
-The app should run as is on mot modern computers running Windows or Linux. Although a Mac version has been compiled, it is as of yet untested and probably doesn't work very well. Feedback from a Mac user would be appreciated!
+The app should run as is on most modern computers running Windows, Linux, or Mac. For various technical reasons, the auto-updater does not yet work on Macs, so Mac users will have to periodically check for updates to this app on their own.
 
 ## Usage
 
-Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Downloaded media is placed on your desktop, in a folder named "Meeting Media".
+Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Open the app, and configure the settings as you please. One you execute the media update, all downloaded media will be placed on your desktop, in a folder named "Meeting Media".
 
 
 ## Does this app infringe the JW.org Terms of Use?
