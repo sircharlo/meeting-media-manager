@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "bootstrap": "^4.5.0",
     "electron-updater": "^4.3.1",
     "extract-zip": "^2.0.1",

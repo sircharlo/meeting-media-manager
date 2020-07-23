@@ -41,7 +41,7 @@ function decode(e) {
 
 function goAhead() {
   const axios = require('axios');
-  const bcrypt = require('bcrypt');
+  const bcrypt = require('bcryptjs');
   const extract = require('extract-zip');
   const fs = require("graceful-fs");
   const glob = require("glob");
@@ -303,8 +303,8 @@ function goAhead() {
   async function startMediaUpdate() {
     await setVars();
     await cleanUp();
-    await updateWeMeeting();
     await updateMwMeeting();
+    await updateWeMeeting();
     await updateCongSpecific();
   }
 
