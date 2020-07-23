@@ -157,7 +157,7 @@
     <div class="tab-pane fade" id="Settings" role="tabpanel" aria-labelledby="Settings-tab">
       <div id="settings">
         <div class="form-group row">
-          <label for="langSelect" class="col col-form-label text-right">Language</label>
+          <label for="langSelect" class="col col-form-label text-right">Media language</label>
           <div class="col">
             <input type="text" class="form-control" id="lang" required hidden />
             <select id="langSelect" class="form-control" required>
@@ -195,15 +195,7 @@
             </select>
           </div>
         </div>
-        <div class="form-group row">
-          <label for="congSelect" class="col col-form-label text-right">Congregation/group</label>
-          <div class="col">
-            <input type="text" id="cong" required hidden />
-            <select id="congSelect" class="form-control">
-              <option selected value="None">None</option>
-            </select>
-          </div>
-        </div>
+        <hr />
         <div class="form-group row">
           <label for="autoStartUpdate" class="col col-form-label text-right">Update media on app launch</label>
           <div class="col">
@@ -228,6 +220,27 @@
             <select class="form-control" id="autoRunAtBoot">
               <option value="false">No</option>
               <option value="true">Yes</option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="form-group row">
+          <label for="congUnlock" class="col col-form-label text-right">Additional media passcode</label>
+            <div class="col">
+              <input type="password" id="congPass" class="form-control form-control-sm" required />
+            </div>
+        </div>
+        <div class="text-center" id="congsSpinner" style="display:none">
+          <div class="col">
+            <div class="spinner-border spinner-border-sm" role="status"></div>
+          </div>
+        </div>
+        <div class="form-group row" id="congs" style="display:none">
+          <label for="congSelect" class="col col-form-label text-right">Congregation/group</label>
+          <div class="col">
+            <input type="text" id="cong" required hidden />
+            <select id="congSelect" class="form-control">
+              <option selected value="None">None</option>
             </select>
           </div>
         </div>

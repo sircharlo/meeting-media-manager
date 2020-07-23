@@ -11,7 +11,7 @@ async function checkInternet() {
       require('electron').ipcRenderer.send('noInternet');
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 }
 
@@ -19,54 +19,49 @@ checkInternet();
 
 require('electron').ipcRenderer.on('checkInternet', () => {
   checkInternet();
-})
+});
 
 require('electron').ipcRenderer.on('hideThenShow', (event, message) => {
   $("#overlay" + message[0]).fadeOut(400, () => {
     $("#overlay" + message[1]).fadeIn();
   });
-})
+});
 
 require('electron').ipcRenderer.on('updateDownloadProgress', (event, message) => {
   $("#updatePercent").html(message[0].toFixed(0) + "% done (about " + message[1] + " second" + (message[1] !== "1" ? "s" : "") + " left)");
-})
+});
 
 require('electron').ipcRenderer.on('goAhead', () => {
   goAhead();
-})
+});
 
 function decode(e) {
-  return new Buffer(e, "base64").toString("ascii")
+  return new Buffer(e, "base64").toString("ascii");
 }
 
 function goAhead() {
   const axios = require('axios');
+  const bcrypt = require('bcrypt');
   const extract = require('extract-zip');
   const fs = require("graceful-fs");
   const glob = require("glob");
-  const moment = require("moment")
+  const moment = require("moment");
   const os = require("os");
   const path = require("path");
   const sqljs = require('sql.js');
 
-  const isElectron = (process.versions['electron'] ? true : false);
-  const plex = {
+  const isElectron = (process.versions.electron ? true : false);
+  const congSpecificServer = {
     cred: decode("cGxleA=="),
     host: decode("c2lyY2hhcmxvLmhvcHRvLm9yZw=="),
     port: decode("NDMyMzQ=")
-  }
+  };
   const pubs = {
     wt: "w",
     mwb: "mwb"
   };
-  const sftpConfig = {
-    host: plex.host,
-    port: plex.port,
-    username: plex.cred,
-    password: plex.cred,
-    keepaliveInterval: 2000,
-    keepaliveCountMax: 20
-  };
+  var sftpConfig = {};
+  const congHash = "$2b$10$Kc4.iOKBP9KXfwQAHUJ0Ieyg0m8EC8nrhPaMigeGPonQ85EMaCJv6";
   const sftpRootDir = decode("L21lZGlhL3BsZXgvTWVkaWEtTGludXgvUHVibGljL2ZpbGVzL01XLU1lZGlhLUZldGNoZXIvVS8=");
   const outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
   const langsFile = outputPath + "/langs.json";
@@ -95,7 +90,7 @@ function goAhead() {
     try {
       prefs = JSON.parse(fs.readFileSync(prefsFile));
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
     if (isElectron) {
       prefsInitialize();
@@ -103,6 +98,7 @@ function goAhead() {
       $("#mwDay").val(prefs.mwDay).change();
       $("#weDay").val(prefs.weDay).change();
       $("#cong").val(prefs.cong).change();
+      $("#congPass").val(prefs.congPass);
       $("#autoStartUpdate").val(prefs.autoStartUpdate.toString()).change();
       $("#autoRunAtBoot").val(prefs.autoRunAtBoot.toString()).change();
       $("#autoQuitWhenDone").val(prefs.autoQuitWhenDone.toString()).change();
@@ -117,7 +113,7 @@ function goAhead() {
   if (!isElectron) {
     var args = process.argv.slice(2);
     if ((!args[0] || !args[1] || !args[2]) && (!prefs.lang || !prefs.weDay || !prefs.mwDay)) {
-      throw ("insufficient args (LANG MWDAY WEDAY CONG)")
+      throw ("insufficient args (LANG MWDAY WEDAY CONG)");
     } else if (!prefs.lang || !prefs.weDay || !prefs.mwDay) {
       prefs = {
         lang: args[0],
@@ -130,16 +126,41 @@ function goAhead() {
   }
 
   async function congFetch() {
-    var congs = await sftpLs(sftpRootDir + "Congregations");
-    for (var cong of congs) {
-      $('#congSelect').append($("<option>", {
-        value: cong.name,
-        text: cong.name
-      }));
+    if ($('#congPass').val() !== "" && bcrypt.compareSync($('#congPass').val(), congHash)) {
+      $('#congPass').css("background-color", "#bbdefb");
+      $('#congsSpinner').fadeIn();
+      sftpConfig = {
+        host: congSpecificServer.host,
+        port: congSpecificServer.port,
+        username: $('#congPass').val(),
+        password: $('#congPass').val(),
+        keepaliveInterval: 2000,
+        keepaliveCountMax: 20
+      };
+      var congs = await sftpLs(sftpRootDir + "Congregations");
+      for (var cong of congs) {
+        $('#congSelect').append($("<option>", {
+          value: cong.name,
+          text: cong.name
+        }));
+      }
+      $('#congSelect').val($('#cong').val());
+      $('#congSelect').select2();
+      $('#congsSpinner').fadeOut(400, () => {
+        $("#congs").fadeIn();
+      });
+      await configIsValid();
+    } else {
+      if ($('#congPass').val().length == 0) {
+        $('#congPass').css("background-color", "#fff");
+      } else {
+        $('#congPass').css("background-color", "#ffcdd2");
+      }
+      $('#congs').fadeOut(400, () => {
+        $('#congSelect option[value!="None"]').remove();
+        $("#congSelect").prop("selectedIndex", 0).change();
+      });
     }
-    $('#congSelect').val($('#cong').val());
-    $('#congSelect').select2();
-    await configIsValid();
   }
 
   async function getInitialData() {
@@ -194,13 +215,13 @@ function goAhead() {
       $("#mediaSync").addClass("btn-secondary");
       $("#Settings-tab").addClass("text-danger").tab('show');
       $("#home-tab").addClass("disabled");
-      return false
+      return false;
     } else {
       $("#mediaSync").prop("disabled", false);
       $("#mediaSync").removeClass("btn-secondary");
       $("#Settings-tab").removeClass("text-danger");
       $("#home-tab").removeClass("disabled");
-      return true
+      return true;
     }
   }
 
@@ -221,6 +242,7 @@ function goAhead() {
       prefs.lang = $("#langSelect").val();
       prefs.mwDay = $("#mwDay").val();
       prefs.weDay = $("#weDay").val();
+      prefs.congPass = $("#congPass").val();
       prefs.cong = $("#congSelect").val();
       prefs.autoStartUpdate = ($("#autoStartUpdate").val() === "false" ? false : true);
       prefs.autoRunAtBoot = ($("#autoRunAtBoot").val() === "false" ? false : true);
@@ -230,6 +252,10 @@ function goAhead() {
         openAtLogin: prefs.autoRunAtBoot
       });
       configIsValid();
+    });
+
+    $("#settings #congPass").on('change', async function() {
+      await congFetch();
     });
     $("#mediaSync").on('click', async function() {
       var stayAlive = false;
@@ -262,13 +288,13 @@ function goAhead() {
       });
       $("div.progress").parent().fadeOut(400, function() {
         $(this).css('visibility', 'hidden').css("display", "block");
-      })
+      });
       $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
       $("#mediaSync").html(buttonLabel);
       $("#mediaSync").prop("disabled", false);
       $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
       $("#Settings-tab").removeClass("disabled");
-      status("main", "Currently inactive")
+      status("main", "Currently inactive");
     });
   } else {
     startMediaUpdate();
@@ -295,7 +321,7 @@ function goAhead() {
     progressReset();
   }
 
-  async function updateWeMeeting(weDate) {
+  async function updateWeMeeting() {
     var weDates = [baseDate.clone().subtract(2, "months"), baseDate.clone().subtract(1, "months")];
     for (var weDate of weDates) {
       status("main", "Retrieving the " + weDate.format("MMMM YYYY") + " Watchtower...");
@@ -316,7 +342,7 @@ function goAhead() {
         var week = weeks[w];
         var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
         if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
-          status("main", "Weekend meeting: " + moment(studyDate).format("YYYY-MM-DD"))
+          status("main", "Weekend meeting: " + moment(studyDate).format("YYYY-MM-DD"));
           var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
           mkdirSync(weekPath);
           var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
@@ -372,9 +398,10 @@ function goAhead() {
       for (w = 0; w < weeks.length; w++) {
         var week = weeks[w];
         var weekDay = moment(weeks[w], "YYYYMMDD").add(prefs.mwDay, "day");
-        mwMediaForWeek = {}, weekMediaFilesCopied = [];
+        mwMediaForWeek = {};
+        weekMediaFilesCopied = [];
         if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
-          status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"))
+          status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"));
           var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
           docId = docId[0].DocumentId;
           var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
@@ -441,7 +468,7 @@ function goAhead() {
         var congSpecificFolders = await sftpLs(sftpRootDir + "Congregations/" + prefs.cong + "/Media/");
         var dirs = [];
         congSpecificFolders.forEach((folder, f) => {
-          dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/Media/" + folder.name, mediaPath + "/" + folder.name])
+          dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/Media/" + folder.name, mediaPath + "/" + folder.name]);
         });
         await sftpDownloadDirs(dirs);
       } catch (err) {
@@ -509,26 +536,27 @@ function goAhead() {
   async function downloadRequired(remoteOpts, destFile, method) {
     if (fs.existsSync(destFile)) {
       var localHash = fs.statSync(destFile).size;
+      var remoteHash, json;
       if (remoteOpts.json) {
-        var json = remoteOpts.json;
+        json = remoteOpts.json;
         if (remoteOpts.track) {
-          var remoteHash = json.filter(function(item) {
+          remoteHash = json.filter(function(item) {
             return item.track == remoteOpts.track;
           });
         } else if (!remoteOpts.onlyFile) {
-          var remoteHash = json.files[prefs.lang][remoteOpts.type];
+          remoteHash = json.files[prefs.lang][remoteOpts.type];
         } else {
-          var remoteHash = json;
+          remoteHash = json;
         }
         remoteHash = remoteHash[0];
       } else {
-        var json = await getJson({
+        json = await getJson({
           pub: remoteOpts.pub,
           issue: remoteOpts.issue,
           filetype: remoteOpts.type,
           track: remoteOpts.track
         });
-        var remoteHash = json.files[prefs.lang][remoteOpts.type];
+        remoteHash = json.files[prefs.lang][remoteOpts.type];
       }
       remoteHash = remoteHash.filesize;
       if (remoteHash == localHash) {
@@ -554,7 +582,7 @@ function goAhead() {
         }
       }
     }
-    return valObj
+    return valObj;
   }
 
   async function getDbFromJwpub(opts) {
@@ -624,15 +652,16 @@ function goAhead() {
     progressIncrement("tasksToDo", "total");
     try {
       var tableDocumentMultimedia = await executeStatement(opts.db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'");
+      var tableMultimedia = "";
       if (tableDocumentMultimedia.length == 0) {
-        var tableMultimedia = "Multimedia";
+        tableMultimedia = "Multimedia";
       } else {
-        var tableMultimedia = "DocumentMultimedia";
+        tableMultimedia = "DocumentMultimedia";
       }
       var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType='video/mp4' OR Multimedia.MimeType='audio/mpeg') " + (tableMultimedia == "DocumentMultimedia" ? "AND NOT Multimedia.KeySymbol='sjj' AND NOT Multimedia.KeySymbol='th'" : "") + ") OR (Multimedia.MimeType='image/jpeg' AND Multimedia.CategoryType <> 9" + (opts.pub == "th" ? " AND Multimedia.Width <> ''" : "") + "))";
       var mediaItems = await executeStatement(opts.db, statement);
       if (mediaItems) {
-        for (media of mediaItems) {
+        for (var media of mediaItems) {
           media.FileType = media.FilePath.split(".").pop();
           if ((media.MimeType.includes("audio") || media.MimeType.includes("video"))) {
             if (media.KeySymbol == null) {
@@ -701,13 +730,14 @@ function goAhead() {
   }
 
   async function getJson(opts) {
+    var jsonUrl = "";
     if (opts.url) {
-      var jsonUrl = opts.url;
+      jsonUrl = opts.url;
     } else {
       if (opts.pub == "w" && parseInt(opts.issue) >= 20080801 && opts.issue.slice(-2) == "01") {
         opts.pub = "wp";
       }
-      var jsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + prefs.lang + (opts.issue ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
+      jsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + prefs.lang + (opts.issue ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
     }
     let payload = null;
     try {
@@ -853,7 +883,7 @@ function goAhead() {
       }
       await sftpDownloadDir.end();
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   }
 
@@ -867,7 +897,7 @@ function goAhead() {
       }).then(await
         function(data) {
           data.filter(function(el) {
-            result.push(el)
+            result.push(el);
           });
         }).then(await
         function() {
@@ -875,9 +905,9 @@ function goAhead() {
         }).catch(err => {
         console.log(err);
       });
-      return result
+      return result;
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   }
 
