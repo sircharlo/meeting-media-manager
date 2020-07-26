@@ -6,6 +6,10 @@
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
   <style>
+    html, body {
+      overflow: hidden;
+    }
+
     #overlay {
       background: #fff;
       position: fixed;
@@ -106,6 +110,12 @@
       <div class="spinner-grow mb-3" role="status"></div>
       <div class="align-self-center" id="upToDate" role="status">No updates available, so let's proceed!</div>
       <div class="align-self-center loading" id="pleaseWait" role="status">Hold on, getting things a few ready<span>.</span><span>.</span><span>.</span></div>
+    </div>
+    <div class="align-self-center text-success" id="overlayStarting" style="display: none;">
+      <div class="align-self-center" id="initiatingUpdate" role="status">Initiating media update...</div>
+      <div class="align-self-center pt-3" id="cancelSync" role="status">
+        <button class="btn btn-warning btn-sm" id="btnCancelSync" type="button">Wait, don't update just yet!</button>
+      </div>
     </div>
     <div class="align-self-center text-success" id="overlayComplete" style="display: none;">
       <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder has been successfully updated!</div>

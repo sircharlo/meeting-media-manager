@@ -102,7 +102,6 @@ function goAhead() {
       $("#autoStartUpdate").val(prefs.autoStartUpdate.toString()).change();
       $("#autoRunAtBoot").val(prefs.autoRunAtBoot.toString()).change();
       $("#autoQuitWhenDone").val(prefs.autoQuitWhenDone.toString()).change();
-      configIsValid();
     }
   } else {
     if (isElectron) {
@@ -126,7 +125,7 @@ function goAhead() {
   }
 
   async function congFetch() {
-    if ($('#congPass').val() !== "" && bcrypt.compareSync($('#congPass').val(), congHash)) {
+    if ($('#congPass').val().length > 0 && bcrypt.compareSync($('#congPass').val(), congHash)) {
       $('#congPass').css("background-color", "#bbdefb");
       $('#congsSpinner').fadeIn();
       sftpConfig = {
@@ -149,7 +148,7 @@ function goAhead() {
       $('#congsSpinner').fadeOut(400, () => {
         $("#congs").fadeIn();
       });
-      await configIsValid();
+      configIsValid();
     } else {
       if ($('#congPass').val().length == 0) {
         $('#congPass').css("background-color", "#fff");
@@ -180,10 +179,23 @@ function goAhead() {
         $(this).removeClass("invalid");
       }
     });
-    $("#overlay, #overlayPleaseWait").fadeOut();
+    var cancelSync = false
     if (prefs.autoStartUpdate && configIsValid()) {
-      $("#home-tab").tab('show');
-      $("#mediaSync").click();
+      $("#btnCancelSync").on("click", function() {
+        cancelSync = true;
+        $("#btnCancelSync").removeClass("btn-warning").addClass("btn-success");
+      });
+      $("#overlayPleaseWait").fadeOut(400, () => {
+        $("#overlayStarting").fadeIn().delay(3000).fadeOut(400, () => {
+          if (!cancelSync) {
+            $("#home-tab").tab('show');
+            $("#mediaSync").click();
+          }
+          $("#overlay, #overlayStarting").fadeOut();
+        });
+      });
+    } else {
+      $("#overlay, #overlayPleaseWait").fadeOut();
     }
   }
 
@@ -210,7 +222,7 @@ function goAhead() {
   }
 
   function configIsValid() {
-    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || !$("#cong").val() || !$("#congSelect").val() || ($("#lang").val() !== $("#langSelect").val()) || ($("#cong").val() !== $("#congSelect").val())) {
+    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val())) {
       $("#mediaSync").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
       $("#Settings-tab").addClass("text-danger").tab('show');
