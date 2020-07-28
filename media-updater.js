@@ -215,12 +215,12 @@ function goAhead() {
         $(this).removeClass("invalid");
       }
     });
-    if ($("#settings #outputPath").val().length == 0) {
+    if ($("#settings #outputPath").val().length == 0 || $("#outputPath").val() == "false") {
       $("#settings #outputPath").addClass("invalid");
     } else {
       $("#settings #outputPath").removeClass("invalid");
     }
-    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val()) || $("#outputPath").val().length == 0) {
+    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val()) || $("#outputPath").val().length == 0 || $("#outputPath").val() == "false") {
       $("#mediaSync").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
       $("#Settings-tab").addClass("text-danger").tab('show');
