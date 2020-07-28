@@ -1,5 +1,4 @@
 /*jshint esversion: 8, node: true */
-
 const ping = require('ping');
 
 async function checkInternet() {
@@ -50,9 +49,7 @@ function goAhead() {
   const path = require("path");
   const sqljs = require('sql.js');
 
-  const isElectron = (process.versions.electron ? true : false);
   const congSpecificServer = {
-    cred: decode("cGxleA=="),
     host: decode("c2lyY2hhcmxvLmhvcHRvLm9yZw=="),
     port: decode("NDMyMzQ=")
   };
@@ -63,11 +60,6 @@ function goAhead() {
   var sftpConfig = {};
   const congHash = "$2b$10$Kc4.iOKBP9KXfwQAHUJ0Ieyg0m8EC8nrhPaMigeGPonQ85EMaCJv6";
   const sftpRootDir = decode("L21lZGlhL3BsZXgvTWVkaWEtTGludXgvUHVibGljL2ZpbGVzL01XLU1lZGlhLUZldGNoZXIvVS8=");
-  const outputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
-  const langsFile = outputPath + "/langs.json";
-  const prefsFile = outputPath + "/prefs.json";
-  mkdirSync(outputPath);
-
   var prefs = {};
   var progress = {
     tasksToDo: {
@@ -77,9 +69,16 @@ function goAhead() {
     download: {}
   };
 
+  const appPath = require('electron').remote.app.getAppPath();
+  const langsFile = path.join(appPath + "/langs.json");
+  const prefsFile = path.join(appPath + "/prefs.json");
+
+  if (!fs.existsSync(prefsFile)) {
+    doMaintenance();
+  }
 
   function prefsInitialize() {
-    for (var pref of ["lang", "mwDay", "weDay", "cong", "autoStartUpdate", "autoRunAtBoot", "autoQuitWhenDone"]) {
+    for (var pref of ["lang", "mwDay", "weDay", "cong", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath"]) {
       if (!(Object.keys(prefs).includes(pref))) {
         prefs[pref] = false;
       }
@@ -92,36 +91,21 @@ function goAhead() {
     } catch (err) {
       console.log(err);
     }
-    if (isElectron) {
-      prefsInitialize();
-      $("#lang").val(prefs.lang);
-      $("#mwDay").val(prefs.mwDay).change();
-      $("#weDay").val(prefs.weDay).change();
-      $("#cong").val(prefs.cong).change();
-      $("#congPass").val(prefs.congPass);
-      $("#autoStartUpdate").val(prefs.autoStartUpdate.toString()).change();
-      $("#autoRunAtBoot").val(prefs.autoRunAtBoot.toString()).change();
-      $("#autoQuitWhenDone").val(prefs.autoQuitWhenDone.toString()).change();
+    if (!prefs.lastMaintenance) {
+      doMaintenance();
     }
+    prefsInitialize();
+    $("#lang").val(prefs.lang);
+    $("#outputPath").val(prefs.outputPath);
+    $("#mwDay").val(prefs.mwDay).change();
+    $("#weDay").val(prefs.weDay).change();
+    $("#cong").val(prefs.cong).change();
+    $("#congPass").val(prefs.congPass);
+    $("#autoStartSync").val(prefs.autoStartSync.toString()).change();
+    $("#autoRunAtBoot").val(prefs.autoRunAtBoot.toString()).change();
+    $("#autoQuitWhenDone").val(prefs.autoQuitWhenDone.toString()).change();
   } else {
-    if (isElectron) {
-      configIsValid();
-    }
-  }
-
-  if (!isElectron) {
-    var args = process.argv.slice(2);
-    if ((!args[0] || !args[1] || !args[2]) && (!prefs.lang || !prefs.weDay || !prefs.mwDay)) {
-      throw ("insufficient args (LANG MWDAY WEDAY CONG)");
-    } else if (!prefs.lang || !prefs.weDay || !prefs.mwDay) {
-      prefs = {
-        lang: args[0],
-        mwDay: args[1],
-        weDay: args[2],
-        cong: args[3]
-      };
-      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
-    }
+    configIsValid();
   }
 
   async function congFetch() {
@@ -168,7 +152,7 @@ function goAhead() {
     await congFetch();
     $('#mwDay').select2();
     $('#weDay').select2();
-    $('#autoStartUpdate').select2();
+    $('#autoStartSync').select2();
     $('#autoRunAtBoot').select2();
     $('#autoQuitWhenDone').select2();
     $(".select2-container").addClass("pt-1");
@@ -179,8 +163,8 @@ function goAhead() {
         $(this).removeClass("invalid");
       }
     });
-    var cancelSync = false
-    if (prefs.autoStartUpdate && configIsValid()) {
+    var cancelSync = false;
+    if (prefs.autoStartSync && configIsValid()) {
       $("#btnCancelSync").on("click", function() {
         cancelSync = true;
         $("#btnCancelSync").removeClass("btn-warning").addClass("btn-success");
@@ -204,25 +188,39 @@ function goAhead() {
       var jwLangs = await getJson({
         url: "https://www.jw.org/en/languages/"
       });
-      fs.writeFileSync(langsFile, JSON.stringify(jwLangs.languages, null, 2));
+      let cleanedJwLangs = jwLangs.languages.filter(lang => lang.hasWebContent).map(lang => ({
+        name: lang.name,
+        langcode: lang.langcode
+      }));
+      fs.writeFileSync(langsFile, JSON.stringify(cleanedJwLangs, null, 2));
       prefs.langUpdatedLast = moment();
       fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     }
     var jsonLangs = JSON.parse(fs.readFileSync(langsFile));
     for (var lang of jsonLangs) {
-      if (lang.hasWebContent) {
-        $('#langSelect').append($("<option>", {
-          value: lang.langcode,
-          text: lang.name
-        }));
-      }
+      $('#langSelect').append($("<option>", {
+        value: lang.langcode,
+        text: lang.name
+      }));
     }
     $('#langSelect').val($('#lang').val());
     $('#langSelect').select2();
   }
 
   function configIsValid() {
-    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val())) {
+    $("#settings .select2-selection").each(function() {
+      if ($(this).text().trim() == "") {
+        $(this).addClass("invalid");
+      } else {
+        $(this).removeClass("invalid");
+      }
+    });
+    if ($("#settings #outputPath").val().length == 0) {
+      $("#settings #outputPath").addClass("invalid");
+    } else {
+      $("#settings #outputPath").removeClass("invalid");
+    }
+    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val()) || $("#outputPath").val().length == 0) {
       $("#mediaSync").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
       $("#Settings-tab").addClass("text-danger").tab('show');
@@ -239,90 +237,88 @@ function goAhead() {
 
   var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
 
-  if (isElectron) {
-    getInitialData();
-    $("#settings *").on('change', function() {
-      $(".select2-selection").each(function() {
-        if ($(this).text().trim() == "") {
-          $(this).addClass("invalid");
-        } else {
-          $(this).removeClass("invalid");
-        }
-      });
-      $("#lang").val($("#langSelect").val());
-      $("#cong").val($("#congSelect").val());
-      prefs.lang = $("#langSelect").val();
-      prefs.mwDay = $("#mwDay").val();
-      prefs.weDay = $("#weDay").val();
-      prefs.congPass = $("#congPass").val();
-      prefs.cong = $("#congSelect").val();
-      prefs.autoStartUpdate = ($("#autoStartUpdate").val() === "false" ? false : true);
-      prefs.autoRunAtBoot = ($("#autoRunAtBoot").val() === "false" ? false : true);
-      prefs.autoQuitWhenDone = ($("#autoQuitWhenDone").val() === "false" ? false : true);
-      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
-      window.require('electron').remote.app.setLoginItemSettings({
-        openAtLogin: prefs.autoRunAtBoot
-      });
-      configIsValid();
+  getInitialData();
+  $("#settings #outputPath").on('click', function() {
+    var path = require('electron').remote.dialog.showOpenDialogSync({
+      properties: ['openDirectory']
     });
+    $(this).val(path).change();
+  });
+  $("#settings *").on('change', function() {
+    $("#lang").val($("#langSelect").val());
+    $("#cong").val($("#congSelect").val());
+    prefs.lang = $("#langSelect").val();
+    prefs.mwDay = $("#mwDay").val();
+    prefs.weDay = $("#weDay").val();
+    prefs.congPass = $("#congPass").val();
+    prefs.cong = $("#congSelect").val();
+    prefs.outputPath = $("#outputPath").val();
+    prefs.autoStartSync = ($("#autoStartSync").val() === "false" ? false : true);
+    prefs.autoRunAtBoot = ($("#autoRunAtBoot").val() === "false" ? false : true);
+    prefs.autoQuitWhenDone = ($("#autoQuitWhenDone").val() === "false" ? false : true);
+    fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
+    window.require('electron').remote.app.setLoginItemSettings({
+      openAtLogin: prefs.autoRunAtBoot
+    });
+    configIsValid();
+  });
 
-    $("#settings #congPass").on('change', async function() {
-      await congFetch();
+  $("#settings #congPass").on('change', async function() {
+    await congFetch();
+  });
+  $("#mediaSync").on('click', async function() {
+    var stayAlive = false;
+    $("#mediaSync").prop("disabled", true);
+    $("#mediaSync").addClass("btn-secondary");
+    $("#Settings-tab").addClass("disabled");
+    var buttonLabel = $("#mediaSync").html();
+    $("#mediaSync").addClass("loading").html('Sync in progress<span>.</span><span>.</span><span>.</span>');
+    $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
+    $("div.progress").parent().css('visibility', 'visible').hide().fadeIn();
+    await progressInitialize();
+    await startMediaSync();
+    await progressReset();
+    if ($("#stayAlive").length !== 0) {
+      $("#stayAlive").remove();
+    }
+    if (prefs.autoQuitWhenDone) {
+      $("#overlayComplete").append('<div class="align-self-center pt-3" id="stayAlive" role="status"><button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don\'t close automatically!</button></div>');
+    }
+    $("#btnStayAlive").on("click", function() {
+      stayAlive = true;
+      $("#btnStayAlive").removeClass("btn-warning").addClass("btn-success");
     });
-    $("#mediaSync").on('click', async function() {
-      var stayAlive = false;
-      $("#mediaSync").prop("disabled", true);
-      $("#mediaSync").addClass("btn-secondary");
-      $("#Settings-tab").addClass("disabled");
-      var buttonLabel = $("#mediaSync").html();
-      $("#mediaSync").addClass("loading").html('Update in progress<span>.</span><span>.</span><span>.</span>');
-      $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
-      $("div.progress").parent().css('visibility', 'visible').hide().fadeIn();
-      await progressInitialize();
-      await startMediaUpdate();
-      await progressReset();
-      if ($("#stayAlive").length !== 0) {
-        $("#stayAlive").remove();
+    $("#overlay").fadeIn();
+    $("#overlayComplete").fadeIn().delay(3000).fadeOut(400, () => {
+      if (prefs.autoQuitWhenDone && !stayAlive) {
+        window.require('electron').remote.app.quit();
       }
-      if (prefs.autoQuitWhenDone) {
-        $("#overlayComplete").append('<div class="align-self-center pt-3" id="stayAlive" role="status"><button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don\'t close automatically!</button></div>');
-      }
-      $("#btnStayAlive").on("click", function() {
-        stayAlive = true;
-        $("#btnStayAlive").removeClass("btn-warning").addClass("btn-success");
-      });
-      $("#overlay").fadeIn();
-      $("#overlayComplete").fadeIn().delay(3000).fadeOut(400, () => {
-        if (prefs.autoQuitWhenDone && !stayAlive) {
-          window.require('electron').remote.app.quit();
-        }
-        $("#overlay").fadeOut();
-      });
-      $("div.progress").parent().fadeOut(400, function() {
-        $(this).css('visibility', 'hidden').css("display", "block");
-      });
-      $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
-      $("#mediaSync").html(buttonLabel);
-      $("#mediaSync").prop("disabled", false);
-      $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
-      $("#Settings-tab").removeClass("disabled");
-      status("main", "Currently inactive");
+      $("#overlay").fadeOut();
     });
-  } else {
-    startMediaUpdate();
-  }
+    $("div.progress").parent().fadeOut(400, function() {
+      $(this).css('visibility', 'hidden').css("display", "block");
+    });
+    $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
+    $("#mediaSync").html(buttonLabel);
+    $("#mediaSync").prop("disabled", false);
+    $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
+    $("#Settings-tab").removeClass("disabled");
+    status("main", "Currently inactive");
+  });
 
-  async function startMediaUpdate() {
+  async function startMediaSync() {
     await setVars();
     await cleanUp();
-    await updateMwMeeting();
-    await updateWeMeeting();
-    await updateCongSpecific();
+    await syncMwMeeting();
+    await syncWeMeeting();
+    await syncCongSpecific();
   }
 
   // Main functions
 
-  async function setVars() {
+  function setVars() {
+    outputPath = path.join(prefs.outputPath, "Meeting Media");
+    mkdirSync(outputPath);
     baseDate = moment().startOf('isoWeek');
     langPath = outputPath + "/" + prefs.lang;
     mkdirSync(langPath);
@@ -333,7 +329,7 @@ function goAhead() {
     progressReset();
   }
 
-  async function updateWeMeeting() {
+  async function syncWeMeeting() {
     var weDates = [baseDate.clone().subtract(2, "months"), baseDate.clone().subtract(1, "months")];
     for (var weDate of weDates) {
       status("main", "Retrieving the " + weDate.format("MMMM YYYY") + " Watchtower...");
@@ -391,7 +387,7 @@ function goAhead() {
     }
   }
 
-  async function updateMwMeeting() {
+  async function syncMwMeeting() {
     var mwDates = [baseDate, baseDate.clone().add(1, "months")];
     for (var mwDate of mwDates) {
       status("main", "Retrieving the " + mwDate.format("MMMM YYYY") + " Meeting Workbook...");
@@ -473,7 +469,7 @@ function goAhead() {
     }
   }
 
-  async function updateCongSpecific() {
+  async function syncCongSpecific() {
     if (prefs.cong !== "None") {
       status("main", "Retrieving any congregation-specific files...");
       try {
@@ -490,21 +486,6 @@ function goAhead() {
   }
 
   function cleanUp() {
-    if (!prefs.lastMaintenance || moment(prefs.lastMaintenance).isBefore(moment("2020-06-07", "YYYY-MM-DD"))) {
-
-      // 2020.06.07 one-time maintenance start
-      status("main", "Performing one-time maintenance functions...");
-      for (var delDir of [mediaPath, langPath + "/Songs"]) {
-        fs.rmdirSync(delDir, {
-          recursive: true
-        });
-      }
-      mkdirSync(mediaPath);
-      // 2020.06.07 one-time maintenance end
-
-      prefs.lastMaintenance = moment();
-      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
-    }
     const getDirectories = source =>
       fs.readdirSync(source, {
         withFileTypes: true
@@ -524,6 +505,29 @@ function goAhead() {
   }
 
   // Support functions
+
+  function doMaintenance() {
+    // 2020.07.28 one-time maintenance start
+    if (!prefs.lastMaintenance || moment(prefs.lastMaintenance).isBefore(moment("2020-07-28", "YYYY-MM-DD"))) {
+      status("main", "Performing one-time maintenance functions...");
+      var oldOutputPath = path.join(os.homedir(), "Desktop");
+      $("#outputPath").val(oldOutputPath).change();
+      try {
+        for (var file of ["langs.json", "prefs.json"]) {
+          fs.renameSync(path.join(oldOutputPath, "Meeting Media", file), path.join(appPath, file));
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      prefs = JSON.parse(fs.readFileSync(prefsFile));
+      prefs.outputPath = oldOutputPath;
+      prefs.lastMaintenance = moment();
+      prefs.langUpdatedLast = moment().subtract(1, "year");
+      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
+      status("main", "Currently inactive");
+    }
+    // 2020.07.28 one-time maintenance end
+  }
 
   const downloadFile = async url => {
     try {
@@ -800,43 +804,34 @@ function goAhead() {
   }
 
   function progressInitialize() {
-    if (isElectron) {
-      for (var bar of Object.keys(progress)) {
-        progress[bar].initialStatus = $("#" + bar + "Status").html();
-      }
+    for (var bar of Object.keys(progress)) {
+      progress[bar].initialStatus = $("#" + bar + "Status").html();
     }
   }
 
   function progressReset() {
-    if (isElectron) {
-      for (var bar of Object.keys(progress)) {
-        progress[bar].current = 0;
-        progress[bar].total = 0;
-        var element = "#" + bar + "Progress div";
-        $(element).html("");
-        $(element).width("0%");
-        element = "#" + bar + "Status";
-        $(element).html(progress[bar].initialStatus);
-      }
+    for (var bar of Object.keys(progress)) {
+      progress[bar].current = 0;
+      progress[bar].total = 0;
+      var element = "#" + bar + "Progress div";
+      $(element).html("");
+      $(element).width("0%");
+      element = "#" + bar + "Status";
+      $(element).html(progress[bar].initialStatus);
     }
   }
 
   function progressSet(bar, percent) {
-    if (isElectron) {
-      var progressBar = "#" + bar + "Progress div";
-      $(progressBar).html(percent.toFixed(2) + "%");
-      $(progressBar).width(percent + "%");
-    }
+    var progressBar = "#" + bar + "Progress div";
+    $(progressBar).html(percent.toFixed(2) + "%");
+    $(progressBar).width(percent + "%");
   }
 
   function progressUpdate(bar) {
-    if (isElectron) {
-      var progressBar = "#" + bar + "Progress div";
-      var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
-      $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
-      $(progressBar).width(percentage);
-      var progressAlert = "#" + bar + "Status";
-    }
+    var progressBar = "#" + bar + "Progress div";
+    var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
+    $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
+    $(progressBar).width(percentage);
   }
 
   function sanitizeFilename(filename) {
@@ -924,9 +919,7 @@ function goAhead() {
   }
 
   function status(dest, message) {
-    if (isElectron) {
-      $("#" + dest + "Status").html(message);
-    }
+    $("#" + dest + "Status").html(message);
   }
 
   function writeFile(opts) {
