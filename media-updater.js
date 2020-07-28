@@ -69,7 +69,7 @@ function goAhead() {
     download: {}
   };
 
-  const appPath = require('electron').remote.app.getAppPath();
+  const appPath = require('electron').remote.app.getPath("userData");
   const langsFile = path.join(appPath + "/langs.json");
   const prefsFile = path.join(appPath + "/prefs.json");
 
@@ -519,11 +519,9 @@ function goAhead() {
       } catch (err) {
         console.log(err);
       }
-      prefs = JSON.parse(fs.readFileSync(prefsFile));
       prefs.outputPath = oldOutputPath;
       prefs.lastMaintenance = moment();
       prefs.langUpdatedLast = moment().subtract(1, "year");
-      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
       status("main", "Currently inactive");
     }
     // 2020.07.28 one-time maintenance end
