@@ -10,7 +10,7 @@ The app should run as is on most modern computers running Windows, Linux, or Mac
 
 ## Usage
 
-Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Open the app, and configure the settings as you please. Once you execute the media sync, all downloaded media will be placed in a subfolder called "Meeting Media" in the folder of your choosing. By default, this is set to your desktop.
+Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Open the app, and configure the settings as you please. Once you execute the media sync, all downloaded media will be placed in a folder of your choosing.
 
 
 ## Does this app infringe the JW.org Terms of Use?

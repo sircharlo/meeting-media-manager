@@ -215,12 +215,13 @@ function goAhead() {
         $(this).removeClass("invalid");
       }
     });
-    if ($("#settings #outputPath").val().length == 0 || $("#outputPath").val() == "false") {
-      $("#settings #outputPath").addClass("invalid");
+    if ($("#outputPath").val().length == 0 || !$("#outputPath").val() || $("#outputPath").val() == "false" || !fs.existsSync($("#outputPath").val())) {
+      $("#outputPath").val("");
+      $("#outputPath").addClass("invalid");
     } else {
-      $("#settings #outputPath").removeClass("invalid");
+      $("#outputPath").removeClass("invalid");
     }
-    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val()) || $("#outputPath").val().length == 0 || $("#outputPath").val() == "false") {
+    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val()) || !$("#outputPath").val()) {
       $("#mediaSync").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
       $("#Settings-tab").addClass("text-danger").tab('show');
@@ -317,7 +318,7 @@ function goAhead() {
   // Main functions
 
   function setVars() {
-    outputPath = path.join(prefs.outputPath, "Meeting Media");
+    outputPath = path.join(prefs.outputPath);
     mkdirSync(outputPath);
     baseDate = moment().startOf('isoWeek');
     langPath = outputPath + "/" + prefs.lang;
@@ -510,11 +511,11 @@ function goAhead() {
     // 2020.07.28 one-time maintenance start
     if (!prefs.lastMaintenance || moment(prefs.lastMaintenance).isBefore(moment("2020-07-28", "YYYY-MM-DD"))) {
       status("main", "Performing one-time maintenance functions...");
-      var oldOutputPath = path.join(os.homedir(), "Desktop");
+      var oldOutputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
       $("#outputPath").val(oldOutputPath).change();
       try {
         for (var file of ["langs.json", "prefs.json"]) {
-          fs.renameSync(path.join(oldOutputPath, "Meeting Media", file), path.join(appPath, file));
+          fs.renameSync(path.join(oldOutputPath, file), path.join(appPath, file));
         }
       } catch (err) {
         console.log(err);
