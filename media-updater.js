@@ -208,7 +208,7 @@ function goAhead() {
   }
 
   function configIsValid() {
-    $("#settings .select2-selection").each(function() {
+    $("#overlaySettings .select2-selection").each(function() {
       if ($(this).text().trim() == "") {
         $(this).addClass("invalid");
       } else {
@@ -222,16 +222,19 @@ function goAhead() {
       $("#outputPath").removeClass("invalid");
     }
     if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val()) || !$("#outputPath").val()) {
-      $("#mediaSync").prop("disabled", true);
+      $("#mediaSync, #btn-settings").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
-      $("#Settings-tab").addClass("text-danger").tab('show');
-      $("#home-tab").addClass("disabled");
+      //$("#Settings-tab").addClass("text-danger").tab('show');
+      //$("#home-tab").addClass("disabled");
+      $("#btn-settings").addClass("btn-danger").removeClass("btn-dark");
+      settingsScreen(true);
       return false;
     } else {
-      $("#mediaSync").prop("disabled", false);
+      $("#mediaSync, #btn-settings").prop("disabled", false);
       $("#mediaSync").removeClass("btn-secondary");
-      $("#Settings-tab").removeClass("text-danger");
-      $("#home-tab").removeClass("disabled");
+      //$("#Settings-tab").removeClass("text-danger");
+      //$("#home-tab").removeClass("disabled");
+      $("#btn-settings").addClass("btn-dark").removeClass("btn-danger");
       return true;
     }
   }
@@ -239,13 +242,16 @@ function goAhead() {
   var mwMediaForWeek, baseDate, weekMediaFilesCopied = [];
 
   getInitialData();
-  $("#settings #outputPath").on('click', function() {
+  $("#outputPath").on('click', function() {
     var path = require('electron').remote.dialog.showOpenDialogSync({
       properties: ['openDirectory']
     });
     $(this).val(path).change();
   });
-  $("#settings *").on('change', function() {
+  $("#btn-settings").on('click', function() {
+    settingsScreen();
+  });
+  $("#overlaySettings *").on('change', function() {
     $("#lang").val($("#langSelect").val());
     $("#cong").val($("#congSelect").val());
     prefs.lang = $("#langSelect").val();
@@ -264,14 +270,15 @@ function goAhead() {
     configIsValid();
   });
 
-  $("#settings #congPass").on('change', async function() {
+  $("#overlaySettings #congPass").on('change', async function() {
     await congFetch();
   });
   $("#mediaSync").on('click', async function() {
     var stayAlive = false;
     $("#mediaSync").prop("disabled", true);
     $("#mediaSync").addClass("btn-secondary");
-    $("#Settings-tab").addClass("disabled");
+    //$("#Settings-tab").addClass("disabled");
+    $("#btn-settings").fadeOut();//.prop("disabled", true);
     var buttonLabel = $("#mediaSync").html();
     $("#mediaSync").addClass("loading").html('Sync in progress<span>.</span><span>.</span><span>.</span>');
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
@@ -303,7 +310,8 @@ function goAhead() {
     $("#mediaSync").html(buttonLabel);
     $("#mediaSync").prop("disabled", false);
     $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
-    $("#Settings-tab").removeClass("disabled");
+    //$("#Settings-tab").removeClass("disabled");
+    $("#btn-settings").fadeIn();//.prop("disabled", false);
     status("main", "Currently inactive");
   });
 
@@ -854,6 +862,17 @@ function goAhead() {
       bytes = Buffer.byteLength(filename, 'utf8');
     }
     return filename;
+  }
+
+  function settingsScreen(forceShow) {
+    var visible = $("#overlaySettings").is(":visible");
+    if (!visible || forceShow) {
+    $("#overlaySettings").fadeIn();
+    $("btn-settings").addClass("btn-success");
+  } else {
+    $("#overlaySettings").fadeOut();
+    $("btn-settings").removeClass("btn-success");
+  }
   }
 
   async function sftpDownloadDirs(dirs) {

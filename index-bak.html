@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JW Meeting Media Fetcher</title>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
+  <style>
+    html,
+    body {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+    }
+
+    #overlay {
+      background: #fff;
+      position: fixed;
+      height: 100%;
+      width: 100%;
+      z-index: 5000;
+      top: 0;
+      left: 0;
+      float: left;
+      text-align: center;
+      display: flex;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: .2;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: .2;
+      }
+    }
+
+    .loading span {
+      animation-name: blink;
+      animation-duration: 1.4s;
+      animation-iteration-count: infinite;
+      animation-fill-mode: both;
+    }
+
+    .loading span:nth-child(2) {
+      animation-delay: .2s;
+    }
+
+    .loading span:nth-child(3) {
+      animation-delay: .4s;
+    }
+
+    #settings,
+    span.select2-dropdown {
+      font-size: 0.9em
+    }
+
+    .select2-container {
+      width: 100% !important;
+    }
+
+    .invalid {
+      border-color: #bd2130 !important;
+    }
+
+    #outputPath {
+      background-color: #fff;
+    }
+
+    #version {
+      position: fixed;
+      bottom: 0;
+    }
+
+    #version span.badge {
+      color: #999;
+      font-weight: normal;
+    }
+  </style>
+  <script>
+    window.$ = window.jQuery = require('jquery');
+    window.popperjs = require('popper.js');
+    window.Bootstrap = require('bootstrap');
+    window.select2 = require('select2')(jQuery);
+  </script>
+</head>
+
+<body>
+  <div id="overlay" class="justify-content-center">
+    <div class="align-self-center text-dark" id="overlayInternetCheck">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">Hang tight, looking for Internet connectivity<span>.</span><span>.</span><span>.</span></div>
+    </div>
+    <div class="align-self-center text-danger" id="overlayInternetFail" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">I can't find the Internet! I'll try again in a few seconds<span>.</span><span>.</span><span>.</span></div>
+    </div>
+    <div class="align-self-center text-dark" id="overlayUpdateCheck" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">Internet's all good; let's check for updates to this app<span>.</span><span>.</span><span>.</span></div>
+    </div>
+    <div class="align-self-center text-info" id="overlayUpdateAvailable" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">App update available, hold on<span>.</span><span>.</span><span>.</span></div>
+      <div class="align-self-center" role="status" id="updatePercent"></div>
+    </div>
+    <div class="align-self-center text-success" id="overlayUpdateDownloaded" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">All done! Now let's install that app update<span>.</span><span>.</span><span>.</span></div>
+    </div>
+    <div class="align-self-center text-primary" id="overlayPleaseWait" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center" id="upToDate" role="status">No app updates available, so let's proceed!</div>
+      <div class="align-self-center loading" id="pleaseWait" role="status">Hold on, getting things a few ready<span>.</span><span>.</span><span>.</span></div>
+    </div>
+    <div class="align-self-center text-success" id="overlayStarting" style="display: none;">
+      <div class="align-self-center" id="initiatingSync" role="status">Initiating media sync...</div>
+      <div class="align-self-center pt-3" id="cancelSync" role="status">
+        <button class="btn btn-warning btn-sm" id="btnCancelSync" type="button">Wait, don't sync just yet!</button>
+      </div>
+    </div>
+    <div class="align-self-center text-success" id="overlayComplete" style="display: none;">
+      <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder has been successfully synced!</div>
+    </div>
+  </div>
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Media sync</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="Settings-tab" data-toggle="tab" href="#Settings" role="tab" aria-controls="Settings" aria-selected="false">Settings</a>
+    </li>
+  </ul>
+  <div class="tab-content p-3" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+      <div class="row py-5 justify-content-center">
+        <blockquote id="mainStatus" class="blockquote text-center my-0">
+          Currently inactive
+        </blockquote>
+      </div>
+      <div class="row py-5 justify-content-center">
+        <button type="button" class="btn btn-primary" id="mediaSync">Start!</button>
+      </div>
+      <div class="row py-3 justify-content-center">
+        <div class="col" style="visibility: hidden">
+          <div class="text-center">
+            Overall progress
+          </div>
+          <div class="progress" id="tasksToDoProgress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+              ...
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row py-3">
+        <div class="col" style="visibility: hidden">
+          <div class="text-center">
+            Current download progress
+          </div>
+          <div class="progress" id="downloadProgress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+              ...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="Settings" role="tabpanel" aria-labelledby="Settings-tab">
+      <div id="settings">
+        <div class="form-group row">
+          <label for="outputPath" class="col col-form-label text-right">Folder in which to store media subfolder</label>
+          <div class="col">
+            <input type="text" class="form-control form-control-sm" id="outputPath" required readonly />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="langSelect" class="col col-form-label text-right">Media language</label>
+          <div class="col">
+            <input type="text" class="form-control" id="lang" required hidden />
+            <select id="langSelect" class="form-control" required>
+              <option disabled selected value hidden></option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="mwDay" class="col col-form-label text-right">Midweek meeting day</label>
+          <div class="col">
+            <select class="form-control" id="mwDay" required>
+              <option disabled selected value hidden></option>
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <option value="5">Saturday</option>
+              <option value="6">Sunday</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="weDay" class="col col-form-label text-right">Weekend meeting day</label>
+          <div class="col">
+            <select class="form-control" id="weDay" required>
+              <option disabled selected value hidden></option>
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <option value="5">Saturday</option>
+              <option value="6">Sunday</option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="form-group row">
+          <label for="autoStartSync" class="col col-form-label text-right">Sync media on app launch</label>
+          <div class="col">
+            <select class="form-control" id="autoStartSync">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="autoQuitWhenDone" class="col col-form-label text-right">Quit app after media sync</label>
+          <div class="col">
+            <select class="form-control" id="autoQuitWhenDone">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="autoRunAtBoot" class="col col-form-label text-right">Run app at system startup</label>
+          <div class="col">
+            <select class="form-control" id="autoRunAtBoot">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="form-group row">
+          <label for="congUnlock" class="col col-form-label text-right">Additional media passcode</label>
+          <div class="col">
+            <input type="password" id="congPass" class="form-control form-control-sm" required />
+          </div>
+        </div>
+        <div class="text-center" id="congsSpinner" style="display:none">
+          <div class="col">
+            <div class="spinner-border spinner-border-sm" role="status"></div>
+          </div>
+        </div>
+        <div class="form-group row" id="congs" style="display:none">
+          <label for="congSelect" class="col col-form-label text-right">Congregation/group</label>
+          <div class="col">
+            <input type="text" id="cong" required hidden />
+            <select id="congSelect" class="form-control">
+              <option selected value="None">None</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="version" class="col text-center">
+    <span class="badge badge-light"></span>
+  </div>
+  <script src="./media-updater.js"></script>
+</body>
+
+</html>
