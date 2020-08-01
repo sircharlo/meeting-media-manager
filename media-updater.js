@@ -101,9 +101,14 @@ function goAhead() {
     $("#weDay").val(prefs.weDay).change();
     $("#cong").val(prefs.cong).change();
     $("#congPass").val(prefs.congPass);
-    $("#autoStartSync").val(prefs.autoStartSync.toString()).change();
-    $("#autoRunAtBoot").val(prefs.autoRunAtBoot.toString()).change();
-    $("#autoQuitWhenDone").val(prefs.autoQuitWhenDone.toString()).change();
+    $("#autoStartSync").prop("checked", prefs.autoStartSync).change();
+    $("#autoRunAtBoot").prop("checked", prefs.autoRunAtBoot).change();
+    $("#autoQuitWhenDone").prop("checked", prefs.autoQuitWhenDone).change();
+    $(".btn-group button input:checked").parent().addClass("text-success");
+    $(".btn-group button input:not(:checked)").parent().removeClass("text-success");
+    $(".btn-group button input:checked").parent().find("i").addClass("fa-toggle-on").removeClass("fa-toggle-off");
+    $(".btn-group button input:not(:checked)").parent().find("i").addClass("fa-toggle-off").removeClass("fa-toggle-on");
+
   } else {
     configIsValid();
   }
@@ -111,28 +116,32 @@ function goAhead() {
   async function congFetch() {
     if ($('#congPass').val().length > 0 && bcrypt.compareSync($('#congPass').val(), congHash)) {
       $('#congPass').css("background-color", "#bbdefb");
-      $('#congsSpinner').fadeIn();
-      sftpConfig = {
-        host: congSpecificServer.host,
-        port: congSpecificServer.port,
-        username: $('#congPass').val(),
-        password: $('#congPass').val(),
-        keepaliveInterval: 2000,
-        keepaliveCountMax: 20
-      };
-      var congs = await sftpLs(sftpRootDir + "Congregations");
-      for (var cong of congs) {
-        $('#congSelect').append($("<option>", {
-          value: cong.name,
-          text: cong.name
-        }));
-      }
-      $('#congSelect').val($('#cong').val());
-      $('#congSelect').select2();
-      $('#congsSpinner').fadeOut(400, () => {
-        $("#congs").fadeIn();
+      $('#congs').fadeIn(400, function() {
+        $('#congs').css("visibility", "visible");
+        $('#congsSpinner').fadeIn(400, async function() {
+          sftpConfig = {
+            host: congSpecificServer.host,
+            port: congSpecificServer.port,
+            username: $('#congPass').val(),
+            password: $('#congPass').val(),
+            keepaliveInterval: 2000,
+            keepaliveCountMax: 20
+          };
+          var congs = await sftpLs(sftpRootDir + "Congregations");
+          for (var cong of congs) {
+            $('#congSelect').append($("<option>", {
+              value: cong.name,
+              text: cong.name
+            }));
+          }
+          $('#congSelect').val($('#cong').val());
+          $('#congSelect').select2();
+          $('#congsSpinner').fadeOut(400, () => {
+            $("#congContainer").fadeIn();
+          });
+          configIsValid();
+        });
       });
-      configIsValid();
     } else {
       if ($('#congPass').val().length == 0) {
         $('#congPass').css("background-color", "#fff");
@@ -140,8 +149,10 @@ function goAhead() {
         $('#congPass').css("background-color", "#ffcdd2");
       }
       $('#congs').fadeOut(400, () => {
+        $('#congs').css("visibility", "hidden")
         $('#congSelect option[value!="None"]').remove();
-        $("#congSelect").prop("selectedIndex", 0).change();
+        $("#congContainer").fadeOut();
+        $('#congSelect').prop("selectedIndex", 0).change();
       });
     }
   }
@@ -152,10 +163,6 @@ function goAhead() {
     await congFetch();
     $('#mwDay').select2();
     $('#weDay').select2();
-    $('#autoStartSync').select2();
-    $('#autoRunAtBoot').select2();
-    $('#autoQuitWhenDone').select2();
-    $(".select2-container").addClass("pt-1");
     $(".select2-selection").each(function() {
       if ($(this).text().trim() == "") {
         $(this).addClass("invalid");
@@ -208,6 +215,7 @@ function goAhead() {
   }
 
   function configIsValid() {
+    console.log($("#lang").val(), $("#langSelect").val(), $("#mwDay").val(), $("#weDay").val(), $("#congPass").val().length, $("#cong").val(), $("#congSelect").val(), $("#outputPath").val())
     $("#overlaySettings .select2-selection").each(function() {
       if ($(this).text().trim() == "") {
         $(this).addClass("invalid");
@@ -221,20 +229,16 @@ function goAhead() {
     } else {
       $("#outputPath").removeClass("invalid");
     }
-    if (!$("#lang").val() || !$("#langSelect").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !$("#congSelect").val() || ($("#cong").val() !== $("#congSelect").val()) || !bcrypt.compareSync($('#congPass').val(), congHash))) || ($("#lang").val() !== $("#langSelect").val()) || !$("#outputPath").val()) {
-      $("#mediaSync, #btn-settings").prop("disabled", true);
+    if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !bcrypt.compareSync($('#congPass').val(), congHash))) || !$("#outputPath").val()) {
+      $("#mediaSync, .btn-settings").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary");
-      //$("#Settings-tab").addClass("text-danger").tab('show');
-      //$("#home-tab").addClass("disabled");
-      $("#btn-settings").addClass("btn-danger").removeClass("btn-dark");
+      $(".btn-settings").addClass("btn-danger").removeClass("btn-primary");
       settingsScreen(true);
       return false;
     } else {
-      $("#mediaSync, #btn-settings").prop("disabled", false);
+      $("#mediaSync, .btn-settings").prop("disabled", false);
       $("#mediaSync").removeClass("btn-secondary");
-      //$("#Settings-tab").removeClass("text-danger");
-      //$("#home-tab").removeClass("disabled");
-      $("#btn-settings").addClass("btn-dark").removeClass("btn-danger");
+      $(".btn-settings").addClass("btn-primary").removeClass("btn-danger");
       return true;
     }
   }
@@ -248,21 +252,25 @@ function goAhead() {
     });
     $(this).val(path).change();
   });
-  $("#btn-settings").on('click', function() {
+  $(".btn-settings").on('click', function() {
     settingsScreen();
   });
   $("#overlaySettings *").on('change', function() {
     $("#lang").val($("#langSelect").val());
     $("#cong").val($("#congSelect").val());
+    $(".btn-group button input:checked").parent().addClass("text-success");
+    $(".btn-group button input:not(:checked)").parent().removeClass("text-success");
+    $(".btn-group button input:checked").parent().find("i").addClass("fa-toggle-on").removeClass("fa-toggle-off");
+    $(".btn-group button input:not(:checked)").parent().find("i").addClass("fa-toggle-off").removeClass("fa-toggle-on");
     prefs.lang = $("#langSelect").val();
     prefs.mwDay = $("#mwDay").val();
     prefs.weDay = $("#weDay").val();
     prefs.congPass = $("#congPass").val();
     prefs.cong = $("#congSelect").val();
     prefs.outputPath = $("#outputPath").val();
-    prefs.autoStartSync = ($("#autoStartSync").val() === "false" ? false : true);
-    prefs.autoRunAtBoot = ($("#autoRunAtBoot").val() === "false" ? false : true);
-    prefs.autoQuitWhenDone = ($("#autoQuitWhenDone").val() === "false" ? false : true);
+    prefs.autoStartSync = $("#autoStartSync").prop("checked");
+    prefs.autoRunAtBoot = $("#autoRunAtBoot").prop("checked");
+    prefs.autoQuitWhenDone = $("#autoQuitWhenDone").prop("checked");
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     window.require('electron').remote.app.setLoginItemSettings({
       openAtLogin: prefs.autoRunAtBoot
@@ -278,7 +286,7 @@ function goAhead() {
     $("#mediaSync").prop("disabled", true);
     $("#mediaSync").addClass("btn-secondary");
     //$("#Settings-tab").addClass("disabled");
-    $("#btn-settings").fadeOut();//.prop("disabled", true);
+    $(".btn-settings").fadeOut();//.prop("disabled", true);
     var buttonLabel = $("#mediaSync").html();
     $("#mediaSync").addClass("loading").html('Sync in progress<span>.</span><span>.</span><span>.</span>');
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
@@ -311,7 +319,7 @@ function goAhead() {
     $("#mediaSync").prop("disabled", false);
     $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
     //$("#Settings-tab").removeClass("disabled");
-    $("#btn-settings").fadeIn();//.prop("disabled", false);
+    $(".btn-settings").fadeIn();//.prop("disabled", false);
     status("main", "Currently inactive");
   });
 
@@ -867,11 +875,10 @@ function goAhead() {
   function settingsScreen(forceShow) {
     var visible = $("#overlaySettings").is(":visible");
     if (!visible || forceShow) {
-    $("#overlaySettings").fadeIn();
-    $("btn-settings").addClass("btn-success");
+    $("#overlaySettings").slideDown("fast");
   } else {
-    $("#overlaySettings").fadeOut();
-    $("btn-settings").removeClass("btn-success");
+    $("#overlaySettings").slideUp("fast");
+    $(".btn-settings i").removeClass("fa-home").addClass("fa-cog");
   }
   }
 
