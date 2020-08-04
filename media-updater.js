@@ -152,7 +152,7 @@ function goAhead() {
         $('#congPass').css("background-color", "#ffcdd2");
       }
       $('#congs').fadeOut(400, () => {
-        $('#congs').css("visibility", "hidden")
+        $('#congs').css("visibility", "hidden");
         $('#congSelect option[value!="None"]').remove();
         $("#congContainer").fadeOut();
         $('#congSelect').prop("selectedIndex", 0).change();
@@ -166,6 +166,7 @@ function goAhead() {
     await congFetch();
     $('#mwDay').select2();
     $('#weDay').select2();
+    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     $(".select2-selection").each(function() {
       if ($(this).text().trim() == "") {
         $(this).addClass("invalid");
@@ -271,6 +272,8 @@ function goAhead() {
     prefs.autoStartSync = $("#autoStartSync").prop("checked");
     prefs.autoRunAtBoot = $("#autoRunAtBoot").prop("checked");
     prefs.autoQuitWhenDone = $("#autoQuitWhenDone").prop("checked");
+    $(".meeting").removeClass("meeting");
+    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     window.require('electron').remote.app.setLoginItemSettings({
       openAtLogin: prefs.autoRunAtBoot
@@ -301,12 +304,12 @@ function goAhead() {
       $("#btnStayAlive").removeClass("btn-warning").addClass("btn-success");
     });
     $("#overlayComplete").fadeIn(400, () => {
-      $("#home, .btn-settings").fadeTo(400, 0);
+      $("#home, .btn-settings, #version").fadeTo(400, 0);
     }).delay(3000).fadeOut(400, () => {
       if (prefs.autoQuitWhenDone && !stayAlive) {
         window.require('electron').remote.app.quit();
       }
-      $("#home, .btn-settings").fadeTo(400, 1);
+      $("#home, .btn-settings, #version").fadeTo(400, 1);
       $("#btnStayAlive").removeClass("btn-success").addClass("btn-warning");
     });
     $("div.progress").parent().fadeOut(400, function() {
@@ -317,7 +320,7 @@ function goAhead() {
     $("#mediaSync").prop("disabled", false);
     $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
     $(".btn-settings").fadeIn();
-    status("main", "Currently inactive");
+    status("main", "Push the big button!");
   });
 
   async function startMediaSync() {
@@ -364,7 +367,7 @@ function goAhead() {
         var week = weeks[w];
         var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
         if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
-          status("main", "Weekend meeting: " + moment(studyDate).format("YYYY-MM-DD"));
+          status("main", "Retrieving media for the weekend meeting...");
           $("#day" + prefs.weDay).addClass("bg-info").removeClass("bg-secondary");
           var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
           mkdirSync(weekPath);
@@ -425,7 +428,7 @@ function goAhead() {
         mwMediaForWeek = {};
         weekMediaFilesCopied = [];
         if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
-          status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"));
+          status("main", "Retrieving media for the midweek meeting...");
           $("#day" + prefs.mwDay).addClass("bg-info").removeClass("bg-secondary");
           var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
           docId = docId[0].DocumentId;
@@ -513,7 +516,7 @@ function goAhead() {
     var mediaSubDirs = getDirectories(mediaPath);
     for (var mediaSubDir of mediaSubDirs) {
       if (moment(mediaSubDir, "YYYY-MM-DD").isValid() && moment(mediaSubDir, "YYYY-MM-DD").isBefore(baseDate)) {
-        status("main", "Cleaning up: " + mediaSubDir);
+        status("main", "Cleaning up older media...");
         var deleteDir = path.join(mediaPath, mediaSubDir);
         fs.rmdirSync(deleteDir, {
           recursive: true
@@ -540,7 +543,7 @@ function goAhead() {
       prefs.outputPath = oldOutputPath;
       prefs.lastMaintenance = moment();
       prefs.langUpdatedLast = moment().subtract(1, "year");
-      status("main", "Currently inactive");
+      status("main", "Push the big button!");
     }
     // 2020.07.28 one-time maintenance end
   }
@@ -655,7 +658,7 @@ function goAhead() {
         return sqldb;
       }
     } catch (err) {
-      console.log(err, opts, json)
+      console.log(err, opts, json);
     }
   }
 
@@ -965,7 +968,7 @@ function goAhead() {
         fs.writeFileSync(opts.destFile, opts.file);
         progressIncrement(opts.bar, "current");
       }
-    } else { // it's a copy
+    } else {
       if ((fs.existsSync(opts.destFile) && fs.existsSync(opts.file) && fs.statSync(opts.destFile).size !== fs.statSync(opts.file).size) || !fs.existsSync(opts.destFile)) {
         progressIncrement(opts.bar, "total");
         if (!opts.sync) {
