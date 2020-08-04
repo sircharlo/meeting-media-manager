@@ -37,13 +37,11 @@ ipcMain.on('noInternet', () => {
 
 autoUpdater.on('error', (err) => {
   console.log(err);
-  win.webContents.send('hideThenShow', ['UpdateCheck', 'PleaseWait']);
   win.webContents.send('goAhead');
 });
 
 
 autoUpdater.on('update-not-available', () => {
-  win.webContents.send('hideThenShow', ['UpdateCheck', 'PleaseWait']);
   win.webContents.send('goAhead');
 });
 

@@ -21,8 +21,8 @@ require('electron').ipcRenderer.on('checkInternet', () => {
 });
 
 require('electron').ipcRenderer.on('hideThenShow', (event, message) => {
-  $("#overlay" + message[0]).fadeOut(400, () => {
-    $("#overlay" + message[1]).fadeIn();
+  $("#overlay" + message[1]).fadeIn(400, () => {
+    $("#overlay" + message[0]).fadeOut();
   });
 });
 
@@ -31,7 +31,10 @@ require('electron').ipcRenderer.on('updateDownloadProgress', (event, message) =>
 });
 
 require('electron').ipcRenderer.on('goAhead', () => {
-  goAhead();
+  $("#overlay" + "PleaseWait").fadeIn(400, () => {
+    $("#overlay" + "UpdateCheck").fadeOut();
+    goAhead();
+  });
 });
 
 function decode(e) {
@@ -170,23 +173,21 @@ function goAhead() {
         $(this).removeClass("invalid");
       }
     });
-    var cancelSync = false;
     if (prefs.autoStartSync && configIsValid()) {
+      var cancelSync = false;
       $("#btnCancelSync").on("click", function() {
         cancelSync = true;
         $("#btnCancelSync").removeClass("btn-warning").addClass("btn-success");
       });
-      $("#overlayPleaseWait").fadeOut(400, () => {
-        $("#overlayStarting").fadeIn().delay(3000).fadeOut(400, () => {
-          if (!cancelSync) {
-            $("#home-tab").tab('show');
-            $("#mediaSync").click();
-          }
-          $("#overlay, #overlayStarting").fadeOut();
-        });
+      $("#overlayStarting").fadeIn(400, () => {
+        $("#overlayPleaseWait").fadeOut();
+      }).delay(3000).fadeOut(400, () => {
+        if (!cancelSync) {
+          $("#mediaSync").click();
+        }
       });
     } else {
-      $("#overlay, #overlayPleaseWait").fadeOut();
+      $("#overlayPleaseWait").fadeOut();
     }
   }
 
@@ -215,7 +216,6 @@ function goAhead() {
   }
 
   function configIsValid() {
-    console.log($("#lang").val(), $("#langSelect").val(), $("#mwDay").val(), $("#weDay").val(), $("#congPass").val().length, $("#cong").val(), $("#congSelect").val(), $("#outputPath").val())
     $("#overlaySettings .select2-selection").each(function() {
       if ($(this).text().trim() == "") {
         $(this).addClass("invalid");
@@ -285,8 +285,7 @@ function goAhead() {
     var stayAlive = false;
     $("#mediaSync").prop("disabled", true);
     $("#mediaSync").addClass("btn-secondary");
-    //$("#Settings-tab").addClass("disabled");
-    $(".btn-settings").fadeOut();//.prop("disabled", true);
+    $(".btn-settings").fadeOut();
     var buttonLabel = $("#mediaSync").html();
     $("#mediaSync").addClass("loading").html('Sync in progress<span>.</span><span>.</span><span>.</span>');
     $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
@@ -294,22 +293,21 @@ function goAhead() {
     await progressInitialize();
     await startMediaSync();
     await progressReset();
-    if ($("#stayAlive").length !== 0) {
-      $("#stayAlive").remove();
-    }
     if (prefs.autoQuitWhenDone) {
-      $("#overlayComplete").append('<div class="align-self-center pt-3" id="stayAlive" role="status"><button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don\'t close automatically!</button></div>');
+      $("#stayAlive").show();
     }
     $("#btnStayAlive").on("click", function() {
       stayAlive = true;
       $("#btnStayAlive").removeClass("btn-warning").addClass("btn-success");
     });
-    $("#overlay").fadeIn();
-    $("#overlayComplete").fadeIn().delay(3000).fadeOut(400, () => {
+    $("#overlayComplete").fadeIn(400, () => {
+      $("#home, .btn-settings").fadeTo(400, 0);
+    }).delay(3000).fadeOut(400, () => {
       if (prefs.autoQuitWhenDone && !stayAlive) {
         window.require('electron').remote.app.quit();
       }
-      $("#overlay").fadeOut();
+      $("#home, .btn-settings").fadeTo(400, 1);
+      $("#btnStayAlive").removeClass("btn-success").addClass("btn-warning");
     });
     $("div.progress").parent().fadeOut(400, function() {
       $(this).css('visibility', 'hidden').css("display", "block");
@@ -318,8 +316,7 @@ function goAhead() {
     $("#mediaSync").html(buttonLabel);
     $("#mediaSync").prop("disabled", false);
     $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
-    //$("#Settings-tab").removeClass("disabled");
-    $(".btn-settings").fadeIn();//.prop("disabled", false);
+    $(".btn-settings").fadeIn();
     status("main", "Currently inactive");
   });
 
@@ -368,6 +365,7 @@ function goAhead() {
         var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
         if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
           status("main", "Weekend meeting: " + moment(studyDate).format("YYYY-MM-DD"));
+          $("#day" + prefs.weDay).addClass("bg-info").removeClass("bg-secondary");
           var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
           mkdirSync(weekPath);
           var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
@@ -399,6 +397,7 @@ function goAhead() {
               type: "copy"
             });
           });
+          $("#day" + prefs.weDay).addClass("bg-success").removeClass("bg-info");
         }
       }
     }
@@ -427,6 +426,7 @@ function goAhead() {
         weekMediaFilesCopied = [];
         if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
           status("main", "Midweek meeting: " + moment(weeks[w], "YYYYMMDD").format("YYYY-MM-DD"));
+          $("#day" + prefs.mwDay).addClass("bg-info").removeClass("bg-secondary");
           var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
           docId = docId[0].DocumentId;
           var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
@@ -481,6 +481,7 @@ function goAhead() {
               }
             }
           }
+          $("#day" + prefs.mwDay).addClass("bg-success").removeClass("bg-info");
         }
       }
     }
@@ -622,35 +623,39 @@ function goAhead() {
       issue: opts.issue,
       filetype: "JWPUB"
     });
-    if (json) {
-      var url = json.files[prefs.lang].JWPUB[0].file.url;
-      var basename = path.basename(url);
-      var workingDirectory = pubsPath + "/" + opts.pub + "/" + opts.issue + "/";
-      var workingUnzipDirectory = workingDirectory + "JWPUB/contents-decompressed/";
-      if (await downloadRequired({
-          json: json,
-          pub: opts.pub,
-          issue: opts.issue,
-          type: "JWPUB"
-        }, workingDirectory + basename) || !glob.sync(workingUnzipDirectory + "/*.db")[0]) {
-        var file = await downloadFile(url);
-        await writeFile({
-          sync: true,
-          file: new Buffer(file),
-          destFile: workingDirectory + basename
-        });
-        mkdirSync(workingDirectory + "JWPUB");
-        await extract(glob.sync(workingDirectory + "/*.jwpub")[0], {
-          dir: workingDirectory + "JWPUB"
-        });
-        mkdirSync(workingUnzipDirectory);
-        await extract(workingDirectory + "JWPUB/contents", {
-          dir: workingUnzipDirectory
-        });
+    try {
+      if (json) {
+        var url = json.files[prefs.lang].JWPUB[0].file.url;
+        var basename = path.basename(url);
+        var workingDirectory = pubsPath + "/" + opts.pub + "/" + opts.issue + "/";
+        var workingUnzipDirectory = workingDirectory + "JWPUB/contents-decompressed/";
+        if (await downloadRequired({
+            json: json,
+            pub: opts.pub,
+            issue: opts.issue,
+            type: "JWPUB"
+          }, workingDirectory + basename) || !glob.sync(workingUnzipDirectory + "/*.db")[0]) {
+          var file = await downloadFile(url);
+          await writeFile({
+            sync: true,
+            file: new Buffer(file),
+            destFile: workingDirectory + basename
+          });
+          mkdirSync(workingDirectory + "JWPUB");
+          await extract(glob.sync(workingDirectory + "/*.jwpub")[0], {
+            dir: workingDirectory + "JWPUB"
+          });
+          mkdirSync(workingUnzipDirectory);
+          await extract(workingDirectory + "JWPUB/contents", {
+            dir: workingUnzipDirectory
+          });
+        }
+        var SQL = await sqljs();
+        var sqldb = new SQL.Database(fs.readFileSync(glob.sync(workingUnzipDirectory + "/*.db")[0]));
+        return sqldb;
       }
-      var SQL = await sqljs();
-      var sqldb = new SQL.Database(fs.readFileSync(glob.sync(workingUnzipDirectory + "/*.db")[0]));
-      return sqldb;
+    } catch (err) {
+      console.log(err, opts, json)
     }
   }
 
@@ -875,11 +880,11 @@ function goAhead() {
   function settingsScreen(forceShow) {
     var visible = $("#overlaySettings").is(":visible");
     if (!visible || forceShow) {
-    $("#overlaySettings").slideDown("fast");
-  } else {
-    $("#overlaySettings").slideUp("fast");
-    $(".btn-settings i").removeClass("fa-home").addClass("fa-cog");
-  }
+      $("#overlaySettings").slideDown("fast");
+    } else {
+      $("#overlaySettings").slideUp("fast");
+      $(".btn-settings i").removeClass("fa-home").addClass("fa-cog");
+    }
   }
 
   async function sftpDownloadDirs(dirs) {
