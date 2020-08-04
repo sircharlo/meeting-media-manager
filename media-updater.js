@@ -167,6 +167,9 @@ function goAhead() {
     $('#mwDay').select2();
     $('#weDay').select2();
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
+    if (prefs.cong.length > 0) {
+      $("#specificCong").addClass("d-flex").html(prefs.cong);
+    }
     $(".select2-selection").each(function() {
       if ($(this).text().trim() == "") {
         $(this).addClass("invalid");
@@ -272,7 +275,7 @@ function goAhead() {
     prefs.autoStartSync = $("#autoStartSync").prop("checked");
     prefs.autoRunAtBoot = $("#autoRunAtBoot").prop("checked");
     prefs.autoQuitWhenDone = $("#autoQuitWhenDone").prop("checked");
-    $(".meeting").removeClass("meeting");
+    $(".day, .congregation").removeClass("meeting").removeClass("bg-success");
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     window.require('electron').remote.app.setLoginItemSettings({
@@ -368,7 +371,7 @@ function goAhead() {
         var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
         if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
           status("main", "Retrieving media for the weekend meeting...");
-          $("#day" + prefs.weDay).addClass("bg-info").removeClass("bg-secondary");
+          $("#day" + prefs.weDay).addClass("bg-info");
           var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
           mkdirSync(weekPath);
           var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
@@ -429,7 +432,7 @@ function goAhead() {
         weekMediaFilesCopied = [];
         if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
           status("main", "Retrieving media for the midweek meeting...");
-          $("#day" + prefs.mwDay).addClass("bg-info").removeClass("bg-secondary");
+          $("#day" + prefs.mwDay).addClass("bg-info");
           var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
           docId = docId[0].DocumentId;
           var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
@@ -493,6 +496,7 @@ function goAhead() {
   async function syncCongSpecific() {
     if (prefs.cong !== "None") {
       status("main", "Retrieving any congregation-specific files...");
+      $("#specificCong").addClass("bg-info");
       try {
         var congSpecificFolders = await sftpLs(sftpRootDir + "Congregations/" + prefs.cong + "/Media/");
         var dirs = [];
@@ -503,6 +507,7 @@ function goAhead() {
       } catch (err) {
         console.log(err);
       }
+      $("#specificCong").addClass("bg-success").removeClass("bg-info");
     }
   }
 

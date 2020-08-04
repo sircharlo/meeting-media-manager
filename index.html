@@ -118,14 +118,18 @@
       display: none;
     }
 
-    .day {
+    .day, .congregation {
       height: 3em;
       width: 3em;
       background-color: #e0e0e0;
     }
 
-    .meeting {
+    .meeting, .congregation {
       background-color: #9e9e9e;
+    }
+
+    .congregation {
+      width: auto;
     }
   </style>
   <script>
@@ -297,7 +301,8 @@
         Push the big button!
       </div>
     </div>
-    <div class="align-items-center d-flex flex-fill justify-content-center">
+    <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
+      <div class="d-flex">
       <div id="day0" class="day m-1 text-light d-flex align-items-center justify-content-center">
         <div>M</div>
       </div>
@@ -319,6 +324,8 @@
       <div id="day6" class="day m-1 text-light d-flex align-items-center justify-content-center">
         <div>S</div>
       </div>
+    </div>
+    <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;"></div>
     </div>
     <div class="align-items-center d-flex flex-fill justify-content-center">
       <button type="button" class="btn btn-success" id="mediaSync">Start!</button>
