@@ -350,9 +350,11 @@ function goAhead() {
   }
 
   async function syncWeMeeting() {
+    status("main", "Retrieving media for the weekend meeting...");
+    $("#day" + prefs.weDay).addClass("bg-info");
     var weDates = [baseDate.clone().subtract(2, "months"), baseDate.clone().subtract(1, "months")];
     for (var weDate of weDates) {
-      status("main", "Retrieving the " + weDate.format("MMMM YYYY") + " Watchtower...");
+      //status("main", "Retrieving the " + weDate.format("MMMM YYYY") + " Watchtower...");
       mkdirSync(pubsPath + "/" + pubs.wt);
       var issue = weDate.format("YYYYMM") + "00";
       mkdirSync(pubsPath + "/" + pubs.wt + "/" + issue);
@@ -370,8 +372,6 @@ function goAhead() {
         var week = weeks[w];
         var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
         if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
-          status("main", "Retrieving media for the weekend meeting...");
-          $("#day" + prefs.weDay).addClass("bg-info");
           var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
           mkdirSync(weekPath);
           var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
@@ -410,9 +410,11 @@ function goAhead() {
   }
 
   async function syncMwMeeting() {
+    status("main", "Retrieving media for the midweek meeting...");
+    $("#day" + prefs.mwDay).addClass("bg-info");
     var mwDates = [baseDate, baseDate.clone().add(1, "months")];
     for (var mwDate of mwDates) {
-      status("main", "Retrieving the " + mwDate.format("MMMM YYYY") + " Meeting Workbook...");
+      //status("main", "Retrieving the " + mwDate.format("MMMM YYYY") + " Meeting Workbook...");
       mkdirSync(pubsPath + "/" + pubs.mwb);
       var issue = mwDate.format("YYYYMM") + "00";
       mkdirSync(pubsPath + "/" + pubs.mwb + "/" + issue);
@@ -431,8 +433,6 @@ function goAhead() {
         mwMediaForWeek = {};
         weekMediaFilesCopied = [];
         if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
-          status("main", "Retrieving media for the midweek meeting...");
-          $("#day" + prefs.mwDay).addClass("bg-info");
           var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
           docId = docId[0].DocumentId;
           var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
