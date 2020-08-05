@@ -52,6 +52,8 @@ function goAhead() {
   const path = require("path");
   const sqljs = require('sql.js');
 
+  const jwGetPubMediaLinks = "https://apps.jw.org/GETPUBMEDIALINKS?output=json";
+
   const congSpecificServer = {
     host: decode("c2lyY2hhcmxvLmhvcHRvLm9yZw=="),
     port: decode("NDMyMzQ=")
@@ -64,17 +66,10 @@ function goAhead() {
   const congHash = "$2b$10$Kc4.iOKBP9KXfwQAHUJ0Ieyg0m8EC8nrhPaMigeGPonQ85EMaCJv6";
   const sftpRootDir = decode("L21lZGlhL3BsZXgvTWVkaWEtTGludXgvUHVibGljL2ZpbGVzL01XLU1lZGlhLUZldGNoZXIvVS8=");
   var prefs = {};
-  var progress = {
-    tasksToDo: {
-      current: 0,
-      total: 0
-    },
-    download: {}
-  };
 
   const appPath = require('electron').remote.app.getPath("userData");
-  const langsFile = path.join(appPath + "/langs.json");
-  const prefsFile = path.join(appPath + "/prefs.json");
+  const langsFile = path.join(appPath, "langs.json");
+  const prefsFile = path.join(appPath, "prefs.json");
 
   if (!fs.existsSync(prefsFile)) {
     doMaintenance();
@@ -118,7 +113,7 @@ function goAhead() {
 
   async function congFetch() {
     if ($('#congPass').val().length > 0 && bcrypt.compareSync($('#congPass').val(), congHash)) {
-      $('#congPass').css("background-color", "#bbdefb");
+      $('#congPass').addClass("valid");
       $('#congs').fadeIn(400, function() {
         $('#congs').css("visibility", "visible");
         $('#congsSpinner').fadeIn(400, async function() {
@@ -130,7 +125,7 @@ function goAhead() {
             keepaliveInterval: 2000,
             keepaliveCountMax: 20
           };
-          var congs = await sftpLs(sftpRootDir + "Congregations");
+          var congs = await sftpLs(path.posix.join(sftpRootDir, "Congregations"));
           for (var cong of congs) {
             $('#congSelect').append($("<option>", {
               value: cong.name,
@@ -147,9 +142,9 @@ function goAhead() {
       });
     } else {
       if ($('#congPass').val().length == 0) {
-        $('#congPass').css("background-color", "#fff");
+        $('#congPass').removeClass("invalid valid");
       } else {
-        $('#congPass').css("background-color", "#ffcdd2");
+        $('#congPass').addClass("invalid");
       }
       $('#congs').fadeOut(400, () => {
         $('#congs').css("visibility", "hidden");
@@ -167,7 +162,7 @@ function goAhead() {
     $('#mwDay').select2();
     $('#weDay').select2();
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
-    if (prefs.cong.length > 0) {
+    if (prefs.cong.length > 0 && prefs.cong !== "None") {
       $("#specificCong").addClass("d-flex").html(prefs.cong);
     }
     $(".select2-selection").each(function() {
@@ -235,13 +230,13 @@ function goAhead() {
     }
     if (!$("#lang").val() || !$("#mwDay").val() || !$("#weDay").val() || ($("#congPass").val().length > 0 && (!$("#cong").val() || !bcrypt.compareSync($('#congPass').val(), congHash))) || !$("#outputPath").val()) {
       $("#mediaSync, .btn-settings").prop("disabled", true);
-      $("#mediaSync").addClass("btn-secondary");
+      $("#mediaSync").addClass("btn-secondary").removeClass("btn-primary");
       $(".btn-settings").addClass("btn-danger").removeClass("btn-primary");
       settingsScreen(true);
       return false;
     } else {
       $("#mediaSync, .btn-settings").prop("disabled", false);
-      $("#mediaSync").removeClass("btn-secondary");
+      $("#mediaSync").addClass("btn-primary").removeClass("btn-secondary");
       $(".btn-settings").addClass("btn-primary").removeClass("btn-danger");
       return true;
     }
@@ -275,8 +270,14 @@ function goAhead() {
     prefs.autoStartSync = $("#autoStartSync").prop("checked");
     prefs.autoRunAtBoot = $("#autoRunAtBoot").prop("checked");
     prefs.autoQuitWhenDone = $("#autoQuitWhenDone").prop("checked");
-    $(".day, .congregation").removeClass("meeting").removeClass("bg-success");
+    $(".day, .congregation").removeClass("meeting bg-success");
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
+    $("#specificCong").html(prefs.cong);
+    if (prefs.cong.length > 0 && prefs.cong !== "None") {
+      $("#specificCong").addClass("d-flex");
+    } else {
+      $("#specificCong").removeClass("d-flex")
+    }
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     window.require('electron').remote.app.setLoginItemSettings({
       openAtLogin: prefs.autoRunAtBoot
@@ -290,15 +291,11 @@ function goAhead() {
   $("#mediaSync").on('click', async function() {
     var stayAlive = false;
     $("#mediaSync").prop("disabled", true);
-    $("#mediaSync").addClass("btn-secondary");
+    $("#mediaSync").addClass("btn-secondary").removeClass("btn-primary");
     $(".btn-settings").fadeOut();
     var buttonLabel = $("#mediaSync").html();
     $("#mediaSync").addClass("loading").html('Sync in progress<span>.</span><span>.</span><span>.</span>');
-    $("div.progress div.progress-bar").addClass("progress-bar-striped progress-bar-animated");
-    $("div.progress").parent().css('visibility', 'visible').hide().fadeIn();
-    await progressInitialize();
     await startMediaSync();
-    await progressReset();
     if (prefs.autoQuitWhenDone) {
       $("#stayAlive").show();
     }
@@ -307,23 +304,19 @@ function goAhead() {
       $("#btnStayAlive").removeClass("btn-warning").addClass("btn-success");
     });
     $("#overlayComplete").fadeIn(400, () => {
-      $("#home, .btn-settings, #version").fadeTo(400, 0);
+      $("#home, .btn-settings").fadeTo(400, 0);
     }).delay(3000).fadeOut(400, () => {
       if (prefs.autoQuitWhenDone && !stayAlive) {
         window.require('electron').remote.app.quit();
       }
-      $("#home, .btn-settings, #version").fadeTo(400, 1);
+      $("#home, .btn-settings").fadeTo(400, 1);
       $("#btnStayAlive").removeClass("btn-success").addClass("btn-warning");
     });
-    $("div.progress").parent().fadeOut(400, function() {
-      $(this).css('visibility', 'hidden').css("display", "block");
-    });
-    $("div.progress div.progress-bar").removeClass("progress-bar-striped progress-bar-animated");
     $("#mediaSync").html(buttonLabel);
     $("#mediaSync").prop("disabled", false);
-    $("#mediaSync").removeClass("btn-secondary").removeClass("loading");
+    $("#mediaSync").addClass("btn-primary").removeClass("btn-secondary loading");
     $(".btn-settings").fadeIn();
-    status("main", "Push the big button!");
+    status("main", "Push the big blue button!");
   });
 
   async function startMediaSync() {
@@ -340,24 +333,22 @@ function goAhead() {
     outputPath = path.join(prefs.outputPath);
     mkdirSync(outputPath);
     baseDate = moment().startOf('isoWeek');
-    langPath = outputPath + "/" + prefs.lang;
+    langPath = path.join(outputPath, prefs.lang);
     mkdirSync(langPath);
-    pubsPath = langPath + "/Publications";
+    pubsPath = path.join(langPath, "Publications");
     mkdirSync(pubsPath);
-    mediaPath = langPath + "/Media";
+    mediaPath = path.join(langPath, "Media");
     mkdirSync(mediaPath);
-    progressReset();
   }
 
   async function syncWeMeeting() {
     status("main", "Retrieving media for the weekend meeting...");
-    $("#day" + prefs.weDay).addClass("bg-info");
+    $("#day" + prefs.weDay).addClass("bg-info in-progress");
     var weDates = [baseDate.clone().subtract(2, "months"), baseDate.clone().subtract(1, "months")];
     for (var weDate of weDates) {
-      //status("main", "Retrieving the " + weDate.format("MMMM YYYY") + " Watchtower...");
-      mkdirSync(pubsPath + "/" + pubs.wt);
+      mkdirSync(path.join(pubsPath, pubs.wt));
       var issue = weDate.format("YYYYMM") + "00";
-      mkdirSync(pubsPath + "/" + pubs.wt + "/" + issue);
+      mkdirSync(path.join(pubsPath, pubs.wt, issue));
       var db = await getDbFromJwpub({
         pub: pubs.wt,
         issue: issue
@@ -372,14 +363,14 @@ function goAhead() {
         var week = weeks[w];
         var studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
         if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
-          var weekPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD");
+          var weekPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
           mkdirSync(weekPath);
           var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
           var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal");
           for (var s = 0; s < qrySongs.length; s++) {
             var song = qrySongs[s];
             song.SongNumber = song.Caption.replace(/\D/g, "");
-            song.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/";
+            song.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
             song.FileOrder = s;
             await getSong(song);
           }
@@ -392,9 +383,9 @@ function goAhead() {
               localMedia.FileName = localMedia.Label;
             }
             localMedia.FileName = localMedia.FileName + "." + localMedia.FileType;
-            localMedia.LocalPath = pubsPath + "/" + pubs.wt + "/" + issue + "/JWPUB/contents-decompressed/" + localMedia.FilePath;
+            localMedia.LocalPath = path.join(pubsPath, pubs.wt, issue, "JWPUB", "contents-decompressed", localMedia.FilePath);
             localMedia.FileName = sanitizeFilename((l + 1 + 50).toString().padStart(3, '0') + " " + localMedia.FileName);
-            localMedia.DestPath = mediaPath + "/" + studyDate.format("YYYY-MM-DD") + "/" + localMedia.FileName;
+            localMedia.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"), localMedia.FileName);
             localMedia.SourceDocumentId = qryDocuments[w].DocumentId;
             writeFile({
               sync: true,
@@ -403,7 +394,7 @@ function goAhead() {
               type: "copy"
             });
           });
-          $("#day" + prefs.weDay).addClass("bg-success").removeClass("bg-info");
+          $("#day" + prefs.weDay).addClass("bg-success").removeClass("bg-info in-progress");
         }
       }
     }
@@ -411,13 +402,12 @@ function goAhead() {
 
   async function syncMwMeeting() {
     status("main", "Retrieving media for the midweek meeting...");
-    $("#day" + prefs.mwDay).addClass("bg-info");
+    $("#day" + prefs.mwDay).addClass("bg-info in-progress");
     var mwDates = [baseDate, baseDate.clone().add(1, "months")];
     for (var mwDate of mwDates) {
-      //status("main", "Retrieving the " + mwDate.format("MMMM YYYY") + " Meeting Workbook...");
-      mkdirSync(pubsPath + "/" + pubs.mwb);
+      mkdirSync(path.join(pubsPath, pubs.mwb));
       var issue = mwDate.format("YYYYMM") + "00";
-      mkdirSync(pubsPath + "/" + pubs.mwb + "/" + issue);
+      mkdirSync(path.join(pubsPath, pubs.mwb, issue));
       var db = await getDbFromJwpub({
         pub: pubs.mwb,
         issue: issue
@@ -435,7 +425,7 @@ function goAhead() {
         if (moment(week, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(week, "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
           var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
           docId = docId[0].DocumentId;
-          var weekPath = mediaPath + "/" + weekDay.format("YYYY-MM-DD");
+          var weekPath = path.join(mediaPath, weekDay.format("YYYY-MM-DD"));
           mkdirSync(weekPath);
           var mediaExternal = await getDocumentMultimedia({
             week: weekDay.format("YYYYMMDD"),
@@ -464,7 +454,7 @@ function goAhead() {
                 weekMediaItem.FileName = weekMediaItem.Json[0].title + "." + path.extname(weekMediaItem.Json[0].file.url);
               }
               weekMediaItem.FileName = sanitizeFilename((wM + 1).toString().padStart(2, '0') + "-" + (wMI + 1).toString().padStart(2, '0') + " " + weekMediaItem.FileName);
-              weekMediaItem.DestPath = path.dirname(weekMediaItem.DestPath) + "/" + weekMediaItem.FileName;
+              weekMediaItem.DestPath = path.join(path.dirname(weekMediaItem.DestPath), weekMediaItem.FileName);
               if (weekMediaItem.Json) {
                 if (await downloadRequired({
                     json: weekMediaItem.Json,
@@ -487,7 +477,7 @@ function goAhead() {
               }
             }
           }
-          $("#day" + prefs.mwDay).addClass("bg-success").removeClass("bg-info");
+          $("#day" + prefs.mwDay).addClass("bg-success").removeClass("bg-info in-progress");
         }
       }
     }
@@ -496,18 +486,18 @@ function goAhead() {
   async function syncCongSpecific() {
     if (prefs.cong !== "None") {
       status("main", "Retrieving any congregation-specific files...");
-      $("#specificCong").addClass("bg-info");
+      $("#specificCong").addClass("bg-info in-progress");
       try {
-        var congSpecificFolders = await sftpLs(sftpRootDir + "Congregations/" + prefs.cong + "/Media/");
+        var congSpecificFolders = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media"));
         var dirs = [];
         congSpecificFolders.forEach((folder, f) => {
-          dirs.push([sftpRootDir + "Congregations/" + prefs.cong + "/Media/" + folder.name, mediaPath + "/" + folder.name]);
+          dirs.push([path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", folder.name), path.join(mediaPath, folder.name)]);
         });
         await sftpDownloadDirs(dirs);
       } catch (err) {
         console.log(err);
       }
-      $("#specificCong").addClass("bg-success").removeClass("bg-info");
+      $("#specificCong").addClass("bg-success").removeClass("bg-info in-progress");
     }
   }
 
@@ -548,26 +538,25 @@ function goAhead() {
       prefs.outputPath = oldOutputPath;
       prefs.lastMaintenance = moment();
       prefs.langUpdatedLast = moment().subtract(1, "year");
-      status("main", "Push the big button!");
+      status("main", "Push the big blue button!");
     }
     // 2020.07.28 one-time maintenance end
   }
 
   const downloadFile = async url => {
     try {
+      $(".progress-container").fadeTo(400, 1);
       const response = await axios.get(url, {
         responseType: 'arraybuffer',
         onDownloadProgress: function(progressEvent) {
           var percent = progressEvent.loaded / progressEvent.total * 100;
-          progressSet("download", percent);
+          progressSet(percent, path.basename(url));
         }
       });
-      progressIncrement("tasksToDo", "current");
       var data;
       data = response.data;
       return data;
     } catch (err) {
-      progressIncrement("tasksToDo", "current");
       console.log(err);
       return err;
     }
@@ -602,11 +591,9 @@ function goAhead() {
       if (remoteHash == localHash) {
         return false;
       } else {
-        progressIncrement("tasksToDo", "total");
         return true;
       }
     } else {
-      progressIncrement("tasksToDo", "total");
       return true;
     }
   }
@@ -635,31 +622,31 @@ function goAhead() {
       if (json) {
         var url = json.files[prefs.lang].JWPUB[0].file.url;
         var basename = path.basename(url);
-        var workingDirectory = pubsPath + "/" + opts.pub + "/" + opts.issue + "/";
-        var workingUnzipDirectory = workingDirectory + "JWPUB/contents-decompressed/";
+        var workingDirectory = path.join(pubsPath, opts.pub, opts.issue);
+        var workingUnzipDirectory = path.join(workingDirectory, "JWPUB", "contents-decompressed");
         if (await downloadRequired({
             json: json,
             pub: opts.pub,
             issue: opts.issue,
             type: "JWPUB"
-          }, workingDirectory + basename) || !glob.sync(workingUnzipDirectory + "/*.db")[0]) {
+          }, path.join(workingDirectory, basename)) || !glob.sync(path.join(workingUnzipDirectory, "*.db"))[0]) {
           var file = await downloadFile(url);
           await writeFile({
             sync: true,
             file: new Buffer(file),
             destFile: workingDirectory + basename
           });
-          mkdirSync(workingDirectory + "JWPUB");
-          await extract(glob.sync(workingDirectory + "/*.jwpub")[0], {
-            dir: workingDirectory + "JWPUB"
+          mkdirSync(path.join(workingDirectory, "JWPUB"));
+          await extract(glob.sync(path.join(workingDirectory, "*.jwpub"))[0], {
+            dir: path.join(workingDirectory, "JWPUB")
           });
           mkdirSync(workingUnzipDirectory);
-          await extract(workingDirectory + "JWPUB/contents", {
+          await extract(path.join(workingDirectory, "JWPUB", "contents"), {
             dir: workingUnzipDirectory
           });
         }
         var SQL = await sqljs();
-        var sqldb = new SQL.Database(fs.readFileSync(glob.sync(workingUnzipDirectory + "/*.db")[0]));
+        var sqldb = new SQL.Database(fs.readFileSync(glob.sync(path.join(workingUnzipDirectory, "*.db"))[0]));
         return sqldb;
       }
     } catch (err) {
@@ -668,12 +655,11 @@ function goAhead() {
   }
 
   async function getDocumentExtract(opts) {
-    progressIncrement("tasksToDo", "total");
     var statement = "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + opts.docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' ORDER BY DocumentExtract.BeginParagraphOrdinal";
     var extractItems = await executeStatement(opts.db, statement);
     for (var extractItem of extractItems) {
-      mkdirSync(pubsPath + "/" + extractItem.UndatedSymbol);
-      mkdirSync(pubsPath + "/" + extractItem.UndatedSymbol + "/" + extractItem.IssueTagNumber);
+      mkdirSync(path.join(pubsPath, extractItem.UndatedSymbol));
+      mkdirSync(path.join(pubsPath, extractItem.UndatedSymbol, extractItem.IssueTagNumber));
       var db = await getDbFromJwpub({
         pub: extractItem.UndatedSymbol,
         issue: extractItem.IssueTagNumber
@@ -689,11 +675,9 @@ function goAhead() {
         });
       }
     }
-    progressIncrement("tasksToDo", "current");
   }
 
   async function getDocumentMultimedia(opts) {
-    progressIncrement("tasksToDo", "total");
     try {
       var tableDocumentMultimedia = await executeStatement(opts.db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'");
       var tableMultimedia = "";
@@ -709,10 +693,10 @@ function goAhead() {
           media.FileType = media.FilePath.split(".").pop();
           if ((media.MimeType.includes("audio") || media.MimeType.includes("video"))) {
             if (media.KeySymbol == null) {
-              media.JsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&docid=" +
+              media.JsonUrl = jwGetPubMediaLinks + "&docid=" +
                 media.MepsDocumentId + "&langwritten=" + prefs.lang;
             } else {
-              media.JsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + media.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + media.IssueTagNumber + "&track=" + media.Track;
+              media.JsonUrl = jwGetPubMediaLinks + "&pub=" + media.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + media.IssueTagNumber + "&track=" + media.Track;
             }
             if (media.MimeType.includes("video")) {
               media.JsonUrl = media.JsonUrl + "&fileformat=MP4";
@@ -746,7 +730,7 @@ function goAhead() {
             media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
           }
           if (!media.JsonUrl) {
-            media.LocalPath = pubsPath + "/" + media.KeySymbol + "/" + media.IssueTagNumber + "/JWPUB/contents-decompressed/" + media.FilePath;
+            media.LocalPath = path.join(pubsPath, media.KeySymbol, media.IssueTagNumber, "JWPUB", "contents-decompressed", media.FilePath);
           }
           media.FileType = media.FilePath.split(".").pop();
           media.FileName = media.Caption;
@@ -757,7 +741,7 @@ function goAhead() {
           }
           media.FileName = media.FileName + "." + media.FileType;
           media.FileName = sanitizeFilename(media.FileName);
-          media.DestPath = mediaPath + "/" + moment(opts.week, "YYYYMMDD").format("YYYY-MM-DD") + "/" + media.FileName;
+          media.DestPath = path.join(mediaPath, moment(opts.week, "YYYYMMDD").format("YYYY-MM-DD"), media.FileName);
           if (!mwMediaForWeek[media.BeginParagraphOrdinal]) {
             mwMediaForWeek[media.BeginParagraphOrdinal] = [];
           }
@@ -770,7 +754,6 @@ function goAhead() {
     } catch (err) {
       console.log(err, opts);
     }
-    progressIncrement("tasksToDo", "current");
   }
 
   async function getJson(opts) {
@@ -781,7 +764,7 @@ function goAhead() {
       if (opts.pub == "w" && parseInt(opts.issue) >= 20080801 && opts.issue.slice(-2) == "01") {
         opts.pub = "wp";
       }
-      jsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + prefs.lang + (opts.issue ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
+      jsonUrl = jwGetPubMediaLinks + "&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + prefs.lang + (opts.issue ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
     }
     let payload = null;
     try {
@@ -796,7 +779,7 @@ function goAhead() {
 
   async function getSong(song) {
     var ks = "sjjm";
-    song.JsonUrl = "https://apps.jw.org/GETPUBMEDIALINKS?output=json&pub=" + ks + "&langwritten=" + prefs.lang + "&track=" + song.SongNumber + "&fileformat=MP4";
+    song.JsonUrl = jwGetPubMediaLinks + "&pub=" + ks + "&langwritten=" + prefs.lang + "&track=" + song.SongNumber + "&fileformat=MP4";
     song.Json = await getJson({
       url: song.JsonUrl
     });
@@ -826,40 +809,15 @@ function goAhead() {
     }
   }
 
-  function progressIncrement(bar, type) {
-    progress[bar][type] = progress[bar][type] + 1;
-    progressUpdate(bar);
-  }
-
-  function progressInitialize() {
-    for (var bar of Object.keys(progress)) {
-      progress[bar].initialStatus = $("#" + bar + "Status").html();
+  function progressSet(percent, filename) {
+    if (percent == 100) {
+      $(".progress-container").fadeTo(400, 0);
+      $("#downloadProgress div").html("").width("0%");
+      $("#downloadFilename").html("&nbsp;");
+    } else {
+      $("#downloadProgress div").width(percent + "%");
+      $("#downloadFilename").html(filename);
     }
-  }
-
-  function progressReset() {
-    for (var bar of Object.keys(progress)) {
-      progress[bar].current = 0;
-      progress[bar].total = 0;
-      var element = "#" + bar + "Progress div";
-      $(element).html("");
-      $(element).width("0%");
-      element = "#" + bar + "Status";
-      $(element).html(progress[bar].initialStatus);
-    }
-  }
-
-  function progressSet(bar, percent) {
-    var progressBar = "#" + bar + "Progress div";
-    $(progressBar).html(percent.toFixed(2) + "%");
-    $(progressBar).width(percent + "%");
-  }
-
-  function progressUpdate(bar) {
-    var progressBar = "#" + bar + "Progress div";
-    var percentage = Math.round((progress[bar].current * 100) / progress[bar].total * 10) / 10 + "%";
-    $(progressBar).html(percentage + " - " + progress[bar].current + "/" + progress[bar].total);
-    $(progressBar).width(percentage);
   }
 
   function sanitizeFilename(filename) {
@@ -899,7 +857,6 @@ function goAhead() {
     try {
       let Client = require('ssh2-sftp-client');
       let sftpDownloadDir = new Client();
-
       await sftpDownloadDir.connect(sftpConfig);
       for (var d = 0; d < dirs.length; d++) {
         var files = await sftpLs(dirs[d][0]);
@@ -907,22 +864,21 @@ function goAhead() {
           var downloadNeeded = true;
           if (!fs.existsSync(dirs[d][1])) {
             downloadNeeded = false;
-          } else if (fs.existsSync(dirs[d][1] + "/" + file.name)) {
-            var localSize = fs.statSync(dirs[d][1] + "/" + file.name).size;
+          } else if (fs.existsSync(path.join(dirs[d][1], file.name))) {
+            var localSize = fs.statSync(path.join(dirs[d][1], file.name)).size;
             var remoteSize = file.size;
             if (remoteSize == localSize) {
               downloadNeeded = false;
             }
           }
           if (downloadNeeded) {
-            progressIncrement("tasksToDo", "total");
-            await sftpDownloadDir.fastGet(dirs[d][0] + "/" + file.name, dirs[d][1] + "/" + file.name, {
+            $(".progress-container").fadeTo(400, 1);
+            await sftpDownloadDir.fastGet(path.posix.join(dirs[d][0], file.name), path.join(dirs[d][1], file.name), {
               step: function(totalTransferred, chunk, total) {
                 var percent = totalTransferred / total * 100;
-                progressSet("download", percent);
+                progressSet(percent, file.name);
               }
             });
-            progressIncrement("tasksToDo", "current");
           }
         }
       }
@@ -961,29 +917,22 @@ function goAhead() {
   }
 
   function writeFile(opts) {
-    opts.bar = "tasksToDo";
     if (!opts.type) {
-      progressIncrement(opts.bar, "total");
       if (!opts.sync) {
         fs.writeFile(opts.destFile, opts.file, function(err) {
           if (err) throw err;
-          progressIncrement(opts.bar, "current");
         });
       } else {
         fs.writeFileSync(opts.destFile, opts.file);
-        progressIncrement(opts.bar, "current");
       }
     } else {
       if ((fs.existsSync(opts.destFile) && fs.existsSync(opts.file) && fs.statSync(opts.destFile).size !== fs.statSync(opts.file).size) || !fs.existsSync(opts.destFile)) {
-        progressIncrement(opts.bar, "total");
         if (!opts.sync) {
           fs.copyFile(opts.file, opts.destFile, function(err) {
             if (err) throw err;
-            progressIncrement(opts.bar, "current");
           });
         } else {
           fs.copyFileSync(opts.file, opts.destFile);
-          progressIncrement(opts.bar, "current");
         }
       }
     }

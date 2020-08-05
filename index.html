@@ -79,15 +79,15 @@
 
     .invalid {
       background-color: #ffcdd2 !important;
+      border-color: #b71c1c !important;
+    }
+
+    .valid {
+      background-color: #b9f6ca !important;
     }
 
     #outputPath {
       background-color: #fff;
-    }
-
-    #version {
-      position: fixed;
-      bottom: 0;
     }
 
     #version span.badge {
@@ -128,10 +128,34 @@
     .meeting,
     .congregation {
       background-color: #9e9e9e;
+      border-radius: 0.25rem;
+    }
+
+    .in-progress {
+      box-shadow: 0 0 0 0 rgba(15, 102, 116, 1);
+      transform: scale(1);
+      animation: pulse 1s infinite;
     }
 
     .congregation {
       width: auto;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(15, 102, 116, 0.7);
+      }
+
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(15, 102, 116, 0);
+      }
+
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(15, 102, 116, 0);
+      }
     }
   </style>
   <script>
@@ -296,11 +320,14 @@
         <button type="button" class="btn btn-primary btn-settings">Go back</button>
       </div>
     </div>
+    <div id="version" class="align-items-center d-flex flex-fill justify-content-center py-1">
+      <span class="badge"></span>
+    </div>
   </div>
   <div id="home" class="d-flex flex-column">
     <div class="align-items-center d-flex flex-fill justify-content-center">
-      <div id="mainStatus" class="blockquote my-0">
-        Push the big button!
+      <div id="mainStatus" class="lead">
+        Push the big blue button!
       </div>
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
@@ -329,34 +356,25 @@
       </div>
       <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;"></div>
     </div>
-    <div class="align-items-center d-flex flex-fill justify-content-center">
-      <button type="button" class="btn btn-success" id="mediaSync">Start!</button>
+    <div class="d-flex justify-content-center">
+      <button type="button" class="btn btn-lg btn-primary" id="mediaSync">Start!</button>
     </div>
-    <div class="align-items-center d-flex flex-fill justify-content-center">
-      <div class="col" style="visibility: hidden">
-        <div class="text-center">
-          Overall progress
-        </div>
-        <div class="progress" id="tasksToDoProgress">
-          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
-          </div>
-        </div>
-      </div>
-      <div class="col" style="visibility: hidden">
-        <div class="text-center">
-          Current download progress
+    <div class="progress-container align-items-center d-flex flex-fill justify-content-center" style="opacity: 0;">
+      <div class="spinner-border" role="status"></div>
+    </div>
+    <div class="progress-container align-items-center d-flex text-center flex-fill justify-content-center" style="opacity: 0;">
+      <div class="half">
+        <div id="downloadFilename" class="lead mb-3">
+          -
         </div>
         <div class="progress" id="downloadProgress">
-          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
           </div>
         </div>
       </div>
     </div>
   </div>
-  <button class="btn btn-primary btn-circle btn-circle-sm m-1 btn-settings fixed"><i class="fa fa-cog"></i></button>
-  <div id="version" class="col text-center">
-    <span class="badge badge-light"></span>
-  </div>
+  <button class="btn btn-secondary btn-circle btn-circle-sm m-1 btn-settings fixed"><i class="fa fa-cog"></i></button>
   <script src="./media-updater.js"></script>
 </body>
 
