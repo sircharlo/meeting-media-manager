@@ -634,7 +634,7 @@ function goAhead() {
           await writeFile({
             sync: true,
             file: new Buffer(file),
-            destFile: workingDirectory + basename
+            destFile: path.join(workingDirectory, basename)
           });
           mkdirSync(path.join(workingDirectory, "JWPUB"));
           await extract(glob.sync(path.join(workingDirectory, "*.jwpub"))[0], {
