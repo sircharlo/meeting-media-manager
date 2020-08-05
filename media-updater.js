@@ -787,7 +787,7 @@ function goAhead() {
       return item.label == "720p";
     });
     song.Filename = ((song.FileOrder + 1) * 50).toString().padStart(3, '0') + " " + song.Json[0].title + ".mp4";
-    song.DestPath = song.DestPath + song.Filename;
+    song.DestPath = path.join(song.DestPath, song.Filename);
     if (await downloadRequired({
         json: song.Json,
         onlyFile: true
