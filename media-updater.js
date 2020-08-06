@@ -102,11 +102,8 @@ function goAhead() {
     $("#autoStartSync").prop("checked", prefs.autoStartSync).change();
     $("#autoRunAtBoot").prop("checked", prefs.autoRunAtBoot).change();
     $("#autoQuitWhenDone").prop("checked", prefs.autoQuitWhenDone).change();
-    $(".btn-group button input:checked").parent().addClass("text-success");
-    $(".btn-group button input:not(:checked)").parent().removeClass("text-success");
-    $(".btn-group button input:checked").parent().find("i").addClass("fa-toggle-on").removeClass("fa-toggle-off");
-    $(".btn-group button input:not(:checked)").parent().find("i").addClass("fa-toggle-off").removeClass("fa-toggle-on");
-
+    $(".btn-group button input:checked").parent().addClass("text-success").find("i").addClass("fa-toggle-on").removeClass("fa-toggle-off");
+    $(".btn-group button input:not(:checked)").parent().removeClass("text-success").find("i").addClass("fa-toggle-off").removeClass("fa-toggle-on");
   } else {
     configIsValid();
   }
@@ -165,13 +162,6 @@ function goAhead() {
     if (prefs.cong.length > 0 && prefs.cong !== "None") {
       $("#specificCong").addClass("d-flex").html(prefs.cong);
     }
-    $(".select2-selection").each(function() {
-      if ($(this).text().trim() == "") {
-        $(this).addClass("invalid");
-      } else {
-        $(this).removeClass("invalid");
-      }
-    });
     if (prefs.autoStartSync && configIsValid()) {
       var cancelSync = false;
       $("#btnCancelSync").on("click", function() {
@@ -191,6 +181,7 @@ function goAhead() {
   }
 
   async function getLanguages() {
+    var jsonLangs = {};
     if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || moment(prefs.langUpdatedLast).isSameOrBefore(moment().subtract(6, "months"))) {
       var jwLangs = await getJson({
         url: "https://www.jw.org/en/languages/"
@@ -202,8 +193,10 @@ function goAhead() {
       fs.writeFileSync(langsFile, JSON.stringify(cleanedJwLangs, null, 2));
       prefs.langUpdatedLast = moment();
       fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
+      jsonLangs = cleanedJwLangs;
+    } else {
+      jsonLangs = JSON.parse(fs.readFileSync(langsFile));
     }
-    var jsonLangs = JSON.parse(fs.readFileSync(langsFile));
     for (var lang of jsonLangs) {
       $('#langSelect').append($("<option>", {
         value: lang.langcode,
@@ -257,10 +250,8 @@ function goAhead() {
   $("#overlaySettings *").on('change', function() {
     $("#lang").val($("#langSelect").val());
     $("#cong").val($("#congSelect").val());
-    $(".btn-group button input:checked").parent().addClass("text-success");
-    $(".btn-group button input:not(:checked)").parent().removeClass("text-success");
-    $(".btn-group button input:checked").parent().find("i").addClass("fa-toggle-on").removeClass("fa-toggle-off");
-    $(".btn-group button input:not(:checked)").parent().find("i").addClass("fa-toggle-off").removeClass("fa-toggle-on");
+    $(".btn-group button input:checked").parent().addClass("text-success").find("i").addClass("fa-toggle-on").removeClass("fa-toggle-off");
+    $(".btn-group button input:not(:checked)").parent().removeClass("text-success").find("i").addClass("fa-toggle-off").removeClass("fa-toggle-on");
     prefs.lang = $("#langSelect").val();
     prefs.mwDay = $("#mwDay").val();
     prefs.weDay = $("#weDay").val();
@@ -276,7 +267,7 @@ function goAhead() {
     if (prefs.cong.length > 0 && prefs.cong !== "None") {
       $("#specificCong").addClass("d-flex");
     } else {
-      $("#specificCong").removeClass("d-flex")
+      $("#specificCong").removeClass("d-flex");
     }
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     window.require('electron').remote.app.setLoginItemSettings({
@@ -290,11 +281,10 @@ function goAhead() {
   });
   $("#mediaSync").on('click', async function() {
     var stayAlive = false;
-    $("#mediaSync").prop("disabled", true);
-    $("#mediaSync").addClass("btn-secondary").removeClass("btn-primary");
     $(".btn-settings").fadeOut();
     var buttonLabel = $("#mediaSync").html();
-    $("#mediaSync").addClass("loading").html('Sync in progress<span>.</span><span>.</span><span>.</span>');
+    $("#mediaSync").prop("disabled", true).addClass("btn-secondary loading").removeClass("btn-primary").html('Sync in progress<span>.</span><span>.</span><span>.</span>');
+    $("#spinnerContainer").fadeTo(400, 1);
     await startMediaSync();
     if (prefs.autoQuitWhenDone) {
       $("#stayAlive").show();
@@ -312,11 +302,10 @@ function goAhead() {
       $("#home, .btn-settings").fadeTo(400, 1);
       $("#btnStayAlive").removeClass("btn-success").addClass("btn-warning");
     });
-    $("#mediaSync").html(buttonLabel);
-    $("#mediaSync").prop("disabled", false);
-    $("#mediaSync").addClass("btn-primary").removeClass("btn-secondary loading");
+    $("#spinnerContainer").fadeTo(400, 0);
+    $("#mediaSync").html(buttonLabel).prop("disabled", false).addClass("btn-primary").removeClass("btn-secondary loading");
     $(".btn-settings").fadeIn();
-    status("main", "Push the big blue button!");
+    status("Push the big blue button!");
   });
 
   async function startMediaSync() {
@@ -342,7 +331,7 @@ function goAhead() {
   }
 
   async function syncWeMeeting() {
-    status("main", "Retrieving media for the weekend meeting...");
+    status("Retrieving media for the weekend meeting...");
     $("#day" + prefs.weDay).addClass("bg-info in-progress");
     var weDates = [baseDate.clone().subtract(2, "months"), baseDate.clone().subtract(1, "months")];
     for (var weDate of weDates) {
@@ -401,7 +390,7 @@ function goAhead() {
   }
 
   async function syncMwMeeting() {
-    status("main", "Retrieving media for the midweek meeting...");
+    status("Retrieving media for the midweek meeting...");
     $("#day" + prefs.mwDay).addClass("bg-info in-progress");
     var mwDates = [baseDate, baseDate.clone().add(1, "months")];
     for (var mwDate of mwDates) {
@@ -485,7 +474,7 @@ function goAhead() {
 
   async function syncCongSpecific() {
     if (prefs.cong !== "None") {
-      status("main", "Retrieving any congregation-specific files...");
+      status("Retrieving any congregation-specific files...");
       $("#specificCong").addClass("bg-info in-progress");
       try {
         var congSpecificFolders = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media"));
@@ -511,7 +500,7 @@ function goAhead() {
     var mediaSubDirs = getDirectories(mediaPath);
     for (var mediaSubDir of mediaSubDirs) {
       if (moment(mediaSubDir, "YYYY-MM-DD").isValid() && moment(mediaSubDir, "YYYY-MM-DD").isBefore(baseDate)) {
-        status("main", "Cleaning up older media...");
+        status("Cleaning up older media...");
         var deleteDir = path.join(mediaPath, mediaSubDir);
         fs.rmdirSync(deleteDir, {
           recursive: true
@@ -525,7 +514,7 @@ function goAhead() {
   function doMaintenance() {
     // 2020.07.28 one-time maintenance start
     if (!prefs.lastMaintenance || moment(prefs.lastMaintenance).isBefore(moment("2020-07-28", "YYYY-MM-DD"))) {
-      status("main", "Performing one-time maintenance functions...");
+      status("Performing one-time maintenance functions...");
       var oldOutputPath = path.join(os.homedir(), "Desktop", "Meeting Media");
       $("#outputPath").val(oldOutputPath).change();
       try {
@@ -538,14 +527,14 @@ function goAhead() {
       prefs.outputPath = oldOutputPath;
       prefs.lastMaintenance = moment();
       prefs.langUpdatedLast = moment().subtract(1, "year");
-      status("main", "Push the big blue button!");
+      status("Push the big blue button!");
     }
     // 2020.07.28 one-time maintenance end
   }
 
   const downloadFile = async url => {
     try {
-      $(".progress-container").fadeTo(400, 1);
+      $("#downloadProgressContainer").fadeTo(400, 1);
       const response = await axios.get(url, {
         responseType: 'arraybuffer',
         onDownloadProgress: function(progressEvent) {
@@ -553,9 +542,7 @@ function goAhead() {
           progressSet(percent, path.basename(url));
         }
       });
-      var data;
-      data = response.data;
-      return data;
+      return response.data;
     } catch (err) {
       console.log(err);
       return err;
@@ -563,9 +550,9 @@ function goAhead() {
   };
 
   async function downloadRequired(remoteOpts, destFile, method) {
+    var returnValue = true;
     if (fs.existsSync(destFile)) {
-      var localHash = fs.statSync(destFile).size;
-      var remoteHash, json;
+      var localHash = fs.statSync(destFile).size, remoteHash, json;
       if (remoteOpts.json) {
         json = remoteOpts.json;
         if (remoteOpts.track) {
@@ -589,18 +576,14 @@ function goAhead() {
       }
       remoteHash = remoteHash.filesize;
       if (remoteHash == localHash) {
-        return false;
-      } else {
-        return true;
+        returnValue = false;
       }
-    } else {
-      return true;
     }
+    return returnValue;
   }
 
   async function executeStatement(db, statement) {
-    var vals = await db.exec(statement)[0];
-    var valObj = [];
+    var vals = await db.exec(statement)[0], valObj = [];
     if (vals) {
       for (var v = 0; v < vals.values.length; v++) {
         valObj[v] = {};
@@ -811,7 +794,7 @@ function goAhead() {
 
   function progressSet(percent, filename) {
     if (percent == 100) {
-      $(".progress-container").fadeTo(400, 0);
+      $("#downloadProgressContainer").fadeTo(400, 0);
       $("#downloadProgress div").html("").width("0%");
       $("#downloadFilename").html("&nbsp;");
     } else {
@@ -872,7 +855,7 @@ function goAhead() {
             }
           }
           if (downloadNeeded) {
-            $(".progress-container").fadeTo(400, 1);
+            $("#downloadProgressContainer").fadeTo(400, 1);
             await sftpDownloadDir.fastGet(path.posix.join(dirs[d][0], file.name), path.join(dirs[d][1], file.name), {
               step: function(totalTransferred, chunk, total) {
                 var percent = totalTransferred / total * 100;
@@ -912,8 +895,8 @@ function goAhead() {
     }
   }
 
-  function status(dest, message) {
-    $("#" + dest + "Status").html(message);
+  function status(message) {
+    $("#mainStatus").html(message);
   }
 
   function writeFile(opts) {
