@@ -259,6 +259,18 @@ function goAhead() {
   $(".btn-settings, #btn-settings").on('click', function() {
     settingsScreen();
   });
+  $(".btn-clean-up:not(.btn-confirmed)").on('click', function() {
+    $(this).addClass("btn-danger btn-confirmed").removeClass("btn-warning").html("Are you sure?");
+    $(".btn-clean-up.btn-confirmed").on('click', function() {
+      setVars();
+      for (var dir of [pubsPath, mediaPath]) {
+        fs.rmdirSync(dir, {
+          recursive: true
+        });
+      }
+      $(this).addClass("btn-success").removeClass("btn-danger btn-confirmed btn-clean-up").html("Clean-up completed!").prop("disabled", true);
+    });
+  });
   $("#overlaySettings *").on('change', function() {
     $("#lang").val($("#langSelect").val());
     $("#cong").val($("#congSelect").val());
@@ -347,6 +359,8 @@ function goAhead() {
                 text: file
               }));
             }
+            $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 7));
+            $("#fileList li:contains(mp4)").addClass("text-dark");
             if ($("#fileToUpload").val().length > 0) {
               $("#fileList li:contains(" + newFileName + ")").addClass("text-primary new-file");
               $("#btnUpload").prop("disabled", false).addClass("btn-success").removeClass("btn-secondary");

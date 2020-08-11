@@ -149,7 +149,6 @@
 
     #fileList {
       font-size: 75%;
-      column-count: 2;
       width: 100%;
     }
 
@@ -253,7 +252,7 @@
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2">
-      <div class="flex-fill pr-3 text-right">Add a file for the following meeting</div>
+      <div class="flex-fill pr-3 text-right">Target meeting</div>
       <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseMeeting">
       </div>
     </div>
@@ -267,7 +266,7 @@
     </div>
     <div class="d-flex py-2">
       <div class="half text-right">
-        <button class="btn btn-light" id="btnCancelUpload" type="button">Cancel</button>
+        <button class="btn btn-light mr-3" id="btnCancelUpload" type="button">Cancel</button>
       </div>
       <div class="half text-left">
         <button class="btn btn-secondary" id="btnUpload" type="button" disabled>Upload!</button>
@@ -312,28 +311,29 @@
         </select>
       </div>
     </div>
+    <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="mwDay" class="half m-0 pr-3 text-right">Midweek meeting day</label>
       <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="mwDay">
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="mwDay" value="0" autocomplete="off"> M
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="mwDay" value="1" autocomplete="off"> T
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="mwDay" value="2" autocomplete="off"> W
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="mwDay" value="3" autocomplete="off"> T
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="mwDay" value="4" autocomplete="off"> F
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="mwDay" value="5" autocomplete="off"> S
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="mwDay" value="6" autocomplete="off"> S
         </label>
       </div>
@@ -341,30 +341,30 @@
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="weDay" class="half m-0 pr-3 text-right">Weekend meeting day</label>
       <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="weDay">
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="weDay" value="0" autocomplete="off"> M
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="weDay" value="1" autocomplete="off"> T
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="weDay" value="2" autocomplete="off"> W
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="weDay" value="3" autocomplete="off"> T
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="weDay" value="4" autocomplete="off"> F
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="weDay" value="5" autocomplete="off"> S
         </label>
-        <label class="btn btn-light">
+        <label class="btn btn-sm btn-light">
           <input type="radio" name="weDay" value="6" autocomplete="off"> S
         </label>
       </div>
     </div>
-    <hr />
+    <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="autoStartSync" class="half m-0 pr-3 text-right">Sync media on app launch</label>
       <div class="btn-group" data-toggle="buttons">
@@ -392,7 +392,7 @@
         </button>
       </div>
     </div>
-    <hr />
+    <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="congUnlock" class="half m-0 pr-3 text-right">Additional media passcode</label>
       <div class="flex-fill">
@@ -414,6 +414,7 @@
     <hr />
     <div class="d-flex flex-row flex-fill align-items-center">
       <div class="flex-fill">
+        <button type="button" class="btn btn-warning btn-clean-up">Clean-up media cache</button>
         <button type="button" class="btn btn-primary btn-settings">Go back</button>
       </div>
     </div>
