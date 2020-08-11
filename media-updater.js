@@ -231,7 +231,7 @@ function goAhead() {
     } else {
       $("#outputPath").removeClass("invalid");
     }
-    if (!$("#lang").val() || $("#mwDay input:checked").length == 0 | $("#weDay input:checked").length == 0 || ($("#congPass").val().length > 0 && (!$("#cong").val() || !bcrypt.compareSync($('#congPass').val(), congHash))) || !$("#outputPath").val()) {
+    if (!$("#lang").val() || $("#mwDay input:checked").length == 0 || $("#weDay input:checked").length == 0 || ($("#congPass").val().length > 0 && (!$("#cong").val() || !bcrypt.compareSync($('#congPass').val(), congHash))) || !$("#outputPath").val()) {
       $("#mediaSync, .btn-settings").prop("disabled", true);
       $("#mediaSync").addClass("btn-secondary").removeClass("btn-primary");
       $(".btn-settings").addClass("btn-danger").removeClass("btn-primary");
@@ -343,7 +343,7 @@ function goAhead() {
       });
       $("#enterPrefix").inputmask("99-99[-99][-99]", {
         "placeholder": "#"
-      })
+      });
       $("#enterPrefix, #chooseMeeting input, #fileToUpload").on("change", function() {
         if ($("#chooseMeeting input:checked").length > 0) {
           $("#fileList").fadeTo(400, 0, () => {
@@ -374,11 +374,11 @@ function goAhead() {
       $("#overlayUploadFile").fadeIn(400, () => {
         $("#overlayDryrun").fadeOut();
       });
-    })
+    });
     $("#btnCancelUpload").on("click", () => {
       $("#overlayUploadFile").fadeOut();
       $("#enterPrefix, #fileList, #fileToUpload").val("").empty();
-    })
+    });
     $("#btnUpload").on("click", async () => {
       try {
         $("#btnUpload").prop("disabled", true).addClass("btn-secondary loading").removeClass("btn-primary").html('Uploading<span>.</span><span>.</span><span>.</span>');
@@ -394,7 +394,7 @@ function goAhead() {
         dryrun = false;
         $("#overlayUploadFile").fadeOut();
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     });
   });
@@ -671,7 +671,8 @@ function goAhead() {
   async function downloadRequired(remoteOpts, destFile, method) {
     var returnValue = true;
     if (fs.existsSync(destFile)) {
-      var localHash = fs.statSync(destFile).size, remoteHash, json;
+      var localHash = fs.statSync(destFile).size,
+        remoteHash, json;
       if (remoteOpts.json) {
         json = remoteOpts.json;
         if (remoteOpts.track) {
@@ -702,7 +703,8 @@ function goAhead() {
   }
 
   async function executeStatement(db, statement) {
-    var vals = await db.exec(statement)[0], valObj = [];
+    var vals = await db.exec(statement)[0],
+      valObj = [];
     if (vals) {
       for (var v = 0; v < vals.values.length; v++) {
         valObj[v] = {};
@@ -868,7 +870,8 @@ function goAhead() {
       }
       jsonUrl = jwGetPubMediaLinks + "&pub=" + opts.pub + "&fileformat=" + opts.filetype + "&langwritten=" + prefs.lang + ((opts.issue && parseInt(opts.issue) > 0) ? "&issue=" + opts.issue : "") + (opts.track ? "&track=" + opts.track : "");
     }
-    let response = null, payload = null;
+    let response = null,
+      payload = null;
     try {
       payload = await axios.get(jsonUrl);
       response = payload.data;
@@ -920,7 +923,7 @@ function goAhead() {
 
   function progressSet(percent, filename, bar) {
     if (!bar) {
-      bar = "download"
+      bar = "download";
     }
     if (percent == 100) {
       $("#" + bar + "ProgressContainer").fadeTo(400, 0);
