@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.18",
+  "version": "0.8.19",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -16,6 +16,7 @@
     "font-awesome": "^4.7.0",
     "glob": "^7.1.6",
     "graceful-fs": "^4.2.4",
+    "inputmask": "^5.0.5",
     "jquery": "^3.5.1",
     "moment": "^2.27.0",
     "os": "^0.1.1",

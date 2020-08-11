@@ -79,14 +79,16 @@
 
     .invalid {
       background-color: #ffcdd2 !important;
-      border-color: #b71c1c !important;
+      border: 1px solid #b71c1c !important;
+      border: 1px solid #aaa;
+      border-radius: 4px;
     }
 
     .valid {
       background-color: #b9f6ca !important;
     }
 
-    #outputPath {
+    #outputPath, #fileToUpload {
       background-color: #fff;
     }
 
@@ -104,10 +106,16 @@
       border-radius: 50%;
     }
 
-    .btn-settings.fixed {
+    #btn-settings {
       position: fixed;
       bottom: 1em;
       right: 1em;
+    }
+
+    #btn-upload {
+      position: fixed;
+      bottom: 1em;
+      left: 1em;
     }
 
     .btn-circle i {
@@ -128,7 +136,6 @@
     .meeting,
     .congregation {
       background-color: #9e9e9e;
-      border-radius: 0.25rem;
     }
 
     .in-progress {
@@ -138,6 +145,22 @@
 
     .congregation {
       width: auto;
+    }
+
+    #fileList {
+      font-size: 75%;
+      column-count: 2;
+      width: 100%;
+    }
+
+    #fileList li {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .new-file {
+      font-weight: bold;
     }
 
     @keyframes pulse {
@@ -209,6 +232,12 @@
       </div>
     </div>
   </div>
+  <div id="overlayDryrun" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-dark">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">Hold on, doing some preliminary work<span>.</span><span>.</span><span>.</span></div>
+    </div>
+  </div>
   <div id="overlayComplete" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-success">
       <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder has been successfully synced!</div>
@@ -217,7 +246,57 @@
       </div>
     </div>
   </div>
+  <div id="overlayUploadFile" class="overlay flex-column p-4" style="display: none;">
+    <div class="align-items-center d-flex justify-content-center pb-4">
+      <div class="lead">
+        Let's upload a file!
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2">
+      <div class="flex-fill pr-3 text-right">Add a file for the following meeting</div>
+      <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseMeeting">
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2">
+      <div class="flex-fill pr-3 text-right">File to upload</div>
+      <input type="text" class="form-control form-control-sm half" id="fileToUpload" required readonly />
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2">
+      <div class="flex-fill pr-3 text-right">Prefix for uploaded file</div>
+      <input type="text" class="form-control form-control-sm half" id="enterPrefix" />
+    </div>
+    <div class="d-flex py-2">
+      <div class="half text-right">
+        <button class="btn btn-light" id="btnCancelUpload" type="button">Cancel</button>
+      </div>
+      <div class="half text-left">
+        <button class="btn btn-secondary" id="btnUpload" type="button" disabled>Upload!</button>
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2" id="uploadSpinnerContainer" style="opacity: 0;">
+      <div class="spinner-border" role="status"></div>
+    </div>
+    <div class="align-items-center d-flex text-center justify-content-center py-2" id="uploadProgressContainer" style="opacity: 0;">
+      <div class="half">
+        <div id="uploadFilename" class="lead mb-3">
+          -
+        </div>
+        <div class="progress" id="uploadProgress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-fill text-left">
+      <ul id="fileList" class="list-unstyled text-secondary m-0" style="opacity: 0;"></ul>
+    </div>
+  </div>
   <div id="overlaySettings" class="flex-column p-4 bg-light" style="display: none;">
+    <div class="align-items-center d-flex justify-content-center pb-4">
+      <div class="lead">
+        Settings
+      </div>
+    </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="outputPath" class="half m-0 pr-3 text-right">Folder in which to save media</label>
       <div class="flex-fill">
@@ -235,32 +314,54 @@
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="mwDay" class="half m-0 pr-3 text-right">Midweek meeting day</label>
-      <div class="flex-fill">
-        <select class="form-control" id="mwDay" required>
-          <option disabled selected value hidden></option>
-          <option value="0">Monday</option>
-          <option value="1">Tuesday</option>
-          <option value="2">Wednesday</option>
-          <option value="3">Thursday</option>
-          <option value="4">Friday</option>
-          <option value="5">Saturday</option>
-          <option value="6">Sunday</option>
-        </select>
+      <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="mwDay">
+        <label class="btn btn-light">
+          <input type="radio" name="mwDay" value="0" autocomplete="off"> M
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="mwDay" value="1" autocomplete="off"> T
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="mwDay" value="2" autocomplete="off"> W
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="mwDay" value="3" autocomplete="off"> T
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="mwDay" value="4" autocomplete="off"> F
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="mwDay" value="5" autocomplete="off"> S
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="mwDay" value="6" autocomplete="off"> S
+        </label>
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="weDay" class="half m-0 pr-3 text-right">Weekend meeting day</label>
-      <div class="flex-fill">
-        <select class="form-control" id="weDay" required>
-          <option disabled selected value hidden></option>
-          <option value="0">Monday</option>
-          <option value="1">Tuesday</option>
-          <option value="2">Wednesday</option>
-          <option value="3">Thursday</option>
-          <option value="4">Friday</option>
-          <option value="5">Saturday</option>
-          <option value="6">Sunday</option>
-        </select>
+      <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="weDay">
+        <label class="btn btn-light">
+          <input type="radio" name="weDay" value="0" autocomplete="off"> M
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="weDay" value="1" autocomplete="off"> T
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="weDay" value="2" autocomplete="off"> W
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="weDay" value="3" autocomplete="off"> T
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="weDay" value="4" autocomplete="off"> F
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="weDay" value="5" autocomplete="off"> S
+        </label>
+        <label class="btn btn-light">
+          <input type="radio" name="weDay" value="6" autocomplete="off"> S
+        </label>
       </div>
     </div>
     <hr />
@@ -322,7 +423,7 @@
   </div>
   <div id="home" class="d-flex flex-column">
     <div class="align-items-center d-flex flex-fill justify-content-center">
-      <div id="mainStatus" class="lead">
+      <div id="mainStatus" class="lead pb-4 loading">
         Push the big blue button!
       </div>
     </div>
@@ -370,7 +471,8 @@
       </div>
     </div>
   </div>
-  <button class="btn btn-secondary btn-circle btn-circle-sm m-1 btn-settings fixed"><i class="fa fa-cog"></i></button>
+  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-upload" style="display: none;"><i class="fa fa-upload"></i></button>
+  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-settings"><i class="fa fa-cog"></i></button>
   <script src="./media-updater.js"></script>
 </body>
 
