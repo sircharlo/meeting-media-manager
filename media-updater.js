@@ -360,7 +360,7 @@ function goAhead() {
               }));
             }
             $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 7));
-            $("#fileList li:contains(mp4)").addClass("text-dark");
+            $("#fileList li:contains(mp4)").addClass("video");
             if ($("#fileToUpload").val().length > 0) {
               $("#fileList li:contains(" + newFileName + ")").addClass("text-primary new-file");
               $("#btnUpload").prop("disabled", false).addClass("btn-success").removeClass("btn-secondary");
