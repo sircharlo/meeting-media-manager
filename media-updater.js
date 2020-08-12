@@ -259,17 +259,21 @@ function goAhead() {
   $(".btn-settings, #btn-settings").on('click', function() {
     settingsScreen();
   });
-  $(".btn-clean-up:not(.btn-confirmed)").on('click', function() {
-    $(this).addClass("btn-danger btn-confirmed").removeClass("btn-warning").html("Are you sure?");
-    $(".btn-clean-up.btn-confirmed").on('click', function() {
-      setVars();
-      for (var dir of [pubsPath, mediaPath]) {
-        fs.rmdirSync(dir, {
-          recursive: true
-        });
-      }
-      $(this).addClass("btn-success").removeClass("btn-danger btn-confirmed btn-clean-up").html("Clean-up completed!").prop("disabled", true);
-    });
+  var origCleanupText = $(".btn-clean-up:not(.btn-confirmed):not(.btn-success)").html();
+  $("#overlaySettings").on('click', ".btn-clean-up:not(.btn-confirmed)", function() {
+    $(".btn-clean-up:not(.btn-confirmed)").addClass("btn-danger btn-confirmed").removeClass("btn-warning").html("Are you sure?");
+    setTimeout(() => {
+      $(".btn-clean-up.btn-confirmed").removeClass("btn-danger btn-confirmed").addClass("btn-warning").html(origCleanupText);
+    }, 3000)
+  });
+  $("#overlaySettings").on('click', ".btn-clean-up.btn-confirmed", function() {
+    setVars();
+    for (var dir of [pubsPath, mediaPath]) {
+      fs.rmdirSync(dir, {
+        recursive: true
+      });
+    }
+    $(this).addClass("btn-success").removeClass("btn-danger btn-confirmed btn-clean-up").html("Clean-up completed!").prop("disabled", true);
   });
   $("#overlaySettings *").on('change', function() {
     $("#lang").val($("#langSelect").val());
