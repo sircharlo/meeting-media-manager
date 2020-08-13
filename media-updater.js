@@ -404,7 +404,7 @@ function goAhead() {
   });
 
   async function startMediaSync() {
-    var stayAlive = false;
+    stayAlive = false;
     $("#btn-settings, #btn-upload").fadeOut();
     $("#spinnerContainer").fadeTo(400, 1);
     await setVars();
