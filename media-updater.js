@@ -794,68 +794,72 @@ function goAhead() {
       } else {
         tableMultimedia = "DocumentMultimedia";
       }
-      var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType='video/mp4' OR Multimedia.MimeType='audio/mpeg') " + (tableMultimedia == "DocumentMultimedia" ? "AND NOT Multimedia.KeySymbol='sjj' AND NOT Multimedia.KeySymbol='th'" : "") + ") OR (Multimedia.MimeType='image/jpeg' AND Multimedia.CategoryType <> 9" + (opts.pub == "th" ? " AND Multimedia.Width <> ''" : "") + "))";
+      var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType='video/mp4' OR Multimedia.MimeType='audio/mpeg') " + (tableMultimedia == "DocumentMultimedia" ? "AND NOT Multimedia.KeySymbol='sjj' AND NOT Multimedia.KeySymbol='th'" : "") + ") OR (Multimedia.MimeType='image/jpeg' AND Multimedia.CategoryType <> 9" + (opts.pub == "th" ? " AND Multimedia.Width <> ''" : "") + "))";
       var mediaItems = await executeStatement(opts.db, statement);
       if (mediaItems) {
         for (var media of mediaItems) {
-          media.FileType = media.FilePath.split(".").pop();
-          if ((media.MimeType.includes("audio") || media.MimeType.includes("video"))) {
-            if (media.KeySymbol == null) {
-              media.JsonUrl = jwGetPubMediaLinks + "&docid=" +
-                media.MepsDocumentId + "&langwritten=" + prefs.lang;
-            } else {
-              media.JsonUrl = jwGetPubMediaLinks + "&pub=" + media.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + media.IssueTagNumber + "&track=" + media.Track;
-            }
-            if (media.MimeType.includes("video")) {
-              media.JsonUrl = media.JsonUrl + "&fileformat=MP4";
-            } else if (media.MimeType.includes("audio")) {
-              media.JsonUrl = media.JsonUrl + "&fileformat=MP3";
-            }
-            var json = await getJson({
-              url: media.JsonUrl
-            });
-            media.Json = Object.values(json.files[prefs.lang])[0];
-            if (media.MimeType.includes("video")) {
-              media.Json = media.Json.filter(function(item) {
-                return item.label == "720p";
+          if (!(opts.pub && media.KeySymbol)) {
+            media.FileType = media.FilePath.split(".").pop();
+            if ((media.MimeType.includes("audio") || media.MimeType.includes("video"))) {
+              if (media.KeySymbol == null) {
+                media.JsonUrl = jwGetPubMediaLinks + "&docid=" +
+                  media.MepsDocumentId + "&langwritten=" + prefs.lang;
+              } else {
+                media.JsonUrl = jwGetPubMediaLinks + "&pub=" + media.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + media.IssueTagNumber + "&track=" + media.Track;
+              }
+              if (media.MimeType.includes("video")) {
+                media.JsonUrl = media.JsonUrl + "&fileformat=MP4";
+              } else if (media.MimeType.includes("audio")) {
+                media.JsonUrl = media.JsonUrl + "&fileformat=MP3";
+              }
+              var json = await getJson({
+                url: media.JsonUrl
               });
+              media.Json = Object.values(json.files[prefs.lang])[0];
+              if (media.MimeType.includes("video")) {
+                media.Json = media.Json.filter(function(item) {
+                  return item.label == "720p";
+                });
+              }
             }
-          }
-          if (opts.srcDocId) {
-            media.SourceDocumentId = opts.srcDocId;
+            if (opts.srcDocId) {
+              media.SourceDocumentId = opts.srcDocId;
+            } else {
+              media.SourceDocumentId = opts.destDocId;
+            }
+            if (opts.srcParId) {
+              media.BeginParagraphOrdinal = opts.srcParId;
+            }
+            if (opts.srcKeySymbol) {
+              media.KeySymbol = opts.srcKeySymbol;
+            } else if (media.KeySymbol == null) {
+              media.KeySymbol = await executeStatement(opts.db, "SELECT UndatedSymbol FROM Publication");
+              media.KeySymbol = media.KeySymbol[0].UndatedSymbol;
+              media.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
+              media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
+            }
+            if (!media.JsonUrl) {
+              media.LocalPath = path.join(pubsPath, media.KeySymbol, media.IssueTagNumber, "JWPUB", "contents-decompressed", media.FilePath);
+            }
+            media.FileType = media.FilePath.split(".").pop();
+            media.FileName = media.Caption;
+            if (media.Label.length == 0 && media.Caption.length == 0) {
+              media.FileName = "Media";
+            } else if (media.Label.length > media.Caption.length) {
+              media.FileName = media.Label;
+            }
+            media.FileName = media.FileName + "." + media.FileType;
+            media.FileName = sanitizeFilename(media.FileName);
+            media.DestPath = path.join(mediaPath, moment(opts.week, "YYYYMMDD").format("YYYY-MM-DD"), media.FileName);
+            if (!mwMediaForWeek[media.BeginParagraphOrdinal]) {
+              mwMediaForWeek[media.BeginParagraphOrdinal] = [];
+            }
+            if (!weekMediaFilesCopied.includes(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId)) {
+              mwMediaForWeek[media.BeginParagraphOrdinal].push(media);
+              weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
+            }
           } else {
-            media.SourceDocumentId = opts.destDocId;
-          }
-          if (opts.srcParId) {
-            media.BeginParagraphOrdinal = opts.srcParId;
-          }
-          if (opts.srcKeySymbol) {
-            media.KeySymbol = opts.srcKeySymbol;
-          } else if (media.KeySymbol == null) {
-            media.KeySymbol = await executeStatement(opts.db, "SELECT UndatedSymbol FROM Publication");
-            media.KeySymbol = media.KeySymbol[0].UndatedSymbol;
-            media.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
-            media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
-          }
-          if (!media.JsonUrl) {
-            media.LocalPath = path.join(pubsPath, media.KeySymbol, media.IssueTagNumber, "JWPUB", "contents-decompressed", media.FilePath);
-          }
-          media.FileType = media.FilePath.split(".").pop();
-          media.FileName = media.Caption;
-          if (media.Label.length == 0 && media.Caption.length == 0) {
-            media.FileName = "Media";
-          } else if (media.Label.length > media.Caption.length) {
-            media.FileName = media.Label;
-          }
-          media.FileName = media.FileName + "." + media.FileType;
-          media.FileName = sanitizeFilename(media.FileName);
-          media.DestPath = path.join(mediaPath, moment(opts.week, "YYYYMMDD").format("YYYY-MM-DD"), media.FileName);
-          if (!mwMediaForWeek[media.BeginParagraphOrdinal]) {
-            mwMediaForWeek[media.BeginParagraphOrdinal] = [];
-          }
-          if (!weekMediaFilesCopied.includes(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId)) {
-            mwMediaForWeek[media.BeginParagraphOrdinal].push(media);
-            weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
+            console.log("Additional video skipped (probably not necessary)", media.KeySymbol, opts.pub, media.CategoryType, media.FilePath)
           }
         }
       }
