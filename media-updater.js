@@ -341,38 +341,83 @@ function goAhead() {
       for (var meeting of Object.keys(dryrunResults)) {
         $("#chooseMeeting").append('<label class="btn btn-light"><input type="radio" name="chooseMeeting" id="' + meeting + '" autocomplete="off"> ' + meeting + '</label>');
       }
-      $("#fileToUpload").on('click', function() {
+      $("#overlayUploadFile").on('click', "input#fileToUpload", function() {
         var path = require('electron').remote.dialog.showOpenDialogSync();
         $(this).val(path).change();
       });
       $("#enterPrefix").inputmask("99-99[-99][-99]", {
         "placeholder": "#"
       });
-      $("#enterPrefix, #chooseMeeting input, #fileToUpload").on("change", function() {
-        if ($("#chooseMeeting input:checked").length > 0) {
-          $("#fileList").fadeTo(400, 0, () => {
-            var newList = dryrunResults[$("#chooseMeeting input:checked").prop("id")];
-            var newFileName = ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val());
-            if ($("#fileToUpload").val().length > 0) {
-              newList = newList.concat([newFileName]);
-            }
-            newList = newList.sort();
-            $("#fileList").empty();
-            for (var file of newList) {
-              $("#fileList").append($("<li>", {
-                text: file
-              }));
-            }
-            $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 7));
-            $("#fileList li:contains(mp4)").addClass("video");
-            if ($("#fileToUpload").val().length > 0) {
-              $("#fileList li:contains(" + newFileName + ")").addClass("text-primary new-file");
-              $("#btnUpload").prop("disabled", false).addClass("btn-success").removeClass("btn-secondary");
-            } else {
-              $("#btnUpload").prop("disabled", true).removeClass("btn-success").addClass("btn-secondary");
-            }
-            $("#fileList").fadeTo(400, 1);
+
+      $("#chooseUploadType").on("change", async function() {
+        $(".localOrRemoteFile").remove();
+        var newElem = "";
+        if ($("#chooseUploadType label:nth-child(1) input:checked").length > 0) {
+          newElem = $('<select class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload">');
+          var sjjm = await getJson({
+            "pub": "sjjm",
+            "filetype": "MP4"
           });
+          sjjm = sjjm.files[prefs.lang]["MP4"].filter(function(item) {
+            return item.label == "720p";
+          });
+          for (sjj of sjjm) {
+            $(newElem).append($('<option>', {
+              value: sjj.title + ".mp4",
+              text: sjj.title
+            }));
+          }
+          $(newElem).val([]);
+        } else {
+          newElem = '<input type="text" class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload" required readonly />'
+        }
+        if ($("#fileToUpload").length == 0) {
+          $(".file-to-upload").append(newElem);
+        }
+      });
+
+      $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
+        $("#chooseUploadType input:checked").prop("checked", false);
+        $("#chooseUploadType .active").removeClass("active");
+
+        if ($("#chooseMeeting label:nth-child(2) input:checked").length > 0) {
+          $("#chooseUploadType label:nth-child(1) input").prop("disabled", false);
+          $("#chooseUploadType label:nth-child(1)").removeClass("disabled");
+        } else {
+          $("#chooseUploadType label:nth-child(1) input").prop("disabled", true);
+          $("#chooseUploadType label:nth-child(1)").addClass("disabled");
+          $("#chooseUploadType label:nth-child(2)").click();
+        }
+      });
+      $("#overlayUploadFile").on("change", "#enterPrefix, #chooseMeeting input, #chooseUploadType input, #fileToUpload", function() {
+        try {
+          if ($("#chooseMeeting input:checked").length > 0) {
+            $("#fileList").fadeTo(400, 0, () => {
+              var newList = dryrunResults[$("#chooseMeeting input:checked").prop("id")];
+              if ($("#fileToUpload").val() !== null && $("#fileToUpload").val().length > 0) {
+                var newFileName = ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val());
+                newList = newList.concat([newFileName]);
+              }
+              newList = newList.sort();
+              $("#fileList").empty();
+              for (var file of newList) {
+                $("#fileList").append($("<li>", {
+                  text: file
+                }));
+              }
+              $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 6));
+              $("#fileList li:contains(mp4)").addClass("video");
+              if ($("#fileToUpload").val() !== null && $("#fileToUpload").val().length > 0) {
+                $("#fileList li:contains(" + newFileName + ")").addClass("text-primary new-file");
+                $("#btnUpload").prop("disabled", false).addClass("btn-success").removeClass("btn-secondary");
+              } else {
+                $("#btnUpload").prop("disabled", true).removeClass("btn-success").addClass("btn-secondary");
+              }
+              $("#fileList").fadeTo(400, 1);
+            });
+          }
+        } catch (err) {
+          console.log(err)
         }
       });
       $("#overlayUploadFile").fadeIn(400, () => {
@@ -387,14 +432,33 @@ function goAhead() {
       try {
         $("#btnUpload").prop("disabled", true).addClass("btn-secondary loading").removeClass("btn-primary").html('Uploading<span>.</span><span>.</span><span>.</span>');
         $("#btnCancelUpload").prop("disabled", true);
-        $("#uploadSpinnerContainer, #uploadProgressContainer").fadeTo(400, 1);
-        await sftpUpload($("#fileToUpload").val(), path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", $("#chooseMeeting input:checked").prop("id")), ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val()));
+        $("#uploadSpinnerContainer").fadeTo(400, 1);
+        var localOrRemoteFile = $("#fileToUpload").val();
+        if ($("#chooseUploadType label:nth-child(1) input:checked").length > 0) {
+          var meetingSong = {
+            "SongNumber": $("#fileToUpload").val().split(".")[0],
+            "DestPath": "",
+            "pureDownload": true
+          };
+          localOrRemoteFile = await getSong(meetingSong);
+          remoteUrl = localOrRemoteFile.Json[0].file.url
+          localOrRemoteFile = await downloadFile(remoteUrl)
+          var tmpSong = path.join(os.tmpdir(), $("#fileToUpload").val() + ".mp4");
+          writeFile({
+            sync: true,
+            file: new Buffer(localOrRemoteFile),
+            destFile: tmpSong
+          });
+          localOrRemoteFile = tmpSong;
+        }
+        $("#uploadProgressContainer").fadeTo(400, 1);
+        await sftpUpload(localOrRemoteFile, path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", $("#chooseMeeting input:checked").prop("id")), ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val()));
         $("#uploadSpinnerContainer").fadeTo(400, 0);
         $("#btnUpload").prop("disabled", false).removeClass("btn-secondary loading").addClass("btn-primary").html('Upload!');
         $("#btnCancelUpload").prop("disabled", false);
-        $("#chooseMeeting input:checked").prop("checked", false).change();
-        $("#enterPrefix, #fileList, #fileToUpload").val("").empty().change();
-        $("#chooseMeeting .active").removeClass("active");
+        $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
+        $("#enterPrefix, #fileList, #fileToUpload").val("").empty();
+        $("#chooseMeeting .active, #chooseUploadType .active").removeClass("active");
         dryrun = false;
         $("#overlayUploadFile").fadeOut();
       } catch (err) {
@@ -900,6 +964,9 @@ function goAhead() {
     });
     song.Filename = ((song.FileOrder + 1) * 5).toString().padStart(2, '0') + "-00 " + song.Json[0].title + ".mp4";
     song.DestPath = path.join(song.DestPath, song.Filename);
+    if (song.pureDownload) {
+      return song;
+    }
     if (dryrun) {
       if (!dryrunResults[path.basename(path.dirname(song.DestPath))]) {
         dryrunResults[path.basename(path.dirname(song.DestPath))] = [];

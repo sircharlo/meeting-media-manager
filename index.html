@@ -148,7 +148,7 @@
     }
 
     #fileList {
-      font-size: 75%;
+      font-size: 60%;
       width: 100%;
     }
 
@@ -179,14 +179,12 @@
         box-shadow: 0 0 0 0 rgba(15, 102, 116, 0);
       }
     }
-
   </style>
   <script>
     window.$ = window.jQuery = require('jquery');
     window.popperjs = require('popper.js');
     window.Bootstrap = require('bootstrap');
     window.select2 = require('select2')(jQuery);
-
   </script>
 </head>
 
@@ -263,8 +261,19 @@
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2">
+      <div class="flex-fill pr-3 text-right">Type of file</div>
+      <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseUploadType">
+        <label class="btn btn-light disabled"><input type="radio" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
+          Song
+        </label>
+        <label class="btn btn-light"><input type="radio" name="chooseUploadType" id="typeFile" autocomplete="off">
+          File
+        </label>
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2 file-to-upload">
       <div class="flex-fill pr-3 text-right">File to upload</div>
-      <input type="text" class="form-control form-control-sm half" id="fileToUpload" required readonly />
+      <input type="text" class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload" required readonly />
     </div>
     <div class="align-items-center d-flex justify-content-center py-2">
       <div class="flex-fill pr-3 text-right">Prefix for uploaded file</div>
