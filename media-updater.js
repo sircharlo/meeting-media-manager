@@ -377,9 +377,6 @@ function goAhead() {
       });
 
       $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
-        $("#chooseUploadType input:checked").prop("checked", false);
-        $("#chooseUploadType .active").removeClass("active");
-
         if ($("#chooseMeeting label:nth-child(2) input:checked").length > 0) {
           $("#chooseUploadType label:nth-child(1) input").prop("disabled", false);
           $("#chooseUploadType label:nth-child(1)").removeClass("disabled");
@@ -394,7 +391,7 @@ function goAhead() {
           if ($("#chooseMeeting input:checked").length > 0) {
             $("#fileList").fadeTo(400, 0, () => {
               var newList = dryrunResults[$("#chooseMeeting input:checked").prop("id")];
-              if ($("#fileToUpload").val() !== null && $("#fileToUpload").val().length > 0) {
+              if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
                 var newFileName = ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val());
                 newList = newList.concat([newFileName]);
               }
@@ -407,7 +404,7 @@ function goAhead() {
               }
               $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 6));
               $("#fileList li:contains(mp4)").addClass("video");
-              if ($("#fileToUpload").val() !== null && $("#fileToUpload").val().length > 0) {
+              if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
                 $("#fileList li:contains(" + newFileName + ")").addClass("text-primary new-file");
                 $("#btnUpload").prop("disabled", false).addClass("btn-success").removeClass("btn-secondary");
               } else {
