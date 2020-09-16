@@ -264,7 +264,7 @@ function goAhead() {
     $(".btn-clean-up:not(.btn-confirmed)").addClass("btn-danger btn-confirmed").removeClass("btn-warning").html("Are you sure?");
     setTimeout(() => {
       $(".btn-clean-up.btn-confirmed").removeClass("btn-danger btn-confirmed").addClass("btn-warning").html(origCleanupText);
-    }, 3000)
+    }, 3000);
   });
   $("#overlaySettings").on('click', ".btn-clean-up.btn-confirmed", function() {
     setVars();
@@ -335,7 +335,8 @@ function goAhead() {
   });
   $("#btn-upload").on('click', function() {
     $("#overlayDryrun").fadeIn(400, async () => {
-      dryrun = true, dryrunResults = {};
+      dryrun = true;
+      dryrunResults = {};
       await startMediaSync();
       $("#chooseMeeting").empty();
       for (var meeting of Object.keys(dryrunResults)) {
@@ -358,10 +359,10 @@ function goAhead() {
             "pub": "sjjm",
             "filetype": "MP4"
           });
-          sjjm = sjjm.files[prefs.lang]["MP4"].filter(function(item) {
+          sjjm = sjjm.files[prefs.lang].MP4.filter(function(item) {
             return item.label == "720p";
           });
-          for (sjj of sjjm) {
+          for (var sjj of sjjm) {
             $(newElem).append($('<option>', {
               value: sjj.title + ".mp4",
               text: sjj.title
@@ -369,7 +370,7 @@ function goAhead() {
           }
           $(newElem).val([]);
         } else {
-          newElem = '<input type="text" class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload" required readonly />'
+          newElem = '<input type="text" class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload" required readonly />';
         }
         if ($("#fileToUpload").length == 0) {
           $(".file-to-upload").append(newElem);
@@ -391,8 +392,9 @@ function goAhead() {
           if ($("#chooseMeeting input:checked").length > 0) {
             $("#fileList").fadeTo(400, 0, () => {
               var newList = dryrunResults[$("#chooseMeeting input:checked").prop("id")];
+              var newFileName = "";
               if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
-                var newFileName = ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val());
+                newFileName = ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val());
                 newList = newList.concat([newFileName]);
               }
               newList = newList.sort();
@@ -414,7 +416,7 @@ function goAhead() {
             });
           }
         } catch (err) {
-          console.log(err)
+          console.log(err);
         }
       });
       $("#overlayUploadFile").fadeIn(400, () => {
@@ -438,8 +440,8 @@ function goAhead() {
             "pureDownload": true
           };
           localOrRemoteFile = await getSong(meetingSong);
-          remoteUrl = localOrRemoteFile.Json[0].file.url
-          localOrRemoteFile = await downloadFile(remoteUrl)
+          remoteUrl = localOrRemoteFile.Json[0].file.url;
+          localOrRemoteFile = await downloadFile(remoteUrl);
           var tmpSong = path.join(os.tmpdir(), $("#fileToUpload").val() + ".mp4");
           writeFile({
             sync: true,
@@ -919,7 +921,7 @@ function goAhead() {
               weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
             }
           } else {
-            console.log("Additional video skipped (probably not necessary)", media.KeySymbol, opts.pub, media.CategoryType, media.FilePath)
+            console.log("Additional video skipped (probably not necessary)", media.KeySymbol, opts.pub, media.CategoryType, media.FilePath);
           }
         }
       }
