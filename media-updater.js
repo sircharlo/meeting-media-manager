@@ -1,5 +1,6 @@
 /*jshint esversion: 8, node: true */
 const ping = require('ping');
+const isPortReachable = require('is-port-reachable');
 
 const congSpecificServer = {
   host: decode("c2lyY2hhcmxvLmhvcHRvLm9yZw=="),
@@ -9,12 +10,14 @@ const congSpecificServer = {
 
 async function checkInternet() {
   try {
-    let res = await ping.promise.probe("www.google.com");
-    let res2 = await ping.promise.probe(congSpecificServer.host);
-    if (res2.alive) {
+    let internet = await ping.promise.probe("www.google.com");
+    let congServer = await isPortReachable(congSpecificServer.port, {
+      host: congSpecificServer.host
+    })
+    if (congServer) {
       congSpecificServer.alive = true;
     }
-    if (res.alive) {
+    if (internet.alive) {
       require('electron').ipcRenderer.send('autoUpdate');
     } else {
       require('electron').ipcRenderer.send('noInternet');
