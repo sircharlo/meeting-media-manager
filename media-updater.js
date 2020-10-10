@@ -66,7 +66,8 @@ function goAhead() {
   const path = require("path");
   const sqljs = require('sql.js');
 
-  const jwGetPubMediaLinks = "https://apps.jw.org/GETPUBMEDIALINKS?output=json";
+  // eventually, dynamically get from live site...
+  const jwGetPubMediaLinks = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS" + "?output=json";
 
   const pubs = {
     wt: "w",
