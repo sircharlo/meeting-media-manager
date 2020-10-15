@@ -1,6 +1,9 @@
 /*jshint esversion: 8, node: true */
-const ping = require('ping');
+const axios = require('axios');
 const isPortReachable = require('is-port-reachable');
+const ping = require('ping');
+
+var pubMediaServer = "";
 
 const congSpecificServer = {
   host: decode("c2lyY2hhcmxvLmhvcHRvLm9yZw=="),
@@ -11,13 +14,22 @@ const congSpecificServer = {
 async function checkInternet() {
   try {
     let internet = await ping.promise.probe("www.google.com");
+    let jwOrg = "";
     let congServer = await isPortReachable(congSpecificServer.port, {
       host: congSpecificServer.host
-    })
+    });
     if (congServer) {
       congSpecificServer.alive = true;
     }
     if (internet.alive) {
+      try {
+        jwOrg = await axios.get("https://wol.jw.org/en/wol/binav/r1/lp-e");
+        response = jwOrg.data;
+      } catch (err) {
+        console.log(err, jwOrg);
+      } finally {
+        pubMediaServer = $(response).find("#pubMediaServer").val();
+      }
       require('electron').ipcRenderer.send('autoUpdate');
     } else {
       require('electron').ipcRenderer.send('noInternet');
@@ -55,7 +67,6 @@ function decode(e) {
 }
 
 function goAhead() {
-  const axios = require('axios');
   const bcrypt = require('bcryptjs');
   const extract = require('extract-zip');
   const fs = require("graceful-fs");
@@ -66,8 +77,8 @@ function goAhead() {
   const path = require("path");
   const sqljs = require('sql.js');
 
-  // eventually, dynamically get from live site...
-  const jwGetPubMediaLinks = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS" + "?output=json";
+  const jwGetPubMediaLinks = pubMediaServer + "?output=json";
+
 
   const pubs = {
     wt: "w",
@@ -373,6 +384,7 @@ function goAhead() {
           $(".localOrRemoteFile").remove();
           var newElem = "";
           if ($("#chooseUploadType label:nth-child(1) input:checked").length > 0) {
+            $(".file-to-upload").append('<div class="half" id="songsSpinner"><div class="spinner-border spinner-border-sm" role="status"></div></div>');
             newElem = $('<select class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload">');
             var sjjm = await getJson({
               "pub": "sjjm",
@@ -388,6 +400,7 @@ function goAhead() {
               }));
             }
             $(newElem).val([]);
+            $(".file-to-upload #songsSpinner").remove();
           } else {
             newElem = '<input type="text" class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload" required readonly />';
           }
