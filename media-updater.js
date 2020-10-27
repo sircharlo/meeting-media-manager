@@ -1149,6 +1149,7 @@ function goAhead() {
         let Client = require('ssh2-sftp-client');
         let sftpUploadFile = new Client();
         await sftpUploadFile.connect(sftpConfig);
+        await sftpUploadFile.mkdir(destFolder, true);
         await sftpUploadFile.fastPut(file, path.posix.join(destFolder, destName), {
           step: function(totalTransferred, chunk, total) {
             var percent = totalTransferred / total * 100;
