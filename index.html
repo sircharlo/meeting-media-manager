@@ -143,6 +143,11 @@
       animation: pulse 1s infinite;
     }
 
+    .today {
+      box-shadow: 0px 0px 15px 0px rgba(255, 193, 7, 0.85);
+      animation: pulseToday 2s infinite;
+    }
+
     .congregation {
       width: auto;
     }
@@ -179,6 +184,20 @@
         box-shadow: 0 0 0 0 rgba(15, 102, 116, 0);
       }
     }
+
+    @keyframes pulseToday {
+      0% {
+        box-shadow: 0 0 15px 0 rgba(255, 193, 7, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 15px 5px rgba(255, 193, 7, 0.7);
+      }
+
+      100% {
+        box-shadow: 0 0 15px 0 rgba(255, 193, 7, 0.7);
+      }
+    }
   </style>
   <script>
     window.$ = window.jQuery = require('jquery');
@@ -192,7 +211,7 @@
   <div id="overlayInternetCheck" class="overlay justify-content-center">
     <div class="align-self-center text-dark">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">Hang tight, looking for Internet connectivity<span>.</span><span>.</span><span>.</span></div>
+      <div class="align-self-center loading" role="status">Hang tight, looking for JW.org<span>.</span><span>.</span><span>.</span></div>
     </div>
   </div>
   <div id="overlayInternetFail" class="overlay justify-content-center" style="display: none;">
@@ -274,6 +293,9 @@
     <div class="align-items-center d-flex justify-content-center py-2 file-to-upload">
       <div class="flex-fill pr-3 text-right">File to upload</div>
       <input type="text" class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload" required readonly />
+      <div class="half songsSpinner" style="display: none;">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+      </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2">
       <div class="flex-fill pr-3 text-right">Prefix for uploaded file</div>

@@ -277,7 +277,13 @@ function goAhead() {
   var mwMediaForWeek, baseDate, weekMediaFilesCopied = [],
     dryrun = false,
     dryrunResults = {};
-
+  var currentWeekday = (new Date()).getDay();
+  if (currentWeekday == 0) {
+    currentWeekday = currentWeekday + 6;
+  } else {
+    currentWeekday = currentWeekday - 1;
+  }
+  $("#day" + currentWeekday).addClass("today");
   getInitialData();
   $("#outputPath").on('click', function() {
     var path = require('electron').remote.dialog.showOpenDialogSync({
@@ -363,6 +369,10 @@ function goAhead() {
     status("Push the big blue button!");
   });
   if (congSpecificServer.alive) {
+    $("#overlayUploadFile").on('click', "input#fileToUpload", function() {
+      var path = require('electron').remote.dialog.showOpenDialogSync();
+      $(this).val(path).change();
+    });
     $("#btn-upload").on('click', function() {
       $("#overlayDryrun").fadeIn(400, async () => {
         dryrun = true;
@@ -372,10 +382,6 @@ function goAhead() {
         for (var meeting of Object.keys(dryrunResults)) {
           $("#chooseMeeting").append('<label class="btn btn-light"><input type="radio" name="chooseMeeting" id="' + meeting + '" autocomplete="off"> ' + meeting + '</label>');
         }
-        $("#overlayUploadFile").on('click', "input#fileToUpload", function() {
-          var path = require('electron').remote.dialog.showOpenDialogSync();
-          $(this).val(path).change();
-        });
         $("#enterPrefix").inputmask("99-99[-99][-99]", {
           "placeholder": "#"
         });
@@ -384,7 +390,7 @@ function goAhead() {
           $(".localOrRemoteFile").remove();
           var newElem = "";
           if ($("#chooseUploadType label:nth-child(1) input:checked").length > 0) {
-            $(".file-to-upload").append('<div class="half" id="songsSpinner"><div class="spinner-border spinner-border-sm" role="status"></div></div>');
+            $(".songsSpinner").show();
             newElem = $('<select class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload">');
             var sjjm = await getJson({
               "pub": "sjjm",
@@ -400,7 +406,7 @@ function goAhead() {
               }));
             }
             $(newElem).val([]);
-            $(".file-to-upload #songsSpinner").remove();
+            $(".songsSpinner").hide();
           } else {
             newElem = '<input type="text" class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload" required readonly />';
           }
