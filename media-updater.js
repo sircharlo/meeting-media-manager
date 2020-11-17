@@ -93,6 +93,8 @@ function goAhead() {
   const langsFile = path.join(appPath, "langs.json");
   const prefsFile = path.join(appPath, "prefs.json");
 
+  var currentWeekDates = [];
+
   if (!fs.existsSync(prefsFile)) {
     doMaintenance();
   }
@@ -556,6 +558,7 @@ function goAhead() {
         if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
           var weekPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
           mkdirSync(weekPath);
+          currentWeekDates.push(weekPath);
           var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
           var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal");
           for (var s = 0; s < qrySongs.length; s++) {
@@ -628,6 +631,7 @@ function goAhead() {
           docId = docId[0].DocumentId;
           var weekPath = path.join(mediaPath, weekDay.format("YYYY-MM-DD"));
           mkdirSync(weekPath);
+          currentWeekDates.push(weekPath);
           var mediaExternal = await getDocumentMultimedia({
             week: weekDay.format("YYYYMMDD"),
             db: db,
@@ -702,9 +706,34 @@ function goAhead() {
         var congSpecificFolders = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media"));
         var dirs = [];
         congSpecificFolders.forEach((folder, f) => {
-          dirs.push([path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", folder.name), path.join(mediaPath, folder.name)]);
+          var congSpecificFoldersParent = mediaPath;
+          if (folder.name == "Recurring") {
+            congSpecificFoldersParent = pubsPath;
+          }
+          mkdirSync(path.join(congSpecificFoldersParent, folder.name));
+          dirs.push([path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", folder.name), path.join(congSpecificFoldersParent, folder.name)]);
         });
+        if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
+          var recurringFiles = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", "Recurring"));
+          for (recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
+            if (recurringFiles.filter(file => file.name == recurringFile).length == 0) {
+              fs.unlinkSync(path.join(pubsPath, "Recurring", recurringFile));
+            }
+          }
+        }
         await sftpDownloadDirs(dirs);
+        if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
+          for (recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
+            for (meetingDate of currentWeekDates) {
+              writeFile({
+                sync: true,
+                file: path.join(pubsPath, "Recurring", recurringFile),
+                destFile: path.join(meetingDate, recurringFile),
+                type: "copy"
+              });
+            }
+          }
+        }
       } catch (err) {
         console.log(err);
       }
@@ -1090,7 +1119,7 @@ function goAhead() {
           for (var file of files) {
             var downloadNeeded = true;
             if (!fs.existsSync(dirs[d][1])) {
-              downloadNeeded = false;
+              //              downloadNeeded = false;
             } else if (fs.existsSync(path.join(dirs[d][1], file.name)) && !dryrun) {
               var localSize = fs.statSync(path.join(dirs[d][1], file.name)).size;
               var remoteSize = file.size;
