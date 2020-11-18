@@ -382,7 +382,9 @@ function goAhead() {
         await startMediaSync();
         $("#chooseMeeting").empty();
         for (var meeting of Object.keys(dryrunResults)) {
-          $("#chooseMeeting").append('<label class="btn btn-light"><input type="radio" name="chooseMeeting" id="' + meeting + '" autocomplete="off"> ' + meeting + '</label>');
+          if (meeting !== "Recurring") {
+            $("#chooseMeeting").append('<label class="btn btn-light"><input type="radio" name="chooseMeeting" id="' + meeting + '" autocomplete="off"> ' + meeting + '</label>');
+          }
         }
         $("#enterPrefix").inputmask("99-99[-99][-99]", {
           "placeholder": "#"
@@ -436,6 +438,9 @@ function goAhead() {
                 if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
                   newFileName = ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val());
                   newList = newList.concat([newFileName]);
+                }
+                if ("Recurring" in dryrunResults) {
+                  newList = newList.concat(dryrunResults.Recurring);
                 }
                 newList = newList.sort();
                 $("#fileList").empty();
