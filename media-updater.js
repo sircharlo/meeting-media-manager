@@ -720,7 +720,7 @@ function goAhead() {
         });
         if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
           var recurringFiles = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", "Recurring"));
-          for (recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
+          for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
             if (recurringFiles.filter(file => file.name == recurringFile).length == 0) {
               fs.unlinkSync(path.join(pubsPath, "Recurring", recurringFile));
             }
@@ -728,8 +728,8 @@ function goAhead() {
         }
         await sftpDownloadDirs(dirs);
         if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
-          for (recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
-            for (meetingDate of currentWeekDates) {
+          for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
+            for (var meetingDate of currentWeekDates) {
               writeFile({
                 sync: true,
                 file: path.join(pubsPath, "Recurring", recurringFile),
