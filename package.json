@@ -8,7 +8,6 @@
     "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
   },
   "dependencies": {
-    "@popperjs/core": "^2.5.4",
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^4.5.2",
@@ -24,6 +23,7 @@
     "os": "^0.1.1",
     "path": "^0.12.7",
     "ping": "^0.2.3",
+    "popper.js": "^1.16.1",
     "select2": "^4.0.13",
     "sql.js": "^1.3.2",
     "ssh2-sftp-client": "^5.3.1"
