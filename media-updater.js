@@ -730,12 +730,16 @@ function goAhead() {
         if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
           for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
             for (var meetingDate of currentWeekDates) {
-              writeFile({
-                sync: true,
-                file: path.join(pubsPath, "Recurring", recurringFile),
-                destFile: path.join(meetingDate, recurringFile),
-                type: "copy"
-              });
+              var currentWeekYeartextFilename = "00-00 " + (new Date()).getFullYear() + " Yeartext " + getISOWeekInMonth(new Date()) + ".mp4";
+              if (recurringFile == currentWeekYeartextFilename) {
+                console.log(recurringFile);
+                writeFile({
+                  sync: true,
+                  file: path.join(pubsPath, "Recurring", recurringFile),
+                  destFile: path.join(meetingDate, recurringFile),
+                  type: "copy"
+                });
+              }
             }
           }
         }
@@ -1003,6 +1007,13 @@ function goAhead() {
     }
   }
 
+  function getISOWeekInMonth(date) {
+    var d = new Date(+date);
+    if (isNaN(d)) return;
+    d.setDate(d.getDate() - d.getDay() + 1);
+    return Math.ceil(d.getDate() / 7);
+  }
+
   async function getJson(opts) {
     var jsonUrl = "";
     if (opts.url) {
@@ -1034,7 +1045,7 @@ function goAhead() {
     song.Json = Object.values(song.Json.files[prefs.lang])[0].filter(function(item) {
       return item.label == "720p";
     });
-    song.Filename = ((song.FileOrder + 1) * 5).toString().padStart(2, '0') + "-00 " + song.Json[0].title + ".mp4";
+    song.Filename = sanitizeFilename(((song.FileOrder + 1) * 5).toString().padStart(2, '0') + "-00 " + song.Json[0].title + ".mp4");
     song.DestPath = path.join(song.DestPath, song.Filename);
     if (song.pureDownload) {
       return song;
