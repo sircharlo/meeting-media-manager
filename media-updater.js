@@ -440,7 +440,8 @@ function goAhead() {
                   newList = newList.concat([newFileName]);
                 }
                 if ("Recurring" in dryrunResults) {
-                  newList = newList.concat(dryrunResults.Recurring);
+                  var recur = dryrunResults.Recurring[0].split(".");
+                  newList = newList.concat(recur[0].slice(0, -1) + "#." + recur[1]);
                 }
                 newList = newList.sort();
                 $("#fileList").empty();
@@ -564,7 +565,7 @@ function goAhead() {
           var weekPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
           mkdirSync(weekPath);
           currentWeekDates.push(weekPath);
-          var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
+          var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
           var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal");
           for (var s = 0; s < qrySongs.length; s++) {
             var song = qrySongs[s];
@@ -573,7 +574,30 @@ function goAhead() {
             song.FileOrder = s;
             await getSong(song);
           }
-          qryLocalMedia.forEach(function(localMedia, l) {
+          for (var l = 0; l < qryLocalMedia.length; l++) {
+            var localMedia = qryLocalMedia[l];
+            localMedia.FileType = localMedia.FilePath.split(".").pop();
+            if ((localMedia.MimeType.includes("audio") || localMedia.MimeType.includes("video"))) {
+              if (localMedia.KeySymbol == null) {
+                localMedia.JsonUrl = jwGetPubMediaLinks + "&docid=" + localMedia.MultiMeps + "&langwritten=" + prefs.lang;
+              } else {
+                localMedia.JsonUrl = jwGetPubMediaLinks + "&pub=" + localMedia.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + localMedia.IssueTagNumber + "&track=" + localMedia.Track;
+              }
+              if (localMedia.MimeType.includes("video")) {
+                localMedia.JsonUrl = localMedia.JsonUrl + "&fileformat=MP4";
+              } else if (localMedia.MimeType.includes("audio")) {
+                localMedia.JsonUrl = localMedia.JsonUrl + "&fileformat=MP3";
+              }
+              var json = await getJson({
+                url: localMedia.JsonUrl
+              });
+              localMedia.Json = Object.values(json.files[prefs.lang])[0];
+              if (localMedia.MimeType.includes("video")) {
+                localMedia.Json = localMedia.Json.filter(function(item) {
+                  return item.label == "720p";
+                });
+              }
+            }
             localMedia.FileType = localMedia.FilePath.split(".").pop();
             localMedia.FileName = localMedia.Caption;
             if (localMedia.Label.length == 0 && localMedia.Caption.length == 0) {
@@ -582,8 +606,13 @@ function goAhead() {
               localMedia.FileName = localMedia.Label;
             }
             localMedia.FileName = localMedia.FileName + "." + localMedia.FileType;
-            localMedia.LocalPath = path.join(pubsPath, pubs.wt, issue, "JWPUB", "contents-decompressed", localMedia.FilePath);
-            localMedia.FileName = sanitizeFilename("05-" + (l + 1).toString().padStart(2, '0') + " " + localMedia.FileName);
+            if (!localMedia.JsonUrl) {
+              localMedia.LocalPath = path.join(pubsPath, pubs.wt, issue, "JWPUB", "contents-decompressed", localMedia.FilePath);
+            }
+            localMedia.FileName = await sanitizeFilename("05-" + (l + 1).toString().padStart(2, '0') + " " + localMedia.FileName);
+            if (localMedia.Json) {
+              localMedia.FileName = "05-" + (l + 1).toString().padStart(2, '0') + " " + localMedia.Json[0].title + "." + path.extname(localMedia.Json[0].file.url);
+            }
             localMedia.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"), localMedia.FileName);
             localMedia.SourceDocumentId = qryDocuments[w].DocumentId;
             if (dryrun) {
@@ -592,14 +621,28 @@ function goAhead() {
               }
               dryrunResults[studyDate.format("YYYY-MM-DD")].push(localMedia.FileName);
             } else {
-              writeFile({
-                sync: true,
-                file: localMedia.LocalPath,
-                destFile: localMedia.DestPath,
-                type: "copy"
-              });
+              if (localMedia.Json) {
+                if (await downloadRequired({
+                    json: localMedia.Json,
+                    onlyFile: true
+                  }, localMedia.DestPath)) {
+                  var file = await downloadFile(localMedia.Json[0].file.url);
+                  writeFile({
+                    sync: true,
+                    file: new Buffer(file),
+                    destFile: localMedia.DestPath
+                  });
+                }
+              } else {
+                writeFile({
+                  sync: true,
+                  file: localMedia.LocalPath,
+                  destFile: localMedia.DestPath,
+                  type: "copy"
+                });
+              }
             }
-          });
+          };
           $("#day" + prefs.weDay).removeClass("in-progress bg-info");
           if (!dryrun) {
             $("#day" + prefs.weDay).addClass("bg-success");
@@ -732,7 +775,6 @@ function goAhead() {
             for (var meetingDate of currentWeekDates) {
               var currentWeekYeartextFilename = "00-00 " + (new Date()).getFullYear() + " Yeartext " + getISOWeekInMonth(new Date()) + ".mp4";
               if (recurringFile == currentWeekYeartextFilename) {
-                console.log(recurringFile);
                 writeFile({
                   sync: true,
                   file: path.join(pubsPath, "Recurring", recurringFile),
