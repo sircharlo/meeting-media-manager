@@ -642,7 +642,7 @@ function goAhead() {
                 });
               }
             }
-          };
+          }
           $("#day" + prefs.weDay).removeClass("in-progress bg-info");
           if (!dryrun) {
             $("#day" + prefs.weDay).addClass("bg-success");
@@ -763,9 +763,9 @@ function goAhead() {
         });
         if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
           var recurringFiles = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", "Recurring"));
-          for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
-            if (recurringFiles.filter(file => file.name == recurringFile).length == 0) {
-              fs.unlinkSync(path.join(pubsPath, "Recurring", recurringFile));
+          for (var localRecurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
+            if (recurringFiles.filter(file => file.name == localRecurringFile).length == 0) {
+              fs.unlinkSync(path.join(pubsPath, "Recurring", localRecurringFile));
             }
           }
         }
