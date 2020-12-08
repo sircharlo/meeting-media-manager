@@ -436,7 +436,7 @@ function goAhead() {
                 var newList = dryrunResults[$("#chooseMeeting input:checked").prop("id")];
                 var newFileName = "";
                 if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
-                  newFileName = ($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val());
+                  newFileName = sanitizeFilename(($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename($("#fileToUpload").val()));
                   newList = newList.concat([newFileName]);
                 }
                 if ("Recurring" in dryrunResults) {
@@ -1240,6 +1240,7 @@ function goAhead() {
     try {
       if (congSpecificServer.alive) {
         let Client = require('ssh2-sftp-client');
+        destName = await sanitizeFilename(destName);
         let sftpUploadFile = new Client();
         await sftpUploadFile.connect(sftpConfig);
         await sftpUploadFile.mkdir(destFolder, true);
