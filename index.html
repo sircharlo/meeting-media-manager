@@ -198,6 +198,19 @@
         box-shadow: 0 0 15px 0 rgba(255, 193, 7, 0.7);
       }
     }
+
+    .dropzone {
+      box-sizing: border-box;
+      display: none;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      z-index: 99999;
+      background: rgba(66, 165, 245, .8);
+      border: 11px dashed #42a5f5;
+    }
   </style>
   <script>
     window.$ = window.jQuery = require('jquery');
@@ -208,22 +221,23 @@
 </head>
 
 <body>
+  <div id="dropzone" class="dropzone"></div>
   <div id="overlayInternetCheck" class="overlay justify-content-center">
     <div class="align-self-center text-dark">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">Hang tight, looking for JW.org<span>.</span><span>.</span><span>.</span></div>
+      <div class="align-self-center loading" role="status">Hang tight, establishing connection to JW.org<span>.</span><span>.</span><span>.</span></div>
     </div>
   </div>
   <div id="overlayInternetFail" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-danger">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">I can't find the Internet! I'll try again in a few seconds<span>.</span><span>.</span><span>.</span></div>
+      <div class="align-self-center loading" role="status">I can't find JW.org! I'll try again in a few seconds<span>.</span><span>.</span><span>.</span></div>
     </div>
   </div>
   <div id="overlayUpdateCheck" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-dark">
       <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">Internet's all good; let's check for updates to this app<span>.</span><span>.</span><span>.</span></div>
+      <div class="align-self-center loading" role="status">Connection to JW.org established; let's check for updates to this app<span>.</span><span>.</span><span>.</span></div>
     </div>
   </div>
   <div id="overlayUpdateAvailable" class="overlay justify-content-center" style="display: none;">
@@ -279,7 +293,7 @@
       <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseMeeting">
       </div>
     </div>
-    <div class="align-items-center d-flex justify-content-center py-2">
+    <div class="align-items-center d-flex justify-content-center py-2 relatedToUploadType">
       <div class="flex-fill pr-3 text-right">Type of file</div>
       <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseUploadType">
         <label class="btn btn-light disabled"><input type="radio" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
@@ -290,15 +304,15 @@
         </label>
       </div>
     </div>
-    <div class="align-items-center d-flex justify-content-center py-2 file-to-upload">
-      <div class="flex-fill pr-3 text-right">File to upload</div>
+    <div class="align-items-center d-flex justify-content-center py-2 file-to-upload relatedToUpload">
+      <div class="flex-fill pr-3 text-right">File(s) to upload</div>
       <input type="text" class="form-control form-control-sm half localOrRemoteFile" id="fileToUpload" required readonly />
       <div class="half songsSpinner" style="display: none;">
         <div class="spinner-border spinner-border-sm" role="status"></div>
       </div>
     </div>
-    <div class="align-items-center d-flex justify-content-center py-2">
-      <div class="flex-fill pr-3 text-right">Prefix for uploaded file</div>
+    <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
+      <div class="flex-fill pr-3 text-right">Prefix for uploaded file(s)</div>
       <input type="text" class="form-control form-control-sm half" id="enterPrefix" />
     </div>
     <div class="d-flex py-2">
