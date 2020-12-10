@@ -95,9 +95,9 @@ function goAhead() {
 
   var currentWeekDates = [];
 
-  if (!fs.existsSync(prefsFile)) {
+  /*if (!fs.existsSync(prefsFile)) {
     doMaintenance();
-  }
+  }*/
 
   function prefsInitialize() {
     for (var pref of ["lang", "mwDay", "weDay", "cong", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath"]) {
@@ -113,9 +113,9 @@ function goAhead() {
     } catch (err) {
       console.log(err);
     }
-    if (!prefs.lastMaintenance) {
+    /*if (!prefs.lastMaintenance) {
       doMaintenance();
-    }
+    }*/
     prefsInitialize();
     $("#lang").val(prefs.lang);
     $("#outputPath").val(prefs.outputPath);
@@ -401,7 +401,9 @@ function goAhead() {
     };
 
     var dragenterHandler = (event) => {
-      $(".dropzone").css("display", "block");
+      if ($("#chooseUploadType label:nth-child(2).active").length > 0) {
+        $(".dropzone").css("display", "block");
+      }
     };
 
     var dragleaveHandler = (event) => {
@@ -467,10 +469,10 @@ function goAhead() {
           if ($("#chooseMeeting label:nth-child(2) input:checked").length > 0) {
             $("#chooseUploadType label.active").removeClass("active");
             $("#chooseUploadType label:nth-child(1) input").prop("disabled", false);
-            $("#chooseUploadType label:nth-child(1)").removeClass("disabled");
+            $("#chooseUploadType label:nth-child(1)").removeClass("disabled").fadeIn();
           } else {
             $("#chooseUploadType label:nth-child(1) input").prop("disabled", true);
-            $("#chooseUploadType label:nth-child(1)").addClass("disabled");
+            $("#chooseUploadType label:nth-child(1)").fadeOut().addClass("disabled");
             $("#chooseUploadType label:nth-child(2)").click().addClass("active");
           }
         });
@@ -484,8 +486,8 @@ function goAhead() {
             if ($("#chooseMeeting input:checked").length > 0) {
               $("#fileList").fadeTo(400, 0, () => {
                 var newList = dryrunResults[$("#chooseMeeting input:checked").prop("id")];
+                var newFiles = [];
                 if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
-                  var newFiles = [];
                   for (var splitFileToUpload of $("#fileToUpload").val().split(" -//- ")) {
                     newFiles.push(sanitizeFilename(($("#enterPrefix").val().length > 0 ? $("#enterPrefix").val() + " " : "") + path.basename(splitFileToUpload)));
                   }
@@ -558,7 +560,7 @@ function goAhead() {
           var localOrRemoteFileOrig = localOrRemoteFile;
           localOrRemoteFile = [];
           if ($("#chooseUploadType label:nth-child(1) input:checked").length == 0) {
-            for (splitLocalOrRemoteFile of localOrRemoteFileOrig.split(" -//- ")) {
+            for (var splitLocalOrRemoteFile of localOrRemoteFileOrig.split(" -//- ")) {
               localOrRemoteFile.push(splitLocalOrRemoteFile);
             }
           } else {
@@ -889,7 +891,7 @@ function goAhead() {
 
   // Support functions
 
-  function doMaintenance() {
+  /*function doMaintenance() {
     // 2020.07.28 one-time maintenance start
     if (!prefs.lastMaintenance || moment(prefs.lastMaintenance).isBefore(moment("2020-07-28", "YYYY-MM-DD"))) {
       status("Performing one-time maintenance functions<span>.</span><span>.</span><span>.</span>");
@@ -908,7 +910,7 @@ function goAhead() {
       status("Push the big blue button!");
     }
     // 2020.07.28 one-time maintenance end
-  }
+  }*/
 
   const downloadFile = async url => {
     try {
