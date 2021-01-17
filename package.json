@@ -1,0 +1,66 @@
+{
+  "name": "jw-meeting-media-fetcher",
+  "version": "0.8.51",
+  "description": "JW Meeting Media Fetcher",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^4.5.2",
+    "electron-updater": "^4.3.5",
+    "extract-zip": "^2.0.1",
+    "font-awesome": "^4.7.0",
+    "glob": "^7.1.6",
+    "graceful-fs": "^4.2.4",
+    "is-port-reachable": "^3.0.0",
+    "jquery": "^3.5.1",
+    "moment": "^2.29.1",
+    "os": "^0.1.1",
+    "path": "^0.12.7",
+    "popper.js": "^1.16.1",
+    "select2": "^4.0.13",
+    "sql.js": "^1.3.2",
+    "ssh2-sftp-client": "^5.3.1"
+  },
+  "build": {
+    "appId": "sircharlo.jw-meeting-media-fetcher",
+    "productName": "JW Meeting Media Fetcher",
+    "win": {
+      "target": "NSIS",
+      "icon": "build/icon.ico",
+      "publish": [
+        "github"
+      ]
+    },
+    "linux": {
+      "category": "Utilities",
+      "target": "AppImage",
+      "icon": "build/icon.png",
+      "publish": [
+        "github"
+      ]
+    },
+    "buildDependenciesFromSource": true
+  },
+  "devDependencies": {
+    "electron": "^8.5.2",
+    "electron-builder": "^22.9.1",
+    "eslint": "^7.17.0"
+  },
+  "scripts": {
+    "start": "electron .",
+    "pack-win": "electron-builder --win",
+    "pack-win-test": "electron-builder --dir --win",
+    "pack-linux-test": "electron-builder --dir --linux",
+    "publish": "electron-builder --win -p always",
+    "publish-linux": "electron-builder --linux -p always",
+    "postinstall": "electron-builder install-app-deps",
+    "release": "electron-builder"
+  },
+  "author": "",
+  "license": "ISC"
+}

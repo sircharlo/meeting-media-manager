@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JW Meeting Media Fetcher</title>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
+  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+  <style>
+    html,
+    body {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .overlay,
+    #overlaySettings {
+      background: #fff;
+      position: fixed;
+      height: 100%;
+      width: 100%;
+      z-index: 5000;
+      top: 0;
+      left: 0;
+      float: left;
+      text-align: center;
+      display: flex;
+    }
+
+    #overlaySettings {
+      z-index: 50;
+    }
+
+    #home {
+      height: 100%;
+    }
+
+    .half {
+      width: 50%;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: .2;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: .2;
+      }
+    }
+
+    .loading span {
+      animation-name: blink;
+      animation-duration: 1.4s;
+      animation-iteration-count: infinite;
+      animation-fill-mode: both;
+    }
+
+    .loading span:nth-child(2) {
+      animation-delay: .2s;
+    }
+
+    .loading span:nth-child(3) {
+      animation-delay: .4s;
+    }
+
+    #overlaySettings,
+    span.select2-dropdown {
+      font-size: 0.9em
+    }
+
+    .select2-container {
+      width: 100% !important;
+    }
+
+    .invalid {
+      background-color: #ffcdd2 !important;
+      border: 1px solid #b71c1c !important;
+      border-radius: 4px;
+    }
+
+    .valid {
+      background-color: #b9f6ca !important;
+    }
+
+    #outputPath,
+    #fileToUpload {
+      background-color: #fff;
+    }
+
+    #version span.badge {
+      color: #999;
+      font-weight: normal;
+    }
+
+    .btn-circle {
+      width: 45px;
+      height: 45px;
+      line-height: 45px;
+      text-align: center;
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    #btn-settings {
+      position: fixed;
+      bottom: 1em;
+      right: 1em;
+    }
+
+    #btn-upload {
+      position: fixed;
+      bottom: 1em;
+      left: 1em;
+    }
+
+    .btn-circle i {
+      font-size: 135%;
+    }
+
+    .btn-group input {
+      display: none;
+    }
+
+    .day,
+    .congregation {
+      height: 3em;
+      width: 3em;
+      background-color: #e0e0e0;
+    }
+
+    .meeting,
+    .congregation {
+      background-color: #9e9e9e;
+    }
+
+    .in-progress {
+      box-shadow: 0 0 0 0 rgba(15, 102, 116, 1);
+      animation: pulse 1s infinite;
+    }
+
+    .today {
+      box-shadow: 0px 0px 15px 0px rgba(255, 193, 7, 0.85);
+      animation: pulseToday 2s infinite;
+    }
+
+    .day>div div {
+      margin: -5px 0;
+      text-align: center;
+    }
+
+    .congregation {
+      width: auto;
+    }
+
+    #fileList {
+      font-size: 60%;
+      width: 100%;
+    }
+
+    #fileList li {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-radius: 0.5em;
+    }
+
+    #fileList li:not(.confirmDelete):hover {
+      background-color: #eee;
+    }
+
+    .video {
+      font-weight: 500;
+    }
+
+    .new-file {
+      font-weight: bold;
+    }
+
+    #fileList li .fa {
+      padding: 3px;
+    }
+
+    #fileList li .fa-minus-circle {
+      color: red;
+    }
+
+    #fileList li .fa-exclamation-circle {
+      color: darkorange;
+    }
+
+    .confirmDelete {
+      background-color: #ffdddd;
+    }
+
+    div#enterPrefix input {
+      text-align: center;
+    }
+
+    div#enterPrefix div:not(:last-of-type) {
+      margin-right: 0.2em;
+    }
+
+    div#enterPrefix div:not(:first-of-type) {
+      margin-left: 0.2em;
+    }
+
+    div#enterPrefix div.seperator {
+      margin-right: 1em;
+    }
+
+    div#enterPrefix input::-webkit-outer-spin-button,
+    div#enterPrefix input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(15, 102, 116, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(15, 102, 116, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(15, 102, 116, 0);
+      }
+    }
+
+    @keyframes pulseToday {
+      0% {
+        box-shadow: 0 0 15px 0 rgba(255, 193, 7, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 15px 5px rgba(255, 193, 7, 0.7);
+      }
+
+      100% {
+        box-shadow: 0 0 15px 0 rgba(255, 193, 7, 0.7);
+      }
+    }
+
+    .dropzone {
+      box-sizing: border-box;
+      display: none;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      z-index: 99999;
+      background: rgba(66, 165, 245, .8);
+      border: 11px dashed #42a5f5;
+    }
+  </style>
+  <script>
+    window.$ = window.jQuery = require('jquery');
+    window.popperjs = require('popper.js');
+    window.Bootstrap = require('bootstrap');
+    window.select2 = require('select2')(jQuery);
+  </script>
+</head>
+
+<body>
+  <div id="dropzone" class="dropzone"></div>
+  <div id="overlayInternetCheck" class="overlay justify-content-center">
+    <div class="align-self-center text-dark">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">Hang tight, establishing connection to JW.org<span>.</span><span>.</span><span>.</span></div>
+    </div>
+  </div>
+  <div id="overlayInternetFail" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-danger">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">I can't find JW.org! I'll try again in a few seconds<span>.</span><span>.</span><span>.</span></div>
+    </div>
+  </div>
+  <div id="overlayUpdateCheck" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-dark">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">Connection to JW.org established; let's check for updates to this app<span>.</span><span>.</span><span>.</span></div>
+    </div>
+  </div>
+  <div id="overlayUpdateAvailable" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-info">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">App update available, hold on<span>.</span><span>.</span><span>.</span></div>
+      <div class="align-self-center" role="status" id="updatePercent"></div>
+    </div>
+  </div>
+  <div id="overlayUpdateDownloaded" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-success" style="display: none;">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">All done! Now let's install that app update<span>.</span><span>.</span><span>.</span></div>
+    </div>
+  </div>
+  <div id="overlayPleaseWait" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-primary">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center" id="upToDate" role="status">No app updates available, so let's proceed!</div>
+      <div class="align-self-center loading" id="pleaseWait" role="status">Hold on, getting things a few ready<span>.</span><span>.</span><span>.</span></div>
+    </div>
+  </div>
+  <div id="overlayStarting" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-success">
+      <div class="align-self-center loading" id="initiatingSync" role="status">Initiating media sync<span>.</span><span>.</span><span>.</span></div>
+      <div class="align-self-center pt-3" id="cancelSync" role="status">
+        <button class="btn btn-warning btn-sm" id="btnCancelSync" type="button">Wait, don't sync just yet!</button>
+      </div>
+    </div>
+  </div>
+  <div id="overlayDryrun" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-dark">
+      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="align-self-center loading" role="status">Hold on, doing some preliminary work<span>.</span><span>.</span><span>.</span></div>
+    </div>
+  </div>
+  <div id="overlayComplete" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center text-success">
+      <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder has been successfully synced!</div>
+      <div class="align-self-center pt-3" id="stayAlive" role="status" style="display: none;">
+        <button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don't close automatically!</button>
+      </div>
+    </div>
+  </div>
+  <div id="overlayUploadFile" class="overlay flex-column p-4" style="display: none;">
+    <div class="align-items-center d-flex justify-content-center pb-4">
+      <div class="lead">
+        Let's upload some stuff!
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2">
+      <div class="flex-fill pr-3 text-right">Target meeting</div>
+      <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseMeeting">
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2 relatedToUploadType">
+      <div class="flex-fill pr-3 text-right">Type of upload</div>
+      <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseUploadType">
+        <label class="btn btn-light disabled"><input type="radio" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
+          Song
+        </label>
+        <label class="btn btn-light"><input type="radio" name="chooseUploadType" id="typeFile" autocomplete="off">
+          File
+        </label>
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2 file-to-upload relatedToUpload">
+      <div class="flex-fill pr-3 text-right">File(s) to upload</div>
+      <input type="text" class="form-control half localOrRemoteFile" id="fileToUpload" required readonly />
+      <div class="half songsSpinner" style="display: none;">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
+      <div class="flex-fill pr-3 text-right">Prefix for uploaded file(s)</div>
+      <div class="d-flex half" id="enterPrefix">
+        <div>
+          <input class="form-control" type="text" maxlength="1" id="enterPrefix-0" />
+        </div>
+        <div class="seperator">
+          <input class="form-control" type="text" maxlength="1" id="enterPrefix-1" disabled />
+        </div>
+        <div>
+          <input class="form-control" type="text" maxlength="1" id="enterPrefix-2" disabled />
+        </div>
+        <div class="seperator">
+          <input class="form-control" type="text" maxlength="1" id="enterPrefix-3" disabled />
+        </div>
+        <div>
+          <input class="form-control" type="text" maxlength="1" id="enterPrefix-4" disabled />
+        </div>
+        <div>
+          <input class="form-control" type="text" maxlength="1" id="enterPrefix-5" disabled />
+        </div>
+      </div>
+    </div>
+    <div class="d-flex py-2">
+      <div class="half text-right">
+        <button class="btn btn-light mr-3" id="btnCancelUpload" type="button">Cancel</button>
+      </div>
+      <div class="half text-left">
+        <button class="btn btn-secondary" id="btnUpload" type="button" disabled>Upload!</button>
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2" id="uploadSpinnerContainer" style="opacity: 0;">
+      <div class="spinner-border" role="status"></div>
+    </div>
+    <div class="align-items-center d-flex text-center justify-content-center py-2" id="uploadProgressContainer" style="opacity: 0;">
+      <div class="half">
+        <div id="uploadFilename" class="lead mb-3">
+          -
+        </div>
+        <div class="progress" id="uploadProgress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-fill text-left">
+      <ul id="fileList" class="list-unstyled text-secondary m-0" style="opacity: 0;"></ul>
+    </div>
+  </div>
+  <div id="overlaySettings" class="flex-column p-4 bg-light" style="display: none;">
+    <div class="align-items-center d-flex justify-content-center pb-4">
+      <div class="lead">
+        Settings
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="outputPath" class="half m-0 pr-3 text-right">Folder in which to save media</label>
+      <div class="flex-fill">
+        <input type="text" class="form-control form-control-sm" id="outputPath" required readonly />
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="langSelect" class="half m-0 pr-3 text-right">Media language</label>
+      <div class="flex-fill">
+        <input type="text" class="form-control" id="lang" required hidden />
+        <select id="langSelect" class="form-control" required>
+          <option disabled selected value hidden></option>
+        </select>
+      </div>
+    </div>
+    <hr class="my-2" />
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="mwDay" class="half m-0 pr-3 text-right">Midweek meeting day</label>
+      <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="mwDay">
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="mwDay" value="0" autocomplete="off"> M
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="mwDay" value="1" autocomplete="off"> T
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="mwDay" value="2" autocomplete="off"> W
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="mwDay" value="3" autocomplete="off"> T
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="mwDay" value="4" autocomplete="off"> F
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="mwDay" value="5" autocomplete="off"> S
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="mwDay" value="6" autocomplete="off"> S
+        </label>
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="weDay" class="half m-0 pr-3 text-right">Weekend meeting day</label>
+      <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="weDay">
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="weDay" value="0" autocomplete="off"> M
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="weDay" value="1" autocomplete="off"> T
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="weDay" value="2" autocomplete="off"> W
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="weDay" value="3" autocomplete="off"> T
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="weDay" value="4" autocomplete="off"> F
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="weDay" value="5" autocomplete="off"> S
+        </label>
+        <label class="btn btn-sm btn-light">
+          <input type="radio" name="weDay" value="6" autocomplete="off"> S
+        </label>
+      </div>
+    </div>
+    <hr class="my-2" />
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="autoStartSync" class="half m-0 pr-3 text-right">Sync media on app launch</label>
+      <div class="btn-group" data-toggle="buttons">
+        <button class="btn">
+          <input type="checkbox" id="autoStartSync" />
+          <i class="fa fa-toggle-off"></i>
+        </button>
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="autoQuitWhenDone" class="half m-0 pr-3 text-right">Quit app after media sync</label>
+      <div class="btn-group" data-toggle="buttons">
+        <button class="btn">
+          <input type="checkbox" id="autoQuitWhenDone" />
+          <i class="fa fa-toggle-off"></i>
+        </button>
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="autoRunAtBoot" class="half m-0 pr-3 text-right">Run app at system startup</label>
+      <div class="btn-group" data-toggle="buttons">
+        <button class="btn">
+          <input type="checkbox" id="autoRunAtBoot" />
+          <i class="fa fa-toggle-off"></i>
+        </button>
+      </div>
+    </div>
+    <hr class="my-2" />
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="congUnlock" class="half m-0 pr-3 text-right">Additional media passcode</label>
+      <div class="flex-fill">
+        <input type="password" id="congPass" class="form-control form-control-sm text-center" required />
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center" id="congs" style="display:none">
+      <label for="congSelect" class="half m-0 pr-3 text-right">Congregation/group</label>
+      <div class="flex-fill">
+        <div id="congContainer">
+          <input type="text" id="cong" required hidden />
+          <select id="congSelect" class="form-control" style="display:none">
+            <option selected value="None">None</option>
+          </select>
+        </div>
+        <div class="spinner-border spinner-border-sm" role="status" id="congsSpinner" style="display:none"></div>
+      </div>
+    </div>
+    <hr />
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <div class="flex-fill text-right">
+        <button type="button" class="btn btn-warning btn-clean-up mr-3">Clean-up media cache</button>
+      </div>
+      <div class="half text-left">
+        <button type="button" class="btn btn-primary btn-settings">Go back</button>
+      </div>
+    </div>
+    <div id="version" class="align-items-center d-flex flex-fill justify-content-center py-1">
+      <span class="badge"></span>
+    </div>
+  </div>
+  <div id="home" class="d-flex flex-column">
+    <div class="align-items-center d-flex flex-fill justify-content-center">
+      <div class="dropdown" id="baseDate">
+        <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </button>
+        <div class="dropdown-menu" aria-labelledby="baseDate-dropdown">
+          <button class="dropdown-item" value=""></button>
+        </div>
+      </div>
+    </div>
+    <div class="align-items-center d-flex flex-fill justify-content-center">
+      <div id="mainStatus" class="lead loading">
+        Push the big blue button!
+      </div>
+    </div>
+    <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
+      <div class="d-flex">
+        <div id="day0" class="day m-1 text-light d-flex align-items-center justify-content-center">
+          <div>
+            <div>M</div>
+            <div class="dateOfMonth"></div>
+          </div>
+        </div>
+        <div id="day1" class="day m-1 text-light d-flex align-items-center justify-content-center">
+          <div>
+            <div>T</div>
+            <div class="dateOfMonth"></div>
+          </div>
+        </div>
+        <div id="day2" class="day m-1 text-light d-flex align-items-center justify-content-center">
+          <div>
+            <div>W</div>
+            <div class="dateOfMonth"></div>
+          </div>
+        </div>
+        <div id="day3" class="day m-1 text-light d-flex align-items-center justify-content-center">
+          <div>
+            <div>T</div>
+            <div class="dateOfMonth"></div>
+          </div>
+        </div>
+        <div id="day4" class="day m-1 text-light d-flex align-items-center justify-content-center">
+          <div>
+            <div>F</div>
+            <div class="dateOfMonth"></div>
+          </div>
+        </div>
+        <div id="day5" class="day m-1 text-light d-flex align-items-center justify-content-center">
+          <div>
+            <div>S</div>
+            <div class="dateOfMonth"></div>
+          </div>
+        </div>
+        <div id="day6" class="day m-1 text-light d-flex align-items-center justify-content-center">
+          <div>
+            <div>S</div>
+            <div class="dateOfMonth"></div>
+          </div>
+        </div>
+      </div>
+      <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;"></div>
+    </div>
+    <div class="d-flex justify-content-center">
+      <button type="button" class="btn btn-lg btn-primary" id="mediaSync">Start!</button>
+    </div>
+    <div class="align-items-center d-flex flex-fill justify-content-center" id="spinnerContainer" style="opacity: 0;">
+      <div class="spinner-border" role="status"></div>
+    </div>
+    <div class="align-items-center d-flex text-center flex-fill justify-content-center" id="downloadProgressContainer" style="opacity: 0;">
+      <div class="half">
+        <div id="downloadFilename" class="lead mb-3">
+          -
+        </div>
+        <div class="progress" id="downloadProgress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width:0%">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-upload" style="display: none;"><i class="fa fa-upload"></i></button>
+  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-settings"><i class="fa fa-cog"></i></button>
+  <script src="./media-updater.js"></script>
+</body>
+
+</html>
