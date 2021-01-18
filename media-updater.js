@@ -511,14 +511,18 @@ function goAhead() {
             }
           }
         }
+        var hiddenFiles= [];
+        $("#overlayUploadFile").on("change", "#chooseMeeting input", async function() {
+          if (prefs.cong !== "None" && congSpecificServer.alive) {
+            hiddenFiles = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Hidden", $("#chooseMeeting input:checked").prop("id")));
+          }
+        });
 
         $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
           document.addEventListener("drop", dropHandler);
           document.addEventListener("dragover", dragoverHandler);
           document.addEventListener("dragenter", dragenterHandler);
           document.addEventListener("dragleave", dragleaveHandler);
-
-          $(".relatedToUploadType").fadeTo(400, 1);
           $("#chooseUploadType label input").prop("checked", false);
           $("#fileToUpload").val("").change();
           if ($("#chooseMeeting label:nth-child(2) input:checked").length > 0) {
@@ -530,6 +534,7 @@ function goAhead() {
             $("#chooseUploadType label:nth-child(1)").fadeOut().addClass("disabled");
             $("#chooseUploadType label:nth-child(2)").click().addClass("active");
           }
+          $(".relatedToUploadType").fadeTo(400, 1);
         });
         $("#overlayUploadFile").on("keyup change", "#enterPrefix input", function() {
           getPrefix();
@@ -558,21 +563,15 @@ function goAhead() {
                   newList = newList.concat(newFiles);
                 }
                 if ("Recurring" in dryrunResults) {
-                  //var recur = dryrunResults.Recurring[0].name.split(".");
                   var currentWeekYeartextFilename = "00-00 " + (new Date(path.basename($("#chooseMeeting input:checked").prop("id")))).getFullYear() + " Yeartext " + getISOWeekInMonth(new Date()) + ".mp4";
                   if (dryrunResults.Recurring.some(e => e.name === currentWeekYeartextFilename)) {
                     newList = newList.concat(dryrunResults.Recurring.filter(e => e.name === currentWeekYeartextFilename));
                   }
                 }
-                //newList = newList.sort();
-                //console.log(newList);
                 newList = newList.sort((a, b) => a.name.localeCompare(b.name));
                 $("#fileList").empty();
                 for (var file of newList) {
                   $("#fileList").append("<li>" + file.name + "</li>");
-                  /*$("<li>", {
-                    text: file
-                  }));*/
                 }
                 $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 5));
                 $("#fileList li:contains(mp4)").addClass("video");
@@ -589,13 +588,9 @@ function goAhead() {
                       return text === b.name;
                     }).prepend("<i class='fa fa-minus-circle'></i>");
                   }
-                  /*  $("#fileList li").hover(function() {
-
-                })*/
                   $(".fa-minus-circle").click(function() {
                     var parentLi = $(this).parent();
                     if (parentLi.hasClass("confirmDelete")) {
-                      //console.log("DELETE", path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", $("#chooseMeeting input:checked").prop("id")), parentLi.text());
                       sftpRm(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Media", $("#chooseMeeting input:checked").prop("id")), parentLi.text());
                       $("#btnCancelUpload").click();
                     } else {
@@ -606,7 +601,36 @@ function goAhead() {
                     }
                   });
                 }
-
+                if (prefs.cong !== "None" && congSpecificServer.alive) {
+                  for (var c of newList.filter(e => e.congSpecific === false && e.recurring === false)) {
+                    $("#fileList li").filter(function () {
+                      var text = $(this).text();
+                      return text === c.name;
+                    }).prepend("<i class='fa fa-eye canHide'></i>");
+                  }
+                  $("#fileList").on("click", ".canHide", function() {
+                    if($(this).parent().text().trim().length > 0) {
+                      $(this).parent().prepend("<i class='fa fa-eye-slash wasHidden'></i>");
+                      sftpPut(Buffer.from("hide", "utf-8"), path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).parent().text().trim());
+                      $(this).parent().wrap("<del></del>").addClass("text-secondary");
+                      $(this).remove();
+                    }
+                  });
+                  $("#fileList").on("click", ".wasHidden", function() {
+                    if($(this).parent().text().trim().length > 0) {
+                      $(this).parent().prepend("<i class='fa fa-eye canHide'></i>");
+                      sftpRm(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).parent().text().trim());
+                      $(this).parent().unwrap().removeClass("text-secondary");
+                      $(this).remove();
+                    }
+                  });
+                  for (var hiddenFile of hiddenFiles) {
+                    $("#fileList li").filter(function () {
+                      var text = $(this).text();
+                      return text === hiddenFile.name;
+                    }).prepend("<i class='fa fa-eye-slash wasHidden'></i>").wrap("<del></del>").addClass("text-secondary").find(".fa-eye").remove();
+                  }
+                }
                 if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
                   for (var newFile of newFiles) {
                     $("#fileList li:contains(" + newFile.name + ")").addClass("text-primary new-file");
@@ -689,6 +713,7 @@ function goAhead() {
     await syncMwMeeting();
     await syncWeMeeting();
     await syncCongSpecific();
+    await removeHiddenMedia();
     $("#btn-settings, #btn-upload").fadeIn();
     $("#spinnerContainer").fadeTo(400, 0);
   }
@@ -880,7 +905,6 @@ function goAhead() {
             dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))] = [];
           }
           if (!dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))].some(e => e.name === weekMediaItem.FileName)) {
-            //if (!dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))].includes(weekMediaItem.FileName)) {
             dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))].push({
               name: weekMediaItem.FileName,
               congSpecific: false,
@@ -912,6 +936,23 @@ function goAhead() {
     $("#day" + prefs.mwDay).removeClass("in-progress bg-info");
     if (!dryrun) {
       $("#day" + prefs.mwDay).addClass("bg-success");
+    }
+  }
+
+  async function removeHiddenMedia() {
+    if (prefs.cong !== "None" && congSpecificServer.alive && !dryrun) {
+      var hiddenFilesFolders = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Hidden"));
+      for (var hiddenFilesFolder of hiddenFilesFolders) {
+        var hiddenFiles = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Hidden", hiddenFilesFolder.name));
+        for (var hiddenFile of hiddenFiles) {
+          try {
+            console.log("Hidden file to delete:", path.join(mediaPath, hiddenFilesFolder.name, hiddenFile.name));
+            fs.unlinkSync(path.join(mediaPath, hiddenFilesFolder.name, hiddenFile.name));
+          } catch(err) {
+            console.log(err);
+          }
+        }
+      }
     }
   }
 
@@ -1308,7 +1349,7 @@ function goAhead() {
   }
 
   function sanitizeFilename(filename) {
-    filename = filename.replace(/[?!"»«()\\[\]№—$]*/g, "").replace(/[;:,|/]+/g, " - ").replace(/ +/g, " ").replace(/\.+/g, ".").replace(/\r?\n/g, " - ");
+    filename = filename.replace(/[?!"»“«()\\[\]№—$]*/g, "").replace(/[;:,|/]+/g, " - ").replace(/ +/g, " ").replace(/\.+/g, ".").replace(/\r?\n/g, " - ");
     var bytes = Buffer.byteLength(filename, "utf8");
     var toolong = 230;
     if (bytes > toolong) {
@@ -1449,6 +1490,22 @@ function goAhead() {
             progressSet(percent, destName, "upload");
           }
         });
+        await sftpUploadFile.end();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function sftpPut(file, destFolder, destName) {
+    try {
+      if (congSpecificServer.alive) {
+        let Client = require("ssh2-sftp-client");
+        destName = await sanitizeFilename(destName);
+        let sftpUploadFile = new Client();
+        await sftpUploadFile.connect(sftpConfig);
+        await sftpUploadFile.mkdir(destFolder, true);
+        await sftpUploadFile.put(file, path.posix.join(destFolder, destName));
         await sftpUploadFile.end();
       }
     } catch (err) {
