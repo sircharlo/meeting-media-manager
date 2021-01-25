@@ -2,7 +2,7 @@ const axios = require("axios");
 const isPortReachable = require("is-port-reachable");
 const $ = require("jquery");
 
-var pubMediaServer, pubsPath, mediaPath, stayAlive, outputPath, langPath;
+var pubMediaServer, pubsPath, mediaPath, stayAlive, outputPath, langPath, zoomPath;
 
 const congSpecificServer = {
   host: decode("c2lyY2hhcmxvLmhvcHRvLm9yZw=="),
@@ -714,6 +714,7 @@ function goAhead() {
     await syncWeMeeting();
     await syncCongSpecific();
     await removeHiddenMedia();
+    await ffmpegConvert();
     $("#btn-settings, #btn-upload").fadeIn();
     $("#spinnerContainer").fadeTo(400, 0);
   }
@@ -729,6 +730,8 @@ function goAhead() {
     mkdirSync(pubsPath);
     mediaPath = path.join(langPath, "Media");
     mkdirSync(mediaPath);
+    zoomPath = path.join(langPath, "Zoom");
+    mkdirSync(zoomPath);
   }
 
   async function syncWeMeeting() {
@@ -939,6 +942,62 @@ function goAhead() {
     }
   }
 
+  const ffmpeg = require("fluent-ffmpeg");
+  const ffmpegPath = require("ffmpeg-static").replace(
+    "app.asar",
+    "app.asar.unpacked"
+  );
+  const ffprobePath = require("ffprobe-static").path.replace(
+    "app.asar",
+    "app.asar.unpacked"
+  );
+  ffmpeg.setFfmpegPath(ffmpegPath);
+  ffmpeg.setFfprobePath(ffprobePath);
+
+  async function ffmpegConvert() {
+    if (!dryrun) {
+      status("Rendering media for Zoom sharing<span>.</span><span>.</span><span>.</span>");
+      for (var mediaDir of getDirectories(mediaPath)) {
+        mkdirSync(path.join(zoomPath, mediaDir));
+        for (var imageFile of getFiles(path.join(mediaPath, mediaDir)).filter(function(name) {
+          name = name.toLowerCase();
+          return name.includes(".jpg") || name.includes(".jpeg") || name.includes(".png");
+        })) {
+          await createVideoSync(mediaDir, imageFile);
+        }
+        for (var nonImageFile of getFiles(path.join(mediaPath, mediaDir)).filter(function(name) {
+          name = name.toLowerCase();
+          return !name.includes(".jpg") && !name.includes(".jpeg") && !name.includes(".png");
+        })) {
+          fs.copyFileSync(path.join(mediaPath, mediaDir, nonImageFile), path.join(zoomPath, mediaDir, nonImageFile));
+        }
+      }
+    }
+  }
+
+  function createVideoSync(mediaDir, vid){
+    return new Promise((resolve,reject)=>{
+      var imageName = path.basename(vid, path.extname(vid));
+      ffmpeg(path.join(mediaPath, mediaDir, vid))
+        .inputFPS(1)
+        .outputFPS(30)
+        .on("end", function() {
+          console.log("file has been converted succesfully");
+          return resolve();
+        })
+        .on("error", function(err) {
+          console.log("an error happened: " + err.message);
+          return reject(err);
+        })
+        .videoCodec("libx264")
+        .noAudio()
+        .size("1280x720")
+        .loop(10)
+        .outputOptions("-pix_fmt yuv420p")
+        .save(path.join(zoomPath, mediaDir, imageName + ".mp4"));
+    });
+  }
+
   async function removeHiddenMedia() {
     if (prefs.cong !== "None" && congSpecificServer.alive && !dryrun) {
       var hiddenFilesFolders = await sftpLs(path.posix.join(sftpRootDir, "Congregations", prefs.cong, "Hidden"));
@@ -1010,13 +1069,21 @@ function goAhead() {
     }
   }
 
+  const getDirectories = source =>
+    fs.readdirSync(source, {
+      withFileTypes: true
+    })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+
+  const getFiles = source =>
+    fs.readdirSync(source, {
+      withFileTypes: true
+    })
+      .filter(dirent => !dirent.isDirectory())
+      .map(dirent => dirent.name);
+
   function cleanUp() {
-    const getDirectories = source =>
-      fs.readdirSync(source, {
-        withFileTypes: true
-      })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
     var mediaSubDirs = getDirectories(mediaPath);
     for (var mediaSubDir of mediaSubDirs) {
       if (moment(mediaSubDir, "YYYY-MM-DD").isValid() && !moment(mediaSubDir, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), undefined, "[]")) {
