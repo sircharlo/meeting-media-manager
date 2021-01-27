@@ -87,7 +87,7 @@ function goAhead() {
   var currentWeekDates = [];
 
   function prefsInitialize() {
-    for (var pref of ["lang", "mwDay", "weDay", "cong", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath"]) {
+    for (var pref of ["lang", "mwDay", "weDay", "cong", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen"]) {
       if (!(Object.keys(prefs).includes(pref))) {
         prefs[pref] = false;
       }
@@ -110,6 +110,7 @@ function goAhead() {
     $("#congPass").val(prefs.congPass);
     $("#autoStartSync").prop("checked", prefs.autoStartSync).change();
     $("#autoRunAtBoot").prop("checked", prefs.autoRunAtBoot).change();
+    $("#betaMp4Gen").prop("checked", prefs.betaMp4Gen).change();
     $("#autoQuitWhenDone").prop("checked", prefs.autoQuitWhenDone).change();
     $(".btn-group button input:checked").parent().addClass("text-success").find("i").addClass("fa-toggle-on").removeClass("fa-toggle-off");
     $(".btn-group button input:not(:checked)").parent().removeClass("text-success").find("i").addClass("fa-toggle-off").removeClass("fa-toggle-on");
@@ -341,6 +342,7 @@ function goAhead() {
     prefs.autoStartSync = $("#autoStartSync").prop("checked");
     prefs.autoRunAtBoot = $("#autoRunAtBoot").prop("checked");
     prefs.autoQuitWhenDone = $("#autoQuitWhenDone").prop("checked");
+    prefs.betaMp4Gen = $("#betaMp4Gen").prop("checked");
     $(".day, .congregation").removeClass("meeting bg-success");
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     $("#specificCong").html(prefs.cong);
@@ -563,10 +565,13 @@ function goAhead() {
                   newList = newList.concat(newFiles);
                 }
                 if ("Recurring" in dryrunResults) {
+                  /* Yeartext per week of month
                   var currentWeekYeartextFilename = "00-00 " + (new Date(path.basename($("#chooseMeeting input:checked").prop("id")))).getFullYear() + " Yeartext " + getISOWeekInMonth(new Date()) + ".mp4";
                   if (dryrunResults.Recurring.some(e => e.name === currentWeekYeartextFilename)) {
                     newList = newList.concat(dryrunResults.Recurring.filter(e => e.name === currentWeekYeartextFilename));
                   }
+                  */
+                  newList = newList.concat(dryrunResults.Recurring);
                 }
                 newList = newList.sort((a, b) => a.name.localeCompare(b.name));
                 $("#fileList").empty();
@@ -730,8 +735,6 @@ function goAhead() {
     mkdirSync(pubsPath);
     mediaPath = path.join(langPath, "Media");
     mkdirSync(mediaPath);
-    zoomPath = path.join(langPath, "Zoom");
-    mkdirSync(zoomPath);
   }
 
   async function syncWeMeeting() {
@@ -955,8 +958,10 @@ function goAhead() {
   ffmpeg.setFfprobePath(ffprobePath);
 
   async function ffmpegConvert() {
-    if (!dryrun) {
+    if (!dryrun && prefs.betaMp4Gen) {
       status("Rendering media for Zoom sharing<span>.</span><span>.</span><span>.</span>");
+      zoomPath = path.join(langPath, "Zoom");
+      mkdirSync(zoomPath);
       for (var mediaDir of getDirectories(mediaPath)) {
         mkdirSync(path.join(zoomPath, mediaDir));
         for (var imageFile of getFiles(path.join(mediaPath, mediaDir)).filter(function(name) {
@@ -1048,14 +1053,14 @@ function goAhead() {
         if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
           for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
             for (var meetingDate of currentWeekDates) {
-              var currentWeekYeartextFilename = "00-00 " + (new Date(path.basename(meetingDate))).getFullYear() + " Yeartext " + getISOWeekInMonth(new Date()) + ".mp4";
-              if (recurringFile == currentWeekYeartextFilename) {
-                writeFile({
-                  file: path.join(pubsPath, "Recurring", recurringFile),
-                  destFile: path.join(meetingDate, recurringFile),
-                  type: "copy"
-                });
-              }
+              //var currentWeekYeartextFilename = "00-00 " + (new Date(path.basename(meetingDate))).getFullYear() + " Yeartext " + getISOWeekInMonth(new Date()) + ".mp4";
+              //if (recurringFile == currentWeekYeartextFilename) {
+              writeFile({
+                file: path.join(pubsPath, "Recurring", recurringFile),
+                destFile: path.join(meetingDate, recurringFile),
+                type: "copy"
+              });
+              //}
             }
           }
         }
