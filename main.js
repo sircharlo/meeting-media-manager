@@ -10,13 +10,14 @@ var win = {};
 function createUpdateWindow() {
   win = new BrowserWindow({
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      enableRemoteModule: true
     },
     width: 600,
     height: 600,
     resizable: false,
-    title: "JW Meeting Media Fetcher",
-    icon: __dirname + "/icon.png"
+    title: "JW Meeting Media Fetcher"//,
+    //icon: __dirname + "/icon.png"
   });
   win.setMenuBarVisibility(false);
   win.loadFile("index.html");

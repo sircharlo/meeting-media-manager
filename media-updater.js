@@ -974,6 +974,9 @@ function goAhead() {
       var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
       ffmpeg.setFfmpegPath(ffmpegPath);
       zoomPath = path.join(langPath, "Zoom");
+      fs.rmdirSync(zoomPath, {
+        recursive: true
+      });
       mkdirSync(zoomPath);
       var filesToRender = 0, filesRendering = 0;
       for (var dir of getDirectories(mediaPath)) {
