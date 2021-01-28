@@ -975,18 +975,26 @@ function goAhead() {
       ffmpeg.setFfmpegPath(ffmpegPath);
       zoomPath = path.join(langPath, "Zoom");
       mkdirSync(zoomPath);
+      var filesToRender = 0, filesRendering = 0;
+      for (var dir of getDirectories(mediaPath)) {
+        filesToRender = filesToRender + getFiles(path.join(mediaPath, dir)).length;
+      }
       for (var mediaDir of getDirectories(mediaPath)) {
         mkdirSync(path.join(zoomPath, mediaDir));
         for (var imageFile of getFiles(path.join(mediaPath, mediaDir)).filter(function(name) {
           name = name.toLowerCase();
           return name.includes(".jpg") || name.includes(".jpeg") || name.includes(".png");
         })) {
+          filesRendering = filesRendering + 1;
+          progressSet(filesRendering / filesToRender * 100, path.basename(imageFile));
           await createVideoSync(mediaDir, imageFile);
         }
         for (var nonImageFile of getFiles(path.join(mediaPath, mediaDir)).filter(function(name) {
           name = name.toLowerCase();
           return !name.includes(".jpg") && !name.includes(".jpeg") && !name.includes(".png");
         })) {
+          filesRendering = filesRendering + 1;
+          progressSet(filesRendering / filesToRender * 100, path.basename(imageFile));
           fs.copyFileSync(path.join(mediaPath, mediaDir, nonImageFile), path.join(zoomPath, mediaDir, nonImageFile));
         }
       }
@@ -1002,14 +1010,8 @@ function goAhead() {
         .outputFPS(outputFPS)
         .on("start", function() {
           $("#downloadProgressContainer").fadeTo(400, 1);
-          progressSet(0, path.basename(vid));
-        })
-        .on("progress", function(progress) {
-          progressSet(progress.frames / outputFPS * loop, path.basename(vid));
         })
         .on("end", function() {
-          console.log("file has been converted succesfully");
-          progressSet(100, path.basename(vid));
           return resolve();
         })
         .on("error", function(err) {
