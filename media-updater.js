@@ -60,13 +60,13 @@ function decode(e) {
 
 function goAhead() {
   const bcrypt = require("bcryptjs");
-  const extract = require("extract-zip");
   const fs = require("graceful-fs");
   const glob = require("glob");
   const moment = require("moment");
   const os = require("os");
   const path = require("path");
   const sqljs = require("sql.js");
+  const zipper = require("zip-local");
 
   const jwGetPubMediaLinks = pubMediaServer + "?output=json";
 
@@ -946,20 +946,33 @@ function goAhead() {
   }
 
   const ffmpeg = require("fluent-ffmpeg");
-  const ffmpegPath = require("ffmpeg-static").replace(
-    "app.asar",
-    "app.asar.unpacked"
-  );
-  const ffprobePath = require("ffprobe-static").path.replace(
-    "app.asar",
-    "app.asar.unpacked"
-  );
-  ffmpeg.setFfmpegPath(ffmpegPath);
-  ffmpeg.setFfprobePath(ffprobePath);
-
   async function ffmpegConvert() {
     if (!dryrun && prefs.betaMp4Gen) {
       status("Rendering media for Zoom sharing<span>.</span><span>.</span><span>.</span>");
+      var osType = os.type();
+      var targetOs;
+      if (osType == "Windows_NT") {
+        targetOs = "windows-64";
+      } else if (osType == "Darwin") {
+        targetOs = "osx-64";
+      } else {
+        targetOs = "linux-64";
+      }
+      var ffmpegVersions = await getJson({url: "https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest"});
+      var ffmpegUrls = await getJson({url: "https://ffbinaries.com/api/v1/version/latest"});
+      var remoteFfmpegZipSize = ffmpegVersions.assets.filter(a => a.name == path.basename(ffmpegUrls.bin[targetOs].ffmpeg))[0].size;
+      var ffmpegZipPath = path.join(appPath, "ffmpeg", "zip", path.basename(ffmpegUrls.bin[targetOs].ffmpeg));
+      if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== remoteFfmpegZipSize) {
+        mkdirSync(path.join(appPath, "ffmpeg", "zip"));
+        var ffmpegZipFile = await downloadFile(ffmpegUrls.bin[targetOs].ffmpeg);
+        await writeFile({
+          file: new Buffer(ffmpegZipFile),
+          destFile: ffmpegZipPath
+        });
+      }
+      zipper.sync.unzip(ffmpegZipPath).save(path.join(appPath, "ffmpeg"));
+      var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
+      ffmpeg.setFfmpegPath(ffmpegPath);
       zoomPath = path.join(langPath, "Zoom");
       mkdirSync(zoomPath);
       for (var mediaDir of getDirectories(mediaPath)) {
@@ -983,11 +996,20 @@ function goAhead() {
   function createVideoSync(mediaDir, vid){
     return new Promise((resolve,reject)=>{
       var imageName = path.basename(vid, path.extname(vid));
+      var outputFPS = 30, loop = 10;
       ffmpeg(path.join(mediaPath, mediaDir, vid))
         .inputFPS(1)
-        .outputFPS(30)
+        .outputFPS(outputFPS)
+        .on("start", function() {
+          $("#downloadProgressContainer").fadeTo(400, 1);
+          progressSet(0, path.basename(vid));
+        })
+        .on("progress", function(progress) {
+          progressSet(progress.frames / outputFPS * loop, path.basename(vid));
+        })
         .on("end", function() {
           console.log("file has been converted succesfully");
+          progressSet(100, path.basename(vid));
           return resolve();
         })
         .on("error", function(err) {
@@ -997,7 +1019,7 @@ function goAhead() {
         .videoCodec("libx264")
         .noAudio()
         .size("1280x720")
-        .loop(10)
+        .loop(loop)
         .outputOptions("-pix_fmt yuv420p")
         .save(path.join(zoomPath, mediaDir, imageName + ".mp4"));
     });
@@ -1127,28 +1149,33 @@ function goAhead() {
     if (fs.existsSync(destFile)) {
       var localHash = fs.statSync(destFile).size,
         remoteHash, json;
-      if (remoteOpts.json) {
-        json = remoteOpts.json;
-        if (remoteOpts.track) {
-          remoteHash = json.filter(function(item) {
-            return item.track == remoteOpts.track;
-          });
-        } else if (!remoteOpts.onlyFile) {
-          remoteHash = json.files[prefs.lang][remoteOpts.type];
-        } else {
-          remoteHash = json;
-        }
-        remoteHash = remoteHash[0];
+      if (remoteOpts.external) {
+        var remoteHead = await axios.head(remoteOpts.external);
+        remoteHash = remoteHead.headers["content-length"];
       } else {
-        json = await getJson({
-          pub: remoteOpts.pub,
-          issue: remoteOpts.issue,
-          filetype: remoteOpts.type,
-          track: remoteOpts.track
-        });
-        remoteHash = json.files[prefs.lang][remoteOpts.type];
+        if (remoteOpts.json) {
+          json = remoteOpts.json;
+          if (remoteOpts.track) {
+            remoteHash = json.filter(function(item) {
+              return item.track == remoteOpts.track;
+            });
+          } else if (!remoteOpts.onlyFile) {
+            remoteHash = json.files[prefs.lang][remoteOpts.type];
+          } else {
+            remoteHash = json;
+          }
+          remoteHash = remoteHash[0];
+        } else {
+          json = await getJson({
+            pub: remoteOpts.pub,
+            issue: remoteOpts.issue,
+            filetype: remoteOpts.type,
+            track: remoteOpts.track
+          });
+          remoteHash = json.files[prefs.lang][remoteOpts.type];
+        }
+        remoteHash = remoteHash.filesize;
       }
-      remoteHash = remoteHash.filesize;
       if (remoteHash == localHash) {
         returnValue = false;
       }
@@ -1194,13 +1221,9 @@ function goAhead() {
             destFile: path.join(workingDirectory, basename)
           });
           mkdirSync(path.join(workingDirectory, "JWPUB"));
-          await extract(glob.sync(path.join(workingDirectory, "*.jwpub"))[0], {
-            dir: path.join(workingDirectory, "JWPUB")
-          });
+          zipper.sync.unzip(glob.sync(path.join(workingDirectory, "*.jwpub"))[0]).save(path.join(workingDirectory, "JWPUB"));
           mkdirSync(workingUnzipDirectory);
-          await extract(path.join(workingDirectory, "JWPUB", "contents"), {
-            dir: workingUnzipDirectory
-          });
+          zipper.sync.unzip(path.join(workingDirectory, "JWPUB", "contents")).save(workingUnzipDirectory);
         }
         var SQL = await sqljs();
         var sqldb = new SQL.Database(fs.readFileSync(glob.sync(path.join(workingUnzipDirectory, "*.db"))[0]));
@@ -1332,12 +1355,12 @@ function goAhead() {
     }
   }
 
-  function getISOWeekInMonth(date) {
+  /*function getISOWeekInMonth(date) {
     var d = new Date(+date);
     if (isNaN(d)) return;
     d.setDate(d.getDate() - d.getDay() + 1);
     return Math.ceil(d.getDate() / 7);
-  }
+  }*/
 
   async function getJson(opts) {
     var jsonUrl = "";
@@ -1400,7 +1423,9 @@ function goAhead() {
 
   function mkdirSync(dirPath) {
     try {
-      fs.mkdirSync(dirPath);
+      fs.mkdirSync(dirPath, {
+        recursive: true
+      });
     } catch (err) {
       if (err.code !== "EEXIST") throw err;
     }
