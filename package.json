@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.63",
+  "version": "0.8.64",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -8,24 +8,24 @@
     "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
   },
   "dependencies": {
-    "axios": "*",
-    "bcryptjs": "*",
-    "bootstrap": "*",
-    "electron-updater": "*",
-    "fluent-ffmpeg": "*",
-    "font-awesome": "*",
-    "glob": "*",
-    "graceful-fs": "*",
-    "is-port-reachable": "*",
-    "jquery": "*",
-    "moment": "*",
-    "os": "*",
-    "path": "*",
-    "popper.js": "*",
-    "select2": "*",
-    "sql.js": "*",
-    "ssh2-sftp-client": "*",
-    "zip-local": "*"
+    "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^4.6.0",
+    "electron-updater": "^4.3.5",
+    "fluent-ffmpeg": "^2.1.2",
+    "font-awesome": "^4.7.0",
+    "glob": "^7.1.6",
+    "graceful-fs": "^4.2.4",
+    "is-port-reachable": "^3.0.0",
+    "jquery": "^3.5.1",
+    "moment": "^2.29.1",
+    "os": "^0.1.1",
+    "path": "^0.12.7",
+    "popper.js": "^1.16.1",
+    "select2": "^4.1.0-rc.0",
+    "sql.js": "^1.4.0",
+    "ssh2-sftp-client": "^6.0.1",
+    "zip-local": "^0.3.4"
   },
   "build": {
     "appId": "sircharlo.jw-meeting-media-fetcher",
@@ -48,9 +48,9 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "*",
-    "electron-builder": "*",
-    "eslint": "*"
+    "electron": "^11.2.1",
+    "electron-builder": "^22.9.1",
+    "eslint": "^7.18.0"
   },
   "scripts": {
     "start": "electron .",
