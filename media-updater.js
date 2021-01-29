@@ -62,7 +62,12 @@ function goAhead() {
   const bcrypt = require("bcryptjs");
   const fs = require("graceful-fs");
   const glob = require("glob");
-  const moment = require("moment");
+  const dayjs = require("dayjs");
+  dayjs.extend(require("dayjs/plugin/isSameOrBefore"));
+  dayjs.extend(require("dayjs/plugin/isSameOrAfter"));
+  dayjs.extend(require("dayjs/plugin/isoWeek"));
+  dayjs.extend(require("dayjs/plugin/isBetween"));
+  dayjs.extend(require("dayjs/plugin/customParseFormat"));
   const os = require("os");
   const path = require("path");
   const sqljs = require("sql.js");
@@ -199,7 +204,7 @@ function goAhead() {
 
   async function getLanguages() {
     var jsonLangs = {};
-    if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || moment(prefs.langUpdatedLast).isSameOrBefore(moment().subtract(6, "months"))) {
+    if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isSameOrBefore(dayjs().subtract(6, "months"))) {
       var jwLangs = await getJson({
         url: "https://www.jw.org/en/languages/"
       });
@@ -208,7 +213,7 @@ function goAhead() {
         langcode: lang.langcode
       }));
       fs.writeFileSync(langsFile, JSON.stringify(cleanedJwLangs, null, 2));
-      prefs.langUpdatedLast = moment();
+      prefs.langUpdatedLast = dayjs();
       fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
       jsonLangs = cleanedJwLangs;
     } else {
@@ -265,7 +270,7 @@ function goAhead() {
   var mwMediaForWeek, baseDate, weekMediaFilesCopied = [],
     dryrun = false,
     dryrunResults = {};
-  baseDate = moment().startOf("isoWeek");
+  baseDate = dayjs().startOf("isoWeek");
   $("#baseDate button, #baseDate .dropdown-item:eq(0)").html(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
   for (var d = 0; d < 7; d++) {
     $("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").format("D"));
@@ -304,7 +309,7 @@ function goAhead() {
   });
   $("#baseDate").on("click", ".dropdown-item", function() {
     setVars();
-    baseDate = moment($(this).val()).startOf("isoWeek");
+    baseDate = dayjs($(this).val()).startOf("isoWeek");
     cleanUp();
     $("#baseDate .dropdown-item.active").removeClass("active");
     $(".day.bg-success, .congregation.bg-success").removeClass("bg-success");
@@ -313,7 +318,7 @@ function goAhead() {
     for (var d = 0; d < 7; d++) {
       $("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").format("D"));
     }
-    if ($("#day" + currentWeekday + " .dateOfMonth").html() == new Date().getDate().toString() && moment().isBetween(baseDate, baseDate.clone().add(6, "days"), undefined, "[]")) {
+    if ($("#day" + currentWeekday + " .dateOfMonth").html() == new Date().getDate().toString() && dayjs().isBetween(baseDate, baseDate.clone().add(6, "days"), undefined, "[]")) {
       $("#day" + currentWeekday).addClass("today");
     } else {
       $(".today").removeClass("today");
@@ -735,6 +740,7 @@ function goAhead() {
     mkdirSync(pubsPath);
     mediaPath = path.join(langPath, "Media");
     mkdirSync(mediaPath);
+    zoomPath = path.join(langPath, "Zoom");
   }
 
   async function syncWeMeeting() {
@@ -752,14 +758,14 @@ function goAhead() {
     var weeks = [],
       studyDate, w;
     for (var tempW = 0; tempW < qryWeeks.length; tempW++) {
-      studyDate = moment(qryWeeks[tempW].FirstDateOffset, "YYYYMMDD").add(prefs.weDay, "days");
+      studyDate = dayjs(qryWeeks[tempW].FirstDateOffset.toString(), "YYYYMMDD").add(prefs.weDay, "days");
       if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
-        weeks.push(qryWeeks[tempW].FirstDateOffset);
+        weeks.push(qryWeeks[tempW].FirstDateOffset.toString());
         w = tempW;
       }
     }
     var week = weeks[0];
-    studyDate = moment(week, "YYYYMMDD").add(prefs.weDay, "days");
+    studyDate = dayjs(week, "YYYYMMDD").add(prefs.weDay, "days");
     var weekPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
     mkdirSync(weekPath);
     currentWeekDates.push(weekPath);
@@ -865,12 +871,12 @@ function goAhead() {
     var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
     var weeks = [];
     for (var line of qryWeeks) {
-      if (moment(line.FirstDateOffset, "YYYYMMDD").isSameOrAfter(baseDate, "day") && moment(line.FirstDateOffset, "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
-        weeks.push(line.FirstDateOffset);
+      if (dayjs(line.FirstDateOffset.toString(), "YYYYMMDD").isSameOrAfter(baseDate, "day") && dayjs(line.FirstDateOffset.toString(), "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
+        weeks.push(line.FirstDateOffset.toString());
       }
     }
     var week = weeks[0];
-    var weekDay = moment(week, "YYYYMMDD").add(prefs.mwDay, "day");
+    var weekDay = dayjs(week, "YYYYMMDD").add(prefs.mwDay, "day");
     mwMediaForWeek = {};
     weekMediaFilesCopied = [];
     var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
@@ -973,10 +979,6 @@ function goAhead() {
       zipper.sync.unzip(ffmpegZipPath).save(path.join(appPath, "ffmpeg"));
       var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
       ffmpeg.setFfmpegPath(ffmpegPath);
-      zoomPath = path.join(langPath, "Zoom");
-      fs.rmdirSync(zoomPath, {
-        recursive: true
-      });
       mkdirSync(zoomPath);
       var filesToRender = 0, filesRendering = 0;
       for (var dir of getDirectories(mediaPath)) {
@@ -1060,7 +1062,7 @@ function goAhead() {
           if (folder.name == "Recurring") {
             congSpecificFoldersParent = pubsPath;
           }
-          if (moment(folder.name, "YYYY-MM-DD").isValid() && (moment(folder.name, "YYYY-MM-DD").isBefore(baseDate) || moment(folder.name, "YYYY-MM-DD").isAfter(baseDate.clone().add(6, "days")))) {
+          if (dayjs(folder.name, "YYYY-MM-DD").isValid() && (dayjs(folder.name, "YYYY-MM-DD").isBefore(baseDate) || dayjs(folder.name, "YYYY-MM-DD").isAfter(baseDate.clone().add(6, "days")))) {
             goOn = false;
           }
           if (goOn) {
@@ -1116,16 +1118,18 @@ function goAhead() {
       .map(dirent => dirent.name);
 
   function cleanUp() {
-    var mediaSubDirs = getDirectories(mediaPath);
-    for (var mediaSubDir of mediaSubDirs) {
-      if (moment(mediaSubDir, "YYYY-MM-DD").isValid() && !moment(mediaSubDir, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), undefined, "[]")) {
-        var oldStatus = $("#mainStatus").html();
-        status("Cleaning up older media<span>.</span><span>.</span><span>.</span>");
-        var deleteDir = path.join(mediaPath, mediaSubDir);
-        fs.rmdirSync(deleteDir, {
-          recursive: true
-        });
-        status(oldStatus);
+    for (var lookinDir of [mediaPath, zoomPath]) {
+      var mediaSubDirs = getDirectories(lookinDir);
+      for (var mediaSubDir of mediaSubDirs) {
+        if (dayjs(mediaSubDir, "YYYY-MM-DD").isValid() && !dayjs(mediaSubDir, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), undefined, "[]")) {
+          var oldStatus = $("#mainStatus").html();
+          status("Cleaning up irrelevant media<span>.</span><span>.</span><span>.</span>");
+          var deleteDir = path.join(lookinDir, mediaSubDir);
+          fs.rmdirSync(deleteDir, {
+            recursive: true
+          });
+          status(oldStatus);
+        }
       }
     }
   }
@@ -1331,7 +1335,7 @@ function goAhead() {
               }
               media.FileName = media.FileName + "." + media.FileType;
               media.FileName = sanitizeFilename(media.FileName);
-              media.DestPath = path.join(mediaPath, moment(opts.week, "YYYYMMDD").format("YYYY-MM-DD"), media.FileName);
+              media.DestPath = path.join(mediaPath, dayjs(opts.week, "YYYYMMDD").format("YYYY-MM-DD"), media.FileName);
               media.relevant = true;
               if (opts.refParStart && opts.refParEnd) {
                 media.relevant = false;

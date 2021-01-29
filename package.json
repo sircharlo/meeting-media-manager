@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.64",
+  "version": "0.8.65",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^4.6.0",
+    "dayjs": "^1.10.4",
     "electron-updater": "^4.3.5",
     "fluent-ffmpeg": "^2.1.2",
     "font-awesome": "^4.7.0",
@@ -18,7 +19,6 @@
     "graceful-fs": "^4.2.4",
     "is-port-reachable": "^3.0.0",
     "jquery": "^3.5.1",
-    "moment": "^2.29.1",
     "os": "^0.1.1",
     "path": "^0.12.7",
     "popper.js": "^1.16.1",
