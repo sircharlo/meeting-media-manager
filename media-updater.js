@@ -75,7 +75,6 @@ function goAhead() {
 
   const jwGetPubMediaLinks = pubMediaServer + "?output=json";
 
-
   const pubs = {
     wt: "w",
     mwb: "mwb"
@@ -741,6 +740,7 @@ function goAhead() {
     mediaPath = path.join(langPath, "Media");
     mkdirSync(mediaPath);
     zoomPath = path.join(langPath, "Zoom");
+    mkdirSync(zoomPath);
   }
 
   async function syncWeMeeting() {
@@ -979,7 +979,6 @@ function goAhead() {
       zipper.sync.unzip(ffmpegZipPath).save(path.join(appPath, "ffmpeg"));
       var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
       ffmpeg.setFfmpegPath(ffmpegPath);
-      mkdirSync(zoomPath);
       var filesToRender = 0, filesRendering = 0;
       for (var dir of getDirectories(mediaPath)) {
         filesToRender = filesToRender + getFiles(path.join(mediaPath, dir)).length;
