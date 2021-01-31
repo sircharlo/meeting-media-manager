@@ -36,7 +36,7 @@ Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-m
 
 ## Using with Zoom
 
-Of note is the setting to convert all images to MP4 files ("Enable beta MP4 generation"), which will allow for both pictures and videos to be shared using native Zoom MP4 sharing feature. This would potentially be much better than having to share your local monitor or the media playback window through Zoom's screen sharing feature. 
+Of note is the setting to convert all images to MP4 files ("Enable beta MP4 generation"), which will allow for both pictures and videos to be shared using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This would potentially be much easier and result in better quality for the meeting participants than sharing your local monitor or the media playback window through Zoom's screen sharing feature. 
 
 
 ## Does this app infringe the JW.org Terms of Use?
