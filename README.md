@@ -1,6 +1,6 @@
 # JW Meeting Media Fetcher
 
-Welcome! Here is an app that facilitates the downloading of media that will be considered during congregation meetings of Jehovah's Witnesses, to be used for example during personal study, or when using JW Library is not possible or feasible for various reasons.
+Welcome! Here is a simple app that facilitates the downloading of media that will be considered during congregation meetings of Jehovah's Witnesses, to be used for example during personal study, to share using Zoom, or when using JW Library is not possible or feasible for various reasons.
 
 ## Prerequisites
 
