@@ -63,8 +63,6 @@ function goAhead() {
   const fs = require("graceful-fs");
   const glob = require("glob");
   const dayjs = require("dayjs");
-  dayjs.extend(require("dayjs/plugin/isSameOrBefore"));
-  dayjs.extend(require("dayjs/plugin/isSameOrAfter"));
   dayjs.extend(require("dayjs/plugin/isoWeek"));
   dayjs.extend(require("dayjs/plugin/isBetween"));
   dayjs.extend(require("dayjs/plugin/customParseFormat"));
@@ -203,7 +201,7 @@ function goAhead() {
 
   async function getLanguages() {
     var jsonLangs = {};
-    if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isSameOrBefore(dayjs().subtract(6, "months"))) {
+    if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(dayjs().subtract(6, "months"))) {
       var jwLangs = await getJson({
         url: "https://www.jw.org/en/languages/"
       });
@@ -317,7 +315,7 @@ function goAhead() {
     for (var d = 0; d < 7; d++) {
       $("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").format("D"));
     }
-    if ($("#day" + currentWeekday + " .dateOfMonth").html() == new Date().getDate().toString() && dayjs().isBetween(baseDate, baseDate.clone().add(6, "days"), undefined, "[]")) {
+    if ($("#day" + currentWeekday + " .dateOfMonth").html() == new Date().getDate().toString() && dayjs().isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
       $("#day" + currentWeekday).addClass("today");
     } else {
       $(".today").removeClass("today");
@@ -325,7 +323,7 @@ function goAhead() {
   });
   $("#overlaySettings").on("click", ".btn-clean-up.btn-confirmed", function() {
     setVars();
-    for (var dir of [pubsPath, mediaPath]) {
+    for (var dir of [pubsPath, mediaPath, zoomPath]) {
       fs.rmdirSync(dir, {
         recursive: true
       });
@@ -569,12 +567,6 @@ function goAhead() {
                   newList = newList.concat(newFiles);
                 }
                 if ("Recurring" in dryrunResults) {
-                  /* Yeartext per week of month
-                  var currentWeekYeartextFilename = "00-00 " + (new Date(path.basename($("#chooseMeeting input:checked").prop("id")))).getFullYear() + " Yeartext " + getISOWeekInMonth(new Date()) + ".mp4";
-                  if (dryrunResults.Recurring.some(e => e.name === currentWeekYeartextFilename)) {
-                    newList = newList.concat(dryrunResults.Recurring.filter(e => e.name === currentWeekYeartextFilename));
-                  }
-                  */
                   newList = newList.concat(dryrunResults.Recurring);
                 }
                 newList = newList.sort((a, b) => a.name.localeCompare(b.name));
@@ -759,7 +751,7 @@ function goAhead() {
       studyDate, w;
     for (var tempW = 0; tempW < qryWeeks.length; tempW++) {
       studyDate = dayjs(qryWeeks[tempW].FirstDateOffset.toString(), "YYYYMMDD").add(prefs.weDay, "days");
-      if (studyDate.isSameOrAfter(baseDate, "day") && studyDate.isSameOrBefore(baseDate.clone().add(1, "week"), "day")) {
+      if (studyDate.isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
         weeks.push(qryWeeks[tempW].FirstDateOffset.toString());
         w = tempW;
       }
@@ -860,7 +852,7 @@ function goAhead() {
     $("#day" + prefs.mwDay).addClass("bg-info in-progress");
     mkdirSync(path.join(pubsPath, pubs.mwb));
     var issue = baseDate.format("YYYYMM") + "00";
-    if (baseDate.isSameOrAfter("2021-01-01") && parseInt(baseDate.format("M")) % 2 == 0) {
+    if (/*baseDate.isAfter("2020-12-31") &&*/ parseInt(baseDate.format("M")) % 2 == 0) {
       issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
     }
     mkdirSync(path.join(pubsPath, pubs.mwb, issue));
@@ -871,12 +863,12 @@ function goAhead() {
     var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
     var weeks = [];
     for (var line of qryWeeks) {
-      if (dayjs(line.FirstDateOffset.toString(), "YYYYMMDD").isSameOrAfter(baseDate, "day") && dayjs(line.FirstDateOffset.toString(), "YYYYMMDD").isBefore(baseDate.clone().add(1, "week"), "day")) {
+      if (dayjs(line.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
         weeks.push(line.FirstDateOffset.toString());
       }
     }
     var week = weeks[0];
-    var weekDay = dayjs(week, "YYYYMMDD").add(prefs.mwDay, "day");
+    var weekDay = dayjs(week, "YYYYMMDD").add(prefs.mwDay, "days");
     mwMediaForWeek = {};
     weekMediaFilesCopied = [];
     var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
@@ -978,6 +970,7 @@ function goAhead() {
       }
       zipper.sync.unzip(ffmpegZipPath).save(path.join(appPath, "ffmpeg"));
       var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
+      fs.chmodSync(ffmpegPath, "777");
       ffmpeg.setFfmpegPath(ffmpegPath);
       var filesToRender = 0, filesRendering = 0;
       for (var dir of getDirectories(mediaPath)) {
@@ -1081,14 +1074,11 @@ function goAhead() {
         if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
           for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
             for (var meetingDate of currentWeekDates) {
-              //var currentWeekYeartextFilename = "00-00 " + (new Date(path.basename(meetingDate))).getFullYear() + " Yeartext " + getISOWeekInMonth(new Date()) + ".mp4";
-              //if (recurringFile == currentWeekYeartextFilename) {
               writeFile({
                 file: path.join(pubsPath, "Recurring", recurringFile),
                 destFile: path.join(meetingDate, recurringFile),
                 type: "copy"
               });
-              //}
             }
           }
         }
@@ -1120,7 +1110,7 @@ function goAhead() {
     for (var lookinDir of [mediaPath, zoomPath]) {
       var mediaSubDirs = getDirectories(lookinDir);
       for (var mediaSubDir of mediaSubDirs) {
-        if (dayjs(mediaSubDir, "YYYY-MM-DD").isValid() && !dayjs(mediaSubDir, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), undefined, "[]")) {
+        if (dayjs(mediaSubDir, "YYYY-MM-DD").isValid() && !dayjs(mediaSubDir, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
           var oldStatus = $("#mainStatus").html();
           status("Cleaning up irrelevant media<span>.</span><span>.</span><span>.</span>");
           var deleteDir = path.join(lookinDir, mediaSubDir);
@@ -1362,13 +1352,6 @@ function goAhead() {
       console.log(err, opts);
     }
   }
-
-  /*function getISOWeekInMonth(date) {
-    var d = new Date(+date);
-    if (isNaN(d)) return;
-    d.setDate(d.getDate() - d.getDay() + 1);
-    return Math.ceil(d.getDate() / 7);
-  }*/
 
   async function getJson(opts) {
     var jsonUrl = "";
