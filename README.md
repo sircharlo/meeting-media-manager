@@ -36,8 +36,18 @@ Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-m
 
 ## Using with Zoom
 
-Of note is the setting to convert all images to MP4 files ("Enable beta MP4 generation"), which will allow for both pictures and videos to be shared using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This would potentially be much easier and result in better quality for the meeting participants than sharing your local monitor or the media playback window through Zoom's screen sharing feature. 
+Of note is the setting to convert all images to MP4 files (**Settings > Enable beta MP4 generation**), which will allow for both pictures and videos to be shared using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This would potentially be much easier and result in better quality for the meeting participants than sharing your local monitor or the media playback window through Zoom's screen sharing feature. 
 
+
+## Congregation media syncing
+
+The brother designated as _videoconference organizer_ by the body of elders can use **JWMMF** to manage what media will be available to the person taking care of media for a given meeting. For example, he can:
+
+- upload additional media to be shared for a meeting (such as for the circuit overseer's visit, or for public speakers' talks)
+- hide media that for one reason or another is not relevant for a given meeting
+- make recurring media available, to be shared at every meeting (such as a yeartext video, or an announcement slide)
+
+Usage of these features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be syncronized should connect to the same SFTP server and directory using the **Settings > Local congregation SFTP server** screen.
 
 ## Does this app infringe the JW.org Terms of Use?
 
