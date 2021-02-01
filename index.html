@@ -27,7 +27,8 @@
       display: flex;
     }
 
-    #overlaySettings {
+    #overlaySettings,
+    #overlaySftp {
       z-index: 50;
     }
 
@@ -157,19 +158,19 @@
       width: auto;
     }
 
-    #fileList {
+    .file-list {
       font-size: 60%;
       width: 100%;
     }
 
-    #fileList li {
+    .file-list li {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       border-radius: 0.5em;
     }
 
-    #fileList li:not(.confirmDelete):hover {
+    .file-list li:not(.confirmDelete):hover {
       background-color: #eee;
     }
 
@@ -181,15 +182,15 @@
       font-weight: bold;
     }
 
-    #fileList li .fa {
+    .file-list li .fa {
       padding: 3px;
     }
 
-    #fileList li .fa-minus-circle {
+    .file-list li .fa-minus-circle {
       color: red;
     }
 
-    #fileList li .fa-exclamation-circle {
+    .file-list li .fa-exclamation-circle {
       color: darkorange;
     }
 
@@ -411,7 +412,7 @@
       </div>
     </div>
     <div class="d-flex flex-fill text-left">
-      <ul id="fileList" class="list-unstyled m-0" style="opacity: 0;"></ul>
+      <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
   </div>
   <div id="overlaySettings" class="flex-column p-4 bg-light" style="display: none;">
@@ -427,10 +428,9 @@
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="langSelect" class="half m-0 pr-3 text-right">Media language</label>
+      <label for="lang" class="half m-0 pr-3 text-right">Media language</label>
       <div class="flex-fill">
-        <input type="text" class="form-control" id="lang" required hidden />
-        <select id="langSelect" class="form-control" required>
+        <select id="lang" class="form-control" required>
           <option disabled selected value hidden></option>
         </select>
       </div>
@@ -491,70 +491,93 @@
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="autoStartSync" class="half m-0 pr-3 text-right">Sync media on app launch</label>
-      <div class="btn-group" data-toggle="buttons">
-        <button class="btn">
-          <input type="checkbox" id="autoStartSync" />
-          <i class="fa fa-toggle-off"></i>
-        </button>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="autoStartSync" />
+        <label class="custom-control-label" for="autoStartSync"></label>
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="autoQuitWhenDone" class="half m-0 pr-3 text-right">Quit app after media sync</label>
-      <div class="btn-group" data-toggle="buttons">
-        <button class="btn">
-          <input type="checkbox" id="autoQuitWhenDone" />
-          <i class="fa fa-toggle-off"></i>
-        </button>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="autoQuitWhenDone" />
+        <label class="custom-control-label" for="autoQuitWhenDone"></label>
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="autoRunAtBoot" class="half m-0 pr-3 text-right">Run app at system startup</label>
-      <div class="btn-group" data-toggle="buttons">
-        <button class="btn">
-          <input type="checkbox" id="autoRunAtBoot" />
-          <i class="fa fa-toggle-off"></i>
-        </button>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="autoRunAtBoot" />
+        <label class="custom-control-label" for="autoRunAtBoot"></label>
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="betaMp4Gen" class="half m-0 pr-3 text-right">Enable beta MP4 generation</label>
-      <div class="btn-group" data-toggle="buttons">
-        <button class="btn">
-          <input type="checkbox" id="betaMp4Gen" />
-          <i class="fa fa-toggle-off"></i>
-        </button>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="betaMp4Gen" />
+        <label class="custom-control-label" for="betaMp4Gen"></label>
       </div>
     </div>
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congUnlock" class="half m-0 pr-3 text-right">Additional media passcode</label>
       <div class="flex-fill">
-        <input type="password" id="congPass" class="form-control form-control-sm text-center" required />
+        <button type="button" class="btn btn-warning btn-clean-up">Clean-up media cache</button>
       </div>
-    </div>
-    <div class="d-flex flex-row flex-fill align-items-center" id="congs" style="display:none">
-      <label for="congSelect" class="half m-0 pr-3 text-right">Congregation/group</label>
       <div class="flex-fill">
-        <div id="congContainer">
-          <input type="text" id="cong" required hidden />
-          <select id="congSelect" class="form-control" style="display:none">
-            <option selected value="None">None</option>
-          </select>
-        </div>
-        <div class="spinner-border spinner-border-sm" role="status" id="congsSpinner" style="display:none"></div>
+        <button type="button" class="btn btn-primary btn-sftp">Local congregation SFTP server</button>
       </div>
-    </div>
-    <hr />
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="flex-fill text-right">
-        <button type="button" class="btn btn-warning btn-clean-up mr-3">Clean-up media cache</button>
-      </div>
-      <div class="half text-left">
+      <div class="flex-fill">
         <button type="button" class="btn btn-primary btn-settings">Go back</button>
       </div>
     </div>
     <div id="version" class="align-items-center d-flex flex-fill justify-content-center py-1">
       <span class="badge"></span>
+    </div>
+  </div>
+  <div id="overlaySftp" class="flex-column p-4 bg-light overlay" style="display: none;">
+    <div class="align-items-center d-flex justify-content-center pb-4">
+      <div class="lead">
+        Local congregation SFTP server
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="congServer" class="half m-0 pr-3 text-right">Hostname</label>
+      <div class="flex-fill">
+        <input type="text" class="form-control form-control-sm sftpReq" id="congServer" required />
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="congServerPort" class="half m-0 pr-3 text-right">Port</label>
+      <div class="flex-fill">
+        <input type="text" class="form-control form-control-sm sftpReq" id="congServerPort" required />
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="congServerUser" class="half m-0 pr-3 text-right">Username</label>
+      <div class="flex-fill">
+        <input type="text" class="form-control form-control-sm sftpReq " id="congServerUser" required />
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="congServerPass" class="half m-0 pr-3 text-right">Password</label>
+      <div class="flex-fill">
+        <input type="password" class="form-control form-control-sm sftpReq" id="congServerPass" required />
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="congServerDir" class="half m-0 pr-3 text-right">Directory</label>
+      <div class="flex-fill">
+        <input type="text" class="form-control form-control-sm" id="congServerDir" required />
+      </div>
+    </div>
+    <div class="d-flex flex-fill text-left">
+      <ul id="sftpFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center" style="opacity: 0;">
+      <label for="sftpSpinner" class="half m-0 pr-3 text-right"></label>
+      <div class="spinner-border" id="sftpSpinner" role="status"></div>
+    </div>
+    <div>
+      <button type="button" class="btn btn-primary btn-sftp">Go back</button>
     </div>
   </div>
   <div id="home" class="d-flex flex-column">
@@ -617,7 +640,7 @@
           </div>
         </div>
       </div>
-      <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;"></div>
+      <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;">Local congregation media</div>
     </div>
     <div class="d-flex justify-content-center">
       <button type="button" class="btn btn-lg btn-primary" id="mediaSync">Start!</button>
