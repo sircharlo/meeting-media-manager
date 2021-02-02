@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.68",
+  "version": "0.8.69",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {

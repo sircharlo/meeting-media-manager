@@ -78,14 +78,22 @@
       width: 100% !important;
     }
 
-    .invalid {
-      background-color: #ffcdd2 !important;
-      border: 1px solid #b71c1c !important;
+    #overlaySettings div.btn-group-toggle {
+      border: 1px solid transparent;
       border-radius: 4px;
     }
 
+    .invalid {
+      background-color: rgba(220, 53, 69, 0.25) !important;
+      border-color: #dc3545 !important;
+    }
+
+    .notValidYet {
+      background-color: rgba(255, 193, 7, 0.25) !important;
+    }
+
     .valid {
-      background-color: #b9f6ca !important;
+      background-color: rgba(40, 167, 69, 0.25) !important;
     }
 
     #outputPath,
@@ -431,7 +439,7 @@
       <label for="lang" class="half m-0 pr-3 text-right">Media language</label>
       <div class="flex-fill">
         <select id="lang" class="form-control" required>
-          <option disabled selected value hidden></option>
+          <!-- <option disabled selected value hidden></option> -->
         </select>
       </div>
     </div>
@@ -542,31 +550,31 @@
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="congServer" class="half m-0 pr-3 text-right">Hostname</label>
       <div class="flex-fill">
-        <input type="text" class="form-control form-control-sm sftpReq" id="congServer" required />
+        <input type="text" class="form-control form-control-sm sftpHost" id="congServer" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="congServerPort" class="half m-0 pr-3 text-right">Port</label>
       <div class="flex-fill">
-        <input type="text" class="form-control form-control-sm sftpReq" id="congServerPort" required />
+        <input type="text" class="form-control form-control-sm sftpHost" id="congServerPort" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="congServerUser" class="half m-0 pr-3 text-right">Username</label>
       <div class="flex-fill">
-        <input type="text" class="form-control form-control-sm sftpReq " id="congServerUser" required />
+        <input type="text" class="form-control form-control-sm sftpCreds" id="congServerUser" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="congServerPass" class="half m-0 pr-3 text-right">Password</label>
       <div class="flex-fill">
-        <input type="password" class="form-control form-control-sm sftpReq" id="congServerPass" required />
+        <input type="password" class="form-control form-control-sm sftpCreds" id="congServerPass" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="congServerDir" class="half m-0 pr-3 text-right">Directory</label>
       <div class="flex-fill">
-        <input type="text" class="form-control form-control-sm" id="congServerDir" required />
+        <input type="text" class="form-control form-control-sm" id="congServerDir" required readonly />
       </div>
     </div>
     <div class="d-flex flex-fill text-left">
