@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.69",
+  "version": "0.8.70",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -47,6 +47,7 @@
     },
     "buildDependenciesFromSource": true
   },
+  "release": "build",
   "devDependencies": {
     "electron": "^11.2.1",
     "electron-builder": "^22.9.1",
