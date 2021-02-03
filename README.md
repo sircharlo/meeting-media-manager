@@ -2,6 +2,8 @@
 
 Welcome! Here is a simple app that facilitates the downloading of media that will be considered during congregation meetings of Jehovah's Witnesses, to be used for example during personal study, to share using Zoom, or when using JW Library is not possible or feasible for various reasons.
 
+![Main screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/01-main.png?raw=true)
+
 ## Prerequisites
 
 The app should run as is on most modern computers running Windows, Linux, or Mac. 
@@ -32,11 +34,17 @@ For various technical reasons, the auto-updater does not yet work on Macs. Mac u
 
 ## Installation and usage
 
-Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Open the app, and configure the settings as you please. Once you execute the media sync, all downloaded media will be placed in the folder of your choosing.
+Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Open the app, and configure the settings as you please. 
+
+![Settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/02-settings.png?raw=true)
+
+Once you execute the media sync, all downloaded media will be placed in the folder of your choosing.
 
 ## Using with Zoom
 
-Of note is the setting to convert all images to MP4 files (**Settings > Enable beta MP4 generation**), which will allow for both pictures and videos to be shared using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This would potentially be much easier and result in better quality for the meeting participants than sharing your local monitor or the media playback window through Zoom's screen sharing feature. 
+Of note is the setting to convert all images to MP4 files (**Settings > Enable beta MP4 generation**), which will allow for both pictures and videos to be shared using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature. 
+
+![Zoom Video share feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true)
 
 
 ## Congregation media syncing
@@ -47,7 +55,11 @@ The brother designated as _videoconference organizer_ by the body of elders can 
 - hide media that for one reason or another is not relevant for a given meeting
 - make recurring media available, to be shared at every meeting (such as a yeartext video, or an announcement slide)
 
+![Upload screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/03-upload.png?raw=true)
+
 Usage of these features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be syncronized should connect to the same SFTP server and directory using the **Settings > Local congregation SFTP server** screen.
+
+![Upload settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/04-upload-settings.png?raw=true)
 
 ## Does this app infringe the JW.org Terms of Use?
 
