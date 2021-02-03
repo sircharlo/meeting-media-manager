@@ -621,7 +621,7 @@ function goAhead() {
   function createVideoSync(mediaDir, vid){
     return new Promise((resolve,reject)=>{
       var imageName = path.basename(vid, path.extname(vid));
-      var outputFPS = 30, loop = 10;
+      var outputFPS = 30, loop = 1;
       ffmpeg(path.join(mediaPath, mediaDir, vid))
         .inputFPS(1)
         .outputFPS(outputFPS)
@@ -637,7 +637,7 @@ function goAhead() {
         })
         .videoCodec("libx264")
         .noAudio()
-        .size("1280x720")
+        .size("?x720")
         .loop(loop)
         .outputOptions("-pix_fmt yuv420p")
         .save(path.join(zoomPath, mediaDir, imageName + ".mp4"));
