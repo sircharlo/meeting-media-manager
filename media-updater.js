@@ -57,7 +57,8 @@ function goAhead() {
   const zipper = require("zip-local");
   const pubs = {
     wt: "w",
-    mwb: "mwb"
+    mwb: "mwb",
+    thv: "thv"
   };
   var sftpConfig = {};
   const congHash = "$2b$10$Kc4.iOKBP9KXfwQAHUJ0Ieyg0m8EC8nrhPaMigeGPonQ85EMaCJv6";
@@ -70,7 +71,7 @@ function goAhead() {
   var currentWeekDates = [];
 
   function prefsInitialize() {
-    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass"]) {
+    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching"]) {
       if (!(Object.keys(prefs).includes(pref))) {
         prefs[pref] = null;
       }
@@ -242,7 +243,7 @@ function goAhead() {
   $("#baseDate").on("click", ".dropdown-item", function() {
     setVars();
     baseDate = dayjs($(this).val()).startOf("isoWeek");
-    cleanUp();
+    cleanUp([mediaPath], "brutal");
     $("#baseDate .dropdown-item.active").removeClass("active");
     $(".day.bg-success, .congregation.bg-success").removeClass("bg-success");
     $(this).addClass("active");
@@ -258,11 +259,7 @@ function goAhead() {
   });
   $("#overlaySettings").on("click", ".btn-clean-up.btn-confirmed", function() {
     setVars();
-    for (var dir of [pubsPath, mediaPath, zoomPath]) {
-      fs.rmdirSync(dir, {
-        recursive: true
-      });
-    }
+    cleanUp([pubsPath, mediaPath, zoomPath], "brutal");
     $(this).addClass("btn-success").removeClass("btn-danger btn-confirmed btn-clean-up").html("Clean-up completed!").prop("disabled", true);
   });
   $("#overlaySettings input, #overlaySettings select, #overlaySftp input, #overlaySftp select").on("change", function() {
@@ -270,7 +267,7 @@ function goAhead() {
       if ($(this).prop("type") == "checkbox") {
         prefs[$(this).prop("id")] = $(this).prop("checked");
       } else if ($(this).prop("type") == "radio") {
-        prefs[$(this).closest("div").prop("id")] = $(this).closest("div").find("input:checked").val(); //$("#mwDay input:checked").val();
+        prefs[$(this).closest("div").prop("id")] = $(this).closest("div").find("input:checked").val();
       } else if ($(this).prop("type") == "text" || $(this).prop("type") == "password") {
         prefs[$(this).prop("id")] = $(this).val();
       }
@@ -280,6 +277,10 @@ function goAhead() {
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     if ($(this).prop("id").includes("cong")) {
       sftpSetup();
+    }
+    setVars();
+    if ($(this).prop("id").includes("cong") || $(this).prop("id") == "lang" || $(this).prop("id") == "includeTeaching" || $(this).prop("name").includes("Day")) {
+      cleanUp([mediaPath], "brutal");
     }
     configIsValid();
   });
@@ -328,7 +329,8 @@ function goAhead() {
     $("#btn-settings, #btn-upload").fadeOut();
     $("#spinnerContainer").fadeTo(400, 1);
     await setVars();
-    await cleanUp();
+    await cleanUp([mediaPath]);
+    await cleanUp([zoomPath], "brutal");
     await syncMwMeeting();
     await syncWeMeeting();
     await syncCongSpecific();
@@ -724,18 +726,26 @@ function goAhead() {
       .filter(dirent => !dirent.isDirectory())
       .map(dirent => dirent.name);
 
-  function cleanUp() {
-    for (var lookinDir of [mediaPath, zoomPath]) {
-      var mediaSubDirs = getDirectories(lookinDir);
-      for (var mediaSubDir of mediaSubDirs) {
-        if (dayjs(mediaSubDir, "YYYY-MM-DD").isValid() && !dayjs(mediaSubDir, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
-          var oldStatus = $("#mainStatus").html();
-          status("Cleaning up irrelevant media<span>.</span><span>.</span><span>.</span>");
-          var deleteDir = path.join(lookinDir, mediaSubDir);
-          fs.rmdirSync(deleteDir, {
+  function cleanUp(dirs, type) {
+    for (var lookinDir of dirs) {
+      if (fs.existsSync(lookinDir)) {
+        if (type == "brutal") {
+          fs.rmdirSync(lookinDir, {
             recursive: true
           });
-          status(oldStatus);
+        } else {
+          var mediaSubDirs = getDirectories(lookinDir);
+          for (var mediaSubDir of mediaSubDirs) {
+            if (dayjs(mediaSubDir, "YYYY-MM-DD").isValid() && !dayjs(mediaSubDir, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+              var oldStatus = $("#mainStatus").html();
+              status("Cleaning up irrelevant media<span>.</span><span>.</span><span>.</span>");
+              var deleteDir = path.join(lookinDir, mediaSubDir);
+              fs.rmdirSync(deleteDir, {
+                recursive: true
+              });
+              status(oldStatus);
+            }
+          }
         }
       }
     }
@@ -884,82 +894,82 @@ function goAhead() {
       } else {
         tableMultimedia = "DocumentMultimedia";
       }
-      var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType='video/mp4' OR Multimedia.MimeType='audio/mpeg')) OR (Multimedia.MimeType='image/jpeg' AND Multimedia.CategoryType <> 9" + (opts.pub == "th" ? " AND Multimedia.Width <> ''" : "") + "))";
+      var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType='video/mp4' OR Multimedia.MimeType='audio/mpeg')) OR (Multimedia.MimeType='image/jpeg' AND Multimedia.CategoryType <> 9" + (opts.pub == "th" ? " AND Multimedia.Width <> ''" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " ORDER BY BeginParagraphOrdinal" : "");
       var mediaItems = await executeStatement(opts.db, statement);
       if (mediaItems) {
         for (var media of mediaItems) {
           try {
-            if (!(opts.pub && media.KeySymbol)) {
-              media.FileType = media.FilePath.split(".").pop();
-              if ((media.MimeType.includes("audio") || media.MimeType.includes("video"))) {
-                if (media.KeySymbol == null) {
-                  media.JsonUrl = jwGetPubMediaLinks + "&docid=" + media.MultiMeps + "&langwritten=" + prefs.lang;
-                } else {
-                  media.JsonUrl = jwGetPubMediaLinks + "&pub=" + media.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + media.IssueTagNumber + "&track=" + media.Track;
-                }
-                if (media.MimeType.includes("video")) {
-                  media.JsonUrl = media.JsonUrl + "&fileformat=MP4";
-                } else if (media.MimeType.includes("audio")) {
-                  media.JsonUrl = media.JsonUrl + "&fileformat=MP3";
-                }
-                var json = await getJson({
-                  url: media.JsonUrl
+            media.FileType = media.FilePath.split(".").pop();
+            if ((media.MimeType.includes("audio") || media.MimeType.includes("video"))) {
+              if (media.KeySymbol == null) {
+                media.JsonUrl = jwGetPubMediaLinks + "&docid=" + media.MultiMeps + "&langwritten=" + prefs.lang;
+              } else {
+                media.JsonUrl = jwGetPubMediaLinks + "&pub=" + media.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + media.IssueTagNumber + "&track=" + media.Track;
+              }
+              if (media.MimeType.includes("video")) {
+                media.JsonUrl = media.JsonUrl + "&fileformat=MP4";
+              } else if (media.MimeType.includes("audio")) {
+                media.JsonUrl = media.JsonUrl + "&fileformat=MP3";
+              }
+              var json = await getJson({
+                url: media.JsonUrl
+              });
+              media.Json = Object.values(json.files[prefs.lang])[0];
+              if (media.MimeType.includes("video")) {
+                media.Json = media.Json.filter(function(item) {
+                  return item.label == "720p";
                 });
-                media.Json = Object.values(json.files[prefs.lang])[0];
-                if (media.MimeType.includes("video")) {
-                  media.Json = media.Json.filter(function(item) {
-                    return item.label == "720p";
-                  });
-                }
               }
-              if (opts.srcDocId) {
-                media.SourceDocumentId = opts.srcDocId;
-              } else {
-                media.SourceDocumentId = opts.destDocId;
-              }
-              if (opts.srcParId) {
-                media.srcParId = opts.srcParId;
-              } else {
-                media.srcParId = media.BeginParagraphOrdinal;
-              }
-              if (opts.srcKeySymbol) {
-                media.KeySymbol = opts.srcKeySymbol;
-              } else if (media.KeySymbol == null) {
-                media.KeySymbol = await executeStatement(opts.db, "SELECT UndatedSymbol FROM Publication");
-                media.KeySymbol = media.KeySymbol[0].UndatedSymbol;
-                media.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
-                media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
-              }
-              if (!media.JsonUrl) {
-                media.LocalPath = path.join(pubsPath, media.KeySymbol, media.IssueTagNumber, "JWPUB", "contents-decompressed", media.FilePath);
-              }
-              media.FileType = media.FilePath.split(".").pop();
-              media.FileName = media.Caption;
-              if (media.Label.length == 0 && media.Caption.length == 0) {
-                media.FileName = "Media";
-              } else if (media.Label.length > media.Caption.length) {
-                media.FileName = media.Label;
-              }
-              media.FileName = media.FileName + "." + media.FileType;
-              media.FileName = sanitizeFilename(media.FileName);
-              media.DestPath = path.join(mediaPath, dayjs(opts.week, "YYYYMMDD").format("YYYY-MM-DD"), media.FileName);
-              media.relevant = true;
-              if (opts.refParStart && opts.refParEnd) {
-                media.relevant = false;
-                if ((media.BeginParagraphOrdinal >= opts.refParStart && media.EndParagraphOrdinal <= opts.refParEnd) || (media.BeginParagraphOrdinal == 1 && opts.refParStart < 5)) {
-                  media.relevant = true;
-                }
-                console.log("Include referenced media from " + media.KeySymbol + ":", media.relevant, "(", media.BeginParagraphOrdinal, media.EndParagraphOrdinal, "/", opts.refParStart, opts.refParEnd, ")");
-              }
-              if (!mwMediaForWeek[media.srcParId]) {
-                mwMediaForWeek[media.srcParId] = [];
-              }
-              if (!weekMediaFilesCopied.includes(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId) && media.relevant) {
-                mwMediaForWeek[media.srcParId].push(media);
-                weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
-              }
+            }
+            if (opts.srcDocId) {
+              media.SourceDocumentId = opts.srcDocId;
             } else {
-              console.log("Additional video skipped:", media.FilePath, "(", media.KeySymbol, opts.pub, ")");
+              media.SourceDocumentId = opts.destDocId;
+            }
+            if (opts.srcParId) {
+              media.srcParId = opts.srcParId;
+            } else {
+              media.srcParId = media.BeginParagraphOrdinal;
+            }
+            if (opts.srcKeySymbol) {
+              media.KeySymbol = opts.srcKeySymbol;
+            } else if (media.KeySymbol == null) {
+              media.KeySymbol = await executeStatement(opts.db, "SELECT UndatedSymbol FROM Publication");
+              media.KeySymbol = media.KeySymbol[0].UndatedSymbol;
+              media.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
+              media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
+            }
+            if (!media.JsonUrl) {
+              media.LocalPath = path.join(pubsPath, media.KeySymbol, media.IssueTagNumber, "JWPUB", "contents-decompressed", media.FilePath);
+            }
+            media.FileType = media.FilePath.split(".").pop();
+            media.FileName = media.Caption;
+            if (media.Label.length == 0 && media.Caption.length == 0) {
+              media.FileName = "Media";
+            } else if (media.Label.length > media.Caption.length) {
+              media.FileName = media.Label;
+            }
+            media.FileName = media.FileName + "." + media.FileType;
+            media.FileName = sanitizeFilename(media.FileName);
+            media.DestPath = path.join(mediaPath, dayjs(opts.week, "YYYYMMDD").format("YYYY-MM-DD"), media.FileName);
+            media.relevant = true;
+            if (opts.refParStart && opts.refParEnd) {
+              media.relevant = false;
+              if ((media.BeginParagraphOrdinal >= opts.refParStart && media.EndParagraphOrdinal <= opts.refParEnd) || (media.BeginParagraphOrdinal == 1 && opts.refParStart <= 5)) {
+                media.relevant = true;
+              }
+              console.log("Include referenced media from " + media.KeySymbol + ":", media.relevant, "(", media.BeginParagraphOrdinal, media.EndParagraphOrdinal, "/", opts.refParStart, opts.refParEnd, ")", media);
+            }
+            if (!prefs.includeTeaching && media.KeySymbol == pubs.thv && !opts.refParStart && !opts.refParEnd) {
+              media.relevant = false;
+              console.log("Not including referenced media from " + media.KeySymbol, media);
+            }
+            if (!mwMediaForWeek[media.srcParId]) {
+              mwMediaForWeek[media.srcParId] = [];
+            }
+            if (!weekMediaFilesCopied.includes(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId) && media.relevant) {
+              mwMediaForWeek[media.srcParId].push(media);
+              weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
             }
           } catch (err) {
             console.log(err);

@@ -16,12 +16,10 @@ function createUpdateWindow() {
     width: 600,
     height: 600,
     resizable: false,
-    title: "JW Meeting Media Fetcher"//,
-    //icon: __dirname + "/icon.png"
+    title: "JW Meeting Media Fetcher"
   });
   win.setMenuBarVisibility(false);
   win.loadFile("index.html");
-  //win.webContents.openDevTools()
 }
 
 ipcMain.on("autoUpdate", () => {
@@ -73,14 +71,6 @@ autoUpdater.autoDownload = false;
 
 app.whenReady().then(createUpdateWindow);
 
-/*app.on('window-all-closed', () => {
-  app.quit()
-})*/
-
-/*app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
-})*/
+app.on("window-all-closed", () => {
+  app.quit();
+});
