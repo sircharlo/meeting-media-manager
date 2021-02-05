@@ -5,12 +5,17 @@
   <title>JW Meeting Media Fetcher</title>
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
-  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
   <style>
     html,
     body {
       overflow: hidden;
       height: 100%;
+    }
+
+    .spinner-border {
+      width: 5rem;
+      height: 5rem;
     }
 
     .overlay,
@@ -28,7 +33,8 @@
     }
 
     #overlaySettings,
-    #overlaySftp {
+    #overlaySftp,
+    #overlayUploadFile {
       z-index: 50;
     }
 
@@ -139,12 +145,12 @@
     .congregation {
       height: 3em;
       width: 3em;
-      background-color: #e0e0e0;
+      background-color: #f8f9fa;
     }
 
     .meeting,
     .congregation {
-      background-color: #9e9e9e;
+      background-color: #6c757d;
     }
 
     .in-progress {
@@ -153,7 +159,7 @@
     }
 
     .today {
-      box-shadow: 0px 0px 15px 0px rgba(255, 193, 7, 0.85);
+      box-shadow: 0px 0px 15px 0px rgba(52, 58, 64, 0.5);
       animation: pulseToday 2s infinite;
     }
 
@@ -167,7 +173,7 @@
     }
 
     .file-list {
-      font-size: 60%;
+      font-size: 70%;
       width: 100%;
     }
 
@@ -190,8 +196,8 @@
       font-weight: bold;
     }
 
-    .file-list li .fa {
-      padding: 3px;
+    #fileList li i.fas {
+      margin-right: 0.5em;
     }
 
     .file-list li .fa-minus-circle {
@@ -244,15 +250,15 @@
 
     @keyframes pulseToday {
       0% {
-        box-shadow: 0 0 15px 0 rgba(255, 193, 7, 0.7);
+        box-shadow: 0 0 15px 0 rgba(52, 58, 64, 0.5);
       }
 
       70% {
-        box-shadow: 0 0 15px 5px rgba(255, 193, 7, 0.7);
+        box-shadow: 0 0 15px 5px rgba(52, 58, 64, 0.5);
       }
 
       100% {
-        box-shadow: 0 0 15px 0 rgba(255, 193, 7, 0.7);
+        box-shadow: 0 0 15px 0 rgba(52, 58, 64, 0.5);
       }
     }
 
@@ -287,45 +293,50 @@
   <div id="dropzone" class="dropzone"></div>
   <div id="overlayInternetCheck" class="overlay justify-content-center">
     <div class="align-self-center text-dark">
-      <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">Hang tight, establishing connection to JW.org<span>.</span><span>.</span><span>.</span></div>
+      <!-- <div class="spinner-border mb-3" role="status"></div> -->
+      <div class="align-self-center" role="status"><i class="fas fa-fw fa-wifi fa-5x"></i></div>
+      <!-- <div class="align-self-center loading" role="status">Hang tight, establishing connection to JW.org<span>.</span><span>.</span><span>.</span></div> -->
     </div>
   </div>
   <div id="overlayInternetFail" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-danger">
-      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="spinner-border mb-3" role="status"></div>
       <div class="align-self-center loading" role="status">I can't find JW.org! I'll try again in a few seconds<span>.</span><span>.</span><span>.</span></div>
     </div>
   </div>
   <div id="overlayUpdateCheck" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-dark">
-      <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">Connection to JW.org established; let's check for updates to this app<span>.</span><span>.</span><span>.</span></div>
+      <!-- <div class="spinner-border mb-3" role="status"></div> -->
+      <div class="align-self-center" role="status"><i class="fas fa-fw fa-satellite-dish fa-5x"></i></div>
+      <!-- <div class="align-self-center loading" role="status">Connection to JW.org established; let's check for updates to this app<span>.</span><span>.</span><span>.</span></div> -->
     </div>
   </div>
   <div id="overlayUpdateAvailable" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-info">
-      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="spinner-border mb-3" role="status"></div>
+      <!-- <div class="align-self-center" role="status"><i class="fas fa-fw fa-cloud-download-alt fa-5x"></i></div> -->
       <div class="align-self-center loading" role="status">App update available, hold on<span>.</span><span>.</span><span>.</span></div>
       <div class="align-self-center" role="status" id="updatePercent"></div>
     </div>
   </div>
   <div id="overlayUpdateDownloaded" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-success" style="display: none;">
-      <div class="spinner-grow mb-3" role="status"></div>
+      <div class="spinner-border mb-3" role="status"></div>
       <div class="align-self-center loading" role="status">All done! Now let's install that app update<span>.</span><span>.</span><span>.</span></div>
     </div>
   </div>
   <div id="overlayPleaseWait" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-primary">
-      <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center" id="upToDate" role="status">No app updates available, so let's proceed!</div>
-      <div class="align-self-center loading" id="pleaseWait" role="status">Hold on, getting things a few ready<span>.</span><span>.</span><span>.</span></div>
+      <div class="spinner-border mb-3" role="status"></div>
+      <!-- <div class="align-self-center" role="status"><i class="fas fa-fw fa-thumbs-up fa-5x"></i></div> -->
+      <!-- <div class="align-self-center" id="upToDate" role="status">No app updates available, so let's proceed!</div>-->
+      <!-- <div class="align-self-center loading" id="pleaseWait" role="status">Hold on, getting things a few ready<span>.</span><span>.</span><span>.</span></div> -->
     </div>
   </div>
   <div id="overlayStarting" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-success">
-      <div class="align-self-center loading" id="initiatingSync" role="status">Initiating media sync<span>.</span><span>.</span><span>.</span></div>
+      <div class="align-self-center" role="status"><i class="fas fa-fw fa-hourglass-start fa-5x"></i></div>
+      <!-- <div class="align-self-center loading" id="initiatingSync" role="status">Initiating media sync<span>.</span><span>.</span><span>.</span></div> -->
       <div class="align-self-center pt-3" id="cancelSync" role="status">
         <button class="btn btn-warning btn-sm" id="btnCancelSync" type="button">Wait, don't sync just yet!</button>
       </div>
@@ -333,16 +344,18 @@
   </div>
   <div id="overlayDryrun" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-dark">
-      <div class="spinner-grow mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">Hold on, doing some preliminary work<span>.</span><span>.</span><span>.</span></div>
+      <div class="spinner-border mb-3" role="status"></div>
+      <!-- <div class="align-self-center loading" role="status">Hold on, doing some preliminary work<span>.</span><span>.</span><span>.</span></div> -->
     </div>
   </div>
   <div id="overlayComplete" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center text-success">
-      <div class="align-self-center" id="upToDate" role="status">Congratulations, the media folder has been successfully synced!</div>
+      <div class="align-self-center" role="status"><i class="fas fa-fw fa-check-circle fa-5x"></i></div>
+      <!-- <div class="align-self-center" role="status">Congratulations, the media folder has been successfully synced!</div> -->
       <div class="align-self-center pt-3" id="stayAlive" role="status" style="display: none;">
         <button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don't close automatically!</button>
       </div>
+
     </div>
   </div>
   <div id="overlayUploadFile" class="overlay flex-column p-4" style="display: none;">
@@ -363,7 +376,7 @@
           Song
         </label>
         <label class="btn btn-light"><input type="radio" name="chooseUploadType" id="typeFile" autocomplete="off">
-          File
+          Custom media or file
         </label>
       </div>
     </div>
@@ -375,7 +388,7 @@
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
-      <div class="flex-fill pr-3 text-right">Prefix for uploaded file(s)</div>
+      <div class="flex-fill pr-3 text-right">Filename prefix</div>
       <div class="d-flex half" id="enterPrefix">
         <div>
           <input class="form-control" type="text" maxlength="1" id="enterPrefix-0" />
@@ -399,14 +412,17 @@
     </div>
     <div class="d-flex py-2">
       <div class="half text-right">
-        <button class="btn btn-light mr-3" id="btnCancelUpload" type="button">Cancel</button>
+        <button class="btn btn-dark mr-3" id="btnCancelUpload" type="button"><i class="fas fa-fw fa-home"></i></button>
       </div>
       <div class="half text-left">
-        <button class="btn btn-secondary" id="btnUpload" type="button" disabled>Upload!</button>
+        <button class="btn btn-secondary" id="btnUpload" type="button" disabled>Upload</button>
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2" id="uploadSpinnerContainer" style="opacity: 0;">
       <div class="spinner-border" role="status"></div>
+    </div>
+    <div class="d-flex flex-fill text-left">
+      <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
     <div class="align-items-center d-flex text-center justify-content-center py-2" id="uploadProgressContainer" style="opacity: 0;">
       <div class="half">
@@ -418,9 +434,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="d-flex flex-fill text-left">
-      <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
   </div>
   <div id="overlaySettings" class="flex-column p-4 bg-light" style="display: none;">
@@ -437,7 +450,7 @@
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="lang" class="half m-0 pr-3 text-right">Media language</label>
-      <div class="flex-fill">
+      <div class="flex-fill half">
         <select id="lang" class="form-control" required>
           <!-- <option disabled selected value hidden></option> -->
         </select>
@@ -519,7 +532,7 @@
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="includeTeaching" class="half m-0 pr-3 text-right">Include media from Teaching brochure</label>
+      <label for="includeTeaching" class="half m-0 pr-3 text-right">Include media from the <i>th</i> brochure</label>
       <div class="custom-control custom-switch">
         <input type="checkbox" class="custom-control-input" id="includeTeaching" />
         <label class="custom-control-label" for="includeTeaching"></label>
@@ -538,10 +551,10 @@
         <button type="button" class="btn btn-warning btn-clean-up">Clean-up media cache</button>
       </div>
       <div class="flex-fill">
-        <button type="button" class="btn btn-primary btn-sftp">Local congregation SFTP server</button>
+        <button type="button" class="btn btn-primary btn-sftp">SFTP server</button>
       </div>
       <div class="flex-fill">
-        <button type="button" class="btn btn-primary btn-settings">Go back</button>
+        <button type="button" class="btn btn-dark btn-settings"><i class="fas fa-fw fa-home"></i></button>
       </div>
     </div>
     <div id="version" class="align-items-center d-flex flex-fill justify-content-center py-1">
@@ -551,7 +564,7 @@
   <div id="overlaySftp" class="flex-column p-4 bg-light overlay" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
       <div class="lead">
-        Local congregation SFTP server
+        SFTP server
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
@@ -592,19 +605,10 @@
       <div class="spinner-border" id="sftpSpinner" role="status"></div>
     </div>
     <div>
-      <button type="button" class="btn btn-primary btn-sftp">Go back</button>
+      <button type="button" class="btn btn-dark btn-sftp"><i class="fas fa-fw fa-user-cog"></i></button>
     </div>
   </div>
   <div id="home" class="d-flex flex-column">
-    <div class="align-items-center d-flex flex-fill justify-content-center">
-      <div class="dropdown" id="baseDate">
-        <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        </button>
-        <div class="dropdown-menu" aria-labelledby="baseDate-dropdown">
-          <button class="dropdown-item" value=""></button>
-        </div>
-      </div>
-    </div>
     <div class="align-items-center d-flex flex-fill justify-content-center">
       <div id="mainStatus" class="lead loading">
         Push the big blue button!
@@ -612,43 +616,43 @@
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
       <div class="d-flex">
-        <div id="day0" class="day m-1 text-light d-flex align-items-center justify-content-center">
+        <div id="day0" class="day m-1 text-dark d-flex align-items-center justify-content-center">
           <div>
             <div>M</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day1" class="day m-1 text-light d-flex align-items-center justify-content-center">
+        <div id="day1" class="day m-1 text-dark d-flex align-items-center justify-content-center">
           <div>
             <div>T</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day2" class="day m-1 text-light d-flex align-items-center justify-content-center">
+        <div id="day2" class="day m-1 text-dark d-flex align-items-center justify-content-center">
           <div>
             <div>W</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day3" class="day m-1 text-light d-flex align-items-center justify-content-center">
+        <div id="day3" class="day m-1 text-dark d-flex align-items-center justify-content-center">
           <div>
             <div>T</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day4" class="day m-1 text-light d-flex align-items-center justify-content-center">
+        <div id="day4" class="day m-1 text-dark d-flex align-items-center justify-content-center">
           <div>
             <div>F</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day5" class="day m-1 text-light d-flex align-items-center justify-content-center">
+        <div id="day5" class="day m-1 text-dark d-flex align-items-center justify-content-center">
           <div>
             <div>S</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day6" class="day m-1 text-light d-flex align-items-center justify-content-center">
+        <div id="day6" class="day m-1 text-dark d-flex align-items-center justify-content-center">
           <div>
             <div>S</div>
             <div class="dateOfMonth"></div>
@@ -658,11 +662,11 @@
       <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;">Local congregation media</div>
     </div>
     <div class="d-flex justify-content-center">
-      <button type="button" class="btn btn-lg btn-primary" id="mediaSync">Start!</button>
+      <button type="button" class="btn btn-lg btn-primary" id="mediaSync"><i class="fas fa-fw fa-play"></i></button>
     </div>
-    <div class="align-items-center d-flex flex-fill justify-content-center" id="spinnerContainer" style="opacity: 0;">
+    <!-- <div class="align-items-center d-flex flex-fill justify-content-center" id="spinnerContainer" style="opacity: 0;">
       <div class="spinner-border" role="status"></div>
-    </div>
+    </div> -->
     <div class="align-items-center d-flex text-center flex-fill justify-content-center" id="downloadProgressContainer" style="opacity: 0;">
       <div class="half">
         <div id="downloadFilename" class="lead mb-3">
@@ -674,9 +678,18 @@
         </div>
       </div>
     </div>
+    <div class="align-items-center d-flex flex-fill justify-content-center">
+      <div class="dropdown" id="baseDate">
+        <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </button>
+        <div class="dropdown-menu" aria-labelledby="baseDate-dropdown">
+          <button class="dropdown-item" value=""></button>
+        </div>
+      </div>
+    </div>
   </div>
-  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-upload" style="display: none;"><i class="fa fa-upload"></i></button>
-  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-settings"><i class="fa fa-cog"></i></button>
+  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-upload" style="display: none;"><i class="fas fa-fw fa-network-wired"></i></button>
+  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-settings"><i class="fas fa-fw fa-user-cog"></i></button>
   <script src="./media-updater.js"></script>
 </body>
 
