@@ -13,11 +13,6 @@
       height: 100%;
     }
 
-    .spinner-border {
-      width: 5rem;
-      height: 5rem;
-    }
-
     .overlay,
     #overlaySettings {
       background: #fff;
@@ -78,6 +73,10 @@
     #overlaySettings,
     span.select2-dropdown {
       font-size: 0.9em
+    }
+
+    .updateSuccess {
+      visibility: hidden;
     }
 
     .select2-container {
@@ -275,7 +274,8 @@
       border: 11px dashed #42a5f5;
     }
 
-    #downloadFilename {
+    #downloadFilename,
+    #uploadFilename {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -292,70 +292,107 @@
 <body>
   <div id="dropzone" class="dropzone"></div>
   <div id="overlayInternetCheck" class="overlay justify-content-center">
-    <div class="align-self-center text-dark">
-      <!-- <div class="spinner-border mb-3" role="status"></div> -->
-      <div class="align-self-center" role="status"><i class="fas fa-fw fa-wifi fa-5x"></i></div>
-      <!-- <div class="align-self-center loading" role="status">Hang tight, establishing connection to JW.org<span>.</span><span>.</span><span>.</span></div> -->
+    <div class="align-self-center">
+      <div class="align-self-center text-dark fa-5x" role="status">
+        <i class="fas fa-fw fa-wifi"></i>
+      </div>
+      <div class="align-self-center text-muted fa-2x" role="status">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
     </div>
   </div>
   <div id="overlayInternetFail" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center text-danger">
-      <div class="spinner-border mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">I can't find JW.org! I'll try again in a few seconds<span>.</span><span>.</span><span>.</span></div>
+    <div class="align-self-center">
+      <div class="align-self-center text-danger fa-5x" role="status">
+        <i class="fas fa-fw fa-wifi"></i>
+      </div>
+      <div class="align-self-center text-muted fa-2x" role="status">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
     </div>
   </div>
   <div id="overlayUpdateCheck" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center text-dark">
-      <!-- <div class="spinner-border mb-3" role="status"></div> -->
-      <div class="align-self-center" role="status"><i class="fas fa-fw fa-satellite-dish fa-5x"></i></div>
-      <!-- <div class="align-self-center loading" role="status">Connection to JW.org established; let's check for updates to this app<span>.</span><span>.</span><span>.</span></div> -->
+    <div class="align-self-center">
+      <div class="align-self-center text-success fa-5x" role="status">
+        <i class="fas fa-fw fa-wifi"></i>
+      </div>
+      <div class="align-self-center text-muted fa-2x" role="status">
+        <i class="fas fa-check-circle"></i>
+      </div>
     </div>
   </div>
   <div id="overlayUpdateAvailable" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center text-info">
-      <div class="spinner-border mb-3" role="status"></div>
-      <!-- <div class="align-self-center" role="status"><i class="fas fa-fw fa-cloud-download-alt fa-5x"></i></div> -->
-      <div class="align-self-center loading" role="status">App update available, hold on<span>.</span><span>.</span><span>.</span></div>
-      <div class="align-self-center" role="status" id="updatePercent"></div>
+    <div class="align-self-center">
+      <div class="align-self-center text-dark fa-5x" role="status">
+        <i class="fas fa-fw fa-cloud-download-alt"></i>
+      </div>
+      <!-- <div class="align-self-center loading" role="status">App update available, hold on<span>.</span><span>.</span><span>.</span></div> -->
+      <div class="align-self-center text-muted fa-2x" role="status">
+        <i class="fas fa-check-circle text-success updateSuccess"></i>
+        <span id="updatePercent">
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+          <i class="fas fa-dot-circle fa-1x"></i>
+        </span>
+        <i class="fas fa-check-circle text-success updateSuccess"></i>
+      </div>
     </div>
   </div>
   <div id="overlayUpdateDownloaded" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center text-success" style="display: none;">
-      <div class="spinner-border mb-3" role="status"></div>
-      <div class="align-self-center loading" role="status">All done! Now let's install that app update<span>.</span><span>.</span><span>.</span></div>
+    <div class="align-self-center">
+      <div class="align-self-center text-success fa-5x" role="status">
+        <i class="fas fa-fw fa-cloud-download-alt"></i>
+      </div>
+      <div class="align-self-center text-muted fa-2x" role="status">
+        <i class="fas fa-check-circle"></i>
+      </div>
     </div>
   </div>
   <div id="overlayPleaseWait" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center text-primary">
-      <div class="spinner-border mb-3" role="status"></div>
-      <!-- <div class="align-self-center" role="status"><i class="fas fa-fw fa-thumbs-up fa-5x"></i></div> -->
-      <!-- <div class="align-self-center" id="upToDate" role="status">No app updates available, so let's proceed!</div>-->
-      <!-- <div class="align-self-center loading" id="pleaseWait" role="status">Hold on, getting things a few ready<span>.</span><span>.</span><span>.</span></div> -->
+    <div class="align-self-center">
+      <div class="align-self-center text-dark fa-5x" role="status">
+        <i class="fas fa-fw fa-tasks"></i>
+      </div>
+      <div class="align-self-center text-muted fa-2x" role="status">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
     </div>
   </div>
   <div id="overlayStarting" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center text-success">
-      <div class="align-self-center" role="status"><i class="fas fa-fw fa-hourglass-start fa-5x"></i></div>
-      <!-- <div class="align-self-center loading" id="initiatingSync" role="status">Initiating media sync<span>.</span><span>.</span><span>.</span></div> -->
-      <div class="align-self-center pt-3" id="cancelSync" role="status">
-        <button class="btn btn-warning btn-sm" id="btnCancelSync" type="button">Wait, don't sync just yet!</button>
+    <div class="align-self-center">
+      <div class="align-self-center text-dark fa-5x" role="status">
+        <i class="fas fa-fw fa-hourglass-start"></i>
+      </div>
+      <div class="align-self-center text-warning fa-2x" role="status">
+        <i id="btnCancelSync" class="fas fa-pause-circle"></i>
       </div>
     </div>
   </div>
   <div id="overlayDryrun" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center text-dark">
-      <div class="spinner-border mb-3" role="status"></div>
-      <!-- <div class="align-self-center loading" role="status">Hold on, doing some preliminary work<span>.</span><span>.</span><span>.</span></div> -->
+    <div class="align-self-center">
+      <div class="align-self-center text-dark fa-5x" role="status">
+        <i class="fas fa-fw fa-tasks"></i>
+      </div>
+      <div class="align-self-center text-muted fa-2x" role="status">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
     </div>
   </div>
   <div id="overlayComplete" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center text-success">
-      <div class="align-self-center" role="status"><i class="fas fa-fw fa-check-circle fa-5x"></i></div>
-      <!-- <div class="align-self-center" role="status">Congratulations, the media folder has been successfully synced!</div> -->
-      <div class="align-self-center pt-3" id="stayAlive" role="status" style="display: none;">
-        <button class="btn btn-warning btn-sm" id="btnStayAlive" type="button">Wait, don't close automatically!</button>
+    <div class="align-self-center">
+      <div class="align-self-center text-dark fa-5x" role="status">
+        <i class="fas fa-fw fa-smile-beam"></i>
       </div>
-
+      <div class="align-self-center text-muted fa-2x" role="status">
+        <i id="btnStayAlive" class="fas fa-check-circle" style="opacity: 0;"></i>
+      </div>
     </div>
   </div>
   <div id="overlayUploadFile" class="overlay flex-column p-4" style="display: none;">
@@ -384,7 +421,7 @@
       <div class="flex-fill pr-3 text-right">File(s) to upload</div>
       <input type="text" class="form-control half localOrRemoteFile" id="fileToUpload" required readonly />
       <div class="half songsSpinner" style="display: none;">
-        <div class="spinner-border spinner-border-sm" role="status"></div>
+        <i class="fas fa-circle-notch fa-spin"></i>
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
@@ -415,11 +452,10 @@
         <button class="btn btn-dark mr-3" id="btnCancelUpload" type="button"><i class="fas fa-fw fa-home"></i></button>
       </div>
       <div class="half text-left">
-        <button class="btn btn-secondary" id="btnUpload" type="button" disabled>Upload</button>
+        <button class="btn btn-primary" id="btnUpload" type="button" disabled>
+          <i class="fas fa-upload"></i>
+        </button>
       </div>
-    </div>
-    <div class="align-items-center d-flex justify-content-center py-2" id="uploadSpinnerContainer" style="opacity: 0;">
-      <div class="spinner-border" role="status"></div>
     </div>
     <div class="d-flex flex-fill text-left">
       <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
@@ -602,7 +638,7 @@
     </div>
     <div class="d-flex flex-row flex-fill align-items-center" style="opacity: 0;">
       <label for="sftpSpinner" class="half m-0 pr-3 text-right"></label>
-      <div class="spinner-border" id="sftpSpinner" role="status"></div>
+      <i class="fas fa-circle-notch fa-spin"></i>
     </div>
     <div>
       <button type="button" class="btn btn-dark btn-sftp"><i class="fas fa-fw fa-user-cog"></i></button>
@@ -614,45 +650,45 @@
         Push the big blue button!
       </div>
     </div>
-    <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
+    <div class="align-items-center d-flex flex-fill flex-column justify-content-center text-dark">
       <div class="d-flex">
-        <div id="day0" class="day m-1 text-dark d-flex align-items-center justify-content-center">
+        <div id="day0" class="day m-1 d-flex align-items-center justify-content-center">
           <div>
             <div>M</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day1" class="day m-1 text-dark d-flex align-items-center justify-content-center">
+        <div id="day1" class="day m-1 d-flex align-items-center justify-content-center">
           <div>
             <div>T</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day2" class="day m-1 text-dark d-flex align-items-center justify-content-center">
+        <div id="day2" class="day m-1 d-flex align-items-center justify-content-center">
           <div>
             <div>W</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day3" class="day m-1 text-dark d-flex align-items-center justify-content-center">
+        <div id="day3" class="day m-1 d-flex align-items-center justify-content-center">
           <div>
             <div>T</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day4" class="day m-1 text-dark d-flex align-items-center justify-content-center">
+        <div id="day4" class="day m-1 d-flex align-items-center justify-content-center">
           <div>
             <div>F</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day5" class="day m-1 text-dark d-flex align-items-center justify-content-center">
+        <div id="day5" class="day m-1 d-flex align-items-center justify-content-center">
           <div>
             <div>S</div>
             <div class="dateOfMonth"></div>
           </div>
         </div>
-        <div id="day6" class="day m-1 text-dark d-flex align-items-center justify-content-center">
+        <div id="day6" class="day m-1 d-flex align-items-center justify-content-center">
           <div>
             <div>S</div>
             <div class="dateOfMonth"></div>
@@ -662,11 +698,10 @@
       <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;">Local congregation media</div>
     </div>
     <div class="d-flex justify-content-center">
-      <button type="button" class="btn btn-lg btn-primary" id="mediaSync"><i class="fas fa-fw fa-play"></i></button>
+      <button type="button" class="btn btn-lg btn-primary" id="mediaSync">
+        <i class="fas fa-fw fa-photo-video"></i>
+      </button>
     </div>
-    <!-- <div class="align-items-center d-flex flex-fill justify-content-center" id="spinnerContainer" style="opacity: 0;">
-      <div class="spinner-border" role="status"></div>
-    </div> -->
     <div class="align-items-center d-flex text-center flex-fill justify-content-center" id="downloadProgressContainer" style="opacity: 0;">
       <div class="half">
         <div id="downloadFilename" class="lead mb-3">
@@ -688,8 +723,12 @@
       </div>
     </div>
   </div>
-  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-upload" style="display: none;"><i class="fas fa-fw fa-network-wired"></i></button>
-  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-settings"><i class="fas fa-fw fa-user-cog"></i></button>
+  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-upload" style="display: none;">
+    <i class="fas fa-fw fa-network-wired"></i>
+  </button>
+  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-settings">
+    <i class="fas fa-fw fa-user-cog"></i>
+  </button>
   <script src="./media-updater.js"></script>
 </body>
 

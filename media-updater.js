@@ -32,12 +32,13 @@ require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
 });
 
 require("electron").ipcRenderer.on("updateDownloadProgress", (event, message) => {
-  $("#updatePercent").html(message[0].toFixed(0) + "% done (about " + message[1] + " second" + (message[1] !== "1" ? "s" : "") + " left)");
+  var dotsDone = Math.floor(parseFloat(message[0]) / 10);
+  $("#updatePercent i:nth-of-type(" + dotsDone + ")").addClass("fa-circle text-success").removeClass("fa-dot-circle");
 });
 
 require("electron").ipcRenderer.on("goAhead", () => {
-  $("#overlay" + "PleaseWait").fadeIn(400, () => {
-    $("#overlay" + "UpdateCheck").fadeOut();
+  $("#overlayPleaseWait").fadeIn(400, () => {
+    $("#overlayUpdateCheck").fadeOut();
     goAhead();
   });
 });
@@ -113,12 +114,12 @@ function goAhead() {
     configIsValid();
     $("#version span.badge").html("Version " + window.require("electron").remote.app.getVersion());
     await sftpSetup();
-    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting").addClass("text-light").removeClass("text-dark");
+    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting").addClass("text-light");
     if (prefs.autoStartSync && configIsValid()) {
       var cancelSync = false;
       $("#btnCancelSync").on("click", function() {
         cancelSync = true;
-        $("#btnCancelSync").removeClass("btn-warning").addClass("btn-success");
+        $("#btnCancelSync").addClass("text-danger fa-stop-circle").removeClass("text-warning fa-pause-circle");
       });
       $("#overlayStarting").fadeIn(400, () => {
         $("#overlayPleaseWait").fadeOut();
@@ -237,7 +238,6 @@ function goAhead() {
     baseDate = dayjs($(this).val()).startOf("isoWeek");
     cleanUp([mediaPath], "brutal");
     $("#baseDate .dropdown-item.active").removeClass("active");
-    $(".day.bg-success, .congregation.bg-success").removeClass("bg-success");
     $(this).addClass("active");
     $("#baseDate > button").html($(this).html());
     dateFormatter();
@@ -278,22 +278,21 @@ function goAhead() {
     });
   });
   $("#mwDay input, #weDay input").on("change", function() {
-    $(".day").removeClass("meeting bg-success").addClass("text-dark").removeClass("text-light");
-    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting").addClass("text-light").removeClass("text-dark");
+    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting text-light");
   });
 
   $("#mediaSync").on("click", async function() {
     dryrun = false;
     var buttonLabel = $("#mediaSync").html();
     $("#baseDate-dropdown").addClass("disabled");
-    $("#mediaSync").prop("disabled", true).addClass("loading").html("<div class=\"spinner-grow\" role=\"status\"></div>");
+    $("#mediaSync").prop("disabled", true).addClass("loading").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-photo-video");
     await startMediaSync();
     if (prefs.autoQuitWhenDone) {
-      $("#stayAlive").show();
+      $("#btnStayAlive").fadeTo(400, 1);
     }
     $("#btnStayAlive").on("click", function() {
       stayAlive = true;
-      $("#btnStayAlive").removeClass("btn-warning").addClass("btn-success");
+      $("#btnStayAlive").removeClass("text-muted").addClass("text-success");
     });
     $("#overlayComplete").fadeIn(400, () => {
       $("#home, .btn-settings, #btn-settings, #btn-upload").fadeTo(400, 0);
@@ -305,7 +304,7 @@ function goAhead() {
       if (prefs.congServer && prefs.congServer.length > 0) {
         $("#btn-upload").fadeTo(400, 1);
       }
-      $("#btnStayAlive").removeClass("btn-success").addClass("btn-warning");
+      $("#btnStayAlive").removeClass("text-success").addClass("text-muted");
     });
     $("#mediaSync").html(buttonLabel).prop("disabled", false).removeClass("loading");
     $("#baseDate-dropdown").removeClass("disabled");
@@ -326,6 +325,9 @@ function goAhead() {
     await ffmpegConvert();
     $("#btn-settings, #btn-upload").fadeIn();
     $("#spinnerContainer").fadeTo(400, 0);
+    setTimeout(() => {
+      $(".day, .congregation").removeClass("bg-success");
+    }, 2000);
   }
 
   // Main functions
@@ -352,8 +354,8 @@ function goAhead() {
       console.log("Date locale " + locale + " not found, falling back to \"en\"");
     }
     for (var d = 0; d < 7; d++) {
-      $("#day" + d + " .dateOfMonth").prev().html(baseDate.clone().add(d, "days").format("dd"));
       $("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").format("DD"));
+      $("#day" + d + " .dateOfMonth").prev().html(baseDate.clone().add(d, "days").locale(locale).format("dd"));
       $("#mwDay label:eq(" + d + ")").contents()[2].data = baseDate.clone().add(d, "days").locale(locale).format("dd");
       $("#weDay label:eq(" + d + ")").contents()[2].data = baseDate.clone().add(d, "days").locale(locale).format("dd");
     }
@@ -1474,9 +1476,9 @@ function goAhead() {
                 for (var newFile of newFiles) {
                   $("#fileList li:contains(" + sanitizeFilename(newFile.name) + ")").addClass("text-primary new-file");
                 }
-                $("#btnUpload").prop("disabled", false).addClass("btn-success").removeClass("btn-secondary");
+                $("#btnUpload").prop("disabled", false);
               } else {
-                $("#btnUpload").prop("disabled", true).removeClass("btn-success").addClass("btn-secondary");
+                $("#btnUpload").prop("disabled", true);
               }
               $("#fileList").fadeTo(400, 1);
             });
@@ -1491,7 +1493,7 @@ function goAhead() {
     });
     $("#btnUpload").on("click", async () => {
       try {
-        $("#btnUpload").prop("disabled", true).addClass("btn-secondary loading").removeClass("btn-primary").html("Uploading<span>.</span><span>.</span><span>.</span>");
+        $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-upload");
         $("#btnCancelUpload").prop("disabled", true);
         $("#uploadSpinnerContainer").fadeTo(400, 1);
         var localOrRemoteFile = $("#fileToUpload").val();
@@ -1532,7 +1534,7 @@ function goAhead() {
           });
         }
         $("#uploadSpinnerContainer").fadeTo(400, 0);
-        $("#btnUpload").prop("disabled", false).removeClass("btn-secondary loading").addClass("btn-primary").html("Upload!");
+        $("#btnUpload").find("i").addClass("fa-upload").removeClass("fa-circle-notch fa-spin");
         $("#btnCancelUpload").prop("disabled", false);
         $("#fileToUpload, #enterPrefix input").val("").empty();
         $("#chooseUploadType input:checked").prop("checked", false);
@@ -1636,7 +1638,6 @@ function goAhead() {
         await sftpUploadFile.fastPut(file, path.posix.join(destFolder, destName), {
           step: function(totalTransferred, chunk, total) {
             var percent = totalTransferred / total * 100;
-            console.log(totalTransferred, chunk, total, percent);
             progressSet(percent, destName, "upload");
           }
         });

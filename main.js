@@ -34,8 +34,7 @@ ipcMain.on("noInternet", () => {
   }, 10000);
 });
 
-autoUpdater.on("error", (err) => {
-  console.log(err);
+autoUpdater.on("error", () => {
   win.webContents.send("goAhead");
 });
 
@@ -50,13 +49,7 @@ autoUpdater.on("update-available", () => {
 });
 
 autoUpdater.on("download-progress", (prog) => {
-  var timeleft = "...";
-  try {
-    timeleft = ((prog.total - prog.transferred) / prog.bytesPerSecond).toFixed(0);
-  } catch (err) {
-    console.log(err);
-  }
-  win.webContents.send("updateDownloadProgress", [prog.percent, timeleft]);
+  win.webContents.send("updateDownloadProgress", [prog.percent]);
 });
 
 autoUpdater.on("update-downloaded", () => {
