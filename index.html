@@ -141,14 +141,16 @@
     }
 
     .day,
-    .congregation {
+    .congregation,
+    .zoom {
       height: 3em;
       width: 3em;
       background-color: #f8f9fa;
     }
 
     .meeting,
-    .congregation {
+    .congregation,
+    .zoom {
       background-color: #6c757d;
     }
 
@@ -167,7 +169,8 @@
       text-align: center;
     }
 
-    .congregation {
+    .congregation,
+    .zoom {
       width: auto;
     }
 
@@ -387,7 +390,7 @@
   </div>
   <div id="overlayComplete" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center text-primary fa-5x" role="status">
         <i class="fas fa-fw fa-smile-beam"></i>
       </div>
       <div class="align-self-center text-muted fa-2x" role="status">
@@ -397,9 +400,7 @@
   </div>
   <div id="overlayUploadFile" class="overlay flex-column p-4" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
-      <div class="lead">
-        Let's upload some stuff!
-      </div>
+      <i class="fas fa-fw fa-cloud-upload-alt fa-3x text-muted"></i>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2">
       <div class="flex-fill pr-3 text-right">Target meeting</div>
@@ -453,7 +454,7 @@
       </div>
       <div class="half text-left">
         <button class="btn btn-primary" id="btnUpload" type="button" disabled>
-          <i class="fas fa-upload"></i>
+          <i class="fas fa-cloud-upload-alt"></i>
         </button>
       </div>
     </div>
@@ -474,9 +475,7 @@
   </div>
   <div id="overlaySettings" class="flex-column p-4 bg-light" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
-      <div class="lead">
-        Settings
-      </div>
+      <i id="settingsIcon" class="fas fa-fw fa-user-cog fa-3x text-muted"></i>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="outputPath" class="half m-0 pr-3 text-right">Folder in which to save media</label>
@@ -488,7 +487,6 @@
       <label for="lang" class="half m-0 pr-3 text-right">Media language</label>
       <div class="flex-fill half">
         <select id="lang" class="form-control" required>
-          <!-- <option disabled selected value hidden></option> -->
         </select>
       </div>
     </div>
@@ -547,6 +545,21 @@
     </div>
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="includeTeaching" class="half m-0 pr-3 text-right">Include media from the <i>th</i> brochure</label>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="includeTeaching" />
+        <label class="custom-control-label" for="includeTeaching"></label>
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="betaMp4Gen" class="half m-0 pr-3 text-right">Convert all media to MP4</label>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="betaMp4Gen" />
+        <label class="custom-control-label" for="betaMp4Gen"></label>
+      </div>
+    </div>
+    <hr class="my-2" />
+    <div class="d-flex flex-row flex-fill align-items-center">
       <label for="autoStartSync" class="half m-0 pr-3 text-right">Sync media on app launch</label>
       <div class="custom-control custom-switch">
         <input type="checkbox" class="custom-control-input" id="autoStartSync" />
@@ -567,78 +580,68 @@
         <label class="custom-control-label" for="autoRunAtBoot"></label>
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="includeTeaching" class="half m-0 pr-3 text-right">Include media from the <i>th</i> brochure</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="includeTeaching" />
-        <label class="custom-control-label" for="includeTeaching"></label>
-      </div>
-    </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="betaMp4Gen" class="half m-0 pr-3 text-right">Enable beta MP4 generation</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="betaMp4Gen" />
-        <label class="custom-control-label" for="betaMp4Gen"></label>
-      </div>
-    </div>
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
       <div class="flex-fill">
-        <button type="button" class="btn btn-warning btn-clean-up">Clean-up media cache</button>
+        <button type="button" class="btn btn-warning btn-clean-up">
+          <i class="fas fa-fw fa-broom"></i>
+        </button>
       </div>
       <div class="flex-fill">
-        <button type="button" class="btn btn-primary btn-sftp">SFTP server</button>
+        <button type="button" class="btn btn-primary btn-sftp">
+          <i class="fas fa-fw fa-network-wired"></i>
+        </button>
       </div>
       <div class="flex-fill">
-        <button type="button" class="btn btn-dark btn-settings"><i class="fas fa-fw fa-home"></i></button>
+        <button type="button" class="btn btn-dark btn-settings">
+          <i class="fas fa-fw fa-home"></i>
+        </button>
       </div>
     </div>
-    <div id="version" class="align-items-center d-flex flex-fill justify-content-center py-1">
+    <div id="version" class="align-items-center d-flex justify-content-center pt-3">
       <span class="badge"></span>
     </div>
   </div>
   <div id="overlaySftp" class="flex-column p-4 bg-light overlay" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
-      <div class="lead">
-        SFTP server
-      </div>
+      <i id="sftpStatus" class="fas fa-fw fa-network-wired fa-3x text-muted"></i>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServer" class="half m-0 pr-3 text-right">Hostname</label>
+      <label for="congServer" class="half m-0 pr-3 text-right">SFTP hostname</label>
       <div class="flex-fill">
         <input type="text" class="form-control form-control-sm sftpHost" id="congServer" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerPort" class="half m-0 pr-3 text-right">Port</label>
+      <label for="congServerPort" class="half m-0 pr-3 text-right">SFTP port</label>
       <div class="flex-fill">
         <input type="text" class="form-control form-control-sm sftpHost" id="congServerPort" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerUser" class="half m-0 pr-3 text-right">Username</label>
+      <label for="congServerUser" class="half m-0 pr-3 text-right">SFTP username</label>
       <div class="flex-fill">
         <input type="text" class="form-control form-control-sm sftpCreds" id="congServerUser" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerPass" class="half m-0 pr-3 text-right">Password</label>
+      <label for="congServerPass" class="half m-0 pr-3 text-right">SFTP password</label>
       <div class="flex-fill">
         <input type="password" class="form-control form-control-sm sftpCreds" id="congServerPass" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerDir" class="half m-0 pr-3 text-right">Directory</label>
+      <label for="congServerDir" class="half m-0 pr-3 text-right">SFTP directory</label>
       <div class="flex-fill">
         <input type="text" class="form-control form-control-sm" id="congServerDir" required readonly />
       </div>
     </div>
-    <div class="d-flex flex-fill text-left">
-      <ul id="sftpFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
-    </div>
     <div class="d-flex flex-row flex-fill align-items-center" style="opacity: 0;">
       <label for="sftpSpinner" class="half m-0 pr-3 text-right"></label>
-      <i class="fas fa-circle-notch fa-spin"></i>
+      <i id="sftpSpinner" class="fas fa-fw fa-2x fa-circle-notch fa-spin"></i>
+    </div>
+    <div class="d-flex flex-fill text-left">
+      <ul id="sftpFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
     <div>
       <button type="button" class="btn btn-dark btn-sftp"><i class="fas fa-fw fa-user-cog"></i></button>
@@ -646,9 +649,7 @@
   </div>
   <div id="home" class="d-flex flex-column">
     <div class="align-items-center d-flex flex-fill justify-content-center">
-      <div id="mainStatus" class="lead loading">
-        Push the big blue button!
-      </div>
+      <i id="statusIcon" class="fas fa-fw fa-photo-video fa-3x text-muted"></i>
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center text-dark">
       <div class="d-flex">
@@ -695,11 +696,14 @@
           </div>
         </div>
       </div>
-      <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;">Local congregation media</div>
+      <div class="d-flex">
+        <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;">Congregation media</div>
+        <div id="zoomRender" class="m-1 px-3 text-light zoom align-items-center justify-content-center" style="display: none;">MP4 conversion</div>
+      </div>
     </div>
     <div class="d-flex justify-content-center">
       <button type="button" class="btn btn-lg btn-primary" id="mediaSync">
-        <i class="fas fa-fw fa-photo-video"></i>
+        <i class="fas fa-fw fa-cloud-download-alt"></i>
       </button>
     </div>
     <div class="align-items-center d-flex text-center flex-fill justify-content-center" id="downloadProgressContainer" style="opacity: 0;">
