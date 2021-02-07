@@ -1,15 +1,11 @@
-const axios = require("axios");
-const isPortReachable = require("is-port-reachable");
-const $ = require("jquery");
-
-var jwGetPubMediaLinks, pubsPath, mediaPath, stayAlive, outputPath, langPath, zoomPath, sftpIsAGo = false;
+const isPortReachable = require("is-port-reachable"),
+  $ = require("jquery");
 async function checkInternet() {
   try {
     let jwOrg = await isPortReachable(443, {
       host: "www.jw.org"
     });
     if (jwOrg) {
-      jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json";
       require("electron").ipcRenderer.send("autoUpdate");
     } else {
       require("electron").ipcRenderer.send("noInternet");
@@ -44,7 +40,8 @@ require("electron").ipcRenderer.on("goAhead", () => {
 });
 
 function goAhead() {
-  const bcrypt = require("bcryptjs"),
+  const axios = require("axios"),
+    bcrypt = require("bcryptjs"),
     Client = require("ssh2-sftp-client"),
     fs = require("graceful-fs"),
     glob = require("glob"),
@@ -58,21 +55,29 @@ function goAhead() {
   dayjs.extend(require("dayjs/plugin/isBetween"));
   dayjs.extend(require("dayjs/plugin/customParseFormat"));
 
-  const pubs = {
-    mwb: "mwb",
-    thv: "thv",
-    wt: "w"
-  };
+  const jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
+    pubs = {
+      mwb: "mwb",
+      thv: "thv",
+      wt: "w"
+    };
 
   var baseDate,
     currentWeekDates = [],
     dryrun = false,
     dryrunResults = {},
     jsonLangs = {},
+    langPath,
+    mediaPath,
     mwMediaForWeek,
+    outputPath,
+    pubsPath,
     prefs = {},
     sftpConfig = {},
-    weekMediaFilesCopied = [];
+    sftpIsAGo = false,
+    stayAlive,
+    weekMediaFilesCopied = [],
+    zoomPath;
 
   const appPath = require("electron").remote.app.getPath("userData");
   const langsFile = path.join(appPath, "langs.json");
@@ -111,12 +116,6 @@ function goAhead() {
   $("#baseDate .dropdown-item:eq(0)").addClass("active");
   for (var a = 1; a <= 4; a++) {
     $("#baseDate .dropdown-menu").append("<button class=\"dropdown-item\" value=\"" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "\">" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
-  }
-  var currentWeekday = (new Date()).getDay();
-  if (currentWeekday == 0) {
-    currentWeekday = currentWeekday + 6;
-  } else {
-    currentWeekday = currentWeekday - 1;
   }
   dateFormatter();
   $("#outputPath").on("click", function() {
@@ -321,8 +320,8 @@ function goAhead() {
       $("#mwDay label:eq(" + d + ")").contents()[2].data = baseDate.clone().add(d, "days").locale(locale).format("dd");
       $("#weDay label:eq(" + d + ")").contents()[2].data = baseDate.clone().add(d, "days").locale(locale).format("dd");
     }
-    if (parseInt($("#day" + currentWeekday + " .dateOfMonth").html()) == new Date().getDate().toString() && dayjs().isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
-      $("#day" + currentWeekday).addClass("today");
+    if (parseInt($("#day" + (dayjs().isoWeekday() - 1) + " .dateOfMonth").html()) == new Date().getDate() && dayjs().isBetween(baseDate, baseDate.clone().add(7, "days"), null, "[)")) {
+      $("#day" + (dayjs().isoWeekday() - 1)).addClass("today");
     } else {
       $(".today").removeClass("today");
     }
@@ -1352,7 +1351,7 @@ function goAhead() {
   $("#btn-upload").on("click", function() {
     var prefix = "";
     $("#btnCancelUpload").on("click", () => {
-      $("#overlayUploadFile").fadeOut();
+      $("#overlayUploadFile").slideUp();
       $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
       $("#fileList, #fileToUpload, #enterPrefix input").val("").empty().change();
       $("#chooseMeeting .active, #chooseUploadType .active").removeClass("active");
@@ -1362,7 +1361,7 @@ function goAhead() {
       document.removeEventListener("dragenter", dragenterHandler);
       document.removeEventListener("dragleave", dragleaveHandler);
     });
-    $("#overlayDryrun").fadeIn(400, async () => {
+    $("#overlayDryrun").slideDown(400, async () => {
       dryrun = true;
       dryrunResults = {};
       await startMediaSync();
