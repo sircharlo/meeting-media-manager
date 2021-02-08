@@ -221,10 +221,9 @@ function goAhead() {
             recursive: true
           });
         } else {
-          var mediaSubDirs = getDirectories(lookinDir);
-          for (var mediaSubDir of mediaSubDirs) {
-            if (dayjs(mediaSubDir, "YYYY-MM-DD").isValid() && !dayjs(mediaSubDir, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
-              var deleteDir = path.join(lookinDir, mediaSubDir);
+          for (var mediaSubDir of glob.sync(path.join(lookinDir, "*"))) {
+            if (dayjs(path.basename(mediaSubDir), "YYYY-MM-DD").isValid() && !dayjs(path.basename(mediaSubDir), "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+              var deleteDir = path.join(lookinDir, path.basename(mediaSubDir));
               fs.rmdirSync(deleteDir, {
                 recursive: true
               });
@@ -420,27 +419,18 @@ function goAhead() {
       var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
       fs.chmodSync(ffmpegPath, "777");
       ffmpeg.setFfmpegPath(ffmpegPath);
-      var filesToRender = 0, filesRendering = 0;
-      for (var dir of getDirectories(mediaPath)) {
-        filesToRender = filesToRender + getFiles(path.join(mediaPath, dir)).length;
+      var filesToProcess = glob.sync(path.join(mediaPath, "*", "*"));
+      var filesToRender = filesToProcess.length, filesRendering = 0;
+      for (var mediaDir of glob.sync(path.join(mediaPath, "*"))) {
+        mkdirSync(path.join(zoomPath, path.basename(mediaDir)));
       }
-      for (var mediaDir of getDirectories(mediaPath)) {
-        mkdirSync(path.join(zoomPath, mediaDir));
-        for (var imageFile of getFiles(path.join(mediaPath, mediaDir)).filter(function(name) {
-          name = name.toLowerCase();
-          return name.includes(".jpg") || name.includes(".jpeg") || name.includes(".png");
-        })) {
-          filesRendering = filesRendering + 1;
-          progressSet(filesRendering / filesToRender * 100, path.basename(imageFile));
-          await createVideoSync(mediaDir, imageFile);
-        }
-        for (var nonImageFile of getFiles(path.join(mediaPath, mediaDir)).filter(function(name) {
-          name = name.toLowerCase();
-          return !name.includes(".jpg") && !name.includes(".jpeg") && !name.includes(".png");
-        })) {
-          filesRendering = filesRendering + 1;
-          progressSet(filesRendering / filesToRender * 100, path.basename(imageFile));
-          fs.copyFileSync(path.join(mediaPath, mediaDir, nonImageFile), path.join(zoomPath, mediaDir, nonImageFile));
+      for (var mediaFile of glob.sync(path.join(mediaPath, "*", "*"))) {
+        filesRendering = filesRendering + 1;
+        progressSet(filesRendering / filesToRender * 100, path.basename(mediaFile));
+        if (path.extname(mediaFile) !== ".mp4") {
+          await createVideoSync(path.basename(path.dirname(mediaFile)), path.basename(mediaFile));
+        } else {
+          fs.copyFileSync(mediaFile, path.join(zoomPath, path.basename(path.dirname(mediaFile)), path.basename(mediaFile)));
         }
       }
       $("#zoomRender").removeClass("bg-warning in-progress").addClass("bg-primary");
@@ -483,10 +473,6 @@ function goAhead() {
       console.log(err, opts, json);
     }
   }
-  const getDirectories = source =>
-    fs.readdirSync(source, {
-      withFileTypes: true
-    }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
   async function getDocumentExtract(opts) {
     var statement = "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + opts.docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' ORDER BY DocumentExtract.BeginParagraphOrdinal";
     var extractItems = await executeStatement(opts.db, statement);
@@ -606,10 +592,6 @@ function goAhead() {
       console.log(err, opts);
     }
   }
-  const getFiles = source =>
-    fs.readdirSync(source, {
-      withFileTypes: true
-    }).filter(dirent => !dirent.isDirectory()).map(dirent => dirent.name);
   async function getInitialData() {
     await getLanguages();
     configIsValid();
@@ -769,7 +751,7 @@ function goAhead() {
   function sanitizeFilename(filename) {
     filename = filename.replace(/[?!"»“«()\\[\]№—$]*/g, "").replace(/[;:,|/]+/g, " - ").replace(/ +/g, " ").replace(/\.+/g, ".").replace(/\r?\n/g, " - ");
     var bytes = Buffer.byteLength(filename, "utf8");
-    var toolong = 230;
+    var toolong = 200;
     if (bytes > toolong) {
       var fe = filename.split(".").pop();
       var chunks = filename.split(" - ");
