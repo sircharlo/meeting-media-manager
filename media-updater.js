@@ -62,7 +62,7 @@ function goAhead() {
       wt: "w"
     };
 
-  var baseDate,
+  var baseDate = dayjs().startOf("isoWeek"),
     currentWeekDates = [],
     dryrun = false,
     dryrunResults = {},
@@ -111,12 +111,6 @@ function goAhead() {
     }
   }
   getInitialData();
-  baseDate = dayjs().startOf("isoWeek");
-  $("#baseDate button, #baseDate .dropdown-item:eq(0)").html(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
-  $("#baseDate .dropdown-item:eq(0)").addClass("active");
-  for (var a = 1; a <= 4; a++) {
-    $("#baseDate .dropdown-menu").append("<button class=\"dropdown-item\" value=\"" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "\">" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
-  }
   dateFormatter();
   $("#outputPath").on("click", function() {
     var path = require("electron").remote.dialog.showOpenDialogSync({
@@ -166,11 +160,14 @@ function goAhead() {
       prefs[$(this).prop("id")] = $(this).find("option:selected").val();
     }
     fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
-    if ($(this).prop("id").includes("cong")) {
-      sftpSetup();
-    }
     if ($(this).prop("id").includes("lang")) {
       dateFormatter();
+    }
+    if ($(this).prop("id") == "congServer" && $(this).val() == "") {
+      $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #sftpFolderList").val("").empty().change();
+    }
+    if ($(this).prop("id").includes("cong")) {
+      sftpSetup();
     }
     setVars();
     if ($(this).prop("id").includes("cong") || $(this).prop("id") == "lang" || $(this).prop("id") == "includeTeaching" || $(this).prop("name").includes("Day")) {
@@ -635,6 +632,11 @@ function goAhead() {
     } else {
       $("#overlayPleaseWait").fadeOut();
     }
+    $("#baseDate button, #baseDate .dropdown-item:eq(0)").html(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
+    $("#baseDate .dropdown-item:eq(0)").addClass("active");
+    for (var a = 1; a <= 4; a++) {
+      $("#baseDate .dropdown-menu").append("<button class=\"dropdown-item\" value=\"" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "\">" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
+    }
   }
   async function getJson(opts) {
     var jsonUrl = "";
@@ -913,7 +915,7 @@ function goAhead() {
     }
   }
   async function sftpSetup() {
-    $(".sftpHost, .sftpCreds").removeClass("valid invalid notValidYet");
+    $(".sftpHost, .sftpCreds, #congServerDir").removeClass("valid invalid notValidYet");
     $("#sftpStatus").removeClass("text-success text-warning text-danger");
     if (prefs.congServer && prefs.congServer.length > 0) {
       $("#sftpSpinner").parent().fadeTo(400, 1);
@@ -954,15 +956,10 @@ function goAhead() {
         $("#sftpStatus").removeClass("text-warning");
         $(".sftpCreds").removeClass("notValidYet");
       }
-      if (prefs.congServer && prefs.congServer.length > 0) {
-        $("#specificCong").addClass("d-flex");
-        $("#btn-upload").fadeIn();
-      } else {
-        $("#specificCong").removeClass("d-flex");
-        $("#btn-upload").fadeOut();
-      }
+      $("#specificCong").addClass("d-flex");
+      $("#btn-upload").fadeIn();
       var sftpDirIsValid = false;
-      if (prefs.congServerDir == null) {
+      if (prefs.congServerDir == null || prefs.congServerDir.length == 0) {
         $("#congServerDir").val("/").change();
       }
       if (sftpLoginSuccessful) {
@@ -995,16 +992,25 @@ function goAhead() {
         }
       }
       if ((sftpLoginSuccessful && sftpDirIsValid) || !prefs.congServer || prefs.congServer.length == 0) {
-        $("#specificCong, #btn-upload, .btn-sftp").removeClass("btn-warning bg-warning");
+        $(".btn-sftp").addClass("btn-primary").removeClass("btn-warning");
+        $("#btn-upload").addClass("btn-light").removeClass("btn-warning");
+        $("#specificCong").removeClass("bg-warning");
       }
       if (sftpLoginSuccessful && sftpDirIsValid) {
         sftpIsAGo = true;
-        $("#btn-upload").fadeTo(400, 1);
+        $("#btn-upload").fadeTo(400, 1).prop("disabled", false);
       } else {
-        $("#specificCong, #btn-upload, .btn-sftp").addClass("btn-warning bg-warning");
+        $("#btn-upload, .btn-sftp").addClass("btn-warning").removeClass("btn-dark btn-primary btn-light");
+        $("#btn-upload").prop("disabled", true);
+        $("#specificCong").addClass("bg-warning");
         sftpIsAGo = false;
       }
       $("#sftpSpinner").parent().fadeTo(400, 0);
+    } else {
+      $("#sftpFolderList").fadeTo(400, 0).empty();
+      $(".btn-sftp.btn-warning").addClass("btn-primary").removeClass("btn-warning");
+      $("#specificCong").removeClass("d-flex");
+      $("#btn-upload").fadeOut();
     }
   }
   async function sftpUpload(file, destFolder, destName) {
