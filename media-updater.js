@@ -277,29 +277,40 @@ function goAhead() {
       return false;
     }
   }
-  function createVideoSync(mediaDir, vid){
+  function createVideoSync(mediaDir, media){
     return new Promise((resolve,reject)=>{
-      var imageName = path.basename(vid, path.extname(vid));
-      var outputFPS = 30, loop = 1;
-      ffmpeg(path.join(mediaPath, mediaDir, vid))
-        .inputFPS(1)
-        .outputFPS(outputFPS)
-        .on("start", function() {
-          $("#downloadProgressContainer").fadeTo(400, 1);
-        })
-        .on("end", function() {
-          return resolve();
-        })
-        .on("error", function(err) {
-          console.log(err.message);
-          return reject(err);
-        })
-        .videoCodec("libx264")
-        .noAudio()
-        .size("?x720")
-        .loop(loop)
-        .outputOptions("-pix_fmt yuv420p")
-        .save(path.join(zoomPath, mediaDir, imageName + ".mp4"));
+      var mediaName = path.basename(media, path.extname(media));
+      $("#downloadProgressContainer").fadeTo(400, 1);
+      if (path.extname(media).includes("mp3")) {
+        ffmpeg(path.join(mediaPath, mediaDir, media))
+          .on("end", function() {
+            return resolve();
+          })
+          .on("error", function(err) {
+            console.log(err.message);
+            return reject(err);
+          })
+          .noVideo()
+          .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
+      } else {
+        var outputFPS = 30, loop = 1;
+        ffmpeg(path.join(mediaPath, mediaDir, media))
+          .inputFPS(1)
+          .outputFPS(outputFPS)
+          .on("end", function() {
+            return resolve();
+          })
+          .on("error", function(err) {
+            console.log(err.message);
+            return reject(err);
+          })
+          .videoCodec("libx264")
+          .noAudio()
+          .size("?x720")
+          .loop(loop)
+          .outputOptions("-pix_fmt yuv420p")
+          .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
+      }
     });
   }
   function dateFormatter() {
@@ -426,12 +437,12 @@ function goAhead() {
       }
       for (var mediaFile of glob.sync(path.join(mediaPath, "*", "*"))) {
         filesRendering = filesRendering + 1;
-        progressSet(filesRendering / filesToRender * 100, path.basename(mediaFile));
         if (path.extname(mediaFile) !== ".mp4") {
           await createVideoSync(path.basename(path.dirname(mediaFile)), path.basename(mediaFile));
         } else {
           fs.copyFileSync(mediaFile, path.join(zoomPath, path.basename(path.dirname(mediaFile)), path.basename(mediaFile)));
         }
+        await progressSet(filesRendering / filesToRender * 100, path.basename(mediaFile));
       }
       $("#zoomRender").removeClass("bg-warning in-progress").addClass("bg-primary");
       $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
@@ -546,8 +557,8 @@ function goAhead() {
             if (opts.srcKeySymbol) {
               media.KeySymbol = opts.srcKeySymbol;
             } else if (media.KeySymbol == null) {
-              media.KeySymbol = await executeStatement(opts.db, "SELECT UndatedSymbol FROM Publication");
-              media.KeySymbol = media.KeySymbol[0].UndatedSymbol;
+              media.KeySymbol = await executeStatement(opts.db, "SELECT UniqueEnglishSymbol FROM Publication");
+              media.KeySymbol = media.KeySymbol[0].UniqueEnglishSymbol.replace(/[0-9]*/g, "");
               media.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
               media.IssueTagNumber = media.IssueTagNumber[0].IssueTagNumber;
             }
@@ -635,11 +646,11 @@ function goAhead() {
     try {
       payload = await axios.get(jsonUrl);
       response = payload.data;
-      return response;
     } catch (err) {
       console.log(err, payload);
-      return err, payload;
+      throw err, payload;
     }
+    return response;
   }
   async function getLanguages() {
     if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(dayjs().subtract(6, "months")) || dayjs(prefs.langUpdatedLast).isBefore(dayjs("2021-02-04"))) {
@@ -668,15 +679,24 @@ function goAhead() {
     $("#lang").select2();
   }
   async function getSong(song) {
-    var ks = "sjjm";
-    song.JsonUrl = jwGetPubMediaLinks + "&pub=" + ks + "&langwritten=" + prefs.lang + "&track=" + song.SongNumber + "&fileformat=MP4";
+    song.JsonUrl = jwGetPubMediaLinks + "&pub=" + song.SongPub + "&langwritten=" + prefs.lang + "&track=" + song.SongNumber;
     song.Json = await getJson({
       url: song.JsonUrl
     });
-    song.Json = Object.values(song.Json.files[prefs.lang])[0].filter(function(item) {
+    var targetLabel = "720p";
+    song.JsonFiles = [];
+    for (var songs of Object.values(song.Json.files[prefs.lang])) {
+      song.JsonFiles = song.JsonFiles.concat(songs);
+    }
+    if (Object.values(song.JsonFiles).filter(function(item) {
       return item.label == "720p";
+    }).length == 0) {
+      targetLabel = "0p";
+    }
+    song.Json = Object.values(song.JsonFiles).filter(function(item) {
+      return item.label == targetLabel;
     });
-    song.Filename = sanitizeFilename(((song.FileOrder + 1) * 5).toString().padStart(2, "0") + "-00 " + song.Json[0].title + ".mp4");
+    song.Filename = sanitizeFilename(((song.FileOrder + 1) * 5).toString().padStart(2, "0") + "-00 " + song.Json[0].title + path.extname(song.Json[0].file.url));
     song.DestPath = path.join(song.DestPath, song.Filename);
     if (song.pureDownload) {
       return song;
@@ -749,7 +769,13 @@ function goAhead() {
     }
   }
   function sanitizeFilename(filename) {
-    filename = filename.replace(/[?!"»“«()\\[\]№—$]*/g, "").replace(/[;:,|/]+/g, " - ").replace(/ +/g, " ").replace(/\.+/g, ".").replace(/\r?\n/g, " - ");
+    filename = filename.match(/(\p{Script=Cyrillic}*\p{Script=Latin}*[-. 0-9]*)/ug)
+      .join("")
+      .replace(/[?!"»“«()\\[\]№—$]*/g, "")
+      .replace(/[;:,|/]+/g, " - ")
+      .replace(/ +/g, " ")
+      .replace(/\.+/g, ".")
+      .replace(/\r?\n/g, " - ");
     var bytes = Buffer.byteLength(filename, "utf8");
     var toolong = 200;
     if (bytes > toolong) {
@@ -1064,12 +1090,17 @@ function goAhead() {
     mkdirSync(weekPath);
     currentWeekDates.push(weekPath);
     var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
-    var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%sjj%' ORDER BY BeginParagraphOrdinal");
+    var qrySongPub = await executeStatement(db, "SELECT EnglishSymbol FROM RefPublication WHERE RefPublicationId = 1");
+    qrySongPub = qrySongPub[0].EnglishSymbol;
+    var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%" + qrySongPub + "%' ORDER BY BeginParagraphOrdinal");
+    var qrySongPubMedia = await executeStatement(db, "SELECT KeySymbol FROM Multimedia Where KeySymbol LIKE '%" + qrySongPub + "%' LIMIT 1");
+    qrySongPubMedia = qrySongPubMedia[0].KeySymbol;
     for (var s = 0; s < qrySongs.length; s++) {
       var song = qrySongs[s];
       song.SongNumber = song.Caption.replace(/\D/g, "");
       song.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
       song.FileOrder = s;
+      song.SongPub = qrySongPubMedia;
       await getSong(song);
     }
     for (var l = 0; l < qryLocalMedia.length; l++) {
@@ -1570,7 +1601,7 @@ function goAhead() {
     });
     $("#btnUpload").on("click", async () => {
       try {
-        $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-upload");
+        $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-cloud-upload-alt");
         $("#btnCancelUpload").prop("disabled", true);
         $("#uploadSpinnerContainer").fadeTo(400, 1);
         var localOrRemoteFile = $("#fileToUpload").val();
@@ -1578,7 +1609,8 @@ function goAhead() {
           var meetingSong = {
             "SongNumber": $("#fileToUpload").val().split(".")[0],
             "DestPath": "",
-            "pureDownload": true
+            "pureDownload": true,
+            "SongPub": "sjjm"
           };
           localOrRemoteFile = await getSong(meetingSong);
           var remoteUrl = localOrRemoteFile.Json[0].file.url;
@@ -1611,7 +1643,7 @@ function goAhead() {
           });
         }
         $("#uploadSpinnerContainer").fadeTo(400, 0);
-        $("#btnUpload").find("i").addClass("fa-upload").removeClass("fa-circle-notch fa-spin");
+        $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
         $("#btnCancelUpload").prop("disabled", false);
         $("#fileToUpload, #enterPrefix input").val("").empty();
         $("#chooseUploadType input:checked").prop("checked", false);
