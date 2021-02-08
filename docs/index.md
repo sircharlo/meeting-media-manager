@@ -1,37 +1,76 @@
-## Welcome to GitHub Pages
+# JW Meeting Media Fetcher
 
-You can use the [editor on GitHub](https://github.com/sircharlo/jw-meeting-media-fetcher/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+Welcome! Here is a simple app that facilitates the downloading of media that will be considered during congregation meetings of Jehovah's Witnesses, to be used for example during personal study, to share using Zoom, or when using JW Library is not possible or feasible for various reasons.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+![Main screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/01-main.png?raw=true)
 
-### Markdown
+## Prerequisites
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+The app should run as is on most modern computers running Windows, Linux, or Mac. 
 
-```markdown
-Syntax highlighted code block
+### Windows
 
-# Header 1
-## Header 2
-### Header 3
+There are no specific prerequisites.
 
-- Bulleted
-- List
+### Linux
 
-1. Numbered
-2. List
+As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html):
 
-**Bold** and _Italic_ and `Code` text
+>AppImages based on Electron require the kernel to be configured in a certain way to allow for its sandboxing to work as intended (specifically, the kernel needs to be allowed to provide “unprivileged namespaces”). Many distributions come with this configured out of the box (like Ubuntu for instance), but some do not (for example Debian).
 
-[Link](url) and ![Image](src)
-```
+Simply put, this means that if the AppImage fails to open properly, then you can confirm the output of the following command:
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+`sysctl kernel.unprivileged_userns_clone`
 
-### Jekyll Themes
+If the output is `kernel.unprivileged_userns_clone = 0`, then the AppImage will not run unless you run the following command and then reboot:
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/sircharlo/jw-meeting-media-fetcher/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+`echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-### Support or Contact
+Before you do this, make sure you read up on what this change entails, for example [here](https://lwn.net/Articles/673597/).
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+### Mac
+
+For various technical reasons, the auto-updater does not yet work on Macs. Mac users will have to periodically check for updates to this app and install them on their own.
+
+## Installation and usage
+
+Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Open the app, and configure the settings as you please. 
+
+![Settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/02-settings.png?raw=true)
+
+Once you execute the media sync, all downloaded media will be placed in the folder of your choosing.
+
+## Using with Zoom
+
+Of note is the setting to convert all images to MP4 files (**Settings > Enable beta MP4 generation**), which will allow for both pictures and videos to be shared using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature. 
+
+![Zoom Video share feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true)
+
+
+## Congregation media syncing
+
+The brother designated as _videoconference organizer_ by the body of elders can use **JWMMF** to manage what media will be available to the person taking care of media for a given meeting. For example, he can:
+
+- upload additional media to be shared for a meeting (such as for the circuit overseer's visit, or for public speakers' talks)
+- hide media that for one reason or another is not relevant for a given meeting
+- make recurring media available, to be shared at every meeting (such as a yeartext video, or an announcement slide)
+
+![Upload screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/03-upload.png?raw=true)
+
+Usage of these features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be syncronized should connect to the same SFTP server and directory using the **Settings > Local congregation SFTP server** screen.
+
+![Upload settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/04-upload-settings.png?raw=true)
+
+## Does this app infringe the JW.org Terms of Use?
+
+No, the JW.org [Terms of Use](https://www.jw.org/en/terms-of-use) actually *explicitly allow* this kind of usage. Here is the relevant excerpt from those terms(emphasis mine):
+
+>You may not:
+>
+> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. **(This does *not* prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)**
+
+## Help!
+
+If ever you run into any issues with the app or the underlying script, please let me know.
+
+*- COS*
