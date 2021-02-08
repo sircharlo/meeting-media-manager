@@ -14,7 +14,7 @@ Once you execute the media sync, all downloaded media will be placed in the fold
 
 ## Using with Zoom
 
-Of note is the setting to convert all images to MP4 files (**Settings > Convert all media to MP4**), which will allow for both pictures and videos to be shared using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature.
+Of note is the setting to convert all images to MP4 files (**Settings > Convert all media to MP4**), which will allow pictures and audio files to be shared along with videos using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature.
 
 ![Zoom Video share feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true)
 
