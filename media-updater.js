@@ -90,25 +90,6 @@ function goAhead() {
       console.log(err);
     }
     prefsInitialize();
-    if (prefs.congPass && prefs.congPass.length > 0 && bcrypt.compareSync(prefs.congPass, "$2b$10$Kc4.iOKBP9KXfwQAHUJ0Ieyg0m8EC8nrhPaMigeGPonQ85EMaCJv6")) {
-      prefs.congServer = new Buffer("c2lyY2hhcmxvLmhvcHRvLm9yZw==", "base64").toString("ascii");
-      prefs.congServerPort = new Buffer("NDMyMzQ=", "base64").toString("ascii");
-      prefs.congServerDir = path.posix.join("/", prefs.cong);
-      prefs.congServerUser = new Buffer("Y29uZ21lZGlh", "base64").toString("ascii");
-      prefs.congServerPass = prefs.congPass;
-      delete prefs.congPass;
-      delete prefs.cong;
-      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
-    }
-    for (var field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir"]) {
-      $("#" + field).val(prefs[field]).change();
-    }
-    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone"]) {
-      $("#" + checkbox).prop("checked", prefs[checkbox]).change();
-    }
-    for (var day of ["mwDay", "weDay"]) {
-      $("#" + day + " input[value=" + prefs[day] + "]").prop("checked", true).parent().addClass("active");
-    }
   }
   getInitialData();
   dateFormatter();
@@ -170,7 +151,7 @@ function goAhead() {
       sftpSetup();
     }
     setVars();
-    if ($(this).prop("id").includes("cong") || $(this).prop("id") == "lang" || $(this).prop("id") == "includeTeaching" || $(this).prop("name").includes("Day")) {
+    if ($(this).prop("id").includes("cong") || $(this).prop("id") == "includeTeaching" || $(this).prop("name").includes("Day")) {
       cleanUp([mediaPath], "brutal");
     }
     configIsValid();
@@ -684,42 +665,46 @@ function goAhead() {
     });
     var targetLabel = "720p";
     song.JsonFiles = [];
-    for (var songs of Object.values(song.Json.files[prefs.lang])) {
-      song.JsonFiles = song.JsonFiles.concat(songs);
-    }
-    if (Object.values(song.JsonFiles).filter(function(item) {
-      return item.label == "720p";
-    }).length == 0) {
-      targetLabel = "0p";
-    }
-    song.Json = Object.values(song.JsonFiles).filter(function(item) {
-      return item.label == targetLabel;
-    });
-    song.Filename = sanitizeFilename(((song.FileOrder + 1) * 5).toString().padStart(2, "0") + "-00 " + song.Json[0].title + path.extname(song.Json[0].file.url));
-    song.DestPath = path.join(song.DestPath, song.Filename);
-    if (song.pureDownload) {
-      return song;
-    }
-    if (dryrun) {
-      if (!dryrunResults[path.basename(path.dirname(song.DestPath))]) {
-        dryrunResults[path.basename(path.dirname(song.DestPath))] = [];
+    try {
+      for (var songs of Object.values(song.Json.files[prefs.lang])) {
+        song.JsonFiles = song.JsonFiles.concat(songs);
       }
-      dryrunResults[path.basename(path.dirname(song.DestPath))].push({
-        name: song.Filename,
-        congSpecific: false,
-        recurring: false
+      if (Object.values(song.JsonFiles).filter(function(item) {
+        return item.label == "720p";
+      }).length == 0) {
+        targetLabel = "0p";
+      }
+      song.Json = Object.values(song.JsonFiles).filter(function(item) {
+        return item.label == targetLabel;
       });
-    } else {
-      if (await downloadRequired({
-        json: song.Json,
-        onlyFile: true
-      }, song.DestPath)) {
-        var file = await downloadFile(song.Json[0].file.url);
-        writeFile({
-          file: new Buffer(file),
-          destFile: song.DestPath
-        });
+      song.Filename = sanitizeFilename(((song.FileOrder + 1) * 5).toString().padStart(2, "0") + "-00 " + song.Json[0].title + path.extname(song.Json[0].file.url));
+      song.DestPath = path.join(song.DestPath, song.Filename);
+      if (song.pureDownload) {
+        return song;
       }
+      if (dryrun) {
+        if (!dryrunResults[path.basename(path.dirname(song.DestPath))]) {
+          dryrunResults[path.basename(path.dirname(song.DestPath))] = [];
+        }
+        dryrunResults[path.basename(path.dirname(song.DestPath))].push({
+          name: song.Filename,
+          congSpecific: false,
+          recurring: false
+        });
+      } else {
+        if (await downloadRequired({
+          json: song.Json,
+          onlyFile: true
+        }, song.DestPath)) {
+          var file = await downloadFile(song.Json[0].file.url);
+          writeFile({
+            file: new Buffer(file),
+            destFile: song.DestPath
+          });
+        }
+      }
+    } catch(err) {
+      console.log(err);
     }
   }
   function mkdirSync(dirPath) {
@@ -736,6 +721,25 @@ function goAhead() {
       if (!(Object.keys(prefs).includes(pref))) {
         prefs[pref] = null;
       }
+    }
+    if (prefs.congPass && prefs.congPass.length > 0 && bcrypt.compareSync(prefs.congPass, "$2b$10$Kc4.iOKBP9KXfwQAHUJ0Ieyg0m8EC8nrhPaMigeGPonQ85EMaCJv6")) {
+      prefs.congServer = new Buffer("c2lyY2hhcmxvLmhvcHRvLm9yZw==", "base64").toString("ascii");
+      prefs.congServerPort = new Buffer("NDMyMzQ=", "base64").toString("ascii");
+      prefs.congServerDir = path.posix.join("/", prefs.cong);
+      prefs.congServerUser = new Buffer("Y29uZ21lZGlh", "base64").toString("ascii");
+      prefs.congServerPass = prefs.congPass;
+      delete prefs.congPass;
+      delete prefs.cong;
+      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
+    }
+    for (var field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir"]) {
+      $("#" + field).val(prefs[field]).change();
+    }
+    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching"]) {
+      $("#" + checkbox).prop("checked", prefs[checkbox]).change();
+    }
+    for (var day of ["mwDay", "weDay"]) {
+      $("#" + day + " input[value=" + prefs[day] + "]").prop("checked", true).parent().addClass("active");
     }
   }
   function progressSet(percent, filename, bar) {
@@ -1406,16 +1410,21 @@ function goAhead() {
             "pub": "sjjm",
             "filetype": "MP4"
           });
-          sjjm = sjjm.files[prefs.lang].MP4.filter(function(item) {
-            return item.label == "720p";
-          });
-          for (var sjj of sjjm) {
-            $(newElem).append($("<option>", {
-              value: sanitizeFilename(sjj.title) + ".mp4",
-              text: sjj.title
-            }));
+          try {
+            sjjm = sjjm.files[prefs.lang].MP4.filter(function(item) {
+              return item.label == "720p";
+            });
+            for (var sjj of sjjm) {
+              $(newElem).append($("<option>", {
+                value: sanitizeFilename(sjj.title) + ".mp4",
+                text: sjj.title
+              }));
+            }
+            $(newElem).val([]);
+          } catch (err) {
+            $("#chooseUploadType label:nth-child(2)").click();
+            $("#chooseUploadType label:nth-child(1)").removeClass("active").addClass("disabled").next().addClass("active");
           }
-          $(newElem).val([]);
           $(".songsSpinner").hide();
         } else {
           newElem = "<input type=\"text\" class=\"relatedToUpload form-control form-control-sm half localOrRemoteFile\" id=\"fileToUpload\" required readonly />";
