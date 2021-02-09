@@ -583,7 +583,7 @@ function goAhead() {
               }
               console.log("Include referenced media from " + media.KeySymbol + ":", media.relevant, "(", media.BeginParagraphOrdinal, media.EndParagraphOrdinal, "/", opts.refParStart, opts.refParEnd, ")", media);
             }
-            if (!prefs.includeTeaching && media.KeySymbol == pubs.thv && !opts.refParStart && !opts.refParEnd) {
+            if (!prefs.includeTeaching && media.KeySymbol == pubs.thv /*&& !opts.refParStart && !opts.refParEnd*/) {
               media.relevant = false;
               console.log("Not including referenced media from " + media.KeySymbol, media);
             }
@@ -648,7 +648,6 @@ function goAhead() {
       response = payload.data;
     } catch (err) {
       console.log(err, payload);
-      throw err, payload;
     }
     return response;
   }
