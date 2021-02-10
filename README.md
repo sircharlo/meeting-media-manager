@@ -60,6 +60,10 @@ Before you do this, make sure you read up on what this change entails, for examp
 
 For various technical reasons, the auto-updater does not yet work on Macs. Mac users will have to periodically check for updates to this app and install them on their own.
 
+## Does this app depend on external sites or sources to download publications or media?
+
+No, the app behaves similarly to JW Library in that it downloads data such as publications and media directly from the official JW website and content delivery network. The source code is available for all to examine and verify this.
+
 ## Does this app infringe the JW.org Terms of Use?
 
 No, the JW.org [Terms of Use](https://www.jw.org/en/terms-of-use) actually *explicitly allow* this kind of usage. Here is the relevant excerpt from those terms(emphasis mine):
