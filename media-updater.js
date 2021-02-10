@@ -78,6 +78,7 @@ function goAhead() {
     prefs = {},
     sftpConfig = {},
     sftpIsAGo = false,
+    sftpClient,
     stayAlive,
     weekMediaFilesCopied = [],
     zoomPath;
@@ -806,8 +807,6 @@ function goAhead() {
   async function sftpDownloadDirs(dirs) {
     try {
       if (sftpIsAGo) {
-        let sftpDownloadDir = new Client();
-        await sftpDownloadDir.connect(sftpConfig);
         for (var d = 0; d < dirs.length; d++) {
           var files = await sftpLs(dirs[d][0]);
           for (var file of files) {
@@ -833,7 +832,7 @@ function goAhead() {
                 });
               } else {
                 $("#downloadProgressContainer").fadeTo(400, 1);
-                await sftpDownloadDir.fastGet(path.posix.join(dirs[d][0], file.name), path.join(dirs[d][1], file.name), {
+                await sftpClient.fastGet(path.posix.join(dirs[d][0], file.name), path.join(dirs[d][1], file.name), {
                   step: function(totalTransferred, chunk, total) {
                     var percent = totalTransferred / total * 100;
                     progressSet(percent, file.name);
@@ -843,7 +842,6 @@ function goAhead() {
             }
           }
         }
-        await sftpDownloadDir.end();
       }
     } catch (err) {
       console.log(err);
@@ -852,13 +850,10 @@ function goAhead() {
   async function sftpLs(dir, force) {
     try {
       if (sftpIsAGo || force == true) {
-        let sftp = new Client();
-        await sftp.connect(sftpConfig);
-        if (!await sftp.exists(dir)) {
-          await sftp.mkdir(dir, true);
+        if (!await sftpClient.exists(dir)) {
+          await sftpClient.mkdir(dir, true);
         }
-        var result = await sftp.list(dir);
-        await sftp.end();
+        var result = await sftpClient.list(dir);
         return result;
       }
     } catch (err) {
@@ -870,15 +865,12 @@ function goAhead() {
     try {
       if (sftpIsAGo) {
         destName = await sanitizeFilename(destName);
-        let sftpUploadFile = new Client();
-        await sftpUploadFile.connect(sftpConfig);
-        if (!await sftpUploadFile.exists(destFolder)) {
-          await sftpUploadFile.mkdir(destFolder, true);
+        if (!await sftpClient.exists(destFolder)) {
+          await sftpClient.mkdir(destFolder, true);
         }
-        if (!await sftpUploadFile.exists(path.posix.join(destFolder, destName))) {
-          await sftpUploadFile.put(file, path.posix.join(destFolder, destName));
+        if (!await sftpClient.exists(path.posix.join(destFolder, destName))) {
+          await sftpClient.put(file, path.posix.join(destFolder, destName));
         }
-        await sftpUploadFile.end();
       }
     } catch (err) {
       console.log(err);
@@ -887,12 +879,9 @@ function goAhead() {
   async function sftpRm(dir, file) {
     try {
       if (sftpIsAGo && dir && file) {
-        let sftp = new Client();
-        await sftp.connect(sftpConfig);
-        if (await sftp.exists(path.posix.join(dir, file))) {
-          await sftp.delete(path.posix.join(dir, file));
+        if (await sftpClient.exists(path.posix.join(dir, file))) {
+          await sftpClient.delete(path.posix.join(dir, file));
         }
-        return sftp.end();
       }
     } catch (err) {
       console.log(err);
@@ -928,8 +917,11 @@ function goAhead() {
           keepaliveCountMax: 20
         };
         try {
-          let sftpLogin = new Client();
-          await sftpLogin.connect(sftpConfig);
+          if (typeof sftpClient === "object") {
+            sftpClient.end();
+          }
+          sftpClient = new Client();
+          await sftpClient.connect(sftpConfig);
           sftpLoginSuccessful = true;
           $("#sftpStatus").addClass("text-success");
         } catch(err) {
@@ -1001,18 +993,15 @@ function goAhead() {
     try {
       if (sftpIsAGo) {
         destName = await sanitizeFilename(destName);
-        let sftpUploadFile = new Client();
-        await sftpUploadFile.connect(sftpConfig);
-        if (!await sftpUploadFile.exists(destFolder)) {
-          await sftpUploadFile.mkdir(destFolder, true);
+        if (!await sftpClient.exists(destFolder)) {
+          await sftpClient.mkdir(destFolder, true);
         }
-        await sftpUploadFile.fastPut(file, path.posix.join(destFolder, destName), {
+        await sftpClient.fastPut(file, path.posix.join(destFolder, destName), {
           step: function(totalTransferred, chunk, total) {
             var percent = totalTransferred / total * 100;
             progressSet(percent, destName, "upload");
           }
         });
-        await sftpUploadFile.end();
       }
     } catch (err) {
       console.log(err);
