@@ -6,15 +6,15 @@ Here is a simple app that facilitates the downloading of media that will be cons
 
 ## Installation and usage
 
-Simply download the latest [installer](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Open the app, and configure the settings as you please.
+Simply download the latest installer [from here](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it. Once the setup is complete, a shortcut to the app will be placed on your desktop. Open the app, and configure the settings as you please.
 
 ![Settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/02-settings.png?raw=true)
 
-Once you execute the media sync, all downloaded media will be placed in the folder of your choosing.
+After configuring the app, execute the media sync, and all downloaded media will be placed in the folder of your choosing.
 
 ## Using with Zoom
 
-Of note is the setting to convert all images to MP4 files (**Settings > Convert all media to MP4**), which will allow pictures and audio files to be shared along with videos using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature.
+Of note is the setting to convert all media to MP4 format (**Settings > Convert all media to MP4**). This allows pictures and audio files to be shared along with videos using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature.
 
 ![Zoom Video share feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true)
 
@@ -68,8 +68,12 @@ No, the JW.org [Terms of Use](https://www.jw.org/en/terms-of-use) actually *expl
 >
 > Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. **(This does *not* prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)**
 
-## Help!
+## Help, there's a problem
 
-If ever you run into any issues with the app or the underlying script, please let me know.
+If ever you run into any issues with the app or the underlying script, please use [GitHub Issues](https://github.com/sircharlo/jw-meeting-media-fetcher/issues) to let me know.
+
+## I have an idea for a great new feature!
+
+I'm open to suggestions! Please use [GitHub Discussions](https://github.com/sircharlo/jw-meeting-media-fetcher/discussions) to let me know.
 
 *- COS*

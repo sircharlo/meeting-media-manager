@@ -50,17 +50,20 @@ function goAhead() {
     os = require("os"),
     path = require("path"),
     sqljs = require("sql.js"),
-    zipper = require("zip-local");
-  dayjs.extend(require("dayjs/plugin/isoWeek"));
-  dayjs.extend(require("dayjs/plugin/isBetween"));
-  dayjs.extend(require("dayjs/plugin/customParseFormat"));
-
-  const jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
+    zipper = require("zip-local"),
+    appPath = require("electron").remote.app.getPath("userData"),
+    jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
+    langsFile = path.join(appPath, "langs.json"),
+    prefsFile = path.join(appPath, "prefs.json"),
     pubs = {
       mwb: "mwb",
       thv: "thv",
       wt: "w"
     };
+
+  dayjs.extend(require("dayjs/plugin/isoWeek"));
+  dayjs.extend(require("dayjs/plugin/isBetween"));
+  dayjs.extend(require("dayjs/plugin/customParseFormat"));
 
   var baseDate = dayjs().startOf("isoWeek"),
     currentWeekDates = [],
@@ -78,10 +81,6 @@ function goAhead() {
     stayAlive,
     weekMediaFilesCopied = [],
     zoomPath;
-
-  const appPath = require("electron").remote.app.getPath("userData");
-  const langsFile = path.join(appPath, "langs.json");
-  const prefsFile = path.join(appPath, "prefs.json");
 
   if (fs.existsSync(prefsFile)) {
     try {
@@ -162,6 +161,7 @@ function goAhead() {
     });
   });
   $("#mwDay input, #weDay input").on("change", function() {
+    $("div.meeting.text-light").removeClass("meeting text-light");
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting text-light");
   });
   $("#mediaSync").on("click", async function() {
@@ -314,10 +314,10 @@ function goAhead() {
       $(".today").removeClass("today");
     }
   }
-  const downloadFile = async url => {
+  async function downloadFile(url) {
     try {
       $("#downloadProgressContainer").fadeTo(400, 1);
-      const response = await axios.get(url, {
+      var response = await axios.get(url, {
         responseType: "arraybuffer",
         onDownloadProgress: function(progressEvent) {
           var percent = progressEvent.loaded / progressEvent.total * 100;
@@ -329,7 +329,7 @@ function goAhead() {
       console.log(err);
       return err;
     }
-  };
+  }
   async function downloadRequired(remoteOpts, destFile) {
     var returnValue = true;
     if (fs.existsSync(destFile)) {
@@ -402,10 +402,7 @@ function goAhead() {
         cleanUp([path.join(appPath, "ffmpeg", "zip")], "brutal");
         mkdirSync(path.join(appPath, "ffmpeg", "zip"));
         var ffmpegZipFile = await downloadFile(ffmpegUrls.bin[targetOs].ffmpeg);
-        await writeFile({
-          file: new Buffer(ffmpegZipFile),
-          destFile: ffmpegZipPath
-        });
+        fs.writeFileSync(ffmpegZipPath, new Buffer(ffmpegZipFile));
       }
       zipper.sync.unzip(ffmpegZipPath).save(path.join(appPath, "ffmpeg"));
       var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
@@ -448,10 +445,7 @@ function goAhead() {
           type: "JWPUB"
         }, path.join(workingDirectory, basename)) || !glob.sync(path.join(workingUnzipDirectory, "*.db"))[0]) {
           var file = await downloadFile(url);
-          await writeFile({
-            file: new Buffer(file),
-            destFile: path.join(workingDirectory, basename)
-          });
+          fs.writeFileSync(path.join(workingDirectory, basename), new Buffer(file));
           mkdirSync(path.join(workingDirectory, "JWPUB"));
           zipper.sync.unzip(glob.sync(path.join(workingDirectory, "*.jwpub"))[0]).save(path.join(workingDirectory, "JWPUB"));
           mkdirSync(workingUnzipDirectory);
@@ -562,11 +556,9 @@ function goAhead() {
               if ((media.BeginParagraphOrdinal >= opts.refParStart && media.EndParagraphOrdinal <= opts.refParEnd) || (media.BeginParagraphOrdinal == 1 && opts.refParStart <= 5)) {
                 media.relevant = true;
               }
-              console.log("Include referenced media from " + media.KeySymbol + ":", media.relevant, "(", media.BeginParagraphOrdinal, media.EndParagraphOrdinal, "/", opts.refParStart, opts.refParEnd, ")", media);
             }
-            if (!prefs.includeTeaching && media.KeySymbol == pubs.thv /*&& !opts.refParStart && !opts.refParEnd*/) {
+            if (!prefs.includeTeaching && media.KeySymbol == pubs.thv) {
               media.relevant = false;
-              console.log("Not including referenced media from " + media.KeySymbol, media);
             }
             if (!mwMediaForWeek[media.srcParId]) {
               mwMediaForWeek[media.srcParId] = [];
@@ -575,6 +567,7 @@ function goAhead() {
               mwMediaForWeek[media.srcParId].push(media);
               weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
             }
+            console.log("%cInclude referenced media from [" + media.KeySymbol + "]: " + media.relevant, (media.relevant ? "color: green;" : "color: red;"), "(", media.BeginParagraphOrdinal, media.EndParagraphOrdinal, "/", opts.refParStart, opts.refParEnd, ")", media);
           } catch (err) {
             console.log(err);
           }
@@ -589,7 +582,7 @@ function goAhead() {
     configIsValid();
     $("#version span.badge").html("v" + window.require("electron").remote.app.getVersion());
     await sftpSetup();
-    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting").addClass("text-light");
+    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting text-light");
     if (prefs.autoStartSync && configIsValid()) {
       var cancelSync = false;
       $("#btnCancelSync").on("click", function() {
@@ -697,10 +690,7 @@ function goAhead() {
           onlyFile: true
         }, song.DestPath)) {
           var file = await downloadFile(song.Json[0].file.url);
-          writeFile({
-            file: new Buffer(file),
-            destFile: song.DestPath
-          });
+          fs.writeFileSync(song.DestPath, new Buffer(file));
         }
       }
     } catch(err) {
@@ -1163,13 +1153,10 @@ function goAhead() {
             onlyFile: true
           }, localMedia.DestPath)) {
             var file = await downloadFile(localMedia.Json[0].file.url);
-            writeFile({
-              file: new Buffer(file),
-              destFile: localMedia.DestPath
-            });
+            fs.writeFileSync(localMedia.DestPath, new Buffer(file));
           }
         } else {
-          writeFile({
+          copyFile({
             file: localMedia.LocalPath,
             destFile: localMedia.DestPath,
             type: "copy"
@@ -1256,13 +1243,10 @@ function goAhead() {
               onlyFile: true
             }, weekMediaItem.DestPath)) {
               var file = await downloadFile(weekMediaItem.Json[0].file.url);
-              writeFile({
-                file: new Buffer(file),
-                destFile: weekMediaItem.DestPath
-              });
+              fs.writeFileSync(weekMediaItem.DestPath, new Buffer(file));
             }
           } else {
-            writeFile({
+            copyFile({
               file: weekMediaItem.LocalPath,
               destFile: weekMediaItem.DestPath,
               type: "copy"
@@ -1309,7 +1293,7 @@ function goAhead() {
         if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
           for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
             for (var meetingDate of currentWeekDates) {
-              writeFile({
+              copyFile({
                 file: path.join(pubsPath, "Recurring", recurringFile),
                 destFile: path.join(meetingDate, recurringFile),
                 type: "copy"
@@ -1335,13 +1319,9 @@ function goAhead() {
       $("#" + screen).slideUp("fast");
     }
   }
-  function writeFile(opts) {
-    if (!opts.type) {
-      fs.writeFileSync(opts.destFile, opts.file);
-    } else {
-      if ((fs.existsSync(opts.destFile) && fs.existsSync(opts.file) && fs.statSync(opts.destFile).size !== fs.statSync(opts.file).size) || !fs.existsSync(opts.destFile)) {
-        fs.copyFileSync(opts.file, opts.destFile);
-      }
+  function copyFile(opts) {
+    if ((fs.existsSync(opts.destFile) && fs.existsSync(opts.file) && fs.statSync(opts.destFile).size !== fs.statSync(opts.file).size) || !fs.existsSync(opts.destFile)) {
+      fs.copyFileSync(opts.file, opts.destFile);
     }
   }
   var dropHandler = (event) => {
@@ -1624,10 +1604,7 @@ function goAhead() {
           var remoteUrl = localOrRemoteFile.Json[0].file.url;
           localOrRemoteFile = await downloadFile(remoteUrl);
           var tmpSong = path.join(os.tmpdir(), $("#fileToUpload").val());
-          writeFile({
-            file: new Buffer(localOrRemoteFile),
-            destFile: tmpSong
-          });
+          fs.writeFileSync(tmpSong, new Buffer(localOrRemoteFile));
           localOrRemoteFile = tmpSong;
         }
         $("#uploadProgressContainer").fadeTo(400, 1);
