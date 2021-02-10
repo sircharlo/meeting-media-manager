@@ -567,7 +567,9 @@ function goAhead() {
               mwMediaForWeek[media.srcParId].push(media);
               weekMediaFilesCopied.push(opts.week + media.KeySymbol + media.IssueTagNumber + media.MultimediaId);
             }
-            console.log("%cInclude referenced media from [" + media.KeySymbol + "]: " + media.relevant, (media.relevant ? "color: green;" : "color: red;"), "(", media.BeginParagraphOrdinal, media.EndParagraphOrdinal, "/", opts.refParStart, opts.refParEnd, ")", media);
+            if (!dryrun) {
+              console.log("%cInclude referenced media from [" + media.KeySymbol + "]: " + media.relevant, (media.relevant ? "background-color: #d4edda; color: #155724;" : "background-color: #f8d7da; color: #721c24;"), "(", media.BeginParagraphOrdinal, media.EndParagraphOrdinal, "/", opts.refParStart, opts.refParEnd, ")", media);
+            }
           } catch (err) {
             console.log(err);
           }
@@ -707,7 +709,7 @@ function goAhead() {
     }
   }
   function prefsInitialize() {
-    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching"]) {
+    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone"]) {
       if (!(Object.keys(prefs).includes(pref))) {
         prefs[pref] = null;
       }
@@ -725,7 +727,7 @@ function goAhead() {
     for (var field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir"]) {
       $("#" + field).val(prefs[field]).change();
     }
-    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching"]) {
+    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching", "openFolderWhenDone"]) {
       $("#" + checkbox).prop("checked", prefs[checkbox]).change();
     }
     for (var day of ["mwDay", "weDay"]) {
@@ -752,8 +754,8 @@ function goAhead() {
         var hiddenFiles = await sftpLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.name));
         for (var hiddenFile of hiddenFiles) {
           try {
-            console.log("Hidden file to delete:", path.join(mediaPath, hiddenFilesFolder.name, hiddenFile.name));
             fs.unlinkSync(path.join(mediaPath, hiddenFilesFolder.name, hiddenFile.name));
+            console.log("%cFile deleted [" + hiddenFilesFolder.name + "]: " + hiddenFile.name, "background-color: #fff3cd; color: #856404;");
           } catch(err) {
             console.log(err);
           }
@@ -850,27 +852,13 @@ function goAhead() {
   async function sftpLs(dir, force) {
     try {
       if (sftpIsAGo || force == true) {
-        var result = [];
         let sftp = new Client();
-        await sftp.connect(sftpConfig).then(async () => {
-          try {
-            await sftp.mkdir(dir, true);
-          } catch(err) {
-            //console.log("Error creating " + dir + ", perhaps it already exists...");
-          }
-          return await sftp.list(dir);
-        }).then(await
-        function(data) {
-          data.filter(function(el) {
-            result.push(el);
-          });
-        }).then(await
-        function() {
-          return sftp.end();
-        }).catch(err => {
-          console.log(err);
-          throw(err);
-        });
+        await sftp.connect(sftpConfig);
+        if (!await sftp.exists(dir)) {
+          await sftp.mkdir(dir, true);
+        }
+        var result = await sftp.list(dir);
+        await sftp.end();
         return result;
       }
     } catch (err) {
@@ -884,12 +872,12 @@ function goAhead() {
         destName = await sanitizeFilename(destName);
         let sftpUploadFile = new Client();
         await sftpUploadFile.connect(sftpConfig);
-        try {
+        if (!await sftpUploadFile.exists(destFolder)) {
           await sftpUploadFile.mkdir(destFolder, true);
-        } catch(err) {
-          //console.log("Error creating " + destFolder + ", perhaps it already exists...");
         }
-        await sftpUploadFile.put(file, path.posix.join(destFolder, destName));
+        if (!await sftpUploadFile.exists(path.posix.join(destFolder, destName))) {
+          await sftpUploadFile.put(file, path.posix.join(destFolder, destName));
+        }
         await sftpUploadFile.end();
       }
     } catch (err) {
@@ -898,18 +886,13 @@ function goAhead() {
   }
   async function sftpRm(dir, file) {
     try {
-      if (sftpIsAGo) {
-        var result = [];
+      if (sftpIsAGo && dir && file) {
         let sftp = new Client();
-        await sftp.connect(sftpConfig).then(() => {
-          return sftp.delete(path.posix.join(dir, file));
-        }).then(await
-        function() {
-          return sftp.end();
-        }).catch(err => {
-          console.log(err);
-        });
-        return result;
+        await sftp.connect(sftpConfig);
+        if (await sftp.exists(path.posix.join(dir, file))) {
+          await sftp.delete(path.posix.join(dir, file));
+        }
+        return sftp.end();
       }
     } catch (err) {
       console.log(err);
@@ -1020,10 +1003,8 @@ function goAhead() {
         destName = await sanitizeFilename(destName);
         let sftpUploadFile = new Client();
         await sftpUploadFile.connect(sftpConfig);
-        try {
+        if (!await sftpUploadFile.exists(destFolder)) {
           await sftpUploadFile.mkdir(destFolder, true);
-        } catch(err) {
-        //  console.log("Error creating " + destFolder + ", perhaps it already exists...");
         }
         await sftpUploadFile.fastPut(file, path.posix.join(destFolder, destName), {
           step: function(totalTransferred, chunk, total) {
@@ -1048,8 +1029,15 @@ function goAhead() {
     await syncMwMeeting();
     await syncWeMeeting();
     await syncCongSpecific();
-    await removeHiddenMedia();
     await ffmpegConvert();
+    if (prefs.openFolderWhenDone) {
+      const {shell} = require("electron");
+      var  openPath = mediaPath;
+      if (prefs.betaMp4Gen) {
+        openPath = zoomPath;
+      }
+      shell.openPath(openPath);
+    }
     $("#btn-settings, #btn-upload").fadeIn();
     $("#spinnerContainer").fadeTo(400, 0);
     setTimeout(() => {
@@ -1301,6 +1289,7 @@ function goAhead() {
             }
           }
         }
+        await removeHiddenMedia();
       } catch (err) {
         console.log(err);
       }
