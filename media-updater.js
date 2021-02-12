@@ -1019,7 +1019,7 @@ function goAhead() {
     await syncWeMeeting();
     await syncCongSpecific();
     await ffmpegConvert();
-    if (prefs.openFolderWhenDone) {
+    if (prefs.openFolderWhenDone && !dryrun) {
       const {shell} = require("electron");
       var  openPath = mediaPath;
       if (prefs.betaMp4Gen) {
