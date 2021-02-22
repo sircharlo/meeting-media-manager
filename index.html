@@ -398,6 +398,29 @@
       </div>
     </div>
   </div>
+  <div id="overlayAdditionalFilesPrompt" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center">
+      <div class="align-self-center text-dark fa-5x" role="status">
+        <i class="fas fa-fw fa-folder-plus"></i>
+      </div>
+      <div>Any other media to add before converting to MP4?</div>
+      <div class="align-self-center fa-2x" role="status">
+        <i id="btnNoAdditionalMedia" class="fas fa-fw fa-times-circle text-danger"></i>
+        <i id="btnAdditionalMedia" class="fas fa-fw fa-check-circle text-success"></i>
+      </div>
+    </div>
+  </div>
+  <div id="overlayAdditionalFilesWaiting" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center">
+      <div class="align-self-center text-dark fa-5x" role="status">
+        <i class="fas fa-fw fa-spinner fa-pulse"></i>
+      </div>
+      <div>Let me know when everything is in place.</div>
+      <div class="align-self-center fa-2x" role="status">
+        <i id="btnAdditionalMediaDone" class="fas fa-fw fa-play-circle text-primary"></i>
+      </div>
+    </div>
+  </div>
   <div id="overlayUploadFile" class="overlay flex-column p-4 bg-light" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
       <i class="fas fa-fw fa-cloud-upload-alt fa-3x text-muted"></i>
@@ -556,6 +579,13 @@
       <div class="custom-control custom-switch">
         <input type="checkbox" class="custom-control-input" id="betaMp4Gen" />
         <label class="custom-control-label" for="betaMp4Gen"></label>
+      </div>
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="additionalMediaPrompt" class="half m-0 pr-3 text-right">Enable conversion of additional media</label>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="additionalMediaPrompt" />
+        <label class="custom-control-label" for="additionalMediaPrompt"></label>
       </div>
     </div>
     <hr class="my-2" />

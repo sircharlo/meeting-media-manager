@@ -49,6 +49,7 @@ function goAhead() {
     ffmpeg = require("fluent-ffmpeg"),
     os = require("os"),
     path = require("path"),
+    {shell} = require("electron"),
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
     appPath = require("electron").remote.app.getPath("userData"),
@@ -193,7 +194,24 @@ function goAhead() {
     $("#mediaSync").html(buttonLabel).prop("disabled", false).removeClass("loading");
     $("#baseDate-dropdown").removeClass("disabled");
   });
-
+  function additionalMedia() {
+    return new Promise((resolve)=>{
+      $("#overlayAdditionalFilesPrompt").fadeIn();
+      $("#btnNoAdditionalMedia, #btnAdditionalMedia").click(function() {
+        $("#overlayAdditionalFilesPrompt").fadeOut();
+      });
+      $("#btnAdditionalMedia").click(function() {
+        $("#overlayAdditionalFilesWaiting").fadeIn();
+        shell.openPath(mediaPath);
+      });
+      $("#btnAdditionalMediaDone").click(function() {
+        $("#overlayAdditionalFilesWaiting").fadeOut();
+      });
+      $("#btnAdditionalMediaDone, #btnNoAdditionalMedia").click(function() {
+        resolve();
+      });
+    });
+  }
   function cleanUp(dirs, type) {
     for (var lookinDir of dirs) {
       if (fs.existsSync(lookinDir)) {
@@ -409,6 +427,9 @@ function goAhead() {
       var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
       fs.chmodSync(ffmpegPath, "777");
       ffmpeg.setFfmpegPath(ffmpegPath);
+      if (prefs.additionalMediaPrompt) {
+        await additionalMedia();
+      }
       var filesToProcess = glob.sync(path.join(mediaPath, "*", "*"));
       var filesToRender = filesToProcess.length, filesRendering = 0;
       for (var mediaDir of glob.sync(path.join(mediaPath, "*"))) {
@@ -710,7 +731,7 @@ function goAhead() {
     }
   }
   function prefsInitialize() {
-    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone"]) {
+    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt"]) {
       if (!(Object.keys(prefs).includes(pref))) {
         prefs[pref] = null;
       }
@@ -728,7 +749,7 @@ function goAhead() {
     for (var field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir"]) {
       $("#" + field).val(prefs[field]).change();
     }
-    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching", "openFolderWhenDone"]) {
+    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt"]) {
       $("#" + checkbox).prop("checked", prefs[checkbox]).change();
     }
     for (var day of ["mwDay", "weDay"]) {
@@ -1020,8 +1041,7 @@ function goAhead() {
     await syncCongSpecific();
     await ffmpegConvert();
     if (prefs.openFolderWhenDone && !dryrun) {
-      const {shell} = require("electron");
-      var  openPath = mediaPath;
+      var openPath = mediaPath;
       if (prefs.betaMp4Gen) {
         openPath = zoomPath;
       }
