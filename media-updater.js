@@ -1,4 +1,5 @@
 const isPortReachable = require("is-port-reachable"),
+  {shell} = require("electron"),
   $ = require("jquery");
 async function checkInternet() {
   try {
@@ -32,6 +33,12 @@ require("electron").ipcRenderer.on("updateDownloadProgress", (event, message) =>
   $("#updatePercent i:nth-of-type(" + dotsDone + ")").addClass("fa-circle text-primary").removeClass("fa-dot-circle");
 });
 
+require("electron").ipcRenderer.on("macUpdate", () => {
+  $("#btn-mac-update").fadeIn().click(function() {
+    shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
+  });
+});
+
 require("electron").ipcRenderer.on("goAhead", () => {
   $("#overlayPleaseWait").fadeIn(400, () => {
     $("#overlayUpdateCheck").fadeOut();
@@ -49,7 +56,6 @@ function goAhead() {
     ffmpeg = require("fluent-ffmpeg"),
     os = require("os"),
     path = require("path"),
-    {shell} = require("electron"),
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
     appPath = require("electron").remote.app.getPath("userData"),
@@ -94,6 +100,9 @@ function goAhead() {
   }
   getInitialData();
   dateFormatter();
+  if (os.platform() == "linux") {
+    $(".notLinux").removeClass("d-flex").hide();
+  }
   $("#outputPath").on("click", function() {
     var path = require("electron").remote.dialog.showOpenDialogSync({
       properties: ["openDirectory"]
@@ -177,19 +186,23 @@ function goAhead() {
     }
     $("#btnStayAlive").on("click", function() {
       stayAlive = true;
-      $("#btnStayAlive").removeClass("text-muted").addClass("text-success");
+      $("#btnStayAlive").removeClass("mtn-primary").addClass("btn-success");
     });
     $("#overlayComplete").fadeIn(400, () => {
       $("#home, .btn-settings, #btn-settings, #btn-upload").fadeTo(400, 0);
     }).delay(3000).fadeOut(400, () => {
-      if (prefs.autoQuitWhenDone && !stayAlive) {
-        window.require("electron").remote.app.quit();
+      if (prefs.autoQuitWhenDone) {
+        if (stayAlive) {
+          toggleScreen("overlaySettings");
+          $("#btnStayAlive").removeClass("btn-success").addClass("btn-primary").fadeTo(400, 0);
+        } else {
+          window.require("electron").remote.app.quit();
+        }
       }
       $("#home, .btn-settings, #btn-settings").fadeTo(400, 1);
       if (prefs.congServer && prefs.congServer.length > 0) {
         $("#btn-upload").fadeTo(400, 1);
       }
-      $("#btnStayAlive").removeClass("text-success").addClass("text-muted");
     });
     $("#mediaSync").html(buttonLabel).prop("disabled", false).removeClass("loading");
     $("#baseDate-dropdown").removeClass("disabled");

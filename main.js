@@ -4,7 +4,8 @@ const {
     ipcMain
   } = require("electron"), {
     autoUpdater
-  } = require("electron-updater");
+  } = require("electron-updater"),
+  os = require("os");
 var win = {};
 
 function createUpdateWindow() {
@@ -44,8 +45,13 @@ autoUpdater.on("update-not-available", () => {
 });
 
 autoUpdater.on("update-available", () => {
-  win.webContents.send("hideThenShow", ["UpdateCheck", "UpdateAvailable"]);
-  autoUpdater.downloadUpdate();
+  if (os.platform() == "darwin") {
+    win.webContents.send("goAhead");
+    win.webContents.send("macUpdate");
+  } else {
+    win.webContents.send("hideThenShow", ["UpdateCheck", "UpdateAvailable"]);
+    autoUpdater.downloadUpdate();
+  }
 });
 
 autoUpdater.on("download-progress", (prog) => {

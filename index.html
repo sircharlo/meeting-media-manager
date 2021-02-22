@@ -132,6 +132,12 @@
       left: 1em;
     }
 
+    #btn-mac-update {
+      position: fixed;
+      bottom: 5em;
+      right: 1em;
+    }
+
     .btn-circle i {
       font-size: 135%;
     }
@@ -330,20 +336,6 @@
         <i class="fas fa-fw fa-cloud-download-alt"></i>
       </div>
       <div class="align-self-center text-warning fa-2x" role="status">
-        <!-- <i class="fas fa-check-circle text-success updateSuccess"></i>
-        <span id="updatePercent">
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-          <i class="fas fa-dot-circle fa-1x"></i>
-        </span>
-        <i class="fas fa-check-circle text-success updateSuccess"></i> -->
         <i class="fas fa-circle-notch fa-spin"></i>
       </div>
     </div>
@@ -393,8 +385,10 @@
       <div class="align-self-center text-primary fa-5x" role="status">
         <i class="fas fa-fw fa-smile-beam"></i>
       </div>
-      <div class="align-self-center text-muted fa-2x" role="status">
-        <i id="btnStayAlive" class="fas fa-check-circle" style="opacity: 0;"></i>
+      <div class="align-self-center fa-2x" role="status">
+        <button id="btnStayAlive" class="btn btn-primary" style="opacity: 0;">
+          <i class="fas fa-user-cog"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -589,7 +583,7 @@
       </div>
     </div>
     <hr class="my-2" />
-    <div class="d-flex flex-row flex-fill align-items-center">
+    <div class="d-flex flex-row flex-fill align-items-center notLinux">
       <label for="autoRunAtBoot" class="half m-0 pr-3 text-right">Run app at system startup</label>
       <div class="custom-control custom-switch">
         <input type="checkbox" class="custom-control-input" id="autoRunAtBoot" />
@@ -626,7 +620,8 @@
       </div>
       <div class="flex-fill">
         <button type="button" class="btn btn-primary btn-sftp">
-          <i class="fas fa-fw fa-network-wired"></i>
+          SFTP Server
+          <!-- <i class="fas fa-fw fa-network-wired"></i> -->
         </button>
       </div>
       <div class="flex-fill">
@@ -766,6 +761,9 @@
   </div>
   <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-upload" style="display: none;">
     <i class="fas fa-fw fa-network-wired"></i>
+  </button>
+  <button class="btn btn-warning btn-circle btn-circle-sm m-1 fixed" id="btn-mac-update" style="display: none;">
+    <i class="fas fa-fw fa-exclamation-triangle"></i>
   </button>
   <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-settings">
     <i class="fas fa-fw fa-user-cog"></i>
