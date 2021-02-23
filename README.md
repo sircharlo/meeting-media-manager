@@ -16,7 +16,7 @@ After configuring the app, execute the media sync, and all downloaded media will
 
 Of note is the setting to convert downloaded media to MP4 format (**Settings > Convert downloaded media to MP4**). This allows pictures and audio files to be shared along with videos using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature. 
 
-The **Enable conversion of additional media** toggle will prompt you if you would like to add any additional media before the MP4 conversion takes place, allowing you to quickly add custom media on the spot and be ready to share it as an MP4.
+The **Enable conversion of additional media** toggle will allow you to add any additional media before the MP4 conversion takes place, allowing you to quickly add custom media on the spot and be ready to share it as an MP4.
 
 ![Zoom Video share feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true)
 
