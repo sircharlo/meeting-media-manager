@@ -271,8 +271,10 @@ function goAhead() {
     }
     if (prefs.betaMp4Gen) {
       $("#zoomRender").addClass("d-flex");
+      $("#additionalMediaPrompt").prop("disabled", false);
     } else {
       $("#zoomRender").removeClass("d-flex");
+      $("#additionalMediaPrompt").prop("disabled", true);
     }
     $("#overlaySettings .invalid").each(function() {
       $(this).closest("div.flex-row").find("label").addClass("text-danger");
@@ -827,16 +829,20 @@ function goAhead() {
     return filename;
   }
   function setVars() {
-    outputPath = path.join(prefs.outputPath);
-    mkdirSync(outputPath);
-    langPath = path.join(outputPath, prefs.lang);
-    mkdirSync(langPath);
-    pubsPath = path.join(langPath, "Publications");
-    mkdirSync(pubsPath);
-    mediaPath = path.join(langPath, "Media");
-    mkdirSync(mediaPath);
-    zoomPath = path.join(langPath, "Zoom");
-    mkdirSync(zoomPath);
+    try {
+      outputPath = path.join(prefs.outputPath);
+      mkdirSync(outputPath);
+      langPath = path.join(outputPath, prefs.lang);
+      mkdirSync(langPath);
+      pubsPath = path.join(langPath, "Publications");
+      mkdirSync(pubsPath);
+      mediaPath = path.join(langPath, "Media");
+      mkdirSync(mediaPath);
+      zoomPath = path.join(langPath, "Zoom");
+      mkdirSync(zoomPath);
+    } catch (err) {
+      console.log(err);
+    }
   }
   async function sftpDownloadDirs(dirs) {
     try {
