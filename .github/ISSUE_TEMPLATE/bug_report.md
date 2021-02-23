@@ -21,7 +21,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **Logs**
-Please include the contents of the console tab of the inspector view. To open the inspector, hit <kbd>Ctrl</kbd><kbd>⇧ Shift</kbd><kbd>I</kbd> (<kbd>⌘ Command</kbd><kbd>⌥ Option</kbd><kbd>I</kbd> for Mac) when the app is starting up.
+Please include the contents of the console tab of the inspector view. To open the inspector, hit <kbd>Ctrl</kbd> <kbd>⇧ Shift</kbd> <kbd>I</kbd> (<kbd>⌘ Command</kbd> <kbd>⌥ Option</kbd> <kbd>I</kbd> for Mac) when the app is starting up.
 
 **Screenshots**
 If possible, add screenshots to help explain your problem.
