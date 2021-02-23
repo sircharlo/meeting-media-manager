@@ -14,17 +14,17 @@ A clear and concise description of what the bug is.
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
-3. Scroll down to '....'
+3. Do '....'
 4. See error
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
 **Logs**
-Please include the contents of the console tab of the inspector view. To open the inspector, hit Ctrl-Shift-I when the app is starting up.
+Please include the contents of the console tab of the inspector view. To open the inspector, hit <kbd>Ctrl</kbd><kbd>⇧ Shift</kbd><kbd>I</kbd> (<kbd>⌘ Command</kbd><kbd>⌥ Option</kbd><kbd>I</kbd> for Mac) when the app is starting up.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+If possible, add screenshots to help explain your problem.
 
 **System specs (please complete the following information):**
  - OS: [e.g. Windows 10]
