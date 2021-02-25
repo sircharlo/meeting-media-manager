@@ -73,7 +73,6 @@ function goAhead() {
   dayjs.extend(require("dayjs/plugin/customParseFormat"));
 
   var baseDate = dayjs().startOf("isoWeek"),
-    currentWeekDates = [],
     dryrun = false,
     dryrunResults = {},
     jsonLangs = {},
@@ -186,7 +185,7 @@ function goAhead() {
     }
     $("#btnStayAlive").on("click", function() {
       stayAlive = true;
-      $("#btnStayAlive").removeClass("mtn-primary").addClass("btn-success");
+      $("#btnStayAlive").removeClass("btn-primary").addClass("btn-success");
     });
     $("#overlayComplete").fadeIn(400, () => {
       $("#home, .btn-settings, #btn-settings, #btn-upload").fadeTo(400, 0);
@@ -293,7 +292,7 @@ function goAhead() {
     }
   }
   function createVideoSync(mediaDir, media){
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve)=>{
       var mediaName = path.basename(media, path.extname(media));
       $("#downloadProgressContainer").fadeTo(400, 1);
       if (path.extname(media).includes("mp3")) {
@@ -303,7 +302,7 @@ function goAhead() {
           })
           .on("error", function(err) {
             console.log(err.message);
-            return reject(err);
+            return resolve();
           })
           .noVideo()
           .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
@@ -317,7 +316,7 @@ function goAhead() {
           })
           .on("error", function(err) {
             console.log(err.message);
-            return reject(err);
+            return resolve();
           })
           .videoCodec("libx264")
           .noAudio()
@@ -1069,218 +1068,237 @@ function goAhead() {
     $("#btn-settings, #btn-upload").fadeIn();
     $("#spinnerContainer").fadeTo(400, 0);
     setTimeout(() => {
-      $(".day, .congregation, .zoom").removeClass("bg-primary");
+      $(".day, .congregation, .zoom").removeClass("bg-primary bg-danger");
       $("#statusIcon").addClass("text-muted").removeClass("text-primary");
     }, 2000);
   }
   async function syncWeMeeting() {
     $("#day" + prefs.weDay).addClass("bg-warning in-progress");
-    mkdirSync(path.join(pubsPath, pubs.wt));
-    var issue = baseDate.clone().subtract(2, "months").format("YYYYMM") + "00";
-    mkdirSync(path.join(pubsPath, pubs.wt, issue));
-    var db = await getDbFromJwpub({
-      pub: pubs.wt,
-      issue: issue
-    });
-    var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
-    var qryDocuments = await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40");
-    var weeks = [],
-      studyDate, w;
-    for (var tempW = 0; tempW < qryWeeks.length; tempW++) {
-      studyDate = dayjs(qryWeeks[tempW].FirstDateOffset.toString(), "YYYYMMDD").add(prefs.weDay, "days");
-      if (studyDate.isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
-        weeks.push(qryWeeks[tempW].FirstDateOffset.toString());
-        w = tempW;
-      }
-    }
-    var week = weeks[0];
-    studyDate = dayjs(week, "YYYYMMDD").add(prefs.weDay, "days");
-    var weekPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
-    mkdirSync(weekPath);
-    currentWeekDates.push(weekPath);
-    var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
-    var qrySongPub = await executeStatement(db, "SELECT EnglishSymbol FROM RefPublication WHERE RefPublicationId = 1");
-    qrySongPub = qrySongPub[0].EnglishSymbol;
-    var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%" + qrySongPub + "%' ORDER BY BeginParagraphOrdinal");
-    var qrySongPubMedia = await executeStatement(db, "SELECT KeySymbol FROM Multimedia Where KeySymbol LIKE '%" + qrySongPub + "%' LIMIT 1");
-    qrySongPubMedia = qrySongPubMedia[0].KeySymbol;
-    for (var s = 0; s < qrySongs.length; s++) {
-      var song = qrySongs[s];
-      song.SongNumber = song.Caption.replace(/\D/g, "");
-      song.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
-      song.FileOrder = s;
-      song.SongPub = qrySongPubMedia;
-      await getSong(song);
-    }
-    for (var l = 0; l < qryLocalMedia.length; l++) {
-      var localMedia = qryLocalMedia[l];
-      localMedia.FileType = localMedia.FilePath.split(".").pop();
-      if ((localMedia.MimeType.includes("audio") || localMedia.MimeType.includes("video"))) {
-        if (localMedia.KeySymbol == null) {
-          localMedia.JsonUrl = jwGetPubMediaLinks + "&docid=" + localMedia.MultiMeps + "&langwritten=" + prefs.lang;
-        } else {
-          localMedia.JsonUrl = jwGetPubMediaLinks + "&pub=" + localMedia.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + localMedia.IssueTagNumber + "&track=" + localMedia.Track;
-        }
-        if (localMedia.MimeType.includes("video")) {
-          localMedia.JsonUrl = localMedia.JsonUrl + "&fileformat=MP4";
-        } else if (localMedia.MimeType.includes("audio")) {
-          localMedia.JsonUrl = localMedia.JsonUrl + "&fileformat=MP3";
-        }
-        var json = await getJson({
-          url: localMedia.JsonUrl
-        });
-        localMedia.Json = Object.values(json.files[prefs.lang])[0];
-        if (localMedia.MimeType.includes("video")) {
-          localMedia.Json = localMedia.Json.filter(function(item) {
-            return item.label == "720p";
-          });
-        }
-      }
-      localMedia.FileType = localMedia.FilePath.split(".").pop();
-      localMedia.FileName = localMedia.Caption;
-      if (localMedia.Label.length == 0 && localMedia.Caption.length == 0) {
-        localMedia.FileName = "Media";
-      } else if (localMedia.Label.length > localMedia.Caption.length) {
-        localMedia.FileName = localMedia.Label;
-      }
-      localMedia.FileName = localMedia.FileName + "." + localMedia.FileType;
-      if (!localMedia.JsonUrl) {
-        localMedia.LocalPath = path.join(pubsPath, pubs.wt, issue, "JWPUB", "contents-decompressed", localMedia.FilePath);
-      }
-      localMedia.FileName = await sanitizeFilename("05-" + (l + 1).toString().padStart(2, "0") + " " + localMedia.FileName);
-      if (localMedia.Json) {
-        localMedia.FileName = "05-" + (l + 1).toString().padStart(2, "0") + " " + localMedia.Json[0].title + "." + path.extname(localMedia.Json[0].file.url);
-      }
-      localMedia.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"), localMedia.FileName);
-      localMedia.SourceDocumentId = qryDocuments[w].DocumentId;
-      if (dryrun) {
-        if (!dryrunResults[studyDate.format("YYYY-MM-DD")]) {
-          dryrunResults[studyDate.format("YYYY-MM-DD")] = [];
-        }
-        dryrunResults[studyDate.format("YYYY-MM-DD")].push({
-          name: localMedia.FileName,
-          congSpecific: false,
-          recurring: false
-        });
-      } else {
-        if (localMedia.Json) {
-          if (await downloadRequired({
-            json: localMedia.Json,
-            onlyFile: true
-          }, localMedia.DestPath)) {
-            var file = await downloadFile(localMedia.Json[0].file.url);
-            fs.writeFileSync(localMedia.DestPath, new Buffer(file));
-          }
-        } else {
-          copyFile({
-            file: localMedia.LocalPath,
-            destFile: localMedia.DestPath,
-            type: "copy"
-          });
-        }
-      }
-    }
-    $("#day" + prefs.weDay).removeClass("in-progress bg-warning");
-    if (!dryrun) {
-      $("#day" + prefs.weDay).addClass("bg-primary");
-    }
-  }
-  async function syncMwMeeting() {
-    $("#day" + prefs.mwDay).addClass("bg-warning in-progress");
-    mkdirSync(path.join(pubsPath, pubs.mwb));
-    var issue = baseDate.format("YYYYMM") + "00";
-    if (parseInt(baseDate.format("M")) % 2 == 0) {
-      issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
-    }
-    mkdirSync(path.join(pubsPath, pubs.mwb, issue));
-    var db = await getDbFromJwpub({
-      pub: pubs.mwb,
-      issue: issue
-    });
-    var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
-    var weeks = [];
-    for (var line of qryWeeks) {
-      if (dayjs(line.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
-        weeks.push(line.FirstDateOffset.toString());
-      }
-    }
-    var week = weeks[0];
-    var weekDay = dayjs(week, "YYYYMMDD").add(prefs.mwDay, "days");
-    mwMediaForWeek = {};
-    weekMediaFilesCopied = [];
-    var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
-    docId = docId[0].DocumentId;
-    var weekPath = path.join(mediaPath, weekDay.format("YYYY-MM-DD"));
-    mkdirSync(weekPath);
-    currentWeekDates.push(weekPath);
-    await getDocumentMultimedia({
-      week: weekDay.format("YYYYMMDD"),
-      db: db,
-      destDocId: docId
-    });
-    await getDocumentExtract({
-      week: weekDay.format("YYYYMMDD"),
-      db: db,
-      docId: docId
-    });
-    var internalRefs = await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94");
-    for (var internalRef of internalRefs) {
-      await getDocumentMultimedia({
-        week: weekDay.format("YYYYMMDD"),
-        db: db,
-        destDocId: internalRef.DocumentId,
-        srcDocId: internalRef.SourceDocumentId,
-        srcParId: internalRef.BeginParagraphOrdinal
+    try {
+      mkdirSync(path.join(pubsPath, pubs.wt));
+      var issue = baseDate.clone().subtract(2, "months").format("YYYYMM") + "00";
+      mkdirSync(path.join(pubsPath, pubs.wt, issue));
+      var db = await getDbFromJwpub({
+        pub: pubs.wt,
+        issue: issue
       });
-    }
-    for (var wM = 0; wM < Object.keys(mwMediaForWeek).length; wM++) {
-      for (var wMI = 0; wMI < Object.values(mwMediaForWeek)[wM].length; wMI++) {
-        var weekMediaItem = Object.values(mwMediaForWeek)[wM][wMI];
-        if (weekMediaItem.Json) {
-          weekMediaItem.FileName = weekMediaItem.Json[0].title + "." + path.extname(weekMediaItem.Json[0].file.url);
+      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
+      var qryDocuments = await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40");
+      var weeks = [],
+        studyDate, w;
+      for (var tempW = 0; tempW < qryWeeks.length; tempW++) {
+        studyDate = dayjs(qryWeeks[tempW].FirstDateOffset.toString(), "YYYYMMDD").add(prefs.weDay, "days");
+        if (studyDate.isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+          weeks.push(qryWeeks[tempW].FirstDateOffset.toString());
+          w = tempW;
         }
-        weekMediaItem.FileName = sanitizeFilename((wM + 1).toString().padStart(2, "0") + "-" + (wMI + 1).toString().padStart(2, "0") + " " + weekMediaItem.FileName);
-        weekMediaItem.DestPath = path.join(path.dirname(weekMediaItem.DestPath), weekMediaItem.FileName);
-        if (dryrun) {
-          if (!dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))]) {
-            dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))] = [];
+      }
+      var week = weeks[0];
+      if (!week) {
+        throw("No WE meeting date!");
+      }
+      studyDate = dayjs(week, "YYYYMMDD").add(prefs.weDay, "days");
+      var weekPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
+      mkdirSync(weekPath);
+      var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
+      var qrySongPub = await executeStatement(db, "SELECT EnglishSymbol FROM RefPublication WHERE RefPublicationId = 1");
+      qrySongPub = qrySongPub[0].EnglishSymbol;
+      var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%" + qrySongPub + "%' ORDER BY BeginParagraphOrdinal");
+      var qrySongPubMedia = await executeStatement(db, "SELECT KeySymbol FROM Multimedia Where KeySymbol LIKE '%" + qrySongPub + "%' LIMIT 1");
+      qrySongPubMedia = qrySongPubMedia[0].KeySymbol;
+      for (var s = 0; s < qrySongs.length; s++) {
+        var song = qrySongs[s];
+        song.SongNumber = song.Caption.replace(/\D/g, "");
+        song.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
+        song.FileOrder = s;
+        song.SongPub = qrySongPubMedia;
+        await getSong(song);
+      }
+      for (var l = 0; l < qryLocalMedia.length; l++) {
+        var localMedia = qryLocalMedia[l];
+        localMedia.FileType = localMedia.FilePath.split(".").pop();
+        if ((localMedia.MimeType.includes("audio") || localMedia.MimeType.includes("video"))) {
+          if (localMedia.KeySymbol == null) {
+            localMedia.JsonUrl = jwGetPubMediaLinks + "&docid=" + localMedia.MultiMeps + "&langwritten=" + prefs.lang;
+          } else {
+            localMedia.JsonUrl = jwGetPubMediaLinks + "&pub=" + localMedia.KeySymbol + "&langwritten=" + prefs.lang + "&issue=" + localMedia.IssueTagNumber + "&track=" + localMedia.Track;
           }
-          if (!dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))].some(e => e.name === weekMediaItem.FileName)) {
-            dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))].push({
-              name: weekMediaItem.FileName,
-              congSpecific: false,
-              recurring: false
+          if (localMedia.MimeType.includes("video")) {
+            localMedia.JsonUrl = localMedia.JsonUrl + "&fileformat=MP4";
+          } else if (localMedia.MimeType.includes("audio")) {
+            localMedia.JsonUrl = localMedia.JsonUrl + "&fileformat=MP3";
+          }
+          var json = await getJson({
+            url: localMedia.JsonUrl
+          });
+          localMedia.Json = Object.values(json.files[prefs.lang])[0];
+          if (localMedia.MimeType.includes("video")) {
+            localMedia.Json = localMedia.Json.filter(function(item) {
+              return item.label == "720p";
             });
           }
+        }
+        localMedia.FileType = localMedia.FilePath.split(".").pop();
+        localMedia.FileName = localMedia.Caption;
+        if (localMedia.Label.length == 0 && localMedia.Caption.length == 0) {
+          localMedia.FileName = "Media";
+        } else if (localMedia.Label.length > localMedia.Caption.length) {
+          localMedia.FileName = localMedia.Label;
+        }
+        localMedia.FileName = localMedia.FileName + "." + localMedia.FileType;
+        if (!localMedia.JsonUrl) {
+          localMedia.LocalPath = path.join(pubsPath, pubs.wt, issue, "JWPUB", "contents-decompressed", localMedia.FilePath);
+        }
+        localMedia.FileName = await sanitizeFilename("05-" + (l + 1).toString().padStart(2, "0") + " " + localMedia.FileName);
+        if (localMedia.Json) {
+          localMedia.FileName = "05-" + (l + 1).toString().padStart(2, "0") + " " + localMedia.Json[0].title + "." + path.extname(localMedia.Json[0].file.url);
+        }
+        localMedia.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"), localMedia.FileName);
+        localMedia.SourceDocumentId = qryDocuments[w].DocumentId;
+        if (dryrun) {
+          if (!dryrunResults[studyDate.format("YYYY-MM-DD")]) {
+            dryrunResults[studyDate.format("YYYY-MM-DD")] = [];
+          }
+          dryrunResults[studyDate.format("YYYY-MM-DD")].push({
+            name: localMedia.FileName,
+            congSpecific: false,
+            recurring: false
+          });
         } else {
-          if (weekMediaItem.Json) {
+          if (localMedia.Json) {
             if (await downloadRequired({
-              json: weekMediaItem.Json,
+              json: localMedia.Json,
               onlyFile: true
-            }, weekMediaItem.DestPath)) {
-              var file = await downloadFile(weekMediaItem.Json[0].file.url);
-              fs.writeFileSync(weekMediaItem.DestPath, new Buffer(file));
+            }, localMedia.DestPath)) {
+              var file = await downloadFile(localMedia.Json[0].file.url);
+              fs.writeFileSync(localMedia.DestPath, new Buffer(file));
             }
           } else {
             copyFile({
-              file: weekMediaItem.LocalPath,
-              destFile: weekMediaItem.DestPath,
+              file: localMedia.LocalPath,
+              destFile: localMedia.DestPath,
               type: "copy"
             });
           }
         }
       }
+      if (!dryrun) {
+        $("#day" + prefs.weDay).addClass("bg-primary");
+      }
+    } catch(err) {
+      console.log(err);
+      $("#day" + prefs.weDay).addClass("bg-danger");
+    }
+    $("#day" + prefs.weDay).removeClass("in-progress bg-warning");
+  }
+  async function syncMwMeeting() {
+    $("#day" + prefs.mwDay).addClass("bg-warning in-progress");
+    try{
+      mkdirSync(path.join(pubsPath, pubs.mwb));
+      var issue = baseDate.format("YYYYMM") + "00";
+      if (parseInt(baseDate.format("M")) % 2 == 0) {
+        issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
+      }
+      mkdirSync(path.join(pubsPath, pubs.mwb, issue));
+      var db = await getDbFromJwpub({
+        pub: pubs.mwb,
+        issue: issue
+      });
+      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
+      var weeks = [];
+      for (var line of qryWeeks) {
+        if (dayjs(line.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+          weeks.push(line.FirstDateOffset.toString());
+        }
+      }
+      var week = weeks[0];
+      if (!week) {
+        throw("No WE meeting date!");
+      }
+      var weekDay = dayjs(week, "YYYYMMDD").add(prefs.mwDay, "days");
+      mwMediaForWeek = {};
+      weekMediaFilesCopied = [];
+      var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
+      docId = docId[0].DocumentId;
+      var weekPath = path.join(mediaPath, weekDay.format("YYYY-MM-DD"));
+      mkdirSync(weekPath);
+      await getDocumentMultimedia({
+        week: weekDay.format("YYYYMMDD"),
+        db: db,
+        destDocId: docId
+      });
+      await getDocumentExtract({
+        week: weekDay.format("YYYYMMDD"),
+        db: db,
+        docId: docId
+      });
+      var internalRefs = await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94");
+      for (var internalRef of internalRefs) {
+        await getDocumentMultimedia({
+          week: weekDay.format("YYYYMMDD"),
+          db: db,
+          destDocId: internalRef.DocumentId,
+          srcDocId: internalRef.SourceDocumentId,
+          srcParId: internalRef.BeginParagraphOrdinal
+        });
+      }
+      for (var wM = 0; wM < Object.keys(mwMediaForWeek).length; wM++) {
+        for (var wMI = 0; wMI < Object.values(mwMediaForWeek)[wM].length; wMI++) {
+          var weekMediaItem = Object.values(mwMediaForWeek)[wM][wMI];
+          if (weekMediaItem.Json) {
+            weekMediaItem.FileName = weekMediaItem.Json[0].title + "." + path.extname(weekMediaItem.Json[0].file.url);
+          }
+          weekMediaItem.FileName = sanitizeFilename((wM + 1).toString().padStart(2, "0") + "-" + (wMI + 1).toString().padStart(2, "0") + " " + weekMediaItem.FileName);
+          weekMediaItem.DestPath = path.join(path.dirname(weekMediaItem.DestPath), weekMediaItem.FileName);
+          if (dryrun) {
+            if (!dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))]) {
+              dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))] = [];
+            }
+            if (!dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))].some(e => e.name === weekMediaItem.FileName)) {
+              dryrunResults[path.basename(path.dirname(weekMediaItem.DestPath))].push({
+                name: weekMediaItem.FileName,
+                congSpecific: false,
+                recurring: false
+              });
+            }
+          } else {
+            if (weekMediaItem.Json) {
+              if (await downloadRequired({
+                json: weekMediaItem.Json,
+                onlyFile: true
+              }, weekMediaItem.DestPath)) {
+                var file = await downloadFile(weekMediaItem.Json[0].file.url);
+                fs.writeFileSync(weekMediaItem.DestPath, new Buffer(file));
+              }
+            } else {
+              copyFile({
+                file: weekMediaItem.LocalPath,
+                destFile: weekMediaItem.DestPath,
+                type: "copy"
+              });
+            }
+          }
+        }
+      }
+      if (!dryrun) {
+        $("#day" + prefs.mwDay).addClass("bg-primary");
+      }
+    } catch(err) {
+      console.log(err);
+      $("#day" + prefs.mwDay).addClass("bg-danger");
     }
     $("#day" + prefs.mwDay).removeClass("in-progress bg-warning");
-    if (!dryrun) {
-      $("#day" + prefs.mwDay).addClass("bg-primary");
-    }
   }
   async function syncCongSpecific() {
     if (sftpIsAGo) {
       $("#statusIcon").addClass("fa-network-wired").removeClass("fa-photo-video");
       $("#specificCong").addClass("bg-warning in-progress");
       try {
+        if (typeof sftpClient === "object") {
+          sftpClient.end();
+        }
+        sftpClient = new Client();
+        await sftpClient.connect(sftpConfig);
         var congSpecificFolders = await sftpLs(path.posix.join(prefs.congServerDir, "Media"));
         var dirs = [];
         congSpecificFolders.forEach((folder) => {
@@ -1297,6 +1315,7 @@ function goAhead() {
             dirs.push([path.posix.join(prefs.congServerDir, "Media", folder.name), path.join(congSpecificFoldersParent, folder.name)]);
           }
         });
+        await sftpDownloadDirs(dirs);
         if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
           var recurringFiles = await sftpLs(path.posix.join(prefs.congServerDir, "Media", "Recurring"));
           for (var localRecurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
@@ -1304,14 +1323,11 @@ function goAhead() {
               fs.unlinkSync(path.join(pubsPath, "Recurring", localRecurringFile));
             }
           }
-        }
-        await sftpDownloadDirs(dirs);
-        if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
           for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
-            for (var meetingDate of currentWeekDates) {
+            for (var meetingDate of fs.readdirSync(path.join(mediaPath))) {
               copyFile({
                 file: path.join(pubsPath, "Recurring", recurringFile),
-                destFile: path.join(meetingDate, recurringFile),
+                destFile: path.join(mediaPath, meetingDate, recurringFile),
                 type: "copy"
               });
             }
@@ -1385,10 +1401,8 @@ function goAhead() {
       dryrunResults = {};
       await startMediaSync();
       $("#chooseMeeting").empty();
-      for (var meeting of Object.keys(dryrunResults)) {
-        if (meeting !== "Recurring") {
-          $("#chooseMeeting").append("<label class=\"btn btn-light\"><input type=\"radio\" name=\"chooseMeeting\" id=\"" + meeting + "\" autocomplete=\"off\"> " + meeting + "</label>");
-        }
+      for (var meeting of [prefs.mwDay, prefs.weDay]) {
+        $("#chooseMeeting").append("<label class=\"btn btn-light\"><input type=\"radio\" name=\"chooseMeeting\" id=\"" + baseDate.add(meeting, "d").format("YYYY-MM-DD") + "\" autocomplete=\"off\"> " + baseDate.add(meeting, "d").format("YYYY-MM-DD") + "</label>");
       }
       $(".relatedToUpload, .relatedToUploadType").fadeTo(400, 0);
       $("#enterPrefix input").on("keypress", function(e){
@@ -1498,6 +1512,9 @@ function goAhead() {
         try {
           if ($("#chooseMeeting input:checked").length > 0) {
             $("#fileList").fadeTo(400, 0, () => {
+              if (!dryrunResults[$("#chooseMeeting input:checked").prop("id")]) {
+                dryrunResults[$("#chooseMeeting input:checked").prop("id")] = [];
+              }
               var newList = dryrunResults[$("#chooseMeeting input:checked").prop("id")];
               var newFiles = [];
               if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
@@ -1647,7 +1664,7 @@ function goAhead() {
         $("#uploadSpinnerContainer").fadeTo(400, 0);
         $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
         $("#btnCancelUpload").prop("disabled", false);
-        $("#fileToUpload, #enterPrefix input").val("").empty();
+        $("#fileToUpload, #enterPrefix input").val("").empty().change();
         $("#chooseUploadType input:checked").prop("checked", false);
         $("#chooseUploadType .active").removeClass("active");
       } catch (err) {
