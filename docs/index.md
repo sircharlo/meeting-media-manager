@@ -14,7 +14,9 @@ After configuring the app, execute the media sync, and all downloaded media will
 
 ## Using with Zoom
 
-Of note is the setting to convert all media to MP4 format (**Settings > Convert all media to MP4**). This allows pictures and audio files to be shared along with videos using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature.
+Of note is the setting to convert downloaded media to MP4 format (**Settings > Convert downloaded media to MP4**). This allows pictures and audio files to be shared along with videos using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature. 
+
+The **Enable conversion of additional media** toggle will allow you to add any additional media before the MP4 conversion takes place, allowing you to quickly add custom media on the spot and be ready to share it as an MP4.
 
 ![Zoom Video share feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true)
 
@@ -28,7 +30,7 @@ The brother designated as _videoconference organizer_ by the body of elders can 
 
 ![Upload screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/03-upload.png?raw=true)
 
-Usage of these features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be syncronized should connect to the same SFTP server and directory using the **Settings > Local congregation SFTP server** screen.
+Usage of these congregation-level syncing features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be syncronized should connect to the same SFTP server and directory using the **Settings > SFTP server** screen.
 
 ![Upload settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/04-upload-settings.png?raw=true)
 
@@ -46,7 +48,7 @@ As per the [official AppImage documentation](https://docs.appimage.org/user-guid
 
 >AppImages based on Electron require the kernel to be configured in a certain way to allow for its sandboxing to work as intended (specifically, the kernel needs to be allowed to provide “unprivileged namespaces”). Many distributions come with this configured out of the box (like Ubuntu for instance), but some do not (for example Debian).
 
-Simply put, this means that if the AppImage fails to open properly, then you can confirm the output of the following command:
+Simply put, this means that if the AppImage fails to open properly, then you'll need to confirm the output of the following command:
 
 `sysctl kernel.unprivileged_userns_clone`
 
@@ -54,15 +56,15 @@ If the output is `kernel.unprivileged_userns_clone = 0`, then the AppImage will 
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Before you do this, make sure you read up on what this change entails, for example [here](https://lwn.net/Articles/673597/).
+Before you do this however, make sure you read up on what this change entails, for example [here](https://lwn.net/Articles/673597/).
 
 ### Mac
 
-For various technical reasons, the auto-updater does not yet work on Macs. Mac users will have to periodically check for updates to this app and install them on their own.
+For technical reasons, the auto-updater does not work on Macs. Mac users will however see a button displayed on the main screen of the app when an update is available. Clicking on this button will take you to the latest release's download page automatically.
 
-## Does this app depend on external sites or sources to download publications or media?
+## Does this app depend on external sites, sources or curators to download publications or media?
 
-No, the app behaves similarly to JW Library in that it downloads data such as publications and media directly from the official JW website and content delivery network. The source code is available for all to examine and verify this.
+No, the app behaves similarly to JW Library in that it downloads data such as publications and media directly from the official JW website and content delivery network. The media and publications to be downloaded are automatically determined at runtime. The source code is available for all to examine and verify this.
 
 ## Does this app infringe the JW.org Terms of Use?
 
