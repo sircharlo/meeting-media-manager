@@ -49,7 +49,7 @@
   "devDependencies": {
     "electron": "^11.3.0",
     "electron-builder": "^22.9.1",
-    "eslint": "^7.20.0"
+    "eslint": "^7.21.0"
   },
   "scripts": {
     "start": "electron .",
