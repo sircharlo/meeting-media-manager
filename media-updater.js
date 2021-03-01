@@ -48,12 +48,11 @@ require("electron").ipcRenderer.on("goAhead", () => {
 
 function goAhead() {
   const axios = require("axios"),
-    bcrypt = require("bcryptjs"),
     Client = require("ssh2-sftp-client"),
-    fs = require("graceful-fs"),
-    glob = require("glob"),
     dayjs = require("dayjs"),
     ffmpeg = require("fluent-ffmpeg"),
+    fs = require("graceful-fs"),
+    glob = require("glob"),
     os = require("os"),
     path = require("path"),
     sqljs = require("sql.js"),
@@ -749,16 +748,6 @@ function goAhead() {
       if (!(Object.keys(prefs).includes(pref))) {
         prefs[pref] = null;
       }
-    }
-    if (prefs.congPass && prefs.congPass.length > 0 && bcrypt.compareSync(prefs.congPass, "$2b$10$Kc4.iOKBP9KXfwQAHUJ0Ieyg0m8EC8nrhPaMigeGPonQ85EMaCJv6")) {
-      prefs.congServer = new Buffer("c2lyY2hhcmxvLmhvcHRvLm9yZw==", "base64").toString("ascii");
-      prefs.congServerPort = new Buffer("NDMyMzQ=", "base64").toString("ascii");
-      prefs.congServerDir = path.posix.join("/", prefs.cong);
-      prefs.congServerUser = new Buffer("Y29uZ21lZGlh", "base64").toString("ascii");
-      prefs.congServerPass = prefs.congPass;
-      delete prefs.congPass;
-      delete prefs.cong;
-      fs.writeFileSync(prefsFile, JSON.stringify(prefs, null, 2));
     }
     for (var field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir"]) {
       $("#" + field).val(prefs[field]).change();
