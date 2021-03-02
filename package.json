@@ -12,7 +12,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "dayjs": "^1.10.4",
-    "electron-updater": "^4.3.5",
+    "electron-updater": "^4.3.8",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.1.6",
     "graceful-fs": "^4.2.6",
