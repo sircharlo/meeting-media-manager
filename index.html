@@ -3,7 +3,8 @@
 
 <head>
   <title>JW Meeting Media Fetcher</title>
-  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="node_modules/bootstrap-dark-4/dist/bootstrap-dark.min.css">
   <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
   <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
   <style>
@@ -13,9 +14,8 @@
       height: 100%;
     }
 
-    .overlay,
-    #overlaySettings {
-      background: #fff;
+    .overlay {
+      background: var(--light);
       position: fixed;
       height: 100%;
       width: 100%;
@@ -89,25 +89,25 @@
     }
 
     .invalid {
-      background-color: rgba(220, 53, 69, 0.25) !important;
-      border-color: #dc3545 !important;
+      /* background-color: var(--red) !important; */
+      border-color: var(--danger) !important;
     }
 
     .notValidYet {
-      background-color: rgba(255, 193, 7, 0.25) !important;
+      border-color: var(--warning) !important;
     }
 
     .valid {
-      background-color: rgba(40, 167, 69, 0.25) !important;
+      border-color: var(--success) !important;
     }
 
     #outputPath,
     #fileToUpload {
-      background-color: #fff;
+      background-color: var(--white);
     }
 
     #version span.badge {
-      color: #999;
+      color: var(--dark);
       font-weight: normal;
     }
 
@@ -151,13 +151,14 @@
     .zoom {
       height: 3em;
       width: 3em;
-      background-color: #f8f9fa;
+      background-color: var(--light);
     }
 
     .meeting,
     .congregation,
     .zoom {
-      background-color: #6c757d;
+      background-color: var(--secondary);
+      color: var(--white);
     }
 
     .in-progress {
@@ -193,7 +194,7 @@
     }
 
     .file-list li:not(.confirmDelete):hover {
-      background-color: #eee;
+      background-color: var(--light);
     }
 
     .video {
@@ -290,6 +291,7 @@
       text-overflow: ellipsis;
     }
   </style>
+  <meta name="color-scheme" content="light dark">
   <script>
     window.$ = window.jQuery = require('jquery');
     window.popperjs = require('popper.js');
@@ -370,7 +372,7 @@
       </div>
     </div>
   </div>
-  <div id="overlayDryrun" class="overlay justify-content-center bg-light" style="display: none;">
+  <div id="overlayDryrun" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
       <div class="align-self-center text-dark fa-5x" role="status">
         <i class="fas fa-fw fa-tasks"></i>
@@ -415,7 +417,7 @@
       </div>
     </div>
   </div>
-  <div id="overlayUploadFile" class="overlay flex-column p-4 bg-light" style="display: none;">
+  <div id="overlayUploadFile" class="overlay flex-column p-4" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
       <i class="fas fa-fw fa-cloud-upload-alt fa-3x text-muted"></i>
     </div>
@@ -490,7 +492,7 @@
       </div>
     </div>
   </div>
-  <div id="overlaySettings" class="flex-column p-4 bg-light" style="display: none;">
+  <div id="overlaySettings" class="flex-column p-4 overlay" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
       <i id="settingsIcon" class="fas fa-fw fa-user-cog fa-3x text-muted"></i>
     </div>
@@ -634,7 +636,7 @@
       <span class="badge"></span>
     </div>
   </div>
-  <div id="overlaySftp" class="flex-column p-4 bg-light overlay" style="display: none;">
+  <div id="overlaySftp" class="flex-column p-4 overlay" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
       <i id="sftpStatus" class="fas fa-fw fa-network-wired fa-3x text-muted"></i>
     </div>
@@ -729,8 +731,8 @@
         </div>
       </div>
       <div class="d-flex">
-        <div id="specificCong" class="m-1 px-3 text-light congregation align-items-center justify-content-center" style="display: none;">Congregation media</div>
-        <div id="zoomRender" class="m-1 px-3 text-light zoom align-items-center justify-content-center" style="display: none;">MP4 conversion</div>
+        <div id="specificCong" class="m-1 px-3 congregation align-items-center justify-content-center" style="display: none;">Congregation media</div>
+        <div id="zoomRender" class="m-1 px-3 zoom align-items-center justify-content-center" style="display: none;">MP4 conversion</div>
       </div>
     </div>
     <div class="d-flex justify-content-center">

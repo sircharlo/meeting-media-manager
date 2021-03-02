@@ -170,8 +170,8 @@ function goAhead() {
     });
   });
   $("#mwDay input, #weDay input").on("change", function() {
-    $("div.meeting.text-light").removeClass("meeting text-light");
-    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting text-light");
+    $("div.meeting").removeClass("meeting");
+    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   });
   $("#mediaSync").on("click", async function() {
     dryrun = false;
@@ -619,7 +619,7 @@ function goAhead() {
     configIsValid();
     $("#version span.badge").html("v" + window.require("electron").remote.app.getVersion());
     await sftpSetup();
-    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting text-light");
+    $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     if (prefs.autoStartSync && configIsValid()) {
       var cancelSync = false;
       $("#btnCancelSync").on("click", function() {
@@ -745,7 +745,7 @@ function goAhead() {
   }
   function prefsInitialize() {
     for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt"]) {
-      if (!(Object.keys(prefs).includes(pref))) {
+      if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) {
         prefs[pref] = null;
       }
     }
