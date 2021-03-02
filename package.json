@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "electron": "^11.3.0",
-    "electron-builder": "^22.9.1",
+    "electron-builder": "^22.10.5",
     "eslint": "^7.21.0"
   },
   "scripts": {
