@@ -18,7 +18,7 @@
     "glob": "^7.1.6",
     "graceful-fs": "^4.2.6",
     "is-port-reachable": "^3.0.0",
-    "jquery": "^3.5.1",
+    "jquery": "^3.6.0",
     "os": "^0.1.1",
     "path": "^0.12.7",
     "popper.js": "^1.16.1",
