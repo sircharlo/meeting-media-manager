@@ -6,6 +6,7 @@ const {
     autoUpdater
   } = require("electron-updater"),
   os = require("os");
+require("@electron/remote/main").initialize();
 var win = {};
 
 function createUpdateWindow() {

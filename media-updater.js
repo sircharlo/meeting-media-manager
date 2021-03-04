@@ -1,4 +1,6 @@
 const isPortReachable = require("is-port-reachable"),
+  remoteApp = require("@electron/remote").app,
+  remoteDialog = require("@electron/remote").dialog,
   {shell} = require("electron"),
   $ = require("jquery");
 async function checkInternet() {
@@ -57,7 +59,7 @@ function goAhead() {
     path = require("path"),
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
-    appPath = require("electron").remote.app.getPath("userData"),
+    appPath = remoteApp.getPath("userData"),
     jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
     langsFile = path.join(appPath, "langs.json"),
     prefsFile = path.join(appPath, "prefs.json"),
@@ -102,7 +104,7 @@ function goAhead() {
     $(".notLinux").removeClass("d-flex").hide();
   }
   $("#outputPath").on("click", function() {
-    var path = require("electron").remote.dialog.showOpenDialogSync({
+    var path = remoteDialog.showOpenDialogSync({
       properties: ["openDirectory"]
     });
     $(this).val(path).change();
@@ -165,7 +167,7 @@ function goAhead() {
     configIsValid();
   });
   $("#autoRunAtBoot").on("change", function() {
-    window.require("electron").remote.app.setLoginItemSettings({
+    remoteApp.setLoginItemSettings({
       openAtLogin: prefs.autoRunAtBoot
     });
   });
@@ -194,7 +196,7 @@ function goAhead() {
           toggleScreen("overlaySettings");
           $("#btnStayAlive").removeClass("btn-success").addClass("btn-primary").fadeTo(400, 0);
         } else {
-          window.require("electron").remote.app.quit();
+          remoteApp.quit();
         }
       }
       $("#home, .btn-settings, #btn-settings").fadeTo(400, 1);
@@ -617,7 +619,7 @@ function goAhead() {
   async function getInitialData() {
     await getLanguages();
     configIsValid();
-    $("#version span.badge").html("v" + window.require("electron").remote.app.getVersion());
+    $("#version span.badge").html("v" + remoteApp.getVersion());
     await sftpSetup();
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     if (prefs.autoStartSync && configIsValid()) {
@@ -1662,7 +1664,7 @@ function goAhead() {
     });
   });
   $("#overlayUploadFile").on("click", "input#fileToUpload", function() {
-    var path = require("electron").remote.dialog.showOpenDialogSync({
+    var path = remoteDialog.showOpenDialogSync({
       properties: ["multiSelections"]
     });
     if (typeof path !== "undefined") {
