@@ -665,7 +665,7 @@ function goAhead() {
     return response;
   }
   async function getLanguages() {
-    if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(dayjs().subtract(6, "months")) || dayjs(prefs.langUpdatedLast).isBefore(dayjs("2021-02-04"))) {
+    if ((!fs.existsSync(langsFile)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(dayjs().subtract(3, "months")) || dayjs(prefs.langUpdatedLast).isBefore(dayjs("2021-02-04"))) {
       var jwLangs = await getJson({
         url: "https://www.jw.org/en/languages/"
       });
