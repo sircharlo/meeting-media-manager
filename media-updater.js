@@ -57,6 +57,7 @@ function goAhead() {
     glob = require("glob"),
     os = require("os"),
     path = require("path"),
+    sharp = require("sharp"),
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
     appPath = remoteApp.getPath("userData"),
@@ -292,6 +293,29 @@ function goAhead() {
       return false;
     }
   }
+  async function convertUnusableFiles() {
+    for (var mediaFile of glob.sync(path.join(mediaPath, "*", "*"))) {
+      try {
+        var mediaFileExt = path.extname(mediaFile).toLowerCase();
+        if (mediaFileExt == ".svg") {
+          await sharp(mediaFile, {
+            density: 300
+          })
+            .resize({ height: 1080 })
+            .png()
+            .toFile(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png"))
+            .then(function() {
+              fs.rmSync(mediaFile);
+            })
+            .catch(function(err) {
+              console.error(err);
+            });
+        }
+      } catch(err) {
+        console.error(err);
+      }
+    }
+  }
   function createVideoSync(mediaDir, media){
     return new Promise((resolve)=>{
       var mediaName = path.basename(media, path.extname(media));
@@ -321,7 +345,7 @@ function goAhead() {
           })
           .videoCodec("libx264")
           .noAudio()
-          .size("?x720")
+          .size("?x1080")
           .loop(loop)
           .outputOptions("-pix_fmt yuv420p")
           .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
@@ -1048,6 +1072,7 @@ function goAhead() {
     await syncMwMeeting();
     await syncWeMeeting();
     await syncCongSpecific();
+    await convertUnusableFiles();
     await ffmpegConvert();
     if (prefs.openFolderWhenDone && !dryrun) {
       var openPath = mediaPath;
