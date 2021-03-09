@@ -59,7 +59,6 @@ function goAhead() {
     path = require("path"),
     //    sharp = require("sharp"),
     sqljs = require("sql.js"),
-    svg2png = require("svpng"),
     zipper = require("zip-local"),
     appPath = remoteApp.getPath("userData"),
     jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
@@ -299,7 +298,7 @@ function goAhead() {
       try {
         var mediaFileExt = path.extname(mediaFile).toLowerCase();
         if (mediaFileExt == ".svg") {
-          var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
+          //var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
           /*await sharp(mediaFile, {
             density: 300
           })
@@ -312,10 +311,7 @@ function goAhead() {
             .catch(function(err) {
               console.error(err);
             });*/
-          await svg2png(mediaFile, mediaFileConverted, {
-            height: 1080
-          });
-          fs.rmSync(mediaFile);
+          console.log("Files like this will be converted in the near future:", path.basename(mediaFile));
         }
       } catch(err) {
         console.error(err);

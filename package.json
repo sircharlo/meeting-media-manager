@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.89",
+  "version": "0.8.90",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -24,11 +24,8 @@
     "path": "^0.12.7",
     "popper.js": "^1.16.1",
     "select2": "^4.1.0-rc.0",
-    "sharp": "^0.27.2",
     "sql.js": "^1.4.0",
     "ssh2-sftp-client": "^6.0.1",
-    "svgexport": "^0.4.1",
-    "svpng": "^1.1.1",
     "zip-local": "^0.3.4"
   },
   "build": {
