@@ -14,7 +14,7 @@ async function checkInternet() {
       require("electron").ipcRenderer.send("noInternet");
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 }
 
@@ -94,7 +94,7 @@ function goAhead() {
     try {
       prefs = JSON.parse(fs.readFileSync(prefsFile));
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
     prefsInitialize();
   }
@@ -302,7 +302,7 @@ function goAhead() {
             return resolve();
           })
           .on("error", function(err) {
-            console.log(err.message);
+            console.error(err.message);
             return resolve();
           })
           .noVideo()
@@ -316,7 +316,7 @@ function goAhead() {
             return resolve();
           })
           .on("error", function(err) {
-            console.log(err.message);
+            console.error(err.message);
             return resolve();
           })
           .videoCodec("libx264")
@@ -360,7 +360,7 @@ function goAhead() {
       });
       return response.data;
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return err;
     }
   }
@@ -493,7 +493,7 @@ function goAhead() {
         return sqldb;
       }
     } catch (err) {
-      console.log(err, opts, json);
+      console.error(err, opts, json);
     }
   }
   async function getDocumentExtract(opts) {
@@ -608,12 +608,12 @@ function goAhead() {
               console.log("%cInclude referenced media from [" + media.KeySymbol + "]: " + media.relevant, (media.relevant ? "background-color: #d4edda; color: #155724;" : "background-color: #f8d7da; color: #721c24;"), "(", media.BeginParagraphOrdinal, media.EndParagraphOrdinal, "/", opts.refParStart, opts.refParEnd, ")", media);
             }
           } catch (err) {
-            console.log(err);
+            console.error(err);
           }
         }
       }
     } catch (err) {
-      console.log(err, opts);
+      console.error(err, opts);
     }
   }
   async function getInitialData() {
@@ -660,7 +660,7 @@ function goAhead() {
       payload = await axios.get(jsonUrl);
       response = payload.data;
     } catch (err) {
-      console.log(err, payload);
+      console.error(err, payload);
     }
     return response;
   }
@@ -733,7 +733,7 @@ function goAhead() {
         }
       }
     } catch(err) {
-      console.log(err);
+      console.error(err);
     }
   }
   function mkdirSync(dirPath) {
@@ -784,7 +784,7 @@ function goAhead() {
             fs.unlinkSync(path.join(mediaPath, hiddenFilesFolder.name, hiddenFile.name));
             console.log("%cFile deleted [" + hiddenFilesFolder.name + "]: " + hiddenFile.name, "background-color: #fff3cd; color: #856404;");
           } catch(err) {
-            console.log(err);
+            console.error(err);
           }
         }
       }
@@ -793,7 +793,7 @@ function goAhead() {
   function sanitizeFilename(filename) {
     filename = filename.match(/(\p{Script=Cyrillic}*\p{Script=Latin}*[-. 0-9]*)/ug)
       .join("")
-      .replace(/[?!"»“«()\\[\]№—$]*/g, "")
+      .replace(/[?!"»“”‘’«()\\[\]№—$]*/g, "")
       .replace(/[;:,|/]+/g, " - ")
       .replace(/ +/g, " ")
       .replace(/\.+/g, ".")
@@ -831,7 +831,7 @@ function goAhead() {
       zoomPath = path.join(langPath, "Zoom");
       mkdirSync(zoomPath);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
   async function sftpDownloadDirs(dirs) {
@@ -874,7 +874,7 @@ function goAhead() {
         }
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
   async function sftpLs(dir, force) {
@@ -887,7 +887,7 @@ function goAhead() {
         return result;
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       throw(err);
     }
   }
@@ -903,7 +903,7 @@ function goAhead() {
         }
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
   async function sftpRm(dir, file) {
@@ -914,7 +914,7 @@ function goAhead() {
         }
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
   async function sftpSetup() {
@@ -955,7 +955,7 @@ function goAhead() {
           sftpLoginSuccessful = true;
           $("#sftpStatus").addClass("text-success");
         } catch(err) {
-          console.log(err);
+          console.error(err);
           $("#sftpStatus").addClass("text-danger");
           $(".sftpCreds").addClass("invalid");
         }
@@ -985,7 +985,7 @@ function goAhead() {
             $("#sftpFolderList").css("column-count", Math.ceil($("#sftpFolderList li").length / 4));
           }
         } catch(err) {
-          console.log(err);
+          console.error(err);
         }
         if (sftpDirIsValid) {
           $("#sftpFolderList").fadeTo(400, 1);
@@ -1034,7 +1034,7 @@ function goAhead() {
         });
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
   async function startMediaSync() {
@@ -1177,7 +1177,7 @@ function goAhead() {
         $("#day" + prefs.weDay).addClass("bg-primary");
       }
     } catch(err) {
-      console.log(err);
+      console.error(err);
       $("#day" + prefs.weDay).addClass("bg-danger");
     }
     $("#day" + prefs.weDay).removeClass("in-progress bg-warning");
@@ -1275,7 +1275,7 @@ function goAhead() {
         $("#day" + prefs.mwDay).addClass("bg-primary");
       }
     } catch(err) {
-      console.log(err);
+      console.error(err);
       $("#day" + prefs.mwDay).addClass("bg-danger");
     }
     $("#day" + prefs.mwDay).removeClass("in-progress bg-warning");
@@ -1326,7 +1326,7 @@ function goAhead() {
         }
         await removeHiddenMedia();
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
       $("#specificCong").removeClass("in-progress bg-warning");
       if (!dryrun) {
@@ -1403,7 +1403,7 @@ function goAhead() {
             /[0-9]/.test(String.fromCharCode(e.which)); // numbers
       });
       $("#chooseUploadType").on("change", async function() {
-        $(".localOrRemoteFile, .localOrRemoteFileCont, .file-to-upload .select2").remove();
+        $(".localOrRemoteFile, .localOrRemoteFileCont, .file-to-upload .select2, #fileToUpload").remove();
         var newElem = "";
         if ($("#chooseUploadType label:nth-child(1) input:checked").length > 0) {
           $(".songsSpinner").show();
@@ -1428,13 +1428,43 @@ function goAhead() {
             $("#chooseUploadType label:nth-child(1)").removeClass("active").addClass("disabled").next().addClass("active");
           }
           $(".songsSpinner").hide();
-        } else {
+        } else if ($("#chooseUploadType label:nth-child(2) input:checked").length > 0) {
           newElem = "<input type=\"text\" class=\"relatedToUpload form-control form-control-sm half localOrRemoteFile\" id=\"fileToUpload\" required readonly />";
+        } else {
+          $(".songsSpinner").show();
+          newElem = $("<select class=\"form-control form-control-sm half localOrRemoteFile\" id=\"s34Picker\">");
+          var s34Talks = await sftpLs(path.posix.join(prefs.congServerDir, "S-34"));
+          if (s34Talks.length == 0) {
+            $("#chooseUploadType label:nth-child(2)").click();
+            $("#chooseUploadType label:nth-child(3)").removeClass("active").addClass("disabled").prev().addClass("active");
+            console.error("S-34 path appears unreachable:", path.posix.join(prefs.congServerDir, "S-34"));
+          } else {
+            s34Talks = s34Talks.sort((a, b) => a.name.replace(/\D/g,"").localeCompare(b.name.replace(/\D/g,"")));
+            for (var s34Talk of s34Talks) {
+              $(newElem).append($("<option>", {
+                value: sanitizeFilename(s34Talk.name),
+                text: s34Talk.name
+              }));
+            }
+            $(newElem).val([]).on("change", async function() {
+              var s34Talk = $(this).val();
+              if (s34Talk) {
+                var s34TalkFiles = await sftpLs(path.posix.join(prefs.congServerDir, "S-34", s34Talk)),
+                  s34Filenames = [];
+                for (var s34TalkFile of s34TalkFiles) {
+                  s34Filenames.push(s34TalkFile.name);
+                }
+                $("#fileToUpload").val(s34Filenames.sort().join(" -//- ")).change();
+              }
+            });
+          }
+          $(".songsSpinner").hide();
         }
         if ($("#fileToUpload").length == 0) {
           $(".file-to-upload").append(newElem);
-          $("#fileToUpload").change();
-          $("select#fileToUpload").wrap("<div class='half localOrRemoteFileCont'>").select2();
+          $("#fileToUpload, #s34Picker").change();
+          $("select#fileToUpload, select#s34Picker").wrap("<div class='half localOrRemoteFileCont'>").select2();
+          $("#s34Picker").after("<input type=\"hidden\" id=\"fileToUpload\" />");
         }
       });
 
@@ -1480,11 +1510,11 @@ function goAhead() {
         $("#fileToUpload").val("");
         if ($("#chooseMeeting label:nth-child(2) input:checked").length > 0) {
           $("#chooseUploadType label.active").removeClass("active");
-          $("#chooseUploadType label:nth-child(1) input").prop("disabled", false);
-          $("#chooseUploadType label:nth-child(1)").removeClass("disabled").fadeIn();
+          $("#chooseUploadType label:nth-child(1) input, #chooseUploadType label:nth-child(3) input").prop("disabled", false);
+          $("#chooseUploadType label:nth-child(1), #chooseUploadType label:nth-child(3)").removeClass("disabled").fadeIn();
         } else {
-          $("#chooseUploadType label:nth-child(1) input").prop("disabled", true);
-          $("#chooseUploadType label:nth-child(1)").fadeOut().addClass("disabled");
+          $("#chooseUploadType label:nth-child(1) input, #chooseUploadType label:nth-child(3) input").prop("disabled", true);
+          $("#chooseUploadType label:nth-child(1), #chooseUploadType label:nth-child(3)").fadeOut().addClass("disabled");
           $("#chooseUploadType label:nth-child(2)").click().addClass("active");
         }
         $(".relatedToUploadType").fadeTo(400, 1);
@@ -1605,7 +1635,7 @@ function goAhead() {
             });
           }
         } catch (err) {
-          console.log(err);
+          console.error(err);
         }
       });
       $("#overlayUploadFile").fadeIn(400, () => {
@@ -1644,6 +1674,16 @@ function goAhead() {
         }
         for (var splitFileToUpload of localOrRemoteFile) {
           var splitFileToUploadName = sanitizeFilename(prefix + " " + path.basename(splitFileToUpload)).trim();
+          if ($("#chooseUploadType label:nth-child(3) input:checked").length > 0) {
+            var tempFile = path.join(os.tmpdir(), splitFileToUploadName);
+            await sftpClient.fastGet(path.posix.join(prefs.congServerDir, "S-34", $("#s34Picker option:selected").val(), splitFileToUpload), tempFile, {
+              step: function(totalTransferred, chunk, total) {
+                var percent = totalTransferred / total * 100;
+                progressSet(percent, path.basename(tempFile));
+              }
+            });
+            splitFileToUpload = tempFile;
+          }
           await sftpUpload(splitFileToUpload, path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), splitFileToUploadName);
           $("#fileList li:contains(" + splitFileToUploadName + ")").removeClass("new-file text-primary").prepend("<i class='fas fw fa-minus-circle'></i>");
           dryrunResults[$("#chooseMeeting input:checked").prop("id")].push({
@@ -1652,6 +1692,7 @@ function goAhead() {
             recurring: false
           });
         }
+        progressSet(100);
         $("#uploadSpinnerContainer").fadeTo(400, 0);
         $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
         $("#btnCancelUpload").prop("disabled", false);
@@ -1659,7 +1700,7 @@ function goAhead() {
         $("#chooseUploadType input:checked").prop("checked", false);
         $("#chooseUploadType .active").removeClass("active");
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     });
   });
