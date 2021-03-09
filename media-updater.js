@@ -57,7 +57,7 @@ function goAhead() {
     glob = require("glob"),
     os = require("os"),
     path = require("path"),
-    sharp = require("sharp"),
+    //    sharp = require("sharp"),
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
     appPath = remoteApp.getPath("userData"),
@@ -298,7 +298,7 @@ function goAhead() {
       try {
         var mediaFileExt = path.extname(mediaFile).toLowerCase();
         if (mediaFileExt == ".svg") {
-          await sharp(mediaFile, {
+          /*await sharp(mediaFile, {
             density: 300
           })
             .resize({ height: 1080 })
@@ -309,7 +309,7 @@ function goAhead() {
             })
             .catch(function(err) {
               console.error(err);
-            });
+            });*/
         }
       } catch(err) {
         console.error(err);
