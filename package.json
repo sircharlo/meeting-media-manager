@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.89",
+  "version": "0.8.88",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -27,6 +27,8 @@
     "sharp": "^0.27.2",
     "sql.js": "^1.4.0",
     "ssh2-sftp-client": "^6.0.1",
+    "svgexport": "^0.4.1",
+    "svpng": "^1.1.1",
     "zip-local": "^0.3.4"
   },
   "build": {
@@ -59,6 +61,7 @@
     "pack-win": "electron-builder --win",
     "pack-win-test": "electron-builder --dir --win",
     "pack-linux-test": "electron-builder --dir --linux",
+    "pack-linux": "electron-builder --linux",
     "publish": "electron-builder --win -p always",
     "publish-linux": "electron-builder --linux -p always",
     "postinstall": "electron-builder install-app-deps",
