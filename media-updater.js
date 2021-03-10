@@ -57,7 +57,6 @@ function goAhead() {
     glob = require("glob"),
     os = require("os"),
     path = require("path"),
-    //    sharp = require("sharp"),
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
     appPath = remoteApp.getPath("userData"),
@@ -293,25 +292,32 @@ function goAhead() {
       return false;
     }
   }
+  function convertSvg(mediaFile) {
+    return new Promise((resolve)=>{
+      var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
+      var svgFile = window.URL.createObjectURL(new Blob([fs.readFileSync(mediaFile, "utf8").replace(/(<svg[ a-zA-Z=":/.0-9%]*)(width="[0-9%]*")([ a-zA-Z=":/.0-9%]*>)/gm, "$1height=\"1080\"$3")], {type:"image/svg+xml;charset=utf-8"}));
+      $("body").append("<div id='svg' style='position: absolute; top: 0;'>");
+      $("div#svg").hide().append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
+      $("img#svgImg").on("load", function() {
+        var canvas = $("#svgCanvas")[0],
+          image = $("img#svgImg")[0];
+        canvas.height = image.height;
+        canvas.width  = image.width;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        fs.writeFileSync(mediaFileConverted, new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+        fs.rmSync(mediaFile);
+        $("div#svg").remove();
+        return resolve();
+      });
+      $("img#svgImg").hide().prop("src", svgFile);
+    });
+  }
   async function convertUnusableFiles() {
     for (var mediaFile of glob.sync(path.join(mediaPath, "*", "*"))) {
       try {
         var mediaFileExt = path.extname(mediaFile).toLowerCase();
         if (mediaFileExt == ".svg") {
-          //var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
-          /*await sharp(mediaFile, {
-            density: 300
-          })
-            .resize({ height: 1080 })
-            .png()
-            .toFile(mediaFileConverted)
-            .then(function() {
-              fs.rmSync(mediaFile);
-            })
-            .catch(function(err) {
-              console.error(err);
-            });*/
-          console.log("Files like this will be converted in the near future:", path.basename(mediaFile));
+          await convertSvg(mediaFile);
         }
       } catch(err) {
         console.error(err);
