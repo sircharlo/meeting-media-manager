@@ -49,7 +49,7 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^12.0.0",
+    "electron": "^12.0.1",
     "electron-builder": "^22.10.5",
     "eslint": "^7.21.0"
   },
