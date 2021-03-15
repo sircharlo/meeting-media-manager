@@ -14,15 +14,15 @@ After configuring the app, execute the media sync, and all downloaded media will
 
 ## Using with Zoom
 
-Of note is the setting to convert downloaded media to MP4 format (**Settings > Convert downloaded media to MP4**). This allows pictures and audio files to be shared along with videos using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature. 
+Of note is the setting to convert downloaded media to MP4 format (**Settings > Convert downloaded media to MP4**). This allows pictures and audio files to be shared along with videos using the native Zoom MP4 sharing feature (new as of February 1st, 2021). This is much easier and results in better quality for the meeting participants than simply sharing your local monitor or your media playback app's window through Zoom's screen sharing feature.
 
-The **Enable conversion of additional media** toggle will allow you to add any additional media before the MP4 conversion takes place, allowing you to quickly add custom media on the spot and be ready to share it as an MP4.
+The **Enable conversion of external media** toggle will allow you to quickly add external media to the MP4 conversion queue after the media sync has taken place. This would enable you, for example, to add your own custom pictures so that they too can be shared as MP4 files.
 
 ![Zoom Video share feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true)
 
 ## Congregation media syncing
 
-The brother designated as _videoconference organizer_ by the body of elders can use **JWMMF** to manage what media will be available to the person taking care of media for a given meeting. For example, he can:
+The brother designated as _videoconference organizer_ by the body of elders can use **JWMMF** to manage what media will be available to the person or team taking care of media for a given meeting. For example, he can:
 
 - upload additional media to be shared for a meeting (such as for the circuit overseer's visit, or for public speakers' talks)
 - hide media that for one reason or another is not relevant for a given meeting
@@ -30,7 +30,7 @@ The brother designated as _videoconference organizer_ by the body of elders can 
 
 ![Upload screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/03-upload.png?raw=true)
 
-Usage of these congregation-level syncing features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be syncronized should connect to the same SFTP server and directory using the **Settings > SFTP server** screen.
+Usage of these congregation-level syncing features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be synchronized should connect to the same SFTP server and directory using the **Settings > SFTP server** screen.
 
 ![Upload settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/04-upload-settings.png?raw=true)
 
