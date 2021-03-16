@@ -328,16 +328,18 @@ function goAhead() {
     });
   }
   async function convertUnusableFiles() {
-    for (var mediaFile of glob.sync(path.join(mediaPath, "*", "*"))) {
-      try {
-        var mediaFileExt = path.extname(mediaFile).toLowerCase();
-        if (mediaFileExt == ".svg") {
-          await convertSvg(mediaFile);
-        } else if (mediaFileExt == ".pdf") {
-          await convertPdf(mediaFile);
+    if (!dryrun && prefs.betaMp4Gen) {
+      for (var mediaFile of glob.sync(path.join(mediaPath, "*", "*"))) {
+        try {
+          var mediaFileExt = path.extname(mediaFile).toLowerCase();
+          if (mediaFileExt == ".svg") {
+            await convertSvg(mediaFile);
+          } else if (mediaFileExt == ".pdf") {
+            await convertPdf(mediaFile);
+          }
+        } catch(err) {
+          console.error(err);
         }
-      } catch(err) {
-        console.error(err);
       }
     }
   }
