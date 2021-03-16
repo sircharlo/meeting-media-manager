@@ -302,6 +302,7 @@ function goAhead() {
         for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
           await pdfRender(mediaFile, pdf, pageNum);
         }
+        fs.rmSync(mediaFile);
         resolve();
       });
     });
@@ -809,7 +810,6 @@ function goAhead() {
         var renderTask = page.render(renderContext);
         renderTask.promise.then(function() {
           fs.writeFileSync(mediaFileConverted, new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
-          fs.rmSync(mediaFile);
           $("div#pdf").remove();
           resolve();
         });
