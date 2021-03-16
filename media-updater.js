@@ -60,6 +60,7 @@ function goAhead() {
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
     appPath = remoteApp.getPath("userData"),
+    hdHeight = 1080,
     jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
     langsFile = path.join(appPath, "langs.json"),
     prefsFile = path.join(appPath, "prefs.json"),
@@ -292,10 +293,23 @@ function goAhead() {
       return false;
     }
   }
+  function convertPdf(mediaFile) {
+    return new Promise((resolve)=>{
+      var pdfjsLib = require("pdfjs-dist/es5/build/pdf.js");
+      var pdfjsLibWorker = require("pdfjs-dist/es5/build/pdf.worker.entry.js");
+      pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsLibWorker;
+      pdfjsLib.getDocument(mediaFile).promise.then(async function(pdf) {
+        for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          await pdfRender(mediaFile, pdf, pageNum);
+        }
+        resolve();
+      });
+    });
+  }
   function convertSvg(mediaFile) {
     return new Promise((resolve)=>{
       var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
-      var svgFile = window.URL.createObjectURL(new Blob([fs.readFileSync(mediaFile, "utf8").replace(/(<svg[ a-zA-Z=":/.0-9%]*)(width="[0-9%]*")([ a-zA-Z=":/.0-9%]*>)/gm, "$1height=\"1080\"$3")], {type:"image/svg+xml;charset=utf-8"}));
+      var svgFile = window.URL.createObjectURL(new Blob([fs.readFileSync(mediaFile, "utf8").replace(/(<svg[ a-zA-Z=":/.0-9%]*)(width="[0-9%]*")([ a-zA-Z=":/.0-9%]*>)/gm, "$1height=\"" + hdHeight + "\"$3")], {type:"image/svg+xml;charset=utf-8"}));
       $("body").append("<div id='svg' style='position: absolute; top: 0;'>");
       $("div#svg").hide().append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
       $("img#svgImg").on("load", function() {
@@ -318,6 +332,8 @@ function goAhead() {
         var mediaFileExt = path.extname(mediaFile).toLowerCase();
         if (mediaFileExt == ".svg") {
           await convertSvg(mediaFile);
+        } else if (mediaFileExt == ".pdf") {
+          await convertPdf(mediaFile);
         }
       } catch(err) {
         console.error(err);
@@ -353,7 +369,7 @@ function goAhead() {
           })
           .videoCodec("libx264")
           .noAudio()
-          .size("?x1080")
+          .size("?x" + hdHeight)
           .loop(loop)
           .outputOptions("-pix_fmt yuv420p")
           .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
@@ -474,9 +490,6 @@ function goAhead() {
       var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
       fs.chmodSync(ffmpegPath, "777");
       ffmpeg.setFfmpegPath(ffmpegPath);
-      if (prefs.additionalMediaPrompt) {
-        await additionalMedia();
-      }
       var filesToProcess = glob.sync(path.join(mediaPath, "*", "*"));
       var filesToRender = filesToProcess.length, filesRendering = 0;
       for (var mediaDir of glob.sync(path.join(mediaPath, "*"))) {
@@ -776,6 +789,32 @@ function goAhead() {
     } catch (err) {
       if (err.code !== "EEXIST") throw err;
     }
+  }
+  function pdfRender(mediaFile, pdf, pageNum) {
+    return new Promise((resolve)=>{
+      pdf.getPage(pageNum).then(function(page) {
+        var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png");
+        $("body").append("<div id='pdf' style='position: absolute; top: 0;'>");
+        $("div#pdf").hide().append("<canvas id='pdfCanvas'></canvas>");
+        var scale = hdHeight / page.getViewport({scale: 1}).height * 2;
+        var viewport = page.getViewport({scale: scale});
+        var canvas = $("#pdfCanvas")[0];
+        canvas.height = hdHeight * 2;
+        canvas.width = page.getViewport({scale: scale}).width;
+        var context = canvas.getContext("2d");
+        var renderContext = {
+          canvasContext: context,
+          viewport: viewport
+        };
+        var renderTask = page.render(renderContext);
+        renderTask.promise.then(function() {
+          fs.writeFileSync(mediaFileConverted, new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+          fs.rmSync(mediaFile);
+          $("div#pdf").remove();
+          resolve();
+        });
+      });
+    });
   }
   function prefsInitialize() {
     for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt"]) {
@@ -1080,6 +1119,9 @@ function goAhead() {
     await syncMwMeeting();
     await syncWeMeeting();
     await syncCongSpecific();
+    if (prefs.additionalMediaPrompt) {
+      await additionalMedia();
+    }
     await convertUnusableFiles();
     await ffmpegConvert();
     if (prefs.openFolderWhenDone && !dryrun) {
