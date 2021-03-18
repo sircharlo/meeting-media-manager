@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@electron/remote": "^1.0.4",
-    "@fortawesome/fontawesome-free": "^5.15.2",
+    "@fortawesome/fontawesome-free": "^5.15.3",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "bootstrap-dark-4": "^0.0.9",
