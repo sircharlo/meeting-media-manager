@@ -372,7 +372,7 @@ function goAhead() {
           })
           .videoCodec("libx264")
           .noAudio()
-          .size("?x" + hdHeight)
+          .size("1920x" + hdHeight)
           .loop(loop)
           .outputOptions("-pix_fmt yuv420p")
           .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
