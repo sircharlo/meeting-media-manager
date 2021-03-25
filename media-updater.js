@@ -116,12 +116,6 @@ function goAhead() {
   $(".btn-sftp").on("click", function() {
     toggleScreen("overlaySftp");
   });
-  $("#overlaySettings").on("click", ".btn-clean-up:not(.btn-confirmed)", function() {
-    $(".btn-clean-up:not(.btn-confirmed)").addClass("btn-danger btn-confirmed").removeClass("btn-warning").find("i").addClass("fa-exclamation-triangle").removeClass("fa-broom");
-    setTimeout(() => {
-      $(".btn-clean-up.btn-confirmed").removeClass("btn-danger btn-confirmed").addClass("btn-warning").find("i").addClass("fa-broom").removeClass("fa-exclamation-triangle");
-    }, 3000);
-  });
   $("#baseDate").on("click", ".dropdown-item", function() {
     setVars();
     baseDate = dayjs($(this).val()).startOf("isoWeek");
@@ -131,12 +125,12 @@ function goAhead() {
     $("#baseDate > button").html($(this).html());
     dateFormatter();
   });
-  $("#overlaySettings").on("click", ".btn-clean-up.btn-confirmed", function() {
+  $("#overlaySettings").on("click", ".btn-clean-up", function() {
+    $(this).addClass("btn-success").removeClass("btn-danger").prop("disabled", true);
     setVars();
     cleanUp([pubsPath, mediaPath, zoomPath], "brutal");
-    $(this).addClass("btn-success").removeClass("btn-danger btn-confirmed").prop("disabled", true).find("i").addClass("fa-check-circle").removeClass("fa-exclamation-triangle");
     setTimeout(() => {
-      $(".btn-clean-up").removeClass("btn-success").addClass("btn-warning").prop("disabled", false).find("i").addClass("fa-broom").removeClass("fa-check-circle");
+      $(".btn-clean-up").removeClass("btn-success").addClass("btn-danger").prop("disabled", false);
     }, 3000);
   });
   $("#overlaySettings input, #overlaySettings select, #overlaySftp input, #overlaySftp select").on("change", function() {
