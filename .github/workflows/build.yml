@@ -1,7 +1,10 @@
 name: Build/release
 
-on: push
-
+on:
+  push:
+    paths:
+    - 'package.json'
+    
 jobs:
   release:
     runs-on: ${{ matrix.os }}
