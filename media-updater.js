@@ -60,7 +60,7 @@ function goAhead() {
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
     appPath = remoteApp.getPath("userData"),
-    hdHeight = 1080,
+    hdRes = [1920, 1080],
     jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
     langsFile = path.join(appPath, "langs.json"),
     prefsFile = path.join(appPath, "prefs.json"),
@@ -304,7 +304,7 @@ function goAhead() {
   function convertSvg(mediaFile) {
     return new Promise((resolve)=>{
       var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
-      var svgFile = window.URL.createObjectURL(new Blob([fs.readFileSync(mediaFile, "utf8").replace(/(<svg[ a-zA-Z=":/.0-9%]*)(width="[0-9%]*")([ a-zA-Z=":/.0-9%]*>)/gm, "$1height=\"" + hdHeight + "\"$3")], {type:"image/svg+xml;charset=utf-8"}));
+      var svgFile = window.URL.createObjectURL(new Blob([fs.readFileSync(mediaFile, "utf8").replace(/(<svg[ a-zA-Z=":/.0-9%]*)(width="[0-9%]*")([ a-zA-Z=":/.0-9%]*>)/gm, "$1height=\"" + hdRes[1] + "\"$3")], {type:"image/svg+xml;charset=utf-8"}));
       $("body").append("<div id='svg' style='position: absolute; top: 0;'>");
       $("div#svg").hide().append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
       $("img#svgImg").on("load", function() {
@@ -366,7 +366,8 @@ function goAhead() {
           })
           .videoCodec("libx264")
           .noAudio()
-          .size("1920x" + hdHeight)
+          .size(hdRes[0] + "x" + hdRes[1])
+          .autopad()
           .loop(loop)
           .outputOptions("-pix_fmt yuv420p")
           .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
@@ -793,10 +794,10 @@ function goAhead() {
         var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png");
         $("body").append("<div id='pdf' style='position: absolute; top: 0;'>");
         $("div#pdf").hide().append("<canvas id='pdfCanvas'></canvas>");
-        var scale = hdHeight / page.getViewport({scale: 1}).height * 2;
+        var scale = hdRes[1] / page.getViewport({scale: 1}).height * 2;
         var viewport = page.getViewport({scale: scale});
         var canvas = $("#pdfCanvas")[0];
-        canvas.height = hdHeight * 2;
+        canvas.height = hdRes[1] * 2;
         canvas.width = page.getViewport({scale: scale}).width;
         var context = canvas.getContext("2d");
         var renderContext = {
