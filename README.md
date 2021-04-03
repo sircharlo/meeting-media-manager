@@ -62,6 +62,12 @@ Before you do this however, make sure you read up on what this change entails, f
 
 For technical reasons, the auto-updater does not work on Macs. Mac users will however see a button displayed on the main screen of the app when an update is available. Clicking on this button will take you to the latest release's download page automatically.
 
+![Mac app error](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/06-mac-error.png?raw=true)
+
+If after launching the app, you receive a message such as the one above, then try running this command in Terminal:
+
+`codesign --force --deep --sign - "/Applications/JW Meeting Media Fetcher.app"`
+
 ## Does this app depend on external sites, sources or curators to download publications or media?
 
 No, the app behaves similarly to JW Library in that it downloads data such as publications and media directly from the official JW website and content delivery network. The media and publications to be downloaded are automatically determined at runtime. The source code is available for all to examine and verify this.
