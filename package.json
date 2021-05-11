@@ -6,7 +6,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
-  },
+  }, 
   "dependencies": {
     "@electron/remote": "^1.1.0",
     "@fortawesome/fontawesome-free": "^5.15.3",
