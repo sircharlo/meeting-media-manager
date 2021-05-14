@@ -11,7 +11,7 @@
     "@electron/remote": "^1.1.0",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "axios": "^0.21.1",
-    "bootstrap": "^5.0.0",
+    "bootstrap": "^5.0.1",
     "bootstrap-dark-4": "^0.0.9",
     "dayjs": "^1.10.4",
     "electron-updater": "^4.3.9",
