@@ -10,6 +10,7 @@
   "dependencies": {
     "@electron/remote": "^1.1.0",
     "@fortawesome/fontawesome-free": "^5.15.3",
+    "@popperjs/core": "^2.9.2",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.1",
     "bootstrap-dark-5": "^1.0.1",
@@ -24,7 +25,6 @@
     "os": "^0.1.1",
     "path": "^0.12.7",
     "pdfjs-dist": "^2.7.570",
-    "popper.js": "^1.16.1",
     "select2": "^4.1.0-rc.0",
     "sql.js": "^1.5.0",
     "ssh2-sftp-client": "^6.0.1",

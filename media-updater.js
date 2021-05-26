@@ -269,15 +269,17 @@ function goAhead() {
       $("#outputPath").addClass("invalid");
       configIsValid = false;
     }
-    var maxResX = parseInt(prefs.maxRes.replace(/\D/g, ""));
-    if (maxResX == 720) {
-      hdRes = [1280, maxResX];
-    } else if (maxResX == 480) {
-      hdRes = [720, maxResX];
-    } else if (maxResX == 360) {
-      hdRes = [480, maxResX];
-    } else {
-      hdRes = [426, maxResX];
+    if (prefs.maxRes) {
+      var maxResX = parseInt(prefs.maxRes.replace(/\D/g, ""));
+      if (maxResX == 720) {
+        hdRes = [1280, maxResX];
+      } else if (maxResX == 480) {
+        hdRes = [720, maxResX];
+      } else if (maxResX == 360) {
+        hdRes = [480, maxResX];
+      } else {
+        hdRes = [426, maxResX];
+      }
     }
     if (prefs.betaMp4Gen) {
       $("#zoomRender").addClass("d-flex");
