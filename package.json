@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.92",
+  "version": "0.8.93",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -12,12 +12,13 @@
     "@fortawesome/fontawesome-free": "^5.15.3",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.1",
-    "bootstrap-dark-4": "^0.0.9",
-    "dayjs": "^1.10.4",
+    "bootstrap-dark-5": "^1.0.1",
+    "dayjs": "^1.10.5",
     "electron-updater": "^4.3.9",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.1.7",
     "graceful-fs": "^4.2.6",
+    "i18n": "^0.13.3",
     "is-port-reachable": "^3.0.0",
     "jquery": "^3.6.0",
     "os": "^0.1.1",
@@ -50,9 +51,9 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^12.0.8",
+    "electron": "^13.0.1",
     "electron-builder": "^22.11.3",
-    "eslint": "^7.26.0"
+    "eslint": "^7.27.0"
   },
   "scripts": {
     "start": "electron .",

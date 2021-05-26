@@ -16,8 +16,8 @@ function createUpdateWindow() {
       enableRemoteModule: true,
       contextIsolation: false
     },
-    width: 600,
-    height: 600,
+    width: 700,
+    height: 700,
     resizable: false,
     title: "JW Meeting Media Fetcher"
   });

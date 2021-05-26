@@ -4,7 +4,7 @@
 <head>
   <title>JW Meeting Media Fetcher</title>
   <!-- <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"> -->
-  <link rel="stylesheet" href="node_modules/bootstrap-dark-4/dist/bootstrap-dark.min.css">
+  <link rel="stylesheet" href="node_modules/bootstrap-dark-5/dist/css/bootstrap-dark.min.css">
   <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
   <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
   <style>
@@ -15,7 +15,7 @@
     }
 
     .overlay {
-      background: var(--light);
+      background: var(--bs-light);
       position: fixed;
       height: 100%;
       width: 100%;
@@ -35,10 +35,6 @@
 
     #home {
       height: 100%;
-    }
-
-    .half {
-      width: 50%;
     }
 
     @keyframes blink {
@@ -71,7 +67,9 @@
     }
 
     #overlaySettings,
-    span.select2-dropdown {
+    span.select2-dropdown,
+    #overlaySettings label,
+    #overlaySftp label {
       font-size: 0.9em
     }
 
@@ -83,31 +81,25 @@
       width: 100% !important;
     }
 
-    #overlaySettings div.btn-group-toggle {
-      border: 1px solid transparent;
-      border-radius: 4px;
-    }
-
     .invalid {
-      /* background-color: var(--red) !important; */
-      border-color: var(--danger) !important;
+      border-color: var(--bs-danger) !important;
     }
 
     .notValidYet {
-      border-color: var(--warning) !important;
+      border-color: var(--bs-warning) !important;
     }
 
     .valid {
-      border-color: var(--success) !important;
+      border-color: var(--bs-success) !important;
     }
 
     #outputPath,
     #fileToUpload {
-      background-color: var(--white);
+      background-color: var(--bs-white);
     }
 
     #version span.badge {
-      color: var(--dark);
+      color: var(--bs-dark);
       font-weight: normal;
     }
 
@@ -142,23 +134,19 @@
       font-size: 135%;
     }
 
-    .btn-group input {
-      display: none;
-    }
-
     .day,
     .congregation,
     .zoom {
       height: 3em;
       width: 3em;
-      background-color: var(--light);
+      background-color: var(--bs-light);
     }
 
     .meeting,
     .congregation,
     .zoom {
-      background-color: var(--secondary);
-      color: var(--white);
+      background-color: var(--bs-secondary);
+      color: var(--bs-white);
     }
 
     .in-progress {
@@ -194,7 +182,7 @@
     }
 
     .file-list li:not(.confirmDelete):hover {
-      background-color: var(--light);
+      background-color: var(--bs-light);
     }
 
     .video {
@@ -289,6 +277,14 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .form-check {
+      min-height: auto;
+    }
+
+    .form-check .form-check-input {
+      float: none;
     }
   </style>
   <meta name="color-scheme" content="light dark">
@@ -399,7 +395,7 @@
       <div class="align-self-center text-dark fa-5x" role="status">
         <i class="fas fa-fw fa-folder-plus"></i>
       </div>
-      <div>Any other media to add before converting to MP4?</div>
+      <div class="i18n" data-i18n-string="mediaAddPrompt"></div>
       <div class="align-self-center fa-2x" role="status">
         <i id="btnNoAdditionalMedia" class="fas fa-fw fa-times-circle text-danger"></i>
         <i id="btnAdditionalMedia" class="fas fa-fw fa-check-circle text-success"></i>
@@ -411,7 +407,7 @@
       <div class="align-self-center text-dark fa-5x" role="status">
         <i class="fas fa-fw fa-spinner fa-pulse"></i>
       </div>
-      <div>Let me know when everything is in place.</div>
+      <div class="i18n" data-i18n-string="filesAreInPlace"></div>
       <div class="align-self-center fa-2x" role="status">
         <i id="btnAdditionalMediaDone" class="fas fa-fw fa-play-circle text-primary"></i>
       </div>
@@ -422,34 +418,33 @@
       <i class="fas fa-fw fa-cloud-upload-alt fa-3x text-muted"></i>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2">
-      <div class="flex-fill pr-3 text-right">Target meeting</div>
-      <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseMeeting">
+      <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="targetMeeting"></div>
+      <div class="btn-group btn-group-toggle col-7" data-toggle="buttons" id="chooseMeeting">
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUploadType">
-      <div class="flex-fill pr-3 text-right">Type of upload</div>
-      <div class="btn-group btn-group-toggle half" data-toggle="buttons" id="chooseUploadType">
-        <label class="btn btn-light disabled"><input type="radio" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
-          Song
-        </label>
-        <label class="btn btn-light"><input type="radio" name="chooseUploadType" id="typeFile" autocomplete="off">
-          Custom
-        </label>
-        <label class="btn btn-light"><input type="radio" name="chooseUploadType" id="typeS34" autocomplete="off">
-          S-34
-        </label>
-      </div>
-    </div>
-    <div class="align-items-center d-flex justify-content-center py-2 file-to-upload relatedToUpload">
-      <div class="flex-fill pr-3 text-right">File(s) to upload</div>
-      <input type="text" class="form-control half localOrRemoteFile" id="fileToUpload" required readonly />
-      <div class="half songsSpinner" style="display: none;">
-        <i class="fas fa-circle-notch fa-spin"></i>
+      <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="uploadType"></div>
+      <div class="btn-group btn-group-toggle col-7" data-toggle="buttons" id="chooseUploadType">
+        <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
+        <label class="btn btn-outline-dark disabled i18n" for="typeSong" data-i18n-string="song"></label>
+        <input type="radio" class="btn-check" name="chooseUploadType" id="typeFile" autocomplete="off">
+        <label class="btn btn-outline-dark i18n" for="typeFile" data-i18n-string="custom"></label>
+        <input type="radio" class="btn-check" name="chooseUploadType" id="typeS34" autocomplete="off">
+        <label class="btn btn-outline-dark i18n" for="typeS34" data-i18n-string="s34"></label>
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
-      <div class="flex-fill pr-3 text-right">Filename prefix</div>
-      <div class="d-flex half" id="enterPrefix">
+      <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="filesToUpload"></div>
+      <div class="col-7 file-to-upload">
+        <input type="text" class="form-control localOrRemoteFile" id="fileToUpload" required readonly />
+        <div class="songsSpinner" style="display: none;">
+          <i class="fas fa-circle-notch fa-spin"></i>
+        </div>
+      </div>
+    </div>
+    <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
+      <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="filenamePrefix"></div>
+      <div class="d-flex col-7" id="enterPrefix">
         <div>
           <input class="form-control" type="text" maxlength="1" id="enterPrefix-0" />
         </div>
@@ -471,20 +466,20 @@
       </div>
     </div>
     <div class="d-flex py-2">
-      <div class="half text-right">
-        <button class="btn btn-dark mr-3" id="btnCancelUpload" type="button"><i class="fas fa-fw fa-home"></i></button>
+      <div class="col-5 text-end px-2">
+        <button class="btn btn-dark" id="btnCancelUpload" type="button"><i class="fas fa-fw fa-home"></i></button>
       </div>
-      <div class="half text-left">
+      <div class="col-7 text-start px-2">
         <button class="btn btn-primary" id="btnUpload" type="button" disabled>
           <i class="fas fa-cloud-upload-alt"></i>
         </button>
       </div>
     </div>
-    <div class="d-flex flex-fill text-left">
+    <div class="d-flex flex-fill text-start">
       <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
     <div class="align-items-center d-flex text-center justify-content-center py-2" id="uploadProgressContainer" style="opacity: 0;">
-      <div class="half">
+      <div class="col-6">
         <div id="uploadFilename" class="lead mb-3">
           -
         </div>
@@ -500,139 +495,123 @@
       <i id="settingsIcon" class="fas fa-fw fa-user-cog fa-3x text-muted"></i>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="outputPath" class="half m-0 pr-3 text-right">Folder in which to save media</label>
+      <label for="outputPath" class="m-0 col-5 pr-3 text-start i18n" data-i18n-string="mediaSaveFolder"></label>
       <div class="flex-fill">
         <input type="text" class="form-control form-control-sm" id="outputPath" required readonly />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="lang" class="half m-0 pr-3 text-right">Media language</label>
-      <div class="flex-fill half">
+      <label for="lang" class="m-0 pr-3 col-5 text-start i18n" data-i18n-string="mediaLanguage"></label>
+      <div class="flex-fill">
         <select id="lang" class="form-control" required>
         </select>
       </div>
     </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <label for="maxRes" class="m-0 pr-3 col-5 text-start i18n" data-i18n-string="maxRes"></label>
+      <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="maxRes">
+        <input type="radio" class="btn-check" name="maxRes" id="maxRes0" value="240p" autocomplete="off">
+        <label class="btn btn-outline-dark" for="maxRes0">240p</label>
+        <input type="radio" class="btn-check" name="maxRes" id="maxRes1" value="360p" autocomplete="off">
+        <label class="btn btn-outline-dark" for="maxRes1">360p</label>
+        <input type="radio" class="btn-check" name="maxRes" id="maxRes2" value="480p" autocomplete="off">
+        <label class="btn btn-outline-dark" for="maxRes2">480p</label>
+        <input type="radio" class="btn-check" name="maxRes" id="maxRes3" value="720p" autocomplete="off">
+        <label class="btn btn-outline-dark" for="maxRes3">720p</label>
+      </div>
+    </div>
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="mwDay" class="half m-0 pr-3 text-right">Midweek meeting day</label>
+      <label for="mwDay" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="mwMeetingDay"></label>
       <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="mwDay">
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="mwDay" value="0" autocomplete="off"> M
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="mwDay" value="1" autocomplete="off"> T
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="mwDay" value="2" autocomplete="off"> W
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="mwDay" value="3" autocomplete="off"> T
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="mwDay" value="4" autocomplete="off"> F
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="mwDay" value="5" autocomplete="off"> S
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="mwDay" value="6" autocomplete="off"> S
-        </label>
+        <input type="radio" class="btn-check" name="mwDay" id="mwDay0" value="0" autocomplete="off">
+        <label class="btn btn-outline-dark" for="mwDay0">M</label>
+        <input type="radio" class="btn-check" name="mwDay" id="mwDay1" value="1" autocomplete="off">
+        <label class="btn btn-outline-dark" for="mwDay1">T</label>
+        <input type="radio" class="btn-check" name="mwDay" id="mwDay2" value="2" autocomplete="off">
+        <label class="btn btn-outline-dark" for="mwDay2">W</label>
+        <input type="radio" class="btn-check" name="mwDay" id="mwDay3" value="3" autocomplete="off">
+        <label class="btn btn-outline-dark" for="mwDay3">T</label>
+        <input type="radio" class="btn-check" name="mwDay" id="mwDay4" alue="4" autocomplete="off">
+        <label class="btn btn-outline-dark" for="mwDay4">F</label>
+        <input type="radio" class="btn-check" name="mwDay" id="mwDay5" value="5" autocomplete="off">
+        <label class="btn btn-outline-dark" for="mwDay5">S</label>
+        <input type="radio" class="btn-check" name="mwDay" id="mwDay6" value="6" autocomplete="off">
+        <label class="btn btn-outline-dark" for="mwDay6">S</label>
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="weDay" class="half m-0 pr-3 text-right">Weekend meeting day</label>
+      <label for="weDay" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="weMeetingDay"></label>
       <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="weDay">
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="weDay" value="0" autocomplete="off"> M
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="weDay" value="1" autocomplete="off"> T
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="weDay" value="2" autocomplete="off"> W
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="weDay" value="3" autocomplete="off"> T
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="weDay" value="4" autocomplete="off"> F
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="weDay" value="5" autocomplete="off"> S
-        </label>
-        <label class="btn btn-sm btn-light">
-          <input type="radio" name="weDay" value="6" autocomplete="off"> S
-        </label>
+        <input type="radio" class="btn-check" name="weDay" id="weDay0" value="0" autocomplete="off">
+        <label class="btn btn-outline-dark" for="weDay0">M</label>
+        <input type="radio" class="btn-check" name="weDay" id="weDay1" value="1" autocomplete="off">
+        <label class="btn btn-outline-dark" for="weDay1">T</label>
+        <input type="radio" class="btn-check" name="weDay" id="weDay2" value="2" autocomplete="off">
+        <label class="btn btn-outline-dark" for="weDay2">W</label>
+        <input type="radio" class="btn-check" name="weDay" id="weDay3" value="3" autocomplete="off">
+        <label class="btn btn-outline-dark" for="weDay3">T</label>
+        <input type="radio" class="btn-check" name="weDay" id="weDay4" alue="4" autocomplete="off">
+        <label class="btn btn-outline-dark" for="weDay4">F</label>
+        <input type="radio" class="btn-check" name="weDay" id="weDay5" value="5" autocomplete="off">
+        <label class="btn btn-outline-dark" for="weDay5">S</label>
+        <input type="radio" class="btn-check" name="weDay" id="weDay6" value="6" autocomplete="off">
+        <label class="btn btn-outline-dark" for="weDay6">S</label>
       </div>
     </div>
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="includeTeaching" class="half m-0 pr-3 text-right">Include media from the <i>th</i> brochure</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="includeTeaching" />
-        <label class="custom-control-label" for="includeTeaching"></label>
+      <div class="form-check form-switch col-1">
+        <input type="checkbox" class="form-check-input" id="includeTeaching" />
       </div>
+      <label for="includeTeaching" class="m-0 text-start i18n" data-i18n-string="includeTh"></label>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="betaMp4Gen" class="half m-0 pr-3 text-right">Convert downloaded media to MP4</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="betaMp4Gen" />
-        <label class="custom-control-label" for="betaMp4Gen"></label>
+      <div class="form-check form-switch col-1">
+        <input type="checkbox" class="form-check-input" id="betaMp4Gen" />
       </div>
-    </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="additionalMediaPrompt" class="half m-0 pr-3 text-right">Enable conversion of external media</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="additionalMediaPrompt" />
-        <label class="custom-control-label" for="additionalMediaPrompt"></label>
-      </div>
-    </div>
-    <hr class="my-2" />
-    <div class="d-flex flex-row flex-fill align-items-center notLinux">
-      <label for="autoRunAtBoot" class="half m-0 pr-3 text-right">Run app at system startup</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="autoRunAtBoot" />
-        <label class="custom-control-label" for="autoRunAtBoot"></label>
-      </div>
-    </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="autoStartSync" class="half m-0 pr-3 text-right">Initiate media sync on app launch</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="autoStartSync" />
-        <label class="custom-control-label" for="autoStartSync"></label>
-      </div>
-    </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="openFolderWhenDone" class="half m-0 pr-3 text-right">Open folder after media sync</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="openFolderWhenDone" />
-        <label class="custom-control-label" for="openFolderWhenDone"></label>
-      </div>
-    </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="autoQuitWhenDone" class="half m-0 pr-3 text-right">Quit app after media sync</label>
-      <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="autoQuitWhenDone" />
-        <label class="custom-control-label" for="autoQuitWhenDone"></label>
+      <label for="betaMp4Gen" class="m-0 text-start i18n col-5" data-i18n-string="convertDownloaded"></label>
+      <label for="additionalMediaPrompt" class="m-0 text-end i18n col-5" data-i18n-string="convertExternal"></label>
+      <div class="form-check form-switch col-1">
+        <input type="checkbox" class="form-check-input" id="additionalMediaPrompt" />
       </div>
     </div>
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="flex-fill">
-        <button type="button" class="btn btn-danger btn-clean-up">
-          Clean media cache
-          <!-- <i class="fas fa-fw fa-broom"></i> -->
-        </button>
+      <div class="form-check form-switch notLinux col-1">
+        <input type="checkbox" class="form-check-input" id="autoRunAtBoot" />
       </div>
-      <div class="flex-fill">
-        <button type="button" class="btn btn-primary btn-sftp">
-          SFTP Server
-          <!-- <i class="fas fa-fw fa-network-wired"></i> -->
-        </button>
+      <label for="autoRunAtBoot" class="m-0 text-start i18n notLinux col-5" data-i18n-string="runAtStartup"></label>
+      <label for="autoQuitWhenDone" class="m-0 text-end i18n col-5" data-i18n-string="quitAfterSync"></label>
+      <div class="form-check form-switch col-1">
+        <input type="checkbox" class="form-check-input" id="autoQuitWhenDone" />
       </div>
-      <div class="flex-fill">
+    </div>
+    <div class="d-flex flex-row flex-fill align-items-center">
+      <div class="form-check form-switch col-1">
+        <input type="checkbox" class="form-check-input" id="autoStartSync" />
+      </div>
+      <label for="syncOnLaunch" class="m-0 text-start i18n col-5" data-i18n-string="syncOnLaunch"></label>
+      <label for="openFolderWhenDone" class="m-0 text-end i18n col-5" data-i18n-string="openTargetFolderAfterSync"></label>
+      <div class="form-check form-switch col-1">
+        <input type="checkbox" class="form-check-input col-1" id="openFolderWhenDone" />
+      </div>
+    </div>
+    <hr class="my-2" />
+    <div class="d-flex flex-row flex-fill align-items-center justify-content-end">
+      <div class="px-1">
         <button type="button" class="btn btn-dark btn-settings">
           <i class="fas fa-fw fa-home"></i>
+        </button>
+      </div>
+      <div class="px-1">
+        <button type="button" class="btn btn-primary btn-sftp">
+          <span class="i18n" data-i18n-string="sftpServer"></span>
+        </button>
+      </div>
+      <div class="px-1">
+        <button type="button" class="btn btn-danger btn-clean-up">
+          <span class="i18n" data-i18n-string="cleanCache"></span>
         </button>
       </div>
     </div>
@@ -645,40 +624,40 @@
       <i id="sftpStatus" class="fas fa-fw fa-network-wired fa-3x text-muted"></i>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServer" class="half m-0 pr-3 text-right">SFTP hostname</label>
-      <div class="flex-fill">
+      <label for="congServer" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpHostname"></label>
+      <div class="col-7">
         <input type="text" class="form-control form-control-sm sftpHost" id="congServer" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerPort" class="half m-0 pr-3 text-right">SFTP port</label>
-      <div class="flex-fill">
+      <label for="congServerPort" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpPort"></label>
+      <div class="col-7">
         <input type="text" class="form-control form-control-sm sftpHost" id="congServerPort" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerUser" class="half m-0 pr-3 text-right">SFTP username</label>
-      <div class="flex-fill">
+      <label for="congServerUser" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpUser"></label>
+      <div class="col-7">
         <input type="text" class="form-control form-control-sm sftpCreds" id="congServerUser" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerPass" class="half m-0 pr-3 text-right">SFTP password</label>
-      <div class="flex-fill">
+      <label for="congServerPass" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpPass"></label>
+      <div class="col-7">
         <input type="password" class="form-control form-control-sm sftpCreds" id="congServerPass" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerDir" class="half m-0 pr-3 text-right">SFTP directory</label>
-      <div class="flex-fill">
+      <label for="congServerDir" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpFolder"></label>
+      <div class="col-7">
         <input type="text" class="form-control form-control-sm" id="congServerDir" required readonly />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center" style="opacity: 0;">
-      <label for="sftpSpinner" class="half m-0 pr-3 text-right"></label>
+      <label for="sftpSpinner" class="col-6 m-0 pr-3 text-end"></label>
       <i id="sftpSpinner" class="fas fa-fw fa-2x fa-circle-notch fa-spin"></i>
     </div>
-    <div class="d-flex flex-fill text-left">
+    <div class="d-flex flex-fill text-start">
       <ul id="sftpFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
     <div>
@@ -735,8 +714,8 @@
         </div>
       </div>
       <div class="d-flex">
-        <div id="specificCong" class="m-1 px-3 congregation align-items-center justify-content-center" style="display: none;">Congregation media</div>
-        <div id="zoomRender" class="m-1 px-3 zoom align-items-center justify-content-center" style="display: none;">MP4 conversion</div>
+        <div id="specificCong" class="m-1 px-3 congregation align-items-center justify-content-center i18n" data-i18n-string="congMedia" style="display: none;"></div>
+        <div id="zoomRender" class="m-1 px-3 zoom align-items-center justify-content-center i18n" data-i18n-string="mp4Conversion" style="display: none;"></div>
       </div>
     </div>
     <div class="d-flex justify-content-center">
@@ -745,7 +724,7 @@
       </button>
     </div>
     <div class="align-items-center d-flex text-center flex-fill justify-content-center" id="downloadProgressContainer" style="opacity: 0;">
-      <div class="half">
+      <div class="col-6">
         <div id="downloadFilename" class="lead mb-3">
           -
         </div>

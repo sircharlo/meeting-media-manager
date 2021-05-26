@@ -55,12 +55,12 @@ function goAhead() {
     ffmpeg = require("fluent-ffmpeg"),
     fs = require("graceful-fs"),
     glob = require("glob"),
+    i18n = require("i18n"),
     os = require("os"),
     path = require("path"),
     sqljs = require("sql.js"),
     zipper = require("zip-local"),
     appPath = remoteApp.getPath("userData"),
-    hdRes = [1920, 1080],
     jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
     langsFile = path.join(appPath, "langs.json"),
     prefsFile = path.join(appPath, "prefs.json"),
@@ -77,6 +77,7 @@ function goAhead() {
   var baseDate = dayjs().startOf("isoWeek"),
     dryrun = false,
     dryrunResults = {},
+    hdRes = [],
     jsonLangs = {},
     langPath,
     mediaPath,
@@ -154,6 +155,9 @@ function goAhead() {
     }
     if ($(this).prop("id").includes("cong")) {
       sftpSetup();
+    }
+    if ($(this).prop("id").includes("lang")) {
+      getTranslations();
     }
     setVars();
     if ($(this).prop("id").includes("cong") || $(this).prop("id") == "includeTeaching" || $(this).prop("name").includes("Day")) {
@@ -245,15 +249,16 @@ function goAhead() {
   function configIsValid() {
     $("#lang").next(".select2").find(".select2-selection").removeClass("invalid");
     $("#mwDay, #weDay, #outputPath").removeClass("invalid");
+    $("#overlaySettings .btn-outline-danger").addClass("btn-outline-dark").removeClass("btn-outline-danger");
     $("#overlaySettings label.text-danger").removeClass("text-danger");
     var configIsValid = true;
     if ($("#lang option:selected").length == 0) {
       $("#lang").next(".select2").find(".select2-selection").addClass("invalid");
       configIsValid = false;
     }
-    for (var elem of ["mwDay", "weDay"]) {
+    for (var elem of ["mwDay", "weDay", "maxRes"]) {
       if ($("#" + elem + " input:checked").length == 0) {
-        $("#" + elem).addClass("invalid");
+        $("#" + elem + " .btn-outline-dark").addClass("btn-outline-danger").removeClass("btn-outline-dark");
         configIsValid = false;
       }
     }
@@ -264,6 +269,16 @@ function goAhead() {
       $("#outputPath").addClass("invalid");
       configIsValid = false;
     }
+    var maxResX = parseInt(prefs.maxRes.replace(/\D/g, ""));
+    if (maxResX == 720) {
+      hdRes = [1280, maxResX];
+    } else if (maxResX == 480) {
+      hdRes = [720, maxResX];
+    } else if (maxResX == 360) {
+      hdRes = [480, maxResX];
+    } else {
+      hdRes = [426, maxResX];
+    }
     if (prefs.betaMp4Gen) {
       $("#zoomRender").addClass("d-flex");
       $("#additionalMediaPrompt").prop("disabled", false);
@@ -271,8 +286,8 @@ function goAhead() {
       $("#zoomRender").removeClass("d-flex");
       $("#additionalMediaPrompt").prop("disabled", true);
     }
-    $("#overlaySettings .invalid").each(function() {
-      $(this).closest("div.flex-row").find("label").addClass("text-danger");
+    $("#overlaySettings .invalid, #overlaySettings .btn-outline-danger").each(function() {
+      $(this).closest("div.flex-row").find("label:nth-child(1)").addClass("text-danger");
     });
     if (configIsValid) {
       $("#mediaSync, .btn-settings").prop("disabled", false);
@@ -385,8 +400,8 @@ function goAhead() {
     for (var d = 0; d < 7; d++) {
       $("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").format("DD"));
       $("#day" + d + " .dateOfMonth").prev().html(baseDate.clone().add(d, "days").locale(locale).format("dd"));
-      $("#mwDay label:eq(" + d + ")").contents()[2].data = baseDate.clone().add(d, "days").locale(locale).format("dd");
-      $("#weDay label:eq(" + d + ")").contents()[2].data = baseDate.clone().add(d, "days").locale(locale).format("dd");
+      $("#mwDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
+      $("#weDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     }
     if (parseInt($("#day" + (dayjs().isoWeekday() - 1) + " .dateOfMonth").html()) == new Date().getDate() && dayjs().isBetween(baseDate, baseDate.clone().add(7, "days"), null, "[)")) {
       $("#day" + (dayjs().isoWeekday() - 1)).addClass("today");
@@ -594,9 +609,15 @@ function goAhead() {
               });
               media.Json = Object.values(json.files[prefs.lang])[0];
               if (media.MimeType.includes("video")) {
-                media.Json = media.Json.filter(function(item) {
-                  return item.label == "720p";
-                });
+                for (var mI of media.Json.reverse()) {
+                  var videoRes = mI.label.replace(/\D/g, "");
+                  if (videoRes > prefs.maxRes.replace(/\D/g, "")) {
+                    continue;
+                  } else {
+                    media.Json = [mI];
+                    break;
+                  }
+                }
               }
             }
             if (opts.srcDocId) {
@@ -661,6 +682,7 @@ function goAhead() {
   }
   async function getInitialData() {
     await getLanguages();
+    await getTranslations();
     configIsValid();
     $("#version span.badge").html("v" + remoteApp.getVersion());
     await sftpSetup();
@@ -703,7 +725,7 @@ function goAhead() {
       payload = await axios.get(jsonUrl);
       response = payload.data;
     } catch (err) {
-      console.error(err, payload);
+      console.error(jsonUrl, err, payload);
     }
     return response;
   }
@@ -738,20 +760,20 @@ function goAhead() {
     song.Json = await getJson({
       url: song.JsonUrl
     });
-    var targetLabel = "720p";
     song.JsonFiles = [];
     try {
       for (var songs of Object.values(song.Json.files[prefs.lang])) {
         song.JsonFiles = song.JsonFiles.concat(songs);
       }
-      if (Object.values(song.JsonFiles).filter(function(item) {
-        return item.label == "720p";
-      }).length == 0) {
-        targetLabel = "0p";
+      for (var mI of Object.values(song.JsonFiles).reverse()) {
+        var videoRes = mI.label.replace(/\D/g, "");
+        if (videoRes > prefs.maxRes.replace(/\D/g, "")) {
+          continue;
+        } else {
+          song.Json = [mI];
+          break;
+        }
       }
-      song.Json = Object.values(song.JsonFiles).filter(function(item) {
-        return item.label == targetLabel;
-      });
       song.Filename = sanitizeFilename(((song.FileOrder + 1) * 5).toString().padStart(2, "0") + "-00 " + song.Json[0].title + path.extname(song.Json[0].file.url));
       song.DestPath = path.join(song.DestPath, song.Filename);
       if (song.pureDownload) {
@@ -778,6 +800,21 @@ function goAhead() {
     } catch(err) {
       console.error(err);
     }
+  }
+  async function getTranslations() {
+    var localeLang = jsonLangs.filter(function (el) {
+      return el.langcode == prefs.lang;
+    });
+    localeLang = localeLang[0];
+    i18n.configure({
+      directory: path.join(__dirname, "locales"),
+      defaultLocale: "en",
+      retryInDefaultLocale: true
+    });
+    i18n.setLocale(localeLang.symbol);
+    $(".i18n").each(function() {
+      $(this).html(i18n.__($(this).data("i18n-string")));
+    });
   }
   function mkdirSync(dirPath) {
     try {
@@ -814,7 +851,7 @@ function goAhead() {
     });
   }
   function prefsInitialize() {
-    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt"]) {
+    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt", "maxRes"]) {
       if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) {
         prefs[pref] = null;
       }
@@ -825,8 +862,8 @@ function goAhead() {
     for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt"]) {
       $("#" + checkbox).prop("checked", prefs[checkbox]).change();
     }
-    for (var day of ["mwDay", "weDay"]) {
-      $("#" + day + " input[value=" + prefs[day] + "]").prop("checked", true).parent().addClass("active");
+    for (var radioSel of ["mwDay", "weDay", "maxRes"]) {
+      $("#" + radioSel + " input[value=" + prefs[radioSel] + "]").prop("checked", true).parent().addClass("active");
     }
   }
   function progressSet(percent, filename, bar) {
@@ -1196,9 +1233,15 @@ function goAhead() {
           });
           localMedia.Json = Object.values(json.files[prefs.lang])[0];
           if (localMedia.MimeType.includes("video")) {
-            localMedia.Json = localMedia.Json.filter(function(item) {
-              return item.label == "720p";
-            });
+            for (var mI of localMedia.Json.reverse()) {
+              var videoRes = mI.label.replace(/\D/g, "");
+              if (videoRes > prefs.maxRes.replace(/\D/g, "")) {
+                continue;
+              } else {
+                localMedia.Json = [mI];
+                break;
+              }
+            }
           }
         }
         localMedia.FileType = localMedia.FilePath.split(".").pop();
@@ -1427,7 +1470,7 @@ function goAhead() {
     for (const f of event.dataTransfer.files) {
       filesDropped.push(f.path);
     }
-    if ($("#chooseUploadType label:nth-child(2).active").length > 0) {
+    if ($("label[for=typeFile].active").length > 0) {
       $("#fileToUpload").val(filesDropped.join(" -//- ")).change();
     }
     $(".dropzone").css("display", "none");
@@ -1437,7 +1480,7 @@ function goAhead() {
     e.stopPropagation();
   };
   var dragenterHandler = () => {
-    if ($("#chooseUploadType label:nth-child(2).active").length > 0) {
+    if ($("label[for=typeFile].active").length > 0) {
       $(".dropzone").css("display", "block");
     }
   };
@@ -1465,7 +1508,8 @@ function goAhead() {
       await startMediaSync();
       $("#chooseMeeting").empty();
       for (var meeting of [prefs.mwDay, prefs.weDay]) {
-        $("#chooseMeeting").append("<label class=\"btn btn-light\"><input type=\"radio\" name=\"chooseMeeting\" id=\"" + baseDate.add(meeting, "d").format("YYYY-MM-DD") + "\" autocomplete=\"off\"> " + baseDate.add(meeting, "d").format("YYYY-MM-DD") + "</label>");
+        let meetingDate = baseDate.add(meeting, "d").format("YYYY-MM-DD");
+        $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-dark' for='" + meetingDate + "'>" + meetingDate + "</label>");
       }
       $(".relatedToUpload, .relatedToUploadType").fadeTo(400, 0);
       $("#enterPrefix input").on("keypress", function(e){
@@ -1477,18 +1521,34 @@ function goAhead() {
       $("#chooseUploadType").on("change", async function() {
         $(".localOrRemoteFile, .localOrRemoteFileCont, .file-to-upload .select2, #fileToUpload").remove();
         var newElem = "";
-        if ($("#chooseUploadType label:nth-child(1) input:checked").length > 0) {
+        if ($("input#typeSong:checked").length > 0) {
           $(".songsSpinner").show();
-          newElem = $("<select class=\"form-control form-control-sm half localOrRemoteFile\" id=\"fileToUpload\">");
+          newElem = $("<select class=\"form-control form-control-sm localOrRemoteFile\" id=\"fileToUpload\">");
           var sjjm = await getJson({
             "pub": "sjjm",
             "filetype": "MP4"
           });
           try {
-            sjjm = sjjm.files[prefs.lang].MP4.filter(function(item) {
-              return item.label == "720p";
-            });
-            for (var sjj of sjjm) {
+            var sjjmFiltered = [];
+            for (var mI of sjjm.files[prefs.lang].MP4) {
+              var videoRes = mI.label.replace(/\D/g, "");
+              if (videoRes > prefs.maxRes.replace(/\D/g, "")) {
+                continue;
+              } else {
+                sjjmFiltered.push(mI);
+              }
+            }
+            sjjm = [];
+            for (let sjj of sjjmFiltered.reverse()) {
+              if(sjjm.filter(function(item) {
+                return item.track == sjj.track;
+              }).length == 0) {
+                sjjm.push(sjj);
+              } else {
+                continue;
+              }
+            }
+            for (let sjj of sjjm.reverse()) {
               $(newElem).append($("<option>", {
                 value: sanitizeFilename(sjj.title) + ".mp4",
                 text: sjj.title
@@ -1496,19 +1556,20 @@ function goAhead() {
             }
             $(newElem).val([]);
           } catch (err) {
-            $("#chooseUploadType label:nth-child(2)").click();
-            $("#chooseUploadType label:nth-child(1)").removeClass("active").addClass("disabled").next().addClass("active");
+            console.error(err);
+            $("label[for=typeSong]").removeClass("active").addClass("disabled");
+            $("label[for=typeFile]").click().addClass("active");
           }
           $(".songsSpinner").hide();
-        } else if ($("#chooseUploadType label:nth-child(2) input:checked").length > 0) {
-          newElem = "<input type=\"text\" class=\"relatedToUpload form-control form-control-sm half localOrRemoteFile\" id=\"fileToUpload\" required readonly />";
+        } else if ($("input#typeFile:checked").length > 0) {
+          newElem = "<input type=\"text\" class=\"relatedToUpload form-control form-control-sm localOrRemoteFile\" id=\"fileToUpload\" required readonly />";
         } else {
           $(".songsSpinner").show();
-          newElem = $("<select class=\"form-control form-control-sm half localOrRemoteFile\" id=\"s34Picker\">");
+          newElem = $("<select class=\"form-control form-control-sm localOrRemoteFile\" id=\"s34Picker\">");
           var s34Talks = await sftpLs(path.posix.join(prefs.congServerDir, "S-34"));
           if (s34Talks.length == 0) {
-            $("#chooseUploadType label:nth-child(2)").click();
-            $("#chooseUploadType label:nth-child(3)").removeClass("active").addClass("disabled").prev().addClass("active");
+            $("label[for=typeS34]").removeClass("active").addClass("disabled");
+            $("label[for=typeFile]").click().addClass("active");
             console.error("S-34 path appears unreachable:", path.posix.join(prefs.congServerDir, "S-34"));
           } else {
             s34Talks = s34Talks.sort((a, b) => a.name.replace(/\D/g,"").localeCompare(b.name.replace(/\D/g,"")));
@@ -1535,7 +1596,7 @@ function goAhead() {
         if ($("#fileToUpload").length == 0) {
           $(".file-to-upload").append(newElem);
           $("#fileToUpload, #s34Picker").change();
-          $("select#fileToUpload, select#s34Picker").wrap("<div class='half localOrRemoteFileCont'>").select2();
+          $("select#fileToUpload, select#s34Picker").wrap("<div class='localOrRemoteFileCont'>").select2();
           $("#s34Picker").after("<input type=\"hidden\" id=\"fileToUpload\" />");
         }
       });
@@ -1544,24 +1605,24 @@ function goAhead() {
         prefix = $("#enterPrefix input").map(function() {
           return $(this).val();
         }).toArray().join("").trim();
-        if (prefix.length % 2) {
-          prefix = prefix + 0;
-        }
-        if (prefix.length > 0) {
-          prefix = prefix.match(/.{1,2}/g).join("-");
-        }
         for (var a0 = 0; a0 <= 4; a0++) {
           if ($("#enterPrefix-" + a0).val().length > 0) {
             for (var a1 = a0 + 1; a1 <= 5; a1++) {
               $("#enterPrefix-" + a1).prop("disabled", false);
             }
-            $("#enterPrefix-" + (a0 + 1)).focus();
           } else {
             for (var a2 = a0 + 1; a2 <= 5; a2++) {
               $("#enterPrefix-" + a2).prop("disabled", true);
               $("#enterPrefix-" + a2).val("");
             }
           }
+        }
+        $("#enterPrefix-" + prefix.length).focus();
+        if (prefix.length % 2) {
+          prefix = prefix + 0;
+        }
+        if (prefix.length > 0) {
+          prefix = prefix.match(/.{1,2}/g).join("-");
         }
       }
       var hiddenFiles= [];
@@ -1578,20 +1639,20 @@ function goAhead() {
         document.addEventListener("dragover", dragoverHandler);
         document.addEventListener("dragenter", dragenterHandler);
         document.addEventListener("dragleave", dragleaveHandler);
-        $("#chooseUploadType label input").prop("checked", false);
-        $("#fileToUpload").val("");
-        if ($("#chooseMeeting label:nth-child(2) input:checked").length > 0) {
+        $("#chooseUploadType input").prop("checked", false);
+        $("#fileToUpload, #enterPrefix input").val("").empty().change();
+        if ($("#chooseMeeting input:nth-child(3):checked").length > 0) {
           $("#chooseUploadType label.active").removeClass("active");
-          $("#chooseUploadType label:nth-child(1) input, #chooseUploadType label:nth-child(3) input").prop("disabled", false);
-          $("#chooseUploadType label:nth-child(1), #chooseUploadType label:nth-child(3)").removeClass("disabled").fadeIn();
+          $("input#typeS34, input#typeSong").prop("disabled", false);
+          $("label[for=typeS34], label[for=typeSong]").removeClass("disabled").fadeIn();
         } else {
-          $("#chooseUploadType label:nth-child(1) input, #chooseUploadType label:nth-child(3) input").prop("disabled", true);
-          $("#chooseUploadType label:nth-child(1), #chooseUploadType label:nth-child(3)").fadeOut().addClass("disabled");
-          $("#chooseUploadType label:nth-child(2)").click().addClass("active");
+          $("input#typeS34, input#typeSong").prop("disabled", true);
+          $("label[for=typeS34], label[for=typeSong]").fadeOut().addClass("disabled");
+          $("label[for=typeFile]").click().addClass("active");
         }
         $(".relatedToUploadType").fadeTo(400, 1);
       });
-      $("#overlayUploadFile").on("keyup change", "#enterPrefix input", function() {
+      $("#overlayUploadFile").on("keyup", "#enterPrefix input", function() {
         getPrefix();
       });
       $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType input", function() {
@@ -1720,7 +1781,7 @@ function goAhead() {
         $("#btnCancelUpload").prop("disabled", true);
         $("#uploadSpinnerContainer").fadeTo(400, 1);
         var localOrRemoteFile = $("#fileToUpload").val();
-        if ($("#chooseUploadType label:nth-child(1) input:checked").length > 0) {
+        if ($("input#typeSong:checked").length > 0) {
           var meetingSong = {
             "SongNumber": $("#fileToUpload").val().split(".")[0],
             "DestPath": "",
@@ -1737,7 +1798,7 @@ function goAhead() {
         $("#uploadProgressContainer").fadeTo(400, 1);
         var localOrRemoteFileOrig = localOrRemoteFile;
         localOrRemoteFile = [];
-        if ($("#chooseUploadType label:nth-child(1) input:checked").length == 0) {
+        if ($("input#typeSong:checked").length == 0) {
           for (var splitLocalOrRemoteFile of localOrRemoteFileOrig.split(" -//- ")) {
             localOrRemoteFile.push(splitLocalOrRemoteFile);
           }
@@ -1746,7 +1807,7 @@ function goAhead() {
         }
         for (var splitFileToUpload of localOrRemoteFile) {
           var splitFileToUploadName = sanitizeFilename(prefix + " " + path.basename(splitFileToUpload)).trim();
-          if ($("#chooseUploadType label:nth-child(3) input:checked").length > 0) {
+          if ($("input#typeS34:checked").length > 0) {
             var tempFile = path.join(os.tmpdir(), splitFileToUploadName);
             await sftpClient.fastGet(path.posix.join(prefs.congServerDir, "S-34", $("#s34Picker option:selected").val(), splitFileToUpload), tempFile, {
               step: function(totalTransferred, chunk, total) {
