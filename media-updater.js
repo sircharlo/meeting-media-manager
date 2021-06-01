@@ -1472,7 +1472,7 @@ function goAhead() {
     for (const f of event.dataTransfer.files) {
       filesDropped.push(f.path);
     }
-    if ($("label[for=typeFile].active").length > 0) {
+    if ($("input#typeFile:checked").length > 0) {
       $("#fileToUpload").val(filesDropped.join(" -//- ")).change();
     }
     $(".dropzone").css("display", "none");
@@ -1482,7 +1482,7 @@ function goAhead() {
     e.stopPropagation();
   };
   var dragenterHandler = () => {
-    if ($("label[for=typeFile].active").length > 0) {
+    if ($("input#typeFile:checked").length > 0) {
       $(".dropzone").css("display", "block");
     }
   };
