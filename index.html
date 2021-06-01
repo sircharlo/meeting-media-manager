@@ -419,12 +419,12 @@
     </div>
     <div class="align-items-center d-flex justify-content-center py-2">
       <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="targetMeeting"></div>
-      <div class="btn-group btn-group-toggle col-7" data-toggle="buttons" id="chooseMeeting">
+      <div class="btn-group btn-group-toggle col-7" id="chooseMeeting">
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUploadType">
       <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="uploadType"></div>
-      <div class="btn-group btn-group-toggle col-7" data-toggle="buttons" id="chooseUploadType">
+      <div class="btn-group btn-group-toggle col-7" id="chooseUploadType">
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
         <label class="btn btn-outline-dark disabled i18n" for="typeSong" data-i18n-string="song"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeFile" autocomplete="off">
@@ -509,7 +509,7 @@
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="maxRes" class="m-0 pr-3 col-5 text-start i18n" data-i18n-string="maxRes"></label>
-      <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="maxRes">
+      <div class="btn-group btn-group-toggle flex-fill" id="maxRes">
         <input type="radio" class="btn-check" name="maxRes" id="maxRes0" value="240p" autocomplete="off">
         <label class="btn btn-outline-dark" for="maxRes0">240p</label>
         <input type="radio" class="btn-check" name="maxRes" id="maxRes1" value="360p" autocomplete="off">
@@ -523,7 +523,7 @@
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="mwDay" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="mwMeetingDay"></label>
-      <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="mwDay">
+      <div class="btn-group btn-group-toggle flex-fill" id="mwDay">
         <input type="radio" class="btn-check" name="mwDay" id="mwDay0" value="0" autocomplete="off">
         <label class="btn btn-outline-dark" for="mwDay0">M</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay1" value="1" autocomplete="off">
@@ -542,7 +542,7 @@
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="weDay" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="weMeetingDay"></label>
-      <div class="btn-group btn-group-toggle flex-fill" data-toggle="buttons" id="weDay">
+      <div class="btn-group btn-group-toggle flex-fill" id="weDay">
         <input type="radio" class="btn-check" name="weDay" id="weDay0" value="0" autocomplete="off">
         <label class="btn btn-outline-dark" for="weDay0">M</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay1" value="1" autocomplete="off">
@@ -735,8 +735,8 @@
       </div>
     </div>
     <div class="align-items-center d-flex flex-fill justify-content-center">
-      <div class="dropdown" id="baseDate">
-        <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <div class="btn-group" id="baseDate">
+        <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
         </button>
         <div class="dropdown-menu" aria-labelledby="baseDate-dropdown">
           <button class="dropdown-item" value=""></button>
