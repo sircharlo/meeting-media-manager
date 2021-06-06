@@ -813,7 +813,9 @@ function goAhead() {
       defaultLocale: "en",
       retryInDefaultLocale: true
     });
-    i18n.setLocale(localeLang.symbol);
+    if (localeLang) {
+      i18n.setLocale(localeLang.symbol);
+    }
     $(".i18n").each(function() {
       $(this).html(i18n.__($(this).data("i18n-string")));
     });
