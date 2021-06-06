@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "0.8.93",
+  "version": "0.8.94",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -48,12 +48,23 @@
         "github"
       ]
     },
+    "mac": {
+      "target": {
+        "target": "default",
+        "arch": [
+          "universal"
+        ]
+      },
+      "publish": [
+        "github"
+      ]
+    },
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^13.1.0",
+    "electron": "^13.1.1",
     "electron-builder": "^22.11.3",
-    "eslint": "^7.27.0"
+    "eslint": "^7.28.0"
   },
   "scripts": {
     "start": "electron .",
