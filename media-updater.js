@@ -103,7 +103,7 @@ function goAhead() {
   getInitialData();
   dateFormatter();
   if (os.platform() == "linux") {
-    $(".notLinux").removeClass("d-flex").hide();
+    $(".notLinux").prop("disabled", true);
   }
   $("#outputPath").on("click", function() {
     var path = remoteDialog.showOpenDialogSync({
