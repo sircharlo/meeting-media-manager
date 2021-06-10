@@ -93,11 +93,6 @@
       border-color: var(--bs-success) !important;
     }
 
-    #outputPath,
-    #fileToUpload {
-      background-color: var(--bs-white);
-    }
-
     #version span.badge {
       color: var(--bs-dark);
       font-weight: normal;
@@ -426,17 +421,17 @@
       <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="uploadType"></div>
       <div class="btn-group btn-group-toggle col-7" id="chooseUploadType">
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
-        <label class="btn btn-outline-dark disabled i18n" for="typeSong" data-i18n-string="song"></label>
+        <label class="btn btn-outline-dark disabled i18n" for="typeSong" data-i18n-string="song" style="display: none;"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeFile" autocomplete="off">
         <label class="btn btn-outline-dark i18n" for="typeFile" data-i18n-string="custom"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeS34" autocomplete="off">
-        <label class="btn btn-outline-dark i18n" for="typeS34" data-i18n-string="s34"></label>
+        <label class="btn btn-outline-dark i18n" for="typeS34" data-i18n-string="s34" style="display: none;"></label>
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
       <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="filesToUpload"></div>
       <div class="col-7 file-to-upload">
-        <input type="text" class="form-control localOrRemoteFile" id="fileToUpload" required readonly />
+        <input type="text" class="form-control localOrRemoteFile" id="fileToUpload" required />
         <div class="songsSpinner" style="display: none;">
           <i class="fas fa-circle-notch fa-spin"></i>
         </div>
@@ -497,7 +492,7 @@
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="outputPath" class="m-0 col-5 pr-3 text-start i18n" data-i18n-string="mediaSaveFolder"></label>
       <div class="flex-fill">
-        <input type="text" class="form-control form-control-sm" id="outputPath" required readonly />
+        <input type="text" class="form-control form-control-sm" id="outputPath" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
