@@ -1529,7 +1529,7 @@ function goAhead() {
         var newElem = "";
         if ($("input#typeSong:checked").length > 0) {
           $(".songsSpinner").show();
-          newElem = $("<select class=\"form-control form-control-sm localOrRemoteFile\" id=\"fileToUpload\">");
+          newElem = $("<select class=\"form-control form-control-sm localOrRemoteFile\" id=\"fileToUpload\" style=\"display: none\">");
           var sjjm = await getJson({
             "pub": "sjjm",
             "filetype": "MP4"
@@ -1673,6 +1673,7 @@ function goAhead() {
         try {
           if ($("#chooseMeeting input:checked").length > 0) {
             $(".relatedToUpload *:enabled").prop("disabled", true).addClass("fileListLoading");
+            $(".songsSpinner").fadeIn(animationDuration);
             $("#fileList").fadeTo(animationDuration, 0, () => {
               if (!dryrunResults[$("#chooseMeeting input:checked").prop("id")]) {
                 dryrunResults[$("#chooseMeeting input:checked").prop("id")] = [];
@@ -1707,7 +1708,7 @@ function goAhead() {
                   }).prepend("<i class='fas fw fa-sync-alt'></i>");
                 }
                 for (var b of newList.filter(e => e.congSpecific === true && e.recurring === false)) {
-                  $("#fileList li").filter(function () {
+                  $("#fileList li:not(:has(.fa-minus-circle))").filter(function () {
                     var text = $(this).text();
                     return text === b.name;
                   }).prepend("<i class='fas fw fa-minus-circle'></i>");
@@ -1731,7 +1732,7 @@ function goAhead() {
                 });
               }
               for (var c of newList.filter(e => e.congSpecific === false && e.recurring === false)) {
-                $("#fileList li").filter(function () {
+                $("#fileList li:not(:has(.fa-eye))").filter(function () {
                   var text = $(this).text();
                   return text === c.name;
                 }).prepend("<i class='fas fw fa-eye'></i>").wrapInner("<span class='canHide'></span>");
@@ -1774,6 +1775,7 @@ function goAhead() {
               }
               $("#fileList").fadeTo(animationDuration, 1, () => {
                 $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
+                $(".songsSpinner").fadeOut(animationDuration);
               });
             });
           }

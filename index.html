@@ -226,6 +226,17 @@
       margin: 0;
     }
 
+    .file-to-upload {
+      position: relative;
+    }
+
+    .songsSpinner {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      padding-top: 3px;
+    }
+
     @keyframes pulse {
       0% {
         box-shadow: 0 0 0 0 rgba(15, 102, 116, 0.7);
@@ -431,10 +442,10 @@
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
       <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="filesToUpload"></div>
       <div class="col-7 file-to-upload">
-        <input type="text" class="form-control localOrRemoteFile" id="fileToUpload" required />
         <div class="songsSpinner" style="display: none;">
           <i class="fas fa-circle-notch fa-spin"></i>
         </div>
+        <input type="text" class="form-control localOrRemoteFile" id="fileToUpload" required />
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
