@@ -117,6 +117,7 @@ function goAhead() {
     toggleScreen("overlaySettings");
   });
   $(".btn-sftp").on("click", function() {
+    sftpSetup();
     toggleScreen("overlaySftp");
   });
   $("#baseDate").on("click", ".dropdown-item", function() {
@@ -689,7 +690,7 @@ function goAhead() {
     await getTranslations();
     configIsValid();
     $("#version span.badge").html("v" + remoteApp.getVersion());
-    await sftpSetup();
+    await sftpSetup(true);
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     if (prefs.autoStartSync && configIsValid()) {
       var cancelSync = false;
@@ -889,13 +890,15 @@ function goAhead() {
     if (sftpIsAGo && !dryrun) {
       var hiddenFilesFolders = await sftpLs(path.posix.join(prefs.congServerDir, "Hidden"));
       for (var hiddenFilesFolder of hiddenFilesFolders) {
-        var hiddenFiles = await sftpLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.name));
-        for (var hiddenFile of hiddenFiles) {
-          try {
-            fs.unlinkSync(path.join(mediaPath, hiddenFilesFolder.name, hiddenFile.name));
-            console.log("%cFile deleted [" + hiddenFilesFolder.name + "]: " + hiddenFile.name, "background-color: #fff3cd; color: #856404;");
-          } catch(err) {
-            console.error(err);
+        if (dayjs(path.basename(hiddenFilesFolder.name), "YYYY-MM-DD").isValid() && dayjs(path.basename(hiddenFilesFolder.name), "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+          var hiddenFiles = await sftpLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.name));
+          for (var hiddenFile of hiddenFiles) {
+            try {
+              fs.unlinkSync(path.join(mediaPath, hiddenFilesFolder.name, hiddenFile.name));
+              console.log("%cFile deleted [" + hiddenFilesFolder.name + "]: " + hiddenFile.name, "background-color: #fff3cd; color: #856404;");
+            } catch(err) {
+              console.error(err);
+            }
           }
         }
       }
@@ -988,9 +991,9 @@ function goAhead() {
       console.error(err);
     }
   }
-  async function sftpLs(dir, force) {
+  async function sftpLs(dir) {
     try {
-      if (sftpIsAGo || force == true) {
+      if (sftpIsAGo) {
         if (!await sftpClient.exists(dir)) {
           await sftpClient.mkdir(dir, true);
         }
@@ -1028,7 +1031,7 @@ function goAhead() {
       console.error(err);
     }
   }
-  async function sftpSetup() {
+  async function sftpSetup(initialCheck) {
     $(".sftpHost, .sftpCreds, #congServerDir").removeClass("valid invalid notValidYet");
     $("#sftpStatus").removeClass("text-success text-warning text-danger");
     if (prefs.congServer && prefs.congServer.length > 0) {
@@ -1079,13 +1082,14 @@ function goAhead() {
       if (prefs.congServerDir == null || prefs.congServerDir.length == 0) {
         $("#congServerDir").val("/").change();
       }
-      if (sftpLoginSuccessful) {
+      if (sftpLoginSuccessful && !initialCheck) {
         $("#sftpFolderList").fadeTo(animationDuration, 0);
         try {
-          var sftpDestDir = await sftpLs(prefs.congServerDir, true);
-          if (sftpDestDir !== undefined) {
+          var sftpDestDir = await sftpClient.exists(prefs.congServerDir);
+          if (sftpDestDir !== false) {
             sftpDirIsValid = true;
             $("#sftpFolderList").empty();
+            sftpDestDir = await sftpClient.list(prefs.congServerDir);
             sftpDestDir = sftpDestDir.sort((a, b) => a.name.localeCompare(b.name));
             for (var item of sftpDestDir) {
               $("#sftpFolderList").append("<li>" + (item.type == "d" ? "<i class=\"fas fw fa-folder-open\"></i> " : "") + item.name + "</li>");
@@ -1113,7 +1117,7 @@ function goAhead() {
         $("#btn-upload").addClass("btn-light").removeClass("btn-warning");
         $("#specificCong").removeClass("bg-warning");
       }
-      if (sftpLoginSuccessful && sftpDirIsValid) {
+      if (sftpLoginSuccessful && (initialCheck || sftpDirIsValid)) {
         sftpIsAGo = true;
         $("#btn-upload").fadeTo(animationDuration, 1).prop("disabled", false);
       } else {
