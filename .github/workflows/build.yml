@@ -16,12 +16,13 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
 
       - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v2.1.5
         with:
           node-version: 14
+          check-latest: true
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0
