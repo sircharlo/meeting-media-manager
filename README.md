@@ -30,7 +30,7 @@ The brother designated as _videoconference organizer_ by the body of elders can 
 
 ![Upload screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/03-upload.png?raw=true)
 
-Usage of these congregation-level syncing features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be synchronized should connect to the same SFTP server and directory using the **Settings > SFTP server** screen.
+Usage of these congregation-level syncing features is entirely optional, and requires a connection to a WebDAV server. All users from a congregation that wish to be synchronized should connect to the same WebDAV server and directory using the **Settings > WebDAV server** screen.
 
 ![Upload settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/04-upload-settings.png?raw=true)
 

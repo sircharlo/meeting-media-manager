@@ -27,7 +27,7 @@
     "pdfjs-dist": "^2.8.335",
     "select2": "^4.1.0-rc.0",
     "sql.js": "^1.5.0",
-    "ssh2-sftp-client": "^7.0.0",
+    "webdav": "^4.6.0",
     "zip-local": "^0.3.4"
   },
   "build": {
@@ -59,7 +59,7 @@
         "github"
       ]
     },
-    "buildDependenciesFromSource": false
+    "buildDependenciesFromSource": true
   },
   "devDependencies": {
     "electron": "^13.1.2",

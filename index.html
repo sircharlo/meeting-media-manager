@@ -28,7 +28,7 @@
     }
 
     #overlaySettings,
-    #overlaySftp,
+    #overlayWebdav,
     #overlayUploadFile {
       z-index: 50;
     }
@@ -69,7 +69,7 @@
     #overlaySettings,
     span.select2-dropdown,
     #overlaySettings label,
-    #overlaySftp label {
+    #overlayWebdav label {
       font-size: 0.9em
     }
 
@@ -611,8 +611,8 @@
         </button>
       </div>
       <div class="px-1">
-        <button type="button" class="btn btn-primary btn-sftp">
-          <span class="i18n" data-i18n-string="sftpServer"></span>
+        <button type="button" class="btn btn-primary btn-webdav">
+          <span class="i18n" data-i18n-string="webdavServer"></span>
         </button>
       </div>
       <div class="px-1">
@@ -625,49 +625,49 @@
       <span class="badge"></span>
     </div>
   </div>
-  <div id="overlaySftp" class="flex-column p-4 overlay" style="display: none;">
+  <div id="overlayWebdav" class="flex-column p-4 overlay" style="display: none;">
     <div class="align-items-center d-flex justify-content-center pb-4">
-      <i id="sftpStatus" class="fas fa-fw fa-network-wired fa-3x text-muted"></i>
+      <i id="webdavStatus" class="fas fa-fw fa-network-wired fa-3x text-muted"></i>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServer" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpHostname"></label>
+      <label for="congServer" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavHostname"></label>
       <div class="col-7">
-        <input type="text" class="form-control form-control-sm sftpHost" id="congServer" required />
+        <input type="text" class="form-control form-control-sm webdavHost" id="congServer" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerPort" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpPort"></label>
+      <label for="congServerPort" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavPort"></label>
       <div class="col-7">
-        <input type="text" class="form-control form-control-sm sftpHost" id="congServerPort" required />
+        <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerUser" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpUser"></label>
+      <label for="congServerUser" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavUser"></label>
       <div class="col-7">
-        <input type="text" class="form-control form-control-sm sftpCreds" id="congServerUser" required />
+        <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerPass" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpPass"></label>
+      <label for="congServerPass" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavPass"></label>
       <div class="col-7">
-        <input type="password" class="form-control form-control-sm sftpCreds" id="congServerPass" required />
+        <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass" required />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="congServerDir" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="sftpFolder"></label>
+      <label for="congServerDir" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavFolder"></label>
       <div class="col-7">
         <input type="text" class="form-control form-control-sm" id="congServerDir" required readonly />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center" style="opacity: 0;">
-      <label for="sftpSpinner" class="col-6 m-0 pr-3 text-end"></label>
-      <i id="sftpSpinner" class="fas fa-fw fa-2x fa-circle-notch fa-spin"></i>
+      <label for="webdavSpinner" class="col-6 m-0 pr-3 text-end"></label>
+      <i id="webdavSpinner" class="fas fa-fw fa-2x fa-circle-notch fa-spin"></i>
     </div>
     <div class="d-flex flex-fill text-start">
-      <ul id="sftpFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+      <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
     <div>
-      <button type="button" class="btn btn-primary btn-sftp"><i class="fas fa-fw fa-user-cog"></i></button>
+      <button type="button" class="btn btn-primary btn-webdav"><i class="fas fa-fw fa-user-cog"></i></button>
     </div>
   </div>
   <div id="home" class="d-flex flex-column">

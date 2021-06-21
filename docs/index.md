@@ -30,7 +30,7 @@ The brother designated as _videoconference organizer_ by the body of elders can 
 
 ![Upload screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/03-upload.png?raw=true)
 
-Usage of these congregation-level syncing features is entirely optional, and requires a connection to an SFTP server. All users from a congregation that wish to be synchronized should connect to the same SFTP server and directory using the **Settings > SFTP server** screen.
+Usage of these congregation-level syncing features is entirely optional, and requires a connection to a WebDAV server. All users from a congregation that wish to be synchronized should connect to the same WebDAV server and directory using the **Settings > WebDAV server** screen.
 
 ![Upload settings screen of app](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/04-upload-settings.png?raw=true)
 
@@ -61,6 +61,12 @@ Before you do this however, make sure you read up on what this change entails, f
 ### Mac
 
 For technical reasons, the auto-updater does not work on Macs. Mac users will however see a button displayed on the main screen of the app when an update is available. Clicking on this button will take you to the latest release's download page automatically.
+
+![Mac app error](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/06-mac-error.png?raw=true)
+
+If after launching the app, you receive a message such as the one above, then try running this command in Terminal:
+
+`codesign --force --deep --sign - "/Applications/JW Meeting Media Fetcher.app"`
 
 ## Does this app depend on external sites, sources or curators to download publications or media?
 

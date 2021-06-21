@@ -20,13 +20,13 @@
 	"openTargetFolderAfterSync": "Ouvrir le dossier des médias après la syncronisation",
 	"quitAfterSync": "Quitter l'appli après la syncronisation des médias",
 	"cleanCache": "Vider le cache des médias",
-	"sftpServer": "Serveur SFTP",
-	"sftpHostname": "Addressedu serveur SFTP",
-	"sftpPort": "Port SFTP",
-	"sftpUser": "Nom d'utilisatuer SFTP",
-	"sftpPass": "Mot de passe SFTP",
-	"sftpFolder": "Dossier SFTP",
+	"webdavServer": "Serveur WebDAV",
+	"webdavHostname": "Addresse du serveur WebDAV",
+	"webdavPort": "Port WebDAV",
+	"webdavUser": "Nom d'utilisateur WebDAV",
+	"webdavPass": "Mot de passe WebDAV",
+	"webdavFolder": "Dossier WebDAV",
 	"congMedia": "Médias de l'assemblée locale",
 	"mp4Conversion": "Conversion MP4",
-	"maxRes": "Resolution maximale pour vidéos"
+	"maxRes": "Résolution maximale pour vidéos"
 }
