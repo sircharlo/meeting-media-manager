@@ -426,6 +426,9 @@ function goAhead() {
           progressSet(percent, path.basename(url), type);
         }
       });
+      if (parseInt(response.headers["content-length"]) !== response.data.byteLength) {
+        throw("ERROR", path.basename(url), "WRONG SIZE");
+      }
       return response.data;
     } catch (err) {
       console.error(err);
@@ -983,6 +986,9 @@ function goAhead() {
                 }
               });
               fs.writeFileSync(path.join(destDir, file.basename), remoteFile);
+              if (file.size !== fs.statSync(path.join(destDir, file.basename)).size) {
+                throw("ERROR", file.basename, "WRONG SIZE");
+              }
             }
           }
         }
@@ -1451,6 +1457,9 @@ function goAhead() {
   function copyFile(opts) {
     if ((fs.existsSync(opts.destFile) && fs.existsSync(opts.file) && fs.statSync(opts.destFile).size !== fs.statSync(opts.file).size) || !fs.existsSync(opts.destFile)) {
       fs.copyFileSync(opts.file, opts.destFile);
+      if (fs.statSync(opts.file).size !== fs.statSync(opts.destFile).size) {
+        throw("ERROR", opts.destFile, "WRONG SIZE");
+      }
     }
   }
   var dropHandler = (event) => {
