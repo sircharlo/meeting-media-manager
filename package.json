@@ -5,7 +5,7 @@
   "main": "main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git" 
+    "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
   },
   "dependencies": {
     "@electron/remote": "^1.2.0",
