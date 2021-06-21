@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2.3.4
+        
+      - name: Get latest CMake and ninja
+        uses: lukka/get-cmake@latest        ⟸ THIS IS THE ONE LINER YOU NEED
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v2.1.5
