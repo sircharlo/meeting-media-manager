@@ -1102,10 +1102,10 @@ function goAhead() {
           webdavDestDir = webdavDestDir.sort((a, b) => a.basename.localeCompare(b.basename));
           for (var item of webdavDestDir) {
             console.log(item);
-            $("#webdavFolderList").append("<li>" + (item.type == "directory" ? "<i class=\"fas fw fa-folder-open\"></i> " : "") + item.basename + "</li>");
+            $("#webdavFolderList").append("<li>" + (item.type == "directory" ? "<i class=\"fas fa-fw fa-folder-open\"></i> " : "") + item.basename + "</li>");
           }
           if (prefs.congServerDir !== "/") {
-            $("#webdavFolderList").prepend("<li><i class=\"fas fw fa-chevron-circle-up\"></i> ../ </li>");
+            $("#webdavFolderList").prepend("<li><i class=\"fas fa-fw fa-chevron-circle-up\"></i> ../ </li>");
           }
           $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 4));
         } catch(err) {
@@ -1645,8 +1645,6 @@ function goAhead() {
         document.addEventListener("dragenter", dragenterHandler);
         document.addEventListener("dragleave", dragleaveHandler);
         $("#chooseUploadType input").prop("checked", false);
-        $("#fileToUpload, #enterPrefix input").val("").empty().change();
-        getPrefix();
         if ($("#chooseMeeting input:nth-child(3):checked").length > 0) {
           $("#chooseUploadType label.active").removeClass("active");
           $("input#typeS34, input#typeSong").prop("disabled", false);
@@ -1662,6 +1660,8 @@ function goAhead() {
         getPrefix();
       });
       $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType input", function() {
+        $("#fileToUpload, #enterPrefix input").val("").empty().change();
+        getPrefix();
         if ($("#chooseMeeting input:checked").length == 0 || $("#chooseUploadType input:checked").length == 0) {
           $(".relatedToUpload").fadeTo(animationDuration, 0);
         } else {
@@ -1671,7 +1671,7 @@ function goAhead() {
       $("#overlayUploadFile").on("change", "#enterPrefix input, #chooseMeeting input, #fileToUpload", function() {
         try {
           if ($("#chooseMeeting input:checked").length > 0) {
-            $(".relatedToUpload *:enabled").prop("disabled", true).addClass("fileListLoading");
+            $(".relatedToUpload *:not(.enterPrefixInput):enabled").prop("disabled", true).addClass("fileListLoading");
             $(".songsSpinner").fadeIn(animationDuration);
             $("#fileList").stop().fadeTo(animationDuration, 0, () => {
               if (!dryrunResults[$("#chooseMeeting input:checked").prop("id")]) {
@@ -1704,13 +1704,13 @@ function goAhead() {
                   $("#fileList li").filter(function () {
                     var text = $(this).text();
                     return text === a.basename;
-                  }).prepend("<i class='fas fw fa-sync-alt'></i>");
+                  }).prepend("<i class='fas fa-fw fa-sync-alt'></i>");
                 }
                 for (var b of newList.filter(e => e.congSpecific === true && e.recurring === false)) {
                   $("#fileList li:not(:has(.fa-minus-circle))").filter(function () {
                     var text = $(this).text();
                     return text === b.basename;
-                  }).prepend("<i class='fas fw fa-minus-circle'></i>");
+                  }).prepend("<i class='fas fa-fw fa-minus-circle'></i>");
                 }
                 $("#fileList li").on("click", ".fa-minus-circle", function() {
                   $(this).parent().addClass("confirmDelete").find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-exclamation-circle");
@@ -1720,6 +1720,7 @@ function goAhead() {
                 });
                 $("#fileList li").on("click", ".fa-exclamation-circle", function() {
                   webdavRm(path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), $(this).parent().text());
+                  cleanUp([mediaPath], "brutal");
                   $(this).parent().fadeOut(animationDuration, function(){
                     $(this).remove();
                   });
@@ -1734,13 +1735,13 @@ function goAhead() {
                 $("#fileList li:not(:has(.fa-eye))").filter(function () {
                   var text = $(this).text();
                   return text === c.basename;
-                }).prepend("<i class='fas fw fa-eye'></i>").wrapInner("<span class='canHide'></span>");
+                }).prepend("<i class='fas fa-fw fa-eye'></i>").wrapInner("<span class='canHide'></span>");
               }
               $("#fileList").on("click", ".canHide", function() {
                 webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).text().trim());
                 $(this).parent()
                   .find("span.canHide").contents().unwrap().parent()
-                  .prepend("<i class='fas fw fa-eye-slash'></i>")
+                  .prepend("<i class='fas fa-fw fa-eye-slash'></i>")
                   .wrapInner("<del class='wasHidden'></del>")
                   .addClass("text-secondary")
                   .find("i.fa-eye").remove();
@@ -1749,7 +1750,7 @@ function goAhead() {
                 webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).text().trim());
                 $(this).parent()
                   .find("del.wasHidden").contents().unwrap().parent()
-                  .prepend("<i class='fas fw fa-eye'></i>")
+                  .prepend("<i class='fas fa-fw fa-eye'></i>")
                   .wrapInner("<span class='canHide'></del>")
                   .removeClass("text-secondary")
                   .find("i.fa-eye-slash").remove();
@@ -1759,14 +1760,16 @@ function goAhead() {
                   var text = $(this).text();
                   return text === hiddenFile.basename;
                 }).find("span.canHide").contents().unwrap().parent()
-                  .prepend("<i class='fas fw fa-eye-slash'></i>")
+                  .prepend("<i class='fas fa-fw fa-eye-slash'></i>")
                   .wrapInner("<del class='wasHidden'></del>")
                   .addClass("text-secondary")
                   .find("i.fa-eye").remove();
               }
               if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
                 for (var newFile of newFiles) {
-                  $("#fileList li:contains(" + sanitizeFilename(newFile.basename) + ")").addClass("text-primary new-file");
+                  $("#fileList li:contains(" + sanitizeFilename(newFile.basename) + ")")
+                    .addClass("text-primary new-file")
+                    .prepend("<i class='fas fa-fw fa-plus'></i>");
                 }
                 $("#btnUpload").prop("disabled", false);
               } else {
@@ -1826,14 +1829,12 @@ function goAhead() {
           }
           var splitFileToUploadName = sanitizeFilename(prefix + " " + path.basename(splitFileToUpload)).trim();
           await webdavPut(fs.readFileSync(splitFileToUpload), path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), splitFileToUploadName);
-          $("#fileList li:contains(" + splitFileToUploadName + ")").removeClass("new-file text-primary").prepend("<i class='fas fw fa-minus-circle'></i>");
         }
-        progressSet(100);
         $("#btnCancelUpload").click();
+        progressSet(100);
         $("#uploadSpinnerContainer").fadeTo(animationDuration, 0);
         $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
         $("#btnCancelUpload").prop("disabled", false);
-        $("#fileToUpload, #enterPrefix input").val("").empty().change();
         $("#chooseUploadType input:checked").prop("checked", false);
         $("#chooseUploadType .active").removeClass("active");
       } catch (err) {
