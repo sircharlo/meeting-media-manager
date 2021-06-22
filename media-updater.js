@@ -1101,7 +1101,8 @@ function goAhead() {
           webdavDestDir = await webdavLs(showMeTheDirectory, true);
           webdavDestDir = webdavDestDir.sort((a, b) => a.basename.localeCompare(b.basename));
           for (var item of webdavDestDir) {
-            $("#webdavFolderList").append("<li>" + (item.type == "d" ? "<i class=\"fas fw fa-folder-open\"></i> " : "") + item.basename + "</li>");
+            console.log(item);
+            $("#webdavFolderList").append("<li>" + (item.type == "directory" ? "<i class=\"fas fw fa-folder-open\"></i> " : "") + item.basename + "</li>");
           }
           if (prefs.congServerDir !== "/") {
             $("#webdavFolderList").prepend("<li><i class=\"fas fw fa-chevron-circle-up\"></i> ../ </li>");
