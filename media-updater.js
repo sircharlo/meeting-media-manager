@@ -912,6 +912,7 @@ function goAhead() {
       $("#" + bar + "Progress div").html("").width("0%");
       $("#" + bar + "Filename").html("&nbsp;");
     } else {
+      $("#" + bar + "ProgressContainer").stop().fadeTo(animationDuration, 1);
       $("#" + bar + "Progress div").width(percent + "%");
       $("#" + bar + "Filename").html(filename);
     }
@@ -1545,7 +1546,7 @@ function goAhead() {
         e.which == 8 || // delete key
         /[0-9]/.test(String.fromCharCode(e.which)); // numbers
   });
-  $("#chooseUploadType").on("change", async function() {
+  $("#chooseUploadType input").on("change", async function() {
     $(".localOrRemoteFile, .localOrRemoteFileCont, .file-to-upload .select2, #fileToUpload").remove();
     var newElem = "";
     if ($("input#typeSong:checked").length > 0) {
@@ -1594,7 +1595,7 @@ function goAhead() {
       $(".songsSpinner").hide();
     } else if ($("input#typeFile:checked").length > 0) {
       newElem = "<input type=\"text\" class=\"relatedToUpload form-control form-control-sm localOrRemoteFile\" id=\"fileToUpload\" required />";
-    } else {
+    } else if ($("input#typeS34:checked").length > 0) {
       $(".songsSpinner").show();
       newElem = $("<select class=\"form-control form-control-sm localOrRemoteFile\" id=\"s34Picker\">");
       var s34Talks = await webdavLs(path.posix.join(prefs.congServerDir, "S-34"));
@@ -1646,12 +1647,13 @@ function goAhead() {
     document.addEventListener("dragover", dragoverHandler);
     document.addEventListener("dragenter", dragenterHandler);
     document.addEventListener("dragleave", dragleaveHandler);
-    $("#chooseUploadType input").prop("checked", false);
     if ($("#chooseMeeting input:nth-child(3):checked").length > 0) {
+      $("#chooseUploadType input").prop("checked", false).change();
       $("#chooseUploadType label.active").removeClass("active");
       $("input#typeS34, input#typeSong").prop("disabled", false);
       $("label[for=typeS34], label[for=typeSong]").removeClass("disabled").fadeIn(animationDuration);
     } else {
+      $("#chooseUploadType input:checked").change();
       $("input#typeS34, input#typeSong").prop("disabled", true);
       $("label[for=typeS34], label[for=typeSong]").fadeOut(animationDuration).addClass("disabled");
       $("label[for=typeFile]").click().addClass("active");
@@ -1662,7 +1664,7 @@ function goAhead() {
     getPrefix();
   });
   $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType input", function() {
-    $("#fileToUpload, #enterPrefix input").val("").empty().change();
+    $("#enterPrefix input").val("").empty().change();
     getPrefix();
     if ($("#chooseMeeting input:checked").length == 0 || $("#chooseUploadType input:checked").length == 0) {
       $(".relatedToUpload").fadeTo(animationDuration, 0);
@@ -1790,7 +1792,7 @@ function goAhead() {
   $("#btnUpload").on("click", async () => {
     try {
       $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-cloud-upload-alt");
-      $("#btnCancelUpload").prop("disabled", true);
+      $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
       $("#uploadSpinnerContainer").fadeTo(animationDuration, 1);
       $("#uploadProgressContainer").fadeTo(animationDuration, 1);
       if ($("input#typeS34:checked").length > 0) {
@@ -1822,11 +1824,11 @@ function goAhead() {
         dryrunResults = {};
         await startMediaSync();
         dryrun = false;
-        $("#chooseMeeting input:checked").prop("checked", false).change().prop("checked", true).change();
+        $("#chooseMeeting input:checked").change();
         progressSet(100, null, "upload");
         $("#uploadSpinnerContainer").fadeTo(animationDuration, 0);
         $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
-        $("#btnCancelUpload").prop("disabled", false);
+        $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
         $("#overlayDryrun").fadeOut(animationDuration);
       });
     } catch (err) {
