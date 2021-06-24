@@ -209,6 +209,38 @@ function goAhead() {
     $("#mediaSync").html(buttonLabel).prop("disabled", false).removeClass("loading");
     $("#baseDate-dropdown").removeClass("disabled");
   });
+  $("#btnMeetingMusic").on("click", async function() {
+    var sjjm = await getJson({
+      "pub": "sjjm",
+      "filetype": "MP3"
+    });
+    var songs = sjjm.files[prefs.lang][sjjm.fileformat[0]];
+    songs.sort(() => .5 - Math.random());
+    var iterator = 0;
+    function createAudioElem(iterator) {
+      var audioElem = $("<audio id=\"meetingMusic\" autoplay>").data("track", songs[iterator].track).on("ended", function() {
+        console.log("SONG", "ENDED", "List #" + (iterator + 1), "Track " + songs[iterator].track);
+        $("#meetingMusic").remove();
+        if (iterator < songs.length - 1) {
+          iterator++;
+        } else {
+          iterator = 0;
+        }
+        createAudioElem(iterator);
+      }).append("<source src=\""+ songs[iterator].file.url + "\" type=\"audio/mpeg\">");
+      $("body").append(audioElem);
+      console.log("SONG", "START", "List #" + (iterator + 1), "Track " + songs[iterator].track);
+    }
+    createAudioElem(iterator);
+    $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
+  });
+  $("#btnStopMeetingMusic").on("click", function() {
+    $("#meetingMusic").remove();
+    $("#btnStopMeetingMusic").hide();
+    if (prefs.enableMusicButton) {
+      $("#btnMeetingMusic").show();
+    }
+  });
   function additionalMedia() {
     return new Promise((resolve)=>{
       $("#overlayAdditionalFilesPrompt").fadeIn(animationDuration);
@@ -290,6 +322,11 @@ function goAhead() {
     } else {
       $("#zoomRender").removeClass("d-flex");
       $("#additionalMediaPrompt").prop("disabled", true);
+    }
+    if (prefs.enableMusicButton) {
+      $("#btnMeetingMusic").fadeIn();
+    } else {
+      $("#btnMeetingMusic").fadeOut();
     }
     $("#overlaySettings .invalid, #overlaySettings .btn-outline-danger").each(function() {
       $(this).closest("div.flex-row").find("label:nth-child(1)").addClass("text-danger");
@@ -888,7 +925,7 @@ function goAhead() {
     });
   }
   function prefsInitialize() {
-    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt", "maxRes"]) {
+    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt", "maxRes", "enableMusicButton"]) {
       if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) {
         prefs[pref] = null;
       }
@@ -896,7 +933,7 @@ function goAhead() {
     for (var field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir"]) {
       $("#" + field).val(prefs[field]).change();
     }
-    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt"]) {
+    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt", "enableMusicButton"]) {
       $("#" + checkbox).prop("checked", prefs[checkbox]).change();
     }
     for (var radioSel of ["mwDay", "weDay", "maxRes"]) {

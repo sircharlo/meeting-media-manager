@@ -113,6 +113,13 @@
       right: 1em;
     }
 
+    #btnMeetingMusic,
+    #btnStopMeetingMusic {
+      position: fixed;
+      bottom: 1em;
+      right: 5em;
+    }
+
     #btn-upload {
       position: fixed;
       bottom: 1em;
@@ -126,7 +133,7 @@
     }
 
     .btn-circle i {
-      font-size: 135%;
+      font-size: 20px;
     }
 
     .day,
@@ -569,7 +576,11 @@
       <div class="form-check form-switch col-1">
         <input type="checkbox" class="form-check-input" id="includeTeaching" />
       </div>
-      <label for="includeTeaching" class="m-0 text-start i18n" data-i18n-string="includeTh"></label>
+      <label for="includeTeaching" class="m-0 text-start i18n col-5" data-i18n-string="includeTh"></label>
+      <label for="enableMusicButton" class="m-0 text-end i18n col-5" data-i18n-string="enableMusicButton"></label>
+      <div class="form-check form-switch col-1">
+        <input type="checkbox" class="form-check-input" id="enableMusicButton" />
+      </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <div class="form-check form-switch col-1">
@@ -749,14 +760,20 @@
       </div>
     </div>
   </div>
-  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-upload" style="display: none;">
+  <button class="btn btn-light btn-circle btn-circle-sm m-1" id="btn-upload" style="display: none;">
     <i class="fas fa-fw fa-network-wired"></i>
   </button>
-  <button class="btn btn-warning btn-circle btn-circle-sm m-1 fixed" id="btn-mac-update" style="display: none;">
+  <button class="btn btn-warning btn-circle btn-circle-sm m-1" id="btn-mac-update" style="display: none;">
     <i class="fas fa-fw fa-exclamation-triangle"></i>
   </button>
-  <button class="btn btn-light btn-circle btn-circle-sm m-1 fixed" id="btn-settings">
+  <button class="btn btn-light btn-circle btn-circle-sm m-1" id="btn-settings">
     <i class="fas fa-fw fa-user-cog"></i>
+  </button>
+  <button type="button" class="btn btn-info btn-circle btn-circle-sm m-1" id="btnMeetingMusic" style="display: none;">
+    <i class="fas fa-fw fa-music"></i>
+  </button>
+  <button type="button" class="btn btn-warning btn-circle btn-circle-sm m-1" id="btnStopMeetingMusic" style="display: none;">
+    <i class="fas fa-fw fa-stop"></i>
   </button>
   <script src="./media-updater.js"></script>
 </body>

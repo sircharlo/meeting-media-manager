@@ -28,5 +28,6 @@
 	"webdavFolder": "WebDAV Directory",
 	"congMedia": "Congregation media",
 	"mp4Conversion": "MP4 conversion",
-	"maxRes": "Maximum resolution for videos"
+	"maxRes": "Maximum resolution for videos",
+	"enableMusicButton": "Enable button to play Kingdom songs before and after meetings"
 }

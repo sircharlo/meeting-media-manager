@@ -28,5 +28,6 @@
 	"webdavFolder": "Dossier WebDAV",
 	"congMedia": "Médias de l'assemblée locale",
 	"mp4Conversion": "Conversion MP4",
-	"maxRes": "Résolution maximale pour vidéos"
+	"maxRes": "Résolution maximale pour vidéos",
+	"enableMusicButton": "Activer le bouton pour jouer des cantiques avant et après les réunions"
 }
