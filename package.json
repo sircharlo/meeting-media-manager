@@ -15,7 +15,7 @@
     "bootstrap": "^5.0.2",
     "bootstrap-dark-5": "^1.0.2",
     "dayjs": "^1.10.5",
-    "electron-updater": "^4.3.9",
+    "electron-updater": "^4.3.10",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.1.7",
     "graceful-fs": "^4.2.6",
