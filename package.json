@@ -14,7 +14,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^5.0.2",
     "bootstrap-dark-5": "^1.0.2",
-    "dayjs": "^1.10.5",
+    "dayjs": "^1.10.6",
     "electron-updater": "^4.3.10",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.1.7",
@@ -62,7 +62,7 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^13.1.5",
+    "electron": "^13.1.6",
     "electron-builder": "^22.11.7",
     "eslint": "^7.30.0"
   },
