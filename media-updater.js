@@ -1257,7 +1257,7 @@ function goAhead() {
     $("#day" + prefs.weDay).addClass("bg-warning in-progress");
     try {
       mkdirSync(path.join(pubsPath, pubs.wt));
-      var issue = baseDate.clone().subtract(2, "months").format("YYYYMM") + "00";
+      var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
       mkdirSync(path.join(pubsPath, pubs.wt, issue));
       var db = await getDbFromJwpub({
         pub: pubs.wt,
