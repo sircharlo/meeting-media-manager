@@ -190,9 +190,7 @@ function goAhead() {
       stayAlive = true;
       $("#btnStayAlive").removeClass("btn-primary").addClass("btn-success");
     });
-    $("#overlayComplete").fadeIn(animationDuration, () => {
-      $("#home, .btn-settings, #btn-settings, #btn-upload").fadeTo(animationDuration, 0);
-    }).delay(3000).fadeOut(animationDuration, () => {
+    $("#overlayComplete").fadeIn().delay(3000).fadeOut(animationDuration, () => {
       if (prefs.autoQuitWhenDone) {
         if (stayAlive) {
           toggleScreen("overlaySettings");
@@ -227,9 +225,14 @@ function goAhead() {
           iterator = 0;
         }
         createAudioElem(iterator);
+      }).on("loadstart", function() {
+        console.log("SONG", "LOADING", "List #" + (iterator + 1), "Track " + songs[iterator].track);
+        $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop");
+      }).on("canplay", function() {
+        console.log("SONG", "PLAYING", "List #" + (iterator + 1), "Track " + songs[iterator].track);
+        $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin");
       }).append("<source src=\""+ songs[iterator].file.url + "\" type=\"audio/mpeg\">");
       $("body").append(audioElem);
-      console.log("SONG", "START", "List #" + (iterator + 1), "Track " + songs[iterator].track);
     }
     createAudioElem(iterator);
     $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
@@ -242,22 +245,24 @@ function goAhead() {
     }
   });
   function additionalMedia() {
-    return new Promise((resolve)=>{
-      $("#overlayAdditionalFilesPrompt").fadeIn(animationDuration);
-      $("#btnNoAdditionalMedia, #btnAdditionalMedia").click(function() {
-        $("#overlayAdditionalFilesPrompt").fadeOut(animationDuration);
+    if (!dryrun && prefs.additionalMediaPrompt) {
+      return new Promise((resolve)=>{
+        $("#overlayAdditionalFilesPrompt").fadeIn(animationDuration);
+        $("#btnNoAdditionalMedia, #btnAdditionalMedia").click(function() {
+          $("#overlayAdditionalFilesPrompt").fadeOut(animationDuration);
+        });
+        $("#btnAdditionalMedia").click(function() {
+          $("#overlayAdditionalFilesWaiting").fadeIn(animationDuration);
+          shell.openPath(mediaPath);
+        });
+        $("#btnAdditionalMediaDone").click(function() {
+          $("#overlayAdditionalFilesWaiting").fadeOut(animationDuration);
+        });
+        $("#btnAdditionalMediaDone, #btnNoAdditionalMedia").click(function() {
+          resolve();
+        });
       });
-      $("#btnAdditionalMedia").click(function() {
-        $("#overlayAdditionalFilesWaiting").fadeIn(animationDuration);
-        shell.openPath(mediaPath);
-      });
-      $("#btnAdditionalMediaDone").click(function() {
-        $("#overlayAdditionalFilesWaiting").fadeOut(animationDuration);
-      });
-      $("#btnAdditionalMediaDone, #btnNoAdditionalMedia").click(function() {
-        resolve();
-      });
-    });
+    }
   }
   function cleanUp(dirs, type) {
     for (var lookinDir of dirs) {
@@ -284,7 +289,7 @@ function goAhead() {
   function configIsValid() {
     $("#lang").next(".select2").find(".select2-selection").removeClass("invalid");
     $("#mwDay, #weDay, #outputPath").removeClass("invalid");
-    $("#overlaySettings .btn-outline-danger").addClass("btn-outline-dark").removeClass("btn-outline-danger");
+    $("#overlaySettings .btn-outline-danger").addClass("btn-outline-primary").removeClass("btn-outline-danger");
     $("#overlaySettings label.text-danger").removeClass("text-danger");
     var configIsValid = true;
     if ($("#lang option:selected").length == 0) {
@@ -293,7 +298,7 @@ function goAhead() {
     }
     for (var elem of ["mwDay", "weDay", "maxRes"]) {
       if ($("#" + elem + " input:checked").length == 0) {
-        $("#" + elem + " .btn-outline-dark").addClass("btn-outline-danger").removeClass("btn-outline-dark");
+        $("#" + elem + " .btn-outline-primary").addClass("btn-outline-danger").removeClass("btn-outline-primary");
         configIsValid = false;
       }
     }
@@ -333,12 +338,12 @@ function goAhead() {
     });
     if (configIsValid) {
       $("#mediaSync, .btn-settings").prop("disabled", false);
-      $(".btn-settings").addClass("btn-primary").removeClass("btn-danger");
+      $(".btn-settings").addClass("btn-dark").removeClass("btn-danger");
       $("#settingsIcon").addClass("text-muted").removeClass("text-danger");
       return true;
     } else {
       $("#mediaSync, .btn-settings").prop("disabled", true);
-      $(".btn-settings").addClass("btn-danger").removeClass("btn-primary");
+      $(".btn-settings").addClass("btn-danger").removeClass("btn-dark");
       $("#settingsIcon").addClass("text-danger").removeClass("text-muted");
       toggleScreen("overlaySettings", true);
       return false;
@@ -1202,15 +1207,14 @@ function goAhead() {
         }
       }
       if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length == 0) {
-        $(".btn-webdav").addClass("btn-primary").removeClass("btn-warning");
-        $("#btn-upload").addClass("btn-light").removeClass("btn-warning");
+        $(".btn-webdav, #btn-upload").addClass("btn-info").removeClass("btn-warning");
         $("#specificCong").removeClass("bg-warning");
       }
       if (webdavLoginSuccessful && (initialCheck || webdavDirIsValid)) {
         webdavIsAGo = true;
         $("#btn-upload").fadeTo(animationDuration, 1).prop("disabled", false);
       } else {
-        $("#btn-upload, .btn-webdav").addClass("btn-warning").removeClass("btn-dark btn-primary btn-light");
+        $("#btn-upload, .btn-webdav").addClass("btn-warning").removeClass("btn-info");
         $("#btn-upload").prop("disabled", true);
         $("#specificCong").addClass("bg-warning");
         webdavIsAGo = false;
@@ -1218,7 +1222,7 @@ function goAhead() {
       $("#webdavSpinner").parent().fadeTo(animationDuration, 0);
     } else {
       $("#webdavFolderList").fadeTo(animationDuration, 0).empty();
-      $(".btn-webdav.btn-warning").addClass("btn-primary").removeClass("btn-warning");
+      $(".btn-webdav.btn-warning").addClass("btn-info").removeClass("btn-warning");
       $("#specificCong").removeClass("d-flex");
       $("#btn-upload").fadeOut(animationDuration);
     }
@@ -1234,9 +1238,7 @@ function goAhead() {
     await syncMwMeeting();
     await syncWeMeeting();
     await syncCongSpecific();
-    if (prefs.additionalMediaPrompt) {
-      await additionalMedia();
-    }
+    await additionalMedia();
     await convertUnusableFiles();
     await ffmpegConvert();
     if (prefs.openFolderWhenDone && !dryrun) {
@@ -1577,7 +1579,7 @@ function goAhead() {
     document.removeEventListener("dragenter", dragenterHandler);
     document.removeEventListener("dragleave", dragleaveHandler);
   });
-  $("#enterPrefix input").on("keypress", function(e){
+  $("#enterPrefix input, #congServerPort").on("keypress", function(e){
     return e.metaKey || // cmd/ctrl
         e.which <= 0 || // arrow keys
         e.which == 8 || // delete key
@@ -1745,13 +1747,13 @@ function goAhead() {
               $("#fileList li").filter(function () {
                 var text = $(this).text();
                 return text === a.basename;
-              }).prepend("<i class='fas fa-fw fa-sync-alt'></i>");
+              }).prepend("<i class='fas fa-fw fa-sync-alt'></i>").addClass("recurring");
             }
             for (var b of newList.filter(e => e.congSpecific === true && e.recurring === false)) {
               $("#fileList li:not(:has(.fa-minus-circle))").filter(function () {
                 var text = $(this).text();
                 return text === b.basename;
-              }).prepend("<i class='fas fa-fw fa-minus-circle'></i>");
+              }).prepend("<i class='fas fa-fw fa-minus-circle'></i>").addClass("canDelete");
             }
             $("#fileList li").on("click", ".fa-minus-circle", function() {
               $(this).parent().addClass("confirmDelete").find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-exclamation-circle");
@@ -1784,7 +1786,7 @@ function goAhead() {
               .find("span.canHide").contents().unwrap().parent()
               .prepend("<i class='fas fa-fw fa-eye-slash'></i>")
               .wrapInner("<del class='wasHidden'></del>")
-              .addClass("text-secondary")
+              .addClass("text-warning")
               .find("i.fa-eye").remove();
           });
           $("#fileList").on("click", ".wasHidden", function() {
@@ -1793,7 +1795,7 @@ function goAhead() {
               .find("del.wasHidden").contents().unwrap().parent()
               .prepend("<i class='fas fa-fw fa-eye'></i>")
               .wrapInner("<span class='canHide'></del>")
-              .removeClass("text-secondary")
+              .removeClass("text-warning")
               .find("i.fa-eye-slash").remove();
           });
           for (var hiddenFile of hiddenFiles) {
@@ -1803,14 +1805,16 @@ function goAhead() {
             }).find("span.canHide").contents().unwrap().parent()
               .prepend("<i class='fas fa-fw fa-eye-slash'></i>")
               .wrapInner("<del class='wasHidden'></del>")
-              .addClass("text-secondary")
+              .addClass("text-warning")
               .find("i.fa-eye").remove();
           }
           if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
             for (var newFile of newFiles) {
-              $("#fileList li:contains(" + sanitizeFilename(newFile.basename) + ")")
-                .addClass("text-primary new-file")
+              $("#fileList li:not(.canDelete):contains(" + sanitizeFilename(newFile.basename) + ")")
+                .addClass("new-file")
                 .prepend("<i class='fas fa-fw fa-plus'></i>");
+              $("#fileList li.canDelete:contains(" + sanitizeFilename(newFile.basename) + ")")
+                .addClass("duplicated-file");
             }
             $("#btnUpload").prop("disabled", false);
           } else {
@@ -1881,7 +1885,7 @@ function goAhead() {
       $("#chooseMeeting").empty();
       for (var meeting of [prefs.mwDay, prefs.weDay]) {
         let meetingDate = baseDate.add(meeting, "d").format("YYYY-MM-DD");
-        $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-dark' for='" + meetingDate + "'>" + meetingDate + "</label>");
+        $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-primary' for='" + meetingDate + "'>" + meetingDate + "</label>");
       }
       $(".relatedToUpload, .relatedToUploadType").fadeTo(animationDuration, 0);
       $("#overlayUploadFile").fadeIn(animationDuration, () => {

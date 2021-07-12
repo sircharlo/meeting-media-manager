@@ -15,7 +15,7 @@
     }
 
     .overlay {
-      background: var(--bs-light);
+      backdrop-filter: blur(60px);
       position: fixed;
       height: 100%;
       width: 100%;
@@ -25,6 +25,30 @@
       float: left;
       text-align: center;
       display: flex;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .btn-outline-primary {
+        background: var(--bs-light);
+      }
+
+      .select2-dropdown,
+      #select2-lang-container,
+      #select2-s34Picker-container,
+      #select2-songPicker-container {
+        color: var(--bs-light) !important;
+        background: var(--bs-dark);
+        border-radius: .2rem;
+      }
+
+      .select2-container--default .select2-results__option--selected {
+        background: var(--bs-secondary);
+      }
+
+      .select2-container--default .select2-selection--single {
+        border: 1px solid var(--bs-secondary);
+        border-radius: 4px;
+      }
     }
 
     #overlaySettings,
@@ -91,11 +115,6 @@
 
     .valid {
       border-color: var(--bs-success) !important;
-    }
-
-    #version span.badge {
-      color: var(--bs-dark);
-      font-weight: normal;
     }
 
     .btn-circle {
@@ -181,10 +200,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
       border-radius: 0.5em;
+      padding: 0 0.5em;
     }
 
-    .file-list li:not(.confirmDelete):hover {
-      background-color: var(--bs-light);
+    .file-list li:not(.confirmDelete):not(.recurring):hover {
+      background-color: var(--bs-secondary);
+      color: var(--bs-white);
     }
 
     .video {
@@ -192,7 +213,13 @@
     }
 
     .new-file {
-      font-weight: bold;
+      background: var(--bs-primary);
+      color: var(--bs-white);
+    }
+
+    .duplicated-file {
+      background: var(--bs-warning);
+      color: var(--bs-dark);
     }
 
     #fileList li i.fas {
@@ -208,7 +235,8 @@
     }
 
     .confirmDelete {
-      background-color: #ffdddd;
+      background-color: var(--bs-dark);
+      color: var(--bs-danger)
     }
 
     div#enterPrefix input {
@@ -313,7 +341,7 @@
   <div id="dropzone" class="dropzone"></div>
   <div id="overlayInternetCheck" class="overlay justify-content-center">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center fa-5x" role="status">
         <i class="fas fa-fw fa-wifi"></i>
       </div>
       <div class="align-self-center text-muted fa-2x" role="status">
@@ -323,7 +351,7 @@
   </div>
   <div id="overlayInternetFail" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center fa-5x" role="status">
         <i class="fas fa-fw fa-wifi"></i>
       </div>
       <div class="align-self-center text-danger fa-2x" role="status">
@@ -333,7 +361,7 @@
   </div>
   <div id="overlayUpdateCheck" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center fa-5x" role="status">
         <i class="fas fa-fw fa-wifi"></i>
       </div>
       <div class="align-self-center text-success fa-2x" role="status">
@@ -343,7 +371,7 @@
   </div>
   <div id="overlayUpdateAvailable" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center fa-5x" role="status">
         <i class="fas fa-fw fa-cloud-download-alt"></i>
       </div>
       <div class="align-self-center text-warning fa-2x" role="status">
@@ -353,7 +381,7 @@
   </div>
   <div id="overlayUpdateDownloaded" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center fa-5x" role="status">
         <i class="fas fa-fw fa-cloud-download-alt"></i>
       </div>
       <div class="align-self-center text-success fa-2x" role="status">
@@ -363,7 +391,7 @@
   </div>
   <div id="overlayPleaseWait" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center fa-5x" role="status">
         <i class="fas fa-fw fa-tasks"></i>
       </div>
       <div class="align-self-center text-muted fa-2x" role="status">
@@ -373,7 +401,7 @@
   </div>
   <div id="overlayStarting" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center text fa-5x" role="status">
         <i class="fas fa-fw fa-hourglass-start"></i>
       </div>
       <div class="align-self-center text-warning fa-2x" role="status">
@@ -383,7 +411,7 @@
   </div>
   <div id="overlayDryrun" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center text fa-5x" role="status">
         <i class="fas fa-fw fa-tasks"></i>
       </div>
       <div class="align-self-center text-muted fa-2x" role="status">
@@ -405,7 +433,7 @@
   </div>
   <div id="overlayAdditionalFilesPrompt" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center fa-5x" role="status">
         <i class="fas fa-fw fa-folder-plus"></i>
       </div>
       <div class="i18n" data-i18n-string="mediaAddPrompt"></div>
@@ -417,7 +445,7 @@
   </div>
   <div id="overlayAdditionalFilesWaiting" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
-      <div class="align-self-center text-dark fa-5x" role="status">
+      <div class="align-self-center fa-5x" role="status">
         <i class="fas fa-fw fa-spinner fa-pulse"></i>
       </div>
       <div class="i18n" data-i18n-string="filesAreInPlace"></div>
@@ -439,11 +467,11 @@
       <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="uploadType"></div>
       <div class="btn-group btn-group-toggle col-7" id="chooseUploadType">
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
-        <label class="btn btn-outline-dark disabled i18n" for="typeSong" data-i18n-string="song" style="display: none;"></label>
+        <label class="btn btn-outline-primary disabled i18n" for="typeSong" data-i18n-string="song" style="display: none;"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeFile" autocomplete="off">
-        <label class="btn btn-outline-dark i18n" for="typeFile" data-i18n-string="custom"></label>
+        <label class="btn btn-outline-primary i18n" for="typeFile" data-i18n-string="custom"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeS34" autocomplete="off">
-        <label class="btn btn-outline-dark i18n" for="typeS34" data-i18n-string="s34" style="display: none;"></label>
+        <label class="btn btn-outline-primary i18n" for="typeS34" data-i18n-string="s34" style="display: none;"></label>
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
@@ -523,13 +551,13 @@
       <label for="maxRes" class="m-0 pr-3 col-5 text-start i18n" data-i18n-string="maxRes"></label>
       <div class="btn-group btn-group-toggle flex-fill" id="maxRes">
         <input type="radio" class="btn-check" name="maxRes" id="maxRes0" value="240p" autocomplete="off">
-        <label class="btn btn-outline-dark" for="maxRes0">240p</label>
+        <label class="btn btn-outline-primary" for="maxRes0">240p</label>
         <input type="radio" class="btn-check" name="maxRes" id="maxRes1" value="360p" autocomplete="off">
-        <label class="btn btn-outline-dark" for="maxRes1">360p</label>
+        <label class="btn btn-outline-primary" for="maxRes1">360p</label>
         <input type="radio" class="btn-check" name="maxRes" id="maxRes2" value="480p" autocomplete="off">
-        <label class="btn btn-outline-dark" for="maxRes2">480p</label>
+        <label class="btn btn-outline-primary" for="maxRes2">480p</label>
         <input type="radio" class="btn-check" name="maxRes" id="maxRes3" value="720p" autocomplete="off">
-        <label class="btn btn-outline-dark" for="maxRes3">720p</label>
+        <label class="btn btn-outline-primary" for="maxRes3">720p</label>
       </div>
     </div>
     <hr class="my-2" />
@@ -537,38 +565,38 @@
       <label for="mwDay" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="mwMeetingDay"></label>
       <div class="btn-group btn-group-toggle flex-fill" id="mwDay">
         <input type="radio" class="btn-check" name="mwDay" id="mwDay0" value="0" autocomplete="off">
-        <label class="btn btn-outline-dark" for="mwDay0">M</label>
+        <label class="btn btn-outline-primary" for="mwDay0">M</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay1" value="1" autocomplete="off">
-        <label class="btn btn-outline-dark" for="mwDay1">T</label>
+        <label class="btn btn-outline-primary" for="mwDay1">T</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay2" value="2" autocomplete="off">
-        <label class="btn btn-outline-dark" for="mwDay2">W</label>
+        <label class="btn btn-outline-primary" for="mwDay2">W</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay3" value="3" autocomplete="off">
-        <label class="btn btn-outline-dark" for="mwDay3">T</label>
+        <label class="btn btn-outline-primary" for="mwDay3">T</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay4" alue="4" autocomplete="off">
-        <label class="btn btn-outline-dark" for="mwDay4">F</label>
+        <label class="btn btn-outline-primary" for="mwDay4">F</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay5" value="5" autocomplete="off">
-        <label class="btn btn-outline-dark" for="mwDay5">S</label>
+        <label class="btn btn-outline-primary" for="mwDay5">S</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay6" value="6" autocomplete="off">
-        <label class="btn btn-outline-dark" for="mwDay6">S</label>
+        <label class="btn btn-outline-primary" for="mwDay6">S</label>
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="weDay" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="weMeetingDay"></label>
       <div class="btn-group btn-group-toggle flex-fill" id="weDay">
         <input type="radio" class="btn-check" name="weDay" id="weDay0" value="0" autocomplete="off">
-        <label class="btn btn-outline-dark" for="weDay0">M</label>
+        <label class="btn btn-outline-primary" for="weDay0">M</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay1" value="1" autocomplete="off">
-        <label class="btn btn-outline-dark" for="weDay1">T</label>
+        <label class="btn btn-outline-primary" for="weDay1">T</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay2" value="2" autocomplete="off">
-        <label class="btn btn-outline-dark" for="weDay2">W</label>
+        <label class="btn btn-outline-primary" for="weDay2">W</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay3" value="3" autocomplete="off">
-        <label class="btn btn-outline-dark" for="weDay3">T</label>
+        <label class="btn btn-outline-primary" for="weDay3">T</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay4" alue="4" autocomplete="off">
-        <label class="btn btn-outline-dark" for="weDay4">F</label>
+        <label class="btn btn-outline-primary" for="weDay4">F</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay5" value="5" autocomplete="off">
-        <label class="btn btn-outline-dark" for="weDay5">S</label>
+        <label class="btn btn-outline-primary" for="weDay5">S</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay6" value="6" autocomplete="off">
-        <label class="btn btn-outline-dark" for="weDay6">S</label>
+        <label class="btn btn-outline-primary" for="weDay6">S</label>
       </div>
     </div>
     <hr class="my-2" />
@@ -621,7 +649,7 @@
         </button>
       </div>
       <div class="px-1">
-        <button type="button" class="btn btn-primary btn-webdav">
+        <button type="button" class="btn btn-info btn-webdav">
           <span class="i18n" data-i18n-string="webdavServer"></span>
         </button>
       </div>
@@ -632,7 +660,7 @@
       </div>
     </div>
     <div id="version" class="align-items-center d-flex justify-content-center pt-3">
-      <span class="badge"></span>
+      <span class="badge bg-light text-dark"></span>
     </div>
   </div>
   <div id="overlayWebdav" class="flex-column p-4 overlay" style="display: none;">
@@ -677,14 +705,14 @@
       <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
     <div>
-      <button type="button" class="btn btn-primary btn-webdav"><i class="fas fa-fw fa-user-cog"></i></button>
+      <button type="button" class="btn btn-info btn-webdav"><i class="fas fa-fw fa-user-cog"></i></button>
     </div>
   </div>
   <div id="home" class="d-flex flex-column">
     <div class="align-items-center d-flex flex-fill justify-content-center">
       <i id="statusIcon" class="fas fa-fw fa-photo-video fa-3x text-muted"></i>
     </div>
-    <div class="align-items-center d-flex flex-fill flex-column justify-content-center text-dark">
+    <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
       <div class="d-flex">
         <div id="day0" class="day m-1 d-flex align-items-center justify-content-center">
           <div>
@@ -760,16 +788,16 @@
       </div>
     </div>
   </div>
-  <button class="btn btn-light btn-circle btn-circle-sm m-1" id="btn-upload" style="display: none;">
+  <button class="btn btn-primary btn-circle btn-circle-sm m-1" id="btn-upload" style="display: none;">
     <i class="fas fa-fw fa-network-wired"></i>
   </button>
   <button class="btn btn-warning btn-circle btn-circle-sm m-1" id="btn-mac-update" style="display: none;">
     <i class="fas fa-fw fa-exclamation-triangle"></i>
   </button>
-  <button class="btn btn-light btn-circle btn-circle-sm m-1" id="btn-settings">
+  <button class="btn btn-info btn-circle btn-circle-sm m-1" id="btn-settings">
     <i class="fas fa-fw fa-user-cog"></i>
   </button>
-  <button type="button" class="btn btn-info btn-circle btn-circle-sm m-1" id="btnMeetingMusic" style="display: none;">
+  <button type="button" class="btn btn-primary btn-circle btn-circle-sm m-1" id="btnMeetingMusic" style="display: none;">
     <i class="fas fa-fw fa-music"></i>
   </button>
   <button type="button" class="btn btn-warning btn-circle btn-circle-sm m-1" id="btnStopMeetingMusic" style="display: none;">
