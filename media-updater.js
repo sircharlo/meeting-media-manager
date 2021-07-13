@@ -1740,7 +1740,7 @@ function goAhead() {
           for (var file of newList) {
             $("#fileList").append("<li title='" + file.basename + "'>" + file.basename + "</li>");
           }
-          $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 4));
+          $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 8));
           $("#fileList li:contains(mp4)").addClass("video");
           if (newList.some(e => e.congSpecific === true)) {
             for (var a of newList.filter(e => e.congSpecific === true && e.recurring === true)) {
@@ -1774,39 +1774,36 @@ function goAhead() {
               }
             });
           }
-          for (var c of newList.filter(e => e.congSpecific === false && e.recurring === false)) {
-            $("#fileList li:not(:has(.fa-eye))").filter(function () {
+          for (var c of newList.filter(e => e.congSpecific === false || e.recurring === true)) {
+            $("#fileList li:not(:has(.fa-check-square))").filter(function () {
               var text = $(this).text();
               return text === c.basename;
-            }).prepend("<i class='fas fa-fw fa-eye'></i>").wrapInner("<span class='canHide'></span>");
+            }).prepend("<i class='far fa-fw fa-check-square'></i>").wrapInner("<span class='canHide'></span>");
           }
           $("#fileList").on("click", ".canHide", function() {
             webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).text().trim());
             $(this).parent()
               .find("span.canHide").contents().unwrap().parent()
-              .prepend("<i class='fas fa-fw fa-eye-slash'></i>")
+              .prepend("<i class='far fa-fw fa-square'></i>")
               .wrapInner("<del class='wasHidden'></del>")
-              .addClass("text-warning")
-              .find("i.fa-eye").remove();
+              .find("i.fa-check-square").remove();
           });
           $("#fileList").on("click", ".wasHidden", function() {
             webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).text().trim());
             $(this).parent()
               .find("del.wasHidden").contents().unwrap().parent()
-              .prepend("<i class='fas fa-fw fa-eye'></i>")
+              .prepend("<i class='far fa-fw fa-check-square'></i>")
               .wrapInner("<span class='canHide'></del>")
-              .removeClass("text-warning")
-              .find("i.fa-eye-slash").remove();
+              .find("i.fa-square").remove();
           });
           for (var hiddenFile of hiddenFiles) {
             $("#fileList li").filter(function () {
               var text = $(this).text();
               return text === hiddenFile.basename;
             }).find("span.canHide").contents().unwrap().parent()
-              .prepend("<i class='fas fa-fw fa-eye-slash'></i>")
+              .prepend("<i class='far fa-fw fa-square'></i>")
               .wrapInner("<del class='wasHidden'></del>")
-              .addClass("text-warning")
-              .find("i.fa-eye").remove();
+              .find("i.fa-check-square").remove();
           }
           if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
             for (var newFile of newFiles) {
