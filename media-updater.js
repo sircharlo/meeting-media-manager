@@ -27,7 +27,7 @@ require("electron").ipcRenderer.on("checkInternet", () => {
 
 require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
   $("#overlay" + message[1]).fadeIn(animationDuration, () => {
-    $("#overlay" + message[0]).fadeOut(animationDuration);
+    $("#overlay" + message[0]).stop().hide();
   });
 });
 
@@ -44,7 +44,7 @@ require("electron").ipcRenderer.on("macUpdate", () => {
 
 require("electron").ipcRenderer.on("goAhead", () => {
   $("#overlayPleaseWait").fadeIn(animationDuration, () => {
-    $("#overlayUpdateCheck").fadeOut(animationDuration);
+    $("#overlayUpdateCheck").stop().hide();
     goAhead();
   });
 });
@@ -751,7 +751,7 @@ function goAhead() {
         }
       });
     } else {
-      $("#overlayPleaseWait").fadeOut(animationDuration);
+      $("#overlayPleaseWait").stop().fadeOut(animationDuration);
     }
     $("#baseDate button, #baseDate .dropdown-item:eq(0)").html(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
     $("#baseDate .dropdown-item:eq(0)").addClass("active");
@@ -1862,7 +1862,7 @@ function goAhead() {
         $("#uploadSpinnerContainer").fadeTo(animationDuration, 0);
         $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
         $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
-        $("#overlayDryrun").fadeOut(animationDuration);
+        $("#overlayDryrun").stop().fadeOut(animationDuration);
       });
     } catch (err) {
       console.error(err);
