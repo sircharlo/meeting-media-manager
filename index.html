@@ -3,7 +3,6 @@
 
 <head>
   <title>JW Meeting Media Fetcher</title>
-  <!-- <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"> -->
   <link rel="stylesheet" href="node_modules/bootstrap-dark-5/dist/css/bootstrap-dark.min.css">
   <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
   <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
@@ -117,50 +116,14 @@
       border-color: var(--bs-success) !important;
     }
 
-    .btn-circle {
-      width: 45px;
-      height: 45px;
-      line-height: 45px;
-      text-align: center;
-      padding: 0;
-      border-radius: 50%;
-    }
-
-    #btn-settings {
-      position: fixed;
-      bottom: 1em;
-      right: 1em;
-    }
-
-    #btnMeetingMusic,
-    #btnStopMeetingMusic {
-      position: fixed;
-      bottom: 1em;
-      right: 5em;
-    }
-
-    #btn-upload {
-      position: fixed;
-      bottom: 1em;
-      left: 1em;
-    }
-
-    #btn-mac-update {
-      position: fixed;
-      bottom: 5em;
-      right: 1em;
-    }
-
-    .btn-circle i {
-      font-size: 20px;
-    }
-
     .day,
     .congregation,
     .zoom {
       height: 3em;
       width: 3em;
       background-color: var(--bs-light);
+      border: 1px solid transparent;
+      border-radius: .25rem;
     }
 
     .meeting,
@@ -171,12 +134,12 @@
     }
 
     .in-progress {
-      box-shadow: 0 0 0 0 rgba(15, 102, 116, 1);
+      box-shadow: 0 0 0 0 var(--bs-secondary);
       animation: pulse 1s infinite;
     }
 
     .today {
-      box-shadow: 0px 0px 15px 0px rgba(52, 58, 64, 0.5);
+      box-shadow: 0px 0px 15px 0px var(--bs-primary);
       animation: pulseToday 2s infinite;
     }
 
@@ -201,6 +164,7 @@
       text-overflow: ellipsis;
       border-radius: 0.5em;
       padding: 0 0.5em;
+      margin-bottom: 0.25em
     }
 
     .file-list li:not(.confirmDelete):hover {
@@ -274,7 +238,7 @@
 
     @keyframes pulse {
       0% {
-        box-shadow: 0 0 0 0 rgba(15, 102, 116, 0.7);
+        box-shadow: 0 0 0 0 var(--bs-secondary);
       }
 
       70% {
@@ -288,15 +252,15 @@
 
     @keyframes pulseToday {
       0% {
-        box-shadow: 0 0 15px 0 rgba(52, 58, 64, 0.5);
+        box-shadow: 0 0 10px 0 var(--bs-primary);
       }
 
       70% {
-        box-shadow: 0 0 15px 5px rgba(52, 58, 64, 0.5);
+        box-shadow: 0 0 15px 3px var(--bs-primary);
       }
 
       100% {
-        box-shadow: 0 0 15px 0 rgba(52, 58, 64, 0.5);
+        box-shadow: 0 0 10px 0 var(--bs-primary);
       }
     }
 
@@ -309,8 +273,8 @@
       left: 0;
       top: 0;
       z-index: 99999;
-      background: rgba(66, 165, 245, .8);
-      border: 11px dashed #42a5f5;
+      background: rgba(13, 110, 253, .5);
+      border: 11px dashed var(--bs-primary);
     }
 
     #downloadFilename,
@@ -326,6 +290,11 @@
 
     .form-check .form-check-input {
       float: none;
+    }
+
+    #version {
+      font-size: 11px;
+      font-family: var(--bs-font-sans-serif);
     }
   </style>
   <meta name="color-scheme" content="light dark">
@@ -454,8 +423,8 @@
       </div>
     </div>
   </div>
-  <div id="overlayUploadFile" class="overlay flex-column p-4" style="display: none;">
-    <div class="align-items-center d-flex justify-content-center pb-4">
+  <div id="overlayUploadFile" class="overlay flex-column px-3" style="display: none;">
+    <div class="align-items-center d-flex justify-content-center py-4">
       <i class="fas fa-fw fa-cloud-upload-alt fa-3x text-muted"></i>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2">
@@ -505,19 +474,6 @@
         </div>
       </div>
     </div>
-    <div class="d-flex py-2">
-      <div class="col-5 text-end px-2">
-        <button class="btn btn-dark" id="btnCancelUpload" type="button"><i class="fas fa-fw fa-home"></i></button>
-      </div>
-      <div class="col-7 text-start px-2">
-        <button class="btn btn-primary" id="btnUpload" type="button" disabled>
-          <i class="fas fa-cloud-upload-alt"></i>
-        </button>
-      </div>
-    </div>
-    <div class="d-flex flex-fill text-start">
-      <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
-    </div>
     <div class="align-items-center d-flex text-center justify-content-center py-2" id="uploadProgressContainer" style="opacity: 0;">
       <div class="col-6">
         <div id="uploadFilename" class="lead mb-3">
@@ -529,10 +485,27 @@
         </div>
       </div>
     </div>
+    <div class="d-flex text-start">
+      <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+    </div>
+    <div class="d-flex py-3 flex-fill align-items-end">
+      <div class="col-4 text-start">
+        <button class="btn btn-dark" id="btnCancelUpload" type="button"><i class="fas fa-fw fa-home"></i></button>
+      </div>
+      <div class="col-4 text-center">
+        <button class="btn btn-primary" id="btnUpload" type="button" disabled>
+          <span class="i18n" data-i18n-string="upload"></span>
+        </button>
+      </div>
+      <div class="col-4 text-end">
+      </div>
+    </div>
   </div>
-  <div id="overlaySettings" class="flex-column p-4 overlay" style="display: none;">
-    <div class="align-items-center d-flex justify-content-center pb-4">
-      <i id="settingsIcon" class="fas fa-fw fa-user-cog fa-3x text-muted"></i>
+  <div id="overlaySettings" class="flex-column overlay px-3" style="display: none;">
+    <div class="align-items-center d-flex justify-content-center py-4">
+      <i id="settingsIcon" class="position-relative fas fa-fw fa-user-cog fa-3x text-muted">
+        <span id="version" class="position-absolute top-0 start-50 translate-middle-y badge rounded-pill bg-dark"></span>
+      </i>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
       <label for="outputPath" class="m-0 col-5 pr-3 text-start i18n" data-i18n-string="mediaSaveFolder"></label>
@@ -601,70 +574,67 @@
     </div>
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="form-check form-switch col-1">
+      <div class="form-check form-switch text-start col-1">
         <input type="checkbox" class="form-check-input" id="includeTeaching" />
       </div>
       <label for="includeTeaching" class="m-0 text-start i18n col-5" data-i18n-string="includeTh"></label>
       <label for="enableMusicButton" class="m-0 text-end i18n col-5" data-i18n-string="enableMusicButton"></label>
-      <div class="form-check form-switch col-1">
+      <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="enableMusicButton" />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="form-check form-switch col-1">
+      <div class="form-check form-switch text-start col-1">
         <input type="checkbox" class="form-check-input" id="betaMp4Gen" />
       </div>
       <label for="betaMp4Gen" class="m-0 text-start i18n col-5" data-i18n-string="convertDownloaded"></label>
       <label for="additionalMediaPrompt" class="m-0 text-end i18n col-5" data-i18n-string="convertExternal"></label>
-      <div class="form-check form-switch col-1">
+      <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="additionalMediaPrompt" />
       </div>
     </div>
     <hr class="my-2" />
     <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="form-check form-switch col-1">
+      <div class="form-check form-switch text-start col-1">
         <input type="checkbox" class="form-check-input notLinux" id="autoRunAtBoot" />
       </div>
       <label for="autoRunAtBoot" class="m-0 text-start i18n col-5" data-i18n-string="runAtStartup"></label>
       <label for="autoQuitWhenDone" class="m-0 text-end i18n col-5" data-i18n-string="quitAfterSync"></label>
-      <div class="form-check form-switch col-1">
+      <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="autoQuitWhenDone" />
       </div>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="form-check form-switch col-1">
+      <div class="form-check form-switch text-start col-1">
         <input type="checkbox" class="form-check-input" id="autoStartSync" />
       </div>
       <label for="syncOnLaunch" class="m-0 text-start i18n col-5" data-i18n-string="syncOnLaunch"></label>
       <label for="openFolderWhenDone" class="m-0 text-end i18n col-5" data-i18n-string="openTargetFolderAfterSync"></label>
-      <div class="form-check form-switch col-1">
+      <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input col-1" id="openFolderWhenDone" />
       </div>
     </div>
     <hr class="my-2" />
-    <div class="d-flex flex-row flex-fill align-items-center justify-content-end">
-      <div class="px-1">
-        <button type="button" class="btn btn-dark btn-settings">
-          <i class="fas fa-fw fa-home"></i>
+    <div class="d-flex flex-row align-items-center justify-content-end text-nowrap py-3">
+      <div class="col-4 text-start">
+        <button type="button" class="btn btn-primary btn-webdav">
+          <span class="i18n">WebDAV</span>
         </button>
       </div>
-      <div class="px-1">
-        <button type="button" class="btn btn-info btn-webdav">
-          <span class="i18n" data-i18n-string="webdavServer"></span>
-        </button>
-      </div>
-      <div class="px-1">
+      <div class="col-4 text-center">
         <button type="button" class="btn btn-danger btn-clean-up">
           <span class="i18n" data-i18n-string="cleanCache"></span>
         </button>
       </div>
-    </div>
-    <div id="version" class="align-items-center d-flex justify-content-center pt-3">
-      <span class="badge bg-light text-dark"></span>
+      <div class="col-4 text-end">
+        <button type="button" class="btn btn-dark btn-settings">
+          <i class="fas fa-fw fa-home"></i>
+        </button>
+      </div>
     </div>
   </div>
-  <div id="overlayWebdav" class="flex-column p-4 overlay" style="display: none;">
-    <div class="align-items-center d-flex justify-content-center pb-4">
+  <div id="overlayWebdav" class="flex-column overlay px-3" style="display: none;">
+    <div class="align-items-center d-flex justify-content-center py-4">
       <i id="webdavStatus" class="fas fa-fw fa-network-wired fa-3x text-muted"></i>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
@@ -704,12 +674,12 @@
     <div class="d-flex flex-fill text-start">
       <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
-    <div>
-      <button type="button" class="btn btn-info btn-webdav"><i class="fas fa-fw fa-user-cog"></i></button>
+    <div class="py-3 text-start">
+      <button type="button" class="btn btn-dark btn-webdav"><i class="fas fa-fw fa-user-cog"></i></button>
     </div>
   </div>
-  <div id="home" class="d-flex flex-column">
-    <div class="align-items-center d-flex flex-fill justify-content-center">
+  <div id="home" class="d-flex flex-column px-3">
+    <div class="align-items-center d-flex justify-content-center py-4">
       <i id="statusIcon" class="fas fa-fw fa-photo-video fa-3x text-muted"></i>
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
@@ -764,7 +734,8 @@
     </div>
     <div class="d-flex justify-content-center">
       <button type="button" class="btn btn-lg btn-primary" id="mediaSync">
-        <i class="fas fa-fw fa-cloud-download-alt"></i>
+        <!-- <i class="fas fa-fw fa-cloud-download-alt"></i> -->
+        <span class="i18n" data-i18n-string="fetchMedia"></span>
       </button>
     </div>
     <div class="align-items-center d-flex text-center flex-fill justify-content-center" id="downloadProgressContainer" style="opacity: 0;">
@@ -778,31 +749,37 @@
         </div>
       </div>
     </div>
-    <div class="align-items-center d-flex flex-fill justify-content-center">
-      <div class="btn-group" id="baseDate">
-        <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="align-items-center d-flex py-3 justify-content-center">
+      <div class="col-3 text-start">
+        <button class="btn btn-warning" id="btn-mac-update" style="display: none;">
+          <i class="fas fa-fw fa-exclamation-triangle"></i>
         </button>
-        <div class="dropdown-menu" aria-labelledby="baseDate-dropdown">
-          <button class="dropdown-item" value=""></button>
+        <button class="btn btn-primary" id="btn-upload" style="display: none;">
+          <i class="fas fa-fw fa-network-wired"></i>
+        </button>
+        <button type="button" class="btn btn-info" id="btnMeetingMusic" style="display: none;">
+          <i class="fas fa-fw fa-music"></i>
+        </button>
+        <button type="button" class="btn btn-warning" id="btnStopMeetingMusic" title="" style="display: none;">
+          <i class="fas fa-fw fa-stop"></i>
+        </button>
+      </div>
+      <div class="col-6 text-center">
+        <div class="btn-group" id="baseDate">
+          <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          </button>
+          <div class="dropdown-menu" aria-labelledby="baseDate-dropdown">
+            <button class="dropdown-item" value=""></button>
+          </div>
         </div>
+      </div>
+      <div class="col-3 text-end">
+        <button class="btn btn-dark" id="btn-settings">
+          <i class="fas fa-fw fa-user-cog"></i>
+        </button>
       </div>
     </div>
   </div>
-  <button class="btn btn-primary btn-circle btn-circle-sm m-1" id="btn-upload" style="display: none;">
-    <i class="fas fa-fw fa-network-wired"></i>
-  </button>
-  <button class="btn btn-warning btn-circle btn-circle-sm m-1" id="btn-mac-update" style="display: none;">
-    <i class="fas fa-fw fa-exclamation-triangle"></i>
-  </button>
-  <button class="btn btn-info btn-circle btn-circle-sm m-1" id="btn-settings">
-    <i class="fas fa-fw fa-user-cog"></i>
-  </button>
-  <button type="button" class="btn btn-primary btn-circle btn-circle-sm m-1" id="btnMeetingMusic" style="display: none;">
-    <i class="fas fa-fw fa-music"></i>
-  </button>
-  <button type="button" class="btn btn-warning btn-circle btn-circle-sm m-1" id="btnStopMeetingMusic" style="display: none;">
-    <i class="fas fa-fw fa-stop"></i>
-  </button>
   <script src="./media-updater.js"></script>
 </body>
 

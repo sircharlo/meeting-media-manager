@@ -217,7 +217,6 @@ function goAhead() {
     var iterator = 0;
     function createAudioElem(iterator) {
       var audioElem = $("<audio id=\"meetingMusic\" autoplay>").data("track", songs[iterator].track).on("ended", function() {
-        console.log("SONG", "ENDED", "List #" + (iterator + 1), "Track " + songs[iterator].track);
         $("#meetingMusic").remove();
         if (iterator < songs.length - 1) {
           iterator++;
@@ -226,11 +225,9 @@ function goAhead() {
         }
         createAudioElem(iterator);
       }).on("loadstart", function() {
-        console.log("SONG", "LOADING", "List #" + (iterator + 1), "Track " + songs[iterator].track);
-        $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop");
+        $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").prop("title", "...");
       }).on("canplay", function() {
-        console.log("SONG", "PLAYING", "List #" + (iterator + 1), "Track " + songs[iterator].track);
-        $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin");
+        $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").prop("title", songs[iterator].title);
       }).append("<source src=\""+ songs[iterator].file.url + "\" type=\"audio/mpeg\">");
       $("body").append(audioElem);
     }
@@ -442,7 +439,7 @@ function goAhead() {
       locale = jsonLangs.filter(lang => lang.langcode == prefs.lang)[0].symbol;
       locale !== "en" && require("dayjs/locale/" + locale);
     } catch(err) {
-      console.log("Date locale " + locale + " not found, falling back to \"en\"");
+      console.error("Date locale " + locale + " not found, falling back to \"en\"");
     }
     for (var d = 0; d < 7; d++) {
       $("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").format("DD"));
@@ -737,7 +734,7 @@ function goAhead() {
     await getLanguages();
     await getTranslations();
     configIsValid();
-    $("#version span.badge").html("v" + remoteApp.getVersion());
+    $("#version").html("v" + remoteApp.getVersion());
     await webdavSetup(true);
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     if (prefs.autoStartSync && configIsValid()) {
@@ -1207,14 +1204,14 @@ function goAhead() {
         }
       }
       if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length == 0) {
-        $(".btn-webdav, #btn-upload").addClass("btn-info").removeClass("btn-warning");
+        $(".btn-webdav, #btn-upload").addClass("btn-primary").removeClass("btn-warning");
         $("#specificCong").removeClass("bg-warning");
       }
       if (webdavLoginSuccessful && (initialCheck || webdavDirIsValid)) {
         webdavIsAGo = true;
         $("#btn-upload").fadeTo(animationDuration, 1).prop("disabled", false);
       } else {
-        $("#btn-upload, .btn-webdav").addClass("btn-warning").removeClass("btn-info");
+        $("#btn-upload, .btn-webdav").addClass("btn-warning").removeClass("btn-primary");
         $("#btn-upload").prop("disabled", true);
         $("#specificCong").addClass("bg-warning");
         webdavIsAGo = false;
@@ -1222,7 +1219,7 @@ function goAhead() {
       $("#webdavSpinner").parent().fadeTo(animationDuration, 0);
     } else {
       $("#webdavFolderList").fadeTo(animationDuration, 0).empty();
-      $(".btn-webdav.btn-warning").addClass("btn-info").removeClass("btn-warning");
+      $(".btn-webdav.btn-warning").addClass("btn-primary").removeClass("btn-warning");
       $("#specificCong").removeClass("d-flex");
       $("#btn-upload").fadeOut(animationDuration);
     }
