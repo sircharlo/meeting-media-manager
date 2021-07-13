@@ -1475,7 +1475,7 @@ function goAhead() {
   }
   async function syncCongSpecific() {
     if (webdavIsAGo) {
-      $("#statusIcon").addClass("fa-network-wired").removeClass("fa-photo-video");
+      $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
       $("#specificCong").addClass("bg-warning in-progress");
       try {
         var congSpecificFolders = await webdavLs(path.posix.join(prefs.congServerDir, "Media"));
@@ -1518,7 +1518,7 @@ function goAhead() {
       if (!dryrun) {
         $("#specificCong").addClass("bg-primary");
       }
-      $("#statusIcon").addClass("fa-photo-video").removeClass("fa-network-wired");
+      $("#statusIcon").addClass("fa-photo-video").removeClass("fa-cloud");
     }
   }
   function toggleScreen(screen, forceShow) {
