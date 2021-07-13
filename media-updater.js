@@ -1038,7 +1038,7 @@ function goAhead() {
         var files = await webdavLs(dir);
         for (var file of files) {
           var downloadNeeded = true;
-          if (!fs.existsSync(destDir)) {
+          if (!fs.existsSync(destDir) && !dryrun) {
             mkdirSync(destDir);
           } else if (fs.existsSync(path.join(destDir, file.basename)) && !dryrun) {
             var localSize = fs.statSync(path.join(destDir, file.basename)).size;
@@ -1281,8 +1281,7 @@ function goAhead() {
         throw("No WE meeting date!");
       }
       studyDate = dayjs(week, "YYYYMMDD").add(prefs.weDay, "days");
-      var weekPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
-      mkdirSync(weekPath);
+      if (!dryrun) mkdirSync(path.join(mediaPath, studyDate.format("YYYY-MM-DD")));
       var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + qryDocuments[w].DocumentId + " AND Multimedia.CategoryType <> 9");
       var qrySongPub = await executeStatement(db, "SELECT EnglishSymbol FROM RefPublication WHERE RefPublicationId = 1");
       qrySongPub = qrySongPub[0].EnglishSymbol;
@@ -1409,8 +1408,7 @@ function goAhead() {
       weekMediaFilesCopied = [];
       var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + week + "");
       docId = docId[0].DocumentId;
-      var weekPath = path.join(mediaPath, weekDay.format("YYYY-MM-DD"));
-      mkdirSync(weekPath);
+      if (!dryrun) mkdirSync(path.join(mediaPath, weekDay.format("YYYY-MM-DD")));
       await getDocumentMultimedia({
         week: weekDay.format("YYYYMMDD"),
         db: db,
@@ -1497,7 +1495,7 @@ function goAhead() {
             await webdavDownloadDir(path.posix.join(prefs.congServerDir, "Media", folder.basename), path.join(congSpecificFoldersParent, folder.basename));
           }
         }
-        if (fs.existsSync(path.join(pubsPath, "Recurring"))) {
+        if (fs.existsSync(path.join(pubsPath, "Recurring")) && !dryrun) {
           var recurringFiles = await webdavLs(path.posix.join(prefs.congServerDir, "Media", "Recurring"));
           for (var localRecurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
             if (recurringFiles.filter(file => file.basename == localRecurringFile).length == 0) {
