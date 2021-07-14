@@ -31,13 +31,10 @@ require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
   });
 });
 
-require("electron").ipcRenderer.on("updateDownloadProgress", (event, message) => {
-  var dotsDone = Math.floor(parseFloat(message[0]) / 10);
-  $("#updatePercent i:nth-of-type(" + dotsDone + ")").addClass("fa-circle text-primary").removeClass("fa-dot-circle");
-});
-
 require("electron").ipcRenderer.on("macUpdate", () => {
-  $("#btn-mac-update").fadeIn(animationDuration).click(function() {
+  $("#bg-mac-update").fadeIn();
+  $("#btn-settings").addClass("in-progress");
+  $("#version").addClass("bg-danger in-progress").removeClass("bg-secondary").append(" <i class=\"fas fa-mouse-pointer\"></i>").click(function() {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
   });
 });
@@ -130,11 +127,11 @@ function goAhead() {
     dateFormatter();
   });
   $("#overlaySettings").on("click", ".btn-clean-up", function() {
-    $(this).addClass("btn-success").removeClass("btn-danger").prop("disabled", true);
+    $(this).addClass("btn-success").removeClass("btn-warning").prop("disabled", true);
     setVars();
     cleanUp([pubsPath, mediaPath, zoomPath], "brutal");
     setTimeout(() => {
-      $(".btn-clean-up").removeClass("btn-success").addClass("btn-danger").prop("disabled", false);
+      $(".btn-clean-up").removeClass("btn-success").addClass("btn-warning").prop("disabled", false);
     }, 3000);
   });
   $("#overlaySettings input, #overlaySettings select, #overlayWebdav input, #overlayWebdav select").on("change", function() {
@@ -1227,7 +1224,7 @@ function goAhead() {
   async function startMediaSync() {
     $("#statusIcon").addClass("text-primary").removeClass("text-muted");
     stayAlive = false;
-    $("#btn-settings, #btn-upload").fadeOut(animationDuration);
+    $("#btn-settings, #btn-upload").fadeTo(animationDuration, 0);
     $("#spinnerContainer").fadeTo(animationDuration, 1);
     await setVars();
     await cleanUp([mediaPath]);
@@ -1245,7 +1242,7 @@ function goAhead() {
       }
       shell.openPath(openPath);
     }
-    $("#btn-settings, #btn-upload").fadeIn(animationDuration);
+    $("#btn-settings, #btn-upload").fadeTo(animationDuration, 1);
     $("#spinnerContainer").fadeTo(animationDuration, 0);
     setTimeout(() => {
       $(".day, .congregation, .zoom").removeClass("bg-primary bg-danger");

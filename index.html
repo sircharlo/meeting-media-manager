@@ -60,35 +60,6 @@
       height: 100%;
     }
 
-    @keyframes blink {
-      0% {
-        opacity: .2;
-      }
-
-      20% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: .2;
-      }
-    }
-
-    .loading span {
-      animation-name: blink;
-      animation-duration: 1.4s;
-      animation-iteration-count: infinite;
-      animation-fill-mode: both;
-    }
-
-    .loading span:nth-child(2) {
-      animation-delay: .2s;
-    }
-
-    .loading span:nth-child(3) {
-      animation-delay: .4s;
-    }
-
     #overlaySettings,
     span.select2-dropdown,
     #overlaySettings label,
@@ -498,7 +469,7 @@
   <div id="overlaySettings" class="flex-column overlay px-3" style="display: none;">
     <div class="align-items-center d-flex justify-content-center py-4">
       <i id="settingsIcon" class="position-relative fas fa-fw fa-user-cog fa-3x text-muted">
-        <span id="version" class="position-absolute top-0 start-50 translate-middle-y badge rounded-pill bg-dark"></span>
+        <span id="version" class="position-absolute top-0 start-50 translate-middle-y badge rounded-pill bg-secondary"></span>
       </i>
     </div>
     <div class="d-flex flex-row flex-fill align-items-center">
@@ -616,7 +587,7 @@
         </button>
       </div>
       <div class="col-4 text-center">
-        <button type="button" class="btn btn-danger btn-clean-up">
+        <button type="button" class="btn btn-warning btn-clean-up">
           <span class="i18n" data-i18n-string="cleanCache"></span>
         </button>
       </div>
@@ -745,9 +716,6 @@
     </div>
     <div class="align-items-center d-flex py-3 justify-content-center">
       <div class="col-3 text-start">
-        <button class="btn btn-warning" id="btn-mac-update" style="display: none;">
-          <i class="fas fa-fw fa-exclamation-triangle"></i>
-        </button>
         <button class="btn btn-primary" id="btn-upload" style="display: none;">
           <i class="fas fa-fw fa-cloud"></i>
         </button>
@@ -768,8 +736,11 @@
         </div>
       </div>
       <div class="col-3 text-end">
-        <button class="btn btn-dark" id="btn-settings">
+        <button class="btn btn-dark position-relative" id="btn-settings">
           <i class="fas fa-fw fa-user-cog"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="bg-mac-update" style="display: none;">
+            <i class="fas fa-fw fa-exclamation-triangle"></i>
+          </span>
         </button>
       </div>
     </div>

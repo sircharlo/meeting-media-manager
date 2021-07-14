@@ -67,10 +67,6 @@ if (!gotTheLock) {
     }
   });
 
-  autoUpdater.on("download-progress", (prog) => {
-    win.webContents.send("updateDownloadProgress", [prog.percent]);
-  });
-
   autoUpdater.on("update-downloaded", () => {
     win.webContents.send("hideThenShow", ["UpdateAvailable", "UpdateDownloaded"]);
     setImmediate(() => {
