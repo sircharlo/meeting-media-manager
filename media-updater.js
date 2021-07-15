@@ -222,9 +222,12 @@ function goAhead() {
         }
         createAudioElem(iterator);
       }).on("loadstart", function() {
-        $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").prop("title", "...");
+        $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").parent().prop("title", "...");
       }).on("canplay", function() {
-        $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").prop("title", songs[iterator].title);
+        $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").parent().prop("title", songs[iterator].title);
+        $("#musicRemaining").html(new Date(songs[iterator].duration * 1000).toISOString().substr(14, 5));
+      }).on("timeupdate", function() {
+        $("#musicRemaining").html(new Date(($("#meetingMusic")[0].duration - $("#meetingMusic")[0].currentTime) * 1000).toISOString().substr(14, 5));
       }).append("<source src=\""+ songs[iterator].file.url + "\" type=\"audio/mpeg\">");
       $("body").append(audioElem);
     }
@@ -234,6 +237,7 @@ function goAhead() {
   $("#btnStopMeetingMusic").on("click", function() {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide();
+    $("#musicRemaining").empty();
     if (prefs.enableMusicButton) {
       $("#btnMeetingMusic").show();
     }
