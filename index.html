@@ -79,14 +79,6 @@
       border-color: var(--bs-danger) !important;
     }
 
-    .notValidYet {
-      border-color: var(--bs-warning) !important;
-    }
-
-    .valid {
-      border-color: var(--bs-success) !important;
-    }
-
     .day,
     .congregation,
     .zoom {
@@ -107,6 +99,11 @@
     .in-progress {
       box-shadow: 0 0 0 0 var(--bs-secondary);
       animation: pulse 1s infinite;
+    }
+
+    .in-danger {
+      box-shadow: 0 0 0 0 var(--bs-danger);
+      animation: pulseDanger 1s infinite;
     }
 
     .today {
@@ -210,6 +207,20 @@
     @keyframes pulse {
       0% {
         box-shadow: 0 0 0 0 var(--bs-secondary);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(15, 102, 116, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(15, 102, 116, 0);
+      }
+    }
+
+    @keyframes pulseDanger {
+      0% {
+        box-shadow: 0 0 0 0 var(--bs-danger);
       }
 
       70% {
@@ -602,39 +613,35 @@
     <div class="align-items-center d-flex justify-content-center py-4">
       <i id="webdavStatus" class="fas fa-fw fa-cloud fa-3x text-muted"></i>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
+    <div class="d-flex flex-row py-3 align-items-center">
       <label for="congServer" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavHostname"></label>
       <div class="col-7">
         <input type="text" class="form-control form-control-sm webdavHost" id="congServer" required />
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
+    <div class="d-flex flex-row py-3 align-items-center">
       <label for="congServerPort" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavPort"></label>
       <div class="col-7">
         <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort" required />
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
+    <div class="d-flex flex-row py-3 align-items-center">
       <label for="congServerUser" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavUser"></label>
       <div class="col-7">
         <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser" required />
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
+    <div class="d-flex flex-row py-3 align-items-center">
       <label for="congServerPass" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavPass"></label>
       <div class="col-7">
         <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass" required />
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
+    <div class="d-flex flex-row py-3 align-items-center">
       <label for="congServerDir" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavFolder"></label>
       <div class="col-7">
         <input type="text" class="form-control form-control-sm" id="congServerDir" required readonly />
       </div>
-    </div>
-    <div class="d-flex flex-row flex-fill align-items-center" style="opacity: 0;">
-      <label for="webdavSpinner" class="col-6 m-0 pr-3 text-end"></label>
-      <i id="webdavSpinner" class="fas fa-fw fa-2x fa-circle-notch fa-spin"></i>
     </div>
     <div class="d-flex flex-fill text-start">
       <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>

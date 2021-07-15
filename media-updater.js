@@ -33,8 +33,8 @@ require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
 
 require("electron").ipcRenderer.on("macUpdate", () => {
   $("#bg-mac-update").fadeIn();
-  $("#btn-settings").addClass("in-progress");
-  $("#version").addClass("bg-danger in-progress").removeClass("bg-secondary").append(" <i class=\"fas fa-mouse-pointer\"></i>").click(function() {
+  $("#btn-settings").addClass("in-danger");
+  $("#version").addClass("bg-danger in-danger").removeClass("bg-secondary").append(" <i class=\"fas fa-mouse-pointer\"></i>").click(function() {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
   });
 });
@@ -223,6 +223,7 @@ function goAhead() {
         createAudioElem(iterator);
       }).on("loadstart", function() {
         $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").parent().prop("title", "...");
+        $("#musicRemaining").html(new Date(0).toISOString().substr(14, 5));
       }).on("canplay", function() {
         $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").parent().prop("title", songs[iterator].title);
         $("#musicRemaining").html(new Date(songs[iterator].duration * 1000).toISOString().substr(14, 5));
@@ -286,7 +287,7 @@ function goAhead() {
   }
   function configIsValid() {
     $("#lang").next(".select2").find(".select2-selection").removeClass("invalid");
-    $("#mwDay, #weDay, #outputPath").removeClass("invalid");
+    $("#mwDay, #weDay, #outputPath").removeClass("invalid is-invalid");
     $("#overlaySettings .btn-outline-danger").addClass("btn-outline-primary").removeClass("btn-outline-danger");
     $("#overlaySettings label.text-danger").removeClass("text-danger");
     var configIsValid = true;
@@ -304,7 +305,7 @@ function goAhead() {
       $("#outputPath").val("");
     }
     if (!$("#outputPath").val()) {
-      $("#outputPath").addClass("invalid");
+      $("#outputPath").addClass("is-invalid");
       configIsValid = false;
     }
     if (prefs.maxRes) {
@@ -331,7 +332,7 @@ function goAhead() {
     } else {
       $("#btnMeetingMusic").fadeOut();
     }
-    $("#overlaySettings .invalid, #overlaySettings .btn-outline-danger").each(function() {
+    $("#overlaySettings .invalid, #overlaySettings .is-invalid, #overlaySettings .btn-outline-danger").each(function() {
       $(this).closest("div.flex-row").find("label:nth-child(1)").addClass("text-danger");
     });
     if (configIsValid) {
@@ -736,7 +737,7 @@ function goAhead() {
     await getTranslations();
     configIsValid();
     $("#version").html("v" + remoteApp.getVersion());
-    await webdavSetup(true);
+    await webdavSetup();
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
     if (prefs.autoStartSync && configIsValid()) {
       var cancelSync = false;
@@ -1122,26 +1123,21 @@ function goAhead() {
       console.error(err);
     }
   }
-  async function webdavSetup(initialCheck) {
-    $(".webdavHost, .webdavCreds, #congServerDir").removeClass("valid invalid notValidYet");
-    $("#webdavStatus").removeClass("text-success text-warning text-danger");
+  async function webdavSetup() {
+    $(".webdavHost, .webdavCreds, #congServerDir").removeClass("is-valid is-invalid");
     if (prefs.congServer && prefs.congServer.length > 0) {
-      $("#webdavSpinner").parent().fadeTo(animationDuration, 1);
-      $(".webdavHost").addClass("notValidYet");
-      $("#webdavStatus").removeClass("text-muted").addClass("text-warning");
+      $(".webdavHost").addClass("is-invalid");
       var congServerHeartbeat = await isPortReachable(prefs.congServerPort, {
         host: prefs.congServer
       });
       if (prefs.congServerPort && congServerHeartbeat) {
-        $("#webdavStatus").addClass("text-success");
+        $("#webdavStatus").removeClass("text-warning text-danger text-muted").addClass("text-success");
+        $(".webdavHost").addClass("is-valid").removeClass("is-invalid");
       } else {
-        $(".webdavHost").addClass("invalid");
-        $("#webdavStatus").addClass("text-danger");
+        $("#webdavStatus").removeClass("text-success text-warning text-muted").addClass("text-danger");
       }
-      $(".webdavHost").removeClass("notValidYet");
-      $(".webdavCreds").addClass("notValidYet");
       if (prefs.congServerPort && prefs.congServerUser && prefs.congServerPass && congServerHeartbeat) {
-        $("#webdavStatus").removeClass("text-success text-danger").addClass("text-warning");
+        $("#webdavStatus").removeClass("text-success text-danger text-muted").addClass("text-warning");
         var webdavLoginSuccessful = false;
         try {
           webdavClient = createClient(
@@ -1153,14 +1149,15 @@ function goAhead() {
           );
           await webdavClient.getDirectoryContents("/");
           webdavLoginSuccessful = true;
-          $("#webdavStatus").addClass("text-success");
+          $("#webdavStatus").removeClass("text-warning text-danger text-muted").addClass("text-success");
+          $(".webdavCreds").addClass("is-valid");
         } catch(err) {
           console.error(err);
-          $("#webdavStatus").addClass("text-danger");
-          $(".webdavCreds").addClass("invalid");
+          $("#webdavStatus").removeClass("text-success text-warning text-muted").addClass("text-danger");
+          $(".webdavCreds").addClass("is-invalid");
         }
-        $("#webdavStatus").removeClass("text-warning");
-        $(".webdavCreds").removeClass("notValidYet");
+      } else {
+        $(".webdavCreds").addClass("is-invalid");
       }
       $("#specificCong").addClass("d-flex");
       $("#btn-upload").fadeIn(animationDuration);
@@ -1168,7 +1165,7 @@ function goAhead() {
       if (prefs.congServerDir == null || prefs.congServerDir.length == 0) {
         $("#congServerDir").val("/").change();
       }
-      if (webdavLoginSuccessful && !initialCheck) {
+      if (webdavLoginSuccessful) {
         $("#webdavFolderList").fadeTo(animationDuration, 0);
         try {
           var webdavDestDir = await webdavClient.exists(prefs.congServerDir);
@@ -1182,45 +1179,50 @@ function goAhead() {
           webdavDestDir = await webdavLs(showMeTheDirectory, true);
           webdavDestDir = webdavDestDir.sort((a, b) => a.basename.localeCompare(b.basename));
           for (var item of webdavDestDir) {
-            $("#webdavFolderList").append("<li>" + (item.type == "directory" ? "<i class=\"fas fa-fw fa-folder-open\"></i> " : "") + item.basename + "</li>");
+            if (item.type == "directory") {
+              $("#webdavFolderList").append("<li><i class=\"fas fa-fw fa-folder-open\"></i>" + item.basename + "</li>");
+            }
           }
           if (prefs.congServerDir !== "/") {
             $("#webdavFolderList").prepend("<li><i class=\"fas fa-fw fa-chevron-circle-up\"></i> ../ </li>");
           }
-          $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 4));
+          $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
         } catch(err) {
           console.error(err);
         }
         $("#webdavFolderList").fadeTo(animationDuration, 1);
         if (webdavDirIsValid) {
-          $("#congServerDir").removeClass("invalid");
+          $("#congServerDir").addClass("is-valid").removeClass("is-invalid");
           $("#webdavFolderList li").click(function() {
             $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
           });
         } else {
-          $("#congServerDir").addClass("invalid");
+          $("#congServerDir").addClass("is-invalid").removeClass("is-valid");
           $("#webdavFolderList li").click(function() {
             $("#congServerDir").val(path.posix.join("/", $(this).text().trim())).change();
           });
         }
+      } else {
+        $("#webdavFolderList").empty();
       }
       if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length == 0) {
-        $(".btn-webdav, #btn-upload").addClass("btn-primary").removeClass("btn-warning");
-        $("#specificCong").removeClass("bg-warning");
+        $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").removeClass("in-danger");
+        $(".btn-webdav, #btn-upload").addClass("btn-primary").removeClass("btn-danger");
+        $("#specificCong").removeClass("bg-danger");
       }
-      if (webdavLoginSuccessful && (initialCheck || webdavDirIsValid)) {
+      if (webdavLoginSuccessful && webdavDirIsValid) {
         webdavIsAGo = true;
         $("#btn-upload").fadeTo(animationDuration, 1).prop("disabled", false);
       } else {
-        $("#btn-upload, .btn-webdav").addClass("btn-warning").removeClass("btn-primary");
+        $("#btn-upload, .btn-webdav").addClass("btn-danger").removeClass("btn-primary");
         $("#btn-upload").prop("disabled", true);
-        $("#specificCong").addClass("bg-warning");
+        $("#specificCong").addClass("bg-danger");
+        $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").addClass("in-danger");
         webdavIsAGo = false;
       }
-      $("#webdavSpinner").parent().fadeTo(animationDuration, 0);
     } else {
       $("#webdavFolderList").fadeTo(animationDuration, 0).empty();
-      $(".btn-webdav.btn-warning").addClass("btn-primary").removeClass("btn-warning");
+      $(".btn-webdav.btn-warning").addClass("btn-primary").removeClass("btn-danger");
       $("#specificCong").removeClass("d-flex");
       $("#btn-upload").fadeOut(animationDuration);
     }
@@ -1249,7 +1251,7 @@ function goAhead() {
     $("#btn-settings, #btn-upload").fadeTo(animationDuration, 1);
     $("#spinnerContainer").fadeTo(animationDuration, 0);
     setTimeout(() => {
-      $(".day, .congregation, .zoom").removeClass("bg-primary bg-danger");
+      $(".day, .congregation, .zoom").removeClass("bg-primary");
       $("#statusIcon").addClass("text-muted").removeClass("text-primary");
     }, 2000);
   }
