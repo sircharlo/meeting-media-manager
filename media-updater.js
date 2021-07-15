@@ -402,36 +402,49 @@ function goAhead() {
     return new Promise((resolve)=>{
       var mediaName = path.basename(media, path.extname(media));
       $("#downloadProgressContainer").fadeTo(animationDuration, 1);
-      if (path.extname(media).includes("mp3")) {
-        ffmpeg(path.join(mediaPath, mediaDir, media))
-          .on("end", function() {
-            return resolve();
-          })
-          .on("error", function(err) {
-            console.error(err.message);
-            return resolve();
-          })
-          .noVideo()
-          .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
-      } else {
-        var outputFPS = 30, loop = 1;
-        ffmpeg(path.join(mediaPath, mediaDir, media))
-          .inputFPS(1)
-          .outputFPS(outputFPS)
-          .on("end", function() {
-            return resolve();
-          })
-          .on("error", function(err) {
-            console.error(err.message);
-            return resolve();
-          })
-          .videoCodec("libx264")
-          .noAudio()
-          .size(hdRes[0] + "x" + hdRes[1])
-          .autopad()
-          .loop(loop)
-          .outputOptions("-pix_fmt yuv420p")
-          .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
+      try {
+        if (path.extname(media).includes("mp3")) {
+          ffmpeg(path.join(mediaPath, mediaDir, media))
+            .on("end", function() {
+              return resolve();
+            })
+            .on("error", function(err) {
+              console.error(err.message);
+              return resolve();
+            })
+            .noVideo()
+            .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
+        } else {
+          var outputFPS = 30,
+            loop = 1,
+            smallSource = false,
+            sourceRes = [hdRes[0], hdRes[1]];
+          ffmpeg(path.join(mediaPath, mediaDir, media)).ffprobe(0, function(err, data) {
+            sourceRes = [data.streams[0].width, data.streams[0].height];
+            if (hdRes[0] > data.streams[0].width && hdRes[1] > data.streams[0].height) {
+              smallSource = true;
+            }
+            ffmpeg(path.join(mediaPath, mediaDir, media)).inputFPS(1)
+              .outputFPS(outputFPS)
+              .on("end", function() {
+                return resolve();
+              })
+              .on("error", function(err) {
+                console.error(err);
+                return resolve();
+              })
+              .videoCodec("libx264")
+              .noAudio()
+              .size((smallSource ? sourceRes[0] + "x" + sourceRes[1] : hdRes[0] + "x" + hdRes[1]))
+              .autopad()
+              .loop(loop)
+              .outputOptions("-pix_fmt yuv420p")
+              .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
+          });
+        }
+      } catch(err) {
+        console.error(err.message);
+        return resolve();
       }
     });
   }
