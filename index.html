@@ -15,7 +15,7 @@
     }
 
     .overlay {
-      backdrop-filter: blur(60px);
+      background-color: var(--bs-light);
       position: fixed;
       height: 100%;
       width: 100%;
@@ -28,6 +28,10 @@
     }
 
     @media (prefers-color-scheme: dark) {
+      .overlay {
+        background-color: var(--bs-gray-dark);
+      }
+
       .btn-outline-primary {
         background: var(--bs-light);
       }
@@ -47,6 +51,7 @@
 
       .select2-container--default .select2-selection--single {
         border: 1px solid var(--bs-secondary);
+        background: var(--bs-dark);
         border-radius: 4px;
       }
     }

@@ -836,6 +836,8 @@ function goAhead() {
         }
       }
     }
+    $(".enterPrefixInput:not(:disabled)").fadeTo(animationDuration, 1);
+    $(".enterPrefixInput:disabled").fadeTo(animationDuration, 0);
     $("#enterPrefix-" + prefix.length).focus();
     if (prefix.length % 2) {
       prefix = prefix + 0;
