@@ -415,14 +415,25 @@ function goAhead() {
           .noVideo()
           .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
       } else {
-        var dimensions = hdRes;
+        var dimensionsString = "";
         try {
           var imageDimesions = sizeOf(path.join(mediaPath, mediaDir, media));
-          if (hdRes[0] > imageDimesions.width && hdRes[1] > imageDimesions.height) {
-            dimensions = [imageDimesions.width, imageDimesions.height];
+          if (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width) { // image wider than target ratio
+            if (imageDimesions.width > hdRes[0]) { // image wider than target res width
+              dimensionsString = hdRes[0] + "x?";
+            } else { // image not as wide as or equal to target res width
+              dimensionsString = imageDimesions.width + "x?";
+            }
+          } else { // image taller than or equal to target ratio
+            if (imageDimesions.height > hdRes[1]) { // image taller than target res height
+              dimensionsString = "?x" + hdRes[1];
+            } else { // image not as tall as or equal to target res height
+              dimensionsString = "?x" + imageDimesions.height;
+            }
           }
         } catch (err) {
           console.error("Unable to get dimensions for:", path.join(mediaPath, mediaDir, media), "Setting manually...", err);
+          dimensionsString = hdRes.join("x");
         }
         var outputFPS = 30, loop = 1;
         ffmpeg(path.join(mediaPath, mediaDir, media))
@@ -437,8 +448,7 @@ function goAhead() {
           })
           .videoCodec("libx264")
           .noAudio()
-          .size(dimensions[0] + "x" + dimensions[1])
-          .autopad()
+          .size(dimensionsString)
           .loop(loop)
           .outputOptions("-pix_fmt yuv420p")
           .save(path.join(zoomPath, mediaDir, mediaName + ".mp4"));
