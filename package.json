@@ -15,6 +15,7 @@
     "bootstrap": "^5.0.2",
     "bootstrap-dark-5": "^1.0.2",
     "dayjs": "^1.10.6",
+    "electron-is-dev": "^2.0.0",
     "electron-updater": "^4.3.10",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.1.7",
@@ -64,7 +65,6 @@
   "devDependencies": {
     "electron": "^13.1.7",
     "electron-builder": "^22.11.7",
-    "electron-is-dev": "^2.0.0",
     "eslint": "^7.31.0"
   },
   "scripts": {
