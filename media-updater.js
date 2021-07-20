@@ -125,6 +125,7 @@ function goAhead() {
     $("#baseDate .dropdown-item.active").removeClass("active");
     $(this).addClass("active");
     $("#baseDate > button").html($(this).html());
+    $(".meeting, .congregation, .zoom").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
     dateFormatter();
   });
   $("#overlaySettings").on("click", ".btn-clean-up", function() {
@@ -172,7 +173,7 @@ function goAhead() {
     });
   });
   $("#mwDay input, #weDay input").on("change", function() {
-    $("div.meeting").removeClass("meeting");
+    $(".meeting, .congregation, .zoom").removeClass("meeting").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   });
   $("#mediaSync").on("click", async function() {
