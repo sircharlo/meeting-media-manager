@@ -464,16 +464,16 @@ function goAhead() {
       console.error("Date locale " + locale + " not found, falling back to \"en\"");
     }
     for (var d = 0; d < 7; d++) {
-      $("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").format("DD"));
-      $("#day" + d + " .dateOfMonth").prev().html(baseDate.clone().add(d, "days").locale(locale).format("dd"));
+      //$("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").locale(locale).format("DD.MM"));
+      $("#day" + d + " .dayOfWeek").html(baseDate.clone().add(d, "days").locale(locale).format("dddd, D MMM"));
       $("#mwDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
       $("#weDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     }
-    if (parseInt($("#day" + (dayjs().isoWeekday() - 1) + " .dateOfMonth").html()) == new Date().getDate() && dayjs().isBetween(baseDate, baseDate.clone().add(7, "days"), null, "[)")) {
+    /*if (parseInt($("#day" + (dayjs().isoWeekday() - 1) + " .dateOfMonth").html()) == new Date().getDate() && dayjs().isBetween(baseDate, baseDate.clone().add(7, "days"), null, "[)")) {
       $("#day" + (dayjs().isoWeekday() - 1)).addClass("today");
     } else {
       $(".today").removeClass("today");
-    }
+    }*/
   }
   async function downloadFile(url, type) {
     if (!type) {
@@ -551,7 +551,7 @@ function goAhead() {
   async function ffmpegConvert() {
     if (!dryrun && prefs.betaMp4Gen) {
       $("#statusIcon").addClass("fa-microchip").removeClass("fa-photo-video");
-      $("#zoomRender").addClass("bg-warning in-progress");
+      $("#zoomRender").addClass("alert-warning").removeClass("alert-secondary").find("i").addClass("fas fa-plus-circle fa-spin").removeClass("far fa-circle");
       var osType = os.type();
       var targetOs;
       if (osType == "Windows_NT") {
@@ -589,7 +589,7 @@ function goAhead() {
         }
         await progressSet(filesRendering / filesToRender * 100, path.basename(mediaFile));
       }
-      $("#zoomRender").removeClass("bg-warning in-progress").addClass("bg-primary");
+      $("#zoomRender").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fas fa-check-circle").removeClass("fa-spin fa-plus-circle");
       $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
     }
   }
@@ -1230,7 +1230,7 @@ function goAhead() {
       if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length == 0) {
         $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").removeClass("in-danger");
         $(".btn-webdav, #btn-upload").addClass("btn-primary").removeClass("btn-danger");
-        $("#specificCong").removeClass("bg-danger");
+        $("#specificCong").removeClass("alert-danger").find("i").removeClass("fas fa-times-circle").addClass("far fa-circle");
       }
       if (webdavLoginSuccessful && webdavDirIsValid) {
         webdavIsAGo = true;
@@ -1238,7 +1238,7 @@ function goAhead() {
       } else {
         $("#btn-upload, .btn-webdav").addClass("btn-danger").removeClass("btn-primary");
         $("#btn-upload").prop("disabled", true);
-        $("#specificCong").addClass("bg-danger");
+        $("#specificCong").addClass("alert-danger").find("i").addClass("fas fa-times-circle").removeClass("fa-circle fa-check-circle");
         $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").addClass("in-danger");
         webdavIsAGo = false;
       }
@@ -1273,12 +1273,12 @@ function goAhead() {
     $("#btn-settings, #btn-upload").fadeTo(animationDuration, 1);
     $("#spinnerContainer").fadeTo(animationDuration, 0);
     setTimeout(() => {
-      $(".day, .congregation, .zoom").removeClass("bg-primary");
+      $(".meeting, .congregation, .zoom").addClass("alert-secondary").removeClass("alert-success");
       $("#statusIcon").addClass("text-muted").removeClass("text-primary");
     }, 2000);
   }
   async function syncWeMeeting() {
-    $("#day" + prefs.weDay).addClass("bg-warning in-progress");
+    $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").addClass("fas fa-plus-circle fa-spin").removeClass("far fa-circle");
     try {
       mkdirSync(path.join(pubsPath, pubs.wt));
       var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
@@ -1393,16 +1393,16 @@ function goAhead() {
         }
       }
       if (!dryrun) {
-        $("#day" + prefs.weDay).addClass("bg-primary");
+        $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fas fa-check-circle").removeClass("fa-spin fa-plus-circle");
       }
     } catch(err) {
       console.error(err);
-      $("#day" + prefs.weDay).addClass("bg-danger");
+      $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fas fa-times-circle").removeClass("fa-spin fa-plus-circle");
     }
-    $("#day" + prefs.weDay).removeClass("in-progress bg-warning");
+    $("#day" + prefs.weDay).removeClass("alert-warning");
   }
   async function syncMwMeeting() {
-    $("#day" + prefs.mwDay).addClass("bg-warning in-progress");
+    $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").addClass("fas fa-plus-circle fa-spin").removeClass("far fa-circle");
     try{
       mkdirSync(path.join(pubsPath, pubs.mwb));
       var issue = baseDate.format("YYYYMM") + "00";
@@ -1490,18 +1490,18 @@ function goAhead() {
         }
       }
       if (!dryrun) {
-        $("#day" + prefs.mwDay).addClass("bg-primary");
+        $("#day" + prefs.mwDay).addClass("alert-success").find("i").addClass("fas fa-check-circle").removeClass("fa-spin fa-plus-circle");
       }
     } catch(err) {
       console.error(err);
-      $("#day" + prefs.mwDay).addClass("bg-danger");
+      $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fas fa-times-circle").removeClass("fa-spin fa-plus-circle");
     }
-    $("#day" + prefs.mwDay).removeClass("in-progress bg-warning");
+    $("#day" + prefs.mwDay).removeClass("alert-warning");
   }
   async function syncCongSpecific() {
     if (webdavIsAGo) {
       $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
-      $("#specificCong").addClass("bg-warning in-progress");
+      $("#specificCong").addClass("alert-warning").removeClass("alert-secondary").find("i").addClass("fas fa-plus-circle fa-spin").removeClass("far fa-circle");
       try {
         var congSpecificFolders = await webdavLs(path.posix.join(prefs.congServerDir, "Media"));
         for (var folder of congSpecificFolders) {
@@ -1537,11 +1537,11 @@ function goAhead() {
         await removeHiddenMedia();
       } catch (err) {
         console.error(err);
-        $("#specificCong").addClass("bg-danger");
+        $("#specificCong").addClass("alert-danger").find("i").addClass("fas fa-times-circle").removeClass("fa-spin fa-plus-circle");
       }
-      $("#specificCong").removeClass("in-progress bg-warning");
+      $("#specificCong").removeClass("alert-warning");
       if (!dryrun) {
-        $("#specificCong").addClass("bg-primary");
+        $("#specificCong").addClass("alert-success").find("i").addClass("fas fa-check-circle").removeClass("fa-spin fa-plus-circle");
       }
       $("#statusIcon").addClass("fa-photo-video").removeClass("fa-cloud");
     }

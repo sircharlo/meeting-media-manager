@@ -85,26 +85,12 @@
       border-color: var(--bs-danger) !important;
     }
 
-    .day,
-    .congregation,
-    .zoom {
-      height: 3em;
-      width: 3em;
-      background-color: var(--bs-light);
-      border: 1px solid transparent;
-      border-radius: .25rem;
+    .day {
+      display: none;
     }
 
-    .meeting,
-    .congregation,
-    .zoom {
-      background-color: var(--bs-secondary);
-      color: var(--bs-white);
-    }
-
-    .in-progress {
-      box-shadow: 0 0 0 0 var(--bs-secondary);
-      animation: pulse 1s infinite;
+    .meeting {
+      display: flex;
     }
 
     .in-danger {
@@ -120,11 +106,6 @@
     .day>div div {
       margin: -5px 0;
       text-align: center;
-    }
-
-    .congregation,
-    .zoom {
-      width: auto;
     }
 
     .file-list {
@@ -661,53 +642,84 @@
       <i id="statusIcon" class="fas fa-fw fa-photo-video fa-3x text-muted"></i>
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
-      <div class="d-flex">
-        <div id="day0" class="day m-1 d-flex align-items-center justify-content-center">
+      <div class="d-flex w-100">
+        <div id="day0" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
           <div>
-            <div>M</div>
-            <div class="dateOfMonth"></div>
+            <i class="fa-circle far"></i>
+          </div>
+          <div class="col ps-3">
+            <span class="dayOfWeek"></span>
+            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
           </div>
         </div>
-        <div id="day1" class="day m-1 d-flex align-items-center justify-content-center">
+        <div id="day1" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
           <div>
-            <div>T</div>
-            <div class="dateOfMonth"></div>
+            <i class="fa-circle far"></i>
+          </div>
+          <div class="col ps-3">
+            <span class="dayOfWeek"></span>
+            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
           </div>
         </div>
-        <div id="day2" class="day m-1 d-flex align-items-center justify-content-center">
+        <div id="day2" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
           <div>
-            <div>W</div>
-            <div class="dateOfMonth"></div>
+            <i class="fa-circle far"></i>
+          </div>
+          <div class="col ps-3">
+            <span class="dayOfWeek"></span>
+            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
           </div>
         </div>
-        <div id="day3" class="day m-1 d-flex align-items-center justify-content-center">
+        <div id="day3" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
           <div>
-            <div>T</div>
-            <div class="dateOfMonth"></div>
+            <i class="fa-circle far"></i>
+          </div>
+          <div class="col ps-3">
+            <span class="dayOfWeek"></span>
+            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
           </div>
         </div>
-        <div id="day4" class="day m-1 d-flex align-items-center justify-content-center">
+        <div id="day4" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
           <div>
-            <div>F</div>
-            <div class="dateOfMonth"></div>
+            <i class="fa-circle far"></i>
+          </div>
+          <div class="col ps-3">
+            <span class="dayOfWeek"></span>
+            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
           </div>
         </div>
-        <div id="day5" class="day m-1 d-flex align-items-center justify-content-center">
+        <div id="day5" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
           <div>
-            <div>S</div>
-            <div class="dateOfMonth"></div>
+            <i class="fa-circle far"></i>
+          </div>
+          <div class="col ps-3">
+            <span class="dayOfWeek"></span>
+            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
           </div>
         </div>
-        <div id="day6" class="day m-1 d-flex align-items-center justify-content-center">
+        <div id="day6" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
           <div>
-            <div>S</div>
-            <div class="dateOfMonth"></div>
+            <i class="fa-circle far"></i>
+          </div>
+          <div class="col ps-3">
+            <span class="dayOfWeek"></span>
+            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
           </div>
         </div>
       </div>
-      <div class="d-flex">
-        <div id="specificCong" class="m-1 px-3 congregation align-items-center justify-content-center i18n" data-i18n-string="congMedia" style="display: none;"></div>
-        <div id="zoomRender" class="m-1 px-3 zoom align-items-center justify-content-center i18n" data-i18n-string="mp4Conversion" style="display: none;"></div>
+      <div class="d-flex w-100">
+        <div id="specificCong" class="m-1 col alert alert-secondary congregation align-items-center justify-content-center" style="display: none;">
+          <div>
+            <i class="fa-circle far"></i>
+          </div>
+          <span class="col i18n ps-3" data-i18n-string="congMedia"></span>
+        </div>
+        <div id="zoomRender" class="m-1 col alert alert-secondary zoom align-items-center justify-content-center" style="display: none;">
+          <div>
+            <i class="fa-circle far"></i>
+          </div>
+          <span class="i18n col ps-3" data-i18n-string="mp4Conversion"></span>
+        </div>
       </div>
     </div>
     <div class="d-flex justify-content-center">
