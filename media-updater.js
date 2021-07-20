@@ -1400,7 +1400,7 @@ function goAhead() {
       console.error(err);
       $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
     }
-    $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
+    if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
   }
   async function syncMwMeeting() {
     if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
@@ -1497,7 +1497,7 @@ function goAhead() {
       console.error(err);
       $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
     }
-    $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
+    if (!dryrun) $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
   }
   async function syncCongSpecific() {
     if (webdavIsAGo) {
@@ -1544,7 +1544,7 @@ function goAhead() {
       if (!dryrun) {
         $("#specificCong").addClass("alert-success").find("i").addClass("fa-check-circle");
       }
-      $("#specificCong").find("i").removeClass("fa-spin fa-sync-alt");
+      if (!dryrun) $("#specificCong").find("i").removeClass("fa-spin fa-sync-alt");
       $("#statusIcon").addClass("fa-photo-video").removeClass("fa-cloud");
     }
   }
