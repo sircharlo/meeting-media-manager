@@ -125,7 +125,7 @@ function goAhead() {
     $("#baseDate .dropdown-item.active").removeClass("active");
     $(this).addClass("active");
     $("#baseDate > button").html($(this).html());
-    $(".meeting, .congregation, .zoom").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+    $(".meeting, .congregation, .zoom").find("i").addClass("fa-sync-alt").removeClass("fa-check-circle");
     dateFormatter();
   });
   $("#overlaySettings").on("click", ".btn-clean-up", function() {
@@ -173,7 +173,7 @@ function goAhead() {
     });
   });
   $("#mwDay input, #weDay input").on("change", function() {
-    $(".meeting, .congregation, .zoom").removeClass("meeting").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+    $(".meeting, .congregation, .zoom").removeClass("meeting").find("i").addClass("fa-sync-alt").removeClass("fa-check-circle");
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   });
   $("#mediaSync").on("click", async function() {
@@ -323,7 +323,7 @@ function goAhead() {
       }
     }
     if (prefs.betaMp4Gen) {
-      $("#zoomRender").addClass("d-flex");
+      $("#zoomRender").addClass("d-flex").find("i").removeClass("fa-check-circle").addClass("fa-sync-alt");
       $("#additionalMediaPrompt").prop("disabled", false);
     } else {
       $("#zoomRender").removeClass("d-flex");
@@ -552,7 +552,7 @@ function goAhead() {
   async function ffmpegConvert() {
     if (!dryrun && prefs.betaMp4Gen) {
       $("#statusIcon").addClass("fa-microchip").removeClass("fa-photo-video");
-      $("#zoomRender").addClass("alert-warning").removeClass("alert-secondary").find("i").addClass("fas fa-plus-circle fa-spin").removeClass("far fa-circle");
+      $("#zoomRender").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
       var osType = os.type();
       var targetOs;
       if (osType == "Windows_NT") {
@@ -590,7 +590,7 @@ function goAhead() {
         }
         await progressSet(filesRendering / filesToRender * 100, path.basename(mediaFile));
       }
-      $("#zoomRender").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fas fa-check-circle").removeClass("fa-spin fa-plus-circle");
+      $("#zoomRender").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spin fa-sync-alt");
       $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
     }
   }
@@ -1231,7 +1231,7 @@ function goAhead() {
       if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length == 0) {
         $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").removeClass("in-danger");
         $(".btn-webdav, #btn-upload").addClass("btn-primary").removeClass("btn-danger");
-        $("#specificCong").removeClass("alert-danger").find("i").removeClass("fas fa-times-circle").addClass("far fa-circle");
+        $("#specificCong").removeClass("alert-danger").find("i").removeClass("fa-times-circle").addClass("fa-sync-alt");
       }
       if (webdavLoginSuccessful && webdavDirIsValid) {
         webdavIsAGo = true;
@@ -1239,7 +1239,7 @@ function goAhead() {
       } else {
         $("#btn-upload, .btn-webdav").addClass("btn-danger").removeClass("btn-primary");
         $("#btn-upload").prop("disabled", true);
-        $("#specificCong").addClass("alert-danger").find("i").addClass("fas fa-times-circle").removeClass("fa-circle fa-check-circle");
+        $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle").removeClass("fa-sync-alt fa-check-circle");
         $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").addClass("in-danger");
         webdavIsAGo = false;
       }
@@ -1279,7 +1279,7 @@ function goAhead() {
     }, 2000);
   }
   async function syncWeMeeting() {
-    $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").addClass("fas fa-plus-circle fa-spin").removeClass("far fa-circle");
+    if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
     try {
       mkdirSync(path.join(pubsPath, pubs.wt));
       var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
@@ -1394,16 +1394,16 @@ function goAhead() {
         }
       }
       if (!dryrun) {
-        $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fas fa-check-circle").removeClass("fa-spin fa-plus-circle");
+        $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fa-check-circle");
       }
     } catch(err) {
       console.error(err);
-      $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fas fa-times-circle").removeClass("fa-spin fa-plus-circle");
+      $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
     }
-    $("#day" + prefs.weDay).removeClass("alert-warning");
+    $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
   }
   async function syncMwMeeting() {
-    $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").addClass("fas fa-plus-circle fa-spin").removeClass("far fa-circle");
+    if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
     try{
       mkdirSync(path.join(pubsPath, pubs.mwb));
       var issue = baseDate.format("YYYYMM") + "00";
@@ -1491,18 +1491,18 @@ function goAhead() {
         }
       }
       if (!dryrun) {
-        $("#day" + prefs.mwDay).addClass("alert-success").find("i").addClass("fas fa-check-circle").removeClass("fa-spin fa-plus-circle");
+        $("#day" + prefs.mwDay).addClass("alert-success").find("i").addClass("fa-check-circle");
       }
     } catch(err) {
       console.error(err);
-      $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fas fa-times-circle").removeClass("fa-spin fa-plus-circle");
+      $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
     }
-    $("#day" + prefs.mwDay).removeClass("alert-warning");
+    $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
   }
   async function syncCongSpecific() {
     if (webdavIsAGo) {
       $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
-      $("#specificCong").addClass("alert-warning").removeClass("alert-secondary").find("i").addClass("fas fa-plus-circle fa-spin").removeClass("far fa-circle");
+      if (!dryrun) $("#specificCong").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
       try {
         var congSpecificFolders = await webdavLs(path.posix.join(prefs.congServerDir, "Media"));
         for (var folder of congSpecificFolders) {
@@ -1538,12 +1538,13 @@ function goAhead() {
         await removeHiddenMedia();
       } catch (err) {
         console.error(err);
-        $("#specificCong").addClass("alert-danger").find("i").addClass("fas fa-times-circle").removeClass("fa-spin fa-plus-circle");
+        $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle");
       }
       $("#specificCong").removeClass("alert-warning");
       if (!dryrun) {
-        $("#specificCong").addClass("alert-success").find("i").addClass("fas fa-check-circle").removeClass("fa-spin fa-plus-circle");
+        $("#specificCong").addClass("alert-success").find("i").addClass("fa-check-circle");
       }
+      $("#specificCong").find("i").removeClass("fa-spin fa-sync-alt");
       $("#statusIcon").addClass("fa-photo-video").removeClass("fa-cloud");
     }
   }
@@ -1899,6 +1900,7 @@ function goAhead() {
       dryrun = true;
       dryrunResults = {};
       await startMediaSync();
+      $(".meeting, .congregation, .zoom").find("i").addClass("fa-sync-alt").removeClass("fa-check-circle");
       dryrun = false;
       $("#chooseMeeting").empty();
       for (var meeting of [prefs.mwDay, prefs.weDay]) {
