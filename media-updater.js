@@ -352,8 +352,8 @@ function goAhead() {
   }
   function convertPdf(mediaFile) {
     return new Promise((resolve)=>{
-      var pdfjsLib = require("pdfjs-dist/es5/build/pdf.js");
-      var pdfjsLibWorker = require("pdfjs-dist/es5/build/pdf.worker.entry.js");
+      var pdfjsLib = require("pdfjs-dist/build/pdf.js");
+      var pdfjsLibWorker = require("pdfjs-dist/build/pdf.worker.entry.js");
       pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsLibWorker;
       pdfjsLib.getDocument(mediaFile).promise.then(async function(pdf) {
         for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
