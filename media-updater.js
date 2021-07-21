@@ -465,16 +465,17 @@ function goAhead() {
       console.error("Date locale " + locale + " not found, falling back to \"en\"");
     }
     for (var d = 0; d < 7; d++) {
-      //$("#day" + d + " .dateOfMonth").html(baseDate.clone().add(d, "days").locale(locale).format("DD.MM"));
-      $("#day" + d + " .dayOfWeek").html(baseDate.clone().add(d, "days").locale(locale).format("dddd, D MMM"));
+      $("#day" + d + " .dayLongDate .dayOfWeek").html(baseDate.clone().add(d, "days").locale(locale).format("dd"));
+      $("#day" + d + " .dayLongDate .dayOfWeekLong").html(baseDate.clone().add(d, "days").locale(locale).format("dddd"));
+      $("#day" + d + " .dayLongDate .dateOfMonth").html(baseDate.clone().add(d, "days").locale(locale).format("DD"));
       $("#mwDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
       $("#weDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     }
-    /*if (parseInt($("#day" + (dayjs().isoWeekday() - 1) + " .dateOfMonth").html()) == new Date().getDate() && dayjs().isBetween(baseDate, baseDate.clone().add(7, "days"), null, "[)")) {
+    if (parseInt($("#day" + (dayjs().isoWeekday() - 1) + " .dateOfMonth").html()) == new Date().getDate() && dayjs().isBetween(baseDate, baseDate.clone().add(7, "days"), null, "[)")) {
       $("#day" + (dayjs().isoWeekday() - 1)).addClass("today");
     } else {
       $(".today").removeClass("today");
-    }*/
+    }
   }
   async function downloadFile(url, type) {
     if (!type) {

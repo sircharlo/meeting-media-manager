@@ -27,35 +27,6 @@
       display: flex;
     }
 
-    @media (prefers-color-scheme: dark) {
-      .overlay {
-        background-color: var(--bs-gray-dark);
-      }
-
-      .btn-outline-primary {
-        background: var(--bs-light);
-      }
-
-      .select2-dropdown,
-      #select2-lang-container,
-      #select2-s34Picker-container,
-      #select2-songPicker-container {
-        color: var(--bs-light) !important;
-        background: var(--bs-dark);
-        border-radius: .2rem;
-      }
-
-      .select2-container--default .select2-results__option--selected {
-        background: var(--bs-secondary);
-      }
-
-      .select2-container--default .select2-selection--single {
-        border: 1px solid var(--bs-secondary);
-        background: var(--bs-dark);
-        border-radius: 4px;
-      }
-    }
-
     #overlaySettings,
     #overlayWebdav,
     #overlayUploadFile {
@@ -85,12 +56,19 @@
       border-color: var(--bs-danger) !important;
     }
 
-    .day {
+    .day:not(.meeting) .dayIcon,
+    .day:not(.meeting) .dayOfWeekLong,
+    .day.meeting .dayOfWeek {
       display: none;
     }
 
     .meeting {
       display: flex;
+      flex: 1 1 auto;
+    }
+
+    .day:not(.meeting) {
+      background-color: var(--bs-light);
     }
 
     .in-danger {
@@ -99,13 +77,21 @@
     }
 
     .today {
-      box-shadow: 0px 0px 15px 0px var(--bs-primary);
+      box-shadow: 0 0 10px 1px var(--bs-info);
       animation: pulseToday 2s infinite;
     }
 
     .day>div div {
       margin: -5px 0;
       text-align: center;
+    }
+
+    .meeting .dayLongDate {
+      padding-left: 1rem;
+    }
+
+    .meeting .dayLongDate div {
+      text-align: left;
     }
 
     .file-list {
@@ -191,20 +177,6 @@
       padding-top: 3px;
     }
 
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 var(--bs-secondary);
-      }
-
-      70% {
-        box-shadow: 0 0 0 10px rgba(15, 102, 116, 0);
-      }
-
-      100% {
-        box-shadow: 0 0 0 0 rgba(15, 102, 116, 0);
-      }
-    }
-
     @keyframes pulseDanger {
       0% {
         box-shadow: 0 0 0 0 var(--bs-danger);
@@ -221,15 +193,15 @@
 
     @keyframes pulseToday {
       0% {
-        box-shadow: 0 0 10px 0 var(--bs-info);
+        box-shadow: 0 0 5px 0 var(--bs-info);
       }
 
       70% {
-        box-shadow: 0 0 15px 3px var(--bs-info);
+        box-shadow: 0 0 5px 1px var(--bs-info);
       }
 
       100% {
-        box-shadow: 0 0 10px 0 var(--bs-info);
+        box-shadow: 0 0 5px 0 var(--bs-info);
       }
     }
 
@@ -264,6 +236,39 @@
     #version {
       font-size: 11px;
       font-family: var(--bs-font-sans-serif);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .day:not(.meeting) {
+        background-color: var(--bs-dark);
+      }
+
+      .overlay {
+        background-color: var(--bs-gray-dark);
+      }
+
+      .btn-outline-primary {
+        background: var(--bs-light);
+      }
+
+      .select2-dropdown,
+      #select2-lang-container,
+      #select2-s34Picker-container,
+      #select2-songPicker-container {
+        color: var(--bs-light) !important;
+        background: var(--bs-dark);
+        border-radius: .2rem;
+      }
+
+      .select2-container--default .select2-results__option--selected {
+        background: var(--bs-secondary);
+      }
+
+      .select2-container--default .select2-selection--single {
+        border: 1px solid var(--bs-secondary);
+        background: var(--bs-dark);
+        border-radius: 4px;
+      }
     }
   </style>
   <meta name="color-scheme" content="light dark">
@@ -644,66 +649,73 @@
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
       <div class="d-flex w-100">
         <div id="day0" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
-          <div>
+          <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
-          <div class="col ps-3">
-            <span class="dayOfWeek"></span>
-            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
+          <div class="col dayLongDate">
+            <div class="dateOfMonth"></div>
+            <div class="dayOfWeek"></div>
+            <div class="dayOfWeekLong"></div>
           </div>
         </div>
         <div id="day1" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
-          <div>
+          <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
-          <div class="col ps-3">
-            <span class="dayOfWeek"></span>
-            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
+          <div class="col dayLongDate">
+            <div class="dateOfMonth"></div>
+            <div class="dayOfWeek"></div>
+            <div class="dayOfWeekLong"></div>
           </div>
         </div>
         <div id="day2" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
-          <div>
+          <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
-          <div class="col ps-3">
-            <span class="dayOfWeek"></span>
-            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
+          <div class="col dayLongDate">
+            <div class="dateOfMonth"></div>
+            <div class="dayOfWeek"></div>
+            <div class="dayOfWeekLong"></div>
           </div>
         </div>
         <div id="day3" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
-          <div>
+          <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
-          <div class="col ps-3">
-            <span class="dayOfWeek"></span>
-            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
+          <div class="col dayLongDate">
+            <div class="dateOfMonth"></div>
+            <div class="dayOfWeek"></div>
+            <div class="dayOfWeekLong"></div>
           </div>
         </div>
         <div id="day4" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
-          <div>
+          <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
-          <div class="col ps-3">
-            <span class="dayOfWeek"></span>
-            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
+          <div class="col dayLongDate">
+            <div class="dateOfMonth"></div>
+            <div class="dayOfWeek"></div>
+            <div class="dayOfWeekLong"></div>
           </div>
         </div>
         <div id="day5" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
-          <div>
+          <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
-          <div class="col ps-3">
-            <span class="dayOfWeek"></span>
-            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
+          <div class="col dayLongDate">
+            <div class="dateOfMonth"></div>
+            <div class="dayOfWeek"></div>
+            <div class="dayOfWeekLong"></div>
           </div>
         </div>
         <div id="day6" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
-          <div>
+          <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
-          <div class="col ps-3">
-            <span class="dayOfWeek"></span>
-            <!--<span class="badge rounded-pill bg-light text-dark dateOfMonth"></span>-->
+          <div class="col dayLongDate">
+            <div class="dateOfMonth"></div>
+            <div class="dayOfWeek"></div>
+            <div class="dayOfWeekLong"></div>
           </div>
         </div>
       </div>
