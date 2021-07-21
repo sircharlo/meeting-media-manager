@@ -85,6 +85,12 @@ function goAhead() {
     pubsPath,
     prefix,
     prefs = {},
+    totals = {
+      cong: {},
+      ffmpeg: {},
+      me: {},
+      we: {}
+    },
     webdavIsAGo = false,
     stayAlive,
     webdavClient,
@@ -104,6 +110,9 @@ function goAhead() {
   if (os.platform() == "linux") {
     $(".notLinux").prop("disabled", true);
   }
+  $(document).on("select2:open", () => {
+    document.querySelector(".select2-search__field").focus();
+  });
   $("#outputPath").on("mousedown", function(event) {
     var path = remoteDialog.showOpenDialogSync({
       properties: ["openDirectory"]
@@ -465,7 +474,7 @@ function goAhead() {
       console.error("Date locale " + locale + " not found, falling back to \"en\"");
     }
     for (var d = 0; d < 7; d++) {
-      $("#day" + d + " .dayLongDate .dayOfWeek").html(baseDate.clone().add(d, "days").locale(locale).format("dd"));
+      $("#day" + d + " .dayLongDate .dayOfWeek").html(baseDate.clone().add(d, "days").locale(locale).format("ddd"));
       $("#day" + d + " .dayLongDate .dayOfWeekLong").html(baseDate.clone().add(d, "days").locale(locale).format("dddd"));
       $("#day" + d + " .dayLongDate .dateOfMonth").html(baseDate.clone().add(d, "days").locale(locale).format("DD"));
       $("#mwDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
@@ -486,8 +495,7 @@ function goAhead() {
       var response = await axios.get(url, {
         responseType: "arraybuffer",
         onDownloadProgress: function(progressEvent) {
-          var percent = progressEvent.loaded / progressEvent.total * 100;
-          progressSet(percent, path.basename(url), type);
+          progressSet(progressEvent.loaded, progressEvent.total);
         }
       });
       if (parseInt(response.headers["content-length"]) !== response.data.byteLength) {
@@ -578,18 +586,20 @@ function goAhead() {
       fs.chmodSync(ffmpegPath, "777");
       ffmpeg.setFfmpegPath(ffmpegPath);
       var filesToProcess = glob.sync(path.join(mediaPath, "*", "*"));
-      var filesToRender = filesToProcess.length, filesRendering = 0;
+      totals.ffmpeg.total = filesToProcess.length;
       for (var mediaDir of glob.sync(path.join(mediaPath, "*"))) {
         mkdirSync(path.join(zoomPath, path.basename(mediaDir)));
       }
-      for (var mediaFile of glob.sync(path.join(mediaPath, "*", "*"))) {
-        filesRendering = filesRendering + 1;
+      totals.ffmpeg.current = 1;
+      for (var mediaFile of filesToProcess) {
+        progressSet(totals.ffmpeg.current, totals.ffmpeg.total, "zoomRender");
         if (path.extname(mediaFile) !== ".mp4") {
           await createVideoSync(path.basename(path.dirname(mediaFile)), path.basename(mediaFile));
         } else {
           fs.copyFileSync(mediaFile, path.join(zoomPath, path.basename(path.dirname(mediaFile)), path.basename(mediaFile)));
         }
-        await progressSet(filesRendering / filesToRender * 100, path.basename(mediaFile));
+        totals.ffmpeg.current++;
+        progressSet(totals.ffmpeg.current, totals.ffmpeg.total, "zoomRender");
       }
       $("#zoomRender").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spin fa-sync-alt");
       $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
@@ -968,18 +978,18 @@ function goAhead() {
       $("#" + radioSel + " input[value=" + prefs[radioSel] + "]").prop("checked", true).parent().addClass("active");
     }
   }
-  function progressSet(percent, filename, bar) {
-    if (!bar) {
-      bar = "download";
-    }
-    if (percent == 100) {
-      $("#" + bar + "ProgressContainer").stop().fadeTo(animationDuration, 0);
-      $("#" + bar + "Progress div").html("").width("0%");
-      $("#" + bar + "Filename").html("&nbsp;");
-    } else {
-      $("#" + bar + "ProgressContainer").stop().fadeTo(animationDuration, 1);
-      $("#" + bar + "Progress div").width(percent + "%");
-      $("#" + bar + "Filename").html(filename);
+  function progressSet(current, total, blockId) {
+    if (!dryrun || !blockId) {
+      if (!blockId) {
+        blockId = "#globalProgress";
+      } else {
+        blockId = "#" + blockId + " .progress-bar";
+      }
+      var percent = current / total * 100;
+      $(blockId).width(percent + "%");
+      if (percent >= 100) {
+        $(blockId).width("0%");
+      }
     }
   }
   async function removeHiddenMedia() {
@@ -1059,7 +1069,9 @@ function goAhead() {
     try {
       if (webdavIsAGo) {
         var files = await webdavLs(dir);
+        totals.cong.total =  totals.cong.total + files.length;
         for (var file of files) {
+          progressSet(totals.cong.current, totals.cong.total, "specificCong");
           var downloadNeeded = true;
           if (!fs.existsSync(destDir) && !dryrun) {
             mkdirSync(destDir);
@@ -1083,8 +1095,7 @@ function goAhead() {
             } else {
               var remoteFile = new Buffer(await webdavClient.getFileContents(path.posix.join(dir, file.basename)), {
                 onDownloadProgress: progressEvent => {
-                  var percent = progressEvent.loaded / progressEvent.total * 100;
-                  progressSet(percent, file.basename);
+                  progressSet(progressEvent.loaded, progressEvent.total);
                 }
               });
               fs.writeFileSync(path.join(destDir, file.basename), remoteFile);
@@ -1093,6 +1104,8 @@ function goAhead() {
               }
             }
           }
+          totals.cong.current++;
+          progressSet(totals.cong.current, totals.cong.total, "specificCong");
         }
       }
     } catch (err) {
@@ -1127,8 +1140,7 @@ function goAhead() {
         await webdavClient.putFileContents(path.posix.join(destFolder, destName), file, {
           contentLength: false,
           onUploadProgress: progressEvent => {
-            var percent = progressEvent.loaded / progressEvent.total * 100;
-            progressSet(percent, destName, "upload");
+            progressSet(progressEvent.loaded, progressEvent.total);
           }
         });
       }
@@ -1312,15 +1324,9 @@ function goAhead() {
       var qrySongs = await executeStatement(db, "SELECT * FROM Extract INNER JOIN DocumentExtract ON DocumentExtract.ExtractId = Extract.ExtractId WHERE DocumentId = " + qryDocuments[w].DocumentId + " and Caption LIKE '%" + qrySongPub + "%' ORDER BY BeginParagraphOrdinal");
       var qrySongPubMedia = await executeStatement(db, "SELECT KeySymbol FROM Multimedia Where KeySymbol LIKE '%" + qrySongPub + "%' LIMIT 1");
       qrySongPubMedia = qrySongPubMedia[0].KeySymbol;
-      for (var s = 0; s < qrySongs.length; s++) {
-        var song = qrySongs[s];
-        song.SongNumber = song.Caption.replace(/\D/g, "");
-        song.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
-        song.FileOrder = s;
-        song.SongPub = qrySongPubMedia;
-        await getSong(song);
-      }
+      totals.we.total = qrySongs.length + qryLocalMedia.length, totals.we.current = 1;
       for (var l = 0; l < qryLocalMedia.length; l++) {
+        progressSet(totals.we.current, totals.we.total, "day" + prefs.weDay);
         var localMedia = qryLocalMedia[l];
         localMedia.FileType = localMedia.FilePath.split(".").pop();
         if ((localMedia.MimeType.includes("audio") || localMedia.MimeType.includes("video"))) {
@@ -1393,6 +1399,19 @@ function goAhead() {
             });
           }
         }
+        totals.we.current++;
+        progressSet(totals.we.current, totals.we.total, "day" + prefs.weDay);
+      }
+      for (var s = 0; s < qrySongs.length; s++) {
+        progressSet(totals.we.current, totals.we.total, "day" + prefs.weDay);
+        var song = qrySongs[s];
+        song.SongNumber = song.Caption.replace(/\D/g, "");
+        song.DestPath = path.join(mediaPath, studyDate.format("YYYY-MM-DD"));
+        song.FileOrder = s;
+        song.SongPub = qrySongPubMedia;
+        await getSong(song);
+        totals.we.current++;
+        progressSet(totals.we.current, totals.we.total, "day" + prefs.weDay);
       }
       if (!dryrun) {
         $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fa-check-circle");
@@ -1453,8 +1472,10 @@ function goAhead() {
           srcParId: internalRef.BeginParagraphOrdinal
         });
       }
+      var totalMediaForMw = [].concat.apply([], Object.values(mwMediaForWeek)).length, currentMediaForMw = 1;
       for (var wM = 0; wM < Object.keys(mwMediaForWeek).length; wM++) {
         for (var wMI = 0; wMI < Object.values(mwMediaForWeek)[wM].length; wMI++) {
+          progressSet(currentMediaForMw, totalMediaForMw, "day" + prefs.mwDay);
           var weekMediaItem = Object.values(mwMediaForWeek)[wM][wMI];
           if (weekMediaItem.Json) {
             weekMediaItem.FileName = weekMediaItem.Json[0].title + "." + path.extname(weekMediaItem.Json[0].file.url);
@@ -1489,6 +1510,8 @@ function goAhead() {
               });
             }
           }
+          currentMediaForMw++;
+          progressSet(currentMediaForMw, totalMediaForMw, "day" + prefs.mwDay);
         }
       }
       if (!dryrun) {
@@ -1506,6 +1529,7 @@ function goAhead() {
       if (!dryrun) $("#specificCong").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
       try {
         var congSpecificFolders = await webdavLs(path.posix.join(prefs.congServerDir, "Media"));
+        totals.cong.total = 0, totals.cong.current = 1;
         for (var folder of congSpecificFolders) {
           var congSpecificFoldersParent = mediaPath;
           var goOn = true;
@@ -1860,7 +1884,7 @@ function goAhead() {
         var s34TalkFiles = await webdavLs(path.posix.join(prefs.congServerDir, "S-34", $("#s34Picker option:selected").val()));
         for (var i = 0; i < s34TalkFiles.length; i++) {
           await webdavCp(s34TalkFiles[i].filename, path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + s34TalkFiles[i].basename).trim()));
-          progressSet(((i + 1) / s34TalkFiles.length), s34TalkFiles[i].basename, "upload");
+          progressSet((i + 1), s34TalkFiles.length);
         }
       } else if ($("input#typeSong:checked").length > 0) {
         var meetingSong = {
@@ -1886,7 +1910,6 @@ function goAhead() {
         await startMediaSync();
         dryrun = false;
         $("#chooseMeeting input:checked").change();
-        progressSet(100, null, "upload");
         $("#uploadSpinnerContainer").fadeTo(animationDuration, 0);
         $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
         $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
