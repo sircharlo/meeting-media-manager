@@ -412,7 +412,6 @@ function goAhead() {
   function createVideoSync(mediaDir, media){
     return new Promise((resolve)=>{
       var mediaName = path.basename(media, path.extname(media));
-      $("#downloadProgressContainer").fadeTo(animationDuration, 1);
       if (path.extname(media).includes("mp3")) {
         ffmpeg(path.join(mediaPath, mediaDir, media))
           .on("end", function() {
@@ -490,7 +489,6 @@ function goAhead() {
     if (!type) {
       type = "download";
     }
-    $("#" + type + "ProgressContainer").stop().fadeTo(animationDuration, 1);
     try {
       var response = await axios.get(url, {
         responseType: "arraybuffer",
@@ -980,16 +978,16 @@ function goAhead() {
   }
   function progressSet(current, total, blockId) {
     if (!dryrun || !blockId) {
+      var percent = current / total * 100;
+      if (percent > 100 || (!blockId && percent == 100)) {
+        percent = 0;
+      }
       if (!blockId) {
         blockId = "#globalProgress";
       } else {
         blockId = "#" + blockId + " .progress-bar";
       }
-      var percent = current / total * 100;
       $(blockId).width(percent + "%");
-      if (percent >= 100) {
-        $(blockId).width("0%");
-      }
     }
   }
   async function removeHiddenMedia() {
@@ -1267,7 +1265,6 @@ function goAhead() {
     $("#statusIcon").addClass("text-primary").removeClass("text-muted");
     stayAlive = false;
     $("#btn-settings, #btn-upload").fadeTo(animationDuration, 0);
-    $("#spinnerContainer").fadeTo(animationDuration, 1);
     await setVars();
     await cleanUp([mediaPath]);
     await cleanUp([zoomPath], "brutal");
@@ -1285,7 +1282,6 @@ function goAhead() {
       shell.openPath(openPath);
     }
     $("#btn-settings, #btn-upload").fadeTo(animationDuration, 1);
-    $("#spinnerContainer").fadeTo(animationDuration, 0);
     setTimeout(() => {
       $(".meeting, .congregation, .zoom").addClass("alert-secondary").removeClass("alert-success");
       $("#statusIcon").addClass("text-muted").removeClass("text-primary");
@@ -1878,8 +1874,6 @@ function goAhead() {
     try {
       $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-cloud-upload-alt");
       $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
-      $("#uploadSpinnerContainer").fadeTo(animationDuration, 1);
-      $("#uploadProgressContainer").fadeTo(animationDuration, 1);
       if ($("input#typeS34:checked").length > 0) {
         var s34TalkFiles = await webdavLs(path.posix.join(prefs.congServerDir, "S-34", $("#s34Picker option:selected").val()));
         for (var i = 0; i < s34TalkFiles.length; i++) {
@@ -1910,7 +1904,6 @@ function goAhead() {
         await startMediaSync();
         dryrun = false;
         $("#chooseMeeting input:checked").change();
-        $("#uploadSpinnerContainer").fadeTo(animationDuration, 0);
         $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
         $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
         $("#overlayDryrun").stop().fadeOut(animationDuration);
