@@ -58,7 +58,7 @@ function goAhead() {
     path = require("path"),
     sizeOf = require("image-size"),
     sqljs = require("sql.js"),
-    zipper = require("zip-local"),
+    zipper = require("adm-zip"),
     appPath = remoteApp.getPath("userData"),
     jwGetPubMediaLinks = "https://app.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json",
     langsFile = path.join(appPath, "langs.json"),
@@ -563,24 +563,27 @@ function goAhead() {
       var osType = os.type();
       var targetOs;
       if (osType == "Windows_NT") {
-        targetOs = "windows-64";
+        targetOs = "win-64";
       } else if (osType == "Darwin") {
         targetOs = "osx-64";
       } else {
         targetOs = "linux-64";
       }
       var ffmpegVersions = await getJson({url: "https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest"});
-      var ffmpegUrls = await getJson({url: "https://ffbinaries.com/api/v1/version/latest"});
-      var remoteFfmpegZipSize = ffmpegVersions.assets.filter(a => a.name == path.basename(ffmpegUrls.bin[targetOs].ffmpeg))[0].size;
-      var ffmpegZipPath = path.join(appPath, "ffmpeg", "zip", path.basename(ffmpegUrls.bin[targetOs].ffmpeg));
-      if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== remoteFfmpegZipSize) {
+      var ffmpegVersion = ffmpegVersions.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
+      var ffmpegZipPath = path.join(appPath, "ffmpeg", "zip", ffmpegVersion.name);
+      if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
         cleanUp([path.join(appPath, "ffmpeg", "zip")], "brutal");
         mkdirSync(path.join(appPath, "ffmpeg", "zip"));
-        var ffmpegZipFile = await downloadFile(ffmpegUrls.bin[targetOs].ffmpeg);
+        var ffmpegZipFile = await downloadFile(ffmpegVersion.browser_download_url);
         fs.writeFileSync(ffmpegZipPath, new Buffer(ffmpegZipFile));
       }
-      zipper.sync.unzip(ffmpegZipPath).save(path.join(appPath, "ffmpeg"));
-      var ffmpegPath = glob.sync(path.join(appPath, "ffmpeg", "ffmpeg*"))[0];
+      var zip = new zipper(ffmpegZipPath);
+      var zipEntry = zip.getEntries().filter((x) => {return !x.entryName.includes("MACOSX");})[0];
+      var ffmpegPath = path.join(path.join(appPath, "ffmpeg", zipEntry.entryName));
+      if (!fs.existsSync(ffmpegPath) || fs.statSync(ffmpegPath).size !== zipEntry.header.size) {
+        zip.extractEntryTo(zipEntry.entryName, path.join(appPath, "ffmpeg"), true, true);
+      }
       fs.chmodSync(ffmpegPath, "777");
       ffmpeg.setFfmpegPath(ffmpegPath);
       var filesToProcess = glob.sync(path.join(mediaPath, "*", "*"));
@@ -624,9 +627,11 @@ function goAhead() {
           var file = await downloadFile(url);
           fs.writeFileSync(path.join(workingDirectory, basename), new Buffer(file));
           mkdirSync(path.join(workingDirectory, "JWPUB"));
-          zipper.sync.unzip(glob.sync(path.join(workingDirectory, "*.jwpub"))[0]).save(path.join(workingDirectory, "JWPUB"));
+          var zip = new zipper(glob.sync(path.join(workingDirectory, "*.jwpub"))[0]);
+          zip.extractAllTo(path.join(workingDirectory, "JWPUB"), true);
           mkdirSync(workingUnzipDirectory);
-          zipper.sync.unzip(path.join(workingDirectory, "JWPUB", "contents")).save(workingUnzipDirectory);
+          zip = new zipper(path.join(workingDirectory, "JWPUB", "contents"));
+          zip.extractAllTo(workingUnzipDirectory, true);
         }
         var SQL = await sqljs();
         var sqldb = new SQL.Database(fs.readFileSync(glob.sync(path.join(workingUnzipDirectory, "*.db"))[0]));

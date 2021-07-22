@@ -2,7 +2,7 @@
   "name": "jw-meeting-media-fetcher",
   "version": "0.8.99",
   "description": "JW Meeting Media Fetcher",
-  "main": "main.js", 
+  "main": "main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
@@ -11,6 +11,7 @@
     "@electron/remote": "^1.2.0",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@popperjs/core": "^2.9.2",
+    "adm-zip": "^0.5.5",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.2",
     "bootstrap-dark-5": "^1.0.2",
@@ -29,8 +30,7 @@
     "pdfjs-dist": "^2.8.335",
     "select2": "^4.1.0-rc.0",
     "sql.js": "^1.5.0",
-    "webdav": "^4.6.0",
-    "zip-local": "^0.3.4"
+    "webdav": "^4.6.0"
   },
   "build": {
     "appId": "sircharlo.jw-meeting-media-fetcher",
