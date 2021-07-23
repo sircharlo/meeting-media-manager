@@ -1552,7 +1552,8 @@ function goAhead() {
             }
           }
           for (var recurringFile of fs.readdirSync(path.join(pubsPath, "Recurring"))) {
-            for (var meetingDate of fs.readdirSync(path.join(mediaPath))) {
+            for (var meetingDateFolder of glob.sync(path.join(mediaPath, "*/"))) {
+              var meetingDate = path.basename(meetingDateFolder);
               copyFile({
                 file: path.join(pubsPath, "Recurring", recurringFile),
                 destFile: path.join(mediaPath, meetingDate, recurringFile),
