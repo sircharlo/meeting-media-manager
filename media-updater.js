@@ -584,7 +584,11 @@ function goAhead() {
       if (!fs.existsSync(ffmpegPath) || fs.statSync(ffmpegPath).size !== zipEntry.header.size) {
         zip.extractEntryTo(zipEntry.entryName, path.join(appPath, "ffmpeg"), true, true);
       }
-      fs.chmodSync(ffmpegPath, "777");
+      try {
+        fs.accessSync(ffmpegPath, fs.constants.X_OK);
+      } catch (err) {
+        fs.chmodSync(ffmpegPath, "777");
+      }
       ffmpeg.setFfmpegPath(ffmpegPath);
       var filesToProcess = glob.sync(path.join(mediaPath, "*", "*"));
       totals.ffmpeg.total = filesToProcess.length;
