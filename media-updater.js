@@ -950,10 +950,10 @@ function goAhead() {
         var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png");
         $("body").append("<div id='pdf' style='position: absolute; top: 0;'>");
         $("div#pdf").hide().append("<canvas id='pdfCanvas'></canvas>");
-        var scale = hdRes[1] / page.getViewport({scale: 1}).height * 2;
+        var scale = hdRes[1] / page.getViewport({scale: 1}).height * 4;
         var viewport = page.getViewport({scale: scale});
         var canvas = $("#pdfCanvas")[0];
-        canvas.height = hdRes[1] * 2;
+        canvas.height = hdRes[1] * 4;
         canvas.width = page.getViewport({scale: scale}).width;
         var context = canvas.getContext("2d");
         var renderContext = {
