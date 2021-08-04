@@ -8,9 +8,9 @@
     "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
   },
   "dependencies": {
-    "@electron/remote": "^1.2.0",
+    "@electron/remote": "^1.2.1",
     "@fortawesome/fontawesome-free": "^5.15.3",
-    "@popperjs/core": "^2.9.2",
+    "@popperjs/core": "^2.9.3",
     "adm-zip": "^0.5.5",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.2",
@@ -64,9 +64,9 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^13.1.7",
+    "electron": "^13.1.8",
     "electron-builder": "^22.11.7",
-    "eslint": "^7.31.0"
+    "eslint": "^7.32.0"
   },
   "scripts": {
     "start-debug": "electron .  --trace-warnings > ./app-run.log  2>&1",
