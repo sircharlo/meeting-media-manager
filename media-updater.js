@@ -84,6 +84,7 @@ function goAhead() {
   paths.app = remoteApp.getPath("userData");
   paths.langs = path.join(paths.app, "langs.json");
   paths.prefs = path.join(paths.app, "prefs.json");
+  paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
 
   if (fs.existsSync(paths.prefs)) {
     try {
@@ -93,6 +94,7 @@ function goAhead() {
     }
     prefsInitialize();
   }
+  updateCleanup();
   getInitialData();
   dateFormatter();
   if (os.platform() == "linux") {
@@ -128,7 +130,7 @@ function goAhead() {
   $("#overlaySettings").on("click", ".btn-clean-up", function() {
     $(this).addClass("btn-success").removeClass("btn-warning").prop("disabled", true);
     setVars();
-    cleanUp([paths.media, paths.zoom], "brutal");
+    cleanUp([paths.lang, paths.langs, paths.pubs], "brutal");
     setTimeout(() => {
       $(".btn-clean-up").removeClass("btn-success").addClass("btn-warning").prop("disabled", false);
     }, 3000);
@@ -260,24 +262,28 @@ function goAhead() {
   }
   function cleanUp(dirs, type) {
     for (var lookinDir of dirs) {
-      if (fs.existsSync(lookinDir)) {
-        $("#statusIcon").addClass("fa-broom").removeClass("fa-photo-video");
-        if (type == "brutal") {
-          fs.rmdirSync(lookinDir, {
-            recursive: true
-          });
-        } else {
-          for (var mediaSubDir of glob.sync(path.join(lookinDir, "*"))) {
-            if (dayjs(path.basename(mediaSubDir), "YYYY-MM-DD").isValid() && !dayjs(path.basename(mediaSubDir), "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
-              var deleteDir = path.join(lookinDir, path.basename(mediaSubDir));
-              fs.rmdirSync(deleteDir, {
-                recursive: true
-              });
+      $("#statusIcon").addClass("fa-broom").removeClass("fa-photo-video");
+      try {
+        if (fs.existsSync(lookinDir)) {
+          if (type == "brutal") {
+            fs.rmSync(lookinDir, {
+              recursive: true
+            });
+          } else {
+            for (var mediaSubDir of glob.sync(path.join(lookinDir, "*"))) {
+              if (dayjs(path.basename(mediaSubDir), "YYYY-MM-DD").isValid() && !dayjs(path.basename(mediaSubDir), "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+                var deleteDir = path.join(lookinDir, path.basename(mediaSubDir));
+                fs.rmdirSync(deleteDir, {
+                  recursive: true
+                });
+              }
             }
           }
         }
-        $("#statusIcon").addClass("fa-photo-video").removeClass("fa-broom");
+      } catch(err) {
+        console.error(err);
       }
+      $("#statusIcon").addClass("fa-photo-video").removeClass("fa-broom");
     }
   }
   function configIsValid() {
@@ -694,6 +700,7 @@ function goAhead() {
     } else {
       jsonLangs = JSON.parse(fs.readFileSync(paths.langs));
     }
+    dateFormatter();
     for (var lang of jsonLangs) {
       $("#lang").append($("<option>", {
         value: lang.langcode,
@@ -1352,6 +1359,19 @@ function goAhead() {
       $("#" + screen).slideDown(animationDuration);
     } else {
       $("#" + screen).slideUp(animationDuration);
+    }
+  }
+  function updateCleanup() {
+    try { // do some housecleaning after version updates
+      var lastRunVersion = (fs.existsSync(paths.lastRunVersion) ? fs.readFileSync(paths.lastRunVersion, "utf8") : 0);
+      setVars();
+    } catch(err) {
+      console.error(err);
+    } finally {
+      if (lastRunVersion !== remoteApp.getVersion()) {
+        cleanUp([paths.lang, paths.pubs], "brutal");
+        fs.writeFileSync(paths.lastRunVersion, remoteApp.getVersion());
+      }
     }
   }
   var dropHandler = (event) => {
