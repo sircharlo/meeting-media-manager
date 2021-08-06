@@ -95,6 +95,7 @@
     }
 
     .meeting .progress-bar,
+    .syncJwOrgMedia .progress-bar,
     .congregation .progress-bar,
     .zoom .progress-bar,
     #globalProgress {
@@ -517,7 +518,7 @@
         <label class="btn btn-outline-primary" for="mwDay2">W</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay3" value="3" autocomplete="off">
         <label class="btn btn-outline-primary" for="mwDay3">T</label>
-        <input type="radio" class="btn-check" name="mwDay" id="mwDay4" alue="4" autocomplete="off">
+        <input type="radio" class="btn-check" name="mwDay" id="mwDay4" value="4" autocomplete="off">
         <label class="btn btn-outline-primary" for="mwDay4">F</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay5" value="5" autocomplete="off">
         <label class="btn btn-outline-primary" for="mwDay5">S</label>
@@ -536,7 +537,7 @@
         <label class="btn btn-outline-primary" for="weDay2">W</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay3" value="3" autocomplete="off">
         <label class="btn btn-outline-primary" for="weDay3">T</label>
-        <input type="radio" class="btn-check" name="weDay" id="weDay4" alue="4" autocomplete="off">
+        <input type="radio" class="btn-check" name="weDay" id="weDay4" value="4" autocomplete="off">
         <label class="btn btn-outline-primary" for="weDay4">F</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay5" value="5" autocomplete="off">
         <label class="btn btn-outline-primary" for="weDay5">S</label>
@@ -652,7 +653,7 @@
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
       <div class="d-flex w-100">
-        <div id="day0" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day0" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
@@ -663,7 +664,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day1" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day1" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
@@ -674,7 +675,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day2" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day2" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
@@ -685,7 +686,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day3" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day3" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
@@ -696,7 +697,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day4" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day4" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
@@ -707,7 +708,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day5" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day5" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
@@ -718,7 +719,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day6" class="day m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day6" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-sync-alt"></i>
           </div>
@@ -731,14 +732,21 @@
         </div>
       </div>
       <div class="d-flex w-100">
-        <div id="specificCong" class="m-1 col alert alert-secondary congregation align-items-center justify-content-center" style="display: none;">
+        <div id="syncJwOrgMedia" class="alertIndicators m-1 col alert alert-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
+          <div>
+            <i class="fas fa-sync-alt"></i>
+          </div>
+          <span class="col i18n ps-3" data-i18n-string="syncJwOrgMedia"></span>
+          <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
+        </div>
+        <div id="specificCong" class="alertIndicators m-1 col alert alert-secondary congregation align-items-center justify-content-center" style="display: none;">
           <div>
             <i class="fas fa-sync-alt"></i>
           </div>
           <span class="col i18n ps-3" data-i18n-string="congMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="zoomRender" class="m-1 col alert alert-secondary zoom align-items-center justify-content-center" style="display: none;">
+        <div id="zoomRender" class="alertIndicators m-1 col alert alert-secondary zoom align-items-center justify-content-center" style="display: none;">
           <div>
             <i class="fas fa-sync-alt"></i>
           </div>
