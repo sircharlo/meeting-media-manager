@@ -20,7 +20,7 @@
     "electron-updater": "^4.3.10",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.1.7",
-    "graceful-fs": "^4.2.6",
+    "graceful-fs": "^4.2.8",
     "i18n": "^0.13.3",
     "image-size": "^1.0.0",
     "is-port-reachable": "^3.0.0",
