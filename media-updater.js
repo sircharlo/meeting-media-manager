@@ -206,6 +206,8 @@ function goAhead() {
     $("#baseDate-dropdown").removeClass("disabled");
   });
   $("#btnMeetingMusic").on("click", async function() {
+    $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").parent().prop("title", "...");
+    $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
     var songs = await getMediaLinks("sjjm", null, null, "MP3");
     songs.sort(() => .5 - Math.random());
     var iterator = 0;
@@ -230,7 +232,6 @@ function goAhead() {
       $("body").append(audioElem);
     }
     createAudioElem(iterator);
-    $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
   });
   $("#btnStopMeetingMusic").on("click", function() {
     $("#meetingMusic").remove();
@@ -328,7 +329,7 @@ function goAhead() {
       $("#zoomRender").removeClass("d-flex");
       $("#additionalMediaPrompt").prop("disabled", true);
     }
-    if (prefs.enableMusicButton) {
+    if (prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length == 0) {
       $("#btnMeetingMusic").fadeIn();
     } else {
       $("#btnMeetingMusic").fadeOut();
