@@ -385,7 +385,7 @@ function goAhead() {
     });
   }
   async function convertUnusableFiles() {
-    for (var mediaFile of glob.sync(path.join(paths.media, "*", "*"))) {
+    for (var mediaFile of glob.sync(path.join(paths.media, "*", "*{pdf,svg}"))) {
       try {
         var mediaFileExt = path.extname(mediaFile).toLowerCase();
         if (mediaFileExt == ".svg") {
@@ -875,6 +875,9 @@ function goAhead() {
       filename = chunks.join(" - ") + "." + fe;
       bytes = Buffer.byteLength(filename, "utf8");
     }
+    filename = filename.trim();
+    filename = path.basename(filename, path.extname(filename)) + path.extname(filename).toLowerCase();
+    console.log(filename);
     return filename;
   }
   function createMediaNames() {
@@ -1609,16 +1612,16 @@ function goAhead() {
       if ($("input#typeS34:checked").length > 0) {
         var s34TalkFiles = await webdavLs(path.posix.join(prefs.congServerDir, "S-34", $("#s34Picker option:selected").val()));
         for (var i = 0; i < s34TalkFiles.length; i++) {
-          await webdavCp(s34TalkFiles[i].filename, path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + s34TalkFiles[i].basename).trim()));
+          await webdavCp(s34TalkFiles[i].filename, path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + s34TalkFiles[i].basename)));
           progressSet((i + 1), s34TalkFiles.length);
         }
       } else if ($("input#typeSong:checked").length > 0) {
         var songFile = await get($("#fileToUpload").val(), true);
-        await webdavPut(new Buffer(songFile), path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), sanitizeFilename(prefix + " " + path.basename($("#fileToUpload").val())).trim());
+        await webdavPut(new Buffer(songFile), path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), sanitizeFilename(prefix + " " + path.basename($("#fileToUpload").val())));
       } else {
         var localFile = $("#fileToUpload").val();
         for (var splitLocalFile of localFile.split(" -//- ")) {
-          var splitFileToUploadName = sanitizeFilename(prefix + " " + path.basename(splitLocalFile)).trim();
+          var splitFileToUploadName = sanitizeFilename(prefix + " " + path.basename(splitLocalFile));
           await webdavPut(fs.readFileSync(splitLocalFile), path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), splitFileToUploadName);
         }
       }
