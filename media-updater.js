@@ -67,6 +67,7 @@ function goAhead() {
 
   dayjs.extend(require("dayjs/plugin/isoWeek"));
   dayjs.extend(require("dayjs/plugin/isBetween"));
+  dayjs.extend(require("dayjs/plugin/isSameOrBefore"));
   dayjs.extend(require("dayjs/plugin/customParseFormat"));
 
   var baseDate = dayjs().startOf("isoWeek"),
@@ -75,6 +76,7 @@ function goAhead() {
     jsonLangs = {},
     jwpubDbs = {},
     meetingMedia,
+    now = dayjs().hour(0).minute(0).second(0).millisecond(0),
     paths = {},
     prefix,
     prefs = {},
@@ -1143,90 +1145,91 @@ function goAhead() {
     console.timeEnd("main");
   }
   async function getWeMediaFromDb() {
-    if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
-    try {
-      var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
-      var db = await getDbFromJwpub(pubs.wt, issue);
-      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
-      var weeks = qryWeeks.map(dateItem => dateItem.FirstDateOffset).filter(date => dayjs(date.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
-      var weekNumber = qryWeeks.findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
-      var qryDocument = await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber);
+    var weDate = baseDate.clone().add(prefs.weDay, "days").format("YYYY-MM-DD");
+    if (now.isSameOrBefore(dayjs(weDate))) {
+      if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
       try {
-        var weDate = dayjs(weeks[0].toString(), "YYYYMMDD").add(prefs.weDay, "days").format("YYYY-MM-DD");
-        var docId = qryDocument[0].DocumentId;
-      } catch {
-        throw("No WE meeting date!");
+        var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
+        var db = await getDbFromJwpub(pubs.wt, issue);
+        var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
+        var weekNumber = qryWeeks.findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
+        var qryDocument = await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber);
+        try {
+          var docId = qryDocument[0].DocumentId;
+        } catch {
+          throw("No WE meeting date!");
+        }
+        var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9");
+        for (var picture of qryLocalMedia) {
+          var LocalPath = path.join(paths.pubs, pubs.wt, issue, picture.FilePath);
+          var FileName = (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
+          var pictureObj = {
+            title: FileName,
+            filepath: LocalPath,
+            filesize: fs.statSync(LocalPath).size
+          };
+          addMediaItemToPart(weDate, picture.BeginParagraphOrdinal, pictureObj);
+        }
+        var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
+        for (var song = 0; song < qrySongs.length; song++) {
+          var songObj = await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track);
+          addMediaItemToPart(weDate, song * 1000, songObj[0]);
+        }
+        if (!dryrun) $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fa-check-circle");
+      } catch(err) {
+        console.error(err);
+        $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
       }
-      var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9");
-      for (var picture of qryLocalMedia) {
-        var LocalPath = path.join(paths.pubs, pubs.wt, issue, picture.FilePath);
-        var FileName = (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
-        var pictureObj = {
-          title: FileName,
-          filepath: LocalPath,
-          filesize: fs.statSync(LocalPath).size
-        };
-        addMediaItemToPart(weDate, picture.BeginParagraphOrdinal, pictureObj);
-      }
-      var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
-      for (var song = 0; song < qrySongs.length; song++) {
-        var songObj = await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track);
-        addMediaItemToPart(weDate, song * 1000, songObj[0]);
-      }
-      if (!dryrun) $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fa-check-circle");
-    } catch(err) {
-      console.error(err);
-      $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
+      if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
     }
-    if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
   }
   async function getMwMediaFromDb() {
-    if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
-    try {
-      var issue = baseDate.format("YYYYMM") + "00";
-      if (parseInt(baseDate.format("M")) % 2 == 0) {
-        issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
-      }
-      var db = await getDbFromJwpub(pubs.mwb, issue);
-      var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
-      var weeks = qryWeeks.map(dateItem => dateItem.FirstDateOffset).filter(date => dayjs(date.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
+    var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
+    if (now.isSameOrBefore(dayjs(mwDate))) {
+      if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
       try {
-        var mwDate = dayjs(weeks[0].toString(), "YYYYMMDD").add(prefs.mwDay, "days").format("YYYY-MM-DD");
-        var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + weeks[0] + "");
-        docId = docId[0].DocumentId;
-      } catch {
-        throw("No MW meeting date!");
-      }
-      var videos = await getDocumentMultimedia({
-        db: db,
-        destDocId: docId
-      });
-      videos.map(video => {
-        addMediaItemToPart(mwDate, video.BeginParagraphOrdinal, video);
-      });
-      var extracted = await getDocumentExtract({
-        db: db,
-        docId: docId
-      });
-      extracted.map(extract => {
-        addMediaItemToPart(mwDate, extract.BeginParagraphOrdinal, extract);
-      });
-      var internalRefs = await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94");
-      for (var internalRef of internalRefs) {
-        var internalRefMediaFiles = await getDocumentMultimedia({
+        var issue = baseDate.format("YYYYMM") + "00";
+        if (parseInt(baseDate.format("M")) % 2 == 0) {
+          issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
+        }
+        var db = await getDbFromJwpub(pubs.mwb, issue);
+        try {
+          var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + baseDate.format("YYYYMMDD") + "");
+          docId = docId[0].DocumentId;
+        } catch {
+          throw("No MW meeting date!");
+        }
+        var videos = await getDocumentMultimedia({
           db: db,
-          destDocId: internalRef.DocumentId
+          destDocId: docId
         });
-        internalRefMediaFiles.map(internalRefMediaFile => {
-          addMediaItemToPart(mwDate, internalRef.BeginParagraphOrdinal, internalRefMediaFile);
+        videos.map(video => {
+          addMediaItemToPart(mwDate, video.BeginParagraphOrdinal, video);
         });
+        var extracted = await getDocumentExtract({
+          db: db,
+          docId: docId
+        });
+        extracted.map(extract => {
+          addMediaItemToPart(mwDate, extract.BeginParagraphOrdinal, extract);
+        });
+        var internalRefs = await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94");
+        for (var internalRef of internalRefs) {
+          var internalRefMediaFiles = await getDocumentMultimedia({
+            db: db,
+            destDocId: internalRef.DocumentId
+          });
+          internalRefMediaFiles.map(internalRefMediaFile => {
+            addMediaItemToPart(mwDate, internalRef.BeginParagraphOrdinal, internalRefMediaFile);
+          });
+        }
+        if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-success").find("i").addClass("fa-check-circle");
+      } catch(err) {
+        console.error(err);
+        $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
       }
-      if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-success").find("i").addClass("fa-check-circle");
-    } catch(err) {
-      console.error(err);
-      $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
+      if (!dryrun) $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
     }
-    if (!dryrun) $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
   }
   function addMediaItemToPart (date, paragraph, media) {
     if (!meetingMedia[date]) meetingMedia[date] = [];
@@ -1260,7 +1263,9 @@ function goAhead() {
               url: remoteFile.filename
             }]
           };
-          if (dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && (dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"))) {
+          //  var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
+          //  if (now.isSameOrBefore(dayjs(mwDate))) {
+          if (dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"))) {
             if (!meetingMedia[congSpecificFolder.basename]) {
               meetingMedia[congSpecificFolder.basename] = [];
             }
@@ -1278,7 +1283,7 @@ function goAhead() {
       }
       var hiddenFilesFolders = await webdavLs(path.posix.join(prefs.congServerDir, "Hidden"));
       for (var hiddenFilesFolder of hiddenFilesFolders) {
-        if (dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isValid() && dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+        if (dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isValid() && dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD"))) {
           var hiddenFiles = await webdavLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.basename));
           for (var hiddenFile of hiddenFiles) {
             for (var part of meetingMedia[hiddenFilesFolder.basename]) {
@@ -1464,7 +1469,7 @@ function goAhead() {
         s34Talks = s34Talks.sort((a, b) => a.basename.replace(/\D/g,"").localeCompare(b.basename.replace(/\D/g,"")));
         for (var s34Talk of s34Talks) {
           $(newElem).append($("<option>", {
-            value: sanitizeFilename(s34Talk.basename),
+            value: s34Talk.basename,
             text: s34Talk.basename
           }));
         }
@@ -1649,7 +1654,7 @@ function goAhead() {
       $("#chooseMeeting").empty();
       for (var meeting of [prefs.mwDay, prefs.weDay]) {
         let meetingDate = baseDate.add(meeting, "d").format("YYYY-MM-DD");
-        $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-primary' for='" + meetingDate + "'>" + meetingDate + "</label>");
+        $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-primary' for='" + meetingDate + "'" + (Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + meetingDate + "</label>");
       }
       $(".relatedToUpload, .relatedToUploadType").fadeTo(animationDuration, 0);
       $("#overlayUploadFile").fadeIn(animationDuration, () => {
