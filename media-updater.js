@@ -73,18 +73,19 @@ function goAhead() {
     dryrun = false,
     hdRes = [],
     jsonLangs = {},
+    jwpubDbs = {},
+    meetingMedia,
     paths = {},
     prefix,
     prefs = {},
     totals = {},
     webdavIsAGo = false,
     stayAlive,
-    webdavClient,
-    meetingMedia;
+    webdavClient;
   paths.app = remoteApp.getPath("userData");
   paths.langs = path.join(paths.app, "langs.json");
-  paths.prefs = path.join(paths.app, "prefs.json");
   paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
+  paths.prefs = path.join(paths.app, "prefs.json");
 
   if (fs.existsSync(paths.prefs)) {
     try {
@@ -564,14 +565,18 @@ function goAhead() {
     $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
   }
   async function getDbFromJwpub(pub, issue) {
-    var jwpub = await getMediaLinks(pub, null, issue, "JWPUB");
     try {
-      jwpub = jwpub[0];
-      jwpub.pub = pub;
-      jwpub.issue = issue;
-      await downloadIfRequired(jwpub);
-      var SQL = await sqljs();
-      var sqldb = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "*.db"))[0]));
+      if (!jwpubDbs[pub]) jwpubDbs[pub] = {};
+      if (!jwpubDbs[pub][issue]) {
+        var jwpub = await getMediaLinks(pub, null, issue, "JWPUB");
+        jwpub = jwpub[0];
+        jwpub.pub = pub;
+        jwpub.issue = issue;
+        await downloadIfRequired(jwpub);
+        var SQL = await sqljs();
+        jwpubDbs[pub][issue] = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "*.db"))[0]));
+      }
+      var sqldb = jwpubDbs[pub][issue];
       return sqldb;
     } catch (err) {
       console.error(err);
@@ -877,7 +882,6 @@ function goAhead() {
     }
     filename = filename.trim();
     filename = path.basename(filename, path.extname(filename)) + path.extname(filename).toLowerCase();
-    console.log(filename);
     return filename;
   }
   function createMediaNames() {
