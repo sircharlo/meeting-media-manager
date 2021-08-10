@@ -246,6 +246,7 @@
 
     .form-check {
       min-height: auto;
+      margin-bottom: 0px;
     }
 
     .form-check .form-check-input {
@@ -560,43 +561,50 @@
       </div>
     </div>
     <hr class="my-2" />
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="form-check form-switch text-start col-1">
+    <!-- <div class="form-check form-switch text-start col-1">
         <input type="checkbox" class="form-check-input" id="includeTeaching" />
       </div>
-      <label for="includeTeaching" class="m-0 text-start i18n col-5" data-i18n-string="includeTh"></label>
-      <label for="enableMusicButton" class="m-0 text-end i18n col-5" data-i18n-string="enableMusicButton"></label>
+      <label for="includeTeaching" class="m-0 text-start i18n col-5" data-i18n-string="includeTh"></label> -->
+    <div class="d-flex flex-fill align-items-center">
+      <label for="enableMusicButton" class="m-0 text-start i18n col-11" data-i18n-string="enableMusicButton"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="enableMusicButton" />
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="form-check form-switch text-start col-1">
+    <hr class="my-2" />
+    <div class="d-flex flex-fill align-items-center">
+      <label for="betaMp4Gen" class="m-0 text-start i18n col-11" data-i18n-string="convertDownloaded"></label>
+      <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="betaMp4Gen" />
       </div>
-      <label for="betaMp4Gen" class="m-0 text-start i18n col-5" data-i18n-string="convertDownloaded"></label>
-      <label for="additionalMediaPrompt" class="m-0 text-end i18n col-5" data-i18n-string="convertExternal"></label>
+    </div>
+    <div class="d-flex flex-fill align-items-center">
+      <label for="additionalMediaPrompt" class="m-0 text-start i18n col-11" data-i18n-string="convertExternal"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="additionalMediaPrompt" />
       </div>
     </div>
     <hr class="my-2" />
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="form-check form-switch text-start col-1">
+    <div class="d-flex flex-fill align-items-center">
+      <label for="autoRunAtBoot" class="m-0 text-start i18n col-11" data-i18n-string="runAtStartup"></label>
+      <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input notLinux" id="autoRunAtBoot" />
       </div>
-      <label for="autoRunAtBoot" class="m-0 text-start i18n col-5" data-i18n-string="runAtStartup"></label>
-      <label for="autoQuitWhenDone" class="m-0 text-end i18n col-5" data-i18n-string="quitAfterSync"></label>
+    </div>
+    <div class="d-flex flex-fill align-items-center">
+      <label for="autoStartSync" class="m-0 text-start i18n col-11" data-i18n-string="syncOnLaunch"></label>
+      <div class="form-check form-switch text-end col-1">
+        <input type="checkbox" class="form-check-input" id="autoStartSync" />
+      </div>
+    </div>
+    <div class="d-flex flex-fill align-items-center">
+      <label for="autoQuitWhenDone" class="m-0 text-start i18n col-11" data-i18n-string="quitAfterSync"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="autoQuitWhenDone" />
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <div class="form-check form-switch text-start col-1">
-        <input type="checkbox" class="form-check-input" id="autoStartSync" />
-      </div>
-      <label for="syncOnLaunch" class="m-0 text-start i18n col-5" data-i18n-string="syncOnLaunch"></label>
-      <label for="openFolderWhenDone" class="m-0 text-end i18n col-5" data-i18n-string="openTargetFolderAfterSync"></label>
+    <div class="d-flex flex-fill align-items-center">
+      <label for="openFolderWhenDone" class="m-0 text-start i18n col-11" data-i18n-string="openTargetFolderAfterSync"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input col-1" id="openFolderWhenDone" />
       </div>

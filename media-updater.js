@@ -58,12 +58,7 @@ function goAhead() {
     path = require("path"),
     sizeOf = require("image-size"),
     sqljs = require("sql.js"),
-    zipper = require("adm-zip"),
-    pubs = {
-      mwb: "mwb",
-      thv: "thv",
-      wt: "w"
-    };
+    zipper = require("adm-zip");
 
   dayjs.extend(require("dayjs/plugin/isoWeek"));
   dayjs.extend(require("dayjs/plugin/isBetween"));
@@ -164,7 +159,7 @@ function goAhead() {
       getTranslations();
     }
     setVars();
-    if ($(this).prop("id").includes("cong") || $(this).prop("id") == "includeTeaching" || $(this).prop("name").includes("Day")) {
+    if ($(this).prop("id").includes("cong") /*|| $(this).prop("id") == "includeTeaching"*/ || $(this).prop("name").includes("Day")) {
       cleanUp([paths.media], "brutal");
     }
     configIsValid();
@@ -570,8 +565,7 @@ function goAhead() {
     try {
       if (!jwpubDbs[pub]) jwpubDbs[pub] = {};
       if (!jwpubDbs[pub][issue]) {
-        var jwpub = await getMediaLinks(pub, null, issue, "JWPUB");
-        jwpub = jwpub[0];
+        var jwpub = (await getMediaLinks(pub, null, issue, "JWPUB"))[0];
         jwpub.pub = pub;
         jwpub.issue = issue;
         await downloadIfRequired(jwpub);
@@ -603,28 +597,25 @@ function goAhead() {
     return extractMultimediaItems;
   }
   async function getDocumentMultimedia(opts) {
-    var tableDocumentMultimedia = await executeStatement(opts.db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'");
-    var tableMultimedia = "";
-    if (tableDocumentMultimedia.length == 0) {
-      tableMultimedia = "Multimedia";
-    } else {
-      tableMultimedia = "DocumentMultimedia";
-    }
-    var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')) OR (Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10" + (opts.pub == "th" ? " AND Multimedia.Width <> ''" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " ORDER BY BeginParagraphOrdinal" : "");
+    var tableMultimedia = ((await executeStatement(opts.db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'")).length == 0 ? "Multimedia" : "DocumentMultimedia");
+    var suppressZoomExists = (await executeStatement(opts.db, "SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Multimedia') WHERE name='SuppressZoom'")).map(function(item) {
+      return (item.CNTREC > 0 ? true : false);
+    })[0];
+    var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (opts.destDocId ? tableMultimedia + ".DocumentId = " + opts.destDocId : "Document.MepsDocumentId = " + opts.destMepsId) + " AND (((Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')) OR (Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10" + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " ORDER BY BeginParagraphOrdinal" : "");
     var multimedia = await executeStatement(opts.db, statement);
     var multimediaItems = [];
     for (var multimediaItem of multimedia) {
       try {
         if ((multimediaItem.MimeType.includes("audio") || multimediaItem.MimeType.includes("video"))) {
-          var json = await getMediaLinks(multimediaItem.KeySymbol, multimediaItem.Track, multimediaItem.IssueTagNumber, null, multimediaItem.MultiMeps);
-          json[0].BeginParagraphOrdinal = multimediaItem.BeginParagraphOrdinal;
-          multimediaItems.push(json[0]);
+          var json = (await getMediaLinks(multimediaItem.KeySymbol, multimediaItem.Track, multimediaItem.IssueTagNumber, null, multimediaItem.MultiMeps))[0];
+          if (json) {
+            json.BeginParagraphOrdinal = multimediaItem.BeginParagraphOrdinal;
+            multimediaItems.push(json);
+          }
         } else {
           if (multimediaItem.KeySymbol == null) {
-            multimediaItem.KeySymbol = await executeStatement(opts.db, "SELECT UniqueEnglishSymbol FROM Publication");
-            multimediaItem.KeySymbol = multimediaItem.KeySymbol[0].UniqueEnglishSymbol.replace(/[0-9]*/g, "");
-            multimediaItem.IssueTagNumber = await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication");
-            multimediaItem.IssueTagNumber = multimediaItem.IssueTagNumber[0].IssueTagNumber;
+            multimediaItem.KeySymbol = (await executeStatement(opts.db, "SELECT UniqueEnglishSymbol FROM Publication"))[0].UniqueEnglishSymbol.replace(/[0-9]*/g, "");
+            multimediaItem.IssueTagNumber = (await executeStatement(opts.db, "SELECT IssueTagNumber FROM Publication"))[0].IssueTagNumber;
             multimediaItem.LocalPath = path.join(paths.pubs, multimediaItem.KeySymbol, multimediaItem.IssueTagNumber, multimediaItem.FilePath);
           }
           multimediaItem.FileName = (multimediaItem.Caption.length > multimediaItem.Label.length ? multimediaItem.Caption : multimediaItem.Label);
@@ -718,33 +709,39 @@ function goAhead() {
     $("#lang").select2();
   }
   async function getMediaLinks(pub, track, issue, format, docId) {
-    var url = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json";
-    if (docId) {
-      url += "&docid=" + docId;
-    } else {
-      url += "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "");
-    }
-    url += (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
-    var result = await get(url);
-    var mediaFileCategories = Object.values(result.files)[0];
-    var filetype = result.fileformat[0];
-    if ("MP4" in mediaFileCategories) {
-      filetype = "MP4";
-    }
     var mediaFiles = [];
-    for (var mediaFileItem of mediaFileCategories[filetype].reverse()) {
-      var videoRes = mediaFileItem.label.replace(/\D/g, "");
-      if ((videoRes !== 0 && videoRes > prefs.maxRes.replace(/\D/g, "")) || mediaFiles.filter(mediaFile => mediaFile.title == mediaFileItem.title).length > 0) {
-        continue;
+    try {
+      var url = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json";
+      if (docId) {
+        url += "&docid=" + docId;
       } else {
-        mediaFiles.push({
-          title: mediaFileItem.title,
-          filesize: mediaFileItem.filesize,
-          url: mediaFileItem.file.url,
-          duration: mediaFileItem.duration
-        });
-        //break;
+        url += "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "");
       }
+      url += (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
+      var result = await get(url);
+      if (result) {
+        var mediaFileCategories = Object.values(result.files)[0];
+        var filetype = result.fileformat[0];
+        if ("MP4" in mediaFileCategories) {
+          filetype = "MP4";
+        }
+        for (var mediaFileItem of mediaFileCategories[filetype].reverse()) {
+          var videoRes = mediaFileItem.label.replace(/\D/g, "");
+          if ((videoRes !== 0 && videoRes > prefs.maxRes.replace(/\D/g, "")) || mediaFiles.filter(mediaFile => mediaFile.title == mediaFileItem.title).length > 0) {
+            continue;
+          } else {
+            mediaFiles.push({
+              title: mediaFileItem.title,
+              filesize: mediaFileItem.filesize,
+              url: mediaFileItem.file.url,
+              duration: mediaFileItem.duration
+            });
+            //break;
+          }
+        }
+      }
+    } catch(err) {
+      console.error(err);
     }
     return mediaFiles;
   }
@@ -775,8 +772,7 @@ function goAhead() {
     }
   }
   async function getTranslations() {
-    var localeLang = jsonLangs.filter(el => el.langcode == prefs.lang);
-    localeLang = localeLang[0];
+    var localeLang = (jsonLangs.filter(el => el.langcode == prefs.lang))[0];
     i18n.configure({
       directory: path.join(__dirname, "locales"),
       defaultLocale: "en",
@@ -824,7 +820,7 @@ function goAhead() {
     });
   }
   function prefsInitialize() {
-    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt", "maxRes", "enableMusicButton"]) {
+    for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", /*"includeTeaching",*/ "openFolderWhenDone", "additionalMediaPrompt", "maxRes", "enableMusicButton"]) {
       if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) {
         prefs[pref] = null;
       }
@@ -832,7 +828,7 @@ function goAhead() {
     for (var field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir"]) {
       $("#" + field).val(prefs[field]).change();
     }
-    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "includeTeaching", "openFolderWhenDone", "additionalMediaPrompt", "enableMusicButton"]) {
+    for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", /*"includeTeaching",*/ "openFolderWhenDone", "additionalMediaPrompt", "enableMusicButton"]) {
       $("#" + checkbox).prop("checked", prefs[checkbox]).change();
     }
     for (var radioSel of ["mwDay", "weDay", "maxRes"]) {
@@ -1146,18 +1142,16 @@ function goAhead() {
       if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
       try {
         var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
-        var db = await getDbFromJwpub(pubs.wt, issue);
-        var qryWeeks = await executeStatement(db, "SELECT FirstDateOffset FROM DatedText");
-        var weekNumber = qryWeeks.findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
-        var qryDocument = await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber);
+        var db = await getDbFromJwpub("w", issue);
+        var weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
         try {
-          var docId = qryDocument[0].DocumentId;
+          var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
         } catch {
           throw("No WE meeting date!");
         }
         var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9");
         for (var picture of qryLocalMedia) {
-          var LocalPath = path.join(paths.pubs, pubs.wt, issue, picture.FilePath);
+          var LocalPath = path.join(paths.pubs, "w", issue, picture.FilePath);
           var FileName = (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
           var pictureObj = {
             title: FileName,
@@ -1168,8 +1162,8 @@ function goAhead() {
         }
         var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
         for (var song = 0; song < qrySongs.length; song++) {
-          var songObj = await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track);
-          addMediaItemToPart(weDate, song * 1000, songObj[0]);
+          var songObj = (await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track))[0];
+          addMediaItemToPart(weDate, song * 1000, songObj);
         }
         if (!dryrun) $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fa-check-circle");
       } catch(err) {
@@ -1188,10 +1182,9 @@ function goAhead() {
         if (parseInt(baseDate.format("M")) % 2 == 0) {
           issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
         }
-        var db = await getDbFromJwpub(pubs.mwb, issue);
+        var db = await getDbFromJwpub("mwb", issue);
         try {
-          var docId = await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + baseDate.format("YYYYMMDD") + "");
-          docId = docId[0].DocumentId;
+          var docId = (await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + baseDate.format("YYYYMMDD") + ""))[0].DocumentId;
         } catch {
           throw("No MW meeting date!");
         }
@@ -1259,8 +1252,6 @@ function goAhead() {
               url: remoteFile.filename
             }]
           };
-          //  var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
-          //  if (now.isSameOrBefore(dayjs(mwDate))) {
           if (dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"))) {
             if (!meetingMedia[congSpecificFolder.basename]) {
               meetingMedia[congSpecificFolder.basename] = [];
@@ -1462,7 +1453,7 @@ function goAhead() {
         $("label[for=typeFile]").click().addClass("active");
         console.error("S-34 path appears unreachable:", path.posix.join(prefs.congServerDir, "S-34"));
       } else {
-        s34Talks = s34Talks.sort((a, b) => a.basename.replace(/\D/g,"").localeCompare(b.basename.replace(/\D/g,"")));
+        s34Talks = s34Talks.sort((a, b) => a.basename.replace(/\D/g,"").padStart(3, "0").localeCompare(b.basename.replace(/\D/g,"").padStart(3, "0")));
         for (var s34Talk of s34Talks) {
           $(newElem).append($("<option>", {
             value: s34Talk.basename,
