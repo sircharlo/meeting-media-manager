@@ -534,7 +534,7 @@ function goAhead() {
       fs.writeFileSync(ffmpegZipPath, new Buffer(ffmpegZipFile));
     }
     var zip = new zipper(ffmpegZipPath);
-    var zipEntry = zip.getEntries().filter((x) => {return !x.entryName.includes("MACOSX");})[0];
+    var zipEntry = zip.getEntries().filter((x) => !x.entryName.includes("MACOSX"))[0];
     var ffmpegPath = path.join(path.join(paths.app, "ffmpeg", zipEntry.entryName));
     if (!fs.existsSync(ffmpegPath) || fs.statSync(ffmpegPath).size !== zipEntry.header.size) {
       zip.extractEntryTo(zipEntry.entryName, path.join(paths.app, "ffmpeg"), true, true);
@@ -578,8 +578,7 @@ function goAhead() {
         var SQL = await sqljs();
         jwpubDbs[pub][issue] = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "*.db"))[0]));
       }
-      var sqldb = jwpubDbs[pub][issue];
-      return sqldb;
+      return jwpubDbs[pub][issue];
     } catch (err) {
       console.error(err);
     }
@@ -776,9 +775,7 @@ function goAhead() {
     }
   }
   async function getTranslations() {
-    var localeLang = jsonLangs.filter(function (el) {
-      return el.langcode == prefs.lang;
-    });
+    var localeLang = jsonLangs.filter(el => el.langcode == prefs.lang);
     localeLang = localeLang[0];
     i18n.configure({
       directory: path.join(__dirname, "locales"),
@@ -944,8 +941,7 @@ function goAhead() {
             recursive: true
           });
         }
-        var result = await webdavClient.getDirectoryContents(dir);
-        return result;
+        return await webdavClient.getDirectoryContents(dir);
       }
     } catch (err) {
       console.error(err);

@@ -100,12 +100,12 @@
     .meeting .progress-bar,
     .syncJwOrgMedia .progress-bar,
     .congregation .progress-bar,
-    .zoom .progress-bar,
-    #globalProgress {
+    .zoom .progress-bar {
       height: 0.25rem;
     }
 
     #globalProgress {
+      height: 0.5rem;
       z-index: 500;
     }
 
@@ -258,8 +258,19 @@
     }
 
     @media (prefers-color-scheme: dark) {
+      body {
+        color: var(--bs-gray-100);
+        background-color: var(--bs-gray-900);
+      }
+
+      .alertIndicators.alert-secondary {
+        color: var(--bs-gray-200);
+        background-color: var(--bs-gray-700);
+      }
+
       .day:not(.meeting) {
-        background-color: var(--bs-dark);
+        color: var(--bs-gray-400);
+        background-color: var(--bs-gray-800);
       }
 
       .overlay {
