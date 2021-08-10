@@ -122,7 +122,7 @@ function goAhead() {
     $("#baseDate .dropdown-item.active").removeClass("active");
     $(this).addClass("active");
     $("#baseDate > button").html($(this).html());
-    $(".alertIndicators").find("i").addClass("fa-sync-alt").removeClass("fa-check-circle");
+    $(".alertIndicators").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
     dateFormatter();
   });
   $("#overlaySettings").on("click", ".btn-clean-up", function() {
@@ -170,7 +170,7 @@ function goAhead() {
     });
   });
   $("#mwDay input, #weDay input").on("change", function() {
-    $(".alertIndicators").removeClass("meeting").find("i").addClass("fa-sync-alt").removeClass("fa-check-circle");
+    $(".alertIndicators").removeClass("meeting").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   });
   $("#mediaSync").on("click", async function() {
@@ -321,7 +321,7 @@ function goAhead() {
       }
     }
     if (prefs.betaMp4Gen) {
-      $("#zoomRender").addClass("d-flex").find("i").removeClass("fa-check-circle").addClass("fa-sync-alt");
+      $("#zoomRender").addClass("d-flex").find("i").removeClass("fa-check-circle").addClass("fa-spinner");
       $("#additionalMediaPrompt").prop("disabled", false);
     } else {
       $("#zoomRender").removeClass("d-flex");
@@ -462,7 +462,8 @@ function goAhead() {
     for (var d = 0; d < 7; d++) {
       $("#day" + d + " .dayLongDate .dayOfWeek").html(baseDate.clone().add(d, "days").locale(locale).format("ddd"));
       $("#day" + d + " .dayLongDate .dayOfWeekLong").html(baseDate.clone().add(d, "days").locale(locale).format("dddd"));
-      $("#day" + d + " .dayLongDate .dateOfMonth").html(baseDate.clone().add(d, "days").locale(locale).format("DD"));
+      $("#day" + d + " .dayLongDate .dateOfMonth .date").html(baseDate.clone().add(d, "days").locale(locale).format("DD"));
+      $("#day" + d + " .dayLongDate .dateOfMonth .month").html(baseDate.clone().add(d, "days").locale(locale).format("MMM"));
       $("#mwDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
       $("#weDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     }
@@ -508,7 +509,7 @@ function goAhead() {
   }
   async function ffmpegConvert() {
     $("#statusIcon").addClass("fa-microchip").removeClass("fa-photo-video");
-    $("#zoomRender").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
+    $("#zoomRender").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
     await convertUnusableFiles();
     var osType = os.type();
     var targetOs;
@@ -558,7 +559,7 @@ function goAhead() {
       totals.ffmpeg.current++;
       progressSet(totals.ffmpeg.current, totals.ffmpeg.total, "zoomRender");
     }
-    $("#zoomRender").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spin fa-sync-alt");
+    $("#zoomRender").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
     $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
   }
   async function getDbFromJwpub(pub, issue) {
@@ -1060,7 +1061,7 @@ function goAhead() {
       if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length == 0) {
         $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").removeClass("in-danger");
         $(".btn-webdav, #btn-upload").addClass("btn-primary").removeClass("btn-danger");
-        $("#specificCong").removeClass("alert-danger").find("i").removeClass("fa-times-circle").addClass("fa-sync-alt");
+        $("#specificCong").removeClass("alert-danger").find("i").removeClass("fa-times-circle").addClass("fa-spinner");
       }
       if (webdavLoginSuccessful && webdavDirIsValid) {
         webdavIsAGo = true;
@@ -1068,7 +1069,7 @@ function goAhead() {
       } else {
         $("#btn-upload, .btn-webdav").addClass("btn-danger").removeClass("btn-primary");
         $("#btn-upload").prop("disabled", true);
-        $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle").removeClass("fa-sync-alt fa-check-circle");
+        $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle").removeClass("fa-spinner fa-check-circle");
         $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").addClass("in-danger");
         webdavIsAGo = false;
       }
@@ -1139,7 +1140,7 @@ function goAhead() {
   async function getWeMediaFromDb() {
     var weDate = baseDate.clone().add(prefs.weDay, "days").format("YYYY-MM-DD");
     if (now.isSameOrBefore(dayjs(weDate))) {
-      if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
+      if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
       try {
         var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
         var db = await getDbFromJwpub("w", issue);
@@ -1170,13 +1171,13 @@ function goAhead() {
         console.error(err);
         $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
       }
-      if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
+      if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spinner fa-pulse");
     }
   }
   async function getMwMediaFromDb() {
     var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
     if (now.isSameOrBefore(dayjs(mwDate))) {
-      if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
+      if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
       try {
         var issue = baseDate.format("YYYYMM") + "00";
         if (parseInt(baseDate.format("M")) % 2 == 0) {
@@ -1217,7 +1218,7 @@ function goAhead() {
         console.error(err);
         $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
       }
-      if (!dryrun) $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
+      if (!dryrun) $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spinner fa-pulse");
     }
   }
   function addMediaItemToPart (date, paragraph, media) {
@@ -1291,7 +1292,7 @@ function goAhead() {
   }
   async function syncCongMedia() {
     $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
-    $("#specificCong").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
+    $("#specificCong").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
     try {
       totals.cong = {
         total: 0,
@@ -1315,11 +1316,11 @@ function goAhead() {
     }
     $("#specificCong").removeClass("alert-warning");
     $("#specificCong").addClass("alert-success").find("i").addClass("fa-check-circle");
-    $("#specificCong").find("i").removeClass("fa-spin fa-sync-alt");
+    $("#specificCong").find("i").removeClass("fa-spinner fa-pulse");
     $("#statusIcon").addClass("fa-photo-video").removeClass("fa-cloud");
   }
   async function syncJwOrgMedia() {
-    $("#syncJwOrgMedia").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
+    $("#syncJwOrgMedia").addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
     totals.jw = {
       total: 0,
       current: 1
@@ -1350,7 +1351,7 @@ function goAhead() {
         }
       }
     }
-    $("#syncJwOrgMedia").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spin fa-sync-alt");
+    $("#syncJwOrgMedia").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
     $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
   }
   function toggleScreen(screen, forceShow) {
@@ -1637,7 +1638,7 @@ function goAhead() {
     $("#overlayDryrun").slideDown(animationDuration, async () => {
       dryrun = true;
       await startMediaSync();
-      $(".alertIndicators").find("i").addClass("fa-sync-alt").removeClass("fa-check-circle");
+      $(".alertIndicators").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
       $("#chooseMeeting").empty();
       for (var meeting of [prefs.mwDay, prefs.weDay]) {
         let meetingDate = baseDate.add(meeting, "d").format("YYYY-MM-DD");
@@ -1679,7 +1680,7 @@ function goAhead() {
 //   return response;
 // }
 // async function getMwMediaFromWol(jsonRefContent) {
-//   if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
+//   if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
 //   try{
 //     var mwDate = dayjs(baseDate).add(prefs.mwDay, "days").format("YYYY-MM-DD");
 //     totals[mwDate] = {}, meetingMedia[mwDate] = [];
@@ -1737,10 +1738,10 @@ function goAhead() {
 //     console.error(err);
 //     $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
 //   }
-//   if (!dryrun) $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
+//   if (!dryrun) $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spinner fa-pulse");
 // }
 // async function getWeMediaFromWol(jsonRefContent) {
-//   if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spin fa-sync-alt");
+//   if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-secondary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
 //   try {
 //     let htmlDoc = $(jsonRefContent, newHTMLDocument);
 //     let wtRefContent = await get(wolBase + htmlDoc.find("a").attr("href"));
@@ -1794,5 +1795,5 @@ function goAhead() {
 //     console.error(err);
 //     $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
 //   }
-//   if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spin fa-sync-alt");
+//   if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spinner fa-pulse");
 // }

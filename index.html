@@ -58,10 +58,12 @@
 
     .alertIndicators {
       line-height: 1.3em;
+      padding: 0.75rem 1rem;
     }
 
     .day:not(.meeting) .dayIcon,
     .day:not(.meeting) .dayOfWeekLong,
+    .day:not(.meeting) .month,
     .day.meeting .dayOfWeek {
       display: none;
     }
@@ -677,78 +679,99 @@
       <div class="d-flex w-100">
         <div id="day0" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <div class="col dayLongDate">
+            <div class="dateOfMonth">
+              <span class="date"></span>
+              <span class="month"><span>
+            </div>
             <div class="dayOfWeek"></div>
             <div class="dayOfWeekLong"></div>
-            <div class="dateOfMonth"></div>
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="day1" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <div class="col dayLongDate">
+            <div class="dateOfMonth">
+              <span class="date"></span>
+              <span class="month"><span>
+            </div>
             <div class="dayOfWeek"></div>
             <div class="dayOfWeekLong"></div>
-            <div class="dateOfMonth"></div>
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="day2" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <div class="col dayLongDate">
+            <div class="dateOfMonth">
+              <span class="date"></span>
+              <span class="month"><span>
+            </div>
             <div class="dayOfWeek"></div>
             <div class="dayOfWeekLong"></div>
-            <div class="dateOfMonth"></div>
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="day3" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <div class="col dayLongDate">
+            <div class="dateOfMonth">
+              <span class="date"></span>
+              <span class="month"><span>
+            </div>
             <div class="dayOfWeek"></div>
             <div class="dayOfWeekLong"></div>
-            <div class="dateOfMonth"></div>
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="day4" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <div class="col dayLongDate">
+            <div class="dateOfMonth">
+              <span class="date"></span>
+              <span class="month"><span>
+            </div>
             <div class="dayOfWeek"></div>
             <div class="dayOfWeekLong"></div>
-            <div class="dateOfMonth"></div>
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="day5" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <div class="col dayLongDate">
+            <div class="dateOfMonth">
+              <span class="date"></span>
+              <span class="month"><span>
+            </div>
             <div class="dayOfWeek"></div>
             <div class="dayOfWeekLong"></div>
-            <div class="dateOfMonth"></div>
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="day6" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
           <div class="dayIcon">
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <div class="col dayLongDate">
+            <div class="dateOfMonth">
+              <span class="date"></span>
+              <span class="month"><span>
+            </div>
             <div class="dayOfWeek"></div>
             <div class="dayOfWeekLong"></div>
-            <div class="dateOfMonth"></div>
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
@@ -756,21 +779,21 @@
       <div class="d-flex w-100">
         <div id="syncJwOrgMedia" class="alertIndicators m-1 col alert alert-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
           <div>
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <span class="col i18n ps-3" data-i18n-string="syncJwOrgMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="specificCong" class="alertIndicators m-1 col alert alert-secondary congregation align-items-center justify-content-center" style="display: none;">
           <div>
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <span class="col i18n ps-3" data-i18n-string="congMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="zoomRender" class="alertIndicators m-1 col alert alert-secondary zoom align-items-center justify-content-center" style="display: none;">
           <div>
-            <i class="fas fa-sync-alt"></i>
+            <i class="fas fa-spinner"></i>
           </div>
           <span class="i18n col ps-3" data-i18n-string="mp4Conversion"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
