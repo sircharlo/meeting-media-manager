@@ -244,10 +244,8 @@ function configIsValid() {
   }
   if (prefs.betaMp4Gen) {
     $("#zoomRender").addClass("d-flex").find("i").removeClass("fa-check-circle").addClass("fa-spinner");
-    $("#additionalMediaPrompt").prop("disabled", false);
   } else {
     $("#zoomRender").removeClass("d-flex");
-    $("#additionalMediaPrompt").prop("disabled", true);
   }
   if (prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length == 0) {
     $("#btnMeetingMusic").fadeIn();
@@ -1280,18 +1278,21 @@ async function webdavSetup() {
     if (webdavLoginSuccessful && webdavDirIsValid) {
       webdavIsAGo = true;
       $("#btn-upload").fadeTo(animationDuration, 1).prop("disabled", false);
+      $("#additionalMediaPrompt").prop("checked", false).prop("disabled", true).change();
     } else {
       $("#btn-upload, .btn-webdav").addClass("btn-danger").removeClass("btn-primary");
       $("#btn-upload").prop("disabled", true);
       $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle").removeClass("fa-spinner fa-check-circle");
       $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").addClass("in-danger");
       webdavIsAGo = false;
+      $("#additionalMediaPrompt").prop("disabled", false);
     }
   } else {
     $("#webdavFolderList").fadeTo(animationDuration, 0).empty();
     $(".btn-webdav.btn-warning").addClass("btn-primary").removeClass("btn-danger");
     $("#specificCong").removeClass("d-flex");
     $("#btn-upload").fadeOut(animationDuration);
+    $("#additionalMediaPrompt").prop("disabled", false);
   }
 }
 var dragenterHandler = () => {
