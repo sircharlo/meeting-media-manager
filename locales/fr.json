@@ -16,7 +16,7 @@
   "mediaSaveFolder": "Dossier d'enregistrement des médias",
   "mp4Conversion": "Conversion MP4",
   "mwMeetingDay": "Jour de réunion de semaine",
-  "noDocumentsFound": "Aucun média n'a été trouvé dans les documents du JWPUB choisi ; veuillez valider ce fichier ou contacter le développeur de cette application.",
+  "noDocumentsFound": "Aucun média n'a été trouvé dans les documents du JWPUB choisi. Veuillez valider ce fichier ou contacter le développeur de cette application.",
   "openTargetFolderAfterSync": "Ouvrir le dossier des médias après la syncronisation",
   "quitAfterSync": "Quitter l'appli après la syncronisation des médias",
   "runAtStartup": "Lancer l'appli automatiquement au démarrage de l'ordinateur",
