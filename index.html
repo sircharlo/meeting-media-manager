@@ -83,7 +83,7 @@
     }
 
     .today {
-      box-shadow: 0 0 10px 1px var(--bs-info);
+      box-shadow: 0 0 10px 1px var(--bs-primary);
       animation: pulseToday 2s infinite;
     }
 
@@ -214,15 +214,15 @@
 
     @keyframes pulseToday {
       0% {
-        box-shadow: 0 0 5px 0 var(--bs-info);
+        box-shadow: 0 0 10px -2px var(--bs-primary);
       }
 
       70% {
-        box-shadow: 0 0 5px 1px var(--bs-info);
+        box-shadow: 0 0 10px -3px var(--bs-primary);
       }
 
       100% {
-        box-shadow: 0 0 5px 0 var(--bs-info);
+        box-shadow: 0 0 10px -2px var(--bs-primary);
       }
     }
 
@@ -260,6 +260,10 @@
       font-family: var(--bs-font-sans-serif);
     }
 
+    .modal-header {
+      font-weight: bold;
+    }
+
     @media (prefers-color-scheme: dark) {
       body {
         color: var(--bs-gray-100);
@@ -267,12 +271,11 @@
       }
 
       .alertIndicators.alert-secondary {
-        color: var(--bs-gray-200);
         background-color: var(--bs-gray-700);
       }
 
       .day:not(.meeting) {
-        color: var(--bs-gray-400);
+        color: var(--bs-gray-500);
         background-color: var(--bs-gray-800);
       }
 
@@ -286,7 +289,6 @@
 
       .select2-dropdown,
       #select2-lang-container,
-      #select2-s34Picker-container,
       #select2-songPicker-container {
         color: var(--bs-light) !important;
         background: var(--bs-dark);
@@ -401,29 +403,6 @@
       </div>
     </div>
   </div>
-  <div id="overlayAdditionalFilesPrompt" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center">
-      <div class="align-self-center fa-5x" role="status">
-        <i class="fas fa-fw fa-folder-plus"></i>
-      </div>
-      <div class="i18n" data-i18n-string="mediaAddPrompt"></div>
-      <div class="align-self-center fa-2x" role="status">
-        <i id="btnNoAdditionalMedia" class="fas fa-fw fa-times-circle text-danger"></i>
-        <i id="btnAdditionalMedia" class="fas fa-fw fa-check-circle text-success"></i>
-      </div>
-    </div>
-  </div>
-  <div id="overlayAdditionalFilesWaiting" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center">
-      <div class="align-self-center fa-5x" role="status">
-        <i class="fas fa-fw fa-spinner fa-pulse"></i>
-      </div>
-      <div class="i18n" data-i18n-string="filesAreInPlace"></div>
-      <div class="align-self-center fa-2x" role="status">
-        <i id="btnAdditionalMediaDone" class="fas fa-fw fa-play-circle text-primary"></i>
-      </div>
-    </div>
-  </div>
   <div id="overlayUploadFile" class="overlay flex-column px-3" style="display: none;">
     <div class="align-items-center d-flex justify-content-center py-4">
       <i class="fas fa-fw fa-cloud-upload-alt fa-3x text-muted"></i>
@@ -436,12 +415,12 @@
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUploadType">
       <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="uploadType"></div>
       <div class="btn-group btn-group-toggle col-7" id="chooseUploadType">
-        <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off" disabled="disabled">
-        <label class="btn btn-outline-primary disabled i18n" for="typeSong" data-i18n-string="song" style="display: none;"></label>
+        <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off">
+        <label class="btn btn-outline-primary i18n" for="typeSong" data-i18n-string="song"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeFile" autocomplete="off">
         <label class="btn btn-outline-primary i18n" for="typeFile" data-i18n-string="custom"></label>
-        <input type="radio" class="btn-check" name="chooseUploadType" id="typeS34" autocomplete="off">
-        <label class="btn btn-outline-primary i18n" for="typeS34" data-i18n-string="s34" style="display: none;"></label>
+        <input type="radio" class="btn-check" name="chooseUploadType" id="typeJwpub" autocomplete="off">
+        <label class="btn btn-outline-primary i18n" for="typeJwpub" data-i18n-string="jwpub"></label>
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
@@ -488,6 +467,7 @@
         </button>
       </div>
       <div class="col-4 text-end">
+        <button class="btn btn-success" id="btnDoneUpload" type="button"><i class="fas fa-fw fa-arrow-right"></i></button>
       </div>
     </div>
   </div>
@@ -677,7 +657,7 @@
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
       <div class="d-flex w-100">
-        <div id="day0" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day0" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-spinner"></i>
           </div>
@@ -691,7 +671,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day1" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day1" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-spinner"></i>
           </div>
@@ -705,7 +685,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day2" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day2" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-spinner"></i>
           </div>
@@ -719,7 +699,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day3" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day3" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-spinner"></i>
           </div>
@@ -733,7 +713,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day4" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day4" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-spinner"></i>
           </div>
@@ -747,7 +727,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day5" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day5" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-spinner"></i>
           </div>
@@ -761,7 +741,7 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="day6" class="day alertIndicators m-1 col alert alert-secondary align-items-center justify-content-center">
+        <div id="day6" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
           <div class="dayIcon">
             <i class="fas fa-spinner"></i>
           </div>
@@ -777,21 +757,21 @@
         </div>
       </div>
       <div class="d-flex w-100">
-        <div id="syncJwOrgMedia" class="alertIndicators m-1 col alert alert-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
+        <div id="syncJwOrgMedia" class="alertIndicators m-1 col alert alert-primary syncJwOrgMedia align-items-center justify-content-center d-flex">
           <div>
             <i class="fas fa-spinner"></i>
           </div>
           <span class="col i18n ps-3" data-i18n-string="syncJwOrgMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="specificCong" class="alertIndicators m-1 col alert alert-secondary congregation align-items-center justify-content-center" style="display: none;">
+        <div id="specificCong" class="alertIndicators m-1 col alert alert-primary congregation align-items-center justify-content-center" style="display: none;">
           <div>
             <i class="fas fa-spinner"></i>
           </div>
           <span class="col i18n ps-3" data-i18n-string="congMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
-        <div id="zoomRender" class="alertIndicators m-1 col alert alert-secondary zoom align-items-center justify-content-center" style="display: none;">
+        <div id="zoomRender" class="alertIndicators m-1 col alert alert-primary zoom align-items-center justify-content-center" style="display: none;">
           <div>
             <i class="fas fa-spinner"></i>
           </div>
@@ -835,6 +815,22 @@
             <i class="fas fa-fw fa-exclamation-triangle"></i>
           </span>
         </button>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fas fa-fw fa-check"></i></button>
+        </div>
       </div>
     </div>
   </div>
