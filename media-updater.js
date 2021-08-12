@@ -129,7 +129,7 @@ function goAhead() {
     }
     setVars();
     if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) {
-      cleanUp([paths.media], "brutal");
+      cleanUp([paths.media]);
     }
     configIsValid();
   });
@@ -181,25 +181,14 @@ function addMediaItemToPart (date, paragraph, media) {
   meetingMedia[date].find(part => part.title == paragraph).media.push(media);
   meetingMedia[date] = meetingMedia[date].sort((a, b) => a.title > b.title && 1 || -1);
 }
-function cleanUp(dirs, type) {
+function cleanUp(dirs) {
   for (var lookinDir of dirs) {
     $("#statusIcon").addClass("fa-broom").removeClass("fa-photo-video");
     try {
       if (fs.existsSync(lookinDir)) {
-        if (type == "brutal") {
-          fs.rmSync(lookinDir, {
-            recursive: true
-          });
-        } else {
-          for (var mediaSubDir of glob.sync(path.join(lookinDir, "*"))) {
-            if (dayjs(path.basename(mediaSubDir), "YYYY-MM-DD").isValid() && !dayjs(path.basename(mediaSubDir), "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
-              var deleteDir = path.join(lookinDir, path.basename(mediaSubDir));
-              fs.rmdirSync(deleteDir, {
-                recursive: true
-              });
-            }
-          }
-        }
+        fs.rmSync(lookinDir, {
+          recursive: true
+        });
       }
     } catch(err) {
       console.error(err);
@@ -457,7 +446,7 @@ async function ffmpegConvert() {
   var ffmpegVersion = ffmpegVersions.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
   var ffmpegZipPath = path.join(paths.app, "ffmpeg", "zip", ffmpegVersion.name);
   if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
-    cleanUp([path.join(paths.app, "ffmpeg", "zip")], "brutal");
+    cleanUp([path.join(paths.app, "ffmpeg", "zip")]);
     mkdirSync(path.join(paths.app, "ffmpeg", "zip"));
     var ffmpegZipFile = await get(ffmpegVersion.browser_download_url, true);
     fs.writeFileSync(ffmpegZipPath, new Buffer(ffmpegZipFile));
@@ -986,8 +975,7 @@ async function startMediaSync() {
   await setVars();
   console.timeEnd("setVars");
   console.time("cleanUp");
-  await cleanUp([paths.media]);
-  await cleanUp([paths.zoom], "brutal");
+  await cleanUp([paths.media, paths.zoom]);
   console.timeEnd("cleanUp");
   console.time("getJwOrgMedia");
   await getMwMediaFromDb();
@@ -1114,7 +1102,7 @@ function updateCleanup() {
     console.error(err);
   } finally {
     if (lastRunVersion !== remoteApp.getVersion()) {
-      cleanUp([paths.lang, paths.pubs], "brutal");
+      cleanUp([paths.media, paths.pubs, paths.zoom]);
       fs.writeFileSync(paths.lastRunVersion, remoteApp.getVersion());
     }
   }
@@ -1329,7 +1317,7 @@ $(document).on("select2:open", () => {
 $("#baseDate").on("click", ".dropdown-item", function() {
   setVars();
   baseDate = dayjs($(this).val()).startOf("isoWeek");
-  cleanUp([paths.media], "brutal");
+  cleanUp([paths.media]);
   $("#baseDate .dropdown-item.active").removeClass("active");
   $(this).addClass("active");
   $("#baseDate > button").html($(this).html());
@@ -1615,7 +1603,7 @@ $("#outputPath").on("mousedown", function(event) {
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
   $(this).addClass("btn-success").removeClass("btn-warning").prop("disabled", true);
   setVars();
-  cleanUp([paths.lang, paths.langs, paths.pubs], "brutal");
+  cleanUp([paths.lang, paths.langs, paths.pubs]);
   setTimeout(() => {
     $(".btn-clean-up").removeClass("btn-success").addClass("btn-warning").prop("disabled", false);
   }, 3000);
@@ -1720,7 +1708,7 @@ $("#overlayUploadFile").on("change", "#enterPrefix input, #chooseMeeting input, 
             fs.rmSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).parent().data("url")));
           } else {
             webdavRm($(this).parent().data("url"));
-            cleanUp([paths.media], "brutal");
+            cleanUp([paths.media]);
           }
           $(this).parent().fadeOut(animationDuration, function(){
             $(this).remove();
