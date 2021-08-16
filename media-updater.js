@@ -975,7 +975,7 @@ async function startMediaSync() {
   await setVars();
   console.timeEnd("setVars");
   console.time("cleanUp");
-  await cleanUp([paths.media, paths.zoom]);
+  if (!dryrun) await cleanUp([paths.media, paths.zoom]);
   console.timeEnd("cleanUp");
   console.time("getJwOrgMedia");
   await getMwMediaFromDb();
@@ -1391,8 +1391,10 @@ $("#btnUpload").on("click", async () => {
       }
     } else if ($("input#typeJwpub:checked").length > 0) {
       for (var tempMedia of tempMediaArray) {
+        if (tempMedia.url) {
+          tempMedia.contents = new Buffer(await get(tempMedia.url, true));
+        }
         if (currentStep == "additionalMedia") {
-          console.log(tempMedia);
           if (tempMedia.contents) {
             fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + tempMedia.filename)), tempMedia.contents);
           } else {
@@ -1515,43 +1517,45 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
   $(this).addClass("active");
   var docId = $(this).data("docid");
   var contents = await getDbFromJwpub(null, null, $("#jwpubPicker").val());
-  var multimediaItems = await executeStatement(contents, "SELECT Multimedia.MultimediaId, Multimedia.FilePath, Multimedia.CategoryType FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DocumentMultimedia.DocumentId = " + docId);
+  var multimediaItems = await executeStatement(contents, "SELECT Multimedia.MultimediaId, Multimedia.FilePath, Multimedia.CategoryType ,Multimedia.KeySymbol, Multimedia.Track, Multimedia.MepsDocumentId, Multimedia.IssueTagNumber FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DocumentMultimedia.DocumentId = " + docId);
   tempMediaArray = [];
   var missingMedia = $("<div id=\"missingMedia\" class=\"list-group\">");
   for (var multimediaItem of multimediaItems) {
     var tempMedia = {
       filename: multimediaItem.FilePath
     };
-    console.log(tempMedia);
     if (multimediaItem.CategoryType !== -1) {
       var jwpubContents = await new zipper($("#jwpubPicker").val()).readFile("contents");
       var mediaEntry = (await new zipper(jwpubContents).getEntries()).filter(entry => entry.name == multimediaItem.FilePath)[0];
       var mediaFile = await new zipper(jwpubContents).readFile(mediaEntry.entryName);
       tempMedia.contents = mediaFile;
     } else {
-      var missingButtonHtml = $("<button class=\"list-group-item list-group-item-action\" data-filename=\"" + tempMedia.filename + "\">" + tempMedia.filename + "</li>").on("click", function() {
-        var missingMediaPath = remoteDialog.showOpenDialogSync({
-          title: $(this).data("filename"),
-          filters: [
-            { name: $(this).data("filename"), extensions: [path.extname($(this).data("filename")).replace(".", "")] }
-          ]
+      var externalMedia = (await getMediaLinks(multimediaItem.KeySymbol, multimediaItem.Track, multimediaItem.IssueTagNumber, null, multimediaItem.MepsDocumentId));
+      if (externalMedia.length > 0) {
+        Object.assign(tempMedia, externalMedia[0]);
+      } else {
+        var missingButtonHtml = $("<button class=\"list-group-item list-group-item-action\" data-filename=\"" + tempMedia.filename + "\">" + tempMedia.filename + "</li>").on("click", function() {
+          var missingMediaPath = remoteDialog.showOpenDialogSync({
+            title: $(this).data("filename"),
+            filters: [
+              { name: $(this).data("filename"), extensions: [path.extname($(this).data("filename")).replace(".", "")] }
+            ]
+          });
+          if (typeof missingMediaPath !== "undefined") {
+            tempMediaArray.find(item => item.filename == $(this).data("filename")).localpath = missingMediaPath[0];
+            $(this).addClass("list-group-item-primary");
+          }
+          if (tempMediaArray.filter(item => !item.contents && !item.localpath).length == 0) {
+            $("#staticBackdrop .modal-footer button").prop("disabled", false);
+            $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).change();
+          }
         });
-        if (typeof missingMediaPath !== "undefined") {
-          tempMediaArray.find(item => item.filename == $(this).data("filename")).localpath = missingMediaPath[0];
-          $(this).addClass("list-group-item-primary");
-        }
-        console.log(tempMediaArray, tempMediaArray.filter(item => !item.contents && !item.localpath));
-        if (tempMediaArray.filter(item => !item.contents && !item.localpath).length == 0) {
-          $("#staticBackdrop .modal-footer button").prop("disabled", false);
-          $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).change();
-        }
-      });
-      $(missingMedia).append(missingButtonHtml);
+        $(missingMedia).append(missingButtonHtml);
+      }
     }
     tempMediaArray.push(tempMedia);
   }
-  console.log(tempMediaArray.filter(item => !item.contents && !item.localpath));
-  if (tempMediaArray.filter(item => !item.contents && !item.localpath).length > 0) {
+  if (tempMediaArray.filter(item => !item.contents && !item.localpath && !item.url).length > 0) {
     $("#staticBackdrop .modal-header").show();
     $("#staticBackdrop .modal-header").html(i18n.__("selectExternalMedia"));
     $("#staticBackdrop .modal-body").html(missingMedia);
