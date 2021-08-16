@@ -30,7 +30,7 @@
     "pdfjs-dist": "^2.9.359",
     "select2": "^4.1.0-rc.0",
     "sql.js": "^1.6.1",
-    "webdav": "^4.6.0"
+    "webdav": "^4.6.1"
   },
   "build": {
     "appId": "sircharlo.jw-meeting-media-fetcher",
