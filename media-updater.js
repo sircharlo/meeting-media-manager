@@ -542,11 +542,16 @@ async function getCongMedia() {
       }
     }
     for (var hiddenFilesFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Hidden"))).filter(hiddenFilesFolder => dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isValid() && dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD"))).sort((a, b) => (a.basename > b.basename) ? 1 : -1)) {
+      console.log("%c" + hiddenFilesFolder.basename, "background-color: #fff3cd; color: #856404;");
       for (var hiddenFile of await webdavLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.basename))) {
-        meetingMedia[hiddenFilesFolder.basename].filter(part => part.media.filter(mediaItem => mediaItem.safeName == hiddenFile.basename).map(function (mediaItem) {
-          mediaItem.hidden = true;
-          console.log("%cFile will be skipped [" + hiddenFilesFolder.basename + "]: " + hiddenFile.basename, "background-color: #fff3cd; color: #856404;");
-        }));
+        var hiddenFileLogString = "padding-left: 2em; background-color: #d6d8d9; color: #1b1e21;";
+        if (meetingMedia[hiddenFilesFolder.basename]) {
+          meetingMedia[hiddenFilesFolder.basename].filter(part => part.media.filter(mediaItem => mediaItem.safeName == hiddenFile.basename).map(function (mediaItem) {
+            mediaItem.hidden = true;
+            hiddenFileLogString = "padding-left: 2em; background-color: #fff3cd; color: #856404";
+          }));
+        }
+        console.log("%c" + hiddenFile.basename, hiddenFileLogString);
       }
     }
   } catch (err) {
@@ -959,7 +964,7 @@ function setVars() {
   }
 }
 async function startMediaSync() {
-  console.time("main");
+  console.time("total");
   $("#statusIcon").addClass("text-primary").removeClass("text-muted");
   stayAlive = false;
   $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 0);
@@ -983,7 +988,6 @@ async function startMediaSync() {
     await getCongMedia();
     console.timeEnd("getCongMedia");
   }
-  console.log(meetingMedia);
   if (!dryrun) {
     console.time("syncJwOrgMedia");
     await syncJwOrgMedia();
@@ -1012,7 +1016,7 @@ async function startMediaSync() {
     $(".alertIndicators").addClass("alert-primary").removeClass("alert-success");
     $("#statusIcon").addClass("text-muted").removeClass("text-primary");
   }, 2000);
-  console.timeEnd("main");
+  console.timeEnd("total");
 }
 async function syncCongMedia() {
   $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
@@ -1022,15 +1026,20 @@ async function syncCongMedia() {
       total: 0,
       current: 1
     };
-    for (let meeting of Object.values(meetingMedia)) {
-      for (let part of meeting) {
-        totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific).length;
+    for (let parts of Object.values(meetingMedia)) {
+      for (let part of parts.filter(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length > 0)) {
+        totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length;
       }
     }
-    for (let meeting of Object.keys(meetingMedia)) {
-      for (let part of meetingMedia[meeting]) {
+    for (let [meeting, parts] of Object.entries(meetingMedia)) {
+      console.log("%c" + meeting, "background-color: #d1ecf1; color: #0c5460;");
+      for (let part of parts) {
         for (var mediaItem of part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden)) {
+          progressSet(totals.cong.current, totals.cong.total, "specificCong");
           await webdavGet(mediaItem);
+          console.log("%c" + mediaItem.safeName, "padding-left: 2em; background-color: #d1ecf1; color: #0c5460;");
+          totals.cong.current++;
+          progressSet(totals.cong.current, totals.cong.total, "specificCong");
         }
       }
     }
@@ -1055,12 +1064,14 @@ async function syncJwOrgMedia() {
     }
   }
   for (var h = 0; h < Object.values(meetingMedia).length; h++) { // meetings
+    console.log("%c" + Object.keys(meetingMedia)[h], "background-color: #cce5ff; color: #004085;");
     var meeting = Object.values(meetingMedia)[h];
     for (var i = 0; i < meeting.length; i++) { // parts
       var partMedia = meeting[i].media.filter(mediaItem => !mediaItem.congSpecific);
       for (var j = 0; j < partMedia.length; j++) { // media
         progressSet(totals.jw.current, totals.jw.total, "syncJwOrgMedia");
         if (!partMedia[j].hidden && !partMedia[j].congSpecific && !dryrun) {
+          console.log("%c" + partMedia[j].safeName, "padding-left: 2em; background-color: #cce5ff; color: #004085;");
           if (partMedia[j].url) {
             await downloadIfRequired(partMedia[j]);
           } else {
