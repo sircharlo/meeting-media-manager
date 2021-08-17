@@ -704,10 +704,10 @@ async function getMediaLinks(pub, track, issue, format, docId) {
   var mediaFiles = [];
   try {
     var url = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json";
-    if (pub && (track || issue)) {
-      url += "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "");
-    } else {
+    if (docId) {
       url += "&docid=" + docId;
+    } else {
+      url += "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "");
     }
     url += (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
     var result = await get(url);
@@ -1283,6 +1283,7 @@ async function webdavSetup() {
     $(".btn-webdav.btn-warning").addClass("btn-primary").removeClass("btn-danger");
     $("#specificCong").removeClass("d-flex");
     $("#btn-upload").fadeOut(animationDuration);
+    webdavIsAGo = false;
     $("#additionalMediaPrompt").prop("disabled", false);
   }
 }
