@@ -46,13 +46,15 @@ require("electron").ipcRenderer.on("goAhead", () => {
   });
 });
 
-const axios = require("axios"),
+const aspect = require("aspectratio"),
+  axios = require("axios"),
   bootstrap = require("bootstrap"),
   { createClient } = require("webdav"),
   dayjs = require("dayjs"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
   glob = require("glob"),
+  hme = require("h264-mp4-encoder"),
   i18n = require("i18n"),
   os = require("os"),
   path = require("path"),
@@ -68,6 +70,7 @@ dayjs.extend(require("dayjs/plugin/customParseFormat"));
 var baseDate = dayjs().startOf("isoWeek"),
   currentStep,
   dryrun = false,
+  ffmpegIsSetup = false,
   hdRes = [],
   jsonLangs = {},
   jwpubDbs = {},
@@ -232,9 +235,9 @@ function configIsValid() {
     }
   }
   if (prefs.betaMp4Gen) {
-    $("#zoomRender").addClass("d-flex").find("i").removeClass("fa-check-circle").addClass("fa-spinner");
+    $("#mp4Convert").addClass("d-flex").find("i").removeClass("fa-check-circle").addClass("fa-spinner");
   } else {
-    $("#zoomRender").removeClass("d-flex");
+    $("#mp4Convert").removeClass("d-flex");
   }
   if (prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length == 0) {
     $("#btnMeetingMusic").fadeIn();
@@ -320,54 +323,55 @@ function createVideoSync(mediaDir, media){
   return new Promise((resolve)=>{
     var mediaName = path.basename(media, path.extname(media));
     if (path.extname(media).includes("mp3")) {
-      ffmpeg(path.join(paths.media, mediaDir, media))
-        .on("end", function() {
-          return resolve();
-        })
-        .on("error", function(err) {
-          console.error(err.message);
-          return resolve();
-        })
-        .noVideo()
-        .save(path.join(paths.zoom, mediaDir, mediaName + ".mp4"));
+      ffmpegSetup().then(function () {
+        ffmpeg(path.join(paths.media, mediaDir, media))
+          .on("end", function() {
+            return resolve();
+          })
+          .on("error", function(err) {
+            console.error(err.message);
+            return resolve();
+          })
+          .noVideo()
+          .save(path.join(paths.zoom, mediaDir, mediaName + ".mp4"));
+      });
     } else {
-      var dimensionsString = "";
       try {
+        var convertedImageDimesions = [];
         var imageDimesions = sizeOf(path.join(paths.media, mediaDir, media));
-        if (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width) { // image wider than target ratio
-          if (imageDimesions.width > hdRes[0]) { // image wider than target res width
-            dimensionsString = hdRes[0] + "x?";
-          } else { // image not as wide as or equal to target res width
-            dimensionsString = imageDimesions.width + "x?";
-          }
-        } else { // image taller than or equal to target ratio
-          if (imageDimesions.height > hdRes[1]) { // image taller than target res height
-            dimensionsString = "?x" + hdRes[1];
-          } else { // image not as tall as or equal to target res height
-            dimensionsString = "?x" + imageDimesions.height;
-          }
-        }
+        convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > hdRes[0] ? hdRes[0] : imageDimesions.width) : null), (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > hdRes[1] ? hdRes[1] : imageDimesions.height)));
       } catch (err) {
         console.error("Unable to get dimensions for:", path.join(paths.media, mediaDir, media), "Setting manually...", err);
-        dimensionsString = hdRes.join("x");
+        convertedImageDimesions = [imageDimesions.width, imageDimesions.height];
       }
-      var outputFPS = 30, loop = 1;
-      ffmpeg(path.join(paths.media, mediaDir, media))
-        .inputFPS(1)
-        .outputFPS(outputFPS)
-        .on("end", function() {
+      convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
+        if (dimension % 2) dimension = dimension - 1;
+        return dimension;
+      });
+      $("body").append("<div id='convert' style='position: absolute; top: 0;'>");
+      $("div#convert").hide().append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
+      hme.createH264MP4Encoder().then(function (encoder) {
+        $("img#imgToConvert").on("load", function() {
+          var canvas = $("#imgCanvas")[0],
+            image = $("img#imgToConvert")[0];
+          image.width = convertedImageDimesions[0];
+          image.height = convertedImageDimesions[1];
+          canvas.width = image.width;
+          canvas.height = image.height;
+          encoder.width = canvas.width;
+          encoder.height = canvas.height;
+          encoder.initialize();
+          canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+          encoder.addFrameRgba(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data);
+          encoder.finalize();
+          const uint8Array = encoder.FS.readFile(encoder.outputFilename);
+          fs.writeFileSync(path.join(paths.zoom, mediaDir, mediaName + ".mp4"), uint8Array);
+          encoder.delete();
+          $("div#convert").remove();
           return resolve();
-        })
-        .on("error", function(err) {
-          console.error(err.message);
-          return resolve();
-        })
-        .videoCodec("libx264")
-        .noAudio()
-        .size(dimensionsString)
-        .loop(loop)
-        .outputOptions("-pix_fmt yuv420p")
-        .save(path.join(paths.zoom, mediaDir, mediaName + ".mp4"));
+        });
+        $("img#imgToConvert").hide().prop("src", path.join(paths.media, mediaDir, media));
+      });
     }
   });
 }
@@ -429,60 +433,65 @@ async function executeStatement(db, statement) {
   }
   return valObj;
 }
-async function ffmpegConvert() {
+async function mp4Convert() {
   $("#statusIcon").addClass("fa-microchip").removeClass("fa-photo-video");
-  $("#zoomRender").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+  $("#mp4Convert").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
   await convertUnusableFiles();
-  var osType = os.type();
-  var targetOs;
-  if (osType == "Windows_NT") {
-    targetOs = "win-64";
-  } else if (osType == "Darwin") {
-    targetOs = "osx-64";
-  } else {
-    targetOs = "linux-64";
-  }
-  var ffmpegVersions = await get("https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest");
-  var ffmpegVersion = ffmpegVersions.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
-  var ffmpegZipPath = path.join(paths.app, "ffmpeg", "zip", ffmpegVersion.name);
-  if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
-    cleanUp([path.join(paths.app, "ffmpeg", "zip")]);
-    mkdirSync(path.join(paths.app, "ffmpeg", "zip"));
-    var ffmpegZipFile = await get(ffmpegVersion.browser_download_url, true);
-    fs.writeFileSync(ffmpegZipPath, new Buffer(ffmpegZipFile));
-  }
-  var zip = new zipper(ffmpegZipPath);
-  var zipEntry = zip.getEntries().filter((x) => !x.entryName.includes("MACOSX"))[0];
-  var ffmpegPath = path.join(path.join(paths.app, "ffmpeg", zipEntry.entryName));
-  if (!fs.existsSync(ffmpegPath) || fs.statSync(ffmpegPath).size !== zipEntry.header.size) {
-    zip.extractEntryTo(zipEntry.entryName, path.join(paths.app, "ffmpeg"), true, true);
-  }
-  try {
-    fs.accessSync(ffmpegPath, fs.constants.X_OK);
-  } catch (err) {
-    fs.chmodSync(ffmpegPath, "777");
-  }
-  ffmpeg.setFfmpegPath(ffmpegPath);
   var filesToProcess = glob.sync(path.join(paths.media, "*", "*"));
-  totals.ffmpeg = {
+  totals.mp4Convert = {
     total: filesToProcess.length
   };
   for (var mediaDir of glob.sync(path.join(paths.media, "*"))) {
     mkdirSync(path.join(paths.zoom, path.basename(mediaDir)));
   }
-  totals.ffmpeg.current = 1;
+  totals.mp4Convert.current = 1;
   for (var mediaFile of filesToProcess) {
-    progressSet(totals.ffmpeg.current, totals.ffmpeg.total, "zoomRender");
+    progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
     if (path.extname(mediaFile) !== ".mp4") {
       await createVideoSync(path.basename(path.dirname(mediaFile)), path.basename(mediaFile));
     } else {
       fs.copyFileSync(mediaFile, path.join(paths.zoom, path.basename(path.dirname(mediaFile)), path.basename(mediaFile)));
     }
-    totals.ffmpeg.current++;
-    progressSet(totals.ffmpeg.current, totals.ffmpeg.total, "zoomRender");
+    totals.mp4Convert.current++;
+    progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
   }
-  $("#zoomRender").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
+  $("#mp4Convert").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
   $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
+}
+async function ffmpegSetup() {
+  if (!ffmpegIsSetup) {
+    var osType = os.type();
+    var targetOs;
+    if (osType == "Windows_NT") {
+      targetOs = "win-64";
+    } else if (osType == "Darwin") {
+      targetOs = "osx-64";
+    } else {
+      targetOs = "linux-64";
+    }
+    var ffmpegVersions = await get("https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest");
+    var ffmpegVersion = ffmpegVersions.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
+    var ffmpegZipPath = path.join(paths.app, "ffmpeg", "zip", ffmpegVersion.name);
+    if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
+      cleanUp([path.join(paths.app, "ffmpeg", "zip")]);
+      mkdirSync(path.join(paths.app, "ffmpeg", "zip"));
+      var ffmpegZipFile = await get(ffmpegVersion.browser_download_url, true);
+      fs.writeFileSync(ffmpegZipPath, new Buffer(ffmpegZipFile));
+    }
+    var zip = new zipper(ffmpegZipPath);
+    var zipEntry = zip.getEntries().filter((x) => !x.entryName.includes("MACOSX"))[0];
+    var ffmpegPath = path.join(path.join(paths.app, "ffmpeg", zipEntry.entryName));
+    if (!fs.existsSync(ffmpegPath) || fs.statSync(ffmpegPath).size !== zipEntry.header.size) {
+      zip.extractEntryTo(zipEntry.entryName, path.join(paths.app, "ffmpeg"), true, true);
+    }
+    try {
+      fs.accessSync(ffmpegPath, fs.constants.X_OK);
+    } catch (err) {
+      fs.chmodSync(ffmpegPath, "777");
+    }
+    ffmpeg.setFfmpegPath(ffmpegPath);
+    ffmpegIsSetup = true;
+  }
 }
 async function get(url, isFile) {
   let response = null,
@@ -1001,9 +1010,9 @@ async function startMediaSync() {
     await additionalMedia();
     console.timeEnd("additionalMedia");
     if (prefs.betaMp4Gen) {
-      console.time("ffmpegConvert");
-      await ffmpegConvert();
-      console.timeEnd("ffmpegConvert");
+      console.time("mp4Convert");
+      await mp4Convert();
+      console.timeEnd("mp4Convert");
     }
     if (prefs.openFolderWhenDone) {
       var openPath = paths.media;
