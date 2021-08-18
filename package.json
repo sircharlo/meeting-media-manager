@@ -12,6 +12,7 @@
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@popperjs/core": "^2.9.3",
     "adm-zip": "^0.5.5",
+    "aspectratio": "^2.2.2",
     "axios": "^0.21.1",
     "bootstrap": "^5.1.0",
     "bootstrap-dark-5": "^1.1.0",
@@ -21,6 +22,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.1.7",
     "graceful-fs": "^4.2.8",
+    "h264-mp4-encoder": "^1.0.12",
     "i18n": "^0.13.3",
     "image-size": "^1.0.0",
     "is-port-reachable": "^3.0.0",
@@ -64,7 +66,7 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^13.2.0",
+    "electron": "^13.2.1",
     "electron-builder": "^22.11.7",
     "eslint": "^7.32.0"
   },
