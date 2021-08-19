@@ -354,18 +354,13 @@ function createVideoSync(mediaDir, media){
         $("img#imgToConvert").on("load", function() {
           var canvas = $("#imgCanvas")[0],
             image = $("img#imgToConvert")[0];
-          image.width = convertedImageDimesions[0];
-          image.height = convertedImageDimesions[1];
-          canvas.width = image.width;
-          canvas.height = image.height;
-          encoder.width = canvas.width;
-          encoder.height = canvas.height;
+          encoder.width = canvas.width = image.width = convertedImageDimesions[0];
+          encoder.height = canvas.height = image.height = convertedImageDimesions[1];
           encoder.initialize();
           canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
           encoder.addFrameRgba(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data);
           encoder.finalize();
-          const uint8Array = encoder.FS.readFile(encoder.outputFilename);
-          fs.writeFileSync(path.join(paths.zoom, mediaDir, mediaName + ".mp4"), uint8Array);
+          fs.writeFileSync(path.join(paths.zoom, mediaDir, mediaName + ".mp4"), encoder.FS.readFile(encoder.outputFilename));
           encoder.delete();
           $("div#convert").remove();
           return resolve();
@@ -1536,9 +1531,10 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
   tempMediaArray = [];
   var multimediaItems = await getDocumentMultimedia(contents, docId, null, true);
   var missingMedia = $("<div id=\"missingMedia\" class=\"list-group\">");
-  for (var multimediaItem of multimediaItems) {
+  for (var i = 0; i < multimediaItems.length; i++) {
+    let multimediaItem = multimediaItems[i];
     var tempMedia = {
-      filename: multimediaItem.queryInfo.FilePath
+      filename: (i + 1).toString().padStart(2, "0") + " - " + multimediaItem.queryInfo.FilePath
     };
     if (multimediaItem.queryInfo.CategoryType !== -1) {
       var jwpubContents = await new zipper($("#jwpubPicker").val()).readFile("contents");
