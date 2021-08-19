@@ -409,11 +409,7 @@ async function downloadIfRequired(file) {
     file.contents = await get(file.url, true);
     fs.writeFileSync(file.localFile, new Buffer(file.contents));
   }
-  if (path.extname(file.localFile) == ".jwpub") extractJwpub(file.localFile, file.localDir);
-}
-async function extractJwpub(jwpubFile, destinationFolder) {
-  var jwpubContents = await new zipper(jwpubFile).readFile("contents");
-  await new zipper(jwpubContents).extractAllTo(destinationFolder);
+  if (path.extname(file.localFile) == ".jwpub") await new zipper((await new zipper(file.localFile).readFile("contents"))).extractAllTo(file.localDir);
 }
 async function executeStatement(db, statement) {
   var vals = await db.exec(statement)[0],
