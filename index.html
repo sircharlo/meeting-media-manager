@@ -191,13 +191,6 @@
       position: relative;
     }
 
-    .songsSpinner {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      padding-top: 3px;
-    }
-
     @keyframes pulseDanger {
       0% {
         box-shadow: 0 0 0 0 var(--bs-danger);
@@ -308,10 +301,10 @@
   </style>
   <meta name="color-scheme" content="light dark">
   <script>
-    window.$ = window.jQuery = require('jquery');
-    window.popperjs = require('@popperjs/core');
-    window.Bootstrap = require('bootstrap');
-    window.select2 = require('select2')(jQuery);
+    window.$ = window.jQuery = require("jquery");
+    window.popperjs = require("@popperjs/core");
+    window.Bootstrap = require("bootstrap");
+    window.select2 = require("select2")(jQuery);
   </script>
 </head>
 
@@ -425,10 +418,11 @@
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
       <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="filesToUpload"></div>
-      <div class="col-7 file-to-upload">
-        <div class="songsSpinner" style="display: none;">
-          <i class="fas fa-circle-notch fa-spin"></i>
-        </div>
+      <div class="col-7 file-to-upload relatedToUpload">
+        <select class="form-control form-control-sm" id="songPicker" style="display: none" disabled="disabled"></select>
+        <input type="text" class="form-control form-control-sm" id="filePicker" style="display: none" disabled="disabled" />
+        <input type="text" class="form-control form-control-sm localOrRemoteFile" id="jwpubPicker" style="display: none" disabled="disabled" />
+        <input type="hidden" id="fileToUpload" />
       </div>
     </div>
     <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
