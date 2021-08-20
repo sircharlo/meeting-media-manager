@@ -81,6 +81,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   }),
   now = dayjs().hour(0).minute(0).second(0).millisecond(0),
   paths = {},
+  perfStats = {},
   prefix,
   prefs = {},
   tempMediaArray = [],
@@ -541,14 +542,15 @@ async function getCongMedia() {
         }
       }
     }
+    console.log("%cHIDDEN MEDIA", "background-color: #fff3cd; color: #856404; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
     for (var hiddenFilesFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Hidden"))).filter(hiddenFilesFolder => dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isValid() && dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD"))).sort((a, b) => (a.basename > b.basename) ? 1 : -1)) {
-      console.log("%c" + hiddenFilesFolder.basename, "background-color: #fff3cd; color: #856404;");
+      console.log("%c[" + hiddenFilesFolder.basename + "]", "background-color: #fff3cd; color: #856404; padding: 0 1em; font-size: 125%;");
       for (var hiddenFile of await webdavLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.basename))) {
-        var hiddenFileLogString = "padding-left: 2em; background-color: #d6d8d9; color: #1b1e21;";
+        var hiddenFileLogString = "background-color: #d6d8d9; color: #1b1e21; padding: 0 2em;";
         if (meetingMedia[hiddenFilesFolder.basename]) {
           meetingMedia[hiddenFilesFolder.basename].filter(part => part.media.filter(mediaItem => mediaItem.safeName == hiddenFile.basename).map(function (mediaItem) {
             mediaItem.hidden = true;
-            hiddenFileLogString = "padding-left: 2em; background-color: #fff3cd; color: #856404";
+            hiddenFileLogString = "background-color: #fff3cd; color: #856404; padding: 0 2em;";
           }));
         }
         console.log("%c" + hiddenFile.basename, hiddenFileLogString);
@@ -904,6 +906,17 @@ function pdfRender(mediaFile, pdf, pageNum) {
     });
   });
 }
+function perf(func, op) {
+  if (!perfStats[func]) perfStats[func] = {};
+  perfStats[func][op] = performance.now();
+}
+function perfPrint() {
+  console.log("\n");
+  console.log("%cPERFORMANCE INFO", "background-color: #e2e3e5; color: #41464b; padding: 0.5em 1em; font-weight: bold; font-size: 125%;");
+  for (var perfItem of Object.entries(perfStats).sort((a, b) => a[1].stop - b[1].stop)) {
+    console.log("%c[" + perfItem[0] + "] " + (perfItem[1].stop - perfItem[1].start).toFixed(1) + "ms", "background-color: #e2e3e5; color: #41464b; padding: 0 1em;");
+  }
+}
 function prefsInitialize() {
   for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "openFolderWhenDone", "additionalMediaPrompt", "maxRes", "enableMusicButton"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) {
@@ -982,46 +995,46 @@ function setVars() {
   }
 }
 async function startMediaSync() {
-  console.time("total");
+  perf("total", "start");
   $("#statusIcon").addClass("text-primary").removeClass("text-muted");
   stayAlive = false;
   $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 0);
-  console.time("setVars");
+  perf("setVars", "start");
   await setVars();
-  console.timeEnd("setVars");
-  console.time("cleanUp");
+  perf("setVars", "stop");
+  perf("cleanUp", "start");
   if (!dryrun) await cleanUp([paths.media, paths.zoom]);
-  console.timeEnd("cleanUp");
-  console.time("getJwOrgMedia");
+  perf("cleanUp", "stop");
+  perf("getJwOrgMedia", "start");
   await getMwMediaFromDb();
   await getWeMediaFromDb();
   //await getMwMediaFromWol();
   //await getWeMediaFromWol();
-  console.timeEnd("getJwOrgMedia");
-  console.time("createMediaNames");
+  perf("getJwOrgMedia", "stop");
+  perf("createMediaNames", "start");
   createMediaNames();
-  console.timeEnd("createMediaNames");
+  perf("createMediaNames", "stop");
   if (webdavIsAGo) {
-    console.time("getCongMedia");
+    perf("getCongMedia", "start");
     await getCongMedia();
-    console.timeEnd("getCongMedia");
+    perf("getCongMedia", "stop");
   }
   if (!dryrun) {
-    console.time("syncJwOrgMedia");
+    perf("syncJwOrgMedia", "start");
     await syncJwOrgMedia();
-    console.timeEnd("syncJwOrgMedia");
+    perf("syncJwOrgMedia", "stop");
     if (webdavIsAGo) {
-      console.time("syncCongMedia");
+      perf("syncCongMedia", "start");
       await syncCongMedia();
-      console.timeEnd("syncCongMedia");
+      perf("syncCongMedia", "stop");
     }
-    console.time("additionalMedia");
+    perf("additionalMedia", "start");
     await additionalMedia();
-    console.timeEnd("additionalMedia");
+    perf("additionalMedia", "stop");
     if (prefs.betaMp4Gen) {
-      console.time("mp4Convert");
+      perf("mp4Convert", "start");
       await mp4Convert();
-      console.timeEnd("mp4Convert");
+      perf("mp4Convert", "stop");
     }
     if (prefs.openFolderWhenDone) {
       var openPath = paths.media;
@@ -1034,7 +1047,8 @@ async function startMediaSync() {
     $(".alertIndicators").addClass("alert-primary").removeClass("alert-success");
     $("#statusIcon").addClass("text-muted").removeClass("text-primary");
   }, 2000);
-  console.timeEnd("total");
+  perf("total", "stop");
+  perfPrint();
 }
 async function syncCongMedia() {
   $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
@@ -1049,13 +1063,14 @@ async function syncCongMedia() {
         totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length;
       }
     }
+    console.log("%cCONGREGATION MEDIA", "background-color: #d1ecf1; color: #0c5460; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
     for (let [meeting, parts] of Object.entries(meetingMedia)) {
-      console.log("%c" + meeting, "background-color: #d1ecf1; color: #0c5460;");
+      console.log("%c[" + meeting + "]", "background-color: #d1ecf1; color: #0c5460; padding: 0 1em; font-size: 125%;");
       for (let part of parts) {
         for (var mediaItem of part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden)) {
           progressSet(totals.cong.current, totals.cong.total, "specificCong");
           await webdavGet(mediaItem);
-          console.log("%c" + mediaItem.safeName, "padding-left: 2em; background-color: #d1ecf1; color: #0c5460;");
+          console.log("%c" + mediaItem.safeName, "background-color: #d1ecf1; color: #0c5460; padding: 0 2em;");
           totals.cong.current++;
           progressSet(totals.cong.current, totals.cong.total, "specificCong");
         }
@@ -1081,15 +1096,16 @@ async function syncJwOrgMedia() {
       totals.jw.total = totals.jw.total + part.media.filter(mediaItem => !mediaItem.congSpecific).length;
     }
   }
+  console.log("%cJW.org MEDIA", "background-color: #cce5ff; color: #004085; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
   for (var h = 0; h < Object.values(meetingMedia).length; h++) { // meetings
-    console.log("%c" + Object.keys(meetingMedia)[h], "background-color: #cce5ff; color: #004085;");
+    console.log("%c[" + Object.keys(meetingMedia)[h] + "]", "background-color: #cce5ff; color: #004085; padding: 0 1em; font-size: 125%;");
     var meeting = Object.values(meetingMedia)[h];
     for (var i = 0; i < meeting.length; i++) { // parts
       var partMedia = meeting[i].media.filter(mediaItem => !mediaItem.congSpecific);
       for (var j = 0; j < partMedia.length; j++) { // media
         progressSet(totals.jw.current, totals.jw.total, "syncJwOrgMedia");
         if (!partMedia[j].hidden && !partMedia[j].congSpecific && !dryrun) {
-          console.log("%c" + partMedia[j].safeName, "padding-left: 2em; background-color: #cce5ff; color: #004085;");
+          console.log("%c" + partMedia[j].safeName, "background-color: #cce5ff; color: #004085; padding: 0 2em;");
           if (partMedia[j].url) {
             await downloadIfRequired(partMedia[j]);
           } else {
