@@ -23,7 +23,9 @@ Most of the options in the [Settings screen](https://github.com/sircharlo/jw-mee
 - **JWPUB:** Choose this to automatically import the media files from a JWPUB file, such as the S-34, or any other JWPUB file that contains media. Upon choosing the JWPUB file, you will be prompted to choose what media you'd like to import.
 - **Custom:** Choose this to select any other media file from your computer.
 
-**Convert media to MP4 format:** This automatically converts all picture and audio files into MP4 format. This includes files downloaded from JW.org, as well as files imported using the "import additional media files" feature mentioned above, if enabled. This allows those files to be shared in Zoom using its [native MP4 sharing feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true). This is much easier and results in better audio-visual quality for those in attendance at the Zoom meeting than simply sharing your local monitor or your media playback app's window.
+**Convert media to MP4 format:** This automatically converts all picture and audio files into MP4 format. This includes files downloaded from JW.org, as well as files imported using the "import additional media files" feature mentioned above, if enabled. This allows those files to be shared in Zoom using its [native MP4 sharing feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true), rather than sharing your local monitor or your media playback app's window.
+
+> **Why do it this way?** As explained by this Zoom [support article](https://support.zoom.us/hc/en-us/articles/360051673592-Sharing-and-playing-a-video), "video files can be opened within Zoom’s built-in video player and shared, without other participants viewing the playback controls. Sharing your video with the built-in player, instead of as part of a shared screen or application, improves the quality of shared videos, providing a smoother and more stable viewing experience for your viewers."
 
 **Congregation-level media syncing (☁️):** The brother designated as _videoconference organizer_ (VO) by the body of elders can use JWMMF to manage what media will be available to the person or team taking care of media for any given meeting. For example, he can:
 
@@ -31,7 +33,7 @@ Most of the options in the [Settings screen](https://github.com/sircharlo/jw-mee
 - hide media that for one reason or another is not relevant for a given meeting (for example, when a part has been replaced by another one by the local branch)
 - make recurring media available, to be shared at every meeting (such as a yeartext video, or an announcement slide)
 
-Usage of these congregation-level media syncing features is, of course, entirely optional. No data is shared or uploaded to me or to any external parties in the process. The underlying congregation-level syncing mechanism uses WebDAV, and therefore simply requires the VO (or someone under his supervision) to maintain a secured WebDAV server. All users from a congregation that wish to be synchronized together should connect to the VO's WebDAV server using the connection information that he provides them. To do so, go to Settings, then click on the **☁️** button.
+> **Note:** Usage of the congregation-level media syncing features is, of course, entirely optional. No data is shared or uploaded to me or to any external parties in the process. The underlying congregation-level syncing mechanism uses WebDAV, and therefore simply requires the VO (or someone under his supervision) to maintain a secured WebDAV server. All users from a congregation that wish to be synchronized together should connect to the VO's WebDAV server using the connection information that he provides them. To do so, go to Settings, then click on the **☁️** button.
 
 ## Does this app depend on external sites, sources or curators to download publications and meeting media?
 
