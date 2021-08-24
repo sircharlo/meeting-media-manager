@@ -172,7 +172,7 @@ function additionalMedia() {
 }
 function addMediaItemToPart (date, paragraph, media) {
   if (!meetingMedia[date]) meetingMedia[date] = [];
-  if (meetingMedia[date].filter(part => part.title == paragraph).length == 0) {
+  if (meetingMedia[date].filter(part => part.title == paragraph).length === 0) {
     meetingMedia[date].push({
       title: paragraph,
       media: []
@@ -203,12 +203,12 @@ function configIsValid() {
   $("#overlaySettings .btn-outline-danger").addClass("btn-outline-primary").removeClass("btn-outline-danger");
   $("#overlaySettings label.text-danger").removeClass("text-danger");
   var configIsValid = true;
-  if ($("#lang option:selected").length == 0) {
+  if ($("#lang option:selected").length === 0) {
     $("#lang").next(".select2").find(".select2-selection").addClass("invalid");
     configIsValid = false;
   }
   for (var elem of ["mwDay", "weDay", "maxRes"]) {
-    if ($("#" + elem + " input:checked").length == 0) {
+    if ($("#" + elem + " input:checked").length === 0) {
       $("#" + elem + " .btn-outline-primary").addClass("btn-outline-danger").removeClass("btn-outline-primary");
       configIsValid = false;
     }
@@ -222,11 +222,11 @@ function configIsValid() {
   }
   if (prefs.maxRes) {
     var maxResX = parseInt(prefs.maxRes.replace(/\D/g, ""));
-    if (maxResX == 720) {
+    if (maxResX === 720) {
       hdRes = [1280, maxResX];
-    } else if (maxResX == 480) {
+    } else if (maxResX === 480) {
       hdRes = [720, maxResX];
-    } else if (maxResX == 360) {
+    } else if (maxResX === 360) {
       hdRes = [480, maxResX];
     } else {
       hdRes = [426, maxResX];
@@ -237,7 +237,7 @@ function configIsValid() {
   } else {
     $("#mp4Convert").removeClass("d-flex");
   }
-  if (prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length == 0) {
+  if (prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0) {
     $("#btnMeetingMusic").fadeIn();
   } else {
     $("#btnMeetingMusic").fadeOut();
@@ -602,11 +602,11 @@ async function getDocumentExtract(db, docId) {
   return extractMultimediaItems;
 }
 async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
-  var tableMultimedia = ((await executeStatement(db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'")).length == 0 ? "Multimedia" : "DocumentMultimedia");
+  var tableMultimedia = ((await executeStatement(db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'")).length === 0 ? "Multimedia" : "DocumentMultimedia");
   var suppressZoomExists = (await executeStatement(db, "SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Multimedia') WHERE name='SuppressZoom'")).map(function(item) {
     return (item.CNTREC > 0 ? true : false);
   })[0];
-  var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (destDocId || destDocId == 0 ? tableMultimedia + ".DocumentId = " + destDocId : "Document.MepsDocumentId = " + destMepsId) + " AND (((Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')) OR (Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10" + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " ORDER BY BeginParagraphOrdinal" : "");
+  var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (destDocId || destDocId === 0 ? tableMultimedia + ".DocumentId = " + destDocId : "Document.MepsDocumentId = " + destMepsId) + " AND (((Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')) OR (Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10" + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " ORDER BY BeginParagraphOrdinal" : "");
   var multimedia = await executeStatement(db, statement);
   var multimediaItems = [];
   for (var multimediaItem of multimedia) {
@@ -759,7 +759,7 @@ async function getMwMediaFromDb() {
     if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
     try {
       var issue = baseDate.format("YYYYMM") + "00";
-      if (parseInt(baseDate.format("M")) % 2 == 0) {
+      if (parseInt(baseDate.format("M")) % 2 === 0) {
         issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
       }
       var db = await getDbFromJwpub("mwb", issue);
@@ -932,7 +932,7 @@ function prefsInitialize() {
 function progressSet(current, total, blockId) {
   if (!dryrun || !blockId) {
     var percent = current / total * 100;
-    if (percent > 100 || (!blockId && percent == 100)) {
+    if (percent > 100 || (!blockId && percent === 100)) {
       percent = 0;
     }
     if (!blockId) {
@@ -1248,7 +1248,7 @@ async function webdavSetup() {
     $("#specificCong").addClass("d-flex");
     $("#btn-upload").fadeIn(animationDuration);
     var webdavDirIsValid = false;
-    if (prefs.congServerDir == null || prefs.congServerDir.length == 0) {
+    if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
       $("#congServerDir").val("/").change();
     }
     if (webdavLoginSuccessful) {
@@ -1291,7 +1291,7 @@ async function webdavSetup() {
     } else {
       $("#webdavFolderList").empty();
     }
-    if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length == 0) {
+    if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length === 0) {
       $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").removeClass("in-danger");
       $(".btn-webdav, #btn-upload").addClass("btn-primary").removeClass("btn-danger");
       $("#specificCong").removeClass("alert-danger").find("i").removeClass("fa-times-circle").addClass("fa-spinner");
@@ -1495,7 +1495,7 @@ $("#chooseUploadType input").on("change", function() {
 $("#enterPrefix input, #congServerPort").on("keypress", function(e){
   return e.metaKey || // cmd/ctrl
       e.which <= 0 || // arrow keys
-      e.which == 8 || // delete key
+      e.which === 8 || // delete key
       /[0-9]/.test(String.fromCharCode(e.which)); // numbers
 });
 $("#overlayUploadFile").on("change", "#filePicker", function() {
@@ -1562,7 +1562,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
             tempMediaArray.find(item => item.filename == $(this).data("filename")).localpath = missingMediaPath[0];
             $(this).addClass("list-group-item-primary");
           }
-          if (tempMediaArray.filter(item => !item.contents && !item.localpath).length == 0) {
+          if (tempMediaArray.filter(item => !item.contents && !item.localpath).length === 0) {
             $("#staticBackdrop .modal-footer button").prop("disabled", false);
             $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).change();
           }
@@ -1645,7 +1645,7 @@ $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
 $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType input", function() {
   $("#enterPrefix input").val("").empty().change();
   getPrefix();
-  if ($("#chooseMeeting input:checked").length == 0 || $("#chooseUploadType input:checked").length == 0) {
+  if ($("#chooseMeeting input:checked").length === 0 || $("#chooseUploadType input:checked").length === 0) {
     $(".relatedToUpload").fadeTo(animationDuration, 0);
   } else {
     $(".relatedToUpload").fadeTo(animationDuration, 1);
