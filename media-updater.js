@@ -71,7 +71,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   currentStep,
   dryrun = false,
   ffmpegIsSetup = false,
-  hdRes = [],
+  hdRes = [1280, 720],
   jsonLangs = {},
   jwpubDbs = {},
   meetingMedia,
@@ -911,8 +911,7 @@ function perf(func, op) {
   perfStats[func][op] = performance.now();
 }
 function perfPrint() {
-  console.log("\n");
-  console.log("%cPERFORMANCE INFO", "background-color: #e2e3e5; color: #41464b; padding: 0.5em 1em; font-weight: bold; font-size: 125%;");
+  console.log("\n%cPERFORMANCE INFO", "background-color: #e2e3e5; color: #41464b; padding: 0.5em 1em; font-weight: bold; font-size: 125%;");
   for (var perfItem of Object.entries(perfStats).sort((a, b) => a[1].stop - b[1].stop)) {
     console.log("%c[" + perfItem[0] + "] " + (perfItem[1].stop - perfItem[1].start).toFixed(1) + "ms", "background-color: #e2e3e5; color: #41464b; padding: 0 1em;");
   }

@@ -1,10 +1,10 @@
 {
   "cleanCache": "Vider le cache des médias",
   "congMedia": "Médias de l'assemblée locale",
-  "convertDownloaded": "Convertir médias téléchargés en format MP4",
-  "convertExternal": "Permettre l'import et la conversion de médias additionels",
+  "convertDownloaded": "Convertir médias en format MP4",
+  "convertExternal": "Permettre l'import de médias additionels",
   "custom": "Autre",
-  "enableMusicButton": "Activer le bouton pour jouer des cantiques avant et après les réunions",
+  "enableMusicButton": "Activer le bouton pour jouer des cantiques en mode aléatoire",
   "fetchMedia": "Télécharger les médias!",
   "filenamePrefix": "Préfix pour nom(s) de fichier(s)",
   "filesAreInPlace": "Indiquez quand tous les fichiers sont en place.",

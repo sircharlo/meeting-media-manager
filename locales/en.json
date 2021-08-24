@@ -1,10 +1,10 @@
 {
 	"cleanCache": "Clean media cache",
 	"congMedia": "Congregation media",
-	"convertDownloaded": "Convert downloaded media to MP4",
-	"convertExternal": "Offer to import and convert additional media",
+	"convertDownloaded": "Convert media to MP4 format",
+	"convertExternal": "Offer to import additional media",
 	"custom": "Custom",
-	"enableMusicButton": "Enable button to play Kingdom songs before and after meetings",
+	"enableMusicButton": "Enable button to play Kingdom songs on shuffle",
 	"fetchMedia": "Get media!",
 	"filenamePrefix": "Filename prefix",
 	"filesAreInPlace": "Let me know when everything is in place.",
