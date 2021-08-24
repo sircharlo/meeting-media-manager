@@ -47,13 +47,6 @@ if (!gotTheLock) {
     }
   });
 
-  ipcMain.on("noInternet", () => {
-    win.webContents.send("hideThenShow", ["InternetCheck", "InternetFail"]);
-    setInterval(() => {
-      win.webContents.send("checkInternet");
-    }, 10000);
-  });
-
   autoUpdater.on("error", () => {
     win.webContents.send("goAhead");
   });

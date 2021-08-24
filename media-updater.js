@@ -4,27 +4,24 @@ const animationDuration = 200,
   remoteDialog = require("@electron/remote").dialog,
   {shell} = require("electron"),
   $ = require("jquery");
-async function checkInternet() {
-  try {
-    let jwOrg = await isPortReachable(443, {
-      host: "www.jw.org"
+function checkInternet(online) {
+  if (online) {
+    $("#overlayInternetCheck").fadeIn(animationDuration, () => {
+      $("#overlayInternetFail").stop().hide();
     });
-    if (jwOrg) {
-      require("electron").ipcRenderer.send("autoUpdate");
-    } else {
-      require("electron").ipcRenderer.send("noInternet");
-    }
-  } catch (err) {
-    console.error(err);
+    require("electron").ipcRenderer.send("autoUpdate");
+  } else {
+    $("#overlayInternetFail").fadeIn(animationDuration, () => {
+      $("#overlayInternetCheck").stop().hide();
+    });
+    updateOnlineStatus();
   }
 }
+const updateOnlineStatus = async () => {
+  checkInternet((await isPortReachable(443, {host: "www.jw.org"})) ? true : false);
+};
 
-checkInternet();
-
-require("electron").ipcRenderer.on("checkInternet", () => {
-  checkInternet();
-});
-
+updateOnlineStatus();
 require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
   $("#overlay" + message[1]).fadeIn(animationDuration, () => {
     $("#overlay" + message[0]).stop().hide();
