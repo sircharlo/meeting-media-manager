@@ -72,7 +72,9 @@ Before you do this however, make sure you read up on what this change entails, f
 ##### Mac
 For technical reasons, the auto-updater does not work on Macs. Mac users will instead see a red, pulsing notification on the main screen of the app and in Settings when an update is available. Clicking on the notification in Settings will open the latest release's download page automatically.
 
-Additionally, if upon launching the app, you receive [a message](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/06-mac-error.png?raw=true) indicating that you "do not have permission to open the application", then try running this command in Terminal:
+Additionally, if upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
+
+If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860). For example, you could try running this command in Terminal:
 
 `codesign --force --deep --sign - "/path/to/JW Meeting Media Fetcher.app"`
 
