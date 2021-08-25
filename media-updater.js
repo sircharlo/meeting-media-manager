@@ -1135,7 +1135,7 @@ function updateCleanup() {
     console.error(err);
   } finally {
     if (lastRunVersion !== remoteApp.getVersion()) {
-      cleanUp([paths.media, paths.pubs, paths.zoom]);
+      cleanUp([paths.lang, paths.pubs]);
       fs.writeFileSync(paths.lastRunVersion, remoteApp.getVersion());
     }
   }
