@@ -2,6 +2,8 @@
 
 JW Meeting Media Fetcher, or JWMMF for short, is an app that facilitates the downloading of media that will be considered during congregation meetings of Jehovah's Witnesses. This is especially useful when using JW Library is not possible or feasible for various reasons, during personal study, or to share media with others during congregation Zoom meetings.
 
+![Media sync in progress](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/00-hero.gif?raw=true)
+
 ## Installation and usage
 
 Simply download the latest installer [from here](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it.
