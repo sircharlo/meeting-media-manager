@@ -1401,12 +1401,13 @@ $(".btn-settings, #btn-settings").on("click", function() {
   toggleScreen("overlaySettings");
 });
 $("#btnStopMeetingMusic").on("click", function() {
-  $("#meetingMusic").remove();
-  $("#btnStopMeetingMusic").hide();
-  $("#musicRemaining").empty();
-  if (prefs.enableMusicButton) {
-    $("#btnMeetingMusic").show();
-  }
+  $("#btnStopMeetingMusic").toggleClass("btn-warning btn-danger").prop("disabled", true);
+  $("#meetingMusic").animate({volume: 0}, animationDuration * 30, () => {
+    $("#meetingMusic").remove();
+    $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
+    $("#musicRemaining").empty();
+    if (prefs.enableMusicButton) $("#btnMeetingMusic").show();
+  });
 });
 $(".btn-webdav").on("click", function() {
   webdavSetup();
