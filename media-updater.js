@@ -52,6 +52,7 @@ const aspect = require("aspectratio"),
   fs = require("graceful-fs"),
   glob = require("glob"),
   hme = require("h264-mp4-encoder"),
+  datetime = require("flatpickr"),
   i18n = require("i18n"),
   os = require("os"),
   path = require("path"),
@@ -66,6 +67,7 @@ dayjs.extend(require("dayjs/plugin/customParseFormat"));
 
 var baseDate = dayjs().startOf("isoWeek"),
   currentStep,
+  datepickers,
   dryrun = false,
   ffmpegIsSetup = false,
   hdRes = [1280, 720],
@@ -78,6 +80,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   }),
   now = dayjs().hour(0).minute(0).second(0).millisecond(0),
   paths = {},
+  pendingMusicFadeOut = {},
   perfStats = {},
   prefix,
   prefs = {},
@@ -103,19 +106,19 @@ function goAhead() {
   updateCleanup();
   getInitialData();
   dateFormatter();
-  $("#overlaySettings input, #overlaySettings select, #overlayWebdav input, #overlayWebdav select").on("change", function() {
+  $("#overlaySettings input:not(.timePicker), #overlaySettings select, #overlayWebdav input, #overlayWebdav select").on("change", function() {
     if ($(this).prop("tagName") == "INPUT") {
       if ($(this).prop("type") == "checkbox") {
         prefs[$(this).prop("id")] = $(this).prop("checked");
       } else if ($(this).prop("type") == "radio") {
         prefs[$(this).closest("div").prop("id")] = $(this).closest("div").find("input:checked").val();
-      } else if ($(this).prop("type") == "text" || $(this).prop("type") == "password") {
+      } else if ($(this).prop("type") == "text" || $(this).prop("type") == "password"  || $(this).prop("type") == "hidden" || $(this).prop("type") == "range") {
         prefs[$(this).prop("id")] = $(this).val();
       }
     } else if ($(this).prop("tagName") == "SELECT") {
       prefs[$(this).prop("id")] = $(this).find("option:selected").val();
     }
-    fs.writeFileSync(paths.prefs, JSON.stringify(prefs, null, 2));
+    fs.writeFileSync(paths.prefs, JSON.stringify(Object.keys(prefs).sort().reduce((acc, key) => ({...acc, [key]: prefs[key]}), {}), null, 2));
     if ($(this).prop("id").includes("lang")) {
       dateFormatter();
     }
@@ -199,7 +202,7 @@ function cleanUp(dirs) {
 }
 function configIsValid() {
   $("#lang").next(".select2").find(".select2-selection").removeClass("invalid");
-  $("#mwDay, #weDay, #outputPath").removeClass("invalid is-invalid");
+  $("#mwDay, #weDay, #outputPath, .timePicker").removeClass("invalid is-invalid");
   $("#overlaySettings .btn-outline-danger").addClass("btn-outline-primary").removeClass("btn-outline-danger");
   $("#overlaySettings label.text-danger").removeClass("text-danger");
   var configIsValid = true;
@@ -216,10 +219,21 @@ function configIsValid() {
   if ($("#outputPath").val() == "false" || !fs.existsSync($("#outputPath").val())) {
     $("#outputPath").val("");
   }
-  if (!$("#outputPath").val()) {
-    $("#outputPath").addClass("is-invalid");
-    configIsValid = false;
+  for (var setting of ["outputPath", "mwStartTime", "weStartTime"]) {
+    if (!$("#" + setting).val()) {
+      $("#" + setting + ":visible").addClass("is-invalid");
+      $(".timePicker").filter("[data-target='" + setting + "']").addClass("is-invalid");
+      configIsValid = false;
+    }
   }
+  if (!prefs.musicFadeOutTime) {
+    $("#musicFadeOutTime").val(5).change();
+  }
+  $("#musicFadeOutType label").each(function() {
+    $(this).find("span").html($("#musicFadeOutTime").val());
+  });
+  $(".relatedToFadeOut, #enableMusicFadeOut").prop("disabled", !prefs.enableMusicButton);
+  if (prefs.enableMusicButton) $(".relatedToFadeOut").prop("disabled", !prefs.enableMusicFadeOut);
   if (prefs.maxRes) {
     var maxResX = parseInt(prefs.maxRes.replace(/\D/g, ""));
     if (maxResX === 720) {
@@ -422,6 +436,19 @@ async function executeStatement(db, statement) {
   }
   return valObj;
 }
+datepickers = datetime(".timePicker", {
+  enableTime: true,
+  noCalendar: true,
+  dateFormat: "H:i",
+  time_24hr: true,
+  minuteIncrement: 15,
+  minTime: "06:00",
+  maxTime: "22:00",
+  onClose: function() {
+    var initiatorEl = $($(this)[0].element);
+    $("#" + initiatorEl.data("target")).val(initiatorEl.val()).change();
+  }
+});
 async function mp4Convert() {
   $("#statusIcon").addClass("fa-microchip").removeClass("fa-photo-video");
   $("#mp4Convert").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
@@ -692,7 +719,7 @@ async function getInitialData() {
   }
 }
 async function getLanguages() {
-  if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(dayjs().subtract(3, "months")) || dayjs(prefs.langUpdatedLast).isBefore(dayjs("2021-02-04"))) {
+  if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months")) || dayjs(prefs.langUpdatedLast).isBefore(dayjs("2021-02-04"))) {
     var jwLangs = await get("https://www.jw.org/en/languages/");
     let cleanedJwLangs = jwLangs.languages.filter(lang => lang.hasWebContent).map(lang => ({
       name: lang.vernacularName + " (" + lang.name + ")",
@@ -701,7 +728,7 @@ async function getLanguages() {
     }));
     fs.writeFileSync(paths.langs, JSON.stringify(cleanedJwLangs, null, 2));
     prefs.langUpdatedLast = dayjs();
-    fs.writeFileSync(paths.prefs, JSON.stringify(prefs, null, 2));
+    fs.writeFileSync(paths.prefs, JSON.stringify(Object.keys(prefs).sort().reduce((acc, key) => ({...acc, [key]: prefs[key]}), {}), null, 2));
     jsonLangs = cleanedJwLangs;
   } else {
     jsonLangs = JSON.parse(fs.readFileSync(paths.langs));
@@ -914,18 +941,24 @@ function perfPrint() {
   }
 }
 function prefsInitialize() {
-  for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "openFolderWhenDone", "additionalMediaPrompt", "maxRes", "enableMusicButton"]) {
+  for (var pref of ["lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "openFolderWhenDone", "additionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "mwStartTime", "weStartTime"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) {
       prefs[pref] = null;
     }
   }
-  for (var field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir"]) {
+  for (let field of ["lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "mwStartTime", "weStartTime"]) {
     $("#" + field).val(prefs[field]).change();
   }
-  for (var checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "openFolderWhenDone", "additionalMediaPrompt", "enableMusicButton"]) {
+  for (let timeField of ["mwStartTime", "weStartTime"]) {
+    $(".timePicker").filter("[data-target='" + timeField + "']").val($("#" + timeField).val());
+  }
+  for (let dtPicker of datepickers) {
+    dtPicker.setDate($(dtPicker.element).val());
+  }
+  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "openFolderWhenDone", "additionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut"]) {
     $("#" + checkbox).prop("checked", prefs[checkbox]).change();
   }
-  for (var radioSel of ["mwDay", "weDay", "maxRes"]) {
+  for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
     $("#" + radioSel + " input[value=" + prefs[radioSel] + "]").prop("checked", true).parent().addClass("active");
   }
 }
@@ -1370,6 +1403,31 @@ $("#btnCancelUpload").on("click", () => {
   document.removeEventListener("dragleave", dragleaveHandler);
 });
 $("#btnMeetingMusic").on("click", async function() {
+  if (prefs.enableMusicButton) $(".relatedToFadeOut, #enableMusicFadeOut, #enableMusicButton").prop("disabled", true);
+  if (prefs.enableMusicFadeOut) {
+    let timeBeforeFade;
+    let rightNow = dayjs();
+    if (prefs.musicFadeOutType == "smart") {
+      if ((now.day() - 1) == prefs.mwDay || (now.day() - 1) == prefs.weDay) {
+        var todaysMeeting = ((now.day() - 1) == prefs.mwDay ? "mw" : "we");
+        let todaysMeetingStartTime = prefs[todaysMeeting + "StartTime"].split(":");
+        let timeToStartFading = now.clone().hour(todaysMeetingStartTime[0]).minute(todaysMeetingStartTime[1]).millisecond(rightNow.millisecond()).subtract(prefs.musicFadeOutTime, "s");
+        timeBeforeFade = timeToStartFading.diff(rightNow);
+      }
+    } else {
+      timeBeforeFade = prefs.musicFadeOutTime * 1000 * 60;
+    }
+    if (timeBeforeFade >= 0) {
+      pendingMusicFadeOut.endTime = timeBeforeFade + rightNow.valueOf();
+      pendingMusicFadeOut.id = setTimeout(function () {
+        $("#btnStopMeetingMusic").click();
+      }, timeBeforeFade);
+    } else {
+      pendingMusicFadeOut.endTime = 0;
+    }
+  } else {
+    pendingMusicFadeOut.id = null;
+  }
   $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").parent().prop("title", "...");
   $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
   var songs = await getMediaLinks("sjjm", null, null, "MP3");
@@ -1386,12 +1444,35 @@ $("#btnMeetingMusic").on("click", async function() {
       createAudioElem(iterator);
     }).on("loadstart", function() {
       $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").parent().prop("title", "...");
-      $("#musicRemaining").html(new Date(0).toISOString().substr(14, 5));
+      let timeRemaining;
+      if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
+        timeRemaining = new Date(dayjs(pendingMusicFadeOut.endTime).diff(dayjs())).toISOString().substr(14, 5);
+      } else {
+        timeRemaining = new Date(0).toISOString().substr(14, 5);
+      }
+      $("#musicRemaining").html(timeRemaining);
     }).on("canplay", function() {
       $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").parent().prop("title", songs[iterator].title);
-      $("#musicRemaining").html(new Date(songs[iterator].duration * 1000).toISOString().substr(14, 5));
+      let timeRemaining;
+      if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
+        timeRemaining = new Date(dayjs(pendingMusicFadeOut.endTime).diff(dayjs())).toISOString().substr(14, 5);
+      } else {
+        timeRemaining = new Date(songs[iterator].duration * 1000).toISOString().substr(14, 5);
+      }
+      $("#musicRemaining").html(timeRemaining);
     }).on("timeupdate", function() {
-      $("#musicRemaining").html(new Date(($("#meetingMusic")[0].duration - $("#meetingMusic")[0].currentTime) * 1000).toISOString().substr(14, 5));
+      let timeRemaining;
+      if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
+        let rightNow = dayjs();
+        if (dayjs(pendingMusicFadeOut.endTime) > rightNow) {
+          timeRemaining = new Date(dayjs(pendingMusicFadeOut.endTime).diff(rightNow)).toISOString().substr(14, 5);
+        } else {
+          timeRemaining = "";
+        }
+      } else {
+        timeRemaining = new Date(($("#meetingMusic")[0].duration - $("#meetingMusic")[0].currentTime) * 1000).toISOString().substr(14, 5);
+      }
+      $("#musicRemaining").html(timeRemaining);
     }).append("<source src='"+ songs[iterator].url + "' type='audio/mpeg'>");
     $("body").append(audioElem);
   }
@@ -1401,12 +1482,17 @@ $(".btn-settings, #btn-settings").on("click", function() {
   toggleScreen("overlaySettings");
 });
 $("#btnStopMeetingMusic").on("click", function() {
+  clearTimeout(pendingMusicFadeOut.id);
   $("#btnStopMeetingMusic").toggleClass("btn-warning btn-danger").prop("disabled", true);
   $("#meetingMusic").animate({volume: 0}, animationDuration * 30, () => {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
     $("#musicRemaining").empty();
-    if (prefs.enableMusicButton) $("#btnMeetingMusic").show();
+    if (prefs.enableMusicButton) {
+      $("#btnMeetingMusic").show();
+      $("#enableMusicFadeOut, #enableMusicButton").prop("disabled", false);
+      if (prefs.enableMusicFadeOut) $(".relatedToFadeOut").prop("disabled", false);
+    }
   });
 });
 $(".btn-webdav").on("click", function() {
