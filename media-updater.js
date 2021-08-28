@@ -230,7 +230,7 @@ function configIsValid() {
     $("#musicFadeOutTime").val(5).change();
   }
   $("#musicFadeOutType label").each(function() {
-    $(this).find("span").html($("#musicFadeOutTime").val());
+    $(this).find("span").html(prefs.musicFadeOutTime);
   });
   $(".relatedToFadeOut, #enableMusicFadeOut").prop("disabled", !prefs.enableMusicButton);
   if (prefs.enableMusicButton) $(".relatedToFadeOut").prop("disabled", !prefs.enableMusicFadeOut);
@@ -345,7 +345,7 @@ function createVideoSync(mediaDir, media){
             return resolve();
           })
           .noVideo()
-          .save(path.join(paths.zoom, mediaDir, mediaName + ".mp4"));
+          .save(path.join(paths.media, mediaDir, mediaName + ".mp4"));
       });
     } else {
       try {
@@ -372,7 +372,7 @@ function createVideoSync(mediaDir, media){
           canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
           encoder.addFrameRgba(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data);
           encoder.finalize();
-          fs.writeFileSync(path.join(paths.zoom, mediaDir, mediaName + ".mp4"), encoder.FS.readFile(encoder.outputFilename));
+          fs.writeFileSync(path.join(paths.media, mediaDir, mediaName + ".mp4"), encoder.FS.readFile(encoder.outputFilename));
           encoder.delete();
           $("div#convert").remove();
           return resolve();
@@ -457,16 +457,12 @@ async function mp4Convert() {
   totals.mp4Convert = {
     total: filesToProcess.length
   };
-  for (var mediaDir of glob.sync(path.join(paths.media, "*"))) {
-    mkdirSync(path.join(paths.zoom, path.basename(mediaDir)));
-  }
   totals.mp4Convert.current = 1;
   for (var mediaFile of filesToProcess) {
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
     if (path.extname(mediaFile) !== ".mp4") {
       await createVideoSync(path.basename(path.dirname(mediaFile)), path.basename(mediaFile));
-    } else {
-      fs.copyFileSync(mediaFile, path.join(paths.zoom, path.basename(path.dirname(mediaFile)), path.basename(mediaFile)));
+      fs.rmSync(mediaFile);
     }
     totals.mp4Convert.current++;
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
@@ -1016,8 +1012,6 @@ function setVars() {
     mkdirSync(paths.lang);
     paths.media = path.join(paths.lang, "Media");
     mkdirSync(paths.media);
-    paths.zoom = path.join(paths.lang, "Zoom");
-    if (prefs.betaMp4Gen) mkdirSync(paths.zoom);
     paths.pubs = path.join(paths.app, "Publications", prefs.lang);
   } catch (err) {
     console.error(err);
@@ -1032,7 +1026,7 @@ async function startMediaSync() {
   await setVars();
   perf("setVars", "stop");
   perf("cleanUp", "start");
-  if (!dryrun) await cleanUp([paths.media, paths.zoom]);
+  if (!dryrun) await cleanUp([paths.media]);
   perf("cleanUp", "stop");
   perf("getJwOrgMedia", "start");
   await getMwMediaFromDb();
@@ -1066,9 +1060,7 @@ async function startMediaSync() {
       perf("mp4Convert", "stop");
     }
     if (prefs.openFolderWhenDone) {
-      var openPath = paths.media;
-      if (prefs.betaMp4Gen) openPath = paths.zoom;
-      shell.openPath(openPath);
+      shell.openPath(paths.media);
     }
   }
   $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 1);
