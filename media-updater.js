@@ -64,6 +64,7 @@ dayjs.extend(require("dayjs/plugin/isoWeek"));
 dayjs.extend(require("dayjs/plugin/isBetween"));
 dayjs.extend(require("dayjs/plugin/isSameOrBefore"));
 dayjs.extend(require("dayjs/plugin/customParseFormat"));
+dayjs.extend(require("dayjs/plugin/duration"));
 
 var baseDate = dayjs().startOf("isoWeek"),
   currentStep,
@@ -405,6 +406,16 @@ function dateFormatter() {
     }
     if (baseDate.clone().add(d, "days").isSame(now)) $("#day" + d).addClass("today");
   }
+}
+function displayMusicRemaining() {
+  let timeRemaining;
+  if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
+    let rightNow = dayjs();
+    timeRemaining = (dayjs(pendingMusicFadeOut.endTime).isAfter(rightNow) ? dayjs(pendingMusicFadeOut.endTime).diff(rightNow) : 0);
+  } else {
+    timeRemaining = (isNaN($("#meetingMusic")[0].duration) ? 0 : ($("#meetingMusic")[0].duration - $("#meetingMusic")[0].currentTime) * 1000);
+  }
+  $("#musicRemaining").html(dayjs.duration(timeRemaining, "ms").format((timeRemaining >= 3600000 ? "HH:" : "") + "mm:ss"));
 }
 async function downloadIfRequired(file) {
   file.downloadRequired = true;
@@ -1436,35 +1447,12 @@ $("#btnMeetingMusic").on("click", async function() {
       createAudioElem(iterator);
     }).on("loadstart", function() {
       $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").parent().prop("title", "...");
-      let timeRemaining;
-      if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
-        timeRemaining = new Date(dayjs(pendingMusicFadeOut.endTime).diff(dayjs())).toISOString().substr(14, 5);
-      } else {
-        timeRemaining = new Date(0).toISOString().substr(14, 5);
-      }
-      $("#musicRemaining").html(timeRemaining);
+      displayMusicRemaining();
     }).on("canplay", function() {
       $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").parent().prop("title", songs[iterator].title);
-      let timeRemaining;
-      if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
-        timeRemaining = new Date(dayjs(pendingMusicFadeOut.endTime).diff(dayjs())).toISOString().substr(14, 5);
-      } else {
-        timeRemaining = new Date(songs[iterator].duration * 1000).toISOString().substr(14, 5);
-      }
-      $("#musicRemaining").html(timeRemaining);
+      displayMusicRemaining();
     }).on("timeupdate", function() {
-      let timeRemaining;
-      if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
-        let rightNow = dayjs();
-        if (dayjs(pendingMusicFadeOut.endTime) > rightNow) {
-          timeRemaining = new Date(dayjs(pendingMusicFadeOut.endTime).diff(rightNow)).toISOString().substr(14, 5);
-        } else {
-          timeRemaining = "";
-        }
-      } else {
-        timeRemaining = new Date(($("#meetingMusic")[0].duration - $("#meetingMusic")[0].currentTime) * 1000).toISOString().substr(14, 5);
-      }
-      $("#musicRemaining").html(timeRemaining);
+      displayMusicRemaining();
     }).append("<source src='"+ songs[iterator].url + "' type='audio/mpeg'>");
     $("body").append(audioElem);
   }
