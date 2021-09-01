@@ -12,7 +12,7 @@
 	"mediaLanguage": "Язык медиафайлов",
 	"mediaSaveFolder": "Папка для сохранения медиафайлов",
 	"mp4Conversion": "Преобразование в MP4",
-	"mwMeetingDay": "День встречи в будние дни",
+	"mwMeetingDay": "Встречи в будние дни",
 	"musicFadeOutType": "Автоматически остановить песни",
 	"musicFadeOutSmart": "За <span>XX</span> секунд до начала встречи",
 	"musicFadeOutTimer": "Спустя <span>XX</span> минут",
@@ -33,5 +33,5 @@
 	"webdavPort": "Порт WebDAV-сервера",
 	"webdavServer": "WebDAV-сервер",
 	"webdavUser": "Имя пользователя WebDAV",
-	"weMeetingDay": "День встречи в выходные дни"
+	"weMeetingDay": "Встречи в выходные дни"
 }

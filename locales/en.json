@@ -13,7 +13,7 @@
 	"mediaLanguage": "Media language",
 	"mediaSaveFolder": "Folder in which to save media",
 	"mp4Conversion": "MP4 conversion",
-	"mwMeetingDay": "Midweek meeting day",
+	"mwMeetingDay": "Midweek meeting",
 	"musicFadeOutType": "Automatically stop playing songs",
 	"musicFadeOutSmart": "<span>XX</span> seconds before the meeting",
 	"musicFadeOutTimer": "After <span>XX</span> minutes",
@@ -35,5 +35,5 @@
 	"webdavPort": "WebDAV Port",
 	"webdavServer": "WebDAV Server",
 	"webdavUser": "WebDAV Username",
-	"weMeetingDay": "Weekend meeting day"
+	"weMeetingDay": "Weekend meeting"
 }

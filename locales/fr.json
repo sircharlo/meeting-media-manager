@@ -15,7 +15,7 @@
   "musicFadeOutType": "Arrêter les cantiques automatiquement",
   "musicFadeOutSmart": "<span>XX</span> secondes avant le début de la réunion",
   "musicFadeOutTimer": "Après <span>XX</span> minutes",
-  "mwMeetingDay": "Jour de réunion de semaine",
+  "mwMeetingDay": "Réunion de semaine",
   "noDocumentsFound": "Aucun média n'a été trouvé dans les documents du JWPUB choisi. Veuillez valider ce fichier ou contacter le développeur de cette application.",
   "openTargetFolderAfterSync": "Ouvrir le dossier des médias après la syncronisation",
   "quitAfterSync": "Quitter l'appli après la syncronisation des médias",
@@ -33,5 +33,5 @@
   "webdavPort": "Port WebDAV",
   "webdavServer": "Serveur WebDAV",
   "webdavUser": "Nom d'utilisateur WebDAV",
-  "weMeetingDay": "Jour de réunion de fin de semaine"
+  "weMeetingDay": "Réunion de fin de semaine"
 }
