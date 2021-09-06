@@ -1207,7 +1207,7 @@ async function webdavLs(dir, force) {
           recursive: true
         });
       }
-      return await webdavClient.getDirectoryContents(dir);
+      return (await webdavClient.getDirectoryContents(dir)).sort((a, b) => a.basename.localeCompare(b.basename));
     }
   } catch (err) {
     console.error(err);
@@ -1299,7 +1299,6 @@ async function webdavSetup() {
         }
         $("#webdavFolderList").empty();
         webdavDestDir = await webdavLs(showMeTheDirectory, true);
-        webdavDestDir = webdavDestDir.sort((a, b) => a.basename.localeCompare(b.basename));
         for (var item of webdavDestDir) {
           if (item.type == "directory") {
             $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
