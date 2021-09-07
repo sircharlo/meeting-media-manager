@@ -462,15 +462,19 @@
     </div>
     <div class="d-flex py-3 flex-fill align-items-end">
       <div class="col-4 text-start">
-        <button class="btn btn-dark" id="btnCancelUpload" type="button"><i class="fas fa-fw fa-home"></i></button>
+        <button class="btn btn-dark" id="btnCancelUpload" type="button">
+          <i class="fas fa-fw fa-home"></i>
+        </button>
       </div>
       <div class="col-4 text-center">
-        <button class="btn btn-primary" id="btnUpload" type="button" disabled>
-          <span class="i18n" data-i18n-string="upload"></span>
+        <button class="btn btn-primary" id="btnUpload" type="button" style="display: none;">
+          <i class="fas fa-fw fa-save"></i>
         </button>
       </div>
       <div class="col-4 text-end">
-        <button class="btn btn-success" id="btnDoneUpload" type="button"><i class="fas fa-fw fa-arrow-right"></i></button>
+        <button class="btn btn-success" id="btnDoneUpload" type="button">
+          <i class="fas fa-fw fa-arrow-right"></i>
+        </button>
       </div>
     </div>
   </div>

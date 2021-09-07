@@ -1480,7 +1480,7 @@ $(".btn-webdav").on("click", function() {
 });
 $("#btnUpload").on("click", async () => {
   try {
-    $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-cloud-upload-alt");
+    $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
     $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
     if ($("input#typeSong:checked").length > 0) {
       var songFile = new Buffer(await get($("#fileToUpload").val(), true));
@@ -1520,7 +1520,7 @@ $("#btnUpload").on("click", async () => {
       dryrun = true;
       await startMediaSync();
       $("#chooseMeeting input:checked").change();
-      $("#btnUpload").find("i").addClass("fa-cloud-upload-alt").removeClass("fa-circle-notch fa-spin");
+      $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
       $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
       $("#overlayDryrun").stop().fadeOut(animationDuration);
     });
@@ -1743,7 +1743,8 @@ $("#overlayUploadFile").on("change", "#enterPrefix input, #chooseMeeting input, 
           }
         }
         var newFiles = [];
-        if ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0) {
+        let newFileChosen = $("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0;
+        if (newFileChosen) {
           for (var splitFileToUpload of $("#fileToUpload").val().split(" -//- ")) {
             newFiles.push({
               title: "New file!",
@@ -1808,8 +1809,8 @@ $("#overlayUploadFile").on("change", "#enterPrefix input, #chooseMeeting input, 
             .wrapInner("<span class='canHide'></del>")
             .find("i.fa-square").remove();
         });
-        $("#btnUpload").prop("disabled", !($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0));
-        $("#btnDoneUpload, #btnCancelUpload").prop("disabled", ($("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0));
+        $("#btnUpload").fadeTo(animationDuration, newFileChosen);
+        $("#" + (currentStep == "additionalMedia" ? "btnDoneUpload" : "btnCancelUpload")).fadeTo(animationDuration, !newFileChosen);
         $("#fileList").stop().fadeTo(animationDuration, 1, () => {
           $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
         });
