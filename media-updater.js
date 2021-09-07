@@ -129,10 +129,11 @@ function goAhead() {
     if ($(this).prop("id").includes("cong")) {
       webdavSetup();
     }
+    setVars();
     if ($(this).prop("id").includes("lang")) {
       getTranslations();
+      updateSongs();
     }
-    setVars();
     if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) {
       cleanUp([paths.media]);
     }
@@ -143,8 +144,8 @@ function goAhead() {
       openAtLogin: prefs.autoRunAtBoot
     });
   });
+  $(".alertIndicators").removeClass("meeting").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
   $("#mwDay input, #weDay input").on("change", function() {
-    $(".alertIndicators").removeClass("meeting").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
     $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   });
 }
@@ -248,7 +249,7 @@ function configIsValid() {
     }
   }
   if (prefs.betaMp4Gen) {
-    $("#mp4Convert").addClass("d-flex").find("i").removeClass("fa-check-circle").addClass("fa-spinner");
+    $("#mp4Convert").addClass("d-flex");
   } else {
     $("#mp4Convert").removeClass("d-flex");
   }
@@ -679,6 +680,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
 async function getInitialData() {
   await getLanguages();
   await getTranslations();
+  await updateSongs();
   configIsValid();
   $("#version").html("v" + remoteApp.getVersion());
   await webdavSetup();
@@ -706,23 +708,6 @@ async function getInitialData() {
   $("#baseDate .dropdown-item:eq(0)").addClass("active");
   for (var a = 1; a <= 4; a++) {
     $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "'>" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
-  }
-  try {
-    for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4")).reverse()) {
-      $("#songPicker").append($("<option>", {
-        value: sjj.url,
-        text: sjj.title
-      }));
-    }
-    $("#songPicker").on("change", function() {
-      if ($(this).val()) {
-        $("#fileToUpload").val($(this).val()).change();
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    $("label[for=typeSong]").removeClass("active").addClass("disabled");
-    $("label[for=typeFile]").click().addClass("active");
   }
 }
 async function getLanguages() {
@@ -886,13 +871,15 @@ async function getWeMediaFromDb() {
         var pictureObj = {
           title: FileName,
           filepath: LocalPath,
-          filesize: fs.statSync(LocalPath).size
+          filesize: fs.statSync(LocalPath).size,
+          queryInfo: picture
         };
         addMediaItemToPart(weDate, picture.BeginParagraphOrdinal, pictureObj);
       }
       var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
       for (var song = 0; song < qrySongs.length; song++) {
         var songObj = (await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track))[0];
+        songObj.queryInfo = qrySongs[song];
         addMediaItemToPart(weDate, song * 1000, songObj);
       }
       if (!dryrun) $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fa-check-circle");
@@ -1174,6 +1161,26 @@ function updateCleanup() {
       cleanUp([paths.lang, paths.pubs]);
       fs.writeFileSync(paths.lastRunVersion, remoteApp.getVersion());
     }
+  }
+}
+async function updateSongs() {
+  try {
+    $("#songPicker").empty();
+    for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4")).reverse()) {
+      $("#songPicker").append($("<option>", {
+        value: sjj.url,
+        text: sjj.title
+      }));
+    }
+    $("#songPicker").on("change", function() {
+      if ($(this).val()) {
+        $("#fileToUpload").val($(this).val()).change();
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    $("label[for=typeSong]").removeClass("active").addClass("disabled");
+    $("label[for=typeFile]").click().addClass("active");
   }
 }
 // async function webdavCp(src, dest) {
