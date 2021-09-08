@@ -1778,10 +1778,10 @@ $("#overlayUploadFile").on("change", "#enterPrefix input, #chooseMeeting input, 
           if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-fw fa-plus'></i>");
           if (!file.newFile && newFiles.filter(item => item.media.filter(mediaItem => mediaItem.safeName.includes(file.safeName)).length > 0).length > 0) html.addClass("duplicated-file");
           if (file.hidden) html.prepend("<i class='far fa-fw fa-square'></i>").wrapInner("<del class='wasHidden'></del>");
+          if (file.safeName.includes(".mp4")) html.addClass("video");
           $("#fileList").append(html);
         }
         $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 8));
-        $("#fileList li:contains(mp4)").addClass("video");
         $("#fileList li").on("click", ".fa-minus-circle", function() {
           $(this).parent().addClass("confirmDelete").find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-exclamation-circle");
           setTimeout(() => {
