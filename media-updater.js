@@ -368,6 +368,7 @@ function createVideoSync(mediaDir, media){
         $("img#imgToConvert").on("load", function() {
           var canvas = $("#imgCanvas")[0],
             image = $("img#imgToConvert")[0];
+          encoder.quantizationParameter = 10;
           encoder.width = canvas.width = image.width = convertedImageDimesions[0];
           encoder.height = canvas.height = image.height = convertedImageDimesions[1];
           encoder.initialize();
