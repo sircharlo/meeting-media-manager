@@ -7,7 +7,7 @@
   "enableMusicButton": "Activar el botón para reproducir canciones en modo aleatorio",
   "fetchMedia": "¡Descargar multimedia!",
   "filenamePrefix": "Prefijo de archivo",
-  "filesToUpload": "Archivo(s) a subir",
+  "mediaToAdd": "Multimedia para añadir",
   "maxRes": "Resolución máxima para los videos",
   "mediaLanguage": "Lenguaje de la multimedia",
   "mediaSaveFolder": "Carpeta para guardar los archivos multimedia",

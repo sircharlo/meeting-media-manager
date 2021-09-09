@@ -7,7 +7,7 @@
   "enableMusicButton": "Activer le bouton pour jouer des cantiques en mode aléatoire",
   "fetchMedia": "Télécharger les médias!",
   "filenamePrefix": "Préfix pour nom(s) de fichier(s)",
-  "filesToUpload": "Fichier(s) à téléverser",
+  "mediaToAdd": "Médias à ajouter",
   "maxRes": "Résolution maximale pour vidéos",
   "mediaLanguage": "Langue des médias",
   "mediaSaveFolder": "Dossier d'enregistrement des médias",
