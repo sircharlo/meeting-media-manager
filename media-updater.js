@@ -353,7 +353,7 @@ function createVideoSync(mediaDir, media){
       try {
         var convertedImageDimesions = [];
         var imageDimesions = sizeOf(path.join(paths.media, mediaDir, media));
-        convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > hdRes[0] ? hdRes[0] : imageDimesions.width) : null), (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > hdRes[1] ? hdRes[1] : imageDimesions.height)));
+        convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > hdRes[0] ? hdRes[0] - 1 : imageDimesions.width) : null), (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > hdRes[1] ? hdRes[1] - 1 : imageDimesions.height)));
       } catch (err) {
         console.error("Unable to get dimensions for:", path.join(paths.media, mediaDir, media), "Setting manually...", err);
         convertedImageDimesions = [imageDimesions.width, imageDimesions.height];
