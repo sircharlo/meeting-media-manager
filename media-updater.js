@@ -240,16 +240,8 @@ function configIsValid() {
   if (prefs.enableMusicButton) $(".relatedToFadeOut").prop("disabled", !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut && !prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
   if (prefs.maxRes) {
-    var maxResX = parseInt(prefs.maxRes.replace(/\D/g, ""));
-    if (maxResX === 720) {
-      hdRes = [1280, maxResX];
-    } else if (maxResX === 480) {
-      hdRes = [720, maxResX];
-    } else if (maxResX === 360) {
-      hdRes = [480, maxResX];
-    } else {
-      hdRes = [426, maxResX];
-    }
+    let maxResX = parseInt(prefs.maxRes.replace(/\D/g, ""));
+    hdRes = [Math.round(maxResX * 16 / 9), maxResX];
   }
   if (prefs.betaMp4Gen) {
     $("#mp4Convert").addClass("d-flex");
