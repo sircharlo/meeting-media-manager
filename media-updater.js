@@ -238,6 +238,7 @@ function configIsValid() {
   });
   $(".relatedToFadeOut, #enableMusicFadeOut").prop("disabled", !prefs.enableMusicButton);
   if (prefs.enableMusicButton) $(".relatedToFadeOut").prop("disabled", !prefs.enableMusicFadeOut);
+  if (prefs.enableMusicButton && prefs.enableMusicFadeOut && !prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
   if (prefs.maxRes) {
     var maxResX = parseInt(prefs.maxRes.replace(/\D/g, ""));
     if (maxResX === 720) {
