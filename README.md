@@ -18,28 +18,47 @@ After configuring the app, simply go to the [main screen](https://github.com/sir
 
 Most of the options in the [Settings screen](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/02-settings.png?raw=true) are self-explanatory, but here are a few additional details about some of them.
 
-**Enable button to play Kingdom songs on shuffle:** Shows a button which will play Kingdom songs in random order. This is  useful to play songs before and after meetings at the Kingdom Hall.
+#### Enable button to play Kingdom songs on shuffle
 
-**Offer to import additional media files:** If enabled, you'll be presented with the [Additional media screen](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/03-upload.png?raw=true) when performing a media sync. This allows you to import additional media files into the week's media. There are 3 types of media you can import.
-- **Song:** Choose this to add a song, for example for a public talk. After choosing the song number, it will be downloaded for you.
-- **JWPUB:** Choose this to automatically import the media files from a JWPUB file, such as the S-34, or any other JWPUB file that contains media. Upon choosing the JWPUB file, you will be prompted to choose what media you'd like to import.
+Shows a button which will play Kingdom songs in random order. This is useful to play songs before and after meetings at the Kingdom Hall as background music.
+
+#### Automatically stop playing songs
+
+If the previous setting (*Enable button to play Kingdom songs on shuffle*) is enabled, then toggling this setting will allow you to specify the period after which the background music should be automatically stopped. This can be either a set number of minutes, or a predetermined number of seconds before the start of the meeting (in the case where the background music was started before a  meeting).
+
+#### Offer to import additional media
+
+If enabled, you'll be presented with the [Additional media screen](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/03-upload.png?raw=true) when performing a media sync. That screen allows you to add additional media files into a given week's media.
+
+There are 3 categories of media files that can be imported.
+
+- **Song:** Choose this to add a song, for a public talk during the weekend meeting for example. After choosing the song number, it will be automatically downloaded for you.
+- **JWPUB:** Choose this to automatically import media from any JWPUB file (for example, the S-34). Upon choosing the JWPUB file, you will be prompted to select the section from which you'd like to import media.
 - **Custom:** Choose this to select any other media file from your computer.
 
-**Convert media to MP4 format:** This automatically converts all picture and audio files into MP4 format. This includes files downloaded from JW.org, as well as files imported using the "import additional media files" feature mentioned above, if enabled. This allows those files to be shared in Zoom using its [native MP4 sharing feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true), rather than sharing your local monitor or your media playback app's window.
+#### Convert media to MP4 format
 
-> **Why do it this way?** As explained by this Zoom [support article](https://support.zoom.us/hc/en-us/articles/360051673592-Sharing-and-playing-a-video), "video files can be opened within Zoom’s built-in video player and shared, without other participants viewing the playback controls. Sharing your video with the built-in player, instead of as part of a shared screen or application, improves the quality of shared videos, providing a smoother and more stable viewing experience for your viewers."
+This automatically converts all picture and audio files into MP4 format. This includes files downloaded from JW.org, as well as files imported using the *import additional media* feature mentioned above (if enabled).
 
-**Congregation-level media syncing (☁️):** The brother designated as _videoconference organizer_ (VO) by the body of elders can use JWMMF to manage what media will be available to the person or team taking care of media for any given meeting. For example, he can:
+This allows all media files to be shared in Zoom using its [native MP4 sharing feature](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/05-zoom.png?raw=true), rather than sharing your local monitor or your media playback app's window.
+
+> **Why do it this way?** As explained by a Zoom [support article](https://support.zoom.us/hc/en-us/articles/360051673592-Sharing-and-playing-a-video), "video files can be opened within Zoom’s built-in video player and shared, without other participants viewing the playback controls. Sharing your video with the built-in player, instead of as part of a shared screen or application, improves the quality of shared videos, providing a smoother and more stable viewing experience for your viewers."
+
+#### Congregation-level media syncing (☁️)
+
+The brother designated as _videoconference organizer_ (VO) by the body of elders can use JWMMF to manage what media will be available to the person or team taking care of media for any given meeting. For example, he can:
 
 - upload additional media to be shared during a meeting (such as for the circuit overseer's visit, or for public speakers' talks)
 - hide media that for one reason or another is not relevant for a given meeting (for example, when a part has been replaced by another one by the local branch)
 - make recurring media available, to be shared at every meeting (such as a yeartext video, or an announcement slide)
 
-> **Note:** Usage of the congregation-level media syncing features is, of course, entirely optional. No data is shared or uploaded to me or to any external parties in the process. The underlying congregation-level syncing mechanism uses WebDAV, and therefore simply requires the VO (or someone under his supervision) to maintain a secured WebDAV server. All users from a congregation that wish to be synchronized together should connect to the VO's WebDAV server using the connection information that he provides them. To do so, go to Settings, then click on the **☁️** button.
+Please note that enabling congregation-level media syncing automatically disables the *Offer to import additional media* option. This is by design. When congregation-level media syncing is enabled, please use the **☁️** button on the main screen of the app to upload any additional media to the WebDAV server. This ensures that all who are taking care of media in your congregation receive the necessary media upon clicking the *Get media!* button.
+
+> **Note:** Usage of the congregation-level media syncing features is entirely optional. No data is shared or uploaded to any third  parties in the process. The underlying congregation-level syncing mechanism uses WebDAV, and simply requires the VO (or someone under his supervision) to maintain a secured WebDAV server. All users from a congregation that wish to be synchronized together should connect to the VO's WebDAV server using the connection information that he provides them. To do so, go to Settings, then click on the **☁️** button.
 
 ## Does this app depend on external sites, sources or curators to download publications and meeting media?
 
-**No.** The app behaves similarly to JW Library. It downloads data such as publications and media directly from one source only: the official JW website and its content delivery network. Files that should be downloaded, such as media and publications, are automatically determined at runtime. The source code is available for all to examine and verify this.
+**No.** The app behaves similarly to JW Library. It downloads data such as publications and media directly from one source only: the official JW website and its content delivery network. At runtime, the app automatically determines what needs to be downloaded, such as media files and publications. The source code is available for all to examine and verify this.
 
 ## Does this app infringe the JW.org Terms of Use?
 
