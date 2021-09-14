@@ -223,7 +223,9 @@ function configIsValid() {
   if ($("#outputPath").val() == "false" || !fs.existsSync($("#outputPath").val())) {
     $("#outputPath").val("");
   }
-  for (var setting of ["outputPath", "mwStartTime", "weStartTime"]) {
+  let mandatoryFields = ["outputPath"];
+  if (prefs.enableMusicFadeOut && prefs.musicFadeOutType == "smart") mandatoryFields.push("mwStartTime", "weStartTime");
+  for (var setting of mandatoryFields) {
     if (!$("#" + setting).val()) {
       $("#" + setting + ":visible").addClass("is-invalid");
       $(".timePicker").filter("[data-target='" + setting + "']").addClass("is-invalid");
