@@ -1,7 +1,6 @@
 const animationDuration = 200,
   isPortReachable = require("is-port-reachable"),
-  remoteApp = require("@electron/remote").app,
-  remoteDialog = require("@electron/remote").dialog,
+  remote = require("@electron/remote"),
   {shell} = require("electron"),
   $ = require("jquery");
 function checkInternet(online) {
@@ -90,7 +89,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   webdavIsAGo = false,
   stayAlive,
   webdavClient;
-paths.app = remoteApp.getPath("userData");
+paths.app = remote.app.getPath("userData");
 paths.langs = path.join(paths.app, "langs.json");
 paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
 paths.prefs = path.join(paths.app, "prefs.json");
@@ -140,7 +139,7 @@ function goAhead() {
     configIsValid();
   });
   $("#autoRunAtBoot").on("change", function() {
-    remoteApp.setLoginItemSettings({
+    remote.app.setLoginItemSettings({
       openAtLogin: prefs.autoRunAtBoot
     });
   });
@@ -686,7 +685,7 @@ async function getInitialData() {
   await getTranslations();
   await updateSongs();
   configIsValid();
-  $("#version").html("v" + remoteApp.getVersion());
+  $("#version").html("v" + remote.app.getVersion());
   await webdavSetup();
   $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   if (os.platform() == "linux") {
@@ -1143,9 +1142,9 @@ function updateCleanup() {
   } catch(err) {
     console.error(err);
   } finally {
-    if (lastRunVersion !== remoteApp.getVersion()) {
+    if (lastRunVersion !== remote.app.getVersion()) {
       cleanUp([paths.lang, paths.pubs]);
-      fs.writeFileSync(paths.lastRunVersion, remoteApp.getVersion());
+      fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
     }
   }
 }
@@ -1611,7 +1610,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
         tempMedia.filename = (i + 1).toString().padStart(2, "0") + " - " + path.basename(tempMedia.url);
       } else {
         var missingButtonHtml = $("<button class='list-group-item list-group-item-action' data-filename='" + tempMedia.filename + "'>" + tempMedia.filename + "</li>").on("click", function() {
-          var missingMediaPath = remoteDialog.showOpenDialogSync({
+          var missingMediaPath = remote.dialog.showOpenDialogSync({
             title: $(this).data("filename"),
             filters: [
               { name: $(this).data("filename"), extensions: [path.extname($(this).data("filename")).replace(".", "")] }
@@ -1662,7 +1661,7 @@ $("#mediaSync").on("click", async function() {
         toggleScreen("overlaySettings");
         $("#btnStayAlive").removeClass("btn-success").addClass("btn-primary").fadeTo(animationDuration, 0);
       } else {
-        remoteApp.quit();
+        remote.app.quit();
       }
     }
     $("#home, .btn-settings, #btn-settings").fadeTo(animationDuration, 1);
@@ -1674,7 +1673,7 @@ $("#mediaSync").on("click", async function() {
   $("#baseDate-dropdown").removeClass("disabled");
 });
 $("#outputPath").on("mousedown", function(event) {
-  var path = remoteDialog.showOpenDialogSync({
+  var path = remote.dialog.showOpenDialogSync({
     properties: ["openDirectory"]
   });
   $(this).val(path).change();
@@ -1817,7 +1816,7 @@ $("#overlayUploadFile").on("keyup", "#enterPrefix input", function() {
   getPrefix();
 });
 $("#overlayUploadFile").on("mousedown", "input#filePicker", function(event) {
-  var path = remoteDialog.showOpenDialogSync({
+  var path = remote.dialog.showOpenDialogSync({
     properties: ["multiSelections"]
   });
   if (typeof path !== "undefined") {
@@ -1828,7 +1827,7 @@ $("#overlayUploadFile").on("mousedown", "input#filePicker", function(event) {
   event.preventDefault();
 });
 $("#overlayUploadFile").on("mousedown", "input#jwpubPicker", function(event) {
-  var path = remoteDialog.showOpenDialogSync({
+  var path = remote.dialog.showOpenDialogSync({
     filters: [
       { name: "JWPUB", extensions: ["jwpub"] }
     ]

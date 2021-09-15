@@ -6,15 +6,15 @@ const {
     autoUpdater
   } = require("electron-updater"),
   isDev = require("electron-is-dev"),
-  os = require("os");
-require("@electron/remote/main").initialize();
+  os = require("os"),
+  remote = require("@electron/remote/main");
 var win = null;
-
+remote.initialize();
 function createUpdateWindow() {
   win = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true,
+      //  enableRemoteModule: true,
       contextIsolation: false
     },
     width: 700,
@@ -22,10 +22,10 @@ function createUpdateWindow() {
     resizable: false,
     title: "JW Meeting Media Fetcher"
   });
+  remote.enable(win.webContents);
   win.setMenuBarVisibility(false);
   win.loadFile("index.html");
 }
-
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
@@ -36,7 +36,6 @@ if (!gotTheLock) {
       win.focus();
     }
   });
-
   ipcMain.on("autoUpdate", () => {
     win.webContents.send("hideThenShow", ["InternetCheck", "UpdateCheck"]);
     if (isDev) {
@@ -46,16 +45,12 @@ if (!gotTheLock) {
       autoUpdater.checkForUpdates();
     }
   });
-
   autoUpdater.on("error", () => {
     win.webContents.send("goAhead");
   });
-
-
   autoUpdater.on("update-not-available", () => {
     win.webContents.send("goAhead");
   });
-
   autoUpdater.on("update-available", () => {
     if (os.platform() == "darwin") {
       win.webContents.send("goAhead");
@@ -65,19 +60,15 @@ if (!gotTheLock) {
       autoUpdater.downloadUpdate();
     }
   });
-
   autoUpdater.on("update-downloaded", () => {
     win.webContents.send("hideThenShow", ["UpdateAvailable", "UpdateDownloaded"]);
     setImmediate(() => {
       autoUpdater.quitAndInstall();
     });
   });
-
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
-
   app.whenReady().then(createUpdateWindow);
-
   app.on("window-all-closed", () => {
     app.quit();
   });
