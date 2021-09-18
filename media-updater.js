@@ -1817,7 +1817,7 @@ $("#overlayUploadFile").on("keyup", "#enterPrefix input", function() {
 });
 $("#overlayUploadFile").on("mousedown", "input#filePicker", function(event) {
   var path = remote.dialog.showOpenDialogSync({
-    properties: ["multiSelections"]
+    properties: ["multiSelections", "openFile"]
   });
   if (typeof path !== "undefined") {
     $(this).val(path.join(" -//- ")).change();
