@@ -26,7 +26,7 @@
     "h264-mp4-encoder": "^1.0.12",
     "i18n": "^0.13.3",
     "image-size": "^1.0.0",
-    "is-port-reachable": "^3.0.0",
+    "is-port-reachable": "^4.0.0",
     "jquery": "^3.6.0",
     "os": "^0.1.2",
     "path": "^0.12.7",
