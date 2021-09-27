@@ -1,5 +1,5 @@
 const animationDuration = 200,
-  isPortReachable = require("is-port-reachable"),
+  axios = require("axios"),
   remote = require("@electron/remote"),
   {shell} = require("electron"),
   $ = require("jquery");
@@ -17,16 +17,14 @@ function checkInternet(online) {
   }
 }
 const updateOnlineStatus = async () => {
-  checkInternet((await isPortReachable(443, {host: "www.jw.org"})) ? true : false);
+  checkInternet((await isReachable("www.jw.org")));
 };
-
 updateOnlineStatus();
 require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
   $("#overlay" + message[1]).fadeIn(animationDuration, () => {
     $("#overlay" + message[0]).stop().hide();
   });
 });
-
 require("electron").ipcRenderer.on("macUpdate", () => {
   $("#bg-mac-update").fadeIn();
   $("#btn-settings").addClass("in-danger");
@@ -34,7 +32,6 @@ require("electron").ipcRenderer.on("macUpdate", () => {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
   });
 });
-
 require("electron").ipcRenderer.on("goAhead", () => {
   $("#overlayPleaseWait").fadeIn(animationDuration, () => {
     $("#overlayUpdateCheck").stop().hide();
@@ -43,7 +40,6 @@ require("electron").ipcRenderer.on("goAhead", () => {
 });
 
 const aspect = require("aspectratio"),
-  axios = require("axios"),
   bootstrap = require("bootstrap"),
   { createClient } = require("webdav"),
   dayjs = require("dayjs"),
@@ -79,7 +75,9 @@ var baseDate = dayjs().startOf("isoWeek"),
     keyboard: false
   }),
   now = dayjs().hour(0).minute(0).second(0).millisecond(0),
-  paths = {},
+  paths = {
+    app: remote.app.getPath("userData")
+  },
   pendingMusicFadeOut = {},
   perfStats = {},
   prefix,
@@ -89,10 +87,23 @@ var baseDate = dayjs().startOf("isoWeek"),
   webdavIsAGo = false,
   stayAlive,
   webdavClient;
-paths.app = remote.app.getPath("userData");
 paths.langs = path.join(paths.app, "langs.json");
 paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
 paths.prefs = path.join(paths.app, "prefs.json");
+
+datepickers = datetime(".timePicker", {
+  enableTime: true,
+  noCalendar: true,
+  dateFormat: "H:i",
+  time_24hr: true,
+  minuteIncrement: 15,
+  minTime: "06:00",
+  maxTime: "22:00",
+  onClose: function() {
+    var initiatorEl = $($(this)[0].element);
+    $("#" + initiatorEl.data("target")).val(initiatorEl.val()).change();
+  }
+});
 
 function goAhead() {
   if (fs.existsSync(paths.prefs)) {
@@ -446,42 +457,6 @@ async function executeStatement(db, statement) {
     }
   }
   return valObj;
-}
-datepickers = datetime(".timePicker", {
-  enableTime: true,
-  noCalendar: true,
-  dateFormat: "H:i",
-  time_24hr: true,
-  minuteIncrement: 15,
-  minTime: "06:00",
-  maxTime: "22:00",
-  onClose: function() {
-    var initiatorEl = $($(this)[0].element);
-    $("#" + initiatorEl.data("target")).val(initiatorEl.val()).change();
-  }
-});
-async function mp4Convert() {
-  perf("mp4Convert", "start");
-  $("#statusIcon").addClass("fa-microchip").removeClass("fa-photo-video");
-  $("#mp4Convert").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
-  await convertUnusableFiles();
-  var filesToProcess = glob.sync(path.join(paths.media, "*", "*"));
-  totals.mp4Convert = {
-    total: filesToProcess.length
-  };
-  totals.mp4Convert.current = 1;
-  for (var mediaFile of filesToProcess) {
-    progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
-    if (path.extname(mediaFile) !== ".mp4") {
-      await createVideoSync(path.basename(path.dirname(mediaFile)), path.basename(mediaFile));
-      fs.rmSync(mediaFile);
-    }
-    totals.mp4Convert.current++;
-    progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
-  }
-  $("#mp4Convert").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
-  $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
-  perf("mp4Convert", "stop");
 }
 async function ffmpegSetup() {
   if (!ffmpegIsSetup) {
@@ -893,6 +868,20 @@ async function getWeMediaFromDb() {
     if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spinner fa-pulse");
   }
 }
+async function isReachable(hostname, port) {
+  let returned = 500;
+  await axios.head("https://" + hostname + (port ? ":" + port : ""), {
+    adapter: require("axios/lib/adapters/http")
+  })
+    .then(function (answer) {
+      returned = (answer.status ? answer.status : answer);
+    })
+    .catch(async function (error) {
+      returned = (error.response && error.response.status ? error.response.status : error);
+    });
+  let reachable = ((returned >= 200 && returned < 400) || returned === 401 || returned === true);
+  return reachable;
+}
 function mkdirSync(dirPath) {
   try {
     fs.mkdirSync(dirPath, {
@@ -901,6 +890,29 @@ function mkdirSync(dirPath) {
   } catch (err) {
     if (err.code !== "EEXIST") throw err;
   }
+}
+async function mp4Convert() {
+  perf("mp4Convert", "start");
+  $("#statusIcon").addClass("fa-microchip").removeClass("fa-photo-video");
+  $("#mp4Convert").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+  await convertUnusableFiles();
+  var filesToProcess = glob.sync(path.join(paths.media, "*", "*"), {
+    ignore: path.join(paths.media, "*", "*.mp4")
+  });
+  totals.mp4Convert = {
+    total: filesToProcess.length,
+    current: 1
+  };
+  for (var mediaFile of filesToProcess) {
+    progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
+    await createVideoSync(path.basename(path.dirname(mediaFile)), path.basename(mediaFile));
+    fs.rmSync(mediaFile);
+    totals.mp4Convert.current++;
+    progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
+  }
+  $("#mp4Convert").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
+  $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
+  perf("mp4Convert", "stop");
 }
 function pdfRender(mediaFile, pdf, pageNum) {
   return new Promise((resolve)=>{
@@ -1168,17 +1180,6 @@ async function updateSongs() {
     $("label[for=typeFile]").click().addClass("active");
   }
 }
-// async function webdavCp(src, dest) {
-//   try {
-//     if (webdavIsAGo && src && dest) {
-//       if (await webdavClient.exists(src)) {
-//         await webdavClient.copyFile(src, dest);
-//       }
-//     }
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
 async function webdavGet(file) {
   var downloadRequired = true;
   let localFile = path.join(paths.media, file.folder, file.safeName);
@@ -1241,37 +1242,35 @@ async function webdavSetup() {
   $(".webdavHost, .webdavCreds, #congServerDir").removeClass("is-valid is-invalid");
   if (prefs.congServer && prefs.congServer.length > 0) {
     $(".webdavHost").addClass("is-invalid");
-    var congServerHeartbeat = await isPortReachable(prefs.congServerPort, {
-      host: prefs.congServer
-    });
+    let congServerHeartbeat = await isReachable(prefs.congServer, prefs.congServerPort);
     if (prefs.congServerPort && congServerHeartbeat) {
       $("#webdavStatus").removeClass("text-warning text-danger text-muted").addClass("text-success");
       $(".webdavHost").addClass("is-valid").removeClass("is-invalid");
-    } else {
-      $("#webdavStatus").removeClass("text-success text-warning text-muted").addClass("text-danger");
-    }
-    if (prefs.congServerPort && prefs.congServerUser && prefs.congServerPass && congServerHeartbeat) {
-      $("#webdavStatus").removeClass("text-success text-danger text-muted").addClass("text-warning");
-      var webdavLoginSuccessful = false;
-      try {
-        webdavClient = createClient(
-          "https://" + prefs.congServer + ":" + prefs.congServerPort,
-          {
-            username: prefs.congServerUser,
-            password: prefs.congServerPass
-          }
-        );
-        await webdavClient.getDirectoryContents("/");
-        webdavLoginSuccessful = true;
-        $("#webdavStatus").removeClass("text-warning text-danger text-muted").addClass("text-success");
-        $(".webdavCreds").addClass("is-valid");
-      } catch(err) {
-        console.error(err);
-        $("#webdavStatus").removeClass("text-success text-warning text-muted").addClass("text-danger");
+      if (prefs.congServerUser && prefs.congServerPass) {
+        $("#webdavStatus").removeClass("text-success text-danger text-muted").addClass("text-warning");
+        var webdavLoginSuccessful = false;
+        try {
+          webdavClient = createClient(
+            "https://" + prefs.congServer + ":" + prefs.congServerPort,
+            {
+              username: prefs.congServerUser,
+              password: prefs.congServerPass
+            }
+          );
+          await webdavClient.getDirectoryContents("/");
+          webdavLoginSuccessful = true;
+          $("#webdavStatus").removeClass("text-warning text-danger text-muted").addClass("text-success");
+          $(".webdavCreds").addClass("is-valid");
+        } catch(err) {
+          console.error(err.response);
+          $("#webdavStatus").removeClass("text-success text-warning text-muted").addClass("text-danger");
+          $(".webdav" + (err.response.status === 401 ? "Creds" : "Host")).addClass("is-invalid");
+        }
+      } else {
         $(".webdavCreds").addClass("is-invalid");
       }
     } else {
-      $(".webdavCreds").addClass("is-invalid");
+      $("#webdavStatus").removeClass("text-success text-warning text-muted").addClass("text-danger");
     }
     $("#specificCong").addClass("d-flex");
     $("#btn-upload").fadeIn(animationDuration);
@@ -1840,23 +1839,6 @@ $("#overlayUploadFile").on("mousedown", "input#jwpubPicker", function(event) {
   event.preventDefault();
 });
 
-// async function head(url, getRedirect) {
-//   let response = null,
-//     payload = null;
-//   try {
-//     payload = await axios.head(url, {
-//       adapter: require("axios/lib/adapters/http")
-//     });
-//     if (getRedirect) {
-//       response = payload.request.path;
-//     } else {
-//       response = payload.headers;
-//     }
-//   } catch (err) {
-//     console.error(url, err, payload);
-//   }
-//   return response;
-// }
 // async function getMwMediaFromWol(jsonRefContent) {
 //   if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
 //   try{
