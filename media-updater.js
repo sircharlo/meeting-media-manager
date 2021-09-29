@@ -336,10 +336,10 @@ function dateFormatter() {
   }
   $(".today").removeClass("today");
   for (var d = 0; d < 7; d++) {
-    $("#day" + d + " .dayLongDate .dayOfWeek").html(baseDate.clone().add(d, "days").locale(locale).format("ddd"));
-    $("#day" + d + " .dayLongDate .dayOfWeekLong").html(baseDate.clone().add(d, "days").locale(locale).format("dddd"));
-    $("#day" + d + " .dayLongDate .dateOfMonth .date").html(baseDate.clone().add(d, "days").locale(locale).format("DD"));
-    $("#day" + d + " .dayLongDate .dateOfMonth .month").html(baseDate.clone().add(d, "days").locale(locale).format("MMM"));
+    $("#day" + d + " .dayLongDate .dayOfWeek").text(baseDate.clone().add(d, "days").locale(locale).format("ddd"));
+    $("#day" + d + " .dayLongDate .dayOfWeekLong").text(baseDate.clone().add(d, "days").locale(locale).format("dddd"));
+    $("#day" + d + " .dayLongDate .dateOfMonth .date").text(baseDate.clone().add(d, "days").locale(locale).format("DD"));
+    $("#day" + d + " .dayLongDate .dateOfMonth .month").text(baseDate.clone().add(d, "days").locale(locale).format("MMM"));
     $("#mwDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     $("#weDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     let meetingInPast = baseDate.clone().add(d, "days").isBefore(now);
@@ -355,7 +355,7 @@ function displayMusicRemaining() {
   } else {
     timeRemaining = (isNaN($("#meetingMusic")[0].duration) ? 0 : ($("#meetingMusic")[0].duration - $("#meetingMusic")[0].currentTime) * 1000);
   }
-  $("#musicRemaining").html(dayjs.duration(timeRemaining, "ms").format((timeRemaining >= 3600000 ? "HH:" : "") + "mm:ss"));
+  $("#musicRemaining").text(dayjs.duration(timeRemaining, "ms").format((timeRemaining >= 3600000 ? "HH:" : "") + "mm:ss"));
 }
 async function downloadIfRequired(file) {
   file.downloadRequired = true;
@@ -587,7 +587,7 @@ async function getInitialData() {
   await getTranslations();
   await updateSongs();
   validateConfig();
-  $("#version").html("v" + remote.app.getVersion());
+  $("#version").text("v" + remote.app.getVersion());
   await webdavSetup();
   $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   if (os.platform() == "linux") $(".notLinux").prop("disabled", true);
@@ -605,7 +605,7 @@ async function getInitialData() {
   } else {
     $("#overlayPleaseWait").stop().fadeOut(animationDuration);
   }
-  $("#baseDate button, #baseDate .dropdown-item:eq(0)").html(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
+  $("#baseDate button, #baseDate .dropdown-item:eq(0)").text(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
   $("#baseDate .dropdown-item:eq(0)").addClass("active");
   for (var a = 1; a <= 4; a++) {
     $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "'>" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
@@ -643,9 +643,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
     let result = await get(url);
     if (result) {
       let mediaFileCategories = Object.values(result.files)[0];
-      let filetype = result.fileformat[0];
-      if ("MP4" in mediaFileCategories) filetype = "MP4";
-      for (var mediaFileItem of mediaFileCategories[filetype].reverse()) {
+      for (var mediaFileItem of mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : result.fileformat[0])].reverse()) {
         let videoRes = mediaFileItem.label.replace(/\D/g, "");
         if ((videoRes !== 0 && videoRes > prefs.maxRes.replace(/\D/g, "")) || mediaFiles.filter(mediaFile => mediaFile.title == mediaFileItem.title).length > 0) {
           continue;
@@ -1104,7 +1102,7 @@ function validateConfig() {
     }
   }
   if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
-  $("#musicFadeOutType label span").html(prefs.musicFadeOutTime);
+  $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
   $(".relatedToFadeOut, #enableMusicFadeOut").prop("disabled", !prefs.enableMusicButton);
   if (prefs.enableMusicButton) $(".relatedToFadeOut").prop("disabled", !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut && !prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
@@ -1288,7 +1286,7 @@ $("#baseDate").on("click", ".dropdown-item", function() {
   cleanUp([paths.media]);
   $("#baseDate .dropdown-item.active").removeClass("active");
   $(this).addClass("active");
-  $("#baseDate > button").html($(this).html());
+  $("#baseDate > button").text($(this).text());
   $(".alertIndicators").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
   dateFormatter();
 });
@@ -1465,10 +1463,10 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
       for (var item of itemsWithMultimedia) {
         $(docList).append("<button class='list-group-item list-group-item-action' data-docid='" + item.DocumentId + "'>" + item.Title + "</li>");
       }
-      $("#staticBackdrop .modal-header").html(i18n.__("selectDocument"));
+      $("#staticBackdrop .modal-header").text(i18n.__("selectDocument"));
       $("#staticBackdrop .modal-body").html(docList);
     } else {
-      $("#staticBackdrop .modal-body").html(i18n.__("noDocumentsFound"));
+      $("#staticBackdrop .modal-body").text(i18n.__("noDocumentsFound"));
       $(this).val("");
       $("#fileToUpload").val("").change();
     }
@@ -1521,7 +1519,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     tempMediaArray.push(tempMedia);
   }
   if (tempMediaArray.filter(item => !item.contents && !item.localpath && !item.url).length > 0) {
-    $("#staticBackdrop .modal-header").show().html(i18n.__("selectExternalMedia"));
+    $("#staticBackdrop .modal-header").show().text(i18n.__("selectExternalMedia"));
     $("#staticBackdrop .modal-body").html(missingMedia);
     $("#staticBackdrop .modal-footer button").prop("disabled", true);
     $("#staticBackdrop .modal-footer").show();
