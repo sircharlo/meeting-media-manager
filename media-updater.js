@@ -45,6 +45,7 @@ const aspect = require("aspectratio"),
   dayjs = require("dayjs"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
+  fullHd = [1920, 1080],
   glob = require("glob"),
   hme = require("h264-mp4-encoder"),
   datetime = require("flatpickr"),
@@ -66,7 +67,6 @@ var baseDate = dayjs().startOf("isoWeek"),
   datepickers,
   dryrun = false,
   ffmpegIsSetup = false,
-  hdRes = [1280, 720],
   jsonLangs = {},
   jwpubDbs = {},
   meetingMedia,
@@ -218,17 +218,42 @@ function convertPdf(mediaFile) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsLibWorker;
     pdfjsLib.getDocument(mediaFile).promise.then(async function(pdf) {
       for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        await pdfRender(mediaFile, pdf, pageNum);
+        await convertPdfPage(mediaFile, pdf, pageNum);
       }
       fs.rmSync(mediaFile);
       resolve();
     });
   });
 }
+function convertPdfPage(mediaFile, pdf, pageNum) {
+  return new Promise((resolve)=>{
+    pdf.getPage(pageNum).then(function(page) {
+      var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png");
+      $("body").append("<div id='pdf' style='display: none;'>");
+      $("div#pdf").append("<canvas id='pdfCanvas'></canvas>");
+      var scale = fullHd[1] / page.getViewport({scale: 1}).height * 4;
+      var viewport = page.getViewport({scale: scale});
+      var canvas = $("#pdfCanvas")[0];
+      canvas.height = fullHd[1] * 4;
+      canvas.width = page.getViewport({scale: scale}).width;
+      var context = canvas.getContext("2d");
+      var renderContext = {
+        canvasContext: context,
+        viewport: viewport
+      };
+      var renderTask = page.render(renderContext);
+      renderTask.promise.then(function() {
+        fs.writeFileSync(mediaFileConverted, new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+        $("div#pdf").remove();
+        resolve();
+      });
+    });
+  });
+}
 function convertSvg(mediaFile) {
   return new Promise((resolve)=>{
     var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
-    var svgFile = window.URL.createObjectURL(new Blob([fs.readFileSync(mediaFile, "utf8").replace(/(<svg[ a-zA-Z=":/.0-9%]*)(width="[0-9%]*")([ a-zA-Z=":/.0-9%]*>)/gm, "$1height='" + hdRes[1] + "'$3")], {type:"image/svg+xml;charset=utf-8"}));
+    var svgFile = window.URL.createObjectURL(new Blob([fs.readFileSync(mediaFile, "utf8").replace(/(<svg[ a-zA-Z=":/.0-9%]*)(width="[0-9%]*")([ a-zA-Z=":/.0-9%]*>)/gm, "$1height='" + fullHd[1] * 4 + "'$3")], {type:"image/svg+xml;charset=utf-8"}));
     $("body").append("<div id='svg' style='display: none;'>");
     $("div#svg").append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
     $("img#svgImg").on("load", function() {
@@ -294,14 +319,21 @@ function createVideoSync(mediaDir, media){
       try {
         var convertedImageDimesions = [];
         var imageDimesions = sizeOf(path.join(paths.media, mediaDir, media));
-        convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > hdRes[0] ? hdRes[0] - 1 : imageDimesions.width) : null), (hdRes[1] / hdRes[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > hdRes[1] ? hdRes[1] - 1 : imageDimesions.height)));
+        if (imageDimesions.orientation && imageDimesions.orientation >= 5) {
+          let oldWidth = imageDimesions.width;
+          imageDimesions.width = imageDimesions.height;
+          imageDimesions.height = oldWidth;
+        }
+        convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height)));
       } catch (err) {
         console.error("Unable to get dimensions for:", path.join(paths.media, mediaDir, media), "Setting manually...", err);
         convertedImageDimesions = [imageDimesions.width, imageDimesions.height];
       }
+      if (convertedImageDimesions.toString() == fullHd.toString() || convertedImageDimesions.toString() == [1280, 720].toString() || convertedImageDimesions.toString() == [Math.round(parseInt(prefs.maxRes.replace(/\D/g, "")) * 16 / 9), parseInt(prefs.maxRes.replace(/\D/g, ""))].toString()) convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
+        return dimension - 1;
+      });
       convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
-        if (dimension % 2) dimension = dimension - 1;
-        return dimension;
+        return (dimension % 2 ? dimension - 1 : dimension);
       });
       $("body").append("<div id='convert' style='display: none;'>");
       $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
@@ -775,7 +807,10 @@ async function getWeMediaFromDb() {
 async function isReachable(hostname, port) {
   let returned = 500;
   await axios.head("https://" + hostname + (port ? ":" + port : ""), {
-    adapter: require("axios/lib/adapters/http")
+    adapter: require("axios/lib/adapters/http"),
+    httpsAgent: new require("https").Agent({
+      rejectUnauthorized: false
+    })
   })
     .then(function (answer) {
       returned = (answer.status ? answer.status : answer);
@@ -817,31 +852,6 @@ async function mp4Convert() {
   $("#mp4Convert").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
   $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
   perf("mp4Convert", "stop");
-}
-function pdfRender(mediaFile, pdf, pageNum) {
-  return new Promise((resolve)=>{
-    pdf.getPage(pageNum).then(function(page) {
-      var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png");
-      $("body").append("<div id='pdf' style='display: none;'>");
-      $("div#pdf").append("<canvas id='pdfCanvas'></canvas>");
-      var scale = hdRes[1] / page.getViewport({scale: 1}).height * 4;
-      var viewport = page.getViewport({scale: scale});
-      var canvas = $("#pdfCanvas")[0];
-      canvas.height = hdRes[1] * 4;
-      canvas.width = page.getViewport({scale: scale}).width;
-      var context = canvas.getContext("2d");
-      var renderContext = {
-        canvasContext: context,
-        viewport: viewport
-      };
-      var renderTask = page.render(renderContext);
-      renderTask.promise.then(function() {
-        fs.writeFileSync(mediaFileConverted, new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
-        $("div#pdf").remove();
-        resolve();
-      });
-    });
-  });
 }
 function perf(func, op) {
   if (!perfStats[func]) perfStats[func] = {};
@@ -1106,7 +1116,6 @@ function validateConfig() {
   $(".relatedToFadeOut, #enableMusicFadeOut").prop("disabled", !prefs.enableMusicButton);
   if (prefs.enableMusicButton) $(".relatedToFadeOut").prop("disabled", !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut && !prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
-  if (prefs.maxRes) hdRes = [Math.round(parseInt(prefs.maxRes.replace(/\D/g, "")) * 16 / 9), parseInt(prefs.maxRes.replace(/\D/g, ""))];
   $("#mp4Convert").toggleClass("d-flex", prefs.betaMp4Gen);
   $("#btnMeetingMusic").toggle(prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
   $("#overlaySettings .invalid, #overlaySettings .is-invalid, #overlaySettings .btn-outline-danger").each(function() {
