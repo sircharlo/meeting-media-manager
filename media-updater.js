@@ -45,7 +45,7 @@ const aspect = require("aspectratio"),
   dayjs = require("dayjs"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
-  fullHd = [1920, 1080],
+  fullHd = [1280, 720],
   glob = require("glob"),
   hme = require("h264-mp4-encoder"),
   datetime = require("flatpickr"),
@@ -320,16 +320,14 @@ function createVideoSync(mediaDir, media){
         var convertedImageDimesions = [];
         var imageDimesions = sizeOf(path.join(paths.media, mediaDir, media));
         if (imageDimesions.orientation && imageDimesions.orientation >= 5) {
-          let oldWidth = imageDimesions.width;
-          imageDimesions.width = imageDimesions.height;
-          imageDimesions.height = oldWidth;
+          [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
         }
         convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height)));
       } catch (err) {
         console.error("Unable to get dimensions for:", path.join(paths.media, mediaDir, media), "Setting manually...", err);
         convertedImageDimesions = [imageDimesions.width, imageDimesions.height];
       }
-      if (convertedImageDimesions.toString() == fullHd.toString() || convertedImageDimesions.toString() == [1280, 720].toString() || convertedImageDimesions.toString() == [Math.round(parseInt(prefs.maxRes.replace(/\D/g, "")) * 16 / 9), parseInt(prefs.maxRes.replace(/\D/g, ""))].toString()) convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
+      if (convertedImageDimesions.toString() == fullHd.toString() || convertedImageDimesions.toString() == [Math.round(parseInt(prefs.maxRes.replace(/\D/g, "")) * 16 / 9), parseInt(prefs.maxRes.replace(/\D/g, ""))].toString()) convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
         return dimension - 1;
       });
       convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
@@ -807,10 +805,7 @@ async function getWeMediaFromDb() {
 async function isReachable(hostname, port) {
   let returned = 500;
   await axios.head("https://" + hostname + (port ? ":" + port : ""), {
-    adapter: require("axios/lib/adapters/http"),
-    httpsAgent: new require("https").Agent({
-      rejectUnauthorized: false
-    })
+    adapter: require("axios/lib/adapters/http")
   })
     .then(function (answer) {
       returned = (answer.status ? answer.status : answer);
