@@ -15,7 +15,7 @@
     "aspectratio": "^2.2.2",
     "axios": "^0.22.0",
     "bootstrap": "^5.1.1",
-    "bootstrap-dark-5": "^1.1.0",
+    "bootstrap-dark-5": "^1.1.1",
     "dayjs": "^1.10.7",
     "electron-is-dev": "^2.0.0",
     "electron-updater": "^4.3.10",
