@@ -29,7 +29,7 @@
     "jquery": "^3.6.0",
     "os": "^0.1.2",
     "path": "^0.12.7",
-    "pdfjs-dist": "^2.9.359",
+    "pdfjs-dist": "^2.10.377",
     "select2": "^4.1.0-rc.0",
     "sql.js": "^1.6.2",
     "webdav": "^4.7.0"
@@ -66,7 +66,7 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^15.1.0",
+    "electron": "^15.1.1",
     "electron-builder": "^22.11.7",
     "eslint": "^7.32.0"
   },
