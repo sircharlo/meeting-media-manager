@@ -642,7 +642,7 @@ async function getInitialData() {
   }
 }
 async function getLanguages() {
-  if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months")) || dayjs(prefs.langUpdatedLast).isBefore(dayjs("2021-02-04"))) {
+  if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months"))) {
     var jwLangs = await get("https://www.jw.org/en/languages/");
     let cleanedJwLangs = jwLangs.languages.filter(lang => lang.hasWebContent).map(lang => ({
       name: lang.vernacularName + " (" + lang.name + ")",
@@ -945,7 +945,9 @@ async function startMediaSync() {
   stayAlive = false;
   $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 0);
   await setVars();
-  if (!dryrun) await cleanUp([paths.media]);
+  for (let folder of glob.sync(path.join(paths.media, "*/"))) {
+    if (!dryrun && (webdavIsAGo || !webdavIsAGo && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(baseDate) || !(dayjs(path.basename(folder), "YYYY-MM-DD").isValid())))) await cleanUp([folder]);
+  }
   perf("getJwOrgMedia", "start");
   await getMwMediaFromDb();
   await getWeMediaFromDb();
