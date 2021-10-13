@@ -391,12 +391,7 @@ async function downloadIfRequired(file) {
   file.downloadRequired = true;
   file.localDir = file.pub ? path.join(paths.pubs, file.pub, file.issue) : path.join(paths.media, file.folder);
   file.localFile = path.join(file.localDir, file.pub ? path.basename(file.url) : file.safeName);
-  if (fs.existsSync(file.localFile)) {
-    file.localSize = fs.statSync(file.localFile).size;
-    if (file.filesize == file.localSize) {
-      file.downloadRequired = false;
-    }
-  }
+  if (fs.existsSync(file.localFile)) file.downloadRequired = file.filesize !== fs.statSync(file.localFile).size;
   if (file.downloadRequired) {
     mkdirSync(file.localDir);
     file.contents = await get(file.url, true);
@@ -1127,7 +1122,7 @@ function validateConfig() {
 async function webdavGet(file) {
   let localFile = path.join(paths.media, file.folder, file.safeName);
   if (fs.existsSync(localFile) ? !(file.filesize == fs.statSync(localFile).size) : true) {
-    if (!fs.existsSync(path.join(paths.media, file.folder))) fs.mkdirSync(path.join(paths.media, file.folder));
+    mkdirSync(path.join(paths.media, file.folder));
     file.contents = await webdavClient.getFileContents(file.url);
     fs.writeFileSync(localFile, new Buffer(file.contents));
   }

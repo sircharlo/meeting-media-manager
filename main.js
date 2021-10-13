@@ -14,7 +14,6 @@ function createUpdateWindow() {
   win = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
-      //  enableRemoteModule: true,
       contextIsolation: false
     },
     width: 700,
