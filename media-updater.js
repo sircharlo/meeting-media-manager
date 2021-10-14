@@ -800,7 +800,8 @@ async function getWeMediaFromDb() {
 async function isReachable(hostname, port) {
   let returned = 500;
   await axios.head("https://" + hostname + (port ? ":" + port : ""), {
-    adapter: require("axios/lib/adapters/http")
+    adapter: require("axios/lib/adapters/http"),
+    timeout: 2000
   })
     .then(function (answer) {
       returned = (answer.status ? answer.status : answer);
@@ -1169,16 +1170,15 @@ async function webdavRm(path) {
   }
 }
 async function webdavSetup() {
-  $(".webdavHost, .webdavCreds, #congServerDir").removeClass("is-valid is-invalid");
-  if (prefs.congServer && prefs.congServer.length > 0) {
-    $(".webdavHost").addClass("is-invalid");
-    let congServerHeartbeat = await isReachable(prefs.congServer, prefs.congServerPort);
+  let congServerEntered = !!(prefs.congServer && prefs.congServer.length > 0);
+  let congServerHeartbeat = false;
+  let webdavLoginSuccessful = false;
+  let webdavDirIsValid = false;
+  $("#webdavFolderList").empty();
+  if (congServerEntered) {
+    congServerHeartbeat = await isReachable(prefs.congServer, prefs.congServerPort);
     if (prefs.congServerPort && congServerHeartbeat) {
-      $("#webdavStatus").removeClass("text-warning text-danger text-muted").addClass("text-success");
-      $(".webdavHost").addClass("is-valid").removeClass("is-invalid");
       if (prefs.congServerUser && prefs.congServerPass) {
-        $("#webdavStatus").removeClass("text-success text-danger text-muted").addClass("text-warning");
-        var webdavLoginSuccessful = false;
         try {
           webdavClient = createClient(
             "https://" + prefs.congServer + ":" + prefs.congServerPort,
@@ -1187,72 +1187,48 @@ async function webdavSetup() {
               password: prefs.congServerPass
             }
           );
-          await webdavClient.getDirectoryContents("/");
-          webdavLoginSuccessful = true;
-          $("#webdavStatus").removeClass("text-warning text-danger text-muted").addClass("text-success");
-          $(".webdavCreds").addClass("is-valid");
+          if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
+            $("#congServerDir").val("/").change();
+          } else {
+            webdavDirIsValid = await webdavClient.exists(prefs.congServerDir);
+            webdavLoginSuccessful = true;
+            if (webdavDirIsValid) {
+              if (prefs.congServerDir !== "/") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
+              for (var item of (await webdavLs(prefs.congServerDir, true))) {
+                if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
+              }
+              $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
+              $("#webdavFolderList li").click(function() {
+                $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
+              });
+              $("#additionalMediaPrompt").prop("checked", false).change();
+            }
+          }
         } catch(err) {
-          $("#webdavStatus").removeClass("text-success text-warning text-muted").addClass("text-danger");
-          $(".webdav" + (err.response && err.response.status === 401 ? "Creds" : "Host")).addClass("is-invalid");
-          console.error(err.response);
+          console.error(err);
+          if (err.response) {
+            console.error(err.response);
+            if (err.response.status === 401) {
+              webdavLoginSuccessful = false;
+            } else if (err.response.status !== 404) {
+              congServerHeartbeat = false;
+            }
+          }
         }
-      } else {
-        $(".webdavCreds").addClass("is-invalid");
       }
-    } else {
-      $("#webdavStatus").removeClass("text-success text-warning text-muted").addClass("text-danger");
     }
-    $("#specificCong").addClass("d-flex");
-    $("#btn-upload").fadeIn(animationDuration);
-    var webdavDirIsValid = false;
-    if (prefs.congServerDir == null || prefs.congServerDir.length === 0) $("#congServerDir").val("/").change();
-    if (webdavLoginSuccessful) {
-      $("#webdavFolderList").fadeTo(animationDuration, 0);
-      try {
-        let webdavDestDirExists = await webdavClient.exists(prefs.congServerDir);
-        if (webdavDestDirExists) webdavDirIsValid = true;
-        $("#webdavFolderList").empty();
-        let webdavDestDir = await webdavLs((webdavDestDirExists ? prefs.congServerDir : "/"), true);
-        for (var item of webdavDestDir) {
-          if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
-        }
-        if (prefs.congServerDir !== "/") $("#webdavFolderList").prepend("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
-        $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
-      } catch(err) {
-        console.error(err);
-      }
-      $("#webdavFolderList").fadeTo(animationDuration, 1);
-      $("#congServerDir").toggleClass("is-valid", webdavDirIsValid).toggleClass("is-invalid", !webdavDirIsValid);
-      $("#webdavFolderList li").click(function() {
-        $("#congServerDir").val(path.posix.join((webdavDirIsValid ? prefs.congServerDir : "/"), $(this).text().trim())).change();
-      });
-    } else {
-      $("#webdavFolderList").empty();
-    }
-    if ((webdavLoginSuccessful && webdavDirIsValid) || !prefs.congServer || prefs.congServer.length === 0) {
-      $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").removeClass("in-danger");
-      $(".btn-webdav, #btn-upload").addClass("btn-primary").removeClass("btn-danger");
-      $("#specificCong").removeClass("alert-danger").find("i").removeClass("fa-times-circle").addClass("fa-spinner");
-    }
-    $("#btn-upload").prop("disabled", !(webdavLoginSuccessful && webdavDirIsValid));
-    $("#additionalMediaPrompt").prop("disabled", (webdavLoginSuccessful && webdavDirIsValid));
-    webdavIsAGo = (webdavLoginSuccessful && webdavDirIsValid);
-    if (webdavLoginSuccessful && webdavDirIsValid) {
-      $("#btn-upload").fadeTo(animationDuration, 1);
-      $("#additionalMediaPrompt").prop("checked", false).change();
-    } else {
-      $("#btn-upload, .btn-webdav").addClass("btn-danger").removeClass("btn-primary");
-      $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle").removeClass("fa-spinner fa-check-circle");
-      $("#btn-settings, #overlaySettings .btn-webdav.btn-danger").addClass("in-danger");
-    }
-  } else {
-    $("#webdavFolderList").fadeTo(animationDuration, 0).empty();
-    $(".btn-webdav.btn-warning").addClass("btn-primary").removeClass("btn-danger");
-    $("#specificCong").removeClass("d-flex");
-    $("#btn-upload").fadeOut(animationDuration);
-    webdavIsAGo = false;
-    $("#additionalMediaPrompt").prop("disabled", false);
   }
+  $("#btn-upload").toggle(congServerEntered).prop("disabled", congServerEntered && !webdavDirIsValid);
+  $(".btn-webdav, #btn-upload").toggleClass("btn-primary", !congServerEntered || (congServerEntered && webdavDirIsValid)).toggleClass("btn-danger", congServerEntered && !webdavDirIsValid);
+  $("#webdavStatus").toggleClass("text-success text-warning text-muted", webdavDirIsValid).toggleClass("text-danger", congServerEntered && !webdavDirIsValid);
+  $(".webdavHost").toggleClass("is-valid", congServerHeartbeat).toggleClass("is-invalid", congServerEntered && !congServerHeartbeat);
+  $(".webdavCreds").toggleClass("is-valid", webdavLoginSuccessful).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && !webdavLoginSuccessful));
+  $("#congServerDir").toggleClass("is-valid", webdavDirIsValid).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && !webdavDirIsValid));
+  $("#webdavFolderList").fadeTo(animationDuration, webdavDirIsValid);
+  $("#additionalMediaPrompt").prop("disabled", congServerEntered && webdavDirIsValid);
+  $("#specificCong").toggleClass("d-flex", congServerEntered).toggleClass("alert-danger", congServerEntered && !(congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid));
+  $("#btn-settings, #overlaySettings .btn-webdav").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
+  webdavIsAGo = (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
 }
 var dragenterHandler = () => {
   if ($("input#typeFile:checked").length > 0 || $("input#typeJwpub:checked").length > 0) $(".dropzone").css("display", "block");
