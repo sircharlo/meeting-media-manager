@@ -1,5 +1,8 @@
+// TODO: check svg resolution and white bg for lff for example
+
 const animationDuration = 200,
   axios = require("axios"),
+  net = require("net"),
   remote = require("@electron/remote"),
   {shell} = require("electron"),
   $ = require("jquery");
@@ -13,11 +16,11 @@ function checkInternet(online) {
     $("#overlayInternetFail").fadeIn(animationDuration, () => {
       $("#overlayInternetCheck").stop().hide();
     });
-    updateOnlineStatus();
+    setTimeout(updateOnlineStatus, 1000);
   }
 }
 const updateOnlineStatus = async () => {
-  checkInternet((await isReachable("www.jw.org")));
+  checkInternet((await isReachable("www.jw.org", 443)));
 };
 updateOnlineStatus();
 require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
@@ -797,20 +800,26 @@ async function getWeMediaFromDb() {
     if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spinner fa-pulse");
   }
 }
-async function isReachable(hostname, port) {
-  let returned = 500;
-  await axios.head("https://" + hostname + (port ? ":" + port : ""), {
-    adapter: require("axios/lib/adapters/http"),
-    timeout: 2000
-  })
-    .then(function (answer) {
-      returned = (answer.status ? answer.status : answer);
-    })
-    .catch(async function (error) {
-      returned = (error.response && error.response.status ? error.response.status : error);
-    });
-  let reachable = ((returned >= 200 && returned < 400) || returned === 401 || returned === true);
-  return reachable;
+function isReachable(hostname, port) {
+  return new Promise(resolve => {
+    try {
+      let client = net.createConnection(port, hostname);
+      client.setTimeout(5000);
+      client.on("timeout", () => {
+        client.destroy("Timeout: " + hostname + ":" + port);
+      });
+      client.on("connect", function() {
+        client.destroy();
+        resolve(true);
+      });
+      client.on("error", function(e) {
+        console.error(e);
+        resolve(false);
+      });
+    } catch(err) {
+      resolve(false);
+    }
+  });
 }
 function mkdirSync(dirPath) {
   try {
@@ -1175,9 +1184,9 @@ async function webdavSetup() {
   let webdavLoginSuccessful = false;
   let webdavDirIsValid = false;
   $("#webdavFolderList").empty();
-  if (congServerEntered) {
+  if (congServerEntered && prefs.congServerPort) {
     congServerHeartbeat = await isReachable(prefs.congServer, prefs.congServerPort);
-    if (prefs.congServerPort && congServerHeartbeat) {
+    if (congServerHeartbeat) {
       if (prefs.congServerUser && prefs.congServerPass) {
         try {
           webdavClient = createClient(
@@ -1660,21 +1669,27 @@ $("#overlayUploadFile").on("change", "#enterPrefix input, #chooseMeeting input, 
 $("#overlayUploadFile").on("keyup", "#enterPrefix input", function() {
   getPrefix();
 });
-$("#overlayUploadFile").on("mousedown", "input#filePicker", function(event) {
-  let path = remote.dialog.showOpenDialogSync({
+$("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", function(event) {
+  let thisId = $(this).prop("id");
+  let options = {
     properties: ["multiSelections", "openFile"]
-  });
-  $(this).val((typeof path !== "undefined" ? path.join(" -//- ") : "")).change();
+  };
+  if (thisId.includes("jwpub")) {
+    options = {
+      filters: [
+        { name: "JWPUB", extensions: ["jwpub"] }
+      ]
+    };
+  }
+  let path = remote.dialog.showOpenDialogSync(options);
+  $(this).val((typeof path !== "undefined" ? (thisId.includes("file") ? path.join(" -//- ") : path) : "")).change();
   event.preventDefault();
 });
-$("#overlayUploadFile").on("mousedown", "input#jwpubPicker", function(event) {
-  let path = remote.dialog.showOpenDialogSync({
-    filters: [
-      { name: "JWPUB", extensions: ["jwpub"] }
-    ]
-  });
-  $(this).val((typeof path !== "undefined" ? path : "")).change();
-  event.preventDefault();
+$("#webdavProviders a").on("click", function() {
+  let data = $(this).data();
+  for (let i in data) {
+    $("#cong" + (i.charAt(0).toUpperCase() + i.substring(1)).replace(/-./g, c => c.substring(1).toUpperCase())).val(data[i]).change();
+  }
 });
 
 // async function getMwMediaFromWol(jsonRefContent) {
