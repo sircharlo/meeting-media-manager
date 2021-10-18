@@ -635,9 +635,20 @@
       <i id="webdavStatus" class="fas fa-fw fa-cloud fa-3x text-muted"></i>
     </div>
     <div class="d-flex flex-row py-3 align-items-center">
-      <label for="congServer" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavHostname"></label>
-      <div class="col-7">
-        <input type="text" class="form-control form-control-sm webdavHost" id="congServer" required />
+      <div class="dropdown col-5 text-start" id="webdavProviders">
+        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <span class="i18n" data-i18n-string="webdavHostname"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" data-server="dav.box.com" data-server-port="443" data-server-dir="/dav/">Box</a></li>
+          <li><a class="dropdown-item" data-server="app.koofr.net" data-server-port="443" data-server-dir="/dav/Koofr/">Koofr</a></li>
+          <li><a class="dropdown-item" data-server="webdav.pcloud.com" data-server-port="443" data-server-dir="/">pCloud</a></li>
+          <li><a class="dropdown-item" data-server="seto.teracloud.jp" data-server-port="443" data-server-dir="/dav/">TeraCLOUD</a></li>
+        </ul>
+      </div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-text">https://</span>
+        <input type=" text" class="form-control form-control-sm webdavHost" id="congServer" required />
       </div>
     </div>
     <div class="d-flex flex-row py-3 align-items-center">
@@ -821,9 +832,9 @@
       </div>
       <div class="col-6 text-center">
         <div class="btn-group" id="baseDate">
-          <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown">
           </button>
-          <div class="dropdown-menu" aria-labelledby="baseDate-dropdown">
+          <div class="dropdown-menu">
             <button class="dropdown-item" value=""></button>
           </div>
         </div>
@@ -838,12 +849,12 @@
       </div>
     </div>
   </div>
-  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           ...
