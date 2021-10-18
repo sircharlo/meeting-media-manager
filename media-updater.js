@@ -256,21 +256,26 @@ function convertPdfPage(mediaFile, pdf, pageNum) {
 function convertSvg(mediaFile) {
   return new Promise((resolve)=>{
     var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
-    var svgFile = window.URL.createObjectURL(new Blob([fs.readFileSync(mediaFile, "utf8").replace(/(<svg[ a-zA-Z=":/.0-9%]*)(width="[0-9%]*")([ a-zA-Z=":/.0-9%]*>)/gm, "$1height='" + fullHd[1] * 4 + "'$3")], {type:"image/svg+xml;charset=utf-8"}));
-    $("body").append("<div id='svg' style='display: none;'>");
+    $("body").append("<div id='svg'>");
     $("div#svg").append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
     $("img#svgImg").on("load", function() {
-      var canvas = $("#svgCanvas")[0],
+      let canvas = $("#svgCanvas")[0],
         image = $("img#svgImg")[0];
+      image.height = fullHd[1] * 2;
       canvas.height = image.height;
       canvas.width  = image.width;
-      canvas.getContext("2d").drawImage(image, 0, 0);
+      let canvasContext = canvas.getContext("2d");
+      canvasContext.fillStyle = "white";
+      canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+      canvasContext.imageSmoothingEnabled = true;
+      canvasContext.imageSmoothingQuality = "high";
+      canvasContext.drawImage(image, 0, 0);
       fs.writeFileSync(mediaFileConverted, new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
       fs.rmSync(mediaFile);
       $("div#svg").remove();
       return resolve();
     });
-    $("img#svgImg").prop("src", svgFile);
+    $("img#svgImg").prop("src", mediaFile);
   });
 }
 async function convertUnusableFiles() {
