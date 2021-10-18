@@ -1,5 +1,3 @@
-// TODO: check svg resolution and white bg for lff for example
-
 const animationDuration = 200,
   axios = require("axios"),
   net = require("net"),
