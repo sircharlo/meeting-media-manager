@@ -1224,7 +1224,7 @@ async function webdavSetup() {
           console.error(err);
           if (err.response) {
             console.error(err.response);
-            if (err.response.status === 401) {
+            if (err.response.status === 401 || err.response.status === 405) {
               webdavLoginSuccessful = false;
             } else if (err.response.status !== 404) {
               congServerHeartbeat = false;
@@ -1701,6 +1701,7 @@ $("#version:not(.bg-danger)").on("click", function() {
 $("#webdavProviders a").on("click", function() {
   let data = $(this).data();
   for (let i in data) {
-    $("#cong" + (i.charAt(0).toUpperCase() + i.substring(1)).replace(/-./g, c => c.substring(1).toUpperCase())).val(data[i]).change();
+    $("#cong" + (i.charAt(0).toUpperCase() + i.substring(1)).replace(/-./g, c => c.substring(1).toUpperCase())).val(data[i]);
   }
+  $("#congServer").change();
 });
