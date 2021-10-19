@@ -65,7 +65,7 @@ The underlying congregation-level syncing mechanism uses WebDAV. It requires the
 - maintain a secured WebDAV server that is web-accessible, or
 - use a third-party cloud storage service that supports the WebDAV protocol.
 
-Once the VO has set up their WebDAV server, or once they have registered on a cloud storage site that support WebDAV, they should enter their connection information in the Settings > ☁️ section to test it and make sure that it works properly.
+Once the VO has set up their WebDAV server, or once they have registered on a cloud storage site that support WebDAV, they should enter their connection information in the [Settings > ☁️](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/04-upload-settings.png?raw=true) section to test it and make sure that it works properly.
 
 All users from a congregation that wish to be synchronized together should connect to the same WebDAV server using the connection information and credentials provided to them by the VO. To set up the connection, go to Settings, then click on the **☁️** button.
 
