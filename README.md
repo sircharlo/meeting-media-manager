@@ -69,7 +69,7 @@ Once the VO has set up their WebDAV server, or once they have registered on a cl
 
 All users from a congregation that wish to be synchronized together should connect to the same WebDAV server using the connection information and credentials provided to them by the VO. To set up the connection, go to Settings, then click on the **☁️** button.
 
-> **Note:** Are you looking for a free, WebDAV-compatible cloud storage provider? Try clicking on the *WebDAV Server* button in the ☁️ section in JWMMF. This will show a list of providers that have been known to be compatible with JWMMF. Please note that this list is being provided as a courtesy, and in no way represents an endorsement of any particular provider. The best server is always the one you own.
+> **Note:** Are you looking for a free, WebDAV-compatible cloud storage provider? Try clicking on the *WebDAV Hostname* button in the ☁️ section in JWMMF. This will show a list of providers that have been known to be compatible with JWMMF. Please note that this list is being provided as a courtesy, and in no way represents an endorsement of any particular provider. The best server is always the one you own.
 
 > **Note:** As detailed in their support pages, [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box), [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) and [TeraCLOUD](https://teracloud.jp/en/support_account_login-settings_apps.html) all require that an app-specific password be created for the purpose of enabling WebDAV connections to their service.
 

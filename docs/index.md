@@ -69,7 +69,7 @@ Once the VO has set up their WebDAV server, or once they have registered on a cl
 
 All users from a congregation that wish to be synchronized together should connect to the same WebDAV server using the connection information and credentials provided to them by the VO. To set up the connection, go to Settings, then click on the **☁️** button.
 
-> **Note:** Are you looking for a free, WebDAV-compatible cloud storage provider? Try clicking on the *WebDAV Server* button in the ☁️ section in JWMMF. This will show a list of providers that have been known to be compatible with JWMMF. Please note that this list is being provided as a courtesy, and in no way represents an endorsement of any particular provider. The best server is always the one you own.
+> **Note:** Are you looking for a free, WebDAV-compatible cloud storage provider? Try clicking on the *WebDAV Hostname* button in the ☁️ section in JWMMF. This will show a list of providers that have been known to be compatible with JWMMF. Please note that this list is being provided as a courtesy, and in no way represents an endorsement of any particular provider. The best server is always the one you own.
 
 > **Note:** As detailed in their support pages, [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box), [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) and [TeraCLOUD](https://teracloud.jp/en/support_account_login-settings_apps.html) all require that an app-specific password be created for the purpose of enabling WebDAV connections to their service.
 
@@ -90,6 +90,7 @@ The app should run as is on most modern computers running Windows, Linux, or Mac
 
 ##### Windows
 On opening the installer, you might get [an error](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/07-win-smartscreen.png?raw=true) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+
 ##### Linux
 As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
 
@@ -102,6 +103,7 @@ If the output is `0`, then the AppImage will not run unless you run the followin
 Make sure you read up on [what this change entails](https://lwn.net/Articles/673597/) before you do this.
 
 ##### Mac
+
 For technical reasons, the auto-updater does not work on macOS. Mac users will instead see a red, pulsing notification on the main screen of the app and in Settings when an update is available. Clicking on the notification in Settings will open the latest release's download page automatically.
 
 If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
@@ -117,3 +119,5 @@ If ever you run into any issues with the app or the underlying script, please us
 ## I have an idea for a great new feature!
 
 I'm open to suggestions! Please use [GitHub Discussions](https://github.com/sircharlo/jw-meeting-media-fetcher/discussions) to let me know.
+
+*- COS*
