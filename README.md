@@ -46,19 +46,36 @@ This allows all media files to be shared in Zoom using its [native MP4 sharing f
 
 ### Congregation-level media syncing (☁️)
 
-The brother designated as _videoconference organizer_ (VO) by the body of elders can use JWMMF to manage what media will be available to the person or team taking care of media for any given meeting. For example, he can:
+> **Note:** Usage of the congregation-level media syncing feature is opt-in and entirely optional.
 
-- upload additional media to be shared during a meeting (such as for the circuit overseer's visit, or for public speakers' talks)
-- hide media that for one reason or another is not relevant for a given meeting (for example, when a part has been replaced by another one by the local branch)
-- make recurring media available, to be shared at every meeting (such as a yeartext video, or an announcement slide)
+The brother designated as _videoconference organizer_ (VO) by the body of elders can optionally use JWMMF to manage what media will be available to the person or team taking care of media for any given meeting. For example, he can:
 
-Please note that enabling congregation-level media syncing automatically disables the *Offer to import additional media* option. This is by design. When congregation-level media syncing is enabled, please use the **☁️** button on the main screen of the app to upload any additional media to the WebDAV server. This ensures that all who are taking care of media in your congregation receive the necessary media upon clicking the *Get media!* button.
+- upload **additional** media to be shared during a meeting (such as for the circuit overseer's visit, or for public speakers' talks)
+- **hide** media that is not relevant for a given meeting (for example, when a part has been replaced by another one by the local branch)
+- make **recurring** media available, to be shared at every meeting (such as a yeartext video, or an announcement slide)
 
-> **Note:** Usage of the congregation-level media syncing features is entirely optional. No data is shared or uploaded to any third  parties in the process. The underlying congregation-level syncing mechanism uses WebDAV, and simply requires the VO (or someone under his supervision) to maintain a secured WebDAV server. All users from a congregation that wish to be synchronized together should connect to the VO's WebDAV server using the connection information that he provides them. To do so, go to Settings, then click on the **☁️** button.
+> **Note:** Enabling congregation-level media syncing automatically disables the *Offer to import additional media* option. This is by design.
 
-## Does this app depend on external sites, sources or curators to download publications and meeting media?
+When congregation-level media syncing is enabled, the **☁️** button on the main screen of the app is used to upload or hide media for a given meeting. This ensures that all who are taking care of media in your congregation receive the necessary media upon clicking the *Get media!* button, if they are connected to the same server.
 
-**No.** The app behaves similarly to JW Library. It downloads data such as publications and media directly from one source only: the official JW website and its content delivery network. At runtime, the app automatically determines what needs to be downloaded, such as media files and publications. The source code is available for all to examine and verify this.
+#### Setting up congregation-level media syncing
+
+The underlying congregation-level syncing mechanism uses WebDAV. It requires the VO (or someone under his supervision) to either:
+
+- maintain a secured WebDAV server that is web-accessible, or
+- use a third-party cloud storage service that supports the WebDAV protocol.
+
+Once the VO has set up their WebDAV server, or once they have registered on a cloud storage site that support WebDAV, they should enter their connection information in the Settings > ☁️ section to test it and make sure that it works properly.
+
+All users from a congregation that wish to be synchronized together should connect to the same WebDAV server using the connection information and credentials provided to them by the VO. To set up the connection, go to Settings, then click on the **☁️** button.
+
+> **Note:** Are you looking for a free, WebDAV-compatible cloud storage provider? Try clicking on the *WebDAV Server* button in the ☁️ section in JWMMF. This will show a list of providers that have been known to be compatible with JWMMF. Please note that this list is being provided as a courtesy, and in no way represents an endorsement of any particular provider. The best server is always the one you own.
+
+> **Note:** As detailed in their support pages, [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box), [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) and [TeraCLOUD](https://teracloud.jp/en/support_account_login-settings_apps.html) all require that an app-specific password be created for the purpose of enabling WebDAV connections to their service.
+
+## Does this app depend on external sites, sources or "curators" to download publications and meeting media?
+
+**No.** The app behaves similarly to JW Library. It downloads publications and media directly from the official JW.org website and its content delivery network. At runtime, the app automatically determines what needs to be downloaded, such as media files and publications. The source code is available for all to examine and verify this.
 
 ## Does this app infringe the JW.org Terms of Use?
 
@@ -73,25 +90,23 @@ The app should run as is on most modern computers running Windows, Linux, or Mac
 
 ##### Windows
 On opening the installer, you might get [an error](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/07-win-smartscreen.png?raw=true) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+
 ##### Linux
-As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html):
-
-> AppImages based on Electron require the kernel to be configured in a certain way to allow for its sandboxing to work as intended (specifically, the kernel needs to be allowed to provide “unprivileged namespaces”). Many distributions come with this configured out of the box (like Ubuntu for instance), but some do not (for example Debian).
-
-Simply put, this means that if the AppImage fails to open properly, then you'll need to confirm the output of the following command:
+As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
 
 `sysctl kernel.unprivileged_userns_clone`
 
-If the output is `kernel.unprivileged_userns_clone = 0`, then the AppImage will not run unless you run the following command and then reboot:
+If the output is `0`, then the AppImage will not run unless you run the following command and then reboot:
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Before you do this however, make sure you read up on what this change entails, for example [here](https://lwn.net/Articles/673597/).
+Make sure you read up on [what this change entails](https://lwn.net/Articles/673597/) before you do this.
 
 ##### Mac
-For technical reasons, the auto-updater does not work on Macs. Mac users will instead see a red, pulsing notification on the main screen of the app and in Settings when an update is available. Clicking on the notification in Settings will open the latest release's download page automatically.
 
-Additionally, if upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
+For technical reasons, the auto-updater does not work on macOS. Mac users will instead see a red, pulsing notification on the main screen of the app and in Settings when an update is available. Clicking on the notification in Settings will open the latest release's download page automatically.
+
+If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
 
 If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860). For example, you could try running this command in Terminal:
 
@@ -104,3 +119,5 @@ If ever you run into any issues with the app or the underlying script, please us
 ## I have an idea for a great new feature!
 
 I'm open to suggestions! Please use [GitHub Discussions](https://github.com/sircharlo/jw-meeting-media-fetcher/discussions) to let me know.
+
+*- COS*
