@@ -29,7 +29,7 @@ require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
 require("electron").ipcRenderer.on("macUpdate", () => {
   $("#bg-mac-update").fadeIn();
   $("#btn-settings").addClass("in-danger");
-  $("#version").addClass("bg-danger in-danger").removeClass("bg-secondary").append(" <i class='fas fa-mouse-pointer'></i>").click(function() {
+  $("#version").addClass("bg-danger in-danger").removeClass("bg-primary").append(" <i class='fas fa-mouse-pointer'></i>").click(function() {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
   });
 });
@@ -115,7 +115,6 @@ function goAhead() {
     }
     prefsInitialize();
   }
-  updateCleanup();
   getInitialData();
   dateFormatter();
   $("#overlaySettings input:not(.timePicker), #overlaySettings select, #overlayWebdav input, #overlayWebdav select").on("change", function() {
@@ -617,6 +616,7 @@ async function getInitialData() {
   await getLanguages();
   await getTranslations();
   await updateSongs();
+  updateCleanup();
   validateConfig();
   $("#version").text("v" + remote.app.getVersion());
   await webdavSetup();
@@ -947,6 +947,11 @@ function setVars() {
   }
   perf("setVars", "stop");
 }
+function showReleaseNotes() {
+  $("#staticBackdrop .modal-header").html("<h5 class='modal-title'>" + i18n.__("whatsNew") + "</h5>");
+  $("#staticBackdrop .modal-body").html(i18n.__("whatsNewDetails"));
+  myModal.show();
+}
 async function startMediaSync() {
   perf("total", "start");
   $("#statusIcon").addClass("text-primary").removeClass("text-muted");
@@ -1068,6 +1073,7 @@ function updateCleanup() {
     if (lastRunVersion !== remote.app.getVersion()) {
       cleanUp([paths.lang, paths.pubs]);
       fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
+      if (lastRunVersion !== 0) showReleaseNotes();
     }
   }
 }
@@ -1464,6 +1470,9 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
     $("#fileToUpload").val("").change();
   }
 });
+$("#staticBackdrop").on("click", "a", function() {
+  shell.openExternal($(this).data("href"));
+});
 $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
   $("#docSelect button").prop("disabled", true);
   $(this).addClass("active");
@@ -1685,6 +1694,9 @@ $("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", f
   let path = remote.dialog.showOpenDialogSync(options);
   $(this).val((typeof path !== "undefined" ? (thisId.includes("file") ? path.join(" -//- ") : path) : "")).change();
   event.preventDefault();
+});
+$("#version:not(.bg-danger)").on("click", function() {
+  showReleaseNotes();
 });
 $("#webdavProviders a").on("click", function() {
   let data = $(this).data();

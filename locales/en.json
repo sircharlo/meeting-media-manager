@@ -34,5 +34,7 @@
 	"webdavPort": "WebDAV Port",
 	"webdavServer": "WebDAV Server",
 	"webdavUser": "WebDAV Username",
-	"weMeetingDay": "Weekend meeting"
+	"weMeetingDay": "Weekend meeting",
+	"whatsNew": "What's new in this version?",
+	"whatsNewDetails": "<p>Notable changes:</p><ul><li>A few free cloud hosting providers were added to the <a href='#' data-href='https://github.com/sircharlo/jw-meeting-media-fetcher#congregation-level-media-syncing-%EF%B8%8F'>congregation media syncing</a> setup screen, now making it easier than ever to enable this useful feature; give it a try!</li><li>Syncing media will no longer wipe the current week's folders, unless congregation media syncing is enabled</li><li>SVG files are now better rendered</li></ul><p>Issues fixed:</p><ul><li>Importing media from older JWPUB files didn't work as expected</li><li>JPG image orientation wasn't taken into consideration properly</li><li>Many minor bugfixes and under-the-hood improvements</li></ul><p>Enjoy!</p>"
 }

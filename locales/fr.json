@@ -32,5 +32,7 @@
   "webdavPort": "Port WebDAV",
   "webdavServer": "Serveur WebDAV",
   "webdavUser": "Nom d'utilisateur WebDAV",
-  "weMeetingDay": "Réunion de fin de semaine"
+  "weMeetingDay": "Réunion de fin de semaine",
+	"whatsNew": "Quoi de neuf dans cette version?",
+	"whatsNewDetails": "<p>Changements importants:</p><ul><li>Quelques fournisseurs de services d'hébergement en ligne gratuits ont été ajoutés à l'écran de configuration de la <a href='#' data-href='https://github.com/sircharlo/jw-meeting-media-fetcher#congregation-level-media-syncing-%EF%B8%8F'>synchronisation des médias de l'assemblée</a>, ce qui facilite plus que jamais l'activation de cette fonction utile; faites-en l'essai!</li><li>La synchronisation des médias ne supprime plus les dossiers de la semaine en cours, sauf si la synchronisation de l'assemblée est activée</li><li>Les fichiers SVG sont maintenant convertis en meilleure qualité</li></ul><p>Problèmes corrigés:</p><ul><li>L'importation de médias à partir de fichiers JWPUB plus anciens ne fonctionnait pas toujours</li><li>La rotation des images JPG n'était pas prise en charge correctement</li><li>Plusieurs corrections de bogues mineurs et améliorations sous le capot</li></ul><p>Amusez-vous bien!</p>"
 }
