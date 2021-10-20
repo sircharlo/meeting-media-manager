@@ -51,10 +51,6 @@
       border-color: var(--bs-danger) !important;
     }
 
-    .timePickerContainer {
-      width: 10%;
-    }
-
     .timePicker {
       text-align: center;
     }
@@ -163,25 +159,13 @@
       color: darkorange;
     }
 
+    .wasHidden {
+      text-decoration: line-through;
+    }
+
     .confirmDelete {
       background-color: var(--bs-dark);
       color: var(--bs-danger)
-    }
-
-    div#enterPrefix input {
-      text-align: center;
-    }
-
-    div#enterPrefix div:not(:last-of-type) {
-      margin-right: 0.2em;
-    }
-
-    div#enterPrefix div:not(:first-of-type) {
-      margin-left: 0.2em;
-    }
-
-    div#enterPrefix div.seperator {
-      margin-right: 1em;
     }
 
     div#enterPrefix input::-webkit-outer-spin-button,
@@ -380,37 +364,30 @@
       </div>
     </div>
   </div>
-  <div id="overlayDryrun" class="overlay justify-content-center" style="display: none;">
-    <div class="align-self-center">
-      <div class="align-self-center fa-5x" role="status">
-        <i class="fas fa-fw fa-cog fa-spin"></i>
-      </div>
-    </div>
-  </div>
   <div id="overlayComplete" class="overlay justify-content-center" style="display: none;">
     <div class="align-self-center">
       <div class="align-self-center text-primary fa-5x" role="status">
         <i class="fas fa-fw fa-smile-beam"></i>
       </div>
       <div class="align-self-center fa-2x" role="status">
-        <button id="btnStayAlive" class="btn btn-primary" style="opacity: 0;">
+        <button id="btnStayAlive" class="btn btn-primary" style="display: none;">
           <i class="fas fa-user-cog"></i>
         </button>
       </div>
     </div>
   </div>
   <div id="overlayUploadFile" class="overlay flex-column px-3" style="display: none;">
-    <div class="align-items-center d-flex justify-content-center py-4">
-      <i class="fas fa-fw fa-file-download fa-3x text-muted"></i>
+    <div class="py-4 row">
+      <i class="fas fa-fw fa-file-download fa-3x text-muted col"></i>
     </div>
-    <div class="align-items-center d-flex justify-content-center py-2">
-      <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="targetMeeting"></div>
-      <div class="btn-group btn-group-toggle col-7" id="chooseMeeting">
+    <div class="align-items-center row justify-content-center py-2">
+      <div class="text-start i18n col-5" data-i18n-string="targetMeeting"></div>
+      <div class="btn-group btn-group-toggle col" id="chooseMeeting">
       </div>
     </div>
-    <div class="align-items-center d-flex justify-content-center py-2 relatedToUploadType">
-      <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="uploadType"></div>
-      <div class="btn-group btn-group-toggle col-7" id="chooseUploadType">
+    <div class="align-items-center row justify-content-center py-2 relatedToUploadType">
+      <div class="text-start i18n col-5" data-i18n-string="uploadType"></div>
+      <div class="btn-group btn-group-toggle col" id="chooseUploadType">
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off">
         <label class="btn btn-outline-primary i18n" for="typeSong" data-i18n-string="song"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeFile" autocomplete="off">
@@ -419,42 +396,30 @@
         <label class="btn btn-outline-primary i18n" for="typeJwpub" data-i18n-string="jwpub"></label>
       </div>
     </div>
-    <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
-      <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="mediaToAdd"></div>
-      <div class="col-7 file-to-upload relatedToUpload">
+    <div class="align-items-center row justify-content-center py-2 relatedToUpload">
+      <div class="text-start i18n col-5" data-i18n-string="mediaToAdd"></div>
+      <div class="col file-to-upload relatedToUpload">
         <select class="form-control form-control-sm" id="songPicker" style="display: none" disabled="disabled"></select>
         <input type="text" class="form-control form-control-sm" id="filePicker" style="display: none" disabled="disabled" />
         <input type="text" class="form-control form-control-sm localOrRemoteFile" id="jwpubPicker" style="display: none" disabled="disabled" />
         <input type="hidden" id="fileToUpload" />
       </div>
     </div>
-    <div class="align-items-center d-flex justify-content-center py-2 relatedToUpload">
-      <div class="flex-fill pr-3 text-start i18n col-5" data-i18n-string="filenamePrefix"></div>
-      <div class="d-flex col-7" id="enterPrefix">
-        <div>
-          <input class="form-control enterPrefixInput" type="text" maxlength="1" id="enterPrefix-0" />
-        </div>
-        <div class="seperator">
-          <input class="form-control enterPrefixInput" type="text" maxlength="1" id="enterPrefix-1" disabled />
-        </div>
-        <div>
-          <input class="form-control enterPrefixInput" type="text" maxlength="1" id="enterPrefix-2" disabled />
-        </div>
-        <div class="seperator">
-          <input class="form-control enterPrefixInput" type="text" maxlength="1" id="enterPrefix-3" disabled />
-        </div>
-        <div>
-          <input class="form-control enterPrefixInput" type="text" maxlength="1" id="enterPrefix-4" disabled />
-        </div>
-        <div>
-          <input class="form-control enterPrefixInput" v type="text" maxlength="1" id="enterPrefix-5" disabled />
-        </div>
+    <div class="align-items-center row justify-content-center py-2 relatedToUpload">
+      <div class="text-start i18n col-5" data-i18n-string="filenamePrefix"></div>
+      <div class="col d-flex text-center">
+        <input class="col enterPrefixInput form-control me-1 text-center" type="text" maxlength="1" id="enterPrefix-0" />
+        <input class="col enterPrefixInput form-control me-3 text-center" type="text" maxlength="1" id="enterPrefix-1" disabled />
+        <input class="col enterPrefixInput form-control me-1 text-center" type="text" maxlength="1" id="enterPrefix-2" disabled />
+        <input class="col enterPrefixInput form-control me-3 text-center" type="text" maxlength="1" id="enterPrefix-3" disabled />
+        <input class="col enterPrefixInput form-control me-1 text-center" type="text" maxlength="1" id="enterPrefix-4" disabled />
+        <input class="col enterPrefixInput form-control text-center" v type="text" maxlength="1" id="enterPrefix-5" disabled />
       </div>
     </div>
-    <div class="d-flex text-start">
+    <div class="flex-fill py-3 row text-start">
       <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
-    <div class="d-flex py-3 flex-fill align-items-end">
+    <div class="align-items-end py-3 row">
       <div class="col-4 text-start">
         <button class="btn btn-dark" id="btnCancelUpload" type="button">
           <i class="fas fa-fw fa-home"></i>
@@ -472,28 +437,35 @@
       </div>
     </div>
   </div>
+  <div id="overlayDryrun" class="overlay justify-content-center" style="display: none;">
+    <div class="align-self-center">
+      <div class="align-self-center fa-5x" role="status">
+        <i class="fas fa-fw fa-cog fa-spin"></i>
+      </div>
+    </div>
+  </div>
   <div id="overlaySettings" class="flex-column overlay px-3" style="display: none;">
-    <div class="align-items-center d-flex justify-content-center py-4">
-      <i id="settingsIcon" class="position-relative fas fa-fw fa-user-cog fa-3x text-muted">
+    <div class="row py-4">
+      <i id="settingsIcon" class="col position-relative fas fa-fw fa-user-cog fa-3x text-muted">
         <span id="version" class="position-absolute top-0 start-50 translate-middle-y badge rounded-pill bg-primary"></span>
       </i>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="outputPath" class="m-0 col-5 pr-3 text-start i18n" data-i18n-string="mediaSaveFolder"></label>
-      <div class="flex-fill">
+    <div class="align-items-center flex-fill row">
+      <label for="outputPath" class="col-4 i18n text-start" data-i18n-string="mediaSaveFolder"></label>
+      <div class="col">
         <input type="text" class="form-control form-control-sm" id="outputPath" required />
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="lang" class="m-0 pr-3 col-5 text-start i18n" data-i18n-string="mediaLanguage"></label>
-      <div class="flex-fill">
+    <div class="align-items-center flex-fill row">
+      <label for="lang" class="col-4 i18n text-start" data-i18n-string="mediaLanguage"></label>
+      <div class="col">
         <select id="lang" class="form-control" required>
         </select>
       </div>
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="maxRes" class="m-0 pr-3 col-5 text-start i18n" data-i18n-string="maxRes"></label>
-      <div class="btn-group btn-group-toggle flex-fill" id="maxRes">
+    <div class="align-items-center flex-fill row">
+      <label for="maxRes" class="col-4 i18n text-start" data-i18n-string="maxRes"></label>
+      <div class="btn-group btn-group-toggle col" id="maxRes">
         <input type="radio" class="btn-check" name="maxRes" id="maxRes0" value="240p" autocomplete="off">
         <label class="btn btn-outline-primary" for="maxRes0">240p</label>
         <input type="radio" class="btn-check" name="maxRes" id="maxRes1" value="360p" autocomplete="off">
@@ -505,9 +477,9 @@
       </div>
     </div>
     <hr class="my-2" />
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="mwDay" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="mwMeetingDay"></label>
-      <div class="btn-group btn-group-toggle flex-fill" id="mwDay">
+    <div class="align-items-center flex-fill row">
+      <label for="mwDay" class="col-4 i18n text-start" data-i18n-string="mwMeetingDay"></label>
+      <div class="btn-group btn-group-toggle col-6" id="mwDay">
         <input type="radio" class="btn-check" name="mwDay" id="mwDay0" value="0" autocomplete="off">
         <label class="btn btn-outline-primary" for="mwDay0">M</label>
         <input type="radio" class="btn-check" name="mwDay" id="mwDay1" value="1" autocomplete="off">
@@ -523,14 +495,14 @@
         <input type="radio" class="btn-check" name="mwDay" id="mwDay6" value="6" autocomplete="off">
         <label class="btn btn-outline-primary" for="mwDay6">S</label>
       </div>
-      <div class="ps-2 timePickerContainer">
+      <div class="col-2">
         <input class="w-100 form-control form-control-sm bg-transparent timePicker" data-target="mwStartTime" type="text" />
       </div>
       <input type="hidden" id="mwStartTime" />
     </div>
-    <div class="d-flex flex-row flex-fill align-items-center">
-      <label for="weDay" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="weMeetingDay"></label>
-      <div class="btn-group btn-group-toggle flex-fill" id="weDay">
+    <div class="align-items-center flex-fill row">
+      <label for="weDay" class="col-4 i18n text-start" data-i18n-string="weMeetingDay"></label>
+      <div class="btn-group btn-group-toggle col-6" id="weDay">
         <input type="radio" class="btn-check" name="weDay" id="weDay0" value="0" autocomplete="off">
         <label class="btn btn-outline-primary" for="weDay0">M</label>
         <input type="radio" class="btn-check" name="weDay" id="weDay1" value="1" autocomplete="off">
@@ -546,20 +518,20 @@
         <input type="radio" class="btn-check" name="weDay" id="weDay6" value="6" autocomplete="off">
         <label class="btn btn-outline-primary" for="weDay6">S</label>
       </div>
-      <div class="ps-2 timePickerContainer">
+      <div class="col-2">
         <input class="w-100 form-control form-control-sm bg-transparent timePicker" data-target="weStartTime" type="text" />
       </div>
       <input type="hidden" id="weStartTime" />
     </div>
     <hr class="my-2" />
-    <div class="d-flex flex-fill align-items-center">
+    <div class="align-items-center flex-fill row">
       <label for="enableMusicButton" class="m-0 text-start i18n col-11" data-i18n-string="enableMusicButton"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="enableMusicButton" />
       </div>
     </div>
-    <div class="d-flex flex-fill align-items-center">
-      <label for="enableMusicFadeOut" class="m-0 text-start i18n col-5" data-i18n-string="musicFadeOutType"></label>
+    <div class="align-items-center flex-fill row">
+      <label for="enableMusicFadeOut" class="m-0 text-start i18n col-4" data-i18n-string="musicFadeOutType"></label>
       <div class="col-2 pe-3">
         <input type="range" class="form-range relatedToFadeOut me-3" min="5" max="60" step="5" value="5" id="musicFadeOutTime">
       </div>
@@ -574,38 +546,38 @@
       </div>
     </div>
     <hr class="my-2" />
-    <div class="d-flex flex-fill align-items-center">
+    <div class="align-items-center flex-fill row">
       <label for="additionalMediaPrompt" class="m-0 text-start i18n col-11" data-i18n-string="convertExternal"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="additionalMediaPrompt" />
       </div>
     </div>
-    <div class="d-flex flex-fill align-items-center">
+    <div class="align-items-center flex-fill row">
       <label for="betaMp4Gen" class="m-0 text-start i18n col-11" data-i18n-string="convertDownloaded"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="betaMp4Gen" />
       </div>
     </div>
     <hr class="my-2" />
-    <div class="d-flex flex-fill align-items-center">
+    <div class="align-items-center flex-fill row">
       <label for="autoRunAtBoot" class="m-0 text-start i18n col-11" data-i18n-string="runAtStartup"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input notLinux" id="autoRunAtBoot" />
       </div>
     </div>
-    <div class="d-flex flex-fill align-items-center">
+    <div class="align-items-center flex-fill row">
       <label for="autoStartSync" class="m-0 text-start i18n col-11" data-i18n-string="syncOnLaunch"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="autoStartSync" />
       </div>
     </div>
-    <div class="d-flex flex-fill align-items-center">
+    <div class="align-items-center flex-fill row">
       <label for="autoQuitWhenDone" class="m-0 text-start i18n col-11" data-i18n-string="quitAfterSync"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input" id="autoQuitWhenDone" />
       </div>
     </div>
-    <div class="d-flex flex-fill align-items-center">
+    <div class="align-items-center flex-fill row">
       <label for="openFolderWhenDone" class="m-0 text-start i18n col-11" data-i18n-string="openTargetFolderAfterSync"></label>
       <div class="form-check form-switch text-end col-1">
         <input type="checkbox" class="form-check-input col-1" id="openFolderWhenDone" />
@@ -631,11 +603,11 @@
     </div>
   </div>
   <div id="overlayWebdav" class="flex-column overlay px-3" style="display: none;">
-    <div class="align-items-center d-flex justify-content-center py-4">
-      <i id="webdavStatus" class="fas fa-fw fa-cloud fa-3x text-muted"></i>
+    <div class="py-4 row">
+      <i id="webdavStatus" class="fas fa-fw fa-cloud fa-3x text-muted col"></i>
     </div>
-    <div class="d-flex flex-row py-3 align-items-center">
-      <div class="dropdown col-5 text-start" id="webdavProviders">
+    <div class="align-items-center py-2 row">
+      <div class="dropdown col-4 text-start" id="webdavProviders">
         <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <span class="i18n" data-i18n-string="webdavHostname"></span>
         </button>
@@ -646,36 +618,36 @@
           <li><a class="dropdown-item" data-server="seto.teracloud.jp" data-server-port="443" data-server-dir="/dav/">TeraCLOUD</a></li>
         </ul>
       </div>
-      <div class="input-group input-group-sm">
+      <div class="input-group input-group-sm col">
         <span class="input-group-text">https://</span>
         <input type=" text" class="form-control form-control-sm webdavHost" id="congServer" required />
       </div>
     </div>
-    <div class="d-flex flex-row py-3 align-items-center">
-      <label for="congServerPort" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavPort"></label>
-      <div class="col-7">
+    <div class="align-items-center py-2 row">
+      <label for="congServerPort" class="col-4 m-0 pr-3 text-start i18n" data-i18n-string="webdavPort"></label>
+      <div class="col">
         <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort" required />
       </div>
     </div>
-    <div class="d-flex flex-row py-3 align-items-center">
-      <label for="congServerUser" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavUser"></label>
-      <div class="col-7">
+    <div class="align-items-center py-2 row">
+      <label for="congServerUser" class="col-4 m-0 pr-3 text-start i18n" data-i18n-string="webdavUser"></label>
+      <div class="col">
         <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser" required />
       </div>
     </div>
-    <div class="d-flex flex-row py-3 align-items-center">
-      <label for="congServerPass" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavPass"></label>
-      <div class="col-7">
+    <div class="align-items-center py-2 row">
+      <label for="congServerPass" class="col-4 m-0 pr-3 text-start i18n" data-i18n-string="webdavPass"></label>
+      <div class="col">
         <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass" required />
       </div>
     </div>
-    <div class="d-flex flex-row py-3 align-items-center">
-      <label for="congServerDir" class="col-5 m-0 pr-3 text-start i18n" data-i18n-string="webdavFolder"></label>
-      <div class="col-7">
+    <div class="align-items-center py-2 row">
+      <label for="congServerDir" class="col-4 m-0 pr-3 text-start i18n" data-i18n-string="webdavFolder"></label>
+      <div class="col">
         <input type="text" class="form-control form-control-sm" id="congServerDir" required />
       </div>
     </div>
-    <div class="d-flex flex-fill text-start">
+    <div class="flex-fill py-3 row text-start">
       <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
     </div>
     <div class="py-3 text-start">
