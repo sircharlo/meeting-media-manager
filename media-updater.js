@@ -794,7 +794,7 @@ function isReachable(hostname, port) {
   return new Promise(resolve => {
     try {
       let client = net.createConnection(port, hostname);
-      client.setTimeout(5000);
+      client.setTimeout(3000);
       client.on("timeout", () => {
         client.destroy("Timeout: " + hostname + ":" + port);
       });
@@ -1692,9 +1692,11 @@ $("#version:not(.bg-danger)").on("click", function() {
   showReleaseNotes();
 });
 $("#webdavProviders a").on("click", function() {
-  let data = $(this).data();
-  for (let i in data) {
-    $("#cong" + (i.charAt(0).toUpperCase() + i.substring(1)).replace(/-./g, c => c.substring(1).toUpperCase())).val(data[i]);
+  let data = Object.entries($(this).data());
+  for (let i of data) {
+    let name = "cong" + (i[0][0].toUpperCase() + i[0].slice(1));
+    prefs[name] = i[1];
+    $("#" + name).val(i[1]);
   }
   $("#congServer").change();
 });
