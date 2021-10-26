@@ -294,56 +294,58 @@ function createMediaNames() {
   }
   perf("createMediaNames", "stop");
 }
-function createVideoSync(mediaDir, media){
+function createVideoSync(mediaFile){
+  let outputFilePath = path.format({ ...path.parse(mediaFile), base: undefined, ext: ".mp4" });
   return new Promise((resolve)=>{
-    var mediaName = path.basename(media, path.extname(media));
-    if (path.extname(media).includes("mp3")) {
-      ffmpegSetup().then(function () {
-        ffmpeg(path.join(paths.media, mediaDir, media)).on("end", function() {
-          return resolve();
-        }).on("error", function(err) {
-          console.error(err.message);
-          return resolve();
-        }).noVideo().save(path.join(paths.media, mediaDir, mediaName + ".mp4"));
-      });
-    } else {
-      try {
+    try {
+      if (path.extname(mediaFile).includes("mp3")) {
+        ffmpegSetup().then(function () {
+          ffmpeg(mediaFile).on("end", function() {
+            fs.rmSync(mediaFile);
+            return resolve();
+          }).on("error", function(err) {
+            console.error(err.message);
+            return resolve();
+          }).noVideo().save(path.join(outputFilePath));
+        });
+      } else {
         var convertedImageDimesions = [];
-        var imageDimesions = sizeOf(path.join(paths.media, mediaDir, media));
+        var imageDimesions = sizeOf(mediaFile);
         if (imageDimesions.orientation && imageDimesions.orientation >= 5) {
           [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
         }
         convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height)));
-      } catch (err) {
-        console.error("Unable to get dimensions for:", path.join(paths.media, mediaDir, media), "Setting manually...", err);
-        convertedImageDimesions = [imageDimesions.width, imageDimesions.height];
-      }
-      if (convertedImageDimesions.toString() == fullHd.toString() || convertedImageDimesions.toString() == [Math.round(parseInt(prefs.maxRes.replace(/\D/g, "")) * 16 / 9), parseInt(prefs.maxRes.replace(/\D/g, ""))].toString()) convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
-        return dimension - 1;
-      });
-      convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
-        return (dimension % 2 ? dimension - 1 : dimension);
-      });
-      $("body").append("<div id='convert' style='display: none;'>");
-      $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
-      hme.createH264MP4Encoder().then(function (encoder) {
-        $("img#imgToConvert").on("load", function() {
-          var canvas = $("#imgCanvas")[0],
-            image = $("img#imgToConvert")[0];
-          encoder.quantizationParameter = 10;
-          encoder.width = canvas.width = image.width = convertedImageDimesions[0];
-          encoder.height = canvas.height = image.height = convertedImageDimesions[1];
-          encoder.initialize();
-          canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
-          encoder.addFrameRgba(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data);
-          encoder.finalize();
-          fs.writeFileSync(path.join(paths.media, mediaDir, mediaName + ".mp4"), encoder.FS.readFile(encoder.outputFilename));
-          encoder.delete();
-          $("div#convert").remove();
-          return resolve();
+        if (convertedImageDimesions.toString() == fullHd.toString() || convertedImageDimesions.toString() == [Math.round(parseInt(prefs.maxRes.replace(/\D/g, "")) * 16 / 9), parseInt(prefs.maxRes.replace(/\D/g, ""))].toString()) convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
+          return dimension - 1;
         });
-        $("img#imgToConvert").prop("src", path.join(paths.media, mediaDir, media));
-      });
+        convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
+          return (dimension % 2 ? dimension - 1 : dimension);
+        });
+        $("body").append("<div id='convert' style='display: none;'>");
+        $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
+        hme.createH264MP4Encoder().then(function (encoder) {
+          $("img#imgToConvert").on("load", function() {
+            var canvas = $("#imgCanvas")[0],
+              image = $("img#imgToConvert")[0];
+            encoder.quantizationParameter = 10;
+            encoder.width = canvas.width = image.width = convertedImageDimesions[0];
+            encoder.height = canvas.height = image.height = convertedImageDimesions[1];
+            encoder.initialize();
+            canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+            encoder.addFrameRgba(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data);
+            encoder.finalize();
+            fs.writeFileSync(outputFilePath, encoder.FS.readFile(encoder.outputFilename));
+            fs.rmSync(mediaFile);
+            encoder.delete();
+            $("div#convert").remove();
+            return resolve();
+          });
+          $("img#imgToConvert").prop("src", mediaFile);
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      return resolve();
     }
   });
 }
@@ -834,8 +836,7 @@ async function mp4Convert() {
   };
   for (var mediaFile of filesToProcess) {
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
-    await createVideoSync(path.basename(path.dirname(mediaFile)), path.basename(mediaFile));
-    fs.rmSync(mediaFile);
+    await createVideoSync(mediaFile);
     totals.mp4Convert.current++;
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
   }
