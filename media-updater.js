@@ -392,6 +392,12 @@ async function downloadIfRequired(file) {
   }
   if (path.extname(file.localFile) == ".jwpub") await new zipper((await new zipper(file.localFile).readFile("contents"))).extractAllTo(file.localDir);
 }
+async function executeDryrun() {
+  $("#overlayDryrun").fadeIn(animationDuration);
+  dryrun = true;
+  await startMediaSync();
+  $("#overlayDryrun").fadeOut(animationDuration);
+}
 async function executeStatement(db, statement) {
   var vals = await db.exec(statement)[0],
     valObj = [];
@@ -1099,11 +1105,12 @@ function validateConfig() {
     $("#lang").next(".select2").find(".select2-selection").addClass("invalid");
     configIsValid = false;
   }
+  $(".alertIndicators").removeClass("meeting").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
   for (var elem of ["mwDay", "weDay", "maxRes"]) {
     if (!prefs[elem]) {
       $("#" + elem + " .btn-outline-primary").addClass("btn-outline-danger").removeClass("btn-outline-primary");
       configIsValid = false;
-    }
+    } else if (elem.includes("Day")) $("#day" + prefs[elem]).addClass("meeting");
   }
   if (prefs.outputPath === "false" || !fs.existsSync(prefs.outputPath)) $("#outputPath").val("");
   let mandatoryFields = ["outputPath"];
@@ -1510,7 +1517,6 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     showModal(false);
   }
 });
-
 $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown").prop("disabled", true);
   dryrun = false;
@@ -1592,10 +1598,6 @@ $("#fileList").on("click", ".wasHidden", function() {
   webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")));
   $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");  executeDryrun();
 });
-$("#mwDay input, #weDay input").on("change", function() {
-  $(".alertIndicators").removeClass("meeting").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
-  $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
-});
 $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
   try {
     if ($("#chooseMeeting input:checked").length > 0) {
@@ -1661,15 +1663,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
     console.error(err);
   }
 });
-async function executeDryrun() {
-  $("#overlayDryrun").fadeIn(animationDuration);
-  dryrun = true;
-  await startMediaSync();
-  $("#overlayDryrun").fadeOut(animationDuration);
-}
-$("#overlayUploadFile").on("keyup", ".enterPrefixInput", function() {
-  getPrefix();
-});
+$("#overlayUploadFile").on("keyup", ".enterPrefixInput", getPrefix);
 $("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", function(event) {
   let thisId = $(this).prop("id");
   let options = {
@@ -1689,9 +1683,7 @@ $("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", f
 $("#songPicker").on("change", function() {
   if ($(this).val()) $("#fileToUpload").val($(this).val()).change();
 });
-$("#version:not(.bg-danger)").on("click", function() {
-  showReleaseNotes();
-});
+$("#version:not(.bg-danger)").on("click", showReleaseNotes);
 $("#webdavProviders a").on("click", function() {
   let data = Object.entries($(this).data());
   for (let i of data) {
