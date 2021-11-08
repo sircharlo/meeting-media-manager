@@ -5,7 +5,6 @@ const {
   } = require("electron"), {
     autoUpdater
   } = require("electron-updater"),
-  isDev = require("electron-is-dev"),
   os = require("os"),
   remote = require("@electron/remote/main");
 var win = null;
@@ -37,12 +36,7 @@ if (!gotTheLock) {
   });
   ipcMain.on("autoUpdate", () => {
     win.webContents.send("hideThenShow", ["InternetCheck", "UpdateCheck"]);
-    if (isDev) {
-      console.log("Running in development; skipping update check");
-      win.webContents.send("goAhead");
-    } else {
-      autoUpdater.checkForUpdates();
-    }
+    autoUpdater.checkForUpdates();
   });
   autoUpdater.on("error", () => {
     win.webContents.send("goAhead");

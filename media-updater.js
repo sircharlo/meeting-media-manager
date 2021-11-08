@@ -42,11 +42,11 @@ require("electron").ipcRenderer.on("goAhead", () => {
 
 const aspect = require("aspectratio"),
   bootstrap = require("bootstrap"),
-  { createClient } = require("webdav"),
   dayjs = require("dayjs"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
   fullHd = [1280, 720],
+  //  fullHd = [1920, 1080], // will
   glob = require("glob"),
   hme = require("h264-mp4-encoder"),
   datetime = require("flatpickr"),
@@ -55,6 +55,7 @@ const aspect = require("aspectratio"),
   path = require("path"),
   sizeOf = require("image-size"),
   sqljs = require("sql.js"),
+  xmlParser = require("fast-xml-parser"),
   zipper = require("adm-zip");
 
 dayjs.extend(require("dayjs/plugin/isoWeek"));
@@ -86,8 +87,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   tempMediaArray = [],
   totals = {},
   webdavIsAGo = false,
-  stayAlive,
-  webdavClient;
+  stayAlive;
 paths.langs = path.join(paths.app, "langs.json");
 paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
 paths.prefs = path.join(paths.app, "prefs.json");
@@ -187,7 +187,7 @@ function addMediaItemToPart (date, paragraph, media) {
 function cleanUp(dirs) {
   perf("cleanUp", "start");
   for (var lookinDir of dirs) {
-    $("#statusIcon").addClass("fa-broom").removeClass("fa-photo-video");
+    if (!dryrun) $("#statusIcon").addClass("fa-broom").removeClass("fa-photo-video");
     try {
       if (fs.existsSync(lookinDir)) {
         fs.rmSync(lookinDir, {
@@ -197,7 +197,7 @@ function cleanUp(dirs) {
     } catch(err) {
       console.error(err);
     }
-    $("#statusIcon").addClass("fa-photo-video").removeClass("fa-broom");
+    if (!dryrun) $("#statusIcon").addClass("fa-photo-video").removeClass("fa-broom");
   }
   perf("cleanUp", "stop");
 }
@@ -387,8 +387,7 @@ async function downloadIfRequired(file) {
   if (fs.existsSync(file.localFile)) file.downloadRequired = file.filesize !== fs.statSync(file.localFile).size;
   if (file.downloadRequired) {
     mkdirSync(file.localDir);
-    file.contents = await get(file.url, true);
-    fs.writeFileSync(file.localFile, new Buffer(file.contents));
+    fs.writeFileSync(file.localFile, new Buffer((await request(file.url, {isFile: true})).data));
   }
   if (path.extname(file.localFile) == ".jwpub") await new zipper((await new zipper(file.localFile).readFile("contents"))).extractAllTo(file.localDir);
 }
@@ -422,13 +421,13 @@ async function ffmpegSetup() {
     } else {
       targetOs = "linux-64";
     }
-    var ffmpegVersions = await get("https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest");
+    var ffmpegVersions = (await request("https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest")).data;
     var ffmpegVersion = ffmpegVersions.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
     var ffmpegZipPath = path.join(paths.app, "ffmpeg", "zip", ffmpegVersion.name);
     if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
       cleanUp([path.join(paths.app, "ffmpeg", "zip")]);
       mkdirSync(path.join(paths.app, "ffmpeg", "zip"));
-      var ffmpegZipFile = await get(ffmpegVersion.browser_download_url, true);
+      var ffmpegZipFile = (await request(ffmpegVersion.browser_download_url, {isFile: true})).data;
       fs.writeFileSync(ffmpegZipPath, new Buffer(ffmpegZipFile));
     }
     var zip = new zipper(ffmpegZipPath);
@@ -446,29 +445,44 @@ async function ffmpegSetup() {
     ffmpegIsSetup = true;
   }
 }
-async function get(url, isFile) {
+async function request(url, opts) {
   let response = null,
-    payload = null;
+    payload,
+    options = opts ? opts : {};
   try {
-    var options = {};
-    if (isFile) {
+    if (options.webdav) {
+      options.auth = {
+        username: prefs.congServerUser,
+        password: prefs.congServerPass
+      };
+    }
+    if (options.isFile) {
       options.responseType = "arraybuffer";
       options.onDownloadProgress = function(progressEvent) {
+        progressSet(progressEvent.loaded, progressEvent.total);
+      };
+    }
+    if (options.method === "PUT") {
+      options.onUploadProgress = progressEvent => {
         progressSet(progressEvent.loaded, progressEvent.total);
       };
     }
     if (url.includes("jw.org")) {
       options.adapter = require("axios/lib/adapters/http");
     }
-    payload = await axios.get(url, options);
-    response = payload.data;
+    options.url = url;
+    if (!options.method) options.method = "GET";
+    payload = await axios.request(options);
+    response = payload;
   } catch (err) {
     console.error(url, err, payload);
+    response = err.response;
   }
   return response;
 }
 async function getCongMedia() {
   perf("getCongMedia", "start");
+  if (!dryrun) $("#specificCong").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
   try {
     var congSpecificFolders = await webdavLs(path.posix.join(prefs.congServerDir, "Media"));
     totals.cong = {
@@ -550,14 +564,14 @@ async function getDbFromJwpub(pub, issue, localpath) {
   }
 }
 async function getDocumentExtract(db, docId) {
-  var statement = "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' AND RefBeginParagraphOrdinal IS NOT NULL ORDER BY DocumentExtract.BeginParagraphOrdinal";
+  var statement = "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' ORDER BY DocumentExtract.BeginParagraphOrdinal";
   var extractItems = await executeStatement(db, statement);
   var extractMultimediaItems = [];
   for (var extractItem of extractItems) {
     var extractDb = await getDbFromJwpub(extractItem.UndatedSymbol, extractItem.IssueTagNumber);
     if (extractDb) {
       var extractMediaFiles = await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId);
-      extractMultimediaItems = extractMultimediaItems.concat(extractMediaFiles.filter(extractMediaFile => extractItem.RefBeginParagraphOrdinal <= extractMediaFile.BeginParagraphOrdinal && extractMediaFile.BeginParagraphOrdinal <= extractItem.RefEndParagraphOrdinal).map(extractMediaFile => {
+      extractMultimediaItems = extractMultimediaItems.concat(extractMediaFiles.filter(extractMediaFile => (extractMediaFile.BeginParagraphOrdinal ? extractItem.RefBeginParagraphOrdinal <= extractMediaFile.BeginParagraphOrdinal && extractMediaFile.BeginParagraphOrdinal <= extractItem.RefEndParagraphOrdinal : true)).map(extractMediaFile => {
         extractMediaFile.BeginParagraphOrdinal = extractItem.BeginParagraphOrdinal;
         return extractMediaFile;
       }));
@@ -638,7 +652,7 @@ async function getInitialData() {
 }
 async function getLanguages() {
   if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months"))) {
-    var jwLangs = await get("https://www.jw.org/en/languages/");
+    var jwLangs = (await request("https://www.jw.org/en/languages/")).data;
     let cleanedJwLangs = jwLangs.languages.filter(lang => lang.hasWebContent).map(lang => ({
       name: lang.vernacularName + " (" + lang.name + ")",
       langcode: lang.langcode,
@@ -665,7 +679,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
   let mediaFiles = [];
   try {
     let url = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
-    let result = await get(url);
+    let result = (await request(url)).data;
     if (result) {
       let mediaFileCategories = Object.values(result.files)[0];
       for (var mediaFileItem of mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : result.fileformat[0])].reverse()) {
@@ -884,6 +898,7 @@ function progressSet(current, total, blockId) {
   if (!dryrun || !blockId) {
     var percent = current / total * 100;
     if (percent > 100 || (!blockId && percent === 100)) percent = 0;
+    remote.getCurrentWindow().setProgressBar(percent / 100);
     blockId = (blockId ? "#" + blockId + " .progress-bar" : "#globalProgress");
     $(blockId).width(percent + "%");
   }
@@ -957,9 +972,9 @@ function showReleaseNotes() {
 }
 async function startMediaSync() {
   perf("total", "start");
-  $("#statusIcon").addClass("text-primary").removeClass("text-muted");
+  if (!dryrun) $("#statusIcon").addClass("text-primary").removeClass("text-muted");
   stayAlive = false;
-  $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 0);
+  if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 0);
   await setVars();
   for (let folder of glob.sync(path.join(paths.media, "*/"))) {
     if (!dryrun && (webdavIsAGo || !webdavIsAGo && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(baseDate) || !(dayjs(path.basename(folder), "YYYY-MM-DD").isValid())))) await cleanUp([folder]);
@@ -976,12 +991,12 @@ async function startMediaSync() {
     if (prefs.additionalMediaPrompt) await additionalMedia();
     if (prefs.betaMp4Gen) await mp4Convert();
     if (prefs.openFolderWhenDone) shell.openPath(paths.media);
+    $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 1);
+    setTimeout(() => {
+      $(".alertIndicators").addClass("alert-primary").removeClass("alert-success");
+      $("#statusIcon").addClass("text-muted").removeClass("text-primary");
+    }, 2000);
   }
-  $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 1);
-  setTimeout(() => {
-    $(".alertIndicators").addClass("alert-primary").removeClass("alert-success");
-    $("#statusIcon").addClass("text-muted").removeClass("text-primary");
-  }, 2000);
   perf("total", "stop");
   perfPrint();
 }
@@ -1045,6 +1060,7 @@ async function syncJwOrgMedia() {
           if (partMedia[j].url) {
             await downloadIfRequired(partMedia[j]);
           } else {
+            mkdirSync(path.join(paths.media, partMedia[j].folder));
             var destFile = path.join(paths.media, partMedia[j].folder, partMedia[j].safeName);
             if (!fs.existsSync(destFile) || fs.statSync(destFile).size !== partMedia[j].filesize) fs.copyFileSync(partMedia[j].filepath, destFile);
           }
@@ -1137,42 +1153,90 @@ function validateConfig() {
   if (!configIsValid) toggleScreen("overlaySettings", true);
   return configIsValid;
 }
+async function webdavExists(url) {
+  let status = (await webdavHead(url)).status;
+  return status < 400;
+}
 async function webdavGet(file) {
   let localFile = path.join(paths.media, file.folder, file.safeName);
   if (fs.existsSync(localFile) ? !(file.filesize == fs.statSync(localFile).size) : true) {
     mkdirSync(path.join(paths.media, file.folder));
-    file.contents = await webdavClient.getFileContents(file.url);
-    fs.writeFileSync(localFile, new Buffer(file.contents));
+    fs.writeFileSync(localFile, new Buffer((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + file.url, {
+      webdav: true,
+      isFile: true
+    })).data));
   }
+}
+async function webdavHead(url) {
+  let response;
+  try {
+    response = await request("https://" + prefs.congServer + ":" + prefs.congServerPort + url, {
+      method: "PROPFIND",
+      responseType: "text",
+      headers: {
+        Accept: "text/plain",
+        Depth: "1"
+      },
+      webdav: true
+    });
+  } catch (err) {
+    response = err.response;
+  }
+  return response;
 }
 async function webdavLs(dir, force) {
   try {
     if (webdavIsAGo || force) {
-      if (await webdavClient.exists(dir) === false) {
-        await webdavClient.createDirectory(dir, {
-          recursive: true
-        });
+      await webdavMkdir(dir);
+      let xml = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + dir, {
+        method: "PROPFIND",
+        responseType: "text",
+        headers: {
+          Accept: "text/plain",
+          Depth: "1"
+        },
+        webdav: true
+      })).data;
+      let listing = xmlParser.parse(xml, {
+        arrayMode: false,
+        ignoreNameSpace: true
+      });
+      let items = [];
+      if (Array.isArray(listing.multistatus.response)) {
+        items = listing.multistatus.response.filter(item => path.resolve(decodeURIComponent(item.href)) !== path.resolve(dir)).map(item => {
+          let href = decodeURIComponent(item.href);
+          return {
+            filename: href,
+            basename: path.basename(href),
+            type: typeof item.propstat.prop.resourcetype === "object" && "collection" in item.propstat.prop.resourcetype ? "directory" : "file",
+            size: item.propstat.prop.getcontentlength ? item.propstat.prop.getcontentlength : 0
+          };
+        }).sort((a, b) => a.basename.localeCompare(b.basename));
       }
-      return (await webdavClient.getDirectoryContents(dir)).sort((a, b) => a.basename.localeCompare(b.basename));
+      return (items);
     }
   } catch (err) {
     console.error(err);
     throw(err);
   }
 }
+async function webdavMkdir(dir) {
+  if (!(await webdavExists(dir))) await request("https://" + prefs.congServer + ":" + prefs.congServerPort + dir, {
+    method: "MKCOL",
+    webdav: true
+  });
+}
 async function webdavPut(file, destFolder, destName) {
   try {
     if (webdavIsAGo && file && destFolder && destName) {
-      if (!(await webdavClient.exists(destFolder))) {
-        await webdavClient.createDirectory(destFolder, {
-          recursive: true
-        });
-      }
-      await webdavClient.putFileContents(path.posix.join(destFolder, (await sanitizeFilename(destName))), file, {
-        contentLength: false,
-        onUploadProgress: progressEvent => {
-          progressSet(progressEvent.loaded, progressEvent.total);
-        }
+      await webdavMkdir(destFolder);
+      await request(path.posix.join("https://" + prefs.congServer + ":" + prefs.congServerPort, destFolder, (await sanitizeFilename(destName))), {
+        method: "PUT",
+        data: file,
+        headers: {
+          "Content-Type": "application/octet-stream"
+        },
+        webdav: true
       });
     }
   } catch (err) {
@@ -1181,7 +1245,12 @@ async function webdavPut(file, destFolder, destName) {
 }
 async function webdavRm(path) {
   try {
-    if (webdavIsAGo && path && await webdavClient.exists(path)) await webdavClient.deleteFile(path);
+    if (webdavIsAGo && path && await webdavExists(path)) {
+      await request("https://" + prefs.congServer + ":" + prefs.congServerPort + path, {
+        method: "DELETE",
+        webdav: true
+      });
+    }
   } catch (err) {
     console.error(err);
   }
@@ -1197,19 +1266,21 @@ async function webdavSetup() {
     if (congServerHeartbeat) {
       if (prefs.congServerUser && prefs.congServerPass) {
         try {
-          webdavClient = createClient(
-            "https://" + prefs.congServer + ":" + prefs.congServerPort,
-            {
-              username: prefs.congServerUser,
-              password: prefs.congServerPass
-            }
-          );
           if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
             $("#congServerDir").val("/").change();
           } else {
-            webdavDirIsValid = await webdavClient.exists(prefs.congServerDir);
-            webdavLoginSuccessful = true;
-            if (webdavDirIsValid) {
+            let webdavStatusCode = (await webdavHead(prefs.congServerDir)).status;
+            if (webdavStatusCode === 200) {
+              webdavLoginSuccessful = true;
+              webdavDirIsValid = true;
+            }
+            if (!([401, 403, 405, 429].includes(webdavStatusCode))) {
+              webdavLoginSuccessful = true;
+            }
+            if (webdavStatusCode !== 404) {
+              webdavDirIsValid = true;
+            }
+            if (congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid) {
               if (prefs.congServerDir !== "/") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
               for (var item of (await webdavLs(prefs.congServerDir, true))) {
                 if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
@@ -1236,11 +1307,11 @@ async function webdavSetup() {
     }
   }
   $("#btn-upload").toggle(congServerEntered).prop("disabled", congServerEntered && !webdavDirIsValid);
-  $(".btn-webdav, #btn-upload").toggleClass("btn-primary", !congServerEntered || (congServerEntered && webdavDirIsValid)).toggleClass("btn-danger", congServerEntered && !webdavDirIsValid);
+  $(".btn-webdav, #btn-upload").toggleClass("btn-primary", !congServerEntered || (congServerEntered && webdavLoginSuccessful && webdavDirIsValid)).toggleClass("btn-danger", congServerEntered && !(webdavDirIsValid && webdavLoginSuccessful));
   $("#webdavStatus").toggleClass("text-success text-warning text-muted", webdavDirIsValid).toggleClass("text-danger", congServerEntered && !webdavDirIsValid);
   $(".webdavHost").toggleClass("is-valid", congServerHeartbeat).toggleClass("is-invalid", congServerEntered && !congServerHeartbeat);
-  $(".webdavCreds").toggleClass("is-valid", webdavLoginSuccessful).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && !webdavLoginSuccessful));
-  $("#congServerDir").toggleClass("is-valid", webdavDirIsValid).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && !webdavDirIsValid));
+  $(".webdavCreds").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && !webdavLoginSuccessful));
+  $("#congServerDir").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && !webdavDirIsValid));
   $("#webdavFolderList").fadeTo(animationDuration, webdavDirIsValid);
   $("#additionalMediaPrompt").prop("disabled", congServerEntered && webdavDirIsValid);
   $("#specificCong").toggleClass("d-flex", congServerEntered).toggleClass("alert-danger", congServerEntered && !(congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid));
@@ -1370,7 +1441,7 @@ $("#btnUpload").on("click", async () => {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
     $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
     if ($("input#typeSong:checked").length > 0) {
-      var songFile = new Buffer(await get($("#fileToUpload").val(), true));
+      var songFile = new Buffer((await request($("#fileToUpload").val(), {isFile: true})).data);
       if (currentStep == "additionalMedia") {
         fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + path.basename($("#fileToUpload").val()))), songFile);
       } else {
@@ -1378,7 +1449,7 @@ $("#btnUpload").on("click", async () => {
       }
     } else if ($("input#typeJwpub:checked").length > 0) {
       for (var tempMedia of tempMediaArray) {
-        if (tempMedia.url) tempMedia.contents = new Buffer(await get(tempMedia.url, true));
+        if (tempMedia.url) tempMedia.contents = new Buffer((await request(tempMedia.url, {isFile: true})).data);
         if (currentStep == "additionalMedia") {
           if (tempMedia.contents) {
             fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + tempMedia.filename)), tempMedia.contents);
@@ -1588,13 +1659,11 @@ $("#fileList").on("click", "li .fa-exclamation-circle", function() {
   meetingMedia[$("#chooseMeeting input:checked").prop("id")].splice(meetingMedia[$("#chooseMeeting input:checked").prop("id")].findIndex(item => item.media.find(mediaItem => mediaItem.url === $(this).parent().data("url"))), 1);
 });
 $("#fileList").on("click", ".canHide", async function() {
-  console.log($(this), $(this).data("safename"));
   webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).data("safename"));
   $(this).removeClass("canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
   executeDryrun();
 });
 $("#fileList").on("click", ".wasHidden", function() {
-  console.log($(this), $(this).data("safename"));
   webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")));
   $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");  executeDryrun();
 });
