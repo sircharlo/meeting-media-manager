@@ -1523,7 +1523,7 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
     if (itemsWithMultimedia.length > 0) {
       var docList = $("<div id='docSelect' class='list-group'>");
       for (var item of itemsWithMultimedia) {
-        $(docList).append("<button class='list-group-item list-group-item-action' data-docid='" + item.DocumentId + "'>" + item.Title + "</li>");
+        $(docList).append("<button class='d-flex list-group-item list-group-item-action' data-docid='" + item.DocumentId + "'><div class='flex-fill'> " + item.Title + "</div><div><i class='far fa-circle'></i></div></li>");
       }
       tempModal.header = i18n.__("selectDocument");
       tempModal.body = docList;
@@ -1542,11 +1542,12 @@ $("#staticBackdrop").on("click", "a", function() {
 });
 $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
   $("#docSelect button").prop("disabled", true);
-  $(this).addClass("active");
+  $(this).addClass("active").find("i").toggleClass("far fas fa-circle fa-circle-notch fa-spin");
   tempMediaArray = [];
   var multimediaItems = await getDocumentMultimedia((await getDbFromJwpub(null, null, $("#jwpubPicker").val())), $(this).data("docid"), null, true);
   var missingMedia = $("<div id='missingMedia' class='list-group'>");
   for (var i = 0; i < multimediaItems.length; i++) {
+    progressSet(i + 1, multimediaItems.length);
     let multimediaItem = multimediaItems[i];
     var tempMedia = {
       filename: (i + 1).toString().padStart(2, "0") + " - " + (multimediaItem.queryInfo.FilePath ? multimediaItem.queryInfo.FilePath : multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3"))
