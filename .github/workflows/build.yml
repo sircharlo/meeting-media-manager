@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - 'package.json'
+    - 'package-lock.json'
     - '/.github/workflows/'
     
 jobs:
