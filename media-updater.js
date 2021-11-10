@@ -46,7 +46,7 @@ const aspect = require("aspectratio"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
   fullHd = [1280, 720],
-  //  fullHd = [1920, 1080], // will enable this once Zoom fixes their HD MP4 bug; should be around 2021.12
+  // fullHd = [1920, 1080], // will enable this once Zoom fixes their HD MP4 bug; should be around 2021.12
   glob = require("glob"),
   hme = require("h264-mp4-encoder"),
   datetime = require("flatpickr"),
@@ -130,23 +130,15 @@ function goAhead() {
       prefs[$(this).prop("id")] = $(this).find("option:selected").val();
     }
     fs.writeFileSync(paths.prefs, JSON.stringify(Object.keys(prefs).sort().reduce((acc, key) => ({...acc, [key]: prefs[key]}), {}), null, 2));
-    if ($(this).prop("id").includes("lang")) {
-      dateFormatter();
-    }
-    if ($(this).prop("id") == "congServer" && $(this).val() == "") {
-      $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
-    }
-    if ($(this).prop("id").includes("cong")) {
-      webdavSetup();
-    }
+    if ($(this).prop("id").includes("lang")) dateFormatter();
+    if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
+    if ($(this).prop("id").includes("cong")) webdavSetup();
     setVars();
     if ($(this).prop("id").includes("lang")) {
       getTranslations();
       updateSongs();
     }
-    if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) {
-      cleanUp([paths.media]);
-    }
+    if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) cleanUp([paths.media]);
     validateConfig();
   });
 }
@@ -189,11 +181,9 @@ function cleanUp(dirs) {
   for (var lookinDir of dirs) {
     if (!dryrun) $("#statusIcon").addClass("fa-broom").removeClass("fa-photo-video");
     try {
-      if (fs.existsSync(lookinDir)) {
-        fs.rmSync(lookinDir, {
-          recursive: true
-        });
-      }
+      if (fs.existsSync(lookinDir)) fs.rmSync(lookinDir, {
+        recursive: true
+      });
     } catch(err) {
       console.error(err);
     }
@@ -204,9 +194,11 @@ function cleanUp(dirs) {
 function convertPdf(mediaFile) {
   return new Promise((resolve)=>{
     var pdfjsLib = require("pdfjs-dist/build/pdf.js");
-    var pdfjsLibWorker = require("pdfjs-dist/build/pdf.worker.entry.js");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsLibWorker;
-    pdfjsLib.getDocument(mediaFile).promise.then(async function(pdf) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = require("pdfjs-dist/build/pdf.worker.entry.js");
+    pdfjsLib.getDocument({
+      url: mediaFile,
+      verbosity: 0
+    }).promise.then(async function(pdf) {
       for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         await convertPdfPage(mediaFile, pdf, pageNum);
       }
@@ -218,22 +210,19 @@ function convertPdf(mediaFile) {
 function convertPdfPage(mediaFile, pdf, pageNum) {
   return new Promise((resolve)=>{
     pdf.getPage(pageNum).then(function(page) {
-      var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png");
       $("body").append("<div id='pdf' style='display: none;'>");
       $("div#pdf").append("<canvas id='pdfCanvas'></canvas>");
-      var scale = fullHd[1] / page.getViewport({scale: 1}).height * 4;
-      var viewport = page.getViewport({scale: scale});
+      let scale = fullHd[1] / page.getViewport({scale: 1}).height * 2;
       var canvas = $("#pdfCanvas")[0];
-      canvas.height = fullHd[1] * 4;
+      let ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+      canvas.height = fullHd[1] * 2;
       canvas.width = page.getViewport({scale: scale}).width;
-      var context = canvas.getContext("2d");
-      var renderContext = {
-        canvasContext: context,
-        viewport: viewport
-      };
-      var renderTask = page.render(renderContext);
-      renderTask.promise.then(function() {
-        fs.writeFileSync(mediaFileConverted, new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+      page.render({
+        canvasContext: ctx,
+        viewport: page.getViewport({scale: scale})
+      }).promise.then(function() {
+        fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png"), new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
         $("div#pdf").remove();
         resolve();
       });
@@ -242,7 +231,6 @@ function convertPdfPage(mediaFile, pdf, pageNum) {
 }
 function convertSvg(mediaFile) {
   return new Promise((resolve)=>{
-    var mediaFileConverted = path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png");
     $("body").append("<div id='svg'>");
     $("div#svg").append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
     $("img#svgImg").on("load", function() {
@@ -257,7 +245,7 @@ function convertSvg(mediaFile) {
       canvasContext.imageSmoothingEnabled = true;
       canvasContext.imageSmoothingQuality = "high";
       canvasContext.drawImage(image, 0, 0);
-      fs.writeFileSync(mediaFileConverted, new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+      fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png"), new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
       fs.rmSync(mediaFile);
       $("div#svg").remove();
       return resolve();
@@ -287,8 +275,7 @@ function createMediaNames() {
     var meeting = Object.values(meetingMedia)[h];
     for (var i = 0; i < meeting.length; i++) { // parts
       for (var j = 0; j < meeting[i].media.length; j++) { // media
-        var fileExt = (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath)));
-        meeting[i].media[j].safeName = sanitizeFilename((i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0") + " - " + meeting[i].media[j].title + "." + fileExt);
+        meeting[i].media[j].safeName = sanitizeFilename((i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0") + " - " + meeting[i].media[j].title + "." + (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath))));
       }
     }
   }
@@ -350,10 +337,10 @@ function createVideoSync(mediaFile){
   });
 }
 function dateFormatter() {
-  var locale = "en";
+  let locale = "en";
   try {
     locale = jsonLangs.filter(lang => lang.langcode == prefs.lang)[0].symbol;
-    locale !== "en" && require("dayjs/locale/" + locale);
+    if (locale !== "en") require("dayjs/locale/" + locale);
   } catch(err) {
     console.error("Date locale " + locale + " not found, falling back to 'en'");
   }
@@ -421,14 +408,12 @@ async function ffmpegSetup() {
     } else {
       targetOs = "linux-64";
     }
-    var ffmpegVersions = (await request("https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest")).data;
-    var ffmpegVersion = ffmpegVersions.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
+    var ffmpegVersion = (await request("https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest")).data.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
     var ffmpegZipPath = path.join(paths.app, "ffmpeg", "zip", ffmpegVersion.name);
     if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
       cleanUp([path.join(paths.app, "ffmpeg", "zip")]);
       mkdirSync(path.join(paths.app, "ffmpeg", "zip"));
-      var ffmpegZipFile = (await request(ffmpegVersion.browser_download_url, {isFile: true})).data;
-      fs.writeFileSync(ffmpegZipPath, new Buffer(ffmpegZipFile));
+      fs.writeFileSync(ffmpegZipPath, new Buffer((await request(ffmpegVersion.browser_download_url, {isFile: true})).data));
     }
     var zip = new zipper(ffmpegZipPath);
     var zipEntry = zip.getEntries().filter((x) => !x.entryName.includes("MACOSX"))[0];
@@ -450,26 +435,16 @@ async function request(url, opts) {
     payload,
     options = opts ? opts : {};
   try {
-    if (options.webdav) {
-      options.auth = {
-        username: prefs.congServerUser,
-        password: prefs.congServerPass
-      };
-    }
+    if (options.webdav) options.auth = {
+      username: prefs.congServerUser,
+      password: prefs.congServerPass
+    };
     if (options.isFile) {
       options.responseType = "arraybuffer";
-      options.onDownloadProgress = function(progressEvent) {
-        progressSet(progressEvent.loaded, progressEvent.total);
-      };
+      options.onDownloadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
     }
-    if (options.method === "PUT") {
-      options.onUploadProgress = progressEvent => {
-        progressSet(progressEvent.loaded, progressEvent.total);
-      };
-    }
-    if (url.includes("jw.org")) {
-      options.adapter = require("axios/lib/adapters/http");
-    }
+    if (options.method === "PUT") options.onUploadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
+    if (url.includes("jw.org")) options.adapter = require("axios/lib/adapters/http");
     options.url = url;
     if (!options.method) options.method = "GET";
     payload = await axios.request(options);
@@ -484,14 +459,12 @@ async function getCongMedia() {
   perf("getCongMedia", "start");
   if (!dryrun) $("#specificCong").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
   try {
-    var congSpecificFolders = await webdavLs(path.posix.join(prefs.congServerDir, "Media"));
     totals.cong = {
       total: 0,
       current: 1
     };
-    for (var congSpecificFolder of congSpecificFolders) {
-      let remoteDir = await webdavLs(path.posix.join(prefs.congServerDir, "Media", congSpecificFolder.basename));
-      for (let remoteFile of remoteDir) {
+    for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
+      for (let remoteFile of (await webdavLs(path.posix.join(prefs.congServerDir, "Media", congSpecificFolder.basename)))) {
         var congSpecificFile = {
           "title": "Congregation-specific",
           media: [{
@@ -541,8 +514,7 @@ async function getDbFromJwpub(pub, issue, localpath) {
     var SQL = await sqljs();
     if (localpath) {
       var jwpubContents = await new zipper(localpath).readFile("contents");
-      var jwpubDbEntry = (await new zipper(jwpubContents).getEntries()).filter(entry => path.extname(entry.name) == ".db")[0];
-      var tempDb = new SQL.Database(await new zipper(jwpubContents).readFile(jwpubDbEntry.entryName));
+      var tempDb = new SQL.Database(await new zipper(jwpubContents).readFile((await new zipper(jwpubContents).getEntries()).filter(entry => path.extname(entry.name) == ".db")[0].entryName));
       var jwpubInfo = (await executeStatement(tempDb, "SELECT UndatedSymbol, IssueTagNumber FROM Publication"))[0];
       pub = jwpubInfo.UndatedSymbol;
       issue = jwpubInfo.IssueTagNumber;
@@ -564,10 +536,8 @@ async function getDbFromJwpub(pub, issue, localpath) {
   }
 }
 async function getDocumentExtract(db, docId) {
-  var statement = "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' ORDER BY DocumentExtract.BeginParagraphOrdinal";
-  var extractItems = await executeStatement(db, statement);
   var extractMultimediaItems = [];
-  for (var extractItem of extractItems) {
+  for (var extractItem of (await executeStatement(db, "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' ORDER BY DocumentExtract.BeginParagraphOrdinal"))) {
     var extractDb = await getDbFromJwpub(extractItem.UndatedSymbol, extractItem.IssueTagNumber);
     if (extractDb) {
       var extractMediaFiles = await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId);
@@ -584,10 +554,8 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
   var suppressZoomExists = (await executeStatement(db, "SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Multimedia') WHERE name='SuppressZoom'")).map(function(item) {
     return (item.CNTREC > 0 ? true : false);
   })[0];
-  var statement = "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (destDocId || destDocId === 0 ? tableMultimedia + ".DocumentId = " + destDocId : "Document.MepsDocumentId = " + destMepsId) + " AND (((Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')) OR (Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10" + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " ORDER BY BeginParagraphOrdinal" : "");
-  var multimedia = await executeStatement(db, statement);
   var multimediaItems = [];
-  for (var multimediaItem of multimedia) {
+  for (var multimediaItem of (await executeStatement(db, "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId WHERE " + (destDocId || destDocId === 0 ? tableMultimedia + ".DocumentId = " + destDocId : "Document.MepsDocumentId = " + destMepsId) + " AND (((Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')) OR (Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10" + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " ORDER BY BeginParagraphOrdinal" : "")))) {
     try {
       if ((multimediaItem.MimeType.includes("audio") || multimediaItem.MimeType.includes("video"))) {
         var json = {
@@ -652,8 +620,7 @@ async function getInitialData() {
 }
 async function getLanguages() {
   if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months"))) {
-    var jwLangs = (await request("https://www.jw.org/en/languages/")).data;
-    let cleanedJwLangs = jwLangs.languages.filter(lang => lang.hasWebContent).map(lang => ({
+    let cleanedJwLangs = (await request("https://www.jw.org/en/languages/")).data.languages.filter(lang => lang.hasWebContent).map(lang => ({
       name: lang.vernacularName + " (" + lang.name + ")",
       langcode: lang.langcode,
       symbol: lang.symbol
@@ -672,14 +639,12 @@ async function getLanguages() {
       text: lang.name
     }));
   }
-  $("#lang").val(prefs.lang);
-  $("#lang").select2();
+  $("#lang").val(prefs.lang).select2();
 }
 async function getMediaLinks(pub, track, issue, format, docId) {
   let mediaFiles = [];
   try {
-    let url = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
-    let result = (await request(url)).data;
+    let result = (await request("https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang)).data;
     if (result) {
       let mediaFileCategories = Object.values(result.files)[0];
       for (var mediaFileItem of mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : result.fileformat[0])].reverse()) {
@@ -714,18 +679,14 @@ async function getMwMediaFromDb() {
       } catch {
         throw("No MW meeting date!");
       }
-      var videos = await getDocumentMultimedia(db, docId);
-      videos.map(video => {
+      (await getDocumentMultimedia(db, docId)).map(video => {
         addMediaItemToPart(mwDate, video.BeginParagraphOrdinal, video);
       });
-      var extracted = await getDocumentExtract(db, docId);
-      extracted.map(extract => {
+      (await getDocumentExtract(db, docId)).map(extract => {
         addMediaItemToPart(mwDate, extract.BeginParagraphOrdinal, extract);
       });
-      var internalRefs = await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94");
-      for (var internalRef of internalRefs) {
-        var internalRefMediaFiles = await getDocumentMultimedia(db, internalRef.DocumentId);
-        internalRefMediaFiles.map(internalRefMediaFile => {
+      for (var internalRef of (await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94"))) {
+        (await getDocumentMultimedia(db, internalRef.DocumentId)).map(internalRefMediaFile => {
           addMediaItemToPart(mwDate, internalRef.BeginParagraphOrdinal, internalRefMediaFile);
         });
       }
@@ -786,8 +747,7 @@ async function getWeMediaFromDb() {
       } catch {
         throw("No WE meeting date!");
       }
-      var qryLocalMedia = await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9");
-      for (var picture of qryLocalMedia) {
+      for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
         var LocalPath = path.join(paths.pubs, "w", issue, picture.FilePath);
         var FileName = (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
         var pictureObj = {
@@ -854,8 +814,8 @@ async function mp4Convert() {
     total: filesToProcess.length,
     current: 1
   };
+  progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
   for (var mediaFile of filesToProcess) {
-    progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
     await createVideoSync(mediaFile);
     totals.mp4Convert.current++;
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
@@ -896,11 +856,10 @@ function prefsInitialize() {
 }
 function progressSet(current, total, blockId) {
   if (!dryrun || !blockId) {
-    var percent = current / total * 100;
+    let percent = current / total * 100;
     if (percent > 100 || (!blockId && percent === 100)) percent = 0;
     remote.getCurrentWindow().setProgressBar(percent / 100);
-    blockId = (blockId ? "#" + blockId + " .progress-bar" : "#globalProgress");
-    $(blockId).width(percent + "%");
+    $("#" + (blockId ? blockId + " .progress-bar" : "globalProgress")).width(percent + "%");
   }
 }
 function removeEventListeners() {
@@ -1014,14 +973,14 @@ async function syncCongMedia() {
         totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length;
       }
     }
+    progressSet(totals.cong.current, totals.cong.total, "specificCong");
     console.log("%cCONGREGATION MEDIA", "background-color: #d1ecf1; color: #0c5460; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
     for (let [meeting, parts] of Object.entries(meetingMedia)) {
       console.log("%c[" + meeting + "]", "background-color: #d1ecf1; color: #0c5460; padding: 0 1em; font-size: 125%;");
       for (let part of parts) {
         for (var mediaItem of part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden)) {
-          progressSet(totals.cong.current, totals.cong.total, "specificCong");
-          await webdavGet(mediaItem);
           console.log("%c" + mediaItem.safeName, "background-color: #d1ecf1; color: #0c5460; padding: 0 2em;");
+          await webdavGet(mediaItem);
           totals.cong.current++;
           progressSet(totals.cong.current, totals.cong.total, "specificCong");
         }
@@ -1047,6 +1006,7 @@ async function syncJwOrgMedia() {
       totals.jw.total = totals.jw.total + part.media.filter(mediaItem => !mediaItem.congSpecific).length;
     }
   }
+  progressSet(totals.jw.current, totals.jw.total, "syncJwOrgMedia");
   console.log("%cJW.org MEDIA", "background-color: #cce5ff; color: #004085; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
   for (var h = 0; h < Object.values(meetingMedia).length; h++) { // meetings
     console.log("%c[" + Object.keys(meetingMedia)[h] + "]", "background-color: #cce5ff; color: #004085; padding: 0 1em; font-size: 125%;");
@@ -1054,7 +1014,6 @@ async function syncJwOrgMedia() {
     for (var i = 0; i < meeting.length; i++) { // parts
       var partMedia = meeting[i].media.filter(mediaItem => !mediaItem.congSpecific);
       for (var j = 0; j < partMedia.length; j++) { // media
-        progressSet(totals.jw.current, totals.jw.total, "syncJwOrgMedia");
         if (!partMedia[j].hidden && !partMedia[j].congSpecific && !dryrun) {
           console.log("%c" + partMedia[j].safeName, "background-color: #cce5ff; color: #004085; padding: 0 2em;");
           if (partMedia[j].url) {
@@ -1075,8 +1034,7 @@ async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "stop");
 }
 function toggleScreen(screen, forceShow) {
-  var visible = $("#" + screen).is(":visible");
-  if (!visible || forceShow) {
+  if (!($("#" + screen).is(":visible")) || forceShow) {
     $("#" + screen).slideDown(animationDuration);
   } else {
     $("#" + screen).slideUp(animationDuration);
@@ -1154,8 +1112,7 @@ function validateConfig() {
   return configIsValid;
 }
 async function webdavExists(url) {
-  let status = (await webdavHead(url)).status;
-  return status < 400;
+  return (await webdavHead(url)).status < 400;
 }
 async function webdavGet(file) {
   let localFile = path.join(paths.media, file.folder, file.safeName);
@@ -1188,7 +1145,7 @@ async function webdavLs(dir, force) {
   try {
     if (webdavIsAGo || force) {
       await webdavMkdir(dir);
-      let xml = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + dir, {
+      let listing = xmlParser.parse((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + dir, {
         method: "PROPFIND",
         responseType: "text",
         headers: {
@@ -1196,8 +1153,7 @@ async function webdavLs(dir, force) {
           Depth: "1"
         },
         webdav: true
-      })).data;
-      let listing = xmlParser.parse(xml, {
+      })).data, {
         arrayMode: false,
         ignoreNameSpace: true
       });
@@ -1375,8 +1331,7 @@ $("#btnMeetingMusic").on("click", async function() {
     let rightNow = dayjs();
     if (prefs.musicFadeOutType == "smart") {
       if ((now.day() - 1) == prefs.mwDay || (now.day() - 1) == prefs.weDay) {
-        var todaysMeeting = ((now.day() - 1) == prefs.mwDay ? "mw" : "we");
-        let todaysMeetingStartTime = prefs[todaysMeeting + "StartTime"].split(":");
+        let todaysMeetingStartTime = prefs[((now.day() - 1) == prefs.mwDay ? "mw" : "we") + "StartTime"].split(":");
         let timeToStartFading = now.clone().hour(todaysMeetingStartTime[0]).minute(todaysMeetingStartTime[1]).millisecond(rightNow.millisecond()).subtract(prefs.musicFadeOutTime, "s");
         timeBeforeFade = timeToStartFading.diff(rightNow);
       }
@@ -1462,8 +1417,7 @@ $("#btnUpload").on("click", async () => {
       }
       tempMediaArray = [];
     } else {
-      var localFile = $("#fileToUpload").val();
-      for (var splitLocalFile of localFile.split(" -//- ")) {
+      for (var splitLocalFile of $("#fileToUpload").val().split(" -//- ")) {
         var splitFileToUploadName = sanitizeFilename(prefix + " " + path.basename(splitLocalFile));
         if (currentStep == "additionalMedia") {
           fs.copyFileSync(splitLocalFile, path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), splitFileToUploadName));
@@ -1554,8 +1508,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     };
     if (multimediaItem.queryInfo.CategoryType !== -1) {
       var jwpubContents = await new zipper($("#jwpubPicker").val()).readFile("contents");
-      var mediaEntry = (await new zipper(jwpubContents).getEntries()).filter(entry => entry.name == multimediaItem.queryInfo.FilePath)[0];
-      tempMedia.contents = (await new zipper(jwpubContents).readFile(mediaEntry.entryName));
+      tempMedia.contents = (await new zipper(jwpubContents).readFile(((await new zipper(jwpubContents).getEntries()).filter(entry => entry.name == multimediaItem.queryInfo.FilePath)[0]).entryName));
     } else {
       var externalMedia = (await getMediaLinks(multimediaItem.queryInfo.KeySymbol, multimediaItem.queryInfo.Track, multimediaItem.queryInfo.IssueTagNumber, null, multimediaItem.queryInfo.MultiMeps));
       if (externalMedia.length > 0) {
@@ -1612,10 +1565,9 @@ $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown").prop("disabled", false);
 });
 $("#outputPath").on("mousedown", function(event) {
-  var path = remote.dialog.showOpenDialogSync({
+  $(this).val(remote.dialog.showOpenDialogSync({
     properties: ["openDirectory"]
-  });
-  $(this).val(path).change();
+  })).change();
   event.preventDefault();
 });
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
@@ -1739,13 +1691,11 @@ $("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", f
   let options = {
     properties: ["multiSelections", "openFile"]
   };
-  if (thisId.includes("jwpub")) {
-    options = {
-      filters: [
-        { name: "JWPUB", extensions: ["jwpub"] }
-      ]
-    };
-  }
+  if (thisId.includes("jwpub")) options = {
+    filters: [
+      { name: "JWPUB", extensions: ["jwpub"] }
+    ]
+  };
   let path = remote.dialog.showOpenDialogSync(options);
   $(this).val((typeof path !== "undefined" ? (thisId.includes("file") ? path.join(" -//- ") : path) : "")).change();
   event.preventDefault();
@@ -1755,8 +1705,7 @@ $("#songPicker").on("change", function() {
 });
 $("#version:not(.bg-danger)").on("click", showReleaseNotes);
 $("#webdavProviders a").on("click", function() {
-  let data = Object.entries($(this).data());
-  for (let i of data) {
+  for (let i of Object.entries($(this).data())) {
     let name = "cong" + (i[0][0].toUpperCase() + i[0].slice(1));
     prefs[name] = i[1];
     $("#" + name).val(i[1]);
