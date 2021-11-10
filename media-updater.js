@@ -302,11 +302,9 @@ function createVideoSync(mediaFile){
           [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
         }
         convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height)));
+        // We'll remove this next bit when Zoom fixes their 1080p MP4 bug
         if (convertedImageDimesions.toString() == fullHd.toString() || convertedImageDimesions.toString() == [Math.round(parseInt(prefs.maxRes.replace(/\D/g, "")) * 16 / 9), parseInt(prefs.maxRes.replace(/\D/g, ""))].toString()) convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
           return dimension - 1;
-        });
-        convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
-          return (dimension % 2 ? dimension - 1 : dimension);
         });
         $("body").append("<div id='convert' style='display: none;'>");
         $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
@@ -315,8 +313,10 @@ function createVideoSync(mediaFile){
             var canvas = $("#imgCanvas")[0],
               image = $("img#imgToConvert")[0];
             encoder.quantizationParameter = 10;
-            encoder.width = canvas.width = image.width = convertedImageDimesions[0];
-            encoder.height = canvas.height = image.height = convertedImageDimesions[1];
+            image.width = convertedImageDimesions[0];
+            image.height = convertedImageDimesions[1];
+            encoder.width = canvas.width = (image.width % 2 ? image.width - 1 : image.width);
+            encoder.height = canvas.height = (image.height % 2 ? image.height - 1 : image.height);
             encoder.initialize();
             canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
             encoder.addFrameRgba(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data);
