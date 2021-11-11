@@ -444,7 +444,7 @@ async function request(url, opts) {
       options.onDownloadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
     }
     if (options.method === "PUT") options.onUploadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
-    if (url.includes("jw.org")) options.adapter = require("axios/lib/adapters/http");
+    if (["jw.org", "www.jw.org"].includes((new URL(url)).hostname)) options.adapter = require("axios/lib/adapters/http");
     options.url = url;
     if (!options.method) options.method = "GET";
     payload = await axios.request(options);
