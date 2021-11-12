@@ -138,7 +138,7 @@ function goAhead() {
       getTranslations();
       updateSongs();
     }
-    if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) cleanUp([paths.media]);
+    if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) rm([paths.media]);
     validateConfig();
   });
 }
@@ -176,20 +176,14 @@ function addMediaItemToPart (date, paragraph, media) {
   meetingMedia[date].find(part => part.title == paragraph).media.push(media);
   meetingMedia[date] = meetingMedia[date].sort((a, b) => a.title > b.title && 1 || -1);
 }
-function cleanUp(dirs) {
-  perf("cleanUp", "start");
-  for (var lookinDir of dirs) {
-    if (!dryrun) $("#statusIcon").addClass("fa-broom").removeClass("fa-photo-video");
-    try {
-      if (fs.existsSync(lookinDir)) fs.rmSync(lookinDir, {
-        recursive: true
-      });
-    } catch(err) {
-      console.error(err);
-    }
-    if (!dryrun) $("#statusIcon").addClass("fa-photo-video").removeClass("fa-broom");
+function rm(toDelete) {
+  if (!Array.isArray(toDelete)) toDelete = [toDelete];
+  for (var fileOrDir of toDelete) {
+    fs.rmSync(fileOrDir, {
+      recursive: true,
+      force: true
+    });
   }
-  perf("cleanUp", "stop");
 }
 function convertPdf(mediaFile) {
   return new Promise((resolve)=>{
@@ -202,7 +196,7 @@ function convertPdf(mediaFile) {
       for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         await convertPdfPage(mediaFile, pdf, pageNum);
       }
-      fs.rmSync(mediaFile);
+      await rm(mediaFile);
       resolve();
     });
   });
@@ -246,7 +240,7 @@ function convertSvg(mediaFile) {
       canvasContext.imageSmoothingQuality = "high";
       canvasContext.drawImage(image, 0, 0);
       fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png"), new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
-      fs.rmSync(mediaFile);
+      rm(mediaFile);
       $("div#svg").remove();
       return resolve();
     });
@@ -288,7 +282,7 @@ function createVideoSync(mediaFile){
       if (path.extname(mediaFile).includes("mp3")) {
         ffmpegSetup().then(function () {
           ffmpeg(mediaFile).on("end", function() {
-            fs.rmSync(mediaFile);
+            rm(mediaFile);
             return resolve();
           }).on("error", function(err) {
             console.error(err.message);
@@ -322,7 +316,7 @@ function createVideoSync(mediaFile){
             encoder.addFrameRgba(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data);
             encoder.finalize();
             fs.writeFileSync(outputFilePath, encoder.FS.readFile(encoder.outputFilename));
-            fs.rmSync(mediaFile);
+            rm(mediaFile);
             encoder.delete();
             $("div#convert").remove();
             return resolve();
@@ -411,7 +405,7 @@ async function ffmpegSetup() {
     var ffmpegVersion = (await request("https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest")).data.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
     var ffmpegZipPath = path.join(paths.app, "ffmpeg", "zip", ffmpegVersion.name);
     if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
-      cleanUp([path.join(paths.app, "ffmpeg", "zip")]);
+      await rm([path.join(paths.app, "ffmpeg", "zip")]);
       mkdirSync(path.join(paths.app, "ffmpeg", "zip"));
       fs.writeFileSync(ffmpegZipPath, new Buffer((await request(ffmpegVersion.browser_download_url, {isFile: true})).data));
     }
@@ -936,7 +930,7 @@ async function startMediaSync() {
   if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 0);
   await setVars();
   for (let folder of glob.sync(path.join(paths.media, "*/"))) {
-    if (!dryrun && (webdavIsAGo || !webdavIsAGo && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(baseDate) || !(dayjs(path.basename(folder), "YYYY-MM-DD").isValid())))) await cleanUp([folder]);
+    if (!dryrun && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(now) || !(dayjs(path.basename(folder), "YYYY-MM-DD").isValid()))) await rm([folder]);
   }
   perf("getJwOrgMedia", "start");
   await getMwMediaFromDb();
@@ -971,6 +965,11 @@ async function syncCongMedia() {
     for (let parts of Object.values(meetingMedia)) {
       for (let part of parts.filter(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length > 0)) {
         totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length;
+      }
+    }
+    for (let datedFolder of glob.sync(path.join(paths.media, "*/"))) {
+      if (meetingMedia[path.basename(datedFolder)]) for (let jwOrCongFile of glob.sync(path.join(datedFolder, "*"))) {
+        if (!meetingMedia[path.basename(datedFolder)].map(part => part.media.map(media => media.safeName)).flat().includes(path.basename(jwOrCongFile))) await rm(jwOrCongFile);
       }
     }
     progressSet(totals.cong.current, totals.cong.total, "specificCong");
@@ -1048,7 +1047,7 @@ function updateCleanup() {
     console.error(err);
   } finally {
     if (lastRunVersion !== remote.app.getVersion()) {
-      cleanUp([paths.lang, paths.pubs]);
+      rm([paths.lang, paths.pubs]);
       fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
       if (lastRunVersion !== 0) showReleaseNotes();
     }
@@ -1309,7 +1308,6 @@ $("#autoRunAtBoot").on("change", function() {
 $("#baseDate").on("click", ".dropdown-item", function() {
   setVars();
   baseDate = dayjs($(this).val()).startOf("isoWeek");
-  cleanUp([paths.media]);
   $("#baseDate .dropdown-item.active").removeClass("active");
   $(this).addClass("active");
   $("#baseDate > button").text($(this).text());
@@ -1573,7 +1571,7 @@ $("#outputPath").on("mousedown", function(event) {
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
   $(this).addClass("btn-success").removeClass("btn-warning").prop("disabled", true);
   setVars();
-  cleanUp([paths.lang, paths.langs, paths.pubs]);
+  rm([paths.lang, paths.langs, paths.pubs]);
   setTimeout(() => {
     $(".btn-clean-up").removeClass("btn-success").addClass("btn-warning").prop("disabled", false);
   }, 3000);
@@ -1601,10 +1599,9 @@ $("#fileList").on("click", "li .fa-minus-circle", function() {
 });
 $("#fileList").on("click", "li .fa-exclamation-circle", function() {
   if (currentStep == "additionalMedia") {
-    fs.rmSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).parent().data("url")));
+    rm(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).parent().data("url")));
   } else {
     webdavRm($(this).parent().data("url"));
-    cleanUp([paths.media]);
   }
   $(this).parent().fadeOut(animationDuration, function(){
     $(this).remove();
