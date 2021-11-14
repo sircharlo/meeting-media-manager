@@ -67,6 +67,7 @@ dayjs.extend(require("dayjs/plugin/duration"));
 var baseDate = dayjs().startOf("isoWeek"),
   currentStep,
   datepickers,
+  downloadStats = {},
   dryrun = false,
   ffmpegIsSetup = false,
   jsonLangs = {},
@@ -369,8 +370,16 @@ async function downloadIfRequired(file) {
   if (file.downloadRequired) {
     mkdirSync(file.localDir);
     fs.writeFileSync(file.localFile, new Buffer((await request(file.url, {isFile: true})).data));
+    downloadStat("jworg", "live", file);
+  } else {
+    downloadStat("jworg", "cache", file);
   }
   if (path.extname(file.localFile) == ".jwpub") await new zipper((await new zipper(file.localFile).readFile("contents"))).extractAllTo(file.localDir);
+}
+function downloadStat(origin, source, file) {
+  if (!downloadStats[origin]) downloadStats[origin] = {};
+  if (!downloadStats[origin][source]) downloadStats[origin][source] = [];
+  downloadStats[origin][source].push(file);
 }
 async function executeDryrun() {
   $("#overlayDryrun").fadeIn(animationDuration);
@@ -823,9 +832,12 @@ function perf(func, op) {
   perfStats[func][op] = performance.now();
 }
 function perfPrint() {
-  console.log("\n%cPERFORMANCE INFO", "background-color: #e2e3e5; color: #41464b; padding: 0.5em 1em; font-weight: bold; font-size: 125%;");
+  console.log("\n%cPERFORMANCE AND NETWORK INFO", "background-color: #e2e3e5; color: #41464b; padding: 0.5em 1em; font-weight: bold; font-size: 125%;");
   for (var perfItem of Object.entries(perfStats).sort((a, b) => a[1].stop - b[1].stop)) {
     console.log("%c[" + perfItem[0] + "] " + (perfItem[1].stop - perfItem[1].start).toFixed(1) + "ms", "background-color: #e2e3e5; color: #41464b; padding: 0 1em;");
+  }
+  for (let downloadSource of Object.entries(downloadStats)) {
+    console.log("%c[" + downloadSource[0] + "Fetch] " + Object.entries(downloadSource[1]).sort((a,b) => a[0].localeCompare(b[0])).map(downloadOrigin => "from " + downloadOrigin[0] + ": " + (downloadOrigin[1].map(source => source.filesize).reduce((a, b) => a + b, 0) / 1024 / 1024).toFixed(1) + "MB").join(", "), "background-color: #fbe9e7; color: #000; padding: 0 1em;");
   }
 }
 function prefsInitialize() {
@@ -895,6 +907,7 @@ function sanitizeFilename(filename) {
 function setVars() {
   perf("setVars", "start");
   try {
+    downloadStats = {};
     meetingMedia = {};
     jwpubDbs = {};
     paths.output = path.join(prefs.outputPath);
@@ -1115,12 +1128,15 @@ async function webdavExists(url) {
 }
 async function webdavGet(file) {
   let localFile = path.join(paths.media, file.folder, file.safeName);
-  if (fs.existsSync(localFile) ? !(file.filesize == fs.statSync(localFile).size) : true) {
+  if (!fs.existsSync(localFile) || !(file.filesize == fs.statSync(localFile).size)) {
     mkdirSync(path.join(paths.media, file.folder));
     fs.writeFileSync(localFile, new Buffer((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + file.url, {
       webdav: true,
       isFile: true
     })).data));
+    downloadStat("cong", "live", file);
+  } else {
+    downloadStat("cong", "cache", file);
   }
 }
 async function webdavHead(url) {
