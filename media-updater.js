@@ -135,10 +135,7 @@ function goAhead() {
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("cong")) webdavSetup();
     setVars();
-    if ($(this).prop("id").includes("lang")) {
-      getTranslations();
-      updateSongs();
-    }
+    if ($(this).prop("id").includes("lang")) getTranslations();
     if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) rm([paths.media]);
     validateConfig();
   });
@@ -433,31 +430,6 @@ async function ffmpegSetup() {
     ffmpegIsSetup = true;
   }
 }
-async function request(url, opts) {
-  let response = null,
-    payload,
-    options = opts ? opts : {};
-  try {
-    if (options.webdav) options.auth = {
-      username: prefs.congServerUser,
-      password: prefs.congServerPass
-    };
-    if (options.isFile) {
-      options.responseType = "arraybuffer";
-      options.onDownloadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
-    }
-    if (options.method === "PUT") options.onUploadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
-    if (["jw.org", "www.jw.org"].includes((new URL(url)).hostname)) options.adapter = require("axios/lib/adapters/http");
-    options.url = url;
-    if (!options.method) options.method = "GET";
-    payload = await axios.request(options);
-    response = payload;
-  } catch (err) {
-    console.error(url, err, payload);
-    response = err.response;
-  }
-  return response;
-}
 async function getCongMedia() {
   perf("getCongMedia", "start");
   if (!dryrun) $("#specificCong").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
@@ -594,7 +566,6 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
 async function getInitialData() {
   await getLanguages();
   await getTranslations();
-  await updateSongs();
   updateCleanup();
   validateConfig();
   $("#version").text("v" + remote.app.getVersion());
@@ -736,6 +707,19 @@ async function getTranslations() {
   $(".i18n").each(function() {
     $(this).html(i18n.__($(this).data("i18n-string")));
   });
+  try {
+    $("#songPicker").empty();
+    for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4")).reverse()) {
+      $("#songPicker").append($("<option>", {
+        value: sjj.url,
+        text: sjj.title
+      }));
+    }
+  } catch (err) {
+    console.error(err);
+    $("label[for=typeSong]").removeClass("active").addClass("disabled");
+    $("label[for=typeFile]").click().addClass("active");
+  }
 }
 async function getWeMediaFromDb() {
   var weDate = baseDate.clone().add(prefs.weDay, "days").format("YYYY-MM-DD");
@@ -874,6 +858,31 @@ function removeEventListeners() {
   document.removeEventListener("dragenter", dragenterHandler);
   document.removeEventListener("dragleave", dragleaveHandler);
 }
+async function request(url, opts) {
+  let response = null,
+    payload,
+    options = opts ? opts : {};
+  try {
+    if (options.webdav) options.auth = {
+      username: prefs.congServerUser,
+      password: prefs.congServerPass
+    };
+    if (options.isFile) {
+      options.responseType = "arraybuffer";
+      options.onDownloadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
+    }
+    if (options.method === "PUT") options.onUploadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
+    if (["jw.org", "www.jw.org"].includes((new URL(url)).hostname)) options.adapter = require("axios/lib/adapters/http");
+    options.url = url;
+    if (!options.method) options.method = "GET";
+    payload = await axios.request(options);
+    response = payload;
+  } catch (err) {
+    console.error(url, err, payload);
+    response = err.response;
+  }
+  return response;
+}
 function sanitizeFilename(filename) {
   filename = filename.match(/(\p{Script=Cyrillic}*\p{Script=Latin}*[-. 0-9_]*)/ug)
     .join("")
@@ -946,14 +955,18 @@ async function startMediaSync() {
     if (!dryrun && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(now) || !(dayjs(path.basename(folder), "YYYY-MM-DD").isValid()))) await rm([folder]);
   }
   perf("getJwOrgMedia", "start");
-  await getMwMediaFromDb();
-  await getWeMediaFromDb();
+  await Promise.all([
+    getMwMediaFromDb(),
+    getWeMediaFromDb()
+  ]);
   perf("getJwOrgMedia", "stop");
   createMediaNames();
   if (webdavIsAGo) await getCongMedia();
   if (!dryrun) {
-    await syncJwOrgMedia();
-    if (webdavIsAGo) await syncCongMedia();
+    await Promise.all([
+      syncCongMedia(),
+      syncJwOrgMedia(),
+    ]);
     if (prefs.additionalMediaPrompt) await additionalMedia();
     if (prefs.betaMp4Gen) await mp4Convert();
     if (prefs.openFolderWhenDone) shell.openPath(paths.media);
@@ -967,44 +980,46 @@ async function startMediaSync() {
   perfPrint();
 }
 async function syncCongMedia() {
-  perf("syncCongMedia", "start");
-  $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
-  $("#specificCong").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
-  try {
-    totals.cong = {
-      total: 0,
-      current: 1
-    };
-    for (let parts of Object.values(meetingMedia)) {
-      for (let part of parts.filter(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length > 0)) {
-        totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length;
-      }
-    }
-    for (let datedFolder of glob.sync(path.join(paths.media, "*/"))) {
-      if (meetingMedia[path.basename(datedFolder)]) for (let jwOrCongFile of glob.sync(path.join(datedFolder, "*"))) {
-        if (!meetingMedia[path.basename(datedFolder)].map(part => part.media.map(media => media.safeName)).flat().includes(path.basename(jwOrCongFile))) await rm(jwOrCongFile);
-      }
-    }
-    progressSet(totals.cong.current, totals.cong.total, "specificCong");
-    console.log("%cCONGREGATION MEDIA", "background-color: #d1ecf1; color: #0c5460; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
-    for (let [meeting, parts] of Object.entries(meetingMedia)) {
-      console.log("%c[" + meeting + "]", "background-color: #d1ecf1; color: #0c5460; padding: 0 1em; font-size: 125%;");
-      for (let part of parts) {
-        for (var mediaItem of part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden)) {
-          console.log("%c" + mediaItem.safeName, "background-color: #d1ecf1; color: #0c5460; padding: 0 2em;");
-          await webdavGet(mediaItem);
-          totals.cong.current++;
-          progressSet(totals.cong.current, totals.cong.total, "specificCong");
+  if (webdavIsAGo) {
+    perf("syncCongMedia", "start");
+    $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
+    $("#specificCong").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+    try {
+      totals.cong = {
+        total: 0,
+        current: 1
+      };
+      for (let parts of Object.values(meetingMedia)) {
+        for (let part of parts.filter(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length > 0)) {
+          totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length;
         }
       }
+      for (let datedFolder of glob.sync(path.join(paths.media, "*/"))) {
+        if (meetingMedia[path.basename(datedFolder)]) for (let jwOrCongFile of glob.sync(path.join(datedFolder, "*"))) {
+          if (!meetingMedia[path.basename(datedFolder)].map(part => part.media.map(media => media.safeName)).flat().includes(path.basename(jwOrCongFile))) await rm(jwOrCongFile);
+        }
+      }
+      progressSet(totals.cong.current, totals.cong.total, "specificCong");
+      console.log("%cCONGREGATION MEDIA", "background-color: #d1ecf1; color: #0c5460; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
+      for (let [meeting, parts] of Object.entries(meetingMedia)) {
+        console.log("%c[" + meeting + "]", "background-color: #d1ecf1; color: #0c5460; padding: 0 1em; font-size: 125%;");
+        for (let part of parts) {
+          for (var mediaItem of part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden)) {
+            console.log("%c" + mediaItem.safeName, "background-color: #d1ecf1; color: #0c5460; padding: 0 2em;");
+            await webdavGet(mediaItem);
+            totals.cong.current++;
+            progressSet(totals.cong.current, totals.cong.total, "specificCong");
+          }
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle");
     }
-  } catch (err) {
-    console.error(err);
-    $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle");
+    $("#specificCong").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
+    $("#statusIcon").addClass("fa-photo-video").removeClass("fa-cloud");
+    perf("syncCongMedia", "stop");
   }
-  $("#specificCong").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
-  $("#statusIcon").addClass("fa-photo-video").removeClass("fa-cloud");
-  perf("syncCongMedia", "stop");
 }
 async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "start");
@@ -1064,21 +1079,6 @@ function updateCleanup() {
       fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
       if (lastRunVersion !== 0) showReleaseNotes();
     }
-  }
-}
-async function updateSongs() {
-  try {
-    $("#songPicker").empty();
-    for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4")).reverse()) {
-      $("#songPicker").append($("<option>", {
-        value: sjj.url,
-        text: sjj.title
-      }));
-    }
-  } catch (err) {
-    console.error(err);
-    $("label[for=typeSong]").removeClass("active").addClass("disabled");
-    $("label[for=typeFile]").click().addClass("active");
   }
 }
 function validateConfig() {
