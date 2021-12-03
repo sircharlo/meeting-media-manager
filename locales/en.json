@@ -5,6 +5,7 @@
 	"convertExternal": "Offer to import additional media",
 	"custom": "Custom",
 	"enableMusicButton": "Enable button to play Kingdom songs on shuffle",
+	"excludeTh": "Exclude media from the <em>th</em> brochure",
 	"fetchMedia": "Get media!",
 	"filenamePrefix": "Filename prefix",
 	"mediaToAdd": "Media to add",
@@ -36,5 +37,5 @@
 	"webdavUser": "WebDAV Username",
 	"weMeetingDay": "Weekend meeting",
 	"whatsNew": "What's new in this version?",
-	"whatsNewDetails": "<p>Issues fixed:</p><ul><li>Some images weren't included if they were from older publications</li><li>Many bugfixes and under-the-hood improvements</li></ul><p>Enjoy!</p>"
+	"whatsNewDetails": "<p><strong>Stop!</strong> There are alot of changes in this update! Some of them might impact you directly, so please read on, especially the last two points.</p><p>Notable changes:</p><ul><li>The maximum resolution of converted images is now increased to 1080p</li><li>The quality of PDF conversion is now improved</li><li>Cached files are handled better, to prevent needless downloads</li><li>Some sync operations now run concurrently to improve performance</li><li>The appropriate cursor is now shown when something is clickable</li><li>Progress is now displayed when loading media from a manually selected JWPUB file</li><li>Fixed an issue where some referenced media was being ignored (particularly, the <em>rr</em> book)</li><li>Consequently, added option to exclude media from the <em>th</em> brochure; it is <strong>disabled</strong> by default, but can be enabled in the settings screen</li></ul><p>Enjoy!</p>"
 }
