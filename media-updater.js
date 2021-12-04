@@ -725,10 +725,16 @@ async function getWeMediaFromDb() {
   if (now.isSameOrBefore(dayjs(weDate))) {
     if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
     try {
-      var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
-      var db = await getDbFromJwpub("w", issue);
-      var weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
       try {
+        var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
+        var db = await getDbFromJwpub("w", issue);
+        var weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
+        if (weekNumber < 0) {
+          issue = baseDate.clone().subtract(9, "weeks").format("YYYYMM") + "00";
+          db = await getDbFromJwpub("w", issue);
+          weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
+        }
+        if (weekNumber < 0) throw("No WE meeting date found!");
         var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
       } catch {
         throw("No WE meeting date!");
