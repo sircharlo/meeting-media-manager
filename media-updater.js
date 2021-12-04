@@ -266,7 +266,11 @@ function createMediaNames() {
     var meeting = Object.values(meetingMedia)[h];
     for (var i = 0; i < meeting.length; i++) { // parts
       for (var j = 0; j < meeting[i].media.length; j++) { // media
-        meeting[i].media[j].safeName = sanitizeFilename((i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0") + " - " + meeting[i].media[j].title + "." + (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath))));
+        if (meeting[i].media[j].filesize) {
+          meeting[i].media[j].safeName = sanitizeFilename((i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0") + " - " + meeting[i].media[j].title + "." + (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath))));
+        } else {
+          continue;
+        }
       }
     }
   }
@@ -739,9 +743,9 @@ async function getWeMediaFromDb() {
       } catch {
         throw("No WE meeting date!");
       }
-      for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId,Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType,DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
+      for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
         var LocalPath = path.join(paths.pubs, "w", issue, picture.FilePath);
-        var FileName = (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
+        var FileName = (picture.TargetParagraphNumberLabel ? picture.TargetParagraphNumberLabel + ". " : "") + (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
         var pictureObj = {
           title: FileName,
           filepath: LocalPath,
@@ -1047,13 +1051,17 @@ async function syncJwOrgMedia() {
       var partMedia = meeting[i].media.filter(mediaItem => !mediaItem.congSpecific);
       for (var j = 0; j < partMedia.length; j++) { // media
         if (!partMedia[j].hidden && !partMedia[j].congSpecific && !dryrun) {
-          console.log("%c" + partMedia[j].safeName, "background-color: #cce5ff; color: #004085; padding: 0 2em;");
-          if (partMedia[j].url) {
-            await downloadIfRequired(partMedia[j]);
+          if (!partMedia[j].filesize) {
+            console.log("%c[WARN]  Skipping missing media! Try running the sync at a later date.", "background-color: #cce5ff; color: #004085; padding: 0 2em;");
           } else {
-            mkdirSync(path.join(paths.media, partMedia[j].folder));
-            var destFile = path.join(paths.media, partMedia[j].folder, partMedia[j].safeName);
-            if (!fs.existsSync(destFile) || fs.statSync(destFile).size !== partMedia[j].filesize) fs.copyFileSync(partMedia[j].filepath, destFile);
+            console.log("%c" + partMedia[j].safeName, "background-color: #cce5ff; color: #004085; padding: 0 2em;");
+            if (partMedia[j].url) {
+              await downloadIfRequired(partMedia[j]);
+            } else {
+              mkdirSync(path.join(paths.media, partMedia[j].folder));
+              var destFile = path.join(paths.media, partMedia[j].folder, partMedia[j].safeName);
+              if (!fs.existsSync(destFile) || fs.statSync(destFile).size !== partMedia[j].filesize) fs.copyFileSync(partMedia[j].filepath, destFile);
+            }
           }
         }
         totals.jw.current++;
