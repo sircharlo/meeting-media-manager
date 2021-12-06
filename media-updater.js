@@ -267,7 +267,7 @@ function createMediaNames() {
     for (var i = 0; i < meeting.length; i++) { // parts
       for (var j = 0; j < meeting[i].media.length; j++) { // media
         if (meeting[i].media[j].filesize) {
-          meeting[i].media[j].safeName = sanitizeFilename((i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0") + " - " + (meeting[i].media[j].queryInfo.TargetParagraphNumberLabel ? meeting[i].media[j].queryInfo.TargetParagraphNumberLabel + ". " : "") + meeting[i].media[j].title + "." + (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath))));
+          meeting[i].media[j].safeName = sanitizeFilename((i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0") + " - " + ((meeting[i].media[j].queryInfo.TargetParagraphNumberLabel ? meeting[i].media[j].queryInfo.TargetParagraphNumberLabel + ". " : "")) + meeting[i].media[j].title + "." + (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath))));
         } else {
           continue;
         }
@@ -760,7 +760,7 @@ async function getWeMediaFromDb() {
       }
       for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
         var LocalPath = path.join(paths.pubs, "w", issue, picture.FilePath);
-        var FileName = (picture.TargetParagraphNumberLabel ? picture.TargetParagraphNumberLabel + ". " : "") + (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
+        var FileName = (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
         var pictureObj = {
           title: FileName,
           filepath: LocalPath,
