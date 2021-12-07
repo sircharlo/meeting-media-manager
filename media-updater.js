@@ -297,10 +297,6 @@ function createVideoSync(mediaFile){
           [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
         }
         convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height)));
-        // We'll remove this next bit when Zoom fixes their 1080p MP4 bug
-        if (convertedImageDimesions.toString() == fullHd.toString() || convertedImageDimesions.toString() == [Math.round(parseInt(prefs.maxRes.replace(/\D/g, "")) * 16 / 9), parseInt(prefs.maxRes.replace(/\D/g, ""))].toString()) convertedImageDimesions = convertedImageDimesions.map(function (dimension) {
-          return dimension - 1;
-        });
         $("body").append("<div id='convert' style='display: none;'>");
         $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
         hme.createH264MP4Encoder().then(function (encoder) {
@@ -1103,7 +1099,7 @@ function updateCleanup() {
     console.error(err);
   } finally {
     if (lastRunVersion !== remote.app.getVersion()) {
-      rm([paths.lang, paths.pubs]);
+      rm([paths.lang /*, paths.pubs*/]);
       fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
       if (lastRunVersion !== 0) showReleaseNotes();
     }
