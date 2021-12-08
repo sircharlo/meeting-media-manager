@@ -542,7 +542,9 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
       if (paragraphNumber.length === 1) Object.assign(multimediaItem, paragraphNumber[0]);
       if ((await executeStatement(db, "SELECT COUNT(*) as Count FROM Question"))[0].Count > 0) {
         multimediaItem.tableQuestionIsUsed = true;
-        multimediaItem.NextParagraphOrdinal = (await executeStatement(db, "SELECT TargetParagraphNumberLabel, TargetParagraphOrdinal From Question WHERE DocumentId = " + multimediaItem.DocumentId + " AND TargetParagraphOrdinal > " + multimediaItem.BeginParagraphOrdinal + " LIMIT 1"))[0].TargetParagraphOrdinal;
+        let nextParagraphQuery = await executeStatement(db, "SELECT TargetParagraphNumberLabel, TargetParagraphOrdinal From Question WHERE DocumentId = " + multimediaItem.DocumentId + " AND TargetParagraphOrdinal > " + multimediaItem.BeginParagraphOrdinal + " LIMIT 1");
+        console.log(nextParagraphQuery);
+        if (nextParagraphQuery.length > 0) multimediaItem.NextParagraphOrdinal = nextParagraphQuery[0].TargetParagraphOrdinal;
       }
     }
     try {
@@ -633,7 +635,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
   let mediaFiles = [];
   try {
     let result = (await request("https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang)).data;
-    if (result) {
+    if (result && result.files) {
       let mediaFileCategories = Object.values(result.files)[0];
       for (var mediaFileItem of mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : result.fileformat[0])].reverse()) {
         let videoRes = mediaFileItem.label.replace(/\D/g, "");
