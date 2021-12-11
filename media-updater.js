@@ -1436,29 +1436,31 @@ $("#btnUpload").on("click", async () => {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
     $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
     if ($("input#typeSong:checked").length > 0) {
-      var songFile = new Buffer((await request($("#fileToUpload").val(), {isFile: true})).data);
+      let songFile = new Buffer((await request($("#fileToUpload").val(), {isFile: true})).data);
+      let songFileName = sanitizeFilename(prefix + " - " + $("#songPicker option:selected").text() + ".mp4");
       if (currentStep == "additionalMedia") {
-        fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + path.basename($("#fileToUpload").val()))), songFile);
+        fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), songFileName), songFile);
       } else {
-        await webdavPut(songFile, path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), sanitizeFilename(prefix + " " + path.basename($("#fileToUpload").val())));
+        await webdavPut(songFile, path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), songFileName);
       }
     } else if ($("input#typeJwpub:checked").length > 0) {
       for (var tempMedia of tempMediaArray) {
         if (tempMedia.url) tempMedia.contents = new Buffer((await request(tempMedia.url, {isFile: true})).data);
+        let jwpubFileName = sanitizeFilename(prefix + " - " + tempMedia.filename);
         if (currentStep == "additionalMedia") {
           if (tempMedia.contents) {
-            fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + tempMedia.filename)), tempMedia.contents);
+            fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), jwpubFileName), tempMedia.contents);
           } else {
-            fs.copyFileSync(tempMedia.localpath, path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), sanitizeFilename(prefix + " " + tempMedia.filename)));
+            fs.copyFileSync(tempMedia.localpath, path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), jwpubFileName));
           }
         } else {
-          await webdavPut((tempMedia.contents ? tempMedia.contents : fs.readFileSync(tempMedia.localpath)), path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), sanitizeFilename(prefix + " " + tempMedia.filename));
+          await webdavPut((tempMedia.contents ? tempMedia.contents : fs.readFileSync(tempMedia.localpath)), path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), jwpubFileName);
         }
       }
       tempMediaArray = [];
     } else {
       for (var splitLocalFile of $("#fileToUpload").val().split(" -//- ")) {
-        var splitFileToUploadName = sanitizeFilename(prefix + " " + path.basename(splitLocalFile));
+        let splitFileToUploadName = sanitizeFilename(prefix + " - " + path.basename(splitLocalFile));
         if (currentStep == "additionalMedia") {
           fs.copyFileSync(splitLocalFile, path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), splitFileToUploadName));
         } else {
@@ -1683,11 +1685,11 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         var newFiles = [];
         let newFileChosen = $("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0;
         if (newFileChosen) {
-          for (var splitFileToUpload of $("#fileToUpload").val().split(" -//- ")) {
+          for (var splitFileToUpload of $("input#typeSong:checked").length > 0 ? [$("#songPicker option:selected").text() + ".mp4"] : $("#fileToUpload").val().split(" -//- ")) {
             newFiles.push({
               title: "New file!",
               media: [{
-                safeName: sanitizeFilename(prefix + " " + path.basename(splitFileToUpload)).trim(),
+                safeName: sanitizeFilename(prefix + " - " + path.basename(splitFileToUpload)).trim(),
                 newFile: true,
                 recurring: false,
               }]
