@@ -116,7 +116,7 @@ function goAhead() {
   }
   getInitialData();
   dateFormatter();
-  $("#overlaySettings input:not(.timePicker), #overlaySettings select, #overlayWebdav input, #overlayWebdav select").on("change", function() {
+  $("#overlaySettings input:not(.timePicker), #overlaySettings select").on("change", function() {
     if ($(this).prop("tagName") == "INPUT") {
       if ($(this).prop("type") == "checkbox") {
         prefs[$(this).prop("id")] = $(this).prop("checked");
@@ -538,7 +538,6 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
       if ((await executeStatement(db, "SELECT COUNT(*) as Count FROM Question"))[0].Count > 0) {
         multimediaItem.tableQuestionIsUsed = true;
         let nextParagraphQuery = await executeStatement(db, "SELECT TargetParagraphNumberLabel, TargetParagraphOrdinal From Question WHERE DocumentId = " + multimediaItem.DocumentId + " AND TargetParagraphOrdinal > " + multimediaItem.BeginParagraphOrdinal + " LIMIT 1");
-        console.log(nextParagraphQuery);
         if (nextParagraphQuery.length > 0) multimediaItem.NextParagraphOrdinal = nextParagraphQuery[0].TargetParagraphOrdinal;
       }
     }
@@ -715,7 +714,7 @@ async function getTranslations() {
     retryInDefaultLocale: true
   });
   if (localeLang) i18n.setLocale(localeLang.symbol);
-  $(".i18n").each(function() {
+  $("[data-i18n-string]").each(function() {
     $(this).html(i18n.__($(this).data("i18n-string")));
   });
   try {
@@ -1083,6 +1082,9 @@ async function syncJwOrgMedia() {
 }
 function toggleScreen(screen, forceShow) {
   if (!($("#" + screen).is(":visible")) || forceShow) {
+    if (!$("#" + screen).is(":visible")) $("#" + screen + " .accordion-collapse").each(function() {
+      $(this).collapse($(this).find(".is-invalid").length > 0 ? "show" : "hide");
+    });
     $("#" + screen).slideDown(animationDuration);
   } else {
     $("#" + screen).slideUp(animationDuration);
@@ -1103,29 +1105,23 @@ function updateCleanup() {
   }
 }
 function validateConfig() {
-  $("#lang").next(".select2").find(".select2-selection").removeClass("invalid");
-  $("#mwDay, #weDay, #outputPath, .timePicker").removeClass("invalid is-invalid");
+  let configIsValid = true;
+  $(".is-invalid").removeClass("is-invalid");
   $("#overlaySettings .btn-outline-danger").addClass("btn-outline-primary").removeClass("btn-outline-danger");
   $("#overlaySettings label.text-danger").removeClass("text-danger");
-  let configIsValid = true;
-  if (!prefs.lang) {
-    $("#lang").next(".select2").find(".select2-selection").addClass("invalid");
-    configIsValid = false;
-  }
   $(".alertIndicators").removeClass("meeting").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
-  for (var elem of ["mwDay", "weDay", "maxRes"]) {
-    if (!prefs[elem]) {
-      $("#" + elem + " .btn-outline-primary").addClass("btn-outline-danger").removeClass("btn-outline-primary");
-      configIsValid = false;
-    } else if (elem.includes("Day")) $("#day" + prefs[elem]).addClass("meeting");
-  }
   if (prefs.outputPath === "false" || !fs.existsSync(prefs.outputPath)) $("#outputPath").val("");
-  let mandatoryFields = ["outputPath"];
-  if (prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push("mwStartTime", "weStartTime");
+  let mandatoryFields = ["outputPath", "lang", "mwDay", "weDay", "maxRes"];
+  if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push("mwStartTime", "weStartTime");
   for (var setting of mandatoryFields) {
     if (!prefs[setting]) {
-      $("#" + setting + ":visible, .timePicker[data-target='" + setting + "']").addClass("is-invalid");
+      $("#" + setting + ", .timePicker[data-target='" + setting + "']").addClass("is-invalid");
+      $("#" + setting).next(".select2").find(".select2-selection").addClass("is-invalid");
+      $("#" + setting + " .btn-outline-primary").addClass("btn-outline-danger").removeClass("btn-outline-primary");
       configIsValid = false;
+      $("#" + setting).closest("div.row").find("label").addClass("text-danger");
+    } else if (setting.includes("Day")) {
+      $("#day" + prefs[setting]).addClass("meeting");
     }
   }
   if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
@@ -1135,12 +1131,8 @@ function validateConfig() {
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut && !prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
   $("#mp4Convert").toggleClass("d-flex", prefs.betaMp4Gen);
   $("#btnMeetingMusic").toggle(prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
-  $("#overlaySettings .invalid, #overlaySettings .is-invalid, #overlaySettings .btn-outline-danger").each(function() {
-    $(this).closest("div.flex-row").find("label:nth-child(1)").addClass("text-danger");
-  });
-  $(".btn-settings").toggleClass("btn-dark", configIsValid).toggleClass("btn-danger", !configIsValid);
-  $("#settingsIcon").toggleClass("text-muted", configIsValid).toggleClass("text-danger", !configIsValid);
-  $("#mediaSync, .btn-settings").prop("disabled", !configIsValid);
+  $(".btn-home").toggleClass("btn-dark", configIsValid).toggleClass("btn-danger", !configIsValid);
+  $("#mediaSync, .btn-home").prop("disabled", !configIsValid);
   if (!configIsValid) toggleScreen("overlaySettings", true);
   return configIsValid;
 }
@@ -1298,8 +1290,7 @@ async function webdavSetup() {
       }
     }
   }
-  $("#btn-upload").toggle(congServerEntered).prop("disabled", congServerEntered && !webdavDirIsValid);
-  $(".btn-webdav, #btn-upload").toggleClass("btn-primary", !congServerEntered || (congServerEntered && webdavLoginSuccessful && webdavDirIsValid)).toggleClass("btn-danger", congServerEntered && !(webdavDirIsValid && webdavLoginSuccessful));
+  $("#btn-upload").toggle(congServerEntered).prop("disabled", congServerEntered && !webdavDirIsValid).toggleClass("btn-primary", !congServerEntered || (congServerEntered && webdavLoginSuccessful && webdavDirIsValid)).toggleClass("btn-danger", congServerEntered && !(webdavDirIsValid && webdavLoginSuccessful));
   $("#webdavStatus").toggleClass("text-success text-warning text-muted", webdavDirIsValid).toggleClass("text-danger", congServerEntered && !webdavDirIsValid);
   $(".webdavHost").toggleClass("is-valid", congServerHeartbeat).toggleClass("is-invalid", congServerEntered && !congServerHeartbeat);
   $(".webdavCreds").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && !webdavLoginSuccessful));
@@ -1307,7 +1298,7 @@ async function webdavSetup() {
   $("#webdavFolderList").fadeTo(animationDuration, webdavDirIsValid);
   $("#additionalMediaPrompt").prop("disabled", congServerEntered && webdavDirIsValid);
   $("#specificCong").toggleClass("d-flex", congServerEntered).toggleClass("alert-danger", congServerEntered && !(congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid));
-  $("#btn-settings, #overlaySettings .btn-webdav").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
+  $("#btn-settings").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
   webdavIsAGo = (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
 }
 var dragenterHandler = () => {
@@ -1405,7 +1396,7 @@ $("#btnMeetingMusic").on("click", async function() {
   }
   createAudioElem(iterator);
 });
-$(".btn-settings, #btn-settings").on("click", function() {
+$(".btn-home, #btn-settings").on("click", function() {
   toggleScreen("overlaySettings");
 });
 $("#btnStopMeetingMusic").on("click", function() {
@@ -1421,10 +1412,6 @@ $("#btnStopMeetingMusic").on("click", function() {
       if (prefs.enableMusicFadeOut) $(".relatedToFadeOut").prop("disabled", false);
     }
   });
-});
-$(".btn-webdav").on("click", function() {
-  webdavSetup();
-  toggleScreen("overlayWebdav");
 });
 $("#btnUpload").on("click", async () => {
   try {
@@ -1600,7 +1587,7 @@ $("#mediaSync").on("click", async function() {
         remote.app.quit();
       }
     }
-    $(".btn-settings, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeTo(animationDuration, 1);
+    $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeTo(animationDuration, 1);
   });
   $("#mediaSync, #baseDate-dropdown").prop("disabled", false);
 });
