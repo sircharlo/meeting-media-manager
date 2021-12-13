@@ -40,12 +40,11 @@ require("electron").ipcRenderer.on("goAhead", () => {
   });
 });
 
-const aspect = require("aspectratio"),
-  bootstrap = require("bootstrap"),
+const bootstrap = require("bootstrap"),
   dayjs = require("dayjs"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
-  fullHd = [1920, 1080],
+  fullHd = [3840, 2160],
   glob = require("glob"),
   hme = require("h264-mp4-encoder"),
   datetime = require("flatpickr"),
@@ -203,11 +202,11 @@ function convertPdfPage(mediaFile, pdf, pageNum) {
     pdf.getPage(pageNum).then(function(page) {
       $("body").append("<div id='pdf' style='display: none;'>");
       $("div#pdf").append("<canvas id='pdfCanvas'></canvas>");
-      let scale = fullHd[1] / page.getViewport({scale: 1}).height * 2;
+      let scale = fullHd[1] / page.getViewport({scale: 1}).height;
       var canvas = $("#pdfCanvas")[0];
       let ctx = canvas.getContext("2d");
       ctx.imageSmoothingEnabled = false;
-      canvas.height = fullHd[1] * 2;
+      canvas.height = fullHd[1];
       canvas.width = page.getViewport({scale: scale}).width;
       page.render({
         canvasContext: ctx,
@@ -227,7 +226,7 @@ function convertSvg(mediaFile) {
     $("img#svgImg").on("load", function() {
       let canvas = $("#svgCanvas")[0],
         image = $("img#svgImg")[0];
-      image.height = fullHd[1] * 2;
+      image.height = fullHd[1];
       canvas.height = image.height;
       canvas.width  = image.width;
       let canvasContext = canvas.getContext("2d");
@@ -291,12 +290,8 @@ function createVideoSync(mediaFile){
           }).noVideo().save(path.join(outputFilePath));
         });
       } else {
-        var convertedImageDimesions = [];
         var imageDimesions = sizeOf(mediaFile);
-        if (imageDimesions.orientation && imageDimesions.orientation >= 5) {
-          [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
-        }
-        convertedImageDimesions = aspect.resize(imageDimesions.width, imageDimesions.height, (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height)));
+        if (imageDimesions.orientation && imageDimesions.orientation >= 5) [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
         $("body").append("<div id='convert' style='display: none;'>");
         $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
         hme.createH264MP4Encoder().then(function (encoder) {
@@ -304,8 +299,8 @@ function createVideoSync(mediaFile){
             var canvas = $("#imgCanvas")[0],
               image = $("img#imgToConvert")[0];
             encoder.quantizationParameter = 10;
-            image.width = convertedImageDimesions[0];
-            image.height = convertedImageDimesions[1];
+            image.width = imageDimesions.width;
+            image.height = imageDimesions.height;
             encoder.width = canvas.width = (image.width % 2 ? image.width - 1 : image.width);
             encoder.height = canvas.height = (image.height % 2 ? image.height - 1 : image.height);
             encoder.initialize();
