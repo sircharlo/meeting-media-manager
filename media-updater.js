@@ -1488,13 +1488,16 @@ $("#chooseUploadType input").on("change", function() {
   $("#songPicker:visible").select2("destroy");
   $("#songPicker, #jwpubPicker, #filePicker").hide();
   $("#fileToUpload").val("").change();
+  $(".enterPrefixInput").val("").empty().change();
   if ($("input#typeSong:checked").length > 0) {
+    $(".enterPrefixInput").slice(0, 4).val(0).change();
     $("#songPicker").val([]).prop("disabled", false).show().select2();
   } else if ($("input#typeFile:checked").length > 0) {
     $("#filePicker").val("").prop("disabled", false).show();
   } else if ($("input#typeJwpub:checked").length > 0) {
     $("#jwpubPicker").val([]).prop("disabled", false).show();
   }
+  getPrefix();
 });
 $(".enterPrefixInput, #congServerPort").on("keypress", function(e){ // cmd/ctrl || arrow keys || delete key || numbers
   return e.metaKey || e.which <= 0 || e.which === 8 || /[0-9]/.test(String.fromCharCode(e.which));
@@ -1626,8 +1629,6 @@ $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
   $(".relatedToUploadType").fadeIn(animationDuration);
 });
 $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType input", function() {
-  $(".enterPrefixInput").val("").empty().change();
-  getPrefix();
   $(".relatedToUpload").fadeTo(animationDuration, ($("#chooseMeeting input:checked").length === 0 || $("#chooseUploadType input:checked").length === 0 ? 0 : 1));
 });
 $("#fileList").on("click", "li .fa-minus-circle", function() {
