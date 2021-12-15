@@ -6,38 +6,25 @@ const animationDuration = 200,
   $ = require("jquery");
 function checkInternet(online) {
   if (online) {
-    $("#overlayInternetCheck").fadeIn(animationDuration, () => {
-      $("#overlayInternetFail").stop().hide();
-    });
+    overlay(true, "cog fa-spin");
     require("electron").ipcRenderer.send("autoUpdate");
   } else {
-    $("#overlayInternetFail").fadeIn(animationDuration, () => {
-      $("#overlayInternetCheck").stop().hide();
-    });
+    overlay(true, "wifi", "circle-notch fa-spin text-danger");
     setTimeout(updateOnlineStatus, 1000);
   }
 }
-const updateOnlineStatus = async () => {
-  checkInternet((await isReachable("www.jw.org", 443)));
-};
+const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443)));
 updateOnlineStatus();
-require("electron").ipcRenderer.on("hideThenShow", (event, message) => {
-  $("#overlay" + message[1]).fadeIn(animationDuration, () => {
-    $("#overlay" + message[0]).stop().hide();
-  });
-});
+require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, message[0], message[1]));
 require("electron").ipcRenderer.on("macUpdate", () => {
   $("#bg-mac-update").fadeIn(animationDuration);
   $("#btn-settings").addClass("in-danger");
-  $("#version").addClass("bg-danger in-danger").removeClass("bg-primary").append(" <i class='fas fa-mouse-pointer'></i>").click(function() {
+  $("#version").addClass("bg-danger in-danger").removeClass("bg-primary").prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").click(function() {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
   });
 });
 require("electron").ipcRenderer.on("goAhead", () => {
-  $("#overlayPleaseWait").fadeIn(animationDuration, () => {
-    $("#overlayUpdateCheck").stop().hide();
-    goAhead();
-  });
+  goAhead();
 });
 
 const bootstrap = require("bootstrap"),
@@ -63,6 +50,7 @@ dayjs.extend(require("dayjs/plugin/customParseFormat"));
 dayjs.extend(require("dayjs/plugin/duration"));
 
 var baseDate = dayjs().startOf("isoWeek"),
+  cancelSync = false,
   currentStep,
   datepickers,
   downloadStats = {},
@@ -149,7 +137,7 @@ function additionalMedia() {
     }
     $(".relatedToUpload, .relatedToUploadType, #btnCancelUpload").fadeOut(animationDuration);
     $("#btnDoneUpload").on("click", function() {
-      $("#overlayUploadFile").slideUp(animationDuration);
+      toggleScreen("overlayUploadFile");
       $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
       $("#fileList, #filePicker, #jwpubPicker, .enterPrefixInput").val("").empty().change();
       $("#chooseMeeting .active, #chooseUploadType .active").removeClass("active");
@@ -157,7 +145,7 @@ function additionalMedia() {
       perf("additionalMedia", "stop");
       resolve();
     }).fadeIn(animationDuration);
-    $("#overlayUploadFile").fadeIn(animationDuration);
+    toggleScreen("overlayUploadFile");
   });
 }
 function addMediaItemToPart (date, paragraph, media) {
@@ -339,10 +327,29 @@ function dateFormatter() {
     $("#mwDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     $("#weDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     let meetingInPast = baseDate.clone().add(d, "days").isBefore(now);
-    $("#day" + d).toggleClass("alert-secondary", meetingInPast).toggleClass("alert-primary", !meetingInPast).find("i").toggleClass("fa-history", meetingInPast).toggleClass("fa-spinner", !meetingInPast);
+    $("#day" + d).toggleClass("alert-secondary", meetingInPast).toggleClass("alert-primary", !meetingInPast).find("i").toggle(!meetingInPast);
     if (baseDate.clone().add(d, "days").isSame(now)) $("#day" + d).addClass("today");
   }
 }
+const delay = s => new Promise(res => {
+  setTimeout(res, s * 1000);
+  let secsRemaining = s;
+  $("button .action-countdown").html(secsRemaining);
+  const timeinterval = setInterval(function() {
+    secsRemaining--;
+    if (secsRemaining < 1) {
+      secsRemaining = "";
+      $("button .action-countdown").html();
+      clearInterval(timeinterval);
+    }
+    $("button .action-countdown").html(secsRemaining);
+  }, 1000);
+  $("#bottomIcon button").on("click", function() {
+    window[$(this).attr("class").split(" ").filter(el => el.includes("btn-action-")).join(" ").split("-").splice(2).join("-").toLowerCase().replace(/([-_][a-z])/g, group => group.toUpperCase().replace("-", "").replace("_", ""))] = true;
+    clearInterval(timeinterval);
+    overlay(false);
+  });
+});
 function displayMusicRemaining() {
   let timeRemaining;
   if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
@@ -372,11 +379,10 @@ function downloadStat(origin, source, file) {
   if (!downloadStats[origin][source]) downloadStats[origin][source] = [];
   downloadStats[origin][source].push(file);
 }
-async function executeDryrun() {
-  $("#overlayDryrun").fadeIn(animationDuration);
-  dryrun = true;
-  await startMediaSync();
-  $("#overlayDryrun").fadeOut(animationDuration);
+async function executeDryrun(persistantOverlay) {
+  await overlay(true, "cog fa-spin");
+  await startMediaSync(true);
+  if (!persistantOverlay) await overlay(false);
 }
 async function executeStatement(db, statement) {
   var vals = await db.exec(statement)[0],
@@ -426,7 +432,7 @@ async function ffmpegSetup() {
 }
 async function getCongMedia() {
   perf("getCongMedia", "start");
-  if (!dryrun) $("#specificCong").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+  updateTile("specificCong", "warning", "fas fa-circle-notch fa-spin");
   try {
     totals.cong = {
       total: 0,
@@ -474,7 +480,7 @@ async function getCongMedia() {
     }
   } catch (err) {
     console.error(err);
-    $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle");
+    updateTile("specificCong", "danger", "fas fa-times-circle");
   }
   perf("getCongMedia", "stop");
 }
@@ -582,25 +588,17 @@ async function getInitialData() {
   await webdavSetup();
   $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   if (os.platform() == "linux") $(".notLinux").prop("disabled", true);
-  if (prefs.autoStartSync && validateConfig()) {
-    var cancelSync = false;
-    $("#btnCancelSync").on("click", function() {
-      cancelSync = true;
-      $("#btnCancelSync").addClass("text-danger fa-stop-circle").removeClass("text-warning fa-pause-circle");
-    });
-    $("#overlayStarting").fadeIn(animationDuration, () => {
-      $("#overlayPleaseWait").stop().hide();
-    }).delay(3000).fadeOut(animationDuration, () => {
-      if (!cancelSync) $("#mediaSync").click();
-    });
-  } else {
-    $("#overlayPleaseWait").stop().fadeOut(animationDuration);
-  }
   $("#baseDate button, #baseDate .dropdown-item:eq(0)").text(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
   $("#baseDate .dropdown-item:eq(0)").addClass("active");
   for (var a = 1; a <= 4; a++) {
     $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "'>" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
   }
+  if (prefs.autoStartSync && validateConfig()) {
+    await overlay(true, "hourglass-start", "pause", "cancel-sync");
+    await delay(5);
+    if (!cancelSync) $("#mediaSync").click();
+  }
+  overlay(false, (prefs.autoStartSync && validateConfig() ? "hourglass-start" : null));
 }
 async function getLanguages() {
   if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months"))) {
@@ -653,7 +651,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
 async function getMwMediaFromDb() {
   var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
   if (now.isSameOrBefore(dayjs(mwDate))) {
-    if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+    updateTile("day" + prefs.mwDay, "warning", "fas fa-circle-notch fa-spin");
     try {
       var issue = baseDate.format("YYYYMM") + "00";
       if (parseInt(baseDate.format("M")) % 2 === 0) issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
@@ -674,12 +672,11 @@ async function getMwMediaFromDb() {
           addMediaItemToPart(mwDate, internalRef.BeginParagraphOrdinal, internalRefMediaFile);
         });
       }
-      if (!dryrun) $("#day" + prefs.mwDay).addClass("alert-success").find("i").addClass("fa-check-circle");
+      updateTile("day" + prefs.mwDay, "success", "fas fa-check-circle");
     } catch(err) {
       console.error(err);
-      $("#day" + prefs.mwDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
+      updateTile("day" + prefs.mwDay, "danger", "fas fa-times-circle");
     }
-    if (!dryrun) $("#day" + prefs.mwDay).removeClass("alert-warning").find("i").removeClass("fa-spinner fa-pulse");
   }
 }
 function getPrefix() {
@@ -734,7 +731,7 @@ async function getTranslations() {
 async function getWeMediaFromDb() {
   var weDate = baseDate.clone().add(prefs.weDay, "days").format("YYYY-MM-DD");
   if (now.isSameOrBefore(dayjs(weDate))) {
-    if (!dryrun) $("#day" + prefs.weDay).addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+    updateTile("day" + prefs.weDay, "warning", "fas fa-circle-notch fa-spin");
     try {
       try {
         var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
@@ -767,12 +764,11 @@ async function getWeMediaFromDb() {
         songObj.queryInfo = qrySongs[song];
         addMediaItemToPart(weDate, song * 1000, songObj);
       }
-      if (!dryrun) $("#day" + prefs.weDay).addClass("alert-success").find("i").addClass("fa-check-circle");
+      updateTile("day" + prefs.weDay, "success", "fas fa-check-circle");
     } catch(err) {
       console.error(err);
-      $("#day" + prefs.weDay).addClass("alert-danger").find("i").addClass("fa-times-circle");
+      updateTile("day" + prefs.weDay, "danger", "fas fa-times-circle");
     }
-    if (!dryrun) $("#day" + prefs.weDay).removeClass("alert-warning").find("i").removeClass("fa-spinner fa-pulse");
   }
 }
 function isReachable(hostname, port) {
@@ -807,8 +803,8 @@ function mkdirSync(dirPath) {
 }
 async function mp4Convert() {
   perf("mp4Convert", "start");
-  $("#statusIcon").addClass("fa-microchip").removeClass("fa-photo-video");
-  $("#mp4Convert").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+  updateStatus("microchip");
+  updateTile("mp4Convert", "warning", "fas fa-circle-notch fa-spin");
   await convertUnusableFiles();
   var filesToProcess = glob.sync(path.join(paths.media, "*", "*"), {
     ignore: path.join(paths.media, "*", "*.mp4")
@@ -823,9 +819,25 @@ async function mp4Convert() {
     totals.mp4Convert.current++;
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
   }
-  $("#mp4Convert").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
-  $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
+  updateStatus("photo-video");
+  updateTile("mp4Convert", "success", "fas fa-check-circle");
   perf("mp4Convert", "stop");
+}
+function overlay(show, topIcon, bottomIcon, action) {
+  return new Promise((resolve) => {
+    if (!show) {
+      if (!topIcon || (topIcon && $("#overlayMaster i.fa-" + topIcon).length > 0)) $("#overlayMaster").stop().fadeOut(animationDuration, () => resolve());
+    } else {
+      if ($("#overlayMaster #topIcon i.fa-" + topIcon).length === 0) $("#overlayMaster #topIcon i").removeClass().addClass("fas fa-fw fa-" + topIcon);
+      $("#overlayMaster #bottomIcon i").removeClass();
+      if (bottomIcon) {
+        $("#overlayMaster #bottomIcon i").addClass("fas fa-fw fa-" + bottomIcon + (action ? " " + action : "")).unwrap("button");
+        $("#overlayMaster #bottomIcon button .action-countdown").html();
+        if (action) $("#overlayMaster #bottomIcon i").next("span").addBack().wrapAll("<button type='button' class='btn btn-danger btn-action-" + action + " position-relative'></button>");
+      }
+      $("#overlayMaster").stop().fadeIn(animationDuration, () => resolve());
+    }
+  });
 }
 function perf(func, op) {
   if (!perfStats[func]) perfStats[func] = {};
@@ -961,9 +973,10 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
 function showReleaseNotes() {
   showModal(true, true, i18n.__("whatsNew"), i18n.__("whatsNewDetails"), true, true);
 }
-async function startMediaSync() {
+async function startMediaSync(isDryrun) {
   perf("total", "start");
-  if (!dryrun) $("#statusIcon").addClass("text-primary").removeClass("text-muted");
+  dryrun = !!isDryrun;
+  if (!dryrun) $("#statusIcon").toggleClass("text-primary text-muted");
   stayAlive = false;
   if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 0);
   await setVars();
@@ -989,7 +1002,7 @@ async function startMediaSync() {
     $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 1);
     setTimeout(() => {
       $(".alertIndicators").addClass("alert-primary").removeClass("alert-success");
-      $("#statusIcon").addClass("text-muted").removeClass("text-primary");
+      $("#statusIcon").toggleClass("text-muted text-primary");
     }, 2000);
   }
   perf("total", "stop");
@@ -998,8 +1011,7 @@ async function startMediaSync() {
 async function syncCongMedia() {
   if (webdavIsAGo) {
     perf("syncCongMedia", "start");
-    $("#statusIcon").addClass("fa-cloud").removeClass("fa-photo-video");
-    $("#specificCong").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+    updateStatus("cloud");
     try {
       totals.cong = {
         total: 0,
@@ -1030,16 +1042,16 @@ async function syncCongMedia() {
       }
     } catch (err) {
       console.error(err);
-      $("#specificCong").addClass("alert-danger").find("i").addClass("fa-times-circle");
+      updateTile("specificCong", "danger", "fas fa-times-circle");
     }
-    $("#specificCong").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
-    $("#statusIcon").addClass("fa-photo-video").removeClass("fa-cloud");
+    updateStatus("photo-video");
+    updateTile("specificCong", "success", "fas fa-check-circle");
     perf("syncCongMedia", "stop");
   }
 }
 async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "start");
-  $("#syncJwOrgMedia").addClass("alert-warning").removeClass("alert-primary").find("i").removeClass("fa-check-circle").addClass("fa-spinner fa-pulse");
+  updateTile("syncJwOrgMedia", "warning", "fas fa-circle-notch fa-spin");
   totals.jw = {
     total: 0,
     current: 1
@@ -1076,19 +1088,22 @@ async function syncJwOrgMedia() {
       }
     }
   }
-  $("#syncJwOrgMedia").removeClass("alert-warning").addClass("alert-success").find("i").addClass("fa-check-circle").removeClass("fa-spinner fa-pulse");
-  $("#statusIcon").addClass("fa-photo-video").removeClass("fa-microchip");
+  updateStatus("photo-video");
+  updateTile("syncJwOrgMedia", "success", "fas fa-check-circle");
   perf("syncJwOrgMedia", "stop");
 }
 function toggleScreen(screen, forceShow) {
-  if (!($("#" + screen).is(":visible")) || forceShow) {
-    if (!$("#" + screen).is(":visible")) $("#" + screen + " .accordion-collapse").each(function() {
+  return new Promise((resolve) => {
+    console.log(screen, forceShow);
+    if (screen === "overlaySettings" && !$("#" + screen).is(":visible")) $("#" + screen + " .accordion-collapse").each(function() {
       $(this).collapse($(this).find(".is-invalid").length > 0 ? "show" : "hide");
     });
-    $("#" + screen).slideDown(animationDuration);
-  } else {
-    $("#" + screen).slideUp(animationDuration);
-  }
+    if (forceShow) {
+      $("#" + screen).slideDown(animationDuration, () => resolve() );
+    } else {
+      $("#" + screen).slideToggle(animationDuration, () => resolve() );
+    }
+  });
 }
 function updateCleanup() {
   try { // do some housecleaning after version updates
@@ -1104,12 +1119,18 @@ function updateCleanup() {
     }
   }
 }
+function updateStatus(icon) {
+  if (!dryrun) $("#statusIcon").removeClass($("#statusIcon").attr("class").split(" ").filter(el => el.includes("fa-")).join(" ")).addClass("fa-fw fa-3x fa-" + icon);
+}
+function updateTile(tile, color, icon) {
+  if (!dryrun) $("#" + tile).removeClass($("#" + tile).attr("class").split(" ").filter(el => el.includes("alert-")).join(" ")).addClass("alert-" + color).find("i").removeClass().addClass(icon);
+}
 function validateConfig() {
   let configIsValid = true;
   $(".is-invalid").removeClass("is-invalid");
   $("#overlaySettings .btn-outline-danger").addClass("btn-outline-primary").removeClass("btn-outline-danger");
   $("#overlaySettings label.text-danger").removeClass("text-danger");
-  $(".alertIndicators").removeClass("meeting").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
+  $(".alertIndicators").removeClass("meeting").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   if (prefs.outputPath === "false" || !fs.existsSync(prefs.outputPath)) $("#outputPath").val("");
   let mandatoryFields = ["outputPath", "lang", "mwDay", "weDay", "maxRes"];
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push("mwStartTime", "weStartTime");
@@ -1339,15 +1360,14 @@ $("#baseDate").on("click", ".dropdown-item", function() {
   $("#baseDate .dropdown-item.active").removeClass("active");
   $(this).addClass("active");
   $("#baseDate > button").text($(this).text());
-  $(".alertIndicators").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
+  $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   dateFormatter();
 });
 $("#btnCancelUpload").on("click", () => {
-  $("#overlayUploadFile").fadeOut(animationDuration);
+  toggleScreen("overlayUploadFile");
   $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
   $("#fileList, #filePicker, #jwpubPicker, .enterPrefixInput").val("").empty().change();
   $("#chooseMeeting .active, #chooseUploadType .active").removeClass("active");
-  dryrun = false;
   removeEventListeners();
 });
 $("#btnMeetingMusic").on("click", async function() {
@@ -1462,9 +1482,10 @@ $("#btn-upload").on("click", async function() {
   $(".relatedToUpload, .relatedToUploadType, #btnDoneUpload").hide();
   $("#btnCancelUpload").fadeIn(animationDuration);
   currentStep = "uploadFile";
-  await executeDryrun();
-  $("#overlayUploadFile").fadeIn(animationDuration);
-  $(".alertIndicators").find("i").addClass("fa-spinner").removeClass("fa-check-circle");
+  await executeDryrun(true);
+  await toggleScreen("overlayUploadFile");
+  overlay(false);
+  $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   $("#chooseMeeting").empty();
   for (var meeting of [prefs.mwDay, prefs.weDay]) {
     let meetingDate = baseDate.add(meeting, "d").format("YYYY-MM-DD");
@@ -1571,25 +1592,16 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
 });
 $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown").prop("disabled", true);
-  dryrun = false;
   await startMediaSync();
-  if (prefs.autoQuitWhenDone) $("#btnStayAlive").fadeIn(animationDuration);
-  $("#btnStayAlive").on("click", function() {
-    stayAlive = true;
-    $("#btnStayAlive").removeClass("btn-primary").addClass("btn-success");
-  });
-  $("#overlayComplete").fadeIn(animationDuration).delay(3000).fadeOut(animationDuration, () => {
-    if (prefs.autoQuitWhenDone) {
-      if (stayAlive) {
-        toggleScreen("overlaySettings");
-        $("#btnStayAlive").removeClass("btn-success").addClass("btn-primary").fadeOut(animationDuration);
-      } else {
-        remote.app.quit();
-      }
-    }
+  await overlay(true, "smile-beam", (prefs.autoQuitWhenDone ? "door-open" : null), "stay-alive");
+  await delay(5);
+  if (prefs.autoQuitWhenDone && !stayAlive) {
+    remote.app.exit();
+  } else {
+    overlay(false);
     $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeTo(animationDuration, 1);
-  });
-  $("#mediaSync, #baseDate-dropdown").prop("disabled", false);
+    $("#mediaSync, #baseDate-dropdown").prop("disabled", false);
+  }
 });
 $("#outputPath").on("mousedown", function(event) {
   $(this).val(remote.dialog.showOpenDialogSync({
@@ -1598,11 +1610,11 @@ $("#outputPath").on("mousedown", function(event) {
   event.preventDefault();
 });
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
-  $(this).addClass("btn-success").removeClass("btn-warning").prop("disabled", true);
+  $(this).toggleClass("btn-success btn-warning").prop("disabled", true);
   setVars();
   rm([paths.lang, paths.langs, paths.pubs]);
   setTimeout(() => {
-    $(".btn-clean-up").removeClass("btn-success").addClass("btn-warning").prop("disabled", false);
+    $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
   }, 3000);
 });
 $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
@@ -1642,7 +1654,8 @@ $("#fileList").on("click", ".canHide", async function() {
 });
 $("#fileList").on("click", ".wasHidden", function() {
   webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")));
-  $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");  executeDryrun();
+  $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
+  executeDryrun();
 });
 $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
   try {
@@ -1727,7 +1740,7 @@ $("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", f
 $("#songPicker").on("change", function() {
   if ($(this).val()) $("#fileToUpload").val($(this).val()).change();
 });
-$("#version:not(.bg-danger)").on("click", showReleaseNotes);
+$("#overlaySettings").on("click", "#version:not(.bg-danger)", showReleaseNotes);
 $("#webdavProviders a").on("click", function() {
   for (let i of Object.entries($(this).data())) {
     let name = "cong" + (i[0][0].toUpperCase() + i[0].slice(1));

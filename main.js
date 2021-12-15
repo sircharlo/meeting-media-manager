@@ -35,7 +35,6 @@ if (!gotTheLock) {
     }
   });
   ipcMain.on("autoUpdate", () => {
-    win.webContents.send("hideThenShow", ["InternetCheck", "UpdateCheck"]);
     autoUpdater.checkForUpdates();
   });
   autoUpdater.on("error", () => {
@@ -49,12 +48,12 @@ if (!gotTheLock) {
       win.webContents.send("goAhead");
       win.webContents.send("macUpdate");
     } else {
-      win.webContents.send("hideThenShow", ["UpdateCheck", "UpdateAvailable"]);
+      win.webContents.send("overlay", ["cloud-download-alt", "circle-notch fa-spin text-success"]);
       autoUpdater.downloadUpdate();
     }
   });
   autoUpdater.on("update-downloaded", () => {
-    win.webContents.send("hideThenShow", ["UpdateAvailable", "UpdateDownloaded"]);
+    win.webContents.send("overlay", ["cloud-download-alt", "check-circle"]);
     setImmediate(() => {
       autoUpdater.quitAndInstall();
     });
@@ -63,6 +62,6 @@ if (!gotTheLock) {
   autoUpdater.autoDownload = false;
   app.whenReady().then(createUpdateWindow);
   app.on("window-all-closed", () => {
-    app.quit();
+    app.exit();
   });
 }
