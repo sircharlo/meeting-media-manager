@@ -355,7 +355,7 @@ const delay = s => new Promise(res => {
 function disableGlobalPref(pref) {
   let row = $("#" + pref).closest("div.row");
   if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>").attr("title", i18n.__("settingLocked")));
-  row.find("#" + pref + ", #" + pref + " input").prop("disabled", true);
+  row.addClass("text-muted disabled").find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").prop("disabled", true);
   // $("#" + pref).closest("div.row").addClass("position-relative").append("<span class='badge bg-warning border border-3 border-white mt-0 position-absolute rounded-pill start-100 text-black top-50 translate-middle w-auto' style='z-index: 2;' data-bs-toggle='tooltip' title='Tooltip on left'><i class='fa-lock fas'></i></span>").find("select, input").prop("disabled", true);
   row.find("[data-bs-toggle]").tooltip();
 }
