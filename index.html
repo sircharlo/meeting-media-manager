@@ -255,6 +255,10 @@
       font-weight: bold;
     }
 
+    .row>* {
+      margin-top: unset;
+    }
+
     @media (prefers-color-scheme: dark) {
       body {
         color: var(--bs-gray-100);
@@ -395,20 +399,34 @@
           <div id="collapseLangMedia" class="accordion-collapse collapse" aria-labelledby="headingLangMedia">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
-                <label for="outputPath" class="col-5 text-start" data-i18n-string="mediaSaveFolder"></label>
+                <label for="appLang" class="col-5 text-start"><span data-i18n-string="appLang"></span></label>
+                <div class="col">
+                  <select class="form-select form-select-sm" id="appLang" class="form-control" required>
+                    <option value="" disabled hidden></option>
+                    <option value="en"></option>
+                    <option value="es"></option>
+                    <option value="fr"></option>
+                    <option value="pt-pt"></option>
+                    <option value="pt"></option>
+                    <option value="ru"></option>
+                  </select>
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="outputPath" class="col-5 text-start"><span data-i18n-string="mediaSaveFolder"></span></label>
                 <div class="col">
                   <input type="text" class="form-control form-control-sm" id="outputPath" required />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="lang" class="col-5 text-start" data-i18n-string="mediaLanguage"></label>
+                <label for="lang" class="col-5 text-start"><span data-i18n-string="mediaLang"></span></label>
                 <div class="col">
                   <select id="lang" class="form-control" required>
                   </select>
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="maxRes" class="col-5 text-start" data-i18n-string="maxRes"></label>
+                <label for="maxRes" class="col-5 text-start"><span data-i18n-string="maxRes"></span></label>
                 <div class="btn-group btn-group-toggle col" id="maxRes">
                   <input type="radio" class="btn-check" name="maxRes" id="maxRes0" value="240p" autocomplete="off">
                   <label class="btn btn-outline-primary" for="maxRes0">240p</label>
@@ -422,20 +440,20 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="excludeTh" class="m-0 text-start col-11" data-i18n-string="excludeTh"></label>
+                <label for="excludeTh" class="m-0 text-start col-11"><span data-i18n-string="excludeTh"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="excludeTh" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="additionalMediaPrompt" class="m-0 text-start col-11" data-i18n-string="convertExternal"></label>
+                <label for="additionalMediaPrompt" class="m-0 text-start col-11"><span data-i18n-string="convertExternal"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="additionalMediaPrompt" />
                 </div>
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="betaMp4Gen" class="m-0 text-start col-11" data-i18n-string="convertDownloaded"></label>
+                <label for="betaMp4Gen" class="m-0 text-start col-11"><span data-i18n-string="convertDownloaded"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="betaMp4Gen" />
                 </div>
@@ -450,7 +468,7 @@
           <div id="collapseMeetings" class="accordion-collapse collapse" aria-labelledby="headingMeetings">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
-                <label for="mwDay" class="col-5 text-start" data-i18n-string="mwMeetingDay"></label>
+                <label for="mwDay" class="col-5 text-start"><span data-i18n-string="mwMeetingDay"></span></label>
                 <div class="btn-group btn-group-toggle col-6" id="mwDay">
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay0" value="0" autocomplete="off">
                   <label class="btn btn-outline-primary" for="mwDay0">M</label>
@@ -468,12 +486,12 @@
                   <label class="btn btn-outline-primary" for="mwDay6">S</label>
                 </div>
                 <div class="col-1">
-                  <input class="w-100 form-control form-control-sm bg-transparent px-1 timePicker" data-target="mwStartTime" type="text" />
+                  <input class="w-100 form-control form-control-sm px-1 timePicker" data-target="mwStartTime" type="text" />
                 </div>
                 <input type="hidden" id="mwStartTime" />
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="weDay" class="col-5 text-start" data-i18n-string="weMeetingDay"></label>
+                <label for="weDay" class="col-5 text-start"><span data-i18n-string="weMeetingDay"></span></label>
                 <div class="btn-group btn-group-toggle col-6" id="weDay">
                   <input type="radio" class="btn-check" name="weDay" id="weDay0" value="0" autocomplete="off">
                   <label class="btn btn-outline-primary" for="weDay0">M</label>
@@ -491,23 +509,23 @@
                   <label class="btn btn-outline-primary" for="weDay6">S</label>
                 </div>
                 <div class="col-1">
-                  <input class="w-100 form-control form-control-sm bg-transparent px-1 timePicker" data-target="weStartTime" type="text" />
+                  <input class="w-100 form-control form-control-sm px-1 timePicker" data-target="weStartTime" type="text" />
                 </div>
                 <input type="hidden" id="weStartTime" />
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="enableMusicButton" class="m-0 text-start col-11" data-i18n-string="enableMusicButton"></label>
+                <label for="enableMusicButton" class="m-0 text-start col-11"><span data-i18n-string="enableMusicButton"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMusicButton" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="enableMusicFadeOut" class="m-0 text-start col-4" data-i18n-string="musicFadeOutType"></label>
-                <div class="col-2 pe-3">
+                <label for="enableMusicFadeOut" class="m-0 text-start col-5"><span data-i18n-string="musicFadeOutType"></span></label>
+                <div class="col-1">
                   <input type="range" class="form-range relatedToFadeOut me-3" min="5" max="60" step="5" value="5" id="musicFadeOutTime">
                 </div>
-                <div class="btn-group btn-group-toggle flex-fill col-4 relatedToFadeOut" id="musicFadeOutType">
+                <div class="btn-group btn-group-toggle col-5 ps-2 relatedToFadeOut" id="musicFadeOutType">
                   <input type="radio" class="btn-check relatedToFadeOut" name="musicFadeOutType" value="smart" id="musicFadeOutSmart">
                   <label class="btn btn-outline-primary" for="musicFadeOutSmart" data-i18n-string="musicFadeOutSmart"></label>
                   <input type="radio" class="btn-check relatedToFadeOut" name="musicFadeOutType" value="timer" id="musicFadeOutTimer">

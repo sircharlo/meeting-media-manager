@@ -9,7 +9,7 @@
   "filenamePrefix": "Prefijo de archivo",
   "mediaToAdd": "Multimedia para añadir",
   "maxRes": "Resolución máxima para los videos",
-  "mediaLanguage": "Lenguaje de la multimedia",
+  "mediaLang": "Lenguaje de la multimedia",
   "mediaSaveFolder": "Carpeta para guardar los archivos multimedia",
   "mp4Conversion": "Conversión a MP4",
   "mwMeetingDay": "Reunión de entre semana",

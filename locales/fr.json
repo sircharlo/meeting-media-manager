@@ -1,4 +1,5 @@
 {
+  "appLang": "Langue de l'application",
   "cleanCache": "Vider le cache des médias",
   "congMedia": "Médias de l'assemblée locale",
   "convertDownloaded": "Convertir médias en format MP4",
@@ -10,7 +11,7 @@
   "filenamePrefix": "Préfix pour nom(s) de fichier(s)",
   "mediaToAdd": "Médias à ajouter",
   "maxRes": "Résolution maximale pour vidéos",
-  "mediaLanguage": "Langue des médias",
+  "mediaLang": "Langue des médias",
   "mediaSaveFolder": "Dossier d'enregistrement des médias",
   "mp4Conversion": "Conversion MP4",
   "musicFadeOutType": "Arrêter les cantiques automatiquement",
@@ -27,6 +28,7 @@
   "runAtStartup": "Lancer l'appli automatiquement au démarrage de l'ordinateur",
   "selectDocument": "Sélectionnez un document pour lequel vous souhaitez extraire les médias:",
 	"selectExternalMedia": "Les fichiers médias référencés ci-dessous ne sont pas inclus dans le fichier JWPUB. Veuillez cliquer sur chaque fichier afin d'indiquer son emplacement sur votre ordinateur:",
+  "settingLocked": "Certains paramètres ont été verrouillés par l'organisateur des vidéoconférences de votre assemblée locale.",
   "song": "Cantique",
   "syncOnLaunch": "Lancer la syncronisation lors de l'ouverture de l'appli",
   "targetMeeting": "Réunion cible",
