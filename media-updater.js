@@ -1312,22 +1312,26 @@ async function webdavSetup() {
                 $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
               });
               if (prefs.additionalMediaPrompt) $("#additionalMediaPrompt").prop("checked", false).change();
-              if (await webdavExists(path.posix.join(prefs.congServerDir, "globalPrefs.json"))) {
+              let forcedSettingsPath = path.posix.join(prefs.congServerDir, "forcedSettings.json");
+              if (await webdavExists(forcedSettingsPath)) {
                 try {
-                  let globalPrefs = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + "/" + path.posix.join(prefs.congServerDir, "globalPrefs.json"), {
+                  let forcedSettings = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + "/" + forcedSettingsPath, {
                     webdav: true,
                     noCache: true
                   })).data;
-                  if (Object.keys(globalPrefs).length > 0) {
+                  if (Object.keys(forcedSettings).length > 0) {
+                    console.log("%cENFORCED SETTINGS", "background-color: #FCE4EC; color: #AD1457; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
+                    console.log("%c Some settings were enforced by your congregation's videoconference organizer:", "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
                     let previousPrefs = v8.deserialize(v8.serialize(prefs));
-                    Object.assign(prefs, globalPrefs);
-                    for (var pref of Object.keys(globalPrefs)) {
+                    Object.assign(prefs, forcedSettings);
+                    for (var pref of Object.keys(forcedSettings)) {
+                      console.log("%c - " + pref, "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
                       disableGlobalPref(pref);
                     }
                     if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) validateConfig(true);
                   }
                 } catch(err) {
-                  console.error("Error setting global prefs!", err);
+                  console.error("Error enforcing congregation-synced settings!", err);
                 }
               }
             }
