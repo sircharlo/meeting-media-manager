@@ -354,10 +354,9 @@ const delay = s => new Promise(res => {
 });
 function disableGlobalPref(pref) {
   let row = $("#" + pref).closest("div.row");
-  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>").attr("title", i18n.__("settingLocked")));
-  row.addClass("text-muted disabled").find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").prop("disabled", true);
-  // $("#" + pref).closest("div.row").addClass("position-relative").append("<span class='badge bg-warning border border-3 border-white mt-0 position-absolute rounded-pill start-100 text-black top-50 translate-middle w-auto' style='z-index: 2;' data-bs-toggle='tooltip' title='Tooltip on left'><i class='fa-lock fas'></i></span>").find("select, input").prop("disabled", true);
-  row.find("[data-bs-toggle]").tooltip();
+  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>").attr("title", i18n.__("settingLocked")).tooltip());
+  row.addClass("text-muted disabled").find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedSetting").prop("disabled", true);
+  console.log("%c - " + pref, "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
 }
 function displayMusicRemaining() {
   let timeRemaining;
@@ -387,6 +386,10 @@ function downloadStat(origin, source, file) {
   if (!downloadStats[origin]) downloadStats[origin] = {};
   if (!downloadStats[origin][source]) downloadStats[origin][source] = [];
   downloadStats[origin][source].push(file);
+}
+function enablePreviouslyForcedPrefs() {
+  $("div.row.text-muted.disabled").removeClass("text-muted disabled").find(".forcedSetting").prop("disabled", false).removeClass("forcedSetting");
+  $("div.row .settingLocked").remove();
 }
 async function executeDryrun(persistantOverlay) {
   await overlay(true, "cog fa-spin");
@@ -698,8 +701,7 @@ function getPrefix() {
       }
     } else {
       for (var a2 = a0 + 1; a2 <= 5; a2++) {
-        $("#enterPrefix-" + a2).prop("disabled", true);
-        $("#enterPrefix-" + a2).val("");
+        $("#enterPrefix-" + a2).val("").prop("disabled", true);
       }
     }
   }
@@ -868,7 +870,7 @@ function prefsInitialize() {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
   for (let field of ["appLang", "lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "mwStartTime", "weStartTime"]) {
-    $("#" + field).val(prefs[field]).change();
+    $("#" + field).val(prefs[field]);
   }
   for (let timeField of ["mwStartTime", "weStartTime"]) {
     $(".timePicker").filter("[data-target='" + timeField + "']").val($("#" + timeField).val());
@@ -877,7 +879,7 @@ function prefsInitialize() {
     dtPicker.setDate($(dtPicker.element).val());
   }
   for (let checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "openFolderWhenDone", "additionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh"]) {
-    $("#" + checkbox).prop("checked", prefs[checkbox]).change();
+    $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
     $("#" + radioSel + " input[value=" + prefs[radioSel] + "]").prop("checked", true).parent().addClass("active");
@@ -1144,23 +1146,17 @@ function updateTile(tile, color, icon) {
 }
 function validateConfig(changed) {
   let configIsValid = true;
-  $(".is-invalid").removeClass("is-invalid");
-  $("#overlaySettings .btn-outline-danger").addClass("btn-outline-primary").removeClass("btn-outline-danger");
-  $("#overlaySettings label.text-danger").removeClass("text-danger");
   $(".alertIndicators").removeClass("meeting").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   if (prefs.outputPath === "false" || !fs.existsSync(prefs.outputPath)) $("#outputPath").val("");
   let mandatoryFields = ["outputPath", "appLang", "lang", "mwDay", "weDay", "maxRes"];
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push("mwStartTime", "weStartTime");
   for (var setting of mandatoryFields) {
-    if (!prefs[setting]) {
-      $("#" + setting + ", .timePicker[data-target='" + setting + "']").addClass("is-invalid");
-      $("#" + setting).next(".select2").find(".select2-selection").addClass("is-invalid");
-      $("#" + setting + " .btn-outline-primary").addClass("btn-outline-danger").removeClass("btn-outline-primary");
-      configIsValid = false;
-      $("#" + setting).closest("div.row").find("label").addClass("text-danger");
-    } else if (setting.includes("Day")) {
-      $("#day" + prefs[setting]).addClass("meeting");
-    }
+    $("#" + setting + ", .timePicker[data-target='" + setting + "']").toggleClass("is-invalid", !prefs[setting]);
+    $("#" + setting).next(".select2").find(".select2-selection").toggleClass("is-invalid", !prefs[setting]);
+    $("#" + setting + " label.btn").toggleClass("btn-outline-primary", !!prefs[setting]).toggleClass("btn-outline-danger", !prefs[setting]);
+    if (!prefs[setting]) configIsValid = false;
+    $("#" + setting).closest("div.row").find("label").toggleClass("text-danger", !prefs[setting]);
+    if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
   }
   if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
   $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
@@ -1312,6 +1308,9 @@ async function webdavSetup() {
                 $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
               });
               if (prefs.additionalMediaPrompt) $("#additionalMediaPrompt").prop("checked", false).change();
+              console.log("%cENFORCED SETTINGS", "background-color: #FCE4EC; color: #AD1457; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
+              console.log("%c Some settings were enforced due to congregation sharing or by your videoconference organizer:", "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
+              disableGlobalPref("additionalMediaPrompt");
               let forcedSettingsPath = path.posix.join(prefs.congServerDir, "forcedSettings.json");
               if (await webdavExists(forcedSettingsPath)) {
                 try {
@@ -1320,15 +1319,15 @@ async function webdavSetup() {
                     noCache: true
                   })).data;
                   if (Object.keys(forcedSettings).length > 0) {
-                    console.log("%cENFORCED SETTINGS", "background-color: #FCE4EC; color: #AD1457; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
-                    console.log("%c Some settings were enforced by your congregation's videoconference organizer:", "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
                     let previousPrefs = v8.deserialize(v8.serialize(prefs));
                     Object.assign(prefs, forcedSettings);
                     for (var pref of Object.keys(forcedSettings)) {
-                      console.log("%c - " + pref, "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
                       disableGlobalPref(pref);
                     }
-                    if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) validateConfig(true);
+                    if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) {
+                      validateConfig(true);
+                      prefsInitialize();
+                    }
                   }
                 } catch(err) {
                   console.error("Error enforcing congregation-synced settings!", err);
@@ -1356,10 +1355,10 @@ async function webdavSetup() {
   $(".webdavCreds").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && !webdavLoginSuccessful));
   $("#congServerDir").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && !webdavDirIsValid));
   $("#webdavFolderList").fadeTo(animationDuration, webdavDirIsValid);
-  disableGlobalPref("additionalMediaPrompt");
   $("#specificCong").toggleClass("d-flex", congServerEntered).toggleClass("alert-danger", congServerEntered && !(congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid));
-  $("#btn-settings").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
+  $("#btn-settings, #headingCongSync button").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
   webdavIsAGo = (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
+  if (!webdavIsAGo) enablePreviouslyForcedPrefs();
 }
 var dragenterHandler = () => {
   if ($("input#typeFile:checked").length > 0 || $("input#typeJwpub:checked").length > 0) $(".dropzone").css("display", "block");
@@ -1643,9 +1642,7 @@ $("#mediaSync").on("click", async function() {
   }
 });
 $("#outputPath").on("mousedown", function(event) {
-  $(this).val(remote.dialog.showOpenDialogSync({
-    properties: ["openDirectory"]
-  })).change();
+  $(this).val(remote.dialog.showOpenDialogSync({ properties: ["openDirectory"] })).change();
   event.preventDefault();
 });
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
