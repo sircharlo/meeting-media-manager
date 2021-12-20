@@ -120,10 +120,8 @@ function goAhead() {
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("cong")) webdavSetup();
     setVars();
-    if ($(this).prop("id") == "appLang") {
-      getTranslations();
-      dateFormatter();
-    }
+    if ($(this).prop("id") == "appLang") setAppLang();
+    if ($(this).prop("id") == "lang") setMediaLang();
     if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) rm([paths.media]);
     validateConfig(true);
   });
@@ -313,9 +311,8 @@ function createVideoSync(mediaFile){
   });
 }
 function dateFormatter() {
-  let locale = "en";
+  let locale = prefs.appLang ? prefs.appLang : "en";
   try {
-    locale = prefs.appLang ? prefs.appLang : jsonLangs.filter(lang => lang.langcode == prefs.lang)[0].symbol;
     if (locale !== "en") require("dayjs/locale/" + locale);
   } catch(err) {
     console.error("Date locale " + locale + " not found, falling back to 'en'");
@@ -591,9 +588,10 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
   return multimediaItems;
 }
 async function getInitialData() {
-  await getLanguages();
-  await getTranslations();
+  await getJwOrgLanguages();
+  await setAppLang();
   await updateCleanup();
+  await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
   $("#version").text("v" + remote.app.getVersion());
@@ -611,7 +609,7 @@ async function getInitialData() {
   }
   overlay(false, (prefs.autoStartSync && configIsValid ? "hourglass-start" : null));
 }
-async function getLanguages() {
+async function getJwOrgLanguages() {
   if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months"))) {
     let cleanedJwLangs = (await request("https://www.jw.org/en/languages/")).data.languages.filter(lang => lang.hasWebContent).map(lang => ({
       name: lang.vernacularName + " (" + lang.name + ")",
@@ -625,14 +623,12 @@ async function getLanguages() {
   } else {
     jsonLangs = JSON.parse(fs.readFileSync(paths.langs));
   }
-  dateFormatter();
   for (var lang of jsonLangs) {
     $("#lang").append($("<option>", {
       value: lang.langcode,
       text: lang.name
     }));
   }
-  $("#lang").val(prefs.lang).select2();
 }
 async function getMediaLinks(pub, track, issue, format, docId) {
   let mediaFiles = [];
@@ -712,7 +708,7 @@ function getPrefix() {
   if (prefix.length % 2) prefix = prefix + 0;
   if (prefix.length > 0) prefix = prefix.match(/.{1,2}/g).join("-");
 }
-async function getTranslations() {
+function setAppLang() {
   $("#appLang option").each(function() {
     let localeLang = jsonLangs.filter(item => item.symbol === $(this).val());
     if (localeLang.length === 1) $(this).text(localeLang[0].name);
@@ -723,23 +719,11 @@ async function getTranslations() {
     updateFiles: false,
     retryInDefaultLocale: true
   });
-  i18n.setLocale(prefs.appLang ? prefs.appLang : (jsonLangs.filter(el => el.langcode == prefs.lang))[0].symbol);
+  i18n.setLocale(prefs.appLang ? prefs.appLang : "en");
   $("[data-i18n-string]").each(function() {
     $(this).html(i18n.__($(this).data("i18n-string")));
   });
-  try {
-    $("#songPicker").empty();
-    for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4")).reverse()) {
-      $("#songPicker").append($("<option>", {
-        value: sjj.url,
-        text: sjj.title
-      }));
-    }
-  } catch (err) {
-    console.error(err);
-    $("label[for=typeSong]").removeClass("active").addClass("disabled");
-    $("label[for=typeFile]").click().addClass("active");
-  }
+  dateFormatter();
 }
 async function getWeMediaFromDb() {
   var weDate = baseDate.clone().add(prefs.weDay, "days").format("YYYY-MM-DD");
@@ -961,6 +945,21 @@ function sanitizeFilename(filename) {
   filename = path.basename(filename, path.extname(filename)) + path.extname(filename).toLowerCase();
   return filename;
 }
+async function setMediaLang() {
+  try {
+    $("#songPicker").empty();
+    for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4")).reverse()) {
+      $("#songPicker").append($("<option>", {
+        value: sjj.url,
+        text: sjj.title
+      }));
+    }
+  } catch (err) {
+    console.error(err);
+    $("label[for=typeSong]").removeClass("active").addClass("disabled");
+    $("label[for=typeFile]").click().addClass("active");
+  }
+}
 function setVars() {
   perf("setVars", "start");
   try {
@@ -1132,9 +1131,17 @@ function updateCleanup() {
     console.error(err);
   } finally {
     if (lastRunVersion !== remote.app.getVersion()) {
-      rm([paths.lang /*, paths.pubs*/]);
+      // rm([paths.lang /*, paths.pubs*/]);
       fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
-      if (lastRunVersion !== 0) showReleaseNotes();
+      if (lastRunVersion !== 0) {
+        if (!prefs.appLang) {
+          prefs.appLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0].symbol;
+          prefsInitialize();
+          validateConfig(true);
+          setAppLang();
+        }
+        showReleaseNotes();
+      }
     }
   }
 }
@@ -1154,9 +1161,10 @@ function validateConfig(changed) {
     $("#" + setting + ", .timePicker[data-target='" + setting + "']").toggleClass("is-invalid", !prefs[setting]);
     $("#" + setting).next(".select2").find(".select2-selection").toggleClass("is-invalid", !prefs[setting]);
     $("#" + setting + " label.btn").toggleClass("btn-outline-primary", !!prefs[setting]).toggleClass("btn-outline-danger", !prefs[setting]);
-    if (!prefs[setting]) configIsValid = false;
     $("#" + setting).closest("div.row").find("label").toggleClass("text-danger", !prefs[setting]);
     if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
+    if (setting == "lang") $("#" + setting).val(prefs[setting]).select2();
+    if (!prefs[setting]) configIsValid = false;
   }
   if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
   $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
@@ -1325,6 +1333,7 @@ async function webdavSetup() {
                       disableGlobalPref(pref);
                     }
                     if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) {
+                      setMediaLang();
                       validateConfig(true);
                       prefsInitialize();
                     }
