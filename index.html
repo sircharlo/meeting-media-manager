@@ -24,7 +24,6 @@
       top: 0;
       left: 0;
       float: left;
-      text-align: center;
       display: flex;
     }
 
@@ -167,6 +166,11 @@
       color: var(--bs-dark);
     }
 
+    #fileList {
+      height: 100%;
+      column-fill: auto;
+    }
+
     #fileList li i.fa-fw {
       margin-right: 0.5em;
     }
@@ -286,9 +290,8 @@
         background-color: var(--bs-gray-800);
       }
 
-      .btn-outline-primary {
-        background: var(--bs-gray-900);
-        color: var(--bs-gray-300);
+      .btn-group .btn-check:not(:checked)+.btn:not(:hover) {
+        color: var(--bs-gray-500);
       }
 
       .select2-dropdown,
@@ -321,17 +324,6 @@
 
 <body>
   <div id="dropzone" class="dropzone"></div>
-  <div id="overlayMaster" class="overlay justify-content-center">
-    <div class="align-self-center">
-      <div id="topIcon" class="align-self-center fa-5x" role="status">
-        <i></i>
-      </div>
-      <div id="bottomIcon" class="align-self-center fa-2x" role="status">
-        <i></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark action-countdown"></span>
-      </div>
-    </div>
-  </div>
   <div id="overlayUploadFile" class="overlay flex-column px-3" style="display: none;">
     <div class="py-4 row">
       <i class="fas fa-fw fa-file-download fa-3x text-muted col"></i>
@@ -345,16 +337,16 @@
       <div class="text-start col-5" data-i18n-string="uploadType"></div>
       <div class="btn-group btn-group-toggle col" id="chooseUploadType">
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off">
-        <label class="btn btn-outline-primary" for="typeSong" data-i18n-string="song"></label>
+        <label class="btn btn-outline-dark" for="typeSong" data-i18n-string="song"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeFile" autocomplete="off">
-        <label class="btn btn-outline-primary" for="typeFile" data-i18n-string="custom"></label>
+        <label class="btn btn-outline-dark" for="typeFile" data-i18n-string="custom"></label>
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeJwpub" autocomplete="off">
-        <label class="btn btn-outline-primary" for="typeJwpub" data-i18n-string="jwpub"></label>
+        <label class="btn btn-outline-dark" for="typeJwpub" data-i18n-string="jwpub"></label>
       </div>
     </div>
     <div class="align-items-center row justify-content-center py-2 relatedToUpload">
       <div class="text-start col-5" data-i18n-string="mediaToAdd"></div>
-      <div class="col file-to-upload relatedToUpload">
+      <div class="col col-7 file-to-upload relatedToUpload" style="height: calc(1.5em + .5rem + -2px);">
         <select class="form-control form-control-sm" id="songPicker" style="display: none" disabled="disabled"></select>
         <input type="text" class="form-control form-control-sm" id="filePicker" style="display: none" disabled="disabled" />
         <input type="text" class="form-control form-control-sm localOrRemoteFile" id="jwpubPicker" style="display: none" disabled="disabled" />
@@ -373,7 +365,11 @@
       </div>
     </div>
     <div class="flex-fill py-3 row text-start">
-      <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+      <div class="card">
+        <div class="card-body">
+          <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+        </div>
+      </div>
     </div>
     <div class="align-items-end py-3 row">
       <div class="col-4 text-start">
@@ -393,6 +389,17 @@
       </div>
     </div>
   </div>
+  <div id="overlayMaster" class="overlay justify-content-center">
+    <div class="align-self-center">
+      <div id="topIcon" class="align-self-center fa-5x" role="status">
+        <i></i>
+      </div>
+      <div id="bottomIcon" class="align-self-center fa-2x" role="status">
+        <i></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark action-countdown"></span>
+      </div>
+    </div>
+  </div>
   <div id="overlaySettings" class="flex-column overlay p-3" style="display: none;">
     <div class="flex-column flex-grow-1 w-100" style="display: flex; overflow-y: auto;">
       <div class="accordion" id="settingsAccordion">
@@ -403,9 +410,9 @@
           <div id="collapseLangMedia" class="accordion-collapse collapse" aria-labelledby="headingLangMedia">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
-                <label for="appLang" class="col-5 text-start"><span data-i18n-string="appLang"></span></label>
+                <label for="localAppLang" class="col-5 text-start"><span data-i18n-string="localAppLang"></span></label>
                 <div class="col">
-                  <select class="form-select form-select-sm" id="appLang" class="form-control" required>
+                  <select class="form-select form-select-sm" id="localAppLang" class="form-control" required>
                     <option value="" disabled hidden></option>
                     <option value="en"></option>
                     <option value="es"></option>
@@ -417,9 +424,9 @@
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="outputPath" class="col-5 text-start"><span data-i18n-string="mediaSaveFolder"></span></label>
+                <label for="localOutputPath" class="col-5 text-start"><span data-i18n-string="mediaSaveFolder"></span></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="outputPath" required />
+                  <input type="text" class="form-control form-control-sm" id="localOutputPath" required />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
@@ -433,13 +440,13 @@
                 <label for="maxRes" class="col-5 text-start"><span data-i18n-string="maxRes"></span></label>
                 <div class="btn-group btn-group-toggle col" id="maxRes">
                   <input type="radio" class="btn-check" name="maxRes" id="maxRes0" value="240p" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="maxRes0">240p</label>
+                  <label class="btn btn-outline-dark" for="maxRes0">240p</label>
                   <input type="radio" class="btn-check" name="maxRes" id="maxRes1" value="360p" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="maxRes1">360p</label>
+                  <label class="btn btn-outline-dark" for="maxRes1">360p</label>
                   <input type="radio" class="btn-check" name="maxRes" id="maxRes2" value="480p" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="maxRes2">480p</label>
+                  <label class="btn btn-outline-dark" for="maxRes2">480p</label>
                   <input type="radio" class="btn-check" name="maxRes" id="maxRes3" value="720p" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="maxRes3">720p</label>
+                  <label class="btn btn-outline-dark" for="maxRes3">720p</label>
                 </div>
               </div>
               <hr class="my-2" />
@@ -450,16 +457,22 @@
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="additionalMediaPrompt" class="m-0 text-start col-11"><span data-i18n-string="convertExternal"></span></label>
+                <label for="excludeLffi" class="m-0 text-start col-11"><span data-i18n-string="excludeLffi"></span></label>
                 <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="additionalMediaPrompt" />
+                  <input type="checkbox" class="form-check-input" id="excludeLffi" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="localAdditionalMediaPrompt" class="m-0 text-start col-11"><span data-i18n-string="convertExternal"></span></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="localAdditionalMediaPrompt" />
                 </div>
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="betaMp4Gen" class="m-0 text-start col-11"><span data-i18n-string="convertDownloaded"></span></label>
+                <label for="enableMp4Conversion" class="m-0 text-start col-11"><span data-i18n-string="convertDownloaded"></span></label>
                 <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="betaMp4Gen" />
+                  <input type="checkbox" class="form-check-input" id="enableMp4Conversion" />
                 </div>
               </div>
             </div>
@@ -475,19 +488,19 @@
                 <label for="mwDay" class="col-5 text-start"><span data-i18n-string="mwMeetingDay"></span></label>
                 <div class="btn-group btn-group-toggle col-6" id="mwDay">
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay0" value="0" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="mwDay0">M</label>
+                  <label class="btn btn-outline-dark" for="mwDay0">M</label>
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay1" value="1" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="mwDay1">T</label>
+                  <label class="btn btn-outline-dark" for="mwDay1">T</label>
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay2" value="2" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="mwDay2">W</label>
+                  <label class="btn btn-outline-dark" for="mwDay2">W</label>
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay3" value="3" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="mwDay3">T</label>
+                  <label class="btn btn-outline-dark" for="mwDay3">T</label>
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay4" value="4" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="mwDay4">F</label>
+                  <label class="btn btn-outline-dark" for="mwDay4">F</label>
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay5" value="5" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="mwDay5">S</label>
+                  <label class="btn btn-outline-dark" for="mwDay5">S</label>
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay6" value="6" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="mwDay6">S</label>
+                  <label class="btn btn-outline-dark" for="mwDay6">S</label>
                 </div>
                 <div class="col-1">
                   <input class="w-100 form-control form-control-sm px-1 timePicker" data-target="mwStartTime" type="text" />
@@ -498,19 +511,19 @@
                 <label for="weDay" class="col-5 text-start"><span data-i18n-string="weMeetingDay"></span></label>
                 <div class="btn-group btn-group-toggle col-6" id="weDay">
                   <input type="radio" class="btn-check" name="weDay" id="weDay0" value="0" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="weDay0">M</label>
+                  <label class="btn btn-outline-dark" for="weDay0">M</label>
                   <input type="radio" class="btn-check" name="weDay" id="weDay1" value="1" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="weDay1">T</label>
+                  <label class="btn btn-outline-dark" for="weDay1">T</label>
                   <input type="radio" class="btn-check" name="weDay" id="weDay2" value="2" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="weDay2">W</label>
+                  <label class="btn btn-outline-dark" for="weDay2">W</label>
                   <input type="radio" class="btn-check" name="weDay" id="weDay3" value="3" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="weDay3">T</label>
+                  <label class="btn btn-outline-dark" for="weDay3">T</label>
                   <input type="radio" class="btn-check" name="weDay" id="weDay4" value="4" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="weDay4">F</label>
+                  <label class="btn btn-outline-dark" for="weDay4">F</label>
                   <input type="radio" class="btn-check" name="weDay" id="weDay5" value="5" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="weDay5">S</label>
+                  <label class="btn btn-outline-dark" for="weDay5">S</label>
                   <input type="radio" class="btn-check" name="weDay" id="weDay6" value="6" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="weDay6">S</label>
+                  <label class="btn btn-outline-dark" for="weDay6">S</label>
                 </div>
                 <div class="col-1">
                   <input class="w-100 form-control form-control-sm px-1 timePicker" data-target="weStartTime" type="text" />
@@ -531,9 +544,9 @@
                 </div>
                 <div class="btn-group btn-group-toggle col-5 ps-2 relatedToFadeOut" id="musicFadeOutType">
                   <input type="radio" class="btn-check relatedToFadeOut" name="musicFadeOutType" value="smart" id="musicFadeOutSmart">
-                  <label class="btn btn-outline-primary" for="musicFadeOutSmart" data-i18n-string="musicFadeOutSmart"></label>
+                  <label class="btn btn-outline-dark" for="musicFadeOutSmart" data-i18n-string="musicFadeOutSmart"></label>
                   <input type="radio" class="btn-check relatedToFadeOut" name="musicFadeOutType" value="timer" id="musicFadeOutTimer">
-                  <label class="btn btn-outline-primary" for="musicFadeOutTimer" data-i18n-string="musicFadeOutTimer"></label>
+                  <label class="btn btn-outline-dark" for="musicFadeOutTimer" data-i18n-string="musicFadeOutTimer"></label>
                 </div>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMusicFadeOut" />
@@ -589,11 +602,22 @@
                   <input type="text" class="form-control form-control-sm" id="congServerDir" required />
                 </div>
               </div>
-              <div class="py-3 row text-start">
-                <div class="card">
-                  <div class="card-body">
-                    <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+              <div class="align-items-center g-1 py-1 row">
+                <label class="col-5 m-0 pr-3"></label>
+                <div class="col">
+                  <div class="card">
+                    <div class="card-body">
+                      <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+                    </div>
                   </div>
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="congServerForcedPrefs" class="col-5 m-0 pr-3" data-i18n-string="settingsLocked"></label>
+                <div class="col">
+                  <button type="button" id="btnForcedPrefs" class="btn btn-primary">
+                    <i class="fas fa-fw fa-cog"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -620,9 +644,9 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="openFolderWhenDone" class="m-0 text-start col-11" data-i18n-string="openTargetFolderAfterSync"></label>
+                <label for="autoOpenFolderWhenDone" class="m-0 text-start col-11" data-i18n-string="openTargetFolderAfterSync"></label>
                 <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input col-1" id="openFolderWhenDone" />
+                  <input type="checkbox" class="form-check-input col-1" id="autoOpenFolderWhenDone" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">

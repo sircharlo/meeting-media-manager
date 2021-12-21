@@ -1,4 +1,4 @@
-const animationDuration = 200,
+const fadeDelay = 200,
   axios = require("axios"),
   net = require("net"),
   remote = require("@electron/remote"),
@@ -17,7 +17,7 @@ const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.
 updateOnlineStatus();
 require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, message[0], message[1]));
 require("electron").ipcRenderer.on("macUpdate", () => {
-  $("#bg-mac-update").fadeIn(animationDuration);
+  $("#bg-mac-update").fadeIn(fadeDelay);
   $("#btn-settings").addClass("in-danger");
   $("#version").addClass("bg-danger in-danger").removeClass("bg-primary").prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").click(function() {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
@@ -106,6 +106,7 @@ function goAhead() {
   getInitialData();
   dateFormatter();
   $("#overlaySettings input:not(.timePicker), #overlaySettings select").on("change", function() {
+    console.log(this);
     if ($(this).prop("tagName") == "INPUT") {
       if ($(this).prop("type") == "checkbox") {
         prefs[$(this).prop("id")] = $(this).prop("checked");
@@ -120,7 +121,7 @@ function goAhead() {
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("cong")) webdavSetup();
     setVars();
-    if ($(this).prop("id") == "appLang") setAppLang();
+    if ($(this).prop("id") == "localAppLang") setAppLang();
     if ($(this).prop("id") == "lang") setMediaLang();
     if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) rm([paths.media]);
     validateConfig(true);
@@ -133,9 +134,9 @@ function additionalMedia() {
     $("#chooseMeeting").empty();
     for (var meeting of [prefs.mwDay, prefs.weDay]) {
       let meetingDate = baseDate.add(meeting, "d").format("YYYY-MM-DD");
-      $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-primary' for='" + meetingDate + "'" + (Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + meetingDate + "</label>");
+      $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-dark' for='" + meetingDate + "'" + (Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + meetingDate + "</label>");
     }
-    $(".relatedToUpload, .relatedToUploadType, #btnCancelUpload").fadeOut(animationDuration);
+    $(".relatedToUpload, .relatedToUploadType, #btnCancelUpload").fadeTo(fadeDelay, 0);
     $("#btnDoneUpload").on("click", function() {
       toggleScreen("overlayUploadFile");
       $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
@@ -144,7 +145,7 @@ function additionalMedia() {
       removeEventListeners();
       perf("additionalMedia", "stop");
       resolve();
-    }).fadeIn(animationDuration);
+    }).fadeIn(fadeDelay);
     toggleScreen("overlayUploadFile");
   });
 }
@@ -311,7 +312,7 @@ function createVideoSync(mediaFile){
   });
 }
 function dateFormatter() {
-  let locale = prefs.appLang ? prefs.appLang : "en";
+  let locale = prefs.localAppLang ? prefs.localAppLang : "en";
   try {
     if (locale !== "en") require("dayjs/locale/" + locale);
   } catch(err) {
@@ -352,7 +353,7 @@ const delay = s => new Promise(res => {
 function disableGlobalPref(pref) {
   let row = $("#" + pref).closest("div.row");
   if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>").attr("title", i18n.__("settingLocked")).tooltip());
-  row.addClass("text-muted disabled").find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedSetting").prop("disabled", true);
+  row.addClass("text-muted disabled").find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
   console.log("%c - " + pref, "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
 }
 function displayMusicRemaining() {
@@ -385,8 +386,28 @@ function downloadStat(origin, source, file) {
   downloadStats[origin][source].push(file);
 }
 function enablePreviouslyForcedPrefs() {
-  $("div.row.text-muted.disabled").removeClass("text-muted disabled").find(".forcedSetting").prop("disabled", false).removeClass("forcedSetting");
+  $("div.row.text-muted.disabled").removeClass("text-muted disabled").find(".forcedPref").prop("disabled", false).removeClass("forcedPref");
   $("div.row .settingLocked").remove();
+}
+async function enforcePrefs() {
+  console.log("%cENFORCED SETTINGS", "background-color: #FCE4EC; color: #AD1457; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
+  console.log("%c Some settings were enforced due to congregation sharing or by your videoconference organizer:", "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
+  paths.forcedPrefs = path.posix.join(prefs.congServerDir, "forcedPrefs.json");
+  let forcedPrefs = await getForcedPrefs();
+  if (Object.keys(forcedPrefs).length > 0) {
+    let previousPrefs = v8.deserialize(v8.serialize(prefs));
+    Object.assign(prefs, forcedPrefs);
+    for (var pref of Object.keys(forcedPrefs)) {
+      disableGlobalPref(pref);
+    }
+    if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) {
+      setMediaLang();
+      validateConfig(true);
+      prefsInitialize();
+    }
+  } else {
+    enablePreviouslyForcedPrefs(true);
+  }
 }
 async function executeDryrun(persistantOverlay) {
   await overlay(true, "cog fa-spin");
@@ -449,7 +470,9 @@ async function getCongMedia() {
     };
     for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
       for (let remoteFile of (await webdavLs(path.posix.join(prefs.congServerDir, "Media", congSpecificFolder.basename)))) {
-        var congSpecificFile = {
+        let isMeetingDate = dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"));
+        let isRecurring = congSpecificFolder.basename == "Recurring";
+        let congSpecificFile = {
           "title": "Congregation-specific",
           media: [{
             safeName: remoteFile.basename,
@@ -459,15 +482,18 @@ async function getCongMedia() {
             url: remoteFile.filename
           }]
         };
-        if (dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"))) {
+        if (isMeetingDate || isRecurring) {
           if (!meetingMedia[congSpecificFolder.basename]) meetingMedia[congSpecificFolder.basename] = [];
           meetingMedia[congSpecificFolder.basename].push(congSpecificFile);
-        } else if (!dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid()) {
-          for (var meeting of Object.keys(meetingMedia)) {
-            var repeatFile = v8.deserialize(v8.serialize(congSpecificFile));
-            repeatFile.media[0].recurring = true;
-            repeatFile.media[0].folder = meeting;
-            meetingMedia[meeting].push(repeatFile);
+          if (isRecurring) {
+            for (var meeting of Object.keys(meetingMedia)) {
+              if (dayjs(meeting, "YYYY-MM-DD").isValid()) {
+                var repeatFile = v8.deserialize(v8.serialize(congSpecificFile));
+                repeatFile.media[0].recurring = true;
+                repeatFile.media[0].folder = meeting;
+                meetingMedia[meeting].push(repeatFile);
+              }
+            }
           }
         }
       }
@@ -520,7 +546,7 @@ async function getDbFromJwpub(pub, issue, localpath) {
 }
 async function getDocumentExtract(db, docId) {
   var extractMultimediaItems = [];
-  for (var extractItem of (await executeStatement(db, "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' " + (prefs.excludeTh ? "AND NOT UndatedSymbol = 'th'" : "") + " ORDER BY DocumentExtract.BeginParagraphOrdinal"))) {
+  for (var extractItem of (await executeStatement(db, "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' " + (prefs.excludeTh ? "AND NOT UndatedSymbol = 'th' " : "") + (prefs.excludeLffi ? "AND NOT UndatedSymbol = 'lffi' " : "") + "ORDER BY DocumentExtract.BeginParagraphOrdinal"))) {
     var extractDb = await getDbFromJwpub(extractItem.UndatedSymbol, extractItem.IssueTagNumber);
     if (extractDb) {
       extractMultimediaItems = extractMultimediaItems.concat((await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId)).filter(extractMediaFile => {
@@ -587,6 +613,22 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
   }
   return multimediaItems;
 }
+async function getForcedPrefs() {
+  let forcedPrefs = {};
+  if (await webdavExists(paths.forcedPrefs)) {
+    try {
+      forcedPrefs = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + "/" + paths.forcedPrefs, {
+        webdav: true,
+        noCache: true
+      })).data;
+    } catch(err) {
+      console.error("Error enforcing congregation-synced settings!", err);
+    }
+  } else {
+    await webdavPut(forcedPrefs, prefs.congServerDir, "forcedPrefs.json");
+  }
+  return forcedPrefs;
+}
 async function getInitialData() {
   await getJwOrgLanguages();
   await setAppLang();
@@ -633,6 +675,7 @@ async function getJwOrgLanguages() {
 async function getMediaLinks(pub, track, issue, format, docId) {
   let mediaFiles = [];
   try {
+    if (pub === "w" && parseInt(issue) >= 20080101 && issue.slice(-2) == "01") pub = "wp";
     let result = (await request("https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang)).data;
     if (result && result.files) {
       let mediaFileCategories = Object.values(result.files)[0];
@@ -702,14 +745,14 @@ function getPrefix() {
     }
   }
   $(".enterPrefixInput").each(function() {
-    $(this).fadeTo(animationDuration, !$(this).prop("disabled"));
+    $(this).fadeTo(fadeDelay, !$(this).prop("disabled"));
   });
   $("#enterPrefix-" + prefix.length).focus();
   if (prefix.length % 2) prefix = prefix + 0;
   if (prefix.length > 0) prefix = prefix.match(/.{1,2}/g).join("-");
 }
 function setAppLang() {
-  $("#appLang option").each(function() {
+  $("#localAppLang option").each(function() {
     let localeLang = jsonLangs.filter(item => item.symbol === $(this).val());
     if (localeLang.length === 1) $(this).text(localeLang[0].name);
   });
@@ -719,7 +762,7 @@ function setAppLang() {
     updateFiles: false,
     retryInDefaultLocale: true
   });
-  i18n.setLocale(prefs.appLang ? prefs.appLang : "en");
+  i18n.setLocale(prefs.localAppLang ? prefs.localAppLang : "en");
   $("[data-i18n-string]").each(function() {
     $(this).html(i18n.__($(this).data("i18n-string")));
   });
@@ -823,7 +866,7 @@ async function mp4Convert() {
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
     if (!show) {
-      if (!topIcon || (topIcon && $("#overlayMaster i.fa-" + topIcon).length > 0)) $("#overlayMaster").stop().fadeOut(animationDuration, () => resolve());
+      if (!topIcon || (topIcon && $("#overlayMaster i.fa-" + topIcon).length > 0)) $("#overlayMaster").stop().fadeOut(fadeDelay, () => resolve());
     } else {
       if ($("#overlayMaster #topIcon i.fa-" + topIcon).length === 0) $("#overlayMaster #topIcon i").removeClass().addClass("fas fa-fw fa-" + topIcon);
       $("#overlayMaster #bottomIcon i").removeClass();
@@ -832,7 +875,7 @@ function overlay(show, topIcon, bottomIcon, action) {
         $("#overlayMaster #bottomIcon button .action-countdown").html();
         if (action) $("#overlayMaster #bottomIcon i").next("span").addBack().wrapAll("<button type='button' class='btn btn-danger btn-action-" + action + " position-relative'></button>");
       }
-      $("#overlayMaster").stop().fadeIn(animationDuration, () => resolve());
+      $("#overlayMaster").stop().fadeIn(fadeDelay, () => resolve());
     }
   });
 }
@@ -850,10 +893,10 @@ function perfPrint() {
   }
 }
 function prefsInitialize() {
-  for (var pref of ["appLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "outputPath", "betaMp4Gen", "congServer", "congServerPort", "congServerUser", "congServerPass", "openFolderWhenDone", "additionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "mwStartTime", "weStartTime", "excludeTh"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
-  for (let field of ["appLang", "lang", "outputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "mwStartTime", "weStartTime"]) {
+  for (let field of ["localAppLang", "lang", "localOutputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "mwStartTime", "weStartTime"]) {
     $("#" + field).val(prefs[field]);
   }
   for (let timeField of ["mwStartTime", "weStartTime"]) {
@@ -862,7 +905,7 @@ function prefsInitialize() {
   for (let dtPicker of datepickers) {
     dtPicker.setDate($(dtPicker.element).val());
   }
-  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "betaMp4Gen", "autoQuitWhenDone", "openFolderWhenDone", "additionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh"]) {
+  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi"]) {
     $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
@@ -910,7 +953,6 @@ async function request(url, opts) {
     payload = await axios.request(options);
     response = payload;
   } catch (err) {
-    console.error(url, err, payload);
     response = err.response;
   }
   return response;
@@ -966,7 +1008,7 @@ function setVars() {
     downloadStats = {};
     meetingMedia = {};
     jwpubDbs = {};
-    paths.output = path.join(prefs.outputPath);
+    paths.output = path.join(prefs.localOutputPath);
     mkdirSync(paths.output);
     paths.lang = path.join(paths.output, prefs.lang);
     mkdirSync(paths.lang);
@@ -997,7 +1039,7 @@ async function startMediaSync(isDryrun) {
   dryrun = !!isDryrun;
   if (!dryrun) $("#statusIcon").toggleClass("text-primary text-muted");
   stayAlive = false;
-  if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 0);
+  if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(fadeDelay, 0);
   await setVars();
   for (let folder of glob.sync(path.join(paths.media, "*/"))) {
     if (!dryrun && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(now) || !(dayjs(path.basename(folder), "YYYY-MM-DD").isValid()))) await rm([folder]);
@@ -1015,10 +1057,10 @@ async function startMediaSync(isDryrun) {
       syncCongMedia(),
       syncJwOrgMedia(),
     ]);
-    if (prefs.additionalMediaPrompt) await additionalMedia();
-    if (prefs.betaMp4Gen) await mp4Convert();
-    if (prefs.openFolderWhenDone) shell.openPath(paths.media);
-    $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(animationDuration, 1);
+    if (prefs.localAdditionalMediaPrompt) await additionalMedia();
+    if (prefs.enableMp4Conversion) await mp4Convert();
+    if (prefs.autoOpenFolderWhenDone) shell.openPath(paths.media);
+    $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(fadeDelay, 1);
     setTimeout(() => {
       $(".alertIndicators").addClass("alert-primary").removeClass("alert-success");
       $("#statusIcon").toggleClass("text-muted text-primary");
@@ -1117,16 +1159,15 @@ function toggleScreen(screen, forceShow) {
       $(this).collapse($(this).find(".is-invalid").length > 0 ? "show" : "hide");
     });
     if (forceShow) {
-      $("#" + screen).slideDown(animationDuration, () => resolve() );
+      $("#" + screen).slideDown(fadeDelay, () => resolve() );
     } else {
-      $("#" + screen).slideToggle(animationDuration, () => resolve() );
+      $("#" + screen).slideToggle(fadeDelay, () => resolve() );
     }
   });
 }
 function updateCleanup() {
   try { // do some housecleaning after version updates
     var lastRunVersion = (fs.existsSync(paths.lastRunVersion) ? fs.readFileSync(paths.lastRunVersion, "utf8") : 0);
-    setVars();
   } catch(err) {
     console.error(err);
   } finally {
@@ -1134,12 +1175,22 @@ function updateCleanup() {
       // rm([paths.lang /*, paths.pubs*/]);
       fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
       if (lastRunVersion !== 0) {
-        if (!prefs.appLang) {
-          prefs.appLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0].symbol;
+        if (!prefs.localAppLang) {
+          prefs.localAppLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0].symbol;
           prefsInitialize();
           validateConfig(true);
           setAppLang();
         }
+        let somePrefWasUpdated = false;
+        for (var updatedPref of [["additionalMediaPrompt", "localAdditionalMediaPrompt"], ["betaMp4Gen", "enableMp4Conversion"], ["outputPath", "localOutputPath"], ["openFolderWhenDone", "autoOpenFolderWhenDone"]]) {
+          if (updatedPref[0] in prefs) {
+            prefs[updatedPref[1]] = prefs[updatedPref[0]];
+            delete prefs[updatedPref[0]];
+            prefsInitialize();
+            somePrefWasUpdated = true;
+          }
+        }
+        validateConfig(somePrefWasUpdated);
         showReleaseNotes();
       }
     }
@@ -1154,13 +1205,13 @@ function updateTile(tile, color, icon) {
 function validateConfig(changed) {
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
-  if (prefs.outputPath === "false" || !fs.existsSync(prefs.outputPath)) $("#outputPath").val("");
-  let mandatoryFields = ["outputPath", "appLang", "lang", "mwDay", "weDay", "maxRes"];
+  if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) $("#localOutputPath").val("");
+  let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes"];
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push("mwStartTime", "weStartTime");
   for (var setting of mandatoryFields) {
     $("#" + setting + ", .timePicker[data-target='" + setting + "']").toggleClass("is-invalid", !prefs[setting]);
     $("#" + setting).next(".select2").find(".select2-selection").toggleClass("is-invalid", !prefs[setting]);
-    $("#" + setting + " label.btn").toggleClass("btn-outline-primary", !!prefs[setting]).toggleClass("btn-outline-danger", !prefs[setting]);
+    $("#" + setting + " label.btn").toggleClass("btn-outline-dark", !!prefs[setting]).toggleClass("btn-outline-danger", !prefs[setting]);
     $("#" + setting).closest("div.row").find("label").toggleClass("text-danger", !prefs[setting]);
     if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
     if (setting == "lang") $("#" + setting).val(prefs[setting]).select2();
@@ -1171,7 +1222,7 @@ function validateConfig(changed) {
   $(".relatedToFadeOut:not(:disabled), #enableMusicFadeOut:not(:disabled)").prop("disabled", !prefs.enableMusicButton);
   if (prefs.enableMusicButton) $(".relatedToFadeOut:not(:disabled)").prop("disabled", !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut && !prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
-  $("#mp4Convert").toggleClass("d-flex", prefs.betaMp4Gen);
+  $("#mp4Convert").toggleClass("d-flex", prefs.enableMp4Conversion);
   $("#btnMeetingMusic").toggle(prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
   $(".btn-home").toggleClass("btn-dark", configIsValid).toggleClass("btn-danger", !configIsValid);
   $("#mediaSync, .btn-home").prop("disabled", !configIsValid);
@@ -1183,7 +1234,7 @@ function validateConfig(changed) {
   return configIsValid;
 }
 async function webdavExists(url) {
-  return (await webdavHead(url)).status < 400;
+  return (await webdavStatus(url)) < 400;
 }
 async function webdavGet(file) {
   let localFile = path.join(paths.media, file.folder, file.safeName);
@@ -1198,7 +1249,7 @@ async function webdavGet(file) {
     downloadStat("cong", "cache", file);
   }
 }
-async function webdavHead(url) {
+async function webdavStatus(url) {
   let response;
   try {
     response = await request("https://" + prefs.congServer + ":" + prefs.congServerPort + url, {
@@ -1213,7 +1264,7 @@ async function webdavHead(url) {
   } catch (err) {
     response = err.response;
   }
-  return response;
+  return response.status;
 }
 async function webdavLs(dir, force) {
   try {
@@ -1232,7 +1283,7 @@ async function webdavLs(dir, force) {
         ignoreNameSpace: true
       });
       let items = [];
-      if (Array.isArray(listing.multistatus.response)) {
+      if (listing && listing.multistatus && listing.multistatus.response && Array.isArray(listing.multistatus.response)) {
         items = listing.multistatus.response.filter(item => path.resolve(decodeURIComponent(item.href)) !== path.resolve(dir)).map(item => {
           let href = decodeURIComponent(item.href);
           return {
@@ -1295,64 +1346,28 @@ async function webdavSetup() {
     congServerHeartbeat = await isReachable(prefs.congServer, prefs.congServerPort);
     if (congServerHeartbeat) {
       if (prefs.congServerUser && prefs.congServerPass) {
-        try {
-          if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
-            $("#congServerDir").val("/").change();
-          } else {
-            let webdavStatusCode = (await webdavHead(prefs.congServerDir)).status;
-            if (webdavStatusCode === 200) {
-              webdavLoginSuccessful = true;
-              webdavDirIsValid = true;
-            }
-            if (!([401, 403, 405, 429].includes(webdavStatusCode))) webdavLoginSuccessful = true;
-            if (webdavStatusCode !== 404) webdavDirIsValid = true;
-            if (congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid) {
-              if (prefs.congServerDir !== "/") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
-              for (var item of (await webdavLs(prefs.congServerDir, true))) {
-                if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
-              }
-              $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
-              $("#webdavFolderList li").click(function() {
-                $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
-              });
-              if (prefs.additionalMediaPrompt) $("#additionalMediaPrompt").prop("checked", false).change();
-              console.log("%cENFORCED SETTINGS", "background-color: #FCE4EC; color: #AD1457; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
-              console.log("%c Some settings were enforced due to congregation sharing or by your videoconference organizer:", "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
-              disableGlobalPref("additionalMediaPrompt");
-              let forcedSettingsPath = path.posix.join(prefs.congServerDir, "forcedSettings.json");
-              if (await webdavExists(forcedSettingsPath)) {
-                try {
-                  let forcedSettings = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + "/" + forcedSettingsPath, {
-                    webdav: true,
-                    noCache: true
-                  })).data;
-                  if (Object.keys(forcedSettings).length > 0) {
-                    let previousPrefs = v8.deserialize(v8.serialize(prefs));
-                    Object.assign(prefs, forcedSettings);
-                    for (var pref of Object.keys(forcedSettings)) {
-                      disableGlobalPref(pref);
-                    }
-                    if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) {
-                      setMediaLang();
-                      validateConfig(true);
-                      prefsInitialize();
-                    }
-                  }
-                } catch(err) {
-                  console.error("Error enforcing congregation-synced settings!", err);
-                }
-              }
-            }
+        if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
+          $("#congServerDir").val("/").change();
+        } else {
+          let webdavStatusCode = await webdavStatus(prefs.congServerDir);
+          if (webdavStatusCode === 200) {
+            webdavLoginSuccessful = true;
+            webdavDirIsValid = true;
           }
-        } catch(err) {
-          console.error(err);
-          if (err.response) {
-            console.error(err.response);
-            if (err.response.status === 401 || err.response.status === 405) {
-              webdavLoginSuccessful = false;
-            } else if (err.response.status !== 404) {
-              congServerHeartbeat = false;
+          if (!([401, 403, 405, 429].includes(webdavStatusCode))) webdavLoginSuccessful = true;
+          if (webdavStatusCode !== 404) webdavDirIsValid = true;
+          if (congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid) {
+            if (prefs.congServerDir !== "/") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
+            for (var item of (await webdavLs(prefs.congServerDir, true))) {
+              if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
             }
+            $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
+            $("#webdavFolderList li").click(function() {
+              $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
+            });
+            if (prefs.localAdditionalMediaPrompt) $("#localAdditionalMediaPrompt").prop("checked", false).change();
+            enforcePrefs();
+            disableGlobalPref("localAdditionalMediaPrompt");
           }
         }
       }
@@ -1363,10 +1378,11 @@ async function webdavSetup() {
   $(".webdavHost").toggleClass("is-valid", congServerHeartbeat).toggleClass("is-invalid", congServerEntered && !congServerHeartbeat);
   $(".webdavCreds").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && !webdavLoginSuccessful));
   $("#congServerDir").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && !webdavDirIsValid));
-  $("#webdavFolderList").fadeTo(animationDuration, webdavDirIsValid);
+  $("#webdavFolderList").fadeTo(fadeDelay, webdavDirIsValid);
   $("#specificCong").toggleClass("d-flex", congServerEntered).toggleClass("alert-danger", congServerEntered && !(congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid));
   $("#btn-settings, #headingCongSync button").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
   webdavIsAGo = (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
+  $("#localAdditionalMediaPrompt").closest(".row").toggle(!webdavIsAGo);
   if (!webdavIsAGo) enablePreviouslyForcedPrefs();
 }
 var dragenterHandler = () => {
@@ -1416,6 +1432,28 @@ $("#btnCancelUpload").on("click", () => {
   $("#fileList, #filePicker, #jwpubPicker, .enterPrefixInput").val("").empty().change();
   $("#chooseMeeting .active, #chooseUploadType .active").removeClass("active");
   removeEventListeners();
+});
+$("#btnForcedPrefs").on("click", () => {
+  getForcedPrefs().then(currentForcedPrefs => {
+    let html = "<h6>" + i18n.__("settingsLockedWhoAreYou") + "</h6>";
+    html += "<p>" + i18n.__("settingsLockedExplain") + "</p>";
+    html += "<div id='forcedPrefs' class='card'><div class='card-body'>";
+    for (var pref of Object.keys(prefs).filter(pref => !pref.startsWith("cong") && !pref.startsWith("auto") && !pref.startsWith("local") && !pref.includes("UpdatedLast")).sort((a, b) => a[0].localeCompare(b[0]))) {
+      html += "<div class='form-check form-switch'><input class='form-check-input' type='checkbox' id='forcedPref-" + pref + "' " + (pref in currentForcedPrefs ? "checked" : "") + "> <label class='form-check-label' for='forcedPref-" + pref + "'><code>" + pref + "</code> <i class='fas fa-question-circle text-muted' title='\"" + $("#" + pref).closest(".row").find("label").first().find("span").last().html() + "\"' data-bs-toggle='tooltip' data-bs-html='true'></i></label></div>";
+    }
+    html += "</div></div>";
+    showModal(true, true, i18n.__("settingsLocked"), html, true, true);
+    $("#staticBackdrop #forcedPrefs i").tooltip();
+    $("#staticBackdrop #forcedPrefs input").on("change", async function() {
+      $("#staticBackdrop #forcedPrefs input").prop("disabled", true);
+      enablePreviouslyForcedPrefs();
+      let checkedItems = $("#staticBackdrop #forcedPrefs input:checked").map(function() { return this.id.replace("forcedPref-", ""); }).get();
+      let forcedPrefs = JSON.stringify(Object.fromEntries(Object.entries(prefs).filter(([key]) => checkedItems.includes(key))), null, 2);
+      await webdavPut(forcedPrefs, prefs.congServerDir, "forcedPrefs.json");
+      enforcePrefs();
+      $("#staticBackdrop #forcedPrefs input").prop("disabled", false);
+    });
+  });
 });
 $("#btnMeetingMusic").on("click", async function() {
   if (prefs.enableMusicButton) $(".relatedToFadeOut, #enableMusicFadeOut, #enableMusicButton").prop("disabled", true);
@@ -1469,7 +1507,7 @@ $(".btn-home, #btn-settings").on("click", function() {
 $("#btnStopMeetingMusic").on("click", function() {
   clearTimeout(pendingMusicFadeOut.id);
   $("#btnStopMeetingMusic").toggleClass("btn-warning btn-danger").prop("disabled", true);
-  $("#meetingMusic").animate({volume: 0}, animationDuration * 30, () => {
+  $("#meetingMusic").animate({volume: 0}, fadeDelay * 30, () => {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
     $("#musicRemaining").empty();
@@ -1526,17 +1564,17 @@ $("#btnUpload").on("click", async () => {
   }
 });
 $("#btn-upload").on("click", async function() {
-  $(".relatedToUpload, .relatedToUploadType, #btnDoneUpload").hide();
-  $("#btnCancelUpload").fadeIn(animationDuration);
+  $(".relatedToUpload, .relatedToUploadType, #btnDoneUpload").fadeTo(fadeDelay, 0);
+  $("#btnCancelUpload").fadeIn(fadeDelay);
   currentStep = "uploadFile";
   await executeDryrun(true);
   await toggleScreen("overlayUploadFile");
   overlay(false);
   $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   $("#chooseMeeting").empty();
-  for (var meeting of [prefs.mwDay, prefs.weDay]) {
-    let meetingDate = baseDate.add(meeting, "d").format("YYYY-MM-DD");
-    $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-primary' for='" + meetingDate + "'" + (Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + meetingDate + "</label>");
+  for (var meeting of [prefs.mwDay, prefs.weDay, "Recurring"]) {
+    let meetingDate = (isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD"));
+    $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-" + (isNaN(meeting) ? "info" : "dark" ) + "' for='" + meetingDate + "'" + (isNaN(meeting) || Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + (isNaN(meeting) ? i18n.__("recurring") : meetingDate) + "</label>");
   }
 });
 $("#chooseUploadType input").on("change", function() {
@@ -1619,7 +1657,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
           });
           if (typeof missingMediaPath !== "undefined") {
             tempMediaArray.find(item => item.filename == $(this).data("filename")).localpath = missingMediaPath[0];
-            $(this).addClass("list-group-item-primary");
+            $(this).addClass("list-group-item-dark");
           }
           if (tempMediaArray.filter(item => !item.contents && !item.localpath).length === 0) {
             $("#staticBackdrop .modal-footer button").prop("disabled", false);
@@ -1640,17 +1678,17 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
 $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown").prop("disabled", true);
   await startMediaSync();
-  await overlay(true, "smile-beam", (prefs.autoQuitWhenDone ? "door-open" : null), "stay-alive");
+  await overlay(true, "smile-beam text-primary", (prefs.autoQuitWhenDone ? "door-open" : null), "stay-alive");
   await delay(5);
   if (prefs.autoQuitWhenDone && !stayAlive) {
     remote.app.exit();
   } else {
     overlay(false);
-    $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeTo(animationDuration, 1);
+    $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeTo(fadeDelay, 1);
     $("#mediaSync, #baseDate-dropdown").prop("disabled", false);
   }
 });
-$("#outputPath").on("mousedown", function(event) {
+$("#localOutputPath").on("mousedown", function(event) {
   $(this).val(remote.dialog.showOpenDialogSync({ properties: ["openDirectory"] })).change();
   event.preventDefault();
 });
@@ -1670,10 +1708,10 @@ $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
   document.addEventListener("dragleave", dragleaveHandler);
   $("#chooseUploadType input").prop("checked", false).change();
   $("#chooseUploadType label.active").removeClass("active");
-  $(".relatedToUploadType").fadeIn(animationDuration);
+  $(".relatedToUploadType").fadeTo(fadeDelay, 1);
 });
 $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType input", function() {
-  $(".relatedToUpload").fadeTo(animationDuration, ($("#chooseMeeting input:checked").length === 0 || $("#chooseUploadType input:checked").length === 0 ? 0 : 1));
+  $(".relatedToUpload").fadeTo(fadeDelay, ($("#chooseMeeting input:checked").length === 0 || $("#chooseUploadType input:checked").length === 0 ? 0 : 1));
 });
 $("#fileList").on("click", "li .fa-minus-circle", function() {
   $(this).parent().addClass("confirmDelete").find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-exclamation-circle");
@@ -1686,8 +1724,9 @@ $("#fileList").on("click", "li .fa-exclamation-circle", function() {
     rm(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).parent().data("url")));
   } else {
     webdavRm($(this).parent().data("url"));
+    if ($(this).parent().data("url").includes("Recurring")) executeDryrun();
   }
-  $(this).parent().fadeOut(animationDuration, function(){
+  $(this).parent().fadeOut(fadeDelay, function(){
     $(this).remove();
   });
   meetingMedia[$("#chooseMeeting input:checked").prop("id")].splice(meetingMedia[$("#chooseMeeting input:checked").prop("id")].findIndex(item => item.media.find(mediaItem => mediaItem.url === $(this).parent().data("url"))), 1);
@@ -1706,7 +1745,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
   try {
     if ($("#chooseMeeting input:checked").length > 0) {
       $(".relatedToUpload *:not(.enterPrefixInput):enabled").prop("disabled", true).addClass("fileListLoading");
-      $("#fileList").stop().fadeTo(animationDuration, 0, () => {
+      $("#fileList").stop().fadeTo(fadeDelay, 0, () => {
         var weekMedia = [];
         if (currentStep == "additionalMedia") {
           fs.readdirSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"))).map(function(item) {
@@ -1721,7 +1760,6 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         } else {
           if (!meetingMedia[$("#chooseMeeting input:checked").prop("id")]) meetingMedia[$("#chooseMeeting input:checked").prop("id")] = [];
           weekMedia = meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(mediaItem => mediaItem.media.length > 0);
-          if ("Recurring" in meetingMedia) weekMedia = weekMedia.concat(meetingMedia.Recurring);
         }
         var newFiles = [];
         let newFileChosen = $("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0;
@@ -1746,7 +1784,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         $("#fileList").empty();
         for (var file of newList) {
           let html = $("<li title='" + file.safeName + "' data-url='" + file.url + "' data-safename='" + file.safeName + "'>" + file.safeName + "</li>");
-          if (file.congSpecific && file.recurring) html.prepend("<i class='fas fa-fw fa-sync-alt'></i>").addClass("recurring");
+          if (file.congSpecific && file.recurring) html.prepend("<i class='fas fa-fw fa-sync-alt'></i>").addClass("recurring text-info");
           if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.prepend("<i class='fas fa-fw fa-minus-circle'></i>").addClass("canDelete");
           if (currentStep !== "additionalMedia" && (!file.congSpecific || file.recurring) && !file.hidden && !file.newFile) html.addClass("canHide").prepend("<i class='far fa-fw fa-check-square'></i>");
           if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-fw fa-plus'></i>");
@@ -1758,7 +1796,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 8));
         $("#btnUpload").toggle(newFileChosen);
         $("#" + (currentStep == "additionalMedia" ? "btnDoneUpload" : "btnCancelUpload")).toggle(!newFileChosen);
-        $("#fileList").stop().fadeTo(animationDuration, 1, () => {
+        $("#fileList").stop().fadeTo(fadeDelay, 1, () => {
           $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
         });
       });
