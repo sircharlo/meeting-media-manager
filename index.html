@@ -66,8 +66,26 @@
       width: 100% !important;
     }
 
-    .select2-selection.is-invalid {
-      border-color: var(--bs-danger) !important;
+    span.select2 span.select2-selection {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+      background-position: right .75rem center;
+      background-size: 16px 12px;
+      border: 1px solid #ced4da;
+      background-repeat: no-repeat;
+      border-radius: .25rem;
+    }
+
+    span.select2.is-invalid span.select2-selection {
+      border-color: #dc3545;
+      padding-right: calc(1.5em + .75rem);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right .75rem center, center right 2.25rem;
+      background-size: 16px 12px, calc(.75em + .375rem) calc(.75em + .375rem);
+    }
+
+    .select2-selection__arrow {
+      display: none;
     }
 
     .timePicker {
@@ -294,12 +312,29 @@
         color: var(--bs-gray-500);
       }
 
-      .select2-dropdown,
-      #select2-lang-container,
-      #select2-songPicker-container {
-        color: var(--bs-light) !important;
-        background: var(--bs-dark);
-        border-radius: .2rem;
+      span.select2 span.select2-selection {
+        color: #b1b1b1;
+        background-color: #222;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23cfcfcf' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        border: 1px solid #515151;
+      }
+
+      .select2-container--default.select2-container--disabled .select2-selection--single {
+        background-color: #3b3b3b;
+      }
+
+      .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #b1b1b1;
+      }
+
+      span.select2.is-invalid span.select2-selection {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23cfcfcf' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23e74c3c'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+      }
+
+      .select2-dropdown {
+        color: #b1b1b1;
+        background-color: #222;
+        border: 1px solid #515151;
       }
 
       .select2-container--default .select2-results__option--selected {
@@ -308,7 +343,6 @@
 
       .select2-container--default .select2-selection--single {
         border: 1px solid var(--bs-secondary);
-        background: var(--bs-dark);
         border-radius: 4px;
       }
     }
@@ -413,7 +447,7 @@
                 <label for="localAppLang" class="col-5 text-start"><span data-i18n-string="localAppLang"></span></label>
                 <div class="col">
                   <select class="form-select form-select-sm" id="localAppLang" class="form-control" required>
-                    <option value="" disabled hidden></option>
+                    <option value="" hidden></option>
                     <option value="en"></option>
                     <option value="es"></option>
                     <option value="fr"></option>
