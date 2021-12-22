@@ -40,7 +40,8 @@
 
     #overlaySettings,
     span.select2-dropdown,
-    #overlaySettings label {
+    #overlaySettings label,
+    #overlaySettings .btn-sm {
       font-size: 0.9em
     }
 
@@ -438,10 +439,10 @@
     <div class="flex-column flex-grow-1 w-100" style="display: flex; overflow-y: auto;">
       <div class="accordion" id="settingsAccordion">
         <div class="accordion-item">
-          <h2 class="accordion-header" id="headingLangMedia">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLangMedia" aria-expanded="true" aria-controls="collapseLangMedia" data-i18n-string="optionsMedia"></button>
+          <h2 class="accordion-header" id="headingAppSettings">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAppSettings" aria-expanded="true" aria-controls="collapseAppSettings" data-i18n-string="optionsApp"></button>
           </h2>
-          <div id="collapseLangMedia" class="accordion-collapse collapse" aria-labelledby="headingLangMedia">
+          <div id="collapseAppSettings" class="accordion-collapse collapse" aria-labelledby="headingAppSettings">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
                 <label for="localAppLang" class="col-5 text-start"><span data-i18n-string="localAppLang"></span></label>
@@ -463,6 +464,110 @@
                   <input type="text" class="form-control form-control-sm" id="localOutputPath" required />
                 </div>
               </div>
+              <hr class="my-2" />
+              <div class="align-items-center g-1 py-1 row">
+                <label for="autoRunAtBoot" class="m-0 text-start col-11" data-i18n-string="runAtStartup"></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input notLinux" id="autoRunAtBoot" />
+                </div>
+              </div>
+              <hr class="my-2" />
+              <div class="align-items-center g-1 py-1 row">
+                <label for="autoStartSync" class="m-0 text-start col-11" data-i18n-string="syncOnLaunch"></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="autoStartSync" />
+                </div>
+              </div>
+              <hr class="my-2" />
+              <div class="align-items-center g-1 py-1 row">
+                <label for="autoOpenFolderWhenDone" class="m-0 text-start col-11" data-i18n-string="openTargetFolderAfterSync"></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input col-1" id="autoOpenFolderWhenDone" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="autoQuitWhenDone" class="m-0 text-start col-11" data-i18n-string="quitAfterSync"></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="autoQuitWhenDone" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingCongSync">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCongSync" aria-expanded="true" aria-controls="collapseCongSync" data-i18n-string="optionsCongSync"></button>
+          </h2>
+          <div id="collapseCongSync" class="accordion-collapse collapse" aria-labelledby="headingCongSync">
+            <div class="accordion-body">
+              <div class="align-items-center g-1 py-1 row">
+                <div class="dropdown col-5 text-start" id="webdavProviders">
+                  <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" style="margin-left: calc(-0.5rem - 1px);">
+                    <span data-i18n-string="webdavHostname"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" data-server="dav.box.com" data-server-port="443" data-server-dir="/dav/">Box</a></li>
+                    <li><a class="dropdown-item" data-server="app.koofr.net" data-server-port="443" data-server-dir="/dav/Koofr/">Koofr</a></li>
+                    <li><a class="dropdown-item" data-server="webdav.pcloud.com" data-server-port="443" data-server-dir="/">pCloud</a></li>
+                    <li><a class="dropdown-item" data-server="seto.teracloud.jp" data-server-port="443" data-server-dir="/dav/">TeraCLOUD</a></li>
+                  </ul>
+                </div>
+                <div class="input-group input-group-sm col">
+                  <span class="input-group-text">https://</span>
+                  <input type=" text" class="form-control form-control-sm webdavHost" id="congServer" required />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="congServerPort" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavPort"></label>
+                <div class="col">
+                  <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort" required />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="congServerUser" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavUser"></label>
+                <div class="col">
+                  <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser" required />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="congServerPass" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavPass"></label>
+                <div class="col">
+                  <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass" required />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="congServerDir" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavFolder"></label>
+                <div class="col">
+                  <input type="text" class="form-control form-control-sm" id="congServerDir" required />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label class="col-5 m-0 pr-3"></label>
+                <div class="col">
+                  <div class="card">
+                    <div class="card-body">
+                      <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="congServerForcedPrefs" class="col-5 m-0 pr-3" data-i18n-string="settingsLocked"></label>
+                <div class="col">
+                  <button type="button" id="btnForcedPrefs" class="btn btn-primary">
+                    <i class="fas fa-fw fa-cog"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingMedia">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMedia" aria-expanded="true" aria-controls="collapseMedia" data-i18n-string="optionsMedia"></button>
+          </h2>
+          <div id="collapseMedia" class="accordion-collapse collapse" aria-labelledby="headingMedia">
+            <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
                 <label for="lang" class="col-5 text-start"><span data-i18n-string="mediaLang"></span></label>
                 <div class="col">
@@ -573,120 +678,17 @@
               </div>
               <div class="align-items-center g-1 py-1 row">
                 <label for="enableMusicFadeOut" class="m-0 text-start col-5"><span data-i18n-string="musicFadeOutType"></span></label>
-                <div class="col-1">
-                  <input type="range" class="form-range relatedToFadeOut me-3" min="5" max="60" step="5" value="5" id="musicFadeOutTime">
+                <div class="col-1 relatedToFadeOut">
+                  <input type="range" class="form-range me-3" min="5" max="60" step="5" value="5" id="musicFadeOutTime">
                 </div>
                 <div class="btn-group btn-group-toggle col-5 ps-2 relatedToFadeOut" id="musicFadeOutType">
-                  <input type="radio" class="btn-check relatedToFadeOut" name="musicFadeOutType" value="smart" id="musicFadeOutSmart">
+                  <input type="radio" class="btn-check" name="musicFadeOutType" value="smart" id="musicFadeOutSmart">
                   <label class="btn btn-outline-dark" for="musicFadeOutSmart" data-i18n-string="musicFadeOutSmart"></label>
-                  <input type="radio" class="btn-check relatedToFadeOut" name="musicFadeOutType" value="timer" id="musicFadeOutTimer">
+                  <input type="radio" class="btn-check" name="musicFadeOutType" value="timer" id="musicFadeOutTimer">
                   <label class="btn btn-outline-dark" for="musicFadeOutTimer" data-i18n-string="musicFadeOutTimer"></label>
                 </div>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMusicFadeOut" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="headingCongSync">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCongSync" aria-expanded="true" aria-controls="collapseCongSync" data-i18n-string="optionsCongSync"></button>
-          </h2>
-          <div id="collapseCongSync" class="accordion-collapse collapse" aria-labelledby="headingCongSync">
-            <div class="accordion-body">
-              <div class="align-items-center g-1 py-1 row">
-                <div class="dropdown col-5 text-start" id="webdavProviders">
-                  <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <span data-i18n-string="webdavHostname"></span>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" data-server="dav.box.com" data-server-port="443" data-server-dir="/dav/">Box</a></li>
-                    <li><a class="dropdown-item" data-server="app.koofr.net" data-server-port="443" data-server-dir="/dav/Koofr/">Koofr</a></li>
-                    <li><a class="dropdown-item" data-server="webdav.pcloud.com" data-server-port="443" data-server-dir="/">pCloud</a></li>
-                    <li><a class="dropdown-item" data-server="seto.teracloud.jp" data-server-port="443" data-server-dir="/dav/">TeraCLOUD</a></li>
-                  </ul>
-                </div>
-                <div class="input-group input-group-sm col">
-                  <span class="input-group-text">https://</span>
-                  <input type=" text" class="form-control form-control-sm webdavHost" id="congServer" required />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="congServerPort" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavPort"></label>
-                <div class="col">
-                  <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort" required />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="congServerUser" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavUser"></label>
-                <div class="col">
-                  <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser" required />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="congServerPass" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavPass"></label>
-                <div class="col">
-                  <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass" required />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="congServerDir" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavFolder"></label>
-                <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="congServerDir" required />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label class="col-5 m-0 pr-3"></label>
-                <div class="col">
-                  <div class="card">
-                    <div class="card-body">
-                      <ul id="webdavFolderList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="congServerForcedPrefs" class="col-5 m-0 pr-3" data-i18n-string="settingsLocked"></label>
-                <div class="col">
-                  <button type="button" id="btnForcedPrefs" class="btn btn-primary">
-                    <i class="fas fa-fw fa-cog"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="headingAutomation">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAutomation" aria-expanded="true" aria-controls="collapseAutomation" data-i18n-string="optionsAutomation"></button>
-          </h2>
-          <div id="collapseAutomation" class="accordion-collapse collapse" aria-labelledby="headingAutomation">
-            <div class="accordion-body">
-              <div class="align-items-center g-1 py-1 row">
-                <label for="autoRunAtBoot" class="m-0 text-start col-11" data-i18n-string="runAtStartup"></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input notLinux" id="autoRunAtBoot" />
-                </div>
-              </div>
-              <hr class="my-2" />
-              <div class="align-items-center g-1 py-1 row">
-                <label for="autoStartSync" class="m-0 text-start col-11" data-i18n-string="syncOnLaunch"></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="autoStartSync" />
-                </div>
-              </div>
-              <hr class="my-2" />
-              <div class="align-items-center g-1 py-1 row">
-                <label for="autoOpenFolderWhenDone" class="m-0 text-start col-11" data-i18n-string="openTargetFolderAfterSync"></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input col-1" id="autoOpenFolderWhenDone" />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="autoQuitWhenDone" class="m-0 text-start col-11" data-i18n-string="quitAfterSync"></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="autoQuitWhenDone" />
                 </div>
               </div>
             </div>

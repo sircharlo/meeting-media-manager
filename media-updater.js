@@ -1069,6 +1069,7 @@ async function startMediaSync(isDryrun) {
   perfPrint();
 }
 async function syncCongMedia() {
+  let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring"));
   if (webdavIsAGo) {
     perf("syncCongMedia", "start");
     updateStatus("cloud");
@@ -1077,19 +1078,19 @@ async function syncCongMedia() {
         total: 0,
         current: 1
       };
-      for (let parts of Object.values(meetingMedia)) {
+      for (let parts of Object.values(congSyncMeetingMedia)) {
         for (let part of parts.filter(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length > 0)) {
           totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length;
         }
       }
-      for (let datedFolder of glob.sync(path.join(paths.media, "*/"))) {
-        if (meetingMedia[path.basename(datedFolder)]) for (let jwOrCongFile of glob.sync(path.join(datedFolder, "*"))) {
-          if (!meetingMedia[path.basename(datedFolder)].map(part => part.media.map(media => media.safeName)).flat().includes(path.basename(jwOrCongFile))) await rm(jwOrCongFile);
+      for (let datedFolder of await glob.sync(path.join(paths.media, "*/"))) {
+        if (congSyncMeetingMedia[path.basename(datedFolder)]) for (let jwOrCongFile of await glob.sync(path.join(datedFolder, "*"))) {
+          if (!congSyncMeetingMedia[path.basename(datedFolder)].map(part => part.media.filter(media => !media.hidden).map(media => media.safeName)).flat().includes(path.basename(jwOrCongFile))) await rm(jwOrCongFile);
         }
       }
       progressSet(totals.cong.current, totals.cong.total, "specificCong");
       console.log("%cCONGREGATION MEDIA", "background-color: #d1ecf1; color: #0c5460; padding: 0.5em 1em; font-weight: bold; font-size: 150%;");
-      for (let [meeting, parts] of Object.entries(meetingMedia)) {
+      for (let [meeting, parts] of Object.entries(congSyncMeetingMedia)) {
         console.log("%c[" + meeting + "]", "background-color: #d1ecf1; color: #0c5460; padding: 0 1em; font-size: 125%;");
         for (let part of parts) {
           for (var mediaItem of part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden)) {
@@ -1206,7 +1207,10 @@ function validateConfig(changed) {
   $(".alertIndicators").removeClass("meeting").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) $("#localOutputPath").val("");
   let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes"];
-  if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push("mwStartTime", "weStartTime");
+  for (let timeField of ["mwStartTime", "weStartTime"]) {
+    if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push(timeField);
+    else $("#" + timeField + ", .timePicker[data-target='" + timeField + "']").removeClass("is-invalid");
+  }
   for (var setting of mandatoryFields) {
     if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
     $("#" + setting + ", .timePicker[data-target='" + setting + "']").toggleClass("is-invalid", !prefs[setting]);
@@ -1215,8 +1219,9 @@ function validateConfig(changed) {
     $("#" + setting).closest("div.row").find("label").toggleClass("text-danger", !prefs[setting]);
     if (!prefs[setting]) configIsValid = false;
   }
-  $("#enableMusicFadeOut").closest(".row").toggle(prefs.enableMusicButton);
-  $(".relatedToFadeOut").fadeTo(fadeDelay, prefs.enableMusicButton && prefs.enableMusicFadeOut);
+  $("#enableMusicFadeOut").closest(".row").toggle(!!prefs.enableMusicButton);
+  $(".relatedToFadeOut").toggle(!!prefs.enableMusicButton && !!prefs.enableMusicFadeOut);
+  $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton && prefs.enableMusicFadeOut) {
     if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
     if (!prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
@@ -1383,6 +1388,7 @@ async function webdavSetup() {
   $("#btn-settings, #headingCongSync button").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
   webdavIsAGo = (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
   $("#localAdditionalMediaPrompt").closest(".row").toggle(!webdavIsAGo);
+  $("#btnForcedPrefs").prop("disabled", !webdavIsAGo);
   if (!webdavIsAGo) enablePreviouslyForcedPrefs();
 }
 var dragenterHandler = () => {
