@@ -2,7 +2,7 @@
 
 To install JWMMF, simply download the latest installer [from here](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it.
 
-| Operating system  | Installer to download |
+| Operating system  | File to download |
 | ------------- | ------------- |
 | Windows  | JW-Meeting-Media-Fetcher-[VERSION].exe  |
 | macOS  | JW-Meeting-Media-Fetcher-[VERSION]-universal.dmg  |

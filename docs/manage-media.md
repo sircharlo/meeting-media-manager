@@ -2,12 +2,15 @@
 
 If either *Offer to import additional media* or [congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher/congregation-sync) are enabled, then users will have the possibility of adding or removing media for any given meeting.
 
-| Scenario  | The media management screen shows up... |
-| ------------- | ------------- |
-| The *Offer to import additional media* setting is enabled | … after clicking *Get media!* and fetching media from JW.org, but before the MP4 conversion takes place (if enabled) |
-| [Congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher/congregation-sync) is active | … after clicking the **☁️** (cloud) button on the main screen of JWMMF |
-
 The media management screen allows the user to add or remove media for any given meeting, as well as recurring media, if congregation sync is active.
+
+
+| Scenario  | The media management screen... |
+| ------------- | ------------- |
+| The *Offer to import additional media* setting is not enabled, and [congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher/congregation-sync) is not active  | ... will never show up.|
+| The *Offer to import additional media* setting is enabled | … shows up after clicking *Get media!* and fetching media from JW.org, but before the MP4 conversion takes place (if enabled). <br>Changed made are local, on your computer only. |
+| [Congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher/congregation-sync) is active | … shows up after clicking the **☁️** (cloud) button on the main screen of JWMMF.<br>Changed are synchronized with all congregation sync users. <br><br>To get the latest version of a meeting's media, as well as any changes or additions made by the VO, users can click on the *Get media* button on the main screen. The sync can be done as many times as necessary. |
+
 
 ### Adding media
 

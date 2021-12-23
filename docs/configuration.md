@@ -8,7 +8,7 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
 | ------------- | ------------- |
 | Display language  | Sets the language in which JWMMF is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new [discussion](https://github.com/sircharlo/jw-meeting-media-fetcher/discussions). |
 | Folder in which to save media  | All media will be downloaded to this folder for later sharing and use. |
-| Run app at system startup | Self-explanatory. |
+| Run app at system start-up | Self-explanatory. |
 | Initiate media sync on app launch | Self-explanatory. |
 | Open folder after media sync | Self-explanatory. |
 | Quit app after media sync | Self-explanatory. |
@@ -24,7 +24,7 @@ See the [congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher
 | Setting  | Explanation |
 | ------------- | ------------- |
 | Media language | Self-explanatory. |
-| Maximum resolution for videos | Videos downloaded from JW.org will be downloaded at this resolution, or the next available lower resolution. Useful for limited or low-bandwidth situatons. |
+| Maximum resolution for videos | Videos downloaded from JW.org will be downloaded at this resolution, or the next available lower resolution. Useful for limited or low-bandwidth situations. |
 | Exclude all media from the <em>th</em> brochure  | If enabled, this will prevent media from the <em>Apply Yourself</em> brochure from being included at every midweek meeting. |
 | Exclude audio and video files from the <em>lffi</em> brochure  | If enabled, this will prevent audio and video files from the <em>Live Forever</em> brochure from being included, for example for student assignments during the midweek meeting. Pictures from the <em>lffi</em> brochure are not affected by this setting. |
 | Offer to import additional media | If enabled, you'll be presented with the *Additional media* screen when performing a media sync. That screen allows you to add additional media files into a given week's media. See [Managing media](https://sircharlo.github.io/jw-meeting-media-fetcher/manage-media). <br><br>**Note:** This option will only be shown is [congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher/congregation-sync) is not enabled.|

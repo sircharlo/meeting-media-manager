@@ -28,7 +28,7 @@
 	"optionsMeetings": "Meeting setup",
 	"quitAfterSync": "Quit app after media sync",
   "recurring": "Recurring",
-	"runAtStartup": "Run app at system startup",
+	"runAtStartup": "Run app at system start-up",
 	"selectDocument": "Select a document for which to extract media:",
 	"selectExternalMedia": "These referenced media files are not included in the JWPUB file. Please click on each one to locate it on your computer:",
   "settingLocked": "Some settings have been locked by your congregation's videoconference organizer.",
