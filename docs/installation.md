@@ -18,3 +18,7 @@ Check the [technical usage notes](https://sircharlo.github.io/jw-meeting-media-f
 ### What's next
 
 [Configure](https://sircharlo.github.io/jw-meeting-media-fetcher/configuration) the app using the Settings screen.
+
+___
+
+##### Back to [home page](https://sircharlo.github.io/jw-meeting-media-fetcher/configuration)
