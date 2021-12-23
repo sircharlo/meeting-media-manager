@@ -1,4 +1,4 @@
-## Managing media
+# Managing media
 
 If either *Offer to import additional media* or [congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher/congregation-sync) are enabled, then users will have the possibility of adding or removing media for any given meeting.
 
@@ -45,4 +45,4 @@ To **hide** or **remove** media, simply select a target meeting, and find the fi
 
 ___
 
-##### Back to [home page](https://sircharlo.github.io/jw-meeting-media-fetcher/configuration)
+##### Back to [home page](https://sircharlo.github.io/jw-meeting-media-fetcher/)

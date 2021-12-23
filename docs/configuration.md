@@ -1,4 +1,4 @@
-## Configuration
+# Configuration
 
 The Settings screen is divided into 4 sections. Most of the options are self-explanatory, but here are a few additional details.
 
@@ -43,4 +43,4 @@ See the [congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher
 
 ___
 
-##### Back to [home page](https://sircharlo.github.io/jw-meeting-media-fetcher/configuration)
+##### Back to [home page](https://sircharlo.github.io/jw-meeting-media-fetcher/)

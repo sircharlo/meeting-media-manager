@@ -1,4 +1,4 @@
-## Congregation sync
+# Congregation sync
 
 The brother designated as _videoconference organizer_ (VO) by the body of elders can use JWMMF to manage what media is made available to the technical A/V support team in his congregation.
 The VO, or someone designated by him, can:
@@ -38,4 +38,4 @@ All users that wish to be synchronized together should connect to the same WebDA
 
 ___
 
-##### Back to [home page](https://sircharlo.github.io/jw-meeting-media-fetcher/configuration)
+##### Back to [home page](https://sircharlo.github.io/jw-meeting-media-fetcher/)
