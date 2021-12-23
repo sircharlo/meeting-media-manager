@@ -10,11 +10,11 @@ To install JWMMF, simply download the latest installer [from here](https://githu
 
 The app does not require administrative privileges to install or run.
 
-##### Trouble installing?
+#### Trouble installing?
 
 Check the [technical usage notes](https://sircharlo.github.io/jw-meeting-media-fetcher/usage-notes) for help.
 
 
-##### Next step
+#### Next step
 
-Configure the app using the [Settings screen](https://sircharlo.github.io/jw-meeting-media-fetcher/settings.md).
+[Configure](https://sircharlo.github.io/jw-meeting-media-fetcher/configuration) the app using the Settings screen.
