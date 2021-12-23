@@ -1,4 +1,4 @@
-### Installation
+## Installation
 
 To install JWMMF, simply download the latest installer [from here](https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest) and run it.
 
@@ -8,13 +8,13 @@ To install JWMMF, simply download the latest installer [from here](https://githu
 | macOS  | JW-Meeting-Media-Fetcher-VERSION-universal.dmg  |
 | Linux  | JW-Meeting-Media-Fetcher-VERSION.AppImage  |
 
-The app does not require administrative privileges to install or run.
+JWMMF does not require administrative privileges to install or run.
 
-#### Trouble installing?
+### Trouble installing?
 
 Check the [technical usage notes](https://sircharlo.github.io/jw-meeting-media-fetcher/usage-notes) for help.
 
 
-#### Next step
+### What's next
 
 [Configure](https://sircharlo.github.io/jw-meeting-media-fetcher/configuration) the app using the Settings screen.
