@@ -1,6 +1,8 @@
 const fadeDelay = 200,
   axios = require("axios"),
+  i18n = require("i18n"),
   net = require("net"),
+  path = require("path"),
   remote = require("@electron/remote"),
   {shell} = require("electron"),
   $ = require("jquery");
@@ -10,9 +12,15 @@ function checkInternet(online) {
     require("electron").ipcRenderer.send("autoUpdate");
   } else {
     overlay(true, "wifi", "circle-notch fa-spin text-danger");
-    setTimeout(updateOnlineStatus, 1000);
+    setTimeout(updateOnlineStatus, 4000);
   }
 }
+i18n.configure({
+  directory: path.join(__dirname, "locales"),
+  defaultLocale: "en",
+  updateFiles: false,
+  retryInDefaultLocale: true
+});
 const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443)));
 updateOnlineStatus();
 require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, message[0], message[1]));
@@ -35,9 +43,7 @@ const bootstrap = require("bootstrap"),
   glob = require("glob"),
   hme = require("h264-mp4-encoder"),
   datetime = require("flatpickr"),
-  i18n = require("i18n"),
   os = require("os"),
-  path = require("path"),
   sizeOf = require("image-size"),
   sqljs = require("sql.js"),
   v8 = require("v8"),
@@ -135,7 +141,7 @@ function additionalMedia() {
       $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-dark' for='" + meetingDate + "'" + (Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + meetingDate + "</label>");
     }
     $(".relatedToUpload, .relatedToUploadType, #btnCancelUpload").fadeTo(fadeDelay, 0);
-    $("#btnDoneUpload").on("click", function() {
+    $("#btnDoneUpload").unbind("click").on("click", function() {
       toggleScreen("overlayUploadFile");
       $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
       $("#fileList, #filePicker, #jwpubPicker, .enterPrefixInput").val("").empty().change();
@@ -350,7 +356,7 @@ const delay = s => new Promise(res => {
 });
 function disableGlobalPref(pref) {
   let row = $("#" + pref).closest("div.row");
-  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>").attr("title", i18n.__("settingLocked")).tooltip());
+  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black i18n-title' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>").attr("title", i18n.__("settingLocked")).tooltip());
   row.addClass("text-muted disabled").find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
   console.log("%c - " + pref, "background-color: #FCE4EC; color: #AD1457; padding: 0 2em;");
 }
@@ -565,6 +571,7 @@ async function getDocumentExtract(db, docId) {
 async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
   let tableMultimedia = ((await executeStatement(db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'")).length === 0 ? "Multimedia" : "DocumentMultimedia");
   let keySymbol = (await executeStatement(db, "SELECT UniqueEnglishSymbol FROM Publication"))[0].UniqueEnglishSymbol.replace(/[0-9]*/g, "");
+  let issueTagNumber = (await executeStatement(db, "SELECT IssueTagNumber FROM Publication"))[0].IssueTagNumber;
   let tableQuestionExists = (await executeStatement(db, "SELECT * FROM sqlite_master WHERE type='table' AND name='Question'")).length !== 0;
   let suppressZoomExists = (await executeStatement(db, "SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Multimedia') WHERE name='SuppressZoom'")).map(function(item) {
     return (item.CNTREC > 0 ? true : false);
@@ -591,7 +598,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
       } else {
         if (multimediaItem.KeySymbol == null) {
           multimediaItem.KeySymbol = keySymbol;
-          multimediaItem.IssueTagNumber = (await executeStatement(db, "SELECT IssueTagNumber FROM Publication"))[0].IssueTagNumber;
+          multimediaItem.IssueTagNumber = issueTagNumber;
           if (!memOnly) multimediaItem.LocalPath = path.join(paths.pubs, multimediaItem.KeySymbol, multimediaItem.IssueTagNumber, multimediaItem.FilePath);
         }
         multimediaItem.FileName = (multimediaItem.Caption.length > multimediaItem.Label.length ? multimediaItem.Caption : multimediaItem.Label);
@@ -708,11 +715,7 @@ async function getMwMediaFromDb() {
       var issue = baseDate.format("YYYYMM") + "00";
       if (parseInt(baseDate.format("M")) % 2 === 0) issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
       var db = await getDbFromJwpub("mwb", issue);
-      try {
-        var docId = (await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + baseDate.format("YYYYMMDD") + ""))[0].DocumentId;
-      } catch {
-        throw("No MW meeting date!");
-      }
+      var docId = (await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + baseDate.format("YYYYMMDD") + ""))[0].DocumentId;
       (await getDocumentMultimedia(db, docId)).map(video => {
         addMediaItemToPart(mwDate, video.BeginParagraphOrdinal, video);
       });
@@ -775,20 +778,16 @@ async function getWeMediaFromDb() {
   if (now.isSameOrBefore(dayjs(weDate))) {
     updateTile("day" + prefs.weDay, "warning", "fas fa-circle-notch fa-spin");
     try {
-      try {
-        var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
-        var db = await getDbFromJwpub("w", issue);
-        var weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
-        if (weekNumber < 0) {
-          issue = baseDate.clone().subtract(9, "weeks").format("YYYYMM") + "00";
-          db = await getDbFromJwpub("w", issue);
-          weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
-        }
-        if (weekNumber < 0) throw("No WE meeting date found!");
-        var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
-      } catch {
-        throw("No WE meeting date!");
+      var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
+      var db = await getDbFromJwpub("w", issue);
+      var weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
+      if (weekNumber < 0) {
+        issue = baseDate.clone().subtract(9, "weeks").format("YYYYMM") + "00";
+        db = await getDbFromJwpub("w", issue);
+        weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"));
       }
+      if (weekNumber < 0) throw("No WE meeting date found!");
+      var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
       for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
         var LocalPath = path.join(paths.pubs, "w", issue, picture.FilePath);
         var FileName = (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
@@ -1682,7 +1681,7 @@ $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown").prop("disabled", true);
   await startMediaSync();
   await overlay(true, "smile-beam text-primary", (prefs.autoQuitWhenDone ? "door-open" : null), "stay-alive");
-  await delay(5);
+  await delay(3);
   if (prefs.autoQuitWhenDone && !stayAlive) {
     remote.app.exit();
   } else {
