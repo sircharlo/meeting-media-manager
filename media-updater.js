@@ -764,16 +764,11 @@ function setAppLang() {
     let localeLang = jsonLangs.filter(item => item.symbol === $(this).val());
     if (localeLang.length === 1) $(this).text(localeLang[0].name);
   });
-  i18n.configure({
-    directory: path.join(__dirname, "locales"),
-    defaultLocale: "en",
-    updateFiles: false,
-    retryInDefaultLocale: true
-  });
   i18n.setLocale(prefs.localAppLang ? prefs.localAppLang : "en");
   $("[data-i18n-string]").each(function() {
     $(this).html(i18n.__($(this).data("i18n-string")));
   });
+  $(".i18n-title").attr("title", i18n.__("settingLocked")).tooltip("dispose").tooltip();
   dateFormatter();
 }
 async function getWeMediaFromDb() {
