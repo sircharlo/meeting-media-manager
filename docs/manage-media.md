@@ -30,7 +30,7 @@ In the *Media to add* field, you'll be presented with different options, dependi
 
 | Media type selected | The Media to add field will... |
 | ------------- | ------------- |
-| Song | ... show a menu with all Kingdom songs videos from the *sjjm* series, in the media language. Choose this option to add a song for the public talk, or for circuit overseer visits. <br><br>The selected song will be automatically downloaded from JW.org. |
+| Song | ... show a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option to add a song for the public talk, or for circuit overseer visits. <br><br>The selected song will be automatically downloaded from JW.org. |
 | JWPUB | ... allow you to browse to a JWPUB file (or drag and drop it into JWMMF). <br><br>You'll then be prompted to select the section or chapter from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br>An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here. |
 | Custom | ... allow you to select any other media file from your computer.  <br><br>If this option is chosen, you may either browse to the file(s) you want to add, or drag and drop the media onto the JWMMF window.<br><br>Note that PDF and SVG files will automatically be converted into high-resolution images by JWMMF. |
 

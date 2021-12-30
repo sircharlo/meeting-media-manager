@@ -6,7 +6,7 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
 
 | Setting  | Explanation |
 | ------------- | ------------- |
-| Display language  | Sets the language in which JWMMF is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new [discussion](https://github.com/sircharlo/jw-meeting-media-fetcher/discussions). |
+| Display language  | Sets the language in which JWMMF is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new [discussion](https://github.com/sircharlo/jw-meeting-media-fetcher/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+LANGUAGE.) |
 | Folder in which to save media  | All media will be downloaded to this folder for later sharing and use. |
 | Run app at system start-up | Self-explanatory. |
 | Initiate media sync on app launch | Self-explanatory. |
@@ -39,7 +39,7 @@ See the [congregation sync](https://sircharlo.github.io/jw-meeting-media-fetcher
 | Midweek meeting | Indicate the usual day and time for the midweek meeting; used for folder naming and smart music fade-out (see below). |
 | Weekend meeting | Indicate the usual day and time for the weekend meeting. |
 | Enable button to play Kingdom songs on shuffle  | Shows a button on the main screen which, once clicked, will play Kingdom songs in random order. This is useful, for example, to play songs before and after meetings at the Kingdom Hall as background music. |
-| Automatically stop playing songs  | If the previous setting is active, then this setting will allow you to specify a delay after which background music should be automatically stopped. <br><br>This can be either: <br>- a set number of minutes, or <br>- a predetermined number of seconds before the start of the meeting (in the case where the background music was started before a meeting). |
+| Automatically stop playing songs  | If the previous setting is active, then this setting will allow you to specify a delay after which background music should be automatically stopped. <br><br>This can be either: <br>- a set number of minutes, **or** <br>- a predetermined number of seconds before the start of the meeting (in the case where the background music was started before a meeting). |
 
 ___
 

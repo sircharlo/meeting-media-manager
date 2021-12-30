@@ -34,7 +34,7 @@ Here are some questions you might have.
 
 #### How do I report an issue or bug I encountered?
 
-If ever you run into any issues with JWMMF, please use [GitHub Issues](https://github.com/sircharlo/jw-meeting-media-fetcher/issues) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+If ever you run into any issues with JWMMF, please use [GitHub Issues](https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from+app&template=app_bug_report.md) to report it. Bug fixes are issued on a regularly basis, usually monthly.
 
 #### How can I request new features?
 
