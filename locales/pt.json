@@ -20,7 +20,7 @@
   "musicFadeOutType": "Parar de reproduzir os cânticos automaticamente",
   "musicFadeOutSmart": "<span>XX</span> segundos antes da reunião",
   "musicFadeOutTimer": "Depois de <span>XX</span> minutos",
-  "noDocumentsFound": "Não existe mídia em nenhum dos documentos JWPUB escolhidos. Verifique seu arquivo novamente ou entre em contato com o desenvolvedor desse programa.",
+  "warnNoDocumentsFound": "Não existe mídia em nenhum dos documentos JWPUB escolhidos. Verifique seu arquivo novamente ou entre em contato com o desenvolvedor desse programa.",
   "openTargetFolderAfterSync": "Abrir pasta depois de baixar as mídias",
   "optionsApp": "Configuração do programa",
   "optionsCongSync": "Configuração WebDAV da congregação",
@@ -44,7 +44,6 @@
   "webdavHostname": "Nome do host WebDAV",
   "webdavPass": "Senha WebDAV",
   "webdavPort": "Porta WebDAV",
-  "webdavServer": "Servidor WebDAV",
   "webdavUser": "Usuário WebDAV",
   "weMeetingDay": "Reunião de fim de semana",
   "whatsNew": "O que há de novo nessa versão?"

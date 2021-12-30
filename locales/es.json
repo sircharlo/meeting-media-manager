@@ -24,7 +24,6 @@
   "webdavHostname": "Nombre de host WebDAV",
   "webdavPass": "Constraseña WebDAV",
   "webdavPort": "Puerto WebDAV",
-  "webdavServer": "Servidor WebDAV",
   "webdavUser": "Usuario WebDAV",
   "weMeetingDay": "Reunión de fin de semana"
 }

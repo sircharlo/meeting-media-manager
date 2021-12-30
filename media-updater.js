@@ -647,6 +647,7 @@ async function getForcedPrefs() {
 }
 async function getInitialData() {
   await getJwOrgLanguages();
+  await getLocaleLanguages();
   await setAppLang();
   await updateCleanup();
   await setMediaLang();
@@ -688,6 +689,16 @@ async function getJwOrgLanguages() {
     }));
   }
   $("#lang").val(prefs.lang).select2();
+}
+function getLocaleLanguages() {
+  for (var localeLang of fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", ""))) {
+    let localeLangMatches = jsonLangs.filter(item => item.symbol === localeLang);
+    $("#localAppLang").append($("<option>", {
+      value: localeLang,
+      text: (localeLangMatches.length === 1 ? localeLangMatches[0].name : localeLang)
+    }));
+  }
+  $("#localAppLang").val(prefs.localAppLang);
 }
 async function getMediaLinks(pub, track, issue, format, docId) {
   let mediaFiles = [];
@@ -767,10 +778,6 @@ function getPrefix() {
   if (prefix.length > 0) prefix = prefix.match(/.{1,2}/g).join("-");
 }
 function setAppLang() {
-  $("#localAppLang option").each(function() {
-    let localeLang = jsonLangs.filter(item => item.symbol === $(this).val());
-    if (localeLang.length === 1) $(this).text(localeLang[0].name);
-  });
   i18n.setLocale(prefs.localAppLang ? prefs.localAppLang : "en");
   $("[data-i18n-string]").each(function() {
     $(this).html(i18n.__($(this).data("i18n-string")));
@@ -881,9 +888,9 @@ function notifyUser(type, message, fileOrUrl, persistent, logOutput, action) {
   default:
     icon = "info-circle text-primary";
   }
+  if (["error", "warning"].includes(type)) console.error(message, fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
   type = i18n.__(type);
   $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' data-toast-action-url='" + action.url + "'>" + action.desc + "</button></div>" : "") + "</div></div>").toast("show"));
-  console.error(message, fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
 }
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
@@ -1025,21 +1032,24 @@ async function setMediaLang() {
       $("label[for=typeSong]").removeClass("active").addClass("disabled");
       $("label[for=typeFile]").click().addClass("active");
     }
+    $("#lang").val(prefs.lang).select2("destroy").select2();
   }
 }
 function setVars(isDryrun) {
-  perf("setVars", "start");
-  try {
-    downloadStats = {};
-    meetingMedia = {};
-    jwpubDbs = {};
-    paths.media = path.join(prefs.localOutputPath, prefs.lang);
-    if (!isDryrun) mkdirSync(paths.media);
-    paths.pubs = path.join(paths.app, "Publications", prefs.lang);
-  } catch (err) {
-    notifyUser("error", "errorSetVars", paths.media, true, err);
+  if (prefs.localOutputPath && prefs.lang) {
+    perf("setVars", "start");
+    try {
+      downloadStats = {};
+      meetingMedia = {};
+      jwpubDbs = {};
+      paths.media = path.join(prefs.localOutputPath, prefs.lang);
+      if (!isDryrun) mkdirSync(paths.media);
+      paths.pubs = path.join(paths.app, "Publications", prefs.lang);
+    } catch (err) {
+      notifyUser("error", "errorSetVars", paths.media, true, err);
+    }
+    perf("setVars", "stop");
   }
-  perf("setVars", "stop");
 }
 function showModal(isVisible, header, headerContent, bodyContent, footer, footerButtonEnabled) {
   if (isVisible) {
@@ -1217,6 +1227,11 @@ function updateCleanup() {
         }
         validateConfig(somePrefWasUpdated);
         showReleaseNotes();
+        let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
+        if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
+          desc: i18n.__("wannaHelpForSure"),
+          url: "https://github.com/sircharlo/jw-meeting-media-fetcher/discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
+        });
       }
     }
   }
@@ -1865,6 +1880,7 @@ $("#songPicker").on("change", function() {
 $("#overlaySettings").on("click", "#version:not(.bg-danger)", showReleaseNotes);
 $("#toastContainer").on("click", "button.toast-action", function() {
   shell.openExternal($(this).data("toast-action-url"));
+  $(this).closest(".toast").find(".toast-header button.btn-close").click();
 });
 $("#webdavProviders a").on("click", function() {
   for (let i of Object.entries($(this).data())) {
