@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: Bug report submitted from app
 about: Create a report to help us improve
 title: "[BUG]"
 labels: bug,from+app
