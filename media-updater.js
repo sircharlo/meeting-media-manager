@@ -37,6 +37,10 @@ require("electron").ipcRenderer.on("goAhead", () => {
 
 const aspect = require("aspectratio"),
   bootstrap = require("bootstrap"),
+  bugAction = {
+    desc: i18n.__("reportIssue"),
+    url: "https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from+app&template=app_bug_report.md"
+  },
   dayjs = require("dayjs"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
@@ -106,7 +110,7 @@ function goAhead() {
     try {
       prefs = JSON.parse(fs.readFileSync(paths.prefs));
     } catch (err) {
-      notifyUser("error", "errorInvalidPrefs", null, true, err);
+      notifyUser("error", "errorInvalidPrefs", null, true, err, bugAction);
     }
     prefsInitialize();
   }
@@ -279,7 +283,7 @@ function createVideoSync(mediaFile){
             rm(mediaFile);
             return resolve();
           }).on("error", function(err) {
-            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err);
+            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, bugAction);
             return resolve();
           }).noVideo().save(path.join(outputFilePath));
         });
@@ -288,7 +292,6 @@ function createVideoSync(mediaFile){
           imageDimesions = sizeOf(mediaFile);
         if (imageDimesions.orientation && imageDimesions.orientation >= 5) [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
         convertedImageDimensions = aspect.resize(imageDimesions.width, imageDimesions.height, (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height)));
-        console.log(path.basename(mediaFile), imageDimesions, convertedImageDimensions);
         $("body").append("<div id='convert' style='display: none;'>");
         $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
         hme.createH264MP4Encoder().then(function (encoder) {
@@ -311,13 +314,13 @@ function createVideoSync(mediaFile){
             return resolve();
           });
           $("img#imgToConvert").on("error", function() {
-            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true);
+            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, null, bugAction);
           });
           $("img#imgToConvert").prop("src", mediaFile);
         });
       }
     } catch (err) {
-      notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err);
+      notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, bugAction);
       return resolve();
     }
   });
@@ -524,7 +527,7 @@ async function getCongMedia() {
       }
     }
   } catch (err) {
-    notifyUser("error", "errorGetCongMedia", null, true, err);
+    notifyUser("error", "errorGetCongMedia", null, true, err, bugAction);
     updateTile("specificCong", "danger", "fas fa-times-circle");
   }
   perf("getCongMedia", "stop");
@@ -552,7 +555,7 @@ async function getDbFromJwpub(pub, issue, localpath) {
     }
     return jwpubDbs[pub][issue];
   } catch (err) {
-    notifyUser("warning", "errorJwpubDbFetch", pub + " - " + issue, false, err);
+    notifyUser("warning", "errorJwpubDbFetch", pub + " - " + issue, false, err, bugAction);
   }
 }
 async function getDocumentExtract(db, docId) {
@@ -621,7 +624,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
         multimediaItems.push(picture);
       }
     } catch (err) {
-      notifyUser("warning", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err);
+      notifyUser("warning", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err, bugAction);
     }
   }
   return multimediaItems;
@@ -736,7 +739,7 @@ async function getMwMediaFromDb() {
       }
       updateTile("day" + prefs.mwDay, "success", "fas fa-check-circle");
     } catch(err) {
-      notifyUser("error", "errorGetMwMedia", null, true, err);
+      notifyUser("error", "errorGetMwMedia", null, true, err, bugAction);
       updateTile("day" + prefs.mwDay, "danger", "fas fa-times-circle");
     }
   }
@@ -809,7 +812,7 @@ async function getWeMediaFromDb() {
       }
       updateTile("day" + prefs.weDay, "success", "fas fa-check-circle");
     } catch(err) {
-      notifyUser("error", "errorGetWeMedia", null, true, err);
+      notifyUser("error", "errorGetWeMedia", null, true, err, bugAction);
       updateTile("day" + prefs.weDay, "danger", "fas fa-times-circle");
     }
   }
@@ -866,7 +869,7 @@ async function mp4Convert() {
   updateTile("mp4Convert", "success", "fas fa-check-circle");
   perf("mp4Convert", "stop");
 }
-function notifyUser(type, message, fileOrUrl, persistent, logOutput) {
+function notifyUser(type, message, fileOrUrl, persistent, logOutput, action) {
   let icon;
   switch (type) {
   case "error":
@@ -879,7 +882,7 @@ function notifyUser(type, message, fileOrUrl, persistent, logOutput) {
     icon = "info-circle text-primary";
   }
   type = i18n.__(type);
-  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + "</div></div>").toast("show"));
+  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' data-toast-action-url='" + action.url + "'>" + action.desc + "</button></div>" : "") + "</div></div>").toast("show"));
   console.error(message, fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
 }
 function overlay(show, topIcon, bottomIcon, action) {
@@ -1123,7 +1126,7 @@ async function syncCongMedia() {
       updateStatus("photo-video");
       updateTile("specificCong", "success", "fas fa-check-circle");
     } catch (err) {
-      notifyUser("error", "errorSyncCongMedia", null, true, err);
+      notifyUser("error", "errorSyncCongMedia", null, true, err, bugAction);
       updateTile("specificCong", "danger", "fas fa-times-circle");
       progressSet(0, 100, "specificCong");
     }
@@ -1590,7 +1593,7 @@ $("#btnUpload").on("click", async () => {
       }
     }
   } catch (err) {
-    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err);
+    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, bugAction);
   }
   await executeDryrun();
   $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
@@ -1641,20 +1644,17 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
       return (item.CNTREC > 0 ? true : false);
     })[0];
     let itemsWithMultimedia = await executeStatement(contents, "SELECT DISTINCT " + tableMultimedia + ".DocumentId, Document.Title FROM Document INNER JOIN " + tableMultimedia + " ON Document.DocumentId = " + tableMultimedia + ".DocumentId " + (tableMultimedia === "DocumentMultimedia" ? "INNER JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId " : "") + "WHERE (Multimedia.CategoryType = 8 OR Multimedia.CategoryType = -1)" + (suppressZoomExists ? " AND Multimedia.SuppressZoom = 0" : "") + " ORDER BY " + tableMultimedia + ".DocumentId");
-    let tempModal = {};
     if (itemsWithMultimedia.length > 0) {
       var docList = $("<div id='docSelect' class='list-group'>");
       for (var item of itemsWithMultimedia) {
         $(docList).append("<button class='d-flex list-group-item list-group-item-action' data-docid='" + item.DocumentId + "'><div class='flex-fill'> " + item.Title + "</div><div><i class='far fa-circle'></i></div></li>");
       }
-      tempModal.header = i18n.__("selectDocument");
-      tempModal.body = docList;
+      showModal(true, itemsWithMultimedia.length > 0, i18n.__("selectDocument"), docList, itemsWithMultimedia.length === 0, true);
     } else {
-      tempModal.body = i18n.__("noDocumentsFound");
       $(this).val("");
       $("#fileToUpload").val("").change();
+      notifyUser("warning", "warnNoDocumentsFound", $(this).val(), true, null, bugAction);
     }
-    showModal(true, itemsWithMultimedia.length > 0, tempModal.header, tempModal.body, itemsWithMultimedia.length === 0, true);
   } else {
     $("#fileToUpload").val("").change();
   }
@@ -1841,7 +1841,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
       });
     }
   } catch (err) {
-    notifyUser("error", "errorAdditionalMediaList", null, true, err);
+    notifyUser("error", "errorAdditionalMediaList", null, true, err, bugAction);
   }
 });
 $("#overlayUploadFile").on("keyup", ".enterPrefixInput", getPrefix);
@@ -1863,6 +1863,9 @@ $("#songPicker").on("change", function() {
   if ($(this).val()) $("#fileToUpload").val($(this).val()).change();
 });
 $("#overlaySettings").on("click", "#version:not(.bg-danger)", showReleaseNotes);
+$("#toastContainer").on("click", "button.toast-action", function() {
+  shell.openExternal($(this).data("toast-action-url"));
+});
 $("#webdavProviders a").on("click", function() {
   for (let i of Object.entries($(this).data())) {
     let name = "cong" + (i[0][0].toUpperCase() + i[0].slice(1));
