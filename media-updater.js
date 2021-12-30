@@ -105,7 +105,7 @@ function goAhead() {
     try {
       prefs = JSON.parse(fs.readFileSync(paths.prefs));
     } catch (err) {
-      console.error(err);
+      notifyUser("error", "errorInvalidPrefs", null, true, err);
     }
     prefsInitialize();
   }
@@ -186,6 +186,9 @@ function convertPdf(mediaFile) {
         await convertPdfPage(mediaFile, pdf, pageNum);
       }
       await rm(mediaFile);
+    }).catch((err) => {
+      notifyUser("warning", "warnPdfConversionFailure", path.basename(mediaFile), true, err);
+    }).then(() => {
       resolve();
     });
   });
@@ -233,23 +236,19 @@ function convertSvg(mediaFile) {
       $("div#svg").remove();
       return resolve();
     });
+    $("img#svgImg").on("error", function() {
+      notifyUser("warning", "warnSvgConversionFailure", path.basename(mediaFile), true);
+      return resolve();
+    });
     $("img#svgImg").prop("src", mediaFile);
   });
 }
 async function convertUnusableFiles() {
   for (let pdfFile of glob.sync(path.join(paths.media, "*", "*pdf"))) {
-    try {
-      await convertPdf(pdfFile);
-    } catch(err) {
-      console.error(err);
-    }
+    await convertPdf(pdfFile);
   }
   for (let svgFile of glob.sync(path.join(paths.media, "*", "*svg"))) {
-    try {
-      await convertSvg(svgFile);
-    } catch(err) {
-      console.error(err);
-    }
+    await convertSvg(svgFile);
   }
 }
 function createMediaNames() {
@@ -278,7 +277,7 @@ function createVideoSync(mediaFile){
             rm(mediaFile);
             return resolve();
           }).on("error", function(err) {
-            console.error(err.message);
+            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err);
             return resolve();
           }).noVideo().save(path.join(outputFilePath));
         });
@@ -306,11 +305,14 @@ function createVideoSync(mediaFile){
             $("div#convert").remove();
             return resolve();
           });
+          $("img#imgToConvert").on("error", function() {
+            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true);
+          });
           $("img#imgToConvert").prop("src", mediaFile);
         });
       }
     } catch (err) {
-      console.error(err);
+      notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err);
       return resolve();
     }
   });
@@ -320,7 +322,7 @@ function dateFormatter() {
   try {
     if (locale !== "en") require("dayjs/locale/" + locale);
   } catch(err) {
-    console.error("Date locale " + locale + " not found, falling back to 'en'");
+    console.log("Date locale " + locale + " not found, falling back to 'en'");
   }
   $(".today").removeClass("today");
   for (var d = 0; d < 7; d++) {
@@ -517,7 +519,7 @@ async function getCongMedia() {
       }
     }
   } catch (err) {
-    console.error(err);
+    notifyUser("error", "errorGetCongMedia", null, true, err);
     updateTile("specificCong", "danger", "fas fa-times-circle");
   }
   perf("getCongMedia", "stop");
@@ -545,7 +547,7 @@ async function getDbFromJwpub(pub, issue, localpath) {
     }
     return jwpubDbs[pub][issue];
   } catch (err) {
-    console.error(err);
+    notifyUser("warning", "errorJwpubDbFetch", pub + " - " + issue, false, err);
   }
 }
 async function getDocumentExtract(db, docId) {
@@ -614,7 +616,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
         multimediaItems.push(picture);
       }
     } catch (err) {
-      console.error(err);
+      notifyUser("warning", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err);
     }
   }
   return multimediaItems;
@@ -628,7 +630,7 @@ async function getForcedPrefs() {
         noCache: true
       })).data;
     } catch(err) {
-      console.error("Error enforcing congregation-synced settings!", err);
+      notifyUser("error", "errorForcedSettingsEnforce", null, true, err);
     }
   } else {
     await webdavPut(forcedPrefs, prefs.congServerDir, "forcedPrefs.json");
@@ -702,7 +704,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
         }
       }
     } catch(err) {
-      console.error(err);
+      notifyUser("warning", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
     }
   }
   return mediaFiles;
@@ -729,7 +731,7 @@ async function getMwMediaFromDb() {
       }
       updateTile("day" + prefs.mwDay, "success", "fas fa-check-circle");
     } catch(err) {
-      console.error(err);
+      notifyUser("error", "errorGetMwMedia", null, true, err);
       updateTile("day" + prefs.mwDay, "danger", "fas fa-times-circle");
     }
   }
@@ -807,7 +809,7 @@ async function getWeMediaFromDb() {
       }
       updateTile("day" + prefs.weDay, "success", "fas fa-check-circle");
     } catch(err) {
-      console.error(err);
+      notifyUser("error", "errorGetWeMedia", null, true, err);
       updateTile("day" + prefs.weDay, "danger", "fas fa-times-circle");
     }
   }
@@ -824,8 +826,8 @@ function isReachable(hostname, port) {
         client.destroy();
         resolve(true);
       });
-      client.on("error", function(e) {
-        console.error(e);
+      client.on("error", function(err) {
+        notifyUser("error", "errorSiteCheck", hostname + ":" + port, false, err);
         resolve(false);
       });
     } catch(err) {
@@ -863,6 +865,23 @@ async function mp4Convert() {
   updateStatus("photo-video");
   updateTile("mp4Convert", "success", "fas fa-check-circle");
   perf("mp4Convert", "stop");
+}
+function notifyUser(type, message, fileOrUrl, persistent, logOutput) {
+  let icon;
+  switch (type) {
+  case "error":
+    icon = "fa-exclamation-circle text-danger";
+    break;
+  case "warning":
+    icon = "fa-exclamation-circle text-warning";
+    break;
+  default:
+    icon = "info-circle text-primary";
+  }
+  type = i18n.__(type);
+  let newToast = "<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + "</div></div>";
+  $("#toastContainer").append($(newToast).toast("show"));
+  console.error(message, fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
 }
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
@@ -954,7 +973,9 @@ async function request(url, opts) {
     payload = await axios.request(options);
     response = payload;
   } catch (err) {
-    response = err.response;
+    response = (err.response ? err.response : err);
+    console.error(response);
+    if (options.webdav) throw(response);
   }
   return response;
 }
@@ -999,7 +1020,6 @@ async function setMediaLang() {
         }));
       }
     } catch (err) {
-      console.error(err);
       $("label[for=typeSong]").removeClass("active").addClass("disabled");
       $("label[for=typeFile]").click().addClass("active");
     }
@@ -1015,7 +1035,7 @@ function setVars(isDryrun) {
     if (!isDryrun) mkdirSync(paths.media);
     paths.pubs = path.join(paths.app, "Publications", prefs.lang);
   } catch (err) {
-    console.error(err);
+    notifyUser("error", "errorSetVars", paths.media, true, err);
   }
   perf("setVars", "stop");
 }
@@ -1101,12 +1121,13 @@ async function syncCongMedia() {
           }
         }
       }
+      updateStatus("photo-video");
+      updateTile("specificCong", "success", "fas fa-check-circle");
     } catch (err) {
-      console.error(err);
+      notifyUser("error", "errorSyncCongMedia", null, true, err);
       updateTile("specificCong", "danger", "fas fa-times-circle");
+      progressSet(0, 100, "specificCong");
     }
-    updateStatus("photo-video");
-    updateTile("specificCong", "success", "fas fa-check-circle");
     perf("syncCongMedia", "stop");
   }
 }
@@ -1167,11 +1188,13 @@ function toggleScreen(screen, forceShow) {
 }
 function updateCleanup() {
   try { // do some housecleaning after version updates
-    var lastRunVersion = (fs.existsSync(paths.lastRunVersion) ? fs.readFileSync(paths.lastRunVersion, "utf8") : 0);
+    var lastRunVersion = 0;
+    if (fs.existsSync(paths.lastRunVersion)) lastRunVersion = fs.readFileSync(paths.lastRunVersion, "utf8");
   } catch(err) {
-    console.error(err);
+    notifyUser("warning", "warnUnknownLastVersion", null, false, err);
   } finally {
     if (lastRunVersion !== remote.app.getVersion()) {
+      setVars();
       rm([paths.media]);
       fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
       if (lastRunVersion !== 0) {
@@ -1267,15 +1290,17 @@ async function webdavStatus(url) {
       webdav: true
     });
   } catch (err) {
-    response = err.response;
+    response = (err.response ? err.response : err);
   }
   return response.status;
 }
 async function webdavLs(dir, force) {
+  let items = [],
+    congUrl = "https://" + prefs.congServer + ":" + prefs.congServerPort + dir;
   try {
     if (webdavIsAGo || force) {
       await webdavMkdir(dir);
-      let listing = xmlParser.parse((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + dir, {
+      let listing = xmlParser.parse((await request(congUrl, {
         method: "PROPFIND",
         responseType: "text",
         headers: {
@@ -1287,7 +1312,6 @@ async function webdavLs(dir, force) {
         arrayMode: false,
         ignoreNameSpace: true
       });
-      let items = [];
       if (listing && listing.multistatus && listing.multistatus.response && Array.isArray(listing.multistatus.response)) {
         items = listing.multistatus.response.filter(item => path.resolve(decodeURIComponent(item.href)) !== path.resolve(dir)).map(item => {
           let href = decodeURIComponent(item.href);
@@ -1299,11 +1323,11 @@ async function webdavLs(dir, force) {
           };
         }).sort((a, b) => a.basename.localeCompare(b.basename));
       }
-      return (items);
+      return items;
     }
   } catch (err) {
-    console.error(err);
-    throw(err);
+    notifyUser("error", "errorWebdavLs", congUrl, true, err);
+    return items;
   }
 }
 async function webdavMkdir(dir) {
@@ -1313,10 +1337,11 @@ async function webdavMkdir(dir) {
   });
 }
 async function webdavPut(file, destFolder, destName) {
+  let destFile = path.posix.join("https://" + prefs.congServer + ":" + prefs.congServerPort, destFolder, (await sanitizeFilename(destName)));
   try {
     if (webdavIsAGo && file && destFolder && destName) {
       await webdavMkdir(destFolder);
-      await request(path.posix.join("https://" + prefs.congServer + ":" + prefs.congServerPort, destFolder, (await sanitizeFilename(destName))), {
+      await request(destFile, {
         method: "PUT",
         data: file,
         headers: {
@@ -1325,20 +1350,25 @@ async function webdavPut(file, destFolder, destName) {
         webdav: true
       });
     }
+    return true;
   } catch (err) {
-    console.error(err);
+    notifyUser("error", "errorWebdavPut", destFile, true, err);
+    return false;
   }
 }
 async function webdavRm(path) {
+  let deleteFile = "https://" + prefs.congServer + ":" + prefs.congServerPort + path;
   try {
     if (webdavIsAGo && path && await webdavExists(path)) {
-      await request("https://" + prefs.congServer + ":" + prefs.congServerPort + path, {
+      await request(deleteFile, {
         method: "DELETE",
         webdav: true
       });
     }
+    return true;
   } catch (err) {
-    console.error(err);
+    notifyUser("error", "errorWebdavRm", deleteFile, true, err);
+    return false;
   }
 }
 async function webdavSetup() {
@@ -1451,11 +1481,14 @@ $("#btnForcedPrefs").on("click", () => {
     $("#staticBackdrop #forcedPrefs i").tooltip();
     $("#staticBackdrop #forcedPrefs input").on("change", async function() {
       $("#staticBackdrop #forcedPrefs input").prop("disabled", true);
-      enablePreviouslyForcedPrefs();
       let checkedItems = $("#staticBackdrop #forcedPrefs input:checked").map(function() { return this.id.replace("forcedPref-", ""); }).get();
       let forcedPrefs = JSON.stringify(Object.fromEntries(Object.entries(prefs).filter(([key]) => checkedItems.includes(key))), null, 2);
-      await webdavPut(forcedPrefs, prefs.congServerDir, "forcedPrefs.json");
-      enforcePrefs();
+      if (await webdavPut(forcedPrefs, prefs.congServerDir, "forcedPrefs.json")) {
+        enablePreviouslyForcedPrefs();
+        enforcePrefs();
+      } else {
+        $(this).prop("checked", !$(this).prop("checked"));
+      }
       $("#staticBackdrop #forcedPrefs input").prop("disabled", false);
     });
   });
@@ -1557,13 +1590,13 @@ $("#btnUpload").on("click", async () => {
         }
       }
     }
-    await executeDryrun();
-    $("#chooseMeeting input:checked").change();
-    $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
-    $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
   } catch (err) {
-    console.error(err);
+    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err);
   }
+  $("#chooseMeeting input:checked").change();
+  $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
+  $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
+  await executeDryrun();
 });
 $("#btn-upload").on("click", async function() {
   $(".relatedToUpload, .relatedToUploadType, #btnDoneUpload").fadeTo(fadeDelay, 0);
@@ -1804,7 +1837,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
       });
     }
   } catch (err) {
-    console.error(err);
+    notifyUser("error", "errorAdditionalMediaList", null, true, err);
   }
 });
 $("#overlayUploadFile").on("keyup", ".enterPrefixInput", getPrefix);
