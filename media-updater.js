@@ -888,6 +888,7 @@ function notifyUser(type, message, fileOrUrl, persistent, logOutput, action) {
   default:
     icon = "info-circle text-primary";
   }
+  if (fileOrUrl) fileOrUrl = encodeURI(fileOrUrl);
   if (["error", "warning"].includes(type)) console.error(message, fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
   type = i18n.__(type);
   $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' data-toast-action-url='" + action.url + "'>" + i18n.__(action.desc) + "</button></div>" : "") + "</div></div>").toast("show"));
