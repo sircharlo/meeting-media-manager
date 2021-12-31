@@ -1627,7 +1627,7 @@ $("#btn-upload").on("click", async function() {
   $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   $("#chooseMeeting").empty();
   for (var meeting of [prefs.mwDay, prefs.weDay, "Recurring"]) {
-    let meetingDate = (isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD"));
+    let meetingDate = encodeURI((isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD")));
     $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-" + (isNaN(meeting) ? "info" : "dark" ) + "' for='" + meetingDate + "'" + (isNaN(meeting) || Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + (isNaN(meeting) ? i18n.__("recurring") : meetingDate) + "</label>");
   }
 });
