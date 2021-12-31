@@ -38,7 +38,7 @@ require("electron").ipcRenderer.on("goAhead", () => {
 const aspect = require("aspectratio"),
   bootstrap = require("bootstrap"),
   bugAction = {
-    desc: i18n.__("reportIssue"),
+    desc: "reportIssue",
     url: "https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from+app&template=app_bug_report.md"
   },
   dayjs = require("dayjs"),
@@ -890,7 +890,7 @@ function notifyUser(type, message, fileOrUrl, persistent, logOutput, action) {
   }
   if (["error", "warning"].includes(type)) console.error(message, fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
   type = i18n.__(type);
-  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' data-toast-action-url='" + action.url + "'>" + action.desc + "</button></div>" : "") + "</div></div>").toast("show"));
+  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' data-toast-action-url='" + action.url + "'>" + i18n.__(action.desc) + "</button></div>" : "") + "</div></div>").toast("show"));
 }
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
@@ -1229,7 +1229,7 @@ function updateCleanup() {
         showReleaseNotes();
         let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
         if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
-          desc: i18n.__("wannaHelpForSure"),
+          desc: "wannaHelpForSure",
           url: "https://github.com/sircharlo/jw-meeting-media-fetcher/discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
         });
       }
