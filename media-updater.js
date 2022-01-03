@@ -483,20 +483,20 @@ async function getCongMedia() {
       current: 1
     };
     for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
-      for (let remoteFile of (await webdavLs(path.posix.join(prefs.congServerDir, "Media", congSpecificFolder.basename)))) {
-        let isMeetingDate = dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"));
-        let isRecurring = congSpecificFolder.basename == "Recurring";
-        let congSpecificFile = {
-          "title": "Congregation-specific",
-          media: [{
-            safeName: remoteFile.basename,
-            congSpecific: true,
-            filesize: remoteFile.size,
-            folder: congSpecificFolder.basename,
-            url: remoteFile.filename
-          }]
-        };
-        if (isMeetingDate || isRecurring) {
+      let isMeetingDate = dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"));
+      let isRecurring = congSpecificFolder.basename == "Recurring";
+      if (isMeetingDate || isRecurring) {
+        for (let remoteFile of (await webdavLs(path.posix.join(prefs.congServerDir, "Media", congSpecificFolder.basename)))) {
+          let congSpecificFile = {
+            "title": "Congregation-specific",
+            media: [{
+              safeName: remoteFile.basename,
+              congSpecific: true,
+              filesize: remoteFile.size,
+              folder: congSpecificFolder.basename,
+              url: remoteFile.filename
+            }]
+          };
           if (!meetingMedia[congSpecificFolder.basename]) meetingMedia[congSpecificFolder.basename] = [];
           meetingMedia[congSpecificFolder.basename].push(congSpecificFile);
           if (isRecurring) {
@@ -1056,7 +1056,7 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
   if (isVisible) {
     $("#staticBackdrop .modal-header").html(header ? "<h5 class='modal-title'>" + headerContent + "</h5>" : "").toggle(header);
     $("#staticBackdrop .modal-body").html(bodyContent);
-    $("#staticBackdrop .modal-footer button").prop("disabled", (footer ? !footerButtonEnabled : false));
+    if (footer) $("#staticBackdrop .modal-footer").html($("<button type='button' class='btn btn-primary' data-bs-dismiss='modal'><i class='fas fa-fw fa-check'></i></button>").prop("disabled", !footerButtonEnabled));
     $("#staticBackdrop .modal-footer").toggle(footer);
     modal.show();
   } else {
@@ -1295,23 +1295,6 @@ async function webdavGet(file) {
     downloadStat("cong", "cache", file);
   }
 }
-async function webdavStatus(url) {
-  let response;
-  try {
-    response = await request("https://" + prefs.congServer + ":" + prefs.congServerPort + url, {
-      method: "PROPFIND",
-      responseType: "text",
-      headers: {
-        Accept: "text/plain",
-        Depth: "1"
-      },
-      webdav: true
-    });
-  } catch (err) {
-    response = (err.response ? err.response : err);
-  }
-  return response.status;
-}
 async function webdavLs(dir, force) {
   let items = [],
     congUrl = "https://" + prefs.congServer + ":" + prefs.congServerPort + dir;
@@ -1353,6 +1336,22 @@ async function webdavMkdir(dir) {
     method: "MKCOL",
     webdav: true
   });
+}
+async function webdavMv(src, dst) {
+  try {
+    let congServerAddress = "https://" + prefs.congServer + ":" + prefs.congServerPort;
+    if (await webdavExists(src)) await request(congServerAddress + src, {
+      method: "MOVE",
+      headers: {
+        "Destination": congServerAddress + dst
+      },
+      webdav: true
+    });
+    return true;
+  } catch (err) {
+    notifyUser("error", "errorWebdavPut", dst, true, err);
+    return false;
+  }
 }
 async function webdavPut(file, destFolder, destName) {
   let destFile = path.posix.join("https://" + prefs.congServer + ":" + prefs.congServerPort, destFolder, (await sanitizeFilename(destName)));
@@ -1438,6 +1437,23 @@ async function webdavSetup() {
   $("#localAdditionalMediaPrompt").closest(".row").toggle(!webdavIsAGo);
   $("#btnForcedPrefs").prop("disabled", !webdavIsAGo);
   if (!webdavIsAGo) enablePreviouslyForcedPrefs();
+}
+async function webdavStatus(url) {
+  let response;
+  try {
+    response = await request("https://" + prefs.congServer + ":" + prefs.congServerPort + url, {
+      method: "PROPFIND",
+      responseType: "text",
+      headers: {
+        Accept: "text/plain",
+        Depth: "1"
+      },
+      webdav: true
+    });
+  } catch (err) {
+    response = (err.response ? err.response : err);
+  }
+  return response.status;
 }
 var dragenterHandler = () => {
   if ($("input#typeFile:checked").length > 0 || $("input#typeJwpub:checked").length > 0) $(".dropzone").css("display", "block");
@@ -1787,8 +1803,19 @@ $("#fileList").on("click", "li .fa-exclamation-circle", async function() {
 $("#fileList").on("click", ".canHide", async function() {
   if (await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).data("safename"))) {
     $(this).removeClass("canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
-    executeDryrun();
+    await executeDryrun();
   }
+});
+$("#fileList").on("click", ".canMove i.fa-edit", async function() {
+  let src = $(this).closest(".canMove").data("url");
+  await showModal(true, false, null, "<div class='input-group'><input type='text' class='form-control' value='" + path.basename(src, path.extname(src)) + "' /><span class='input-group-text'>" + path.extname(src) + "</span></div>", true, true);
+  $("#staticBackdrop .modal-footer button").on("click", async function() {
+    if (encodeURIComponent(path.basename(src, path.extname(src))) !== encodeURIComponent($("#staticBackdrop .modal-body input").val())) {
+      await webdavMv(src, path.posix.join(path.dirname(src), encodeURIComponent($("#staticBackdrop .modal-body input").val()) + path.extname(src)));
+      await executeDryrun();
+      $("#chooseMeeting input").change();
+    }
+  });
 });
 $("#fileList").on("click", ".wasHidden", async function() {
   if (await webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")))) {
@@ -1838,17 +1865,18 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         newList = newList.sort((a, b) => a.safeName.localeCompare(b.safeName));
         $("#fileList").empty();
         for (var file of newList) {
-          let html = $("<li title='" + file.safeName + "' data-url='" + file.url + "' data-safename='" + file.safeName + "'>" + file.safeName + "</li>");
-          if (file.congSpecific && file.recurring) html.prepend("<i class='fas fa-fw fa-sync-alt'></i>").addClass("recurring text-info");
-          if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.prepend("<i class='fas fa-fw fa-minus-circle'></i>").addClass("canDelete");
-          if (currentStep !== "additionalMedia" && (!file.congSpecific || file.recurring) && !file.hidden && !file.newFile) html.addClass("canHide").prepend("<i class='far fa-fw fa-check-square'></i>");
-          if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-fw fa-plus'></i>");
+          let html = $("<li title='" + file.safeName + "' data-url='" + file.url + "' data-safename='" + file.safeName + "'><span class='filename'>" + file.safeName + "</span></li>");
+          if (file.congSpecific && file.recurring) html.prepend("<i class='fas fa-sync-alt me-2'></i>").addClass("recurring text-info");
+          if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.prepend("<i class='fas fa-minus-circle me-2'></i>").addClass("canDelete");
+          if (currentStep !== "additionalMedia" && !file.newFile && file.congSpecific && !file.recurring) html.append("<i class='fas fa-edit ms-2'></i>").addClass("canMove");
+          if (currentStep !== "additionalMedia" && (!file.congSpecific || file.recurring) && !file.hidden && !file.newFile) html.addClass("canHide").prepend("<i class='far fa-check-square me-2'></i>");
+          if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-plus me-2'></i>");
           if (!file.newFile && newFiles.filter(item => item.media.filter(mediaItem => mediaItem.safeName.includes(file.safeName)).length > 0).length > 0) html.addClass("duplicated-file");
-          if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-fw fa-square'></i>");
+          if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-square me-2'></i>");
           if (file.safeName.includes(".mp4")) html.addClass("video");
           $("#fileList").append(html);
         }
-        $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 8));
+        $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 11));
         $("#btnUpload").toggle(newFileChosen);
         $("#" + (currentStep == "additionalMedia" ? "btnDoneUpload" : "btnCancelUpload")).toggle(!newFileChosen);
         $("#fileList").stop().fadeTo(fadeDelay, 1, () => {

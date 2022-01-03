@@ -166,12 +166,17 @@
     }
 
     .file-list li {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
       border-radius: 0.5em;
       padding: 0 0.5em;
       margin-bottom: 0.25em
+    }
+
+    .file-list li span.filename {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .file-list li:not(.confirmDelete):hover {
@@ -198,10 +203,6 @@
       column-fill: auto;
     }
 
-    #fileList li i.fa-fw {
-      margin-right: 0.5em;
-    }
-
     .file-list li .fa-minus-circle {
       color: red;
     }
@@ -210,7 +211,7 @@
       color: darkorange;
     }
 
-    .wasHidden {
+    .wasHidden span {
       text-decoration: line-through;
     }
 
@@ -893,7 +894,6 @@
           ...
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fas fa-fw fa-check"></i></button>
         </div>
       </div>
     </div>
