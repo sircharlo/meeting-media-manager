@@ -25,6 +25,7 @@
   "excludeTh": "Eliminar todas as multimédias da brochura <em>th</em>",
   "fetchMedia": "Descarregar as multimédias!",
   "filenamePrefix": "Prefixo do nome do ficheiro",
+  "info": "Informação",
   "infoPubIgnored": "Não foi possível descarregar os ficheiros de multimédia dessa publicação:",
   "jwpub": "JWPUB",
   "localAppLang": "Língua do programa",
@@ -32,6 +33,7 @@
   "mediaLang": "Língua das multimédias",
   "mediaSaveFolder": "Pasta para salvar as multimédias",
   "mediaToAdd": "Escolha a multimédia",
+  "moreInfo": "Mais detalhes",
   "mp4Conversion": "Conversão em MP4",
   "musicFadeOutSmart": "<span>XX</span> segundos antes da reunião",
   "musicFadeOutTimer": "Depois de <span>XX</span> minutos",
@@ -57,6 +59,7 @@
   "syncOnLaunch": "Descarregar as multimédias automaticamente ao abrir o programa",
   "targetMeeting": "Selecione a reunião",
   "uploadType": "Qual o tipo de ficheiro?",
+  "updateInstalled": "Foi instalada uma actualização do JWMMF.",
   "wannaHelp": "Você gostaria de ajudar?",
   "wannaHelpExplain": "A língua definida para as multimédias não está disponível. Você gostaria de ajudar a traduzir o JWMMF para utilizadores que falam esta língua?",
   "wannaHelpForSure": "Ajude a traduzir esse programa",
@@ -72,6 +75,5 @@
   "webdavPass": "Senha WebDAV",
   "webdavPort": "Porta WebDAV",
   "webdavUser": "Usuário WebDAV",
-  "weMeetingDay": "Reunião de fim de semana",
-  "whatsNew": "Novidades dessa versão"
+  "weMeetingDay": "Reunião de fim de semana"
 }

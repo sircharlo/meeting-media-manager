@@ -25,6 +25,7 @@
   "excludeTh": "Excluir toda la multimedia del folleto <em>th</em>",
   "fetchMedia": "Descargar multimedia!",
   "filenamePrefix": "Prefijo de nombre de archivo",
+  "info": "Información",
   "infoPubIgnored": "No se ha podido descargar los archivos multimedia para la siguiente publicación:",
   "jwpub": "JWPUB",
   "localAppLang": "Idioma de visualización",
@@ -32,6 +33,7 @@
   "mediaLang": "Idioma de los archivos multimedia",
   "mediaSaveFolder": "Directorio en el que guardar los archivos multimedia",
   "mediaToAdd": "Multimedia a añadir",
+  "moreInfo": "Más detalles",
   "mp4Conversion": "Conversión MP4",
   "musicFadeOutSmart": "<span>XX</span> segundos antes de la reunión",
   "musicFadeOutTimer": "Después de <span>XX</span> minutos",
@@ -57,6 +59,7 @@
   "syncOnLaunch": "Iniciar sincronización de medios al abrir la aplicación",
   "targetMeeting": "Reunión objetivo",
   "uploadType": "Tipo de subida",
+  "updateInstalled": "Se ha instalado una actualización de JWMMF.",
   "wannaHelp": "¿Te gustaría ayudar?",
   "wannaHelpExplain": "El idioma configurado para archivos multimedia no esta disponible aún como idioma de visualización para JWMMF. Te gustaría ayudar a traducir JWMMF para los usuarios que hablan este idioma?",
   "wannaHelpForSure": "Ayuda a traducir esta aplicación",
@@ -72,7 +75,5 @@
   "webdavPass": "Contraseña de sincronización de la congregación",
   "webdavPort": "Puerto de sincronización de la congregación",
   "webdavUser": "Nombre usuario de sincronización de la congregación",
-  "weMeetingDay": "Reunión de fin de semana",
-  "whatsNew": "Novedades en esta versión",
-  "whatsNewDetails": "<p>¡Un nuevo dia, una nueva actualización!</p><h6>Novedades destacables:</h6><ul><li>Se ha añadido la opción de establecer un idioma de visualización de la aplicación distinto del idioma de los archivos multimedia</li><li>Se ha añadido la opción para excluir archivos de audio y vídeo del folleto <em>lffi</em></li></ul><h6>Para los organizadores de videoconferencias que utilizan la sincronización de la congregación:</h6><ul><li>Se ha añadido la posibilidad de añadir y borrar fácilmente archivos multimedia recurrentes</li><li>Se ha añadido la posibilidad de que algunos ajustes se apliquen para todos los usuarios a nivel de congregación</li></ul><h6>Otros cambios:</h6><ul><li>Inclusión de números de parrafo en los nombres de archivo a medida de lo posible</li><li>Inclusión de los archivos multimedia desde el inicio de una lección/capítulo en la primera semana en la que se estudia, siempre que sea posible</li><li>Archivos multimedia faltantes en JW.org ahora se manejan mejor</li><li>Renovación visual de la pantalla de ajustes</li><li>Varios ajustes y correcciones de errores</li></ul>"
+  "weMeetingDay": "Reunión de fin de semana"
 }
