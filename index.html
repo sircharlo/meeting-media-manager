@@ -41,8 +41,7 @@
 
     #fileList li:not(.canDelete),
     #fileList li i,
-    #webdavFolderList li,
-    #version {
+    #webdavFolderList li {
       cursor: pointer;
     }
 
@@ -701,15 +700,19 @@
       </div>
     </div>
     <div class="d-flex flex-row align-items-center justify-content-end text-nowrap pt-3">
-      <div class="col-4 text-start">
-        <button type="button" class="btn btn-warning btn-clean-up">
+      <div class="col text-start">
+        <button id="version" type="button" class="btn btn-light btn-sm" data-action-url="https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest">
+        </button>
+        <button id="version" type="button" class="btn btn-secondary btn-sm" data-action-url="https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from+app&template=app_bug_report.md">
+          <span data-i18n-string="reportIssue"></span>
+        </button>
+        <button type="button" class="btn btn-clean-up btn-sm btn-warning">
           <span data-i18n-string="cleanCache"></span>
         </button>
       </div>
-      <div class="col-4 text-center">
-        <span id="version" class="badge rounded-pill bg-primary" data-action-url="https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"></span>
+      <div class="col text-center">
       </div>
-      <div class="col-4 text-end">
+      <div class="col text-end">
         <button type="button" class="btn btn-dark btn-home">
           <i class="fas fa-fw fa-home"></i>
         </button>
@@ -827,6 +830,7 @@
             <i class="far fa-circle"></i>
           </div>
           <span class="col ps-3" data-i18n-string="syncJwOrgMedia"></span>
+          <span class="jwLang ps-3"><em><small></small></em></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
         <div id="specificCong" class="alertIndicators m-1 flex-fill alert alert-primary congregation align-items-center justify-content-center" style="display: none;">

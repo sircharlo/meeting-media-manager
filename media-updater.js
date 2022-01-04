@@ -1,5 +1,6 @@
 const fadeDelay = 200,
   axios = require("axios"),
+  escape = require("escape-html"),
   i18n = require("i18n"),
   net = require("net"),
   path = require("path"),
@@ -27,7 +28,7 @@ require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, 
 require("electron").ipcRenderer.on("macUpdate", () => {
   $("#bg-mac-update").fadeIn(fadeDelay);
   $("#btn-settings").addClass("in-danger");
-  $("#version").addClass("bg-danger in-danger").removeClass("bg-primary").prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").click(function() {
+  $("#version").addClass("btn-danger in-danger").removeClass("btn-light").find("i").remove().end().prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").click(function() {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
   });
 });
@@ -41,6 +42,7 @@ const aspect = require("aspectratio"),
     desc: "reportIssue",
     url: "https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from+app&template=app_bug_report.md"
   },
+  currentAppVersion = "v" + remote.app.getVersion(),
   dayjs = require("dayjs"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
@@ -653,7 +655,7 @@ async function getInitialData() {
   await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
-  $("#version").text("v" + remote.app.getVersion());
+  $("#version").html("JWMMF " + escape(currentAppVersion));
   $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   if (os.platform() == "linux") $(".notLinux").prop("disabled", true);
   $("#baseDate button, #baseDate .dropdown-item:eq(0)").text(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
@@ -668,12 +670,13 @@ async function getInitialData() {
   }
   overlay(false, (prefs.autoStartSync && configIsValid ? "hourglass-start" : null));
 }
-async function getJwOrgLanguages() {
-  if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months"))) {
+async function getJwOrgLanguages(forceRefresh) {
+  if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months")) || forceRefresh) {
     let cleanedJwLangs = (await request("https://www.jw.org/en/languages/")).data.languages.filter(lang => lang.hasWebContent).map(lang => ({
-      name: lang.vernacularName + " (" + lang.name + ")",
+      name: lang.name,
       langcode: lang.langcode,
-      symbol: lang.symbol
+      symbol: lang.symbol,
+      vernacularName: lang.vernacularName
     }));
     fs.writeFileSync(paths.langs, JSON.stringify(cleanedJwLangs, null, 2));
     prefs.langUpdatedLast = dayjs();
@@ -685,7 +688,7 @@ async function getJwOrgLanguages() {
   for (var lang of jsonLangs) {
     $("#lang").append($("<option>", {
       value: lang.langcode,
-      text: lang.name
+      text: lang.vernacularName + " (" + lang.name + ")"
     }));
   }
   $("#lang").val(prefs.lang).select2();
@@ -695,7 +698,7 @@ function getLocaleLanguages() {
     let localeLangMatches = jsonLangs.filter(item => item.symbol === localeLang);
     $("#localAppLang").append($("<option>", {
       value: localeLang,
-      text: (localeLangMatches.length === 1 ? localeLangMatches[0].name : localeLang)
+      text: (localeLangMatches.length === 1 ? localeLangMatches[0].vernacularName + " (" + localeLangMatches[0].name + ")" : localeLang)
     }));
   }
   $("#localAppLang").val(prefs.localAppLang);
@@ -888,10 +891,10 @@ function notifyUser(type, message, fileOrUrl, persistent, logOutput, action) {
   default:
     icon = "fa-info-circle text-primary";
   }
-  if (fileOrUrl) fileOrUrl = encodeURI(fileOrUrl);
+  if (fileOrUrl) fileOrUrl = escape(fileOrUrl);
   if (["error", "warning"].includes(type)) console.error(message, fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
   type = i18n.__(type);
-  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action.url ? "data-toast-action-url='" + action.url + "'" :"") + ">" + i18n.__(action.desc) + "</button></div>" : "") + "</div></div>").toast("show"));
+  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action.url ? "data-toast-action-url='" + action.url + "'" :"") + ">" + i18n.__(action.desc) + "</button></div>" : "") + "</div></div>").toast("show"));
 }
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
@@ -1034,6 +1037,8 @@ async function setMediaLang() {
       $("label[for=typeFile]").click().addClass("active");
     }
     $("#lang").val(prefs.lang).select2("destroy").select2();
+    let currentJwLang = jsonLangs.filter(item => item.langcode == prefs.lang);
+    $(".jwLang small").text(currentJwLang.length == 1 && currentJwLang[0].vernacularName ? "(" + currentJwLang[0].vernacularName + ")" : "");
   }
 }
 function setVars(isDryrun) {
@@ -1203,10 +1208,10 @@ function updateCleanup() {
   } catch(err) {
     notifyUser("warning", "warnUnknownLastVersion", null, false, err);
   } finally {
-    if (lastRunVersion !== remote.app.getVersion()) {
+    if (lastRunVersion !== currentAppVersion) {
       setVars();
       rm([paths.media]);
-      fs.writeFileSync(paths.lastRunVersion, remote.app.getVersion());
+      fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
       if (lastRunVersion !== 0) {
         let somePrefWasUpdated = false;
         for (var updatedPref of [["additionalMediaPrompt", "localAdditionalMediaPrompt"], ["betaMp4Gen", "enableMp4Conversion"], ["outputPath", "localOutputPath"], ["openFolderWhenDone", "autoOpenFolderWhenDone"]]) {
@@ -1224,11 +1229,14 @@ function updateCleanup() {
           setAppLang();
         }
         validateConfig(somePrefWasUpdated);
-        notifyUser("info", "updateInstalled", remote.app.getVersion(), false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
+        notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
         let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
         if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
           desc: "wannaHelpForSure",
           url: "https://github.com/sircharlo/jw-meeting-media-fetcher/discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
+        });
+        getJwOrgLanguages(true).then(function() {
+          setMediaLang();
         });
       }
     }
@@ -1640,7 +1648,7 @@ $("#btn-upload").on("click", async function() {
   $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   $("#chooseMeeting").empty();
   for (var meeting of [prefs.mwDay, prefs.weDay, "Recurring"]) {
-    let meetingDate = encodeURI((isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD")));
+    let meetingDate = escape((isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD")));
     $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-" + (isNaN(meeting) ? "info" : "dark" ) + "' for='" + meetingDate + "'" + (isNaN(meeting) || Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + (isNaN(meeting) ? i18n.__("recurring") : meetingDate) + "</label>");
   }
 });
@@ -1807,8 +1815,8 @@ $("#fileList").on("click", ".canMove i.fa-edit", async function() {
   let src = $(this).closest(".canMove").data("url");
   await showModal(true, false, null, "<div class='input-group'><input type='text' class='form-control' value='" + path.basename(src, path.extname(src)) + "' /><span class='input-group-text'>" + path.extname(src) + "</span></div>", true, true);
   $("#staticBackdrop .modal-footer button").on("click", async function() {
-    if (encodeURIComponent(path.basename(src, path.extname(src))) !== encodeURIComponent($("#staticBackdrop .modal-body input").val())) {
-      await webdavMv(src, path.posix.join(path.dirname(src), encodeURIComponent($("#staticBackdrop .modal-body input").val()) + path.extname(src)));
+    if (escape(path.basename(src, path.extname(src))) !== escape($("#staticBackdrop .modal-body input").val())) {
+      await webdavMv(src, path.posix.join(path.dirname(src), escape($("#staticBackdrop .modal-body input").val()) + path.extname(src)));
       await executeDryrun();
       $("#chooseMeeting input").change();
     }
@@ -1903,7 +1911,7 @@ $("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", f
 $("#songPicker").on("change", function() {
   if ($(this).val()) $("#fileToUpload").val($(this).val()).change();
 });
-$("#overlaySettings").on("click", "#version:not(.bg-danger)", function() {
+$("#overlaySettings").on("click", "#version:not(.btn-danger)", function() {
   shell.openExternal($(this).data("action-url"));
 });
 $("#toastContainer").on("click", "button.toast-action", function() {
