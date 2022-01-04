@@ -886,12 +886,12 @@ function notifyUser(type, message, fileOrUrl, persistent, logOutput, action) {
     icon = "fa-exclamation-circle text-warning";
     break;
   default:
-    icon = "info-circle text-primary";
+    icon = "fa-info-circle text-primary";
   }
   if (fileOrUrl) fileOrUrl = encodeURI(fileOrUrl);
   if (["error", "warning"].includes(type)) console.error(message, fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
   type = i18n.__(type);
-  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' data-toast-action-url='" + action.url + "'>" + i18n.__(action.desc) + "</button></div>" : "") + "</div></div>").toast("show"));
+  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action.url ? "data-toast-action-url='" + action.url + "'" :"") + ">" + i18n.__(action.desc) + "</button></div>" : "") + "</div></div>").toast("show"));
 }
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
@@ -1063,9 +1063,6 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
     modal.hide();
   }
 }
-function showReleaseNotes() {
-  showModal(true, true, i18n.__("whatsNew"), i18n.__("whatsNewDetails"), true, true);
-}
 async function startMediaSync(isDryrun) {
   perf("total", "start");
   dryrun = !!isDryrun;
@@ -1227,7 +1224,7 @@ function updateCleanup() {
           setAppLang();
         }
         validateConfig(somePrefWasUpdated);
-        showReleaseNotes();
+        notifyUser("info", "updateInstalled", remote.app.getVersion(), false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
         let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
         if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
           desc: "wannaHelpForSure",
@@ -1906,9 +1903,11 @@ $("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", f
 $("#songPicker").on("change", function() {
   if ($(this).val()) $("#fileToUpload").val($(this).val()).change();
 });
-$("#overlaySettings").on("click", "#version:not(.bg-danger)", showReleaseNotes);
+$("#overlaySettings").on("click", "#version:not(.bg-danger)", function() {
+  shell.openExternal($(this).data("action-url"));
+});
 $("#toastContainer").on("click", "button.toast-action", function() {
-  shell.openExternal($(this).data("toast-action-url"));
+  if ($(this).data("toast-action-url")) shell.openExternal($(this).data("toast-action-url"));
   $(this).closest(".toast").find(".toast-header button.btn-close").click();
 });
 $("#webdavProviders a").on("click", function() {
