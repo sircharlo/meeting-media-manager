@@ -1210,7 +1210,7 @@ function updateCleanup() {
   } finally {
     if (lastRunVersion !== currentAppVersion) {
       setVars();
-      rm([paths.media]);
+      //rm([paths.media]);
       fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
       if (lastRunVersion !== 0) {
         let somePrefWasUpdated = false;
