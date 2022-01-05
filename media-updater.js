@@ -1820,10 +1820,12 @@ $("#fileList").on("click", ".canMove i.fa-edit", async function() {
     if (escape(path.basename(src, path.extname(src))) !== escape($("#staticBackdrop .modal-body input").val())) {
       let newName = escape($("#staticBackdrop .modal-body input").val()) + path.extname(src);
       if (await webdavMv(src, path.posix.join(path.dirname(src), newName))) {
-        meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == previousSafename).length > 0).forEach(item => item.media.forEach(mediaItem => {
-          mediaItem.safeName = newName;
-          mediaItem.url = path.posix.join(path.dirname(src), newName);
-        }));
+        Object.keys(meetingMedia).filter(meeting => dayjs($("#chooseMeeting input:checked").prop("id")).isValid() ? meeting == $("#chooseMeeting input:checked").prop("id") : true).forEach(meeting => {
+          meetingMedia[meeting].filter(item => item.media.filter(mediaItem => mediaItem.safeName == previousSafename).length > 0).forEach(item => item.media.forEach(mediaItem => {
+            mediaItem.safeName = newName;
+            mediaItem.url = path.posix.join(path.dirname(src), newName);
+          }));
+        });
         row.data("safename", newName).attr("title", newName).data("url", path.posix.join(path.dirname(src), newName)).find("span.filename").text(newName);
       }
     }
