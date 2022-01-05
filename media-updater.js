@@ -1345,7 +1345,9 @@ async function webdavMkdir(dir) {
 async function webdavMv(src, dst) {
   try {
     let congServerAddress = "https://" + prefs.congServer + ":" + prefs.congServerPort;
-    if (await webdavExists(src)) await request(congServerAddress + src, {
+    if (await webdavExists(dst)) {
+      throw("File overwrite not allowed.");
+    } else if (await webdavExists(src)) await request(congServerAddress + src, {
       method: "MOVE",
       headers: {
         "Destination": congServerAddress + dst
@@ -1354,7 +1356,7 @@ async function webdavMv(src, dst) {
     });
     return true;
   } catch (err) {
-    notifyUser("error", "errorWebdavPut", dst, true, err);
+    notifyUser("error", "errorWebdavPut", src + " => " + dst, true, err);
     return false;
   }
 }
@@ -1830,6 +1832,10 @@ $("#fileList").on("click", ".canMove i.fa-edit", async function() {
           }));
         });
         row.data("safename", newName).attr("title", newName).data("url", path.posix.join(path.dirname(src), newName)).find("span.filename").text(newName);
+        let elems = $("#fileList li").detach().sort(function (a, b) {
+          return ($(a).text() < $(b).text() ? -1 : $(a).text() > $(b).text() ? 1 : 0);
+        });
+        $("#fileList").append(elems);
       }
     }
   });
