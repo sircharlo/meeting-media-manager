@@ -1808,24 +1808,31 @@ $("#fileList").on("click", "li .fa-exclamation-circle", async function() {
 $("#fileList").on("click", ".canHide", async function() {
   if (await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).data("safename"))) {
     $(this).removeClass("canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
-    await executeDryrun();
+    meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = true ));
   }
 });
 $("#fileList").on("click", ".canMove i.fa-edit", async function() {
-  let src = $(this).closest(".canMove").data("url");
+  let row = $(this).closest(".canMove");
+  let src = row.data("url");
+  let previousSafename = row.data("safename");
   await showModal(true, false, null, "<div class='input-group'><input type='text' class='form-control' value='" + path.basename(src, path.extname(src)) + "' /><span class='input-group-text'>" + path.extname(src) + "</span></div>", true, true);
   $("#staticBackdrop .modal-footer button").on("click", async function() {
     if (escape(path.basename(src, path.extname(src))) !== escape($("#staticBackdrop .modal-body input").val())) {
-      await webdavMv(src, path.posix.join(path.dirname(src), escape($("#staticBackdrop .modal-body input").val()) + path.extname(src)));
-      await executeDryrun();
-      $("#chooseMeeting input").change();
+      let newName = escape($("#staticBackdrop .modal-body input").val()) + path.extname(src);
+      if (await webdavMv(src, path.posix.join(path.dirname(src), newName))) {
+        meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == previousSafename).length > 0).forEach(item => item.media.forEach(mediaItem => {
+          mediaItem.safeName = newName;
+          mediaItem.url = path.posix.join(path.dirname(src), newName);
+        }));
+        row.data("safename", newName).attr("title", newName).data("url", path.posix.join(path.dirname(src), newName)).find("span.filename").text(newName);
+      }
     }
   });
 });
 $("#fileList").on("click", ".wasHidden", async function() {
   if (await webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")))) {
     $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
-    executeDryrun();
+    meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = false ));
   }
 });
 $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
