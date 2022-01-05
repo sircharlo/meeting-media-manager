@@ -1816,9 +1816,12 @@ $("#fileList").on("click", ".canMove i.fa-edit", async function() {
   let src = row.data("url");
   let previousSafename = row.data("safename");
   await showModal(true, false, null, "<div class='input-group'><input type='text' class='form-control' value='" + path.basename(src, path.extname(src)) + "' /><span class='input-group-text'>" + path.extname(src) + "</span></div>", true, true);
+  $("#staticBackdrop .modal-body input").focus().on("keypress", function(e) {
+    if (e.which == 13) $("#staticBackdrop .modal-footer button").click();
+  });
   $("#staticBackdrop .modal-footer button").on("click", async function() {
-    if (escape(path.basename(src, path.extname(src))) !== escape($("#staticBackdrop .modal-body input").val())) {
-      let newName = escape($("#staticBackdrop .modal-body input").val()) + path.extname(src);
+    let newName = escape($("#staticBackdrop .modal-body input").val().trim()) + path.extname(src);
+    if (escape(path.basename(src, path.extname(src))) !== escape($("#staticBackdrop .modal-body input").val().trim())) {
       if (await webdavMv(src, path.posix.join(path.dirname(src), newName))) {
         Object.keys(meetingMedia).filter(meeting => dayjs($("#chooseMeeting input:checked").prop("id")).isValid() ? meeting == $("#chooseMeeting input:checked").prop("id") : true).forEach(meeting => {
           meetingMedia[meeting].filter(item => item.media.filter(mediaItem => mediaItem.safeName == previousSafename).length > 0).forEach(item => item.media.forEach(mediaItem => {
@@ -1885,13 +1888,13 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
           if (currentStep !== "additionalMedia" && !file.newFile && file.congSpecific && !file.recurring) html.append("<i class='fas fa-edit ms-2'></i>").addClass("canMove");
           if (currentStep !== "additionalMedia" && (!file.congSpecific || file.recurring) && !file.hidden && !file.newFile) html.addClass("canHide").prepend("<i class='far fa-check-square me-2'></i>");
           if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-plus me-2'></i>");
-          if (!file.newFile && newFiles.filter(item => item.media.filter(mediaItem => mediaItem.safeName.includes(file.safeName)).length > 0).length > 0) html.addClass("duplicated-file");
+          if (newList.filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
           if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-square me-2'></i>");
           if (file.safeName.includes(".mp4")) html.addClass("video");
           $("#fileList").append(html);
         }
         $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 11));
-        $("#btnUpload").toggle(newFileChosen);
+        $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
         $("#" + (currentStep == "additionalMedia" ? "btnDoneUpload" : "btnCancelUpload")).toggle(!newFileChosen);
         $("#fileList").stop().fadeTo(fadeDelay, 1, () => {
           $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
@@ -1919,6 +1922,13 @@ $("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", f
 });
 $("#songPicker").on("change", function() {
   if ($(this).val()) $("#fileToUpload").val($(this).val()).change();
+});
+$(document).on("shown.bs.modal", "#staticBackdrop", function () {
+  if ($("#staticBackdrop input").length > 0) {
+    let inputVal = $("#staticBackdrop input").first().val();
+    $("#staticBackdrop input")[0].focus();
+    $("#staticBackdrop input").first().val("").val(inputVal);
+  }
 });
 $("#overlaySettings").on("click", "#version:not(.btn-danger)", function() {
   shell.openExternal($(this).data("action-url"));
