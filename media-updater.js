@@ -54,7 +54,7 @@ const aspect = require("aspectratio"),
   sizeOf = require("image-size"),
   sqljs = require("sql.js"),
   v8 = require("v8"),
-  xmlParser = require("fast-xml-parser"),
+  {XMLParser} = require("fast-xml-parser"),
   zipper = require("adm-zip");
 
 dayjs.extend(require("dayjs/plugin/isoWeek"));
@@ -1300,7 +1300,7 @@ async function webdavLs(dir, force) {
   try {
     if (webdavIsAGo || force) {
       await webdavMkdir(dir);
-      let listing = xmlParser.parse((await request(congUrl, {
+      let listing = new XMLParser({removeNSPrefix: true}).parse((await request(congUrl, {
         method: "PROPFIND",
         responseType: "text",
         headers: {
@@ -1308,10 +1308,7 @@ async function webdavLs(dir, force) {
           Depth: "1"
         },
         webdav: true
-      })).data, {
-        arrayMode: false,
-        ignoreNameSpace: true
-      });
+      })).data);
       if (listing && listing.multistatus && listing.multistatus.response && Array.isArray(listing.multistatus.response)) {
         items = listing.multistatus.response.filter(item => path.resolve(decodeURIComponent(item.href)) !== path.resolve(dir)).map(item => {
           let href = decodeURIComponent(item.href);
