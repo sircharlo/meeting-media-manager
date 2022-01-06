@@ -711,26 +711,18 @@ async function getMediaLinks(pub, track, issue, format, docId) {
       let result = (await request("https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang)).data;
       if (result && result.files) {
         let mediaFileCategories = Object.values(result.files)[0];
-        for (var mediaFileItem of mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : result.fileformat[0])].reverse()) {
-          let videoRes = mediaFileItem.label.replace(/\D/g, "");
-          if ((videoRes !== 0 && videoRes > prefs.maxRes.replace(/\D/g, "")) || mediaFiles.filter(mediaFile => mediaFile.title == mediaFileItem.title).length > 0) {
-            continue;
-          } else {
-            mediaFiles.push({
-              title: mediaFileItem.title,
-              filesize: mediaFileItem.filesize,
-              url: mediaFileItem.file.url,
-              subtitled: mediaFileItem.subtitled,
-              duration: mediaFileItem.duration
-            });
-          }
+        mediaFiles = mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : result.fileformat[0])].filter(({label}) => label.replace(/\D/g, "") <= prefs.maxRes.replace(/\D/g, ""));
+        let map = new Map(mediaFiles.map(item => [item.title, item]));
+        for (let item of mediaFiles) {
+          let {label, subtitled} = map.get(item.title);
+          if ((item.label.replace(/\D/g, "") - label.replace(/\D/g, "") || subtitled - item.subtitled) > 0) map.set(item.title, item);
         }
+        mediaFiles = Array.from(map.values(), ({title, file: {url}, filesize, duration}) => ({title, url, filesize, duration}));
       }
     } catch(err) {
       notifyUser("warning", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
     }
   }
-  if (mediaFiles.length > 1) mediaFiles = mediaFiles.filter(mediaFile => !mediaFile.subtitled);
   return mediaFiles;
 }
 async function getMwMediaFromDb() {
@@ -1028,7 +1020,7 @@ async function setMediaLang() {
   if (prefs.lang) {
     try {
       $("#songPicker").empty();
-      for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4")).reverse()) {
+      for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4"))) {
         $("#songPicker").append($("<option>", {
           value: sjj.url,
           text: sjj.title
