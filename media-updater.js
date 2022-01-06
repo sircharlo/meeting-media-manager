@@ -720,6 +720,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
               title: mediaFileItem.title,
               filesize: mediaFileItem.filesize,
               url: mediaFileItem.file.url,
+              subtitled: mediaFileItem.subtitled,
               duration: mediaFileItem.duration
             });
           }
@@ -729,6 +730,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
       notifyUser("warning", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
     }
   }
+  if (mediaFiles.length > 1) mediaFiles = mediaFiles.filter(mediaFile => !mediaFile.subtitled);
   return mediaFiles;
 }
 async function getMwMediaFromDb() {
