@@ -67,6 +67,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   cancelSync = false,
   currentStep,
   datepickers,
+  debug = false,
   downloadStats = {},
   dryrun = false,
   ffmpegIsSetup = false,
@@ -273,6 +274,7 @@ function createMediaNames() {
       }
     }
   }
+  if (debug) console.log(meetingMedia);
   perf("createMediaNames", "stop");
 }
 function createVideoSync(mediaFile){
@@ -540,8 +542,8 @@ async function getDbFromJwpub(pub, issue, localpath) {
     if (localpath) {
       var jwpubContents = await new zipper(localpath).readFile("contents");
       var tempDb = new SQL.Database(await new zipper(jwpubContents).readFile((await new zipper(jwpubContents).getEntries()).filter(entry => path.extname(entry.name) == ".db")[0].entryName));
-      var jwpubInfo = (await executeStatement(tempDb, "SELECT UndatedSymbol, IssueTagNumber FROM Publication"))[0];
-      pub = jwpubInfo.UndatedSymbol;
+      var jwpubInfo = (await executeStatement(tempDb, "SELECT UniqueEnglishSymbol, IssueTagNumber FROM Publication"))[0];
+      pub = jwpubInfo.UniqueEnglishSymbol.replace(/[0-9]/g, "");
       issue = jwpubInfo.IssueTagNumber;
       if (!jwpubDbs[pub]) jwpubDbs[pub] = {};
       jwpubDbs[pub][issue] = tempDb;
@@ -562,8 +564,8 @@ async function getDbFromJwpub(pub, issue, localpath) {
 }
 async function getDocumentExtract(db, docId) {
   var extractMultimediaItems = [];
-  for (var extractItem of (await executeStatement(db, "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UndatedSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UndatedSymbol = 'sjj' AND NOT UndatedSymbol = 'mwbr' " + (prefs.excludeTh ? "AND NOT UndatedSymbol = 'th' " : "") + "ORDER BY DocumentExtract.BeginParagraphOrdinal"))) {
-    var extractDb = await getDbFromJwpub(extractItem.UndatedSymbol, extractItem.IssueTagNumber);
+  for (var extractItem of (await executeStatement(db, "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UniqueEnglishSymbol = 'sjj' AND NOT UniqueEnglishSymbol = 'mwbr' " + (prefs.excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : "") + "ORDER BY DocumentExtract.BeginParagraphOrdinal"))) {
+    var extractDb = await getDbFromJwpub(extractItem.UniqueEnglishSymbol.replace(/[0-9]/g, ""), extractItem.IssueTagNumber);
     if (extractDb) {
       extractMultimediaItems = extractMultimediaItems.concat((await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId)).filter(extractMediaFile => {
         if (extractMediaFile.queryInfo.tableQuestionIsUsed && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) extractMediaFile.BeginParagraphOrdinal = extractMediaFile.queryInfo.NextParagraphOrdinal;
@@ -587,7 +589,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
   let targetParagraphNumberLabelExists = (await executeStatement(db, "PRAGMA table_info('Question')")).map(item => item.name).includes("TargetParagraphNumberLabel");
   let suppressZoomExists = (await executeStatement(db, "PRAGMA table_info('Multimedia')")).map(item => item.name).includes("SuppressZoom");
   let multimediaItems = [];
-  for (var multimediaItem of (await executeStatement(db, "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + (targetParagraphNumberLabelExists && tableMultimedia == "DocumentMultimedia" ? "Question.TargetParagraphNumberLabel, " : "") + "Multimedia.MimeType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId " + (targetParagraphNumberLabelExists && tableMultimedia == "DocumentMultimedia" ? "LEFT JOIN Question ON Question.DocumentId = " + tableMultimedia + ".DocumentId AND Question.TargetParagraphOrdinal = " + tableMultimedia + ".BeginParagraphOrdinal " : "") + "WHERE " + (destDocId || destDocId === 0 ? tableMultimedia + ".DocumentId = " + destDocId : "Document.MepsDocumentId = " + destMepsId) + " AND (" + (keySymbol !== "lffi" || !prefs.excludeLffi ? "((Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')) OR " : "") + "(Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 6 AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25" + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " GROUP BY " + tableMultimedia + ".MultimediaId ORDER BY BeginParagraphOrdinal" : "")))) {
+  for (var multimediaItem of (await executeStatement(db, "SELECT " + tableMultimedia + ".DocumentId, " + tableMultimedia + ".MultimediaId, " + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") + (targetParagraphNumberLabelExists && tableMultimedia == "DocumentMultimedia" ? "Question.TargetParagraphNumberLabel, " : "") + "Multimedia.MimeType, Multimedia.DataType, Multimedia.MajorType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId " + (targetParagraphNumberLabelExists && tableMultimedia == "DocumentMultimedia" ? "LEFT JOIN Question ON Question.DocumentId = " + tableMultimedia + ".DocumentId AND Question.TargetParagraphOrdinal = " + tableMultimedia + ".BeginParagraphOrdinal " : "") + "WHERE " + (destDocId || destDocId === 0 ? tableMultimedia + ".DocumentId = " + destDocId : "Document.MepsDocumentId = " + destMepsId) + " AND (" + (keySymbol !== "lffi" || !prefs.excludeLffi ? "((Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')) OR " : "") + "(Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 6 AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25" + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "") + "))" + (tableMultimedia == "DocumentMultimedia" ? " GROUP BY " + tableMultimedia + ".MultimediaId ORDER BY BeginParagraphOrdinal" : "")))) {
     if (targetParagraphNumberLabelExists) {
       let paragraphNumber = await executeStatement(db, "SELECT TargetParagraphNumberLabel From Question WHERE DocumentId = " + multimediaItem.DocumentId + " AND TargetParagraphOrdinal = " + multimediaItem.BeginParagraphOrdinal);
       if (paragraphNumber.length === 1) Object.assign(multimediaItem, paragraphNumber[0]);
@@ -603,6 +605,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
           queryInfo: multimediaItem,
           BeginParagraphOrdinal: multimediaItem.BeginParagraphOrdinal
         };
+        if (multimediaItem.DataType == 2 && multimediaItem.MajorType == 0 && multimediaItem.Track <= 135) multimediaItem.KeySymbol = multimediaItem.KeySymbol + "m";
         Object.assign(json, (await getMediaLinks(multimediaItem.KeySymbol, multimediaItem.Track, multimediaItem.IssueTagNumber, null, multimediaItem.MultiMeps))[0]);
         multimediaItems.push(json);
       } else {
@@ -708,8 +711,9 @@ async function getMediaLinks(pub, track, issue, format, docId) {
       if (pub === "w" && parseInt(issue) >= 20080101 && issue.slice(-2) == "01") pub = "wp";
       let result = (await request("https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang)).data;
       if (result && result.files) {
+        if (debug) console.log(result);
         let mediaFileCategories = Object.values(result.files)[0];
-        mediaFiles = mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : result.fileformat[0])].filter(({label}) => label.replace(/\D/g, "") <= prefs.maxRes.replace(/\D/g, ""));
+        mediaFiles = mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : Object.keys(mediaFileCategories)[0])].filter(({label}) => label.replace(/\D/g, "") <= prefs.maxRes.replace(/\D/g, ""));
         let map = new Map(mediaFiles.map(item => [item.title, item]));
         for (let item of mediaFiles) {
           let {label, subtitled} = map.get(item.title);
@@ -721,6 +725,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
       notifyUser("warning", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
     }
   }
+  if (debug) console.log(mediaFiles);
   return mediaFiles;
 }
 async function getMwMediaFromDb() {
@@ -808,6 +813,7 @@ async function getWeMediaFromDb() {
       }
       var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
       for (var song = 0; song < qrySongs.length; song++) {
+        if (qrySongs[song].DataType == 2 && qrySongs[song].MajorType == 0 && qrySongs[song].Track <= 135) qrySongs[song].KeySymbol = qrySongs[song].KeySymbol + "m";
         var songObj = (await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track))[0];
         songObj.queryInfo = qrySongs[song];
         addMediaItemToPart(weDate, song * 1000, songObj);
@@ -1180,6 +1186,16 @@ async function syncJwOrgMedia() {
   updateStatus("photo-video");
   updateTile("syncJwOrgMedia", "success", "fas fa-check-circle");
   perf("syncJwOrgMedia", "stop");
+}
+async function testJwmmf() {
+  debug = true;
+  let previousLang = prefs.lang;
+  for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"] ) {
+    prefs.lang = lang;
+    await startMediaSync(true);
+  }
+  prefs.lang = previousLang;
+  debug = false;
 }
 function toggleScreen(screen, forceShow) {
   return new Promise((resolve) => {
@@ -1928,6 +1944,7 @@ $(document).on("shown.bs.modal", "#staticBackdrop", function () {
 $("#overlaySettings").on("click", "#version:not(.btn-danger)", function() {
   shell.openExternal($(this).data("action-url"));
 });
+$("#btnTestApp").on("click", testJwmmf);
 $("#toastContainer").on("click", "button.toast-action", function() {
   if ($(this).data("toast-action-url")) shell.openExternal($(this).data("toast-action-url"));
   $(this).closest(".toast").find(".toast-header button.btn-close").click();

@@ -299,6 +299,10 @@
       margin-top: unset;
     }
 
+    #btnTestApp {
+      display: none;
+    }
+
     @media (prefers-color-scheme: dark) {
       body {
         color: var(--bs-gray-100);
@@ -713,6 +717,9 @@
         </button>
         <button type="button" class="btn btn-clean-up btn-sm btn-warning">
           <span data-i18n-string="cleanCache"></span>
+        </button>
+        <button type="button" id="btnTestApp" class="btn btn-sm btn-danger">
+          <span>Run tests</span>
         </button>
       </div>
       <div class="col text-center">
