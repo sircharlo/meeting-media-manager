@@ -274,7 +274,9 @@ function createMediaNames() {
       }
     }
   }
-  if (debug) console.log(meetingMedia);
+  if (debug) for (var meetingDay of Object.keys(meetingMedia)) {
+    console.log(meetingDay, meetingMedia[meetingDay].filter(mediaItem => mediaItem.media.length > 0).map(item => item.media).flat());
+  }
   perf("createMediaNames", "stop");
 }
 function createVideoSync(mediaFile){
@@ -605,7 +607,6 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
           queryInfo: multimediaItem,
           BeginParagraphOrdinal: multimediaItem.BeginParagraphOrdinal
         };
-        if (multimediaItem.DataType == 2 && multimediaItem.MajorType == 0 && multimediaItem.Track <= 135) multimediaItem.KeySymbol = multimediaItem.KeySymbol + "m";
         Object.assign(json, (await getMediaLinks(multimediaItem.KeySymbol, multimediaItem.Track, multimediaItem.IssueTagNumber, null, multimediaItem.MultiMeps))[0]);
         multimediaItems.push(json);
       } else {
@@ -709,7 +710,14 @@ async function getMediaLinks(pub, track, issue, format, docId) {
   if (prefs.lang && prefs.maxRes) {
     try {
       if (pub === "w" && parseInt(issue) >= 20080101 && issue.slice(-2) == "01") pub = "wp";
-      let result = (await request("https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang)).data;
+      let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
+      let result = (await request(requestUrl)).data;
+      if (debug) console.log(pub, track, issue, format, docId, requestUrl, result);
+      if (result && result.length > 0 && result[0].status && result[0].status == 404 && pub && track) {
+        requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + pub + "m" + "&track=" + track + (issue ? "&issue=" + issue : "") + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
+        result = (await request(requestUrl)).data;
+        if (debug) console.log(pub + "m", track, issue, format, docId, requestUrl, result);
+      }
       if (result && result.files) {
         if (debug) console.log(result);
         let mediaFileCategories = Object.values(result.files)[0];
@@ -813,10 +821,13 @@ async function getWeMediaFromDb() {
       }
       var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
       for (var song = 0; song < qrySongs.length; song++) {
-        if (qrySongs[song].DataType == 2 && qrySongs[song].MajorType == 0 && qrySongs[song].Track <= 135) qrySongs[song].KeySymbol = qrySongs[song].KeySymbol + "m";
-        var songObj = (await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track))[0];
-        songObj.queryInfo = qrySongs[song];
-        addMediaItemToPart(weDate, song * 1000, songObj);
+        let songJson = await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track);
+        if (songJson.length > 0) {
+          songJson[0].queryInfo = qrySongs[song];
+          addMediaItemToPart(weDate, song * 1000, songJson[0]);
+        } else {
+          notifyUser("error", "errorGetWeMedia", null, true, songJson, bugAction);
+        }
       }
       updateTile("day" + prefs.weDay, "success", "fas fa-check-circle");
     } catch(err) {
