@@ -1727,7 +1727,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     progressSet(i + 1, multimediaItems.length);
     let multimediaItem = multimediaItems[i];
     var tempMedia = {
-      filename: (i + 1).toString().padStart(2, "0") + " - " + (multimediaItem.queryInfo.FilePath ? multimediaItem.queryInfo.FilePath : multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3"))
+      filename: (i + 1).toString().padStart(2, "0") + " - " + (multimediaItem.queryInfo.Label ? multimediaItem.queryInfo.Label : (multimediaItem.queryInfo.Caption ? multimediaItem.queryInfo.Caption : (multimediaItem.queryInfo.FilePath ? multimediaItem.queryInfo.FilePath : multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3")))) + (multimediaItem.queryInfo.FilePath && (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption) ? path.extname(multimediaItem.queryInfo.FilePath) : "")
     };
     if (multimediaItem.queryInfo.CategoryType !== -1) {
       var jwpubContents = await new zipper($("#jwpubPicker").val()).readFile("contents");
