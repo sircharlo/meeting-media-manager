@@ -1366,7 +1366,7 @@ async function webdavMv(src, dst) {
     } else if (await webdavExists(src)) await request(congServerAddress + src, {
       method: "MOVE",
       headers: {
-        "Destination": congServerAddress + dst
+        "Destination": congServerAddress + encodeURI(dst)
       },
       webdav: true
     });
