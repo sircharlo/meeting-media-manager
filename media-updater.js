@@ -1803,13 +1803,13 @@ $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
 $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType input", function() {
   $(".relatedToUpload").fadeTo(fadeDelay, ($("#chooseMeeting input:checked").length === 0 || $("#chooseUploadType input:checked").length === 0 ? 0 : 1));
 });
-$("#fileList").on("click", "li .fa-minus-circle", function() {
-  $(this).parent().addClass("confirmDelete").find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-exclamation-circle");
+$("#fileList").on("click", "li:not(.confirmDelete) .fa-minus-square", function() {
+  $(this).parent().addClass("confirmDelete");
   setTimeout(() => {
-    $(".confirmDelete").removeClass("confirmDelete").find(".fa-exclamation-circle").removeClass("fa-exclamation-circle").addClass("fa-minus-circle");
+    $(".confirmDelete").removeClass("confirmDelete");
   }, 3000);
 });
-$("#fileList").on("click", "li .fa-exclamation-circle", async function() {
+$("#fileList").on("click", "li.confirmDelete .fa-minus-square", async function() {
   let successful = true;
   if (currentStep == "additionalMedia") {
     rm(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).parent().data("url")));
@@ -1905,11 +1905,11 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         $("#fileList").empty();
         for (var file of newList) {
           let html = $("<li title='" + file.safeName + "' data-url='" + file.url + "' data-safename='" + file.safeName + "'><span class='filename'>" + file.safeName + "</span></li>");
-          if (file.congSpecific && file.recurring) html.prepend("<i class='fas fa-sync-alt me-2'></i>").addClass("recurring text-info");
-          if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.prepend("<i class='fas fa-minus-circle me-2'></i>").addClass("canDelete");
+          if (file.congSpecific && file.recurring) html.append("<i class='fas fa-sync-alt ms-2'></i>").addClass("recurring text-info");
+          if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.prepend("<i class='fas fa-minus-square me-2 text-danger'></i>").addClass("canDelete");
           if (currentStep !== "additionalMedia" && !file.newFile && file.congSpecific && !file.recurring) html.append("<i class='fas fa-edit ms-2'></i>").addClass("canMove");
           if (currentStep !== "additionalMedia" && (!file.congSpecific || file.recurring) && !file.hidden && !file.newFile) html.addClass("canHide").prepend("<i class='far fa-check-square me-2'></i>");
-          if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-plus me-2'></i>");
+          if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-plus-square me-2'></i>");
           if (newList.filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
           if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-square me-2'></i>");
           if (file.safeName.includes(".mp4")) html.addClass("video");
