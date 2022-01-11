@@ -727,7 +727,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
           let {label, subtitled} = map.get(item.title);
           if ((item.label.replace(/\D/g, "") - label.replace(/\D/g, "") || subtitled - item.subtitled) > 0) map.set(item.title, item);
         }
-        mediaFiles = Array.from(map.values(), ({title, file: {url}, filesize, duration}) => ({title, url, filesize, duration}));
+        mediaFiles = Array.from(map.values(), ({title, file: {url}, filesize, duration, trackImage}) => ({title, url, filesize, duration, trackImage}));
       }
     } catch(err) {
       notifyUser("warning", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
@@ -1904,7 +1904,9 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         newList = newList.sort((a, b) => a.safeName.localeCompare(b.safeName));
         $("#fileList").empty();
         for (var file of newList) {
-          let html = $("<li title='" + file.safeName + "' data-url='" + file.url + "' data-safename='" + file.safeName + "'><span class='filename'>" + file.safeName + "</span></li>");
+          let html = $("<li data-bs-toggle='tooltip' data-url='" + file.url + "' data-safename='" + file.safeName + "'><span class='filename'>" + file.safeName + "</span></li>").tooltip({
+            title: file.safeName
+          });
           if (file.congSpecific && file.recurring) html.append("<i class='fas fa-sync-alt ms-2'></i>").addClass("recurring text-info");
           if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.prepend("<i class='fas fa-minus-square me-2 text-danger'></i>").addClass("canDelete");
           if (currentStep !== "additionalMedia" && !file.newFile && file.congSpecific && !file.recurring) html.append("<i class='fas fa-edit ms-2'></i>").addClass("canMove");
@@ -1913,6 +1915,13 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
           if (newList.filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
           if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-square me-2'></i>");
           if (file.safeName.includes(".mp4")) html.addClass("video");
+          if ((!(file.congSpecific || file.newFile) && (file.filepath || (file.trackImage && file.trackImage.url))) || currentStep === "additionalMedia" && !file.safeName.includes(".mp4")) html.tooltip("dispose").tooltip({
+            html: true,
+            title: $("<img />", {
+              style: "max-height: 100%; max-width: 100%",
+              src: (file.filepath ? file.filepath : (file.trackImage && file.trackImage.url ? file.trackImage.url : (currentStep === "additionalMedia" ? path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), file.url) : file.url)))
+            })
+          });
           $("#fileList").append(html);
         }
         $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 11));
