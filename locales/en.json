@@ -65,6 +65,7 @@
   "wannaHelpForSure": "Help translate this app",
   "wannaHelpWillGoAway": "This notification will only appear when a new version of JWMMF is released.",
   "warning": "Warning",
+  "warnFileNotAvailable": "The following file is not yet available. Please try again later, or contact your videoconference organizer",
   "warnMp4ConversionFailure": "The following file could not be converted to MP4 format:",
   "warnNoDocumentsFound": "No media was found in any of the chosen JWPUB's documents. Please validate the file or contact the developer of this app.",
   "warnPdfConversionFailure": "The pages from the following PDF file could not be extracted as images:",

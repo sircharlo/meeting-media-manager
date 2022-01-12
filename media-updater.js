@@ -1191,7 +1191,7 @@ async function syncJwOrgMedia() {
       for (var j = 0; j < partMedia.length; j++) { // media
         if (!partMedia[j].hidden && !partMedia[j].congSpecific && !dryrun) {
           if (!partMedia[j].filesize) {
-            console.log("%c[WARN]  Skipping missing media! Try running the sync at a later date.", "background-color: #cce5ff; color: #004085; padding: 0 2em;");
+            notifyUser("warning", "warnFileNotAvailable", [partMedia[j].queryInfo.KeySymbol, partMedia[j].queryInfo.Track, partMedia[j].queryInfo.IssueTagNumber].filter(Boolean).join("_"), true, partMedia[j]);
           } else {
             console.log("%c" + partMedia[j].safeName, "background-color: #cce5ff; color: #004085; padding: 0 2em;");
             if (partMedia[j].url) {
