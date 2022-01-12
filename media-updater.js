@@ -266,8 +266,9 @@ function createMediaNames() {
     var meeting = Object.values(meetingMedia)[h];
     for (var i = 0; i < meeting.length; i++) { // parts
       for (var j = 0; j < meeting[i].media.length; j++) { // media
+        meeting[i].media[j].safeName = (i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0");
         if (meeting[i].media[j].filesize) {
-          meeting[i].media[j].safeName = sanitizeFilename((i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0") + " - " + ((meeting[i].media[j].queryInfo.TargetParagraphNumberLabel ? meeting[i].media[j].queryInfo.TargetParagraphNumberLabel + ". " : "")) + meeting[i].media[j].title + "." + (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath))));
+          meeting[i].media[j].safeName = sanitizeFilename(meeting[i].media[j].safeName + " - " + ((meeting[i].media[j].queryInfo.TargetParagraphNumberLabel ? meeting[i].media[j].queryInfo.TargetParagraphNumberLabel + ". " : "")) + meeting[i].media[j].title + "." + (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath))));
         } else {
           continue;
         }
@@ -1920,13 +1921,18 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
           let html = $("<li data-bs-toggle='tooltip' data-url='" + file.url + "' data-safename='" + file.safeName + "'><span class='filename'>" + file.safeName + "</span></li>").tooltip({
             title: file.safeName
           });
-          if (file.congSpecific && file.recurring) html.append("<i class='fas fa-sync-alt ms-2'></i>").addClass("recurring text-info");
           if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.prepend("<i class='fas fa-minus-square me-2 text-danger'></i>").addClass("canDelete");
-          if (currentStep !== "additionalMedia" && !file.newFile && file.congSpecific && !file.recurring) html.append("<i class='fas fa-edit ms-2'></i>").addClass("canMove");
-          if (currentStep !== "additionalMedia" && (!file.congSpecific || file.recurring) && !file.hidden && !file.newFile) html.addClass("canHide").prepend("<i class='far fa-check-square me-2'></i>");
+          if (currentStep !== "additionalMedia") {
+            if (!file.newFile) {
+              if (file.congSpecific && file.recurring) html.append("<i class='fas fa-sync-alt ms-2'></i>").addClass("recurring text-info");
+              if (file.congSpecific && !file.recurring) html.append("<i class='fas fa-edit ms-2'></i>").addClass("canMove");
+              if (((!file.congSpecific && (file.url || file.safeName.includes(" - "))) || file.recurring) && !file.hidden) html.addClass("canHide").prepend("<i class='far fa-check-square me-2'></i>");
+            }
+            if (!file.congSpecific && !(file.url || file.safeName.includes(" - "))) html.addClass("cantHide").prepend("<i class='fas fa-stop me-2'></i>");
+            if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-square me-2'></i>");
+          }
           if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-plus-square me-2'></i>");
           if (newList.filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
-          if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-square me-2'></i>");
           if (file.safeName.includes(".mp4")) html.addClass("video");
           if ((!(file.congSpecific || file.newFile) && (file.filepath || (file.trackImage && file.trackImage.url))) || currentStep === "additionalMedia" && !file.safeName.includes(".mp4")) html.tooltip("dispose").tooltip({
             html: true,
