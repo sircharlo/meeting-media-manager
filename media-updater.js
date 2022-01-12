@@ -728,6 +728,12 @@ async function getMediaLinks(pub, track, issue, format, docId) {
           if ((item.label.replace(/\D/g, "") - label.replace(/\D/g, "") || subtitled - item.subtitled) > 0) map.set(item.title, item);
         }
         mediaFiles = Array.from(map.values(), ({title, file: {url}, filesize, duration, trackImage}) => ({title, url, filesize, duration, trackImage}));
+        for (var item of mediaFiles) {
+          if (item.duration >0 && (!item.trackImage || (item.trackImage && !item.trackImage.url))) {
+            if (!item.trackImage) item.trackImage = {};
+            item.trackImage.url = await getMediaThumbnail(pub, track, issue, format, docId);
+          }
+        }
       }
     } catch(err) {
       notifyUser("warning", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
@@ -735,6 +741,13 @@ async function getMediaLinks(pub, track, issue, format, docId) {
   }
   if (debug) console.log(mediaFiles);
   return mediaFiles;
+}
+async function getMediaThumbnail(pub, track, issue, format, docId) {
+  let thumbnail = "";
+  if (issue) issue = issue.toString().replace(/(\d{6})00$/gm, "$1");
+  let result = (await request("https://b.jw-cdn.org/apis/mediator/v1/media-items/" + prefs.lang + "/" + (docId ? "docid-" + docId + "_1": "pub-" + [pub, issue, track].join("_")) + "_VIDEO")).data;
+  if (result && result.media && result.media.length > 0 && result.media[0].images.wss.sm) thumbnail = result.media[0].images.wss.sm;
+  return thumbnail;
 }
 async function getMwMediaFromDb() {
   var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
