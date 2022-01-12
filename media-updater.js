@@ -746,7 +746,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
 async function getMediaThumbnail(pub, track, issue, format, docId) {
   let thumbnail = "";
   if (issue) issue = issue.toString().replace(/(\d{6})00$/gm, "$1");
-  let result = (await request("https://b.jw-cdn.org/apis/mediator/v1/media-items/" + prefs.lang + "/" + (docId ? "docid-" + docId + "_1": "pub-" + [pub, issue, track].join("_")) + "_VIDEO")).data;
+  let result = (await request("https://b.jw-cdn.org/apis/mediator/v1/media-items/" + prefs.lang + "/" + (docId ? "docid-" + docId + "_1": "pub-" + [pub, issue, track].filter(Boolean).join("_")) + "_VIDEO")).data;
   if (result && result.media && result.media.length > 0 && result.media[0].images.wss.sm) thumbnail = result.media[0].images.wss.sm;
   return thumbnail;
 }
