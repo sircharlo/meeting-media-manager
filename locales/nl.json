@@ -22,6 +22,7 @@
   "errorWebdavPut": "Er ging iets fout tijdens het proberen opslaan van het volgende bestand in de gemeente sync. Neem alsjeblieft contact op met jouw videoconferentie organisator.",
   "errorWebdavRm": "Er ging iets fout tijdens het proberen verwijderen van het volgende bestand in de gemeente sync. Neem alsjeblieft contact op met jouw videoconferentie organisator.",
   "excludeLffi": "Sluit audio en video bestanden van de <em>lffi</em> brochure uit",
+  "excludeLffiImages": "Sluit afbeeldingen van de <em>lffi</em> brochure uit",
   "excludeTh": "Sluit alle media van de <em>th</em> brochure uit",
   "fetchMedia": "Haal media op!",
   "filenamePrefix": "Bestandsnaam voorvoegsel",

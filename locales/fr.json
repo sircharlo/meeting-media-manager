@@ -22,6 +22,7 @@
   "errorWebdavPut": "Une erreur s'est produite lors de l'écriture du fichier suivant dans la synchronisation de l'assemblée locale.  Veuillez contacter votre organisateur des vidéoconférences.",
   "errorWebdavRm": "Une erreur s'est produite lors de la suppression du fichier suivant depuis la synchronisation de l'assemblée locale.  Veuillez contacter votre organisateur des vidéoconférencess.",
   "excludeLffi": "Exclure les fichiers audio et vidéo de la brochure <em>lffi</em>",
+  "excludeLffiImages": "Exclure les images de la brochure <em>lffi</em>",
   "excludeTh": "Exclure tous les médias de la brochure <em>th</em>",
   "fetchMedia": "Télécharger les médias!",
   "filenamePrefix": "Préfix pour nom(s) de fichier(s)",

@@ -22,6 +22,7 @@
   "errorWebdavPut": "Ocorreu um erro ao tentar gravar esse ficheiro no servidor WebDAV da congregação. Entre em contacto com o organizador de sua videoconferência.",
   "errorWebdavRm": "Ocorreu um erro ao tentar eliminar esse ficheiro do servidor WebDAV da congregação. Entre em contacto com o organizador de sua videoconferência.",
   "excludeLffi": "Eliminar ficheiros de áudio e vídeo da brochura <em>lffi</em>",
+  "excludeLffiImages": "Excluir imagens da brochura <em>lffi</em>",
   "excludeTh": "Eliminar todas as multimédias da brochura <em>th</em>",
   "fetchMedia": "Descarregar as multimédias!",
   "filenamePrefix": "Prefixo do nome do ficheiro",

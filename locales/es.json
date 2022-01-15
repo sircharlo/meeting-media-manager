@@ -22,6 +22,7 @@
   "errorWebdavPut": "Se ha producido un error al intentar escribir el siguiente archivo desde la sincronización de la congregación. Por favor contacta al organizador de tu videoconferencia.",
   "errorWebdavRm": "Se ha producido un error al intentar borrar el siguiente archivo desde la sincronización de la congregación. Por favor contacta al organizador de tu videoconferencia.",
   "excludeLffi": "Excluir archivos de audio y video del folleto <em>lffi</em>",
+  "excludeLffiImages": "Excluir las imágenes del folleto <em>lffi</em>",
   "excludeTh": "Excluir toda la multimedia del folleto <em>th</em>",
   "fetchMedia": "Descargar multimedia!",
   "filenamePrefix": "Prefijo de nombre de archivo",
