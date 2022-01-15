@@ -48,6 +48,8 @@ const aspect = require("aspectratio"),
   fs = require("graceful-fs"),
   fullHd = [1920, 1080],
   glob = require("glob"),
+  isImage = require("is-image"),
+  isVideo = require("is-video"),
   hme = require("h264-mp4-encoder"),
   datetime = require("flatpickr"),
   os = require("os"),
@@ -1588,7 +1590,7 @@ $("#btnMeetingMusic").on("click", async function() {
   } else {
     pendingMusicFadeOut.id = null;
   }
-  $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").parent().prop("title", "...");
+  $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
   $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
   var songs = (await getMediaLinks("sjjm", null, null, "MP3")).sort(() => .5 - Math.random());
   var iterator = 0;
@@ -1598,10 +1600,10 @@ $("#btnMeetingMusic").on("click", async function() {
       iterator = (iterator < songs.length - 1 ? iterator + 1 : 0);
       createAudioElem(iterator);
     }).on("loadstart", function() {
-      $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").parent().prop("title", "...");
+      $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
       displayMusicRemaining();
     }).on("canplay", function() {
-      $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").parent().prop("title", songs[iterator].title);
+      $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").closest("button").prop("title", songs[iterator].title);
       displayMusicRemaining();
     }).on("timeupdate", function() {
       displayMusicRemaining();
@@ -1818,7 +1820,7 @@ $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType in
   $(".relatedToUpload").fadeTo(fadeDelay, ($("#chooseMeeting input:checked").length === 0 || $("#chooseUploadType input:checked").length === 0 ? 0 : 1));
 });
 $("#fileList").on("click", "li:not(.confirmDelete) .fa-minus-square", function() {
-  $(this).parent().addClass("confirmDelete");
+  $(this).closest("li").addClass("confirmDelete");
   setTimeout(() => {
     $(".confirmDelete").removeClass("confirmDelete");
   }, 3000);
@@ -1826,15 +1828,15 @@ $("#fileList").on("click", "li:not(.confirmDelete) .fa-minus-square", function()
 $("#fileList").on("click", "li.confirmDelete .fa-minus-square", async function() {
   let successful = true;
   if (currentStep == "additionalMedia") {
-    rm(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).parent().data("url")));
+    rm(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).closest("li").data("url")));
   } else {
-    successful = await webdavRm($(this).parent().data("url"));
+    successful = await webdavRm($(this).closest("li").data("url"));
   }
   if (successful) {
-    $(this).parent().fadeOut(fadeDelay, function(){
-      $(this).remove();
+    $(this).closest("li").fadeOut(fadeDelay, function(){
+      $(this).tooltip("dispose").remove();
     });
-    meetingMedia[$("#chooseMeeting input:checked").prop("id")].splice(meetingMedia[$("#chooseMeeting input:checked").prop("id")].findIndex(item => item.media.find(mediaItem => mediaItem.url === $(this).parent().data("url"))), 1);
+    meetingMedia[$("#chooseMeeting input:checked").prop("id")].splice(meetingMedia[$("#chooseMeeting input:checked").prop("id")].findIndex(item => item.media.find(mediaItem => mediaItem.url === $(this).closest("li").data("url"))), 1);
   }
 });
 $("#fileList").on("click", ".canHide", async function() {
@@ -1906,6 +1908,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
                 safeName: sanitizeFilename(prefix + " - " + path.basename(splitFileToUpload)).trim(),
                 newFile: true,
                 recurring: false,
+                filepath: splitFileToUpload
               }]
             });
           }
@@ -1917,30 +1920,69 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         }
         newList = newList.sort((a, b) => a.safeName.localeCompare(b.safeName));
         $("#fileList").empty();
+        $(".tooltip").remove();
         for (var file of newList) {
-          let html = $("<li data-bs-toggle='tooltip' data-url='" + file.url + "' data-safename='" + file.safeName + "'><span class='filename'>" + file.safeName + "</span></li>").tooltip({
+          let html = $("<li data-bs-toggle='tooltip' data-url='" + file.url + "' data-safename='" + file.safeName + "'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons'></div></li>").tooltip({
             title: file.safeName
           });
-          if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.prepend("<i class='fas fa-minus-square me-2 text-danger'></i>").addClass("canDelete");
+          if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
           if (currentStep !== "additionalMedia") {
             if (!file.newFile) {
-              if (file.congSpecific && file.recurring) html.append("<i class='fas fa-sync-alt ms-2'></i>").addClass("recurring text-info");
-              if (file.congSpecific && !file.recurring) html.append("<i class='fas fa-edit ms-2'></i>").addClass("canMove");
-              if (((!file.congSpecific && (file.url || file.safeName.includes(" - "))) || file.recurring) && !file.hidden) html.addClass("canHide").prepend("<i class='far fa-check-square me-2'></i>");
+              if (file.congSpecific && !file.recurring) html.find(".infoIcons").append("<i class='fas fa-fw fa-edit me-1 text-primary'></i>").addClass("canMove");
+              if (((!file.congSpecific && (file.url || file.safeName.includes(" - "))) || file.recurring) && !file.hidden) html.addClass("canHide").prepend("<i class='far fa-fw fa-check-square me-2'></i>");
+              if (!file.congSpecific && !(file.url || file.safeName.includes(" - "))) html.addClass("cantHide").prepend("<i class='fas fa-fw fa-stop me-2'></i>");
             }
-            if (!file.congSpecific && !(file.url || file.safeName.includes(" - "))) html.addClass("cantHide").prepend("<i class='fas fa-stop me-2'></i>");
-            if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-square me-2'></i>");
+            if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-fw fa-square me-2'></i>");
           }
-          if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-plus-square me-2'></i>");
+          if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-fw fa-plus-square me-2'></i>");
           if (newList.filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
-          if (file.safeName.includes(".mp4")) html.addClass("video");
-          if ((!(file.congSpecific || file.newFile) && (file.filepath || (file.trackImage && file.trackImage.url))) || currentStep === "additionalMedia" && !file.safeName.includes(".mp4")) html.tooltip("dispose").tooltip({
-            html: true,
-            title: $("<img />", {
-              style: "max-height: 100%; max-width: 100%",
-              src: (file.filepath ? file.filepath : (file.trackImage && file.trackImage.url ? file.trackImage.url : (currentStep === "additionalMedia" ? path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), file.url) : file.url)))
-            })
-          });
+          let fileOrigin = "fa-globe-americas";
+          if (file.congSpecific || file.newFile) {
+            if (file.recurring) {
+              fileOrigin = "fa-sync-alt text-info";
+              html.addClass("recurring");
+            }
+            else
+              fileOrigin = "fa-cloud";
+          }
+          let fileType = "fa-question-circle";
+          if (isImage(file.safeName)) {
+            fileType = "fa-image";
+          } else if (isVideo(file.safeName)) {
+            fileType = "fa-play-circle";
+          } else if (path.extname(file.safeName).toLowerCase() == ".pdf") {
+            fileType = "fa-file-pdf";
+          }
+          html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i><i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>");
+          if ((file.trackImage && file.trackImage.url) || file.congSpecific || file.filepath) {
+            let imageSrc = (file.filepath ? file.filepath : (file.trackImage && file.trackImage.url ? file.trackImage.url : (currentStep === "additionalMedia" ? path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), file.url) : file.url)));
+            if (isImage(imageSrc)) {
+              if (file.congSpecific) {
+                request("https://" + prefs.congServer + ":" + prefs.congServerPort + file.url, {
+                  webdav: true,
+                  isFile: true
+                }).then(res => {
+                  if (res.data) {
+                    html.tooltip("dispose").tooltip({
+                      html: true,
+                      title: $("<img />", {
+                        style: "max-height: 100%; max-width: 100%; min-width: 180px;",
+                        src: "data:;base64," + Buffer.from(res.data, "binary").toString("base64")
+                      })
+                    });
+                  }
+                });
+              } else {
+                html.tooltip("dispose").tooltip({
+                  html: true,
+                  title: $("<img />", {
+                    style: "max-height: 100%; max-width: 100%; min-width: 180px;",
+                    src: imageSrc
+                  })
+                });
+              }
+            }
+          }
           $("#fileList").append(html);
         }
         $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 11));

@@ -40,7 +40,7 @@
     }
 
     #fileList li:not(.canDelete),
-    #fileList li i,
+    #fileList li i:not(.file-type):not(.file-origin),
     #webdavFolderList li {
       cursor: pointer;
     }
@@ -183,7 +183,7 @@
       color: var(--bs-dark);
     }
 
-    .video {
+    .notImage {
       font-weight: 500;
     }
 
@@ -205,6 +205,12 @@
     #fileList {
       height: 100%;
       column-fill: auto;
+      column-rule: solid 1px;
+    }
+
+    .infoIcons {
+      display: flex;
+      color: var(--bs-secondary);
     }
 
     .wasHidden span {
