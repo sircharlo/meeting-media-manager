@@ -1309,7 +1309,7 @@ function validateConfig(changed) {
   }
   $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
   $("#mp4Convert").toggleClass("d-flex", prefs.enableMp4Conversion);
-  $("#btnMeetingMusic").toggle(prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
+  $("#btnMeetingMusic").toggle(!!prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
   $(".btn-home").toggleClass("btn-dark", configIsValid).toggleClass("btn-danger", !configIsValid);
   $("#mediaSync, .btn-home").prop("disabled", !configIsValid);
   if (!configIsValid) {
