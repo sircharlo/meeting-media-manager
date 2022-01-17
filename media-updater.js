@@ -1890,7 +1890,8 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
               title: item,
               media: [{
                 safeName: item,
-                url: item
+                url: item,
+                filepath: path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), item)
               }]
             });
           });
@@ -1953,7 +1954,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
           } else if (path.extname(file.safeName).toLowerCase() == ".pdf") {
             fileType = "fa-file-pdf";
           }
-          html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i><i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>");
+          html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i>" + (currentStep !== "additionalMedia" ? "<i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>" : ""));
           if ((file.trackImage && file.trackImage.url) || file.congSpecific || file.filepath) {
             let imageSrc = (file.filepath ? file.filepath : (file.trackImage && file.trackImage.url ? file.trackImage.url : (currentStep === "additionalMedia" ? path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), file.url) : file.url)));
             if (isImage(imageSrc)) {
