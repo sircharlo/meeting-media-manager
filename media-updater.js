@@ -1054,7 +1054,8 @@ async function setMediaLang() {
       for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4"))) {
         $("#songPicker").append($("<option>", {
           value: sjj.url,
-          text: sjj.title
+          text: sjj.title,
+          "data-thumbnail": sjj.trackImage.url
         }));
       }
     } catch (err) {
@@ -1908,7 +1909,10 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
               safeName: sanitizeFilename(getPrefix() + " - " + path.basename(splitFileToUpload)).trim(),
               newFile: true,
               recurring: false,
-              filepath: splitFileToUpload
+              filepath: splitFileToUpload,
+              trackImage: ($("input#typeSong:checked").length > 0 && $("#songPicker option:selected").data("thumbnail") ? {
+                url: $("#songPicker option:selected").data("thumbnail")
+              } : null)
             }]
           });
         }
@@ -1952,13 +1956,11 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i>" + (currentStep !== "additionalMedia" ? "<i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>" : ""));
         if ((file.trackImage && file.trackImage.url) || file.congSpecific || file.filepath) {
           let imageSrc = {};
-          if (file.filepath) {
-            imageSrc.path = file.filepath;
-            if (tempMediaArray.find(item => item.filename == file.filepath)) {
-              imageSrc.data = "data:;base64," + Buffer.from(tempMediaArray.find(item => item.filename == file.filepath).contents, "binary").toString("base64");
-            }
-          } else if (file.trackImage && file.trackImage.url) {
+          if (file.trackImage && file.trackImage.url) {
             imageSrc.path = file.trackImage.url;
+          } else if (file.filepath) {
+            imageSrc.path = file.filepath;
+            if (tempMediaArray.find(item => item.filename == file.filepath)) imageSrc.data = tempMediaArray.find(item => item.filename == file.filepath).contents;
           } else if (currentStep === "additionalMedia") {
             imageSrc.path = path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), file.url);
           } else {
@@ -1985,7 +1987,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
                 html: true,
                 title: $("<img />", {
                   style: "max-height: 100%; max-width: 100%; min-width: 180px;",
-                  src: (imageSrc.data ? imageSrc.data : imageSrc.path)
+                  src: (imageSrc.data ? "data:;base64," + Buffer.from(imageSrc.data, "binary").toString("base64") : imageSrc.path)
                 })
               });
             }
