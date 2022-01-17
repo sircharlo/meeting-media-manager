@@ -179,7 +179,7 @@
     }
 
     .file-list li:not(.confirmDelete):hover {
-      background-color: var(--bs-light);
+      background-color: var(--bs-gray-200);
       color: var(--bs-dark);
     }
 
@@ -210,7 +210,10 @@
 
     .infoIcons {
       display: flex;
-      color: var(--bs-secondary);
+    }
+
+    li:not(.new-file) .infoIcons i.fa-globe-americas {
+      color: #4a6da7;
     }
 
     .wasHidden span {
@@ -320,6 +323,10 @@
         background-color: var(--bs-gray-dark);
       }
 
+      .file-list li:not(.confirmDelete):hover {
+        background-color: var(--bs-gray-200);
+      }
+
       .accordion-button {
         background-color: var(--bs-gray-800);
       }
@@ -418,7 +425,7 @@
     <div class="flex-fill py-3 row text-start">
       <div class="card">
         <div class="card-body">
-          <ul id="fileList" class="list-unstyled m-0 file-list" style="opacity: 0;"></ul>
+          <ul id="fileList" class="list-unstyled m-0 file-list"></ul>
         </div>
       </div>
     </div>
