@@ -1928,7 +1928,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
           if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
           if (currentStep !== "additionalMedia") {
             if (!file.newFile) {
-              if (file.congSpecific && !file.recurring) html.find(".infoIcons").append("<i class='fas fa-fw fa-edit me-1 text-primary'></i>").addClass("canMove");
+              if (file.congSpecific && !file.recurring) html.addClass("canMove").find(".infoIcons").append("<i class='fas fa-fw fa-edit me-1 text-primary'></i>");
               if (((!file.congSpecific && (file.url || file.safeName.includes(" - "))) || file.recurring) && !file.hidden) html.addClass("canHide").prepend("<i class='far fa-fw fa-check-square me-2'></i>");
               if (!file.congSpecific && !(file.url || file.safeName.includes(" - "))) html.addClass("cantHide").prepend("<i class='fas fa-fw fa-stop me-2'></i>");
             }
