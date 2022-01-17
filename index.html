@@ -43,6 +43,7 @@
     #fileList li i:not(.file-type):not(.file-origin),
     #webdavFolderList li {
       cursor: pointer;
+      display: flex;
     }
 
     #overlaySettings,
@@ -422,8 +423,8 @@
         <input class="col enterPrefixInput form-control text-center" v type="text" maxlength="1" id="enterPrefix-5" disabled />
       </div>
     </div>
-    <div class="flex-fill py-3 row text-start">
-      <div class="card">
+    <div class="flex-fill overflow-hidden py-3 row text-start">
+      <div class="card h-100 overflow-hidden">
         <div class="card-body">
           <ul id="fileList" class="list-unstyled m-0 file-list"></ul>
         </div>

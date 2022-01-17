@@ -1834,8 +1834,9 @@ $("#fileList").on("click", "li.confirmDelete .fa-minus-square", async function()
     successful = await webdavRm($(this).closest("li").data("url"));
   }
   if (successful) {
-    $(this).closest("li").fadeOut(fadeDelay, function(){
+    $(this).closest("li").slideUp(fadeDelay, function(){
       $(this).tooltip("dispose").remove();
+      $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 11));
     });
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].splice(meetingMedia[$("#chooseMeeting input:checked").prop("id")].findIndex(item => item.media.find(mediaItem => mediaItem.url === $(this).closest("li").data("url"))), 1);
   }
@@ -1880,13 +1881,17 @@ $("#fileList").on("click", ".wasHidden", async function() {
   }
 });
 $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
+  let initiatingChange = $(this).prop("name");
   try {
     if ($("#chooseMeeting input:checked").length > 0) {
       $(".relatedToUpload *:not(.enterPrefixInput):enabled").prop("disabled", true).addClass("fileListLoading");
-      var weekMedia = [];
+      var weekMedia = {
+        existing: [],
+        new: []
+      };
       if (currentStep == "additionalMedia") {
         fs.readdirSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"))).map(function(item) {
-          weekMedia.push({
+          weekMedia.existing.push({
             title: item,
             media: [{
               safeName: item,
@@ -1897,7 +1902,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         });
       } else {
         if (!meetingMedia[$("#chooseMeeting input:checked").prop("id")]) meetingMedia[$("#chooseMeeting input:checked").prop("id")] = [];
-        weekMedia = meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(mediaItem => mediaItem.media.length > 0);
+        weekMedia.existing = meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(mediaItem => mediaItem.media.length > 0);
       }
       var newFiles = [];
       let newFileChosen = $("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0;
@@ -1916,17 +1921,15 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
             }]
           });
         }
-        weekMedia = weekMedia.concat(newFiles);
+        weekMedia.new = newFiles;
       }
-      var newList = [];
-      for (var weekMediaItem of weekMedia) {
-        newList = newList.concat(weekMediaItem.media);
-      }
-      newList = newList.sort((a, b) => a.safeName.localeCompare(b.safeName));
-      $("#fileList").empty();
+      $("#fileList li" + (initiatingChange == "chooseMeeting" ? "" : ".new-file")).slideUp(fadeDelay, function() {
+        $(this).remove();
+      });
       $(".tooltip").remove();
+      let newList = Object.keys(weekMedia).map(type => (initiatingChange == "chooseMeeting" || type == "new") &&  weekMedia[type]).flat().filter(Boolean).map(weekMediaItem => weekMediaItem.media).flat().sort((a, b) => a.safeName.localeCompare(b.safeName));
       for (var file of newList) {
-        let html = $("<li data-bs-toggle='tooltip' data-url='" + file.url + "' data-safename='" + file.safeName + "'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons'></div></li>").tooltip({
+        let html = $("<li data-bs-toggle='tooltip' data-url='" + file.url + "' data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
           title: file.safeName
         });
         if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
@@ -1993,9 +1996,16 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
             }
           }
         }
-        $("#fileList").append(html);
+        let insertPosition = $("#fileList li").toArray().concat(html).sort((a, b) => $(a).text().localeCompare($(b).text())).indexOf(html);
+        if (initiatingChange == "chooseMeeting" || insertPosition >= $("#fileList li").length) {
+          html.appendTo($("#fileList")).slideDown(fadeDelay);
+        } else {
+          if (insertPosition < $("#fileList li").length) {
+            html.insertBefore($("#fileList li").eq($("#fileList li").toArray().concat(html).sort((a, b) => $(a).text().localeCompare($(b).text())).indexOf(html))).slideDown(fadeDelay);
+          }
+        }
       }
-      $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 11));
+      $("#fileList").css("column-count", Math.ceil(Object.values(weekMedia).flat().map(item => item.media).flat().length / 11));
       $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
       $("#" + (currentStep == "additionalMedia" ? "btnDoneUpload" : "btnCancelUpload")).toggle(!newFileChosen);
       $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
