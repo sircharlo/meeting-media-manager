@@ -1,5 +1,3 @@
-// TODO: further test lffi images and lffi av settings
-
 const fadeDelay = 200,
   axios = require("axios"),
   escape = require("escape-html"),
@@ -439,7 +437,6 @@ async function executeDryrun(persistantOverlay) {
   if (!persistantOverlay) await overlay(false);
 }
 async function executeStatement(db, statement) {
-  console.log(statement);
   var vals = await db.exec(statement)[0],
     valObj = [];
   if (vals) {
@@ -450,7 +447,7 @@ async function executeStatement(db, statement) {
       }
     }
   }
-  console.log(valObj);
+  if (debug) console.log({statement: statement, valObj: valObj});
   return valObj;
 }
 async function ffmpegSetup() {
@@ -1840,7 +1837,7 @@ $("#fileList").on("click", "li.confirmDelete .fa-minus-square", async function()
   if (successful) {
     $(this).closest("li").slideUp(fadeDelay, function(){
       $(this).tooltip("dispose").remove();
-      $("#fileList").css("column-count", Math.ceil($("#fileList li").length / 11));
+      $("#fileList li").css("width", 100 / Math.ceil($("#fileList li").length / 11) + "%");
     });
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].splice(meetingMedia[$("#chooseMeeting input:checked").prop("id")].findIndex(item => item.media.find(mediaItem => mediaItem.url === $(this).closest("li").data("url"))), 1);
   }
@@ -2009,7 +2006,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
           }
         }
       }
-      $("#fileList").css("column-count", Math.ceil(Object.values(weekMedia).flat().map(item => item.media).flat().length / 11));
+      $("#fileList li").css("width", 100 / Math.ceil(Object.values(weekMedia).flat().map(item => item.media).flat().length / 11) + "%");
       $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
       $("#" + (currentStep == "additionalMedia" ? "btnDoneUpload" : "btnCancelUpload")).toggle(!newFileChosen);
       $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
