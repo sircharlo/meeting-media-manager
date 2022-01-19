@@ -321,19 +321,21 @@ function createVideoSync(mediaFile){
             encoder.addFrameRgba(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data);
             encoder.finalize();
             fs.writeFileSync(outputFilePath, encoder.FS.readFile(encoder.outputFilename));
-            rm(mediaFile);
             encoder.delete();
             $("div#convert").remove();
+            rm(mediaFile);
             return resolve();
           });
-          $("img#imgToConvert").on("error", function() {
-            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, null, bugAction);
+          $("img#imgToConvert").on("error", function(err) {
+            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, bugAction(err));
+            $("div#convert").remove();
+            return resolve();
           });
           $("img#imgToConvert").prop("src", mediaFile);
         });
       }
     } catch (err) {
-      notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, bugAction);
+      notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, bugAction(err));
       return resolve();
     }
   });
@@ -619,7 +621,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
           multimediaItem.IssueTagNumber = issueTagNumber;
           if (!memOnly) multimediaItem.LocalPath = path.join(paths.pubs, multimediaItem.KeySymbol, multimediaItem.IssueTagNumber, multimediaItem.FilePath);
         }
-        multimediaItem.FileName = (multimediaItem.Caption.length > multimediaItem.Label.length ? multimediaItem.Caption : multimediaItem.Label);
+        multimediaItem.FileName = sanitizeFilename(multimediaItem.Caption.length > multimediaItem.Label.length ? multimediaItem.Caption : multimediaItem.Label);
         var picture = {
           BeginParagraphOrdinal: multimediaItem.BeginParagraphOrdinal,
           title: multimediaItem.FileName,
@@ -828,7 +830,7 @@ async function getWeMediaFromDb() {
       var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
       for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
         var LocalPath = path.join(paths.pubs, "w", issue, picture.FilePath);
-        var FileName = (picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
+        var FileName = sanitizeFilename(picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
         var pictureObj = {
           title: FileName,
           filepath: LocalPath,
@@ -1013,38 +1015,23 @@ async function request(url, opts) {
     response = payload;
   } catch (err) {
     response = (err.response ? err.response : err);
-    console.error(response);
+    log.scope("request").error(response);
     if (options.webdav) throw(response);
   }
   return response;
 }
 function sanitizeFilename(filename) {
-  filename = filename.match(/(\p{Script=Cyrillic}*\p{Script=Latin}*[-. 0-9_]*)/ug)
-    .join("")
-    .replace(/[?!"»“”‘’«()\\[\]№—$]*/g, "")
-    .replace(/[;:,|/]+/g, " - ")
-    .replace(/ +/g, " ")
-    .replace(/\.+/g, ".")
-    .replace(/\r?\n/g, " - ");
-  var bytes = Buffer.byteLength(filename, "utf8");
-  var toolong = 200;
-  if (bytes > toolong) {
-    var fe = filename.split(".").pop();
-    var chunks = filename.split(" - ");
-    while (bytes > toolong) {
-      if (chunks.length > 2) {
-        chunks.pop();
-        filename = chunks.join(" - ");
-      } else {
-        filename = filename.substring(0, 90);
-        chunks = [filename];
-      }
-      bytes = Buffer.byteLength(filename + "." + fe, "utf8");
-    }
-    filename = chunks.join(" - ") + "." + fe;
-    bytes = Buffer.byteLength(filename, "utf8");
+  filename = filename.match(/(\p{Script=Cyrillic}*\p{Script=Latin}*[-. 0-9_]*)/ug).join("").replace(/[?!"»“”‘’«()\\[\]№—$]*/g, "").replace(/[;:,|/]+/g, " - ").replace(/ +/g, " ").replace(/\.+/g, ".").replace(/\r?\n/g, " - ").trim();
+  let currentBytes = Buffer.byteLength(filename, "utf8"),
+    tooManyBytes = 200,
+    maxCharactersInPath = 250;
+  while (currentBytes > tooManyBytes) {
+    let filenameNoExt = path.basename(filename, path.extname(filename));
+    filename = filenameNoExt.slice(0, -1).trim() + path.extname(filename);
+    currentBytes = Buffer.byteLength(filename, "utf8");
   }
-  filename = filename.trim();
+  let projectedPathCharLength = path.join(paths.media, "9999-99-99", filename).length;
+  if (projectedPathCharLength > maxCharactersInPath) filename = path.basename(filename, path.extname(filename)).slice(0, -(projectedPathCharLength - maxCharactersInPath)).trim() + path.extname(filename);
   filename = path.basename(filename, path.extname(filename)) + path.extname(filename).toLowerCase();
   return filename;
 }
@@ -1741,7 +1728,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     progressSet(i + 1, multimediaItems.length);
     let multimediaItem = multimediaItems[i];
     var tempMedia = {
-      filename: (i + 1).toString().padStart(2, "0") + " - " + (multimediaItem.queryInfo.Label ? multimediaItem.queryInfo.Label : (multimediaItem.queryInfo.Caption ? multimediaItem.queryInfo.Caption : (multimediaItem.queryInfo.FilePath ? multimediaItem.queryInfo.FilePath : multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3")))) + (multimediaItem.queryInfo.FilePath && (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption) ? path.extname(multimediaItem.queryInfo.FilePath) : "")
+      filename: sanitizeFilename((i + 1).toString().padStart(2, "0") + " - " + (multimediaItem.queryInfo.Label ? multimediaItem.queryInfo.Label : (multimediaItem.queryInfo.Caption ? multimediaItem.queryInfo.Caption : (multimediaItem.queryInfo.FilePath ? multimediaItem.queryInfo.FilePath : multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3")))) + (multimediaItem.queryInfo.FilePath && (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption) ? path.extname(multimediaItem.queryInfo.FilePath) : ""))
     };
     if (multimediaItem.queryInfo.CategoryType !== -1) {
       var jwpubContents = await new zipper($("#jwpubPicker").val()).readFile("contents");
