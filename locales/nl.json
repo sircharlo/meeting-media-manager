@@ -65,7 +65,7 @@
   "wannaHelpExplain": "De gekozen media taal is not niet beschikbaar als display taal voor JWMMF. Zou je willen helpen met JWMMF te vertalen for gebruikers die deze taal spreken?",
   "wannaHelpForSure": "Help bij het vertalen van deze app",
   "wannaHelpWillGoAway": "Deze melding wordt alleen getoond wanneer een nieuwe versie van JWMMF beschikbaar is.",
-  "warning": "Waarschuwing",
+  "warn": "Waarschuwing",
   "warnFileNotAvailable": "Het volgende bestand is nog niet beschikbaar. Probeer alsjeblieft later opnieuw of neem contact op met jouw videoconferentie organisator.",
   "warnMp4ConversionFailure": "Het volgende bestand kon niet omgezet worden naar een MP4 formaat:",
   "warnNoDocumentsFound": "Er was geen media gevonden in de gekozen JWPUB bestanden. Controller het bestand of neem contact op met de developer van deze app.",

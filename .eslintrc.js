@@ -10,6 +10,7 @@ module.exports = {
     "sourceType": "module"
   },
   "rules": {
+    "no-control-regex": "off",
     "indent": [
       "error",
       2

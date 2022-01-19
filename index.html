@@ -208,8 +208,6 @@
 
     #fileList {
       height: 100%;
-      /* column-fill: auto;
-      column-rule: solid 1px; */
       display: flex;
       flex-direction: column;
       flex-wrap: wrap;
@@ -220,8 +218,18 @@
       display: flex;
     }
 
-    li:not(.new-file) .infoIcons i.fa-globe-americas {
-      color: #4a6da7;
+    li:not(.new-file):not(.wasHidden) .infoIcons i.fa-globe-americas {
+      color: var(--bs-primary);
+    }
+
+    li:not(.new-file):not(.wasHidden) .infoIcons i.fa-cloud,
+    li:not(.new-file):not(.wasHidden) .infoIcons i.fa-sync-alt {
+      color: var(--bs-teal);
+    }
+
+    li.wasHidden .filename,
+    li.wasHidden .infoIcons {
+      color: gray
     }
 
     .wasHidden span {

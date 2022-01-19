@@ -2,7 +2,22 @@ const fadeDelay = 200,
   axios = require("axios"),
   escape = require("escape-html"),
   i18n = require("i18n"),
-  log = require("electron-log"),
+  log = {
+    debug: function() {
+      if (logLevel == "debug") console.log.apply(console,arguments);
+    },
+    error: function() {
+      !("error" in logOutput) && (logOutput.error = []);
+      logOutput.error.push(arguments);
+      console.error.apply(console,arguments);
+    },
+    info: function() {
+      console.info.apply(console,arguments);
+    },
+    warn: function() {
+      console.warn.apply(console,arguments);
+    },
+  },
   net = require("net"),
   os = require("os"),
   path = require("path"),
@@ -18,8 +33,6 @@ function checkInternet(online) {
     setTimeout(updateOnlineStatus, 4000);
   }
 }
-log.transports.console.level = "info";
-log.transports.file.level = false;
 i18n.configure({
   directory: path.join(__dirname, "locales"),
   defaultLocale: "en",
@@ -39,20 +52,11 @@ require("electron").ipcRenderer.on("macUpdate", () => {
 require("electron").ipcRenderer.on("goAhead", () => {
   goAhead();
 });
-
 const aspect = require("aspectratio"),
   bootstrap = require("bootstrap"),
-  bugAction = function(err) {
-    return {
-      desc: "reportIssue",
-      url: "https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("###Describe the bug\nA clear and concise description of what the bug is.\n\n###To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n###Expected behavior\nA clear and concise description of what you expected to happen.\n\n###Screenshots\nIf possible, add screenshots to help explain your problem.\n\n###System specs\n- " + os.type() + " " + os.release() + "\n- JWMMF v" + remote.app.getVersion() + "\n\n###Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n#### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
-        if ((entry[0].startsWith("congServer") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
-        return entry;
-      })), null, 2) + "\n```" : "") + (err ? "\n#### Error details\n```\n" + JSON.stringify(err, Object.getOwnPropertyNames(err), 2) + "\n```" : "") + "\n").replace(/\n/g, "%0D%0A")
-    };
-  },
   currentAppVersion = "v" + remote.app.getVersion(),
   dayjs = require("dayjs"),
+  logOutput = {},
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
   fullHd = [1920, 1080],
@@ -66,6 +70,11 @@ const aspect = require("aspectratio"),
   v8 = require("v8"),
   {XMLParser} = require("fast-xml-parser"),
   zipper = require("adm-zip");
+
+const bugUrl = () => "https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- JWMMF v" + remote.app.getVersion() + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
+  if ((entry[0].startsWith("congServer") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
+  return entry;
+})), null, 2) + "\n```" : "") + (logOutput.error && logOutput.error.length >0 ? "\n### Full error log\n```\n" + JSON.stringify(logOutput.error, null, 2) + "\n```" : "") + "\n").replace(/\n/g, "%0D%0A");
 
 dayjs.extend(require("dayjs/plugin/isoWeek"));
 dayjs.extend(require("dayjs/plugin/isBetween"));
@@ -82,6 +91,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   ffmpegIsSetup = false,
   jsonLangs = {},
   jwpubDbs = {},
+  logLevel = "info",
   meetingMedia,
   modal = new bootstrap.Modal(document.getElementById("staticBackdrop"), {
     backdrop: "static",
@@ -121,7 +131,7 @@ function goAhead() {
     try {
       prefs = JSON.parse(fs.readFileSync(paths.prefs));
     } catch (err) {
-      notifyUser("error", "errorInvalidPrefs", null, true, err, bugAction(err));
+      notifyUser("error", "errorInvalidPrefs", null, true, err, true);
     }
     prefsInitialize();
   }
@@ -143,7 +153,10 @@ function goAhead() {
     if ($(this).prop("id").includes("cong")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
     if ($(this).prop("id") == "lang") setMediaLang();
-    if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) rm([paths.media]);
+    if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) {
+      rm([paths.media]);
+      $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+    }
     validateConfig(true);
   });
 }
@@ -204,7 +217,7 @@ function convertPdf(mediaFile) {
       }
       await rm(mediaFile);
     }).catch((err) => {
-      notifyUser("warning", "warnPdfConversionFailure", path.basename(mediaFile), true, err);
+      notifyUser("warn", "warnPdfConversionFailure", path.basename(mediaFile), true, err);
     }).then(() => {
       resolve();
     });
@@ -254,7 +267,7 @@ function convertSvg(mediaFile) {
       return resolve();
     });
     $("img#svgImg").on("error", function() {
-      notifyUser("warning", "warnSvgConversionFailure", path.basename(mediaFile), true);
+      notifyUser("warn", "warnSvgConversionFailure", path.basename(mediaFile), true);
       return resolve();
     });
     $("img#svgImg").prop("src", mediaFile);
@@ -276,14 +289,14 @@ function createMediaNames() {
       for (var j = 0; j < meeting[i].media.length; j++) { // media
         meeting[i].media[j].safeName = (i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0");
         if (meeting[i].media[j].filesize) {
-          meeting[i].media[j].safeName = sanitizeFilename(meeting[i].media[j].safeName + " - " + ((meeting[i].media[j].queryInfo.TargetParagraphNumberLabel ? meeting[i].media[j].queryInfo.TargetParagraphNumberLabel + ". " : "")) + meeting[i].media[j].title + "." + (meeting[i].media[j].filetype ? meeting[i].media[j].filetype : path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath))));
+          meeting[i].media[j].safeName = sanitizeFilename(meeting[i].media[j].safeName + " - " + ((meeting[i].media[j].queryInfo.TargetParagraphNumberLabel ? meeting[i].media[j].queryInfo.TargetParagraphNumberLabel + "- " : "")) + meeting[i].media[j].title + path.extname((meeting[i].media[j].url ? meeting[i].media[j].url : meeting[i].media[j].filepath)));
         } else {
           continue;
         }
       }
     }
   }
-  for (var meetingDay of Object.keys(meetingMedia)) log.scope("debug").silly(meetingDay, JSON.stringify(meetingMedia[meetingDay].filter(mediaItem => mediaItem.media.length > 0).map(item => item.media).flat(), null, 2));
+  for (var meetingDay of Object.keys(meetingMedia)) log.debug(meetingDay, JSON.stringify(meetingMedia[meetingDay].filter(mediaItem => mediaItem.media.length > 0).map(item => item.media).flat(), null, 2));
   perf("createMediaNames", "stop");
 }
 function createVideoSync(mediaFile){
@@ -296,7 +309,7 @@ function createVideoSync(mediaFile){
             rm(mediaFile);
             return resolve();
           }).on("error", function(err) {
-            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, bugAction(err));
+            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
             return resolve();
           }).noVideo().save(path.join(outputFilePath));
         });
@@ -327,7 +340,7 @@ function createVideoSync(mediaFile){
             return resolve();
           });
           $("img#imgToConvert").on("error", function(err) {
-            notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, bugAction(err));
+            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
             $("div#convert").remove();
             return resolve();
           });
@@ -335,7 +348,7 @@ function createVideoSync(mediaFile){
         });
       }
     } catch (err) {
-      notifyUser("warning", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, bugAction(err));
+      notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
       return resolve();
     }
   });
@@ -345,7 +358,7 @@ function dateFormatter() {
   try {
     if (locale !== "en") require("dayjs/locale/" + locale);
   } catch(err) {
-    log.scope("locale").warn("Date locale " + locale + " not found, falling back to 'en'");
+    log.warn("%c[locale] Date locale " + locale + " not found, falling back to 'en'");
   }
   $(".today").removeClass("today");
   for (var d = 0; d < 7; d++) {
@@ -383,7 +396,7 @@ function disableGlobalPref([pref, value]) {
   let row = $("#" + pref).closest("div.row");
   if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black i18n-title' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>").attr("title", i18n.__("settingLocked")).tooltip());
   row.addClass("text-muted disabled").find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
-  log.scope("enforcedPrefs").info("%c[" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
+  log.info("%c[enforcedPrefs] [" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
 }
 function displayMusicRemaining() {
   let timeRemaining;
@@ -452,7 +465,7 @@ async function executeStatement(db, statement) {
       }
     }
   }
-  log.scope("executeStatement").silly({statement: statement, valObj: valObj});
+  log.debug({statement: statement, valObj: valObj});
   return valObj;
 }
 async function ffmpegSetup() {
@@ -535,11 +548,11 @@ async function getCongMedia() {
             hiddenFileLogString = "background-color: #fff3cd; color: #856404;";
           }));
         }
-        log.scope("hiddenMedia").info("%c[" + hiddenFilesFolder.basename + "] " + hiddenFile.basename, hiddenFileLogString);
+        log.info("%c[hiddenMedia] [" + hiddenFilesFolder.basename + "] " + hiddenFile.basename, hiddenFileLogString);
       }
     }
   } catch (err) {
-    notifyUser("error", "errorGetCongMedia", null, true, err, bugAction(err));
+    notifyUser("error", "errorGetCongMedia", null, true, err, true);
     updateTile("specificCong", "danger", "fas fa-times-circle");
   }
   perf("getCongMedia", "stop");
@@ -567,7 +580,7 @@ async function getDbFromJwpub(pub, issue, localpath) {
     }
     return jwpubDbs[pub][issue];
   } catch (err) {
-    notifyUser("warning", "errorJwpubDbFetch", pub + " - " + issue, false, err, bugAction(err));
+    notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, err, true);
   }
 }
 async function getDocumentExtract(db, docId) {
@@ -621,7 +634,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
           multimediaItem.IssueTagNumber = issueTagNumber;
           if (!memOnly) multimediaItem.LocalPath = path.join(paths.pubs, multimediaItem.KeySymbol, multimediaItem.IssueTagNumber, multimediaItem.FilePath);
         }
-        multimediaItem.FileName = sanitizeFilename(multimediaItem.Caption.length > multimediaItem.Label.length ? multimediaItem.Caption : multimediaItem.Label);
+        multimediaItem.FileName = sanitizeFilename((multimediaItem.Caption.length > multimediaItem.Label.length ? multimediaItem.Caption : multimediaItem.Label), true);
         var picture = {
           BeginParagraphOrdinal: multimediaItem.BeginParagraphOrdinal,
           title: multimediaItem.FileName,
@@ -634,7 +647,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
         multimediaItems.push(picture);
       }
     } catch (err) {
-      notifyUser("warning", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err, bugAction(err));
+      notifyUser("warn", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err, true);
     }
   }
   return multimediaItems;
@@ -718,14 +731,14 @@ async function getMediaLinks(pub, track, issue, format, docId) {
       if (pub === "w" && parseInt(issue) >= 20080101 && issue.slice(-2) == "01") pub = "wp";
       let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
       let result = (await request(requestUrl)).data;
-      log.scope("getMediaLinks").silly(pub, track, issue, format, docId, requestUrl, result);
+      log.debug(pub, track, issue, format, docId, requestUrl, result);
       if (result && result.length > 0 && result[0].status && result[0].status == 404 && pub && track) {
         requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + pub + "m" + "&track=" + track + (issue ? "&issue=" + issue : "") + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
         result = (await request(requestUrl)).data;
-        log.scope("getMediaLinks").silly(pub + "m", track, issue, format, docId, requestUrl, result);
+        log.debug(pub + "m", track, issue, format, docId, requestUrl, result);
       }
       if (result && result.files) {
-        log.scope("getMediaLinks").silly(result);
+        log.debug(result);
         let mediaFileCategories = Object.values(result.files)[0];
         mediaFiles = mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : Object.keys(mediaFileCategories)[0])].filter(({label}) => label.replace(/\D/g, "") <= prefs.maxRes.replace(/\D/g, ""));
         let map = new Map(mediaFiles.map(item => [item.title, item]));
@@ -742,10 +755,10 @@ async function getMediaLinks(pub, track, issue, format, docId) {
         }
       }
     } catch(err) {
-      notifyUser("warning", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
+      notifyUser("warn", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
     }
   }
-  log.scope("getMediaLinks").silly(mediaFiles);
+  log.debug(mediaFiles);
   return mediaFiles;
 }
 async function getMediaThumbnail(pub, track, issue, format, docId) {
@@ -777,7 +790,7 @@ async function getMwMediaFromDb() {
       }
       updateTile("day" + prefs.mwDay, "success", "fas fa-check-circle");
     } catch(err) {
-      notifyUser("error", "errorGetMwMedia", null, true, err, bugAction(err));
+      notifyUser("error", "errorGetMwMedia", null, true, err, true);
       updateTile("day" + prefs.mwDay, "danger", "fas fa-times-circle");
     }
   }
@@ -830,7 +843,7 @@ async function getWeMediaFromDb() {
       var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
       for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
         var LocalPath = path.join(paths.pubs, "w", issue, picture.FilePath);
-        var FileName = sanitizeFilename(picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label);
+        var FileName = sanitizeFilename((picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label), true);
         var pictureObj = {
           title: FileName,
           filepath: LocalPath,
@@ -846,12 +859,12 @@ async function getWeMediaFromDb() {
           songJson[0].queryInfo = qrySongs[song];
           addMediaItemToPart(weDate, song * 1000, songJson[0]);
         } else {
-          notifyUser("error", "errorGetWeMedia", null, true, songJson, bugAction(songJson));
+          notifyUser("error", "errorGetWeMedia", null, true, songJson, true);
         }
       }
       updateTile("day" + prefs.weDay, "success", "fas fa-check-circle");
     } catch(err) {
-      notifyUser("error", "errorGetWeMedia", null, true, err, bugAction(err));
+      notifyUser("error", "errorGetWeMedia", null, true, err, true);
       updateTile("day" + prefs.weDay, "danger", "fas fa-times-circle");
     }
   }
@@ -908,22 +921,23 @@ async function mp4Convert() {
   updateTile("mp4Convert", "success", "fas fa-check-circle");
   perf("mp4Convert", "stop");
 }
-function notifyUser(type, message, fileOrUrl, persistent, logOutput, action) {
+function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action) {
   let icon;
   switch (type) {
   case "error":
     icon = "fa-exclamation-circle text-danger";
     break;
-  case "warning":
+  case "warn":
     icon = "fa-exclamation-circle text-warning";
     break;
   default:
     icon = "fa-info-circle text-primary";
   }
   if (fileOrUrl) fileOrUrl = escape(fileOrUrl);
-  if (["error", "warning"].includes(type)) log.scope(message).error(fileOrUrl ? fileOrUrl : "", logOutput ? logOutput : "");
+  if (["error", "warn"].includes(type)) log[type](fileOrUrl ? fileOrUrl : "", errorFedToMe ? errorFedToMe : "");
   type = i18n.__(type);
-  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action.url ? "data-toast-action-url='" + escape(action.url) + "'" :"") + ">" + i18n.__(action.desc) + "</button></div>" : "") + "</div></div>").toast("show"));
+  let thisBugUrl = bugUrl() + (errorFedToMe ? encodeURIComponent("\n### Error details\n```\n" + JSON.stringify(errorFedToMe, Object.getOwnPropertyNames(errorFedToMe), 2) + "\n```\n").replace(/\n/g, "%0D%0A") : "");
+  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action ? "data-toast-action-url='" + escape((action && action.url ? action.url : thisBugUrl)) + "'" :"") + ">" + i18n.__(action && action.desc ? action.desc : "reportIssue") + "</button></div>" : "") + "</div></div>").toast("show"));
 }
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
@@ -947,10 +961,10 @@ function perf(func, op) {
 }
 function perfPrint() {
   for (var perfItem of Object.entries(perfStats).sort((a, b) => a[1].stop - b[1].stop)) {
-    log.scope("perf").info("%c[" + perfItem[0] + "] " + (perfItem[1].stop - perfItem[1].start).toFixed(1) + "ms", "background-color: #e2e3e5; color: #41464b;");
+    log.info("%c[perf] [" + perfItem[0] + "] " + (perfItem[1].stop - perfItem[1].start).toFixed(1) + "ms", "background-color: #e2e3e5; color: #41464b;");
   }
   for (let downloadSource of Object.entries(downloadStats)) {
-    log.scope("perf").info("%c[" + downloadSource[0] + "Fetch] " + Object.entries(downloadSource[1]).sort((a,b) => a[0].localeCompare(b[0])).map(downloadOrigin => "from " + downloadOrigin[0] + ": " + (downloadOrigin[1].map(source => source.filesize).reduce((a, b) => a + b, 0) / 1024 / 1024).toFixed(1) + "MB").join(", "), "background-color: #fbe9e7; color: #000;");
+    log.info("%c[perf] [" + downloadSource[0] + "Fetch] " + Object.entries(downloadSource[1]).sort((a,b) => a[0].localeCompare(b[0])).map(downloadOrigin => "from " + downloadOrigin[0] + ": " + (downloadOrigin[1].map(source => source.filesize).reduce((a, b) => a + b, 0) / 1024 / 1024).toFixed(1) + "MB").join(", "), "background-color: #fbe9e7; color: #000;");
   }
 }
 function prefsInitialize() {
@@ -1015,25 +1029,31 @@ async function request(url, opts) {
     response = payload;
   } catch (err) {
     response = (err.response ? err.response : err);
-    log.scope("request").error(response);
+    if (response.config.url && response.data) response = {
+      url: response.config.url,
+      data: response.data
+    };
+    log.error(response);
     if (options.webdav) throw(response);
   }
   return response;
 }
-function sanitizeFilename(filename) {
-  filename = filename.match(/(\p{Script=Cyrillic}*\p{Script=Latin}*[-. 0-9_]*)/ug).join("").replace(/[?!"»“”‘’«()\\[\]№—$]*/g, "").replace(/[;:,|/]+/g, " - ").replace(/ +/g, " ").replace(/\.+/g, ".").replace(/\r?\n/g, " - ").trim();
-  let currentBytes = Buffer.byteLength(filename, "utf8"),
-    tooManyBytes = 200,
-    maxCharactersInPath = 250;
-  while (currentBytes > tooManyBytes) {
-    let filenameNoExt = path.basename(filename, path.extname(filename));
-    filename = filenameNoExt.slice(0, -1).trim() + path.extname(filename);
-    currentBytes = Buffer.byteLength(filename, "utf8");
+function sanitizeFilename(filename, isNotFile) {
+  let fileExtIfApplicable = (isNotFile ? "" : path.extname(filename).toLowerCase());
+  filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).replace(/["»“”‘’«()№+[\]$<>,/\\:*\x00-\x1f\x80-\x9f]/g, "").replace(/ *[—?;:|.!?] */g, " - ").trim().replace(/[ -]+$/g, "") + fileExtIfApplicable;
+  if (!isNotFile) {
+    let maxCharactersInPath = 245,
+      projectedPathCharLength = path.join(paths.media, "9999-99-99", filename).length;
+    if (projectedPathCharLength > maxCharactersInPath) {
+      filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).slice(0, -(projectedPathCharLength - maxCharactersInPath)).trim() + fileExtIfApplicable;
+    }
+    let currentBytes = Buffer.byteLength(filename, "utf8");
+    while (currentBytes > 200) {
+      filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).slice(0, -1).trim() + fileExtIfApplicable;
+      currentBytes = Buffer.byteLength(filename, "utf8");
+    }
   }
-  let projectedPathCharLength = path.join(paths.media, "9999-99-99", filename).length;
-  if (projectedPathCharLength > maxCharactersInPath) filename = path.basename(filename, path.extname(filename)).slice(0, -(projectedPathCharLength - maxCharactersInPath)).trim() + path.extname(filename);
-  filename = path.basename(filename, path.extname(filename)) + path.extname(filename).toLowerCase();
-  return filename;
+  return path.basename(filename, (isNotFile ? "" : path.extname(filename))) + fileExtIfApplicable;
 }
 async function setMediaLang() {
   if (prefs.lang) {
@@ -1141,7 +1161,7 @@ async function syncCongMedia() {
       for (let [meeting, parts] of Object.entries(congSyncMeetingMedia)) {
         for (let part of parts) {
           for (var mediaItem of part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden)) {
-            log.scope("congMedia").info("%c[" + meeting + "] " + mediaItem.safeName, "background-color: #d1ecf1; color: #0c5460");
+            log.info("%c[congMedia] [" + meeting + "] " + mediaItem.safeName, "background-color: #d1ecf1; color: #0c5460");
             await webdavGet(mediaItem);
             totals.cong.current++;
             progressSet(totals.cong.current, totals.cong.total, "specificCong");
@@ -1151,7 +1171,7 @@ async function syncCongMedia() {
       updateStatus("photo-video");
       updateTile("specificCong", "success", "fas fa-check-circle");
     } catch (err) {
-      notifyUser("error", "errorSyncCongMedia", null, true, err, bugAction(err));
+      notifyUser("error", "errorSyncCongMedia", null, true, err, true);
       updateTile("specificCong", "danger", "fas fa-times-circle");
       progressSet(0, 100, "specificCong");
     }
@@ -1178,9 +1198,9 @@ async function syncJwOrgMedia() {
       for (var j = 0; j < partMedia.length; j++) { // media
         if (!partMedia[j].hidden && !partMedia[j].congSpecific && !dryrun) {
           if (!partMedia[j].filesize) {
-            notifyUser("warning", "warnFileNotAvailable", [partMedia[j].queryInfo.KeySymbol, partMedia[j].queryInfo.Track, partMedia[j].queryInfo.IssueTagNumber].filter(Boolean).join("_"), true, partMedia[j]);
+            notifyUser("warn", "warnFileNotAvailable", [partMedia[j].queryInfo.KeySymbol, partMedia[j].queryInfo.Track, partMedia[j].queryInfo.IssueTagNumber].filter(Boolean).join("_"), true, partMedia[j]);
           } else {
-            log.scope("jwOrg").info("%c[" + Object.keys(meetingMedia)[h] + "] " + partMedia[j].safeName, "background-color: #cce5ff; color: #004085;");
+            log.info("%c[jwOrg] [" + Object.keys(meetingMedia)[h] + "] " + partMedia[j].safeName, "background-color: #cce5ff; color: #004085;");
             if (partMedia[j].url) {
               await downloadIfRequired(partMedia[j]);
             } else {
@@ -1200,14 +1220,14 @@ async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "stop");
 }
 async function testJwmmf() {
-  log.transports.console.level = "silly";
+  logLevel = "debug";
   let previousLang = prefs.lang;
   for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"] ) {
     prefs.lang = lang;
     await startMediaSync(true);
   }
   prefs.lang = previousLang;
-  log.transports.console.level = "warn";
+  logLevel = "info";
 }
 function toggleScreen(screen, forceShow) {
   return new Promise((resolve) => {
@@ -1226,7 +1246,7 @@ function updateCleanup() {
     var lastRunVersion = 0;
     if (fs.existsSync(paths.lastRunVersion)) lastRunVersion = fs.readFileSync(paths.lastRunVersion, "utf8");
   } catch(err) {
-    notifyUser("warning", "warnUnknownLastVersion", null, false, err);
+    notifyUser("warn", "warnUnknownLastVersion", null, false, err);
   } finally {
     if (lastRunVersion !== currentAppVersion) {
       setVars();
@@ -1270,7 +1290,7 @@ function updateTile(tile, color, icon) {
 }
 function validateConfig(changed) {
   let configIsValid = true;
-  $(".alertIndicators").removeClass("meeting").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+  $(".alertIndicators").removeClass("meeting");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) $("#localOutputPath").val("");
   let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes"];
   for (let timeField of ["mwStartTime", "weStartTime"]) {
@@ -1516,7 +1536,6 @@ $("#baseDate").on("click", ".dropdown-item", function() {
   $("#baseDate .dropdown-item.active").removeClass("active");
   $(this).addClass("active");
   $("#baseDate > button").text($(this).text());
-  $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   dateFormatter();
 });
 $("#btnCancelUpload").on("click", () => {
@@ -1649,7 +1668,7 @@ $("#btnUpload").on("click", async () => {
       }
     }
   } catch (err) {
-    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, bugAction(err));
+    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true);
   }
   await executeDryrun();
   $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
@@ -1664,7 +1683,6 @@ $("#btn-upload").on("click", async function() {
   await executeDryrun(true);
   await toggleScreen("overlayUploadFile");
   overlay(false);
-  $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   $("#chooseMeeting").empty();
   for (var meeting of [prefs.mwDay, prefs.weDay, "Recurring"]) {
     let meetingDate = escape((isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD")));
@@ -1709,7 +1727,7 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
     } else {
       $(this).val("");
       $("#fileToUpload").val("").change();
-      notifyUser("warning", "warnNoDocumentsFound", $(this).val(), true, null, bugAction());
+      notifyUser("warn", "warnNoDocumentsFound", $(this).val(), true, null, true);
     }
   } else {
     $("#fileToUpload").val("").change();
@@ -1787,6 +1805,7 @@ $("#overlaySettings").on("click", ".btn-clean-up", function() {
   $(this).toggleClass("btn-success btn-warning").prop("disabled", true);
   setVars();
   rm([paths.media, paths.langs, paths.pubs]);
+  $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   setTimeout(() => {
     $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
   }, 3000);
@@ -1909,8 +1928,9 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
       }
       $("#fileList li" + (initiatingChange == "chooseMeeting" ? "" : ".new-file")).slideUp(fadeDelay, function() {
         $(this).remove();
+        $(".tooltip").remove();
+        $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
       });
-      $(".tooltip").remove();
       let newList = Object.keys(weekMedia).map(type => (initiatingChange == "chooseMeeting" || type == "new") &&  weekMedia[type]).flat().filter(Boolean).map(weekMediaItem => weekMediaItem.media).flat().sort((a, b) => a.safeName.localeCompare(b.safeName));
       for (var file of newList) {
         let html = $("<li data-bs-toggle='tooltip' data-url='" + file.url + "' data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
@@ -1919,18 +1939,18 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
         if (currentStep !== "additionalMedia") {
           if (!file.newFile) {
-            if (file.congSpecific && !file.recurring) html.addClass("canMove").find(".infoIcons").append("<i class='fas fa-fw fa-pen me-1 text-primary'></i>");
+            if (file.congSpecific && !file.recurring) html.addClass("canMove").find(".infoIcons").append("<i class='fas fa-fw fa-pen me-1'></i>");
             if (((!file.congSpecific && (file.url || file.safeName.includes(" - "))) || file.recurring) && !file.hidden) html.addClass("canHide").prepend("<i class='far fa-fw fa-check-square me-2'></i>");
             if (!file.congSpecific && !(file.url || file.safeName.includes(" - "))) html.addClass("cantHide").prepend("<i class='fas fa-fw fa-stop me-2'></i>");
           }
           if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-fw fa-square me-2'></i>");
         }
         if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-fw fa-plus-square me-2'></i>");
-        if (newList.filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
+        if (Object.values(weekMedia).flat().map(weekMediaItem => weekMediaItem.media).flat().filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
         let fileOrigin = "fa-globe-americas";
         if (file.congSpecific || file.newFile) {
-          fileOrigin = "fa-cloud text-success";
-          if (file.recurring) html.find(".infoIcons").append("<i class='fas fa-fw fa-sync-alt text-info me-1'></i>");
+          fileOrigin = "fa-cloud";
+          if (file.recurring) html.find(".infoIcons").append("<i class='fas fa-fw fa-sync-alt me-1'></i>");
         }
         let fileType = "fa-question-circle";
         if (isImage(file.safeName)) {
@@ -1995,7 +2015,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
       $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
     }
   } catch (err) {
-    notifyUser("error", "errorAdditionalMediaList", null, true, err, bugAction(err));
+    notifyUser("error", "errorAdditionalMediaList", null, true, err, true);
   }
 });
 $("#overlayUploadFile").on("keyup", ".enterPrefixInput", getPrefix);
@@ -2024,7 +2044,7 @@ $(document).on("shown.bs.modal", "#staticBackdrop", function () {
   }
 });
 $("#overlaySettings").on("click", ".btn-action:not(.btn-danger)", function() {
-  if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugAction().url);
+  if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugUrl());
   shell.openExternal($(this).data("action-url"));
 });
 $("#btnTestApp").on("click", testJwmmf);
