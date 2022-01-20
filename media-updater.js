@@ -4,17 +4,27 @@ const fadeDelay = 200,
   i18n = require("i18n"),
   log = {
     debug: function() {
+      let now = + new Date();
+      if (!logOutput.debug[now]) logOutput.debug[now] = [];
+      logOutput.debug[now].push(arguments);
       if (logLevel == "debug") console.log.apply(console,arguments);
     },
     error: function() {
-      !("error" in logOutput) && (logOutput.error = []);
-      logOutput.error.push(arguments);
+      let now = + new Date();
+      if (!logOutput.error[now]) logOutput.error[now] = [];
+      logOutput.error[now].push(arguments);
       console.error.apply(console,arguments);
     },
     info: function() {
+      let now = + new Date();
+      if (!logOutput.info[now]) logOutput.info[now] = [];
+      logOutput.info[now].push(arguments);
       console.info.apply(console,arguments);
     },
     warn: function() {
+      let now = + new Date();
+      if (!logOutput.warn[now]) logOutput.warn[now] = [];
+      logOutput.warn[now].push(arguments);
       console.warn.apply(console,arguments);
     },
   },
@@ -56,7 +66,6 @@ const aspect = require("aspectratio"),
   bootstrap = require("bootstrap"),
   currentAppVersion = "v" + remote.app.getVersion(),
   dayjs = require("dayjs"),
-  logOutput = {},
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
   fullHd = [1920, 1080],
@@ -92,6 +101,12 @@ var baseDate = dayjs().startOf("isoWeek"),
   jsonLangs = {},
   jwpubDbs = {},
   logLevel = "info",
+  logOutput = {
+    error: {},
+    warn: {},
+    info: {},
+    debug: {}
+  },
   meetingMedia,
   modal = new bootstrap.Modal(document.getElementById("staticBackdrop"), {
     backdrop: "static",
@@ -296,7 +311,7 @@ function createMediaNames() {
       }
     }
   }
-  for (var meetingDay of Object.keys(meetingMedia)) log.debug(meetingDay, JSON.stringify(meetingMedia[meetingDay].filter(mediaItem => mediaItem.media.length > 0).map(item => item.media).flat(), null, 2));
+  log.debug(Object.entries(meetingMedia).map(meeting => { meeting[1] = meeting[1].filter(mediaItem => mediaItem.media.length > 0).map(item => item.media).flat(); return meeting; }));
   perf("createMediaNames", "stop");
 }
 function createVideoSync(mediaFile){
@@ -731,14 +746,13 @@ async function getMediaLinks(pub, track, issue, format, docId) {
       if (pub === "w" && parseInt(issue) >= 20080101 && issue.slice(-2) == "01") pub = "wp";
       let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
       let result = (await request(requestUrl)).data;
-      log.debug(pub, track, issue, format, docId, requestUrl, result);
+      log.debug(pub, track, issue, format, docId, requestUrl);
       if (result && result.length > 0 && result[0].status && result[0].status == 404 && pub && track) {
         requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + pub + "m" + "&track=" + track + (issue ? "&issue=" + issue : "") + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
         result = (await request(requestUrl)).data;
-        log.debug(pub + "m", track, issue, format, docId, requestUrl, result);
+        log.debug(pub + "m", track, issue, format, docId, requestUrl);
       }
       if (result && result.files) {
-        log.debug(result);
         let mediaFileCategories = Object.values(result.files)[0];
         mediaFiles = mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : Object.keys(mediaFileCategories)[0])].filter(({label}) => label.replace(/\D/g, "") <= prefs.maxRes.replace(/\D/g, ""));
         let map = new Map(mediaFiles.map(item => [item.title, item]));
