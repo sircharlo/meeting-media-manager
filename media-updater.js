@@ -760,11 +760,13 @@ async function getMediaLinks(pub, track, issue, format, docId) {
           let {label, subtitled} = map.get(item.title);
           if ((item.label.replace(/\D/g, "") - label.replace(/\D/g, "") || subtitled - item.subtitled) > 0) map.set(item.title, item);
         }
-        mediaFiles = Array.from(map.values(), ({title, file: {url}, filesize, duration, trackImage}) => ({title, url, filesize, duration, trackImage}));
+        mediaFiles = Array.from(map.values(), ({title, file: {url}, filesize, duration, trackImage}) => ({title, url, filesize, duration, trackImage})).map(item => {
+          item.trackImage = item.trackImage.url;
+          return item;
+        });
         for (var item of mediaFiles) {
-          if (item.duration >0 && (!item.trackImage || (item.trackImage && !item.trackImage.url))) {
-            if (!item.trackImage) item.trackImage = {};
-            item.trackImage.url = await getMediaThumbnail(pub, track, issue, format, docId);
+          if (item.duration >0 && !item.trackImage) {
+            item.trackImage = await getMediaThumbnail(pub, track, issue, format, docId);
           }
         }
       }
@@ -1077,7 +1079,7 @@ async function setMediaLang() {
         $("#songPicker").append($("<option>", {
           value: sjj.url,
           text: sjj.title,
-          "data-thumbnail": sjj.trackImage.url
+          "data-thumbnail": sjj.trackImage
         }));
       }
     } catch (err) {
@@ -1975,10 +1977,10 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
           fileType = "fa-file-pdf";
         }
         html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i>" + (currentStep !== "additionalMedia" ? "<i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>" : ""));
-        if ((file.trackImage && file.trackImage.url) || file.congSpecific || file.filepath) {
+        if (file.trackImage || file.congSpecific || file.filepath) {
           let imageSrc = {};
-          if (file.trackImage && file.trackImage.url) {
-            imageSrc.path = file.trackImage.url;
+          if (file.trackImage) {
+            imageSrc.path = file.trackImage;
           } else if (file.filepath) {
             imageSrc.path = file.filepath;
             if (tempMediaArray.find(item => item.filename == file.filepath)) imageSrc.data = tempMediaArray.find(item => item.filename == file.filepath).contents;
