@@ -170,7 +170,7 @@ function goAhead() {
     if ($(this).prop("id") == "lang") setMediaLang();
     if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) {
       rm([paths.media]);
-      $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+      $(".alertIndicators i").addClass("far fa-circle").removeClass("fas fa-check-circle");
     }
     validateConfig(true);
   });
@@ -1548,11 +1548,15 @@ $("#autoRunAtBoot").on("change", function() {
   });
 });
 $("#baseDate").on("click", ".dropdown-item", function() {
-  baseDate = dayjs($(this).val()).startOf("isoWeek");
-  $("#baseDate .dropdown-item.active").removeClass("active");
-  $(this).addClass("active");
-  $("#baseDate > button").text($(this).text());
-  dateFormatter();
+  let newBaseDate = dayjs($(this).val()).startOf("isoWeek");
+  if (!baseDate.isSame(newBaseDate)) {
+    baseDate = newBaseDate;
+    $(".alertIndicators i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+    $("#baseDate .dropdown-item.active").removeClass("active");
+    $(this).addClass("active");
+    $("#baseDate > button").text($(this).text());
+    dateFormatter();
+  }
 });
 $("#btnCancelUpload").on("click", () => {
   toggleScreen("overlayUploadFile");
@@ -1821,7 +1825,7 @@ $("#overlaySettings").on("click", ".btn-clean-up", function() {
   $(this).toggleClass("btn-success btn-warning").prop("disabled", true);
   setVars();
   rm([paths.media, paths.langs, paths.pubs]);
-  $(".alertIndicators").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+  $(".alertIndicators i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   setTimeout(() => {
     $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
   }, 3000);
