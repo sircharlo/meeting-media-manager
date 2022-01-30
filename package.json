@@ -47,7 +47,7 @@
       ]
     },
     "linux": {
-      "category": "Utilities",
+      "category": "Utility",
       "target": "AppImage",
       "icon": "build/icon.png",
       "publish": [
