@@ -520,10 +520,6 @@ async function getCongMedia() {
   perf("getCongMedia", "start");
   updateTile("specificCong", "warning", "fas fa-circle-notch fa-spin");
   try {
-    totals.cong = {
-      total: 0,
-      current: 1
-    };
     for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
       let isMeetingDate = dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"));
       let isRecurring = congSpecificFolder.basename == "Recurring";
@@ -1160,14 +1156,9 @@ async function syncCongMedia() {
     updateStatus("cloud");
     try {
       totals.cong = {
-        total: 0,
+        total: Object.values(congSyncMeetingMedia).map(parts => Object.values(parts).map(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue),
         current: 1
       };
-      for (let parts of Object.values(congSyncMeetingMedia)) {
-        for (let part of parts.filter(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length > 0)) {
-          totals.cong.total = totals.cong.total + part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length;
-        }
-      }
       for (let datedFolder of await glob.sync(path.join(paths.media, "*/"))) {
         if (congSyncMeetingMedia[path.basename(datedFolder)]) for (let jwOrCongFile of await glob.sync(path.join(datedFolder, "*"))) {
           if (!congSyncMeetingMedia[path.basename(datedFolder)].map(part => part.media.filter(media => !media.hidden).map(media => media.safeName)).flat().includes(path.basename(jwOrCongFile))) await rm(jwOrCongFile);
@@ -1198,14 +1189,9 @@ async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "start");
   updateTile("syncJwOrgMedia", "warning", "fas fa-circle-notch fa-spin");
   totals.jw = {
-    total: 0,
+    total: Object.values(meetingMedia).map(meeting => Object.values(meeting).map(part => part.media.filter(mediaItem => !mediaItem.congSpecific).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue),
     current: 1
   };
-  for (let meeting of Object.values(meetingMedia)) {
-    for (let part of meeting) {
-      totals.jw.total = totals.jw.total + part.media.filter(mediaItem => !mediaItem.congSpecific).length;
-    }
-  }
   progressSet(totals.jw.current, totals.jw.total, "syncJwOrgMedia");
   for (var h = 0; h < Object.values(meetingMedia).length; h++) { // meetings
     var meeting = Object.values(meetingMedia)[h];

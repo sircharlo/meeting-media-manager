@@ -40,7 +40,6 @@ If ever you run into any issues with JWMMF, please use [GitHub Issues](https://g
 
 I'm open to suggestions! Please use [GitHub Discussions](https://github.com/sircharlo/jw-meeting-media-fetcher/discussions) to discuss potential new features.
 
-<meta name="google-site-verification" content="ryxTooYENIk1ek3gUkeqH1gc1zGCpK-hyikZCtV92bY" />
 This app is made with love and a bit of spare time. Enjoy!
 
 *- COS*
