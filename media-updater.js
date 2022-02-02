@@ -1148,6 +1148,19 @@ async function startMediaSync(isDryrun) {
   }
   perf("total", "stop");
   perfPrint();
+  /*
+  let logObj = Object.entries(logOutput).map(logLevel => Object.entries(logLevel[1]).map(logItem => [logItem[0], logLevel[0], logItem[1]])).flat().sort();
+  console.log((await request("https://pastebin.com/api/api_post.php", {
+    method: "POST",
+    data: new URLSearchParams({
+      api_dev_key: "4fe0d5da994143b504443b806aef6a87",
+      api_paste_code: JSON.stringify(logObj, null, 2),
+      api_option: "paste",
+      api_paste_format: "json",
+      api_paste_expire_date: "1M"
+    }).toString()
+  })).data);
+  */
 }
 async function syncCongMedia() {
   let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring"));
