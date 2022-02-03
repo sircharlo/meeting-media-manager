@@ -1874,7 +1874,8 @@ $("#fileList").on("click", "li:not(.confirmDelete) .fa-minus-square", function()
     $(".confirmDelete").removeClass("confirmDelete");
   }, 3000);
 });
-$("#fileList").on("click", "li.confirmDelete .fa-minus-square", async function() {
+$("#fileList").on("click", "li.confirmDelete:not(.webdavWait) .fa-minus-square", async function() {
+  $(this).closest("li").addClass("webdavWait");
   let successful = true;
   if (currentStep == "additionalMedia") {
     rm(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).closest("li").data("url")));
@@ -1889,13 +1890,14 @@ $("#fileList").on("click", "li.confirmDelete .fa-minus-square", async function()
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].splice(meetingMedia[$("#chooseMeeting input:checked").prop("id")].findIndex(item => item.media.find(mediaItem => mediaItem.url === $(this).closest("li").data("url"))), 1);
   }
 });
-$("#fileList").on("click", ".canHide", async function() {
+$("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
+  $(this).addClass("webdavWait");
   if (await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).data("safename"))) {
-    $(this).removeClass("canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
+    $(this).removeClass("webdavWait canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = true ));
   }
 });
-$("#fileList").on("click", ".canMove i.fa-pen", async function() {
+$("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function() {
   let row = $(this).closest(".canMove");
   let src = row.data("url");
   let previousSafename = row.data("safename");
@@ -1906,6 +1908,7 @@ $("#fileList").on("click", ".canMove i.fa-pen", async function() {
   $("#staticBackdrop .modal-footer button").on("click", async function() {
     let newName = escape($("#staticBackdrop .modal-body input").val().trim()) + path.extname(src);
     if (escape(path.basename(src, path.extname(src))) !== escape($("#staticBackdrop .modal-body input").val().trim())) {
+      row.addClass("webdavWait");
       if (await webdavMv(src, path.posix.join(path.dirname(src), newName))) {
         Object.keys(meetingMedia).filter(meeting => dayjs($("#chooseMeeting input:checked").prop("id")).isValid() ? meeting == $("#chooseMeeting input:checked").prop("id") : true).forEach(meeting => {
           meetingMedia[meeting].filter(item => item.media.filter(mediaItem => mediaItem.safeName == previousSafename).length > 0).forEach(item => item.media.forEach(mediaItem => {
@@ -1913,7 +1916,7 @@ $("#fileList").on("click", ".canMove i.fa-pen", async function() {
             mediaItem.url = path.posix.join(path.dirname(src), newName);
           }));
         });
-        row.data("safename", newName).attr("title", newName).data("url", path.posix.join(path.dirname(src), newName)).find("span.filename").text(newName);
+        row.removeClass("webdavWait").data("safename", newName).attr("title", newName).data("url", path.posix.join(path.dirname(src), newName)).find("span.filename").text(newName);
         let elems = $("#fileList li").detach().sort(function (a, b) {
           return ($(a).text() < $(b).text() ? -1 : $(a).text() > $(b).text() ? 1 : 0);
         });
@@ -1922,9 +1925,10 @@ $("#fileList").on("click", ".canMove i.fa-pen", async function() {
     }
   });
 });
-$("#fileList").on("click", ".wasHidden", async function() {
+$("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
+  $(this).addClass("webdavWait");
   if (await webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")))) {
-    $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
+    $(this).removeClass("wasHidden webdavWait").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = false ));
   }
 });
