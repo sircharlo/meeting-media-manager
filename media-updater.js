@@ -1893,9 +1893,10 @@ $("#fileList").on("click", "li.confirmDelete:not(.webdavWait) .fa-minus-square",
 $("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
   $(this).addClass("webdavWait");
   if (await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).data("safename"))) {
-    $(this).removeClass("webdavWait canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
+    $(this).removeClass("canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = true ));
   }
+  $(this).removeClass("webdavWait");
 });
 $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function() {
   let row = $(this).closest(".canMove");
@@ -1916,21 +1917,23 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
             mediaItem.url = path.posix.join(path.dirname(src), newName);
           }));
         });
-        row.removeClass("webdavWait").data("safename", newName).attr("title", newName).data("url", path.posix.join(path.dirname(src), newName)).find("span.filename").text(newName);
+        row.data("safename", newName).attr("title", newName).data("url", path.posix.join(path.dirname(src), newName)).find("span.filename").text(newName);
         let elems = $("#fileList li").detach().sort(function (a, b) {
           return ($(a).text() < $(b).text() ? -1 : $(a).text() > $(b).text() ? 1 : 0);
         });
         $("#fileList").append(elems);
       }
+      row.removeClass("webdavWait");
     }
   });
 });
 $("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
   $(this).addClass("webdavWait");
   if (await webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")))) {
-    $(this).removeClass("wasHidden webdavWait").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
+    $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = false ));
   }
+  $(this).removeClass("webdavWait");
 });
 $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
   let initiatingChange = $(this).prop("name");
