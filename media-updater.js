@@ -667,15 +667,13 @@ async function getForcedPrefs() {
   let forcedPrefs = {};
   if (await webdavExists(paths.forcedPrefs)) {
     try {
-      forcedPrefs = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + "/" + paths.forcedPrefs, {
+      forcedPrefs = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + paths.forcedPrefs, {
         webdav: true,
         noCache: true
       })).data;
     } catch(err) {
       notifyUser("error", "errorForcedSettingsEnforce", null, true, err);
     }
-  } else {
-    await webdavPut(forcedPrefs, prefs.congServerDir, "forcedPrefs.json");
   }
   return forcedPrefs;
 }
@@ -1043,7 +1041,8 @@ async function request(url, opts) {
     response = (err.response ? err.response : err);
     if (response.config.url && response.data) response = {
       url: response.config.url,
-      data: response.data
+      data: response.data,
+      status: response.status
     };
     log.error(response);
     if (options.webdav) throw(response);
@@ -1053,7 +1052,7 @@ async function request(url, opts) {
 function sanitizeFilename(filename, isNotFile) {
   let fileExtIfApplicable = (isNotFile ? "" : path.extname(filename).toLowerCase());
   filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).replace(/["»“”‘’«()№+[\]$<>,/\\:*\x00-\x1f\x80-\x9f]/g, "").replace(/ *[—?;:|.!?] */g, " - ").trim().replace(/[ -]+$/g, "") + fileExtIfApplicable;
-  if (!isNotFile) {
+  if (!isNotFile && paths.media) {
     let maxCharactersInPath = 245,
       projectedPathCharLength = path.join(paths.media, "9999-99-99", filename).length;
     if (projectedPathCharLength > maxCharactersInPath) {
@@ -1346,10 +1345,24 @@ async function webdavGet(file) {
   let localFile = path.join(paths.media, file.folder, file.safeName);
   if (!fs.existsSync(localFile) || !(file.filesize == fs.statSync(localFile).size)) {
     mkdirSync(path.join(paths.media, file.folder));
-    fs.writeFileSync(localFile, new Buffer((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + file.url, {
+    let perf = {
+      start: performance.now(),
+      bytes: file.filesize,
+      name: file.safeName
+    };
+    let remoteFile = await request("https://" + prefs.congServer + ":" + prefs.congServerPort + file.url, {
       webdav: true,
       isFile: true
-    })).data));
+    });
+    perf.end = performance.now();
+    perf.bits = perf.bytes * 8;
+    perf.ms = perf.end - perf.start;
+    perf.s = perf.ms / 1000;
+    perf.bps = perf.bits / perf.s;
+    perf.mbps = perf.bps / 1000000;
+    perf.dir = "down";
+    log.debug(perf);
+    fs.writeFileSync(localFile, new Buffer(remoteFile.data));
     downloadStat("cong", "live", file);
   } else {
     downloadStat("cong", "cache", file);
@@ -1417,6 +1430,11 @@ async function webdavPut(file, destFolder, destName) {
   try {
     if (webdavIsAGo && file && destFolder && destName) {
       await webdavMkdir(destFolder);
+      let perf = {
+        start: performance.now(),
+        bytes: file.byteLength,
+        name: destName
+      };
       await request(destFile, {
         method: "PUT",
         data: file,
@@ -1425,6 +1443,14 @@ async function webdavPut(file, destFolder, destName) {
         },
         webdav: true
       });
+      perf.end = performance.now();
+      perf.bits = perf.bytes * 8;
+      perf.ms = perf.end - perf.start;
+      perf.s = perf.ms / 1000;
+      perf.bps = perf.bits / perf.s;
+      perf.mbps = perf.bps / 1000000;
+      perf.dir = "up";
+      log.debug(perf);
     }
     return true;
   } catch (err) {
