@@ -39,7 +39,7 @@ function checkInternet(online) {
     overlay(true, "cog fa-spin");
     require("electron").ipcRenderer.send("autoUpdate");
   } else {
-    overlay(true, "wifi", "circle-notch fa-spin text-danger");
+    overlay(true, "wifi fa-beat", "circle-notch fa-spin text-danger");
     setTimeout(updateOnlineStatus, 4000);
   }
 }
@@ -409,8 +409,8 @@ const delay = s => new Promise(res => {
 });
 function disableGlobalPref([pref, value]) {
   let row = $("#" + pref).closest("div.row");
-  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black i18n-title' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>").attr("title", i18n.__("settingLocked")).tooltip());
-  row.addClass("text-muted disabled").find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
+  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black i18n-title' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>"));
+  row.addClass("text-muted disabled").attr("title", i18n.__("settingLocked")).tooltip().find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
   log.info("%c[enforcedPrefs] [" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
 }
 function displayMusicRemaining() {
@@ -443,7 +443,7 @@ function downloadStat(origin, source, file) {
   downloadStats[origin][source].push(file);
 }
 function enablePreviouslyForcedPrefs() {
-  $("div.row.text-muted.disabled").removeClass("text-muted disabled").find(".forcedPref").prop("disabled", false).removeClass("forcedPref");
+  $("div.row.text-muted.disabled").removeClass("text-muted disabled").attr("title", "").tooltip("dispose").find(".forcedPref").prop("disabled", false).removeClass("forcedPref");
   $("div.row .settingLocked").remove();
 }
 async function enforcePrefs() {
@@ -465,7 +465,7 @@ async function enforcePrefs() {
   }
 }
 async function executeDryrun(persistantOverlay) {
-  await overlay(true, "cog fa-spin");
+  await overlay(true, "cloud fa-beat");
   await startMediaSync(true);
   if (!persistantOverlay) await overlay(false);
 }
@@ -519,6 +519,7 @@ async function ffmpegSetup() {
 async function getCongMedia() {
   perf("getCongMedia", "start");
   updateTile("specificCong", "warning", "fas fa-circle-notch fa-spin");
+  updateStatus("cloud");
   try {
     for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
       let isMeetingDate = dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"));
@@ -694,11 +695,11 @@ async function getInitialData() {
     $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "'>" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
   }
   if (prefs.autoStartSync && configIsValid) {
-    await overlay(true, "hourglass-start", "pause", "cancel-sync");
+    await overlay(true, "flag-checkered fa-beat", "pause", "cancel-sync");
     await delay(5);
     if (!cancelSync) $("#mediaSync").click();
   }
-  overlay(false, (prefs.autoStartSync && configIsValid ? "hourglass-start" : null));
+  overlay(false, (prefs.autoStartSync && configIsValid ? "flag-checkered" : null));
 }
 async function getJwOrgLanguages(forceRefresh) {
   if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months")) || forceRefresh) {
@@ -902,7 +903,7 @@ function mkdirSync(dirPath) {
 }
 async function mp4Convert() {
   perf("mp4Convert", "start");
-  updateStatus("microchip");
+  updateStatus("file-video");
   updateTile("mp4Convert", "warning", "fas fa-circle-notch fa-spin");
   await convertUnusableFiles();
   var filesToProcess = glob.sync(path.join(paths.media, "*", "*"), {
@@ -918,7 +919,6 @@ async function mp4Convert() {
     totals.mp4Convert.current++;
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
   }
-  updateStatus("photo-video");
   updateTile("mp4Convert", "success", "fas fa-check-circle");
   perf("mp4Convert", "stop");
 }
@@ -1107,7 +1107,7 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
 async function startMediaSync(isDryrun) {
   perf("total", "start");
   dryrun = !!isDryrun;
-  if (!dryrun) $("#statusIcon").toggleClass("text-primary text-muted");
+  if (!dryrun) $("#statusIcon").toggleClass("text-primary text-muted fa-flip");
   stayAlive = false;
   if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(fadeDelay, 0);
   await setVars(isDryrun);
@@ -1115,6 +1115,7 @@ async function startMediaSync(isDryrun) {
     if (!dryrun && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(now) || !(dayjs(path.basename(folder), "YYYY-MM-DD").isValid()))) await rm([folder]);
   }
   perf("getJwOrgMedia", "start");
+  updateStatus("globe-americas");
   await Promise.all([
     getMwMediaFromDb(),
     getWeMediaFromDb()
@@ -1123,6 +1124,7 @@ async function startMediaSync(isDryrun) {
   createMediaNames();
   if (webdavIsAGo) await getCongMedia();
   if (!dryrun) {
+    updateStatus("download");
     await Promise.all([
       syncCongMedia(),
       syncJwOrgMedia(),
@@ -1133,7 +1135,8 @@ async function startMediaSync(isDryrun) {
     $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(fadeDelay, 1);
     setTimeout(() => {
       $(".alertIndicators").addClass("alert-primary").removeClass("alert-success");
-      $("#statusIcon").toggleClass("text-muted text-primary");
+      $("#statusIcon").toggleClass("text-muted text-primary fa-flip");
+      updateStatus("photo-video");
     }, 2000);
   }
   perf("total", "stop");
@@ -1156,7 +1159,6 @@ async function syncCongMedia() {
   let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring"));
   if (webdavIsAGo) {
     perf("syncCongMedia", "start");
-    updateStatus("cloud");
     try {
       totals.cong = {
         total: Object.values(congSyncMeetingMedia).map(parts => Object.values(parts).map(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue),
@@ -1178,7 +1180,6 @@ async function syncCongMedia() {
           }
         }
       }
-      updateStatus("photo-video");
       updateTile("specificCong", "success", "fas fa-check-circle");
     } catch (err) {
       notifyUser("error", "errorSyncCongMedia", null, true, err, true);
@@ -1220,7 +1221,6 @@ async function syncJwOrgMedia() {
       }
     }
   }
-  updateStatus("photo-video");
   updateTile("syncJwOrgMedia", "success", "fas fa-check-circle");
   perf("syncJwOrgMedia", "stop");
 }
@@ -1288,7 +1288,7 @@ function updateCleanup() {
   }
 }
 function updateStatus(icon) {
-  if (!dryrun) $("#statusIcon").removeClass($("#statusIcon").attr("class").split(" ").filter(el => el.includes("fa-")).join(" ")).addClass("fa-fw fa-3x fa-" + icon);
+  if (!dryrun) $("#statusIcon").removeClass($("#statusIcon").attr("class").split(" ").filter(el => !["fa-fw", "fa-3x", "fa-flip"].includes(el) && el.includes("fa-")).join(" ")).addClass("fa-" + icon);
 }
 function updateTile(tile, color, icon) {
   if (!dryrun) $("#" + tile).removeClass($("#" + tile).attr("class").split(" ").filter(el => el.includes("alert-")).join(" ")).addClass("alert-" + color).find("i").removeClass().addClass(icon);
@@ -1823,7 +1823,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
 $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown").prop("disabled", true);
   await startMediaSync();
-  await overlay(true, "smile-beam text-primary", (prefs.autoQuitWhenDone ? "door-open" : null), "stay-alive");
+  await overlay(true, "circle-check text-success fa-beat", (prefs.autoQuitWhenDone ? "person-running" : null), "stay-alive");
   await delay(3);
   if (prefs.autoQuitWhenDone && !stayAlive) {
     remote.app.exit();
@@ -1926,7 +1926,7 @@ $("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
   }
   $(this).removeClass("webdavWait");
 });
-$("#overlayUploadFile").on("change keyup", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
+$("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
   let initiatingChange = $(this).prop("name");
   try {
     if ($("#chooseMeeting input:checked").length > 0) {
