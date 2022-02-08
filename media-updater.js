@@ -1970,9 +1970,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
               newFile: true,
               recurring: false,
               filepath: splitFileToUpload,
-              trackImage: ($("input#typeSong:checked").length > 0 && $("#songPicker option:selected").data("thumbnail") ? {
-                url: $("#songPicker option:selected").data("thumbnail")
-              } : null)
+              trackImage: ($("input#typeSong:checked").length > 0 && $("#songPicker option:selected").data("thumbnail") ? $("#songPicker option:selected").data("thumbnail") : null)
             }]
           });
         }
