@@ -806,24 +806,15 @@ async function getMwMediaFromDb() {
   }
 }
 function getPrefix() {
+  if (!$("#chooseMeeting input").prop("disabled")) for (var a0 = 0; a0 < 6; a0++) {
+    let curValuePresent = $("#enterPrefix-" + a0).val().length > 0;
+    if (!curValuePresent) $(Array(6 - 1 - a0).fill(a0).map((x, y) => "#enterPrefix-" + (x + 1 + y)).join(", ")).val("");
+    $("#enterPrefix-" + (a0 + 1)).prop("disabled", !curValuePresent).stop().fadeTo(fadeDelay, curValuePresent);
+  }
   let prefix = $(".enterPrefixInput").map(function() {
     return $(this).val();
   }).toArray().join("").trim();
-  for (var a0 = 0; a0 <= 4; a0++) {
-    if ($("#enterPrefix-" + a0).val().length > 0) {
-      for (var a1 = a0 + 1; a1 <= 5; a1++) {
-        $("#enterPrefix-" + a1).prop("disabled", false);
-      }
-    } else {
-      for (var a2 = a0 + 1; a2 <= 5; a2++) {
-        $("#enterPrefix-" + a2).val("").prop("disabled", true);
-      }
-    }
-  }
-  $(".enterPrefixInput").each(function() {
-    $(this).fadeTo(fadeDelay, !$(this).prop("disabled"));
-  });
-  $("#enterPrefix-" + prefix.length).focus();
+  if ($("#enterPrefix-0").val().length > 0) $("#enterPrefix-" + prefix.length).focus();
   if (prefix.length % 2) prefix = prefix + 0;
   if (prefix.length > 0) prefix = prefix.match(/.{1,2}/g).join("-");
   return prefix;
@@ -1935,7 +1926,7 @@ $("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
   }
   $(this).removeClass("webdavWait");
 });
-$("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
+$("#overlayUploadFile").on("change keyup", ".enterPrefixInput, #chooseMeeting input, #fileToUpload", function() {
   let initiatingChange = $(this).prop("name");
   try {
     if ($("#chooseMeeting input:checked").length > 0) {
