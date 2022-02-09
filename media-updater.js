@@ -200,15 +200,17 @@ function additionalMedia() {
 }
 function addMediaItemToPart (date, paragraph, media) {
   if (!meetingMedia[date]) meetingMedia[date] = [];
-  if (meetingMedia[date].filter(part => part.title == paragraph).length === 0) {
-    meetingMedia[date].push({
-      title: paragraph,
-      media: []
-    });
+  if (!media.checksum || !meetingMedia[date].map(part => part.media).flat().map(item => item.checksum).filter(Boolean).includes(media.checksum)) {
+    if (meetingMedia[date].filter(part => part.title == paragraph).length === 0) {
+      meetingMedia[date].push({
+        title: paragraph,
+        media: []
+      });
+    }
+    media.folder = date;
+    meetingMedia[date].find(part => part.title == paragraph).media.push(media);
+    meetingMedia[date] = meetingMedia[date].sort((a, b) => a.title > b.title && 1 || -1);
   }
-  media.folder = date;
-  meetingMedia[date].find(part => part.title == paragraph).media.push(media);
-  meetingMedia[date] = meetingMedia[date].sort((a, b) => a.title > b.title && 1 || -1);
 }
 function rm(toDelete) {
   if (!Array.isArray(toDelete)) toDelete = [toDelete];
@@ -755,7 +757,7 @@ async function getMediaLinks(pub, track, issue, format, docId) {
           let {label, subtitled} = map.get(item.title);
           if ((item.label.replace(/\D/g, "") - label.replace(/\D/g, "") || subtitled - item.subtitled) > 0) map.set(item.title, item);
         }
-        mediaFiles = Array.from(map.values(), ({title, file: {url}, filesize, duration, trackImage}) => ({title, url, filesize, duration, trackImage})).map(item => {
+        mediaFiles = Array.from(map.values(), ({title, file: {url}, file: {checksum}, filesize, duration, trackImage}) => ({title, url, checksum, filesize, duration, trackImage})).map(item => {
           item.trackImage = item.trackImage.url;
           return item;
         });
