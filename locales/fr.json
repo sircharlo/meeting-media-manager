@@ -29,6 +29,7 @@
   "info": "Information",
   "infoPubIgnored": "Impossible de récupérer les médias pour la publication suivante:",
   "jwpub": "JWPUB",
+  "keepOriginalsAfterConversion": "Conserver les fichiers multimédias originaux après leur conversion",
   "localAppLang": "Langue d'affichage",
   "maxRes": "Résolution maximale pour vidéos",
   "mediaLang": "Langue des médias",

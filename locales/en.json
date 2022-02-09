@@ -29,6 +29,7 @@
   "info": "Information",
   "infoPubIgnored": "Unable to fetch media for the following publication:",
   "jwpub": "JWPUB",
+  "keepOriginalsAfterConversion": "Keep original media files after conversion",
   "localAppLang": "Display language",
   "maxRes": "Maximum resolution for videos",
   "mediaLang": "Media language",

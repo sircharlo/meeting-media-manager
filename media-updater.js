@@ -323,7 +323,7 @@ function createVideoSync(mediaFile){
       if (path.extname(mediaFile).includes("mp3")) {
         ffmpegSetup().then(function () {
           ffmpeg(mediaFile).on("end", function() {
-            rm(mediaFile);
+            if (!prefs.keepOriginalsAfterConversion) rm(mediaFile);
             return resolve();
           }).on("error", function(err) {
             notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
@@ -353,7 +353,7 @@ function createVideoSync(mediaFile){
             fs.writeFileSync(outputFilePath, encoder.FS.readFile(encoder.outputFilename));
             encoder.delete();
             $("div#convert").remove();
-            rm(mediaFile);
+            if (!prefs.keepOriginalsAfterConversion) rm(mediaFile);
             return resolve();
           });
           $("img#imgToConvert").on("error", function(err) {
@@ -974,7 +974,7 @@ function perfPrint() {
   }
 }
 function prefsInitialize() {
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
   for (let field of ["localAppLang", "lang", "localOutputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "mwStartTime", "weStartTime"]) {
@@ -986,7 +986,7 @@ function prefsInitialize() {
   for (let dtPicker of datepickers) {
     dtPicker.setDate($(dtPicker.element).val());
   }
-  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages"]) {
+  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages"]) {
     $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
@@ -1323,7 +1323,8 @@ function validateConfig(changed) {
     if (!prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
   }
   $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
-  $("#mp4Convert").toggleClass("d-flex", prefs.enableMp4Conversion);
+  $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
+  $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
   $("#btnMeetingMusic").toggle(!!prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
   $(".btn-home").toggleClass("btn-dark", configIsValid).toggleClass("btn-danger", !configIsValid);
   $("#mediaSync, .btn-home").prop("disabled", !configIsValid);
