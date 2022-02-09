@@ -1,0 +1,28 @@
+---
+layout: default
+---
+
+<nav id='sidebar'>
+  {% include nav.html %}
+</nav>
+
+<section id='content'>
+  <h3 id="jwmmf">JWMMF</h3>
+
+  <p>JW Meeting Media Fetcher, or <strong>JWMMF</strong> for short, is an app that facilitates the downloading of media that will be considered during congregation meetings of Jehovah’s Witnesses. This is especially useful to share media with others
+    during congregation Zoom meetings, for use during personal study, or when using JW Library is not possible or feasible for various reasons.</p>
+
+  <p>This app is made with love and a bit of spare time. Enjoy!</p>
+
+  <p><em>- COS</em></p>
+  {% for post in site.posts %}
+  <article class='{{ post.type }}'>
+    <a name='{{ post.url }}' href='#{{ post.url }}'>
+      <h2>{% if post.type %}<code><b>{{ post.type }}</b> {{ post.url_path }}</code> {% endif %}{{ post.title }}</h2>
+    </a>
+    <section class='body'>
+      {{ post.content }}
+    </section>
+  </article>
+  {% endfor %}
+</section>
