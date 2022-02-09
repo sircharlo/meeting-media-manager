@@ -11,7 +11,9 @@ JW Meeting Media Fetcher, or **JWMMF** for short, is an app that facilitates the
 
 ---
 
-![Media sync in progress](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/00-hero.gif?raw=true)
+![Media sync in progress](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/hero-main.gif?raw=true)
+
+![Congregation media management](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/hero-cong.gif?raw=true)
 
 
 ---
