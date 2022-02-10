@@ -857,14 +857,14 @@ async function getWeMediaFromDb() {
           filesize: fs.statSync(LocalPath).size,
           queryInfo: picture
         };
-        addMediaItemToPart(weDate, picture.BeginParagraphOrdinal, pictureObj);
+        addMediaItemToPart(weDate, 1, pictureObj);
       }
       var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
       for (var song = 0; song < qrySongs.length; song++) {
         let songJson = await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track);
         if (songJson.length > 0) {
           songJson[0].queryInfo = qrySongs[song];
-          addMediaItemToPart(weDate, song * 1000, songJson[0]);
+          addMediaItemToPart(weDate, song * 2, songJson[0]);
         } else {
           notifyUser("error", "errorGetWeMedia", null, true, songJson, true);
         }
