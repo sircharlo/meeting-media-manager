@@ -693,7 +693,7 @@ async function getInitialData() {
   let configIsValid = validateConfig();
   $("#version").html("JWMMF " + escape(currentAppVersion));
   $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
-  if (os.platform() == "linux") $(".notLinux").prop("disabled", true);
+  $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
   $("#baseDate button, #baseDate .dropdown-item:eq(0)").text(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
   $("#baseDate .dropdown-item:eq(0)").addClass("active");
   for (var a = 1; a <= 4; a++) {
