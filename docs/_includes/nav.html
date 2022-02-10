@@ -5,7 +5,7 @@
   <li><a href='#{{ post.url }}'>{{ post.title }}</a></li>
   {% endif %}
   {% endfor %}
-  {% for category in site.categories %}
+  {% for category in site.categories reversed %}
   <li>
     <h2>{{ category | first }}</h2>
     <ul>

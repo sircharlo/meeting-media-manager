@@ -1,5 +1,6 @@
 ---
 title: 'Screenshots'
+category: Usage
 layout: null
 ---
 

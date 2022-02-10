@@ -546,7 +546,7 @@ code {
 #content {
   padding: 20px;
   padding-left: 260px;
-  /* max-width: 700px; */
+  max-width: 1000px;
 }
 
 #content .control {
