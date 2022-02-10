@@ -29,6 +29,7 @@
   "info": "Informação",
   "infoPubIgnored": "Não foi possível descarregar os ficheiros de multimédia dessa publicação:",
   "jwpub": "JWPUB",
+  "keepOriginalsAfterConversion": "Manter os ficheiros de multimédia originais após a conversão",
   "localAppLang": "Língua do programa",
   "maxRes": "Resolução máxima para os vídeos",
   "mediaLang": "Língua das multimédias",
