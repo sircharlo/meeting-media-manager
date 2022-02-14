@@ -70,8 +70,6 @@ audio:not([controls]) {
 
 html {
     font-family: sans-serif; /* 1 */
-    -webkit-text-size-adjust: 100%; /* 2 */
-    -ms-text-size-adjust: 100%; /* 2 */
 }
 
 /**
@@ -437,7 +435,11 @@ body,
 input,
 textarea {
   color: #231734;
-  font: 14px/140% 'Open Sans', Arial, sans-serif;
+  font: 1em 'Open Sans', Arial, sans-serif;
+}
+
+.showcase img {
+    max-width: 50vw;
 }
 
 a {

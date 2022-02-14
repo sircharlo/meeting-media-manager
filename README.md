@@ -13,6 +13,6 @@ This app is made with love and a bit of spare time. Enjoy!
 
 ---
 
-![Media sync in progress](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/hero-main.gif?raw=true)
+![Media sync in progress](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/hero-main.gif?raw=true)
 
-![Congregation media management](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/screenshots/hero-cong.gif?raw=true)
+![Congregation media management](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/hero-cong.gif?raw=true)
