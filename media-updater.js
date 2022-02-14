@@ -156,12 +156,12 @@ function goAhead() {
       if ($(this).prop("type") == "checkbox") {
         prefs[$(this).prop("id")] = $(this).prop("checked");
       } else if ($(this).prop("type") == "radio") {
-        prefs[$(this).closest("div").prop("id")] = $(this).closest("div").find("input:checked").val();
+        prefs[$(this).closest("div").prop("id")] = escape($(this).closest("div").find("input:checked").val());
       } else if ($(this).prop("type") == "text" || $(this).prop("type") == "password"  || $(this).prop("type") == "hidden" || $(this).prop("type") == "range") {
-        prefs[$(this).prop("id")] = $(this).val();
+        prefs[$(this).prop("id")] = escape($(this).val());
       }
     } else if ($(this).prop("tagName") == "SELECT") {
-      prefs[$(this).prop("id")] = $(this).find("option:selected").val();
+      prefs[$(this).prop("id")] = escape($(this).find("option:selected").val());
     }
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("cong")) webdavSetup();
