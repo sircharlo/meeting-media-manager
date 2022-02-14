@@ -231,6 +231,7 @@
     }
 
     li:not(.new-file):not(.wasHidden) .infoIcons i.fa-cloud,
+    li:not(.new-file):not(.wasHidden) .infoIcons i.fa-folder-open,
     li:not(.new-file):not(.wasHidden) .infoIcons i.fa-sync-alt {
       color: var(--bs-teal);
     }
@@ -455,7 +456,7 @@
     </div>
     <div class="align-items-end py-3 row">
       <div class="col-4 text-start">
-        <button class="btn btn-dark" id="btnCancelUpload" type="button">
+        <button class="btn btn-dark" id="btnCancelUpload" type="button" style="display: none;">
           <i class="fas fa-fw fa-home"></i>
         </button>
       </div>

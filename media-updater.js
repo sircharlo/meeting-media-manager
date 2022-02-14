@@ -93,7 +93,6 @@ dayjs.extend(require("dayjs/plugin/duration"));
 
 var baseDate = dayjs().startOf("isoWeek"),
   cancelSync = false,
-  currentStep,
   datepickers,
   downloadStats = {},
   dryrun = false,
@@ -169,33 +168,12 @@ function goAhead() {
     if ($(this).prop("id") == "localAppLang") setAppLang();
     if ($(this).prop("id") == "lang") setMediaLang();
     if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) {
-      rm([paths.media]);
+      rm(glob.sync(path.join(paths.media, "*"), {
+        ignore: [path.join(paths.media, "Recurring")]
+      }));
       $(".alertIndicators i").addClass("far fa-circle").removeClass("fas fa-check-circle");
     }
     validateConfig(true);
-  });
-}
-function additionalMedia() {
-  perf("additionalMedia", "start");
-  currentStep = "additionalMedia";
-  return new Promise((resolve)=>{
-    $("#chooseMeeting").empty();
-    for (var meeting of [prefs.mwDay, prefs.weDay]) {
-      let meetingDate = baseDate.add(meeting, "d").format("YYYY-MM-DD");
-      $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-dark' for='" + meetingDate + "'" + (Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + meetingDate + "</label>");
-    }
-    $(".relatedToUpload, .relatedToUploadType").fadeTo(fadeDelay, 0);
-    $("#btnCancelUpload").fadeOut(fadeDelay);
-    $("#btnDoneUpload").unbind("click").on("click", function() {
-      toggleScreen("overlayUploadFile");
-      $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
-      $("#fileList, #filePicker, #jwpubPicker, .enterPrefixInput").val("").empty().change();
-      $("#chooseMeeting .active, #chooseUploadType .active").removeClass("active");
-      removeEventListeners();
-      perf("additionalMedia", "stop");
-      resolve();
-    }).fadeIn(fadeDelay);
-    toggleScreen("overlayUploadFile");
   });
 }
 function addMediaItemToPart (date, paragraph, media) {
@@ -291,10 +269,14 @@ function convertSvg(mediaFile) {
   });
 }
 async function convertUnusableFiles() {
-  for (let pdfFile of glob.sync(path.join(paths.media, "*", "*pdf"))) {
+  for (let pdfFile of glob.sync(path.join(paths.media, "*", "*pdf"), {
+    ignore: [path.join(paths.media, "Recurring")]
+  })) {
     await convertPdf(pdfFile);
   }
-  for (let svgFile of glob.sync(path.join(paths.media, "*", "*svg"))) {
+  for (let svgFile of glob.sync(path.join(paths.media, "*", "*svg"), {
+    ignore: [path.join(paths.media, "Recurring")]
+  })) {
     await convertSvg(svgFile);
   }
 }
@@ -897,6 +879,31 @@ function isReachable(hostname, port) {
     }
   });
 }
+async function manageMedia() {
+  $(".relatedToUpload, .relatedToUploadType").fadeTo(fadeDelay, 0);
+  $("#btnDoneUpload").fadeOut(fadeDelay);
+  if (!prefs.localAdditionalMediaPrompt) {
+    $("#btnCancelUpload").fadeIn(fadeDelay);
+    await executeDryrun(true);
+  }
+  await toggleScreen("overlayUploadFile");
+  $("#chooseMeeting").empty();
+  for (var meeting of [prefs.mwDay, prefs.weDay, "Recurring"]) {
+    let meetingDate = escape((isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD")));
+    $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-" + (isNaN(meeting) ? "info" : "dark" ) + "' for='" + meetingDate + "'" + (isNaN(meeting) || Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + (isNaN(meeting) ? i18n.__("recurring") : meetingDate) + "</label>");
+  }
+  overlay(false);
+  return (prefs.localAdditionalMediaPrompt ? new Promise((resolve)=>{
+    $("#btnDoneUpload").unbind("click").on("click", function() {
+      toggleScreen("overlayUploadFile");
+      $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
+      $("#fileList, #filePicker, #jwpubPicker, .enterPrefixInput").val("").empty().change();
+      $("#chooseMeeting .active, #chooseUploadType .active").removeClass("active");
+      removeEventListeners();
+      resolve();
+    }).fadeIn(fadeDelay);
+  }) : true);
+}
 function mkdirSync(dirPath) {
   try {
     fs.mkdirSync(dirPath, {
@@ -912,7 +919,7 @@ async function mp4Convert() {
   updateTile("mp4Convert", "warning", "fas fa-circle-notch fa-spin");
   await convertUnusableFiles();
   var filesToProcess = glob.sync(path.join(paths.media, "*", "*"), {
-    ignore: path.join(paths.media, "*", "*.mp4")
+    ignore: [path.join(paths.media, "Recurring", "*"), path.join(paths.media, "*", "*.mp4")]
   });
   totals.mp4Convert = {
     total: filesToProcess.length,
@@ -1116,8 +1123,10 @@ async function startMediaSync(isDryrun) {
   stayAlive = false;
   if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(fadeDelay, 0);
   await setVars(isDryrun);
-  for (let folder of glob.sync(path.join(paths.media, "*/"))) {
-    if (!dryrun && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(now) || !(dayjs(path.basename(folder), "YYYY-MM-DD").isValid()))) await rm([folder]);
+  for (let folder of glob.sync(path.join(paths.media, "*/"), {
+    ignore: [path.join(paths.media, "Recurring")]
+  })) {
+    if (!dryrun && (dayjs(path.basename(folder), "YYYY-MM-DD").isValid() && dayjs(path.basename(folder), "YYYY-MM-DD").isBefore(now) || !dayjs(path.basename(folder), "YYYY-MM-DD").isValid())) await rm([folder]);
   }
   perf("getJwOrgMedia", "start");
   updateStatus("globe-americas");
@@ -1127,14 +1136,16 @@ async function startMediaSync(isDryrun) {
   ]);
   perf("getJwOrgMedia", "stop");
   createMediaNames();
-  if (webdavIsAGo) await getCongMedia();
+  if (webdavIsAGo) {
+    await getCongMedia();
+  } else if (prefs.localAdditionalMediaPrompt) await manageMedia();
   if (!dryrun) {
     updateStatus("download");
     await Promise.all([
       syncCongMedia(),
       syncJwOrgMedia(),
+      syncLocalRecurringMedia(),
     ]);
-    if (prefs.localAdditionalMediaPrompt) await additionalMedia();
     if (prefs.enableMp4Conversion) await mp4Convert();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(paths.media);
     $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(fadeDelay, 1);
@@ -1169,7 +1180,9 @@ async function syncCongMedia() {
         total: Object.values(congSyncMeetingMedia).map(parts => Object.values(parts).map(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue),
         current: 1
       };
-      for (let datedFolder of await glob.sync(path.join(paths.media, "*/"))) {
+      for (let datedFolder of await glob.sync(path.join(paths.media, "*/"), {
+        ignore: [path.join(paths.media, "Recurring")]
+      })) {
         if (congSyncMeetingMedia[path.basename(datedFolder)]) for (let jwOrCongFile of await glob.sync(path.join(datedFolder, "*"))) {
           if (!congSyncMeetingMedia[path.basename(datedFolder)].map(part => part.media.filter(media => !media.hidden).map(media => media.safeName)).flat().includes(path.basename(jwOrCongFile))) await rm(jwOrCongFile);
         }
@@ -1198,7 +1211,7 @@ async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "start");
   updateTile("syncJwOrgMedia", "warning", "fas fa-circle-notch fa-spin");
   totals.jw = {
-    total: Object.values(meetingMedia).map(meeting => Object.values(meeting).map(part => part.media.filter(mediaItem => !mediaItem.congSpecific).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue),
+    total: Object.values(meetingMedia).map(meeting => Object.values(meeting).map(part => part.media.filter(mediaItem => !mediaItem.congSpecific).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue, 0),
     current: 1
   };
   progressSet(totals.jw.current, totals.jw.total, "syncJwOrgMedia");
@@ -1228,6 +1241,16 @@ async function syncJwOrgMedia() {
   }
   updateTile("syncJwOrgMedia", "success", "fas fa-check-circle");
   perf("syncJwOrgMedia", "stop");
+}
+function syncLocalRecurringMedia() {
+  if (prefs.localAdditionalMediaPrompt && fs.existsSync(path.join(paths.media, "Recurring"))) {
+    glob.sync(path.join(paths.media, "Recurring", "*")).forEach((recurringItem) => {
+      Object.keys(meetingMedia).forEach((meeting) => {
+        mkdirSync(path.join(paths.media, meeting));
+        fs.copyFileSync(recurringItem, path.join(paths.media, meeting, path.basename(recurringItem)));
+      });
+    });
+  }
 }
 async function testJwmmf() {
   logLevel = "debug";
@@ -1260,7 +1283,6 @@ function updateCleanup() {
   } finally {
     if (lastRunVersion !== currentAppVersion) {
       setVars();
-      //rm([paths.media]);
       fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
       if (lastRunVersion !== 0) {
         let somePrefWasUpdated = false;
@@ -1676,10 +1698,11 @@ $("#btnUpload").on("click", async () => {
   try {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
     $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
+    mkdirSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id")));
     if ($("input#typeSong:checked").length > 0) {
       let songFile = new Buffer((await request($("#fileToUpload").val(), {isFile: true})).data);
       let songFileName = sanitizeFilename(getPrefix() + " - " + $("#songPicker option:selected").text() + ".mp4");
-      if (currentStep == "additionalMedia") {
+      if (prefs.localAdditionalMediaPrompt) {
         fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), songFileName), songFile);
       } else {
         await webdavPut(songFile, path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), songFileName);
@@ -1688,7 +1711,7 @@ $("#btnUpload").on("click", async () => {
       for (var tempMedia of tempMediaArray) {
         if (tempMedia.url) tempMedia.contents = new Buffer((await request(tempMedia.url, {isFile: true})).data);
         let jwpubFileName = sanitizeFilename(getPrefix() + " - " + tempMedia.filename);
-        if (currentStep == "additionalMedia") {
+        if (prefs.localAdditionalMediaPrompt) {
           if (tempMedia.contents) {
             fs.writeFileSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), jwpubFileName), tempMedia.contents);
           } else {
@@ -1702,7 +1725,7 @@ $("#btnUpload").on("click", async () => {
     } else {
       for (var splitLocalFile of $("#fileToUpload").val().split(" -//- ")) {
         let splitFileToUploadName = sanitizeFilename(getPrefix() + " - " + path.basename(splitLocalFile));
-        if (currentStep == "additionalMedia") {
+        if (prefs.localAdditionalMediaPrompt) {
           fs.copyFileSync(splitLocalFile, path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), splitFileToUploadName));
         } else {
           await webdavPut(fs.readFileSync(splitLocalFile), path.posix.join(prefs.congServerDir, "Media", $("#chooseMeeting input:checked").prop("id")), splitFileToUploadName);
@@ -1712,24 +1735,13 @@ $("#btnUpload").on("click", async () => {
   } catch (err) {
     notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true);
   }
-  await executeDryrun();
+  if (!prefs.localAdditionalMediaPrompt) await executeDryrun();
   $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
   $("#btnCancelUpload, #chooseMeeting input, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
   $("#chooseMeeting input:checked").change();
 });
-$("#btn-upload").on("click", async function() {
-  $(".relatedToUpload, .relatedToUploadType").fadeTo(fadeDelay, 0);
-  $("#btnDoneUpload").fadeOut(fadeDelay);
-  $("#btnCancelUpload").fadeIn(fadeDelay);
-  currentStep = "uploadFile";
-  await executeDryrun(true);
-  await toggleScreen("overlayUploadFile");
-  overlay(false);
-  $("#chooseMeeting").empty();
-  for (var meeting of [prefs.mwDay, prefs.weDay, "Recurring"]) {
-    let meetingDate = escape((isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD")));
-    $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-" + (isNaN(meeting) ? "info" : "dark" ) + "' for='" + meetingDate + "'" + (isNaN(meeting) || Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + (isNaN(meeting) ? i18n.__("recurring") : meetingDate) + "</label>");
-  }
+$("#btn-upload").on("click", function() {
+  manageMedia();
 });
 $("#chooseUploadType input").on("change", function() {
   $("#songPicker:visible").select2("destroy");
@@ -1846,7 +1858,9 @@ $("#localOutputPath").on("mousedown", function(event) {
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
   $(this).toggleClass("btn-success btn-warning").prop("disabled", true);
   setVars();
-  rm([paths.media, paths.langs, paths.pubs]);
+  rm(glob.sync(path.join(paths.media, "*"), {
+    ignore: [path.join(paths.media, "Recurring")]
+  }).concat([paths.langs, paths.pubs]));
   $(".alertIndicators i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   setTimeout(() => {
     $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
@@ -1874,8 +1888,8 @@ $("#fileList").on("click", "li:not(.confirmDelete) .fa-minus-square", function()
 $("#fileList").on("click", "li.confirmDelete:not(.webdavWait) .fa-minus-square", async function() {
   $(this).closest("li").addClass("webdavWait");
   let successful = true;
-  if (currentStep == "additionalMedia") {
-    rm(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).closest("li").data("url")));
+  if (prefs.localAdditionalMediaPrompt) {
+    rm(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), $(this).closest("li").data("safename")));
   } else {
     successful = await webdavRm($(this).closest("li").data("url"));
   }
@@ -1889,7 +1903,7 @@ $("#fileList").on("click", "li.confirmDelete:not(.webdavWait) .fa-minus-square",
 });
 $("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
   $(this).addClass("webdavWait");
-  if (await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).data("safename"))) {
+  if (prefs.localAdditionalMediaPrompt || await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id")), $(this).data("safename"))) {
     $(this).removeClass("canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = true ));
   }
@@ -1897,7 +1911,7 @@ $("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
 });
 $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function() {
   let row = $(this).closest(".canMove");
-  let src = row.data("url");
+  let src = prefs.localAdditionalMediaPrompt ? path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), row.data("safename")) : row.data("url");
   let previousSafename = row.data("safename");
   await showModal(true, false, null, "<div class='input-group'><input type='text' class='form-control' value='" + path.basename(src, path.extname(src)) + "' /><span class='input-group-text'>" + path.extname(src) + "</span></div>", true, true);
   $("#staticBackdrop .modal-body input").focus().on("keypress", function(e) {
@@ -1907,14 +1921,26 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
     let newName = escape($("#staticBackdrop .modal-body input").val().trim()) + path.extname(src);
     if (escape(path.basename(src, path.extname(src))) !== escape($("#staticBackdrop .modal-body input").val().trim())) {
       row.addClass("webdavWait");
-      if (await webdavMv(src, path.posix.join(path.dirname(src), newName))) {
+      let successful = false;
+      if (prefs.localAdditionalMediaPrompt) {
+        try {
+          fs.renameSync(src, path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), newName));
+          successful = true;
+        } catch(err) {
+          notifyUser("error", "errorWebdavPut", src + " => " + path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), newName), true, err);
+        }
+      } else {
+        successful = await webdavMv(src, path.posix.join(path.dirname(src), newName));
+      }
+      if (successful) {
         Object.keys(meetingMedia).filter(meeting => dayjs($("#chooseMeeting input:checked").prop("id")).isValid() ? meeting == $("#chooseMeeting input:checked").prop("id") : true).forEach(meeting => {
           meetingMedia[meeting].filter(item => item.media.filter(mediaItem => mediaItem.safeName == previousSafename).length > 0).forEach(item => item.media.forEach(mediaItem => {
             mediaItem.safeName = newName;
-            mediaItem.url = path.posix.join(path.dirname(src), newName);
+            if (!prefs.localAdditionalMediaPrompt) mediaItem.url = path.posix.join(path.dirname(src), newName);
           }));
         });
-        row.data("safename", newName).attr("title", newName).data("url", path.posix.join(path.dirname(src), newName)).find("span.filename").text(newName);
+        if (!prefs.localAdditionalMediaPrompt) row.data("url", path.posix.join(path.dirname(src), newName));
+        row.data("safename", newName).attr("title", newName).find("span.filename").text(newName);
         let elems = $("#fileList li").detach().sort(function (a, b) {
           return ($(a).text() < $(b).text() ? -1 : $(a).text() > $(b).text() ? 1 : 0);
         });
@@ -1926,7 +1952,7 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
 });
 $("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
   $(this).addClass("webdavWait");
-  if (await webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")))) {
+  if (prefs.localAdditionalMediaPrompt || await webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chooseMeeting input:checked").prop("id"), $(this).data("safename")))) {
     $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
     meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = false ));
   }
@@ -1941,20 +1967,52 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         existing: [],
         new: []
       };
-      if (currentStep == "additionalMedia") {
-        fs.readdirSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"))).map(function(item) {
-          weekMedia.existing.push({
-            title: item,
-            media: [{
-              safeName: item,
-              url: item,
-              filepath: path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), item)
-            }]
+      if (!meetingMedia[$("#chooseMeeting input:checked").prop("id")]) meetingMedia[$("#chooseMeeting input:checked").prop("id")] = [];
+      weekMedia.existing = meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(mediaItem => mediaItem.media.length > 0);
+      if (prefs.localAdditionalMediaPrompt) {
+        if (fs.existsSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id")))) {
+          fs.readdirSync(path.join(paths.media, $("#chooseMeeting input:checked").prop("id"))).map(function(item) {
+            let existingItem = weekMedia.existing.map(weekMediaItem => weekMediaItem.media).flat().filter(weekMediaItemMedia => weekMediaItemMedia.safeName == item);
+            if (existingItem.length >0) {
+              existingItem.map(item => {
+                item.isLocal = true;
+                return item;
+              });
+            } else {
+              weekMedia.existing.push({
+                title: item,
+                media: [{
+                  safeName: item,
+                  url: item,
+                  isLocal: true,
+                  filepath: path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), item)
+                }]
+              });
+            }
           });
-        });
-      } else {
-        if (!meetingMedia[$("#chooseMeeting input:checked").prop("id")]) meetingMedia[$("#chooseMeeting input:checked").prop("id")] = [];
-        weekMedia.existing = meetingMedia[$("#chooseMeeting input:checked").prop("id")].filter(mediaItem => mediaItem.media.length > 0);
+        }
+        if ($("#chooseMeeting input:checked").prop("id") !== "Recurring" && fs.existsSync(path.join(paths.media, "Recurring"))) {
+          fs.readdirSync(path.join(paths.media, "Recurring")).map(function(item) {
+            let recurringItem = weekMedia.existing.map(weekMediaItem => weekMediaItem.media).flat().filter(weekMediaItemMedia => weekMediaItemMedia.safeName == item);
+            if (recurringItem.length >0) {
+              recurringItem.map(item => {
+                item.recurring = true;
+                return item;
+              });
+            } else {
+              weekMedia.existing.push({
+                title: item,
+                media: [{
+                  safeName: item,
+                  url: item,
+                  isLocal: true,
+                  recurring: true,
+                  filepath: path.join(paths.media, "Recurring", item)
+                }]
+              });
+            }
+          });
+        }
       }
       var newFiles = [];
       let newFileChosen = $("#fileToUpload").val() !== null && $("#fileToUpload").val() !== undefined && $("#fileToUpload").val().length > 0;
@@ -1983,20 +2041,18 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         let html = $("<li data-bs-toggle='tooltip' data-url='" + file.url + "' data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
           title: file.safeName
         });
-        if ((currentStep == "additionalMedia" && !file.newFile) || (file.congSpecific && !file.recurring)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
-        if (currentStep !== "additionalMedia") {
-          if (!file.newFile) {
-            if (file.congSpecific && !file.recurring) html.addClass("canMove").find(".infoIcons").append("<i class='fas fa-fw fa-pen me-1'></i>");
-            if (((!file.congSpecific && (file.url || file.safeName.includes(" - "))) || file.recurring) && !file.hidden) html.addClass("canHide").prepend("<i class='far fa-fw fa-check-square me-2'></i>");
-            if (!file.congSpecific && !(file.url || file.safeName.includes(" - "))) html.addClass("cantHide").prepend("<i class='fas fa-fw fa-stop me-2'></i>");
-          }
-          if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-fw fa-square me-2'></i>");
+        if (!file.recurring && ((file.isLocal && !file.newFile) || file.congSpecific)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
+        if (!file.newFile) {
+          if ((file.isLocal || file.congSpecific) && !file.recurring) html.addClass("canMove").find(".infoIcons").append("<i class='fas fa-fw fa-pen me-1'></i>");
+          if (!file.isLocal && ((!file.congSpecific && (file.url || file.safeName.includes(" - "))) || file.recurring) && !file.hidden) html.addClass("canHide").prepend("<i class='far fa-fw fa-check-square me-2'></i>");
+          if (file.recurring && file.isLocal || !file.congSpecific && !(file.url || file.safeName.includes(" - "))) html.addClass("cantHide").prepend("<i class='fas fa-fw fa-stop me-2'></i>");
         }
+        if (file.hidden) html.addClass("wasHidden").prepend("<i class='far fa-fw fa-square me-2'></i>");
         if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-fw fa-plus-square me-2'></i>");
         if (Object.values(weekMedia).flat().map(weekMediaItem => weekMediaItem.media).flat().filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
         let fileOrigin = "fa-globe-americas";
-        if (file.congSpecific || file.newFile) {
-          fileOrigin = "fa-cloud";
+        if (file.congSpecific || file.newFile || file.isLocal) {
+          fileOrigin = prefs.localAdditionalMediaPrompt ? "fa-folder-open" : "fa-cloud";
           if (file.recurring) html.find(".infoIcons").append("<i class='fas fa-fw fa-sync-alt me-1'></i>");
         }
         let fileType = "fa-question-circle";
@@ -2007,7 +2063,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         } else if (path.extname(file.safeName).toLowerCase() == ".pdf") {
           fileType = "fa-file-pdf";
         }
-        html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i>" + (currentStep !== "additionalMedia" ? "<i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>" : ""));
+        html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i><i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>");
         if (file.trackImage || file.congSpecific || file.filepath) {
           let imageSrc = {};
           if (file.trackImage) {
@@ -2015,7 +2071,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
           } else if (file.filepath) {
             imageSrc.path = file.filepath;
             if (tempMediaArray.find(item => item.filename == file.filepath)) imageSrc.data = tempMediaArray.find(item => item.filename == file.filepath).contents;
-          } else if (currentStep === "additionalMedia") {
+          } else if (prefs.localAdditionalMediaPrompt) {
             imageSrc.path = path.join(paths.media, $("#chooseMeeting input:checked").prop("id"), file.url);
           } else {
             imageSrc.path = file.url;
@@ -2058,7 +2114,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
       }
       $("#fileList li").css("width", 100 / Math.ceil(Object.values(weekMedia).flat().map(item => item.media).flat().length / 11) + "%");
       $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
-      $("#" + (currentStep == "additionalMedia" ? "btnDoneUpload" : "btnCancelUpload")).toggle(!newFileChosen);
+      $("#" + (prefs.localAdditionalMediaPrompt ? "btnDoneUpload" : "btnCancelUpload")).toggle(!newFileChosen);
       $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
     }
   } catch (err) {
