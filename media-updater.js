@@ -52,9 +52,22 @@ i18n.configure({
 const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443)));
 updateOnlineStatus();
 require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, message[0], message[1]));
-require("electron").ipcRenderer.on("macUpdate", () => {
+require("electron").ipcRenderer.on("macUpdate", async () => {
+  await overlay(true, "cloud-download-alt fa-beat", "circle-notch fa-spin text-success");
   $("#bg-mac-update").fadeIn(fadeDelay);
   $("#btn-settings").addClass("in-danger");
+  try {
+    let latestVersion = (await request("https://api.github.com/repos/sircharlo/jw-meeting-media-fetcher/releases/latest")).data;
+    let macDownload = latestVersion.assets.find(a => a.name.includes("dmg"));
+    notifyUser("info", "updateDownloading", latestVersion.tag_name, false, null);
+    let macDownloadPath = path.join(remote.app.getPath("downloads"), macDownload.name);
+    fs.writeFileSync(macDownloadPath, new Buffer((await request(macDownload.browser_download_url, {isFile: true})).data));
+    await shell.openPath(macDownloadPath);
+    remote.app.exit();
+  } catch(err) {
+    await overlay(false);
+    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
+  }
   $("#version").addClass("btn-danger in-danger").removeClass("btn-light").find("i").remove().end().prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").click(function() {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
   });

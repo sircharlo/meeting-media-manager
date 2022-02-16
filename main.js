@@ -48,12 +48,12 @@ if (!gotTheLock) {
       win.webContents.send("goAhead");
       win.webContents.send("macUpdate");
     } else {
-      win.webContents.send("overlay", ["cloud-download-alt", "circle-notch fa-spin text-success"]);
+      win.webContents.send("overlay", ["cloud-download-alt fa-beat", "circle-notch fa-spin text-success"]);
       autoUpdater.downloadUpdate();
     }
   });
   autoUpdater.on("update-downloaded", () => {
-    win.webContents.send("overlay", ["cloud-download-alt", "check-circle"]);
+    win.webContents.send("overlay", ["cloud-download-alt fa-beat", "check-circle"]);
     setImmediate(() => {
       autoUpdater.quitAndInstall();
     });
