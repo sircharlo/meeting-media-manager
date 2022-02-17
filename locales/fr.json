@@ -40,6 +40,7 @@
   "musicFadeOutSmart": "<span>XX</span> secondes avant le début de la réunion",
   "musicFadeOutTimer": "Après <span>XX</span> minutes",
   "musicFadeOutType": "Arrêter les cantiques automatiquement",
+  "musicVolume": "Volume des cantiques",
   "mwMeetingDay": "Réunion de semaine",
   "openTargetFolderAfterSync": "Ouvrir le dossier des médias après la syncronisation",
   "optionsApp": "Configuration de l'appli",

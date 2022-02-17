@@ -40,6 +40,7 @@
   "musicFadeOutSmart": "За <span>XX</span> секунд до начала встречи",
   "musicFadeOutTimer": "Спустя <span>XX</span> минут",
   "musicFadeOutType": "Автоматически остановить песни",
+  "musicVolume": "Громкость песен",
   "mwMeetingDay": "Встречи в будние дни",
   "openTargetFolderAfterSync": "Открыть папку медиафайлов после синхронизации",
   "optionsApp": "Настройка приложения",

@@ -40,6 +40,7 @@
   "musicFadeOutSmart": "<span>XX</span> seconds before the meeting",
   "musicFadeOutTimer": "After <span>XX</span> minutes",
   "musicFadeOutType": "Automatically stop playing songs",
+  "musicVolume": "Song playback volume",
   "mwMeetingDay": "Midweek meeting",
   "openTargetFolderAfterSync": "Open folder after media sync",
   "optionsApp": "Application setup",

@@ -650,6 +650,25 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
+                <label for="localAdditionalMediaPrompt" class="m-0 text-start col-11"><span data-i18n-string="convertExternal"></span></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="localAdditionalMediaPrompt" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="enableMp4Conversion" class="m-0 text-start col-11"><span data-i18n-string="convertDownloaded"></span></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="enableMp4Conversion" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="keepOriginalsAfterConversion" class="m-0 text-start col-11"><span data-i18n-string="keepOriginalsAfterConversion"></span></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="keepOriginalsAfterConversion" />
+                </div>
+              </div>
+              <hr class="my-2" />
+              <div class="align-items-center g-1 py-1 row">
                 <label for="excludeTh" class="m-0 text-start col-11"><span data-i18n-string="excludeTh"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="excludeTh" />
@@ -665,25 +684,6 @@
                 <label for="excludeLffiImages" class="m-0 text-start col-11"><span data-i18n-string="excludeLffiImages"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="excludeLffiImages" />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="localAdditionalMediaPrompt" class="m-0 text-start col-11"><span data-i18n-string="convertExternal"></span></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="localAdditionalMediaPrompt" />
-                </div>
-              </div>
-              <hr class="my-2" />
-              <div class="align-items-center g-1 py-1 row">
-                <label for="enableMp4Conversion" class="m-0 text-start col-11"><span data-i18n-string="convertDownloaded"></span></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="enableMp4Conversion" />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="keepOriginalsAfterConversion" class="m-0 text-start col-11"><span data-i18n-string="keepOriginalsAfterConversion"></span></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="keepOriginalsAfterConversion" />
                 </div>
               </div>
             </div>
@@ -761,6 +761,15 @@
                 </div>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMusicFadeOut" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="musicVolume" class="m-0 text-start col-5"><span data-i18n-string="musicVolume"></span></label>
+                <div class="col-6">
+                  <input type="range" class="form-range" min="1" max="100" id="musicVolume">
+                </div>
+                <div class="col-1 text-end">
+                  <span id="musicVolumeDisplay"></span>
                 </div>
               </div>
             </div>

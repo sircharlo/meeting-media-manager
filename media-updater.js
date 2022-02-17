@@ -994,11 +994,11 @@ function perfPrint() {
   }
 }
 function prefsInitialize() {
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
-  for (let field of ["localAppLang", "lang", "localOutputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "mwStartTime", "weStartTime"]) {
-    $("#" + field).val(prefs[field]);
+  for (let field of ["localAppLang", "lang", "localOutputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime"]) {
+    $("#" + field).val(prefs[field]).closest(".row").find("#" + field + "Display").html(prefs[field]);
   }
   for (let timeField of ["mwStartTime", "weStartTime"]) {
     $(".timePicker").filter("[data-target='" + timeField + "']").val($("#" + timeField).val());
@@ -1350,14 +1350,22 @@ function validateConfig(changed) {
     $("#" + setting).closest("div.row").find("label").toggleClass("text-danger", !prefs[setting]);
     if (!prefs[setting]) configIsValid = false;
   }
-  $("#enableMusicFadeOut").closest(".row").toggle(!!prefs.enableMusicButton);
+  $("#enableMusicFadeOut, #musicVolume").closest(".row").toggle(!!prefs.enableMusicButton);
   $(".relatedToFadeOut").toggle(!!prefs.enableMusicButton && !!prefs.enableMusicFadeOut);
   $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
-  if (prefs.enableMusicButton && prefs.enableMusicFadeOut) {
-    if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
-    if (!prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
+  if (prefs.enableMusicButton) {
+    if (prefs.enableMusicFadeOut) {
+      if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
+      if (!prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
+    }
+    $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
+    if (prefs.musicVolume) {
+      $("#meetingMusic").animate({volume: prefs.musicVolume / 100});
+      $("#musicVolumeDisplay").html(prefs.musicVolume);
+    } else {
+      $("#musicVolume").val(100).change();
+    }
   }
-  $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
   $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
   $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
   $("#btnMeetingMusic").toggle(!!prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
@@ -1685,6 +1693,7 @@ $("#btnMeetingMusic").on("click", async function() {
       displayMusicRemaining();
     }).on("canplay", function() {
       $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").closest("button").prop("title", songs[iterator].title);
+      $("#meetingMusic").prop("volume", prefs.musicVolume / 100);
       displayMusicRemaining();
     }).on("timeupdate", function() {
       displayMusicRemaining();
