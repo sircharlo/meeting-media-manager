@@ -386,7 +386,7 @@ function dateFormatter() {
   }
 }
 const delay = s => new Promise(res => {
-  setTimeout(res, s * 1000);
+  let finalTimeout = setTimeout(res, s * 1000);
   let secsRemaining = s;
   $("button .action-countdown").html(secsRemaining);
   const timeinterval = setInterval(function() {
@@ -395,13 +395,16 @@ const delay = s => new Promise(res => {
       secsRemaining = "";
       $("button .action-countdown").html();
       clearInterval(timeinterval);
+      clearTimeout(finalTimeout);
+      res();
     }
     $("button .action-countdown").html(secsRemaining);
   }, 1000);
   $("#bottomIcon button").on("click", function() {
     window[$(this).attr("class").split(" ").filter(el => el.includes("btn-action-")).join(" ").split("-").splice(2).join("-").toLowerCase().replace(/([-_][a-z])/g, group => group.toUpperCase().replace("-", "").replace("_", ""))] = true;
     clearInterval(timeinterval);
-    overlay(false);
+    clearTimeout(finalTimeout);
+    res();
   });
 });
 function disableGlobalPref([pref, value]) {
@@ -971,10 +974,10 @@ function overlay(show, topIcon, bottomIcon, action) {
       if (!topIcon || (topIcon && $("#overlayMaster i.fa-" + topIcon).length > 0)) $("#overlayMaster").stop().fadeOut(fadeDelay, () => resolve());
     } else {
       if ($("#overlayMaster #topIcon i.fa-" + topIcon).length === 0) $("#overlayMaster #topIcon i").removeClass().addClass("fas fa-fw fa-" + topIcon);
-      $("#overlayMaster #bottomIcon i").removeClass();
+      $("#overlayMaster #bottomIcon i").removeClass().unwrap("button");
+      $("#overlayMaster #bottomIcon .action-countdown").html("");
       if (bottomIcon) {
         $("#overlayMaster #bottomIcon i").addClass("fas fa-fw fa-" + bottomIcon + (action ? " " + action : "")).unwrap("button");
-        $("#overlayMaster #bottomIcon button .action-countdown").html();
         if (action) $("#overlayMaster #bottomIcon i").next("span").addBack().wrapAll("<button type='button' class='btn btn-danger btn-action-" + action + " position-relative'></button>");
       }
       $("#overlayMaster").stop().fadeIn(fadeDelay, () => resolve());
@@ -1190,7 +1193,7 @@ async function syncCongMedia() {
     perf("syncCongMedia", "start");
     try {
       totals.cong = {
-        total: Object.values(congSyncMeetingMedia).map(parts => Object.values(parts).map(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue),
+        total: Object.values(congSyncMeetingMedia).map(parts => Object.values(parts).map(part => part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue, 0),
         current: 1
       };
       for (let datedFolder of await glob.sync(path.join(paths.media, "*/"), {
@@ -1864,7 +1867,7 @@ $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown").prop("disabled", true);
   await startMediaSync();
   await overlay(true, "circle-check text-success fa-beat", (prefs.autoQuitWhenDone ? "person-running" : null), "stay-alive");
-  await delay(3);
+  await delay(5);
   if (prefs.autoQuitWhenDone && !stayAlive) {
     remote.app.exit();
   } else {
