@@ -670,10 +670,3 @@ code {
   color: #546974;
   padding: 0 1px;
 }
-
-#content .body p > code {
-  display: block;
-  padding: 15px;
-  white-space: pre;
-  overflow: auto;
-}

@@ -57,7 +57,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
         </tr>
         <tr>
             <td><code>Offer to import additional media</code></td>
-            <td>If enabled, you'll be presented with the *Additional media* screen when performing a media sync. That screen allows you to add additional media files into a given week's media. See [Managing media](#/manage-media). <br><br>**Note:** This option will only be shown is [congregation sync](#/congregation-sync) is not enabled.</td>
+            <td>If enabled, you'll be presented with the <em>Additional media</em> screen when performing a media sync. That screen allows you to add additional media files into a given week's media. See [Managing media](#/manage-media). <br><br><strong>Note:</strong> This option will only be shown is [congregation sync](#/congregation-sync) is not enabled.</td>
         </tr>
         <tr>
             <td><code>Convert media to MP4 format</code></td>
@@ -65,7 +65,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
         </tr>
         <tr>
             <td><code>Keep original media files after conversion</code></td>
-            <td>If this setting is enabled, picture and audio files will be kept in the media folder after converting them to MP4 format, rather than being deleted. This will result in a slightly more cluttered media folder, and generally does not need to be enabled if sharing media through Zoom MP4 sharing. (See <code>Convert media to MP4 format</code> above.) <br><br>**Note:** Only visible if <code>Convert media to MP4 format</code> is also enabled.</td>
+            <td>If this setting is enabled, picture and audio files will be kept in the media folder after converting them to MP4 format, rather than being deleted. This will result in a slightly more cluttered media folder, and generally does not need to be enabled if sharing media through Zoom MP4 sharing. (See <code>Convert media to MP4 format</code> above.) <br><br><strong>Note:</strong> Only visible if <code>Convert media to MP4 format</code> is also enabled.</td>
         </tr>
     </tbody>
 </table>
