@@ -813,7 +813,7 @@ function getPrefix() {
   if (!$("#chooseMeeting input").prop("disabled")) for (var a0 = 0; a0 < 6; a0++) {
     let curValuePresent = $("#enterPrefix-" + a0).val().length > 0;
     if (!curValuePresent) $(Array(6 - 1 - a0).fill(a0).map((x, y) => "#enterPrefix-" + (x + 1 + y)).join(", ")).val("");
-    $("#enterPrefix-" + (a0 + 1)).prop("disabled", !curValuePresent).stop().fadeTo(fadeDelay, curValuePresent);
+    $("#enterPrefix-" + (a0 + 1)).fadeToAndToggle(fadeDelay, curValuePresent).prop("disabled", !curValuePresent);
   }
   let prefix = $(".enterPrefixInput").map(function() {
     return $(this).val();
@@ -896,7 +896,7 @@ function isReachable(hostname, port) {
   });
 }
 async function manageMedia() {
-  $(".relatedToUpload, .relatedToUploadType").fadeTo(fadeDelay, 0);
+  $(".relatedToUpload, .relatedToUploadType").fadeToAndToggle(fadeDelay, 0);
   $("#btnDoneUpload").fadeOut(fadeDelay);
   if (!prefs.localAdditionalMediaPrompt) {
     $("#btnCancelUpload").fadeIn(fadeDelay);
@@ -1137,7 +1137,7 @@ async function startMediaSync(isDryrun) {
   dryrun = !!isDryrun;
   if (!dryrun) $("#statusIcon").toggleClass("text-primary text-muted fa-flip");
   stayAlive = false;
-  if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(fadeDelay, 0);
+  if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeToAndToggle(fadeDelay, 0);
   await setVars(isDryrun);
   for (let folder of glob.sync(path.join(paths.media, "*/"), {
     ignore: [path.join(paths.media, "Recurring")]
@@ -1164,7 +1164,7 @@ async function startMediaSync(isDryrun) {
     ]);
     if (prefs.enableMp4Conversion) await mp4Convert();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(paths.media);
-    $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeTo(fadeDelay, 1);
+    $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeToAndToggle(fadeDelay, 1);
     setTimeout(() => {
       $(".alertIndicators").addClass("alert-primary").removeClass("alert-success");
       $("#statusIcon").toggleClass("text-muted text-primary fa-flip");
@@ -1558,7 +1558,7 @@ async function webdavSetup() {
   $(".webdavHost").toggleClass("is-valid", congServerHeartbeat).toggleClass("is-invalid", congServerEntered && !congServerHeartbeat);
   $(".webdavCreds").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && !webdavLoginSuccessful));
   $("#congServerDir").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && !webdavDirIsValid));
-  $("#webdavFolderList").fadeTo(fadeDelay, webdavDirIsValid);
+  $("#webdavFolderList").closest(".row").fadeToAndToggle(fadeDelay, congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
   $("#specificCong").toggleClass("d-flex", congServerEntered).toggleClass("alert-danger", congServerEntered && !(congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid));
   $("#btn-settings, #headingCongSync button").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
   webdavIsAGo = (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
@@ -1872,7 +1872,7 @@ $("#mediaSync").on("click", async function() {
     remote.app.exit();
   } else {
     overlay(false);
-    $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeTo(fadeDelay, 1);
+    $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeToAndToggle(fadeDelay, 1);
     $("#mediaSync, #baseDate-dropdown").prop("disabled", false);
   }
 });
@@ -1899,10 +1899,10 @@ $("#overlayUploadFile").on("change", "#chooseMeeting input", function() {
   document.addEventListener("dragleave", dragleaveHandler);
   $("#chooseUploadType input").prop("checked", false).change();
   $("#chooseUploadType label.active").removeClass("active");
-  $(".relatedToUploadType").fadeTo(fadeDelay, 1);
+  $(".relatedToUploadType").fadeToAndToggle(fadeDelay, 1);
 });
 $("#overlayUploadFile").on("change", "#chooseMeeting input, #chooseUploadType input", function() {
-  $(".relatedToUpload").fadeTo(fadeDelay, ($("#chooseMeeting input:checked").length === 0 || $("#chooseUploadType input:checked").length === 0 ? 0 : 1));
+  $(".relatedToUpload").fadeToAndToggle(fadeDelay, ($("#chooseMeeting input:checked").length === 0 || $("#chooseUploadType input:checked").length === 0 ? 0 : 1));
 });
 $("#fileList").on("click", "li:not(.confirmDelete) .fa-minus-square", function() {
   $(this).closest("li").addClass("confirmDelete");
@@ -2187,4 +2187,12 @@ $("#webdavProviders a").on("click", function() {
     $("#" + name).val(i[1]);
   }
   $("#congServer").change();
+});
+$.fn.extend({
+  fadeToAndToggle: function(speed, to, easing, callback) {
+    return this.stop().css("visibility", "visible").animate( { opacity: to }, speed, easing, function() {
+      $(this).css("visibility", to ? "visible" : "hidden");
+      if (callback) callback();
+    } );
+  }
 });
