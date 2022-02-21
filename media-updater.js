@@ -1059,10 +1059,14 @@ async function request(url, opts) {
     response = payload;
   } catch (err) {
     response = (err.response ? err.response : err);
-    if (response.config.url && response.data) response = {
+    if (!response.status) response = (response.config.url && response.data) ? {
       url: response.config.url,
       data: response.data,
       status: response.status
+    } : {
+      url: url,
+      status: 500,
+      originalResponse: response
     };
     log.error(response);
     if (options.webdav) throw(response);
@@ -1531,24 +1535,26 @@ async function webdavSetup() {
           $("#congServerDir").val("/").change();
         } else {
           let webdavStatusCode = await webdavStatus(prefs.congServerDir);
-          if (webdavStatusCode === 200) {
-            webdavLoginSuccessful = true;
-            webdavDirIsValid = true;
-          }
-          if (!([401, 403, 405, 429].includes(webdavStatusCode))) webdavLoginSuccessful = true;
-          if (webdavStatusCode !== 404) webdavDirIsValid = true;
-          if (congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid) {
-            if (prefs.congServerDir !== "/") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
-            for (var item of (await webdavLs(prefs.congServerDir, true))) {
-              if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
+          if (webdavStatusCode < 500) {
+            if (webdavStatusCode === 200) {
+              webdavLoginSuccessful = true;
+              webdavDirIsValid = true;
             }
-            $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
-            $("#webdavFolderList li").click(function() {
-              $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
-            });
-            if (prefs.localAdditionalMediaPrompt) $("#localAdditionalMediaPrompt").prop("checked", false).change();
-            enforcePrefs();
-            disableGlobalPref(["localAdditionalMediaPrompt", false]);
+            if (!([401, 403, 405, 429].includes(webdavStatusCode))) webdavLoginSuccessful = true;
+            if (webdavStatusCode !== 404) webdavDirIsValid = true;
+            if (congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid) {
+              if (prefs.congServerDir !== "/") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
+              for (var item of (await webdavLs(prefs.congServerDir, true))) {
+                if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
+              }
+              $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
+              $("#webdavFolderList li").click(function() {
+                $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
+              });
+              if (prefs.localAdditionalMediaPrompt) $("#localAdditionalMediaPrompt").prop("checked", false).change();
+              enforcePrefs();
+              disableGlobalPref(["localAdditionalMediaPrompt", false]);
+            }
           }
         }
       }
