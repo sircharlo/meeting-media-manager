@@ -181,6 +181,7 @@ function goAhead() {
     if ($(this).prop("id") == "localAppLang") setAppLang();
     if ($(this).prop("id") == "lang") setMediaLang();
     if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) {
+      setVars();
       rm(glob.sync(path.join(paths.media, "*"), {
         ignore: [path.join(paths.media, "Recurring")]
       }));
