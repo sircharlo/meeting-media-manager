@@ -899,16 +899,15 @@ function isReachable(hostname, port) {
 async function manageMedia() {
   $(".relatedToUpload, .relatedToUploadType").fadeToAndToggle(fadeDelay, 0);
   $("#btnDoneUpload").fadeOut(fadeDelay);
-  if (!prefs.localAdditionalMediaPrompt) {
-    $("#btnCancelUpload").fadeIn(fadeDelay);
-    await executeDryrun(true);
-  }
-  await toggleScreen("overlayUploadFile");
+  if (!prefs.localAdditionalMediaPrompt) await executeDryrun(true);
+  $("#btnCancelUpload").toggle(!prefs.localAdditionalMediaPrompt);
+  $("#overlayUploadFile .fa-3x").toggleClass("fa-cloud", !prefs.localAdditionalMediaPrompt).toggleClass("fa-folder-open", !!prefs.localAdditionalMediaPrompt);
   $("#chooseMeeting").empty();
   for (var meeting of [prefs.mwDay, prefs.weDay, "Recurring"]) {
     let meetingDate = escape((isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD")));
     $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-" + (isNaN(meeting) ? "info" : "dark" ) + "' for='" + meetingDate + "'" + (isNaN(meeting) || Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + (isNaN(meeting) ? i18n.__("recurring") : meetingDate) + "</label>");
   }
+  await toggleScreen("overlayUploadFile");
   overlay(false);
   return (prefs.localAdditionalMediaPrompt ? new Promise((resolve)=>{
     $("#btnDoneUpload").unbind("click").on("click", function() {
@@ -1569,7 +1568,7 @@ async function webdavSetup() {
   $("#specificCong").toggleClass("d-flex", congServerEntered).toggleClass("alert-danger", congServerEntered && !(congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid));
   $("#btn-settings, #headingCongSync button").toggleClass("in-danger", congServerEntered && !webdavDirIsValid);
   webdavIsAGo = (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
-  $("#localAdditionalMediaPrompt").closest(".row").toggle(!webdavIsAGo);
+  $("#localAdditionalMediaPrompt").closest(".row").toggle(!webdavIsAGo).next("hr").toggle(!webdavIsAGo);
   $("#btnForcedPrefs").prop("disabled", !webdavIsAGo);
   if (!webdavIsAGo) enablePreviouslyForcedPrefs();
 }
