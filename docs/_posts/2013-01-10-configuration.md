@@ -10,14 +10,40 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
 
 ### Application setup
 
-| Setting  | Explanation |
-| ------------- | ------------- |
-| `Display language`  | Sets the language in which JWMMF is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+LANGUAGE" target="_blank">discussion</a>. |
-| `Folder in which to save media`  | Meeting media will be saved to this folder for later sharing and use. |
-| `Run app at system start-up` | If enabled, JWMMF will launch when the current user logs into the computer. <br><br>**Note:** Unavailable on Linux. |
-| `Initiate media sync on app launch` | If enabled, this option will automatically initiate a media sync 5 seconds after JWMMF is launched. <br><br>To prevent the automatic sync from occurring, press the ⏸ (pause) button before the 5-second timer is up.  |
-| `Open folder after media sync` | When enabled, the folder containing the downloaded media for the chosen week will open in the computer's file manager after the media sync is complete. |
-| `Quit app after media sync` | If enabled, this option will automatically quit JWMMF 5 seconds after the media sync is complete. <br><br>To prevent JWMMF from quitting automatically, press the 🏃 (person exiting) button before the 5-second timer is up. |
+<table>
+    <thead>
+        <tr>
+            <th>Setting</th>
+            <th>Explanation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>Display language</code></td>
+            <td>Sets the language in which JWMMF is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+LANGUAGE" target="_blank">discussion</a>.</td>
+        </tr>
+        <tr>
+            <td><code>Folder in which to save media</code></td>
+            <td>Meeting media will be saved to this folder for later sharing and use.</td>
+        </tr>
+        <tr>
+            <td><code>Run app at system start-up</code></td>
+            <td>If enabled, JWMMF will launch when the current user logs into the computer. <br><br>**Note:** Unavailable on Linux.</td>
+        </tr>
+        <tr>
+            <td><code>Initiate media sync on app launch</code></td>
+            <td>If enabled, this option will automatically initiate a media sync 5 seconds after JWMMF is launched. <br><br><blockquote>To prevent the automatic sync from occurring when this setting is enabled, press the ⏸ (pause) button before the 5-second timer is up.</blockquote></td>
+        </tr>
+        <tr>
+            <td><code>Open folder after media sync</code></td>
+            <td>When enabled, the folder containing the downloaded media for the chosen week will open in the computer's file manager after the media sync is complete.</td>
+        </tr>
+        <tr>
+            <td><code>Quit app after media sync</code></td>
+            <td>If enabled, this option will automatically quit JWMMF 5 seconds after the media sync is complete. <br><br><blockquote>To prevent JWMMF from quitting automatically when this setting is enabled, press the 🏃 (person leaving/running) button before the 5-second timer is up.</blockquote></td>
+        </tr>
+    </tbody>
+</table>
 
 
 ### Congregation sync setup
