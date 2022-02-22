@@ -28,7 +28,7 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
         </tr>
         <tr>
             <td><code>Run app at system start-up</code></td>
-            <td>If enabled, JWMMF will launch when the current user logs into the computer. <br><br>**Note:** Unavailable on Linux.</td>
+            <td>If enabled, JWMMF will launch when the current user logs into the computer. <br><br><blockquote><strong>Note:</strong> Unavailable on Linux.</blockquote></td>
         </tr>
         <tr>
             <td><code>Initiate media sync on app launch</code></td>
