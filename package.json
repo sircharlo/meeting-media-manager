@@ -8,7 +8,7 @@
     "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
   },
   "dependencies": {
-    "@electron/remote": "^2.0.4",
+    "@electron/remote": "^2.0.5",
     "@fortawesome/fontawesome-free": "^6.0.0",
     "@popperjs/core": "^2.11.2",
     "adm-zip": "^0.5.9",
