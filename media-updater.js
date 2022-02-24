@@ -1,7 +1,18 @@
 const fadeDelay = 200,
+  aspect = require("aspectratio"),
   axios = require("axios"),
+  bootstrap = require("bootstrap"),
+  datetime = require("flatpickr"),
+  dayjs = require("dayjs"),
   escape = require("escape-html"),
+  ffmpeg = require("fluent-ffmpeg"),
+  fs = require("graceful-fs"),
+  fullHd = [1920, 1080],
+  glob = require("glob"),
+  hme = require("h264-mp4-encoder"),
   i18n = require("i18n"),
+  isImage = require("is-image"),
+  isVideo = require("is-video"),
   log = {
     debug: function() {
       let now = + new Date();
@@ -33,7 +44,20 @@ const fadeDelay = 200,
   path = require("path"),
   remote = require("@electron/remote"),
   {shell} = require("electron"),
+  sizeOf = require("image-size"),
+  sqljs = require("sql.js"),
+  v8 = require("v8"),
+  {XMLParser} = require("fast-xml-parser"),
+  zipper = require("adm-zip"),
   $ = require("jquery");
+const currentAppVersion = "v" + remote.app.getVersion();
+i18n.configure({
+  directory: path.join(__dirname, "locales"),
+  defaultLocale: "en",
+  updateFiles: false,
+  retryInDefaultLocale: true
+});
+
 function checkInternet(online) {
   if (online) {
     overlay(true, "cog fa-spin");
@@ -43,19 +67,11 @@ function checkInternet(online) {
     setTimeout(updateOnlineStatus, 4000);
   }
 }
-i18n.configure({
-  directory: path.join(__dirname, "locales"),
-  defaultLocale: "en",
-  updateFiles: false,
-  retryInDefaultLocale: true
-});
 const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443)));
 updateOnlineStatus();
 require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, message[0], message[1]));
 require("electron").ipcRenderer.on("macUpdate", async () => {
   await overlay(true, "cloud-download-alt fa-beat", "circle-notch fa-spin text-success");
-  $("#bg-mac-update").fadeIn(fadeDelay);
-  $("#btn-settings").addClass("in-danger");
   try {
     let latestVersion = (await request("https://api.github.com/repos/sircharlo/jw-meeting-media-fetcher/releases/latest")).data;
     let macDownload = latestVersion.assets.find(a => a.name.includes("dmg"));
@@ -63,36 +79,20 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
     let macDownloadPath = path.join(remote.app.getPath("downloads"), macDownload.name);
     fs.writeFileSync(macDownloadPath, new Buffer((await request(macDownload.browser_download_url, {isFile: true})).data));
     await shell.openPath(macDownloadPath);
-    remote.app.exit();
+    // remote.app.exit();
   } catch(err) {
-    await overlay(false);
     notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
   }
+  $("#bg-mac-update").fadeIn(fadeDelay);
+  $("#btn-settings").addClass("in-danger");
   $("#version").addClass("btn-danger in-danger").removeClass("btn-light").find("i").remove().end().prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").click(function() {
     shell.openExternal("https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest");
   });
+  await overlay(false);
 });
 require("electron").ipcRenderer.on("goAhead", () => {
   goAhead();
 });
-const aspect = require("aspectratio"),
-  bootstrap = require("bootstrap"),
-  currentAppVersion = "v" + remote.app.getVersion(),
-  dayjs = require("dayjs"),
-  ffmpeg = require("fluent-ffmpeg"),
-  fs = require("graceful-fs"),
-  fullHd = [1920, 1080],
-  glob = require("glob"),
-  isImage = require("is-image"),
-  isVideo = require("is-video"),
-  hme = require("h264-mp4-encoder"),
-  datetime = require("flatpickr"),
-  sizeOf = require("image-size"),
-  sqljs = require("sql.js"),
-  v8 = require("v8"),
-  {XMLParser} = require("fast-xml-parser"),
-  zipper = require("adm-zip");
-
 const bugUrl = () => "https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- JWMMF v" + remote.app.getVersion() + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
   if ((entry[0].startsWith("congServer") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
   return entry;
