@@ -52,11 +52,11 @@ All users that wish to be synchronized together will need to connect to the same
     </tr>
     <tr>
       <td><code>Congregation sync password</code></td>
-      <td>Password for the WebDAV service. <br><br><strong>Note:</strong> As detailed in their respective support pages, an app-specific password might need to be created for <a href="https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box" target="_blank">Box</a> and <a href="https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/" target="_blank">Koofr</a> in order to enable WebDAV connections to their services. </td>
+      <td>Password for the WebDAV service. <br><br><blockquote><strong>Note:</strong> As detailed in their respective support pages, an app-specific password might need to be created for <a href="https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box" target="_blank">Box</a> and <a href="https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/" target="_blank">Koofr</a> in order to enable WebDAV connections to their services.</blockquote></td>
     </tr>
     <tr>
       <td><code>Congregation sync folder</code></td>
-      <td>This is the folder that will be used to synchronize media for all congregation sync users. <br><br>You can either type/paste in a path, or use your mouse to navigate to the target folder. <br><br><strong>Note:</strong> Make sure that all congregation sync users input the same folder path; otherwise the sync won't work as expected. </td>
+      <td>This is the folder that will be used to synchronize media for all congregation sync users. <br><br>You can either type/paste in a path, or use your mouse to navigate to the target folder. <br><br><blockquote><strong>Note:</strong> Make sure that all congregation sync users input the same folder path; otherwise the sync won't work as expected.</blockquote></td>
     </tr>
     <tr>
       <td><code>Congregation-wide settings</code></td>
