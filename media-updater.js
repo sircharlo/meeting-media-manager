@@ -1359,6 +1359,7 @@ function validateConfig(changed) {
   }
   $("#enableMusicFadeOut, #musicVolume").closest(".row").toggle(!!prefs.enableMusicButton);
   $(".relatedToFadeOut").toggle(!!prefs.enableMusicButton && !!prefs.enableMusicFadeOut);
+  if (os.platform() !== "linux") remote.app.setLoginItemSettings({ openAtLogin: prefs.autoRunAtBoot });
   $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton) {
     if (prefs.enableMusicFadeOut) {
@@ -1615,11 +1616,6 @@ var dropHandler = (event) => {
 };
 $(document).on("select2:open", () => {
   document.querySelector(".select2-search__field").focus();
-});
-$("#autoRunAtBoot").on("change", function() {
-  remote.app.setLoginItemSettings({
-    openAtLogin: prefs.autoRunAtBoot
-  });
 });
 $("#baseDate").on("click", ".dropdown-item", function() {
   let newBaseDate = dayjs($(this).val()).startOf("isoWeek");
