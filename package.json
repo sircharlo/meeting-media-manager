@@ -19,7 +19,7 @@
     "dayjs": "^1.10.8",
     "electron-updater": "^4.6.5",
     "escape-html": "^1.0.3",
-    "fast-xml-parser": "^4.0.5",
+    "fast-xml-parser": "^4.0.6",
     "flatpickr": "^4.6.10",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.2.0",
@@ -68,7 +68,7 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^17.1.0",
+    "electron": "^17.1.1",
     "electron-builder": "^22.14.13"
   },
   "scripts": {
