@@ -46,8 +46,9 @@ const fadeDelay = 200,
   {shell} = require("electron"),
   sizeOf = require("image-size"),
   sqljs = require("sql.js"),
+  url = require("url"),
   v8 = require("v8"),
-  {XMLParser} = require("fast-xml-parser"),
+  {XMLParser, XMLBuilder} = require("fast-xml-parser"),
   zipper = require("adm-zip"),
   $ = require("jquery");
 const currentAppVersion = "v" + remote.app.getVersion();
@@ -935,7 +936,7 @@ async function mp4Convert() {
   updateTile("mp4Convert", "warning", "fas fa-circle-notch fa-spin");
   await convertUnusableFiles();
   var filesToProcess = glob.sync(path.join(paths.media, "*", "*"), {
-    ignore: [path.join(paths.media, "Recurring", "*"), path.join(paths.media, "*", "*.mp4")]
+    ignore: [path.join(paths.media, "Recurring", "*"), path.join(paths.media, "*", "*.mp4"), path.join(paths.media, "*", "*.xspf")]
   });
   totals.mp4Convert = {
     total: filesToProcess.length,
@@ -997,7 +998,7 @@ function perfPrint() {
   }
 }
 function prefsInitialize() {
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
   for (let field of ["localAppLang", "lang", "localOutputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime"]) {
@@ -1009,7 +1010,7 @@ function prefsInitialize() {
   for (let dtPicker of datepickers) {
     dtPicker.setDate($(dtPicker.element).val());
   }
-  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages"]) {
+  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation"]) {
     $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
@@ -1167,6 +1168,24 @@ async function startMediaSync(isDryrun) {
       syncLocalRecurringMedia(),
     ]);
     if (prefs.enableMp4Conversion) await mp4Convert();
+    if (prefs.enableVlcPlaylistCreation) for (var date of Object.keys(meetingMedia).filter(item => dayjs(item).isValid())) {
+      var playlistItems = {
+        "?xml": {
+          "@_version": "1.0",
+          "@_encoding": "UTF-8"
+        },
+        "playlist": {
+          "title": date,
+          "trackList": {
+            "track": glob.sync(path.join(paths.media, date, "*")).map(k => ({"location": url.pathToFileURL(k).href}))
+          },
+          "@_xmlns": "http://xspf.org/ns/0/",
+          "@_xmlns:vlc": "http://www.videolan.org/vlc/playlist/ns/0/",
+          "@_version": "1"
+        }
+      };
+      fs.writeFileSync(path.join(paths.media, date, date + ".xspf"), (new XMLBuilder({ignoreAttributes: false})).build(playlistItems));
+    }
     if (prefs.autoOpenFolderWhenDone) shell.openPath(paths.media);
     $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeToAndToggle(fadeDelay, 1);
     setTimeout(() => {
@@ -1716,9 +1735,7 @@ $("#btnStopMeetingMusic").on("click", function() {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
     $("#musicRemaining").empty();
-    if (prefs.enableMusicButton) {
-      $("#btnMeetingMusic").show();
-    }
+    if (prefs.enableMusicButton) $("#btnMeetingMusic").show();
   });
 });
 $("#btnUpload").on("click", async () => {
