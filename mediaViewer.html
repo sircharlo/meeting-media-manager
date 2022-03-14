@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>JWMMF Media Window</title>
+  <style>
+    html,
+    body,
+    video,
+    #mediaDisplay,
+    #blackOverlay {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+    }
+
+    html,
+    body {
+      background: black;
+      -webkit-app-region: drag;
+    }
+
+    #blackOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: black;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    #mediaDisplay {
+      background: transparent;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="mediaDisplay"></div>
+  <div id="blackOverlay"></div>
+  <script type="text/javascript">
+    window.$ = window.jQuery = require("jquery");
+    window.popperjs = require("@popperjs/core");
+    window.Bootstrap = require("bootstrap");
+    const {
+      ipcRenderer
+    } = require('electron'),
+      glob = require("glob"),
+      isImage = require("is-image"),
+      isVideo = require("is-video"),
+      path = require("path"),
+      remote = require("@electron/remote"),
+      url = require("url");
+
+    function trasitionToMedia(media) {
+      $("#blackOverlay").css("opacity", "1");
+      setTimeout(function() {
+        if (isVideo(media)) {
+          $("#mediaDisplay").append($('<video />', {
+            id: 'mediaVideo',
+            src: url.pathToFileURL(media).href,
+            controls: false,
+            autoplay: true
+          }).on("timeupdate", () => {
+            require("electron").ipcRenderer.send("videoProgress", ($("video")[0].currentTime / $("video")[0].duration * 100));
+          }).on("ended", () => {
+            require("electron").ipcRenderer.send("videoEnd");
+          }));
+          $("#mediaDisplay").css("background", "black");
+        } else if (isImage(media)) {
+          $("#mediaDisplay").css("background", "url(" + url.pathToFileURL(media).href + ") black center center / contain no-repeat");
+        } else {
+          $("#mediaDisplay").css("background", "transparent");
+        }
+        $("#blackOverlay").css("opacity", "0");
+      }, 400);
+    }
+    ipcRenderer.on('showMedia', (event, arg) => {
+      trasitionToMedia(arg)
+    });
+    ipcRenderer.on('pauseVideo', (event, arg) => {
+      $("video").trigger("pause")
+    });
+    ipcRenderer.on('playVideo', (event, arg) => {
+      $("video").trigger("play")
+    });
+    ipcRenderer.on('hideMedia', (event) => {
+      hideMedia();
+    });
+
+    function hideMedia() {
+      trasitionToMedia("transparent");
+      $("video").animate({
+        volume: 0
+      }, 400, () => {
+        $("video").remove();
+      });
+    }
+    let mediaWindowBackgroundImages = glob.sync(path.join(remote.app.getPath("userData"), "media-window-background-image*"))
+    if (mediaWindowBackgroundImages.length > 0) $("body").css("background", "url(" + url.pathToFileURL(mediaWindowBackgroundImages[0]).href + ") black center center / contain no-repeat");
+  </script>
+</body>
+
+</html>

@@ -91,6 +91,9 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
   });
   await overlay(false);
 });
+require("electron").ipcRenderer.on("notifyUser", (event, arg) => {
+  notifyUser(arg[0], arg[1]);
+});
 require("electron").ipcRenderer.on("goAhead", () => {
   goAhead();
 });
@@ -998,7 +1001,7 @@ function perfPrint() {
   }
 }
 function prefsInitialize() {
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
   for (let field of ["localAppLang", "lang", "localOutputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime"]) {
@@ -1010,7 +1013,7 @@ function prefsInitialize() {
   for (let dtPicker of datepickers) {
     dtPicker.setDate($(dtPicker.element).val());
   }
-  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation"]) {
+  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton"]) {
     $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
@@ -1024,6 +1027,10 @@ function progressSet(current, total, blockId) {
     remote.getCurrentWindow().setProgressBar(percent / 100);
     $("#" + (blockId ? blockId + " .progress-bar" : "globalProgress")).width(percent + "%");
   }
+}
+function refreshBackgroundImagePreview() {
+  let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
+  $("#currentMediaBackground").prop("src", mediaWindowBackgroundImages.length > 0 ? mediaWindowBackgroundImages[0] + "?" + (new Date()).getTime() : "");
 }
 function removeEventListeners() {
   document.removeEventListener("drop", dropHandler);
@@ -1393,6 +1400,9 @@ function validateConfig(changed) {
       $("#musicVolume").val(100).change();
     }
   }
+  $("#btnMediaWindow").toggle(!!prefs.enableMediaDisplayButton);
+  if (prefs.enableMediaDisplayButton) refreshBackgroundImagePreview();
+  $("#currentMediaBackground").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
   $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
   $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
   $("#btnMeetingMusic").toggle(!!prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
@@ -1525,20 +1535,25 @@ async function webdavPut(file, destFolder, destName) {
     return false;
   }
 }
-async function webdavRm(path) {
-  let deleteFile = "https://" + prefs.congServer + ":" + prefs.congServerPort + path;
-  try {
-    if (webdavIsAGo && path && await webdavExists(path)) {
-      await request(deleteFile, {
-        method: "DELETE",
-        webdav: true
-      });
+async function webdavRm(pathsToDel) {
+  if (pathsToDel.length == 0) pathsToDel = null;
+  if (!Array.isArray(pathsToDel)) pathsToDel = [pathsToDel];
+  let returnVal = true;
+  for (var pathToDel of pathsToDel) {
+    let deleteFile = "https://" + prefs.congServer + ":" + prefs.congServerPort + pathToDel;
+    try {
+      if (webdavIsAGo && pathToDel && await webdavExists(pathToDel)) {
+        await request(deleteFile, {
+          method: "DELETE",
+          webdav: true
+        });
+      }
+    } catch (err) {
+      notifyUser("error", "errorWebdavRm", deleteFile, true, err);
+      returnVal = false;
     }
-    return true;
-  } catch (err) {
-    notifyUser("error", "errorWebdavRm", deleteFile, true, err);
-    return false;
   }
+  return returnVal;
 }
 async function webdavSetup() {
   let congServerEntered = !!(prefs.congServer && prefs.congServer.length > 0);
@@ -1573,6 +1588,20 @@ async function webdavSetup() {
               if (prefs.localAdditionalMediaPrompt) $("#localAdditionalMediaPrompt").prop("checked", false).change();
               enforcePrefs();
               disableGlobalPref(["localAdditionalMediaPrompt", false]);
+              let items = await webdavLs(prefs.congServerDir, true);
+              if (items) {
+                let remoteMediaWindowBackgrounds = items.filter(item => item.basename.includes("media-window-background-image"));
+                if (remoteMediaWindowBackgrounds.length >0) {
+                  let localFile = path.join(paths.app, remoteMediaWindowBackgrounds[0].basename);
+                  if (!fs.existsSync(localFile) || !(remoteMediaWindowBackgrounds[0].size == fs.statSync(localFile).size)) {
+                    fs.writeFileSync(localFile, new Buffer((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + remoteMediaWindowBackgrounds[0].filename, {
+                      webdav: true,
+                      isFile: true
+                    })).data));
+                    refreshBackgroundImagePreview();
+                  }
+                }
+              }
             }
           }
         }
@@ -1678,6 +1707,91 @@ $("#btnForcedPrefs").on("click", () => {
       $("#staticBackdrop #forcedPrefs input").prop("disabled", false);
     });
   });
+});
+require("electron").ipcRenderer.on("videoProgress", (event, percent) => {
+  $("#videoProgress .progress-bar").css("width", percent + "%");
+  if (percent == 100) $("#videoProgress").closest(".item").find("button.playStop.stop").click();
+});
+require("electron").ipcRenderer.on("videoEnd", () => {
+  $("#videoProgress").closest(".item").find("button.playStop.stop").click();
+});
+$("#staticBackdrop").on("click", "#btnToggleMediaWindowFocus", function() {
+  require("electron").ipcRenderer.send("toggleMediaWindowFocus");
+  $(this).find(".fa-stack-2x").toggleClass("fa-regular fa-circle text-danger fa-solid fa-ban");
+});
+$("#btnMediaWindow").on("click", function() {
+  setVars();
+  require("electron").ipcRenderer.send("showMediaWindow");
+  let folderListing = $("<div id='folderListing' class='list-group'>");
+  function listMediaFolders() {
+    folderListing.empty();
+    $("h5.modal-title").text(i18n.__("targetMeeting"));
+    for (var folder of glob.sync(path.join(paths.media, "*/"))) {
+      $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format("YYYY-MM-DD") == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
+    }
+  }
+  $(folderListing).on("click", "button.folder", function() {
+    $("h5.modal-title").html($("<button class='btn btn-secondary'>" + path.basename($(this).data("folder")) + "</button>").on("click", function() {
+      listMediaFolders();
+    }));
+    folderListing.empty();
+    for (var item of glob.sync(path.join($(this).data("folder"), "*"))) {
+      if (isVideo(item) || isImage(item)) $(folderListing).append("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='col-2 me-3'>" + (isVideo(item) ? "<video preload='metadata' class='w-100 d-flex'><source src='" + url.pathToFileURL(item).href + "#t=5'></video>" : "<img class='d-flex w-100' src='" + url.pathToFileURL(item).href + "' />") + "</div><div class='flex-fill mediaDesc'>" + path.basename(item) + "</div><div class='ps-3 pe-1'><button class='btn btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-primary playStop play'><i class='fas fa-fw fa-play'></i></button></div></li>");
+    }
+  });
+  listMediaFolders();
+  $(folderListing).on("click", "li.item button.pausePlay", function() {
+    if ($(this).hasClass("pause")) {
+      require("electron").ipcRenderer.send("pauseVideo");
+    } else if ($(this).hasClass("play")) {
+      require("electron").ipcRenderer.send("playVideo");
+    }
+    $(this).toggleClass("play pause").find("i").toggleClass("fa-play fa-pause");
+  });
+  $(folderListing).on("click", "li.item button.playStop", function() {
+    let triggerButton = $(this),
+      mediaItem = $(this).closest(".item");
+    if (triggerButton.hasClass("play")) {
+      $("#folderListing button.playStop.stop").toggleClass("play stop btn-warning btn-primary").find("i").toggleClass("fa-play fa-stop");
+      require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
+      if (mediaItem.hasClass("video")) {
+        mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute progress start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
+        mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
+        $("#folderListing button.playStop.play").not(triggerButton).prop("disabled", true);
+      }
+      $("h5.modal-title button").not(triggerButton).prop("disabled", true);
+      triggerButton.toggleClass("play stop btn-primary btn-warning").find("i").toggleClass("fa-play fa-stop");
+    } else if (triggerButton.hasClass("stop")) {
+      if (!mediaItem.hasClass("video") || triggerButton.hasClass("confirmed")) {
+        require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
+        if (mediaItem.hasClass("video")) {
+          mediaItem.find("#videoProgress").remove();
+          mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 0);
+        }
+        $("#folderListing button.playStop.play").prop("disabled", false);
+        $("h5.modal-title button").not(triggerButton).prop("disabled", false);
+        triggerButton.toggleClass("play stop btn-primary btn-warning").removeClass("confirmed btn-danger").find("i").toggleClass("fa-play fa-stop");
+      } else {
+        triggerButton.addClass("confirmed btn-danger");
+        setTimeout(() => {
+          triggerButton.removeClass("confirmed btn-danger");
+        }, 3000);
+      }
+    }
+  });
+  showModal(true, true, i18n.__("targetMeeting"), folderListing, false);
+  $(folderListing).find(".thatsToday").click();
+  $("#staticBackdrop .modal-footer").html($("<button type='button' id='btnToggleMediaWindowFocus' class='btn btn-info'><span class='fa-stack'><i class='fa-solid fa-desktop fa-stack-1x'></i><i class='fa-solid fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button>"));
+  $("#staticBackdrop .modal-footer").on("click", "button.closeModal:not(.confirmed)", async function() {
+    $(this).addClass("confirmed btn-danger");
+    await delay(3);
+    $(this).removeClass("confirmed btn-danger");
+  });
+  $("#staticBackdrop .modal-footer").on("click", "button.closeModal.confirmed", function() {
+    require("electron").ipcRenderer.send("hideMediaWindow");
+    showModal(false);
+  });
+  $("#staticBackdrop .modal-footer").show();
 });
 $("#btnMeetingMusic").on("click", async function() {
   if (prefs.enableMusicFadeOut) {
@@ -1898,6 +2012,29 @@ $("#mediaSync").on("click", async function() {
 $("#localOutputPath").on("mousedown", function(event) {
   $(this).val(remote.dialog.showOpenDialogSync({ properties: ["openDirectory"] })).change();
   event.preventDefault();
+});
+$("#chooseBackground").on("click", function() {
+  let mediaWindowBackground = remote.dialog.showOpenDialogSync({
+    properties: ["openFile"]
+  });
+  if (mediaWindowBackground && isImage(mediaWindowBackground[0])) {
+    for (var oldBackground of glob.sync(path.join(paths.app, "media-window-background-image*"))) {
+      rm(oldBackground);
+    }
+    fs.copyFileSync(mediaWindowBackground[0], path.join(paths.app, "media-window-background-image" + path.extname(mediaWindowBackground[0])));
+    if (webdavIsAGo) try {
+      webdavLs(prefs.congServerDir).then(items => {
+        webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(prefs.congServerDir, item.basename))).then(() => {
+          webdavPut(fs.readFileSync(mediaWindowBackground[0]), prefs.congServerDir, "media-window-background-image" + path.extname(mediaWindowBackground[0]));
+        });
+      });
+    } catch(err) {
+      notifyUser("error", "errorWebdavPut", mediaWindowBackground[0], false, err);
+    }
+    refreshBackgroundImagePreview();
+  } else {
+    notifyUser("error", "notAnImage");
+  }
 });
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
   $(this).toggleClass("btn-success btn-warning").prop("disabled", true);

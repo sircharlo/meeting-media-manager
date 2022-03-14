@@ -351,6 +351,17 @@
       display: none;
     }
 
+    .mediaDesc {
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      display: -webkit-box;
+      font-size: 90%;
+    }
+
+    #videoProgress .progress-bar {
+      transition: width 0.4s;
+    }
+
     @media (prefers-color-scheme: dark) {
       body {
         color: var(--bs-gray-100);
@@ -784,6 +795,24 @@
                   <input type="checkbox" class="form-check-input" id="enableMusicFadeOut" />
                 </div>
               </div>
+              <hr class="my-2" />
+              <div class="align-items-center g-1 py-1 row">
+                <label for="enableMediaDisplayButton" class="m-0 text-start col-11"><span data-i18n-string="enableMediaDisplayButton"></span></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="enableMediaDisplayButton" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="currentMediaBackground" class="col-5 text-start"><span data-i18n-string="mediaWindowBackground"></span></label>
+                <div class="col m-2">
+                  <img class="w-100" id="currentMediaBackground" />
+                </div>
+                <div class="col-2 text-end">
+                  <button id="chooseBackground" type="button" class="btn btn-primary btn-sm">
+                    <span data-i18n-string="browse"></span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -971,6 +1000,9 @@
         </div>
       </div>
       <div class="col-3 text-end">
+        <button type="button" class="btn btn-primary" id="btnMediaWindow" style="display: none;">
+          <i class="fas fa-fw fa-play"></i>
+        </button>
         <button class="btn btn-dark position-relative" id="btn-settings">
           <i class="fas fa-fw fa-user-cog"></i>
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="bg-mac-update" style="display: none;">
@@ -981,7 +1013,7 @@
     </div>
   </div>
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-fullscreen-lg-down modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel"></h5>

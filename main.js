@@ -1,13 +1,18 @@
 const {
     app,
     BrowserWindow,
-    ipcMain
+    ipcMain,
+    screen
   } = require("electron"), {
     autoUpdater
   } = require("electron-updater"),
   os = require("os"),
   remote = require("@electron/remote/main");
-var win = null;
+var win = null,
+  mediaWin = null,
+  displays = null,
+  externalDisplays = null,
+  authorizedCloseMediaWin = false;
 remote.initialize();
 function createUpdateWindow() {
   win = new BrowserWindow({
@@ -17,8 +22,16 @@ function createUpdateWindow() {
     },
     width: 700,
     height: 700,
-    resizable: false,
+    minWidth: 700,
+    minHeight: 700,
+    // resizable: false,
     title: "JW Meeting Media Fetcher"
+  });
+  win.on("close", (e) => {
+    if (mediaWin) {
+      e.preventDefault();
+      win.webContents.send("notifyUser", ["warn", "cantCloseMediaWindowOpen"]);
+    }
   });
   remote.enable(win.webContents);
   win.setMenuBarVisibility(false);
@@ -36,6 +49,80 @@ if (!gotTheLock) {
   });
   ipcMain.on("autoUpdate", () => {
     autoUpdater.checkForUpdates();
+  });
+  ipcMain.on("hideMediaWindow", () => {
+    if (mediaWin) {
+      authorizedCloseMediaWin = true;
+      mediaWin.close();
+      mediaWin = null;
+      authorizedCloseMediaWin = false;
+    }
+  });
+  ipcMain.on("showMedia", (event, arg) => {
+    mediaWin.webContents.send("showMedia", arg);
+  });
+  ipcMain.on("hideMedia", () => {
+    mediaWin.webContents.send("hideMedia");
+  });
+  ipcMain.on("pauseVideo", () => {
+    mediaWin.webContents.send("pauseVideo");
+  });
+  ipcMain.on("playVideo", () => {
+    mediaWin.webContents.send("playVideo");
+  });
+  ipcMain.on("videoProgress", (event, percent) => {
+    win.webContents.send("videoProgress", percent);
+  });
+  ipcMain.on("videoEnd", () => {
+    win.webContents.send("videoEnd");
+  });
+  ipcMain.on("showMediaWindow", () => {
+    let mainWinPosition = win.getPosition();
+    let otherScreens = displays.filter(screen => !(mainWinPosition[0] >= screen.bounds.x && mainWinPosition[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinPosition[1] >= screen.bounds.y && mainWinPosition[1] < (screen.bounds.y + screen.bounds.height)));
+    if (!mediaWin) {
+      let windowOptions = {
+        title: "JWMMF Media Window",
+        frame: !externalDisplays,
+        alwaysOnTop: true,
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false
+        },
+      };
+      let supplementaryOptions = {
+        width: 1280,
+        height: 720
+      };
+      if (externalDisplays.length > 0) {
+        supplementaryOptions = {
+          x: otherScreens[otherScreens.length - 1].bounds.x + 50,
+          y: otherScreens[otherScreens.length - 1].bounds.y + 50,
+          fullscreen: true
+        };
+      }
+      Object.assign(windowOptions, supplementaryOptions);
+      mediaWin = new BrowserWindow(windowOptions);
+      mediaWin.setAspectRatio(16/9);
+      mediaWin.setMenuBarVisibility(false);
+      remote.enable(mediaWin.webContents);
+      mediaWin.loadFile("mediaViewer.html");
+      mediaWin.on("close", (e) => {
+        if (!authorizedCloseMediaWin) {
+          e.preventDefault();
+          win.webContents.send("notifyUser", ["warn", "cantCloseMediaWindowOpen"]);
+        }
+      });
+      mediaWin.on("closed", () => {
+        mediaWin = null;
+      });
+    }
+  });
+  ipcMain.on("toggleMediaWindowFocus", () => {
+    if (mediaWin.isVisible()) {
+      mediaWin.hide();
+    } else {
+      mediaWin.show();
+    }
   });
   autoUpdater.on("error", () => {
     win.webContents.send("goAhead");
@@ -60,7 +147,11 @@ if (!gotTheLock) {
   });
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
-  app.whenReady().then(createUpdateWindow);
+  app.whenReady().then(() => {
+    displays = screen.getAllDisplays();
+    externalDisplays = displays.filter((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
+    createUpdateWindow();
+  });
   app.on("window-all-closed", () => {
     app.exit();
   });
