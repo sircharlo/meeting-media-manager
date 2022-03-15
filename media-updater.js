@@ -1716,6 +1716,9 @@ require("electron").ipcRenderer.on("videoProgress", (event, percent) => {
 require("electron").ipcRenderer.on("videoEnd", () => {
   $("#videoProgress").closest(".item").find("button.playStop.stop").click();
 });
+require("electron").ipcRenderer.on("videoPaused", () => {
+  $("#videoProgress").closest(".item").find("button.pausePlay").click();
+});
 $("#staticBackdrop").on("click", "#btnToggleMediaWindowFocus", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
   $(this).find(".fa-stack-2x").toggleClass("fa-regular fa-circle text-danger fa-solid fa-ban");

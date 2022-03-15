@@ -97,8 +97,13 @@
           $("#mediaDisplay").append($('<video />', {
             id: 'mediaVideo',
             src: url.pathToFileURL(media).href,
-            controls: false,
-            autoplay: true
+            controls: false
+          }).on("canplay", () => {
+            if ($("video")[0].duration > 0.1) {
+              $("video")[0].play();
+            } else {
+              require("electron").ipcRenderer.send("videoPaused");
+            }
           }).on("timeupdate", () => {
             require("electron").ipcRenderer.send("videoProgress", ($("video")[0].currentTime / $("video")[0].duration * 100));
           }).on("ended", () => {

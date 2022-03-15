@@ -76,6 +76,9 @@ if (!gotTheLock) {
   ipcMain.on("videoEnd", () => {
     win.webContents.send("videoEnd");
   });
+  ipcMain.on("videoPaused", () => {
+    win.webContents.send("videoPaused");
+  });
   ipcMain.on("showMediaWindow", () => {
     let mainWinPosition = win.getPosition();
     let otherScreens = displays.filter(screen => !(mainWinPosition[0] >= screen.bounds.x && mainWinPosition[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinPosition[1] >= screen.bounds.y && mainWinPosition[1] < (screen.bounds.y + screen.bounds.height)));

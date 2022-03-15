@@ -95,8 +95,8 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     </tr>
     <tr>
       <td><code>Convert media to MP4 format</code></td>
-      <td>This automatically converts all picture and audio files into MP4 format, for use with Zoom's <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/zoom-mp4-share.png?raw=true" target="_blank">native MP4 sharing feature</a>. This includes all pictures and media files downloaded from JW.org, as well as additional media files added by the user or the VO. <br><br>
-        <blockquote>When using the option to share your desktop or an application in Zoom, the video resolution is dependent upon CPU usage, screen resolution, graphics card, and OS graphic system capabilities. Depending on how the video is shared, the overall quality of both the video share and the meeting for the user who is sharing may be affected. <br><br> However, when using the MP4 video share option, Zoom encodes the video from the file directly and shares it, effectively bypassing some of the limiting factors with standard content sharing. Allowing the Zoom client to handle the encoding and sharing minimizes CPU usage for the participant who is sharing, which allows for higher frame rates and smoother video playback for all participants. (Source: <a href="https://support.zoom.us/hc/en-us/articles/360051673592-Sharing-and-playing-a-video" target="_blank">Zoom support article</a>.)</blockquote>
+      <td>This automatically converts all picture and audio files into MP4 format, for use with Zoom's <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/zoom-mp4-share.png?raw=true" target="_blank">native MP4 sharing feature</a>. This includes all pictures and media files downloaded from JW.org, as well as additional media files added by the user or the VO.
+      <br><br><blockquote><strong>Note:</strong> This option is best suited for <strong>remote-only</strong> congregation Zoom meetings. If conducting either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings, look into using <a href="#/present-media">media presentation mode</a> by activating the <code>Enable button to present media on an external monitor or in a separate window</code> option instead.</blockquote>
       </td>
     </tr>
     <tr>
@@ -146,7 +146,9 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     </tr>
     <tr>
       <td><code>Enable button to present media on an external monitor or in a separate window</code></td>
-      <td>This setting will allow you to use JWMMF to present pictures, videos and audio files during congregation meetings, for example at the Kingdom Hall. <a href="#/present-media">Media presentation mode</a> can be accessed by clicking the ▶️ (play) button on the main screen of JWMMF.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.</td>
+      <td>This setting will allow you to use JWMMF to present pictures, videos and audio files during congregation meetings, for example at the Kingdom Hall. <a href="#/present-media">Media presentation mode</a> can be accessed by clicking the ▶️ (play) button on the main screen of JWMMF.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.
+      <br><br><blockquote><strong>Note:</strong> This option is best suited for either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings.<br><br>
+      If conducting <strong>remote-only</strong> congregation Zoom meetings, look into activating the <code>Convert media to MP4 format</code> option and sharing the media with Zoom's native MP4 sharing instead.</blockquote></td>
     </tr>
     <tr>
       <td><code>Background image for media presentation mode</code></td>
