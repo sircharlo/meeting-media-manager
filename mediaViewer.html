@@ -83,6 +83,7 @@
     } = require('electron'),
       fs = require("graceful-fs"),
       glob = require("glob"),
+      isAudio = require("is-audio"),
       isImage = require("is-image"),
       isVideo = require("is-video"),
       os = require("os"),
@@ -93,7 +94,7 @@
     function trasitionToMedia(media) {
       $("#blackOverlay").css("opacity", "1");
       setTimeout(function() {
-        if (isVideo(media)) {
+        if (isVideo(media) || isAudio(media)) {
           $("#mediaDisplay").append($('<video />', {
             id: 'mediaVideo',
             src: url.pathToFileURL(media).href,

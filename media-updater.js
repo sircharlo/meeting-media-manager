@@ -11,6 +11,7 @@ const fadeDelay = 200,
   glob = require("glob"),
   hme = require("h264-mp4-encoder"),
   i18n = require("i18n"),
+  isAudio = require("is-audio"),
   isImage = require("is-image"),
   isVideo = require("is-video"),
   log = {
@@ -1742,7 +1743,7 @@ $("#btnMediaWindow").on("click", function() {
     folderListing.empty();
     for (var item of glob.sync(path.join($(this).data("folder"), "*"))) {
       item = escape(item);
-      if (isVideo(item) || isImage(item)) $(folderListing).append("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='col-2 me-3'>" + (isVideo(item) ? "<video preload='metadata' class='w-100 d-flex'><source src='" + url.pathToFileURL(item).href + "#t=5'></video>" : "<img class='d-flex w-100' src='" + url.pathToFileURL(item).href + "' />") + "</div><div class='flex-fill mediaDesc'>" + path.basename(item) + "</div><div class='ps-3 pe-1'><button class='btn btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-primary playStop play'><i class='fas fa-fw fa-play'></i></button></div></li>");
+      if (isVideo(item) || isAudio(item) || isImage(item)) $(folderListing).append("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='col-2 me-3'>" + (isVideo(item) || isAudio(item) ? "<video preload='metadata' class='w-100 d-flex' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>" : "<img class='d-flex w-100' src='" + url.pathToFileURL(item).href + "' />") + "</div><div class='flex-fill mediaDesc'>" + path.basename(item) + "</div><div class='ps-3 pe-1'><button class='btn btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-primary playStop play'><i class='fas fa-fw fa-play'></i></button></div></li>");
     }
   });
   listMediaFolders();
@@ -2263,7 +2264,7 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #chooseMeeting input, #
         let fileType = "fa-question-circle";
         if (isImage(file.safeName)) {
           fileType = "fa-image";
-        } else if (isVideo(file.safeName)) {
+        } else if (isVideo(file.safeName) || isAudio(file.safeName)) {
           fileType = "fa-play-circle";
         } else if (path.extname(file.safeName).toLowerCase() == ".pdf") {
           fileType = "fa-file-pdf";
