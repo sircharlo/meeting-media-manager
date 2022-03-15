@@ -1751,11 +1751,18 @@ $("#btnMediaWindow").on("click", function() {
     }
     $(this).toggleClass("play pause").find("i").toggleClass("fa-play fa-pause");
   });
+  $(folderListing).on("mouseenter", "li:not(.list-group-item-primary)", function () {
+    $(this).addClass("list-group-item-secondary");
+  });
+  $(folderListing).on("mouseleave", "li:not(.list-group-item-primary)", function () {
+    $(this).removeClass("list-group-item-secondary");
+  });
   $(folderListing).on("click", "li.item button.playStop", function() {
     let triggerButton = $(this),
       mediaItem = $(this).closest(".item");
     if (triggerButton.hasClass("play")) {
       $("#folderListing button.playStop.stop").toggleClass("play stop btn-warning btn-primary").find("i").toggleClass("fa-play fa-stop");
+      $("#folderListing .item").removeClass("list-group-item-primary");
       require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
       if (mediaItem.hasClass("video")) {
         mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute progress start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
@@ -1764,6 +1771,8 @@ $("#btnMediaWindow").on("click", function() {
       }
       $("h5.modal-title button").not(triggerButton).prop("disabled", true);
       triggerButton.toggleClass("play stop btn-primary btn-warning").find("i").toggleClass("fa-play fa-stop");
+      mediaItem.addClass("list-group-item-primary").removeClass("list-group-item-secondary");
+      $("button.closeModal").prop("disabled", true);
     } else if (triggerButton.hasClass("stop")) {
       if (!mediaItem.hasClass("video") || triggerButton.hasClass("confirmed")) {
         require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
@@ -1774,6 +1783,8 @@ $("#btnMediaWindow").on("click", function() {
         $("#folderListing button.playStop.play").prop("disabled", false);
         $("h5.modal-title button").not(triggerButton).prop("disabled", false);
         triggerButton.toggleClass("play stop btn-primary btn-warning").removeClass("confirmed btn-danger").find("i").toggleClass("fa-play fa-stop");
+        mediaItem.removeClass("list-group-item-primary");
+        $("button.closeModal").prop("disabled", false);
       } else {
         triggerButton.addClass("confirmed btn-danger");
         setTimeout(() => {
