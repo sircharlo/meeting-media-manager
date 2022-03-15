@@ -89,8 +89,8 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     </tr>
     <tr>
       <td><code>Offer to import additional media</code></td>
-      <td>If enabled, you'll be presented with the <em>Additional media</em> screen when performing a media sync. That screen allows you to add additional media files into a given week's media. See <a href="#/manage-media" target="_blank">Managing media</a>. <br><br>
-        <blockquote><strong>Note:</strong> This option will only be shown is <a href="#/congregation-sync" target="_blank">congregation sync</a> is not enabled.</blockquote>
+      <td>If enabled, you'll be presented with the <em>Additional media</em> screen when performing a media sync. That screen allows you to add additional media files into a given week's media. See <a href="#/manage-media">Managing media</a>. <br><br>
+        <blockquote><strong>Note:</strong> This option will only be shown is <a href="#/congregation-sync">congregation sync</a> is not enabled.</blockquote>
       </td>
     </tr>
     <tr>
@@ -138,11 +138,21 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
       <td>Sets the volume at which the background music will play.</td>
     </tr>
     <tr>
-      <td><code>Automatically stop playing songs</code> </td>
+      <td><code>Automatically stop playing songs</code></td>
       <td>If <code>Enable button to play Kingdom songs on shuffle</code> is active, then this setting will allow you to specify a delay after which background music should be automatically stopped. <br><br>This can be either:
       <ul><li>a set number of minutes, <strong>or</strong></li>
         <li>a predetermined number of seconds before the start of the meeting (in the case where the background music was started before a meeting).</li></ul>
       </td>
+    </tr>
+    <tr>
+      <td><code>Enable button to present media on an external monitor or in a separate window</code></td>
+      <td>This setting will allow you to use JWMMF to present pictures, videos and audio files during congregation meetings, for example at the Kingdom Hall. <a href="#/present-media">Media presentation mode</a> can be accessed by clicking the ▶️ (play) button on the main screen of JWMMF.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.</td>
+    </tr>
+    <tr>
+      <td><code>Background image for media presentation mode</code></td>
+      <td>This setting allows you to configure a background image, such as the yeartext, to be automatically displayed in the JWMMF media presentation window when no other media is being played.
+      <br><br>
+      <blockquote><strong>Note:</strong> If <a href="#/congregation-sync">congregation sync</a> is enabled, then the selected background image will be synced for all congregation sync users automatically.</blockquote></td>
     </tr>
   </tbody>
 </table>
