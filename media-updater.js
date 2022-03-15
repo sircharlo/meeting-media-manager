@@ -1031,6 +1031,7 @@ function progressSet(current, total, blockId) {
 function refreshBackgroundImagePreview() {
   let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
   $("#currentMediaBackground").prop("src", mediaWindowBackgroundImages.length > 0 ? mediaWindowBackgroundImages[0] + "?" + (new Date()).getTime() : "");
+  $("#deleteBackground").toggle(mediaWindowBackgroundImages.length > 0);
 }
 function removeEventListeners() {
   document.removeEventListener("drop", dropHandler);
@@ -1727,6 +1728,7 @@ $("#btnMediaWindow").on("click", function() {
     folderListing.empty();
     $("h5.modal-title").text(i18n.__("targetMeeting"));
     for (var folder of glob.sync(path.join(paths.media, "*/"))) {
+      folder = escape(folder);
       $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format("YYYY-MM-DD") == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
     }
   }
@@ -1736,6 +1738,7 @@ $("#btnMediaWindow").on("click", function() {
     }));
     folderListing.empty();
     for (var item of glob.sync(path.join($(this).data("folder"), "*"))) {
+      item = escape(item);
       if (isVideo(item) || isImage(item)) $(folderListing).append("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='col-2 me-3'>" + (isVideo(item) ? "<video preload='metadata' class='w-100 d-flex'><source src='" + url.pathToFileURL(item).href + "#t=5'></video>" : "<img class='d-flex w-100' src='" + url.pathToFileURL(item).href + "' />") + "</div><div class='flex-fill mediaDesc'>" + path.basename(item) + "</div><div class='ps-3 pe-1'><button class='btn btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-primary playStop play'><i class='fas fa-fw fa-play'></i></button></div></li>");
     }
   });
@@ -2024,19 +2027,24 @@ $("#chooseBackground").on("click", function() {
       rm(oldBackground);
     }
     fs.copyFileSync(mediaWindowBackground[0], path.join(paths.app, "media-window-background-image" + path.extname(mediaWindowBackground[0])));
-    if (webdavIsAGo) try {
-      webdavLs(prefs.congServerDir).then(items => {
-        webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(prefs.congServerDir, item.basename))).then(() => {
-          webdavPut(fs.readFileSync(mediaWindowBackground[0]), prefs.congServerDir, "media-window-background-image" + path.extname(mediaWindowBackground[0]));
-        });
+    if (webdavIsAGo) webdavLs(prefs.congServerDir).then(items => {
+      webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(prefs.congServerDir, item.basename))).then(() => {
+        webdavPut(fs.readFileSync(mediaWindowBackground[0]), prefs.congServerDir, "media-window-background-image" + path.extname(mediaWindowBackground[0]));
       });
-    } catch(err) {
-      notifyUser("error", "errorWebdavPut", mediaWindowBackground[0], false, err);
-    }
+    });
     refreshBackgroundImagePreview();
   } else {
     notifyUser("error", "notAnImage");
   }
+});
+$("#deleteBackground").on("click", function() {
+  for (var oldBackground of glob.sync(path.join(paths.app, "media-window-background-image*"))) {
+    rm(oldBackground);
+  }
+  if (webdavIsAGo) webdavLs(prefs.congServerDir).then(items => {
+    webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(prefs.congServerDir, item.basename)));
+  });
+  refreshBackgroundImagePreview();
 });
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
   $(this).toggleClass("btn-success btn-warning").prop("disabled", true);

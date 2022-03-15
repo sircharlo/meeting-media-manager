@@ -21,22 +21,57 @@
       -webkit-app-region: drag;
     }
 
-    #blackOverlay {
+    #blackOverlay,
+    #importedYearText,
+    #mediaDisplay {
       position: absolute;
       top: 0;
       left: 0;
+    }
+
+
+    #blackOverlay {
       background: black;
       opacity: 0;
       transition: opacity 0.4s;
+      z-index: 15;
     }
 
     #mediaDisplay {
       background: transparent;
+      z-index: 10;
+    }
+
+    #importedYearText,
+    #importedYearTextLogo {
+      z-index: 5;
+    }
+
+    #importedYearText {
+      color: white;
+      width: 100%;
+      text-align: center;
+      height: fit-content;
+      margin: auto;
+      bottom: 0;
+      right: 0;
+      font-size: 4vw;
+      line-height: 2vw;
+    }
+
+    #importedYearTextLogo {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 18vh;
+      position: absolute;
+      bottom: 10vh;
+      right: 10vh;
     }
   </style>
 </head>
 
 <body>
+  <div id="importedYearText"></div>
+  <div id="importedYearTextLogo"></div>
   <div id="mediaDisplay"></div>
   <div id="blackOverlay"></div>
   <script type="text/javascript">
@@ -46,9 +81,11 @@
     const {
       ipcRenderer
     } = require('electron'),
+      fs = require("graceful-fs"),
       glob = require("glob"),
       isImage = require("is-image"),
       isVideo = require("is-video"),
+      os = require("os"),
       path = require("path"),
       remote = require("@electron/remote"),
       url = require("url");
@@ -97,8 +134,56 @@
         $("video").remove();
       });
     }
-    let mediaWindowBackgroundImages = glob.sync(path.join(remote.app.getPath("userData"), "media-window-background-image*"))
-    if (mediaWindowBackgroundImages.length > 0) $("body").css("background", "url(" + url.pathToFileURL(mediaWindowBackgroundImages[0]).href + ") black center center / contain no-repeat");
+    let prefs = {},
+      prefsFile = path.join(remote.app.getPath("userData"), "prefs.json")
+    if (fs.existsSync(prefsFile)) {
+      try {
+        prefs = JSON.parse(fs.readFileSync(prefsFile));
+      } catch (err) {
+        console.error("no prefs found!");
+      }
+    }
+    let mediaWindowBackgroundImages = glob.sync(path.join(remote.app.getPath("userData"),
+      "media-window-background-image*"))
+    if (mediaWindowBackgroundImages.length > 0) {
+      $("body").css("background", "url(" + url.pathToFileURL(mediaWindowBackgroundImages[0]).href + ") black center center / contain no-repeat");
+    } else if (prefs.lang) {
+      try {
+        let localAppData = remote.app.getPath("appData");
+        if (os.platform() == "win32") localAppData = glob.sync(path.join(localAppData, "../local"))[0]
+        let yearText = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "YearText", (new Date().getFullYear()).toString(), "*")).find(yt => path.basename(yt) == prefs.lang)
+        if (yearText && yearText.length > 0) {
+          $("#importedYearText").html(fs.readFileSync(yearText, "utf8"));
+          let yearTextFontFiles = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "Wt-ClearText-Bold.*"));
+          if (yearTextFontFiles && yearTextFontFiles.length > 0) {
+            var yearTextFont = new FontFace('Wt-ClearText-Bold', 'url(' + url.pathToFileURL(yearTextFontFiles[0]).href + ')');
+            yearTextFont.load().then(function(loaded_face) {
+              document.fonts.add(loaded_face);
+              document.getElementById("importedYearText").style.fontFamily = '"Wt-ClearText-Bold", serif';
+            }).catch(function(err) {
+              console.error(err);
+            });
+          }
+        }
+        try {
+          let logoFontFiles = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "jw-icons*"));
+          if (logoFontFiles && logoFontFiles.length > 0) {
+            var logoFont = new FontFace('JW-Icons', 'url(' + url.pathToFileURL(logoFontFiles[0]).href + ')');
+            logoFont.load().then(function(loaded_face) {
+              document.fonts.add(loaded_face);
+              document.getElementById("importedYearTextLogo").style.fontFamily = '"JW-Icons"';
+              $("#importedYearTextLogo").text("");
+            }).catch(function(err) {
+              console.error(err);
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
   </script>
 </body>
 

@@ -6,6 +6,7 @@
   "convertDownloaded": "Convert media to MP4 format",
   "convertExternal": "Offer to import additional media",
   "custom": "Custom",
+  "delete": "Delete",
   "enableMediaDisplayButton": "Enable button to present media on an external monitor or in a separate window",
   "enableMusicButton": "Enable button to play Kingdom songs on shuffle",
   "enableVlcPlaylistCreation": "Create playlists for use with <em>VLC</em>",

@@ -4,7 +4,7 @@ title: 'Presenting media'
 layout: null
 ---
 
-The media presentation mode is designed for simplicity rather than complex features.
+The media presentation mode is designed for simplicity and to prevent mistakes during meetings.
 
 ### Entering media presentation mode
 
@@ -14,7 +14,11 @@ The folder selection screen allows you to select the date for which you'd like t
 
 ### Presenting media
 
-When in standby, the media presentation screen displays the background image as configured in the settings, or a black background if no background image was provided.
+When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then JWMMF will attempt to automatically display the yeartext on Windows computers.
+
+<blockquote>For automatic yeartext display to work properly, JW Library needs to have been used at least once to display the yeartext on an external monitor. Note that this feature has only been tested on Windows computers.</blockquote>
+
+If all else fails, a black background will be displayed when on standby.
 
 To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be paused and played if necessary; note that for videos, the stop button must be pressed **twice** to prevent accidentally stopping a video while it is playing.
 
