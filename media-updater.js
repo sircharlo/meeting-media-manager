@@ -1805,7 +1805,7 @@ $("#btnMeetingMusic").on("click", async function() {
     if (prefs.musicFadeOutType == "smart") {
       if ((now.day() - 1) == prefs.mwDay || (now.day() - 1) == prefs.weDay) {
         let todaysMeetingStartTime = prefs[((now.day() - 1) == prefs.mwDay ? "mw" : "we") + "StartTime"].split(":");
-        let timeToStartFading = now.clone().hour(todaysMeetingStartTime[0]).minute(todaysMeetingStartTime[1]).millisecond(rightNow.millisecond()).subtract(prefs.musicFadeOutTime, "s");
+        let timeToStartFading = now.clone().hour(todaysMeetingStartTime[0]).minute(todaysMeetingStartTime[1]).millisecond(rightNow.millisecond()).subtract(prefs.musicFadeOutTime, "s").subtract(fadeDelay * 30, "ms");
         timeBeforeFade = timeToStartFading.diff(rightNow);
       }
     } else {
