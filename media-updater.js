@@ -1781,7 +1781,8 @@ $("#btnMediaWindow").on("click", function() {
   });
   showModal(true, true, i18n.__("targetMeeting"), folderListing, false);
   $(folderListing).find(".thatsToday").click();
-  $("#staticBackdrop .modal-footer").html($("<button type='button' id='btnToggleMediaWindowFocus' class='btn btn-info'><span class='fa-stack'><i class='fa-solid fa-desktop fa-stack-1x'></i><i class='fa-solid fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button>"));
+  $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-info mx-2'><span class='fa-stack'><i class='fa-solid fa-desktop fa-stack-1x'></i><i class='fa-solid fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
+  $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic"));
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal:not(.confirmed)", async function() {
     $(this).addClass("confirmed btn-danger");
     await delay(3);
@@ -1790,6 +1791,7 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal.confirmed", function() {
     require("electron").ipcRenderer.send("hideMediaWindow");
     showModal(false);
+    $("#actionButtions .left").append($("#btnMeetingMusic, #btnStopMeetingMusic"));
   });
   $("#staticBackdrop .modal-footer").show();
 });
