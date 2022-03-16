@@ -1712,10 +1712,10 @@ $("#btnForcedPrefs").on("click", () => {
 });
 require("electron").ipcRenderer.on("videoProgress", (event, percent) => {
   $("#videoProgress .progress-bar").css("width", percent + "%");
-  if (percent == 100) $("#videoProgress").closest(".item").find("button.playStop.stop").click();
+  $("#videoScrubber").val(percent);
 });
 require("electron").ipcRenderer.on("videoEnd", () => {
-  $("#videoProgress").closest(".item").find("button.playStop.stop").click();
+  $("#videoProgress").closest(".item").find("button.playStop.stop").addClass("confirmed btn-danger").click();
 });
 require("electron").ipcRenderer.on("videoPaused", () => {
   $("#videoProgress").closest(".item").find("button.pausePlay").click();
@@ -1723,6 +1723,9 @@ require("electron").ipcRenderer.on("videoPaused", () => {
 $("#staticBackdrop").on("click", "#btnToggleMediaWindowFocus", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
   $(this).toggleClass("hidden").find(".fa-stack-2x").toggleClass("fa-regular fa-circle text-danger fa-solid fa-ban");
+});
+$("#staticBackdrop").on("input change", "#videoScrubber", function() {
+  require("electron").ipcRenderer.send("videoScrub", $(this).val());
 });
 $("#btnMediaWindow").on("click", function() {
   setVars();
@@ -1753,6 +1756,7 @@ $("#btnMediaWindow").on("click", function() {
     } else if ($(this).hasClass("play")) {
       require("electron").ipcRenderer.send("playVideo");
     }
+    $("#videoProgress, #videoScrubber").toggle();
     $(this).toggleClass("play pause").find("i").toggleClass("fa-play fa-pause");
   });
   $(folderListing).on("mouseenter", "li:not(.list-group-item-primary)", function () {
@@ -1770,7 +1774,8 @@ $("#btnMediaWindow").on("click", function() {
       $("#btnToggleMediaWindowFocus.hidden").click();
       require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
       if (mediaItem.hasClass("video")) {
-        mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute progress start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
+        mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
+        mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0 w-100' style='height: 3px; display: none;' min='0' max='100' step='any' />");
         mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
         $("#folderListing button.playStop.play").not(triggerButton).prop("disabled", true);
       }
@@ -1782,8 +1787,8 @@ $("#btnMediaWindow").on("click", function() {
       if (!mediaItem.hasClass("video") || triggerButton.hasClass("confirmed")) {
         require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
         if (mediaItem.hasClass("video")) {
-          mediaItem.find("#videoProgress").remove();
-          mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 0);
+          mediaItem.find("#videoProgress, #videoScrubber").remove();
+          mediaItem.find(".pausePlay").removeClass("play").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
         }
         $("#folderListing button.playStop.play").prop("disabled", false);
         $("h5.modal-title button").not(triggerButton).prop("disabled", false);

@@ -102,11 +102,11 @@
           $("#mediaDisplay").append($('<video />', {
             id: 'mediaVideo',
             src: url.pathToFileURL(media).href,
+            autoplay: true,
             controls: false
           }).on("canplay", () => {
-            if ($("video")[0].duration > 0.1) {
-              $("video")[0].play();
-            } else {
+            if ($("video")[0].duration < 0.1) {
+              $("video")[0].pause();
               require("electron").ipcRenderer.send("videoPaused");
             }
           }).on("timeupdate", () => {
@@ -131,6 +131,9 @@
     });
     ipcRenderer.on('playVideo', (event, arg) => {
       $("video").trigger("play")
+    });
+    ipcRenderer.on('videoScrub', (event, timeAsPercent) => {
+      $("video")[0].currentTime = $("video")[0].duration * timeAsPercent / 100;
     });
     ipcRenderer.on('hideMedia', (event) => {
       hideMedia();
