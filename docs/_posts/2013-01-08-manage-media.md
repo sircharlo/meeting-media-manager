@@ -49,3 +49,28 @@ To **hide** or **remove** media, simply select a target meeting, find the media 
 | ------------- | ------------- | | |
 | `Offer to import additional media` is enabled | The media file was added to the meeting's media by you. <br><br>Click on the red 🟥 (delete) icon to delete the file from your computer. <br>Click a second time to confirm. | The media file is referenced in the meeting's material. <br><br>It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file was referenced in the meeting's material. <br><br>It was hidden by you, so it *will not* be downloaded or added to the meeting's media. |
 | [Congregation sync](#/congregation-sync) is active | The media file was added to congregation sync by the VO. <br><br>Click on the red 🟥 (delete) icon to delete the file from congregation sync. <br>Click a second time to confirm. | The media file is referenced in the meeting's material. <br><br>It *will* be downloaded from JW.org or extracted from the relevant publication, for every congregation sync user that fetches that meeting's media.  | The media file was referenced in the meeting's material. <br><br>It was hidden by the VO, so it *will not* be downloaded or added to the meeting's media, for any congregation sync user.  |
+
+### Screenshots
+
+<table class="showcase">
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-song.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-song.png?raw=true"></a></td>
+<td>Adding a song for a public talk</td>
+</tr>
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-media.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-media.png?raw=true"></a></td>
+<td>Adding an additional picture</td>
+</tr>
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-jwpub-extract.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-jwpub-extract.png?raw=true"></a></td>
+<td>Importing media from a section in a JWPUB file</td>
+</tr>
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-jwpub.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-jwpub.png?raw=true"></a></td>
+<td>Previewing media from a JWPUB file before importing</td>
+</tr>
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/rename-media.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/rename-media.png?raw=true"></a></td>
+<td>Renaming a media file</td>
+</tr>
+</table>

@@ -1,11 +1,13 @@
 ## Welcome!
 
-JW Meeting Media Fetcher, or **JWMMF** for short, is an app that facilitates the downloading of media that will be considered during congregation meetings of Jehovah's Witnesses. This is especially useful to share media with others during congregation Zoom meetings, for use during personal study, or when using JW Library is not possible or feasible for various reasons.
+JW Meeting Media Fetcher, or **JWMMF** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org. It features recurring and custom media management, as well as optional congregation sync.
+
+JWMMF also allows you to share and present all meeting media easily, using either its integrated media presentation mode for **hybrid** or **in-person** congregation meetings, or the inbuilt MP4 conversion feature, which enables you to share media during fully **remote** congregation Zoom meetings using Zoom's native MP4 sharing feature.
 
 
-## Documentation
+## How do I get started?
 
-Go to the [documentation](https://sircharlo.github.io/jw-meeting-media-fetcher/) for JWMMF to find information about installation, configuration, congregation media sync, and more.
+Go to the [documentation](https://sircharlo.github.io/jw-meeting-media-fetcher/) for JWMMF to find information about installation, configuration, media presentation mode, congregation media sync, and more.
 
 This app is made with love and a bit of spare time. Enjoy!
 
@@ -13,6 +15,6 @@ This app is made with love and a bit of spare time. Enjoy!
 
 ---
 
-![Media sync in progress](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/hero-main.gif?raw=true)
+![Media presentation mode](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/standby-mode.png?raw=true)
 
-![Congregation media management](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/hero-cong.gif?raw=true)
+![Media sync in progress](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/hero-main.gif?raw=true)

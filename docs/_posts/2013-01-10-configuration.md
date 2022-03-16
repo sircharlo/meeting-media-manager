@@ -96,7 +96,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     <tr>
       <td><code>Convert media to MP4 format</code></td>
       <td>This automatically converts all picture and audio files into MP4 format, for use with Zoom's <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/zoom-mp4-share.png?raw=true" target="_blank">native MP4 sharing feature</a>. This includes all pictures and media files downloaded from JW.org, as well as additional media files added by the user or the VO.
-      <br><br><blockquote><strong>Note:</strong> This option is best suited for <strong>remote-only</strong> congregation Zoom meetings. If conducting either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings, look into using <a href="#/present-media">media presentation mode</a> by activating the <code>Enable button to present media on an external monitor or in a separate window</code> option instead.</blockquote>
+      <br><br><blockquote><strong>Note:</strong> This option is best suited for <strong>remote-only</strong> congregation Zoom meetings. If conducting either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings, look into using <a href="#/present-media">media presentation mode</a> by activating the <code>Enable button to present media on an external monitor or in a separate window</code> option instead, and disable this option.</blockquote>
       </td>
     </tr>
     <tr>
@@ -157,4 +157,25 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
       <blockquote><strong>Note:</strong> If <a href="#/congregation-sync">congregation sync</a> is enabled, then the selected background image will be synced for all congregation sync users automatically.</blockquote></td>
     </tr>
   </tbody>
+</table>
+
+### Screenshots
+
+<table class="showcase">
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-1.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-1.png?raw=true"></a></td>
+<td>Application configuration</td>
+</tr>
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-2.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-2.png?raw=true"></a></td>
+<td>Congregation sync setup</td>
+</tr>
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-3.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-3.png?raw=true"></a></td>
+<td>Media fetching and sync setup</td>
+</tr>
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-4.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-4.png?raw=true"></a></td>
+<td>Meeting date and time setup</td>
+</tr>
 </table>
