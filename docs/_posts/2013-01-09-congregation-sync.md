@@ -69,3 +69,13 @@ All users that wish to be synchronized together will need to connect to the same
 ### Using congregation sync to manage media
 
 Once the setup is complete, you're ready to start <a href="#/manage-media">managing media</a> for your congregation's technical AV support team.
+
+
+### Screenshots
+
+<table class="showcase">
+<tr>
+<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-2.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-2.png?raw=true"></a></td>
+<td>Congregation sync setup</td>
+</tr>
+</table>

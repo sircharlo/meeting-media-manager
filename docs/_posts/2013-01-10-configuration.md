@@ -167,10 +167,6 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
 <td>Application configuration</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-2.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-2.png?raw=true"></a></td>
-<td>Congregation sync setup</td>
-</tr>
-<tr>
 <td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-3.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-3.png?raw=true"></a></td>
 <td>Media fetching and sync setup</td>
 </tr>
