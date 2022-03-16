@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "22.3.1",
+  "version": "22.3.2",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -8,8 +8,8 @@
     "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
   },
   "dependencies": {
-    "@electron/remote": "^2.0.7",
-    "@fortawesome/fontawesome-free": "^6.0.0",
+    "@electron/remote": "^2.0.8",
+    "@fortawesome/fontawesome-free": "^6.1.0",
     "@popperjs/core": "^2.11.4",
     "adm-zip": "^0.5.9",
     "aspectratio": "^2.2.2",
