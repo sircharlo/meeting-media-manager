@@ -43,7 +43,7 @@
     }
 
     #importedYearText,
-    #importedYearTextLogo {
+    #importedYearTextLogoContainer {
       z-index: 5;
     }
 
@@ -59,19 +59,23 @@
       line-height: 2vw;
     }
 
-    #importedYearTextLogo {
-      color: rgba(255, 255, 255, 0.2);
+    #importedYearTextLogoContainer {
       font-size: 18vh;
       position: absolute;
       bottom: 10vh;
       right: 10vh;
+      background: rgba(255, 255, 255, .2);
+    }
+
+    #importedYearTextLogo {
+      margin: -2vh -1vh;
     }
   </style>
 </head>
 
 <body>
   <div id="importedYearText"></div>
-  <div id="importedYearTextLogo"></div>
+  <div id="importedYearTextLogoContainer"></div>
   <div id="mediaDisplay"></div>
   <div id="blackOverlay"></div>
   <script type="text/javascript">
@@ -177,8 +181,8 @@
             var logoFont = new FontFace('JW-Icons', 'url(' + url.pathToFileURL(logoFontFiles[0]).href + ')');
             logoFont.load().then(function(loaded_face) {
               document.fonts.add(loaded_face);
-              document.getElementById("importedYearTextLogo").style.fontFamily = '"JW-Icons"';
-              $("#importedYearTextLogo").text("");
+              document.getElementById("importedYearTextLogoContainer").style.fontFamily = '"JW-Icons"';
+              $("#importedYearTextLogoContainer").html("<div id='importedYearTextLogo'></div>");
             }).catch(function(err) {
               console.error(err);
             });

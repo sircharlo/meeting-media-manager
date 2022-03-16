@@ -86,7 +86,6 @@ if (!gotTheLock) {
       let windowOptions = {
         title: "JWMMF Media Window",
         frame: !externalDisplays,
-        alwaysOnTop: true,
         webPreferences: {
           nodeIntegration: true,
           contextIsolation: false
@@ -105,6 +104,7 @@ if (!gotTheLock) {
       }
       Object.assign(windowOptions, supplementaryOptions);
       mediaWin = new BrowserWindow(windowOptions);
+      mediaWin.setAlwaysOnTop(true, "screen-saver");
       mediaWin.setAspectRatio(16/9);
       mediaWin.setMenuBarVisibility(false);
       remote.enable(mediaWin.webContents);

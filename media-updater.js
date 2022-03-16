@@ -1722,7 +1722,7 @@ require("electron").ipcRenderer.on("videoPaused", () => {
 });
 $("#staticBackdrop").on("click", "#btnToggleMediaWindowFocus", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
-  $(this).find(".fa-stack-2x").toggleClass("fa-regular fa-circle text-danger fa-solid fa-ban");
+  $(this).toggleClass("hidden").find(".fa-stack-2x").toggleClass("fa-regular fa-circle text-danger fa-solid fa-ban");
 });
 $("#btnMediaWindow").on("click", function() {
   setVars();
@@ -1767,6 +1767,7 @@ $("#btnMediaWindow").on("click", function() {
     if (triggerButton.hasClass("play")) {
       $("#folderListing button.playStop.stop").toggleClass("play stop btn-warning btn-primary").find("i").toggleClass("fa-play fa-stop");
       $("#folderListing .item").removeClass("list-group-item-primary");
+      $("#btnToggleMediaWindowFocus.hidden").click();
       require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
       if (mediaItem.hasClass("video")) {
         mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute progress start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
@@ -1809,7 +1810,7 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal.confirmed", function() {
     require("electron").ipcRenderer.send("hideMediaWindow");
     showModal(false);
-    $("#actionButtions .left").append($("#btnMeetingMusic, #btnStopMeetingMusic"));
+    $("#actionButtions").append($("#btnMeetingMusic, #btnStopMeetingMusic"));
   });
   $("#staticBackdrop .modal-footer").show();
 });
