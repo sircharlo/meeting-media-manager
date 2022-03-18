@@ -19,7 +19,7 @@
     "dayjs": "^1.11.0",
     "electron-updater": "^4.6.5",
     "escape-html": "^1.0.3",
-    "fast-xml-parser": "^4.0.6",
+    "fast-xml-parser": "^4.0.7",
     "flatpickr": "^4.6.11",
     "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.2.0",
