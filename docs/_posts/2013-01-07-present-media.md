@@ -8,7 +8,7 @@ The media presentation mode is designed for simplicity and to prevent mistakes d
 
 ### Entering media presentation mode
 
-Media presentation mode can be accessed by clicking the ▶️ (play) button on the main screen of JWMMF.
+Media presentation mode can be accessed by clicking the ▶️ (play) button on the main screen of JWMMF, or by using the keyboard shortcut <kbd>Alt</kbd> <kbd>D</kbd> (for external **d**isplay).
 
 Once you have entered presentation mode, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window in the case where no external monitor was detected.
 
@@ -32,7 +32,7 @@ Here are a few notes that will no doubt help you to set up hybrid meetings at th
 
 #### Initial configuration: Zoom
 
-**Zoom** should be configured to use dual monitors. It's also recommended to enable global keyboard shortcuts for Zoom for starting/stopping screen sharing (<kbd>Alt</kbd> <kbd>S</kbd>), muting/unmuting the KH audio in Zoom (<kbd>Alt</kbd> <kbd>A</kbd>), and starting/stopping the KH video feed in Zoom (<kbd>Alt</kbd> <kbd>V</kbd>).
+**Zoom** should be configured to use dual monitors. It's also recommended to enable global keyboard shortcuts for Zoom for starting/stopping screen **s**haring (<kbd>Alt</kbd> <kbd>S</kbd>), muting/unmuting the Kingdom Hall **a**udio in Zoom (<kbd>Alt</kbd> <kbd>A</kbd>), and starting/stopping the Kingdom Hall **v**ideo feed in Zoom (<kbd>Alt</kbd> <kbd>V</kbd>).
 
 #### Initial configuration: JWMMF
 
@@ -42,13 +42,13 @@ Not much is required in terms of initial configuration in JWMMF, other than maki
 
 Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
 
-Once the Zoom meeting is being displayed on the external monitor, open JWMMF. Sync media if necessary, and enter media presentation mode. The media presentation window will automatically open on top of Zoom on the external monitor.
+Once the Zoom meeting is being displayed on the external monitor, open JWMMF. Sync media if necessary, and enter media presentation mode by clicking the ▶️ (play) button on the main screen of JWMMF, or <kbd>Alt</kbd> <kbd>D</kbd>. The media presentation window will automatically open on top of Zoom on the external monitor.
 
-Start background music playback using the button on the bottom left.
+Start background music playback using the button on the bottom left, or <kbd>Alt</kbd> <kbd>K</kbd>.
 
 #### Broadcasting in-person parts from the Kingdom Hall stage over Zoom
 
-Enable the KH video feed (<kbd>Alt</kbd> <kbd>V</kbd>), and spotlight the KH video feed if necessary so that Zoom participants see the KH stage. Unmute the KH audio feed in Zoom (<kbd>Alt</kbd> <kbd>A</kbd>).
+Enable the Kingdom Hall video feed (<kbd>Alt</kbd> <kbd>V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt</kbd> <kbd>A</kbd>).
 
 #### Sharing media at the Kingdom Hall and over Zoom
 
@@ -56,15 +56,15 @@ Start sharing in Zoom by hitting <kbd>Alt</kbd> <kbd>S</kbd>. In the Zoom sharin
 
 Find the media you want to share in the JWMMF media playback control window, and press the "play" button. The media will now be visible to those at the Kingdom Hall, and shared over Zoom.
 
-When you're done sharing media, hit <kbd>Alt</kbd> <kbd>S</kbd> to end Zoom screen sharing. The KH monitor will now show the yeartext.
+When you're done sharing media, hit <kbd>Alt</kbd> <kbd>S</kbd> to end Zoom screen sharing. The Kingdom Hall monitor will now show the yeartext.
 
-#### Displaying remote Zoom participants on the KH monitor
+#### Displaying remote Zoom participants on the Kingdom Hall monitor
 
-Press the "hide/show media presentation screen" button in the lower right corner of the JWMMF media playback control window to **hide** the media presentation window. The Zoom meeting will now be visible on the KH monitor.
+Press the "hide/show media presentation screen" button in the lower right corner of the JWMMF media playback control window, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
 
-<blockquote>If the participant has media to show, follow the steps under the *Sharing media at the Kingdom Hall and over Zoom* subheading.</blockquote>
+<blockquote>If the participant has media to show, follow the steps under the <strong>Sharing media at the Kingdom Hall and over Zoom</strong> subheading.</blockquote>
 
-Once the participant has finished their part, press the "hide/show media presentation screen" button in the lower right corner of the JWMMF media playback control window to **show** the media presentation window. The KH monitor will now show the yeartext.
+Once the participant has finished their part, press the "hide/show media presentation screen" button in the lower right corner of the JWMMF media playback control window, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
 
 ### Screenshots
 
