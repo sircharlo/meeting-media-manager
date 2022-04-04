@@ -1407,6 +1407,9 @@ function validateConfig(changed) {
   if (os.platform() !== "linux") remote.app.setLoginItemSettings({ openAtLogin: prefs.autoRunAtBoot });
   $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton) {
+    remote.globalShortcut.register("Alt+K", () => {
+      $("#btnMeetingMusic:visible, #btnStopMeetingMusic:visible").click();
+    });
     if (prefs.enableMusicFadeOut) {
       if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
       if (!prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
@@ -1418,8 +1421,17 @@ function validateConfig(changed) {
     } else {
       $("#musicVolume").val(100).change();
     }
+  } else {
+    remote.globalShortcut.unregister("Alt+B");
   }
   $("#btnMediaWindow").toggle(!!prefs.enableMediaDisplayButton);
+  if (prefs.enableMediaDisplayButton) {
+    remote.globalShortcut.register("Alt+D", () => {
+      if ($("#btnToggleMediaWindowFocus:visible").length == 0) $("#btnMediaWindow:visible").click();
+    });
+  } else {
+    remote.globalShortcut.unregister("Alt+D");
+  }
   if (prefs.enableMediaDisplayButton) refreshBackgroundImagePreview();
   $("#currentMediaBackground").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
   $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
@@ -1745,6 +1757,9 @@ $("#staticBackdrop").on("input change", "#videoScrubber", function() {
   require("electron").ipcRenderer.send("videoScrub", $(this).val());
 });
 $("#btnMediaWindow").on("click", function() {
+  remote.globalShortcut.register("Alt+Z", () => {
+    $("#btnToggleMediaWindowFocus:visible").click();
+  });
   setVars();
   require("electron").ipcRenderer.send("showMediaWindow");
   let folderListing = $("<div id='folderListing' class='list-group'>");
@@ -1822,7 +1837,7 @@ $("#btnMediaWindow").on("click", function() {
   });
   showModal(true, true, i18n.__("targetMeeting"), folderListing, false);
   $(folderListing).find(".thatsToday").click();
-  $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-info mx-2'><span class='fa-stack'><i class='fa-solid fa-desktop fa-stack-1x'></i><i class='fa-solid fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
+  $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-info mx-2' title='Alt+Z'><span class='fa-stack'><i class='fa-solid fa-desktop fa-stack-1x'></i><i class='fa-solid fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic"));
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal:not(.confirmed)", async function() {
     $(this).addClass("confirmed btn-danger");
@@ -1831,12 +1846,19 @@ $("#btnMediaWindow").on("click", function() {
   });
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal.confirmed", function() {
     require("electron").ipcRenderer.send("hideMediaWindow");
+    remote.globalShortcut.unregister("Alt+Z");
     showModal(false);
     $("#actionButtions").append($("#btnMeetingMusic, #btnStopMeetingMusic"));
   });
   $("#staticBackdrop .modal-footer").show();
 });
-$("#btnMeetingMusic").on("click", async function() {
+$("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
+  $(this).addClass("confirmed btn-warning");
+  await delay(3);
+  $(this).removeClass("confirmed btn-warning");
+});
+$("body").on("click", "#btnMeetingMusic.confirmed", async function() {
+  $(this).removeClass("confirmed btn-warning");
   if (prefs.enableMusicFadeOut) {
     let timeBeforeFade;
     let rightNow = dayjs();
@@ -1875,7 +1897,7 @@ $("#btnMeetingMusic").on("click", async function() {
       iterator = (iterator < songs.length - 1 ? iterator + 1 : 0);
       createAudioElem(iterator);
     }).on("canplay", function() {
-      $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").closest("button").prop("title", songs[iterator].title);
+      $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").closest("button").prop("title", songs[iterator].title + " (Alt+K)");
       $("#meetingMusic").prop("volume", prefs.musicVolume / 100);
       displayMusicRemaining();
     }).on("timeupdate", function() {
