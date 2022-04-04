@@ -431,17 +431,28 @@ function displayMusicRemaining() {
 }
 async function downloadIfRequired(file) {
   file.downloadRequired = true;
-  file.localDir = file.pub ? path.join(paths.pubs, file.pub, file.issue) : path.join(paths.media, file.folder);
-  file.localFile = path.join(file.localDir, file.pub ? path.basename(file.url) : file.safeName);
+  file.localDir = path.join(paths.pubs, (file.pub || file.queryInfo.KeySymbol || file.queryInfo.MultiMeps || "unknown").toString(), (file.issue || file.queryInfo.IssueTagNumber || 0).toString(), (file.track || file.queryInfo.Track || 0).toString());
+  file.localFilename = file.folder ? file.safeName : path.basename(file.url) || file.safeName;
+  file.localFile = path.join(file.localDir, file.localFilename);
   if (fs.existsSync(file.localFile)) file.downloadRequired = file.filesize !== fs.statSync(file.localFile).size;
   if (file.downloadRequired) {
     mkdirSync(file.localDir);
-    fs.writeFileSync(file.localFile, new Buffer((await request(file.url, {isFile: true})).data));
+    let downloadedFile = new Buffer((await request(file.url, {isFile: true})).data);
+    fs.writeFileSync(file.localFile, downloadedFile);
+    if (file.folder) {
+      mkdirSync(path.join(paths.media, file.folder));
+      fs.writeFileSync(path.join(paths.media, file.folder, file.localFilename), downloadedFile);
+    }
     downloadStat("jworg", "live", file);
   } else {
+    if (file.folder) {
+      mkdirSync(path.join(paths.media, file.folder));
+      fs.copyFileSync(file.localFile, path.join(paths.media, file.folder, file.localFilename));
+    }
     downloadStat("jworg", "cache", file);
   }
   if (path.extname(file.localFile) == ".jwpub") await new zipper((await new zipper(file.localFile).readFile("contents"))).extractAllTo(file.localDir);
+  return file.localFile;
 }
 function downloadStat(origin, source, file) {
   if (!downloadStats[origin]) downloadStats[origin] = {};
@@ -592,8 +603,9 @@ async function getDbFromJwpub(pub, issue, localpath) {
         var jwpub = (await getMediaLinks(pub, null, issue, "JWPUB"))[0];
         jwpub.pub = pub;
         jwpub.issue = issue;
+        jwpub.queryInfo = {};
         await downloadIfRequired(jwpub);
-        jwpubDbs[pub][issue] = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "*.db"))[0]));
+        jwpubDbs[pub][issue] = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "0", "*.db"))[0]));
       }
     }
     return jwpubDbs[pub][issue];
@@ -653,7 +665,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
         if (multimediaItem.KeySymbol == null) {
           multimediaItem.KeySymbol = keySymbol;
           multimediaItem.IssueTagNumber = issueTagNumber;
-          if (!memOnly) multimediaItem.LocalPath = path.join(paths.pubs, multimediaItem.KeySymbol, multimediaItem.IssueTagNumber, multimediaItem.FilePath);
+          if (!memOnly) multimediaItem.LocalPath = path.join(paths.pubs, multimediaItem.KeySymbol, multimediaItem.IssueTagNumber, "0", multimediaItem.FilePath);
         }
         multimediaItem.FileName = sanitizeFilename((multimediaItem.Caption.length > multimediaItem.Label.length ? multimediaItem.Caption : multimediaItem.Label), true);
         var picture = {
@@ -743,18 +755,18 @@ function getLocaleLanguages() {
   }
   $("#localAppLang").val(prefs.localAppLang);
 }
-async function getMediaLinks(pub, track, issue, format, docId) {
+async function getMediaLinks(pubSymbol, track, issue, format, docId) {
   let mediaFiles = [];
   if (prefs.lang && prefs.maxRes) {
     try {
-      if (pub === "w" && parseInt(issue) >= 20080101 && issue.slice(-2) == "01") pub = "wp";
-      let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pub + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
+      if (pubSymbol === "w" && parseInt(issue) >= 20080101 && issue.slice(-2) == "01") pubSymbol = "wp";
+      let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pubSymbol + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
       let result = (await request(requestUrl)).data;
-      log.debug(pub, track, issue, format, docId, requestUrl);
-      if (result && result.length > 0 && result[0].status && result[0].status == 404 && pub && track) {
-        requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + pub + "m" + "&track=" + track + (issue ? "&issue=" + issue : "") + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
+      log.debug(pubSymbol, track, issue, format, docId, requestUrl);
+      if (result && result.length > 0 && result[0].status && result[0].status == 404 && pubSymbol && track) {
+        requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + pubSymbol + "m" + "&track=" + track + (issue ? "&issue=" + issue : "") + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
         result = (await request(requestUrl)).data;
-        log.debug(pub + "m", track, issue, format, docId, requestUrl);
+        log.debug(pubSymbol + "m", track, issue, format, docId, requestUrl);
       }
       if (result && result.files) {
         let mediaFileCategories = Object.values(result.files)[0];
@@ -764,18 +776,19 @@ async function getMediaLinks(pub, track, issue, format, docId) {
           let {label, subtitled} = map.get(item.title);
           if ((item.label.replace(/\D/g, "") - label.replace(/\D/g, "") || subtitled - item.subtitled) > 0) map.set(item.title, item);
         }
-        mediaFiles = Array.from(map.values(), ({title, file: {url}, file: {checksum}, filesize, duration, trackImage}) => ({title, url, checksum, filesize, duration, trackImage})).map(item => {
+        mediaFiles = Array.from(map.values(), ({title, file: {url}, file: {checksum}, filesize, duration, trackImage, track, pub}) => ({title, url, checksum, filesize, duration, trackImage, track, pub})).map(item => {
           item.trackImage = item.trackImage.url;
+          item.queryInfo = {};
           return item;
         });
         for (var item of mediaFiles) {
           if (item.duration >0 && !item.trackImage) {
-            item.trackImage = await getMediaThumbnail(pub, track, issue, format, docId);
+            item.trackImage = await getMediaThumbnail(pubSymbol, track, issue, format, docId);
           }
         }
       }
     } catch(err) {
-      notifyUser("warn", "infoPubIgnored", pub + " - " + track + " - " + issue + " - " + format, false, err);
+      notifyUser("warn", "infoPubIgnored", pubSymbol + " - " + track + " - " + issue + " - " + format, false, err);
     }
   }
   log.debug(mediaFiles);
@@ -853,7 +866,7 @@ async function getWeMediaFromDb() {
       if (weekNumber < 0) throw("No WE meeting date found!");
       var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
       for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
-        var LocalPath = path.join(paths.pubs, "w", issue, picture.FilePath);
+        var LocalPath = path.join(paths.pubs, "w", issue, "0", picture.FilePath);
         var FileName = sanitizeFilename((picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label), true);
         var pictureObj = {
           title: FileName,
@@ -1847,21 +1860,22 @@ $("#btnMeetingMusic").on("click", async function() {
   $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
   var songs = (await getMediaLinks("sjjm", null, null, "MP3")).sort(() => .5 - Math.random());
   var iterator = 0;
-  function createAudioElem(iterator) {
+  async function createAudioElem(iterator) {
+    setVars();
     $("body").append($("<audio id='meetingMusic' autoplay>").data("track", songs[iterator].track).on("ended", function() {
       $("#meetingMusic").remove();
       iterator = (iterator < songs.length - 1 ? iterator + 1 : 0);
       createAudioElem(iterator);
-    }).on("loadstart", function() {
-      $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
-      displayMusicRemaining();
     }).on("canplay", function() {
       $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").closest("button").prop("title", songs[iterator].title);
       $("#meetingMusic").prop("volume", prefs.musicVolume / 100);
       displayMusicRemaining();
     }).on("timeupdate", function() {
       displayMusicRemaining();
-    }).append("<source src='"+ songs[iterator].url + "' type='audio/mpeg'>"));
+    }));
+    $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
+    displayMusicRemaining();
+    $("#meetingMusic").append("<source src='"+ (await downloadIfRequired(songs[iterator])) + "' type='audio/mpeg'>");
   }
   createAudioElem(iterator);
 });
