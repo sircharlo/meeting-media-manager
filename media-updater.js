@@ -60,17 +60,21 @@ i18n.configure({
   retryInDefaultLocale: true
 });
 
+var jworgIsReachable = false,
+  initialConnectivityCheck = true;
+
 function checkInternet(online) {
-  if (online) {
-    overlay(true, "cog fa-spin");
-    require("electron").ipcRenderer.send("autoUpdate");
-  } else {
-    overlay(true, "wifi fa-beat", "circle-notch fa-spin text-danger");
-    setTimeout(updateOnlineStatus, 4000);
+  jworgIsReachable = !!online;
+  $("#mediaSync").toggleClass("noJwOrg", !online).prop("disabled", !online);
+  if (!online) {
+    initialConnectivityCheck = false;
+    setTimeout(updateOnlineStatus, 10000);
   }
 }
-const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443)));
+const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443, !initialConnectivityCheck)));
+overlay(true, "cog fa-spin");
 updateOnlineStatus();
+require("electron").ipcRenderer.send("attemptAutoUpdate");
 require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, message[0], message[1]));
 require("electron").ipcRenderer.on("macUpdate", async () => {
   await overlay(true, "cloud-download-alt fa-beat", "circle-notch fa-spin text-success");
@@ -893,7 +897,7 @@ async function getWeMediaFromDb() {
     }
   }
 }
-function isReachable(hostname, port) {
+function isReachable(hostname, port, silent) {
   return new Promise(resolve => {
     try {
       let client = net.createConnection(port, hostname);
@@ -906,7 +910,7 @@ function isReachable(hostname, port) {
         resolve(true);
       });
       client.on("error", function(err) {
-        notifyUser("error", "errorSiteCheck", hostname + ":" + port, false, err);
+        if (!silent) notifyUser("error", "errorSiteCheck", hostname + ":" + port, false, err);
         resolve(false);
       });
     } catch(err) {
@@ -1422,7 +1426,7 @@ function validateConfig(changed) {
   $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
   $("#btnMeetingMusic").toggle(!!prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
   $(".btn-home").toggleClass("btn-dark", configIsValid).toggleClass("btn-danger", !configIsValid);
-  $("#mediaSync, .btn-home").prop("disabled", !configIsValid);
+  $("#mediaSync:not(.noJwOrg), .btn-home").prop("disabled", !configIsValid);
   if (!configIsValid) {
     toggleScreen("overlaySettings", true);
   } else if (changed) {
@@ -1856,10 +1860,14 @@ $("#btnMeetingMusic").on("click", async function() {
   } else {
     pendingMusicFadeOut.id = null;
   }
-  $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
-  $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
-  var songs = (await getMediaLinks("sjjm", null, null, "MP3")).sort(() => .5 - Math.random());
-  var iterator = 0;
+  setVars();
+  var songs = (jworgIsReachable ? (await getMediaLinks("sjjm", null, null, "MP3")) : glob.sync(path.join(paths.pubs, "sjjm", "0", "*", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
+  if (songs.length > 0) {
+    $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
+    $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
+    var iterator = 0;
+    createAudioElem(iterator);
+  }
   async function createAudioElem(iterator) {
     setVars();
     $("body").append($("<audio id='meetingMusic' autoplay>").data("track", songs[iterator].track).on("ended", function() {
@@ -1875,9 +1883,8 @@ $("#btnMeetingMusic").on("click", async function() {
     }));
     $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
     displayMusicRemaining();
-    $("#meetingMusic").append("<source src='"+ (await downloadIfRequired(songs[iterator])) + "' type='audio/mpeg'>");
+    $("#meetingMusic").append("<source src='"+ (jworgIsReachable ? (await downloadIfRequired(songs[iterator])) : songs[iterator].path) + "' type='audio/mpeg'>");
   }
-  createAudioElem(iterator);
 });
 $(".btn-home, #btn-settings").on("click", function() {
   toggleScreen("overlaySettings");

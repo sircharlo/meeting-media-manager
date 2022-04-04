@@ -47,7 +47,7 @@ if (!gotTheLock) {
       win.focus();
     }
   });
-  ipcMain.on("autoUpdate", () => {
+  ipcMain.on("attemptAutoUpdate", () => {
     autoUpdater.checkForUpdates();
   });
   ipcMain.on("hideMediaWindow", () => {
