@@ -131,7 +131,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     </tr>
     <tr>
       <td><code>Enable button to play Kingdom songs on shuffle</code> </td>
-      <td>Shows a button on the main screen which, once clicked, will play Kingdom songs from the <em>sjjm</em> series, in random order. This is useful, for example, to play songs before and after meetings at the Kingdom Hall as background music.</td>
+      <td>Shows a button on the main screen which, when clicked twice, will play Kingdom songs from the <em>sjjm</em> series, in random order. This is useful, for example, to play songs before and after meetings at the Kingdom Hall as background music.</td>
     </tr>
     <tr>
       <td><code>Song playback volume</code></td>
