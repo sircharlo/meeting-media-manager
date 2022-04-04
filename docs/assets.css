@@ -172,6 +172,15 @@ samp {
     font-size: 1em;
 }
 
+kbd {
+    font-family: monospace;
+    background: rgb(230, 230, 230);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+    border: solid rgb(210,210,210) 2px;
+    font-weight: bold;
+}
+
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
