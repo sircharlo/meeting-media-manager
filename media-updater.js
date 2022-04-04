@@ -1671,7 +1671,7 @@ $("#baseDate").on("click", ".dropdown-item", function() {
   let newBaseDate = dayjs($(this).val()).startOf("isoWeek");
   if (!baseDate.isSame(newBaseDate)) {
     baseDate = newBaseDate;
-    $(".alertIndicators i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+    $(".alertIndicators").removeClass("alert-danger").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle fa-times-circle");
     $("#baseDate .dropdown-item.active").removeClass("active");
     $(this).addClass("active");
     $("#baseDate > button").text($(this).text());
