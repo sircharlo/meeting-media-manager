@@ -70,7 +70,8 @@
   },
   "devDependencies": {
     "electron": "^18.0.1",
-    "electron-builder": "^22.14.13"
+    "electron-builder": "^22.14.13",
+    "@electron/universal": "^1.2.1"
   },
   "scripts": {
     "start-debug": "electron .  --trace-warnings > ./app-run.log  2>&1",
