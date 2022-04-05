@@ -452,28 +452,30 @@ function displayMusicRemaining() {
 }
 async function downloadIfRequired(file) {
   file.downloadRequired = true;
-  file.localDir = path.join(paths.pubs, (file.pub || file.queryInfo.KeySymbol || file.queryInfo.MultiMeps || "unknown").toString(), (file.issue || file.queryInfo.IssueTagNumber || 0).toString(), (file.track || file.queryInfo.Track || 0).toString());
-  file.localFilename = file.folder ? file.safeName : path.basename(file.url) || file.safeName;
-  file.localFile = path.join(file.localDir, file.localFilename);
-  if (fs.existsSync(file.localFile)) file.downloadRequired = file.filesize !== fs.statSync(file.localFile).size;
+  file.cacheDir = path.join(paths.pubs, (file.pub || file.queryInfo.KeySymbol || file.queryInfo.MultiMeps || "unknown").toString(), (file.issue || file.queryInfo.IssueTagNumber || 0).toString(), (file.track || file.queryInfo.Track || 0).toString());
+  file.cacheFilename = path.basename(file.url) || file.safeName;
+  file.cacheFile = path.join(file.cacheDir, file.cacheFilename);
+  file.destFilename = file.folder ? file.safeName : file.cacheFilename;
+  if (fs.existsSync(file.cacheFile)) file.downloadRequired = file.filesize !== fs.statSync(file.cacheFile).size;
+  console.log(file);
   if (file.downloadRequired) {
-    mkdirSync(file.localDir);
+    mkdirSync(file.cacheDir);
     let downloadedFile = new Buffer((await request(file.url, {isFile: true})).data);
-    fs.writeFileSync(file.localFile, downloadedFile);
+    fs.writeFileSync(file.cacheFile, downloadedFile);
     if (file.folder) {
       mkdirSync(path.join(paths.media, file.folder));
-      fs.writeFileSync(path.join(paths.media, file.folder, file.localFilename), downloadedFile);
+      fs.writeFileSync(path.join(paths.media, file.folder, file.destFilename), downloadedFile);
     }
     downloadStat("jworg", "live", file);
   } else {
     if (file.folder) {
       mkdirSync(path.join(paths.media, file.folder));
-      fs.copyFileSync(file.localFile, path.join(paths.media, file.folder, file.localFilename));
+      fs.copyFileSync(file.cacheFile, path.join(paths.media, file.folder, file.destFilename));
     }
     downloadStat("jworg", "cache", file);
   }
-  if (path.extname(file.localFile) == ".jwpub") await new zipper((await new zipper(file.localFile).readFile("contents"))).extractAllTo(file.localDir);
-  return file.localFile;
+  if (path.extname(file.cacheFile) == ".jwpub") await new zipper((await new zipper(file.cacheFile).readFile("contents"))).extractAllTo(file.cacheDir);
+  return file.cacheFile;
 }
 function downloadStat(origin, source, file) {
   if (!downloadStats[origin]) downloadStats[origin] = {};
