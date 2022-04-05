@@ -800,6 +800,7 @@ async function getMediaLinks(pubSymbol, track, issue, format, docId) {
         mediaFiles = Array.from(map.values(), ({title, file: {url}, file: {checksum}, filesize, duration, trackImage, track, pub}) => ({title, url, checksum, filesize, duration, trackImage, track, pub})).map(item => {
           item.trackImage = item.trackImage.url;
           item.queryInfo = {};
+          if (issue) item.issue = issue;
           return item;
         });
         for (var item of mediaFiles) {
@@ -1227,6 +1228,7 @@ async function startMediaSync(isDryrun) {
           "@_version": "1"
         }
       };
+      mkdirSync(path.join(paths.media, date));
       fs.writeFileSync(path.join(paths.media, date, date + ".xspf"), (new XMLBuilder({ignoreAttributes: false})).build(playlistItems));
     }
     if (prefs.autoOpenFolderWhenDone) shell.openPath(paths.media);
@@ -2087,7 +2089,7 @@ $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown").prop("disabled", true);
   await startMediaSync();
   await overlay(true, "circle-check text-success fa-beat", (prefs.autoQuitWhenDone ? "person-running" : null), "stay-alive");
-  await delay(5);
+  await delay(3);
   if (prefs.autoQuitWhenDone && !stayAlive) {
     remote.app.exit();
   } else {
