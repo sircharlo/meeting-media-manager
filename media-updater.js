@@ -213,6 +213,23 @@ function addMediaItemToPart (date, paragraph, media) {
     meetingMedia[date] = meetingMedia[date].sort((a, b) => a.title > b.title && 1 || -1);
   }
 }
+async function calculateCacheSize() {
+  setVars();
+  let cacheSize = 0;
+  const updateCacheSize = () => $("#cacheSizeInMb").text(Math.ceil(cacheSize / 1024 / 1024) + "MB");
+  for (var file of glob.sync(path.join(paths.media, "**", "*"), {
+    ignore: [path.join(paths.media, "Recurring")],
+    nodir: true
+  }).concat(glob.sync(paths.langs)).concat(glob.sync(path.join(paths.pubs, "*", "**", "*"), {
+    nodir: true
+  }))) {
+    fs.stat(file, (err, stats) => {
+      cacheSize = cacheSize + stats.size;
+      updateCacheSize();
+    });
+  }
+  updateCacheSize();
+}
 function rm(toDelete) {
   if (!Array.isArray(toDelete)) toDelete = [toDelete];
   for (var fileOrDir of toDelete) {
@@ -1908,8 +1925,9 @@ $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
     $("#meetingMusic").append("<source src='"+ (jworgIsReachable ? (await downloadIfRequired(songs[iterator])) : songs[iterator].path) + "' type='audio/mpeg'>");
   }
 });
-$(".btn-home, #btn-settings").on("click", function() {
+$(".btn-home, #btn-settings").on("click", async function() {
   toggleScreen("overlaySettings");
+  if (!$(this).hasClass("btn-home")) calculateCacheSize();
 });
 $("#btnStopMeetingMusic").on("click", function() {
   clearTimeout(pendingMusicFadeOut.id);
@@ -2117,6 +2135,7 @@ $("#overlaySettings").on("click", ".btn-clean-up", function() {
     ignore: [path.join(paths.media, "Recurring")]
   }).concat([paths.langs, paths.pubs]));
   $(".alertIndicators i").addClass("far fa-circle").removeClass("fas fa-check-circle");
+  calculateCacheSize();
   setTimeout(() => {
     $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
   }, 3000);
