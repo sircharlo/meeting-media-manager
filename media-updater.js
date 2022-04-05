@@ -215,20 +215,21 @@ function addMediaItemToPart (date, paragraph, media) {
 }
 async function calculateCacheSize() {
   setVars();
-  let cacheSize = 0;
-  const updateCacheSize = () => $("#cacheSizeInMb").text(Math.ceil(cacheSize / 1024 / 1024) + "MB");
-  for (var file of glob.sync(path.join(paths.media, "**", "*"), {
-    ignore: [path.join(paths.media, "Recurring")],
-    nodir: true
-  }).concat(glob.sync(paths.langs)).concat(glob.sync(path.join(paths.pubs, "*", "**", "*"), {
-    nodir: true
-  }))) {
-    fs.stat(file, (err, stats) => {
-      cacheSize = cacheSize + stats.size;
-      updateCacheSize();
-    });
-  }
-  updateCacheSize();
+  $("#cacheSizeInMb").prop("Counter", 0).animate({
+    Counter: glob.sync(path.join(paths.media, "**", "*"), {
+      ignore: [path.join(paths.media, "Recurring")],
+      nodir: true
+    }).concat(glob.sync(paths.langs)).concat(glob.sync(path.join(paths.pubs, "*", "**", "*"), {
+      nodir: true
+    })).map(file => {
+      return fs.statSync(file).size;
+    }).reduce((a, b) => a + b, 0) / 1024 / 1024
+  }, {
+    duration: fadeDelay * 3,
+    step: function (now) {
+      $(this).text(now.toFixed(1) + "MB");
+    }
+  });
 }
 function rm(toDelete) {
   if (!Array.isArray(toDelete)) toDelete = [toDelete];
@@ -1865,7 +1866,7 @@ $("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
   $(this).removeClass("confirmed btn-warning");
 });
 $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
-  $(this).removeClass("confirmed btn-warning");
+  $(this).removeClass("confirmed");
   if (prefs.enableMusicFadeOut) {
     let timeBeforeFade;
     let rightNow = dayjs();
