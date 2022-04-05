@@ -766,6 +766,27 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
+                <label for="enableMediaDisplayButton" class="m-0 text-start col-11"><span data-i18n-string="enableMediaDisplayButton"></span></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="enableMediaDisplayButton" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="currentMediaBackground" class="col-5 text-start"><span data-i18n-string="mediaWindowBackground"></span></label>
+                <div class="col m-2">
+                  <img class="w-100" id="currentMediaBackground" />
+                </div>
+                <div class="col-2 text-end">
+                  <button id="chooseBackground" type="button" class="btn btn-primary btn-sm">
+                    <span data-i18n-string="browse"></span>
+                  </button>
+                  <button id="deleteBackground" type="button" class="btn btn-danger btn-sm">
+                    <span data-i18n-string="delete"></span>
+                  </button>
+                </div>
+              </div>
+              <hr class="my-2" />
+              <div class="align-items-center g-1 py-1 row">
                 <label for="enableMusicButton" class="m-0 text-start col-11"><span data-i18n-string="enableMusicButton"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMusicButton" />
@@ -795,27 +816,6 @@
                   <input type="checkbox" class="form-check-input" id="enableMusicFadeOut" />
                 </div>
               </div>
-              <hr class="my-2" />
-              <div class="align-items-center g-1 py-1 row">
-                <label for="enableMediaDisplayButton" class="m-0 text-start col-11"><span data-i18n-string="enableMediaDisplayButton"></span></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="enableMediaDisplayButton" />
-                </div>
-              </div>
-              <div class="align-items-center g-1 py-1 row">
-                <label for="currentMediaBackground" class="col-5 text-start"><span data-i18n-string="mediaWindowBackground"></span></label>
-                <div class="col m-2">
-                  <img class="w-100" id="currentMediaBackground" />
-                </div>
-                <div class="col-2 text-end">
-                  <button id="chooseBackground" type="button" class="btn btn-primary btn-sm">
-                    <span data-i18n-string="browse"></span>
-                  </button>
-                  <button id="deleteBackground" type="button" class="btn btn-danger btn-sm">
-                    <span data-i18n-string="delete"></span>
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -829,7 +829,7 @@
           <span data-i18n-string="reportIssue"></span>
         </button>
         <button type="button" class="btn btn-clean-up btn-sm btn-warning">
-          <span data-i18n-string="cleanCache"></span> (<span id="cacheSizeInMb">...</span>)
+          <span data-i18n-string="cleanCache"></span> (<span id="cacheSizeInMb">0MB</span>)
         </button>
         <button type="button" id="btnTestApp" class="btn btn-sm btn-danger">
           <span>Run tests</span>

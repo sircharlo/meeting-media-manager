@@ -452,12 +452,11 @@ function displayMusicRemaining() {
 }
 async function downloadIfRequired(file) {
   file.downloadRequired = true;
-  file.cacheDir = path.join(paths.pubs, (file.pub || file.queryInfo.KeySymbol || file.queryInfo.MultiMeps || "unknown").toString(), (file.issue || file.queryInfo.IssueTagNumber || 0).toString(), (file.track || file.queryInfo.Track || 0).toString());
+  file.cacheDir = path.join(paths.pubs, (file.pub || file.queryInfo.KeySymbol || file.queryInfo.MultiMeps || file.primaryCategory || "unknown").toString(), (file.issue || file.queryInfo.IssueTagNumber || 0).toString(), (file.track || file.queryInfo.Track || 0).toString());
   file.cacheFilename = path.basename(file.url) || file.safeName;
   file.cacheFile = path.join(file.cacheDir, file.cacheFilename);
   file.destFilename = file.folder ? file.safeName : file.cacheFilename;
   if (fs.existsSync(file.cacheFile)) file.downloadRequired = file.filesize !== fs.statSync(file.cacheFile).size;
-  console.log(file);
   if (file.downloadRequired) {
     mkdirSync(file.cacheDir);
     let downloadedFile = new Buffer((await request(file.url, {isFile: true})).data);
@@ -727,6 +726,7 @@ async function getInitialData() {
   await getLocaleLanguages();
   await setAppLang();
   await updateCleanup();
+  await periodicCleanup();
   await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
@@ -806,8 +806,8 @@ async function getMediaLinks(pubSymbol, track, issue, format, docId) {
           return item;
         });
         for (var item of mediaFiles) {
-          if (item.duration >0 && !item.trackImage) {
-            item.trackImage = await getMediaThumbnail(pubSymbol, track, issue, format, docId);
+          if (item.duration >0 && (!item.trackImage || !item.pub)) {
+            Object.assign(item, (await getMediaAdditionalInfo(pubSymbol, track, issue, format, docId)));
           }
         }
       }
@@ -818,12 +818,15 @@ async function getMediaLinks(pubSymbol, track, issue, format, docId) {
   log.debug(mediaFiles);
   return mediaFiles;
 }
-async function getMediaThumbnail(pub, track, issue, format, docId) {
-  let thumbnail = "";
+async function getMediaAdditionalInfo(pub, track, issue, format, docId) {
+  let mediaAdditionalInfo = {};
   if (issue) issue = issue.toString().replace(/(\d{6})00$/gm, "$1");
   let result = (await request("https://b.jw-cdn.org/apis/mediator/v1/media-items/" + prefs.lang + "/" + (docId ? "docid-" + docId + "_1": "pub-" + [pub, issue, track].filter(Boolean).join("_")) + "_VIDEO")).data;
-  if (result && result.media && result.media.length > 0 && result.media[0].images.wss.sm) thumbnail = result.media[0].images.wss.sm;
-  return thumbnail;
+  if (result && result.media && result.media.length > 0) {
+    if (result.media[0].images.wss.sm) mediaAdditionalInfo.thumbnail = result.media[0].images.wss.sm;
+    if (result.media[0].primaryCategory) mediaAdditionalInfo.primaryCategory = result.media[0].primaryCategory;
+  }
+  return mediaAdditionalInfo;
 }
 async function getMwMediaFromDb() {
   var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
@@ -1038,6 +1041,18 @@ function perfPrint() {
     log.info("%c[perf] [" + downloadSource[0] + "Fetch] " + Object.entries(downloadSource[1]).sort((a,b) => a[0].localeCompare(b[0])).map(downloadOrigin => "from " + downloadOrigin[0] + ": " + (downloadOrigin[1].map(source => source.filesize).reduce((a, b) => a + b, 0) / 1024 / 1024).toFixed(1) + "MB").join(", "), "background-color: #fbe9e7; color: #000;");
   }
 }
+function periodicCleanup() {
+  setVars();
+  if (paths.pubs && (!prefs.lastPeriodicCleanup || dayjs(prefs.lastPeriodicCleanup).isBefore(now.subtract(3, "months")))) {
+    rm(glob.sync(path.join(paths.pubs, "**", "*/*.mp4")).map(video => {
+      let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
+      let itemPub = path.basename(path.join(path.dirname(video), "../../"));
+      if (itemPub !== "sjjm" && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
+    }).filter(Boolean));
+    prefs.lastPeriodicCleanup = dayjs();
+    validateConfig(true);
+  }
+}
 function prefsInitialize() {
   for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
@@ -1243,19 +1258,6 @@ async function startMediaSync(isDryrun) {
   }
   perf("total", "stop");
   perfPrint();
-  /*
-  let logObj = Object.entries(logOutput).map(logLevel => Object.entries(logLevel[1]).map(logItem => [logItem[0], logLevel[0], logItem[1]])).flat().sort();
-  console.log((await request("https://pastebin.com/api/api_post.php", {
-    method: "POST",
-    data: new URLSearchParams({
-      api_dev_key: "4fe0d5da994143b504443b806aef6a87",
-      api_paste_code: JSON.stringify(logObj, null, 2),
-      api_option: "paste",
-      api_paste_format: "json",
-      api_paste_expire_date: "1M"
-    }).toString()
-  })).data);
-  */
 }
 async function syncCongMedia() {
   let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring"));
@@ -1371,22 +1373,6 @@ function updateCleanup() {
       setVars();
       fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
       if (lastRunVersion !== 0) {
-        let somePrefWasUpdated = false;
-        for (var updatedPref of [["additionalMediaPrompt", "localAdditionalMediaPrompt"], ["betaMp4Gen", "enableMp4Conversion"], ["outputPath", "localOutputPath"], ["openFolderWhenDone", "autoOpenFolderWhenDone"]]) {
-          if (updatedPref[0] in prefs) {
-            prefs[updatedPref[1]] = prefs[updatedPref[0]];
-            delete prefs[updatedPref[0]];
-            prefsInitialize();
-            somePrefWasUpdated = true;
-          }
-        }
-        if (!prefs.localAppLang) {
-          prefs.localAppLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0].symbol;
-          somePrefWasUpdated = true;
-          prefsInitialize();
-          setAppLang();
-        }
-        validateConfig(somePrefWasUpdated);
         notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
         let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
         if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
