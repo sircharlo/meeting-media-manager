@@ -1,8 +1,10 @@
 {
   "browse": "Selecionar",
   "cantCloseMediaWindowOpen": "Saia do modo de exibição da tela secundária antes de tentar fechar o JWMMF",
+  "chooseCongregation": "Escolha sua congregação",											   
   "cleanCache": "Excluir mídias",
   "congMedia": "Mídia da congregação",
+  "congregationName": "Nome da congregação",									  
   "convertDownloaded": "Converter mídia baixada para MP4",
   "convertExternal": "Habilitar conversão de mídia externa",
   "custom": "Personalizado",
