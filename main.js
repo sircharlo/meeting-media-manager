@@ -82,6 +82,9 @@ if (!gotTheLock) {
   ipcMain.on("videoScrub", (event, timeAsPercent) => {
     mediaWin.webContents.send("videoScrub", timeAsPercent);
   });
+  ipcMain.on("startMediaDisplay", (event, prefsFile) => {
+    mediaWin.webContents.send("startMediaDisplay", prefsFile);
+  });
   ipcMain.on("showMediaWindow", () => {
     let mainWinPosition = win.getPosition();
     let otherScreens = displays.filter(screen => !(mainWinPosition[0] >= screen.bounds.x && mainWinPosition[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinPosition[1] >= screen.bounds.y && mainWinPosition[1] < (screen.bounds.y + screen.bounds.height)));
@@ -131,14 +134,14 @@ if (!gotTheLock) {
     }
   });
   autoUpdater.on("error", () => {
-    win.webContents.send("goAhead");
+    win.webContents.send("congregationInitialSelector");
   });
   autoUpdater.on("update-not-available", () => {
-    win.webContents.send("goAhead");
+    win.webContents.send("congregationInitialSelector");
   });
   autoUpdater.on("update-available", () => {
     if (os.platform() == "darwin") {
-      win.webContents.send("goAhead");
+      win.webContents.send("congregationInitialSelector");
       win.webContents.send("macUpdate");
     } else {
       win.webContents.send("overlay", ["cloud-download-alt fa-beat", "circle-notch fa-spin text-success"]);

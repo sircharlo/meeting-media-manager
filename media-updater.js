@@ -99,8 +99,8 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
 require("electron").ipcRenderer.on("notifyUser", (event, arg) => {
   notifyUser(arg[0], arg[1]);
 });
-require("electron").ipcRenderer.on("goAhead", () => {
-  goAhead();
+require("electron").ipcRenderer.on("congregationInitialSelector", () => {
+  congregationInitialSelector();
 });
 const bugUrl = () => "https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- JWMMF " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
   if ((entry[0].startsWith("congServer") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
@@ -146,7 +146,6 @@ var baseDate = dayjs().startOf("isoWeek"),
   stayAlive;
 paths.langs = path.join(paths.app, "langs.json");
 paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
-paths.prefs = path.join(paths.app, "prefs.json");
 
 datepickers = datetime(".timePicker", {
   enableTime: true,
@@ -173,6 +172,7 @@ function goAhead() {
   }
   getInitialData();
   dateFormatter();
+  overlay(false);
   $("#overlaySettings input:not(.timePicker), #overlaySettings select").on("change", function() {
     if ($(this).prop("tagName") == "INPUT") {
       if ($(this).prop("type") == "checkbox") {
@@ -186,10 +186,10 @@ function goAhead() {
       prefs[$(this).prop("id")] = escape($(this).find("option:selected").val());
     }
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
-    if ($(this).prop("id").includes("cong")) webdavSetup();
+    if ($(this).prop("id").includes("congServer")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
     if ($(this).prop("id") == "lang") setMediaLang();
-    if ($(this).prop("id").includes("cong") || $(this).prop("name").includes("Day")) {
+    if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
       setVars();
       rm(glob.sync(path.join(paths.media, "*"), {
         ignore: [path.join(paths.media, "Recurring")]
@@ -219,7 +219,7 @@ async function calculateCacheSize() {
     Counter: glob.sync(path.join(paths.media, "**", "*"), {
       ignore: [path.join(paths.media, "Recurring")],
       nodir: true
-    }).concat(glob.sync(paths.langs)).concat(glob.sync(path.join(paths.pubs, "*", "**", "*"), {
+    }).concat(glob.sync(paths.langs)).concat(glob.sync(path.join(paths.pubs, "**", "*"), {
       nodir: true
     })).map(file => {
       return fs.statSync(file).size;
@@ -238,6 +238,60 @@ function rm(toDelete) {
       recursive: true,
       force: true
     });
+  }
+}
+function congregationChange(prefsFile) {
+  overlay(true, "cog fa-spin").then(() => {
+    paths.prefs = prefsFile;
+    prefs = {};
+    prefsInitialize();
+    goAhead();
+  });
+}
+function congregationInitialSelector() {
+  congregationPrefsPopulate();
+  if (paths.congprefs.length > 1) {
+    let congregationList = $("<div id='congregationList' class='list-group'>");
+    for (var congregation of paths.congprefs) {
+      $(congregationList).prepend("<button class='d-flex list-group-item list-group-item-action' value='" + congregation.path + "'>" + congregation.name + "</div></button>");
+    }
+    $(congregationList).on("click", "button", function() {
+      showModal(false);
+      congregationChange($(this).val());
+    });
+    showModal(true, true, i18n.__("chooseCongregation"), congregationList);
+  } else if (paths.congprefs.length == 1) {
+    paths.prefs = paths.congprefs[0].path;
+    goAhead();
+  } else {
+    congregationCreate();
+  }
+}
+function congregationCreate() {
+  congregationChange(path.join(paths.app, "prefs-" + Math.floor(Math.random() * Date.now()) + ".json"));
+}
+function congregationDelete(prefsFile) {
+  let congToDelete = $("#congregationSelect .dropdown-item").filter(function() {
+    return this.value == prefsFile;
+  });
+  rm(prefsFile);
+  congregationPrefsPopulate();
+  congregationSelectPopulate();
+  if (congToDelete.hasClass("active")) {
+    $("#congregationSelect .dropdown-item.congregation:eq(0)").click();
+  }
+}
+function congregationPrefsPopulate() {
+  paths.congprefs = glob.sync(path.join(paths.app, "prefs*.json")).map(congregationPrefs => ({
+    name: JSON.parse(fs.readFileSync(congregationPrefs)).congregationName || "Default",
+    path: congregationPrefs
+  })).sort((a, b) => b.name.localeCompare(a.name));
+}
+function congregationSelectPopulate() {
+  $("#congregationSelect .dropdown-menu .congregation").remove();
+  for (var congregation of paths.congprefs) {
+    $("#congregationSelect .dropdown-menu").prepend("<button class='dropdown-item congregation " + (path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : "") + "' value='" + congregation.path + "'>" + (paths.congprefs.length > 1 ? "<i class='fa-solid fa-square-minus text-warning'></i> " : "") + congregation.name + "</button>");
+    if (path.resolve(paths.prefs) == path.resolve(congregation.path)) $("#congregationSelect button.dropdown-toggle").text(congregation.name);
   }
 }
 function convertPdf(mediaFile) {
@@ -734,6 +788,7 @@ async function getInitialData() {
   $("#version").html("JWMMF " + escape(currentAppVersion));
   $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
+  congregationSelectPopulate();
   $("#baseDate button, #baseDate .dropdown-item:eq(0)").text(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
   $("#baseDate .dropdown-item:eq(0)").addClass("active");
   for (var a = 1; a <= 4; a++) {
@@ -770,6 +825,7 @@ async function getJwOrgLanguages(forceRefresh) {
   $("#lang").val(prefs.lang).select2();
 }
 function getLocaleLanguages() {
+  $("#localAppLang").empty();
   for (var localeLang of fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", ""))) {
     let localeLangMatches = jsonLangs.filter(item => item.symbol === localeLang);
     $("#localAppLang").append($("<option>", {
@@ -1044,7 +1100,7 @@ function perfPrint() {
 }
 function periodicCleanup() {
   setVars();
-  if (paths.pubs && (!prefs.lastPeriodicCleanup || dayjs(prefs.lastPeriodicCleanup).isBefore(now.subtract(3, "months")))) {
+  if (paths.pubs && (!prefs.lastPeriodicCleanup || dayjs(prefs.lastPeriodicCleanup).isBefore(now.subtract(6, "months")))) {
     rm(glob.sync(path.join(paths.pubs, "**", "*/*.mp4")).map(video => {
       let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
       let itemPub = path.basename(path.join(path.dirname(video), "../../"));
@@ -1055,10 +1111,11 @@ function periodicCleanup() {
   }
 }
 function prefsInitialize() {
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton"]) {
+  $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "localAdditionalMediaPrompt", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
-  for (let field of ["localAppLang", "lang", "localOutputPath", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime"]) {
+  for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime"]) {
     $("#" + field).val(prefs[field]).closest(".row").find("#" + field + "Display").html(prefs[field]);
   }
   for (let timeField of ["mwStartTime", "weStartTime"]) {
@@ -1397,7 +1454,7 @@ function validateConfig(changed) {
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) $("#localOutputPath").val("");
-  let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes"];
+  let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes", "congregationName"];
   for (let timeField of ["mwStartTime", "weStartTime"]) {
     if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push(timeField);
     else $("#" + timeField + ", .timePicker[data-target='" + timeField + "']").removeClass("is-invalid");
@@ -1451,6 +1508,8 @@ function validateConfig(changed) {
     toggleScreen("overlaySettings", true);
   } else if (changed) {
     fs.writeFileSync(paths.prefs, JSON.stringify(Object.keys(prefs).sort().reduce((acc, key) => ({...acc, [key]: prefs[key]}), {}), null, 2));
+    congregationPrefsPopulate();
+    congregationSelectPopulate();
   }
   return configIsValid;
 }
@@ -1715,6 +1774,20 @@ $("#baseDate").on("click", ".dropdown-item", function() {
     dateFormatter();
   }
 });
+$("#congregationSelect").on("click", ".dropdown-item:not(.active)", function() {
+  congregationChange($(this).val());
+});
+$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function(e) {
+  e.stopPropagation();
+});
+$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus:not(.confirmed)", async function() {
+  $(this).toggleClass("confirmed text-danger text-warning");
+  await delay(3);
+  $(this).toggleClass("confirmed text-danger text-warning");
+});
+$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus.confirmed", function() {
+  congregationDelete($(this).closest("button").val());
+});
 $("#btnCancelUpload").on("click", () => {
   toggleScreen("overlayUploadFile");
   $("#chooseMeeting input:checked, #chooseUploadType input:checked").prop("checked", false);
@@ -1727,7 +1800,7 @@ $("#btnForcedPrefs").on("click", () => {
     let html = "<h6>" + i18n.__("settingsLockedWhoAreYou") + "</h6>";
     html += "<p>" + i18n.__("settingsLockedExplain") + "</p>";
     html += "<div id='forcedPrefs' class='card'><div class='card-body'>";
-    for (var pref of Object.keys(prefs).filter(pref => !pref.startsWith("cong") && !pref.startsWith("auto") && !pref.startsWith("local") && !pref.includes("UpdatedLast")).sort((a, b) => a[0].localeCompare(b[0]))) {
+    for (var pref of Object.keys(prefs).filter(pref => !pref.startsWith("congServer") && !pref.startsWith("auto") && !pref.startsWith("local") && !pref.includes("UpdatedLast")).sort((a, b) => a[0].localeCompare(b[0]))) {
       html += "<div class='form-check form-switch'><input class='form-check-input' type='checkbox' id='forcedPref-" + pref + "' " + (pref in currentForcedPrefs ? "checked" : "") + "> <label class='form-check-label' for='forcedPref-" + pref + "'><code class='badge bg-info text-dark prefName' title='\"" + $("#" + pref).closest(".row").find("label").first().find("span").last().html() + "\"' data-bs-toggle='tooltip' data-bs-html='true'>" + pref + "</code> <code class='badge bg-secondary'>" + prefs[pref] + "</code></label></div>";
     }
     html += "</div></div>";
@@ -1770,6 +1843,7 @@ $("#btnMediaWindow").on("click", function() {
   });
   setVars();
   require("electron").ipcRenderer.send("showMediaWindow");
+  require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
   let folderListing = $("<div id='folderListing' class='list-group'>");
   function listMediaFolders() {
     folderListing.empty();
@@ -1867,6 +1941,7 @@ $("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
 });
 $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
   $(this).removeClass("confirmed");
+  $("#congregationSelect-dropdown").prop("disabled", true);
   if (prefs.enableMusicFadeOut) {
     let timeBeforeFade;
     let rightNow = dayjs();
@@ -1893,7 +1968,7 @@ $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
   setVars();
   var songs = (jworgIsReachable ? (await getMediaLinks("sjjm", null, null, "MP3")) : glob.sync(path.join(paths.pubs, "sjjm", "0", "*", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
   if (songs.length > 0) {
-    $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
+    $("#btnStopMeetingMusic").addClass("initialLoad").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
     $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
     var iterator = 0;
     createAudioElem(iterator);
@@ -1905,7 +1980,7 @@ $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
       iterator = (iterator < songs.length - 1 ? iterator + 1 : 0);
       createAudioElem(iterator);
     }).on("canplay", function() {
-      $("#btnStopMeetingMusic i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").closest("button").prop("title", songs[iterator].title + " (Alt+K)");
+      $("#btnStopMeetingMusic").removeClass("initialLoad").find("i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin").closest("button").prop("title", songs[iterator].title + " (Alt+K)");
       $("#meetingMusic").prop("volume", prefs.musicVolume / 100);
       displayMusicRemaining();
     }).on("timeupdate", function() {
@@ -1920,7 +1995,7 @@ $(".btn-home, #btn-settings").on("click", async function() {
   toggleScreen("overlaySettings");
   if (!$(this).hasClass("btn-home")) calculateCacheSize();
 });
-$("#btnStopMeetingMusic").on("click", function() {
+$("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
   clearTimeout(pendingMusicFadeOut.id);
   $("#btnStopMeetingMusic").toggleClass("btn-warning btn-danger").prop("disabled", true);
   $("#meetingMusic").animate({volume: 0}, fadeDelay * 30, () => {
@@ -1928,6 +2003,7 @@ $("#btnStopMeetingMusic").on("click", function() {
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
     $("#musicRemaining").empty();
     if (prefs.enableMusicButton) $("#btnMeetingMusic").show();
+    if (!$("#mediaSync").prop("disabled")) $("#congregationSelect-dropdown").prop("disabled", false);
   });
 });
 $("#btnUpload").on("click", async () => {
@@ -1978,6 +2054,9 @@ $("#btnUpload").on("click", async () => {
 });
 $("#btn-upload").on("click", function() {
   manageMedia();
+});
+$("#congregationSelect").on("click", ".new-cong", function() {
+  congregationCreate();
 });
 $("#chooseUploadType input").on("change", function() {
   $("#songPicker:visible").select2("destroy");
@@ -2075,7 +2154,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
   }
 });
 $("#mediaSync").on("click", async function() {
-  $("#mediaSync, #baseDate-dropdown").prop("disabled", true);
+  $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown").prop("disabled", true);
   await startMediaSync();
   await overlay(true, "circle-check text-success fa-beat", (prefs.autoQuitWhenDone ? "person-running" : null), "stay-alive");
   await delay(3);
@@ -2084,7 +2163,7 @@ $("#mediaSync").on("click", async function() {
   } else {
     overlay(false);
     $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeToAndToggle(fadeDelay, 1);
-    $("#mediaSync, #baseDate-dropdown").prop("disabled", false);
+    $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown").prop("disabled", false);
   }
 });
 $("#localOutputPath").on("mousedown", function(event) {

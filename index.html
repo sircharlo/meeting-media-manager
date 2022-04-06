@@ -526,6 +526,12 @@
           <div id="collapseAppSettings" class="accordion-collapse collapse" aria-labelledby="headingAppSettings">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
+                <label for="congregationName" class="col-5 text-start"><span data-i18n-string="congregationName"></span></label>
+                <div class="col">
+                  <input type="text" class="form-control form-control-sm" id="congregationName" required />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
                 <label for="localAppLang" class="col-5 text-start"><span data-i18n-string="localAppLang"></span></label>
                 <div class="col">
                   <select class="form-select form-select-sm" id="localAppLang" class="form-control" required>
@@ -845,8 +851,21 @@
     </div>
   </div>
   <div id="home" class="d-flex flex-column px-3">
-    <div class="align-items-center d-flex justify-content-center py-4">
-      <i id="statusIcon" class="fas fa-fw fa-photo-video fa-3x text-muted"></i>
+    <div class="align-items-center d-flex flex-grow-0 justify-content-center py-4">
+      <div class="col-5">
+      </div>
+      <div class="col-2 text-center">
+        <i id="statusIcon" class="fas fa-fw fa-photo-video fa-3x text-muted"></i>
+      </div>
+      <div class="col-5 text-end">
+        <div class="btn-group" id="congregationSelect">
+          <button class="btn dropdown-toggle" type="button" id="congregationSelect-dropdown" data-bs-toggle="dropdown">
+          </button>
+          <div class="dropdown-menu dropdown-menu-end">
+            <button class="dropdown-item new-cong" value=""><i class="fa-solid fa-square-plus text-success"></i></button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
       <div class="d-flex w-100">
