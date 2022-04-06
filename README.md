@@ -1,6 +1,6 @@
 ## Welcome!
 
-JW Meeting Media Fetcher, or **JWMMF** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org. It features recurring and custom media management, as well as an optional sync feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account. 
+JW Meeting Media Fetcher, or **JWMMF** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org. It features recurring and custom media management, an optional sync feature for members of the same congregation, as well as support for multiple congregations and/or groups. 
 
 JWMMF also allows you to share and present all meeting media easily, using either its integrated media presentation mode for **hybrid** or **in-person** congregation meetings, or the inbuilt MP4 conversion feature, which enables you to share media during fully **remote** congregation Zoom meetings using Zoom's native MP4 sharing feature.
 
