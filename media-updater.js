@@ -172,7 +172,6 @@ function goAhead() {
   }
   getInitialData();
   dateFormatter();
-  overlay(false);
   $("#overlaySettings input:not(.timePicker), #overlaySettings select").on("change", function() {
     if ($(this).prop("tagName") == "INPUT") {
       if ($(this).prop("type") == "checkbox") {
@@ -789,11 +788,12 @@ async function getInitialData() {
   $("#day" + prefs.mwDay + ", #day" + prefs.weDay).addClass("meeting");
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
   congregationSelectPopulate();
-  $("#baseDate button, #baseDate .dropdown-item:eq(0)").text(baseDate.format("YYYY-MM-DD") + " - " + baseDate.clone().add(6, "days").format("YYYY-MM-DD")).val(baseDate.format("YYYY-MM-DD"));
-  $("#baseDate .dropdown-item:eq(0)").addClass("active");
-  for (var a = 1; a <= 4; a++) {
+  $("#baseDate .dropdown-menu").empty();
+  for (var a = 0; a <= 4; a++) {
     $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "'>" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
   }
+  $("#baseDate button.dropdown-toggle").text($("#baseDate .dropdown-item:eq(0)").text());
+  $("#baseDate .dropdown-item:eq(0)").addClass("active");
   if (prefs.autoStartSync && configIsValid) {
     await overlay(true, "flag-checkered fa-beat", "pause", "cancel-sync");
     await delay(5);
@@ -816,6 +816,7 @@ async function getJwOrgLanguages(forceRefresh) {
   } else {
     jsonLangs = JSON.parse(fs.readFileSync(paths.langs));
   }
+  $("#lang").empty();
   for (var lang of jsonLangs) {
     $("#lang").append($("<option>", {
       value: lang.langcode,
@@ -1259,7 +1260,10 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
 async function startMediaSync(isDryrun) {
   perf("total", "start");
   dryrun = !!isDryrun;
-  if (!dryrun) $("#statusIcon").toggleClass("text-primary text-muted fa-flip");
+  if (!dryrun) {
+    $("#statusIcon").toggleClass("text-primary text-muted fa-flip");
+    $("#congregationSelect-dropdown").addClass("sync-started");
+  }
   stayAlive = false;
   if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeToAndToggle(fadeDelay, 0);
   await setVars(isDryrun);
@@ -1313,6 +1317,7 @@ async function startMediaSync(isDryrun) {
       $("#statusIcon").toggleClass("text-muted text-primary fa-flip");
       updateStatus("photo-video");
     }, 2000);
+    $("#congregationSelect-dropdown").removeClass("sync-started");
   }
   perf("total", "stop");
   perfPrint();
@@ -1941,7 +1946,7 @@ $("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
 });
 $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
   $(this).removeClass("confirmed");
-  $("#congregationSelect-dropdown").prop("disabled", true);
+  $("#congregationSelect-dropdown").addClass("music-playing").prop("disabled", true);
   if (prefs.enableMusicFadeOut) {
     let timeBeforeFade;
     let rightNow = dayjs();
@@ -2003,7 +2008,8 @@ $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
     $("#musicRemaining").empty();
     if (prefs.enableMusicButton) $("#btnMeetingMusic").show();
-    if (!$("#mediaSync").prop("disabled")) $("#congregationSelect-dropdown").prop("disabled", false);
+    $("#congregationSelect-dropdown").removeClass("music-playing");
+    $("#congregationSelect-dropdown:not(.sync-started)").prop("disabled", false);
   });
 });
 $("#btnUpload").on("click", async () => {
@@ -2163,7 +2169,7 @@ $("#mediaSync").on("click", async function() {
   } else {
     overlay(false);
     $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeToAndToggle(fadeDelay, 1);
-    $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown").prop("disabled", false);
+    $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown:not(.music-playing)").prop("disabled", false);
   }
 });
 $("#localOutputPath").on("mousedown", function(event) {
