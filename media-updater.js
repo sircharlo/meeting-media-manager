@@ -359,7 +359,7 @@ function convertSvg(mediaFile) {
       notifyUser("warn", "warnSvgConversionFailure", path.basename(mediaFile), true);
       return resolve();
     });
-    $("img#svgImg").prop("src", mediaFile);
+    $("img#svgImg").prop("src", escape(mediaFile));
   });
 }
 async function convertUnusableFiles() {
@@ -437,7 +437,7 @@ function createVideoSync(mediaFile){
             $("div#convert").remove();
             return resolve();
           });
-          $("img#imgToConvert").prop("src", mediaFile);
+          $("img#imgToConvert").prop("src", escape(mediaFile));
         });
       }
     } catch (err) {
@@ -1143,7 +1143,7 @@ function progressSet(current, total, blockId) {
 }
 function refreshBackgroundImagePreview() {
   let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
-  $("#currentMediaBackground").prop("src", mediaWindowBackgroundImages.length > 0 ? mediaWindowBackgroundImages[0] + "?" + (new Date()).getTime() : "");
+  $("#currentMediaBackground").prop("src", mediaWindowBackgroundImages.length > 0 ? escape(mediaWindowBackgroundImages[0]) + "?" + (new Date()).getTime() : "");
   $("#deleteBackground").toggle(mediaWindowBackgroundImages.length > 0);
 }
 function removeEventListeners() {
