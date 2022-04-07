@@ -1101,14 +1101,15 @@ function perfPrint() {
 }
 function periodicCleanup() {
   setVars();
-  if (paths.pubs && (!prefs.lastPeriodicCleanup || dayjs(prefs.lastPeriodicCleanup).isBefore(now.subtract(6, "months")))) {
-    rm(glob.sync(path.join(paths.pubs, "**", "*/*.mp4")).map(video => {
+  let lastPeriodicCleanupPath = path.join(paths.pubs, "lastPeriodicCleanup"),
+    lastPeriodicCleanup = fs.existsSync(lastPeriodicCleanupPath) && fs.readFileSync(lastPeriodicCleanupPath, "utf8") || false;
+  if (paths.pubs && (!dayjs(lastPeriodicCleanup).isValid() || dayjs(lastPeriodicCleanup).isBefore(now.subtract(6, "months")))) {
+    rm(glob.sync(path.join(paths.pubs, "**", "*/*.mp*")).map(video => {
       let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
       let itemPub = path.basename(path.join(path.dirname(video), "../../"));
       if (itemPub !== "sjjm" && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
     }).filter(Boolean));
-    prefs.lastPeriodicCleanup = dayjs();
-    validateConfig(true);
+    fs.writeFileSync(lastPeriodicCleanupPath, dayjs().format());
   }
 }
 function prefsInitialize() {
