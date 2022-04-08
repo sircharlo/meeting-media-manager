@@ -618,6 +618,7 @@ async function getCongMedia() {
       let isMeetingDate = dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"));
       let isRecurring = congSpecificFolder.basename == "Recurring";
       if (isMeetingDate || isRecurring) {
+        if (!meetingMedia[congSpecificFolder.basename]) meetingMedia[congSpecificFolder.basename] = [];
         for (let remoteFile of (await webdavLs(path.posix.join(prefs.congServerDir, "Media", congSpecificFolder.basename)))) {
           let congSpecificFile = {
             "title": "Congregation-specific",
@@ -629,7 +630,6 @@ async function getCongMedia() {
               url: remoteFile.filename
             }]
           };
-          if (!meetingMedia[congSpecificFolder.basename]) meetingMedia[congSpecificFolder.basename] = [];
           meetingMedia[congSpecificFolder.basename].push(congSpecificFile);
           if (isRecurring) {
             for (var meeting of Object.keys(meetingMedia)) {
@@ -913,6 +913,25 @@ async function getMwMediaFromDb() {
     }
   }
 }
+function getPreexistingFolders() {
+  for (var folderPath of glob.sync(path.join(paths.media, "*/"))) {
+    let folder = path.basename(folderPath);
+    if (!(folder in meetingMedia) && dayjs(folder, "YYYY-MM-DD").isValid() && dayjs(folder, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, "YYYY-MM-DD"))) {
+      meetingMedia[folder] = [];
+      fs.readdirSync(folderPath).map(function(item) {
+        meetingMedia[folder].push({
+          title: item,
+          media: [{
+            safeName: item,
+            url: item,
+            isLocal: true,
+            filepath: path.join(folderPath, item)
+          }]
+        });
+      });
+    }
+  }
+}
 function getPrefix() {
   if (!$("#chooseMeeting input").prop("disabled")) for (var a0 = 0; a0 < 6; a0++) {
     let curValuePresent = $("#enterPrefix-" + a0).val().length > 0;
@@ -1006,9 +1025,8 @@ async function manageMedia() {
   $("#btnCancelUpload").toggle(!prefs.localAdditionalMediaPrompt);
   $("#overlayUploadFile .fa-3x").toggleClass("fa-cloud", !prefs.localAdditionalMediaPrompt).toggleClass("fa-folder-open", !!prefs.localAdditionalMediaPrompt);
   $("#chooseMeeting").empty();
-  for (var meeting of [prefs.mwDay, prefs.weDay, "Recurring"]) {
-    let meetingDate = escape((isNaN(meeting) ? meeting : baseDate.add(meeting, "d").format("YYYY-MM-DD")));
-    $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meetingDate + "' autocomplete='off'><label class='btn btn-outline-" + (isNaN(meeting) ? "info" : "dark" ) + "' for='" + meetingDate + "'" + (isNaN(meeting) || Object.prototype.hasOwnProperty.call(meetingMedia, meetingDate) ? "" : " style='display: none;'") + ">" + (isNaN(meeting) ? i18n.__("recurring") : meetingDate) + "</label>");
+  for (var meeting of Object.keys(meetingMedia).sort()) {
+    $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + meeting + "' autocomplete='off'><label class='btn btn-outline-" + (!dayjs(meeting, "YYYY-MM-DD").isValid() ? "info" : "dark" ) + "' for='" + meeting + "'" + (!dayjs(meeting, "YYYY-MM-DD").isValid() || Object.prototype.hasOwnProperty.call(meetingMedia, meeting) ? "" : " style='display: none;'") + ">" + (!dayjs(meeting, "YYYY-MM-DD").isValid() ? i18n.__("recurring") : meeting) + "</label>");
   }
   await toggleScreen("overlayUploadFile");
   overlay(false);
@@ -1283,7 +1301,10 @@ async function startMediaSync(isDryrun) {
   createMediaNames();
   if (webdavIsAGo) {
     await getCongMedia();
-  } else if (prefs.localAdditionalMediaPrompt) await manageMedia();
+  } else if (prefs.localAdditionalMediaPrompt) {
+    await getPreexistingFolders();
+    await manageMedia();
+  }
   if (!dryrun) {
     updateStatus("download");
     await Promise.all([
@@ -1372,7 +1393,7 @@ async function syncJwOrgMedia() {
     for (var i = 0; i < meeting.length; i++) { // parts
       var partMedia = meeting[i].media.filter(mediaItem => !mediaItem.congSpecific);
       for (var j = 0; j < partMedia.length; j++) { // media
-        if (!partMedia[j].hidden && !partMedia[j].congSpecific && !dryrun) {
+        if (!partMedia[j].hidden && !partMedia[j].congSpecific && !partMedia[j].isLocal && !dryrun) {
           if (!partMedia[j].filesize) {
             notifyUser("warn", "warnFileNotAvailable", [partMedia[j].queryInfo.KeySymbol, partMedia[j].queryInfo.Track, partMedia[j].queryInfo.IssueTagNumber].filter(Boolean).join("_"), true, partMedia[j]);
           } else {
