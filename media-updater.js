@@ -1920,10 +1920,10 @@ $("#btnMediaWindow").on("click", function() {
         mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
         $("#folderListing button.playStop.play").not(triggerButton).prop("disabled", true);
       }
-      $("h5.modal-title button").not(triggerButton).prop("disabled", true);
       triggerButton.toggleClass("play stop btn-primary btn-warning").find("i").toggleClass("fa-play fa-stop");
       mediaItem.addClass("list-group-item-primary").removeClass("list-group-item-secondary");
-      $("button.closeModal").prop("disabled", true);
+      $("h5.modal-title button").not(triggerButton).prop("disabled", true);
+      $("button.closeModal, #btnMeetingMusic").prop("disabled", true);
     } else if (triggerButton.hasClass("stop")) {
       if (!mediaItem.hasClass("video") || triggerButton.hasClass("confirmed")) {
         require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
@@ -1931,11 +1931,10 @@ $("#btnMediaWindow").on("click", function() {
           mediaItem.find("#videoProgress, #videoScrubber").remove();
           mediaItem.find(".pausePlay").removeClass("play").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
         }
-        $("#folderListing button.playStop.play").prop("disabled", false);
-        $("h5.modal-title button").not(triggerButton).prop("disabled", false);
         triggerButton.toggleClass("play stop btn-primary btn-warning").removeClass("confirmed btn-danger").find("i").toggleClass("fa-play fa-stop");
         mediaItem.removeClass("list-group-item-primary");
-        $("button.closeModal").prop("disabled", false);
+        $("#folderListing button.playStop.play, button.closeModal, #btnMeetingMusic").prop("disabled", false);
+        $("h5.modal-title button").not(triggerButton).prop("disabled", false);
       } else {
         triggerButton.addClass("confirmed btn-danger");
         setTimeout(() => {
