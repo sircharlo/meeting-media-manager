@@ -103,7 +103,7 @@ require("electron").ipcRenderer.on("congregationInitialSelector", () => {
   congregationInitialSelector();
 });
 const bugUrl = () => "https://github.com/sircharlo/jw-meeting-media-fetcher/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- JWMMF " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
-  if ((entry[0].startsWith("congServer") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
+  if ((entry[0].startsWith("cong") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
   return entry;
 })), null, 2) + "\n```" : "") + (logOutput.error && logOutput.error.length >0 ? "\n### Full error log\n```\n" + JSON.stringify(logOutput.error, null, 2) + "\n```" : "") + "\n").replace(/\n/g, "%0D%0A");
 
@@ -1118,16 +1118,21 @@ function perfPrint() {
   }
 }
 function periodicCleanup() {
-  setVars();
-  let lastPeriodicCleanupPath = path.join(paths.pubs, "lastPeriodicCleanup"),
-    lastPeriodicCleanup = fs.existsSync(lastPeriodicCleanupPath) && fs.readFileSync(lastPeriodicCleanupPath, "utf8") || false;
-  if (paths.pubs && (!dayjs(lastPeriodicCleanup).isValid() || dayjs(lastPeriodicCleanup).isBefore(now.subtract(6, "months")))) {
-    rm(glob.sync(path.join(paths.pubs, "**", "*/*.mp*")).map(video => {
-      let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
-      let itemPub = path.basename(path.join(path.dirname(video), "../../"));
-      if (itemPub !== "sjjm" && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
-    }).filter(Boolean));
-    fs.writeFileSync(lastPeriodicCleanupPath, dayjs().format());
+  try {
+    setVars();
+    let lastPeriodicCleanupPath = path.join(paths.pubs, "lastPeriodicCleanup"),
+      lastPeriodicCleanup = fs.existsSync(lastPeriodicCleanupPath) && fs.readFileSync(lastPeriodicCleanupPath, "utf8") || false;
+    if (paths.pubs && (!dayjs(lastPeriodicCleanup).isValid() || dayjs(lastPeriodicCleanup).isBefore(now.subtract(6, "months")))) {
+      rm(glob.sync(path.join(paths.pubs, "**", "*/*.mp*")).map(video => {
+        let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
+        let itemPub = path.basename(path.join(path.dirname(video), "../../"));
+        if (itemPub !== "sjjm" && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
+      }).filter(Boolean));
+      mkdirSync(paths.pubs);
+      fs.writeFileSync(lastPeriodicCleanupPath, dayjs().format());
+    }
+  } catch(err) {
+    console.error(err);
   }
 }
 function prefsInitialize() {
@@ -1961,9 +1966,9 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer").show();
 });
 $("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
-  $(this).addClass("confirmed btn-warning");
+  $(this).addClass("confirmed btn-warning").find("i, small").toggle();
   await delay(3);
-  $(this).removeClass("confirmed btn-warning");
+  $(this).removeClass("confirmed btn-warning").find("i, small").toggle();
 });
 $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
   $(this).removeClass("confirmed");
