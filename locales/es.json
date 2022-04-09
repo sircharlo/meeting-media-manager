@@ -10,7 +10,7 @@
   "custom": "Personalizada",
   "delete": "Borrar",
   "enableMediaDisplayButton": "Habilite el botón para presentar multimedia en un pantalla externa o en una ventana separada",
-  "enableMusicButton": "Habilite el botón para reproducir canciones del Reino en modo aleatorio
+  "enableMusicButton": "Habilite el botón para reproducir canciones del Reino en modo aleatorio",
   "enableVlcPlaylistCreation": "Crear listas de reproducción para usar con <em>VLC</em>",
   "error": "Error",
   "errorAdditionalMedia": "Ocurrió un error al importar multimedia. Póngase en contacto con el organizador de su videoconferencia.",
@@ -43,7 +43,7 @@
   "mediaWindowBackground": "Ilustración de fondo para el modo de presentación multimedia",
   "mediaSaveFolder": "Carpeta en la que guardar la multimedia",
   "mediaToAdd": "Multimedia para agregar",
-  "moreInfo": "Saber más
+  "moreInfo": "Saber más",
   "mp4Conversion": "Conversión de MP4 ",
   "musicFadeOutSmart": "<span>XX</span> segundos antes de la reunión",
   "musicFadeOutTimer": "Después de <span>XX</span> minutos",
