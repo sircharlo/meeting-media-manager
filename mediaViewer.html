@@ -168,7 +168,7 @@
             axios.get("https://wol.jw.org/wol/finder?docid=1102022800&wtlocale=" + lang + "&format=json&snip=yes", {
               adapter: require("axios/lib/adapters/http")
             }).then(result => {
-              if (result.data.content) setYearText(result.data.content);
+              if (result.data.content) setYearText(JSON.parse(JSON.stringify(result.data.content)));
             }).catch(err => {
               console.error(err);
               setYearText(null)
@@ -176,25 +176,25 @@
           }
 
           function setYearText(yearText) {
-            if (yearText && yearText.length > 0) {
-              $("#importedYearText").empty();
-              $(yearText).filter("p").filter(function() {
-                return this.textContent.length > 0;
-              }).each(function() {
-                $("#importedYearText").append("<p>" + this.textContent + "</p>");
-              });
-              let yearTextFontFiles = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "Wt-ClearText-Bold.*"));
-              if (yearTextFontFiles && yearTextFontFiles.length > 0) {
-                var yearTextFont = new FontFace('Wt-ClearText-Bold', 'url(' + url.pathToFileURL(yearTextFontFiles[0]).href + ')');
-                yearTextFont.load().then(function(loaded_face) {
-                  document.fonts.add(loaded_face);
-                  document.getElementById("importedYearText").style.fontFamily = '"Wt-ClearText-Bold", serif';
-                }).catch(function(err) {
-                  console.error(err);
-                });
-              }
-            }
             try {
+              if (yearText && yearText.length > 0) {
+                $("#importedYearText").empty();
+                $(yearText).filter("p").filter(function() {
+                  return this.textContent.length > 0;
+                }).each(function() {
+                  $("#importedYearText").append("<p>" + this.textContent + "</p>");
+                });
+                let yearTextFontFiles = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "Wt-ClearText-Bold.*"));
+                if (yearTextFontFiles && yearTextFontFiles.length > 0) {
+                  var yearTextFont = new FontFace('Wt-ClearText-Bold', 'url(' + url.pathToFileURL(yearTextFontFiles[0]).href + ')');
+                  yearTextFont.load().then(function(loaded_face) {
+                    document.fonts.add(loaded_face);
+                    document.getElementById("importedYearText").style.fontFamily = '"Wt-ClearText-Bold", serif';
+                  }).catch(function(err) {
+                    console.error(err);
+                  });
+                }
+              }
               let logoFontFiles = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "jw-icons*"));
               if (logoFontFiles && logoFontFiles.length > 0) {
                 var logoFont = new FontFace('JW-Icons', 'url(' + url.pathToFileURL(logoFontFiles[0]).href + ')');
