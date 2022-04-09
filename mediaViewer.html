@@ -181,8 +181,8 @@
                 $("#importedYearText").empty();
                 $(yearText).filter("p").filter(function() {
                   return this.textContent.length > 0;
-                }).each(function() {
-                  $("#importedYearText").append("<p>" + this.textContent + "</p>");
+                }).each(function(i, el) {
+                  $("#importedYearText").append($("<p>").text(el.textContent));
                 });
                 let yearTextFontFiles = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "Wt-ClearText-Bold.*"));
                 if (yearTextFontFiles && yearTextFontFiles.length > 0) {
