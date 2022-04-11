@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "electron": "^18.0.3",
-    "electron-builder": "^22.14.13",
+    "electron-builder": "^23.0.3",
     "@electron/universal": "^1.2.1"
   },
   "scripts": {
