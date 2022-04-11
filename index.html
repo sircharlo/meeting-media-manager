@@ -442,12 +442,14 @@
   <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
   <div id="overlayUploadFile" class="overlay flex-column px-3" style="display: none;">
     <div class="py-4 row">
-      <i class="fas fa-fw fa-cloud fa-3x text-muted col"></i>
-    </div>
-    <div class="align-items-center row justify-content-center py-2">
-      <div class="text-start col-5" data-i18n-string="targetMeeting"></div>
-      <div class="btn-group btn-group-toggle col" id="chooseMeeting">
+      <div class="col-5">
+        <i class="fas fa-fw fa-cloud fa-3x text-muted"></i>
       </div>
+      <!-- </div>
+    <div class="align-items-center row justify-content-center py-2">
+      <div class="text-start col-5" data-i18n-string="targetMeeting"></div> -->
+      <h4 class="align-items-center col d-flex mb-0" id="chosenMeetingDay">
+      </h4>
     </div>
     <div class="align-items-center row justify-content-center py-2 relatedToUploadType">
       <div class="text-start col-5" data-i18n-string="uploadType"></div>
@@ -489,7 +491,7 @@
     </div>
     <div class="align-items-end py-3 row">
       <div class="col-4 text-start">
-        <button class="btn btn-dark" id="btnCancelUpload" type="button" style="display: none;">
+        <button class="btn btn-dark" id="btnCancelUpload" type="button">
           <i class="fas fa-fw fa-home"></i>
         </button>
       </div>
@@ -499,9 +501,6 @@
         </button>
       </div>
       <div class="col-4 text-end">
-        <button class="btn btn-success" id="btnDoneUpload" type="button">
-          <i class="fas fa-fw fa-arrow-right"></i>
-        </button>
       </div>
     </div>
   </div>
@@ -667,13 +666,6 @@
                   <label class="btn btn-outline-dark" for="maxRes2">480p</label>
                   <input type="radio" class="btn-check" name="maxRes" id="maxRes3" value="720p" autocomplete="off">
                   <label class="btn btn-outline-dark" for="maxRes3">720p</label>
-                </div>
-              </div>
-              <hr class="my-2" />
-              <div class="align-items-center g-1 py-1 row">
-                <label for="localAdditionalMediaPrompt" class="m-0 text-start col-11"><span data-i18n-string="convertExternal"></span></label>
-                <div class="form-check form-switch text-end col-1">
-                  <input type="checkbox" class="form-check-input" id="localAdditionalMediaPrompt" />
                 </div>
               </div>
               <hr class="my-2" />
@@ -868,105 +860,7 @@
       </div>
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
-      <div class="d-flex w-100">
-        <div id="day0" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
-          <div class="dayIcon">
-            <i class="far fa-circle"></i>
-          </div>
-          <div class="col dayLongDate">
-            <div class="dateOfMonth">
-              <span class="date"></span>
-              <span class="month"><span>
-            </div>
-            <div class="dayOfWeek"></div>
-            <div class="dayOfWeekLong"></div>
-          </div>
-          <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
-        <div id="day1" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
-          <div class="dayIcon">
-            <i class="far fa-circle"></i>
-          </div>
-          <div class="col dayLongDate">
-            <div class="dateOfMonth">
-              <span class="date"></span>
-              <span class="month"><span>
-            </div>
-            <div class="dayOfWeek"></div>
-            <div class="dayOfWeekLong"></div>
-          </div>
-          <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
-        <div id="day2" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
-          <div class="dayIcon">
-            <i class="far fa-circle"></i>
-          </div>
-          <div class="col dayLongDate">
-            <div class="dateOfMonth">
-              <span class="date"></span>
-              <span class="month"><span>
-            </div>
-            <div class="dayOfWeek"></div>
-            <div class="dayOfWeekLong"></div>
-          </div>
-          <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
-        <div id="day3" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
-          <div class="dayIcon">
-            <i class="far fa-circle"></i>
-          </div>
-          <div class="col dayLongDate">
-            <div class="dateOfMonth">
-              <span class="date"></span>
-              <span class="month"><span>
-            </div>
-            <div class="dayOfWeek"></div>
-            <div class="dayOfWeekLong"></div>
-          </div>
-          <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
-        <div id="day4" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
-          <div class="dayIcon">
-            <i class="far fa-circle"></i>
-          </div>
-          <div class="col dayLongDate">
-            <div class="dateOfMonth">
-              <span class="date"></span>
-              <span class="month"><span>
-            </div>
-            <div class="dayOfWeek"></div>
-            <div class="dayOfWeekLong"></div>
-          </div>
-          <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
-        <div id="day5" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
-          <div class="dayIcon">
-            <i class="far fa-circle"></i>
-          </div>
-          <div class="col dayLongDate">
-            <div class="dateOfMonth">
-              <span class="date"></span>
-              <span class="month"><span>
-            </div>
-            <div class="dayOfWeek"></div>
-            <div class="dayOfWeekLong"></div>
-          </div>
-          <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
-        <div id="day6" class="day alertIndicators m-1 col alert alert-primary align-items-center justify-content-center">
-          <div class="dayIcon">
-            <i class="far fa-circle"></i>
-          </div>
-          <div class="col dayLongDate">
-            <div class="dateOfMonth">
-              <span class="date"></span>
-              <span class="month"><span>
-            </div>
-            <div class="dayOfWeek"></div>
-            <div class="dayOfWeekLong"></div>
-          </div>
-          <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
+      <div id="days" class="d-flex w-100">
       </div>
       <div class="d-flex w-100">
         <div id="syncJwOrgMedia" class="alertIndicators m-1 flex-fill alert alert-primary syncJwOrgMedia align-items-center justify-content-center d-flex">
