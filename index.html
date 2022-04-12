@@ -149,10 +149,6 @@
       flex: 1 1 auto;
     }
 
-    .day:not(.meeting) {
-      background-color: var(--bs-light);
-    }
-
     .in-danger {
       box-shadow: 0 0 0 0 var(--bs-danger);
       animation: pulseDanger 1s infinite;
@@ -366,15 +362,6 @@
       body {
         color: var(--bs-gray-100);
         background-color: var(--bs-gray-900);
-      }
-
-      .alertIndicators.alert-secondary {
-        background-color: var(--bs-gray-700);
-      }
-
-      .day:not(.meeting) {
-        color: var(--bs-gray-500);
-        background-color: var(--bs-gray-800);
       }
 
       .overlay {
@@ -863,28 +850,28 @@
       <div id="days" class="d-flex w-100">
       </div>
       <div class="d-flex w-100">
-        <div id="syncJwOrgMedia" class="alertIndicators m-1 flex-fill alert alert-primary syncJwOrgMedia align-items-center justify-content-center d-flex">
+        <button id="syncJwOrgMedia" data-settingslink="collapseMedia" class="alertIndicators m-1 flex-fill btn btn-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
           <div>
             <i class="far fa-circle"></i>
           </div>
           <span class="col ps-3" data-i18n-string="syncJwOrgMedia"></span>
           <span class="jwLang ps-3"><em><small></small></em></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
-        <div id="specificCong" class="alertIndicators m-1 flex-fill alert alert-primary congregation align-items-center justify-content-center" style="display: none;">
+        </button>
+        <button id="specificCong" data-settingslink="collapseCongSync" class="alertIndicators m-1 flex-fill btn btn-secondary congregation align-items-center justify-content-center" style="display: none;">
           <div>
             <i class="far fa-circle"></i>
           </div>
           <span class="col ps-3" data-i18n-string="congMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
-        <div id="mp4Convert" class="alertIndicators m-1 flex-fill alert alert-primary zoom align-items-center justify-content-center" style="display: none;">
+        </button>
+        <button id="mp4Convert" data-settingslink="collapseMedia" class="alertIndicators m-1 flex-fill btn btn-secondary zoom align-items-center justify-content-center" style="display: none;">
           <div>
             <i class="far fa-circle"></i>
           </div>
           <span class="col ps-3" data-i18n-string="mp4Conversion"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </div>
+        </button>
       </div>
     </div>
     <div class="d-flex justify-content-center flex-fill">
@@ -931,7 +918,7 @@
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-fullscreen-lg-down modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header justify-content-center">
           <h5 class="modal-title" id="staticBackdropLabel"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
