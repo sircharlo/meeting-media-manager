@@ -17,12 +17,12 @@
     "bootstrap": "^5.1.3",
     "bootstrap-dark-5": "^1.1.3",
     "dayjs": "^1.11.0",
-    "electron-updater": "^4.6.5",
+    "electron-updater": "^5.0.1",
     "escape-html": "^1.0.3",
     "fast-xml-parser": "^4.0.7",
     "flatpickr": "^4.6.11",
     "fluent-ffmpeg": "^2.1.2",
-    "glob": "^7.2.0",
+    "glob": "^8.0.1",
     "graceful-fs": "^4.2.10",
     "h264-mp4-encoder": "^1.0.12",
     "i18n": "^0.14.2",
@@ -36,9 +36,6 @@
     "pdfjs-dist": "^2.13.216",
     "select2": "^4.1.0-rc.0",
     "sql.js": "^1.6.2"
-  },
-  "overrides": {
-    "@electron/universal": "^1.2.1"
   },
   "build": {
     "appId": "sircharlo.jw-meeting-media-fetcher",
@@ -73,8 +70,7 @@
   },
   "devDependencies": {
     "electron": "^18.0.3",
-    "electron-builder": "^22.14.13",
-    "@electron/universal": "^1.2.1"
+    "electron-builder": "^23.0.3"
   },
   "scripts": {
     "start-debug": "electron .  --trace-warnings > ./app-run.log  2>&1",
