@@ -1,5 +1,5 @@
-// TODO: add recurring alert on home screen
 // TODO: merge media and meeting setup
+// TODO: find a way to make the new method obvious
 
 const fadeDelay = 200,
   aspect = require("aspectratio"),
@@ -459,13 +459,9 @@ function dateFormatter() {
     let meetingInPast = baseDate.clone().add(d, "days").isBefore(now);
     $("#days").append($("<button>", {
       id: "day" + d,
-      class: "day alertIndicators m-1 col btn " + (meetingInPast ? "disabled " : "") + "align-items-center justify-content-center " + (baseDate.clone().add(d, "days").isSame(now) ? "today " : "") + ([prefs.mwDay, prefs.weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") + (prefs.mwDay == d.toString() ? "mw " : "") + (prefs.weDay == d.toString() ? "we " : ""),
+      class: "day alertIndicators m-1 col btn btn-sm " + (meetingInPast ? "disabled " : "") + "align-items-center justify-content-center " + (baseDate.clone().add(d, "days").isSame(now) ? "today " : "") + ([prefs.mwDay, prefs.weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") + (prefs.mwDay == d.toString() ? "mw " : "") + (prefs.weDay == d.toString() ? "we " : ""),
       "data-datevalue": baseDate.clone().add(d, "days").locale(locale).format("YYYY-MM-DD")
     }).append($("<div>", {
-      class: "dayIcon"
-    }).append($("<i>", {
-      class: "far fa-circle " + (meetingInPast ? "d-none" : "")
-    }))).append($("<div>", {
       class: "col dayLongDate"
     }).append($("<div>", {
       class: "dateOfMonth"
@@ -487,6 +483,7 @@ function dateFormatter() {
     $("#mwDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
     $("#weDay label:eq(" + d + ")").text(baseDate.clone().add(d, "days").locale(locale).format("dd"));
   }
+  $(".alertIndicators.btn-success").addClass("btn-secondary").removeClass("btn-success");
 }
 const delay = s => new Promise(res => {
   let finalTimeout = setTimeout(res, s * 1000);
@@ -633,9 +630,12 @@ async function ffmpegSetup() {
 }
 async function getCongMedia() {
   perf("getCongMedia", "start");
-  updateTile("specificCong", "warning", "fas fa-circle-notch fa-spin");
+  updateTile("specificCong", "warning");
   updateStatus("cloud");
   try {
+    for (var meeting of Object.keys(meetingMedia).filter(meeting => dayjs(meeting, "YYYY-MM-DD").isValid() && dayjs(meeting, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"))) {
+      meetingMedia[meeting] = meetingMedia[meeting].filter(part => part.media.filter(mediaItem => mediaItem.recurring).length == 0);
+    }
     for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
       let isMeetingDate = dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"));
       let isRecurring = congSpecificFolder.basename == "Recurring";
@@ -912,7 +912,7 @@ async function getMediaAdditionalInfo(pub, track, issue, format, docId) {
 async function getMwMediaFromDb() {
   var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
   if (now.isSameOrBefore(dayjs(mwDate))) {
-    updateTile("day" + prefs.mwDay, "warning", "fas fa-circle-notch fa-spin");
+    updateTile("day" + prefs.mwDay, "warning");
     try {
       var issue = baseDate.format("YYYYMM") + "00";
       if (parseInt(baseDate.format("M")) % 2 === 0) issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
@@ -933,6 +933,25 @@ async function getMwMediaFromDb() {
     } catch(err) {
       notifyUser("error", "errorGetMwMedia", null, true, err, true);
       updateTile("day" + prefs.mwDay, "danger", "fas fa-times-circle");
+    }
+  }
+}
+function getPreexistingFolders() {
+  for (var folderPath of glob.sync(path.join(paths.media, "*/"))) {
+    let folder = path.basename(folderPath);
+    if (!(folder in meetingMedia) && dayjs(folder, "YYYY-MM-DD").isValid() && dayjs(folder, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, "YYYY-MM-DD"))) {
+      meetingMedia[folder] = [];
+      fs.readdirSync(folderPath).map(function(item) {
+        meetingMedia[folder].push({
+          title: item,
+          media: [{
+            safeName: item,
+            url: item,
+            isLocal: true,
+            filepath: path.join(folderPath, item)
+          }]
+        });
+      });
     }
   }
 }
@@ -961,7 +980,7 @@ function setAppLang() {
 async function getWeMediaFromDb() {
   var weDate = baseDate.clone().add(prefs.weDay, "days").format("YYYY-MM-DD");
   if (now.isSameOrBefore(dayjs(weDate))) {
-    updateTile("day" + prefs.weDay, "warning", "fas fa-circle-notch fa-spin");
+    updateTile("day" + prefs.weDay, "warning");
     try {
       var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
       var db = await getDbFromJwpub("w", issue);
@@ -1022,8 +1041,8 @@ function isReachable(hostname, port, silent) {
     }
   });
 }
-async function manageMedia(day, isMeetingDate, meetingType) {
-  $("#chosenMeetingDay").data("folderName", day).text(day);
+async function manageMedia(day, isMeetingDate, mediaType) {
+  $("#chosenMeetingDay").data("folderName", day).text(dayjs(day, "YYYY-MM-DD").isValid() ? day : i18n.__("recurring"));
   removeEventListeners();
   document.addEventListener("drop", dropHandler);
   document.addEventListener("dragover", dragoverHandler);
@@ -1032,7 +1051,7 @@ async function manageMedia(day, isMeetingDate, meetingType) {
   $("#chooseUploadType input").prop("checked", false).change();
   $("#chooseUploadType label.active").removeClass("active");
   if (!meetingMedia[day]) meetingMedia[day] = [];
-  await executeDryrun(true, (isMeetingDate ? meetingType : null));
+  await executeDryrun(true, (isMeetingDate || mediaType ? mediaType : null));
   if (!webdavIsAGo) $("#overlayUploadFile .fa-3x").toggleClass("fa-cloud fa-folder-open");
   updateFileList(true);
   // $("#chooseMeeting").empty();
@@ -1052,7 +1071,7 @@ function mkdirSync(dirPath) {
 async function mp4Convert() {
   perf("mp4Convert", "start");
   updateStatus("file-video");
-  updateTile("mp4Convert", "warning", "fas fa-circle-notch fa-spin");
+  updateTile("mp4Convert", "warning");
   await convertUnusableFiles();
   var filesToProcess = glob.sync(path.join(paths.media, "*/"), {
     ignore: [path.join(paths.media, "Recurring", "*"), path.join(paths.media, "*", "*.mp4"), path.join(paths.media, "*", "*.xspf")]
@@ -1288,6 +1307,7 @@ async function startMediaSync(isDryrun, onlyThisMeetingType) {
   if (!dryrun) {
     $("#statusIcon").toggleClass("text-primary text-muted fa-flip");
     $("#congregationSelect-dropdown").addClass("sync-started");
+    $(".alertIndicators.btn-success").addClass("btn-secondary").removeClass("btn-success");
   }
   stayAlive = false;
   $(".alertIndicators:not(.disabledWhileSyncing):not(.disabled)").addClass("disabledWhileSyncing disabled");
@@ -1304,7 +1324,11 @@ async function startMediaSync(isDryrun, onlyThisMeetingType) {
   ]);
   perf("getJwOrgMedia", "stop");
   createMediaNames();
-  if (webdavIsAGo) await getCongMedia();
+  if (webdavIsAGo) {
+    await getCongMedia();
+  } else {
+    //await getPreexistingFolders();
+  }
   if (!dryrun) {
     updateStatus("download");
     await Promise.all([
@@ -1334,11 +1358,11 @@ async function startMediaSync(isDryrun, onlyThisMeetingType) {
     }
     if (prefs.autoOpenFolderWhenDone) shell.openPath(paths.media);
     $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeToAndToggle(fadeDelay, 1);
+    $("#statusIcon").toggleClass("text-muted text-primary fa-flip");
+    updateStatus("photo-video");
     setTimeout(() => {
       $(".alertIndicators").addClass("btn-secondary").removeClass("btn-success");
-      $("#statusIcon").toggleClass("text-muted text-primary fa-flip");
-      updateStatus("photo-video");
-    }, 2000);
+    }, fadeDelay * 65);
     $("#congregationSelect-dropdown").removeClass("sync-started");
   }
   $(".alertIndicators.disabledWhileSyncing").removeClass("disabledWhileSyncing disabled");
@@ -1383,7 +1407,7 @@ async function syncCongMedia() {
 }
 async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "start");
-  updateTile("syncJwOrgMedia", "warning", "fas fa-circle-notch fa-spin");
+  updateTile("syncJwOrgMedia", "warning");
   let jwOrgSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, "YYYY-MM-DD").isValid() && dayjs(key, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
   totals.jw = {
     total: Object.values(jwOrgSyncMeetingMedia).map(meeting => Object.values(meeting).map(part => part.media.filter(mediaItem => !mediaItem.congSpecific).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue, 0),
@@ -1418,7 +1442,7 @@ async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "stop");
 }
 function syncLocalRecurringMedia() {
-  if (fs.existsSync(path.join(paths.media, "Recurring"))) {
+  if (!webdavIsAGo && fs.existsSync(path.join(paths.media, "Recurring"))) {
     glob.sync(path.join(paths.media, "Recurring", "*")).forEach((recurringItem) => {
       Object.keys(meetingMedia).filter(key => key !== "Recurring" && dayjs(key, "YYYY-MM-DD").isValid() && dayjs(key, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")).forEach((meeting) => {
         mkdirSync(path.join(paths.media, meeting));
@@ -1496,7 +1520,7 @@ function updateFileList(initialLoad) {
     console.log(weekMedia);
     if (!webdavIsAGo) {
       if (fs.existsSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")))) {
-        fs.readdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName"))).map(function(item) {
+        fs.readdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName"))).map(item => {
           let existingItem = weekMedia.existing.map(weekMediaItem => weekMediaItem.media).flat().filter(weekMediaItemMedia => weekMediaItemMedia.safeName == item);
           if (existingItem.length >0) {
             existingItem.map(item => {
@@ -1560,11 +1584,13 @@ function updateFileList(initialLoad) {
       $(".tooltip").remove();
       $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
     });
+    console.log(weekMedia);
     let newList = Object.values(weekMedia).flat().filter(Boolean).map(weekMediaItem => weekMediaItem.media).flat().sort((a, b) => a.safeName.localeCompare(b.safeName));
     for (var file of newList) {
       let html = $("<li data-bs-toggle='tooltip' " + (file.isNotPresentOnRemote ? "data-isnotpresentonremote='true' " : "") + (file.thumbnail ? "data-thumbnail='" + file.thumbnail + "' " : "") + (file.url ? "data-url='" + file.url + "'": "data-islocal='true'") + " data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
         title: file.safeName
       });
+      console.log(file);
       if (!file.recurring && ((file.isLocal && !file.newFile) || file.congSpecific)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
       if (!file.newFile) {
         if ((file.isLocal || file.congSpecific) && !file.recurring) html.addClass("canMove").find(".infoIcons").append("<i class='fas fa-fw fa-pen me-1'></i>");
@@ -1575,7 +1601,7 @@ function updateFileList(initialLoad) {
       if (file.newFile) html.addClass("new-file").prepend("<i class='fas fa-fw fa-plus-square me-2'></i>");
       if (Object.values(weekMedia).flat().map(weekMediaItem => weekMediaItem.media).flat().filter(item => item.safeName == file.safeName).length > 1) html.addClass("duplicated-file");
       let fileOrigin = "fa-globe-americas";
-      if (file.congSpecific || file.newFile || file.isNotPresentOnRemote) {
+      if (file.congSpecific || file.newFile || file.isNotPresentOnRemote || file.isLocal) {
         fileOrigin = webdavIsAGo ? "fa-cloud" : "fa-folder-open";
         if (file.recurring) html.find(".infoIcons").append("<i class='fas fa-fw fa-sync-alt me-1'></i>");
       }
@@ -1650,8 +1676,8 @@ function updateFileList(initialLoad) {
 function updateStatus(icon) {
   if (!dryrun) $("#statusIcon").removeClass($("#statusIcon").attr("class").split(" ").filter(el => !["fa-fw", "fa-3x", "fa-flip"].includes(el) && el.includes("fa-")).join(" ")).addClass("fa-" + icon);
 }
-function updateTile(tile, color, icon) {
-  if (!dryrun) $("#" + tile).removeClass($("#" + tile).attr("class").split(" ").filter(el => el.includes("btn-")).join(" ")).addClass("btn-" + color).find("i").removeClass().addClass(icon);
+function updateTile(tile, color) {
+  if (!dryrun) $("#" + tile).removeClass($("#" + tile).attr("class").split(" ").filter(el => el.includes("btn-") && !el.includes("-sm")).join(" ")).addClass("btn-" + color);
 }
 function validateConfig(changed) {
   let configIsValid = true;
@@ -1967,7 +1993,7 @@ $("#baseDate").on("click", ".dropdown-item", function() {
   let newBaseDate = dayjs($(this).val()).startOf("isoWeek");
   if (!baseDate.isSame(newBaseDate)) {
     baseDate = newBaseDate;
-    $(".alertIndicators:not(.congregation)").removeClass("btn-danger").find("i").addClass("far fa-circle").removeClass("fas fa-check-circle fa-times-circle");
+    $(".alertIndicators:not(.congregation)").removeClass("btn-danger");
     $("#baseDate .dropdown-item.active").removeClass("active");
     $(this).addClass("active");
     $("#baseDate > button").text($(this).text());
@@ -2210,7 +2236,7 @@ $("#btnUpload").on("click", async () => {
   try {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
     $("#btnCancelUpload, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
-    mkdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
+    if (!webdavIsAGo) mkdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
     if ($("input#typeSong:checked").length > 0) {
       let songFile = new Buffer((await request($("#fileToUpload").val(), {isFile: true})).data);
       let songFileName = sanitizeFilename(getPrefix() + " - " + $("#songPicker option:selected").text() + ".mp4");
@@ -2276,6 +2302,9 @@ $(".enterPrefixInput, #congServerPort").on("keypress", function(e){ // cmd/ctrl 
 });
 $("#days").on("click", ".day.btn", function() {
   manageMedia($(this).data("datevalue"), $(this).hasClass("meeting"), ($(this).hasClass("mw") ? "mw" : $(this).hasClass("we") ? "we" : ""));
+});
+$("#recurringMedia").on("click", function() {
+  manageMedia("Recurring", false, "Recurring");
 });
 $("#overlayUploadFile").on("change", "#filePicker", function() {
   $("#fileToUpload").val($(this).val()).change();
@@ -2405,7 +2434,6 @@ $("#overlaySettings").on("click", ".btn-clean-up", function() {
   rm(glob.sync(path.join(paths.media, "*"), {
     ignore: [path.join(paths.media, "Recurring")]
   }).concat([paths.langs, paths.pubs]));
-  $(".alertIndicators i").addClass("far fa-circle").removeClass("fas fa-check-circle");
   calculateCacheSize();
   setTimeout(() => {
     $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);

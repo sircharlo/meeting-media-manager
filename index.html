@@ -132,8 +132,7 @@
     }
 
     .alertIndicators {
-      line-height: 1.3em;
-      padding: 0.75rem 1rem;
+      padding: 0.5rem 1rem;
       transition: all 0.15s linear;
     }
 
@@ -159,14 +158,6 @@
       animation: pulseToday 2s infinite;
     }
 
-    .day .dayLongDate {
-      text-align: center;
-    }
-
-    .meeting .dayLongDate {
-      padding-left: 1rem;
-    }
-
     .progress-bar {
       transition: width .1s ease;
     }
@@ -181,10 +172,6 @@
     #globalProgress {
       height: 0.5rem;
       z-index: 75;
-    }
-
-    .meeting .dayLongDate div {
-      text-align: left;
     }
 
     .file-list {
@@ -838,7 +825,7 @@
       </div>
       <div class="col-5 text-end">
         <div class="btn-group" id="congregationSelect">
-          <button class="btn dropdown-toggle" type="button" id="congregationSelect-dropdown" data-bs-toggle="dropdown">
+          <button class="btn btn-sm dropdown-toggle" type="button" id="congregationSelect-dropdown" data-bs-toggle="dropdown">
           </button>
           <div class="dropdown-menu dropdown-menu-end">
             <button class="dropdown-item new-cong" value=""><i class="fa-solid fa-square-plus text-success"></i></button>
@@ -850,26 +837,22 @@
       <div id="days" class="d-flex w-100">
       </div>
       <div class="d-flex w-100">
-        <button id="syncJwOrgMedia" data-settingslink="collapseMedia" class="alertIndicators m-1 flex-fill btn btn-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
+        <button id="syncJwOrgMedia" data-settingslink="collapseMedia" class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
           <div>
-            <i class="far fa-circle"></i>
+            <span data-i18n-string="syncJwOrgMedia"></span>
+            <span class="jwLang"><em><small></small></em></span>
           </div>
-          <span class="col ps-3" data-i18n-string="syncJwOrgMedia"></span>
-          <span class="jwLang ps-3"><em><small></small></em></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </button>
-        <button id="specificCong" data-settingslink="collapseCongSync" class="alertIndicators m-1 flex-fill btn btn-secondary congregation align-items-center justify-content-center" style="display: none;">
-          <div>
-            <i class="far fa-circle"></i>
-          </div>
-          <span class="col ps-3" data-i18n-string="congMedia"></span>
+        <button id="specificCong" data-settingslink="collapseCongSync" class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary congregation align-items-center justify-content-center" style="display: none;">
+          <span class="col" data-i18n-string="congMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </button>
-        <button id="mp4Convert" data-settingslink="collapseMedia" class="alertIndicators m-1 flex-fill btn btn-secondary zoom align-items-center justify-content-center" style="display: none;">
-          <div>
-            <i class="far fa-circle"></i>
-          </div>
-          <span class="col ps-3" data-i18n-string="mp4Conversion"></span>
+        <button id="recurringMedia" class="btn btn-sm alertIndicators m-1 flex-fill btn-secondary align-items-center justify-content-center">
+          <span class="col" data-i18n-string="recurring"></span>
+        </button>
+        <button id="mp4Convert" data-settingslink="collapseMedia" class="alertIndicators m-1 flex-fill btn btn-sm btn-secondary zoom align-items-center justify-content-center" style="display: none;">
+          <span class="col" data-i18n-string="mp4Conversion"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </button>
       </div>
