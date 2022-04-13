@@ -2091,7 +2091,7 @@ $("#btnMediaWindow").on("click", function() {
       require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
       if (mediaItem.hasClass("video")) {
         mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
-        mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0 w-100' style='height: 3px; display: none; z-index: 1;' min='0' max='100' step='any' />");
+        mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0' min='0' max='100' step='any' />");
         mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
         $("#folderListing button.playStop.play").not(triggerButton).prop("disabled", true);
       }
