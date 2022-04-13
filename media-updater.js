@@ -636,7 +636,7 @@ async function getCongMedia() {
   updateTile("specificCong", "warning");
   updateStatus("cloud");
   try {
-    for (var meeting of Object.keys(meetingMedia).filter(meeting => dayjs(meeting, "YYYY-MM-DD").isValid() && dayjs(meeting, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"))) {
+    for (let meeting of Object.keys(meetingMedia).filter(meeting => dayjs(meeting, "YYYY-MM-DD").isValid() && dayjs(meeting, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"))) {
       meetingMedia[meeting] = meetingMedia[meeting].filter(part => part.media.filter(mediaItem => mediaItem.recurring).length == 0);
     }
     for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
@@ -657,7 +657,7 @@ async function getCongMedia() {
           };
           if (!meetingMedia[congSpecificFolder.basename].map(part => part.media).flat().map(item => item.url).filter(Boolean).includes(remoteFile.filename)) meetingMedia[congSpecificFolder.basename].push(congSpecificFile);
           if (isRecurring) {
-            for (var meeting of Object.keys(meetingMedia)) {
+            for (let meeting of Object.keys(meetingMedia)) {
               if (dayjs(meeting, "YYYY-MM-DD").isValid() && dayjs(meeting, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
                 var repeatFile = v8.deserialize(v8.serialize(congSpecificFile));
                 repeatFile.media[0].recurring = true;
@@ -936,25 +936,6 @@ async function getMwMediaFromDb() {
     } catch(err) {
       notifyUser("error", "errorGetMwMedia", null, true, err, true);
       updateTile("day" + prefs.mwDay, "danger", "fas fa-times-circle");
-    }
-  }
-}
-function getPreexistingFolders() {
-  for (var folderPath of glob.sync(path.join(paths.media, "*/"))) {
-    let folder = path.basename(folderPath);
-    if (!(folder in meetingMedia) && dayjs(folder, "YYYY-MM-DD").isValid() && dayjs(folder, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, "YYYY-MM-DD"))) {
-      meetingMedia[folder] = [];
-      fs.readdirSync(folderPath).map(function(item) {
-        meetingMedia[folder].push({
-          title: item,
-          media: [{
-            safeName: item,
-            url: item,
-            isLocal: true,
-            filepath: path.join(folderPath, item)
-          }]
-        });
-      });
     }
   }
 }
