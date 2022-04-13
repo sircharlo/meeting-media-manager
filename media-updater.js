@@ -45,7 +45,7 @@ const fadeDelay = 200,
   },
   net = require("net"),
   os = require("os"),
-  path = require("path"),
+  path = require("upath"),
   remote = require("@electron/remote"),
   {shell} = require("electron"),
   sizeOf = require("image-size"),
@@ -77,7 +77,6 @@ function checkInternet(online) {
 const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443, !initialConnectivityCheck)));
 overlay(true, "cog fa-spin");
 updateOnlineStatus();
-require("electron").ipcRenderer.send("attemptAutoUpdate");
 require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, message[0], message[1]));
 require("electron").ipcRenderer.on("macUpdate", async () => {
   await overlay(true, "cloud-download-alt fa-beat", "circle-notch fa-spin text-success");
@@ -138,7 +137,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   }),
   now = dayjs().hour(0).minute(0).second(0).millisecond(0),
   paths = {
-    app: remote.app.getPath("userData")
+    app: path.normalize(remote.app.getPath("userData"))
   },
   pendingMusicFadeOut = {},
   perfStats = {},
@@ -163,7 +162,11 @@ datepickers = datetime(".timePicker", {
     $("#" + initiatorEl.data("target")).val(initiatorEl.val()).change();
   }
 });
-
+if (remote.app.isPackaged) {
+  require("electron").ipcRenderer.send("attemptAutoUpdate");
+} else {
+  congregationInitialSelector();
+}
 function goAhead() {
   if (fs.existsSync(paths.prefs)) {
     try {
@@ -970,11 +973,17 @@ function getPrefix() {
   return prefix;
 }
 function setAppLang() {
-  i18n.setLocale(prefs.localAppLang ? prefs.localAppLang : "en");
-  $("[data-i18n-string]").each(function() {
-    $(this).html(i18n.__($(this).data("i18n-string")));
-  });
-  $(".i18n-title").attr("title", i18n.__("settingLocked")).tooltip("dispose").tooltip();
+  try {
+    i18n.setLocale(prefs.localAppLang ? prefs.localAppLang : "en");
+    $("[data-i18n-string]").each(function() {
+      $(this).html(i18n.__($(this).data("i18n-string")));
+    });
+    $(".i18n-title").each(() => {
+      $(this).attr("title", i18n.__("settingLocked")).tooltip("dispose").tooltip();
+    });
+  } catch(err) {
+    console.error(err);
+  }
   dateFormatter();
 }
 async function getWeMediaFromDb() {

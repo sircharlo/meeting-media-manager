@@ -93,7 +93,7 @@
       isImage = require("is-image"),
       isVideo = require("is-video"),
       os = require("os"),
-      path = require("path"),
+      path = require("upath"),
       remote = require("@electron/remote"),
       url = require("url");
 
@@ -164,8 +164,8 @@
         $("body").css("background", "url(" + url.pathToFileURL(mediaWindowBackgroundImages[0]).href + ") black center center / contain no-repeat");
       } else if (prefs.lang) {
         let yearTextPath = path.join(remote.app.getPath("userData"), "Publications", prefs.lang, "yeartext-" + prefs.lang + "-" + (new Date().getFullYear()).toString());
-        let localAppData = remote.app.getPath("appData");
-        if (os.platform() == "win32") localAppData = glob.sync(path.join(localAppData, "../local"))[0]
+        let localAppData = path.normalize(remote.app.getPath("appData"));
+        if (os.platform() == "win32" && glob.sync(path.join(localAppData, "../local")).length > 0) localAppData = glob.sync(path.join(localAppData, "../local"))[0]
         try {
           function getRemoteYearText(lang) {
             axios.get("https://wol.jw.org/wol/finder?docid=1102022800&wtlocale=" + lang + "&format=json&snip=yes", {
