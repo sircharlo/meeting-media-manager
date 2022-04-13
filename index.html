@@ -345,6 +345,11 @@
       transition: width 0.4s;
     }
 
+    .media-item {
+      max-width: 100%;
+      height: 4rem;
+    }
+
     @media (prefers-color-scheme: dark) {
       body {
         color: var(--bs-gray-100);
@@ -465,11 +470,14 @@
     </div>
     <div class="align-items-end py-3 row">
       <div class="col-4 text-start">
-        <button class="btn btn-dark" id="btnCancelUpload" type="button">
-          <i class="fas fa-fw fa-home"></i>
+        <button class="btn btn-danger btn-cancel-upload file-selected" type="button">
+          <i class="fas fa-fw fa-circle-arrow-left"></i>
         </button>
       </div>
       <div class="col-4 text-center">
+        <button class="btn btn-dark btn-cancel-upload no-file-selected" type="button">
+          <i class="fas fa-fw fa-home"></i>
+        </button>
         <button class="btn btn-primary" id="btnUpload" type="button" style="display: none;">
           <i class="fas fa-fw fa-save"></i>
         </button>
@@ -828,7 +836,7 @@
           <button class="btn btn-sm dropdown-toggle" type="button" id="congregationSelect-dropdown" data-bs-toggle="dropdown">
           </button>
           <div class="dropdown-menu dropdown-menu-end">
-            <button class="dropdown-item new-cong" value=""><i class="fa-solid fa-square-plus text-success"></i></button>
+            <button class="dropdown-item new-cong" value=""><i class="fas fa-square-plus text-success"></i></button>
           </div>
         </div>
       </div>
@@ -866,9 +874,6 @@
     </div>
     <div class="align-items-center d-flex py-3 justify-content-center">
       <div id="actionButtions" class="col-3 text-start">
-        <button class="btn btn-primary" id="btn-upload" style="display: none;">
-          <i class="fas fa-fw fa-cloud-upload-alt"></i>
-        </button>
         <button type="button" class="btn btn-info" id="btnMeetingMusic" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-music"></i>
           <small data-i18n-string="clickAgain" style="display: none;"></small>
