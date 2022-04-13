@@ -9,7 +9,8 @@
     body,
     video,
     #mediaDisplay,
-    #blackOverlay {
+    #blackOverlay,
+    #resizeOverlay {
       height: 100%;
       width: 100%;
       margin: 0;
@@ -23,6 +24,7 @@
     }
 
     #blackOverlay,
+    #resizeOverlay,
     #importedYearText,
     #mediaDisplay {
       position: absolute;
@@ -31,11 +33,36 @@
     }
 
 
-    #blackOverlay {
+    #blackOverlay,
+    #resizeOverlay {
       background: black;
       opacity: 0;
-      transition: opacity 0.4s;
+    }
+
+    #blackOverlay {
       z-index: 15;
+      transition: opacity 0.4s;
+    }
+
+    #resizeOverlay {
+      z-index: 25;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #dimensions {
+      color: #084298;
+      background-color: #cfe2ff;
+      border-color: #b6d4fe;
+      position: relative;
+      padding: 1rem 1rem;
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+      width: fit-content;
+      height: fit-content;
+      font: bold 4vw monospace;
     }
 
     #mediaDisplay {
@@ -79,6 +106,9 @@
   <div id="importedYearTextLogoContainer"></div>
   <div id="mediaDisplay"></div>
   <div id="blackOverlay"></div>
+  <div id="resizeOverlay">
+    <div id="dimensions"></div>
+  </div>
   <script type="text/javascript">
     window.$ = window.jQuery = require("jquery");
     window.popperjs = require("@popperjs/core");
@@ -98,6 +128,7 @@
       url = require("url");
 
     function trasitionToMedia(media) {
+      resizingDone();
       $("#blackOverlay").css("opacity", "1");
       setTimeout(function() {
         if (isVideo(media) || isAudio(media)) {
@@ -125,6 +156,16 @@
         $("#blackOverlay").css("opacity", "0");
       }, 400);
     }
+
+    function resizingNow(width, height) {
+      $("#resizeOverlay").css("opacity", "1");
+      $("#dimensions").text(width + "x" + height)
+    }
+
+    function resizingDone() {
+      $("#resizeOverlay").css("opacity", "0");
+    }
+
     ipcRenderer.on('showMedia', (event, arg) => {
       trasitionToMedia(arg)
     });
@@ -133,6 +174,12 @@
     });
     ipcRenderer.on('playVideo', (event, arg) => {
       $("video").trigger("play")
+    });
+    ipcRenderer.on('windowResizing', (event, arg) => {
+      resizingNow(arg[0], arg[1])
+    });
+    ipcRenderer.on('windowResized', (event) => {
+      resizingDone();
     });
     ipcRenderer.on('videoScrub', (event, timeAsPercent) => {
       $("video")[0].currentTime = $("video")[0].duration * timeAsPercent / 100;

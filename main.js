@@ -96,6 +96,7 @@ if (!gotTheLock) {
           nodeIntegration: true,
           contextIsolation: false
         },
+        minHeight: 100,
       };
       let supplementaryOptions = {
         width: 1280,
@@ -120,6 +121,10 @@ if (!gotTheLock) {
           e.preventDefault();
           win.webContents.send("notifyUser", ["warn", "cantCloseMediaWindowOpen"]);
         }
+      }).on("will-resize", () => {
+        mediaWin.webContents.send("windowResizing", mediaWin.getSize());
+      }).on("resized", () => {
+        mediaWin.webContents.send("windowResized");
       });
       mediaWin.on("closed", () => {
         mediaWin = null;

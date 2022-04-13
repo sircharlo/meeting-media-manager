@@ -1571,7 +1571,6 @@ function updateFileList(initialLoad) {
       let html = $("<li data-bs-toggle='tooltip' " + (file.isNotPresentOnRemote ? "data-isnotpresentonremote='true' " : "") + (file.thumbnail ? "data-thumbnail='" + file.thumbnail + "' " : "") + (file.url ? "data-url='" + file.url + "'": "data-islocal='true'") + " data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
         title: file.safeName
       });
-      console.log(file);
       if (!file.recurring && ((file.isLocal && !file.newFile) || file.congSpecific)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
       if (!file.newFile) {
         if ((file.isLocal || file.congSpecific) && !file.recurring) html.addClass("canMove").find(".infoIcons").append("<i class='fas fa-fw fa-pen me-1'></i>");
@@ -1595,7 +1594,6 @@ function updateFileList(initialLoad) {
         fileType = "fa-file-pdf";
       }
       html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i><i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>");
-      console.log(file, (file.thumbnail || file.url));
       if (file.trackImage || file.congSpecific || file.filepath || file.thumbnail) {
         let imageSrc = {};
         if (file.trackImage) {
