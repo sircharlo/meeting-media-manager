@@ -296,7 +296,7 @@ function congregationPrefsPopulate() {
 function congregationSelectPopulate() {
   $("#congregationSelect .dropdown-menu .congregation").remove();
   for (var congregation of paths.congprefs) {
-    $("#congregationSelect .dropdown-menu").prepend("<button class='dropdown-item congregation " + (path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : "") + "' value='" + congregation.path + "'>" + (paths.congprefs.length > 1 ? "<i class='fa-solid fa-square-minus text-warning'></i> " : "") + congregation.name + "</button>");
+    $("#congregationSelect .dropdown-menu").prepend("<button class='dropdown-item congregation " + (path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : "") + "' value='" + congregation.path + "'>" + (paths.congprefs.length > 1 ? "<i class='fas fa-square-minus text-warning'></i> " : "") + congregation.name + "</button>");
     if (path.resolve(paths.prefs) == path.resolve(congregation.path)) $("#congregationSelect button.dropdown-toggle").text(congregation.name);
   }
 }
@@ -1044,8 +1044,6 @@ async function manageMedia(day, isMeetingDate, mediaType) {
   await executeDryrun(true, (isMeetingDate || mediaType ? mediaType : null));
   if (!webdavIsAGo) $("#overlayUploadFile .fa-3x").toggleClass("fa-cloud fa-folder-open");
   updateFileList(true);
-  // $("#chooseMeeting").empty();
-  // $("#chooseMeeting").append("<input type='radio' class='btn-check' name='chooseMeeting' id='" + day + "' autocomplete='off'><label class='btn btn-outline-" + (!dayjs(day, "YYYY-MM-DD").isValid() ? "info" : "dark" ) + "' for='" + day + "'>" + (!dayjs(day, "YYYY-MM-DD").isValid() ? i18n.__("recurring") : day) + "</label>");
   await toggleScreen("overlayUploadFile");
   overlay(false);
 }
@@ -1291,7 +1289,7 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
     modal.hide();
   }
 }
-async function startMediaSync(isDryrun, onlyThisMeetingType) {
+async function startMediaSync(isDryrun, meetingFilter) {
   perf("total", "start");
   dryrun = !!isDryrun;
   if (!dryrun) {
@@ -1301,7 +1299,7 @@ async function startMediaSync(isDryrun, onlyThisMeetingType) {
   }
   stayAlive = false;
   $(".alertIndicators:not(.disabledWhileSyncing):not(.disabled)").addClass("disabledWhileSyncing disabled");
-  if (!dryrun) $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeToAndToggle(fadeDelay, 0);
+  if (!dryrun) $("#btn-settings").fadeToAndToggle(fadeDelay, 0);
   await setVars(isDryrun);
   if (!dryrun) await rm(glob.sync(path.join(paths.media, "*/"), {
     ignore: [path.join(paths.media, "Recurring")]
@@ -1309,16 +1307,12 @@ async function startMediaSync(isDryrun, onlyThisMeetingType) {
   perf("getJwOrgMedia", "start");
   updateStatus("globe-americas");
   await Promise.all([
-    (!onlyThisMeetingType || onlyThisMeetingType == "mw") && getMwMediaFromDb(),
-    (!onlyThisMeetingType || onlyThisMeetingType == "we") && getWeMediaFromDb()
+    (!meetingFilter || meetingFilter == "mw") && getMwMediaFromDb(),
+    (!meetingFilter || meetingFilter == "we") && getWeMediaFromDb()
   ]);
   perf("getJwOrgMedia", "stop");
   createMediaNames();
-  if (webdavIsAGo) {
-    await getCongMedia();
-  } else {
-    //await getPreexistingFolders();
-  }
+  if (webdavIsAGo) await getCongMedia();
   if (!dryrun) {
     updateStatus("download");
     await Promise.all([
@@ -1347,7 +1341,7 @@ async function startMediaSync(isDryrun, onlyThisMeetingType) {
       fs.writeFileSync(path.join(paths.media, date, date + ".xspf"), (new XMLBuilder({ignoreAttributes: false})).build(playlistItems));
     }
     if (prefs.autoOpenFolderWhenDone) shell.openPath(paths.media);
-    $("#btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? ", #btn-upload" : "")).fadeToAndToggle(fadeDelay, 1);
+    $("#btn-settings").fadeToAndToggle(fadeDelay, 1);
     $("#statusIcon").toggleClass("text-muted text-primary fa-flip");
     updateStatus("photo-video");
     setTimeout(() => {
@@ -1457,7 +1451,6 @@ function toggleScreen(screen, forceShow, sectionToShow) {
       $("#" + screen + " .accordion-collapse").each(function() {
         $(this).collapse($(this).find(".is-invalid").length > 0 || $(this).prop("id") == sectionToShow ? "show" : "hide");
       });
-      console.log(sectionToShow);
     }
     if (forceShow) {
       $("#" + screen).slideDown(fadeDelay, () => resolve() );
@@ -1497,7 +1490,7 @@ function updateFileList(initialLoad) {
       $("#chooseUploadType label.active").removeClass("active");
       $(".relatedToUploadType").fadeToAndToggle(fadeDelay, 1);
       $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
-      $("#btnCancelUpload, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
+      $(".btn-cancel-upload, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
       $("#fileList").empty();
     }
     $(".relatedToUpload *:not(.enterPrefixInput):enabled").prop("disabled", true).addClass("fileListLoading");
@@ -1507,7 +1500,6 @@ function updateFileList(initialLoad) {
     };
     if (!meetingMedia[$("#chosenMeetingDay").data("folderName")]) meetingMedia[$("#chosenMeetingDay").data("folderName")] = [];
     weekMedia.existing = meetingMedia[$("#chosenMeetingDay").data("folderName")].filter(mediaItem => mediaItem.media.length > 0);
-    console.log(weekMedia);
     if (!webdavIsAGo) {
       if (fs.existsSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")))) {
         fs.readdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName"))).map(item => {
@@ -1574,7 +1566,6 @@ function updateFileList(initialLoad) {
       $(".tooltip").remove();
       $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
     });
-    console.log(weekMedia);
     let newList = Object.values(weekMedia).flat().filter(Boolean).map(weekMediaItem => weekMediaItem.media).flat().sort((a, b) => a.safeName.localeCompare(b.safeName));
     for (var file of newList) {
       let html = $("<li data-bs-toggle='tooltip' " + (file.isNotPresentOnRemote ? "data-isnotpresentonremote='true' " : "") + (file.thumbnail ? "data-thumbnail='" + file.thumbnail + "' " : "") + (file.url ? "data-url='" + file.url + "'": "data-islocal='true'") + " data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
@@ -1657,7 +1648,8 @@ function updateFileList(initialLoad) {
     }
     $("#fileList li").css("width", 100 / Math.ceil(Object.values(weekMedia).flat().map(item => item.media).flat().length / 11) + "%");
     $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
-    $("#btnCancelUpload").toggleClass("btn-dark", !newFileChosen).toggleClass("btn-danger", newFileChosen).find("i").toggleClass("fa-home", !newFileChosen).toggleClass("fa-circle-arrow-left", newFileChosen);
+    $(".btn-cancel-upload.file-selected").toggle(!!newFileChosen);
+    $(".btn-cancel-upload.no-file-selected").toggle(!newFileChosen);
     $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
   } catch (err) {
     notifyUser("error", "errorAdditionalMediaList", null, true, err, true);
@@ -1923,7 +1915,6 @@ async function webdavSetup() {
       }
     }
   }
-  $("#btn-upload").toggle(congServerEntered).prop("disabled", congServerEntered && !webdavDirIsValid).toggleClass("btn-primary", !congServerEntered || (congServerEntered && webdavLoginSuccessful && webdavDirIsValid)).toggleClass("btn-danger", congServerEntered && !(webdavDirIsValid && webdavLoginSuccessful));
   $("#webdavStatus").toggleClass("text-success text-warning text-muted", webdavDirIsValid).toggleClass("text-danger", congServerEntered && !webdavDirIsValid);
   $(".webdavHost").toggleClass("is-valid", congServerHeartbeat).toggleClass("is-invalid", congServerEntered && !congServerHeartbeat);
   $(".webdavCreds").toggleClass("is-valid", congServerHeartbeat && webdavLoginSuccessful).toggleClass("is-invalid", (congServerEntered && congServerHeartbeat && !webdavLoginSuccessful));
@@ -2004,7 +1995,7 @@ $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus:not(.confi
 $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus.confirmed", function() {
   congregationDelete($(this).closest("button").val());
 });
-$("#btnCancelUpload").on("click", () => {
+$(".btn-cancel-upload").on("click", () => {
   toggleScreen("overlayUploadFile");
   removeEventListeners();
 });
@@ -2045,7 +2036,7 @@ require("electron").ipcRenderer.on("videoPaused", () => {
 });
 $("#staticBackdrop").on("click", "#btnToggleMediaWindowFocus", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
-  $(this).toggleClass("hidden").find(".fa-stack-2x").toggleClass("fa-regular fa-circle text-danger fa-solid fa-ban");
+  $(this).toggleClass("btn-primary btn-warning").find(".fa-stack-2x").toggleClass("fas far fa-circle fa-ban text-danger");
 });
 $("#staticBackdrop").on("input change", "#videoScrubber", function() {
   require("electron").ipcRenderer.send("videoScrub", $(this).val());
@@ -2073,7 +2064,7 @@ $("#btnMediaWindow").on("click", function() {
     folderListing.empty();
     for (var item of glob.sync(path.join($(this).data("folder"), "*"))) {
       item = escape(item);
-      if (isVideo(item) || isAudio(item) || isImage(item)) $(folderListing).append("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='col-2 me-3'>" + (isVideo(item) || isAudio(item) ? "<video preload='metadata' class='w-100 d-flex' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>" : "<img class='d-flex w-100' src='" + url.pathToFileURL(item).href + "' />") + "</div><div class='flex-fill mediaDesc'>" + path.basename(item) + "</div><div class='ps-3 pe-1'><button class='btn btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-primary playStop play'><i class='fas fa-fw fa-play'></i></button></div></li>");
+      if (isVideo(item) || isAudio(item) || isImage(item)) $(folderListing).append("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='col-2 d-flex justify-content-center me-3'>" + (isVideo(item) || isAudio(item) ? "<video preload='metadata' class='d-flex media-item' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>" : "<img class='d-flex media-item' src='" + url.pathToFileURL(item).href + "' />") + "</div><div class='flex-fill mediaDesc'>" + path.basename(item) + "</div><div class='ps-3 pe-1'><button class='btn btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-primary playStop play'><i class='fas fa-fw fa-play'></i></button></div></li>");
     }
   });
   listMediaFolders();
@@ -2102,7 +2093,7 @@ $("#btnMediaWindow").on("click", function() {
       require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
       if (mediaItem.hasClass("video")) {
         mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
-        mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0 w-100' style='height: 3px; display: none;' min='0' max='100' step='any' />");
+        mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0 w-100' style='height: 3px; display: none; z-index: 1;' min='0' max='100' step='any' />");
         mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
         $("#folderListing button.playStop.play").not(triggerButton).prop("disabled", true);
       }
@@ -2131,7 +2122,7 @@ $("#btnMediaWindow").on("click", function() {
   });
   showModal(true, true, i18n.__("targetMeeting"), folderListing, false);
   $(folderListing).find(".thatsToday").click();
-  $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-info mx-2' title='Alt+Z'><span class='fa-stack'><i class='fa-solid fa-desktop fa-stack-1x'></i><i class='fa-solid fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
+  $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-warning mx-2' title='Alt+Z'><span class='fa-stack'><i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic"));
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal:not(.confirmed)", async function() {
     $(this).addClass("confirmed btn-danger");
@@ -2225,7 +2216,7 @@ $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
 $("#btnUpload").on("click", async () => {
   try {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
-    $("#btnCancelUpload, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
+    $(".btn-cancel-upload, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
     if (!webdavIsAGo) mkdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
     if ($("input#typeSong:checked").length > 0) {
       let songFile = new Buffer((await request($("#fileToUpload").val(), {isFile: true})).data);
@@ -2263,11 +2254,8 @@ $("#btnUpload").on("click", async () => {
   } catch (err) {
     notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true);
   }
-  if (webdavIsAGo) await executeDryrun();
+  if (webdavIsAGo) await executeDryrun(true, "Recurring");
   updateFileList(true);
-});
-$("#btn-upload").on("click", function() {
-  //manageMedia();
 });
 $("#congregationSelect").on("click", ".new-cong", function() {
   congregationCreate();
@@ -2382,7 +2370,7 @@ $("#mediaSync").on("click", async function() {
     remote.app.exit();
   } else {
     overlay(false);
-    $(".btn-home, #btn-settings" + (prefs.congServer && prefs.congServer.length > 0 ? " #btn-upload" : "")).fadeToAndToggle(fadeDelay, 1);
+    $(".btn-home, #btn-settings").fadeToAndToggle(fadeDelay, 1);
     $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown:not(.music-playing)").prop("disabled", false);
   }
 });
