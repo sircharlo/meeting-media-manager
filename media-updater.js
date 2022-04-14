@@ -193,7 +193,12 @@ function goAhead() {
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("congServer")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
-    if ($(this).prop("id") == "lang") setMediaLang();
+    if ($(this).prop("id") == "lang") {
+      setVars();
+      setMediaLang().finally(() => {
+        refreshBackgroundImagePreview();
+      });
+    }
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
       setVars();
@@ -578,11 +583,6 @@ async function enforcePrefs() {
   } else {
     enablePreviouslyForcedPrefs(true);
   }
-}
-async function executeDryrun(persistantOverlay, meetingType) {
-  await overlay(true, "cloud fa-beat");
-  await startMediaSync(true, meetingType);
-  if (!persistantOverlay) await overlay(false);
 }
 async function executeStatement(db, statement) {
   var vals = await db.exec(statement)[0],
@@ -1010,6 +1010,27 @@ async function getWeMediaFromDb() {
     }
   }
 }
+async function getRemoteYearText(force) {
+  let yearText = null;
+  try {
+    if (!fs.existsSync(paths.yearText) || force) {
+      await axios.get("https://wol.jw.org/wol/finder?docid=1102022800&wtlocale=" + prefs.lang + "&format=json&snip=yes", {
+        adapter: require("axios/lib/adapters/http")
+      }).then(result => {
+        mkdirSync(path.join(paths.yearText, "../"));
+        if (result && result.data && result.data.content) fs.writeFileSync(paths.yearText, JSON.parse(JSON.stringify(result.data.content)));
+        yearText = JSON.parse(JSON.stringify(result.data.content));
+      }).catch(err => {
+        console.error(err);
+      });
+    } else {
+      yearText = fs.readFileSync(paths.yearText, "utf8");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  return yearText;
+}
 function isReachable(hostname, port, silent) {
   return new Promise(resolve => {
     try {
@@ -1032,6 +1053,7 @@ function isReachable(hostname, port, silent) {
   });
 }
 async function manageMedia(day, isMeetingDate, mediaType) {
+  await overlay(true, (webdavIsAGo ? "cloud" : "folder-open") + " fa-beat");
   $("#chosenMeetingDay").data("folderName", day).text(dayjs(day, "YYYY-MM-DD").isValid() ? day : i18n.__("recurring"));
   removeEventListeners();
   document.addEventListener("drop", dropHandler);
@@ -1041,8 +1063,8 @@ async function manageMedia(day, isMeetingDate, mediaType) {
   $("#chooseUploadType input").prop("checked", false).change();
   $("#chooseUploadType label.active").removeClass("active");
   if (!meetingMedia[day]) meetingMedia[day] = [];
-  await executeDryrun(true, (isMeetingDate || mediaType ? mediaType : null));
-  if (!webdavIsAGo) $("#overlayUploadFile .fa-3x").toggleClass("fa-cloud fa-folder-open");
+  await startMediaSync(true, isMeetingDate || mediaType ? mediaType : null);
+  if (!webdavIsAGo) $("#overlayUploadFile .fa-2x").toggleClass("fa-cloud fa-folder-open");
   updateFileList(true);
   await toggleScreen("overlayUploadFile");
   overlay(false);
@@ -1172,10 +1194,18 @@ function progressSet(current, total, blockId) {
     $("#" + (blockId ? blockId + " .progress-bar" : "globalProgress")).width(percent + "%");
   }
 }
-function refreshBackgroundImagePreview() {
+function refreshBackgroundImagePreview(force) {
   let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
-  $("#currentMediaBackground").prop("src", mediaWindowBackgroundImages.length > 0 ? escape(mediaWindowBackgroundImages[0]) + "?" + (new Date()).getTime() : "");
-  $("#deleteBackground").toggle(mediaWindowBackgroundImages.length > 0);
+  if (mediaWindowBackgroundImages.length == 0) {
+    getRemoteYearText(force).then((yearText) => {
+      $("#fetchedYearText").text($(yearText).text());
+      $("#fetchedYearText, #refreshYeartext").toggle(!!yearText);
+    });
+  } else {
+    $("#currentMediaBackground").prop("src", escape(mediaWindowBackgroundImages[0]) + "?" + (new Date()).getTime());
+  }
+  $("#currentMediaBackground, #deleteBackground").toggle(mediaWindowBackgroundImages.length > 0);
+  $("#chooseBackground").toggle(mediaWindowBackgroundImages.length == 0);
 }
 function removeEventListeners() {
   document.removeEventListener("drop", dropHandler);
@@ -1264,14 +1294,15 @@ async function setMediaLang() {
     $(".jwLang small").text(currentJwLang.length == 1 && currentJwLang[0].vernacularName ? "(" + currentJwLang[0].vernacularName + ")" : "");
   }
 }
-function setVars(isDryrun) {
+function setVars() {
   if (prefs.localOutputPath && prefs.lang) {
     perf("setVars", "start");
     try {
       downloadStats = {};
       paths.media = path.join(prefs.localOutputPath, prefs.lang);
-      if (!isDryrun) mkdirSync(paths.media);
+      if (!dryrun) mkdirSync(paths.media);
       paths.pubs = path.join(paths.app, "Publications", prefs.lang);
+      paths.yearText = path.join(paths.pubs, "yeartext-" + prefs.lang + "-" + (new Date().getFullYear()).toString());
     } catch (err) {
       notifyUser("error", "errorSetVars", paths.media, true, err);
     }
@@ -1300,7 +1331,7 @@ async function startMediaSync(isDryrun, meetingFilter) {
   stayAlive = false;
   $(".alertIndicators:not(.disabledWhileSyncing):not(.disabled)").addClass("disabledWhileSyncing disabled");
   if (!dryrun) $("#btn-settings").fadeToAndToggle(fadeDelay, 0);
-  await setVars(isDryrun);
+  await setVars();
   if (!dryrun) await rm(glob.sync(path.join(paths.media, "*/"), {
     ignore: [path.join(paths.media, "Recurring")]
   }).filter(folderPath => dayjs(path.basename(folderPath), "YYYY-MM-DD").isValid() && dayjs(path.basename(folderPath), "YYYY-MM-DD").isBefore(now) || !dayjs(path.basename(folderPath), "YYYY-MM-DD").isValid()));
@@ -1488,12 +1519,13 @@ function updateFileList(initialLoad) {
     if (initialLoad) {
       $("#chooseUploadType input").prop("checked", false).change();
       $("#chooseUploadType label.active").removeClass("active");
-      $(".relatedToUploadType").fadeToAndToggle(fadeDelay, 1);
       $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
-      $(".btn-cancel-upload, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", false);
+      $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled").addClass("disabled-while-load").prop("disabled", true);
       $("#fileList").empty();
     }
-    $(".relatedToUpload *:not(.enterPrefixInput):enabled").prop("disabled", true).addClass("fileListLoading");
+    $("div.row.file-to-upload").fadeToAndToggle(fadeDelay, $("input[name='chooseUploadType']").is(":checked"));
+    $("div.row.prefix").fadeToAndToggle(fadeDelay, !!$("#fileToUpload").val());
+    $("#overlayUploadFile *:not(.enterPrefixInput):enabled").prop("disabled", true).addClass("fileListLoading");
     var weekMedia = {
       existing: [],
       new: []
@@ -1651,6 +1683,8 @@ function updateFileList(initialLoad) {
     $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
   } catch (err) {
     notifyUser("error", "errorAdditionalMediaList", null, true, err, true);
+  } finally {
+    $(".disabled-while-load").prop("disabled", false);
   }
 }
 function updateStatus(icon) {
@@ -2045,7 +2079,9 @@ $("#btnMediaWindow").on("click", function() {
   });
   setVars();
   require("electron").ipcRenderer.send("showMediaWindow");
-  require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
+  getRemoteYearText().finally(() => {
+    require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
+  });
   let folderListing = $("<div id='folderListing' class='list-group'>");
   function listMediaFolders() {
     folderListing.empty();
@@ -2214,7 +2250,7 @@ $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
 $("#btnUpload").on("click", async () => {
   try {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
-    $(".btn-cancel-upload, .relatedToUploadType input, .relatedToUpload select, .relatedToUpload input").prop("disabled", true);
+    $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled").addClass("disabled-while-load").prop("disabled", true);
     if (!webdavIsAGo) mkdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
     if ($("input#typeSong:checked").length > 0) {
       let songFile = new Buffer((await request($("#fileToUpload").val(), {isFile: true})).data);
@@ -2252,24 +2288,25 @@ $("#btnUpload").on("click", async () => {
   } catch (err) {
     notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true);
   }
-  if (webdavIsAGo) await executeDryrun(true, "Recurring");
+  if (webdavIsAGo) await startMediaSync(true, "Recurring");
   updateFileList(true);
 });
 $("#congregationSelect").on("click", ".new-cong", function() {
   congregationCreate();
 });
 $("#chooseUploadType input").on("change", function() {
+  $("div.row.file-to-upload").fadeToAndToggle(fadeDelay, $("input[name='chooseUploadType']").is(":checked"));
   $("#songPicker:visible").select2("destroy");
-  $("#songPicker, #jwpubPicker, #filePicker").hide();
+  $(".file-to-upload.selector").children().hide();
   $(".enterPrefixInput").val("").empty();
   if ($("#fileToUpload").val()) $("#fileToUpload").val("").change();
   if ($("input#typeSong:checked").length > 0) {
     $(".enterPrefixInput").slice(0, 4).val(0);
     $("#songPicker").val([]).prop("disabled", false).show().select2();
   } else if ($("input#typeFile:checked").length > 0) {
-    $("#filePicker").val("").prop("disabled", false).show();
+    $("#filePicker").val("").closest("div").show();
   } else if ($("input#typeJwpub:checked").length > 0) {
-    $("#jwpubPicker").val([]).prop("disabled", false).show();
+    $("#jwpubPicker").val([]).closest("div").show();
   }
   getPrefix();
 });
@@ -2508,22 +2545,28 @@ $("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
   $(this).removeClass("webdavWait");
 });
 $("#overlayUploadFile").on("change", ".enterPrefixInput, #fileToUpload", function() {
+  $("div.row.prefix").fadeToAndToggle(fadeDelay, !!$("#fileToUpload").val());
   updateFileList();
 });
 $("#overlayUploadFile").on("keyup", ".enterPrefixInput", getPrefix);
-$("#overlayUploadFile").on("mousedown", "input#filePicker, input#jwpubPicker", function(event) {
-  let thisId = $(this).prop("id");
+$("#overlayUploadFile").on("mousedown", "#filePicker, #jwpubPicker", function() {
+  $(this).prev("button").click();
+});
+$("#overlayUploadFile").on("click", "#filePickerButton, #jwpubPickerButton", function() {
   let options = {
     properties: ["multiSelections", "openFile"]
   };
-  if (thisId.includes("jwpub")) options = {
+  if ($(this).prop("id").includes("jwpub")) options = {
     filters: [
       { name: "JWPUB", extensions: ["jwpub"] }
     ]
   };
   let path = remote.dialog.showOpenDialogSync(options);
-  $(this).val((typeof path !== "undefined" ? (thisId.includes("file") ? path.join(" -//- ") : path) : "")).change();
+  $(this).next("input").val((typeof path !== "undefined" ? ($(this).prop("id").includes("file") ? path.join(" -//- ") : path) : "")).change();
   event.preventDefault();
+});
+$("#refreshYeartext").on("click", function() {
+  refreshBackgroundImagePreview(true);
 });
 $("#songPicker").on("change", function() {
   if ($(this).val()) $("#fileToUpload").val($(this).val()).change();

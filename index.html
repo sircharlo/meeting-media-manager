@@ -429,17 +429,14 @@
   <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
   <div id="overlayUploadFile" class="overlay flex-column px-3" style="display: none;">
     <div class="py-4 row">
-      <div class="col-5">
-        <i class="fas fa-fw fa-cloud fa-3x text-muted"></i>
+      <div class="col-1">
+        <i class="fas fa-fw fa-cloud fa-2x text-muted"></i>
       </div>
-      <!-- </div>
-    <div class="align-items-center row justify-content-center py-2">
-      <div class="text-start col-5" data-i18n-string="targetMeeting"></div> -->
-      <h4 class="align-items-center col d-flex mb-0" id="chosenMeetingDay">
+      <h4 class="align-items-center col d-flex justify-content-center mb-0" id="chosenMeetingDay">
       </h4>
     </div>
     <div class="align-items-center row justify-content-center py-2 relatedToUploadType">
-      <div class="text-start col-5" data-i18n-string="uploadType"></div>
+      <div class="text-start col-1"><i class="fas fa-photo-film"></i></div>
       <div class="btn-group btn-group-toggle col" id="chooseUploadType">
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off">
         <label class="btn btn-outline-dark" for="typeSong" data-i18n-string="song"></label>
@@ -449,24 +446,30 @@
         <label class="btn btn-outline-dark" for="typeJwpub" data-i18n-string="jwpub"></label>
       </div>
     </div>
-    <div class="align-items-center row justify-content-center py-2 relatedToUpload">
-      <div class="text-start col-5" data-i18n-string="mediaToAdd"></div>
-      <div class="col col-7 file-to-upload relatedToUpload" style="height: calc(1.5em + .5rem + -2px);">
-        <select class="form-control form-control-sm" id="songPicker" style="display: none" disabled="disabled"></select>
-        <input type="text" class="form-control form-control-sm" id="filePicker" style="display: none" disabled="disabled" />
-        <input type="text" class="form-control form-control-sm localOrRemoteFile" id="jwpubPicker" style="display: none" disabled="disabled" />
+    <div class="align-items-center row justify-content-center py-2 file-to-upload">
+      <div class="text-start col-1"><i class="fas fa-file-export"></i></div>
+      <div class="col file-to-upload selector" style="height: calc(1.5em + .5rem + -2px);">
+        <select class="form-control form-control-sm" id="songPicker" disabled="disabled"></select>
+        <div class="input-group mb-3">
+          <button type="button" id="filePickerButton" class="btn btn-sm btn-primary"><span data-i18n-string="browse"></span></button>
+          <input type="text" class="form-control form-control-sm" id="filePicker" disabled="disabled" />
+        </div>
+        <div class="input-group mb-3">
+          <button type="button" id="jwpubPickerButton" class="btn btn-sm btn-primary"><span data-i18n-string="browse"></span></button>
+          <input type="text" class="form-control form-control-sm localOrRemoteFile" id="jwpubPicker" disabled="disabled" />
+        </div>
         <input type="hidden" id="fileToUpload" />
       </div>
     </div>
-    <div class="align-items-center row justify-content-center py-2 relatedToUpload">
-      <div class="text-start col-5" data-i18n-string="filenamePrefix"></div>
+    <div class="align-items-center row justify-content-center py-2 prefix">
+      <div class="text-start col-1"><i class="fas fa-arrow-down-1-9"></i></div>
       <div class="col d-flex text-center">
-        <input class="col enterPrefixInput form-control me-1 text-center" type="text" maxlength="1" id="enterPrefix-0" />
-        <input class="col enterPrefixInput form-control me-3 text-center" type="text" maxlength="1" id="enterPrefix-1" disabled />
-        <input class="col enterPrefixInput form-control me-1 text-center" type="text" maxlength="1" id="enterPrefix-2" disabled />
-        <input class="col enterPrefixInput form-control me-3 text-center" type="text" maxlength="1" id="enterPrefix-3" disabled />
-        <input class="col enterPrefixInput form-control me-1 text-center" type="text" maxlength="1" id="enterPrefix-4" disabled />
-        <input class="col enterPrefixInput form-control text-center" v type="text" maxlength="1" id="enterPrefix-5" disabled />
+        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-0" />
+        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1" id="enterPrefix-1" disabled />
+        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-2" disabled />
+        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1" id="enterPrefix-3" disabled />
+        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-4" disabled />
+        <input class="col enterPrefixInput form-control form-control-sm text-center" v type="text" maxlength="1" id="enterPrefix-5" disabled />
       </div>
     </div>
     <div class="flex-fill overflow-hidden py-3 row text-start">
@@ -760,16 +763,18 @@
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="currentMediaBackground" class="col-5 text-start"><span data-i18n-string="mediaWindowBackground"></span></label>
-                <div class="col m-2">
-                  <img class="w-100" id="currentMediaBackground" />
-                </div>
-                <div class="col-2 text-end">
+                <label for="currentMediaBackground" class="col text-start me-2"><span data-i18n-string="mediaWindowBackground"></span></label>
+                <img class="col-5" id="currentMediaBackground" />
+                <div class="bg-black col-5 fw-bold p-3 rounded-3 text-center text-white" id="fetchedYearText"></div>
+                <div class="col text-end ms-2">
                   <button id="chooseBackground" type="button" class="btn btn-primary btn-sm">
                     <span data-i18n-string="browse"></span>
                   </button>
                   <button id="deleteBackground" type="button" class="btn btn-danger btn-sm">
                     <span data-i18n-string="delete"></span>
+                  </button>
+                  <button id="refreshYeartext" type="button" class="btn btn-warning btn-sm">
+                    <i class="fas fa-arrows-rotate"></i>
                   </button>
                 </div>
               </div>
