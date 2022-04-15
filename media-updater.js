@@ -963,7 +963,7 @@ function setAppLang() {
       $(this).attr("title", i18n.__("settingLocked")).tooltip("dispose").tooltip();
     });
   } catch(err) {
-    console.error(err);
+    log.error(err);
   }
   dateFormatter();
 }
@@ -1021,13 +1021,13 @@ async function getRemoteYearText(force) {
         if (result && result.data && result.data.content) fs.writeFileSync(paths.yearText, JSON.parse(JSON.stringify(result.data.content)));
         yearText = JSON.parse(JSON.stringify(result.data.content));
       }).catch(err => {
-        console.error(err);
+        log.error(err);
       });
     } else {
       yearText = fs.readFileSync(paths.yearText, "utf8");
     }
   } catch (err) {
-    console.error(err);
+    log.error(err);
   }
   return yearText;
 }
@@ -1162,7 +1162,7 @@ function periodicCleanup() {
       fs.writeFileSync(lastPeriodicCleanupPath, dayjs().format());
     }
   } catch(err) {
-    console.error(err);
+    log.error(err);
   }
 }
 function prefsInitialize() {
@@ -1195,17 +1195,21 @@ function progressSet(current, total, blockId) {
   }
 }
 function refreshBackgroundImagePreview(force) {
-  let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
-  if (mediaWindowBackgroundImages.length == 0) {
-    getRemoteYearText(force).then((yearText) => {
-      $("#fetchedYearText").text($(yearText).text());
-      $("#fetchedYearText, #refreshYeartext").toggle(!!yearText);
-    });
-  } else {
-    $("#currentMediaBackground").prop("src", escape(mediaWindowBackgroundImages[0]) + "?" + (new Date()).getTime());
+  try {
+    let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
+    if (mediaWindowBackgroundImages.length == 0) {
+      getRemoteYearText(force).then((yearText) => {
+        $("#fetchedYearText").text($(yearText).text());
+        $("#fetchedYearText, #refreshYeartext").toggle(!!yearText);
+      });
+    } else {
+      $("#currentMediaBackground").prop("src", escape(mediaWindowBackgroundImages[0]) + "?" + (new Date()).getTime());
+    }
+    $("#currentMediaBackground, #deleteBackground").toggle(mediaWindowBackgroundImages.length > 0);
+    $("#chooseBackground").toggle(mediaWindowBackgroundImages.length == 0);
+  } catch (err) {
+    log.error(err);
   }
-  $("#currentMediaBackground, #deleteBackground").toggle(mediaWindowBackgroundImages.length > 0);
-  $("#chooseBackground").toggle(mediaWindowBackgroundImages.length == 0);
 }
 function removeEventListeners() {
   document.removeEventListener("drop", dropHandler);
