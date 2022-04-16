@@ -17,8 +17,9 @@ remote.initialize();
 function createUpdateWindow() {
   win = new BrowserWindow({
     webPreferences: {
+      backgroundThrottling: false,
+      contextIsolation: false,
       nodeIntegration: true,
-      contextIsolation: false
     },
     width: 700,
     height: 700,
@@ -93,8 +94,9 @@ if (!gotTheLock) {
         title: "JWMMF Media Window",
         frame: !externalDisplays,
         webPreferences: {
+          backgroundThrottling: false,
+          contextIsolation: false,
           nodeIntegration: true,
-          contextIsolation: false
         },
         minHeight: 100,
       };
