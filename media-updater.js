@@ -533,6 +533,7 @@ function displayMusicRemaining() {
 }
 async function downloadIfRequired(file) {
   file.downloadRequired = true;
+  if (!file.queryInfo) file.queryInfo = {};
   file.cacheDir = path.join(paths.pubs, (file.pub || file.queryInfo.KeySymbol || file.queryInfo.MultiMeps || file.primaryCategory || "unknown").toString(), (file.issue || file.queryInfo.IssueTagNumber || 0).toString(), (file.track || file.queryInfo.Track || 0).toString());
   file.cacheFilename = path.basename(file.url) || file.safeName;
   file.cacheFile = path.join(file.cacheDir, file.cacheFilename);
@@ -886,7 +887,6 @@ async function getMediaLinks(pubSymbol, track, issue, format, docId) {
         }
         mediaFiles = Array.from(map.values(), ({title, file: {url}, file: {checksum}, filesize, duration, trackImage, track, pub}) => ({title, url, checksum, filesize, duration, trackImage, track, pub})).map(item => {
           item.trackImage = item.trackImage.url;
-          item.queryInfo = {};
           if (issue) item.issue = issue;
           return item;
         });
@@ -2363,9 +2363,9 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     progressSet(i + 1, multimediaItems.length);
     let multimediaItem = multimediaItems[i];
     var tempMedia = {
-      filename: sanitizeFilename((i + 1).toString().padStart(2, "0") + " - " + (multimediaItem.queryInfo.Label ? multimediaItem.queryInfo.Label : (multimediaItem.queryInfo.Caption ? multimediaItem.queryInfo.Caption : (multimediaItem.queryInfo.FilePath ? multimediaItem.queryInfo.FilePath : multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3")))) + (multimediaItem.queryInfo.FilePath && (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption) ? path.extname(multimediaItem.queryInfo.FilePath) : ""))
+      filename: sanitizeFilename((i + 1).toString().padStart(2, "0") + " - " + (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption || multimediaItem.queryInfo.FilePath || multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType ? (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3") : "")) + (multimediaItem.queryInfo.FilePath && (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption) ? path.extname(multimediaItem.queryInfo.FilePath) : ""))
     };
-    if (multimediaItem.queryInfo.CategoryType !== -1) {
+    if (multimediaItem.queryInfo && multimediaItem.queryInfo.CategoryType && multimediaItem.queryInfo.CategoryType !== -1) {
       var jwpubContents = await new zipper($("#jwpubPicker").val()).readFile("contents");
       tempMedia.contents = (await new zipper(jwpubContents).readFile(((await new zipper(jwpubContents).getEntries()).filter(entry => entry.name == multimediaItem.queryInfo.FilePath)[0]).entryName));
     } else {
