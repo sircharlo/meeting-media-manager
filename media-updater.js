@@ -539,6 +539,7 @@ async function downloadIfRequired(file) {
   file.destFilename = file.folder ? file.safeName : file.cacheFilename;
   if (fs.existsSync(file.cacheFile)) file.downloadRequired = file.filesize !== fs.statSync(file.cacheFile).size;
   if (file.downloadRequired) {
+    if (path.extname(file.cacheFile) == ".jwpub") rm(file.cacheDir);
     mkdirSync(file.cacheDir);
     let downloadedFile = new Buffer((await request(file.url, {isFile: true})).data);
     fs.writeFileSync(file.cacheFile, downloadedFile);
@@ -547,6 +548,7 @@ async function downloadIfRequired(file) {
       fs.writeFileSync(path.join(paths.media, file.folder, file.destFilename), downloadedFile);
     }
     downloadStat("jworg", "live", file);
+    if (path.extname(file.cacheFile) == ".jwpub") await new zipper((await new zipper(file.cacheFile).readFile("contents"))).extractAllTo(file.cacheDir);
   } else {
     if (file.folder) {
       mkdirSync(path.join(paths.media, file.folder));
@@ -554,7 +556,6 @@ async function downloadIfRequired(file) {
     }
     downloadStat("jworg", "cache", file);
   }
-  if (path.extname(file.cacheFile) == ".jwpub") await new zipper((await new zipper(file.cacheFile).readFile("contents"))).extractAllTo(file.cacheDir);
   return file.cacheFile;
 }
 function downloadStat(origin, source, file) {
