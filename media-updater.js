@@ -2178,7 +2178,7 @@ $("#btnMediaWindow").on("click", function() {
 });
 $("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
   $(this).addClass("confirmed btn-warning").find("i, small").toggle();
-  await delay(3);
+  await delay(5);
   $(this).removeClass("confirmed btn-warning").find("i, small").toggle();
 });
 $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
@@ -2188,8 +2188,9 @@ $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
     let timeBeforeFade;
     let rightNow = dayjs();
     if (prefs.musicFadeOutType == "smart") {
-      if ((now.day() - 1) == prefs.mwDay || (now.day() - 1) == prefs.weDay) {
-        let todaysMeetingStartTime = prefs[((now.day() - 1) == prefs.mwDay ? "mw" : "we") + "StartTime"].split(":");
+      let nowDay = now.day() == 0 ? 6 : now.day() - 1;
+      if (nowDay == prefs.mwDay || nowDay == prefs.weDay) {
+        let todaysMeetingStartTime = prefs[(nowDay == prefs.mwDay ? "mw" : "we") + "StartTime"].split(":");
         let timeToStartFading = now.clone().hour(todaysMeetingStartTime[0]).minute(todaysMeetingStartTime[1]).millisecond(rightNow.millisecond()).subtract(prefs.musicFadeOutTime, "s").subtract(fadeDelay * 30, "ms");
         timeBeforeFade = timeToStartFading.diff(rightNow);
       }
@@ -2207,13 +2208,16 @@ $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
   } else {
     pendingMusicFadeOut.id = null;
   }
+  $("#btnStopMeetingMusic").addClass("initialLoad").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
+  $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
   setVars();
   var songs = (jworgIsReachable ? (await getMediaLinks("sjjm", null, null, "MP3")) : glob.sync(path.join(paths.pubs, "sjjm", "0", "*", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
   if (songs.length > 0) {
-    $("#btnStopMeetingMusic").addClass("initialLoad").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
-    $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
     var iterator = 0;
     createAudioElem(iterator);
+  } else {
+    $("#btnStopMeetingMusic").removeClass("initialLoad").find("i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin");
+    $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
   }
   async function createAudioElem(iterator) {
     setVars();
@@ -2243,7 +2247,7 @@ $("[data-settingslink]").on("click", function() {
 $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
   clearTimeout(pendingMusicFadeOut.id);
   $("#btnStopMeetingMusic").toggleClass("btn-warning btn-danger").prop("disabled", true);
-  $("#meetingMusic").animate({volume: 0}, fadeDelay * 30, () => {
+  $("#meetingMusic").animate({volume: 0}, fadeDelay * (pendingMusicFadeOut.id ? 25 : 10), () => {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
     $("#musicRemaining").empty();
