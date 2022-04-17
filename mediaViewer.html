@@ -5,6 +5,11 @@
   <meta charset="utf-8">
   <title>JWMMF Media Window</title>
   <style>
+    @font-face {
+      font-family: NotoSerif;
+      src: url(fonts/NotoSerif-Bold.ttf) format('truetype');
+    }
+
     html,
     body,
     video,
@@ -228,7 +233,7 @@
                   var yearTextFont = new FontFace('Wt-ClearText-Bold', 'url(' + url.pathToFileURL(yearTextFontFiles[0]).href + ')');
                   yearTextFont.load().then(function(loaded_face) {
                     document.fonts.add(loaded_face);
-                    document.getElementById("importedYearText").style.fontFamily = '"Wt-ClearText-Bold", serif';
+                    document.getElementById("importedYearText").style.fontFamily = '"Wt-ClearText-Bold", "NotoSerif", serif';
                   }).catch(function(err) {
                     console.error(err);
                   });
