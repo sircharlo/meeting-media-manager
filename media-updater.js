@@ -2090,7 +2090,7 @@ $("#btnMediaWindow").on("click", function() {
   let folderListing = $("<div id='folderListing' class='list-group'>");
   function listMediaFolders() {
     folderListing.empty();
-    $("h5.modal-title").text(i18n.__("targetMeeting"));
+    $("h5.modal-title").text(i18n.__("meeting"));
     for (var folder of glob.sync(path.join(paths.media, "*/"))) {
       folder = escape(folder);
       $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format("YYYY-MM-DD") == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
@@ -2159,7 +2159,7 @@ $("#btnMediaWindow").on("click", function() {
       }
     }
   });
-  showModal(true, true, i18n.__("targetMeeting"), folderListing, false);
+  showModal(true, true, i18n.__("meeting"), folderListing, false);
   $(folderListing).find(".thatsToday").click();
   $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-warning mx-2' title='Alt+Z'><span class='fa-stack'><i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic"));

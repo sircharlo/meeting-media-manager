@@ -67,7 +67,7 @@
   "song": "Cantique",
   "syncJwOrgMedia": "JW.org",
   "syncOnLaunch": "Lancer la syncronisation automatiquement",
-  "targetMeeting": "Réunion cible",
+  "meeting": "Réunion",
   "updateDownloading": "Veuillez patienter, une mise à jour de JWMMF est en cours de téléchargement.",
   "updateInstalled": "Une mise à jour de JWMMF a été installée.",
   "updateNotDownloaded": "Une mise à jour de JWMMF est disponible, mais n'a pas pu être téléchargée automatiquement. Veuillez la télécharger en cliquant sur le bouton ci-dessous.",
