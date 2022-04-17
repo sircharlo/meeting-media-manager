@@ -11,7 +11,7 @@ const fadeDelay = 200,
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("graceful-fs"),
   fullHd = [1920, 1080],
-  glob = require("glob"),
+  glob = require("fast-glob"),
   hme = require("h264-mp4-encoder"),
   i18n = require("i18n"),
   isAudio = require("is-audio"),
@@ -203,7 +203,8 @@ function goAhead() {
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
       setVars();
       rm(glob.sync(path.join(paths.media, "*"), {
-        ignore: [path.join(paths.media, "Recurring")]
+        ignore: [path.join(paths.media, "Recurring")],
+        onlyDirectories: true
       }));
       dateFormatter();
     }
@@ -227,14 +228,10 @@ function addMediaItemToPart (date, paragraph, media) {
 async function calculateCacheSize() {
   setVars();
   $("#cacheSizeInMb").prop("Counter", 0).animate({
-    Counter: glob.sync(path.join(paths.media, "**", "*"), {
+    Counter: glob.sync([path.join(paths.media, "**"), paths.langs, path.join(paths.pubs, "**")], {
       ignore: [path.join(paths.media, "Recurring")],
-      nodir: true
-    }).concat(glob.sync(paths.langs)).concat(glob.sync(path.join(paths.pubs, "**", "*"), {
-      nodir: true
-    })).map(file => {
-      return fs.statSync(file).size;
-    }).reduce((a, b) => a + b, 0) / 1024 / 1024
+      stats: true
+    }).map(file => file.stats.size).reduce((a, b) => a + b, 0) / 1024 / 1024
   }, {
     duration: fadeDelay * 3,
     step: function (now) {
@@ -375,12 +372,12 @@ function convertSvg(mediaFile) {
   });
 }
 async function convertUnusableFiles() {
-  for (let pdfFile of glob.sync(path.join(paths.media, "*", "*pdf"), {
+  for (let pdfFile of glob.sync(path.join(paths.media, "**", "*pdf"), {
     ignore: [path.join(paths.media, "Recurring")]
   })) {
     await convertPdf(pdfFile);
   }
-  for (let svgFile of glob.sync(path.join(paths.media, "*", "*svg"), {
+  for (let svgFile of glob.sync(path.join(paths.media, "**", "*svg"), {
     ignore: [path.join(paths.media, "Recurring")]
   })) {
     await convertSvg(svgFile);
@@ -1084,10 +1081,10 @@ async function mp4Convert() {
   updateStatus("file-video");
   updateTile("mp4Convert", "warning");
   await convertUnusableFiles();
-  var filesToProcess = glob.sync(path.join(paths.media, "*/"), {
-    ignore: [path.join(paths.media, "Recurring", "*"), path.join(paths.media, "*", "*.mp4"), path.join(paths.media, "*", "*.xspf")]
+  var filesToProcess = glob.sync(path.join(paths.media, "*"), {
+    onlyDirectories: true
   }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, "YYYY-MM-DD").isValid() && dayjs(folder, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, "YYYY-MM-DD"))).map(folder => glob.sync(path.join(paths.media, folder, "*"), {
-    ignore: [path.join(paths.media, "*", "*.mp4"), path.join(paths.media, "*", "*.xspf")]
+    ignore: ["*.mp4", "*.xspf"]
   })).flat();
   totals.mp4Convert = {
     total: filesToProcess.length,
@@ -1154,7 +1151,7 @@ function periodicCleanup() {
     let lastPeriodicCleanupPath = path.join(paths.pubs, "lastPeriodicCleanup"),
       lastPeriodicCleanup = fs.existsSync(lastPeriodicCleanupPath) && fs.readFileSync(lastPeriodicCleanupPath, "utf8") || false;
     if (paths.pubs && (!dayjs(lastPeriodicCleanup).isValid() || dayjs(lastPeriodicCleanup).isBefore(now.subtract(6, "months")))) {
-      rm(glob.sync(path.join(paths.pubs, "**", "*/*.mp*")).map(video => {
+      rm(glob.sync(path.join(paths.pubs, "**", "*.mp*")).map(video => {
         let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
         let itemPub = path.basename(path.join(path.dirname(video), "../../"));
         if (itemPub !== "sjjm" && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
@@ -1338,7 +1335,8 @@ async function startMediaSync(isDryrun, meetingFilter) {
   if (!dryrun) $("#btn-settings").fadeToAndToggle(fadeDelay, 0);
   await setVars();
   if (!dryrun) await rm(glob.sync(path.join(paths.media, "*/"), {
-    ignore: [path.join(paths.media, "Recurring")]
+    ignore: [path.join(paths.media, "Recurring")],
+    onlyDirectories: true
   }).filter(folderPath => dayjs(path.basename(folderPath), "YYYY-MM-DD").isValid() && dayjs(path.basename(folderPath), "YYYY-MM-DD").isBefore(now) || !dayjs(path.basename(folderPath), "YYYY-MM-DD").isValid()));
   perf("getJwOrgMedia", "start");
   updateStatus("globe-americas");
@@ -1357,7 +1355,9 @@ async function startMediaSync(isDryrun, meetingFilter) {
       syncLocalRecurringMedia(),
     ]);
     if (prefs.enableMp4Conversion) await mp4Convert();
-    if (prefs.enableVlcPlaylistCreation) for (var date of Object.keys(meetingMedia).filter(item => dayjs(item).isValid())) {
+    if (prefs.enableVlcPlaylistCreation) for (var date of glob.sync(path.join(paths.media, "*/"), {
+      onlyDirectories: true
+    }).map(item => path.basename(item)).filter(item => dayjs(item).isValid())) {
       var playlistItems = {
         "?xml": {
           "@_version": "1.0",
@@ -1399,7 +1399,8 @@ async function syncCongMedia() {
         current: 1
       };
       for (let datedFolder of await glob.sync(path.join(paths.media, "*/"), {
-        ignore: [path.join(paths.media, "Recurring")]
+        ignore: [path.join(paths.media, "Recurring")],
+        onlyDirectories: true
       })) {
         if (congSyncMeetingMedia[path.basename(datedFolder)]) for (let jwOrCongFile of await glob.sync(path.join(datedFolder, "*"))) {
           if (!congSyncMeetingMedia[path.basename(datedFolder)].map(part => part.media.filter(media => !media.hidden).map(media => media.safeName)).flat().includes(path.basename(jwOrCongFile))) await rm(jwOrCongFile);
@@ -2091,7 +2092,9 @@ $("#btnMediaWindow").on("click", function() {
   function listMediaFolders() {
     folderListing.empty();
     $("h5.modal-title").text(i18n.__("meeting"));
-    for (var folder of glob.sync(path.join(paths.media, "*/"))) {
+    for (var folder of glob.sync(path.join(paths.media, "*/"), {
+      onlyDirectories: true
+    })) {
       folder = escape(folder);
       $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format("YYYY-MM-DD") == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
     }
@@ -2211,7 +2214,7 @@ $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
   $("#btnStopMeetingMusic").addClass("initialLoad").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
   $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
   setVars();
-  var songs = (jworgIsReachable ? (await getMediaLinks("sjjm", null, null, "MP3")) : glob.sync(path.join(paths.pubs, "sjjm", "0", "*", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
+  var songs = (jworgIsReachable ? (await getMediaLinks("sjjm", null, null, "MP3")) : glob.sync(path.join(paths.pubs, "sjjm", "**", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
   if (songs.length > 0) {
     var iterator = 0;
     createAudioElem(iterator);
@@ -2427,9 +2430,7 @@ $("#chooseBackground").on("click", function() {
     properties: ["openFile"]
   });
   if (mediaWindowBackground && isImage(mediaWindowBackground[0])) {
-    for (var oldBackground of glob.sync(path.join(paths.app, "media-window-background-image*"))) {
-      rm(oldBackground);
-    }
+    rm(glob.sync(path.join(paths.app, "media-window-background-image*")));
     fs.copyFileSync(mediaWindowBackground[0], path.join(paths.app, "media-window-background-image" + path.extname(mediaWindowBackground[0])));
     if (webdavIsAGo) webdavLs(prefs.congServerDir).then(items => {
       webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(prefs.congServerDir, item.basename))).then(() => {
@@ -2442,9 +2443,7 @@ $("#chooseBackground").on("click", function() {
   }
 });
 $("#deleteBackground").on("click", function() {
-  for (var oldBackground of glob.sync(path.join(paths.app, "media-window-background-image*"))) {
-    rm(oldBackground);
-  }
+  rm(glob.sync(path.join(paths.app, "media-window-background-image*")));
   if (webdavIsAGo) webdavLs(prefs.congServerDir).then(items => {
     webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(prefs.congServerDir, item.basename)));
   });
@@ -2453,9 +2452,10 @@ $("#deleteBackground").on("click", function() {
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
   $(this).toggleClass("btn-success btn-warning").prop("disabled", true);
   setVars();
-  rm(glob.sync(path.join(paths.media, "*"), {
-    ignore: [path.join(paths.media, "Recurring")]
-  }).concat([paths.langs, paths.pubs]));
+  rm(glob.sync([path.join(paths.media, "*"), paths.pubs], {
+    ignore: [path.join(paths.media, "Recurring")],
+    onlyDirectories: true
+  }).concat([paths.langs]));
   calculateCacheSize();
   setTimeout(() => {
     $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);

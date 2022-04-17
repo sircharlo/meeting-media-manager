@@ -90,6 +90,7 @@
       right: 0;
       font-size: 4vw;
       line-height: 2vw;
+      font-weight: 800;
     }
 
     #importedYearTextLogoContainer {
@@ -122,7 +123,7 @@
       ipcRenderer
     } = require('electron'),
       fs = require("graceful-fs"),
-      glob = require("glob"),
+      glob = require("fast-glob"),
       isAudio = require("is-audio"),
       isImage = require("is-image"),
       isVideo = require("is-video"),
@@ -209,14 +210,16 @@
           console.error("no prefs found!");
         }
       }
-      let mediaWindowBackgroundImages = glob.sync(path.join(remote.app.getPath("userData"),
-        "media-window-background-image*"))
+      let mediaWindowBackgroundImages = glob.sync(path.join(remote.app.getPath("userData"), "media-window-background-image*"))
       if (mediaWindowBackgroundImages.length > 0) {
         $("body").css("background", "url(" + url.pathToFileURL(mediaWindowBackgroundImages[0]).href + ") black center center / contain no-repeat");
       } else if (prefs.lang) {
         let yearTextPath = path.join(remote.app.getPath("userData"), "Publications", prefs.lang, "yeartext-" + prefs.lang + "-" + (new Date().getFullYear()).toString());
-        let localAppData = path.normalize(remote.app.getPath("appData"));
-        if (os.platform() == "win32" && glob.sync(path.join(localAppData, "../local")).length > 0) localAppData = glob.sync(path.join(localAppData, "../local"))[0]
+        let appData = path.normalize(remote.app.getPath("appData"));
+        let localAppData = glob.sync(path.join(appData, "../local"), {
+          onlyDirectories: true
+        })
+        if (os.platform() == "win32" && localAppData.length > 0) appData = localAppData[0]
         try {
           function setYearText() {
             try {
@@ -228,7 +231,7 @@
                 }).each(function(i, el) {
                   $("#importedYearText").append($("<p>").text(el.textContent));
                 });
-                let yearTextFontFiles = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "Wt-ClearText-Bold.*"));
+                let yearTextFontFiles = glob.sync(path.join(appData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "Wt-ClearText-Bold.*"));
                 if (yearTextFontFiles && yearTextFontFiles.length > 0) {
                   var yearTextFont = new FontFace('Wt-ClearText-Bold', 'url(' + url.pathToFileURL(yearTextFontFiles[0]).href + ')');
                   yearTextFont.load().then(function(loaded_face) {
@@ -239,7 +242,7 @@
                   });
                 }
               }
-              let logoFontFiles = glob.sync(path.join(localAppData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "jw-icons*"));
+              let logoFontFiles = glob.sync(path.join(appData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "jw-icons*"));
               if (logoFontFiles && logoFontFiles.length > 0) {
                 var logoFont = new FontFace('JW-Icons', 'url(' + url.pathToFileURL(logoFontFiles[0]).href + ')');
                 logoFont.load().then(function(loaded_face) {
