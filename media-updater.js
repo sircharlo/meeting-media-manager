@@ -1694,7 +1694,7 @@ function updateFileList(initialLoad) {
   } catch (err) {
     notifyUser("error", "errorAdditionalMediaList", null, true, err, true);
   } finally {
-    $(".disabled-while-load").prop("disabled", false);
+    $(".disabled-while-load").prop("disabled", false).removeClass("disabled-while-load");
   }
 }
 function updateStatus(icon) {
@@ -2037,7 +2037,12 @@ $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus:not(.confi
 $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus.confirmed", function() {
   congregationDelete($(this).closest("button").val());
 });
-$(".btn-cancel-upload").on("click", () => {
+$("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected:not(.confirmed)", async function() {
+  $(this).addClass("confirmed").find("i, small").toggle();
+  await delay(5);
+  $(this).toggleClass("confirmed").find("i, small").toggle();
+});
+$("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected.confirmed, .btn-cancel-upload.no-file-selected", function() {
   toggleScreen("overlayUploadFile");
   removeEventListeners();
 });
