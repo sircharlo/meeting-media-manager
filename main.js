@@ -1,6 +1,7 @@
 const {
     app,
     BrowserWindow,
+    crashReporter,
     ipcMain,
     screen
   } = require("electron"), {
@@ -8,6 +9,9 @@ const {
   } = require("electron-updater"),
   os = require("os"),
   remote = require("@electron/remote/main");
+crashReporter.start({
+  uploadToServer: false
+});
 var win = null,
   mediaWin = null,
   displays = null,
@@ -25,7 +29,6 @@ function createUpdateWindow() {
     height: 700,
     minWidth: 700,
     minHeight: 700,
-    // resizable: false,
     title: "JW Meeting Media Fetcher"
   });
   win.on("close", (e) => {
