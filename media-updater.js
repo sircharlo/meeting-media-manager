@@ -1,5 +1,6 @@
 // TODO: merge media and meeting setup
 // TODO: find a way to make the new method obvious
+// TODO: add foolproof notification before losing changes in managemedia
 
 const fadeDelay = 200,
   aspect = require("aspectratio"),
@@ -451,6 +452,29 @@ function createVideoSync(mediaFile){
       return resolve();
     }
   });
+}
+function createVlcPlaylists() {
+  for (var date of glob.sync(path.join(paths.media, "*/"), {
+    onlyDirectories: true
+  }).map(item => path.basename(item)).filter(item => dayjs(item).isValid())) {
+    var playlistItems = {
+      "?xml": {
+        "@_version": "1.0",
+        "@_encoding": "UTF-8"
+      },
+      "playlist": {
+        "title": date,
+        "trackList": {
+          "track": glob.sync(path.join(paths.media, date, "*")).map(k => ({"location": url.pathToFileURL(k).href}))
+        },
+        "@_xmlns": "http://xspf.org/ns/0/",
+        "@_xmlns:vlc": "http://www.videolan.org/vlc/playlist/ns/0/",
+        "@_version": "1"
+      }
+    };
+    mkdirSync(path.join(paths.media, date));
+    fs.writeFileSync(path.join(paths.media, date, date + ".xspf"), (new XMLBuilder({ignoreAttributes: false})).build(playlistItems));
+  }
 }
 function dateFormatter() {
   let locale = prefs.localAppLang ? prefs.localAppLang : "en";
@@ -1080,7 +1104,6 @@ async function mp4Convert() {
   perf("mp4Convert", "start");
   updateStatus("file-video");
   updateTile("mp4Convert", "warning");
-  await convertUnusableFiles();
   var filesToProcess = glob.sync(path.join(paths.media, "*"), {
     onlyDirectories: true
   }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, "YYYY-MM-DD").isValid() && dayjs(folder, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, "YYYY-MM-DD"))).map(folder => glob.sync(path.join(paths.media, folder, "*"), {
@@ -1354,28 +1377,9 @@ async function startMediaSync(isDryrun, meetingFilter) {
       syncJwOrgMedia(),
       syncLocalRecurringMedia(),
     ]);
+    await convertUnusableFiles();
     if (prefs.enableMp4Conversion) await mp4Convert();
-    if (prefs.enableVlcPlaylistCreation) for (var date of glob.sync(path.join(paths.media, "*/"), {
-      onlyDirectories: true
-    }).map(item => path.basename(item)).filter(item => dayjs(item).isValid())) {
-      var playlistItems = {
-        "?xml": {
-          "@_version": "1.0",
-          "@_encoding": "UTF-8"
-        },
-        "playlist": {
-          "title": date,
-          "trackList": {
-            "track": glob.sync(path.join(paths.media, date, "*")).map(k => ({"location": url.pathToFileURL(k).href}))
-          },
-          "@_xmlns": "http://xspf.org/ns/0/",
-          "@_xmlns:vlc": "http://www.videolan.org/vlc/playlist/ns/0/",
-          "@_version": "1"
-        }
-      };
-      mkdirSync(path.join(paths.media, date));
-      fs.writeFileSync(path.join(paths.media, date, date + ".xspf"), (new XMLBuilder({ignoreAttributes: false})).build(playlistItems));
-    }
+    if (prefs.enableVlcPlaylistCreation) createVlcPlaylists();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(paths.media);
     $("#btn-settings").fadeToAndToggle(fadeDelay, 1);
     $("#statusIcon").toggleClass("text-muted text-primary fa-flip");
