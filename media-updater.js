@@ -1,5 +1,3 @@
-// TODO: find a way to make the new method obvious
-
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -257,23 +255,25 @@ function congregationChange(prefsFile) {
   });
 }
 function congregationInitialSelector() {
-  congregationPrefsPopulate();
-  if (paths.congprefs.length > 1) {
-    let congregationList = $("<div id='congregationList' class='list-group'>");
-    for (var congregation of paths.congprefs) {
-      $(congregationList).prepend("<button class='d-flex list-group-item list-group-item-action' value='" + congregation.path + "'>" + congregation.name + "</div></button>");
+  $(document).ready(function(){
+    congregationPrefsPopulate();
+    if (paths.congprefs.length > 1) {
+      let congregationList = $("<div id='congregationList' class='list-group'>");
+      for (var congregation of paths.congprefs) {
+        $(congregationList).prepend("<button class='d-flex list-group-item list-group-item-action' value='" + congregation.path + "'>" + congregation.name + "</div></button>");
+      }
+      $(congregationList).on("click", "button", function() {
+        showModal(false);
+        congregationChange($(this).val());
+      });
+      showModal(true, true, "<i class='fas fa-2x fa-building-user'></i>", congregationList);
+    } else if (paths.congprefs.length == 1) {
+      paths.prefs = paths.congprefs[0].path;
+      goAhead();
+    } else {
+      congregationCreate();
     }
-    $(congregationList).on("click", "button", function() {
-      showModal(false);
-      congregationChange($(this).val());
-    });
-    showModal(true, true, "<i class='fas fa-2x fa-building-user'></i>", congregationList);
-  } else if (paths.congprefs.length == 1) {
-    paths.prefs = paths.congprefs[0].path;
-    goAhead();
-  } else {
-    congregationCreate();
-  }
+  });
 }
 function congregationCreate() {
   congregationChange(path.join(paths.app, "prefs-" + Math.floor(Math.random() * Date.now()) + ".json"));
@@ -964,7 +964,7 @@ function getPrefix() {
   for (var a0 = 0; a0 < 6; a0++) {
     let curValuePresent = $("#enterPrefix-" + a0).val().length > 0;
     if (!curValuePresent) $(Array(6 - 1 - a0).fill(a0).map((x, y) => "#enterPrefix-" + (x + 1 + y)).join(", ")).val("");
-    $("#enterPrefix-" + (a0 + 1)).fadeToAndToggle(fadeDelay, curValuePresent).prop("disabled", !curValuePresent);
+    $("#enterPrefix-" + (a0 + 1)).fadeToAndToggle(fadeDelay, curValuePresent).filter(":not(.disabled-while-load)").prop("disabled", !curValuePresent);
   }
   let prefix = $(".enterPrefixInput").map(function() {
     return $(this).val();
@@ -1121,23 +1121,28 @@ async function mp4Convert() {
   updateTile("mp4Convert", "success", "fas fa-check-circle");
   perf("mp4Convert", "stop");
 }
-function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action) {
-  let icon;
-  switch (type) {
-  case "error":
-    icon = "fa-exclamation-circle text-danger";
-    break;
-  case "warn":
-    icon = "fa-exclamation-circle text-warning";
-    break;
-  default:
-    icon = "fa-info-circle text-primary";
+function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, hideDismiss) {
+  try {
+    let icon;
+    switch (type) {
+    case "error":
+      icon = "fa-exclamation-circle text-danger";
+      break;
+    case "warn":
+      icon = "fa-exclamation-circle text-warning";
+      break;
+    default:
+      icon = "fa-info-circle text-primary";
+    }
+    if (fileOrUrl) fileOrUrl = escape(fileOrUrl);
+    if (["error", "warn"].includes(type)) log[type](fileOrUrl ? fileOrUrl : "", errorFedToMe ? errorFedToMe : "");
+    type = i18n.__(type);
+    let thisBugUrl = bugUrl() + (errorFedToMe ? encodeURIComponent("\n### Error details\n```\n" + JSON.stringify(errorFedToMe, Object.getOwnPropertyNames(errorFedToMe), 2) + "\n```\n").replace(/\n/g, "%0D%0A") : "");
+    console.log($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close " + (hideDismiss ? "d-none" : "") + "' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action && !action.noLink ? "data-toast-action-url='" + escape((action && action.url ? action.url : thisBugUrl)) + "'" :"") + ">" + i18n.__(action && action.desc ? action.desc : "reportIssue") + "</button></div>" : "") + "</div></div>"));
+    $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close " + (hideDismiss ? "d-none" : "") + "' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action && !action.noLink ? "data-toast-action-url='" + escape((action && action.url ? action.url : thisBugUrl)) + "'" :"") + ">" + i18n.__(action && action.desc ? action.desc : "reportIssue") + "</button></div>" : "") + "</div></div>").toast("show"));
+  } catch (err) {
+    log.error(err);
   }
-  if (fileOrUrl) fileOrUrl = escape(fileOrUrl);
-  if (["error", "warn"].includes(type)) log[type](fileOrUrl ? fileOrUrl : "", errorFedToMe ? errorFedToMe : "");
-  type = i18n.__(type);
-  let thisBugUrl = bugUrl() + (errorFedToMe ? encodeURIComponent("\n### Error details\n```\n" + JSON.stringify(errorFedToMe, Object.getOwnPropertyNames(errorFedToMe), 2) + "\n```\n").replace(/\n/g, "%0D%0A") : "");
-  $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action ? "data-toast-action-url='" + escape((action && action.url ? action.url : thisBugUrl)) + "'" :"") + ">" + i18n.__(action && action.desc ? action.desc : "reportIssue") + "</button></div>" : "") + "</div></div>").toast("show"));
 }
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
@@ -1516,9 +1521,13 @@ function updateCleanup() {
   } finally {
     if (lastRunVersion !== currentAppVersion) {
       setVars();
-      fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
+      if (remote.app.isPackaged) fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
       if (lastRunVersion !== 0) {
         notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
+        if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
+          notifyUser("info", "<h6>Managing media just got simpler</h6><p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>" + (prefs.congServer ? "<p>The cloud upload button has therefore been removed.</p>" : "") + "<p>Media can also easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p><h6>In short:</h6> " + (prefs.congServer ? "<li>No more cloud button</li> " : "") + "<li><strong>Click on a day</strong> to manage media for that day</li>", null, true, null, {desc: "understood", noLink: true}, true);
+          $("#days").addClass("new-stuff");
+        }
         let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
         if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
           desc: "wannaHelpForSure",
@@ -2612,9 +2621,11 @@ $("#overlaySettings").on("click", ".btn-action:not(.btn-danger)", function() {
   shell.openExternal($(this).data("action-url"));
 });
 $("#btnTestApp").on("click", testJwmmf);
-$("#toastContainer").on("click", "button.toast-action", function() {
+$("#toastContainer").on("click", "button.toast-action", async function() {
   if ($(this).data("toast-action-url")) shell.openExternal($(this).data("toast-action-url"));
   $(this).closest(".toast").find(".toast-header button.btn-close").click();
+  await delay(2);
+  $(".new-stuff").removeClass("new-stuff");
 });
 $("#webdavProviders a").on("click", function() {
   for (let i of Object.entries($(this).data())) {

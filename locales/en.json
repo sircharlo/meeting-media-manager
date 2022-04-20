@@ -72,6 +72,7 @@
   "updateDownloading": "Please wait; an update to JWMMF is currently being downloaded.",
   "updateInstalled": "An update to JWMMF was installed.",
   "updateNotDownloaded": "An update to JWMMF is available, but could not be downloaded automatically. Please download it by clicking the button below.",
+  "understood": "I understand",
   "wannaHelp": "Would you like to help?",
   "wannaHelpExplain": "The media language currently configured is not yet available as a display language for JWMMF. Would you like to help to translate JWMMF for users who speak that language?",
   "wannaHelpForSure": "Help translate this app",
