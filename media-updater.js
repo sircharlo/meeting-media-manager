@@ -1525,7 +1525,7 @@ function updateCleanup() {
       if (lastRunVersion !== 0) {
         notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
         if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
-          notifyUser("info", "<h6>Managing media just got simpler</h6><p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>" + (prefs.congServer ? "<p>The cloud upload button has therefore been removed.</p>" : "") + "<p>Media can also easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p><h6>In short:</h6> " + (prefs.congServer ? "<li>No more cloud button</li> " : "") + "<li><strong>Click on a day</strong> to manage media for that day</li>", null, true, null, {desc: "understood", noLink: true}, true);
+          notifyUser("info", "<h6>Managing media just got simpler</h6><p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>" + (prefs.congServer ? "<p>The cloud upload button has therefore been removed from the bottom left corner of the app.</p>" : "") + "<p>Media can also now easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p><h6>In short:</h6> " + (prefs.congServer ? "<li>No more cloud button</li> " : "") + "<li><strong>Click on any day</strong> to manage media for that day</li>", null, true, null, {desc: "understood", noLink: true}, true);
           $("#days").addClass("new-stuff");
         }
         let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
@@ -2232,6 +2232,7 @@ $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
     if (timeBeforeFade >= 0) {
       pendingMusicFadeOut.endTime = timeBeforeFade + rightNow.valueOf();
       pendingMusicFadeOut.id = setTimeout(function () {
+        pendingMusicFadeOut.autoStop = true;
         $("#btnStopMeetingMusic").click();
       }, timeBeforeFade);
     } else {
@@ -2279,7 +2280,7 @@ $("[data-settingslink]").on("click", function() {
 $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
   clearTimeout(pendingMusicFadeOut.id);
   $("#btnStopMeetingMusic").toggleClass("btn-warning btn-danger").prop("disabled", true);
-  $("#meetingMusic").animate({volume: 0}, fadeDelay * (pendingMusicFadeOut.id ? 25 : 10), () => {
+  $("#meetingMusic").animate({volume: 0}, fadeDelay * (pendingMusicFadeOut.autoStop ? 50 : 10), () => {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
     $("#musicRemaining").empty();
@@ -2287,6 +2288,7 @@ $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
     $("#congregationSelect-dropdown").removeClass("music-playing");
     $("#congregationSelect-dropdown:not(.sync-started)").prop("disabled", false);
   });
+  pendingMusicFadeOut = {};
 });
 $("#btnUpload").on("click", async () => {
   try {
