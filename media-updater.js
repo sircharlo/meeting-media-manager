@@ -1,6 +1,4 @@
-// TODO: merge media and meeting setup
 // TODO: find a way to make the new method obvious
-// TODO: add foolproof notification before losing changes in managemedia
 
 const fadeDelay = 200,
   aspect = require("aspectratio"),
@@ -191,6 +189,7 @@ function goAhead() {
     } else if ($(this).prop("tagName") == "SELECT") {
       prefs[$(this).prop("id")] = escape($(this).find("option:selected").val());
     }
+    if ($(this).prop("id") == "disableHardwareAcceleration") toggleHardwareAcceleration();
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("congServer")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
@@ -209,7 +208,7 @@ function goAhead() {
       }));
       dateFormatter();
     }
-    validateConfig(true);
+    validateConfig(true, $(this).prop("id") == "disableHardwareAcceleration");
   });
 }
 function addMediaItemToPart (date, paragraph, media) {
@@ -1188,7 +1187,8 @@ function periodicCleanup() {
 }
 function prefsInitialize() {
   $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName"]) {
+  prefs.disableHardwareAcceleration = !!fs.existsSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
   for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime"]) {
@@ -1200,7 +1200,7 @@ function prefsInitialize() {
   for (let dtPicker of datepickers) {
     dtPicker.setDate($(dtPicker.element).val());
   }
-  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton"]) {
+  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "disableHardwareAcceleration"]) {
     $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
@@ -1486,6 +1486,13 @@ async function testJwmmf() {
   prefs.lang = previousLang;
   logLevel = "info";
 }
+function toggleHardwareAcceleration() {
+  if (prefs.disableHardwareAcceleration) {
+    fs.writeFileSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"), "true");
+  } else {
+    rm(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
+  }
+}
 function toggleScreen(screen, forceShow, sectionToShow) {
   return new Promise((resolve) => {
     if (screen === "overlaySettings" && !$("#" + screen).is(":visible")) {
@@ -1703,7 +1710,7 @@ function updateStatus(icon) {
 function updateTile(tile, color) {
   if (!dryrun) $("#" + tile).removeClass($("#" + tile).attr("class").split(" ").filter(el => el.includes("btn-") && !el.includes("-sm")).join(" ")).addClass("btn-" + color);
 }
-function validateConfig(changed) {
+function validateConfig(changed, restart) {
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) $("#localOutputPath").val("");
@@ -1763,6 +1770,10 @@ function validateConfig(changed) {
     fs.writeFileSync(paths.prefs, JSON.stringify(Object.keys(prefs).sort().reduce((acc, key) => ({...acc, [key]: prefs[key]}), {}), null, 2));
     congregationPrefsPopulate();
     congregationSelectPopulate();
+  }
+  if (restart) {
+    remote.app.relaunch();
+    remote.app.exit();
   }
   return configIsValid;
 }
@@ -2051,7 +2062,7 @@ $("#btnForcedPrefs").on("click", () => {
     let html = "<h6>" + i18n.__("settingsLockedWhoAreYou") + "</h6>";
     html += "<p>" + i18n.__("settingsLockedExplain") + "</p>";
     html += "<div id='forcedPrefs' class='card'><div class='card-body'>";
-    for (var pref of Object.keys(prefs).filter(pref => !pref.startsWith("congServer") && !pref.startsWith("auto") && !pref.startsWith("local") && !pref.includes("UpdatedLast")).sort((a, b) => a[0].localeCompare(b[0]))) {
+    for (var pref of Object.keys(prefs).filter(pref => !pref.startsWith("congServer") && !pref.startsWith("auto") && !pref.startsWith("local") && !pref.includes("UpdatedLast") && !pref.includes("disableHardwareAcceleration")).sort((a, b) => a[0].localeCompare(b[0]))) {
       html += "<div class='form-check form-switch'><input class='form-check-input' type='checkbox' id='forcedPref-" + pref + "' " + (pref in currentForcedPrefs ? "checked" : "") + "> <label class='form-check-label' for='forcedPref-" + pref + "'><code class='badge bg-info text-dark prefName' title='\"" + $("#" + pref).closest(".row").find("label").first().find("span").last().html() + "\"' data-bs-toggle='tooltip' data-bs-html='true'>" + pref + "</code> <code class='badge bg-secondary'>" + prefs[pref] + "</code></label></div>";
     }
     html += "</div></div>";

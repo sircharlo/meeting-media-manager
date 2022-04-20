@@ -9,6 +9,7 @@
   "convertExternal": "Permettre l'import de médias additionels",
   "custom": "Autre",
   "delete": "Supprimer",
+  "disableHardwareAcceleration": "Désactiver l'accélération matérielle <em>(Remarque : N'activez ce paramètre que si vous rencontrez des problèmes avec le mode de présentation des médias. Si ce paramètre est modifié, JWMMF sera relancé.)</em>",
   "enableMediaDisplayButton": "Activer le bouton de présentation des médias, pour présenter les médias sur un deuxième écran ou dans une fenêtre séparée",
   "enableMusicButton": "Activer le bouton pour jouer des cantiques en mode aléatoire",
   "enableVlcPlaylistCreation": "Créer des listes de lecture (playlists) pour <em>VLC</em>",

@@ -7,11 +7,18 @@ const {
   } = require("electron"), {
     autoUpdater
   } = require("electron-updater"),
+  fs = require("graceful-fs"),
   os = require("os"),
+  path = require("upath"),
   remote = require("@electron/remote/main");
 crashReporter.start({
   uploadToServer: false
 });
+try {
+  if (fs.existsSync(path.join(app.getPath("userData"), "disableHardwareAcceleration"))) app.disableHardwareAcceleration();
+} catch (err) {
+  console.error(err);
+}
 var win = null,
   mediaWin = null,
   displays = null,
