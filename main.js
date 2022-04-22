@@ -47,6 +47,7 @@ function createUpdateWindow() {
   remote.enable(win.webContents);
   win.setMenuBarVisibility(false);
   win.loadFile("index.html");
+  if (!app.isPackaged) win.webContents.openDevTools();
 }
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -128,6 +129,7 @@ if (!gotTheLock) {
       mediaWin.setMenuBarVisibility(false);
       remote.enable(mediaWin.webContents);
       mediaWin.loadFile("mediaViewer.html");
+      if (!app.isPackaged) mediaWin.webContents.openDevTools();
       mediaWin.on("close", (e) => {
         if (!authorizedCloseMediaWin) {
           e.preventDefault();

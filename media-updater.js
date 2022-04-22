@@ -1,3 +1,5 @@
+// TODO: fix manual tooltip placement in all 4 instances
+
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -482,12 +484,11 @@ function dateFormatter() {
   } catch(err) {
     log.warn("%c[locale] Date locale " + locale + " not found, falling back to 'en'");
   }
-  $("#days").empty();
-  for (var d = 0; d < 7; d++) {
-    let meetingInPast = baseDate.clone().add(d, "days").isBefore(now);
-    $("#days").append($("<button>", {
+  $("#folders .day").remove();
+  for (var d = 6; d >= 0; d--) {
+    if (!baseDate.clone().add(d, "days").isBefore(now)) $("#folders").prepend($("<button>", {
       id: "day" + d,
-      class: "day alertIndicators m-1 col btn btn-sm " + (meetingInPast ? "disabled " : "") + "align-items-center justify-content-center " + (baseDate.clone().add(d, "days").isSame(now) ? "today " : "") + ([prefs.mwDay, prefs.weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") + (prefs.mwDay == d.toString() ? "mw " : "") + (prefs.weDay == d.toString() ? "we " : ""),
+      class: "day alertIndicators m-1 col btn btn-sm align-items-center justify-content-center " + (baseDate.clone().add(d, "days").isSame(now) ? "today " : "") + ([prefs.mwDay, prefs.weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") + (prefs.mwDay == d.toString() ? "mw " : "") + (prefs.weDay == d.toString() ? "we " : ""),
       "data-datevalue": baseDate.clone().add(d, "days").locale(locale).format("YYYY-MM-DD")
     }).append($("<div>", {
       class: "col dayLongDate"
@@ -495,7 +496,7 @@ function dateFormatter() {
       class: "dateOfMonth"
     }).append($("<span>", {
       class: "date",
-      text: baseDate.clone().add(d, "days").locale(locale).format("DD ")
+      text: baseDate.clone().add(d, "days").locale(locale).format("D ")
     })).append($("<span>", {
       class: "month",
       text: baseDate.clone().add(d, "days").locale(locale).format("MMM")
@@ -538,7 +539,9 @@ const delay = s => new Promise(res => {
 function disableGlobalPref([pref, value]) {
   let row = $("#" + pref).closest("div.row");
   if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black i18n-title' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>"));
-  row.addClass("text-muted disabled").attr("title", i18n.__("settingLocked")).tooltip().find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
+  row.addClass("text-muted disabled").tooltip({
+    title: i18n.__("settingLocked")
+  }).find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
   log.info("%c[enforcedPrefs] [" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
 }
 function displayMusicRemaining() {
@@ -585,7 +588,7 @@ function downloadStat(origin, source, file) {
   downloadStats[origin][source].push(file);
 }
 function enablePreviouslyForcedPrefs() {
-  $("div.row.text-muted.disabled").removeClass("text-muted disabled").attr("title", "").tooltip("dispose").find(".forcedPref").prop("disabled", false).removeClass("forcedPref");
+  $("div.row.text-muted.disabled").removeClass("text-muted disabled").tooltip("dispose").find(".forcedPref").prop("disabled", false).removeClass("forcedPref");
   $("div.row .settingLocked").remove();
 }
 async function enforcePrefs() {
@@ -705,7 +708,7 @@ async function getCongMedia() {
     }
   } catch (err) {
     notifyUser("error", "errorGetCongMedia", null, true, err, true);
-    updateTile("specificCong", "danger", "fas fa-times-circle");
+    updateTile("specificCong", "danger");
   }
   perf("getCongMedia", "stop");
 }
@@ -953,10 +956,10 @@ async function getMwMediaFromDb() {
           addMediaItemToPart(mwDate, internalRef.BeginParagraphOrdinal, internalRefMediaFile);
         });
       }
-      updateTile("day" + prefs.mwDay, "success", "fas fa-check-circle");
+      updateTile("day" + prefs.mwDay, "success");
     } catch(err) {
       notifyUser("error", "errorGetMwMedia", null, true, err, true);
-      updateTile("day" + prefs.mwDay, "danger", "fas fa-times-circle");
+      updateTile("day" + prefs.mwDay, "danger");
     }
   }
 }
@@ -981,7 +984,9 @@ function setAppLang() {
       $(this).html(i18n.__($(this).data("i18n-string")));
     });
     $(".i18n-title").each(() => {
-      $(this).attr("title", i18n.__("settingLocked")).tooltip("dispose").tooltip();
+      $(this).tooltip("dispose").tooltip({
+        title: i18n.__("settingLocked")
+      });
     });
   } catch(err) {
     log.error(err);
@@ -1024,10 +1029,10 @@ async function getWeMediaFromDb() {
           notifyUser("error", "errorGetWeMedia", null, true, songJson, true);
         }
       }
-      updateTile("day" + prefs.weDay, "success", "fas fa-check-circle");
+      updateTile("day" + prefs.weDay, "success");
     } catch(err) {
       notifyUser("error", "errorGetWeMedia", null, true, err, true);
-      updateTile("day" + prefs.weDay, "danger", "fas fa-times-circle");
+      updateTile("day" + prefs.weDay, "danger");
     }
   }
 }
@@ -1118,7 +1123,7 @@ async function mp4Convert() {
     totals.mp4Convert.current++;
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
   }
-  updateTile("mp4Convert", "success", "fas fa-check-circle");
+  updateTile("mp4Convert", "success");
   perf("mp4Convert", "stop");
 }
 function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, hideDismiss) {
@@ -1138,7 +1143,6 @@ function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, 
     if (["error", "warn"].includes(type)) log[type](fileOrUrl ? fileOrUrl : "", errorFedToMe ? errorFedToMe : "");
     type = i18n.__(type);
     let thisBugUrl = bugUrl() + (errorFedToMe ? encodeURIComponent("\n### Error details\n```\n" + JSON.stringify(errorFedToMe, Object.getOwnPropertyNames(errorFedToMe), 2) + "\n```\n").replace(/\n/g, "%0D%0A") : "");
-    console.log($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close " + (hideDismiss ? "d-none" : "") + "' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action && !action.noLink ? "data-toast-action-url='" + escape((action && action.url ? action.url : thisBugUrl)) + "'" :"") + ">" + i18n.__(action && action.desc ? action.desc : "reportIssue") + "</button></div>" : "") + "</div></div>"));
     $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close " + (hideDismiss ? "d-none" : "") + "' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action && !action.noLink ? "data-toast-action-url='" + escape((action && action.url ? action.url : thisBugUrl)) + "'" :"") + ">" + i18n.__(action && action.desc ? action.desc : "reportIssue") + "</button></div>" : "") + "</div></div>").toast("show"));
   } catch (err) {
     log.error(err);
@@ -1421,15 +1425,17 @@ async function syncCongMedia() {
           for (var mediaItem of part.media.filter(mediaItem => mediaItem.congSpecific && !mediaItem.hidden)) {
             log.info("%c[congMedia] [" + meeting + "] " + mediaItem.safeName, "background-color: #d1ecf1; color: #0c5460");
             await webdavGet(mediaItem);
+            if (mediaItem.recurring) updateTile("recurringMedia", "warning");
             totals.cong.current++;
             progressSet(totals.cong.current, totals.cong.total, "specificCong");
           }
         }
       }
-      updateTile("specificCong", "success", "fas fa-check-circle");
+      if (Object.values(congSyncMeetingMedia).flat().map(part => part.media).flat().filter(media => media.recurring).length > 0) updateTile("recurringMedia", "success");
+      updateTile("specificCong", "success");
     } catch (err) {
       notifyUser("error", "errorSyncCongMedia", null, true, err, true);
-      updateTile("specificCong", "danger", "fas fa-times-circle");
+      updateTile("specificCong", "danger");
       progressSet(0, 100, "specificCong");
     }
     perf("syncCongMedia", "stop");
@@ -1468,17 +1474,19 @@ async function syncJwOrgMedia() {
       }
     }
   }
-  updateTile("syncJwOrgMedia", "success", "fas fa-check-circle");
+  updateTile("syncJwOrgMedia", "success");
   perf("syncJwOrgMedia", "stop");
 }
 function syncLocalRecurringMedia() {
   if (!webdavIsAGo && fs.existsSync(path.join(paths.media, "Recurring"))) {
+    updateTile("recurringMedia", "warning");
     glob.sync(path.join(paths.media, "Recurring", "*")).forEach((recurringItem) => {
       Object.keys(meetingMedia).filter(key => key !== "Recurring" && dayjs(key, "YYYY-MM-DD").isValid() && dayjs(key, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")).forEach((meeting) => {
         mkdirSync(path.join(paths.media, meeting));
         fs.copyFileSync(recurringItem, path.join(paths.media, meeting, path.basename(recurringItem)));
       });
     });
+    updateTile("recurringMedia", "success");
   }
 }
 async function testJwmmf() {
@@ -1526,7 +1534,7 @@ function updateCleanup() {
         notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"});
         if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
           notifyUser("info", "<h6>Managing media just got simpler</h6><p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>" + (prefs.congServer ? "<p>The cloud upload button has therefore been removed from the bottom left corner of the app.</p>" : "") + "<p>Media can also now easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p><h6>In short:</h6> " + (prefs.congServer ? "<li>No more cloud button</li> " : "") + "<li><strong>Click on any day</strong> to manage media for that day</li>", null, true, null, {desc: "understood", noLink: true}, true);
-          $("#days").addClass("new-stuff");
+          $("#folders").addClass("new-stuff");
         }
         let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
         if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
@@ -1643,15 +1651,15 @@ function updateFileList(initialLoad) {
         fileOrigin = webdavIsAGo ? "fa-cloud" : "fa-folder-open";
         if (file.recurring) html.find(".infoIcons").append("<i class='fas fa-fw fa-sync-alt me-1'></i>");
       }
-      let fileType = "fa-question-circle";
+      let fileType = "far fa-question-circle";
       if (isImage(file.safeName)) {
-        fileType = "fa-image";
+        fileType = "far fa-image";
       } else if (isVideo(file.safeName) || isAudio(file.safeName)) {
-        fileType = "fa-play-circle";
+        fileType = "fas fa-film";
       } else if (path.extname(file.safeName).toLowerCase() == ".pdf") {
-        fileType = "fa-file-pdf";
+        fileType = "far fa-file-pdf";
       }
-      html.find(".infoIcons").append("<i class='far fa-fw " + fileType + " file-type me-1'></i><i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>");
+      html.find(".infoIcons").append("<i class='fa-fw " + fileType + " file-type me-1'></i><i class='fas fa-fw " + fileOrigin + " file-origin me-1'></i>");
       if (file.trackImage || file.congSpecific || file.filepath || file.thumbnail) {
         let imageSrc = {};
         if (file.trackImage) {
@@ -2058,12 +2066,19 @@ $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus.confirmed"
   congregationDelete($(this).closest("button").val());
 });
 $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected:not(.confirmed)", async function() {
-  $(this).addClass("confirmed").find("i, small").toggle();
+  $(this).toggleClass("btn-warning btn-danger confirmed").tooltip({
+    title: i18n.__("clickAgain"),
+    trigger: "manual",
+    container: "#overlayUploadFile",
+  }).tooltip("show")/*.find("i, small").toggle()*/;
   await delay(5);
-  $(this).toggleClass("confirmed").find("i, small").toggle();
+  $(this).toggleClass("btn-warning btn-danger confirmed").tooltip("dispose")/*.find("i, small").toggle()*/;
 });
 $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected.confirmed, .btn-cancel-upload.no-file-selected", function() {
+  $(this).tooltip("dispose");
+  if ($(this).hasClass("changes-made")) notifyUser("warn", "dontForgetToGetMedia");
   toggleScreen("overlayUploadFile");
+  $(".btn-cancel-upload").removeClass("changes-made");
   removeEventListeners();
 });
 $("#btnForcedPrefs").on("click", () => {
@@ -2179,42 +2194,53 @@ $("#btnMediaWindow").on("click", function() {
           mediaItem.find("#videoProgress, #videoScrubber").remove();
           mediaItem.find(".pausePlay").removeClass("play").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
         }
-        triggerButton.toggleClass("play stop btn-primary btn-warning").removeClass("confirmed btn-danger").find("i").toggleClass("fa-play fa-stop");
+        triggerButton.toggleClass("play stop btn-primary btn-warning").removeClass("confirmed btn-danger").tooltip("dispose").find("i").toggleClass("fa-play fa-stop");
         mediaItem.removeClass("list-group-item-primary");
         $("#folderListing button.playStop.play, button.closeModal, #btnMeetingMusic").prop("disabled", false);
         $("h5.modal-title button").not(triggerButton).prop("disabled", false);
       } else {
-        triggerButton.addClass("confirmed btn-danger");
+        triggerButton.addClass("confirmed btn-danger").tooltip({
+          title: i18n.__("clickAgain"),
+          trigger: "manual",
+          container: "#staticBackdrop"
+        }).tooltip("show");
         setTimeout(() => {
-          triggerButton.removeClass("confirmed btn-danger");
+          triggerButton.removeClass("confirmed btn-danger").tooltip("dispose");
         }, 3000);
       }
     }
   });
   showModal(true, true, i18n.__("meeting"), folderListing, false);
   $(folderListing).find(".thatsToday").click();
-  $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-warning mx-2' title='Alt+Z'><span class='fa-stack'><i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
+  $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-warning mx-2' title='Alt+Z'><span class='fa-stack'><i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning' data-bs-trigger='manual'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic"));
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal:not(.confirmed)", async function() {
-    $(this).addClass("confirmed btn-danger");
+    $(this).addClass("confirmed btn-danger").tooltip({
+      title: i18n.__("clickAgain"),
+      trigger: "manual"
+    }).tooltip("show");
     await delay(3);
-    $(this).removeClass("confirmed btn-danger");
+    $(this).removeClass("confirmed btn-danger").tooltip("dispose");
   });
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal.confirmed", function() {
     require("electron").ipcRenderer.send("hideMediaWindow");
     remote.globalShortcut.unregister("Alt+Z");
     showModal(false);
+    $(this).removeClass("confirmed btn-danger").tooltip("dispose");
     $("#actionButtions").append($("#btnMeetingMusic, #btnStopMeetingMusic"));
   });
   $("#staticBackdrop .modal-footer").show();
 });
 $("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
-  $(this).addClass("confirmed btn-warning").find("i, small").toggle();
+  $(this).attr("title", i18n.__("clickAgain")).addClass("confirmed btn-warning").tooltip({
+    trigger: "manual",
+    container: "#home"
+  }).tooltip("show")/*.find("i, small").toggle()*/;
   await delay(5);
-  $(this).removeClass("confirmed btn-warning").find("i, small").toggle();
+  $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose")/*.find("i, small").toggle()*/;
 });
 $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
-  $(this).removeClass("confirmed");
+  $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose")/*.find("i, small").toggle()*/;
   $("#congregationSelect-dropdown").addClass("music-playing").prop("disabled", true);
   if (prefs.enableMusicFadeOut) {
     let timeBeforeFade;
@@ -2284,7 +2310,7 @@ $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
     $("#musicRemaining").empty();
-    if (prefs.enableMusicButton) $("#btnMeetingMusic").show();
+    if (prefs.enableMusicButton) $("#btnMeetingMusic").attr("title", "Alt+K").show();
     $("#congregationSelect-dropdown").removeClass("music-playing");
     $("#congregationSelect-dropdown:not(.sync-started)").prop("disabled", false);
   });
@@ -2331,6 +2357,7 @@ $("#btnUpload").on("click", async () => {
   } catch (err) {
     notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true);
   }
+  $(".btn-cancel-upload").addClass("changes-made");
   if (webdavIsAGo) await startMediaSync(true, "Recurring");
   updateFileList(true);
 });
@@ -2356,7 +2383,7 @@ $("#chooseUploadType input").on("change", function() {
 $(".enterPrefixInput, #congServerPort").on("keypress", function(e){ // cmd/ctrl || arrow keys || delete key || numbers
   return e.metaKey || e.which <= 0 || e.which === 8 || /[0-9]/.test(String.fromCharCode(e.which));
 });
-$("#days").on("click", ".day.btn", function() {
+$("#folders").on("click", ".day.btn", function() {
   manageMedia($(this).data("datevalue"), $(this).hasClass("meeting"), ($(this).hasClass("mw") ? "mw" : $(this).hasClass("we") ? "we" : ""));
 });
 $("#recurringMedia").on("click", function() {
@@ -2521,6 +2548,7 @@ $("#fileList").on("click", "li.confirmDelete:not(.webdavWait) .fa-minus-square",
         item.media.filter(mediaItem => mediaItem.safeName == $this.data("safename")).map(item => item.isLocal = false);
       });
     }
+    $(".btn-cancel-upload").addClass("changes-made");
   }
 });
 $("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
@@ -2534,6 +2562,7 @@ $("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
     });
   }
   $(this).removeClass("webdavWait");
+  $(".btn-cancel-upload").addClass("changes-made");
 });
 $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function() {
   let row = $(this).closest(".canMove");
@@ -2573,6 +2602,7 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
         $("#fileList").append(elems);
       }
       row.removeClass("webdavWait");
+      $(".btn-cancel-upload").addClass("changes-made");
     }
   });
 });
@@ -2583,6 +2613,7 @@ $("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
     meetingMedia[$("#chosenMeetingDay").data("folderName")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = false ));
   }
   $(this).removeClass("webdavWait");
+  $(".btn-cancel-upload").addClass("changes-made");
 });
 $("#overlayUploadFile").on("change", ".enterPrefixInput, #fileToUpload", function() {
   $("div.row.prefix").fadeToAndToggle(fadeDelay, !!$("#fileToUpload").val());

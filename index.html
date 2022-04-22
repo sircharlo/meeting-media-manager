@@ -148,6 +148,10 @@
       flex: 1 1 auto;
     }
 
+    #recurringMedia {
+      width: min-content;
+    }
+
     .in-danger {
       box-shadow: 0 0 0 0 var(--bs-danger);
       animation: pulseDanger 1s infinite;
@@ -355,14 +359,14 @@
 
     .media-item {
       max-width: 100%;
-      height: 4rem;
+      max-height: 4rem;
     }
 
     .toast {
       background: rgba(255, 255, 255, .95);
     }
 
-    #days {
+    #folders {
       transition: box-shadow 3s ease-in-out;
       z-index: 1;
       border-radius: 0.5rem;
@@ -885,7 +889,10 @@
       </div>
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
-      <div id="days" class="d-flex w-100">
+      <div id="folders" class="d-flex w-100">
+        <button id="recurringMedia" class="btn btn-sm alertIndicators m-1 btn-secondary align-items-center justify-content-center">
+          <span class="col" data-i18n-string="recurring"></span>
+        </button>
       </div>
       <div class="d-flex w-100">
         <button id="syncJwOrgMedia" data-settingslink="collapseMedia" class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
@@ -898,9 +905,6 @@
         <button id="specificCong" data-settingslink="collapseCongSync" class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary congregation align-items-center justify-content-center" style="display: none;">
           <span class="col" data-i18n-string="congMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
-        </button>
-        <button id="recurringMedia" class="btn btn-sm alertIndicators m-1 flex-fill btn-secondary align-items-center justify-content-center">
-          <span class="col" data-i18n-string="recurring"></span>
         </button>
         <button id="mp4Convert" data-settingslink="collapseMedia" class="alertIndicators m-1 flex-fill btn btn-sm btn-secondary zoom align-items-center justify-content-center" style="display: none;">
           <span class="col" data-i18n-string="mp4Conversion"></span>
