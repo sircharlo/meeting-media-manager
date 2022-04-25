@@ -1,4 +1,5 @@
 // TODO: fix manual tooltip placement in all 4 instances
+// TODO: remove comments
 
 const fadeDelay = 200,
   aspect = require("aspectratio"),
@@ -1044,8 +1045,10 @@ async function getRemoteYearText(force) {
         adapter: require("axios/lib/adapters/http")
       }).then(result => {
         mkdirSync(path.join(paths.yearText, "../"));
-        if (result && result.data && result.data.content) fs.writeFileSync(paths.yearText, JSON.parse(JSON.stringify(result.data.content)));
-        yearText = JSON.parse(JSON.stringify(result.data.content));
+        if (result && result.data && result.data.content) {
+          fs.writeFileSync(paths.yearText, JSON.parse(JSON.stringify(result.data.content)));
+          yearText = JSON.parse(JSON.stringify(result.data.content));
+        }
       }).catch(err => {
         log.error(err);
       });
@@ -2069,7 +2072,7 @@ $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected:not(.confi
   $(this).toggleClass("btn-warning btn-danger confirmed").tooltip({
     title: i18n.__("clickAgain"),
     trigger: "manual",
-    container: "#overlayUploadFile",
+    placement: "right"
   }).tooltip("show")/*.find("i, small").toggle()*/;
   await delay(5);
   $(this).toggleClass("btn-warning btn-danger confirmed").tooltip("dispose")/*.find("i, small").toggle()*/;
@@ -2202,7 +2205,7 @@ $("#btnMediaWindow").on("click", function() {
         triggerButton.addClass("confirmed btn-danger").tooltip({
           title: i18n.__("clickAgain"),
           trigger: "manual",
-          container: "#staticBackdrop"
+          placement: "left"
         }).tooltip("show");
         setTimeout(() => {
           triggerButton.removeClass("confirmed btn-danger").tooltip("dispose");
@@ -2217,7 +2220,8 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer").on("click", "button.closeModal:not(.confirmed)", async function() {
     $(this).addClass("confirmed btn-danger").tooltip({
       title: i18n.__("clickAgain"),
-      trigger: "manual"
+      trigger: "manual",
+      placement: "left"
     }).tooltip("show");
     await delay(3);
     $(this).removeClass("confirmed btn-danger").tooltip("dispose");
@@ -2234,7 +2238,7 @@ $("#btnMediaWindow").on("click", function() {
 $("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
   $(this).attr("title", i18n.__("clickAgain")).addClass("confirmed btn-warning").tooltip({
     trigger: "manual",
-    container: "#home"
+    placement: "right"
   }).tooltip("show")/*.find("i, small").toggle()*/;
   await delay(5);
   $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose")/*.find("i, small").toggle()*/;
