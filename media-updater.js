@@ -1,6 +1,3 @@
-// TODO: fix manual tooltip placement in all 4 instances
-// TODO: remove comments
-
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -2073,9 +2070,9 @@ $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected:not(.confi
     title: i18n.__("clickAgain"),
     trigger: "manual",
     placement: "right"
-  }).tooltip("show")/*.find("i, small").toggle()*/;
+  }).tooltip("show");
   await delay(5);
-  $(this).toggleClass("btn-warning btn-danger confirmed").tooltip("dispose")/*.find("i, small").toggle()*/;
+  $(this).toggleClass("btn-warning btn-danger confirmed").tooltip("dispose");
 });
 $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected.confirmed, .btn-cancel-upload.no-file-selected", function() {
   $(this).tooltip("dispose");
@@ -2239,12 +2236,12 @@ $("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
   $(this).attr("title", i18n.__("clickAgain")).addClass("confirmed btn-warning").tooltip({
     trigger: "manual",
     placement: "right"
-  }).tooltip("show")/*.find("i, small").toggle()*/;
+  }).tooltip("show");
   await delay(5);
-  $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose")/*.find("i, small").toggle()*/;
+  $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose");
 });
 $("body").on("click", "#btnMeetingMusic.confirmed", async function() {
-  $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose")/*.find("i, small").toggle()*/;
+  $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose");
   $("#congregationSelect-dropdown").addClass("music-playing").prop("disabled", true);
   if (prefs.enableMusicFadeOut) {
     let timeBeforeFade;
