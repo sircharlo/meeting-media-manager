@@ -342,7 +342,7 @@
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       display: -webkit-box;
-      font-size: 90%;
+      overflow: hidden;
     }
 
     #videoProgress .progress-bar {
@@ -358,8 +358,9 @@
     }
 
     .media-item {
-      max-width: 100%;
-      max-height: 4rem;
+      width: 9em;
+      max-height: 5rem;
+      height: fit-content;
     }
 
     .toast {
@@ -921,7 +922,7 @@
     <div class="align-items-center d-flex py-3 justify-content-center">
       <div id="actionButtions" class="col-3 text-start">
         <button type="button" class="btn btn-info" id="btnMeetingMusic" title="Alt+K" style="display: none;">
-          <i class="fas fa-fw fa-music"></i>
+          <i class="fas fa-fw fa-music"></i> <i class="fa-solid fa-shuffle"></i>
         </button>
         <button type="button" class="btn btn-warning" id="btnStopMeetingMusic" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-stop"></i> <span id="musicRemaining"></span>
@@ -949,7 +950,7 @@
     </div>
   </div>
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog modal-fullscreen-lg-down modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-fullscreen-xxl-down modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header justify-content-center">
           <h5 class="modal-title" id="staticBackdropLabel"></h5>
