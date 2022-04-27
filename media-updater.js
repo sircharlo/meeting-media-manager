@@ -1259,7 +1259,6 @@ function refreshFolderListing(folderPath) {
   $("h5.modal-title").html($("<button class='btn btn-secondary'>" + path.basename(folderPath) + "</button>").on("click", function() {
     $("div#folderListing").empty().append(listMediaFolders());
   }));
-  // let folderListing = $("<div id='folderListing' class='list-group'>");
   $("div#folderListing").empty();
   for (var item of glob.sync(path.join(folderPath, "*"))) {
     item = escape(item);
@@ -2097,6 +2096,7 @@ $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus:not(.confi
   $(this).removeClass("confirmed text-danger").tooltip("dispose");
 });
 $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus.confirmed", function() {
+  $(this).tooltip("dispose");
   congregationDelete($(this).closest("button").val());
 });
 $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected:not(.confirmed)", async function() {
@@ -2234,8 +2234,8 @@ $("#btnMediaWindow").on("click", function() {
   });
   showModal(true, true, i18n.__("meeting"), folderListing, false);
   $("#staticBackdrop .modal-header").addClass("d-flex").children().wrapAll("<div class='col-4 text-center'></div>");
-  $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only'></div>");
-  $("#staticBackdrop .modal-header").append("<div class='col-4 for-folder-listing-only text-end'><button class='btn btn-sm folderRefresh'><i class='fas fa-rotate-right'></i></button><button class='btn btn-sm folderOpen'><i class='fas fa-folder-open'></i></button></div>");
+  $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only' style='display: none;'></div>");
+  $("#staticBackdrop .modal-header").append("<div class='col-4 for-folder-listing-only text-end' style='display: none;'><button class='btn btn-sm folderRefresh'><i class='fas fa-rotate-right'></i></button><button class='btn btn-sm folderOpen'><i class='fas fa-folder-open'></i></button></div>");
   $(folderListing).find(".thatsToday").click();
   $("#staticBackdrop .modal-footer").html($("<div class='left flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-warning mx-2' title='Alt+Z'><span class='fa-stack'><i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning' data-bs-trigger='manual'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic").addClass("btn-lg"));
