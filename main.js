@@ -102,7 +102,7 @@ if (!gotTheLock) {
     let otherScreens = displays.filter(screen => !(mainWinPosition[0] >= screen.bounds.x && mainWinPosition[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinPosition[1] >= screen.bounds.y && mainWinPosition[1] < (screen.bounds.y + screen.bounds.height)));
     if (!mediaWin) {
       let windowOptions = {
-        title: "JWMMF Media Window",
+        title: "Media Window",
         frame: !externalDisplays,
         webPreferences: {
           backgroundThrottling: false,

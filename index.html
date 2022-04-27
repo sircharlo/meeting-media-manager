@@ -152,14 +152,12 @@
       width: min-content;
     }
 
-    .in-danger {
-      box-shadow: 0 0 0 0 var(--bs-danger);
+    .pulse-danger {
       animation: pulseDanger 1s infinite;
     }
 
-    .today {
-      box-shadow: 0 0 10px 1px var(--bs-primary);
-      animation: pulseToday 2s infinite;
+    .pulse-info {
+      animation: pulseInfo 2s infinite;
     }
 
     .progress-bar {
@@ -283,17 +281,17 @@
       }
     }
 
-    @keyframes pulseToday {
+    @keyframes pulseInfo {
       0% {
-        box-shadow: 0 0 10px -2px var(--bs-primary);
+        box-shadow: 0 0 0 0 var(--bs-info);
       }
 
-      70% {
-        box-shadow: 0 0 10px -3px var(--bs-primary);
+      60% {
+        box-shadow: 0 0 0 5px rgba(15, 102, 116, 0);
       }
 
       100% {
-        box-shadow: 0 0 10px -2px var(--bs-primary);
+        box-shadow: 0 0 0 0 rgba(15, 102, 116, 0);
       }
     }
 
@@ -367,6 +365,11 @@
       width: 9em;
       max-height: 5rem;
       height: fit-content;
+    }
+
+    .media-item img {
+      max-height: 5rem;
+      max-width: 100%;
     }
 
     .toast {
