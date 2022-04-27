@@ -148,7 +148,7 @@
               require("electron").ipcRenderer.send("videoPaused");
             }
           }).on("timeupdate", () => {
-            require("electron").ipcRenderer.send("videoProgress", ($("video")[0].currentTime / $("video")[0].duration * 100));
+            require("electron").ipcRenderer.send("videoProgress", [$("video")[0].currentTime, $("video")[0].duration]);
           }).on("ended", () => {
             require("electron").ipcRenderer.send("videoEnd");
           }));
