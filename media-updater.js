@@ -2058,9 +2058,13 @@ $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function
   e.stopPropagation();
 });
 $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus:not(.confirmed)", async function() {
-  $(this).toggleClass("confirmed text-danger text-warning");
+  $(this).addClass("confirmed text-danger").tooltip({
+    title: i18n.__("clickAgain"),
+    trigger: "manual",
+    placement: "left"
+  }).tooltip("show");
   await delay(3);
-  $(this).toggleClass("confirmed text-danger text-warning");
+  $(this).removeClass("confirmed text-danger").tooltip("dispose");
 });
 $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus.confirmed", function() {
   congregationDelete($(this).closest("button").val());
