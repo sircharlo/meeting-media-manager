@@ -86,9 +86,9 @@
   "warnSvgConversionFailure": "Esse arquivo não foi reconhecido como uma imagem SVG válida:",
   "warnUnknownLastVersion": "Não foi possível identificar a versão instalada do JWMMF. Provavelmente ele já foi atualizado.",
   "webdavFolder": "Pasta WebDAV",
-  "webdavHostname": "Nome do host WebDAV",
-  "webdavPass": "Senha WebDAV",
-  "webdavPort": "Porta WebDAV",
-  "webdavUser": "Usuário WebDAV",
+  "hostname": "Nome do host",
+  "password": "Senha",
+  "port": "Porta",
+  "username": "Usuário",
   "weMeetingDay": "Reunião de fim de semana"
 }

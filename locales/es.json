@@ -82,9 +82,9 @@
   "warnSvgConversionFailure": "El siguiente archivo no se reconoció como una ilustración SVG válida:",
   "warnUnknownLastVersion": "No se puede establecer la versión previamente instalada de JWMMF. Suponiendo que la aplicación se acaba de actualizar.",
   "webdavFolder": "Carpeta de sincronización de la congregación",
-  "webdavHostname": "Nombre de host de sincronización de la congregación",
-  "webdavPass": "Contraseña de sincronización de la congregación",
-  "webdavPort": "Puerto de sincronización de la congregación",
-  "webdavUser": "Nombre de usuario de sincronización de la congregación",
+  "hostname": "Nombre de host",
+  "password": "Contraseña",
+  "port": "Puerto",
+  "username": "Nombre de usuario",
   "weMeetingDay": "Reunión de fin de semana"
 }

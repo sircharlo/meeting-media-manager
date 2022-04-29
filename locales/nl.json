@@ -70,9 +70,9 @@
   "warnSvgConversionFailure": "Het volgende bestand was niet herkend als een correct SVG plaatje:",
   "warnUnknownLastVersion": "Kon de vorige versie van JWMMF niet ophalen. Ga ervan uit dat de app net geüpdatet is.",
   "webdavFolder": "Gemeente sync folder",
-  "webdavHostname": "Gemeente sync hostnaam",
-  "webdavPass": "Gemeente sync wachtwoord",
-  "webdavPort": "Gemeente sync poort",
-  "webdavUser": "Gemeente sync gebruikersnaam",
+  "hostname": "Hostnaam",
+  "password": "Wachtwoord",
+  "port": "Poort",
+  "username": "Gebruikersnaam",
   "weMeetingDay": "Weekend vergadering"
 }

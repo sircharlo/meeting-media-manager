@@ -83,9 +83,9 @@
   "warnSvgConversionFailure": "Följande fil kunde inte kännas igen som en giltig SVG-bild:",
   "warnUnknownLastVersion": "Kunde inte konstrollera föregående version av JWMMF. Programmet har troligen blivit nyligen uppdaterad.",
   "webdavFolder": "Församlingens synkroniseringsmapp",
-  "webdavHostname": "Värdnamn fär församlingssynkroniseringen",
-  "webdavPass": "Lösenord församlingssynkroniseringend",
-  "webdavPort": "Port för församlingssynkroniseringen",
-  "webdavUser": "Användarnamn för församlingssynkroniseringen",
+  "hostname": "Värdnamn",
+  "password": "Lösenord",
+  "port": "Port",
+  "username": "Användarnamn",
   "weMeetingDay": "Helgmöte"
 }

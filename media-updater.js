@@ -41,6 +41,7 @@ const fadeDelay = 200,
     },
   },
   net = require("net"),
+  OBSWebSocket = require("obs-websocket-js"),
   os = require("os"),
   path = require("upath"),
   remote = require("@electron/remote"),
@@ -133,6 +134,7 @@ var baseDate = dayjs().startOf("isoWeek"),
     keyboard: false
   }),
   now = dayjs().hour(0).minute(0).second(0).millisecond(0),
+  obs = null,
   paths = {
     app: path.normalize(remote.app.getPath("userData"))
   },
@@ -1209,10 +1211,10 @@ function periodicCleanup() {
 function prefsInitialize() {
   $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
   prefs.disableHardwareAcceleration = !!fs.existsSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration", "enableObs", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
-  for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime"]) {
+  for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene"]) {
     $("#" + field).val(prefs[field]).closest(".row").find("#" + field + "Display").html(prefs[field]);
   }
   for (let timeField of ["mwStartTime", "weStartTime"]) {
@@ -1221,7 +1223,7 @@ function prefsInitialize() {
   for (let dtPicker of datepickers) {
     dtPicker.setDate($(dtPicker.element).val());
   }
-  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "disableHardwareAcceleration"]) {
+  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "disableHardwareAcceleration", "enableObs"]) {
     $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
@@ -1775,6 +1777,7 @@ function validateConfig(changed, restart) {
   }
   $("#enableMusicFadeOut, #musicVolume").closest(".row").toggle(!!prefs.enableMusicButton);
   $(".relatedToFadeOut").toggle(!!prefs.enableMusicButton && !!prefs.enableMusicFadeOut);
+  $(".relatedToObs").toggle(!!prefs.enableObs);
   if (os.platform() !== "linux") remote.app.setLoginItemSettings({ openAtLogin: prefs.autoRunAtBoot });
   $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton) {
@@ -2170,6 +2173,17 @@ $("#btnMediaWindow").on("click", function() {
   require("electron").ipcRenderer.send("showMediaWindow");
   getRemoteYearText().finally(() => {
     require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
+    if (prefs.enableObs && prefs.obsPort && prefs.obsPassword && prefs.obsCameraScene && prefs.obsMediaScene) {
+      obs = new OBSWebSocket();
+      obs.connect({ address: "localhost:" + prefs.obsPort, password: prefs.obsPassword }).then(() => {
+        obs.send("SetCurrentScene", { "scene-name": prefs.obsCameraScene });
+      }).catch(err => {
+        console.error(err);
+      });
+      obs.on("error", err => {
+        console.error("socket error:", err);
+      });
+    }
   });
   let folderListing = listMediaFolders();
   $(folderListing).on("click", "button.folder", function() {
@@ -2198,6 +2212,7 @@ $("#btnMediaWindow").on("click", function() {
       $("#folderListing .item").removeClass("list-group-item-primary");
       $("#btnToggleMediaWindowFocus.hidden").click();
       require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
+      if (obs) obs.send("SetCurrentScene", { "scene-name": prefs.obsMediaScene });
       if (mediaItem.hasClass("video")) {
         mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
         mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0' min='0' max='100' step='any' />");
@@ -2211,6 +2226,7 @@ $("#btnMediaWindow").on("click", function() {
     } else if (triggerButton.hasClass("stop")) {
       if (!mediaItem.hasClass("video") || triggerButton.hasClass("confirmed")) {
         require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
+        if (obs) obs.send("SetCurrentScene", { "scene-name": prefs.obsCameraScene });
         if (mediaItem.hasClass("video")) {
           mediaItem.find("#videoProgress, #videoScrubber").remove();
           mediaItem.find(".time .current").text("");
@@ -2252,6 +2268,7 @@ $("#staticBackdrop .modal-footer").on("click", "button.closeModal:not(.confirmed
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal.confirmed", function() {
   require("electron").ipcRenderer.send("hideMediaWindow");
+  obs = null;
   remote.globalShortcut.unregister("Alt+Z");
   showModal(false);
   $(this).removeClass("confirmed btn-danger").tooltip("dispose");

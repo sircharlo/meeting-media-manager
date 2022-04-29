@@ -85,9 +85,9 @@
   "warnSvgConversionFailure": "Die folgende Datei wurde nicht als gültiges SVG erkannt:",
   "warnUnknownLastVersion": "Die vorher installierte Version von JWMMF konnte nicht ermittelt werden. Wahrscheinlich wurde die Anwendung gerade aktualisiert.",
   "webdavFolder": "Synchronisations-Ordner",
-  "webdavHostname": "Synchronisations-Hostname",
-  "webdavPass": "Synchronisations-Passwort",
-  "webdavPort": "Synchronisations-Port",
-  "webdavUser": "Synchronisations-Benutzername",
+  "hostname": "Hostname",
+  "password": "Passwort",
+  "port": "Port",
+  "username": "Benutzername",
   "weMeetingDay": "Zusammenkunft unter der Woche"
 }
