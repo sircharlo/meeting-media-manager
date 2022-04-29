@@ -874,13 +874,17 @@
               <div class="align-items-center g-1 py-1 row relatedToObs">
                 <label for="obsCameraScene" class="m-0 text-start col-5"><span data-i18n-string="obsCameraScene"></span></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="obsCameraScene" required />
+                  <select class="form-select form-select-sm obs-scenes" id="obsCameraScene" required>
+                    <option value=""></option>
+                  </select>
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row relatedToObs">
                 <label for="obsMediaScene" class="m-0 text-start col-5"><span data-i18n-string="obsMediaScene"></span></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="obsMediaScene" required />
+                  <select class="form-select form-select-sm obs-scenes" id="obsMediaScene" required>
+                    <option value=""></option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -960,7 +964,7 @@
       </div>
     </div>
     <div class="align-items-center d-flex py-3 justify-content-center">
-      <div id="actionButtions" class="col-3 text-start">
+      <div id="actionButtons" class="col-3 text-start">
         <button type="button" class="btn btn-info" id="btnMeetingMusic" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-music"></i> <i class="fa-solid fa-shuffle"></i>
         </button>
