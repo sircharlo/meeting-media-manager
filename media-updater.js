@@ -1825,8 +1825,10 @@ function validateConfig(changed, restart) {
     if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push(timeField);
     else $("#" + timeField + ", .timePicker[data-target='" + timeField + "']").removeClass("is-invalid");
   }
-  if (prefs.enableObs) mandatoryFields.push("obsPort", "obsPassword");
-  if (obs._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
+  if (prefs.enableObs) {
+    mandatoryFields.push("obsPort", "obsPassword");
+    if (obs._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
+  }
   for (var setting of mandatoryFields) {
     if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
     $("#" + setting + ", .timePicker[data-target='" + setting + "']").toggleClass("is-invalid", !prefs[setting]);
