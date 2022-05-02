@@ -52,16 +52,30 @@ function createUpdateWindow() {
   win.loadFile("index.html");
   if (!app.isPackaged) win.webContents.openDevTools();
 }
+function fadeWindow(browserWindow, fadeType) {
+  let opacity = browserWindow.getOpacity();
+  const interval = setInterval(() => {
+    let wereDone = (fadeType == "in" ? opacity >= 1 : opacity <= 0);
+    if (wereDone) {
+      clearInterval(interval);
+      if (fadeType == "out") {
+        win.webContents.send("mediaWindowVisibilityChanged", "hidden");
+      }
+    }
+    if (fadeType == "in") {
+      win.webContents.send("mediaWindowVisibilityChanged", "shown");
+    }
+    browserWindow.setOpacity(opacity);
+    opacity = opacity + 0.05 * (fadeType == "in" ? 1 : -1);
+  }, 5);
+  return interval;
+}
 function getScreenInfo() {
   displays = screen.getAllDisplays();
   externalDisplays = displays.filter((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
   mainWinCoordinates = win.getPosition().concat(win.getSize());
   mainWinMidpoint = [mainWinCoordinates[0] + (mainWinCoordinates[2] / 2), mainWinCoordinates[1] + (mainWinCoordinates[3] / 2)];
   otherScreens = displays.filter(screen => !(mainWinMidpoint[0] >= screen.bounds.x && mainWinMidpoint[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinMidpoint[1] >= screen.bounds.y && mainWinMidpoint[1] < (screen.bounds.y + screen.bounds.height)));
-  console.log(displays);
-  console.log(externalDisplays);
-  console.log(mainWinCoordinates, mainWinMidpoint);
-  console.log(otherScreens);
 }
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -159,13 +173,13 @@ if (!gotTheLock) {
     }
   });
   ipcMain.on("toggleMediaWindowFocus", () => {
-    if (mediaWin.isVisible()) {
-      mediaWin.hide();
+    if (mediaWin.getOpacity() > 0) {
+      fadeWindow(mediaWin, "out");
     } else {
       getScreenInfo();
       if (externalDisplays.length > 0) win.setPosition(otherScreens[otherScreens.length - 1].bounds.x + 50, otherScreens[otherScreens.length - 1].bounds.y + 50);
       mediaWin.setFullScreen(externalDisplays.length > 0);
-      mediaWin.show();
+      fadeWindow(mediaWin, "in");
     }
   });
   autoUpdater.on("error", () => {

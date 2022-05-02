@@ -2235,7 +2235,9 @@ require("electron").ipcRenderer.on("videoPaused", () => {
 });
 $("#staticBackdrop").on("click", "#btnToggleMediaWindowFocus", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
-  $(this).toggleClass("btn-primary btn-warning pulse-danger").find(".fa-stack-2x").toggleClass("fas far fa-circle fa-ban text-danger");
+});
+require("electron").ipcRenderer.on("mediaWindowVisibilityChanged", (event, status) => {
+  $("#btnToggleMediaWindowFocus").toggleClass("btn-warning", status !== "hidden").toggleClass("btn-primary pulse-danger", status == "hidden").find(".fa-stack-2x").toggleClass("fas fa-ban text-danger", status !== "hidden").toggleClass("far fa-circle", status == "hidden");
 });
 $("#staticBackdrop").on("input change", "#videoScrubber", function() {
   require("electron").ipcRenderer.send("videoScrub", $(this).val());
