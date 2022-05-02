@@ -1416,7 +1416,7 @@ async function setMediaLang() {
       $("#songPicker").empty();
       for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4"))) {
         $("#songPicker").append($("<option>", {
-          value: sjj.url,
+          value: sjj.track,
           text: sjj.title,
           "data-thumbnail": sjj.trackImage
         }));
@@ -2199,7 +2199,6 @@ $("#btnForcedPrefs").on("click", () => {
     html += "<p>" + i18n.__("settingsLockedExplain") + "</p>";
     html += "<div id='forcedPrefs' class='card'><div class='card-body'>";
     for (var pref of Object.keys(prefs).filter(pref => !pref.startsWith("congServer") && !pref.startsWith("auto") && !pref.startsWith("local") && !pref.includes("UpdatedLast") && !pref.includes("disableHardwareAcceleration")).sort((a, b) => a[0].localeCompare(b[0]))) {
-      console.log(pref, pref.toLowerCase(), pref.toLowerCase().includes("password"));
       html += "<div class='form-check form-switch'><input class='form-check-input' type='checkbox' id='forcedPref-" + pref + "' " + (pref in currentForcedPrefs ? "checked" : "") + "> <label class='form-check-label' for='forcedPref-" + pref + "'><code class='badge bg-info text-dark prefName' title='\"" + $("#" + pref).closest(".row").find("label").first().find("span").last().html() + "\"' data-bs-toggle='tooltip' data-bs-html='true'>" + pref + "</code> <code class='badge bg-secondary'>" + (pref.toLowerCase().includes("password") ? "********" : prefs[pref]) + "</code></label></div>";
     }
     html += "</div></div>";
@@ -2443,12 +2442,15 @@ $("#btnUpload").on("click", async () => {
     $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled").addClass("disabled-while-load").prop("disabled", true);
     if (!webdavIsAGo) mkdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
     if ($("input#typeSong:checked").length > 0) {
-      let songFile = new Buffer((await request($("#fileToUpload").val(), {isFile: true})).data);
-      let songFileName = sanitizeFilename(getPrefix() + " - " + $("#songPicker option:selected").text() + ".mp4");
-      if (!webdavIsAGo) {
-        fs.writeFileSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName"), songFileName), songFile);
-      } else {
-        await webdavPut(songFile, path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), songFileName);
+      let songFiles = await getMediaLinks("sjjm", $("#fileToUpload").val(), null, "MP4");
+      if (songFiles.length > 0) {
+        let songFile = await downloadIfRequired(songFiles[0]);
+        let songFileName = sanitizeFilename(getPrefix() + " - Song " + $("#songPicker option:selected").text() + ".mp4");
+        if (!webdavIsAGo) {
+          fs.copyFileSync(songFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), songFileName));
+        } else {
+          await webdavPut(fs.readFileSync(songFile), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), songFileName);
+        }
       }
     } else if ($("input#typeJwpub:checked").length > 0) {
       for (var tempMedia of tempMediaArray) {
