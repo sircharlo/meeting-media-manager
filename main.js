@@ -23,6 +23,9 @@ var win = null,
   mediaWin = null,
   displays = null,
   externalDisplays = null,
+  mainWinCoordinates = null,
+  mainWinMidpoint = null,
+  otherScreens = null,
   authorizedCloseMediaWin = false;
 remote.initialize();
 function createUpdateWindow() {
@@ -48,6 +51,17 @@ function createUpdateWindow() {
   win.setMenuBarVisibility(false);
   win.loadFile("index.html");
   if (!app.isPackaged) win.webContents.openDevTools();
+}
+function getScreenInfo() {
+  displays = screen.getAllDisplays();
+  externalDisplays = displays.filter((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
+  mainWinCoordinates = win.getPosition().concat(win.getSize());
+  mainWinMidpoint = [mainWinCoordinates[0] + (mainWinCoordinates[2] / 2), mainWinCoordinates[1] + (mainWinCoordinates[3] / 2)];
+  otherScreens = displays.filter(screen => !(mainWinMidpoint[0] >= screen.bounds.x && mainWinMidpoint[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinMidpoint[1] >= screen.bounds.y && mainWinMidpoint[1] < (screen.bounds.y + screen.bounds.height)));
+  console.log(displays);
+  console.log(externalDisplays);
+  console.log(mainWinCoordinates, mainWinMidpoint);
+  console.log(otherScreens);
 }
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -98,8 +112,7 @@ if (!gotTheLock) {
     mediaWin.webContents.send("startMediaDisplay", prefsFile);
   });
   ipcMain.on("showMediaWindow", () => {
-    let mainWinPosition = win.getPosition();
-    let otherScreens = displays.filter(screen => !(mainWinPosition[0] >= screen.bounds.x && mainWinPosition[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinPosition[1] >= screen.bounds.y && mainWinPosition[1] < (screen.bounds.y + screen.bounds.height)));
+    getScreenInfo();
     if (!mediaWin) {
       let windowOptions = {
         title: "Media Window",
@@ -149,6 +162,9 @@ if (!gotTheLock) {
     if (mediaWin.isVisible()) {
       mediaWin.hide();
     } else {
+      getScreenInfo();
+      if (externalDisplays.length > 0) win.setPosition(otherScreens[otherScreens.length - 1].bounds.x + 50, otherScreens[otherScreens.length - 1].bounds.y + 50);
+      mediaWin.setFullScreen(externalDisplays.length > 0);
       mediaWin.show();
     }
   });
@@ -176,8 +192,6 @@ if (!gotTheLock) {
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
-    displays = screen.getAllDisplays();
-    externalDisplays = displays.filter((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
     createUpdateWindow();
   });
   app.on("window-all-closed", () => {
