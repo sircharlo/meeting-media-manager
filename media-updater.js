@@ -840,7 +840,7 @@ async function getInitialData() {
   await webdavSetup();
   let configIsValid = validateConfig();
   await obsGetScenes();
-  $("#version").html("JWMMF " + escape(currentAppVersion));
+  $("#version").html("JWMMF " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
   congregationSelectPopulate();
   $("#baseDate .dropdown-menu").empty();
