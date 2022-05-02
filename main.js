@@ -177,7 +177,7 @@ if (!gotTheLock) {
       fadeWindow(mediaWin, "out");
     } else {
       getScreenInfo();
-      if (externalDisplays.length > 0) win.setPosition(otherScreens[otherScreens.length - 1].bounds.x + 50, otherScreens[otherScreens.length - 1].bounds.y + 50);
+      if (externalDisplays.length > 0) mediaWin.setPosition(otherScreens[otherScreens.length - 1].bounds.x + 50, otherScreens[otherScreens.length - 1].bounds.y + 50);
       mediaWin.setFullScreen(externalDisplays.length > 0);
       fadeWindow(mediaWin, "in");
     }
