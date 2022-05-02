@@ -1203,7 +1203,7 @@ async function obsGetScenes(force, currentOnly) {
         }));
       });
       for (var pref of ["obsCameraScene", "obsMediaScene"]) {
-        if ($("#" + pref + " option[value=" + prefs[pref] + "]").length == 0) {
+        if ($("#" + pref + " option[value='" + prefs[pref] + "']").length == 0) {
           prefs[pref] = null;
           validateConfig();
         } else {
@@ -1287,7 +1287,7 @@ function prefsInitialize() {
     $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
-    $("#" + radioSel + " input[value=" + prefs[radioSel] + "]").prop("checked", true);
+    $("#" + radioSel + " input[value='" + prefs[radioSel] + "']").prop("checked", true);
   }
 }
 function progressSet(current, total, blockId) {
