@@ -1215,7 +1215,7 @@ async function obsGetScenes(force, currentOnly) {
             $("#" + pref).val(prefs[pref]);
           }
         }
-        $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'><option value='' hidden></option></select>");
+        $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'></select>");
         $("#obsCameraScene").children().clone().filter(function (i, el) {
           return $(el).val() !== prefs.obsMediaScene;
         }).appendTo("#obsTempCameraScene");
@@ -2343,7 +2343,7 @@ $("#staticBackdrop .modal-footer").on("click", "button.closeModal.confirmed", fu
   $("#actionButtons").append($("#btnMeetingMusic, #btnStopMeetingMusic").removeClass("btn-lg"));
 });
 $("#staticBackdrop .modal-footer").on("change", "#obsTempCameraScene", async function() {
-  if ((await obsGetScenes(false, true)).name !== prefs.obsMediaScene) obsSetScene($(this).val());
+  if ((await obsGetScenes(false, true)) !== prefs.obsMediaScene) obsSetScene($(this).val());
 });
 $("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function() {
   refreshFolderListing(path.join(paths.media, $(".modal-header h5").text()));
