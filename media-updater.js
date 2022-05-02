@@ -1167,60 +1167,73 @@ function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, 
   }
 }
 async function obsConnect(force) {
-  if (!prefs.enableObs && obs._connected) {
-    await obs.disconnect();
-    log.info("OBS disconnected.");
-    obs = {};
-  } else if ((!obs._connected || force) && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
-    obs = new OBSWebSocket();
-    await obs.connect({ address: "localhost:" + prefs.obsPort, password: prefs.obsPassword }).then(() => {
-      log.info("OBS success! Connected & authenticated.");
-      $(".relatedToObsLogin input").removeClass("is-invalid").addClass("is-valid");
+  try {
+    if (!prefs.enableObs && obs._connected) {
+      await obs.disconnect();
+      log.info("OBS disconnected.");
+      obs = {};
+    } else if ((!obs._connected || force) && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
+      obs = new OBSWebSocket();
+      await obs.connect({ address: "localhost:" + prefs.obsPort, password: prefs.obsPassword }).then(() => {
+        log.info("OBS success! Connected & authenticated.");
+        $(".relatedToObsLogin input").removeClass("is-invalid").addClass("is-valid");
 
-    }).catch(err => {
-      notifyUser("error", "errorObs", null, false, err);
-      $(".relatedToObsLogin input").removeClass("is-valid").addClass("is-invalid");
-    });
-    obs.on("error", err => {
-      notifyUser("error", "errorObs", null, false, err);
-    });
+      }).catch(err => {
+        notifyUser("error", "errorObs", null, false, err);
+        $(".relatedToObsLogin input").removeClass("is-valid").addClass("is-invalid");
+      });
+      obs.on("error", err => {
+        notifyUser("error", "errorObs", null, false, err);
+      });
+    }
+  } catch (err) {
+    notifyUser("error", "errorObs", null, false, err);
   }
   return !!obs._connected;
 }
 async function obsGetScenes(force, currentOnly) {
-  let connectionAttempt = await obsConnect(force);
-  $(".relatedToObsScenes").toggle(connectionAttempt);
-  return (connectionAttempt ? await obs.send("GetSceneList").then(data => {
-    if (currentOnly) {
-      return data.currentScene;
-    } else {
-      $("#overlaySettings .obs-scenes .loaded-scene").remove();
-      data.scenes.map(scene => scene.name).sort().forEach(scene => {
-        $("#overlaySettings .obs-scenes").append($("<option>", {
-          class: "loaded-scene",
-          text: scene,
-          value: scene
-        }));
-      });
-      for (var pref of ["obsCameraScene", "obsMediaScene"]) {
-        if ($("#" + pref + " option[value='" + prefs[pref] + "']").length == 0) {
-          prefs[pref] = null;
-          validateConfig();
-        } else {
-          $("#" + pref).val(prefs[pref]);
+  try {
+    let connectionAttempt = await obsConnect(force);
+    $(".relatedToObsScenes").toggle(connectionAttempt);
+    return (connectionAttempt ? await obs.send("GetSceneList").then(data => {
+      if (currentOnly) {
+        return data.currentScene;
+      } else {
+        $("#overlaySettings .obs-scenes .loaded-scene").remove();
+        data.scenes.map(scene => scene.name).sort().forEach(scene => {
+          $("#overlaySettings .obs-scenes").append($("<option>", {
+            class: "loaded-scene",
+            text: scene,
+            value: scene
+          }));
+        });
+        for (var pref of ["obsCameraScene", "obsMediaScene"]) {
+          if ($("#" + pref + " option[value='" + prefs[pref] + "']").length == 0) {
+            prefs[pref] = null;
+            validateConfig();
+          } else {
+            $("#" + pref).val(prefs[pref]);
+          }
         }
+        $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'><option value='' hidden></option></select>");
+        $("#obsCameraScene").children().clone().filter(function (i, el) {
+          return $(el).val() !== prefs.obsMediaScene;
+        }).appendTo("#obsTempCameraScene");
+        $("#obsTempCameraScene").val(prefs.obsCameraScene);
+        return data;
       }
-      $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'><option value='' hidden></option></select>");
-      $("#obsCameraScene").children().clone().filter(function (i, el) {
-        return $(el).val() !== prefs.obsMediaScene;
-      }).appendTo("#obsTempCameraScene");
-      $("#obsTempCameraScene").val(prefs.obsCameraScene);
-      return data;
-    }
-  }) : false);
+    }) : false);
+  } catch (err) {
+    notifyUser("error", "errorObs", null, false, err);
+    return false;
+  }
 }
 async function obsSetScene(scene) {
-  if (await obsConnect()) obs.send("SetCurrentScene", { "scene-name": scene });
+  try {
+    if (await obsConnect()) obs.send("SetCurrentScene", { "scene-name": scene });
+  } catch (err) {
+    notifyUser("error", "errorObs", null, false, err);
+  }
 }
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
