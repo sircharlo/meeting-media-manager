@@ -2279,6 +2279,7 @@ $("#btnMediaWindow").on("click", function() {
       $("#folderListing .item").removeClass("list-group-item-primary");
       $("#btnToggleMediaWindowFocus.hidden").click();
       require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
+      $("#btnToggleMediaWindowFocus.pulse-danger").click();
       obsSetScene(prefs.obsMediaScene);
       if (mediaItem.hasClass("video")) {
         mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
