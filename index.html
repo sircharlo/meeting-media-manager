@@ -570,7 +570,10 @@
               <div class="align-items-center g-1 py-1 row">
                 <label for="localOutputPath" class="col-5 text-start"><span data-i18n-string="mediaSaveFolder"></span></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="localOutputPath" required />
+                  <div class="input-group">
+                    <button type="button" id="localOutputPathButton" class="btn btn-sm btn-primary"><span data-i18n-string="browse"></span></button>
+                    <input type="text" class="form-control form-control-sm" id="localOutputPath" disabled="disabled" />
+                  </div>
                 </div>
               </div>
               <hr class="my-2" />

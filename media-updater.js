@@ -2602,10 +2602,6 @@ $("#mediaSync").on("click", async function() {
     $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown:not(.music-playing)").prop("disabled", false);
   }
 });
-$("#localOutputPath").on("mousedown", function(event) {
-  $(this).val(remote.dialog.showOpenDialogSync({ properties: ["openDirectory"] })).change();
-  event.preventDefault();
-});
 $("#chooseBackground").on("click", function() {
   let mediaWindowBackground = remote.dialog.showOpenDialogSync({
     properties: ["openFile"]
@@ -2743,12 +2739,12 @@ $("#overlayUploadFile").on("change", ".enterPrefixInput, #fileToUpload", functio
   updateFileList();
 });
 $("#overlayUploadFile").on("keyup", ".enterPrefixInput", getPrefix);
-$("#overlayUploadFile").on("mousedown", "#filePicker, #jwpubPicker", function() {
+$("body").on("mousedown", "#filePicker, #jwpubPicker, #localOutputPath", function() {
   $(this).prev("button").click();
 });
-$("#overlayUploadFile").on("click", "#filePickerButton, #jwpubPickerButton", function() {
+$("body").on("click", "#filePickerButton, #jwpubPickerButton, #localOutputPathButton", function() {
   let options = {
-    properties: ["multiSelections", "openFile"]
+    properties: ($(this).prop("id").includes("localOutputPath") ? ["openDirectory"] : ["multiSelections", "openFile"])
   };
   if ($(this).prop("id").includes("jwpub")) options = {
     filters: [
@@ -2756,7 +2752,7 @@ $("#overlayUploadFile").on("click", "#filePickerButton, #jwpubPickerButton", fun
     ]
   };
   let path = remote.dialog.showOpenDialogSync(options);
-  $(this).next("input").val((typeof path !== "undefined" ? ($(this).prop("id").includes("file") ? path.join(" -//- ") : path) : "")).change();
+  if (typeof path !== "undefined") $(this).next("input").val($(this).prop("id").includes("file") ? path.join(" -//- ") : path).change();
   event.preventDefault();
 });
 $("#refreshYeartext").on("click", function() {
