@@ -839,6 +839,7 @@ async function getInitialData() {
   await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
+  if (prefs.enableMediaDisplayButton) await startMediaDisplay();
   await obsGetScenes();
   $("#version").html("JWMMF " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
@@ -1172,15 +1173,12 @@ async function obsConnect(force) {
       await obs.disconnect();
       log.info("OBS disconnected.");
       obs = {};
-    } else if ((!obs._connected || force) && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
+    } else if ((!("_connected" in obs) || force) && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
       obs = new OBSWebSocket();
       await obs.connect({ address: "localhost:" + prefs.obsPort, password: prefs.obsPassword }).then(() => {
         log.info("OBS success! Connected & authenticated.");
-        $(".relatedToObsLogin input").removeClass("is-invalid").addClass("is-valid");
-
       }).catch(err => {
         notifyUser("error", "errorObs", null, false, err);
-        $(".relatedToObsLogin input").removeClass("is-valid").addClass("is-invalid");
       });
       obs.on("error", err => {
         notifyUser("error", "errorObs", null, false, err);
@@ -1189,12 +1187,13 @@ async function obsConnect(force) {
   } catch (err) {
     notifyUser("error", "errorObs", null, false, err);
   }
+  $(".relatedToObsScenes").toggle(!!obs._connected);
+  $(".relatedToObsLogin input").toggleClass("is-invalid", !obs._connected).toggleClass("is-valid", !!obs._connected);
   return !!obs._connected;
 }
 async function obsGetScenes(force, currentOnly) {
   try {
     let connectionAttempt = await obsConnect(force);
-    $(".relatedToObsScenes").toggle(connectionAttempt);
     return (connectionAttempt ? await obs.send("GetSceneList").then(data => {
       if (currentOnly) {
         return data.currentScene;
@@ -1219,12 +1218,12 @@ async function obsGetScenes(force, currentOnly) {
         $("#obsCameraScene").children().clone().filter(function (i, el) {
           return $(el).val() !== prefs.obsMediaScene;
         }).appendTo("#obsTempCameraScene");
-        $("#obsTempCameraScene").val(prefs.obsCameraScene);
+        $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene);
         return data;
       }
     }) : false);
   } catch (err) {
-    notifyUser("error", "errorObs", null, false, err);
+    if (obs._connected) notifyUser("error", "errorObs", null, false, err);
     return false;
   }
 }
@@ -1232,7 +1231,7 @@ async function obsSetScene(scene) {
   try {
     if (await obsConnect()) obs.send("SetCurrentScene", { "scene-name": scene });
   } catch (err) {
-    notifyUser("error", "errorObs", null, false, err);
+    if (obs._connected) notifyUser("error", "errorObs", null, false, err);
   }
 }
 function overlay(show, topIcon, bottomIcon, action) {
@@ -1456,6 +1455,16 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
     modal.hide();
   }
 }
+async function startMediaDisplay() {
+  remote.globalShortcut.register("Alt+Z", () => {
+    $("#btnToggleMediaWindowFocus").click();
+  });
+  require("electron").ipcRenderer.send("showMediaWindow");
+  await obsSetScene(prefs.obsCameraScene);
+  await getRemoteYearText().finally(async () => {
+    require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
+  });
+}
 async function startMediaSync(isDryrun, meetingFilter) {
   perf("total", "start");
   dryrun = !!isDryrun;
@@ -1503,6 +1512,10 @@ async function startMediaSync(isDryrun, meetingFilter) {
   $(".alertIndicators.disabledWhileSyncing").removeClass("disabledWhileSyncing disabled");
   perf("total", "stop");
   perfPrint();
+}
+function stopMediaDisplay() {
+  require("electron").ipcRenderer.send("hideMediaWindow");
+  remote.globalShortcut.unregister("Alt+Z");
 }
 async function syncCongMedia() {
   let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, "YYYY-MM-DD").isValid() && dayjs(key, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
@@ -1873,15 +1886,17 @@ function validateConfig(changed, restart) {
   } else {
     remote.globalShortcut.unregister("Alt+B");
   }
-  $("#btnMediaWindow").toggle(!!prefs.enableMediaDisplayButton);
+  $("#btnMediaWindow, #btnToggleMediaWindowFocus").toggle(!!prefs.enableMediaDisplayButton);
   if (prefs.enableMediaDisplayButton) {
     remote.globalShortcut.register("Alt+D", () => {
-      if ($("#btnToggleMediaWindowFocus:visible").length == 0) $("#btnMediaWindow:visible").click();
+      if ($("#staticBackdrop:visible").length == 0) $("#btnMediaWindow:visible").click();
     });
+    refreshBackgroundImagePreview();
+    startMediaDisplay();
   } else {
     remote.globalShortcut.unregister("Alt+D");
+    stopMediaDisplay();
   }
-  if (prefs.enableMediaDisplayButton) refreshBackgroundImagePreview();
   $("#currentMediaBackground").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
   $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
   $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
@@ -2233,7 +2248,7 @@ require("electron").ipcRenderer.on("videoEnd", () => {
 require("electron").ipcRenderer.on("videoPaused", () => {
   $("#videoProgress").closest(".item").find("button.pausePlay").click();
 });
-$("#staticBackdrop").on("click", "#btnToggleMediaWindowFocus", function() {
+$("#btnToggleMediaWindowFocus").on("click", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
 });
 require("electron").ipcRenderer.on("mediaWindowVisibilityChanged", (event, status) => {
@@ -2243,15 +2258,8 @@ $("#staticBackdrop").on("input change", "#videoScrubber", function() {
   require("electron").ipcRenderer.send("videoScrub", $(this).val());
 });
 $("#btnMediaWindow").on("click", function() {
-  remote.globalShortcut.register("Alt+Z", () => {
-    $("#btnToggleMediaWindowFocus:visible").click();
-  });
+  require("electron").ipcRenderer.send("preventQuit");
   setVars();
-  require("electron").ipcRenderer.send("showMediaWindow");
-  getRemoteYearText().finally(async () => {
-    require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
-    if (await obsGetScenes()) await obsSetScene(prefs.obsCameraScene);
-  });
   let folderListing = listMediaFolders();
   $(folderListing).on("click", "button.folder", function() {
     refreshFolderListing($(this).data("folder"));
@@ -2317,30 +2325,22 @@ $("#btnMediaWindow").on("click", function() {
     }
   });
   showModal(true, true, i18n.__("meeting"), folderListing, false);
+  obsGetScenes();
   $("#staticBackdrop .modal-header").addClass("d-flex").children().wrapAll("<div class='col-4 text-center'></div>");
   $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only' style='display: none;'></div>");
   $("#staticBackdrop .modal-header").append("<div class='col-4 for-folder-listing-only text-end' style='display: none;'><button class='btn btn-sm folderRefresh'><i class='fas fa-rotate-right'></i></button><button class='btn btn-sm folderOpen'><i class='fas fa-folder-open'></i></button></div>");
   $(folderListing).find(".thatsToday").click();
-  $("#staticBackdrop .modal-footer").html($("<div class='left d-flex flex-fill text-start'></div><div class='right text-end'><button type='button' id='btnToggleMediaWindowFocus' class='btn btn-warning mx-2' title='Alt+Z'><span class='fa-stack'><i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i></span></button><button type='button' class='closeModal btn btn-warning' data-bs-trigger='manual'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
+  $("#staticBackdrop .modal-footer").html($("<div class='left d-flex flex-fill text-start'></div><div class='right text-end'><button type='button' class='closeModal btn btn-warning' data-bs-trigger='manual'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic").addClass("btn-lg"));
+  $("#staticBackdrop .modal-footer .right").prepend($("#btnToggleMediaWindowFocus").removeClass("btn-sm"));
   $("#staticBackdrop .modal-footer").show();
 });
-$("#staticBackdrop .modal-footer").on("click", "button.closeModal:not(.confirmed)", async function() {
-  $(this).addClass("confirmed btn-danger").tooltip({
-    title: i18n.__("clickAgain"),
-    trigger: "manual",
-    placement: "left"
-  }).tooltip("show");
-  await delay(3);
-  $(this).removeClass("confirmed btn-danger").tooltip("dispose");
-});
-$("#staticBackdrop .modal-footer").on("click", "button.closeModal.confirmed", function() {
-  require("electron").ipcRenderer.send("hideMediaWindow");
+$("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
   obs = {};
-  remote.globalShortcut.unregister("Alt+Z");
+  require("electron").ipcRenderer.send("allowQuit");
+  $("#music-buttons").append($("#btnMeetingMusic, #btnStopMeetingMusic").removeClass("btn-lg"));
+  $("#btnMediaWindow").before($("#btnToggleMediaWindowFocus").addClass("btn-sm"));
   showModal(false);
-  $(this).removeClass("confirmed btn-danger").tooltip("dispose");
-  $("#actionButtons").append($("#btnMeetingMusic, #btnStopMeetingMusic").removeClass("btn-lg"));
 });
 $("#staticBackdrop .modal-footer").on("change", "#obsTempCameraScene", async function() {
   if ((await obsGetScenes(false, true)) !== prefs.obsMediaScene) obsSetScene($(this).val());

@@ -22,6 +22,7 @@ try {
 var win = null,
   mediaWin = null,
   displays = null,
+  dontClose = false,
   externalDisplays = null,
   mainWinCoordinates = null,
   mainWinMidpoint = null,
@@ -42,9 +43,11 @@ function createUpdateWindow() {
     title: "JW Meeting Media Fetcher"
   });
   win.on("close", (e) => {
-    if (mediaWin) {
+    if (dontClose) {
       e.preventDefault();
       win.webContents.send("notifyUser", ["warn", "cantCloseMediaWindowOpen"]);
+    } else if (mediaWin) {
+      mediaWin.destroy();
     }
   });
   remote.enable(win.webContents);
@@ -122,6 +125,12 @@ if (!gotTheLock) {
   ipcMain.on("videoScrub", (event, timeAsPercent) => {
     mediaWin.webContents.send("videoScrub", timeAsPercent);
   });
+  ipcMain.on("preventQuit", () => {
+    dontClose = true;
+  });
+  ipcMain.on("allowQuit", () => {
+    dontClose = false;
+  });
   ipcMain.on("startMediaDisplay", (event, prefsFile) => {
     mediaWin.webContents.send("startMediaDisplay", prefsFile);
   });
@@ -158,10 +167,7 @@ if (!gotTheLock) {
       mediaWin.loadFile("mediaViewer.html");
       if (!app.isPackaged) mediaWin.webContents.openDevTools();
       mediaWin.on("close", (e) => {
-        if (!authorizedCloseMediaWin) {
-          e.preventDefault();
-          win.webContents.send("notifyUser", ["warn", "cantCloseMediaWindowOpen"]);
-        }
+        if (!authorizedCloseMediaWin) e.preventDefault();
       }).on("will-resize", () => {
         mediaWin.webContents.send("windowResizing", mediaWin.getSize());
       }).on("resized", () => {

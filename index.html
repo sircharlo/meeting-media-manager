@@ -964,7 +964,7 @@
       </div>
     </div>
     <div class="align-items-center d-flex py-3 justify-content-center">
-      <div id="actionButtons" class="col-3 text-start">
+      <div id="music-buttons" class="col-4 text-start">
         <button type="button" class="btn btn-info" id="btnMeetingMusic" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-music"></i> <i class="fa-solid fa-shuffle"></i>
         </button>
@@ -972,7 +972,7 @@
           <i class="fas fa-fw fa-stop"></i> <span id="musicRemaining"></span>
         </button>
       </div>
-      <div class="col-6 text-center">
+      <div class="col-4 text-center">
         <div class="btn-group" id="baseDate">
           <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown">
           </button>
@@ -980,11 +980,14 @@
           </div>
         </div>
       </div>
-      <div class="col-3 text-end">
-        <button type="button" class="btn btn-primary" id="btnMediaWindow" title="Alt+D" style="display: none;">
-          <i class="fas fa-fw fa-play"></i>
-        </button>
-        <button class="btn btn-dark position-relative" id="btn-settings">
+      <div id="control-buttons" class="col-4 text-end">
+        <button type='button' id='btnToggleMediaWindowFocus' class='btn btn-sm btn-warning me-2' title='Alt+Z' style="display: none;">
+          <span class='fa-stack'>
+            <i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i>
+          </span>
+        </button><button type="button" class="btn btn-primary me-2" id="btnMediaWindow" title="Alt+D" style="display: none;">
+          <i class="fas fa-fw fa-play"></i> <i class="fas fa-sliders"></i>
+        </button><button class="btn btn-dark position-relative" id="btn-settings">
           <i class="fas fa-fw fa-user-cog"></i>
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="bg-mac-update" style="display: none;">
             <i class="fas fa-fw fa-exclamation-triangle"></i>
