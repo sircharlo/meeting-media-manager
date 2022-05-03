@@ -1129,7 +1129,7 @@ async function mp4Convert() {
   var filesToProcess = glob.sync(path.join(paths.media, "*"), {
     onlyDirectories: true
   }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, "YYYY-MM-DD").isValid() && dayjs(folder, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, "YYYY-MM-DD"))).map(folder => glob.sync(path.join(paths.media, folder, "*"), {
-    ignore: ["*.mp4", "*.xspf"]
+    ignore: ["!**/(*.mp4|*.xspf)"]
   })).flat();
   totals.mp4Convert = {
     total: filesToProcess.length,
