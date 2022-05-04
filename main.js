@@ -40,6 +40,7 @@ function createUpdateWindow() {
     height: 700,
     minWidth: 700,
     minHeight: 700,
+    icon: "build/icon.ico",
     title: "JW Meeting Media Fetcher"
   });
   win.on("close", (e) => {
@@ -139,6 +140,7 @@ if (!gotTheLock) {
     if (!mediaWin) {
       let windowOptions = {
         title: "Media Window",
+        icon: "build/video-player.ico",
         frame: !externalDisplays,
         webPreferences: {
           backgroundThrottling: false,
