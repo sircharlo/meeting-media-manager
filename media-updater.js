@@ -2451,10 +2451,11 @@ $("[data-settingslink]").on("click", function() {
 $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
   clearTimeout(pendingMusicFadeOut.id);
   $("#btnStopMeetingMusic").toggleClass("btn-warning btn-danger").prop("disabled", true);
+  $("#musicRemaining").hide();
   $("#meetingMusic").animate({volume: 0}, fadeDelay * (pendingMusicFadeOut.autoStop ? 50 : 10), () => {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
-    $("#musicRemaining").empty();
+    $("#musicRemaining").empty().show();
     if (prefs.enableMusicButton) $("#btnMeetingMusic").attr("title", "Alt+K").show();
     $("#congregationSelect-dropdown").removeClass("music-playing");
     $("#congregationSelect-dropdown:not(.sync-started)").prop("disabled", false);
