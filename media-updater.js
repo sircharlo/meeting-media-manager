@@ -541,7 +541,7 @@ const delay = s => new Promise(res => {
 });
 function disableGlobalPref([pref, value]) {
   let row = $("#" + pref).closest("div.row");
-  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black i18n-title' data-bs-toggle='tooltip'><i class='fa-lock fas'></i></span>"));
+  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black'><i class='fa-lock fas'></i></span>"));
   row.addClass("text-muted disabled").tooltip({
     title: i18n.__("settingLocked")
   }).find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
@@ -988,7 +988,7 @@ function setAppLang() {
     $("[data-i18n-string]").each(function() {
       $(this).html(i18n.__($(this).data("i18n-string")));
     });
-    $(".i18n-title").each(() => {
+    $(".row.disabled").each(function() {
       $(this).tooltip("dispose").tooltip({
         title: i18n.__("settingLocked")
       });
