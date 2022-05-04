@@ -57,6 +57,10 @@ function createUpdateWindow() {
   if (!app.isPackaged) win.webContents.openDevTools();
 }
 function fadeWindow(browserWindow, fadeType) {
+  if (fadeType == "in") {
+    win.webContents.send("mediaWindowVisibilityChanged", "shown");
+    browserWindow.focus();
+  }
   let opacity = browserWindow.getOpacity();
   const interval = setInterval(() => {
     let wereDone = (fadeType == "in" ? opacity >= 1 : opacity <= 0);
@@ -65,9 +69,6 @@ function fadeWindow(browserWindow, fadeType) {
       if (fadeType == "out") {
         win.webContents.send("mediaWindowVisibilityChanged", "hidden");
       }
-    }
-    if (fadeType == "in") {
-      win.webContents.send("mediaWindowVisibilityChanged", "shown");
     }
     browserWindow.setOpacity(opacity);
     opacity = opacity + 0.05 * (fadeType == "in" ? 1 : -1);

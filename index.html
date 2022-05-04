@@ -15,7 +15,8 @@
       user-select: none;
     }
 
-    #toastContainer {
+    #toastContainer,
+    .popover {
       z-index: 1100
     }
 
@@ -197,7 +198,7 @@
       text-overflow: ellipsis;
     }
 
-    .file-list li:not(.confirmDelete):hover {
+    .file-list li:not(.confirmed):hover {
       background-color: var(--bs-gray-200);
       color: var(--bs-dark);
     }
@@ -252,7 +253,7 @@
       text-decoration: line-through;
     }
 
-    .confirmDelete {
+    li.confirmed {
       background-color: var(--bs-warning);
       color: var(--bs-danger)
     }
@@ -404,7 +405,7 @@
         background-color: var(--bs-gray-dark);
       }
 
-      .file-list li:not(.confirmDelete):hover {
+      .file-list li:not(.confirmed):hover {
         background-color: var(--bs-gray-200);
       }
 
@@ -517,7 +518,7 @@
     </div>
     <div class="align-items-end py-3 row">
       <div class="col-4 text-start">
-        <button class="btn btn-danger btn-cancel-upload file-selected" type="button">
+        <button class="btn btn-danger btn-cancel-upload file-selected" data-bs-toggle="popover" data-bs-trigger="focus" type="button">
           <i class="fas fa-fw fa-circle-arrow-left"></i>
         </button>
       </div>
@@ -968,7 +969,7 @@
     </div>
     <div class="align-items-center d-flex py-3 justify-content-center">
       <div id="music-buttons" class="col-4 text-start">
-        <button type="button" class="btn btn-info" id="btnMeetingMusic" title="Alt+K" style="display: none;">
+        <button type="button" class="btn btn-info" id="btnMeetingMusic" data-bs-toggle="popover" data-bs-trigger="focus" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-music"></i> <i class="fa-solid fa-shuffle"></i>
         </button>
         <button type="button" class="btn btn-warning" id="btnStopMeetingMusic" title="Alt+K" style="display: none;">

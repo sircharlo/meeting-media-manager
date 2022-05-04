@@ -261,6 +261,11 @@ function congregationChange(prefsFile) {
 }
 function congregationInitialSelector() {
   $(document).ready(function(){
+    $("[data-bs-toggle='popover'][data-bs-trigger='focus']").popover({
+      content: i18n.__("clickAgain")
+    }).on("hidden.bs.popover", function() {
+      unconfirm(this);
+    });
     congregationPrefsPopulate();
     if (paths.congprefs.length > 1) {
       let congregationList = $("<div id='congregationList' class='list-group'>");
@@ -303,9 +308,16 @@ function congregationPrefsPopulate() {
 function congregationSelectPopulate() {
   $("#congregationSelect .dropdown-menu .congregation").remove();
   for (var congregation of paths.congprefs) {
-    $("#congregationSelect .dropdown-menu").prepend("<button class='dropdown-item congregation " + (path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : "") + "' value='" + congregation.path + "'>" + (paths.congprefs.length > 1 ? "<i class='fas fa-square-minus text-warning'></i> " : "") + congregation.name + "</button>");
+    $("#congregationSelect .dropdown-menu").prepend("<button class='dropdown-item congregation " + (path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : "") + "' value='" + congregation.path + "'>" + (paths.congprefs.length > 1 ? "<i role='button' tabindex='0' class='fas fa-square-minus text-warning'></i> " : "") + congregation.name + "</button>");
     if (path.resolve(paths.prefs) == path.resolve(congregation.path)) $("#congregationSelect button.dropdown-toggle").text(congregation.name);
   }
+  $("#congregationSelect .dropdown-menu .dropdown-item .fa-square-minus").popover({
+    content: i18n.__("clickAgain"),
+    container: "body",
+    trigger: "focus"
+  }).on("hidden.bs.popover", function() {
+    unconfirm(this);
+  });
 }
 function convertPdf(mediaFile) {
   return new Promise((resolve)=>{
@@ -1335,12 +1347,17 @@ function refreshFolderListing(folderPath) {
   $("div#folderListing").empty();
   for (var item of glob.sync(path.join(folderPath, "*"))) {
     item = escape(item);
-    let lineItem = $("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/- Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/- Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-lg btn-primary playStop play'><i class='fas fa-fw fa-play'></i></button></div></li>");
+    let lineItem = $("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/- Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/- Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button></div></li>");
     lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMS4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNNDYzLjEgMzJoLTQxNkMyMS40OSAzMi0uMDAwMSA1My40OS0uMDAwMSA4MHYzNTJjMCAyNi41MSAyMS40OSA0OCA0Ny4xIDQ4aDQxNmMyNi41MSAwIDQ4LTIxLjQ5IDQ4LTQ4di0zNTJDNTExLjEgNTMuNDkgNDkwLjUgMzIgNDYzLjEgMzJ6TTExMS4xIDQwOGMwIDQuNDE4LTMuNTgyIDgtOCA4SDU1LjFjLTQuNDE4IDAtOC0zLjU4Mi04LTh2LTQ4YzAtNC40MTggMy41ODItOCA4LThoNDcuMWM0LjQxOCAwIDggMy41ODIgOCA4TDExMS4xIDQwOHpNMTExLjEgMjgwYzAgNC40MTgtMy41ODIgOC04IDhINTUuMWMtNC40MTggMC04LTMuNTgyLTgtOHYtNDhjMC00LjQxOCAzLjU4Mi04IDgtOGg0Ny4xYzQuNDE4IDAgOCAzLjU4MiA4IDhWMjgwek0xMTEuMSAxNTJjMCA0LjQxOC0zLjU4MiA4LTggOEg1NS4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOEwxMTEuMSAxNTJ6TTM1MS4xIDQwMGMwIDguODM2LTcuMTY0IDE2LTE2IDE2SDE3NS4xYy04LjgzNiAwLTE2LTcuMTY0LTE2LTE2di05NmMwLTguODM4IDcuMTY0LTE2IDE2LTE2aDE2MGM4LjgzNiAwIDE2IDcuMTYyIDE2IDE2VjQwMHpNMzUxLjEgMjA4YzAgOC44MzYtNy4xNjQgMTYtMTYgMTZIMTc1LjFjLTguODM2IDAtMTYtNy4xNjQtMTYtMTZ2LTk2YzAtOC44MzggNy4xNjQtMTYgMTYtMTZoMTYwYzguODM2IDAgMTYgNy4xNjIgMTYgMTZWMjA4ek00NjMuMSA0MDhjMCA0LjQxOC0zLjU4MiA4LTggOGgtNDcuMWMtNC40MTggMC03LjEtMy41ODItNy4xLThsMC00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFY0MDh6TTQ2My4xIDI4MGMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYyODB6TTQ2My4xIDE1MmMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04bDAtNDhjMC00LjQxOCAzLjU4Mi04IDcuMS04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYxNTJ6Ii8+PC9zdmc+'") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
       if ($(this)[0].duration) lineItem.find(".time .duration").text(dayjs.duration($(this)[0].duration, "s").format("mm:ss"));
     }).add("<div class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple" ) + "'></i> <span class='current'></span><span class='duration'></span></div>") : "<img class='mx-auto' src='" + url.pathToFileURL(item).href + "' />")));
     if (isVideo(item) || isAudio(item) || isImage(item)) $("div#folderListing").append(lineItem);
   }
+  $("div#folderListing .video .stop").popover({
+    content: i18n.__("clickAgain")
+  }).on("hidden.bs.popover", function() {
+    unconfirm(this);
+  });
 }
 function removeEventListeners() {
   document.removeEventListener("drop", dropHandler);
@@ -1752,7 +1769,13 @@ function updateFileList(initialLoad) {
       let html = $("<li data-bs-toggle='tooltip' " + (file.isNotPresentOnRemote ? "data-isnotpresentonremote='true' " : "") + (file.thumbnail ? "data-thumbnail='" + file.thumbnail + "' " : "") + (file.url ? "data-url='" + file.url + "'": "data-islocal='true'") + " data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
         title: file.safeName
       });
-      if (!file.recurring && ((file.isLocal && !file.newFile) || file.congSpecific)) html.addClass("canDelete").prepend("<i class='fas fa-fw fa-minus-square me-2 text-danger'></i>");
+      if (!file.recurring && ((file.isLocal && !file.newFile) || file.congSpecific)) html.addClass("canDelete").prepend($("<i role='button' tabindex='0' class='fas fa-fw fa-minus-square me-2 text-danger'></i>").popover({
+        content: i18n.__("clickAgain"),
+        container: "body",
+        trigger: "focus"
+      }).on("hidden.bs.popover", function() {
+        unconfirm(this);
+      }));
       if (!file.newFile) {
         if ((file.isLocal || file.congSpecific) && !file.recurring) html.addClass("canMove").find(".infoIcons").append("<i class='fas fa-fw fa-pen me-1'></i>");
         if (!file.isLocal && ((!file.congSpecific && (file.url || file.safeName.includes(" - "))) || file.recurring) && !file.hidden) html.addClass("canHide").prepend("<i class='far fa-fw fa-check-square me-2'></i>");
@@ -1842,6 +1865,14 @@ function updateStatus(icon) {
 function updateTile(tile, color) {
   if (!dryrun) $("#" + tile).removeClass($("#" + tile).attr("class").split(" ").filter(el => el.includes("btn-") && !el.includes("-sm")).join(" ")).addClass("btn-" + color);
 }
+function unconfirm(el) {
+  clearTimeout($(el).data("popover-timeout-id"));
+  let currentDangerClass = $(el).attr("class").split(" ").filter(el => el.includes("-danger"));
+  if ($(el).hasClass("wasWarningBefore")) $(el).addClass(currentDangerClass.join(" ").replace("-danger", "-warning"));
+  let currentColorClasses = $(el).attr("class").split(" ").filter(el => el.includes("-danger") || el.includes("-warning") || el.includes("-primary") || el.includes("-info") || el.includes("-secondary"));
+  if (currentColorClasses.length > 1) $(el).removeClass($(el).hasClass("wasWarningBefore") ? currentDangerClass.join(" ") : "btn-warning");
+  $(el).removeClass("wasWarningBefore confirmed").blur();
+}
 function validateConfig(changed, restart) {
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
@@ -1915,6 +1946,18 @@ function validateConfig(changed, restart) {
     remote.app.exit();
   }
   return configIsValid;
+}
+function waitToConfirm(el) {
+  console.log(el);
+  let currentWarningClass = $(el).attr("class").split(" ").filter(el => el.includes("-warning"));
+  if (currentWarningClass.length > 0) $(el).addClass("wasWarningBefore");
+  if (!$(el).hasClass("confirmed")) {
+    $(el).addClass("confirmed " + (currentWarningClass.length > 0 ? currentWarningClass.join(" ").replace("-warning", "-danger") : "btn-warning"));
+    if (currentWarningClass.length > 0) $(el).removeClass(currentWarningClass.join(" "));
+    $(el).data("popover-timeout-id", setTimeout(function() {
+      unconfirm(el);
+    }, 3000));
+  }
 }
 async function webdavExists(url) {
   return (await webdavStatus(url)) < 400;
@@ -2179,34 +2222,24 @@ $("#congregationSelect").on("click", ".dropdown-item:not(.active)", function() {
 $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function(e) {
   e.stopPropagation();
 });
-$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus:not(.confirmed)", async function() {
-  $(this).addClass("confirmed text-danger").tooltip({
-    title: i18n.__("clickAgain"),
-    trigger: "manual",
-    placement: "left"
-  }).tooltip("show");
-  await delay(3);
-  $(this).removeClass("confirmed text-danger").tooltip("dispose");
+$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function() {
+  if (!$(this).hasClass("confirmed")) {
+    waitToConfirm(this);
+  } else {
+    unconfirm(this);
+    congregationDelete($(this).closest("button").val());
+  }
 });
-$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus.confirmed", function() {
-  $(this).tooltip("dispose");
-  congregationDelete($(this).closest("button").val());
-});
-$("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected:not(.confirmed)", async function() {
-  $(this).toggleClass("btn-warning btn-danger confirmed").tooltip({
-    title: i18n.__("clickAgain"),
-    trigger: "manual",
-    placement: "right"
-  }).tooltip("show");
-  await delay(5);
-  $(this).toggleClass("btn-warning btn-danger confirmed").tooltip("dispose");
-});
-$("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected.confirmed, .btn-cancel-upload.no-file-selected", function() {
-  $(this).tooltip("dispose");
-  if ($(this).hasClass("changes-made")) notifyUser("warn", "dontForgetToGetMedia");
-  toggleScreen("overlayUploadFile");
-  $(".btn-cancel-upload").removeClass("changes-made");
-  removeEventListeners();
+$("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected, .btn-cancel-upload.no-file-selected", function() {
+  if (!$(this).is(".confirmed, .no-file-selected")) {
+    waitToConfirm(this);
+  } else {
+    unconfirm(this);
+    if ($(this).hasClass("changes-made")) notifyUser("warn", "dontForgetToGetMedia");
+    toggleScreen("overlayUploadFile");
+    $(".btn-cancel-upload").removeClass("changes-made");
+    removeEventListeners();
+  }
 });
 $("#btnForcedPrefs").on("click", () => {
   getForcedPrefs().then(currentForcedPrefs => {
@@ -2243,7 +2276,7 @@ require("electron").ipcRenderer.on("videoProgress", (event, stats) => {
   }
 });
 require("electron").ipcRenderer.on("videoEnd", () => {
-  $("#videoProgress").closest(".item").find("button.playStop.stop").addClass("confirmed btn-danger").click();
+  $("#videoProgress").closest(".item").find("button.stop").addClass("confirmed").click();
 });
 require("electron").ipcRenderer.on("videoPaused", () => {
   $("#videoProgress").closest(".item").find("button.pausePlay").click();
@@ -2271,7 +2304,7 @@ $("#btnMediaWindow").on("click", function() {
       require("electron").ipcRenderer.send("playVideo");
     }
     $("#videoProgress, #videoScrubber").toggle();
-    $(this).toggleClass("play pause").find("i").toggleClass("fa-play fa-pause");
+    $(this).toggleClass("play pause").toggleClass("pulse-danger", $(this).hasClass("play")).find("i").toggleClass("fa-play fa-pause");
   });
   $(folderListing).on("mouseenter", "li:not(.list-group-item-primary)", function () {
     $(this).addClass("list-group-item-secondary");
@@ -2279,49 +2312,45 @@ $("#btnMediaWindow").on("click", function() {
   $(folderListing).on("mouseleave", "li:not(.list-group-item-primary)", function () {
     $(this).removeClass("list-group-item-secondary");
   });
-  $(folderListing).on("click", "li.item button.playStop", function() {
-    let triggerButton = $(this),
-      mediaItem = $(this).closest(".item");
-    if (triggerButton.hasClass("play")) {
-      $("#folderListing button.playStop.stop").toggleClass("play stop btn-warning btn-primary").find("i").toggleClass("fa-play fa-stop");
-      $("#folderListing .item").removeClass("list-group-item-primary");
-      $("#btnToggleMediaWindowFocus.hidden").click();
-      require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
-      $("#btnToggleMediaWindowFocus.pulse-danger").click();
-      obsSetScene(prefs.obsMediaScene);
+  $(folderListing).on("click", "li.item button.play:not(.pausePlay)", function() {
+    let mediaItem = $(this).closest(".item");
+    $("#folderListing .item").removeClass("list-group-item-primary");
+    $("#btnToggleMediaWindowFocus.hidden").click();
+    require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
+    $("#btnToggleMediaWindowFocus.pulse-danger").click();
+    obsSetScene(prefs.obsMediaScene);
+    if (mediaItem.hasClass("video")) {
+      mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
+      mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0' min='0' max='100' step='any' />");
+      mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
+      $("#folderListing button.play").prop("disabled", true);
+    }
+    mediaItem.addClass("list-group-item-primary").removeClass("list-group-item-secondary");
+    $("#folderListing button.play").show();
+    $("h5.modal-title button").not($(this)).prop("disabled", true);
+    $("button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", true);
+    $("#folderListing button.stop").hide();
+    $(this).hide();
+    mediaItem.find(".stop").show();
+  });
+  $(folderListing).on("click", "li.item button.stop", function() {
+    let mediaItem = $(this).closest(".item");
+    if (!mediaItem.hasClass("video") || $(this).hasClass("confirmed")) {
+      require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
+      obsSetScene($("#obsTempCameraScene").val());
       if (mediaItem.hasClass("video")) {
-        mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
-        mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0' min='0' max='100' step='any' />");
-        mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
-        $("#folderListing button.playStop.play").not(triggerButton).prop("disabled", true);
+        mediaItem.find("#videoProgress, #videoScrubber").remove();
+        mediaItem.find(".time .current").text("");
+        mediaItem.find(".pausePlay").removeClass("play pulse-danger").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
+        unconfirm(this);
       }
-      triggerButton.toggleClass("play stop btn-primary btn-warning").find("i").toggleClass("fa-play fa-stop");
-      mediaItem.addClass("list-group-item-primary").removeClass("list-group-item-secondary");
-      $("h5.modal-title button").not(triggerButton).prop("disabled", true);
-      $("button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", true);
-    } else if (triggerButton.hasClass("stop")) {
-      if (!mediaItem.hasClass("video") || triggerButton.hasClass("confirmed")) {
-        require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
-        obsSetScene($("#obsTempCameraScene").val());
-        if (mediaItem.hasClass("video")) {
-          mediaItem.find("#videoProgress, #videoScrubber").remove();
-          mediaItem.find(".time .current").text("");
-          mediaItem.find(".pausePlay").removeClass("play").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
-        }
-        triggerButton.toggleClass("play stop btn-primary btn-warning").removeClass("confirmed btn-danger").tooltip("dispose").find("i").toggleClass("fa-play fa-stop");
-        mediaItem.removeClass("list-group-item-primary");
-        $("#folderListing button.playStop.play, button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", false);
-        $("h5.modal-title button").not(triggerButton).prop("disabled", false);
-      } else {
-        triggerButton.addClass("confirmed btn-danger").tooltip({
-          title: i18n.__("clickAgain"),
-          trigger: "manual",
-          placement: "left"
-        }).tooltip("show");
-        setTimeout(() => {
-          triggerButton.removeClass("confirmed btn-danger").tooltip("dispose");
-        }, 3000);
-      }
+      mediaItem.removeClass("list-group-item-primary");
+      $("#folderListing button.play, button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", false);
+      $("#folderListing button.stop").hide();
+      mediaItem.find(".play").show();
+      $("h5.modal-title button").not($(this)).prop("disabled", false);
+    } else {
+      waitToConfirm(this);
     }
   });
   showModal(true, true, i18n.__("meeting"), folderListing, false);
@@ -2351,52 +2380,48 @@ $("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function(
 $("#staticBackdrop .modal-header").on("click", "button.folderOpen", function() {
   shell.openExternal(url.pathToFileURL(path.join(paths.media, $(".modal-header h5").text())).href);
 });
-$("body").on("click", "#btnMeetingMusic:not(.confirmed)", async function() {
-  $(this).attr("title", i18n.__("clickAgain")).addClass("confirmed btn-warning").tooltip({
-    trigger: "manual",
-    placement: "right"
-  }).tooltip("show");
-  await delay(5);
-  $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose");
-});
-$("body").on("click", "#btnMeetingMusic.confirmed", async function() {
-  $(this).attr("title", "Alt+K").removeClass("confirmed btn-warning").tooltip("dispose");
-  $("#congregationSelect-dropdown").addClass("music-playing").prop("disabled", true);
-  if (prefs.enableMusicFadeOut) {
-    let timeBeforeFade;
-    let rightNow = dayjs();
-    if (prefs.musicFadeOutType == "smart") {
-      let nowDay = now.day() == 0 ? 6 : now.day() - 1;
-      if (nowDay == prefs.mwDay || nowDay == prefs.weDay) {
-        let todaysMeetingStartTime = prefs[(nowDay == prefs.mwDay ? "mw" : "we") + "StartTime"].split(":");
-        let timeToStartFading = now.clone().hour(todaysMeetingStartTime[0]).minute(todaysMeetingStartTime[1]).millisecond(rightNow.millisecond()).subtract(prefs.musicFadeOutTime, "s").subtract(fadeDelay * 30, "ms");
-        timeBeforeFade = timeToStartFading.diff(rightNow);
+$("body").on("click", "#btnMeetingMusic", async function() {
+  if (!$(this).hasClass("confirmed")) {
+    waitToConfirm(this);
+  } else {
+    unconfirm(this);
+    $("#congregationSelect-dropdown").addClass("music-playing").prop("disabled", true);
+    if (prefs.enableMusicFadeOut) {
+      let timeBeforeFade;
+      let rightNow = dayjs();
+      if (prefs.musicFadeOutType == "smart") {
+        let nowDay = now.day() == 0 ? 6 : now.day() - 1;
+        if (nowDay == prefs.mwDay || nowDay == prefs.weDay) {
+          let todaysMeetingStartTime = prefs[(nowDay == prefs.mwDay ? "mw" : "we") + "StartTime"].split(":");
+          let timeToStartFading = now.clone().hour(todaysMeetingStartTime[0]).minute(todaysMeetingStartTime[1]).millisecond(rightNow.millisecond()).subtract(prefs.musicFadeOutTime, "s").subtract(fadeDelay * 30, "ms");
+          timeBeforeFade = timeToStartFading.diff(rightNow);
+        }
+      } else {
+        timeBeforeFade = prefs.musicFadeOutTime * 1000 * 60;
+      }
+      if (timeBeforeFade >= 0) {
+        pendingMusicFadeOut.endTime = timeBeforeFade + rightNow.valueOf();
+        pendingMusicFadeOut.id = setTimeout(function () {
+          pendingMusicFadeOut.autoStop = true;
+          $("#btnStopMeetingMusic").click();
+        }, timeBeforeFade);
+      } else {
+        pendingMusicFadeOut.endTime = 0;
       }
     } else {
-      timeBeforeFade = prefs.musicFadeOutTime * 1000 * 60;
+      pendingMusicFadeOut.id = null;
     }
-    if (timeBeforeFade >= 0) {
-      pendingMusicFadeOut.endTime = timeBeforeFade + rightNow.valueOf();
-      pendingMusicFadeOut.id = setTimeout(function () {
-        pendingMusicFadeOut.autoStop = true;
-        $("#btnStopMeetingMusic").click();
-      }, timeBeforeFade);
-    } else {
-      pendingMusicFadeOut.endTime = 0;
-    }
-  } else {
-    pendingMusicFadeOut.id = null;
-  }
-  $("#btnStopMeetingMusic").addClass("initialLoad").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
-  $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
-  setVars();
-  var songs = (jworgIsReachable ? (await getMediaLinks("sjjm", null, null, "MP3")) : glob.sync(path.join(paths.pubs, "sjjm", "**", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
-  if (songs.length > 0) {
-    var iterator = 0;
-    createAudioElem(iterator);
-  } else {
-    $("#btnStopMeetingMusic").removeClass("initialLoad").find("i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin");
+    $("#btnStopMeetingMusic").addClass("initialLoad").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
     $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
+    setVars();
+    var songs = (jworgIsReachable ? (await getMediaLinks("sjjm", null, null, "MP3")) : glob.sync(path.join(paths.pubs, "sjjm", "**", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
+    if (songs.length > 0) {
+      var iterator = 0;
+      createAudioElem(iterator);
+    } else {
+      $("#btnStopMeetingMusic").removeClass("initialLoad").find("i").addClass("fa-stop").removeClass("fa-circle-notch fa-spin");
+      $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
+    }
   }
   async function createAudioElem(iterator) {
     setVars();
@@ -2638,36 +2663,35 @@ $("#overlaySettings").on("click", ".btn-clean-up", function() {
     $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
   }, 3000);
 });
-$("#fileList").on("click", "li:not(.confirmDelete) .fa-minus-square", function() {
-  $(this).closest("li").addClass("confirmDelete");
-  setTimeout(() => {
-    $(".confirmDelete").removeClass("confirmDelete");
-  }, 3000);
-});
-$("#fileList").on("click", "li.confirmDelete:not(.webdavWait) .fa-minus-square", async function() {
-  $(this).closest("li").addClass("webdavWait");
-  let successful = true;
-  if (!webdavIsAGo) {
-    rm(path.join(paths.media, $("#chosenMeetingDay").data("folderName"), $(this).closest("li").data("safename")));
-    $(this).closest("li").removeClass("webdavWait confirmDelete canDelete").data("islocal", "false");
+$("#fileList").on("click", "li:not(.webdavWait) .fa-minus-square", async function() {
+  if (!$(this).hasClass("confirmed")) {
+    waitToConfirm(this);
   } else {
-    successful = await webdavRm($(this).closest("li").data("url"));
-  }
-  if (successful) {
-    if ($(this).closest("li").data("isnotpresentonremote") || $(this).closest("li").data("url") && (!$(this).closest("li").data("islocal") || $(this).closest("li").data("islocal") == false)) {
-      $(this).closest("li").slideUp(fadeDelay, function(){
-        $(this).tooltip("dispose").remove();
-        $("#fileList li").css("width", 100 / Math.ceil($("#fileList li").length / 11) + "%");
-      });
-      meetingMedia[$("#chosenMeetingDay").data("folderName")].splice(meetingMedia[$("#chosenMeetingDay").data("folderName")].findIndex(item => item.media.find(mediaItem => mediaItem.safeName === $(this).closest("li").data("safename"))), 1);
+    unconfirm(this);
+    $(this).closest("li").addClass("webdavWait");
+    let successful = true;
+    if (!webdavIsAGo) {
+      rm(path.join(paths.media, $("#chosenMeetingDay").data("folderName"), $(this).closest("li").data("safename")));
+      $(this).closest("li").removeClass("webdavWait confirmed canDelete").data("islocal", "false");
     } else {
-      $(this).toggleClass("fas fa-minus-square text-danger far fa-check-square").closest("li").toggleClass("canHide");
-      let $this = $(this).closest("li");
-      meetingMedia[$("#chosenMeetingDay").data("folderName")].map(item => {
-        item.media.filter(mediaItem => mediaItem.safeName == $this.data("safename")).map(item => item.isLocal = false);
-      });
+      successful = await webdavRm($(this).closest("li").data("url"));
     }
-    $(".btn-cancel-upload").addClass("changes-made");
+    if (successful) {
+      if ($(this).closest("li").data("isnotpresentonremote") || $(this).closest("li").data("url") && (!$(this).closest("li").data("islocal") || $(this).closest("li").data("islocal") == false)) {
+        $(this).closest("li").slideUp(fadeDelay, function(){
+          $(this).tooltip("dispose").remove();
+          $("#fileList li").css("width", 100 / Math.ceil($("#fileList li").length / 11) + "%");
+        });
+        meetingMedia[$("#chosenMeetingDay").data("folderName")].splice(meetingMedia[$("#chosenMeetingDay").data("folderName")].findIndex(item => item.media.find(mediaItem => mediaItem.safeName === $(this).closest("li").data("safename"))), 1);
+      } else {
+        $(this).toggleClass("fas fa-minus-square text-danger far fa-check-square").closest("li").toggleClass("canHide");
+        let $this = $(this).closest("li");
+        meetingMedia[$("#chosenMeetingDay").data("folderName")].map(item => {
+          item.media.filter(mediaItem => mediaItem.safeName == $this.data("safename")).map(item => item.isLocal = false);
+        });
+      }
+      $(".btn-cancel-upload").addClass("changes-made");
+    }
   }
 });
 $("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
