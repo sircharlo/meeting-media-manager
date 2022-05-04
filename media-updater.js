@@ -85,7 +85,7 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
     let macDownload = latestVersion.assets.find(a => a.name.includes("dmg"));
     notifyUser("info", "updateDownloading", latestVersion.tag_name, false, null);
     let macDownloadPath = path.join(remote.app.getPath("downloads"), macDownload.name);
-    fs.writeFileSync(macDownloadPath, new Buffer((await request(macDownload.browser_download_url, {isFile: true})).data));
+    fs.writeFileSync(macDownloadPath, Buffer.from(new Uint8Array((await request(macDownload.browser_download_url, {isFile: true})).data)));
     await shell.openExternal(url.pathToFileURL(macDownloadPath).href);
     // remote.app.exit();
   } catch(err) {
@@ -353,7 +353,7 @@ function convertPdfPage(mediaFile, pdf, pageNum) {
         canvasContext: ctx,
         viewport: page.getViewport({scale: scale})
       }).promise.then(function() {
-        fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png"), new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+        fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png"), Buffer.string(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
         $("div#pdf").remove();
         resolve();
       });
@@ -376,7 +376,7 @@ function convertSvg(mediaFile) {
       canvasContext.imageSmoothingEnabled = true;
       canvasContext.imageSmoothingQuality = "high";
       canvasContext.drawImage(image, 0, 0);
-      fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png"), new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+      fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png"), Buffer.from(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
       rm(mediaFile);
       $("div#svg").remove();
       return resolve();
@@ -580,7 +580,7 @@ async function downloadIfRequired(file) {
   if (file.downloadRequired) {
     if (path.extname(file.cacheFile) == ".jwpub") rm(file.cacheDir);
     mkdirSync(file.cacheDir);
-    let downloadedFile = new Buffer((await request(file.url, {isFile: true})).data);
+    let downloadedFile = Buffer.from(new Uint8Array((await request(file.url, {isFile: true})).data));
     fs.writeFileSync(file.cacheFile, downloadedFile);
     if (file.folder) {
       mkdirSync(path.join(paths.media, file.folder));
@@ -654,7 +654,7 @@ async function ffmpegSetup() {
     if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
       await rm([path.join(paths.app, "ffmpeg", "zip")]);
       mkdirSync(path.join(paths.app, "ffmpeg", "zip"));
-      fs.writeFileSync(ffmpegZipPath, new Buffer((await request(ffmpegVersion.browser_download_url, {isFile: true})).data));
+      fs.writeFileSync(ffmpegZipPath, Buffer.from( new Uint8Array((await request(ffmpegVersion.browser_download_url, {isFile: true})).data)));
     }
     var zip = new zipper(ffmpegZipPath);
     var zipEntry = zip.getEntries().filter((x) => !x.entryName.includes("MACOSX"))[0];
@@ -1983,7 +1983,7 @@ async function webdavGet(file) {
     perf.mbps = perf.bps / 1000000;
     perf.dir = "down";
     log.debug(perf);
-    fs.writeFileSync(localFile, new Buffer(remoteFile.data));
+    fs.writeFileSync(localFile, Buffer.from(new Uint8Array(remoteFile.data)));
     downloadStat("cong", "live", file);
   } else {
     downloadStat("cong", "cache", file);
@@ -2136,10 +2136,10 @@ async function webdavSetup() {
                 if (remoteMediaWindowBackgrounds.length >0) {
                   let localFile = path.join(paths.app, remoteMediaWindowBackgrounds[0].basename);
                   if (!fs.existsSync(localFile) || !(remoteMediaWindowBackgrounds[0].size == fs.statSync(localFile).size)) {
-                    fs.writeFileSync(localFile, new Buffer((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + remoteMediaWindowBackgrounds[0].filename, {
+                    fs.writeFileSync(localFile, Buffer.from(new Uint8Array((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + remoteMediaWindowBackgrounds[0].filename, {
                       webdav: true,
                       isFile: true
-                    })).data));
+                    })).data)));
                     refreshBackgroundImagePreview();
                   }
                 }
@@ -2480,7 +2480,7 @@ $("#btnUpload").on("click", async () => {
       }
     } else if ($("input#typeJwpub:checked").length > 0) {
       for (var tempMedia of tempMediaArray) {
-        if (tempMedia.url) tempMedia.contents = new Buffer((await request(tempMedia.url, {isFile: true})).data);
+        if (tempMedia.url) tempMedia.contents = Buffer.from(new Uint8Array((await request(tempMedia.url, {isFile: true})).data));
         let jwpubFileName = sanitizeFilename(getPrefix() + " - " + tempMedia.filename);
         if (!webdavIsAGo) {
           if (tempMedia.contents) {
