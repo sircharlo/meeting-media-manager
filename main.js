@@ -21,6 +21,7 @@ try {
 }
 var win = null,
   mediaWin = null,
+  closeAttempts = 0,
   displays = null,
   dontClose = false,
   externalDisplays = null,
@@ -44,9 +45,13 @@ function createUpdateWindow() {
     title: "JW Meeting Media Fetcher"
   });
   win.on("close", (e) => {
-    if (dontClose) {
+    if (dontClose && closeAttempts < 2) {
       e.preventDefault();
       win.webContents.send("notifyUser", ["warn", "cantCloseMediaWindowOpen"]);
+      closeAttempts++;
+      setTimeout(() => {
+        closeAttempts--;
+      }, 10000);
     } else if (mediaWin) {
       mediaWin.destroy();
     }
