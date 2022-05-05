@@ -1,5 +1,3 @@
-// TODO: fix fullscreen opacityy
-
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
