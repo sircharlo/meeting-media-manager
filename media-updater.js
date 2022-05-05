@@ -1,4 +1,4 @@
-// TODO: add "song " when manually uploaded
+// TODO: fix fullscreen opacityy
 
 const fadeDelay = 200,
   aspect = require("aspectratio"),
@@ -1534,6 +1534,34 @@ function stopMediaDisplay() {
   require("electron").ipcRenderer.send("hideMediaWindow");
   remote.globalShortcut.unregister("Alt+Z");
 }
+function stopMeetingMusic() {
+  const clearMusic = () => {
+    $("#meetingMusic").remove();
+    $("#btnStopMeetingMusic").hide().addClass("btn-warning").removeClass("btn-danger stopping");
+    $("#musicRemaining").empty().show();
+    if (prefs.enableMusicButton) $("#btnMeetingMusic").attr("title", "Alt+K").show();
+    $("#congregationSelect-dropdown").removeClass("music-playing");
+    $("#congregationSelect-dropdown:not(.sync-started)").prop("disabled", false);
+    pendingMusicFadeOut = {};
+  };
+  try {
+    clearTimeout(pendingMusicFadeOut.id);
+    $("#btnStopMeetingMusic").removeClass("btn-warning").addClass("btn-danger");
+    $("#musicRemaining").hide();
+    console.log($("#btnStopMeetingMusic").hasClass("stopping"), fadeDelay * (pendingMusicFadeOut.autoStop ? 50 : 10));
+    if ($("#btnStopMeetingMusic").hasClass("stopping")) {
+      clearMusic();
+    } else {
+      $("#btnStopMeetingMusic").addClass("stopping");
+      $("#meetingMusic").stop().animate({volume: 0}, fadeDelay * (pendingMusicFadeOut.autoStop ? 50 : 10), () => {
+        clearMusic();
+      });
+    }
+  } catch (err) {
+    log.error(err);
+    clearMusic();
+  }
+}
 async function syncCongMedia() {
   let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, "YYYY-MM-DD").isValid() && dayjs(key, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
   if (webdavIsAGo) {
@@ -2403,7 +2431,7 @@ $("body").on("click", "#btnMeetingMusic", async function() {
         pendingMusicFadeOut.endTime = timeBeforeFade + rightNow.valueOf();
         pendingMusicFadeOut.id = setTimeout(function () {
           pendingMusicFadeOut.autoStop = true;
-          $("#btnStopMeetingMusic").click();
+          stopMeetingMusic();
         }, timeBeforeFade);
       } else {
         pendingMusicFadeOut.endTime = 0;
@@ -2449,18 +2477,7 @@ $("[data-settingslink]").on("click", function() {
   toggleScreen("overlaySettings", null, $(this).data("settingslink"));
 });
 $("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
-  clearTimeout(pendingMusicFadeOut.id);
-  $("#btnStopMeetingMusic").toggleClass("btn-warning btn-danger").prop("disabled", true);
-  $("#musicRemaining").hide();
-  $("#meetingMusic").animate({volume: 0}, fadeDelay * (pendingMusicFadeOut.autoStop ? 50 : 10), () => {
-    $("#meetingMusic").remove();
-    $("#btnStopMeetingMusic").hide().toggleClass("btn-warning btn-danger").prop("disabled", false);
-    $("#musicRemaining").empty().show();
-    if (prefs.enableMusicButton) $("#btnMeetingMusic").attr("title", "Alt+K").show();
-    $("#congregationSelect-dropdown").removeClass("music-playing");
-    $("#congregationSelect-dropdown:not(.sync-started)").prop("disabled", false);
-  });
-  pendingMusicFadeOut = {};
+  stopMeetingMusic();
 });
 $("#btnUpload").on("click", async () => {
   try {
