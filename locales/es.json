@@ -86,5 +86,8 @@
   "warnSvgConversionFailure": "El siguiente archivo no se reconoció como una ilustración SVG válida:",
   "warnUnknownLastVersion": "No se puede establecer la versión previamente instalada de JWMMF. Suponiendo que la aplicación se acaba de actualizar.",
   "webdavFolder": "Carpeta de sincronización de la congregación",
-  "weMeetingDay": "Reunión de fin de semana"
+  "weMeetingDay": "Reunión de fin de semana",
+  "preferredOutput": "",
+  "window": "",
+  "screen": ""
 }

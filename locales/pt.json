@@ -94,5 +94,8 @@
   "warnSvgConversionFailure": "Esse arquivo não foi reconhecido como uma imagem SVG válida:",
   "warnUnknownLastVersion": "Não foi possível identificar a versão instalada do JWMMF. Provavelmente ele já foi atualizado.",
   "webdavFolder": "Pasta WebDAV",
-  "weMeetingDay": "Reunião de fim de semana"
+  "weMeetingDay": "Reunião de fim de semana",
+  "preferredOutput": "",
+  "window": "",
+  "screen": ""
 }

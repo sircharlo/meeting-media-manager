@@ -74,5 +74,8 @@
   "warnSvgConversionFailure": "Het volgende bestand was niet herkend als een correct SVG plaatje:",
   "warnUnknownLastVersion": "Kon de vorige versie van JWMMF niet ophalen. Ga ervan uit dat de app net geüpdatet is.",
   "webdavFolder": "Gemeente sync folder",
-  "weMeetingDay": "Weekend vergadering"
+  "weMeetingDay": "Weekend vergadering",
+  "preferredOutput": "",
+  "window": "",
+  "screen": ""
 }

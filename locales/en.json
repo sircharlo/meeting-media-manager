@@ -94,5 +94,8 @@
   "warnSvgConversionFailure": "The following file was not recognized as a valid SVG image:",
   "warnUnknownLastVersion": "Unable to establish previously installed version of JWMMF. Assuming app was just updated.",
   "webdavFolder": "Congregation sync folder",
-  "weMeetingDay": "Weekend meeting"
+  "weMeetingDay": "Weekend meeting",
+  "preferredOutput": "Show media presentation window in",
+  "window": "Moveable window",
+  "screen": "Screen"
 }

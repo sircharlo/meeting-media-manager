@@ -94,5 +94,8 @@
   "warnSvgConversionFailure": "Le fichier suivant n'a pu être reconnu comme une image SVG valide:",
   "warnUnknownLastVersion": "Impossible de déterminer la version de JWMMF qui était installée auparavant. Présumons que l'appli vient tout juste d'être mise à jour.",
   "webdavFolder": "Dossier de l'assemblée locale",
-  "weMeetingDay": "Réunion de fin de semaine"
+  "weMeetingDay": "Réunion de fin de semaine",
+  "preferredOutput": "Afficher la fenêtre de présentation des médias sur",
+  "window": "Fenêtre déplaçable",
+  "screen": "Écran"
 }

@@ -88,5 +88,8 @@
   "warnSvgConversionFailure": "Die folgende Datei wurde nicht als gültiges SVG erkannt:",
   "warnUnknownLastVersion": "Die vorher installierte Version von JWMMF konnte nicht ermittelt werden. Wahrscheinlich wurde die Anwendung gerade aktualisiert.",
   "webdavFolder": "Synchronisations-Ordner",
-  "weMeetingDay": "Zusammenkunft unter der Woche"
+  "weMeetingDay": "Zusammenkunft unter der Woche",
+  "preferredOutput": "",
+  "window": "",
+  "screen": ""
 }

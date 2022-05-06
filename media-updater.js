@@ -196,6 +196,7 @@ function goAhead() {
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("congServer")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
+    if ($(this).prop("id") == "preferredOutput") moveMediaWindow();
     if ($(this).prop("id") == "lang" || $(this).prop("id").includes("maxRes")) {
       setVars();
       setMediaLang().finally(() => {
@@ -998,7 +999,7 @@ function getPrefix() {
 }
 function getMediaWindowDestination() {
   let mediaWindowDestination = "window";
-  $("#preferredOutput").hide().find(".display").remove();
+  $("#preferredOutput").closest(".row").hide().find(".display").remove();
   try {
     let screenInfo = require("electron").ipcRenderer.sendSync("getScreenInfo");
     $("#preferredOutput").closest(".row").toggle(screenInfo.otherScreens.length > 0);
@@ -1006,10 +1007,10 @@ function getMediaWindowDestination() {
       $("#preferredOutput").append($("<option />", {
         value: screen.id,
         class: "display",
-        selected: prefs.preferredOutput == screen.id ? "selected" : "",
-        text: (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
+        text: i18n.__("screen") + " " + (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
       }));
     });
+    if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput)
     if (screenInfo.otherScreens.length > 0) {
       if (prefs.preferredOutput !== "window") {
         if (screenInfo.otherScreens.length > 1) {
@@ -1026,7 +1027,6 @@ function getMediaWindowDestination() {
           prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
         }
       }
-      console.log(prefs.preferredOutput);
       mediaWindowDestination = prefs.preferredOutput;
     }
   } catch(err) {
@@ -1048,6 +1048,7 @@ function setAppLang() {
         title: i18n.__("settingLocked")
       });
     });
+    getMediaWindowDestination();
   } catch(err) {
     log.error(err);
   }

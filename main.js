@@ -155,18 +155,17 @@ if (!gotTheLock) {
   ipcMain.on("setMediaWindowDestination", (event, mediaWindowDestination) => {
     try {
       if (mediaWin) {
+        let screenInfo = getScreenInfo();
         if (mediaWindowDestination !== "window") {
-          let screenInfo = getScreenInfo();
           if (screen.getDisplayNearestPoint(screenInfo.mainWinMidpoint).id == screen.getDisplayNearestPoint(mediaWin.getBounds()).id) {
             mediaWin.setBounds(screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds);
           }
           if (!mediaWin.isFullScreen()) mediaWin.setFullScreen(true);
         } else {
-          if (mediaWin.isFullScreen()) {
-            mediaWin.setFullScreen(false);
+          if (screenInfo.otherScreens.length > 0 && screen.getDisplayNearestPoint(mediaWin.getBounds()).id == screen.getDisplayNearestPoint(win.getBounds()).id) mediaWin.setBounds(screenInfo.otherScreens[0].bounds);
+            if (mediaWin.isFullScreen()) mediaWin.setFullScreen(false);
             mediaWin.setSize(1280, 720);
             mediaWin.center();
-          }
         }
         if (!mediaWin.isFocused()) mediaWin.focus();
       }
@@ -203,6 +202,11 @@ if (!gotTheLock) {
       }
       Object.assign(windowOptions, supplementaryOptions);
       mediaWin = new BrowserWindow(windowOptions);
+      if (screenInfo.otherScreens.length > 0 && mediaWindowDestination == "window") {
+        mediaWin.setBounds(screenInfo.otherScreens[0].bounds);
+        mediaWin.setSize(1280, 720);
+        mediaWin.center();
+      }
       mediaWin.setAlwaysOnTop(true, "pop-up-menu");
       mediaWin.setAspectRatio(16/9);
       mediaWin.setMenuBarVisibility(false);
