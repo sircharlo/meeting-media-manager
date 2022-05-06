@@ -203,12 +203,10 @@
     }
     ipcRenderer.on('startMediaDisplay', (event, prefsFile) => {
       let prefs = {};
-      if (fs.existsSync(prefsFile)) {
-        try {
-          prefs = JSON.parse(fs.readFileSync(prefsFile));
-        } catch (err) {
-          console.error("no prefs found!");
-        }
+      try {
+        if (fs.existsSync(prefsFile)) prefs = JSON.parse(fs.readFileSync(prefsFile));
+      } catch (err) {
+        console.error("no prefs found!");
       }
       let mediaWindowBackgroundImages = glob.sync(path.join(remote.app.getPath("userData"), "media-window-background-image*"))
       if (mediaWindowBackgroundImages.length > 0) {

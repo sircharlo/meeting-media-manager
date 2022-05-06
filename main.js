@@ -22,12 +22,7 @@ try {
 var win = null,
   mediaWin = null,
   closeAttempts = 0,
-  displays = null,
   dontClose = false,
-  externalDisplays = null,
-  mainWinCoordinates = null,
-  mainWinMidpoint = null,
-  otherScreens = null,
   authorizedCloseMediaWin = false;
 remote.initialize();
 function createUpdateWindow() {
@@ -43,6 +38,9 @@ function createUpdateWindow() {
     minHeight: 700,
     icon: "build/icon.ico",
     title: "JW Meeting Media Fetcher"
+  });
+  win.on("moved", () => {
+    win.webContents.send("moveMediaWindow");
   });
   win.on("close", (e) => {
     if (dontClose && closeAttempts < 2) {
@@ -76,11 +74,31 @@ function fadeWindow(browserWindow, fadeType) {
   return interval;
 }
 function getScreenInfo() {
-  displays = screen.getAllDisplays();
-  externalDisplays = displays.filter((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
-  mainWinCoordinates = win.getPosition().concat(win.getSize());
-  mainWinMidpoint = [mainWinCoordinates[0] + (mainWinCoordinates[2] / 2), mainWinCoordinates[1] + (mainWinCoordinates[3] / 2)];
-  otherScreens = displays.filter(screen => !(mainWinMidpoint[0] >= screen.bounds.x && mainWinMidpoint[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinMidpoint[1] >= screen.bounds.y && mainWinMidpoint[1] < (screen.bounds.y + screen.bounds.height)));
+  let displays = [],
+    mainWinMidpoint = {};
+  try {
+    let mainWinCoordinates = win.getPosition().concat(win.getSize());
+    mainWinMidpoint = {
+      x: mainWinCoordinates[0] + (mainWinCoordinates[2] / 2),
+      y: mainWinCoordinates[1] + (mainWinCoordinates[3] / 2)
+    };
+    displays = screen.getAllDisplays();
+  } catch(err) {
+    console.error(err);
+  }
+  return {
+    displays: displays,
+    mainWinMidpoint: mainWinMidpoint,
+    otherScreens: displays.filter(display => display.id !== screen.getDisplayNearestPoint(mainWinMidpoint).id)
+  };
+}
+function closeMediaWindow() {
+  if (mediaWin) {
+    authorizedCloseMediaWin = true;
+    mediaWin.close();
+    mediaWin = null;
+    authorizedCloseMediaWin = false;
+  }
 }
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -95,13 +113,11 @@ if (!gotTheLock) {
   ipcMain.on("attemptAutoUpdate", () => {
     autoUpdater.checkForUpdates();
   });
-  ipcMain.on("hideMediaWindow", () => {
-    if (mediaWin) {
-      authorizedCloseMediaWin = true;
-      mediaWin.close();
-      mediaWin = null;
-      authorizedCloseMediaWin = false;
-    }
+  ipcMain.on("closeMediaWindow", () => {
+    closeMediaWindow();
+  });
+  ipcMain.on("getScreenInfo", (event) => {
+    event.returnValue = getScreenInfo();
   });
   ipcMain.on("showMedia", (event, arg) => {
     mediaWin.webContents.send("showMedia", arg);
@@ -136,34 +152,58 @@ if (!gotTheLock) {
   ipcMain.on("startMediaDisplay", (event, prefsFile) => {
     mediaWin.webContents.send("startMediaDisplay", prefsFile);
   });
-  ipcMain.on("showMediaWindow", () => {
-    getScreenInfo();
+  ipcMain.on("setMediaWindowDestination", (event, mediaWindowDestination) => {
+    try {
+      if (mediaWin) {
+        if (mediaWindowDestination !== "window") {
+          let screenInfo = getScreenInfo();
+          if (screen.getDisplayNearestPoint(screenInfo.mainWinMidpoint).id == screen.getDisplayNearestPoint(mediaWin.getBounds()).id) {
+            mediaWin.setBounds(screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds);
+          }
+          if (!mediaWin.isFullScreen()) mediaWin.setFullScreen(true);
+        } else {
+          if (mediaWin.isFullScreen()) {
+            mediaWin.setFullScreen(false);
+            mediaWin.setSize(1280, 720);
+            mediaWin.center();
+          }
+        }
+        if (!mediaWin.isFocused()) mediaWin.focus();
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  });
+  ipcMain.on("showMediaWindow", (event, mediaWindowDestination) => {
+    closeMediaWindow();
     if (!mediaWin) {
+      let screenInfo = getScreenInfo();
       let windowOptions = {
         title: "Media Window",
         icon: "build/video-player.ico",
-        frame: !externalDisplays,
+        frame: false,
         webPreferences: {
           backgroundThrottling: false,
           contextIsolation: false,
           nodeIntegration: true,
         },
         minHeight: 100,
+        alwaysOnTop: true
       };
       let supplementaryOptions = {
         width: 1280,
         height: 720
       };
-      if (externalDisplays.length > 0) {
+      if (mediaWindowDestination !== "window") {
         supplementaryOptions = {
-          x: otherScreens[otherScreens.length - 1].bounds.x + 50,
-          y: otherScreens[otherScreens.length - 1].bounds.y + 50,
+          x: screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds.x + 50,
+          y: screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds.y + 50,
           fullscreen: true
         };
       }
       Object.assign(windowOptions, supplementaryOptions);
       mediaWin = new BrowserWindow(windowOptions);
-      mediaWin.setAlwaysOnTop(true, "screen-saver");
+      mediaWin.setAlwaysOnTop(true, "pop-up-menu");
       mediaWin.setAspectRatio(16/9);
       mediaWin.setMenuBarVisibility(false);
       remote.enable(mediaWin.webContents);
@@ -179,15 +219,13 @@ if (!gotTheLock) {
       mediaWin.on("closed", () => {
         mediaWin = null;
       });
+      win.webContents.send("mediaWindowShown");
     }
   });
   ipcMain.on("toggleMediaWindowFocus", () => {
     if (mediaWin.getOpacity() > 0) {
       fadeWindow(mediaWin, "out");
     } else {
-      getScreenInfo();
-      if (externalDisplays.length > 0) mediaWin.setPosition(otherScreens[otherScreens.length - 1].bounds.x + 50, otherScreens[otherScreens.length - 1].bounds.y + 50);
-      mediaWin.setFullScreen(externalDisplays.length > 0);
       fadeWindow(mediaWin, "in");
     }
   });
@@ -215,6 +253,12 @@ if (!gotTheLock) {
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
+    screen.on("display-removed", () => {
+      win.webContents.send("moveMediaWindow");
+    });
+    screen.on("display-added", () => {
+      win.webContents.send("moveMediaWindow");
+    });
     createUpdateWindow();
   });
   app.on("window-all-closed", () => {

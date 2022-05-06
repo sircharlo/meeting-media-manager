@@ -193,12 +193,13 @@ function goAhead() {
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("congServer")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
-    if ($(this).prop("id") == "lang") {
+    if ($(this).prop("id") == "lang" || $(this).prop("id").includes("maxRes")) {
       setVars();
       setMediaLang().finally(() => {
         refreshBackgroundImagePreview();
       });
     }
+    if ($(this).prop("id") == "enableMediaDisplayButton") toggleMediaWindow();
     if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes(true);
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
@@ -849,7 +850,7 @@ async function getInitialData() {
   await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
-  if (prefs.enableMediaDisplayButton) await startMediaDisplay();
+  await toggleMediaWindow();
   await obsGetScenes();
   $("#version").html("JWMMF " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
@@ -991,6 +992,42 @@ function getPrefix() {
   if (prefix.length % 2) prefix = prefix + 0;
   if (prefix.length > 0) prefix = prefix.match(/.{1,2}/g).join("-");
   return prefix;
+}
+function getMediaWindowDestination() {
+  let mediaWindowDestination = "window";
+  try {
+    let screenInfo = require("electron").ipcRenderer.sendSync("getScreenInfo");
+    $("#preferredScreen").empty().closest(".row").toggle(screenInfo.otherScreens.length > 1);
+    if (screenInfo.otherScreens.length > 0) {
+      if (screenInfo.otherScreens.length > 1) {
+        if (prefs.preferredScreen) {
+          if (screenInfo.displays.find(display => display.id == prefs.preferredScreen) === undefined) {
+            prefs.preferredScreen = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
+            validateConfig(true);
+          }
+        } else {
+          prefs.preferredScreen = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
+          validateConfig(true);
+        }
+        screenInfo.otherScreens.map((screen, i) => {
+          $("#preferredScreen").append($("<option />", {
+            value: screen.id,
+            selected: prefs.preferredScreen == screen.id ? "selected" : "",
+            text: (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
+          }));
+        });
+        mediaWindowDestination = prefs.preferredScreen;
+      } else {
+        mediaWindowDestination =  screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
+      }
+    }
+  } catch(err) {
+    log.error(err);
+  }
+  return mediaWindowDestination;
+}
+function moveMediaWindow() {
+  require("electron").ipcRenderer.send("setMediaWindowDestination", getMediaWindowDestination());
 }
 function setAppLang() {
   try {
@@ -1275,16 +1312,18 @@ function perfPrint() {
 function periodicCleanup() {
   try {
     setVars();
-    let lastPeriodicCleanupPath = path.join(paths.pubs, "lastPeriodicCleanup"),
-      lastPeriodicCleanup = fs.existsSync(lastPeriodicCleanupPath) && fs.readFileSync(lastPeriodicCleanupPath, "utf8") || false;
-    if (paths.pubs && (!dayjs(lastPeriodicCleanup).isValid() || dayjs(lastPeriodicCleanup).isBefore(now.subtract(6, "months")))) {
-      rm(glob.sync(path.join(paths.pubs, "**", "*.mp*")).map(video => {
-        let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
-        let itemPub = path.basename(path.join(path.dirname(video), "../../"));
-        if (itemPub !== "sjjm" && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
-      }).filter(Boolean));
-      mkdirSync(paths.pubs);
-      fs.writeFileSync(lastPeriodicCleanupPath, dayjs().format());
+    if (paths.pubs) {
+      let lastPeriodicCleanupPath = path.join(paths.pubs, "lastPeriodicCleanup"),
+        lastPeriodicCleanup = fs.existsSync(lastPeriodicCleanupPath) && fs.readFileSync(lastPeriodicCleanupPath, "utf8") || false;
+      if (!dayjs(lastPeriodicCleanup).isValid() || dayjs(lastPeriodicCleanup).isBefore(now.subtract(6, "months"))) {
+        rm(glob.sync(path.join(paths.pubs, "**", "*.mp*")).map(video => {
+          let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
+          let itemPub = path.basename(path.join(path.dirname(video), "../../"));
+          if (itemPub !== "sjjm" && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
+        }).filter(Boolean));
+        mkdirSync(paths.pubs);
+        fs.writeFileSync(lastPeriodicCleanupPath, dayjs().format());
+      }
     }
   } catch(err) {
     log.error(err);
@@ -1293,10 +1332,10 @@ function periodicCleanup() {
 function prefsInitialize() {
   $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
   prefs.disableHardwareAcceleration = !!fs.existsSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration", "enableObs", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration", "enableObs", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredScreen"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
-  for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene"]) {
+  for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredScreen"]) {
     $("#" + field).val(prefs[field]).closest(".row").find("#" + field + "Display").html(prefs[field]);
   }
   for (let timeField of ["mwStartTime", "weStartTime"]) {
@@ -1470,15 +1509,25 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
     modal.hide();
   }
 }
-async function startMediaDisplay() {
+function showMediaWindow() {
+  remote.globalShortcut.register("Alt+D", () => {
+    if ($("#staticBackdrop:visible").length == 0) $("#btnMediaWindow:visible").click();
+  });
   remote.globalShortcut.register("Alt+Z", () => {
     $("#btnToggleMediaWindowFocus").click();
   });
-  require("electron").ipcRenderer.send("showMediaWindow");
-  await obsSetScene(prefs.obsCameraScene);
-  await getRemoteYearText().finally(async () => {
-    require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
-  });
+  let mediaWindowConfig = getMediaWindowDestination();
+  require("electron").ipcRenderer.send("showMediaWindow", mediaWindowConfig);
+}
+async function startMediaDisplay() {
+  try {
+    await obsSetScene(prefs.obsCameraScene);
+    await getRemoteYearText().finally(() => {
+      require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
+    });
+  } catch(err) {
+    log.error(err);
+  }
 }
 async function startMediaSync(isDryrun, meetingFilter) {
   perf("total", "start");
@@ -1528,8 +1577,9 @@ async function startMediaSync(isDryrun, meetingFilter) {
   perf("total", "stop");
   perfPrint();
 }
-function stopMediaDisplay() {
-  require("electron").ipcRenderer.send("hideMediaWindow");
+function closeMediaWindow() {
+  remote.globalShortcut.unregister("Alt+D");
+  require("electron").ipcRenderer.send("closeMediaWindow");
   remote.globalShortcut.unregister("Alt+Z");
 }
 function stopMeetingMusic() {
@@ -1546,7 +1596,6 @@ function stopMeetingMusic() {
     clearTimeout(pendingMusicFadeOut.id);
     $("#btnStopMeetingMusic").removeClass("btn-warning").addClass("btn-danger");
     $("#musicRemaining").hide();
-    console.log($("#btnStopMeetingMusic").hasClass("stopping"), fadeDelay * (pendingMusicFadeOut.autoStop ? 50 : 10));
     if ($("#btnStopMeetingMusic").hasClass("stopping")) {
       clearMusic();
     } else {
@@ -1662,6 +1711,14 @@ function toggleHardwareAcceleration() {
     fs.writeFileSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"), "true");
   } else {
     rm(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
+  }
+}
+function toggleMediaWindow() {
+  if (prefs.enableMediaDisplayButton) {
+    refreshBackgroundImagePreview();
+    showMediaWindow();
+  } else {
+    closeMediaWindow();
   }
 }
 function toggleScreen(screen, forceShow, sectionToShow) {
@@ -1944,16 +2001,6 @@ function validateConfig(changed, restart) {
     remote.globalShortcut.unregister("Alt+B");
   }
   $("#btnMediaWindow, #btnToggleMediaWindowFocus").toggle(!!prefs.enableMediaDisplayButton);
-  if (prefs.enableMediaDisplayButton) {
-    remote.globalShortcut.register("Alt+D", () => {
-      if ($("#staticBackdrop:visible").length == 0) $("#btnMediaWindow:visible").click();
-    });
-    refreshBackgroundImagePreview();
-    startMediaDisplay();
-  } else {
-    remote.globalShortcut.unregister("Alt+D");
-    stopMediaDisplay();
-  }
   $("#currentMediaBackground").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
   $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
   $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
@@ -1974,7 +2021,6 @@ function validateConfig(changed, restart) {
   return configIsValid;
 }
 function waitToConfirm(el) {
-  console.log(el);
   let currentWarningClass = $(el).attr("class").split(" ").filter(el => el.includes("-warning"));
   if (currentWarningClass.length > 0) $(el).addClass("wasWarningBefore");
   if (!$(el).hasClass("confirmed")) {
@@ -2307,11 +2353,17 @@ require("electron").ipcRenderer.on("videoEnd", () => {
 require("electron").ipcRenderer.on("videoPaused", () => {
   $("#videoProgress").closest(".item").find("button.pausePlay").click();
 });
+require("electron").ipcRenderer.on("moveMediaWindow", () => {
+  moveMediaWindow();
+});
 $("#btnToggleMediaWindowFocus").on("click", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
 });
 require("electron").ipcRenderer.on("mediaWindowVisibilityChanged", (event, status) => {
   $("#btnToggleMediaWindowFocus").toggleClass("btn-warning", status !== "hidden").toggleClass("btn-primary pulse-danger", status == "hidden").find(".fa-stack-2x").toggleClass("fas fa-ban text-danger", status !== "hidden").toggleClass("far fa-circle", status == "hidden");
+});
+require("electron").ipcRenderer.on("mediaWindowShown", () => {
+  startMediaDisplay();
 });
 $("#staticBackdrop").on("input change", "#videoScrubber", function() {
   require("electron").ipcRenderer.send("videoScrub", $(this).val());
