@@ -1,3 +1,6 @@
+// TODO: translte preferredOutput string and other strings in fr/rus
+// TODO:  implement preferredOutput schange event
+
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -995,31 +998,36 @@ function getPrefix() {
 }
 function getMediaWindowDestination() {
   let mediaWindowDestination = "window";
+  $("#preferredOutput").hide().find(".display").remove();
   try {
     let screenInfo = require("electron").ipcRenderer.sendSync("getScreenInfo");
-    $("#preferredScreen").empty().closest(".row").toggle(screenInfo.otherScreens.length > 1);
+    $("#preferredOutput").closest(".row").toggle(screenInfo.otherScreens.length > 0);
+    screenInfo.otherScreens.map((screen, i) => {
+      $("#preferredOutput").append($("<option />", {
+        value: screen.id,
+        class: "display",
+        selected: prefs.preferredOutput == screen.id ? "selected" : "",
+        text: (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
+      }));
+    });
     if (screenInfo.otherScreens.length > 0) {
-      if (screenInfo.otherScreens.length > 1) {
-        if (prefs.preferredScreen) {
-          if (screenInfo.displays.find(display => display.id == prefs.preferredScreen) === undefined) {
-            prefs.preferredScreen = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
+      if (prefs.preferredOutput !== "window") {
+        if (screenInfo.otherScreens.length > 1) {
+          if (prefs.preferredOutput) {
+            if (screenInfo.displays.find(display => display.id == prefs.preferredOutput) === undefined) {
+              prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
+              validateConfig(true);
+            }
+          } else {
+            prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
             validateConfig(true);
           }
         } else {
-          prefs.preferredScreen = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
-          validateConfig(true);
+          prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
         }
-        screenInfo.otherScreens.map((screen, i) => {
-          $("#preferredScreen").append($("<option />", {
-            value: screen.id,
-            selected: prefs.preferredScreen == screen.id ? "selected" : "",
-            text: (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
-          }));
-        });
-        mediaWindowDestination = prefs.preferredScreen;
-      } else {
-        mediaWindowDestination =  screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
       }
+      console.log(prefs.preferredOutput);
+      mediaWindowDestination = prefs.preferredOutput;
     }
   } catch(err) {
     log.error(err);
@@ -1235,7 +1243,7 @@ async function obsConnect(force) {
     notifyUser("error", "errorObs", null, false, err);
   }
   $(".relatedToObsScenes").toggle(!!obs._connected);
-  $(".relatedToObsLogin input").toggleClass("is-invalid", !obs._connected).toggleClass("is-valid", !!obs._connected);
+  $(".relatedToObsLogin input").toggleClass("is-invalid", prefs.enableObs && !obs._connected).toggleClass("is-valid", prefs.enableObs && !!obs._connected);
   return !!obs._connected;
 }
 async function obsGetScenes(force, currentOnly) {
@@ -1332,10 +1340,10 @@ function periodicCleanup() {
 function prefsInitialize() {
   $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
   prefs.disableHardwareAcceleration = !!fs.existsSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration", "enableObs", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredScreen"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration", "enableObs", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredOutput"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
-  for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredScreen"]) {
+  for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredOutput"]) {
     $("#" + field).val(prefs[field]).closest(".row").find("#" + field + "Display").html(prefs[field]);
   }
   for (let timeField of ["mwStartTime", "weStartTime"]) {
