@@ -1,6 +1,6 @@
 {
   "browse": "Selecionar",
-  "cantCloseMediaWindowOpen": "Saia do controlador de mídias antes de tentar fechar o JWMMF",
+  "cantCloseMediaWindowOpen": "Saia do reprodutor de mídias antes de tentar fechar o JWMMF",
   "cleanCache": "Excluir mídias",
   "clickAgain": "Clique novamente para confirmar",
   "congMedia": "Mídia da congregação",
@@ -35,7 +35,7 @@
   "excludeLffi": "Excluir arquivos de áudio e vídeo da publicação <em>lffi</em>",
   "excludeLffiImages": "Excluir imagens da publicação <em>lffi</em>",
   "excludeTh": "Excluir todas as mídias da publicação <em>th</em>",
-  "fetchMedia": "Baixar as mídias!",
+  "fetchMedia": "Baixar mídias!",
   "info": "Informações",
   "infoPubIgnored": "Não foi possível baixar os arquivos de mídia dessa publicação:",
   "jwpub": "JWPUB",
