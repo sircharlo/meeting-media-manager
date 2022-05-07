@@ -36,7 +36,7 @@ function createUpdateWindow() {
     height: 700,
     minWidth: 700,
     minHeight: 700,
-    icon: "build/icon.ico",
+    icon: path.join(__dirname, "build", "icon.ico"),
     title: "JW Meeting Media Fetcher"
   });
   // win.on("moved", () => {
@@ -192,7 +192,7 @@ if (!gotTheLock) {
       let screenInfo = getScreenInfo();
       let windowOptions = {
         title: "Media Window",
-        icon: "build/video-player.ico",
+        icon: path.join(__dirname, "build", "video-player.ico"),
         frame: false,
         webPreferences: {
           backgroundThrottling: false,
