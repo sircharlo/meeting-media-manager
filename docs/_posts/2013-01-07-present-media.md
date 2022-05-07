@@ -8,7 +8,7 @@ layout: null
 
 The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
 
-Once the option to "Present media on an external monitor or in a separate window" is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected. Fullscreen mode can be enabled or disabled by hitting <kbd>F11</kbd> if needed.
+Once the option to "Present media on an external monitor or in a separate window" is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
 
 When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then JWMMF will attempt to automatically fetch and display the yeartext.
 
@@ -22,7 +22,7 @@ Once you have entered controller mode, the folder selection screen will allow yo
 
 To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
 
-The bottom right has the "exit" button, which will exit media controller mode, as well as the "hide/show media presentation window" button.
+The bottom right has the "home" button, which will exit media controller mode, as well as the "hide/show media presentation window" button.
 
 ### Conducting hybrid meetings using a combination of JWMMF, OBS Studio, and Zoom
 
