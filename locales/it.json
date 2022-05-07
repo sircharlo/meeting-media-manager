@@ -41,7 +41,6 @@
   "musicFadeOutTimer": "Dopo <span>XX</span> minuti",
   "musicFadeOutType": "Interrompi automaticamente la riproduzione Audio",
   "mwMeetingDay": "Adunanza infrasettimanale",
-  "obsCameraScene": "",
   "openTargetFolderAfterSync": "Apri la cartella dopo la generazione dei Media",
   "optionsApp": "Impostazioni App",
   "optionsCongSync": "Impostazioni di Sincronizzazione Congregazione",
@@ -76,8 +75,5 @@
   "warnSvgConversionFailure": "Il seguente file non è stato riconosciuto quale valida immagine SVG:",
   "warnUnknownLastVersion": "Impossibile avviare la versione dell'App JWMMF precedentemente installata. Si presume che sia stata appena aggiornata.",
   "webdavFolder": "Cartella di Sincronizzazione Congregazione",
-  "weMeetingDay": "Adunanza del fine settimana",
-  "preferredOutput": "",
-  "window": "",
-  "screen": ""
+  "weMeetingDay": "Adunanza del fine settimana"
 }

@@ -1054,6 +1054,11 @@ function setAppLang() {
         title: i18n.__("settingLocked")
       });
     });
+    $("[data-bs-toggle='popover'][data-bs-trigger='focus']").popover("dispose").popover({
+      content: i18n.__("clickAgain")
+    }).on("hidden.bs.popover", function() {
+      unconfirm(this);
+    });
     getMediaWindowDestination();
   } catch(err) {
     log.error(err);

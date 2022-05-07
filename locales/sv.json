@@ -86,8 +86,5 @@
   "warnSvgConversionFailure": "Följande fil kunde inte kännas igen som en giltig SVG-bild:",
   "warnUnknownLastVersion": "Kunde inte konstrollera föregående version av JWMMF. Programmet har troligen blivit nyligen uppdaterad.",
   "webdavFolder": "Församlingens synkroniseringsmapp",
-  "weMeetingDay": "Helgmöte",
-  "preferredOutput": "",
-  "window": "",
-  "screen": ""
+  "weMeetingDay": "Helgmöte"
 }
