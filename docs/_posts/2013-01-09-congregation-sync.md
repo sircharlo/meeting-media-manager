@@ -11,13 +11,9 @@ The VO, or someone designated by him, can:
 - <strong>hide</strong> media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
 - add or remove <strong>recurring</strong> media, such as a year-text video, or an announcement slide
 
-When congregation sync is enabled, the VO will use the ☁️ (cloud) button on the main screen of JWMMF to <a href="#/manage-media">manage meeting or recurring media</a>.
-
-All who are synced to the same congregation will then receive the exact same media when they click the <em>Get media!</em> button.
+All who are synced to the same congregation will then receive the exact same media when they click the <em>Update media folders</em> button.
 
 Please note that the congregation sync feature is opt-in and entirely optional.
-
-> <strong>Note:</strong> Enabling congregation sync automatically disables and hides the <em>Offer to import additional media</em> option.
 
 ### How it works
 
@@ -68,7 +64,7 @@ All users that wish to be synchronized together will need to connect to the same
 
 ### Using congregation sync to manage media
 
-Once the setup is complete, you're ready to start <a href="#/manage-media">managing media</a> for your congregation's technical AV support team.
+Once the congregation sync setup is complete, you're ready to start <a href="#/manage-media">managing media</a> for your congregation's technical AV support team.
 
 
 ### Screenshots

@@ -21,8 +21,8 @@ try {
 }
 var win = null,
   mediaWin = null,
-  displays = null,
-  externalDisplays = null,
+  closeAttempts = 0,
+  dontClose = false,
   authorizedCloseMediaWin = false;
 remote.initialize();
 function createUpdateWindow() {
@@ -36,18 +36,80 @@ function createUpdateWindow() {
     height: 700,
     minWidth: 700,
     minHeight: 700,
+    icon: path.join(__dirname, "build", "icon.ico"),
     title: "JW Meeting Media Fetcher"
   });
+  // win.on("moved", () => {
+  //   win.webContents.send("moveMediaWindow");
+  // });
   win.on("close", (e) => {
-    if (mediaWin) {
+    if (dontClose && closeAttempts < 2) {
       e.preventDefault();
       win.webContents.send("notifyUser", ["warn", "cantCloseMediaWindowOpen"]);
+      closeAttempts++;
+      setTimeout(() => {
+        closeAttempts--;
+      }, 10000);
+    } else if (mediaWin) {
+      mediaWin.destroy();
     }
   });
   remote.enable(win.webContents);
   win.setMenuBarVisibility(false);
   win.loadFile("index.html");
   if (!app.isPackaged) win.webContents.openDevTools();
+}
+function fadeWindow(browserWindow) {
+  if (os.platform() == "linux") {
+    if (!browserWindow.isVisible()) {
+      browserWindow.show();
+      win.webContents.send("mediaWindowVisibilityChanged", "shown");
+    } else {
+      browserWindow.hide();
+      win.webContents.send("mediaWindowVisibilityChanged", "hidden");
+    }
+  } else {
+    let fadeType = mediaWin.getOpacity() > 0 ? "out" : "in";
+    if (fadeType == "in") win.webContents.send("mediaWindowVisibilityChanged", "shown");
+    let opacity = browserWindow.getOpacity();
+    const interval = setInterval(() => {
+      let wereDone = (fadeType == "in" ? opacity >= 1 : opacity <= 0);
+      if (wereDone) {
+        clearInterval(interval);
+        if (fadeType == "out") win.webContents.send("mediaWindowVisibilityChanged", "hidden");
+      }
+      browserWindow.setOpacity(opacity);
+      opacity = opacity + 0.05 * (fadeType == "in" ? 1 : -1);
+    }, 5);
+    return interval;
+  }
+}
+function getScreenInfo() {
+  let displays = [],
+    mainWinMidpoint = {};
+  try {
+    let mainWinCoordinates = win.getPosition().concat(win.getSize());
+    mainWinMidpoint = {
+      x: mainWinCoordinates[0] + (mainWinCoordinates[2] / 2),
+      y: mainWinCoordinates[1] + (mainWinCoordinates[3] / 2)
+    };
+    displays = screen.getAllDisplays();
+  } catch(err) {
+    console.error(err);
+  }
+  return {
+    displays: displays,
+    mainWinMidpoint: mainWinMidpoint,
+    otherScreens: displays.filter(display => display.id !== screen.getDisplayNearestPoint(mainWinMidpoint).id)
+  };
+}
+function closeMediaWindow() {
+  if (mediaWin) {
+    authorizedCloseMediaWin = true;
+    mediaWin.close();
+    mediaWin = null;
+    authorizedCloseMediaWin = false;
+  }
 }
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -62,13 +124,11 @@ if (!gotTheLock) {
   ipcMain.on("attemptAutoUpdate", () => {
     autoUpdater.checkForUpdates();
   });
-  ipcMain.on("hideMediaWindow", () => {
-    if (mediaWin) {
-      authorizedCloseMediaWin = true;
-      mediaWin.close();
-      mediaWin = null;
-      authorizedCloseMediaWin = false;
-    }
+  ipcMain.on("closeMediaWindow", () => {
+    closeMediaWindow();
+  });
+  ipcMain.on("getScreenInfo", (event) => {
+    event.returnValue = getScreenInfo();
   });
   ipcMain.on("showMedia", (event, arg) => {
     mediaWin.webContents.send("showMedia", arg);
@@ -94,63 +154,93 @@ if (!gotTheLock) {
   ipcMain.on("videoScrub", (event, timeAsPercent) => {
     mediaWin.webContents.send("videoScrub", timeAsPercent);
   });
+  ipcMain.on("preventQuit", () => {
+    dontClose = true;
+  });
+  ipcMain.on("allowQuit", () => {
+    dontClose = false;
+  });
   ipcMain.on("startMediaDisplay", (event, prefsFile) => {
     mediaWin.webContents.send("startMediaDisplay", prefsFile);
   });
-  ipcMain.on("showMediaWindow", () => {
-    let mainWinPosition = win.getPosition();
-    let otherScreens = displays.filter(screen => !(mainWinPosition[0] >= screen.bounds.x && mainWinPosition[0] < (screen.bounds.x + screen.bounds.width)) || !(mainWinPosition[1] >= screen.bounds.y && mainWinPosition[1] < (screen.bounds.y + screen.bounds.height)));
+  ipcMain.on("setMediaWindowDestination", (event, mediaWindowDestination) => {
+    try {
+      if (mediaWin) {
+        let screenInfo = getScreenInfo();
+        if (mediaWindowDestination !== "window") {
+          if (screen.getDisplayNearestPoint(screenInfo.mainWinMidpoint).id == screen.getDisplayNearestPoint(mediaWin.getBounds()).id) {
+            mediaWin.setBounds(screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds);
+          }
+          if (!mediaWin.isFullScreen()) mediaWin.setFullScreen(true);
+        } else {
+          if (screenInfo.otherScreens.length > 0 && screen.getDisplayNearestPoint(mediaWin.getBounds()).id == screen.getDisplayNearestPoint(win.getBounds()).id) mediaWin.setBounds(screenInfo.otherScreens[0].bounds);
+          if (mediaWin.isFullScreen()) mediaWin.setFullScreen(false);
+          mediaWin.setSize(1280, 720);
+          mediaWin.center();
+        }
+        if (!mediaWin.isFocused()) mediaWin.focus();
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  });
+  ipcMain.on("showMediaWindow", (event, mediaWindowDestination) => {
+    if (mediaWin && mediaWindowDestination && screen.getDisplayNearestPoint(mediaWin.getBounds()).id !== mediaWindowDestination) {
+      closeMediaWindow();
+    }
     if (!mediaWin) {
+      let screenInfo = getScreenInfo();
       let windowOptions = {
         title: "Media Window",
-        frame: !externalDisplays,
+        icon: path.join(__dirname, "build", "video-player.ico"),
+        frame: false,
         webPreferences: {
           backgroundThrottling: false,
           contextIsolation: false,
           nodeIntegration: true,
         },
         minHeight: 100,
+        alwaysOnTop: true
       };
       let supplementaryOptions = {
         width: 1280,
         height: 720
       };
-      if (externalDisplays.length > 0) {
+      if (mediaWindowDestination !== "window") {
         supplementaryOptions = {
-          x: otherScreens[otherScreens.length - 1].bounds.x + 50,
-          y: otherScreens[otherScreens.length - 1].bounds.y + 50,
+          x: screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds.x + 50,
+          y: screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds.y + 50,
           fullscreen: true
         };
       }
       Object.assign(windowOptions, supplementaryOptions);
       mediaWin = new BrowserWindow(windowOptions);
-      mediaWin.setAlwaysOnTop(true, "screen-saver");
+      if (screenInfo.otherScreens.length > 0 && mediaWindowDestination == "window") {
+        mediaWin.setBounds(screenInfo.otherScreens[0].bounds);
+        mediaWin.setSize(1280, 720);
+        mediaWin.center();
+      }
+      mediaWin.setAlwaysOnTop(true, "pop-up-menu");
       mediaWin.setAspectRatio(16/9);
       mediaWin.setMenuBarVisibility(false);
       remote.enable(mediaWin.webContents);
       mediaWin.loadFile("mediaViewer.html");
-      if (!app.isPackaged) mediaWin.webContents.openDevTools();
+      // if (!app.isPackaged) mediaWin.webContents.openDevTools();
       mediaWin.on("close", (e) => {
-        if (!authorizedCloseMediaWin) {
-          e.preventDefault();
-          win.webContents.send("notifyUser", ["warn", "cantCloseMediaWindowOpen"]);
-        }
+        if (!authorizedCloseMediaWin) e.preventDefault();
       }).on("will-resize", () => {
         mediaWin.webContents.send("windowResizing", mediaWin.getSize());
       }).on("resized", () => {
         mediaWin.webContents.send("windowResized");
       });
-      mediaWin.on("closed", () => {
-        mediaWin = null;
-      });
+      // mediaWin.on("closed", () => {
+      //   mediaWin = null;
+      // });
+      win.webContents.send("mediaWindowShown");
     }
   });
   ipcMain.on("toggleMediaWindowFocus", () => {
-    if (mediaWin.isVisible()) {
-      mediaWin.hide();
-    } else {
-      mediaWin.show();
-    }
+    fadeWindow(mediaWin);
   });
   autoUpdater.on("error", () => {
     win.webContents.send("congregationInitialSelector");
@@ -176,8 +266,12 @@ if (!gotTheLock) {
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
-    displays = screen.getAllDisplays();
-    externalDisplays = displays.filter((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
+    // screen.on("display-removed", () => {
+    //   win.webContents.send("displaysChanged");
+    // });
+    // screen.on("display-added", () => {
+    //   win.webContents.send("displaysChanged");
+    // });
     createUpdateWindow();
   });
   app.on("window-all-closed", () => {

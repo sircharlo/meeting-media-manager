@@ -15,7 +15,8 @@
       user-select: none;
     }
 
-    #toastContainer {
+    #toastContainer,
+    .popover {
       z-index: 1100
     }
 
@@ -197,7 +198,7 @@
       text-overflow: ellipsis;
     }
 
-    .file-list li:not(.confirmDelete):hover {
+    .file-list li:not(.confirmed):hover {
       background-color: var(--bs-gray-200);
       color: var(--bs-dark);
     }
@@ -252,7 +253,7 @@
       text-decoration: line-through;
     }
 
-    .confirmDelete {
+    li.confirmed {
       background-color: var(--bs-warning);
       color: var(--bs-danger)
     }
@@ -404,7 +405,7 @@
         background-color: var(--bs-gray-dark);
       }
 
-      .file-list li:not(.confirmDelete):hover {
+      .file-list li:not(.confirmed):hover {
         background-color: var(--bs-gray-200);
       }
 
@@ -517,7 +518,7 @@
     </div>
     <div class="align-items-end py-3 row">
       <div class="col-4 text-start">
-        <button class="btn btn-danger btn-cancel-upload file-selected" type="button">
+        <button class="btn btn-danger btn-cancel-upload file-selected" data-bs-toggle="popover" data-bs-trigger="focus" type="button">
           <i class="fas fa-fw fa-circle-arrow-left"></i>
         </button>
       </div>
@@ -570,7 +571,10 @@
               <div class="align-items-center g-1 py-1 row">
                 <label for="localOutputPath" class="col-5 text-start"><span data-i18n-string="mediaSaveFolder"></span></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="localOutputPath" required />
+                  <div class="input-group">
+                    <button type="button" id="localOutputPathButton" class="btn btn-sm btn-primary"><span data-i18n-string="browse"></span></button>
+                    <input type="text" class="form-control form-control-sm" id="localOutputPath" disabled="disabled" />
+                  </div>
                 </div>
               </div>
               <hr class="my-2" />
@@ -757,6 +761,14 @@
                 <label for="enableMediaDisplayButton" class="m-0 text-start col-11"><span data-i18n-string="enableMediaDisplayButton"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMediaDisplayButton" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row" style="display:none">
+                <label for="preferredOutput" class="m-0 text-start col-5"><span data-i18n-string="preferredOutput"></span></label>
+                <div class="col">
+                  <select class="form-select form-select-sm" id="preferredOutput" required>
+                    <option value="window" data-i18n-string="window"></option>
+                  </select>
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
@@ -964,15 +976,15 @@
       </div>
     </div>
     <div class="align-items-center d-flex py-3 justify-content-center">
-      <div id="actionButtons" class="col-3 text-start">
-        <button type="button" class="btn btn-info" id="btnMeetingMusic" title="Alt+K" style="display: none;">
+      <div id="music-buttons" class="col-4 text-start">
+        <button type="button" class="btn btn-info" id="btnMeetingMusic" data-bs-toggle="popover" data-bs-trigger="focus" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-music"></i> <i class="fa-solid fa-shuffle"></i>
         </button>
         <button type="button" class="btn btn-warning" id="btnStopMeetingMusic" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-stop"></i> <span id="musicRemaining"></span>
         </button>
       </div>
-      <div class="col-6 text-center">
+      <div class="col-4 text-center">
         <div class="btn-group" id="baseDate">
           <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown">
           </button>
@@ -980,11 +992,14 @@
           </div>
         </div>
       </div>
-      <div class="col-3 text-end">
-        <button type="button" class="btn btn-primary" id="btnMediaWindow" title="Alt+D" style="display: none;">
-          <i class="fas fa-fw fa-play"></i>
-        </button>
-        <button class="btn btn-dark position-relative" id="btn-settings">
+      <div id="control-buttons" class="col-4 text-end">
+        <button type='button' id='btnToggleMediaWindowFocus' class='btn btn-sm btn-warning me-2' title='Alt+Z' style="display: none;">
+          <span class='fa-stack'>
+            <i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i>
+          </span>
+        </button><button type="button" class="btn btn-primary me-2" id="btnMediaWindow" title="Alt+D" style="display: none;">
+          <i class="fas fa-fw fa-play"></i> <i class="fas fa-sliders"></i>
+        </button><button class="btn btn-dark position-relative" id="btn-settings">
           <i class="fas fa-fw fa-user-cog"></i>
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="bg-mac-update" style="display: none;">
             <i class="fas fa-fw fa-exclamation-triangle"></i>
