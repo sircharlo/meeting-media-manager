@@ -1007,33 +1007,35 @@ function getMediaWindowDestination() {
   let mediaWindowDestination = "window";
   $("#preferredOutput").closest(".row").hide().find(".display").remove();
   try {
-    let screenInfo = require("electron").ipcRenderer.sendSync("getScreenInfo");
-    $("#preferredOutput").closest(".row").toggle(screenInfo.otherScreens.length > 0);
-    screenInfo.otherScreens.map((screen, i) => {
-      $("#preferredOutput").append($("<option />", {
-        value: screen.id,
-        class: "display",
-        text: i18n.__("screen") + " " + (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
-      }));
-    });
-    if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput);
-    if (screenInfo.otherScreens.length > 0) {
-      if (prefs.preferredOutput !== "window") {
-        if (screenInfo.otherScreens.length > 1) {
-          if (prefs.preferredOutput) {
-            if (screenInfo.displays.find(display => display.id == prefs.preferredOutput) === undefined) {
+    if (prefs.enableMediaDisplayButton) {
+      let screenInfo = require("electron").ipcRenderer.sendSync("getScreenInfo");
+      $("#preferredOutput").closest(".row").toggle(screenInfo.otherScreens.length > 0);
+      screenInfo.otherScreens.map((screen, i) => {
+        $("#preferredOutput").append($("<option />", {
+          value: screen.id,
+          class: "display",
+          text: i18n.__("screen") + " " + (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
+        }));
+      });
+      if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput);
+      if (screenInfo.otherScreens.length > 0) {
+        if (prefs.preferredOutput !== "window") {
+          if (screenInfo.otherScreens.length > 1) {
+            if (prefs.preferredOutput) {
+              if (screenInfo.displays.find(display => display.id == prefs.preferredOutput) === undefined) {
+                prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
+                validateConfig(true);
+              }
+            } else {
               prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
               validateConfig(true);
             }
           } else {
             prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
-            validateConfig(true);
           }
-        } else {
-          prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
         }
+        mediaWindowDestination = prefs.preferredOutput;
       }
-      mediaWindowDestination = prefs.preferredOutput;
     }
   } catch(err) {
     log.error(err);

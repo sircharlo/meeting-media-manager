@@ -59,19 +59,30 @@ function createUpdateWindow() {
   win.loadFile("index.html");
   if (!app.isPackaged) win.webContents.openDevTools();
 }
-function fadeWindow(browserWindow, fadeType) {
-  if (fadeType == "in") win.webContents.send("mediaWindowVisibilityChanged", "shown");
-  let opacity = browserWindow.getOpacity();
-  const interval = setInterval(() => {
-    let wereDone = (fadeType == "in" ? opacity >= 1 : opacity <= 0);
-    if (wereDone) {
-      clearInterval(interval);
-      if (fadeType == "out") win.webContents.send("mediaWindowVisibilityChanged", "hidden");
+function fadeWindow(browserWindow) {
+  if (os.platform() == "linux") {
+    if (!browserWindow.isVisible()) {
+      browserWindow.show();
+      win.webContents.send("mediaWindowVisibilityChanged", "shown");
+    } else {
+      browserWindow.hide();
+      win.webContents.send("mediaWindowVisibilityChanged", "hidden");
     }
-    browserWindow.setOpacity(opacity);
-    opacity = opacity + 0.05 * (fadeType == "in" ? 1 : -1);
-  }, 5);
-  return interval;
+  } else {
+    let fadeType = mediaWin.getOpacity() > 0 ? "out" : "in";
+    if (fadeType == "in") win.webContents.send("mediaWindowVisibilityChanged", "shown");
+    let opacity = browserWindow.getOpacity();
+    const interval = setInterval(() => {
+      let wereDone = (fadeType == "in" ? opacity >= 1 : opacity <= 0);
+      if (wereDone) {
+        clearInterval(interval);
+        if (fadeType == "out") win.webContents.send("mediaWindowVisibilityChanged", "hidden");
+      }
+      browserWindow.setOpacity(opacity);
+      opacity = opacity + 0.05 * (fadeType == "in" ? 1 : -1);
+    }, 5);
+    return interval;
+  }
 }
 function getScreenInfo() {
   let displays = [],
@@ -214,7 +225,7 @@ if (!gotTheLock) {
       mediaWin.setMenuBarVisibility(false);
       remote.enable(mediaWin.webContents);
       mediaWin.loadFile("mediaViewer.html");
-      if (!app.isPackaged) mediaWin.webContents.openDevTools();
+      // if (!app.isPackaged) mediaWin.webContents.openDevTools();
       mediaWin.on("close", (e) => {
         if (!authorizedCloseMediaWin) e.preventDefault();
       }).on("will-resize", () => {
@@ -229,11 +240,7 @@ if (!gotTheLock) {
     }
   });
   ipcMain.on("toggleMediaWindowFocus", () => {
-    if (mediaWin.getOpacity() > 0) {
-      fadeWindow(mediaWin, "out");
-    } else {
-      fadeWindow(mediaWin, "in");
-    }
+    fadeWindow(mediaWin);
   });
   autoUpdater.on("error", () => {
     win.webContents.send("congregationInitialSelector");
