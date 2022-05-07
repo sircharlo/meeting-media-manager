@@ -1,6 +1,6 @@
 {
   "name": "jw-meeting-media-fetcher",
-  "version": "22.5.1",
+  "version": "22.5.2",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
@@ -47,28 +47,20 @@
     "win": {
       "target": "NSIS",
       "icon": "build/icon.ico",
-      "publish": [
-        "github"
-      ]
+      "publish": ["github"]
     },
     "linux": {
       "category": "Utility",
       "target": "AppImage",
       "icon": "build/icon.png",
-      "publish": [
-        "github"
-      ]
+      "publish": ["github"]
     },
     "mac": {
       "target": {
         "target": "dmg",
-        "arch": [
-          "universal"
-        ]
+        "arch": ["universal"]
       },
-      "publish": [
-        "github"
-      ]
+      "publish": ["github"]
     },
     "buildDependenciesFromSource": true
   },
