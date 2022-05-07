@@ -362,8 +362,11 @@ function convertPdfPage(mediaFile, pdf, pageNum) {
         canvasContext: ctx,
         viewport: page.getViewport({scale: scale})
       }).promise.then(function() {
-        fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png"), Buffer.string(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+        fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png"), Buffer.from(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
         $("div#pdf").remove();
+      }).catch((err) => {
+        notifyUser("warn", "warnPdfConversionFailure", path.basename(mediaFile), true, err);
+      }).finally(() => {
         resolve();
       });
     });
