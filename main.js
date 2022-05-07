@@ -39,9 +39,9 @@ function createUpdateWindow() {
     icon: "build/icon.ico",
     title: "JW Meeting Media Fetcher"
   });
-  win.on("moved", () => {
-    win.webContents.send("moveMediaWindow");
-  });
+  // win.on("moved", () => {
+  //   win.webContents.send("moveMediaWindow");
+  // });
   win.on("close", (e) => {
     if (dontClose && closeAttempts < 2) {
       e.preventDefault();
@@ -163,9 +163,9 @@ if (!gotTheLock) {
           if (!mediaWin.isFullScreen()) mediaWin.setFullScreen(true);
         } else {
           if (screenInfo.otherScreens.length > 0 && screen.getDisplayNearestPoint(mediaWin.getBounds()).id == screen.getDisplayNearestPoint(win.getBounds()).id) mediaWin.setBounds(screenInfo.otherScreens[0].bounds);
-            if (mediaWin.isFullScreen()) mediaWin.setFullScreen(false);
-            mediaWin.setSize(1280, 720);
-            mediaWin.center();
+          if (mediaWin.isFullScreen()) mediaWin.setFullScreen(false);
+          mediaWin.setSize(1280, 720);
+          mediaWin.center();
         }
         if (!mediaWin.isFocused()) mediaWin.focus();
       }
@@ -174,7 +174,9 @@ if (!gotTheLock) {
     }
   });
   ipcMain.on("showMediaWindow", (event, mediaWindowDestination) => {
-    closeMediaWindow();
+    if (mediaWin && mediaWindowDestination && screen.getDisplayNearestPoint(mediaWin.getBounds()).id !== mediaWindowDestination) {
+      closeMediaWindow();
+    }
     if (!mediaWin) {
       let screenInfo = getScreenInfo();
       let windowOptions = {
@@ -220,9 +222,9 @@ if (!gotTheLock) {
       }).on("resized", () => {
         mediaWin.webContents.send("windowResized");
       });
-      mediaWin.on("closed", () => {
-        mediaWin = null;
-      });
+      // mediaWin.on("closed", () => {
+      //   mediaWin = null;
+      // });
       win.webContents.send("mediaWindowShown");
     }
   });
@@ -257,12 +259,12 @@ if (!gotTheLock) {
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
-    screen.on("display-removed", () => {
-      win.webContents.send("moveMediaWindow");
-    });
-    screen.on("display-added", () => {
-      win.webContents.send("moveMediaWindow");
-    });
+    // screen.on("display-removed", () => {
+    //   win.webContents.send("displaysChanged");
+    // });
+    // screen.on("display-added", () => {
+    //   win.webContents.send("displaysChanged");
+    // });
     createUpdateWindow();
   });
   app.on("window-all-closed", () => {

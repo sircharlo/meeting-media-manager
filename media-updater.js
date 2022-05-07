@@ -1,5 +1,12 @@
-// TODO: translte preferredOutput string and other strings in fr/rus
-// TODO:  implement preferredOutput schange event
+// TODO: WHEN JWMMF window moves
+//          IF more than one screen present AND JWMMF window new midpoint is same as current media window midpoint
+//           move media window to preferredOutput if not already there
+
+// TODO: WHEN screen added or removed
+//          IF more than one screen present
+//            move media window to preferredOutput if not already there
+//          ELSE
+//            resize media wwindow to windowed
 
 const fadeDelay = 200,
   aspect = require("aspectratio"),
@@ -196,14 +203,13 @@ function goAhead() {
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("congServer")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
-    if ($(this).prop("id") == "preferredOutput") moveMediaWindow();
     if ($(this).prop("id") == "lang" || $(this).prop("id").includes("maxRes")) {
       setVars();
       setMediaLang().finally(() => {
         refreshBackgroundImagePreview();
       });
     }
-    if ($(this).prop("id") == "enableMediaDisplayButton") toggleMediaWindow();
+    if ($(this).prop("id") == "enableMediaDisplayButton" || $(this).prop("id") == "preferredOutput") toggleMediaWindow();
     if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes(true);
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
@@ -1010,7 +1016,7 @@ function getMediaWindowDestination() {
         text: i18n.__("screen") + " " + (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
       }));
     });
-    if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput)
+    if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput);
     if (screenInfo.otherScreens.length > 0) {
       if (prefs.preferredOutput !== "window") {
         if (screenInfo.otherScreens.length > 1) {
@@ -1034,9 +1040,9 @@ function getMediaWindowDestination() {
   }
   return mediaWindowDestination;
 }
-function moveMediaWindow() {
-  require("electron").ipcRenderer.send("setMediaWindowDestination", getMediaWindowDestination());
-}
+// function moveMediaWindow() {
+//   require("electron").ipcRenderer.send("setMediaWindowDestination", getMediaWindowDestination());
+// }
 function setAppLang() {
   try {
     i18n.setLocale(prefs.localAppLang ? prefs.localAppLang : "en");
@@ -1244,7 +1250,7 @@ async function obsConnect(force) {
     notifyUser("error", "errorObs", null, false, err);
   }
   $(".relatedToObsScenes").toggle(!!obs._connected);
-  $(".relatedToObsLogin input").toggleClass("is-invalid", prefs.enableObs && !obs._connected).toggleClass("is-valid", prefs.enableObs && !!obs._connected);
+  $(".relatedToObsLogin input").toggleClass("is-invalid", !!prefs.enableObs && !obs._connected).toggleClass("is-valid", !!prefs.enableObs && !!obs._connected);
   return !!obs._connected;
 }
 async function obsGetScenes(force, currentOnly) {
@@ -1525,8 +1531,7 @@ function showMediaWindow() {
   remote.globalShortcut.register("Alt+Z", () => {
     $("#btnToggleMediaWindowFocus").click();
   });
-  let mediaWindowConfig = getMediaWindowDestination();
-  require("electron").ipcRenderer.send("showMediaWindow", mediaWindowConfig);
+  require("electron").ipcRenderer.send("showMediaWindow", getMediaWindowDestination());
 }
 async function startMediaDisplay() {
   try {
@@ -2362,9 +2367,12 @@ require("electron").ipcRenderer.on("videoEnd", () => {
 require("electron").ipcRenderer.on("videoPaused", () => {
   $("#videoProgress").closest(".item").find("button.pausePlay").click();
 });
-require("electron").ipcRenderer.on("moveMediaWindow", () => {
-  moveMediaWindow();
-});
+// require("electron").ipcRenderer.on("moveMediaWindow", () => {
+//   moveMediaWindow();
+// });
+// require("electron").ipcRenderer.on("displaysChanged", () => {
+//   toggleMediaWindow();
+// });
 $("#btnToggleMediaWindowFocus").on("click", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
 });
