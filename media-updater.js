@@ -2464,7 +2464,7 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only' style='display: none;'></div>");
   $("#staticBackdrop .modal-header").append("<div class='col-4 for-folder-listing-only text-end' style='display: none;'><button class='btn btn-sm folderRefresh'><i class='fas fa-rotate-right'></i></button><button class='btn btn-sm folderOpen'><i class='fas fa-folder-open'></i></button></div>");
   $(folderListing).find(".thatsToday").click();
-  $("#staticBackdrop .modal-footer").html($("<div class='left d-flex flex-fill text-start'></div><div class='right text-end'><button type='button' class='closeModal btn btn-warning' data-bs-trigger='manual'><i class='fas fa-fw fa-2x fa-power-off'></i></button></div>")).addClass("d-flex");
+  $("#staticBackdrop .modal-footer").html($("<div class='left d-flex flex-fill text-start'></div><div class='right text-end'><button type='button' class='closeModal btn btn-warning' data-bs-trigger='manual'><i class='fas fa-fw fa-2x fa-home'></i></button></div>")).addClass("d-flex");
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic").addClass("btn-lg"));
   $("#staticBackdrop .modal-footer .right").prepend($("#btnToggleMediaWindowFocus").removeClass("btn-sm"));
   $("#staticBackdrop .modal-footer").show();

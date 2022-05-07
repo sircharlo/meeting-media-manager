@@ -4,25 +4,25 @@ title: 'Presenting media'
 layout: null
 ---
 
-The media presentation mode is designed for simplicity and to prevent mistakes during meetings.
+### Using media presentation mode
 
-### Entering media presentation mode
+The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
 
-Media presentation mode can be accessed by clicking the ▶️ (play) button on the main screen of JWMMF, or by using the keyboard shortcut <kbd>Alt</kbd> <kbd>D</kbd> (for external **d**isplay).
-
-Once you have entered presentation mode, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window in the case where no external monitor was detected.
-
-The folder selection screen allows you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you may still change the selected date at any time by clicking on the date selection button, in the top section.
-
-### Presenting media
+Once the option to "Present media on an external monitor or in a separate window" is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected. Fullscreen mode can be enabled or disabled by hitting <kbd>F11</kbd> if needed.
 
 When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then JWMMF will attempt to automatically fetch and display the yeartext.
 
 If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
 
+Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of JWMMF, or by using the keyboard shortcut <kbd>Alt</kbd> <kbd>D</kbd> (for external **d**isplay).
+
+Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
+
+### Presenting media
+
 To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
 
-The bottom right has the "exit" button, which will exit media presentation mode, as well as the "hide/show media presentation screen" button.
+The bottom right has the "exit" button, which will exit media controller mode, as well as the "hide/show media presentation window" button.
 
 ### Conducting hybrid meetings using a combination of JWMMF, OBS Studio, and Zoom
 
@@ -38,7 +38,9 @@ Configure the computer sound card's output to go to one of the sound booth mixer
 
 Install OBS Studio, or download the portable version.
 
-Install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Configure a port number and password for obs-websocket.
+Install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+
+Install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Configure a port number and password for obs-websocket.
 
 In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 
@@ -54,15 +56,15 @@ Set the default "microphone" to be sound booth mixer's combined output (so that 
 
 #### Initial configuration: JWMMF
 
-Enable the media presentation mode button.
+Enable the "Present media on an external monitor or in a separate window" option.
 
-Enable and configure OBS Studio compatibility mode with the port and password information configured in the previous step. Configure which scene is the media window scene from OBS, and which will be the default camera scene that will be activated when media presentation mode starts.
+Enable and configure OBS Studio compatibility mode, using the port and password information configured in the OBS Studio configuration step. Configure which scene is set up as the media window scene in OBS, and which scene should be the default view that will be activated when media presentation mode starts.
 
 #### Starting the meeting
 
 Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
 
-Once the Zoom meeting is being displayed on the external monitor, open JWMMF. Sync media if necessary, and enter media presentation mode by clicking the ▶️ (play) button on the main screen of JWMMF, or <kbd>Alt</kbd> <kbd>D</kbd>. The media presentation window will automatically open on top of Zoom on the external monitor.
+Once the Zoom meeting is being displayed on the external monitor, open JWMMF. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of JWMMF, or <kbd>Alt</kbd> <kbd>D</kbd>.
 
 Enable the Kingdom Hall video feed (<kbd>Alt</kbd> <kbd>V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt</kbd> <kbd>A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
 
@@ -82,12 +84,11 @@ When you're done sharing media, press the "stop" button in JWMMF. Note that vide
 
 #### Displaying remote Zoom participants on the Kingdom Hall monitor
 
-Press the "hide/show media presentation screen" button in the lower right corner of the JWMMF media playback control window, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+Press the "hide/show media presentation window" button in the lower right corner of the JWMMF media controller screen, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
 
 <blockquote>If the participant has media to show, follow the steps under the <strong>Sharing media at the Kingdom Hall and over Zoom</strong> subheading.</blockquote>
 
-Once the participant has finished their part, press the "hide/show media presentation screen" button in the lower right corner of the JWMMF media playback control window, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
-
+Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the JWMMF media playback control window, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
 
 
 ### Conducting hybrid meetings using only JWMMF and Zoom
@@ -100,7 +101,7 @@ Same as corresponding section above, with the addition of the global keyboard sh
 
 #### Initial configuration: JWMMF
 
-Enable the media presentation mode button.
+Enable the "Present media on an external monitor or in a separate window" option.
 
 #### Starting the meeting
 
@@ -127,7 +128,7 @@ Same as corresponding section above.
 <table class="showcase">
 <tr>
 <td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/launch-presentation-mode.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/launch-presentation-mode.png?raw=true"></a></td>
-<td>Button to enter media presentation mode</td>
+<td>Button to enter media controller mode</td>
 </tr>
 <tr>
 <td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/meeting-picker.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/meeting-picker.png?raw=true"></a></td>
