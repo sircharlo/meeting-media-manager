@@ -112,6 +112,22 @@ function getScreenInfo() {
     otherScreens: displays.filter(display => display.id !== screen.getDisplayNearestPoint(winMidpoints.main).id)
   };
 }
+function setMediaWindowPosition(mediaWindowOpts) {
+  try {
+    if (mediaWin) {
+      let screenInfo = getScreenInfo();
+      mediaWin.setBounds({
+        x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
+        y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
+      });
+      mediaWin.getBounds();
+      mediaWin.setFullScreen(mediaWindowOpts.type == "fullscreen" && screenInfo.otherScreens.length > 0);
+      mediaWin.focus();
+    }
+  } catch(err) {
+    console.error(err);
+  }
+}
 function closeMediaWindow() {
   if (mediaWin) {
     authorizedCloseMediaWin = true;
@@ -173,22 +189,7 @@ if (!gotTheLock) {
     mediaWin.webContents.send("startMediaDisplay", prefsFile);
   });
   ipcMain.on("setMediaWindowPosition", (event, mediaWindowOpts) => {
-    try {
-      if (mediaWin) {
-        let screenInfo = getScreenInfo();
-        let mediaWillShareMainScreen = screenInfo.winMidpoints.media && screen.getDisplayNearestPoint(screenInfo.winMidpoints.media).id == mediaWindowOpts.destination;
-        if (!mediaWillShareMainScreen) {
-          mediaWin.setBounds({
-            x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
-            y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
-          });
-        }
-        mediaWin.setFullScreen(mediaWindowOpts.type == "fullscreen" && !mediaWillShareMainScreen);
-        mediaWin.focus();
-      }
-    } catch(err) {
-      console.error(err);
-    }
+    setMediaWindowPosition(mediaWindowOpts);
   });
   ipcMain.on("showMediaWindow", (event, mediaWindowOpts) => {
     if (!mediaWin) {
@@ -228,6 +229,8 @@ if (!gotTheLock) {
       //   mediaWin = null;
       // });
       win.webContents.send("mediaWindowShown");
+    } else {
+      setMediaWindowPosition(mediaWindowOpts);
     }
   });
   ipcMain.on("toggleMediaWindowFocus", () => {

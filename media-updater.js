@@ -2,12 +2,6 @@
 //          IF more than one screen present AND JWMMF window new midpoint is same as current media window midpoint
 //           move media window to preferredOutput if not already there
 
-// TODO: WHEN screen added or removed
-//          IF more than one screen present
-//            move media window to preferredOutput if not already there
-//          ELSE
-//            resize media wwindow to windowed
-
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -209,7 +203,8 @@ function goAhead() {
         refreshBackgroundImagePreview();
       });
     }
-    if ($(this).prop("id") == "enableMediaDisplayButton" || $(this).prop("id") == "preferredOutput") toggleMediaWindow();
+    if ($(this).prop("id") == "enableMediaDisplayButton") toggleMediaWindow();
+    if ($(this).prop("id") == "preferredOutput") moveMediaWindow();
     if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes(true);
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
@@ -1008,7 +1003,7 @@ function getPrefix() {
 }
 function getMediaWindowDestination() {
   let mediaWindowOpts = {
-    destination: "window",
+    destination: null,
     type: "window"
   };
   $("#preferredOutput").closest(".row").hide().find(".display").remove();
@@ -1031,8 +1026,8 @@ function getMediaWindowDestination() {
             mediaWindowOpts.destination = preferredDisplay ? preferredDisplay.id : screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id; // try to use preferred display; otherwise use another available one
           }
           mediaWindowOpts.type = "fullscreen";
-          mediaWindowOpts.destination = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
         }
+        if (!mediaWindowOpts.destination) mediaWindowOpts.destination = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
       } else { // no  external screen, use main one
         mediaWindowOpts.destination = screenInfo.displays[0].id;
       }
