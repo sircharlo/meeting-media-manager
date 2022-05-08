@@ -1268,7 +1268,7 @@ async function obsGetScenes(force, currentOnly) {
         return data.currentScene;
       } else {
         $("#overlaySettings .obs-scenes .loaded-scene").remove();
-        data.scenes.map(scene => scene.name).sort().forEach(scene => {
+        data.scenes.map(scene => scene.name).forEach(scene => {
           $("#overlaySettings .obs-scenes").append($("<option>", {
             class: "loaded-scene",
             text: scene,
