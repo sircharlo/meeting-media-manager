@@ -1007,7 +1007,10 @@ function getPrefix() {
   return prefix;
 }
 function getMediaWindowDestination() {
-  let mediaWindowDestination = "window";
+  let mediaWindowOpts = {
+    destination: "window",
+    type: "window"
+  };
   $("#preferredOutput").closest(".row").hide().find(".display").remove();
   try {
     if (prefs.enableMediaDisplayButton) {
@@ -1021,33 +1024,27 @@ function getMediaWindowDestination() {
         }));
       });
       if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput);
-      if (screenInfo.otherScreens.length > 0) {
-        if (prefs.preferredOutput !== "window") {
-          if (screenInfo.otherScreens.length > 1) {
-            if (prefs.preferredOutput) {
-              if (screenInfo.displays.find(display => display.id == prefs.preferredOutput) === undefined) {
-                prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
-                validateConfig(true);
-              }
-            } else {
-              prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
-              validateConfig(true);
-            }
-          } else {
-            prefs.preferredOutput = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
+      if (screenInfo.otherScreens.length > 0) { // at least one external screen
+        if (prefs.preferredOutput !== "window") { // fullscreen mode
+          if (screenInfo.otherScreens.length > 1) { // more than one external screen
+            let preferredDisplay = screenInfo.displays.find(display => display.id == prefs.preferredOutput); // try to find preferred display
+            mediaWindowOpts.destination = preferredDisplay ? preferredDisplay.id : screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id; // try to use preferred display; otherwise use another available one
           }
+          mediaWindowOpts.type = "fullscreen";
+          mediaWindowOpts.destination = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
         }
-        mediaWindowDestination = prefs.preferredOutput;
+      } else { // no  external screen, use main one
+        mediaWindowOpts.destination = screenInfo.displays[0].id;
       }
     }
   } catch(err) {
     log.error(err);
   }
-  return mediaWindowDestination;
+  return mediaWindowOpts;
 }
-// function moveMediaWindow() {
-//   require("electron").ipcRenderer.send("setMediaWindowDestination", getMediaWindowDestination());
-// }
+function moveMediaWindow() {
+  require("electron").ipcRenderer.send("setMediaWindowPosition", getMediaWindowDestination());
+}
 function setAppLang() {
   try {
     i18n.setLocale(prefs.localAppLang ? prefs.localAppLang : "en");
@@ -2380,9 +2377,9 @@ require("electron").ipcRenderer.on("videoPaused", () => {
 // require("electron").ipcRenderer.on("moveMediaWindow", () => {
 //   moveMediaWindow();
 // });
-// require("electron").ipcRenderer.on("displaysChanged", () => {
-//   toggleMediaWindow();
-// });
+require("electron").ipcRenderer.on("displaysChanged", () => {
+  moveMediaWindow();
+});
 $("#btnToggleMediaWindowFocus").on("click", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
 });

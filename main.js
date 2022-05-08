@@ -60,47 +60,56 @@ function createUpdateWindow() {
   if (!app.isPackaged) win.webContents.openDevTools();
 }
 function fadeWindow(browserWindow) {
-  if (os.platform() == "linux") {
-    if (!browserWindow.isVisible()) {
-      browserWindow.show();
-      win.webContents.send("mediaWindowVisibilityChanged", "shown");
-    } else {
-      browserWindow.hide();
-      win.webContents.send("mediaWindowVisibilityChanged", "hidden");
-    }
+  // shelving the graceful fade for now, as it seems to be causing more issues than what it's worth
+  // if (os.platform() == "linux") {
+  if (!browserWindow.isVisible()) {
+    browserWindow.show();
+    win.webContents.send("mediaWindowVisibilityChanged", "shown");
   } else {
-    let fadeType = mediaWin.getOpacity() > 0 ? "out" : "in";
-    if (fadeType == "in") win.webContents.send("mediaWindowVisibilityChanged", "shown");
-    let opacity = browserWindow.getOpacity();
-    const interval = setInterval(() => {
-      let wereDone = (fadeType == "in" ? opacity >= 1 : opacity <= 0);
-      if (wereDone) {
-        clearInterval(interval);
-        if (fadeType == "out") win.webContents.send("mediaWindowVisibilityChanged", "hidden");
-      }
-      browserWindow.setOpacity(opacity);
-      opacity = opacity + 0.05 * (fadeType == "in" ? 1 : -1);
-    }, 5);
-    return interval;
+    browserWindow.hide();
+    win.webContents.send("mediaWindowVisibilityChanged", "hidden");
   }
+  // } else {
+  //   let fadeType = mediaWin.getOpacity() > 0 ? "out" : "in";
+  //   if (fadeType == "in") win.webContents.send("mediaWindowVisibilityChanged", "shown");
+  //   let opacity = browserWindow.getOpacity();
+  //   const interval = setInterval(() => {
+  //     let wereDone = (fadeType == "in" ? opacity >= 1 : opacity <= 0);
+  //     if (wereDone) {
+  //       clearInterval(interval);
+  //       if (fadeType == "out") win.webContents.send("mediaWindowVisibilityChanged", "hidden");
+  //     }
+  //     browserWindow.setOpacity(opacity);
+  //     opacity = opacity + 0.05 * (fadeType == "in" ? 1 : -1);
+  //   }, 5);
+  //   return interval;
+  // }
 }
 function getScreenInfo() {
   let displays = [],
-    mainWinMidpoint = {};
+    winMidpoints = {},
+    winCoordinates = {};
   try {
-    let mainWinCoordinates = win.getPosition().concat(win.getSize());
-    mainWinMidpoint = {
-      x: mainWinCoordinates[0] + (mainWinCoordinates[2] / 2),
-      y: mainWinCoordinates[1] + (mainWinCoordinates[3] / 2)
+    winCoordinates.main = win.getPosition().concat(win.getSize());
+    winMidpoints.main = {
+      x: winCoordinates.main[0] + (winCoordinates.main[2] / 2),
+      y: winCoordinates.main[1] + (winCoordinates.main[3] / 2)
     };
+    if (mediaWin) {
+      winCoordinates.media = mediaWin.getPosition().concat(win.getSize());
+      winMidpoints.media = {
+        x: winCoordinates.media[0] + (winCoordinates.media[2] / 2),
+        y: winCoordinates.media[1] + (winCoordinates.media[3] / 2)
+      };
+    }
     displays = screen.getAllDisplays();
   } catch(err) {
     console.error(err);
   }
   return {
     displays: displays,
-    mainWinMidpoint: mainWinMidpoint,
-    otherScreens: displays.filter(display => display.id !== screen.getDisplayNearestPoint(mainWinMidpoint).id)
+    winMidpoints: winMidpoints,
+    otherScreens: displays.filter(display => display.id !== screen.getDisplayNearestPoint(winMidpoints.main).id)
   };
 }
 function closeMediaWindow() {
@@ -163,31 +172,25 @@ if (!gotTheLock) {
   ipcMain.on("startMediaDisplay", (event, prefsFile) => {
     mediaWin.webContents.send("startMediaDisplay", prefsFile);
   });
-  ipcMain.on("setMediaWindowDestination", (event, mediaWindowDestination) => {
+  ipcMain.on("setMediaWindowPosition", (event, mediaWindowOpts) => {
     try {
       if (mediaWin) {
         let screenInfo = getScreenInfo();
-        if (mediaWindowDestination !== "window") {
-          if (screen.getDisplayNearestPoint(screenInfo.mainWinMidpoint).id == screen.getDisplayNearestPoint(mediaWin.getBounds()).id) {
-            mediaWin.setBounds(screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds);
-          }
-          if (!mediaWin.isFullScreen()) mediaWin.setFullScreen(true);
-        } else {
-          if (screenInfo.otherScreens.length > 0 && screen.getDisplayNearestPoint(mediaWin.getBounds()).id == screen.getDisplayNearestPoint(win.getBounds()).id) mediaWin.setBounds(screenInfo.otherScreens[0].bounds);
-          if (mediaWin.isFullScreen()) mediaWin.setFullScreen(false);
-          mediaWin.setSize(1280, 720);
-          mediaWin.center();
+        let mediaWillShareMainScreen = screenInfo.winMidpoints.media && screen.getDisplayNearestPoint(screenInfo.winMidpoints.media).id == mediaWindowOpts.destination;
+        if (!mediaWillShareMainScreen) {
+          mediaWin.setBounds({
+            x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
+            y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
+          });
         }
-        if (!mediaWin.isFocused()) mediaWin.focus();
+        mediaWin.setFullScreen(mediaWindowOpts.type == "fullscreen" && !mediaWillShareMainScreen);
+        mediaWin.focus();
       }
     } catch(err) {
       console.error(err);
     }
   });
-  ipcMain.on("showMediaWindow", (event, mediaWindowDestination) => {
-    if (mediaWin && mediaWindowDestination && screen.getDisplayNearestPoint(mediaWin.getBounds()).id !== mediaWindowDestination) {
-      closeMediaWindow();
-    }
+  ipcMain.on("showMediaWindow", (event, mediaWindowOpts) => {
     if (!mediaWin) {
       let screenInfo = getScreenInfo();
       let windowOptions = {
@@ -200,26 +203,14 @@ if (!gotTheLock) {
           nodeIntegration: true,
         },
         minHeight: 100,
-        alwaysOnTop: true
-      };
-      let supplementaryOptions = {
+        alwaysOnTop: true,
         width: 1280,
-        height: 720
+        height: 720,
+        x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
+        y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
       };
-      if (mediaWindowDestination !== "window") {
-        supplementaryOptions = {
-          x: screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds.x + 50,
-          y: screenInfo.displays.find(display => display.id == mediaWindowDestination).bounds.y + 50,
-          fullscreen: true
-        };
-      }
-      Object.assign(windowOptions, supplementaryOptions);
+      if (mediaWindowOpts.type == "fullscreen") windowOptions.fullscreen = true;
       mediaWin = new BrowserWindow(windowOptions);
-      if (screenInfo.otherScreens.length > 0 && mediaWindowDestination == "window") {
-        mediaWin.setBounds(screenInfo.otherScreens[0].bounds);
-        mediaWin.setSize(1280, 720);
-        mediaWin.center();
-      }
       mediaWin.setAlwaysOnTop(true, "pop-up-menu");
       mediaWin.setAspectRatio(16/9);
       mediaWin.setMenuBarVisibility(false);
@@ -266,12 +257,12 @@ if (!gotTheLock) {
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
-    // screen.on("display-removed", () => {
-    //   win.webContents.send("displaysChanged");
-    // });
-    // screen.on("display-added", () => {
-    //   win.webContents.send("displaysChanged");
-    // });
+    screen.on("display-removed", () => {
+      win.webContents.send("displaysChanged");
+    });
+    screen.on("display-added", () => {
+      win.webContents.send("displaysChanged");
+    });
     createUpdateWindow();
   });
   app.on("window-all-closed", () => {
