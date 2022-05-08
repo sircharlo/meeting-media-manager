@@ -1234,7 +1234,9 @@ function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, 
 async function obsConnect(force) {
   try {
     if (!prefs.enableObs && obs._connected) {
-      await obs.disconnect();
+      await obs.disconnect().catch(err => {
+        log.error(err);
+      });
       log.info("OBS disconnected.");
       obs = {};
     } else if ((!("_connected" in obs) || force) && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
@@ -1285,6 +1287,8 @@ async function obsGetScenes(force, currentOnly) {
         $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene);
         return data;
       }
+    }).catch(err => {
+      notifyUser("error", "errorObs", null, false, err);
     }) : false);
   } catch (err) {
     if (obs._connected) notifyUser("error", "errorObs", null, false, err);
@@ -1293,7 +1297,9 @@ async function obsGetScenes(force, currentOnly) {
 }
 async function obsSetScene(scene) {
   try {
-    if (await obsConnect()) obs.send("SetCurrentScene", { "scene-name": scene });
+    if (await obsConnect()) obs.send("SetCurrentScene", { "scene-name": scene }).catch(err => {
+      notifyUser("error", "errorObs", null, false, err);
+    });
   } catch (err) {
     if (obs._connected) notifyUser("error", "errorObs", null, false, err);
   }
