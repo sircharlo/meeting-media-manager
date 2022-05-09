@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" href="node_modules/flatpickr/dist/flatpickr.min.css">
   <style>
-    html,
-    body {
+    body,
+    html {
       overflow: hidden;
       height: 100%;
       user-select: none;
@@ -17,7 +17,7 @@
 
     #toastContainer,
     .popover {
-      z-index: 1100
+      z-index: 1100;
     }
 
     .toast-body {
@@ -44,22 +44,22 @@
       height: 100%;
     }
 
-    #fileList li:not(.canDelete),
     #fileList li i:not(.file-type):not(.file-origin),
+    #fileList li:not(.canDelete),
     #webdavFolderList li {
       cursor: pointer;
       display: flex;
     }
 
     #fileList .webdavWait {
-      opacity: .5;
+      opacity: 0.5;
     }
 
     #overlaySettings,
-    span.select2-dropdown,
+    #overlaySettings .btn-sm,
     #overlaySettings label,
-    #overlaySettings .btn-sm {
-      font-size: 0.9em
+    span.select2-dropdown {
+      font-size: 0.9em;
     }
 
     #overlaySettings input[type=text] {
@@ -91,7 +91,7 @@
     }
 
     #forcedPrefs code.badge {
-      margin: 2px
+      margin: 2px;
     }
 
     .accordion-button {
@@ -108,11 +108,11 @@
 
     span.select2 span.select2-selection {
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-      background-position: right .75rem center;
+      background-position: right 0.75rem center;
       background-size: 16px 12px;
       border: 1px solid #ced4da;
       background-repeat: no-repeat;
-      border-radius: .25rem;
+      border-radius: 0.25rem;
     }
 
     span.select2.is-invalid span.select2-selection {
@@ -120,7 +120,7 @@
       padding-right: calc(1.5em + .75rem);
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
       background-repeat: no-repeat;
-      background-position: right .75rem center, center right 2.25rem;
+      background-position: right 0.75rem center, center right 2.25rem;
       background-size: 16px 12px, calc(.75em + .375rem) calc(.75em + .375rem);
     }
 
@@ -138,10 +138,10 @@
       transition: all 0.15s linear;
     }
 
+    .day.meeting .dayOfWeek,
     .day:not(.meeting) .dayIcon,
     .day:not(.meeting) .dayOfWeekLong,
-    .day:not(.meeting) .month,
-    .day.meeting .dayOfWeek {
+    .day:not(.meeting) .month {
       display: none;
     }
 
@@ -163,12 +163,12 @@
     }
 
     .progress-bar {
-      transition: width .1s ease;
+      transition: width 0.1s ease;
     }
 
+    .congregation .progress-bar,
     .meeting .progress-bar,
     .syncJwOrgMedia .progress-bar,
-    .congregation .progress-bar,
     .zoom .progress-bar {
       height: 0.25rem;
     }
@@ -247,7 +247,7 @@
 
     li.wasHidden .filename,
     li.wasHidden .infoIcons {
-      color: gray
+      color: gray;
     }
 
     .wasHidden span {
@@ -256,11 +256,11 @@
 
     li.confirmed {
       background-color: var(--bs-warning);
-      color: var(--bs-danger)
+      color: var(--bs-danger);
     }
 
-    div#enterPrefix input::-webkit-outer-spin-button,
-    div#enterPrefix input::-webkit-inner-spin-button {
+    div#enterPrefix input::-webkit-inner-spin-button,
+    div#enterPrefix input::-webkit-outer-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
@@ -319,7 +319,7 @@
 
     .form-check {
       min-height: auto;
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
 
     .form-check .form-check-input {
@@ -338,10 +338,14 @@
       display: none;
     }
 
+    li.video .customStartStop,
     li.video .time {
       background: rgba(0, 0, 0, .8);
-      border-top-right-radius: 0.25rem;
       margin-left: 1px;
+    }
+
+    li.video .time {
+      border-top-right-radius: 0.25rem;
     }
 
     .mediaDesc {
@@ -470,11 +474,12 @@
       <div class="col-1">
         <i class="fas fa-fw fa-cloud fa-2x text-muted"></i>
       </div>
-      <h4 class="align-items-center col d-flex justify-content-center mb-0" id="chosenMeetingDay">
-      </h4>
+      <h4 class="align-items-center col d-flex justify-content-center mb-0" id="chosenMeetingDay"></h4>
     </div>
     <div class="align-items-center row justify-content-center py-2 relatedToUploadType">
-      <div class="text-start col-1"><i class="fas fa-photo-film"></i></div>
+      <div class="text-start col-1">
+        <i class="fas fa-photo-film"></i>
+      </div>
       <div class="btn-group btn-group-toggle col" id="chooseUploadType">
         <input type="radio" class="btn-check" name="chooseUploadType" id="typeSong" autocomplete="off">
         <label class="btn btn-outline-dark" for="typeSong" data-i18n-string="song"></label>
@@ -485,29 +490,35 @@
       </div>
     </div>
     <div class="align-items-center row justify-content-center py-2 file-to-upload">
-      <div class="text-start col-1"><i class="fas fa-file-export"></i></div>
+      <div class="text-start col-1">
+        <i class="fas fa-file-export"></i>
+      </div>
       <div class="col file-to-upload selector" style="height: calc(1.5em + .5rem + -2px);">
         <select class="form-control form-control-sm" id="songPicker" disabled="disabled"></select>
         <div class="input-group mb-3">
-          <button type="button" id="filePickerButton" class="btn btn-sm btn-primary"><span data-i18n-string="browse"></span></button>
+          <button type="button" id="filePickerButton" class="btn btn-sm btn-primary">
+            <span data-i18n-string="browse"></span></button>
           <input type="text" class="form-control form-control-sm" id="filePicker" disabled="disabled" />
         </div>
         <div class="input-group mb-3">
-          <button type="button" id="jwpubPickerButton" class="btn btn-sm btn-primary"><span data-i18n-string="browse"></span></button>
+          <button type="button" id="jwpubPickerButton" class="btn btn-sm btn-primary">
+            <span data-i18n-string="browse"></span></button>
           <input type="text" class="form-control form-control-sm localOrRemoteFile" id="jwpubPicker" disabled="disabled" />
         </div>
         <input type="hidden" id="fileToUpload" />
       </div>
     </div>
     <div class="align-items-center row justify-content-center py-2 prefix">
-      <div class="text-start col-1"><i class="fas fa-arrow-down-1-9"></i></div>
+      <div class="text-start col-1">
+        <i class="fas fa-arrow-down-1-9"></i>
+      </div>
       <div class="col d-flex text-center">
         <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-0" />
-        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1" id="enterPrefix-1" disabled />
-        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-2" disabled />
-        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1" id="enterPrefix-3" disabled />
-        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-4" disabled />
-        <input class="col enterPrefixInput form-control form-control-sm text-center" v type="text" maxlength="1" id="enterPrefix-5" disabled />
+        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1" id="enterPrefix-1" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-2" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1" id="enterPrefix-3" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-4" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm text-center" v="v" type="text" maxlength="1" id="enterPrefix-5" disabled="disabled" />
       </div>
     </div>
     <div class="flex-fill overflow-hidden py-3 row text-start">
@@ -531,8 +542,7 @@
           <i class="fas fa-fw fa-save"></i>
         </button>
       </div>
-      <div class="col-4 text-end">
-      </div>
+      <div class="col-4 text-end"></div>
     </div>
   </div>
   <div id="overlayMaster" class="overlay justify-content-center">
@@ -556,24 +566,28 @@
           <div id="collapseAppSettings" class="accordion-collapse collapse" aria-labelledby="headingAppSettings">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
-                <label for="congregationName" class="col-5 text-start"><span data-i18n-string="congregationName"></span></label>
+                <label for="congregationName" class="col-5 text-start">
+                  <span data-i18n-string="congregationName"></span></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="congregationName" required />
+                  <input type="text" class="form-control form-control-sm" id="congregationName" required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="localAppLang" class="col-5 text-start"><span data-i18n-string="localAppLang"></span></label>
+                <label for="localAppLang" class="col-5 text-start">
+                  <span data-i18n-string="localAppLang"></span></label>
                 <div class="col">
-                  <select class="form-select form-select-sm" id="localAppLang" class="form-control" required>
-                    <option value="" hidden></option>
+                  <select class="form-select form-select-sm" id="localAppLang" required="required">
+                    <option value="" hidden="hidden"></option>
                   </select>
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="localOutputPath" class="col-5 text-start"><span data-i18n-string="mediaSaveFolder"></span></label>
+                <label for="localOutputPath" class="col-5 text-start">
+                  <span data-i18n-string="mediaSaveFolder"></span></label>
                 <div class="col">
                   <div class="input-group">
-                    <button type="button" id="localOutputPathButton" class="btn btn-sm btn-primary"><span data-i18n-string="browse"></span></button>
+                    <button type="button" id="localOutputPathButton" class="btn btn-sm btn-primary">
+                      <span data-i18n-string="browse"></span></button>
                     <input type="text" class="form-control form-control-sm" id="localOutputPath" disabled="disabled" />
                   </div>
                 </div>
@@ -607,36 +621,41 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="enableObs" class="m-0 text-start col-11"><span data-i18n-string="enableObs"></span></label>
+                <label for="enableObs" class="m-0 text-start col-11">
+                  <span data-i18n-string="enableObs"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableObs" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row relatedToObs relatedToObsLogin">
-                <label for="obsPort" class="m-0 text-start col-5"><span data-i18n-string="port"></span></label>
+                <label for="obsPort" class="m-0 text-start col-5">
+                  <span data-i18n-string="port"></span></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="obsPort" required />
+                  <input type="text" class="form-control form-control-sm" id="obsPort" required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row relatedToObs relatedToObsLogin">
-                <label for="obsPassword" class="m-0 text-start col-5"><span data-i18n-string="password"></span></label>
+                <label for="obsPassword" class="m-0 text-start col-5">
+                  <span data-i18n-string="password"></span></label>
                 <div class="col">
-                  <input type="password" class="form-control form-control-sm" id="obsPassword" required />
+                  <input type="password" class="form-control form-control-sm" id="obsPassword" required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row relatedToObs relatedToObsScenes">
-                <label for="obsCameraScene" class="m-0 text-start col-5"><span data-i18n-string="obsCameraScene"></span></label>
+                <label for="obsCameraScene" class="m-0 text-start col-5">
+                  <span data-i18n-string="obsCameraScene"></span></label>
                 <div class="col">
-                  <select class="form-select form-select-sm obs-scenes" id="obsCameraScene" required>
-                    <option value="" hidden></option>
+                  <select class="form-select form-select-sm obs-scenes" id="obsCameraScene" required="required">
+                    <option value="" hidden="hidden"></option>
                   </select>
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row relatedToObs relatedToObsScenes">
-                <label for="obsMediaScene" class="m-0 text-start col-5"><span data-i18n-string="obsMediaScene"></span></label>
+                <label for="obsMediaScene" class="m-0 text-start col-5">
+                  <span data-i18n-string="obsMediaScene"></span></label>
                 <div class="col">
-                  <select class="form-select form-select-sm obs-scenes" id="obsMediaScene" required>
-                    <option value="" hidden></option>
+                  <select class="form-select form-select-sm obs-scenes" id="obsMediaScene" required="required">
+                    <option value="" hidden="hidden"></option>
                   </select>
                 </div>
               </div>
@@ -662,39 +681,47 @@
                     <span data-i18n-string="hostname"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" data-server="webdav.4shared.com" data-server-port="443" data-server-dir="/">4shared</a></li>
-                    <li><a class="dropdown-item" data-server="dav.box.com" data-server-port="443" data-server-dir="/dav/">Box</a></li>
-                    <li><a class="dropdown-item" data-server="app.koofr.net" data-server-port="443" data-server-dir="/dav/Koofr/">Koofr</a></li>
-                    <li><a class="dropdown-item" data-server="my.powerfolder.com" data-server-port="443" data-server-dir="/webdav/">PowerFolder</a></li>
+                    <li>
+                      <a class="dropdown-item" data-server="webdav.4shared.com" data-server-port="443" data-server-dir="/">4shared</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" data-server="dav.box.com" data-server-port="443" data-server-dir="/dav/">Box</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" data-server="app.koofr.net" data-server-port="443" data-server-dir="/dav/Koofr/">Koofr</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" data-server="my.powerfolder.com" data-server-port="443" data-server-dir="/webdav/">PowerFolder</a>
+                    </li>
                   </ul>
                 </div>
                 <div class="input-group input-group-sm col">
                   <span class="input-group-text">https://</span>
-                  <input type=" text" class="form-control form-control-sm webdavHost" id="congServer" required />
+                  <input type=" text" class="form-control form-control-sm webdavHost" id="congServer" required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
                 <label for="congServerPort" class="col-5 m-0 pr-3 text-start" data-i18n-string="port"></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort" required />
+                  <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort" required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
                 <label for="congServerUser" class="col-5 m-0 pr-3 text-start" data-i18n-string="username"></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser" required />
+                  <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser" required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
                 <label for="congServerPass" class="col-5 m-0 pr-3 text-start" data-i18n-string="password"></label>
                 <div class="col">
-                  <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass" required />
+                  <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass" required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
                 <label for="congServerDir" class="col-5 m-0 pr-3 text-start" data-i18n-string="webdavFolder"></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm" id="congServerDir" required />
+                  <input type="text" class="form-control form-control-sm" id="congServerDir" required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
@@ -725,14 +752,15 @@
           <div id="collapseMedia" class="accordion-collapse collapse" aria-labelledby="headingMedia">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
-                <label for="lang" class="col-5 text-start"><span data-i18n-string="mediaLang"></span></label>
+                <label for="lang" class="col-5 text-start">
+                  <span data-i18n-string="mediaLang"></span></label>
                 <div class="col">
-                  <select id="lang" class="form-control" required>
-                  </select>
+                  <select id="lang" class="form-control" required="required"></select>
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="maxRes" class="col-5 text-start"><span data-i18n-string="maxRes"></span></label>
+                <label for="maxRes" class="col-5 text-start">
+                  <span data-i18n-string="maxRes"></span></label>
                 <div class="btn-group btn-group-toggle col" id="maxRes">
                   <input type="radio" class="btn-check" name="maxRes" id="maxRes0" value="240p" autocomplete="off">
                   <label class="btn btn-outline-dark" for="maxRes0">240p</label>
@@ -746,34 +774,39 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="enableMp4Conversion" class="m-0 text-start col-11"><span data-i18n-string="convertDownloaded"></span></label>
+                <label for="enableMp4Conversion" class="m-0 text-start col-11">
+                  <span data-i18n-string="convertDownloaded"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMp4Conversion" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="keepOriginalsAfterConversion" class="m-0 text-start col-11"><span data-i18n-string="keepOriginalsAfterConversion"></span></label>
+                <label for="keepOriginalsAfterConversion" class="m-0 text-start col-11">
+                  <span data-i18n-string="keepOriginalsAfterConversion"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="keepOriginalsAfterConversion" />
                 </div>
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="enableMediaDisplayButton" class="m-0 text-start col-11"><span data-i18n-string="enableMediaDisplayButton"></span></label>
+                <label for="enableMediaDisplayButton" class="m-0 text-start col-11">
+                  <span data-i18n-string="enableMediaDisplayButton"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMediaDisplayButton" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row" style="display:none">
-                <label for="preferredOutput" class="m-0 text-start col-5"><span data-i18n-string="preferredOutput"></span></label>
+                <label for="preferredOutput" class="m-0 text-start col-5">
+                  <span data-i18n-string="preferredOutput"></span></label>
                 <div class="col">
-                  <select class="form-select form-select-sm" id="preferredOutput" required>
+                  <select class="form-select form-select-sm" id="preferredOutput" required="required">
                     <option value="window" data-i18n-string="window"></option>
                   </select>
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="currentMediaBackground" class="col text-start me-2"><span data-i18n-string="mediaWindowBackground"></span></label>
+                <label for="currentMediaBackground" class="col text-start me-2">
+                  <span data-i18n-string="mediaWindowBackground"></span></label>
                 <img class="col-5" id="currentMediaBackground" />
                 <div class="bg-black col-5 fw-bold p-3 rounded-3 text-center text-white" id="fetchedYearText"></div>
                 <div class="col text-end ms-2">
@@ -790,26 +823,30 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="enableVlcPlaylistCreation" class="m-0 text-start col-11"><span data-i18n-string="enableVlcPlaylistCreation"></span></label>
+                <label for="enableVlcPlaylistCreation" class="m-0 text-start col-11">
+                  <span data-i18n-string="enableVlcPlaylistCreation"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableVlcPlaylistCreation" />
                 </div>
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="excludeTh" class="m-0 text-start col-11"><span data-i18n-string="excludeTh"></span></label>
+                <label for="excludeTh" class="m-0 text-start col-11">
+                  <span data-i18n-string="excludeTh"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="excludeTh" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="excludeLffi" class="m-0 text-start col-11"><span data-i18n-string="excludeLffi"></span></label>
+                <label for="excludeLffi" class="m-0 text-start col-11">
+                  <span data-i18n-string="excludeLffi"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="excludeLffi" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="excludeLffiImages" class="m-0 text-start col-11"><span data-i18n-string="excludeLffiImages"></span></label>
+                <label for="excludeLffiImages" class="m-0 text-start col-11">
+                  <span data-i18n-string="excludeLffiImages"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="excludeLffiImages" />
                 </div>
@@ -824,7 +861,8 @@
           <div id="collapseMeetings" class="accordion-collapse collapse" aria-labelledby="headingMeetings">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
-                <label for="mwDay" class="col-5 text-start"><span data-i18n-string="mwMeetingDay"></span></label>
+                <label for="mwDay" class="col-5 text-start">
+                  <span data-i18n-string="mwMeetingDay"></span></label>
                 <div class="btn-group btn-group-toggle col-6" id="mwDay">
                   <input type="radio" class="btn-check" name="mwDay" id="mwDay0" value="0" autocomplete="off">
                   <label class="btn btn-outline-dark" for="mwDay0">M</label>
@@ -847,7 +885,8 @@
                 <input type="hidden" id="mwStartTime" />
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="weDay" class="col-5 text-start"><span data-i18n-string="weMeetingDay"></span></label>
+                <label for="weDay" class="col-5 text-start">
+                  <span data-i18n-string="weMeetingDay"></span></label>
                 <div class="btn-group btn-group-toggle col-6" id="weDay">
                   <input type="radio" class="btn-check" name="weDay" id="weDay0" value="0" autocomplete="off">
                   <label class="btn btn-outline-dark" for="weDay0">M</label>
@@ -871,13 +910,15 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="enableMusicButton" class="m-0 text-start col-11"><span data-i18n-string="enableMusicButton"></span></label>
+                <label for="enableMusicButton" class="m-0 text-start col-11">
+                  <span data-i18n-string="enableMusicButton"></span></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMusicButton" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="musicVolume" class="m-0 text-start col-5"><span data-i18n-string="musicVolume"></span></label>
+                <label for="musicVolume" class="m-0 text-start col-5">
+                  <span data-i18n-string="musicVolume"></span></label>
                 <div class="col-6">
                   <input type="range" class="form-range" min="1" max="100" id="musicVolume">
                 </div>
@@ -886,7 +927,8 @@
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
-                <label for="enableMusicFadeOut" class="m-0 text-start col-5"><span data-i18n-string="musicFadeOutType"></span></label>
+                <label for="enableMusicFadeOut" class="m-0 text-start col-5">
+                  <span data-i18n-string="musicFadeOutType"></span></label>
                 <div class="col-1 relatedToFadeOut">
                   <input type="range" class="form-range me-3" min="5" max="60" step="5" value="5" id="musicFadeOutTime">
                 </div>
@@ -907,20 +949,19 @@
     </div>
     <div class="d-flex flex-row align-items-center justify-content-end text-nowrap pt-3">
       <div class="col text-start">
-        <button id="version" type="button" class="btn btn-action btn-light btn-sm" data-action-url="https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest">
-        </button>
+        <button id="version" type="button" class="btn btn-action btn-light btn-sm" data-action-url="https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest"></button>
         <button type="button" class="btn btn-action btn-report-issue btn-secondary btn-sm">
           <span data-i18n-string="reportIssue"></span>
         </button>
         <button type="button" class="btn btn-clean-up btn-sm btn-warning">
-          <span data-i18n-string="cleanCache"></span> (<span id="cacheSizeInMb">0MB</span>)
+          <span data-i18n-string="cleanCache"></span>
+          (<span id="cacheSizeInMb">0MB</span>)
         </button>
         <button type="button" id="btnTestApp" class="btn btn-sm btn-danger">
           <span>Run tests</span>
         </button>
       </div>
-      <div class="col text-center">
-      </div>
+      <div class="col text-center"></div>
       <div class="col text-end">
         <button type="button" class="btn btn-dark btn-home">
           <i class="fas fa-fw fa-home"></i>
@@ -930,17 +971,17 @@
   </div>
   <div id="home" class="d-flex flex-column px-3">
     <div class="align-items-center d-flex flex-grow-0 justify-content-center py-4">
-      <div class="col-5">
-      </div>
+      <div class="col-5"></div>
       <div class="col-2 text-center">
         <i id="statusIcon" class="fas fa-fw fa-photo-video fa-3x text-muted"></i>
       </div>
       <div class="col-5 text-end">
         <div class="btn-group" id="congregationSelect">
-          <button class="btn btn-sm dropdown-toggle" type="button" id="congregationSelect-dropdown" data-bs-toggle="dropdown">
-          </button>
+          <button class="btn btn-sm dropdown-toggle" type="button" id="congregationSelect-dropdown" data-bs-toggle="dropdown"></button>
           <div class="dropdown-menu dropdown-menu-end">
-            <button class="dropdown-item new-cong" value=""><i class="fas fa-square-plus text-success"></i></button>
+            <button class="dropdown-item new-cong" value="">
+              <i class="fas fa-square-plus text-success"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -955,7 +996,11 @@
         <button id="syncJwOrgMedia" data-settingslink="collapseMedia" class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
           <div>
             <span data-i18n-string="syncJwOrgMedia"></span>
-            <span class="jwLang"><em><small></small></em></span>
+            <span class="jwLang">
+              <em>
+                <small></small>
+              </em>
+            </span>
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </button>
@@ -979,28 +1024,32 @@
     <div class="align-items-center d-flex py-3 justify-content-center">
       <div id="music-buttons" class="col-4 text-start">
         <button type="button" class="btn btn-info" id="btnMeetingMusic" data-bs-toggle="popover" data-bs-trigger="focus" title="Alt+K" style="display: none;">
-          <i class="fas fa-fw fa-music"></i> <i class="fa-solid fa-shuffle"></i>
+          <i class="fas fa-fw fa-music"></i>
+          <i class="fa-solid fa-shuffle"></i>
         </button>
         <button type="button" class="btn btn-warning" id="btnStopMeetingMusic" title="Alt+K" style="display: none;">
-          <i class="fas fa-fw fa-stop"></i> <span id="musicRemaining"></span>
+          <i class="fas fa-fw fa-stop"></i>
+          <span id="musicRemaining"></span>
         </button>
       </div>
       <div class="col-4 text-center">
         <div class="btn-group" id="baseDate">
-          <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown">
-          </button>
-          <div class="dropdown-menu">
-          </div>
+          <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown"></button>
+          <div class="dropdown-menu"></div>
         </div>
       </div>
       <div id="control-buttons" class="col-4 text-end">
         <button type='button' id='btnToggleMediaWindowFocus' class='btn btn-sm btn-warning me-2' title='Alt+Z' style="display: none;">
           <span class='fa-stack'>
-            <i class='fas fa-desktop fa-stack-1x'></i><i class='fas fa-ban fa-stack-2x text-danger'></i>
+            <i class='fas fa-desktop fa-stack-1x'></i>
+            <i class='fas fa-ban fa-stack-2x text-danger'></i>
           </span>
-        </button><button type="button" class="btn btn-primary me-2" id="btnMediaWindow" title="Alt+D" style="display: none;">
-          <i class="fas fa-fw fa-play"></i> <i class="fas fa-sliders"></i>
-        </button><button class="btn btn-dark position-relative" id="btn-settings">
+        </button>
+        <button type="button" class="btn btn-primary me-2" id="btnMediaWindow" title="Alt+D" style="display: none;">
+          <i class="fas fa-fw fa-play"></i>
+          <i class="fas fa-sliders"></i>
+        </button>
+        <button class="btn btn-dark position-relative" id="btn-settings">
           <i class="fas fa-fw fa-user-cog"></i>
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="bg-mac-update" style="display: none;">
             <i class="fas fa-fw fa-exclamation-triangle"></i>
@@ -1019,8 +1068,7 @@
         <div class="modal-body">
           ...
         </div>
-        <div class="modal-footer">
-        </div>
+        <div class="modal-footer"></div>
       </div>
     </div>
   </div>

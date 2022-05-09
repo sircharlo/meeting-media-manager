@@ -7,36 +7,35 @@
   <style>
     @font-face {
       font-family: NotoSerif;
-      src: url(fonts/NotoSerif-Bold.ttf) format('truetype');
+      src: url("fonts/NotoSerif-Bold.ttf") format('truetype');
     }
 
-    html,
-    body,
-    video,
-    #mediaDisplay,
     #blackOverlay,
-    #resizeOverlay {
+    #mediaDisplay,
+    #resizeOverlay,
+    body,
+    html,
+    video {
       height: 100%;
       width: 100%;
       margin: 0;
       overflow: hidden;
     }
 
-    html,
-    body {
+    body,
+    html {
       background: black;
       -webkit-app-region: drag;
     }
 
     #blackOverlay,
-    #resizeOverlay,
     #importedYearText,
-    #mediaDisplay {
+    #mediaDisplay,
+    #resizeOverlay {
       position: absolute;
       top: 0;
       left: 0;
     }
-
 
     #blackOverlay,
     #resizeOverlay {
@@ -62,7 +61,7 @@
       background-color: #cfe2ff;
       border-color: #b6d4fe;
       position: relative;
-      padding: 1rem 1rem;
+      padding: 1rem;
       border: 1px solid transparent;
       border-radius: 0.25rem;
       width: fit-content;
@@ -136,25 +135,43 @@
       resizingDone();
       $("#blackOverlay").css("opacity", "1");
       setTimeout(function() {
-        if (isVideo(media) || isAudio(media)) {
-          $("#mediaDisplay").append($('<video />', {
-            id: 'mediaVideo',
-            src: url.pathToFileURL(media).href,
-            autoplay: true,
-            controls: false
-          }).on("canplay", () => {
-            if ($("video")[0].duration < 0.1) {
-              $("video")[0].pause();
-              require("electron").ipcRenderer.send("videoPaused");
-            }
-          }).on("timeupdate", () => {
-            require("electron").ipcRenderer.send("videoProgress", [$("video")[0].currentTime, $("video")[0].duration]);
-          }).on("ended", () => {
-            require("electron").ipcRenderer.send("videoEnd");
-          }));
-          $("#mediaDisplay").css("background", "black");
-        } else if (isImage(media)) {
-          $("#mediaDisplay").css("background", "url(" + url.pathToFileURL(media).href + ") black center center / contain no-repeat");
+        if (media.item) {
+          if (isVideo(media.item) || isAudio(media.item)) {
+            $("#mediaDisplay").append($('<video />', {
+              id: 'mediaVideo',
+              src: url.pathToFileURL(media.item).href + (
+                media.Start || media.End ?
+                "#t=" + (
+                  media.Start || ""
+                ) + "," + (
+                  media.End || ""
+                ) :
+                ""
+              ),
+              autoplay: true,
+              controls: false
+            }).on("canplay", () => {
+              if ($("video")[0].duration < 0.1) {
+                $("video")[0].pause();
+                require("electron").ipcRenderer.send("videoPaused");
+              }
+            }).on("timeupdate", () => {
+              require("electron").ipcRenderer.send("videoProgress", [
+                $("video")[0].currentTime,
+                $("video")[0].duration
+              ]);
+            }).on("pause", () => {
+              if (!$("video").hasClass("manuallyPaused")) {
+                hideMedia();
+                require("electron").ipcRenderer.send("videoEnd");
+              }
+            }).on("ended", () => {
+              require("electron").ipcRenderer.send("videoEnd");
+            }));
+            $("#mediaDisplay").css("background", "black");
+          } else if (isImage(media.item)) {
+            $("#mediaDisplay").css("background", "url(" + url.pathToFileURL(media.item).href + ") black center center / contain no-repeat");
+          }
         } else {
           $("#mediaDisplay").css("background", "transparent");
         }
@@ -175,7 +192,7 @@
       trasitionToMedia(arg)
     });
     ipcRenderer.on('pauseVideo', (event, arg) => {
-      $("video").trigger("pause")
+      $("video").addClass("manuallyPaused").trigger("pause")
     });
     ipcRenderer.on('playVideo', (event, arg) => {
       $("video").trigger("play")
@@ -204,7 +221,8 @@
     ipcRenderer.on('startMediaDisplay', (event, prefsFile) => {
       let prefs = {};
       try {
-        if (fs.existsSync(prefsFile)) prefs = JSON.parse(fs.readFileSync(prefsFile));
+        if (fs.existsSync(prefsFile))
+          prefs = JSON.parse(fs.readFileSync(prefsFile));
       } catch (err) {
         console.error("no prefs found!");
       }
@@ -212,16 +230,23 @@
       if (mediaWindowBackgroundImages.length > 0) {
         $("body").css("background", "url(" + url.pathToFileURL(mediaWindowBackgroundImages[0]).href + ") black center center / contain no-repeat");
       } else if (prefs.lang) {
-        let yearTextPath = path.join(remote.app.getPath("userData"), "Publications", prefs.lang, "yeartext-" + prefs.lang + "-" + (new Date().getFullYear()).toString());
+        let yearTextPath = path.join(remote.app.getPath("userData"), "Publications", prefs.lang, "yeartext-" + prefs.lang + "-" + (
+          new Date().getFullYear()
+        ).toString());
         let appData = path.normalize(remote.app.getPath("appData"));
         let localAppData = glob.sync(path.join(appData, "../local"), {
           onlyDirectories: true
         })
-        if (os.platform() == "win32" && localAppData.length > 0) appData = localAppData[0]
+        if (os.platform() == "win32" && localAppData.length > 0)
+          appData = localAppData[0]
         try {
           function setYearText() {
             try {
-              let yearText = (glob.sync(yearTextPath).length > 0 ? fs.readFileSync(yearTextPath, "utf8") : null);
+              let yearText = (
+                glob.sync(yearTextPath).length > 0 ?
+                fs.readFileSync(yearTextPath, "utf8") :
+                null
+              );
               if (yearText && yearText.length > 0) {
                 $("#importedYearText").empty();
                 $(yearText).filter("p").filter(function() {
