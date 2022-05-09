@@ -34,8 +34,8 @@ function createUpdateWindow() {
     },
     width: 700,
     height: 700,
-    minWidth: 700,
-    minHeight: 700,
+    minWidth: 600,
+    minHeight: 410,
     icon: path.join(__dirname, "build", "icon.ico"),
     title: "JW Meeting Media Fetcher"
   });
