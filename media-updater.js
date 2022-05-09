@@ -2,6 +2,8 @@
 //          IF more than one screen present AND JWMMF window new midpoint is same as current media window midpoint
 //           move media window to preferredOutput if not already there
 
+// TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
+
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -901,15 +903,26 @@ async function getJwOrgLanguages(forceRefresh) {
   $("#lang").val(prefs.lang).select2();
 }
 function getLocaleLanguages() {
-  $("#localAppLang").empty();
-  for (var localeLang of fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", ""))) {
-    let localeLangMatches = jsonLangs.filter(item => item.symbol === localeLang);
-    $("#localAppLang").append($("<option>", {
-      value: localeLang,
-      text: (localeLangMatches.length === 1 ? localeLangMatches[0].vernacularName + " (" + localeLangMatches[0].name + ")" : localeLang)
-    }));
+  try {
+    $("#localAppLang").empty();
+    fs.readdirSync(path.join(__dirname, "locales")).map(file => {
+      let basename = path.basename(file, path.extname(file));
+      let localeLangMatch = jsonLangs.find(item => item.symbol === basename);
+      return {
+        friendlyName: (localeLangMatch ? localeLangMatch.vernacularName + " (" + localeLangMatch.name + ")" : basename),
+        actualName: (localeLangMatch ? localeLangMatch.name : basename),
+        localeCode: basename
+      };
+    }).sort((a, b) => a.actualName.localeCompare(b.actualName)).map(lang => {
+      $("#localAppLang").append($("<option>", {
+        value: lang.localeCode,
+        text: lang.friendlyName
+      }));
+    });
+    $("#localAppLang").val(prefs.localAppLang);
+  } catch(err) {
+    log.error(err);
   }
-  $("#localAppLang").val(prefs.localAppLang);
 }
 async function getMediaLinks(pubSymbol, track, issue, format, docId) {
   let mediaFiles = [];
@@ -1389,6 +1402,8 @@ function refreshBackgroundImagePreview(force) {
       getRemoteYearText(force).then((yearText) => {
         $("#fetchedYearText").text($(yearText).text());
         $("#fetchedYearText, #refreshYeartext").toggle(!!yearText);
+      }).finally(() => {
+        require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
       });
     } else {
       $("#currentMediaBackground").prop("src", escape(mediaWindowBackgroundImages[0]) + "?" + (new Date()).getTime());
@@ -1409,9 +1424,73 @@ function refreshFolderListing(folderPath) {
     item = escape(item);
     let lineItem = $("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/- Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/- Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button></div></li>");
     lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMS4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNNDYzLjEgMzJoLTQxNkMyMS40OSAzMi0uMDAwMSA1My40OS0uMDAwMSA4MHYzNTJjMCAyNi41MSAyMS40OSA0OCA0Ny4xIDQ4aDQxNmMyNi41MSAwIDQ4LTIxLjQ5IDQ4LTQ4di0zNTJDNTExLjEgNTMuNDkgNDkwLjUgMzIgNDYzLjEgMzJ6TTExMS4xIDQwOGMwIDQuNDE4LTMuNTgyIDgtOCA4SDU1LjFjLTQuNDE4IDAtOC0zLjU4Mi04LTh2LTQ4YzAtNC40MTggMy41ODItOCA4LThoNDcuMWM0LjQxOCAwIDggMy41ODIgOCA4TDExMS4xIDQwOHpNMTExLjEgMjgwYzAgNC40MTgtMy41ODIgOC04IDhINTUuMWMtNC40MTggMC04LTMuNTgyLTgtOHYtNDhjMC00LjQxOCAzLjU4Mi04IDgtOGg0Ny4xYzQuNDE4IDAgOCAzLjU4MiA4IDhWMjgwek0xMTEuMSAxNTJjMCA0LjQxOC0zLjU4MiA4LTggOEg1NS4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOEwxMTEuMSAxNTJ6TTM1MS4xIDQwMGMwIDguODM2LTcuMTY0IDE2LTE2IDE2SDE3NS4xYy04LjgzNiAwLTE2LTcuMTY0LTE2LTE2di05NmMwLTguODM4IDcuMTY0LTE2IDE2LTE2aDE2MGM4LjgzNiAwIDE2IDcuMTYyIDE2IDE2VjQwMHpNMzUxLjEgMjA4YzAgOC44MzYtNy4xNjQgMTYtMTYgMTZIMTc1LjFjLTguODM2IDAtMTYtNy4xNjQtMTYtMTZ2LTk2YzAtOC44MzggNy4xNjQtMTYgMTYtMTZoMTYwYzguODM2IDAgMTYgNy4xNjIgMTYgMTZWMjA4ek00NjMuMSA0MDhjMCA0LjQxOC0zLjU4MiA4LTggOGgtNDcuMWMtNC40MTggMC03LjEtMy41ODItNy4xLThsMC00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFY0MDh6TTQ2My4xIDI4MGMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYyODB6TTQ2My4xIDE1MmMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04bDAtNDhjMC00LjQxOCAzLjU4Mi04IDcuMS04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYxNTJ6Ii8+PC9zdmc+'") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
-      if ($(this)[0].duration) lineItem.find(".time .duration").text(dayjs.duration($(this)[0].duration, "s").format("mm:ss"));
-    }).add("<div class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple" ) + "'></i> <span class='current'></span><span class='duration'></span></div>") : "<img class='mx-auto' src='" + url.pathToFileURL(item).href + "' />")));
+      lineItem.data("originalStart", 0);
+      if ($(this)[0].duration) {
+        let durationAsMs = dayjs.duration($(this)[0].duration, "s").asMilliseconds().toFixed(0);
+        lineItem.data("originalEnd", durationAsMs);
+        lineItem.find(".time .duration").text(dayjs.duration(durationAsMs, "ms").format("mm:ss"));
+      }
+    }).add("<div class='h-100 w-100 position-absolute p-2 small text-light customStartStop d-none flex-column'><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='setTimeToCurrent beginning fas fa-fw fa-backward-step'></i></div><div><input type='text' class='col form-control form-control-sm timeStart px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-rotate-left timeReset'></i></div></div><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-forward-step setTimeToCurrent end'></i></i></div><div><input type='text' class='col form-control form-control-sm timeEnd px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' tabindex='0' class='applyTimeChanges fas fa-fw fa-square-check text-danger'></i></div></div></div>").add($("<div role='button' tabindex='0' class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple" ) + "'></i> <span class='current'></span><span class='duration'></span></div>").popover({
+      content: i18n.__("clickAgain"),
+      container: "body",
+      trigger: "focus"
+    }).on("hidden.bs.popover", function() {
+      unconfirm(this);
+    }).on("click", function() {
+      if (!$(this).hasClass("confirmed")) {
+        waitToConfirm(this);
+      } else {
+        unconfirm(this);
+        getMediaDuration(lineItem);
+        lineItem.find(".customStartStop").toggleClass("d-flex d-none");
+        $(this).hide();
+      }
+    })) : "<img class='mx-auto' src='" + url.pathToFileURL(item).href + "' />")));
+    lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
+      if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "Start" : "End")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS"));
+    });
+    lineItem.find(".customStartStop i.timeReset").on("click", function() {
+      for (let timeItem of ["Start", "End"]) {
+        lineItem.find(".time" + timeItem).val(!isNaN(lineItem.data("original" + timeItem)) ? dayjs.duration(lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"): "");
+      }
+    });
+    lineItem.find(".customStartStop i.applyTimeChanges").popover({
+      content: i18n.__("clickAgain"),
+      container: "body",
+      trigger: "focus"
+    }).on("hidden.bs.popover", function() {
+      unconfirm(this);
+    }).on("click", function() {
+      if (!$(this).hasClass("confirmed")) {
+        waitToConfirm(this);
+      } else {
+        unconfirm(this);
+        for (let timeItem of ["Start", "End"]) {
+          let inputTime = dayjs(lineItem.find(".time" + timeItem).val(), "mm:ss.SSS");
+          let newTimeAsMs = dayjs.duration({
+            m: inputTime.format("m"),
+            s: inputTime.format("s"),
+            ms: inputTime.format("SSS"),
+          }).asMilliseconds();
+          if (lineItem.data("original" + timeItem).toString() !== newTimeAsMs.toString()) {
+            lineItem.data("custom" + timeItem, newTimeAsMs);
+            lineItem.find(".stop:visible").addClass("confirmed").click();
+          } else {
+            lineItem.removeData("custom" + timeItem);
+          }
+        }
+        lineItem.find(".time .current").text(!isNaN(lineItem.data("customStart")) ? dayjs.duration(lineItem.data("customStart"), "ms").format("mm:ss/") : "");
+        lineItem.find(".time .duration").text(dayjs.duration(!isNaN(lineItem.data("customEnd")) ? lineItem.data("customEnd") : lineItem.data("originalEnd"), "ms").format("mm:ss"));
+        lineItem.find(".time").toggleClass("pulse-danger", (!!lineItem.data("customStart") && lineItem.data("customStart") !== lineItem.data("originalStart")) || (!!lineItem.data("customEnd") && lineItem.data("customEnd") !== lineItem.data("originalEnd"))).show();
+        lineItem.find(".customStartStop").toggleClass("d-flex d-none");
+      }
+    });
     if (isVideo(item) || isAudio(item) || isImage(item)) $("div#folderListing").append(lineItem);
+  }
+  function getMediaDuration(lineItem) {
+    for (let timeItem of ["Start", "End"]) {
+      lineItem.find(".time" + timeItem).val(!isNaN(dayjs.duration(lineItem.data("custom" + timeItem)) ? lineItem.data("custom" + timeItem) : lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"));
+    }
   }
   $("div#folderListing .video .stop").popover({
     content: i18n.__("clickAgain")
@@ -2365,8 +2444,10 @@ require("electron").ipcRenderer.on("videoProgress", (event, stats) => {
     let percent = stats[0] / stats[1] * 100;
     $("#videoProgress .progress-bar").css("width", percent + "%");
     $("#videoScrubber").val(percent);
-    $("#videoScrubber").closest("li.video").find(".time .current").text(dayjs.duration(stats[0], "s").format("mm:ss/"));
-    $("#videoScrubber").closest("li.video").find(".time .duration").text(dayjs.duration(stats[1], "s").format("mm:ss"));
+    let videoItem = $("#videoScrubber").closest("li.video");
+    videoItem.data("timeElapsed", stats[0]);
+    videoItem.find(".time .current").text(dayjs.duration(stats[0], "s").format("mm:ss/"));
+    videoItem.find(".time .duration").text(dayjs.duration(!isNaN(videoItem.data("customEnd")) ? videoItem.data("customEnd") : stats[1] * 1000, "ms").format("mm:ss"));
   }
 });
 require("electron").ipcRenderer.on("videoEnd", () => {
@@ -2419,7 +2500,13 @@ $("#btnMediaWindow").on("click", function() {
     let mediaItem = $(this).closest(".item");
     $("#folderListing .item").removeClass("list-group-item-primary");
     $("#btnToggleMediaWindowFocus.hidden").click();
-    require("electron").ipcRenderer.send("showMedia", mediaItem.data("item"));
+    let mediaFileToPlay = {
+      item: mediaItem.data("item"),
+    };
+    for (var timeItem of ["Start", "End"]) {
+      if (!isNaN(mediaItem.data("custom" + timeItem))) mediaFileToPlay[timeItem] = dayjs.duration(mediaItem.data("custom" + timeItem), "ms").format("mm:ss.SSS");
+    }
+    require("electron").ipcRenderer.send("showMedia", mediaFileToPlay);
     $("#btnToggleMediaWindowFocus.pulse-danger").click();
     obsSetScene(prefs.obsMediaScene);
     if (mediaItem.hasClass("video")) {
@@ -2443,7 +2530,7 @@ $("#btnMediaWindow").on("click", function() {
       obsSetScene($("#obsTempCameraScene").val());
       if (mediaItem.hasClass("video")) {
         mediaItem.find("#videoProgress, #videoScrubber").remove();
-        mediaItem.find(".time .current").text("");
+        mediaItem.find(".time .current").text(!isNaN(mediaItem.data("customStart")) ? dayjs.duration(mediaItem.data("customStart"), "ms").format("mm:ss/") : "");
         mediaItem.find(".pausePlay").removeClass("play pulse-danger").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
         unconfirm(this);
       }
