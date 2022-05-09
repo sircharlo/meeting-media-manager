@@ -9,8 +9,11 @@
   "convertExternal": "Möjlighet att importera tilläggsmedia",
   "custom": "Anpassa",
   "delete": "Radera",
+  "disableHardwareAcceleration": "Inaktivera hårdvaruacceleration <em>(Obs! Aktivera endast den här inställningen om du har problem med mediapresentation. Om du ändrar den här inställningen kommer JWMMF att starta om.)</em>",
+  "dontForgetToGetMedia": "Glöm inte att uppdatera mediamapparna på datorn som används för att presentera media på församlingsmöten!",
   "enableMediaDisplayButton": "Visa knapp för att visa media på extern skärm eller i ett separat fönster",
   "enableMusicButton": "Visa knapp för att spela slumpvis utvalda Rikets sånger",
+  "enableObs": "Aktivera OBS Studio-kompatibilitetsläge <em>(kräver obs-websocket)</em>",
   "enableVlcPlaylistCreation": "Skapa spellistor för <em>VLC</em>",
   "error": "Fel",
   "errorAdditionalMedia": "Ett fel har uppstått vid importering av media. Vänligen kontakta organisatören för videokonferensen.",
@@ -22,6 +25,7 @@
   "errorInvalidPrefs": "Ett fel har upptstått vid inläsning av dina inställningar. Vänligen kontrollera dina inställningar.",
   "errorJwpubDbFetch": "Ett fel har uppstår vid inläsning av följande publikation:",
   "errorJwpubMediaExtract": "Ett fel har uppstått när media skulle inläsas från följande publikation:",
+  "errorObs": "Ett fel uppstod vid försök att ansluta till OBS Studio. Kontrollera att OBS Studio körs och att <code>obs-websocket</code>-konfigurationen är korrekt.",
   "errorSetVars": "Ett fel har uppstått vid skapande av katalog. Vänligen kontrollera att du har tillgång till följande sökväg på din dator:",
   "errorSiteCheck": "Kunde inte komma åt följande sida:",
   "errorSyncCongMedia": "Ett fel har uppstått vid inläsning av media från församlingssynkroniseringen. Vänligen prova igen senare eller kontakta organisatören för videokonferensen.",
@@ -42,6 +46,7 @@
   "mediaLang": "Mediaspråk",
   "mediaSaveFolder": "Mapp för media",
   "mediaWindowBackground": "Bakgrundsbild för mediavisning",
+  "meeting": "Möte",
   "moreInfo": "Ta reda på mer",
   "mp4Conversion": "MP4 konvertering",
   "musicFadeOutSmart": "<span>XX</span> sekunder före möte",
@@ -89,5 +94,8 @@
   "warnSvgConversionFailure": "Följande fil kunde inte kännas igen som en giltig SVG-bild:",
   "warnUnknownLastVersion": "Kunde inte konstrollera föregående version av JWMMF. Programmet har troligen blivit nyligen uppdaterad.",
   "webdavFolder": "Församlingens synkroniseringsmapp",
-  "weMeetingDay": "Helgmöte"
+  "weMeetingDay": "Helgmöte",
+  "preferredOutput": "Visa mediepresentationsfönstret i",
+  "window": "Flyttbart fönster",
+  "screen": "Skärm"
 }
