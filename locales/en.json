@@ -18,6 +18,7 @@
   "error": "Error",
   "errorAdditionalMedia": "An error occurred while importing media. Please contact your videoconference organizer.",
   "errorAdditionalMediaList": "An error occurred while listing media. Please try again later or contact your videoconference organizer.",
+  "errorBadOutputPath": "The path you specified contains illegal characters. Please ensure that the following characters are not present in the path:",
   "errorForcedSettingsEnforce": "An error occurred while enforcing congregation settings. Please contact your videoconference organizer.",
   "errorGetCongMedia": "An error occurred while fetching congregation media. Please verify your congregation sync settings or contact your videoconference organizer.",
   "errorGetMwMedia": "An error occurred while fetching media for the midweek meeting. Please try again later or contact your videoconference organizer.",

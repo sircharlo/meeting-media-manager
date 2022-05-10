@@ -211,7 +211,7 @@ function goAhead() {
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
       setVars();
-      rm(glob.sync(path.join(paths.media, "*"), {
+      if (paths.media) rm(glob.sync(path.join(paths.media, "*"), {
         ignore: [path.join(paths.media, "Recurring")],
         onlyDirectories: true
       }));
@@ -306,10 +306,20 @@ function congregationDelete(prefsFile) {
   }
 }
 function congregationPrefsPopulate() {
-  paths.congprefs = glob.sync(path.join(paths.app, "prefs*.json")).map(congregationPrefs => ({
-    name: JSON.parse(fs.readFileSync(congregationPrefs)).congregationName || "Default",
-    path: congregationPrefs
-  })).sort((a, b) => b.name.localeCompare(a.name));
+  paths.congprefs = glob.sync(path.join(paths.app, "prefs*.json")).map(congregationPrefs => {
+    let congPrefInfo = {}, congName = "Default";
+    try {
+      congName = JSON.parse(fs.readFileSync(congregationPrefs, "utf8")).congregationName;
+    } catch (err) {
+      log.error(err);
+    } finally {
+      congPrefInfo = ({
+        name: congName,
+        path: congregationPrefs
+      });
+    }
+    return congPrefInfo;
+  }).filter(congPrefInfo => congPrefInfo.name).sort((a, b) => b.name.localeCompare(a.name));
 }
 function congregationSelectPopulate() {
   $("#congregationSelect .dropdown-menu .congregation").remove();
@@ -1397,19 +1407,21 @@ function progressSet(current, total, blockId) {
 }
 function refreshBackgroundImagePreview(force) {
   try {
-    let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
-    if (mediaWindowBackgroundImages.length == 0) {
-      getRemoteYearText(force).then((yearText) => {
-        $("#fetchedYearText").text($(yearText).text());
-        $("#fetchedYearText, #refreshYeartext").toggle(!!yearText);
-      }).finally(() => {
-        require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
-      });
-    } else {
-      $("#currentMediaBackground").prop("src", escape(mediaWindowBackgroundImages[0]) + "?" + (new Date()).getTime());
+    if (prefs.enableMediaDisplayButton) {
+      let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
+      if (mediaWindowBackgroundImages.length == 0) {
+        getRemoteYearText(force).then((yearText) => {
+          $("#fetchedYearText").text($(yearText).text());
+          $("#fetchedYearText, #refreshYeartext").toggle(!!yearText);
+        }).finally(() => {
+          require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
+        });
+      } else {
+        $("#currentMediaBackground").prop("src", escape(mediaWindowBackgroundImages[0]) + "?" + (new Date()).getTime());
+      }
+      $("#currentMediaBackground, #deleteBackground").toggle(mediaWindowBackgroundImages.length > 0);
+      $("#chooseBackground").toggle(mediaWindowBackgroundImages.length == 0);
     }
-    $("#currentMediaBackground, #deleteBackground").toggle(mediaWindowBackgroundImages.length > 0);
-    $("#chooseBackground").toggle(mediaWindowBackgroundImages.length == 0);
   } catch (err) {
     log.error(err);
   }
@@ -2060,7 +2072,16 @@ function unconfirm(el) {
 function validateConfig(changed, restart) {
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
-  if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) $("#localOutputPath").val("");
+  if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) {
+    prefs.localOutputPath = null;
+  } else if (prefs.localOutputPath) {
+    let badCharacters = prefs.localOutputPath.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g);
+    if (badCharacters) {
+      console.log(badCharacters);
+      notifyUser("error", "errorBadOutputPath", badCharacters.join(" "), true);
+      prefs.localOutputPath = null;
+    }
+  }
   let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes", "congregationName"];
   for (let timeField of ["mwStartTime", "weStartTime"]) {
     if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push(timeField);
