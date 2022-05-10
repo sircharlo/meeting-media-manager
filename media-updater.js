@@ -1601,7 +1601,7 @@ async function request(url, opts) {
 }
 function sanitizeFilename(filename, isNotFile) {
   let fileExtIfApplicable = (isNotFile ? "" : path.extname(filename).toLowerCase());
-  filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).replace(/["»“”‘’«()№+[\]$<>,/\\:*\x00-\x1f\x80-\x9f]/g, "").replace(/ *[—?;:|.!?] */g, " - ").trim().replace(/[ -]+$/g, "") + fileExtIfApplicable;
+  filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).replace(/["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1f\x80-\x9f]/g, "").replace(/ *[—?;:|.!?] */g, " - ").trim().replace(/[ -]+$/g, "") + fileExtIfApplicable;
   if (!isNotFile && paths.media) {
     let maxCharactersInPath = 245,
       projectedPathCharLength = path.join(paths.media, "9999-99-99", filename).length;
