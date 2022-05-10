@@ -18,6 +18,7 @@
   "error": "Erro",
   "errorAdditionalMedia": "Ocorreu um erro ao importar as multimédias. Por favor fale com o organizador de vídeoconferência da sua congregação.",
   "errorAdditionalMediaList": "Ocorreu um erro ao listar os ficheiros de multimédia. Tente novamente mais tarde ou entre em contacte com o organizador de vídeoconferência da sua congregação.",
+  "errorBadOutputPath": "O caminho especificado tem caracteres inválidos. Certifique-se de que estes caracteres não estão no caminho:",
   "errorForcedSettingsEnforce": "Ocorreu um erro ao aplicar as configurações da congregação. Entre em contacto com o organizador de vídeoconferência da sua congregação.",
   "errorGetCongMedia": "Ocorreu um erro ao descarregar os ficheiros de multimédia da congregação. Verifique as configurações do servidor ou entre em contacto com o organizador de vídeoconferência da sua congregação.",
   "errorGetMwMedia": "Ocorreu um erro ao descarregar os ficheiros de multimédia para a reunião de meio de semana. Tente novamente mais tarde ou entre em contacto com o organizador de vídeoconferência da sua congregação.",
