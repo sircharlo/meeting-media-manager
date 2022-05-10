@@ -143,9 +143,7 @@
                 media.Start || media.End ?
                 "#t=" + (
                   media.Start || ""
-                ) + "," + (
-                  media.End || ""
-                ) :
+                ) + (media.End ? "," + media.End : "") :
                 ""
               ),
               autoplay: true,

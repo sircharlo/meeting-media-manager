@@ -1436,11 +1436,15 @@ function refreshFolderListing(folderPath) {
     item = escape(item);
     let lineItem = $("<li class='d-flex align-items-center list-group-item item position-relative " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/- Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/- Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button></div></li>");
     lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMS4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNNDYzLjEgMzJoLTQxNkMyMS40OSAzMi0uMDAwMSA1My40OS0uMDAwMSA4MHYzNTJjMCAyNi41MSAyMS40OSA0OCA0Ny4xIDQ4aDQxNmMyNi41MSAwIDQ4LTIxLjQ5IDQ4LTQ4di0zNTJDNTExLjEgNTMuNDkgNDkwLjUgMzIgNDYzLjEgMzJ6TTExMS4xIDQwOGMwIDQuNDE4LTMuNTgyIDgtOCA4SDU1LjFjLTQuNDE4IDAtOC0zLjU4Mi04LTh2LTQ4YzAtNC40MTggMy41ODItOCA4LThoNDcuMWM0LjQxOCAwIDggMy41ODIgOCA4TDExMS4xIDQwOHpNMTExLjEgMjgwYzAgNC40MTgtMy41ODIgOC04IDhINTUuMWMtNC40MTggMC04LTMuNTgyLTgtOHYtNDhjMC00LjQxOCAzLjU4Mi04IDgtOGg0Ny4xYzQuNDE4IDAgOCAzLjU4MiA4IDhWMjgwek0xMTEuMSAxNTJjMCA0LjQxOC0zLjU4MiA4LTggOEg1NS4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOEwxMTEuMSAxNTJ6TTM1MS4xIDQwMGMwIDguODM2LTcuMTY0IDE2LTE2IDE2SDE3NS4xYy04LjgzNiAwLTE2LTcuMTY0LTE2LTE2di05NmMwLTguODM4IDcuMTY0LTE2IDE2LTE2aDE2MGM4LjgzNiAwIDE2IDcuMTYyIDE2IDE2VjQwMHpNMzUxLjEgMjA4YzAgOC44MzYtNy4xNjQgMTYtMTYgMTZIMTc1LjFjLTguODM2IDAtMTYtNy4xNjQtMTYtMTZ2LTk2YzAtOC44MzggNy4xNjQtMTYgMTYtMTZoMTYwYzguODM2IDAgMTYgNy4xNjIgMTYgMTZWMjA4ek00NjMuMSA0MDhjMCA0LjQxOC0zLjU4MiA4LTggOGgtNDcuMWMtNC40MTggMC03LjEtMy41ODItNy4xLThsMC00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFY0MDh6TTQ2My4xIDI4MGMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYyODB6TTQ2My4xIDE1MmMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04bDAtNDhjMC00LjQxOCAzLjU4Mi04IDcuMS04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYxNTJ6Ii8+PC9zdmc+'") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
-      lineItem.data("originalStart", 0);
-      if ($(this)[0].duration) {
-        let durationAsMs = dayjs.duration($(this)[0].duration, "s").asMilliseconds().toFixed(0);
-        lineItem.data("originalEnd", durationAsMs);
-        lineItem.find(".time .duration").text(dayjs.duration(durationAsMs, "ms").format("mm:ss"));
+      try {
+        lineItem.data("originalStart", 0);
+        if ($(this)[0].duration) {
+          let durationAsMs = dayjs.duration($(this)[0].duration, "s").asMilliseconds().toFixed(0);
+          lineItem.data("originalEnd", durationAsMs);
+          lineItem.find(".time .duration").text(dayjs.duration(durationAsMs, "ms").format("mm:ss"));
+        }
+      } catch (err) {
+        log.error(err);
       }
     }).add("<div class='h-100 w-100 position-absolute p-2 small text-light customStartStop d-none flex-column'><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='setTimeToCurrent beginning fas fa-fw fa-backward-step'></i></div><div><input type='text' class='col form-control form-control-sm timeStart px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-rotate-left timeReset'></i></div></div><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-forward-step setTimeToCurrent end'></i></i></div><div><input type='text' class='col form-control form-control-sm timeEnd px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' tabindex='0' class='applyTimeChanges fas fa-fw fa-square-check text-danger'></i></div></div></div>").add($("<div role='button' tabindex='0' class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple" ) + "'></i> <span class='current'></span><span class='duration'></span></div>").popover({
       content: i18n.__("clickAgain"),
@@ -1459,11 +1463,40 @@ function refreshFolderListing(folderPath) {
       }
     })) : "<img class='mx-auto' src='" + url.pathToFileURL(item).href + "' />")));
     lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
-      if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "Start" : "End")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS"));
+      try {
+        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "Start" : "End")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS"));
+      } catch (err) {
+        log.error(err);
+      }
     });
     lineItem.find(".customStartStop i.timeReset").on("click", function() {
-      for (let timeItem of ["Start", "End"]) {
-        lineItem.find(".time" + timeItem).val(!isNaN(lineItem.data("original" + timeItem)) ? dayjs.duration(lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"): "");
+      try {
+        for (let timeItem of ["Start", "End"]) {
+          lineItem.find(".time" + timeItem).val(!isNaN(lineItem.data("original" + timeItem)) ? dayjs.duration(lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"): "");
+        }
+      } catch (err) {
+        log.error(err);
+      }
+    });
+    lineItem.find(".customStartStop .timeStart, .customStartStop .timeEnd").on("change", function() {
+      try {
+        let inputTimes = {};
+        for (let timeItem of ["Start", "End"]) {
+          inputTimes[timeItem] = {
+            asTime: dayjs($(this).closest(".customStartStop").find(".time" + timeItem).val(), "mm:ss.SSS")
+          };
+          inputTimes[timeItem].asMs = dayjs.duration({
+            m: inputTimes[timeItem].asTime.format("m"),
+            s: inputTimes[timeItem].asTime.format("s"),
+            ms: inputTimes[timeItem].asTime.format("SSS"),
+          }).asMilliseconds();
+        }
+        console.log(inputTimes, lineItem.data("originalEnd"));
+        if (inputTimes.Start.asMs < 0 || inputTimes.End.asMs > lineItem.data("originalEnd") || inputTimes.Start.asMs >= inputTimes.End.asMs || inputTimes.End.asMs <= inputTimes.Start.asMs) {
+          $(this).val(dayjs.duration($(this).hasClass("timeStart") ? 0 : lineItem.data("originalEnd"), "ms").format("mm:ss.SSS"));
+        }
+      } catch (err) {
+        log.error(err);
       }
     });
     lineItem.find(".customStartStop i.applyTimeChanges").popover({
@@ -1477,31 +1510,39 @@ function refreshFolderListing(folderPath) {
         waitToConfirm(this);
       } else {
         unconfirm(this);
-        for (let timeItem of ["Start", "End"]) {
-          let inputTime = dayjs(lineItem.find(".time" + timeItem).val(), "mm:ss.SSS");
-          let newTimeAsMs = dayjs.duration({
-            m: inputTime.format("m"),
-            s: inputTime.format("s"),
-            ms: inputTime.format("SSS"),
-          }).asMilliseconds();
-          if (lineItem.data("original" + timeItem).toString() !== newTimeAsMs.toString()) {
-            lineItem.data("custom" + timeItem, newTimeAsMs);
-            lineItem.find(".stop:visible").addClass("confirmed").click();
-          } else {
-            lineItem.removeData("custom" + timeItem);
+        try {
+          for (let timeItem of ["Start", "End"]) {
+            let inputTime = dayjs(lineItem.find(".time" + timeItem).val(), "mm:ss.SSS");
+            let newTimeAsMs = dayjs.duration({
+              m: inputTime.format("m"),
+              s: inputTime.format("s"),
+              ms: inputTime.format("SSS"),
+            }).asMilliseconds();
+            if (lineItem.data("original" + timeItem).toString() !== newTimeAsMs.toString()) {
+              lineItem.data("custom" + timeItem, newTimeAsMs);
+              lineItem.find(".stop:visible").addClass("confirmed").click();
+            } else {
+              lineItem.removeData("custom" + timeItem);
+            }
           }
+          lineItem.find(".time .current").text(!isNaN(lineItem.data("customStart")) ? dayjs.duration(lineItem.data("customStart"), "ms").format("mm:ss/") : "");
+          lineItem.find(".time .duration").text(dayjs.duration(!isNaN(lineItem.data("customEnd")) ? lineItem.data("customEnd") : lineItem.data("originalEnd"), "ms").format("mm:ss"));
+          lineItem.find(".time").toggleClass("pulse-danger", (!!lineItem.data("customStart") && lineItem.data("customStart") !== lineItem.data("originalStart")) || (!!lineItem.data("customEnd") && lineItem.data("customEnd") !== lineItem.data("originalEnd"))).show();
+          lineItem.find(".customStartStop").toggleClass("d-flex d-none");
+        } catch (err) {
+          log.error(err);
         }
-        lineItem.find(".time .current").text(!isNaN(lineItem.data("customStart")) ? dayjs.duration(lineItem.data("customStart"), "ms").format("mm:ss/") : "");
-        lineItem.find(".time .duration").text(dayjs.duration(!isNaN(lineItem.data("customEnd")) ? lineItem.data("customEnd") : lineItem.data("originalEnd"), "ms").format("mm:ss"));
-        lineItem.find(".time").toggleClass("pulse-danger", (!!lineItem.data("customStart") && lineItem.data("customStart") !== lineItem.data("originalStart")) || (!!lineItem.data("customEnd") && lineItem.data("customEnd") !== lineItem.data("originalEnd"))).show();
-        lineItem.find(".customStartStop").toggleClass("d-flex d-none");
       }
     });
     if (isVideo(item) || isAudio(item) || isImage(item)) $("div#folderListing").append(lineItem);
   }
   function getMediaDuration(lineItem) {
     for (let timeItem of ["Start", "End"]) {
-      lineItem.find(".time" + timeItem).val(!isNaN(dayjs.duration(lineItem.data("custom" + timeItem)) ? lineItem.data("custom" + timeItem) : lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"));
+      try {
+        lineItem.find(".time" + timeItem).val(dayjs.duration(!isNaN(lineItem.data("custom" + timeItem)) ? lineItem.data("custom" + timeItem) : lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"));
+      } catch (err) {
+        log.error(err);
+      }
     }
   }
   $("div#folderListing .video .stop").popover({
@@ -2535,6 +2576,7 @@ $("#btnMediaWindow").on("click", function() {
       mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0' min='0' max='100' step='any' />");
       mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
       $("#folderListing button.play").prop("disabled", true);
+      mediaItem.find(".time").addClass("disabled");
     }
     mediaItem.addClass("list-group-item-primary").removeClass("list-group-item-secondary");
     $("#folderListing button.play").show();
@@ -2553,6 +2595,7 @@ $("#btnMediaWindow").on("click", function() {
         mediaItem.find("#videoProgress, #videoScrubber").remove();
         mediaItem.find(".time .current").text(!isNaN(mediaItem.data("customStart")) ? dayjs.duration(mediaItem.data("customStart"), "ms").format("mm:ss/") : "");
         mediaItem.find(".pausePlay").removeClass("play pulse-danger").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
+        mediaItem.find(".time").removeClass("disabled");
         unconfirm(this);
       }
       mediaItem.removeClass("list-group-item-primary");
