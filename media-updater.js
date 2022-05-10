@@ -2549,6 +2549,7 @@ $("#btnMediaWindow").on("click", function() {
     } else if ($(this).hasClass("play")) {
       require("electron").ipcRenderer.send("playVideo");
     }
+    obsSetScene($(this).hasClass("pause") ? $("#obsTempCameraScene").val() : prefs.obsMediaScene);
     $("#videoProgress, #videoScrubber").toggle();
     $(this).toggleClass("play pause").toggleClass("pulse-danger", $(this).hasClass("play")).find("i").toggleClass("fa-play fa-pause");
   });
