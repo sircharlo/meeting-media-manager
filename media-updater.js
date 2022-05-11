@@ -2987,6 +2987,7 @@ $("#overlaySettings").on("click", ".btn-clean-up", function() {
     onlyDirectories: true
   }).concat([paths.langs]));
   calculateCacheSize();
+  jwpubDbs = {};
   setTimeout(() => {
     $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
   }, 3000);
