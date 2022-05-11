@@ -7,6 +7,7 @@ const {
   } = require("electron"), {
     autoUpdater
   } = require("electron-updater"),
+  appLongName = "JW Meeting Media Fetcher",
   fs = require("graceful-fs"),
   os = require("os"),
   path = require("upath"),
@@ -37,11 +38,14 @@ function createUpdateWindow() {
     minWidth: 600,
     minHeight: 410,
     icon: path.join(__dirname, "build", "icon.ico"),
-    title: "JW Meeting Media Fetcher"
+    title: appLongName
   });
   // win.on("moved", () => {
   //   win.webContents.send("moveMediaWindow");
   // });
+  win.setAppDetails({
+    appId: appLongName
+  });
   win.on("close", (e) => {
     if (dontClose && closeAttempts < 2) {
       e.preventDefault();
@@ -212,6 +216,9 @@ if (!gotTheLock) {
       };
       if (mediaWindowOpts.type == "fullscreen") windowOptions.fullscreen = true;
       mediaWin = new BrowserWindow(windowOptions);
+      mediaWin.setAppDetails({
+        appId: appLongName
+      });
       mediaWin.setAlwaysOnTop(true, "pop-up-menu");
       mediaWin.setAspectRatio(16/9);
       mediaWin.setMenuBarVisibility(false);
