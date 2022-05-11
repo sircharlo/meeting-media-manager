@@ -137,6 +137,7 @@
       setTimeout(function() {
         if (media.item) {
           if (isVideo(media.item) || isAudio(media.item)) {
+            if ($("#mediaDisplay video").length > 0) $("#mediaDisplay video").remove()
             $("#mediaDisplay").append($('<video />', {
               id: 'mediaVideo',
               src: url.pathToFileURL(media.item).href + (
@@ -150,8 +151,8 @@
               controls: false
             }).on("canplay", () => {
               if ($("video")[0].duration < 0.1) {
+                $("video").addClass("shortVideoPaused")
                 $("video")[0].pause();
-                require("electron").ipcRenderer.send("videoPaused");
               }
             }).on("timeupdate", () => {
               require("electron").ipcRenderer.send("videoProgress", [
@@ -159,7 +160,7 @@
                 $("video")[0].duration
               ]);
             }).on("pause", () => {
-              if (!$("video").hasClass("manuallyPaused")) {
+              if (!($("video").hasClass("shortVideoPaused") || $("video").hasClass("manuallyPaused"))) {
                 hideMedia();
                 require("electron").ipcRenderer.send("videoEnd");
               }
@@ -189,11 +190,11 @@
     ipcRenderer.on('showMedia', (event, arg) => {
       trasitionToMedia(arg)
     });
-    ipcRenderer.on('pauseVideo', (event, arg) => {
-      $("video").addClass("manuallyPaused").trigger("pause")
+    ipcRenderer.on('pauseVideo', (event) => {
+      $("video").addClass("manuallyPaused").trigger("pause");
     });
     ipcRenderer.on('playVideo', (event, arg) => {
-      $("video").trigger("play")
+      $("video").removeClass("shortVideoPaused manuallyPaused").trigger("play")
     });
     ipcRenderer.on('windowResizing', (event, arg) => {
       resizingNow(arg[0], arg[1])

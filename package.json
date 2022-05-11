@@ -27,6 +27,7 @@
     "h264-mp4-encoder": "^1.0.12",
     "i18n": "^0.14.2",
     "image-size": "^1.0.1",
+    "inputmask": "^5.0.7",
     "is-audio": "^0.0.0",
     "is-image": "^3.0.0",
     "is-video": "^1.0.1",
@@ -47,20 +48,28 @@
     "win": {
       "target": "NSIS",
       "icon": "build/icon.ico",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "linux": {
       "category": "Utility",
       "target": "AppImage",
       "icon": "build/icon.png",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "mac": {
       "target": {
         "target": "dmg",
-        "arch": ["universal"]
+        "arch": [
+          "universal"
+        ]
       },
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "buildDependenciesFromSource": true
   },

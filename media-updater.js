@@ -4,6 +4,11 @@
 
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
+// TODO: add reordering to media window items
+
+// TODO: add dynamic keyboard shortcuts to scenes
+
+
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -1478,7 +1483,7 @@ function refreshFolderListing(folderPath) {
         log.error(err);
       }
     });
-    lineItem.find(".customStartStop .timeStart, .customStartStop .timeEnd").on("change", function() {
+    lineItem.find(".customStartStop .timeStart, .customStartStop .timeEnd").inputmask("99:99.999", { "placeholder": "0" }).on("change", function() {
       try {
         let inputTimes = {};
         for (let timeItem of ["Start", "End"]) {
@@ -1491,8 +1496,7 @@ function refreshFolderListing(folderPath) {
             ms: inputTimes[timeItem].asTime.format("SSS"),
           }).asMilliseconds();
         }
-        console.log(inputTimes, lineItem.data("originalEnd"));
-        if (inputTimes.Start.asMs < 0 || inputTimes.End.asMs > lineItem.data("originalEnd") || inputTimes.Start.asMs >= inputTimes.End.asMs || inputTimes.End.asMs <= inputTimes.Start.asMs) {
+        if (isNaN(inputTimes.Start.asMs) || isNaN(inputTimes.End.asMs) || inputTimes.Start.asMs < 0 || inputTimes.End.asMs > lineItem.data("originalEnd") || inputTimes.Start.asMs >= inputTimes.End.asMs || inputTimes.End.asMs <= inputTimes.Start.asMs) {
           $(this).val(dayjs.duration($(this).hasClass("timeStart") ? 0 : lineItem.data("originalEnd"), "ms").format("mm:ss.SSS"));
         }
       } catch (err) {
@@ -2118,7 +2122,6 @@ function validateConfig(changed, restart) {
   } else if (prefs.localOutputPath) {
     let badCharacters = prefs.localOutputPath.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g);
     if (badCharacters) {
-      console.log(badCharacters);
       notifyUser("error", "errorBadOutputPath", badCharacters.join(" "), true);
       prefs.localOutputPath = null;
     }
@@ -2515,9 +2518,6 @@ require("electron").ipcRenderer.on("videoProgress", (event, stats) => {
 require("electron").ipcRenderer.on("videoEnd", () => {
   $("#videoProgress").closest(".item").find("button.stop").addClass("confirmed").click();
 });
-require("electron").ipcRenderer.on("videoPaused", () => {
-  $("#videoProgress").closest(".item").find("button.pausePlay").click();
-});
 // require("electron").ipcRenderer.on("moveMediaWindow", () => {
 //   moveMediaWindow();
 // });
@@ -2534,7 +2534,22 @@ require("electron").ipcRenderer.on("mediaWindowShown", () => {
   startMediaDisplay();
 });
 $("#staticBackdrop").on("input change", "#videoScrubber", function() {
-  require("electron").ipcRenderer.send("videoScrub", $(this).val());
+  let scrolled_value = $(this).val(),
+    limits = {};
+  try {
+    if ($(this).closest(".video").data("customStart") || $(this).closest(".video").data("customEnd")) {
+      if ($(this).closest(".video").data("customStart")) limits.min = ($(this).closest(".video").data("customStart") / $(this).closest(".video").data("originalEnd") * 100);
+      if ($(this).closest(".video").data("customEnd")) limits.max = ($(this).closest(".video").data("customEnd") / $(this).closest(".video").data("originalEnd") * 100);
+      if (scrolled_value > limits.max) {
+        $(this).val(limits.max);
+      } else if (scrolled_value < limits.min) {
+        $(this).val(limits.min);
+      }
+    }
+    require("electron").ipcRenderer.send("videoScrub", $(this).val());
+  } catch (err) {
+    console.error(err);
+  }
 });
 $("#btnMediaWindow").on("click", function() {
   require("electron").ipcRenderer.send("preventQuit");
@@ -2544,14 +2559,14 @@ $("#btnMediaWindow").on("click", function() {
     refreshFolderListing($(this).data("folder"));
   });
   $(folderListing).on("click", "li.item button.pausePlay", function() {
-    if ($(this).hasClass("pause")) {
+    if ($(this).hasClass("pause") && !$(this).hasClass("shortVideoPaused")) {
       require("electron").ipcRenderer.send("pauseVideo");
     } else if ($(this).hasClass("play")) {
       require("electron").ipcRenderer.send("playVideo");
     }
-    obsSetScene($(this).hasClass("pause") ? $("#obsTempCameraScene").val() : prefs.obsMediaScene);
+    obsSetScene($(this).hasClass("pause") && !$(this).hasClass("shortVideoPaused") ? $("#obsTempCameraScene").val() : prefs.obsMediaScene);
     $("#videoProgress, #videoScrubber").toggle();
-    $(this).toggleClass("play pause").toggleClass("pulse-danger", $(this).hasClass("play")).find("i").toggleClass("fa-play fa-pause");
+    $(this).removeClass("shortVideoPaused").toggleClass("play pause").toggleClass("pulse-danger", $(this).hasClass("play")).find("i").toggleClass("fa-play fa-pause");
   });
   $(folderListing).on("mouseenter", "li:not(.list-group-item-primary)", function () {
     $(this).addClass("list-group-item-secondary");
@@ -2572,7 +2587,7 @@ $("#btnMediaWindow").on("click", function() {
     require("electron").ipcRenderer.send("showMedia", mediaFileToPlay);
     $("#btnToggleMediaWindowFocus.pulse-danger").click();
     obsSetScene(prefs.obsMediaScene);
-    if (mediaItem.hasClass("video")) {
+    if (mediaItem.hasClass("video") && !(mediaItem.data("originalEnd") < 1000)) {
       mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
       mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0' min='0' max='100' step='any' />");
       mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
