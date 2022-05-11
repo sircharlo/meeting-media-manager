@@ -106,6 +106,21 @@
       width: 100% !important;
     }
 
+    span.selection {
+      height: 100%;
+    }
+
+    .obsTempCameraSceneSelect {
+      height: inherit !important;
+      display: flex !important;
+      align-items: center;
+      font-size: 1.25rem;
+    }
+
+    #btnMeetingMusic {
+      white-space: nowrap;
+    }
+
     span.select2 span.select2-selection {
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
       background-position: right 0.75rem center;
@@ -1042,11 +1057,11 @@
     </div>
     <div class="align-items-center d-flex py-3 justify-content-center">
       <div id="music-buttons" class="col-4 text-start">
-        <button type="button" class="btn btn-info" id="btnMeetingMusic" data-bs-toggle="popover" data-bs-trigger="focus" title="Alt+K" style="display: none;">
+        <button type="button" class="btn btn-info me-2" id="btnMeetingMusic" data-bs-toggle="popover" data-bs-trigger="focus" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-music"></i>
           <i class="fa-solid fa-shuffle"></i>
         </button>
-        <button type="button" class="btn btn-warning" id="btnStopMeetingMusic" title="Alt+K" style="display: none;">
+        <button type="button" class="btn btn-warning me-2" id="btnStopMeetingMusic" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-stop"></i>
           <span id="musicRemaining"></span>
         </button>

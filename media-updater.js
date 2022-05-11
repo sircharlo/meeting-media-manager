@@ -4,8 +4,6 @@
 
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
-// TODO: add dynamic keyboard shortcuts to scenes
-
 // TODO: add confirm to clearcache button
 
 
@@ -136,6 +134,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   datepickers,
   downloadStats = {},
   dryrun = false,
+  dynamicShortcuts = {},
   ffmpegIsSetup = false,
   jsonLangs = {},
   jwpubDbs = {},
@@ -1292,6 +1291,26 @@ async function obsConnect(force) {
   $(".relatedToObsLogin input").toggleClass("is-invalid", !!prefs.enableObs && !obs._connected).toggleClass("is-valid", !!prefs.enableObs && !!obs._connected);
   return !!obs._connected;
 }
+function shortcutSet(shortcut, destination, fn) {
+  try {
+    const ret = remote.globalShortcut.register(shortcut, fn);
+    if (ret) {
+      if (!dynamicShortcuts[destination]) dynamicShortcuts[destination] = [];
+      dynamicShortcuts[destination].push(shortcut);
+    }
+  } catch (err) {
+    log.error(err);
+  }
+}
+function shortcutsUnset(shortcuts) {
+  try {
+    if (shortcuts) shortcuts.forEach(shortcut => {
+      remote.globalShortcut.unregister(shortcut);
+    });
+  } catch (err) {
+    log.error(err);
+  }
+}
 async function obsGetScenes(force, currentOnly) {
   try {
     let connectionAttempt = await obsConnect(force);
@@ -1316,9 +1335,40 @@ async function obsGetScenes(force, currentOnly) {
           }
         }
         $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'></select>");
+        shortcutsUnset(dynamicShortcuts.obsScenes);
+        let cameraScenes = [];
         $("#obsCameraScene").children().clone().filter(function (i, el) {
-          return $(el).val() !== prefs.obsMediaScene;
-        }).appendTo("#obsTempCameraScene");
+          return $(el).val() && $(el).val() !== prefs.obsMediaScene;
+        }).each((i, el) => {
+          try {
+            let sceneNum = (i < 10 ? (i + 1).toString().slice(-1) : null);
+            cameraScenes.push({
+              id: $(el).val(),
+              text: $(el).val() + (sceneNum ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
+              html: $(el).val() + (sceneNum ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
+              title: $(el).val(),
+            });
+            if ((i + 1) < 10) shortcutSet("Alt+" + sceneNum, dynamicShortcuts.obsScenes, function() {
+              $("#obsTempCameraScene").val($(el).val()).change();
+            });
+          } catch (err) {
+            log.error(err);
+          }
+        });
+        $("#obsTempCameraScene").select2({
+          selectionCssClass: "obsTempCameraSceneSelect",
+          dropdownParent: $("#staticBackdrop"),
+          data: cameraScenes,
+          escapeMarkup: function(markup) {
+            return markup;
+          },
+          templateResult: function(data) {
+            return data.html;
+          },
+          templateSelection: function(data) {
+            return data.text;
+          }
+        });
         $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene);
         return data;
       }
