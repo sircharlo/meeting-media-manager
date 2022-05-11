@@ -1292,8 +1292,9 @@ async function obsConnect(force) {
   return !!obs._connected;
 }
 function shortcutSet(shortcut, destination, fn) {
+  let ret = null;
   try {
-    const ret = remote.globalShortcut.register(shortcut, fn);
+    ret = remote.globalShortcut.register(shortcut, fn);
     if (ret) {
       if (!dynamicShortcuts[destination]) dynamicShortcuts[destination] = [];
       dynamicShortcuts[destination].push(shortcut);
@@ -1301,10 +1302,12 @@ function shortcutSet(shortcut, destination, fn) {
   } catch (err) {
     log.error(err);
   }
+  return ret;
 }
 function shortcutsUnset(shortcuts) {
   try {
-    if (shortcuts) shortcuts.forEach(shortcut => {
+    if (shortcuts && dynamicShortcuts[shortcuts]) dynamicShortcuts[shortcuts].forEach(shortcut => {
+      console.log(shortcut);
       remote.globalShortcut.unregister(shortcut);
     });
   } catch (err) {
@@ -1335,21 +1338,25 @@ async function obsGetScenes(force, currentOnly) {
           }
         }
         $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'></select>");
-        shortcutsUnset(dynamicShortcuts.obsScenes);
+        shortcutsUnset("obsScenes");
         let cameraScenes = [];
         $("#obsCameraScene").children().clone().filter(function (i, el) {
           return $(el).val() && $(el).val() !== prefs.obsMediaScene;
         }).each((i, el) => {
           try {
             let sceneNum = (i < 10 ? (i + 1).toString().slice(-1) : null);
+            let shortcutSetSuccess = false;
+            if ((i + 1) < 10) {
+              shortcutSetSuccess = shortcutSet("Alt+" + sceneNum, "obsScenes", function() {
+                $("#obsTempCameraScene").val($(el).val()).change();
+              });
+            }
+            console.log(shortcutSetSuccess);
             cameraScenes.push({
               id: $(el).val(),
-              text: $(el).val() + (sceneNum ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
-              html: $(el).val() + (sceneNum ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
+              text: $(el).val() + (shortcutSetSuccess ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
+              html: $(el).val() + (shortcutSetSuccess ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
               title: $(el).val(),
-            });
-            if ((i + 1) < 10) shortcutSet("Alt+" + sceneNum, dynamicShortcuts.obsScenes, function() {
-              $("#obsTempCameraScene").val($(el).val()).change();
             });
           } catch (err) {
             log.error(err);
