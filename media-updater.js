@@ -64,6 +64,13 @@ const fadeDelay = 200,
   {XMLParser, XMLBuilder} = require("fast-xml-parser"),
   zipper = require("adm-zip"),
   $ = require("jquery");
+require("jquery-ui");
+require("jquery-ui/ui/data");
+require("jquery-ui/ui/effect");
+require("jquery-ui/ui/effects/effect-slide");
+require("jquery-ui/ui/scroll-parent");
+require("jquery-ui/ui/widgets/mouse");
+require("jquery-ui/ui/widgets/sortable");
 const currentAppVersion = "v" + remote.app.getVersion();
 i18n.configure({
   directory: path.join(__dirname, "locales"),
@@ -1436,20 +1443,15 @@ function refreshFolderListing(folderPath) {
   $("h5.modal-title").html($("<button class='btn btn-secondary'>" + path.basename(folderPath) + "</button>").on("click", function() {
     $("div#folderListing").empty().append(listMediaFolders());
   }));
-  require("jquery-ui");
-  require("jquery-ui/ui/data");
-  require("jquery-ui/ui/scroll-parent");
-  require("jquery-ui/ui/widgets/mouse");
-  require("jquery-ui/ui/widgets/sortable");
   $("div#folderListing").empty().sortable({
     placeholder: "list-group-item",
-    // forcePlaceholderSize: false,
+    handle: ".move-handle",
     cancel: ".position-relative",
     axis: "y",
   });
   for (var item of glob.sync(path.join(folderPath, "*"))) {
     item = escape(item);
-    let lineItem = $("<li class='d-flex align-items-center list-group-item item " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/- Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/- Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button></div></li>");
+    let lineItem = $("<li class='d-flex align-items-center list-group-item item " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/- Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/- Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button></div><div class='alert alert-info move-handle mb-0 ms-3' style='display: none;'><i class='fas fa-arrows-up-down'></i></div></li>");
     lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMS4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNNDYzLjEgMzJoLTQxNkMyMS40OSAzMi0uMDAwMSA1My40OS0uMDAwMSA4MHYzNTJjMCAyNi41MSAyMS40OSA0OCA0Ny4xIDQ4aDQxNmMyNi41MSAwIDQ4LTIxLjQ5IDQ4LTQ4di0zNTJDNTExLjEgNTMuNDkgNDkwLjUgMzIgNDYzLjEgMzJ6TTExMS4xIDQwOGMwIDQuNDE4LTMuNTgyIDgtOCA4SDU1LjFjLTQuNDE4IDAtOC0zLjU4Mi04LTh2LTQ4YzAtNC40MTggMy41ODItOCA4LThoNDcuMWM0LjQxOCAwIDggMy41ODIgOCA4TDExMS4xIDQwOHpNMTExLjEgMjgwYzAgNC40MTgtMy41ODIgOC04IDhINTUuMWMtNC40MTggMC04LTMuNTgyLTgtOHYtNDhjMC00LjQxOCAzLjU4Mi04IDgtOGg0Ny4xYzQuNDE4IDAgOCAzLjU4MiA4IDhWMjgwek0xMTEuMSAxNTJjMCA0LjQxOC0zLjU4MiA4LTggOEg1NS4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOEwxMTEuMSAxNTJ6TTM1MS4xIDQwMGMwIDguODM2LTcuMTY0IDE2LTE2IDE2SDE3NS4xYy04LjgzNiAwLTE2LTcuMTY0LTE2LTE2di05NmMwLTguODM4IDcuMTY0LTE2IDE2LTE2aDE2MGM4LjgzNiAwIDE2IDcuMTYyIDE2IDE2VjQwMHpNMzUxLjEgMjA4YzAgOC44MzYtNy4xNjQgMTYtMTYgMTZIMTc1LjFjLTguODM2IDAtMTYtNy4xNjQtMTYtMTZ2LTk2YzAtOC44MzggNy4xNjQtMTYgMTYtMTZoMTYwYzguODM2IDAgMTYgNy4xNjIgMTYgMTZWMjA4ek00NjMuMSA0MDhjMCA0LjQxOC0zLjU4MiA4LTggOGgtNDcuMWMtNC40MTggMC03LjEtMy41ODItNy4xLThsMC00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFY0MDh6TTQ2My4xIDI4MGMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYyODB6TTQ2My4xIDE1MmMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04bDAtNDhjMC00LjQxOCAzLjU4Mi04IDcuMS04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYxNTJ6Ii8+PC9zdmc+'") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
       try {
         lineItem.data("originalStart", 0);
@@ -1479,7 +1481,7 @@ function refreshFolderListing(folderPath) {
     })) : "<img class='mx-auto' src='" + url.pathToFileURL(item).href + "' />")));
     lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
       try {
-        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "Start" : "End")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS"));
+        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "Start" : "End")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS")).change();
       } catch (err) {
         log.error(err);
       }
@@ -2639,7 +2641,7 @@ $("#btnMediaWindow").on("click", function() {
   obsGetScenes();
   $("#staticBackdrop .modal-header").addClass("d-flex").children().wrapAll("<div class='col-4 text-center'></div>");
   $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only' style='display: none;'></div>");
-  $("#staticBackdrop .modal-header").append("<div class='col-4 for-folder-listing-only text-end' style='display: none;'><button class='btn btn-sm folderRefresh'><i class='fas fa-rotate-right'></i></button><button class='btn btn-sm folderOpen'><i class='fas fa-folder-open'></i></button></div>");
+  $("#staticBackdrop .modal-header").append("<div class='col-4 for-folder-listing-only text-end' style='display: none;'><button class='btn btn-sm folderRefresh'><i class='fas fa-fw fa-rotate-right'></i></button><button class='btn btn-sm master-move-handle'><i class='fas fa-fw fa-arrow-down-short-wide'></i></button><button class='btn btn-sm folderOpen'><i class='fas fa-fw fa-folder-open'></i></button></div>");
   $(folderListing).find(".thatsToday").click();
   $("#staticBackdrop .modal-footer").html($("<div class='left d-flex flex-fill text-start'></div><div class='right text-end'><button type='button' class='closeModal btn btn-warning' data-bs-trigger='manual'><i class='fas fa-fw fa-2x fa-home'></i></button></div>")).addClass("d-flex");
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic").addClass("btn-lg"));
@@ -2658,6 +2660,10 @@ $("#staticBackdrop .modal-footer").on("change", "#obsTempCameraScene", async fun
 });
 $("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function() {
   refreshFolderListing(path.join(paths.media, $(".modal-header h5").text()));
+});
+$("#staticBackdrop .modal-header").on("click", ".master-move-handle", function() {
+  $(".move-handle").toggle("right");
+  $(this).find("i").toggleClass("fa-square-check fa-arrow-down-short-wide");
 });
 $("#staticBackdrop .modal-header").on("click", "button.folderOpen", function() {
   shell.openExternal(url.pathToFileURL(path.join(paths.media, $(".modal-header h5").text())).href);
