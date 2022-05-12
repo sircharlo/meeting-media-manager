@@ -40,9 +40,17 @@ function createUpdateWindow() {
     icon: path.join(__dirname, "build", "icon.ico"),
     title: appLongName
   });
-  // win.on("moved", () => {
-  //   win.webContents.send("moveMediaWindow");
-  // });
+  win.on("will-move", () => {
+    if (mediaWin) {
+      let screenInfo = getScreenInfo();
+      if (screenInfo.otherScreens.length > 0) {
+        if (screenInfo.winMidpoints) {
+          let mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints).map(item => screen.getDisplayNearestPoint(item[1])).every( (val, i, arr) => val.id === arr[0].id );
+          if (mainWinSameAsMedia) win.webContents.send("moveMediaWindowToOtherScreen");
+        }
+      }
+    }
+  });
   win.setAppDetails({
     appId: appLongName
   });
@@ -106,7 +114,10 @@ function getScreenInfo() {
         y: winCoordinates.media[1] + (winCoordinates.media[3] / 2)
       };
     }
-    displays = screen.getAllDisplays();
+    displays = screen.getAllDisplays().map((display, i) => {
+      display.humanFriendlyNumber = i + 1;
+      return display;
+    });
   } catch(err) {
     console.error(err);
   }
@@ -123,10 +134,14 @@ function setMediaWindowPosition(mediaWindowOpts) {
       mediaWin.setBounds({
         x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
         y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
+        ...(mediaWindowOpts.type == "window") && {width: 1280},
+        ...(mediaWindowOpts.type == "window") && {height: 720}
       });
-      mediaWin.getBounds();
-      mediaWin.setFullScreen(mediaWindowOpts.type == "fullscreen" && screenInfo.otherScreens.length > 0);
-      mediaWin.focus();
+      if (mediaWindowOpts.type == "fullscreen" && screenInfo.otherScreens.length > 0 && !mediaWin.isFullScreen()) {
+        mediaWin.setFullScreen(true);
+      } else if (mediaWindowOpts.type == "window" && mediaWin.isFullScreen()) {
+        mediaWin.setFullScreen(false);
+      }
     }
   } catch(err) {
     console.error(err);
@@ -207,10 +222,13 @@ if (!gotTheLock) {
           contextIsolation: false,
           nodeIntegration: true,
         },
+        backgroundColor: "black",
         minHeight: 100,
         alwaysOnTop: true,
         width: 1280,
         height: 720,
+        show: false,
+        thickFrame: false,
         x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
         y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
       };
@@ -219,7 +237,7 @@ if (!gotTheLock) {
       mediaWin.setAppDetails({
         appId: appLongName
       });
-      mediaWin.setAlwaysOnTop(true, "pop-up-menu");
+      mediaWin.setAlwaysOnTop(true, "screen-saver");
       mediaWin.setAspectRatio(16/9);
       mediaWin.setMenuBarVisibility(false);
       remote.enable(mediaWin.webContents);
@@ -231,6 +249,8 @@ if (!gotTheLock) {
         mediaWin.webContents.send("windowResizing", mediaWin.getSize());
       }).on("resized", () => {
         mediaWin.webContents.send("windowResized");
+      }).once("ready-to-show", () => {
+        mediaWin.show();
       });
       // mediaWin.on("closed", () => {
       //   mediaWin = null;

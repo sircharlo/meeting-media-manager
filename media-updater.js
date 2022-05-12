@@ -217,7 +217,7 @@ function goAhead() {
       });
     }
     if ($(this).prop("id") == "enableMediaDisplayButton") toggleMediaWindow();
-    if ($(this).prop("id") == "preferredOutput") moveMediaWindow();
+    if ($(this).prop("id") == "preferredOutput") setMediaWindowPosition();
     if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes(true);
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
@@ -1044,24 +1044,25 @@ function getMediaWindowDestination() {
   try {
     if (prefs.enableMediaDisplayButton) {
       let screenInfo = require("electron").ipcRenderer.sendSync("getScreenInfo");
-      $("#preferredOutput").closest(".row").toggle(screenInfo.otherScreens.length > 0);
-      screenInfo.otherScreens.map((screen, i) => {
+      screenInfo.otherScreens.map(screen => {
         $("#preferredOutput").append($("<option />", {
           value: screen.id,
           class: "display",
-          text: i18n.__("screen") + " " + (i + 1) + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
+          text: i18n.__("screen") + " " + screen.humanFriendlyNumber + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
         }));
       });
       if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput);
+      $("#preferredOutput").closest(".row").toggle(screenInfo.otherScreens.length > 0);
       if (screenInfo.otherScreens.length > 0) { // at least one external screen
         if (prefs.preferredOutput !== "window") { // fullscreen mode
+          let preferredDisplay = screenInfo.displays.find(display => display.id == prefs.preferredOutput); // try to find preferred display
           if (screenInfo.otherScreens.length > 1) { // more than one external screen
-            let preferredDisplay = screenInfo.displays.find(display => display.id == prefs.preferredOutput); // try to find preferred display
             mediaWindowOpts.destination = preferredDisplay ? preferredDisplay.id : screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id; // try to use preferred display; otherwise use another available one
           }
           mediaWindowOpts.type = "fullscreen";
         }
         if (!mediaWindowOpts.destination) mediaWindowOpts.destination = screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id;
+        if (mediaWindowOpts.type == "fullscreen") $("#preferredOutput").val(mediaWindowOpts.destination); // set the display menu to show the selected screen, but don't save it in prefs in case preferred screen comes back
       } else { // no  external screen, use main one
         mediaWindowOpts.destination = screenInfo.displays[0].id;
       }
@@ -1071,7 +1072,7 @@ function getMediaWindowDestination() {
   }
   return mediaWindowOpts;
 }
-function moveMediaWindow() {
+function setMediaWindowPosition() {
   require("electron").ipcRenderer.send("setMediaWindowPosition", getMediaWindowDestination());
 }
 function setAppLang() {
@@ -2587,11 +2588,11 @@ require("electron").ipcRenderer.on("videoProgress", (event, stats) => {
 require("electron").ipcRenderer.on("videoEnd", () => {
   $("#videoProgress").closest(".item").find("button.stop").addClass("confirmed").click();
 });
-// require("electron").ipcRenderer.on("moveMediaWindow", () => {
-//   moveMediaWindow();
-// });
+require("electron").ipcRenderer.on("moveMediaWindowToOtherScreen", () => {
+  setMediaWindowPosition();
+});
 require("electron").ipcRenderer.on("displaysChanged", () => {
-  moveMediaWindow();
+  setMediaWindowPosition();
 });
 $("#btnToggleMediaWindowFocus").on("click", function() {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
