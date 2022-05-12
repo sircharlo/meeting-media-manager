@@ -200,7 +200,7 @@ if (!gotTheLock) {
       let screenInfo = getScreenInfo();
       let windowOptions = {
         title: "Media Window",
-        icon: path.join(__dirname, "build", "video-player.ico"),
+        icon: path.join(__dirname, "public", "videoPlayer.ico"),
         frame: false,
         webPreferences: {
           backgroundThrottling: false,
