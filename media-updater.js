@@ -218,7 +218,7 @@ function goAhead() {
     }
     if ($(this).prop("id") == "enableMediaDisplayButton") toggleMediaWindow();
     if ($(this).prop("id") == "preferredOutput") setMediaWindowPosition();
-    if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes(true);
+    if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes();
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
       setVars();
@@ -881,8 +881,8 @@ async function getInitialData() {
   await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
-  await toggleMediaWindow();
   await obsGetScenes();
+  await toggleMediaWindow();
   $("#version").html("JWMMF " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
   congregationSelectPopulate();
@@ -1266,22 +1266,28 @@ function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, 
     log.error(err);
   }
 }
-async function obsConnect(force) {
+async function obsConnect() {
   try {
     if (!prefs.enableObs && obs._connected) {
-      await obs.disconnect().catch(err => {
-        log.error(err);
-      });
+      await obs.disconnect();
       log.info("OBS disconnected.");
       obs = {};
-    } else if ((!("_connected" in obs) || force) && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
+    } else if (!obs._connected && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
       obs = new OBSWebSocket();
-      await obs.connect({ address: "localhost:" + prefs.obsPort, password: prefs.obsPassword }).then(() => {
-        log.info("OBS success! Connected & authenticated.");
-      }).catch(err => {
+      obs.on("error", err => {
         notifyUser("error", "errorObs", null, false, err);
       });
-      obs.on("error", err => {
+      obs.on("SwitchScenes", function(newScene) {
+        try {
+          if (newScene && newScene.sceneName && newScene.sceneName !== prefs.obsMediaScene) $("#obsTempCameraScene").val(newScene.sceneName).change();
+        } catch (err) {
+          log.error(err);
+        }
+      });
+      obs.on("ConnectionOpened", () => {
+        log.info("OBS success! Connected & authenticated.");
+      });
+      await obs.connect({ address: "localhost:" + prefs.obsPort, password: prefs.obsPassword }).catch(err => {
         notifyUser("error", "errorObs", null, false, err);
       });
     }
@@ -1308,16 +1314,15 @@ function shortcutSet(shortcut, destination, fn) {
 function shortcutsUnset(shortcuts) {
   try {
     if (shortcuts && dynamicShortcuts[shortcuts]) dynamicShortcuts[shortcuts].forEach(shortcut => {
-      console.log(shortcut);
       remote.globalShortcut.unregister(shortcut);
     });
   } catch (err) {
     log.error(err);
   }
 }
-async function obsGetScenes(force, currentOnly) {
+async function obsGetScenes(currentOnly) {
   try {
-    let connectionAttempt = await obsConnect(force);
+    let connectionAttempt = await obsConnect();
     return (connectionAttempt ? await obs.send("GetSceneList").then(data => {
       if (currentOnly) {
         return data.currentScene;
@@ -1352,7 +1357,6 @@ async function obsGetScenes(force, currentOnly) {
                 $("#obsTempCameraScene").val($(el).val()).change();
               });
             }
-            console.log(shortcutSetSuccess);
             cameraScenes.push({
               id: $(el).val(),
               text: $(el).val() + (shortcutSetSuccess ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
@@ -1377,7 +1381,7 @@ async function obsGetScenes(force, currentOnly) {
             return data.text;
           }
         });
-        $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene);
+        $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene).change();
         return data;
       }
     }).catch(err => {
@@ -1390,7 +1394,7 @@ async function obsGetScenes(force, currentOnly) {
 }
 async function obsSetScene(scene) {
   try {
-    if (await obsConnect()) obs.send("SetCurrentScene", { "scene-name": scene }).catch(err => {
+    if (await obsConnect() && scene) obs.send("SetCurrentScene", { "scene-name": scene }).catch(err => {
       notifyUser("error", "errorObs", null, false, err);
     });
   } catch (err) {
@@ -1941,10 +1945,10 @@ function toggleHardwareAcceleration() {
     rm(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
   }
 }
-function toggleMediaWindow() {
+async function toggleMediaWindow() {
   if (prefs.enableMediaDisplayButton) {
-    refreshBackgroundImagePreview();
-    showMediaWindow();
+    await refreshBackgroundImagePreview();
+    await showMediaWindow();
   } else {
     closeMediaWindow();
   }
@@ -2600,8 +2604,8 @@ $("#btnToggleMediaWindowFocus").on("click", function() {
 require("electron").ipcRenderer.on("mediaWindowVisibilityChanged", (event, status) => {
   $("#btnToggleMediaWindowFocus").toggleClass("btn-warning", status !== "hidden").toggleClass("btn-primary pulse-danger", status == "hidden").find(".fa-stack-2x").toggleClass("fas fa-ban text-danger", status !== "hidden").toggleClass("far fa-circle", status == "hidden");
 });
-require("electron").ipcRenderer.on("mediaWindowShown", () => {
-  startMediaDisplay();
+require("electron").ipcRenderer.on("mediaWindowShown", async () => {
+  await startMediaDisplay();
 });
 $("#staticBackdrop").on("input change", "#videoScrubber", function() {
   let scrolled_value = $(this).val(),
@@ -2714,7 +2718,7 @@ $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
   showModal(false);
 });
 $("#staticBackdrop .modal-footer").on("change", "#obsTempCameraScene", async function() {
-  if ((await obsGetScenes(false, true)) !== prefs.obsMediaScene) obsSetScene($(this).val());
+  if ((await obsGetScenes(true)) !== prefs.obsMediaScene) obsSetScene($(this).val());
 });
 $("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function() {
   refreshFolderListing(path.join(paths.media, $(".modal-header h5").text()));
