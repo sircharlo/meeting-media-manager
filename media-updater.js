@@ -1,7 +1,3 @@
-// TODO: WHEN JWMMF window moves
-//          IF more than one screen present AND JWMMF window new midpoint is same as current media window midpoint
-//           move media window to preferredOutput if not already there
-
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
 // TODO: add confirm to clearcache button
@@ -1299,25 +1295,31 @@ async function obsConnect() {
   return !!obs._connected;
 }
 function shortcutSet(shortcut, destination, fn) {
-  let ret = null;
+  let ret = null, alreadyExists = false;
   try {
-    ret = remote.globalShortcut.register(shortcut, fn);
+    if (dynamicShortcuts[destination] && dynamicShortcuts[destination].includes(shortcut)) {
+      alreadyExists = true;
+    } else if (!dynamicShortcuts[destination] || (Array.isArray(dynamicShortcuts[destination]) && !dynamicShortcuts[destination].includes(shortcut))) ret = remote.globalShortcut.register(shortcut, fn);
     if (ret) {
       if (!dynamicShortcuts[destination]) dynamicShortcuts[destination] = [];
       dynamicShortcuts[destination].push(shortcut);
+    }
+    if (!(ret || alreadyExists)) {
+      notifyUser("info", "infoShortcutSetFail", shortcut);
     }
   } catch (err) {
     log.error(err);
   }
   return ret;
 }
-function shortcutsUnset(shortcuts) {
-  try {
-    if (shortcuts && dynamicShortcuts[shortcuts]) dynamicShortcuts[shortcuts].forEach(shortcut => {
-      remote.globalShortcut.unregister(shortcut);
-    });
-  } catch (err) {
-    log.error(err);
+function shortcutsUnset(domain) {
+  if (domain && dynamicShortcuts[domain]) for (let i = dynamicShortcuts[domain].length - 1; i >= 0; i--) {
+    try {
+      remote.globalShortcut.unregister(dynamicShortcuts[domain][i]);
+      dynamicShortcuts[domain].splice(i, 1);
+    } catch (err) {
+      log.error(err);
+    }
   }
 }
 async function obsGetScenes(currentOnly) {
@@ -1743,10 +1745,10 @@ function showModal(isVisible, header, headerContent, bodyContent, footer, footer
   }
 }
 function showMediaWindow() {
-  remote.globalShortcut.register("Alt+D", () => {
+  shortcutSet("Alt+D", "mediaWindow", function () {
     if ($("#staticBackdrop:visible").length == 0) $("#btnMediaWindow:visible").click();
   });
-  remote.globalShortcut.register("Alt+Z", () => {
+  shortcutSet("Alt+Z", "mediaWindow", function () {
     $("#btnToggleMediaWindowFocus").click();
   });
   require("electron").ipcRenderer.send("showMediaWindow", getMediaWindowDestination());
@@ -1810,9 +1812,8 @@ async function startMediaSync(isDryrun, meetingFilter) {
   perfPrint();
 }
 function closeMediaWindow() {
-  remote.globalShortcut.unregister("Alt+D");
+  shortcutsUnset("mediaWindow");
   require("electron").ipcRenderer.send("closeMediaWindow");
-  remote.globalShortcut.unregister("Alt+Z");
 }
 function stopMeetingMusic() {
   const clearMusic = () => {
@@ -2223,7 +2224,7 @@ function validateConfig(changed, restart) {
   if (os.platform() !== "linux") remote.app.setLoginItemSettings({ openAtLogin: prefs.autoRunAtBoot });
   $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton) {
-    remote.globalShortcut.register("Alt+K", () => {
+    shortcutSet("Alt+K", "musicButton", function () {
       $("#btnMeetingMusic:visible, #btnStopMeetingMusic:visible").click();
     });
     if (prefs.enableMusicFadeOut) {
@@ -2238,7 +2239,7 @@ function validateConfig(changed, restart) {
       $("#musicVolume").val(100).change();
     }
   } else {
-    remote.globalShortcut.unregister("Alt+B");
+    shortcutsUnset("musicButton");
   }
   $("#btnMediaWindow, #btnToggleMediaWindowFocus").toggle(!!prefs.enableMediaDisplayButton);
   $("#currentMediaBackground").closest(".row").toggle(!!prefs.enableMediaDisplayButton);

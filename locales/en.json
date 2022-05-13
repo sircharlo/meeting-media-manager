@@ -39,6 +39,7 @@
   "fetchMedia": "Update media folders",
   "hostname": "Hostname",
   "info": "Information",
+  "infoShortcutSetFail": "JWMMF was unable to activate the following keyboard shortcut. If you wish to use this keyboard shortcut, please make sure that no other app is using it, and relaunch JWMMF. Otherwise, no action is required.",
   "infoPubIgnored": "Unable to fetch media for the following publication:",
   "jwpub": "JWPUB",
   "keepOriginalsAfterConversion": "Keep original media files after conversion",
