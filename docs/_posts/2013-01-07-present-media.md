@@ -10,11 +10,11 @@ The media presentation and controller modes are designed for simplicity and to p
 
 Once the option to "Present media on an external monitor or in a separate window" is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
 
-When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then JWMMF will attempt to automatically fetch and display the yeartext.
+When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then MMM will attempt to automatically fetch and display the yeartext.
 
 If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
 
-Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of JWMMF, or by using the keyboard shortcut <kbd>Alt</kbd> <kbd>D</kbd> (for external **d**isplay).
+Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of MMM, or by using the keyboard shortcut <kbd>Alt</kbd> <kbd>D</kbd> (for external **d**isplay).
 
 Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
 
@@ -24,9 +24,9 @@ To play media, press the ▶️ (play) button for the file you'd like. To hide t
 
 The bottom right has the "home" button, which will exit media controller mode, as well as the "hide/show media presentation window" button.
 
-### Conducting hybrid meetings using a combination of JWMMF, OBS Studio, and Zoom
+### Conducting hybrid meetings using a combination of MMM, OBS Studio, and Zoom
 
-By far the simplest way to share media during hybrid meetings is by configuring OBS Studio, JWMMF and Zoom to work together.
+By far the simplest way to share media during hybrid meetings is by configuring OBS Studio, MMM and Zoom to work together.
 
 #### Initial configuration: Kingdom Hall computer
 
@@ -54,7 +54,7 @@ Zoom should be configured to use dual monitors. Enable global keyboard shortcuts
 
 Set the default "microphone" to be sound booth mixer's combined output (so that everything that is heard over the Kingdom Hall sound system is transmitted over Zoom, including microphones and media) and the "camera" to be the virtual camera provided by OBS Studio.
 
-#### Initial configuration: JWMMF
+#### Initial configuration: MMM
 
 Enable the "Present media on an external monitor or in a separate window" option.
 
@@ -64,7 +64,7 @@ Enable and configure OBS Studio compatibility mode, using the port and password 
 
 Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
 
-Once the Zoom meeting is being displayed on the external monitor, open JWMMF. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of JWMMF, or <kbd>Alt</kbd> <kbd>D</kbd>.
+Once the Zoom meeting is being displayed on the external monitor, open MMM. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of MMM, or <kbd>Alt</kbd> <kbd>D</kbd>.
 
 Enable the Kingdom Hall video feed (<kbd>Alt</kbd> <kbd>V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt</kbd> <kbd>A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
 
@@ -74,24 +74,24 @@ Start background music playback using the button on the bottom left, or <kbd>Alt
 
 No action necessary.
 
-Various camera angles/zoom can be chosen during the meeting by using the menu on the bottom of the JWMMF media playback control window; this menu will contain a list of all configured camera view scenes in OBS.
+Various camera angles/zoom can be chosen during the meeting by using the menu on the bottom of the MMM media playback control window; this menu will contain a list of all configured camera view scenes in OBS.
 
 #### Sharing media at the Kingdom Hall and over Zoom
 
-Find the media you want to share in the JWMMF media playback control window, and press the "play" button.
+Find the media you want to share in the MMM media playback control window, and press the "play" button.
 
-When you're done sharing media, press the "stop" button in JWMMF. Note that videos automatically stop upon completion.
+When you're done sharing media, press the "stop" button in MMM. Note that videos automatically stop upon completion.
 
 #### Displaying remote Zoom participants on the Kingdom Hall monitor
 
-Press the "hide/show media presentation window" button in the lower right corner of the JWMMF media controller screen, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+Press the "hide/show media presentation window" button in the lower right corner of the MMM media controller screen, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
 
 <blockquote>If the participant has media to show, follow the steps under the <strong>Sharing media at the Kingdom Hall and over Zoom</strong> subheading.</blockquote>
 
-Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the JWMMF media playback control window, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
+Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the MMM media playback control window, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
 
 
-### Conducting hybrid meetings using only JWMMF and Zoom
+### Conducting hybrid meetings using only MMM and Zoom
 
 If you do not wish to use OBS Studio for any reason, the following suggestions will perhaps help you to set things up as simply as possible.
 
@@ -99,7 +99,7 @@ If you do not wish to use OBS Studio for any reason, the following suggestions w
 
 Same as corresponding section above, with the addition of the global keyboard shortcut for Zoom for starting/stopping screen **s**haring (<kbd>Alt</kbd> <kbd>S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
 
-#### Initial configuration: JWMMF
+#### Initial configuration: MMM
 
 Enable the "Present media on an external monitor or in a separate window" option.
 
@@ -115,7 +115,7 @@ Same as corresponding section above.
 
 Start sharing in Zoom by hitting <kbd>Alt</kbd> <kbd>S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
 
-Find the media you want to share in the JWMMF media playback control window, and press the "play" button. The media will now be visible to those at the Kingdom Hall, and shared over Zoom.
+Find the media you want to share in the MMM media playback control window, and press the "play" button. The media will now be visible to those at the Kingdom Hall, and shared over Zoom.
 
 When you're done sharing media, hit <kbd>Alt</kbd> <kbd>S</kbd> to end Zoom screen sharing. The Kingdom Hall monitor will now show the yeartext.
 
@@ -144,7 +144,7 @@ Same as corresponding section above.
 </tr>
 <tr>
 <td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true"></a></td>
-<td>JWMMF media presentation in standby mode</td>
+<td>MMM media presentation in standby mode</td>
 </tr>
 <tr>
 <td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/play-picture.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/play-picture.png?raw=true"></a></td>

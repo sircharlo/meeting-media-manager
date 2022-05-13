@@ -7,7 +7,7 @@ const {
   } = require("electron"), {
     autoUpdater
   } = require("electron-updater"),
-  appLongName = "JW Meeting Media Fetcher",
+  appLongName = "Meeting Media Manager",
   fs = require("graceful-fs"),
   os = require("os"),
   path = require("upath"),

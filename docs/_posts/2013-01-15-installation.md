@@ -4,7 +4,7 @@ title: 'Installation'
 layout: null
 ---
 
-JWMMF does not require administrative privileges to install or run. To install JWMMF, simply download the latest installer <a href="https://github.com/sircharlo/meeting-media-manager/releases/latest" target="_blank">from here</a> and run it.
+MMM does not require administrative privileges to install or run. To install MMM, simply download the latest installer <a href="https://github.com/sircharlo/meeting-media-manager/releases/latest" target="_blank">from here</a> and run it.
 
 | Operating system  | File to download |
 | ------------- | ------------- |

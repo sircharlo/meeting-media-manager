@@ -1,7 +1,7 @@
 {
   "name": "meeting-media-manager",
   "version": "22.5.5",
-  "description": "JW Meeting Media Fetcher",
+  "description": "Meeting Media Manager",
   "main": "main.js",
   "repository": {
     "type": "git",
@@ -45,7 +45,7 @@
   },
   "build": {
     "appId": "sircharlo.meeting-media-manager",
-    "productName": "JW Meeting Media Fetcher",
+    "productName": "Meeting Media Manager",
     "win": {
       "target": "NSIS",
       "icon": "build/icon.ico",

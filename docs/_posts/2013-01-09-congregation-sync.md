@@ -4,7 +4,7 @@ title: 'Congregation sync'
 layout: null
 ---
 
-The brother designated as _videoconference organizer_ (VO) by the body of elders can use JWMMF to manage what media is made available to the technical A/V support team in his congregation.
+The brother designated as _videoconference organizer_ (VO) by the body of elders can use MMM to manage what media is made available to the technical A/V support team in his congregation.
 The VO, or someone designated by him, can:
 
 - upload <strong>additional</strong> media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
@@ -17,7 +17,7 @@ Please note that the congregation sync feature is opt-in and entirely optional.
 
 ### How it works
 
-JWMMF's underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+MMM's underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
 
 - set up a secured WebDAV server that is web-accessible, <strong>or</strong>
 - use a third-party cloud storage service that supports the WebDAV protocol (see the <code>Congregation sync hostname</code> setting in the <em>Congregation sync setup</em> section below).
@@ -36,7 +36,7 @@ All users that wish to be synchronized together will need to connect to the same
   <tbody>
     <tr>
       <td><code>Congregation sync hostname</code></td>
-      <td>Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br><blockquote><strong>Note:</strong> The label for this field is actually a button that, once clicked, will show a list of WebDAV providers that have been known to be compatible with JWMMF, and will automatically prefill certain settings for those providers. <br><br>This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...</blockquote></td>
+      <td>Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br><blockquote><strong>Note:</strong> The label for this field is actually a button that, once clicked, will show a list of WebDAV providers that have been known to be compatible with MMM, and will automatically prefill certain settings for those providers. <br><br>This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...</blockquote></td>
     </tr>
     <tr>
       <td><code>Congregation sync port</code></td>
@@ -56,7 +56,7 @@ All users that wish to be synchronized together will need to connect to the same
     </tr>
     <tr>
       <td><code>Congregation-wide settings</code></td>
-      <td>Once the VO has configured the <em>Media setup</em> and <em>Meeting setup</em> sections of the <a href="#/configuration">JWMMF settings</a> on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open JWMMF.</td>
+      <td>Once the VO has configured the <em>Media setup</em> and <em>Meeting setup</em> sections of the <a href="#/configuration">MMM settings</a> on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open MMM.</td>
     </tr>
   </tbody>
 </table>

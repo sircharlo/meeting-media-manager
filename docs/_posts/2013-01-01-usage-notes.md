@@ -34,12 +34,12 @@ If upon launching the app, you receive a warning that the app cannot be opened, 
 
 If you get a message indicating that you "do not have permission to open the application", then try some solutions from <a href="https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860" target="_blank">this page</a>. For example, you could try running this command in Terminal:
 
-`codesign --force --deep --sign - "/path/to/JW Meeting Media Fetcher.app"`
+`codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
 #### Auto-update
 
 Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for Mac users when an update is available:
 
-- JWMMF will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the JWMMF update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated JWMMF from their Applications folder as usual.
+- MMM will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the MMM update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated MMM from their Applications folder as usual.
 
-- If the previous step fails at any stage, JWMMF will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of JWMMF. The JWMMF version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
+- If the previous step fails at any stage, MMM will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of MMM. The MMM version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.

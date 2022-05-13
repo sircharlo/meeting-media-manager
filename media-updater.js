@@ -111,7 +111,7 @@ require("electron").ipcRenderer.on("notifyUser", (event, arg) => {
 require("electron").ipcRenderer.on("congregationInitialSelector", () => {
   congregationInitialSelector();
 });
-const bugUrl = () => "https://github.com/sircharlo/meeting-media-manager/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- JWMMF " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
+const bugUrl = () => "https://github.com/sircharlo/meeting-media-manager/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- MMM " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
   if ((entry[0].startsWith("cong") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
   return entry;
 })), null, 2) + "\n```" : "") + (logOutput.error && logOutput.error.length >0 ? "\n### Full error log\n```\n" + JSON.stringify(logOutput.error, null, 2) + "\n```" : "") + "\n").replace(/\n/g, "%0D%0A");
@@ -876,7 +876,7 @@ async function getInitialData() {
   let configIsValid = validateConfig();
   await obsGetScenes();
   await toggleMediaWindow();
-  $("#version").html("JWMMF " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
+  $("#version").html("MMM " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
   congregationSelectPopulate();
   $("#baseDate .dropdown-menu").empty();
@@ -1926,7 +1926,7 @@ function syncLocalRecurringMedia() {
     updateTile("recurringMedia", "success");
   }
 }
-async function testJwmmf() {
+async function testMMM() {
   logLevel = "debug";
   let previousLang = prefs.lang;
   for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"] ) {
@@ -1984,7 +1984,7 @@ function updateCleanup() {
         let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
         if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
           desc: "wannaHelpForSure",
-          url: "https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
+          url: "https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+MMM+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
         });
         getJwOrgLanguages(true).then(function() {
           setMediaLang();
@@ -3140,7 +3140,7 @@ $("#overlaySettings").on("click", ".btn-action:not(.btn-danger)", function() {
   if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugUrl());
   shell.openExternal($(this).data("action-url"));
 });
-$("#btnTestApp").on("click", testJwmmf);
+$("#btnTestApp").on("click", testMMM);
 $("#toastContainer").on("click", "button.toast-action", async function() {
   if ($(this).data("toast-action-url")) shell.openExternal($(this).data("toast-action-url"));
   $(this).closest(".toast").find(".toast-header button.btn-close").click();
