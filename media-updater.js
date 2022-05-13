@@ -1,8 +1,5 @@
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
-// TODO: add confirm to clearcache button
-
-
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -2993,17 +2990,22 @@ $("#deleteBackground").on("click", function() {
   refreshBackgroundImagePreview();
 });
 $("#overlaySettings").on("click", ".btn-clean-up", function() {
-  $(this).toggleClass("btn-success btn-warning").prop("disabled", true);
-  setVars();
-  rm(glob.sync([path.join(paths.media, "*"), paths.pubs], {
-    ignore: [path.join(paths.media, "Recurring")],
-    onlyDirectories: true
-  }).concat([paths.langs]));
-  calculateCacheSize();
-  jwpubDbs = {};
-  setTimeout(() => {
-    $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
-  }, 3000);
+  if (!$(this).hasClass("confirmed")) {
+    waitToConfirm(this);
+  } else {
+    unconfirm(this);
+    $(this).toggleClass("btn-success btn-warning").prop("disabled", true);
+    setVars();
+    rm(glob.sync([path.join(paths.media, "*"), paths.pubs], {
+      ignore: [path.join(paths.media, "Recurring")],
+      onlyDirectories: true
+    }).concat([paths.langs]));
+    calculateCacheSize();
+    jwpubDbs = {};
+    setTimeout(() => {
+      $(".btn-clean-up").toggleClass("btn-success btn-warning").prop("disabled", false);
+    }, 3000);
+  }
 });
 $("#fileList").on("click", "li:not(.webdavWait) .fa-minus-square", async function() {
   if (!$(this).hasClass("confirmed")) {
