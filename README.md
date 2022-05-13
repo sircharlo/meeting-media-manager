@@ -30,7 +30,7 @@
 
 ## How do I get started?
 
-Go to the [documentation](https://sircharlo.github.io/jw-meeting-media-fetcher/) for JWMMF to find information about installation, configuration, media presentation mode, congregation media sync, and more.
+Go to the [documentation](https://sircharlo.github.io/meeting-media-manager/) for JWMMF to find information about installation, configuration, media presentation mode, congregation media sync, and more.
 
 This app is made with love and a bit of spare time. Enjoy!
 
@@ -38,6 +38,6 @@ This app is made with love and a bit of spare time. Enjoy!
 
 ---
 
-![Media presentation mode](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/standby-mode.png?raw=true)
+![Media presentation mode](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true)
 
-![Media sync in progress](https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/hero-main.gif?raw=true)
+![Media sync in progress](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/hero-main.gif?raw=true)

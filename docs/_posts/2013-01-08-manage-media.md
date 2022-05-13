@@ -45,23 +45,23 @@ To **remove**, **hide**, or **show** media, simply find the media file you don't
 
 <table class="showcase">
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-song.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-song.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-song.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-song.png?raw=true"></a></td>
 <td>Adding a song for a public talk</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-media.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-media.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-media.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-media.png?raw=true"></a></td>
 <td>Adding an additional picture</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-jwpub-extract.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-jwpub-extract.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-jwpub-extract.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-jwpub-extract.png?raw=true"></a></td>
 <td>Importing media from a section in a JWPUB file</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-jwpub.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/custom-jwpub.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-jwpub.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-jwpub.png?raw=true"></a></td>
 <td>Previewing media from a JWPUB file before importing</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/rename-media.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/rename-media.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/rename-media.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/rename-media.png?raw=true"></a></td>
 <td>Renaming a media file</td>
 </tr>
 </table>

@@ -71,7 +71,7 @@ Once the congregation sync setup is complete, you're ready to start <a href="#/m
 
 <table class="showcase">
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-2.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-2.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-2.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-2.png?raw=true"></a></td>
 <td>Congregation sync setup</td>
 </tr>
 </table>

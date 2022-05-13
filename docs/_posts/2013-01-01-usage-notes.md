@@ -10,7 +10,7 @@ The app should run as is on most modern computers running Windows, Linux, or Mac
 
 #### Installation and first launch
 
-On opening the installer, you might get <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/win-smartscreen.png?raw=true" target="_blank">an error</a> indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+On opening the installer, you might get <a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/win-smartscreen.png?raw=true" target="_blank">an error</a> indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
 
 ### Linux
 

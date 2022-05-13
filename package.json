@@ -1,11 +1,11 @@
 {
-  "name": "jw-meeting-media-fetcher",
+  "name": "meeting-media-manager",
   "version": "22.5.5",
   "description": "JW Meeting Media Fetcher",
   "main": "main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sircharlo/jw-meeting-media-fetcher.git"
+    "url": "https://github.com/sircharlo/meeting-media-manager.git"
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",
@@ -44,7 +44,7 @@
     "@electron/universal": "^1.2.1"
   },
   "build": {
-    "appId": "sircharlo.jw-meeting-media-fetcher",
+    "appId": "sircharlo.meeting-media-manager",
     "productName": "JW Meeting Media Fetcher",
     "win": {
       "target": "NSIS",

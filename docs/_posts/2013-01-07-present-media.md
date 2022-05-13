@@ -127,35 +127,35 @@ Same as corresponding section above.
 
 <table class="showcase">
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/launch-presentation-mode.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/launch-presentation-mode.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/launch-presentation-mode.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/launch-presentation-mode.png?raw=true"></a></td>
 <td>Button to enter media controller mode</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/meeting-picker.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/meeting-picker.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/meeting-picker.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/meeting-picker.png?raw=true"></a></td>
 <td>Selecting a meeting for which to display media</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/default-background.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/default-background.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/default-background.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/default-background.png?raw=true"></a></td>
 <td>Default media background, with automatically generated yeartext</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/media-list.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/media-list.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/media-list.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/media-list.png?raw=true"></a></td>
 <td>List of media that is ready to be presented</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/standby-mode.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/standby-mode.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true"></a></td>
 <td>JWMMF media presentation in standby mode</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/play-picture.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/play-picture.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/play-picture.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/play-picture.png?raw=true"></a></td>
 <td>Displaying a picture</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/video-playing.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/video-playing.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/video-playing.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/video-playing.png?raw=true"></a></td>
 <td>Playing a video</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/video-scrub.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/video-scrub.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/video-scrub.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/video-scrub.png?raw=true"></a></td>
 <td>Moving to a specific time in a video</td>
 </tr>
 </table>

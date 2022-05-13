@@ -4,13 +4,13 @@ title: 'Installation'
 layout: null
 ---
 
-JWMMF does not require administrative privileges to install or run. To install JWMMF, simply download the latest installer <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/releases/latest" target="_blank">from here</a> and run it.
+JWMMF does not require administrative privileges to install or run. To install JWMMF, simply download the latest installer <a href="https://github.com/sircharlo/meeting-media-manager/releases/latest" target="_blank">from here</a> and run it.
 
 | Operating system  | File to download |
 | ------------- | ------------- |
-| Windows  | `JW-Meeting-Media-Fetcher-[VERSION].exe`  |
-| macOS  | `JW-Meeting-Media-Fetcher-[VERSION]-universal.dmg`  |
-| Linux  | `JW-Meeting-Media-Fetcher-[VERSION].AppImage`  |
+| Windows  | `meeting-media-manager-[VERSION].exe`  |
+| macOS  | `meeting-media-manager-[VERSION]-universal.dmg`  |
+| Linux  | `meeting-media-manager-[VERSION].AppImage`  |
 
 
 ### What's next

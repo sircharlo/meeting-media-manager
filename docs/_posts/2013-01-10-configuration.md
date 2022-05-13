@@ -24,7 +24,7 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
   </tr>
     <tr>
       <td><code>Display language</code></td>
-      <td>Sets the language in which JWMMF is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+LANGUAGE" target="_blank">discussion</a>.</td>
+      <td>Sets the language in which JWMMF is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+JWMMF+into+a+language+I+speak,+LANGUAGE" target="_blank">discussion</a>.</td>
     </tr>
     <tr>
       <td><code>Folder in which to save media</code></td>
@@ -112,7 +112,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     </tr>
     <tr>
       <td><code>Convert media to MP4 format</code></td>
-      <td>This will automatically convert all picture and audio files into MP4 format, for use with Zoom's <a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/zoom-mp4-share.png?raw=true" target="_blank">native MP4 sharing feature</a> during <strong>fully remote</strong> congregation Zoom meetings. This includes all pictures and media files downloaded from JW.org, as well as additional media files added by the user or the VO.
+      <td>This will automatically convert all picture and audio files into MP4 format, for use with Zoom's <a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/zoom-mp4-share.png?raw=true" target="_blank">native MP4 sharing feature</a> during <strong>fully remote</strong> congregation Zoom meetings. This includes all pictures and media files downloaded from JW.org, as well as additional media files added by the user or the VO.
       <br><br><blockquote><strong>Note:</strong> This option is best suited for <strong>remote-only</strong> congregation Zoom meetings. If conducting either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings, look into using <a href="#/present-media">media presentation mode</a> by activating the <code>Enable button to present media on an external monitor or in a separate window</code> option instead, and disable this option.</blockquote>
       </td>
     </tr>
@@ -204,15 +204,15 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
 
 <table class="showcase">
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-1.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-1.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-1.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-1.png?raw=true"></a></td>
 <td>Application configuration</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-3.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-3.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-3.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-3.png?raw=true"></a></td>
 <td>Media fetching and sync setup</td>
 </tr>
 <tr>
-<td><a href="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-4.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/jw-meeting-media-fetcher/blob/master/docs/screenshots/settings-4.png?raw=true"></a></td>
+<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-4.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-4.png?raw=true"></a></td>
 <td>Meeting date and time setup</td>
 </tr>
 </table>
