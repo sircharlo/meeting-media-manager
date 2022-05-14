@@ -24,7 +24,7 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
   </tr>
     <tr>
       <td><code>Display language</code></td>
-      <td>Sets the language in which MMM is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+MMM+into+a+language+I+speak,+LANGUAGE" target="_blank">discussion</a>.</td>
+      <td>Sets the language in which M³ is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+LANGUAGE" target="_blank">discussion</a>.</td>
     </tr>
     <tr>
       <td><code>Folder in which to save media</code></td>
@@ -32,13 +32,13 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
     </tr>
     <tr>
       <td><code>Run app at system start-up</code></td>
-      <td>If enabled, MMM will launch when the current user logs into the computer. <br><br>
+      <td>If enabled, M³ will launch when the current user logs into the computer. <br><br>
         <blockquote><strong>Note:</strong> Unavailable on Linux.</blockquote>
       </td>
     </tr>
     <tr>
       <td><code>Automatically initiate media sync</code></td>
-      <td>If enabled, this option will automatically initiate a media sync 5 seconds after MMM is launched. <br><br>
+      <td>If enabled, this option will automatically initiate a media sync 5 seconds after M³ is launched. <br><br>
         <blockquote>To prevent the automatic sync from occurring when this setting is enabled, press the ⏸ (pause) button before the 5-second timer is up.</blockquote>
       </td>
     </tr>
@@ -48,14 +48,14 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
     </tr>
     <tr>
       <td><code>Quit app after media sync</code></td>
-      <td>If enabled, this option will automatically quit MMM 5 seconds after the media sync is complete. <br><br>
-        <blockquote>To prevent MMM from quitting automatically when this setting is enabled, press the 🏃 (person leaving/running) button before the 5-second timer is up.</blockquote>
+      <td>If enabled, this option will automatically quit M³ 5 seconds after the media sync is complete. <br><br>
+        <blockquote>To prevent M³ from quitting automatically when this setting is enabled, press the 🏃 (person leaving/running) button before the 5-second timer is up.</blockquote>
       </td>
     </tr>
     <tr>
       <td><code>Enable <em>OBS Studio</em> compatibility mode</code></td>
       <td>If enabled, this option will tap into OBS Studio to change scenes automatically as needed both before and after sharing media.<br><br>
-        <blockquote>If enabling this setting, make sure that OBS Studio is configured to use the <code>obs-websockets</code> plugin, which is what will enable MMM to communicate with OBS Studio.<br><br>Also, configure all needed scenes for media sharing and stage display in OBS. At the very least, you'll need a scene with a <code>Window Capture</code> (recommended) or <code>Display Capture</code> configured to capture the MMM media presentation window, or the screen on which the media will be presented.<br><br>You'll also need to configure all desired stage view scenes, for example: <li>a shot of the lectern</li><li>a wide shot of the stage</li><li>the lectern and reader mics together</li><li>a shot of the table</li></blockquote>
+        <blockquote>If enabling this setting, make sure that OBS Studio is configured to use the <code>obs-websockets</code> plugin, which is what will enable M³ to communicate with OBS Studio.<br><br>Also, configure all needed scenes for media sharing and stage display in OBS. At the very least, you'll need a scene with a <code>Window Capture</code> (recommended) or <code>Display Capture</code> configured to capture the M³ media presentation window, or the screen on which the media will be presented.<br><br>You'll also need to configure all desired stage view scenes, for example: <li>a shot of the lectern</li><li>a wide shot of the stage</li><li>the lectern and reader mics together</li><li>a shot of the table</li></blockquote>
       </td>
     </tr>
     <tr>
@@ -75,12 +75,12 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
     </tr>
     <tr>
       <td><code>Media window scene in OBS Studio</code></td>
-      <td>Select which scene is configured in OBS Studio to capture the MMM media window.
+      <td>Select which scene is configured in OBS Studio to capture the M³ media window.
       </td>
     </tr>
     <tr>
       <td><code>Disable hardware acceleration</code></td>
-      <td>Only enable this setting if you are experiencing issues with media presentation mode. Changing this setting will cause MMM to restart.
+      <td>Only enable this setting if you are experiencing issues with media presentation mode. Changing this setting will cause M³ to restart.
       </td>
     </tr>
   </tbody>
@@ -125,20 +125,20 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     </tr>
     <tr>
       <td><code>Enable button to present media on an external monitor or in a separate window</code></td>
-      <td>This setting will allow you to use MMM to present pictures, videos and audio files during <strong>hybrid</strong> or <strong>in-person</strong> congregation meetings. <a href="#/present-media">Media presentation mode</a> can then be accessed by clicking the ▶️ (play) button on the main screen of MMM.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.
+      <td>This setting will allow you to use M³ to present pictures, videos and audio files during <strong>hybrid</strong> or <strong>in-person</strong> congregation meetings. <a href="#/present-media">Media presentation mode</a> can then be accessed by clicking the ▶️ (play) button on the main screen of M³.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.
       <br><br><blockquote><strong>Note:</strong> This option is best suited for either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings.<br><br>
       If conducting <strong>remote-only</strong> congregation Zoom meetings, look into activating the <code>Convert media to MP4 format</code> option and sharing the media with Zoom's native MP4 sharing instead.</blockquote></td>
       </td>
     </tr>
     <tr>
       <td><code>Background image for media presentation mode</code></td>
-      <td>By default, MMM will attempt to fetch the current year's text in the language selected previously, in order to display it on a black background when in <a href="#/present-media">media presentation mode</a> and no other media is being played. If the automatic yeartext retrieval fails for some reason, or if you wish to display a different background image, you can either use the "Browse" button to select a custom picture, or the "Refresh" button to try fetching the yeartext automatically again.<br><br>
+      <td>By default, M³ will attempt to fetch the current year's text in the language selected previously, in order to display it on a black background when in <a href="#/present-media">media presentation mode</a> and no other media is being played. If the automatic yeartext retrieval fails for some reason, or if you wish to display a different background image, you can either use the "Browse" button to select a custom picture, or the "Refresh" button to try fetching the yeartext automatically again.<br><br>
       <blockquote><strong>Note:</strong> If <a href="#/congregation-sync">congregation sync</a> is enabled, selecting a custom background image will synchronize it for all congregation sync users automatically.</blockquote>
       </td>
     </tr>
     <tr>
       <td><code>Enable button to present media on an external monitor or in a separate window</code></td>
-      <td>This setting will allow you to use MMM to present pictures, videos and audio files during congregation meetings, for example at the Kingdom Hall. <a href="#/present-media">Media presentation mode</a> can be accessed by clicking the ▶️ (play) button on the main screen of MMM.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.
+      <td>This setting will allow you to use M³ to present pictures, videos and audio files during congregation meetings, for example at the Kingdom Hall. <a href="#/present-media">Media presentation mode</a> can be accessed by clicking the ▶️ (play) button on the main screen of M³.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.
       <br><br><blockquote><strong>Note:</strong> This option is best suited for either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings.<br><br>
       If conducting <strong>remote-only</strong> congregation Zoom meetings, look into activating the <code>Convert media to MP4 format</code> option and sharing the media with Zoom's native MP4 sharing instead.</blockquote></td>
     </tr>
