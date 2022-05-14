@@ -39,6 +39,7 @@
   "fetchMedia": "Medienordner aktualisieren",
   "hostname": "Hostname",
   "info": "Information",
+  "infoShortcutSetFail": "MMM konnte die folgende Tastenkombination nicht aktivieren. Um diese Tastenkombination zu verwenden, darf sie von keiner andere App benutzt werden; ggf. muss MMM neu gestartet werden. Andernfalls ist keine Aktion erforderlich.",
   "infoPubIgnored": "Medien für die folgende Publikation können nicht abgerufen werden:",
   "jwpub": "JWPUB",
   "keepOriginalsAfterConversion": "Original-Mediendateien nach der Konvertierung behalten",
