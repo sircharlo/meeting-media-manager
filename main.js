@@ -8,7 +8,7 @@ const {
     autoUpdater
   } = require("electron-updater"),
   appLongName = "Meeting Media Manager",
-  fs = require("graceful-fs"),
+  fs = require("fs-extra"),
   os = require("os"),
   path = require("upath"),
   remote = require("@electron/remote/main");
@@ -26,7 +26,7 @@ var win = null,
   dontClose = false,
   authorizedCloseMediaWin = false;
 remote.initialize();
-function createUpdateWindow() {
+function createMainWindow() {
   win = new BrowserWindow({
     webPreferences: {
       backgroundThrottling: false,
@@ -69,7 +69,7 @@ function createUpdateWindow() {
   remote.enable(win.webContents);
   win.setMenuBarVisibility(false);
   win.loadFile("index.html");
-  if (!app.isPackaged) win.webContents.openDevTools();
+  if (!app.isPackaged) win.webContents.openDevTools({ mode: "detach" });
 }
 function fadeWindow(browserWindow) {
   // shelving the graceful fade for now, as it seems to be causing more issues than what it's worth
@@ -165,9 +165,9 @@ if (!gotTheLock) {
       win.focus();
     }
   });
-  ipcMain.on("attemptAutoUpdate", () => {
-    autoUpdater.checkForUpdates();
-  });
+  // ipcMain.on("attemptAutoUpdate", () => {
+  //   autoUpdater.checkForUpdatesAndNotify();
+  // });
   ipcMain.on("closeMediaWindow", () => {
     closeMediaWindow();
   });
@@ -263,37 +263,39 @@ if (!gotTheLock) {
   ipcMain.on("toggleMediaWindowFocus", () => {
     fadeWindow(mediaWin);
   });
-  autoUpdater.on("error", () => {
-    win.webContents.send("congregationInitialSelector");
-  });
-  autoUpdater.on("update-not-available", () => {
-    win.webContents.send("congregationInitialSelector");
-  });
+  // autoUpdater.on("error", () => {
+  //   // win.webContents.send("congregationInitialSelector");
+  // notifiy user here?
+  // });
+  // autoUpdater.on("update-not-available", () => {
+  //   win.webContents.send("congregationInitialSelector");
+  // });
   autoUpdater.on("update-available", () => {
     if (os.platform() == "darwin") {
-      win.webContents.send("congregationInitialSelector");
+      // win.webContents.send("congregationInitialSelector");
       win.webContents.send("macUpdate");
-    } else {
-      win.webContents.send("overlay", ["cloud-download-alt fa-beat", "circle-notch fa-spin text-success"]);
-      autoUpdater.downloadUpdate();
+    // } else {
+    //   win.webContents.send("overlay", ["cloud-download-alt fa-beat", "circle-notch fa-spin text-success"]);
+    //   autoUpdater.downloadUpdate();
     }
   });
-  autoUpdater.on("update-downloaded", () => {
-    win.webContents.send("overlay", ["cloud-download-alt fa-beat", "check-circle"]);
-    setImmediate(() => {
-      autoUpdater.quitAndInstall();
-    });
-  });
+  // autoUpdater.on("update-downloaded", () => {
+  //   win.webContents.send("overlay", ["cloud-download-alt fa-beat", "check-circle"]);
+  //   setImmediate(() => {
+  //     autoUpdater.quitAndInstall();
+  //   });
+  // });
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
+    autoUpdater.checkForUpdatesAndNotify();
     screen.on("display-removed", () => {
       win.webContents.send("displaysChanged");
     });
     screen.on("display-added", () => {
       win.webContents.send("displaysChanged");
     });
-    createUpdateWindow();
+    createMainWindow();
   });
   app.on("window-all-closed", () => {
     app.exit();

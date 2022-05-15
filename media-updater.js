@@ -8,7 +8,7 @@ const fadeDelay = 200,
   dayjs = require("dayjs"),
   escape = require("escape-html"),
   ffmpeg = require("fluent-ffmpeg"),
-  fs = require("graceful-fs"),
+  fs = require("fs-extra"),
   fullHd = [1920, 1080],
   glob = require("fast-glob"),
   hme = require("h264-mp4-encoder"),
@@ -58,7 +58,9 @@ const fadeDelay = 200,
 require("jquery-ui");
 require("jquery-ui/ui/data");
 require("jquery-ui/ui/effect");
-require("jquery-ui/ui/effects/effect-slide");
+require("jquery-ui/ui/effects/effect-blind");
+require("jquery-ui/ui/effects/effect-clip");
+// require("jquery-ui/ui/effects/effect-slide");
 require("jquery-ui/ui/scroll-parent");
 require("jquery-ui/ui/widgets/mouse");
 require("jquery-ui/ui/widgets/sortable");
@@ -82,8 +84,6 @@ function checkInternet(online) {
   }
 }
 const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443, !initialConnectivityCheck)));
-overlay(true, "cog fa-spin");
-updateOnlineStatus();
 require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, message[0], message[1]));
 require("electron").ipcRenderer.on("macUpdate", async () => {
   await overlay(true, "cloud-download-alt fa-beat", "circle-notch fa-spin text-success");
@@ -93,7 +93,7 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
     notifyUser("info", "updateDownloading", latestVersion.tag_name, false, null);
     let macDownloadPath = path.join(remote.app.getPath("downloads"), macDownload.name);
     fs.writeFileSync(macDownloadPath, Buffer.from(new Uint8Array((await request(macDownload.browser_download_url, {isFile: true})).data)));
-    await shell.openExternal(url.pathToFileURL(macDownloadPath).href);
+    await shell.openPath(url.fileURLToPath(url.pathToFileURL(macDownloadPath).href));
     // remote.app.exit();
   } catch(err) {
     notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: "https://github.com/sircharlo/meeting-media-manager/releases/latest"});
@@ -108,10 +108,10 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
 require("electron").ipcRenderer.on("notifyUser", (event, arg) => {
   notifyUser(arg[0], arg[1]);
 });
-require("electron").ipcRenderer.on("congregationInitialSelector", () => {
-  congregationInitialSelector();
-});
-const bugUrl = () => "https://github.com/sircharlo/meeting-media-manager/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- MMM " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
+// require("electron").ipcRenderer.on("congregationInitialSelector", () => {
+//   congregationInitialSelector();
+// });
+const bugUrl = () => "https://github.com/sircharlo/meeting-media-manager/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- M³ " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
   if ((entry[0].startsWith("cong") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
   return entry;
 })), null, 2) + "\n```" : "") + (logOutput.error && logOutput.error.length >0 ? "\n### Full error log\n```\n" + JSON.stringify(logOutput.error, null, 2) + "\n```" : "") + "\n").replace(/\n/g, "%0D%0A");
@@ -129,7 +129,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   dryrun = false,
   dynamicShortcuts = {},
   ffmpegIsSetup = false,
-  jsonLangs = {},
+  jsonLangs = [],
   jwpubDbs = {},
   logLevel = "info",
   logOutput = {
@@ -171,11 +171,16 @@ datepickers = datetime(".timePicker", {
     $("#" + initiatorEl.data("target")).val(initiatorEl.val()).change();
   }
 });
-if (remote.app.isPackaged) {
-  require("electron").ipcRenderer.send("attemptAutoUpdate");
-} else {
+overlay(true, "cog fa-spin");
+$( document ).ready(function() {
+  updateCleanup();
+  updateOnlineStatus();
+  // if (remote.app.isPackaged) {
+  // require("electron").ipcRenderer.send("attemptAutoUpdate");
+  // } else {
+  // }
   congregationInitialSelector();
-}
+});
 function goAhead() {
   if (fs.existsSync(paths.prefs)) {
     try {
@@ -869,14 +874,13 @@ async function getInitialData() {
   await getJwOrgLanguages();
   await getLocaleLanguages();
   await setAppLang();
-  await updateCleanup();
   await periodicCleanup();
   await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
   await obsGetScenes();
   await toggleMediaWindow();
-  $("#version").html("MMM " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
+  $("#version").html("M³ " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
   congregationSelectPopulate();
   $("#baseDate .dropdown-menu").empty();
@@ -902,7 +906,6 @@ async function getJwOrgLanguages(forceRefresh) {
     }));
     fs.writeFileSync(paths.langs, JSON.stringify(cleanedJwLangs, null, 2));
     prefs.langUpdatedLast = dayjs();
-    validateConfig(true);
     jsonLangs = cleanedJwLangs;
   } else {
     jsonLangs = JSON.parse(fs.readFileSync(paths.langs));
@@ -1512,7 +1515,7 @@ function refreshFolderListing(folderPath) {
   });
   for (var item of glob.sync(path.join(folderPath, "*"))) {
     item = escape(item);
-    let lineItem = $("<li class='d-flex align-items-center list-group-item item " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/- Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/- Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button></div><div class='alert alert-info move-handle mb-0 ms-3' style='display: none;'><i class='fas fa-arrows-up-down'></i></div></li>");
+    let lineItem = $("<li class='d-flex align-items-center list-group-item item " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/^(\d{2}-\d{2} )/, "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>").replace(/- Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/- Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div class='d-flex flex-shrink-0'><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button><div class='btn btn-lg btn-info move-handle mb-0 ms-3' style='display: none;'><i class='fas fa-sort'></i></div></div></li>");
     lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMS4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNNDYzLjEgMzJoLTQxNkMyMS40OSAzMi0uMDAwMSA1My40OS0uMDAwMSA4MHYzNTJjMCAyNi41MSAyMS40OSA0OCA0Ny4xIDQ4aDQxNmMyNi41MSAwIDQ4LTIxLjQ5IDQ4LTQ4di0zNTJDNTExLjEgNTMuNDkgNDkwLjUgMzIgNDYzLjEgMzJ6TTExMS4xIDQwOGMwIDQuNDE4LTMuNTgyIDgtOCA4SDU1LjFjLTQuNDE4IDAtOC0zLjU4Mi04LTh2LTQ4YzAtNC40MTggMy41ODItOCA4LThoNDcuMWM0LjQxOCAwIDggMy41ODIgOCA4TDExMS4xIDQwOHpNMTExLjEgMjgwYzAgNC40MTgtMy41ODIgOC04IDhINTUuMWMtNC40MTggMC04LTMuNTgyLTgtOHYtNDhjMC00LjQxOCAzLjU4Mi04IDgtOGg0Ny4xYzQuNDE4IDAgOCAzLjU4MiA4IDhWMjgwek0xMTEuMSAxNTJjMCA0LjQxOC0zLjU4MiA4LTggOEg1NS4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOEwxMTEuMSAxNTJ6TTM1MS4xIDQwMGMwIDguODM2LTcuMTY0IDE2LTE2IDE2SDE3NS4xYy04LjgzNiAwLTE2LTcuMTY0LTE2LTE2di05NmMwLTguODM4IDcuMTY0LTE2IDE2LTE2aDE2MGM4LjgzNiAwIDE2IDcuMTYyIDE2IDE2VjQwMHpNMzUxLjEgMjA4YzAgOC44MzYtNy4xNjQgMTYtMTYgMTZIMTc1LjFjLTguODM2IDAtMTYtNy4xNjQtMTYtMTZ2LTk2YzAtOC44MzggNy4xNjQtMTYgMTYtMTZoMTYwYzguODM2IDAgMTYgNy4xNjIgMTYgMTZWMjA4ek00NjMuMSA0MDhjMCA0LjQxOC0zLjU4MiA4LTggOGgtNDcuMWMtNC40MTggMC03LjEtMy41ODItNy4xLThsMC00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFY0MDh6TTQ2My4xIDI4MGMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYyODB6TTQ2My4xIDE1MmMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04bDAtNDhjMC00LjQxOCAzLjU4Mi04IDcuMS04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYxNTJ6Ii8+PC9zdmc+'") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
       try {
         lineItem.data("originalStart", 0);
@@ -1795,7 +1798,7 @@ async function startMediaSync(isDryrun, meetingFilter) {
     await convertUnusableFiles();
     if (prefs.enableMp4Conversion) await mp4Convert();
     if (prefs.enableVlcPlaylistCreation) createVlcPlaylists();
-    if (prefs.autoOpenFolderWhenDone) shell.openExternal(url.pathToFileURL(paths.media).href);
+    if (prefs.autoOpenFolderWhenDone) shell.openPath(url.fileURLToPath(url.pathToFileURL(paths.media).href));
     $("#btn-settings").fadeToAndToggle(fadeDelay, 1);
     $("#statusIcon").toggleClass("text-muted text-primary fa-flip");
     updateStatus("photo-video");
@@ -1926,7 +1929,7 @@ function syncLocalRecurringMedia() {
     updateTile("recurringMedia", "success");
   }
 }
-async function testMMM() {
+async function testApp() {
   logLevel = "debug";
   let previousLang = prefs.lang;
   for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"] ) {
@@ -1967,28 +1970,52 @@ function toggleScreen(screen, forceShow, sectionToShow) {
 }
 function updateCleanup() {
   try { // do some housecleaning after version updates
-    var lastRunVersion = 0;
+    var lastRunVersion = "0";
     if (fs.existsSync(paths.lastRunVersion)) lastRunVersion = fs.readFileSync(paths.lastRunVersion, "utf8");
   } catch(err) {
     notifyUser("warn", "warnUnknownLastVersion", null, false, err);
   } finally {
     if (lastRunVersion !== currentAppVersion) {
-      setVars();
-      if (remote.app.isPackaged) fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
-      if (lastRunVersion !== 0) {
-        notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/meeting-media-manager/releases/latest"});
-        if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
-          notifyUser("info", "<h6>Managing media just got simpler</h6><p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>" + (prefs.congServer ? "<p>The cloud upload button has therefore been removed from the bottom left corner of the app.</p>" : "") + "<p>Media can also now easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p><h6>In short:</h6> " + (prefs.congServer ? "<li>No more cloud button</li> " : "") + "<li><strong>Click on any day</strong> to manage media for that day</li>", null, true, null, {desc: "understood", noLink: true}, true);
-          $("#folders").addClass("new-stuff");
+      try {
+        if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2255 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2256) { // one-time migrate from jwmmf to mmm
+          try {
+            let files = glob.sync(path.join(remote.app.getPath("appData"), "jw-meeting-media-fetcher", "pref*.json"));
+            files.push(path.join(remote.app.getPath("appData"), "jw-meeting-media-fetcher", "Publications"));
+            for (let file of files) {
+              try {
+                if (fs.pathExistsSync(file)) fs.copySync(file, path.join(remote.app.getPath("userData"), path.basename(file)));
+              } catch (err) {
+                log.error(file, err);
+              }
+            }
+            let prevJwmmfVersion = path.join(remote.app.getPath("appData"), "jw-meeting-media-fetcher", "lastRunVersion.json");
+            if (fs.existsSync(prevJwmmfVersion)) lastRunVersion = fs.readFileSync(prevJwmmfVersion, "utf8");
+            fs.removeSync(path.join(remote.app.getPath("appData"), "jw-meeting-media-fetcher"));
+          } catch (err) {
+            log.error(err);
+          }
         }
-        let currentLang = jsonLangs.filter(item => item.langcode === prefs.lang)[0];
-        if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
-          desc: "wannaHelpForSure",
-          url: "https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+MMM+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
-        });
-        getJwOrgLanguages(true).then(function() {
-          setMediaLang();
-        });
+        setVars();
+        // for dev only
+        // fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
+        if (remote.app.isPackaged) fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
+        if (lastRunVersion !== "0") {
+          notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/meeting-media-manager/releases/latest"});
+          // if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
+          //   notifyUser("info", "<h6>Managing media just got simpler</h6><p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>" + (prefs.congServer ? "<p>The cloud upload button has therefore been removed from the bottom left corner of the app.</p>" : "") + "<p>Media can also now easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p><h6>In short:</h6> " + (prefs.congServer ? "<li>No more cloud button</li> " : "") + "<li><strong>Click on any day</strong> to manage media for that day</li>", null, true, null, {desc: "understood", noLink: true}, true);
+          //   $("#folders").addClass("new-stuff");
+          // }
+          let currentLang = jsonLangs ? jsonLangs.filter(item => item.langcode === prefs.lang)[0] : null;
+          if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
+            desc: "wannaHelpForSure",
+            url: "https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
+          });
+          getJwOrgLanguages(true).then(function() {
+            setMediaLang();
+          });
+        }
+      } catch (err) {
+        log.error(err);
       }
     }
   }
@@ -2187,6 +2214,7 @@ function unconfirm(el) {
   $(el).removeClass("wasWarningBefore confirmed").blur();
 }
 function validateConfig(changed, restart) {
+  console.log(prefs);
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) {
@@ -2700,7 +2728,7 @@ $("#btnMediaWindow").on("click", function() {
   showModal(true, true, i18n.__("meeting"), folderListing, false);
   obsGetScenes();
   $("#staticBackdrop .modal-header").addClass("d-flex").children().wrapAll("<div class='col-4 text-center'></div>");
-  $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only' style='display: none;'></div>");
+  $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only' style='display: none;'><button class='btn btn-sm show-prefixes'><i class='fas fa-fw fa-eye'></i><i class='fas fa-fw fa-list-ol'></i></button></div>");
   $("#staticBackdrop .modal-header").append("<div class='col-4 for-folder-listing-only text-end' style='display: none;'><button class='btn btn-sm folderRefresh'><i class='fas fa-fw fa-rotate-right'></i></button><button class='btn btn-sm master-move-handle'><i class='fas fa-fw fa-arrow-down-short-wide'></i></button><button class='btn btn-sm folderOpen'><i class='fas fa-fw fa-folder-open'></i></button></div>");
   $(folderListing).find(".thatsToday").click();
   $("#staticBackdrop .modal-footer").html($("<div class='left d-flex flex-fill text-start'></div><div class='right text-end'><button type='button' class='closeModal btn btn-warning' data-bs-trigger='manual'><i class='fas fa-fw fa-2x fa-home'></i></button></div>")).addClass("d-flex");
@@ -2722,11 +2750,19 @@ $("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function(
   refreshFolderListing(path.join(paths.media, $(".modal-header h5").text()));
 });
 $("#staticBackdrop .modal-header").on("click", ".master-move-handle", function() {
-  $(".move-handle").toggle("right");
+  $(".move-handle").toggle("blind", {direction: "right"}, fadeDelay);
   $(this).find("i").toggleClass("fa-square-check fa-arrow-down-short-wide");
 });
+$("#staticBackdrop .modal-header").on("click", ".show-prefixes", function() {
+  $(".sort-prefix").toggle("blind", {direction: "horizontal"}, fadeDelay);
+  $(this).prop("disabled", true);
+  setTimeout(() => {
+    $(".show-prefixes").prop("disabled", false);
+    $(".sort-prefix").toggle("blind", {direction: "horizontal"}, fadeDelay);
+  }, 3000);
+});
 $("#staticBackdrop .modal-header").on("click", "button.folderOpen", function() {
-  shell.openExternal(url.pathToFileURL(path.join(paths.media, $(".modal-header h5").text())).href);
+  shell.openPath(url.fileURLToPath(url.pathToFileURL(path.join(paths.media, $(".modal-header h5").text())).href));
 });
 $("body").on("click", "#btnMeetingMusic", async function() {
   if (!$(this).hasClass("confirmed")) {
@@ -3140,7 +3176,7 @@ $("#overlaySettings").on("click", ".btn-action:not(.btn-danger)", function() {
   if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugUrl());
   shell.openExternal($(this).data("action-url"));
 });
-$("#btnTestApp").on("click", testMMM);
+$("#btnTestApp").on("click", testApp);
 $("#toastContainer").on("click", "button.toast-action", async function() {
   if ($(this).data("toast-action-url")) shell.openExternal($(this).data("toast-action-url"));
   $(this).closest(".toast").find(".toast-header button.btn-close").click();

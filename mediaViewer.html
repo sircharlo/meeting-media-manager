@@ -7,7 +7,7 @@
   <style>
     @font-face {
       font-family: NotoSerif;
-      src: url("fonts/NotoSerif-Bold.ttf") format('truetype');
+      src: url("public/NotoSerif-Bold.ttf") format('truetype');
     }
 
     #blackOverlay,
@@ -35,6 +35,19 @@
       position: absolute;
       top: 0;
       left: 0;
+    }
+
+    #importedYearText.font-fallback {
+      font-family: "NotoSerif", serif;
+      letter-spacing: 0.05rem;
+    }
+
+    #importedYearText.font-native {
+      font-family: "Wt-ClearText-Bold", "NotoSerif", serif;
+    }
+
+    #importedYearText.loading {
+      visibility: hidden;
     }
 
     #blackOverlay,
@@ -107,7 +120,7 @@
 </head>
 
 <body>
-  <div id="importedYearText"></div>
+  <div id="importedYearText" class="font-fallback loading"></div>
   <div id="importedYearTextLogoContainer"></div>
   <div id="mediaDisplay"></div>
   <div id="blackOverlay"></div>
@@ -121,7 +134,7 @@
     const {
       ipcRenderer
     } = require('electron'),
-      fs = require("graceful-fs"),
+      fs = require("fs-extra"),
       glob = require("fast-glob"),
       isAudio = require("is-audio"),
       isImage = require("is-image"),
@@ -258,10 +271,14 @@
                   var yearTextFont = new FontFace('Wt-ClearText-Bold', 'url(' + url.pathToFileURL(yearTextFontFiles[0]).href + ')');
                   yearTextFont.load().then(function(loaded_face) {
                     document.fonts.add(loaded_face);
-                    document.getElementById("importedYearText").style.fontFamily = '"Wt-ClearText-Bold", "NotoSerif", serif';
+                    $("#importedYearText").removeClass("font-fallback").addClass("font-native")
                   }).catch(function(err) {
                     console.error(err);
+                  }).finally(function() {
+                    $("#importedYearText").removeClass("loading");
                   });
+                } else {
+                  $("#importedYearText").removeClass("loading");
                 }
               }
               let logoFontFiles = glob.sync(path.join(appData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "jw-icons*"));

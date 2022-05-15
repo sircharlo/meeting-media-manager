@@ -39,7 +39,7 @@
   "fetchMedia": "Descarregar multimédias!",
   "hostname": "Nome do host",
   "info": "Informação",
-  "infoShortcutSetFail": "Não é possível utilizar este atalho de teclado. Certifique-se de que nenhum outro programa está configurado com este atalho e em seguida reinicie o MMM. Caso contrário, não tens de fazer nada.",
+  "infoShortcutSetFail": "Não é possível utilizar este atalho de teclado. Certifique-se de que nenhum outro programa está configurado com este atalho e em seguida reinicie o M³. Caso contrário, não tens de fazer nada.",
   "infoPubIgnored": "Não foi possível descarregar os ficheiros de multimédia dessa publicação:",
   "jwpub": "JWPUB",
   "keepOriginalsAfterConversion": "Manter os ficheiros de multimédia originais após a conversão",
