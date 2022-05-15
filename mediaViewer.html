@@ -281,16 +281,18 @@
                   $("#importedYearText").removeClass("loading");
                 }
               }
-              let logoFontFiles = glob.sync(path.join(appData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "jw-icons*"));
-              if (logoFontFiles && logoFontFiles.length > 0) {
-                var logoFont = new FontFace('JW-Icons', 'url(' + url.pathToFileURL(logoFontFiles[0]).href + ')');
-                logoFont.load().then(function(loaded_face) {
-                  document.fonts.add(loaded_face);
-                  document.getElementById("importedYearTextLogoContainer").style.fontFamily = '"JW-Icons"';
-                  $("#importedYearTextLogoContainer").html("<div id='importedYearTextLogo'></div>");
-                }).catch(function(err) {
-                  console.error(err);
-                });
+              if (!prefs.hideMediaLogo) {
+                let logoFontFiles = glob.sync(path.join(appData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "jw-icons*"));
+                if (logoFontFiles && logoFontFiles.length > 0) {
+                  var logoFont = new FontFace('JW-Icons', 'url(' + url.pathToFileURL(logoFontFiles[0]).href + ')');
+                  logoFont.load().then(function(loaded_face) {
+                    document.fonts.add(loaded_face);
+                    document.getElementById("importedYearTextLogoContainer").style.fontFamily = '"JW-Icons"';
+                    $("#importedYearTextLogoContainer").html("<div id='importedYearTextLogo'></div>");
+                  }).catch(function(err) {
+                    console.error(err);
+                  });
+                }
               }
             } catch (err) {
               console.error(err);

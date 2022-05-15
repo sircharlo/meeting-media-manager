@@ -215,6 +215,7 @@ function goAhead() {
       });
     }
     if ($(this).prop("id") == "enableMediaDisplayButton") toggleMediaWindow();
+    if ($(this).prop("id") == "hideMediaLogo") toggleMediaWindow("reopen");
     if ($(this).prop("id") == "preferredOutput") setMediaWindowPosition();
     if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes();
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
@@ -1454,7 +1455,7 @@ function periodicCleanup() {
 function prefsInitialize() {
   $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
   prefs.disableHardwareAcceleration = !!fs.existsSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration", "enableObs", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredOutput"]) {
+  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration", "enableObs", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredOutput", "hideMediaLogo"]) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
   for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredOutput"]) {
@@ -1466,7 +1467,7 @@ function prefsInitialize() {
   for (let dtPicker of datepickers) {
     dtPicker.setDate($(dtPicker.element).val());
   }
-  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "disableHardwareAcceleration", "enableObs"]) {
+  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "disableHardwareAcceleration", "enableObs", "hideMediaLogo"]) {
     $("#" + checkbox).prop("checked", prefs[checkbox]);
   }
   for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
@@ -1946,12 +1947,14 @@ function toggleHardwareAcceleration() {
     rm(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
   }
 }
-async function toggleMediaWindow() {
-  if (prefs.enableMediaDisplayButton) {
+async function toggleMediaWindow(action) {
+  if (!action) action = prefs.enableMediaDisplayButton ? "open" : "close";
+  if (action == "open") {
     await refreshBackgroundImagePreview();
     await showMediaWindow();
   } else {
     closeMediaWindow();
+    if (action == "reopen") toggleMediaWindow();
   }
 }
 function toggleScreen(screen, forceShow, sectionToShow) {
@@ -2214,7 +2217,6 @@ function unconfirm(el) {
   $(el).removeClass("wasWarningBefore confirmed").blur();
 }
 function validateConfig(changed, restart) {
-  console.log(prefs);
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) {
@@ -2267,7 +2269,7 @@ function validateConfig(changed, restart) {
     shortcutsUnset("musicButton");
   }
   $("#btnMediaWindow, #btnToggleMediaWindowFocus").toggle(!!prefs.enableMediaDisplayButton);
-  $("#currentMediaBackground").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
+  $("#currentMediaBackground, #hideMediaLogo").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
   $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
   $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
   $("#btnMeetingMusic").toggle(!!prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);

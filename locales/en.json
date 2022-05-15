@@ -37,6 +37,7 @@
   "excludeLffiImages": "Exclude images from the <em>lffi</em> brochure",
   "excludeTh": "Exclude all media from the <em>th</em> brochure",
   "fetchMedia": "Update media folders",
+  "hideMediaLogo": "Hide logo from media presentation window",
   "hostname": "Hostname",
   "info": "Information",
   "infoShortcutSetFail": "M³ was unable to activate the following keyboard shortcut. If you wish to use this keyboard shortcut, please make sure that no other app is using it, and relaunch M³. Otherwise, no action is required.",
