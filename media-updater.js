@@ -151,6 +151,7 @@ var baseDate = dayjs().startOf("isoWeek"),
   pendingMusicFadeOut = {},
   perfStats = {},
   prefs = {},
+  songPub = "",
   tempMediaArray = [],
   totals = {},
   webdavIsAGo = false,
@@ -770,7 +771,7 @@ async function getDbFromJwpub(pub, issue, localpath) {
     } else {
       if (!jwpubDbs[pub]) jwpubDbs[pub] = {};
       if (!jwpubDbs[pub][issue]) {
-        var jwpub = (await getMediaLinks(pub, null, issue, "JWPUB"))[0];
+        var jwpub = (await getMediaLinks({pubSymbol: pub, issue: issue, format: "JWPUB"}))[0];
         jwpub.pub = pub;
         jwpub.issue = issue;
         jwpub.queryInfo = {};
@@ -829,7 +830,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
           queryInfo: multimediaItem,
           BeginParagraphOrdinal: multimediaItem.BeginParagraphOrdinal
         };
-        Object.assign(json, (await getMediaLinks(multimediaItem.KeySymbol, multimediaItem.Track, multimediaItem.IssueTagNumber, null, multimediaItem.MultiMeps))[0]);
+        Object.assign(json, (await getMediaLinks({pubSymbol: multimediaItem.KeySymbol, track: multimediaItem.Track, issue: multimediaItem.IssueTagNumber, docId: multimediaItem.MultiMeps}))[0]);
         multimediaItems.push(json);
       } else {
         if (multimediaItem.KeySymbol == null) {
@@ -903,7 +904,8 @@ async function getJwOrgLanguages(forceRefresh) {
       name: lang.name,
       langcode: lang.langcode,
       symbol: lang.symbol,
-      vernacularName: lang.vernacularName
+      vernacularName: lang.vernacularName,
+      isSignLanguage: lang.isSignLanguage
     }));
     fs.writeFileSync(paths.langs, JSON.stringify(cleanedJwLangs, null, 2));
     prefs.langUpdatedLast = dayjs();
@@ -919,6 +921,7 @@ async function getJwOrgLanguages(forceRefresh) {
     }));
   }
   $("#lang").val(prefs.lang).select2();
+  songPub = "sjj" + (!jsonLangs.find(lang => lang.langcode == prefs.lang) || (jsonLangs.find(lang => lang.langcode == prefs.lang) && !jsonLangs.find(lang => lang.langcode == prefs.lang).isSignLanguage) ? "m" : "");
 }
 function getLocaleLanguages() {
   try {
@@ -942,18 +945,23 @@ function getLocaleLanguages() {
     log.error(err);
   }
 }
-async function getMediaLinks(pubSymbol, track, issue, format, docId) {
+async function getMediaLinks(mediaItem) {
   let mediaFiles = [];
   if (prefs.lang && prefs.maxRes) {
     try {
-      if (pubSymbol === "w" && parseInt(issue) >= 20080101 && issue.slice(-2) == "01") pubSymbol = "wp";
-      let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (docId ? "&docid=" + docId : "&pub=" + pubSymbol + (track ? "&track=" + track : "") + (issue ? "&issue=" + issue : "")) + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
+      if (mediaItem.pubSymbol === "w" && mediaItem.issue && parseInt(mediaItem.issue) >= 20080101 && mediaItem.issue.toString().slice(-2) == "01") mediaItem.pubSymbol = "wp";
+      let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (mediaItem.pubSymbol ? "&pub=" + mediaItem.pubSymbol + (mediaItem.track ? "&track=" + mediaItem.track : "") + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") : (mediaItem.docId ? "&docid=" + mediaItem.docId : "")) + "&langwritten=" + (mediaItem.lang || prefs.lang);
       let result = (await request(requestUrl)).data;
-      log.debug(pubSymbol, track, issue, format, docId, requestUrl);
-      if (result && result.length > 0 && result[0].status && result[0].status == 404 && pubSymbol && track) {
-        requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + pubSymbol + "m" + "&track=" + track + (issue ? "&issue=" + issue : "") + (format ? "&fileformat=" + format : "") + "&langwritten=" + prefs.lang;
+      log.debug(mediaItem.pubSymbol, mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
+      if (result && result.length > 0 && result[0].status && [400, 404].includes(result[0].status) && mediaItem.pubSymbol && mediaItem.track) {
+        requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + mediaItem.pubSymbol + "m" + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || prefs.lang);
         result = (await request(requestUrl)).data;
-        log.debug(pubSymbol + "m", track, issue, format, docId, requestUrl);
+        log.debug(mediaItem.pubSymbol + "m", mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
+      }
+      if (result && result.length > 0 && result[0].status && [400, 404].includes(result[0].status) && mediaItem.pubSymbol && mediaItem.pubSymbol.endsWith("m") && mediaItem.track) {
+        requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + mediaItem.pubSymbol.slice(0, -1) + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || prefs.lang);
+        result = (await request(requestUrl)).data;
+        log.debug(mediaItem.pubSymbol + "m", mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
       }
       if (result && result.files) {
         let mediaFileCategories = Object.values(result.files)[0];
@@ -963,22 +971,23 @@ async function getMediaLinks(pubSymbol, track, issue, format, docId) {
           let {label, subtitled} = map.get(item.title);
           if ((item.label.replace(/\D/g, "") - label.replace(/\D/g, "") || subtitled - item.subtitled) > 0) map.set(item.title, item);
         }
-        mediaFiles = Array.from(map.values(), ({title, file: {url}, file: {checksum}, filesize, duration, trackImage, track, pub}) => ({title, url, checksum, filesize, duration, trackImage, track, pub})).map(item => {
+        mediaFiles = Array.from(map.values(), ({title, file: {url}, file: {checksum}, filesize, duration, trackImage, track, pub, markers}) => ({title, url, checksum, filesize, duration, trackImage, track, pub, markers})).map(item => {
           item.trackImage = item.trackImage.url;
-          if (issue) item.issue = issue;
+          if (mediaItem.issue) item.issue = mediaItem.issue;
           return item;
         });
         for (var item of mediaFiles) {
           if (item.duration >0 && (!item.trackImage || !item.pub)) {
-            Object.assign(item, (await getMediaAdditionalInfo(pubSymbol, track, issue, format, docId)));
+            Object.assign(item, (await getMediaAdditionalInfo(mediaItem.pubSymbol, mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId)));
           }
         }
       }
     } catch(err) {
-      notifyUser("warn", "infoPubIgnored", pubSymbol + " - " + track + " - " + issue + " - " + format, false, err);
+      notifyUser("warn", "infoPubIgnored", mediaItem.pubSymbol + " - " + mediaItem.track + " - " + mediaItem.issue + " - " + mediaItem.format, false, err);
     }
   }
   log.debug(mediaFiles);
+  console.log(mediaFiles);
   return mediaFiles;
 }
 async function getMediaAdditionalInfo(pub, track, issue, format, docId) {
@@ -1109,20 +1118,25 @@ async function getWeMediaFromDb() {
       }
       if (weekNumber < 0) throw("No WE meeting date found!");
       var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
-      for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9"))) {
-        var LocalPath = path.join(paths.pubs, "w", issue, "0", picture.FilePath);
-        var FileName = sanitizeFilename((picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label), true);
-        var pictureObj = {
-          title: FileName,
-          filepath: LocalPath,
-          filesize: fs.statSync(LocalPath).size,
-          queryInfo: picture
-        };
-        addMediaItemToPart(weDate, 1, pictureObj);
+      for (var picture of (await executeStatement(db, "SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel FROM DocumentMultimedia INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal WHERE Document.DocumentId = " + docId + " AND Multimedia.CategoryType <> 9 GROUP BY DocumentMultimedia.MultimediaId"))) {
+        if (!isImage(picture.FilePath)) {
+          let mediaObj = await getMediaLinks({pubSymbol: picture.KeySymbol, track: picture.Track, issue: picture.IssueTagNumber});
+          if (mediaObj && mediaObj.length > 0) addMediaItemToPart(weDate, 1, mediaObj[0]);
+        } else {
+          var LocalPath = path.join(paths.pubs, "w", issue, "0", picture.FilePath);
+          var FileName = sanitizeFilename((picture.Caption.length > picture.Label.length ? picture.Caption : picture.Label), true);
+          var pictureObj = {
+            title: FileName,
+            filepath: LocalPath,
+            filesize: fs.statSync(LocalPath).size,
+            queryInfo: picture
+          };
+          addMediaItemToPart(weDate, 1, pictureObj);
+        }
       }
       var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
       for (var song = 0; song < qrySongs.length; song++) {
-        let songJson = await getMediaLinks(qrySongs[song].KeySymbol, qrySongs[song].Track);
+        let songJson = await getMediaLinks({pubSymbol: qrySongs[song].KeySymbol, track: qrySongs[song].Track});
         if (songJson.length > 0) {
           songJson[0].queryInfo = qrySongs[song];
           addMediaItemToPart(weDate, song * 2, songJson[0]);
@@ -1442,7 +1456,7 @@ function periodicCleanup() {
         rm(glob.sync(path.join(paths.pubs, "**", "*.mp*")).map(video => {
           let itemDate = dayjs(path.basename(path.join(path.dirname(video), "../")), "YYYYMMDD");
           let itemPub = path.basename(path.join(path.dirname(video), "../../"));
-          if (itemPub !== "sjjm" && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
+          if (!itemPub.includes("sjj") && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
         }).filter(Boolean));
         mkdirSync(paths.pubs);
         fs.writeFileSync(lastPeriodicCleanupPath, dayjs().format());
@@ -1703,7 +1717,7 @@ async function setMediaLang() {
     meetingMedia = {};
     try {
       $("#songPicker").empty();
-      for (let sjj of (await getMediaLinks("sjjm", null, null, "MP4"))) {
+      for (let sjj of (await getMediaLinks({pubSymbol: songPub, format: "MP4"}))) {
         $("#songPicker").append($("<option>", {
           value: sjj.track,
           text: sjj.title,
@@ -1901,6 +1915,7 @@ async function syncJwOrgMedia() {
             notifyUser("warn", "warnFileNotAvailable", [partMedia[j].queryInfo.KeySymbol, partMedia[j].queryInfo.Track, partMedia[j].queryInfo.IssueTagNumber].filter(Boolean).join("_"), true, partMedia[j]);
           } else {
             log.info("%c[jwOrg] [" + Object.keys(jwOrgSyncMeetingMedia)[h] + "] " + partMedia[j].safeName, "background-color: #cce5ff; color: #004085;");
+            console.log(partMedia[j]);
             if (partMedia[j].url) {
               await downloadIfRequired(partMedia[j]);
             } else {
@@ -2800,7 +2815,7 @@ $("body").on("click", "#btnMeetingMusic", async function() {
     $("#btnStopMeetingMusic").addClass("initialLoad").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
     $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
     setVars();
-    var songs = (jworgIsReachable ? (await getMediaLinks("sjjm", null, null, "MP3")) : glob.sync(path.join(paths.pubs, "sjjm", "**", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
+    var songs = (jworgIsReachable ? (await getMediaLinks({pubSymbol: "sjjm", format: "MP3", lang: "E"})) : glob.sync(path.join(paths.pubs, songPub, "**", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
     if (songs.length > 0) {
       var iterator = 0;
       createAudioElem(iterator);
@@ -2843,7 +2858,7 @@ $("#btnUpload").on("click", async () => {
     $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled").addClass("disabled-while-load").prop("disabled", true);
     if (!webdavIsAGo) mkdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
     if ($("input#typeSong:checked").length > 0) {
-      let songFiles = await getMediaLinks("sjjm", $("#fileToUpload").val(), null, "MP4");
+      let songFiles = await getMediaLinks({pubSymbol: songPub, track: $("#fileToUpload").val(), format: "MP4"});
       if (songFiles.length > 0) {
         let songFile = await downloadIfRequired(songFiles[0]);
         let songFileName = sanitizeFilename(getPrefix() + " - Song " + $("#songPicker option:selected").text() + ".mp4");
@@ -2958,7 +2973,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
       var jwpubContents = await new zipper($("#jwpubPicker").val()).readFile("contents");
       tempMedia.contents = (await new zipper(jwpubContents).readFile(((await new zipper(jwpubContents).getEntries()).filter(entry => entry.name == multimediaItem.queryInfo.FilePath)[0]).entryName));
     } else {
-      var externalMedia = (await getMediaLinks(multimediaItem.queryInfo.KeySymbol, multimediaItem.queryInfo.Track, multimediaItem.queryInfo.IssueTagNumber, null, multimediaItem.queryInfo.MultiMeps));
+      var externalMedia = (await getMediaLinks({pubSymbol: multimediaItem.queryInfo.KeySymbol, track: multimediaItem.queryInfo.Track, issue: multimediaItem.queryInfo.IssueTagNumber, docId: multimediaItem.queryInfo.MultiMeps}));
       if (externalMedia.length > 0) {
         Object.assign(tempMedia, externalMedia[0]);
         tempMedia.filename = (i + 1).toString().padStart(2, "0") + " - " + path.basename(tempMedia.url);
