@@ -65,6 +65,7 @@
   "optionsCongSync": "Seurakunnan synkronoinnin asetukset",
   "optionsMedia": "Mediaasetukset",
   "optionsMeetings": "Kokousasetukset",
+  "outputFolderDateFormat": "Päivämäärämuoto kokouskansioille",
   "password": "Salasana",
   "port": "Portti",
   "quitAfterSync": "Sulje sovellus median synkronoinnin jälkeen",
