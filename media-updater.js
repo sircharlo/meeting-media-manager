@@ -1530,7 +1530,7 @@ function refreshFolderListing(folderPath) {
   });
   for (var item of glob.sync(path.join(folderPath, "*"))) {
     item = escape(item);
-    let lineItem = $("<li class='d-flex align-items-center list-group-item flex-column item " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='align-items-center d-flex flex-row w-100'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/^(\d{2}-\d{2} - )/, "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>").replace(/Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div class='d-flex flex-shrink-0'><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button><div class='btn btn-lg btn-info move-handle mb-0 ms-3' style='display: none;'><i class='fas fa-sort'></i></div></div></div><div class='align-items-center d-flex flex-row mt-2'><div class='markerList'></div></div></li>");
+    let lineItem = $("<li class='d-flex align-items-center list-group-item flex-column item " + (isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown")) + "' data-item='" + item + "'><div class='align-items-center d-flex flex-row w-100'><div class='d-flex me-3' style='height: 5rem;'></div><div class='flex-fill mediaDesc'>" + path.basename(item).replace(/^(\d{2}-\d{2} - )/, "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>").replace(/Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>").replace(/Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") + "</div><div class='ps-3 pe-2'><button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'><i class='fas fa-fw fa-pause'></i></button></div><div class='d-flex flex-shrink-0'><button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'><i class='fas fa-fw fa-stop'></i></button><button class='btn btn-lg btn-primary play'><i class='fas fa-fw fa-play'></i></button><div class='btn btn-lg btn-info move-handle mb-0 ms-3' style='display: none;'><i class='fas fa-sort'></i></div></div></div><div class='align-items-center d-flex flex-row mt-2 w-100'><div class='markerList w-100' style='column-count: 3;'></div></div></li>");
     lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMC4wIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNMjU2IDMyQzExMi45IDMyIDQuNTYzIDE1MS4xIDAgMjg4djEwNEMwIDQwNS4zIDEwLjc1IDQxNiAyMy4xIDQxNlM0OCA0MDUuMyA0OCAzOTJWMjg4YzAtMTE0LjcgOTMuMzQtMjA3LjggMjA4LTIwNy44QzM3MC43IDgwLjIgNDY0IDE3My4zIDQ2NCAyODh2MTA0QzQ2NCA0MDUuMyA0NzQuNyA0MTYgNDg4IDQxNlM1MTIgNDA1LjMgNTEyIDM5MlYyODcuMUM1MDcuNCAxNTEuMSAzOTkuMSAzMiAyNTYgMzJ6TTE2MCAyODhMMTQ0IDI4OGMtMzUuMzQgMC02NCAyOC43LTY0IDY0LjEzdjYzLjc1QzgwIDQ1MS4zIDEwOC43IDQ4MCAxNDQgNDgwTDE2MCA0ODBjMTcuNjYgMCAzMi0xNC4zNCAzMi0zMi4wNXYtMTI3LjlDMTkyIDMwMi4zIDE3Ny43IDI4OCAxNjAgMjg4ek0zNjggMjg4TDM1MiAyODhjLTE3LjY2IDAtMzIgMTQuMzItMzIgMzIuMDR2MTI3LjljMCAxNy43IDE0LjM0IDMyLjA1IDMyIDMyLjA1TDM2OCA0ODBjMzUuMzQgMCA2NC0yOC43IDY0LTY0LjEzdi02My43NUM0MzIgMzE2LjcgNDAzLjMgMjg4IDM2OCAyODh6Ii8+PC9zdmc+'" : "poster='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuMS4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIyIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNNDYzLjEgMzJoLTQxNkMyMS40OSAzMi0uMDAwMSA1My40OS0uMDAwMSA4MHYzNTJjMCAyNi41MSAyMS40OSA0OCA0Ny4xIDQ4aDQxNmMyNi41MSAwIDQ4LTIxLjQ5IDQ4LTQ4di0zNTJDNTExLjEgNTMuNDkgNDkwLjUgMzIgNDYzLjEgMzJ6TTExMS4xIDQwOGMwIDQuNDE4LTMuNTgyIDgtOCA4SDU1LjFjLTQuNDE4IDAtOC0zLjU4Mi04LTh2LTQ4YzAtNC40MTggMy41ODItOCA4LThoNDcuMWM0LjQxOCAwIDggMy41ODIgOCA4TDExMS4xIDQwOHpNMTExLjEgMjgwYzAgNC40MTgtMy41ODIgOC04IDhINTUuMWMtNC40MTggMC04LTMuNTgyLTgtOHYtNDhjMC00LjQxOCAzLjU4Mi04IDgtOGg0Ny4xYzQuNDE4IDAgOCAzLjU4MiA4IDhWMjgwek0xMTEuMSAxNTJjMCA0LjQxOC0zLjU4MiA4LTggOEg1NS4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOEwxMTEuMSAxNTJ6TTM1MS4xIDQwMGMwIDguODM2LTcuMTY0IDE2LTE2IDE2SDE3NS4xYy04LjgzNiAwLTE2LTcuMTY0LTE2LTE2di05NmMwLTguODM4IDcuMTY0LTE2IDE2LTE2aDE2MGM4LjgzNiAwIDE2IDcuMTYyIDE2IDE2VjQwMHpNMzUxLjEgMjA4YzAgOC44MzYtNy4xNjQgMTYtMTYgMTZIMTc1LjFjLTguODM2IDAtMTYtNy4xNjQtMTYtMTZ2LTk2YzAtOC44MzggNy4xNjQtMTYgMTYtMTZoMTYwYzguODM2IDAgMTYgNy4xNjIgMTYgMTZWMjA4ek00NjMuMSA0MDhjMCA0LjQxOC0zLjU4MiA4LTggOGgtNDcuMWMtNC40MTggMC03LjEtMy41ODItNy4xLThsMC00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFY0MDh6TTQ2My4xIDI4MGMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04di00OGMwLTQuNDE4IDMuNTgyLTggOC04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYyODB6TTQ2My4xIDE1MmMwIDQuNDE4LTMuNTgyIDgtOCA4aC00Ny4xYy00LjQxOCAwLTgtMy41ODItOC04bDAtNDhjMC00LjQxOCAzLjU4Mi04IDcuMS04aDQ3LjFjNC40MTggMCA4IDMuNTgyIDggOFYxNTJ6Ii8+PC9zdmc+'") + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
       try {
         lineItem.data("originalStart", 0);
@@ -1542,7 +1542,7 @@ function refreshFolderListing(folderPath) {
       } catch (err) {
         log.error(err);
       }
-    }).add("<div class='h-100 w-100 position-absolute p-2 small text-light customStartStop d-none flex-column'><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='setTimeToCurrent beginning fas fa-fw fa-backward-step'></i></div><div><input type='text' class='col form-control form-control-sm timeStart px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-rotate-left timeReset'></i></div></div><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-forward-step setTimeToCurrent end'></i></i></div><div><input type='text' class='col form-control form-control-sm timeEnd px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' tabindex='0' class='applyTimeChanges fas fa-fw fa-square-check text-danger'></i></div></div></div>").add($("<div role='button' tabindex='0' class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple" ) + "'></i> <span class='current'></span><span class='duration'></span></div>").popover({
+    }).add("<div class='h-100 w-100 position-absolute p-2 small text-light customStartStop d-none flex-column'><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='setTimeToCurrent beginning fas fa-fw fa-backward-step'></i></div><div><input type='text' class='col form-control form-control-sm timestart px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-rotate-left timeReset'></i></div></div><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-forward-step setTimeToCurrent end'></i></i></div><div><input type='text' class='col form-control form-control-sm timeend px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' tabindex='0' class='applyTimeChanges fas fa-fw fa-square-check text-danger'></i></div></div></div>").add($("<div role='button' tabindex='0' class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple" ) + "'></i> <span class='current'></span><span class='duration'></span></div>").popover({
       content: i18n.__("clickAgain"),
       container: "body",
       trigger: "focus"
@@ -1590,24 +1590,35 @@ function refreshFolderListing(folderPath) {
         endTime.asMs = startTime.asTime.add(dayjs.duration(endTime.offsetAsMs, "ms")).subtract(endTime.transitionAsMs, "ms");
         console.log(startTime, endTime);
         lineItem.find(".markerList").append($("<div>", {
-          "data-customStart": startTime.asMs, //.duration
-          "data-customEnd": endTime.asMs, //.duration
-          class: "btn btn-sm btn-secondary mb-2 me-2",
+          "data-custom-start": startTime.asMs,
+          "data-custom-end": endTime.asMs,
+          class: "btn btn-sm btn-primary mb-2 me-2 w-100",
           role: "button",
           text: marker.label
-        }).on("click", function() {
-          console.log($(this).data());
-          lineItem.data("customStart", $(this).data("customstart"));
-          lineItem.data("customEnd", $(this).data("customend"));
-          console.log(lineItem.data());
-          lineItem.find("button.play:not(.pausePlay)").click();
-          lineItem.find(".time").addClass("pulse-danger");
         }));
       }
+      lineItem.find(".markerList").prepend($("<div>", {
+        class: "btn btn-sm btn-warning btn-reset-marker mb-2 me-2 w-100",
+        role: "button",
+        html: "<i class='fa-solid fa-rotate-left'></i>"
+      }));
+      lineItem.find(".markerList .btn").on("click", function() {
+        lineItem.data("customStart", $(this).hasClass("btn-reset-marker") ? lineItem.data("originalStart") : $(this).data("customStart"));
+        lineItem.data("customEnd", $(this).hasClass("btn-reset-marker") ? lineItem.data("originalEnd") : $(this).data("customEnd"));
+        if (!$(this).hasClass("btn-reset-marker")) {
+          lineItem.find("button.play:not(.pausePlay)").click();
+        } else {
+          lineItem.removeData("customStart");
+          lineItem.removeData("customEnd");
+          lineItem.find(".time .current").text("");
+          lineItem.find(".time .duration").text(dayjs.duration(lineItem.data("originalEnd"), "ms").format("mm:ss"));
+        }
+        lineItem.find(".time").toggleClass("pulse-danger", !$(this).hasClass("btn-reset-marker"));
+      });
     }
     lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
       try {
-        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "Start" : "End")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS")).change();
+        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "start" : "end")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS")).change();
       } catch (err) {
         log.error(err);
       }
@@ -1615,18 +1626,18 @@ function refreshFolderListing(folderPath) {
     lineItem.find(".customStartStop i.timeReset").on("click", function() {
       try {
         for (let timeItem of ["Start", "End"]) {
-          lineItem.find(".time" + timeItem).val(!isNaN(lineItem.data("original" + timeItem)) ? dayjs.duration(lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"): "");
+          lineItem.find(".time" + timeItem.toLowerCase()).val(!isNaN(lineItem.data("original" + timeItem)) ? dayjs.duration(lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"): "");
         }
       } catch (err) {
         log.error(err);
       }
     });
-    lineItem.find(".customStartStop .timeStart, .customStartStop .timeEnd").inputmask("99:99.999", { "placeholder": "0" }).on("change", function() {
+    lineItem.find(".customStartStop .timestart, .customStartStop .timeend").inputmask("99:99.999", { "placeholder": "0" }).on("change", function() {
       try {
         let inputTimes = {};
         for (let timeItem of ["Start", "End"]) {
           inputTimes[timeItem] = {
-            asTime: dayjs($(this).closest(".customStartStop").find(".time" + timeItem).val(), "mm:ss.SSS")
+            asTime: dayjs($(this).closest(".customStartStop").find(".time" + timeItem.toLowerCase()).val(), "mm:ss.SSS")
           };
           inputTimes[timeItem].asMs = dayjs.duration({
             m: inputTimes[timeItem].asTime.format("m"),
@@ -1635,7 +1646,7 @@ function refreshFolderListing(folderPath) {
           }).asMilliseconds();
         }
         if (isNaN(inputTimes.Start.asMs) || isNaN(inputTimes.End.asMs) || inputTimes.Start.asMs < 0 || inputTimes.End.asMs > lineItem.data("originalEnd") || inputTimes.Start.asMs >= inputTimes.End.asMs || inputTimes.End.asMs <= inputTimes.Start.asMs) {
-          $(this).val(dayjs.duration($(this).hasClass("timeStart") ? 0 : lineItem.data("originalEnd"), "ms").format("mm:ss.SSS"));
+          $(this).val(dayjs.duration($(this).hasClass("timestart") ? 0 : lineItem.data("originalEnd"), "ms").format("mm:ss.SSS"));
         }
       } catch (err) {
         log.error(err);
@@ -1654,7 +1665,7 @@ function refreshFolderListing(folderPath) {
         unconfirm(this);
         try {
           for (let timeItem of ["Start", "End"]) {
-            let inputTime = dayjs(lineItem.find(".time" + timeItem).val(), "mm:ss.SSS");
+            let inputTime = dayjs(lineItem.find(".time" + timeItem.toLowerCase()).val(), "mm:ss.SSS");
             let newTimeAsMs = dayjs.duration({
               m: inputTime.format("m"),
               s: inputTime.format("s"),
@@ -1681,7 +1692,7 @@ function refreshFolderListing(folderPath) {
   function getMediaDuration(lineItem) {
     for (let timeItem of ["Start", "End"]) {
       try {
-        lineItem.find(".time" + timeItem).val(dayjs.duration(!isNaN(lineItem.data("custom" + timeItem)) ? lineItem.data("custom" + timeItem) : lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"));
+        lineItem.find(".time" + timeItem.toLowerCase()).val(dayjs.duration(!isNaN(lineItem.data("custom" + timeItem)) ? lineItem.data("custom" + timeItem) : lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"));
       } catch (err) {
         log.error(err);
       }
