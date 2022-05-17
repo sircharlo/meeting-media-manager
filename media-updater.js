@@ -1603,25 +1603,13 @@ function refreshFolderListing(folderPath) {
           text: marker.label
         }));
       }
-      lineItem.find(".markerList").prepend($("<div>", {
-        class: "btn btn-sm btn-warning btn-reset-marker mb-2 me-2 w-100",
-        role: "button",
-        html: "<i class='fa-solid fa-rotate-left'></i>"
-      }));
       lineItem.find(".markerList .btn").on("click", function() {
-        lineItem.find(".stop:visible").addClass("confirmed").click();
-        lineItem.data("customStart", $(this).hasClass("btn-reset-marker") ? lineItem.data("originalStart") : $(this).data("customStart"));
-        lineItem.data("customEnd", $(this).hasClass("btn-reset-marker") ? lineItem.data("originalEnd") : $(this).data("customEnd"));
-        if (!$(this).hasClass("btn-reset-marker")) {
-          lineItem.find("button.play:not(.pausePlay)").click();
-          $(this).removeClass("btn-info").addClass("btn-primary");
-        } else {
-          lineItem.removeData("customStart");
-          lineItem.removeData("customEnd");
-          lineItem.find(".time .current").text("");
-          lineItem.find(".time .duration").text(dayjs.duration(lineItem.data("originalEnd"), "ms").format("mm:ss"));
-        }
-        lineItem.find(".time").toggleClass("pulse-danger", !$(this).hasClass("btn-reset-marker"));
+        lineItem.data("customStart", $(this).data("customStart"));
+        lineItem.data("customEnd", $(this).data("customEnd"));
+        lineItem.find("button.play:not(.pausePlay)").click();
+        lineItem.find(".markerList div.btn.btn-primary").addClass("btn-info").removeClass("btn-primary");
+        $(this).removeClass("btn-info").addClass("btn-primary");
+        lineItem.find(".time").addClass("pulse-danger");
       });
     }
     lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
@@ -2780,7 +2768,8 @@ $("#btnMediaWindow").on("click", function() {
       mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
       mediaItem.append("<input type='range' id='videoScrubber' class='form-range bottom-0 position-absolute start-0' min='0' max='100' step='any' />");
       mediaItem.find(".pausePlay").fadeToAndToggle(fadeDelay, 1);
-      $("#folderListing button.play").prop("disabled", true);
+      $("#folderListing button.play").not($(this)).prop("disabled", true);
+      $("#folderListing .item").not(mediaItem).find(".markerList .btn-info").addClass("disabled");
       mediaItem.find(".time").addClass("disabled");
     }
     mediaItem.addClass("list-group-item-primary").removeClass("list-group-item-secondary");
@@ -2802,11 +2791,18 @@ $("#btnMediaWindow").on("click", function() {
         mediaItem.find(".time .current").text(!isNaN(mediaItem.data("customStart")) ? dayjs.duration(mediaItem.data("customStart"), "ms").format("mm:ss/") : "");
         mediaItem.find(".pausePlay").removeClass("play pulse-danger").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
         mediaItem.find(".time").removeClass("disabled");
+        if (mediaItem.find(".markerList div.btn.btn-primary").length > 0) {
+          mediaItem.removeData("customStart");
+          mediaItem.removeData("customEnd");
+          mediaItem.find(".time .current").text("");
+          mediaItem.find(".time .duration").text(dayjs.duration(mediaItem.data("originalEnd"), "ms").format("mm:ss"));
+          mediaItem.find(".time").removeClass("pulse-danger");
+        }
         mediaItem.find(".markerList div.btn.btn-primary").addClass("btn-info").removeClass("btn-primary");
         unconfirm(this);
       }
       mediaItem.removeClass("list-group-item-primary");
-      $("#folderListing button.play, button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", false);
+      $("#folderListing button.play, #folderListing .markerList .btn-info, button.closeModal, #btnMeetingMusic, button.folderRefresh").removeClass("disabled");
       $("#folderListing button.stop").hide();
       mediaItem.find(".play").show();
       $("h5.modal-title button").not($(this)).prop("disabled", false);
