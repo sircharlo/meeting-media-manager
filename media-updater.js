@@ -502,7 +502,7 @@ function createVideoSync(mediaFile){
 function createVlcPlaylists() {
   for (var date of glob.sync(path.join(paths.media, "*/"), {
     onlyDirectories: true
-  }).map(item => path.basename(item)).filter(item => dayjs(item).isValid())) {
+  }).map(item => path.basename(item)).filter(item => dayjs(item, prefs.outputFolderDateFormat).isValid())) {
     var playlistItems = {
       "?xml": {
         "@_version": "1.0",
@@ -523,18 +523,32 @@ function createVlcPlaylists() {
   }
 }
 function dateFormatter() {
-  let locale = prefs.localAppLang ? prefs.localAppLang : "en";
+  meetingMedia = {};
+  let locale = prefs.localAppLang ? prefs.localAppLang.split("-")[0] : "en";
   try {
     if (locale !== "en") require("dayjs/locale/" + locale);
+    dayjs.locale(locale);
   } catch(err) {
     log.warn("%c[locale] Date locale " + locale + " not found, falling back to 'en'");
   }
+  $("#outputFolderDateFormat option.customDateFormat").remove();
+  for (let dateFormat of ["YYYY-MM-DD", "YYYY-MM-DD - dddd", "DD-MM-YYYY", "DD-MM-YYYY - dddd"]) {
+    $("#outputFolderDateFormat").append($("<option>", {
+      value: dateFormat,
+      class: "customDateFormat",
+      text: dayjs().locale(locale).format(dateFormat),
+      ...(prefs.outputFolderDateFormat == dateFormat && { selected: "selected" }),
+    }));
+  }
+  console.log(123);
+  if (!prefs.outputFolderDateFormat) $("#outputFolderDateFormat").val("YYYY-MM-DD").change();
+  baseDate = dayjs(baseDate).locale(locale);
   $("#folders .day").remove();
   for (var d = 6; d >= 0; d--) {
     if (!baseDate.clone().add(d, "days").isBefore(now)) $("#folders").prepend($("<button>", {
       id: "day" + d,
       class: "day alertIndicators m-1 col btn btn-sm align-items-center justify-content-center " + (baseDate.clone().add(d, "days").isSame(now) ? "pulse-info " : "") + ([prefs.mwDay, prefs.weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") + (prefs.mwDay == d.toString() ? "mw " : "") + (prefs.weDay == d.toString() ? "we " : ""),
-      "data-datevalue": baseDate.clone().add(d, "days").locale(locale).format("YYYY-MM-DD")
+      "data-datevalue": baseDate.clone().add(d, "days").locale(locale).format(prefs.outputFolderDateFormat)
     }).append($("<div>", {
       class: "col dayLongDate"
     }).append($("<div>", {
@@ -706,14 +720,15 @@ async function getCongMedia() {
   updateTile("specificCong", "warning");
   updateStatus("cloud");
   try {
-    for (let meeting of Object.keys(meetingMedia).filter(meeting => dayjs(meeting, "YYYY-MM-DD").isValid() && dayjs(meeting, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"))) {
+    for (let meeting of Object.keys(meetingMedia).filter(meeting => dayjs(meeting, prefs.outputFolderDateFormat).isValid() && dayjs(meeting, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"))) {
       meetingMedia[meeting] = meetingMedia[meeting].filter(part => part.media.filter(mediaItem => mediaItem.recurring).length == 0);
     }
     for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
-      let isMeetingDate = dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isValid() && dayjs(congSpecificFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, "YYYY-MM-DD"));
+      let isMeetingDate = dayjs(congSpecificFolder.basename, prefs.outputFolderDateFormat).isValid() && dayjs(congSpecificFolder.basename, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, prefs.outputFolderDateFormat));
       let isRecurring = congSpecificFolder.basename == "Recurring";
+      let congSubFolder = (isRecurring ? congSpecificFolder.basename : dayjs(congSpecificFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat));
       if (isMeetingDate || isRecurring) {
-        if (!meetingMedia[congSpecificFolder.basename]) meetingMedia[congSpecificFolder.basename] = [];
+        if (!meetingMedia[congSubFolder]) meetingMedia[congSubFolder] = [];
         for (let remoteFile of (await webdavLs(path.posix.join(prefs.congServerDir, "Media", congSpecificFolder.basename)))) {
           let congSpecificFile = {
             "title": "Congregation-specific",
@@ -721,14 +736,14 @@ async function getCongMedia() {
               safeName: remoteFile.basename,
               congSpecific: true,
               filesize: remoteFile.size,
-              folder: congSpecificFolder.basename,
+              folder: congSubFolder,
               url: remoteFile.filename
             }]
           };
-          if (!meetingMedia[congSpecificFolder.basename].map(part => part.media).flat().map(item => item.url).filter(Boolean).includes(remoteFile.filename)) meetingMedia[congSpecificFolder.basename].push(congSpecificFile);
+          if (!meetingMedia[congSubFolder].map(part => part.media).flat().map(item => item.url).filter(Boolean).includes(remoteFile.filename)) meetingMedia[congSubFolder].push(congSpecificFile);
           if (isRecurring) {
             for (let meeting of Object.keys(meetingMedia)) {
-              if (dayjs(meeting, "YYYY-MM-DD").isValid() && dayjs(meeting, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+              if (dayjs(meeting, prefs.outputFolderDateFormat).isValid() && dayjs(meeting, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
                 var repeatFile = v8.deserialize(v8.serialize(congSpecificFile));
                 repeatFile.media[0].recurring = true;
                 repeatFile.media[0].folder = meeting;
@@ -739,11 +754,12 @@ async function getCongMedia() {
         }
       }
     }
-    for (var hiddenFilesFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Hidden"))).filter(hiddenFilesFolder => dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isValid() && dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(hiddenFilesFolder.basename, "YYYY-MM-DD"))).sort((a, b) => (a.basename > b.basename) ? 1 : -1)) {
+    for (var hiddenFilesFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Hidden"))).filter(hiddenFilesFolder => dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).isValid() && dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat))).sort((a, b) => (a.basename > b.basename) ? 1 : -1)) {
+      console.log(hiddenFilesFolder.basename);
       for (var hiddenFile of await webdavLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.basename))) {
         var hiddenFileLogString = "background-color: #d6d8d9; color: #1b1e21;";
-        if (meetingMedia[hiddenFilesFolder.basename]) {
-          meetingMedia[hiddenFilesFolder.basename].filter(part => part.media.filter(mediaItem => mediaItem.safeName == hiddenFile.basename).map(function (mediaItem) {
+        if (meetingMedia[dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat)]) {
+          meetingMedia[dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat)].filter(part => part.media.filter(mediaItem => mediaItem.safeName == hiddenFile.basename).map(function (mediaItem) {
             mediaItem.hidden = true;
             hiddenFileLogString = "background-color: #fff3cd; color: #856404;";
           }));
@@ -887,7 +903,7 @@ async function getInitialData() {
   congregationSelectPopulate();
   $("#baseDate .dropdown-menu").empty();
   for (var a = 0; a <= 4; a++) {
-    $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + "'>" + baseDate.clone().add(a, "week").format("YYYY-MM-DD") + " - " + baseDate.clone().add(a, "week").add(6, "days").format("YYYY-MM-DD") + "</button>");
+    $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format(prefs.outputFolderDateFormat) + "'>" + baseDate.clone().add(a, "week").format(prefs.outputFolderDateFormat.replace(" - dddd", "")) + " - " + baseDate.clone().add(a, "week").add(6, "days").format(prefs.outputFolderDateFormat.replace(" - dddd", "")) + "</button>");
   }
   $("#baseDate button.dropdown-toggle").text($("#baseDate .dropdown-item:eq(0)").text());
   $("#baseDate .dropdown-item:eq(0)").addClass("active");
@@ -987,7 +1003,6 @@ async function getMediaLinks(mediaItem) {
     }
   }
   log.debug(mediaFiles);
-  console.log(mediaFiles);
   return mediaFiles;
 }
 async function getMediaAdditionalInfo(pub, track, issue, format, docId) {
@@ -1001,8 +1016,8 @@ async function getMediaAdditionalInfo(pub, track, issue, format, docId) {
   return mediaAdditionalInfo;
 }
 async function getMwMediaFromDb() {
-  var mwDate = baseDate.clone().add(prefs.mwDay, "days").format("YYYY-MM-DD");
-  if (now.isSameOrBefore(dayjs(mwDate))) {
+  var mwDate = baseDate.clone().add(prefs.mwDay, "days").format(prefs.outputFolderDateFormat);
+  if (now.isSameOrBefore(dayjs(mwDate, prefs.outputFolderDateFormat))) {
     updateTile("day" + prefs.mwDay, "warning");
     try {
       var issue = baseDate.format("YYYYMM") + "00";
@@ -1104,8 +1119,8 @@ function setAppLang() {
   dateFormatter();
 }
 async function getWeMediaFromDb() {
-  var weDate = baseDate.clone().add(prefs.weDay, "days").format("YYYY-MM-DD");
-  if (now.isSameOrBefore(dayjs(weDate))) {
+  var weDate = baseDate.clone().add(prefs.weDay, "days").format(prefs.outputFolderDateFormat);
+  if (now.isSameOrBefore(dayjs(weDate, prefs.outputFolderDateFormat))) {
     updateTile("day" + prefs.weDay, "warning");
     try {
       var issue = baseDate.clone().subtract(8, "weeks").format("YYYYMM") + "00";
@@ -1203,13 +1218,13 @@ function listMediaFolders() {
     onlyDirectories: true
   })) {
     folder = escape(folder);
-    $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format("YYYY-MM-DD") == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
+    $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format(prefs.outputFolderDateFormat) == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
   }
   return folderListing;
 }
 async function manageMedia(day, isMeetingDate, mediaType) {
   await overlay(true, (webdavIsAGo ? "cloud" : "folder-open") + " fa-beat");
-  $("#chosenMeetingDay").data("folderName", day).text(dayjs(day, "YYYY-MM-DD").isValid() ? day : i18n.__("recurring"));
+  $("#chosenMeetingDay").data("folderName", day).text(dayjs(day, prefs.outputFolderDateFormat).isValid() ? day : i18n.__("recurring"));
   removeEventListeners();
   document.addEventListener("drop", dropHandler);
   document.addEventListener("dragover", dragoverHandler);
@@ -1239,7 +1254,7 @@ async function mp4Convert() {
   updateTile("mp4Convert", "warning");
   var filesToProcess = glob.sync(path.join(paths.media, "*"), {
     onlyDirectories: true
-  }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, "YYYY-MM-DD").isValid() && dayjs(folder, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, "YYYY-MM-DD"))).map(folder => glob.sync(path.join(paths.media, folder, "*"), {
+  }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, prefs.outputFolderDateFormat).isValid() && dayjs(folder, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, prefs.outputFolderDateFormat))).map(folder => glob.sync(path.join(paths.media, folder, "*"), {
     ignore: ["!**/(*.mp4|*.xspf)"]
   })).flat();
   totals.mp4Convert = {
@@ -1560,7 +1575,6 @@ function refreshFolderListing(folderPath) {
     })) : "<img class='mx-auto' src='" + url.pathToFileURL(item).href + "' />")));
     if (lineItem.hasClass("video") && fs.existsSync(path.changeExt(item, ".json"))) {
       lineItem.data("markers", JSON.parse(fs.readFileSync(path.changeExt(item, ".json"), "utf8")));
-      console.log(lineItem.data("markers"));
       for (let marker of lineItem.data("markers")) {
         let startTime = {
           asTime: dayjs(marker.startTime, "hh:mm:ss.SSS")
@@ -1588,7 +1602,6 @@ function refreshFolderListing(folderPath) {
           ms: endTime.transitionAsTime.format("SSS"),
         }).asMilliseconds();
         endTime.asMs = startTime.asTime.add(dayjs.duration(endTime.offsetAsMs, "ms")).subtract(endTime.transitionAsMs, "ms");
-        console.log(startTime, endTime);
         lineItem.find(".markerList").append($("<div>", {
           "data-custom-start": startTime.asMs,
           "data-custom-end": endTime.asMs,
@@ -1851,7 +1864,7 @@ async function startMediaSync(isDryrun, meetingFilter) {
   if (!dryrun) await rm(glob.sync(path.join(paths.media, "*/"), {
     ignore: [path.join(paths.media, "Recurring")],
     onlyDirectories: true
-  }).filter(folderPath => dayjs(path.basename(folderPath), "YYYY-MM-DD").isValid() && dayjs(path.basename(folderPath), "YYYY-MM-DD").isBefore(now) || !dayjs(path.basename(folderPath), "YYYY-MM-DD").isValid()));
+  }).filter(folderPath => dayjs(path.basename(folderPath), prefs.outputFolderDateFormat).isValid() && dayjs(path.basename(folderPath), prefs.outputFolderDateFormat).isBefore(now) || !dayjs(path.basename(folderPath), prefs.outputFolderDateFormat).isValid()));
   perf("getJwOrgMedia", "start");
   updateStatus("globe-americas");
   await Promise.all([
@@ -1916,7 +1929,7 @@ function stopMeetingMusic() {
   }
 }
 async function syncCongMedia() {
-  let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, "YYYY-MM-DD").isValid() && dayjs(key, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
+  let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, prefs.outputFolderDateFormat).isValid() && dayjs(key, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
   if (webdavIsAGo) {
     perf("syncCongMedia", "start");
     try {
@@ -1957,7 +1970,7 @@ async function syncCongMedia() {
 async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "start");
   updateTile("syncJwOrgMedia", "warning");
-  let jwOrgSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, "YYYY-MM-DD").isValid() && dayjs(key, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
+  let jwOrgSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, prefs.outputFolderDateFormat).isValid() && dayjs(key, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
   totals.jw = {
     total: Object.values(jwOrgSyncMeetingMedia).map(meeting => Object.values(meeting).map(part => part.media.filter(mediaItem => !mediaItem.congSpecific).length)).flat().reduce((previousValue, currentValue) => previousValue + currentValue, 0),
     current: 1
@@ -1976,7 +1989,6 @@ async function syncJwOrgMedia() {
             if (partMedia[j].markers) {
               let markers = partMedia[j].markers.markers.map(({duration, label, startTime, endTransitionDuration}) => ({duration, label, startTime, endTransitionDuration}));
               markers = Array.from(new Set(markers.map(JSON.stringify))).map(JSON.parse);
-              console.log(markers, paths.media, partMedia[j].folder, path.changeExt(partMedia[j].safeName, ".json"));
               fs.writeFileSync(path.join(paths.media, partMedia[j].folder, path.changeExt(partMedia[j].safeName, ".json")), JSON.stringify(markers));
             }
             if (partMedia[j].url) {
@@ -2000,7 +2012,7 @@ function syncLocalRecurringMedia() {
   if (!webdavIsAGo && fs.existsSync(path.join(paths.media, "Recurring"))) {
     updateTile("recurringMedia", "warning");
     glob.sync(path.join(paths.media, "Recurring", "*")).forEach((recurringItem) => {
-      Object.keys(meetingMedia).filter(key => key !== "Recurring" && dayjs(key, "YYYY-MM-DD").isValid() && dayjs(key, "YYYY-MM-DD").isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")).forEach((meeting) => {
+      Object.keys(meetingMedia).filter(key => key !== "Recurring" && dayjs(key, prefs.outputFolderDateFormat).isValid() && dayjs(key, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")).forEach((meeting) => {
         mkdirSync(path.join(paths.media, meeting));
         fs.copyFileSync(recurringItem, path.join(paths.media, meeting, path.basename(recurringItem)));
       });
@@ -2624,7 +2636,7 @@ $(document).on("select2:open", () => {
   document.querySelector(".select2-search__field").focus();
 });
 $("#baseDate").on("click", ".dropdown-item", function() {
-  let newBaseDate = dayjs($(this).val()).startOf("isoWeek");
+  let newBaseDate = dayjs($(this).val(), prefs.outputFolderDateFormat).startOf("isoWeek");
   if (!baseDate.isSame(newBaseDate)) {
     baseDate = newBaseDate;
     $(".alertIndicators:not(.congregation)").removeClass("btn-danger");
@@ -3191,7 +3203,7 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
         successful = await webdavMv(src, path.posix.join(path.dirname(src), newName));
       }
       if (successful) {
-        Object.keys(meetingMedia).filter(meeting => dayjs($("#chosenMeetingDay").data("folderName")).isValid() ? meeting == $("#chosenMeetingDay").data("folderName") : true).forEach(meeting => {
+        Object.keys(meetingMedia).filter(meeting => dayjs($("#chosenMeetingDay").data("folderName"), prefs.outputFolderDateFormat).isValid() ? meeting == $("#chosenMeetingDay").data("folderName") : true).forEach(meeting => {
           meetingMedia[meeting].filter(item => item.media.filter(mediaItem => mediaItem.safeName == previousSafename).length > 0).forEach(item => item.media.forEach(mediaItem => {
             mediaItem.safeName = newName;
             if (webdavIsAGo) mediaItem.url = path.posix.join(path.dirname(src), newName);

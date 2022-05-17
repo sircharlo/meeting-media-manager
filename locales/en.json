@@ -65,6 +65,7 @@
   "optionsCongSync": "Congregation sync setup",
   "optionsMedia": "Media setup",
   "optionsMeetings": "Meeting setup",
+  "outputFolderDateFormat": "Date format for meeting folders",
   "password": "Password",
   "port": "Port",
   "quitAfterSync": "Quit app after media sync",

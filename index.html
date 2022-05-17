@@ -2,7 +2,8 @@
 <html>
 
 <head>
-  <title>Meeting Media Manager</title>
+  <meta charset="UTF-8">
+  <title>M³ - Meeting Media Manager</title>
   <link rel="stylesheet" href="node_modules/bootstrap-dark-5/dist/css/bootstrap-dark.min.css">
   <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
   <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
@@ -628,6 +629,14 @@
                       <span data-i18n-string="browse"></span></button>
                     <input type="text" class="form-control form-control-sm" id="localOutputPath" disabled="disabled" />
                   </div>
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="outputFolderDateFormat" class="col-5 text-start">
+                  <span data-i18n-string="outputFolderDateFormat"></span></label>
+                <div class="col">
+                  <select id="outputFolderDateFormat" class="form-select form-select-sm" required="required">
+                  </select>
                 </div>
               </div>
               <hr class="my-2" />
