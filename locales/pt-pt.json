@@ -65,6 +65,7 @@
   "optionsCongSync": "Configuração do servidor da congregação",
   "optionsMedia": "Configuração de multimédia",
   "optionsMeetings": "Configuração da reunião",
+  "outputFolderDateFormat": "Formato de data das pastas de mídia",
   "password": "Senha",
   "port": "Porta",
   "quitAfterSync": "Fechar o programa após descarregar as multimédias",
