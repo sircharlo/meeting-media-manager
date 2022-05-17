@@ -518,7 +518,7 @@ function createVlcPlaylists() {
         "@_version": "1"
       }
     };
-    mkdirSync(path.join(paths.media, date));
+    fs.ensureDirSync(path.join(paths.media, date));
     fs.writeFileSync(path.join(paths.media, date, date + ".xspf"), (new XMLBuilder({ignoreAttributes: false})).build(playlistItems));
   }
 }
@@ -540,7 +540,6 @@ function dateFormatter() {
       ...(prefs.outputFolderDateFormat == dateFormat && { selected: "selected" }),
     }));
   }
-  console.log(123);
   if (!prefs.outputFolderDateFormat) $("#outputFolderDateFormat").val("YYYY-MM-DD").change();
   baseDate = dayjs(baseDate).locale(locale);
   $("#folders .day").remove();
@@ -623,18 +622,18 @@ async function downloadIfRequired(file) {
   if (fs.existsSync(file.cacheFile)) file.downloadRequired = file.filesize !== fs.statSync(file.cacheFile).size;
   if (file.downloadRequired) {
     if (path.extname(file.cacheFile) == ".jwpub") rm(file.cacheDir);
-    mkdirSync(file.cacheDir);
+    fs.ensureDirSync(file.cacheDir);
     let downloadedFile = Buffer.from(new Uint8Array((await request(file.url, {isFile: true})).data));
     fs.writeFileSync(file.cacheFile, downloadedFile);
     if (file.folder) {
-      mkdirSync(path.join(paths.media, file.folder));
+      fs.ensureDirSync(path.join(paths.media, file.folder));
       fs.writeFileSync(path.join(paths.media, file.folder, file.destFilename), downloadedFile);
     }
     downloadStat("jworg", "live", file);
     if (path.extname(file.cacheFile) == ".jwpub") await new zipper((await new zipper(file.cacheFile).readFile("contents"))).extractAllTo(file.cacheDir);
   } else {
     if (file.folder) {
-      mkdirSync(path.join(paths.media, file.folder));
+      fs.ensureDirSync(path.join(paths.media, file.folder));
       fs.copyFileSync(file.cacheFile, path.join(paths.media, file.folder, file.destFilename));
     }
     downloadStat("jworg", "cache", file);
@@ -697,7 +696,7 @@ async function ffmpegSetup() {
     var ffmpegZipPath = path.join(paths.app, "ffmpeg", "zip", ffmpegVersion.name);
     if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
       await rm([path.join(paths.app, "ffmpeg", "zip")]);
-      mkdirSync(path.join(paths.app, "ffmpeg", "zip"));
+      fs.ensureDirSync(path.join(paths.app, "ffmpeg", "zip"));
       fs.writeFileSync(ffmpegZipPath, Buffer.from( new Uint8Array((await request(ffmpegVersion.browser_download_url, {isFile: true})).data)));
     }
     var zip = new zipper(ffmpegZipPath);
@@ -755,7 +754,6 @@ async function getCongMedia() {
       }
     }
     for (var hiddenFilesFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Hidden"))).filter(hiddenFilesFolder => dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).isValid() && dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat))).sort((a, b) => (a.basename > b.basename) ? 1 : -1)) {
-      console.log(hiddenFilesFolder.basename);
       for (var hiddenFile of await webdavLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.basename))) {
         var hiddenFileLogString = "background-color: #d6d8d9; color: #1b1e21;";
         if (meetingMedia[dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat)]) {
@@ -788,11 +786,15 @@ async function getDbFromJwpub(pub, issue, localpath) {
       if (!jwpubDbs[pub]) jwpubDbs[pub] = {};
       if (!jwpubDbs[pub][issue]) {
         var jwpub = (await getMediaLinks({pubSymbol: pub, issue: issue, format: "JWPUB"}))[0];
-        jwpub.pub = pub;
-        jwpub.issue = issue;
-        jwpub.queryInfo = {};
-        await downloadIfRequired(jwpub);
-        jwpubDbs[pub][issue] = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "0", "*.db"))[0]));
+        if (jwpub) {
+          jwpub.pub = pub;
+          jwpub.issue = issue;
+          jwpub.queryInfo = {};
+          await downloadIfRequired(jwpub);
+          jwpubDbs[pub][issue] = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "0", "*.db"))[0]));
+        } else {
+          notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, null, true);
+        }
       }
     }
     return jwpubDbs[pub][issue];
@@ -1173,7 +1175,7 @@ async function getRemoteYearText(force) {
       await axios.get("https://wol.jw.org/wol/finder?docid=1102022800&wtlocale=" + prefs.lang + "&format=json&snip=yes", {
         adapter: require("axios/lib/adapters/http")
       }).then(result => {
-        mkdirSync(path.join(paths.yearText, "../"));
+        fs.ensureDirSync(path.join(paths.yearText, "../"));
         if (result && result.data && result.data.content) {
           fs.writeFileSync(paths.yearText, JSON.parse(JSON.stringify(result.data.content)));
           yearText = JSON.parse(JSON.stringify(result.data.content));
@@ -1238,15 +1240,6 @@ async function manageMedia(day, isMeetingDate, mediaType) {
   updateFileList(true);
   await toggleScreen("overlayUploadFile");
   overlay(false);
-}
-function mkdirSync(dirPath) {
-  try {
-    fs.mkdirSync(dirPath, {
-      recursive: true
-    });
-  } catch (err) {
-    if (err.code !== "EEXIST") throw err;
-  }
 }
 async function mp4Convert() {
   perf("mp4Convert", "start");
@@ -1473,7 +1466,7 @@ function periodicCleanup() {
           let itemPub = path.basename(path.join(path.dirname(video), "../../"));
           if (!itemPub.includes("sjj") && (!itemDate.isValid() || (itemDate.isValid() && itemDate.isBefore(now.subtract(3, "months"))))) return video;
         }).filter(Boolean));
-        mkdirSync(paths.pubs);
+        fs.ensureDirSync(paths.pubs);
         fs.writeFileSync(lastPeriodicCleanupPath, dayjs().format());
       }
     }
@@ -1601,7 +1594,7 @@ function refreshFolderListing(folderPath) {
           s: endTime.transitionAsTime.format("s"),
           ms: endTime.transitionAsTime.format("SSS"),
         }).asMilliseconds();
-        endTime.asMs = startTime.asTime.add(dayjs.duration(endTime.offsetAsMs, "ms")).subtract(endTime.transitionAsMs, "ms");
+        endTime.asMs = startTime.asTime.add(dayjs.duration(endTime.offsetAsMs, "ms")).subtract(endTime.transitionAsMs + 400, "ms");
         lineItem.find(".markerList").append($("<div>", {
           "data-custom-start": startTime.asMs,
           "data-custom-end": endTime.asMs,
@@ -1616,10 +1609,12 @@ function refreshFolderListing(folderPath) {
         html: "<i class='fa-solid fa-rotate-left'></i>"
       }));
       lineItem.find(".markerList .btn").on("click", function() {
+        lineItem.find(".stop:visible").addClass("confirmed").click();
         lineItem.data("customStart", $(this).hasClass("btn-reset-marker") ? lineItem.data("originalStart") : $(this).data("customStart"));
         lineItem.data("customEnd", $(this).hasClass("btn-reset-marker") ? lineItem.data("originalEnd") : $(this).data("customEnd"));
         if (!$(this).hasClass("btn-reset-marker")) {
           lineItem.find("button.play:not(.pausePlay)").click();
+          $(this).removeClass("btn-info").addClass("btn-primary");
         } else {
           lineItem.removeData("customStart");
           lineItem.removeData("customEnd");
@@ -1810,7 +1805,7 @@ function setVars() {
     try {
       downloadStats = {};
       paths.media = path.join(prefs.localOutputPath, prefs.lang);
-      if (!dryrun) mkdirSync(paths.media);
+      if (!dryrun) fs.ensureDirSync(paths.media);
       paths.pubs = path.join(paths.app, "Publications", prefs.lang);
       paths.yearText = path.join(paths.pubs, "yeartext-" + prefs.lang + "-" + (new Date().getFullYear()).toString());
     } catch (err) {
@@ -1989,12 +1984,13 @@ async function syncJwOrgMedia() {
             if (partMedia[j].markers) {
               let markers = partMedia[j].markers.markers.map(({duration, label, startTime, endTransitionDuration}) => ({duration, label, startTime, endTransitionDuration}));
               markers = Array.from(new Set(markers.map(JSON.stringify))).map(JSON.parse);
+              fs.ensureDirSync(path.join(paths.media, partMedia[j].folder));
               fs.writeFileSync(path.join(paths.media, partMedia[j].folder, path.changeExt(partMedia[j].safeName, ".json")), JSON.stringify(markers));
             }
             if (partMedia[j].url) {
               await downloadIfRequired(partMedia[j]);
             } else {
-              mkdirSync(path.join(paths.media, partMedia[j].folder));
+              fs.ensureDirSync(path.join(paths.media, partMedia[j].folder));
               var destFile = path.join(paths.media, partMedia[j].folder, partMedia[j].safeName);
               if (!fs.existsSync(destFile) || fs.statSync(destFile).size !== partMedia[j].filesize) fs.copyFileSync(partMedia[j].filepath, destFile);
             }
@@ -2013,7 +2009,7 @@ function syncLocalRecurringMedia() {
     updateTile("recurringMedia", "warning");
     glob.sync(path.join(paths.media, "Recurring", "*")).forEach((recurringItem) => {
       Object.keys(meetingMedia).filter(key => key !== "Recurring" && dayjs(key, prefs.outputFolderDateFormat).isValid() && dayjs(key, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")).forEach((meeting) => {
-        mkdirSync(path.join(paths.media, meeting));
+        fs.ensureDirSync(path.join(paths.media, meeting));
         fs.copyFileSync(recurringItem, path.join(paths.media, meeting, path.basename(recurringItem)));
       });
     });
@@ -2395,7 +2391,7 @@ async function webdavExists(url) {
 async function webdavGet(file) {
   let localFile = path.join(paths.media, file.folder, file.safeName);
   if (!fs.existsSync(localFile) || !(file.filesize == fs.statSync(localFile).size)) {
-    mkdirSync(path.join(paths.media, file.folder));
+    fs.ensureDirSync(path.join(paths.media, file.folder));
     let perf = {
       start: performance.now(),
       bytes: file.filesize,
@@ -2806,6 +2802,7 @@ $("#btnMediaWindow").on("click", function() {
         mediaItem.find(".time .current").text(!isNaN(mediaItem.data("customStart")) ? dayjs.duration(mediaItem.data("customStart"), "ms").format("mm:ss/") : "");
         mediaItem.find(".pausePlay").removeClass("play pulse-danger").addClass("pause").fadeToAndToggle(fadeDelay, 0).find("i").removeClass("fa-play").addClass("fa-pause");
         mediaItem.find(".time").removeClass("disabled");
+        mediaItem.find(".markerList div.btn.btn-primary").addClass("btn-info").removeClass("btn-primary");
         unconfirm(this);
       }
       mediaItem.removeClass("list-group-item-primary");
@@ -2931,7 +2928,7 @@ $("#btnUpload").on("click", async () => {
   try {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
     $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled").addClass("disabled-while-load").prop("disabled", true);
-    if (!webdavIsAGo) mkdirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
+    if (!webdavIsAGo) fs.ensureDirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
     if ($("input#typeSong:checked").length > 0) {
       let songFiles = await getMediaLinks({pubSymbol: songPub, track: $("#fileToUpload").val(), format: "MP4"});
       if (songFiles.length > 0) {

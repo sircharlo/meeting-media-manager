@@ -263,33 +263,35 @@ if (!gotTheLock) {
   ipcMain.on("toggleMediaWindowFocus", () => {
     fadeWindow(mediaWin);
   });
-  // autoUpdater.on("error", () => {
-  //   // win.webContents.send("congregationInitialSelector");
-  // notifiy user here?
-  // });
+  autoUpdater.on("error", () => {
+    win.webContents.send("notifyUser", ["warn", "updateNotDownloaded"]);
+  });
   // autoUpdater.on("update-not-available", () => {
   //   win.webContents.send("congregationInitialSelector");
   // });
   autoUpdater.on("update-available", () => {
     if (os.platform() == "darwin") {
-      // win.webContents.send("congregationInitialSelector");
+    // win.webContents.send("congregationInitialSelector");
       win.webContents.send("macUpdate");
-    // } else {
-    //   win.webContents.send("overlay", ["cloud-download-alt fa-beat", "circle-notch fa-spin text-success"]);
-    //   autoUpdater.downloadUpdate();
+    } else {
+    // win.webContents.send("overlay", ["cloud-download-alt fa-beat", "circle-notch fa-spin text-success"]);
+      win.webContents.send("notifyUser", ["info", "updateDownloading"]);
+      autoUpdater.downloadUpdate();
     }
   });
-  // autoUpdater.on("update-downloaded", () => {
-  //   win.webContents.send("overlay", ["cloud-download-alt fa-beat", "check-circle"]);
-  //   setImmediate(() => {
-  //     autoUpdater.quitAndInstall();
-  //   });
-  // });
+  autoUpdater.on("update-downloaded", () => {
+    // win.webContents.send("overlay", ["cloud-download-alt fa-beat", "check-circle"]);
+    // setImmediate(() => {
+    win.webContents.send("notifyUser", ["info", "updateDownloaded"]);
+    // });
+  });
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
     autoUpdater.checkForUpdatesAndNotify();
-    screen.on("display-removed", () => {
+    screen.on("display-removed", (e, oldDisplay) => {
+      console.log(e);
+      console.log(oldDisplay);
       win.webContents.send("displaysChanged");
     });
     screen.on("display-added", () => {
