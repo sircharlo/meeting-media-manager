@@ -82,6 +82,7 @@
   "syncJwOrgMedia": "JW.org",
   "syncOnLaunch": "Aloita median synkronointi automaattisesti",
   "understood": "Ymmärrän",
+  "updateDownloaded": "M³:n päivityksen lataaminen onnistui. Asennus alkaa, kun M³ suljetaan.",
   "updateDownloading": "Odota; M³-päivitystä ladataan parhaillaan.",
   "updateInstalled": "M³-päivitys asennettiin.",
   "updateNotDownloaded": "M³-päivitys on saatavilla, mutta sitä ei voitu ladata automaattisesti. Lataa se napsauttamalla alla olevaa painiketta.",
