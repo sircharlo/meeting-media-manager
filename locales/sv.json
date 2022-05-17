@@ -82,6 +82,7 @@
   "syncJwOrgMedia": "JW.org",
   "syncOnLaunch": "Initiera mediasynkronisering automatiskt ",
   "understood": "Jag förstår",
+  "updateDownloaded": "En uppdatering till M³ laddades ned. Installationen börjar när M³ stängs ned.",
   "updateDownloading": "Vänligen vänta; en uppdatering av M³ laddas ned.",
   "updateInstalled": "Uppdateringen av M³ genomförd.",
   "updateNotDownloaded": "En uppdatering för M³ finns tillgänglig, men den kunde inte laddas ned automatiskt. Klicka på knappen nedan för att ladda ned uppdateringen.",
