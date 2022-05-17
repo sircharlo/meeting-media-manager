@@ -72,8 +72,6 @@ function createMainWindow() {
   if (!app.isPackaged) win.webContents.openDevTools({ mode: "detach" });
 }
 function fadeWindow(browserWindow) {
-  // shelving the graceful fade for now, as it seems to be causing more issues than what it's worth
-  // if (os.platform() == "linux") {
   if (!browserWindow.isVisible()) {
     browserWindow.show();
     win.webContents.send("mediaWindowVisibilityChanged", "shown");
@@ -81,21 +79,6 @@ function fadeWindow(browserWindow) {
     browserWindow.hide();
     win.webContents.send("mediaWindowVisibilityChanged", "hidden");
   }
-  // } else {
-  //   let fadeType = mediaWin.getOpacity() > 0 ? "out" : "in";
-  //   if (fadeType == "in") win.webContents.send("mediaWindowVisibilityChanged", "shown");
-  //   let opacity = browserWindow.getOpacity();
-  //   const interval = setInterval(() => {
-  //     let wereDone = (fadeType == "in" ? opacity >= 1 : opacity <= 0);
-  //     if (wereDone) {
-  //       clearInterval(interval);
-  //       if (fadeType == "out") win.webContents.send("mediaWindowVisibilityChanged", "hidden");
-  //     }
-  //     browserWindow.setOpacity(opacity);
-  //     opacity = opacity + 0.05 * (fadeType == "in" ? 1 : -1);
-  //   }, 5);
-  //   return interval;
-  // }
 }
 function getScreenInfo() {
   let displays = [],
@@ -165,9 +148,6 @@ if (!gotTheLock) {
       win.focus();
     }
   });
-  // ipcMain.on("attemptAutoUpdate", () => {
-  //   autoUpdater.checkForUpdatesAndNotify();
-  // });
   ipcMain.on("closeMediaWindow", () => {
     closeMediaWindow();
   });
@@ -252,9 +232,6 @@ if (!gotTheLock) {
       }).once("ready-to-show", () => {
         mediaWin.show();
       });
-      // mediaWin.on("closed", () => {
-      //   mediaWin = null;
-      // });
       win.webContents.send("mediaWindowShown");
     } else {
       setMediaWindowPosition(mediaWindowOpts);
@@ -266,29 +243,20 @@ if (!gotTheLock) {
   autoUpdater.on("error", () => {
     win.webContents.send("notifyUser", ["warn", "updateNotDownloaded"]);
   });
-  // autoUpdater.on("update-not-available", () => {
-  //   win.webContents.send("congregationInitialSelector");
-  // });
   autoUpdater.on("update-available", () => {
     if (os.platform() == "darwin") {
-    // win.webContents.send("congregationInitialSelector");
       win.webContents.send("macUpdate");
     } else {
-    // win.webContents.send("overlay", ["cloud-download-alt fa-beat", "circle-notch fa-spin text-success"]);
       win.webContents.send("notifyUser", ["info", "updateDownloading"]);
       autoUpdater.downloadUpdate();
     }
   });
   autoUpdater.on("update-downloaded", () => {
-    // win.webContents.send("overlay", ["cloud-download-alt fa-beat", "check-circle"]);
-    // setImmediate(() => {
     win.webContents.send("notifyUser", ["info", "updateDownloaded"]);
-    // });
   });
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
-    autoUpdater.checkForUpdatesAndNotify();
     screen.on("display-removed", (e, oldDisplay) => {
       console.log(e);
       console.log(oldDisplay);
