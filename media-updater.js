@@ -2878,7 +2878,7 @@ $("body").on("click", "#btnMeetingMusic", async function() {
     $("#btnStopMeetingMusic").addClass("initialLoad").find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
     $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
     setVars();
-    var songs = (jworgIsReachable ? (await getMediaLinks({pubSymbol: "sjjm", format: "MP3", lang: "E"})) : glob.sync(path.join(paths.pubs, songPub, "**", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
+    var songs = (jworgIsReachable ? (await getMediaLinks({pubSymbol: "sjjm", format: "MP3", lang: "E"})).filter(item => path.extname(item.url) == ".mp3") : glob.sync(path.join(paths.pubs, songPub, "**", "*.mp3")).map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item}))).sort(() => .5 - Math.random());
     if (songs.length > 0) {
       var iterator = 0;
       createAudioElem(iterator);
