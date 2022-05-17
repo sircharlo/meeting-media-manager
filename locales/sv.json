@@ -65,6 +65,7 @@
   "optionsCongSync": "Inställningar för församlingssynkronisering",
   "optionsMedia": "Mediainställningar",
   "optionsMeetings": "Mötesinställningar",
+  "outputFolderDateFormat": "Datumformat för mötesmappar",
   "password": "Lösenord",
   "port": "Port",
   "quitAfterSync": "Stäng programmet efter mediasynkronisering",
