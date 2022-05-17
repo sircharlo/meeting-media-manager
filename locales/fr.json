@@ -11,7 +11,7 @@
   "delete": "Supprimer",
   "disableHardwareAcceleration": "Désactiver l'accélération matérielle <em>(Remarque : N'activez ce paramètre que si vous rencontrez des problèmes avec le mode de présentation des médias. Si ce paramètre est modifié, M³ sera relancé.)</em>",
   "dontForgetToGetMedia": "N'oubliez pas de rafraîchir les dossiers multimédias sur l'ordinateur utilisé pour présenter les médias lors des réunions de l'assemblée locale !",
-  "enableMediaDisplayButton": "Activer le bouton de présentation des médias, pour présenter les médias sur un deuxième écran ou dans une fenêtre séparée",
+  "enableMediaDisplayButton": "Présenter les médias sur un écran externe ou dans une fenêtre séparée",
   "enableMusicButton": "Activer le bouton pour jouer des cantiques en mode aléatoire",
   "enableObs": "Activer le mode de compatibilité avec OBS Studio <em>(nécéssite obs-websocket)</em>",
   "enableVlcPlaylistCreation": "Créer des listes de lecture (playlists) pour <em>VLC</em>",
