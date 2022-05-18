@@ -819,7 +819,9 @@ async function getDocumentExtract(db, docId) {
       if (extractDb) {
         extractMultimediaItems = extractMultimediaItems.concat((await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId, null, extractItem.Lang)).filter(extractMediaFile => {
           if (extractMediaFile.queryInfo.tableQuestionIsUsed && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) extractMediaFile.BeginParagraphOrdinal = extractMediaFile.queryInfo.NextParagraphOrdinal;
-          if (extractMediaFile.BeginParagraphOrdinal && extractItem.RefBeginParagraphOrdinal && extractItem.RefEndParagraphOrdinal) {
+          if (jsonLangs.find(lang => lang.langcode == prefs.lang).isSignLanguage && !!extractMediaFile.queryInfo.FilePath && isVideo(extractMediaFile.queryInfo.FilePath) && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) {
+            return true; // include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
+          } else if (extractMediaFile.BeginParagraphOrdinal && extractItem.RefBeginParagraphOrdinal && extractItem.RefEndParagraphOrdinal) {
             return extractItem.RefBeginParagraphOrdinal <= extractMediaFile.BeginParagraphOrdinal && extractMediaFile.BeginParagraphOrdinal <= extractItem.RefEndParagraphOrdinal;
           } else {
             return true;
