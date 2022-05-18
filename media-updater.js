@@ -771,7 +771,7 @@ async function getCongMedia() {
   }
   perf("getCongMedia", "stop");
 }
-async function getDbFromJwpub(pub, issue, localpath) {
+async function getDbFromJwpub(pub, issue, localpath, lang) {
   try {
     var SQL = await sqljs();
     if (localpath) {
@@ -785,7 +785,7 @@ async function getDbFromJwpub(pub, issue, localpath) {
     } else {
       if (!jwpubDbs[pub]) jwpubDbs[pub] = {};
       if (!jwpubDbs[pub][issue]) {
-        var jwpub = (await getMediaLinks({pubSymbol: pub, issue: issue, format: "JWPUB"}))[0];
+        var jwpub = (await getMediaLinks({pubSymbol: pub, issue: issue, format: "JWPUB", ...(lang && { lang: lang })}))[0];
         if (jwpub) {
           jwpub.pub = pub;
           jwpub.issue = issue;
@@ -804,12 +804,20 @@ async function getDbFromJwpub(pub, issue, localpath) {
 }
 async function getDocumentExtract(db, docId) {
   var extractMultimediaItems = [];
-  for (var extractItem of (await executeStatement(db, "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UniqueEnglishSymbol = 'sjj' AND NOT UniqueEnglishSymbol = 'mwbr' " + (prefs.excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : "") + "ORDER BY DocumentExtract.BeginParagraphOrdinal"))) {
+  for (var extractItem of (await executeStatement(db, "SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link FROM DocumentExtract INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId WHERE DocumentExtract.DocumentId = " + docId + " AND NOT UniqueEnglishSymbol = 'sjj' AND NOT UniqueEnglishSymbol = 'mwbr' " + (prefs.excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : "") + "ORDER BY DocumentExtract.BeginParagraphOrdinal"))) {
+    extractItem.Lang = prefs.lang;
+    if (extractItem.Link) {
+      try {
+        extractItem.Lang = extractItem.Link.match(/\/(.*)\//).pop().split(":")[0];
+      } catch (err) {
+        log.error(err);
+      }
+    }
     let uniqueEnglishSymbol = extractItem.UniqueEnglishSymbol.replace(/[0-9]/g, "");
     if (uniqueEnglishSymbol !== "snnw") { // exclude the "old new songs" songbook, as we don't need images from that
-      var extractDb = await getDbFromJwpub(uniqueEnglishSymbol, extractItem.IssueTagNumber);
+      var extractDb = await getDbFromJwpub(uniqueEnglishSymbol, extractItem.IssueTagNumber, null, extractItem.Lang);
       if (extractDb) {
-        extractMultimediaItems = extractMultimediaItems.concat((await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId)).filter(extractMediaFile => {
+        extractMultimediaItems = extractMultimediaItems.concat((await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId, null, extractItem.Lang)).filter(extractMediaFile => {
           if (extractMediaFile.queryInfo.tableQuestionIsUsed && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) extractMediaFile.BeginParagraphOrdinal = extractMediaFile.queryInfo.NextParagraphOrdinal;
           if (extractMediaFile.BeginParagraphOrdinal && extractItem.RefBeginParagraphOrdinal && extractItem.RefEndParagraphOrdinal) {
             return extractItem.RefBeginParagraphOrdinal <= extractMediaFile.BeginParagraphOrdinal && extractMediaFile.BeginParagraphOrdinal <= extractItem.RefEndParagraphOrdinal;
@@ -825,7 +833,7 @@ async function getDocumentExtract(db, docId) {
   }
   return extractMultimediaItems;
 }
-async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
+async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly, lang) {
   let tableMultimedia = ((await executeStatement(db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'")).length === 0 ? "Multimedia" : "DocumentMultimedia");
   let keySymbol = (await executeStatement(db, "SELECT UniqueEnglishSymbol FROM Publication"))[0].UniqueEnglishSymbol.replace(/[0-9]*/g, "");
   let issueTagNumber = (await executeStatement(db, "SELECT IssueTagNumber FROM Publication"))[0].IssueTagNumber;
@@ -848,7 +856,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly) {
           queryInfo: multimediaItem,
           BeginParagraphOrdinal: multimediaItem.BeginParagraphOrdinal
         };
-        Object.assign(json, (await getMediaLinks({pubSymbol: multimediaItem.KeySymbol, track: multimediaItem.Track, issue: multimediaItem.IssueTagNumber, docId: multimediaItem.MultiMeps}))[0]);
+        Object.assign(json, (await getMediaLinks({pubSymbol: multimediaItem.KeySymbol, track: multimediaItem.Track, issue: multimediaItem.IssueTagNumber, docId: multimediaItem.MultiMeps, ...(lang && { lang: lang })}))[0]);
         multimediaItems.push(json);
       } else {
         if (multimediaItem.KeySymbol == null) {
@@ -965,7 +973,7 @@ function getLocaleLanguages() {
 }
 async function getMediaLinks(mediaItem) {
   let mediaFiles = [];
-  if (prefs.lang && prefs.maxRes) {
+  if ((mediaItem.lang || prefs.lang) && prefs.maxRes) {
     try {
       if (mediaItem.pubSymbol === "w" && mediaItem.issue && parseInt(mediaItem.issue) >= 20080101 && mediaItem.issue.toString().slice(-2) == "01") mediaItem.pubSymbol = "wp";
       let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (mediaItem.pubSymbol ? "&pub=" + mediaItem.pubSymbol + (mediaItem.track ? "&track=" + mediaItem.track : "") + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") : (mediaItem.docId ? "&docid=" + mediaItem.docId : "")) + "&langwritten=" + (mediaItem.lang || prefs.lang);
@@ -2802,7 +2810,7 @@ $("#btnMediaWindow").on("click", function() {
         unconfirm(this);
       }
       mediaItem.removeClass("list-group-item-primary");
-      $("#folderListing button.play, #folderListing .markerList .btn-info, button.closeModal, #btnMeetingMusic, button.folderRefresh").removeClass("disabled");
+      $("#folderListing button.play, #folderListing .markerList .btn-info, button.closeModal, #btnMeetingMusic, button.folderRefresh").removeClass("disabled").prop("disabled", false);
       $("#folderListing button.stop").hide();
       mediaItem.find(".play").show();
       $("h5.modal-title button").not($(this)).prop("disabled", false);
