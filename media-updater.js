@@ -1606,7 +1606,7 @@ function refreshFolderListing(folderPath) {
         lineItem.find(".markerList").append($("<div>", {
           "data-custom-start": startTime.asMs,
           "data-custom-end": endTime.asMs,
-          class: "btn btn-sm btn-info mb-2 me-2",
+          class: "btn btn-sm btn-info mt-2 me-2",
           role: "button",
           text: marker.label
         }));
@@ -1618,6 +1618,7 @@ function refreshFolderListing(folderPath) {
         lineItem.find(".markerList div.btn.btn-primary").addClass("btn-info").removeClass("btn-primary");
         $(this).removeClass("btn-info").addClass("btn-primary");
         lineItem.find(".time").addClass("pulse-danger");
+        $(this).addClass("opacity-75");
       });
     }
     lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
@@ -2784,11 +2785,11 @@ $("#btnMediaWindow").on("click", function() {
     $("#folderListing button.play").show();
     $("h5.modal-title button").not($(this)).prop("disabled", true);
     $("button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", true);
-    $("#folderListing button.stop:visible").closest("li.item").addClass("opacity-75");
+    if (!jsonLangs.find(lang => lang.langcode == prefs.lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) $("#folderListing button.stop:visible").closest("li.item").addClass("opacity-75");
     $("#folderListing button.stop").hide();
     $(this).hide();
     mediaItem.find(".stop").show();
-    mediaItem.find(".previously-played").fadeIn(fadeDelay);
+    mediaItem.find(".previously-played").show("blind", { direction: "horizontal"}, fadeDelay);
   });
   $(folderListing).on("click", "li.item button.stop", function() {
     let mediaItem = $(this).closest(".item");
@@ -2815,7 +2816,7 @@ $("#btnMediaWindow").on("click", function() {
       $("#folderListing button.play, #folderListing .markerList .btn-info, button.closeModal, #btnMeetingMusic, button.folderRefresh").removeClass("disabled").prop("disabled", false);
       $("#folderListing button.stop").hide();
       mediaItem.find(".play").show();
-      mediaItem.addClass("opacity-75");
+      if (!jsonLangs.find(lang => lang.langcode == prefs.lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) mediaItem.addClass("opacity-75");
       $("h5.modal-title button").not($(this)).prop("disabled", false);
     } else {
       waitToConfirm(this);
