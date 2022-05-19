@@ -231,9 +231,10 @@ function goAhead() {
     validateConfig(true, $(this).prop("id") == "disableHardwareAcceleration");
   });
 }
-function addMediaItemToPart (date, paragraph, media) {
+function addMediaItemToPart(date, paragraph, media, source) {
   if (!meetingMedia[date]) meetingMedia[date] = [];
-  if ((media.filepath && !meetingMedia[date].map(part => part.media).flat().map(item => item.filepath).filter(Boolean).includes(media.filepath)) || (media.checksum && !meetingMedia[date].map(part => part.media).flat().map(item => item.checksum).filter(Boolean).includes(media.checksum))) {
+  media.uniqueId = [paragraph, source, media.checksum, media.filepath].filter(Boolean).toString();
+  if (!media.uniqueId || !meetingMedia[date].map(part => part.media).flat().map(item => item.uniqueId).filter(Boolean).includes(media.uniqueId)) {
     if (meetingMedia[date].filter(part => part.title == paragraph).length === 0) {
       meetingMedia[date].push({
         title: paragraph,
@@ -262,10 +263,7 @@ async function calculateCacheSize() {
 function rm(toDelete) {
   if (!Array.isArray(toDelete)) toDelete = [toDelete];
   for (var fileOrDir of toDelete) {
-    fs.rmSync(fileOrDir, {
-      recursive: true,
-      force: true
-    });
+    fs.removeSync(fileOrDir);
   }
 }
 function congregationChange(prefsFile) {
@@ -1037,14 +1035,14 @@ async function getMwMediaFromDb() {
       var db = await getDbFromJwpub("mwb", issue);
       var docId = (await executeStatement(db, "SELECT DocumentId FROM DatedText WHERE FirstDateOffset = " + baseDate.format("YYYYMMDD") + ""))[0].DocumentId;
       (await getDocumentMultimedia(db, docId)).map(video => {
-        addMediaItemToPart(mwDate, video.BeginParagraphOrdinal, video);
+        addMediaItemToPart(mwDate, video.BeginParagraphOrdinal, video, "internal");
       });
       (await getDocumentExtract(db, docId)).map(extract => {
-        addMediaItemToPart(mwDate, extract.BeginParagraphOrdinal, extract);
+        addMediaItemToPart(mwDate, extract.BeginParagraphOrdinal, extract, "external");
       });
       for (var internalRef of (await executeStatement(db, "SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = " + docId + " AND Document.Class <> 94"))) {
         (await getDocumentMultimedia(db, internalRef.DocumentId)).map(internalRefMediaFile => {
-          addMediaItemToPart(mwDate, internalRef.BeginParagraphOrdinal, internalRefMediaFile);
+          addMediaItemToPart(mwDate, internalRef.BeginParagraphOrdinal, internalRefMediaFile, "internal");
         });
       }
       updateTile("day" + prefs.mwDay, "success");
