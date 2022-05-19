@@ -85,7 +85,7 @@
   "updateDownloaded": "An update to M³ was downloaded successfully. The installation will begin when M³ is closed.",
   "updateDownloading": "An update to M³ is being downloaded in the background.",
   "updateInstalled": "An update to M³ was installed.",
-  "updateNotDownloaded": "An update to M³ is available, but could not be downloaded automatically. Please download it by clicking the button below.",
+  "updateNotDownloaded": "An update to M³ is available, but could not be downloaded automatically. Please download it manually.",
   "username": "Username",
   "wannaHelp": "Would you like to help?",
   "wannaHelpExplain": "The media language currently configured is not yet available as a display language for M³. Would you like to help to translate M³ for users who speak that language?",

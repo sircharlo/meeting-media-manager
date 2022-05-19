@@ -47,6 +47,7 @@
     "appId": "sircharlo.meeting-media-manager",
     "productName": "Meeting Media Manager",
     "nsis": {
+      "guid": "d9bcf07e-55a1-51f4-83c6-e268a864b225",
       "oneClick": false
     },
     "win": {
