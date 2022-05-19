@@ -217,7 +217,7 @@ if (!gotTheLock) {
       };
       if (mediaWindowOpts.type == "fullscreen") windowOptions.fullscreen = true;
       mediaWin = new BrowserWindow(windowOptions);
-      mediaWin.setAppDetails({
+      if (os.platform() == "win32") mediaWin.setAppDetails({
         appId: appLongName
       });
       mediaWin.setAlwaysOnTop(true, "screen-saver");
