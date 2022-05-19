@@ -51,7 +51,7 @@ function createMainWindow() {
       }
     }
   });
-  win.setAppDetails({
+  if (os.platform() == "win32") win.setAppDetails({
     appId: appLongName
   });
   win.on("close", (e) => {
