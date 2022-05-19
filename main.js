@@ -187,6 +187,9 @@ if (!gotTheLock) {
   ipcMain.on("startMediaDisplay", (event, prefsFile) => {
     mediaWin.webContents.send("startMediaDisplay", prefsFile);
   });
+  ipcMain.on("checkForUpdates", () => {
+    autoUpdater.checkForUpdates();
+  });
   ipcMain.on("setMediaWindowPosition", (event, mediaWindowOpts) => {
     setMediaWindowPosition(mediaWindowOpts);
   });

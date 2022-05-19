@@ -173,6 +173,7 @@ datepickers = datetime(".timePicker", {
   }
 });
 overlay(true, "cog fa-spin");
+require("electron").ipcRenderer.send("checkForUpdates");
 $( document ).ready(function() {
   updateCleanup();
   updateOnlineStatus();
