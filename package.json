@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "22.5.5",
+  "version": "22.5.6",
   "description": "Meeting Media Manager",
   "main": "main.js",
   "repository": {
@@ -23,9 +23,9 @@
     "fast-xml-parser": "^4.0.7",
     "flatpickr": "^4.6.13",
     "fluent-ffmpeg": "^2.1.2",
-    "graceful-fs": "^4.2.10",
+    "fs-extra": "^10.1.0",
     "h264-mp4-encoder": "^1.0.12",
-    "i18n": "^0.14.2",
+    "i18n": "^0.15.0",
     "image-size": "^1.0.1",
     "inputmask": "^5.0.7",
     "is-audio": "^0.0.0",
@@ -35,7 +35,7 @@
     "jquery-ui": "^1.13.1",
     "obs-websocket-js": "^4.0.3",
     "os": "^0.1.2",
-    "pdfjs-dist": "^2.13.216",
+    "pdfjs-dist": "^2.14.305",
     "select2": "^4.1.0-rc.0",
     "sql.js": "^1.6.2",
     "upath": "^2.0.1"
@@ -46,6 +46,10 @@
   "build": {
     "appId": "sircharlo.meeting-media-manager",
     "productName": "Meeting Media Manager",
+    "nsis": {
+      "guid": "d9bcf07e-55a1-51f4-83c6-e268a864b225",
+      "oneClick": false
+    },
     "win": {
       "target": "NSIS",
       "icon": "build/icon.ico",
@@ -67,7 +71,7 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^18.2.3",
+    "electron": "^18.2.4",
     "electron-builder": "^23.0.3"
   },
   "scripts": {
