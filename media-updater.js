@@ -911,6 +911,7 @@ async function getInitialData() {
   await toggleMediaWindow();
   $("#version").html("M³ " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
+  $(".onlyWindows").closest(".row").add(".onlyWindows").toggle(os.platform() == "win32");
   congregationSelectPopulate();
   $("#baseDate .dropdown-menu").empty();
   for (var a = 0; a <= 4; a++) {
