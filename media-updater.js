@@ -2480,11 +2480,12 @@ async function webdavPut(file, destFolder, destName) {
         bytes: file.byteLength,
         name: destName
       };
+      console.log(file);
       await request(destFile, {
         method: "PUT",
         data: file,
         headers: {
-          "Content-Type": "application/octet-stream"
+          "Content-Type": "application/octet-stream",
         },
         webdav: true
       });
@@ -2947,6 +2948,9 @@ $("#btnUpload").on("click", async () => {
           fs.copyFileSync(songFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), songFileName));
         } else {
           await webdavPut(fs.readFileSync(songFile), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), songFileName);
+          getCongMedia().then(() => {
+            syncCongMedia();
+          });
         }
       }
     } else if ($("input#typeJwpub:checked").length > 0) {
@@ -2961,6 +2965,9 @@ $("#btnUpload").on("click", async () => {
           }
         } else {
           await webdavPut((tempMedia.contents ? tempMedia.contents : fs.readFileSync(tempMedia.localpath)), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), jwpubFileName);
+          getCongMedia().then(() => {
+            syncCongMedia();
+          });
         }
       }
       tempMediaArray = [];
@@ -2971,6 +2978,9 @@ $("#btnUpload").on("click", async () => {
           fs.copyFileSync(splitLocalFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), splitFileToUploadName));
         } else {
           await webdavPut(fs.readFileSync(splitLocalFile), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), splitFileToUploadName);
+          getCongMedia().then(() => {
+            syncCongMedia();
+          });
         }
       }
     }
@@ -3207,6 +3217,9 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
         }
       } else {
         successful = await webdavMv(src, path.posix.join(path.dirname(src), newName));
+        getCongMedia().then(() => {
+          syncCongMedia();
+        });
       }
       if (successful) {
         Object.keys(meetingMedia).filter(meeting => dayjs($("#chosenMeetingDay").data("folderName"), prefs.outputFolderDateFormat).isValid() ? meeting == $("#chosenMeetingDay").data("folderName") : true).forEach(meeting => {
