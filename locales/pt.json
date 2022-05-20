@@ -37,7 +37,7 @@
   "excludeLffiImages": "Excluir imagens da publicação <em>lffi</em>",
   "excludeTh": "Excluir todas as mídias da publicação <em>th</em>",
   "fetchMedia": "Baixar mídias!",
-  "hideMediaLogo": "Ocultar o logotipo da janela de exibição de mídias",
+  "hideMediaLogo": "Ocultar o logotipo <em>JW</em> da tela de exibição de mídias",
   "hostname": "Nome do host",
   "info": "Informações",
   "infoShortcutSetFail": "Não é possível usar esse atalho de teclado. Certifique-se de que nenhum outro programa esteja configurado com este atalho e em seguida reinicie o M³. Caso contrário, não é necessário fazer nada.",
