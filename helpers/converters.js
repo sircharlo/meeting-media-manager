@@ -26,7 +26,7 @@ async function mp4Convert(perf, updateStatus, updateTile, glob, progressSet, cre
   perf("mp4Convert", "stop");
 }
 
-function convertPdf(mediaFile, rm, notifyUser) {
+function convertPdf(mediaFile, rm) {
   return new Promise((resolve)=>{
     var pdfjsLib = require("pdfjs-dist/build/pdf.js");
     pdfjsLib.GlobalWorkerOptions.workerSrc = require("pdfjs-dist/build/pdf.worker.entry.js");
@@ -45,7 +45,7 @@ function convertPdf(mediaFile, rm, notifyUser) {
     });
   });
 }
-function convertPdfPage(mediaFile, pdf, pageNum, notifyUser) {
+function convertPdfPage(mediaFile, pdf, pageNum) {
   return new Promise((resolve)=>{
     pdf.getPage(pageNum).then(function(page) {
       $("body").append("<div id='pdf' style='display: none;'>");
@@ -70,7 +70,7 @@ function convertPdfPage(mediaFile, pdf, pageNum, notifyUser) {
     });
   });
 }
-function convertSvg(mediaFile, rm, notifyUser) {
+function convertSvg(mediaFile, rm) {
   return new Promise((resolve)=>{
     $("body").append("<div id='svg'>");
     $("div#svg").append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
@@ -99,16 +99,16 @@ function convertSvg(mediaFile, rm, notifyUser) {
   });
 }
 
-async function convertUnusableFiles(glob, rm, notifyUser) {
+async function convertUnusableFiles(glob, rm) {
   for (let pdfFile of glob.sync(path.join(paths.media, "**", "*pdf"), {
     ignore: [path.join(paths.media, "Recurring")]
   })) {
-    await convertPdf(pdfFile, rm, notifyUser);
+    await convertPdf(pdfFile, rm);
   }
   for (let svgFile of glob.sync(path.join(paths.media, "**", "*svg"), {
     ignore: [path.join(paths.media, "Recurring")]
   })) {
-    await convertSvg(svgFile, rm, notifyUser);
+    await convertSvg(svgFile, rm);
   }
 }
 

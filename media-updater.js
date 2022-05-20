@@ -1572,7 +1572,7 @@ async function startMediaSync(isDryrun, meetingFilter) {
       syncJwOrgMedia(),
       syncLocalRecurringMedia(),
     ]);
-    await convertUnusableFiles(glob, rm, notifyUser);
+    await convertUnusableFiles(glob, rm);
     if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, glob, progressSet, createVideoSync, totals);
     if (prefs.enableVlcPlaylistCreation) createVlcPlaylists();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(url.fileURLToPath(url.pathToFileURL(paths.media).href));
