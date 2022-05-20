@@ -1,20 +1,20 @@
 // Internal packages
-const { log, notifyUser } = require('./log')
+const { log, notifyUser } = require("./log");
 
 // External packages
-const remote = require("@electron/remote")
-const OBSWebSocket = require("obs-websocket-js")
+const remote = require("@electron/remote");
+const OBSWebSocket = require("obs-websocket-js");
 
 // Variables
-let obs = {}
-let dynamicShortcuts = {}
+let obs = {};
+let dynamicShortcuts = {};
 
 function getObs() {
-  return obs
+  return obs;
 }
 
 function setObs(o) {
-  obs = o
+  obs = o;
 }
 
 async function obsConnect(prefs) {
@@ -80,9 +80,9 @@ function shortcutsUnset(domain) {
 async function obsGetScenes(currentOnly, validateConfig, prefs) {
   try {
     let connectionAttempt = await obsConnect(prefs);
-    log.debug('conn', connectionAttempt)
+    log.debug("conn", connectionAttempt);
     return (connectionAttempt ? await obs.send("GetSceneList").then(data => {
-      log.debug('data', data)
+      log.debug("data", data);
       if (currentOnly) {
         return data.currentScene;
       } else {
@@ -168,4 +168,4 @@ module.exports = {
   obsGetScenes,
   shortcutSet,
   shortcutsUnset,
-}
+};

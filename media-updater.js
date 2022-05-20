@@ -1,9 +1,9 @@
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
-const { log, bugUrl, notifyUser } = require('./helpers/log')
-const constants = require('./constants')
-const { mp4Convert, convertUnusableFiles } = require('./helpers/converters')
-const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require('./helpers/obs')
+const { log, bugUrl, notifyUser } = require("./helpers/log");
+const constants = require("./constants");
+const { mp4Convert, convertUnusableFiles } = require("./helpers/converters");
+const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require("./helpers/obs");
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -2533,7 +2533,7 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer").show();
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
-  setObs({})
+  setObs({});
   require("electron").ipcRenderer.send("allowQuit");
   $("#music-buttons").append($("#btnMeetingMusic, #btnStopMeetingMusic").removeClass("btn-lg"));
   $("#btnMediaWindow").before($("#btnToggleMediaWindowFocus").addClass("btn-sm"));

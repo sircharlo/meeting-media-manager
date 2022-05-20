@@ -1,14 +1,14 @@
 // Internal constants
-const constants = require('./../constants')
+const constants = require("./../constants");
 
 // Variables
-const logLevel = "debug"
+const logLevel = "debug";
 const logOutput = {
-    error: {},
-    warn: {},
-    info: {},
-    debug: {}
-  }
+  error: {},
+  warn: {},
+  info: {},
+  debug: {}
+};
 
 const log = {
   debug: function() {
@@ -35,7 +35,7 @@ const log = {
     logOutput.warn[now].push(arguments);
     console.warn.apply(console,arguments);
   },
-}
+};
 
 const bugUrl = () => constants.REPO_URL + "issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- M³ " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
   if ((entry[0].startsWith("cong") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
@@ -69,4 +69,4 @@ module.exports = {
   log,
   bugUrl,
   notifyUser
-}
+};
