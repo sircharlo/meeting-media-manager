@@ -220,8 +220,8 @@ function goAhead() {
     if ($(this).prop("id") == "hideMediaLogo") toggleMediaWindow("reopen");
     if ($(this).prop("id") == "preferredOutput") setMediaWindowPosition();
     if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes();
-    if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer")) meetingMedia = {};
-    if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day")) {
+    if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer") || $(this).prop("id") == "outputFolderDateFormat") meetingMedia = {};
+    if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day") || $(this).prop("id") == "outputFolderDateFormat") {
       setVars();
       if (paths.media) rm(glob.sync(path.join(paths.media, "*"), {
         ignore: [path.join(paths.media, "Recurring")],
