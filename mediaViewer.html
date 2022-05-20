@@ -249,8 +249,7 @@
         let localAppData = glob.sync(path.join(appData, "../local"), {
           onlyDirectories: true
         })
-        if (os.platform() == "win32" && localAppData.length > 0)
-          appData = localAppData[0]
+        if (os.platform() == "win32" && localAppData.length > 0) appData = localAppData[0]
         try {
           function setYearText() {
             try {

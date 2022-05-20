@@ -1393,8 +1393,8 @@ async function obsGetScenes(currentOnly) {
             }
             cameraScenes.push({
               id: $(el).val(),
-              text: $(el).val() + (shortcutSetSuccess ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
-              html: $(el).val() + (shortcutSetSuccess ? " <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd>" : ""),
+              text: (shortcutSetSuccess ? "<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd> - " : "") + $(el).val(),
+              html: (shortcutSetSuccess ? "<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd> - " : "") + $(el).val(),
               title: $(el).val(),
             });
           } catch (err) {
