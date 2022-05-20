@@ -2938,50 +2938,32 @@ $("#btnUpload").on("click", async () => {
   try {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
     $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled").addClass("disabled-while-load").prop("disabled", true);
-    if (!webdavIsAGo) fs.ensureDirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
+    fs.ensureDirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
     if ($("input#typeSong:checked").length > 0) {
       let songFiles = await getMediaLinks({pubSymbol: songPub, track: $("#fileToUpload").val(), format: "MP4"});
       if (songFiles.length > 0) {
         let songFile = await downloadIfRequired(songFiles[0]);
         let songFileName = sanitizeFilename(getPrefix() + " - Song " + $("#songPicker option:selected").text() + ".mp4");
-        if (!webdavIsAGo) {
-          fs.copyFileSync(songFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), songFileName));
-        } else {
-          await webdavPut(fs.readFileSync(songFile), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), songFileName);
-          getCongMedia().then(() => {
-            syncCongMedia();
-          });
-        }
+        if (webdavIsAGo) await webdavPut(fs.readFileSync(songFile), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), songFileName);
+        fs.copyFileSync(songFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), songFileName));
       }
     } else if ($("input#typeJwpub:checked").length > 0) {
       for (var tempMedia of tempMediaArray) {
         if (tempMedia.url) tempMedia.contents = Buffer.from(new Uint8Array((await request(tempMedia.url, {isFile: true})).data));
         let jwpubFileName = sanitizeFilename(getPrefix() + " - " + tempMedia.filename);
-        if (!webdavIsAGo) {
-          if (tempMedia.contents) {
-            fs.writeFileSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName"), jwpubFileName), tempMedia.contents);
-          } else {
-            fs.copyFileSync(tempMedia.localpath, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), jwpubFileName));
-          }
+        if (webdavIsAGo) await webdavPut((tempMedia.contents ? tempMedia.contents : fs.readFileSync(tempMedia.localpath)), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), jwpubFileName);
+        if (tempMedia.contents) {
+          fs.writeFileSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName"), jwpubFileName), tempMedia.contents);
         } else {
-          await webdavPut((tempMedia.contents ? tempMedia.contents : fs.readFileSync(tempMedia.localpath)), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), jwpubFileName);
-          getCongMedia().then(() => {
-            syncCongMedia();
-          });
+          fs.copyFileSync(tempMedia.localpath, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), jwpubFileName));
         }
       }
       tempMediaArray = [];
     } else {
       for (var splitLocalFile of $("#fileToUpload").val().split(" -//- ")) {
         let splitFileToUploadName = sanitizeFilename(getPrefix() + " - " + path.basename(splitLocalFile));
-        if (!webdavIsAGo) {
-          fs.copyFileSync(splitLocalFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), splitFileToUploadName));
-        } else {
-          await webdavPut(fs.readFileSync(splitLocalFile), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), splitFileToUploadName);
-          getCongMedia().then(() => {
-            syncCongMedia();
-          });
-        }
+        if (webdavIsAGo) await webdavPut(fs.readFileSync(splitLocalFile), path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), splitFileToUploadName);
+        fs.copyFileSync(splitLocalFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), splitFileToUploadName));
       }
     }
   } catch (err) {
