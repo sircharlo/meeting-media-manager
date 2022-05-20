@@ -1,7 +1,7 @@
 // External packages
-const dayjs = require("dayjs")
-const path = require("upath")
-const fs = require("fs-extra")
+const dayjs = require("dayjs");
+const path = require("upath");
+const fs = require("fs-extra");
 
 async function mp4Convert(perf, updateStatus, updateTile, glob, progressSet, createVideoSync, totals) {
   perf("mp4Convert", "start");
@@ -115,4 +115,4 @@ async function convertUnusableFiles(glob, rm) {
 module.exports = {
   mp4Convert,
   convertUnusableFiles,
-}
+};

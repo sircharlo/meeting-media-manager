@@ -2491,7 +2491,7 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer").show();
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
-  setObs({})
+  setObs({});
   require("electron").ipcRenderer.send("allowQuit");
   $("#music-buttons").append($("#btnMeetingMusic, #btnStopMeetingMusic").removeClass("btn-lg"));
   $("#btnMediaWindow").before($("#btnToggleMediaWindowFocus").addClass("btn-sm"));

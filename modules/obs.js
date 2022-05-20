@@ -1,20 +1,20 @@
 // Internal packages
-const { log, notifyUser } = require('./log')
+const { log, notifyUser } = require("./log");
 
 // External packages
-const remote = require("@electron/remote")
-const OBSWebSocket = require("obs-websocket-js")
+const remote = require("@electron/remote");
+const OBSWebSocket = require("obs-websocket-js");
 
 // Variables
-let obs = {}
-let dynamicShortcuts = {}
+let obs = {};
+let dynamicShortcuts = {};
 
 function getObs() {
-  return obs
+  return obs;
 }
 
 function setObs(o) {
-  obs = o
+  obs = o;
 }
 
 async function obsConnect(prefs) {
@@ -166,4 +166,4 @@ module.exports = {
   obsGetScenes,
   shortcutSet,
   shortcutsUnset,
-}
+};
