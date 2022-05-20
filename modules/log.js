@@ -1,8 +1,21 @@
 // Internal constants
-const constants = require("./../constants");
+const { REPO_URL } = require('./../constants')
+
+// External packages
+const os = require("os")
+const remote = require("@electron/remote")
+const path = require("upath")
+const i18n = require("i18n")
+i18n.configure({
+  directory: path.join(__dirname, "../locales"),
+  defaultLocale: "en",
+  updateFiles: false,
+  retryInDefaultLocale: true
+});
 
 // Variables
-const logLevel = "debug";
+const currentAppVersion = "v" + remote.app.getVersion();
+const logLevel = "info"
 const logOutput = {
   error: {},
   warn: {},
@@ -37,12 +50,12 @@ const log = {
   },
 };
 
-const bugUrl = () => constants.REPO_URL + "issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- M³ " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
+const bugUrl = (prefs) => REPO_URL + "issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- M³ " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
   if ((entry[0].startsWith("cong") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
   return entry;
 })), null, 2) + "\n```" : "") + (logOutput.error && logOutput.error.length >0 ? "\n### Full error log\n```\n" + JSON.stringify(logOutput.error, null, 2) + "\n```" : "") + "\n").replace(/\n/g, "%0D%0A");
 
-function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, hideDismiss) {
+function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, hideDismiss, prefs) {
   try {
     let icon;
     switch (type) {
@@ -58,7 +71,7 @@ function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, 
     if (fileOrUrl) fileOrUrl = escape(fileOrUrl);
     if (["error", "warn"].includes(type)) log[type](fileOrUrl ? fileOrUrl : "", errorFedToMe ? errorFedToMe : "");
     type = i18n.__(type);
-    let thisBugUrl = bugUrl() + (errorFedToMe ? encodeURIComponent("\n### Error details\n```\n" + JSON.stringify(errorFedToMe, Object.getOwnPropertyNames(errorFedToMe), 2) + "\n```\n").replace(/\n/g, "%0D%0A") : "");
+    let thisBugUrl = bugUrl(prefs) + (errorFedToMe ? encodeURIComponent("\n### Error details\n```\n" + JSON.stringify(errorFedToMe, Object.getOwnPropertyNames(errorFedToMe), 2) + "\n```\n").replace(/\n/g, "%0D%0A") : "");
     $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close " + (hideDismiss ? "d-none" : "") + "' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action && !action.noLink ? "data-toast-action-url='" + escape((action && action.url ? action.url : thisBugUrl)) + "'" :"") + ">" + i18n.__(action && action.desc ? action.desc : "reportIssue") + "</button></div>" : "") + "</div></div>").toast("show"));
   } catch (err) {
     log.error(err);

@@ -1,14 +1,14 @@
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
-const { log, bugUrl, notifyUser } = require("./helpers/log");
-const constants = require("./constants");
-const { mp4Convert, convertUnusableFiles } = require("./helpers/converters");
-const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require("./helpers/obs");
+const { getPrefs, setPrefs, prefsInitialize } = require("./modules/prefs")
+const { log, bugUrl, notifyUser } = require('./modules/log')
+const constants = require('./constants')
+const { mp4Convert, convertUnusableFiles } = require('./modules/converters')
+const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require('./modules/obs')
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
   bootstrap = require("bootstrap"),
-  datetime = require("flatpickr"),
   dayjs = require("dayjs"),
   escape = require("escape-html"),
   ffmpeg = require("fluent-ffmpeg"),
@@ -73,7 +73,7 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
     await shell.openPath(url.fileURLToPath(url.pathToFileURL(macDownloadPath).href));
     // remote.app.exit();
   } catch(err) {
-    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
+    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"}, false, prefs);
   }
   $("#bg-mac-update").fadeIn(fadeDelay);
   $("#btn-settings").addClass("pulse-danger");
@@ -97,7 +97,6 @@ dayjs.extend(require("dayjs/plugin/duration"));
 
 var baseDate = dayjs().startOf("isoWeek"),
   cancelSync = false,
-  datepickers,
   downloadStats = {},
   dryrun = false,
   ffmpegIsSetup = false,
@@ -123,19 +122,6 @@ var baseDate = dayjs().startOf("isoWeek"),
 paths.langs = path.join(paths.app, "langs.json");
 paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
 
-datepickers = datetime(".timePicker", {
-  enableTime: true,
-  noCalendar: true,
-  dateFormat: "H:i",
-  time_24hr: true,
-  minuteIncrement: 15,
-  minTime: "06:00",
-  maxTime: "22:00",
-  onClose: function() {
-    var initiatorEl = $($(this)[0].element);
-    $("#" + initiatorEl.data("target")).val(initiatorEl.val()).change();
-  }
-});
 overlay(true, "cog fa-spin");
 require("electron").ipcRenderer.send("checkForUpdates");
 $( document ).ready(function() {
@@ -148,14 +134,7 @@ $( document ).ready(function() {
   congregationInitialSelector();
 });
 function goAhead() {
-  if (fs.existsSync(paths.prefs)) {
-    try {
-      prefs = JSON.parse(fs.readFileSync(paths.prefs));
-    } catch (err) {
-      notifyUser("error", "errorInvalidPrefs", null, true, err, true);
-    }
-    prefsInitialize();
-  }
+  prefs = getPrefs(paths.prefs)
   getInitialData();
   dateFormatter();
   $("#overlaySettings input:not(.timePicker), #overlaySettings select").on("change", function() {
@@ -234,8 +213,8 @@ function rm(toDelete) {
 function congregationChange(prefsFile) {
   overlay(true, "cog fa-spin").then(() => {
     paths.prefs = prefsFile;
-    prefs = {};
-    prefsInitialize();
+    prefs = setPrefs({});
+    prefs = prefsInitialize();
     goAhead();
   });
 }
@@ -335,7 +314,7 @@ function createVideoSync(mediaFile){
             if (!prefs.keepOriginalsAfterConversion) rm(mediaFile);
             return resolve();
           }).on("error", function(err) {
-            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
+            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true, false, prefs);
             return resolve();
           }).noVideo().save(path.join(outputFilePath));
         });
@@ -366,7 +345,7 @@ function createVideoSync(mediaFile){
             return resolve();
           });
           $("img#imgToConvert").on("error", function(err) {
-            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
+            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true, false, prefs);
             $("div#convert").remove();
             return resolve();
           });
@@ -374,7 +353,7 @@ function createVideoSync(mediaFile){
         });
       }
     } catch (err) {
-      notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
+      notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true, false, prefs);
       return resolve();
     }
   });
@@ -538,7 +517,7 @@ async function enforcePrefs() {
     if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) {
       setMediaLang();
       validateConfig(true);
-      prefsInitialize();
+      prefs = prefsInitialize();
     }
     for (var pref of Object.entries(forcedPrefs)) {
       disableGlobalPref(pref);
@@ -646,7 +625,7 @@ async function getCongMedia() {
       }
     }
   } catch (err) {
-    notifyUser("error", "errorGetCongMedia", null, true, err, true);
+    notifyUser("error", "errorGetCongMedia", null, true, err, true, false, prefs);
     updateTile("specificCong", "danger");
   }
   perf("getCongMedia", "stop");
@@ -673,13 +652,13 @@ async function getDbFromJwpub(pub, issue, localpath, lang) {
           await downloadIfRequired(jwpub);
           jwpubDbs[pub][issue] = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "0", "*.db"))[0]));
         } else {
-          notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, null, true);
+          notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, null, true, false, prefs);
         }
       }
     }
     return jwpubDbs[pub][issue];
   } catch (err) {
-    notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, err, true);
+    notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, err, true, false, prefs);
   }
 }
 async function getDocumentExtract(db, docId) {
@@ -759,7 +738,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly, lang) {
         multimediaItems.push(picture);
       }
     } catch (err) {
-      notifyUser("warn", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err, true);
+      notifyUser("warn", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err, true, false, prefs);
     }
   }
   return multimediaItems;
@@ -773,7 +752,7 @@ async function getForcedPrefs() {
         noCache: true
       })).data;
     } catch(err) {
-      notifyUser("error", "errorForcedSettingsEnforce", null, true, err);
+      notifyUser("error", "errorForcedSettingsEnforce", null, true, err, false, false, prefs);
     }
   }
   return forcedPrefs;
@@ -892,7 +871,7 @@ async function getMediaLinks(mediaItem) {
         }
       }
     } catch(err) {
-      notifyUser("warn", "infoPubIgnored", mediaItem.pubSymbol + " - " + mediaItem.track + " - " + mediaItem.issue + " - " + mediaItem.format, false, err);
+      notifyUser("warn", "infoPubIgnored", mediaItem.pubSymbol + " - " + mediaItem.track + " - " + mediaItem.issue + " - " + mediaItem.format, false, err, false, false, prefs);
     }
   }
   log.debug(mediaFiles);
@@ -930,7 +909,7 @@ async function getMwMediaFromDb() {
       }
       updateTile("day" + prefs.mwDay, "success");
     } catch(err) {
-      notifyUser("error", "errorGetMwMedia", null, true, err, true);
+      notifyUser("error", "errorGetMwMedia", null, true, err, true, false, prefs);
       updateTile("day" + prefs.mwDay, "danger");
     }
   }
@@ -1049,12 +1028,12 @@ async function getWeMediaFromDb() {
           songJson[0].queryInfo = qrySongs[song];
           addMediaItemToPart(weDate, song * 2, songJson[0]);
         } else {
-          notifyUser("error", "errorGetWeMedia", null, true, songJson, true);
+          notifyUser("error", "errorGetWeMedia", null, true, songJson, true, false, prefs);
         }
       }
       updateTile("day" + prefs.weDay, "success");
     } catch(err) {
-      notifyUser("error", "errorGetWeMedia", null, true, err, true);
+      notifyUser("error", "errorGetWeMedia", null, true, err, true, false, prefs);
       updateTile("day" + prefs.weDay, "danger");
     }
   }
@@ -1095,7 +1074,7 @@ function isReachable(hostname, port, silent) {
         resolve(true);
       });
       client.on("error", function(err) {
-        if (!silent) notifyUser("error", "errorSiteCheck", hostname + ":" + port, false, err);
+        if (!silent) notifyUser("error", "errorSiteCheck", hostname + ":" + port, false, err, false, false, prefs);
         resolve(false);
       });
     } catch(err) {
@@ -1181,28 +1160,7 @@ function periodicCleanup() {
     log.error(err);
   }
 }
-function prefsInitialize() {
-  $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
-  prefs.disableHardwareAcceleration = !!fs.existsSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
-  for (var pref of ["localAppLang", "lang", "mwDay", "weDay", "autoStartSync", "autoRunAtBoot", "autoQuitWhenDone", "localOutputPath", "enableMp4Conversion", "keepOriginalsAfterConversion", "congServer", "congServerPort", "congServerUser", "congServerPass", "autoOpenFolderWhenDone", "maxRes", "enableMusicButton", "enableMusicFadeOut", "musicFadeOutTime", "musicFadeOutType", "musicVolume", "mwStartTime", "weStartTime", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "congregationName", "disableHardwareAcceleration", "enableObs", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredOutput", "hideMediaLogo"]) {
-    if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
-  }
-  for (let field of ["localAppLang", "lang", "localOutputPath", "congregationName", "congServer", "congServerUser", "congServerPass", "congServerPort", "congServerDir", "musicFadeOutTime", "musicVolume", "mwStartTime", "weStartTime", "obsPort", "obsPassword", "obsMediaScene", "obsCameraScene", "preferredOutput"]) {
-    $("#" + field).val(prefs[field]).closest(".row").find("#" + field + "Display").html(prefs[field]);
-  }
-  for (let timeField of ["mwStartTime", "weStartTime"]) {
-    $(".timePicker").filter("[data-target='" + timeField + "']").val($("#" + timeField).val());
-  }
-  for (let dtPicker of datepickers) {
-    dtPicker.setDate($(dtPicker.element).val());
-  }
-  for (let checkbox of ["autoStartSync", "autoRunAtBoot", "enableMp4Conversion", "keepOriginalsAfterConversion", "autoQuitWhenDone", "autoOpenFolderWhenDone", "enableMusicButton", "enableMusicFadeOut", "excludeTh", "excludeLffi", "excludeLffiImages", "enableVlcPlaylistCreation", "enableMediaDisplayButton", "disableHardwareAcceleration", "enableObs", "hideMediaLogo"]) {
-    $("#" + checkbox).prop("checked", prefs[checkbox]);
-  }
-  for (let radioSel of ["mwDay", "weDay", "maxRes", "musicFadeOutType"]) {
-    $("#" + radioSel + " input[value='" + prefs[radioSel] + "']").prop("checked", true);
-  }
-}
+
 function progressSet(current, total, blockId) {
   if (!dryrun || !blockId) {
     let percent = current / total * 100;
@@ -1651,7 +1609,7 @@ async function syncCongMedia() {
       if (Object.values(congSyncMeetingMedia).flat().map(part => part.media).flat().filter(media => media.recurring).length > 0) updateTile("recurringMedia", "success");
       updateTile("specificCong", "success");
     } catch (err) {
-      notifyUser("error", "errorSyncCongMedia", null, true, err, true);
+      notifyUser("error", "errorSyncCongMedia", null, true, err, true, false, prefs);
       updateTile("specificCong", "danger");
       progressSet(0, 100, "specificCong");
     }
@@ -1785,7 +1743,7 @@ function updateCleanup() {
         // fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
         if (remote.app.isPackaged) fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
         if (lastRunVersion !== "0") {
-          notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
+          notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"}, false, prefs);
           // if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
           //   notifyUser("info", "<h6>Managing media just got simpler</h6><p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>" + (prefs.congServer ? "<p>The cloud upload button has therefore been removed from the bottom left corner of the app.</p>" : "") + "<p>Media can also now easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p><h6>In short:</h6> " + (prefs.congServer ? "<li>No more cloud button</li> " : "") + "<li><strong>Click on any day</strong> to manage media for that day</li>", null, true, null, {desc: "understood", noLink: true}, true);
           //   $("#folders").addClass("new-stuff");
@@ -1794,7 +1752,7 @@ function updateCleanup() {
           if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
             desc: "wannaHelpForSure",
             url: constants.REPO_URL + "discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
-          });
+          }, false, prefs);
           getJwOrgLanguages(true).then(function() {
             setMediaLang();
           });
@@ -1979,7 +1937,7 @@ function updateFileList(initialLoad) {
     $(".btn-cancel-upload.no-file-selected").toggle(!newFileChosen);
     $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
   } catch (err) {
-    notifyUser("error", "errorAdditionalMediaList", null, true, err, true);
+    notifyUser("error", "errorAdditionalMediaList", null, true, err, true, false, prefs);
   } finally {
     $(".disabled-while-load").prop("disabled", false).removeClass("disabled-while-load");
   }
@@ -2666,7 +2624,7 @@ $("#btnUpload").on("click", async () => {
       }
     }
   } catch (err) {
-    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true);
+    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true, false, prefs);
   }
   $(".btn-cancel-upload").addClass("changes-made");
   if (webdavIsAGo) await startMediaSync(true, "Recurring");
@@ -2720,7 +2678,7 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
     } else {
       $(this).val("");
       $("#fileToUpload").val("").change();
-      notifyUser("warn", "warnNoDocumentsFound", $(this).val(), true, null, true);
+      notifyUser("warn", "warnNoDocumentsFound", $(this).val(), true, null, true, false, prefs);
     }
   } else {
     $("#fileToUpload").val("").change();
@@ -2962,7 +2920,7 @@ $(document).on("shown.bs.modal", "#staticBackdrop", function () {
   }
 });
 $("#overlaySettings").on("click", ".btn-action:not(.btn-danger)", function() {
-  if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugUrl());
+  if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugUrl(prefs));
   shell.openExternal($(this).data("action-url"));
 });
 $("#btnTestApp").on("click", testApp);
