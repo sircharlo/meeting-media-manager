@@ -87,6 +87,6 @@
     "postinstall": "electron-builder install-app-deps",
     "release": "electron-builder"
   },
-  "author": "",
+  "author": "sircharlo",
   "license": "ISC"
 }
