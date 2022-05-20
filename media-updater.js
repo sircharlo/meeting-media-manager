@@ -1,5 +1,9 @@
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
+const { log, bugUrl, notifyUser } = require('./helpers/log')
+const constants = require('./constants')
+const { mp4Convert, convertUnusableFiles } = require('./helpers/converters')
+const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require('./helpers/obs')
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -16,34 +20,7 @@ const fadeDelay = 200,
   isAudio = require("is-audio"),
   isImage = require("is-image"),
   isVideo = require("is-video"),
-  log = {
-    debug: function() {
-      let now = + new Date();
-      if (!logOutput.debug[now]) logOutput.debug[now] = [];
-      logOutput.debug[now].push(arguments);
-      if (logLevel == "debug") console.log.apply(console,arguments);
-    },
-    error: function() {
-      let now = + new Date();
-      if (!logOutput.error[now]) logOutput.error[now] = [];
-      logOutput.error[now].push(arguments);
-      console.error.apply(console,arguments);
-    },
-    info: function() {
-      let now = + new Date();
-      if (!logOutput.info[now]) logOutput.info[now] = [];
-      logOutput.info[now].push(arguments);
-      console.info.apply(console,arguments);
-    },
-    warn: function() {
-      let now = + new Date();
-      if (!logOutput.warn[now]) logOutput.warn[now] = [];
-      logOutput.warn[now].push(arguments);
-      console.warn.apply(console,arguments);
-    },
-  },
   net = require("net"),
-  OBSWebSocket = require("obs-websocket-js"),
   os = require("os"),
   path = require("upath"),
   remote = require("@electron/remote"),
@@ -88,7 +65,7 @@ require("electron").ipcRenderer.on("overlay", (event, message) => overlay(true, 
 require("electron").ipcRenderer.on("macUpdate", async () => {
   await overlay(true, "cloud-download-alt fa-beat", "circle-notch fa-spin text-success");
   try {
-    let latestVersion = (await request("https://api.github.com/repos/sircharlo/meeting-media-manager/releases/latest")).data;
+    let latestVersion = (await request(constants.REPO_URL + "releases/latest")).data;
     let macDownload = latestVersion.assets.find(a => a.name.includes("dmg"));
     notifyUser("info", "updateDownloading", latestVersion.tag_name, false, null);
     let macDownloadPath = path.join(remote.app.getPath("downloads"), macDownload.name);
@@ -96,12 +73,12 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
     await shell.openPath(url.fileURLToPath(url.pathToFileURL(macDownloadPath).href));
     // remote.app.exit();
   } catch(err) {
-    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: "https://github.com/sircharlo/meeting-media-manager/releases/latest"});
+    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
   }
   $("#bg-mac-update").fadeIn(fadeDelay);
   $("#btn-settings").addClass("pulse-danger");
   $("#version").addClass("btn-danger pulse-danger").removeClass("btn-light").find("i").remove().end().prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").click(function() {
-    shell.openExternal("https://github.com/sircharlo/meeting-media-manager/releases/latest");
+    shell.openExternal(constants.REPO_URL + "releases/latest");
   });
   await overlay(false);
 });
@@ -111,10 +88,6 @@ require("electron").ipcRenderer.on("notifyUser", (event, arg) => {
 // require("electron").ipcRenderer.on("congregationInitialSelector", () => {
 //   congregationInitialSelector();
 // });
-const bugUrl = () => "https://github.com/sircharlo/meeting-media-manager/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" + encodeURIComponent("### Describe the bug\nA clear and concise description of what the bug is.\n\n### To Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Do '....'\n4. See error\n\n### Expected behavior\nA clear and concise description of what you expected to happen.\n\n### Screenshots\nIf possible, add screenshots to help explain your problem.\n\n### System specs\n- " + os.type() + " " + os.release() + "\n- M³ " + currentAppVersion + "\n\n### Additional context\nAdd any other context about the problem here.\n" + (prefs ? "\n### Anonymized `prefs.json`\n```\n" + JSON.stringify(Object.fromEntries(Object.entries(prefs).map(entry => {
-  if ((entry[0].startsWith("cong") || entry[0] == "localOutputPath") && entry[1]) entry[1] = "***";
-  return entry;
-})), null, 2) + "\n```" : "") + (logOutput.error && logOutput.error.length >0 ? "\n### Full error log\n```\n" + JSON.stringify(logOutput.error, null, 2) + "\n```" : "") + "\n").replace(/\n/g, "%0D%0A");
 
 dayjs.extend(require("dayjs/plugin/isoWeek"));
 dayjs.extend(require("dayjs/plugin/isBetween"));
@@ -127,24 +100,15 @@ var baseDate = dayjs().startOf("isoWeek"),
   datepickers,
   downloadStats = {},
   dryrun = false,
-  dynamicShortcuts = {},
   ffmpegIsSetup = false,
   jsonLangs = [],
   jwpubDbs = {},
-  logLevel = "info",
-  logOutput = {
-    error: {},
-    warn: {},
-    info: {},
-    debug: {}
-  },
   meetingMedia,
   modal = new bootstrap.Modal(document.getElementById("staticBackdrop"), {
     backdrop: "static",
     keyboard: false
   }),
   now = dayjs().hour(0).minute(0).second(0).millisecond(0),
-  obs = {},
   paths = {
     app: path.normalize(remote.app.getPath("userData"))
   },
@@ -219,7 +183,7 @@ function goAhead() {
     if ($(this).prop("id") == "enableMediaDisplayButton") toggleMediaWindow();
     if ($(this).prop("id") == "hideMediaLogo") toggleMediaWindow("reopen");
     if ($(this).prop("id") == "preferredOutput") setMediaWindowPosition();
-    if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes();
+    if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes(false, validateConfig, prefs);
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer") || $(this).prop("id") == "outputFolderDateFormat") meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day") || $(this).prop("id") == "outputFolderDateFormat") {
       setVars();
@@ -345,90 +309,7 @@ function congregationSelectPopulate() {
     unconfirm(this);
   });
 }
-function convertPdf(mediaFile) {
-  return new Promise((resolve)=>{
-    var pdfjsLib = require("pdfjs-dist/build/pdf.js");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = require("pdfjs-dist/build/pdf.worker.entry.js");
-    pdfjsLib.getDocument({
-      url: mediaFile,
-      verbosity: 0
-    }).promise.then(async function(pdf) {
-      for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        await convertPdfPage(mediaFile, pdf, pageNum);
-      }
-      await rm(mediaFile);
-    }).catch((err) => {
-      notifyUser("warn", "warnPdfConversionFailure", path.basename(mediaFile), true, err);
-    }).then(() => {
-      resolve();
-    });
-  });
-}
-function convertPdfPage(mediaFile, pdf, pageNum) {
-  return new Promise((resolve)=>{
-    pdf.getPage(pageNum).then(function(page) {
-      $("body").append("<div id='pdf' style='display: none;'>");
-      $("div#pdf").append("<canvas id='pdfCanvas'></canvas>");
-      let scale = fullHd[1] / page.getViewport({scale: 1}).height * 2;
-      var canvas = $("#pdfCanvas")[0];
-      let ctx = canvas.getContext("2d");
-      ctx.imageSmoothingEnabled = false;
-      canvas.height = fullHd[1] * 2;
-      canvas.width = page.getViewport({scale: scale}).width;
-      page.render({
-        canvasContext: ctx,
-        viewport: page.getViewport({scale: scale})
-      }).promise.then(function() {
-        fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png"), Buffer.from(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
-        $("div#pdf").remove();
-      }).catch((err) => {
-        notifyUser("warn", "warnPdfConversionFailure", path.basename(mediaFile), true, err);
-      }).finally(() => {
-        resolve();
-      });
-    });
-  });
-}
-function convertSvg(mediaFile) {
-  return new Promise((resolve)=>{
-    $("body").append("<div id='svg'>");
-    $("div#svg").append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
-    $("img#svgImg").on("load", function() {
-      let canvas = $("#svgCanvas")[0],
-        image = $("img#svgImg")[0];
-      image.height = fullHd[1] * 2;
-      canvas.height = image.height;
-      canvas.width  = image.width;
-      let canvasContext = canvas.getContext("2d");
-      canvasContext.fillStyle = "white";
-      canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-      canvasContext.imageSmoothingEnabled = true;
-      canvasContext.imageSmoothingQuality = "high";
-      canvasContext.drawImage(image, 0, 0);
-      fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png"), Buffer.from(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
-      rm(mediaFile);
-      $("div#svg").remove();
-      return resolve();
-    });
-    $("img#svgImg").on("error", function() {
-      notifyUser("warn", "warnSvgConversionFailure", path.basename(mediaFile), true);
-      return resolve();
-    });
-    $("img#svgImg").prop("src", escape(mediaFile));
-  });
-}
-async function convertUnusableFiles() {
-  for (let pdfFile of glob.sync(path.join(paths.media, "**", "*pdf"), {
-    ignore: [path.join(paths.media, "Recurring")]
-  })) {
-    await convertPdf(pdfFile);
-  }
-  for (let svgFile of glob.sync(path.join(paths.media, "**", "*svg"), {
-    ignore: [path.join(paths.media, "Recurring")]
-  })) {
-    await convertSvg(svgFile);
-  }
-}
+
 function createMediaNames() {
   perf("createMediaNames", "start");
   Object.values(meetingMedia).map(meeting => {
@@ -691,7 +572,7 @@ async function ffmpegSetup() {
     } else {
       targetOs = "linux-64";
     }
-    var ffmpegVersion = (await request("https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest")).data.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
+    var ffmpegVersion = (await request(constants.FFMPEG_VERSION)).data.assets.filter(a => a.name.includes(targetOs) && a.name.includes("ffmpeg"))[0];
     var ffmpegZipPath = path.join(paths.app, "ffmpeg", "zip", ffmpegVersion.name);
     if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
       await rm([path.join(paths.app, "ffmpeg", "zip")]);
@@ -907,7 +788,7 @@ async function getInitialData() {
   await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
-  await obsGetScenes();
+  await obsGetScenes(false, validateConfig, prefs);
   await toggleMediaWindow();
   $("#version").html("M³ " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
@@ -978,16 +859,16 @@ async function getMediaLinks(mediaItem) {
   if ((mediaItem.lang || prefs.lang) && prefs.maxRes) {
     try {
       if (mediaItem.pubSymbol === "w" && mediaItem.issue && parseInt(mediaItem.issue) >= 20080101 && mediaItem.issue.toString().slice(-2) == "01") mediaItem.pubSymbol = "wp";
-      let requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + (mediaItem.pubSymbol ? "&pub=" + mediaItem.pubSymbol + (mediaItem.track ? "&track=" + mediaItem.track : "") + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") : (mediaItem.docId ? "&docid=" + mediaItem.docId : "")) + "&langwritten=" + (mediaItem.lang || prefs.lang);
+      let requestUrl = constants.JW_API + (mediaItem.pubSymbol ? "&pub=" + mediaItem.pubSymbol + (mediaItem.track ? "&track=" + mediaItem.track : "") + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") : (mediaItem.docId ? "&docid=" + mediaItem.docId : "")) + "&langwritten=" + (mediaItem.lang || prefs.lang);
       let result = (await request(requestUrl)).data;
       log.debug(mediaItem.pubSymbol, mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
       if (result && result.length > 0 && result[0].status && [400, 404].includes(result[0].status) && mediaItem.pubSymbol && mediaItem.track) {
-        requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + mediaItem.pubSymbol + "m" + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || prefs.lang);
+        requestUrl = constants.JW_API + "&pub=" + mediaItem.pubSymbol + "m" + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || prefs.lang);
         result = (await request(requestUrl)).data;
         log.debug(mediaItem.pubSymbol + "m", mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
       }
       if (result && result.length > 0 && result[0].status && [400, 404].includes(result[0].status) && mediaItem.pubSymbol && mediaItem.pubSymbol.endsWith("m") && mediaItem.track) {
-        requestUrl = "https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS?output=json" + "&pub=" + mediaItem.pubSymbol.slice(0, -1) + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || prefs.lang);
+        requestUrl = constants.JW_API + "&pub=" + mediaItem.pubSymbol.slice(0, -1) + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || prefs.lang);
         result = (await request(requestUrl)).data;
         log.debug(mediaItem.pubSymbol + "m", mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
       }
@@ -1020,7 +901,7 @@ async function getMediaLinks(mediaItem) {
 async function getMediaAdditionalInfo(pub, track, issue, format, docId) {
   let mediaAdditionalInfo = {};
   if (issue) issue = issue.toString().replace(/(\d{6})00$/gm, "$1");
-  let result = (await request("https://b.jw-cdn.org/apis/mediator/v1/media-items/" + prefs.lang + "/" + (docId ? "docid-" + docId + "_1": "pub-" + [pub, issue, track].filter(Boolean).join("_")) + "_VIDEO")).data;
+  let result = (await request(constants.JWPUB_API + prefs.lang + "/" + (docId ? "docid-" + docId + "_1": "pub-" + [pub, issue, track].filter(Boolean).join("_")) + "_VIDEO")).data;
   if (result && result.media && result.media.length > 0) {
     if (result.media[0].images.wss.sm) mediaAdditionalInfo.thumbnail = result.media[0].images.wss.sm;
     if (result.media[0].primaryCategory) mediaAdditionalInfo.primaryCategory = result.media[0].primaryCategory;
@@ -1182,7 +1063,7 @@ async function getRemoteYearText(force) {
   let yearText = null;
   try {
     if (!fs.existsSync(paths.yearText) || force) {
-      await axios.get("https://wol.jw.org/wol/finder?docid=1102022800&wtlocale=" + prefs.lang + "&format=json&snip=yes", {
+      await axios.get(constants.YEARTEXT(prefs.lang), {
         adapter: require("axios/lib/adapters/http")
       }).then(result => {
         fs.ensureDirSync(path.join(paths.yearText, "../"));
@@ -1251,191 +1132,7 @@ async function manageMedia(day, isMeetingDate, mediaType) {
   await toggleScreen("overlayUploadFile");
   overlay(false);
 }
-async function mp4Convert() {
-  perf("mp4Convert", "start");
-  updateStatus("file-video");
-  updateTile("mp4Convert", "warning");
-  var filesToProcess = glob.sync(path.join(paths.media, "*"), {
-    onlyDirectories: true
-  }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, prefs.outputFolderDateFormat).isValid() && dayjs(folder, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, prefs.outputFolderDateFormat))).map(folder => glob.sync(path.join(paths.media, folder, "*"), {
-    ignore: ["!**/(*.mp4|*.xspf)"]
-  })).flat();
-  totals.mp4Convert = {
-    total: filesToProcess.length,
-    current: 1
-  };
-  progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
-  for (var mediaFile of filesToProcess) {
-    await createVideoSync(mediaFile);
-    totals.mp4Convert.current++;
-    progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
-  }
-  updateTile("mp4Convert", "success");
-  perf("mp4Convert", "stop");
-}
-function notifyUser(type, message, fileOrUrl, persistent, errorFedToMe, action, hideDismiss) {
-  try {
-    let icon;
-    switch (type) {
-    case "error":
-      icon = "fa-exclamation-circle text-danger";
-      break;
-    case "warn":
-      icon = "fa-exclamation-circle text-warning";
-      break;
-    default:
-      icon = "fa-info-circle text-primary";
-    }
-    if (fileOrUrl) fileOrUrl = escape(fileOrUrl);
-    if (["error", "warn"].includes(type)) log[type](fileOrUrl ? fileOrUrl : "", errorFedToMe ? errorFedToMe : "");
-    type = i18n.__(type);
-    let thisBugUrl = bugUrl() + (errorFedToMe ? encodeURIComponent("\n### Error details\n```\n" + JSON.stringify(errorFedToMe, Object.getOwnPropertyNames(errorFedToMe), 2) + "\n```\n").replace(/\n/g, "%0D%0A") : "");
-    $("#toastContainer").append($("<div class='toast' role='alert' data-bs-autohide='" + !persistent + "' data-bs-delay='10000'><div class='toast-header'><i class='fas " + icon + "'></i><strong class='me-auto ms-2'>" + type + "</strong><button type='button' class='btn-close " + (hideDismiss ? "d-none" : "") + "' data-bs-dismiss='toast'></button></div><div class='toast-body'><p>" + i18n.__(message) + "</p>" + (fileOrUrl ? "<code>" + fileOrUrl + "</code>" : "") + (action ? "<div class='mt-2 pt-2 border-top'><button type='button' class='btn btn-primary btn-sm toast-action' " + (action && !action.noLink ? "data-toast-action-url='" + escape((action && action.url ? action.url : thisBugUrl)) + "'" :"") + ">" + i18n.__(action && action.desc ? action.desc : "reportIssue") + "</button></div>" : "") + "</div></div>").toast("show"));
-  } catch (err) {
-    log.error(err);
-  }
-}
-async function obsConnect() {
-  try {
-    if (!prefs.enableObs && obs._connected) {
-      await obs.disconnect();
-      log.info("OBS disconnected.");
-      obs = {};
-    } else if (!obs._connected && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
-      obs = new OBSWebSocket();
-      obs.on("error", err => {
-        notifyUser("error", "errorObs", null, false, err);
-      });
-      obs.on("SwitchScenes", function(newScene) {
-        try {
-          if (newScene && newScene.sceneName && newScene.sceneName !== prefs.obsMediaScene) $("#obsTempCameraScene").val(newScene.sceneName).change();
-        } catch (err) {
-          log.error(err);
-        }
-      });
-      obs.on("ConnectionOpened", () => {
-        log.info("OBS success! Connected & authenticated.");
-      });
-      await obs.connect({ address: "localhost:" + prefs.obsPort, password: prefs.obsPassword }).catch(err => {
-        notifyUser("error", "errorObs", null, false, err);
-      });
-    }
-  } catch (err) {
-    notifyUser("error", "errorObs", null, false, err);
-  }
-  $(".relatedToObsScenes").toggle(!!obs._connected);
-  $(".relatedToObsLogin input").toggleClass("is-invalid", !!prefs.enableObs && !obs._connected).toggleClass("is-valid", !!prefs.enableObs && !!obs._connected);
-  return !!obs._connected;
-}
-function shortcutSet(shortcut, destination, fn) {
-  let ret = null, alreadyExists = false;
-  try {
-    if (dynamicShortcuts[destination] && dynamicShortcuts[destination].includes(shortcut)) {
-      alreadyExists = true;
-    } else if (!dynamicShortcuts[destination] || (Array.isArray(dynamicShortcuts[destination]) && !dynamicShortcuts[destination].includes(shortcut))) ret = remote.globalShortcut.register(shortcut, fn);
-    if (ret) {
-      if (!dynamicShortcuts[destination]) dynamicShortcuts[destination] = [];
-      dynamicShortcuts[destination].push(shortcut);
-    }
-    if (!(ret || alreadyExists)) {
-      notifyUser("info", "infoShortcutSetFail", shortcut);
-    }
-  } catch (err) {
-    log.error(err);
-  }
-  return ret;
-}
-function shortcutsUnset(domain) {
-  if (domain && dynamicShortcuts[domain]) for (let i = dynamicShortcuts[domain].length - 1; i >= 0; i--) {
-    try {
-      remote.globalShortcut.unregister(dynamicShortcuts[domain][i]);
-      dynamicShortcuts[domain].splice(i, 1);
-    } catch (err) {
-      log.error(err);
-    }
-  }
-}
-async function obsGetScenes(currentOnly) {
-  try {
-    let connectionAttempt = await obsConnect();
-    return (connectionAttempt ? await obs.send("GetSceneList").then(data => {
-      if (currentOnly) {
-        return data.currentScene;
-      } else {
-        $("#overlaySettings .obs-scenes .loaded-scene").remove();
-        data.scenes.map(scene => scene.name).forEach(scene => {
-          $("#overlaySettings .obs-scenes").append($("<option>", {
-            class: "loaded-scene",
-            text: scene,
-            value: scene
-          }));
-        });
-        for (var pref of ["obsCameraScene", "obsMediaScene"]) {
-          if ($("#" + pref + " option[value='" + prefs[pref] + "']").length == 0) {
-            prefs[pref] = null;
-            validateConfig();
-          } else {
-            $("#" + pref).val(prefs[pref]);
-          }
-        }
-        $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'></select>");
-        shortcutsUnset("obsScenes");
-        let cameraScenes = [];
-        $("#obsCameraScene").children().clone().filter(function (i, el) {
-          return $(el).val() && $(el).val() !== prefs.obsMediaScene;
-        }).each((i, el) => {
-          try {
-            let sceneNum = (i < 10 ? (i + 1).toString().slice(-1) : null);
-            let shortcutSetSuccess = false;
-            if ((i + 1) < 10) {
-              shortcutSetSuccess = shortcutSet("Alt+" + sceneNum, "obsScenes", function() {
-                $("#obsTempCameraScene").val($(el).val()).change();
-              });
-            }
-            cameraScenes.push({
-              id: $(el).val(),
-              text: (shortcutSetSuccess ? "<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd> - " : "") + $(el).val(),
-              html: (shortcutSetSuccess ? "<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd> - " : "") + $(el).val(),
-              title: $(el).val(),
-            });
-          } catch (err) {
-            log.error(err);
-          }
-        });
-        $("#obsTempCameraScene").select2({
-          selectionCssClass: "obsTempCameraSceneSelect",
-          dropdownParent: $("#staticBackdrop"),
-          data: cameraScenes,
-          escapeMarkup: function(markup) {
-            return markup;
-          },
-          templateResult: function(data) {
-            return data.html;
-          },
-          templateSelection: function(data) {
-            return data.text;
-          }
-        });
-        $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene).change();
-        return data;
-      }
-    }).catch(err => {
-      notifyUser("error", "errorObs", null, false, err);
-    }) : false);
-  } catch (err) {
-    if (obs._connected) notifyUser("error", "errorObs", null, false, err);
-    return false;
-  }
-}
-async function obsSetScene(scene) {
-  try {
-    if (await obsConnect() && scene) obs.send("SetCurrentScene", { "scene-name": scene }).catch(err => {
-      notifyUser("error", "errorObs", null, false, err);
-    });
-  } catch (err) {
-    if (obs._connected) notifyUser("error", "errorObs", null, false, err);
-  }
-}
+
 function overlay(show, topIcon, bottomIcon, action) {
   return new Promise((resolve) => {
     if (!show) {
@@ -1835,7 +1532,7 @@ function showMediaWindow() {
 }
 async function startMediaDisplay() {
   try {
-    await obsSetScene(prefs.obsCameraScene);
+    await obsSetScene(prefs.obsCameraScene, prefs);
     await getRemoteYearText().finally(() => {
       require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
     });
@@ -1875,8 +1572,8 @@ async function startMediaSync(isDryrun, meetingFilter) {
       syncJwOrgMedia(),
       syncLocalRecurringMedia(),
     ]);
-    await convertUnusableFiles();
-    if (prefs.enableMp4Conversion) await mp4Convert();
+    await convertUnusableFiles(glob, rm);
+    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, glob, progressSet, createVideoSync, totals);
     if (prefs.enableVlcPlaylistCreation) createVlcPlaylists();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(url.fileURLToPath(url.pathToFileURL(paths.media).href));
     $("#btn-settings").fadeToAndToggle(fadeDelay, 1);
@@ -2088,7 +1785,7 @@ function updateCleanup() {
         // fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
         if (remote.app.isPackaged) fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
         if (lastRunVersion !== "0") {
-          notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: "https://github.com/sircharlo/meeting-media-manager/releases/latest"});
+          notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
           // if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
           //   notifyUser("info", "<h6>Managing media just got simpler</h6><p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>" + (prefs.congServer ? "<p>The cloud upload button has therefore been removed from the bottom left corner of the app.</p>" : "") + "<p>Media can also now easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p><h6>In short:</h6> " + (prefs.congServer ? "<li>No more cloud button</li> " : "") + "<li><strong>Click on any day</strong> to manage media for that day</li>", null, true, null, {desc: "understood", noLink: true}, true);
           //   $("#folders").addClass("new-stuff");
@@ -2096,7 +1793,7 @@ function updateCleanup() {
           let currentLang = jsonLangs ? jsonLangs.filter(item => item.langcode === prefs.lang)[0] : null;
           if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
             desc: "wannaHelpForSure",
-            url: "https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
+            url: constants.REPO_URL + "discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
           });
           getJwOrgLanguages(true).then(function() {
             setMediaLang();
@@ -2320,7 +2017,7 @@ function validateConfig(changed, restart) {
   }
   if (prefs.enableObs) {
     mandatoryFields.push("obsPort", "obsPassword");
-    if (obs._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
+    if (getObs()._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
   }
   for (var setting of mandatoryFields) {
     if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
@@ -2751,7 +2448,7 @@ $("#btnMediaWindow").on("click", function() {
     } else if ($(this).hasClass("play")) {
       require("electron").ipcRenderer.send("playVideo");
     }
-    obsSetScene($(this).hasClass("pause") && !$(this).hasClass("shortVideoPaused") ? $("#obsTempCameraScene").val() : prefs.obsMediaScene);
+    obsSetScene($(this).hasClass("pause") && !$(this).hasClass("shortVideoPaused") ? $("#obsTempCameraScene").val() : prefs.obsMediaScene, prefs);
     $("#videoProgress, #videoScrubber").toggle();
     $(this).removeClass("shortVideoPaused").toggleClass("play pause").toggleClass("pulse-danger", $(this).hasClass("play")).find("i").toggleClass("fa-play fa-pause");
   });
@@ -2773,7 +2470,7 @@ $("#btnMediaWindow").on("click", function() {
     }
     require("electron").ipcRenderer.send("showMedia", mediaFileToPlay);
     $("#btnToggleMediaWindowFocus.pulse-danger").click();
-    obsSetScene(prefs.obsMediaScene);
+    obsSetScene(prefs.obsMediaScene, prefs);
     if (mediaItem.hasClass("video") && !(mediaItem.data("originalEnd") < 1000)) {
       mediaItem.addClass("position-relative");
       mediaItem.append("<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'><div class='progress-bar' role='progressbar' style='width: 0%'></div></div>");
@@ -2797,7 +2494,7 @@ $("#btnMediaWindow").on("click", function() {
     let mediaItem = $(this).closest(".item");
     if (!mediaItem.hasClass("video") || $(this).hasClass("confirmed")) {
       require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
-      obsSetScene($("#obsTempCameraScene").val());
+      obsSetScene($("#obsTempCameraScene").val(), prefs);
       if (mediaItem.hasClass("video")) {
         mediaItem.removeClass("position-relative");
         mediaItem.find("#videoProgress, #videoScrubber").remove();
@@ -2825,7 +2522,7 @@ $("#btnMediaWindow").on("click", function() {
     }
   });
   showModal(true, true, i18n.__("meeting"), folderListing, false);
-  obsGetScenes();
+  obsGetScenes(false, validateConfig, prefs);
   $("#staticBackdrop .modal-header").addClass("d-flex").children().wrapAll("<div class='col-4 text-center'></div>");
   $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only' style='display: none;'><button class='btn btn-sm show-prefixes'><i class='fas fa-fw fa-eye'></i><i class='fas fa-fw fa-list-ol'></i></button></div>");
   $("#staticBackdrop .modal-header").append("<div class='col-4 for-folder-listing-only text-end' style='display: none;'><button class='btn btn-sm folderRefresh'><i class='fas fa-fw fa-rotate-right'></i></button><button class='btn btn-sm master-move-handle'><i class='fas fa-fw fa-arrow-down-short-wide'></i></button><button class='btn btn-sm folderOpen'><i class='fas fa-fw fa-folder-open'></i></button></div>");
@@ -2836,14 +2533,14 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer").show();
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
-  obs = {};
+  setObs({})
   require("electron").ipcRenderer.send("allowQuit");
   $("#music-buttons").append($("#btnMeetingMusic, #btnStopMeetingMusic").removeClass("btn-lg"));
   $("#btnMediaWindow").before($("#btnToggleMediaWindowFocus").addClass("btn-sm"));
   showModal(false);
 });
 $("#staticBackdrop .modal-footer").on("change", "#obsTempCameraScene", async function() {
-  if ((await obsGetScenes(true)) !== prefs.obsMediaScene) obsSetScene($(this).val());
+  if ((await obsGetScenes(true, validateConfig, prefs)) !== prefs.obsMediaScene) obsSetScene($(this).val(), prefs);
 });
 $("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function() {
   refreshFolderListing(path.join(paths.media, $(".modal-header h5").text()));
