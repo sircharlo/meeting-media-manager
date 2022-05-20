@@ -80,9 +80,7 @@ function shortcutsUnset(domain) {
 async function obsGetScenes(currentOnly, validateConfig, prefs) {
   try {
     let connectionAttempt = await obsConnect(prefs);
-    log.debug('conn', connectionAttempt)
     return (connectionAttempt ? await obs.send("GetSceneList").then(data => {
-      log.debug('data', data)
       if (currentOnly) {
         return data.currentScene;
       } else {
