@@ -1,8 +1,9 @@
-// Internal packages
+// Internal modules
 const { log, notifyUser } = require("./log");
 
-// External packages
+// External modules
 const remote = require("@electron/remote");
+const $ = require("jquery");
 const OBSWebSocket = require("obs-websocket-js");
 
 // Variables
@@ -46,15 +47,19 @@ async function obsConnect(prefs) {
     notifyUser("error", "errorObs", null, false, err);
   }
   $(".relatedToObsScenes").toggle(!!obs._connected);
-  $(".relatedToObsLogin input").toggleClass("is-invalid", !!prefs.enableObs && !obs._connected).toggleClass("is-valid", !!prefs.enableObs && !!obs._connected);
+  $(".relatedToObsLogin input")
+    .toggleClass("is-invalid", !!prefs.enableObs && !obs._connected)
+    .toggleClass("is-valid", !!prefs.enableObs && !!obs._connected);
   return !!obs._connected;
 }
+
 function shortcutSet(shortcut, destination, fn) {
   let ret = null, alreadyExists = false;
   try {
     if (dynamicShortcuts[destination] && dynamicShortcuts[destination].includes(shortcut)) {
       alreadyExists = true;
-    } else if (!dynamicShortcuts[destination] || (Array.isArray(dynamicShortcuts[destination]) && !dynamicShortcuts[destination].includes(shortcut))) ret = remote.globalShortcut.register(shortcut, fn);
+    } else if (!dynamicShortcuts[destination] || (Array.isArray(dynamicShortcuts[destination]) && !dynamicShortcuts[destination].includes(shortcut))) 
+      ret = remote.globalShortcut.register(shortcut, fn);
     if (ret) {
       if (!dynamicShortcuts[destination]) dynamicShortcuts[destination] = [];
       dynamicShortcuts[destination].push(shortcut);
@@ -67,6 +72,7 @@ function shortcutSet(shortcut, destination, fn) {
   }
   return ret;
 }
+
 function shortcutsUnset(domain) {
   if (domain && dynamicShortcuts[domain]) for (let i = dynamicShortcuts[domain].length - 1; i >= 0; i--) {
     try {
@@ -77,6 +83,7 @@ function shortcutsUnset(domain) {
     }
   }
 }
+
 async function obsGetScenes(currentOnly, validateConfig, prefs) {
   try {
     let connectionAttempt = await obsConnect(prefs);
@@ -92,7 +99,7 @@ async function obsGetScenes(currentOnly, validateConfig, prefs) {
             value: scene
           }));
         });
-        for (var pref of ["obsCameraScene", "obsMediaScene"]) {
+        for (let pref of ["obsCameraScene", "obsMediaScene"]) {
           if ($("#" + pref + " option[value='" + prefs[pref] + "']").length == 0) {
             prefs[pref] = null;
             validateConfig();
@@ -114,10 +121,13 @@ async function obsGetScenes(currentOnly, validateConfig, prefs) {
                 $("#obsTempCameraScene").val($(el).val()).change();
               });
             }
+
+            const txt = (shortcutSetSuccess ? `<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>${sceneNum}</kbd> - ` : "") + $(el).val();
+
             cameraScenes.push({
               id: $(el).val(),
-              text: (shortcutSetSuccess ? "<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd> - " : "") + $(el).val(),
-              html: (shortcutSetSuccess ? "<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>" + sceneNum + "</kbd> - " : "") + $(el).val(),
+              text: txt,
+              html: txt,
               title: $(el).val(),
             });
           } catch (err) {

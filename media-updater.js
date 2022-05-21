@@ -1,10 +1,10 @@
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
-const { getPrefs, setPrefs, prefsInitialize } = require("./modules/prefs")
-const { log, bugUrl, notifyUser } = require('./modules/log')
-const constants = require('./constants')
-const { mp4Convert, convertUnusableFiles } = require('./modules/converters')
-const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require('./modules/obs')
+const { initPrefs, setPref, setPrefs, prefsInitialize } = require("./modules/prefs");
+const { log, bugUrl, notifyUser, setLogLevel } = require("./modules/log");
+const constants = require("./constants");
+const { mp4Convert, convertUnusableFiles } = require("./modules/converters");
+const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require("./modules/obs");
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -134,20 +134,20 @@ $( document ).ready(function() {
   congregationInitialSelector();
 });
 function goAhead() {
-  prefs = getPrefs(paths.prefs)
+  prefs = initPrefs(paths.prefs);
   getInitialData();
   dateFormatter();
   $("#overlaySettings input:not(.timePicker), #overlaySettings select").on("change", function() {
     if ($(this).prop("tagName") == "INPUT") {
       if ($(this).prop("type") == "checkbox") {
-        prefs[$(this).prop("id")] = $(this).prop("checked");
+        prefs = setPref($(this).prop("id"), $(this).prop("checked"));
       } else if ($(this).prop("type") == "radio") {
-        prefs[$(this).closest("div").prop("id")] = escape($(this).closest("div").find("input:checked").val());
+        prefs = setPref($(this).closest("div").prop("id"), escape($(this).closest("div").find("input:checked").val()));
       } else if ($(this).prop("type") == "text" || $(this).prop("type") == "password"  || $(this).prop("type") == "hidden" || $(this).prop("type") == "range") {
-        prefs[$(this).prop("id")] = escape($(this).val());
+        prefs = setPref($(this).prop("id"), escape($(this).val()));
       }
     } else if ($(this).prop("tagName") == "SELECT") {
-      prefs[$(this).prop("id")] = escape($(this).find("option:selected").val());
+      prefs = setPref($(this).prop("id"), escape($(this).find("option:selected").val()));
     }
     if ($(this).prop("id") == "disableHardwareAcceleration") toggleHardwareAcceleration();
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
@@ -796,7 +796,7 @@ async function getJwOrgLanguages(forceRefresh) {
       isSignLanguage: lang.isSignLanguage
     }));
     fs.writeFileSync(paths.langs, JSON.stringify(cleanedJwLangs, null, 2));
-    prefs.langUpdatedLast = dayjs();
+    prefs = setPref("langUpdatedLast", dayjs());
     jsonLangs = cleanedJwLangs;
   } else {
     jsonLangs = JSON.parse(fs.readFileSync(paths.langs));
@@ -1530,8 +1530,8 @@ async function startMediaSync(isDryrun, meetingFilter) {
       syncJwOrgMedia(),
       syncLocalRecurringMedia(),
     ]);
-    await convertUnusableFiles(glob, rm);
-    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, glob, progressSet, createVideoSync, totals);
+    await convertUnusableFiles(rm, paths.media);
+    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, paths.media, prefs);
     if (prefs.enableVlcPlaylistCreation) createVlcPlaylists();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(url.fileURLToPath(url.pathToFileURL(paths.media).href));
     $("#btn-settings").fadeToAndToggle(fadeDelay, 1);
@@ -1671,14 +1671,14 @@ function syncLocalRecurringMedia() {
   }
 }
 async function testApp() {
-  logLevel = "debug";
+  setLogLevel("debug");
   let previousLang = prefs.lang;
   for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"] ) {
-    prefs.lang = lang;
+    prefs = setPref("lang", lang);
     await startMediaSync(true);
   }
-  prefs.lang = previousLang;
-  logLevel = "info";
+  prefs = setPref("lang", previousLang);
+  setLogLevel("info");
 }
 function toggleHardwareAcceleration() {
   if (prefs.disableHardwareAcceleration) {
@@ -1960,12 +1960,12 @@ function validateConfig(changed, restart) {
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) {
-    prefs.localOutputPath = null;
+    prefs = setPref("localOutputPath", null);
   } else if (prefs.localOutputPath) {
     let badCharacters = prefs.localOutputPath.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g);
     if (badCharacters) {
       notifyUser("error", "errorBadOutputPath", badCharacters.join(" "), true);
-      prefs.localOutputPath = null;
+      prefs = setPref("localOutputPath", null);
     }
   }
   let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes", "congregationName"];
@@ -2933,7 +2933,7 @@ $("#toastContainer").on("click", "button.toast-action", async function() {
 $("#webdavProviders a").on("click", function() {
   for (let i of Object.entries($(this).data())) {
     let name = "cong" + (i[0][0].toUpperCase() + i[0].slice(1));
-    prefs[name] = i[1];
+    prefs = setPref(name, i[1]);
     $("#" + name).val(i[1]);
   }
   $("#congServer").change();
