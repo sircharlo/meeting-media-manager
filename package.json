@@ -76,6 +76,7 @@
     "eslint": "^8.16.0"
   },
   "scripts": {
+    "lint:js": "eslint --fix --ext \".js\" .",
     "start-debug": "electron .  --trace-warnings > ./app-run.log  2>&1",
     "start": "electron .",
     "pack-win": "electron-builder --win",
@@ -88,6 +89,7 @@
     "postinstall": "electron-builder install-app-deps",
     "release": "electron-builder"
   },
+  "eslintIgnore": ["docs", "node_modules"],
   "author": "sircharlo",
   "license": "ISC"
 }

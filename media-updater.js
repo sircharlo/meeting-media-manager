@@ -1,6 +1,6 @@
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
-const { initPrefs, getPrefs, setPref, setPrefs, prefsInitialize } = require("./modules/prefs");
+const { initPrefs, setPref, setPrefs, prefsInitialize } = require("./modules/prefs");
 const { log, bugUrl, notifyUser, setLogLevel } = require("./modules/log");
 const constants = require("./constants");
 const { mp4Convert, convertUnusableFiles } = require("./modules/converters");
