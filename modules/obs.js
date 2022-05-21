@@ -1,8 +1,9 @@
-// Internal packages
+// Internal modules
 const { log, notifyUser } = require("./log");
 
-// External packages
+// External modules
 const remote = require("@electron/remote");
+const $ = require("jquery");
 const OBSWebSocket = require("obs-websocket-js");
 
 // Variables
@@ -92,7 +93,7 @@ async function obsGetScenes(currentOnly, validateConfig, prefs) {
             value: scene
           }));
         });
-        for (var pref of ["obsCameraScene", "obsMediaScene"]) {
+        for (let pref of ["obsCameraScene", "obsMediaScene"]) {
           if ($("#" + pref + " option[value='" + prefs[pref] + "']").length == 0) {
             prefs[pref] = null;
             validateConfig();

@@ -1,10 +1,10 @@
 // TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
 
-const { getPrefs, setPrefs, prefsInitialize } = require("./modules/prefs")
-const { log, bugUrl, notifyUser } = require('./modules/log')
-const constants = require('./constants')
-const { mp4Convert, convertUnusableFiles } = require('./modules/converters')
-const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require('./modules/obs')
+const { initPrefs, getPrefs, setPref, setPrefs, prefsInitialize } = require("./modules/prefs");
+const { log, bugUrl, notifyUser, setLogLevel } = require("./modules/log");
+const constants = require("./constants");
+const { mp4Convert, convertUnusableFiles } = require("./modules/converters");
+const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require("./modules/obs");
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -134,23 +134,23 @@ $( document ).ready(function() {
   congregationInitialSelector();
 });
 function goAhead() {
-  prefs = getPrefs(paths.prefs)
+  prefs = initPrefs(paths.prefs);
   getInitialData();
   dateFormatter();
   $("#overlaySettings input:not(.timePicker), #overlaySettings select").on("change", function() {
     if ($(this).prop("tagName") == "INPUT") {
       if ($(this).prop("type") == "checkbox") {
-        prefs[$(this).prop("id")] = $(this).prop("checked");
+        prefs = setPref($(this).prop("id"), $(this).prop("checked"));
       } else if ($(this).prop("type") == "radio") {
-        prefs[$(this).closest("div").prop("id")] = escape($(this).closest("div").find("input:checked").val());
+        prefs = setPref($(this).closest("div").prop("id"), escape($(this).closest("div").find("input:checked").val()));
       } else if ($(this).prop("type") == "text" || $(this).prop("type") == "password"  || $(this).prop("type") == "hidden" || $(this).prop("type") == "range") {
-        prefs[$(this).prop("id")] = escape($(this).val());
+        prefs = setPref($(this).prop("id"), escape($(this).val()));
       }
     } else if ($(this).prop("tagName") == "SELECT") {
-      prefs[$(this).prop("id")] = escape($(this).find("option:selected").val());
+      prefs = setPref($(this).prop("id"), escape($(this).find("option:selected").val()));
     }
     if ($(this).prop("id") == "disableHardwareAcceleration") toggleHardwareAcceleration();
-    if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
+    if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().trigger("change");
     if ($(this).prop("id").includes("congServer")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
     if ($(this).prop("id") == "lang" || $(this).prop("id").includes("maxRes")) {
@@ -399,7 +399,7 @@ function dateFormatter() {
       ...(prefs.outputFolderDateFormat == dateFormat && { selected: "selected" }),
     }));
   }
-  if (!prefs.outputFolderDateFormat) $("#outputFolderDateFormat").val("YYYY-MM-DD").change();
+  if (!prefs.outputFolderDateFormat) $("#outputFolderDateFormat").val("YYYY-MM-DD").trigger("change");
   baseDate = dayjs(baseDate).locale(locale);
   $("#folders .day").remove();
   for (var d = 6; d >= 0; d--) {
@@ -796,7 +796,7 @@ async function getJwOrgLanguages(forceRefresh) {
       isSignLanguage: lang.isSignLanguage
     }));
     fs.writeFileSync(paths.langs, JSON.stringify(cleanedJwLangs, null, 2));
-    prefs.langUpdatedLast = dayjs();
+    prefs = setPref("langUpdatedLast", dayjs());
     jsonLangs = cleanedJwLangs;
   } else {
     jsonLangs = JSON.parse(fs.readFileSync(paths.langs));
@@ -1102,7 +1102,7 @@ async function manageMedia(day, isMeetingDate, mediaType) {
   document.addEventListener("dragover", dragoverHandler);
   document.addEventListener("dragenter", dragenterHandler);
   document.addEventListener("dragleave", dragleaveHandler);
-  $("#chooseUploadType input").prop("checked", false).change();
+  $("#chooseUploadType input").prop("checked", false).trigger("change");
   $("#chooseUploadType label.active").removeClass("active");
   if (!meetingMedia[day]) meetingMedia[day] = [];
   await startMediaSync(true, isMeetingDate || mediaType ? mediaType : null);
@@ -1280,7 +1280,7 @@ function refreshFolderListing(folderPath) {
     }
     lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
       try {
-        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "start" : "end")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS")).change();
+        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "start" : "end")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS")).trigger("change");
       } catch (err) {
         log.error(err);
       }
@@ -1530,8 +1530,8 @@ async function startMediaSync(isDryrun, meetingFilter) {
       syncJwOrgMedia(),
       syncLocalRecurringMedia(),
     ]);
-    await convertUnusableFiles(rm);
-    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals);
+    await convertUnusableFiles(rm, paths.media);
+    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, paths.media, prefs);
     if (prefs.enableVlcPlaylistCreation) createVlcPlaylists();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(url.fileURLToPath(url.pathToFileURL(paths.media).href));
     $("#btn-settings").fadeToAndToggle(fadeDelay, 1);
@@ -1671,14 +1671,14 @@ function syncLocalRecurringMedia() {
   }
 }
 async function testApp() {
-  logLevel = "debug";
+  setLogLevel("debug");
   let previousLang = prefs.lang;
   for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"] ) {
-    prefs.lang = lang;
+    prefs = setPref("lang", lang);
     await startMediaSync(true);
   }
-  prefs.lang = previousLang;
-  logLevel = "info";
+  prefs = setPref("lang", previousLang);
+  setLogLevel("info");
 }
 function toggleHardwareAcceleration() {
   if (prefs.disableHardwareAcceleration) {
@@ -1766,7 +1766,7 @@ function updateCleanup() {
 function updateFileList(initialLoad) {
   try {
     if (initialLoad) {
-      $("#chooseUploadType input").prop("checked", false).change();
+      $("#chooseUploadType input").prop("checked", false).trigger("change");
       $("#chooseUploadType label.active").removeClass("active");
       $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
       $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled").addClass("disabled-while-load").prop("disabled", true);
@@ -1960,12 +1960,12 @@ function validateConfig(changed, restart) {
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) {
-    prefs.localOutputPath = null;
+    prefs = setPref("localOutputPath", null);
   } else if (prefs.localOutputPath) {
     let badCharacters = prefs.localOutputPath.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g);
     if (badCharacters) {
       notifyUser("error", "errorBadOutputPath", badCharacters.join(" "), true);
-      prefs.localOutputPath = null;
+      prefs = setPref("localOutputPath", null);
     }
   }
   let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes", "congregationName"];
@@ -1995,7 +1995,7 @@ function validateConfig(changed, restart) {
       $("#btnMeetingMusic:visible, #btnStopMeetingMusic:visible").click();
     });
     if (prefs.enableMusicFadeOut) {
-      if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
+      if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).trigger("change");
       if (!prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
     }
     $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
@@ -2003,7 +2003,7 @@ function validateConfig(changed, restart) {
       $("#meetingMusic").animate({volume: prefs.musicVolume / 100});
       $("#musicVolumeDisplay").html(prefs.musicVolume);
     } else {
-      $("#musicVolume").val(100).change();
+      $("#musicVolume").val(100).trigger("change");
     }
   } else {
     shortcutsUnset("musicButton");
@@ -2190,7 +2190,7 @@ async function webdavSetup() {
     if (congServerHeartbeat) {
       if (prefs.congServerUser && prefs.congServerPass) {
         if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
-          $("#congServerDir").val("/").change();
+          $("#congServerDir").val("/").trigger("change");
         } else {
           let webdavStatusCode = await webdavStatus(prefs.congServerDir);
           if (webdavStatusCode < 500) {
@@ -2207,7 +2207,7 @@ async function webdavSetup() {
               }
               $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
               $("#webdavFolderList li").click(function() {
-                $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
+                $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).trigger("change");
               });
               enforcePrefs();
               let items = await webdavLs(prefs.congServerDir, true);
@@ -2276,9 +2276,9 @@ var dropHandler = (event) => {
     filesDropped.push(f.path);
   }
   if ($("input#typeFile:checked").length > 0) {
-    $("#filePicker").val(filesDropped.join(" -//- ")).change();
+    $("#filePicker").val(filesDropped.join(" -//- ")).trigger("change");
   } else if ($("input#typeJwpub:checked").length > 0) {
-    $("#jwpubPicker").val(filesDropped.filter(filepath => path.extname(filepath) == ".jwpub")[0]).change();
+    $("#jwpubPicker").val(filesDropped.filter(filepath => path.extname(filepath) == ".jwpub")[0]).trigger("change");
   }
   $(".dropzone").css("display", "none");
 };
@@ -2638,7 +2638,7 @@ $("#chooseUploadType input").on("change", function() {
   $("#songPicker:visible").select2("destroy");
   $(".file-to-upload.selector").children().hide();
   $(".enterPrefixInput").val("").empty();
-  if ($("#fileToUpload").val()) $("#fileToUpload").val("").change();
+  if ($("#fileToUpload").val()) $("#fileToUpload").val("").trigger("change");
   if ($("input#typeSong:checked").length > 0) {
     $(".enterPrefixInput").slice(0, 4).val(0);
     $("#songPicker").val([]).prop("disabled", false).show().select2();
@@ -2659,7 +2659,7 @@ $("#recurringMedia").on("click", function() {
   manageMedia("Recurring", false, "Recurring");
 });
 $("#overlayUploadFile").on("change", "#filePicker", function() {
-  $("#fileToUpload").val($(this).val()).change();
+  $("#fileToUpload").val($(this).val()).trigger("change");
 });
 $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
   if ($(this).val().length >0) {
@@ -2677,11 +2677,11 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
       showModal(true, itemsWithMultimedia.length > 0, i18n.__("selectDocument"), docList, itemsWithMultimedia.length === 0, true);
     } else {
       $(this).val("");
-      $("#fileToUpload").val("").change();
+      $("#fileToUpload").val("").trigger("change");
       notifyUser("warn", "warnNoDocumentsFound", $(this).val(), true, null, true, false, prefs);
     }
   } else {
-    $("#fileToUpload").val("").change();
+    $("#fileToUpload").val("").trigger("change");
   }
 });
 $("#staticBackdrop").on("click", "a", function() {
@@ -2721,7 +2721,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
           }
           if (tempMediaArray.filter(item => !item.contents && !item.localpath).length === 0) {
             $("#staticBackdrop .modal-footer button").prop("disabled", false);
-            $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).change();
+            $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).trigger("change");
           }
         }));
       }
@@ -2731,7 +2731,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
   if (tempMediaArray.filter(item => !item.contents && !item.localpath && !item.url).length > 0) {
     showModal(true, true, i18n.__("selectExternalMedia"), missingMedia, true, false);
   } else {
-    $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).change();
+    $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).trigger("change");
     showModal(false);
   }
 });
@@ -2903,14 +2903,14 @@ $("body").on("click", "#filePickerButton, #jwpubPickerButton, #localOutputPathBu
     ]
   };
   let path = remote.dialog.showOpenDialogSync(options);
-  if (typeof path !== "undefined") $(this).next("input").val($(this).prop("id").includes("file") ? path.join(" -//- ") : path).change();
+  if (typeof path !== "undefined") $(this).next("input").val($(this).prop("id").includes("file") ? path.join(" -//- ") : path).trigger("change");
   event.preventDefault();
 });
 $("#refreshYeartext").on("click", function() {
   refreshBackgroundImagePreview(true);
 });
 $("#songPicker").on("change", function() {
-  if ($(this).val()) $("#fileToUpload").val($(this).val()).change();
+  if ($(this).val()) $("#fileToUpload").val($(this).val()).trigger("change");
 });
 $(document).on("shown.bs.modal", "#staticBackdrop", function () {
   if ($("#staticBackdrop input").length > 0) {
@@ -2933,10 +2933,10 @@ $("#toastContainer").on("click", "button.toast-action", async function() {
 $("#webdavProviders a").on("click", function() {
   for (let i of Object.entries($(this).data())) {
     let name = "cong" + (i[0][0].toUpperCase() + i[0].slice(1));
-    prefs[name] = i[1];
+    prefs = setPref(name, i[1]);
     $("#" + name).val(i[1]);
   }
-  $("#congServer").change();
+  $("#congServer").trigger("change");
 });
 $.fn.extend({
   fadeToAndToggle: function(speed, to, easing, callback) {

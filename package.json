@@ -72,7 +72,8 @@
   },
   "devDependencies": {
     "electron": "^18.2.4",
-    "electron-builder": "^23.0.3"
+    "electron-builder": "^23.0.3",
+    "eslint": "^8.16.0"
   },
   "scripts": {
     "start-debug": "electron .  --trace-warnings > ./app-run.log  2>&1",

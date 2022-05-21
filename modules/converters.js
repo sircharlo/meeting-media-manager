@@ -1,16 +1,26 @@
-// External packages
+// Internal modules
+const { notifyUser } = require("./log");
+
+// External modules
 const dayjs = require("dayjs");
 const path = require("upath");
+const $ = require("jquery");
 const fs = require("fs-extra");
 const glob = require("fast-glob");
 
-async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals) {
+// Variables
+const fullHd = [1920, 1080];
+const baseDate = dayjs().startOf("isoWeek");
+const now = dayjs().hour(0).minute(0).second(0).millisecond(0);
+
+
+async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, path, prefs) {
   perf("mp4Convert", "start");
   updateStatus("file-video");
   updateTile("mp4Convert", "warning");
-  var filesToProcess = glob.sync(path.join(paths.media, "*"), {
+  let filesToProcess = glob.sync(path.join(path, "*"), {
     onlyDirectories: true
-  }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, prefs.outputFolderDateFormat).isValid() && dayjs(folder, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, prefs.outputFolderDateFormat))).map(folder => glob.sync(path.join(paths.media, folder, "*"), {
+  }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, prefs.outputFolderDateFormat).isValid() && dayjs(folder, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, prefs.outputFolderDateFormat))).map(folder => glob.sync(path.join(path, folder, "*"), {
     ignore: ["!**/(*.mp4|*.xspf)"]
   })).flat();
   totals.mp4Convert = {
@@ -18,7 +28,7 @@ async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVid
     current: 1
   };
   progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
-  for (var mediaFile of filesToProcess) {
+  for (let mediaFile of filesToProcess) {
     await createVideoSync(mediaFile);
     totals.mp4Convert.current++;
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
@@ -29,13 +39,13 @@ async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVid
 
 function convertPdf(mediaFile, rm) {
   return new Promise((resolve)=>{
-    var pdfjsLib = require("pdfjs-dist/build/pdf.js");
+    let pdfjsLib = require("pdfjs-dist/build/pdf.js");
     pdfjsLib.GlobalWorkerOptions.workerSrc = require("pdfjs-dist/build/pdf.worker.entry.js");
     pdfjsLib.getDocument({
       url: mediaFile,
       verbosity: 0
     }).promise.then(async function(pdf) {
-      for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         await convertPdfPage(mediaFile, pdf, pageNum, notifyUser);
       }
       await rm(mediaFile);
@@ -52,7 +62,7 @@ function convertPdfPage(mediaFile, pdf, pageNum) {
       $("body").append("<div id='pdf' style='display: none;'>");
       $("div#pdf").append("<canvas id='pdfCanvas'></canvas>");
       let scale = fullHd[1] / page.getViewport({scale: 1}).height * 2;
-      var canvas = $("#pdfCanvas")[0];
+      let canvas = $("#pdfCanvas")[0];
       let ctx = canvas.getContext("2d");
       ctx.imageSmoothingEnabled = false;
       canvas.height = fullHd[1] * 2;
@@ -100,14 +110,14 @@ function convertSvg(mediaFile, rm) {
   });
 }
 
-async function convertUnusableFiles(rm) {
-  for (let pdfFile of glob.sync(path.join(paths.media, "**", "*pdf"), {
-    ignore: [path.join(paths.media, "Recurring")]
+async function convertUnusableFiles(rm, path) {
+  for (let pdfFile of glob.sync(path.join(path, "**", "*pdf"), {
+    ignore: [path.join(path, "Recurring")]
   })) {
     await convertPdf(pdfFile, rm);
   }
-  for (let svgFile of glob.sync(path.join(paths.media, "**", "*svg"), {
-    ignore: [path.join(paths.media, "Recurring")]
+  for (let svgFile of glob.sync(path.join(path, "**", "*svg"), {
+    ignore: [path.join(path, "Recurring")]
   })) {
     await convertSvg(svgFile, rm);
   }
