@@ -150,7 +150,7 @@ function goAhead() {
       prefs = setPref($(this).prop("id"), escape($(this).find("option:selected").val()));
     }
     if ($(this).prop("id") == "disableHardwareAcceleration") toggleHardwareAcceleration();
-    if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().trigger("change");
+    if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("congServer")) webdavSetup();
     if ($(this).prop("id") == "localAppLang") setAppLang();
     if ($(this).prop("id") == "lang" || $(this).prop("id").includes("maxRes")) {
@@ -399,7 +399,7 @@ function dateFormatter() {
       ...(prefs.outputFolderDateFormat == dateFormat && { selected: "selected" }),
     }));
   }
-  if (!prefs.outputFolderDateFormat) $("#outputFolderDateFormat").val("YYYY-MM-DD").trigger("change");
+  if (!prefs.outputFolderDateFormat) $("#outputFolderDateFormat").val("YYYY-MM-DD").change();
   baseDate = dayjs(baseDate).locale(locale);
   $("#folders .day").remove();
   for (var d = 6; d >= 0; d--) {
@@ -1102,7 +1102,7 @@ async function manageMedia(day, isMeetingDate, mediaType) {
   document.addEventListener("dragover", dragoverHandler);
   document.addEventListener("dragenter", dragenterHandler);
   document.addEventListener("dragleave", dragleaveHandler);
-  $("#chooseUploadType input").prop("checked", false).trigger("change");
+  $("#chooseUploadType input").prop("checked", false).change();
   $("#chooseUploadType label.active").removeClass("active");
   if (!meetingMedia[day]) meetingMedia[day] = [];
   await startMediaSync(true, isMeetingDate || mediaType ? mediaType : null);
@@ -1280,7 +1280,7 @@ function refreshFolderListing(folderPath) {
     }
     lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
       try {
-        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "start" : "end")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS")).trigger("change");
+        if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "start" : "end")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS")).change();
       } catch (err) {
         log.error(err);
       }
@@ -1766,7 +1766,7 @@ function updateCleanup() {
 function updateFileList(initialLoad) {
   try {
     if (initialLoad) {
-      $("#chooseUploadType input").prop("checked", false).trigger("change");
+      $("#chooseUploadType input").prop("checked", false).change();
       $("#chooseUploadType label.active").removeClass("active");
       $("#btnUpload").prop("disabled", false).find("i").addClass("fa-save").removeClass("fa-circle-notch fa-spin");
       $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled").addClass("disabled-while-load").prop("disabled", true);
@@ -1995,7 +1995,7 @@ function validateConfig(changed, restart) {
       $("#btnMeetingMusic:visible, #btnStopMeetingMusic:visible").click();
     });
     if (prefs.enableMusicFadeOut) {
-      if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).trigger("change");
+      if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).change();
       if (!prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").click();
     }
     $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
@@ -2003,7 +2003,7 @@ function validateConfig(changed, restart) {
       $("#meetingMusic").animate({volume: prefs.musicVolume / 100});
       $("#musicVolumeDisplay").html(prefs.musicVolume);
     } else {
-      $("#musicVolume").val(100).trigger("change");
+      $("#musicVolume").val(100).change();
     }
   } else {
     shortcutsUnset("musicButton");
@@ -2190,7 +2190,7 @@ async function webdavSetup() {
     if (congServerHeartbeat) {
       if (prefs.congServerUser && prefs.congServerPass) {
         if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
-          $("#congServerDir").val("/").trigger("change");
+          $("#congServerDir").val("/").change();
         } else {
           let webdavStatusCode = await webdavStatus(prefs.congServerDir);
           if (webdavStatusCode < 500) {
@@ -2207,7 +2207,7 @@ async function webdavSetup() {
               }
               $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
               $("#webdavFolderList li").click(function() {
-                $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).trigger("change");
+                $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
               });
               enforcePrefs();
               let items = await webdavLs(prefs.congServerDir, true);
@@ -2276,9 +2276,9 @@ var dropHandler = (event) => {
     filesDropped.push(f.path);
   }
   if ($("input#typeFile:checked").length > 0) {
-    $("#filePicker").val(filesDropped.join(" -//- ")).trigger("change");
+    $("#filePicker").val(filesDropped.join(" -//- ")).change();
   } else if ($("input#typeJwpub:checked").length > 0) {
-    $("#jwpubPicker").val(filesDropped.filter(filepath => path.extname(filepath) == ".jwpub")[0]).trigger("change");
+    $("#jwpubPicker").val(filesDropped.filter(filepath => path.extname(filepath) == ".jwpub")[0]).change();
   }
   $(".dropzone").css("display", "none");
 };
@@ -2638,7 +2638,7 @@ $("#chooseUploadType input").on("change", function() {
   $("#songPicker:visible").select2("destroy");
   $(".file-to-upload.selector").children().hide();
   $(".enterPrefixInput").val("").empty();
-  if ($("#fileToUpload").val()) $("#fileToUpload").val("").trigger("change");
+  if ($("#fileToUpload").val()) $("#fileToUpload").val("").change();
   if ($("input#typeSong:checked").length > 0) {
     $(".enterPrefixInput").slice(0, 4).val(0);
     $("#songPicker").val([]).prop("disabled", false).show().select2();
@@ -2659,7 +2659,7 @@ $("#recurringMedia").on("click", function() {
   manageMedia("Recurring", false, "Recurring");
 });
 $("#overlayUploadFile").on("change", "#filePicker", function() {
-  $("#fileToUpload").val($(this).val()).trigger("change");
+  $("#fileToUpload").val($(this).val()).change();
 });
 $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
   if ($(this).val().length >0) {
@@ -2677,11 +2677,11 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
       showModal(true, itemsWithMultimedia.length > 0, i18n.__("selectDocument"), docList, itemsWithMultimedia.length === 0, true);
     } else {
       $(this).val("");
-      $("#fileToUpload").val("").trigger("change");
+      $("#fileToUpload").val("").change();
       notifyUser("warn", "warnNoDocumentsFound", $(this).val(), true, null, true, false, prefs);
     }
   } else {
-    $("#fileToUpload").val("").trigger("change");
+    $("#fileToUpload").val("").change();
   }
 });
 $("#staticBackdrop").on("click", "a", function() {
@@ -2721,7 +2721,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
           }
           if (tempMediaArray.filter(item => !item.contents && !item.localpath).length === 0) {
             $("#staticBackdrop .modal-footer button").prop("disabled", false);
-            $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).trigger("change");
+            $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).change();
           }
         }));
       }
@@ -2731,7 +2731,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
   if (tempMediaArray.filter(item => !item.contents && !item.localpath && !item.url).length > 0) {
     showModal(true, true, i18n.__("selectExternalMedia"), missingMedia, true, false);
   } else {
-    $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).trigger("change");
+    $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).change();
     showModal(false);
   }
 });
@@ -2903,14 +2903,14 @@ $("body").on("click", "#filePickerButton, #jwpubPickerButton, #localOutputPathBu
     ]
   };
   let path = remote.dialog.showOpenDialogSync(options);
-  if (typeof path !== "undefined") $(this).next("input").val($(this).prop("id").includes("file") ? path.join(" -//- ") : path).trigger("change");
+  if (typeof path !== "undefined") $(this).next("input").val($(this).prop("id").includes("file") ? path.join(" -//- ") : path).change();
   event.preventDefault();
 });
 $("#refreshYeartext").on("click", function() {
   refreshBackgroundImagePreview(true);
 });
 $("#songPicker").on("change", function() {
-  if ($(this).val()) $("#fileToUpload").val($(this).val()).trigger("change");
+  if ($(this).val()) $("#fileToUpload").val($(this).val()).change();
 });
 $(document).on("shown.bs.modal", "#staticBackdrop", function () {
   if ($("#staticBackdrop input").length > 0) {
@@ -2936,7 +2936,7 @@ $("#webdavProviders a").on("click", function() {
     prefs = setPref(name, i[1]);
     $("#" + name).val(i[1]);
   }
-  $("#congServer").trigger("change");
+  $("#congServer").change();
 });
 $.fn.extend({
   fadeToAndToggle: function(speed, to, easing, callback) {

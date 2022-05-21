@@ -23,7 +23,7 @@ const datepickers = datetime(".timePicker", {
   maxTime: "22:00",
   onClose: function() {
     let initiatorEl = $($(this)[0].element);
-    $("#" + initiatorEl.data("target")).val(initiatorEl.val()).trigger("change");
+    $("#" + initiatorEl.data("target")).val(initiatorEl.val()).change();
   }
 });
 
