@@ -1,4 +1,4 @@
-const { PREF_FIELDS } = require("./general")
+const { PREF_FIELDS } = require("./general");
 
 const { YEARTEXT, JW_API, JWPUB_API, REPO_URL, FFMPEG_VERSION } = require("./endpoints");
 

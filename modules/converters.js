@@ -14,25 +14,40 @@ const baseDate = dayjs().startOf("isoWeek");
 const now = dayjs().hour(0).minute(0).second(0).millisecond(0);
 
 
-async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, path, prefs) {
+async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, p, prefs) {
   perf("mp4Convert", "start");
   updateStatus("file-video");
   updateTile("mp4Convert", "warning");
-  let filesToProcess = glob.sync(path.join(path, "*"), {
+  
+  let filesToProcess = glob.sync(path.join(p, "*"), {
     onlyDirectories: true
-  }).map(folderPath => path.basename(folderPath)).filter(folder => dayjs(folder, prefs.outputFolderDateFormat).isValid() && dayjs(folder, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(folder, prefs.outputFolderDateFormat))).map(folder => glob.sync(path.join(path, folder, "*"), {
-    ignore: ["!**/(*.mp4|*.xspf)"]
-  })).flat();
+  }).map(folderPath => p
+    .basename(folderPath))
+    .filter(folder => 
+      dayjs(
+        folder, 
+        prefs.outputFolderDateFormat
+      ).isValid() && 
+      dayjs(folder, prefs.outputFolderDateFormat)
+        .isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && 
+        now.isSameOrBefore(dayjs(folder, prefs.outputFolderDateFormat))
+    )
+    .map(folder => glob.sync(path.join(p, folder, "*"), {
+      ignore: ["!**/(*.mp4|*.xspf)"]
+    })).flat();
   totals.mp4Convert = {
     total: filesToProcess.length,
     current: 1
   };
+  
   progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
+  
   for (let mediaFile of filesToProcess) {
     await createVideoSync(mediaFile);
     totals.mp4Convert.current++;
     progressSet(totals.mp4Convert.current, totals.mp4Convert.total, "mp4Convert");
   }
+
   updateTile("mp4Convert", "success");
   perf("mp4Convert", "stop");
 }
@@ -56,6 +71,7 @@ function convertPdf(mediaFile, rm) {
     });
   });
 }
+
 function convertPdfPage(mediaFile, pdf, pageNum) {
   return new Promise((resolve)=>{
     pdf.getPage(pageNum).then(function(page) {
@@ -71,7 +87,10 @@ function convertPdfPage(mediaFile, pdf, pageNum) {
         canvasContext: ctx,
         viewport: page.getViewport({scale: scale})
       }).promise.then(function() {
-        fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png"), Buffer.from(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+        fs.writeFileSync(
+          path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + "-" + String(pageNum).padStart(2, "0") + ".png"), 
+          Buffer.from(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64")
+        );
         $("div#pdf").remove();
       }).catch((err) => {
         notifyUser("warn", "warnPdfConversionFailure", path.basename(mediaFile), true, err);
@@ -81,43 +100,52 @@ function convertPdfPage(mediaFile, pdf, pageNum) {
     });
   });
 }
+
 function convertSvg(mediaFile, rm) {
   return new Promise((resolve)=>{
     $("body").append("<div id='svg'>");
     $("div#svg").append("<img id='svgImg'>").append("<canvas id='svgCanvas'></canvas>");
     $("img#svgImg").on("load", function() {
-      let canvas = $("#svgCanvas")[0],
-        image = $("img#svgImg")[0];
+      let canvas = $("#svgCanvas")[0];
+      let image = $("img#svgImg")[0];
+      
       image.height = fullHd[1] * 2;
       canvas.height = image.height;
       canvas.width  = image.width;
+      
       let canvasContext = canvas.getContext("2d");
       canvasContext.fillStyle = "white";
       canvasContext.fillRect(0, 0, canvas.width, canvas.height);
       canvasContext.imageSmoothingEnabled = true;
       canvasContext.imageSmoothingQuality = "high";
       canvasContext.drawImage(image, 0, 0);
-      fs.writeFileSync(path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png"), Buffer.from(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64"));
+      
+      fs.writeFileSync(
+        path.join(path.dirname(mediaFile), path.basename(mediaFile, path.extname(mediaFile)) + ".png"), 
+        Buffer.from(canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""), "base64")
+      );
       rm(mediaFile);
       $("div#svg").remove();
       return resolve();
     });
+
     $("img#svgImg").on("error", function() {
       notifyUser("warn", "warnSvgConversionFailure", path.basename(mediaFile), true);
       return resolve();
     });
+
     $("img#svgImg").prop("src", escape(mediaFile));
   });
 }
 
-async function convertUnusableFiles(rm, path) {
-  for (let pdfFile of glob.sync(path.join(path, "**", "*pdf"), {
-    ignore: [path.join(path, "Recurring")]
+async function convertUnusableFiles(rm, p) {
+  for (let pdfFile of glob.sync(path.join(p, "**", "*pdf"), {
+    ignore: [path.join(p, "Recurring")]
   })) {
     await convertPdf(pdfFile, rm);
   }
-  for (let svgFile of glob.sync(path.join(path, "**", "*svg"), {
-    ignore: [path.join(path, "Recurring")]
+  for (let svgFile of glob.sync(path.join(p, "**", "*svg"), {
+    ignore: [path.join(p, "Recurring")]
   })) {
     await convertSvg(svgFile, rm);
   }

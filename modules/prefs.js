@@ -60,10 +60,16 @@ function prefsInitialize() {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
   }
   for (let field of PREF_FIELDS.text) {
-    $("#" + field).val(prefs[field]).closest(".row").find("#" + field + "Display").html(prefs[field]);
+    $("#" + field)
+      .val(prefs[field])
+      .closest(".row")
+      .find("#" + field + "Display")
+      .html(prefs[field]);
   }
   for (let timeField of PREF_FIELDS.time) {
-    $(".timePicker").filter("[data-target='" + timeField + "']").val($("#" + timeField).val());
+    $(".timePicker")
+      .filter("[data-target='" + timeField + "']")
+      .val($("#" + timeField).val());
   }
   for (let dtPicker of datepickers) {
     dtPicker.setDate($(dtPicker.element).val());
