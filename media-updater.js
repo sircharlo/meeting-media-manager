@@ -1530,8 +1530,8 @@ async function startMediaSync(isDryrun, meetingFilter) {
       syncJwOrgMedia(),
       syncLocalRecurringMedia(),
     ]);
-    await convertUnusableFiles(glob, rm);
-    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, glob, progressSet, createVideoSync, totals);
+    await convertUnusableFiles(rm);
+    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals);
     if (prefs.enableVlcPlaylistCreation) createVlcPlaylists();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(url.fileURLToPath(url.pathToFileURL(paths.media).href));
     $("#btn-settings").fadeToAndToggle(fadeDelay, 1);

@@ -2,8 +2,9 @@
 const dayjs = require("dayjs");
 const path = require("upath");
 const fs = require("fs-extra");
+const glob = require("fast-glob");
 
-async function mp4Convert(perf, updateStatus, updateTile, glob, progressSet, createVideoSync, totals) {
+async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals) {
   perf("mp4Convert", "start");
   updateStatus("file-video");
   updateTile("mp4Convert", "warning");
@@ -99,7 +100,7 @@ function convertSvg(mediaFile, rm) {
   });
 }
 
-async function convertUnusableFiles(glob, rm) {
+async function convertUnusableFiles(rm) {
   for (let pdfFile of glob.sync(path.join(paths.media, "**", "*pdf"), {
     ignore: [path.join(paths.media, "Recurring")]
   })) {
