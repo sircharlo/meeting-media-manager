@@ -58,6 +58,8 @@ function checkInternet(online) {
   if (!online) {
     initialConnectivityCheck = false;
     setTimeout(updateOnlineStatus, 10000);
+  } else {
+    require("electron").ipcRenderer.send("checkForUpdates");
   }
 }
 const updateOnlineStatus = async () => checkInternet((await isReachable("www.jw.org", 443, !initialConnectivityCheck)));
@@ -123,14 +125,9 @@ paths.langs = path.join(paths.app, "langs.json");
 paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
 
 overlay(true, "cog fa-spin");
-require("electron").ipcRenderer.send("checkForUpdates");
 $( document ).ready(function() {
   updateCleanup();
   updateOnlineStatus();
-  // if (remote.app.isPackaged) {
-  // require("electron").ipcRenderer.send("attemptAutoUpdate");
-  // } else {
-  // }
   congregationInitialSelector();
 });
 function goAhead() {
