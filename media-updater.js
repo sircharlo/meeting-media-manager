@@ -87,9 +87,6 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
 require("electron").ipcRenderer.on("notifyUser", (event, arg) => {
   notifyUser(arg[0], arg[1]);
 });
-// require("electron").ipcRenderer.on("congregationInitialSelector", () => {
-//   congregationInitialSelector();
-// });
 
 dayjs.extend(require("dayjs/plugin/isoWeek"));
 dayjs.extend(require("dayjs/plugin/isBetween"));

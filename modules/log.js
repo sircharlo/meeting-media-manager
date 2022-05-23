@@ -93,7 +93,7 @@ Add any other context about the problem here.\n` +
             ),
             null,
             2
-          ) + "\n```" 
+          ) + "\n```"
         : "") +
       (logOutput.error && logOutput.error.length > 0
         ? "\n### Full error log\n```\n" +
@@ -156,13 +156,13 @@ function notifyUser(
         <div class='toast-body'>
           <p>${i18n.__(message)}</p>
           ${fileOrUrl ? `<code>${fileOrUrl}</code>` : ""}
-          ${action 
-    ? `div class='mt-2 pt-2 border-top'>
-          <button type='button' class='btn btn-primary btn-sm toast-action' 
+          ${action
+    ? `<div class='mt-2 pt-2 border-top'>
+          <button type='button' class='btn btn-primary btn-sm toast-action'
             ${!action.noLink ? `data-toast-action-url='${escape(action && action.url ? action.url : thisBugUrl)}'` : ""}>
             ${i18n.__(action && action.desc ? action.desc : "reportIssue")}
           </button>
-      </div>` 
+      </div>`
     : ""}
     </div>
     </div>`
