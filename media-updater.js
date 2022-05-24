@@ -413,7 +413,10 @@ function dateFormatter() {
   for (var d = 6; d >= 0; d--) {
     if (!baseDate.clone().add(d, "days").isBefore(now)) $("#folders").prepend($("<button>", {
       id: "day" + d,
-      class: "day alertIndicators m-1 col btn btn-sm align-items-center justify-content-center " + (baseDate.clone().add(d, "days").isSame(now) ? "pulse-info " : "") + ([prefs.mwDay, prefs.weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") + (prefs.mwDay == d.toString() ? "mw " : "") + (prefs.weDay == d.toString() ? "we " : ""),
+      class: "day alertIndicators m-1 col btn btn-sm align-items-center justify-content-center " 
+        + (baseDate.clone().add(d, "days").isSame(now) ? "pulse-info " : "") 
+        + ([prefs.mwDay, prefs.weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") 
+        + (prefs.mwDay == d.toString() ? "mw " : "") + (prefs.weDay == d.toString() ? "we " : ""),
       "data-datevalue": baseDate.clone().add(d, "days").locale(locale).format(prefs.outputFolderDateFormat)
     }).append($("<div>", {
       class: "col dayLongDate"
@@ -455,7 +458,10 @@ const delay = s => new Promise(res => {
     $("button .action-countdown").html(secsRemaining);
   }, 1000);
   $("#bottomIcon button").on("click", function() {
-    window[$(this).attr("class").split(" ").filter(el => el.includes("btn-action-")).join(" ").split("-").splice(2).join("-").toLowerCase().replace(/([-_][a-z])/g, group => group.toUpperCase().replace("-", "").replace("_", ""))] = true;
+    window[$(this).attr("class").split(" ")
+      .filter(el => el.includes("btn-action-"))
+      .join(" ").split("-").splice(2).join("-").toLowerCase()
+      .replace(/([-_][a-z])/g, group => group.toUpperCase().replace("-", "").replace("_", ""))] = true;
     clearInterval(timeinterval);
     clearTimeout(finalTimeout);
     res();
@@ -597,10 +603,11 @@ async function getCongMedia() {
       for (var hiddenFile of await webdavLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.basename))) {
         var hiddenFileLogString = "background-color: #d6d8d9; color: #1b1e21;";
         if (meetingMedia[dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat)]) {
-          meetingMedia[dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat)].filter(part => part.media.filter(mediaItem => mediaItem.safeName == hiddenFile.basename).map(function (mediaItem) {
-            mediaItem.hidden = true;
-            hiddenFileLogString = "background-color: #fff3cd; color: #856404;";
-          }));
+          meetingMedia[dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat)]
+            .filter(part => part.media.filter(mediaItem => mediaItem.safeName == hiddenFile.basename).map(function (mediaItem) {
+              mediaItem.hidden = true;
+              hiddenFileLogString = "background-color: #fff3cd; color: #856404;";
+            }));
         }
         log.info("%c[hiddenMedia] [" + hiddenFilesFolder.basename + "] " + hiddenFile.basename, hiddenFileLogString);
       }
@@ -616,7 +623,8 @@ async function getDbFromJwpub(pub, issue, localpath, lang) {
     var SQL = await sqljs();
     if (localpath) {
       var jwpubContents = await new zipper(localpath).readFile("contents");
-      var tempDb = new SQL.Database(await new zipper(jwpubContents).readFile((await new zipper(jwpubContents).getEntries()).filter(entry => path.extname(entry.name) == ".db")[0].entryName));
+      var tempDb = new SQL.Database(await new zipper(jwpubContents).readFile((await new zipper(jwpubContents).getEntries())
+        .filter(entry => path.extname(entry.name) == ".db")[0].entryName));
       var jwpubInfo = (await executeStatement(tempDb, "SELECT UniqueEnglishSymbol, IssueTagNumber FROM Publication"))[0];
       pub = jwpubInfo.UniqueEnglishSymbol.replace(/[0-9]/g, "");
       issue = jwpubInfo.IssueTagNumber;
@@ -646,7 +654,9 @@ async function getDocumentExtract(db, docId) {
   var extractMultimediaItems = [];
   for (var extractItem of (await executeStatement(
     db, 
-    `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link 
+    `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
+      Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,
+      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link 
     FROM DocumentExtract 
       INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId 
       INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId 
