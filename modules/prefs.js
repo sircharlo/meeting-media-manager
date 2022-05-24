@@ -3,6 +3,7 @@ const { PREF_FIELDS } = require("./../constants");
 
 // Internal modules
 const { log, notifyUser } = require("./log");
+const { translate } = require("./lang");
 
 // External modules
 const fs = require("fs-extra");
@@ -11,13 +12,6 @@ const path = require("upath");
 const $ = require("jquery");
 const remote = require("@electron/remote");
 const datetime = require("flatpickr");
-const i18n = require("i18n");
-i18n.configure({
-  directory: path.join(__dirname, "../locales"),
-  defaultLocale: "en",
-  updateFiles: false,
-  retryInDefaultLocale: true,
-});
 
 // Variables
 let prefs = {};
@@ -134,7 +128,7 @@ function disableGlobalPref([pref, value]) {
   let row = $("#" + pref).closest("div.row");
   if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black'><i class='fa-lock fas'></i></span>"));
   row.addClass("text-muted disabled").tooltip({
-    title: i18n.__("settingLocked")
+    title: translate("settingLocked")
   }).find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
   log.info("%c[enforcedPrefs] [" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
 }

@@ -1,5 +1,6 @@
 // TODO: check why bounds are weird on display removed, ie not detecting only one screen properly??
 
+const { translate, setAppLang } = require("./modules/lang");
 const { initPrefs, setPref, setPrefs, prefsInitialize, enforcePrefs, getForcedPrefs, enablePreviouslyForcedPrefs } = require("./modules/prefs");
 const { log, bugUrl, notifyUser, setLogLevel } = require("./modules/log");
 const constants = require("./constants");
@@ -16,7 +17,6 @@ const fadeDelay = 200,
   fullHd = [1920, 1080],
   glob = require("fast-glob"),
   hme = require("h264-mp4-encoder"),
-  i18n = require("i18n"),
   isAudio = require("is-audio"),
   isImage = require("is-image"),
   isVideo = require("is-video"),
@@ -42,12 +42,6 @@ require("jquery-ui/ui/scroll-parent");
 require("jquery-ui/ui/widgets/mouse");
 require("jquery-ui/ui/widgets/sortable");
 const currentAppVersion = "v" + remote.app.getVersion();
-i18n.configure({
-  directory: path.join(__dirname, "locales"),
-  defaultLocale: "en",
-  updateFiles: false,
-  retryInDefaultLocale: true
-});
 
 var jworgIsReachable = false,
   initialConnectivityCheck = true;
@@ -146,7 +140,7 @@ function goAhead() {
     if ($(this).prop("id") == "disableHardwareAcceleration") toggleHardwareAcceleration();
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().change();
     if ($(this).prop("id").includes("congServer")) webdavSetup();
-    if ($(this).prop("id") == "localAppLang") setAppLang();
+    if ($(this).prop("id") == "localAppLang") setAppLang(getMediaWindowDestination, unconfirm, dateFormatter, prefs.localAppLang);
     if ($(this).prop("id") == "lang" || $(this).prop("id").includes("maxRes")) {
       setVars();
       setMediaLang().finally(() => {
@@ -215,7 +209,7 @@ function congregationChange(prefsFile) {
 function congregationInitialSelector() {
   $(function() {
     $("[data-bs-toggle='popover'][data-bs-trigger='focus']").popover({
-      content: i18n.__("clickAgain")
+      content: translate("clickAgain")
     }).on("hidden.bs.popover", function() {
       unconfirm(this);
     });
@@ -275,7 +269,7 @@ function congregationSelectPopulate() {
     if (path.resolve(paths.prefs) == path.resolve(congregation.path)) $("#congregationSelect button.dropdown-toggle").text(congregation.name);
   }
   $("#congregationSelect .dropdown-menu .dropdown-item .fa-square-minus").popover({
-    content: i18n.__("clickAgain"),
+    content: translate("clickAgain"),
     container: "body",
     trigger: "focus"
   }).on("hidden.bs.popover", function() {
@@ -716,7 +710,7 @@ async function getInitialData() {
   jwpubDbs = {};
   await getJwOrgLanguages();
   await getLocaleLanguages();
-  await setAppLang();
+  await setAppLang(getMediaWindowDestination, unconfirm, dateFormatter, prefs.localAppLang);
   await periodicCleanup();
   await setMediaLang();
   await webdavSetup();
@@ -895,7 +889,7 @@ function getMediaWindowDestination() {
         $("#preferredOutput").append($("<option />", {
           value: screen.id,
           class: "display",
-          text: i18n.__("screen") + " " + screen.humanFriendlyNumber + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
+          text: translate("screen") + " " + screen.humanFriendlyNumber + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
         }));
       });
       if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput);
@@ -922,28 +916,7 @@ function getMediaWindowDestination() {
 function setMediaWindowPosition() {
   require("electron").ipcRenderer.send("setMediaWindowPosition", getMediaWindowDestination());
 }
-function setAppLang() {
-  try {
-    i18n.setLocale(prefs.localAppLang ? prefs.localAppLang : "en");
-    $("[data-i18n-string]").each(function() {
-      $(this).html(i18n.__($(this).data("i18n-string")));
-    });
-    $(".row.disabled").each(function() {
-      $(this).tooltip("dispose").tooltip({
-        title: i18n.__("settingLocked")
-      });
-    });
-    $("[data-bs-toggle='popover'][data-bs-trigger='focus']").popover("dispose").popover({
-      content: i18n.__("clickAgain")
-    }).on("hidden.bs.popover", function() {
-      unconfirm(this);
-    });
-    getMediaWindowDestination();
-  } catch(err) {
-    log.error(err);
-  }
-  dateFormatter();
-}
+
 async function getWeMediaFromDb() {
   var weDate = baseDate.clone().add(prefs.weDay, "days").format(prefs.outputFolderDateFormat);
   if (now.isSameOrBefore(dayjs(weDate, prefs.outputFolderDateFormat))) {
@@ -1039,7 +1012,7 @@ function isReachable(hostname, port, silent) {
 function listMediaFolders() {
   $(".for-folder-listing-only").hide();
   let folderListing = $("<div id='folderListing' class='list-group'>");
-  $("h5.modal-title").text(i18n.__("meeting"));
+  $("h5.modal-title").text(translate("meeting"));
   for (var folder of glob.sync(path.join(paths.media, "*/"), {
     onlyDirectories: true
   })) {
@@ -1050,7 +1023,7 @@ function listMediaFolders() {
 }
 async function manageMedia(day, isMeetingDate, mediaType) {
   await overlay(true, (webdavIsAGo ? "cloud" : "folder-open") + " fa-beat");
-  $("#chosenMeetingDay").data("folderName", day).text(dayjs(day, prefs.outputFolderDateFormat).isValid() ? day : i18n.__("recurring"));
+  $("#chosenMeetingDay").data("folderName", day).text(dayjs(day, prefs.outputFolderDateFormat).isValid() ? day : translate("recurring"));
   removeEventListeners();
   document.addEventListener("drop", dropHandler);
   document.addEventListener("dragover", dragoverHandler);
@@ -1170,7 +1143,7 @@ function refreshFolderListing(folderPath) {
         log.error(err);
       }
     }).add("<div class='h-100 w-100 position-absolute p-2 small text-light customStartStop d-none flex-column'><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='setTimeToCurrent beginning fas fa-fw fa-backward-step'></i></div><div><input type='text' class='col form-control form-control-sm timestart px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-rotate-left timeReset'></i></div></div><div class='d-flex'><div class='d-flex fs-5 align-items-center'><i role='button' class='fas fa-fw fa-forward-step setTimeToCurrent end'></i></i></div><div><input type='text' class='col form-control form-control-sm timeend px-1 py-0 text-center'></div><div class='d-flex fs-5 align-items-center'><i role='button' tabindex='0' class='applyTimeChanges fas fa-fw fa-square-check text-danger'></i></div></div></div>").add($("<div role='button' tabindex='0' class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple" ) + "'></i> <span class='current'></span><span class='duration'></span></div>").popover({
-      content: i18n.__("clickAgain"),
+      content: translate("clickAgain"),
       container: "body",
       trigger: "focus"
     }).on("hidden.bs.popover", function() {
@@ -1269,7 +1242,7 @@ function refreshFolderListing(folderPath) {
       }
     });
     lineItem.find(".customStartStop i.applyTimeChanges").popover({
-      content: i18n.__("clickAgain"),
+      content: translate("clickAgain"),
       container: "body",
       trigger: "focus"
     }).on("hidden.bs.popover", function() {
@@ -1315,7 +1288,7 @@ function refreshFolderListing(folderPath) {
     }
   }
   $("div#folderListing .video .stop").popover({
-    content: i18n.__("clickAgain")
+    content: translate("clickAgain")
   }).on("hidden.bs.popover", function() {
     unconfirm(this);
   });
@@ -1703,7 +1676,7 @@ function updateCleanup() {
           //   $("#folders").addClass("new-stuff");
           // }
           let currentLang = jsonLangs ? jsonLangs.filter(item => item.langcode === prefs.lang)[0] : null;
-          if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", i18n.__("wannaHelpExplain") + "<br/><small>" +  i18n.__("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
+          if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", translate("wannaHelpExplain") + "<br/><small>" +  translate("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
             desc: "wannaHelpForSure",
             url: constants.REPO_URL + "discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
           }, false, prefs);
@@ -1807,7 +1780,7 @@ function updateFileList(initialLoad) {
         title: file.safeName
       });
       if (!file.recurring && ((file.isLocal && !file.newFile) || file.congSpecific)) html.addClass("canDelete").prepend($("<i role='button' tabindex='0' class='fas fa-fw fa-minus-square me-2 text-danger'></i>").popover({
-        content: i18n.__("clickAgain"),
+        content: translate("clickAgain"),
         container: "body",
         trigger: "focus"
       }).on("hidden.bs.popover", function() {
@@ -2277,14 +2250,14 @@ $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected, .btn-canc
 });
 $("#btnForcedPrefs").on("click", () => {
   getForcedPrefs(webdavExists, request, paths).then(currentForcedPrefs => {
-    let html = "<h6>" + i18n.__("settingsLockedWhoAreYou") + "</h6>";
-    html += "<p>" + i18n.__("settingsLockedExplain") + "</p>";
+    let html = "<h6>" + translate("settingsLockedWhoAreYou") + "</h6>";
+    html += "<p>" + translate("settingsLockedExplain") + "</p>";
     html += "<div id='forcedPrefs' class='card'><div class='card-body'>";
     for (var pref of Object.keys(prefs).filter(pref => !pref.startsWith("congServer") && !pref.startsWith("auto") && !pref.startsWith("local") && !pref.includes("UpdatedLast") && !pref.includes("disableHardwareAcceleration")).sort((a, b) => a[0].localeCompare(b[0]))) {
       html += "<div class='form-check form-switch'><input class='form-check-input' type='checkbox' id='forcedPref-" + pref + "' " + (pref in currentForcedPrefs ? "checked" : "") + "> <label class='form-check-label' for='forcedPref-" + pref + "'><code class='badge bg-info text-dark prefName' title='\"" + $("#" + pref).closest(".row").find("label").first().find("span").last().html() + "\"' data-bs-toggle='tooltip' data-bs-html='true'>" + pref + "</code> <code class='badge bg-secondary'>" + (pref.toLowerCase().includes("password") ? "********" : prefs[pref]) + "</code></label></div>";
     }
     html += "</div></div>";
-    showModal(true, true, i18n.__("settingsLocked"), html, true, true);
+    showModal(true, true, translate("settingsLocked"), html, true, true);
     $("#staticBackdrop #forcedPrefs .prefName").tooltip();
     $("#staticBackdrop #forcedPrefs input").on("change", async function() {
       $("#staticBackdrop #forcedPrefs input").prop("disabled", true);
@@ -2433,7 +2406,7 @@ $("#btnMediaWindow").on("click", function() {
       waitToConfirm(this);
     }
   });
-  showModal(true, true, i18n.__("meeting"), folderListing, false);
+  showModal(true, true, translate("meeting"), folderListing, false);
   obsGetScenes(false, validateConfig, prefs);
   $("#staticBackdrop .modal-header").addClass("d-flex").children().wrapAll("<div class='col-4 text-center'></div>");
   $("#staticBackdrop .modal-header").prepend("<div class='col-4 for-folder-listing-only' style='display: none;'><button class='btn btn-sm show-prefixes'><i class='fas fa-fw fa-eye'></i><i class='fas fa-fw fa-list-ol'></i></button></div>");
@@ -2628,7 +2601,7 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
       for (var item of itemsWithMultimedia) {
         $(docList).append("<button class='d-flex list-group-item list-group-item-action' data-docid='" + item.DocumentId + "'><div class='flex-fill'> " + item.Title + "</div><div><i class='far fa-circle'></i></div></li>");
       }
-      showModal(true, itemsWithMultimedia.length > 0, i18n.__("selectDocument"), docList, itemsWithMultimedia.length === 0, true);
+      showModal(true, itemsWithMultimedia.length > 0, translate("selectDocument"), docList, itemsWithMultimedia.length === 0, true);
     } else {
       $(this).val("");
       $("#fileToUpload").val("").change();
@@ -2683,7 +2656,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     tempMediaArray.push(tempMedia);
   }
   if (tempMediaArray.filter(item => !item.contents && !item.localpath && !item.url).length > 0) {
-    showModal(true, true, i18n.__("selectExternalMedia"), missingMedia, true, false);
+    showModal(true, true, translate("selectExternalMedia"), missingMedia, true, false);
   } else {
     $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).change();
     showModal(false);
