@@ -8,6 +8,12 @@ const $ = require("jquery");
 const fs = require("fs-extra");
 const glob = require("fast-glob");
 
+dayjs.extend(require("dayjs/plugin/isoWeek"));
+dayjs.extend(require("dayjs/plugin/isBetween"));
+dayjs.extend(require("dayjs/plugin/isSameOrBefore"));
+dayjs.extend(require("dayjs/plugin/customParseFormat"));
+dayjs.extend(require("dayjs/plugin/duration"));
+
 // Variables
 const fullHd = [1920, 1080];
 const baseDate = dayjs().startOf("isoWeek");

@@ -1,6 +1,6 @@
-// TODO: check why bounds are weird on display removed, ie not detecing only one screen properly??
+// TODO: check why bounds are weird on display removed, ie not detecting only one screen properly??
 
-const { initPrefs, setPref, setPrefs, prefsInitialize } = require("./modules/prefs");
+const { initPrefs, setPref, setPrefs, prefsInitialize, enforcePrefs, getForcedPrefs, enablePreviouslyForcedPrefs } = require("./modules/prefs");
 const { log, bugUrl, notifyUser, setLogLevel } = require("./modules/log");
 const constants = require("./constants");
 const { mp4Convert, convertUnusableFiles } = require("./modules/converters");
@@ -122,7 +122,7 @@ paths.langs = path.join(paths.app, "langs.json");
 paths.lastRunVersion = path.join(paths.app, "lastRunVersion.json");
 
 overlay(true, "cog fa-spin");
-$( document ).ready(function() {
+$(function() {
   updateCleanup();
   updateOnlineStatus();
   congregationInitialSelector();
@@ -213,16 +213,16 @@ function congregationChange(prefsFile) {
   });
 }
 function congregationInitialSelector() {
-  $(document).ready(function(){
+  $(function() {
     $("[data-bs-toggle='popover'][data-bs-trigger='focus']").popover({
       content: i18n.__("clickAgain")
     }).on("hidden.bs.popover", function() {
       unconfirm(this);
     });
     congregationPrefsPopulate();
-    if (paths.congprefs.length > 1) {
+    if (paths.congPrefs.length > 1) {
       let congregationList = $("<div id='congregationList' class='list-group'>");
-      for (var congregation of paths.congprefs) {
+      for (var congregation of paths.congPrefs) {
         $(congregationList).prepend("<button class='d-flex list-group-item list-group-item-action' value='" + congregation.path + "'>" + congregation.name + "</div></button>");
       }
       $(congregationList).on("click", "button", function() {
@@ -230,8 +230,8 @@ function congregationInitialSelector() {
         congregationChange($(this).val());
       });
       showModal(true, true, "<i class='fas fa-2x fa-building-user'></i>", congregationList);
-    } else if (paths.congprefs.length == 1) {
-      paths.prefs = paths.congprefs[0].path;
+    } else if (paths.congPrefs.length == 1) {
+      paths.prefs = paths.congPrefs[0].path;
       goAhead();
     } else {
       congregationCreate();
@@ -253,7 +253,7 @@ function congregationDelete(prefsFile) {
   }
 }
 function congregationPrefsPopulate() {
-  paths.congprefs = glob.sync(path.join(paths.app, "prefs*.json")).map(congregationPrefs => {
+  paths.congPrefs = glob.sync(path.join(paths.app, "prefs*.json")).map(congregationPrefs => {
     let congPrefInfo = {}, congName = "Default";
     try {
       congName = JSON.parse(fs.readFileSync(congregationPrefs, "utf8")).congregationName;
@@ -270,8 +270,8 @@ function congregationPrefsPopulate() {
 }
 function congregationSelectPopulate() {
   $("#congregationSelect .dropdown-menu .congregation").remove();
-  for (var congregation of paths.congprefs) {
-    $("#congregationSelect .dropdown-menu").prepend("<button class='dropdown-item congregation " + (path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : "") + "' value='" + congregation.path + "'>" + (paths.congprefs.length > 1 ? "<i role='button' tabindex='0' class='fas fa-square-minus text-warning'></i> " : "") + congregation.name + "</button>");
+  for (var congregation of paths.congPrefs) {
+    $("#congregationSelect .dropdown-menu").prepend("<button class='dropdown-item congregation " + (path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : "") + "' value='" + congregation.path + "'>" + (paths.congPrefs.length > 1 ? "<i role='button' tabindex='0' class='fas fa-square-minus text-warning'></i> " : "") + congregation.name + "</button>");
     if (path.resolve(paths.prefs) == path.resolve(congregation.path)) $("#congregationSelect button.dropdown-toggle").text(congregation.name);
   }
   $("#congregationSelect .dropdown-menu .dropdown-item .fa-square-minus").popover({
@@ -447,14 +447,7 @@ const delay = s => new Promise(res => {
     res();
   });
 });
-function disableGlobalPref([pref, value]) {
-  let row = $("#" + pref).closest("div.row");
-  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black'><i class='fa-lock fas'></i></span>"));
-  row.addClass("text-muted disabled").tooltip({
-    title: i18n.__("settingLocked")
-  }).find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
-  log.info("%c[enforcedPrefs] [" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
-}
+
 function displayMusicRemaining() {
   let timeRemaining;
   if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
@@ -498,28 +491,8 @@ function downloadStat(origin, source, file) {
   if (!downloadStats[origin][source]) downloadStats[origin][source] = [];
   downloadStats[origin][source].push(file);
 }
-function enablePreviouslyForcedPrefs() {
-  $("div.row.text-muted.disabled").removeClass("text-muted disabled").tooltip("dispose").find(".forcedPref").prop("disabled", false).removeClass("forcedPref");
-  $("div.row .settingLocked").remove();
-}
-async function enforcePrefs() {
-  paths.forcedPrefs = path.posix.join(prefs.congServerDir, "forcedPrefs.json");
-  let forcedPrefs = await getForcedPrefs();
-  if (Object.keys(forcedPrefs).length > 0) {
-    let previousPrefs = v8.deserialize(v8.serialize(prefs));
-    Object.assign(prefs, forcedPrefs);
-    if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) {
-      setMediaLang();
-      validateConfig(true);
-      prefs = prefsInitialize();
-    }
-    for (var pref of Object.entries(forcedPrefs)) {
-      disableGlobalPref(pref);
-    }
-  } else {
-    enablePreviouslyForcedPrefs(true);
-  }
-}
+
+
 async function executeStatement(db, statement) {
   var vals = await db.exec(statement)[0],
     valObj = [];
@@ -737,20 +710,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly, lang) {
   }
   return multimediaItems;
 }
-async function getForcedPrefs() {
-  let forcedPrefs = {};
-  if (await webdavExists(paths.forcedPrefs)) {
-    try {
-      forcedPrefs = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + paths.forcedPrefs, {
-        webdav: true,
-        noCache: true
-      })).data;
-    } catch(err) {
-      notifyUser("error", "errorForcedSettingsEnforce", null, true, err, false, false, prefs);
-    }
-  }
-  return forcedPrefs;
-}
+
 async function getInitialData() {
   meetingMedia = {};
   jwpubDbs = {};
@@ -2203,7 +2163,7 @@ async function webdavSetup() {
               $("#webdavFolderList li").click(function() {
                 $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).change();
               });
-              enforcePrefs();
+              enforcePrefs(paths, setMediaLang, validateConfig, webdavExists, request);
               let items = await webdavLs(prefs.congServerDir, true);
               if (items) {
                 let remoteMediaWindowBackgrounds = items.filter(item => item.basename.includes("media-window-background-image"));
@@ -2316,7 +2276,7 @@ $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected, .btn-canc
   }
 });
 $("#btnForcedPrefs").on("click", () => {
-  getForcedPrefs().then(currentForcedPrefs => {
+  getForcedPrefs(webdavExists, request, paths).then(currentForcedPrefs => {
     let html = "<h6>" + i18n.__("settingsLockedWhoAreYou") + "</h6>";
     html += "<p>" + i18n.__("settingsLockedExplain") + "</p>";
     html += "<div id='forcedPrefs' class='card'><div class='card-body'>";
@@ -2332,7 +2292,7 @@ $("#btnForcedPrefs").on("click", () => {
       let forcedPrefs = JSON.stringify(Object.fromEntries(Object.entries(prefs).filter(([key]) => checkedItems.includes(key))), null, 2);
       if (await webdavPut(forcedPrefs, prefs.congServerDir, "forcedPrefs.json")) {
         enablePreviouslyForcedPrefs();
-        enforcePrefs();
+        enforcePrefs(paths, setMediaLang, validateConfig, webdavExists, request);
       } else {
         $(this).prop("checked", !$(this).prop("checked"));
       }
@@ -2659,8 +2619,8 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
   if ($(this).val().length >0) {
     let contents = await getDbFromJwpub(null, null, $(this).val());
     let tableMultimedia = ((await executeStatement(contents, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'")).length === 0 ? "Multimedia" : "DocumentMultimedia");
-    let suppressZoomExists = (await executeStatement(contents, "SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Multimedia') WHERE name='SuppressZoom'")).map(function(item) {
-      return (item.CNTREC > 0 ? true : false);
+    let suppressZoomExists = (await executeStatement(contents, "SELECT COUNT(*) AS CNT_REC FROM pragma_table_info('Multimedia') WHERE name='SuppressZoom'")).map(function(item) {
+      return (item.CNT_REC > 0 ? true : false);
     })[0];
     let itemsWithMultimedia = await executeStatement(contents, "SELECT DISTINCT " + tableMultimedia + ".DocumentId, Document.Title FROM Document INNER JOIN " + tableMultimedia + " ON Document.DocumentId = " + tableMultimedia + ".DocumentId " + (tableMultimedia === "DocumentMultimedia" ? "INNER JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId " : "") + "WHERE (Multimedia.CategoryType <> 9)" + (suppressZoomExists ? " AND Multimedia.SuppressZoom = 0" : "") + " ORDER BY " + tableMultimedia + ".DocumentId");
     if (itemsWithMultimedia.length > 0) {
@@ -2860,10 +2820,10 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
         });
         if (webdavIsAGo) row.data("url", path.posix.join(path.dirname(src), newName));
         row.data("safename", newName).attr("title", newName).find("span.filename").text(newName);
-        let elems = $("#fileList li").detach().sort(function (a, b) {
+        let files = $("#fileList li").detach().sort(function (a, b) {
           return ($(a).text() < $(b).text() ? -1 : $(a).text() > $(b).text() ? 1 : 0);
         });
-        $("#fileList").append(elems);
+        $("#fileList").append(files);
       }
       row.removeClass("webdavWait");
       $(".btn-cancel-upload").addClass("changes-made");
