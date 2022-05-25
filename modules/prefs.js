@@ -2,10 +2,12 @@
 const { PREF_FIELDS } = require("./../constants");
 
 // Internal modules
-const { notifyUser } = require("./log");
+const { log, notifyUser } = require("./log");
+const { translate } = require("./lang");
 
 // External modules
 const fs = require("fs-extra");
+const v8 = require("v8");
 const path = require("upath");
 const $ = require("jquery");
 const remote = require("@electron/remote");
@@ -84,10 +86,60 @@ function prefsInitialize() {
   return prefs;
 }
 
+async function getForcedPrefs(webdavExists, request, paths) {
+  let forcedPrefs = {};
+  if (await webdavExists(paths.forcedPrefs)) {
+    try {
+      forcedPrefs = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + paths.forcedPrefs, {
+        webdav: true,
+        noCache: true
+      })).data;
+    } catch(err) {
+      notifyUser("error", "errorForcedSettingsEnforce", null, true, err, false, false, prefs);
+    }
+  }
+  return forcedPrefs;
+}
+
+function enablePreviouslyForcedPrefs() {
+  $("div.row.text-muted.disabled").removeClass("text-muted disabled").tooltip("dispose").find(".forcedPref").prop("disabled", false).removeClass("forcedPref");
+  $("div.row .settingLocked").remove();
+}
+async function enforcePrefs(paths, setMediaLang, validateConfig, webdavExists, request) {
+  paths.forcedPrefs = path.posix.join(prefs.congServerDir, "forcedPrefs.json");
+  let forcedPrefs = await getForcedPrefs(webdavExists, request, paths);
+  if (Object.keys(forcedPrefs).length > 0) {
+    let previousPrefs = v8.deserialize(v8.serialize(prefs));
+    Object.assign(prefs, forcedPrefs);
+    if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) {
+      setMediaLang();
+      validateConfig(true);
+      prefs = prefsInitialize();
+    }
+    for (var pref of Object.entries(forcedPrefs)) {
+      disableGlobalPref(pref);
+    }
+  } else {
+    enablePreviouslyForcedPrefs(true);
+  }
+}
+
+function disableGlobalPref([pref, value]) {
+  let row = $("#" + pref).closest("div.row");
+  if (row.find(".settingLocked").length === 0) row.find("label").first().prepend($("<span class='badge bg-warning me-1 rounded-pill settingLocked text-black'><i class='fa-lock fas'></i></span>"));
+  row.addClass("text-muted disabled").tooltip({
+    title: translate("settingLocked")
+  }).find("#" + pref + ", #" + pref + " input, input[data-target=" + pref + "]").addClass("forcedPref").prop("disabled", true);
+  log.info("%c[enforcedPrefs] [" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
+}
+
 module.exports = {
   initPrefs,
   getPrefs,
   setPref,
   setPrefs,
-  prefsInitialize
+  prefsInitialize,
+  enforcePrefs,
+  getForcedPrefs,
+  enablePreviouslyForcedPrefs
 };

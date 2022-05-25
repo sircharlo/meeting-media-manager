@@ -12,8 +12,31 @@
     ".vscode-insiders",
     "docs/assets.js"
   ],
+  "cSpell.ignoreWords": ["bootstrap", "-sm"],
   "cSpell.words": [
+    "-sm",
+    "americas",
+    "Anonymized",
+    "bootstrap",
+    "Creds",
     "dayjs",
-    "upath"
+    "docid",
+    "flatpickr",
+    "islocal",
+    "isnotpresentonremote",
+    "jwmmf",
+    "jworg",
+    "lffi",
+    "mbps",
+    "Meps",
+    "MKCOL",
+    "mwbr",
+    "sjjm",
+    "snnw",
+    "sqljs",
+    "unconfirm",
+    "upath",
+    "webdav",
+    "xspf"
   ]
 }
