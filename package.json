@@ -72,8 +72,7 @@
   },
   "devDependencies": {
     "electron": "^19.0.0",
-    "electron-builder": "^23.0.3",
-    "eslint": "^8.16.0"
+    "electron-builder": "^23.0.3"
   },
   "scripts": {
     "lint:js": "eslint --fix --ext \".js\" .",
