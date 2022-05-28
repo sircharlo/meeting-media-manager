@@ -17,7 +17,6 @@ const fadeDelay = 200,
   escape = require("escape-html"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("fs-extra"),
-  fullHd = [1920, 1080],
   glob = require("fast-glob"),
   hme = require("h264-mp4-encoder"),
   isAudio = require("is-audio"),
@@ -96,7 +95,6 @@ var baseDate = dayjs().startOf("isoWeek"),
   downloadStats = {},
   dryrun = false,
   ffmpegIsSetup = false,
-  jsonLangs = [],
   jwpubDbs = {},
   meetingMedia,
   modal = new bootstrap.Modal(document.getElementById("staticBackdrop"), {
@@ -329,8 +327,8 @@ function createVideoSync(mediaFile){
         convertedImageDimensions = aspect.resize(
           imageDimesions.width, 
           imageDimesions.height, 
-          (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), 
-          (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height))
+          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > constants.FULL_HD[0] ? constants.FULL_HD[0] : imageDimesions.width) : null), 
+          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > constants.FULL_HD[1] ? constants.FULL_HD[1] : imageDimesions.height))
         );
         $("body").append("<div id='convert' style='display: none;'>");
         $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
@@ -681,7 +679,7 @@ async function getDocumentExtract(db, docId) {
       if (extractDb) {
         extractMultimediaItems = extractMultimediaItems.concat((await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId, null, extractItem.Lang)).filter(extractMediaFile => {
           if (extractMediaFile.queryInfo.tableQuestionIsUsed && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) extractMediaFile.BeginParagraphOrdinal = extractMediaFile.queryInfo.NextParagraphOrdinal;
-          if (jsonLangs.find(lang => lang.langcode == get("prefs").lang).isSignLanguage && !!extractMediaFile.queryInfo.FilePath && isVideo(extractMediaFile.queryInfo.FilePath) && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) {
+          if (get("jsonLangs").find(lang => lang.langcode == get("prefs").lang).isSignLanguage && !!extractMediaFile.queryInfo.FilePath && isVideo(extractMediaFile.queryInfo.FilePath) && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) {
             return true; // include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
           } else if (extractMediaFile.BeginParagraphOrdinal && extractItem.RefBeginParagraphOrdinal && extractItem.RefEndParagraphOrdinal) {
             return extractItem.RefBeginParagraphOrdinal <= extractMediaFile.BeginParagraphOrdinal && extractMediaFile.BeginParagraphOrdinal <= extractItem.RefEndParagraphOrdinal;
@@ -1411,7 +1409,7 @@ async function setMediaLang() {
       $("label[for=typeFile]").trigger("click").addClass("active");
     }
     $("#lang").val(prefs.lang).select2("destroy").select2();
-    let currentJwLang = jsonLangs.filter(item => item.langcode == prefs.lang);
+    let currentJwLang = get("jsonLangs").filter(item => item.langcode == prefs.lang);
     $(".jwLang small").text(currentJwLang.length == 1 && currentJwLang[0].vernacularName ? "(" + currentJwLang[0].vernacularName + ")" : "");
   }
 }
@@ -1725,7 +1723,7 @@ function updateCleanup() {
             null, true, null, {desc: "understood", noLink: true}, true);
              $("#folders").addClass("new-stuff");
            }*/
-          let currentLang = jsonLangs ? jsonLangs.filter(item => item.langcode === prefs.lang)[0] : null;
+          let currentLang = get("jsonLangs") ? get("jsonLangs").filter(item => item.langcode === prefs.lang)[0] : null;
           if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", translate("wannaHelpExplain") + "<br/><small>" +  translate("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
             desc: "wannaHelpForSure",
             url: constants.REPO_URL + "discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
@@ -2443,7 +2441,7 @@ $("#btnMediaWindow").on("click", function() {
     $("#folderListing button.play").show();
     $("h5.modal-title button").not($(this)).prop("disabled", true);
     $("button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", true);
-    if (!jsonLangs.find(lang => lang.langcode == get("prefs").lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) {
+    if (!get("jsonLangs").find(lang => lang.langcode == get("prefs").lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) {
       $("#folderListing button.stop:visible").closest("li.item").addClass("opacity-75");
     }
     $("#folderListing button.stop").hide();
@@ -2483,7 +2481,7 @@ $("#btnMediaWindow").on("click", function() {
         .prop("disabled", false);
       $("#folderListing button.stop").hide();
       mediaItem.find(".play").show();
-      if (!jsonLangs.find(lang => lang.langcode == get("prefs").lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) {
+      if (!get("jsonLangs").find(lang => lang.langcode == get("prefs").lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) {
         mediaItem.addClass("opacity-75");
       }
       $("h5.modal-title button").not($(this)).prop("disabled", false);
