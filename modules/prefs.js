@@ -4,6 +4,7 @@ const { PREF_FIELDS } = require("./../constants");
 // Internal modules
 const { log, notifyUser } = require("./log");
 const { translate } = require("./lang");
+const {get, set } = require("./store");
 
 // External modules
 const fs = require("fs-extra");
@@ -14,7 +15,6 @@ const remote = require("@electron/remote");
 const datetime = require("flatpickr");
 
 // Variables
-let prefs = {};
 const datepickers = datetime(".timePicker", {
   enableTime: true,
   noCalendar: true,
@@ -25,37 +25,23 @@ const datepickers = datetime(".timePicker", {
   maxTime: "22:00",
   onClose: function() {
     let initiatorEl = $($(this)[0].element);
-    $("#" + initiatorEl.data("target")).val(initiatorEl.val()).change();
+    $("#" + initiatorEl.data("target")).val(initiatorEl.val()).trigger("change");
   }
 });
 
 function initPrefs(path) {
   if (fs.existsSync(path)) {
     try {
-      prefs = JSON.parse(fs.readFileSync(path));
+      set("prefs", JSON.parse(fs.readFileSync(path)));
     } catch (err) {
-      notifyUser("error", "errorInvalidPrefs", null, true, err, true, false, prefs);
+      notifyUser("error", "errorInvalidPrefs", null, true, err, true, false, get("prefs"));
     }
     prefsInitialize();
   }
-  return prefs;
-}
-
-function getPrefs() {
-  return prefs;
-}
-
-function setPref(name, val) {
-  prefs[name] = val;
-  return prefs;
-}
-
-function setPrefs(p) {
-  prefs = p;
-  return prefs;
 }
 
 function prefsInitialize() {
+  let prefs = get("prefs");
   $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
   prefs.disableHardwareAcceleration = !!fs.existsSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
   for (let pref of PREF_FIELDS.all) {
@@ -83,19 +69,19 @@ function prefsInitialize() {
     $("#" + radioSel + " input[value='" + prefs[radioSel] + "']").prop("checked", true);
   }
 
-  return prefs;
+  set("prefs", prefs);
 }
 
 async function getForcedPrefs(webdavExists, request, paths) {
   let forcedPrefs = {};
   if (await webdavExists(paths.forcedPrefs)) {
     try {
-      forcedPrefs = (await request("https://" + prefs.congServer + ":" + prefs.congServerPort + paths.forcedPrefs, {
+      forcedPrefs = (await request("https://" + get("prefs").congServer + ":" + get("prefs").congServerPort + paths.forcedPrefs, {
         webdav: true,
         noCache: true
       })).data;
     } catch(err) {
-      notifyUser("error", "errorForcedSettingsEnforce", null, true, err, false, false, prefs);
+      notifyUser("error", "errorForcedSettingsEnforce", null, true, err, false, false, get("prefs"));
     }
   }
   return forcedPrefs;
@@ -106,6 +92,7 @@ function enablePreviouslyForcedPrefs() {
   $("div.row .settingLocked").remove();
 }
 async function enforcePrefs(paths, setMediaLang, validateConfig, webdavExists, request) {
+  let prefs = get("prefs");
   paths.forcedPrefs = path.posix.join(prefs.congServerDir, "forcedPrefs.json");
   let forcedPrefs = await getForcedPrefs(webdavExists, request, paths);
   if (Object.keys(forcedPrefs).length > 0) {
@@ -122,6 +109,7 @@ async function enforcePrefs(paths, setMediaLang, validateConfig, webdavExists, r
   } else {
     enablePreviouslyForcedPrefs(true);
   }
+  set("prefs", prefs);
 }
 
 function disableGlobalPref([pref, value]) {
@@ -135,9 +123,6 @@ function disableGlobalPref([pref, value]) {
 
 module.exports = {
   initPrefs,
-  getPrefs,
-  setPref,
-  setPrefs,
   prefsInitialize,
   enforcePrefs,
   getForcedPrefs,

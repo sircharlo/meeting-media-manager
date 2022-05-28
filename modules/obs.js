@@ -1,5 +1,6 @@
 // Internal modules
 const { log, notifyUser } = require("./log");
+const { get, set, setPref } = require("./store");
 
 // External modules
 const remote = require("@electron/remote");
@@ -7,31 +8,24 @@ const $ = require("jquery");
 const OBSWebSocket = require("obs-websocket-js");
 
 // Variables
-let obs = {};
 let dynamicShortcuts = {};
 
-function getObs() {
-  return obs;
-}
-
-function setObs(o) {
-  obs = o;
-}
-
-async function obsConnect(prefs) {
+async function obsConnect() {
+  let obs = get("obs");
+  const prefs = get("prefs");
   try {
     if (!prefs.enableObs && obs._connected) {
       await obs.disconnect();
       log.info("OBS disconnected.");
-      obs = {};
+      obs = set("obs",{});
     } else if (!obs._connected && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
-      obs = new OBSWebSocket();
+      obs = set("obs", new OBSWebSocket());
       obs.on("error", err => {
         notifyUser("error", "errorObs", null, false, err);
       });
       obs.on("SwitchScenes", function(newScene) {
         try {
-          if (newScene && newScene.sceneName && newScene.sceneName !== prefs.obsMediaScene) $("#obsTempCameraScene").val(newScene.sceneName).change();
+          if (newScene && newScene.sceneName && newScene.sceneName !== prefs.obsMediaScene) $("#obsTempCameraScene").val(newScene.sceneName).trigger("change");
         } catch (err) {
           log.error(err);
         }
@@ -84,9 +78,11 @@ function shortcutsUnset(domain) {
   }
 }
 
-async function obsGetScenes(currentOnly, validateConfig, prefs) {
+async function obsGetScenes(currentOnly, validateConfig) {
+  const obs = get("obs");
+  const prefs = get("prefs");
   try {
-    let connectionAttempt = await obsConnect(prefs);
+    let connectionAttempt = await obsConnect();
     return (connectionAttempt ? await obs.send("GetSceneList").then(data => {
       if (currentOnly) {
         return data.currentScene;
@@ -101,7 +97,7 @@ async function obsGetScenes(currentOnly, validateConfig, prefs) {
         });
         for (let pref of ["obsCameraScene", "obsMediaScene"]) {
           if ($("#" + pref + " option[value='" + prefs[pref] + "']").length == 0) {
-            prefs[pref] = null;
+            setPref(pref, null);
             validateConfig();
           } else {
             $("#" + pref).val(prefs[pref]);
@@ -118,7 +114,7 @@ async function obsGetScenes(currentOnly, validateConfig, prefs) {
             let shortcutSetSuccess = false;
             if ((i + 1) < 10) {
               shortcutSetSuccess = shortcutSet("Alt+" + sceneNum, "obsScenes", function() {
-                $("#obsTempCameraScene").val($(el).val()).change();
+                $("#obsTempCameraScene").val($(el).val()).trigger("change");
               });
             }
 
@@ -148,7 +144,7 @@ async function obsGetScenes(currentOnly, validateConfig, prefs) {
             return data.text;
           }
         });
-        $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene).change();
+        $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene).trigger("change");
         return data;
       }
     }).catch(err => {
@@ -159,9 +155,10 @@ async function obsGetScenes(currentOnly, validateConfig, prefs) {
     return false;
   }
 }
-async function obsSetScene(scene, prefs) {
+async function obsSetScene(scene) {
+  const obs = get("obs");
   try {
-    if (await obsConnect(prefs) && scene) obs.send("SetCurrentScene", { "scene-name": scene }).catch(err => {
+    if (await obsConnect() && scene) obs.send("SetCurrentScene", { "scene-name": scene }).catch(err => {
       notifyUser("error", "errorObs", null, false, err);
     });
   } catch (err) {
@@ -170,8 +167,6 @@ async function obsSetScene(scene, prefs) {
 }
 
 module.exports = {
-  getObs,
-  setObs,
   obsSetScene,
   obsGetScenes,
   shortcutSet,

@@ -1,5 +1,6 @@
 // Internal modules
 const { notifyUser } = require("./log");
+const { get } = require("./store");
 
 // External modules
 const dayjs = require("dayjs");
@@ -20,14 +21,15 @@ const baseDate = dayjs().startOf("isoWeek");
 const now = dayjs().hour(0).minute(0).second(0).millisecond(0);
 
 
-async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, p, prefs) {
+async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, mediaPath) {
+  const prefs = get("prefs");
   perf("mp4Convert", "start");
   updateStatus("file-video");
   updateTile("mp4Convert", "warning");
   
-  let filesToProcess = glob.sync(path.join(p, "*"), {
+  let filesToProcess = glob.sync(path.join(mediaPath, "*"), {
     onlyDirectories: true
-  }).map(folderPath => p
+  }).map(folderPath => mediaPath
     .basename(folderPath))
     .filter(folder => 
       dayjs(
@@ -38,7 +40,7 @@ async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVid
         .isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && 
         now.isSameOrBefore(dayjs(folder, prefs.outputFolderDateFormat))
     )
-    .map(folder => glob.sync(path.join(p, folder, "*"), {
+    .map(folder => glob.sync(path.join(mediaPath, folder, "*"), {
       ignore: ["!**/(*.mp4|*.xspf)"]
     })).flat();
   totals.mp4Convert = {

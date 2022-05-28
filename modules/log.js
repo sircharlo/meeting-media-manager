@@ -1,7 +1,10 @@
 // Global constants
 const { REPO_URL } = require("./../constants");
 
-// External packages
+// Internal modules
+const { get } = require("./store");
+
+// External modules
 const os = require("os");
 const $ = require("jquery");
 const remote = require("@electron/remote");
@@ -51,7 +54,7 @@ const log = {
   },
 };
 
-const bugUrl = (prefs) =>
+const bugUrl = () =>
   REPO_URL +
   "issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=" +
   encodeURIComponent(
@@ -77,11 +80,11 @@ If possible, add screenshots to help explain your problem.
 
 ### Additional context
 Add any other context about the problem here.\n` +
-      (prefs
+      (get("prefs")
         ? "\n### Anonymized `prefs.json`\n```\n" +
           JSON.stringify(
             Object.fromEntries(
-              Object.entries(prefs).map((entry) => {
+              Object.entries(get("prefs")).map((entry) => {
                 if (
                   (entry[0].startsWith("cong") ||
                     entry[0] == "localOutputPath") &&
@@ -109,12 +112,11 @@ function setLogLevel(level) {
 function notifyUser(
   type,
   message,
-  fileOrUrl,
-  persistent,
-  errorFedToMe,
-  action,
-  hideDismiss,
-  prefs
+  fileOrUrl = null,
+  persistent = false,
+  errorFedToMe = null,
+  action = null,
+  hideDismiss = false
 ) {
   try {
     let icon;
@@ -133,7 +135,7 @@ function notifyUser(
       log[type](fileOrUrl ? fileOrUrl : "", errorFedToMe ? errorFedToMe : "");
     type = i18n.__(type);
     let thisBugUrl =
-      bugUrl(prefs) +
+      bugUrl() +
       (errorFedToMe
         ? encodeURIComponent(
           "\n### Error details\n```\n" +
