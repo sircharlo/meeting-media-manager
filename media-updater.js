@@ -1,11 +1,14 @@
 // TODO: check why bounds are weird on display removed, ie not detecting only one screen properly??
 
-const { translate, setAppLang } = require("./modules/lang");
-const { initPrefs, setPref, setPrefs, prefsInitialize, enforcePrefs, getForcedPrefs, enablePreviouslyForcedPrefs } = require("./modules/prefs");
+const { request } = require("./modules/requests");
+const { progressSet } = require("./modules/ui");
+const { get, set, setPref } = require("./modules/store");
+const { translate, setAppLang, getJwOrgLanguages, getLocaleLanguages } = require("./modules/lang");
+const { initPrefs, prefsInitialize, enforcePrefs, getForcedPrefs, enablePreviouslyForcedPrefs } = require("./modules/prefs");
 const { log, bugUrl, notifyUser, setLogLevel } = require("./modules/log");
 const constants = require("./constants");
 const { mp4Convert, convertUnusableFiles } = require("./modules/converters");
-const { getObs, setObs, obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require("./modules/obs");
+const { obsGetScenes, obsSetScene, shortcutSet, shortcutsUnset } = require("./modules/obs");
 const fadeDelay = 200,
   aspect = require("aspectratio"),
   axios = require("axios"),
@@ -14,7 +17,6 @@ const fadeDelay = 200,
   escape = require("escape-html"),
   ffmpeg = require("fluent-ffmpeg"),
   fs = require("fs-extra"),
-  fullHd = [1920, 1080],
   glob = require("fast-glob"),
   hme = require("h264-mp4-encoder"),
   isAudio = require("is-audio"),
@@ -69,7 +71,7 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
     await shell.openPath(url.fileURLToPath(url.pathToFileURL(macDownloadPath).href));
     // remote.app.exit();
   } catch(err) {
-    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"}, false, prefs);
+    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
   }
   $("#bg-mac-update").fadeIn(fadeDelay);
   $("#btn-settings").addClass("pulse-danger");
@@ -93,7 +95,6 @@ var baseDate = dayjs().startOf("isoWeek"),
   downloadStats = {},
   dryrun = false,
   ffmpegIsSetup = false,
-  jsonLangs = [],
   jwpubDbs = {},
   meetingMedia,
   modal = new bootstrap.Modal(document.getElementById("staticBackdrop"), {
@@ -106,8 +107,6 @@ var baseDate = dayjs().startOf("isoWeek"),
   },
   pendingMusicFadeOut = {},
   perfStats = {},
-  prefs = {},
-  songPub = "",
   tempMediaArray = [],
   totals = {},
   webdavIsAGo = false,
@@ -122,25 +121,25 @@ $(function() {
   congregationInitialSelector();
 });
 function goAhead() {
-  prefs = initPrefs(paths.prefs);
+  initPrefs(paths.prefs);
   getInitialData();
   dateFormatter();
   $("#overlaySettings input:not(.timePicker), #overlaySettings select").on("change", function() {
     if ($(this).prop("tagName") == "INPUT") {
       if ($(this).prop("type") == "checkbox") {
-        prefs = setPref($(this).prop("id"), $(this).prop("checked"));
+        setPref($(this).prop("id"), $(this).prop("checked"));
       } else if ($(this).prop("type") == "radio") {
-        prefs = setPref($(this).closest("div").prop("id"), escape($(this).closest("div").find("input:checked").val()));
+        setPref($(this).closest("div").prop("id"), escape($(this).closest("div").find("input:checked").val()));
       } else if ($(this).prop("type") == "text" || $(this).prop("type") == "password"  || $(this).prop("type") == "hidden" || $(this).prop("type") == "range") {
-        prefs = setPref($(this).prop("id"), escape($(this).val()));
+        setPref($(this).prop("id"), escape($(this).val()));
       }
     } else if ($(this).prop("tagName") == "SELECT") {
-      prefs = setPref($(this).prop("id"), escape($(this).find("option:selected").val()));
+      setPref($(this).prop("id"), escape($(this).find("option:selected").val()));
     }
     if ($(this).prop("id") == "disableHardwareAcceleration") toggleHardwareAcceleration();
     if ($(this).prop("id") == "congServer" && $(this).val() == "") $("#congServerPort, #congServerUser, #congServerPass, #congServerDir, #webdavFolderList").val("").empty().trigger("change");
     if ($(this).prop("id").includes("congServer")) webdavSetup();
-    if ($(this).prop("id") == "localAppLang") setAppLang(getMediaWindowDestination, unconfirm, dateFormatter, prefs.localAppLang);
+    if ($(this).prop("id") == "localAppLang") setAppLang(getMediaWindowDestination, unconfirm, dateFormatter, get("prefs").localAppLang);
     if ($(this).prop("id") == "lang" || $(this).prop("id").includes("maxRes")) {
       setVars();
       setMediaLang().finally(() => {
@@ -150,7 +149,7 @@ function goAhead() {
     if ($(this).prop("id") == "enableMediaDisplayButton") toggleMediaWindow();
     if ($(this).prop("id") == "hideMediaLogo") toggleMediaWindow("reopen");
     if ($(this).prop("id") == "preferredOutput") setMediaWindowPosition();
-    if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes(false, validateConfig, prefs);
+    if ($(this).prop("id") == "enableObs" || $(this).prop("id") == "obsPort" || $(this).prop("id") == "obsPassword") obsGetScenes(false, validateConfig);
     if ($(this).prop("name").includes("Day") || $(this).prop("name").includes("exclude") || $(this).prop("id") == "maxRes" || $(this).prop("id").includes("congServer") || $(this).prop("id") == "outputFolderDateFormat") meetingMedia = {};
     if ($(this).prop("id").includes("congServer") || $(this).prop("name").includes("Day") || $(this).prop("id") == "outputFolderDateFormat") {
       setVars();
@@ -201,8 +200,8 @@ function rm(toDelete) {
 function congregationChange(prefsFile) {
   overlay(true, "cog fa-spin").then(() => {
     paths.prefs = prefsFile;
-    prefs = setPrefs({});
-    prefs = prefsInitialize();
+    set("prefs", {});
+    prefsInitialize();
     goAhead();
   });
 }
@@ -314,10 +313,10 @@ function createVideoSync(mediaFile){
       if (path.extname(mediaFile).includes("mp3")) {
         ffmpegSetup().then(function () {
           ffmpeg(mediaFile).on("end", function() {
-            if (!prefs.keepOriginalsAfterConversion) rm(mediaFile);
+            if (!get("prefs").keepOriginalsAfterConversion) rm(mediaFile);
             return resolve();
           }).on("error", function(err) {
-            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true, false, prefs);
+            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
             return resolve();
           }).noVideo().save(path.join(outputFilePath));
         });
@@ -328,8 +327,8 @@ function createVideoSync(mediaFile){
         convertedImageDimensions = aspect.resize(
           imageDimesions.width, 
           imageDimesions.height, 
-          (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > fullHd[0] ? fullHd[0] : imageDimesions.width) : null), 
-          (fullHd[1] / fullHd[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > fullHd[1] ? fullHd[1] : imageDimesions.height))
+          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > constants.FULL_HD[0] ? constants.FULL_HD[0] : imageDimesions.width) : null), 
+          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > constants.FULL_HD[1] ? constants.FULL_HD[1] : imageDimesions.height))
         );
         $("body").append("<div id='convert' style='display: none;'>");
         $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
@@ -349,11 +348,11 @@ function createVideoSync(mediaFile){
             fs.writeFileSync(outputFilePath, encoder.FS.readFile(encoder.outputFilename));
             encoder.delete();
             $("div#convert").remove();
-            if (!prefs.keepOriginalsAfterConversion) rm(mediaFile);
+            if (!get("prefs").keepOriginalsAfterConversion) rm(mediaFile);
             return resolve();
           });
           $("img#imgToConvert").on("error", function(err) {
-            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true, false, prefs);
+            notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
             $("div#convert").remove();
             return resolve();
           });
@@ -361,7 +360,7 @@ function createVideoSync(mediaFile){
         });
       }
     } catch (err) {
-      notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true, false, prefs);
+      notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
       return resolve();
     }
   });
@@ -369,7 +368,7 @@ function createVideoSync(mediaFile){
 function createVlcPlaylists() {
   for (var date of glob.sync(path.join(paths.media, "*/"), {
     onlyDirectories: true
-  }).map(item => path.basename(item)).filter(item => dayjs(item, prefs.outputFolderDateFormat).isValid())) {
+  }).map(item => path.basename(item)).filter(item => dayjs(item, get("prefs").outputFolderDateFormat).isValid())) {
     var playlistItems = {
       "?xml": {
         "@_version": "1.0",
@@ -391,7 +390,7 @@ function createVlcPlaylists() {
 }
 function dateFormatter() {
   meetingMedia = {};
-  let locale = prefs.localAppLang ? prefs.localAppLang.split("-")[0] : "en";
+  let locale = get("prefs").localAppLang ? get("prefs").localAppLang.split("-")[0] : "en";
   try {
     if (locale !== "en") require("dayjs/locale/" + locale);
     dayjs.locale(locale);
@@ -404,10 +403,10 @@ function dateFormatter() {
       value: dateFormat,
       class: "customDateFormat",
       text: dayjs().locale(locale).format(dateFormat),
-      ...(prefs.outputFolderDateFormat == dateFormat && { selected: "selected" }),
+      ...(get("prefs").outputFolderDateFormat == dateFormat && { selected: "selected" }),
     }));
   }
-  if (!prefs.outputFolderDateFormat) $("#outputFolderDateFormat").val("YYYY-MM-DD").trigger("change");
+  if (!get("prefs").outputFolderDateFormat) $("#outputFolderDateFormat").val("YYYY-MM-DD").trigger("change");
   baseDate = dayjs(baseDate).locale(locale);
   $("#folders .day").remove();
   for (var d = 6; d >= 0; d--) {
@@ -415,9 +414,9 @@ function dateFormatter() {
       id: "day" + d,
       class: "day alertIndicators m-1 col btn btn-sm align-items-center justify-content-center " 
         + (baseDate.clone().add(d, "days").isSame(now) ? "pulse-info " : "") 
-        + ([prefs.mwDay, prefs.weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") 
-        + (prefs.mwDay == d.toString() ? "mw " : "") + (prefs.weDay == d.toString() ? "we " : ""),
-      "data-datevalue": baseDate.clone().add(d, "days").locale(locale).format(prefs.outputFolderDateFormat)
+        + ([get("prefs").mwDay, get("prefs").weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") 
+        + (get("prefs").mwDay == d.toString() ? "mw " : "") + (get("prefs").weDay == d.toString() ? "we " : ""),
+      "data-datevalue": baseDate.clone().add(d, "days").locale(locale).format(get("prefs").outputFolderDateFormat)
     }).append($("<div>", {
       class: "col dayLongDate"
     }).append($("<div>", {
@@ -470,7 +469,7 @@ const delay = s => new Promise(res => {
 
 function displayMusicRemaining() {
   let timeRemaining;
-  if (prefs.enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
+  if (get("prefs").enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
     let rightNow = dayjs();
     timeRemaining = (dayjs(pendingMusicFadeOut.endTime).isAfter(rightNow) ? dayjs(pendingMusicFadeOut.endTime).diff(rightNow) : 0);
   } else {
@@ -565,16 +564,16 @@ async function getCongMedia() {
   updateTile("specificCong", "warning");
   updateStatus("cloud");
   try {
-    for (let meeting of Object.keys(meetingMedia).filter(meeting => dayjs(meeting, prefs.outputFolderDateFormat).isValid() && dayjs(meeting, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"))) {
+    for (let meeting of Object.keys(meetingMedia).filter(meeting => dayjs(meeting, get("prefs").outputFolderDateFormat).isValid() && dayjs(meeting, get("prefs").outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]"))) {
       meetingMedia[meeting] = meetingMedia[meeting].filter(part => part.media.filter(mediaItem => mediaItem.recurring).length == 0);
     }
-    for (let congSpecificFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Media")))) {
-      let isMeetingDate = dayjs(congSpecificFolder.basename, prefs.outputFolderDateFormat).isValid() && dayjs(congSpecificFolder.basename, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, prefs.outputFolderDateFormat));
+    for (let congSpecificFolder of (await webdavLs(path.posix.join(get("prefs").congServerDir, "Media")))) {
+      let isMeetingDate = dayjs(congSpecificFolder.basename, get("prefs").outputFolderDateFormat).isValid() && dayjs(congSpecificFolder.basename, get("prefs").outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(congSpecificFolder.basename, get("prefs").outputFolderDateFormat));
       let isRecurring = congSpecificFolder.basename == "Recurring";
-      let congSubFolder = (isRecurring ? congSpecificFolder.basename : dayjs(congSpecificFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat));
+      let congSubFolder = (isRecurring ? congSpecificFolder.basename : dayjs(congSpecificFolder.basename, get("prefs").outputFolderDateFormat).format(get("prefs").outputFolderDateFormat));
       if (isMeetingDate || isRecurring) {
         if (!meetingMedia[congSubFolder]) meetingMedia[congSubFolder] = [];
-        for (let remoteFile of (await webdavLs(path.posix.join(prefs.congServerDir, "Media", congSpecificFolder.basename)))) {
+        for (let remoteFile of (await webdavLs(path.posix.join(get("prefs").congServerDir, "Media", congSpecificFolder.basename)))) {
           let congSpecificFile = {
             "title": "Congregation-specific",
             media: [{
@@ -588,7 +587,7 @@ async function getCongMedia() {
           if (!meetingMedia[congSubFolder].map(part => part.media).flat().map(item => item.url).filter(Boolean).includes(remoteFile.filename)) meetingMedia[congSubFolder].push(congSpecificFile);
           if (isRecurring) {
             for (let meeting of Object.keys(meetingMedia)) {
-              if (dayjs(meeting, prefs.outputFolderDateFormat).isValid() && dayjs(meeting, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
+              if (dayjs(meeting, get("prefs").outputFolderDateFormat).isValid() && dayjs(meeting, get("prefs").outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")) {
                 var repeatFile = v8.deserialize(v8.serialize(congSpecificFile));
                 repeatFile.media[0].recurring = true;
                 repeatFile.media[0].folder = meeting;
@@ -599,11 +598,11 @@ async function getCongMedia() {
         }
       }
     }
-    for (var hiddenFilesFolder of (await webdavLs(path.posix.join(prefs.congServerDir, "Hidden"))).filter(hiddenFilesFolder => dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).isValid() && dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat))).sort((a, b) => (a.basename > b.basename) ? 1 : -1)) {
-      for (var hiddenFile of await webdavLs(path.posix.join(prefs.congServerDir, "Hidden", hiddenFilesFolder.basename))) {
+    for (var hiddenFilesFolder of (await webdavLs(path.posix.join(get("prefs").congServerDir, "Hidden"))).filter(hiddenFilesFolder => dayjs(hiddenFilesFolder.basename, get("prefs").outputFolderDateFormat).isValid() && dayjs(hiddenFilesFolder.basename, get("prefs").outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && now.isSameOrBefore(dayjs(hiddenFilesFolder.basename, get("prefs").outputFolderDateFormat))).sort((a, b) => (a.basename > b.basename) ? 1 : -1)) {
+      for (var hiddenFile of await webdavLs(path.posix.join(get("prefs").congServerDir, "Hidden", hiddenFilesFolder.basename))) {
         var hiddenFileLogString = "background-color: #d6d8d9; color: #1b1e21;";
-        if (meetingMedia[dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat)]) {
-          meetingMedia[dayjs(hiddenFilesFolder.basename, prefs.outputFolderDateFormat).format(prefs.outputFolderDateFormat)]
+        if (meetingMedia[dayjs(hiddenFilesFolder.basename, get("prefs").outputFolderDateFormat).format(get("prefs").outputFolderDateFormat)]) {
+          meetingMedia[dayjs(hiddenFilesFolder.basename, get("prefs").outputFolderDateFormat).format(get("prefs").outputFolderDateFormat)]
             .filter(part => part.media.filter(mediaItem => mediaItem.safeName == hiddenFile.basename).map(function (mediaItem) {
               mediaItem.hidden = true;
               hiddenFileLogString = "background-color: #fff3cd; color: #856404;";
@@ -613,7 +612,7 @@ async function getCongMedia() {
       }
     }
   } catch (err) {
-    notifyUser("error", "errorGetCongMedia", null, true, err, true, false, prefs);
+    notifyUser("error", "errorGetCongMedia", null, true, err, true);
     updateTile("specificCong", "danger");
   }
   perf("getCongMedia", "stop");
@@ -641,13 +640,13 @@ async function getDbFromJwpub(pub, issue, localpath, lang) {
           await downloadIfRequired(jwpub);
           jwpubDbs[pub][issue] = new SQL.Database(fs.readFileSync(glob.sync(path.join(paths.pubs, jwpub.pub, jwpub.issue, "0", "*.db"))[0]));
         } else {
-          notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, null, true, false, prefs);
+          notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, null, true);
         }
       }
     }
     return jwpubDbs[pub][issue];
   } catch (err) {
-    notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, err, true, false, prefs);
+    notifyUser("warn", "errorJwpubDbFetch", pub + " - " + issue, false, err, true);
   }
 }
 async function getDocumentExtract(db, docId) {
@@ -664,9 +663,9 @@ async function getDocumentExtract(db, docId) {
     WHERE DocumentExtract.DocumentId = ${docId} 
       AND NOT UniqueEnglishSymbol = 'sjj' 
       AND NOT UniqueEnglishSymbol = 'mwbr'
-      ${prefs.excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ""}
+      ${get("prefs").excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ""}
     ORDER BY DocumentExtract.BeginParagraphOrdinal`))) {
-    extractItem.Lang = prefs.lang;
+    extractItem.Lang = get("prefs").lang;
     if (extractItem.Link) {
       try {
         extractItem.Lang = extractItem.Link.match(/\/(.*)\//).pop().split(":")[0];
@@ -680,7 +679,7 @@ async function getDocumentExtract(db, docId) {
       if (extractDb) {
         extractMultimediaItems = extractMultimediaItems.concat((await getDocumentMultimedia(extractDb, null, extractItem.RefMepsDocumentId, null, extractItem.Lang)).filter(extractMediaFile => {
           if (extractMediaFile.queryInfo.tableQuestionIsUsed && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) extractMediaFile.BeginParagraphOrdinal = extractMediaFile.queryInfo.NextParagraphOrdinal;
-          if (jsonLangs.find(lang => lang.langcode == prefs.lang).isSignLanguage && !!extractMediaFile.queryInfo.FilePath && isVideo(extractMediaFile.queryInfo.FilePath) && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) {
+          if (get("jsonLangs").find(lang => lang.langcode == get("prefs").lang).isSignLanguage && !!extractMediaFile.queryInfo.FilePath && isVideo(extractMediaFile.queryInfo.FilePath) && !extractMediaFile.queryInfo.TargetParagraphNumberLabel) {
             return true; // include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
           } else if (extractMediaFile.BeginParagraphOrdinal && extractItem.RefBeginParagraphOrdinal && extractItem.RefEndParagraphOrdinal) {
             return extractItem.RefBeginParagraphOrdinal <= extractMediaFile.BeginParagraphOrdinal && extractMediaFile.BeginParagraphOrdinal <= extractItem.RefEndParagraphOrdinal;
@@ -697,6 +696,7 @@ async function getDocumentExtract(db, docId) {
   return extractMultimediaItems;
 }
 async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly, lang) {
+  const prefs = get("prefs");
   let tableMultimedia = ((await executeStatement(db, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'")).length === 0 ? "Multimedia" : "DocumentMultimedia");
   let keySymbol = (await executeStatement(db, "SELECT UniqueEnglishSymbol FROM Publication"))[0].UniqueEnglishSymbol.replace(/[0-9]*/g, "");
   let issueTagNumber = (await executeStatement(db, "SELECT IssueTagNumber FROM Publication"))[0].IssueTagNumber;
@@ -754,23 +754,24 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly, lang) {
         multimediaItems.push(picture);
       }
     } catch (err) {
-      notifyUser("warn", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err, true, false, prefs);
+      notifyUser("warn", "errorJwpubMediaExtract", keySymbol + " - " + issueTagNumber, false, err, true);
     }
   }
   return multimediaItems;
 }
 
 async function getInitialData() {
+  const prefs = get("prefs");
   meetingMedia = {};
   jwpubDbs = {};
   await getJwOrgLanguages();
   await getLocaleLanguages();
-  await setAppLang(getMediaWindowDestination, unconfirm, dateFormatter, prefs.localAppLang);
+  await setAppLang(getMediaWindowDestination, unconfirm, dateFormatter);
   await periodicCleanup();
   await setMediaLang();
   await webdavSetup();
   let configIsValid = validateConfig();
-  await obsGetScenes(false, validateConfig, prefs);
+  await obsGetScenes(false, validateConfig);
   await toggleMediaWindow();
   $("#version").html("M³ " + (remote.app.isPackaged ? escape(currentAppVersion) : "Development Version"));
   $(".notLinux").closest(".row").add(".notLinux").toggle(os.platform() !== "linux");
@@ -778,7 +779,7 @@ async function getInitialData() {
   congregationSelectPopulate();
   $("#baseDate .dropdown-menu").empty();
   for (var a = 0; a <= 4; a++) {
-    $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format(prefs.outputFolderDateFormat) + "'>" + baseDate.clone().add(a, "week").format(prefs.outputFolderDateFormat.replace(" - dddd", "")) + " - " + baseDate.clone().add(a, "week").add(6, "days").format(prefs.outputFolderDateFormat.replace(" - dddd", "")) + "</button>");
+    $("#baseDate .dropdown-menu").append("<button class='dropdown-item' value='" + baseDate.clone().add(a, "week").format(get("prefs").outputFolderDateFormat) + "'>" + baseDate.clone().add(a, "week").format(prefs.outputFolderDateFormat.replace(" - dddd", "")) + " - " + baseDate.clone().add(a, "week").add(6, "days").format(prefs.outputFolderDateFormat.replace(" - dddd", "")) + "</button>");
   }
   $("#baseDate button.dropdown-toggle").text($("#baseDate .dropdown-item:eq(0)").text());
   $("#baseDate .dropdown-item:eq(0)").addClass("active");
@@ -789,74 +790,28 @@ async function getInitialData() {
   }
   overlay(false, (prefs.autoStartSync && configIsValid ? "flag-checkered" : null));
 }
-async function getJwOrgLanguages(forceRefresh) {
-  if ((!fs.existsSync(paths.langs)) || (!prefs.langUpdatedLast) || dayjs(prefs.langUpdatedLast).isBefore(now.subtract(3, "months")) || forceRefresh) {
-    let cleanedJwLangs = (await request("https://www.jw.org/en/languages/")).data.languages.filter(lang => lang.hasWebContent).map(lang => ({
-      name: lang.name,
-      langcode: lang.langcode,
-      symbol: lang.symbol,
-      vernacularName: lang.vernacularName,
-      isSignLanguage: lang.isSignLanguage
-    }));
-    fs.writeFileSync(paths.langs, JSON.stringify(cleanedJwLangs, null, 2));
-    prefs = setPref("langUpdatedLast", dayjs());
-    jsonLangs = cleanedJwLangs;
-  } else {
-    jsonLangs = JSON.parse(fs.readFileSync(paths.langs));
-  }
-  $("#lang").empty();
-  for (var lang of jsonLangs) {
-    $("#lang").append($("<option>", {
-      value: lang.langcode,
-      text: lang.vernacularName + " (" + lang.name + ")"
-    }));
-  }
-  $("#lang").val(prefs.lang).select2();
-  songPub = "sjj" + (!jsonLangs.find(lang => lang.langcode == prefs.lang) || (jsonLangs.find(lang => lang.langcode == prefs.lang) && !jsonLangs.find(lang => lang.langcode == prefs.lang).isSignLanguage) ? "m" : "");
-}
-function getLocaleLanguages() {
-  try {
-    $("#localAppLang").empty();
-    fs.readdirSync(path.join(__dirname, "locales")).map(file => {
-      let basename = path.basename(file, path.extname(file));
-      let localeLangMatch = jsonLangs.find(item => item.symbol === basename);
-      return {
-        friendlyName: (localeLangMatch ? localeLangMatch.vernacularName + " (" + localeLangMatch.name + ")" : basename),
-        actualName: (localeLangMatch ? localeLangMatch.name : basename),
-        localeCode: basename
-      };
-    }).sort((a, b) => a.actualName.localeCompare(b.actualName)).map(lang => {
-      $("#localAppLang").append($("<option>", {
-        value: lang.localeCode,
-        text: lang.friendlyName
-      }));
-    });
-    $("#localAppLang").val(prefs.localAppLang);
-  } catch(err) {
-    log.error(err);
-  }
-}
+
 async function getMediaLinks(mediaItem) {
   let mediaFiles = [];
-  if ((mediaItem.lang || prefs.lang) && prefs.maxRes) {
+  if ((mediaItem.lang || get("prefs").lang) && get("prefs").maxRes) {
     try {
       if (mediaItem.pubSymbol === "w" && mediaItem.issue && parseInt(mediaItem.issue) >= 20080101 && mediaItem.issue.toString().slice(-2) == "01") mediaItem.pubSymbol = "wp";
-      let requestUrl = constants.JW_API + (mediaItem.pubSymbol ? "&pub=" + mediaItem.pubSymbol + (mediaItem.track ? "&track=" + mediaItem.track : "") + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") : (mediaItem.docId ? "&docid=" + mediaItem.docId : "")) + "&langwritten=" + (mediaItem.lang || prefs.lang);
+      let requestUrl = constants.JW_API + (mediaItem.pubSymbol ? "&pub=" + mediaItem.pubSymbol + (mediaItem.track ? "&track=" + mediaItem.track : "") + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") : (mediaItem.docId ? "&docid=" + mediaItem.docId : "")) + "&langwritten=" + (mediaItem.lang || get("prefs").lang);
       let result = (await request(requestUrl)).data;
       log.debug(mediaItem.pubSymbol, mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
       if (result && result.length > 0 && result[0].status && [400, 404].includes(result[0].status) && mediaItem.pubSymbol && mediaItem.track) {
-        requestUrl = constants.JW_API + "&pub=" + mediaItem.pubSymbol + "m" + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || prefs.lang);
+        requestUrl = constants.JW_API + "&pub=" + mediaItem.pubSymbol + "m" + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || get("prefs").lang);
         result = (await request(requestUrl)).data;
         log.debug(mediaItem.pubSymbol + "m", mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
       }
       if (result && result.length > 0 && result[0].status && [400, 404].includes(result[0].status) && mediaItem.pubSymbol && mediaItem.pubSymbol.endsWith("m") && mediaItem.track) {
-        requestUrl = constants.JW_API + "&pub=" + mediaItem.pubSymbol.slice(0, -1) + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || prefs.lang);
+        requestUrl = constants.JW_API + "&pub=" + mediaItem.pubSymbol.slice(0, -1) + "&track=" + mediaItem.track + (mediaItem.issue ? "&issue=" + mediaItem.issue : "") + (mediaItem.format ? "&fileformat=" + mediaItem.format : "") + "&langwritten=" + (mediaItem.lang || get("prefs").lang);
         result = (await request(requestUrl)).data;
         log.debug(mediaItem.pubSymbol + "m", mediaItem.track, mediaItem.issue, mediaItem.format, mediaItem.docId, requestUrl);
       }
       if (result && result.files) {
         let mediaFileCategories = Object.values(result.files)[0];
-        mediaFiles = mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : Object.keys(mediaFileCategories)[0])].filter(({label}) => label.replace(/\D/g, "") <= prefs.maxRes.replace(/\D/g, ""));
+        mediaFiles = mediaFileCategories[("MP4" in mediaFileCategories ? "MP4" : Object.keys(mediaFileCategories)[0])].filter(({label}) => label.replace(/\D/g, "") <= get("prefs").maxRes.replace(/\D/g, ""));
         let map = new Map(mediaFiles.map(item => [item.title, item]));
         for (let item of mediaFiles) {
           let {label, subtitled} = map.get(item.title);
@@ -874,7 +829,7 @@ async function getMediaLinks(mediaItem) {
         }
       }
     } catch(err) {
-      notifyUser("warn", "infoPubIgnored", mediaItem.pubSymbol + " - " + mediaItem.track + " - " + mediaItem.issue + " - " + mediaItem.format, false, err, false, false, prefs);
+      notifyUser("warn", "infoPubIgnored", mediaItem.pubSymbol + " - " + mediaItem.track + " - " + mediaItem.issue + " - " + mediaItem.format, false, err);
     }
   }
   log.debug(mediaFiles);
@@ -883,7 +838,7 @@ async function getMediaLinks(mediaItem) {
 async function getMediaAdditionalInfo(pub, track, issue, _format, docId) {
   let mediaAdditionalInfo = {};
   if (issue) issue = issue.toString().replace(/(\d{6})00$/gm, "$1");
-  let result = (await request(constants.JWPUB_API + prefs.lang + "/" + (docId ? "docid-" + docId + "_1": "pub-" + [pub, issue, track].filter(Boolean).join("_")) + "_VIDEO")).data;
+  let result = (await request(constants.JWPUB_API + get("prefs").lang + "/" + (docId ? "docid-" + docId + "_1": "pub-" + [pub, issue, track].filter(Boolean).join("_")) + "_VIDEO")).data;
   if (result && result.media && result.media.length > 0) {
     if (result.media[0].images.wss.sm) mediaAdditionalInfo.thumbnail = result.media[0].images.wss.sm;
     if (result.media[0].primaryCategory) mediaAdditionalInfo.primaryCategory = result.media[0].primaryCategory;
@@ -891,9 +846,9 @@ async function getMediaAdditionalInfo(pub, track, issue, _format, docId) {
   return mediaAdditionalInfo;
 }
 async function getMwMediaFromDb() {
-  var mwDate = baseDate.clone().add(prefs.mwDay, "days").format(prefs.outputFolderDateFormat);
-  if (now.isSameOrBefore(dayjs(mwDate, prefs.outputFolderDateFormat))) {
-    updateTile("day" + prefs.mwDay, "warning");
+  var mwDate = baseDate.clone().add(get("prefs").mwDay, "days").format(get("prefs").outputFolderDateFormat);
+  if (now.isSameOrBefore(dayjs(mwDate, get("prefs").outputFolderDateFormat))) {
+    updateTile("day" + get("prefs").mwDay, "warning");
     try {
       var issue = baseDate.format("YYYYMM") + "00";
       if (parseInt(baseDate.format("M")) % 2 === 0) issue = baseDate.clone().subtract(1, "months").format("YYYYMM") + "00";
@@ -910,10 +865,10 @@ async function getMwMediaFromDb() {
           addMediaItemToPart(mwDate, internalRef.BeginParagraphOrdinal, internalRefMediaFile, "internal");
         });
       }
-      updateTile("day" + prefs.mwDay, "success");
+      updateTile("day" + get("prefs").mwDay, "success");
     } catch(err) {
-      notifyUser("error", "errorGetMwMedia", null, true, err, true, false, prefs);
-      updateTile("day" + prefs.mwDay, "danger");
+      notifyUser("error", "errorGetMwMedia", null, true, err, true);
+      updateTile("day" + get("prefs").mwDay, "danger");
     }
   }
 }
@@ -939,7 +894,7 @@ function getMediaWindowDestination() {
   };
   $("#preferredOutput").closest(".row").hide().find(".display").remove();
   try {
-    if (prefs.enableMediaDisplayButton) {
+    if (get("prefs").enableMediaDisplayButton) {
       let screenInfo = require("electron").ipcRenderer.sendSync("getScreenInfo");
       screenInfo.otherScreens.map(screen => {
         $("#preferredOutput").append($("<option />", {
@@ -948,11 +903,11 @@ function getMediaWindowDestination() {
           text: translate("screen") + " " + screen.humanFriendlyNumber + (screen.size && screen.size.width && screen.size.height ? " (" + screen.size.width + "x" + screen.size.height + ") (ID: " + screen.id + ")" : "")
         }));
       });
-      if (prefs.preferredOutput) $("#preferredOutput").val(prefs.preferredOutput);
+      if (get("prefs").preferredOutput) $("#preferredOutput").val(get("prefs").preferredOutput);
       $("#preferredOutput").closest(".row").toggle(screenInfo.otherScreens.length > 0);
       if (screenInfo.otherScreens.length > 0) { // at least one external screen
-        if (prefs.preferredOutput !== "window") { // fullscreen mode
-          let preferredDisplay = screenInfo.displays.find(display => display.id == prefs.preferredOutput); // try to find preferred display
+        if (get("prefs").preferredOutput !== "window") { // fullscreen mode
+          let preferredDisplay = screenInfo.displays.find(display => display.id == get("prefs").preferredOutput); // try to find preferred display
           if (screenInfo.otherScreens.length > 1) { // more than one external screen
             mediaWindowOpts.destination = preferredDisplay ? preferredDisplay.id : screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id; // try to use preferred display; otherwise use another available one
           }
@@ -975,6 +930,7 @@ function setMediaWindowPosition() {
 }
 
 async function getWeMediaFromDb() {
+  const prefs = get("prefs");
   var weDate = baseDate.clone().add(prefs.weDay, "days").format(prefs.outputFolderDateFormat);
   if (now.isSameOrBefore(dayjs(weDate, prefs.outputFolderDateFormat))) {
     updateTile("day" + prefs.weDay, "warning");
@@ -1019,12 +975,12 @@ async function getWeMediaFromDb() {
           songJson[0].queryInfo = qrySongs[song];
           addMediaItemToPart(weDate, song * 2, songJson[0]);
         } else {
-          notifyUser("error", "errorGetWeMedia", null, true, songJson, true, false, prefs);
+          notifyUser("error", "errorGetWeMedia", null, true, songJson, true);
         }
       }
       updateTile("day" + prefs.weDay, "success");
     } catch(err) {
-      notifyUser("error", "errorGetWeMedia", null, true, err, true, false, prefs);
+      notifyUser("error", "errorGetWeMedia", null, true, err, true);
       updateTile("day" + prefs.weDay, "danger");
     }
   }
@@ -1034,7 +990,7 @@ async function getRemoteYearText(force) {
   let yearText = null;
   try {
     if (!fs.existsSync(paths.yearText) || force) {
-      await axios.get(constants.YEARTEXT(prefs.lang), {
+      await axios.get(constants.YEARTEXT(get("prefs").lang), {
         adapter: require("axios/lib/adapters/http")
       }).then(result => {
         fs.ensureDirSync(path.join(paths.yearText, "../"));
@@ -1067,7 +1023,7 @@ function isReachable(hostname, port, silent) {
         resolve(true);
       });
       client.on("error", function(err) {
-        if (!silent) notifyUser("error", "errorSiteCheck", hostname + ":" + port, false, err, false, false, prefs);
+        if (!silent) notifyUser("error", "errorSiteCheck", hostname + ":" + port, false, err);
         resolve(false);
       });
     } catch(err) {
@@ -1084,14 +1040,14 @@ function listMediaFolders() {
     onlyDirectories: true
   })) {
     folder = escape(folder);
-    $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format(prefs.outputFolderDateFormat) == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
+    $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format(get("prefs").outputFolderDateFormat) == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
   }
   return folderListing;
 }
 
 async function manageMedia(day, isMeetingDate, mediaType) {
   await overlay(true, (webdavIsAGo ? "cloud" : "folder-open") + " fa-beat");
-  $("#chosenMeetingDay").data("folderName", day).text(dayjs(day, prefs.outputFolderDateFormat).isValid() ? day : translate("recurring"));
+  $("#chosenMeetingDay").data("folderName", day).text(dayjs(day, get("prefs").outputFolderDateFormat).isValid() ? day : translate("recurring"));
   removeEventListeners();
   document.addEventListener("drop", dropHandler);
   document.addEventListener("dragover", dragoverHandler);
@@ -1159,18 +1115,9 @@ function periodicCleanup() {
   }
 }
 
-function progressSet(current, total, blockId) {
-  if (!dryrun || !blockId) {
-    let percent = current / total * 100;
-    if (percent > 100 || (!blockId && percent === 100)) percent = 0;
-    remote.getCurrentWindow().setProgressBar(percent / 100);
-    $("#" + (blockId ? blockId + " .progress-bar" : "globalProgress")).width(percent + "%");
-  }
-}
-
 function refreshBackgroundImagePreview(force) {
   try {
-    if (prefs.enableMediaDisplayButton) {
+    if (get("prefs").enableMediaDisplayButton) {
       let mediaWindowBackgroundImages = glob.sync(path.join(paths.app, "media-window-background-image*"));
       if (mediaWindowBackgroundImages.length == 0) {
         getRemoteYearText(force).then((yearText) => {
@@ -1425,48 +1372,7 @@ function removeEventListeners() {
   document.removeEventListener("dragenter", dragenterHandler);
   document.removeEventListener("dragleave", dragleaveHandler);
 }
-async function request(url, opts) {
-  let response = null,
-    payload,
-    options = opts ? opts : {};
-  try {
-    if (options.webdav) options.auth = {
-      username: prefs.congServerUser,
-      password: prefs.congServerPass
-    };
-    if (options.isFile) {
-      options.responseType = "arraybuffer";
-      options.onDownloadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
-    }
-    if (options.noCache) {
-      options.headers = {
-        "Cache-Control": "no-cache",
-        "Pragma": "no-cache",
-        "Expires": "0",
-      };
-    }
-    if (options.method === "PUT") options.onUploadProgress = progressEvent => progressSet(progressEvent.loaded, progressEvent.total);
-    if (["jw.org", "www.jw.org"].includes((new URL(url)).hostname)) options.adapter = require("axios/lib/adapters/http");
-    options.url = url;
-    if (!options.method) options.method = "GET";
-    payload = await axios.request(options);
-    response = payload;
-  } catch (err) {
-    response = (err.response ? err.response : err);
-    if (!response.status) response = (response.config.url && response.data) ? {
-      url: response.config.url,
-      data: response.data,
-      status: response.status
-    } : {
-      url: url,
-      status: 500,
-      originalResponse: response
-    };
-    log.error(response);
-    if (options.webdav) throw(response);
-  }
-  return response;
-}
+
 function sanitizeFilename(filename, isNotFile) {
   let fileExtIfApplicable = (isNotFile ? "" : path.extname(filename).toLowerCase());
   filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).replace(/["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1f\x80-\x9f]/g, "").replace(/ *[—?;:|.!?] */g, " - ").replace(/\u00A0/g, " ").trim().replace(/[ -]+$/g, "") + fileExtIfApplicable;
@@ -1485,12 +1391,13 @@ function sanitizeFilename(filename, isNotFile) {
   return path.basename(filename, (isNotFile ? "" : path.extname(filename))) + fileExtIfApplicable;
 }
 async function setMediaLang() {
+  const prefs = get("prefs");
   if (prefs.lang) {
     jwpubDbs = {};
     meetingMedia = {};
     try {
       $("#songPicker").empty();
-      for (let sjj of (await getMediaLinks({pubSymbol: songPub, format: "MP4"}))) {
+      for (let sjj of (await getMediaLinks({pubSymbol: get("songPub"), format: "MP4"}))) {
         $("#songPicker").append($("<option>", {
           value: sjj.track,
           text: sjj.title,
@@ -1502,11 +1409,12 @@ async function setMediaLang() {
       $("label[for=typeFile]").trigger("click").addClass("active");
     }
     $("#lang").val(prefs.lang).select2("destroy").select2();
-    let currentJwLang = jsonLangs.filter(item => item.langcode == prefs.lang);
+    let currentJwLang = get("jsonLangs").filter(item => item.langcode == prefs.lang);
     $(".jwLang small").text(currentJwLang.length == 1 && currentJwLang[0].vernacularName ? "(" + currentJwLang[0].vernacularName + ")" : "");
   }
 }
 function setVars() {
+  const prefs = get("prefs");
   if (prefs.localOutputPath && prefs.lang) {
     perf("setVars", "start");
     try {
@@ -1543,7 +1451,7 @@ function showMediaWindow() {
 }
 async function startMediaDisplay() {
   try {
-    await obsSetScene(prefs.obsCameraScene, prefs);
+    await obsSetScene(get("prefs").obsCameraScene);
     await getRemoteYearText().finally(() => {
       require("electron").ipcRenderer.send("startMediaDisplay", paths.prefs);
     });
@@ -1552,8 +1460,9 @@ async function startMediaDisplay() {
   }
 }
 async function startMediaSync(isDryrun, meetingFilter) {
+  const prefs = get("prefs");
   perf("total", "start");
-  dryrun = !!isDryrun;
+  dryrun = set("dryrun", !!isDryrun);
   if (!dryrun) {
     $("#statusIcon").toggleClass("text-primary text-muted fa-flip");
     $("#congregationSelect-dropdown").addClass("sync-started");
@@ -1584,7 +1493,7 @@ async function startMediaSync(isDryrun, meetingFilter) {
       syncLocalRecurringMedia(),
     ]);
     await convertUnusableFiles(rm, paths.media);
-    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, paths.media, prefs);
+    if (prefs.enableMp4Conversion) await mp4Convert(perf, updateStatus, updateTile, progressSet, createVideoSync, totals, paths.media);
     if (prefs.enableVlcPlaylistCreation) createVlcPlaylists();
     if (prefs.autoOpenFolderWhenDone) shell.openPath(url.fileURLToPath(url.pathToFileURL(paths.media).href));
     $("#btn-settings").fadeToAndToggle(fadeDelay, 1);
@@ -1608,7 +1517,7 @@ function stopMeetingMusic() {
     $("#meetingMusic").remove();
     $("#btnStopMeetingMusic").hide().addClass("btn-warning").removeClass("btn-danger stopping");
     $("#musicRemaining").empty().show();
-    if (prefs.enableMusicButton) $("#btnMeetingMusic").attr("title", "Alt+K").show();
+    if (get("prefs").enableMusicButton) $("#btnMeetingMusic").attr("title", "Alt+K").show();
     $("#congregationSelect-dropdown").removeClass("music-playing");
     $("#congregationSelect-dropdown:not(.sync-started)").prop("disabled", false);
     pendingMusicFadeOut = {};
@@ -1631,6 +1540,7 @@ function stopMeetingMusic() {
   }
 }
 async function syncCongMedia() {
+  const prefs = get("prefs");
   let congSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, prefs.outputFolderDateFormat).isValid() && dayjs(key, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
   if (webdavIsAGo) {
     perf("syncCongMedia", "start");
@@ -1662,7 +1572,7 @@ async function syncCongMedia() {
       if (Object.values(congSyncMeetingMedia).flat().map(part => part.media).flat().filter(media => media.recurring).length > 0) updateTile("recurringMedia", "success");
       updateTile("specificCong", "success");
     } catch (err) {
-      notifyUser("error", "errorSyncCongMedia", null, true, err, true, false, prefs);
+      notifyUser("error", "errorSyncCongMedia", null, true, err, true);
       updateTile("specificCong", "danger");
       progressSet(0, 100, "specificCong");
     }
@@ -1670,6 +1580,7 @@ async function syncCongMedia() {
   }
 }
 async function syncJwOrgMedia() {
+  const prefs = get("prefs");
   perf("syncJwOrgMedia", "start");
   updateTile("syncJwOrgMedia", "warning");
   let jwOrgSyncMeetingMedia = Object.fromEntries(Object.entries(meetingMedia).filter(([key]) => key !== "Recurring" && dayjs(key, prefs.outputFolderDateFormat).isValid() && dayjs(key, prefs.outputFolderDateFormat).isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]")));
@@ -1712,6 +1623,7 @@ async function syncJwOrgMedia() {
   perf("syncJwOrgMedia", "stop");
 }
 function syncLocalRecurringMedia() {
+  const prefs = get("prefs");
   if (!webdavIsAGo && fs.existsSync(path.join(paths.media, "Recurring"))) {
     updateTile("recurringMedia", "warning");
     glob.sync(path.join(paths.media, "Recurring", "*")).forEach((recurringItem) => {
@@ -1725,23 +1637,23 @@ function syncLocalRecurringMedia() {
 }
 async function testApp() {
   setLogLevel("debug");
-  let previousLang = prefs.lang;
+  let previousLang = get("prefs").lang;
   for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"] ) {
-    prefs = setPref("lang", lang);
+    setPref("lang", lang);
     await startMediaSync(true);
   }
-  prefs = setPref("lang", previousLang);
+  setPref("lang", previousLang);
   setLogLevel("info");
 }
 function toggleHardwareAcceleration() {
-  if (prefs.disableHardwareAcceleration) {
+  if (get("prefs").disableHardwareAcceleration) {
     fs.writeFileSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"), "true");
   } else {
     rm(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
   }
 }
 async function toggleMediaWindow(action) {
-  if (!action) action = prefs.enableMediaDisplayButton ? "open" : "close";
+  if (!action) action = get("prefs").enableMediaDisplayButton ? "open" : "close";
   if (action == "open") {
     await refreshBackgroundImagePreview();
     await showMediaWindow();
@@ -1765,6 +1677,7 @@ function toggleScreen(screen, forceShow, sectionToShow) {
   });
 }
 function updateCleanup() {
+  const prefs = get("prefs");
   try { // do some housecleaning after version updates
     var lastRunVersion = "0";
     if (fs.existsSync(paths.lastRunVersion)) lastRunVersion = fs.readFileSync(paths.lastRunVersion, "utf8");
@@ -1796,7 +1709,7 @@ function updateCleanup() {
         // fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
         if (remote.app.isPackaged) fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
         if (lastRunVersion !== "0") {
-          notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"}, false, prefs);
+          notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
           /* if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
           notifyUser(
             "info", 
@@ -1810,11 +1723,11 @@ function updateCleanup() {
             null, true, null, {desc: "understood", noLink: true}, true);
              $("#folders").addClass("new-stuff");
            }*/
-          let currentLang = jsonLangs ? jsonLangs.filter(item => item.langcode === prefs.lang)[0] : null;
+          let currentLang = get("jsonLangs") ? get("jsonLangs").filter(item => item.langcode === prefs.lang)[0] : null;
           if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", translate("wannaHelpExplain") + "<br/><small>" +  translate("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
             desc: "wannaHelpForSure",
             url: constants.REPO_URL + "discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
-          }, false, prefs);
+          });
           getJwOrgLanguages(true).then(function() {
             setMediaLang();
           });
@@ -1957,7 +1870,7 @@ function updateFileList(initialLoad) {
         }
         if (isImage(imageSrc.path)) {
           if (file.congSpecific) {
-            request("https://" + prefs.congServer + ":" + prefs.congServerPort + file.url, {
+            request("https://" + get("prefs").congServer + ":" + get("prefs").congServerPort + file.url, {
               webdav: true,
               isFile: true
             }).then(res => {
@@ -1999,7 +1912,7 @@ function updateFileList(initialLoad) {
     $(".btn-cancel-upload.no-file-selected").toggle(!newFileChosen);
     $(".fileListLoading").prop("disabled", false).removeClass("fileListLoading");
   } catch (err) {
-    notifyUser("error", "errorAdditionalMediaList", null, true, err, true, false, prefs);
+    notifyUser("error", "errorAdditionalMediaList", null, true, err, true);
   } finally {
     $(".disabled-while-load").prop("disabled", false).removeClass("disabled-while-load");
   }
@@ -2019,6 +1932,7 @@ function unconfirm(el) {
   $(el).removeClass("wasWarningBefore confirmed").blur();
 }
 function validateConfig(changed, restart) {
+  let prefs = get("prefs");
   let configIsValid = true;
   $(".alertIndicators").removeClass("meeting");
   if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) {
@@ -2037,7 +1951,7 @@ function validateConfig(changed, restart) {
   }
   if (prefs.enableObs) {
     mandatoryFields.push("obsPort", "obsPassword");
-    if (getObs()._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
+    if (get("obs")._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
   }
   for (var setting of mandatoryFields) {
     if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
@@ -2105,6 +2019,7 @@ async function webdavExists(url) {
   return (await webdavStatus(url)) < 400;
 }
 async function webdavGet(file) {
+  const prefs = get("prefs");
   let localFile = path.join(paths.media, file.folder, file.safeName);
   if (!fs.existsSync(localFile) || !(file.filesize == fs.statSync(localFile).size)) {
     fs.ensureDirSync(path.join(paths.media, file.folder));
@@ -2132,6 +2047,7 @@ async function webdavGet(file) {
   }
 }
 async function webdavLs(dir, force) {
+  const prefs = get("prefs");
   let items = [],
     congUrl = "https://" + prefs.congServer + ":" + prefs.congServerPort + dir;
   try {
@@ -2165,12 +2081,14 @@ async function webdavLs(dir, force) {
   }
 }
 async function webdavMkdir(dir) {
+  const prefs = get("prefs");
   if (!(await webdavExists(dir))) await request("https://" + prefs.congServer + ":" + prefs.congServerPort + dir, {
     method: "MKCOL",
     webdav: true
   });
 }
 async function webdavMv(src, dst) {
+  const prefs = get("prefs");
   try {
     let congServerAddress = "https://" + prefs.congServer + ":" + prefs.congServerPort;
     if (await webdavExists(dst)) {
@@ -2189,6 +2107,7 @@ async function webdavMv(src, dst) {
   }
 }
 async function webdavPut(file, destFolder, destName) {
+  const prefs = get("prefs");
   let destFile = path.posix.join("https://" + prefs.congServer + ":" + prefs.congServerPort, destFolder, (await sanitizeFilename(destName)));
   try {
     if (webdavIsAGo && file && destFolder && destName) {
@@ -2222,6 +2141,7 @@ async function webdavPut(file, destFolder, destName) {
   }
 }
 async function webdavRm(pathsToDel) {
+  const prefs = get("prefs");
   if (pathsToDel.length == 0) pathsToDel = null;
   if (!Array.isArray(pathsToDel)) pathsToDel = [pathsToDel];
   let returnVal = true;
@@ -2242,6 +2162,7 @@ async function webdavRm(pathsToDel) {
   return returnVal;
 }
 async function webdavSetup() {
+  const prefs = get("prefs");
   let congServerEntered = !!(prefs.congServer && prefs.congServer.length > 0);
   let congServerHeartbeat = false;
   let webdavLoginSuccessful = false;
@@ -2304,6 +2225,7 @@ async function webdavSetup() {
   if (!webdavIsAGo) enablePreviouslyForcedPrefs();
 }
 async function webdavStatus(url) {
+  const prefs = get("prefs");
   let response;
   try {
     response = await request("https://" + prefs.congServer + ":" + prefs.congServerPort + url, {
@@ -2348,7 +2270,7 @@ $(document).on("select2:open", () => {
   document.querySelector(".select2-search__field").focus();
 });
 $("#baseDate").on("click", ".dropdown-item", function() {
-  let newBaseDate = dayjs($(this).val(), prefs.outputFolderDateFormat).startOf("isoWeek");
+  let newBaseDate = dayjs($(this).val(), get("prefs").outputFolderDateFormat).startOf("isoWeek");
   if (!baseDate.isSame(newBaseDate)) {
     baseDate = newBaseDate;
     $(".alertIndicators:not(.congregation)").removeClass("btn-danger");
@@ -2385,6 +2307,7 @@ $("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected, .btn-canc
 });
 $("#btnForcedPrefs").on("click", () => {
   getForcedPrefs(webdavExists, request, paths).then(currentForcedPrefs => {
+    const prefs = get("prefs");
     let html = "<h6>" + translate("settingsLockedWhoAreYou") + "</h6>";
     html += "<p>" + translate("settingsLockedExplain") + "</p>";
     html += "<div id='forcedPrefs' class='card'><div class='card-body'>";
@@ -2476,7 +2399,7 @@ $("#btnMediaWindow").on("click", function() {
     } else if ($(this).hasClass("play")) {
       require("electron").ipcRenderer.send("playVideo");
     }
-    obsSetScene($(this).hasClass("pause") && !$(this).hasClass("shortVideoPaused") ? $("#obsTempCameraScene").val() : prefs.obsMediaScene, prefs);
+    obsSetScene($(this).hasClass("pause") && !$(this).hasClass("shortVideoPaused") ? $("#obsTempCameraScene").val() : get("prefs").obsMediaScene);
     $("#videoProgress, #videoScrubber").toggle();
     $(this).removeClass("shortVideoPaused").toggleClass("play pause")
       .toggleClass("pulse-danger", $(this).hasClass("play"))
@@ -2502,7 +2425,7 @@ $("#btnMediaWindow").on("click", function() {
     }
     require("electron").ipcRenderer.send("showMedia", mediaFileToPlay);
     $("#btnToggleMediaWindowFocus.pulse-danger").trigger("click");
-    obsSetScene(prefs.obsMediaScene, prefs);
+    obsSetScene(get("prefs").obsMediaScene);
     if (mediaItem.hasClass("video") && !(mediaItem.data("originalEnd") < 1000)) {
       mediaItem.addClass("position-relative");
       mediaItem.append(`<div id='videoProgress' class='progress bottom-0 position-absolute start-0 w-100' style='height: 3px;'>
@@ -2518,7 +2441,7 @@ $("#btnMediaWindow").on("click", function() {
     $("#folderListing button.play").show();
     $("h5.modal-title button").not($(this)).prop("disabled", true);
     $("button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", true);
-    if (!jsonLangs.find(lang => lang.langcode == prefs.lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) {
+    if (!get("jsonLangs").find(lang => lang.langcode == get("prefs").lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) {
       $("#folderListing button.stop:visible").closest("li.item").addClass("opacity-75");
     }
     $("#folderListing button.stop").hide();
@@ -2530,7 +2453,7 @@ $("#btnMediaWindow").on("click", function() {
     let mediaItem = $(this).closest(".item");
     if (!mediaItem.hasClass("video") || $(this).hasClass("confirmed")) {
       require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
-      obsSetScene($("#obsTempCameraScene").val(), prefs);
+      obsSetScene($("#obsTempCameraScene").val());
       if (mediaItem.hasClass("video")) {
         mediaItem.removeClass("position-relative");
         mediaItem.find("#videoProgress, #videoScrubber").remove();
@@ -2558,7 +2481,7 @@ $("#btnMediaWindow").on("click", function() {
         .prop("disabled", false);
       $("#folderListing button.stop").hide();
       mediaItem.find(".play").show();
-      if (!jsonLangs.find(lang => lang.langcode == prefs.lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) {
+      if (!get("jsonLangs").find(lang => lang.langcode == get("prefs").lang).isSignLanguage || mediaItem.find(".markerList div").length == 0) {
         mediaItem.addClass("opacity-75");
       }
       $("h5.modal-title button").not($(this)).prop("disabled", false);
@@ -2567,7 +2490,7 @@ $("#btnMediaWindow").on("click", function() {
     }
   });
   showModal(true, true, translate("meeting"), folderListing, false);
-  obsGetScenes(false, validateConfig, prefs);
+  obsGetScenes(false, validateConfig);
   $("#staticBackdrop .modal-header").addClass("d-flex").children().wrapAll("<div class='col-4 text-center'></div>");
   $("#staticBackdrop .modal-header").prepend(`<div class='col-4 for-folder-listing-only' style='display: none;'>
   <button class='btn btn-sm show-prefixes'>
@@ -2590,14 +2513,14 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer").show();
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
-  setObs({});
+  set("obs",{});
   require("electron").ipcRenderer.send("allowQuit");
   $("#music-buttons").append($("#btnMeetingMusic, #btnStopMeetingMusic").removeClass("btn-lg"));
   $("#btnMediaWindow").before($("#btnToggleMediaWindowFocus").addClass("btn-sm"));
   showModal(false);
 });
 $("#staticBackdrop .modal-footer").on("change", "#obsTempCameraScene", async function() {
-  if ((await obsGetScenes(true, validateConfig, prefs)) !== prefs.obsMediaScene) obsSetScene($(this).val(), prefs);
+  if ((await obsGetScenes(true, validateConfig)) !== get("prefs").obsMediaScene) obsSetScene($(this).val());
 });
 $("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function() {
   refreshFolderListing(path.join(paths.media, $(".modal-header h5").text()));
@@ -2618,6 +2541,7 @@ $("#staticBackdrop .modal-header").on("click", "button.folderOpen", function() {
   shell.openPath(url.fileURLToPath(url.pathToFileURL(path.join(paths.media, $(".modal-header h5").text())).href));
 });
 $("body").on("click", "#btnMeetingMusic", async function() {
+  const prefs = get("prefs");
   if (!$(this).hasClass("confirmed")) {
     waitToConfirm(this);
   } else {
@@ -2655,7 +2579,7 @@ $("body").on("click", "#btnMeetingMusic", async function() {
     setVars();
     var songs = (jworgIsReachable 
       ? (await getMediaLinks({pubSymbol: "sjjm", format: "MP3", lang: "E"})).filter(item => path.extname(item.url) == ".mp3") 
-      : glob.sync(path.join(paths.pubs, songPub, "**", "*.mp3"))
+      : glob.sync(path.join(paths.pubs, get("songPub"), "**", "*.mp3"))
         .map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item})))
       .sort(() => .5 - Math.random());
     if (songs.length > 0) {
@@ -2701,22 +2625,22 @@ $("#btnUpload").on("click", async () => {
     $("#btnUpload").prop("disabled", true).find("i").addClass("fa-circle-notch fa-spin").removeClass("fa-save");
     $("#overlayUploadFile button:enabled, #overlayUploadFile select:enabled, #overlayUploadFile input:enabled")
       .addClass("disabled-while-load").prop("disabled", true);
-    if (!webdavIsAGo || dayjs($("#chosenMeetingDay").data("folderName"), prefs.outputFolderDateFormat).isValid()) {
+    if (!webdavIsAGo || dayjs($("#chosenMeetingDay").data("folderName"), get("prefs").outputFolderDateFormat).isValid()) {
       fs.ensureDirSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName")));
     }
     if ($("input#typeSong:checked").length > 0) {
-      let songFiles = await getMediaLinks({pubSymbol: songPub, track: $("#fileToUpload").val(), format: "MP4"});
+      let songFiles = await getMediaLinks({pubSymbol: get("songPub"), track: $("#fileToUpload").val(), format: "MP4"});
       if (songFiles.length > 0) {
         let songFile = await downloadIfRequired(songFiles[0]);
         let songFileName = sanitizeFilename(getPrefix() + " - Song " + $("#songPicker option:selected").text() + ".mp4");
         if (webdavIsAGo) {
           await webdavPut(
             fs.readFileSync(songFile), 
-            path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
+            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
             songFileName
           );
         }
-        if (!webdavIsAGo || dayjs($("#chosenMeetingDay").data("folderName"), prefs.outputFolderDateFormat).isValid()) {
+        if (!webdavIsAGo || dayjs($("#chosenMeetingDay").data("folderName"), get("prefs").outputFolderDateFormat).isValid()) {
           fs.copyFileSync(songFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), songFileName));
         }
       }
@@ -2727,11 +2651,11 @@ $("#btnUpload").on("click", async () => {
         if (webdavIsAGo) {
           await webdavPut(
             (tempMedia.contents ? tempMedia.contents : fs.readFileSync(tempMedia.localpath)), 
-            path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
+            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
             jwpubFileName
           );
         }
-        if (!webdavIsAGo || dayjs($("#chosenMeetingDay").data("folderName"), prefs.outputFolderDateFormat).isValid()) {
+        if (!webdavIsAGo || dayjs($("#chosenMeetingDay").data("folderName"), get("prefs").outputFolderDateFormat).isValid()) {
           if (tempMedia.contents) {
             fs.writeFileSync(path.join(paths.media, $("#chosenMeetingDay").data("folderName"), jwpubFileName), tempMedia.contents);
           } else {
@@ -2746,17 +2670,17 @@ $("#btnUpload").on("click", async () => {
         if (webdavIsAGo) {
           await webdavPut(
             fs.readFileSync(splitLocalFile), 
-            path.posix.join(prefs.congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
+            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
             splitFileToUploadName
           );
         }
-        if (!webdavIsAGo || dayjs($("#chosenMeetingDay").data("folderName"), prefs.outputFolderDateFormat).isValid()) {
+        if (!webdavIsAGo || dayjs($("#chosenMeetingDay").data("folderName"), get("prefs").outputFolderDateFormat).isValid()) {
           fs.copyFileSync(splitLocalFile, path.join(paths.media, $("#chosenMeetingDay").data("folderName"), splitFileToUploadName));
         }
       }
     }
   } catch (err) {
-    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true, false, prefs);
+    notifyUser("error", "errorAdditionalMedia", $("#fileToUpload").val(), true, err, true);
   }
   $(".btn-cancel-upload").addClass("changes-made");
   if (webdavIsAGo) await startMediaSync(true, "Recurring");
@@ -2814,7 +2738,7 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
     } else {
       $(this).val("");
       $("#fileToUpload").val("").trigger("change");
-      notifyUser("warn", "warnNoDocumentsFound", $(this).val(), true, null, true, false, prefs);
+      notifyUser("warn", "warnNoDocumentsFound", $(this).val(), true, null, true);
     }
   } else {
     $("#fileToUpload").val("").trigger("change");
@@ -2878,9 +2802,9 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
 $("#mediaSync").on("click", async function() {
   $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown").prop("disabled", true);
   await startMediaSync();
-  await overlay(true, "circle-check text-success fa-beat", (prefs.autoQuitWhenDone ? "person-running" : null), "stay-alive");
+  await overlay(true, "circle-check text-success fa-beat", (get("prefs").autoQuitWhenDone ? "person-running" : null), "stay-alive");
   await delay(3);
-  if (prefs.autoQuitWhenDone && !stayAlive) {
+  if (get("prefs").autoQuitWhenDone && !stayAlive) {
     remote.app.exit();
   } else {
     overlay(false);
@@ -2889,6 +2813,7 @@ $("#mediaSync").on("click", async function() {
   }
 });
 $("#chooseBackground").on("click", function() {
+  const prefs = get("prefs");
   let mediaWindowBackground = remote.dialog.showOpenDialogSync({
     properties: ["openFile"]
   });
@@ -2907,8 +2832,8 @@ $("#chooseBackground").on("click", function() {
 });
 $("#deleteBackground").on("click", function() {
   rm(glob.sync(path.join(paths.app, "media-window-background-image*")));
-  if (webdavIsAGo) webdavLs(prefs.congServerDir).then(items => {
-    webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(prefs.congServerDir, item.basename)));
+  if (webdavIsAGo) webdavLs(get("prefs").congServerDir).then(items => {
+    webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(get("prefs").congServerDir, item.basename)));
   });
   refreshBackgroundImagePreview();
 });
@@ -2963,7 +2888,7 @@ $("#fileList").on("click", "li:not(.webdavWait) .fa-minus-square", async functio
 });
 $("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
   $(this).addClass("webdavWait");
-  if (!webdavIsAGo || await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(prefs.congServerDir, "Hidden", $("#chosenMeetingDay").data("folderName")), $(this).data("safename"))) {
+  if (!webdavIsAGo || await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(get("prefs").congServerDir, "Hidden", $("#chosenMeetingDay").data("folderName")), $(this).data("safename"))) {
     $(this).removeClass("canHide").addClass("wasHidden").find("i.fa-check-square").removeClass("fa-check-square").addClass("fa-square");
     meetingMedia[$("#chosenMeetingDay").data("folderName")].map(item => {
       item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).map(mediaItem => {
@@ -2998,7 +2923,7 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
         successful = await webdavMv(src, path.posix.join(path.dirname(src), newName));
       }
       if (successful) {
-        Object.keys(meetingMedia).filter(meeting => dayjs($("#chosenMeetingDay").data("folderName"), prefs.outputFolderDateFormat).isValid() ? meeting == $("#chosenMeetingDay").data("folderName") : true).forEach(meeting => {
+        Object.keys(meetingMedia).filter(meeting => dayjs($("#chosenMeetingDay").data("folderName"), get("prefs").outputFolderDateFormat).isValid() ? meeting == $("#chosenMeetingDay").data("folderName") : true).forEach(meeting => {
           meetingMedia[meeting].filter(item => item.media.filter(mediaItem => mediaItem.safeName == previousSafename).length > 0).forEach(item => item.media.forEach(mediaItem => {
             mediaItem.safeName = newName;
             if (webdavIsAGo) mediaItem.url = path.posix.join(path.dirname(src), newName);
@@ -3018,7 +2943,7 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
 });
 $("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
   $(this).addClass("webdavWait");
-  if (!webdavIsAGo || await webdavRm(path.posix.join(prefs.congServerDir, "Hidden", $("#chosenMeetingDay").data("folderName"), $(this).data("safename")))) {
+  if (!webdavIsAGo || await webdavRm(path.posix.join(get("prefs").congServerDir, "Hidden", $("#chosenMeetingDay").data("folderName"), $(this).data("safename")))) {
     $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
     meetingMedia[$("#chosenMeetingDay").data("folderName")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = false ));
   }
@@ -3060,7 +2985,7 @@ $(document).on("shown.bs.modal", "#staticBackdrop", function () {
   }
 });
 $("#overlaySettings").on("click", ".btn-action:not(.btn-danger)", function() {
-  if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugUrl(prefs));
+  if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugUrl());
   shell.openExternal($(this).data("action-url"));
 });
 $("#btnTestApp").on("click", testApp);
@@ -3073,7 +2998,7 @@ $("#toastContainer").on("click", "button.toast-action", async function() {
 $("#webdavProviders a").on("click", function() {
   for (let i of Object.entries($(this).data())) {
     let name = "cong" + (i[0][0].toUpperCase() + i[0].slice(1));
-    prefs = setPref(name, i[1]);
+    setPref(name, i[1]);
     $("#" + name).val(i[1]);
   }
   $("#congServer").trigger("change");

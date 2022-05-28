@@ -1,9 +1,13 @@
 // Internal modules
 const { log } = require("./log");
+const { get, set, setPref } = require("./store");
+const { request } = require("./requests");
 
 // External modules
 const $ = require("jquery");
+const dayjs = require("dayjs");
 const path = require("upath");
+const fs = require("fs-extra");
 const i18n = require("i18n");
 i18n.configure({
   directory: path.join(__dirname, "../locales"),
@@ -12,13 +16,66 @@ i18n.configure({
   retryInDefaultLocale: true
 });
 
+const now = dayjs().hour(0).minute(0).second(0).millisecond(0);
+
 function translate(phrase) {
   return i18n.__(phrase);
 }
 
-function setAppLang(getMediaWindowDestination, unconfirm, dateFormatter, localAppLang) {
+async function getJwOrgLanguages(forceRefresh) {
+  if ((!fs.existsSync(get("paths").langs)) || (!get("prefs").langUpdatedLast) || dayjs(get("prefs").langUpdatedLast).isBefore(now.subtract(3, "months")) || forceRefresh) {
+    let cleanedJwLangs = (await request("https://www.jw.org/en/languages/")).data.languages.filter(lang => lang.hasWebContent).map(lang => ({
+      name: lang.name,
+      langcode: lang.langcode,
+      symbol: lang.symbol,
+      vernacularName: lang.vernacularName,
+      isSignLanguage: lang.isSignLanguage
+    }));
+    fs.writeFileSync(get("paths").langs, JSON.stringify(cleanedJwLangs, null, 2));
+    setPref("langUpdatedLast", dayjs());
+    set("jsonLangs", cleanedJwLangs);
+  } else {
+    set("jsonLangs", JSON.parse(fs.readFileSync(get("paths").langs)));
+  }
+  $("#lang").empty();
+  const jsonLangs = get("jsonLangs");
+  for (let lang of jsonLangs) {
+    $("#lang").append($("<option>", {
+      value: lang.langcode,
+      text: lang.vernacularName + " (" + lang.name + ")"
+    }));
+  }
+  $("#lang").val(get("prefs").lang).select2();
+  set("songPub", "sjj" + (!jsonLangs.find(lang => lang.langcode == get("prefs").lang) || (jsonLangs.find(lang => lang.langcode == get("prefs").lang) && !jsonLangs.find(lang => lang.langcode == get("prefs").lang).isSignLanguage) ? "m" : ""));
+}
+
+function getLocaleLanguages() {
+  const jsonLangs = get("jsonLangs");
   try {
-    i18n.setLocale(localAppLang ? localAppLang : "en");
+    $("#localAppLang").empty();
+    fs.readdirSync(path.join(__dirname, "../locales")).map(file => {
+      let basename = path.basename(file, path.extname(file));
+      let localeLangMatch = jsonLangs.find(item => item.symbol === basename);
+      return {
+        friendlyName: (localeLangMatch ? localeLangMatch.vernacularName + " (" + localeLangMatch.name + ")" : basename),
+        actualName: (localeLangMatch ? localeLangMatch.name : basename),
+        localeCode: basename
+      };
+    }).sort((a, b) => a.actualName.localeCompare(b.actualName)).map(lang => {
+      $("#localAppLang").append($("<option>", {
+        value: lang.localeCode,
+        text: lang.friendlyName
+      }));
+    });
+    $("#localAppLang").val(get("prefs").localAppLang);
+  } catch(err) {
+    log.error(err);
+  }
+}
+
+function setAppLang(getMediaWindowDestination, unconfirm, dateFormatter) {
+  try {
+    i18n.setLocale(get("prefs").localAppLang? get("prefs").localAppLang : "en");
     $("[data-i18n-string]").each(function() {
       $(this).html(i18n.__($(this).data("i18n-string")));
     });
@@ -41,5 +98,7 @@ function setAppLang(getMediaWindowDestination, unconfirm, dateFormatter, localAp
 
 module.exports = {
   translate,
-  setAppLang
+  setAppLang,
+  getJwOrgLanguages,
+  getLocaleLanguages
 };
