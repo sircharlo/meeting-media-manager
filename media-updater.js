@@ -264,8 +264,8 @@ function congregationPrefsPopulate() {
 function congregationSelectPopulate() {
   $("#congregationSelect .dropdown-menu .congregation").remove();
   for (var congregation of paths.congPrefs) {
-    $("#congregationSelect .dropdown-menu").prepend(`<button 
-      class='dropdown-item congregation ${path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : ""}' 
+    $("#congregationSelect .dropdown-menu").prepend(`<button
+      class='dropdown-item congregation ${path.resolve(paths.prefs) == path.resolve(congregation.path) ? "active" : ""}'
       value='${congregation.path}'
     >
       ${paths.congPrefs.length > 1 ? "<i role='button' tabindex='0' class='fas fa-square-minus text-warning'></i> " : ""}
@@ -291,8 +291,8 @@ function createMediaNames() {
         media.safeName = (i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0");
         if (!media.congSpecific) {
           media.safeName = sanitizeFilename(
-            media.safeName + " - " 
-            + ((media.queryInfo && media.queryInfo.TargetParagraphNumberLabel ? "Paragraph " + media.queryInfo.TargetParagraphNumberLabel + " - " : "")) 
+            media.safeName + " - "
+            + ((media.queryInfo && media.queryInfo.TargetParagraphNumberLabel ? "Paragraph " + media.queryInfo.TargetParagraphNumberLabel + " - " : ""))
             + (media.pub && media.pub.includes("sjj") ? "Song " : "") + media.title + path.extname((media.url ? media.url : media.filepath))
           );
         }
@@ -302,7 +302,7 @@ function createMediaNames() {
   log.debug(Object.entries(meetingMedia).map(meeting => { meeting[1] = meeting[1]
     .filter(mediaItem => mediaItem.media.length > 0)
     .map(item => item.media)
-    .flat(); return meeting; 
+    .flat(); return meeting;
   }));
   perf("createMediaNames", "stop");
 }
@@ -325,9 +325,9 @@ function createVideoSync(mediaFile){
           imageDimesions = sizeOf(mediaFile);
         if (imageDimesions.orientation && imageDimesions.orientation >= 5) [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
         convertedImageDimensions = aspect.resize(
-          imageDimesions.width, 
-          imageDimesions.height, 
-          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > constants.FULL_HD[0] ? constants.FULL_HD[0] : imageDimesions.width) : null), 
+          imageDimesions.width,
+          imageDimesions.height,
+          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > constants.FULL_HD[0] ? constants.FULL_HD[0] : imageDimesions.width) : null),
           (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > constants.FULL_HD[1] ? constants.FULL_HD[1] : imageDimesions.height))
         );
         $("body").append("<div id='convert' style='display: none;'>");
@@ -412,9 +412,9 @@ function dateFormatter() {
   for (var d = 6; d >= 0; d--) {
     if (!baseDate.clone().add(d, "days").isBefore(now)) $("#folders").prepend($("<button>", {
       id: "day" + d,
-      class: "day alertIndicators m-1 col btn btn-sm align-items-center justify-content-center " 
-        + (baseDate.clone().add(d, "days").isSame(now) ? "pulse-info " : "") 
-        + ([get("prefs").mwDay, get("prefs").weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ") 
+      class: "day alertIndicators m-1 col btn btn-sm align-items-center justify-content-center "
+        + (baseDate.clone().add(d, "days").isSame(now) ? "pulse-info " : "")
+        + ([get("prefs").mwDay, get("prefs").weDay].includes(d.toString()) ? "meeting btn-secondary " : "btn-light ")
         + (get("prefs").mwDay == d.toString() ? "mw " : "") + (get("prefs").weDay == d.toString() ? "we " : ""),
       "data-datevalue": baseDate.clone().add(d, "days").locale(locale).format(get("prefs").outputFolderDateFormat)
     }).append($("<div>", {
@@ -652,16 +652,16 @@ async function getDbFromJwpub(pub, issue, localpath, lang) {
 async function getDocumentExtract(db, docId) {
   var extractMultimediaItems = [];
   for (var extractItem of (await executeStatement(
-    db, 
+    db,
     `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
       Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,
-      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link 
-    FROM DocumentExtract 
-      INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId 
-      INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId 
-      INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId 
-    WHERE DocumentExtract.DocumentId = ${docId} 
-      AND NOT UniqueEnglishSymbol = 'sjj' 
+      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link
+    FROM DocumentExtract
+      INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
+      INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
+      INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId
+    WHERE DocumentExtract.DocumentId = ${docId}
+      AND NOT UniqueEnglishSymbol = 'sjj'
       AND NOT UniqueEnglishSymbol = 'mwbr'
       ${get("prefs").excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ""}
     ORDER BY DocumentExtract.BeginParagraphOrdinal`))) {
@@ -704,19 +704,19 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly, lang) {
   let suppressZoomExists = (await executeStatement(db, "PRAGMA table_info('Multimedia')")).map(item => item.name).includes("SuppressZoom");
   let multimediaItems = [];
   if (!(keySymbol == "lffi" && prefs.excludeLffi && prefs.excludeLffiImages)) for (var multimediaItem of (await executeStatement(
-    db, 
-    `SELECT ${tableMultimedia}.DocumentId, ${tableMultimedia}.MultimediaId, ` 
-    + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ") 
-    + (targetParagraphNumberLabelExists && tableMultimedia == "DocumentMultimedia" ? "Question.TargetParagraphNumberLabel, " : "") 
-    + "Multimedia.MimeType, Multimedia.DataType, Multimedia.MajorType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia 
-    + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "") 
-    + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId " 
-    + (targetParagraphNumberLabelExists && tableMultimedia == "DocumentMultimedia" ? "LEFT JOIN Question ON Question.DocumentId = " + tableMultimedia + ".DocumentId AND Question.TargetParagraphOrdinal = " + tableMultimedia + ".BeginParagraphOrdinal " : "") 
-    + "WHERE " + (destDocId || destDocId === 0 ? tableMultimedia + ".DocumentId = " + destDocId : "Document.MepsDocumentId = " + destMepsId) 
-    + " AND (" + (keySymbol !== "lffi" || !prefs.excludeLffi ? "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')" : "") 
-    + (keySymbol !== "lffi" || (!prefs.excludeLffi && !prefs.excludeLffiImages) ? " OR " : "") 
-    + (keySymbol !== "lffi" || !prefs.excludeLffiImages ? "(Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 6 AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)" : "") + ")" 
-    + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "") 
+    db,
+    `SELECT ${tableMultimedia}.DocumentId, ${tableMultimedia}.MultimediaId, `
+    + (tableMultimedia == "DocumentMultimedia" ? tableMultimedia + ".BeginParagraphOrdinal, " + tableMultimedia + ".EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MultimediaId," + (suppressZoomExists ? " Multimedia.SuppressZoom," : "") + " Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber, " : "Multimedia.CategoryType, ")
+    + (targetParagraphNumberLabelExists && tableMultimedia == "DocumentMultimedia" ? "Question.TargetParagraphNumberLabel, " : "")
+    + "Multimedia.MimeType, Multimedia.DataType, Multimedia.MajorType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType FROM " + tableMultimedia
+    + (tableMultimedia == "DocumentMultimedia" ? " INNER JOIN Multimedia ON Multimedia.MultimediaId = " + tableMultimedia + ".MultimediaId" : "")
+    + " INNER JOIN Document ON " + tableMultimedia + ".DocumentId = Document.DocumentId "
+    + (targetParagraphNumberLabelExists && tableMultimedia == "DocumentMultimedia" ? "LEFT JOIN Question ON Question.DocumentId = " + tableMultimedia + ".DocumentId AND Question.TargetParagraphOrdinal = " + tableMultimedia + ".BeginParagraphOrdinal " : "")
+    + "WHERE " + (destDocId || destDocId === 0 ? tableMultimedia + ".DocumentId = " + destDocId : "Document.MepsDocumentId = " + destMepsId)
+    + " AND (" + (keySymbol !== "lffi" || !prefs.excludeLffi ? "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')" : "")
+    + (keySymbol !== "lffi" || (!prefs.excludeLffi && !prefs.excludeLffiImages) ? " OR " : "")
+    + (keySymbol !== "lffi" || !prefs.excludeLffiImages ? "(Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 6 AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)" : "") + ")"
+    + (suppressZoomExists ? " AND Multimedia.SuppressZoom <> 1" : "")
     + (tableMultimedia == "DocumentMultimedia" ? " GROUP BY " + tableMultimedia + ".MultimediaId ORDER BY BeginParagraphOrdinal" : "")))) {
     if (targetParagraphNumberLabelExists) {
       let paragraphNumber = await executeStatement(db, "SELECT TargetParagraphNumberLabel From Question WHERE DocumentId = " + multimediaItem.DocumentId + " AND TargetParagraphOrdinal = " + multimediaItem.BeginParagraphOrdinal);
@@ -946,12 +946,12 @@ async function getWeMediaFromDb() {
       if (weekNumber < 0) throw("No WE meeting date found!");
       var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
       for (var picture of (await executeStatement(
-        db, 
-        `SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel 
-        FROM DocumentMultimedia 
-          INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId 
-          INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId 
-          LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal 
+        db,
+        `SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel
+        FROM DocumentMultimedia
+          INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId
+          INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
+          LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
         WHERE Document.DocumentId = ${docId} AND Multimedia.CategoryType <> 9 GROUP BY DocumentMultimedia.MultimediaId`))) {
         if (!isImage(picture.FilePath)) {
           let mediaObj = await getMediaLinks({pubSymbol: picture.KeySymbol, track: picture.Track, issue: picture.IssueTagNumber});
@@ -1038,7 +1038,7 @@ function listMediaFolders() {
   $("h5.modal-title").text(translate("meeting"));
   for (var folder of glob.sync(path.join(paths.media, "*/"), {
     onlyDirectories: true
-  })) {
+  }).sort()) {
     folder = escape(folder);
     $(folderListing).append("<button class='d-flex list-group-item list-group-item-action folder " + (now.format(get("prefs").outputFolderDateFormat) == path.basename(folder) ? "thatsToday" : "") + "' data-folder='" + folder + "'>" + path.basename(folder) + "</div></button>");
   }
@@ -1148,18 +1148,18 @@ function refreshFolderListing(folderPath) {
     cancel: ".position-relative",
     axis: "y",
   });
-  for (var item of glob.sync(path.join(folderPath, "*"))) {
+  for (var item of glob.sync(path.join(folderPath, "*")).sort()) {
     item = escape(item);
     let lineItem = $(`<li class='d-flex align-items-center list-group-item flex-column item ${(isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown"))}' data-item='${item}'>
     <div class='bg-opacity-75 bg-primary h-100 p-1 position-absolute previously-played small start-0 top-0' style='display: none'></div>
     <div class='align-items-center d-flex flex-row w-100'>
       <div class='d-flex me-3' style='height: 5rem;'>
     </div>
-    <div class='flex-fill mediaDesc'>` 
+    <div class='flex-fill mediaDesc'>`
     + path.basename(item)
       .replace(/^(\d{2}-\d{2} - )/, "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>")
       .replace(/Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>")
-      .replace(/Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>") 
+      .replace(/Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>")
     + `</div>
     <div class='ps-3 pe-2'>
       <button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'>
@@ -1183,7 +1183,7 @@ function refreshFolderListing(folderPath) {
     </div>
   </div>
 </li>`);
-    
+
     lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? `poster='${constants.AUDIO_ICON}'` : `poster='${constants.VIDEO_ICON}'`) + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
       try {
         lineItem.data("originalStart", 0);
@@ -1712,14 +1712,14 @@ function updateCleanup() {
           notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
           /* if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
           notifyUser(
-            "info", 
+            "info",
             `<h6>Managing media just got simpler</h6>
                <p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>
                ${(prefs.congServer ? "<p>The cloud upload button has therefore been removed from the bottom left corner of the app.</p>" : "")}
                <p>Media can also now easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p>
                <h6>In short:</h6>
                ${prefs.congServer ? "<li>No more cloud button</li> " : ""}
-               <li><strong>Click on any day</strong> to manage media for that day</li>`, 
+               <li><strong>Click on any day</strong> to manage media for that day</li>`,
             null, true, null, {desc: "understood", noLink: true}, true);
              $("#folders").addClass("new-stuff");
            }*/
@@ -2577,8 +2577,8 @@ $("body").on("click", "#btnMeetingMusic", async function() {
       .closest("button").prop("title", "...");
     $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
     setVars();
-    var songs = (jworgIsReachable 
-      ? (await getMediaLinks({pubSymbol: "sjjm", format: "MP3", lang: "E"})).filter(item => path.extname(item.url) == ".mp3") 
+    var songs = (jworgIsReachable
+      ? (await getMediaLinks({pubSymbol: "sjjm", format: "MP3", lang: "E"})).filter(item => path.extname(item.url) == ".mp3")
       : glob.sync(path.join(paths.pubs, get("songPub"), "**", "*.mp3"))
         .map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item})))
       .sort(() => .5 - Math.random());
@@ -2635,8 +2635,8 @@ $("#btnUpload").on("click", async () => {
         let songFileName = sanitizeFilename(getPrefix() + " - Song " + $("#songPicker option:selected").text() + ".mp4");
         if (webdavIsAGo) {
           await webdavPut(
-            fs.readFileSync(songFile), 
-            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
+            fs.readFileSync(songFile),
+            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")),
             songFileName
           );
         }
@@ -2650,8 +2650,8 @@ $("#btnUpload").on("click", async () => {
         let jwpubFileName = sanitizeFilename(getPrefix() + " - " + tempMedia.filename);
         if (webdavIsAGo) {
           await webdavPut(
-            (tempMedia.contents ? tempMedia.contents : fs.readFileSync(tempMedia.localpath)), 
-            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
+            (tempMedia.contents ? tempMedia.contents : fs.readFileSync(tempMedia.localpath)),
+            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")),
             jwpubFileName
           );
         }
@@ -2669,8 +2669,8 @@ $("#btnUpload").on("click", async () => {
         let splitFileToUploadName = sanitizeFilename(getPrefix() + " - " + path.basename(splitLocalFile));
         if (webdavIsAGo) {
           await webdavPut(
-            fs.readFileSync(splitLocalFile), 
-            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")), 
+            fs.readFileSync(splitLocalFile),
+            path.posix.join(get("prefs").congServerDir, "Media", $("#chosenMeetingDay").data("folderName")),
             splitFileToUploadName
           );
         }
@@ -2725,9 +2725,9 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
       return (item.CNT_REC > 0 ? true : false);
     })[0];
     let itemsWithMultimedia = await executeStatement(
-      contents, 
+      contents,
       `SELECT DISTINCT ${tableMultimedia}.DocumentId, Document.Title FROM Document INNER JOIN ${tableMultimedia} ON Document.DocumentId = ${tableMultimedia}.DocumentId `
-      + (tableMultimedia === "DocumentMultimedia" ? "INNER JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId " : "") + "WHERE (Multimedia.CategoryType <> 9)" 
+      + (tableMultimedia === "DocumentMultimedia" ? "INNER JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId " : "") + "WHERE (Multimedia.CategoryType <> 9)"
       + (suppressZoomExists ? " AND Multimedia.SuppressZoom = 0" : "") + ` ORDER BY ${tableMultimedia}.DocumentId`);
     if (itemsWithMultimedia.length > 0) {
       var docList = $("<div id='docSelect' class='list-group'>");
@@ -2758,8 +2758,8 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     let multimediaItem = multimediaItems[i];
     var tempMedia = {
       filename: sanitizeFilename(
-        (i + 1).toString().padStart(2, "0") + " - " 
-        + (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption || multimediaItem.queryInfo.FilePath || multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType ? (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3") : "")) 
+        (i + 1).toString().padStart(2, "0") + " - "
+        + (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption || multimediaItem.queryInfo.FilePath || multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType ? (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3") : ""))
         + (multimediaItem.queryInfo.FilePath && (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption) ? path.extname(multimediaItem.queryInfo.FilePath) : "")
       )
     };
