@@ -66,6 +66,7 @@
   "optionsMedia": "Media setup",
   "optionsMeetings": "Meeting setup",
   "outputFolderDateFormat": "Date format for meeting folders",
+  "paragraph": "Paragraph",
   "password": "Password",
   "port": "Port",
   "quitAfterSync": "Quit app after media sync",
