@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "22.6.0-alpha",
+  "version": "22.6.1-alpha",
   "description": "Meeting Media Manager",
   "main": "main.js",
   "repository": {

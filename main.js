@@ -201,50 +201,50 @@ if (!gotTheLock) {
     /////////
     */
 
-    let screenInfo = getScreenInfo();
-    let windowOptions = {
-      icon: path.join(__dirname, "public", "videoPlayer.ico"),
-      frame: false,
-      webPreferences: {
-        backgroundThrottling: false,
-        contextIsolation: false,
-        nodeIntegration: true,
-      },
-      backgroundColor: "black",
-      minHeight: 100,
-      width: 1280,
-      height: 720,
-      show: false,
-      thickFrame: false,
-      x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
-      y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
-    };
-    if (mediaWindowOpts.type == "fullscreen") windowOptions.fullscreen = true;
-    mediaWin = new BrowserWindow(Object.assign({}, windowOptions, {title: "setVisibleOnAllWorkspaces && setAlwaysOnTop"}));
-    mediaWin.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
-    mediaWin.setAlwaysOnTop(true, "screen-saver");
-    mediaWin.loadFile("mediaViewer.html");
-    remote.enable(mediaWin.webContents);
-    mediaWin.show();
-
-    let mediaWin2, mediaWin3, mediaWin4;
-
-    mediaWin2 = new BrowserWindow(Object.assign({}, windowOptions, {title: "setVisibleOnAllWorkspaces"}));
-    mediaWin2.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
-    mediaWin2.loadFile("mediaViewer.html");
-    remote.enable(mediaWin2.webContents);
-    mediaWin2.show();
-
-    mediaWin3 = new BrowserWindow(Object.assign({}, windowOptions, {title: "setAlwaysOnTop"}));
-    mediaWin3.setAlwaysOnTop(true, "screen-saver");
-    mediaWin3.loadFile("mediaViewer.html");
-    remote.enable(mediaWin3.webContents);
-    mediaWin3.show();
-
-    mediaWin4 = new BrowserWindow(Object.assign({}, windowOptions, {title: "nothing"}));
-    mediaWin4.loadFile("mediaViewer.html");
-    remote.enable(mediaWin4.webContents);
-    mediaWin4.show();
+    // let screenInfo = getScreenInfo();
+    // let windowOptions = {
+    //   icon: path.join(__dirname, "public", "videoPlayer.ico"),
+    //   frame: false,
+    //   webPreferences: {
+    //     backgroundThrottling: false,
+    //     contextIsolation: false,
+    //     nodeIntegration: true,
+    //   },
+    //   backgroundColor: "black",
+    //   minHeight: 100,
+    //   width: 1280,
+    //   height: 720,
+    //   show: false,
+    //   thickFrame: false,
+    //   x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
+    //   y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
+    // };
+    // if (mediaWindowOpts.type == "fullscreen") windowOptions.fullscreen = true;
+    // mediaWin = new BrowserWindow(Object.assign({}, windowOptions, {title: "setVisibleOnAllWorkspaces && setAlwaysOnTop"}));
+    // mediaWin.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
+    // mediaWin.setAlwaysOnTop(true, "screen-saver");
+    // mediaWin.loadFile("mediaViewer.html");
+    // remote.enable(mediaWin.webContents);
+    // mediaWin.show();
+    //
+    // let mediaWin2, mediaWin3, mediaWin4;
+    //
+    // mediaWin2 = new BrowserWindow(Object.assign({}, windowOptions, {title: "setVisibleOnAllWorkspaces"}));
+    // mediaWin2.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
+    // mediaWin2.loadFile("mediaViewer.html");
+    // remote.enable(mediaWin2.webContents);
+    // mediaWin2.show();
+    //
+    // mediaWin3 = new BrowserWindow(Object.assign({}, windowOptions, {title: "setAlwaysOnTop"}));
+    // mediaWin3.setAlwaysOnTop(true, "screen-saver");
+    // mediaWin3.loadFile("mediaViewer.html");
+    // remote.enable(mediaWin3.webContents);
+    // mediaWin3.show();
+    //
+    // mediaWin4 = new BrowserWindow(Object.assign({}, windowOptions, {title: "nothing"}));
+    // mediaWin4.loadFile("mediaViewer.html");
+    // remote.enable(mediaWin4.webContents);
+    // mediaWin4.show();
 
     /*
     /////////
@@ -258,52 +258,52 @@ if (!gotTheLock) {
     /////////
     */
 
-    // if (!mediaWin) {
-    //   let screenInfo = getScreenInfo();
-    //   let windowOptions = {
-    //     title: "Media Window",
-    //     icon: path.join(__dirname, "public", "videoPlayer.ico"),
-    //     frame: false,
-    //     webPreferences: {
-    //       backgroundThrottling: false,
-    //       contextIsolation: false,
-    //       nodeIntegration: true,
-    //     },
-    //     backgroundColor: "black",
-    //     minHeight: 100,
-    //     alwaysOnTop: true,
-    //     width: 1280,
-    //     height: 720,
-    //     show: false,
-    //     thickFrame: false,
-    //     x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
-    //     y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
-    //   };
-    //   if (mediaWindowOpts.type == "fullscreen") windowOptions.fullscreen = true;
-    //   mediaWin = new BrowserWindow(windowOptions);
-    //   if (os.platform() == "win32") mediaWin.setAppDetails({
-    //     appId: appLongName
-    //   });
-    //   mediaWin.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
-    //   mediaWin.setAlwaysOnTop(true, "screen-saver");
-    //   mediaWin.setAspectRatio(16/9);
-    //   mediaWin.setMenuBarVisibility(false);
-    //   remote.enable(mediaWin.webContents);
-    //   mediaWin.loadFile("mediaViewer.html");
-    //   // if (!app.isPackaged) mediaWin.webContents.openDevTools();
-    //   mediaWin.on("close", (e) => {
-    //     if (!authorizedCloseMediaWin) e.preventDefault();
-    //   }).on("will-resize", () => {
-    //     mediaWin.webContents.send("windowResizing", mediaWin.getSize());
-    //   }).on("resized", () => {
-    //     mediaWin.webContents.send("windowResized");
-    //   }).once("ready-to-show", () => {
-    //     mediaWin.show();
-    //   });
-    //   win.webContents.send("mediaWindowShown");
-    // } else {
-    //   setMediaWindowPosition(mediaWindowOpts);
-    // }
+    if (!mediaWin) {
+      let screenInfo = getScreenInfo();
+      let windowOptions = {
+        title: "Media Window",
+        icon: path.join(__dirname, "public", "videoPlayer.ico"),
+        frame: false,
+        webPreferences: {
+          backgroundThrottling: false,
+          contextIsolation: false,
+          nodeIntegration: true,
+        },
+        backgroundColor: "black",
+        minHeight: 100,
+        alwaysOnTop: true,
+        width: 1280,
+        height: 720,
+        show: false,
+        thickFrame: false,
+        x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
+        y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
+      };
+      if (mediaWindowOpts.type == "fullscreen") windowOptions.fullscreen = true;
+      mediaWin = new BrowserWindow(windowOptions);
+      if (os.platform() == "win32") mediaWin.setAppDetails({
+        appId: appLongName
+      });
+      mediaWin.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
+      if (os.platform() !== "darwin") mediaWin.setAlwaysOnTop(true, "screen-saver");
+      mediaWin.setAspectRatio(16/9);
+      mediaWin.setMenuBarVisibility(false);
+      remote.enable(mediaWin.webContents);
+      mediaWin.loadFile("mediaViewer.html");
+      // if (!app.isPackaged) mediaWin.webContents.openDevTools();
+      mediaWin.on("close", (e) => {
+        if (!authorizedCloseMediaWin) e.preventDefault();
+      }).on("will-resize", () => {
+        mediaWin.webContents.send("windowResizing", mediaWin.getSize());
+      }).on("resized", () => {
+        mediaWin.webContents.send("windowResized");
+      }).once("ready-to-show", () => {
+        mediaWin.show();
+      });
+      win.webContents.send("mediaWindowShown");
+    } else {
+      setMediaWindowPosition(mediaWindowOpts);
+    }
 
     /*
     /////////
