@@ -271,7 +271,6 @@ if (!gotTheLock) {
         },
         backgroundColor: "black",
         minHeight: 100,
-        alwaysOnTop: true,
         width: 1280,
         height: 720,
         show: false,
