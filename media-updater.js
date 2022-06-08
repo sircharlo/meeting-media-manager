@@ -1182,6 +1182,10 @@ function refreshFolderListing(folderPath) {
     <div class='d-flex flex-wrap markerList w-100' style='column-count: 3;'>
     </div>
   </div>
+  ${(isVideo(item) || isAudio(item) ? `<div id='videoBounds' class='bg-transparent bottom-0 justify-content-between position-absolute progress start-0 w-100' style='height: 3px; display: none; z-index: 2;'>
+    <div class='progress-bar bg-danger Start' role='progressbar' style='width: 0%'></div>
+    <div class='progress-bar bg-danger End' role='progressbar' style='width: 0%'></div>
+  </div>` : "")}
 </li>`);
 
     lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? `poster='${constants.AUDIO_ICON}'` : `poster='${constants.VIDEO_ICON}'`) + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
@@ -1339,10 +1343,17 @@ function refreshFolderListing(folderPath) {
             } else {
               lineItem.removeData("custom" + timeItem);
             }
+            lineItem.find("#videoBounds ." + timeItem).css("width", Math.abs((timeItem == "End" ? 100 : 0) - (newTimeAsMs / lineItem.data("originalEnd") * 100)) + "%");
           }
           lineItem.find(".time .current").text(!isNaN(lineItem.data("customStart")) ? dayjs.duration(lineItem.data("customStart"), "ms").format("mm:ss/") : "");
           lineItem.find(".time .duration").text(dayjs.duration(!isNaN(lineItem.data("customEnd")) ? lineItem.data("customEnd") : lineItem.data("originalEnd"), "ms").format("mm:ss"));
-          lineItem.find(".time").toggleClass("pulse-danger", (!!lineItem.data("customStart") && lineItem.data("customStart") !== lineItem.data("originalStart")) || (!!lineItem.data("customEnd") && lineItem.data("customEnd") !== lineItem.data("originalEnd"))).show();
+          let customStartStopIsSet = (!!lineItem.data("customStart") && lineItem.data("customStart") !== lineItem.data("originalStart")) || (!!lineItem.data("customEnd") && lineItem.data("customEnd") !== lineItem.data("originalEnd"));
+          lineItem.find(".time").toggleClass("pulse-danger", customStartStopIsSet).show();
+          if (customStartStopIsSet) {
+            lineItem.find("#videoBounds").show("blind", { direction: "vertical"}, fadeDelay);
+          } else {
+            lineItem.find("#videoBounds").hide("blind", { direction: "vertical"}, fadeDelay);
+          }
           lineItem.find(".customStartStop").toggleClass("d-flex d-none");
         } catch (err) {
           log.error(err);
@@ -2413,7 +2424,7 @@ $("#btnMediaWindow").on("click", function() {
   });
   $(folderListing).on("click", "li.item button.play:not(.pausePlay)", function() {
     let mediaItem = $(this).closest(".item");
-    $("#folderListing .item").removeClass("list-group-item-primary");
+    $("#folderListing .item").removeClass("list-group-item-primary z-2");
     $("#btnToggleMediaWindowFocus.hidden").trigger("click");
     let mediaFileToPlay = {
       item: mediaItem.data("item"),
@@ -2437,7 +2448,7 @@ $("#btnMediaWindow").on("click", function() {
       $("#folderListing .item").not(mediaItem).find(".markerList .btn-info").addClass("disabled");
       mediaItem.find(".time").addClass("disabled");
     }
-    mediaItem.addClass("list-group-item-primary").removeClass("list-group-item-secondary");
+    mediaItem.addClass("list-group-item-primary z-2").removeClass("list-group-item-secondary");
     $("#folderListing button.play").show();
     $("h5.modal-title button").not($(this)).prop("disabled", true);
     $("button.closeModal, #btnMeetingMusic, button.folderRefresh").prop("disabled", true);
@@ -2475,7 +2486,7 @@ $("#btnMediaWindow").on("click", function() {
         mediaItem.find(".markerList div.btn.btn-primary").addClass("btn-info").removeClass("btn-primary");
         unconfirm(this);
       }
-      mediaItem.removeClass("list-group-item-primary");
+      mediaItem.removeClass("list-group-item-primary z-2");
       $("#folderListing button.play, #folderListing .markerList .btn-info, button.closeModal, #btnMeetingMusic, button.folderRefresh")
         .removeClass("disabled")
         .prop("disabled", false);
