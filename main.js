@@ -283,7 +283,6 @@ if (!gotTheLock) {
       if (os.platform() == "win32") mediaWin.setAppDetails({
         appId: appLongName
       });
-      mediaWin.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
       if (os.platform() !== "darwin") mediaWin.setAlwaysOnTop(true, "screen-saver");
       mediaWin.setAspectRatio(16/9);
       mediaWin.setMenuBarVisibility(false);
