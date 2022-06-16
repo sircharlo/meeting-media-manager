@@ -101,7 +101,6 @@ async function enforcePrefs(paths, setMediaLang, validateConfig, webdavExists, r
     if (JSON.stringify(previousPrefs) !== JSON.stringify(prefs)) {
       setMediaLang();
       validateConfig(true);
-      prefs = prefsInitialize();
     }
     for (var pref of Object.entries(forcedPrefs)) {
       disableGlobalPref(pref);

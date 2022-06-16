@@ -322,13 +322,13 @@ function createVideoSync(mediaFile){
         });
       } else {
         let convertedImageDimensions = [],
-          imageDimesions = sizeOf(mediaFile);
-        if (imageDimesions.orientation && imageDimesions.orientation >= 5) [imageDimesions.width, imageDimesions.height] = [imageDimesions.height, imageDimesions.width];
+          imageDimensions = sizeOf(mediaFile);
+        if (imageDimensions.orientation && imageDimensions.orientation >= 5) [imageDimensions.width, imageDimensions.height] = [imageDimensions.height, imageDimensions.width];
         convertedImageDimensions = aspect.resize(
-          imageDimesions.width,
-          imageDimesions.height,
-          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? (imageDimesions.width > constants.FULL_HD[0] ? constants.FULL_HD[0] : imageDimesions.width) : null),
-          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimesions.height / imageDimesions.width ? null : (imageDimesions.height > constants.FULL_HD[1] ? constants.FULL_HD[1] : imageDimesions.height))
+          imageDimensions.width,
+          imageDimensions.height,
+          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimensions.height / imageDimensions.width ? (imageDimensions.width > constants.FULL_HD[0] ? constants.FULL_HD[0] : imageDimensions.width) : null),
+          (constants.FULL_HD[1] / constants.FULL_HD[0] > imageDimensions.height / imageDimensions.width ? null : (imageDimensions.height > constants.FULL_HD[1] ? constants.FULL_HD[1] : imageDimensions.height))
         );
         $("body").append("<div id='convert' style='display: none;'>");
         $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
