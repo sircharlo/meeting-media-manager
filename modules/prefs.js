@@ -4,11 +4,16 @@ const { PREF_FIELDS } = require("./../constants");
 // Internal modules
 const { log, notifyUser } = require("./log");
 const { translate } = require("./lang");
-const {get, set } = require("./store");
+const { get, set, setPath, setPref } = require("./store");
+const { perf } = require("./requests");
+const { toggleScreen } = require("./ui");
+const { shortcutSet, shortcutsUnset } = require("./obs");
+const { congregationSelectPopulate, congregationPrefsPopulate} = require("./cong");
 
 // External modules
 const fs = require("fs-extra");
 const v8 = require("v8");
+const os = require("os");
 const path = require("upath");
 const $ = require("jquery");
 const remote = require("@electron/remote");
@@ -120,10 +125,103 @@ function disableGlobalPref([pref, value]) {
   log.info("%c[enforcedPrefs] [" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
 }
 
+function setVars() {
+  const prefs = get("prefs");
+  if (prefs.localOutputPath && prefs.lang) {
+    perf("setVars", "start");
+    try {
+      set("downloadStats", {});
+      setPath("media", path.join(prefs.localOutputPath, prefs.lang));
+      if (!get("dryrun")) fs.ensureDirSync(get("paths").media);
+      setPath("pubs", path.join(get("paths").app, "Publications", prefs.lang));
+      setPath("yearText", path.join(get("paths").pubs, "yeartext-" + prefs.lang + "-" + (new Date().getFullYear()).toString()));
+    } catch (err) {
+      notifyUser("error", "errorSetVars", get("paths").media, true, err);
+    }
+    perf("setVars", "stop");
+  }
+}
+
+function validateConfig(changed, restart) {
+  let prefs = get("prefs");
+  let configIsValid = true;
+  $(".alertIndicators").removeClass("meeting");
+  if (prefs.localOutputPath === "false" || !fs.existsSync(prefs.localOutputPath)) {
+    prefs = setPref("localOutputPath", null);
+  } else if (prefs.localOutputPath) {
+    let badCharacters = prefs.localOutputPath.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g);
+    if (badCharacters) {
+      notifyUser("error", "errorBadOutputPath", badCharacters.join(" "), true);
+      prefs = setPref("localOutputPath", null);
+    }
+  }
+  let mandatoryFields = ["localOutputPath", "localAppLang", "lang", "mwDay", "weDay", "maxRes", "congregationName"];
+  for (let timeField of ["mwStartTime", "weStartTime"]) {
+    if (prefs.enableMusicButton && prefs.enableMusicFadeOut && prefs.musicFadeOutType === "smart") mandatoryFields.push(timeField);
+    else $("#" + timeField + ", .timePicker[data-target='" + timeField + "']").removeClass("is-invalid");
+  }
+  if (prefs.enableObs) {
+    mandatoryFields.push("obsPort", "obsPassword");
+    if (get("obs")._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
+  }
+  for (var setting of mandatoryFields) {
+    if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
+    $("#" + setting + ", .timePicker[data-target='" + setting + "']").toggleClass("is-invalid", !prefs[setting]);
+    $("#" + setting).next(".select2").toggleClass("is-invalid", !prefs[setting]);
+    $("#" + setting + " label.btn").toggleClass("btn-outline-dark", !!prefs[setting]).toggleClass("btn-outline-danger", !prefs[setting]);
+    $("#" + setting).closest("div.row").find("label").toggleClass("text-danger", !prefs[setting]);
+    if (!prefs[setting]) configIsValid = false;
+  }
+  $("#enableMusicFadeOut, #musicVolume").closest(".row").toggle(!!prefs.enableMusicButton);
+  $(".relatedToFadeOut").toggle(!!prefs.enableMusicButton && !!prefs.enableMusicFadeOut);
+  $(".relatedToObs").toggle(!!prefs.enableObs);
+  if (os.platform() !== "linux") remote.app.setLoginItemSettings({ openAtLogin: prefs.autoRunAtBoot });
+  $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
+  if (prefs.enableMusicButton) {
+    shortcutSet("Alt+K", "musicButton", function () {
+      $("#btnMeetingMusic:visible, #btnStopMeetingMusic:visible").trigger("click");
+    });
+    if (prefs.enableMusicFadeOut) {
+      if (!prefs.musicFadeOutTime) $("#musicFadeOutTime").val(5).trigger("change");
+      if (!prefs.musicFadeOutType) $("label[for=musicFadeOutSmart]").trigger("click");
+    }
+    $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
+    if (prefs.musicVolume) {
+      $("#meetingMusic").animate({volume: prefs.musicVolume / 100});
+      $("#musicVolumeDisplay").html(prefs.musicVolume);
+    } else {
+      $("#musicVolume").val(100).trigger("change");
+    }
+  } else {
+    shortcutsUnset("musicButton");
+  }
+  $("#btnMediaWindow, #btnToggleMediaWindowFocus").toggle(!!prefs.enableMediaDisplayButton);
+  $("#currentMediaBackground, #hideMediaLogo").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
+  $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
+  $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
+  $("#btnMeetingMusic").toggle(!!prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
+  $(".btn-home").toggleClass("btn-dark", configIsValid).toggleClass("btn-danger", !configIsValid);
+  $("#mediaSync:not(.noJwOrg), .btn-home").prop("disabled", !configIsValid);
+  if (!configIsValid) {
+    toggleScreen("overlaySettings", true);
+  } else if (changed) {
+    fs.writeFileSync(get("paths").prefs, JSON.stringify(Object.keys(prefs).sort().reduce((acc, key) => ({...acc, [key]: prefs[key]}), {}), null, 2));
+    congregationPrefsPopulate();
+    congregationSelectPopulate();
+  }
+  if (restart) {
+    remote.app.relaunch();
+    remote.app.exit();
+  }
+  return configIsValid;
+}
+
 module.exports = {
   initPrefs,
   prefsInitialize,
   enforcePrefs,
   getForcedPrefs,
-  enablePreviouslyForcedPrefs
+  enablePreviouslyForcedPrefs,
+  setVars,
+  validateConfig
 };

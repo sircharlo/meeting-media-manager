@@ -1,5 +1,12 @@
 const path = require("upath");
 const remote = require("@electron/remote");
+const dayjs = require("dayjs");
+
+dayjs.extend(require("dayjs/plugin/isoWeek"));
+dayjs.extend(require("dayjs/plugin/isBetween"));
+dayjs.extend(require("dayjs/plugin/isSameOrBefore"));
+dayjs.extend(require("dayjs/plugin/customParseFormat"));
+dayjs.extend(require("dayjs/plugin/duration"));
 
 const APP_PATH = path.normalize(remote.app.getPath("userData"));
 
@@ -19,6 +26,12 @@ let store = {
   jsonLangs: [],
   dryrun: false,
   songPub: null,
+  jwpubDbs: {},
+  meetingMedia: undefined,
+  baseDate: dayjs().startOf("isoWeek"),
+  webdavIsAGo: false,
+  downloadStats: {},
+  perfStats: {},
 };
 
 function get(key) {
@@ -35,8 +48,20 @@ function setPref(key, value) {
   return store.prefs;
 }
 
+function setPath(key, value) {
+  store.paths[key] = value;
+  return store.paths;
+}
+
+function setMeetingMedia(key, value) {
+  store.meetingMedia[key] = value;
+  return store.meetingMedia;
+}
+
 module.exports = {
   get,
   set,
-  setPref
+  setPref,
+  setPath,
+  setMeetingMedia
 };
