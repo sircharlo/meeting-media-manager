@@ -1,7 +1,7 @@
 // Internal modules
 const { log } = require("./log");
 const { get, set, setPref } = require("./store");
-const { request } = require("./requests");
+const { request, getMediaLinks } = require("./requests");
 
 // External modules
 const $ = require("jquery");
@@ -96,9 +96,34 @@ function setAppLang(getMediaWindowDestination, unconfirm, dateFormatter) {
   dateFormatter();
 }
 
+async function setMediaLang() {
+  const prefs = get("prefs");
+  if (prefs.lang) {
+    set("jwpubDbs", {});
+    set("meetingMedia", {});
+    try {
+      $("#songPicker").empty();
+      for (let sjj of (await getMediaLinks({pubSymbol: get("songPub"), format: "MP4"}))) {
+        $("#songPicker").append($("<option>", {
+          value: sjj.track,
+          text: sjj.title,
+          "data-thumbnail": sjj.trackImage
+        }));
+      }
+    } catch (err) {
+      $("label[for=typeSong]").removeClass("active").addClass("disabled");
+      $("label[for=typeFile]").trigger("click").addClass("active");
+    }
+    $("#lang").val(prefs.lang).select2("destroy").select2();
+    let currentJwLang = get("jsonLangs").filter(item => item.langcode == prefs.lang);
+    $(".jwLang small").text(currentJwLang.length == 1 && currentJwLang[0].vernacularName ? "(" + currentJwLang[0].vernacularName + ")" : "");
+  }
+}
+
 module.exports = {
   translate,
   setAppLang,
+  setMediaLang,
   getJwOrgLanguages,
   getLocaleLanguages
 };
