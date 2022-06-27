@@ -8,8 +8,6 @@ const { get, set, setPath, setPref } = require("./store");
 const { perf } = require("./requests");
 const { toggleScreen } = require("./ui");
 const { shortcutSet, shortcutsUnset } = require("./obs");
-const { congregationSelectPopulate, congregationPrefsPopulate} = require("./cong");
-
 // External modules
 const fs = require("fs-extra");
 const v8 = require("v8");
@@ -125,6 +123,45 @@ function disableGlobalPref([pref, value]) {
   log.info("%c[enforcedPrefs] [" + pref + "] " + value, "background-color: #FCE4EC; color: #AD1457;");
 }
 
+function congregationPrefsPopulate() {
+  setPath("congPrefs", glob.sync(path.join(get("paths").app, "prefs*.json")).map(congregationPrefs => {
+    let congPrefInfo = {}, congName = "Default";
+    try {
+      congName = JSON.parse(fs.readFileSync(congregationPrefs, "utf8")).congregationName;
+    } catch (err) {
+      log.error(err);
+    } finally {
+      congPrefInfo = ({
+        name: congName,
+        path: congregationPrefs
+      });
+    }
+    return congPrefInfo;
+  }).filter(congPrefInfo => congPrefInfo.name).sort((a, b) => b.name.localeCompare(a.name)));
+}
+
+function congregationSelectPopulate() {
+  $("#congregationSelect .dropdown-menu .congregation").remove();
+  for (var congregation of get("paths").congPrefs) {
+    $("#congregationSelect .dropdown-menu").prepend(`<button
+      class='dropdown-item congregation ${path.resolve(get("paths").prefs) == path.resolve(congregation.path) ? "active" : ""}'
+      value='${congregation.path}'
+    >
+      ${get("paths").congPrefs.length > 1 ? "<i role='button' tabindex='0' class='fas fa-square-minus text-warning'></i> " : ""}
+      ${congregation.name}
+    </button>
+    `);
+    if (path.resolve(get("paths").prefs) == path.resolve(congregation.path)) $("#congregationSelect button.dropdown-toggle").text(congregation.name);
+  }
+  $("#congregationSelect .dropdown-menu .dropdown-item .fa-square-minus").popover({
+    content: translate("clickAgain"),
+    container: "body",
+    trigger: "focus"
+  }).on("hidden.bs.popover", function() {
+    unconfirm(this);
+  });
+}
+
 function setVars() {
   const prefs = get("prefs");
   if (prefs.localOutputPath && prefs.lang) {
@@ -222,6 +259,8 @@ module.exports = {
   enforcePrefs,
   getForcedPrefs,
   enablePreviouslyForcedPrefs,
+  congregationPrefsPopulate,
+  congregationSelectPopulate,
   setVars,
   validateConfig
 };

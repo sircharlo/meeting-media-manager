@@ -2,11 +2,11 @@
 const fadeDelay = require("./../constants").FADE_DELAY;
 
 // Internal modules
-const { log } = require("./log");
+const { log, notifyUser } = require("./log");
 const { overlay, unconfirm, delay, showModal, refreshBackgroundImagePreview, getMediaWindowDestination, setMediaWindowPosition } = require("./ui");
 const { get, set, setPref, setPath } = require("./store");
 const { translate, setAppLang, getJwOrgLanguages, getLocaleLanguages, setMediaLang } = require("./lang");
-const { prefsInitialize, initPrefs, enforcePrefs, enablePreviouslyForcedPrefs, setVars, validateConfig } = require("./prefs");
+const { prefsInitialize, initPrefs, enforcePrefs, enablePreviouslyForcedPrefs, setVars, validateConfig, congregationSelectPopulate, congregationPrefsPopulate } = require("./prefs");
 const { obsGetScenes } = require("./obs");
 const { request, isReachable } = require("./requests");
 const { dateFormatter } = require("./date");
@@ -54,42 +54,44 @@ async function webdavSetup() {
   let webdavLoginSuccessful = false;
   let webdavDirIsValid = false;
   $("#webdavFolderList").empty();
-  if (congServerEntered && prefs.congServerPort) {
-    congServerHeartbeat = await isReachable(prefs.congServer, prefs.congServerPort);
-    if (congServerHeartbeat) {
-      if (prefs.congServerUser && prefs.congServerPass) {
-        if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
-          $("#congServerDir").val("/").trigger("change");
-        } else {
-          let webdavStatusCode = await webdavStatus(prefs.congServerDir);
-          if (webdavStatusCode < 500) {
-            if (webdavStatusCode === 200) {
-              webdavLoginSuccessful = true;
-              webdavDirIsValid = true;
-            }
-            if (!([401, 403, 405, 429].includes(webdavStatusCode))) webdavLoginSuccessful = true;
-            if (webdavStatusCode !== 404) webdavDirIsValid = true;
-            if (congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid) {
-              if (prefs.congServerDir !== "/") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
-              for (var item of (await webdavLs(prefs.congServerDir, true))) {
-                if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
+  try {
+    if (congServerEntered && prefs.congServerPort) {
+      congServerHeartbeat = await isReachable(prefs.congServer, prefs.congServerPort);
+      if (congServerHeartbeat) {
+        if (prefs.congServerUser && prefs.congServerPass) {
+          if (prefs.congServerDir == null || prefs.congServerDir.length === 0) {
+            $("#congServerDir").val("/").trigger("change");
+          } else {
+            let webdavStatusCode = await webdavStatus(prefs.congServerDir);
+            if (webdavStatusCode < 500) {
+              if (webdavStatusCode === 200) {
+                webdavLoginSuccessful = true;
+                webdavDirIsValid = true;
               }
-              $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
-              $("#webdavFolderList li").on("click", function() {
-                $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).trigger("change");
-              });
-              enforcePrefs(get("paths"), setMediaLang, validateConfig, webdavExists, request);
-              let items = await webdavLs(prefs.congServerDir, true);
-              if (items) {
-                let remoteMediaWindowBackgrounds = items.filter(item => item.basename.includes("media-window-background-image"));
-                if (remoteMediaWindowBackgrounds.length >0) {
-                  let localFile = path.join(get("paths").app, remoteMediaWindowBackgrounds[0].basename);
-                  if (!fs.existsSync(localFile) || !(remoteMediaWindowBackgrounds[0].size == fs.statSync(localFile).size)) {
-                    fs.writeFileSync(localFile, Buffer.from(new Uint8Array((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + remoteMediaWindowBackgrounds[0].filename, {
-                      webdav: true,
-                      isFile: true
-                    })).data)));
-                    refreshBackgroundImagePreview();
+              if (!([401, 403, 405, 429].includes(webdavStatusCode))) webdavLoginSuccessful = true;
+              if (webdavStatusCode !== 404) webdavDirIsValid = true;
+              if (congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid) {
+                if (prefs.congServerDir !== "/") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-chevron-circle-up'></i> ../ </li>");
+                for (var item of (await webdavLs(prefs.congServerDir, true))) {
+                  if (item.type == "directory") $("#webdavFolderList").append("<li><i class='fas fa-fw fa-folder-open'></i>" + item.basename + "</li>");
+                }
+                $("#webdavFolderList").css("column-count", Math.ceil($("#webdavFolderList li").length / 8));
+                $("#webdavFolderList li").on("click", function() {
+                  $("#congServerDir").val(path.posix.join(prefs.congServerDir, $(this).text().trim())).trigger("change");
+                });
+                enforcePrefs(get("paths"), setMediaLang, validateConfig, webdavExists, request);
+                let items = await webdavLs(prefs.congServerDir, true);
+                if (items) {
+                  let remoteMediaWindowBackgrounds = items.filter(item => item.basename.includes("media-window-background-image"));
+                  if (remoteMediaWindowBackgrounds.length >0) {
+                    let localFile = path.join(get("paths").app, remoteMediaWindowBackgrounds[0].basename);
+                    if (!fs.existsSync(localFile) || !(remoteMediaWindowBackgrounds[0].size == fs.statSync(localFile).size)) {
+                      fs.writeFileSync(localFile, Buffer.from(new Uint8Array((await request("https://" + prefs.congServer + ":" + prefs.congServerPort + remoteMediaWindowBackgrounds[0].filename, {
+                        webdav: true,
+                        isFile: true
+                      })).data)));
+                      refreshBackgroundImagePreview();
+                    }
                   }
                 }
               }
@@ -98,6 +100,8 @@ async function webdavSetup() {
         }
       }
     }
+  } catch (err) {
+    notifyUser("error", "errorWebdavLs", null, true, err);
   }
   $("#webdavStatus").toggleClass("text-success text-warning text-muted", webdavDirIsValid).toggleClass("text-danger", congServerEntered && !webdavDirIsValid);
   $(".webdavHost").toggleClass("is-valid", congServerHeartbeat).toggleClass("is-invalid", congServerEntered && !congServerHeartbeat);
@@ -106,7 +110,6 @@ async function webdavSetup() {
   $("#webdavFolderList").closest(".row").fadeToAndToggle(fadeDelay, congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
   $("#specificCong").toggleClass("d-flex", congServerEntered).toggleClass("btn-danger", congServerEntered && !(congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid));
   $("#btn-settings, #headingCongSync button").toggleClass("pulse-danger", congServerEntered && !webdavDirIsValid);
-  
   let webdavIsAGo = get("webdavIsAGo");
   webdavIsAGo = (congServerEntered && congServerHeartbeat && webdavLoginSuccessful && webdavDirIsValid);
   $("#btnForcedPrefs").prop("disabled", !webdavIsAGo);
@@ -286,49 +289,8 @@ function congregationDelete(prefsFile) {
   }
 }
 
-function congregationPrefsPopulate() {
-  setPath("congPrefs", glob.sync(path.join(get("paths").app, "prefs*.json")).map(congregationPrefs => {
-    let congPrefInfo = {}, congName = "Default";
-    try {
-      congName = JSON.parse(fs.readFileSync(congregationPrefs, "utf8")).congregationName;
-    } catch (err) {
-      log.error(err);
-    } finally {
-      congPrefInfo = ({
-        name: congName,
-        path: congregationPrefs
-      });
-    }
-    return congPrefInfo;
-  }).filter(congPrefInfo => congPrefInfo.name).sort((a, b) => b.name.localeCompare(a.name)));
-}
-
-function congregationSelectPopulate() {
-  $("#congregationSelect .dropdown-menu .congregation").remove();
-  for (var congregation of get("paths").congPrefs) {
-    $("#congregationSelect .dropdown-menu").prepend(`<button
-      class='dropdown-item congregation ${path.resolve(get("paths").prefs) == path.resolve(congregation.path) ? "active" : ""}'
-      value='${congregation.path}'
-    >
-      ${get("paths").congPrefs.length > 1 ? "<i role='button' tabindex='0' class='fas fa-square-minus text-warning'></i> " : ""}
-      ${congregation.name}
-    </button>
-    `);
-    if (path.resolve(get("paths").prefs) == path.resolve(congregation.path)) $("#congregationSelect button.dropdown-toggle").text(congregation.name);
-  }
-  $("#congregationSelect .dropdown-menu .dropdown-item .fa-square-minus").popover({
-    content: translate("clickAgain"),
-    container: "body",
-    trigger: "focus"
-  }).on("hidden.bs.popover", function() {
-    unconfirm(this);
-  });
-}
-
 module.exports = {
   congregationInitialSelector,
-  congregationPrefsPopulate,
-  congregationSelectPopulate,
   congregationChange,
   congregationDelete,
   congregationCreate
