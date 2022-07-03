@@ -172,6 +172,7 @@ async function request(url, opts = null) {
     if (["jw.org", "www.jw.org"].includes((new URL(url)).hostname)) options.adapter = require("axios/lib/adapters/http");
     options.url = url;
     if (!options.method) options.method = "GET";
+    // if (!options.timeout) options.timeout = 1800000;
     payload = await axios.request(options);
     response = payload;
   } catch (err) {
