@@ -17,7 +17,6 @@ dayjs.extend(require("dayjs/plugin/duration"));
 
 // Variables
 const fullHd = [1920, 1080];
-const baseDate = dayjs().startOf("isoWeek");
 const now = dayjs().hour(0).minute(0).second(0).millisecond(0);
 
 
@@ -29,7 +28,7 @@ async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVid
   
   let filesToProcess = glob.sync(path.join(mediaPath, "*"), {
     onlyDirectories: true
-  }).map(folderPath => mediaPath
+  }).map(folderPath => path
     .basename(folderPath))
     .filter(folder => 
       dayjs(
@@ -37,7 +36,7 @@ async function mp4Convert(perf, updateStatus, updateTile, progressSet, createVid
         prefs.outputFolderDateFormat
       ).isValid() && 
       dayjs(folder, prefs.outputFolderDateFormat)
-        .isBetween(baseDate, baseDate.clone().add(6, "days"), null, "[]") && 
+        .isBetween(get("baseDate"), get("baseDate").clone().add(6, "days"), null, "[]") && 
         now.isSameOrBefore(dayjs(folder, prefs.outputFolderDateFormat))
     )
     .map(folder => glob.sync(path.join(mediaPath, folder, "*"), {
