@@ -34,7 +34,7 @@
     "is-video": "^1.0.1",
     "jquery": "^3.6.0",
     "jquery-ui": "^1.13.1",
-    "obs-websocket-js": "^4.0.3",
+    "obs-websocket-js": "^5.0.0",
     "os": "^0.1.2",
     "pdfjs-dist": "^2.14.305",
     "select2": "^4.1.0-rc.0",
