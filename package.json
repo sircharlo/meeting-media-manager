@@ -30,7 +30,7 @@
     "image-size": "^1.0.1",
     "inputmask": "^5.0.7",
     "is-audio": "^0.0.0",
-    "is-image": "^3.0.0",
+    "is-image": "^3.1.0",
     "is-video": "^1.0.1",
     "jquery": "^3.6.0",
     "jquery-ui": "^1.13.1",
@@ -72,7 +72,7 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^19.0.7",
+    "electron": "^19.0.8",
     "electron-builder": "^23.3.0"
   },
   "scripts": {
