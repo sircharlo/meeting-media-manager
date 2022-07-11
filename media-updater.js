@@ -1165,19 +1165,6 @@ function updateCleanup() {
         if (remote.app.isPackaged) fs.writeFileSync(get("paths").lastRunVersion, currentAppVersion);
         if (lastRunVersion !== "0") {
           notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
-          /* if (parseInt(lastRunVersion.replace(/\D/g, "")) <= 2242 && parseInt(currentAppVersion.replace(/\D/g, "")) >= 2243) {
-          notifyUser(
-            "info",
-            `<h6>Managing media just got simpler</h6>
-               <p>You can now choose which files will be downloaded from JW.org for any particular meeting, as well as add or remove additional media to a meeting, <strong>simply by clicking that day's icon</strong> on the main screen.</p>
-               ${(prefs.congServer ? "<p>The cloud upload button has therefore been removed from the bottom left corner of the app.</p>" : "")}
-               <p>Media can also now easily be added to non-meeting days, for special events and meetings, simply by clicking the desired date.</p>
-               <h6>In short:</h6>
-               ${prefs.congServer ? "<li>No more cloud button</li> " : ""}
-               <li><strong>Click on any day</strong> to manage media for that day</li>`,
-            null, true, null, {desc: "understood", noLink: true}, true);
-             $("#folders").addClass("new-stuff");
-           }*/
           let currentLang = get("jsonLangs") ? get("jsonLangs").filter(item => item.langcode === prefs.lang)[0] : null;
           if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", translate("wannaHelpExplain") + "<br/><small>" +  translate("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
             desc: "wannaHelpForSure",
