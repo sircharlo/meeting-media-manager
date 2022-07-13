@@ -924,7 +924,7 @@ function sanitizeFilename(filename, isNotFile) {
   filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).replace(/["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1f\x80-\x9f]/g, "").replace(/ *[—?;:|.!?] */g, " - ").replace(/\u00A0/g, " ").trim().replace(/[ -]+$/g, "") + fileExtIfApplicable;
   if (!isNotFile && get("paths").media) {
     let maxCharactersInPath = 245,
-      projectedPathCharLength = path.join(get("paths").media, "9999-99-99", filename).length;
+      projectedPathCharLength = path.join(get("paths").media, "9999-99-99 - AAAAAAAAAA AAAAAAAAAA", filename).length;
     if (projectedPathCharLength > maxCharactersInPath) {
       filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).slice(0, -(projectedPathCharLength - maxCharactersInPath)).trim() + fileExtIfApplicable;
     }
