@@ -14,7 +14,7 @@
     "adm-zip": "^0.5.9",
     "aspectratio": "^2.2.2",
     "axios": "^0.27.2",
-    "bootstrap": "^5.1.3",
+    "bootstrap": "^5.2.0",
     "bootstrap-dark-5": "^1.1.3",
     "dayjs": "^1.11.3",
     "electron-updater": "^5.2.0",
