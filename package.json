@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "electron": "^19.0.9",
-    "electron-builder": "^23.3.2"
+    "electron-builder": "^23.3.3"
   },
   "scripts": {
     "lint:js": "eslint --fix --ext \".js\" .",
