@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",
-    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@fortawesome/fontawesome-free": "^6.1.2",
     "@popperjs/core": "^2.11.5",
     "adm-zip": "^0.5.9",
     "aspectratio": "^2.2.2",
@@ -69,8 +69,8 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^19.0.9",
-    "electron-builder": "^23.3.2"
+    "electron": "^19.0.10",
+    "electron-builder": "^23.3.3"
   },
   "scripts": {
     "lint:js": "eslint --fix --ext \".js\" .",
