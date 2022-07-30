@@ -6,13 +6,14 @@ const { log, notifyUser } = require("./log");
 const { translate } = require("./lang");
 const { get, set, setPath, setPref } = require("./store");
 const { perf } = require("./requests");
-const { toggleScreen } = require("./ui");
+const { toggleScreen, unconfirm } = require("./ui");
 const { shortcutSet, shortcutsUnset } = require("./obs");
 // External modules
 const fs = require("fs-extra");
 const v8 = require("v8");
 const os = require("os");
 const path = require("upath");
+const glob = require("fast-glob");
 const $ = require("jquery");
 const remote = require("@electron/remote");
 const datetime = require("flatpickr");
