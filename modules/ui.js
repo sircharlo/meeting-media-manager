@@ -11,6 +11,7 @@ const { translate } = require("./lang");
 const $ = require("jquery");
 const remote = require("@electron/remote");
 const bootstrap = require("bootstrap");
+const escape = require("escape-html");
 const glob = require("fast-glob");
 const path = require("upath");
 

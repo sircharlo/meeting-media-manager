@@ -8,6 +8,7 @@ const { get } = require("./store");
 const os = require("os");
 const $ = require("jquery");
 const remote = require("@electron/remote");
+const escape = require("escape-html");
 const path = require("upath");
 const i18n = require("i18n");
 i18n.configure({

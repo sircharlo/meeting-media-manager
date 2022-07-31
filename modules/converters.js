@@ -8,6 +8,7 @@ const path = require("upath");
 const $ = require("jquery");
 const fs = require("fs-extra");
 const glob = require("fast-glob");
+const escape = require("escape-html");
 
 dayjs.extend(require("dayjs/plugin/isoWeek"));
 dayjs.extend(require("dayjs/plugin/isBetween"));

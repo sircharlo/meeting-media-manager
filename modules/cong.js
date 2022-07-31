@@ -17,6 +17,7 @@ const { webdavLs, webdavExists, webdavStatus } = require("./webdav");
 const $ = require("jquery"); 
 const fs = require("fs-extra");
 const path = require("upath");
+const escape = require("escape-html");
 const glob = require("fast-glob");
 const os = require("os");
 const dayjs = require("dayjs");
