@@ -194,70 +194,6 @@ if (!gotTheLock) {
     setMediaWindowPosition(mediaWindowOpts);
   });
   ipcMain.on("showMediaWindow", (event, mediaWindowOpts) => {
-
-    /*
-    /////////
-    BEGIN MAC WINDOW TESTS
-    /////////
-    */
-
-    // let screenInfo = getScreenInfo();
-    // let windowOptions = {
-    //   icon: path.join(__dirname, "public", "videoPlayer.ico"),
-    //   frame: false,
-    //   webPreferences: {
-    //     backgroundThrottling: false,
-    //     contextIsolation: false,
-    //     nodeIntegration: true,
-    //   },
-    //   backgroundColor: "black",
-    //   minHeight: 100,
-    //   width: 1280,
-    //   height: 720,
-    //   show: false,
-    //   thickFrame: false,
-    //   x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
-    //   y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
-    // };
-    // if (mediaWindowOpts.type == "fullscreen") windowOptions.fullscreen = true;
-    // mediaWin = new BrowserWindow(Object.assign({}, windowOptions, {title: "setVisibleOnAllWorkspaces && setAlwaysOnTop"}));
-    // mediaWin.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
-    // mediaWin.setAlwaysOnTop(true, "screen-saver");
-    // mediaWin.loadFile("mediaViewer.html");
-    // remote.enable(mediaWin.webContents);
-    // mediaWin.show();
-    //
-    // let mediaWin2, mediaWin3, mediaWin4;
-    //
-    // mediaWin2 = new BrowserWindow(Object.assign({}, windowOptions, {title: "setVisibleOnAllWorkspaces"}));
-    // mediaWin2.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
-    // mediaWin2.loadFile("mediaViewer.html");
-    // remote.enable(mediaWin2.webContents);
-    // mediaWin2.show();
-    //
-    // mediaWin3 = new BrowserWindow(Object.assign({}, windowOptions, {title: "setAlwaysOnTop"}));
-    // mediaWin3.setAlwaysOnTop(true, "screen-saver");
-    // mediaWin3.loadFile("mediaViewer.html");
-    // remote.enable(mediaWin3.webContents);
-    // mediaWin3.show();
-    //
-    // mediaWin4 = new BrowserWindow(Object.assign({}, windowOptions, {title: "nothing"}));
-    // mediaWin4.loadFile("mediaViewer.html");
-    // remote.enable(mediaWin4.webContents);
-    // mediaWin4.show();
-
-    /*
-    /////////
-    END MAC WINDOW TESTS
-    /////////
-    */
-
-    /*
-    /////////
-    BEGIN ORIGINAL WORKING WINDOW CODE
-    /////////
-    */
-
     if (!mediaWin) {
       let screenInfo = getScreenInfo();
       let windowOptions = {
@@ -270,6 +206,7 @@ if (!gotTheLock) {
           nodeIntegration: true,
         },
         backgroundColor: "black",
+        roundedCorners: false,
         minHeight: 100,
         width: 1280,
         height: 720,
