@@ -1895,7 +1895,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     var tempMedia = {
       filename: sanitizeFilename(
         (i + 1).toString().padStart(2, "0") + " - "
-        + (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption || multimediaItem.queryInfo.FilePath || multimediaItem.queryInfo.KeySymbol + "." + (multimediaItem.queryInfo.MimeType ? (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3") : ""))
+        + (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption || multimediaItem.queryInfo.FilePath || [multimediaItem.queryInfo.KeySymbol, multimediaItem.queryInfo.Track, multimediaItem.queryInfo.IssueTagNumber].filter(Boolean).join("_") + "." + (multimediaItem.queryInfo.MimeType ? (multimediaItem.queryInfo.MimeType.includes("video") ? "mp4" : "mp3") : ""))
         + (multimediaItem.queryInfo.FilePath && (multimediaItem.queryInfo.Label || multimediaItem.queryInfo.Caption) ? path.extname(multimediaItem.queryInfo.FilePath) : "")
       )
     };
@@ -1919,7 +1919,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
             tempMediaArray.find(item => item.filename == $(this).data("filename")).localpath = missingMediaPath[0];
             $(this).addClass("list-group-item-dark");
           }
-          if (tempMediaArray.filter(item => !item.contents && !item.localpath).length === 0) {
+          if (tempMediaArray.filter(item => !item.contents && !item.url && !item.localpath).length === 0) {
             $("#staticBackdrop .modal-footer button").prop("disabled", false);
             $("#fileToUpload").val(tempMediaArray.map(item => item.filename).join(" -//- ")).trigger("change");
           }
