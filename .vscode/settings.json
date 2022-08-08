@@ -1,5 +1,5 @@
 {
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
@@ -12,7 +12,10 @@
     ".vscode-insiders",
     "docs/assets.js"
   ],
-  "cSpell.ignoreWords": ["bootstrap", "-sm"],
+  "cSpell.ignoreWords": [
+    "bootstrap",
+    "-sm"
+  ],
   "cSpell.words": [
     "-sm",
     "americas",
@@ -70,5 +73,12 @@
     "webdav",
     "xspf",
     "YEARTEXT"
-  ]
+  ],
+  "files.autoSave": "onFocusChange",
+  "editor.tabSize": 2,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "diffEditor.codeLens": true,
+  "diffEditor.ignoreTrimWhitespace": true,
+  "window.autoDetectColorScheme": false
 }
