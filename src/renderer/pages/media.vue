@@ -1,0 +1,393 @@
+<template>
+  <div>
+    <div id="importedYearText" class="font-fallback loading" />
+    <div id="importedYearTextLogoContainer" />
+    <div id="mediaDisplay" />
+    <div id="blackOverlay" />
+    <div id="resizeOverlay">
+      <div id="dimensions" />
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import { pathToFileURL } from 'url'
+import Vue from 'vue'
+// eslint-disable-next-line import/named
+import { readFileSync } from 'fs-extra'
+import { join } from 'upath'
+import { ipcRenderer } from 'electron'
+import { existsSync } from 'original-fs'
+import { ElectronStore } from '~/types'
+
+export default Vue.extend({
+  name: 'MediaPage',
+  layout: 'media',
+  data() {
+    return {
+      yeartext: document.createElement('div'),
+      ytLogo: document.createElement('div'),
+      mediaDisplay: document.createElement('div'),
+      blackOverlay: document.createElement('div'),
+      resizeOverlay: document.createElement('div'),
+      dimensions: document.createElement('div'),
+    }
+  },
+  computed: {},
+  mounted() {
+    // Set global html elements
+    this.yeartext = document.querySelector(
+      '#importedYearText'
+    ) as HTMLDivElement
+    this.ytLogo = document.querySelector(
+      '#importedYearTextLogoContainer'
+    ) as HTMLDivElement
+    this.mediaDisplay = document.querySelector(
+      '#mediaDisplay'
+    ) as HTMLDivElement
+    this.blackOverlay = document.querySelector(
+      '#blackOverlay'
+    ) as HTMLDivElement
+    this.resizeOverlay = document.querySelector(
+      '#resizeOverlay'
+    ) as HTMLDivElement
+    this.dimensions = document.querySelector('#dimensions') as HTMLDivElement
+
+    // ipcRenderer listeners
+    ipcRenderer.on('showMedia', (_e, media) => {
+      this.transitionToMedia(media)
+    })
+    ipcRenderer.on('pauseVideo', () => {
+      const video = document.querySelector('video') as HTMLVideoElement
+      video.classList.add('manuallyPaused')
+      video.pause()
+    })
+    ipcRenderer.on('playVideo', () => {
+      const video = document.querySelector('video') as HTMLVideoElement
+      video.classList.remove('manuallyPaused', 'shortVideoPaused')
+      video.play()
+    })
+    ipcRenderer.on('windowResizing', (_e, args) => {
+      this.resizingNow(args[0], args[1])
+    })
+    ipcRenderer.on('windowResized', () => {
+      this.resizingDone()
+    })
+    ipcRenderer.on('videoScrub', (_e, timeAsPercent) => {
+      const video = document.querySelector('video') as HTMLVideoElement
+      video.currentTime = (video.duration * timeAsPercent) / 100
+    })
+    ipcRenderer.on('hideMedia', async () => {
+      await this.hideMedia()
+    })
+    ipcRenderer.on('startMediaDisplay', async (_e, prefs) => {
+      // Reset screen
+      this.yeartext.innerHTML = ''
+      const main = document.querySelector('main') as HTMLElement
+      main.style.background = 'black'
+
+      const bgImage = this.$findOne(
+        join(
+          await ipcRenderer.invoke('userData'),
+          'media-window-background-image*'
+        )
+      )
+      if (bgImage) {
+        main.style.background = `url(${
+          pathToFileURL(bgImage).href
+        }) black center center / contain no-repeat`
+      } else if (prefs.media.lang) {
+        await this.setYearText(prefs)
+      }
+    })
+
+    ipcRenderer.send('readyToListen')
+  },
+  beforeDestroy() {
+    ipcRenderer.removeAllListeners('startMediaDisplay')
+    ipcRenderer.removeAllListeners('hideMedia')
+    ipcRenderer.removeAllListeners('videoScrub')
+    ipcRenderer.removeAllListeners('windowResized')
+    ipcRenderer.removeAllListeners('windowResizing')
+    ipcRenderer.removeAllListeners('playVideo')
+    ipcRenderer.removeAllListeners('pauseVideo')
+    ipcRenderer.removeAllListeners('showMedia')
+  },
+  methods: {
+    transitionToMedia(media: { path: string; start?: string; end?: string }) {
+      this.resizingDone()
+      this.blackOverlay.style.opacity = '1'
+      setTimeout(() => {
+        if (media?.path) {
+          if (this.$isVideo(media.path) || this.$isAudio(media.path)) {
+            const videos = document.querySelectorAll('#mediaDisplay video')
+            if (videos.length > 0) {
+              videos.forEach((video) => {
+                video.remove()
+              })
+            }
+
+            let src = pathToFileURL(media.path).href
+            if (media.start || media.end) {
+              src += `#t=${media.start || ''}${
+                media.end ? ',' + media.end : ''
+              }`
+            }
+
+            const video = document.createElement('video')
+            video.id = 'mediaVideo'
+            video.autoplay = true
+            video.controls = false
+            video.src = src
+            video.oncanplay = () => {
+              if (video.duration < 0.1) {
+                video.classList.add('shortVideoPaused')
+                video.pause()
+              }
+            }
+            video.ontimeupdate = () => {
+              ipcRenderer.send('videoProgress', [
+                video.currentTime,
+                video.duration,
+              ])
+            }
+            video.onpause = async () => {
+              if (
+                !(
+                  video.classList.contains('manuallyPaused') ||
+                  video.classList.contains('shortVideoPaused')
+                )
+              ) {
+                await this.hideMedia()
+                ipcRenderer.send('videoEnd')
+              }
+            }
+            video.onended = () => {
+              ipcRenderer.send('videoEnd')
+            }
+            this.mediaDisplay.append(video)
+            this.mediaDisplay.style.background = 'black'
+          } else if (this.$isImage(media.path)) {
+            this.mediaDisplay.style.background = `url(${
+              pathToFileURL(media.path).href
+            }) black center center / contain no-repeat`
+          }
+        } else {
+          this.mediaDisplay.style.background = 'transparent'
+        }
+        this.blackOverlay.style.opacity = '0'
+      }, 400)
+    },
+    resizingNow(width: number, height: number) {
+      this.resizeOverlay.style.opacity = '1'
+      this.dimensions.innerText = `${width}x${height}`
+    },
+    resizingDone() {
+      this.resizeOverlay.style.opacity = '0'
+    },
+    async hideMedia() {
+      const video = document.querySelector('video') as HTMLVideoElement
+      if (video) {
+        const animation = video.animate(
+          [
+            { opacity: 1, volume: 100 },
+            { opacity: 0, volume: 0 },
+          ],
+          {
+            duration: 400,
+          }
+        )
+        await animation.finished
+        video.remove()
+      }
+      setTimeout(() => {
+        this.mediaDisplay.style.background = 'transparent'
+        this.blackOverlay.style.opacity = '0'
+      }, 400)
+    },
+    async setYearText(prefs: ElectronStore) {
+      const path = join(
+        await ipcRenderer.invoke('userData'),
+        'Publications',
+        prefs.media.lang,
+        `yeartext-${prefs.media.lang}-${new Date().getFullYear().toString()}`
+      )
+      try {
+        const yeartext = existsSync(path) ? readFileSync(path, 'utf8') : null
+        const fontPath = await this.$wtFontPath() // Only works when watchtower library is installed on the user's machine
+        if (yeartext && yeartext.length > 0) {
+          const root = document.createElement('div')
+          root.innerHTML = yeartext
+          for (let i = 0; i < root.children.length; i++) {
+            const el = root.children.item(i)
+            if (
+              el?.tagName === 'P' &&
+              el.textContent &&
+              el.textContent.length > 0
+            ) {
+              const newEl = document.createElement('p')
+              newEl.innerText = el.textContent
+              this.yeartext.append(newEl)
+            }
+          }
+          const fontFile = this.$findOne(join(fontPath, 'Wt-ClearText-Bold.*'))
+          if (fontFile) {
+            // @ts-ignore
+            const font = new FontFace(
+              'Wt-ClearText-Bold',
+              `url(${pathToFileURL(fontFile).href})`
+            )
+            try {
+              const loadedFont = await font.load()
+              // @ts-ignore
+              document.fonts.add(loadedFont)
+              this.yeartext.classList.replace('font-fallback', 'font-native')
+            } catch (e) {
+              console.error(e)
+            } finally {
+              this.yeartext.classList.remove('loading')
+            }
+          } else {
+            this.yeartext.classList.remove('loading')
+          }
+        }
+        if (!prefs.media.hideMediaLogo) {
+          const logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
+          if (logoFontFile) {
+            // @ts-ignore
+            const logoFont = new FontFace(
+              'JW-Icons',
+              `url(${pathToFileURL(logoFontFile).href})`
+            )
+            const loadedFont = await logoFont.load()
+            // @ts-ignore
+            document.fonts.add(loadedFont)
+            this.ytLogo.style.fontFamily = '"JW-Icons"'
+            this.ytLogo.innerHTML = "<div id='importedYearTextLogo'></div>"
+          }
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    },
+  },
+})
+</script>
+<style lang="scss">
+@font-face {
+  font-family: NotoSerif;
+  src: url('/NotoSerif-Bold.ttf') format('truetype');
+}
+
+html,
+body {
+  -webkit-app-region: drag;
+  background: black;
+  user-select: auto;
+}
+
+html,
+body,
+video,
+#mediaDisplay,
+#blackOverlay,
+#resizeOverlay {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden !important;
+}
+
+#importedYearText,
+#mediaDisplay,
+#blackOverlay,
+#resizeOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#importedYearText,
+#importedYearTextLogoContainer {
+  z-index: 5;
+}
+
+#importedYearText {
+  color: white;
+  width: 100%;
+  text-align: center;
+  height: fit-content;
+  margin: auto;
+  bottom: 0;
+  right: 0;
+  font-size: 4vw;
+  line-height: 2vw;
+  font-weight: 800;
+
+  &.font-fallback {
+    font-family: 'NotoSerif', serif;
+    letter-spacing: 0.05rem;
+  }
+
+  &.font-native {
+    font-family: 'Wt-ClearText-Bold', 'NotoSerif', serif;
+  }
+
+  &.loading {
+    visibility: hidden;
+  }
+
+  p {
+    margin: 1em 0;
+    padding: 0;
+  }
+}
+
+#importedYearTextLogoContainer {
+  font-size: 18vh;
+  position: absolute;
+  bottom: 10vh;
+  right: 10vh;
+  background: rgba(255, 255, 255, 0.2);
+
+  #importedYearTextLogo {
+    margin: -2vh -1vh;
+  }
+}
+
+#mediaDisplay {
+  background: transparent;
+  z-index: 10;
+}
+
+#blackOverlay,
+#resizeOverlay {
+  background: black;
+  opacity: 0;
+}
+
+#blackOverlay {
+  z-index: 15;
+  transition: opacity 0.4s;
+}
+
+#resizeOverlay {
+  z-index: 25;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  #dimensions {
+    color: #084298;
+    background-color: #cfe2ff;
+    border-color: #b6d4fe;
+    position: relative;
+    padding: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    width: fit-content;
+    height: fit-content;
+    font: bold 4vw monospace;
+  }
+}
+</style>

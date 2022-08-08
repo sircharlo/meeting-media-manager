@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "lib": ["esnext", "esnext.asynciterable", "dom"],
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "strict": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./*"]
+    },
+    "types": [
+      "@nuxt/types",
+      "@nuxtjs/axios",
+      "@nuxtjs/vuetify",
+      "@types/node",
+      "@nuxtjs/i18n",
+      "@nuxtjs/dayjs",
+      "axios",
+      "dayjs/plugin/isoWeek",
+      "dayjs/plugin/isBetween",
+      "dayjs/plugin/isSameOrBefore",
+      "dayjs/plugin/customParseFormat",
+      "dayjs/plugin/duration",
+      "dayjs/plugin/localeData",
+      "dayjs/plugin/updateLocale",
+      "@types/fs-extra"
+    ]
+  }
+}

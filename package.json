@@ -1,92 +1,109 @@
 {
   "name": "meeting-media-manager",
-  "version": "22.7.1",
+  "version": "22.8.0",
   "description": "Meeting Media Manager",
-  "main": "main.js",
+  "keywords": [
+    "meeting media manager",
+    "m3",
+    "M³",
+    "jw"
+  ],
+  "homepage": "https://github.com/sircharlo/meeting-media-manager#readme",
+  "bugs": "https://github.com/sircharlo/meeting-media-manager/issues",
+  "license": "ISC",
+  "author": "sircharlo <sircharlo@gmail.com> (https://github.com/sircharlo/)",
+  "contributors": [
+    "mtdvlpr <149895ja@gmail.com> (https://github.com/mtdvlpr)"
+  ],
+  "main": "./dist/main/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/sircharlo/meeting-media-manager.git"
   },
-  "dependencies": {
-    "@electron/remote": "^2.0.8",
+  "scripts": {
+    "dev": "./pre-build.sh && node .electron-nuxt/dev.js",
+    "build": "./pre-build.sh && node .electron-nuxt/build.js",
+    "lint": "node_modules/.bin/eslint --ext .js,.vue,.ts --ignore-path .gitignore -f ./node_modules/eslint-friendly-formatter ./src",
+    "lint:fix": "yarn lint --fix",
+    "preinstall": "node .electron-nuxt/check-engines.js",
+    "postinstall": "electron-builder install-app-deps & yarn lint:fix"
+  },
+  "engines": {
+    "node": ">=16.11.45",
+    "yarn": ">=1.22.19"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "private": true,
+  "resolutions": {
+    "@types/node": "16.11.45"
+  },
+  "devDependencies": {
+    "@babel/core": "7.18.9",
+    "@babel/runtime-corejs3": "7.18.9",
     "@fortawesome/fontawesome-free": "^6.1.2",
-    "@popperjs/core": "^2.11.5",
+    "@mdi/js": "^7.0.96",
+    "@nuxt/types": "^2.15.8",
+    "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/dayjs": "^1.4.1",
+    "@nuxtjs/eslint-config-typescript": "^10.0.0",
+    "@nuxtjs/i18n": "^7.2.3",
+    "@nuxtjs/vuetify": "^1.12.3",
+    "@types/adm-zip": "^0.5.0",
+    "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/sql.js": "^1.4.3",
+    "@xpda-dev/core": "^0.1.6",
+    "@xpda-dev/electron-builder": "^0.2.1",
+    "@xpda-dev/electron-launcher": "^0.3.0",
+    "@xpda-dev/webpack-step": "^0.1.6",
     "adm-zip": "^0.5.9",
-    "aspectratio": "^2.2.2",
     "axios": "^0.27.2",
-    "bootstrap": "^5.2.0",
-    "bootstrap-dark-5": "^1.1.3",
-    "dayjs": "^1.11.4",
+    "consola": "^2.15.3",
+    "core-js": "^3.24.1",
+    "cross-env": "^7.0.3",
+    "css-loader": "^5.2.7",
+    "deepmerge": "^4.2.2",
+    "electron": "20.0.1",
+    "electron-builder": "^23.3.3",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-store": "^8.1.0",
     "electron-updater": "^5.2.1",
-    "escape-html": "^1.0.3",
     "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-plugin-nuxt": "^3.2.0",
+    "eslint-plugin-vue": "^9.3.0",
+    "eslint-webpack-plugin": "^2.7.0",
     "fast-glob": "^3.2.11",
     "fast-xml-parser": "^4.0.9",
-    "flatpickr": "^4.6.13",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^10.1.0",
     "h264-mp4-encoder": "^1.0.12",
-    "i18n": "^0.15.0",
     "image-size": "^1.0.2",
-    "inputmask": "^5.0.7",
-    "is-audio": "^0.0.0",
-    "is-image": "^3.1.0",
-    "is-video": "^1.0.1",
-    "jquery": "^3.6.0",
-    "jquery-ui": "^1.13.2",
+    "net": "^1.0.2",
+    "node-sass": "^6.0.1",
+    "nuxt": "^2.15.8",
     "obs-websocket-js": "^4.0.3",
-    "os": "^0.1.2",
     "pdfjs-dist": "^2.15.349",
-    "select2": "^4.1.0-rc.0",
+    "prettier": "^2.7.1",
+    "roboto-fontface": "^0.10.0",
+    "sass-loader": "^10.3.1",
     "sql.js": "^1.7.0",
-    "upath": "^2.0.1"
-  },
-  "build": {
-    "appId": "sircharlo.meeting-media-manager",
-    "productName": "Meeting Media Manager",
-    "nsis": {
-      "guid": "d9bcf07e-55a1-51f4-83c6-e268a864b225",
-      "oneClick": false
-    },
-    "win": {
-      "target": "NSIS",
-      "icon": "build/icon.ico",
-      "publish": ["github"]
-    },
-    "linux": {
-      "category": "Utility",
-      "target": "AppImage",
-      "icon": "build/icon.png",
-      "publish": ["github"]
-    },
-    "mac": {
-      "target": {
-        "target": "dmg",
-        "arch": ["universal"]
-      },
-      "publish": ["github"]
-    },
-    "buildDependenciesFromSource": true
-  },
-  "devDependencies": {
-    "electron": "^19.0.10",
-    "electron-builder": "^23.3.3"
-  },
-  "scripts": {
-    "lint:js": "eslint --fix --ext \".js\" .",
-    "start-debug": "electron .  --trace-warnings > ./app-run.log  2>&1",
-    "start": "electron .",
-    "pack-win": "electron-builder --win",
-    "pack-win-test": "electron-builder --dir --win",
-    "pack-linux-test": "electron-builder --dir --linux",
-    "pack-linux": "electron-builder --linux",
-    "pack-mac": "electron-builder --mac",
-    "publish": "electron-builder --win -p always",
-    "publish-linux": "electron-builder --linux -p always",
-    "postinstall": "electron-builder install-app-deps",
-    "release": "electron-builder"
-  },
-  "eslintIgnore": ["docs", "node_modules"],
-  "author": "sircharlo",
-  "license": "ISC"
+    "ts-loader": "^8.4.0",
+    "typescript": "^4.7.4",
+    "upath": "^2.0.1",
+    "v-mask": "^2.3.0",
+    "vue": "2.7.7",
+    "vue-server-renderer": "2.7.7",
+    "vue-template-compiler": "2.7.7",
+    "vuedraggable": "^2.24.3",
+    "vuetify": "^2.6.8",
+    "webdav": "^4.10.0",
+    "webpack": "^4.46.0",
+    "webpack-node-externals": "^3.0.0"
+  }
 }

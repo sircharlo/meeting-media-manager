@@ -1,0 +1,245 @@
+<!-- eslint-disable vue/no-v-html -->
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
+<template>
+  <v-list-item :id="id" three-line :class="{ 'media-played': played }">
+    <v-img v-if="isImage" :src="url" contain max-width="144" max-height="80" />
+    <media-video
+      v-else
+      :src="src"
+      :playing="active"
+      @clipped="setTime($event)"
+      @progress="progress = $event"
+    />
+    <v-list-item-content class="ml-2">
+      <v-list-item-subtitle class="media-title" v-html="title" />
+    </v-list-item-content>
+    <v-list-item-action class="d-flex flex-row">
+      <template v-if="active">
+        <icon-btn
+          v-if="!isImage && !end.startsWith('00:00')"
+          variant="pause"
+          class="mr-2"
+          @click="togglePaused()"
+        />
+        <icon-btn
+          variant="stop"
+          tooltip="top"
+          :click-twice="!isImage && !end.startsWith('00:00')"
+          @click="stop()"
+        />
+      </template>
+      <icon-btn v-else variant="play" :disabled="mediaActive" @click="play()" />
+      <icon-btn v-if="sortable" variant="sort" class="ml-2" />
+    </v-list-item-action>
+    <v-progress-linear
+      v-if="!isImage"
+      v-model="progress"
+      absolute
+      bottom
+      color="primary"
+      :background-opacity="0"
+    />
+    <v-progress-linear
+      v-if="!isImage"
+      v-model="clippedStart"
+      absolute
+      bottom
+      color="rgb(231, 76, 60)"
+      :background-opacity="0"
+    />
+    <v-progress-linear
+      v-if="!isImage"
+      v-model="clippedEnd"
+      absolute
+      bottom
+      color="rgb(231, 76, 60)"
+      reverse
+      :background-opacity="0"
+    />
+  </v-list-item>
+</template>
+<script lang="ts">
+import { pathToFileURL } from 'url'
+import { basename } from 'upath'
+import { ipcRenderer } from 'electron'
+import Vue from 'vue'
+export default Vue.extend({
+  props: {
+    src: {
+      type: String,
+      required: true,
+    },
+    showPrefix: {
+      type: Boolean,
+      default: false,
+    },
+    sortable: {
+      type: Boolean,
+      default: false,
+    },
+    mediaActive: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      active: false as boolean,
+      played: false,
+      video: null as any,
+      paused: false as boolean,
+      progress: 0,
+      stopClicked: false as boolean,
+      start: undefined as string | undefined,
+      end: undefined as string | undefined,
+    }
+  },
+  computed: {
+    id(): string {
+      return (
+        basename(this.src as string)
+          .replaceAll(' ', '')
+          .replaceAll('-', '')
+          .replaceAll('.', '')
+          .replaceAll(/\d/g, '') + 'mediaitem'
+      )
+    },
+    url(): string {
+      return pathToFileURL(this.src).href
+    },
+    scene(): string {
+      return this.$store.state.obs.currentScene as string
+    },
+    clippedStart(): number {
+      if (!this.video) return 0
+      return (this.video.clipped.start * 100) / this.video.original.end
+    },
+    clippedEnd(): number {
+      if (!this.video) return 0
+      return 100 - (this.video.clipped.end * 100) / this.video.original.end
+    },
+    isImage(): boolean {
+      return this.$isImage(this.src)
+    },
+    title(): string {
+      return basename(this.src)
+        .replace(
+          /^((\d{1,2}-?)* - )/,
+          "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>"
+        )
+        .replace(
+          new RegExp(`${this.$t('song')} (\\d+) -`, 'g'),
+          `<big><span class="song v-btn pa-1"><i class="fas fa-music"></i>$1</span></big>`
+        )
+        .replace(
+          new RegExp(`${this.$t('paragraph')} (\\d+) -`, 'g'),
+          `<big><span class="paragraph v-btn pa-1"><i class="fas fa-paragraph"></i>$1</span></big>`
+        )
+    },
+  },
+  watch: {
+    async active(val) {
+      if (!val) {
+        this.progress = 0
+        if (this.scene) {
+          await this.$setScene(this.scene)
+        }
+      }
+    },
+    showPrefix(val) {
+      const prefix = document.querySelector(
+        `#${this.id} .sort-prefix`
+      ) as HTMLSpanElement
+      if (prefix) {
+        if (val) {
+          prefix.style.display = 'inline'
+        } else {
+          prefix.style.display = 'none'
+        }
+      }
+    },
+  },
+  mounted() {
+    ipcRenderer.on('videoEnd', () => {
+      this.active = false
+    })
+  },
+  beforeDestroy() {
+    ipcRenderer.removeAllListeners('videoEnd')
+  },
+  methods: {
+    async play() {
+      this.active = true
+      this.played = true
+      if (this.scene) {
+        await this.$setScene(this.$getPrefs('app.obs.mediaScene') as string)
+      }
+      ipcRenderer.send('showMedia', {
+        path: this.src,
+        start: this.start,
+        end: this.end,
+      })
+    },
+    togglePaused(): void {
+      ipcRenderer.send(this.paused ? 'playVideo' : 'pauseVideo')
+      this.paused = !this.paused
+    },
+    stop() {
+      this.active = false
+      if (this.isImage) {
+        ipcRenderer.send('showMedia', null)
+      } else {
+        ipcRenderer.send('hideMedia')
+      }
+    },
+    setTime({
+      original,
+      clipped,
+      formatted,
+    }: {
+      original: any
+      clipped: any
+      formatted: any
+    }) {
+      this.start = formatted.start
+      this.end = formatted.end
+      this.video = { original, clipped }
+    },
+  },
+})
+</script>
+<style lang="scss">
+.theme--light {
+  .media-title {
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+}
+
+.theme--dark {
+  .media-title {
+    color: #ffffff !important;
+  }
+}
+
+.media-title {
+  font-size: 1rem !important;
+}
+
+.media-played {
+  border-left: 8px solid rgba(55, 90, 127, 0.75) !important;
+}
+
+.song {
+  color: #5dbecd;
+  background-color: #0c515c;
+  border-color: #0e616e;
+  border: 1px solid transparent;
+}
+
+.paragraph {
+  color: #919191;
+  background-color: #313131;
+  border-color: #3b3b3b;
+  border: 1px solid transparent;
+}
+</style>

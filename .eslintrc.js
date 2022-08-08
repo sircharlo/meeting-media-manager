@@ -1,27 +1,43 @@
 module.exports = {
-  "env": {
-    "es2021": true,
-    "node": true,
-    "browser": true
+  root: true,
+  env: {
+    browser: true,
+    node: true,
   },
-  "extends": "eslint:recommended",
-  "parserOptions": {
-    "ecmaVersion": 12,
-    "sourceType": "module"
+  parserOptions: {
+    sourceType: 'module',
   },
-  "rules": {
-    "no-control-regex": "off",
-    "indent": [
-      "error",
-      2
+  ignorePatterns: ['docs/*', 'static/*'],
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/recommended',
+    'plugin:nuxt/recommended',
+    '@nuxtjs/eslint-config-typescript',
+    'prettier',
+  ],
+  // add your custom rules here
+  rules: {
+    'vue/valid-attribute-name': ['error'],
+    'vue/valid-model-definition': ['error'],
+    'vue/multi-word-component-names': 'off',
+    'vue/component-name-in-template-casing': ['error', 'kebab-case'],
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'vue/no-unsupported-features': [
+      'error',
+      {
+        version: '2.7.0',
+      },
     ],
-    "quotes": [
-      "error",
-      "double"
+    'vue/html-self-closing': [
+      'error',
+      {
+        html: {
+          void: 'always',
+          normal: 'always',
+          component: 'always',
+        },
+      },
     ],
-    "semi": [
-      "error",
-      "always"
-    ]
-  }
-};
+  },
+}

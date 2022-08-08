@@ -1,7 +1,10 @@
 {
   "recommendations": [
-    "aaron-bond.better-comments",
-    "streetsidesoftware.code-spell-checker",
-    "dbaeumer.vscode-eslint",
+    "aaron-bond.better-comments", // Comments with colors and syntax highlighting for bugs, questions, todos, etc.
+    "streetsidesoftware.code-spell-checker", // Spell checker for code
+    "editorconfig.editorconfig", // EditorConfig support for VS Code
+    "dbaeumer.vscode-eslint", // ESLint support for VS Code
+    "eamodio.gitlens", // Show Git history in the editor
+    "octref.vetur" // Vue.js support for VS Code
   ]
 }

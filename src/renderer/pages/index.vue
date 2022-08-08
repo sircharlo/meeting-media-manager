@@ -1,0 +1,562 @@
+<template>
+  <v-row justify="center" class="fill-height">
+    <v-row class="pa-4">
+      <v-col cols="5" sm="4" md="3" />
+      <v-col cols="2" sm="4" md="6" class="text-center">
+        <v-icon x-large disabled>{{ statusIcon }}</v-icon>
+      </v-col>
+      <v-col cols="5" sm="4" md="3">
+        <v-select
+          v-model="cong"
+          :items="congs"
+          item-text="name"
+          item-value="path"
+          dense
+          solo
+          @change="changeCong($event)"
+        >
+          <template #item="{ item }">
+            <v-list-item-avatar v-if="congs.length > 1">
+              <v-icon
+                v-if="item.color === 'warning'"
+                small
+                color="warning"
+                @click.stop="atCongClick(item)"
+              >
+                fas fa-square-minus
+              </v-icon>
+              <v-tooltip v-else right>
+                <template #activator="{ on, attrs }">
+                  <v-icon
+                    small
+                    color="error"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click.stop="atCongClick(item)"
+                  >
+                    fas fa-square-minus
+                  </v-icon>
+                </template>
+                <span>{{ $t('clickAgain') }}</span>
+              </v-tooltip>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item-content>
+          </template>
+          <template #append-item>
+            <v-list-item @click="addCong()">
+              <v-list-item-avatar>
+                <v-icon small color="success">fas fa-square-plus</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content />
+            </v-list-item>
+          </template>
+        </v-select>
+      </v-col>
+    </v-row>
+    <v-col cols="12">
+      <v-col cols="12" class="d-flex pb-0">
+        <v-col
+          v-for="(day, i) in daysOfWeek"
+          :key="day.formatted"
+          class="text-center flex-shrink-1 px-1 pb-0"
+        >
+          <v-card :color="dayColors[i]" @click="openDate(day.formatted)">
+            <v-card-text class="pb-0 pt-2">{{ day.first }}</v-card-text>
+            <v-card-text class="pt-0 pb-2">{{ day.second }}</v-card-text>
+          </v-card>
+        </v-col>
+        <v-col class="pb-0 px-1">
+          <v-card
+            class="fill-height d-flex align-center"
+            :color="recurringColor"
+            @click="openDate('Recurring')"
+          >
+            <v-card-text class="text-center py-2">
+              {{ $t('recurring') }}
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-col>
+      <v-col cols="12" class="d-flex py-0">
+        <v-col class="text-center flex-shrink-1 px-1 pb-0">
+          <v-card class="pb-0" :color="jwSyncColor">
+            <v-card-text class="text-center py-2">{{ jwSync }}</v-card-text>
+          </v-card>
+        </v-col>
+        <v-col v-if="congSync" class="text-center flex-shrink-1 px-1 pb-0">
+          <v-card class="pb-0" :color="congSyncColor">
+            <v-card-text class="text-center py-2">
+              {{ $t('congMedia') }}
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col
+          v-if="$getPrefs('media.enableMp4Conversion')"
+          class="text-center flex-shrink-1 px-1 pb-0"
+        >
+          <v-card class="pb-0" :color="mp4Color">
+            <v-card-text class="text-center py-2">
+              {{ $t('convertDownloaded') }}
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-col>
+    </v-col>
+    <v-col cols="12" class="text-center">
+      <v-btn
+        color="primary"
+        :disabled="loading || !online"
+        :loading="loading"
+        @click="startMediaSync()"
+      >
+        {{ $t('fetchMedia') }}
+      </v-btn>
+    </v-col>
+    <v-col cols="12" align-self="end" class="d-flex pa-0">
+      <v-col>
+        <icon-btn
+          v-if="$getPrefs('meeting.enableMusicButton')"
+          variant="shuffle"
+          click-twice
+        />
+      </v-col>
+      <v-col class="text-center">
+        <v-select
+          v-model="currentWeek"
+          :items="upcomingWeeks"
+          item-text="label"
+          item-value="iso"
+          :disabled="loading"
+          solo
+          dense
+          hide-details="auto"
+          class="justify-center"
+          @change="resetColors()"
+        />
+      </v-col>
+      <v-col class="d-flex justify-end">
+        <template v-if="$getPrefs('media.enableMediaDisplayButton')">
+          <icon-btn variant="toggleScreen" class="mr-2" />
+          <icon-btn variant="present" :disabled="loading" class="mr-2" />
+        </template>
+        <icon-btn variant="settings" :disabled="loading" :loading="loading" />
+      </v-col>
+      <v-progress-linear
+        v-if="currentProgress || totalProgress"
+        fixed
+        bottom
+        stream
+        striped
+        :height="8"
+        :buffer-value="currentProgress"
+        :value="totalProgress"
+      />
+    </v-col>
+  </v-row>
+</template>
+<script lang="ts">
+import { fileURLToPath, pathToFileURL } from 'url'
+import Vue from 'vue'
+import { Dayjs } from 'dayjs'
+import { basename, join } from 'upath'
+import { ipcRenderer } from 'electron'
+import { ShortJWLang } from '~/types'
+
+export default Vue.extend({
+  name: 'HomePage',
+  data() {
+    return {
+      cong: null,
+      congs: [] as { name: string; path: string; color: string }[],
+      loading: true,
+      currentProgress: 0,
+      totalProgress: 0,
+      currentWeek: this.$dayjs().isoWeek(),
+      jwSyncColor: 'secondary',
+      congSyncColor: 'secondary',
+      recurringColor: 'secondary',
+      mp4Color: 'secondary',
+      dayColors: {
+        0: 'accent',
+        1: 'accent',
+        2: 'accent',
+        3: 'accent',
+        4: 'accent',
+        5: 'accent',
+        6: 'accent',
+      } as { [key: number]: string },
+    }
+  },
+  head() {
+    return { title: 'Home' }
+  },
+  computed: {
+    congSync(): boolean {
+      return !!this.$store.state.cong.client
+    },
+    mediaScreenVisible(): boolean {
+      return this.$store.state.present.mediaScreenVisible
+    },
+    online(): boolean {
+      return this.$store.state.stats.online
+    },
+    congParam() {
+      return this.$route.query.cong
+    },
+    jwSync(): string {
+      const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
+        (lang) => lang.langcode === (this.$getPrefs('media.lang') as string)
+      ) as ShortJWLang
+      return `${this.$t('syncJwOrgMedia')} (${lang?.vernacularName})`
+    },
+    upcomingWeeks(): { iso: number; label: string }[] {
+      const weeks: { iso: number; label: string }[] = []
+
+      for (let i = 0; i < 5; i++) {
+        const monday = (this.$dayjs() as Dayjs)
+          .add(i, 'weeks')
+          .startOf('week')
+          .format(
+            (this.$getPrefs('app.outputFolderDateFormat') as string).replace(
+              ' - dddd',
+              ''
+            )
+          )
+        const sunday = (this.$dayjs() as Dayjs)
+          .add(i, 'weeks')
+          .endOf('week')
+          .format(
+            (this.$getPrefs('app.outputFolderDateFormat') as string).replace(
+              ' - dddd',
+              ''
+            )
+          )
+        weeks.push({
+          iso: (this.$dayjs() as Dayjs).add(i, 'weeks').isoWeek(),
+          label: `${monday} - ${sunday}`,
+        })
+      }
+
+      return weeks
+    },
+    now() {
+      return (this.$dayjs() as Dayjs).hour(0).minute(0).second(0).millisecond(0)
+    },
+    statusIcon(): string {
+      return this.loading
+        ? 'fas fa-fw fa-photo-video fa-3x fa-flip'
+        : 'fas fa-fw fa-photo-video fa-3x'
+    },
+    baseDate(): Dayjs {
+      let y = 0
+      if (this.currentWeek < this.$dayjs().isoWeek()) y = 1
+      const week = (this.$dayjs() as Dayjs)
+        .add(y, 'years')
+        .isoWeek(this.currentWeek)
+      return week.startOf('week')
+    },
+    daysOfWeek(): { first: string; second: string; formatted: string }[] {
+      const days: { first: string; second: string; formatted: string }[] = []
+      for (let i = 0; i < 7; i++) {
+        const day = this.baseDate.add(i, 'days')
+        if (day.isBefore(this.now)) continue
+        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
+        if (
+          weekDay === this.$getPrefs('meeting.mwDay') ||
+          weekDay === this.$getPrefs('meeting.weDay')
+        ) {
+          days.push({
+            first: day.format('D MMM'),
+            second: day.format('dddd'),
+            formatted: day.format(
+              this.$getPrefs('app.outputFolderDateFormat') as string
+            ),
+          })
+        } else {
+          days.push({
+            first: day.format('D'),
+            second: day.format('dd.'),
+            formatted: day.format(
+              this.$getPrefs('app.outputFolderDateFormat') as string
+            ),
+          })
+        }
+      }
+      return days
+    },
+  },
+  watch: {
+    congParam(val) {
+      if (val) {
+        window.location.reload()
+      }
+    },
+  },
+  async mounted() {
+    this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
+    this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
+    this.congs = (await this.$getCongPrefs()).map(
+      (cong: { name: string; path: string }) => {
+        return {
+          name: cong.name,
+          path: cong.path,
+          color: 'warning',
+        }
+      }
+    )
+    this.cong = this.$storePath()
+    this.loading = false
+    this.$log.debug('v' + (await this.$appVersion()))
+    if (this.$getPrefs('app.autoStartSync')) {
+      await this.startMediaSync()
+    }
+  },
+  methods: {
+    setDayColor(day: number, color: string) {
+      this.dayColors[this.daysOfWeek.length + day - 7] = color
+    },
+    openDate(date: string) {
+      this.$router.push({
+        path: this.localePath('/add'),
+        query: { ...this.$route.query, date },
+      })
+    },
+    resetColors() {
+      this.jwSyncColor =
+        this.congSyncColor =
+        this.recurringColor =
+        this.mp4Color =
+          'secondary'
+      this.dayColors = {
+        0: 'accent',
+        1: 'accent',
+        2: 'accent',
+        3: 'accent',
+        4: 'accent',
+        5: 'accent',
+        6: 'accent',
+      }
+    },
+    addCong() {
+      if (this.$store.state.present.mediaScreenInit) {
+        this.$toggleMediaWindow('close')
+      }
+      const id = Math.random().toString(36).substring(2, 15)
+      this.$switchCong(join(this.$appPath(), 'prefs-' + id + '.json'))
+      this.$router.push({
+        path: this.localePath('/settings'),
+        query: { cong: id },
+      })
+    },
+    changeCong(path: string) {
+      this.$router.push({
+        query: {
+          cong: basename(path, '.json').replace('prefs-', ''),
+        },
+      })
+    },
+    atCongClick(item: { name: string; path: string; color: string }): void {
+      if (item.color === 'warning') {
+        item.color = 'error'
+        setTimeout(() => {
+          item.color = 'warning'
+        }, 3000)
+      } else if (this.cong === item.path) {
+        this.$removeCong(item.path)
+        this.$router.push({
+          query: {
+            cong: basename(
+              this.congs.find((c) => c.path !== item.path)?.path as string,
+              '.json'
+            ).replace('prefs-', ''),
+          },
+        })
+      } else {
+        this.$removeCong(item.path)
+        window.location.reload()
+      }
+    },
+    isMeetingDay(day: number): boolean {
+      const date = (this.$dayjs() as Dayjs).add(day, 'days')
+      const weekDay = date.day() === 0 ? '6' : (date.day() - 1).toString() // day is 0 indexed and starts with Sunday
+      return (
+        weekDay === this.$getPrefs('meeting.mwDay') ||
+        weekDay === this.$getPrefs('meeting.weDay')
+      )
+    },
+    setProgress(loaded: number, total: number, global: boolean = false) {
+      if (global) {
+        this.totalProgress = (100 * loaded) / total
+      } else {
+        this.currentProgress = (100 * loaded) / total
+      }
+      if (this.currentProgress === 100) this.currentProgress = 0
+      if (this.totalProgress === 100) this.totalProgress = 0
+    },
+    async syncJWorgMedia(dryrun: boolean = false) {
+      this.$store.commit('stats/startPerf', {
+        func: 'syncJWorgMedia',
+        start: performance.now(),
+      })
+      this.jwSyncColor = 'warning'
+
+      try {
+        await this.$syncJWMedia(dryrun, this.baseDate, this.setProgress)
+        this.jwSyncColor = 'success'
+      } catch (e) {
+        this.$log.error(e)
+        this.jwSyncColor = 'error'
+      }
+      this.$store.commit('stats/stopPerf', {
+        func: 'syncJWorgMedia',
+        stop: performance.now(),
+      })
+    },
+    async startMediaSync(dryrun: boolean = false, filter: string = 'all') {
+      this.loading = !dryrun
+      this.$store.commit('stats/startPerf', {
+        func: 'total',
+        start: performance.now(),
+      })
+      try {
+        const mwDay = this.baseDate.add(this.$getPrefs('meeting.mwDay'), 'days')
+        const weDay = this.baseDate.add(this.$getPrefs('meeting.weDay'), 'days')
+
+        // Remove old and invalid date directories
+        if (!dryrun) {
+          this.$rm(
+            this.$findAll(join(this.$mediaPath(), '*/'), {
+              ignore: [join(this.$mediaPath(), 'Recurring')],
+              onlyDirectories: true,
+            }).filter((dir: string) => {
+              const date = this.$dayjs(
+                basename(dir),
+                this.$getPrefs('app.outputFolderDateFormat')
+              ) as Dayjs
+              return !date.isValid() || date.isBefore(this.now)
+            })
+          )
+        }
+        this.$store.commit('stats/startPerf', {
+          func: 'getJwOrgMedia',
+          start: performance.now(),
+        })
+
+        // Get midweek media
+        if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {
+          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'warning')
+          try {
+            await this.$getMwMedia(
+              mwDay.format(
+                this.$getPrefs('app.outputFolderDateFormat') as string
+              ),
+              this.setProgress
+            )
+            this.setDayColor(this.$getPrefs('meeting.mwDay'), 'success')
+          } catch (e) {
+            this.$log.error(e)
+            this.$error(this.$t('errorGetMwMedia'))
+            this.setDayColor(this.$getPrefs('meeting.mwDay'), 'error')
+          }
+        }
+
+        // Get weekend media
+        if (filter !== 'mw' && this.now.isSameOrBefore(weDay)) {
+          this.setDayColor(this.$getPrefs('meeting.weDay'), 'warning')
+          try {
+            await this.$getWeMedia(
+              weDay.format(
+                this.$getPrefs('app.outputFolderDateFormat') as string
+              ),
+              this.setProgress
+            )
+            this.setDayColor(this.$getPrefs('meeting.weDay'), 'success')
+          } catch (e) {
+            this.$log.error(e)
+            this.$error(this.$t('errorGetWeMedia'))
+            this.setDayColor(this.$getPrefs('meeting.weDay'), 'error')
+          }
+        }
+        this.$store.commit('stats/stopPerf', {
+          func: 'getJwOrgMedia',
+          stop: performance.now(),
+        })
+
+        this.$createMediaNames()
+
+        // if (this.$store.state.cong.client) await getCongMedia()
+        if (!dryrun) {
+          // await syncCongMedia()
+          await this.syncJWorgMedia(dryrun)
+
+          try {
+            this.recurringColor = 'warning'
+            await this.$syncLocalRecurringMedia(this.baseDate)
+            this.recurringColor = 'success'
+          } catch (e) {
+            this.$log.error(e)
+            this.recurringColor = 'error'
+          }
+        }
+
+        await this.$convertUnusableFiles(this.$mediaPath())
+
+        if (this.$getPrefs('media.enableMp4Conversion')) {
+          this.$store.commit('stats/startPerf', {
+            func: 'convertMP4',
+            start: performance.now(),
+          })
+          this.mp4Color = 'warning'
+          try {
+            await this.$convertToMP4(this.baseDate, this.now, this.setProgress)
+            this.mp4Color = 'success'
+          } catch (e) {
+            this.$log.error(e)
+            this.mp4Color = 'error'
+          } finally {
+            this.$store.commit('stats/stopPerf', {
+              func: 'convertMP4',
+              stop: performance.now(),
+            })
+          }
+        }
+
+        if (this.$getPrefs('media.enableVlcPlaylistCreation')) {
+          this.$convertToVLC()
+        }
+
+        if (this.$getPrefs('app.autoOpenFolderWhenDone')) {
+          ipcRenderer.send(
+            'openPath',
+            fileURLToPath(pathToFileURL(this.$mediaPath()).href)
+          )
+        }
+
+        this.$store.commit('stats/stopPerf', {
+          func: 'total',
+          stop: performance.now(),
+        })
+        this.$printStats()
+      } catch (e) {
+        this.$error(e)
+        this.$log.error(e)
+      } finally {
+        this.loading = false
+      }
+    },
+  },
+})
+</script>
+<style lang="scss">
+.theme--light {
+  .secondary * {
+    color: #fff !important;
+  }
+
+  .accent * {
+    color: #000 !important;
+  }
+}
+</style>

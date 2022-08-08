@@ -1,0 +1,44 @@
+# TODOS
+
+- [ ] Convert flash to notify system with action buttons
+- [ ] Make progress slider draggable when paused to change current progress / video scrubber??
+- [ ] Option to add multiple local files at once
+- [ ] Option to drag and drop files to add them to the media list
+- [ ] Test for 3 displays
+- [X] Add local JWPUB file media to media list
+- [X] Add played and video progress visuals to present page
+- [X] Congregation sync
+- [X] Edit local filename option
+- [X] Electron windows setup
+- [X] Functionality to add local files to media list
+- [X] Get meeting media from jw.org
+- [X] Make sure light mode looks good as well
+- [X] Media webpage
+- [X] OBS integration
+- [X] Presentation mode
+- [X] Recurring media functionality
+- [X] Save preferences locally
+- [X] Set custom start and end times for videos
+- [X] Shuffle music
+- [X] Support for external display
+- [X] VLC / MP4 / PDF / SVG support
+
+## In Progress
+
+- Nothing at the moment
+
+## Known Bugs
+
+- Volume animation on musicFadeOut does not work
+
+## Bug Fixes
+
+- Setting custom media background works instantly
+
+## New Features
+
+- Using electron-store instead of home grown version
+- Use translation for song and paragraph in file names
+- Auto rename media when switching local language
+- Auto rename meeting folders when switching date format
+- Auto rename mediaList keys when switching date format
