@@ -23,6 +23,7 @@ const linuxOS = {
 
 const macOS = {
   mac: {
+    icon: ICONS_DIR + 'icon.icns',
     target: {
       target: 'dmg',
       arch: ['universal'],
@@ -36,6 +37,7 @@ module.exports = {
   appId: 'sircharlo.meeting-media-manager',
   // eslint-disable-next-line no-template-curly-in-string
   artifactName: 'Meeting-Media-Manager-${version}.${ext}',
+  buildDependenciesFromSource: true,
   directories: {
     output: 'build',
   },
