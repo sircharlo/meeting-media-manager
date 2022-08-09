@@ -30,7 +30,6 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Build/release Electron app
-        env: 
+        env:
           GH_TOKEN: ${{ secrets.github_token }
-        run: |
-        yarn run build -p onTag
+        run: yarn run build -p onTag
