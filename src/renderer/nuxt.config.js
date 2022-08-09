@@ -141,8 +141,8 @@ module.exports = {
       config.module = {
         ...config.module,
         noParse: [
-          /node_modules\/sql\.js\/dist\/sql-wasm/,
-          /node_modules\/pdfjs-dist\/build\/pdf/,
+          /node_modules\/?\\?sql\.js\/?\\?dist\/?\\?sql-wasm/,
+          /node_modules\/?\\?pdfjs-dist\/?\\?build\/?\\?pdf/,
         ],
       }
     },
