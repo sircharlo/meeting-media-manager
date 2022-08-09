@@ -4,6 +4,7 @@ const windowsOS = {
   win: {
     icon: ICONS_DIR + 'icon.ico',
     target: 'nsis',
+    publish: ['github'],
   },
 
   nsis: {
@@ -16,6 +17,7 @@ const linuxOS = {
     icon: ICONS_DIR + 'icon.png',
     target: 'AppImage',
     category: 'Utility',
+    publish: ['github'],
   },
 }
 
@@ -25,6 +27,7 @@ const macOS = {
       target: 'dmg',
       arch: ['universal'],
     },
+    publish: ['github'],
   },
 }
 
