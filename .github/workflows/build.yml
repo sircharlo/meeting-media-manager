@@ -6,7 +6,7 @@ on:
     paths:
       - 'package.json'
       - 'yarn.lock'
-      - '/.github/workflows/'
+      - '*.yml'
 
 jobs:
   release:
