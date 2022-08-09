@@ -31,13 +31,9 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Build/release Electron app
-        uses: michalzaq12/action-electron-nuxt@v1
+        run: yarn build -p onTag
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
           # type: string
-          github_token: ${{ secrets.github_token }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0")
-          # type: boolean
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          GH_TOKEN: ${{ secrets.github_token }}
