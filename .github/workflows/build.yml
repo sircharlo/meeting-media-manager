@@ -32,5 +32,5 @@ jobs:
 
       - name: Build/release Electron app
         env:
-          GH_TOKEN: ${{ secrets.github_token }
+          GH_TOKEN: ${{ secrets.github_token }}
         run: yarn run build -p onTag
