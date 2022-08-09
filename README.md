@@ -1,6 +1,7 @@
 # Meeting Media Manager
 
-![M³](https://github.com/sircharlo/meeting-media-manager/blob/master/build/icon.png?raw=true "The M³ Logo")
+<!-- markdownlint-disable-next-line -->
+<img src='https://github.com/sircharlo/meeting-media-manager/blob/master/build/icon.png?raw=true' alt='The M³ Logo' style='max-height: 20vh' />
 
 > A Meeting Media Manager for meetings of Jehovah's Witnesses.
 
@@ -45,10 +46,3 @@ Enjoy!
 ![Media Presentation Mode](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true)
 
 ![Media Sync in progress](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/hero-main.gif?raw=true)
-
-<!-- markdownlint-disable-next-line -->
-<style>
-  img[alt=M³] {
-   max-height: 20vh
-}
-</style>
