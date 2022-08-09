@@ -27,8 +27,8 @@ jobs:
           node-version: 16
           check-latest: true
 
-      - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@latest
+      - name: Install dependencies
+        run: yarn install
 
       - name: Build/release Electron app
         env:
