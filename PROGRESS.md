@@ -38,7 +38,8 @@
 ## New Features
 
 - Using electron-store instead of home grown version
+- Using webdav client instead of home grown version
 - Use translation for song and paragraph in file names
-- Auto rename media when switching local language
-- Auto rename meeting folders when switching date format
+- Auto rename media when switching local language (also on cong server)
+- Auto rename meeting folders when switching date format (also on cong server)
 - Auto rename mediaList keys when switching date format

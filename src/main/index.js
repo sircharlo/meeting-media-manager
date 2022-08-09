@@ -41,13 +41,17 @@ const allowClose = true
 let authorizedCloseMediaWin = false
 const appLongName = 'Meeting Media Manager'
 
+let iconType = 'png'
+if (os.platform() === 'darwin') iconType = 'icns'
+if (os.platform() === 'win32') iconType = 'ico'
+
 function createMainWindow() {
   winHandler = new BrowserWinHandler({
     height: 700,
     width: 700,
-    minWidth: 670, // ? 675 might be better
+    minWidth: 670,
     minHeight: 410,
-    icon: join(__dirname, '../../build', 'icons', 'icon.ico'),
+    icon: join(__dirname, '../../build', 'icons', `icon.${iconType}`),
     title: appLongName,
   })
 
@@ -286,7 +290,13 @@ if (gotTheLock) {
       const screenInfo = getScreenInfo()
       const windowOptions = {
         title: 'Media Window',
-        icon: join(__dirname, '../../build', 'icons', 'videoPlayer.ico'),
+        icon: join(
+          __dirname,
+          '../../build',
+          'icons',
+          'videoPlayer',
+          `videoPlayer.${iconType}`
+        ),
         frame: false,
         backgroundColor: 'black',
         roundedCorners: false,

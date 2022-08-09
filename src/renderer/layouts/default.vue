@@ -116,11 +116,13 @@ export default Vue.extend({
     await this.updateOnlineStatus()
   },
   beforeDestroy() {
+    ipcRenderer.removeAllListeners('setObsScene')
+    ipcRenderer.removeAllListeners('openPresentMode')
     ipcRenderer.removeAllListeners('readyToListen')
     ipcRenderer.removeAllListeners('openPresentMode')
     ipcRenderer.removeAllListeners('mediaWindowShown')
     ipcRenderer.removeAllListeners('mediaWindowVisibilityChanged')
-    ipcRenderer.removeAllListeners('toggleShuffleMusic')
+    ipcRenderer.removeAllListeners('toggleMusicShuffle')
     ipcRenderer.removeAllListeners('displaysChanged')
     ipcRenderer.removeAllListeners('moveMediaWindowToOtherScreen')
   },

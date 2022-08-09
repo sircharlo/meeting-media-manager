@@ -232,6 +232,9 @@ export default Vue.extend({
       if (this.playing) this.$emit('progress', percentage)
     })
   },
+  beforeDestroy() {
+    ipcRenderer.removeAllListeners('videoProgress')
+  },
   methods: {
     atClick(): void {
       if (this.playing || this.duration === '00:00') return

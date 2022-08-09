@@ -14,7 +14,7 @@ const windowsOS = {
 
 const linuxOS = {
   linux: {
-    icon: ICONS_DIR + 'icon.png',
+    icon: ICONS_DIR,
     target: 'AppImage',
     category: 'Utility',
     publish: ['github'],
