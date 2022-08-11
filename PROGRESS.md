@@ -35,6 +35,7 @@
 ## Bug Fixes
 
 - Setting custom media background works instantly
+- Show M³ icon in taskbar on Linux
 
 ## New Features
 
@@ -44,3 +45,4 @@
 - Auto rename media when switching local language (also on cong server)
 - Auto rename meeting folders when switching date format (also on cong server)
 - Auto rename mediaList keys when switching date format
+- Prevent duplicate media from being added to media list by checking safeNames without prefix

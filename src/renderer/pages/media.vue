@@ -347,6 +347,8 @@ video,
   position: absolute;
   bottom: 10vh;
   right: 10vh;
+  color: black !important;
+  line-height: normal !important;
   background: rgba(255, 255, 255, 0.2);
 
   #importedYearTextLogo {

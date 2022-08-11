@@ -3,8 +3,8 @@
     v-if="variant === 'shuffle' && musicFadeOut && !clickedOnce"
     color="warning"
     title="ALT+K"
-    :disabled="loading"
-    :loading="loading"
+    :disabled="loading || $attrs.disabled"
+    :loading="loading || $attrs.loading"
     @click="atClick()"
   >
     <v-icon small left :color="isDark ? 'white' : 'black'">
@@ -41,8 +41,8 @@
       <v-btn
         ref="btn"
         v-model="$attrs.value"
-        :disabled="loading"
-        :loading="loading"
+        :disabled="loading || $attrs.disabled"
+        :loading="loading || $attrs.loading"
         v-bind="{ ...style.props, ...$attrs, ...attrs }"
         :color="variant === 'shuffle' && !musicFadeOut ? 'warning' : 'error'"
         v-on="on"
@@ -70,8 +70,8 @@
     ref="btn"
     v-model="$attrs.value"
     :nuxt="!!style.to"
-    :disabled="loading"
-    :loading="loading"
+    :disabled="loading || $attrs.disabled"
+    :loading="loading || $attrs.loading"
     :to="style.to ? localePath(`${style.to}?cong=${cong}`) : undefined"
     v-bind="{ ...style.props, ...$attrs }"
     @click.stop="atClick()"

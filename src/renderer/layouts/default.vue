@@ -41,6 +41,9 @@ export default Vue.extend({
     store() {
       return this.$storePath()
     },
+    path() {
+      return this.$route.path
+    },
   },
   watch: {
     cong: {
@@ -50,6 +53,9 @@ export default Vue.extend({
         }
       },
       immediate: true,
+    },
+    path(val) {
+      ipcRenderer.send('allowQuit', val.split('/').pop() !== 'present')
     },
     isDark(val) {
       this.$vuetify.theme.dark = val
@@ -99,6 +105,9 @@ export default Vue.extend({
     })
     ipcRenderer.on('setObsScene', async (_e, i: number) => {
       await this.$setScene(this.scenes[i])
+    })
+    ipcRenderer.on('notifyUser', (_e, msg: string[]) => {
+      this.$flash(this.$t(msg[1]) as string, msg[0])
     })
     ipcRenderer.on('openPresentMode', () => {
       if (

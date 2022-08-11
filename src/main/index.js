@@ -10,7 +10,7 @@ import {
 } from 'electron'
 import Store from 'electron-store'
 import { existsSync } from 'fs-extra'
-import { join } from 'upath'
+import { join, normalize } from 'upath'
 import { autoUpdater } from 'electron-updater'
 import BrowserWinHandler from './BrowserWinHandler'
 const os = require('os')
@@ -37,7 +37,7 @@ let winHandler = null
 let mediaWin = null
 let mediaWinHandler = null
 let closeAttempts = 0
-const allowClose = true
+let allowClose = true
 let authorizedCloseMediaWin = false
 const appLongName = 'Meeting Media Manager'
 
@@ -75,7 +75,10 @@ function createMainWindow() {
   win.on('close', (e) => {
     if (!allowClose && closeAttempts < 2) {
       e.preventDefault()
-      win.webContents.send('notifyUser', ['warn', 'cantCloseMediaWindowOpen'])
+      win.webContents.send('notifyUser', [
+        'warning',
+        'cantCloseMediaWindowOpen',
+      ])
       closeAttempts++
       setTimeout(() => {
         closeAttempts--
@@ -183,9 +186,9 @@ if (gotTheLock) {
   })
 
   // ipcMain event for general purposes
-  ipcMain.handle('userData', () => app.getPath('userData'))
+  ipcMain.handle('userData', () => normalize(app.getPath('userData')))
   ipcMain.handle('mediaWinOpen', () => !!mediaWin)
-  ipcMain.handle('appData', () => app.getPath('appData'))
+  ipcMain.handle('appData', () => normalize(app.getPath('appData')))
   ipcMain.handle('appVersion', () => app.getVersion())
   ipcMain.handle('getScreenInfo', () => getScreenInfo())
 
@@ -276,6 +279,9 @@ if (gotTheLock) {
   })
 
   // ipcMain events to control the windows
+  ipcMain.on('allowQuit', (_e, val) => {
+    allowClose = val
+  })
   ipcMain.on('setMediaWindowPosition', (_e, mediaWinOptions) => {
     setMediaWindowPosition(mediaWinOptions)
   })
@@ -348,7 +354,7 @@ if (gotTheLock) {
   })
 
   autoUpdater.on('error', () => {
-    win.webContents.send('notifyUser', ['warn', 'updateNotDownloaded'])
+    win.webContents.send('notifyUser', ['warning', 'updateNotDownloaded'])
   })
   autoUpdater.on('update-available', () => {
     if (os.platform() === 'darwin') {
