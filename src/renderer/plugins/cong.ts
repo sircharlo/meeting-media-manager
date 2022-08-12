@@ -1,9 +1,10 @@
 import { WebDAVClient, createClient, FileStat } from 'webdav/web'
 /* eslint-disable import/named */
 import { Context } from '@nuxt/types'
-import { dirname, join } from 'upath'
+import { basename, dirname, extname, join } from 'upath'
 import { Dayjs } from 'dayjs'
-import { CongFile } from '~/types'
+import { statSync } from 'fs-extra'
+import { CongFile, MultiMediaImage, SmallMediaFile } from '~/types'
 
 export default function (
   {
@@ -11,7 +12,12 @@ export default function (
     $log,
     $dayjs,
     $migrate2280,
+    $findOne,
+    $mediaPath,
+    $warn,
+    $write,
     $getPrefs,
+    $rename,
     $setAllPrefs,
     i18n,
     $error,
@@ -187,25 +193,15 @@ export default function (
   inject('getContentsTree', getContentsTree)
 
   inject('getCongMedia', (baseDate: Dayjs, now: Dayjs) => {
+    store.commit('stats/startPerf', {
+      func: 'getCongMedia',
+      start: performance.now(),
+    })
     const tree = getContentsTree() as CongFile[]
-    const mediaFolder = tree.find(({ filename }) => filename === 'Media')
-    // const hiddenFolder = tree.find(({ filename }) => filename === 'Hidden')
-    let recurringMedia: any[] = []
+    const mediaFolder = tree.find(({ basename }) => basename === 'Media')
+    const hiddenFolder = tree.find(({ basename }) => basename === 'Hidden')
 
     if (mediaFolder?.children) {
-      const recurring = mediaFolder.children.find(
-        ({ basename }) => basename === 'Recurring'
-      )
-      if (recurring?.children) {
-        recurringMedia = recurring.children.map((file) => {
-          return {
-            safeName: file.basename,
-            congSpecific: true,
-            filesize: file.size,
-            recurring: true,
-          }
-        })
-      }
       for (const date of mediaFolder.children) {
         if (date.children) {
           const day = $dayjs(
@@ -231,23 +227,209 @@ export default function (
             store.commit('media/setMultiple', {
               date: date.basename,
               par: -1,
-              media: isRecurring
-                ? media
-                : media.concat(
-                    recurringMedia.map((media) => {
-                      return { ...media, folder: date.basename }
-                    })
-                  ),
+              media,
             })
           }
         }
       }
     }
-    // TODO: add hidden to media
-    /* if (hiddenFolder.children) {
-      for (const )
-    } */
+    if (hiddenFolder?.children) {
+      const meetings = store.state.media.meetings as Map<
+        string,
+        Map<number, (SmallMediaFile | MultiMediaImage)[]>
+      >
+      for (const date of hiddenFolder.children) {
+        if (date.children) {
+          const mediaMap = meetings.get(date.basename)
+          const day = $dayjs(
+            date.basename,
+            $getPrefs('app.outputFolderDateFormat') as string
+          )
+          const isMeetingDay =
+            day.isValid() &&
+            day.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]') &&
+            now.isSameOrBefore(day)
+
+          if (isMeetingDay && mediaMap) {
+            for (const hiddenFile of date.children) {
+              for (const [par, media] of mediaMap.entries()) {
+                const result = media.find(
+                  ({ safeName }) => safeName === hiddenFile.basename
+                )
+                if (result) {
+                  store.commit('media/setHidden', {
+                    date,
+                    par,
+                    mediaName: hiddenFile.basename,
+                    hidden: true,
+                  })
+                  $log.info(
+                    '%c[hiddenMedia] [' +
+                      date.basename +
+                      '] ' +
+                      hiddenFile.basename,
+                    'background-color: #fff3cd; color: #856404;'
+                  )
+                  break
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    store.commit('stats/stopPerf', {
+      func: 'getCongMedia',
+      stop: performance.now(),
+    })
   })
 
-  inject('syncCongMedia', async () => {})
+  inject('syncCongMedia', async (baseDate: Dayjs, setProgress: Function) => {
+    store.commit('stats/startPerf', {
+      func: 'syncCongMedia',
+      start: performance.now(),
+    })
+    const meetings = new Map(
+      Array.from(
+        store.getters['media/meetings'] as Map<
+          string,
+          Map<number, (SmallMediaFile | MultiMediaImage)[]>
+        >
+      )
+        .filter(([date, _parts]) => {
+          if (date === 'Recurring') return true
+          const dateObj = $dayjs(
+            date,
+            $getPrefs('app.outputFolderDateFormat') as string
+          ) as Dayjs
+          return (
+            dateObj.isValid() &&
+            dateObj.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
+          )
+        })
+        .map((meeting) => {
+          meeting[1] = new Map(
+            Array.from(meeting[1]).filter((part) => {
+              part[1] = part[1].filter(({ congSpecific }) => congSpecific)
+              return part
+            })
+          )
+          return meeting
+        })
+    )
+    console.log(meetings)
+
+    let total = 0
+    meetings.forEach((parts) =>
+      parts.forEach((media) => (total += media.length))
+    )
+
+    let progress = 0
+    for (const [date, parts] of meetings.entries()) {
+      for (const [, media] of parts.entries()) {
+        for (const item of media) {
+          if (!item.hidden && !item.isLocal) {
+            if (item.filesize) {
+              $log.info(
+                `%c[congMedia] [${date}] ${item.safeName}`,
+                'background-color: #d1ecf1; color: #0c5460'
+              )
+              const duplicate = $findOne(
+                join(
+                  $mediaPath(),
+                  item.folder as string,
+                  '*' + item.safeName?.substring(8).replace('.svg', '.png')
+                )
+              )
+              if (
+                duplicate &&
+                (statSync(duplicate).size === item.filesize ||
+                  extname(item.safeName as string) === '.svg')
+              ) {
+                if (basename(duplicate) !== item.safeName) {
+                  $rename(
+                    duplicate,
+                    basename(duplicate),
+                    (item.safeName as string).replace('.svg', '.png')
+                  )
+                }
+                store.commit('stats/setDownloads', {
+                  origin: 'cong',
+                  source: 'cache',
+                  file: item,
+                })
+              } else {
+                const client = store.state.cong.client as WebDAVClient
+                if (client) {
+                  /* client
+                    .createReadStream(item.url as string)
+                    .pipe(
+                      createWriteStream(
+                        join(
+                          $mediaPath(),
+                          item.folder as string,
+                          item.safeName as string
+                        )
+                      )
+                    ) */
+                  const perf: any = {
+                    start: performance.now(),
+                    bytes: item.filesize,
+                    name: item.safeName,
+                  }
+                  const file = (await client.getFileContents(
+                    item.url as string,
+                    {
+                      onDownloadProgress: (progress) => {
+                        setProgress(progress.loaded, progress.total)
+                      },
+                    }
+                  )) as ArrayBuffer
+                  perf.end = performance.now()
+                  perf.bits = perf.bytes * 8
+                  perf.ms = perf.end - perf.start
+                  perf.s = perf.ms / 1000
+                  perf.bps = perf.bits / perf.s
+                  perf.mbps = perf.bps / 1000000
+                  perf.dir = 'down'
+                  $log.debug(perf)
+
+                  $write(
+                    join(
+                      $mediaPath(),
+                      item.folder as string,
+                      item.safeName as string
+                    ),
+                    Buffer.from(new Uint8Array(file))
+                  )
+                  store.commit('stats/setDownloads', {
+                    origin: 'cong',
+                    source: 'live',
+                    file: item,
+                  })
+                }
+              }
+            } else {
+              $warn(i18n.t('warnFileNotAvailable') as string)
+              $log.warn(
+                [
+                  item.queryInfo?.KeySymbol,
+                  item.queryInfo?.Track,
+                  item.queryInfo?.IssueTagNumber,
+                ]
+                  .filter(Boolean)
+                  .join('_')
+              )
+            }
+          }
+          progress++
+          setProgress(progress, total, true)
+        }
+      }
+    }
+    store.commit('stats/stopPerf', {
+      func: 'syncCongMedia',
+      stop: performance.now(),
+    })
+  })
 }

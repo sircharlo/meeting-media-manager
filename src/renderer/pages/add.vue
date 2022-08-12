@@ -188,8 +188,7 @@
 </template>
 <script lang="ts">
 // eslint-disable-next-line import/named
-import { readdirSync } from 'fs-extra'
-import { existsSync, readFileSync } from 'original-fs'
+import { readdirSync, readFileSync, existsSync, statSync } from 'fs-extra'
 import { basename, extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
@@ -391,12 +390,34 @@ export default Vue.extend({
             if (!(await this.client.exists(datePath))) {
               await this.client.createDirectory(datePath)
             }
+            /* createReadStream(path).pipe(
+              this.client.createWriteStream(
+                filePath,
+                { overwrite: true },
+                (res) => {
+                  console.log(JSON.parse(JSON.stringify(res)))
+                }
+              )
+            ) */
+            const perf: any = {
+              start: performance.now(),
+              bytes: statSync(path).size,
+              name: file.safeName,
+            }
             await this.client.putFileContents(filePath, readFileSync(path), {
               overwrite: true,
               onUploadProgress: (progress) => {
                 this.setProgress(progress.loaded, progress.total, true)
               },
             })
+            perf.end = performance.now()
+            perf.bits = perf.bytes * 8
+            perf.ms = perf.end - perf.start
+            perf.s = perf.ms / 1000
+            perf.bps = perf.bits / perf.s
+            perf.mbps = perf.bps / 1000000
+            perf.dir = 'up'
+            this.$log.debug(perf)
           }
         }
         await this.$convertUnusableFiles(this.$mediaPath())

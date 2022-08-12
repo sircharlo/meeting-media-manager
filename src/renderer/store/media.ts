@@ -21,6 +21,26 @@ export const mutations = {
   setMusicFadeOut(state: MediaStore, musicFadeOut: Dayjs | string) {
     state.musicFadeOut = musicFadeOut
   },
+  setHidden(
+    state: MediaStore,
+    {
+      date,
+      par,
+      mediaName,
+      hidden,
+    }: { date: string; par: number; mediaName: string; hidden: boolean }
+  ) {
+    const media = state.meetings.get(date)?.get(par)
+    if (media) {
+      const newMedia = [...media]
+      const index = newMedia.findIndex(({ safeName }) => safeName === mediaName)
+      if (index !== -1) {
+        newMedia[index].hidden = hidden
+        state.meetings.get(date)?.set(par, newMedia)
+        state.meetings = new Map(state.meetings)
+      }
+    }
+  },
   set(
     state: MediaStore,
     {
@@ -71,7 +91,7 @@ export const mutations = {
     let mediaList = dateMap.get(par)
     if (!mediaList) dateMap.set(par, [])
     mediaList = dateMap.get(par) as (SmallMediaFile | MultiMediaImage)[]
-    mediaList.concat(media)
+    mediaList = mediaList.concat(media)
     const parMap = new Map(dateMap.set(par, mediaList))
     state.meetings = new Map(state.meetings.set(date, parMap))
   },

@@ -522,9 +522,30 @@ export default Vue.extend({
 
         this.$createMediaNames()
 
-        // if (this.$store.state.cong.client) await getCongMedia()
+        if (this.congSync) {
+          try {
+            this.congSyncColor = 'warning'
+            this.$getCongMedia(this.baseDate, this.now)
+          } catch (e) {
+            this.$log.error(e)
+            this.$error(this.$t('errorGetCongMedia') as string)
+            this.congSyncColor = 'error'
+          }
+        }
         if (!dryrun) {
-          // await syncCongMedia()
+          if (this.congSync) {
+            try {
+              await this.$syncCongMedia(this.baseDate, this.setProgress)
+              if (this.congSyncColor === 'warning') {
+                this.congSyncColor = 'success'
+              }
+            } catch (e) {
+              this.$log.error(e)
+              this.congSyncColor = 'error'
+              this.$error(this.$t('errorSyncCongMedia') as string)
+            }
+          }
+
           await this.syncJWorgMedia(dryrun)
 
           try {

@@ -13,10 +13,9 @@
 import { pathToFileURL } from 'url'
 import Vue from 'vue'
 // eslint-disable-next-line import/named
-import { readFileSync } from 'fs-extra'
+import { readFileSync, existsSync } from 'fs-extra'
 import { join } from 'upath'
 import { ipcRenderer } from 'electron'
-import { existsSync } from 'original-fs'
 import { ElectronStore } from '~/types'
 
 export default Vue.extend({

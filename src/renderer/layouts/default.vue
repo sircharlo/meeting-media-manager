@@ -16,8 +16,7 @@ import Vue from 'vue'
 import { Scene } from 'obs-websocket-js'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
-import { existsSync, readFileSync, removeSync } from 'fs-extra'
-import { renameSync } from 'original-fs'
+import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav/web'
 import { ShortJWLang, CongPrefs } from '~/types'
 export default Vue.extend({

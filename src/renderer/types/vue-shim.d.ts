@@ -43,6 +43,7 @@ interface CustomProps {
   $flash: (message: string, type?: string) => void
   $forcePrefs: () => Promise<void>
   $getAllPrefs: () => ElectronStore
+  $getCongMedia: (baseDate: Dayjs, now: Dayjs) => void
   $getCongPrefs: () => Promise<{ name: string | null; path: string }[]>
   $getContentsTree: () => CongFile[]
   $getDb: ({
@@ -138,6 +139,7 @@ interface CustomProps {
   $storePath: () => string
   $success: (message: string) => void
   $switchCong: (path: string) => void
+  $syncCongMedia: (baseDate: Dayjs, setProgress: Function) => Promise<void>
   $syncJWMedia: (
     dryrun: boolean,
     baseDate: Dayjs,
