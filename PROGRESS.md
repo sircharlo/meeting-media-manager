@@ -1,5 +1,8 @@
 # TODOS
 
+- [ ] Improve type definitions with combined MediaFile type
+- [ ] Get cong media
+- [ ] Sync cong media
 - [ ] Check if build artifacts work correctly for Windows and MacOS
 - [ ] Convert flash to notify system with action buttons
 - [ ] Make progress slider draggable when paused to change current progress / video scrubber??

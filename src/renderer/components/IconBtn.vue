@@ -7,9 +7,7 @@
     :loading="loading || $attrs.loading"
     @click="atClick()"
   >
-    <v-icon small left :color="isDark ? 'white' : 'black'">
-      fas fa-fw fa-stop
-    </v-icon>
+    <font-awesome-icon :icon="faStop" pull="left" />
     {{ timeRemaining }}
   </v-btn>
   <v-btn
@@ -18,23 +16,28 @@
     :class="{ 'pulse-danger': toggled }"
     @click="toggle()"
   >
-    <v-icon color="black">
-      {{ toggled ? 'fas fa-fw fa-play' : 'fas fa-fw fa-pause' }}
-    </v-icon>
+    <font-awesome-icon :icon="pauseIcon" size="xl" class="black--text" />
   </v-btn>
   <v-btn
     v-else-if="variant === 'toggleScreen'"
     :color="mediaVisible ? 'warning' : 'primary'"
-    class="px-2"
     :class="{ 'pulse-danger': !mediaVisible }"
     title="ALT+Z"
-    min-width="32px"
     @click="toggleMediaScreen()"
   >
-    <span class="fa-stack fa-1x">
-      <i :class="style.icons[mediaVisible ? 0 : 1]" />
-      <i :class="style.icons[mediaVisible ? 2 : 3]" />
-    </span>
+    <font-awesome-layers class="fa-lg" fixed-width>
+      <font-awesome-icon
+        :icon="style.icons[0]"
+        :class="mediaVisible ? 'black--text' : 'white--text'"
+        fixed-width
+      />
+      <font-awesome-icon
+        :icon="style.icons[mediaVisible ? 1 : 2]"
+        :class="mediaVisible ? 'error--text' : 'white--text'"
+        fixed-width
+        transform="grow-12"
+      />
+    </font-awesome-layers>
   </v-btn>
   <v-tooltip v-else-if="clickedOnce" v-bind="tooltipObj">
     <template #activator="{ on, attrs }">
@@ -48,18 +51,23 @@
         v-on="on"
         @click="atClick()"
       >
-        <v-icon v-if="variant === 'shuffle' && musicFadeOut" color="white">
-          fas fa-fw fa-stop
-        </v-icon>
-        <v-icon
-          v-for="icon in style.icons"
+        <font-awesome-icon
+          v-if="variant === 'shuffle' && musicFadeOut"
+          :icon="faStop"
+          size="xl"
+          :style="{ color: 'white' }"
+        />
+        <font-awesome-icon
+          v-for="(icon, i) in style.icons"
           v-else
           v-bind="icon.props ? icon.props : {}"
-          :key="icon.text ? icon.text : icon"
-          :color="isDark || variant !== 'shuffle' ? 'white' : 'black'"
-        >
-          {{ icon.text ? icon.text : icon }}
-        </v-icon>
+          :key="i"
+          :pull="style.icons.length > 0 ? (i == 0 ? 'left' : 'right') : null"
+          :icon="icon.text ? icon.text : icon"
+          :style="{
+            color: isDark || variant !== 'shuffle' ? 'white' : 'black',
+          }"
+        />
         <slot v-for="(_, name) in $slots" :slot="name" :name="name" />
       </v-btn>
     </template>
@@ -76,20 +84,39 @@
     v-bind="{ ...style.props, ...$attrs }"
     @click.stop="atClick()"
   >
-    <v-icon
-      v-for="icon in style.icons"
+    <font-awesome-icon
+      v-for="(icon, i) in style.icons"
       v-bind="icon.props ? icon.props : {}"
-      :key="icon.text ? icon.text : icon"
-      :color="iconColor ? iconColor : icon.props ? icon.props.color : undefined"
-    >
-      {{ icon.text ? icon.text : icon }}
-    </v-icon>
+      :key="i"
+      :pull="style.icons.length > 0 ? (i == 0 ? 'left' : 'right') : null"
+      :icon="icon.text ? icon.text : icon"
+      :style="
+        iconColor || icon.props
+          ? { color: iconColor ? iconColor : icon.props.color }
+          : {}
+      "
+    />
     <slot v-for="(_, name) in $slots" :slot="name" :name="name" />
   </v-btn>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import { Dayjs } from 'dayjs'
+import {
+  faStop,
+  faPlay,
+  faPause,
+  faDesktop,
+  faBan,
+  faSliders,
+  faUserCog,
+  faShuffle,
+  faMusic,
+  faSort,
+  faHome,
+  IconDefinition,
+} from '@fortawesome/free-solid-svg-icons'
+import { faCircle } from '@fortawesome/free-regular-svg-icons'
 import { ipcRenderer } from 'electron'
 export default Vue.extend({
   props: {
@@ -135,52 +162,55 @@ export default Vue.extend({
         home: {
           to: '/',
           props: { 'min-width': '32px', dark: true },
-          icons: [{ text: 'fas fa-fw fa-home', props: { small: true } }],
+          icons: [faHome],
         },
         present: {
           to: '/present',
           props: { color: 'primary', title: 'ALT+D' },
-          icons: [
-            { text: 'fas fa-fw fa-play', props: { small: true } },
-            { text: 'fas fa-sliders', props: { small: true } },
-          ],
+          icons: [faPlay, faSliders],
         },
         settings: {
           to: '/settings',
           props: { 'min-width': '32px', dark: true },
-          icons: [{ text: 'fas fa-fw fa-user-cog', props: { small: true } }],
+          icons: [faUserCog],
         },
         shuffle: {
           props: { color: 'info', title: 'ALT+K' },
           icons: [
-            { text: 'fas fa-fw fa-music', props: { small: true } },
-            { text: 'fa-solid fa-shuffle', props: { small: true } },
+            { text: faMusic, props: { size: 'lg' } },
+            { text: faShuffle, props: { size: 'lg' } },
           ],
         },
         play: {
           props: { color: 'primary' },
-          icons: [{ text: 'fas fa-fw fa-play', props: { small: true } }],
+          icons: [{ text: faPlay, props: { size: 'lg' } }],
         },
         stop: {
           props: { color: 'warning' },
-          icons: [{ text: 'fas fa-fw fa-stop', props: { color: 'black' } }],
+          icons: [
+            {
+              text: faStop,
+              props: { size: 'xl', class: 'black--text' },
+            },
+          ],
         },
         sort: {
           props: { color: 'info', class: 'sort-btn' },
-          icons: [{ text: 'fas fa-sort', props: { small: true } }],
+          icons: [faSort],
         },
         toggleScreen: {
-          icons: [
-            'fas fa-fw fa-stack-1x fa-desktop black--text',
-            'fas fa-fw fa-stack-1x fa-desktop white--text',
-            'fas fa-stack-2x fa-ban error--text',
-            'far fa-stack-2x fa-circle white--text',
-          ],
+          icons: [faDesktop, faBan, faCircle],
         },
       },
     }
   },
   computed: {
+    faStop(): IconDefinition {
+      return faStop
+    },
+    pauseIcon(): IconDefinition {
+      return this.toggled ? faPlay : faPause
+    },
     cong(): string {
       return this.$route.query.cong as string
     },

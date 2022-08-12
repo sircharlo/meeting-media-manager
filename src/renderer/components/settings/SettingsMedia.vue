@@ -92,7 +92,7 @@
             min-width="32px"
             @click="$refreshBackgroundImgPreview(true)"
           >
-            <v-icon small color="black">fas fa-arrows-rotate</v-icon>
+            <font-awesome-icon :icon="faArrowsRotate" class="black--text" />
           </v-btn>
         </v-col>
       </v-row>
@@ -149,6 +149,7 @@ import { platform } from 'os'
 import Vue from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
@@ -165,6 +166,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    faArrowsRotate() {
+      return faArrowsRotate
+    },
     langs(): { name: string; langcode: string }[] {
       return this.jwLangs.map((lang) => {
         return {

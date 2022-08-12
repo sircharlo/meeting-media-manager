@@ -5,30 +5,29 @@
     :id="$attrs['data-id']"
     ref="field"
     v-model="$attrs.value"
-    :append-icon="
-      field === 'password'
-        ? showPassword
-          ? 'fa-solid fa-eye'
-          : 'fa-solid fa-eye-slash'
-        : undefined
-    "
     :type="field === 'password' && showPassword ? 'text' : field"
     :disabled="$attrs.disabled || locked"
     v-bind="{ ...style, ...$attrs }"
     :rules="rules"
     :counter="max"
     v-on="$listeners"
-    @click:append="showPassword = !showPassword"
   >
-    <slot v-for="(_, name) in $slots" :slot="name" :name="name" />
-    <template v-if="locked" #append>
+    <template v-if="field === 'password'" #append>
+      <font-awesome-icon
+        :icon="passIcon"
+        size="lg"
+        @click="showPassword = !showPassword"
+      />
+    </template>
+    <template v-else-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on">fas fa-lock</v-icon>
+          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
     </template>
+    <slot v-for="(_, name) in $slots" :slot="name" :name="name" />
   </v-text-field>
   <v-autocomplete
     v-else-if="field == 'autocomplete'"
@@ -46,7 +45,7 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on">fas fa-lock</v-icon>
+          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -67,7 +66,7 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on">fas fa-lock</v-icon>
+          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -89,7 +88,7 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on">fas fa-lock</v-icon>
+          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -110,7 +109,7 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on">fas fa-lock</v-icon>
+          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -131,7 +130,7 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on">fas fa-lock</v-icon>
+          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -166,7 +165,7 @@
           {{ item.label }}
         </v-btn>
         <v-btn v-if="locked" icon :disabled="true" :style="`height: ${height}`">
-          <v-icon>fas fa-lock</v-icon>
+          <font-awesome-icon :icon="faLock" />
         </v-btn>
       </v-btn-toggle>
     </v-col>
@@ -200,7 +199,7 @@
         <template v-if="locked" #append>
           <v-tooltip top>
             <template #activator="{ on, attrs }">
-              <v-icon v-bind="attrs" v-on="on">fas fa-lock</v-icon>
+              <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
             </template>
             <span>{{ $t('settingLocked') }}</span>
           </v-tooltip>
@@ -213,6 +212,12 @@
   </v-row>
 </template>
 <script lang="ts">
+import {
+  faLock,
+  faEye,
+  faEyeSlash,
+  IconDefinition,
+} from '@fortawesome/free-solid-svg-icons'
 import Vue from 'vue'
 export default Vue.extend({
   props: {
@@ -283,6 +288,12 @@ export default Vue.extend({
     }
   },
   computed: {
+    faLock() {
+      return faLock
+    },
+    passIcon(): IconDefinition {
+      return this.showPassword ? faEye : faEyeSlash
+    },
     rules() {
       const rules = (this.$attrs.rules as unknown as any[]) ?? []
       if (this.required) {

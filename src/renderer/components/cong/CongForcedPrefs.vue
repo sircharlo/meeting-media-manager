@@ -41,7 +41,7 @@
     </v-row>
     <v-footer fixed style="justify-content: right">
       <v-btn color="primary" @click="updatePrefs()">
-        <v-icon>fas fa-fw fa-check</v-icon>
+        <font-awesome-icon :icon="faCheck" size="xl" />
       </v-btn>
     </v-footer>
   </v-card>
@@ -50,6 +50,7 @@
 import Vue from 'vue'
 import { join } from 'upath'
 import { WebDAVClient } from 'webdav/web'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 const { FORCABLE } = require('~/constants/prefs') as { FORCABLE: string[] }
 export default Vue.extend({
   data() {
@@ -59,6 +60,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    faCheck() {
+      return faCheck
+    },
     client() {
       return this.$store.state.cong.client as WebDAVClient
     },

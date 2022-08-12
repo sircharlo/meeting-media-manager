@@ -102,7 +102,7 @@
           :color="scenes.length > 0 ? 'success' : 'primary'"
           @click="$getScenes()"
         >
-          <v-icon>fa-solid fa-globe</v-icon>
+          <font-awesome-icon :icon="faGlobe" />
         </v-btn>
       </v-col>
       <form-input
@@ -143,6 +143,7 @@ import { join } from 'upath'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
+import { faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { AppPrefs, ElectronStore } from '~/types'
 import { DateFormat } from '~/types/prefs'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
@@ -156,6 +157,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    faGlobe() {
+      return faGlobe
+    },
     dateFormats(): { label: string; value: DateFormat }[] {
       return Object.values(DateFormat).map((val) => {
         return {
@@ -198,7 +202,7 @@ export default Vue.extend({
     'app.obs.enable': {
       async handler() {
         await this.$getScenes()
-      }
+      },
     },
     'app.obs.cameraScene': {
       handler(val) {

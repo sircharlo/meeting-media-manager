@@ -26,7 +26,7 @@ export default {
     },
   },
   icons: {
-    iconfont: 'fa',
+    iconfont: 'faSvg',
   },
 }
 

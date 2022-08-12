@@ -7,14 +7,17 @@
     open-on-click
   >
     <template #prepend="{ item, open }">
-      <v-icon v-if="item.type === 'file'"> fa-solid fa-file </v-icon>
-      <v-icon v-else>
-        {{ open ? 'fa-solid fa-folder-open' : 'fa-solid fa-folder' }}
-      </v-icon>
+      <font-awesome-icon v-if="item.type === 'file'" :icon="faFile" />
+      <font-awesome-icon v-else :icon="open ? faFolderOpen : faFolder" />
     </template>
   </v-treeview>
 </template>
 <script lang="ts">
+import {
+  faFile,
+  faFolderOpen,
+  faFolder,
+} from '@fortawesome/free-solid-svg-icons'
 import Vue from 'vue'
 export default Vue.extend({
   props: {
@@ -27,6 +30,17 @@ export default Vue.extend({
     return {
       tree: [],
     }
+  },
+  computed: {
+    faFile() {
+      return faFile
+    },
+    faFolder() {
+      return faFolder
+    },
+    faFolderOpen() {
+      return faFolderOpen
+    },
   },
 })
 </script>

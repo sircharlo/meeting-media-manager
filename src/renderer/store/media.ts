@@ -48,6 +48,33 @@ export const mutations = {
     const parMap = new Map(dateMap.set(par, mediaList))
     state.meetings = new Map(state.meetings.set(date, parMap))
   },
+  setMultiple(
+    state: MediaStore,
+    {
+      date,
+      par,
+      media,
+    }: {
+      date: string
+      par: number
+      media: (SmallMediaFile | MultiMediaImage)[]
+    }
+  ) {
+    let dateMap = state.meetings.get(date)
+    if (!dateMap) {
+      state.meetings.set(date, new Map())
+      dateMap = state.meetings.get(date) as Map<
+        number,
+        (SmallMediaFile | MultiMediaImage)[]
+      >
+    }
+    let mediaList = dateMap.get(par)
+    if (!mediaList) dateMap.set(par, [])
+    mediaList = dateMap.get(par) as (SmallMediaFile | MultiMediaImage)[]
+    mediaList.concat(media)
+    const parMap = new Map(dateMap.set(par, mediaList))
+    state.meetings = new Map(state.meetings.set(date, parMap))
+  },
   addDate(
     state: MediaStore,
     {

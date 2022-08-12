@@ -5,7 +5,7 @@
         <v-col class="text-right">
           <form-input v-model="edit.newName" :suffix="edit.ext" />
           <v-btn color="primary" @click="saveNewName()">
-            <v-icon>fas fa-fw fa-check</v-icon>
+            <font-awesome-icon :icon="faCheck" />
           </v-btn>
         </v-col>
       </v-card>
@@ -17,24 +17,31 @@
       @click="atClick(item)"
     >
       <v-list-item-action v-if="item.isLocal || item.congSpecific">
-        <v-icon v-if="item.color === 'warning'" x-small color="warning">
-          fas fa-square-minus
-        </v-icon>
+        <font-awesome-icon
+          v-if="item.color === 'warning'"
+          :icon="faSquareMinus"
+          class="warning--text"
+          size="xs"
+        />
         <v-tooltip v-else right>
           <template #activator="{ on, attrs }">
-            <v-icon x-small color="error" v-bind="attrs" v-on="on">
-              fas fa-square-minus
-            </v-icon>
+            <font-awesome-icon
+              v-bind="attrs"
+              :icon="faSquareMinus"
+              class="error--text"
+              size="xs"
+              v-on="on"
+            />
           </template>
           <span>{{ $t('clickAgain') }}</span>
         </v-tooltip>
       </v-list-item-action>
       <v-list-item-action v-else-if="item.isLocal === undefined">
-        <v-icon x-small>fas fa-fw fa-plus-square</v-icon>
+        <font-awesome-icon :icon="faSquarePlus" size="xs" />
       </v-list-item-action>
       <v-list-item-action v-else>
-        <v-icon v-if="item.hidden" x-small>far fa-fw fa-square</v-icon>
-        <v-icon v-else x-small>far fa-fw fa-check-square</v-icon>
+        <font-awesome-icon v-if="item.hidden" :icon="faSquare" />
+        <font-awesome-icon v-else :icon="faSquareCheck" size="xs" />
       </v-list-item-action>
       <v-hover v-slot="{ hover }">
         <v-list-item-content>
@@ -56,28 +63,36 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-hover>
-      <v-list-item-avatar
-        v-if="item.isLocal && !item.hidden"
-        @click="editItem(item)"
-      >
-        <v-icon x-small>fas fa-fw fa-pen</v-icon>
-      </v-list-item-avatar>
-      <v-list-item-avatar>
-        <v-icon x-small :disabled="item.hidden">
-          {{ item.safeName | typeIcon }}
-        </v-icon>
-      </v-list-item-avatar>
-      <v-list-item-avatar>
-        <v-icon v-if="item.congSpecific" x-small color="info">
-          fas fa-fw fa-cloud
-        </v-icon>
-        <v-icon v-else-if="item.isLocal" x-small>
-          fas fa-fw fa-folder-open
-        </v-icon>
-        <v-icon v-else x-small color="primary" :disabled="item.hidden">
-          fas fa-fw fa-globe-americas
-        </v-icon>
-      </v-list-item-avatar>
+      <v-list-item-action>
+        <v-btn v-if="item.isLocal && !item.hidden" icon @click="editItem(item)">
+          <font-awesome-icon :icon="faPen" size="sm" />
+        </v-btn>
+      </v-list-item-action>
+      <v-list-item-action>
+        <font-awesome-icon
+          :icon="item.safeName | typeIcon"
+          size="sm"
+          fixed-width
+        />
+      </v-list-item-action>
+      <v-list-item-action>
+        <font-awesome-icon
+          v-if="item.congSpecific"
+          :icon="faCloud"
+          class="info--text"
+        />
+        <font-awesome-icon
+          v-else-if="item.isLocal"
+          :icon="faFolderOpen"
+          size="sm"
+        />
+        <font-awesome-icon
+          v-else
+          :icon="faGlobeAmericas"
+          class="primary--text"
+          size="sm"
+        />
+      </v-list-item-action>
     </v-list-item>
   </v-list>
 </template>
@@ -87,6 +102,22 @@ import { pathToFileURL } from 'url'
 import { basename, extname, join, trimExt } from 'upath'
 import Vue from 'vue'
 import { WebDAVClient } from 'webdav/web'
+import {
+  faImage,
+  faSquare,
+  faSquareCheck,
+} from '@fortawesome/free-regular-svg-icons'
+import {
+  faCheck,
+  faFilm,
+  faQuestionCircle,
+  faSquareMinus,
+  faFolderOpen,
+  faSquarePlus,
+  faPen,
+  faCloud,
+  faGlobeAmericas,
+} from '@fortawesome/free-solid-svg-icons'
 import { MultiMediaImage, SmallMediaFile } from '~/types'
 export default Vue.extend({
   filters: {
@@ -95,11 +126,11 @@ export default Vue.extend({
     },
     typeIcon(filename: string) {
       if (['.jpg', '.png', '.jpeg', '.svg'].includes(extname(filename))) {
-        return 'fa-fw far fa-image'
+        return faImage
       } else if (['.mp4'].includes(extname(filename))) {
-        return 'fa-fw fas fa-film'
+        return faFilm
       } else {
-        return 'fa-fw far fa-question-circle'
+        return faQuestionCircle
       }
     },
   },
@@ -138,6 +169,33 @@ export default Vue.extend({
   computed: {
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
+    },
+    faCheck() {
+      return faCheck
+    },
+    faSquare() {
+      return faSquare
+    },
+    faFolderOpen() {
+      return faFolderOpen
+    },
+    faSquareMinus() {
+      return faSquareMinus
+    },
+    faSquarePlus() {
+      return faSquarePlus
+    },
+    faSquareCheck() {
+      return faSquareCheck
+    },
+    faPen() {
+      return faPen
+    },
+    faCloud() {
+      return faCloud
+    },
+    faGlobeAmericas() {
+      return faGlobeAmericas
     },
   },
   watch: {

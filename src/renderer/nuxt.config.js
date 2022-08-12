@@ -22,7 +22,12 @@ module.exports = {
   },
   loading: false,
   components: true,
-  css: ['~/assets/main.scss'],
+  vue: {
+    config: {
+      runtimeCompiler: true,
+    },
+  },
+  css: ['@fortawesome/fontawesome-svg-core/styles.css', '~/assets/main.scss'],
   plugins: [
     '~/plugins/prefs',
     '~/plugins/logger',

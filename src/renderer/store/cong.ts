@@ -1,15 +1,11 @@
-import { WebDAVClient, FileStat } from 'webdav/web'
-import { ElectronStore } from './../types/prefs'
-
-interface CongStore {
-  client: WebDAVClient | null
-  contents: FileStat[]
-  prefs: ElectronStore | null
-}
+import { FileStat, WebDAVClient } from 'webdav/web'
+import { CongFile } from './../types/store/storeCong.d'
+import { CongStore, ElectronStore } from '~/types'
 
 const defaultState: CongStore = {
   client: null,
   contents: [],
+  contentsTree: [],
   prefs: null,
 }
 
@@ -24,6 +20,9 @@ export const mutations = {
   },
   setContents(state: CongStore, contents: FileStat[]) {
     state.contents = contents
+  },
+  setContentsTree(state: CongStore, contentsTree: CongFile[]) {
+    state.contentsTree = contentsTree
   },
   clear(state: CongStore) {
     Object.assign(state, defaultState)

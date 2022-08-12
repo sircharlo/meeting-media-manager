@@ -18,7 +18,7 @@
             hide-details="auto"
           >
             <template #prepend-icon>
-              <v-icon>fas fa-fw fa-backward-step</v-icon>
+              <font-awesome-icon :icon="faBackwardStep" />
             </template>
           </v-text-field>
           <v-text-field
@@ -30,16 +30,16 @@
             hide-details="auto"
           >
             <template #prepend-icon>
-              <v-icon>fas fa-fw fa-forward-step</v-icon>
+              <font-awesome-icon :icon="faForwardStep" />
             </template>
           </v-text-field>
         </v-col>
         <v-col align-self="end" class="d-flex flex-column">
           <v-btn icon @click="resetClipped()">
-            <v-icon>fas fa-fw fa-rotate-left</v-icon>
+            <font-awesome-icon :icon="faRotateLeft" />
           </v-btn>
           <v-btn icon @click="setTime()">
-            <v-icon color="error">fas fa-fw fa-square-check</v-icon>
+            <font-awesome-icon :icon="faSquareCheck" class="error--text" />
           </v-btn>
         </v-col>
       </v-row>
@@ -56,7 +56,7 @@
           v-on="on"
           @click="atClick()"
         >
-          <v-icon x-small class="mr-1">fas fa-film</v-icon>
+          <font-awesome-icon :icon="faFilm" pull="left" />
           {{
             (playing || isClipped) && duration !== '00:00'
               ? `${progress[0] ?? limits.start}/${limits.end}`
@@ -75,7 +75,7 @@
       :class="{ 'pulse-danger': isClipped }"
       @click="atClick()"
     >
-      <v-icon x-small class="mr-1">fas fa-film</v-icon>
+      <font-awesome-icon :icon="faFilm" pull="left" />
       {{
         (playing || isClipped) && duration !== '00:00'
           ? `${progress[0] ?? limits.start}/${limits.end}`
@@ -89,6 +89,13 @@ import { pathToFileURL } from 'url'
 import { basename } from 'upath'
 import Vue from 'vue'
 import { ipcRenderer } from 'electron'
+import {
+  faBackwardStep,
+  faForwardStep,
+  faSquareCheck,
+  faRotateLeft,
+  faFilm,
+} from '@fortawesome/free-solid-svg-icons'
 import { AUDIO_ICON, VIDEO_ICON } from '~/constants/general'
 export default Vue.extend({
   props: {
@@ -120,6 +127,21 @@ export default Vue.extend({
     }
   },
   computed: {
+    faForwardStep() {
+      return faForwardStep
+    },
+    faBackwardStep() {
+      return faBackwardStep
+    },
+    faRotateLeft() {
+      return faRotateLeft
+    },
+    faSquareCheck() {
+      return faSquareCheck
+    },
+    faFilm() {
+      return faFilm
+    },
     url(): string {
       return pathToFileURL(this.src).href + '#t=5'
     },

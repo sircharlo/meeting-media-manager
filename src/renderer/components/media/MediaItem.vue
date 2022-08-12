@@ -11,7 +11,9 @@
       @progress="progress = $event"
     />
     <v-list-item-content class="ml-2">
-      <v-list-item-subtitle class="media-title" v-html="title" />
+      <v-list-item-subtitle class="media-title">
+        <runtime-template-compiler :template="title" :parent="parent" />
+      </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action class="d-flex flex-row">
       <template v-if="active">
@@ -63,7 +65,13 @@ import { pathToFileURL } from 'url'
 import { basename } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
+// @ts-ignore
+import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
+import { faMusic, faParagraph } from '@fortawesome/free-solid-svg-icons'
 export default Vue.extend({
+  components: {
+    RuntimeTemplateCompiler,
+  },
   props: {
     src: {
       type: String,
@@ -92,6 +100,7 @@ export default Vue.extend({
       stopClicked: false as boolean,
       start: undefined as string | undefined,
       end: undefined as string | undefined,
+      parent: this,
     }
   },
   computed: {
@@ -106,6 +115,12 @@ export default Vue.extend({
     },
     url(): string {
       return pathToFileURL(this.src).href
+    },
+    faParagraph() {
+      return faParagraph
+    },
+    faMusic() {
+      return faMusic
     },
     scene(): string {
       return this.$store.state.obs.currentScene as string
@@ -122,19 +137,23 @@ export default Vue.extend({
       return this.$isImage(this.src)
     },
     title(): string {
-      return basename(this.src)
-        .replace(
-          /^((\d{1,2}-?)* - )/,
-          "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>"
-        )
-        .replace(
-          new RegExp(`${this.$t('song')} (\\d+) -`, 'g'),
-          `<big><span class="song v-btn pa-1"><i class="fas fa-music"></i>$1</span></big>`
-        )
-        .replace(
-          new RegExp(`${this.$t('paragraph')} (\\d+) -`, 'g'),
-          `<big><span class="paragraph v-btn pa-1"><i class="fas fa-paragraph"></i>$1</span></big>`
-        )
+      return (
+        `<div>` +
+        basename(this.src)
+          .replace(
+            /^((\d{1,2}-?)* ?- )/,
+            "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>"
+          )
+          .replace(
+            new RegExp(`${this.$t('song')} (\\d+) -`, 'g'),
+            `<span class="song v-btn pa-1"><font-awesome-icon :icon="faMusic" size="sm" pull="left"/>$1</span>`
+          )
+          .replace(
+            new RegExp(`${this.$t('paragraph')} (\\d+) -`, 'g'),
+            `<span class="paragraph v-btn pa-1"><font-awesome-icon :icon="faParagraph" size="sm" pull="left"/>$1</span>`
+          ) +
+        `</div>`
+      )
     },
   },
   watch: {

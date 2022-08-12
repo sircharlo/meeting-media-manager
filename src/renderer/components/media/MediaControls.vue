@@ -3,8 +3,8 @@
     <v-app-bar fixed>
       <v-col class="text-left">
         <v-btn icon @click="togglePrefix()">
-          <v-icon small>fas fa-fw fa-eye</v-icon>
-          <v-icon small>fas fa-fw fa-list-ol</v-icon>
+          <font-awesome-icon :icon="faEye" />
+          <font-awesome-icon :icon="faListOl" />
         </v-btn>
       </v-col>
       <v-col class="text-center">
@@ -12,16 +12,16 @@
       </v-col>
       <v-col class="text-right">
         <v-btn icon>
-          <v-icon small>fas fa-fw fa-rotate-right</v-icon>
+          <font-awesome-icon :icon="faRotateRight" />
         </v-btn>
         <v-btn v-if="sortable" icon @click="sortable = false">
-          <v-icon small>fas fa-fw fa-square-check</v-icon>
+          <font-awesome-icon :icon="faSquareCheck" />
         </v-btn>
         <v-btn v-else icon @click="sortable = true">
-          <v-icon small>fas fa-fw fa-arrow-down-short-wide</v-icon>
+          <font-awesome-icon :icon="faArrowDownShortWide" />
         </v-btn>
         <v-btn icon @click="openFolder()">
-          <v-icon small>fas fa-fw fa-folder-open</v-icon>
+          <font-awesome-icon :icon="faFolderOpen" />
         </v-btn>
       </v-col>
     </v-app-bar>
@@ -49,9 +49,17 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { join } from 'upath'
+import { basename, join } from 'upath'
 import draggable from 'vuedraggable'
 import { ipcRenderer } from 'electron'
+import {
+  faEye,
+  faListOl,
+  faRotateRight,
+  faSquareCheck,
+  faArrowDownShortWide,
+  faFolderOpen,
+} from '@fortawesome/free-solid-svg-icons'
 export default Vue.extend({
   components: {
     draggable,
@@ -75,14 +83,34 @@ export default Vue.extend({
     date(): string {
       return this.$route.query.date as string
     },
+    faEye() {
+      return faEye
+    },
+    faArrowDownShortWide() {
+      return faArrowDownShortWide
+    },
+    faListOl() {
+      return faListOl
+    },
+    faRotateRight() {
+      return faRotateRight
+    },
+    faSquareCheck() {
+      return faSquareCheck
+    },
+    faFolderOpen() {
+      return faFolderOpen
+    },
   },
   mounted() {
     this.items = this.$findAll([
       join(this.$mediaPath(), this.date, '*'),
       join(this.$mediaPath(), 'Recurring', '*'),
-    ]).map((path, i) => {
-      return { id: i, path }
-    })
+    ])
+      .sort((a, b) => basename(a).localeCompare(basename(b)))
+      .map((path, i) => {
+        return { id: i, path }
+      })
     this.loading = false
   },
   beforeDestroy() {},

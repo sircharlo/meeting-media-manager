@@ -10,12 +10,14 @@
     <v-row class="fill-height" align-content="start">
       <v-row align="center" class="mb-4" style="width: 100%">
         <v-col cols="1" class="text-center">
-          <v-icon v-if="isMeetingDay || client" x-large disabled>
-            fas fa-fw fa-2x fa-cloud
-          </v-icon>
-          <v-icon v-else x-large disabled>
-            fas fa-fw fa-2x fa-folder-open
-          </v-icon>
+          <font-awesome-icon
+            size="2x"
+            :icon="isMeetingDay || client ? faCloud : faFolderOpen"
+            :class="{
+              'secondary--text': !isDark,
+              'accent--text': isDark,
+            }"
+          />
         </v-col>
         <v-col cols="11" class="text-center">
           <h1>{{ date }}</h1>
@@ -23,7 +25,7 @@
       </v-row>
       <v-row align="center" style="width: 100%">
         <v-col cols="1" class="text-center" align-self="center">
-          <v-icon disabled>fas fa-photo-film</v-icon>
+          <font-awesome-icon :icon="faPhotoFilm" />
         </v-col>
         <v-col cols="11">
           <v-btn-toggle v-model="type" style="width: 100%">
@@ -35,7 +37,7 @@
       </v-row>
       <v-row v-if="type" align="center" class="mb-0">
         <v-col cols="1" class="text-center" align-self="center">
-          <v-icon disabled>fas fa-file-export</v-icon>
+          <font-awesome-icon :icon="faFileExport" />
         </v-col>
         <v-col cols="11">
           <form-input
@@ -91,7 +93,7 @@
         style="width: 100%"
       >
         <v-col cols="1" class="text-center" align-self="center">
-          <v-icon disabled>fas fa-arrow-down-1-9</v-icon>
+          <font-awesome-icon :icon="faArrowDown19" />
         </v-col>
         <v-col cols="11" class="d-flex">
           <v-col cols="4">
@@ -159,7 +161,11 @@
             :to="localePath('/?cong=') + cong"
             min-width="32px"
           >
-            <v-icon small color="white">fas fa-fw fa-circle-arrow-left</v-icon>
+            <font-awesome-icon
+              :icon="faCircleArrowLeft"
+              class="white--text"
+              size="lg"
+            />
           </v-btn>
         </v-col>
         <v-col class="text-center">
@@ -167,12 +173,11 @@
             v-if="file || files.length > 0"
             color="primary"
             min-width="32px"
+            :loading="loading"
             :disabled="loading"
             @click="saveFile()"
           >
-            <v-icon small>
-              {{ loading ? 'fa-circle-notch fa-spin' : 'fas fa-fw fa-save' }}
-            </v-icon>
+            <font-awesome-icon :icon="faSave" size="lg" />
           </v-btn>
           <icon-btn v-else variant="home" :disabled="loading" />
         </v-col>
@@ -189,6 +194,15 @@ import { basename, extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
 import { FileStat, WebDAVClient } from 'webdav/web'
+import {
+  faArrowDown19,
+  faCircleArrowLeft,
+  faCloud,
+  faFileExport,
+  faFolderOpen,
+  faPhotoFilm,
+  faSave,
+} from '@fortawesome/free-solid-svg-icons'
 import { MultiMediaImage, SmallMediaFile } from '~/types'
 export default Vue.extend({
   name: 'AddPage',
@@ -244,6 +258,30 @@ export default Vue.extend({
     return { title: 'Media List' }
   },
   computed: {
+    faSave() {
+      return faSave
+    },
+    faFolderOpen() {
+      return faFolderOpen
+    },
+    faCloud() {
+      return faCloud
+    },
+    faPhotoFilm() {
+      return faPhotoFilm
+    },
+    isDark() {
+      return this.$vuetify.theme.dark
+    },
+    faArrowDown19() {
+      return faArrowDown19
+    },
+    faCircleArrowLeft() {
+      return faCircleArrowLeft
+    },
+    faFileExport() {
+      return faFileExport
+    },
     cong() {
       return this.$route.query.cong
     },

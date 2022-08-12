@@ -56,7 +56,7 @@
       </v-col>
       <v-col class="text-right pr-0">
         <v-btn color="primary" @click="setPrefs = true">
-          <v-icon>fas fa-fw fa-cog</v-icon>
+          <font-awesome-icon :icon="faCog" size="lg" />
         </v-btn>
       </v-col>
     </v-col>
@@ -67,14 +67,13 @@
       :loading="loading"
       @click="submit()"
     >
-      <v-icon>fa-solid fa-globe</v-icon>
+      <font-awesome-icon :icon="faGlobe" size="lg" />
     </v-btn>
   </v-form>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { dirname } from 'upath'
-import { FileStat } from 'webdav/web'
+import { faCog, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { CongPrefs, ElectronStore } from '~/types'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
@@ -116,53 +115,17 @@ export default Vue.extend({
     }
   },
   computed: {
+    faGlobe() {
+      return faGlobe
+    },
+    faCog() {
+      return faCog
+    },
     client() {
       return this.$store.state.cong.client
     },
     contents() {
-      const tree: FileStat[] = []
-      const root = this.cong.dir
-      const contents = [...this.$store.state.cong.contents] as FileStat[]
-      const dirs = [...contents.filter(({ type }) => type === 'directory')]
-      const files = [...contents.filter(({ type }) => type === 'file')]
-      files.forEach((file) => {
-        const fileDir = dirname(file.filename)
-        if (fileDir === root) {
-          tree.push(file)
-        } else {
-          const dir = dirs.find(({ filename }) => filename === fileDir)
-          if (dir) {
-            // @ts-ignore
-            if (!dir.children) {
-              // @ts-ignore
-              dir.children = []
-            }
-            // @ts-ignore
-            dir.children.push(file)
-          }
-        }
-      })
-      dirs.forEach((dir) => {
-        const dirName = dirname(dir.filename)
-        if (dirName !== root) {
-          const parent = dirs.find(({ filename }) => filename === dirName)
-          if (parent) {
-            // @ts-ignore
-            if (!parent.children) {
-              // @ts-ignore
-              parent.children = []
-            }
-            // @ts-ignore
-            parent.children.push(dir)
-          }
-        }
-      })
-      dirs
-        .filter(({ filename }) => dirname(filename) === root)
-        .forEach((dir) => {
-          tree.push(dir)
-        })
-      return tree
+      return this.$getContentsTree()
     },
     complete(): boolean {
       return !!(

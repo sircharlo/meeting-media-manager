@@ -44,6 +44,7 @@ interface CustomProps {
   $forcePrefs: () => Promise<void>
   $getAllPrefs: () => ElectronStore
   $getCongPrefs: () => Promise<{ name: string | null; path: string }[]>
+  $getContentsTree: () => CongFile[]
   $getDb: ({
     file,
     pub,

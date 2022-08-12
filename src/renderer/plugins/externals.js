@@ -1,13 +1,19 @@
+/* eslint-disable vue/component-definition-name-casing */
 import Vue from 'vue'
 import VueMask from 'v-mask'
+import { library, config } from '@fortawesome/fontawesome-svg-core'
+import {
+  FontAwesomeIcon,
+  FontAwesomeLayers,
+} from '@fortawesome/vue-fontawesome'
+import { faChevronDown, faCaretDown } from '@fortawesome/free-solid-svg-icons'
 
-import '@fortawesome/fontawesome-free/css/all.css'
-import('roboto-fontface/css/roboto/roboto-fontface.css')
-import('roboto-fontface/fonts/roboto/Roboto-Thin.woff2') // 100
-import('roboto-fontface/fonts/roboto/Roboto-Light.woff2') // 300
-import('roboto-fontface/fonts/roboto/Roboto-Regular.woff2') // 400
-import('roboto-fontface/fonts/roboto/Roboto-Medium.woff2') // 500
-import('roboto-fontface/fonts/roboto/Roboto-Bold.woff2') // 700
-import('roboto-fontface/fonts/roboto/Roboto-Black.woff2') // 900
+// Font-Awesome
+config.autoAddCss = false
+library.add(faChevronDown, faCaretDown)
 
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-layers', FontAwesomeLayers)
+
+// v-mask
 Vue.use(VueMask)

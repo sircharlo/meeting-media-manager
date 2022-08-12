@@ -2,7 +2,7 @@
   <v-container fluid fill-height class="align-start">
     <v-row justify="start" align="start">
       <v-col cols="12" class="text-center">
-        <v-icon x-large>fas fa-2x fa-building-user</v-icon>
+        <font-awesome-icon :icon="faBuildingUser" size="2xl" />
       </v-col>
       <v-col cols="12">
         <v-divider />
@@ -24,6 +24,7 @@
   </v-container>
 </template>
 <script lang="ts">
+import { faBuildingUser } from '@fortawesome/free-solid-svg-icons'
 import { basename } from 'upath'
 import Vue from 'vue'
 export default Vue.extend({
@@ -31,6 +32,11 @@ export default Vue.extend({
     return {
       congs: [] as { name: string | null; path: string; filename: string }[],
     }
+  },
+  computed: {
+    faBuildingUser() {
+      return faBuildingUser
+    },
   },
   async mounted() {
     this.congs = (await this.$getCongPrefs()).map((c) => {

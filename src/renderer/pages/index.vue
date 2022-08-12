@@ -3,7 +3,16 @@
     <v-row class="pa-4">
       <v-col cols="5" sm="4" md="3" />
       <v-col cols="2" sm="4" md="6" class="text-center">
-        <v-icon x-large disabled>{{ statusIcon }}</v-icon>
+        <font-awesome-icon
+          :icon="statusIcon"
+          size="3x"
+          :flip="loading"
+          :class="{
+            'primary--text': loading,
+            'secondary--text': !loading && !isDark,
+            'accent--text': !loading && isDark,
+          }"
+        />
       </v-col>
       <v-col cols="5" sm="4" md="3">
         <v-select
@@ -16,39 +25,41 @@
           @change="changeCong($event)"
         >
           <template #item="{ item }">
-            <v-list-item-avatar v-if="congs.length > 1">
-              <v-icon
+            <v-list-item-action v-if="congs.length > 1">
+              <font-awesome-icon
                 v-if="item.color === 'warning'"
-                small
-                color="warning"
+                :icon="faSquareMinus"
+                class="warning--text"
+                size="xs"
                 @click.stop="atCongClick(item)"
-              >
-                fas fa-square-minus
-              </v-icon>
+              />
               <v-tooltip v-else right>
                 <template #activator="{ on, attrs }">
-                  <v-icon
-                    small
-                    color="error"
+                  <font-awesome-icon
                     v-bind="attrs"
+                    :icon="faSquareMinus"
+                    class="error--text"
+                    size="xs"
                     v-on="on"
                     @click.stop="atCongClick(item)"
-                  >
-                    fas fa-square-minus
-                  </v-icon>
+                  />
                 </template>
                 <span>{{ $t('clickAgain') }}</span>
               </v-tooltip>
-            </v-list-item-avatar>
+            </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>{{ item.name }}</v-list-item-title>
             </v-list-item-content>
           </template>
           <template #append-item>
             <v-list-item @click="addCong()">
-              <v-list-item-avatar>
-                <v-icon small color="success">fas fa-square-plus</v-icon>
-              </v-list-item-avatar>
+              <v-list-item-action>
+                <font-awesome-icon
+                  :icon="faSquarePlus"
+                  class="success--text"
+                  size="xs"
+                />
+              </v-list-item-action>
               <v-list-item-content />
             </v-list-item>
           </template>
@@ -162,6 +173,14 @@ import Vue from 'vue'
 import { Dayjs } from 'dayjs'
 import { basename, join } from 'upath'
 import { ipcRenderer } from 'electron'
+import {
+  faPhotoVideo,
+  faSquareMinus,
+  faDownload,
+  faCloud,
+  faSquarePlus,
+  faGlobeAmericas,
+} from '@fortawesome/free-solid-svg-icons'
 import { ShortJWLang } from '~/types'
 
 export default Vue.extend({
@@ -193,11 +212,31 @@ export default Vue.extend({
     return { title: 'Home' }
   },
   computed: {
+    statusIcon() {
+      if (this.congSyncColor === 'warning') {
+        return faCloud
+      } else if (this.jwSyncColor === 'warning') {
+        return faDownload
+      } else if (this.loading) {
+        return faGlobeAmericas
+      } else {
+        return faPhotoVideo
+      }
+    },
+    faSquareMinus() {
+      return faSquareMinus
+    },
+    faSquarePlus() {
+      return faSquarePlus
+    },
     congSync(): boolean {
       return !!this.$store.state.cong.client
     },
     mediaScreenVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible
+    },
+    isDark() {
+      return this.$vuetify.theme.dark
     },
     online(): boolean {
       return this.$store.state.stats.online
@@ -243,11 +282,6 @@ export default Vue.extend({
     },
     now() {
       return (this.$dayjs() as Dayjs).hour(0).minute(0).second(0).millisecond(0)
-    },
-    statusIcon(): string {
-      return this.loading
-        ? 'fas fa-fw fa-photo-video fa-3x fa-flip'
-        : 'fas fa-fw fa-photo-video fa-3x'
     },
     baseDate(): Dayjs {
       let y = 0
@@ -343,6 +377,8 @@ export default Vue.extend({
       if (this.$store.state.present.mediaScreenInit) {
         this.$toggleMediaWindow('close')
       }
+      this.$store.commit('cong/clear')
+      this.$store.commit('obs/clear')
       const id = Math.random().toString(36).substring(2, 15)
       this.$switchCong(join(this.$appPath(), 'prefs-' + id + '.json'))
       this.$router.push({

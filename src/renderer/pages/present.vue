@@ -30,7 +30,7 @@
           color="warning"
           :disabled="mediaActive"
         >
-          <v-icon color="black">fas fa-fw fa-home</v-icon>
+          <font-awesome-icon :icon="faHome" class="black--text" size="xl" />
         </v-btn>
       </v-col>
     </v-footer>
@@ -40,6 +40,7 @@
 import Vue from 'vue'
 import { Scene } from 'obs-websocket-js'
 import { ipcRenderer } from 'electron'
+import { faHome } from '@fortawesome/free-solid-svg-icons'
 export default Vue.extend({
   name: 'PresentPage',
   data() {
@@ -72,6 +73,9 @@ export default Vue.extend({
     },
     date() {
       return this.$route.query.date
+    },
+    faHome() {
+      return faHome
     },
     cong() {
       return this.$route.query.cong
