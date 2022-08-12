@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex'
 import dayjs, { Dayjs } from 'dayjs'
-import { MediaStore, MultiMediaImage, SmallMediaFile } from '~/types'
+import { MediaStore, MeetingFile } from '~/types'
 
 const defaultState: MediaStore = {
   songPub: 'sjjm',
@@ -50,20 +50,17 @@ export const mutations = {
     }: {
       date: string
       par: number
-      media: SmallMediaFile | MultiMediaImage
+      media: MeetingFile
     }
   ) {
     let dateMap = state.meetings.get(date)
     if (!dateMap) {
       state.meetings.set(date, new Map())
-      dateMap = state.meetings.get(date) as Map<
-        number,
-        (SmallMediaFile | MultiMediaImage)[]
-      >
+      dateMap = state.meetings.get(date) as Map<number, MeetingFile[]>
     }
     let mediaList = dateMap.get(par)
     if (!mediaList) dateMap.set(par, [])
-    mediaList = dateMap.get(par) as (SmallMediaFile | MultiMediaImage)[]
+    mediaList = dateMap.get(par) as MeetingFile[]
     mediaList.push(media)
     const parMap = new Map(dateMap.set(par, mediaList))
     state.meetings = new Map(state.meetings.set(date, parMap))
@@ -77,30 +74,24 @@ export const mutations = {
     }: {
       date: string
       par: number
-      media: (SmallMediaFile | MultiMediaImage)[]
+      media: MeetingFile[]
     }
   ) {
     let dateMap = state.meetings.get(date)
     if (!dateMap) {
       state.meetings.set(date, new Map())
-      dateMap = state.meetings.get(date) as Map<
-        number,
-        (SmallMediaFile | MultiMediaImage)[]
-      >
+      dateMap = state.meetings.get(date) as Map<number, MeetingFile[]>
     }
     let mediaList = dateMap.get(par)
     if (!mediaList) dateMap.set(par, [])
-    mediaList = dateMap.get(par) as (SmallMediaFile | MultiMediaImage)[]
+    mediaList = dateMap.get(par) as MeetingFile[]
     mediaList = mediaList.concat(media)
     const parMap = new Map(dateMap.set(par, mediaList))
     state.meetings = new Map(state.meetings.set(date, parMap))
   },
   addDate(
     state: MediaStore,
-    {
-      date,
-      map,
-    }: { date: string; map: Map<number, (SmallMediaFile | MultiMediaImage)[]> }
+    { date, map }: { date: string; map: Map<number, MeetingFile[]> }
   ) {
     state.meetings.set(date, map)
   },

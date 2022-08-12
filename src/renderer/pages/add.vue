@@ -202,7 +202,7 @@ import {
   faPhotoFilm,
   faSave,
 } from '@fortawesome/free-solid-svg-icons'
-import { MultiMediaImage, SmallMediaFile } from '~/types'
+import { MeetingFile, VideoFile } from '~/types'
 export default Vue.extend({
   name: 'AddPage',
   data() {
@@ -214,10 +214,7 @@ export default Vue.extend({
       currentProgress: 0,
       loading: true,
       type: null,
-      file: null as
-        | { safeName: string; filepath: string }
-        | null
-        | SmallMediaFile,
+      file: null as { safeName: string; filepath: string } | null | MeetingFile,
       files: [] as {
         contents: null | Buffer
         safeName: string
@@ -225,12 +222,11 @@ export default Vue.extend({
         url: undefined | string
       }[],
       loadingSongs: true,
-      songs: [] as SmallMediaFile[],
+      songs: [] as MeetingFile[],
       media: [] as (
         | string
-        | SmallMediaFile
+        | MeetingFile
         | FileStat
-        | MultiMediaImage
         | {
             safeName: string
             isLocal: boolean
@@ -458,7 +454,7 @@ export default Vue.extend({
       const result = (await this.$getMediaLinks({
         pubSymbol: this.$store.state.media.songPub,
         format: 'MP4',
-      })) as SmallMediaFile[]
+      })) as VideoFile[]
       result.forEach((song) => {
         song.safeName =
           this.$sanitize(`- ${this.$t('song')} ${song.title}`) + '.mp4'
@@ -469,7 +465,7 @@ export default Vue.extend({
     async getExistingMedia() {
       const meetings = this.$store.getters['media/meetings'] as Map<
         string,
-        Map<number, (SmallMediaFile | MultiMediaImage)[]>
+        Map<number, MeetingFile[]>
       >
       const localMedia: {
         safeName: string
@@ -492,7 +488,7 @@ export default Vue.extend({
           })
         })
 
-      const jwMedia: (SmallMediaFile | MultiMediaImage)[] = []
+      const jwMedia: MeetingFile[] = []
       for (const [, media] of meetings.get(this.date) ?? []) {
         for (const m of media) {
           m.isLocal = false

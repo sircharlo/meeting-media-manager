@@ -1,4 +1,4 @@
-import { SmallMediaFile, MultiMediaImage } from '../jw'
+import { MeetingFile } from './../media'
 
 export interface Perf {
   start: number
@@ -6,8 +6,8 @@ export interface Perf {
 }
 
 export interface Origin {
-  cache: (SmallMediaFile | MultiMediaImage)[]
-  live: (SmallMediaFile | MultiMediaImage)[]
+  cache: MeetingFile[]
+  live: MeetingFile[]
 }
 
 export interface Stats {

@@ -118,7 +118,7 @@ import {
   faCloud,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
-import { MultiMediaImage, SmallMediaFile } from '~/types'
+import { MeetingFile } from '~/types'
 export default Vue.extend({
   filters: {
     ext(filename: string) {
@@ -278,7 +278,7 @@ export default Vue.extend({
       this.edit = newItem
     },
     getPreview(
-      item: SmallMediaFile | MultiMediaImage | { filepath: string } | string
+      item: MeetingFile | { filepath: string } | string
     ): string | undefined {
       // @ts-ignore
       if (item.trackImage) return item.trackImage
@@ -302,11 +302,11 @@ export default Vue.extend({
       }
       return undefined
     },
-    async toggleVisibility(item: MultiMediaImage | SmallMediaFile) {
+    async toggleVisibility(item: MeetingFile) {
       const mediaMap = (
         this.$store.getters['media/meetings'] as Map<
           string,
-          Map<number, (SmallMediaFile | MultiMediaImage)[]>
+          Map<number, MeetingFile[]>
         >
       ).get(this.date)
 

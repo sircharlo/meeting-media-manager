@@ -16,14 +16,14 @@ import { Context } from '@nuxt/types'
 import { sync, Options } from 'fast-glob'
 import Zipper from 'adm-zip'
 import { FileStat, WebDAVClient } from 'webdav/web'
-import { SmallMediaFile } from '~/types'
+import { MeetingFile } from '~/types'
 
 export default function (
   { $getPrefs, $log, store, $appPath, $dayjs, i18n }: Context,
   inject: (argument0: string, argument1: unknown) => void
 ) {
   // Paths
-  inject('pubPath', (file?: SmallMediaFile) => {
+  inject('pubPath', (file?: MeetingFile) => {
     const pubPath = join($appPath(), 'Publications', $getPrefs('media.lang'))
     ensureDirSync(pubPath)
     if (file) {
@@ -46,7 +46,7 @@ export default function (
     }
   })
 
-  function mediaPath(file?: SmallMediaFile) {
+  function mediaPath(file?: MeetingFile) {
     const mediaPath = join(
       $getPrefs('app.localOutputPath'),
       $getPrefs('media.lang')

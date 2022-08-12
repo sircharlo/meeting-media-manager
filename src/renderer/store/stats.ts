@@ -1,11 +1,4 @@
-import {
-  SmallMediaFile,
-  MultiMediaImage,
-  StatStore,
-  Perf,
-  Stats,
-  Origin,
-} from '~/types'
+import { MeetingFile, StatStore, Perf, Stats, Origin } from '~/types'
 
 const defaultState: StatStore = {
   online: false,
@@ -48,7 +41,7 @@ export const mutations = {
     }: {
       origin: keyof Stats
       source: keyof Origin
-      file: SmallMediaFile | MultiMediaImage
+      file: MeetingFile
     }
   ) {
     state.downloads[origin][source].push(file)

@@ -6,7 +6,7 @@ import { Options } from 'fast-glob'
 import { Database } from 'sql.js'
 import Vue from 'vue'
 import {
-  MultiMediaImage,
+  MeetingFile,
   SmallMediaFile,
   ElectronStore,
   ShortJWLang,
@@ -66,7 +66,7 @@ interface CustomProps {
     docId: number | null,
     mepsId?: number,
     memOnly: boolean = false
-  ) => Promise<(SmallMediaFile | MultiMediaImage)[]>
+  ) => Promise<MeetingFile[]>
   $getLocalJWLangs: () => ShortJWLang[]
   $getJWLangs: (forceReload: boolean = false) => Promise<ShortJWLang[]>
   $getPrefs: (key: string) => unknown
@@ -99,12 +99,12 @@ interface CustomProps {
     error: (msg: any, ...args: any[]) => void
   }
   $mediaItems: NuxtAxiosInstance
-  $mediaPath: (file?: SmallMediaFile) => string
+  $mediaPath: (file?: MeetingFile) => string
   $migrate2280: (key: string, newVal: any) => { key: string; val: unknown }
   $prefsInitialized: () => boolean
   $printStats: () => void
   $pubMedia: NuxtAxiosInstance
-  $pubPath: (file?: SmallMediaFile) => string
+  $pubPath: (file?: MeetingFile) => string
   $query: (db: Database, query: string) => unknown[]
   $refreshBackgroundImgPreview: (force: boolean = false) => Promise<string>
   $removeCong: (path: string) => void

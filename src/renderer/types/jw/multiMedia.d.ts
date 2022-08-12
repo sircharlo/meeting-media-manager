@@ -1,5 +1,5 @@
 export interface MultiMediaItem {
-  BeginParagraphOrdinal?: number
+  BeginParagraphOrdinal: number
   Caption: string
   CaptionContent?: string | null
   CaptionRich?: string | null
@@ -18,8 +18,8 @@ export interface MultiMediaItem {
   KeySymbol?: string | null
   Label: string
   LabelRich?: string | null
-  LinkMultimediaId?: number | null
   LocalPath?: string
+  LinkMultimediaId?: number | null
   MajorType: number
   MepsDocumentId?: number | null
   MepsLanguageIndex?: number
@@ -30,28 +30,10 @@ export interface MultiMediaItem {
   NextParagraphOrdinal?: number
   SizeConstraint?: number | null
   SuppressZoom?: number
-  TargetParagraphNumberLabel?: string | null
+  tableQuestionIsUsed?: boolean
+  TargetParagraphNumberLabel: number
   Track?: number | null
   Width?: number | null
-  tableQuestionIsUsed?: boolean
-}
-
-export interface MultiMediaImage {
-  BeginParagraphOrdinal?: number
-  checksum?: string
-  filepath?: string
-  filesize?: number
-  safeName?: string
-  folder?: string
-  queryInfo: MultiMediaItem
-  title: string
-  congSpecific?: boolean
-  url?: undefined
-  pub?: undefined
-  markers: undefined
-  hidden?: boolean
-  isLocal?: boolean
-  uniqueId?: string
 }
 
 export interface MultiMediaExtract {

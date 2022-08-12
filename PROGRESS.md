@@ -1,8 +1,5 @@
 # TODOS
 
-- [ ] Improve type definitions with combined MediaFile type
-- [ ] Get cong media
-- [ ] Sync cong media
 - [ ] Check if build artifacts work correctly for Windows and MacOS
 - [ ] Convert flash to notify system with action buttons
 - [ ] Make progress slider draggable when paused to change current progress / video scrubber??
@@ -16,6 +13,7 @@
 - [X] Electron windows setup
 - [X] Functionality to add local files to media list
 - [X] Get meeting media from jw.org
+- [X] Improve type definitions with combined MediaFile type
 - [X] Make sure light mode looks good as well
 - [X] Media webpage
 - [X] OBS integration

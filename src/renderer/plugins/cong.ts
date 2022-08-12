@@ -4,7 +4,7 @@ import { Context } from '@nuxt/types'
 import { basename, dirname, extname, join } from 'upath'
 import { Dayjs } from 'dayjs'
 import { statSync } from 'fs-extra'
-import { CongFile, MultiMediaImage, SmallMediaFile } from '~/types'
+import { CongFile, MeetingFile } from '~/types'
 
 export default function (
   {
@@ -236,7 +236,7 @@ export default function (
     if (hiddenFolder?.children) {
       const meetings = store.state.media.meetings as Map<
         string,
-        Map<number, (SmallMediaFile | MultiMediaImage)[]>
+        Map<number, MeetingFile[]>
       >
       for (const date of hiddenFolder.children) {
         if (date.children) {
@@ -293,7 +293,7 @@ export default function (
       Array.from(
         store.getters['media/meetings'] as Map<
           string,
-          Map<number, (SmallMediaFile | MultiMediaImage)[]>
+          Map<number, MeetingFile[]>
         >
       )
         .filter(([date, _parts]) => {

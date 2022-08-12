@@ -1,5 +1,3 @@
-import { MultiMediaItem } from './multiMedia'
-
 export interface Lang {
   direction: string
   locale: string
@@ -47,26 +45,12 @@ export interface BaseMediaFile {
 }
 
 export interface SmallMediaFile extends BaseMediaFile {
-  BeginParagraphOrdinal?: number
-  cacheDir?: string
-  cacheFile?: string
-  cacheFilename?: string
-  checksum: string
-  congSpecific?: boolean
-  destFilename?: string
-  downloadRequired?: boolean
-  filepath?: string
-  folder?: string
-  hidden?: boolean
-  isLocal?: boolean
   issue: string
-  primaryCategory?: string
-  queryInfo?: MultiMediaItem
-  safeName?: string
-  thumbnail?: string
-  trackImage: string
-  uniqueId?: string
   url: string
+  checksum: string | null
+  trackImage: string
+  thumbnail?: string
+  primaryCategory?: string
 }
 
 export interface MediaFile extends BaseMediaFile {

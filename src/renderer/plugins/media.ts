@@ -6,11 +6,11 @@ import { emptyDirSync, existsSync, readFileSync, statSync } from 'fs-extra'
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { basename, changeExt, extname, join, resolve } from 'upath'
 import { Database } from 'sql.js'
+import { ImageFile, MeetingFile, VideoFile } from './../types/media.d'
 import {
   MediaFile,
   MediaItemResult,
   MultiMediaExtract,
-  MultiMediaImage,
   MultiMediaItem,
   Publication,
   ShortJWLang,
@@ -55,7 +55,7 @@ export default function (
     setProgress?: Function
   ) {
     const excludeTh = $getPrefs('media.excludeTh')
-    let extractMultimediaItems: (SmallMediaFile | MultiMediaImage)[] = []
+    let extractMultimediaItems: MeetingFile[] = []
     const extracts = $query(
       db,
       `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
@@ -105,6 +105,7 @@ export default function (
               .filter((mmItem) => {
                 if (
                   mmItem?.queryInfo?.tableQuestionIsUsed &&
+                  mmItem.queryInfo.NextParagraphOrdinal &&
                   !mmItem?.queryInfo?.TargetParagraphNumberLabel
                 ) {
                   mmItem.BeginParagraphOrdinal =
@@ -152,13 +153,13 @@ export default function (
   async function addMediaItemToPart(
     date: string,
     par: number,
-    media: SmallMediaFile | MultiMediaImage,
+    media: MeetingFile,
     source?: string
   ) {
     const mediaList = (await store.dispatch('media/get', {
       date,
       par,
-    })) as (SmallMediaFile | MultiMediaImage)[]
+    })) as MeetingFile[]
 
     media.uniqueId = [par, source, media.checksum, media.filepath]
       .filter(Boolean)
@@ -218,7 +219,7 @@ export default function (
       .map((item) => item.name)
       .includes('SuppressZoom') as boolean
 
-    const mmItems: (SmallMediaFile | MultiMediaImage)[] = []
+    const mmItems: MeetingFile[] = []
 
     const excludeLffi = $getPrefs('media.excludeLffi')
     const excludeLffiImages = $getPrefs('media.excludeLffiImages')
@@ -299,17 +300,17 @@ export default function (
             mmItem.MimeType.includes('video')
           ) {
             const json =
-              (
+              ((
                 await getMediaLinks({
                   pubSymbol: mmItem.KeySymbol as string,
                   track: mmItem.Track as number,
                   issue: (mmItem.IssueTagNumber as number)?.toString(),
                   docId: mmItem.MultiMeps as number,
                 })
-              )[0] ?? {}
+              )[0] as VideoFile) ?? {}
             json.queryInfo = mmItem
             json.BeginParagraphOrdinal = mmItem.BeginParagraphOrdinal
-            mmItems.push(json)
+            mmItems.push(json as VideoFile)
           } else {
             if (!mmItem.KeySymbol) {
               mmItem.KeySymbol = keySymbol
@@ -337,7 +338,7 @@ export default function (
               filesize: memOnly
                 ? undefined
                 : statSync(mmItem.LocalPath as string).size,
-            } as MultiMediaImage
+            } as ImageFile
 
             mmItems.push(picture)
           }
@@ -457,8 +458,8 @@ export default function (
           return {
             title,
             issue: mediaItem.issue,
-            url: file?.url,
-            checksum: file?.checksum,
+            url: file.url,
+            checksum: file.checksum,
             filesize,
             duration,
             trackImage: trackImage.url,
@@ -543,7 +544,7 @@ export default function (
             issue,
             format: 'JWPUB',
           })
-        )[0]
+        )[0] as VideoFile
         await downloadIfRequired(jwpub, setProgress)
         db = await $getDb({
           pub,
@@ -561,13 +562,10 @@ export default function (
 
   inject('getDbFromJWPUB', getDbFromJWPUB)
 
-  async function downloadIfRequired(
-    file: SmallMediaFile,
-    setProgress?: Function
-  ) {
+  async function downloadIfRequired(file: VideoFile, setProgress?: Function) {
     file.downloadRequired = true
     file.cacheDir = $pubPath(file) as string
-    file.cacheFilename = basename(file.url) || file.safeName
+    file.cacheFilename = basename(file.url || '') || file.safeName
     file.cacheFile = join(file.cacheDir, file.cacheFilename as string)
     file.destFilename = file.folder ? file.safeName : file.cacheFilename
     if (existsSync(file.cacheFile)) {
@@ -739,7 +737,7 @@ export default function (
           filepath: LocalPath,
           filesize: statSync(LocalPath).size,
           queryInfo: img,
-        } as MultiMediaImage
+        } as ImageFile
         await addMediaItemToPart(date, 1, pictureObj)
       } else {
         const media = await getMediaLinks({
@@ -747,7 +745,8 @@ export default function (
           track: img.Track as number,
           issue: img.IssueTagNumber?.toString(),
         })
-        if (media?.length > 0) addMediaItemToPart(date, 1, media[0])
+        if (media?.length > 0)
+          addMediaItemToPart(date, 1, media[0] as VideoFile)
       }
     }
 
@@ -764,7 +763,7 @@ export default function (
         track: song.Track as number,
       })
       if (songMedia?.length > 0) {
-        const songObj = songMedia[0]
+        const songObj = songMedia[0] as VideoFile
         songObj.queryInfo = song
         await addMediaItemToPart(date, 2 * i, songObj)
       } else {
@@ -780,7 +779,7 @@ export default function (
     })
     const meetings = store.getters['media/meetings'] as Map<
       string,
-      Map<number, (SmallMediaFile | MultiMediaImage)[]>
+      Map<number, MeetingFile[]>
     >
     for (const [, parts] of meetings.entries()) {
       let i = 1
@@ -828,7 +827,7 @@ export default function (
   inject('syncLocalRecurringMedia', (baseDate: Dayjs) => {
     const meetings = store.getters['media/meetings'] as Map<
       string,
-      Map<number, (SmallMediaFile | MultiMediaImage)[]>
+      Map<number, MeetingFile[]>
     >
     const dates = [...meetings.keys()].filter((date) => {
       if (date === 'Recurring') return false
@@ -860,7 +859,7 @@ export default function (
         Array.from(
           store.getters['media/meetings'] as Map<
             string,
-            Map<number, (SmallMediaFile | MultiMediaImage)[]>
+            Map<number, MeetingFile[]>
           >
         )
           .filter(([date, _parts]) => {
@@ -1024,11 +1023,11 @@ export default function (
       const songs = (
         store.state.stats.online
           ? (
-              await getMediaLinks({
+              (await getMediaLinks({
                 pubSymbol: 'sjjm',
                 format: 'MP3',
                 lang: 'E',
-              })
+              })) as VideoFile[]
             ).filter((item) => extname(item.url) === '.mp3')
           : $findAll(
               join($pubPath(), store.state.media.songPub, '**', '*.mp3')
@@ -1046,7 +1045,7 @@ export default function (
   inject('shuffleMusic', shuffleMusic)
 
   async function createAudioElement(
-    songs: (SmallMediaFile | { title: string; track: string; path: string })[],
+    songs: (VideoFile | { title: string; track: string; path: string })[],
     index: number,
     fadeOut: boolean
   ) {
@@ -1078,11 +1077,12 @@ export default function (
     source.type = 'audio/mpeg'
     if (store.state.stats.online) {
       source.src = pathToFileURL(
-        await downloadIfRequired(songs[index] as SmallMediaFile)
+        await downloadIfRequired(songs[index] as VideoFile)
       ).href
     } else {
-      // @ts-ignore
-      source.src = pathToFileURL(songs[index].path).href
+      source.src = pathToFileURL(
+        (songs[index] as { title: string; track: string; path: string }).path
+      ).href
     }
     audio.appendChild(source)
     document.body.appendChild(audio)

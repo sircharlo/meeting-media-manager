@@ -1,7 +1,7 @@
 /* eslint-disable import/named */
 import { type, release } from 'os'
 import { Context } from '@nuxt/types'
-import { SmallMediaFile, MultiMediaImage, Perf, Stats } from '~/types'
+import { MeetingFile, Perf, Stats } from '~/types'
 
 export default function (
   { $getAllPrefs, $config, store }: Context,
@@ -132,7 +132,7 @@ ${JSON.stringify(logs.error, null, 2)}
         // log.info("%c[perf] [" + downloadSource[0] + "Fetch] " + Object.entries(downloadSource[1]).sort((a,b) => a[0].localeCompare(b[0])).map(downloadOrigin => "from " + downloadOrigin[0] + ": " + (downloadOrigin[1].map(source => source.filesize).reduce((a, b) => a + b, 0) / 1024 / 1024).toFixed(1) + "MB").join(", "), "background-color: #fbe9e7; color: #000;");
         log.info(
           `%c[perf] [${origin} Fetch] from ${source}: ${(
-            (files as (SmallMediaFile | MultiMediaImage)[])
+            (files as MeetingFile[])
               .map((file) => file.filesize as number)
               .reduce((a, b) => a + b, 0) /
             1024 /
