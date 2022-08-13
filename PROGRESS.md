@@ -2,9 +2,8 @@
 
 - [ ] Check if build artifacts work correctly for Windows and MacOS
 - [ ] Convert flash to notify system with action buttons
+- [ ] Fix how recurring media works
 - [ ] Make progress slider draggable when paused to change current progress / video scrubber??
-- [ ] Option to add multiple local files at once
-- [ ] Option to drag and drop files to add them to the media list
 - [ ] Test for 3 displays
 - [X] Add local JWPUB file media to media list
 - [X] Add played and video progress visuals to present page
@@ -17,6 +16,8 @@
 - [X] Make sure light mode looks good as well
 - [X] Media webpage
 - [X] OBS integration
+- [X] Option to add multiple local files at once
+- [X] Option to drag and drop files to add them to the media list
 - [X] Presentation mode
 - [X] Recurring media functionality
 - [X] Save preferences locally
@@ -36,7 +37,7 @@
 ## Bug Fixes
 
 - Setting custom media background works instantly
-- Show M³ icon in taskbar on Linux
+- Correctly set app icon for Linux
 
 ## New Features
 

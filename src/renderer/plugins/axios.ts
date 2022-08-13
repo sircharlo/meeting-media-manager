@@ -3,14 +3,9 @@ import { Context } from '@nuxt/types'
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 
 export default function (
-  { $axios, $log }: Context,
+  { $axios }: Context,
   inject: (arg0: string, arg1: any) => void
 ) {
-  $axios.onError((err: unknown) => {
-    $log.error(err)
-    return Promise.reject(err)
-  })
-
   const pubMedia = $axios.create({
     baseURL: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
   }) as NuxtAxiosInstance

@@ -118,7 +118,7 @@ import {
   faCloud,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
-import { LocalFile, MeetingFile, CongFile } from '~/types'
+import { LocalFile, MeetingFile } from '~/types'
 export default Vue.extend({
   filters: {
     ext(filename: string) {
@@ -163,7 +163,7 @@ export default Vue.extend({
   data() {
     return {
       edit: null as any,
-      mediaList: [] as (MeetingFile | CongFile | LocalFile)[],
+      mediaList: [] as (MeetingFile | LocalFile)[],
     }
   },
   computed: {
@@ -223,15 +223,10 @@ export default Vue.extend({
   },
   methods: {
     setMediaList() {
-      if (
-        (this.newFile &&
-          extname(this.newFile.safeName).toLowerCase() !== '.jwpub') ||
-        this.newFiles.length > 0
-      ) {
+      if (this.newFile || this.newFiles.length > 0) {
         this.mediaList = (
           [this.newFile, ...this.newFiles, ...this.media] as (
             | MeetingFile
-            | CongFile
             | LocalFile
           )[]
         )
@@ -255,7 +250,7 @@ export default Vue.extend({
           })
       } else {
         this.mediaList = [
-          ...(this.media as (MeetingFile | CongFile | LocalFile)[]).map((m) => {
+          ...(this.media as (MeetingFile | LocalFile)[]).map((m) => {
             m.color = 'warning'
             return m
           }),
@@ -271,13 +266,13 @@ export default Vue.extend({
       this.edit = null
       this.$emit('refresh')
     },
-    editItem(item: MeetingFile | CongFile | LocalFile) {
+    editItem(item: MeetingFile | LocalFile) {
       const newItem = Object.assign({}, item) as any
       newItem.ext = extname(item.safeName as string)
       newItem.newName = trimExt(item.safeName as string)
       this.edit = newItem
     },
-    getPreview(item: MeetingFile | CongFile | LocalFile): string | undefined {
+    getPreview(item: MeetingFile | LocalFile): string | undefined {
       if (item.trackImage) return item.trackImage
       if (item.thumbnail) return item.thumbnail
       if (item.contents) {
@@ -293,7 +288,7 @@ export default Vue.extend({
       }
       return undefined
     },
-    async toggleVisibility(item: MeetingFile | CongFile | LocalFile) {
+    async toggleVisibility(item: MeetingFile | LocalFile) {
       const mediaMap = (
         this.$store.getters['media/meetings'] as Map<
           string,
@@ -328,14 +323,14 @@ export default Vue.extend({
         this.$emit('refresh')
       }
     },
-    async atClick(item: MeetingFile | CongFile | LocalFile) {
+    async atClick(item: MeetingFile | LocalFile) {
       if (item.isLocal) {
         await this.removeItem(item)
       } else if (item.isLocal !== undefined) {
         await this.toggleVisibility(item)
       }
     },
-    async removeItem(item: MeetingFile | CongFile | LocalFile) {
+    async removeItem(item: MeetingFile | LocalFile) {
       if (item.color === 'error') {
         this.mediaList.splice(this.mediaList.indexOf(item), 1)
         this.$rm(join(this.$mediaPath(), this.date, item.safeName as string))

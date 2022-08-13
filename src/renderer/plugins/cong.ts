@@ -327,7 +327,6 @@ export default function (
           return meeting
         })
     )
-    console.log(meetings)
 
     let total = 0
     meetings.forEach((parts) =>
@@ -400,7 +399,7 @@ export default function (
                   perf.ms = perf.end - perf.start
                   perf.s = perf.ms / 1000
                   perf.bps = perf.bits / perf.s
-                  perf.mbps = perf.bps / 1000000
+                  perf.MBps = perf.bps / 1000000
                   perf.dir = 'down'
                   $log.debug(perf)
 

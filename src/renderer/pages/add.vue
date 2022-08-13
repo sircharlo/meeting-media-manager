@@ -1,8 +1,8 @@
 <template>
   <v-container fluid fill-height>
-    <v-dialog v-if="file && type === 'jwpub'" :value="true">
+    <v-dialog v-if="fileString && type === 'jwpub'" :value="true">
       <media-select
-        :file="file ? file.filepath : null"
+        :file="fileString"
         :set-progress="setProgress"
         @select="addMedia($event)"
       />
@@ -28,7 +28,11 @@
           <font-awesome-icon :icon="faPhotoFilm" />
         </v-col>
         <v-col cols="11">
-          <v-btn-toggle v-model="type" style="width: 100%">
+          <v-btn-toggle
+            v-model="type"
+            style="width: 100%"
+            @change="fileString = ''"
+          >
             <v-btn width="33.3%" value="song">{{ $t('song') }}</v-btn>
             <v-btn width="33.3%" value="custom">{{ $t('custom') }}</v-btn>
             <v-btn width="33.3%" value="jwpub">{{ $t('jwpub') }}</v-btn>
@@ -42,7 +46,7 @@
         <v-col cols="11">
           <form-input
             v-if="type === 'song'"
-            v-model="file"
+            v-model="song"
             field="autocomplete"
             :items="songs"
             item-text="title"
@@ -54,16 +58,12 @@
           />
           <v-row v-else-if="type === 'custom'" align="center">
             <v-col cols="auto" class="pr-0 text-left">
-              <v-btn color="primary" style="height: 40px" @click="addFile('*')">
+              <v-btn color="primary" style="height: 40px" @click="addFiles()">
                 {{ $t('browse') }}
               </v-btn>
             </v-col>
             <v-col class="pl-0">
-              <form-input
-                :value="file ? file.filepath : ''"
-                readonly
-                hide-details="auto"
-              />
+              <form-input :value="fileString" readonly hide-details="auto" />
             </v-col>
           </v-row>
           <v-row v-else-if="type === 'jwpub'" align="center">
@@ -71,23 +71,19 @@
               <v-btn
                 color="primary"
                 style="height: 40px"
-                @click="addFile('JWPUB', 'jwpub')"
+                @click="addFiles(false, 'JWPUB', 'jwpub')"
               >
                 {{ $t('browse') }}
               </v-btn>
             </v-col>
             <v-col class="pl-0">
-              <form-input
-                :value="file ? file.filepath : ''"
-                readonly
-                hide-details="auto"
-              />
+              <form-input :value="fileString" readonly hide-details="auto" />
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row
-        v-if="file || files.length > 0"
+        v-if="song || files.length > 0"
         align="center"
         class="my-n4"
         style="width: 100%"
@@ -130,16 +126,20 @@
       </v-row>
       <v-col cols="12" class="px-0" style="margin-bottom: 72px">
         <loading v-if="loading" />
-        <media-list
-          v-else
-          :date="date"
-          :new-file="file"
-          :new-files="files"
-          :prefix="prefix"
-          :media="media"
-          :set-progess="setProgress"
-          @refresh="getExistingMedia()"
-        />
+        <template v-else>
+          <v-overlay :value="dragging">
+            <font-awesome-icon :icon="faDownload" size="3x" bounce />
+          </v-overlay>
+          <media-list
+            :date="date"
+            :new-file="song"
+            :new-files="files"
+            :prefix="prefix"
+            :media="media"
+            :set-progess="setProgress"
+            @refresh="getExistingMedia()"
+          />
+        </template>
       </v-col>
       <v-progress-linear
         v-if="currentProgress || totalProgress"
@@ -154,7 +154,7 @@
       <v-footer fixed>
         <v-col class="text-left">
           <v-btn
-            v-if="file || files.length > 0"
+            v-if="song || files.length > 0"
             nuxt
             :disabled="loading"
             color="error"
@@ -170,12 +170,12 @@
         </v-col>
         <v-col class="text-center">
           <v-btn
-            v-if="file || files.length > 0"
+            v-if="song || files.length > 0"
             color="primary"
             min-width="32px"
             :loading="loading"
             :disabled="loading"
-            @click="saveFile()"
+            @click="saveFiles()"
           >
             <font-awesome-icon :icon="faSave" size="lg" />
           </v-btn>
@@ -189,7 +189,7 @@
 <script lang="ts">
 // eslint-disable-next-line import/named
 import { readdirSync, readFileSync, existsSync, statSync } from 'fs-extra'
-import { basename, extname, join } from 'upath'
+import { basename, join } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
 import { FileStat, WebDAVClient } from 'webdav/web'
@@ -200,25 +200,28 @@ import {
   faFileExport,
   faFolderOpen,
   faPhotoFilm,
+  faDownload,
   faSave,
 } from '@fortawesome/free-solid-svg-icons'
-import { CongFile, LocalFile, MeetingFile, VideoFile } from '~/types'
+import { LocalFile, MeetingFile, VideoFile } from '~/types'
 export default Vue.extend({
   name: 'AddPage',
   data() {
     return {
+      dragging: false,
       prefix1: null,
       prefix2: null,
       prefix3: null,
       totalProgress: 0,
       currentProgress: 0,
       loading: true,
-      type: null,
-      file: null as LocalFile | null | VideoFile,
-      files: [] as LocalFile[],
+      type: null as string | null,
+      fileString: '',
+      song: null as VideoFile | null,
+      files: [] as (LocalFile | VideoFile)[],
       loadingSongs: true,
       songs: [] as VideoFile[],
-      media: [] as (MeetingFile | CongFile | LocalFile)[],
+      media: [] as (MeetingFile | LocalFile)[],
       types: [
         {
           label: this.$t('song'),
@@ -241,6 +244,9 @@ export default Vue.extend({
   computed: {
     faSave() {
       return faSave
+    },
+    faDownload() {
+      return faDownload
     },
     faFolderOpen() {
       return faFolderOpen
@@ -290,49 +296,82 @@ export default Vue.extend({
   },
   watch: {
     async type(newType) {
-      this.file = null
       if (newType === 'song' && this.songs.length === 0) {
         await this.getSongs()
       }
     },
-    file(val) {
+    fileString(val) {
       if (!val) {
         this.prefix1 = this.prefix2 = this.prefix3 = null
       }
     },
   },
+  beforeDestroy() {
+    document.removeEventListener('dragover', this.stopEvent)
+    document.removeEventListener('dragenter', this.handleDrag)
+    document.removeEventListener('dragleave', this.handleDrag)
+    document.removeEventListener('drop', this.handleDrop)
+  },
   async mounted() {
     await this.getMeetingData()
     await this.getExistingMedia()
+    document.addEventListener('dragover', this.stopEvent)
+    document.addEventListener('dragenter', this.handleDrag)
+    document.addEventListener('dragleave', this.handleDrag)
+    document.addEventListener('drop', this.handleDrop)
     this.loading = false
   },
   methods: {
+    handleDrag(e: DragEvent) {
+      if (
+        !this.dragging ||
+        (e.target as HTMLElement).className === 'v-overlay__scrim'
+      ) {
+        this.dragging = e.type === 'dragenter'
+      }
+    },
+    stopEvent(e: DragEvent) {
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    handleDrop(e: DragEvent) {
+      this.stopEvent(e)
+      this.type = 'custom'
+      this.dragging = false
+      this.files = Array.from(e.dataTransfer?.files ?? []).map((file) => {
+        return {
+          safeName: '- ' + file.name,
+          filepath: file.path,
+        }
+      })
+      this.fileString = this.files.map((file) => file.filepath).join(';')
+    },
     addMedia(media: LocalFile[]) {
       this.files = media
       this.type = null
     },
-    async addFile(...exts: string[]) {
+    async addFiles(multi: boolean = true, ...exts: string[]) {
+      if (exts.length === 0) {
+        exts.push('*')
+      }
+      const properties = ['openFile']
+      if (multi) properties.push('multiSelections')
       const result = await ipcRenderer.invoke('openDialog', {
-        filters: [{ name: exts[0] ?? '', extensions: exts }],
-        properties: ['openFile'],
+        filters: [{ name: exts[0], extensions: exts }],
+        properties,
       })
-      if (
-        result &&
-        !result.canceled &&
-        (exts.includes('*') ||
-          exts.includes(extname(result.filePaths[0]).substring(1)))
-      ) {
-        const name = '- ' + basename(result.filePaths[0])
-        this.file = {
-          safeName: name,
-          filepath: result.filePaths[0],
-        }
+      if (result && !result.canceled) {
+        this.files = result.filePaths.map((file: string) => ({
+          safeName: '- ' + basename(file),
+          filepath: file,
+        }))
+        this.fileString = result.filePaths.join(';')
       }
     },
-    async saveFile(): Promise<void> {
+    async saveFiles(): Promise<void> {
       this.loading = true
       try {
-        for (const file of [...this.files, Object.assign({}, this.file)]) {
+        for (const file of [...this.files, this.song]) {
           if (!file?.safeName) continue
           if (this.prefix) {
             file.safeName = this.prefix + ' ' + file.safeName
@@ -361,10 +400,7 @@ export default Vue.extend({
             /* createReadStream(path).pipe(
               this.client.createWriteStream(
                 filePath,
-                { overwrite: true },
-                (res) => {
-                  console.log(JSON.parse(JSON.stringify(res)))
-                }
+                { overwrite: true }
               )
             ) */
             const perf: any = {
@@ -383,7 +419,7 @@ export default Vue.extend({
             perf.ms = perf.end - perf.start
             perf.s = perf.ms / 1000
             perf.bps = perf.bits / perf.s
-            perf.mbps = perf.bps / 1000000
+            perf.MBps = perf.bps / 1000000
             perf.dir = 'up'
             this.$log.debug(perf)
           }
@@ -441,7 +477,7 @@ export default Vue.extend({
       >
       const localMedia: LocalFile[] = []
 
-      const congMedia: CongFile[] = (
+      const congMedia: LocalFile[] = (
         this.$store.state.cong.contents as FileStat[]
       )
         .filter(
@@ -473,7 +509,7 @@ export default Vue.extend({
       if (existsSync(path)) {
         readdirSync(path).forEach((filename) => {
           const jwMatch = jwMedia.find((m) => m.safeName === filename)
-          const congMatch = congMedia.find((m) => m.basename === filename)
+          const congMatch = congMedia.find((m) => m.safeName === filename)
           if (jwMatch) {
             jwMatch.isLocal = true
           } else if (congMatch) {

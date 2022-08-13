@@ -93,7 +93,6 @@ export default Vue.extend({
       )
     })
     ipcRenderer.on('displaysChanged', async () => {
-      console.log('displaysChanged')
       ipcRenderer.send(
         'setMediaWindowPosition',
         await this.$getMediaWindowDestination()
