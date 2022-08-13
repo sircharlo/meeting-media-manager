@@ -4,6 +4,13 @@ import { Context } from '@nuxt/types'
 import { basename, dirname, extname, join } from 'upath'
 import { Dayjs } from 'dayjs'
 import { statSync } from 'fs-extra'
+import {
+  ObsPrefs,
+  AppPrefs,
+  CongPrefs,
+  MediaPrefs,
+  MeetingPrefs,
+} from './../types/prefs'
 import { CongFile, MeetingFile } from '~/types'
 
 export default function (
@@ -121,15 +128,18 @@ export default function (
         store.commit('cong/setPrefs', JSON.parse(JSON.stringify(prefs)))
         if (!prefs.app) prefs.app = {}
         prefs.app.obs = Object.assign(
-          $getPrefs('app.obs') as any,
+          $getPrefs('app.obs') as ObsPrefs,
           prefs.app.obs ?? {}
         )
         const newPrefs = {
-          app: Object.assign($getPrefs('app') as any, prefs.app ?? {}),
-          cong: Object.assign($getPrefs('cong') as any, prefs.cong ?? {}),
-          media: Object.assign($getPrefs('media') as any, prefs.media ?? {}),
+          app: Object.assign($getPrefs('app') as AppPrefs, prefs.app ?? {}),
+          cong: Object.assign($getPrefs('cong') as CongPrefs, prefs.cong ?? {}),
+          media: Object.assign(
+            $getPrefs('media') as MediaPrefs,
+            prefs.media ?? {}
+          ),
           meeting: Object.assign(
-            $getPrefs('meeting') as any,
+            $getPrefs('meeting') as MeetingPrefs,
             prefs.meeting ?? {}
           ),
         }

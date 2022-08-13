@@ -118,6 +118,20 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faCircle } from '@fortawesome/free-regular-svg-icons'
 import { ipcRenderer } from 'electron'
+
+interface Style {
+  to?: string
+  props?: Record<string, any>
+  icons: (
+    | IconDefinition
+    | { text: IconDefinition; props?: Record<string, any> }
+  )[]
+}
+
+interface Styles {
+  [key: string]: Style
+}
+
 export default Vue.extend({
   props: {
     variant: {
@@ -201,7 +215,7 @@ export default Vue.extend({
         toggleScreen: {
           icons: [faDesktop, faBan, faCircle],
         },
-      },
+      } as Styles,
     }
   },
   computed: {
@@ -223,9 +237,8 @@ export default Vue.extend({
     musicFadeOut(): Dayjs {
       return this.$store.state.media.musicFadeOut as Dayjs
     },
-    style(): any {
-      // @ts-ignore
-      return this.styles[this.variant]
+    style(): Style {
+      return this.styles[this.variant as keyof Styles]
     },
     tooltipObj(): any {
       const obj = {} as any

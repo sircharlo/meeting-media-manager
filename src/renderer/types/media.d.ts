@@ -12,12 +12,15 @@ export interface MeetingFileBase {
   congSpecific?: boolean
   hidden?: boolean
   isLocal?: boolean
+  filename?: undefined
+  color?: string
 }
 
 export interface VideoFile extends SmallMediaFile, MeetingFileBase {
   BeginParagraphOrdinal?: number
   queryInfo?: MultiMediaItem
-  filepath: undefined
+  filepath?: string
+  contents?: Buffer
 }
 
 export interface ImageFile extends MeetingFileBase {
@@ -26,13 +29,30 @@ export interface ImageFile extends MeetingFileBase {
   title: string
   filepath?: string
   filesize?: number
-  url: undefined
-  markers: undefined
-  pub: undefined
-  checksum: undefined
-  primaryCategory: undefined
-  issue: undefined
-  track: undefined
+  url?: undefined
+  markers?: undefined
+  pub?: undefined
+  checksum?: undefined
+  primaryCategory?: undefined
+  issue?: undefined
+  track?: undefined
+  contents?: undefined
+  thumbnail?: undefined
+  trackImage?: undefined
+}
+
+export interface LocalFile {
+  safeName: string
+  filename?: string
+  isLocal?: boolean
+  filepath?: string
+  contents?: Buffer
+  url?: string
+  folder?: string
+  color?: string
+  congSpecific?: boolean
+  thumbnail?: undefined
+  trackImage?: undefined
 }
 
 export declare type MeetingFile = ImageFile | VideoFile

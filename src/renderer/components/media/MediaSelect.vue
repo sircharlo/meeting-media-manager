@@ -48,7 +48,7 @@ import { ipcRenderer } from 'electron'
 import { Database } from 'sql.js'
 import { basename, extname, trimExt } from 'upath'
 import Vue from 'vue'
-import { MultiMediaItem } from '~/types'
+import { MultiMediaItem, VideoFile, LocalFile } from '~/types'
 export default Vue.extend({
   props: {
     file: {
@@ -63,20 +63,22 @@ export default Vue.extend({
   data() {
     return {
       loading: true,
-      items: [] as any[],
+      items: [] as { DocumentId: number; Title: string }[],
       db: null as null | Database,
       docId: null as null | number,
-      mediaFiles: [] as any[],
-      missingMedia: [] as any[],
+      mediaFiles: [] as (LocalFile | VideoFile)[],
+      missingMedia: [] as string[],
     }
   },
   watch: {
     mediaFiles: {
-      handler(val: any[]): void {
+      handler(val: (LocalFile | VideoFile)[]): void {
         if (!this.loading && this.missingMedia.length === 0) {
           this.$emit(
             'select',
-            val.sort((a, b) => a.safeName.localeCompare(b.safeName))
+            val.sort((a, b) =>
+              (a.safeName as string).localeCompare(b.safeName as string)
+            )
           )
         }
       },
@@ -121,7 +123,7 @@ export default Vue.extend({
     WHERE Multimedia.CategoryType <> 9
     ${suppressZoom ? 'AND Multimedia.SuppressZoom = 0' : ''}
     ORDER BY ${table}.DocumentId`
-    )
+    ) as { DocumentId: number; Title: string }[]
     this.loading = false
     if (this.items.length === 0) {
       this.$flash(this.$t('warnNoDocumentsFound') as string)
@@ -137,8 +139,8 @@ export default Vue.extend({
       })
       if (result && !result.canceled) {
         this.missingMedia = this.missingMedia.filter((f) => f !== name)
-        this.mediaFiles.find((f) => f.filename === name).filepath =
-          result.filePaths[0]
+        const find = this.mediaFiles.find((f) => f.filename === name)
+        if (find) find.filepath = result.filePaths[0]
       }
     },
     async selectDoc(docId: number): Promise<void> {
@@ -180,20 +182,20 @@ export default Vue.extend({
         const tempMedia = {
           safeName: `${prefix} - ${name}`,
           filename: name,
-          contents: null as null | Buffer,
+          contents: undefined as undefined | Buffer,
           url: undefined as string | undefined,
           filepath: undefined as string | undefined,
-        }
+        } as LocalFile
 
         if (CategoryType && CategoryType !== -1) {
           tempMedia.contents = this.$getZipContentsByName(this.file, FilePath)
         } else {
-          const externalMedia = await this.$getMediaLinks({
+          const externalMedia = (await this.$getMediaLinks({
             pubSymbol: KeySymbol as string,
             track: Track ?? undefined,
             issue: IssueTagNumber?.toString(),
             docId: MultiMeps ?? undefined,
-          })
+          })) as VideoFile[]
 
           if (externalMedia.length > 0) {
             Object.assign(tempMedia, externalMedia[0])
@@ -201,7 +203,7 @@ export default Vue.extend({
               tempMedia.url as string
             )}`
           } else {
-            this.missingMedia.push(tempMedia.filename)
+            this.missingMedia.push(tempMedia.filename as string)
           }
         }
         this.mediaFiles.push(tempMedia)

@@ -202,7 +202,7 @@ import {
   faPhotoFilm,
   faSave,
 } from '@fortawesome/free-solid-svg-icons'
-import { MeetingFile, VideoFile } from '~/types'
+import { CongFile, LocalFile, MeetingFile, VideoFile } from '~/types'
 export default Vue.extend({
   name: 'AddPage',
   data() {
@@ -214,25 +214,11 @@ export default Vue.extend({
       currentProgress: 0,
       loading: true,
       type: null,
-      file: null as { safeName: string; filepath: string } | null | MeetingFile,
-      files: [] as {
-        contents: null | Buffer
-        safeName: string
-        filepath: undefined | string
-        url: undefined | string
-      }[],
+      file: null as LocalFile | null | VideoFile,
+      files: [] as LocalFile[],
       loadingSongs: true,
-      songs: [] as MeetingFile[],
-      media: [] as (
-        | string
-        | MeetingFile
-        | FileStat
-        | {
-            safeName: string
-            isLocal: boolean
-            filepath: string
-          }
-      )[],
+      songs: [] as VideoFile[],
+      media: [] as (MeetingFile | CongFile | LocalFile)[],
       types: [
         {
           label: this.$t('song'),
@@ -321,14 +307,7 @@ export default Vue.extend({
     this.loading = false
   },
   methods: {
-    addMedia(
-      media: {
-        contents: null | Buffer
-        safeName: string
-        filepath: undefined | string
-        url: undefined | string
-      }[]
-    ) {
+    addMedia(media: LocalFile[]) {
       this.files = media
       this.type = null
     },
@@ -356,22 +335,15 @@ export default Vue.extend({
         for (const file of [...this.files, Object.assign({}, this.file)]) {
           if (!file?.safeName) continue
           if (this.prefix) {
-            // @ts-ignore
-            file.safeName = this.prefix + ' ' + file?.safeName
+            file.safeName = this.prefix + ' ' + file.safeName
           }
 
           const path = join(this.$mediaPath(), this.date, file.safeName)
-          // @ts-ignore
-          if (file?.contents) {
-            this.$write(
-              path,
-              // @ts-ignore
-              file.contents
-            )
-          } else if (file?.filepath) {
+          if (file.contents) {
+            this.$write(path, file.contents)
+          } else if (file.filepath) {
             this.$copy(file.filepath, path)
           } else if (file.safeName) {
-            // @ts-ignore
             file.folder = this.date
             await this.$downloadIfRequired(file, this.setProgress)
           }
@@ -467,13 +439,9 @@ export default Vue.extend({
         string,
         Map<number, MeetingFile[]>
       >
-      const localMedia: {
-        safeName: string
-        isLocal: boolean
-        filepath: string
-      }[] = []
+      const localMedia: LocalFile[] = []
 
-      const congMedia: FileStat[] = (
+      const congMedia: CongFile[] = (
         this.$store.state.cong.contents as FileStat[]
       )
         .filter(
@@ -509,7 +477,6 @@ export default Vue.extend({
           if (jwMatch) {
             jwMatch.isLocal = true
           } else if (congMatch) {
-            // @ts-ignore
             congMatch.isLocal = true
           } else {
             localMedia.push({
@@ -521,7 +488,6 @@ export default Vue.extend({
         })
       }
       this.media = [...jwMedia, ...congMedia, ...localMedia].sort((a, b) => {
-        // @ts-ignore
         return (a.safeName as string).localeCompare(b.safeName as string)
       })
     },

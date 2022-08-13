@@ -53,7 +53,7 @@
             contain
           />
           <v-list-item-title v-if="item.isLocal === undefined">
-            {{ getName(item) }}
+            {{ prefix + ' ' + item.safeName }}
           </v-list-item-title>
           <v-list-item-title
             v-else
@@ -99,7 +99,7 @@
 <script lang="ts">
 // eslint-disable-next-line import/named
 import { pathToFileURL } from 'url'
-import { basename, extname, join, trimExt } from 'upath'
+import { extname, join, trimExt } from 'upath'
 import Vue from 'vue'
 import { WebDAVClient } from 'webdav/web'
 import {
@@ -118,7 +118,7 @@ import {
   faCloud,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
-import { MeetingFile } from '~/types'
+import { LocalFile, MeetingFile, CongFile } from '~/types'
 export default Vue.extend({
   filters: {
     ext(filename: string) {
@@ -144,7 +144,7 @@ export default Vue.extend({
       required: true,
     },
     newFile: {
-      type: [Object, String],
+      type: Object,
       default: null,
     },
     newFiles: {
@@ -162,8 +162,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      edit: null,
-      mediaList: [] as any[],
+      edit: null as any,
+      mediaList: [] as (MeetingFile | CongFile | LocalFile)[],
     }
   },
   computed: {
@@ -228,81 +228,72 @@ export default Vue.extend({
           extname(this.newFile.safeName).toLowerCase() !== '.jwpub') ||
         this.newFiles.length > 0
       ) {
-        this.mediaList = [this.newFile, ...this.newFiles, ...this.media]
+        this.mediaList = (
+          [this.newFile, ...this.newFiles, ...this.media] as (
+            | MeetingFile
+            | CongFile
+            | LocalFile
+          )[]
+        )
           .filter(Boolean)
-          .map((m: any) => {
+          .map((m) => {
             m.color = 'warning'
             return m
           })
           .sort((a, b) => {
             if (this.prefix && a.isLocal === undefined) {
-              return (this.prefix + ' ' + (a.safeName ?? a)).localeCompare(
-                b.safeName
+              return (this.prefix + ' ' + (a.safeName as string)).localeCompare(
+                b.safeName as string
               )
             } else if (this.prefix && b.isLocal === undefined) {
               return (a.safeName as string).localeCompare(
-                this.prefix + ' ' + (b.safeName ?? b)
+                this.prefix + ' ' + (b.safeName as string)
               )
             } else {
-              return (a.safeName ?? a).localeCompare(b.safeName ?? b)
+              return (a.safeName as string).localeCompare(b.safeName as string)
             }
           })
       } else {
         this.mediaList = [
-          ...this.media.map((m: any) => {
+          ...(this.media as (MeetingFile | CongFile | LocalFile)[]).map((m) => {
             m.color = 'warning'
             return m
           }),
         ]
       }
     },
-    getName(item: any): string {
-      return item.safeName ? this.prefix + ' ' + item.safeName : basename(item)
-    },
     saveNewName() {
       this.$rename(
-        // @ts-ignore
         join(this.$mediaPath(), this.date, this.edit?.safeName),
-        // @ts-ignore
         this.edit?.safeName,
-        // @ts-ignore
         this.edit?.newName + this.edit?.ext
       )
       this.edit = null
       this.$emit('refresh')
     },
-    editItem(item: any) {
-      const newItem = Object.assign({}, item)
-      newItem.ext = extname(item.safeName)
-      newItem.newName = trimExt(item.safeName)
+    editItem(item: MeetingFile | CongFile | LocalFile) {
+      const newItem = Object.assign({}, item) as any
+      newItem.ext = extname(item.safeName as string)
+      newItem.newName = trimExt(item.safeName as string)
       this.edit = newItem
     },
-    getPreview(
-      item: MeetingFile | { filepath: string } | string
-    ): string | undefined {
-      // @ts-ignore
+    getPreview(item: MeetingFile | CongFile | LocalFile): string | undefined {
       if (item.trackImage) return item.trackImage
-      // @ts-ignore
       if (item.thumbnail) return item.thumbnail
-      // @ts-ignore
       if (item.contents) {
         return (
-          // @ts-ignore
-          `data:image/${extname(item.safeName)};base64,` +
-          // @ts-ignore
+          `data:image/${extname(item.safeName as string)};base64,` +
           item.contents.toString('base64')
         )
-        // @ts-ignore
       } else if (!item.congSpecific) {
-        // @ts-ignore
-        const path = item.filepath ?? item.url ?? item
+        const path = (item.filepath ?? item.url) as string
         if (this.$isImage(path)) {
           return pathToFileURL(path).href
         }
       }
       return undefined
     },
-    async toggleVisibility(item: MeetingFile) {
+    async toggleVisibility(item: MeetingFile | CongFile | LocalFile) {
       const mediaMap = (
         this.$store.getters['media/meetings'] as Map<
           string,
@@ -337,20 +328,20 @@ export default Vue.extend({
         this.$emit('refresh')
       }
     },
-    async atClick(item: any) {
+    async atClick(item: MeetingFile | CongFile | LocalFile) {
       if (item.isLocal) {
         await this.removeItem(item)
       } else if (item.isLocal !== undefined) {
         await this.toggleVisibility(item)
       }
     },
-    async removeItem(item: any) {
+    async removeItem(item: MeetingFile | CongFile | LocalFile) {
       if (item.color === 'error') {
         this.mediaList.splice(this.mediaList.indexOf(item), 1)
         this.$rm(join(this.$mediaPath(), this.date, item.safeName as string))
 
         if (item.congSpecific) {
-          await this.client.deleteFile(item.filename)
+          await this.client.deleteFile(item.filename as string)
           await this.$updateContent()
         }
         this.$emit('refresh')
