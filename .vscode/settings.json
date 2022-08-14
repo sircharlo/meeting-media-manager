@@ -4,7 +4,8 @@
   },
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.fixAll.markdownlint": true
   },
   "cSpell.words": [
     "americas",
@@ -15,6 +16,7 @@
     "Descr",
     "docid",
     "eesti",
+    "EPUB",
     "esnext",
     "español",
     "icns",
@@ -36,6 +38,7 @@
     "sqljs",
     "suomi",
     "uncompiled",
+    "unmute",
     "upath",
     "vetur",
     "vuedraggable",
