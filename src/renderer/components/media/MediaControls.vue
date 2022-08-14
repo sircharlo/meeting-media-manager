@@ -11,7 +11,7 @@
         <v-btn color="secondary" @click="clearDate()">{{ date }}</v-btn>
       </v-col>
       <v-col class="text-right">
-        <v-btn icon>
+        <v-btn icon @click="getMedia()">
           <font-awesome-icon :icon="faRotateRight" />
         </v-btn>
         <v-btn v-if="sortable" icon @click="sortable = false">
@@ -76,7 +76,7 @@ export default Vue.extend({
       sortable: false,
       loading: true,
       showPrefix: false,
-      items: [] as { id: number; path: string }[],
+      items: [] as { id: string; path: string }[],
     }
   },
   computed: {
@@ -103,18 +103,26 @@ export default Vue.extend({
     },
   },
   mounted() {
-    this.items = this.$findAll([
-      join(this.$mediaPath(), this.date, '*'),
-      join(this.$mediaPath(), 'Recurring', '*'),
-    ])
-      .sort((a, b) => basename(a).localeCompare(basename(b)))
-      .map((path, i) => {
-        return { id: i, path }
-      })
-    this.loading = false
+    this.getMedia()
   },
-  beforeDestroy() {},
   methods: {
+    getMedia() {
+      this.loading = true
+      this.items = this.$findAll(join(this.$mediaPath(), this.date, '*'))
+        .sort((a, b) => basename(a).localeCompare(basename(b)))
+        .map((path) => {
+          return {
+            id:
+              basename(path)
+                .replaceAll(' ', '')
+                .replaceAll('-', '')
+                .replaceAll('.', '')
+                .replaceAll(/\d/g, '') + 'mediaitem',
+            path,
+          }
+        })
+      this.loading = false
+    },
     clearDate() {
       this.$router.push({
         query: {
