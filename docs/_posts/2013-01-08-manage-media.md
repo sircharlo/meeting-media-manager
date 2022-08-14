@@ -14,31 +14,28 @@ To manage media for a certain meeting or day, simply click on that day's tile on
 
 Here's how to **add** media from the media management screen.
 
-
-| Option  | Explanation |
-| ------------- | ------------- |
-| `Type of upload`  | Choose from one of the 3 `media types`. (See below.) |
-| `Media to add`  | Depends on the `media type` chosen. (See below.) |
-| `Filename prefix`  | Up to 6 digits can be added before the media filename(s), to help with sorting. |
-| `Media list` | This shows the currently planned media for the selected date tile. |
-
+| Option            | Explanation                                                                     |
+| ----------------- | ------------------------------------------------------------------------------- |
+| `Type of upload`  | Choose from one of the 3 `media types`. (See below.)                            |
+| `Media to add`    | Depends on the `media type` chosen. (See below.)                                |
+| `Filename prefix` | Up to 6 digits can be added before the media filename(s), to help with sorting. |
+| `Media list`      | This shows the currently planned media for the selected date tile.              |
 
 In the `Media to add` field, you'll be presented with different options, depending on the media type selected.
 
-| `Media type` selected | The `Media to add` field will... |
-| ------------- | ------------- |
-| `Song` | ... show a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br>The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [settings](#/configuration). |
-| `JWPUB` | ... allow you to browse to (or drag and drop) a JWPUB file. <br><br>You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br>An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here. |
-| `Custom` | ... allow you to browse to (or drag and drop) any other media file(s) from your computer.    <br><br><blockquote>Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.</blockquote> |
-
+| `Media type` selected | The `Media to add` field will...                                                                                                                                                                                                                                                                                                                                 |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Song`                | ... show a menu with all Kingdom song videos from the _sjjm_ series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br>The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [settings](#/configuration). |
+| `JWPUB`               | ... allow you to browse to (or drag and drop) a JWPUB file. <br><br>You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br>An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.      |
+| `Custom`              | ... allow you to browse to (or drag and drop) any other media file(s) from your computer.    <br><br><blockquote>Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.</blockquote>                                                                                                                                 |
 
 ### Removing, hiding and showing media
 
 To **remove**, **hide**, or **show** media, simply find the media file you don't want, and click on the relevant icon.
 
 | Media has a red 🟥 (delete) icon | Media has a ☑️ (checked checkbox) icon | Media has a 🔲 (unchecked checkbox) icon |
-| ------------- | | |
-| The media file was added to that day's media by you or the VO. <br><br>Click on the red 🟥 (delete) icon to delete the file. <br>Click a second time to confirm. | The media file is referenced in the meeting's material. <br><br>It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file was referenced in the meeting's material. <br><br>It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
+| ------------------------------- || |
+| The media file was added to that day's media by you or the VO. <br><br>Click on the red 🟥 (delete) icon to delete the file. <br>Click a second time to confirm. | The media file is referenced in the meeting's material. <br><br>It _will_ be downloaded from JW.org or extracted from the relevant publication. | The media file was referenced in the meeting's material. <br><br>It was hidden by you or the VO, so it _will not_ be downloaded or added to the meeting's media. |
 
 ### Screenshots
 

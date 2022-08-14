@@ -11,9 +11,9 @@ Once the option to "Present media on an external monitor or in a separate window
 
 When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
 
-If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
+If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be **displayed when on standby.
 
-Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt</kbd> <kbd>D</kbd> (for external **d**isplay).
+Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt</kbd> <kbd>D</kbd> (for external display).
 
 Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
 
@@ -37,9 +37,9 @@ Configure the computer sound card's output to go to one of the sound booth mixer
 
 Install OBS Studio, or download the portable version.
 
-Install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+Install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/){:target="_blank"} plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
 
-Install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Configure a port number and password for obs-websocket.
+Install the [obs-websocket](https://github.com/obsproject/obs-websocket){:target="_blank"} plugin. Configure a port number and password for obs-websocket.
 
 In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 
@@ -49,7 +49,7 @@ Add a shortcut to OBS Studio, with the `--startvirtualcam` parameter, to the Sta
 
 #### Initial configuration: Kingdom Hall Zoom
 
-Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom for muting/unmuting the Kingdom Hall **a**udio in Zoom (<kbd>Alt</kbd> <kbd>A</kbd>), and starting/stopping the Kingdom Hall **v**ideo feed in Zoom (<kbd>Alt</kbd> <kbd>V</kbd>).
+Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall **a**udio in Zoom (<kbd>Alt</kbd> <kbd>A</kbd>), and start/stop the Kingdom Hall **v**ideo feed in Zoom (<kbd>Alt</kbd> <kbd>V</kbd>).
 
 Set the default "microphone" to be sound booth mixer's combined output (so that everything that is heard over the Kingdom Hall sound system is transmitted over Zoom, including microphones and media) and the "camera" to be the virtual camera provided by OBS Studio.
 
@@ -85,32 +85,31 @@ When you're done sharing media, press the "stop" button in M³. Note that videos
 
 Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
 
-<blockquote>If the participant has media to show, follow the steps under the <strong>Sharing media at the Kingdom Hall and over Zoom</strong> subheading.</blockquote>
+> If the participant has media to show, follow the steps under the **Sharing media at the Kingdom Hall and over Zoom** subheading.
 
 Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt</kbd> <kbd>Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
-
 
 ### Conducting hybrid meetings using only M³ and Zoom
 
 If you do not wish to use OBS Studio for any reason, the following suggestions will perhaps help you to set things up as simply as possible.
 
-#### Initial configuration: Kingdom Hall Zoom
+#### Initial configuration (M³ and Zoom only): Kingdom Hall Zoom
 
 Same as corresponding section above, with the addition of the global keyboard shortcut for Zoom for starting/stopping screen **s**haring (<kbd>Alt</kbd> <kbd>S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
 
-#### Initial configuration: M³
+#### Initial configuration (M³ and Zoom only): M³
 
 Enable the "Present media on an external monitor or in a separate window" option.
 
-#### Starting the meeting
+#### Starting the meeting (M³ and Zoom only)
 
 Same as corresponding section above.
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom
+#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom (M³ and Zoom only)
 
 Same as corresponding section above.
 
-#### Sharing media at the Kingdom Hall and over Zoom
+#### Sharing media at the Kingdom Hall and over Zoom (M³ and Zoom only)
 
 Start sharing in Zoom by hitting <kbd>Alt</kbd> <kbd>S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
 
@@ -118,7 +117,7 @@ Find the media you want to share in the M³ media playback control window, and p
 
 When you're done sharing media, hit <kbd>Alt</kbd> <kbd>S</kbd> to end Zoom screen sharing. The Kingdom Hall monitor will now show the yeartext.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor
+#### Displaying remote Zoom participants on the Kingdom Hall monitor (M³ and Zoom only)
 
 Same as corresponding section above.
 
