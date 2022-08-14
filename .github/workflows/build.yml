@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - '*.yml'
       - 'yarn.lock'
       - 'package.json'
       - 'builder.config.js'

@@ -2,7 +2,17 @@
 
 You are welcome to contribute to this project. If you want to do so, here you will find some useful information to get you started.
 
-## Developer Tools
+## Help translate this application
+
+If any one of you would like to volunteer to become a M³ language moderator for a language you speak, please [sign into GitLocalize](https://gitlocalize.com/) using your GitHub account, and then let me know by [creating a new discussion](https://github.com/sircharlo/meeting-media-manager/discussions/categories/translations) in the **Translations** category.
+
+As language moderator, you will get notified of changes to the English original strings, have a nice and easy to use interface to review existing as well as untranslated strings in your language, and submit new translations to the repo easily.
+
+## Help maintain this application
+
+In order to help maintain this application, the following information will help you get started. If anything is unclear or you simply need more information, please feel free to make contact through [the discussion thread](https://github.com/sircharlo/meeting-media-manager/discussions).
+
+### Developer Tools
 
 - [Git](https://git-scm.com/) >= v2.25.1
 - [Node.js](https://nodejs.org/en/) >= v16.11.45
@@ -10,7 +20,7 @@ You are welcome to contribute to this project. If you want to do so, here you wi
 - [VS Code](https://code.visualstudio.com/) >= v1.69.2
   - VS Code extensions: see [extensions.json](/.vscode/extensions.json)
 
-## Build Setup
+### Build Setup
 
 ``` bash
 # Install dependencies
@@ -25,9 +35,12 @@ yarn build
 # Lint all JS/Vue component files in `src/`
 yarn lint
 
+# Lint all JS/Vue component files in `src/` and fix all auto-fixable errors
+yarn lint:fix
+
 ```
 
-## Build Tools
+### Build Tools
 
 This project was generated with [electron-nuxt](https://github.com/michalzaq12/electron-nuxt) v1.8.1 using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://github.com/michalzaq12/electron-nuxt/blob/master/README.md).
 
