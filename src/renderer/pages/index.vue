@@ -118,7 +118,7 @@
     <v-col cols="12" class="text-center">
       <v-btn
         color="primary"
-        :disabled="loading || !online"
+        :disabled="!online"
         :loading="loading"
         @click="startMediaSync()"
       >
@@ -152,7 +152,7 @@
           <icon-btn variant="toggleScreen" class="mr-2" />
           <icon-btn variant="present" :disabled="loading" class="mr-2" />
         </template>
-        <icon-btn variant="settings" :disabled="loading" :loading="loading" />
+        <icon-btn variant="settings" :disabled="loading" />
       </v-col>
       <v-progress-linear
         v-if="currentProgress || totalProgress"

@@ -52,7 +52,6 @@
             item-text="title"
             item-value="safeName"
             hide-details="auto"
-            :disabled="loadingSongs"
             :loading="loadingSongs"
             return-object
           />
@@ -174,7 +173,6 @@
             color="primary"
             min-width="32px"
             :loading="loading"
-            :disabled="loading"
             @click="saveFiles()"
           >
             <font-awesome-icon :icon="faSave" size="lg" />

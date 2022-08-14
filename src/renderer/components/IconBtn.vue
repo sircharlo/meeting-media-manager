@@ -3,7 +3,7 @@
     v-if="variant === 'shuffle' && musicFadeOut && !clickedOnce"
     color="warning"
     title="ALT+K"
-    :disabled="loading || $attrs.disabled"
+    v-bind="$attrs"
     :loading="loading || $attrs.loading"
     @click="atClick()"
   >
@@ -13,6 +13,7 @@
   <v-btn
     v-else-if="variant === 'pause'"
     color="warning"
+    v-bind="$attrs"
     :class="{ 'pulse-danger': toggled }"
     @click="toggle()"
   >
@@ -21,6 +22,7 @@
   <v-btn
     v-else-if="variant === 'toggleScreen'"
     :color="mediaVisible ? 'warning' : 'primary'"
+    v-bind="$attrs"
     :class="{ 'pulse-danger': !mediaVisible }"
     title="ALT+Z"
     @click="toggleMediaScreen()"
@@ -44,7 +46,6 @@
       <v-btn
         ref="btn"
         v-model="$attrs.value"
-        :disabled="loading || $attrs.disabled"
         :loading="loading || $attrs.loading"
         v-bind="{ ...style.props, ...$attrs, ...attrs }"
         :color="variant === 'shuffle' && !musicFadeOut ? 'warning' : 'error'"
@@ -77,10 +78,9 @@
     v-else
     ref="btn"
     v-model="$attrs.value"
-    :nuxt="!!style.to"
-    :disabled="loading || $attrs.disabled"
+    :nuxt="!!style.to || $attrs.nuxt"
     :loading="loading || $attrs.loading"
-    :to="style.to ? localePath(`${style.to}?cong=${cong}`) : undefined"
+    :to="style.to ? localePath(`${style.to}?cong=${cong}`) : $attrs.to"
     v-bind="{ ...style.props, ...$attrs }"
     @click.stop="atClick()"
   >
