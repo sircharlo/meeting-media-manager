@@ -353,7 +353,8 @@ if (gotTheLock) {
     autoUpdater.checkForUpdates()
   })
 
-  autoUpdater.on('error', () => {
+  autoUpdater.on('error', (e) => {
+    win.webContents.send('error', e)
     win.webContents.send('notifyUser', ['warning', 'updateNotDownloaded'])
   })
   autoUpdater.on('update-available', () => {
