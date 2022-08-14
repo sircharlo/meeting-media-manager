@@ -202,6 +202,9 @@ function validateConfig(changed, restart) {
     mandatoryFields.push("obsPort", "obsPassword");
     if (get("obs")._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
   }
+  if (prefs.ppEnable) {
+    mandatoryFields.push("ppForward", "ppBackward");
+  }
   for (var setting of mandatoryFields) {
     if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
     $("#" + setting + ", .timePicker[data-target='" + setting + "']").toggleClass("is-invalid", !prefs[setting]);
@@ -213,6 +216,7 @@ function validateConfig(changed, restart) {
   $("#enableMusicFadeOut, #musicVolume").closest(".row").toggle(!!prefs.enableMusicButton);
   $(".relatedToFadeOut").toggle(!!prefs.enableMusicButton && !!prefs.enableMusicFadeOut);
   $(".relatedToObs").toggle(!!prefs.enableObs);
+  $(".relatedToPP").toggle(!!prefs.ppEnable);
   if (os.platform() !== "linux") remote.app.setLoginItemSettings({ openAtLogin: prefs.autoRunAtBoot });
   $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton) {
