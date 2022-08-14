@@ -1,7 +1,6 @@
 ---
 category: Configuration
 title: 'Congregation sync'
-layout: null
 ---
 
 The brother designated as _videoconference organizer_ (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
@@ -69,9 +68,6 @@ Once the congregation sync setup is complete, you're ready to start <a href="#/m
 
 ### Screenshots
 
-<table class="showcase">
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-2.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-2.png?raw=true"></a></td>
-<td>Congregation sync setup</td>
-</tr>
+<table class="showcase" markdown="0">
+{% include image.html src="settings/cong.png" alt="Congregation sync setup" %}
 </table>

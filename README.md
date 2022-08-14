@@ -43,6 +43,6 @@ Enjoy!
 
 ---
 
-![Media Presentation Mode](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true)
+![Media Presentation Mode](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/assets/img/present/standby-mode.png?raw=true)
 
-![Media Sync in progress](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/hero-main.gif?raw=true)
+![Media Sync in progress](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/assets/img/main/update-folders.gif?raw=true)

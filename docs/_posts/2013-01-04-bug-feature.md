@@ -1,7 +1,6 @@
 ---
 category: Help
 title: 'Issues and feature requests'
-layout: null
 ---
 
 ### How do I report an issue or bug I encountered?

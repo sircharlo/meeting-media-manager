@@ -1,7 +1,6 @@
 ---
 category: Usage
 title: 'Managing media'
-layout: null
 ---
 
 
@@ -43,25 +42,10 @@ To **remove**, **hide**, or **show** media, simply find the media file you don't
 
 ### Screenshots
 
-<table class="showcase">
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-song.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-song.png?raw=true"></a></td>
-<td>Adding a song for a public talk</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-media.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-media.png?raw=true"></a></td>
-<td>Adding an additional picture</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-jwpub-extract.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-jwpub-extract.png?raw=true"></a></td>
-<td>Importing media from a section in a JWPUB file</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-jwpub.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/custom-jwpub.png?raw=true"></a></td>
-<td>Previewing media from a JWPUB file before importing</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/rename-media.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/rename-media.png?raw=true"></a></td>
-<td>Renaming a media file</td>
-</tr>
+<table class="showcase" markdown="0">
+{% include image.html src="manage/song-media.png" alt="Adding a song for a public talk" %}
+{% include image.html src="manage/custom-media.png" alt="Adding an additional picture" %}
+{% include image.html src="manage/jwpub-extract.png" alt="Importing media from a section in a JWPUB file" %}
+{% include image.html src="manage/jwpub-media.png" alt="Previewing media from a JWPUB file before importing" %}
+{% include image.html src="manage/rename-media.png" alt="Renaming a media file" %}
 </table>

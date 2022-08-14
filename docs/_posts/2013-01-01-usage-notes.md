@@ -1,7 +1,6 @@
 ---
 category: Help
 title: Technical usage notes
-layout: null
 ---
 
 The app should run as is on most modern computers running Windows, Linux, or Mac.

@@ -1,7 +1,6 @@
 ---
 category: Usage
 title: 'Presenting media'
-layout: null
 ---
 
 ### Using media presentation mode
@@ -125,37 +124,13 @@ Same as corresponding section above.
 
 ### Screenshots
 
-<table class="showcase">
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/launch-presentation-mode.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/launch-presentation-mode.png?raw=true"></a></td>
-<td>Button to enter media controller mode</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/meeting-picker.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/meeting-picker.png?raw=true"></a></td>
-<td>Selecting a meeting for which to display media</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/default-background.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/default-background.png?raw=true"></a></td>
-<td>Default media background, with automatically generated yeartext</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/media-list.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/media-list.png?raw=true"></a></td>
-<td>List of media that is ready to be presented</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true"></a></td>
-<td>M³ media presentation in standby mode</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/play-picture.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/play-picture.png?raw=true"></a></td>
-<td>Displaying a picture</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/video-playing.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/video-playing.png?raw=true"></a></td>
-<td>Playing a video</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/video-scrub.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/video-scrub.png?raw=true"></a></td>
-<td>Moving to a specific time in a video</td>
-</tr>
+<table class="showcase" markdown="0">
+{% include image.html src="present/launch-present-mode.png" alt="Button to enter media controller mode" %}
+{% include image.html src="present/meeting-picker.png" alt="Selecting a meeting for which to display media" %}
+{% include image.html src="present/default-bg.png" alt="Default media background, with automatically generated yeartext" %}
+{% include image.html src="present/media-list.png" alt="List of media that is ready to be presented" %}
+{% include image.html src="present/standby-mode.png" alt="M³ media presentation in standby mode" %}
+{% include image.html src="present/picture-playing.png" alt="Displaying a picture" %}
+{% include image.html src="present/video-playing.png" alt="Playing a video" %}
+{% include image.html src="present/video-scrub.png" alt="Moving to a specific time in a video" %}
 </table>

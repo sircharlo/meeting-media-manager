@@ -6,6 +6,13 @@ prefs.json
 src/renderer/static/sql-wasm.wasm
 src/renderer/static/pdf.worker*
 
+# Jekyll build output
+_site
+
+# Jekyll cache
+.jekyll-cache
+.jekyll-metadata
+
 # Logs
 logs
 *.log
@@ -32,17 +39,8 @@ node_modules/
 node_modules*/
 jspm_packages/
 
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
 # Optional eslint cache
 .eslintcache
-
-# Output of 'npm pack'
-*.tgz
 
 # Yarn Integrity file
 .yarn-integrity

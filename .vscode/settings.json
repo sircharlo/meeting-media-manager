@@ -1,4 +1,7 @@
 {
+  "files.associations": {
+    "main.scss": "liquid"
+  },
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true

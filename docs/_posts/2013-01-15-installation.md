@@ -1,7 +1,6 @@
 ---
 category: Configuration
 title: 'Installation'
-layout: null
 ---
 
 M³ does not require administrative privileges to install or run. To install M³, simply download the latest installer <a href="https://github.com/sircharlo/meeting-media-manager/releases/latest" target="_blank">from here</a> and run it.
