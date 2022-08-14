@@ -13,6 +13,7 @@
 * text eol=lf
 
 # git objects as binary
+*.gif binary
 *.png binary
 *.ico binary
 *.icns binary
