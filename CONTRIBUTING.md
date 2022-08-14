@@ -26,7 +26,7 @@ In order to help maintain this application, the following information will help 
 # Install dependencies
 yarn install
 
-# Serve app with hot reload
+# Serve app with hot reload on localhost:3000
 yarn dev
 
 # Build electron application for production
@@ -51,3 +51,16 @@ The renderer process is made using [Nuxt](https://nuxtjs.org/). The Nuxt framewo
 The UI components are made using [Vuetify](https://vuetifyjs.com/en/). The Vuetify framework is a Vue UI library for building beautiful material design web applications.
 
 The icons used in this project are taken from the [Font Awesome](https://fontawesome.com/icons) project.
+
+### Run documentation website locally
+
+The documentation website is hosted on [GitHub Pages](https://pages.github.com/) and generated with [Jekyll](https://jekyllrb.com/docs/installation/).
+
+To run the documentation site locally, you can follow the [instructions](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) of GitHub Pages.
+
+Once you have installed Jekyll, you can run the following command inside the docs folder.
+
+``` bash
+# Serve website with hot reload on localhost:4000
+jekyll serve
+```
