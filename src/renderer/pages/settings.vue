@@ -21,7 +21,7 @@
     <v-col cols="12" align-self="end" class="d-flex">
       <v-col class="d-flex pa-0" align-self="center">
         <v-btn small class="mr-2">
-          M³ {{ $config.isDev ? 'development' : $config.version }}
+          M³ {{ $config.isDev ? 'dev' : $config.version }}
         </v-btn>
         <v-btn small class="mr-2" @click="report()">
           {{ $t('reportIssue') }}

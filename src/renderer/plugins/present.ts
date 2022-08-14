@@ -147,7 +147,7 @@ export default function (
               size: { width: number; height: number }
             }) => {
               return {
-                value: screen.id,
+                id: screen.id,
                 class: 'display',
                 text: `${i18n.t('screen')} ${screen.humanFriendlyNumber} ${
                   screen.size?.width && screen.size?.height

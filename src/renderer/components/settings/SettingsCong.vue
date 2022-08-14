@@ -175,7 +175,9 @@ export default Vue.extend({
       }
     },
     setHost(host: CongPrefs) {
-      Object.assign(this.cong, host)
+      this.cong.server = host.server
+      this.cong.port = host.port
+      this.cong.dir = host.dir
     },
   },
 })

@@ -58,14 +58,20 @@ export default function (
           return [
             scope,
             Object.fromEntries(
-              Object.entries(prefs).map(([key, value]) => {
-                if (value) {
-                  if (scope === 'cong') value = '***'
-                  if (key === 'localOutputPath') value = '***'
-                  if (key === 'password' || key === 'port') value = '***'
+              Object.entries(prefs).map(
+                ([key, value]: [key: string, value: any]) => {
+                  if (value) {
+                    if (scope === 'cong') value = '***'
+                    if (key === 'localOutputPath') value = '***'
+                    if (key === 'password' || key === 'port') value = '***'
+                    if (key === 'obs') {
+                      if (value.password) value.password = '***'
+                      if (value.port) value.port = '***'
+                    }
+                  }
+                  return [key, value]
                 }
-                return [key, value]
-              })
+              )
             ),
           ]
         })

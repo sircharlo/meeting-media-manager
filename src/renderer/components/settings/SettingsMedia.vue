@@ -46,9 +46,8 @@
         v-if="screens.length > 0"
         v-model="media.preferredOutput"
         field="select"
-        :items="[{ id: 'window', text: $t('window') }, ...screens]"
-        item-text="text"
         item-value="id"
+        :items="[{ id: 'window', text: $t('window') }, ...screens]"
         :locked="locked('media.preferredOutput')"
         :label="$t('preferredOutput')"
       />
