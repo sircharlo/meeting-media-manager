@@ -18,7 +18,15 @@ module.exports = {
   head: {
     titleTemplate: '%s - Meeting Media Manager',
     title: 'M³',
-    meta: [{ charset: 'utf-8' }],
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Meeting Media Manager',
+      },
+    ],
   },
   loading: false,
   components: true,
