@@ -151,7 +151,7 @@ export default Vue.extend({
         join(this.$getPrefs('cong.dir'), 'forcedPrefs.json'),
         JSON.stringify(forcedPrefs, null, 2)
       )
-      await this.$forcePrefs()
+      await this.$forcePrefs(true)
       this.loading = false
       this.$emit('done')
     },
