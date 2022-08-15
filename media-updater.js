@@ -28,12 +28,12 @@ const aspect = require("aspectratio"),
   os = require("os"),
   path = require("upath"),
   remote = require("@electron/remote"),
-  {shell} = require("electron"),
+  { shell } = require("electron"),
   sizeOf = require("image-size"),
   sqljs = require("sql.js"),
   url = require("url"),
   v8 = require("v8"),
-  {XMLBuilder} = require("fast-xml-parser"),
+  { XMLBuilder } = require("fast-xml-parser"),
   zipper = require("adm-zip"),
   $ = require("jquery");
 require("jquery-ui");
@@ -69,15 +69,15 @@ require("electron").ipcRenderer.on("macUpdate", async () => {
     let macDownload = latestVersion.assets.find(a => a.name.includes("dmg"));
     notifyUser("info", "updateDownloading", latestVersion.tag_name, false, null);
     let macDownloadPath = path.join(remote.app.getPath("downloads"), macDownload.name);
-    fs.writeFileSync(macDownloadPath, Buffer.from(new Uint8Array((await request(macDownload.browser_download_url, {isFile: true})).data)));
+    fs.writeFileSync(macDownloadPath, Buffer.from(new Uint8Array((await request(macDownload.browser_download_url, { isFile: true })).data)));
     await shell.openPath(url.fileURLToPath(url.pathToFileURL(macDownloadPath).href));
     // remote.app.exit();
-  } catch(err) {
-    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
+  } catch (err) {
+    notifyUser("error", "updateNotDownloaded", currentAppVersion, true, err, { desc: "moreInfo", url: constants.REPO_URL + "releases/latest" });
   }
   $("#bg-mac-update").fadeIn(constants.FADE_DELAY);
   $("#btn-settings").addClass("pulse-danger");
-  $("#version").addClass("btn-danger pulse-danger").removeClass("btn-light").find("i").remove().end().prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").on("click", function() {
+  $("#version").addClass("btn-danger pulse-danger").removeClass("btn-light").find("i").remove().end().prepend("<i class='fas fa-hand-point-right'></i> ").append(" <i class='fas fa-hand-point-left'></i>").on("click", function () {
     shell.openExternal(constants.REPO_URL + "releases/latest");
   });
   await overlay(false);
@@ -100,7 +100,7 @@ var ffmpegIsSetup = false,
   stayAlive;
 
 overlay(true, "cog fa-spin");
-$(function() {
+$(function () {
   updateCleanup();
   updateOnlineStatus();
   congregationInitialSelector();
@@ -152,31 +152,30 @@ function createMediaNames() {
         media.safeName = (i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0");
         if (!media.congSpecific) {
           media.safeName = sanitizeFilename(
-            media.safeName + " - "
-            + ((media.queryInfo && media.queryInfo.TargetParagraphNumberLabel ? "Paragraph " + media.queryInfo.TargetParagraphNumberLabel + " - " : ""))
-            + (media.pub && media.pub.includes("sjj") ? "Song " : "") + media.title + path.extname((media.url ? media.url : media.filepath))
+            `${media.safeName} - ${(media.queryInfo && media.queryInfo.TargetParagraphNumberLabel ? `${translate("paragraph")} ` + media.queryInfo.TargetParagraphNumberLabel + " - " : "")}${media.pub && media.pub.includes("sjj") ? `${translate("song")} ` : ""}${media.title}${path.extname((media.url ? media.url : media.filepath))}`
           );
         }
       });
     });
   });
-  log.debug(Object.entries(get("meetingMedia")).map(meeting => { meeting[1] = meeting[1]
-    .filter(mediaItem => mediaItem.media.length > 0)
-    .map(item => item.media)
-    .flat(); return meeting;
+  log.debug(Object.entries(get("meetingMedia")).map(meeting => {
+    meeting[1] = meeting[1]
+      .filter(mediaItem => mediaItem.media.length > 0)
+      .map(item => item.media)
+      .flat(); return meeting;
   }));
   perf("createMediaNames", "stop");
 }
-function createVideoSync(mediaFile){
+function createVideoSync(mediaFile) {
   let outputFilePath = path.format({ ...path.parse(mediaFile), base: undefined, ext: ".mp4" });
-  return new Promise((resolve)=>{
+  return new Promise((resolve) => {
     try {
       if (path.extname(mediaFile).includes("mp3")) {
         ffmpegSetup().then(function () {
-          ffmpeg(mediaFile).on("end", function() {
+          ffmpeg(mediaFile).on("end", function () {
             if (!get("prefs").keepOriginalsAfterConversion) rm(mediaFile);
             return resolve();
-          }).on("error", function(err) {
+          }).on("error", function (err) {
             notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
             return resolve();
           }).noVideo().save(path.join(outputFilePath));
@@ -194,7 +193,7 @@ function createVideoSync(mediaFile){
         $("body").append("<div id='convert' style='display: none;'>");
         $("div#convert").append("<img id='imgToConvert'>").append("<canvas id='imgCanvas'></canvas>");
         hme.createH264MP4Encoder().then(function (encoder) {
-          $("img#imgToConvert").on("load", function() {
+          $("img#imgToConvert").on("load", function () {
             var canvas = $("#imgCanvas")[0],
               image = $("img#imgToConvert")[0];
             encoder.quantizationParameter = 10;
@@ -212,7 +211,7 @@ function createVideoSync(mediaFile){
             if (!get("prefs").keepOriginalsAfterConversion) rm(mediaFile);
             return resolve();
           });
-          $("img#imgToConvert").on("error", function(err) {
+          $("img#imgToConvert").on("error", function (err) {
             notifyUser("warn", "warnMp4ConversionFailure", path.basename(mediaFile), true, err, true);
             $("div#convert").remove();
             return resolve();
@@ -238,7 +237,7 @@ function createVlcPlaylists() {
       "playlist": {
         "title": date,
         "trackList": {
-          "track": glob.sync(path.join(get("paths").media, date, "*")).map(k => ({"location": url.pathToFileURL(k).href}))
+          "track": glob.sync(path.join(get("paths").media, date, "*")).map(k => ({ "location": url.pathToFileURL(k).href }))
         },
         "@_xmlns": "http://xspf.org/ns/0/",
         "@_xmlns:vlc": "http://www.videolan.org/vlc/playlist/ns/0/",
@@ -246,13 +245,13 @@ function createVlcPlaylists() {
       }
     };
     fs.ensureDirSync(path.join(get("paths").media, date));
-    fs.writeFileSync(path.join(get("paths").media, date, date + ".xspf"), (new XMLBuilder({ignoreAttributes: false})).build(playlistItems));
+    fs.writeFileSync(path.join(get("paths").media, date, date + ".xspf"), (new XMLBuilder({ ignoreAttributes: false })).build(playlistItems));
   }
 }
 
 function displayMusicRemaining() {
   let timeRemaining;
-  if (get("prefs").enableMusicFadeOut && pendingMusicFadeOut.endTime >0) {
+  if (get("prefs").enableMusicFadeOut && pendingMusicFadeOut.endTime > 0) {
     let rightNow = dayjs();
     timeRemaining = (dayjs(pendingMusicFadeOut.endTime).isAfter(rightNow) ? dayjs(pendingMusicFadeOut.endTime).diff(rightNow) : 0);
   } else {
@@ -271,7 +270,7 @@ async function downloadIfRequired(file) {
   if (file.downloadRequired) {
     if (path.extname(file.cacheFile) == ".jwpub") rm(file.cacheDir);
     fs.ensureDirSync(file.cacheDir);
-    let downloadedFile = Buffer.from(new Uint8Array((await request(file.url, {isFile: true})).data));
+    let downloadedFile = Buffer.from(new Uint8Array((await request(file.url, { isFile: true })).data));
     fs.writeFileSync(file.cacheFile, downloadedFile);
     if (file.folder) {
       fs.ensureDirSync(path.join(get("paths").media, file.folder));
@@ -300,7 +299,7 @@ async function executeStatement(db, statement) {
       }
     }
   }
-  log.debug({statement: statement, valObj: valObj});
+  log.debug({ statement: statement, valObj: valObj });
   return valObj;
 }
 async function ffmpegSetup() {
@@ -319,7 +318,7 @@ async function ffmpegSetup() {
     if (!fs.existsSync(ffmpegZipPath) || fs.statSync(ffmpegZipPath).size !== ffmpegVersion.size) {
       await rm([path.join(get("paths").app, "ffmpeg", "zip")]);
       fs.ensureDirSync(path.join(get("paths").app, "ffmpeg", "zip"));
-      fs.writeFileSync(ffmpegZipPath, Buffer.from( new Uint8Array((await request(ffmpegVersion.browser_download_url, {isFile: true})).data)));
+      fs.writeFileSync(ffmpegZipPath, Buffer.from(new Uint8Array((await request(ffmpegVersion.browser_download_url, { isFile: true })).data)));
     }
     var zip = new zipper(ffmpegZipPath);
     var zipEntry = zip.getEntries().filter((x) => !x.entryName.includes("MACOSX"))[0];
@@ -412,7 +411,7 @@ async function getDbFromJwpub(pub, issue, localpath, lang) {
     } else {
       if (!jwDbs[pub]) jwDbs[pub] = {};
       if (!jwDbs[pub][issue]) {
-        var jwpub = (await getMediaLinks({pubSymbol: pub, issue: issue, format: "JWPUB", ...(lang && { lang: lang })}))[0];
+        var jwpub = (await getMediaLinks({ pubSymbol: pub, issue: issue, format: "JWPUB", ...(lang && { lang: lang }) }))[0];
         if (jwpub) {
           jwpub.pub = pub;
           jwpub.issue = issue;
@@ -515,7 +514,7 @@ async function getDocumentMultimedia(db, destDocId, destMepsId, memOnly, lang) {
           queryInfo: multimediaItem,
           BeginParagraphOrdinal: multimediaItem.BeginParagraphOrdinal
         };
-        Object.assign(json, (await getMediaLinks({pubSymbol: multimediaItem.KeySymbol, track: multimediaItem.Track, issue: multimediaItem.IssueTagNumber, docId: multimediaItem.MultiMeps, ...(lang && { lang: lang })}))[0]);
+        Object.assign(json, (await getMediaLinks({ pubSymbol: multimediaItem.KeySymbol, track: multimediaItem.Track, issue: multimediaItem.IssueTagNumber, docId: multimediaItem.MultiMeps, ...(lang && { lang: lang }) }))[0]);
         multimediaItems.push(json);
       } else {
         if (multimediaItem.KeySymbol == null) {
@@ -563,7 +562,7 @@ async function getMwMediaFromDb() {
         });
       }
       updateTile("day" + get("prefs").mwDay, "success");
-    } catch(err) {
+    } catch (err) {
       notifyUser("error", "errorGetMwMedia", null, true, err, true);
       updateTile("day" + get("prefs").mwDay, "danger");
     }
@@ -575,7 +574,7 @@ function getPrefix() {
     if (!curValuePresent) $(Array(6 - 1 - a0).fill(a0).map((x, y) => "#enterPrefix-" + (x + 1 + y)).join(", ")).val("");
     $("#enterPrefix-" + (a0 + 1)).fadeToAndToggle(constants.FADE_DELAY, curValuePresent).filter(":not(.disabled-while-load)").prop("disabled", !curValuePresent);
   }
-  let prefix = $(".enterPrefixInput").map(function() {
+  let prefix = $(".enterPrefixInput").map(function () {
     return $(this).val();
   }).toArray().join("").trim();
   if ($("#enterPrefix-0").val().length > 0) $("#enterPrefix-" + prefix.length).focus();
@@ -598,7 +597,7 @@ async function getWeMediaFromDb() {
         db = await getDbFromJwpub("w", issue);
         weekNumber = (await executeStatement(db, "SELECT FirstDateOffset FROM DatedText")).findIndex(weekItem => dayjs(weekItem.FirstDateOffset.toString(), "YYYYMMDD").isBetween(get("baseDate"), get("baseDate").clone().add(6, "days"), null, "[]"));
       }
-      if (weekNumber < 0) throw("No WE meeting date found!");
+      if (weekNumber < 0) throw ("No WE meeting date found!");
       var docId = (await executeStatement(db, "SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET " + weekNumber))[0].DocumentId;
       for (var picture of (await executeStatement(
         db,
@@ -609,7 +608,7 @@ async function getWeMediaFromDb() {
           LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
         WHERE Document.DocumentId = ${docId} AND Multimedia.CategoryType <> 9 GROUP BY DocumentMultimedia.MultimediaId`))) {
         if (!isImage(picture.FilePath)) {
-          let mediaObj = await getMediaLinks({pubSymbol: picture.KeySymbol, track: picture.Track, issue: picture.IssueTagNumber});
+          let mediaObj = await getMediaLinks({ pubSymbol: picture.KeySymbol, track: picture.Track, issue: picture.IssueTagNumber });
           if (mediaObj && mediaObj.length > 0) addMediaItemToPart(weDate, 1, mediaObj[0]);
         } else {
           var LocalPath = path.join(get("paths").pubs, "w", issue, "0", picture.FilePath);
@@ -625,7 +624,7 @@ async function getWeMediaFromDb() {
       }
       var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
       for (var song = 0; song < qrySongs.length; song++) {
-        let songJson = await getMediaLinks({pubSymbol: qrySongs[song].KeySymbol, track: qrySongs[song].Track});
+        let songJson = await getMediaLinks({ pubSymbol: qrySongs[song].KeySymbol, track: qrySongs[song].Track });
         if (songJson.length > 0) {
           songJson[0].queryInfo = qrySongs[song];
           addMediaItemToPart(weDate, song * 2, songJson[0]);
@@ -634,7 +633,7 @@ async function getWeMediaFromDb() {
         }
       }
       updateTile("day" + prefs.weDay, "success");
-    } catch(err) {
+    } catch (err) {
       notifyUser("error", "errorGetWeMedia", null, true, err, true);
       updateTile("day" + prefs.weDay, "danger");
     }
@@ -674,7 +673,7 @@ async function manageMedia(day, isMeetingDate, mediaType) {
 
 function refreshFolderListing(folderPath) {
   $(".for-folder-listing-only").show();
-  $("h5.modal-title").html($("<button class='btn btn-secondary'>" + path.basename(folderPath) + "</button>").on("click", function() {
+  $("h5.modal-title").html($("<button class='btn btn-secondary'>" + path.basename(folderPath) + "</button>").on("click", function () {
     $("div#folderListing").empty().append(listMediaFolders());
   }));
   $("div#folderListing").empty().sortable({
@@ -691,11 +690,11 @@ function refreshFolderListing(folderPath) {
       <div class='d-flex me-3' style='height: 5rem;'>
     </div>
     <div class='flex-fill mediaDesc'>`
-    + path.basename(item)
-      .replace(/^(\d{2}-\d{2} - )/, "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>")
-      .replace(/Paragraph (\d+) -/g, "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>")
-      .replace(/Song (\d+) -/g, "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>")
-    + `</div>
+      + path.basename(item)
+        .replace(/^(\d{2}-\d{2} - )/, "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>")
+        .replace(new RegExp(`${translate("paragraph")} (\\d+) -`, "g"), "<big><span class='alert alert-secondary fw-bold px-2 py-1 small'><i class='fas fa-paragraph'></i> $1</span></big>")
+        .replace(new RegExp(`${translate("song")} (\\d+) -`, "g"), "<big><span class='alert alert-info fw-bold px-2 py-1 small'><i class='fas fa-music'></i> $1</span></big>")
+      + `</div>
     <div class='ps-3 pe-2'>
       <button class='btn btn-lg btn-warning pausePlay pause' style='visibility: hidden;'>
         <i class='fas fa-fw fa-pause'></i>
@@ -723,7 +722,7 @@ function refreshFolderListing(folderPath) {
   </div>` : "")}
 </li>`);
 
-    lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? `poster='${constants.AUDIO_ICON}'` : `poster='${constants.VIDEO_ICON}'`) + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function() {
+    lineItem.find(".mediaDesc").prev("div").append($("<div class='align-self-center d-flex media-item position-relative'></div>").append((isVideo(item) || isAudio(item) ? $("<video preload='metadata' " + (isAudio(item) && !isVideo(item) ? `poster='${constants.AUDIO_ICON}'` : `poster='${constants.VIDEO_ICON}'`) + "><source src='" + url.pathToFileURL(item).href + "#t=5'></video>").on("loadedmetadata", function () {
       try {
         lineItem.data("originalStart", 0);
         if ($(this)[0].duration) {
@@ -753,14 +752,14 @@ function refreshFolderListing(folderPath) {
   <div><input type='text' class='col form-control form-control-sm timeend px-1 py-0 text-center'></div>
   <div class='d-flex fs-5 align-items-center'><i role='button' tabindex='0' class='applyTimeChanges fas fa-fw fa-square-check text-danger'></i></div>
   </div></div>`)
-      .add($("<div role='button' tabindex='0' class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple" ) + "'></i> <span class='current'></span><span class='duration'></span></div>")
+      .add($("<div role='button' tabindex='0' class='bottom-0 position-absolute px-2 small start-0 text-light time'><i class='fas fa-" + (isVideo(item) ? "film" : "headphones-simple") + "'></i> <span class='current'></span><span class='duration'></span></div>")
         .popover({
           content: translate("clickAgain"),
           container: "body",
           trigger: "focus"
-        }).on("hidden.bs.popover", function() {
+        }).on("hidden.bs.popover", function () {
           unconfirm(this);
-        }).on("click", function() {
+        }).on("click", function () {
           if (!$(this).hasClass("confirmed")) {
             waitToConfirm(this);
           } else {
@@ -807,7 +806,7 @@ function refreshFolderListing(folderPath) {
           text: marker.label
         }));
       }
-      lineItem.find(".markerList .btn").on("click", function() {
+      lineItem.find(".markerList .btn").on("click", function () {
         lineItem.data("customStart", $(this).data("customStart"));
         lineItem.data("customEnd", $(this).data("customEnd"));
         lineItem.find("button.play:not(.pausePlay)").trigger("click");
@@ -817,23 +816,23 @@ function refreshFolderListing(folderPath) {
         $(this).addClass("opacity-75");
       });
     }
-    lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function() {
+    lineItem.find(".customStartStop i.setTimeToCurrent").on("click", function () {
       try {
         if (!isNaN(lineItem.data("timeElapsed"))) lineItem.find(".time" + ($(this).hasClass("beginning") ? "start" : "end")).val(dayjs.duration(Math.round(lineItem.data("timeElapsed") * 1000, "ms")).format("mm:ss.SSS")).trigger("change");
       } catch (err) {
         log.error(err);
       }
     });
-    lineItem.find(".customStartStop i.timeReset").on("click", function() {
+    lineItem.find(".customStartStop i.timeReset").on("click", function () {
       try {
         for (let timeItem of ["Start", "End"]) {
-          lineItem.find(".time" + timeItem.toLowerCase()).val(!isNaN(lineItem.data("original" + timeItem)) ? dayjs.duration(lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS"): "");
+          lineItem.find(".time" + timeItem.toLowerCase()).val(!isNaN(lineItem.data("original" + timeItem)) ? dayjs.duration(lineItem.data("original" + timeItem), "ms").format("mm:ss.SSS") : "");
         }
       } catch (err) {
         log.error(err);
       }
     });
-    lineItem.find(".customStartStop .timestart, .customStartStop .timeend").inputmask("99:99.999", { "placeholder": "0" }).on("change", function() {
+    lineItem.find(".customStartStop .timestart, .customStartStop .timeend").inputmask("99:99.999", { "placeholder": "0" }).on("change", function () {
       try {
         let inputTimes = {};
         for (let timeItem of ["Start", "End"]) {
@@ -857,9 +856,9 @@ function refreshFolderListing(folderPath) {
       content: translate("clickAgain"),
       container: "body",
       trigger: "focus"
-    }).on("hidden.bs.popover", function() {
+    }).on("hidden.bs.popover", function () {
       unconfirm(this);
-    }).on("click", function() {
+    }).on("click", function () {
       if (!$(this).hasClass("confirmed")) {
         waitToConfirm(this);
       } else {
@@ -885,9 +884,9 @@ function refreshFolderListing(folderPath) {
           let customStartStopIsSet = (!!lineItem.data("customStart") && lineItem.data("customStart") !== lineItem.data("originalStart")) || (!!lineItem.data("customEnd") && lineItem.data("customEnd") !== lineItem.data("originalEnd"));
           lineItem.find(".time").toggleClass("pulse-danger", customStartStopIsSet).show();
           if (customStartStopIsSet) {
-            lineItem.find("#videoBounds").show("blind", { direction: "vertical"}, constants.FADE_DELAY);
+            lineItem.find("#videoBounds").show("blind", { direction: "vertical" }, constants.FADE_DELAY);
           } else {
-            lineItem.find("#videoBounds").hide("blind", { direction: "vertical"}, constants.FADE_DELAY);
+            lineItem.find("#videoBounds").hide("blind", { direction: "vertical" }, constants.FADE_DELAY);
           }
           lineItem.find(".customStartStop").toggleClass("d-flex d-none");
         } catch (err) {
@@ -908,7 +907,7 @@ function refreshFolderListing(folderPath) {
   }
   $("div#folderListing .video .stop").popover({
     content: translate("clickAgain")
-  }).on("hidden.bs.popover", function() {
+  }).on("hidden.bs.popover", function () {
     unconfirm(this);
   });
 }
@@ -943,7 +942,7 @@ async function startMediaDisplay() {
     await getRemoteYearText().finally(() => {
       require("electron").ipcRenderer.send("startMediaDisplay", get("paths").prefs);
     });
-  } catch(err) {
+  } catch (err) {
     log.error(err);
   }
 }
@@ -1015,7 +1014,7 @@ function stopMeetingMusic() {
       clearMusic();
     } else {
       $("#btnStopMeetingMusic").addClass("stopping");
-      $("#meetingMusic").stop().animate({volume: 0}, constants.FADE_DELAY * (pendingMusicFadeOut.autoStop ? 50 : 10), () => {
+      $("#meetingMusic").stop().animate({ volume: 0 }, constants.FADE_DELAY * (pendingMusicFadeOut.autoStop ? 50 : 10), () => {
         clearMusic();
       });
     }
@@ -1085,7 +1084,7 @@ async function syncJwOrgMedia() {
           } else {
             log.info("%c[jwOrg] [" + Object.keys(jwOrgSyncMeetingMedia)[h] + "] " + partMedia[j].safeName, "background-color: #cce5ff; color: #004085;");
             if (partMedia[j].markers) {
-              let markers = partMedia[j].markers.markers.map(({duration, label, startTime, endTransitionDuration}) => ({duration, label, startTime, endTransitionDuration}));
+              let markers = partMedia[j].markers.markers.map(({ duration, label, startTime, endTransitionDuration }) => ({ duration, label, startTime, endTransitionDuration }));
               markers = Array.from(new Set(markers.map(JSON.stringify))).map(JSON.parse);
               fs.ensureDirSync(path.join(get("paths").media, partMedia[j].folder));
               fs.writeFileSync(path.join(get("paths").media, partMedia[j].folder, path.changeExt(partMedia[j].safeName, ".json")), JSON.stringify(markers));
@@ -1123,7 +1122,7 @@ function syncLocalRecurringMedia() {
 async function testApp() {
   setLogLevel("debug");
   let previousLang = get("prefs").lang;
-  for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"] ) {
+  for (var lang of ["E", "F", "M", "R", "S", "T", "U", "X"]) {
     setPref("lang", lang);
     await startMediaSync(true);
   }
@@ -1136,7 +1135,7 @@ function updateCleanup() {
   try { // do some housecleaning after version updates
     var lastRunVersion = "0";
     if (fs.existsSync(get("paths").lastRunVersion)) lastRunVersion = fs.readFileSync(get("paths").lastRunVersion, "utf8");
-  } catch(err) {
+  } catch (err) {
     notifyUser("warn", "warnUnknownLastVersion", null, false, err);
   } finally {
     if (lastRunVersion !== currentAppVersion) {
@@ -1164,13 +1163,13 @@ function updateCleanup() {
         // fs.writeFileSync(paths.lastRunVersion, currentAppVersion);
         if (remote.app.isPackaged) fs.writeFileSync(get("paths").lastRunVersion, currentAppVersion);
         if (lastRunVersion !== "0") {
-          notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"});
+          notifyUser("info", "updateInstalled", currentAppVersion, false, null, { desc: "moreInfo", url: constants.REPO_URL + "releases/latest" });
           let currentLang = get("jsonLangs") ? get("jsonLangs").filter(item => item.langcode === prefs.lang)[0] : null;
-          if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", translate("wannaHelpExplain") + "<br/><small>" +  translate("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
+          if (prefs.lang && currentLang && !fs.readdirSync(path.join(__dirname, "locales")).map(file => file.replace(".json", "")).includes(currentLang.symbol)) notifyUser("wannaHelp", translate("wannaHelpExplain") + "<br/><small>" + translate("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
             desc: "wannaHelpForSure",
             url: constants.REPO_URL + "discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
           });
-          getJwOrgLanguages(true).then(function() {
+          getJwOrgLanguages(true).then(function () {
             setMediaLang();
           });
         }
@@ -1202,7 +1201,7 @@ function updateFileList(initialLoad) {
       if (fs.existsSync(path.join(get("paths").media, $("#chosenMeetingDay").data("folderName")))) {
         fs.readdirSync(path.join(get("paths").media, $("#chosenMeetingDay").data("folderName"))).map(item => {
           let existingItem = weekMedia.existing.map(weekMediaItem => weekMediaItem.media).flat().filter(weekMediaItemMedia => weekMediaItemMedia.safeName == item);
-          if (existingItem.length >0) {
+          if (existingItem.length > 0) {
             existingItem.map(item => {
               item.isLocal = true;
               return item;
@@ -1221,9 +1220,9 @@ function updateFileList(initialLoad) {
         });
       }
       if ($("#chosenMeetingDay").data("folderName") !== "Recurring" && fs.existsSync(path.join(get("paths").media, "Recurring"))) {
-        fs.readdirSync(path.join(get("paths").media, "Recurring")).map(function(item) {
+        fs.readdirSync(path.join(get("paths").media, "Recurring")).map(function (item) {
           let recurringItem = weekMedia.existing.map(weekMediaItem => weekMediaItem.media).flat().filter(weekMediaItemMedia => weekMediaItemMedia.safeName == item);
-          if (recurringItem.length >0) {
+          if (recurringItem.length > 0) {
             recurringItem.map(item => {
               item.recurring = true;
               return item;
@@ -1259,21 +1258,21 @@ function updateFileList(initialLoad) {
       }
       weekMedia.new = newFiles;
     }
-    $("#fileList li.new-file").slideUp(constants.FADE_DELAY, function() {
+    $("#fileList li.new-file").slideUp(constants.FADE_DELAY, function () {
       $(this).remove();
       $(".tooltip").remove();
       $("#btnUpload").toggle(newFileChosen).prop("disabled", $("#fileList .duplicated-file").length > 0);
     });
     let newList = Object.values(weekMedia).flat().filter(Boolean).map(weekMediaItem => weekMediaItem.media).flat().sort((a, b) => a.safeName.localeCompare(b.safeName));
     for (var file of newList) {
-      let html = $("<li data-bs-toggle='tooltip' " + (file.isNotPresentOnRemote ? "data-isnotpresentonremote='true' " : "") + (file.thumbnail ? "data-thumbnail='" + file.thumbnail + "' " : "") + (file.url ? "data-url='" + file.url + "'": "data-islocal='true'") + " data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
+      let html = $("<li data-bs-toggle='tooltip' " + (file.isNotPresentOnRemote ? "data-isnotpresentonremote='true' " : "") + (file.thumbnail ? "data-thumbnail='" + file.thumbnail + "' " : "") + (file.url ? "data-url='" + file.url + "'" : "data-islocal='true'") + " data-safename='" + file.safeName + "' style='display: none;'><span class='filename w-100'>" + file.safeName + "</span><div class='infoIcons ms-1'></div></li>").tooltip({
         title: file.safeName
       });
       if (!file.recurring && ((file.isLocal && !file.newFile) || file.congSpecific)) html.addClass("canDelete").prepend($("<i role='button' tabindex='0' class='fas fa-fw fa-minus-square me-2 text-danger'></i>").popover({
         content: translate("clickAgain"),
         container: "body",
         trigger: "focus"
-      }).on("hidden.bs.popover", function() {
+      }).on("hidden.bs.popover", function () {
         unconfirm(this);
       }));
       if (!file.newFile) {
@@ -1372,7 +1371,7 @@ function waitToConfirm(el) {
   if (!$(el).hasClass("confirmed")) {
     $(el).addClass("confirmed " + (currentWarningClass.length > 0 ? currentWarningClass.join(" ").replace("-warning", "-danger") : "btn-warning"));
     if (currentWarningClass.length > 0) $(el).removeClass(currentWarningClass.join(" "));
-    $(el).data("popover-timeout-id", setTimeout(function() {
+    $(el).data("popover-timeout-id", setTimeout(function () {
       unconfirm(el);
     }, 3000));
   }
@@ -1405,7 +1404,7 @@ var dropHandler = (event) => {
 $(document).on("select2:open", () => {
   document.querySelector(".select2-search__field").focus();
 });
-$("#baseDate").on("click", ".dropdown-item", function() {
+$("#baseDate").on("click", ".dropdown-item", function () {
   let newBaseDate = dayjs($(this).val(), get("prefs").outputFolderDateFormat).startOf("isoWeek");
   if (!get("baseDate").isSame(newBaseDate)) {
     set("baseDate", newBaseDate);
@@ -1416,13 +1415,13 @@ $("#baseDate").on("click", ".dropdown-item", function() {
     dateFormatter();
   }
 });
-$("#congregationSelect").on("click", ".dropdown-item:not(.active)", function() {
+$("#congregationSelect").on("click", ".dropdown-item:not(.active)", function () {
   congregationChange($(this).val());
 });
-$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function(e) {
+$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function (e) {
   e.stopPropagation();
 });
-$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function() {
+$("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function () {
   if (!$(this).hasClass("confirmed")) {
     waitToConfirm(this);
   } else {
@@ -1430,7 +1429,7 @@ $("#congregationSelect").on("click", ".dropdown-item .fa-square-minus", function
     congregationDelete($(this).closest("button").val());
   }
 });
-$("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected, .btn-cancel-upload.no-file-selected", function() {
+$("#overlayUploadFile").on("click", ".btn-cancel-upload.file-selected, .btn-cancel-upload.no-file-selected", function () {
   if (!$(this).is(".confirmed, .no-file-selected")) {
     waitToConfirm(this);
   } else {
@@ -1461,9 +1460,9 @@ $("#btnForcedPrefs").on("click", () => {
     html += "</div></div>";
     showModal(true, true, translate("settingsLocked"), html, true, true);
     $("#staticBackdrop #forcedPrefs .prefName").tooltip();
-    $("#staticBackdrop #forcedPrefs input").on("change", async function() {
+    $("#staticBackdrop #forcedPrefs input").on("change", async function () {
       $("#staticBackdrop #forcedPrefs input").prop("disabled", true);
-      let checkedItems = $("#staticBackdrop #forcedPrefs input:checked").map(function() { return this.id.replace("forcedPref-", ""); }).get();
+      let checkedItems = $("#staticBackdrop #forcedPrefs input:checked").map(function () { return this.id.replace("forcedPref-", ""); }).get();
       let forcedPrefs = JSON.stringify(Object.fromEntries(Object.entries(prefs).filter(([key]) => checkedItems.includes(key))), null, 2);
       if (await webdavPut(forcedPrefs, prefs.congServerDir, "forcedPrefs.json")) {
         enablePreviouslyForcedPrefs();
@@ -1495,7 +1494,7 @@ require("electron").ipcRenderer.on("moveMediaWindowToOtherScreen", () => {
 require("electron").ipcRenderer.on("displaysChanged", () => {
   setMediaWindowPosition();
 });
-$("#btnToggleMediaWindowFocus").on("click", function() {
+$("#btnToggleMediaWindowFocus").on("click", function () {
   require("electron").ipcRenderer.send("toggleMediaWindowFocus");
 });
 require("electron").ipcRenderer.on("mediaWindowVisibilityChanged", (_event, status) => {
@@ -1504,7 +1503,7 @@ require("electron").ipcRenderer.on("mediaWindowVisibilityChanged", (_event, stat
 require("electron").ipcRenderer.on("mediaWindowShown", async () => {
   await startMediaDisplay();
 });
-$("#staticBackdrop").on("input change", "#videoScrubber", function() {
+$("#staticBackdrop").on("input change", "#videoScrubber", function () {
   let scrolled_value = $(this).val(),
     limits = {};
   try {
@@ -1522,14 +1521,14 @@ $("#staticBackdrop").on("input change", "#videoScrubber", function() {
     console.error(err);
   }
 });
-$("#btnMediaWindow").on("click", function() {
+$("#btnMediaWindow").on("click", function () {
   require("electron").ipcRenderer.send("preventQuit");
   setVars();
   let folderListing = listMediaFolders();
-  $(folderListing).on("click", "button.folder", function() {
+  $(folderListing).on("click", "button.folder", function () {
     refreshFolderListing($(this).data("folder"));
   });
-  $(folderListing).on("click", "li.item button.pausePlay", function() {
+  $(folderListing).on("click", "li.item button.pausePlay", function () {
     if ($(this).hasClass("pause") && !$(this).hasClass("shortVideoPaused")) {
       require("electron").ipcRenderer.send("pauseVideo");
     } else if ($(this).hasClass("play")) {
@@ -1547,7 +1546,7 @@ $("#btnMediaWindow").on("click", function() {
   $(folderListing).on("mouseleave", "li:not(.list-group-item-primary)", function () {
     $(this).removeClass("list-group-item-secondary");
   });
-  $(folderListing).on("click", "li.item button.play:not(.pausePlay)", function() {
+  $(folderListing).on("click", "li.item button.play:not(.pausePlay)", function () {
     let mediaItem = $(this).closest(".item");
     $("#folderListing .item").removeClass("list-group-item-primary z-2");
     $("#btnToggleMediaWindowFocus.hidden").trigger("click");
@@ -1583,9 +1582,9 @@ $("#btnMediaWindow").on("click", function() {
     $("#folderListing button.stop").hide();
     $(this).hide();
     mediaItem.find(".stop").show();
-    mediaItem.find(".previously-played").show("blind", { direction: "horizontal"}, constants.FADE_DELAY);
+    mediaItem.find(".previously-played").show("blind", { direction: "horizontal" }, constants.FADE_DELAY);
   });
-  $(folderListing).on("click", "li.item button.stop", function() {
+  $(folderListing).on("click", "li.item button.stop", function () {
     let mediaItem = $(this).closest(".item");
     if (!mediaItem.hasClass("video") || $(this).hasClass("confirmed")) {
       require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
@@ -1648,35 +1647,35 @@ $("#btnMediaWindow").on("click", function() {
   $("#staticBackdrop .modal-footer .right").prepend($("#btnToggleMediaWindowFocus").removeClass("btn-sm"));
   $("#staticBackdrop .modal-footer").show();
 });
-$("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
-  set("obs",{});
+$("#staticBackdrop .modal-footer").on("click", "button.closeModal", function () {
+  set("obs", {});
   require("electron").ipcRenderer.send("allowQuit");
   $("#music-buttons").append($("#btnMeetingMusic, #btnStopMeetingMusic").removeClass("btn-lg"));
   $("#btnMediaWindow").before($("#btnToggleMediaWindowFocus").addClass("btn-sm"));
   showModal(false);
 });
-$("#staticBackdrop .modal-footer").on("change", "#obsTempCameraScene", async function() {
+$("#staticBackdrop .modal-footer").on("change", "#obsTempCameraScene", async function () {
   if ((await obsGetScenes(true, validateConfig)) !== get("prefs").obsMediaScene) obsSetScene($(this).val());
 });
-$("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function() {
+$("#staticBackdrop .modal-header").on("click", "button.folderRefresh", function () {
   refreshFolderListing(path.join(get("paths").media, $(".modal-header h5").text()));
 });
-$("#staticBackdrop .modal-header").on("click", ".master-move-handle", function() {
-  $(".move-handle").toggle("blind", {direction: "right"}, constants.FADE_DELAY);
+$("#staticBackdrop .modal-header").on("click", ".master-move-handle", function () {
+  $(".move-handle").toggle("blind", { direction: "right" }, constants.FADE_DELAY);
   $(this).find("i").toggleClass("fa-square-check fa-arrow-down-short-wide");
 });
-$("#staticBackdrop .modal-header").on("click", ".show-prefixes", function() {
-  $(".sort-prefix").toggle("blind", {direction: "horizontal"}, constants.FADE_DELAY);
+$("#staticBackdrop .modal-header").on("click", ".show-prefixes", function () {
+  $(".sort-prefix").toggle("blind", { direction: "horizontal" }, constants.FADE_DELAY);
   $(this).prop("disabled", true);
   setTimeout(() => {
     $(".show-prefixes").prop("disabled", false);
-    $(".sort-prefix").toggle("blind", {direction: "horizontal"}, constants.FADE_DELAY);
+    $(".sort-prefix").toggle("blind", { direction: "horizontal" }, constants.FADE_DELAY);
   }, 3000);
 });
-$("#staticBackdrop .modal-header").on("click", "button.folderOpen", function() {
+$("#staticBackdrop .modal-header").on("click", "button.folderOpen", function () {
   shell.openPath(url.fileURLToPath(url.pathToFileURL(path.join(get("paths").media, $(".modal-header h5").text())).href));
 });
-$("body").on("click", "#btnMeetingMusic", async function() {
+$("body").on("click", "#btnMeetingMusic", async function () {
   const prefs = get("prefs");
   if (!$(this).hasClass("confirmed")) {
     waitToConfirm(this);
@@ -1714,9 +1713,9 @@ $("body").on("click", "#btnMeetingMusic", async function() {
     $("#btnMeetingMusic, #btnStopMeetingMusic").toggle();
     setVars();
     var songs = (jworgIsReachable
-      ? (await getMediaLinks({pubSymbol: "sjjm", format: "MP3", lang: "E"})).filter(item => path.extname(item.url) == ".mp3")
+      ? (await getMediaLinks({ pubSymbol: "sjjm", format: "MP3", lang: "E" })).filter(item => path.extname(item.url) == ".mp3")
       : glob.sync(path.join(get("paths").pubs, get("songPub"), "**", "*.mp3"))
-        .map(item => ({title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item})))
+        .map(item => ({ title: path.basename(item), track: path.basename(path.resolve(item, "..")), path: item })))
       .sort(() => .5 - Math.random());
     if (songs.length > 0) {
       var iterator = 0;
@@ -1728,32 +1727,32 @@ $("body").on("click", "#btnMeetingMusic", async function() {
   }
   async function createAudioElem(iterator) {
     setVars();
-    $("body").append($("<audio id='meetingMusic' autoplay>").data("track", songs[iterator].track).on("ended", function() {
+    $("body").append($("<audio id='meetingMusic' autoplay>").data("track", songs[iterator].track).on("ended", function () {
       $("#meetingMusic").remove();
       iterator = (iterator < songs.length - 1 ? iterator + 1 : 0);
       createAudioElem(iterator);
-    }).on("canplay", function() {
+    }).on("canplay", function () {
       $("#btnStopMeetingMusic").removeClass("initialLoad").find("i")
         .addClass("fa-stop").removeClass("fa-circle-notch fa-spin")
         .closest("button").prop("title", songs[iterator].title + " (Alt+K)");
       $("#meetingMusic").prop("volume", prefs.musicVolume / 100);
       displayMusicRemaining();
-    }).on("timeupdate", function() {
+    }).on("timeupdate", function () {
       displayMusicRemaining();
     }));
     $("#btnStopMeetingMusic i").addClass("fa-circle-notch fa-spin").removeClass("fa-stop").closest("button").prop("title", "...");
     displayMusicRemaining();
-    $("#meetingMusic").append("<source src='"+ (jworgIsReachable ? (await downloadIfRequired(songs[iterator])) : songs[iterator].path) + "' type='audio/mpeg'>");
+    $("#meetingMusic").append("<source src='" + (jworgIsReachable ? (await downloadIfRequired(songs[iterator])) : songs[iterator].path) + "' type='audio/mpeg'>");
   }
 });
-$(".btn-home, #btn-settings").on("click", async function() {
+$(".btn-home, #btn-settings").on("click", async function () {
   toggleScreen("overlaySettings");
   if (!$(this).hasClass("btn-home")) calculateCacheSize();
 });
-$("[data-settingslink]").on("click", function() {
+$("[data-settingslink]").on("click", function () {
   toggleScreen("overlaySettings", null, $(this).data("settingslink"));
 });
-$("#btnStopMeetingMusic:not(.initialLoad)").on("click", function() {
+$("#btnStopMeetingMusic:not(.initialLoad)").on("click", function () {
   stopMeetingMusic();
 });
 $("#btnUpload").on("click", async () => {
@@ -1765,10 +1764,10 @@ $("#btnUpload").on("click", async () => {
       fs.ensureDirSync(path.join(get("paths").media, $("#chosenMeetingDay").data("folderName")));
     }
     if ($("input#typeSong:checked").length > 0) {
-      let songFiles = await getMediaLinks({pubSymbol: get("songPub"), track: $("#fileToUpload").val(), format: "MP4"});
+      let songFiles = await getMediaLinks({ pubSymbol: get("songPub"), track: $("#fileToUpload").val(), format: "MP4" });
       if (songFiles.length > 0) {
         let songFile = await downloadIfRequired(songFiles[0]);
-        let songFileName = sanitizeFilename(getPrefix() + " - Song " + $("#songPicker option:selected").text() + ".mp4");
+        let songFileName = sanitizeFilename(`${getPrefix()} - ${translate("song")} ${$("#songPicker option: selected").text()}.mp4`);
         if (get("webdavIsAGo")) {
           await webdavPut(
             fs.readFileSync(songFile),
@@ -1782,7 +1781,7 @@ $("#btnUpload").on("click", async () => {
       }
     } else if ($("input#typeJwpub:checked").length > 0) {
       for (var tempMedia of tempMediaArray) {
-        if (tempMedia.url) tempMedia.contents = Buffer.from(new Uint8Array((await request(tempMedia.url, {isFile: true})).data));
+        if (tempMedia.url) tempMedia.contents = Buffer.from(new Uint8Array((await request(tempMedia.url, { isFile: true })).data));
         let jwpubFileName = sanitizeFilename(getPrefix() + " - " + tempMedia.filename);
         if (get("webdavIsAGo")) {
           await webdavPut(
@@ -1822,10 +1821,10 @@ $("#btnUpload").on("click", async () => {
   if (get("webdavIsAGo")) await startMediaSync(true, "Recurring");
   updateFileList(true);
 });
-$("#congregationSelect").on("click", ".new-cong", function() {
+$("#congregationSelect").on("click", ".new-cong", function () {
   congregationCreate();
 });
-$("#chooseUploadType input").on("change", function() {
+$("#chooseUploadType input").on("change", function () {
   $("div.row.file-to-upload").fadeToAndToggle(constants.FADE_DELAY, $("input[name='chooseUploadType']").is(":checked"));
   $("#songPicker:visible").select2("destroy");
   $(".file-to-upload.selector").children().hide();
@@ -1841,23 +1840,23 @@ $("#chooseUploadType input").on("change", function() {
   }
   getPrefix();
 });
-$(".enterPrefixInput, #congServerPort").on("keypress", function(e){ // cmd/ctrl || arrow keys || delete key || numbers
+$(".enterPrefixInput, #congServerPort").on("keypress", function (e) { // cmd/ctrl || arrow keys || delete key || numbers
   return e.metaKey || e.which <= 0 || e.which === 8 || /[0-9]/.test(String.fromCharCode(e.which));
 });
-$("#folders").on("click", ".day.btn", function() {
+$("#folders").on("click", ".day.btn", function () {
   manageMedia($(this).data("datevalue"), $(this).hasClass("meeting"), ($(this).hasClass("mw") ? "mw" : $(this).hasClass("we") ? "we" : ""));
 });
-$("#recurringMedia").on("click", function() {
+$("#recurringMedia").on("click", function () {
   manageMedia("Recurring", false, "Recurring");
 });
-$("#overlayUploadFile").on("change", "#filePicker", function() {
+$("#overlayUploadFile").on("change", "#filePicker", function () {
   $("#fileToUpload").val($(this).val()).trigger("change");
 });
-$("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
-  if ($(this).val().length >0) {
+$("#overlayUploadFile").on("change", "#jwpubPicker", async function () {
+  if ($(this).val().length > 0) {
     let contents = await getDbFromJwpub(null, null, $(this).val());
     let tableMultimedia = ((await executeStatement(contents, "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'")).length === 0 ? "Multimedia" : "DocumentMultimedia");
-    let suppressZoomExists = (await executeStatement(contents, "SELECT COUNT(*) AS CNT_REC FROM pragma_table_info('Multimedia') WHERE name='SuppressZoom'")).map(function(item) {
+    let suppressZoomExists = (await executeStatement(contents, "SELECT COUNT(*) AS CNT_REC FROM pragma_table_info('Multimedia') WHERE name='SuppressZoom'")).map(function (item) {
       return (item.CNT_REC > 0 ? true : false);
     })[0];
     let itemsWithMultimedia = await executeStatement(
@@ -1880,10 +1879,10 @@ $("#overlayUploadFile").on("change", "#jwpubPicker", async function() {
     $("#fileToUpload").val("").trigger("change");
   }
 });
-$("#staticBackdrop").on("click", "a", function() {
+$("#staticBackdrop").on("click", "a", function () {
   shell.openExternal($(this).data("href"));
 });
-$("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
+$("#staticBackdrop").on("mousedown", "#docSelect button", async function () {
   $("#docSelect button").prop("disabled", true);
   $(this).addClass("active").find("i").toggleClass("far fas fa-circle fa-circle-notch fa-spin");
   tempMediaArray = [];
@@ -1903,12 +1902,12 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
       var jwpubContents = await new zipper($("#jwpubPicker").val()).readFile("contents");
       tempMedia.contents = (await new zipper(jwpubContents).readFile(((await new zipper(jwpubContents).getEntries()).filter(entry => entry.name == multimediaItem.queryInfo.FilePath)[0]).entryName));
     } else {
-      var externalMedia = (await getMediaLinks({pubSymbol: multimediaItem.queryInfo.KeySymbol, track: multimediaItem.queryInfo.Track, issue: multimediaItem.queryInfo.IssueTagNumber, docId: multimediaItem.queryInfo.MultiMeps}));
+      var externalMedia = (await getMediaLinks({ pubSymbol: multimediaItem.queryInfo.KeySymbol, track: multimediaItem.queryInfo.Track, issue: multimediaItem.queryInfo.IssueTagNumber, docId: multimediaItem.queryInfo.MultiMeps }));
       if (externalMedia.length > 0) {
         Object.assign(tempMedia, externalMedia[0]);
         tempMedia.filename = (i + 1).toString().padStart(2, "0") + " - " + path.basename(tempMedia.url);
       } else {
-        $(missingMedia).append($("<button class='list-group-item list-group-item-action' data-filename='" + tempMedia.filename + "'>" + tempMedia.filename + "</li>").on("click", function() {
+        $(missingMedia).append($("<button class='list-group-item list-group-item-action' data-filename='" + tempMedia.filename + "'>" + tempMedia.filename + "</li>").on("click", function () {
           var missingMediaPath = remote.dialog.showOpenDialogSync({
             title: $(this).data("filename"),
             filters: [
@@ -1935,7 +1934,7 @@ $("#staticBackdrop").on("mousedown", "#docSelect button", async function() {
     showModal(false);
   }
 });
-$("#mediaSync").on("click", async function() {
+$("#mediaSync").on("click", async function () {
   $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown").prop("disabled", true);
   await startMediaSync();
   await overlay(true, "circle-check text-success fa-beat", (get("prefs").autoQuitWhenDone ? "person-running" : null), "stay-alive");
@@ -1948,7 +1947,7 @@ $("#mediaSync").on("click", async function() {
     $("#mediaSync, #baseDate-dropdown, #congregationSelect-dropdown:not(.music-playing)").prop("disabled", false);
   }
 });
-$("#chooseBackground").on("click", function() {
+$("#chooseBackground").on("click", function () {
   const prefs = get("prefs");
   let mediaWindowBackground = remote.dialog.showOpenDialogSync({
     properties: ["openFile"]
@@ -1966,14 +1965,14 @@ $("#chooseBackground").on("click", function() {
     notifyUser("error", "notAnImage");
   }
 });
-$("#deleteBackground").on("click", function() {
+$("#deleteBackground").on("click", function () {
   rm(glob.sync(path.join(get("paths").app, "media-window-background-image*")));
   if (get("webdavIsAGo")) webdavLs(get("prefs").congServerDir).then(items => {
     webdavRm(items.filter(item => item.basename.includes("media-window-background-image")).map(item => path.join(get("prefs").congServerDir, item.basename)));
   });
   refreshBackgroundImagePreview();
 });
-$("#overlaySettings").on("click", ".btn-clean-up", function() {
+$("#overlaySettings").on("click", ".btn-clean-up", function () {
   if (!$(this).hasClass("confirmed")) {
     waitToConfirm(this);
   } else {
@@ -1991,7 +1990,7 @@ $("#overlaySettings").on("click", ".btn-clean-up", function() {
     }, 3000);
   }
 });
-$("#fileList").on("click", "li:not(.webdavWait) .fa-minus-square", async function() {
+$("#fileList").on("click", "li:not(.webdavWait) .fa-minus-square", async function () {
   if (!$(this).hasClass("confirmed")) {
     waitToConfirm(this);
   } else {
@@ -2007,7 +2006,7 @@ $("#fileList").on("click", "li:not(.webdavWait) .fa-minus-square", async functio
     if (successful) {
       const mm = get("meetingMedia");
       if ($(this).closest("li").data("isnotpresentonremote") || $(this).closest("li").data("url") && (!$(this).closest("li").data("islocal") || $(this).closest("li").data("islocal") == false)) {
-        $(this).closest("li").slideUp(constants.FADE_DELAY, function(){
+        $(this).closest("li").slideUp(constants.FADE_DELAY, function () {
           $(this).tooltip("dispose").remove();
           $("#fileList li").css("width", 100 / Math.ceil($("#fileList li").length / 11) + "%");
         });
@@ -2024,7 +2023,7 @@ $("#fileList").on("click", "li:not(.webdavWait) .fa-minus-square", async functio
     }
   }
 });
-$("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
+$("#fileList").on("click", ".canHide:not(.webdavWait)", async function () {
   const mm = get("meetingMedia");
   $(this).addClass("webdavWait");
   if (!get("webdavIsAGo") || await webdavPut(Buffer.from("hide", "utf-8"), path.posix.join(get("prefs").congServerDir, "Hidden", $("#chosenMeetingDay").data("folderName")), $(this).data("safename"))) {
@@ -2039,15 +2038,15 @@ $("#fileList").on("click", ".canHide:not(.webdavWait)", async function() {
   $(".btn-cancel-upload").addClass("changes-made");
   set("meetingMedia", mm);
 });
-$("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function() {
+$("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function () {
   let row = $(this).closest(".canMove");
   let src = get("webdavIsAGo") ? row.data("url") : path.join(get("paths").media, $("#chosenMeetingDay").data("folderName"), row.data("safename"));
   let previousSafename = row.data("safename");
   await showModal(true, false, null, "<div class='input-group'><input type='text' class='form-control' value='" + path.basename(src, path.extname(src)) + "' /><span class='input-group-text'>" + path.extname(src) + "</span></div>", true, true);
-  $("#staticBackdrop .modal-body input").focus().on("keypress", function(e) {
+  $("#staticBackdrop .modal-body input").focus().on("keypress", function (e) {
     if (e.which == 13) $("#staticBackdrop .modal-footer button").trigger("click");
   });
-  $("#staticBackdrop .modal-footer button").on("click", async function() {
+  $("#staticBackdrop .modal-footer button").on("click", async function () {
     let newName = escape($("#staticBackdrop .modal-body input").val().trim()) + path.extname(src);
     if (escape(path.basename(src, path.extname(src))) !== escape($("#staticBackdrop .modal-body input").val().trim())) {
       row.addClass("webdavWait");
@@ -2056,7 +2055,7 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
         try {
           fs.renameSync(src, path.join(get("paths").media, $("#chosenMeetingDay").data("folderName"), newName));
           successful = true;
-        } catch(err) {
+        } catch (err) {
           notifyUser("error", "errorWebdavPut", src + " => " + path.join(get("paths").media, $("#chosenMeetingDay").data("folderName"), newName), true, err);
         }
       } else {
@@ -2083,26 +2082,26 @@ $("#fileList").on("click", ".canMove:not(.webdavWait) i.fa-pen", async function(
     }
   });
 });
-$("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function() {
+$("#fileList").on("click", ".wasHidden:not(.webdavWait)", async function () {
   $(this).addClass("webdavWait");
   if (!get("webdavIsAGo") || await webdavRm(path.posix.join(get("prefs").congServerDir, "Hidden", $("#chosenMeetingDay").data("folderName"), $(this).data("safename")))) {
     const mm = get("meetingMedia");
     $(this).removeClass("wasHidden").addClass("canHide").find("i.fa-square").removeClass("fa-square").addClass("fa-check-square");
-    mm[$("#chosenMeetingDay").data("folderName")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = false ));
+    mm[$("#chosenMeetingDay").data("folderName")].filter(item => item.media.filter(mediaItem => mediaItem.safeName == $(this).data("safename")).length > 0).forEach(item => item.media.forEach(mediaItem => mediaItem.hidden = false));
     set("meetingMedia", mm);
   }
   $(this).removeClass("webdavWait");
   $(".btn-cancel-upload").addClass("changes-made");
 });
-$("#overlayUploadFile").on("change", ".enterPrefixInput, #fileToUpload", function() {
+$("#overlayUploadFile").on("change", ".enterPrefixInput, #fileToUpload", function () {
   $("div.row.prefix").fadeToAndToggle(constants.FADE_DELAY, !!$("#fileToUpload").val());
   updateFileList();
 });
 $("#overlayUploadFile").on("keyup", ".enterPrefixInput", getPrefix);
-$("body").on("mousedown", "#filePicker, #jwpubPicker, #localOutputPath", function() {
+$("body").on("mousedown", "#filePicker, #jwpubPicker, #localOutputPath", function () {
   $(this).prev("button").trigger("click");
 });
-$("body").on("click", "#filePickerButton, #jwpubPickerButton, #localOutputPathButton", function() {
+$("body").on("click", "#filePickerButton, #jwpubPickerButton, #localOutputPathButton", function () {
   let options = {
     properties: ($(this).prop("id").includes("localOutputPath") ? ["openDirectory"] : ["multiSelections", "openFile"])
   };
@@ -2115,10 +2114,10 @@ $("body").on("click", "#filePickerButton, #jwpubPickerButton, #localOutputPathBu
   if (typeof path !== "undefined") $(this).next("input").val($(this).prop("id").includes("file") ? path.join(" -//- ") : path).trigger("change");
   event.preventDefault();
 });
-$("#refreshYeartext").on("click", function() {
+$("#refreshYeartext").on("click", function () {
   refreshBackgroundImagePreview(true);
 });
-$("#songPicker").on("change", function() {
+$("#songPicker").on("change", function () {
   if ($(this).val()) $("#fileToUpload").val($(this).val()).trigger("change");
 });
 $(document).on("shown.bs.modal", "#staticBackdrop", function () {
@@ -2128,18 +2127,18 @@ $(document).on("shown.bs.modal", "#staticBackdrop", function () {
     $("#staticBackdrop input").first().val("").val(inputVal);
   }
 });
-$("#overlaySettings").on("click", ".btn-action:not(.btn-danger)", function() {
+$("#overlaySettings").on("click", ".btn-action:not(.btn-danger)", function () {
   if ($(this).hasClass("btn-report-issue")) $(this).data("action-url", bugUrl());
   shell.openExternal($(this).data("action-url"));
 });
 $("#btnTestApp").on("click", testApp);
-$("#toastContainer").on("click", "button.toast-action", async function() {
+$("#toastContainer").on("click", "button.toast-action", async function () {
   if ($(this).data("toast-action-url")) shell.openExternal($(this).data("toast-action-url"));
   $(this).closest(".toast").find(".toast-header button.btn-close").trigger("click");
   await delay(2);
   $(".new-stuff").removeClass("new-stuff");
 });
-$("#webdavProviders a").on("click", function() {
+$("#webdavProviders a").on("click", function () {
   for (let i of Object.entries($(this).data())) {
     let name = "cong" + (i[0][0].toUpperCase() + i[0].slice(1));
     setPref(name, i[1]);
@@ -2148,10 +2147,10 @@ $("#webdavProviders a").on("click", function() {
   $("#congServer").trigger("change");
 });
 $.fn.extend({
-  fadeToAndToggle: function(speed, to, easing, callback) {
-    return this.stop().css("visibility", "visible").animate( { opacity: to }, speed, easing, function() {
+  fadeToAndToggle: function (speed, to, easing, callback) {
+    return this.stop().css("visibility", "visible").animate({ opacity: to }, speed, easing, function () {
       $(this).css("visibility", to ? "visible" : "hidden");
       if (callback) callback();
-    } );
+    });
   }
 });
