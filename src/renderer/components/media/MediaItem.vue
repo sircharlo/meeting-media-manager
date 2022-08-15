@@ -38,6 +38,7 @@
       v-model="progress"
       absolute
       bottom
+      aria-label="Video progress"
       color="primary"
       :background-opacity="0"
     />
@@ -46,6 +47,7 @@
       v-model="clippedStart"
       absolute
       bottom
+      aria-label="Video clipped start"
       color="rgb(231, 76, 60)"
       :background-opacity="0"
     />
@@ -54,6 +56,7 @@
       v-model="clippedEnd"
       absolute
       bottom
+      aria-label="Video clipped end"
       color="rgb(231, 76, 60)"
       reverse
       :background-opacity="0"
@@ -248,17 +251,36 @@ export default Vue.extend({
   border-left: 8px solid rgba(55, 90, 127, 0.75) !important;
 }
 
-.song {
-  color: #5dbecd;
-  background-color: #0c515c;
-  border-color: #0e616e;
+.song,
+.paragraph {
   border: 1px solid transparent;
 }
 
-.paragraph {
-  color: #919191;
-  background-color: #313131;
-  border-color: #3b3b3b;
-  border: 1px solid transparent;
+.theme--light {
+  .song {
+    color: #055160;
+    background-color: #cff4fc;
+    border-color: #b6effb;
+  }
+
+  .paragraph {
+    color: #41464b;
+    background-color: #e2e3e5;
+    border-color: #d3d6d8;
+  }
+}
+
+.theme--dark {
+  .song {
+    color: #5dbecd;
+    background-color: #0c515c;
+    border-color: #0e616e;
+  }
+
+  .paragraph {
+    color: #c1c1c1;
+    background-color: #313131;
+    border-color: #3b3b3b;
+  }
 }
 </style>

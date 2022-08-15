@@ -4,7 +4,7 @@
       <v-card>
         <v-col class="text-right">
           <form-input v-model="edit.newName" :suffix="edit.ext" />
-          <v-btn color="primary" @click="saveNewName()">
+          <v-btn color="primary" aria-label="save" @click="saveNewName()">
             <font-awesome-icon :icon="faCheck" />
           </v-btn>
         </v-col>
@@ -64,7 +64,12 @@
         </v-list-item-content>
       </v-hover>
       <v-list-item-action>
-        <v-btn v-if="item.isLocal && !item.hidden" icon @click="editItem(item)">
+        <v-btn
+          v-if="item.isLocal && !item.hidden"
+          icon
+          aria-label="rename file"
+          @click="editItem(item)"
+        >
           <font-awesome-icon :icon="faPen" size="sm" />
         </v-btn>
       </v-list-item-action>
@@ -309,13 +314,17 @@ export default Vue.extend({
               const datePath = join(hiddenPath, this.date)
               const filePath = join(datePath, item.safeName)
 
-              if (!this.contents.find(({filename}) => filename === hiddenPath)) {
+              if (
+                !this.contents.find(({ filename }) => filename === hiddenPath)
+              ) {
                 await this.client.createDirectory(hiddenPath)
               }
-              if (!this.contents.find(({filename}) => filename === datePath)) {
+              if (
+                !this.contents.find(({ filename }) => filename === datePath)
+              ) {
                 await this.client.createDirectory(datePath)
               }
-              if (this.contents.find(({filename}) => filename === filePath)) {
+              if (this.contents.find(({ filename }) => filename === filePath)) {
                 await this.client.deleteFile(filePath)
               } else {
                 await this.client.putFileContents(filePath, '')
