@@ -69,7 +69,7 @@
   "paragraph": "Paragraph",
   "password": "Password",
   "port": "Port",
-  "enablePp": "Enable keyboard shortcuts for media playback (for use with a USB remote control, for example)",
+  "enablePp": "Enable keyboard shortcuts during media playback (for use with a USB remote control, for example)",
   "ppForward": "Key combination to play next media item",
   "ppBackward": "Key combination to play previous media item",
   "quitAfterSync": "Quit app after media sync",
