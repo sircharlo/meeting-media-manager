@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { EventEmitter } from 'events'
 import { BrowserWindow, app, shell } from 'electron'
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL
@@ -57,7 +56,7 @@ export default class BrowserWinHandler {
       return { action: 'deny' }
     })
 
-    if (os.platform() == 'win32')
+    if (os.platform() === 'win32')
       this.browserWindow.setAppDetails({
         appId: appLongName,
       })
