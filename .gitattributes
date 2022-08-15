@@ -13,23 +13,32 @@
 * text eol=lf
 
 # Images as binary
-*.gif binary
-*.png binary
-*.ico binary
-*.icns binary
-*.xcf binary
+*.gif           binary
+*.png           binary
+*.ico           binary
+*.icns          binary
+*.xcf           binary
 
 # Other files as text for diff
-*.md text
-*.js text
-*.vue text
-*.yml text
-.editorconfig text
-.gitattributes text
-.gitignore text
+*.md            text
+*.js            text
+*.ts            text
+*.css           text
+*.scss          text
+*.vue           text
+*.yml           text
+.editorconfig   text
+.gitattributes  text
+.gitignore      text
 
 # Font files as not text for diff
-*.otf -text diff
-*.ttf -text diff
-*.eot -text diff
-*.woff -text diff
+*.otf           -text diff
+*.ttf           -text diff
+*.eot           -text diff
+*.woff          -text diff
+
+# Don't try and merge these files
+yarn.lock       -diff
+
+# Ignore these files for repository statistics
+docs/*          linguist-vendored
