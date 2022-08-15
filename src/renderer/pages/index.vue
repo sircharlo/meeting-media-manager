@@ -614,7 +614,8 @@ export default Vue.extend({
     color: #fff !important;
   }
 
-  .accent * {
+  .accent *,
+  .success * {
     color: #000 !important;
   }
 }
@@ -623,7 +624,8 @@ export default Vue.extend({
     color: #fff !important;
   }
 
-  .accent * {
+  .accent *,
+  .success * {
     color: #000 !important;
   }
 }

@@ -4,6 +4,8 @@
 - [ ] Convert flash to notify system with action buttons
 - [ ] Fix how recurring media works
 - [ ] Make progress slider draggable when paused to change current progress / video scrubber
+- [ ] Implement video markers for sign language media
+- [ ] Add missing sign language media (Some media is missing that is specific to sign language)
 - [ ] Test for 3 displays
 - [X] Add local JWPUB file media to media list
 - [X] Add played and video progress visuals to present page
@@ -49,3 +51,8 @@
 - Auto rename meeting folders when switching date format (also on cong server)
 - Auto rename mediaList keys when switching date format
 - Prevent duplicate media from being added to media list by checking safeNames without prefix
+
+## Other Changes
+
+- Refactored docs to use sass instead of css
+- Implemented image html fraction in docs to make it easier to add an image

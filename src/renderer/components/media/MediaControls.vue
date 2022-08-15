@@ -124,6 +124,7 @@ export default Vue.extend({
               basename(path)
                 .replaceAll(' ', '')
                 .replaceAll('-', '')
+                .replaceAll("'", '')
                 .replaceAll('.', '')
                 .replaceAll(/\d/g, '') + 'mediaitem',
             path,
