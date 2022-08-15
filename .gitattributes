@@ -12,13 +12,14 @@
 * text=auto
 * text eol=lf
 
-# git objects as binary
+# Images as binary
+*.gif binary
 *.png binary
 *.ico binary
 *.icns binary
-*.gif binary
+*.xcf binary
 
-# git objects as text for diff
+# Other files as text for diff
 *.md text
 *.js text
 *.vue text
@@ -27,8 +28,8 @@
 .gitattributes text
 .gitignore text
 
-
-*.ttf     -text diff
-*.otf     -text diff
-*.eot     -text diff
-*.woff    -text diff
+# Font files as not text for diff
+*.otf -text diff
+*.ttf -text diff
+*.eot -text diff
+*.woff -text diff
