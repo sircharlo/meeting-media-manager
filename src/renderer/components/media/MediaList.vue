@@ -4,7 +4,7 @@
       <v-card>
         <v-col class="text-right">
           <form-input v-model="edit.newName" :suffix="edit.ext" />
-          <v-btn color="primary" aria-label="save" @click="saveNewName()">
+          <v-btn color="primary" @click="saveNewName()">
             <font-awesome-icon :icon="faCheck" />
           </v-btn>
         </v-col>
@@ -64,12 +64,7 @@
         </v-list-item-content>
       </v-hover>
       <v-list-item-action>
-        <v-btn
-          v-if="item.isLocal && !item.hidden"
-          icon
-          aria-label="rename file"
-          @click="editItem(item)"
-        >
+        <v-btn v-if="item.isLocal && !item.hidden" icon @click="editItem(item)">
           <font-awesome-icon :icon="faPen" size="sm" />
         </v-btn>
       </v-list-item-action>
@@ -106,7 +101,7 @@
 import { pathToFileURL } from 'url'
 import { extname, join, trimExt } from 'upath'
 import Vue from 'vue'
-import { WebDAVClient, FileStat } from 'webdav/web'
+import { WebDAVClient } from 'webdav/web'
 import {
   faImage,
   faSquare,
@@ -174,9 +169,6 @@ export default Vue.extend({
   computed: {
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
-    },
-    contents(): FileStat[] {
-      return this.$store.state.cong.contents as FileStat[]
     },
     faCheck() {
       return faCheck
@@ -314,22 +306,17 @@ export default Vue.extend({
               const datePath = join(hiddenPath, this.date)
               const filePath = join(datePath, item.safeName)
 
-              if (
-                !this.contents.find(({ filename }) => filename === hiddenPath)
-              ) {
+              if (!(await this.client.exists(hiddenPath))) {
                 await this.client.createDirectory(hiddenPath)
               }
-              if (
-                !this.contents.find(({ filename }) => filename === datePath)
-              ) {
+              if (!(await this.client.exists(datePath))) {
                 await this.client.createDirectory(datePath)
               }
-              if (this.contents.find(({ filename }) => filename === filePath)) {
+              if (await this.client.exists(filePath)) {
                 await this.client.deleteFile(filePath)
               } else {
                 await this.client.putFileContents(filePath, '')
               }
-              await this.$updateContent()
             }
           }
         }

@@ -24,13 +24,6 @@ export default Vue.extend({
   data() {
     return {}
   },
-  head() {
-    return {
-      htmlAttrs: {
-        lang: this.$i18n.locale,
-      },
-    }
-  },
   computed: {
     isDark(): boolean {
       return window.matchMedia('(prefers-color-scheme:dark)').matches
@@ -287,12 +280,10 @@ export default Vue.extend({
               parseInt(lastVersion.replace(/\D/g, '')) <= 2255 &&
               parseInt(this.$config.version.replace(/\D/g, '')) >= 2256
             ) {
-              const files = this.$findAll([
+              this.$findAll([
                 join(JWMMF, 'pref*.json'),
                 join(JWMMF, 'Publications'),
-              ]) as string[]
-
-              files.forEach((file) => {
+              ]).forEach((file) => {
                 renameSync(file, join(this.$appPath(), basename(file)))
               })
               removeSync(JWMMF)

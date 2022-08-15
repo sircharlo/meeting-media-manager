@@ -274,7 +274,7 @@ export default Vue.extend({
 <style lang="scss">
 @font-face {
   font-family: NotoSerif;
-  src: url('~/assets/fonts/NotoSerif-Bold.ttf') format('truetype');
+  src: url('/NotoSerif-Bold.ttf') format('truetype');
 }
 
 html,

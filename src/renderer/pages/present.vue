@@ -28,7 +28,6 @@
           nuxt
           :to="localePath('/?cong=') + cong"
           color="warning"
-          aria-label="Go to home"
           :disabled="mediaActive"
         >
           <font-awesome-icon :icon="faHome" class="black--text" size="xl" />
@@ -93,5 +92,6 @@ export default Vue.extend({
   beforeDestroy() {
     ipcRenderer.removeAllListeners('showingMedia')
   },
+  methods: {},
 })
 </script>
