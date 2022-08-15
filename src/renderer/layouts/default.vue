@@ -287,12 +287,12 @@ export default Vue.extend({
               parseInt(lastVersion.replace(/\D/g, '')) <= 2255 &&
               parseInt(this.$config.version.replace(/\D/g, '')) >= 2256
             ) {
-              ;(
-                this.$findAll([
-                  join(JWMMF, 'pref*.json'),
-                  join(JWMMF, 'Publications'),
-                ]) as string[]
-              ).forEach((file) => {
+              const files = this.$findAll([
+                join(JWMMF, 'pref*.json'),
+                join(JWMMF, 'Publications'),
+              ]) as string[]
+
+              files.forEach((file) => {
                 renameSync(file, join(this.$appPath(), basename(file)))
               })
               removeSync(JWMMF)

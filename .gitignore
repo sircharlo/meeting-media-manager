@@ -7,7 +7,7 @@ src/renderer/static/sql-wasm.wasm
 src/renderer/static/pdf.worker*
 
 # Jekyll build output
-_site
+_site/
 
 # Jekyll cache
 .jekyll-cache
@@ -44,6 +44,9 @@ jspm_packages/
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Output of 'npm pack'
+*.tgz
 
 # dotenv environment variables file
 .env
