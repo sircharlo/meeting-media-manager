@@ -91,11 +91,14 @@ export default function (
     }
   })
 
-  inject('forcePrefs', async () => {
+  inject('forcePrefs', async (refresh: boolean = false) => {
+    if (!refresh && store.state.cong.prefs) {
+      return store.state.cong.prefs
+    }
     try {
       const client = store.state.cong.client as WebDAVClient
       const path = join($getPrefs('cong.dir'), 'forcedPrefs.json')
-      if (await client.exists(path)) {
+      if ((store.state.cong.contents as FileStat[]).find(({filename}) => filename === path)) {
         const json = await client.getFileContents(path, {
           format: 'text',
         })

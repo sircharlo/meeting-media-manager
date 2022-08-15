@@ -2,7 +2,7 @@
   <v-row>
     <v-app-bar fixed>
       <v-col class="text-left">
-        <v-btn icon @click="togglePrefix()">
+        <v-btn icon aria-label="Toggle prefix" @click="togglePrefix()">
           <font-awesome-icon :icon="faEye" />
           <font-awesome-icon :icon="faListOl" />
         </v-btn>
@@ -11,16 +11,21 @@
         <v-btn color="secondary" @click="clearDate()">{{ date }}</v-btn>
       </v-col>
       <v-col class="text-right">
-        <v-btn icon @click="getMedia()">
+        <v-btn icon aria-label="Refresh" @click="getMedia()">
           <font-awesome-icon :icon="faRotateRight" />
         </v-btn>
-        <v-btn v-if="sortable" icon @click="sortable = false">
+        <v-btn
+          v-if="sortable"
+          aria-label="Save order"
+          icon
+          @click="sortable = false"
+        >
           <font-awesome-icon :icon="faSquareCheck" />
         </v-btn>
-        <v-btn v-else icon @click="sortable = true">
+        <v-btn v-else icon aria-label="Sort items" @click="sortable = true">
           <font-awesome-icon :icon="faArrowDownShortWide" />
         </v-btn>
-        <v-btn icon @click="openFolder()">
+        <v-btn icon aria-label="Open media folder" @click="openFolder()">
           <font-awesome-icon :icon="faFolderOpen" />
         </v-btn>
       </v-col>
@@ -109,6 +114,9 @@ export default Vue.extend({
     getMedia() {
       this.loading = true
       this.items = this.$findAll(join(this.$mediaPath(), this.date, '*'))
+        .filter((f) => {
+          return this.$isImage(f) || this.$isVideo(f) || this.$isAudio(f)
+        })
         .sort((a, b) => basename(a).localeCompare(basename(b)))
         .map((path) => {
           return {
