@@ -44,7 +44,7 @@
 - Using electron-store instead of home grown version
 - Using webdav client instead of home grown version
 - Port field for cong sync is no longer necessary
-- Use translation for song and paragraph in file names
+- ~~Use translation for song and paragraph in file names~~ (no longer new)
 - Auto rename media when switching local language (also on cong server)
 - Auto rename meeting folders when switching date format (also on cong server)
 - Auto rename mediaList keys when switching date format
