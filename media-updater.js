@@ -1698,7 +1698,7 @@ var mediaItemIndex = "mediaPlayIndex_1";
 $("#staticBackdrop .modal-header").on("click", "button.forward", function () {
   var mediaIndex = mediaItemIndex.split("_");
   if (mediaIndex[0] == "mediaPlayIndex") {
-    $("#mediaStopIndex_" + mediaIndex[1]).trigger("click");
+    $("#mediaStopIndex_" + mediaIndex[1]).addClass("confirmed").trigger("click");
     mediaIndex = "mediaPlayIndex_" + ((+mediaIndex[1]) + (+1));
   } else {
     $("#mediaPlayIndex_" + ((+mediaIndex[1]) + (+1))).trigger("click");
@@ -1708,7 +1708,7 @@ $("#staticBackdrop .modal-header").on("click", "button.forward", function () {
 $("#staticBackdrop .modal-header").on("click", "button.backward", function () {
   var mediaIndex = mediaItemIndex.split("_");
   if (mediaIndex[0] == "mediaPlayIndex") {
-    $("#mediaStopIndex_" + mediaIndex[1]).trigger("click");
+    $("#mediaStopIndex_" + mediaIndex[1]).addClass("confirmed").trigger("click");
     mediaIndex = "mediaPlayIndex_" + ((+mediaIndex[1]) + (-1));
   } else {
     $("#mediaPlayIndex_" + ((+mediaIndex[1]) + (-1))).trigger("click");
