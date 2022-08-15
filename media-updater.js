@@ -1695,18 +1695,26 @@ $("#staticBackdrop .modal-header").on("click", ".show-prefixes", function() {
 $("#staticBackdrop .modal-header").on("click", "button.folderOpen", function() {
   shell.openPath(url.fileURLToPath(url.pathToFileURL(path.join(get("paths").media, $(".modal-header h5").text())).href));
 });
-var mediaItemIndex = "mediaItemIndex_0";
-$("#staticBackdrop .modal-header").on("click", "button.forward", function() {
+var mediaItemIndex = "mediaPlayIndex_1";
+$("#staticBackdrop .modal-header").on("click", "button.forward", function () {
   var mediaIndex = mediaItemIndex.split("_");
-  $("#mediaStopIndex_" + mediaIndex[1]).trigger("click");
-  $("#mediaStopIndex_" + mediaIndex[1]).trigger("click");
-  $("#mediaPlayIndex_" + ((+mediaIndex[1]) + (+1))).trigger("click");
+  if (mediaIndex[0] == "mediaPlayIndex") {
+    $("#mediaStopIndex_" + mediaIndex[1]).trigger("click");
+    mediaIndex = "mediaPlayIndex_" + ((+mediaIndex[1]) + (+1));
+  } else {
+    $("#mediaPlayIndex_" + ((+mediaIndex[1]) + (+1))).trigger("click");
+    mediaIndex = "mediaStopIndex_" + mediaIndex[1];
+  }
 });
-$("#staticBackdrop .modal-header").on("click", "button.backward", function() {
+$("#staticBackdrop .modal-header").on("click", "button.backward", function () {
   var mediaIndex = mediaItemIndex.split("_");
-  $("#mediaStopIndex_" + mediaIndex[1]).trigger("click");
-  $("#mediaStopIndex_" + mediaIndex[1]).trigger("click");
-  $("#mediaPlayIndex_" + ((+mediaIndex[1]) + (-1))).trigger("click");
+  if (mediaIndex[0] == "mediaPlayIndex") {
+    $("#mediaStopIndex_" + mediaIndex[1]).trigger("click");
+    mediaIndex = "mediaPlayIndex_" + ((+mediaIndex[1]) + (-1));
+  } else {
+    $("#mediaPlayIndex_" + ((+mediaIndex[1]) + (-1))).trigger("click");
+    mediaIndex = "mediaStopIndex_" + mediaIndex[1];
+  }
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
   mediaItemIndex = "mediaItemIndex_0";
