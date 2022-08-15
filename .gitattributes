@@ -17,11 +17,14 @@
 *.png           binary
 *.ico           binary
 *.icns          binary
+*.xcf           binary
 
 # Other files as text for diff
 *.md            text
 *.js            text
+*.ts            text
 *.vue           text
+*.scss          text
 *.yml           text
 .editorconfig   text
 .gitattributes  text
@@ -32,3 +35,9 @@
 *.ttf           -text diff
 *.eot           -text diff
 *.woff          -text diff
+
+# Don't try and merge these files
+yarn.lock       -diff
+
+# Ignore these files for repository statistics
+docs/*          linguist-vendored
