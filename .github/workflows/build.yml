@@ -6,7 +6,8 @@ on:
     paths:
       - 'yarn.lock'
       - 'package.json'
-      - 'builder.config.js'
+      - 'builder.config.js',
+      - 'main/boot/*.js',
       - '.electron-nuxt/**/*'
 
 jobs:

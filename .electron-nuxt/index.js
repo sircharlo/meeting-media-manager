@@ -1,4 +1,4 @@
-const { join } = require('upath')
+const path = require('path')
 const webpack = require('webpack')
 const electron = require('electron')
 
@@ -25,7 +25,7 @@ electronLogger.ignore((text) =>
 const launcher = new ElectronLauncher({
   logger: electronLogger,
   electronPath: electron,
-  entryFile: join(DIST_DIR, 'main/index.js'),
+  entryFile: path.join(DIST_DIR, 'main/index.js'),
 })
 
 function hasConfigArgument(array) {
@@ -42,11 +42,11 @@ const builder = new ElectronBuilder({
 
 const webpackConfig = Webpack.getBaseConfig({
   entry: isDev
-    ? join(MAIN_PROCESS_DIR, 'boot/index.dev.js')
-    : join(MAIN_PROCESS_DIR, 'boot/index.prod.js'),
+    ? path.join(MAIN_PROCESS_DIR, 'boot/index.dev.js')
+    : path.join(MAIN_PROCESS_DIR, 'boot/index.prod.js'),
   output: {
     filename: 'index.js',
-    path: join(DIST_DIR, 'main'),
+    path: path.join(DIST_DIR, 'main'),
   },
   plugins: [
     new webpack.DefinePlugin({

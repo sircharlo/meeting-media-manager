@@ -22,9 +22,9 @@
 # Other files as text for diff
 *.md            text
 *.js            text
-*.ts            text
+#\*.ts            text
 *.vue           text
-*.scss          text
+#\*.scss          text
 *.yml           text
 .editorconfig   text
 .gitattributes  text
@@ -37,4 +37,4 @@
 *.woff          -text diff
 
 # Ignore these files for repository statistics
-docs/*          linguist-vendored
+#\docs/*          linguist-vendored

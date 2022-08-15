@@ -1,9 +1,10 @@
-import { URL } from 'url'
+/* eslint-disable */
 import { app, protocol } from 'electron'
-import { join, normalize } from 'upath'
+import * as path from 'path'
+import { URL } from 'url'
 
 const PRODUCTION_APP_PROTOCOL = 'app'
-const PRODUCTION_APP_PATH = join(__dirname, '..', 'renderer')
+const PRODUCTION_APP_PATH = path.join(__dirname, '..', 'renderer')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -19,11 +20,11 @@ app.once('ready', () => {
 
 // Credits: https://github.com/nklayman/vue-cli-plugin-electron-builder/blob/master/lib/createProtocol.js
 function registerProtocol(scheme) {
-  protocol.registerFileProtocol(scheme, (request, respond) => {
-    const relativePath = normalize(new URL(request.url).pathname)
-    const absolutePath = join(PRODUCTION_APP_PATH, relativePath)
+  protocol.registerFileProtocol(scheme, (request, callback) => {
+    const relativePath = path.normalize(new URL(request.url).pathname)
+    const absolutePath = path.join(PRODUCTION_APP_PATH, relativePath)
 
-    respond({ path: absolutePath })
+    callback({ path: absolutePath })
   })
 }
 
