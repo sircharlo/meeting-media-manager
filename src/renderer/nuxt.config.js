@@ -18,7 +18,15 @@ module.exports = {
   head: {
     titleTemplate: '%s - Meeting Media Manager',
     title: 'M³',
-    meta: [{ charset: 'utf-8' }],
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Meeting Media Manager',
+      },
+    ],
   },
   loading: false,
   components: true,
@@ -27,7 +35,10 @@ module.exports = {
       runtimeCompiler: true,
     },
   },
-  css: ['@fortawesome/fontawesome-svg-core/styles.css', '~/assets/main.scss'],
+  css: [
+    '@fortawesome/fontawesome-svg-core/styles.css',
+    '~/assets/scss/main.scss',
+  ],
   plugins: [
     '~/plugins/prefs',
     '~/plugins/logger',
@@ -72,7 +83,7 @@ module.exports = {
       icons: false,
     },
     optionsPath: '~/vuetify.options.js',
-    customVariables: ['~/assets/variables.scss'],
+    customVariables: ['~/assets/scss/variables.scss'],
   },
 
   i18n: {

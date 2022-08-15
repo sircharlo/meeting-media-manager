@@ -26,3 +26,9 @@
 .editorconfig text
 .gitattributes text
 .gitignore text
+
+
+*.ttf     -text diff
+*.otf     -text diff
+*.eot     -text diff
+*.woff    -text diff

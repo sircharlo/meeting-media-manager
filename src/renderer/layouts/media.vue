@@ -9,11 +9,12 @@
 import Vue from 'vue'
 export default Vue.extend({
   name: 'MediaLayout',
-  data() {
-    return {}
+  head() {
+    return {
+      htmlAttrs: {
+        lang: this.$i18n.locale,
+      },
+    }
   },
-  computed: {},
-  mounted() {},
-  methods: {},
 })
 </script>
