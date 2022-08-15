@@ -1,3 +1,4 @@
----
 permalink: ':title'
-title: 'M³'
+title: 'M³ - Meeting Media Manager'
+sass:
+  style: compressed

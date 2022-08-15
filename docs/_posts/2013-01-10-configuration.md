@@ -1,9 +1,6 @@
 ---
 category: Configuration
 title: 'Settings'
-layout: null
-#type: 'Configuration'
-
 ---
 
 The Settings screen is divided into 4 sections. Most of the options are self-explanatory, but here are a few additional details.
@@ -11,17 +8,6 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
 ### Application setup
 
 <table>
-  <thead>
-    <tr>
-      <th>Setting</th>
-      <th>Explanation</th>
-    </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td><code>Congregation name</code></td>
-    <td>Sets the name that will be displayed in the congregation selection list. Useful to differentiate between congregations if more than one are using the same Windows login information.</td>
-  </tr>
     <tr>
       <td><code>Display language</code></td>
       <td>Sets the language in which M³ is displayed. <br><br>Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+LANGUAGE" target="_blank">discussion</a>.</td>
@@ -33,7 +19,7 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
     <tr>
       <td><code>Run app at system start-up</code></td>
       <td>If enabled, M³ will launch when the current user logs into the computer. <br><br>
-        <blockquote><strong>Note:</strong> Unavailable on Linux.</blockquote>
+        <blockquote>**Note:** Unavailable on Linux.</blockquote>
       </td>
     </tr>
     <tr>
@@ -53,8 +39,9 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
       </td>
     </tr>
     <tr>
-      <td><code>Enable <em>OBS Studio</em> compatibility mode</code></td>
-      <td>If enabled, this option will tap into OBS Studio to change scenes automatically as needed both before and after sharing media.<br><br>
+      <td><code>Enable_OBS Studio_ compatibility mode</code></td>
+      <td>
+        If enabled, this option will tap into OBS Studio to change scenes automatically as needed both before and after sharing media.<br><br>
         <blockquote>If enabling this setting, make sure that OBS Studio is configured to use the <code>obs-websockets</code> plugin, which is what will enable M³ to communicate with OBS Studio.<br><br>Also, configure all needed scenes for media sharing and stage display in OBS. At the very least, you'll need a scene with a <code>Window Capture</code> (recommended) or <code>Display Capture</code> configured to capture the M³ media presentation window, or the screen on which the media will be presented.<br><br>You'll also need to configure all desired stage view scenes, for example: <li>a shot of the lectern</li><li>a wide shot of the stage</li><li>the lectern and reader mics together</li><li>a shot of the table</li></blockquote>
       </td>
     </tr>
@@ -86,11 +73,9 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
   </tbody>
 </table>
 
-
 ### Congregation sync setup
 
 See the [congregation sync](#/congregation-sync) section for details on what this does exactly and how to configure this section.
-
 
 ### Media setup
 
@@ -112,57 +97,55 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     </tr>
     <tr>
       <td><code>Convert media to MP4 format</code></td>
-      <td>This will automatically convert all picture and audio files into MP4 format, for use with Zoom's <a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/zoom-mp4-share.png?raw=true" target="_blank">native MP4 sharing feature</a> during <strong>fully remote</strong> congregation Zoom meetings. This includes all pictures and media files downloaded from JW.org, as well as additional media files added by the user or the VO.
-      <br><br><blockquote><strong>Note:</strong> This option is best suited for <strong>remote-only</strong> congregation Zoom meetings. If conducting either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings, look into using <a href="#/present-media">media presentation mode</a> by activating the <code>Enable button to present media on an external monitor or in a separate window</code> option instead, and disable this option.</blockquote>
+      <td>This will automatically convert all picture and audio files into MP4 format, for use with Zoom's <a href="assets/img/other/zoom-mp4-share.png" target="_blank">native MP4 sharing feature</a> during **fully remote** congregation Zoom meetings. This includes all pictures and media files downloaded from JW.org, as well as additional media files added by the user or the VO.
+      <br><br><blockquote>**Note:** This option is best suited for **remote-only** congregation Zoom meetings. If conducting either **hybrid** or **regular** congregation meetings, look into using <a href="#/present-media">media presentation mode</a> by activating the <code>Enable button to present media on an external monitor or in a separate window</code> option instead, and disable this option.</blockquote>
       </td>
     </tr>
     <tr>
       <td><code>Keep original media files after conversion</code></td>
       <td>If this setting is enabled, picture and audio files will be kept in the media folder after converting them to MP4 format, rather than being deleted. This will result in a slightly more cluttered media folder, and generally does not need to be enabled if sharing media through Zoom MP4 sharing. (See <code>Convert media to MP4 format</code> above.)
         <br><br>
-        <blockquote><strong>Note:</strong> Only visible if <code>Convert media to MP4 format</code> is also enabled.</blockquote>
+        <blockquote>**Note:** Only visible if <code>Convert media to MP4 format</code> is also enabled.</blockquote>
       </td>
     </tr>
     <tr>
       <td><code>Enable button to present media on an external monitor or in a separate window</code></td>
-      <td>This setting will allow you to use M³ to present pictures, videos and audio files during <strong>hybrid</strong> or <strong>in-person</strong> congregation meetings. <a href="#/present-media">Media presentation mode</a> can then be accessed by clicking the ▶️ (play) button on the main screen of M³.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.
-      <br><br><blockquote><strong>Note:</strong> This option is best suited for either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings.<br><br>
-      If conducting <strong>remote-only</strong> congregation Zoom meetings, look into activating the <code>Convert media to MP4 format</code> option and sharing the media with Zoom's native MP4 sharing instead.</blockquote></td>
+      <td>This setting will allow you to use M³ to present pictures, videos and audio files during **hybrid** or **in-person** congregation meetings. <a href="#/present-media">Media presentation mode</a> can then be accessed by clicking the ▶️ (play) button on the main screen of M³.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.
+      <br><br><blockquote>**Note:** This option is best suited for either **hybrid** or **regular** congregation meetings.<br><br>
+      If conducting **remote-only** congregation Zoom meetings, look into activating the <code>Convert media to MP4 format</code> option and sharing the media with Zoom's native MP4 sharing instead.</blockquote></td>
       </td>
     </tr>
     <tr>
       <td><code>Background image for media presentation mode</code></td>
       <td>By default, M³ will attempt to fetch the current year's text in the language selected previously, in order to display it on a black background when in <a href="#/present-media">media presentation mode</a> and no other media is being played. If the automatic yeartext retrieval fails for some reason, or if you wish to display a different background image, you can either use the "Browse" button to select a custom picture, or the "Refresh" button to try fetching the yeartext automatically again.<br><br>
-      <blockquote><strong>Note:</strong> If <a href="#/congregation-sync">congregation sync</a> is enabled, selecting a custom background image will synchronize it for all congregation sync users automatically.</blockquote>
+      <blockquote>**Note:** If <a href="#/congregation-sync">congregation sync</a> is enabled, selecting a custom background image will synchronize it for all congregation sync users automatically.</blockquote>
       </td>
     </tr>
     <tr>
       <td><code>Enable button to present media on an external monitor or in a separate window</code></td>
       <td>This setting will allow you to use M³ to present pictures, videos and audio files during congregation meetings, for example at the Kingdom Hall. <a href="#/present-media">Media presentation mode</a> can be accessed by clicking the ▶️ (play) button on the main screen of M³.<br><br>The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.
-      <br><br><blockquote><strong>Note:</strong> This option is best suited for either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings.<br><br>
-      If conducting <strong>remote-only</strong> congregation Zoom meetings, look into activating the <code>Convert media to MP4 format</code> option and sharing the media with Zoom's native MP4 sharing instead.</blockquote></td>
+      <br><br><blockquote>**Note:** This option is best suited for either **hybrid** or **regular** congregation meetings.<br><br>
+      If conducting **remote-only** congregation Zoom meetings, look into activating the <code>Convert media to MP4 format</code> option and sharing the media with Zoom's native MP4 sharing instead.</blockquote></td>
     </tr>
     <tr>
-      <td><code>Create playlists for use with <em>VLC</em></code></td>
+      <td><code>Create playlists for use with_VLC_</code></td>
       <td>Enable this if you want to generate playlists for every meeting automatically, which can then be loaded in VLC, if you are using that app to display media instead of <a href="#/present-media">media presentation mode</a>.
       </td>
     </tr>
     <tr>
-      <td><code>Exclude all media from the <em>th</em> brochure</code></td>
-      <td>If enabled, this will prevent media from the <em>Apply Yourself</em> brochure from being included at every midweek meeting.</td>
+      <td><code>Exclude all media from the_th_brochure</code></td>
+      <td>If enabled, this will prevent media from the_Apply Yourself_brochure from being included at every midweek meeting.</td>
     </tr>
     <tr>
-    <td><code>Exclude audio and video files from the <em>lffi</em> brochure</code></td>
-    <td>If enabled, this will prevent audio and video files from the <em>Live Forever</em> brochure (<em>lffi</em>) from being included, for example for student assignments during the midweek meeting. Images from the <em>lffi</em> brochure are not affected by this setting.</td>
+      <td><code>Exclude audio and video files from the_lffi_brochure</code></td>
+      <td>If enabled, this will prevent audio and video files from the_Live Forever_brochure (_lffi_) from being included, for example for student assignments during the midweek meeting. Images from the_lffi_brochure are not affected by this setting.</td>
     </tr>
     <tr>
-      <td><code>Exclude images from the <em>lffi</em> brochure</code></td>
-      <td>If enabled, this will prevent images from the <em>Live Forever</em> brochure (<em>lffi</em>) from being included, for example for student assignments during the midweek meeting. Audio and video files from the <em>lffi</em> brochure are not affected by this setting.</td>
+      <td><code>Exclude images from the_lffi_brochure</code></td>
+      <td>If enabled, this will prevent images from the_Live Forever_brochure (_lffi_) from being included, for example for student assignments during the midweek meeting. Audio and video files from the_lffi_ brochure are not affected by this setting.</td>
     </tr>
   </tbody>
 </table>
-
-
 
 ### Meeting setup
 
@@ -184,7 +167,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     </tr>
     <tr>
       <td><code>Enable button to play Kingdom songs on shuffle</code> </td>
-      <td>Enable a button on the main screen which will play Kingdom songs from the <em>sjjm</em> series, in random order. This is useful, for example, to play songs before and after meetings at the Kingdom Hall as background music.</td>
+      <td>Enable a button on the main screen which will play Kingdom songs from the _sjjm_ series, in random order. This is useful, for example, to play songs before and after meetings at the Kingdom Hall as background music.</td>
     </tr>
     <tr>
       <td><code>Song playback volume</code></td>
@@ -193,7 +176,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     <tr>
       <td><code>Automatically stop playing songs</code></td>
       <td>If <code>Enable button to play Kingdom songs on shuffle</code> is active, then this setting will allow you to specify a delay after which background music should be automatically stopped. <br><br>This can be either:
-      <ul><li>a set number of minutes, <strong>or</strong></li>
+      <ul><li>a set number of minutes, **or**</li>
         <li>a predetermined number of seconds before the start of the meeting (in the case where the background music was started before a meeting).</li></ul>
       </td>
     </tr>
@@ -202,17 +185,8 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
 
 ### Screenshots
 
-<table class="showcase">
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-1.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-1.png?raw=true"></a></td>
-<td>Application configuration</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-3.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-3.png?raw=true"></a></td>
-<td>Media fetching and sync setup</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-4.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-4.png?raw=true"></a></td>
-<td>Meeting date and time setup</td>
-</tr>
+<table class="showcase" markdown="0">
+{% include image.html src="settings/app.png" alt="Application configuration" %}
+{% include image.html src="settings/media.png" alt="Media fetch and sync setup" %}
+{% include image.html src="settings/meeting.png" alt="Meeting date and time setup" %}
 </table>

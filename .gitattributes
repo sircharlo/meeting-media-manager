@@ -16,6 +16,7 @@
 *.png binary
 *.ico binary
 *.icns binary
+*.gif binary
 
 # git objects as text for diff
 *.md text

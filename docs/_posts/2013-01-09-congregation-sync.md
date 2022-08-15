@@ -1,17 +1,16 @@
 ---
 category: Configuration
 title: 'Congregation sync'
-layout: null
 ---
 
 The brother designated as _videoconference organizer_ (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
 The VO, or someone designated by him, can:
 
-- upload <strong>additional</strong> media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
-- <strong>hide</strong> media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
-- add or remove <strong>recurring</strong> media, such as a year-text video, or an announcement slide
+- upload **additional**media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
+- **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
+- add or remove **recurring** media, such as a year-text video, or an announcement slide
 
-All who are synced to the same congregation will then receive the exact same media when they click the <em>Update media folders</em> button.
+All who are synced to the same congregation will then receive the exact same media when they click the _Update media folders_ button.
 
 Please note that the congregation sync feature is opt-in and entirely optional.
 
@@ -19,8 +18,8 @@ Please note that the congregation sync feature is opt-in and entirely optional.
 
 M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
 
-- set up a secured WebDAV server that is web-accessible, <strong>or</strong>
-- use a third-party cloud storage service that supports the WebDAV protocol (see the <code>Congregation sync hostname</code> setting in the <em>Congregation sync setup</em> section below).
+- set up a secured WebDAV server that is web-accessible, **or**
+- use a third-party cloud storage service that supports the WebDAV protocol (see the `Congregation sync hostname` setting in the _Congregation sync setup_ section below).
 
 All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
 
@@ -61,17 +60,12 @@ All users that wish to be synchronized together will need to connect to the same
   </tbody>
 </table>
 
-
 ### Using congregation sync to manage media
 
 Once the congregation sync setup is complete, you're ready to start <a href="#/manage-media">managing media</a> for your congregation's technical AV support team.
 
-
 ### Screenshots
 
-<table class="showcase">
-<tr>
-<td><a href="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-2.png?raw=true" target="_blank"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/settings-2.png?raw=true"></a></td>
-<td>Congregation sync setup</td>
-</tr>
+<table class="showcase" markdown="0">
+{% include image.html src="settings/cong.png" alt="Congregation sync setup" %}
 </table>
