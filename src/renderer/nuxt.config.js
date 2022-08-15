@@ -27,7 +27,10 @@ module.exports = {
       runtimeCompiler: true,
     },
   },
-  css: ['@fortawesome/fontawesome-svg-core/styles.css', '~/assets/main.scss'],
+  css: [
+    '@fortawesome/fontawesome-svg-core/styles.css',
+    '~/assets/scss/main.scss',
+  ],
   plugins: [
     '~/plugins/prefs',
     '~/plugins/logger',
@@ -72,7 +75,7 @@ module.exports = {
       icons: false,
     },
     optionsPath: '~/vuetify.options.js',
-    customVariables: ['~/assets/variables.scss'],
+    customVariables: ['~/assets/scss/variables.scss'],
   },
 
   i18n: {
