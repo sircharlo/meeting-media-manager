@@ -1,9 +1,11 @@
 {
-  "name": "boot",
-  "description": "Main app boot component",
-  "dependencies": {
-    "component/jquery": "*"
-  },
-  "local": ["filter"],
-  "scripts": ["index.js"]
+    "name": "boot",
+    "description": "Main app boot component",
+    "dependencies": {
+        "necolas/normalize.css": "*",
+        "component/jquery": "*"
+    },
+    "local": ["filter"],
+    "scripts": ["index.js"],
+    "styles": ["style.css"]
 }

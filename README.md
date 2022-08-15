@@ -1,5 +1,6 @@
 # Meeting Media Manager
 
+<!-- markdownlint-disable-next-line -->
 <img src='https://github.com/sircharlo/meeting-media-manager/blob/master/build/icon.png?raw=true' alt='The M³ Logo' style='max-height: 20vh' />
 
 > A Meeting Media Manager for meetings of Jehovah's Witnesses.
@@ -8,6 +9,7 @@
 
 **Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org. It features recurring and custom media management, as well as an optional sync feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
 
+<!-- markdownlint-disable-next-line -->
 <sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
 
 ## What van M³ do?
@@ -41,6 +43,6 @@ Enjoy!
 
 ---
 
-![Media Presentation Mode](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/assets/img/present/standby-mode.png?raw=true)
+![Media Presentation Mode](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/standby-mode.png?raw=true)
 
-![Media Sync in progress](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/assets/img/main/update-folders.gif?raw=true)
+![Media Sync in progress](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/hero-main.gif?raw=true)

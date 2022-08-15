@@ -245,8 +245,7 @@ export default function (
               .format($getPrefs('app.outputFolderDateFormat') as string)
           )
           if (date.isValid() && newName !== file.filename) {
-            const contents = store.state.cong.contents as FileStat[]
-            if (!contents.find(({filename}) => filename === newName)) {
+            if (!(await client.exists(newName))) {
               await client.moveFile(file.filename, newName)
             }
           }

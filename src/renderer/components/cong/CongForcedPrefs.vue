@@ -22,7 +22,7 @@
         lg="4"
         class="pl-8 py-2"
       >
-        <v-switch v-model="item.forced" hide-details="auto" class="my-0 py-0" @change="change = true">
+        <v-switch v-model="item.forced" hide-details="auto" class="my-0 py-0">
           <template #label>
             <v-tooltip top>
               <template #activator="{ attrs, on }">
@@ -55,7 +55,6 @@ const { FORCABLE } = require('~/constants/prefs') as { FORCABLE: string[] }
 export default Vue.extend({
   data() {
     return {
-      change: false,
       loading: true,
       forcable: [] as { key: string; value: any; forced: boolean }[],
     }
@@ -129,10 +128,6 @@ export default Vue.extend({
       }
     },
     async updatePrefs() {
-      if (!this.change) {
-        this.$emit('done')
-        return
-      }
       this.loading = true
       const forcedPrefs = {} as any
       this.forcable
@@ -156,7 +151,7 @@ export default Vue.extend({
         join(this.$getPrefs('cong.dir'), 'forcedPrefs.json'),
         JSON.stringify(forcedPrefs, null, 2)
       )
-      await this.$forcePrefs(true)
+      await this.$forcePrefs()
       this.loading = false
       this.$emit('done')
     },

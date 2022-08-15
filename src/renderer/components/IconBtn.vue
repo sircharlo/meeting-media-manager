@@ -1,7 +1,6 @@
 <template>
   <v-btn
     v-if="variant === 'shuffle' && musicFadeOut && !clickedOnce"
-    :aria-label="variant"
     color="warning"
     title="ALT+K"
     v-bind="$attrs"
@@ -14,7 +13,6 @@
   <v-btn
     v-else-if="variant === 'pause'"
     color="warning"
-    :aria-label="variant"
     v-bind="$attrs"
     :class="{ 'pulse-danger': toggled }"
     @click="toggle()"
@@ -23,7 +21,6 @@
   </v-btn>
   <v-btn
     v-else-if="variant === 'toggleScreen'"
-    :aria-label="variant"
     :color="mediaVisible ? 'warning' : 'primary'"
     v-bind="$attrs"
     :class="{ 'pulse-danger': !mediaVisible }"
@@ -49,7 +46,6 @@
       <v-btn
         ref="btn"
         v-model="$attrs.value"
-        :aria-label="variant"
         :loading="loading || $attrs.loading"
         v-bind="{ ...style.props, ...$attrs, ...attrs }"
         :color="variant === 'shuffle' && !musicFadeOut ? 'warning' : 'error'"
@@ -82,7 +78,6 @@
     v-else
     ref="btn"
     v-model="$attrs.value"
-    :aria-label="variant"
     :nuxt="!!style.to || $attrs.nuxt"
     :loading="loading || $attrs.loading"
     :to="style.to ? localePath(`${style.to}?cong=${cong}`) : $attrs.to"

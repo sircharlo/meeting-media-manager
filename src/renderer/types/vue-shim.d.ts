@@ -41,7 +41,7 @@ interface CustomProps {
   $findAll: (path: string | string[], options?: Options) => string[]
   $findOne: (path: string | string[], options?: Options) => string
   $flash: (message: string, type?: string) => void
-  $forcePrefs: (refresh: boolean = false) => Promise<void>
+  $forcePrefs: () => Promise<void>
   $getAllPrefs: () => ElectronStore
   $getCongMedia: (baseDate: Dayjs, now: Dayjs) => void
   $getCongPrefs: () => Promise<{ name: string | null; path: string }[]>

@@ -1,11 +1,7 @@
 {
-  "files.associations": {
-    "main.scss": "liquid"
-  },
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.fixAll.markdownlint": true
+    "source.fixAll.eslint": true
   },
   "cSpell.words": [
     "americas",
@@ -16,12 +12,10 @@
     "Descr",
     "docid",
     "eesti",
-    "EPUB",
     "esnext",
     "español",
     "icns",
     "Italiano",
-    "jekyll",
     "JWMMF",
     "jworg",
     "koofr",
@@ -39,7 +33,6 @@
     "sqljs",
     "suomi",
     "uncompiled",
-    "unmute",
     "upath",
     "vetur",
     "vuedraggable",

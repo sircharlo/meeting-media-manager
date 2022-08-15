@@ -7,8 +7,6 @@ on:
       - 'yarn.lock'
       - 'package.json'
       - 'builder.config.js'
-      - 'src/main/boot/*.js'
-      - '.electron-nuxt/**/*'
 
 jobs:
   release:
