@@ -1712,7 +1712,7 @@ $("#staticBackdrop .modal-header").on("click", "button.backward", function () {
   }
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function () {
-  mediaItemIndex = "mediaItemIndex_0";
+  mediaItemIndex = "mediaStopIndex_0";
   if (get("prefs").ppEnable) {
     remote.globalShortcut.unregister(get("prefs").ppForward);
     remote.globalShortcut.unregister(get("prefs").ppBackward);
