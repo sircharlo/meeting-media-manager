@@ -101,7 +101,7 @@
 import { pathToFileURL } from 'url'
 import { extname, join, trimExt } from 'upath'
 import Vue from 'vue'
-import { WebDAVClient } from 'webdav/web'
+import { WebDAVClient, FileStat } from 'webdav/web'
 import {
   faImage,
   faSquare,
@@ -169,6 +169,9 @@ export default Vue.extend({
   computed: {
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
+    },
+    contents(): FileStat[] {
+      return this.$store.state.cong.contents as FileStat[]
     },
     faCheck() {
       return faCheck
@@ -306,17 +309,18 @@ export default Vue.extend({
               const datePath = join(hiddenPath, this.date)
               const filePath = join(datePath, item.safeName)
 
-              if (!(await this.client.exists(hiddenPath))) {
+              if (!this.contents.find(({filename}) => filename === hiddenPath)) {
                 await this.client.createDirectory(hiddenPath)
               }
-              if (!(await this.client.exists(datePath))) {
+              if (!this.contents.find(({filename}) => filename === datePath)) {
                 await this.client.createDirectory(datePath)
               }
-              if (await this.client.exists(filePath)) {
+              if (this.contents.find(({filename}) => filename === filePath)) {
                 await this.client.deleteFile(filePath)
               } else {
                 await this.client.putFileContents(filePath, '')
               }
+              await this.$updateContent()
             }
           }
         }
