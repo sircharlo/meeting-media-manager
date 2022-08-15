@@ -27,7 +27,7 @@ const datepickers = datetime(".timePicker", {
   minuteIncrement: 15,
   minTime: "06:00",
   maxTime: "22:00",
-  onClose: function() {
+  onClose: function () {
     let initiatorEl = $($(this)[0].element);
     $("#" + initiatorEl.data("target")).val(initiatorEl.val()).trigger("change");
   }
@@ -46,7 +46,7 @@ function initPrefs(path) {
 
 function prefsInitialize() {
   let prefs = get("prefs");
-  $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop( "checked", false );
+  $("#overlaySettings input:checkbox, #overlaySettings input:radio").prop("checked", false);
   prefs.disableHardwareAcceleration = !!fs.existsSync(path.join(remote.app.getPath("userData"), "disableHardwareAcceleration"));
   for (let pref of PREF_FIELDS.all) {
     if (!(Object.keys(prefs).includes(pref)) || !prefs[pref]) prefs[pref] = null;
@@ -84,7 +84,7 @@ async function getForcedPrefs(webdavExists, request, paths) {
         webdav: true,
         noCache: true
       })).data;
-    } catch(err) {
+    } catch (err) {
       notifyUser("error", "errorForcedSettingsEnforce", null, true, err, false, false, get("prefs"));
     }
   }
@@ -158,7 +158,7 @@ function congregationSelectPopulate() {
     content: translate("clickAgain"),
     container: "body",
     trigger: "focus"
-  }).on("hidden.bs.popover", function() {
+  }).on("hidden.bs.popover", function () {
     unconfirm(this);
   });
 }
@@ -202,6 +202,9 @@ function validateConfig(changed, restart) {
     mandatoryFields.push("obsPort", "obsPassword");
     if (get("obs")._connected) mandatoryFields.push("obsMediaScene", "obsCameraScene");
   }
+  if (prefs.enablePp) {
+    mandatoryFields.push("ppForward", "ppBackward");
+  }
   for (var setting of mandatoryFields) {
     if (setting.includes("Day")) $("#day" + prefs[setting]).addClass("meeting");
     $("#" + setting + ", .timePicker[data-target='" + setting + "']").toggleClass("is-invalid", !prefs[setting]);
@@ -213,6 +216,7 @@ function validateConfig(changed, restart) {
   $("#enableMusicFadeOut, #musicVolume").closest(".row").toggle(!!prefs.enableMusicButton);
   $(".relatedToFadeOut").toggle(!!prefs.enableMusicButton && !!prefs.enableMusicFadeOut);
   $(".relatedToObs").toggle(!!prefs.enableObs);
+  $(".relatedToPP").toggle(!!prefs.enablePp && !!prefs.enableMediaDisplayButton);
   if (os.platform() !== "linux") remote.app.setLoginItemSettings({ openAtLogin: prefs.autoRunAtBoot });
   $("#enableMusicFadeOut").closest(".row").find("label").first().toggleClass("col-11", prefs.enableMusicButton && !prefs.enableMusicFadeOut);
   if (prefs.enableMusicButton) {
@@ -225,7 +229,7 @@ function validateConfig(changed, restart) {
     }
     $("#musicFadeOutType label span").text(prefs.musicFadeOutTime);
     if (prefs.musicVolume) {
-      $("#meetingMusic").animate({volume: prefs.musicVolume / 100});
+      $("#meetingMusic").animate({ volume: prefs.musicVolume / 100 });
       $("#musicVolumeDisplay").html(prefs.musicVolume);
     } else {
       $("#musicVolume").val(100).trigger("change");
@@ -234,7 +238,7 @@ function validateConfig(changed, restart) {
     shortcutsUnset("musicButton");
   }
   $("#btnMediaWindow, #btnToggleMediaWindowFocus").toggle(!!prefs.enableMediaDisplayButton);
-  $("#currentMediaBackground, #hideMediaLogo").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
+  $("#currentMediaBackground, #hideMediaLogo, #enablePp").closest(".row").toggle(!!prefs.enableMediaDisplayButton);
   $("#mp4Convert").toggleClass("d-flex", !!prefs.enableMp4Conversion);
   $("#keepOriginalsAfterConversion").closest(".row").toggle(!!prefs.enableMp4Conversion);
   $("#btnMeetingMusic").toggle(!!prefs.enableMusicButton && $("#btnStopMeetingMusic:visible").length === 0);
@@ -243,7 +247,7 @@ function validateConfig(changed, restart) {
   if (!configIsValid) {
     toggleScreen("overlaySettings", true);
   } else if (changed) {
-    fs.writeFileSync(get("paths").prefs, JSON.stringify(Object.keys(prefs).sort().reduce((acc, key) => ({...acc, [key]: prefs[key]}), {}), null, 2));
+    fs.writeFileSync(get("paths").prefs, JSON.stringify(Object.keys(prefs).sort().reduce((acc, key) => ({ ...acc, [key]: prefs[key] }), {}), null, 2));
     congregationPrefsPopulate();
     congregationSelectPopulate();
   }

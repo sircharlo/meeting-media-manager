@@ -546,7 +546,8 @@
         <div class="input-group mb-3">
           <button type="button" id="jwpubPickerButton" class="btn btn-sm btn-primary">
             <span data-i18n-string="browse"></span></button>
-          <input type="text" class="form-control form-control-sm localOrRemoteFile" id="jwpubPicker" disabled="disabled" />
+          <input type="text" class="form-control form-control-sm localOrRemoteFile" id="jwpubPicker"
+            disabled="disabled" />
         </div>
         <input type="hidden" id="fileToUpload" />
       </div>
@@ -556,12 +557,18 @@
         <i class="fas fa-arrow-down-1-9"></i>
       </div>
       <div class="col d-flex text-center">
-        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-0" />
-        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1" id="enterPrefix-1" disabled="disabled" />
-        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-2" disabled="disabled" />
-        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1" id="enterPrefix-3" disabled="disabled" />
-        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1" id="enterPrefix-4" disabled="disabled" />
-        <input class="col enterPrefixInput form-control form-control-sm text-center" v="v" type="text" maxlength="1" id="enterPrefix-5" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1"
+          id="enterPrefix-0" />
+        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1"
+          id="enterPrefix-1" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1"
+          id="enterPrefix-2" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm me-3 text-center" type="text" maxlength="1"
+          id="enterPrefix-3" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm me-1 text-center" type="text" maxlength="1"
+          id="enterPrefix-4" disabled="disabled" />
+        <input class="col enterPrefixInput form-control form-control-sm text-center" v="v" type="text" maxlength="1"
+          id="enterPrefix-5" disabled="disabled" />
       </div>
     </div>
     <div class="flex-fill overflow-hidden py-3 row text-start">
@@ -573,7 +580,8 @@
     </div>
     <div class="align-items-end py-3 row">
       <div class="col-4 text-start">
-        <button class="btn btn-danger btn-cancel-upload file-selected" data-bs-toggle="popover" data-bs-trigger="focus" type="button">
+        <button class="btn btn-danger btn-cancel-upload file-selected" data-bs-toggle="popover" data-bs-trigger="focus"
+          type="button">
           <i class="fas fa-fw fa-circle-arrow-left"></i>
         </button>
       </div>
@@ -595,7 +603,8 @@
       </div>
       <div id="bottomIcon" class="align-self-center fa-2x text-center" role="status">
         <i></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark action-countdown"></span>
+        <span
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark action-countdown"></span>
       </div>
     </div>
   </div>
@@ -604,7 +613,9 @@
       <div class="accordion" id="settingsAccordion">
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingAppSettings">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAppSettings" aria-expanded="true" aria-controls="collapseAppSettings" data-i18n-string="optionsApp"></button>
+            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseAppSettings" aria-expanded="true" aria-controls="collapseAppSettings"
+              data-i18n-string="optionsApp"></button>
           </h2>
           <div id="collapseAppSettings" class="accordion-collapse collapse" aria-labelledby="headingAppSettings">
             <div class="accordion-body">
@@ -659,7 +670,8 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="autoOpenFolderWhenDone" class="m-0 text-start col-11" data-i18n-string="openTargetFolderAfterSync"></label>
+                <label for="autoOpenFolderWhenDone" class="m-0 text-start col-11"
+                  data-i18n-string="openTargetFolderAfterSync"></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input col-1" id="autoOpenFolderWhenDone" />
                 </div>
@@ -712,7 +724,8 @@
               </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
-                <label for="disableHardwareAcceleration" class="m-0 text-start col-11" data-i18n-string="disableHardwareAcceleration"></label>
+                <label for="disableHardwareAcceleration" class="m-0 text-start col-11"
+                  data-i18n-string="disableHardwareAcceleration"></label>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input col-1" id="disableHardwareAcceleration" />
                 </div>
@@ -722,51 +735,61 @@
         </div>
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingCongSync">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCongSync" aria-expanded="true" aria-controls="collapseCongSync" data-i18n-string="optionsCongSync"></button>
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCongSync"
+              aria-expanded="true" aria-controls="collapseCongSync" data-i18n-string="optionsCongSync"></button>
           </h2>
           <div id="collapseCongSync" class="accordion-collapse collapse" aria-labelledby="headingCongSync">
             <div class="accordion-body">
               <div class="align-items-center g-1 py-1 row">
                 <div class="dropdown col-5 text-start" id="webdavProviders">
-                  <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" style="margin-left: calc(-0.5rem - 1px);">
+                  <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    style="margin-left: calc(-0.5rem - 1px);">
                     <span data-i18n-string="hostname"></span>
                   </button>
                   <ul class="dropdown-menu">
                     <li>
-                      <a class="dropdown-item" data-server="webdav.4shared.com" data-server-port="443" data-server-dir="/">4shared</a>
+                      <a class="dropdown-item" data-server="webdav.4shared.com" data-server-port="443"
+                        data-server-dir="/">4shared</a>
                     </li>
                     <li>
-                      <a class="dropdown-item" data-server="dav.box.com" data-server-port="443" data-server-dir="/dav/">Box</a>
+                      <a class="dropdown-item" data-server="dav.box.com" data-server-port="443"
+                        data-server-dir="/dav/">Box</a>
                     </li>
                     <li>
-                      <a class="dropdown-item" data-server="app.koofr.net" data-server-port="443" data-server-dir="/dav/Koofr/">Koofr</a>
+                      <a class="dropdown-item" data-server="app.koofr.net" data-server-port="443"
+                        data-server-dir="/dav/Koofr/">Koofr</a>
                     </li>
                     <li>
-                      <a class="dropdown-item" data-server="my.powerfolder.com" data-server-port="443" data-server-dir="/webdav/">PowerFolder</a>
+                      <a class="dropdown-item" data-server="my.powerfolder.com" data-server-port="443"
+                        data-server-dir="/webdav/">PowerFolder</a>
                     </li>
                   </ul>
                 </div>
                 <div class="input-group input-group-sm col">
                   <span class="input-group-text">https://</span>
-                  <input type=" text" class="form-control form-control-sm webdavHost" id="congServer" required="required" />
+                  <input type=" text" class="form-control form-control-sm webdavHost" id="congServer"
+                    required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
                 <label for="congServerPort" class="col-5 m-0 pr-3 text-start" data-i18n-string="port"></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort" required="required" />
+                  <input type="text" class="form-control form-control-sm webdavHost" id="congServerPort"
+                    required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
                 <label for="congServerUser" class="col-5 m-0 pr-3 text-start" data-i18n-string="username"></label>
                 <div class="col">
-                  <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser" required="required" />
+                  <input type="text" class="form-control form-control-sm webdavCreds" id="congServerUser"
+                    required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
                 <label for="congServerPass" class="col-5 m-0 pr-3 text-start" data-i18n-string="password"></label>
                 <div class="col">
-                  <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass" required="required" />
+                  <input type="password" class="form-control form-control-sm webdavCreds" id="congServerPass"
+                    required="required" />
                 </div>
               </div>
               <div class="align-items-center g-1 py-1 row">
@@ -798,7 +821,8 @@
         </div>
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingMedia">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMedia" aria-expanded="true" aria-controls="collapseMedia" data-i18n-string="optionsMedia"></button>
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMedia"
+              aria-expanded="true" aria-controls="collapseMedia" data-i18n-string="optionsMedia"></button>
           </h2>
           <div id="collapseMedia" class="accordion-collapse collapse" aria-labelledby="headingMedia">
             <div class="accordion-body">
@@ -879,6 +903,29 @@
                   <input type="checkbox" class="form-check-input onlyWindows" id="hideMediaLogo" />
                 </div>
               </div>
+              <div class="align-items-center g-1 py-1 row">
+                <label for="enablePp" class="m-0 text-start col-11">
+                  <span data-i18n-string="enablePp"></span></label>
+                <div class="form-check form-switch text-end col-1">
+                  <input type="checkbox" class="form-check-input" id="enablePp" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row relatedToPP">
+                <label for="ppForward" class="m-0 text-start col-5">
+                  <span data-i18n-string="ppForward"></span></label>
+                <div class="col">
+                  <input type="text" class="form-control form-control-sm" id="ppForward" placeholder="PageDown"
+                    required="required" />
+                </div>
+              </div>
+              <div class="align-items-center g-1 py-1 row relatedToPP">
+                <label for="ppBackward" class="m-0 text-start col-5">
+                  <span data-i18n-string="ppBackward"></span></label>
+                <div class="col">
+                  <input type="text" class="form-control form-control-sm" id="ppBackward" placeholder="PageUp"
+                    required="required" />
+                </div>
+              </div>
               <hr class="my-2" />
               <div class="align-items-center g-1 py-1 row">
                 <label for="enableVlcPlaylistCreation" class="m-0 text-start col-11">
@@ -914,7 +961,8 @@
         </div>
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingMeetings">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMeetings" aria-expanded="true" aria-controls="collapseMeetings" data-i18n-string="optionsMeetings"></button>
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMeetings"
+              aria-expanded="true" aria-controls="collapseMeetings" data-i18n-string="optionsMeetings"></button>
           </h2>
           <div id="collapseMeetings" class="accordion-collapse collapse" aria-labelledby="headingMeetings">
             <div class="accordion-body">
@@ -938,7 +986,8 @@
                   <label class="btn btn-outline-dark" for="mwDay6">S</label>
                 </div>
                 <div class="col-1">
-                  <input class="w-100 form-control form-control-sm px-1 timePicker" data-target="mwStartTime" type="text" />
+                  <input class="w-100 form-control form-control-sm px-1 timePicker" data-target="mwStartTime"
+                    type="text" />
                 </div>
                 <input type="hidden" id="mwStartTime" />
               </div>
@@ -962,7 +1011,8 @@
                   <label class="btn btn-outline-dark" for="weDay6">S</label>
                 </div>
                 <div class="col-1">
-                  <input class="w-100 form-control form-control-sm px-1 timePicker" data-target="weStartTime" type="text" />
+                  <input class="w-100 form-control form-control-sm px-1 timePicker" data-target="weStartTime"
+                    type="text" />
                 </div>
                 <input type="hidden" id="weStartTime" />
               </div>
@@ -992,9 +1042,11 @@
                 </div>
                 <div class="btn-group btn-group-toggle col-5 ps-2 relatedToFadeOut" id="musicFadeOutType">
                   <input type="radio" class="btn-check" name="musicFadeOutType" value="smart" id="musicFadeOutSmart">
-                  <label class="btn btn-outline-dark" for="musicFadeOutSmart" data-i18n-string="musicFadeOutSmart"></label>
+                  <label class="btn btn-outline-dark" for="musicFadeOutSmart"
+                    data-i18n-string="musicFadeOutSmart"></label>
                   <input type="radio" class="btn-check" name="musicFadeOutType" value="timer" id="musicFadeOutTimer">
-                  <label class="btn btn-outline-dark" for="musicFadeOutTimer" data-i18n-string="musicFadeOutTimer"></label>
+                  <label class="btn btn-outline-dark" for="musicFadeOutTimer"
+                    data-i18n-string="musicFadeOutTimer"></label>
                 </div>
                 <div class="form-check form-switch text-end col-1">
                   <input type="checkbox" class="form-check-input" id="enableMusicFadeOut" />
@@ -1007,11 +1059,13 @@
     </div>
     <div class="d-flex flex-row align-items-center justify-content-end text-nowrap pt-3">
       <div class="col text-start">
-        <button id="version" type="button" class="btn btn-action btn-light btn-sm" data-action-url="https://github.com/sircharlo/meeting-media-manager/releases/latest"></button>
+        <button id="version" type="button" class="btn btn-action btn-light btn-sm"
+          data-action-url="https://github.com/sircharlo/meeting-media-manager/releases/latest"></button>
         <button type="button" class="btn btn-action btn-report-issue btn-secondary btn-sm">
           <span data-i18n-string="reportIssue"></span>
         </button>
-        <button type="button" data-bs-toggle="popover" data-bs-trigger="focus" class="btn btn-clean-up btn-sm btn-warning">
+        <button type="button" data-bs-toggle="popover" data-bs-trigger="focus"
+          class="btn btn-clean-up btn-sm btn-warning">
           <span data-i18n-string="cleanCache"></span>
           (<span id="cacheSizeInMb">0MB</span>)
         </button>
@@ -1035,7 +1089,8 @@
       </div>
       <div class="col-5 text-end">
         <div class="btn-group" id="congregationSelect">
-          <button class="btn btn-sm dropdown-toggle" type="button" id="congregationSelect-dropdown" data-bs-toggle="dropdown"></button>
+          <button class="btn btn-sm dropdown-toggle" type="button" id="congregationSelect-dropdown"
+            data-bs-toggle="dropdown"></button>
           <div class="dropdown-menu dropdown-menu-end">
             <button class="dropdown-item new-cong" value="">
               <i class="fas fa-square-plus text-success"></i>
@@ -1046,12 +1101,14 @@
     </div>
     <div class="align-items-center d-flex flex-fill flex-column justify-content-center">
       <div id="folders" class="d-flex w-100">
-        <button id="recurringMedia" class="btn btn-sm alertIndicators m-1 btn-secondary align-items-center justify-content-center">
+        <button id="recurringMedia"
+          class="btn btn-sm alertIndicators m-1 btn-secondary align-items-center justify-content-center">
           <span class="col" data-i18n-string="recurring"></span>
         </button>
       </div>
       <div class="d-flex w-100">
-        <button id="syncJwOrgMedia" data-settingslink="collapseMedia" class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
+        <button id="syncJwOrgMedia" data-settingslink="collapseMedia"
+          class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary syncJwOrgMedia align-items-center justify-content-center d-flex">
           <div>
             <span data-i18n-string="syncJwOrgMedia"></span>
             <span class="jwLang">
@@ -1062,11 +1119,15 @@
           </div>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </button>
-        <button id="specificCong" data-settingslink="collapseCongSync" class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary congregation align-items-center justify-content-center" style="display: none;">
+        <button id="specificCong" data-settingslink="collapseCongSync"
+          class="btn-sm alertIndicators m-1 flex-fill btn btn-secondary congregation align-items-center justify-content-center"
+          style="display: none;">
           <span class="col" data-i18n-string="congMedia"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </button>
-        <button id="mp4Convert" data-settingslink="collapseMedia" class="alertIndicators m-1 flex-fill btn btn-sm btn-secondary zoom align-items-center justify-content-center" style="display: none;">
+        <button id="mp4Convert" data-settingslink="collapseMedia"
+          class="alertIndicators m-1 flex-fill btn btn-sm btn-secondary zoom align-items-center justify-content-center"
+          style="display: none;">
           <span class="col" data-i18n-string="mp4Conversion"></span>
           <div class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
         </button>
@@ -1081,23 +1142,27 @@
     </div>
     <div class="align-items-center d-flex py-3 justify-content-center">
       <div id="music-buttons" class="col-4 text-start">
-        <button type="button" class="btn btn-info me-2" id="btnMeetingMusic" data-bs-toggle="popover" data-bs-trigger="focus" title="Alt+K" style="display: none;">
+        <button type="button" class="btn btn-info me-2" id="btnMeetingMusic" data-bs-toggle="popover"
+          data-bs-trigger="focus" title="Alt+K" style="display: none;">
           <i class="fas fa-fw fa-music"></i>
           <i class="fa-solid fa-shuffle"></i>
         </button>
-        <button type="button" class="btn btn-warning me-2" id="btnStopMeetingMusic" title="Alt+K" style="display: none;">
+        <button type="button" class="btn btn-warning me-2" id="btnStopMeetingMusic" title="Alt+K"
+          style="display: none;">
           <i class="fas fa-fw fa-stop"></i>
           <span id="musicRemaining"></span>
         </button>
       </div>
       <div class="col-4 text-center">
         <div class="btn-group" id="baseDate">
-          <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown" data-bs-toggle="dropdown"></button>
+          <button class="btn dropdown-toggle btn-sm" type="button" id="baseDate-dropdown"
+            data-bs-toggle="dropdown"></button>
           <div class="dropdown-menu"></div>
         </div>
       </div>
       <div id="control-buttons" class="col-4 text-end">
-        <button type='button' id='btnToggleMediaWindowFocus' class='btn btn-sm btn-warning me-2' title='Alt+Z' style="display: none;">
+        <button type='button' id='btnToggleMediaWindowFocus' class='btn btn-sm btn-warning me-2' title='Alt+Z'
+          style="display: none;">
           <span class='fa-stack'>
             <i class='fas fa-desktop fa-stack-1x'></i>
             <i class='fas fa-ban fa-stack-2x text-danger'></i>
@@ -1109,7 +1174,8 @@
         </button>
         <button class="btn btn-dark position-relative" id="btn-settings">
           <i class="fas fa-fw fa-user-cog"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="bg-mac-update" style="display: none;">
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            id="bg-mac-update" style="display: none;">
             <i class="fas fa-fw fa-exclamation-triangle"></i>
           </span>
         </button>
@@ -1130,7 +1196,8 @@
       </div>
     </div>
   </div>
-  <div id="globalProgress" class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
+  <div id="globalProgress"
+    class="position-absolute bottom-0 start-0 progress-bar progress-bar-striped progress-bar-animated"></div>
   <script src="./media-updater.js"></script>
 </body>
 

@@ -682,6 +682,7 @@ function refreshFolderListing(folderPath) {
     cancel: ".position-relative",
     axis: "y",
   });
+  var n = 1;
   for (var item of glob.sync(path.join(folderPath, "*")).sort()) {
     item = escape(item);
     let lineItem = $(`<li class='d-flex align-items-center list-group-item flex-column item ${(isVideo(item) || isAudio(item) ? "video" : (isImage(item) ? "image" : "unknown"))}' data-item='${item}'>
@@ -701,10 +702,10 @@ function refreshFolderListing(folderPath) {
       </button>
     </div>
     <div class='d-flex flex-shrink-0'>
-      <button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;'>
+      <button class='btn btn-lg btn-warning stop' data-bs-toggle='popover' data-bs-trigger='focus' style='display: none;' id='mediaStopIndex_` + n + `'>
         <i class='fas fa-fw fa-stop'></i>
       </button>
-      <button class='btn btn-lg btn-primary play'>
+      <button class='btn btn-lg btn-primary play' id='mediaPlayIndex_` + n + `'>
         <i class='fas fa-fw fa-play'></i>
       </button>
       <div class='btn btn-lg btn-info move-handle mb-0 ms-3' style='display: none;'>
@@ -895,6 +896,7 @@ function refreshFolderListing(folderPath) {
       }
     });
     if (isVideo(item) || isAudio(item) || isImage(item)) $("div#folderListing").append(lineItem);
+    n++;
   }
   function getMediaDuration(lineItem) {
     for (let timeItem of ["Start", "End"]) {
@@ -1548,6 +1550,7 @@ $("#btnMediaWindow").on("click", function () {
   });
   $(folderListing).on("click", "li.item button.play:not(.pausePlay)", function () {
     let mediaItem = $(this).closest(".item");
+    mediaItemIndex = this.id;
     $("#folderListing .item").removeClass("list-group-item-primary z-2");
     $("#btnToggleMediaWindowFocus.hidden").trigger("click");
     let mediaFileToPlay = {
@@ -1586,6 +1589,7 @@ $("#btnMediaWindow").on("click", function () {
   });
   $(folderListing).on("click", "li.item button.stop", function () {
     let mediaItem = $(this).closest(".item");
+    mediaItemIndex = this.id;
     if (!mediaItem.hasClass("video") || $(this).hasClass("confirmed")) {
       require("electron").ipcRenderer.send("hideMedia", mediaItem.data("item"));
       obsSetScene($("#obsTempCameraScene").val());
@@ -1634,6 +1638,9 @@ $("#btnMediaWindow").on("click", function () {
   </button>
   </div>`);
   $("#staticBackdrop .modal-header").append(`<div class='col-4 for-folder-listing-only text-end' style='display: none;'>
+${get("prefs").enablePp ? `
+  <button class="btn btn-sm backward" id="backward" title="${get("prefs").ppBackward}"><i class="fas fa-fw fa-backward"></i></button>
+  <button class="btn btn-sm forward" id="forward" title="${get("prefs").ppForward}"><i class="fas fa-fw fa-forward"></i></button>` : ""}
   <button class='btn btn-sm folderRefresh'><i class='fas fa-fw fa-rotate-right'></i></button>
   <button class='btn btn-sm master-move-handle'><i class='fas fa-fw fa-arrow-down-short-wide'></i></button>
   <button class='btn btn-sm folderOpen'><i class='fas fa-fw fa-folder-open'></i></button>
@@ -1646,6 +1653,14 @@ $("#btnMediaWindow").on("click", function () {
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic").addClass("btn-lg"));
   $("#staticBackdrop .modal-footer .right").prepend($("#btnToggleMediaWindowFocus").removeClass("btn-sm"));
   $("#staticBackdrop .modal-footer").show();
+  if (get("prefs").enablePp) {
+    remote.globalShortcut.register(get("prefs").ppForward, () => {
+      if ($("#forward:visible").length > 0) $("#forward").trigger("click");
+    });
+    remote.globalShortcut.register(get("prefs").ppBackward, () => {
+      if ($("#backward:visible").length > 0) $("#backward").trigger("click");
+    });
+  }
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function () {
   set("obs", {});
@@ -1674,6 +1689,34 @@ $("#staticBackdrop .modal-header").on("click", ".show-prefixes", function () {
 });
 $("#staticBackdrop .modal-header").on("click", "button.folderOpen", function () {
   shell.openPath(url.fileURLToPath(url.pathToFileURL(path.join(get("paths").media, $(".modal-header h5").text())).href));
+});
+var mediaItemIndex = "mediaStopIndex_0";
+$("#staticBackdrop .modal-header").on("click", "button.forward", function () {
+  var mediaIndex = mediaItemIndex.split("_");
+  if (mediaIndex[0] == "mediaPlayIndex") {
+    $("#mediaStopIndex_" + mediaIndex[1]).addClass("confirmed").trigger("click");
+    mediaIndex = "mediaPlayIndex_" + ((+mediaIndex[1]) + (+1));
+  } else {
+    $("#mediaPlayIndex_" + ((+mediaIndex[1]) + (+1))).trigger("click");
+    mediaIndex = "mediaStopIndex_" + mediaIndex[1];
+  }
+});
+$("#staticBackdrop .modal-header").on("click", "button.backward", function () {
+  var mediaIndex = mediaItemIndex.split("_");
+  if (mediaIndex[0] == "mediaPlayIndex") {
+    $("#mediaStopIndex_" + mediaIndex[1]).addClass("confirmed").trigger("click");
+    mediaIndex = "mediaPlayIndex_" + ((+mediaIndex[1]) + (-1));
+  } else {
+    $("#mediaPlayIndex_" + ((+mediaIndex[1]) + (-1))).trigger("click");
+    mediaIndex = "mediaStopIndex_" + mediaIndex[1];
+  }
+});
+$("#staticBackdrop .modal-footer").on("click", "button.closeModal", function () {
+  mediaItemIndex = "mediaStopIndex_0";
+  if (get("prefs").enablePp) {
+    remote.globalShortcut.unregister(get("prefs").ppForward);
+    remote.globalShortcut.unregister(get("prefs").ppBackward);
+  }
 });
 $("body").on("click", "#btnMeetingMusic", async function () {
   const prefs = get("prefs");
