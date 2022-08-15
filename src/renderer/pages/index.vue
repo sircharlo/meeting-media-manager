@@ -20,6 +20,7 @@
           :items="congs"
           item-text="name"
           item-value="path"
+          :label="$t('congregationName')"
           dense
           solo
           @change="changeCong($event)"
@@ -140,6 +141,7 @@
           item-text="label"
           item-value="iso"
           :disabled="loading"
+          :label="$t('meeting')"
           solo
           dense
           hide-details="auto"
@@ -608,6 +610,15 @@ export default Vue.extend({
 </script>
 <style lang="scss">
 .theme--light {
+  .secondary * {
+    color: #fff !important;
+  }
+
+  .accent * {
+    color: #000 !important;
+  }
+}
+.theme--dark {
   .secondary * {
     color: #fff !important;
   }

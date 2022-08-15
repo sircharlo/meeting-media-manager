@@ -9,6 +9,7 @@ on:
       - 'builder.config.js'
       - 'src/main/boot/*.js'
       - '.electron-nuxt/**/*'
+      - 'src/renderer/nuxt.config.js'
 
 jobs:
   release:
