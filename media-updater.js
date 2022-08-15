@@ -1638,7 +1638,7 @@ $("#btnMediaWindow").on("click", function () {
   </button>
   </div>`);
   $("#staticBackdrop .modal-header").append(`<div class='col-4 for-folder-listing-only text-end' style='display: none;'>
-${get("prefs").ppEnable ? `
+${get("prefs").enablePp ? `
   <button class="btn btn-sm backward" id="backward" title="${get("prefs").ppBackward}"><i class="fas fa-fw fa-backward"></i></button>
   <button class="btn btn-sm forward" id="forward" title="${get("prefs").ppForward}"><i class="fas fa-fw fa-forward"></i></button>` : ""}
   <button class='btn btn-sm folderRefresh'><i class='fas fa-fw fa-rotate-right'></i></button>
@@ -1653,7 +1653,7 @@ ${get("prefs").ppEnable ? `
   $("#staticBackdrop .modal-footer .left").prepend($("#btnMeetingMusic, #btnStopMeetingMusic").addClass("btn-lg"));
   $("#staticBackdrop .modal-footer .right").prepend($("#btnToggleMediaWindowFocus").removeClass("btn-sm"));
   $("#staticBackdrop .modal-footer").show();
-  if (get("prefs").ppEnable) {
+  if (get("prefs").enablePp) {
     remote.globalShortcut.register(get("prefs").ppForward, () => {
       if ($("#forward:visible").length > 0) $("#forward").trigger("click");
     });
@@ -1713,7 +1713,7 @@ $("#staticBackdrop .modal-header").on("click", "button.backward", function () {
 });
 $("#staticBackdrop .modal-footer").on("click", "button.closeModal", function () {
   mediaItemIndex = "mediaStopIndex_0";
-  if (get("prefs").ppEnable) {
+  if (get("prefs").enablePp) {
     remote.globalShortcut.unregister(get("prefs").ppForward);
     remote.globalShortcut.unregister(get("prefs").ppBackward);
   }

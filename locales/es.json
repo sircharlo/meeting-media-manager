@@ -69,7 +69,7 @@
 	"paragraph": "Párrafo",
 	"password": "Contraseña",
 	"port": "Puerto",
-	"ppEnable": "Activar control remoto PowerPoint USB",
+	"enablePp": "Activar control remoto PowerPoint USB",
 	"ppForward": "Atajo siguiente contenido multimedia",
 	"ppBackward": "Atajo anterior contenido multimedia",
 	"quitAfterSync": "Salir de la aplicación después de la sincronización de la multimedia",
