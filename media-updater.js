@@ -1636,15 +1636,11 @@ $("#btnMediaWindow").on("click", function () {
     <i class='fas fa-fw fa-eye'></i>
     <i class='fas fa-fw fa-list-ol'></i>
   </button>
-  ${get("prefs").ppEnable ? `
-  <button class="btn btn-md btn-primary backward" id="backward" title="${get("prefs").ppBackward}" style="">
-    <i class="fas fa-fw fa-backward"></i>
-  </button>
-  <button class="btn btn-md btn-primary forward" id="forward" title="${get("prefs").ppForward}" style="">
-    <i class="fas fa-fw fa-forward"></i>
-  </button>` : "" }
   </div>`);
   $("#staticBackdrop .modal-header").append(`<div class='col-4 for-folder-listing-only text-end' style='display: none;'>
+${get("prefs").ppEnable ? `
+  <button class="btn btn-sm backward" id="backward" title="${get("prefs").ppBackward}"><i class="fas fa-fw fa-backward"></i></button>
+  <button class="btn btn-sm forward" id="forward" title="${get("prefs").ppForward}"><i class="fas fa-fw fa-forward"></i></button>` : ""}
   <button class='btn btn-sm folderRefresh'><i class='fas fa-fw fa-rotate-right'></i></button>
   <button class='btn btn-sm master-move-handle'><i class='fas fa-fw fa-arrow-down-short-wide'></i></button>
   <button class='btn btn-sm folderOpen'><i class='fas fa-fw fa-folder-open'></i></button>
@@ -1659,10 +1655,10 @@ $("#btnMediaWindow").on("click", function () {
   $("#staticBackdrop .modal-footer").show();
   if (get("prefs").ppEnable) {
     remote.globalShortcut.register(get("prefs").ppForward, () => {
-      $("#forward").trigger("click");
+      if ($("#forward:visible").length > 0) $("#forward").trigger("click");
     });
     remote.globalShortcut.register(get("prefs").ppBackward, () => {
-      $("#backward").trigger("click");
+      if ($("#backward:visible").length > 0) $("#backward").trigger("click");
     });
   }
 });
@@ -1694,7 +1690,7 @@ $("#staticBackdrop .modal-header").on("click", ".show-prefixes", function () {
 $("#staticBackdrop .modal-header").on("click", "button.folderOpen", function () {
   shell.openPath(url.fileURLToPath(url.pathToFileURL(path.join(get("paths").media, $(".modal-header h5").text())).href));
 });
-var mediaItemIndex = "mediaPlayIndex_1";
+var mediaItemIndex = "mediaStopIndex_0";
 $("#staticBackdrop .modal-header").on("click", "button.forward", function () {
   var mediaIndex = mediaItemIndex.split("_");
   if (mediaIndex[0] == "mediaPlayIndex") {
@@ -1715,14 +1711,14 @@ $("#staticBackdrop .modal-header").on("click", "button.backward", function () {
     mediaIndex = "mediaStopIndex_" + mediaIndex[1];
   }
 });
-$("#staticBackdrop .modal-footer").on("click", "button.closeModal", function() {
+$("#staticBackdrop .modal-footer").on("click", "button.closeModal", function () {
   mediaItemIndex = "mediaItemIndex_0";
-  if (get("prefs").ppEnable){
+  if (get("prefs").ppEnable) {
     remote.globalShortcut.unregister(get("prefs").ppForward);
     remote.globalShortcut.unregister(get("prefs").ppBackward);
   }
 });
-$("body").on("click", "#btnMeetingMusic", async function() {
+$("body").on("click", "#btnMeetingMusic", async function () {
   const prefs = get("prefs");
   if (!$(this).hasClass("confirmed")) {
     waitToConfirm(this);
