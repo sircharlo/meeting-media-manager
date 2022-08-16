@@ -60,15 +60,15 @@ search.onkeyup = () => {
         el.childNodes.forEach((node) => {
           if (!node.nodeName === '#text') return
           console.log(node.nodeValue)
-          const match = regex.exec(node.nodeValue)
-          console.log(match)
-          if (match) {
+          let match = null
+          while ((match = regex.exec(node.nodeValue)) !== null) {
+            const m = match[0]
             el.innerHTML = el.innerHTML.replaceAll(
-              match[0],
-              `${match[0][0]}<span class="highlight">${match[0].substring(
+              m,
+              `${m[0]}<span class="highlight">${m.substring(
                 1,
-                match[0].length - 1
-              )}</span>${match[0][match[0].length - 1]}`
+                m.length - 1
+              )}</span>${m[m.length - 1]}`
             )
           }
         })
