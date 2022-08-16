@@ -54,9 +54,15 @@ The icons used in this project are taken from the [Font Awesome](https://fontawe
 
 ### Run documentation website locally
 
-The documentation website is hosted on [GitHub Pages](https://pages.github.com/) and generated with [Jekyll](https://jekyllrb.com/docs/installation/). To run the documentation site locally, you can follow the [instructions](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) of GitHub Pages. Once you have installed Jekyll, you can run the following command inside the docs folder:
+The documentation website is hosted on [GitHub Pages](https://pages.github.com/) and generated with [Jekyll](https://jekyllrb.com/docs/installation/). To run the documentation site locally, you can follow the [instructions](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) of GitHub Pages. Once you have installed Bundle, you can run the following commands:
 
 ``` bash
+# Navigate to docs folder of the project
+cd docs
+
+# Install dependencies
+bundle install
+
 # Serve website with hot reload on localhost:4000
-jekyll serve
+bundle exec jekyll serve
 ```
