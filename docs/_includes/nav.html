@@ -1,12 +1,14 @@
+{% assign posts=site.posts | where:"lang", page.lang %}
 <h1><a href="#content"><img src="https://github.com/sircharlo/meeting-media-manager/blob/master/build/icon.png?raw=true" alt="M³" style="max-height: 4rem;" /></a>M³ docs</h1>
 <ul id='links'>
   <input id="search" type="search" placeholder="Filter by keyword" />
-  <li><a href="#content">Home</a></li>{% for post in site.posts %}{% if post.category == null %}
-  <li><a href='#{{ post.url }}'>{{ post.title }}</a></li>{% endif %}{% endfor %}{% for category in site.categories reversed %}
+  <li><a href="#content" target="_self">Home</a></li>{% for post in posts %}{% if post.tag == null %}
+  <li><a href='#{{ post.url }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}{% for tag in site.tags reversed %}
+  {% assign posts=tag[1] | where:"lang", page.lang %}
   <li>
-    <h2>{{ category | first }}</h2>
-    <ul>{% for posts in category %}{% for post in posts %}{% if post.url %}
-      <li class='{{ post.type }}'><a href='#{{ post.url }}'>{{ post.title }}</a></li>{% endif %}{% endfor %}{% endfor %}
+    <h2>{{ tag[0] }}</h2>
+    <ul>{% for post in posts %}{% if post.url %}
+      <li class='{{ post.type }}'><a href='#{{ post.url }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}
     </ul>
   </li>{% endfor %}
 </ul>

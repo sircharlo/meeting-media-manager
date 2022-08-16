@@ -1,4 +1,24 @@
-permalink: ':title'
+domain: mtdvlpr.github.io       # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
+url: https://mtdvlpr.github.io  # the base hostname and protocol for your site, e.g. http://example.com
+baseurl: /meeting-media-manager      # place folder name if the site is served in a subfolder
+permalink: '/:title'
 title: 'M³ - Meeting Media Manager'
 sass:
   style: compressed
+defaults:
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  -
+    scope:
+      path: "locales/en/**/*"
+    values:
+      lang: "en"
+  -
+    scope:
+      path: "locales/nl/**/*"
+    values:
+      lang: "nl"

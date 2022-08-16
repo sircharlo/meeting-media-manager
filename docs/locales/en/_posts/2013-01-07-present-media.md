@@ -1,6 +1,7 @@
 ---
-category: Usage
+tag: Usage
 title: 'Presenting media'
+ref: present-media
 ---
 
 ### Using media presentation mode
@@ -37,9 +38,9 @@ Configure the computer sound card's output to go to one of the sound booth mixer
 
 Install OBS Studio, or download the portable version.
 
-Install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/){:target="_blank"} plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+Install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
 
-Install the [obs-websocket](https://github.com/obsproject/obs-websocket){:target="_blank"} plugin. Configure a port number and password for obs-websocket.
+Install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Configure a port number and password for obs-websocket.
 
 In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 
