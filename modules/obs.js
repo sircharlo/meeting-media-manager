@@ -147,14 +147,16 @@ async function obsGetScenes(currentOnly, validateConfig) {
           });
         } else {
           $(".modal-footer .left").append("<input type='hidden' id='obsTempCameraScene' />");
-          $(".modal-footer .left").append("<div class='btn-group' role='group' id='obsTempCameraScenePicker'></div>");
-          for (var i = 0; i < cameraScenes.length; i++) {
-            $("#obsTempCameraScenePicker").append(`<input type='radio' class='btn-check' name='obsTempCameraScenePicker' id='${cameraScenes[i].id}' autocomplete='off' ${cameraScenes[i].id == (data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene) ? "checked" : ""}/>`);
-            $("#obsTempCameraScenePicker").append(`<label class='btn btn-lg btn-outline-primary' for='${cameraScenes[i].id}' title='${(cameraScenes[i].kbdScene ? "[Alt-" + cameraScenes[i].kbdScene + "] - " : "") + cameraScenes[i].title}'>${cameraScenes[i].title.match(/\b(\w)/g).join("")}</label>`);
+          if (cameraScenes.length > 1) {
+            $(".modal-footer .left").append("<div class='btn-group' role='group' id='obsTempCameraScenePicker'></div>");
+            for (var i = 0; i < cameraScenes.length; i++) {
+              $("#obsTempCameraScenePicker").append(`<input type='radio' class='btn-check' name='obsTempCameraScenePicker' id='${cameraScenes[i].id}' autocomplete='off' ${cameraScenes[i].id == (data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene) ? "checked" : ""}/>`);
+              $("#obsTempCameraScenePicker").append(`<label class='btn btn-lg btn-outline-primary' for='${cameraScenes[i].id}' title='${(cameraScenes[i].kbdScene ? "[Alt-" + cameraScenes[i].kbdScene + "] - " : "") + cameraScenes[i].title}'>${cameraScenes[i].title.match(/\b(\w)/g).join("")}</label>`);
+            }
+            $("#obsTempCameraScenePicker input").on("change", function () {
+              $("#obsTempCameraScene").val($("#obsTempCameraScenePicker input:checked").attr("id")).trigger("change");
+            });
           }
-          $("#obsTempCameraScenePicker input").on("change", function () {
-            $("#obsTempCameraScene").val($("#obsTempCameraScenePicker input:checked").attr("id")).trigger("change");
-          });
         }
         $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene).trigger("change");
         return data;
