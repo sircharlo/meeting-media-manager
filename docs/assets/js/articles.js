@@ -29,12 +29,12 @@ links.forEach((link) => {
       const body = article.querySelector('.body')
       toggle(body, true)
     }
-    
+
     setTimeout(() => {
-      (article || header).scrollIntoView({
+      ;(article || header).scrollIntoView({
         behavior: 'smooth',
       })
-    }, 500);
+    }, 500)
   }
 
   const otherLinks = document.querySelectorAll(`.body a[href="#${id}"]`)
@@ -61,7 +61,6 @@ hide.onclick = () => {
     toggle(body, false)
   })
 }
-
 
 // On page load go to the article that is in the URL
 window.onload = () => {

@@ -43,6 +43,7 @@
 
 ## New Features
 
+- Documentation filter searches entire website and highlights results with yellow background
 - Using electron-store instead of home grown version
 - Using webdav client instead of home grown version
 - Port field for cong sync is no longer necessary
