@@ -14,12 +14,18 @@
     margin: 0;
     padding: 20px;
     text-transform: uppercase;
+    display: flex;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   h2 {
     color: rgba(255, 255, 255, 0.5);
     font-size: 14px;
     margin: 0;
+    margin-bottom: 10px;
   }
 
   input {

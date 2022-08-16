@@ -7,7 +7,8 @@ layout: default
 </nav>
 
 <section id='content'>
-  <img style='max-height: 20vh' src="https://github.com/sircharlo/meeting-media-manager/blob/master/build/icon.png?raw=true" alt="M³" />
+  <button class="control show">Expand all articles</button>
+  <button class="control hide">Collapse all articles</button>
   <h3 id="mmm-is">What is M³?</h3>
 
   <p><strong>Meeting Media Manager</strong>, or <strong>M³</strong> for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in
@@ -52,7 +53,7 @@ layout: default
 
   {% for post in site.posts %}
   <article class='{{ post.type }}'>
-    <a name='{{ post.url }}' href='#{{ post.url }}'>
+    <a id='{{ post.url }}' href='#{{ post.url }}'>
       <h2>{% if post.type %}<code><b>{{ post.type }}</b> {{ post.url_path }}</code> {% endif %}{{ post.title }}</h2>
     </a>
     <section class='body'>

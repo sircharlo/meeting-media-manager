@@ -10,6 +10,8 @@
   }
 
   .body {
+    overflow: hidden;
+    transition: height 10s ease-in-out;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     border-top: 1px solid $code-background;

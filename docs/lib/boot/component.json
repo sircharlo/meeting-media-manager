@@ -1,9 +1,0 @@
-{
-  "name": "boot",
-  "description": "Main app boot component",
-  "dependencies": {
-    "component/jquery": "*"
-  },
-  "local": ["filter"],
-  "scripts": ["index.js"]
-}
