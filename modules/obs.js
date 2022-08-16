@@ -5,6 +5,7 @@ const { get, set, setPref } = require("./store");
 // External modules
 const remote = require("@electron/remote");
 const $ = require("jquery");
+const escape = require("escape-html");
 const OBSWebSocket = require("obs-websocket-js");
 
 // Variables
@@ -119,10 +120,10 @@ async function obsGetScenes(currentOnly, validateConfig) {
             const txt = (shortcutSetSuccess ? kbdShortcut : "") + $(el).val();
 
             cameraScenes.push({
-              id: $(el).val(),
+              id: escape($(el).val()),
               text: txt,
               html: txt,
-              title: $(el).val(),
+              title: escape($(el).val()),
               ...(shortcutSetSuccess && { kbdScene: sceneNum }),
             });
           } catch (err) {
