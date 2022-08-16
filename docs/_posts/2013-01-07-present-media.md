@@ -11,7 +11,7 @@ Once the option to "Present media on an external monitor or in a separate window
 
 When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
 
-If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be **displayed when on standby.
+If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be **d**isplayed when on standby.
 
 Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt</kbd> <kbd>D</kbd> (for external display).
 
@@ -121,7 +121,7 @@ When you're done sharing media, hit <kbd>Alt</kbd> <kbd>S</kbd> to end Zoom scre
 
 Same as corresponding section above.
 
-### Screenshots
+### Screenshots of Presentation Mode
 
 <table class="showcase" markdown="0">
 {% include image.html src="present/launch-present-mode.png" alt="Button to enter media controller mode" %}

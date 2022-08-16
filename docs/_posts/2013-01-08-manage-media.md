@@ -37,7 +37,7 @@ To **remove**, **hide**, or **show** media, simply find the media file you don't
 | ------------------------------- || |
 | The media file was added to that day's media by you or the VO. <br><br>Click on the red 🟥 (delete) icon to delete the file. <br>Click a second time to confirm. | The media file is referenced in the meeting's material. <br><br>It _will_ be downloaded from JW.org or extracted from the relevant publication. | The media file was referenced in the meeting's material. <br><br>It was hidden by you or the VO, so it _will not_ be downloaded or added to the meeting's media. |
 
-### Screenshots
+### Screenshots of the media management screen
 
 <table class="showcase" markdown="0">
 {% include image.html src="manage/song-media.png" alt="Adding a song for a public talk" %}
