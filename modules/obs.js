@@ -16,13 +16,13 @@ async function obsConnect() {
     if (!prefs.enableObs && get("obs")._connected) {
       await get("obs").disconnect();
       log.info("OBS disconnected.");
-      set("obs",{});
+      set("obs", {});
     } else if (!get("obs")._connected && prefs.enableObs && prefs.obsPort && prefs.obsPassword) {
       set("obs", new OBSWebSocket());
       get("obs").on("error", err => {
         notifyUser("error", "errorObs", null, false, err);
       });
-      get("obs").on("SwitchScenes", function(newScene) {
+      get("obs").on("SwitchScenes", function (newScene) {
         try {
           if (newScene && newScene.sceneName && newScene.sceneName !== prefs.obsMediaScene) $("#obsTempCameraScene").val(newScene.sceneName).trigger("change");
         } catch (err) {
@@ -51,7 +51,7 @@ function shortcutSet(shortcut, destination, fn) {
   try {
     if (dynamicShortcuts[destination] && dynamicShortcuts[destination].includes(shortcut)) {
       alreadyExists = true;
-    } else if (!dynamicShortcuts[destination] || (Array.isArray(dynamicShortcuts[destination]) && !dynamicShortcuts[destination].includes(shortcut))) 
+    } else if (!dynamicShortcuts[destination] || (Array.isArray(dynamicShortcuts[destination]) && !dynamicShortcuts[destination].includes(shortcut)))
       ret = remote.globalShortcut.register(shortcut, fn);
     if (ret) {
       if (!dynamicShortcuts[destination]) dynamicShortcuts[destination] = [];
@@ -101,7 +101,6 @@ async function obsGetScenes(currentOnly, validateConfig) {
             $("#" + pref).val(prefs[pref]);
           }
         }
-        $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'></select>");
         shortcutsUnset("obsScenes");
         let cameraScenes = [];
         $("#obsCameraScene").children().clone().filter(function (i, el) {
@@ -111,37 +110,52 @@ async function obsGetScenes(currentOnly, validateConfig) {
             let sceneNum = (i < 10 ? (i + 1).toString().slice(-1) : null);
             let shortcutSetSuccess = false;
             if ((i + 1) < 10) {
-              shortcutSetSuccess = shortcutSet("Alt+" + sceneNum, "obsScenes", function() {
+              shortcutSetSuccess = shortcutSet("Alt+" + sceneNum, "obsScenes", function () {
                 $("#obsTempCameraScene").val($(el).val()).trigger("change");
+                $(`#obsTempCameraScenePicker :radio[id="${$(el).val()}"]`).prop("checked", true);
               });
             }
-
-            const txt = (shortcutSetSuccess ? `<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>${sceneNum}</kbd> - ` : "") + $(el).val();
+            let kbdShortcut = `<kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>Alt</kbd> <kbd class='bg-light border border-1 border-secondary fw-bold text-dark'>${sceneNum}</kbd> - `;
+            const txt = (shortcutSetSuccess ? kbdShortcut : "") + $(el).val();
 
             cameraScenes.push({
               id: $(el).val(),
               text: txt,
               html: txt,
               title: $(el).val(),
+              ...(shortcutSetSuccess && { kbdScene: sceneNum }),
             });
           } catch (err) {
             log.error(err);
           }
         });
-        $("#obsTempCameraScene").select2({
-          selectionCssClass: "obsTempCameraSceneSelect",
-          dropdownParent: $("#staticBackdrop"),
-          data: cameraScenes,
-          escapeMarkup: function(markup) {
-            return markup;
-          },
-          templateResult: function(data) {
-            return data.html;
-          },
-          templateSelection: function(data) {
-            return data.text;
+        if (cameraScenes.length > 6) {
+          $(".modal-footer .left").append("<select class='form-select form-select-lg ms-3 obs-scenes w-auto' id='obsTempCameraScene'></select>");
+          $("#obsTempCameraScene").select2({
+            selectionCssClass: "obsTempCameraSceneSelect",
+            dropdownParent: $("#staticBackdrop"),
+            data: cameraScenes,
+            escapeMarkup: function (markup) {
+              return markup;
+            },
+            templateResult: function (data) {
+              return data.html;
+            },
+            templateSelection: function (data) {
+              return data.text;
+            }
+          });
+        } else {
+          $(".modal-footer .left").append("<input type='hidden' id='obsTempCameraScene' />");
+          $(".modal-footer .left").append("<div class='btn-group' role='group' id='obsTempCameraScenePicker'></div>");
+          for (var i = 0; i < cameraScenes.length; i++) {
+            $("#obsTempCameraScenePicker").append(`<input type='radio' class='btn-check' name='obsTempCameraScenePicker' id='${cameraScenes[i].id}' autocomplete='off' ${cameraScenes[i].id == (data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene) ? "checked" : ""}/>`);
+            $("#obsTempCameraScenePicker").append(`<label class='btn btn-lg btn-outline-primary' for='${cameraScenes[i].id}' title='${(cameraScenes[i].kbdScene ? "[Alt-" + cameraScenes[i].kbdScene + "] - " : "") + cameraScenes[i].title}'>${cameraScenes[i].title.match(/\b(\w)/g).join("")}</label>`);
           }
-        });
+          $("#obsTempCameraScenePicker input").on("change", function () {
+            $("#obsTempCameraScene").val($("#obsTempCameraScenePicker input:checked").attr("id")).trigger("change");
+          });
+        }
         $("#obsTempCameraScene").val(data.currentScene == prefs.obsMediaScene ? prefs.obsCameraScene : data.currentScene).trigger("change");
         return data;
       }
