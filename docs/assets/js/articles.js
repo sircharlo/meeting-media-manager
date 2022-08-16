@@ -1,8 +1,7 @@
 // Toggle element active state
 function toggle(el, force = undefined) {
   if (el) {
-    const active = el.classList.toggle('active', force)
-    el.setAttribute('style', active ? '' : 'height: 0px')
+    return el.classList.toggle('active', force)
   }
 }
 
@@ -11,8 +10,11 @@ const articles = document.querySelectorAll('article')
 articles.forEach((article) => {
   const body = article.querySelector('.body')
   toggle(body, false)
-  article.onclick = () => {
-    toggle(body)
+  article.onclick = (e) => {
+    const active = toggle(body)
+    if (!active) {
+      e.preventDefault()
+    }
   }
 })
 
@@ -28,9 +30,11 @@ links.forEach((link) => {
       toggle(body, true)
     }
     
-    (article || header).scrollIntoView({
-      behavior: 'smooth',
-    })
+    setTimeout(() => {
+      (article || header).scrollIntoView({
+        behavior: 'smooth',
+      })
+    }, 500);
   }
 
   const otherLinks = document.querySelectorAll(`.body a[href="#${id}"]`)

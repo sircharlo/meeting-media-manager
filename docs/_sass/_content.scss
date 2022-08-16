@@ -10,8 +10,8 @@
   }
 
   .body {
+    max-height: 0;
     overflow: hidden;
-    transition: height 10s ease-in-out;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     border-top: 1px solid $code-background;
@@ -19,6 +19,12 @@
     display: block;
     padding: 15px 15px 0;
     width: 100%;
+    transition: max-height .5s ease-in-out;
+
+    &.active {
+      transition: max-height .5s ease-in-out;
+      max-height: 1000px
+    }
 
     code {
       border: 1px solid $code-border;
