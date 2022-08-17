@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "22.7.1",
+  "version": "22.8.0",
   "description": "Meeting Media Manager",
   "main": "main.js",
   "repository": {
@@ -51,20 +51,28 @@
     "win": {
       "target": "NSIS",
       "icon": "build/icon.ico",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "linux": {
       "category": "Utility",
       "target": "AppImage",
       "icon": "build/icon.png",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "mac": {
       "target": {
         "target": "dmg",
-        "arch": ["universal"]
+        "arch": [
+          "universal"
+        ]
       },
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "buildDependenciesFromSource": true
   },
@@ -86,7 +94,10 @@
     "postinstall": "electron-builder install-app-deps",
     "release": "electron-builder"
   },
-  "eslintIgnore": ["docs", "node_modules"],
+  "eslintIgnore": [
+    "docs",
+    "node_modules"
+  ],
   "author": "sircharlo",
   "license": "ISC"
 }
