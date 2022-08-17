@@ -61,3 +61,5 @@
 
 - Refactored docs to use sass instead of css
 - Implemented image html fraction in docs to make it easier to add an image
+
+The new documentation site is hosted [here](https://mtdvlpr.github.io/meeting-media-manager/en/)
