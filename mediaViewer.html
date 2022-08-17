@@ -106,22 +106,26 @@
     }
 
     #importedYearTextLogoContainer {
-      font-size: 18vh;
+      font-size: 16vh;
       position: absolute;
-      bottom: 10vh;
-      right: 10vh;
+      bottom: 14vh;
+      right: 14vh;
       background: rgba(255, 255, 255, .2);
+      border: rgba(255, 255, 255, 0) 1.5vh solid;
+      height: 12vh;
+      width: 12vh;
+      overflow: hidden;
     }
 
     #importedYearTextLogo {
-      margin: -2vh -1vh;
+      margin: -2.5vh -2vh;
     }
   </style>
 </head>
 
 <body>
   <div id="importedYearText" class="font-fallback loading"></div>
-  <div id="importedYearTextLogoContainer"></div>
+  <div id="importedYearTextLogoContainer" style="display: none;"></div>
   <div id="mediaDisplay"></div>
   <div id="blackOverlay"></div>
   <div id="resizeOverlay">
@@ -144,10 +148,10 @@
       remote = require("@electron/remote"),
       url = require("url");
 
-    function trasitionToMedia(media) {
+    function transitionToMedia(media) {
       resizingDone();
       $("#blackOverlay").css("opacity", "1");
-      setTimeout(function() {
+      setTimeout(function () {
         if (media.item) {
           if (isVideo(media.item) || isAudio(media.item)) {
             if ($("#mediaDisplay video").length > 0) $("#mediaDisplay video").remove()
@@ -155,10 +159,10 @@
               id: 'mediaVideo',
               src: url.pathToFileURL(media.item).href + (
                 media.Start || media.End ?
-                "#t=" + (
-                  media.Start || ""
-                ) + (media.End ? "," + media.End : "") :
-                ""
+                  "#t=" + (
+                    media.Start || ""
+                  ) + (media.End ? "," + media.End : "") :
+                  ""
               ),
               autoplay: true,
               controls: false
@@ -201,7 +205,7 @@
     }
 
     ipcRenderer.on('showMedia', (event, arg) => {
-      trasitionToMedia(arg)
+      transitionToMedia(arg)
     });
     ipcRenderer.on('pauseVideo', (event) => {
       $("video").addClass("manuallyPaused").trigger("pause");
@@ -223,7 +227,7 @@
     });
 
     function hideMedia() {
-      trasitionToMedia("transparent");
+      transitionToMedia("transparent");
       $("video").animate({
         volume: 0
       }, 400, () => {
@@ -255,25 +259,25 @@
             try {
               let yearText = (
                 glob.sync(yearTextPath).length > 0 ?
-                fs.readFileSync(yearTextPath, "utf8") :
-                null
+                  fs.readFileSync(yearTextPath, "utf8") :
+                  null
               );
               if (yearText && yearText.length > 0) {
                 $("#importedYearText").empty();
-                $(yearText).filter("p").filter(function() {
+                $(yearText).filter("p").filter(function () {
                   return this.textContent.length > 0;
-                }).each(function(i, el) {
+                }).each(function (i, el) {
                   $("#importedYearText").append($("<p>").text(el.textContent));
                 });
                 let yearTextFontFiles = glob.sync(path.join(appData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "Wt-ClearText-Bold.*"));
                 if (yearTextFontFiles && yearTextFontFiles.length > 0) {
                   var yearTextFont = new FontFace('Wt-ClearText-Bold', 'url(' + url.pathToFileURL(yearTextFontFiles[0]).href + ')');
-                  yearTextFont.load().then(function(loaded_face) {
+                  yearTextFont.load().then(function (loaded_face) {
                     document.fonts.add(loaded_face);
                     $("#importedYearText").removeClass("font-fallback").addClass("font-native")
-                  }).catch(function(err) {
+                  }).catch(function (err) {
                     console.error(err);
-                  }).finally(function() {
+                  }).finally(function () {
                     $("#importedYearText").removeClass("loading");
                   });
                 } else {
@@ -284,11 +288,11 @@
                 let logoFontFiles = glob.sync(path.join(appData, "Packages", "*WatchtowerBibleandTractSo*", "LocalState", "www", "webapp", "fonts", "jw-icons*"));
                 if (logoFontFiles && logoFontFiles.length > 0) {
                   var logoFont = new FontFace('JW-Icons', 'url(' + url.pathToFileURL(logoFontFiles[0]).href + ')');
-                  logoFont.load().then(function(loaded_face) {
+                  logoFont.load().then(function (loaded_face) {
                     document.fonts.add(loaded_face);
                     document.getElementById("importedYearTextLogoContainer").style.fontFamily = '"JW-Icons"';
-                    $("#importedYearTextLogoContainer").html("<div id='importedYearTextLogo'></div>");
-                  }).catch(function(err) {
+                    $("#importedYearTextLogoContainer").html("<div id='importedYearTextLogo'></div>").show();
+                  }).catch(function (err) {
                     console.error(err);
                   });
                 }

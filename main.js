@@ -1,12 +1,12 @@
 const {
-    app,
-    BrowserWindow,
-    crashReporter,
-    ipcMain,
-    screen
-  } = require("electron"), {
-    autoUpdater
-  } = require("electron-updater"),
+  app,
+  BrowserWindow,
+  crashReporter,
+  ipcMain,
+  screen
+} = require("electron"), {
+  autoUpdater
+} = require("electron-updater"),
   appLongName = "Meeting Media Manager",
   fs = require("fs-extra"),
   os = require("os"),
@@ -45,7 +45,7 @@ function createMainWindow() {
       let screenInfo = getScreenInfo();
       if (screenInfo.otherScreens.length > 0) {
         if (screenInfo.winMidpoints) {
-          let mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints).map(item => screen.getDisplayNearestPoint(item[1])).every( (val, i, arr) => val.id === arr[0].id );
+          let mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints).map(item => screen.getDisplayNearestPoint(item[1])).every((val, i, arr) => val.id === arr[0].id);
           if (mainWinSameAsMedia) win.webContents.send("moveMediaWindowToOtherScreen");
         }
       }
@@ -101,7 +101,7 @@ function getScreenInfo() {
       display.humanFriendlyNumber = i + 1;
       return display;
     });
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
   return {
@@ -117,8 +117,8 @@ function setMediaWindowPosition(mediaWindowOpts) {
       mediaWin.setBounds({
         x: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.x + 50,
         y: screenInfo.displays.find(display => display.id == mediaWindowOpts.destination).bounds.y + 50,
-        ...(mediaWindowOpts.type == "window") && {width: 1280},
-        ...(mediaWindowOpts.type == "window") && {height: 720}
+        ...(mediaWindowOpts.type == "window") && { width: 1280 },
+        ...(mediaWindowOpts.type == "window") && { height: 720 }
       });
       if (mediaWindowOpts.type == "fullscreen" && screenInfo.otherScreens.length > 0 && !mediaWin.isFullScreen()) {
         mediaWin.setFullScreen(true);
@@ -126,7 +126,7 @@ function setMediaWindowPosition(mediaWindowOpts) {
         mediaWin.setFullScreen(false);
       }
     }
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
 }
@@ -207,7 +207,7 @@ if (!gotTheLock) {
         },
         backgroundColor: "black",
         roundedCorners: false,
-        minHeight: 100,
+        minHeight: 110,
         width: 1280,
         height: 720,
         show: false,
@@ -221,7 +221,7 @@ if (!gotTheLock) {
         appId: appLongName
       });
       if (os.platform() !== "darwin") mediaWin.setAlwaysOnTop(true, "screen-saver");
-      mediaWin.setAspectRatio(16/9);
+      mediaWin.setAspectRatio(16 / 9);
       mediaWin.setMenuBarVisibility(false);
       remote.enable(mediaWin.webContents);
       mediaWin.loadFile("mediaViewer.html");
