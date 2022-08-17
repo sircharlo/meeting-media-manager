@@ -22,7 +22,7 @@ articles.forEach((article) => {
 // Expand article and scroll to it on link click
 const links = document.querySelectorAll('#sidebar a')
 links.forEach((link) => {
-  const id = link.getAttribute('href').substring(1)
+  const id = link.getAttribute('href').substring(link.getAttribute('href').indexOf('#') + 1)
   const header = document.getElementById(id)
   const article = header.closest('article')
 
@@ -77,7 +77,8 @@ hide.onclick = () => {
 window.onload = () => {
   const id = window.location.hash.substring(1)
   if (id) {
-    const link = document.querySelector(`#sidebar a[href="#${id}"]`)
+    const lang = window.location.pathname.substring(window.location.pathname.length - 3)
+    const link = document.querySelector(`#sidebar a[href="${lang}#${id}"]`)
     link.click()
   }
 }

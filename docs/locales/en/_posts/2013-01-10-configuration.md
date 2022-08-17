@@ -134,7 +134,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
         This will automatically convert all picture and audio files into MP4 format, for use with Zoom's <a href="assets/img/other/zoom-mp4-share.png">native MP4 sharing feature</a> during <strong>fully remote</strong> congregation Zoom meetings. This includes all pictures and media files downloaded from JW.org, as well as additional media files added by the user or the VO.<br>
         <br>
         <blockquote>
-          <strong>Note:</strong> This option is best suited for <strong>remote-only</strong> congregation Zoom meetings. If conducting either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings, look into using <a href="#/present-media">media presentation mode</a> by activating the <code>Enable button to present media on an external monitor or in a separate window</code> option instead, and disable this option.
+          <strong>Note:</strong> This option is best suited for <strong>remote-only</strong> congregation Zoom meetings. If conducting either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings, look into using <a href="en/#/present-media">media presentation mode</a> by activating the <code>Enable button to present media on an external monitor or in a separate window</code> option instead, and disable this option.
         </blockquote>
       </td>
     </tr>
@@ -149,7 +149,7 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     <tr>
       <td><code>Enable button to present media on an external monitor or in a separate window</code></td>
       <td>
-        This setting will allow you to use M³ to present pictures, videos and audio files during <strong>hybrid</strong> or <strong>in-person</strong> congregation meetings. <a href="#/present-media">Media presentation mode</a> can then be accessed by clicking the ▶️ (play) button on the main screen of M³.<br>
+        This setting will allow you to use M³ to present pictures, videos and audio files during <strong>hybrid</strong> or <strong>in-person</strong> congregation meetings. <a href="en/#/present-media">Media presentation mode</a> can then be accessed by clicking the ▶️ (play) button on the main screen of M³.<br>
         <br>
         The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.<br>
         <br>
@@ -163,30 +163,17 @@ See the [congregation sync](#/congregation-sync) section for details on what thi
     <tr>
       <td><code>Background image for media presentation mode</code></td>
       <td>
-        By default, M³ will attempt to fetch the current year's text in the language selected previously, in order to display it on a black background when in <a href="#/present-media">media presentation mode</a> and no other media is being played. If the automatic yeartext retrieval fails for some reason, or if you wish to display a different background image, you can either use the "Browse" button to select a custom picture, or the "Refresh" button to try fetching the yeartext automatically again.<br>
+        By default, M³ will attempt to fetch the current year's text in the language selected previously, in order to display it on a black background when in <a href="en/#/present-media">media presentation mode</a> and no other media is being played. If the automatic yeartext retrieval fails for some reason, or if you wish to display a different background image, you can either use the "Browse" button to select a custom picture, or the "Refresh" button to try fetching the yeartext automatically again.<br>
         <br>
         <blockquote>
-          <strong>Note:</strong> If <a href="#/congregation-sync">congregation sync</a> is enabled, selecting a custom background image will synchronize it for all congregation sync users automatically.
-        </blockquote>
-      </td>
-    </tr>
-    <tr>
-      <td><code>Enable button to present media on an external monitor or in a separate window</code></td>
-      <td>
-        This setting will allow you to use M³ to present pictures, videos and audio files during congregation meetings, for example at the Kingdom Hall. <a href="#/present-media">Media presentation mode</a> can be accessed by clicking the ▶️ (play) button on the main screen of M³.<br>
-        <br>
-        The media presentation screen will automatically use an external monitor if present; if not, the media will be displayed in a separate, resizable window.<br>
-        <br>
-        <blockquote>
-          <strong>Note:</strong> This option is best suited for either <strong>hybrid</strong> or <strong>regular</strong> congregation meetings.<br><br>
-          If conducting <strong>remote-only</strong> congregation Zoom meetings, look into activating the <code>Convert media to MP4 format</code> option and sharing the media with Zoom's native MP4 sharing instead.
+          <strong>Note:</strong> If <a href="en/#/congregation-sync">congregation sync</a> is enabled, selecting a custom background image will synchronize it for all congregation sync users automatically.
         </blockquote>
       </td>
     </tr>
     <tr>
       <td><code>Create playlists for use with<em>VLC</em></code></td>
       <td>
-        Enable this if you want to generate playlists for every meeting automatically, which can then be loaded in VLC, if you are using that app to display media instead of <a href="#/present-media">media presentation mode</a>.
+        Enable this if you want to generate playlists for every meeting automatically, which can then be loaded in VLC, if you are using that app to display media instead of <a href="en/#/present-media">media presentation mode</a>.
       </td>
     </tr>
     <tr>

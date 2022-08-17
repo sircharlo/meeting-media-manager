@@ -3,8 +3,11 @@
 - [ ] Check if build artifacts work correctly for Windows and MacOS
 - [ ] Convert flash to notify system with action buttons
 - [ ] Fix how recurring media works
+- [ ] Sync custom media background when congregation sync is enabled
 - [ ] Make progress slider draggable when paused to change current progress / video scrubber
 - [ ] Implement video markers for sign language media
+- [ ] Auto open today's meeting when first opening presentation mode
+- [ ] Allow navigation of cong sync folder through the treeview
 - [ ] Add missing sign language media (Some media is missing that is specific to sign language)
 - [ ] Test for 3 displays
 - [X] Add local JWPUB file media to media list
@@ -43,6 +46,7 @@
 
 ## New Features
 
+- Documentation site now supports multiple languages. Time to translate my dear volunteers!
 - Documentation filter searches entire website and highlights results with yellow background
 - Using electron-store instead of home grown version
 - Using webdav client instead of home grown version

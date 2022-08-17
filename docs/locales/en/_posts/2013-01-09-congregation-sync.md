@@ -77,7 +77,7 @@ All users that wish to be synchronized together will need to connect to the same
     <tr>
       <td><code>Congregation-wide settings</code></td>
       <td>
-        Once the VO has configured the <em>Media setup</em> and <em>Meeting setup</em> sections of the <a href="#/configuration">M³ settings</a> on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open M³.
+        Once the VO has configured the <em>Media setup</em> and <em>Meeting setup</em> sections of the <a href="en/#/configuration">M³ settings</a> on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open M³.
       </td>
     </tr>
   </tbody>
@@ -85,7 +85,7 @@ All users that wish to be synchronized together will need to connect to the same
 
 ### Using congregation sync to manage media
 
-Once the congregation sync setup is complete, you're ready to start <a href="#/manage-media">managing media</a> for your congregation's technical AV support team.
+Once the congregation sync setup is complete, you're ready to start <a href="en/#/manage-media">managing media</a> for your congregation's technical AV support team.
 
 ### Screenshots of congregation sync in action
 

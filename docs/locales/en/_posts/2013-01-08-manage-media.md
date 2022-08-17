@@ -32,15 +32,29 @@ In the `Media to add` field, you'll be presented with different options, dependi
   <tbody>
     <tr>
       <td><code>Song</code></td>
-      <td>... show a menu with all Kingdom song videos from the _sjjm_ series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br>The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [settings](#/configuration).</td>
+      <td>
+        ... show a menu with all Kingdom song videos from the <em>sjjm</em> series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits.<br>
+        <br>
+        The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the <a href="en/#/configuration">settings</a>.
+      </td>
     </tr>
     <tr>
       <td><code>JWPUB</code></td>
-      <td>... allow you to browse to (or drag and drop) a JWPUB file. <br><br>You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br>An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.</td>
+      <td>
+        ... allow you to browse to (or drag and drop) a JWPUB file.<br>
+        <br>
+        You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file.<br>
+        <br>
+        An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.
+      </td>
     </tr>
     <tr>
       <td><code>Custom</code></td>
-      <td>... allow you to browse to (or drag and drop) any other media file(s) from your computer.    <br><br><blockquote>Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.</blockquote>                      </td>
+      <td>
+        ... allow you to browse to (or drag and drop) any other media file(s) from your computer.<br>
+        <br>
+        <blockquote>Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.</blockquote>
+      </td>
     </tr>
   </tbody>
 </table>
@@ -71,7 +85,7 @@ To **remove**, **hide**, or **show** media, simply find the media file you don't
       <td>
         The media file was referenced in the meeting's material.<br>
         <br>
-        It was hidden by you or the VO, so it _will not_ be downloaded or added to the meeting's media.
+        It was hidden by you or the VO, so it <em>will not</em> be downloaded or added to the meeting's media.
       </td>
     </tr>
   </tbody>
