@@ -64,7 +64,9 @@ export default Vue.extend({
       ipcRenderer.send('allowQuit', val.split('/').pop() !== 'present')
     },
     isDark(val) {
-      this.$vuetify.theme.dark = val
+      if (this.$getPrefs('app.theme') === 'system') {
+        this.$vuetify.theme.dark = val
+      }
     },
   },
   async beforeMount() {
@@ -165,9 +167,17 @@ export default Vue.extend({
       } else if (lang !== this.$i18n.locale) {
         this.$router.replace(this.switchLocalePath(lang))
       }
+
       this.$dayjs.locale(lang.split('-')[0])
-      this.$vuetify.theme.dark = this.isDark
       this.$log.debug(this.$appPath())
+
+      const themePref = this.$getPrefs('app.theme')
+      if (themePref === 'system') {
+        this.$vuetify.theme.dark = this.isDark
+      } else {
+        this.$vuetify.theme.dark = themePref === 'dark'
+      }
+
       if (
         this.$getPrefs('media.enableMediaDisplayButton') &&
         !this.$store.state.present.mediaScreenInit

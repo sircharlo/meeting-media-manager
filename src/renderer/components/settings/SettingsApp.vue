@@ -2,6 +2,17 @@
 <template>
   <v-form ref="form" v-model="valid">
     <form-input
+      v-model="app.theme"
+      field="select"
+      :items="[
+        { text: $t('light'), value: 'light' },
+        { text: $t('dark'), value: 'dark' },
+        { text: $t('system'), value: 'system' },
+      ]"
+      :label="$t('themePreference')"
+      :locked="locked('app.theme')"
+    />
+    <form-input
       v-model="app.congregationName"
       :label="$t('congregationName')"
       :locked="locked('app.congregationName')"
@@ -168,6 +179,9 @@ export default Vue.extend({
         }
       })
     },
+    isDark(): boolean {
+      return window.matchMedia('(prefers-color-scheme:dark)').matches
+    },
     isLinux() {
       return platform() === 'linux'
     },
@@ -198,6 +212,15 @@ export default Vue.extend({
         this.$setPrefs('app', val)
       },
       deep: true,
+    },
+    'app.theme': {
+      handler(val) {
+        if (val === 'system') {
+          this.$vuetify.theme.dark = this.isDark
+        } else {
+          this.$vuetify.theme.dark = val === 'dark'
+        }
+      },
     },
     'app.obs.enable': {
       async handler() {

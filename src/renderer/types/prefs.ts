@@ -14,6 +14,7 @@ export enum DateFormat {
 }
 
 export interface AppPrefs {
+  theme: 'light' | 'dark' | 'system'
   autoOpenFolderWhenDone: boolean
   autoQuitWhenDone: boolean
   autoRunAtBoot: boolean

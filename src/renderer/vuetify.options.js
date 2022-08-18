@@ -2,7 +2,7 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   theme: {
-    dark: true,
+    dark: false,
     options: { cspNonce: 'dQw4w9WgXcQ' },
     themes: {
       light: {

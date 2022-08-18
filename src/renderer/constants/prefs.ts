@@ -16,6 +16,7 @@ const PREFS = {
       cameraScene: null,
     },
     outputFolderDateFormat: 'YYYY-MM-DD',
+    theme: 'system',
   },
   cong: {
     server: null,

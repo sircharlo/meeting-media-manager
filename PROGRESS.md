@@ -58,6 +58,7 @@
 - MEDIA SYNC: Prevent duplicate media from being added to media list by checking safeNames without prefix
 - OBS: Auto detect scene change when changed from OBS directly
 - SETTINGS: Port field for cong sync is no longer necessary
+- SETTINGS: Set your theme preference (light, dark, system) inside the app
 
 ## Background Changes
 

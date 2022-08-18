@@ -74,6 +74,6 @@
   "warnPdfConversionFailure": "Le pagine del seguente file PDF non possono essere estratte come immagini:",
   "warnSvgConversionFailure": "Il seguente file non è stato riconosciuto quale valida immagine SVG:",
   "warnUnknownLastVersion": "Impossibile avviare la versione dell'App M³ precedentemente installata. Si presume che sia stata appena aggiornata.",
-  "webdavFolder": "Cartella di Sincronizzazione Congregazione",
-  "weMeetingDay": "Adunanza del fine settimana"
+  "weMeetingDay": "Adunanza del fine settimana",
+  "webdavFolder": "Cartella di Sincronizzazione Congregazione"
 }

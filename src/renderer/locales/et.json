@@ -64,10 +64,12 @@
   "optionsMeetings": "Koosoleku sätted",
   "password": "Parool",
   "port": "Port",
+  "preferredOutput": "Kuva meediaesitluse aken",
   "quitAfterSync": "Pärast meedia sünkroonimist sulgege rakendus",
   "recurring": "Korduv meedia",
   "reportIssue": "Teatage probleemist",
   "runAtStartup": "Käivitage rakendus arvuti operatsioonisüsteemi käivitamisel",
+  "screen": "Ekraan",
   "selectDocument": "Valige dokument, millelt meedia importida:",
   "selectExternalMedia": "Need viidatud meediafailid ei sisaldu JWPUB-failis. Klõpsake igal meedial, et leida see oma arvutis:",
   "settingLocked": "Teie koguduse videokonverentsi korraldaja on mõned seaded lukustanud.",
@@ -93,9 +95,7 @@
   "warnPdfConversionFailure": "Järgmise PDF-faili lehti ei saanud piltidena ekstraktida:",
   "warnSvgConversionFailure": "Järgmist faili ei tuvastatud kehtiva SVG-pildina:",
   "warnUnknownLastVersion": "M³-i varem installitud versiooni ei saa luua. Eeldan, et rakendust just värskendati.",
-  "webdavFolder": "Koguduse sünkroonimiskaust",
   "weMeetingDay": "Nädalavahetuse koosolek",
-  "preferredOutput": "Kuva meediaesitluse aken",
-  "window": "Liigutatav aken",
-  "screen": "Ekraan"
+  "webdavFolder": "Koguduse sünkroonimiskaust",
+  "window": "Liigutatav aken"
 }

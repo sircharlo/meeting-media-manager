@@ -23,6 +23,10 @@ const schema: Schema<ElectronStore> = {
   app: {
     type: 'object',
     properties: {
+      theme: {
+        type: 'string',
+        default: 'system',
+      },
       disableHardwareAcceleration: {
         type: 'boolean',
         default: PREFS.app.disableHardwareAcceleration,
