@@ -100,7 +100,7 @@ interface CustomProps {
   }
   $mediaItems: NuxtAxiosInstance
   $mediaPath: (file?: MeetingFile) => string
-  $migrate2280: (key: string, newVal: any) => { key: string; val: unknown }
+  $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
   $prefsInitialized: () => boolean
   $printStats: () => void
   $pubMedia: NuxtAxiosInstance

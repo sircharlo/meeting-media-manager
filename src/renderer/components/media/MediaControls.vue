@@ -125,8 +125,7 @@ export default Vue.extend({
                 .replaceAll(' ', '')
                 .replaceAll('-', '')
                 .replaceAll("'", '')
-                .replaceAll('.', '')
-                .replaceAll(/\d/g, '') + 'mediaitem',
+                .replaceAll('.', '') + 'mediaitem',
             path,
           }
         })

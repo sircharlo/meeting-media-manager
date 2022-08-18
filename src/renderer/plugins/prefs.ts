@@ -235,7 +235,7 @@ function storeOptions(name: string = 'prefs') {
       console.debug(`[main-config] versions: ${context.versions}`)
     },
     migrations: {
-      '<=22.8.0': (store) => {
+      '<=22.9.0': (store) => {
         for (const key of Object.keys(store.store)) {
           // Skip root keys
           if (
@@ -247,7 +247,7 @@ function storeOptions(name: string = 'prefs') {
             continue
           }
 
-          const newProp = migrate2280(key, store.get(key))
+          const newProp = migrate2290(key, store.get(key))
 
           // Set new key and value and delete old one
           store.set(newProp.key, newProp.val)
@@ -258,7 +258,7 @@ function storeOptions(name: string = 'prefs') {
   } as Store.Options<ElectronStore>
 }
 
-function migrate2280(key: string, newVal: any) {
+function migrate2290(key: string, newVal: any) {
   let isObsPref = false
   let isMeetingPref = false
   let isMediaPref = false
@@ -390,5 +390,5 @@ export default function (
   inject('resetPrefs', () => {
     return store.clear()
   })
-  inject('migrate2280', migrate2280)
+  inject('migrate2290', migrate2290)
 }

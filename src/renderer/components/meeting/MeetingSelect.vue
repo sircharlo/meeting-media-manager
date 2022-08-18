@@ -28,16 +28,36 @@
 import { join, basename } from 'upath'
 import Vue from 'vue'
 export default Vue.extend({
+  props: {
+    firstChoice: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       dates: [] as string[],
     }
+  },
+  computed: {
+    today() {
+      return this.$dayjs().format(
+        this.$getPrefs('app.outputFolderDateFormat') as string
+      )
+    },
   },
   mounted() {
     this.dates = this.$findAll(join(this.$mediaPath(), '*'), {
       onlyDirectories: true,
       ignore: [join(this.$mediaPath(), 'Recurring')],
     }).map((date) => basename(date))
+    if (this.firstChoice) {
+      if (this.dates.length === 1) {
+        this.selectDate(this.dates[0])
+      } else if (this.dates.includes(this.today)) {
+        this.selectDate(this.today)
+      }
+    }
   },
   methods: {
     selectDate(date: string) {

@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "22.8.0",
+  "version": "22.9.0",
   "description": "Meeting Media Manager",
   "keywords": [
     "meeting media manager",
@@ -17,7 +17,8 @@
     "joaochris (https://github.com/joaochris)",
     "Marko Hietaharju (https://github.com/Hi-there-how-are-u)",
     "stepstra (https://github.com/stepstra)",
-    "wikmanipoiss (https://github.com/wikmanipoiss)"
+    "wikmanipoiss (https://github.com/wikmanipoiss)",
+    "wifilogo (https://github.com/wifilogo)"
   ],
   "main": "./dist/main/index.js",
   "repository": {

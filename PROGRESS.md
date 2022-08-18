@@ -2,7 +2,7 @@
 
 - [ ] Add missing sign language media (Some media is missing that is specific to sign language)
 - [ ] Allow navigation of cong sync folder through the treeview
-- [ ] Auto open today's meeting when first opening presentation mode
+- [X] Auto open meeting when first opening presentation mode if todays date it present or there is only one meeting
 - [ ] Check if build artifacts work correctly for Windows and MacOS
 - [ ] Convert flash to notify system with action buttons
 - [ ] Fix how recurring media works
@@ -47,6 +47,7 @@
 
 ## New Features
 
+- Auto detect scene change when changed from OBS directly
 - Documentation site now supports multiple languages. Time to translate my dear volunteers!
 - Documentation filter searches entire website and highlights results with yellow background
 - Using electron-store instead of home grown version

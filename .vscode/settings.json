@@ -2,7 +2,7 @@
   "files.associations": {
     "main.scss": "liquid"
   },
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
     "source.fixAll.markdownlint": true

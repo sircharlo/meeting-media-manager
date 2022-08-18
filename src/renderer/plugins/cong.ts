@@ -18,7 +18,7 @@ export default function (
     store,
     $log,
     $dayjs,
-    $migrate2280,
+    $migrate2290,
     $findOne,
     $mediaPath,
     $warn,
@@ -98,7 +98,11 @@ export default function (
     try {
       const client = store.state.cong.client as WebDAVClient
       const path = join($getPrefs('cong.dir'), 'forcedPrefs.json')
-      if ((store.state.cong.contents as FileStat[]).find(({filename}) => filename === path)) {
+      if (
+        (store.state.cong.contents as FileStat[]).find(
+          ({ filename }) => filename === path
+        )
+      ) {
         const json = await client.getFileContents(path, {
           format: 'text',
         })
@@ -115,7 +119,7 @@ export default function (
             continue
           }
 
-          const newProp = $migrate2280(key, prefs[key])
+          const newProp = $migrate2290(key, prefs[key])
           delete prefs[key]
 
           const keys = newProp.key.split('.')
