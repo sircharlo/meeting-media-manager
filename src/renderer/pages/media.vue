@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="importedYearText" class="font-fallback loading" />
-    <div id="importedYearTextLogoContainer" />
+    <div id="importedYearTextLogoContainer" style="display: none" />
     <div id="mediaDisplay" />
     <div id="blackOverlay" />
     <div id="resizeOverlay">
@@ -262,6 +262,7 @@ export default Vue.extend({
             document.fonts.add(loadedFont)
             this.ytLogo.style.fontFamily = '"JW-Icons"'
             this.ytLogo.innerHTML = "<div id='importedYearTextLogo'></div>"
+            this.ytLogo.setAttribute('style', '') // new
           }
         }
       } catch (e) {
@@ -342,16 +343,22 @@ video,
 }
 
 #importedYearTextLogoContainer {
-  font-size: 18vh;
+  font-size: 16vh; // was 14
   position: absolute;
-  bottom: 10vh;
-  right: 10vh;
+  bottom: 12vh; // was 10
+  right: 14vh; // was 10
   color: black !important;
   line-height: normal !important;
   background: rgba(255, 255, 255, 0.2);
 
+  // new
+  border: rgba(255, 255, 255, 0) 1.5vh solid;
+  height: 12vh;
+  width: 12vh;
+  overflow: hidden;
+
   #importedYearTextLogo {
-    margin: -2vh -1vh;
+    margin: -2.5vh -2vh; // was -2 -1
   }
 }
 

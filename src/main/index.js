@@ -306,7 +306,7 @@ if (gotTheLock) {
         frame: false,
         backgroundColor: 'black',
         roundedCorners: false,
-        minHeight: 100,
+        minHeight: 110,
         width: 1280,
         height: 720,
         show: false,
