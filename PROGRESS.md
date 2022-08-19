@@ -1,39 +1,39 @@
 # TODOS
 
-- [ ] Add missing sign language media (Some media is missing that is specific to sign language)
-- [ ] Allow navigation of cong sync folder through the treeview
-- [ ] Check if build artifacts work correctly for Windows and MacOS
-- [ ] Convert flash to notify system with action buttons
-- [ ] Fix how recurring media works
-- [ ] Implement video markers for sign language media
-- [ ] Improve docs translations by using more localized strings like how M3 itself does it
-- [ ] Make progress slider draggable when paused to change current progress / video scrubber
-- [ ] Sync custom media background when congregation sync is enabled
-- [ ] Test for 3 displays
-- [ ] Test if auto updater works correctly
-- [X] Add local JWPUB file media to media list
-- [X] Add media playback previous/next function from 22.8.0
-- [X] Add played and video progress visuals to present page
-- [X] Auto open meeting when first opening presentation mode if todays date it present or there is only one meeting
-- [X] Congregation sync
-- [X] Edit local filename option
-- [X] Electron windows setup
-- [X] Functionality to add local files to media list
-- [X] Get meeting media from jw.org
-- [X] Improve type definitions with combined MediaFile type
-- [X] Make sure light mode looks good as well
-- [X] Media webpage
-- [X] OBS integration
-- [X] Option to add multiple local files at once
-- [X] Option to drag and drop files to add them to the media list
-- [X] Presentation mode
-- [X] Recurring media functionality
-- [X] Save preferences locally
-- [X] Set custom start and end times for videos
-- [X] Show OBS scenes as buttons when 6 or less from 22.8.0
-- [X] Shuffle music
-- [X] Support for external display
-- [X] VLC / MP4 / PDF / SVG support
+- [ ] Cong sync: Allow navigation of cong sync folder through the treeview
+- [ ] Cong sync: Sync custom media background when congregation sync is enabled
+- [ ] Docs: Improve docs translations by using more localized strings like how M3 itself does it
+- [ ] Manage media: Fix how recurring media works
+- [ ] Media sync: Add missing sign language media (Some media is missing that is specific to sign language)
+- [ ] Misc: Convert flash to notify system with action buttons
+- [ ] Present media: Implement video markers for sign language media
+- [ ] Present media: Make progress slider draggable when paused to change current progress / video scrubber
+- [ ] Release: Check if build artifacts work correctly for Windows and MacOS
+- [ ] Test: test for 3 displays
+- [ ] Test: test if auto updater works correctly
+- [X] Cong sync: Congregation sync
+- [X] Manage media: Add local JWPUB file media to media list
+- [X] Manage media: Edit local filename option
+- [X] Manage media: Functionality to add local files to media list
+- [X] Manage media: Option to add multiple local files at once
+- [X] Manage media: Option to drag and drop files to add them to the media list
+- [X] Manage media: Recurring media functionality
+- [X] Media sync: Get meeting media from jw.org
+- [X] Media sync: VLC / MP4 / PDF / SVG support
+- [X] Misc: Electron windows setup
+- [X] Misc: Improve type definitions with combined MediaFile type
+- [X] Misc: Save preferences locally
+- [X] Misc: Shuffle music
+- [X] Present media: Add media playback previous/next function from 22.8.0
+- [X] Present media: Add played and video progress visuals to present page
+- [X] Present media: Auto open meeting when first opening presentation mode if todays date it present or there is only one meeting
+- [X] Present media: Media webpage
+- [X] Present media: OBS integration
+- [X] Present media: Presentation mode
+- [X] Present media: Set custom start and end times for videos
+- [X] Present media: Show OBS scenes as buttons when 6 or less from 22.8.0
+- [X] Present media: Support for external display
+- [X] Test: Make sure light mode looks good as well
 
 ## In Progress
 
