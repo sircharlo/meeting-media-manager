@@ -50,7 +50,9 @@ export default Vue.extend({
     this.dates = this.$findAll(join(this.$mediaPath(), '*'), {
       onlyDirectories: true,
       ignore: [join(this.$mediaPath(), 'Recurring')],
-    }).map((date) => basename(date))
+    })
+      .map((date) => basename(date))
+      .filter((date) => this.validDate(date))
     if (this.firstChoice) {
       if (this.dates.length === 1) {
         this.selectDate(this.dates[0])
@@ -60,6 +62,12 @@ export default Vue.extend({
     }
   },
   methods: {
+    validDate(date: string) {
+      return this.$dayjs(
+        date,
+        this.$getPrefs('app.outputFolderDateFormat') as string
+      ).isValid()
+    },
     selectDate(date: string) {
       this.$router.push({
         query: {
