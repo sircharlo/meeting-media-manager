@@ -8,7 +8,7 @@ The app should run as is on most modern computers running Windows, Linux, or Mac
 
 ### Windows Installation and first launch
 
-On opening the installer, you might get [an error](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/screenshots/win-smartscreen.png?raw=true) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+On opening the installer, you might get [an error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
 
 ### Linux Installation and first launch
 

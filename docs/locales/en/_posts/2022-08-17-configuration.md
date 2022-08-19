@@ -15,7 +15,7 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
       <td>
         Sets the language in which M³ is displayed.<br>
         <br>
-        Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+LANGUAGE">discussion</a>.
+        Thank you to our many contributors for translating the app in so many languages! If you want to help improve an existing translation or add a new one, please open up a new <a href="{{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+LANGUAGE">discussion</a>.
       </td>
     </tr>
     <tr>

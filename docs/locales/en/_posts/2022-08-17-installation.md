@@ -4,7 +4,7 @@ title: 'Installation'
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer](https://github.com/sircharlo/meeting-media-manager/releases/latest) and run it.
+M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
 
 | Operating system | File to download                                |
 | ---------------- | ----------------------------------------------- |

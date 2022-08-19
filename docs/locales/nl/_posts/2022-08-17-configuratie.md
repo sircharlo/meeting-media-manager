@@ -15,7 +15,7 @@ Het instellingen scherm is verdeeld in 4 secties. De meeste opties spreken voor 
       <td>
         De taal waarin M³ wordt weergegeven.<br>
         <br>
-        Alle vrijwilliger, enorm bedankt voor het vertalen van deze app in zo veel talen! Als je wilt meehelpen aan het verbeteren van een bestaande vertaling of een nieuwe taal wilt toevoegen, open dan alsjeblieft een nieuwe <a href="https://github.com/sircharlo/meeting-media-manager/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+LANGUAGE">discussie</a>.
+        Alle vrijwilliger, enorm bedankt voor het vertalen van deze app in zo veel talen! Als je wilt meehelpen aan het verbeteren van een bestaande vertaling of een nieuwe taal wilt toevoegen, open dan alsjeblieft een nieuwe <a href="{{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+LANGUAGE">discussie</a>.
       </td>
     </tr>
     <tr>

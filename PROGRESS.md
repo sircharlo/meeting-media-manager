@@ -1,7 +1,7 @@
 # TODOS
 
 - [ ] Docs: Improve docs translations by using more localized strings like how M3 itself does it
-- [ ] Manage media: Fix how recurring media works
+- [ ] Manage media: Fix how recurring media works (currently unable to hide recurring media)
 - [ ] Misc: Convert flash to notify system with action buttons
 - [ ] Present media: Make progress slider draggable when paused to change current progress / video scrubber
 - [ ] Release: Check if build artifacts work correctly for Windows and MacOS
@@ -39,7 +39,7 @@
 
 - Nothing at the moment
 
-## Known Bugs
+## Known Bugs without immediate fix
 
 - Volume animation on musicFadeOut does not work
 
