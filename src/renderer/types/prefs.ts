@@ -45,6 +45,7 @@ export enum Res {
 export interface MediaPrefs {
   enableMediaDisplayButton: boolean
   enableMp4Conversion: boolean
+  enablePp: boolean
   enableVlcPlaylistCreation: boolean
   excludeLffi: boolean
   excludeLffiImages: boolean
@@ -54,6 +55,8 @@ export interface MediaPrefs {
   lang: string | null
   langUpdatedLast: string | null
   maxRes: Res
+  ppBackward: string | null
+  ppForward: string | null
   preferredOutput: string | number
 }
 

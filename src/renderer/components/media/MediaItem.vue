@@ -80,6 +80,14 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    playNow: {
+      type: Boolean,
+      default: false,
+    },
+    stopNow: {
+      type: Boolean,
+      default: false,
+    },
     showPrefix: {
       type: Boolean,
       default: false,
@@ -160,6 +168,16 @@ export default Vue.extend({
     },
   },
   watch: {
+    async playNow(val) {
+      if (val) {
+        await this.play()
+      }
+    },
+    stopNow(val) {
+      if (val) {
+        this.stop()
+      }
+    },
     async active(val) {
       if (!val) {
         this.progress = 0
@@ -191,6 +209,7 @@ export default Vue.extend({
   },
   methods: {
     async play() {
+      this.$emit('playing')
       this.active = true
       this.played = true
       if (this.scene) {

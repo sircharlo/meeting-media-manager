@@ -25,7 +25,7 @@ const schema: Schema<ElectronStore> = {
     properties: {
       theme: {
         type: 'string',
-        default: 'system',
+        default: PREFS.app.theme,
       },
       disableHardwareAcceleration: {
         type: 'boolean',
@@ -130,6 +130,10 @@ const schema: Schema<ElectronStore> = {
         type: 'string',
         default: PREFS.media.maxRes,
       },
+      enablePp: {
+        type: 'boolean',
+        default: PREFS.media.enablePp,
+      },
       enableMp4Conversion: {
         type: 'boolean',
         default: PREFS.media.enableMp4Conversion,
@@ -161,6 +165,14 @@ const schema: Schema<ElectronStore> = {
       excludeLffiImages: {
         type: 'boolean',
         default: PREFS.media.excludeLffiImages,
+      },
+      ppBackward: {
+        type: ['string', 'null'],
+        default: PREFS.media.ppBackward,
+      },
+      ppForward: {
+        type: ['string', 'null'],
+        default: PREFS.media.ppForward,
       },
       preferredOutput: {
         type: ['string', 'number'],

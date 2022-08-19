@@ -10,7 +10,7 @@
       style="margin-bottom: 72px"
       :first-choice="firstChoice"
     />
-    <v-footer fixed>
+    <v-footer fixed class="justify-space-between">
       <v-col class="text-left" cols="auto">
         <icon-btn
           v-if="$getPrefs('meeting.enableMusicButton')"
@@ -122,9 +122,22 @@ export default Vue.extend({
     ipcRenderer.on('showingMedia', (_e, val) => {
       this.mediaActive = val
     })
+    if (this.$getPrefs('media.enablePp')) {
+      this.$setShortcut(
+        this.$getPrefs('media.ppForward') as string,
+        'nextMediaItem',
+        'present mode'
+      )
+      this.$setShortcut(
+        this.$getPrefs('media.ppBackward') as string,
+        'previousMediaItem',
+        'present mode'
+      )
+    }
   },
   beforeDestroy() {
     ipcRenderer.removeAllListeners('showingMedia')
+    this.$unsetShortcuts('present mode')
   },
 })
 </script>

@@ -28,6 +28,7 @@ const PREFS = {
   media: {
     enableMediaDisplayButton: false,
     enableMp4Conversion: false,
+    enablePp: false,
     enableVlcPlaylistCreation: false,
     excludeLffi: false,
     excludeLffiImages: false,
@@ -37,6 +38,8 @@ const PREFS = {
     lang: null,
     langUpdatedLast: null,
     maxRes: '720p',
+    ppBackward: null,
+    ppForward: null,
     preferredOutput: 'window',
   },
   meeting: {
@@ -62,6 +65,7 @@ const FORCABLE = [
   'app.outputFolderDateFormat',
   'media.enableMediaDisplayButton',
   'media.enableMp4Conversion',
+  'media.enablePp',
   'media.enableVlcPlaylistCreation',
   'media.excludeLffi',
   'media.excludeLffiImages',
@@ -70,6 +74,8 @@ const FORCABLE = [
   'media.keepOriginalsAfterConversion',
   'media.lang',
   'media.maxRes',
+  'media.ppBackward',
+  'media.ppForward',
   'media.preferredOutput',
   'meeting.enableMusicButton',
   'meeting.enableMusicFadeOut',

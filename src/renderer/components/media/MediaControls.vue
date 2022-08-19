@@ -1,16 +1,50 @@
 <template>
   <v-row>
     <v-app-bar fixed>
-      <v-col class="text-left">
+      <v-col class="text-left" cols="auto">
         <v-btn icon aria-label="Toggle prefix" @click="togglePrefix()">
           <font-awesome-icon :icon="faEye" />
           <font-awesome-icon :icon="faListOl" />
         </v-btn>
       </v-col>
-      <v-col class="text-center">
-        <v-btn color="secondary" @click="clearDate()">{{ date }}</v-btn>
+      <v-col class="text-center d-flex justify-center">
+        <v-btn color="secondary" :disabled="mediaActive" @click="clearDate()">
+          {{ date }}
+        </v-btn>
       </v-col>
-      <v-col class="text-right">
+      <v-col class="text-right" cols="auto">
+        <template v-if="$getPrefs('media.enablePp')">
+          <v-tooltip bottom>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                icon
+                aria-label="Previous"
+                :disabled="!mediaActive && currentIndex < 1"
+                v-bind="attrs"
+                v-on="on"
+                @click="previous()"
+              >
+                <font-awesome-icon :icon="faBackward" />
+              </v-btn>
+            </template>
+            <span>{{ $getPrefs('media.ppBackward') }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                icon
+                aria-label="Next"
+                v-bind="attrs"
+                :disabled="!mediaActive && currentIndex == items.length - 1"
+                v-on="on"
+                @click="next()"
+              >
+                <font-awesome-icon :icon="faForward" />
+              </v-btn>
+            </template>
+            <span>{{ $getPrefs('media.ppForward') }}</span>
+          </v-tooltip>
+        </template>
         <v-btn icon aria-label="Refresh" @click="getMedia()">
           <font-awesome-icon :icon="faRotateRight" />
         </v-btn>
@@ -42,12 +76,15 @@
       @end="dragging = false"
     >
       <media-item
-        v-for="item in items"
+        v-for="(item, i) in items"
         :key="item.id"
         :src="item.path"
+        :play-now="item.play"
+        :stop-now="item.stop"
         :media-active="mediaActive"
         :show-prefix="showPrefix"
         :sortable="sortable"
+        @playing="currentIndex = i"
       />
     </draggable>
   </v-row>
@@ -61,6 +98,8 @@ import {
   faEye,
   faListOl,
   faRotateRight,
+  faBackward,
+  faForward,
   faSquareCheck,
   faArrowDownShortWide,
   faFolderOpen,
@@ -77,11 +116,12 @@ export default Vue.extend({
   },
   data() {
     return {
+      currentIndex: -1,
       dragging: false,
       sortable: false,
       loading: true,
       showPrefix: false,
-      items: [] as { id: string; path: string }[],
+      items: [] as { id: string; path: string; play: boolean; stop: boolean }[],
     }
   },
   computed: {
@@ -97,6 +137,12 @@ export default Vue.extend({
     faListOl() {
       return faListOl
     },
+    faBackward() {
+      return faBackward
+    },
+    faForward() {
+      return faForward
+    },
     faRotateRight() {
       return faRotateRight
     },
@@ -107,10 +153,44 @@ export default Vue.extend({
       return faFolderOpen
     },
   },
+  watch: {
+    mediaActive() {
+      this.items.forEach((item) => {
+        item.play = false
+        item.stop = false
+      })
+    },
+  },
+  beforeDestroy() {
+    ipcRenderer.removeAllListeners('play')
+  },
   mounted() {
     this.getMedia()
+    ipcRenderer.on('play', (_e, type: 'next' | 'previous') => {
+      if (type === 'next') {
+        this.next()
+      } else if (type === 'previous') {
+        this.previous()
+      }
+    })
   },
   methods: {
+    previous() {
+      if (this.mediaActive) {
+        this.items[this.currentIndex].stop = true
+      } else if (this.currentIndex > 0) {
+        this.currentIndex--
+        this.items[this.currentIndex].play = true
+      }
+    },
+    next() {
+      if (this.mediaActive) {
+        this.items[this.currentIndex].stop = true
+      } else if (this.currentIndex < this.items.length - 1) {
+        this.currentIndex++
+        this.items[this.currentIndex].play = true
+      }
+    },
     getMedia() {
       this.loading = true
       this.items = this.$findAll(join(this.$mediaPath(), this.date, '*'))
@@ -127,6 +207,8 @@ export default Vue.extend({
                 .replaceAll("'", '')
                 .replaceAll('.', '') + 'mediaitem',
             path,
+            play: false,
+            stop: false,
           }
         })
       this.loading = false

@@ -218,6 +218,12 @@ if (gotTheLock) {
       setObsScene: () => {
         win.webContents.send('setObsScene', +shortcut.split('+')[1])
       },
+      previousMediaItem: () => {
+        win.webContents.send('play', 'previous')
+      },
+      nextMediaItem: () => {
+        win.webContents.send('play', 'next')
+      },
     }
     return globalShortcut.register(shortcut, functions[fn])
   })

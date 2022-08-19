@@ -102,6 +102,28 @@
         :locked="locked('media.hideMediaLogo')"
         :label="$t('hideMediaLogo')"
       />
+      <form-input
+        v-model="media.enablePp"
+        field="switch"
+        :locked="locked('media.enablePp')"
+        :label="$t('enablePp')"
+      />
+      <template v-if="media.enablePp">
+        <form-input
+          v-model="media.ppForward"
+          :locked="locked('media.ppForward')"
+          placeholder="pageDown"
+          :label="$t('ppForward')"
+          :required="media.enablePp"
+        />
+        <form-input
+          v-model="media.ppBackward"
+          placeholder="pageUp"
+          :locked="locked('media.ppBackward')"
+          :label="$t('ppBackward')"
+          :required="media.enablePp"
+        />
+      </template>
     </template>
     <v-divider class="mb-6" />
     <form-input

@@ -100,6 +100,7 @@
         v-model="app.obs.port"
         :label="$t('port')"
         :locked="locked('app.obs.port')"
+        :required="app.obs.enable"
       />
       <form-input
         v-model="app.obs.password"
@@ -107,6 +108,7 @@
         :label="$t('password')"
         :locked="locked('app.obs.password')"
         hide-details="auto"
+        :required="app.obs.enable"
       />
       <v-col cols="12" class="text-right pr-0">
         <v-btn
@@ -123,6 +125,7 @@
         :label="$t('obsCameraScene')"
         :disabled="cameraScenes.length === 0"
         :locked="locked('app.obs.cameraScene')"
+        :required="app.obs.enable"
       />
       <form-input
         v-model="app.obs.mediaScene"
@@ -131,6 +134,7 @@
         :label="$t('obsMediaScene')"
         :disabled="cameraScenes.length === 0"
         :locked="locked('app.obs.mediaScene')"
+        :required="app.obs.enable"
       />
     </template>
     <v-divider class="mb-6" />

@@ -1,6 +1,5 @@
 # TODOS
 
-- [ ] Add media playback previous/next function from 22.8.0
 - [ ] Add missing sign language media (Some media is missing that is specific to sign language)
 - [ ] Allow navigation of cong sync folder through the treeview
 - [ ] Check if build artifacts work correctly for Windows and MacOS
@@ -13,6 +12,7 @@
 - [ ] Test for 3 displays
 - [ ] Test if auto updater works correctly
 - [X] Add local JWPUB file media to media list
+- [X] Add media playback previous/next function from 22.8.0
 - [X] Add played and video progress visuals to present page
 - [X] Auto open meeting when first opening presentation mode if todays date it present or there is only one meeting
 - [X] Congregation sync
