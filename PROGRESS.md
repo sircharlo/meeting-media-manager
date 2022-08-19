@@ -2,9 +2,7 @@
 
 - [ ] Docs: Improve docs translations by using more localized strings like how M3 itself does it
 - [ ] Manage media: Fix how recurring media works
-- [ ] Media sync: Add missing sign language media (Some media is missing that is specific to sign language)
 - [ ] Misc: Convert flash to notify system with action buttons
-- [ ] Present media: Implement video markers for sign language media
 - [ ] Present media: Make progress slider draggable when paused to change current progress / video scrubber
 - [ ] Release: Check if build artifacts work correctly for Windows and MacOS
 - [ ] Test: test for 3 displays
@@ -18,6 +16,7 @@
 - [X] Manage media: Option to add multiple local files at once
 - [X] Manage media: Option to drag and drop files to add them to the media list
 - [X] Manage media: Recurring media functionality
+- [X] Media sync: Add missing sign language media (Some media is missing that is specific to sign language)
 - [X] Media sync: Get meeting media from jw.org
 - [X] Media sync: VLC / MP4 / PDF / SVG support
 - [X] Misc: Electron windows setup
@@ -27,6 +26,7 @@
 - [X] Present media: Add media playback previous/next function from 22.8.0
 - [X] Present media: Add played and video progress visuals to present page
 - [X] Present media: Auto open meeting when first opening presentation mode if todays date it present or there is only one meeting
+- [X] Present media: Implement video markers for sign language media
 - [X] Present media: Media webpage
 - [X] Present media: OBS integration
 - [X] Present media: Presentation mode

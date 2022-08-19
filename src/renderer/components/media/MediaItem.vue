@@ -14,7 +14,9 @@
         v-else
         :src="src"
         :playing="active"
+        :temp-clipped="tempClipped"
         @clipped="setTime($event)"
+        @reset-clipped="tempClipped = null"
         @progress="progress = $event"
       />
       <v-list-item-content class="ml-2">
@@ -79,7 +81,9 @@
         v-for="marker in markers"
         :key="id + marker.label"
         class="mr-2 mb-2"
-        color="info"
+        :color="
+          marker.playing ? 'primary' : marker.played ? 'info darken-2' : 'info'
+        "
         @click="play(marker)"
       >
         {{ marker.label }}
@@ -140,6 +144,7 @@ export default Vue.extend({
       end: undefined as string | undefined,
       parent: this,
       markers: [] as Marker[],
+      tempClipped: null as any,
     }
   },
   computed: {
@@ -154,6 +159,9 @@ export default Vue.extend({
     },
     url(): string {
       return pathToFileURL(this.src).href
+    },
+    mediaVisible(): boolean {
+      return this.$store.state.present.mediaScreenVisible
     },
     faParagraph() {
       return faParagraph
@@ -208,6 +216,9 @@ export default Vue.extend({
     },
     async active(val) {
       if (!val) {
+        this.markers.forEach((m) => {
+          m.playing = false
+        })
         this.progress = 0
         if (this.scene) {
           await this.$setScene(this.scene)
@@ -238,6 +249,17 @@ export default Vue.extend({
   },
   methods: {
     async play(marker?: Marker) {
+      if (!this.mediaVisible) {
+        ipcRenderer.send('toggleMediaWindowFocus')
+      }
+      if (marker) {
+        marker.played = true
+        marker.playing = true
+        this.tempClipped = {
+          start: marker.customStartTime,
+          end: marker.customEndTime,
+        }
+      }
       this.$emit('playing')
       this.active = true
       this.played = true
@@ -268,6 +290,7 @@ export default Vue.extend({
           readFileSync(changeExt(this.src, '.json'), 'utf8')
         ) as Marker[]
         markers.forEach((marker) => {
+          marker.playing = false
           const startTime = this.$dayjs(marker.startTime, 'hh:mm:ss.SSS')
           const duration = this.$dayjs(marker.duration, 'hh:mm:ss.SSS')
           const transition = this.$dayjs(

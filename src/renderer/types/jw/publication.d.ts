@@ -15,6 +15,8 @@ export interface Marker extends Introduction {
   label?: string
   customStartTime?: string
   customEndTime?: string
+  playing?: boolean
+  played?: boolean
 }
 
 export interface Markers {

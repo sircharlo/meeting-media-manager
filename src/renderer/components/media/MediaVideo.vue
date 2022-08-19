@@ -107,6 +107,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    tempClipped: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
@@ -212,10 +216,20 @@ export default Vue.extend({
     },
   },
   watch: {
+    tempClipped(val) {
+      if (val) {
+        this.clipped = this.tempClipped
+        this.setTime()
+      }
+    },
     playing(val) {
       if (!val) {
         this.current = 0
         this.progress = []
+        if (this.tempClipped) {
+          this.resetClipped()
+          this.$emit('resetClipped')
+        }
       }
     },
   },
@@ -279,6 +293,11 @@ export default Vue.extend({
     },
     resetClipped(): void {
       this.clipped = JSON.parse(JSON.stringify(this.originalString))
+      this.$emit('clipped', {
+        original: this.original,
+        clipped: this.clippedMs,
+        formatted: this.clipped,
+      })
     },
   },
 })
