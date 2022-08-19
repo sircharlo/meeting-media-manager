@@ -123,6 +123,7 @@ export default function (
                   $isVideo(mmItem?.queryInfo?.FilePath) &&
                   !mmItem?.queryInfo?.TargetParagraphNumberLabel
                 ) {
+                  console.log('SL item: ', mmItem)
                   return true
                 } else if (
                   mmItem.BeginParagraphOrdinal &&
@@ -299,6 +300,7 @@ export default function (
             mmItem.MimeType.includes('audio') ||
             mmItem.MimeType.includes('video')
           ) {
+            console.log(mmItem)
             const json =
               ((
                 await getMediaLinks({
@@ -382,16 +384,21 @@ export default function (
 
       // Get publication from jw api
       let result = null
+
+      const params: any = {}
+      if (mediaItem.pubSymbol) {
+        params.pub = mediaItem.pubSymbol
+        params.issue = mediaItem.issue
+        params.track = mediaItem.track
+        params.fileformat = mediaItem.format
+      } else {
+        params.docid = mediaItem.docId
+      }
+      params.langwritten = mediaLang
+
       try {
         result = await $pubMedia.get('', {
-          params: {
-            pub: mediaItem.pubSymbol,
-            track: mediaItem.track,
-            issue: mediaItem.issue,
-            fileformat: mediaItem.format,
-            docid: mediaItem.docId,
-            langwritten: mediaLang,
-          },
+          params,
         })
       } catch (e) {
         try {
@@ -900,10 +907,24 @@ export default function (
                   'background-color: #cce5ff; color: #004085;'
                 )
                 if (item.markers) {
-                  const markers = item.markers.markers
-                  // ? Why this? Some sort of way to remove duplicates?
-                  // markers = Array.from(new Set(markers.map(JSON.stringify))).map(JSON.parse)
-
+                  const markers = Array.from(
+                    new Set(
+                      item.markers.markers.map(
+                        ({
+                          duration,
+                          label,
+                          startTime,
+                          endTransitionDuration,
+                        }) =>
+                          JSON.stringify({
+                            duration,
+                            label,
+                            startTime,
+                            endTransitionDuration,
+                          })
+                      )
+                    )
+                  ).map((m) => JSON.parse(m))
                   $write(
                     join(
                       $mediaPath(),

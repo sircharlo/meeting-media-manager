@@ -10,9 +10,11 @@ export interface Introduction {
 }
 
 export interface Marker extends Introduction {
-  mepsParagraphId: number
-  endTransitionDuration?: unknown
+  mepsParagraphId?: number
+  endTransitionDuration?: string
   label?: string
+  customStartTime?: string
+  customEndTime?: string
 }
 
 export interface Markers {

@@ -1,76 +1,103 @@
 <!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
-  <v-list-item :id="id" three-line :class="{ 'media-played': played }">
-    <v-img v-if="isImage" :src="url" contain max-width="144" max-height="80" />
-    <media-video
-      v-else
-      :src="src"
-      :playing="active"
-      @clipped="setTime($event)"
-      @progress="progress = $event"
-    />
-    <v-list-item-content class="ml-2">
-      <v-list-item-subtitle class="media-title">
-        <runtime-template-compiler :template="title" :parent="parent" />
-      </v-list-item-subtitle>
-    </v-list-item-content>
-    <v-list-item-action class="d-flex flex-row">
-      <template v-if="active">
+  <div>
+    <v-list-item :id="id" three-line :class="{ 'media-played': played }">
+      <v-img
+        v-if="isImage"
+        :src="url"
+        contain
+        max-width="144"
+        max-height="80"
+      />
+      <media-video
+        v-else
+        :src="src"
+        :playing="active"
+        @clipped="setTime($event)"
+        @progress="progress = $event"
+      />
+      <v-list-item-content class="ml-2">
+        <v-list-item-subtitle class="media-title">
+          <runtime-template-compiler :template="title" :parent="parent" />
+        </v-list-item-subtitle>
+      </v-list-item-content>
+      <v-list-item-action class="d-flex flex-row">
+        <template v-if="active">
+          <icon-btn
+            v-if="!isImage && !end.startsWith('00:00')"
+            variant="pause"
+            class="mr-2"
+            @click="togglePaused()"
+          />
+          <icon-btn
+            variant="stop"
+            tooltip="top"
+            :click-twice="!isImage && !end.startsWith('00:00')"
+            @click="stop()"
+          />
+        </template>
         <icon-btn
-          v-if="!isImage && !end.startsWith('00:00')"
-          variant="pause"
-          class="mr-2"
-          @click="togglePaused()"
+          v-else
+          variant="play"
+          :disabled="mediaActive"
+          @click="play()"
         />
-        <icon-btn
-          variant="stop"
-          tooltip="top"
-          :click-twice="!isImage && !end.startsWith('00:00')"
-          @click="stop()"
-        />
-      </template>
-      <icon-btn v-else variant="play" :disabled="mediaActive" @click="play()" />
-      <icon-btn v-if="sortable" variant="sort" class="ml-2" />
-    </v-list-item-action>
-    <v-progress-linear
-      v-if="!isImage"
-      v-model="progress"
-      absolute
-      bottom
-      aria-label="Video progress"
-      color="primary"
-      :background-opacity="0"
-    />
-    <v-progress-linear
-      v-if="!isImage"
-      v-model="clippedStart"
-      absolute
-      bottom
-      aria-label="Video clipped start"
-      color="rgb(231, 76, 60)"
-      :background-opacity="0"
-    />
-    <v-progress-linear
-      v-if="!isImage"
-      v-model="clippedEnd"
-      absolute
-      bottom
-      aria-label="Video clipped end"
-      color="rgb(231, 76, 60)"
-      reverse
-      :background-opacity="0"
-    />
-  </v-list-item>
+        <icon-btn v-if="sortable" variant="sort" class="ml-2" />
+      </v-list-item-action>
+      <v-progress-linear
+        v-if="!isImage"
+        v-model="progress"
+        absolute
+        bottom
+        aria-label="Video progress"
+        color="primary"
+        :background-opacity="0"
+      />
+      <v-progress-linear
+        v-if="!isImage"
+        v-model="clippedStart"
+        absolute
+        bottom
+        aria-label="Video clipped start"
+        color="rgb(231, 76, 60)"
+        :background-opacity="0"
+      />
+      <v-progress-linear
+        v-if="!isImage"
+        v-model="clippedEnd"
+        absolute
+        bottom
+        aria-label="Video clipped end"
+        color="rgb(231, 76, 60)"
+        reverse
+        :background-opacity="0"
+      />
+    </v-list-item>
+    <div class="mx-4">
+      <v-btn
+        v-for="marker in markers"
+        :key="id + marker.label"
+        class="mr-2 mb-2"
+        color="info"
+        @click="play(marker)"
+      >
+        {{ marker.label }}
+      </v-btn>
+    </div>
+  </div>
 </template>
 <script lang="ts">
 import { pathToFileURL } from 'url'
-import { basename } from 'upath'
+import { basename, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
 // @ts-ignore
 import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
 import { faMusic, faParagraph } from '@fortawesome/free-solid-svg-icons'
+// eslint-disable-next-line import/named
+import { existsSync, readFileSync } from 'fs-extra'
+import { Marker } from '~/types'
 export default Vue.extend({
   components: {
     RuntimeTemplateCompiler,
@@ -112,6 +139,7 @@ export default Vue.extend({
       start: undefined as string | undefined,
       end: undefined as string | undefined,
       parent: this,
+      markers: [] as Marker[],
     }
   },
   computed: {
@@ -200,6 +228,7 @@ export default Vue.extend({
     },
   },
   mounted() {
+    this.getMarkers()
     ipcRenderer.on('videoEnd', () => {
       this.active = false
     })
@@ -208,7 +237,7 @@ export default Vue.extend({
     ipcRenderer.removeAllListeners('videoEnd')
   },
   methods: {
-    async play() {
+    async play(marker?: Marker) {
       this.$emit('playing')
       this.active = true
       this.played = true
@@ -217,8 +246,8 @@ export default Vue.extend({
       }
       ipcRenderer.send('showMedia', {
         path: this.src,
-        start: this.start,
-        end: this.end,
+        start: marker ? marker.customStartTime : this.start,
+        end: marker ? marker.customEndTime : this.end,
       })
     },
     togglePaused(): void {
@@ -231,6 +260,50 @@ export default Vue.extend({
         ipcRenderer.send('showMedia', null)
       } else {
         ipcRenderer.send('hideMedia')
+      }
+    },
+    getMarkers() {
+      if (!this.isImage && existsSync(changeExt(this.src, '.json'))) {
+        const markers = JSON.parse(
+          readFileSync(changeExt(this.src, '.json'), 'utf8')
+        ) as Marker[]
+        markers.forEach((marker) => {
+          const startTime = this.$dayjs(marker.startTime, 'hh:mm:ss.SSS')
+          const duration = this.$dayjs(marker.duration, 'hh:mm:ss.SSS')
+          const transition = this.$dayjs(
+            marker.endTransitionDuration,
+            'hh:mm:ss.SSS'
+          )
+
+          marker.customStartTime = this.$dayjs
+            .duration({
+              hours: parseInt(startTime.format('h')),
+              minutes: parseInt(startTime.format('m')),
+              seconds: parseInt(startTime.format('s')),
+              milliseconds: parseInt(startTime.format('SSS')),
+            })
+            .format('mm:ss.SSS')
+
+          marker.customEndTime = startTime
+            .add(
+              this.$dayjs.duration({
+                hours: parseInt(duration.format('h')),
+                minutes: parseInt(duration.format('m')),
+                seconds: parseInt(duration.format('s')),
+                milliseconds: parseInt(duration.format('SSS')),
+              })
+            )
+            .subtract(
+              this.$dayjs.duration({
+                hours: parseInt(transition.format('h')),
+                minutes: parseInt(transition.format('m')),
+                seconds: parseInt(transition.format('s')),
+                milliseconds: parseInt(transition.format('SSS')),
+              })
+            )
+            .format('mm:ss.SSS')
+        })
+        this.markers = markers
       }
     },
     setTime({
