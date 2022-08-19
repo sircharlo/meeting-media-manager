@@ -170,7 +170,10 @@ import { platform } from 'os'
 import Vue from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'
+// eslint-disable-next-line import/named
+import { readFileSync } from 'fs-extra'
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
+import { WebDAVClient } from 'webdav/web'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
@@ -197,6 +200,9 @@ export default Vue.extend({
           langcode: lang.langcode,
         }
       })
+    },
+    client(): WebDAVClient {
+      return this.$store.state.cong.client as WebDAVClient
     },
     resolutions(): { label: Res; value: Res }[] {
       return Object.values(Res).map((val) => {
@@ -294,6 +300,19 @@ export default Vue.extend({
           bg,
           join(this.$appPath(), 'media-window-background-image' + extname(bg))
         )
+        if (this.client) {
+          await this.client.putFileContents(
+            join(
+              this.$getPrefs('cong.dir'),
+              'media-window-background-image' + extname(bg)
+            ),
+            readFileSync(bg),
+            {
+              overwrite: true,
+            }
+          )
+        }
+
         this.bg = await this.$refreshBackgroundImgPreview()
       }
     },

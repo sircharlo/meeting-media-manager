@@ -60,7 +60,7 @@
         </v-btn>
       </v-col>
     </v-col>
-    <cong-dir-list v-if="client" :contents="contents" />
+    <cong-dir-list v-if="client" :contents="contents" @open="openDir($event)" />
     <v-btn
       :color="error === 'success' ? 'success' : 'primary'"
       class="float-right"
@@ -125,7 +125,7 @@ export default Vue.extend({
       return this.$store.state.cong.client
     },
     contents() {
-      return this.$getContentsTree()
+      return this.$store.state.cong.contentsTree
     },
     complete(): boolean {
       return !!(
@@ -159,6 +159,9 @@ export default Vue.extend({
     this.$refs.form.validate()
     if (this.complete) {
       await this.submit()
+      if (this.client) {
+        this.$updateContentsTree()
+      }
     }
   },
   methods: {
@@ -171,8 +174,16 @@ export default Vue.extend({
           this.cong.password as string,
           this.cong.dir as string
         )) as string
+        if (this.client) {
+          this.$updateContentsTree()
+        }
         this.loading = false
       }
+    },
+    async openDir(dir: string) {
+      this.cong.dir = dir
+      await this.$updateContent()
+      this.$updateContentsTree()
     },
     setHost(host: CongPrefs) {
       this.cong.server = host.server

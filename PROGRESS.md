@@ -1,7 +1,5 @@
 # TODOS
 
-- [ ] Cong sync: Allow navigation of cong sync folder through the treeview
-- [ ] Cong sync: Sync custom media background when congregation sync is enabled
 - [ ] Docs: Improve docs translations by using more localized strings like how M3 itself does it
 - [ ] Manage media: Fix how recurring media works
 - [ ] Media sync: Add missing sign language media (Some media is missing that is specific to sign language)
@@ -11,7 +9,9 @@
 - [ ] Release: Check if build artifacts work correctly for Windows and MacOS
 - [ ] Test: test for 3 displays
 - [ ] Test: test if auto updater works correctly
+- [X] Cong sync: Allow navigation of cong sync folder through the treeview
 - [X] Cong sync: Congregation sync
+- [X] Cong sync: Sync custom media background when congregation sync is enabled
 - [X] Manage media: Add local JWPUB file media to media list
 - [X] Manage media: Edit local filename option
 - [X] Manage media: Functionality to add local files to media list
@@ -59,6 +59,7 @@
 - OBS: Auto detect scene change when changed from OBS directly
 - SETTINGS: Port field for cong sync is no longer necessary
 - SETTINGS: Set your theme preference (light, dark, system) inside the app
+- SETTINGS: Toggle password visibility
 
 ## Background Changes
 

@@ -45,7 +45,7 @@ interface CustomProps {
   $getAllPrefs: () => ElectronStore
   $getCongMedia: (baseDate: Dayjs, now: Dayjs) => void
   $getCongPrefs: () => Promise<{ name: string | null; path: string }[]>
-  $getContentsTree: () => CongFile[]
+  $updateContentsTree: () => CongFile[]
   $getDb: ({
     file,
     pub,

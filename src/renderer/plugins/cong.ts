@@ -23,6 +23,9 @@ export default function (
     $mediaPath,
     $warn,
     $write,
+    $rm,
+    $appPath,
+    $findAll,
     $getPrefs,
     $rename,
     $setAllPrefs,
@@ -56,6 +59,22 @@ export default function (
             client.deleteFile(dir.filename)
           }
         })
+
+      const bg = contents.find(({ basename }) =>
+        basename.startsWith('media-window-background-image')
+      )
+      if (bg) {
+        $rm($findAll(join($appPath(), 'media-window-background-image*')))
+        $write(
+          join($appPath(), bg.basename),
+          Buffer.from(
+            new Uint8Array(
+              (await client.getFileContents(bg.filename)) as ArrayBuffer
+            )
+          )
+        )
+      }
+
       store.commit('cong/setContents', contents)
       store.commit('cong/setClient', client)
       return 'success'
@@ -159,62 +178,58 @@ export default function (
     }
   })
 
-  function getContentsTree() {
-    if (store.state.cong.contentsTree.length > 0) {
-      return store.state.cong.contentsTree
-    } else {
-      const tree: CongFile[] = []
-      const root = $getPrefs('cong.dir')
-      const contents = [...store.state.cong.contents] as FileStat[]
-      const dirs = [
-        ...contents.filter(({ type }) => type === 'directory'),
-      ] as CongFile[]
-      const files = [
-        ...contents.filter(({ type }) => type === 'file'),
-      ] as CongFile[]
-      files.forEach((file) => {
-        const fileDir = dirname(file.filename)
-        if (fileDir === root) {
-          tree.push(file)
-        } else {
-          const dir = dirs.find(({ filename }) => filename === fileDir)
-          if (dir) {
-            if (!dir.children) {
-              dir.children = []
-            }
-            dir.children.push(file)
+  function updateContentsTree() {
+    const tree: CongFile[] = []
+    const root = $getPrefs('cong.dir')
+    const contents = [...store.state.cong.contents] as FileStat[]
+    const dirs = [
+      ...contents.filter(({ type }) => type === 'directory'),
+    ] as CongFile[]
+    const files = [
+      ...contents.filter(({ type }) => type === 'file'),
+    ] as CongFile[]
+    files.forEach((file) => {
+      const fileDir = dirname(file.filename)
+      if (fileDir === root) {
+        tree.push(file)
+      } else {
+        const dir = dirs.find(({ filename }) => filename === fileDir)
+        if (dir) {
+          if (!dir.children) {
+            dir.children = []
           }
+          dir.children.push(file)
         }
-      })
-      dirs.forEach((dir) => {
-        const dirName = dirname(dir.filename)
-        if (dirName !== root) {
-          const parent = dirs.find(({ filename }) => filename === dirName)
-          if (parent) {
-            if (!parent.children) {
-              parent.children = []
-            }
-            parent.children.push(dir)
+      }
+    })
+    dirs.forEach((dir) => {
+      const dirName = dirname(dir.filename)
+      if (dirName !== root) {
+        const parent = dirs.find(({ filename }) => filename === dirName)
+        if (parent) {
+          if (!parent.children) {
+            parent.children = []
           }
+          parent.children.push(dir)
         }
+      }
+    })
+    dirs
+      .filter(({ filename }) => dirname(filename) === root)
+      .forEach((dir) => {
+        tree.push(dir)
       })
-      dirs
-        .filter(({ filename }) => dirname(filename) === root)
-        .forEach((dir) => {
-          tree.push(dir)
-        })
-      store.commit('cong/setContentsTree', tree)
-      return tree
-    }
+    store.commit('cong/setContentsTree', tree)
+    return tree
   }
-  inject('getContentsTree', getContentsTree)
+  inject('updateContentsTree', updateContentsTree)
 
   inject('getCongMedia', (baseDate: Dayjs, now: Dayjs) => {
     store.commit('stats/startPerf', {
       func: 'getCongMedia',
       start: performance.now(),
     })
-    const tree = getContentsTree() as CongFile[]
+    const tree = updateContentsTree() as CongFile[]
     const mediaFolder = tree.find(({ basename }) => basename === 'Media')
     const hiddenFolder = tree.find(({ basename }) => basename === 'Hidden')
 

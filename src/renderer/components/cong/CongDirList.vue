@@ -10,12 +10,22 @@
       <font-awesome-icon v-if="item.type === 'file'" :icon="faFile" />
       <font-awesome-icon v-else :icon="open ? faFolderOpen : faFolder" />
     </template>
+    <template #append="{ item }">
+      <v-btn
+        v-if="item.type === 'directory'"
+        icon
+        @click="$emit('open', item.filename)"
+      >
+        <font-awesome-icon :icon="faArrowRight" />
+      </v-btn>
+    </template>
   </v-treeview>
 </template>
 <script lang="ts">
 import {
   faFile,
   faFolderOpen,
+  faArrowRight,
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
 import Vue from 'vue'
@@ -34,6 +44,9 @@ export default Vue.extend({
   computed: {
     faFile() {
       return faFile
+    },
+    faArrowRight() {
+      return faArrowRight
     },
     faFolder() {
       return faFolder
