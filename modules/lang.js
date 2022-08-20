@@ -68,29 +68,29 @@ function getLocaleLanguages() {
       }));
     });
     $("#localAppLang").val(get("prefs").localAppLang);
-  } catch(err) {
+  } catch (err) {
     log.error(err);
   }
 }
 
 function setAppLang(getMediaWindowDestination, unconfirm, dateFormatter) {
   try {
-    i18n.setLocale(get("prefs").localAppLang? get("prefs").localAppLang : "en");
-    $("[data-i18n-string]").each(function() {
+    i18n.setLocale(get("prefs").localAppLang ? get("prefs").localAppLang : "en");
+    $("[data-i18n-string]").each(function () {
       $(this).html(i18n.__($(this).data("i18n-string")));
     });
-    $(".row.disabled").each(function() {
+    $(".row.disabled").each(function () {
       $(this).tooltip("dispose").tooltip({
         title: i18n.__("settingLocked")
       });
     });
     $("[data-bs-toggle='popover'][data-bs-trigger='focus']").popover("dispose").popover({
       content: i18n.__("clickAgain")
-    }).on("hidden.bs.popover", function() {
+    }).on("hidden.bs.popover", function () {
       unconfirm(this);
     });
     getMediaWindowDestination();
-  } catch(err) {
+  } catch (err) {
     log.error(err);
   }
   dateFormatter();
@@ -103,8 +103,8 @@ async function setMediaLang() {
     set("meetingMedia", {});
     try {
       $("#songPicker").empty();
-      for (let sjj of (await getMediaLinks({pubSymbol: get("songPub"), format: "MP4"}))) {
-        $("#songPicker").append($("<option>", {
+      for (let sjj of (await getMediaLinks({ pubSymbol: get("songPub"), format: "MP4" }))) {
+        if (sjj.track && sjj.track > 0) $("#songPicker").append($("<option>", {
           value: sjj.track,
           text: sjj.title,
           "data-thumbnail": sjj.trackImage

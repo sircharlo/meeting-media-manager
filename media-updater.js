@@ -110,7 +110,7 @@ function addMediaItemToPart(date, paragraph, media, source) {
   const mm = get("meetingMedia");
   if (!mm[date]) setMeetingMedia(date, []);
   media.uniqueId = [paragraph, source, media.checksum, media.filepath].filter(Boolean).toString();
-  if (!media.uniqueId || !mm[date].map(part => part.media).flat().map(item => item.uniqueId).filter(Boolean).includes(media.uniqueId)) {
+  if (!media.uniqueId || (!mm[date].map(part => part.media).flat().map(item => item.uniqueId).filter(Boolean).includes(media.uniqueId) && !mm[date].map(part => part.media).flat().map(item => item.checksum).filter(Boolean).includes(media.checksum))) {
     if (mm[date].filter(part => part.title == paragraph).length === 0) {
       mm[date].push({
         title: paragraph,
@@ -152,7 +152,7 @@ function createMediaNames() {
         media.safeName = (i + 1).toString().padStart(2, "0") + "-" + (j + 1).toString().padStart(2, "0");
         if (!media.congSpecific) {
           media.safeName = sanitizeFilename(
-            `${media.safeName} - ${(media.queryInfo && media.queryInfo.TargetParagraphNumberLabel ? `${translate("paragraph")} ` + media.queryInfo.TargetParagraphNumberLabel + " - " : "")}${media.pub && media.pub.includes("sjj") ? `${translate("song")} ` : ""}${media.title}${path.extname((media.url ? media.url : media.filepath))}`
+            `${media.safeName} - ${(media.queryInfo && media.queryInfo.TargetParagraphNumberLabel ? `${translate("paragraph")} ` + media.queryInfo.TargetParagraphNumberLabel + " - " : "")}${media.pub && media.pub.includes("sjj") ? `${translate("song")} ` : ""}${media.title || ""}${media.url || media.filepath ? path.extname((media.url ? media.url : media.filepath)) : ""}`
           );
         }
       });
@@ -442,7 +442,7 @@ async function getDocumentExtract(db, docId) {
       INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
       INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId
     WHERE DocumentExtract.DocumentId = ${docId}
-      AND NOT UniqueEnglishSymbol = 'sjj'
+    ${!get("jsonLangs").find(lang => lang.langcode == get("prefs").lang).isSignLanguage ? "AND NOT UniqueEnglishSymbol = 'sjj'" : ""}
       AND NOT UniqueEnglishSymbol = 'mwbr'
       ${get("prefs").excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ""}
     ORDER BY DocumentExtract.BeginParagraphOrdinal`))) {
@@ -623,8 +623,14 @@ async function getWeMediaFromDb() {
         }
       }
       var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
+      var qrySongsLangs = {};
+      try {
+        (await executeStatement(db, "SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal FROM Extract INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId WHERE Extract.RefMepsDocumentClass = 31 ORDER BY Extract.ExtractId LIMIT 2 OFFSET " + weekNumber * 2)).sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal).map(item => item.Link.match(/\/(.*)\//).pop().split(":")[0]);
+      } catch (err) {
+        console.error(err);
+      }
       for (var song = 0; song < qrySongs.length; song++) {
-        let songJson = await getMediaLinks({ pubSymbol: qrySongs[song].KeySymbol, track: qrySongs[song].Track });
+        let songJson = await getMediaLinks({ pubSymbol: qrySongs[song].KeySymbol, track: qrySongs[song].Track, lang: (qrySongsLangs[song] || get("prefs").lang) });
         if (songJson.length > 0) {
           songJson[0].queryInfo = qrySongs[song];
           addMediaItemToPart(weDate, song * 2, songJson[0]);
@@ -1081,7 +1087,7 @@ async function syncJwOrgMedia() {
       var partMedia = meeting[i].media.filter(mediaItem => !mediaItem.congSpecific);
       for (var j = 0; j < partMedia.length; j++) { // media
         if (!partMedia[j].hidden && !partMedia[j].congSpecific && !partMedia[j].isLocal && !get("dryrun")) {
-          if (!partMedia[j].filesize) {
+          if (!partMedia[j].filesize && (partMedia[j].url || partMedia[j].filepath)) {
             notifyUser("warn", "warnFileNotAvailable", [partMedia[j].queryInfo.KeySymbol, partMedia[j].queryInfo.Track, partMedia[j].queryInfo.IssueTagNumber].filter(Boolean).join("_"), true, partMedia[j]);
           } else {
             log.info("%c[jwOrg] [" + Object.keys(jwOrgSyncMeetingMedia)[h] + "] " + partMedia[j].safeName, "background-color: #cce5ff; color: #004085;");
@@ -1093,7 +1099,7 @@ async function syncJwOrgMedia() {
             }
             if (partMedia[j].url) {
               await downloadIfRequired(partMedia[j]);
-            } else {
+            } else if (partMedia[j].filepath) {
               fs.ensureDirSync(path.join(get("paths").media, partMedia[j].folder));
               var destFile = path.join(get("paths").media, partMedia[j].folder, partMedia[j].safeName);
               if (!fs.existsSync(destFile) || fs.statSync(destFile).size !== partMedia[j].filesize) fs.copyFileSync(partMedia[j].filepath, destFile);
@@ -1810,7 +1816,7 @@ $("#btnUpload").on("click", async () => {
       let songFiles = await getMediaLinks({ pubSymbol: get("songPub"), track: $("#fileToUpload").val(), format: "MP4" });
       if (songFiles.length > 0) {
         let songFile = await downloadIfRequired(songFiles[0]);
-        let songFileName = sanitizeFilename(`${getPrefix()} - ${translate("song")} ${$("#songPicker option: selected").text()}.mp4`);
+        let songFileName = sanitizeFilename(`${getPrefix()} - ${translate("song")} ${$("#songPicker option:selected").text()}.mp4`);
         if (get("webdavIsAGo")) {
           await webdavPut(
             fs.readFileSync(songFile),
@@ -1868,12 +1874,20 @@ $("#congregationSelect").on("click", ".new-cong", function () {
   congregationCreate();
 });
 $("#chooseUploadType input").on("change", function () {
+  // $("div.row.sign-language").hide();
   $("div.row.file-to-upload").fadeToAndToggle(constants.FADE_DELAY, $("input[name='chooseUploadType']").is(":checked"));
   $("#songPicker:visible").select2("destroy");
   $(".file-to-upload.selector").children().hide();
   $(".enterPrefixInput").val("").empty();
   if ($("#fileToUpload").val()) $("#fileToUpload").val("").trigger("change");
   if ($("input#typeSong:checked").length > 0) {
+    // $("div.row.sign-language").show();
+    // let slp = $("#lang").clone();
+    // $("#slp").remove();
+    // slp.attr("id", "slp");
+    // slp.find(`option[value='${get("prefs").lang}']`).prop("selected", true);
+    // $("#languagePickerContainer").append(slp);
+    // $("#slp").select2();
     $(".enterPrefixInput").slice(0, 4).val(0);
     $("#songPicker").val([]).prop("disabled", false).show().select2();
   } else if ($("input#typeFile:checked").length > 0) {
