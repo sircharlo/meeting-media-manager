@@ -625,10 +625,12 @@ async function getWeMediaFromDb() {
       var qrySongs = await executeStatement(db, "SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET " + weekNumber * 2);
       var qrySongsLangs = {};
       try {
-        (await executeStatement(db, "SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal FROM Extract INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId WHERE Extract.RefMepsDocumentClass = 31 ORDER BY Extract.ExtractId LIMIT 2 OFFSET " + weekNumber * 2)).sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal).map(item => item.Link.match(/\/(.*)\//).pop().split(":")[0]);
+        qrySongsLangs = (await executeStatement(db, "SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal FROM Extract INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId WHERE Extract.RefMepsDocumentClass = 31 ORDER BY Extract.ExtractId LIMIT 2 OFFSET " + weekNumber * 2)).sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal).map(item => item.Link.match(/\/(.*)\//).pop().split(":")[0]);
+        console.log(qrySongsLangs);
       } catch (err) {
         console.error(err);
       }
+      console.log(qrySongsLangs);
       for (var song = 0; song < qrySongs.length; song++) {
         let songJson = await getMediaLinks({ pubSymbol: qrySongs[song].KeySymbol, track: qrySongs[song].Track, lang: (qrySongsLangs[song] || get("prefs").lang) });
         if (songJson.length > 0) {
@@ -928,7 +930,7 @@ function removeEventListeners() {
 
 function sanitizeFilename(filename, isNotFile) {
   let fileExtIfApplicable = (isNotFile ? "" : path.extname(filename).toLowerCase());
-  filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).replace(/["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1f\x80-\x9f]/g, "").replace(/ *[—?;:|.!?] */g, " - ").replace(/\u00A0/g, " ").trim().replace(/[ -]+$/g, "") + fileExtIfApplicable;
+  filename = path.basename(filename, (isNotFile ? "" : path.extname(filename))).replace(/["»“”‘’'«(){}№+[\]$<>,/\\:*\x00-\x1f\x80-\x9f]/g, "").replace(/ *[—?;:|.!?] */g, " - ").replace(/\u00A0/g, " ").trim().replace(/[ -]+$/g, "") + fileExtIfApplicable;
   if (!isNotFile && get("paths").media) {
     let maxCharactersInPath = 245,
       projectedPathCharLength = path.join(get("paths").media, "9999-99-99 - AAAAAAAAAA AAAAAAAAAA", filename).length;
