@@ -119,7 +119,9 @@ import {
   faSquareMinus,
   faFolderOpen,
   faSquarePlus,
+  faFileCode,
   faPen,
+  faFilePdf,
   faCloud,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
@@ -134,6 +136,10 @@ export default Vue.extend({
         return faImage
       } else if (['.mp4'].includes(extname(filename))) {
         return faFilm
+      } else if (extname(filename) === '.pdf') {
+        return faFilePdf
+      } else if (['.xspf', '.json'].includes(extname(filename))) {
+        return faFileCode
       } else {
         return faQuestionCircle
       }
