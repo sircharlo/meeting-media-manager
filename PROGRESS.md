@@ -3,7 +3,6 @@
 - [ ] Docs: Improve docs translations by using more localized strings like how M3 itself does it
 - [ ] Manage media: Fix how recurring media works (currently unable to hide recurring media)
 - [ ] Misc: Convert flash to notify system with action buttons
-- [ ] Present media: Make progress slider draggable when paused to change current progress / video scrubber
 - [ ] Release: Check if build artifacts work correctly for Windows and MacOS
 - [ ] Test: test for 3 displays
 - [ ] Test: test if auto updater works correctly
@@ -27,6 +26,7 @@
 - [X] Present media: Add played and video progress visuals to present page
 - [X] Present media: Auto open meeting when first opening presentation mode if todays date it present or there is only one meeting
 - [X] Present media: Implement video markers for sign language media
+- [X] Present media: Make progress slider draggable when paused to change current progress / video scrubber
 - [X] Present media: Media webpage
 - [X] Present media: OBS integration
 - [X] Present media: Presentation mode

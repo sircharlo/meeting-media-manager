@@ -30,6 +30,7 @@
             v-if="!isImage && !end.startsWith('00:00')"
             variant="pause"
             class="mr-2"
+            :toggled="paused"
             @click="togglePaused()"
           />
           <icon-btn
@@ -47,34 +48,48 @@
         />
         <icon-btn v-if="sortable" variant="sort" class="ml-2" />
       </v-list-item-action>
-      <v-progress-linear
-        v-if="!isImage"
-        v-model="progress"
-        absolute
-        bottom
-        aria-label="Video progress"
-        color="primary"
-        :background-opacity="0"
-      />
-      <v-progress-linear
-        v-if="!isImage"
-        v-model="clippedStart"
-        absolute
-        bottom
-        aria-label="Video clipped start"
-        color="rgb(231, 76, 60)"
-        :background-opacity="0"
-      />
-      <v-progress-linear
-        v-if="!isImage"
-        v-model="clippedEnd"
-        absolute
-        bottom
-        aria-label="Video clipped end"
-        color="rgb(231, 76, 60)"
-        reverse
-        :background-opacity="0"
-      />
+      <template v-if="!isImage">
+        <v-slider
+          v-if="active && paused"
+          v-model="newProgress"
+          color="primary"
+          dense
+          aria-label="Video scrubber"
+          hide-details="auto"
+          :min="clippedStart"
+          :max="100 - clippedEnd"
+          class="video-scrubber"
+          :style="`left: ${clippedStart}%; right: ${clippedEnd}%; width: ${
+            100 - clippedStart - clippedEnd
+          }%`"
+        />
+        <v-progress-linear
+          v-else
+          v-model="progress"
+          absolute
+          bottom
+          aria-label="Video progress"
+          color="primary"
+          :background-opacity="0"
+        />
+        <v-progress-linear
+          v-model="clippedStart"
+          absolute
+          bottom
+          aria-label="Video clipped start"
+          color="rgb(231, 76, 60)"
+          :background-opacity="0"
+        />
+        <v-progress-linear
+          v-model="clippedEnd"
+          absolute
+          bottom
+          aria-label="Video clipped end"
+          color="rgb(231, 76, 60)"
+          reverse
+          :background-opacity="0"
+        />
+      </template>
     </v-list-item>
     <div class="mx-4">
       <v-btn
@@ -139,6 +154,7 @@ export default Vue.extend({
       video: null as any,
       paused: false as boolean,
       progress: 0,
+      newProgress: 0,
       stopClicked: false as boolean,
       start: undefined as string | undefined,
       end: undefined as string | undefined,
@@ -204,6 +220,11 @@ export default Vue.extend({
     },
   },
   watch: {
+    newProgress() {
+      if (this.paused) {
+        this.scrubVideo()
+      }
+    },
     async playNow(val) {
       if (val) {
         await this.play()
@@ -220,6 +241,8 @@ export default Vue.extend({
           m.playing = false
         })
         this.progress = 0
+        this.newProgress = 0
+        this.paused = false
         if (this.scene) {
           await this.$setScene(this.scene)
         }
@@ -273,6 +296,7 @@ export default Vue.extend({
       })
     },
     togglePaused(): void {
+      this.newProgress = this.progress
       ipcRenderer.send(this.paused ? 'playVideo' : 'pauseVideo')
       this.paused = !this.paused
     },
@@ -329,6 +353,9 @@ export default Vue.extend({
         this.markers = markers
       }
     },
+    scrubVideo() {
+      ipcRenderer.send('videoScrub', this.newProgress)
+    },
     setTime({
       original,
       clipped,
@@ -346,18 +373,6 @@ export default Vue.extend({
 })
 </script>
 <style lang="scss">
-.theme--light {
-  .media-title {
-    color: rgba(0, 0, 0, 0.87) !important;
-  }
-}
-
-.theme--dark {
-  .media-title {
-    color: #ffffff !important;
-  }
-}
-
 .media-title {
   font-size: 1rem !important;
 }
@@ -366,12 +381,30 @@ export default Vue.extend({
   border-left: 8px solid rgba(55, 90, 127, 0.75) !important;
 }
 
+.video-scrubber {
+  position: absolute;
+  bottom: 0;
+  margin-bottom: -14px;
+
+  .v-slider {
+    margin: 0;
+
+    .v-slider__track-container {
+      height: 4px !important;
+    }
+  }
+}
+
 .song,
 .paragraph {
   border: 1px solid transparent;
 }
 
 .theme--light {
+  .media-title {
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+
   .song {
     color: #055160;
     background-color: #cff4fc;
@@ -386,6 +419,10 @@ export default Vue.extend({
 }
 
 .theme--dark {
+  .media-title {
+    color: #ffffff !important;
+  }
+
   .song {
     color: #5dbecd;
     background-color: #0c515c;

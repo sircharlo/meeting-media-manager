@@ -17,7 +17,7 @@
     :aria-label="variant"
     v-bind="$attrs"
     :class="{ 'pulse-danger': toggled }"
-    @click="toggle()"
+    @click="$emit('click')"
   >
     <font-awesome-icon :icon="pauseIcon" size="xl" class="black--text" />
   </v-btn>
@@ -169,10 +169,13 @@ export default Vue.extend({
       type: String,
       default: '',
     },
+    toggled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      toggled: false,
       loading: false,
       clickedOnce: false,
       timeRemaining: '',
@@ -264,10 +267,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    toggle() {
-      this.toggled = !this.toggled
-      this.$emit('click')
-    },
     async atClick(): Promise<void> {
       if (this.clickTwice && !this.clickedOnce) {
         this.clickedOnce = true
