@@ -47,6 +47,7 @@
 
 - Setting custom media background works instantly
 - Correctly set app icon for Linux
+- Download markers for sign language when adding a song with the song picker
 
 ## New Features
 

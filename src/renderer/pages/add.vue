@@ -187,7 +187,7 @@
 <script lang="ts">
 // eslint-disable-next-line import/named
 import { readdirSync, readFileSync, existsSync, statSync } from 'fs-extra'
-import { basename, join } from 'upath'
+import { basename, join, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
 import { FileStat, WebDAVClient } from 'webdav/web'
@@ -315,7 +315,7 @@ export default Vue.extend({
   },
   async mounted() {
     await this.getMeetingData()
-     this.getExistingMedia()
+    this.getExistingMedia()
     document.addEventListener('dragover', this.stopEvent)
     document.addEventListener('dragenter', this.handleDrag)
     document.addEventListener('dragleave', this.handleDrag)
@@ -345,7 +345,7 @@ export default Vue.extend({
           filepath: file.path,
         }
       })
-      this.fileString = this.files.map(({filepath}) => filepath).join(';')
+      this.fileString = this.files.map(({ filepath }) => filepath).join(';')
     },
     addMedia(media: LocalFile[]) {
       this.files = media
@@ -386,14 +386,41 @@ export default Vue.extend({
           } else if (file.safeName) {
             file.folder = this.date
             await this.$downloadIfRequired(file, this.setProgress)
+            if ((file as VideoFile).markers) {
+              const markers = Array.from(
+                new Set(
+                  (file as VideoFile).markers?.markers?.map(
+                    ({ duration, label, startTime, endTransitionDuration }) =>
+                      JSON.stringify({
+                        duration,
+                        label,
+                        startTime,
+                        endTransitionDuration,
+                      })
+                  )
+                )
+              ).map((m) => JSON.parse(m))
+              this.$write(
+                join(
+                  this.$mediaPath(),
+                  file.folder as string,
+                  changeExt(file.safeName as string, 'json')
+                ),
+                JSON.stringify(markers)
+              )
+            }
           }
 
           if (this.client) {
             const mediaPath = join(this.$getPrefs('cong.dir'), 'Media')
             const datePath = join(mediaPath, this.date)
             const filePath = join(datePath, file.safeName)
-            const mediaPathExists = !!this.contents.find(({filename}) => filename === mediaPath)
-            const datePathExists = !!this.contents.find(({filename}) => filename === datePath)
+            const mediaPathExists = !!this.contents.find(
+              ({ filename }) => filename === mediaPath
+            )
+            const datePathExists = !!this.contents.find(
+              ({ filename }) => filename === datePath
+            )
             if (!mediaPathExists) {
               await this.client.createDirectory(mediaPath)
             }
@@ -413,7 +440,7 @@ export default Vue.extend({
             }
             await this.client.putFileContents(filePath, readFileSync(path), {
               overwrite: true,
-              onUploadProgress: ({loaded, total}) => {
+              onUploadProgress: ({ loaded, total }) => {
                 this.setProgress(loaded, total, true)
               },
             })
@@ -429,12 +456,14 @@ export default Vue.extend({
         }
         await this.$convertUnusableFiles(this.$mediaPath())
         if (this.client) await this.$updateContent()
-         this.getExistingMedia()
+        this.getExistingMedia()
       } catch (e) {
         this.$log.error(e)
       } finally {
         this.type = null
+        this.song = null
         this.files = []
+        this.fileString = ''
         this.loading = false
       }
     },
@@ -473,7 +502,7 @@ export default Vue.extend({
       this.songs = result
       this.loadingSongs = false
     },
-     getExistingMedia() {
+    getExistingMedia() {
       const meetings = this.$store.getters['media/meetings'] as Map<
         string,
         Map<number, MeetingFile[]>
@@ -498,8 +527,13 @@ export default Vue.extend({
         for (const m of media) {
           m.isLocal = false
           if (this.client) {
-            const path = join(this.$getPrefs('cong.dir'), 'Hidden', this.date, m.safeName)
-            m.hidden = !!this.contents.find(({filename}) => filename === path)
+            const path = join(
+              this.$getPrefs('cong.dir'),
+              'Hidden',
+              this.date,
+              m.safeName
+            )
+            m.hidden = !!this.contents.find(({ filename }) => filename === path)
           }
         }
         jwMedia.push(...media)
@@ -508,8 +542,10 @@ export default Vue.extend({
       const path = join(this.$mediaPath(), this.date)
       if (existsSync(path)) {
         readdirSync(path).forEach((filename) => {
-          const jwMatch = jwMedia.find(({safeName}) => safeName === filename)
-          const congMatch = congMedia.find(({safeName}) => safeName === filename)
+          const jwMatch = jwMedia.find(({ safeName }) => safeName === filename)
+          const congMatch = congMedia.find(
+            ({ safeName }) => safeName === filename
+          )
           if (jwMatch) {
             jwMatch.isLocal = true
           } else if (congMatch) {
