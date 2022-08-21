@@ -157,12 +157,13 @@ export default Vue.extend({
     },
     id(): string {
       return (
+        'video-' +
         basename(this.src)
           .replaceAll(' ', '')
           .replaceAll('-', '')
           .replaceAll('.', '')
           .replaceAll("'", '')
-          .replaceAll(/\d/g, '') + 'video'
+          .replaceAll(/\d/g, '')
       )
     },
     duration(): string {

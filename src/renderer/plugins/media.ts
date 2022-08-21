@@ -54,6 +54,7 @@ export default function (
     docId: number,
     setProgress?: Function
   ) {
+    const songPub = store.state.media.songPub as string
     const excludeTh = $getPrefs('media.excludeTh')
     let extractMultimediaItems: MeetingFile[] = []
     const extracts = $query(
@@ -66,7 +67,7 @@ export default function (
         INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
         INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId
       WHERE DocumentExtract.DocumentId = ${docId}
-        AND NOT UniqueEnglishSymbol = 'sjj'
+        ${songPub === 'sjjm' ? "AND NOT UniqueEnglishSymbol = 'sjj' " : ''}
         AND NOT UniqueEnglishSymbol = 'mwbr'
         ${excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ''}
       ORDER BY DocumentExtract.BeginParagraphOrdinal`
@@ -123,7 +124,6 @@ export default function (
                   $isVideo(mmItem?.queryInfo?.FilePath) &&
                   !mmItem?.queryInfo?.TargetParagraphNumberLabel
                 ) {
-                  console.log('SL item: ', mmItem)
                   return true
                 } else if (
                   mmItem.BeginParagraphOrdinal &&
@@ -168,11 +168,16 @@ export default function (
 
     if (
       !media.uniqueId ||
-      !mediaList
+      (!mediaList
         .flat()
         .map((item) => item.uniqueId)
         .filter(Boolean)
-        .includes(media.uniqueId)
+        .includes(media.uniqueId) &&
+        !mediaList
+          .flat()
+          .map((item) => item.checksum)
+          .filter(Boolean)
+          .includes(media.checksum))
     ) {
       media.folder = date
       store.commit('media/set', {
@@ -300,7 +305,6 @@ export default function (
             mmItem.MimeType.includes('audio') ||
             mmItem.MimeType.includes('video')
           ) {
-            console.log(mmItem)
             const json =
               ((
                 await getMediaLinks({
@@ -362,6 +366,10 @@ export default function (
     format?: string
     lang?: string
   }) {
+    if (mediaItem.lang) {
+      console.log(mediaItem)
+      console.log($getPrefs('media.lang'))
+    }
     let mediaFiles: MediaFile[] = []
     let smallMediaFiles: SmallMediaFile[] = []
 
@@ -426,78 +434,88 @@ export default function (
       $log.debug(result?.request.responseURL, mediaItem)
 
       const publication = result?.data as Publication
-      const categories = Object.values(publication.files)[0]
-      mediaFiles = categories.MP4 ?? Object.values(categories)[0]
+      if (publication) {
+        const categories = Object.values(publication.files)[0]
+        mediaFiles = categories.MP4 ?? Object.values(categories)[0]
 
-      // Filter on max resolution
-      mediaFiles = mediaFiles.filter((file) => {
-        return (
-          parseRes(file.label) <= parseRes($getPrefs('media.maxRes') as string)
-        )
-      })
-
-      const mappedFiles = new Map(mediaFiles.map((file) => [file.title, file]))
-
-      // Keep highest resolution of each media file without subtitles
-      mediaFiles.forEach((item) => {
-        const file = mappedFiles.get(item.title)
-        if (file) {
-          const { label, subtitled } = file
-          if (
-            (parseRes(item.label) - parseRes(label) ||
-              +!!subtitled - +!!item.subtitled) > 0
+        // Filter on max resolution
+        mediaFiles = mediaFiles.filter((file) => {
+          return (
+            parseRes(file.label) <=
+            parseRes($getPrefs('media.maxRes') as string)
           )
-            mappedFiles.set(item.title, item)
-        }
-      })
+        })
 
-      smallMediaFiles = Array.from(mappedFiles.values()).map(
-        ({
-          title,
-          file,
-          filesize,
-          duration,
-          trackImage,
-          track,
-          pub,
-          markers,
-        }) => {
-          return {
+        const mappedFiles = new Map(
+          mediaFiles.map((file) => [file.title, file])
+        )
+
+        // Keep highest resolution of each media file without subtitles
+        mediaFiles.forEach((item) => {
+          const file = mappedFiles.get(item.title)
+          if (file) {
+            const { label, subtitled } = file
+            if (
+              (parseRes(item.label) - parseRes(label) ||
+                +!!subtitled - +!!item.subtitled) > 0
+            )
+              mappedFiles.set(item.title, item)
+          }
+        })
+
+        smallMediaFiles = Array.from(mappedFiles.values()).map(
+          ({
             title,
-            issue: mediaItem.issue,
-            url: file.url,
-            checksum: file.checksum,
+            file,
             filesize,
             duration,
-            trackImage: trackImage.url,
+            trackImage,
             track,
             pub,
             markers,
+          }) => {
+            return {
+              title,
+              issue: mediaItem.issue,
+              url: file.url,
+              checksum: file.checksum,
+              filesize,
+              duration,
+              trackImage: trackImage.url,
+              track,
+              pub,
+              markers,
+            }
+          }
+        ) as SmallMediaFile[]
+
+        // Get thumbnail and primaryCategory
+        for (const item of smallMediaFiles) {
+          if (
+            (item.duration as number) > 0 &&
+            (!item.trackImage || !item.pub)
+          ) {
+            const id = mediaItem.docId
+              ? `docid-${mediaItem.docId}_1`
+              : `pub-${[
+                  mediaItem.pubSymbol,
+                  mediaItem.issue?.toString().replace(/(\d{6})00$/gm, '$1'),
+                  mediaItem.track,
+                ]
+                  .filter(Boolean)
+                  .join('_')}`
+            const result = (await $mediaItems.$get(
+              `${$getPrefs('media.lang')}/${id}_VIDEO`
+            )) as MediaItemResult
+
+            if (result?.media?.length > 0) {
+              item.thumbnail = result?.media[0]?.images?.wss?.sm
+              item.primaryCategory = result?.media[0]?.primaryCategory
+            }
           }
         }
-      ) as SmallMediaFile[]
-
-      // Get thumbnail and primaryCategory
-      for (const item of smallMediaFiles) {
-        if ((item.duration as number) > 0 && (!item.trackImage || !item.pub)) {
-          const id = mediaItem.docId
-            ? `docid-${mediaItem.docId}_1`
-            : `pub-${[
-                mediaItem.pubSymbol,
-                mediaItem.issue?.toString().replace(/(\d{6})00$/gm, '$1'),
-                mediaItem.track,
-              ]
-                .filter(Boolean)
-                .join('_')}`
-          const result = (await $mediaItems.$get(
-            `${$getPrefs('media.lang')}/${id}_VIDEO`
-          )) as MediaItemResult
-
-          if (result?.media?.length > 0) {
-            item.thumbnail = result?.media[0]?.images?.wss?.sm
-            item.primaryCategory = result?.media[0]?.primaryCategory
-          }
-        }
+      } else {
+        $warn(i18n.t('infoPubIgnored') as string)
       }
     } catch (e) {
       $log.error(e)
@@ -552,12 +570,16 @@ export default function (
             format: 'JWPUB',
           })
         )[0] as VideoFile
-        await downloadIfRequired(jwpub, setProgress)
-        db = await $getDb({
-          pub,
-          issue,
-          file: readFileSync($findOne(join($pubPath(jwpub), '*.db'))),
-        })
+        if (jwpub) {
+          await downloadIfRequired(jwpub, setProgress)
+          db = await $getDb({
+            pub,
+            issue,
+            file: readFileSync($findOne(join($pubPath(jwpub), '*.db'))),
+          })
+        } else {
+          return null
+        }
       } else return null
     } catch (e) {
       $log.error(`${pub}-${issue}`, e)
@@ -635,6 +657,7 @@ export default function (
 
     // Get document id of this weeks mwb issue
     const db = (await getDbFromJWPUB('mwb', issue, setProgress)) as Database
+    if (!db) throw new Error('No MW media data found!')
     const docId = (
       $query(
         db,
@@ -694,6 +717,7 @@ export default function (
     const baseDate = weDay.startOf('week')
 
     const getWeekNr = (database: Database) => {
+      if (!db) return -1
       return $query(
         database,
         'SELECT FirstDateOffset FROM DatedText'
@@ -764,10 +788,41 @@ export default function (
       }`
     ) as MultiMediaItem[]
 
+    let songLangs = songs.map(() => $getPrefs('media.lang') as string)
+
+    try {
+      songLangs = (
+        $query(
+          db,
+          `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal FROM Extract INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId WHERE Extract.RefMepsDocumentClass = 31 ORDER BY Extract.ExtractId LIMIT 2 OFFSET ${
+            2 * weekNr
+          }`
+        ) as {
+          ExtractId: number
+          Link: string
+          BeginParagraphOrdinal: number
+        }[]
+      )
+        .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
+        .map((item) => {
+          const match = item.Link.match(/\/(.*)\//)
+          if (match) {
+            return (
+              match.pop()?.split(':')[0] ?? ($getPrefs('media.lang') as string)
+            )
+          } else {
+            return $getPrefs('media.lang') as string
+          }
+        })
+    } catch (e) {
+      $log.error(e)
+    }
+
     for (const [i, song] of songs.entries()) {
       const songMedia = await getMediaLinks({
         pubSymbol: song.KeySymbol as string,
         track: song.Track as number,
+        lang: songLangs[i],
       })
       if (songMedia?.length > 0) {
         const songObj = songMedia[0] as VideoFile
@@ -809,7 +864,7 @@ export default function (
                 item.safeName += ` ${i18n.t('song')}`
               }
               item.safeName = $sanitize(
-                `${item.safeName} ${item.title}${extname(
+                `${item.safeName} ${item.title || ''}${extname(
                   item.url || item.filepath || ''
                 )}`,
                 true
@@ -883,7 +938,10 @@ export default function (
           .map((meeting) => {
             meeting[1] = new Map(
               Array.from(meeting[1]).filter((part) => {
-                part[1] = part[1].filter((mediaItem) => !mediaItem.congSpecific)
+                part[1] = part[1].filter(
+                  ({ congSpecific, hidden, isLocal }) =>
+                    !congSpecific && !hidden && !isLocal
+                )
                 return part
               })
             )
@@ -900,8 +958,8 @@ export default function (
       for (const [date, parts] of meetings.entries()) {
         for (const [, media] of parts.entries()) {
           for (const item of media) {
-            if (!dryrun && !item.hidden && !item.isLocal) {
-              if (item.filesize) {
+            if (!dryrun) {
+              if (item.filesize && (item.url || item.filepath)) {
                 $log.info(
                   `%c[jwOrg] [${date}] ${item.safeName}`,
                   'background-color: #cce5ff; color: #004085;'
@@ -959,7 +1017,7 @@ export default function (
                     JSON.parse(JSON.stringify(item as SmallMediaFile)),
                     setProgress
                   )
-                } else {
+                } else if (item.filepath) {
                   const dest = join(
                     $mediaPath(),
                     item.folder as string,

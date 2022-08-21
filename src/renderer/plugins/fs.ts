@@ -280,7 +280,7 @@ export default function (
     name =
       basename(name, ext)
         // eslint-disable-next-line no-control-regex
-        .replace(/["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F]/g, '')
+        .replace(/["»“”‘’'«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F]/g, '')
         .replace(/ *[—?;:|.!?] */g, ' - ')
         .replace(/\u00A0/g, ' ')
         .trim()

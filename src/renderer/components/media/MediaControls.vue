@@ -201,11 +201,12 @@ export default Vue.extend({
         .map((path) => {
           return {
             id:
+              'mediaitem-' +
               basename(path)
                 .replaceAll(' ', '')
                 .replaceAll('-', '')
                 .replaceAll("'", '')
-                .replaceAll('.', '') + 'mediaitem',
+                .replaceAll('.', ''),
             path,
             play: false,
             stop: false,

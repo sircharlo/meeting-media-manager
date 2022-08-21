@@ -166,11 +166,12 @@ export default Vue.extend({
   computed: {
     id(): string {
       return (
+        'mediaitem-' +
         basename(this.src as string)
           .replaceAll(' ', '')
           .replaceAll('-', '')
           .replaceAll('.', '')
-          .replaceAll("'", '') + 'mediaitem'
+          .replaceAll("'", '')
       )
     },
     url(): string {

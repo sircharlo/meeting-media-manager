@@ -31,7 +31,7 @@
     "lint": "node_modules/.bin/eslint --ext .js,.vue,.ts --ignore-path .gitignore -f ./node_modules/eslint-friendly-formatter ./src",
     "lint:fix": "yarn lint --fix",
     "preinstall": "node .electron-nuxt/check-engines.js",
-    "postinstall": "electron-builder install-app-deps & yarn lint:fix"
+    "postinstall": "electron-builder install-app-deps"
   },
   "engines": {
     "node": ">=16.11.45",
