@@ -206,7 +206,7 @@ if (!gotTheLock) {
           nodeIntegration: true,
         },
         backgroundColor: "black",
-        roundedCorners: false,
+        // roundedCorners: false,
         minHeight: 110,
         width: 1280,
         height: 720,
@@ -239,12 +239,6 @@ if (!gotTheLock) {
     } else {
       setMediaWindowPosition(mediaWindowOpts);
     }
-
-    /*
-    /////////
-    END ORIGINAL WORKING WINDOW CODE
-    /////////
-    */
   });
   ipcMain.on("toggleMediaWindowFocus", () => {
     fadeWindow(mediaWin);
