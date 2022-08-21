@@ -77,7 +77,7 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "electron": "^19.0.8",
+    "electron": "^20.0.3",
     "electron-builder": "^23.3.1"
   },
   "scripts": {
