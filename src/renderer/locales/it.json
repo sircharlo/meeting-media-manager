@@ -67,7 +67,7 @@
   "wannaHelpExplain": "La lingua dei Media prescelta non è disponibile come lingua dell'interfaccia M³. Desideri aiutare a tradurre questa App M³ a beneficio degli utenti che parlano questa lingua?",
   "wannaHelpForSure": "Aiuta traducendo questa App",
   "wannaHelpWillGoAway": "Questa notifica apparirà unicamente quando sarà rilasciata una nuova versione dell'App M³.",
-  "warn": "Attenzione",
+  "warning": "Attenzione",
   "warnFileNotAvailable": "Il seguente file non è attualmente disponibile. Per favore riprova più tardi. Altrimenti contatta il responsabile Audio/Video o il responsabile Videoconferenze.",
   "warnMp4ConversionFailure": "Il seguente file non può essere convertito in formato MP4:",
   "warnNoDocumentsFound": "Nessun Media è stato trovate in tutti i file JWPUB selezionati. Per favore convalida il file oppure contata il developer di questa App M³.",

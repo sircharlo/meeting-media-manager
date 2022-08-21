@@ -128,6 +128,20 @@
     </v-col>
     <v-col cols="12" align-self="end" class="d-flex pa-0">
       <v-col>
+        <v-btn
+          @click="
+            $notify('test', {
+              identifier: 'identifier',
+              persistent: true,
+              action: {
+                type: 'link',
+                label: 'understood',
+                url: 'https://jw.org/',
+              },
+            })
+          "
+          >Notify</v-btn
+        >
         <icon-btn
           v-if="$getPrefs('meeting.enableMusicButton')"
           variant="shuffle"
@@ -443,7 +457,7 @@ export default Vue.extend({
       try {
         await this.$syncJWMedia(dryrun, this.baseDate, this.setProgress)
         this.jwSyncColor = 'success'
-      } catch (e) {
+      } catch (e: any) {
         this.$log.error(e)
         this.jwSyncColor = 'error'
       }
@@ -493,9 +507,8 @@ export default Vue.extend({
               this.setProgress
             )
             this.setDayColor(this.$getPrefs('meeting.mwDay'), 'success')
-          } catch (e) {
-            this.$log.error(e)
-            this.$error(this.$t('errorGetMwMedia'))
+          } catch (e: any) {
+            this.$error('errorGetMwMedia', e)
             this.setDayColor(this.$getPrefs('meeting.mwDay'), 'error')
           }
         }
@@ -511,9 +524,8 @@ export default Vue.extend({
               this.setProgress
             )
             this.setDayColor(this.$getPrefs('meeting.weDay'), 'success')
-          } catch (e) {
-            this.$log.error(e)
-            this.$error(this.$t('errorGetWeMedia'))
+          } catch (e: any) {
+            this.$error('errorGetWeMedia', e)
             this.setDayColor(this.$getPrefs('meeting.weDay'), 'error')
           }
         }
@@ -528,9 +540,8 @@ export default Vue.extend({
           try {
             this.congSyncColor = 'warning'
             this.$getCongMedia(this.baseDate, this.now)
-          } catch (e) {
-            this.$log.error(e)
-            this.$error(this.$t('errorGetCongMedia') as string)
+          } catch (e: any) {
+            this.$error('errorGetCongMedia', e)
             this.congSyncColor = 'error'
           }
         }
@@ -541,10 +552,9 @@ export default Vue.extend({
               if (this.congSyncColor === 'warning') {
                 this.congSyncColor = 'success'
               }
-            } catch (e) {
-              this.$log.error(e)
+            } catch (e: any) {
               this.congSyncColor = 'error'
-              this.$error(this.$t('errorSyncCongMedia') as string)
+              this.$error('errorSyncCongMedia', e)
             }
           }
 
@@ -554,7 +564,7 @@ export default Vue.extend({
             this.recurringColor = 'warning'
             await this.$syncLocalRecurringMedia(this.baseDate)
             this.recurringColor = 'success'
-          } catch (e) {
+          } catch (e: any) {
             this.$log.error(e)
             this.recurringColor = 'error'
           }
@@ -571,7 +581,7 @@ export default Vue.extend({
           try {
             await this.$convertToMP4(this.baseDate, this.now, this.setProgress)
             this.mp4Color = 'success'
-          } catch (e) {
+          } catch (e: any) {
             this.$log.error(e)
             this.mp4Color = 'error'
           } finally {
@@ -598,9 +608,8 @@ export default Vue.extend({
           stop: performance.now(),
         })
         this.$printStats()
-      } catch (e) {
-        this.$error(e)
-        this.$log.error(e)
+      } catch (e: any) {
+        this.$error('error', e)
       } finally {
         this.loading = false
       }

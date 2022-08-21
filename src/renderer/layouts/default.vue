@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <flash />
+    <notify-user />
     <v-main>
       <v-container fluid fill-height>
         <nuxt v-if="cong" />
@@ -55,6 +56,7 @@ export default Vue.extend({
     cong: {
       handler(val) {
         if (val) {
+          console.log('watch init')
           this.initPrefs('prefs-' + val)
         }
       },
@@ -74,11 +76,14 @@ export default Vue.extend({
     if (congs.length === 0) {
       const id = Math.random().toString(36).substring(2, 15)
       if (this.$route.path === '/') {
+        console.log('beforeMount 0 home init')
         this.initPrefs('prefs-' + id, true)
       } else {
+        console.log('beforeMount 0 elsewhere init')
         this.initPrefs('prefs-' + id)
       }
     } else if (congs.length === 1) {
+      console.log('beforeMount 1 init')
       this.initPrefs(basename(congs[0].path, '.json'))
     }
   },
@@ -117,7 +122,7 @@ export default Vue.extend({
       await this.$setScene(this.scenes[i])
     })
     ipcRenderer.on('notifyUser', (_e, msg: string[]) => {
-      this.$flash(this.$t(msg[1]) as string, msg[0])
+      this.$notify(msg[0], msg[1], msg[3])
     })
     ipcRenderer.on('openPresentMode', () => {
       if (
@@ -150,7 +155,9 @@ export default Vue.extend({
     async initPrefs(name: string, isNew = false) {
       this.$initStore(name)
       const lang = this.$getPrefs('app.localAppLang') as string
+      let newCong = false
       if ('prefs-' + this.cong !== name) {
+        newCong = true
         let path = this.$route.path
         if (lang !== this.$i18n.locale) {
           path = this.switchLocalePath(lang)
@@ -195,14 +202,19 @@ export default Vue.extend({
         (l) => l.langcode === this.$getPrefs('media.lang')
       )
       if (
+        newCong &&
         mediaLang &&
         !this.$i18n.locales.map((l: any) => l.code).includes(mediaLang.symbol)
       ) {
-        this.$flash(`${this.$t('wannaHelp')} ${this.$t('wannaHelpExplain')}`)
-        /* notifyUser("wannaHelp", translate("wannaHelpExplain") + "<br/><small>" +  translate("wannaHelpWillGoAway") + "</small>", currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")", true, null, {
-            desc: "wannaHelpForSure",
-            url: constants.REPO_URL + "discussions/new?category=translations&title=New+translation+in+" + currentLang.name + "&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+" + currentLang.name + " (" + currentLang.langcode + "/" + currentLang.symbol + ")."
-          }) */
+        this.$notify('wannaHelpExplain', {
+          type: 'wannaHelp',
+          identifier: `${mediaLang.name} (${mediaLang.langcode}/${mediaLang.symbol})`,
+          action: {
+            type: 'link',
+            label: 'wannaHelpForSure',
+            url: `${this.$config.repo}/discussions/new?category=translations&title=New+translation+in+${mediaLang.name}&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,${mediaLang.name} (${mediaLang.langcode}/${mediaLang.symbol}).`,
+          },
+        })
       }
 
       if (this.$getPrefs('meeting.enableMusicButton')) {
@@ -217,8 +229,6 @@ export default Vue.extend({
           const error = await this.$connect(server, user, password, dir)
           if (error === 'success') {
             await this.$forcePrefs()
-          } else {
-            this.$error(this.$t('errorGetCongMedia') as string)
           }
         }
       }
@@ -255,20 +265,12 @@ export default Vue.extend({
             resolve(true)
           })
           client.on('error', (e) => {
-            this.$log.error(e)
             if (!silent) {
-              this.$error(this.$t('errorSiteCheck') as string)
-              /* notifyUser(
-                'error',
-                'errorSiteCheck',
-                hostname + ':' + port,
-                false,
-                err
-              ) */
+              this.$error('errorSiteCheck', e, `${hostname}:${port}`)
             }
             resolve(false)
           })
-        } catch (e) {
+        } catch (e: any) {
           console.error(e)
           resolve(false)
         }
@@ -286,9 +288,8 @@ export default Vue.extend({
         } else if (existsSync(join(JWMMF, 'lastRunVersion.json'))) {
           lastVersion = readFileSync(join(JWMMF, 'lastRunVersion.json'), 'utf8')
         }
-      } catch (e) {
-        this.$log.error(e)
-        this.$error(this.$t('warnUnknownLastVersion') as string)
+      } catch (e: any) {
+        this.$error('warnUnknownLastVersion', e)
       } finally {
         if (lastVersion !== this.$config.version) {
           try {
@@ -309,10 +310,16 @@ export default Vue.extend({
             }
 
             if (lastVersion !== '0') {
-              this.$flash(this.$t('updateInstalled') as string)
-              // notifyUser("info", "updateInstalled", currentAppVersion, false, null, {desc: "moreInfo", url: constants.REPO_URL + "releases/latest"})
+              this.$notify('updateInstalled', {
+                identifier: this.$config.version,
+                action: {
+                  type: 'link',
+                  label: 'moreInfo',
+                  url: `${this.$config.repo}/releases/latest`,
+                },
+              })
             }
-          } catch (e) {
+          } catch (e: any) {
             this.$log.error(e)
           }
         }

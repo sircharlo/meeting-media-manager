@@ -80,7 +80,7 @@ export default function (
           if (matches && matches.length > 0) {
             extract.Lang = (matches.pop() as string).split(':')[0]
           }
-        } catch (e) {
+        } catch (e: any) {
           $log.error(e)
         }
       }
@@ -348,9 +348,14 @@ export default function (
 
             mmItems.push(picture)
           }
-        } catch (e) {
-          $log.error(`${keySymbol}-${issueTagNumber}`, e)
-          $warn(i18n.t('errorJwpubMediaExtract') as string)
+        } catch (e: any) {
+          $warn(
+            'errorJwpubMediaExtract',
+            {
+              identifier: `${keySymbol}-${issueTagNumber}`,
+            },
+            e
+          )
         }
       }
     }
@@ -367,8 +372,8 @@ export default function (
     lang?: string
   }) {
     if (mediaItem.lang) {
-      console.log(mediaItem)
-      console.log($getPrefs('media.lang'))
+      $log.debug(mediaItem)
+      $log.debug($getPrefs('media.lang'))
     }
     let mediaFiles: MediaFile[] = []
     let smallMediaFiles: SmallMediaFile[] = []
@@ -408,7 +413,7 @@ export default function (
         result = await $pubMedia.get('', {
           params,
         })
-      } catch (e) {
+      } catch (e: any) {
         try {
           result = await $pubMedia.get('', {
             params: {
@@ -419,7 +424,7 @@ export default function (
               langwritten: mediaLang,
             },
           })
-        } catch (e) {
+        } catch (e: any) {
           result = await $pubMedia.get('', {
             params: {
               pub: mediaItem.pubSymbol.slice(0, -1),
@@ -515,11 +520,18 @@ export default function (
           }
         }
       } else {
-        $warn(i18n.t('infoPubIgnored') as string)
+        $warn('infoPubIgnored', {
+          identifier: Object.values(mediaItem).filter(Boolean).join('_'),
+        })
       }
-    } catch (e) {
-      $log.error(e)
-      $warn(i18n.t('infoPubIgnored') as string)
+    } catch (e: any) {
+      $warn(
+        'infoPubIgnored',
+        {
+          identifier: Object.values(mediaItem).filter(Boolean).join('_'),
+        },
+        e
+      )
     }
     $log.debug(smallMediaFiles)
     return smallMediaFiles
@@ -559,7 +571,7 @@ export default function (
           pub = jwpubInfo.UniqueEnglishSymbol.replace(/[0-9]/g, '')
           issue = jwpubInfo.IssueTagNumber
           $setDb(pub, issue, db)
-        } catch (e) {
+        } catch (e: any) {
           $log.error(e)
         }
       } else if (pub) {
@@ -581,9 +593,8 @@ export default function (
           return null
         }
       } else return null
-    } catch (e) {
-      $log.error(`${pub}-${issue}`, e)
-      $warn(i18n.t('errorJwpubDbFetch') as string)
+    } catch (e: any) {
+      $warn('errorJwpubDbFetch', { identifier: `${pub}-${issue}` }, e)
       return null
     }
     return db
@@ -814,7 +825,7 @@ export default function (
             return $getPrefs('media.lang') as string
           }
         })
-    } catch (e) {
+    } catch (e: any) {
       $log.error(e)
     }
 
@@ -829,7 +840,7 @@ export default function (
         songObj.queryInfo = song
         await addMediaItemToPart(date, 2 * i, songObj)
       } else {
-        $error(i18n.t('errorGetWeMedia') as string)
+        $error('errorGetWeMedia', new Error('No WE songs found!'))
       }
     }
   })
@@ -1031,15 +1042,19 @@ export default function (
                   }
                 }
               } else {
-                $warn(i18n.t('warnFileNotAvailable') as string)
-                $log.warn(
-                  [
-                    item.queryInfo?.KeySymbol,
-                    item.queryInfo?.Track,
-                    item.queryInfo?.IssueTagNumber,
-                  ]
-                    .filter(Boolean)
-                    .join('_')
+                $warn(
+                  'warnFileNotAvailable',
+                  {
+                    persistent: true,
+                    identifier: [
+                      item.queryInfo?.KeySymbol,
+                      item.queryInfo?.Track,
+                      item.queryInfo?.IssueTagNumber,
+                    ]
+                      .filter(Boolean)
+                      .join('_'),
+                  },
+                  item
                 )
               }
             }

@@ -94,7 +94,7 @@
   "wannaHelpExplain": "M³ finns inte på det mediaspråk som är valt. Vill du hjälpa till med att översätta M³ för de användare som talar det språket?",
   "wannaHelpForSure": "Hjälp med översättningen av det här programmet",
   "wannaHelpWillGoAway": "Detta meddelande dyker upp när en ny version av M³ är släppt.",
-  "warn": "Varning",
+  "warning": "Varning",
   "warnFileNotAvailable": "Följande fil finns inte tillgänglig. Vänligen prova igen senare eller kontakta organisatören för videokonferensen.",
   "warnMp4ConversionFailure": "Följande fil kunde inte konverteas till MP4-format:",
   "warnNoDocumentsFound": "Ingen media hittades i någon av de valda JWPUB-publikationerna. Kontrollera filen eller kontakta utvecklaren av programmet.",

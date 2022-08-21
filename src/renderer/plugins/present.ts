@@ -6,7 +6,7 @@ import { join } from 'upath'
 
 export default function (
   {
-    $flash,
+    $notify,
     $log,
     $appPath,
     $getYearText,
@@ -38,13 +38,11 @@ export default function (
         shortcut,
         fn,
       })
-    } catch (e) {
+    } catch (e: any) {
       $log.error(e)
     } finally {
       if (!res) {
-        $flash(i18n.t('infoShortcutSetFail') as string)
-        $log.warn(shortcut)
-        // notifyUser("info", "infoShortcutSetFail", shortcut);
+        $notify('infoShortcutSetFail', { identifier: shortcut })
       }
     }
   }
@@ -62,7 +60,7 @@ export default function (
           ipcRenderer.send('unregisterShortcut', name)
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       $log.error(e)
     } finally {
       store.commit('present/setShortcuts', [])
@@ -123,7 +121,7 @@ export default function (
         ipcRenderer.send('startMediaDisplay', $getAllPrefs())
         return type
       }
-    } catch (e) {
+    } catch (e: any) {
       $log.error(e)
     }
   }
@@ -171,7 +169,7 @@ export default function (
           mediaWinOptions.destination = screenInfo.displays[0].id
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       $log.error(e)
     }
     return mediaWinOptions

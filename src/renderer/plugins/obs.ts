@@ -5,15 +5,7 @@ import { ObsPrefs } from './../types/prefs'
 let obs = null as OBSWebSocket | null
 
 export default function (
-  {
-    $getPrefs,
-    $log,
-    $error,
-    $setShortcut,
-    $unsetShortcuts,
-    i18n,
-    store,
-  }: Context,
+  { $getPrefs, $log, $error, $setShortcut, $unsetShortcuts, store }: Context,
   inject: (argument0: string, argument1: unknown) => void
 ) {
   async function connect() {
@@ -37,7 +29,7 @@ export default function (
             ) {
               store.commit('obs/setCurrentScene', newScene['scene-name'])
             }
-          } catch (e) {
+          } catch (e: any) {
             $log.error(e)
           }
         })
@@ -47,8 +39,7 @@ export default function (
         })
 
         obs.on('error', (e) => {
-          $log.error(e)
-          $error(i18n.t('errorObs') as string)
+          $error('errorObs', e.error)
         })
 
         await obs.connect({
@@ -62,10 +53,9 @@ export default function (
         if (cameraScene) {
           setScene(cameraScene)
         }
-      } catch (e) {
-        $log.error(e)
+      } catch (e: any) {
         store.commit('obs/clear')
-        $error(i18n.t('errorObs') as string)
+        $error('errorObs', e)
       }
     }
     return obs
@@ -87,10 +77,9 @@ export default function (
 
       if (current) return result['current-scene']
       return store.state.obs.scenes
-    } catch (e) {
-      $log.error(e)
+    } catch (e: any) {
       if (store.state.obs.connected) {
-        $error(i18n.t('errorObs') as string)
+        $error('errorObs', e)
       }
       return []
     }
@@ -101,10 +90,9 @@ export default function (
       const obs = await connect()
       if (!obs) return
       await obs.send('SetCurrentScene', { 'scene-name': scene })
-    } catch (e) {
-      $log.error(e)
+    } catch (e: any) {
       if (store.state.obs.connected) {
-        $error(i18n.t('errorObs') as string)
+        $error('errorObs', e)
       }
     }
   }

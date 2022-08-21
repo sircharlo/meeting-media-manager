@@ -35,7 +35,7 @@ interface CustomProps {
     file: SmallMediaFile,
     setProgress?: Function
   ) => Promise<string>
-  $error: (message: string) => void
+  $error: (message: string, error: Error, identifier?: string) => void
   $escapeHTML: (str: string) => string
   $extractAllTo: (zip: string, file: string, dest: string) => void
   $findAll: (path: string | string[], options?: Options) => string[]
@@ -101,6 +101,15 @@ interface CustomProps {
   $mediaItems: NuxtAxiosInstance
   $mediaPath: (file?: MeetingFile) => string
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
+  $notify: (
+    message: string,
+    props?: {
+      action?: NotifyAction
+      dismiss?: boolean
+      identifier?: string
+      persistent?: boolean
+    }
+  ) => void
   $prefsInitialized: () => boolean
   $printStats: () => void
   $pubMedia: NuxtAxiosInstance
@@ -137,7 +146,15 @@ interface CustomProps {
   ) => Promise<void>
   $shuffleMusic: (stop: boolean = false) => Promise<void>
   $storePath: () => string
-  $success: (message: string) => void
+  $success: (
+    message: string,
+    props?: {
+      action?: NotifyAction
+      dismiss?: boolean
+      identifier?: string
+      persistent?: boolean
+    }
+  ) => void
   $switchCong: (path: string) => void
   $syncCongMedia: (baseDate: Dayjs, setProgress: Function) => Promise<void>
   $syncJWMedia: (
@@ -150,7 +167,15 @@ interface CustomProps {
   $unsetPrefs: (key: keyof ElectronStore) => void
   $unsetShortcuts: (filter: string = 'all') => void
   $updateContent: () => Promise<void>
-  $warn: (message: string) => void
+  $warn: (
+    message: string,
+    props?: {
+      dismiss?: boolean
+      identifier?: string
+      persistent?: boolean
+    },
+    error?: any
+  ) => void
   $write: (file: string, data: string | NodeJS.ArrayBufferView) => void
   $wtFontPath: () => Promise<string>
   $yeartext: NuxtAxiosInstance

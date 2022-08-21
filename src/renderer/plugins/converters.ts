@@ -22,7 +22,6 @@ import { FULL_HD } from '~/constants/general'
 
 export default function (
   {
-    $log,
     $warn,
     $rm,
     $findAll,
@@ -30,8 +29,6 @@ export default function (
     $getPrefs,
     $axios,
     $appPath,
-    i18n,
-    $error,
     store,
     $write,
     $dayjs,
@@ -72,9 +69,8 @@ export default function (
       div.remove()
     }
 
-    image.onerror = () => {
-      $warn(i18n.t('warnSvgConversionFailure') as string)
-      $log.warn(`Failed to convert ${basename(mediaFile)} to png`)
+    image.onerror = (e) => {
+      $warn('warnSvgConversionFailure', { identifier: basename(mediaFile) }, e)
     }
 
     image.src = pathToFileURL(mediaFile).href
@@ -123,9 +119,8 @@ export default function (
         await convertPdfPage(mediaFile, pdf, pageNr)
       }
       $rm(mediaFile)
-    } catch (e) {
-      $log.warn(basename(mediaFile), e)
-      $warn(i18n.t('warnPdfConversionFailure') as string)
+    } catch (e: any) {
+      $warn('warnPdfConversionFailure', { identifier: basename(mediaFile) }, e)
     }
   }
 
@@ -171,9 +166,14 @@ export default function (
           'base64'
         )
       )
-    } catch (e) {
-      $log.warn(`${basename(mediaFile)}, page ${pageNr}`, e)
-      $warn(i18n.t('warnPdfConversionFailure') as string)
+    } catch (e: any) {
+      $warn(
+        'warnPdfConversionFailure',
+        {
+          identifier: `${basename(mediaFile)}, page ${pageNr}`,
+        },
+        e
+      )
     }
   }
 
@@ -239,7 +239,7 @@ export default function (
 
     try {
       accessSync(entryPath, constants.X_OK)
-    } catch (e) {
+    } catch (e: any) {
       chmodSync(entryPath, '777')
     }
     setFfmpegPath(entryPath)
@@ -380,9 +380,8 @@ export default function (
             throw new Error('Could not determine dimensions of image.')
           }
         }
-      } catch (e) {
-        $error(i18n.t('warnMp4ConversionFailure') as string)
-        $log.warn(basename(file), e)
+      } catch (e: any) {
+        $warn('warnMp4ConversionFailure', { identifier: basename(file) }, e)
         return resolve()
       }
     })

@@ -291,29 +291,35 @@ export default Vue.extend({
           { name: 'Image', extensions: ['jpg', 'png', 'jpeg', 'gif', 'svg'] },
         ],
       })
-      if (result && !result.canceled && this.$isImage(result.filePaths[0])) {
-        const bg = result.filePaths[0]
-        this.$rm(
-          this.$findAll(join(this.$appPath(), 'media-window-background-image*'))
-        )
-        this.$copy(
-          bg,
-          join(this.$appPath(), 'media-window-background-image' + extname(bg))
-        )
-        if (this.client) {
-          await this.client.putFileContents(
-            join(
-              this.$getPrefs('cong.dir'),
-              'media-window-background-image' + extname(bg)
-            ),
-            readFileSync(bg),
-            {
-              overwrite: true,
-            }
+      if (result && !result.canceled) {
+        if (this.$isImage(result.filePaths[0])) {
+          const bg = result.filePaths[0]
+          this.$rm(
+            this.$findAll(
+              join(this.$appPath(), 'media-window-background-image*')
+            )
           )
-        }
+          this.$copy(
+            bg,
+            join(this.$appPath(), 'media-window-background-image' + extname(bg))
+          )
+          if (this.client) {
+            await this.client.putFileContents(
+              join(
+                this.$getPrefs('cong.dir'),
+                'media-window-background-image' + extname(bg)
+              ),
+              readFileSync(bg),
+              {
+                overwrite: true,
+              }
+            )
+          }
 
-        this.bg = await this.$refreshBackgroundImgPreview()
+          this.bg = await this.$refreshBackgroundImgPreview()
+        } else {
+          this.$warn('notAnImage')
+        }
       }
     },
     async removeBg() {

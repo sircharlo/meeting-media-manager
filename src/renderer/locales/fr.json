@@ -97,7 +97,7 @@
   "wannaHelpExplain": "La langue des médias actuellement configurée n'est pas encore disponible comme langue d'affichage pour M³. Aimeriez-vous aider à traduire M³ pour les utilisateurs qui parlent cette langue ?",
   "wannaHelpForSure": "Aidez à traduire cette appli",
   "wannaHelpWillGoAway": "Cette notification n'apparaîtra que lorsqu'une nouvelle version de M³ sera publiée.",
-  "warn": "Avertissement",
+  "warning": "Avertissement",
   "warnFileNotAvailable": "Le fichier suivant n'est pas disponible actuellement. Veuillez réessayer plus tard ou contacter votre organisateur des vidéoconférences.",
   "warnMp4ConversionFailure": "Le fichier suivant n'a pas pu être converti au format MP4:",
   "warnNoDocumentsFound": "Aucun média n'a été trouvé dans les documents du JWPUB choisi. Veuillez valider ce fichier ou contacter le développeur de cette application.",

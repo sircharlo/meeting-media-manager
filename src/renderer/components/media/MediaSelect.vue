@@ -126,7 +126,7 @@ export default Vue.extend({
     ) as { DocumentId: number; Title: string }[]
     this.loading = false
     if (this.items.length === 0) {
-      this.$flash(this.$t('warnNoDocumentsFound') as string)
+      this.$notify('warnNoDocumentsFound')
       this.$emit('empty')
     }
   },

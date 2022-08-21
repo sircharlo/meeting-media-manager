@@ -331,7 +331,11 @@ export default Vue.extend({
                 await this.client.createDirectory(datePath)
               }
               if (this.contents.find(({ filename }) => filename === filePath)) {
-                await this.client.deleteFile(filePath)
+                try {
+                  await this.client.deleteFile(filePath)
+                } catch (e) {
+                  this.$error('errorWebdavRm', e, filePath)
+                }
               } else {
                 await this.client.putFileContents(filePath, '')
               }
@@ -355,7 +359,11 @@ export default Vue.extend({
         this.$rm(join(this.$mediaPath(), this.date, item.safeName as string))
 
         if (item.congSpecific) {
-          await this.client.deleteFile(item.filename as string)
+          try {
+            await this.client.deleteFile(item.filename as string)
+          } catch (e: any) {
+            this.$error('errorWebdavRm', e, item.filename as string)
+          }
           await this.$updateContent()
         }
         this.$emit('refresh')

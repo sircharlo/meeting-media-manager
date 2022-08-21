@@ -1,6 +1,6 @@
-export * from './storeFlash'
 export * from './storeModal'
 export * from './storeConfirm'
 export * from './storeMedia'
 export * from './storeStats'
 export * from './storeCong'
+export * from './storeNotify'

@@ -101,7 +101,7 @@
   "wannaHelpExplain": "The media language currently configured is not yet available as a display language for M³. Would you like to help to translate M³ for users who speak that language?",
   "wannaHelpForSure": "Help translate this app",
   "wannaHelpWillGoAway": "This notification will only appear when a new version of M³ is released.",
-  "warn": "Warning",
+  "warning": "Warning",
   "warnFileNotAvailable": "The following file is not yet available. Please try again later, or contact your videoconference organizer",
   "warnMp4ConversionFailure": "The following file could not be converted to MP4 format:",
   "warnNoDocumentsFound": "No media was found in any of the chosen JWPUB's documents. Please validate the file or contact the developer of this app.",

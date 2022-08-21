@@ -44,7 +44,7 @@ export default function (
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })
         return db
-      } catch (e) {
+      } catch (e: any) {
         $log.error(e)
       }
 

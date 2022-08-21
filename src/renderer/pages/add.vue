@@ -438,12 +438,17 @@ export default Vue.extend({
               bytes: statSync(path).size,
               name: file.safeName,
             }
-            await this.client.putFileContents(filePath, readFileSync(path), {
-              overwrite: true,
-              onUploadProgress: ({ loaded, total }) => {
-                this.setProgress(loaded, total, true)
-              },
-            })
+            try {
+              await this.client.putFileContents(filePath, readFileSync(path), {
+                overwrite: true,
+                onUploadProgress: ({ loaded, total }) => {
+                  this.setProgress(loaded, total, true)
+                },
+              })
+            } catch (e: any) {
+              this.$error('errorWebdavPut', e, `${path} => ${filePath}`)
+            }
+
             perf.end = performance.now()
             perf.bits = perf.bytes * 8
             perf.ms = perf.end - perf.start
@@ -457,8 +462,8 @@ export default Vue.extend({
         await this.$convertUnusableFiles(this.$mediaPath())
         if (this.client) await this.$updateContent()
         this.getExistingMedia()
-      } catch (e) {
-        this.$log.error(e)
+      } catch (e: any) {
+        this.$error('errorAdditionalMediaList', e)
       } finally {
         this.type = null
         this.song = null

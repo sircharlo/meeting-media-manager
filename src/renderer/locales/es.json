@@ -97,7 +97,7 @@
   "wannaHelpExplain": "El idioma multimedia actualmente configurado aún no está disponible como idioma de visualización para M³. ¿Le gustaría ayudar a traducir M³ para los usuarios que hablan ese idioma?",
   "wannaHelpForSure": "Ayuda a traducir esta aplicación",
   "wannaHelpWillGoAway": "Esta notificación solo aparecerá cuando se publique una nueva versión de M³.",
-  "warn": "Advertencia",
+  "warning": "Advertencia",
   "warnFileNotAvailable": "El siguiente archivo aún no está disponible. Vuelva a intentarlo más tarde o póngase en contacto con el organizador de la videoconferencia",
   "warnMp4ConversionFailure": "El siguiente archivo no se pudo convertir al formato MP4:",
   "warnNoDocumentsFound": "No se encontraron multimedia en ninguno de los documentos del JWPUB elegido. Valide el archivo o comuníquese con el desarrollador de esta aplicación.",

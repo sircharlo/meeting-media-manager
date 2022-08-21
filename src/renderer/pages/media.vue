@@ -240,7 +240,7 @@ export default Vue.extend({
               // @ts-ignore
               document.fonts.add(loadedFont)
               this.yeartext.classList.replace('font-fallback', 'font-native')
-            } catch (e) {
+            } catch (e: any) {
               console.error(e)
             } finally {
               this.yeartext.classList.remove('loading')
@@ -265,7 +265,7 @@ export default Vue.extend({
             this.ytLogo.setAttribute('style', '') // new
           }
         }
-      } catch (e) {
+      } catch (e: any) {
         console.error(e)
       }
     },

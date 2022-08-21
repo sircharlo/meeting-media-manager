@@ -2,7 +2,6 @@
 
 - [ ] Docs: Improve docs translations by using more localized strings like how M3 itself does it
 - [ ] Manage media: Fix how recurring media works (currently unable to hide recurring media)
-- [ ] Misc: Convert flash to notify system with action buttons
 - [ ] Release: Check if build artifacts work correctly for Windows and MacOS
 - [ ] Test: test for 3 displays
 - [ ] Test: test if auto updater works correctly
@@ -18,6 +17,7 @@
 - [X] Media sync: Add missing sign language media (Some media is missing that is specific to sign language)
 - [X] Media sync: Get meeting media from jw.org
 - [X] Media sync: VLC / MP4 / PDF / SVG support
+- [X] Misc: Convert flash to notify system with action buttons
 - [X] Misc: Electron windows setup
 - [X] Misc: Improve type definitions with combined MediaFile type
 - [X] Misc: Save preferences locally

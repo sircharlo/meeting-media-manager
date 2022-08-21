@@ -29,7 +29,6 @@ export default function (
     $getPrefs,
     $rename,
     $setAllPrefs,
-    i18n,
     $error,
   }: Context,
   inject: (argument0: string, argument1: unknown) => void
@@ -56,7 +55,11 @@ export default function (
             $getPrefs('app.outputFolderDateFormat') as string
           )
           if (date.isValid() && date.isBefore($dayjs().subtract(1, 'day'))) {
-            client.deleteFile(dir.filename)
+            try {
+              client.deleteFile(dir.filename)
+            } catch (e: any) {
+              $error('errorWebdavRm', e, dir.filename)
+            }
           }
         })
 
@@ -80,7 +83,6 @@ export default function (
       return 'success'
     } catch (e: any) {
       store.commit('cong/clear')
-      $log.error(e)
       if (e.message === 'Network Error') {
         return 'host'
       } else if (e.message === 'Invalid response: 401 Unauthorized') {
@@ -91,7 +93,7 @@ export default function (
       ) {
         return 'dir'
       } else {
-        $error(i18n.t('errorGetCongMedia') as string)
+        $error('errorWebdavLs', e, dir)
         return null
       }
     }
@@ -172,9 +174,8 @@ export default function (
 
         $setAllPrefs(newPrefs)
       }
-    } catch (e) {
-      $log.error(e)
-      $error(i18n.t('errorForcedSettingsEnforce') as string)
+    } catch (e: any) {
+      $error('errorForcedSettingsEnforce', e)
     }
   })
 
@@ -441,16 +442,15 @@ export default function (
                 }
               }
             } else {
-              $warn(i18n.t('warnFileNotAvailable') as string)
-              $log.warn(
-                [
+              $warn('warnFileNotAvailable', {
+                identifier: [
                   item.queryInfo?.KeySymbol,
                   item.queryInfo?.Track,
                   item.queryInfo?.IssueTagNumber,
                 ]
                   .filter(Boolean)
-                  .join('_')
-              )
+                  .join('_'),
+              })
             }
           }
           progress++

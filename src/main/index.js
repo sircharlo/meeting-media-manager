@@ -76,8 +76,8 @@ function createMainWindow() {
     if (!allowClose && closeAttempts < 2) {
       e.preventDefault()
       win.webContents.send('notifyUser', [
-        'warning',
         'cantCloseMediaWindowOpen',
+        { type: 'warning' },
       ])
       closeAttempts++
       setTimeout(() => {
@@ -361,18 +361,25 @@ if (gotTheLock) {
 
   autoUpdater.on('error', (e) => {
     win.webContents.send('error', e)
-    win.webContents.send('notifyUser', ['warning', 'updateNotDownloaded'])
+    win.webContents.send('notifyUser', [
+      'updateNotDownloaded',
+      { type: 'warning' },
+      e,
+    ])
   })
-  autoUpdater.on('update-available', () => {
+  autoUpdater.on('update-available', (info) => {
     if (os.platform() === 'darwin') {
       win.webContents.send('macUpdate')
     } else {
-      win.webContents.send('notifyUser', ['info', 'updateDownloading'])
+      win.webContents.send('notifyUser', [
+        'updateDownloading',
+        { identifier: 'v' + info.version },
+      ])
       autoUpdater.downloadUpdate()
     }
   })
   autoUpdater.on('update-downloaded', () => {
-    win.webContents.send('notifyUser', ['info', 'updateDownloaded'])
+    win.webContents.send('notifyUser', ['updateDownloaded'])
   })
   autoUpdater.logger = console
   autoUpdater.autoDownload = false

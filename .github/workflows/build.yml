@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Lint code
+        run: yarn lint
+
       - name: Build/release Electron app
         env:
           GH_TOKEN: ${{ secrets.github_token }}

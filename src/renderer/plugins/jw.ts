@@ -42,7 +42,7 @@ export default function (
           })
         $write(langPath, JSON.stringify(langs, null, 2))
         $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
-      } catch (e) {
+      } catch (e: any) {
         $log.error(e)
       }
     }
@@ -78,7 +78,7 @@ export default function (
           yeartext = JSON.parse(JSON.stringify(result.content))
           $write($ytPath(), yeartext)
         }
-      } catch (e) {
+      } catch (e: any) {
         $log.error(e)
       }
     } else {
@@ -100,7 +100,7 @@ export default function (
         langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'
       )
       return langs
-    } catch (e) {
+    } catch (e: any) {
       return []
     }
   })
