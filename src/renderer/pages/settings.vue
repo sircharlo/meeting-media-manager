@@ -20,7 +20,17 @@
     </v-col>
     <v-col cols="12" align-self="end" class="d-flex">
       <v-col class="d-flex pa-0" align-self="center">
-        <v-btn small class="mr-2">
+        <v-btn
+          small
+          :color="updateSuccess ? undefined : 'error'"
+          :class="{ 'mr-2': true, 'pulse-danger': !updateSuccess }"
+          @click="openReleases()"
+        >
+          <font-awesome-icon
+            v-if="!updateSuccess"
+            :icon="faHandPointRight"
+            class="mr-1"
+          />
           M³ {{ $config.isDev ? 'dev' : $config.version }}
         </v-btn>
         <v-btn small class="mr-2" @click="report()">
@@ -45,6 +55,7 @@
 <script lang="ts">
 import { join } from 'upath'
 import Vue from 'vue'
+import { faHandPointRight } from '@fortawesome/free-solid-svg-icons'
 export default Vue.extend({
   name: 'SettingsPage',
   data() {
@@ -86,6 +97,12 @@ export default Vue.extend({
     },
     valid(): boolean {
       return this.headers.every(({ valid }) => valid)
+    },
+    faHandPointRight() {
+      return faHandPointRight
+    },
+    updateSuccess(): boolean {
+      return this.$store.state.stats.updateSuccess as boolean
     },
   },
   watch: {
@@ -137,6 +154,9 @@ export default Vue.extend({
         this.calcCache()
       }
       this.loading = false
+    },
+    openReleases() {
+      window.open(`${this.$config.repo}/releases/latest`, '_blank')
     },
     report(): void {
       window.open(this.$bugURL(), '_blank')

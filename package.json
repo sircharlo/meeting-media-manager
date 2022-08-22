@@ -11,7 +11,11 @@
   "homepage": "https://sircharlo.github.io/meeting-media-manager/",
   "bugs": "https://github.com/sircharlo/meeting-media-manager/issues",
   "license": "ISC",
-  "author": "sircharlo <sircharlo@gmail.com> (https://github.com/sircharlo)",
+  "author": {
+    "name": "sircharlo",
+    "email": "sircharlo@gmail.com",
+    "url": "https://github.com/sircharlo/"
+  },
   "contributors": [
     "mtdvlpr <149895ja@gmail.com> (https://github.com/mtdvlpr)",
     "joaochris (https://github.com/joaochris)",

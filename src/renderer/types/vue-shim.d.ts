@@ -88,6 +88,7 @@ interface CustomProps {
   $getYearText: (force: boolean = false) => Promise<string>
   $getZipContentsByExt: (zip: string, ext: string) => Buffer
   $getZipContentsByName: (zip: string, name: string) => Buffer
+  $ghApi: NuxtAxiosInstance
   $initStore: (name: string) => void
   $isAudio: (filepath: string) => boolean
   $isImage: (filepath: string) => boolean
@@ -178,7 +179,6 @@ interface CustomProps {
   ) => void
   $write: (file: string, data: string | NodeJS.ArrayBufferView) => void
   $wtFontPath: () => Promise<string>
-  $yeartext: NuxtAxiosInstance
   $ytPath: (lang?: string) => string
 }
 

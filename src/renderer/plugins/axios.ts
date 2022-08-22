@@ -3,7 +3,7 @@ import { Context } from '@nuxt/types'
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 
 export default function (
-  { $axios }: Context,
+  { $axios, $config }: Context,
   inject: (arg0: string, arg1: any) => void
 ) {
   const pubMedia = $axios.create({
@@ -23,17 +23,9 @@ export default function (
   }) as NuxtAxiosInstance
   inject('mediaItems', mediaItems)
 
-  const yeartext = $axios.create({
-    baseURL: 'https://wol.jw.org/wol/finder',
-  }) as NuxtAxiosInstance
-
-  yeartext.onRequest((config) => {
-    config.params = {
-      ...config.params,
-      docid: '1102022800',
-      format: 'json',
-      snip: 'yes',
-    }
+  const ghApi = $axios.create({
+    baseURL: `https://api.github.com/repos/${$config.author}/${$config.name}/`,
   })
-  inject('ytApi', yeartext)
+
+  inject('ghApi', ghApi)
 }

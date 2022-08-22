@@ -176,6 +176,7 @@ export default Vue.extend({
         )) as string
         if (this.client) {
           this.$updateContentsTree()
+          this.$forcePrefs()
         }
         this.loading = false
       }

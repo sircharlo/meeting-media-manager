@@ -2,6 +2,7 @@ import { MeetingFile, StatStore, Perf, Stats, Origin } from '~/types'
 
 const defaultState: StatStore = {
   online: false,
+  updateSuccess: true,
   performance: new Map(),
   downloads: {
     jworg: {
@@ -20,6 +21,9 @@ export const state = () => Object.assign({}, defaultState)
 export const mutations = {
   setOnline(state: StatStore, online: boolean) {
     state.online = online
+  },
+  setUpdateSuccess(state: StatStore, success: boolean) {
+    state.updateSuccess = success
   },
   startPerf(
     state: StatStore,

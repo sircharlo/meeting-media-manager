@@ -48,18 +48,15 @@ search.onkeyup = () => {
         if (!el.childNodes[0]) return false
         return regex.test(el.childNodes[0].nodeValue)
       })
-      console.log(result)
 
       // Hide the menu item if no results found in its article
       link.style.display = result.length > 0 ? 'list-item' : 'none'
 
       // Highlight the results
       result.forEach((el) => {
-        console.log(el)
         if (!el.childNodes[0]) return
         el.childNodes.forEach((node) => {
           if (!node.nodeName === '#text') return
-          console.log(node.nodeValue)
           let match = null
           while ((match = regex.exec(node.nodeValue)) !== null) {
             const m = match[0]

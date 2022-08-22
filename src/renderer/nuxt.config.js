@@ -180,6 +180,8 @@ module.exports = {
   publicRuntimeConfig: {
     version: 'v' + pkg.version,
     isDev: process.env.NODE_ENV !== 'production',
+    author: pkg.author.name,
+    name: pkg.name,
     repo: pkg.repository.url.replace('.git', ''),
   },
 }

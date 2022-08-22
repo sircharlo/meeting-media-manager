@@ -74,7 +74,11 @@
           :key="day.formatted"
           class="text-center flex-shrink-1 px-1 pb-0"
         >
-          <v-card :color="dayColors[i]" @click="openDate(day.formatted)">
+          <v-card
+            :color="dayColors[i]"
+            class="fill-height d-flex justify-center flex-column"
+            @click="openDate(day.formatted)"
+          >
             <v-card-text class="pb-0 pt-2">{{ day.first }}</v-card-text>
             <v-card-text class="pt-0 pb-2">{{ day.second }}</v-card-text>
           </v-card>
@@ -128,20 +132,6 @@
     </v-col>
     <v-col cols="12" align-self="end" class="d-flex pa-0">
       <v-col>
-        <v-btn
-          @click="
-            $notify('test', {
-              identifier: 'identifier',
-              persistent: true,
-              action: {
-                type: 'link',
-                label: 'understood',
-                url: 'https://jw.org/',
-              },
-            })
-          "
-          >Notify</v-btn
-        >
         <icon-btn
           v-if="$getPrefs('meeting.enableMusicButton')"
           variant="shuffle"
@@ -197,6 +187,8 @@ import {
   faSquarePlus,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
+// eslint-disable-next-line import/named
+import { existsSync } from 'fs-extra'
 import { ShortJWLang } from '~/types'
 
 export default Vue.extend({
@@ -562,7 +554,12 @@ export default Vue.extend({
 
           try {
             this.recurringColor = 'warning'
-            await this.$syncLocalRecurringMedia(this.baseDate)
+            if (
+              !this.congSync &&
+              existsSync(join(this.$mediaPath(), 'Recurring'))
+            ) {
+              await this.$syncLocalRecurringMedia(this.baseDate)
+            }
             this.recurringColor = 'success'
           } catch (e: any) {
             this.$log.error(e)

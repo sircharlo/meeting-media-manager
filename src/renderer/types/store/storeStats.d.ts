@@ -17,6 +17,7 @@ export interface Stats {
 
 export interface StatStore {
   online: boolean
+  updateSuccess: boolean
   performance: Map<string, Perf>
   downloads: Stats
 }

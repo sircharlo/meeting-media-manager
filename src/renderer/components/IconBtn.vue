@@ -83,6 +83,9 @@
     ref="btn"
     v-model="$attrs.value"
     :aria-label="variant"
+    :class="
+      variant === 'settings' ? { 'pulse-danger': !updateSuccess } : undefined
+    "
     :nuxt="!!style.to || $attrs.nuxt"
     :loading="loading || $attrs.loading"
     :to="style.to ? localePath(`${style.to}?cong=${cong}`) : $attrs.to"
@@ -247,6 +250,9 @@ export default Vue.extend({
     },
     style(): Style {
       return this.styles[this.variant as keyof Styles]
+    },
+    updateSuccess(): boolean {
+      return this.$store.state.stats.updateSuccess as boolean
     },
     tooltipObj(): any {
       const obj = {} as any

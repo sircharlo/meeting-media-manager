@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <flash />
     <notify-user />
     <v-main>
       <v-container fluid fill-height>
@@ -12,6 +11,7 @@
 </template>
 <script lang="ts">
 import { createConnection } from 'net'
+import { fileURLToPath, pathToFileURL } from 'url'
 import { basename, join } from 'upath'
 import Vue from 'vue'
 import { Scene } from 'obs-websocket-js'
@@ -19,7 +19,7 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav/web'
-import { ShortJWLang, CongPrefs } from '~/types'
+import { ShortJWLang, CongPrefs, Release, Asset } from '~/types'
 export default Vue.extend({
   name: 'DefaultLayout',
   data() {
@@ -56,7 +56,6 @@ export default Vue.extend({
     cong: {
       handler(val) {
         if (val) {
-          console.log('watch init')
           this.initPrefs('prefs-' + val)
         }
       },
@@ -76,14 +75,11 @@ export default Vue.extend({
     if (congs.length === 0) {
       const id = Math.random().toString(36).substring(2, 15)
       if (this.$route.path === '/') {
-        console.log('beforeMount 0 home init')
         this.initPrefs('prefs-' + id, true)
       } else {
-        console.log('beforeMount 0 elsewhere init')
         this.initPrefs('prefs-' + id)
       }
     } else if (congs.length === 1) {
-      console.log('beforeMount 1 init')
       this.initPrefs(basename(congs[0].path, '.json'))
     }
   },
@@ -123,6 +119,9 @@ export default Vue.extend({
     })
     ipcRenderer.on('notifyUser', (_e, msg: string[]) => {
       this.$notify(msg[0], msg[1], msg[3])
+      if (msg[0] === 'updateNotDownloaded') {
+        this.$store.commit('stats/setUpdateSuccess', false)
+      }
     })
     ipcRenderer.on('openPresentMode', () => {
       if (
@@ -133,6 +132,41 @@ export default Vue.extend({
           path: this.localePath('/present'),
           query: this.$route.query,
         })
+      }
+    })
+
+    ipcRenderer.on('macUpdate', async () => {
+      try {
+        const latestRelease = (await this.$ghApi.$get(
+          `releases/latest`
+        )) as Release
+        const macDownload = latestRelease.assets.find(({ name }) =>
+          name.includes('dmg')
+        ) as Asset
+        this.$notify('updateDownloading', {
+          identifier: latestRelease.tag_name,
+        })
+        const downloadsPath = join(
+          (await ipcRenderer.invoke('downloads')) as string,
+          macDownload.name
+        )
+        this.$write(
+          downloadsPath,
+          Buffer.from(
+            new Uint8Array(
+              await this.$axios.$get(macDownload.browser_download_url, {
+                responseType: 'arraybuffer',
+              })
+            )
+          )
+        )
+        await ipcRenderer.invoke(
+          'openPath',
+          fileURLToPath(pathToFileURL(downloadsPath).href)
+        )
+      } catch (e: any) {
+        this.$error('updateNotDownloaded', e, this.$config.version)
+        this.$store.commit('stats/setUpdateSuccess', false)
       }
     })
 
@@ -150,6 +184,7 @@ export default Vue.extend({
     ipcRenderer.removeAllListeners('toggleMusicShuffle')
     ipcRenderer.removeAllListeners('displaysChanged')
     ipcRenderer.removeAllListeners('moveMediaWindowToOtherScreen')
+    ipcRenderer.removeAllListeners('macUpdate')
   },
   methods: {
     async initPrefs(name: string, isNew = false) {
