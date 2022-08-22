@@ -626,11 +626,9 @@ async function getWeMediaFromDb() {
       var qrySongsLangs = {};
       try {
         qrySongsLangs = (await executeStatement(db, "SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal FROM Extract INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId WHERE Extract.RefMepsDocumentClass = 31 ORDER BY Extract.ExtractId LIMIT 2 OFFSET " + weekNumber * 2)).sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal).map(item => item.Link.match(/\/(.*)\//).pop().split(":")[0]);
-        console.log(qrySongsLangs);
       } catch (err) {
         console.error(err);
       }
-      console.log(qrySongsLangs);
       for (var song = 0; song < qrySongs.length; song++) {
         let songJson = await getMediaLinks({ pubSymbol: qrySongs[song].KeySymbol, track: qrySongs[song].Track, lang: (qrySongsLangs[song] || get("prefs").lang) });
         if (songJson.length > 0) {

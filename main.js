@@ -1,12 +1,5 @@
-const {
-  app,
-  BrowserWindow,
-  crashReporter,
-  ipcMain,
-  screen
-} = require("electron"), {
-  autoUpdater
-} = require("electron-updater"),
+const { app, BrowserWindow, crashReporter, ipcMain, screen } = require("electron"),
+  { autoUpdater } = require("electron-updater"),
   appLongName = "Meeting Media Manager",
   fs = require("fs-extra"),
   os = require("os"),
@@ -206,7 +199,7 @@ if (!gotTheLock) {
           nodeIntegration: true,
         },
         backgroundColor: "black",
-        // roundedCorners: false,
+        // roundedCorners: false, // waiting for https://github.com/electron/electron/issues/35403 to be fixed before enabling this
         minHeight: 110,
         width: 1280,
         height: 720,
@@ -260,9 +253,7 @@ if (!gotTheLock) {
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false;
   app.whenReady().then(() => {
-    screen.on("display-removed", (e, oldDisplay) => {
-      console.log(e);
-      console.log(oldDisplay);
+    screen.on("display-removed", () => {
       win.webContents.send("displaysChanged");
     });
     screen.on("display-added", () => {
