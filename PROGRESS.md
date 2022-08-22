@@ -1,7 +1,5 @@
 # TODOS
 
-- [ ] Docs: Improve docs translations by using more localized strings like how M3 itself does it
-- [ ] Manage media: Fix how recurring media works (currently unable to hide recurring media)
 - [ ] Release: Check if build artifacts work correctly for Windows and MacOS
 - [ ] Test: test for 3 displays
 - [ ] Test: test if auto updater works correctly
@@ -10,6 +8,7 @@
 - [X] Cong sync: Sync custom media background when congregation sync is enabled
 - [X] Manage media: Add local JWPUB file media to media list
 - [X] Manage media: Edit local filename option
+- [X] Manage media: Fix how recurring media works (currently unable to hide recurring media)
 - [X] Manage media: Functionality to add local files to media list
 - [X] Manage media: Option to add multiple local files at once
 - [X] Manage media: Option to drag and drop files to add them to the media list

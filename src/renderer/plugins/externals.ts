@@ -1,5 +1,6 @@
 /* eslint-disable vue/component-definition-name-casing */
 import Vue from 'vue'
+// @ts-ignore
 import VueMask from 'v-mask'
 import { library, config } from '@fortawesome/fontawesome-svg-core'
 import {

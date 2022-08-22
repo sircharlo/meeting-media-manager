@@ -30,11 +30,15 @@ export const mutations = {
       hidden,
     }: { date: string; par: number; mediaName: string; hidden: boolean }
   ) {
+    console.log('try to hide', { date, par, mediaName, hidden })
     const media = state.meetings.get(date)?.get(par)
+    console.log('media', media)
     if (media) {
       const newMedia = [...media]
       const index = newMedia.findIndex(({ safeName }) => safeName === mediaName)
+      console.log(index)
       if (index !== -1) {
+        console.log('hide')
         newMedia[index].hidden = hidden
         state.meetings.get(date)?.set(par, newMedia)
         state.meetings = new Map(state.meetings)
@@ -71,10 +75,12 @@ export const mutations = {
       date,
       par,
       media,
+      overwrite,
     }: {
       date: string
       par: number
       media: MeetingFile[]
+      overwrite?: boolean
     }
   ) {
     let dateMap = state.meetings.get(date)
@@ -85,7 +91,11 @@ export const mutations = {
     let mediaList = dateMap.get(par)
     if (!mediaList) dateMap.set(par, [])
     mediaList = dateMap.get(par) as MeetingFile[]
-    mediaList = mediaList.concat(media)
+    if (overwrite) {
+      mediaList = [...media]
+    } else {
+      mediaList = mediaList.concat(media)
+    }
     const parMap = new Map(dateMap.set(par, mediaList))
     state.meetings = new Map(state.meetings.set(date, parMap))
   },

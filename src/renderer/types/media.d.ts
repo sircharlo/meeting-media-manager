@@ -14,6 +14,7 @@ export interface MeetingFileBase {
   isLocal?: boolean
   filename?: undefined
   color?: string
+  recurring?: boolean
 }
 
 export interface VideoFile extends SmallMediaFile, MeetingFileBase {

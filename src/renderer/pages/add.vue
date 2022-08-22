@@ -201,6 +201,7 @@ import {
   faDownload,
   faSave,
 } from '@fortawesome/free-solid-svg-icons'
+import { Dayjs } from 'dayjs'
 import { LocalFile, MeetingFile, VideoFile } from '~/types'
 export default Vue.extend({
   name: 'AddPage',
@@ -266,6 +267,9 @@ export default Vue.extend({
     },
     faFileExport() {
       return faFileExport
+    },
+    now() {
+      return (this.$dayjs() as Dayjs).hour(0).minute(0).second(0).millisecond(0)
     },
     cong() {
       return this.$route.query.cong
@@ -446,7 +450,7 @@ export default Vue.extend({
                 },
               })
             } catch (e: any) {
-              this.$error('errorWebdavPut', e, `${path} => ${filePath}`)
+              this.$error('errorWebdavPut', e, `${basename(path)}`)
             }
 
             perf.end = performance.now()
@@ -508,38 +512,21 @@ export default Vue.extend({
       this.loadingSongs = false
     },
     getExistingMedia() {
+      const day = this.$dayjs(
+        this.date,
+        this.$getPrefs('app.outputFolderDateFormat')
+      ) as Dayjs
+      this.$getCongMedia(day.startOf('week'), this.now)
       const meetings = this.$store.getters['media/meetings'] as Map<
         string,
         Map<number, MeetingFile[]>
       >
       const localMedia: LocalFile[] = []
 
-      const congMedia: LocalFile[] = this.contents
-        .filter(
-          ({ filename, type }) =>
-            type === 'file' && filename.includes(`Media/${this.date}/`)
-        )
-        .map((file) => {
-          return Object.assign(file, {
-            isLocal: false,
-            safeName: file.basename,
-            congSpecific: true,
-          })
-        })
-
       const jwMedia: MeetingFile[] = []
       for (const [, media] of meetings.get(this.date) ?? []) {
         for (const m of media) {
           m.isLocal = false
-          if (this.client) {
-            const path = join(
-              this.$getPrefs('cong.dir'),
-              'Hidden',
-              this.date,
-              m.safeName
-            )
-            m.hidden = !!this.contents.find(({ filename }) => filename === path)
-          }
         }
         jwMedia.push(...media)
       }
@@ -548,13 +535,8 @@ export default Vue.extend({
       if (existsSync(path)) {
         readdirSync(path).forEach((filename) => {
           const jwMatch = jwMedia.find(({ safeName }) => safeName === filename)
-          const congMatch = congMedia.find(
-            ({ safeName }) => safeName === filename
-          )
           if (jwMatch) {
             jwMatch.isLocal = true
-          } else if (congMatch) {
-            congMatch.isLocal = true
           } else {
             localMedia.push({
               safeName: filename,
@@ -564,7 +546,7 @@ export default Vue.extend({
           }
         })
       }
-      this.media = [...jwMedia, ...congMedia, ...localMedia].sort((a, b) => {
+      this.media = [...jwMedia, ...localMedia].sort((a, b) => {
         return (a.safeName as string).localeCompare(b.safeName as string)
       })
     },

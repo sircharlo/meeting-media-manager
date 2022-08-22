@@ -21,6 +21,7 @@ export default function (
     $migrate2290,
     $findOne,
     $mediaPath,
+    $clone,
     $warn,
     $write,
     $rm,
@@ -182,7 +183,7 @@ export default function (
   function updateContentsTree() {
     const tree: CongFile[] = []
     const root = $getPrefs('cong.dir')
-    const contents = [...store.state.cong.contents] as FileStat[]
+    const contents = $clone(store.state.cong.contents) as FileStat[]
     const dirs = [
       ...contents.filter(({ type }) => type === 'directory'),
     ] as CongFile[]
@@ -254,6 +255,7 @@ export default function (
                 congSpecific: true,
                 filesize: mediaFile.size,
                 folder: date.basename,
+                recurring: isRecurring,
                 url: mediaFile.filename,
               }
             })
@@ -261,7 +263,28 @@ export default function (
               date: date.basename,
               par: -1,
               media,
+              overwrite: true,
             })
+            if (isRecurring) {
+              const dates = [
+                ...(
+                  store.state.media.meetings as Map<
+                    string,
+                    Map<number, MeetingFile[]>
+                  >
+                ).keys(),
+              ].filter((date) => date !== 'Recurring')
+              dates.forEach((date) => {
+                store.commit('media/setMultiple', {
+                  date,
+                  par: -1,
+                  media: ($clone(media) as typeof media).map((m) => {
+                    m.folder = date
+                    return m
+                  }),
+                })
+              })
+            }
           }
         }
       }
@@ -291,7 +314,7 @@ export default function (
                 )
                 if (result) {
                   store.commit('media/setHidden', {
-                    date,
+                    date: date.basename,
                     par,
                     mediaName: hiddenFile.basename,
                     hidden: true,

@@ -326,6 +326,14 @@ export default Vue.extend({
       this.$rm(
         this.$findAll(join(this.$appPath(), 'media-window-background-image*'))
       )
+      if (this.client) {
+        await this.client.deleteFile(
+          join(
+            this.$getPrefs('cong.dir'),
+            'media-window-background-image' + extname(this.background)
+          )
+        )
+      }
       this.bg = await this.$refreshBackgroundImgPreview()
     },
     locked(key: string) {

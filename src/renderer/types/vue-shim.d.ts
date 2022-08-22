@@ -16,6 +16,7 @@ interface CustomProps {
   $appPath: () => string
   $appVersion: () => Promise<string>
   $bugURL: () => string
+  $clone: (value: any) => any
   $connect: (
     host: string,
     username: string,

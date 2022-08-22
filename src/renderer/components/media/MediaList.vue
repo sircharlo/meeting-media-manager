@@ -16,7 +16,9 @@
       dense
       @click="atClick(item)"
     >
-      <v-list-item-action v-if="item.isLocal || item.congSpecific">
+      <v-list-item-action
+        v-if="!item.recurring && (item.isLocal || item.congSpecific)"
+      >
         <font-awesome-icon
           v-if="item.color === 'warning'"
           :icon="faSquareMinus"
@@ -64,8 +66,13 @@
         </v-list-item-content>
       </v-hover>
       <v-list-item-action>
+        <font-awesome-icon
+          v-if="item.recurring"
+          :icon="faSyncAlt"
+          class="info--text"
+        />
         <v-btn
-          v-if="item.isLocal && !item.hidden"
+          v-else-if="item.isLocal && !item.hidden"
           icon
           aria-label="rename file"
           @click="editItem(item)"
@@ -121,6 +128,7 @@ import {
   faSquarePlus,
   faFileCode,
   faPen,
+  faSyncAlt,
   faFilePdf,
   faCloud,
   faGlobeAmericas,
@@ -186,6 +194,9 @@ export default Vue.extend({
     },
     faCheck() {
       return faCheck
+    },
+    faSyncAlt() {
+      return faSyncAlt
     },
     faSquare() {
       return faSquare
@@ -360,9 +371,9 @@ export default Vue.extend({
 
         if (item.congSpecific) {
           try {
-            await this.client.deleteFile(item.filename as string)
+            await this.client.deleteFile(item.url as string)
           } catch (e: any) {
-            this.$error('errorWebdavRm', e, item.filename as string)
+            this.$error('errorWebdavRm', e, item.url as string)
           }
           await this.$updateContent()
         }

@@ -40,6 +40,7 @@ module.exports = {
     '~/assets/scss/main.scss',
   ],
   plugins: [
+    '~/plugins/helpers',
     '~/plugins/prefs',
     '~/plugins/logger',
     '~/plugins/notify',
