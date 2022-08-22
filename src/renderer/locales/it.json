@@ -67,13 +67,13 @@
   "wannaHelpExplain": "La lingua dei Media prescelta non è disponibile come lingua dell'interfaccia M³. Desideri aiutare a tradurre questa App M³ a beneficio degli utenti che parlano questa lingua?",
   "wannaHelpForSure": "Aiuta traducendo questa App",
   "wannaHelpWillGoAway": "Questa notifica apparirà unicamente quando sarà rilasciata una nuova versione dell'App M³.",
-  "warning": "Attenzione",
   "warnFileNotAvailable": "Il seguente file non è attualmente disponibile. Per favore riprova più tardi. Altrimenti contatta il responsabile Audio/Video o il responsabile Videoconferenze.",
   "warnMp4ConversionFailure": "Il seguente file non può essere convertito in formato MP4:",
   "warnNoDocumentsFound": "Nessun Media è stato trovate in tutti i file JWPUB selezionati. Per favore convalida il file oppure contata il developer di questa App M³.",
   "warnPdfConversionFailure": "Le pagine del seguente file PDF non possono essere estratte come immagini:",
   "warnSvgConversionFailure": "Il seguente file non è stato riconosciuto quale valida immagine SVG:",
   "warnUnknownLastVersion": "Impossibile avviare la versione dell'App M³ precedentemente installata. Si presume che sia stata appena aggiornata.",
+  "warning": "Attenzione",
   "weMeetingDay": "Adunanza del fine settimana",
   "webdavFolder": "Cartella di Sincronizzazione Congregazione"
 }

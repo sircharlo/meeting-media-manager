@@ -17,24 +17,21 @@ export default function (
       },
       error?: any
     ) => {
-      if (props?.type === 'warning' && error) {
-        $log.warn(error)
+      if (props?.type === 'warning' || props?.type === 'error') {
         props.action = {
           type: 'error',
           label: 'reportIssue',
           url: error,
         }
         props.persistent = true
-      } else if (props?.type === 'error' && error) {
-        $log.error(error)
-        props.action = {
-          type: 'error',
-          label: 'reportIssue',
-          url: error,
+
+        if (props.type === 'warning') {
+          $log.warn(error)
+        } else {
+          $log.error(error)
         }
-        props.persistent = true
       }
-      console.log('notify', { message, ...(props ?? {}) })
+
       store.commit('notify/show', {
         message,
         ...(props ?? {}),
