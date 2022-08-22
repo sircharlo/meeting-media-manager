@@ -4,7 +4,12 @@
     "streetsidesoftware.code-spell-checker", // Spell checker for code
     "editorconfig.editorconfig", // EditorConfig support for VS Code
     "dbaeumer.vscode-eslint", // ESLint support for VS Code
-    "eamodio.gitlens", // Show Git history in the editor
-    "octref.vetur" // Vue.js support for VS Code
+    "octref.vetur", // Vue.js support for VS Code
+    "usernamehw.errorlens", // Show errors at the end of the line
+    "visualstudioexptteam.vscodeintellicode", // Get AI-assisted code completions
+    "esbenp.prettier-vscode", // Prettier support for VS Code
+    "christian-kohler.path-intellisense", // Path completions
+    "yzhang.markdown-all-in-one", // Markdown support for VS Code
+    "davidanson.vscode-markdownlint" // Markdown linter
   ]
 }

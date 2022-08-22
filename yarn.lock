@@ -4796,10 +4796,10 @@ electron-updater@^5.2.1:
     semver "^7.3.5"
     typed-emitter "^2.1.0"
 
-electron@20.0.2:
-  version "20.0.2"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-20.0.2.tgz#5a610b07192a03979f83a35b9b9d1568a7f08c93"
-  integrity sha512-Op4nxSyXH0tXjhvWC+WDn9EI0gep5etPccainxu1A4wes+ZFQBMCBXxibotanJfG+WNW4RaOv88NArwHIsSmPw==
+electron@20.0.3:
+  version "20.0.3"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-20.0.3.tgz#e3c557faa69915d29b212363e53e8668956d782d"
+  integrity sha512-Yx0a/SGgus/XqDAoMMs165JUikgE5vBmQpNJ+0XMDG/IYFj6TNNzfY2ATI+t171JjhKKO+MYPO8xqyZdFRoIDw==
   dependencies:
     "@electron/get" "^1.14.1"
     "@types/node" "^16.11.26"
@@ -7743,7 +7743,7 @@ minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimatch@^5.0.1:
+minimatch@^5.0.1, minimatch@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.0.tgz#1717b464f4971b144f6aabe8f2d0b8e4511e09c7"
   integrity sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==
@@ -11810,10 +11810,10 @@ web-streams-polyfill@^3.2.1:
   resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-3.2.1.tgz#71c2718c52b45fd49dbeee88634b3a60ceab42a6"
   integrity sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==
 
-webdav@^4.10.0:
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/webdav/-/webdav-4.10.0.tgz#6b8c15be426f601addf0a732199ee99174b6d60f"
-  integrity sha512-8PevPYhFsgbDhVGQQyrfBDYHiCYtN01qVX9zjFDA/OjIFqu28SsZuZdvGxBIQu2/e3Wp8M5oUpYvLM3uLP8g6A==
+webdav@^4.11.0:
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/webdav/-/webdav-4.11.0.tgz#21678153e442dcd3c5f74a50e1fedb10af13a8e4"
+  integrity sha512-vQ2EFL8cef9F/Nvua1NPcw3z9CWAnnc22mn+sym72W2WFW4Q7doTIhItRzxpgU+tUCc3V10VB0I+eBdgU5wKTQ==
   dependencies:
     axios "^0.27.2"
     base-64 "^1.0.0"
@@ -11823,7 +11823,7 @@ webdav@^4.10.0:
     hot-patcher "^0.5.0"
     layerr "^0.1.2"
     md5 "^2.3.0"
-    minimatch "^5.0.1"
+    minimatch "^5.1.0"
     nested-property "^4.0.0"
     path-posix "^1.0.0"
     url-join "^4.0.1"

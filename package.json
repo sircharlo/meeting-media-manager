@@ -75,7 +75,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.7",
     "deepmerge": "^4.2.2",
-    "electron": "20.0.2",
+    "electron": "20.0.3",
     "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.2.0",
     "electron-store": "^8.1.0",
@@ -112,7 +112,7 @@
     "vue-template-compiler": "2.7.7",
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.6.9",
-    "webdav": "^4.10.0",
+    "webdav": "^4.11.0",
     "webpack": "^4.46.0",
     "webpack-node-externals": "^3.0.0"
   }
