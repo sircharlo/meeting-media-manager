@@ -1,6 +1,6 @@
 # Meeting Media Manager
 
-<img src='https://github.com/sircharlo/meeting-media-manager/blob/master/build/icon.png?raw=true' alt='The M³ Logo' style='max-height: 20vh' />
+<img src='./build/icons/icon.png' alt='The M³ Logo' style='max-height: 20vh' />
 
 > A Meeting Media Manager for meetings of Jehovah's Witnesses.
 
@@ -41,6 +41,6 @@ Enjoy!
 
 ---
 
-![Media Presentation Mode](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/assets/img/present/standby-mode.png?raw=true)
+![Media Presentation Mode](./docs/assets/img/present/standby-mode.png)
 
-![Media Sync in progress](https://github.com/sircharlo/meeting-media-manager/blob/master/docs/assets/img/main/update-folders.gif?raw=true)
+![Media Sync in progress](./docs/assets/img/main/update-folders.gif)
