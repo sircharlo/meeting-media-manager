@@ -312,7 +312,7 @@ if (gotTheLock) {
         ),
         frame: false,
         backgroundColor: 'black',
-        // roundedCorners: false, temporarily disabled due to a bug in electron
+        // roundedCorners: false, // waiting for https://github.com/electron/electron/issues/35403 to be fixed before enabling this
         minHeight: 110,
         width: 1280,
         height: 720,
