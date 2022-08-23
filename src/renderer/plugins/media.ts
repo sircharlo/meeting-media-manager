@@ -192,7 +192,8 @@ export default function (
     db: Database,
     docId: number | null,
     mepsId?: number,
-    memOnly: boolean = false
+    memOnly: boolean = false,
+    silent: boolean = false
   ) {
     const result = $query(
       db,
@@ -307,12 +308,15 @@ export default function (
           ) {
             const json =
               ((
-                await getMediaLinks({
-                  pubSymbol: mmItem.KeySymbol as string,
-                  track: mmItem.Track as number,
-                  issue: (mmItem.IssueTagNumber as number)?.toString(),
-                  docId: mmItem.MultiMeps as number,
-                })
+                await getMediaLinks(
+                  {
+                    pubSymbol: mmItem.KeySymbol as string,
+                    track: mmItem.Track as number,
+                    issue: (mmItem.IssueTagNumber as number)?.toString(),
+                    docId: mmItem.MultiMeps as number,
+                  },
+                  silent
+                )
               )[0] as VideoFile) ?? {}
             json.queryInfo = mmItem
             json.BeginParagraphOrdinal = mmItem.BeginParagraphOrdinal
@@ -363,14 +367,17 @@ export default function (
   }
   inject('getDocumentMultiMedia', getDocumentMultiMedia)
 
-  async function getMediaLinks(mediaItem: {
-    docId?: number
-    track?: number
-    pubSymbol: string
-    issue?: string
-    format?: string
-    lang?: string
-  }) {
+  async function getMediaLinks(
+    mediaItem: {
+      docId?: number
+      track?: number
+      pubSymbol: string
+      issue?: string
+      format?: string
+      lang?: string
+    },
+    silent: boolean = false
+  ) {
     if (mediaItem.lang) {
       $log.debug(mediaItem)
       $log.debug($getPrefs('media.lang'))
@@ -414,6 +421,7 @@ export default function (
           params,
         })
       } catch (e: any) {
+        $log.debug(params, mediaItem)
         try {
           result = await $pubMedia.get('', {
             params: {
@@ -425,21 +433,25 @@ export default function (
             },
           })
         } catch (e: any) {
-          result = await $pubMedia.get('', {
-            params: {
-              pub: mediaItem.pubSymbol.slice(0, -1),
-              track: mediaItem.track,
-              issue: mediaItem.issue,
-              fileformat: mediaItem.format,
-              langwritten: mediaLang,
-            },
-          })
+          $log.debug(`pub: ${mediaItem.pubSymbol + 'm'}`, mediaItem)
+          try {
+            result = await $pubMedia.get('', {
+              params: {
+                pub: mediaItem.pubSymbol.slice(0, -1),
+                track: mediaItem.track,
+                issue: mediaItem.issue,
+                fileformat: mediaItem.format,
+                langwritten: mediaLang,
+              },
+            })
+          } catch (e: any) {
+            $log.debug(`pub: ${mediaItem.pubSymbol.slice(0, -1)}`, mediaItem)
+          }
         }
       }
-      $log.debug(result?.request.responseURL, mediaItem)
 
       const publication = result?.data as Publication
-      if (publication) {
+      if (publication?.files) {
         const categories = Object.values(publication.files)[0]
         mediaFiles = categories.MP4 ?? Object.values(categories)[0]
 
@@ -519,19 +531,23 @@ export default function (
             }
           }
         }
-      } else {
+      } else if (!silent) {
         $warn('infoPubIgnored', {
           identifier: Object.values(mediaItem).filter(Boolean).join('_'),
         })
       }
     } catch (e: any) {
-      $warn(
-        'infoPubIgnored',
-        {
-          identifier: Object.values(mediaItem).filter(Boolean).join('_'),
-        },
-        e
-      )
+      if (silent) {
+        $log.warn(e)
+      } else {
+        $warn(
+          'infoPubIgnored',
+          {
+            identifier: Object.values(mediaItem).filter(Boolean).join('_'),
+          },
+          e
+        )
+      }
     }
     $log.debug(smallMediaFiles)
     return smallMediaFiles

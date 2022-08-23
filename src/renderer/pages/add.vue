@@ -187,7 +187,7 @@
 <script lang="ts">
 // eslint-disable-next-line import/named
 import { readdirSync, readFileSync, existsSync, statSync } from 'fs-extra'
-import { basename, join, changeExt } from 'upath'
+import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
 import { FileStat, WebDAVClient } from 'webdav/web'
@@ -341,7 +341,6 @@ export default Vue.extend({
     },
     handleDrop(e: DragEvent) {
       this.stopEvent(e)
-      this.type = 'custom'
       this.dragging = false
       this.files = Array.from(e.dataTransfer?.files ?? []).map((file) => {
         return {
@@ -349,6 +348,14 @@ export default Vue.extend({
           filepath: file.path,
         }
       })
+      if (
+        this.files.length === 1 &&
+        extname(this.files[0].filepath ?? '') === '.jwpub'
+      ) {
+        this.type = 'jwpub'
+      } else {
+        this.type = 'custom'
+      }
       this.fileString = this.files.map(({ filepath }) => filepath).join(';')
     },
     addMedia(media: LocalFile[]) {

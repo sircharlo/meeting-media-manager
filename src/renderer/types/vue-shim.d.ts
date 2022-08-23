@@ -66,19 +66,23 @@ interface CustomProps {
     db: Database,
     docId: number | null,
     mepsId?: number,
-    memOnly: boolean = false
+    memOnly: boolean = false,
+    silent: boolean = false
   ) => Promise<MeetingFile[]>
   $getLocalJWLangs: () => ShortJWLang[]
   $getJWLangs: (forceReload: boolean = false) => Promise<ShortJWLang[]>
   $getPrefs: (key: string) => unknown
-  $getMediaLinks: (mediaItem: {
-    docId?: number
-    track?: number
-    pubSymbol: string
-    issue?: string
-    format?: string
-    lang?: string
-  }) => Promise<SmallMediaFile[]>
+  $getMediaLinks: (
+    mediaItem: {
+      docId?: number
+      track?: number
+      pubSymbol: string
+      issue?: string
+      format?: string
+      lang?: string
+    },
+    silent: boolean = false
+  ) => Promise<SmallMediaFile[]>
   $getMediaWindowDestination: () => Promise<{
     destination: number
     type: 'window' | 'fullscreen'

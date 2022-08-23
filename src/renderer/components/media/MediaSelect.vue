@@ -126,7 +126,7 @@ export default Vue.extend({
     ) as { DocumentId: number; Title: string }[]
     this.loading = false
     if (this.items.length === 0) {
-      this.$notify('warnNoDocumentsFound')
+      this.$warn('warnNoDocumentsFound')
       this.$emit('empty')
     }
   },
@@ -150,6 +150,7 @@ export default Vue.extend({
         this.db as Database,
         docId,
         undefined,
+        true,
         true
       )
       for (const [i, mm] of mmItems.entries()) {
@@ -190,12 +191,15 @@ export default Vue.extend({
         if (CategoryType && CategoryType !== -1) {
           tempMedia.contents = this.$getZipContentsByName(this.file, FilePath)
         } else {
-          const externalMedia = (await this.$getMediaLinks({
-            pubSymbol: KeySymbol as string,
-            track: Track ?? undefined,
-            issue: IssueTagNumber?.toString(),
-            docId: MultiMeps ?? undefined,
-          })) as VideoFile[]
+          const externalMedia = (await this.$getMediaLinks(
+            {
+              pubSymbol: KeySymbol as string,
+              track: Track ?? undefined,
+              issue: IssueTagNumber?.toString(),
+              docId: MultiMeps ?? undefined,
+            },
+            true
+          )) as VideoFile[]
 
           if (externalMedia.length > 0) {
             Object.assign(tempMedia, externalMedia[0])
