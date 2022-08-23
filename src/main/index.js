@@ -312,7 +312,7 @@ if (gotTheLock) {
         ),
         frame: false,
         backgroundColor: 'black',
-        roundedCorners: false,
+        // roundedCorners: false, temporarily disabled due to a bug in electron
         minHeight: 110,
         width: 1280,
         height: 720,
