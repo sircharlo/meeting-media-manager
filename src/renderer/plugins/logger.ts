@@ -126,7 +126,6 @@ ${JSON.stringify(logs.error, null, 2)}
     for (const [func, perf] of [...performance.entries()].sort(
       (a, b) => a[1].stop - b[1].stop
     )) {
-      // log.info("%c[perf] [" + perfItem[0] + "] " + (perfItem[1].stop - perfItem[1].start).toFixed(1) + "ms", "background-color: #e2e3e5; color: #41464b;");
       log.info(
         `%c[perf] [${func}] ${(perf.stop - perf.start).toFixed(1)}ms`,
         'background-color: #e2e3e5; color: #41464b;'
@@ -135,7 +134,6 @@ ${JSON.stringify(logs.error, null, 2)}
 
     for (const [origin, sources] of Object.entries(downloads)) {
       for (const [source, files] of Object.entries(sources)) {
-        // log.info("%c[perf] [" + downloadSource[0] + "Fetch] " + Object.entries(downloadSource[1]).sort((a,b) => a[0].localeCompare(b[0])).map(downloadOrigin => "from " + downloadOrigin[0] + ": " + (downloadOrigin[1].map(source => source.filesize).reduce((a, b) => a + b, 0) / 1024 / 1024).toFixed(1) + "MB").join(", "), "background-color: #fbe9e7; color: #000;");
         log.info(
           `%c[perf] [${origin} Fetch] from ${source}: ${(
             (files as MeetingFile[])

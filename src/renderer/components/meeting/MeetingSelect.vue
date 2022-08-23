@@ -1,3 +1,4 @@
+<!-- Select a date to present -->
 <template>
   <v-row justify="start" align="start">
     <v-col cols="12" class="text-center">
@@ -53,10 +54,15 @@ export default Vue.extend({
     })
       .map((date) => basename(date))
       .filter((date) => this.validDate(date))
+
+    // If the user is not trying to change the date he previously selected
     if (this.firstChoice) {
+      // Open the only date available
       if (this.dates.length === 1) {
         this.selectDate(this.dates[0])
-      } else if (this.dates.includes(this.today)) {
+      }
+      // Open todays date
+      else if (this.dates.includes(this.today)) {
         this.selectDate(this.today)
       }
     }

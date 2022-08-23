@@ -302,6 +302,7 @@ export default function (
           }
         }
         try {
+          // Get Video file
           if (
             mmItem.MimeType.includes('audio') ||
             mmItem.MimeType.includes('video')
@@ -396,6 +397,7 @@ export default function (
         mediaItem.pubSymbol = 'wp'
       }
 
+      // Set correct song publication (e.g. sjj for sign language)
       if (mediaItem.pubSymbol === 'sjjm') {
         mediaItem.pubSymbol = store.state.media.songPub
       }
@@ -567,6 +569,7 @@ export default function (
   ) {
     let db: Database
     try {
+      // Extract db from local JWPUB file
       if (localPath) {
         db = await $getDb({
           pub,
@@ -619,6 +622,7 @@ export default function (
   inject('getDbFromJWPUB', getDbFromJWPUB)
 
   async function downloadIfRequired(file: VideoFile, setProgress?: Function) {
+    // Set extra properties
     file.downloadRequired = true
     file.cacheDir = $pubPath(file) as string
     file.cacheFilename = basename(file.url || '') || file.safeName
@@ -743,6 +747,7 @@ export default function (
     )
     const baseDate = weDay.startOf('week')
 
+    // Get week nr from db
     const getWeekNr = (database: Database) => {
       if (!db) return -1
       return $query(
@@ -967,7 +972,7 @@ export default function (
               Array.from(meeting[1]).filter((part) => {
                 part[1] = part[1].filter(
                   ({ congSpecific, hidden, isLocal }) =>
-                    !congSpecific && !hidden && !isLocal
+                    !congSpecific && !hidden && !isLocal // Filter out cong specific media, hidden media and local media
                 )
                 return part
               })
@@ -991,6 +996,7 @@ export default function (
                   `%c[jwOrg] [${date}] ${item.safeName}`,
                   'background-color: #cce5ff; color: #004085;'
                 )
+                // Set markers for sign language videos
                 if (item.markers) {
                   const markers = Array.from(
                     new Set(
@@ -1020,6 +1026,7 @@ export default function (
                   )
                 }
 
+                // Prevent duplicates
                 const duplicate = $findOne(
                   join(
                     $mediaPath(),
@@ -1100,6 +1107,7 @@ export default function (
             today === $getPrefs('meeting.mwDay') ||
             today === $getPrefs('meeting.weDay')
           ) {
+            // Set stop time depending on mw or we day
             let meetingStarts = null
             if (today === $getPrefs('meeting.mwDay')) {
               meetingStarts = (
@@ -1130,6 +1138,7 @@ export default function (
         }
       }
 
+      // Get songs from jw.org or from local cache
       const songs = (
         store.state.stats.online
           ? (

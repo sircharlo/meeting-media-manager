@@ -348,6 +348,8 @@ export default Vue.extend({
           filepath: file.path,
         }
       })
+
+      // If one jwpub was dropped, set media type to jwpub
       if (
         this.files.length === 1 &&
         extname(this.files[0].filepath ?? '') === '.jwpub'
@@ -390,13 +392,21 @@ export default Vue.extend({
           }
 
           const path = join(this.$mediaPath(), this.date, file.safeName)
+
+          // JWPUB extract
           if (file.contents) {
             this.$write(path, file.contents)
-          } else if (file.filepath) {
+          }
+          // Local file
+          else if (file.filepath) {
             this.$copy(file.filepath, path)
-          } else if (file.safeName) {
+          }
+          // External file from jw.org
+          else if (file.safeName) {
             file.folder = this.date
             await this.$downloadIfRequired(file, this.setProgress)
+
+            // Download markers if required
             if ((file as VideoFile).markers) {
               const markers = Array.from(
                 new Set(
@@ -411,6 +421,7 @@ export default Vue.extend({
                   )
                 )
               ).map((m) => JSON.parse(m))
+
               this.$write(
                 join(
                   this.$mediaPath(),
@@ -422,6 +433,7 @@ export default Vue.extend({
             }
           }
 
+          // Upload media to the cong server
           if (this.client) {
             const mediaPath = join(this.$getPrefs('cong.dir'), 'Media')
             const datePath = join(mediaPath, this.date)
@@ -438,6 +450,7 @@ export default Vue.extend({
             if (!datePathExists) {
               await this.client.createDirectory(datePath)
             }
+            // Read/write streams don't work for the web
             /* createReadStream(path).pipe(
               this.client.createWriteStream(
                 filePath,
@@ -470,6 +483,7 @@ export default Vue.extend({
             this.$log.debug(perf)
           }
         }
+
         await this.$convertUnusableFiles(this.$mediaPath())
         if (this.client) await this.$updateContent()
         this.getExistingMedia()
@@ -542,6 +556,7 @@ export default Vue.extend({
         jwMedia.push(...media)
       }
 
+      // If jw media is already dowloaded, set isLocal of jw media to true, else add local file to list
       const path = join(this.$mediaPath(), this.date)
       if (existsSync(path)) {
         readdirSync(path).forEach((filename) => {

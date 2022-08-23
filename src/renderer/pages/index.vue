@@ -305,6 +305,8 @@ export default Vue.extend({
         const day = this.baseDate.add(i, 'days')
         if (day.isBefore(this.now)) continue
         const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
+
+        // Add meeting day
         if (
           weekDay === this.$getPrefs('meeting.mwDay') ||
           weekDay === this.$getPrefs('meeting.weDay')
@@ -316,7 +318,9 @@ export default Vue.extend({
               this.$getPrefs('app.outputFolderDateFormat') as string
             ),
           })
-        } else {
+        }
+        // Add normal day
+        else {
           days.push({
             first: day.format('D'),
             second: day.format('dd.'),
@@ -339,6 +343,8 @@ export default Vue.extend({
   async mounted() {
     this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
     this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
+
+    // Get all congregations
     this.congs = (await this.$getCongPrefs()).map(
       (cong: { name: string; path: string }) => {
         return {
@@ -387,6 +393,8 @@ export default Vue.extend({
       }
       this.$store.commit('cong/clear')
       this.$store.commit('obs/clear')
+
+      // Create new cong and switch to it
       const id = Math.random().toString(36).substring(2, 15)
       this.$switchCong(join(this.$appPath(), 'prefs-' + id + '.json'))
       this.$router.push({
@@ -407,8 +415,12 @@ export default Vue.extend({
         setTimeout(() => {
           item.color = 'warning'
         }, 3000)
-      } else if (this.cong === item.path) {
+      }
+      // Remove current congregation
+      else if (this.cong === item.path) {
         this.$removeCong(item.path)
+
+        // Switch to the first other congregation found
         this.$router.push({
           query: {
             cong: basename(
@@ -526,8 +538,10 @@ export default Vue.extend({
           stop: performance.now(),
         })
 
+        // Create media names
         this.$createMediaNames()
 
+        // Get cong media
         if (this.congSync) {
           try {
             this.congSyncColor = 'warning'
@@ -537,6 +551,8 @@ export default Vue.extend({
             this.congSyncColor = 'error'
           }
         }
+
+        // If not dryrun, download all media
         if (!dryrun) {
           if (this.congSync) {
             try {
@@ -569,6 +585,7 @@ export default Vue.extend({
 
         await this.$convertUnusableFiles(this.$mediaPath())
 
+        // Convert media to mp4 if enabled
         if (this.$getPrefs('media.enableMp4Conversion')) {
           this.$store.commit('stats/startPerf', {
             func: 'convertMP4',
@@ -589,10 +606,12 @@ export default Vue.extend({
           }
         }
 
+        // Create VLC playlist if enabled
         if (this.$getPrefs('media.enableVlcPlaylistCreation')) {
           this.$convertToVLC()
         }
 
+        // Open media folder if enabled
         if (this.$getPrefs('app.autoOpenFolderWhenDone')) {
           ipcRenderer.send(
             'openPath',

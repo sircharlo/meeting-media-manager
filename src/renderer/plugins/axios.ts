@@ -6,6 +6,7 @@ export default function (
   { $axios, $config }: Context,
   inject: (arg0: string, arg1: any) => void
 ) {
+  // Get media links from publication
   const pubMedia = $axios.create({
     baseURL: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
   }) as NuxtAxiosInstance
@@ -18,11 +19,13 @@ export default function (
   })
   inject('pubMedia', pubMedia)
 
+  // Get media item
   const mediaItems = $axios.create({
     baseURL: 'https://b.jw-cdn.org/apis/mediator/v1/media-items/',
   }) as NuxtAxiosInstance
   inject('mediaItems', mediaItems)
 
+  // Get GitHub information
   const ghApi = $axios.create({
     baseURL: `https://api.github.com/repos/${$config.author}/${$config.name}/`,
   })

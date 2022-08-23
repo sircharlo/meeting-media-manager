@@ -241,9 +241,13 @@ export default Vue.extend({
     'app.localAppLang': {
       async handler(val, oldVal) {
         this.$dayjs.locale(val.split('-')[0])
+
+        // Change the language of the app by changing it in the URL
         if (val !== this.$i18n.locale) {
           this.$router.replace(this.switchLocalePath(val))
         }
+
+        // Rename all the local files with 'song' and 'paragraph' in the name
         if (val !== oldVal) {
           await this.$renamePubs(oldVal, val)
           this.$store.commit('media/clear')
@@ -253,7 +257,10 @@ export default Vue.extend({
     'app.outputFolderDateFormat': {
       async handler(newVal, oldVal) {
         if (newVal !== oldVal) {
+          // Change the folder format of the current folders in the media path
           this.$renameAll(this.$mediaPath(), oldVal, newVal, 'rename', 'date')
+
+          // Change the date keys in the media store
           await this.$store.dispatch('media/updateDateFormat', {
             locale: this.$i18n.locale.split('-')[0],
             newFormat: newVal,
@@ -264,6 +271,7 @@ export default Vue.extend({
     },
     'app.disableHardwareAcceleration': {
       handler(val) {
+        // Only do something if the value is not in sync with the presence of the file
         if (
           val &&
           !existsSync(join(this.$appPath(), 'disableHardwareAcceleration'))
@@ -281,6 +289,8 @@ export default Vue.extend({
   mounted() {
     Object.assign(this.app, this.$getPrefs('app'))
     this.app.localAppLang = this.$i18n.locale
+
+    // Validate form (for new congregations)
     if (this.$refs.form) {
       // @ts-ignore
       this.$refs.form.validate()
@@ -296,12 +306,17 @@ export default Vue.extend({
       }
     },
     locked(key: string) {
+      // If no forced prefs, don't lock
       if (!this.forcedPrefs) return false
       const keys = key.split('.')
+
+      // If app key is not in forcedPrefs, don't lock
       if (!this.forcedPrefs[keys[0]]) return false
       if (keys.length === 2) {
         return this.forcedPrefs[keys[0]][keys[1]] !== undefined
-      } else if (keys.length === 3) {
+      }
+      // If pref is in a sub object (e.g. app.obs.enable)
+      else if (keys.length === 3) {
         if (!this.forcedPrefs[keys[0]][keys[1]]) {
           return false
         }

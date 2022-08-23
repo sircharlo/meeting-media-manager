@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
+<!-- Media item in presentation mode -->
 <template>
   <div>
     <v-list-item :id="id" three-line :class="{ 'media-played': played }">
@@ -276,6 +277,8 @@ export default Vue.extend({
       if (!this.mediaVisible) {
         ipcRenderer.send('toggleMediaWindowFocus')
       }
+
+      // If it's a marker, set custom start and end times
       if (marker) {
         marker.played = true
         marker.playing = true
@@ -287,9 +290,13 @@ export default Vue.extend({
       this.$emit('playing')
       this.active = true
       this.played = true
+
+      // Set OBS scene
       if (this.scene) {
         await this.$setScene(this.$getPrefs('app.obs.mediaScene') as string)
       }
+
+      // Show media
       ipcRenderer.send('showMedia', {
         path: this.src,
         start: marker ? marker.customStartTime : this.start,
@@ -314,6 +321,8 @@ export default Vue.extend({
         const markers = JSON.parse(
           readFileSync(changeExt(this.src, '.json'), 'utf8')
         ) as Marker[]
+
+        // For each marker, calculate the custom start and end time
         markers.forEach((marker) => {
           marker.playing = false
           const startTime = this.$dayjs(marker.startTime, 'hh:mm:ss.SSS')

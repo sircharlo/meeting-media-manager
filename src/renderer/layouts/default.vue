@@ -62,7 +62,7 @@ export default Vue.extend({
       immediate: true,
     },
     path(val) {
-      ipcRenderer.send('allowQuit', val.split('/').pop() !== 'present')
+      ipcRenderer.send('allowQuit', val.split('/').pop() !== 'present') // Don't allow to quit when presenting
     },
     isDark(val) {
       if (this.$getPrefs('app.theme') === 'system') {
@@ -72,6 +72,8 @@ export default Vue.extend({
   },
   async beforeMount() {
     const congs = await this.$getCongPrefs()
+
+    // If not congs, make a new one
     if (congs.length === 0) {
       const id = Math.random().toString(36).substring(2, 15)
       if (this.$route.path === '/') {
@@ -79,7 +81,9 @@ export default Vue.extend({
       } else {
         this.initPrefs('prefs-' + id)
       }
-    } else if (congs.length === 1) {
+    }
+    // If one congregation, open that one
+    else if (congs.length === 1) {
       this.initPrefs(basename(congs[0].path, '.json'))
     }
   },
@@ -140,16 +144,21 @@ export default Vue.extend({
         const latestRelease = (await this.$ghApi.$get(
           `releases/latest`
         )) as Release
+
         const macDownload = latestRelease.assets.find(({ name }) =>
           name.includes('dmg')
         ) as Asset
+
         this.$notify('updateDownloading', {
           identifier: latestRelease.tag_name,
         })
+
         const downloadsPath = join(
           (await ipcRenderer.invoke('downloads')) as string,
           macDownload.name
         )
+
+        // Download the latest release
         this.$write(
           downloadsPath,
           Buffer.from(
@@ -160,6 +169,8 @@ export default Vue.extend({
             )
           )
         )
+
+        // Open the downloaded file
         await ipcRenderer.invoke(
           'openPath',
           fileURLToPath(pathToFileURL(downloadsPath).href)
@@ -191,6 +202,8 @@ export default Vue.extend({
       this.$initStore(name)
       const lang = this.$getPrefs('app.localAppLang') as string
       let newCong = false
+
+      // If current cong does not equal new cong, set new cong
       if ('prefs-' + this.cong !== name) {
         newCong = true
         let path = this.$route.path
@@ -206,13 +219,16 @@ export default Vue.extend({
             cong: name.replace('prefs-', ''),
           },
         })
-      } else if (lang !== this.$i18n.locale) {
+      }
+      // If congs lang is different from current lang, set new lang
+      else if (lang !== this.$i18n.locale) {
         this.$router.replace(this.switchLocalePath(lang))
       }
 
       this.$dayjs.locale(lang.split('-')[0])
       this.$log.debug(this.$appPath())
 
+      // Set app theme
       const themePref = this.$getPrefs('app.theme')
       if (themePref === 'system') {
         this.$vuetify.theme.dark = this.isDark
@@ -220,6 +236,7 @@ export default Vue.extend({
         this.$vuetify.theme.dark = themePref === 'dark'
       }
 
+      // Open or close the media window depending on prefs
       if (
         this.$getPrefs('media.enableMediaDisplayButton') &&
         !this.$store.state.present.mediaScreenInit
@@ -232,6 +249,7 @@ export default Vue.extend({
         this.$toggleMediaWindow('close')
       }
 
+      // Check if the app is available in the current media lang
       const langs = this.$getLocalJWLangs() as ShortJWLang[]
       const mediaLang = langs.find(
         (l) => l.langcode === this.$getPrefs('media.lang')
@@ -252,10 +270,12 @@ export default Vue.extend({
         })
       }
 
+      // Set music shuffle shortcut if enabled
       if (this.$getPrefs('meeting.enableMusicButton')) {
         await this.$setShortcut('ALT+K', 'toggleMusicShuffle', 'mainWindow')
       }
 
+      // If all cong fields are filled in, try to connect to the server
       if (!this.client) {
         const { server, user, password, dir } = this.$getPrefs(
           'cong'
@@ -268,6 +288,7 @@ export default Vue.extend({
         }
       }
 
+      // Connect or disconnect to OBS depending on prefs
       if (this.$getPrefs('app.obs.enable')) {
         await this.$getScenes()
       } else {
@@ -317,6 +338,7 @@ export default Vue.extend({
       const appDataPath = await ipcRenderer.invoke('appData')
       const JWMMF = join(appDataPath, 'jw-meeting-media-fetcher')
 
+      // Try to get previous version
       try {
         if (existsSync(versionPath)) {
           lastVersion = readFileSync(versionPath, 'utf8')

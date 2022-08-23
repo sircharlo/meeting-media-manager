@@ -143,12 +143,16 @@ export default Vue.extend({
         }, 3000)
       } else {
         this.loading = true
+
+        // Remove cache
         this.$rm(
           this.$findAll([join(this.$mediaPath(), '*'), this.$pubPath()], {
             ignore: [join(this.$mediaPath(), 'Recurring')],
             onlyDirectories: true,
           })
         )
+
+        // Force refresh jw langs
         await this.$getJWLangs(true)
         this.cacheColor = 'warning'
         this.calcCache()

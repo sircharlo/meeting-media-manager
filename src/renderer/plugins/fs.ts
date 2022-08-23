@@ -26,6 +26,8 @@ export default function (
   inject('pubPath', (file?: MeetingFile) => {
     const pubPath = join($appPath(), 'Publications', $getPrefs('media.lang'))
     ensureDirSync(pubPath)
+
+    // Get path for specific file
     if (file) {
       const pubFolder = (
         file.pub ||
@@ -128,14 +130,16 @@ export default function (
       switch (action) {
         case 'rename':
           if (type === 'date') {
+            // Convert date folder to new format
             const date = $dayjs(file, oldName)
             if (date.isValid())
               renameSync(join(dir, file), join(dir, date.format(newName)))
           } else if (file === oldName) {
+            // Rename a file
             renameSync(join(dir, file), join(dir, newName))
           }
           break
-        case 'replace':
+        case 'replace': // replace a string within a filename (e.g. song or paragraph)
           if (file.includes(oldName)) {
             renameSync(
               join(dir, file),
@@ -151,6 +155,7 @@ export default function (
 
   inject('rename', rename)
 
+  // Search for all occurrence inside a folder and rename them
   inject(
     'renameAll',
     (
@@ -176,6 +181,7 @@ export default function (
         oldVal.split('-')[0]
       )
       if (date.isValid()) {
+        // Rename all files that include the localized 'song' or 'paragraph' strings
         readdirSync(join(mediaPath(), dir)).forEach((file) => {
           renameSync(
             join(mediaPath(), dir, file),
@@ -194,6 +200,8 @@ export default function (
             )
           )
         })
+
+        // Rename the date folder to the new localized format
         const newPath = join(
           mediaPath(),
           date
@@ -206,6 +214,7 @@ export default function (
       }
     })
 
+    // Rename files containing localized 'song' or 'paragraph' strings and date folders on cong server
     const client = store.state.cong.client as WebDAVClient
     if (client) {
       for (const file of store.state.cong.contents as FileStat[]) {
@@ -246,7 +255,7 @@ export default function (
           )
           if (date.isValid() && newName !== file.filename) {
             const contents = store.state.cong.contents as FileStat[]
-            if (!contents.find(({filename}) => filename === newName)) {
+            if (!contents.find(({ filename }) => filename === newName)) {
               await client.moveFile(file.filename, newName)
             }
           }

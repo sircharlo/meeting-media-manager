@@ -241,6 +241,7 @@ export default Vue.extend({
     },
     'media.lang': {
       async handler() {
+        // Clear the db and media store and refresh the langs from jw.org
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
         await this.$getJWLangs()
@@ -248,6 +249,7 @@ export default Vue.extend({
     },
     'media.preferredOutput': {
       async handler() {
+        // Change the position of the media window to the preferred output
         ipcRenderer.send(
           'setMediaWindowPosition',
           await this.$getMediaWindowDestination()
@@ -256,9 +258,12 @@ export default Vue.extend({
     },
     'media.enableMediaDisplayButton': {
       async handler(val) {
+        // If value is not in sync with the state of the media window, toggle it
         if (val !== this.$store.state.present.mediaScreenInit) {
           await this.$toggleMediaWindow(val ? 'open' : 'close')
         }
+
+        // Initialize the media screen background
         this.bg = await this.$refreshBackgroundImgPreview()
       },
     },
@@ -303,6 +308,8 @@ export default Vue.extend({
             bg,
             join(this.$appPath(), 'media-window-background-image' + extname(bg))
           )
+
+          // Upload the background to the cong server
           if (this.client) {
             await this.client.putFileContents(
               join(
@@ -326,6 +333,8 @@ export default Vue.extend({
       this.$rm(
         this.$findAll(join(this.$appPath(), 'media-window-background-image*'))
       )
+
+      // Remove the background from the cong server
       if (this.client) {
         await this.client.deleteFile(
           join(
@@ -334,6 +343,8 @@ export default Vue.extend({
           )
         )
       }
+
+      // Refresh the media screen background
       this.bg = await this.$refreshBackgroundImgPreview()
     },
     locked(key: string) {

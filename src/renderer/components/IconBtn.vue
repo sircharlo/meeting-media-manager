@@ -274,6 +274,7 @@ export default Vue.extend({
   },
   methods: {
     async atClick(): Promise<void> {
+      // If click twice is enabled, wait for second click
       if (this.clickTwice && !this.clickedOnce) {
         this.clickedOnce = true
         setTimeout(() => {
@@ -291,6 +292,7 @@ export default Vue.extend({
     toggleMediaScreen() {
       ipcRenderer.send('toggleMediaWindowFocus')
     },
+    // Set time remaining for music shuffle
     setTimeRemaining() {
       this.loading = true
       if (this.musicFadeOut) {
@@ -301,6 +303,8 @@ export default Vue.extend({
             this.timeRemaining = this.$dayjs
               .duration(this.musicFadeOut.diff(this.$dayjs()), 'ms')
               .format('mm:ss')
+
+            // Stop music shuffle at 0
             if (this.timeRemaining === '00:00') {
               this.loading = true
               await this.$shuffleMusic(true)
@@ -308,6 +312,7 @@ export default Vue.extend({
             }
           }
         }, 1000)
+        // Stop the interval if music stopped
       } else if (this.interval) {
         clearInterval(this.interval as NodeJS.Timer)
         this.timeRemaining = ''

@@ -20,6 +20,8 @@ export default function (
     } else if (enable && !obs) {
       try {
         obs = new OBSWebSocket()
+
+        // When OBS switches scenes, update current scene if not media scene
         obs.on('SwitchScenes', (newScene) => {
           try {
             if (
@@ -50,9 +52,6 @@ export default function (
         if (cameraScene) {
           setScene(cameraScene)
         }
-        if (cameraScene) {
-          setScene(cameraScene)
-        }
       } catch (e: any) {
         store.commit('obs/clear')
         $error('errorObs', e)
@@ -69,6 +68,7 @@ export default function (
       store.commit('obs/setScenes', result.scenes)
       store.commit('obs/setCurrentScene', result['current-scene'])
 
+      // Set shortcuts for scenes
       for (const [i] of result.scenes
         .filter(({ name }) => name !== $getPrefs('app.obs.mediaScene'))
         .entries()) {

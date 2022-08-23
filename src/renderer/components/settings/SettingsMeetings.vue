@@ -141,6 +141,7 @@ export default Vue.extend({
       deep: true,
     },
     'meeting.enableMusicButton': {
+      // Set or unset the music shuffle shortcut
       async handler(val) {
         if (val) {
           await this.$setShortcut('ALT+K', 'toggleMusicShuffle', 'music')

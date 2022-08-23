@@ -104,6 +104,8 @@ export default Vue.extend({
   methods: {
     openActionURL(action: NotifyAction) {
       let url = action.url as string
+
+      // If action is error, open github report issue page
       if (action.type === 'error') {
         url =
           (this.$bugURL() as string) +
@@ -135,14 +137,16 @@ export default Vue.extend({
         this.$store.commit('notify/delete', key)
       }
     },
+    // Get combined height of previous messages to calculate where to place the next message
     getCombinedHeight(index: number) {
       let height = 0
       for (let i = 0; i < index; i++) {
-        height += this.getHeight(i)
-        height += 8
+        height += this.getHeight(i) // The height of each message
+        height += 8 // The margin between messages
       }
-      return height + 8
+      return height + 8 // The start margin for the first message
     },
+    // Calculate the height of a message
     getHeight(index: number) {
       const el = document.getElementById(
         `msg-${this.messages[index].timestamp}`

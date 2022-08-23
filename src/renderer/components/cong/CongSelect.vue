@@ -1,3 +1,4 @@
+<!-- Select a congregation on startup -->
 <template>
   <v-container fluid fill-height class="align-start">
     <v-row justify="start" align="start">

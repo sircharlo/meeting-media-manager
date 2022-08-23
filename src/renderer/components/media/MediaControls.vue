@@ -1,3 +1,4 @@
+<!-- Media controls for the presentation mode -->
 <template>
   <v-row>
     <v-app-bar fixed>

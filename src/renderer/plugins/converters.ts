@@ -47,6 +47,7 @@ export default function (
       canvas.height = image.height
       canvas.width = image.width
 
+      // Draw the image onto the canvas
       const canvasContext = canvas.getContext('2d') as CanvasRenderingContext2D
       canvasContext.fillStyle = 'white'
       canvasContext.fillRect(0, 0, canvas.width, canvas.height)
@@ -130,11 +131,13 @@ export default function (
     pageNr: number
   ) {
     try {
+      // Set pdf page
       const page = await pdf.getPage(pageNr)
       const div = document.createElement('div')
       div.id = 'pdf'
       div.style.display = 'none'
 
+      // Set canvas
       const canvas = document.createElement('canvas')
       canvas.id = 'pdfCanvas'
 
@@ -148,11 +151,13 @@ export default function (
       canvas.height = 2 * FULL_HD[1]
       canvas.width = page.getViewport({ scale }).width
 
+      // Render page
       await page.render({
         canvasContext: ctx,
         viewport: page.getViewport({ scale }),
       }).promise
 
+      // Save image
       $write(
         join(
           dirname(mediaFile),
@@ -191,6 +196,7 @@ export default function (
     }
   })
 
+  // Setup FFmpeg for video conversion
   async function setupFFmpeg(setProgress: Function) {
     if (store.state.media.ffMpeg) return
     const osType = type()
@@ -310,6 +316,7 @@ export default function (
     const output = changeExt(file, '.mp4')
     return new Promise<void>((resolve) => {
       try {
+        // If mp3, just add audio to empty video
         if (extname(file).includes('mp3')) {
           setupFFmpeg(setProgress).then(() => {
             ffmpeg(file)
@@ -321,6 +328,7 @@ export default function (
               })
           })
         } else {
+          // Set video dimensions to image dimensions
           let convertedDimensions: number[] = []
           const dimensions = sizeOf(file)
           if (dimensions.orientation && dimensions.orientation >= 5) {
@@ -354,6 +362,7 @@ export default function (
 
             HME.createH264MP4Encoder().then((encoder) => {
               img.onload = () => {
+                // Set width and height
                 encoder.quantizationParameter = 10
                 img.width = convertedDimensions[0]
                 img.height = convertedDimensions[1]
@@ -362,11 +371,15 @@ export default function (
                 encoder.height = canvas.height =
                   img.height % 2 ? img.height - 1 : img.height
                 encoder.initialize()
+
+                // Set canvas
                 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
                 encoder.addFrameRgba(
                   ctx.getImageData(0, 0, canvas.width, canvas.height).data
                 )
+
+                // Save video
                 encoder.finalize()
                 $write(output, encoder.FS.readFile(encoder.outputFilename))
                 encoder.delete()
@@ -407,7 +420,7 @@ export default function (
         })
         .map((dir) =>
           $findAll(join($mediaPath(), dir, '*'), {
-            ignore: ['!**/(*.mp4|*.xspf|*.json)'],
+            ignore: ['!**/(*.mp4|*.xspf|*.json)'], // Don't convert videos, playlists or markers
           })
         )
         .flat()

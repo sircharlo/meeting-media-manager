@@ -1,3 +1,4 @@
+<!-- Video in presentation mode -->
 <template>
   <div :id="id">
     <div />
@@ -244,6 +245,8 @@ export default Vue.extend({
     video.preload = 'metadata'
     video.poster = this.poster
     video.appendChild(source)
+
+    // When video has been loaded, set clipped to original
     video.onloadedmetadata = () => {
       this.original.end = parseInt(
         this.$dayjs.duration(video.duration, 's').asMilliseconds().toFixed(0)
@@ -262,6 +265,7 @@ export default Vue.extend({
     }
     div?.replaceChild(video, div.firstChild as ChildNode)
 
+    // Get video progress
     ipcRenderer.on('videoProgress', (_e, progress) => {
       const percentage = (100 * 1000 * progress[0]) / this.original.end
       this.progress = progress.map((seconds: number) => {

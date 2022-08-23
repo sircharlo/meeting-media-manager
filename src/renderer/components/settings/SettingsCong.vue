@@ -157,6 +157,8 @@ export default Vue.extend({
     Object.assign(this.cong, this.$getPrefs('cong'))
     // @ts-ignore
     this.$refs.form.validate()
+
+    // If all the cong fields are filled in, try to connect
     if (this.complete) {
       await this.submit()
       if (this.client) {

@@ -61,6 +61,8 @@ export default function (
 
     return langs
   })
+
+  // Get yeartext from WT online library
   inject('getYearText', async (force: boolean = false) => {
     let yeartext = null
     if (force || !existsSync($ytPath())) {

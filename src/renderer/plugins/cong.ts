@@ -48,6 +48,8 @@ export default function (
       const contents = (await client.getDirectoryContents(dir, {
         deep: true,
       })) as FileStat[]
+
+      // Clean up old dates
       contents
         .filter(({ type }) => type === 'directory')
         .forEach((dir) => {
@@ -67,6 +69,8 @@ export default function (
       const bg = contents.find(({ basename }) =>
         basename.startsWith('media-window-background-image')
       )
+
+      // If bg on cong server, force it to be used
       if (bg) {
         $rm($findAll(join($appPath(), 'media-window-background-image*')))
         $write(
@@ -84,6 +88,8 @@ export default function (
       return 'success'
     } catch (e: any) {
       store.commit('cong/clear')
+
+      // Return error message
       if (e.message === 'Network Error') {
         return 'host'
       } else if (e.message === 'Invalid response: 401 Unauthorized') {
@@ -130,6 +136,8 @@ export default function (
         })
 
         const prefs = JSON.parse(json as string)
+
+        // Migration of old pref structures
         for (const key of Object.keys(prefs)) {
           // Skip root keys
           if (
@@ -184,12 +192,18 @@ export default function (
     const tree: CongFile[] = []
     const root = $getPrefs('cong.dir')
     const contents = $clone(store.state.cong.contents) as FileStat[]
+
+    // Get directories
     const dirs = [
       ...contents.filter(({ type }) => type === 'directory'),
     ] as CongFile[]
+
+    // Get files
     const files = [
       ...contents.filter(({ type }) => type === 'file'),
     ] as CongFile[]
+
+    // Add each file to its directory
     files.forEach((file) => {
       const fileDir = dirname(file.filename)
       if (fileDir === root) {
@@ -204,6 +218,8 @@ export default function (
         }
       }
     })
+
+    // Add subdirectories to their parent
     dirs.forEach((dir) => {
       const dirName = dirname(dir.filename)
       if (dirName !== root) {
@@ -216,6 +232,8 @@ export default function (
         }
       }
     })
+
+    // Add root directories to root
     dirs
       .filter(({ filename }) => dirname(filename) === root)
       .forEach((dir) => {
@@ -235,6 +253,7 @@ export default function (
     const mediaFolder = tree.find(({ basename }) => basename === 'Media')
     const hiddenFolder = tree.find(({ basename }) => basename === 'Hidden')
 
+    // Get cong media
     if (mediaFolder?.children) {
       let recurringMedia: MeetingFile[] = []
       for (const date of mediaFolder.children) {
@@ -272,6 +291,7 @@ export default function (
         }
       }
 
+      // Set recurring media for each date
       const dates = [
         now.format($getPrefs('app.outputFolderDateFormat') as string),
       ]
@@ -306,6 +326,8 @@ export default function (
         })
       })
     }
+
+    // Set hidden media
     if (hiddenFolder?.children) {
       const meetings = store.state.media.meetings as Map<
         string,
@@ -336,6 +358,8 @@ export default function (
                     mediaName: hiddenFile.basename,
                     hidden: true,
                   })
+
+                  // Remove hidden media if it was already downloaded
                   $rm(join($mediaPath(), date.basename, hiddenFile.basename))
                   $log.info(
                     '%c[hiddenMedia] [' +
@@ -407,6 +431,8 @@ export default function (
                 `%c[congMedia] [${date}] ${item.safeName}`,
                 'background-color: #d1ecf1; color: #0c5460'
               )
+
+              // Prevent duplicates
               const duplicate = $findOne(
                 join(
                   $mediaPath(),

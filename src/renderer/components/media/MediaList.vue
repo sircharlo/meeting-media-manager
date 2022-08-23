@@ -1,3 +1,4 @@
+<!-- Media list in the media manager page -->
 <template>
   <v-list>
     <v-dialog v-if="edit" :value="true">
@@ -248,6 +249,7 @@ export default Vue.extend({
   },
   methods: {
     setMediaList() {
+      // If new files are being uploaded, add them to the list
       if (this.newFile || this.newFiles.length > 0) {
         this.mediaList = (
           [this.newFile, ...this.newFiles, ...this.media] as (
@@ -288,6 +290,8 @@ export default Vue.extend({
         this.edit?.safeName,
         this.edit?.newName + this.edit?.ext
       )
+
+      // Change the name of the file in every date folder that it appears in
       if (this.date === 'Recurring') {
         this.$findAll(
           join(this.$mediaPath() as string, '*', this.edit?.safeName)
@@ -299,6 +303,8 @@ export default Vue.extend({
           )
         })
       }
+
+      // Change the name in the cong server
       if (this.client && this.edit.congSpecific) {
         const dirPath = join(
           this.$getPrefs('cong.dir') as string,
@@ -365,16 +371,21 @@ export default Vue.extend({
               const datePath = join(hiddenPath, this.date)
               const filePath = join(datePath, item.safeName)
 
+              // Create hidden dir if not exists
               if (
                 !this.contents.find(({ filename }) => filename === hiddenPath)
               ) {
                 await this.client.createDirectory(hiddenPath)
               }
+
+              // Create date dir if not exists
               if (
                 !this.contents.find(({ filename }) => filename === datePath)
               ) {
                 await this.client.createDirectory(datePath)
               }
+
+              // Remove file if exists or add it if it doesn't
               if (this.contents.find(({ filename }) => filename === filePath)) {
                 try {
                   await this.client.deleteFile(filePath)
@@ -392,7 +403,6 @@ export default Vue.extend({
       }
     },
     async atClick(item: MeetingFile | LocalFile) {
-      console.log(item)
       if (item.isLocal && !(item.recurring && item.congSpecific)) {
         await this.removeItem(item)
       } else if (item.isLocal !== undefined) {
@@ -404,6 +414,7 @@ export default Vue.extend({
         this.mediaList.splice(this.mediaList.indexOf(item), 1)
         this.$rm(join(this.$mediaPath(), this.date, item.safeName as string))
 
+        // Remove item in cong server
         if (item.congSpecific) {
           try {
             await this.client.deleteFile(item.url as string)
@@ -414,6 +425,7 @@ export default Vue.extend({
         }
         this.$emit('refresh')
       } else {
+        // Make user click twice to remove
         const newItem = Object.assign(item, { color: 'error' })
         this.mediaList.splice(this.mediaList.indexOf(item), 1, newItem)
         setTimeout(() => {

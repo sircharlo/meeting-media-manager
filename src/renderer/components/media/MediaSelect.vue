@@ -1,3 +1,4 @@
+<!-- Extract media from chosen JWPUB file -->
 <template>
   <v-card>
     <v-card-title class="justify-center">
@@ -125,6 +126,7 @@ export default Vue.extend({
     ORDER BY ${table}.DocumentId`
     ) as { DocumentId: number; Title: string }[]
     this.loading = false
+
     if (this.items.length === 0) {
       this.$warn('warnNoDocumentsFound')
       this.$emit('empty')
@@ -146,6 +148,8 @@ export default Vue.extend({
     async selectDoc(docId: number): Promise<void> {
       this.loading = true
       this.docId = docId
+
+      // Get media from jwpub file
       const mmItems = await this.$getDocumentMultiMedia(
         this.db as Database,
         docId,
@@ -191,6 +195,7 @@ export default Vue.extend({
         if (CategoryType && CategoryType !== -1) {
           tempMedia.contents = this.$getZipContentsByName(this.file, FilePath)
         } else {
+          // Try to get external media
           const externalMedia = (await this.$getMediaLinks(
             {
               pubSymbol: KeySymbol as string,

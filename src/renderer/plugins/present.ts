@@ -102,6 +102,8 @@ export default function (
         const backgrounds = $findAll(
           join($appPath(), 'media-window-background-image*')
         )
+
+        // If no custom background, set yeartext as background
         if (backgrounds.length === 0) {
           const yeartext = await $getYearText(force)
           const root = document.createElement('div')

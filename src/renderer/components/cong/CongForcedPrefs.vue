@@ -1,3 +1,4 @@
+<!-- Cong toggle forced prefs modal -->
 <template>
   <v-card class="d-flex flex-column">
     <v-card-title class="justify-center">
@@ -22,7 +23,12 @@
         lg="4"
         class="pl-8 py-2"
       >
-        <v-switch v-model="item.forced" hide-details="auto" class="my-0 py-0" @change="change = true">
+        <v-switch
+          v-model="item.forced"
+          hide-details="auto"
+          class="my-0 py-0"
+          @change="change = true"
+        >
           <template #label>
             <v-tooltip top>
               <template #activator="{ attrs, on }">
@@ -129,6 +135,7 @@ export default Vue.extend({
       }
     },
     async updatePrefs() {
+      // If nothing changed, just close the modal
       if (!this.change) {
         this.$emit('done')
         return
@@ -152,6 +159,8 @@ export default Vue.extend({
             forcedPrefs[keys[0]][keys[1]][keys[2]] = pref.value
           }
         })
+
+      // Update forcedPrefs.json
       await this.client.putFileContents(
         join(this.$getPrefs('cong.dir'), 'forcedPrefs.json'),
         JSON.stringify(forcedPrefs, null, 2)

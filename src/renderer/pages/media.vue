@@ -84,6 +84,7 @@ export default Vue.extend({
       const main = document.querySelector('main') as HTMLElement
       main.style.background = 'black'
 
+      // Look for a custom background
       const bgImage = this.$findOne(
         join(
           await ipcRenderer.invoke('userData'),
@@ -119,6 +120,8 @@ export default Vue.extend({
         if (media?.path) {
           if (this.$isVideo(media.path) || this.$isAudio(media.path)) {
             const videos = document.querySelectorAll('#mediaDisplay video')
+
+            // Remove all videos
             if (videos.length > 0) {
               videos.forEach((video) => {
                 video.remove()
@@ -126,6 +129,8 @@ export default Vue.extend({
             }
 
             let src = pathToFileURL(media.path).href
+
+            // Set start and end times
             if (media.start || media.end) {
               src += `#t=${media.start || ''}${
                 media.end ? ',' + media.end : ''
@@ -137,6 +142,8 @@ export default Vue.extend({
             video.autoplay = true
             video.controls = false
             video.src = src
+
+            // If the video is short (converted image), pause it, so it doesn't stop automatically
             video.oncanplay = () => {
               if (video.duration < 0.1) {
                 video.classList.add('shortVideoPaused')
@@ -149,6 +156,8 @@ export default Vue.extend({
                 video.duration,
               ])
             }
+
+            // If media is paused externally, stop the video
             video.onpause = async () => {
               if (
                 !(
@@ -185,6 +194,8 @@ export default Vue.extend({
     },
     async hideMedia() {
       const video = document.querySelector('video') as HTMLVideoElement
+
+      // Animate out
       if (video) {
         const animation = video.animate(
           [
@@ -216,6 +227,8 @@ export default Vue.extend({
         if (yeartext && yeartext.length > 0) {
           const root = document.createElement('div')
           root.innerHTML = yeartext
+
+          // For each element of the yeartext, add it as a paragraph
           for (let i = 0; i < root.children.length; i++) {
             const el = root.children.item(i)
             if (
@@ -228,6 +241,8 @@ export default Vue.extend({
               this.yeartext.append(newEl)
             }
           }
+
+          // If WT library is installed, set the font to the WT font
           const fontFile = this.$findOne(join(fontPath, 'Wt-ClearText-Bold.*'))
           if (fontFile) {
             // @ts-ignore
@@ -249,6 +264,8 @@ export default Vue.extend({
             this.yeartext.classList.remove('loading')
           }
         }
+
+        // If media logo is enabled, try to show it
         if (!prefs.media.hideMediaLogo) {
           const logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
           if (logoFontFile) {

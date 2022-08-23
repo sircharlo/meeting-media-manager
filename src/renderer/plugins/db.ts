@@ -32,6 +32,7 @@ export default function (
       pub?: string
       issue?: string
     }) => {
+      // Get saved db if available
       if (pub && issue) {
         const result = await store.dispatch('db/get', { pub, issue })
         if (result) return result
