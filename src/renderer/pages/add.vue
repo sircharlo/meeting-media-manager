@@ -489,7 +489,8 @@ export default Vue.extend({
       const day = this.$dayjs(
         this.date,
         this.$getPrefs('app.outputFolderDateFormat')
-      )
+      ) as Dayjs
+      if (!day.isValid()) return
       const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
       if (weekDay === this.$getPrefs('meeting.mwDay')) {
         await this.$getMwMedia(this.date)
@@ -516,7 +517,10 @@ export default Vue.extend({
         this.date,
         this.$getPrefs('app.outputFolderDateFormat')
       ) as Dayjs
-      this.$getCongMedia(day.startOf('week'), this.now)
+      this.$getCongMedia(
+        day.isValid() ? day.startOf('week') : this.now.startOf('week'),
+        this.now
+      )
       const meetings = this.$store.getters['media/meetings'] as Map<
         string,
         Map<number, MeetingFile[]>

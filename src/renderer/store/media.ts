@@ -30,15 +30,11 @@ export const mutations = {
       hidden,
     }: { date: string; par: number; mediaName: string; hidden: boolean }
   ) {
-    console.log('try to hide', { date, par, mediaName, hidden })
     const media = state.meetings.get(date)?.get(par)
-    console.log('media', media)
     if (media) {
       const newMedia = [...media]
       const index = newMedia.findIndex(({ safeName }) => safeName === mediaName)
-      console.log(index)
       if (index !== -1) {
-        console.log('hide')
         newMedia[index].hidden = hidden
         state.meetings.get(date)?.set(par, newMedia)
         state.meetings = new Map(state.meetings)

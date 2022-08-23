@@ -54,6 +54,7 @@ export interface LocalFile {
   congSpecific?: boolean
   thumbnail?: undefined
   trackImage?: undefined
+  recurring?: boolean
 }
 
 export declare type MeetingFile = ImageFile | VideoFile

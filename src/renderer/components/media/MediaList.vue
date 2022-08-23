@@ -72,7 +72,7 @@
           class="info--text"
         />
         <v-btn
-          v-else-if="item.isLocal && !item.hidden"
+          v-else-if="(item.congSpecific || item.isLocal) && !item.hidden"
           icon
           aria-label="rename file"
           @click="editItem(item)"
@@ -282,12 +282,42 @@ export default Vue.extend({
         ]
       }
     },
-    saveNewName() {
+    async saveNewName() {
       this.$rename(
         join(this.$mediaPath(), this.date, this.edit?.safeName),
         this.edit?.safeName,
         this.edit?.newName + this.edit?.ext
       )
+      if (this.date === 'Recurring') {
+        this.$findAll(
+          join(this.$mediaPath() as string, '*', this.edit?.safeName)
+        ).forEach((file) => {
+          this.$rename(
+            file,
+            this.edit?.safeName,
+            this.edit?.newName + this.edit?.ext
+          )
+        })
+      }
+      if (this.client && this.edit.congSpecific) {
+        const dirPath = join(
+          this.$getPrefs('cong.dir') as string,
+          'Media',
+          this.date
+        )
+        if (
+          !this.contents.find(
+            (c) =>
+              c.filename === join(dirPath, this.edit?.newName + this.edit?.ext)
+          )
+        ) {
+          await this.client.moveFile(
+            join(dirPath, this.edit?.safeName),
+            join(dirPath, this.edit?.newName + this.edit?.ext)
+          )
+        }
+        await this.$updateContent()
+      }
       this.edit = null
       this.$emit('refresh')
     },
@@ -320,8 +350,12 @@ export default Vue.extend({
           Map<number, MeetingFile[]>
         >
       ).get(this.date)
+      console.log('toggle visibility', item)
 
-      if (mediaMap && item.isLocal === false) {
+      if (
+        mediaMap &&
+        (!item.isLocal || (item.recurring && item.congSpecific))
+      ) {
         for (const [, media] of mediaMap) {
           const match = media.find((m) => m.safeName === item.safeName)
           if (match) {
@@ -358,7 +392,8 @@ export default Vue.extend({
       }
     },
     async atClick(item: MeetingFile | LocalFile) {
-      if (item.isLocal) {
+      console.log(item)
+      if (item.isLocal && !(item.recurring && item.congSpecific)) {
         await this.removeItem(item)
       } else if (item.isLocal !== undefined) {
         await this.toggleVisibility(item)

@@ -52,9 +52,11 @@
 
 - DOCS: Documentation filter searches entire website and highlights results with yellow background
 - DOCS: Documentation site now supports multiple languages. Time to translate my dear volunteers!
+- MEDIA SYNC: Auto remove hidden media if it was downloaded before
 - MEDIA SYNC: Auto rename media when switching local language (also on cong server)
 - MEDIA SYNC: Auto rename mediaList keys when switching date format
 - MEDIA SYNC: Auto rename meeting folders when switching date format (also on cong server)
+- MEDIA SYNC: Auto rename recurring files in other folders
 - MEDIA SYNC: Prevent duplicate media from being added to media list by checking safeNames without prefix
 - OBS: Auto detect scene change when changed from OBS directly
 - SETTINGS: Port field for cong sync is no longer necessary

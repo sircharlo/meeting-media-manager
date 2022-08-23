@@ -236,6 +236,7 @@ export default function (
     const hiddenFolder = tree.find(({ basename }) => basename === 'Hidden')
 
     if (mediaFolder?.children) {
+      let recurringMedia: MeetingFile[] = []
       for (const date of mediaFolder.children) {
         if (date.children) {
           const day = $dayjs(
@@ -255,7 +256,6 @@ export default function (
                 congSpecific: true,
                 filesize: mediaFile.size,
                 folder: date.basename,
-                recurring: isRecurring,
                 url: mediaFile.filename,
               }
             })
@@ -266,28 +266,45 @@ export default function (
               overwrite: true,
             })
             if (isRecurring) {
-              const dates = [
-                ...(
-                  store.state.media.meetings as Map<
-                    string,
-                    Map<number, MeetingFile[]>
-                  >
-                ).keys(),
-              ].filter((date) => date !== 'Recurring')
-              dates.forEach((date) => {
-                store.commit('media/setMultiple', {
-                  date,
-                  par: -1,
-                  media: ($clone(media) as typeof media).map((m) => {
-                    m.folder = date
-                    return m
-                  }),
-                })
-              })
+              recurringMedia = $clone(media)
             }
           }
         }
       }
+
+      const dates = [
+        now.format($getPrefs('app.outputFolderDateFormat') as string),
+      ]
+      let day = now.add(1, 'day')
+      while (day.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')) {
+        dates.push(
+          day.format($getPrefs('app.outputFolderDateFormat') as string)
+        )
+        day = day.add(1, 'day')
+      }
+
+      dates.forEach((date) => {
+        store.commit('media/setMultiple', {
+          date,
+          par: -1,
+          media: $clone(recurringMedia)
+            .map((m: MeetingFile) => {
+              m.folder = date
+              m.recurring = true
+              return m
+            })
+            .filter((m: MeetingFile) => {
+              const media = store.state.media.meetings.get(date)?.get(-1)
+              if (media) {
+                return !media.find(
+                  ({ safeName }: MeetingFile) => safeName === m.safeName
+                )
+              } else {
+                return true
+              }
+            }),
+        })
+      })
     }
     if (hiddenFolder?.children) {
       const meetings = store.state.media.meetings as Map<
@@ -319,6 +336,7 @@ export default function (
                     mediaName: hiddenFile.basename,
                     hidden: true,
                   })
+                  $rm(join($mediaPath(), date.basename, hiddenFile.basename))
                   $log.info(
                     '%c[hiddenMedia] [' +
                       date.basename +
