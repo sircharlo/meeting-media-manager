@@ -1,3 +1,18 @@
 ---
 ---
-<script>window.location.replace('en/')</script>
+
+<!-- Auto detect preferred language and serve it if it's available -->
+<script>
+  const available = ['en', 'nl']
+  let foundLang = false
+  for (const lang of navigator.languages) {
+    if (available.includes(lang.split('-')[0])) {
+      foundLang = true
+      window.location.replace(`${lang.split('-')[0]}/`)
+      break
+    }
+  }
+  if (!foundLang) {
+    window.location.replace('en/')
+  }
+</script>
