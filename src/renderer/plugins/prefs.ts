@@ -175,7 +175,7 @@ const schema: Schema<ElectronStore> = {
         default: PREFS.media.ppForward,
       },
       preferredOutput: {
-        type: ['string', 'number'],
+        type: ['string', 'number'], // ? Might be better as just string
         default: PREFS.media.preferredOutput,
       },
     },
