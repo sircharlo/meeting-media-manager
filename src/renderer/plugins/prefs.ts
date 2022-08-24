@@ -251,7 +251,7 @@ function storeOptions(name: string = 'prefs') {
       console.debug(`[main-config] versions: ${context.versions}`)
     },
     migrations: {
-      '<=22.9.0': (store) => {
+      '<=22.9.0-alpha': (store) => {
         for (const key of Object.keys(store.store)) {
           // Skip root keys
           if (
