@@ -13,50 +13,50 @@ defaults:
     values:
       layout: 'default'
   - scope:
-      path: 'locales/de/**/*'
+      path: 'posts/de/**/*'
     values:
       lang: 'de'
   - scope:
-      path: 'locales/en/**/*'
+      path: 'posts/en/**/*'
     values:
       lang: 'en'
   - scope:
-      path: 'locales/es/**/*'
+      path: 'posts/es/**/*'
     values:
       lang: 'es'
   - scope:
-      path: 'locales/et/**/*'
+      path: 'posts/et/**/*'
     values:
       lang: 'et'
   - scope:
-      path: 'locales/fi/**/*'
+      path: 'posts/fi/**/*'
     values:
       lang: 'fi'
   - scope:
-      path: 'locales/fr/**/*'
+      path: 'posts/fr/**/*'
     values:
       lang: 'fr'
   - scope:
-      path: 'locales/it/**/*'
+      path: 'posts/it/**/*'
     values:
       lang: 'it'
   - scope:
-      path: 'locales/nl/**/*'
+      path: 'posts/nl/**/*'
     values:
       lang: 'nl'
   - scope:
-      path: 'locales/pt-BR/**/*'
+      path: 'posts/pt/**/*'
     values:
       lang: 'pt-BR'
   - scope:
-      path: 'locales/pt-PT/**/*'
+      path: 'posts/pt-pt/**/*'
     values:
       lang: 'pt-PT'
   - scope:
-      path: 'locales/ru/**/*'
+      path: 'posts/ru/**/*'
     values:
       lang: 'ru'
   - scope:
-      path: 'locales/sv/**/*'
+      path: 'posts/sv/**/*'
     values:
       lang: 'sv'

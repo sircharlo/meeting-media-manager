@@ -11,7 +11,6 @@
     "americas",
     "booknum",
     "congs",
-    "wtlocale",
     "corejs",
     "dayjs",
     "Descr",
@@ -25,10 +24,12 @@
     "jekyll",
     "JWMMF",
     "jworg",
+    "Kieli",
     "koofr",
     "Koofr",
     "lffi",
     "Lffi",
+    "Língua",
     "meps",
     "mwbr",
     "popperjs",
@@ -37,6 +38,7 @@
     "sircharlo",
     "sjjm",
     "snnw",
+    "Språk",
     "sqljs",
     "suomi",
     "uncompiled",
@@ -45,9 +47,11 @@
     "vetur",
     "vuedraggable",
     "webdav",
+    "wtlocale",
     "xpda",
     "xspf",
-    "русский"
+    "русский",
+    "Язык"
   ],
   "cSpell.ignoreWords": ["transform", "PDF"]
 }
