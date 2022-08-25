@@ -57,7 +57,7 @@ export interface MediaPrefs {
   maxRes: Res
   ppBackward: string | null
   ppForward: string | null
-  preferredOutput: string | number
+  preferredOutput: 'window' | number
 }
 
 export enum FadeOutType {

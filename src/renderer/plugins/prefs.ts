@@ -25,6 +25,7 @@ const schema: Schema<ElectronStore> = {
     properties: {
       theme: {
         type: 'string',
+        enum: ['dark', 'light', 'system'],
         default: PREFS.app.theme,
       },
       disableHardwareAcceleration: {
@@ -45,6 +46,12 @@ const schema: Schema<ElectronStore> = {
       },
       outputFolderDateFormat: {
         type: 'string',
+        enum: [
+          'YYYY-MM-DD',
+          'YYYY-MM-DD - dddd',
+          'DD-MM-YYYY',
+          'DD-MM-YYYY - dddd',
+        ],
         default: PREFS.app.outputFolderDateFormat,
       },
       autoStartSync: {
@@ -128,6 +135,7 @@ const schema: Schema<ElectronStore> = {
       },
       maxRes: {
         type: 'string',
+        enum: ['240p', '360p', '480p', '720p'],
         default: PREFS.media.maxRes,
       },
       enablePp: {
@@ -175,7 +183,7 @@ const schema: Schema<ElectronStore> = {
         default: PREFS.media.ppForward,
       },
       preferredOutput: {
-        type: ['string', 'number'], // ? Might be better as just string
+        oneOf: [{ type: 'string', const: 'window' }, { type: 'number' }],
         default: PREFS.media.preferredOutput,
       },
     },
@@ -193,22 +201,32 @@ const schema: Schema<ElectronStore> = {
       },
       mwDay: {
         type: ['number', 'null'],
+        minimum: 0,
+        maximum: 6,
         default: PREFS.meeting.mwDay,
       },
       weDay: {
         type: ['number', 'null'],
+        minimum: 0,
+        maximum: 6,
         default: PREFS.meeting.weDay,
       },
       musicFadeOutType: {
         type: 'string',
+        enum: ['smart', 'timer'],
         default: PREFS.meeting.musicFadeOutType,
       },
       musicFadeOutTime: {
         type: 'number',
+        minimum: 5,
+        maximum: 60,
+        multipleOf: 5,
         default: PREFS.meeting.musicFadeOutTime,
       },
       musicVolume: {
         type: 'number',
+        minimum: 1,
+        maximum: 100,
         default: PREFS.meeting.musicVolume,
       },
       mwStartTime: {
