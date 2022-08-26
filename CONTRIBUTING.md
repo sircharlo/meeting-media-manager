@@ -66,3 +66,5 @@ bundle install
 # Serve website with hot reload on localhost:4000
 bundle exec jekyll serve
 ```
+
+The documentation site automatically gets updated when you push the latest changes to the docs branch.
