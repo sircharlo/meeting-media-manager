@@ -14,10 +14,10 @@ In order to help maintain this application, the following information will help 
 
 ### Developer Tools
 
-- [Git](https://git-scm.com/) >= v2.25.1
-- [Node.js](https://nodejs.org/en/) >= v16.11.45
-- [Yarn](https://yarnpkg.com/) >= v1.22.19
-- [VS Code](https://code.visualstudio.com/) >= v1.69.2
+- [Git](https://git-scm.com/) >= v2.34.1
+- [Node.js](https://nodejs.org/en/) >= v16.17.0
+- [Yarn](https://yarnpkg.com/) >= v3.2.3
+- [VS Code](https://code.visualstudio.com/) >= v1.70.2
   - VS Code extensions: see [extensions.json](/.vscode/extensions.json)
 
 ### Build Setup
