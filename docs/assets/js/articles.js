@@ -1,3 +1,5 @@
+const lang = document.querySelector('html').getAttribute('lang')
+
 // Toggle element active state
 function toggle(el, force = undefined) {
   if (el) {
@@ -22,7 +24,9 @@ articles.forEach((article) => {
 // Expand article and scroll to it on link click
 const links = document.querySelectorAll('#sidebar a')
 links.forEach((link) => {
-  const id = link.getAttribute('href').substring(link.getAttribute('href').indexOf('#') + 1)
+  const id = link
+    .getAttribute('href')
+    .substring(link.getAttribute('href').indexOf('#') + 1)
   const header = document.getElementById(id)
   const article = header.closest('article')
 
@@ -47,7 +51,7 @@ links.forEach((link) => {
     }, 500)
   }
 
-  const otherLinks = document.querySelectorAll(`.body a[href="#${id}"]`)
+  const otherLinks = document.querySelectorAll(`.body a[href="${lang}/#${id}"]`)
   otherLinks.forEach((otherLink) => {
     otherLink.setAttribute('target', '_self')
     otherLink.onclick = () => {
@@ -77,7 +81,9 @@ hide.onclick = () => {
 window.onload = () => {
   const id = window.location.hash.substring(1)
   if (id) {
-    const lang = window.location.pathname.substring(window.location.pathname.length - 3)
+    const lang = window.location.pathname.substring(
+      window.location.pathname.length - 3
+    )
     const link = document.querySelector(`#sidebar a[href="${lang}#${id}"]`)
     link.click()
   }

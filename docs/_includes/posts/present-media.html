@@ -1,0 +1,290 @@
+{% assign presentMode= include.lang.configuration.enableMediaDisplayButton %} {%
+if presentMode == nil %} {% assign presentMode=
+site.data.en.configuration.enableMediaDisplayButton %} {% endif %}
+<h3>
+  {% include t.html lang=include.lang page="present-media" key="usePresentMode"
+  %}
+</h3>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="presentMode" %}
+</p>
+{% assign string= include.lang.present-media.presentModeEnabled %} {% if string
+== nil %} {% assign string= site.data.en.present-media.presentModeEnabled %} {%
+endif %}
+<p>{{string | replace: '[PRESENT]', presentMode}}</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="presentStandby"
+  %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="presentBG" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="presentControls"
+  %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="folderSelect" %}
+  {% include t.html lang=include.lang page="present-media"
+  key="folderCurrentDay" %} {% include t.html lang=include.lang
+  page="present-media" key="folderSelected" %}
+</p>
+
+<h3>
+  {% include t.html lang=include.lang page="present-media" key="presentMedia" %}
+</h3>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="mediaPlay" %} {%
+  include t.html lang=include.lang page="present-media" key="mediaHide" %} {%
+  include t.html lang=include.lang page="present-media" key="mediaVideo" %} {%
+  include t.html lang=include.lang page="present-media" key="mediaVideoNote" %}
+  {% include t.html lang=include.lang page="present-media" key="mediaVideoStop"
+  %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="mediaButton" %}
+</p>
+
+<h3>
+  {% include t.html lang=include.lang page="present-media" key="m3ZoomOBS" %}
+</h3>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="together" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="configKH" %}
+</h4>
+
+<p>{% include t.html lang=include.lang page="present-media" key="monitor" %}</p>
+
+<p>{% include t.html lang=include.lang page="present-media" key="sound" %}</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="configOBS" %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="obsInstall" %}
+</p>
+{% assign link='<a
+  href="https://obsproject.com/forum/resources/obs-virtualcam.949/"
+  >Virtualcam</a
+>' %} {% assign string= include.lang.present-media.obsVirtualCam %} {% if string
+== nil %} {% assign string= site.data.en.present-media.obsVirtualCam %} {% endif
+%}
+<p>{{string | replace: '[Virtualcam]', link}}</p>
+{% assign link='<a href="https://github.com/obsproject/obs-websocket"
+  >obs-websocket</a
+>' %} {% assign string= include.lang.present-media.obsWebsocket %} {% if string
+== nil %} {% assign string= site.data.en.present-media.obsWebsocket %} {% endif
+%}
+<p>{{string | replace: '[obs-websocket]', link}}</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="obsSettings" %}
+  {% include t.html lang=include.lang page="present-media"
+  key="obsSettingsVideo" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="obsScenes" %} {%
+  include t.html lang=include.lang page="present-media" key="obsMoreScenes" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="obsShortcut" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="configZoom" %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="zoomMonitors" %}
+  {% include t.html lang=include.lang page="present-media" key="zoomShortcuts"
+  %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="zoomMicVid" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="configM3" %}
+</h4>
+
+{% assign string= include.lang.present-media.enablePresentMode %} {% if string
+== nil %} {% assign string= site.data.en.present-media.enablePresentMode %} {%
+endif %} {% assign enablePresent = string | replace: '[PRESENT]', presentMode %}
+<p>{{enablePresent}}</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="enableOBS" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="startMeeting" %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="startZoom" %} {%
+  include t.html lang=include.lang page="present-media" key="zoomDesc" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="openM3" %} {%
+  include t.html lang=include.lang page="present-media" key="autoOpen" %} {%
+  include t.html lang=include.lang page="present-media" key="sync" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="enableFeed" %}
+  {% include t.html lang=include.lang page="present-media" key="enableMic" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="startMusic" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="broadcastToZoom"
+  %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="noAction" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="camAngles" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="shareMedia" %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="findMedia" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="stopMedia" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="showZoomParts"
+  %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="hideShow" %} {%
+  include t.html lang=include.lang page="present-media" key="zoomVisible" %}
+</p>
+{% assign shareMedia= include.lang.present-media.shareMedia %} {% if shareMedia
+== nil %} {% assign shareMedia= site.data.en.present-media.shareMedia %} {%
+endif %} {% assign string= include.lang.present-media.zoomPartWithMedia %} {% if
+string == nil %} {% assign string= site.data.en.present-media.zoomPartWithMedia
+%} {% endif %}
+<blockquote>{{ string | replace: '[SHAREMEDIA]', shareMedia }}</blockquote>
+
+<p>
+  {% include t.html lang=include.lang page="present-media"
+  key="zoomPartFinished" %} {% include t.html lang=include.lang
+  page="present-media" key="yeartextVisible" %}
+</p>
+
+<h3>
+  {% include t.html lang=include.lang page="present-media" key="onlyZoomM3" %}
+</h3>
+
+<p>{% include t.html lang=include.lang page="present-media" key="noOBS" %}</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="configKH" %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="sameAsBefore" %}
+  {% include t.html lang=include.lang page="present-media" key="sameAddition" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="configM3" %}
+</h4>
+
+<p>{{enablePresent}}</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="startMeeting" %}
+</h4>
+#### Starting the meeting (M³ and Zoom only)
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="sameAsBefore" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="broadcastToZoom"
+  %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="sameAsBefore" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="shareMedia" %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="startShare" %}
+  {% include t.html lang=include.lang page="present-media" key="selectMonitor"
+  %} {% include t.html lang=include.lang page="present-media"
+  key="yeartextShared" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="findMedia" %}
+</p>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="stopSharing" %}
+</p>
+
+<h4>
+  {% include t.html lang=include.lang page="present-media" key="showZoomParts"
+  %}
+</h4>
+
+<p>
+  {% include t.html lang=include.lang page="present-media" key="sameAsBefore" %}
+</p>
+
+<h3>
+  {% include t.html lang=include.lang page="present-media" key="screenshots" %}
+</h3>
+
+<table class="showcase" markdown="0">
+  {% include image.html src="present/launch-present-mode.png" alt="imgButton"
+  lang=include.lang page="present-media" %} {% include image.html
+  src="present/meeting-picker.png" alt="imgSelectMeeting" lang=include.lang
+  page="present-media" %} {% include image.html src="present/default-bg.png"
+  alt="imgBG" lang=include.lang page="present-media" %} {% include image.html
+  src="present/media-list.png" alt="imgMediaList" lang=include.lang
+  page="present-media" %} {% include image.html src="present/standby-mode.png"
+  alt="imgStandby" lang=include.lang page="present-media" %} {% include
+  image.html src="present/picture-playing.png" alt="imgDisplayPic"
+  lang=include.lang page="present-media" %} {% include image.html
+  src="present/video-playing.png" alt="imgPlayVideo" lang=include.lang
+  page="present-media" %} {% include image.html src="present/video-scrub.png"
+  alt="imgVideoScrub" lang=include.lang page="present-media" %}
+</table>

@@ -1,0 +1,222 @@
+{% assign posts=site.posts | where:"lang", page.lang %} {% assign post=posts |
+where:"ref", "configuration" %} {% assign link= '<a href="[LANG]/#[POSTURL]"
+  >[POSTTITLE]</a
+>' | strip_newlines | strip | replace: '[POSTURL]', post[0].url | replace:
+'[LANG]', page.lang %} {% assign linkConfig=link | replace: '[POSTTITLE]',
+post[0].title %}
+<p>{% include t.html lang=include.lang page="manage-media" key="summary" %}</p>
+
+<h3>{% include t.html lang=include.lang page="manage-media" key="manage" %}</h3>
+
+<p>
+  {% include t.html lang=include.lang page="manage-media" key="manageDesc" %} {%
+  include t.html lang=include.lang page="manage-media" key="manageRecurring" %}
+</p>
+
+<h3>
+  {% include t.html lang=include.lang page="manage-media" key="mediaAdd" %}
+</h3>
+
+<p>
+  {% include t.html lang=include.lang page="manage-media" key="mediaAddHow" %}
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>{% include t.html lang=include.lang page="shared" key="option" %}</th>
+      <th>
+        {% include t.html lang=include.lang page="shared" key="explanation" %}
+      </th>
+    </tr>
+  </thead>
+  {% assign media= include.lang.manage-media.optionMedia %} {% if media == nil
+  %} {% assign media= site.data.en.manage-media.optionMedia %} {% endif %}
+  <tbody>
+    <tr>
+      <td>
+        <code>
+          {% include t.html lang=include.lang page="manage-media"
+          key="optionType" %}
+        </code>
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="manage-media"
+        key="explainType" %}
+      </td>
+    </tr>
+    <tr>
+      <td><code> {{media}} </code></td>
+      <td>
+        {% include t.html lang=include.lang page="manage-media"
+        key="explainMedia" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          {% include t.html lang=include.lang page="manage-media"
+          key="optionPrefix" %}
+        </code>
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="manage-media"
+        key="explainPrefix" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          {% include t.html lang=include.lang page="manage-media"
+          key="optionList" %}
+        </code>
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="manage-media"
+        key="explainList" %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% assign string= include.lang.manage-media.explainAdd %} {% if string == nil %}
+{% assign string= site.data.en.manage-media.explainAdd %} {% endif %}
+<p>{{string | replace: '[MEDIA]', media}}</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>
+        <code>
+          {% include t.html lang=include.lang page="manage-media" key="type" %}
+        </code>
+      </th>
+      {% assign string= include.lang.manage-media.addField %} {% if string ==
+      nil %} {% assign string= site.data.en.manage-media.addField %} {% endif %}
+      <th>{{string | replace: '[MEDIA]', media }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>
+          {% include t.html lang=include.lang page="manage-media" key="song" %}
+        </code>
+      </td>
+      {% assign string= include.lang.manage-media.songNote %} {% if string ==
+      nil %} {% assign string= site.data.en.manage-media.songNote %} {% endif %}
+      <td>
+        {% include t.html lang=include.lang page="manage-media" key="songDesc"
+        %} {% include t.html lang=include.lang page="manage-media"
+        key="songChoose" %}<br />
+        <br />
+        {{string | replace: '[SETTINGS]', linkConfig }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="manage-media" key="jwpub"
+          %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="manage-media" key="jwpubDesc"
+        %}<br />
+        <br />
+        {% include t.html lang=include.lang page="manage-media"
+        key="jwpubPromted" %} {% include t.html lang=include.lang
+        page="manage-media" key="jwpubAdd" %}<br />
+        <br />
+        {% include t.html lang=include.lang page="manage-media" key="jwpubNote"
+        %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="manage-media" key="custom"
+          %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="manage-media" key="customDesc"
+        %}<br />
+        <br />
+        <blockquote>
+          {% include t.html lang=include.lang page="manage-media"
+          key="customNote" %}
+        </blockquote>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>
+  {% include t.html lang=include.lang page="manage-media" key="removeHideShow"
+  %}
+</h3>
+
+<p>
+  {% include t.html lang=include.lang page="manage-media"
+  key="removeHideShowDesc" %}
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>
+        {% include t.html lang=include.lang page="manage-media" key="iconDelete"
+        %}
+      </th>
+      <th>
+        {% include t.html lang=include.lang page="manage-media"
+        key="iconChecked" %}
+      </th>
+      <th>
+        {% include t.html lang=include.lang page="manage-media"
+        key="iconUnchecked" %}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        {% include t.html lang=include.lang page="manage-media" key="mediaAdded"
+        %}<br />
+        <br />
+        {% include t.html lang=include.lang page="manage-media"
+        key="mediaCLicked" %}
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="manage-media" key="mediaRef"
+        %}<br />
+        <br />
+        {% include t.html lang=include.lang page="manage-media"
+        key="mediaDownload" %}
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="manage-media" key="mediaRef"
+        %}<br />
+        <br />
+        {% include t.html lang=include.lang page="manage-media"
+        key="mediaHidden" %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>
+  {% include t.html lang=include.lang page="manage-media" key="screenshots" %}
+</h3>
+
+<table class="showcase" markdown="0">
+  {% include image.html src="manage/song-media.png" alt="imgAddSong"
+  lang=include.lang page="manage-media" %} {% include image.html
+  src="manage/custom-media.png" alt="imgAddPic" lang=include.lang
+  page="manage-media" %} {% include image.html src="manage/jwpub-extract.png"
+  alt="imgImportJWPUB" lang=include.lang page="manage-media" %} {% include
+  image.html src="manage/jwpub-media.png" alt="imgPreviewJWPUB"
+  lang=include.lang page="manage-media" %} {% include image.html
+  src="manage/rename-media.png" alt="imgRename" lang=include.lang
+  page="manage-media" %}
+</table>

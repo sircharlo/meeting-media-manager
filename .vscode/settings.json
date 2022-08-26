@@ -1,7 +1,4 @@
 {
-  "files.associations": {
-    "main.scss": "liquid"
-  },
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
@@ -24,12 +21,10 @@
     "jekyll",
     "JWMMF",
     "jworg",
-    "Kieli",
     "koofr",
     "Koofr",
     "lffi",
     "Lffi",
-    "Língua",
     "meps",
     "mwbr",
     "popperjs",
@@ -49,9 +44,8 @@
     "webdav",
     "wtlocale",
     "xpda",
-    "xspf",
-    "русский",
-    "Язык"
+    "xspf"
   ],
-  "cSpell.ignoreWords": ["transform", "PDF"]
+  "cSpell.ignorePaths": ["src/renderer/locales/*", "docs/_data/*"],
+  "cSpell.ignoreWords": ["transform", "PDF", "TERMS"]
 }

@@ -1,8 +1,13 @@
 <tr>
   <td>
     <a href="./assets/img/{{include.src}}">
-      <img src="./assets/img/{{include.src}}" alt="{{include.alt}}" />
+      <img
+        src="./assets/img/{{include.src}}"
+        alt="{% include t.html lang=include.lang page=include.page key=include.alt %}"
+      />
     </a>
   </td>
-  <td>{{include.alt}}</td>
+  <td>
+    {% include t.html lang=include.lang page=include.page key=include.alt %}
+  </td>
 </tr>
