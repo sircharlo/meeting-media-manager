@@ -38,8 +38,8 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "engines": {
-    "node": ">=16.11.45",
-    "yarn": ">=1.22.19"
+    "node": "^16.17.0",
+    "yarn": "^3.2.3"
   },
   "os": [
     "darwin",
@@ -48,7 +48,7 @@
   ],
   "private": true,
   "resolutions": {
-    "@types/node": "16.11.45"
+    "@types/node": "16.11.56"
   },
   "devDependencies": {
     "@babel/core": "7.18.9",
@@ -62,7 +62,7 @@
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/dayjs": "^1.4.1",
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
-    "@nuxtjs/i18n": "^7.2.3",
+    "@nuxtjs/i18n": "^7.3.0",
     "@nuxtjs/vuetify": "^1.12.3",
     "@types/adm-zip": "^0.5.0",
     "@types/fluent-ffmpeg": "^2.1.20",
@@ -75,7 +75,7 @@
     "adm-zip": "^0.5.9",
     "axios": "^0.27.2",
     "consola": "^2.15.3",
-    "core-js": "^3.24.1",
+    "core-js": "^3.25.0",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.7",
     "deepmerge": "^4.2.2",
@@ -108,7 +108,7 @@
     "sass-loader": "^10.3.1",
     "sql.js": "^1.7.0",
     "ts-loader": "^8.4.0",
-    "typescript": "^4.7.4",
+    "typescript": "^4.8.2",
     "upath": "^2.0.1",
     "v-mask": "^2.3.0",
     "vue": "2.7.7",

@@ -39,6 +39,15 @@ node_modules/
 node_modules*/
 jspm_packages/
 
+# Yarn files
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # Optional eslint cache
 .eslintcache
 
