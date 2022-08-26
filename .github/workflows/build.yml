@@ -29,6 +29,9 @@ jobs:
           node-version: 16
           check-latest: true
 
+      - name: Update Yarn
+        run: yarn set version stable
+
       - name: Install dependencies
         run: yarn install
 
