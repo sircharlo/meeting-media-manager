@@ -94,6 +94,7 @@
   "understood": "I understand",
   "updateDownloaded": "An update to M³ was downloaded successfully. The installation will begin when M³ is closed.",
   "updateDownloading": "An update to M³ is being downloaded in the background.",
+  "updateError": "Something went wrong while checking for updates.",
   "updateInstalled": "An update to M³ was installed.",
   "updateNotDownloaded": "An update to M³ is available, but could not be downloaded automatically. Please download it manually.",
   "username": "Username",

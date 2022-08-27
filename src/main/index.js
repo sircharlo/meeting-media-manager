@@ -16,6 +16,7 @@ import BrowserWinHandler from './BrowserWinHandler'
 const os = require('os')
 const adapter = require('axios/lib/adapters/http')
 const axios = require('axios')
+const isDev = process.env.NODE_ENV === 'development'
 
 crashReporter.start({
   uploadToServer: false,
@@ -205,8 +206,19 @@ if (gotTheLock) {
   })
 
   ipcMain.on('restart', () => {
-    app.relaunch()
-    app.quit()
+    if (isDev) {
+      app.exit(250)
+    } else {
+      let options
+      if (process.env.APPIMAGE) {
+        options = {
+          execPath: process.env.APPIMAGE,
+          args: ['--appimage-extract-and-run'],
+        }
+      }
+      app.relaunch(options)
+      app.quit()
+    }
   })
 
   ipcMain.handle('registerShortcut', (_e, { shortcut, fn }) => {
@@ -360,15 +372,18 @@ if (gotTheLock) {
   })
 
   // Auto updater events
+  const log = require('electron-log')
+  autoUpdater.logger = log
+  autoUpdater.logger.transports.file.level = isDev ? 'debug' : 'info'
+
   ipcMain.on('checkForUpdates', () => {
     autoUpdater.checkForUpdates()
   })
 
   autoUpdater.on('error', (e) => {
-    win.webContents.send('error', e)
     win.webContents.send('notifyUser', [
-      'updateNotDownloaded',
-      { type: 'warning' },
+      'updateError',
+      { type: 'warning', identifier: e.message },
       e,
     ])
   })
@@ -380,7 +395,13 @@ if (gotTheLock) {
         'updateDownloading',
         { identifier: 'v' + info.version },
       ])
-      autoUpdater.downloadUpdate()
+      autoUpdater.downloadUpdate().catch((e) => {
+        win.webContents.send('notifyUser', [
+          'updateNotDownloaded',
+          { type: 'warning' },
+          e,
+        ])
+      })
     }
   })
   autoUpdater.on('update-downloaded', () => {

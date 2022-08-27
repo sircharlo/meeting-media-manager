@@ -97,12 +97,12 @@
       </v-col>
       <v-col cols="12" class="d-flex py-0">
         <v-col class="text-center flex-shrink-1 px-1 pb-0">
-          <v-card class="pb-0" :color="jwSyncColor">
+          <v-card class="fill-height pb-0" :color="jwSyncColor">
             <v-card-text class="text-center py-2">{{ jwSync }}</v-card-text>
           </v-card>
         </v-col>
         <v-col v-if="congSync" class="text-center flex-shrink-1 px-1 pb-0">
-          <v-card class="pb-0" :color="congSyncColor">
+          <v-card class="fill-height pb-0" :color="congSyncColor">
             <v-card-text class="text-center py-2">
               {{ $t('congMedia') }}
             </v-card-text>
@@ -112,7 +112,7 @@
           v-if="$getPrefs('media.enableMp4Conversion')"
           class="text-center flex-shrink-1 px-1 pb-0"
         >
-          <v-card class="pb-0" :color="mp4Color">
+          <v-card class="fill-height pb-0" :color="mp4Color">
             <v-card-text class="text-center py-2">
               {{ $t('convertDownloaded') }}
             </v-card-text>
