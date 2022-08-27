@@ -193,6 +193,10 @@ if (gotTheLock) {
   ipcMain.handle('appVersion', () => app.getVersion())
   ipcMain.handle('getScreenInfo', () => getScreenInfo())
 
+  ipcMain.on('runAtBoot', (_e, val) => {
+    app.setLoginItemSettings({ openAtLogin: val })
+  })
+
   ipcMain.on('openPath', (_e, path) => {
     shell.openPath(path)
   })

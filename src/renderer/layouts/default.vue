@@ -12,6 +12,7 @@
 <script lang="ts">
 import { createConnection } from 'net'
 import { fileURLToPath, pathToFileURL } from 'url'
+import { platform } from 'os'
 import { basename, join } from 'upath'
 import Vue from 'vue'
 import { Scene } from 'obs-websocket-js'
@@ -268,6 +269,11 @@ export default Vue.extend({
             url: `${this.$config.repo}/discussions/new?category=translations&title=New+translation+in+${mediaLang.name}&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,${mediaLang.name} (${mediaLang.langcode}/${mediaLang.symbol}).`,
           },
         })
+      }
+
+      // Set runAtBoot depending on prefs and platform
+      if (platform() !== 'linux') {
+        ipcRenderer.send('runAtBoot', this.$getPrefs('app.autoRunAtBoot'))
       }
 
       // Set music shuffle shortcut if enabled

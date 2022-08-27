@@ -238,6 +238,13 @@ export default Vue.extend({
         }
       },
     },
+    'app.autoRunAtBoot': {
+      handler(val) {
+        if (!this.isLinux) {
+          ipcRenderer.send('runAtBoot', val)
+        }
+      },
+    },
     'app.localAppLang': {
       async handler(val, oldVal) {
         this.$dayjs.locale(val.split('-')[0])
