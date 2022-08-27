@@ -27,7 +27,7 @@
   "main": "./dist/main/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mtdvlpr/meeting-media-manager.git"
+    "url": "https://github.com/sircharlo/meeting-media-manager.git"
   },
   "scripts": {
     "dev": "./pre-build.sh && node .electron-nuxt/dev.js",
