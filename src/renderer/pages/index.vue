@@ -138,6 +138,15 @@
       >
         {{ $t('fetchMedia') }}
       </v-btn>
+      <v-btn
+        v-if="$config.isDev"
+        color="primary"
+        :disabled="!online"
+        :loading="loading"
+        @click="testApp()"
+      >
+        Test App
+      </v-btn>
     </v-col>
     <v-col cols="12" align-self="end" class="d-flex pa-0">
       <v-col>
@@ -396,6 +405,28 @@ export default Vue.extend({
         6: 'accent',
       }
     },
+    async testApp() {
+      const previousLang = this.$getPrefs('media.lang')
+      /*
+      E: English
+      F: French
+      O: Dutch
+      M: Romanian
+      R: Armenian (West)
+      S: Spanish
+      T: Portugese (Brazil)
+      U: Russian
+      X: German
+      */
+      for (const lang of ['E', 'F', 'M', 'O', 'R', 'S', 'T', 'U', 'X']) {
+        this.$setPrefs('media.lang', lang)
+        this.$store.commit('db/clear')
+        this.$store.commit('media/clear')
+        await this.startMediaSync(true)
+      }
+      this.$setPrefs('media.lang', previousLang)
+      await this.startMediaSync(true)
+    },
     addCong() {
       if (this.$store.state.present.mediaScreenInit) {
         this.$toggleMediaWindow('close')
@@ -480,7 +511,7 @@ export default Vue.extend({
       })
     },
     async startMediaSync(dryrun: boolean = false, filter: string = 'all') {
-      this.loading = !dryrun
+      this.loading = true
       this.$store.commit('stats/startPerf', {
         func: 'total',
         start: performance.now(),
@@ -555,6 +586,9 @@ export default Vue.extend({
           try {
             this.congSyncColor = 'warning'
             this.$getCongMedia(this.baseDate, this.now)
+            if (dryrun) {
+              this.congSyncColor = 'success'
+            }
           } catch (e: any) {
             this.$error('errorGetCongMedia', e)
             this.congSyncColor = 'error'
