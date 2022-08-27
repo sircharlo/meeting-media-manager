@@ -230,6 +230,22 @@ export default Vue.extend({
       this.$dayjs.locale(lang.split('-')[0])
       this.$log.debug(this.$appPath())
 
+      // Set disabledHardwareAcceleration to user pref
+      const disableHA = this.$getPrefs('app.disableHardwareAcceleration')
+      const haPath = join(this.$appPath(), 'disableHardwareAcceleration')
+      const haExists = existsSync(haPath)
+
+      // Only do something if the value is not in sync with the presence of the file
+      if (disableHA && !haExists) {
+        this.$write(haPath, '')
+      } else if (!disableHA && haExists) {
+        this.$rm(haPath)
+      }
+
+      if (disableHA !== haExists) {
+        ipcRenderer.send('restart')
+      }
+
       // Set app theme
       const themePref = this.$getPrefs('app.theme')
       if (themePref === 'system') {
