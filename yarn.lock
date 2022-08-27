@@ -10314,7 +10314,6 @@ __metadata:
     obs-websocket-js: ^4.0.3
     pdfjs-dist: ^2.15.349
     prettier: ^2.7.1
-    roboto-fontface: ^0.10.0
     sass-loader: ^10.3.1
     sql.js: ^1.7.0
     ts-loader: ^8.4.0
@@ -10327,6 +10326,7 @@ __metadata:
     vue-template-compiler: 2.7.7
     vuedraggable: ^2.24.3
     vuetify: ^2.6.9
+    vuetify-loader: ^1.9.2
     webdav: ^4.11.0
     webpack: ^4.46.0
     webpack-node-externals: ^3.0.0
@@ -13617,13 +13617,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"roboto-fontface@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "roboto-fontface@npm:0.10.0"
-  checksum: 58749bb49133974aa72d79ab1928d5d0aa1df162daab7398cbceeadc1508d222054d2e81d41ab548361a785c5cd2da97159544c3acecc8a180030c91b504be3b
-  languageName: node
-  linkType: hard
-
 "run-async@npm:^2.4.0":
   version: 2.4.1
   resolution: "run-async@npm:2.4.1"
@@ -16015,6 +16008,33 @@ __metadata:
     sharp:
       optional: true
   checksum: 502d0af308c06f900c15286799a664a67d45bf4ab2f793b98ace23d11ae9b83181b9a27522ab331508a4b6e26b1cbf9713f36b2aa7ed03b8c98b46b48f3b8b55
+  languageName: node
+  linkType: hard
+
+"vuetify-loader@npm:^1.9.2":
+  version: 1.9.2
+  resolution: "vuetify-loader@npm:1.9.2"
+  dependencies:
+    acorn: ^8.4.1
+    acorn-walk: ^8.2.0
+    decache: ^4.6.0
+    file-loader: ^6.2.0
+    loader-utils: ^2.0.0
+  peerDependencies:
+    gm: ^1.23.0
+    pug: ^2.0.0 || ^3.0.0
+    sharp: "*"
+    vue: ^2.7.2
+    vuetify: ^1.3.0 || ^2.0.0
+    webpack: ^4.0.0 || ^5.0.0
+  peerDependenciesMeta:
+    gm:
+      optional: true
+    pug:
+      optional: true
+    sharp:
+      optional: true
+  checksum: 4e04323092e017f37e641940269443434055e3b01ffb8f7f05b3e79c3ff477cda0fc4f2f2b095b51f4e1f5435c3264772477b49ac2cf0dcb8f0ac04b4f18418b
   languageName: node
   linkType: hard
 

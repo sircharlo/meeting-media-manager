@@ -15,7 +15,7 @@ import { join, extname, basename, dirname, joinSafe } from 'upath'
 import { Context } from '@nuxt/types'
 import { sync, Options } from 'fast-glob'
 import Zipper from 'adm-zip'
-import { FileStat, WebDAVClient } from 'webdav/web'
+import { FileStat, WebDAVClient } from 'webdav'
 import { MeetingFile } from '~/types'
 
 export default function (

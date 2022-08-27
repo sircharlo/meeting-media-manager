@@ -190,7 +190,7 @@ import { readdirSync, readFileSync, existsSync, statSync } from 'fs-extra'
 import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
-import { FileStat, WebDAVClient } from 'webdav/web'
+import { FileStat, WebDAVClient } from 'webdav'
 import {
   faArrowDown19,
   faCircleArrowLeft,

@@ -29,7 +29,7 @@ export default function (
     const now = +new Date()
     if (!logs[type][now]) logs[type][now] = []
     logs[type][now].push(
-      typeof args[0] === 'string' ? args[0] : args[0].message
+      typeof args[0] === 'string' ? args[0] : args[0]?.message
     )
     console[type].apply(console, args)
   }

@@ -19,7 +19,7 @@ import { Scene } from 'obs-websocket-js'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
-import { WebDAVClient } from 'webdav/web'
+import { WebDAVClient } from 'webdav'
 import { ShortJWLang, CongPrefs, Release, Asset } from '~/types'
 export default Vue.extend({
   name: 'DefaultLayout',
@@ -123,7 +123,11 @@ export default Vue.extend({
       await this.$setScene(this.scenes[i])
     })
     ipcRenderer.on('notifyUser', (_e, msg: string[]) => {
-      this.$notify(msg[0], msg[1], msg[3])
+      if (msg[0]) {
+        this.$notify(msg[0], msg[1], msg[3])
+      } else {
+        console.warn('Notify message is empty: ', msg)
+      }
       if (msg[0] === 'updateNotDownloaded') {
         this.$store.commit('stats/setUpdateSuccess', false)
       }

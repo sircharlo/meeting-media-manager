@@ -173,7 +173,7 @@ import { join, extname } from 'upath'
 // eslint-disable-next-line import/named
 import { readFileSync } from 'fs-extra'
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
-import { WebDAVClient } from 'webdav/web'
+import { WebDAVClient } from 'webdav'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }

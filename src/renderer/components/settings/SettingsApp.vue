@@ -278,17 +278,17 @@ export default Vue.extend({
     },
     'app.disableHardwareAcceleration': {
       handler(val) {
+        const path = join(this.$appPath(), 'disableHardwareAcceleration')
+        const fileExists = existsSync(path)
         // Only do something if the value is not in sync with the presence of the file
-        if (
-          val &&
-          !existsSync(join(this.$appPath(), 'disableHardwareAcceleration'))
-        ) {
-          this.$write(join(this.$appPath(), 'disableHardwareAcceleration'), '')
-        } else if (
-          !val &&
-          existsSync(join(this.$appPath(), 'disableHardwareAcceleration'))
-        ) {
-          this.$rm(join(this.$appPath(), 'disableHardwareAcceleration'))
+        if (val && !fileExists) {
+          this.$write(path, '')
+        } else if (!val && fileExists) {
+          this.$rm(path)
+        }
+
+        if (val !== fileExists) {
+          ipcRenderer.send('restart')
         }
       },
     },

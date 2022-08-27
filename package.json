@@ -104,7 +104,6 @@
     "obs-websocket-js": "^4.0.3",
     "pdfjs-dist": "^2.15.349",
     "prettier": "^2.7.1",
-    "roboto-fontface": "^0.10.0",
     "sass-loader": "^10.3.1",
     "sql.js": "^1.7.0",
     "ts-loader": "^8.4.0",
@@ -117,6 +116,7 @@
     "vue-template-compiler": "2.7.7",
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.6.9",
+    "vuetify-loader": "^1.9.2",
     "webdav": "^4.11.0",
     "webpack": "^4.46.0",
     "webpack-node-externals": "^3.0.0"

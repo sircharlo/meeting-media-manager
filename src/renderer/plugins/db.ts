@@ -40,7 +40,8 @@ export default function (
 
       try {
         const SQL = await sqljs({
-          locateFile: (filename: string) => `/${filename}`,
+          locateFile: (filename: string) =>
+            `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.7.0/${filename}`,
         })
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })

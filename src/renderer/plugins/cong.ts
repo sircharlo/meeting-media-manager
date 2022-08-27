@@ -1,4 +1,4 @@
-import { WebDAVClient, createClient, FileStat } from 'webdav/web'
+import { WebDAVClient, createClient, FileStat } from 'webdav'
 /* eslint-disable import/named */
 import { Context } from '@nuxt/types'
 import { basename, dirname, extname, join } from 'upath'

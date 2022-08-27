@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
 import { BrowserWindow, app, shell } from 'electron'
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL
-const isProduction = process.env.NODE_ENV === 'production'
+// const isProduction = process.env.NODE_ENV === 'production'
 const isDev = process.env.NODE_ENV === 'development'
 const os = require('os')
 const appLongName = 'Meeting Media Manager'
@@ -42,8 +42,10 @@ export default class BrowserWinHandler {
       webPreferences: {
         ...this.options.webPreferences,
         backgroundThrottling: false,
-        webSecurity: isProduction, // disable on dev to allow loading local resources
+        webSecurity: false,
+        // webSecurity: isProduction, // disable on dev to allow loading local resources
         nodeIntegration: true, // allow loading modules via the require () function
+        nodeIntegrationInWorker: true,
         contextIsolation: false, // https://github.com/electron/electron/issues/18037#issuecomment-806320028
       },
     })

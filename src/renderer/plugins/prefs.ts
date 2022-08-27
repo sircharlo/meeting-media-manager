@@ -353,6 +353,11 @@ function migrate2290(key: string, newVal: any) {
     newVal = PREFS.app[newKey as keyof AppPrefs]
   }
 
+  // Values that were converted from number to string
+  if (key === 'congServerPort') {
+    newVal = newVal.toString()
+  }
+
   // Values that were converted from string to number
   if (
     key === 'musicFadeOutTime' ||

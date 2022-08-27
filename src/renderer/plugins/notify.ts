@@ -17,7 +17,10 @@ export default function (
       },
       error?: any
     ) => {
-      if (props?.type === 'warning' || props?.type === 'error') {
+      if (error) {
+        if (!props) {
+          props = {}
+        }
         props.action = {
           type: 'error',
           label: 'reportIssue',
@@ -25,9 +28,9 @@ export default function (
         }
         props.persistent = true
 
-        if (props.type === 'warning') {
+        if (error && props.type === 'warning') {
           $log.warn(error)
-        } else {
+        } else if (error) {
           $log.error(error)
         }
       }

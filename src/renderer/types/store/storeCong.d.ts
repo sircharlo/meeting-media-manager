@@ -1,4 +1,4 @@
-import { WebDAVClient, FileStat } from 'webdav/web'
+import { WebDAVClient, FileStat } from 'webdav'
 
 export interface CongFile extends FileStat {
   children?: CongFile[]

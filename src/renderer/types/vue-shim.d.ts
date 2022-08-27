@@ -1,5 +1,5 @@
 import { Scene } from 'obs-websocket-js'
-import { WebDAVClient } from 'webdav/web'
+import { WebDAVClient } from 'webdav'
 /* eslint-disable import/named */
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { Options } from 'fast-glob'

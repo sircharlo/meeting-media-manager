@@ -1,4 +1,4 @@
-import { FileStat, WebDAVClient } from 'webdav/web'
+import { FileStat, WebDAVClient } from 'webdav'
 import { CongFile } from './../types/store/storeCong.d'
 import { CongStore, ElectronStore } from '~/types'
 
