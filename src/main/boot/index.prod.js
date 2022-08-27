@@ -10,7 +10,7 @@ const PRODUCTION_APP_PATH = path.join(__dirname, '..', 'renderer')
 protocol.registerSchemesAsPrivileged([
   {
     scheme: PRODUCTION_APP_PROTOCOL,
-    privileges: { secure: true, standard: true /* supportFetchAPI: true */ },
+    privileges: { secure: true, standard: true, supportFetchAPI: true },
   },
 ])
 

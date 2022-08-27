@@ -356,7 +356,6 @@ export default Vue.extend({
           Map<number, MeetingFile[]>
         >
       ).get(this.date)
-      console.log('toggle visibility', item)
 
       if (
         mediaMap &&
@@ -403,7 +402,7 @@ export default Vue.extend({
       }
     },
     async atClick(item: MeetingFile | LocalFile) {
-      if (item.isLocal && !(item.recurring && item.congSpecific)) {
+      if (!item.recurring && (item.isLocal || item.congSpecific)) {
         await this.removeItem(item)
       } else if (item.isLocal !== undefined) {
         await this.toggleVisibility(item)
