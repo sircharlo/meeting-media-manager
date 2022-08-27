@@ -7,7 +7,7 @@ on:
       - 'yarn.lock'
       - 'package.json'
       - 'builder.config.js'
-      - 'src/main/boot/*.js'
+      - 'src/main/**/*'
       - '.electron-nuxt/**/*'
       - 'src/renderer/nuxt.config.js'
 
