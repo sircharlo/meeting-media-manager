@@ -27,7 +27,7 @@
   "main": "./dist/main/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sircharlo/meeting-media-manager.git"
+    "url": "https://github.com/mtdvlpr/meeting-media-manager.git"
   },
   "scripts": {
     "dev": "./pre-build.sh && node .electron-nuxt/dev.js",
@@ -35,7 +35,8 @@
     "lint": "node_modules/.bin/eslint --ext .js,.vue,.ts --ignore-path .gitignore -f ./node_modules/eslint-friendly-formatter ./src",
     "lint:fix": "yarn lint --fix",
     "preinstall": "node .electron-nuxt/check-engines.js",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "release": "./pre-build.sh && node .electron-nuxt/build.js"
   },
   "engines": {
     "node": "^16.17.0",
