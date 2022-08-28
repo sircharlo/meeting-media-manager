@@ -3,6 +3,7 @@
 - [ ] Release: Check if build artifacts work correctly for Windows and MacOS
 - [ ] Test: test for 3 displays
 - [ ] Test: test if auto updater works correctly
+- [ ] Manage media: Allow to hide recurring media without cong server
 - [X] Cong sync: Allow navigation of cong sync folder through the treeview
 - [X] Cong sync: Congregation sync
 - [X] Cong sync: Sync custom media background when congregation sync is enabled

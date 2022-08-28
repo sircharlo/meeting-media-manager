@@ -3,7 +3,7 @@ interface PresentStore {
   mediaScreenVisible: boolean
   background: string
   screens: { id: string; class: string; text: string }[]
-  shortcuts: { name: string; domain: string }[]
+  shortcuts: { name: string; domain: string; fn: string }[]
 }
 
 const defaultState: PresentStore = {
@@ -38,13 +38,16 @@ export const mutations = {
   ) {
     state.screens = screens
   },
-  addShortcut(state: PresentStore, shortcut: { name: string; domain: string }) {
+  addShortcut(
+    state: PresentStore,
+    shortcut: { name: string; domain: string; fn: string }
+  ) {
     const shortcuts = state.shortcuts ?? []
     state.shortcuts = [...shortcuts, shortcut]
   },
   setShortcuts(
     state: PresentStore,
-    shortcuts: { name: string; domain: string }[]
+    shortcuts: { name: string; domain: string; fn: string }[]
   ) {
     state.shortcuts = shortcuts
   },

@@ -27,17 +27,19 @@ export default function (
     const shortcuts = store.state.present.shortcuts as {
       name: string
       domain: string
+      fn: string
     }[]
     try {
-      if (shortcuts.map(({ name }) => name).includes(shortcut)) {
-        ipcRenderer.send('unregisterShortcut', shortcut)
+      const match = shortcuts.find(({ name }) => name === shortcut)
+      if (match) {
+        res = match.domain === domain && match.fn === fn
       } else {
-        store.commit('present/addShortcut', { name: shortcut, domain })
+        store.commit('present/addShortcut', { name: shortcut, domain, fn })
+        res = await ipcRenderer.invoke('registerShortcut', {
+          shortcut,
+          fn,
+        })
       }
-      res = await ipcRenderer.invoke('registerShortcut', {
-        shortcut,
-        fn,
-      })
     } catch (e: any) {
       $log.error(e)
     } finally {

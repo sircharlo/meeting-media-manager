@@ -298,12 +298,15 @@ export default Vue.extend({
       const rules = (this.$attrs.rules as unknown as any[]) ?? []
       if (this.required) {
         rules.push((v: any) => {
-          return !!v || 'This field needs to be filled in.'
+          return !!v || this.$t('fieldRequired')
         })
       }
       if (this.max) {
         rules.push(
-          (v: any) => !v || v.length <= this.max || `Max ${this.max} characters`
+          (v: any) =>
+            !v ||
+            v.length <= this.max ||
+            (this.$t('fieldMax') as string).replace('XX', this.max.toString())
         )
       }
       return rules

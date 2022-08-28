@@ -39,6 +39,8 @@
   "excludeLffiImages": "Exclude images from the <em>lffi</em> brochure",
   "excludeTh": "Exclude all media from the <em>th</em> brochure",
   "fetchMedia": "Update media folders",
+  "fieldRequired": "This field is required.",
+  "fieldMax": "Max XX characters.",
   "hideMediaLogo": "Hide logo from media presentation window",
   "hostname": "Hostname",
   "info": "Information",
