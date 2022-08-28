@@ -7,7 +7,7 @@ src/renderer/static/sql-wasm.wasm
 src/renderer/static/pdf.worker*
 
 # Jekyll build output
-docs/_site/
+_site/
 
 # Jekyll cache
 .jekyll-cache
