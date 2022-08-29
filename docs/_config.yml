@@ -2,10 +2,24 @@ domain: sircharlo.github.io # if you want to force HTTPS, specify the domain wit
 url: https://sircharlo.github.io # the base hostname and protocol for your site, e.g. http://example.com
 baseurl: /meeting-media-manager # place folder name if the site is served in a subfolder
 github: 'https://github.com/sircharlo/meeting-media-manager'
-permalink: '/:title'
 title: 'M³ - Meeting Media Manager'
+permalink: 'nothing'
 sass:
   style: compressed
+exclude:
+  [
+    'Gemfile',
+    'Gemfile.lock',
+    'assets/js/articles.js',
+    'assets/js/lang.js',
+    'assets/js/search.js',
+    'build',
+    'dist',
+    'docs',
+    'locales/**/_posts',
+    'node_modules',
+    'src',
+  ]
 defaults:
   - scope:
       path: ''
@@ -13,50 +27,54 @@ defaults:
     values:
       layout: 'default'
   - scope:
-      path: 'posts/de/**/*'
+      path: 'locales/**/posts/*'
+    values:
+      output: false
+  - scope:
+      path: 'locales/de/**/*'
     values:
       lang: 'de'
   - scope:
-      path: 'posts/en/**/*'
+      path: 'locales/en/**/*'
     values:
       lang: 'en'
   - scope:
-      path: 'posts/es/**/*'
+      path: 'locales/es/**/*'
     values:
       lang: 'es'
   - scope:
-      path: 'posts/et/**/*'
+      path: 'locales/et/**/*'
     values:
       lang: 'et'
   - scope:
-      path: 'posts/fi/**/*'
+      path: 'locales/fi/**/*'
     values:
       lang: 'fi'
   - scope:
-      path: 'posts/fr/**/*'
+      path: 'locales/fr/**/*'
     values:
       lang: 'fr'
   - scope:
-      path: 'posts/it/**/*'
+      path: 'locales/it/**/*'
     values:
       lang: 'it'
   - scope:
-      path: 'posts/nl/**/*'
+      path: 'locales/nl/**/*'
     values:
       lang: 'nl'
   - scope:
-      path: 'posts/pt/**/*'
+      path: 'locales/pt/**/*'
     values:
       lang: 'pt-BR'
   - scope:
-      path: 'posts/pt-pt/**/*'
+      path: 'locales/pt-pt/**/*'
     values:
       lang: 'pt-PT'
   - scope:
-      path: 'posts/ru/**/*'
+      path: 'locales/ru/**/*'
     values:
       lang: 'ru'
   - scope:
-      path: 'posts/sv/**/*'
+      path: 'locales/sv/**/*'
     values:
       lang: 'sv'

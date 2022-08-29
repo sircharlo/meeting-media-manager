@@ -57,13 +57,8 @@
   {% assign posts=site.posts | where:"lang", page.lang %} {% for post in posts
   %}
   <article class="{{ post.type }}">
-    <a id="{{ post.url }}" href="{{page.lang}}/#{{ post.url }}">
-      <h2>
-        {% if post.type %}<code
-          ><b>{{ post.type }}</b> {{ post.url_path }}</code
-        >
-        {% endif %}{{ post.title }}
-      </h2>
+    <a id="{{ post.ref }}" href="{{page.lang}}/#{{ post.ref }}">
+      <h2>{{ post.title }}</h2>
     </a>
     <section class="body">{{ post.content }}</section>
   </article>

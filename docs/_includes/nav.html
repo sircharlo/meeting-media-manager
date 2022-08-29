@@ -3,12 +3,12 @@
 <ul id='links'>
   <input id="search" type="search" placeholder="Filter by keyword" />
   <li><a href="{{page.lang}}/#content" target="_self">Home</a></li>{% for post in posts %}{% if post.tag == null %}
-  <li><a href='{{page.lang}}/#{{ post.url }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}{% for tag in site.tags reversed %}
+  <li><a href='{{page.lang}}/#{{ post.ref }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}{% for tag in site.tags reversed %}
   {% assign posts=tag[1] | where:"lang", page.lang %}
   <li>
     <h2>{{ tag[0] }}</h2>
-    <ul>{% for post in posts %}{% if post.url %}
-      <li class='{{ post.type }}'><a href='{{page.lang}}/#{{ post.url }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}
+    <ul>{% for post in posts %}{% if post.ref %}
+      <li class='{{ post.type }}'><a href='{{page.lang}}/#{{ post.ref }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}
     </ul>
   </li>{% endfor %}
   {% assign lang=site.data | where:"lang", page.lang %}

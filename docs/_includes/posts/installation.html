@@ -47,7 +47,7 @@ assign string= site.data.en.installation.install %} {% endif %}
 {% assign post=posts | where:"ref", "configuration" %} {% assign link= '<a
   href="[LANG]/#[POSTURL]"
   >[POSTTITLE]</a
->' | strip_newlines | strip | replace: '[POSTURL]', post[0].url | replace:
+>' | strip_newlines | strip | replace: '[POSTURL]', post[0].ref | replace:
 '[LANG]', page.lang %} {% assign linkConfig=link | replace: '[POSTTITLE]',
 post[0].title %}
 
@@ -64,7 +64,7 @@ post[0].title %}
 {% assign post=posts | where:"ref", "usage-notes" %} {% assign link= '<a
   href="[LANG]/#[POSTURL]"
   >[POSTTITLE]</a
->' | strip_newlines | strip | replace: '[POSTURL]', post[0].url | replace:
+>' | strip_newlines | strip | replace: '[POSTURL]', post[0].ref | replace:
 '[LANG]', page.lang %} {% assign linkNotes=link | replace: '[POSTTITLE]',
 post[0].title %} {% assign string= include.lang.installation.check %} {% if
 string == nil %} {% assign string= site.data.en.installation.check %} {% endif

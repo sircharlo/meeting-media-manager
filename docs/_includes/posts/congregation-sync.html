@@ -1,11 +1,11 @@
 {% assign posts=site.posts | where:"lang", page.lang %} {% assign post=posts |
 where:"ref", "manage-media" %} {% assign link= '<a href="[LANG]/#[POSTURL]"
   >[POSTTITLE]</a
->' | strip_newlines | strip | replace: '[POSTURL]', post[0].url | replace:
+>' | strip_newlines | strip | replace: '[POSTURL]', post[0].ref | replace:
 '[LANG]', page.lang %} {% assign linkManageMedia=link | replace: '[POSTTITLE]',
 post[0].title %} {% assign post=posts | where:"ref", "configuration" %} {%
 assign link= '<a href="[LANG]/#[POSTURL]">[POSTTITLE]</a>' | strip_newlines |
-strip | replace: '[POSTURL]', post[0].url | replace: '[LANG]', page.lang %} {%
+strip | replace: '[POSTURL]', post[0].ref | replace: '[LANG]', page.lang %} {%
 assign linkConfig=link | replace: '[POSTTITLE]', post[0].title %}
 <p>{% include t.html lang=include.lang page="congregation-sync" key="vo" %}</p>
 <p>
