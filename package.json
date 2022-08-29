@@ -32,7 +32,7 @@
     "is-audio": "^0.0.0",
     "is-image": "^3.1.0",
     "is-video": "^1.0.1",
-    "jquery": "^3.6.0",
+    "jquery": "^3.6.1",
     "jquery-ui": "^1.13.2",
     "obs-websocket-js": "^4.0.3",
     "os": "^0.1.2",
