@@ -36,7 +36,7 @@
     "jquery-ui": "^1.13.2",
     "obs-websocket-js": "^4.0.3",
     "os": "^0.1.2",
-    "pdfjs-dist": "^2.15.349",
+    "pdfjs-dist": "^2.16.105",
     "select2": "^4.1.0-rc.0",
     "sql.js": "^1.7.0",
     "upath": "^2.0.1"
