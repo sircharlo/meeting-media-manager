@@ -124,7 +124,7 @@
         </v-col>
       </v-row>
       <v-col cols="12" class="px-0" style="margin-bottom: 72px">
-        <loading v-if="loading" />
+        <loading-icon v-if="loading" />
         <template v-else>
           <v-overlay :value="dragging">
             <font-awesome-icon :icon="faDownload" size="3x" bounce />

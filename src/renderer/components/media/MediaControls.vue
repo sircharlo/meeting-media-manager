@@ -65,7 +65,7 @@
         </v-btn>
       </v-col>
     </v-app-bar>
-    <loading v-if="loading" />
+    <loading-icon v-if="loading" />
     <draggable
       v-else
       v-model="items"

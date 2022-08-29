@@ -1,0 +1,54 @@
+<template>
+  <v-overlay :value="true" :opacity="1">
+    <v-container class="d-flex flex-column align-center">
+      <h1 class="mb-2">{{ $t(text) }}</h1>
+      <v-badge :content="timer">
+        <v-btn color="error" @click="$emit('abort')">
+          <font-awesome-icon :icon="iconObj" />
+        </v-btn>
+      </v-badge>
+    </v-container>
+  </v-overlay>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import { faPause, faPersonRunning } from '@fortawesome/free-solid-svg-icons'
+export default Vue.extend({
+  props: {
+    text: {
+      type: String,
+      required: true,
+    },
+    icon: {
+      type: String,
+      required: true,
+      validator: (val: string) => ['faPersonRunning', 'faPause'].includes(val),
+    },
+  },
+  data() {
+    return {
+      timer: 5,
+    }
+  },
+  computed: {
+    iconObj() {
+      switch (this.icon) {
+        case 'faPersonRunning':
+          return faPersonRunning
+        case 'faPause':
+          return faPause
+        default:
+          throw new Error('Unknown icon: ' + this.icon)
+      }
+    },
+  },
+  mounted() {
+    setInterval(() => {
+      this.timer--
+      if (this.timer === 0) {
+        this.$emit('perform')
+      }
+    }, 1000)
+  },
+})
+</script>

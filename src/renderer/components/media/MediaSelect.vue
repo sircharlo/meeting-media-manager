@@ -12,7 +12,7 @@
       <v-divider />
     </v-col>
     <v-col cols="12">
-      <loading v-if="loading" />
+      <loading-icon v-if="loading" />
       <v-list v-else-if="missingMedia.length > 0">
         <template v-for="(item, i) in missingMedia">
           <v-list-item

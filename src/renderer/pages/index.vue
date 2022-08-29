@@ -1,5 +1,12 @@
 <template>
   <v-row justify="center" class="fill-height">
+    <action-preview
+      v-if="action"
+      :text="action | text"
+      :icon="action | icon"
+      @abort="action = ''"
+      @perform="execute(action)"
+    />
     <v-row class="pa-4">
       <v-col cols="5" sm="4" md="3" />
       <v-col cols="2" sm="4" md="6" class="text-center">
@@ -211,9 +218,32 @@ import { ShortJWLang } from '~/types'
 
 export default Vue.extend({
   name: 'HomePage',
+  filters: {
+    icon(action: string) {
+      switch (action) {
+        case 'quitApp':
+          return 'faPersonRunning'
+        case 'startMediaSync':
+          return 'faPause'
+        default:
+          throw new Error(`Unknown action: ${action}`)
+      }
+    },
+    text(action: string) {
+      switch (action) {
+        case 'quitApp':
+          return 'quitAfterSync'
+        case 'startMediaSync':
+          return 'syncOnLaunch'
+        default:
+          throw new Error(`Unknown action: ${action}`)
+      }
+    },
+  },
   data() {
     return {
       cong: null,
+      action: '',
       congs: [] as { name: string; path: string; color: string }[],
       loading: true,
       currentProgress: 0,
@@ -376,10 +406,23 @@ export default Vue.extend({
     this.loading = false
     this.$log.debug('v' + (await this.$appVersion()))
     if (this.$getPrefs('app.autoStartSync')) {
-      await this.startMediaSync()
+      this.action = 'startMediaSync'
     }
   },
   methods: {
+    async execute(action: string) {
+      this.action = ''
+      switch (action) {
+        case 'startMediaSync':
+          await this.startMediaSync()
+          break
+        case 'quitApp':
+          ipcRenderer.send('exit')
+          break
+        default:
+          throw new Error('Unknown action')
+      }
+    },
     setDayColor(day: number, color: string) {
       this.dayColors[this.daysOfWeek.length + day - 7] = color
     },
@@ -667,6 +710,10 @@ export default Vue.extend({
           stop: performance.now(),
         })
         this.$printStats()
+
+        if (this.$getPrefs('app.autoQuitWhenDone')) {
+          this.action = 'quitApp'
+        }
       } catch (e: any) {
         this.$error('error', e)
       } finally {

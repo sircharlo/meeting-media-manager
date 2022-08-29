@@ -13,7 +13,7 @@
     <v-card-text>
       {{ $t('settingsLockedExplain') }}
     </v-card-text>
-    <loading v-if="loading" />
+    <loading-icon v-if="loading" />
     <v-row v-else class="mb-10 justify-space-around">
       <v-col
         v-for="item in forcable"

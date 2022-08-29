@@ -198,6 +198,10 @@ if (gotTheLock) {
     app.setLoginItemSettings({ openAtLogin: val })
   })
 
+  ipcMain.on('exit', () => {
+    app.exit()
+  })
+
   ipcMain.on('openPath', (_e, path) => {
     shell.openPath(path)
   })
