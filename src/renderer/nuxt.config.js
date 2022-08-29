@@ -35,6 +35,9 @@ module.exports = {
       runtimeCompiler: true,
     },
   },
+  router: {
+    middleware: 'reminders',
+  },
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css',
     '~/assets/scss/main.scss',

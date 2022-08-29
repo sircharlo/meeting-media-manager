@@ -18,11 +18,25 @@ The components directory contains your Vue.js components. Components make up the
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
 
+### `constants`
+
+The constants directory is not a directory from Nuxt, but a self made one that contains constants that are used in the project.
+
 ### `layouts`
 
 Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
+
+### `locales`
+
+The locales directory contains the internationalization files. These are used by the [@nuxtjs/i18n](https://i18n.nuxtjs.org/) module to translate the application into multiple languages.
+
+### `middleware`
+
+The middleware directory contains your application middleware. Middleware lets you define custom functions that can be run before rendering either a page or a group of pages (layout).
+
+More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/middleware).
 
 ### `pages`
 
@@ -49,3 +63,7 @@ More information about the usage of this directory in [the documentation](https:
 This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+
+### `types`
+
+The types directory contains custom type definitions. You can define custom objects and their properties. These are used by the TypeScript compiler to check your code for errors and help with finding existing properties on objects.
