@@ -18,15 +18,18 @@
         ref="field"
         v-model="$attrs.value"
         :label="label"
-        :prepend-icon="locked ? undefined : 'fa-regular fa-clock'"
         readonly
         :locked="locked"
         :dense="false"
         v-bind="{ ...attrs, ...$attrs }"
         hide-details="auto"
-        style="min-width: 100px; max-width: 100px"
+        style="min-width: 85px; max-width: 85px"
         v-on="on"
-      />
+      >
+        <template v-if="!locked" #append>
+          <font-awesome-icon :icon="faClock" style="margin-top: 2px" />
+        </template>
+      </form-input>
     </template>
     <v-time-picker
       v-if="menu"
@@ -43,6 +46,7 @@
 </template>
 <script>
 import Vue from 'vue'
+import { faClock } from '@fortawesome/free-regular-svg-icons'
 export default Vue.extend({
   props: {
     label: {
@@ -62,6 +66,11 @@ export default Vue.extend({
     return {
       menu: false,
     }
+  },
+  computed: {
+    faClock() {
+      return faClock
+    },
   },
 })
 </script>

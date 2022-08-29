@@ -22,7 +22,12 @@
     <template v-else-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faLock"
+            style="margin-top: 2px"
+            v-on="on"
+          />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -45,7 +50,12 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faLock"
+            style="margin-top: 2px"
+            v-on="on"
+          />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -66,7 +76,12 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faLock"
+            style="margin-top: 2px"
+            v-on="on"
+          />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -109,7 +124,12 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faLock"
+            style="margin-top: 3px"
+            v-on="on"
+          />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -130,7 +150,12 @@
     <template v-if="locked" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
-          <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faLock"
+            style="margin-top: 3px"
+            v-on="on"
+          />
         </template>
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
@@ -199,7 +224,12 @@
         <template v-if="locked" #append>
           <v-tooltip top>
             <template #activator="{ on, attrs }">
-              <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
+              <font-awesome-icon
+                v-bind="attrs"
+                :icon="faLock"
+                style="margin-top: 2px"
+                v-on="on"
+              />
             </template>
             <span>{{ $t('settingLocked') }}</span>
           </v-tooltip>

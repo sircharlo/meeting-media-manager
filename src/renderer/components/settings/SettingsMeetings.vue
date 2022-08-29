@@ -27,7 +27,7 @@
         v-model="meeting.weStartTime"
         :label="''"
         required
-        :locked="locked('meeting.mwStartTime')"
+        :locked="locked('meeting.weStartTime')"
       />
     </form-input>
     <v-divider class="mb-6" />
