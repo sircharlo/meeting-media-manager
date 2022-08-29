@@ -23,9 +23,6 @@ import { WebDAVClient } from 'webdav'
 import { ShortJWLang, CongPrefs, Release, Asset } from '~/types'
 export default Vue.extend({
   name: 'DefaultLayout',
-  data() {
-    return {}
-  },
   head() {
     return {
       htmlAttrs: {
@@ -119,7 +116,12 @@ export default Vue.extend({
     ipcRenderer.on('setObsScene', async (_e, i: number) => {
       await this.$setScene(this.scenes[i])
     })
-    ipcRenderer.on('notifyUser', (_e, msg: string[]) => {
+    ipcRenderer.on('themeUpdated', (_e, isDark) => {
+      if (this.$getPrefs('app.theme') === 'system') {
+        this.$vuetify.theme.dark = isDark
+      }
+    })
+    ipcRenderer.on('notifyUser', (_e, msg: any[]) => {
       if (msg[0]) {
         this.$notify(msg[0], msg[1], msg[3])
       } else {

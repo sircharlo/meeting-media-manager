@@ -183,9 +183,6 @@ export default Vue.extend({
         }
       })
     },
-    isDark(): boolean {
-      return window.matchMedia('(prefers-color-scheme:dark)').matches
-    },
     isLinux() {
       return platform() === 'linux'
     },
@@ -218,9 +215,10 @@ export default Vue.extend({
       deep: true,
     },
     'app.theme': {
-      handler(val) {
+      async handler(val) {
+        ipcRenderer.send('setTheme', val)
         if (val === 'system') {
-          this.$vuetify.theme.dark = this.isDark
+          this.$vuetify.theme.dark = await ipcRenderer.invoke('darkMode')
         } else {
           this.$vuetify.theme.dark = val === 'dark'
         }

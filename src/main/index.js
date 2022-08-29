@@ -3,6 +3,7 @@ import {
   app,
   ipcMain,
   dialog,
+  nativeTheme,
   shell,
   screen,
   crashReporter,
@@ -193,6 +194,15 @@ if (gotTheLock) {
   ipcMain.handle('downloads', () => normalize(app.getPath('downloads')))
   ipcMain.handle('appVersion', () => app.getVersion())
   ipcMain.handle('getScreenInfo', () => getScreenInfo())
+  ipcMain.handle('darkMode', () => nativeTheme.shouldUseDarkColors)
+
+  nativeTheme.on('updated', () => {
+    win.webContents.send('themeUpdated', nativeTheme.shouldUseDarkColors)
+  })
+
+  ipcMain.on('setTheme', (_e, val) => {
+    nativeTheme.themeSource = val
+  })
 
   ipcMain.on('runAtBoot', (_e, val) => {
     app.setLoginItemSettings({ openAtLogin: val })

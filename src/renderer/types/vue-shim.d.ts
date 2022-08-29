@@ -114,7 +114,9 @@ interface CustomProps {
       dismiss?: boolean
       identifier?: string
       persistent?: boolean
-    }
+      type?: string
+    },
+    error?: any
   ) => void
   $prefsInitialized: () => boolean
   $printStats: () => void

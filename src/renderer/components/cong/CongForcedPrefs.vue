@@ -39,7 +39,7 @@
               <span>{{ $t(item.description) }}</span>
             </v-tooltip>
             <v-chip>
-              {{ item.value ? item.value : 'null' }}
+              {{ item.value === null ? 'null' : item.value }}
             </v-chip>
           </template>
         </v-switch>
