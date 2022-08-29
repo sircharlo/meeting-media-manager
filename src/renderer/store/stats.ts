@@ -2,6 +2,7 @@ import { MeetingFile, StatStore, Perf, Stats, Origin } from '~/types'
 
 const defaultState: StatStore = {
   online: false,
+  initialLoad: true,
   updateSuccess: true,
   performance: new Map(),
   downloads: {
@@ -21,6 +22,9 @@ export const state = () => Object.assign({}, defaultState)
 export const mutations = {
   setOnline(state: StatStore, online: boolean) {
     state.online = online
+  },
+  setInitialLoad(state: StatStore, initialLoad: boolean) {
+    state.initialLoad = initialLoad
   },
   setUpdateSuccess(state: StatStore, success: boolean) {
     state.updateSuccess = success

@@ -285,6 +285,9 @@ export default Vue.extend({
     faSquarePlus() {
       return faSquarePlus
     },
+    initialLoad() {
+      return this.$store.state.stats.initialLoad
+    },
     congSync(): boolean {
       return !!this.$store.state.cong.client
     },
@@ -405,9 +408,10 @@ export default Vue.extend({
     this.cong = this.$storePath()
     this.loading = false
     this.$log.debug('v' + (await this.$appVersion()))
-    if (this.$getPrefs('app.autoStartSync')) {
+    if (this.initialLoad && this.$getPrefs('app.autoStartSync')) {
       this.action = 'startMediaSync'
     }
+    this.$store.commit('stats/setInitialLoad', false)
   },
   methods: {
     async execute(action: string) {

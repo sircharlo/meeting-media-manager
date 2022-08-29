@@ -1,9 +1,12 @@
+import minifyTheme from 'minify-css-string'
 import colors from 'vuetify/es5/util/colors'
 
 export default {
   theme: {
     dark: false,
-    options: { cspNonce: 'dQw4w9WgXcQ' },
+    options: {
+      minifyTheme,
+    },
     themes: {
       light: {
         primary: '#0d6efd',
@@ -29,8 +32,3 @@ export default {
     iconfont: 'faSvg',
   },
 }
-
-/*
-date card: #f8f9fa vs #9e9e9e
-meeting day card / date select btn: #6c757d vs #626262
-*/

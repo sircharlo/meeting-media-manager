@@ -10315,6 +10315,7 @@ __metadata:
     h264-mp4-encoder: ^1.0.12
     image-size: ^1.0.2
     lodash.clonedeep: ^4.5.0
+    minify-css-string: ^1.0.0
     net: ^1.0.2
     node-sass: ^6.0.1
     nuxt: ^2.15.8
@@ -10532,6 +10533,13 @@ __metadata:
   version: 1.0.1
   resolution: "min-indent@npm:1.0.1"
   checksum: bfc6dd03c5eaf623a4963ebd94d087f6f4bbbfd8c41329a7f09706b0cb66969c4ddd336abeb587bc44bc6f08e13bf90f0b374f9d71f9f01e04adc2cd6f083ef1
+  languageName: node
+  linkType: hard
+
+"minify-css-string@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "minify-css-string@npm:1.0.0"
+  checksum: eef50790aefa92ef8e2009405d9e38e7bac4ea9b34e195d010439fc229a97c4153c871e96601662e791a11bd6e9ef80fbbc0d138108c2ca649e973592bedd62f
   languageName: node
   linkType: hard
 

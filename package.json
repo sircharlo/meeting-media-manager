@@ -122,5 +122,8 @@
     "webdav": "^4.11.0",
     "webpack": "^4.46.0",
     "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "minify-css-string": "^1.0.0"
   }
 }

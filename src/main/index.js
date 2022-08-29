@@ -51,7 +51,7 @@ function createMainWindow() {
     height: 700,
     width: 700,
     minWidth: 670,
-    minHeight: 410,
+    minHeight: 435,
     icon: join(__dirname, '../../build', 'icons', `icon.${iconType}`),
     title: appLongName,
   })
@@ -334,6 +334,7 @@ if (gotTheLock) {
         backgroundColor: 'black',
         // roundedCorners: false, // waiting for https://github.com/electron/electron/issues/35403 to be fixed before enabling this
         minHeight: 110,
+        minWidth: 195,
         width: 1280,
         height: 720,
         show: false,
