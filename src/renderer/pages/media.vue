@@ -31,7 +31,6 @@ export default Vue.extend({
       dimensions: document.createElement('div'),
     }
   },
-  computed: {},
   mounted() {
     // Set global html elements
     this.yeartext = document.querySelector(

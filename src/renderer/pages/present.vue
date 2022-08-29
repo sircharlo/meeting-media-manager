@@ -61,7 +61,7 @@
 import Vue from 'vue'
 import { Scene } from 'obs-websocket-js'
 import { ipcRenderer } from 'electron'
-import { faHome } from '@fortawesome/free-solid-svg-icons'
+import { faHome, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 export default Vue.extend({
   name: 'PresentPage',
   data() {
@@ -70,10 +70,20 @@ export default Vue.extend({
       firstChoice: true,
     }
   },
+  head() {
+    return {
+      // @ts-ignore
+      title: this.date ?? 'Present',
+      // @ts-ignore
+      titleTemplate: this.date
+        ? 'Present %s - M³'
+        : '%s - Meeting Media Manager',
+    }
+  },
   computed: {
     scene: {
-      get() {
-        return this.$store.state.obs.currentScene
+      get(): string {
+        return this.$store.state.obs.currentScene as string
       },
       async set(value: string) {
         if (this.mediaActive) {
@@ -98,21 +108,21 @@ export default Vue.extend({
           }
         })
     },
-    date() {
-      return this.$route.query.date
+    date(): string {
+      return this.$route.query.date as string
     },
-    faHome() {
-      return faHome
+    faHome(): IconDefinition {
+      return faHome as IconDefinition
     },
-    cong() {
-      return this.$route.query.cong
+    cong(): string {
+      return this.$route.query.cong as string
     },
     mediaScreenVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible
     },
   },
   watch: {
-    date(val) {
+    date(val: string) {
       if (val) {
         this.firstChoice = false
       }

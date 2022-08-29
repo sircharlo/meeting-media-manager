@@ -11,6 +11,8 @@ export default Vue.extend({
   name: 'MediaLayout',
   head() {
     return {
+      title: 'Media Window',
+      titleTemplate: '%s - M³',
       htmlAttrs: {
         lang: this.$i18n.locale,
       },

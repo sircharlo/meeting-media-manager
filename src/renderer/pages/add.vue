@@ -238,7 +238,8 @@ export default Vue.extend({
     }
   },
   head() {
-    return { title: 'Media List' }
+    // @ts-ignore
+    return { title: `Manage ${this.date}`, titleTemplate: '%s - M³' }
   },
   computed: {
     faSave() {
@@ -257,7 +258,7 @@ export default Vue.extend({
       return faPhotoFilm
     },
     isDark() {
-      return this.$vuetify.theme.dark
+      return this.$vuetify.theme.dark as boolean
     },
     faArrowDown19() {
       return faArrowDown19
