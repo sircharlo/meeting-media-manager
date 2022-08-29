@@ -1,5 +1,5 @@
-domain: mtdvlpr.github.io # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
-url: https://mtdvlpr.github.io # the base hostname and protocol for your site, e.g. http://example.com
+domain: sircharlo.github.io # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
+url: https://sircharlo.github.io # the base hostname and protocol for your site, e.g. http://example.com
 baseurl: /meeting-media-manager # place folder name if the site is served in a subfolder
 github: 'https://github.com/sircharlo/meeting-media-manager'
 permalink: '/:title'
