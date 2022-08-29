@@ -296,7 +296,10 @@ if (gotTheLock) {
   // ipcMain events for the media window
   ipcMain.on('showMedia', (_e, media) => {
     mediaWin.webContents.send('showMedia', media)
-    win.webContents.send('showingMedia', !!media)
+    win.webContents.send('showingMedia', [
+      !!media,
+      media ? !!media.start : false,
+    ])
   })
   ipcMain.on('hideMedia', () => {
     mediaWin.webContents.send('hideMedia')

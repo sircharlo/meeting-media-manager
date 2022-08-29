@@ -117,16 +117,15 @@ export default Vue.extend({
       this.blackOverlay.style.opacity = '1'
       setTimeout(() => {
         if (media?.path) {
+          const videos = document.querySelectorAll('#mediaDisplay video')
+
+          // Remove all videos
+          if (videos.length > 0) {
+            videos.forEach((video) => {
+              video.remove()
+            })
+          }
           if (this.$isVideo(media.path) || this.$isAudio(media.path)) {
-            const videos = document.querySelectorAll('#mediaDisplay video')
-
-            // Remove all videos
-            if (videos.length > 0) {
-              videos.forEach((video) => {
-                video.remove()
-              })
-            }
-
             let src = pathToFileURL(media.path).href
 
             // Set start and end times

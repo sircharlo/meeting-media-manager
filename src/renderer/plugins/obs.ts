@@ -9,7 +9,7 @@ export default function (
   inject: (argument0: string, argument1: unknown) => void
 ) {
   async function connect() {
-    const { enable, port, password, mediaScene, cameraScene } = $getPrefs(
+    const { enable, port, password, cameraScene } = $getPrefs(
       'app.obs'
     ) as ObsPrefs
     if (!enable && obs) {
@@ -25,9 +25,8 @@ export default function (
         obs.on('SwitchScenes', (newScene) => {
           try {
             if (
-              newScene &&
               newScene['scene-name'] &&
-              newScene['scene-name'] !== mediaScene
+              newScene['scene-name'] !== $getPrefs('app.obs.mediaScene')
             ) {
               store.commit('obs/setCurrentScene', newScene['scene-name'])
             }

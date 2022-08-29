@@ -4,6 +4,7 @@
       v-if="date"
       style="margin-bottom: 72px"
       :media-active="mediaActive"
+      :video-active="videoActive"
     />
     <meeting-select
       v-else
@@ -67,6 +68,7 @@ export default Vue.extend({
   data() {
     return {
       mediaActive: false,
+      videoActive: false,
       firstChoice: true,
     }
   },
@@ -130,7 +132,8 @@ export default Vue.extend({
   },
   mounted() {
     ipcRenderer.on('showingMedia', (_e, val) => {
-      this.mediaActive = val
+      this.mediaActive = val[0]
+      this.videoActive = val[1]
     })
     if (this.$getPrefs('media.enablePp')) {
       this.$setShortcut(

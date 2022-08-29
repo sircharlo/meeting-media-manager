@@ -82,10 +82,12 @@
         :src="item.path"
         :play-now="item.play"
         :stop-now="item.stop"
+        :deactivate="item.deactivate"
         :media-active="mediaActive"
+        :video-active="videoActive"
         :show-prefix="showPrefix"
         :sortable="sortable"
-        @playing="currentIndex = i"
+        @playing="setIndex(i)"
       />
     </draggable>
   </v-row>
@@ -114,6 +116,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    videoActive: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -122,7 +128,13 @@ export default Vue.extend({
       sortable: false,
       loading: true,
       showPrefix: false,
-      items: [] as { id: string; path: string; play: boolean; stop: boolean }[],
+      items: [] as {
+        id: string
+        path: string
+        play: boolean
+        stop: boolean
+        deactivate: boolean
+      }[],
     }
   },
   computed: {
@@ -159,6 +171,7 @@ export default Vue.extend({
       this.items.forEach((item) => {
         item.play = false
         item.stop = false
+        item.deactivate = false
       })
     },
   },
@@ -176,6 +189,13 @@ export default Vue.extend({
     })
   },
   methods: {
+    setIndex(index: number) {
+      const previousItem = this.items[this.currentIndex]
+      if (previousItem && this.currentIndex !== index) {
+        previousItem.deactivate = true
+      }
+      this.currentIndex = index
+    },
     previous() {
       if (this.mediaActive) {
         this.items[this.currentIndex].stop = true
@@ -211,6 +231,7 @@ export default Vue.extend({
             path,
             play: false,
             stop: false,
+            deactivate: false,
           }
         })
       this.loading = false

@@ -191,6 +191,7 @@ export default Vue.extend({
   beforeDestroy() {
     ipcRenderer.removeAllListeners('error')
     ipcRenderer.removeAllListeners('setObsScene')
+    ipcRenderer.removeAllListeners('themeUpdated')
     ipcRenderer.removeAllListeners('openPresentMode')
     ipcRenderer.removeAllListeners('readyToListen')
     ipcRenderer.removeAllListeners('openPresentMode')

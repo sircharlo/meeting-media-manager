@@ -3,7 +3,11 @@
 <!-- Media item in presentation mode -->
 <template>
   <div>
-    <v-list-item :id="id" three-line :class="{ 'media-played': played }">
+    <v-list-item
+      :id="id"
+      three-line
+      :class="{ 'media-played': played, 'current-media-item': current }"
+    >
       <v-img
         v-if="isImage"
         :src="url"
@@ -44,7 +48,7 @@
         <icon-btn
           v-else
           variant="play"
-          :disabled="mediaActive"
+          :disabled="videoActive"
           @click="play()"
         />
         <icon-btn v-if="sortable" variant="sort" class="ml-2" />
@@ -135,6 +139,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    deactivate: {
+      type: Boolean,
+      default: false,
+    },
     showPrefix: {
       type: Boolean,
       default: false,
@@ -147,9 +155,14 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    videoActive: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
+      current: false,
       active: false as boolean,
       played: false,
       video: null as any,
@@ -229,6 +242,7 @@ export default Vue.extend({
     },
     async playNow(val) {
       if (val) {
+        this.current = true
         await this.play()
       }
     },
@@ -237,15 +251,30 @@ export default Vue.extend({
         this.stop()
       }
     },
+    deactivate(val) {
+      if (val) {
+        this.active = false
+        this.current = false
+      }
+    },
+    mediaActive(val) {
+      if (val && !this.active) {
+        this.current = false
+      } else if (!val) {
+        this.active = false
+      }
+    },
     async active(val) {
-      if (!val) {
+      if (val) {
+        this.current = this.$getPrefs('media.enablePp') as boolean
+      } else {
         this.markers.forEach((m) => {
           m.playing = false
         })
         this.progress = 0
         this.newProgress = 0
         this.paused = false
-        if (this.scene) {
+        if (this.scene && !this.deactivate) {
           await this.$setScene(this.scene)
         }
       }
@@ -304,6 +333,13 @@ export default Vue.extend({
       })
     },
     togglePaused(): void {
+      if (this.scene) {
+        this.$setScene(
+          this.paused
+            ? (this.$getPrefs('app.obs.mediaScene') as string)
+            : this.scene
+        )
+      }
       this.newProgress = this.progress
       ipcRenderer.send(this.paused ? 'playVideo' : 'pauseVideo')
       this.paused = !this.paused
@@ -389,6 +425,10 @@ export default Vue.extend({
 
 .media-played {
   border-left: 8px solid rgba(55, 90, 127, 0.75) !important;
+}
+
+.current-media-item {
+  border-left: 8px solid orange !important;
 }
 
 .video-scrubber {
