@@ -250,8 +250,26 @@ export default function (
       start: performance.now(),
     })
     const tree = updateContentsTree() as CongFile[]
+    console.log(tree)
     const mediaFolder = tree.find(({ basename }) => basename === 'Media')
     const hiddenFolder = tree.find(({ basename }) => basename === 'Hidden')
+    const dates = [
+      now.format($getPrefs('app.outputFolderDateFormat') as string),
+    ]
+    let day = now.add(1, 'day')
+    while (day.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')) {
+      dates.push(day.format($getPrefs('app.outputFolderDateFormat') as string))
+      day = day.add(1, 'day')
+    }
+
+    dates.forEach((date) => {
+      store.commit('media/setMultiple', {
+        date,
+        par: -1,
+        media: [],
+        overwrite: true,
+      })
+    })
 
     // Get cong media
     if (mediaFolder?.children) {
@@ -292,17 +310,6 @@ export default function (
       }
 
       // Set recurring media for each date
-      const dates = [
-        now.format($getPrefs('app.outputFolderDateFormat') as string),
-      ]
-      let day = now.add(1, 'day')
-      while (day.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')) {
-        dates.push(
-          day.format($getPrefs('app.outputFolderDateFormat') as string)
-        )
-        day = day.add(1, 'day')
-      }
-
       dates.forEach((date) => {
         store.commit('media/setMultiple', {
           date,

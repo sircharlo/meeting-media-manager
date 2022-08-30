@@ -50,7 +50,8 @@
         <v-list-item-content>
           <v-img
             v-if="hover && getPreview(item)"
-            :src="getPreview(item)"
+            :src="preview"
+            alt="Loading..."
             class="tooltip-img"
             max-width="200px"
             contain
@@ -183,6 +184,9 @@ export default Vue.extend({
   data() {
     return {
       edit: null as any,
+      preview: '',
+      previewName: '',
+      loading: false,
       mediaList: [] as (MeetingFile | LocalFile)[],
     }
   },
@@ -333,21 +337,38 @@ export default Vue.extend({
       newItem.newName = trimExt(item.safeName as string)
       this.edit = newItem
     },
-    getPreview(item: MeetingFile | LocalFile): string | undefined {
-      if (item.trackImage) return item.trackImage
-      if (item.thumbnail) return item.thumbnail
-      if (item.contents) {
-        return (
+    getPreview(item: MeetingFile | LocalFile): string {
+      if (this.previewName === item.safeName) {
+        return this.preview
+      }
+      this.loading = true
+      this.preview = ''
+      if (item.trackImage) this.preview = item.trackImage
+      else if (item.thumbnail) this.preview = item.thumbnail
+      else if (item.contents) {
+        this.preview =
           `data:image/${extname(item.safeName as string)};base64,` +
           item.contents.toString('base64')
-        )
-      } else if (!item.congSpecific) {
-        const path = (item.filepath ?? item.url) as string
-        if (this.$isImage(path)) {
-          return pathToFileURL(path).href
+      } else if (item.filepath && this.$isImage(item.filepath)) {
+        this.preview = pathToFileURL(item.filepath).href
+      } else if (this.$isImage(item.url as string)) {
+        if (item.congSpecific) {
+          this.client.getFileContents(item.url as string).then((contents) => {
+            this.preview =
+              `data:;base64,` +
+              Buffer.from(new Uint8Array(contents as ArrayBuffer)).toString(
+                'base64'
+              )
+          })
+        } else {
+          this.preview = pathToFileURL(item.url as string).href
         }
+      } else {
+        this.preview = ''
       }
-      return undefined
+      this.loading = false
+      this.previewName = item.safeName as string
+      return this.preview
     },
     async toggleVisibility(item: MeetingFile | LocalFile) {
       const mediaMap = (
