@@ -38,9 +38,9 @@ Configure the computer sound card's output to go to one of the sound booth mixer
 
 Install OBS Studio, or download the portable version.
 
-Install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+If using the portable version of OBS Studio, install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, add the virtual camera to Windows by double-clicking the provided installation script.
 
-Install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Configure a port number and password for obs-websocket.
+Install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. For the moment, <code>v5</code> is not supported in M³, so make sure that you install the latest version of <code>v4</code> (currently <code>4.9.1-compat</code>) to avoid any issues. Configure a port number and password for obs-websocket.
 
 In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 

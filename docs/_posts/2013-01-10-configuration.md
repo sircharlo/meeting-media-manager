@@ -55,17 +55,17 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
     <tr>
       <td><code>Enable <em>OBS Studio</em> compatibility mode</code></td>
       <td>If enabled, this option will tap into OBS Studio to change scenes automatically as needed both before and after sharing media.<br><br>
-        <blockquote>If enabling this setting, make sure that OBS Studio is configured to use the <code>obs-websockets</code> plugin, which is what will enable M³ to communicate with OBS Studio.<br><br>Also, configure all needed scenes for media sharing and stage display in OBS. At the very least, you'll need a scene with a <code>Window Capture</code> (recommended) or <code>Display Capture</code> configured to capture the M³ media presentation window, or the screen on which the media will be presented.<br><br>You'll also need to configure all desired stage view scenes, for example: <li>a shot of the lectern</li><li>a wide shot of the stage</li><li>the lectern and reader mics together</li><li>a shot of the table</li></blockquote>
+        <blockquote>If enabling this setting, make sure that OBS Studio is configured to use the <code>obs-websocket</code> plugin, which is what will enable M³ to communicate with OBS Studio. For the moment, <code>v5</code> is not supported in M³, so make sure that you install the latest version of <code>obs-websocket v4</code> (currently <code>4.9.1-compat</code>) to avoid any issues.<br><br>Also, configure all needed scenes for media sharing and stage display in OBS. At the very least, you'll need a scene with a <code>Window Capture</code> (recommended) or <code>Display Capture</code> configured to capture the M³ media presentation window, or the screen on which the media will be presented.<br><br>You'll also need to configure all desired stage view scenes, for example: <li>a shot of the lectern</li><li>a wide shot of the stage</li><li>the lectern and reader mics together</li><li>a shot of the table</li></blockquote>
       </td>
     </tr>
     <tr>
       <td><code>Port</code></td>
-      <td>Port on which the <code>obs-websockets</code> plugin is configured to listen.
+      <td>Port on which the <code>obs-websocket</code> plugin is configured to listen.
       </td>
     </tr>
     <tr>
       <td><code>Password</code></td>
-      <td>Password configured in the <code>obs-websockets</code> plugin's settings.
+      <td>Password configured in the <code>obs-websocket</code> plugin's settings.
       </td>
     </tr>
     <tr>
