@@ -17,6 +17,7 @@
           v-if="$getPrefs('meeting.enableMusicButton')"
           variant="shuffle"
           click-twice
+          :disabled="mediaActive"
         />
       </v-col>
       <v-col v-if="scene && scenes.length > 1" class="d-flex justify-center">
