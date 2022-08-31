@@ -145,8 +145,8 @@ export default Vue.extend({
     variant: {
       type: String,
       required: true,
-      validator: (val: string) =>
-        [
+      validator: (val: string) => {
+        return [
           'home',
           'settings',
           'play',
@@ -156,7 +156,8 @@ export default Vue.extend({
           'toggleScreen',
           'present',
           'shuffle',
-        ].includes(val),
+        ].includes(val)
+      },
     },
     clickTwice: {
       type: Boolean,
@@ -165,8 +166,9 @@ export default Vue.extend({
     tooltip: {
       type: String,
       default: 'right',
-      validator: (val: string) =>
-        ['right', 'left', 'top', 'bottom'].includes(val),
+      validator: (val: string) => {
+        return ['right', 'left', 'top', 'bottom'].includes(val)
+      },
     },
     iconColor: {
       type: String,

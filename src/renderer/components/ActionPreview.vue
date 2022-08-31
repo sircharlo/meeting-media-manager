@@ -11,7 +11,7 @@
   </v-overlay>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropOptions } from 'vue'
 import { faPause, faPersonRunning } from '@fortawesome/free-solid-svg-icons'
 export default Vue.extend({
   props: {
@@ -22,8 +22,10 @@ export default Vue.extend({
     icon: {
       type: String,
       required: true,
-      validator: (val: string) => ['faPersonRunning', 'faPause'].includes(val),
-    },
+      validator: (val: string) => {
+        return ['faPersonRunning', 'faPause'].includes(val)
+      },
+    } as PropOptions<'faPersonRunning' | 'faPause'>,
   },
   data() {
     return {

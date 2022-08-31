@@ -249,38 +249,45 @@ import {
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
 import Vue, { PropOptions } from 'vue'
+enum FieldType {
+  text = 'text',
+  password = 'password',
+  number = 'number',
+  autocomplete = 'autocomplete',
+  select = 'select',
+  textarea = 'textarea',
+  checkbox = 'checkbox',
+  switch = 'switch',
+  date = 'date',
+  time = 'time',
+  'btn-group' = 'btn-group',
+  slider = 'slider',
+}
 export default Vue.extend({
   props: {
     field: {
       type: String,
       default: 'text',
-      validator(value: string) {
-        return [
-          'text',
-          'password',
-          'number',
-          'autocomplete',
-          'select',
-          'textarea',
-          'checkbox',
-          'switch',
-          'date',
-          'time',
-          'btn-group',
-          'slider',
-        ].includes(value)
+      validator: (val: string) => {
+        return Object.keys(FieldType).includes(val)
       },
-    },
+    } as PropOptions<FieldType>,
     variant: {
       type: String,
       default: 'default',
-      validator(value: string) {
-        return ['default', 'round', 'basic'].includes(value)
+      validator: (val: string) => {
+        return ['default', 'round', 'basic'].includes(val)
       },
-    },
+    } as PropOptions<'default' | 'round' | 'basic'>,
     max: {
       type: [Number, Boolean],
       default: false,
+      validator: (val: number | boolean) => {
+        if (typeof val === 'number') {
+          return val > 0
+        }
+        return typeof val === 'boolean'
+      },
     },
     groupLabel: {
       type: String,
