@@ -1,6 +1,6 @@
-/* eslint-disable import/named */
+// eslint-disable-next-line import/named
 import { readFileSync, removeSync } from 'fs-extra'
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import Store, { Schema } from 'electron-store'
 import { basename, dirname, join, normalize } from 'upath'
@@ -375,10 +375,7 @@ function migrate2290(key: string, newVal: any) {
   }
 }
 
-export default function (
-  _context: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+const plugin: Plugin = (_ctx, inject) => {
   inject('prefsInitialized', () => !!store)
   inject('getCongPrefs', async () => {
     return sync(join(await ipcRenderer.invoke('userData'), 'prefs-*.json'))
@@ -431,3 +428,5 @@ export default function (
   })
   inject('migrate2290', migrate2290)
 }
+
+export default plugin

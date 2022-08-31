@@ -1,9 +1,6 @@
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { NotifyAction } from './../types/store/storeNotify.d'
-export default function (
-  { store, $log }: Context,
-  inject: (arg0: string, arg1: any) => void
-) {
+const plugin: Plugin = ({ store, $log }, inject) => {
   inject(
     'notify',
     (
@@ -108,3 +105,5 @@ export default function (
     })
   })
 }
+
+export default plugin

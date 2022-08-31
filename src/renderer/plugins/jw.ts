@@ -1,23 +1,14 @@
-/* eslint-disable import/named */
 import { join } from 'upath'
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
+// eslint-disable-next-line import/named
 import { existsSync, readFileSync } from 'fs-extra'
 import { JWLang, ShortJWLang } from '~/types'
 
-export default function (
-  {
-    $appPath,
-    $write,
-    $getPrefs,
-    $ytPath,
-    $log,
-    $setPrefs,
-    $dayjs,
-    store,
-  }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+const plugin: Plugin = (
+  { $appPath, $write, $getPrefs, $ytPath, $log, $setPrefs, $dayjs, store },
+  inject
+) => {
   inject('getJWLangs', async (forceReload: boolean = false) => {
     const langPath = join($appPath(), 'langs.json')
     const lastUpdate = $getPrefs('media.langUpdatedLast') as string
@@ -107,3 +98,5 @@ export default function (
     }
   })
 }
+
+export default plugin

@@ -1,6 +1,6 @@
+/* eslint-disable import/named */
 import { platform } from 'os'
 import { ipcRenderer } from 'electron'
-/* eslint-disable import/named */
 import {
   existsSync,
   readdirSync,
@@ -12,16 +12,16 @@ import {
   writeFileSync,
 } from 'fs-extra'
 import { join, extname, basename, dirname, joinSafe } from 'upath'
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { sync, Options } from 'fast-glob'
 import Zipper from 'adm-zip'
 import { FileStat, WebDAVClient } from 'webdav'
 import { MeetingFile } from '~/types'
 
-export default function (
-  { $getPrefs, $log, store, $appPath, $dayjs, i18n }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+const plugin: Plugin = (
+  { $getPrefs, $log, store, $appPath, $dayjs, i18n },
+  inject
+) => {
   // Paths
   inject('pubPath', (file?: MeetingFile) => {
     const pubPath = join($appPath(), 'Publications', $getPrefs('media.lang'))
@@ -349,3 +349,5 @@ export default function (
     return contents
   })
 }
+
+export default plugin

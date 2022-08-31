@@ -47,7 +47,7 @@ export default Vue.extend({
       return this.$storePath()
     },
     path() {
-      return this.$route.path
+      return this.$route
     },
   },
   watch: {
@@ -58,9 +58,6 @@ export default Vue.extend({
         }
       },
       immediate: true,
-    },
-    path(val) {
-      ipcRenderer.send('allowQuit', val.split('/').pop() !== 'present') // Don't allow to quit when presenting
     },
     isDark(val) {
       if (this.$getPrefs('app.theme') === 'system') {

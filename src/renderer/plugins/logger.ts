@@ -1,12 +1,8 @@
-/* eslint-disable import/named */
 import { type, release } from 'os'
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { MeetingFile, Perf, Stats } from '~/types'
 
-export default function (
-  { $getAllPrefs, $config, store }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+const plugin: Plugin = ({ $getAllPrefs, $config, store }, inject) => {
   interface Log {
     [key: number]: any[]
   }
@@ -148,3 +144,5 @@ ${JSON.stringify(logs.error, null, 2)}
     }
   })
 }
+
+export default plugin

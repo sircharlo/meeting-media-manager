@@ -74,7 +74,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { faCog, faGlobe } from '@fortawesome/free-solid-svg-icons'
-import { CongPrefs, ElectronStore } from '~/types'
+import { WebDAVClient } from 'webdav'
+import { CongFile, CongPrefs, ElectronStore } from '~/types'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
   data() {
@@ -121,11 +122,11 @@ export default Vue.extend({
     faCog() {
       return faCog
     },
-    client() {
-      return this.$store.state.cong.client
+    client(): WebDAVClient {
+      return this.$store.state.cong.client as WebDAVClient
     },
-    contents() {
-      return this.$store.state.cong.contentsTree
+    contents(): CongFile[] {
+      return this.$store.state.cong.contentsTree as CongFile[]
     },
     complete(): boolean {
       return !!(

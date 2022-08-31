@@ -1,13 +1,13 @@
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import OBSWebSocket from 'obs-websocket-js'
 import { ObsPrefs } from './../types/prefs'
 
 let obs = null as OBSWebSocket | null
 
-export default function (
-  { $getPrefs, $log, $error, $setShortcut, $unsetShortcuts, store }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+const plugin: Plugin = (
+  { $getPrefs, $log, $error, $setShortcut, $unsetShortcuts, store },
+  inject
+) => {
   async function connect() {
     const { enable, port, password, cameraScene } = $getPrefs(
       'app.obs'
@@ -97,3 +97,5 @@ export default function (
   }
   inject('setScene', setScene)
 }
+
+export default plugin

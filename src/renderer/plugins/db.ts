@@ -1,11 +1,7 @@
-import { Context } from '@nuxt/types'
-
+import { Plugin } from '@nuxt/types'
 import sqljs, { Database } from 'sql.js'
 
-export default function (
-  { store, $log }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+const plugin: Plugin = ({ store, $log }, inject) => {
   function executeQuery(db: Database, query: string) {
     const vals = db.exec(query)[0]
     const valObj: any[] = []
@@ -61,3 +57,5 @@ export default function (
 
   inject('query', executeQuery)
 }
+
+export default plugin

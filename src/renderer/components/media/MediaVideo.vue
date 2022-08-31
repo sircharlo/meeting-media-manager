@@ -88,7 +88,7 @@
 <script lang="ts">
 import { pathToFileURL } from 'url'
 import { basename } from 'upath'
-import Vue from 'vue'
+import Vue, { PropOptions } from 'vue'
 import { ipcRenderer } from 'electron'
 import {
   faBackwardStep,
@@ -111,7 +111,7 @@ export default Vue.extend({
     tempClipped: {
       type: Object,
       default: null,
-    },
+    } as PropOptions<{ start: string; end: string }>,
   },
   data() {
     return {
@@ -218,7 +218,7 @@ export default Vue.extend({
     },
   },
   watch: {
-    tempClipped(val) {
+    tempClipped(val: { start: string; end: string }) {
       if (val) {
         this.clipped = this.tempClipped
         this.setTime()

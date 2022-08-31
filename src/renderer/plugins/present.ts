@@ -1,10 +1,9 @@
-/* eslint-disable import/named */
 import { pathToFileURL } from 'url'
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import { join } from 'upath'
 
-export default function (
+const plugin: Plugin = (
   {
     $notify,
     $log,
@@ -15,9 +14,9 @@ export default function (
     $getAllPrefs,
     i18n,
     store,
-  }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+  },
+  inject
+) => {
   async function setShortcut(
     shortcut: string,
     fn: string,
@@ -180,3 +179,5 @@ export default function (
   }
   inject('getMediaWindowDestination', getMediaWindowDestination)
 }
+
+export default plugin

@@ -1,8 +1,8 @@
-import { type } from 'os'
 /* eslint-disable import/named */
+import { type } from 'os'
 import { pathToFileURL } from 'url'
 import { Dayjs } from 'dayjs'
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { XMLBuilder } from 'fast-xml-parser'
 import {
   accessSync,
@@ -20,7 +20,7 @@ import ffmpeg, { setFfmpegPath } from 'fluent-ffmpeg'
 import sizeOf from 'image-size'
 import { FULL_HD } from '~/constants/general'
 
-export default function (
+const plugin: Plugin = (
   {
     $warn,
     $rm,
@@ -32,9 +32,9 @@ export default function (
     store,
     $write,
     $dayjs,
-  }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+  },
+  inject
+) => {
   function convertSvg(mediaFile: string) {
     const div = document.createElement('div')
     const image = document.createElement('img')
@@ -436,3 +436,5 @@ export default function (
     }
   )
 }
+
+export default plugin

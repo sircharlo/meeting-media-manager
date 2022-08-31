@@ -200,7 +200,7 @@ declare module 'vuex/types/index' {
 
 declare module '@nuxt/types' {
   interface Context extends CustomProps {}
-  interface Configuration extends CustomProps {}
+  interface NuxtAppOptions extends CustomProps {}
 }
 
 declare module '*.vue' {

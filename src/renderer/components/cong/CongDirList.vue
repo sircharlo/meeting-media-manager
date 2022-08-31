@@ -29,13 +29,14 @@ import {
   faArrowRight,
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
-import Vue from 'vue'
+import Vue, { PropOptions } from 'vue'
+import { CongFile } from '~/types'
 export default Vue.extend({
   props: {
     contents: {
       type: Array,
       required: true,
-    },
+    } as PropOptions<CongFile[]>,
   },
   data() {
     return {

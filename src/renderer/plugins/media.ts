@@ -1,7 +1,7 @@
-import { pathToFileURL } from 'url'
 /* eslint-disable import/named */
+import { pathToFileURL } from 'url'
 import { Dayjs } from 'dayjs'
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { emptyDirSync, existsSync, readFileSync, statSync } from 'fs-extra'
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { basename, changeExt, extname, join, resolve } from 'upath'
@@ -18,7 +18,7 @@ import {
   MultiMediaExtractRef,
 } from '~/types'
 
-export default function (
+const plugin: Plugin = (
   {
     $pubPath,
     $pubMedia,
@@ -46,9 +46,9 @@ export default function (
     $dayjs,
     $sanitize,
     store,
-  }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+  },
+  inject
+) => {
   async function getDocumentExtract(
     db: Database,
     docId: number,
@@ -1207,3 +1207,5 @@ export default function (
     document.body.appendChild(audio)
   }
 }
+
+export default plugin

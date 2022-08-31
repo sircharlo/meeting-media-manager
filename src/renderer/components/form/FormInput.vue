@@ -248,7 +248,7 @@ import {
   faEyeSlash,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
-import Vue from 'vue'
+import Vue, { PropOptions } from 'vue'
 export default Vue.extend({
   props: {
     field: {
@@ -289,7 +289,7 @@ export default Vue.extend({
     groupItems: {
       type: Array,
       default: () => [],
-    },
+    } as PropOptions<{ label: string; value: string }[]>,
     height: {
       type: String,
       default: '48px',

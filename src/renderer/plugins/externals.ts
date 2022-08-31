@@ -1,4 +1,3 @@
-/* eslint-disable vue/component-definition-name-casing */
 import Vue from 'vue'
 // @ts-ignore
 import VueMask from 'v-mask'
@@ -13,8 +12,8 @@ import { faChevronDown, faCaretDown } from '@fortawesome/free-solid-svg-icons'
 config.autoAddCss = false
 library.add(faChevronDown, faCaretDown)
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
-Vue.component('font-awesome-layers', FontAwesomeLayers)
+Vue.component('FontAwesomeIcon', FontAwesomeIcon)
+Vue.component('FontAwesomeLayers', FontAwesomeLayers)
 
 // v-mask
 Vue.use(VueMask)

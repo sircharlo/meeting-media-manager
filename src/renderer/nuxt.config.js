@@ -36,7 +36,7 @@ module.exports = {
     },
   },
   router: {
-    middleware: 'reminders',
+    middleware: ['reminders', 'allowQuit'],
   },
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css',

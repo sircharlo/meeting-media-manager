@@ -114,7 +114,7 @@
 // eslint-disable-next-line import/named
 import { pathToFileURL } from 'url'
 import { extname, join, trimExt } from 'upath'
-import Vue from 'vue'
+import Vue, { PropOptions } from 'vue'
 import { WebDAVClient, FileStat } from 'webdav'
 import {
   faImage,
@@ -135,7 +135,7 @@ import {
   faCloud,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
-import { LocalFile, MeetingFile } from '~/types'
+import { LocalFile, MeetingFile, VideoFile } from '~/types'
 export default Vue.extend({
   filters: {
     ext(filename: string) {
@@ -163,15 +163,15 @@ export default Vue.extend({
     media: {
       type: Array,
       required: true,
-    },
+    } as PropOptions<(LocalFile | VideoFile)[]>,
     newFile: {
       type: Object,
       default: null,
-    },
+    } as PropOptions<VideoFile>,
     newFiles: {
       type: Array,
       default: () => [],
-    },
+    } as PropOptions<(LocalFile | VideoFile)[]>,
     prefix: {
       type: String,
       default: '',
@@ -255,12 +255,8 @@ export default Vue.extend({
     setMediaList() {
       // If new files are being uploaded, add them to the list
       if (this.newFile || this.newFiles.length > 0) {
-        this.mediaList = (
-          [this.newFile, ...this.newFiles, ...this.media] as (
-            | MeetingFile
-            | LocalFile
-          )[]
-        )
+        this.mediaList = [this.newFile, ...this.newFiles, ...this.media]
+
           .filter(Boolean)
           .map((m) => {
             m.color = 'warning'
@@ -281,7 +277,7 @@ export default Vue.extend({
           })
       } else {
         this.mediaList = [
-          ...(this.media as (MeetingFile | LocalFile)[]).map((m) => {
+          ...this.media.map((m) => {
             m.color = 'warning'
             return m
           }),

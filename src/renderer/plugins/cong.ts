@@ -1,8 +1,8 @@
 import { WebDAVClient, createClient, FileStat } from 'webdav'
-/* eslint-disable import/named */
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import { basename, dirname, extname, join } from 'upath'
 import { Dayjs } from 'dayjs'
+// eslint-disable-next-line import/named
 import { statSync } from 'fs-extra'
 import {
   ObsPrefs,
@@ -13,7 +13,7 @@ import {
 } from './../types/prefs'
 import { CongFile, MeetingFile } from '~/types'
 
-export default function (
+const plugin: Plugin = (
   {
     store,
     $log,
@@ -31,9 +31,9 @@ export default function (
     $rename,
     $setAllPrefs,
     $error,
-  }: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+  },
+  inject
+) => {
   async function connect(
     host: string,
     username: string,
@@ -538,3 +538,5 @@ export default function (
     })
   })
 }
+
+export default plugin

@@ -1,11 +1,10 @@
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 import cloneDeep from 'lodash.clonedeep'
 
-export default function (
-  _: Context,
-  inject: (argument0: string, argument1: unknown) => void
-) {
+const plugin: Plugin = (_ctx, inject) => {
   inject('clone', (value: any) => {
     return cloneDeep(value)
   })
 }
+
+export default plugin

@@ -1,11 +1,8 @@
-import { Context } from '@nuxt/types'
+import { Plugin } from '@nuxt/types'
 // eslint-disable-next-line import/named
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 
-export default function (
-  { $axios, $config }: Context,
-  inject: (arg0: string, arg1: any) => void
-) {
+const plugin: Plugin = ({ $axios, $config }, inject) => {
   // Get media links from publication
   const pubMedia = $axios.create({
     baseURL: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
@@ -32,3 +29,5 @@ export default function (
 
   inject('ghApi', ghApi)
 }
+
+export default plugin
