@@ -56,20 +56,20 @@ const plugin: Plugin = (
       fn: string
     }[]
     const keepers = [] as { name: string; domain: string; fn: string }[]
-    try {
-      for (let i = shortcuts.length - 1; i >= 0; i--) {
-        const { name, domain } = shortcuts[i]
-        if (filter === 'all' || domain === filter) {
+
+    for (let i = shortcuts.length - 1; i >= 0; i--) {
+      const { name, domain } = shortcuts[i]
+      if (filter === 'all' || domain === filter) {
+        try {
           ipcRenderer.send('unregisterShortcut', name)
-        } else {
-          keepers.push({ ...shortcuts[i] })
+        } catch (e: any) {
+          $log.error(e)
         }
+      } else {
+        keepers.push({ ...shortcuts[i] })
       }
-    } catch (e: any) {
-      $log.error(e)
-    } finally {
-      store.commit('present/setShortcuts', keepers)
     }
+    store.commit('present/setShortcuts', keepers)
   }
   inject('unsetShortcuts', unsetShortcuts)
 
