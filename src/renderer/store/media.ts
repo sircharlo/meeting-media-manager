@@ -1,4 +1,4 @@
-import { ActionContext } from 'vuex'
+import { MutationTree, ActionTree, GetterTree } from 'vuex'
 import dayjs, { Dayjs } from 'dayjs'
 import { MediaStore, MeetingFile } from '~/types'
 
@@ -11,18 +11,18 @@ const defaultState: MediaStore = {
 
 export const state = () => Object.assign({}, defaultState)
 
-export const mutations = {
-  setSongPub(state: MediaStore, pub: string) {
+export const mutations: MutationTree<MediaStore> = {
+  setSongPub(state, pub: string) {
     state.songPub = pub
   },
-  setFFmpeg(state: MediaStore, ffMpeg: boolean) {
+  setFFmpeg(state, ffMpeg: boolean) {
     state.ffMpeg = ffMpeg
   },
-  setMusicFadeOut(state: MediaStore, musicFadeOut: Dayjs | string) {
+  setMusicFadeOut(state, musicFadeOut: Dayjs | string) {
     state.musicFadeOut = musicFadeOut
   },
   setHidden(
-    state: MediaStore,
+    state,
     {
       date,
       par,
@@ -42,7 +42,7 @@ export const mutations = {
     }
   },
   set(
-    state: MediaStore,
+    state,
     {
       date,
       par,
@@ -66,7 +66,7 @@ export const mutations = {
     state.meetings = new Map(state.meetings.set(date, parMap))
   },
   setMultiple(
-    state: MediaStore,
+    state,
     {
       date,
       par,
@@ -96,31 +96,28 @@ export const mutations = {
     state.meetings = new Map(state.meetings.set(date, parMap))
   },
   addDate(
-    state: MediaStore,
+    state,
     { date, map }: { date: string; map: Map<number, MeetingFile[]> }
   ) {
     state.meetings.set(date, map)
   },
-  deleteDate(state: MediaStore, date: string) {
+  deleteDate(state, date: string) {
     state.meetings.delete(date)
   },
-  clear(state: MediaStore) {
+  clear(state) {
     state.meetings = new Map()
   },
 }
 
-export const actions = {
-  get(
-    { state }: ActionContext<MediaStore, MediaStore>,
-    { date, par }: { date: string; par: number }
-  ) {
+export const actions: ActionTree<MediaStore, MediaStore> = {
+  get({ state }, { date, par }: { date: string; par: number }) {
     const dateMap = state.meetings.get(date)
     const media = dateMap?.get(par)
     if (media) return media
     return []
   },
   updateDateFormat(
-    { state, commit }: ActionContext<MediaStore, MediaStore>,
+    { state, commit },
     {
       locale,
       oldFormat,
@@ -144,7 +141,7 @@ export const actions = {
   },
 }
 
-export const getters = {
-  songPub: (state: MediaStore) => state.songPub,
-  meetings: (state: MediaStore) => state.meetings,
+export const getters: GetterTree<MediaStore, MediaStore> = {
+  songPub: (state) => state.songPub,
+  meetings: (state) => state.meetings,
 }

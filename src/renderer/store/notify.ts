@@ -1,3 +1,4 @@
+import { MutationTree } from 'vuex'
 import { Notify } from '~/types'
 
 const defaultState: Notify = {
@@ -10,14 +11,14 @@ const defaultState: Notify = {
   timestamp: 0,
 }
 
-export const state = () => []
+export const state = () => [] as Notify[]
 
-export const mutations = {
-  show(state: Notify[], payload: Notify) {
+export const mutations: MutationTree<Notify[]> = {
+  show(state, payload: Notify) {
     const msg = { ...defaultState, ...payload, timestamp: Date.now() }
     state.push(msg)
   },
-  delete(state: Notify[], index: number) {
+  delete(state, index: number) {
     state.splice(index, 1)
   },
 }

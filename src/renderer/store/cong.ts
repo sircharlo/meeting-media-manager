@@ -1,3 +1,4 @@
+import { MutationTree } from 'vuex'
 import { FileStat, WebDAVClient } from 'webdav'
 import { CongFile } from './../types/store/storeCong.d'
 import { CongStore, ElectronStore } from '~/types'
@@ -11,20 +12,20 @@ const defaultState: CongStore = {
 
 export const state = () => Object.assign({}, defaultState)
 
-export const mutations = {
-  setClient(state: CongStore, client: WebDAVClient) {
+export const mutations: MutationTree<CongStore> = {
+  setClient(state, client: WebDAVClient) {
     state.client = client
   },
-  setPrefs(state: CongStore, prefs: ElectronStore) {
+  setPrefs(state, prefs: ElectronStore) {
     state.prefs = prefs
   },
-  setContents(state: CongStore, contents: FileStat[]) {
+  setContents(state, contents: FileStat[]) {
     state.contents = contents
   },
-  setContentsTree(state: CongStore, contentsTree: CongFile[]) {
+  setContentsTree(state, contentsTree: CongFile[]) {
     state.contentsTree = contentsTree
   },
-  clear(state: CongStore) {
+  clear(state) {
     Object.assign(state, defaultState)
   },
 }

@@ -1,3 +1,4 @@
+import { MutationTree } from 'vuex'
 import { MeetingFile, StatStore, Perf, Stats, Origin } from '~/types'
 
 const defaultState: StatStore = {
@@ -19,29 +20,26 @@ const defaultState: StatStore = {
 
 export const state = () => Object.assign({}, defaultState)
 
-export const mutations = {
-  setOnline(state: StatStore, online: boolean) {
+export const mutations: MutationTree<StatStore> = {
+  setOnline(state, online: boolean) {
     state.online = online
   },
-  setInitialLoad(state: StatStore, initialLoad: boolean) {
+  setInitialLoad(state, initialLoad: boolean) {
     state.initialLoad = initialLoad
   },
-  setUpdateSuccess(state: StatStore, success: boolean) {
+  setUpdateSuccess(state, success: boolean) {
     state.updateSuccess = success
   },
-  startPerf(
-    state: StatStore,
-    { func, start }: { func: string; start: number }
-  ) {
+  startPerf(state, { func, start }: { func: string; start: number }) {
     state.performance.set(func, { start, stop: 0 })
   },
-  stopPerf(state: StatStore, { func, stop }: { func: string; stop: number }) {
+  stopPerf(state, { func, stop }: { func: string; stop: number }) {
     const perf = state.performance.get(func) as Perf
     perf.stop = stop
     state.performance.set(func, perf)
   },
   setDownloads(
-    state: StatStore,
+    state,
     {
       origin,
       source,

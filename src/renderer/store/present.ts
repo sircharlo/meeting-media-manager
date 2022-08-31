@@ -1,3 +1,5 @@
+import { MutationTree, GetterTree } from 'vuex'
+
 interface PresentStore {
   mediaScreenInit: boolean
   mediaScreenVisible: boolean
@@ -16,46 +18,37 @@ const defaultState: PresentStore = {
 
 export const state = () => Object.assign({}, defaultState)
 
-export const mutations = {
-  setBackground(state: PresentStore, background: string) {
+export const mutations: MutationTree<PresentStore> = {
+  setBackground(state, background: string) {
     state.background = background
   },
-  setMediaScreenVisible(state: PresentStore, visible: boolean) {
+  setMediaScreenVisible(state, visible: boolean) {
     state.mediaScreenVisible = visible
   },
-  setMediaScreenInit(state: PresentStore, init: boolean) {
+  setMediaScreenInit(state, init: boolean) {
     state.mediaScreenInit = init
   },
-  addScreen(
-    state: PresentStore,
-    screen: { id: string; class: string; text: string }
-  ) {
+  addScreen(state, screen: { id: string; class: string; text: string }) {
     state.screens.push(screen)
   },
-  setScreens(
-    state: PresentStore,
-    screens: { id: string; class: string; text: string }[]
-  ) {
+  setScreens(state, screens: { id: string; class: string; text: string }[]) {
     state.screens = screens
   },
-  addShortcut(
-    state: PresentStore,
-    shortcut: { name: string; domain: string; fn: string }
-  ) {
+  addShortcut(state, shortcut: { name: string; domain: string; fn: string }) {
     const shortcuts = state.shortcuts ?? []
     state.shortcuts = [...shortcuts, shortcut]
   },
   setShortcuts(
-    state: PresentStore,
+    state,
     shortcuts: { name: string; domain: string; fn: string }[]
   ) {
     state.shortcuts = shortcuts
   },
-  clear(state: PresentStore) {
+  clear(state) {
     Object.assign(state, defaultState)
   },
 }
 
-export const getters = {
-  shortcuts: (state: PresentStore) => state.shortcuts,
+export const getters: GetterTree<PresentStore, PresentStore> = {
+  shortcuts: (state) => state.shortcuts,
 }

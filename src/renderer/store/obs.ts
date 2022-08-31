@@ -1,3 +1,4 @@
+import { MutationTree } from 'vuex'
 import { Scene } from 'obs-websocket-js'
 
 interface OBSStore {
@@ -14,17 +15,17 @@ const defaultState: OBSStore = {
 
 export const state = () => Object.assign({}, defaultState)
 
-export const mutations = {
-  setConnected(state: OBSStore, connected: boolean) {
+export const mutations: MutationTree<OBSStore> = {
+  setConnected(state, connected: boolean) {
     state.connected = connected
   },
-  setScenes(state: OBSStore, scenes: Scene[]) {
+  setScenes(state, scenes: Scene[]) {
     state.scenes = scenes
   },
-  setCurrentScene(state: OBSStore, scene: string) {
+  setCurrentScene(state, scene: string) {
     state.currentScene = scene
   },
-  clear(state: OBSStore) {
+  clear(state) {
     Object.assign(state, defaultState)
   },
 }
