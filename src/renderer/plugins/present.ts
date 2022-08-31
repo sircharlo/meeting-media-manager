@@ -53,18 +53,22 @@ const plugin: Plugin = (
     const shortcuts = store.state.present.shortcuts as {
       name: string
       domain: string
+      fn: string
     }[]
+    const keepers = [] as { name: string; domain: string; fn: string }[]
     try {
       for (let i = shortcuts.length - 1; i >= 0; i--) {
         const { name, domain } = shortcuts[i]
         if (filter === 'all' || domain === filter) {
           ipcRenderer.send('unregisterShortcut', name)
+        } else {
+          keepers.push({ ...shortcuts[i] })
         }
       }
     } catch (e: any) {
       $log.error(e)
     } finally {
-      store.commit('present/setShortcuts', [])
+      store.commit('present/setShortcuts', keepers)
     }
   }
   inject('unsetShortcuts', unsetShortcuts)
