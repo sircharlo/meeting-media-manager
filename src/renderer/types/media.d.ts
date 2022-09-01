@@ -1,60 +1,60 @@
 import { MultiMediaItem, SmallMediaFile } from './jw'
 
 export interface MeetingFileBase {
-  downloadRequired?: boolean
   cacheDir?: string
-  cacheFilename?: string
   cacheFile?: string
-  destFilename?: string
-  folder?: string
-  safeName?: string
-  uniqueId?: string
+  cacheFilename?: string
+  color?: string
   congSpecific?: boolean
+  destFilename?: string
+  downloadRequired?: boolean
+  filename?: undefined
+  folder?: string
   hidden?: boolean
   isLocal?: boolean
-  filename?: undefined
-  color?: string
   recurring?: boolean
+  safeName?: string
+  uniqueId?: string
 }
 
 export interface VideoFile extends SmallMediaFile, MeetingFileBase {
   BeginParagraphOrdinal?: number
-  queryInfo?: MultiMediaItem
-  filepath?: string
   contents?: Buffer
+  filepath?: string
+  queryInfo?: MultiMediaItem
 }
 
 export interface ImageFile extends MeetingFileBase {
   BeginParagraphOrdinal: number
-  queryInfo: MultiMediaItem
-  title: string
+  checksum?: undefined
+  contents?: undefined
   filepath?: string
   filesize?: number
-  url?: undefined
-  markers?: undefined
-  pub?: undefined
-  checksum?: undefined
-  primaryCategory?: undefined
   issue?: undefined
-  track?: undefined
-  contents?: undefined
+  markers?: undefined
+  primaryCategory?: undefined
+  pub?: undefined
+  queryInfo: MultiMediaItem
   thumbnail?: undefined
+  title: string
+  track?: undefined
   trackImage?: undefined
+  url?: undefined
 }
 
 export interface LocalFile {
-  safeName: string
-  filename?: string
-  isLocal?: boolean
-  filepath?: string
-  contents?: Buffer
-  url?: string
-  folder?: string
   color?: string
   congSpecific?: boolean
+  contents?: Buffer
+  filename?: string
+  filepath?: string
+  folder?: string
+  isLocal?: boolean
+  recurring?: boolean
+  safeName: string
   thumbnail?: undefined
   trackImage?: undefined
-  recurring?: boolean
+  url?: string
 }
 
 export declare type MeetingFile = ImageFile | VideoFile

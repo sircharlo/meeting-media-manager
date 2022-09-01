@@ -17,17 +17,11 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
-    'vue/valid-attribute-name': ['error'],
-    'vue/valid-model-definition': ['error'],
-    'vue/component-name-in-template-casing': ['error', 'kebab-case'],
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'vue/no-unsupported-features': [
-      'error',
-      {
-        version: '2.7.0',
-      },
-    ],
+    'vue/component-name-in-template-casing': ['error', 'kebab-case'],
+    'vue/valid-attribute-name': ['error'],
+    'vue/valid-model-definition': ['error'],
     'vue/html-self-closing': [
       'error',
       {
@@ -36,6 +30,12 @@ module.exports = {
           normal: 'always',
           component: 'always',
         },
+      },
+    ],
+    'vue/no-unsupported-features': [
+      'error',
+      {
+        version: '2.7.0',
       },
     ],
   },

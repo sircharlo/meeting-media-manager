@@ -15,7 +15,7 @@ In order to help maintain this application, the following information will help 
 ### Developer Tools
 
 - [Git](https://git-scm.com/) >= v2.34.1
-- [Node.js](https://nodejs.org/en/) >= v16.17.0
+- [Node.js](https://nodejs.org/en/) >= v16.13.0
 - [Yarn](https://yarnpkg.com/) >= v3.2.3
 - [VS Code](https://code.visualstudio.com/) >= v1.70.2
   - VS Code extensions: see [extensions.json](/.vscode/extensions.json)

@@ -19,19 +19,18 @@
     "types": [
       "@nuxt/types",
       "@nuxtjs/axios",
+      "@nuxtjs/dayjs",
+      "@nuxtjs/i18n",
       "@nuxtjs/vuetify",
       "@types/node",
-      "@nuxtjs/i18n",
-      "@nuxtjs/dayjs",
       "axios",
-      "dayjs/plugin/isoWeek",
-      "dayjs/plugin/isBetween",
-      "dayjs/plugin/isSameOrBefore",
       "dayjs/plugin/customParseFormat",
       "dayjs/plugin/duration",
+      "dayjs/plugin/isBetween",
+      "dayjs/plugin/isSameOrBefore",
+      "dayjs/plugin/isoWeek",
       "dayjs/plugin/localeData",
-      "dayjs/plugin/updateLocale",
-      "@types/fs-extra"
+      "dayjs/plugin/updateLocale"
     ]
   }
 }

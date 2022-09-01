@@ -11,13 +11,12 @@ const { LOCAL_LANGS } = require('./constants/lang.ts')
  * @link {https://nuxtjs.org/guide/configuration/}
  */
 
-// eslint-disable-next-line nuxt/no-cjs-in-config
 module.exports = {
   ssr: false,
   target: 'static',
   head: {
-    titleTemplate: '%s - Meeting Media Manager',
     title: 'M³',
+    titleTemplate: '%s - Meeting Media Manager',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -43,40 +42,46 @@ module.exports = {
     '~/assets/scss/main.scss',
   ],
   plugins: [
+    // No dependencies
+    '~/plugins/axios',
+    '~/plugins/dayjs',
+    '~/plugins/externals',
     '~/plugins/helpers',
     '~/plugins/prefs',
+    // Depends on prefs
     '~/plugins/logger',
-    '~/plugins/notify',
-    '~/plugins/externals',
-    '~/plugins/axios',
+    // Depends on logger
     '~/plugins/db',
-    '~/plugins/dayjs',
     '~/plugins/fs',
-    '~/plugins/jw',
-    '~/plugins/media',
-    '~/plugins/converters',
-    '~/plugins/present',
+    '~/plugins/notify',
+    // Depends on db/fs/notify/
     '~/plugins/cong',
+    '~/plugins/converters',
+    '~/plugins/jw',
+    // Depends on jw
+    '~/plugins/media',
+    '~/plugins/present',
+    // Depends on present
     '~/plugins/obs',
   ],
 
   buildModules: ['@nuxt/typescript-build'],
   modules: [
-    '@nuxtjs/vuetify',
     '@nuxtjs/axios',
-    '@nuxtjs/i18n',
     '@nuxtjs/dayjs',
+    '@nuxtjs/i18n',
+    '@nuxtjs/vuetify',
   ],
 
   dayjs: {
     locales: LOCAL_LANGS,
     defaultLocale: 'en',
     plugins: [
-      'isoWeek',
-      'isBetween',
-      'isSameOrBefore',
       'customParseFormat',
       'duration',
+      'isBetween',
+      'isSameOrBefore',
+      'isoWeek',
       'localeData',
       'updateLocale',
     ],
@@ -161,8 +166,8 @@ module.exports = {
       config.module = {
         ...config.module,
         noParse: [
-          /node_modules\/?\\?sql\.js\/?\\?dist\/?\\?sql-wasm/,
           /node_modules\/?\\?pdfjs-dist\/?\\?build\/?\\?pdf/,
+          /node_modules\/?\\?sql\.js\/?\\?dist\/?\\?sql-wasm/,
         ],
       }
     },
@@ -182,10 +187,10 @@ module.exports = {
     ],
   },
   publicRuntimeConfig: {
-    version: 'v' + pkg.version,
-    isDev: process.env.NODE_ENV !== 'production',
     author: pkg.author.name,
+    isDev: process.env.NODE_ENV !== 'production',
     name: pkg.name,
     repo: pkg.repository.url.replace('.git', ''),
+    version: 'v' + pkg.version,
   },
 }
