@@ -54,6 +54,7 @@
     "vue-server-renderer": "2.7.10",
     "vue-template-compiler": "2.7.10"
   },
+  "packageManager": "yarn@3.2.3",
   "devDependencies": {
     "@babel/core": "7.18.9",
     "@babel/runtime-corejs3": "7.18.9",
