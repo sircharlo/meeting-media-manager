@@ -1,9 +1,8 @@
 import { MutationTree } from 'vuex'
-import { Scene } from '~/types'
 
 interface OBSStore {
   connected: boolean
-  scenes: Scene[]
+  scenes: string[]
   currentScene: string
 }
 
@@ -19,7 +18,7 @@ export const mutations: MutationTree<OBSStore> = {
   setConnected(state, connected: boolean) {
     state.connected = connected
   },
-  setScenes(state, scenes: Scene[]) {
+  setScenes(state, scenes: string[]) {
     state.scenes = scenes
   },
   setCurrentScene(state, scene: string) {

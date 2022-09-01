@@ -19,15 +19,7 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav'
-import {
-  Scene,
-  SceneV4,
-  SceneV5,
-  ShortJWLang,
-  CongPrefs,
-  Release,
-  Asset,
-} from '~/types'
+import { ShortJWLang, CongPrefs, Release, Asset } from '~/types'
 export default Vue.extend({
   name: 'DefaultLayout',
   head() {
@@ -45,13 +37,7 @@ export default Vue.extend({
       return this.$route.query.cong
     },
     scenes(): string[] {
-      return (this.$store.state.obs.scenes as Scene[]).map((scene) => {
-        if (this.$getPrefs('app.obs.useV4')) {
-          return (scene as SceneV4).name
-        } else {
-          return (scene as SceneV5).sceneName
-        }
-      })
+      return this.$store.state.obs.scenes as string[]
     },
     client() {
       return this.$store.state.cong.client as WebDAVClient | null

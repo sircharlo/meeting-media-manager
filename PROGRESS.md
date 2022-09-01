@@ -61,7 +61,8 @@
 - MEDIA SYNC: Auto rename meeting folders when switching date format (also on cong server)
 - MEDIA SYNC: Auto rename recurring files in other folders
 - MEDIA SYNC: Prevent duplicate media from being added to media list by checking safeNames without prefix
-- OBS: Auto detect scene change when changed from OBS directly
+- OBS: Auto detect change in scene list (add, remove, rename scenes)
+- OBS: Auto detect current scene change when changed from OBS directly
 - OBS: Support for obs-websocket v5 (default is v4 for backwards compatibility, but can be changed in the settings)
 - SETTINGS: Port field for cong sync is no longer necessary
 - SETTINGS: Set your theme preference (light, dark, system) inside the app

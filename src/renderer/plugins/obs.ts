@@ -34,6 +34,14 @@ const plugin: Plugin = (
             }
           })
 
+          obs.on('ScenesChanged', async () => {
+            await getScenes()
+          })
+
+          obs.on('SceneCollectionChanged', async () => {
+            await getScenes()
+          })
+
           obs.on('ConnectionOpened', () => {
             $log.info('OBS Success! Connected & authenticated.')
           })
@@ -63,6 +71,10 @@ const plugin: Plugin = (
             }
           })
 
+          obs.on('SceneListChanged', async () => {
+            await getScenes()
+          })
+
           obs.on('ConnectionOpened', () => {
             $log.info('OBS Success! Connected & authenticated.')
           })
@@ -70,10 +82,11 @@ const plugin: Plugin = (
           try {
             await obs.connect(`ws://127.0.0.1:${port}`, password as string)
           } catch (e: any) {
-            $error('errorObs', e.error)
+            $error('errorObs', e)
+            return
           }
         }
-        store.commit('obs/setConnected', true)
+        store.commit('obs/setConnected', !!obs)
         if (cameraScene) {
           setScene(cameraScene)
         }
@@ -93,48 +106,44 @@ const plugin: Plugin = (
   }
   inject('resetOBS', resetOBS)
 
-  inject('getScenes', async (current: boolean = false) => {
+  async function getScenes(current: boolean = false) {
     try {
+      let currentScene = ''
+      let scenes: string[] = []
       if ($getPrefs('app.obs.useV4')) {
         const obs = (await connect()) as OBSWebSocketV4
         if (!obs) return []
         const result = await obs.send('GetSceneList')
-        store.commit('obs/setScenes', result.scenes)
-        store.commit('obs/setCurrentScene', result['current-scene'])
-
-        // Set shortcuts for scenes
-        for (const [i] of result.scenes
-          .filter(({ name }) => name !== $getPrefs('app.obs.mediaScene'))
-          .entries()) {
-          await $setShortcut(`ALT+${i + 1}`, 'setObsScene', 'obs')
-        }
-
-        if (current) return result['current-scene']
-        return store.state.obs.scenes
+        scenes = result.scenes.map(({ name }) => name)
+        currentScene = result['current-scene']
       } else {
         const obs = (await connect()) as OBSWebSocket
         if (!obs) return []
         const result = await obs.call('GetSceneList')
-        store.commit('obs/setScenes', result.scenes)
-        store.commit('obs/setCurrentScene', result.currentProgramSceneName)
-
-        // Set shortcuts for scenes
-        for (const [i] of result.scenes
-          .filter(({ name }) => name !== $getPrefs('app.obs.mediaScene'))
-          .entries()) {
-          await $setShortcut(`ALT+${i + 1}`, 'setObsScene', 'obs')
-        }
-
-        if (current) return result.currentProgramSceneName
-        return store.state.obs.scenes
+        scenes = result.scenes.map(({ sceneName }) => sceneName as string)
+        currentScene = result.currentProgramSceneName
       }
+
+      store.commit('obs/setScenes', scenes)
+      store.commit('obs/setCurrentScene', currentScene)
+
+      // Set shortcuts for scenes
+      for (const [i] of scenes
+        .filter((scene) => scene !== $getPrefs('app.obs.mediaScene'))
+        .entries()) {
+        await $setShortcut(`ALT+${i + 1}`, 'setObsScene', 'obs')
+      }
+
+      if (current) return currentScene
+      return scenes
     } catch (e: any) {
       if (store.state.obs.connected) {
         $error('errorObs', e)
       }
       return []
     }
-  })
+  }
+  inject('getScenes', getScenes)
 
   async function setScene(scene: string) {
     try {

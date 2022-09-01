@@ -63,7 +63,6 @@
 import Vue from 'vue'
 import { ipcRenderer } from 'electron'
 import { faHome, IconDefinition } from '@fortawesome/free-solid-svg-icons'
-import { Scene, SceneV4, SceneV5 } from '~/types'
 export default Vue.extend({
   name: 'PresentPage',
   data() {
@@ -97,32 +96,17 @@ export default Vue.extend({
       },
     },
     scenes() {
-      return (this.$store.state.obs.scenes as Scene[])
-        .filter((scene) => {
-          if (this.$getPrefs('app.obs.useV4')) {
-            return (
-              (scene as SceneV4).name !== this.$getPrefs('app.obs.mediaScene')
-            )
-          } else {
-            return (
-              (scene as SceneV5).sceneName !==
-              this.$getPrefs('app.obs.mediaScene')
-            )
-          }
-        })
+      return (this.$store.state.obs.scenes as string[])
+        .filter((scene) => scene !== this.$getPrefs('app.obs.mediaScene'))
         .map((scene, i) => {
-          const v4 = this.$getPrefs('app.obs.useV4')
-          const sceneName = v4
-            ? (scene as SceneV4).name
-            : (scene as SceneV5).sceneName
           return {
-            shortText: sceneName
+            shortText: scene
               .split(' ')
               .map((w) => w[0])
               .join('')
               .toUpperCase(),
-            text: `ALT+${i + 1}: ${sceneName}`,
-            value: sceneName,
+            text: `ALT+${i + 1}: ${scene}`,
+            value: scene,
           }
         })
     },

@@ -167,7 +167,7 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { faGlobe } from '@fortawesome/free-solid-svg-icons'
-import { Scene, SceneV4, SceneV5, AppPrefs, ElectronStore } from '~/types'
+import { AppPrefs, ElectronStore } from '~/types'
 import { DateFormat } from '~/types/prefs'
 const dateFormats = [
   'DD-MM-YYYY',
@@ -212,13 +212,7 @@ export default Vue.extend({
       return this.scenes.filter((scene) => scene !== this.app.obs.cameraScene)
     },
     scenes(): string[] {
-      return (this.$store.state.obs.scenes as Scene[]).map((scene) => {
-        if (this.app.obs.useV4) {
-          return (scene as SceneV4).name
-        } else {
-          return (scene as SceneV5).sceneName
-        }
-      })
+      return this.$store.state.obs.scenes as string[]
     },
     forcedPrefs() {
       return this.$store.state.cong.prefs
