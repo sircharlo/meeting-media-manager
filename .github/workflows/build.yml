@@ -15,7 +15,6 @@ on:
 
 jobs:
   lint:
-    name: Run linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -33,11 +32,10 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Lint code
+      - name: Run linter
         run: yarn lint
 
   build:
-    name: Build/release
     runs-on: ${{ matrix.os }}
 
     strategy:
