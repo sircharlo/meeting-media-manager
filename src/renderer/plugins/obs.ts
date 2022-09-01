@@ -120,7 +120,9 @@ const plugin: Plugin = (
         const obs = (await connect()) as OBSWebSocket
         if (!obs) return []
         const result = await obs.call('GetSceneList')
-        scenes = result.scenes.map(({ sceneName }) => sceneName as string)
+        scenes = result.scenes
+          .sort((a, b) => (a.sceneIndex as number) - (b.sceneIndex as number))
+          .map(({ sceneName }) => sceneName as string)
         currentScene = result.currentProgramSceneName
       }
 
