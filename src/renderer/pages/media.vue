@@ -358,15 +358,14 @@ video,
 }
 
 #importedYearTextLogoContainer {
-  font-size: 16vh; // was 14
+  font-size: 16vh;
   position: absolute;
-  bottom: 12vh; // was 10
-  right: 14vh; // was 10
+  bottom: 12vh;
+  right: 14vh;
   color: black !important;
   line-height: normal !important;
+  box-sizing: unset;
   background: rgba(255, 255, 255, 0.2);
-
-  // new
   border: rgba(255, 255, 255, 0) 1.5vh solid;
   height: 12vh;
   width: 12vh;
