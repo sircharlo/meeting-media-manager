@@ -275,9 +275,9 @@ export default Vue.extend({
             const loadedFont = await logoFont.load()
             // @ts-ignore
             document.fonts.add(loadedFont)
+            this.ytLogo.setAttribute('style', '')
             this.ytLogo.style.fontFamily = '"JW-Icons"'
             this.ytLogo.innerHTML = "<div id='importedYearTextLogo'></div>"
-            this.ytLogo.setAttribute('style', '') // new
           }
         }
       } catch (e: any) {
