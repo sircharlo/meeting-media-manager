@@ -30,10 +30,10 @@
           <v-tooltip v-for="s in scenes" :key="s.name" top>
             <template #activator="{ on, attrs }">
               <v-btn :value="s.value" v-bind="attrs" v-on="on">
-                {{ s.shortText }}
+                {{ showShortText ? s.shortText : s.value }}
               </v-btn>
             </template>
-            <span>{{ s.text }}</span>
+            <span>{{ showShortText ? s.text : s.shortcut }}</span>
           </v-tooltip>
         </v-btn-toggle>
         <form-input
@@ -70,6 +70,7 @@ export default Vue.extend({
       mediaActive: false,
       videoActive: false,
       firstChoice: true,
+      windowWidth: 0,
     }
   },
   head() {
@@ -95,18 +96,32 @@ export default Vue.extend({
         }
       },
     },
+    showShortText(): boolean {
+      return (
+        10.1 * this.combinedScenesLength >
+        this.windowWidth - 320 - (25 * this.scenes.length + 1)
+      )
+    },
+    combinedScenesLength() {
+      let length = 0
+      for (const scene of this.scenes) {
+        length += scene.value.length
+      }
+      return length
+    },
     scenes() {
       return (this.$store.state.obs.scenes as string[])
         .filter((scene) => scene !== this.$getPrefs('app.obs.mediaScene'))
         .map((scene, i) => {
           return {
+            shortcut: `ALT+${i + 1}`,
+            text: `ALT+${i + 1}: ${scene}`,
+            value: scene,
             shortText: scene
               .split(' ')
               .map((w) => w[0])
               .join('')
               .toUpperCase(),
-            text: `ALT+${i + 1}: ${scene}`,
-            value: scene,
           }
         })
     },
@@ -131,6 +146,8 @@ export default Vue.extend({
     },
   },
   mounted() {
+    this.setWindowWidth()
+    window.onresize = this.setWindowWidth
     ipcRenderer.on('showingMedia', (_e, val) => {
       this.mediaActive = val[0]
       this.videoActive = val[1]
@@ -149,8 +166,14 @@ export default Vue.extend({
     }
   },
   beforeDestroy() {
+    window.removeEventListener('resize', this.setWindowWidth)
     ipcRenderer.removeAllListeners('showingMedia')
     this.$unsetShortcuts('present mode')
+  },
+  methods: {
+    setWindowWidth() {
+      this.windowWidth = window.innerWidth
+    },
   },
 })
 </script>
