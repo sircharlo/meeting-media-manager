@@ -1,6 +1,5 @@
 # TODOS
 
-- [ ] Manage media: Allow to hide recurring media without cong server
 - [ ] Release: Check if build artifacts work correctly for Windows and MacOS
 - [ ] Test: test for 3 displays
 - [ ] Test: test if auto updater works correctly
@@ -36,19 +35,15 @@
 - [X] Present media: Support for external display
 - [X] Test: Make sure light mode looks good as well
 
-## In Progress
-
-- Nothing at the moment
-
 ## Known Bugs without immediate fix
 
 - Volume animation on musicFadeOut does not work
 
 ## Bug Fixes
 
-- Setting custom media background works instantly
 - Correctly set app icon for Linux
 - Download markers for sign language when adding a song with the song picker
+- Setting custom media background works instantly
 
 ## New Features
 
