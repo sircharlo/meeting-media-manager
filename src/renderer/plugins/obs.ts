@@ -121,7 +121,7 @@ const plugin: Plugin = (
         if (!obs) return []
         const result = await obs.call('GetSceneList')
         scenes = result.scenes
-          .sort((a, b) => (a.sceneIndex as number) - (b.sceneIndex as number))
+          .sort((a, b) => (b.sceneIndex as number) - (a.sceneIndex as number))
           .map(({ sceneName }) => sceneName as string)
         currentScene = result.currentProgramSceneName
       }
