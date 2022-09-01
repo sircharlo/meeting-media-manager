@@ -3423,7 +3423,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.0.4, acorn@npm:^8.4.1, acorn@npm:^8.5.0, acorn@npm:^8.7.1":
+"acorn@npm:^8.0.4, acorn@npm:^8.4.1, acorn@npm:^8.5.0":
   version: 8.7.1
   resolution: "acorn@npm:8.7.1"
   bin:
@@ -6512,16 +6512,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:20.1.0":
-  version: 20.1.0
-  resolution: "electron@npm:20.1.0"
+"electron@npm:20.1.1":
+  version: 20.1.1
+  resolution: "electron@npm:20.1.1"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 29a0a79aa2d62fb51a871cdb0afaa15243b3a892cd941cce1b412836fd61b35e5c542367caa0941f91460a35f74d6a6beb4b08ddee1bf085aae6dd48f63ef00c
+  checksum: 7ed5e9530c324e506aa366935a6a0cddf72f7b6a080f37d821822e3b954f668660c7f0a5a9f79339a4f5b696630a72a3f7a9269a86691dd6dff21d85cc9a0a9c
   languageName: node
   linkType: hard
 
@@ -6913,14 +6913,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-nuxt@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "eslint-plugin-nuxt@npm:3.2.0"
+"eslint-plugin-nuxt@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "eslint-plugin-nuxt@npm:4.0.0"
   dependencies:
-    eslint-plugin-vue: ^8.5.0
-    semver: ^7.3.5
-    vue-eslint-parser: ^8.3.0
-  checksum: 45fca390ec702e889e2f16e3f2fd2e8df81b6b1e47b1170e9b0cadc50246494057e32f84d30964e6cc3b733aefc31cb45d0c9a6b6b8cfa9961ada05b472e8040
+    eslint-plugin-vue: ^9.4.0
+    semver: ^7.3.7
+    vue-eslint-parser: ^9.0.3
+  checksum: e17081911cc20e750cbdebe4d5ade0b94352a7c2df71970fdb6e2fa41bccb3123fee5c484774feb76a53daae33e252b6f7245946df1983a117f52366e8ebc70e
   languageName: node
   linkType: hard
 
@@ -6954,22 +6954,6 @@ __metadata:
   peerDependencies:
     eslint: ">=8.18.0"
   checksum: 1b63eb013cbc0b3c9ef131a1e049b4b53d8e208393675d5f97d3fa83c050ebcb695a7fd210f4de1460f42f89c2ecca261280488834591d5c21e146d297a9ee2e
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-vue@npm:^8.5.0":
-  version: 8.7.1
-  resolution: "eslint-plugin-vue@npm:8.7.1"
-  dependencies:
-    eslint-utils: ^3.0.0
-    natural-compare: ^1.4.0
-    nth-check: ^2.0.1
-    postcss-selector-parser: ^6.0.9
-    semver: ^7.3.5
-    vue-eslint-parser: ^8.0.1
-  peerDependencies:
-    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
-  checksum: c3aefb226dea126db32cab4c570f17f4b4047d609f4f5748e8dc410e929fbbfacdc07af1421c0f7773398513e9363de4480694714bc85fa2188ca50d1d19cfbc
   languageName: node
   linkType: hard
 
@@ -7010,7 +6994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-scope@npm:^7.0.0, eslint-scope@npm:^7.1.1":
+"eslint-scope@npm:^7.1.1":
   version: 7.1.1
   resolution: "eslint-scope@npm:7.1.1"
   dependencies:
@@ -7054,7 +7038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-visitor-keys@npm:^3.1.0, eslint-visitor-keys@npm:^3.3.0":
+"eslint-visitor-keys@npm:^3.3.0":
   version: 3.3.0
   resolution: "eslint-visitor-keys@npm:3.3.0"
   checksum: d59e68a7c5a6d0146526b0eec16ce87fbf97fe46b8281e0d41384224375c4e52f5ffb9e16d48f4ea50785cde93f766b0c898e31ab89978d88b0e1720fbfb7808
@@ -7124,17 +7108,6 @@ __metadata:
   bin:
     eslint: bin/eslint.js
   checksum: ff6075daa28d817a7ac4508f31bc108a04d9ab5056608c8651b5bf9cfea5d708ca16dea6cdab2c3c0ae99b0bf0e726af8504eaa8e17c8e12e242cb68237ead64
-  languageName: node
-  linkType: hard
-
-"espree@npm:^9.0.0":
-  version: 9.3.2
-  resolution: "espree@npm:9.3.2"
-  dependencies:
-    acorn: ^8.7.1
-    acorn-jsx: ^5.3.2
-    eslint-visitor-keys: ^3.3.0
-  checksum: 9a790d6779847051e87f70d720a0f6981899a722419e80c92ab6dee01e1ab83b8ce52d11b4dc96c2c490182efb5a4c138b8b0d569205bfe1cd4629e658e58c30
   languageName: node
   linkType: hard
 
@@ -10414,7 +10387,7 @@ __metadata:
     cross-env: ^7.0.3
     css-loader: ^5.2.7
     deepmerge: ^4.2.2
-    electron: 20.1.0
+    electron: 20.1.1
     electron-builder: 23.3.3
     electron-devtools-installer: ^3.2.0
     electron-log: ^4.4.8
@@ -10423,7 +10396,7 @@ __metadata:
     eslint: ^8.23.0
     eslint-config-prettier: ^8.5.0
     eslint-friendly-formatter: ^4.0.1
-    eslint-plugin-nuxt: ^3.2.0
+    eslint-plugin-nuxt: ^4.0.0
     eslint-plugin-vue: ^9.4.0
     eslint-webpack-plugin: ^2.7.0
     fast-glob: ^3.2.11
@@ -16007,24 +15980,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-eslint-parser@npm:^8.0.1, vue-eslint-parser@npm:^8.3.0":
-  version: 8.3.0
-  resolution: "vue-eslint-parser@npm:8.3.0"
-  dependencies:
-    debug: ^4.3.2
-    eslint-scope: ^7.0.0
-    eslint-visitor-keys: ^3.1.0
-    espree: ^9.0.0
-    esquery: ^1.4.0
-    lodash: ^4.17.21
-    semver: ^7.3.5
-  peerDependencies:
-    eslint: ">=6.0.0"
-  checksum: 8cc751e9fc2bfba93664ad8945732ab1c97791f9123e703de8669b65670d1e01906d80436bf4932d7ee6fa6174ed4545e8abb059206c88f4bd71957ca6cf7ba8
-  languageName: node
-  linkType: hard
-
-"vue-eslint-parser@npm:^9.0.1":
+"vue-eslint-parser@npm:^9.0.1, vue-eslint-parser@npm:^9.0.3":
   version: 9.0.3
   resolution: "vue-eslint-parser@npm:9.0.3"
   dependencies:
