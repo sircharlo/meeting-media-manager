@@ -98,7 +98,7 @@ export default Vue.extend({
     },
     scenes() {
       return (this.$store.state.obs.scenes as Scene[])
-        .filter(({ scene }) => {
+        .filter((scene) => {
           if (this.$getPrefs('app.obs.useV4')) {
             return (
               (scene as SceneV4).name !== this.$getPrefs('app.obs.mediaScene')
