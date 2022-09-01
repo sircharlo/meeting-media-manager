@@ -14,19 +14,24 @@ updates:
     schedule:
       interval: 'daily'
     ignore:
-      - dependency-name: 'obs-websocket-js'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'webpack'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'ts-loader'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'sass-loader'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'vue'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'node-sass'
+      - dependency-name: '@babel/core'
+      - dependency-name: 'css-loader'
         update-types: ['version-update:semver-major']
       - dependency-name: 'eslint-webpack-plugin'
         update-types: ['version-update:semver-major']
-      - dependency-name: 'css-loader'
+      - dependency-name: 'node-sass'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'obs-websocket-js'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'sass-loader'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'ts-loader'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'vue'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'vue-router'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'vuex'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'webpack'
         update-types: ['version-update:semver-major']
