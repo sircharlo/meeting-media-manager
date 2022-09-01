@@ -122,7 +122,7 @@
       <v-col cols="12" class="text-right pr-0">
         <v-btn
           :color="scenes.length > 0 ? 'success' : 'primary'"
-          @click="$getScenes()"
+          @click="refreshOBS()"
         >
           <font-awesome-icon :icon="faGlobe" />
         </v-btn>
@@ -251,8 +251,7 @@ export default Vue.extend({
     },
     'app.obs.useV4': {
       async handler() {
-        this.$resetOBS()
-        await this.$getScenes()
+        await this.refreshOBS()
       },
     },
     'app.obs.cameraScene': {
@@ -328,6 +327,10 @@ export default Vue.extend({
     }
   },
   methods: {
+    async refreshOBS() {
+      this.$resetOBS()
+      await this.$getScenes()
+    },
     async setLocalOutputPath() {
       const result = await ipcRenderer.invoke('openDialog', {
         properties: ['openDirectory'],
