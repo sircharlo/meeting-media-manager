@@ -140,6 +140,7 @@ interface CustomProps {
     type?: string
   ) => void
   $renamePubs: (oldVal: string, newVal: string) => Promise<void>
+  $resetOBS: () => void
   $resetPrefs: () => void
   $rm: (files: string | string[]) => void
   $sanitize: (name: string, isFile: boolean = false) => string

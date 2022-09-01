@@ -4,14 +4,16 @@ export interface ObsPrefs {
   password: string | null
   mediaScene: string | null
   cameraScene: string | null
+  useV4: boolean
 }
 
-export enum DateFormat {
-  DMY = 'DD-MM-YYYY',
-  DMYd = 'DD-MM-YYYY - dddd',
-  YMD = 'YYYY-MM-DD',
-  YMDd = 'YYYY-MM-DD - dddd',
-}
+export const dateFormats = [
+  'DD-MM-YYYY',
+  'YYYY-MM-DD',
+  'DD-MM-YYYY - dddd',
+  'YYYY-MM-DD - dddd',
+] as const
+export type DateFormat = typeof dateFormats[number]
 
 export interface AppPrefs {
   theme: 'light' | 'dark' | 'system'
@@ -35,12 +37,8 @@ export interface CongPrefs {
   dir: string | null
 }
 
-export enum Res {
-  '240p' = '240p',
-  '360p' = '360p',
-  '480p' = '480p',
-  '720p' = '720p',
-}
+export const resolutions = ['240p', '360p', '480p', '720p'] as const
+export type Res = typeof resolutions[number]
 
 export interface MediaPrefs {
   enableMediaDisplayButton: boolean
@@ -60,12 +58,7 @@ export interface MediaPrefs {
   preferredOutput: 'window' | number
 }
 
-export enum FadeOutType {
-  SMART = 'smart',
-  TIMER = 'timer',
-}
-
-export enum MeetingDay {
+export const enum MeetingDay {
   MO = 0,
   TU = 1,
   WE = 2,
@@ -79,7 +72,7 @@ export interface MeetingPrefs {
   enableMusicButton: boolean
   enableMusicFadeOut: boolean
   musicFadeOutTime: number | null
-  musicFadeOutType: FadeOutType
+  musicFadeOutType: 'smart' | 'timer'
   musicVolume: number | null
   mwDay: MeetingDay | null
   mwStartTime: string | null

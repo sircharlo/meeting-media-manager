@@ -174,7 +174,9 @@ import { join, extname } from 'upath'
 import { readFileSync } from 'fs-extra'
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav'
-import { MediaPrefs, ElectronStore, ShortJWLang, Res } from '~/types'
+import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
+import { Res } from '~/types/prefs'
+const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
   data() {
@@ -204,7 +206,7 @@ export default Vue.extend({
       return this.$store.state.cong.client as WebDAVClient
     },
     resolutions(): { label: Res; value: Res }[] {
-      return Object.values(Res).map((val) => {
+      return resolutions.map((val) => {
         return {
           label: val,
           value: val,

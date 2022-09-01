@@ -97,6 +97,15 @@
     </form-input>
     <template v-if="app.obs.enable">
       <form-input
+        v-model="app.obs.useV4"
+        field="switch"
+        :locked="locked('app.obs.useV4')"
+      >
+        <template #label>
+          <span v-html="$t('obsUseV4')" />
+        </template>
+      </form-input>
+      <form-input
         v-model="app.obs.port"
         :label="$t('port')"
         :locked="locked('app.obs.port')"
@@ -159,7 +168,14 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { faGlobe } from '@fortawesome/free-solid-svg-icons'
-import { AppPrefs, ElectronStore, DateFormat } from '~/types'
+import { AppPrefs, ElectronStore } from '~/types'
+import { DateFormat } from '~/types/prefs'
+const dateFormats = [
+  'DD-MM-YYYY',
+  'YYYY-MM-DD',
+  'DD-MM-YYYY - dddd',
+  'YYYY-MM-DD - dddd',
+] as DateFormat[]
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
   data() {
@@ -175,7 +191,7 @@ export default Vue.extend({
       return faGlobe
     },
     dateFormats(): { label: string; value: DateFormat }[] {
-      return Object.values(DateFormat).map((val) => {
+      return dateFormats.map((val) => {
         return {
           label: (this.$dayjs() as Dayjs).format(val),
           value: val,
@@ -225,6 +241,12 @@ export default Vue.extend({
     },
     'app.obs.enable': {
       async handler() {
+        await this.$getScenes()
+      },
+    },
+    'app.obs.useV4': {
+      async handler() {
+        this.$resetOBS()
         await this.$getScenes()
       },
     },

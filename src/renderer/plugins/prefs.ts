@@ -93,6 +93,10 @@ const schema: Schema<ElectronStore> = {
             type: ['string', 'null'],
             default: PREFS.app.obs.cameraScene,
           },
+          useV4: {
+            type: 'boolean',
+            default: PREFS.app.obs.useV4,
+          },
         },
       },
     },

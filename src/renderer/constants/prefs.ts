@@ -14,6 +14,7 @@ const PREFS = {
       password: null,
       mediaScene: null,
       cameraScene: null,
+      useV4: false,
     },
     outputFolderDateFormat: 'YYYY-MM-DD',
     theme: 'system',
