@@ -351,7 +351,7 @@ if (gotTheLock) {
         ),
         frame: false,
         backgroundColor: 'black',
-        // roundedCorners: false, // waiting for https://github.com/electron/electron/issues/35403 to be fixed before enabling this
+        roundedCorners: false,
         minHeight: 110,
         minWidth: 195,
         width: 1280,
