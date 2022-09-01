@@ -62,6 +62,7 @@
 - MEDIA SYNC: Auto rename recurring files in other folders
 - MEDIA SYNC: Prevent duplicate media from being added to media list by checking safeNames without prefix
 - OBS: Auto detect scene change when changed from OBS directly
+- OBS: Support for obs-websocket v5
 - SETTINGS: Port field for cong sync is no longer necessary
 - SETTINGS: Set your theme preference (light, dark, system) inside the app
 - SETTINGS: Toggle password visibility
