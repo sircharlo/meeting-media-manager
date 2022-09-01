@@ -82,6 +82,7 @@ const plugin: Plugin = (
           try {
             await obs.connect(`ws://127.0.0.1:${port}`, password as string)
           } catch (e: any) {
+            store.commit('obs/clear')
             $error('errorObs', e)
             return
           }
