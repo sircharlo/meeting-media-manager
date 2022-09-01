@@ -15,12 +15,19 @@ import { fileURLToPath, pathToFileURL } from 'url'
 import { platform } from 'os'
 import { basename, join } from 'upath'
 import Vue from 'vue'
-import { Scene } from 'obs-websocket-js'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav'
-import { ShortJWLang, CongPrefs, Release, Asset } from '~/types'
+import {
+  Scene,
+  SceneV4,
+  SceneV5,
+  ShortJWLang,
+  CongPrefs,
+  Release,
+  Asset,
+} from '~/types'
 export default Vue.extend({
   name: 'DefaultLayout',
   head() {
@@ -37,8 +44,14 @@ export default Vue.extend({
     cong() {
       return this.$route.query.cong
     },
-    scenes() {
-      return (this.$store.state.obs.scenes as Scene[]).map(({ name }) => name)
+    scenes(): string[] {
+      return (this.$store.state.obs.scenes as Scene[]).map((scene) => {
+        if (this.app.obs.useV4) {
+          return (scene as SceneV4).name
+        } else {
+          return (scene as SceneV5).sceneName
+        }
+      })
     },
     client() {
       return this.$store.state.cong.client as WebDAVClient | null

@@ -162,13 +162,12 @@
 import { platform } from 'os'
 import Vue from 'vue'
 import { Dayjs } from 'dayjs'
-import { Scene } from 'obs-websocket-js'
 import { join } from 'upath'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { faGlobe } from '@fortawesome/free-solid-svg-icons'
-import { AppPrefs, ElectronStore } from '~/types'
+import { Scene, SceneV4, SceneV5, AppPrefs, ElectronStore } from '~/types'
 import { DateFormat } from '~/types/prefs'
 const dateFormats = [
   'DD-MM-YYYY',
@@ -213,7 +212,13 @@ export default Vue.extend({
       return this.scenes.filter((scene) => scene !== this.app.obs.cameraScene)
     },
     scenes(): string[] {
-      return (this.$store.state.obs.scenes as Scene[]).map(({ name }) => name)
+      return (this.$store.state.obs.scenes as Scene[]).map((scene) => {
+        if (this.app.obs.useV4) {
+          return (scene as SceneV4).name
+        } else {
+          return (scene as SceneV5).sceneName
+        }
+      })
     },
     forcedPrefs() {
       return this.$store.state.cong.prefs

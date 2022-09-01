@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex'
-import { Scene } from 'obs-websocket-js'
+import { Scene } from '~/types'
 
 interface OBSStore {
   connected: boolean

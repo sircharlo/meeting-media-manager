@@ -1,4 +1,4 @@
-import { Scene } from 'obs-websocket-js'
+import { Scene } from '~/types'
 import { WebDAVClient } from 'webdav'
 /* eslint-disable import/named */
 import { NuxtAxiosInstance } from '@nuxtjs/axios'

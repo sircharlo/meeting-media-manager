@@ -61,9 +61,9 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { Scene } from 'obs-websocket-js'
 import { ipcRenderer } from 'electron'
 import { faHome, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import { Scene, SceneV4, SceneV5 } from '~/types'
 export default Vue.extend({
   name: 'PresentPage',
   data() {
@@ -98,16 +98,31 @@ export default Vue.extend({
     },
     scenes() {
       return (this.$store.state.obs.scenes as Scene[])
-        .filter(({ name }) => name !== this.$getPrefs('app.obs.mediaScene'))
-        .map(({ name }, i) => {
+        .filter(({ scene }) => {
+          if (this.$getPrefs('app.obs.useV4')) {
+            return (
+              (scene as SceneV4).name !== this.$getPrefs('app.obs.mediaScene')
+            )
+          } else {
+            return (
+              (scene as SceneV5).sceneName !==
+              this.$getPrefs('app.obs.mediaScene')
+            )
+          }
+        })
+        .map((scene, i) => {
+          const v4 = this.$getPrefs('app.obs.useV4')
+          const sceneName = v4
+            ? (scene as SceneV4).name
+            : (scene as SceneV5).sceneName
           return {
-            shortText: name
+            shortText: sceneName
               .split(' ')
               .map((w) => w[0])
               .join('')
               .toUpperCase(),
-            text: `ALT+${i + 1}: ${name}`,
-            value: name,
+            text: `ALT+${i + 1}: ${sceneName}`,
+            value: sceneName,
           }
         })
     },
