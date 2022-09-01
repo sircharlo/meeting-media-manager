@@ -19,7 +19,6 @@ module.exports = {
   rules: {
     'vue/valid-attribute-name': ['error'],
     'vue/valid-model-definition': ['error'],
-    'vue/multi-word-component-names': 'off',
     'vue/component-name-in-template-casing': ['error', 'kebab-case'],
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
