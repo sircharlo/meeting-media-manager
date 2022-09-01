@@ -1,7 +1,9 @@
-name: Build/release
+name: build/release
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main, master]
   push:
     paths:
       - 'yarn.lock'
@@ -12,24 +14,19 @@ on:
       - 'src/renderer/nuxt.config.js'
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
+  lint:
+    runs-on: ubuntu-latest
     steps:
-      - name: Check out Git repository
+      - name: Checkout repository
         uses: actions/checkout@v3.0.2
 
-      - name: Install Node.js, NPM and Yarn
+      - name: Setup node
         uses: actions/setup-node@v3.4.1
         with:
           node-version: 16
           check-latest: true
 
-      - name: Update Yarn
+      - name: Install yarn@latest
         run: yarn set version stable
 
       - name: Install dependencies
@@ -37,6 +34,29 @@ jobs:
 
       - name: Lint code
         run: yarn lint
+
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.0.2
+
+      - name: Setup node
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: 16
+          check-latest: true
+
+      - name: Install yarn@latest
+        run: yarn set version stable
+
+      - name: Install dependencies
+        run: yarn install
 
       - name: Build/release Electron app
         env:
