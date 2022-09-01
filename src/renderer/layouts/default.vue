@@ -46,7 +46,7 @@ export default Vue.extend({
     },
     scenes(): string[] {
       return (this.$store.state.obs.scenes as Scene[]).map((scene) => {
-        if (this.app.obs.useV4) {
+        if (this.$getPrefs('app.obs.useV4')) {
           return (scene as SceneV4).name
         } else {
           return (scene as SceneV5).sceneName
