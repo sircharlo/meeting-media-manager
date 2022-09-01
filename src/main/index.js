@@ -190,6 +190,7 @@ if (gotTheLock) {
   // ipcMain event for general purposes
   ipcMain.handle('userData', () => normalize(app.getPath('userData')))
   ipcMain.handle('mediaWinOpen', () => !!mediaWin)
+  ipcMain.handle('mediaWinVisible', () => mediaWin && mediaWin.isVisible())
   ipcMain.handle('appData', () => normalize(app.getPath('appData')))
   ipcMain.handle('downloads', () => normalize(app.getPath('downloads')))
   ipcMain.handle('appVersion', () => app.getVersion())
@@ -256,10 +257,15 @@ if (gotTheLock) {
         win.webContents.send('play', 'next')
       },
     }
+    if (globalShortcut.isRegistered(shortcut)) {
+      globalShortcut.unregister(shortcut)
+    }
     return globalShortcut.register(shortcut, functions[fn])
   })
   ipcMain.on('unregisterShortcut', (_e, shortcut) => {
-    globalShortcut.unregister(shortcut)
+    if (globalShortcut.isRegistered(shortcut)) {
+      globalShortcut.unregister(shortcut)
+    }
   })
 
   ipcMain.handle('getFromJWOrg', async (_e, opt) => {

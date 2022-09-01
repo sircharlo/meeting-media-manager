@@ -85,6 +85,10 @@ export default Vue.extend({
   async mounted() {
     const mediaWinOpen = await ipcRenderer.invoke('mediaWinOpen')
     this.$store.commit('present/setMediaScreenInit', mediaWinOpen)
+    if (mediaWinOpen) {
+      const mediaWinVisible = await ipcRenderer.invoke('mediaWinVisible')
+      this.$store.commit('present/setMediaScreenVisible', mediaWinVisible)
+    }
     ipcRenderer.on('mediaWindowShown', () => {
       this.$store.commit('present/setMediaScreenInit', true)
       ipcRenderer.send('startMediaDisplay', this.$getAllPrefs())
