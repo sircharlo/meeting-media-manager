@@ -1,15 +1,15 @@
 {
   "recommendations": [
-    "aaron-bond.better-comments", // Comments with colors and syntax highlighting for bugs, questions, todos, etc.
-    "streetsidesoftware.code-spell-checker", // Spell checker for code
-    "editorconfig.editorconfig", // EditorConfig support for VS Code
-    "dbaeumer.vscode-eslint", // ESLint support for VS Code
-    "octref.vetur", // Vue.js support for VS Code
-    "usernamehw.errorlens", // Show errors at the end of the line
-    "visualstudioexptteam.vscodeintellicode", // Get AI-assisted code completions
-    "esbenp.prettier-vscode", // Prettier support for VS Code
-    "christian-kohler.path-intellisense", // Path completions
-    "yzhang.markdown-all-in-one", // Markdown support for VS Code
-    "davidanson.vscode-markdownlint" // Markdown linter
+    "aaron-bond.better-comments",
+    "streetsidesoftware.code-spell-checker",
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "octref.vetur",
+    "usernamehw.errorlens",
+    "visualstudioexptteam.vscodeintellicode",
+    "esbenp.prettier-vscode",
+    "christian-kohler.path-intellisense",
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint"
   ]
 }
