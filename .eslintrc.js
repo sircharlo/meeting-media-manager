@@ -7,7 +7,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
   },
-  ignorePatterns: ['docs/**/*.min.js', 'static/*'],
+  ignorePatterns: ['docs/**/*.min.js', 'static/*', 'dist/*', 'build/*'],
   extends: [
     'eslint:recommended',
     'plugin:vue/recommended',
