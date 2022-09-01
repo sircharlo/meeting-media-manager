@@ -1,6 +1,6 @@
 import { Plugin } from '@nuxt/types'
 import OBSWebSocket from 'obs-websocket-js'
-import { ObsPrefs } from './../types/prefs'
+import { ObsPrefs } from '~/types'
 
 let obs = null as OBSWebSocket | null
 

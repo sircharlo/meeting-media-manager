@@ -11,8 +11,8 @@ import {
   MediaPrefs,
   CongPrefs,
   ObsPrefs,
-} from './../types/prefs'
-import { ElectronStore } from '~/types'
+  ElectronStore,
+} from '~/types'
 
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 

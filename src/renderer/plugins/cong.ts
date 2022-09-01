@@ -10,8 +10,9 @@ import {
   CongPrefs,
   MediaPrefs,
   MeetingPrefs,
-} from './../types/prefs'
-import { CongFile, MeetingFile } from '~/types'
+  CongFile,
+  MeetingFile,
+} from '~/types'
 
 const plugin: Plugin = (
   {

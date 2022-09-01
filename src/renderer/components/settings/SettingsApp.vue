@@ -159,8 +159,7 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { faGlobe } from '@fortawesome/free-solid-svg-icons'
-import { AppPrefs, ElectronStore } from '~/types'
-import { DateFormat } from '~/types/prefs'
+import { AppPrefs, ElectronStore, DateFormat } from '~/types'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
   data() {

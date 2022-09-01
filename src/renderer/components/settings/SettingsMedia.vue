@@ -174,8 +174,7 @@ import { join, extname } from 'upath'
 import { readFileSync } from 'fs-extra'
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav'
-import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
-import { Res } from '~/types/prefs'
+import { MediaPrefs, ElectronStore, ShortJWLang, Res } from '~/types'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
   data() {
