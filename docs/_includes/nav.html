@@ -16,7 +16,7 @@
   <select id="select-lang" name="select-lang">
     {% for p in site.pages %}{% if p.lang %}
     {% assign language=site.data | where:"lang", p.lang %}
-    <option value="{{ p.lang }}"{% if p.lang == page.lang %}selected="selected"{% endif %}>{{ language[0].name }}</option>
+    <option value="{{ p.lang }}"{% if p.lang == page.lang %} selected="selected"{% endif %}>{{ language[0].name }}</option>
     {% endif %}{% endfor %}
   </select>
 </ul>

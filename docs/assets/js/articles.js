@@ -82,7 +82,7 @@ window.onload = () => {
   const id = window.location.hash.substring(1)
   if (id) {
     const lang = window.location.pathname.substring(
-      window.location.pathname.length - 3
+      window.location.pathname.indexOf('/', 1) + 1
     )
     const link = document.querySelector(`#sidebar a[href="${lang}#${id}"]`)
     link.click()
