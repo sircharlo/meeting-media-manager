@@ -1,4 +1,3 @@
-import { Scene } from '~/types'
 import { WebDAVClient } from 'webdav'
 /* eslint-disable import/named */
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
@@ -88,7 +87,7 @@ interface CustomProps {
     type: 'window' | 'fullscreen'
   }>
   $getMwMedia: (date: string, setProgress?: Function) => Promise<void>
-  $getScenes: (current: boolean = false) => Promise<Scene[] | string>
+  $getScenes: (current: boolean = false) => Promise<string[] | string>
   $getWeMedia: (date: string, setProgress?: Function) => Promise<void>
   $getYearText: (force: boolean = false) => Promise<string>
   $getZipContentsByExt: (zip: string, ext: string) => Buffer
