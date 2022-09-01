@@ -16,14 +16,6 @@
     "email": "sircharlo@gmail.com",
     "url": "https://github.com/sircharlo/"
   },
-  "contributors": [
-    "mtdvlpr <149895ja@gmail.com> (https://github.com/mtdvlpr)",
-    "joaochris (https://github.com/joaochris)",
-    "Marko Hietaharju (https://github.com/Hi-there-how-are-u)",
-    "stepstra (https://github.com/stepstra)",
-    "wikmanipoiss (https://github.com/wikmanipoiss)",
-    "wifilogo (https://github.com/wifilogo)"
-  ],
   "main": "./dist/main/index.js",
   "repository": {
     "type": "git",
@@ -35,11 +27,10 @@
     "lint": "node_modules/.bin/eslint --ext .js,.vue,.ts --ignore-path .gitignore -f ./node_modules/eslint-friendly-formatter ./src",
     "lint:fix": "yarn lint --fix",
     "preinstall": "node .electron-nuxt/check-engines.js",
-    "postinstall": "electron-builder install-app-deps",
-    "release": "./pre-build.sh && node .electron-nuxt/build.js"
+    "postinstall": "electron-builder install-app-deps"
   },
   "engines": {
-    "node": "^16.16.0",
+    "node": "^16.13.0",
     "yarn": "^3.2.3"
   },
   "os": [
