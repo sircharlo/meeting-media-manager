@@ -3116,17 +3116,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-sfc@npm:2.7.7":
-  version: 2.7.7
-  resolution: "@vue/compiler-sfc@npm:2.7.7"
-  dependencies:
-    "@babel/parser": ^7.18.4
-    postcss: ^8.4.14
-    source-map: ^0.6.1
-  checksum: 7771fdb5172cd4185cd7ef01ffae59ef8391361875b314ce2a379a588ccc542ab9cae4e67e6d3c7e51d62202b1772591fe4447d855129b274f2c6d955cc85311
-  languageName: node
-  linkType: hard
-
 "@vue/component-compiler-utils@npm:^3.1.0":
   version: 3.3.0
   resolution: "@vue/component-compiler-utils@npm:3.3.0"
@@ -16106,22 +16095,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-server-renderer@npm:^2.6.12":
-  version: 2.7.7
-  resolution: "vue-server-renderer@npm:2.7.7"
-  dependencies:
-    chalk: ^4.1.2
-    hash-sum: ^2.0.0
-    he: ^1.2.0
-    lodash.template: ^4.5.0
-    lodash.uniq: ^4.5.0
-    resolve: ^1.22.0
-    serialize-javascript: ^6.0.0
-    source-map: 0.5.6
-  checksum: c0b4dd242c1ea07ac1096437feac0b67f2cd52e9924460dfebce037818beb3253b1180d2c1082f03bdf79a84936defe3009710cfd14063cc3c242fdbd5aace60
-  languageName: node
-  linkType: hard
-
 "vue-style-loader@npm:^4.1.0, vue-style-loader@npm:^4.1.3":
   version: 4.1.3
   resolution: "vue-style-loader@npm:4.1.3"
@@ -16142,26 +16115,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-template-compiler@npm:^2.6.11":
-  version: 2.7.8
-  resolution: "vue-template-compiler@npm:2.7.8"
-  dependencies:
-    de-indent: ^1.0.2
-    he: ^1.2.0
-  checksum: e0886488f46055c6e8f59c57fdcc624d1b241aaa0995977482381124a4bf602142743bb6127cf13fa8b04e4c1070253c7aa9b77abc158cf7ab988b223cddbf24
-  languageName: node
-  linkType: hard
-
-"vue-template-compiler@npm:^2.6.12, vue-template-compiler@npm:^2.6.14":
-  version: 2.7.7
-  resolution: "vue-template-compiler@npm:2.7.7"
-  dependencies:
-    de-indent: ^1.0.2
-    he: ^1.2.0
-  checksum: 3ef7956ba1907206224e8bd198010c27f67dd14d29840b457b2a36c17c288e1af314f04e82aaa0734bc22bf92cf55b3e86fe2aae662fe2c4e45894808de69636
-  languageName: node
-  linkType: hard
-
 "vue-template-es2015-compiler@npm:^1.9.0":
   version: 1.9.1
   resolution: "vue-template-es2015-compiler@npm:1.9.1"
@@ -16176,16 +16129,6 @@ __metadata:
     "@vue/compiler-sfc": 2.7.10
     csstype: ^3.1.0
   checksum: 97887eea9ae0c7ec7309dcaed1ac9bb65803af235f63f629fe21df959be3c1b801f8aa7d1e85428624e149e5f47706950d0efe09f19b6a6e3b4d38a6352d5c71
-  languageName: node
-  linkType: hard
-
-"vue@npm:^2.6.12":
-  version: 2.7.7
-  resolution: "vue@npm:2.7.7"
-  dependencies:
-    "@vue/compiler-sfc": 2.7.7
-    csstype: ^3.1.0
-  checksum: 3c6dacc33351d729e2d1b41242ad8ece5a1879d438a56d29c8ce3523ad5bf10f0e5c8ff622dcd778ab935248b14aa958e58199e7ffd87bcbe67df091f9045992
   languageName: node
   linkType: hard
 

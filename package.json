@@ -49,7 +49,10 @@
   ],
   "private": true,
   "resolutions": {
-    "@types/node": "16.11.56"
+    "@types/node": "16.11.56",
+    "vue": "2.7.10",
+    "vue-server-renderer": "2.7.10",
+    "vue-template-compiler": "2.7.10"
   },
   "devDependencies": {
     "@babel/core": "7.18.9",
