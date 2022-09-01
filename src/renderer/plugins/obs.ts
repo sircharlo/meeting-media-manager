@@ -6,7 +6,7 @@ import { ObsPrefs } from '~/types'
 let obs = null as OBSWebSocket | OBSWebSocketV4 | null
 
 const plugin: Plugin = (
-  { $getPrefs, $log, $error, $setShortcut, $unsetShortcuts, store },
+  { $getPrefs, $setPrefs, $log, $error, $setShortcut, $unsetShortcuts, store },
   inject
 ) => {
   async function connect() {
@@ -68,6 +68,22 @@ const plugin: Plugin = (
               }
             } catch (e: any) {
               $log.error(e)
+            }
+          })
+
+          obs.on('SceneNameChanged', ({ oldSceneName, sceneName }) => {
+            const camera = $getPrefs('app.obs.cameraScene')
+            const media = $getPrefs('app.obs.mediaScene')
+            const current = store.state.obs.currentScene
+
+            if (oldSceneName === current) {
+              store.commit('obs/setCurrentScene', sceneName)
+            }
+
+            if (oldSceneName === camera) {
+              $setPrefs('app.obs.cameraScene', sceneName)
+            } else if (oldSceneName === media) {
+              $setPrefs('app.obs.mediaScene', sceneName)
             }
           })
 
