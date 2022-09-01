@@ -16,7 +16,7 @@
     "convertDownloaded": "Converter mídias para MP4",
     "enableMediaDisplayButton": "Exibir as mídias numa tela secundária",
     "enableMusicButton": "Habilitar botão para reproduzir cânticos aleatoriamente",
-    "enableObs": "Habilitar compatibilidade com OBS Studio <em>(necessita do obs-websocket)</em>",
+    "enableObs": "Habilitar compatibilidade com OBS Studio",
     "enableVlcPlaylistCreation": "Criar lista de reprodução para usar no <em>VLC</em>",
     "excludeLffi": "Excluir arquivos de áudio e vídeo da publicação <em>lffi</em>",
     "excludeLffiImages": "Excluir imagens da publicação <em>lffi</em>",

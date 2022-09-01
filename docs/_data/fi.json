@@ -17,7 +17,7 @@
     "disableHardwareAcceleration": "Poista laitteistokiihdytys käytöstä",
     "enableMediaDisplayButton": "Esitä media ulkoisella näytöllä tai erillisessä ikkunassa",
     "enableMusicButton": "Ota käyttöön painike toistaaksesi Valtakunnanlauluja satunnaistoistona",
-    "enableObs": "Ota OBS Studion yhteensopivuustila käyttöön <em>(vaatii obs-websocketin)</em>",
+    "enableObs": "Ota OBS Studion yhteensopivuustila käyttöön",
     "enableVlcPlaylistCreation": "Luo soittolistoja käytettäväksi <em>VLC:n</em> kanssa",
     "excludeLffi": "Jäta ääni- ja videotiedostot pois <em>lffi</em>-esitteestä",
     "excludeLffiImages": "Jätä kuvat pois <em>lffi</em>-esitteestä",

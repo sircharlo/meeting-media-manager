@@ -16,7 +16,7 @@
     "convertDownloaded": "Konvertera media till MP4-format",
     "enableMediaDisplayButton": "Schaltfläche zum Präsentieren von Medien auf einem zweiten Monitor oder in einem separaten Fenster",
     "enableMusicButton": "Schaltfläche für Zufallswiedergabe von Königreichsliedern",
-    "enableObs": "OBS Studio-Kompatibilitätsmodus aktivieren<em>(obs-websocket erforderlich)</em>",
+    "enableObs": "OBS Studio-Kompatibilitätsmodus aktivieren",
     "enableVlcPlaylistCreation": "Skapa spellistor för <em>VLC</em>",
     "excludeLffi": "Exkludera audio- och videofiler från broschyren <em>lffi</em>",
     "excludeLffiImages": "Exkludera bilder från broschyren <em>lffi</em>",
