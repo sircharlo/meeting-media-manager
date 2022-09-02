@@ -18,7 +18,7 @@ In order to help maintain this application, the following information will help 
 - [Node.js](https://nodejs.org/en/) >= v16.13.0
 - [Yarn](https://yarnpkg.com/) >= v3.2.3
 - [VS Code](https://code.visualstudio.com/) >= v1.70.2
-  - VS Code extensions: see [extensions.json](/.vscode/extensions.json)
+  - VS Code extensions: see [extensions.json](./.vscode/extensions.json)
 
 ### Getting Started
 

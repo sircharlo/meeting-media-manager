@@ -40,7 +40,7 @@ Enjoy!
 *- COS*
 
 ---
+<!-- //TODO change mtdvlpr to sircharlo -->
+![Media Presentation Mode](https://github.com/mtdvlpr/meeting-media-manager/tree/docs/assets/img/present/standby-mode.png)
 
-![Media Presentation Mode](./docs/assets/img/present/standby-mode.png)
-
-![Media Sync in progress](./docs/assets/img/main/update-folders.gif)
+![Media Sync in progress](https://github.com/mtdvlpr/meeting-media-manager/tree/docs/assets/img/main/update-folders.gif)
