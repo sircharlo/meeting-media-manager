@@ -52,6 +52,7 @@ jobs:
         with:
           node-version: 16
           check-latest: true
+          cache: 'yarn'
 
       - name: Install yarn@latest
         run: yarn set version stable
