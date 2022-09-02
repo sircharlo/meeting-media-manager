@@ -268,6 +268,11 @@ export default Vue.extend({
         this.bg = await this.$refreshBackgroundImgPreview()
       },
     },
+    'media.hideMediaLogo': {
+      async handler() {
+        await this.$refreshBackgroundImgPreview(true)
+      },
+    },
     bg(val) {
       if (val === 'yeartext') {
         const col = document.querySelector(
