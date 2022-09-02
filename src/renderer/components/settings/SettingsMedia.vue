@@ -284,8 +284,7 @@ export default Vue.extend({
     this.jwLangs = await this.$getJWLangs()
     this.loading = false
     if (this.$refs.form) {
-      // @ts-ignore
-      this.$refs.form.validate()
+      ;(this.$refs.form as HTMLFormElement).validate()
     }
     this.bg = await this.$refreshBackgroundImgPreview()
   },

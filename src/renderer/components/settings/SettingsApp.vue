@@ -316,8 +316,7 @@ export default Vue.extend({
 
     // Validate form (for new congregations)
     if (this.$refs.form) {
-      // @ts-ignore
-      this.$refs.form.validate()
+      ;(this.$refs.form as HTMLFormElement).validate()
     }
   },
   methods: {

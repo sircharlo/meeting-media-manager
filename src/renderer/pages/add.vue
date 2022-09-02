@@ -190,6 +190,7 @@ import { readdirSync, readFileSync, existsSync, statSync } from 'fs-extra'
 import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
+import { MetaInfo } from 'vue-meta'
 import { FileStat, WebDAVClient } from 'webdav'
 import {
   faArrowDown19,
@@ -200,6 +201,7 @@ import {
   faPhotoFilm,
   faDownload,
   faSave,
+  IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
 import { Dayjs } from 'dayjs'
 import { LocalFile, MeetingFile, VideoFile } from '~/types'
@@ -208,13 +210,13 @@ export default Vue.extend({
   data() {
     return {
       dragging: false,
-      prefix1: null,
-      prefix2: null,
-      prefix3: null,
+      prefix1: '',
+      prefix2: '',
+      prefix3: '',
       totalProgress: 0,
       currentProgress: 0,
       loading: true,
-      type: null as string | null,
+      type: '',
       fileString: '',
       song: null as VideoFile | null,
       files: [] as (LocalFile | VideoFile)[],
@@ -223,57 +225,56 @@ export default Vue.extend({
       media: [] as (MeetingFile | LocalFile)[],
       types: [
         {
-          label: this.$t('song'),
+          label: this.$t('song') as string,
           value: 'song',
         },
         {
-          label: this.$t('custom'),
+          label: this.$t('custom') as string,
           value: 'custom',
         },
         {
-          label: this.$t('jwpub'),
+          label: this.$t('jwpub') as string,
           value: 'jwpub',
         },
-      ],
+      ] as { label: string; value: string }[],
     }
   },
-  head() {
-    // @ts-ignore
+  head(): MetaInfo {
     return { title: `Manage ${this.date}`, titleTemplate: '%s - M³' }
   },
   computed: {
-    faSave() {
+    faSave(): IconDefinition {
       return faSave
     },
-    faDownload() {
+    faDownload(): IconDefinition {
       return faDownload
     },
-    faFolderOpen() {
+    faFolderOpen(): IconDefinition {
       return faFolderOpen
     },
-    faCloud() {
+    faCloud(): IconDefinition {
       return faCloud
     },
-    faPhotoFilm() {
+    faPhotoFilm(): IconDefinition {
       return faPhotoFilm
     },
-    isDark() {
+    isDark(): boolean {
       return this.$vuetify.theme.dark as boolean
     },
-    faArrowDown19() {
+    faArrowDown19(): IconDefinition {
       return faArrowDown19
     },
-    faCircleArrowLeft() {
+    faCircleArrowLeft(): IconDefinition {
       return faCircleArrowLeft
     },
-    faFileExport() {
+    faFileExport(): IconDefinition {
       return faFileExport
     },
-    now() {
+    now(): Dayjs {
       return (this.$dayjs() as Dayjs).hour(0).minute(0).second(0).millisecond(0)
     },
-    cong() {
-      return this.$route.query.cong
+    cong(): string {
+      return this.$route.query.cong as string
     },
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
@@ -293,22 +294,22 @@ export default Vue.extend({
       const day = this.$dayjs(
         this.date,
         this.$getPrefs('app.outputFolderDateFormat') as string
-      )
-      const mwDay = this.$getPrefs('meeting.mwDay')
-      const weDay = this.$getPrefs('meeting.weDay')
+      ) as Dayjs
+      const mwDay = this.$getPrefs('meeting.mwDay') as number
+      const weDay = this.$getPrefs('meeting.weDay') as number
       const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
       return mwDay === weekDay || weDay === weekDay
     },
   },
   watch: {
-    async type(newType) {
+    async type(newType: string) {
       if (newType === 'song' && this.songs.length === 0) {
         await this.getSongs()
       }
     },
-    fileString(val) {
+    fileString(val: string) {
       if (!val) {
-        this.prefix1 = this.prefix2 = this.prefix3 = null
+        this.prefix1 = this.prefix2 = this.prefix3 = ''
       }
     },
   },
@@ -363,7 +364,7 @@ export default Vue.extend({
     },
     addMedia(media: LocalFile[]) {
       this.files = media
-      this.type = null
+      this.type = ''
     },
     async addFiles(multi: boolean = true, ...exts: string[]) {
       if (exts.length === 0) {
@@ -383,7 +384,7 @@ export default Vue.extend({
         this.fileString = result.filePaths.join(';')
       }
     },
-    async saveFiles(): Promise<void> {
+    async saveFiles() {
       this.loading = true
       try {
         for (const file of [...this.files, this.song]) {
@@ -392,7 +393,11 @@ export default Vue.extend({
             file.safeName = this.prefix + ' ' + file.safeName
           }
 
-          const path = join(this.$mediaPath(), this.date, file.safeName)
+          const path = join(
+            this.$mediaPath() as string,
+            this.date,
+            file.safeName
+          )
 
           // JWPUB extract
           if (file.contents) {
@@ -436,7 +441,10 @@ export default Vue.extend({
 
           // Upload media to the cong server
           if (this.client) {
-            const mediaPath = join(this.$getPrefs('cong.dir'), 'Media')
+            const mediaPath = join(
+              this.$getPrefs('cong.dir') as string,
+              'Media'
+            )
             const datePath = join(mediaPath, this.date)
             const filePath = join(datePath, file.safeName)
             const mediaPathExists = !!this.contents.find(
@@ -485,13 +493,13 @@ export default Vue.extend({
           }
         }
 
-        await this.$convertUnusableFiles(this.$mediaPath())
+        await this.$convertUnusableFiles(this.$mediaPath() as string)
         if (this.client) await this.$updateContent()
         this.getExistingMedia()
       } catch (e: any) {
         this.$error('errorAdditionalMediaList', e)
       } finally {
-        this.type = null
+        this.type = ''
         this.song = null
         this.files = []
         this.fileString = ''
@@ -510,13 +518,13 @@ export default Vue.extend({
     async getMeetingData() {
       const day = this.$dayjs(
         this.date,
-        this.$getPrefs('app.outputFolderDateFormat')
+        this.$getPrefs('app.outputFolderDateFormat') as string
       ) as Dayjs
       if (!day.isValid()) return
       const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
-      if (weekDay === this.$getPrefs('meeting.mwDay')) {
+      if (weekDay === (this.$getPrefs('meeting.mwDay') as number)) {
         await this.$getMwMedia(this.date)
-      } else if (weekDay === this.$getPrefs('meeting.weDay')) {
+      } else if (weekDay === (this.$getPrefs('meeting.weDay') as number)) {
         await this.$getWeMedia(this.date)
       }
       this.$createMediaNames()
@@ -537,7 +545,7 @@ export default Vue.extend({
     getExistingMedia() {
       const day = this.$dayjs(
         this.date,
-        this.$getPrefs('app.outputFolderDateFormat')
+        this.$getPrefs('app.outputFolderDateFormat') as string
       ) as Dayjs
       this.$getCongMedia(
         day.isValid() ? day.startOf('week') : this.now.startOf('week'),
@@ -568,7 +576,7 @@ export default Vue.extend({
             localMedia.push({
               safeName: filename,
               isLocal: true,
-              filepath: join(this.$mediaPath(), this.date, filename),
+              filepath: join(this.$mediaPath() as string, this.date, filename),
             })
           }
         })

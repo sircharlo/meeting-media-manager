@@ -156,8 +156,7 @@ export default Vue.extend({
   },
   async mounted() {
     Object.assign(this.cong, this.$getPrefs('cong'))
-    // @ts-ignore
-    this.$refs.form.validate()
+    ;(this.$refs.form as HTMLFormElement).validate()
 
     // If all the cong fields are filled in, try to connect
     if (this.complete) {

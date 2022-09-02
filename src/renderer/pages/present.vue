@@ -61,6 +61,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
 import { faHome, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 export default Vue.extend({
@@ -73,11 +74,9 @@ export default Vue.extend({
       windowWidth: 0,
     }
   },
-  head() {
+  head(): MetaInfo {
     return {
-      // @ts-ignore
       title: this.date ?? 'Present',
-      // @ts-ignore
       titleTemplate: this.date
         ? 'Present %s - M³'
         : '%s - Meeting Media Manager',
@@ -102,14 +101,19 @@ export default Vue.extend({
         this.windowWidth - 320 - (25 * this.scenes.length + 1)
       )
     },
-    combinedScenesLength() {
+    combinedScenesLength(): number {
       let length = 0
       for (const scene of this.scenes) {
         length += scene.value.length
       }
       return length
     },
-    scenes() {
+    scenes(): {
+      value: string
+      shortcut: string
+      text: string
+      shortText: string
+    }[] {
       return (this.$store.state.obs.scenes as string[])
         .filter((scene) => scene !== this.$getPrefs('app.obs.mediaScene'))
         .map((scene, i) => {
@@ -135,7 +139,7 @@ export default Vue.extend({
       return this.$route.query.cong as string
     },
     mediaScreenVisible(): boolean {
-      return this.$store.state.present.mediaScreenVisible
+      return this.$store.state.present.mediaScreenVisible as boolean
     },
   },
   watch: {
