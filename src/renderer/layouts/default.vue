@@ -402,6 +402,7 @@ export default Vue.extend({
                 },
               })
             }
+            this.$write(versionPath, this.$config.version)
           } catch (e: any) {
             this.$log.error(e)
           }
