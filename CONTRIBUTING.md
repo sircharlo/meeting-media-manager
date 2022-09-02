@@ -20,25 +20,43 @@ In order to help maintain this application, the following information will help 
 - [VS Code](https://code.visualstudio.com/) >= v1.70.2
   - VS Code extensions: see [extensions.json](/.vscode/extensions.json)
 
+### Getting Started
+
+To get started, you first have to install Git, Node.js and VS Code (see their respective documentation for more information). Once you have installed those, you van easily install Yarn by executing the following commands:
+
+```bash
+# Enable corepack feature of Node.js (includes yarn)
+corepack enable
+
+# Update yarn to the latest stable version
+yarn set version stable
+```
+
+Once you have done that, you are ready to contribute! Fork this repository, clone it, and when you have something to contribute, you can create a Pull Request on GitHub.
+
 ### Build Setup
 
-``` bash
+The following commands are used during the development of the application to build and test it:
+
+```bash
 # Install dependencies
 yarn install
 
-# Serve app with hot reload on localhost:3000
+# Serve app with hot reload
 yarn dev
 
 # Build electron application for production
 yarn build
 
-# Lint all JS/Vue component files in `src/`
+# Lint all JS/TS/Vue files in `src/`
 yarn lint
 
-# Lint all JS/Vue component files in `src/` and fix all auto-fixable errors
+# Lint all JS/TS/Vue files in `src/` and fix all auto-fixable errors
 yarn lint:fix
 
 ```
+
+The development environment uses a different location to store its files ([`app.getPath('appData')`](https://electronjs.org/docs/api/app#appgetpathname)/Electron) than production ([`app.getPath('appData')`](https://electronjs.org/docs/api/app#appgetpathname)/meeting-media-manager). This prevents the accidental breaking/changing of your personal production version of the application.
 
 ### Build Tools
 
@@ -46,19 +64,23 @@ This project was generated with [electron-nuxt](https://github.com/michalzaq12/e
 
 This project uses [Electron.js](https://www.electronjs.org/) to create the desktop application. The Electron.js framework is a cross-platform framework for building native applications.
 
-The renderer process is made using [Nuxt](https://nuxtjs.org/). The Nuxt framework is a Vue framework for building web applications.
+The renderer process is made using [Nuxt.js](https://nuxtjs.org/). The Nuxt framework is a [Vue](https://v2.vuejs.org/) framework for building web applications.
 
-The UI components are made using [Vuetify](https://vuetifyjs.com/en/). The Vuetify framework is a Vue UI library for building beautiful material design web applications.
+The UI components are made using [Vuetify.js](https://vuetifyjs.com/en/). The Vuetify framework is a Vue UI library for building beautiful material design web applications.
 
 The icons used in this project are taken from the [Font Awesome](https://fontawesome.com/icons) project.
 
+### Release Procedure
+
+To release a new version of the application, you first create a draft release on GitHub. Then, you can change the [package.json](package.json) version to the desired version and commit the changes. Then, the build/release workflow will be executed and will fill the release draft with the new artifacts. After that, you can add a description of the release (features, bug fixes, etc.) and publish it.
+
 ### Run documentation website locally
 
-The documentation website is hosted on [GitHub Pages](https://pages.github.com/) and generated with [Jekyll](https://jekyllrb.com/docs/installation/). To run the documentation site locally, you can follow the [instructions](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) of GitHub Pages. Once you have installed Bundle, you can run the following commands:
+The documentation website is hosted on [GitHub Pages](https://pages.github.com/) and generated with [Jekyll](https://jekyllrb.com/docs/installation/). To run the documentation site locally, you can follow the [instructions](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) of GitHub Pages. Once you have installed [Bundler](https://bundler.io/), you can run the following commands:
 
 ``` bash
-# Navigate to docs folder of the project
-cd docs
+# Checkout the docs branch
+git checkout docs
 
 # Install dependencies
 bundle install
@@ -67,4 +89,4 @@ bundle install
 bundle exec jekyll serve
 ```
 
-The documentation site automatically gets updated when you push the latest changes to the docs branch.
+The documentation website will automatically be updated when changes are pushed to the docs branch.
