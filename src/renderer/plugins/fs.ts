@@ -24,7 +24,11 @@ const plugin: Plugin = (
 ) => {
   // Paths
   inject('pubPath', (file?: MeetingFile) => {
-    const pubPath = join($appPath(), 'Publications', $getPrefs('media.lang'))
+    const pubPath = joinSafe(
+      $appPath(),
+      'Publications',
+      $getPrefs('media.lang')
+    )
     ensureDirSync(pubPath)
 
     // Get path for specific file
@@ -42,20 +46,24 @@ const plugin: Plugin = (
         0
       ).toString()
       const trackFolder = (file.track || file.queryInfo?.Track || 0).toString()
-      return join(pubPath, pubFolder, issueFolder, trackFolder)
+      return joinSafe(pubPath, pubFolder, issueFolder, trackFolder)
     } else {
       return pubPath
     }
   })
 
   function mediaPath(file?: MeetingFile) {
-    const mediaPath = join(
+    const mediaPath = joinSafe(
       $getPrefs('app.localOutputPath'),
       $getPrefs('media.lang')
     )
     ensureDirSync(mediaPath)
     if (file)
-      return join(mediaPath, file.folder as string, file.destFilename as string)
+      return joinSafe(
+        mediaPath,
+        file.folder as string,
+        file.destFilename as string
+      )
     return mediaPath
   }
   inject('mediaPath', mediaPath)
@@ -81,7 +89,7 @@ const plugin: Plugin = (
   })
 
   inject('ytPath', (lang?: string) => {
-    return join(
+    return joinSafe(
       $appPath(),
       'Publications',
       lang ?? $getPrefs('media.lang'),

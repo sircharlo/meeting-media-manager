@@ -3,7 +3,7 @@ import { readFileSync, removeSync } from 'fs-extra'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import Store, { Schema } from 'electron-store'
-import { basename, dirname, join, normalize } from 'upath'
+import { basename, dirname, join, normalizeSafe } from 'upath'
 import { sync } from 'fast-glob'
 import {
   AppPrefs,
@@ -397,9 +397,11 @@ const plugin: Plugin = (_ctx, inject) => {
     store = new Store<ElectronStore>(storeOptions(name))
   }
   inject('initStore', initStore)
-  inject('storePath', () => (store?.path ? normalize(store.path) : undefined))
+  inject('storePath', () =>
+    store?.path ? normalizeSafe(store.path) : undefined
+  )
   inject('appPath', () => {
-    return dirname(normalize(store?.path ?? ''))
+    return dirname(normalizeSafe(store?.path ?? ''))
   })
   inject('appVersion', async () => {
     return await ipcRenderer.invoke('appVersion')
