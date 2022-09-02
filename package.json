@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "22.9.0-alpha.1",
+  "version": "22.9.0-alpha.2",
   "description": "Meeting Media Manager",
   "keywords": [
     "meeting media manager",
@@ -19,7 +19,7 @@
   "main": "./dist/main/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sircharlo/meeting-media-manager.git"
+    "url": "https://github.com/mtdvlpr/meeting-media-manager.git"
   },
   "scripts": {
     "dev": "./pre-build.sh && node .electron-nuxt/dev.js",
