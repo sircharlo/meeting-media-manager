@@ -41,6 +41,6 @@ Enjoy!
 
 ---
 <!-- //TODO change mtdvlpr to sircharlo -->
-![Media Presentation Mode](https://github.com/mtdvlpr/meeting-media-manager/blob/docs/assets/img/present/standby-mode.png)
+![Media Presentation Mode](https://github.com/mtdvlpr/meeting-media-manager/raw/docs/assets/img/present/standby-mode.png?raw=true)
 
-![Media Sync in progress](https://github.com/mtdvlpr/meeting-media-manager/blob/docs/assets/img/main/update-folders.gif)
+![Media Sync in progress](https://github.com/mtdvlpr/meeting-media-manager/raw/docs/assets/img/main/update-folders.gif?raw=true)
