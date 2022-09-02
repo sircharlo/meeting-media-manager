@@ -44,6 +44,7 @@
 - Correctly set app icon for Linux
 - Download markers for sign language when adding a song with the song picker
 - Setting custom media background works instantly
+- Hiding jw logo for media window works instantly
 
 ## New Features
 
