@@ -214,7 +214,7 @@ if (gotTheLock) {
   })
 
   ipcMain.on('openPath', (_e, path) => {
-    shell.openPath(path)
+    shell.openPath(path.replace('/', os.platform() === 'win32') ? '\\' : '/')
   })
   ipcMain.handle('openDialog', async (_e, options) => {
     return await dialog.showOpenDialog(options)

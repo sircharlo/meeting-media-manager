@@ -45,9 +45,6 @@ export default Vue.extend({
     store() {
       return this.$storePath()
     },
-    path() {
-      return this.$route
-    },
   },
   watch: {
     cong: {
