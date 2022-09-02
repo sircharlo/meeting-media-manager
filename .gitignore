@@ -13,6 +13,9 @@ _site/
 .jekyll-cache
 .jekyll-metadata
 
+# Bundler packages
+vendor/
+
 # Logs
 logs
 *.log
