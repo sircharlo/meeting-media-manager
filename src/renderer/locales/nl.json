@@ -65,6 +65,7 @@
   "notAnImage": "Dit is geen correct plaatjes bestand. Probeer het alsjeblieft nogmaals.",
   "obsCameraScene": "Standaard podiumbeeld scene in OBS Studio",
   "obsMediaScene": "Media beeld scene in OBS Studio",
+  "obsUseV4": "Gebruik <em>obs-websocket v4</em>",
   "openTargetFolderAfterSync": "Open folder na media sync",
   "optionsApp": "Applicatie configuratie",
   "optionsCongSync": "Gemeente sync configuratie",

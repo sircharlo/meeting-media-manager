@@ -20,12 +20,13 @@
     />
     <form-input
       v-model="app.localAppLang"
-      field="select"
+      field="autocomplete"
       :label="$t('localAppLang')"
       :items="$i18n.locales"
       item-text="name"
       item-value="code"
       required
+      auto-select-first
       :locked="locked('app.localAppLang')"
     />
     <v-row>

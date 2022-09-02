@@ -1,7 +1,7 @@
 <template>
   <v-overlay :value="true" :opacity="1">
     <v-container class="d-flex flex-column align-center">
-      <h1 class="mb-2">{{ $t(text) }}</h1>
+      <h1 class="mb-6 text-center">{{ $t(text) }}</h1>
       <v-badge :content="timer">
         <v-btn color="error" @click="$emit('abort')">
           <font-awesome-icon :icon="iconObj" />
