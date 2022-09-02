@@ -251,7 +251,6 @@ const plugin: Plugin = (
       start: performance.now(),
     })
     const tree = updateContentsTree() as CongFile[]
-    console.log(tree)
     const mediaFolder = tree.find(({ basename }) => basename === 'Media')
     const hiddenFolder = tree.find(({ basename }) => basename === 'Hidden')
     const dates = [

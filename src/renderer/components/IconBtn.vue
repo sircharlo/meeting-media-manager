@@ -83,13 +83,14 @@
     ref="btn"
     v-model="$attrs.value"
     :aria-label="variant"
-    :class="
-      variant === 'settings' ? { 'pulse-danger': !updateSuccess } : undefined
-    "
+    v-bind="{ ...style.props, ...$attrs }"
+    :class="{
+      ...style.props.class,
+      'pulse-danger': variant === 'settings' && !updateSuccess,
+    }"
     :nuxt="!!style.to || $attrs.nuxt"
     :loading="loading || $attrs.loading"
     :to="style.to ? localePath(`${style.to}?cong=${cong}`) : $attrs.to"
-    v-bind="{ ...style.props, ...$attrs }"
     @click.stop="atClick()"
   >
     <font-awesome-icon
@@ -222,7 +223,7 @@ export default Vue.extend({
           ],
         },
         sort: {
-          props: { color: 'info', class: 'sort-btn' },
+          props: { color: 'info', class: { 'sort-btn': true } },
           icons: [faSort],
         },
         toggleScreen: {
