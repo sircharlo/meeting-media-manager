@@ -338,22 +338,22 @@ function migrate2290(key: string, newVal: any) {
 
   // Convert null values to (new) default values
   if (isObsPref) {
-    if (!newVal) {
+    if (newVal === null || newVal === undefined) {
       newVal = PREFS.app.obs[newKey as keyof ObsPrefs]
     }
   } else if (isMeetingPref) {
-    if (!newVal) {
+    if (newVal === null || newVal === undefined) {
       newVal = PREFS.meeting[newKey as keyof MeetingPrefs]
     }
   } else if (isMediaPref) {
-    if (!newVal) {
+    if (newVal === null || newVal === undefined) {
       newVal = PREFS.media[newKey as keyof MediaPrefs]
     }
   } else if (isCongPref) {
-    if (!newVal) {
+    if (newVal === null || newVal === undefined) {
       newVal = PREFS.cong[newKey as keyof CongPrefs]
     }
-  } else if (!newVal) {
+  } else if (newVal === null || newVal === undefined) {
     newVal = PREFS.app[newKey as keyof AppPrefs]
   }
 
