@@ -264,7 +264,9 @@ export default Vue.extend({
         }
 
         // If media logo is enabled, try to show it
-        if (!prefs.media.hideMediaLogo) {
+        if (prefs.media.hideMediaLogo) {
+          this.ytLogo.setAttribute('style', 'display: none')
+        } else {
           const logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
           if (logoFontFile) {
             // @ts-ignore
