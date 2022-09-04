@@ -1,8 +1,8 @@
 process.env.BABEL_ENV = 'renderer'
 const isProduction = process.env.NODE_ENV === 'production'
 const isDev = process.env.NODE_ENV === 'development'
-const path = require('path')
-const webpack = require('webpack')
+const { join } = require('path')
+const { DefinePlugin } = require('webpack')
 const deepmerge = require('deepmerge')
 const nodeExternals = require('webpack-node-externals')
 const resourcesPath = require('../resources-path-provider')
@@ -21,7 +21,7 @@ const baseConfig = {
   },
   dev: isDev,
   generate: {
-    dir: path.join(DIST_DIR, 'renderer'),
+    dir: join(DIST_DIR, 'renderer'),
   },
 }
 
@@ -42,7 +42,7 @@ const baseExtend = (config, { isClient }) => {
   }
 
   config.plugins.push(
-    new webpack.DefinePlugin({
+    new DefinePlugin({
       'process.resourcesPath': isClient
         ? resourcesPath.nuxtClient()
         : resourcesPath.nuxtServer(),
@@ -57,7 +57,7 @@ const baseExtend = (config, { isClient }) => {
     const jsLoader = config.module.rules.find(
       (el) => el.test.test('sample.js') === true
     )
-    if (jsLoader) jsLoader.use = [path.join(__dirname, 'do-nothing-loader.js')]
+    if (jsLoader) jsLoader.use = [join(__dirname, 'do-nothing-loader.js')]
   }
 }
 

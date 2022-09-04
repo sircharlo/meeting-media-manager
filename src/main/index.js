@@ -9,14 +9,14 @@ import {
   crashReporter,
   globalShortcut,
 } from 'electron'
-import Store from 'electron-store'
+import { initRenderer } from 'electron-store'
 import { existsSync } from 'fs-extra'
 import { join, normalize } from 'upath'
 import { autoUpdater } from 'electron-updater'
 import BrowserWinHandler from './BrowserWinHandler'
-const os = require('os')
+const { platform } = require('os')
 const adapter = require('axios/lib/adapters/http')
-const axios = require('axios')
+const { get } = require('axios')
 const isDev = process.env.NODE_ENV === 'development'
 
 crashReporter.start({
@@ -24,7 +24,7 @@ crashReporter.start({
 })
 
 // Initialize the store
-Store.initRenderer()
+initRenderer()
 
 // Disable hardware acceleration if the user turned it off
 try {
@@ -46,8 +46,8 @@ const appLongName = 'Meeting Media Manager'
 
 // Set correct app icon
 let iconType = 'png'
-if (os.platform() === 'darwin') iconType = 'icns'
-if (os.platform() === 'win32') iconType = 'ico'
+if (platform() === 'darwin') iconType = 'icns'
+if (platform() === 'win32') iconType = 'ico'
 
 // Main window
 function createMainWindow() {
@@ -220,7 +220,7 @@ if (gotTheLock) {
   })
 
   ipcMain.on('openPath', (_e, path) => {
-    shell.openPath(path.replaceAll('/', os.platform() === 'win32' ? '\\' : '/'))
+    shell.openPath(path.replaceAll('/', platform() === 'win32' ? '\\' : '/'))
   })
   ipcMain.handle('openDialog', async (_e, options) => {
     return await dialog.showOpenDialog(options)
@@ -283,7 +283,7 @@ if (gotTheLock) {
     if (opt.headers) options.headers = opt.headers
     if (opt.params) options.params = opt.params
     try {
-      const result = await axios.get(opt.url, options)
+      const result = await get(opt.url, options)
       return result.data
     } catch (e) {
       return e
@@ -378,7 +378,7 @@ if (gotTheLock) {
       mediaWinHandler = new BrowserWinHandler(windowOptions)
       mediaWin = mediaWinHandler.browserWindow
 
-      if (os.platform() !== 'darwin') {
+      if (platform() !== 'darwin') {
         mediaWin.setAlwaysOnTop(true, 'screen-saver')
         mediaWin.setMenuBarVisibility(false)
       }
@@ -421,7 +421,7 @@ if (gotTheLock) {
     ])
   })
   autoUpdater.on('update-available', (info) => {
-    if (os.platform() === 'darwin') {
+    if (platform() === 'darwin') {
       win.webContents.send('macUpdate')
     } else {
       win.webContents.send('notifyUser', [
