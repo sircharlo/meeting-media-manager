@@ -10,9 +10,7 @@ const plugin: Plugin = (
   inject
 ) => {
   async function connect() {
-    const { enable, port, password, cameraScene, useV4 } = $getPrefs(
-      'app.obs'
-    ) as ObsPrefs
+    const { enable, port, password, useV4 } = $getPrefs('app.obs') as ObsPrefs
     if (!enable && obs) {
       resetOBS()
     } else if (enable && !obs) {
@@ -104,9 +102,6 @@ const plugin: Plugin = (
           }
         }
         store.commit('obs/setConnected', !!obs)
-        if (cameraScene) {
-          setScene(cameraScene)
-        }
       } catch (e: any) {
         store.commit('obs/clear')
         $error('errorObs', e)

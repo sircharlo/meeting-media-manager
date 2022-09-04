@@ -156,23 +156,28 @@ export default Vue.extend({
       this.mediaActive = val[0]
       this.videoActive = val[1]
     })
+
+    if (this.$store.obs.connected) {
+      this.$setScene(this.$getPrefs('app.obs.cameraScene'))
+    }
+
     if (this.$getPrefs('media.enablePp')) {
       this.$setShortcut(
         this.$getPrefs('media.ppForward') as string,
         'nextMediaItem',
-        'present mode'
+        'presentMode'
       )
       this.$setShortcut(
         this.$getPrefs('media.ppBackward') as string,
         'previousMediaItem',
-        'present mode'
+        'presentMode'
       )
     }
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.setWindowWidth)
     ipcRenderer.removeAllListeners('showingMedia')
-    this.$unsetShortcuts('present mode')
+    this.$unsetShortcuts('presentMode')
   },
   methods: {
     setWindowWidth() {
