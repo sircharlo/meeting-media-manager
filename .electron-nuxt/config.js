@@ -1,7 +1,7 @@
-const path = require('path')
+const { join } = require('path')
 
-const PROJECT_ROOT = path.join(__dirname, '..')
-const SRC_DIR = path.join(PROJECT_ROOT, 'src')
+const PROJECT_ROOT = join(__dirname, '..')
+const SRC_DIR = join(PROJECT_ROOT, 'src')
 
 const config = {
   ELECTRON_RELAUNCH_CODE: 250, // valid range in unix system: <1,255>
@@ -11,11 +11,11 @@ const config = {
 
   PROJECT_ROOT,
   SRC_DIR,
-  MAIN_PROCESS_DIR: path.join(SRC_DIR, 'main'),
-  RENDERER_PROCESS_DIR: path.join(SRC_DIR, 'renderer'),
-  RESOURCES_DIR: path.join(SRC_DIR, 'extraResources'),
-  DIST_DIR: path.join(PROJECT_ROOT, 'dist'),
-  BUILD_DIR: path.join(PROJECT_ROOT, 'build'),
+  MAIN_PROCESS_DIR: join(SRC_DIR, 'main'),
+  RENDERER_PROCESS_DIR: join(SRC_DIR, 'renderer'),
+  RESOURCES_DIR: join(SRC_DIR, 'extraResources'),
+  DIST_DIR: join(PROJECT_ROOT, 'dist'),
+  BUILD_DIR: join(PROJECT_ROOT, 'build'),
 
   DISABLE_BABEL_LOADER: false, // experimental
 }

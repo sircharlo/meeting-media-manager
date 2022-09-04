@@ -1,9 +1,9 @@
-const path = require('path')
+const { join } = require('path')
 const { fork } = require('child_process')
 const { utils } = require('@xpda-dev/core')
 const { killWithAllSubProcess } = utils
 
-const NUXT_PROCESS_PATH = path.join(__dirname, 'nuxt-process.js')
+const NUXT_PROCESS_PATH = join(__dirname, 'nuxt-process.js')
 
 /**
  * @implements {IStep}

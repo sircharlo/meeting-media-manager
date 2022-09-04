@@ -15,7 +15,7 @@ import { basename, changeExt, dirname, extname, join } from 'upath'
 import * as pdfjsLib from 'pdfjs-dist'
 import { PDFDocumentProxy } from 'pdfjs-dist'
 import Zipper from 'adm-zip'
-import * as HME from 'h264-mp4-encoder'
+import { createH264MP4Encoder } from 'h264-mp4-encoder'
 import ffmpeg, { setFfmpegPath } from 'fluent-ffmpeg'
 import sizeOf from 'image-size'
 import { FULL_HD } from '~/constants/general'
@@ -360,7 +360,7 @@ const plugin: Plugin = (
             div.append(img, canvas)
             document.body.appendChild(div)
 
-            HME.createH264MP4Encoder().then((encoder) => {
+            createH264MP4Encoder().then((encoder) => {
               img.onload = () => {
                 // Set width and height
                 encoder.quantizationParameter = 10

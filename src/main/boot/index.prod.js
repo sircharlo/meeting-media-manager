@@ -1,6 +1,6 @@
 import { URL } from 'url'
+import { join, normalize } from 'path'
 import { app, protocol } from 'electron'
-import * as path from 'upath'
 
 const PRODUCTION_APP_PROTOCOL = 'app'
 const PRODUCTION_APP_PATH = path.join(__dirname, '..', 'renderer')
@@ -20,8 +20,8 @@ app.once('ready', () => {
 // Credits: https://github.com/nklayman/vue-cli-plugin-electron-builder/blob/master/lib/createProtocol.js
 function registerProtocol(scheme) {
   protocol.registerFileProtocol(scheme, (request, response) => {
-    const relativePath = path.normalize(new URL(request.url).pathname)
-    const absolutePath = path.join(PRODUCTION_APP_PATH, relativePath)
+    const relativePath = normalize(new URL(request.url).pathname)
+    const absolutePath = join(PRODUCTION_APP_PATH, relativePath)
 
     response({ path: absolutePath })
   })
