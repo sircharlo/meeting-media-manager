@@ -358,7 +358,7 @@ function migrate2290(key: string, newVal: any) {
   }
 
   // Values that were converted from number to string
-  if (key === 'congServerPort') {
+  if (key === 'congServerPort' && newVal) {
     newVal = newVal.toString()
   }
 
