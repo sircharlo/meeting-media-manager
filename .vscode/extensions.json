@@ -1,15 +1,15 @@
 {
   "recommendations": [
     "aaron-bond.better-comments",
-    "streetsidesoftware.code-spell-checker",
-    "editorconfig.editorconfig",
+    "christian-kohler.path-intellisense",
+    "davidanson.vscode-markdownlint",
     "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
     "octref.vetur",
+    "streetsidesoftware.code-spell-checker",
     "usernamehw.errorlens",
     "visualstudioexptteam.vscodeintellicode",
-    "esbenp.prettier-vscode",
-    "christian-kohler.path-intellisense",
-    "yzhang.markdown-all-in-one",
-    "davidanson.vscode-markdownlint"
+    "yzhang.markdown-all-in-one"
   ]
 }

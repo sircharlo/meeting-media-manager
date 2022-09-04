@@ -6,12 +6,12 @@ on:
     branches: [main, master]
   push:
     paths:
-      - 'yarn.lock'
-      - 'package.json'
-      - 'builder.config.js'
-      - 'src/main/**/*'
       - '.electron-nuxt/**/*'
+      - 'builder.config.js'
+      - 'package.json'
+      - 'src/main/**/*'
       - 'src/renderer/nuxt.config.js'
+      - 'yarn.lock'
 
 jobs:
   lint:
