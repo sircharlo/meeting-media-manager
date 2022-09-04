@@ -34,6 +34,7 @@ try {
   console.error(err)
 }
 
+// Initial values
 let win = null
 let winHandler = null
 let mediaWin = null
@@ -43,10 +44,12 @@ let allowClose = true
 let authorizedCloseMediaWin = false
 const appLongName = 'Meeting Media Manager'
 
+// Set correct app icon
 let iconType = 'png'
 if (os.platform() === 'darwin') iconType = 'icns'
 if (os.platform() === 'win32') iconType = 'ico'
 
+// Main window
 function createMainWindow() {
   winHandler = new BrowserWinHandler({
     height: 700,
@@ -93,6 +96,7 @@ function createMainWindow() {
   winHandler.loadPage('/')
 }
 
+// Show/hide media window
 function fadeWindow(browserWindow) {
   if (!browserWindow.isVisible()) {
     browserWindow.show()
@@ -138,6 +142,7 @@ function getScreenInfo() {
   }
 }
 
+// Se position of the media window
 function setMediaWindowPosition(mediaWinOptions) {
   try {
     if (mediaWin) {
@@ -178,6 +183,7 @@ function closeMediaWindow() {
   }
 }
 
+// Prevent opening the app multiple times
 const gotTheLock = app.requestSingleInstanceLock()
 if (gotTheLock) {
   app.on('second-instance', () => {
@@ -187,7 +193,7 @@ if (gotTheLock) {
     }
   })
 
-  // ipcMain event for general purposes
+  // ipcMain events for general purposes
   ipcMain.handle('userData', () => normalize(app.getPath('userData')))
   ipcMain.handle('mediaWinOpen', () => !!mediaWin)
   ipcMain.handle('mediaWinVisible', () => mediaWin && mediaWin.isVisible())
@@ -367,15 +373,19 @@ if (gotTheLock) {
             (display) => display.id === mediaWinOptions.destination
           ).bounds.y + 50,
       }
+
       if (mediaWinOptions.type === 'fullscreen') windowOptions.fullscreen = true
       mediaWinHandler = new BrowserWinHandler(windowOptions)
       mediaWin = mediaWinHandler.browserWindow
+
       if (os.platform() !== 'darwin') {
         mediaWin.setAlwaysOnTop(true, 'screen-saver')
         mediaWin.setMenuBarVisibility(false)
       }
+
       mediaWin.setAspectRatio(16 / 9)
       mediaWinHandler.loadPage('/media')
+
       mediaWin
         .on('close', (e) => {
           if (!authorizedCloseMediaWin) e.preventDefault()
@@ -396,9 +406,8 @@ if (gotTheLock) {
   })
 
   // Auto updater events
-  const log = require('electron-log')
-  autoUpdater.logger = log
-  autoUpdater.logger.transports.file.level = isDev ? 'debug' : 'info'
+  autoUpdater.logger = console
+  autoUpdater.autoDownload = false
 
   ipcMain.on('checkForUpdates', () => {
     autoUpdater.checkForUpdates()
@@ -431,8 +440,6 @@ if (gotTheLock) {
   autoUpdater.on('update-downloaded', () => {
     win.webContents.send('notifyUser', ['updateDownloaded'])
   })
-  autoUpdater.logger = console
-  autoUpdater.autoDownload = false
 
   // When ready create main window
   app.whenReady().then(() => {
