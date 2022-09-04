@@ -48,14 +48,14 @@ export default Vue.extend({
   },
   watch: {
     cong: {
-      handler(val) {
+      handler(val: string) {
         if (val) {
           this.initPrefs('prefs-' + val)
         }
       },
       immediate: true,
     },
-    isDark(val) {
+    isDark(val: boolean) {
       if (this.$getPrefs('app.theme') === 'system') {
         this.$vuetify.theme.dark = val
       }

@@ -224,7 +224,7 @@ export default Vue.extend({
         this.setTime()
       }
     },
-    playing(val) {
+    playing(val: boolean) {
       if (!val) {
         this.current = 0
         this.progress = []

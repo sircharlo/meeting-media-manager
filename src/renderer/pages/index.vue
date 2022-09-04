@@ -242,7 +242,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      cong: null,
+      cong: '',
       action: '',
       congs: [] as { name: string; path: string; color: string }[],
       loading: true,
@@ -285,8 +285,8 @@ export default Vue.extend({
     faSquarePlus() {
       return faSquarePlus
     },
-    initialLoad() {
-      return this.$store.state.stats.initialLoad
+    initialLoad(): boolean {
+      return this.$store.state.stats.initialLoad as boolean
     },
     congSync(): boolean {
       return !!this.$store.state.cong.client
@@ -300,8 +300,8 @@ export default Vue.extend({
     online(): boolean {
       return this.$store.state.stats.online
     },
-    congParam() {
-      return this.$route.query.cong
+    congParam(): string {
+      return this.$route.query.cong as string
     },
     jwSync(): string {
       const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
@@ -385,7 +385,7 @@ export default Vue.extend({
     },
   },
   watch: {
-    congParam(val) {
+    congParam(val: string) {
       if (val) {
         window.location.reload()
       }
@@ -405,7 +405,7 @@ export default Vue.extend({
         }
       }
     )
-    this.cong = this.$storePath()
+    this.cong = this.$storePath() as string
     this.loading = false
     this.$log.debug('v' + (await this.$appVersion()))
     if (this.initialLoad && this.$getPrefs('app.autoStartSync')) {
@@ -455,6 +455,7 @@ export default Vue.extend({
     async testApp() {
       const previousLang = this.$getPrefs('media.lang')
       /*
+      AML: American Sign Language
       E: English
       F: French
       O: Dutch
@@ -465,7 +466,7 @@ export default Vue.extend({
       U: Russian
       X: German
       */
-      for (const lang of ['E', 'F', 'M', 'O', 'R', 'S', 'T', 'U', 'X']) {
+      for (const lang of ['AML', 'E', 'F', 'M', 'O', 'R', 'S', 'T', 'U', 'X']) {
         this.$setPrefs('media.lang', lang)
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')

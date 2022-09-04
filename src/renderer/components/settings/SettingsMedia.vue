@@ -231,11 +231,11 @@ export default Vue.extend({
     },
   },
   watch: {
-    valid(val) {
+    valid(val: boolean) {
       this.$emit('valid', val)
     },
     media: {
-      handler(val) {
+      handler(val: MediaPrefs) {
         this.$setPrefs('media', val)
       },
       deep: true,
@@ -258,7 +258,7 @@ export default Vue.extend({
       },
     },
     'media.enableMediaDisplayButton': {
-      async handler(val) {
+      async handler(val: boolean) {
         // If value is not in sync with the state of the media window, toggle it
         if (val !== this.$store.state.present.mediaScreenInit) {
           await this.$toggleMediaWindow(val ? 'open' : 'close')
@@ -273,7 +273,7 @@ export default Vue.extend({
         await this.$refreshBackgroundImgPreview(true)
       },
     },
-    bg(val) {
+    bg(val: string) {
       if (val === 'yeartext') {
         const col = document.querySelector(
           '#mediaWindowBackground'

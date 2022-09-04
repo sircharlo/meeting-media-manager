@@ -264,7 +264,7 @@ export default Vue.extend({
     },
   },
   watch: {
-    musicFadeOut(val) {
+    musicFadeOut(val: Dayjs) {
       if (!!val !== !!this.interval) {
         this.setTimeRemaining()
       }

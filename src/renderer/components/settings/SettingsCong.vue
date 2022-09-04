@@ -138,17 +138,17 @@ export default Vue.extend({
     },
   },
   watch: {
-    valid(val) {
+    valid(val: boolean) {
       this.$emit('valid', val)
     },
-    complete(val) {
+    complete(val: boolean) {
       if (!val) {
         this.error = ''
         this.$store.commit('cong/clear')
       }
     },
     cong: {
-      handler(val) {
+      handler(val: CongPrefs) {
         this.$setPrefs('cong', val)
       },
       deep: true,

@@ -220,17 +220,17 @@ export default Vue.extend({
     },
   },
   watch: {
-    valid(val) {
+    valid(val: boolean) {
       this.$emit('valid', val)
     },
     app: {
-      handler(val) {
+      handler(val: AppPrefs) {
         this.$setPrefs('app', val)
       },
       deep: true,
     },
     'app.theme': {
-      async handler(val) {
+      async handler(val: 'light' | 'dark' | 'system') {
         ipcRenderer.send('setTheme', val)
         if (val === 'system') {
           this.$vuetify.theme.dark = await ipcRenderer.invoke('darkMode')
@@ -250,21 +250,21 @@ export default Vue.extend({
       },
     },
     'app.obs.cameraScene': {
-      handler(val) {
+      handler(val: string) {
         if (val) {
           this.$setScene(val)
         }
       },
     },
     'app.autoRunAtBoot': {
-      handler(val) {
+      handler(val: boolean) {
         if (!this.isLinux) {
           ipcRenderer.send('runAtBoot', val)
         }
       },
     },
     'app.localAppLang': {
-      async handler(val, oldVal) {
+      async handler(val: string, oldVal: string) {
         this.$dayjs.locale(val.split('-')[0])
 
         // Change the language of the app by changing it in the URL
@@ -280,7 +280,7 @@ export default Vue.extend({
       },
     },
     'app.outputFolderDateFormat': {
-      async handler(newVal, oldVal) {
+      async handler(newVal: string, oldVal: string) {
         if (newVal !== oldVal) {
           // Change the folder format of the current folders in the media path
           this.$renameAll(this.$mediaPath(), oldVal, newVal, 'rename', 'date')
@@ -295,7 +295,7 @@ export default Vue.extend({
       },
     },
     'app.disableHardwareAcceleration': {
-      handler(val) {
+      handler(val: boolean) {
         const path = join(this.$appPath(), 'disableHardwareAcceleration')
         const fileExists = existsSync(path)
         // Only do something if the value is not in sync with the presence of the file

@@ -124,14 +124,14 @@ export default Vue.extend({
     },
   },
   watch: {
-    valid(val) {
+    valid(val: boolean) {
       this.$emit(
         'valid',
         val && this.meeting.mwDay !== null && this.meeting.weDay !== null
       )
     },
     meeting: {
-      handler(val) {
+      handler(val: MeetingPrefs) {
         this.$setPrefs('meeting', val)
         this.$emit(
           'valid',
@@ -142,7 +142,7 @@ export default Vue.extend({
     },
     'meeting.enableMusicButton': {
       // Set or unset the music shuffle shortcut
-      async handler(val) {
+      async handler(val: boolean) {
         if (val) {
           await this.$setShortcut('ALT+K', 'toggleMusicShuffle', 'music')
         } else {

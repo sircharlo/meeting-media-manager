@@ -106,7 +106,7 @@ export default Vue.extend({
     },
   },
   watch: {
-    valid(val) {
+    valid(val: boolean) {
       if (val) this.calcCache()
     },
   },

@@ -240,31 +240,31 @@ export default Vue.extend({
         this.scrubVideo()
       }
     },
-    async playNow(val) {
+    async playNow(val: boolean) {
       if (val) {
         this.current = true
         await this.play()
       }
     },
-    stopNow(val) {
+    stopNow(val: boolean) {
       if (val) {
         this.stop()
       }
     },
-    deactivate(val) {
+    deactivate(val: boolean) {
       if (val) {
         this.active = false
         this.current = false
       }
     },
-    mediaActive(val) {
+    mediaActive(val: boolean) {
       if (val && !this.active) {
         this.current = false
       } else if (!val) {
         this.active = false
       }
     },
-    async active(val) {
+    async active(val: boolean) {
       if (val) {
         this.current = this.$getPrefs('media.enablePp') as boolean
       } else {
@@ -279,7 +279,7 @@ export default Vue.extend({
         }
       }
     },
-    showPrefix(val) {
+    showPrefix(val: boolean) {
       const prefix = document.querySelector(
         `#${this.id} .sort-prefix`
       ) as HTMLSpanElement
