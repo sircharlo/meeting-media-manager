@@ -3,7 +3,7 @@ import { join, normalize } from 'path'
 import { app, protocol } from 'electron'
 
 const PRODUCTION_APP_PROTOCOL = 'app'
-const PRODUCTION_APP_PATH = path.join(__dirname, '..', 'renderer')
+const PRODUCTION_APP_PATH = join(__dirname, '..', 'renderer')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
