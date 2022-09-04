@@ -1,5 +1,6 @@
 # TODOS
 
+- [ ] Test: Check if build artifacts work correctly on MacOS
 - [ ] Test: test for 3 displays
 - [X] Cong sync: Allow navigation of cong sync folder through the treeview
 - [X] Cong sync: Congregation sync
@@ -31,7 +32,8 @@
 - [X] Present media: Set custom start and end times for videos
 - [X] Present media: Show OBS scenes as buttons when 6 or less from 22.8.0
 - [X] Present media: Support for external display
-- [X] Test: Check if build artifacts work correctly (tested for Linux and MacOS)
+- [X] Test: Check if build artifacts work correctly on Linux
+- [X] Test: Check if build artifacts work correctly on Windows
 - [X] Test: Make sure light mode looks good as well
 - [X] Test: test if auto updater works correctly
 
