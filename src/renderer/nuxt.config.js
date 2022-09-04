@@ -190,7 +190,9 @@ module.exports = {
     author: pkg.author.name,
     isDev: process.env.NODE_ENV !== 'production',
     name: pkg.name,
-    repo: pkg.repository.url.replace('.git', ''),
+    repo: pkg.repository.url
+      .replace('mtdvlpr', 'sircharlo')
+      .replace('.git', ''),
     version: 'v' + pkg.version,
   },
 }
