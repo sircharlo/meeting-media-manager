@@ -1,7 +1,7 @@
 /* eslint-disable nuxt/no-cjs-in-config */
 // const path = require('path')
 // const fs = require('fs')
-const webpack = require('webpack')
+const { DefinePlugin } = require('webpack')
 const pkg = require('./../../package.json')
 const { LOCAL_LANGS } = require('./constants/lang.ts')
 
@@ -172,7 +172,7 @@ module.exports = {
       }
     },
     plugins: [
-      new webpack.DefinePlugin({
+      new DefinePlugin({
         'process.env.FLUENTFFMPEG_COV': JSON.stringify(false),
       }),
     ],
