@@ -83,4 +83,3 @@ build/*
 
 # Service worker
 sw.*
-node_modules
