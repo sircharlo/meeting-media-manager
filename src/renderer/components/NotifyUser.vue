@@ -110,15 +110,14 @@ export default Vue.extend({
         url =
           (this.$bugURL() as string) +
           encodeURIComponent(`
-        ### Error details
-        \`\`\`
-        ${JSON.stringify(
-          action.url as Error,
-          Object.getOwnPropertyNames(action.url as Error),
-          2
-        )}
-        \`\`\`
-        `).replace(/\n/g, '%0D%0A')
+### Error details
+\`\`\`
+${JSON.stringify(
+  action.url as Error,
+  Object.getOwnPropertyNames(action.url as Error),
+  2
+)}
+\`\`\``).replace(/\n/g, '%0D%0A')
       }
       window.open(url, '_blank')
     },

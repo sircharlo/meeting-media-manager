@@ -1,15 +1,12 @@
 <template>
   <v-container class="text-center">
-    <h1 v-if="error.statusCode === 404">
-      {{ pageNotFound }}
+    <h1 class="mb-4">
+      {{ error.statusCode === 404 ? pageNotFound : otherError }}
     </h1>
-    <h1 v-else>
-      {{ otherError }}
-    </h1>
-    <v-btn small class="mr-2" @click="report()">
+    <v-btn class="mr-2" @click="report()">
       {{ $t('reportIssue') }}
     </v-btn>
-    <icon-btn variant="home" />
+    <icon-btn variant="home" @click="refresh()" />
   </v-container>
 </template>
 <script lang="ts">
@@ -25,7 +22,7 @@ export default Vue.extend({
   data() {
     return {
       pageNotFound: '404 Not Found',
-      otherError: 'An error occurred',
+      otherError: 'An unexpected error occurred',
     }
   },
   head() {
@@ -33,18 +30,23 @@ export default Vue.extend({
       this.error.statusCode === 404 ? this.pageNotFound : this.otherError
     return {
       title,
+      titleTemplate: '%s - M³',
     }
   },
   methods: {
+    refresh() {
+      if (this.$route.path === `/${this.$i18n.locale}`) {
+        window.location.reload()
+      }
+    },
     report(): void {
       window.open(
         (this.$bugURL() as string) +
           encodeURIComponent(`
-        ### Error details
-        \`\`\`
-        ${JSON.stringify(this.error, Object.getOwnPropertyNames(this.error), 2)}
-        \`\`\`
-        `).replace(/\n/g, '%0D%0A'),
+### Error details
+\`\`\`
+${JSON.stringify(this.error, Object.getOwnPropertyNames(this.error), 2)}
+\`\`\``).replace(/\n/g, '%0D%0A'),
         '_blank'
       )
     },
