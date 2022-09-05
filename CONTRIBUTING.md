@@ -36,7 +36,7 @@ Once you have done that, you are ready to contribute! Fork this repository, clon
 
 ### Build Setup
 
-The following commands are used during the development of the application to build and test it:
+The following commands are used during the development of the application to test and build it:
 
 ```bash
 # Install dependencies

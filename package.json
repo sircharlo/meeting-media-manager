@@ -3,10 +3,10 @@
   "version": "22.9.0-alpha.2",
   "description": "Meeting Media Manager",
   "keywords": [
-    "meeting media manager",
-    "m3",
     "M³",
-    "jw"
+    "jw",
+    "m3",
+    "meeting media manager"
   ],
   "homepage": "https://sircharlo.github.io/meeting-media-manager/",
   "bugs": "https://github.com/sircharlo/meeting-media-manager/issues",
