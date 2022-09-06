@@ -31,6 +31,7 @@
           <v-btn
             v-if="m.persistent || m.dismiss"
             icon
+            :color="closeColor"
             class="align-right"
             @click="hideMessage(i)"
           >
@@ -96,6 +97,9 @@ export default Vue.extend({
   computed: {
     messages() {
       return this.$store.state.notify as Notify[]
+    },
+    closeColor() {
+      return this.$vuetify.theme.dark ? 'white' : 'black'
     },
     color() {
       return this.$vuetify.theme.dark ? '#121212' : '#fff'

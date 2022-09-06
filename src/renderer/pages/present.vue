@@ -157,7 +157,7 @@ export default Vue.extend({
       this.videoActive = val[1]
     })
 
-    if (this.$store.obs.connected) {
+    if (this.$store.state.obs.connected) {
       this.$setScene(this.$getPrefs('app.obs.cameraScene'))
     }
 

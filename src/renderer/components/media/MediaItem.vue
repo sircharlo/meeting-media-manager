@@ -6,7 +6,10 @@
     <v-list-item
       :id="id"
       three-line
-      :class="{ 'media-played': played, 'current-media-item': current }"
+      :class="{
+        'media-played': played,
+        'current-media-item': current,
+      }"
     >
       <v-img
         v-if="isImage"
@@ -421,6 +424,10 @@ export default Vue.extend({
 <style lang="scss">
 .media-title {
   font-size: 1rem !important;
+}
+
+.v-list-item {
+  border-left: 8px solid transparent;
 }
 
 .media-played {
