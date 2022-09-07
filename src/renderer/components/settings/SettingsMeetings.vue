@@ -7,6 +7,7 @@
       :group-items="localeDays"
       :locked="locked('meeting.mwDay')"
       height="56px"
+      :mandatory="!!meeting.mwDay"
       required
     >
       <form-time-picker
@@ -23,6 +24,7 @@
       :locked="locked('meeting.weDay')"
       :group-items="localeDays"
       height="56px"
+      :mandatory="!!meeting.weDay"
       required
     >
       <form-time-picker
