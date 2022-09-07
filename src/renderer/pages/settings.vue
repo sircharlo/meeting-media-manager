@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" class="fill-height mb-0">
-    <v-col cols="12" class="text-center">
+    <v-col cols="12" class="text-center" style="margin-bottom: 72px">
       <v-expansion-panels v-model="panel" multiple>
         <v-expansion-panel
           v-for="(header, i) in headers"
@@ -18,38 +18,40 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </v-col>
-    <v-col cols="12" align-self="end" class="d-flex">
-      <v-col class="d-flex pa-0" align-self="center">
-        <v-btn
-          small
-          :color="updateSuccess ? undefined : 'error'"
-          :class="{ 'mr-2': true, 'pulse-danger': !updateSuccess }"
-          @click="openReleases()"
-        >
-          <font-awesome-icon
-            v-if="!updateSuccess"
-            :icon="faHandPointRight"
-            class="mr-1"
-          />
-          M³ {{ $config.isDev ? 'dev' : $config.version }}
-        </v-btn>
-        <v-btn small class="mr-2" @click="report()">
-          {{ $t('reportIssue') }}
-        </v-btn>
-        <v-btn
-          small
-          :color="cacheColor"
-          :loading="loading"
-          class="black--text"
-          @click="removeCache()"
-        >
-          {{ `${$t('cleanCache')} (${cache}MB)` }}
-        </v-btn>
+    <v-footer fixed class="justify-space-between">
+      <v-col cols="12" align-self="end" class="d-flex">
+        <v-col class="d-flex pa-0" align-self="center">
+          <v-btn
+            small
+            :color="updateSuccess ? undefined : 'error'"
+            :class="{ 'mr-2': true, 'pulse-danger': !updateSuccess }"
+            @click="openReleases()"
+          >
+            <font-awesome-icon
+              v-if="!updateSuccess"
+              :icon="faHandPointRight"
+              class="mr-1"
+            />
+            M³ {{ $config.isDev ? 'dev' : $config.version }}
+          </v-btn>
+          <v-btn small class="mr-2" @click="report()">
+            {{ $t('reportIssue') }}
+          </v-btn>
+          <v-btn
+            small
+            :color="cacheColor"
+            :loading="loading"
+            class="black--text"
+            @click="removeCache()"
+          >
+            {{ `${$t('cleanCache')} (${cache}MB)` }}
+          </v-btn>
+        </v-col>
+        <v-col align-self="end" class="text-right pa-0">
+          <icon-btn variant="home" :disabled="!valid" />
+        </v-col>
       </v-col>
-      <v-col align-self="end" class="text-right pa-0">
-        <icon-btn variant="home" :disabled="!valid" />
-      </v-col>
-    </v-col>
+    </v-footer>
   </v-row>
 </template>
 <script lang="ts">

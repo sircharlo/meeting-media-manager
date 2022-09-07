@@ -176,7 +176,9 @@
         :id="$attrs['data-id']"
         ref="field"
         v-model="$attrs.value"
+        :color="required && !$attrs.value ? 'error' : 'primary'"
         v-bind="$attrs"
+        :class="{ 'btn-group-error': required && !$attrs.value }"
         v-on="$listeners"
         @change="$emit('input', $event)"
       >
@@ -374,5 +376,8 @@ export default Vue.extend({
 <style lang="css">
 .v-text-field--filled .v-text-field__prefix {
   margin-top: 0px !important;
+}
+.btn-group-error {
+  border: solid 1px;
 }
 </style>

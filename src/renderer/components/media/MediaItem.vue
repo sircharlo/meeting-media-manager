@@ -81,7 +81,8 @@
           :background-opacity="0"
         />
         <v-progress-linear
-          v-model="clippedStart"
+          v-if="clippedStart > 0"
+          :value="clippedStart"
           absolute
           bottom
           aria-label="Video clipped start"
@@ -89,7 +90,8 @@
           :background-opacity="0"
         />
         <v-progress-linear
-          v-model="clippedEnd"
+          v-if="clippedEnd > 0"
+          :value="clippedEnd"
           absolute
           bottom
           aria-label="Video clipped end"

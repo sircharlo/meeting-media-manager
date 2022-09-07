@@ -7,6 +7,7 @@
       :group-items="localeDays"
       :locked="locked('meeting.mwDay')"
       height="56px"
+      required
     >
       <form-time-picker
         v-model="meeting.mwStartTime"
@@ -22,6 +23,7 @@
       :locked="locked('meeting.weDay')"
       :group-items="localeDays"
       height="56px"
+      required
     >
       <form-time-picker
         v-model="meeting.weStartTime"
