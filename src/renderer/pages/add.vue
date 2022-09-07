@@ -30,6 +30,7 @@
         <v-col cols="11">
           <v-btn-toggle
             v-model="type"
+            color="primary"
             style="width: 100%"
             @change="fileString = ''"
           >

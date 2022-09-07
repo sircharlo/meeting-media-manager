@@ -73,6 +73,8 @@
         <v-col cols="auto" align-self="center" class="text-right">
           <v-btn-toggle
             v-model="meeting.musicFadeOutType"
+            color="primary"
+            mandatory
             :locked="locked('meeting.musicFadeOutType')"
           >
             <v-btn value="smart" :disabled="locked('meeting.musicFadeOutType')">
