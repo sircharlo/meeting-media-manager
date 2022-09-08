@@ -92,8 +92,8 @@ const plugin: Plugin = (
     return joinSafe(
       $appPath(),
       'Publications',
-      lang ?? $getPrefs('media.lang'),
-      `yeartext-${lang ?? $getPrefs('media.lang')}-${new Date()
+      lang ?? $getPrefs('media.lang') ?? 'E',
+      `yeartext-${lang ?? $getPrefs('media.lang') ?? 'E'}-${new Date()
         .getFullYear()
         .toString()}`
     )
@@ -182,6 +182,7 @@ const plugin: Plugin = (
   )
 
   inject('renamePubs', async (oldVal: string, newVal: string) => {
+    if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) return
     readdirSync(mediaPath()).forEach((dir) => {
       const date = $dayjs(
         dir,

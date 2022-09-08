@@ -314,10 +314,11 @@ export default Vue.extend({
   mounted() {
     Object.assign(this.app, this.$getPrefs('app'))
     this.app.localAppLang = this.$i18n.locale
+    this.$emit('valid', this.valid)
 
     // Validate form (for new congregations)
     if (this.$refs.form) {
-      ;(this.$refs.form as HTMLFormElement).validate()
+      this.$refs.form.validate()
     }
   },
   methods: {

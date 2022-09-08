@@ -65,27 +65,27 @@ export default Vue.extend({
       cache: 0,
       cacheColor: 'warning',
       loading: false,
-      panel: [] as number[],
+      panel: [0, 1, 2, 3] as number[],
       headers: [
         {
           name: this.$t('optionsApp'),
           component: 'settings-app',
-          valid: true,
+          valid: false,
         },
         {
           name: this.$t('optionsCongSync'),
           component: 'settings-cong',
-          valid: true,
+          valid: false,
         },
         {
           name: this.$t('optionsMedia'),
           component: 'settings-media',
-          valid: true,
+          valid: false,
         },
         {
           name: this.$t('optionsMeetings'),
           component: 'settings-meetings',
-          valid: true,
+          valid: false,
         },
       ],
     }
@@ -95,7 +95,7 @@ export default Vue.extend({
   },
   computed: {
     cong(): string {
-      return this.$route.query.cong
+      return this.$route.query.cong as string
     },
     valid(): boolean {
       return this.headers.every(({ valid }) => valid)
@@ -111,16 +111,29 @@ export default Vue.extend({
     valid(val: boolean) {
       if (val) this.calcCache()
     },
+    headers: {
+      handler() {
+        this.headers.forEach(({ valid }, i) => {
+          const match = this.panel.indexOf(i)
+          if (!valid && match === -1) this.panel.push(i)
+          else if (valid && match > -1) this.panel.splice(match, 1)
+        })
+      },
+      deep: true,
+    },
   },
   mounted() {
-    if (!this.$getPrefs('app.congregationName')) {
-      this.panel = [0, 2, 3]
-    } else {
-      this.calcCache()
-    }
+    this.calcCache()
   },
   methods: {
     calcCache(): void {
+      if (
+        !this.$getPrefs('app.localOutputPath') ||
+        !this.$getPrefs('media.lang')
+      ) {
+        this.cache = 0
+        return
+      }
       this.cache = parseFloat(
         (
           this.$findAll(

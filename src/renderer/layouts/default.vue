@@ -181,8 +181,6 @@ export default Vue.extend({
         this.$store.commit('stats/setUpdateSuccess', false)
       }
     })
-
-    await this.updateCleanup()
     await this.updateOnlineStatus()
   },
   beforeDestroy() {
@@ -317,6 +315,7 @@ export default Vue.extend({
       } else {
         this.$store.commit('obs/clear')
       }
+      await this.updateCleanup()
     },
     async updateOnlineStatus(firstTry: boolean = true) {
       this.checkInternet(await this.isReachable('www.jw.org', 443, firstTry))

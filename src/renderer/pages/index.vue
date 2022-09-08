@@ -307,7 +307,10 @@ export default Vue.extend({
       const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
         (lang) => lang.langcode === (this.$getPrefs('media.lang') as string)
       ) as ShortJWLang
-      return `${this.$t('syncJwOrgMedia')} (${lang?.vernacularName})`
+      if (lang?.vernacularName) {
+        return `${this.$t('syncJwOrgMedia')} (${lang?.vernacularName})`
+      }
+      return ''
     },
     upcomingWeeks(): { iso: number; label: string }[] {
       const weeks: { iso: number; label: string }[] = []
@@ -392,6 +395,12 @@ export default Vue.extend({
     },
   },
   async mounted() {
+    if (!this.jwSync) {
+      this.$router.push({
+        path: this.localePath('/settings'),
+        query: this.$route.query,
+      })
+    }
     this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
     this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
 

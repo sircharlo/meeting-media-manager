@@ -246,6 +246,7 @@ export default Vue.extend({
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
         await this.$getJWLangs()
+        this.$refreshBackgroundImgPreview(true)
       },
     },
     'media.preferredOutput': {
@@ -287,9 +288,18 @@ export default Vue.extend({
   async mounted(): Promise<void> {
     Object.assign(this.media, this.$getPrefs('media'))
     this.jwLangs = await this.$getJWLangs()
+    if (
+      !this.langs
+        .map(({ langcode }) => langcode)
+        .includes(this.media.lang ?? '')
+    ) {
+      this.media.lang = null
+    }
     this.loading = false
+    this.$emit('valid', this.valid)
+
     if (this.$refs.form) {
-      ;(this.$refs.form as HTMLFormElement).validate()
+      this.$refs.form.validate()
     }
     this.bg = await this.$refreshBackgroundImgPreview()
   },

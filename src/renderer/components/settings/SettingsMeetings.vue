@@ -159,8 +159,10 @@ export default Vue.extend({
   },
   mounted() {
     Object.assign(this.meeting, this.$getPrefs('meeting'))
+    this.$emit('valid', this.valid)
+
     if (this.$refs.form) {
-      ;(this.$refs.form as HTMLFormElement).validate()
+      this.$refs.form.validate()
     }
   },
   methods: {

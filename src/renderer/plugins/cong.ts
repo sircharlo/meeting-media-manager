@@ -96,8 +96,9 @@ const plugin: Plugin = (
       } else if (e.message === 'Invalid response: 401 Unauthorized') {
         return 'credentials'
       } else if (
-        e.message === 'Invalid response: 405 Method Not Allowed' ||
-        e.message === 'Invalid response: 404 Not Found'
+        e.message === 'Invalid response: 403 Forbidden' ||
+        e.message === 'Invalid response: 404 Not Found' ||
+        e.message === 'Invalid response: 405 Method Not Allowed'
       ) {
         return 'dir'
       } else {

@@ -62,7 +62,7 @@ const plugin: Plugin = (
           url: 'https://wol.jw.org/wol/finder',
           params: {
             docid: '1102022800',
-            wtlocale: $getPrefs('media.lang'),
+            wtlocale: $getPrefs('media.lang') ?? 'E',
             format: 'json',
             snip: 'yes',
           },
