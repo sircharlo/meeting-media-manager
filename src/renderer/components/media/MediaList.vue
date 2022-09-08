@@ -341,7 +341,7 @@ export default Vue.extend({
       this.preview = ''
       if (item.trackImage) this.preview = item.trackImage
       else if (item.thumbnail) this.preview = item.thumbnail
-      else if (item.contents) {
+      else if (item.contents && item.safeName) {
         this.preview =
           `data:image/${extname(item.safeName as string)};base64,` +
           item.contents.toString('base64')
