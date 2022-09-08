@@ -5,6 +5,7 @@
   <div>
     <v-list-item
       :id="id"
+      link
       three-line
       :class="{
         'media-played': played,
@@ -430,6 +431,9 @@ export default Vue.extend({
 
 .v-list-item {
   border-left: 8px solid transparent;
+  &:hover {
+    cursor: default;
+  }
 }
 
 .media-played {

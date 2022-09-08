@@ -51,8 +51,10 @@
           x-small
           absolute
           left
+          tile
+          depressed
           v-bind="attrs"
-          style="bottom: 4px"
+          style="bottom: 7.5px"
           :class="{ 'pulse-danger': isClipped }"
           v-on="on"
           @click="atClick()"
@@ -72,7 +74,9 @@
       x-small
       absolute
       left
-      style="bottom: 4px"
+      tile
+      depressed
+      style="bottom: 7.5px"
       :class="{ 'pulse-danger': isClipped }"
       @click="atClick()"
     >
