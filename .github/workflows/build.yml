@@ -60,6 +60,13 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Set env variables
+        run: |
+          export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          export SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+          export SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+          export SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+
       - name: Build/release Electron app
         env:
           GH_TOKEN: ${{ secrets.github_token }}

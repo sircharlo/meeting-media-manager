@@ -2,6 +2,7 @@
 // const path = require('path')
 // const fs = require('fs')
 const { DefinePlugin } = require('webpack')
+const SentryPlugin = require('@sentry/webpack-plugin')
 const pkg = require('./../../package.json')
 const { LOCAL_LANGS } = require('./constants/lang.ts')
 
@@ -43,9 +44,9 @@ module.exports = {
   ],
   plugins: [
     // No dependencies
+    '~/plugins/externals',
     '~/plugins/axios',
     '~/plugins/dayjs',
-    '~/plugins/externals',
     '~/plugins/helpers',
     '~/plugins/prefs',
     // Depends on prefs
@@ -162,7 +163,7 @@ module.exports = {
         ]
       },
     },
-    extend(config, _ctx) {
+    extend(config, { isClient }) {
       config.module = {
         ...config.module,
         noParse: [
@@ -170,10 +171,21 @@ module.exports = {
           /node_modules\/?\\?sql\.js\/?\\?dist\/?\\?sql-wasm/,
         ],
       }
+      if (isClient) {
+        config.devtool = 'source-map'
+      }
     },
     plugins: [
       new DefinePlugin({
         'process.env.FLUENTFFMPEG_COV': JSON.stringify(false),
+      }),
+      new DefinePlugin({
+        __SENTRY_DEBUG__: false,
+        __SENTRY_TRACING__: false,
+      }),
+      new SentryPlugin({
+        release: 'meeting-media-manager@' + pkg.version,
+        include: './dist',
       }),
     ],
     externals: [
@@ -194,5 +206,6 @@ module.exports = {
       .replace('mtdvlpr', 'sircharlo')
       .replace('.git', ''),
     version: 'v' + pkg.version,
+    sentryDsn: process.env.SENTRY_DSN,
   },
 }

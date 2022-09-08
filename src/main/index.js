@@ -6,21 +6,24 @@ import {
   nativeTheme,
   shell,
   screen,
-  crashReporter,
   globalShortcut,
 } from 'electron'
+import * as Sentry from '@sentry/electron'
 import { initRenderer } from 'electron-store'
 import { existsSync } from 'fs-extra'
 import { join, normalize } from 'upath'
 import { autoUpdater } from 'electron-updater'
 import BrowserWinHandler from './BrowserWinHandler'
+require('dotenv').config()
 const { platform } = require('os')
 const adapter = require('axios/lib/adapters/http')
 const { get } = require('axios')
 const isDev = process.env.NODE_ENV === 'development'
 
-crashReporter.start({
-  uploadToServer: false,
+Sentry.init({
+  environment: isDev ? 'development' : 'production',
+  release: `meeting-media-manager@${app.getVersion()}`,
+  dsn: process.env.SENTRY_DSN,
 })
 
 // Initialize the store

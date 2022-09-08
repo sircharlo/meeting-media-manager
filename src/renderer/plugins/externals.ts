@@ -7,6 +7,8 @@ import {
   FontAwesomeLayers,
 } from '@fortawesome/vue-fontawesome'
 import { faChevronDown, faCaretDown } from '@fortawesome/free-solid-svg-icons'
+import * as Sentry from '@sentry/vue'
+import { Plugin } from '@nuxt/types'
 
 // Font-Awesome
 config.autoAddCss = false
@@ -17,3 +19,14 @@ Vue.component('FontAwesomeLayers', FontAwesomeLayers)
 
 // v-mask
 Vue.use(VueMask)
+
+const plugin: Plugin = ({ $config }) => {
+  Sentry.init({
+    Vue,
+    dsn: $config.sentryDsn,
+    release: `meeting-media-manager@${$config.version.substring(1)}`,
+    environment: $config.isDev ? 'development' : 'production',
+  })
+}
+
+export default plugin

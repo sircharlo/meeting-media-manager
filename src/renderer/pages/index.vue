@@ -423,6 +423,9 @@ export default Vue.extend({
     this.$store.commit('stats/setInitialLoad', false)
   },
   methods: {
+    throwError() {
+      throw new Error('test')
+    },
     async execute(action: string) {
       this.action = ''
       switch (action) {
