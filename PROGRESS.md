@@ -45,13 +45,14 @@
 
 - Correctly set app icon for Linux
 - Download markers for sign language when adding a song with the song picker
-- Setting custom media background works instantly
 - Hiding jw logo for media window works instantly
+- Setting custom media background works instantly
 
 ## New Features
 
 - DOCS: Documentation filter searches entire website and highlights results with yellow background
 - DOCS: Documentation site now supports multiple languages. Time to translate my dear volunteers!
+- GENERAL: Support Debian package
 - MEDIA MANAGER: Auto determine drag and dropped file type (custom / jwpub)
 - MEDIA SYNC: Auto remove hidden media if it was downloaded before
 - MEDIA SYNC: Auto rename media when switching local language (also on cong server)
