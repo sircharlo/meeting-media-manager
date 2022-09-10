@@ -688,7 +688,7 @@ const plugin: Plugin = (
 
     // Get document id of this weeks mwb issue
     const db = (await getDbFromJWPUB('mwb', issue, setProgress)) as Database
-    if (!db) throw new Error('No MW media data found!')
+    if (!db) throw new Error(`No MW media data found for ${date}!`)
     const docId = (
       $query(
         db,
@@ -770,7 +770,7 @@ const plugin: Plugin = (
       db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
       weekNr = getWeekNr(db)
     }
-    if (weekNr < 0) throw new Error('No WE meeting data found!')
+    if (weekNr < 0) throw new Error(`No WE meeting data found for ${date}!`)
 
     const docId = (
       $query(

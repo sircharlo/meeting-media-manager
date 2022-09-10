@@ -2502,6 +2502,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/tracing@npm:^7.12.1":
+  version: 7.12.1
+  resolution: "@sentry/tracing@npm:7.12.1"
+  dependencies:
+    "@sentry/hub": 7.12.1
+    "@sentry/types": 7.12.1
+    "@sentry/utils": 7.12.1
+    tslib: ^1.9.3
+  checksum: 6135bb2df812f309d6018d21fea63fb35e14d7b6a04589924814b73eff4d3838b9028cd5651ad872badd315a08bf736a83963db02a5becfa5b3b971b72456462
+  languageName: node
+  linkType: hard
+
 "@sentry/types@npm:7.12.1":
   version: 7.12.1
   resolution: "@sentry/types@npm:7.12.1"
@@ -10718,6 +10730,7 @@ __metadata:
     "@nuxtjs/i18n": ^7.3.0
     "@nuxtjs/vuetify": ^1.12.3
     "@sentry/electron": ^4.0.0
+    "@sentry/tracing": ^7.12.1
     "@sentry/vue": ^7.12.1
     "@sentry/webpack-plugin": ^1.19.0
     "@types/adm-zip": ^0.5.0
