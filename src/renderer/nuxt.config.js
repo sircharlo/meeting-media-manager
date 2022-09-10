@@ -5,6 +5,7 @@ const { DefinePlugin } = require('webpack')
 const SentryPlugin = require('@sentry/webpack-plugin')
 const pkg = require('./../../package.json')
 const { LOCAL_LANGS } = require('./constants/lang.ts')
+require('dotenv').config()
 
 /**
  * By default, Nuxt.js is configured to cover most use cases.
@@ -44,6 +45,7 @@ module.exports = {
   ],
   plugins: [
     // No dependencies
+    '~/plugins/sentry',
     '~/plugins/externals',
     '~/plugins/axios',
     '~/plugins/dayjs',
@@ -206,6 +208,7 @@ module.exports = {
       .replace('mtdvlpr', 'sircharlo')
       .replace('.git', ''),
     version: 'v' + pkg.version,
-    sentryDsn: process.env.SENTRY_DSN,
+    sentryDSN: process.env.SENTRY_DSN,
+    env: process.env,
   },
 }

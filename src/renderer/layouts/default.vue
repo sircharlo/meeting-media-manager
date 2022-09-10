@@ -316,6 +316,14 @@ export default Vue.extend({
         this.$store.commit('obs/clear')
       }
       await this.updateCleanup()
+      this.$sentry.setUser({
+        username: this.$getPrefs('app.congregationName') as string,
+      })
+
+      this.$sentry.setContext('prefs', {
+        ...this.$getAllPrefs(),
+        obs: this.$getPrefs('app.obs'),
+      })
     },
     async updateOnlineStatus(firstTry: boolean = true) {
       this.checkInternet(await this.isReachable('www.jw.org', 443, firstTry))

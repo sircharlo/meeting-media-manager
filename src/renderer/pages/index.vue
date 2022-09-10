@@ -154,6 +154,7 @@
       >
         Test App
       </v-btn>
+      <v-btn @click="throwError()">Throw error</v-btn>
     </v-col>
     <v-col cols="12" align-self="end" class="d-flex pa-0">
       <v-col>
@@ -424,7 +425,7 @@ export default Vue.extend({
   },
   methods: {
     throwError() {
-      throw new Error('test')
+      throw new Error('tester')
     },
     async execute(action: string) {
       this.action = ''

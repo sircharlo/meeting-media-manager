@@ -237,6 +237,10 @@ export default Vue.extend({
     media: {
       handler(val: MediaPrefs) {
         this.$setPrefs('media', val)
+        this.$sentry.setContext('prefs', {
+          ...this.$getAllPrefs(),
+          obs: this.$getPrefs('app.obs'),
+        })
       },
       deep: true,
     },

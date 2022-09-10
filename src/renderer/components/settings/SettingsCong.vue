@@ -150,6 +150,10 @@ export default Vue.extend({
     cong: {
       handler(val: CongPrefs) {
         this.$setPrefs('cong', val)
+        this.$sentry.setContext('prefs', {
+          ...this.$getAllPrefs(),
+          obs: this.$getPrefs('app.obs'),
+        })
       },
       deep: true,
     },
