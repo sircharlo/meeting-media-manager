@@ -2,7 +2,7 @@ import { type, release } from 'os'
 import { Plugin } from '@nuxt/types'
 import { MeetingFile, Perf, Stats } from '~/types'
 
-const plugin: Plugin = ({ $getAllPrefs, $config, store }, inject) => {
+const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
   interface Log {
     [key: number]: any[]
   }
@@ -25,7 +25,9 @@ const plugin: Plugin = ({ $getAllPrefs, $config, store }, inject) => {
     const now = +new Date()
     if (!logs[type][now]) logs[type][now] = []
     logs[type][now].push(
-      typeof args[0] === 'string' ? args[0] : args[0]?.message
+      typeof args[0] === 'string'
+        ? args[0]
+        : args[0]?.message ?? args[0]?.description
     )
     console[type].apply(console, args)
   }
@@ -42,6 +44,9 @@ const plugin: Plugin = ({ $getAllPrefs, $config, store }, inject) => {
     },
     error: function (msg: any, ...args: any[]) {
       logger('error', [msg, ...args])
+      if (typeof msg !== 'string') {
+        $sentry.captureException(msg)
+      }
     },
   }
 

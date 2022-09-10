@@ -226,10 +226,6 @@ export default Vue.extend({
     app: {
       handler(val: AppPrefs) {
         this.$setPrefs('app', val)
-        this.$sentry.setContext('prefs', {
-          ...this.$getAllPrefs(),
-          obs: this.$getPrefs('app.obs'),
-        })
       },
       deep: true,
     },

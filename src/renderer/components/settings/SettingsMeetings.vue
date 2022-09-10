@@ -139,10 +139,6 @@ export default Vue.extend({
     meeting: {
       handler(val: MeetingPrefs) {
         this.$setPrefs('meeting', val)
-        this.$sentry.setContext('prefs', {
-          ...this.$getAllPrefs(),
-          obs: this.$getPrefs('app.obs'),
-        })
         this.$emit(
           'valid',
           val && this.meeting.mwDay !== null && this.meeting.weDay !== null

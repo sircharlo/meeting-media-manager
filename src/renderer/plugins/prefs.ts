@@ -379,7 +379,7 @@ function migrate2290(key: string, newVal: any) {
   }
 }
 
-const plugin: Plugin = (_ctx, inject) => {
+const plugin: Plugin = ({ $sentry }, inject) => {
   inject('prefsInitialized', () => !!store)
   inject('getCongPrefs', async () => {
     return sync(join(await ipcRenderer.invoke('userData'), 'prefs-*.json'))
@@ -418,7 +418,12 @@ const plugin: Plugin = (_ctx, inject) => {
   inject('getAllPrefs', () => JSON.parse(readFileSync(store.path, 'utf8')))
 
   inject('setPrefs', (key: string, value: unknown) => {
-    return store.set(key, value)
+    store.set(key, value)
+    const prefs = JSON.parse(readFileSync(store.path, 'utf8')) as ElectronStore
+    $sentry.setContext('prefs', {
+      ...prefs,
+      obs: prefs.app.obs,
+    })
   })
 
   inject('setAllPrefs', (settings: ElectronStore) => {
