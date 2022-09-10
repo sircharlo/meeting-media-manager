@@ -6837,16 +6837,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:20.1.2":
-  version: 20.1.2
-  resolution: "electron@npm:20.1.2"
+"electron@npm:20.1.3":
+  version: 20.1.3
+  resolution: "electron@npm:20.1.3"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 2fc71e1d4538cc105a95a35f961c7b503e0cd412c9c0216a5ca4af87e38e4994564e56c7fddc2476cf9d216daf5d6eea33cae9686595fbe663b3225d23480078
+  checksum: 53b1b153dd3ff30a2a5d6cfd4fa5561449403161bb358e29d9d1f16407131f67715afde9a4d5467be1acee7b7cc044a29c10b2d96ad51dc1a4c575af5574689d
   languageName: node
   linkType: hard
 
@@ -7732,6 +7732,19 @@ __metadata:
     merge2: ^1.3.0
     micromatch: ^4.0.4
   checksum: f473105324a7780a20c06de842e15ddbb41d3cb7e71d1e4fe6e8373204f22245d54f5ab9e2061e6a1c613047345954d29b022e0e76f5c28b1df9858179a0e6d7
+  languageName: node
+  linkType: hard
+
+"fast-glob@npm:^3.2.12":
+  version: 3.2.12
+  resolution: "fast-glob@npm:3.2.12"
+  dependencies:
+    "@nodelib/fs.stat": ^2.0.2
+    "@nodelib/fs.walk": ^1.2.3
+    glob-parent: ^5.1.2
+    merge2: ^1.3.0
+    micromatch: ^4.0.4
+  checksum: 0b1990f6ce831c7e28c4d505edcdaad8e27e88ab9fa65eedadb730438cfc7cde4910d6c975d6b7b8dc8a73da4773702ebcfcd6e3518e73938bb1383badfe01c2
   languageName: node
   linkType: hard
 
@@ -10723,7 +10736,7 @@ __metadata:
     css-loader: ^5.2.7
     deepmerge: ^4.2.2
     dotenv: ^16.0.2
-    electron: 20.1.2
+    electron: 20.1.3
     electron-builder: 23.3.3
     electron-devtools-installer: ^3.2.0
     electron-store: ^8.1.0
@@ -10734,7 +10747,7 @@ __metadata:
     eslint-plugin-nuxt: ^4.0.0
     eslint-plugin-vue: ^9.4.0
     eslint-webpack-plugin: ^2.7.0
-    fast-glob: ^3.2.11
+    fast-glob: ^3.2.12
     fast-xml-parser: ^4.0.9
     fluent-ffmpeg: ^2.1.2
     fs-extra: ^10.1.0
@@ -10753,7 +10766,7 @@ __metadata:
     sass-loader: ^10.3.1
     sql.js: ^1.8.0
     ts-loader: ^8.4.0
-    typescript: ^4.8.2
+    typescript: ^4.8.3
     upath: ^2.0.1
     v-mask: ^2.3.0
     vue: 2.7.10
@@ -15805,13 +15818,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.8.2":
-  version: 4.8.2
-  resolution: "typescript@npm:4.8.2"
+"typescript@npm:^4.8.3":
+  version: 4.8.3
+  resolution: "typescript@npm:4.8.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 7f5b81d0d558c9067f952c7af52ab7f19c2e70a916817929e4a5b256c93990bf3178eccb1ac8a850bc75df35f6781b6f4cb3370ce20d8b1ded92ed462348f628
+  checksum: 8286a5edcaf3d68e65c451aa1e7150ad1cf53ee0813c07ec35b7abdfdb10f355ecaa13c6a226a694ae7a67785fd7eeebf89f845da0b4f7e4a35561ddc459aba0
   languageName: node
   linkType: hard
 
@@ -15825,13 +15838,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.8.2#~builtin<compat/typescript>":
-  version: 4.8.2
-  resolution: "typescript@patch:typescript@npm%3A4.8.2#~builtin<compat/typescript>::version=4.8.2&hash=a1c5e5"
+"typescript@patch:typescript@^4.8.3#~builtin<compat/typescript>":
+  version: 4.8.3
+  resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 5cb0f02f414f5405f4b0e7ee1fd7fa9177b6a8783c9017b6cad85f56ce4c4f93e0e6f2ce37e863cb597d44227cd009474c9fbd85bf7a50004e5557426cb58079
+  checksum: 2222d2382fb3146089b1d27ce2b55e9d1f99cc64118f1aba75809b693b856c5d3c324f052f60c75b577947fc538bc1c27bad0eb76cbdba9a63a253489504ba7e
   languageName: node
   linkType: hard
 
