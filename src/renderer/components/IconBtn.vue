@@ -97,7 +97,7 @@
       v-for="(icon, i) in style.icons"
       v-bind="icon.props ? icon.props : {}"
       :key="i"
-      :pull="style.icons.length > 0 ? (i == 0 ? 'left' : 'right') : null"
+      :pull="style.icons.length > 1 ? (i == 0 ? 'left' : 'right') : null"
       :icon="icon.text ? icon.text : icon"
       :style="
         iconColor || icon.props
@@ -189,7 +189,10 @@ export default Vue.extend({
       styles: {
         home: {
           to: '/',
-          props: { 'min-width': '32px', color: 'black' },
+          props: {
+            'min-width': '32px',
+            color: 'btn',
+          },
           icons: [{ text: faHome, props: { class: 'white--text' } }],
         },
         present: {
@@ -199,7 +202,10 @@ export default Vue.extend({
         },
         settings: {
           to: '/settings',
-          props: { 'min-width': '32px', color: 'black' },
+          props: {
+            'min-width': '32px',
+            color: 'btn',
+          },
           icons: [{ text: faUserCog, props: { class: 'white--text' } }],
         },
         shuffle: {

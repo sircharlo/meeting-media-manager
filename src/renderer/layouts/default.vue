@@ -128,7 +128,6 @@ export default Vue.extend({
       await this.$setScene(this.scenes[i])
     })
     ipcRenderer.on('themeUpdated', (_e, isDark) => {
-      console.log('theme', isDark)
       if (this.$getPrefs('app.theme') === 'system') {
         this.$vuetify.theme.dark = isDark
       }
@@ -261,8 +260,6 @@ export default Vue.extend({
 
       // Set app theme
       const themePref = this.$getPrefs('app.theme')
-      console.log(themePref)
-      console.log(this.isDark)
       ipcRenderer.send('setTheme', themePref)
       if (themePref === 'system') {
         this.$vuetify.theme.dark = this.isDark

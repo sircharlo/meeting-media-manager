@@ -44,7 +44,7 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
     },
     error: function (msg: any, ...args: any[]) {
       logger('error', [msg, ...args])
-      if (typeof msg !== 'string') {
+      if (typeof msg !== 'string' && msg?.code !== 'CONNECTION_ERROR') {
         $sentry.captureException(msg)
       }
     },
