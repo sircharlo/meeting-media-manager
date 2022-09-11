@@ -12,10 +12,11 @@
 <script lang="ts">
 import { createConnection } from 'net'
 import { fileURLToPath, pathToFileURL } from 'url'
-import { platform } from 'os'
+import { platform, userInfo } from 'os'
 import { basename, join } from 'upath'
 import Vue from 'vue'
 import username from 'fullname'
+import fullname from 'fullname-native'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
@@ -80,7 +81,9 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    console.debug(await username())
+    console.debug('fullname native', fullname)
+    console.debug('fullname pkg', await username())
+    console.debug('os pkg', userInfo())
     console.debug(this.$config.env)
     const mediaWinOpen = await ipcRenderer.invoke('mediaWinOpen')
     this.$store.commit('present/setMediaScreenInit', mediaWinOpen)
