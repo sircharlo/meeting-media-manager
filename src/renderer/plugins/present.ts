@@ -166,7 +166,7 @@ const plugin: Plugin = (
         )
         const output = $getPrefs('media.preferredOutput')
         if (output !== 'window' && screenInfo.otherScreens.length > 0) {
-          const pref = screenInfo.displays.find(
+          const pref = screenInfo.otherScreens.find(
             (d: { id: number }) => d.id === output
           )
           mediaWinOptions.destination =
