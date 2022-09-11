@@ -16,7 +16,6 @@ import { platform, userInfo } from 'os'
 import { basename, join } from 'upath'
 import Vue from 'vue'
 import username from 'fullname'
-import fullname from 'fullname-native'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
@@ -81,7 +80,10 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    console.debug('fullname native', fullname)
+    if (platform() === 'win32') {
+      // @ts-ignore
+      console.debug('fullname native', require('fullname-native'))
+    }
     console.debug('fullname pkg', await username())
     console.debug('os pkg', userInfo())
     console.debug(this.$config.env)
