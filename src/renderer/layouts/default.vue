@@ -79,6 +79,7 @@ export default Vue.extend({
     }
   },
   async mounted() {
+    console.debug(this.$config.env)
     const mediaWinOpen = await ipcRenderer.invoke('mediaWinOpen')
     this.$store.commit('present/setMediaScreenInit', mediaWinOpen)
     if (mediaWinOpen) {

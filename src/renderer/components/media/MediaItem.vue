@@ -222,7 +222,7 @@ export default Vue.extend({
     },
     title(): string {
       return (
-        `<div>` +
+        `<div style="line-break: anywhere">` +
         basename(this.src)
           .replace(
             /^((\d{1,2}-?)* ?- )/,
