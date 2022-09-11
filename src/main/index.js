@@ -1,14 +1,6 @@
 /* eslint-disable import/named */
-import {
-  app,
-  ipcMain,
-  dialog,
-  nativeTheme,
-  shell,
-  screen,
-  globalShortcut,
-} from 'electron'
-import * as Sentry from '@sentry/electron'
+import { app, ipcMain, nativeTheme, screen } from 'electron'
+import { init } from '@sentry/electron'
 import { initRenderer } from 'electron-store'
 import { existsSync } from 'fs-extra'
 import { join, normalize } from 'upath'
@@ -16,11 +8,9 @@ import { autoUpdater } from 'electron-updater'
 import BrowserWinHandler from './BrowserWinHandler'
 require('dotenv').config()
 const { platform } = require('os')
-const adapter = require('axios/lib/adapters/http')
-const { get } = require('axios')
 const isDev = process.env.NODE_ENV === 'development'
 
-Sentry.init({
+init({
   environment: isDev ? 'development' : 'production',
   release: `meeting-media-manager@${app.getVersion()}`,
   dsn: process.env.SENTRY_DSN,
@@ -223,10 +213,12 @@ if (gotTheLock) {
   })
 
   ipcMain.on('openPath', (_e, path) => {
-    shell.openPath(path.replaceAll('/', platform() === 'win32' ? '\\' : '/'))
+    require('electron').shell.openPath(
+      path.replaceAll('/', platform() === 'win32' ? '\\' : '/')
+    )
   })
   ipcMain.handle('openDialog', async (_e, options) => {
-    return await dialog.showOpenDialog(options)
+    return await require('electron').dialog.showOpenDialog(options)
   })
 
   ipcMain.on('restart', () => {
@@ -246,6 +238,7 @@ if (gotTheLock) {
   })
 
   ipcMain.handle('registerShortcut', (_e, { shortcut, fn }) => {
+    const globalShortcut = require('electron').globalShortcut
     const functions = {
       toggleMediaWindow: () => {
         fadeWindow(mediaWin)
@@ -279,14 +272,14 @@ if (gotTheLock) {
 
   ipcMain.handle('getFromJWOrg', async (_e, opt) => {
     const options = {
-      adapter,
+      adapter: require('axios/lib/adapters/http'),
       headers: {},
       params: {},
     }
     if (opt.headers) options.headers = opt.headers
     if (opt.params) options.params = opt.params
     try {
-      const result = await get(opt.url, options)
+      const result = await require('axios').get(opt.url, options)
       return result.data
     } catch (e) {
       return e

@@ -343,11 +343,11 @@ export default Vue.extend({
       else if (item.thumbnail) this.preview = item.thumbnail
       else if (item.contents && item.safeName) {
         this.preview =
-          `data:image/${extname(item.safeName as string)};base64,` +
+          `data:image/${extname(item.safeName)};base64,` +
           item.contents.toString('base64')
       } else if (item.filepath && this.$isImage(item.filepath)) {
         this.preview = pathToFileURL(item.filepath).href
-      } else if (this.$isImage(item.url as string)) {
+      } else if (item.url && this.$isImage(item.url)) {
         if (item.congSpecific) {
           this.client.getFileContents(item.url as string).then((contents) => {
             this.preview =

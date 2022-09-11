@@ -12,11 +12,8 @@ import {
   statSync,
 } from 'fs-extra'
 import { basename, changeExt, dirname, extname, join } from 'upath'
-import * as pdfjsLib from 'pdfjs-dist'
-import { PDFDocumentProxy } from 'pdfjs-dist'
+import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api'
 import Zipper from 'adm-zip'
-import { createH264MP4Encoder } from 'h264-mp4-encoder'
-import ffmpeg, { setFfmpegPath } from 'fluent-ffmpeg'
 import sizeOf from 'image-size'
 import { FULL_HD } from '~/constants/general'
 
@@ -110,6 +107,7 @@ const plugin: Plugin = (
   })
 
   async function convertPdf(mediaFile: string) {
+    const pdfjsLib = require('pdfjs-dist') as typeof import('pdfjs-dist')
     try {
       pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
       const pdf = await pdfjsLib.getDocument({
@@ -197,7 +195,10 @@ const plugin: Plugin = (
   })
 
   // Setup FFmpeg for video conversion
-  async function setupFFmpeg(setProgress: Function) {
+  async function setupFFmpeg(
+    ffmpeg: typeof import('fluent-ffmpeg'),
+    setProgress: Function
+  ) {
     if (store.state.media.ffMpeg) return
     const osType = type()
     let target = 'linux-64'
@@ -248,7 +249,7 @@ const plugin: Plugin = (
     } catch (e: any) {
       chmodSync(entryPath, '777')
     }
-    setFfmpegPath(entryPath)
+    ffmpeg.setFfmpegPath(entryPath)
     store.commit('media/setFFmpeg', true)
   }
 
@@ -318,7 +319,9 @@ const plugin: Plugin = (
       try {
         // If mp3, just add audio to empty video
         if (extname(file).includes('mp3')) {
-          setupFFmpeg(setProgress).then(() => {
+          const ffmpeg =
+            require('fluent-ffmpeg') as typeof import('fluent-ffmpeg')
+          setupFFmpeg(ffmpeg, setProgress).then(() => {
             ffmpeg(file)
               .noVideo()
               .save(join(output))
@@ -360,6 +363,8 @@ const plugin: Plugin = (
             div.append(img, canvas)
             document.body.appendChild(div)
 
+            const createH264MP4Encoder = require('h264-mp4-encoder')
+              .createH264MP4Encoder as typeof import('h264-mp4-encoder').createH264MP4Encoder
             createH264MP4Encoder().then((encoder) => {
               img.onload = () => {
                 // Set width and height

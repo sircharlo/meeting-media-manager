@@ -274,18 +274,21 @@ const plugin: Plugin = (
   })
 
   inject('isVideo', (filepath: string) => {
+    if (!filepath) return false
     return ['mov', 'mp4', 'mpeg', 'mpg', 'ogg', 'ogv', 'webm'].includes(
       extname(filepath).slice(1).toLowerCase()
     )
   })
 
   inject('isImage', (filepath: string) => {
+    if (!filepath) return false
     return ['jpg', 'png', 'gif', 'jpeg', 'svg'].includes(
       extname(filepath).slice(1).toLowerCase()
     )
   })
 
   inject('isAudio', (filepath: string) => {
+    if (!filepath) return false
     return ['mp3', 'ogg', 'wav'].includes(
       extname(filepath).slice(1).toLowerCase()
     )
