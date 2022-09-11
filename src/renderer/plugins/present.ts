@@ -143,7 +143,6 @@ const plugin: Plugin = (
     try {
       if ($getPrefs('media.enableMediaDisplayButton')) {
         const screenInfo = await ipcRenderer.invoke('getScreenInfo')
-        console.debug(screenInfo)
         store.commit(
           'present/setScreens',
           screenInfo.otherScreens.map(

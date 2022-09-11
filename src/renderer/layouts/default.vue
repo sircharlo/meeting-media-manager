@@ -15,7 +15,7 @@ import { fileURLToPath, pathToFileURL } from 'url'
 import { platform, userInfo } from 'os'
 import { basename, join } from 'upath'
 import Vue from 'vue'
-import username from 'fullname'
+import getUsername from 'fullname'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
@@ -63,26 +63,36 @@ export default Vue.extend({
     },
   },
   async beforeMount() {
-    const congs = await this.$getCongPrefs()
+    if (!this.cong) {
+      const congs = await this.$getCongPrefs()
 
-    // If not congs, make a new one
-    if (congs.length === 0) {
-      const id = Math.random().toString(36).substring(2, 15)
-      if (this.$route.path === this.localePath('/')) {
-        this.initPrefs('prefs-' + id, true)
-      } else {
-        this.initPrefs('prefs-' + id)
+      // If not congs, make a new one
+      if (congs.length === 0) {
+        const id = Math.random().toString(36).substring(2, 15)
+        if (this.$route.path === this.localePath('/')) {
+          this.initPrefs('prefs-' + id, true)
+        } else {
+          this.initPrefs('prefs-' + id)
+        }
       }
-    }
-    // If one congregation, open that one
-    else if (congs.length === 1) {
-      this.initPrefs(basename(congs[0].path, '.json'))
+      // If one congregation, open that one
+      else if (congs.length === 1) {
+        this.initPrefs(basename(congs[0].path, '.json'))
+      }
+      // If computer username matches congregation name, auto login
+      else {
+        const username = (await getUsername()) ?? userInfo().username
+        this.$log.debug(`current user: ${username}`)
+        const match = congs.find(
+          (c) => c.name?.toLowerCase().trim() === username.toLowerCase().trim()
+        )
+        if (match) {
+          this.initPrefs(basename(match.path, '.json'))
+        }
+      }
     }
   },
   async mounted() {
-    console.debug('fullname pkg', await username())
-    console.debug('os pkg', userInfo())
-    console.debug('env', this.$config.env)
     const mediaWinOpen = await ipcRenderer.invoke('mediaWinOpen')
     this.$store.commit('present/setMediaScreenInit', mediaWinOpen)
     if (mediaWinOpen) {
@@ -118,6 +128,7 @@ export default Vue.extend({
       await this.$setScene(this.scenes[i])
     })
     ipcRenderer.on('themeUpdated', (_e, isDark) => {
+      console.log('theme', isDark)
       if (this.$getPrefs('app.theme') === 'system') {
         this.$vuetify.theme.dark = isDark
       }
@@ -250,6 +261,9 @@ export default Vue.extend({
 
       // Set app theme
       const themePref = this.$getPrefs('app.theme')
+      console.log(themePref)
+      console.log(this.isDark)
+      ipcRenderer.send('setTheme', themePref)
       if (themePref === 'system') {
         this.$vuetify.theme.dark = this.isDark
       } else {
