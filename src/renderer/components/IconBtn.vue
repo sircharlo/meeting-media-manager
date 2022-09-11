@@ -189,8 +189,8 @@ export default Vue.extend({
       styles: {
         home: {
           to: '/',
-          props: { 'min-width': '32px', dark: true },
-          icons: [faHome],
+          props: { 'min-width': '32px', color: 'black' },
+          icons: [{ text: faHome, props: { class: 'white--text' } }],
         },
         present: {
           to: '/present',
@@ -199,8 +199,8 @@ export default Vue.extend({
         },
         settings: {
           to: '/settings',
-          props: { 'min-width': '32px', dark: true },
-          icons: [faUserCog],
+          props: { 'min-width': '32px', color: 'black' },
+          icons: [{ text: faUserCog, props: { class: 'white--text' } }],
         },
         shuffle: {
           props: { color: 'info', title: 'ALT+K' },

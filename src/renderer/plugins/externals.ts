@@ -6,11 +6,15 @@ import {
   FontAwesomeIcon,
   FontAwesomeLayers,
 } from '@fortawesome/vue-fontawesome'
-import { faChevronDown, faCaretDown } from '@fortawesome/free-solid-svg-icons'
+import {
+  faChevronDown,
+  faCaretDown,
+  faTimesCircle,
+} from '@fortawesome/free-solid-svg-icons'
 
 // Font-Awesome
 config.autoAddCss = false
-library.add(faChevronDown, faCaretDown)
+library.add(faChevronDown, faCaretDown, faTimesCircle)
 
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 Vue.component('FontAwesomeLayers', FontAwesomeLayers)

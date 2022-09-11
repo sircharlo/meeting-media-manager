@@ -63,8 +63,9 @@ function createMainWindow() {
           const mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints)
             .map((item) => screen.getDisplayNearestPoint(item[1]))
             .every((val, _i, arr) => val.id === arr[0].id)
-          if (mainWinSameAsMedia)
+          if (mainWinSameAsMedia) {
             win.webContents.send('moveMediaWindowToOtherScreen')
+          }
         }
       }
     }

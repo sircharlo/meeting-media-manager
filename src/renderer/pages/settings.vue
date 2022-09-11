@@ -63,6 +63,7 @@ export default Vue.extend({
   data() {
     return {
       cache: 0,
+      mounted: false,
       cacheColor: 'warning',
       loading: false,
       panel: [0, 1, 2, 3] as number[],
@@ -113,11 +114,16 @@ export default Vue.extend({
     },
     headers: {
       handler() {
+        // Open invalid settings and close valid settings on first load
         this.headers.forEach(({ valid }, i) => {
           const match = this.panel.indexOf(i)
-          if (!valid && match === -1) this.panel.push(i)
-          else if (valid && match > -1) this.panel.splice(match, 1)
+          if (!valid && match === -1) {
+            this.panel.push(i)
+          } else if (!this.mounted && valid && match > -1) {
+            this.panel.splice(match, 1)
+          }
         })
+        this.mounted = this.mounted || this.valid
       },
       deep: true,
     },
