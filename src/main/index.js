@@ -265,6 +265,7 @@ if (gotTheLock) {
     return globalShortcut.register(shortcut, functions[fn])
   })
   ipcMain.on('unregisterShortcut', (_e, shortcut) => {
+    const globalShortcut = require('electron').globalShortcut
     if (globalShortcut.isRegistered(shortcut)) {
       globalShortcut.unregister(shortcut)
     }

@@ -46,7 +46,12 @@
             <span>{{ $getPrefs('media.ppForward') }}</span>
           </v-tooltip>
         </template>
-        <v-btn icon aria-label="Refresh" @click="getMedia()">
+        <v-btn
+          icon
+          aria-label="Refresh"
+          :disabled="mediaActive"
+          @click="getMedia()"
+        >
           <font-awesome-icon :icon="faRotateRight" />
         </v-btn>
         <v-btn
@@ -57,7 +62,13 @@
         >
           <font-awesome-icon :icon="faSquareCheck" />
         </v-btn>
-        <v-btn v-else icon aria-label="Sort items" @click="sortable = true">
+        <v-btn
+          v-else
+          icon
+          aria-label="Sort items"
+          :disabled="mediaActive"
+          @click="sortable = true"
+        >
           <font-awesome-icon :icon="faArrowDownShortWide" />
         </v-btn>
         <v-btn icon aria-label="Open media folder" @click="openFolder()">
