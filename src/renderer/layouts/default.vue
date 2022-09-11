@@ -67,7 +67,7 @@ export default Vue.extend({
     // If not congs, make a new one
     if (congs.length === 0) {
       const id = Math.random().toString(36).substring(2, 15)
-      if (this.$route.path === '/') {
+      if (this.$route.path === this.localePath('/')) {
         this.initPrefs('prefs-' + id, true)
       } else {
         this.initPrefs('prefs-' + id)
@@ -132,7 +132,7 @@ export default Vue.extend({
     ipcRenderer.on('openPresentMode', () => {
       if (
         this.$getPrefs('media.enableMediaDisplayButton') &&
-        this.$route.path !== '/present'
+        this.$route.path !== this.localePath('/present')
       ) {
         this.$router.push({
           path: this.localePath('/present'),
