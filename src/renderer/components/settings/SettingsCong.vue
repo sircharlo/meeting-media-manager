@@ -48,6 +48,7 @@
       v-model="cong.dir"
       :label="$t('webdavFolder')"
       :required="!!cong.server"
+      :locked="locked('cong.dir')"
       :rules="[!complete || error !== 'dir']"
     />
     <v-col v-if="client" cols="12" class="d-flex px-0">
@@ -125,6 +126,9 @@ export default Vue.extend({
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
     },
+    forcedPrefs() {
+      return this.$store.state.cong.prefs
+    },
     contents(): CongFile[] {
       return this.$store.state.cong.contentsTree as CongFile[]
     },
@@ -196,6 +200,21 @@ export default Vue.extend({
       this.cong.server = host.server
       this.cong.port = host.port
       this.cong.dir = host.dir
+    },
+    locked(key: string) {
+      if (!this.forcedPrefs) return false
+      const keys = key.split('.')
+      if (!this.forcedPrefs[keys[0]]) return false
+      if (keys.length === 2) {
+        return this.forcedPrefs[keys[0]][keys[1]] !== undefined
+      } else if (keys.length === 3) {
+        if (!this.forcedPrefs[keys[0]][keys[1]]) {
+          return false
+        }
+        return this.forcedPrefs[keys[0]][keys[1]][keys[2]] !== undefined
+      } else {
+        throw new Error('Invalid key')
+      }
     },
   },
 })

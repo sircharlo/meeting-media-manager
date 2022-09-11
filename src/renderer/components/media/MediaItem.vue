@@ -36,7 +36,7 @@
       <v-list-item-action class="d-flex flex-row">
         <template v-if="active">
           <icon-btn
-            v-if="!isImage && !end.startsWith('00:00')"
+            v-if="!isImage && !end.startsWith('00:00:00')"
             variant="pause"
             class="mr-2"
             :toggled="paused"
@@ -45,7 +45,7 @@
           <icon-btn
             variant="stop"
             tooltip="top"
-            :click-twice="!isImage && !end.startsWith('00:00')"
+            :click-twice="!isImage && !end.startsWith('00:00:00')"
             @click="stop()"
           />
         </template>
@@ -367,11 +367,11 @@ export default Vue.extend({
         // For each marker, calculate the custom start and end time
         markers.forEach((marker) => {
           marker.playing = false
-          const startTime = this.$dayjs(marker.startTime, 'hh:mm:ss.SSS')
-          const duration = this.$dayjs(marker.duration, 'hh:mm:ss.SSS')
+          const startTime = this.$dayjs(marker.startTime, 'HH:mm:ss.SSS')
+          const duration = this.$dayjs(marker.duration, 'HH:mm:ss.SSS')
           const transition = this.$dayjs(
             marker.endTransitionDuration,
-            'hh:mm:ss.SSS'
+            'HH:mm:ss.SSS'
           )
 
           marker.customStartTime = this.$dayjs
@@ -381,7 +381,7 @@ export default Vue.extend({
               seconds: parseInt(startTime.format('s')),
               milliseconds: parseInt(startTime.format('SSS')),
             })
-            .format('mm:ss.SSS')
+            .format('HH:mm:ss.SSS')
 
           marker.customEndTime = startTime
             .add(
@@ -400,7 +400,7 @@ export default Vue.extend({
                 milliseconds: parseInt(transition.format('SSS')),
               })
             )
-            .format('mm:ss.SSS')
+            .format('HH:mm:ss.SSS')
         })
         this.markers = markers
       }

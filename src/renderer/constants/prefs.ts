@@ -64,7 +64,6 @@ const FORCABLE = [
   'app.obs.password',
   'app.obs.port',
   'app.outputFolderDateFormat',
-  'cong.dir',
   'media.enableMediaDisplayButton',
   'media.enableMp4Conversion',
   'media.enablePp',

@@ -54,6 +54,7 @@
 - DOCS: Documentation site now supports multiple languages. Time to translate my dear volunteers!
 - GENERAL: Support Debian package
 - MEDIA MANAGER: Auto determine drag and dropped file type (custom / jwpub)
+- MEDIA MANAGER: Warning when file is too big to upload to cong server
 - MEDIA SYNC: Auto remove hidden media if it was downloaded before
 - MEDIA SYNC: Auto rename media when switching local language (also on cong server)
 - MEDIA SYNC: Auto rename mediaList keys when switching date format

@@ -12,9 +12,11 @@
         <v-col align-self="start" class="ml-2">
           <v-text-field
             v-model="clipped.start"
-            v-mask="'##:##.###'"
-            :rules="[(v) => /\d{2}:\d{2}.\d{3}/.test(v) || 'mm:ss.SSS']"
-            placeholder="00:00.000"
+            v-mask="'##:##:##.###'"
+            :rules="[
+              (v) => /\d{2}:\d{2}:\d{2}.\d{3}/.test(v) || 'hh:mm:ss.SSS',
+            ]"
+            placeholder="00:00:00.000"
             dense
             hide-details="auto"
           >
@@ -24,9 +26,11 @@
           </v-text-field>
           <v-text-field
             v-model="clipped.end"
-            v-mask="'##:##.###'"
-            :rules="[(v) => /\d{2}:\d{2}.\d{3}/.test(v) || 'mm:ss.SSS']"
-            placeholder="00:00.000"
+            v-mask="'##:##:##.###'"
+            :rules="[
+              (v) => /\d{2}:\d{2}:\d{2}.\d{3}/.test(v) || 'hh:mm:ss.SSS',
+            ]"
+            placeholder="00:00:00.000"
             dense
             hide-details="auto"
           >
@@ -61,7 +65,7 @@
         >
           <font-awesome-icon :icon="faFilm" pull="left" />
           {{
-            (playing || isClipped) && duration !== '00:00'
+            (playing || isClipped) && !isShortVideo
               ? `${progress[0] ?? limits.start}/${limits.end}`
               : `${duration}`
           }}
@@ -82,7 +86,7 @@
     >
       <font-awesome-icon :icon="faFilm" pull="left" />
       {{
-        (playing || isClipped) && duration !== '00:00'
+        (playing || isClipped) && !isShortVideo
           ? `${progress[0] ?? limits.start}/${limits.end}`
           : `${duration}`
       }}
@@ -91,6 +95,7 @@
 </template>
 <script lang="ts">
 import { pathToFileURL } from 'url'
+import { Duration } from 'dayjs/plugin/duration'
 import { basename } from 'upath'
 import Vue, { PropOptions } from 'vue'
 import { ipcRenderer } from 'electron'
@@ -172,22 +177,27 @@ export default Vue.extend({
       )
     },
     duration(): string {
-      return this.$dayjs
-        .duration(this.clippedMs.end - this.clippedMs.start, 'ms')
-        .format('mm:ss')
+      return this.format(
+        this.$dayjs.duration(this.clippedMs.end - this.clippedMs.start, 'ms')
+      )
+    },
+    isShortVideo(): boolean {
+      return this.duration === '00:00:00' || this.duration === '00:00'
     },
     limits(): { start: string; end: string } {
       return {
-        start: this.$dayjs.duration(this.clippedMs.start, 'ms').format('mm:ss'),
-        end: this.$dayjs.duration(this.clippedMs.end, 'ms').format('mm:ss'),
+        start: this.format(this.$dayjs.duration(this.clippedMs.start, 'ms')),
+        end: this.format(this.$dayjs.duration(this.clippedMs.end, 'ms')),
       }
     },
     originalString(): { start: string; end: string } {
       return {
         start: this.$dayjs
           .duration(this.original.start, 'ms')
-          .format('mm:ss.SSS'),
-        end: this.$dayjs.duration(this.original.end, 'ms').format('mm:ss.SSS'),
+          .format('HH:mm:ss.SSS'),
+        end: this.$dayjs
+          .duration(this.original.end, 'ms')
+          .format('HH:mm:ss.SSS'),
       }
     },
     isClipped(): boolean {
@@ -201,8 +211,9 @@ export default Vue.extend({
         start: parseInt(
           this.$dayjs
             .duration({
-              minutes: parseInt(this.clipped.start.split(':')[0]),
-              seconds: parseInt(this.clipped.start.split(':')[1]),
+              hours: parseInt(this.clipped.start.split(':')[0]),
+              minutes: parseInt(this.clipped.start.split(':')[1]),
+              seconds: parseInt(this.clipped.start.split(':')[2]),
               milliseconds: parseInt(this.clipped.start.split('.')[1]),
             })
             .asMilliseconds()
@@ -211,8 +222,9 @@ export default Vue.extend({
         end: parseInt(
           this.$dayjs
             .duration({
-              minutes: parseInt(this.clipped.end.split(':')[0]),
-              seconds: parseInt(this.clipped.end.split(':')[1]),
+              hours: parseInt(this.clipped.end.split(':')[0]),
+              minutes: parseInt(this.clipped.end.split(':')[1]),
+              seconds: parseInt(this.clipped.end.split(':')[2]),
               milliseconds: parseInt(this.clipped.end.split('.')[1]),
             })
             .asMilliseconds()
@@ -258,8 +270,10 @@ export default Vue.extend({
       this.clipped = {
         start: this.$dayjs
           .duration(this.original.start, 'ms')
-          .format('mm:ss.SSS'),
-        end: this.$dayjs.duration(this.original.end, 'ms').format('mm:ss.SSS'),
+          .format('HH:mm:ss.SSS'),
+        end: this.$dayjs
+          .duration(this.original.end, 'ms')
+          .format('HH:mm:ss.SSS'),
       }
       this.$emit('clipped', {
         original: this.original,
@@ -273,7 +287,7 @@ export default Vue.extend({
     ipcRenderer.on('videoProgress', (_e, progress) => {
       const percentage = (100 * 1000 * progress[0]) / this.original.end
       this.progress = progress.map((seconds: number) => {
-        return this.$dayjs.duration(seconds, 's').format('mm:ss')
+        return this.format(this.$dayjs.duration(seconds, 's'))
       })
       if (this.playing) this.$emit('progress', percentage)
     })
@@ -282,8 +296,15 @@ export default Vue.extend({
     ipcRenderer.removeAllListeners('videoProgress')
   },
   methods: {
+    format(duration: Duration) {
+      if (duration.hours() > 0) {
+        return duration.format('HH:mm:ss')
+      } else {
+        return duration.format('mm:ss')
+      }
+    },
     atClick(): void {
-      if (this.playing || this.duration === '00:00') return
+      if (this.playing || this.isShortVideo) return
       if (this.clickedOnce) this.changeTime = true
       else {
         this.clickedOnce = true
@@ -293,12 +314,16 @@ export default Vue.extend({
       }
     },
     setTime(): void {
+      if (this.clippedMs.end < 1000 || this.clippedMs.end > this.original.end) {
+        this.resetClipped()
+      } else {
+        this.$emit('clipped', {
+          original: this.original,
+          clipped: this.clippedMs,
+          formatted: this.clipped,
+        })
+      }
       this.changeTime = false
-      this.$emit('clipped', {
-        original: this.original,
-        clipped: this.clippedMs,
-        formatted: this.clipped,
-      })
     },
     resetClipped(): void {
       this.clipped = JSON.parse(JSON.stringify(this.originalString))
