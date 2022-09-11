@@ -78,7 +78,6 @@ export default Vue.extend({
       await this.hideMedia()
     })
     ipcRenderer.on('startMediaDisplay', async (_e, prefs) => {
-      console.log('start media display')
       // Reset screen
       this.yeartext.innerHTML = ''
       const main = document.querySelector('main') as HTMLElement
@@ -222,7 +221,6 @@ export default Vue.extend({
           .getFullYear()
           .toString()}`
       )
-      console.log('path', path)
       try {
         const yeartext = existsSync(path) ? readFileSync(path, 'utf8') : null
         const fontPath = await this.$wtFontPath() // Only works when watchtower library is installed on the user's machine

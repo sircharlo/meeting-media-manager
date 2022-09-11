@@ -18,7 +18,7 @@ import Vue from 'vue'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
-import { WebDAVClient } from 'webdav'
+import { WebDAVClient } from 'webdav/dist/web/types'
 import { ShortJWLang, CongPrefs, Release, Asset } from '~/types'
 export default Vue.extend({
   name: 'DefaultLayout',

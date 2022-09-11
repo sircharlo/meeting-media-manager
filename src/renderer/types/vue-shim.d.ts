@@ -1,4 +1,4 @@
-import { WebDAVClient } from 'webdav'
+import { WebDAVClient } from 'webdav/dist/web/types'
 /* eslint-disable import/named */
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { Options } from 'fast-glob'

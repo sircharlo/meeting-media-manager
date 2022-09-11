@@ -35,6 +35,7 @@
   "errorWebdavLs": "Er ging iets fout tijdens het lezen van de volgende folder. Neem alsjeblieft contact op met jouw videoconferentie organisator.",
   "errorWebdavPut": "Er ging iets fout tijdens het opslaan van het volgende bestand. Neem alsjeblieft contact op met jouw videoconferentie organisator.",
   "errorWebdavRm": "Er ging iets fout tijdens het verwijderen van het volgende bestand. Neem alsjeblieft contact op met jouw videoconferentie organisator.",
+  "errorWebdavTooBig": "Het bestand dat je wilde uploaden is te groot (max 512MB). Het bestand is lokaal toegevoegd, maar niet toegevoegd aan de gemeente server.",
   "excludeLffi": "Sluit audio en video bestanden van de <em>lffi</em> brochure uit",
   "excludeLffiImages": "Sluit afbeeldingen van de <em>lffi</em> brochure uit",
   "excludeTh": "Sluit alle media van de <em>th</em> brochure uit",

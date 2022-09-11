@@ -1,4 +1,4 @@
-import { WebDAVClient, createClient, FileStat } from 'webdav'
+import { WebDAVClient, createClient, FileStat } from 'webdav/web'
 import { Plugin } from '@nuxt/types'
 import { basename, dirname, extname, join } from 'upath'
 import { Dayjs } from 'dayjs'
@@ -468,17 +468,6 @@ const plugin: Plugin = (
               } else {
                 const client = store.state.cong.client as WebDAVClient
                 if (client) {
-                  /* client
-                    .createReadStream(item.url as string)
-                    .pipe(
-                      createWriteStream(
-                        join(
-                          $mediaPath(),
-                          item.folder as string,
-                          item.safeName as string
-                        )
-                      )
-                    ) */
                   const perf: any = {
                     start: performance.now(),
                     bytes: item.filesize,

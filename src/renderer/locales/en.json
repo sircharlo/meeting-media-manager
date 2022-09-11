@@ -35,6 +35,7 @@
   "errorWebdavLs": "An error occurred while attempting to read the following directory. Please contact your videoconference organizer.",
   "errorWebdavPut": "An error occurred while attempting to write the following file. Please contact your videoconference organizer.",
   "errorWebdavRm": "An error occurred while attempting to delete the following file. Please contact your videoconference organizer.",
+  "errorWebdavTooBig": "The file you are attempting to upload is too large (max 512MB). The file has been added locally, but not to the cong server.",
   "excludeLffi": "Exclude audio and video files from the <em>lffi</em> brochure",
   "excludeLffiImages": "Exclude images from the <em>lffi</em> brochure",
   "excludeTh": "Exclude all media from the <em>th</em> brochure",

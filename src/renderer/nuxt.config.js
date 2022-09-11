@@ -150,7 +150,7 @@ module.exports = {
       // envName: server, client, modern
       presets({ envName }) {
         const envTargets = {
-          client: { browsers: ['last 2 versions'] },
+          client: { browsers: ['Chrome >= 104'] },
           server: { node: 'current' },
         }
         return [

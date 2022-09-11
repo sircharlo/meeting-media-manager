@@ -15,7 +15,7 @@ import { join, extname, basename, dirname, joinSafe } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { sync, Options } from 'fast-glob'
 import Zipper from 'adm-zip'
-import { FileStat, WebDAVClient } from 'webdav'
+import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import { MeetingFile } from '~/types'
 
 const plugin: Plugin = (

@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex'
-import { FileStat, WebDAVClient } from 'webdav'
+import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import { CongFile } from './../types/store/storeCong.d'
 import { CongStore, ElectronStore } from '~/types'
 

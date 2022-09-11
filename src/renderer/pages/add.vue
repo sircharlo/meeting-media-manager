@@ -34,9 +34,15 @@
             style="width: 100%"
             @change="fileString = ''"
           >
-            <v-btn width="33.3%" value="song">{{ $t('song') }}</v-btn>
-            <v-btn width="33.3%" value="custom">{{ $t('custom') }}</v-btn>
-            <v-btn width="33.3%" value="jwpub">{{ $t('jwpub') }}</v-btn>
+            <v-btn width="33.3%" value="song" :disabled="loading">{{
+              $t('song')
+            }}</v-btn>
+            <v-btn width="33.3%" value="custom" :disabled="loading">{{
+              $t('custom')
+            }}</v-btn>
+            <v-btn width="33.3%" value="jwpub" :disabled="loading">{{
+              $t('jwpub')
+            }}</v-btn>
           </v-btn-toggle>
         </v-col>
       </v-row>
@@ -53,12 +59,18 @@
             item-text="title"
             item-value="safeName"
             hide-details="auto"
+            :disabled="loading"
             :loading="loadingSongs"
             return-object
           />
           <v-row v-else-if="type === 'custom'" align="center">
             <v-col cols="auto" class="pr-0 text-left">
-              <v-btn color="primary" style="height: 40px" @click="addFiles()">
+              <v-btn
+                color="primary"
+                style="height: 40px"
+                :disabled="loading"
+                @click="addFiles()"
+              >
                 {{ $t('browse') }}
               </v-btn>
             </v-col>
@@ -71,6 +83,7 @@
               <v-btn
                 color="primary"
                 style="height: 40px"
+                :disabled="loading"
                 @click="addFiles(false, 'JWPUB', 'jwpub')"
               >
                 {{ $t('browse') }}
@@ -98,6 +111,7 @@
               type="number"
               length="2"
               dense
+              :disabled="loading"
               @finish="$refs.prefix2.focus()"
             />
           </v-col>
@@ -109,6 +123,7 @@
               type="number"
               length="2"
               dense
+              :disabled="loading"
               @finish="$refs.prefix3.focus()"
             />
           </v-col>
@@ -120,6 +135,7 @@
               type="number"
               length="2"
               dense
+              :disabled="loading"
             />
           </v-col>
         </v-col>
@@ -187,12 +203,12 @@
 </template>
 <script lang="ts">
 // eslint-disable-next-line import/named
-import { readdirSync, readFileSync, existsSync, statSync } from 'fs-extra'
+import { readdirSync, existsSync, readFileSync, statSync } from 'fs-extra'
 import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
 import Vue from 'vue'
 import { MetaInfo } from 'vue-meta'
-import { FileStat, WebDAVClient } from 'webdav'
+import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import {
   faArrowDown19,
   faCircleArrowLeft,
@@ -460,13 +476,6 @@ export default Vue.extend({
             if (!datePathExists) {
               await this.client.createDirectory(datePath)
             }
-            // Read/write streams don't work for the web
-            /* createReadStream(path).pipe(
-              this.client.createWriteStream(
-                filePath,
-                { overwrite: true }
-              )
-            ) */
             const perf: any = {
               start: performance.now(),
               bytes: statSync(path).size,
@@ -480,7 +489,14 @@ export default Vue.extend({
                 },
               })
             } catch (e: any) {
-              this.$error('errorWebdavPut', e, `${basename(path)}`)
+              if (
+                e.message ===
+                'Cannot create a string longer than 0x1fffffe8 characters'
+              ) {
+                this.$warn('errorWebdavTooBig', { identifier: basename(path) })
+              } else {
+                this.$error('errorWebdavPut', e, `${basename(path)}`)
+              }
             }
 
             perf.end = performance.now()
@@ -529,6 +545,9 @@ export default Vue.extend({
         await this.$getWeMedia(this.date)
       }
       this.$createMediaNames()
+      if (this.client) {
+        await this.$updateContent()
+      }
     },
     async getSongs() {
       this.loadingSongs = true

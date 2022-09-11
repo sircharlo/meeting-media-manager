@@ -115,7 +115,7 @@
 import { pathToFileURL } from 'url'
 import { extname, join, trimExt } from 'upath'
 import Vue, { PropOptions } from 'vue'
-import { WebDAVClient, FileStat } from 'webdav'
+import { WebDAVClient, FileStat } from 'webdav/dist/web/types'
 import {
   faImage,
   faSquare,
