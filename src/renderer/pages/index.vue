@@ -154,7 +154,6 @@
       >
         Test App
       </v-btn>
-      <v-btn @click="throwError()">Throw error</v-btn>
     </v-col>
     <v-col cols="12" align-self="end" class="d-flex pa-0">
       <v-col>
@@ -424,9 +423,6 @@ export default Vue.extend({
     this.$store.commit('stats/setInitialLoad', false)
   },
   methods: {
-    throwError() {
-      throw new Error('tester')
-    },
     async execute(action: string) {
       this.action = ''
       switch (action) {

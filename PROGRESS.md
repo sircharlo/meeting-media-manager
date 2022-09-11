@@ -73,6 +73,7 @@
 - Added build workflow for documentation to validate pull requests
 - Cache dependencies in build workflow to improve build times
 - Implemented image html fraction in docs to make it easier to add an image
+- Improved error/bug reporting through Sentry
 - Refactored docs to use sass instead of css
 - Refactored the entire code base to be more stable and easier to maintain
 - Using electron-store instead of home grown version
