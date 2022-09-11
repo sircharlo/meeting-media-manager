@@ -80,13 +80,9 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    if (platform() === 'win32') {
-      // @ts-ignore
-      console.debug('fullname native', require('fullname-native'))
-    }
     console.debug('fullname pkg', await username())
     console.debug('os pkg', userInfo())
-    console.debug(this.$config.env)
+    console.debug('env', this.$config.env)
     const mediaWinOpen = await ipcRenderer.invoke('mediaWinOpen')
     this.$store.commit('present/setMediaScreenInit', mediaWinOpen)
     if (mediaWinOpen) {
