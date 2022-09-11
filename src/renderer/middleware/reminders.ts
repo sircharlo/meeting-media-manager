@@ -1,7 +1,7 @@
 import { Middleware } from '@nuxt/types'
 
-const middleware: Middleware = ({ from, route, $warn }) => {
-  if (from.path.endsWith('/add') && !route.path.endsWith('/add')) {
+const middleware: Middleware = ({ from, route, localePath, $warn }) => {
+  if (from.path === localePath('/add') && route.path !== localePath('/add')) {
     $warn('dontForgetToGetMedia')
   }
 }
