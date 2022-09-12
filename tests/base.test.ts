@@ -4,6 +4,8 @@
  * in both renderer and main processes
  */
 import { join } from 'upath'
+// eslint-disable-next-line import/named
+import { writeFileSync } from 'fs-extra'
 import { expect, test } from '@playwright/test'
 import {
   findLatestBuild,
@@ -13,6 +15,7 @@ import {
 import jimp from 'jimp'
 import { ElectronApplication, Page, _electron as electron } from 'playwright'
 import { version } from '../package.json'
+import prefs from './mockPrefs.json'
 
 let electronApp: ElectronApplication
 
@@ -48,28 +51,18 @@ test.afterAll(async () => {
 
 let page: Page
 
-test('renders the first page', async () => {
+test('renders the home page correctly', async () => {
+  // Open the settings page as a new congregation
   page = await electronApp.firstWindow()
-  await page.waitForSelector('svg')
-  const buildingUserIcon = await page.$eval('svg', (el) =>
-    el.classList.contains('fa-building-user')
-  )
-  expect(buildingUserIcon).toBe(true)
-  const title = await page.title()
-  expect(title).toBe('M³ - Meeting Media Manager')
-})
+  const appPath = (await ipcRendererInvoke(page, 'userData')) as string
+  const downloadsPath = (await ipcRendererInvoke(page, 'downloads')) as string
+  prefs.localOutputPath = downloadsPath
+  writeFileSync(join(appPath, 'prefs-test.json'), JSON.stringify(prefs))
 
-test(`cong list exists`, async () => {
-  expect(await page.$('.v-list')).toBeTruthy()
-})
+  await page.goto(page.url() + '?cong=test')
+  await page.waitForSelector('.fa-photo-film')
 
-test('click the test cong to go to the main page', async () => {
-  await page.click('div[role="listitem"]')
-  const photoFilmIcon = await page.waitForSelector('.fa-photo-film')
-  expect(photoFilmIcon).toBeTruthy()
-})
-
-test('Home page has correct title', async () => {
+  // Test if title is correct
   const title = await page.title()
   expect(title).toBe('Home - Meeting Media Manager')
 })
