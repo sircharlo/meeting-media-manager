@@ -83,3 +83,6 @@ build/*
 
 # Service worker
 sw.*
+
+# Playwright reports
+test-results
