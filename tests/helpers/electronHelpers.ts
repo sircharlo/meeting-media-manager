@@ -1,3 +1,4 @@
+import { platform } from 'os'
 import { join } from 'upath'
 // eslint-disable-next-line import/named
 import { writeFileSync } from 'fs-extra'
@@ -21,7 +22,10 @@ export async function startApp() {
 
   const electronApp = await electron.launch({
     args: [appInfo.main],
-    executablePath: join(appInfo.executable, appInfo.name),
+    executablePath:
+      platform() === 'linux'
+        ? join(appInfo.executable, appInfo.name)
+        : appInfo.executable,
   })
 
   electronApp.on('window', (page) => {
