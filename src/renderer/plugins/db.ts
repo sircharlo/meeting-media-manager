@@ -1,5 +1,5 @@
 import { Plugin } from '@nuxt/types'
-import { Database, SqlJsStatic } from 'sql.js'
+import sqljs, { Database } from 'sql.js'
 
 const plugin: Plugin = ({ store, $log }, inject) => {
   function executeQuery(db: Database, query: string) {
@@ -34,11 +34,10 @@ const plugin: Plugin = ({ store, $log }, inject) => {
         if (result) return result
       }
 
-      const sqljs = require('sql.js')
       try {
-        const SQL = (await sqljs({
+        const SQL = await sqljs({
           locateFile: (filename: string) => `/${filename}`,
-        })) as SqlJsStatic
+        })
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })
         return db
