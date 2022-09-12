@@ -53,6 +53,8 @@
 - DOCS: Documentation filter searches entire website and highlights results with yellow background
 - DOCS: Documentation site now supports multiple languages. Time to translate my dear volunteers!
 - GENERAL: Automatically log in to congregation when computer username matches congregation name
+- GENERAL: Better error tracking through Sentry
+- GENERAL: Tests to ensure everything stays working between releases
 - GENERAL: Support Debian package
 - MEDIA MANAGER: Auto determine drag and dropped file type (custom / jwpub)
 - MEDIA MANAGER: Warning when file is too big to upload to cong server

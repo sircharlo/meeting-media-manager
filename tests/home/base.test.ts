@@ -3,46 +3,19 @@
  * showing/testing various API features
  * in both renderer and main processes
  */
-import { join } from 'upath'
 // eslint-disable-next-line import/named
-import { writeFileSync } from 'fs-extra'
 import { expect, test } from '@playwright/test'
-import {
-  findLatestBuild,
-  parseElectronApp,
-  ipcRendererInvoke,
-} from 'electron-playwright-helpers'
+import { ipcRendererInvoke } from 'electron-playwright-helpers'
 import jimp from 'jimp'
-import { ElectronApplication, Page, _electron as electron } from 'playwright'
-import { name, version } from '../package.json'
-import prefs from './mocks/prefsOld.json'
+import { ElectronApplication, Page } from 'playwright'
+import { version } from '../../package.json'
+import { startApp, openHomePage } from './../helpers/electronHelpers'
+import prefs from './../mocks/prefsOld.json'
 
 let electronApp: ElectronApplication
 
 test.beforeAll(async () => {
-  // find the latest build in the out directory
-  const latestBuild = findLatestBuild('build')
-  // parse the directory and find paths and other info
-  const appInfo = parseElectronApp(latestBuild)
-  // set the CI environment variable to true
-  process.env.CI = 'e2e'
-  electronApp = await electron.launch({
-    args: [appInfo.main],
-    executablePath: join(appInfo.executable, appInfo.name),
-  })
-  electronApp.on('window', (page) => {
-    const filename = page.url()?.split('/').pop()
-    console.log(`Window opened: ${filename}`)
-
-    // capture errors
-    page.on('pageerror', (error) => {
-      console.error(error)
-    })
-    // capture console messages
-    page.on('console', (msg) => {
-      console.log(msg.text())
-    })
-  })
+  electronApp = await startApp()
 })
 
 test.afterAll(async () => {
@@ -52,20 +25,7 @@ test.afterAll(async () => {
 let page: Page
 
 test('render the home page correctly', async () => {
-  // Set first browser window as page
-  page = await electronApp.firstWindow()
-
-  // Insert mock preferences
-  const congId = 'test'
-  const appPath = (await ipcRendererInvoke(page, 'userData')) as string
-  expect(appPath.endsWith(name)).toBe(true)
-  const downloadsPath = (await ipcRendererInvoke(page, 'downloads')) as string
-  prefs.localOutputPath = downloadsPath
-  writeFileSync(join(appPath, `prefs-${congId}.json`), JSON.stringify(prefs))
-
-  // Open the home page as test congregation
-  await page.goto(`${page.url()}?cong=${congId}`)
-  await page.waitForSelector('.fa-photo-film')
+  page = await openHomePage(electronApp)
 
   // Check that the correct congregation is loaded
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
