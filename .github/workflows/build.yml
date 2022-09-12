@@ -36,6 +36,31 @@ jobs:
       - name: Run linter
         run: yarn lint
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          check-latest: true
+          cache: 'yarn'
+
+      - name: Install yarn@latest
+        run: yarn set version stable
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build Electron app
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test
+
   build:
     runs-on: ${{ matrix.os }}
 

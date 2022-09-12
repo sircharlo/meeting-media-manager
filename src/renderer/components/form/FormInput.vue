@@ -176,9 +176,9 @@
         :id="$attrs['data-id']"
         ref="field"
         v-model="$attrs.value"
-        :color="required && !$attrs.value ? 'error' : 'primary'"
+        :color="required && $attrs.value === null ? 'error' : 'primary'"
         v-bind="$attrs"
-        :class="{ 'btn-group-error': required && !$attrs.value }"
+        :class="{ 'btn-group-error': required && $attrs.value === null }"
         v-on="$listeners"
         @change="$emit('input', $event)"
       >
