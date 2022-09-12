@@ -14,8 +14,8 @@ import {
 } from 'electron-playwright-helpers'
 import jimp from 'jimp'
 import { ElectronApplication, Page, _electron as electron } from 'playwright'
-import { version } from '../package.json'
-import prefs from './mockPrefs.json'
+import { name, version } from '../package.json'
+import prefs from './mocks/prefsOld.json'
 
 let electronApp: ElectronApplication
 
@@ -51,16 +51,24 @@ test.afterAll(async () => {
 
 let page: Page
 
-test('renders the home page correctly', async () => {
-  // Open the settings page as a new congregation
+test('render the home page correctly', async () => {
+  // Set first browser window as page
   page = await electronApp.firstWindow()
+
+  // Insert mock preferences
+  const congId = 'test'
   const appPath = (await ipcRendererInvoke(page, 'userData')) as string
+  expect(appPath.endsWith(name)).toBe(true)
   const downloadsPath = (await ipcRendererInvoke(page, 'downloads')) as string
   prefs.localOutputPath = downloadsPath
-  writeFileSync(join(appPath, 'prefs-test.json'), JSON.stringify(prefs))
+  writeFileSync(join(appPath, `prefs-${congId}.json`), JSON.stringify(prefs))
 
-  await page.goto(page.url() + '?cong=test')
+  // Open the home page as test congregation
+  await page.goto(`${page.url()}?cong=${congId}`)
   await page.waitForSelector('.fa-photo-film')
+
+  // Check that the correct congregation is loaded
+  expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
 
   // Test if title is correct
   const title = await page.title()
