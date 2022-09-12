@@ -26,7 +26,7 @@
     "build": "./pre-build.sh && node .electron-nuxt/build.js",
     "lint": "node_modules/.bin/eslint --ext .js,.vue,.ts --ignore-path .gitignore -f ./node_modules/eslint-friendly-formatter ./src",
     "lint:fix": "yarn lint --fix",
-    "test": "npx playwright test",
+    "test": "xvfb-maybe -- playwright test",
     "preinstall": "node .electron-nuxt/check-engines.js",
     "postinstall": "electron-builder install-app-deps"
   },
@@ -131,6 +131,7 @@
     "vuex": "^3.6.2",
     "webdav": "^4.11.0",
     "webpack": "^4.46.0",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-node-externals": "^3.0.0",
+    "xvfb-maybe": "^0.2.1"
   }
 }

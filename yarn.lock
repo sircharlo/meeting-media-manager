@@ -11433,6 +11433,7 @@ __metadata:
     webdav: ^4.11.0
     webpack: ^4.46.0
     webpack-node-externals: ^3.0.0
+    xvfb-maybe: ^0.2.1
   languageName: unknown
   linkType: soft
 
@@ -17679,7 +17680,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which@npm:^1.1.1, which@npm:^1.2.9":
+"which@npm:^1.1.1, which@npm:^1.2.4, which@npm:^1.2.9":
   version: 1.3.1
   resolution: "which@npm:1.3.1"
   dependencies:
@@ -17903,6 +17904,18 @@ __metadata:
   version: 4.0.2
   resolution: "xtend@npm:4.0.2"
   checksum: ac5dfa738b21f6e7f0dd6e65e1b3155036d68104e67e5d5d1bde74892e327d7e5636a076f625599dc394330a731861e87343ff184b0047fef1360a7ec0a5a36a
+  languageName: node
+  linkType: hard
+
+"xvfb-maybe@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "xvfb-maybe@npm:0.2.1"
+  dependencies:
+    debug: ^2.2.0
+    which: ^1.2.4
+  bin:
+    xvfb-maybe: ./src/xvfb-maybe.js
+  checksum: b3a218991291c85232eb27ce74fbd0c8f22053e0b15e8492c772fa269f09b5448c01089f805146acc64cbe516356db3b5231a52d92fb990dc59df11e622dd6bd
   languageName: node
   linkType: hard
 
