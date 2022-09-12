@@ -10,6 +10,7 @@ import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
+import prefs from './../mocks/prefsOld.json'
 
 let electronApp: ElectronApplication
 let page: Page
@@ -46,6 +47,12 @@ test('render the presentation mode page correctly', async () => {
 
   // Go back to home page
   await page.locator('[aria-label="home"]').click()
+
+  // Verify home page
+  expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
+
+  // Weird bug in Windows only when testing
+  await page.goto(page.url().replace('nl', ''))
 
   // Close media window
   await page.locator('[aria-label="toggleScreen"]').click()
