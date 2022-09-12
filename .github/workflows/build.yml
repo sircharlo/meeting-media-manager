@@ -64,6 +64,8 @@ jobs:
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
 
       - name: Build Electron app
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
         run: yarn build
 
       - name: Run tests
