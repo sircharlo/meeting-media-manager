@@ -12,18 +12,18 @@ import { version } from '../../package.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
 
 let electronApp: ElectronApplication
+let page: Page
 
 test.beforeAll(async () => {
   electronApp = await startApp()
 })
 
 test.afterAll(async () => {
+  await page.locator('[aria-label="Go to home"]').click()
   await electronApp.close()
 })
 
-let page: Page
-
-test('render the settings page correctly', async () => {
+test('render the presentation mode page correctly', async () => {
   page = await openHomePage(electronApp)
 
   // Open settings page
@@ -46,6 +46,9 @@ test('render the settings page correctly', async () => {
 
   // Go back to home page
   await page.locator('[aria-label="home"]').click()
+
+  // Close media window
+  await page.locator('[aria-label="toggleScreen"]').click()
 
   // Open presentation mode
   await page.locator('[aria-label="present"]').click()
