@@ -13,7 +13,7 @@ const isDev = process.env.NODE_ENV === 'development'
 init({
   environment: isDev ? 'development' : 'production',
   enabled: !process.env.SENTRY_DISABLE,
-  release: `meeting-media-manager@${app.getVersion()}`,
+  release: `meeting-media-manager@${isDev ? 'dev' : app.getVersion()}`,
   dsn: process.env.SENTRY_DSN,
 })
 

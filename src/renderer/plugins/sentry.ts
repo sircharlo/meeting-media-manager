@@ -8,7 +8,9 @@ const plugin: Plugin = ({ $config, app }, inject) => {
     Vue,
     dsn: $config.sentryDSN,
     enabled: $config.sentryEnabled,
-    release: `meeting-media-manager@${$config.version.substring(1)}`,
+    release: `meeting-media-manager@${
+      $config.isDev ? 'dev' : $config.version.substring(1)
+    }`,
     environment: $config.isDev ? 'development' : 'production',
     integrations: app.router
       ? [
