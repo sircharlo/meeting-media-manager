@@ -67,6 +67,7 @@ jobs:
           echo SENTRY_ORG=${{ secrets.SENTRY_ORG }} >> .env
           echo SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }} >> .env
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
+          echo SENTRY_DISABLE=true >> .env
 
       - name: Build Electron app
         env:

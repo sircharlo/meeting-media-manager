@@ -209,6 +209,6 @@ module.exports = {
       .replace('.git', ''),
     version: 'v' + pkg.version,
     sentryDSN: process.env.SENTRY_DSN,
-    env: process.env,
+    sentryEnabled: !process.env.SENTRY_DISABLE,
   },
 }
