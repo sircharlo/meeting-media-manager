@@ -52,7 +52,7 @@ test('render the presentation mode page correctly', async () => {
   // Verify home page
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
 
-  // Weird bug in Windows that changes the lang parameter after going back home
+  // Weird bug in Windows that changes the lang parameter after going back home (only when testing)
   await page.goto(baseURL)
 
   // Close media window
