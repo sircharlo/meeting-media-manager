@@ -26,6 +26,7 @@ test.afterAll(async () => {
 
 test('render the presentation mode page correctly', async () => {
   page = await openHomePage(electronApp)
+  const baseURL = page.url()
 
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
@@ -51,8 +52,8 @@ test('render the presentation mode page correctly', async () => {
   // Verify home page
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
 
-  // Weird bug in Windows only when testing
-  await page.goto(page.url().replace('nl', ''))
+  // Weird bug in Windows that changes the lang parameter after going back home
+  await page.goto(baseURL)
 
   // Close media window
   await page.locator('[aria-label="toggleScreen"]').click()
