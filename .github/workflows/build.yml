@@ -55,6 +55,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
       - name: Set env variables
         run: |
           touch .env
