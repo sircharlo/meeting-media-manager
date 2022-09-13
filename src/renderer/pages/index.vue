@@ -463,7 +463,7 @@ export default Vue.extend({
       }
     },
     async testApp() {
-      const previousLang = this.$getPrefs('media.lang')
+      const previousLang = this.$clone(this.$getPrefs('media.lang')) as string
       /*
       AML: American Sign Language
       E: English
@@ -476,14 +476,19 @@ export default Vue.extend({
       U: Russian
       X: German
       */
-      for (const lang of ['AML', 'E', 'F', 'M', 'O', 'R', 'S', 'T', 'U', 'X']) {
+      const testLangs = ['AML', 'E', 'F', 'M', 'O', 'R', 'S', 'T', 'U', 'X']
+      for (const lang of testLangs) {
         this.$setPrefs('media.lang', lang)
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
         await this.startMediaSync(true)
       }
       this.$setPrefs('media.lang', previousLang)
-      await this.startMediaSync(true)
+      this.$store.commit('db/clear')
+      this.$store.commit('media/clear')
+      if (!testLangs.includes(previousLang)) {
+        await this.startMediaSync(true)
+      }
     },
     addCong() {
       if (this.$store.state.present.mediaScreenInit) {

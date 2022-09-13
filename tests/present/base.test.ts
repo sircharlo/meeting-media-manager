@@ -4,13 +4,18 @@
  * in both renderer and main processes
  */
 // eslint-disable-next-line import/named
+import { existsSync } from 'fs-extra'
+import { sync } from 'fast-glob'
+import dayjs from 'dayjs'
 import { expect, test } from '@playwright/test'
 import { ipcRendererInvoke } from 'electron-playwright-helpers'
 import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
+import { join } from 'upath'
 import { version } from '../../package.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
 import prefs from './../mocks/prefsOld.json'
+import locale from './../../src/renderer/locales/en.json'
 
 let electronApp: ElectronApplication
 let page: Page
@@ -40,11 +45,7 @@ test('render the presentation mode page correctly', async () => {
   await page.locator('button', { hasText: 'Media setup' }).click()
 
   // Turn media presention mode on
-  await page
-    .locator(
-      'text=Present media on an external monitor or in a separate window'
-    )
-    .check()
+  await page.locator(`text=${locale.enableMediaDisplayButton}`).check()
 
   // Go back to home page
   await page.locator('[aria-label="home"]').click()
@@ -61,8 +62,26 @@ test('render the presentation mode page correctly', async () => {
   // Open presentation mode
   await page.locator('[aria-label="present"]').click()
 
-  // Check for correct heading
-  expect(await page.locator('h2').innerText()).toBe(`Meeting`)
+  // If one date or todays date, that one gets opened automatically
+  const mediaPath = await ipcRendererInvoke(page, 'downloads')
+  if (
+    existsSync(
+      join(mediaPath, 'E', dayjs().format(prefs.outputFolderDateFormat))
+    ) ||
+    sync(join(mediaPath, 'E', '*'), {
+      onlyDirectories: true,
+    }).length === 1
+  ) {
+    // Check if toggle prefix button is present
+    expect(
+      await page
+        .locator('[aria-label="Toggle prefix"]')
+        .getAttribute('aria-label')
+    ).toBeTruthy()
+  } else {
+    // Check for correct heading
+    expect(await page.locator('h2').innerText()).toBe(locale.meeting)
+  }
 })
 /*
  test('send IPC message from renderer', async () => {

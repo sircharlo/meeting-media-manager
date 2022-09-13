@@ -10,6 +10,7 @@ import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
+import locale from './../../src/renderer/locales/en.json'
 
 let electronApp: ElectronApplication
 
@@ -27,7 +28,7 @@ test('render the add media page correctly', async () => {
   page = await openHomePage(electronApp)
 
   // Open add page
-  await page.locator('.v-card', { hasText: 'Recurring media' }).click()
+  await page.locator('.v-card', { hasText: locale.recurring }).click()
 
   // Check for correct heading
   expect(await page.locator('h1').innerText()).toBe(`Recurring`)
