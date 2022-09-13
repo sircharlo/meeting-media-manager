@@ -62,7 +62,7 @@
     "@nuxtjs/i18n": "^7.3.0",
     "@nuxtjs/vuetify": "^1.12.3",
     "@playwright/test": "^1.25.2",
-    "@sentry/electron": "^4.0.0",
+    "@sentry/electron": "^4.0.2",
     "@sentry/tracing": "^7.12.1",
     "@sentry/vue": "^7.12.1",
     "@sentry/webpack-plugin": "^1.19.0",
