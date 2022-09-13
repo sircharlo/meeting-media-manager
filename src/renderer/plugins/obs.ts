@@ -140,10 +140,16 @@ OBS off: v5 error onclose disconnect reset
           try {
             await obs.connect(`ws://127.0.0.1:${port}`, password as string)
           } catch (e: any) {
-            console.warn('connect v5', e)
             resetOBS()
+            if (e.stack.contains('resetOBS')) return obs
+            console.warn('connect v5', {
+              name: e.name,
+              cause: e.cause,
+              code: e.code,
+              message: e.message,
+              stack: e.stack,
+            })
             $error('errorObs', e)
-            return
           }
         }
         store.commit('obs/setConnected', !!obs)
