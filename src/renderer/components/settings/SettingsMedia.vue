@@ -374,12 +374,20 @@ export default Vue.extend({
 
       // Remove the background from the cong server
       if (this.client) {
-        await this.client.deleteFile(
-          join(
-            this.$getPrefs('cong.dir'),
+        try {
+          await this.client.deleteFile(
+            join(
+              this.$getPrefs('cong.dir'),
+              'media-window-background-image' + extname(this.background)
+            )
+          )
+        } catch (e: any) {
+          this.$error(
+            'errorWebdavRm',
+            e,
             'media-window-background-image' + extname(this.background)
           )
-        )
+        }
       }
 
       // Refresh the media screen background
