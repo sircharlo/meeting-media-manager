@@ -10,12 +10,20 @@ require('dotenv').config()
 const { platform } = require('os')
 const isDev = process.env.NODE_ENV === 'development'
 
-init({
-  environment: isDev ? 'development' : 'production',
-  enabled: !process.env.SENTRY_DISABLE,
-  release: `meeting-media-manager@${isDev ? 'dev' : app.getVersion()}`,
-  dsn: process.env.SENTRY_DSN,
-})
+const initSentry =
+  !!process.env.SENTRY_DSN &&
+  !!process.env.SENTRY_ORG &&
+  !!process.env.SENTRY_PROJECT &&
+  !!process.env.SENTRY_AUTH_TOKEN
+
+if (initSentry) {
+  init({
+    environment: isDev ? 'development' : 'production',
+    enabled: !process.env.SENTRY_DISABLE,
+    release: `meeting-media-manager@${isDev ? 'dev' : app.getVersion()}`,
+    dsn: process.env.SENTRY_DSN,
+  })
+}
 
 // Initialize the store
 initRenderer()

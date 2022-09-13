@@ -7,6 +7,33 @@ const pkg = require('./../../package.json')
 const { LOCAL_LANGS } = require('./constants/lang.ts')
 require('dotenv').config()
 
+const initSentry =
+  !!process.env.SENTRY_DSN &&
+  !!process.env.SENTRY_ORG &&
+  !!process.env.SENTRY_PROJECT &&
+  !!process.env.SENTRY_AUTH_TOKEN
+
+const webpackPlugins = [
+  new DefinePlugin({
+    'process.env.FLUENTFFMPEG_COV': JSON.stringify(false),
+  }),
+]
+
+if (initSentry) {
+  webpackPlugins.push(
+    new SentryPlugin({
+      validate: true,
+      release:
+        'meeting-media-manager@' + process.env.NODE_ENV === 'production'
+          ? pkg.version
+          : 'dev',
+      include: process.env.SENTRY_DISABLE
+        ? []
+        : [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }],
+    })
+  )
+}
+
 /**
  * By default, Nuxt.js is configured to cover most use cases.
  * This default configuration can be overwritten in this file
@@ -177,21 +204,7 @@ module.exports = {
         config.devtool = 'source-map'
       }
     },
-    plugins: [
-      new DefinePlugin({
-        'process.env.FLUENTFFMPEG_COV': JSON.stringify(false),
-      }),
-      new SentryPlugin({
-        validate: true,
-        release:
-          'meeting-media-manager@' + process.env.NODE_ENV === 'production'
-            ? pkg.version
-            : 'dev',
-        include: process.env.SENTRY_DISABLE
-          ? []
-          : [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }],
-      }),
-    ],
+    plugins: webpackPlugins,
     externals: [
       function ({ request }, callback) {
         const IGNORES = ['fluent-ffmpeg']
@@ -210,7 +223,8 @@ module.exports = {
       .replace('mtdvlpr', 'sircharlo')
       .replace('.git', ''),
     sentryDSN: process.env.SENTRY_DSN,
-    sentryEnabled: !process.env.SENTRY_DISABLE,
+    sentryEnabled: initSentry && !process.env.SENTRY_DISABLE,
+    sentryInit: initSentry,
     sqlJsVersion: pkg.devDependencies['sql.js'].replace('^', ''),
     version: 'v' + pkg.version,
   },
