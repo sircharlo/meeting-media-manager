@@ -1,7 +1,7 @@
 import { Plugin } from '@nuxt/types'
 import sqljs, { Database } from 'sql.js'
 
-const plugin: Plugin = ({ store, $log }, inject) => {
+const plugin: Plugin = ({ store, $log, $config }, inject) => {
   function executeQuery(db: Database, query: string) {
     const vals = db.exec(query)[0]
     const valObj: any[] = []
@@ -37,7 +37,7 @@ const plugin: Plugin = ({ store, $log }, inject) => {
       try {
         const SQL = await sqljs({
           locateFile: (filename: string) =>
-            `https://sql.js.org/dist/${filename}`,
+            `https://cdnjs.cloudflare.com/ajax/libs/sql.js/${$config.sqlJsVersion}/${filename}`,
         })
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })

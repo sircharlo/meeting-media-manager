@@ -207,8 +207,9 @@ module.exports = {
     repo: pkg.repository.url
       .replace('mtdvlpr', 'sircharlo')
       .replace('.git', ''),
-    version: 'v' + pkg.version,
     sentryDSN: process.env.SENTRY_DSN,
     sentryEnabled: !process.env.SENTRY_DISABLE,
+    sqlJsVersion: pkg.devDependencies['sql.js'].replace('^', ''),
+    version: 'v' + pkg.version,
   },
 }
