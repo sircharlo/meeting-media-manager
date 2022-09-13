@@ -241,17 +241,21 @@ export default Vue.extend({
     },
     'app.obs.enable': {
       async handler() {
-        await this.$getScenes()
+        if (this.obsComplete) {
+          await this.$getScenes()
+        }
       },
     },
     'app.obs.useV4': {
       async handler() {
-        await this.refreshOBS()
+        if (this.obsComplete) {
+          await this.refreshOBS()
+        }
       },
     },
     'app.obs.cameraScene': {
       handler(val: string) {
-        if (val) {
+        if (val && this.obsComplete) {
           this.$setScene(val)
         }
       },
