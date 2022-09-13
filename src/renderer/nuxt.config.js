@@ -187,7 +187,10 @@ module.exports = {
           'meeting-media-manager@' + process.env.NODE_ENV === 'production'
             ? pkg.version
             : 'dev',
-        include: [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }],
+        include:
+          process.env.NODE_ENV === 'production'
+            ? [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }]
+            : [],
       }),
     ],
     externals: [

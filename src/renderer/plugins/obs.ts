@@ -6,7 +6,16 @@ import { ObsPrefs } from '~/types'
 let obs = null as OBSWebSocket | OBSWebSocketV4 | null
 
 const plugin: Plugin = (
-  { $getPrefs, $setPrefs, $log, $error, $setShortcut, $unsetShortcuts, store },
+  {
+    $getPrefs,
+    $setPrefs,
+    $log,
+    $warn,
+    $error,
+    $setShortcut,
+    $unsetShortcuts,
+    store,
+  },
   inject
 ) => {
   async function connect() {
@@ -45,13 +54,33 @@ const plugin: Plugin = (
           })
 
           obs.on('error', (e) => {
-            $error('errorObs', e.error)
+            console.warn('built in', e)
+            if (e.error.code === 'NOT_CONNECTED') {
+              $warn('errorObsNotRunning')
+            } else if (e.error.code === 'CONNECTION_ERROR') {
+              // OBS not running
+              $warn('errorObsNotRunning')
+            } else {
+              $error('errorObs', e.error)
+            }
           })
 
-          await obs.connect({
-            address: `localhost:${port}`,
-            password: password as string,
-          })
+          try {
+            await obs.connect({
+              address: `localhost:${port}`,
+              password: password as string,
+            })
+          } catch (e: any) {
+            if (e.error === 'Authentication Failed.') {
+              $warn('errorObsAuth')
+            } else if (e.code === 'CONNECTION_ERROR') {
+              $warn('errorObs')
+            } else {
+              $error('errorObs', e)
+            }
+            console.warn('connect v4', e)
+            resetOBS()
+          }
         } else {
           obs = new OBSWebSocket()
 
@@ -96,14 +125,16 @@ const plugin: Plugin = (
           try {
             await obs.connect(`ws://127.0.0.1:${port}`, password as string)
           } catch (e: any) {
-            store.commit('obs/clear')
+            console.warn('connect v5', e)
+            resetOBS()
             $error('errorObs', e)
             return
           }
         }
         store.commit('obs/setConnected', !!obs)
       } catch (e: any) {
-        store.commit('obs/clear')
+        console.warn('last resort', e)
+        resetOBS()
         $error('errorObs', e)
       }
     }
@@ -152,6 +183,7 @@ const plugin: Plugin = (
       return scenes
     } catch (e: any) {
       if (store.state.obs.connected) {
+        console.warn('getScenes', e)
         $error('errorObs', e)
       }
       return []
@@ -172,6 +204,7 @@ const plugin: Plugin = (
       }
     } catch (e: any) {
       if (store.state.obs.connected) {
+        console.warn('setScene', e)
         $error('errorObs', e)
       }
     }

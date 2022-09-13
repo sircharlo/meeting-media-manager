@@ -51,21 +51,19 @@ const plugin: Plugin = (
       })) as FileStat[]
 
       // Clean up old dates
-      contents
-        .filter(({ type }) => type === 'directory')
-        .forEach((dir) => {
-          const date = $dayjs(
-            dir.basename,
-            $getPrefs('app.outputFolderDateFormat') as string
-          )
-          if (date.isValid() && date.isBefore($dayjs().subtract(1, 'day'))) {
-            try {
-              client.deleteFile(dir.filename)
-            } catch (e: any) {
-              $error('errorWebdavRm', e, dir.filename)
-            }
+      for (const dir of contents.filter(({ type }) => type === 'directory')) {
+        const date = $dayjs(
+          dir.basename,
+          $getPrefs('app.outputFolderDateFormat') as string
+        )
+        if (date.isValid() && date.isBefore($dayjs().subtract(1, 'day'))) {
+          try {
+            await client.deleteFile(dir.filename)
+          } catch (e: any) {
+            $error('errorWebdavRm', e, dir.filename)
           }
-        })
+        }
+      }
 
       const bg = contents.find(({ basename }) =>
         basename.startsWith('media-window-background-image')

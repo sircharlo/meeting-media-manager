@@ -19,7 +19,7 @@ import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import { MeetingFile } from '~/types'
 
 const plugin: Plugin = (
-  { $getPrefs, $log, store, $appPath, $dayjs, i18n },
+  { $getPrefs, $log, store, $appPath, $dayjs, i18n, $strip },
   inject
 ) => {
   // Paths
@@ -299,13 +299,12 @@ const plugin: Plugin = (
 
     // Remove special characters from filename
     name =
-      basename(name, ext)
-        // eslint-disable-next-line no-control-regex
-        .replace(/["»“”‘’'«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F]/g, '')
-        .replace(/ *[—?;:|.!?] */g, ' - ')
-        .replace(/\u00A0/g, ' ')
-        .trim()
-        .replace(/[ -]+$/g, '') + ext
+      $strip(
+        basename(name, ext)
+          .replace(/\u00A0/g, ' ')
+          .replace(/[ -]+$/g, ''),
+        'file'
+      ).trim() + ext
 
     if (isFile && mediaPath()) {
       // Cutoff filename if path is longer than 245 characters
