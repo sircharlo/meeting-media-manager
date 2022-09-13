@@ -192,22 +192,22 @@ const plugin: Plugin = (
       if (date.isValid()) {
         // Rename all files that include the localized 'song' or 'paragraph' strings
         readdirSync(join(mediaPath(), dir)).forEach((file) => {
-          renameSync(
-            join(mediaPath(), dir, file),
-            join(
-              mediaPath(),
-              dir,
-              file
-                .replace(
-                  (' - ' + i18n.t('song', oldVal)) as string,
-                  (' - ' + i18n.t('song', newVal)) as string
-                )
-                .replace(
-                  (' - ' + i18n.t('paragraph', oldVal)) as string,
-                  (' - ' + i18n.t('paragraph', newVal)) as string
-                )
+          const newName = file
+            .replace(
+              (' - ' + i18n.t('song', oldVal)) as string,
+              (' - ' + i18n.t('song', newVal)) as string
             )
-          )
+            .replace(
+              (' - ' + i18n.t('paragraph', oldVal)) as string,
+              (' - ' + i18n.t('paragraph', newVal)) as string
+            )
+
+          if (file !== newName) {
+            renameSync(
+              join(mediaPath(), dir, file),
+              join(mediaPath(), dir, newName)
+            )
+          }
         })
 
         // Rename the date folder to the new localized format
@@ -230,40 +230,25 @@ const plugin: Plugin = (
         if (
           file.basename.includes((' - ' + i18n.t('song', oldVal)) as string)
         ) {
-          if (
-            file.filename !==
-            file.filename.replace(
-              (' - ' + i18n.t('song', oldVal)) as string,
-              (' - ' + i18n.t('song', newVal)) as string
-            )
-          ) {
-            await client.moveFile(
-              file.filename,
-              file.filename.replace(
-                (' - ' + i18n.t('song', oldVal)) as string,
-                (' - ' + i18n.t('song', newVal)) as string
-              )
-            )
+          const newName = file.filename.replace(
+            (' - ' + i18n.t('song', oldVal)) as string,
+            (' - ' + i18n.t('song', newVal)) as string
+          )
+
+          if (file.filename !== newName) {
+            await client.moveFile(file.filename, newName)
           }
         } else if (
           file.basename.includes(
             (' - ' + i18n.t('paragraph', oldVal)) as string
           )
         ) {
-          if (
-            file.filename !==
-            file.filename.replace(
-              (' - ' + i18n.t('paragraph', oldVal)) as string,
-              (' - ' + i18n.t('paragraph', newVal)) as string
-            )
-          ) {
-            await client.moveFile(
-              file.filename,
-              file.filename.replace(
-                (' - ' + i18n.t('paragraph', oldVal)) as string,
-                (' - ' + i18n.t('paragraph', newVal)) as string
-              )
-            )
+          const newName = file.filename.replace(
+            (' - ' + i18n.t('paragraph', oldVal)) as string,
+            (' - ' + i18n.t('paragraph', newVal)) as string
+          )
+          if (file.filename !== newName) {
+            await client.moveFile(file.filename, newName)
           }
         } else if (file.type === 'directory') {
           const date = $dayjs(
