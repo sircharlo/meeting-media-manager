@@ -122,6 +122,7 @@
       />
       <v-col cols="12" class="text-right pr-0">
         <v-btn
+          :disabled="!obsComplete"
           :color="scenes.length > 0 ? 'success' : 'primary'"
           @click="refreshOBS()"
         >
