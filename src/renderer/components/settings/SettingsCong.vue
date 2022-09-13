@@ -66,6 +66,7 @@
       :color="error === 'success' ? 'success' : 'primary'"
       class="float-right"
       :loading="loading"
+      :disabled="!complete"
       @click="submit()"
     >
       <font-awesome-icon :icon="faGlobe" size="lg" />

@@ -93,6 +93,7 @@ export default Vue.extend({
     }
   },
   async mounted() {
+    console.debug('sentry', this.$config.sentryEnabled)
     const mediaWinOpen = await ipcRenderer.invoke('mediaWinOpen')
     this.$store.commit('present/setMediaScreenInit', mediaWinOpen)
     if (mediaWinOpen) {
