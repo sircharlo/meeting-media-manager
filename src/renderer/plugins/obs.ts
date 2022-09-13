@@ -133,6 +133,10 @@ const plugin: Plugin = (
             $log.info('OBS Success! Connected & authenticated.')
           })
 
+          /*
+OBS off: v5 error onclose disconnect reset
+          */
+
           try {
             await obs.connect(`ws://127.0.0.1:${port}`, password as string)
           } catch (e: any) {
@@ -153,7 +157,11 @@ const plugin: Plugin = (
   }
 
   function resetOBS() {
-    obs?.disconnect()
+    if (obs && $getPrefs('app.obs.useV4')) {
+      ;(obs as OBSWebSocketV4).disconnect()
+    } else if (obs) {
+      ;(obs as OBSWebSocket).disconnect().catch(() => {})
+    }
     obs = null
     store.commit('obs/clear')
     $unsetShortcuts('obs')
