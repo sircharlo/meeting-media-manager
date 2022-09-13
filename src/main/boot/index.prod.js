@@ -19,11 +19,11 @@ app.once('ready', () => {
 
 // Credits: https://github.com/nklayman/vue-cli-plugin-electron-builder/blob/master/lib/createProtocol.js
 function registerProtocol(scheme) {
-  protocol.registerFileProtocol(scheme, (request, response) => {
+  protocol.registerFileProtocol(scheme, (request, callback) => {
     const relativePath = normalize(new URL(request.url).pathname)
     const absolutePath = join(PRODUCTION_APP_PATH, relativePath)
 
-    response({ path: absolutePath })
+    callback(absolutePath)
   })
 }
 
