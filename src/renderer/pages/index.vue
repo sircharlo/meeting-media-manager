@@ -395,7 +395,6 @@ export default Vue.extend({
     },
   },
   async mounted() {
-    console.log(this.$config.sqlJsVersion)
     if (!this.jwSync) {
       this.$router.push({
         path: this.localePath('/settings'),
