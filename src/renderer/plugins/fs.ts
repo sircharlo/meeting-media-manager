@@ -230,25 +230,41 @@ const plugin: Plugin = (
         if (
           file.basename.includes((' - ' + i18n.t('song', oldVal)) as string)
         ) {
-          await client.moveFile(
-            file.filename,
+          if (
+            file.filename !==
             file.filename.replace(
               (' - ' + i18n.t('song', oldVal)) as string,
               (' - ' + i18n.t('song', newVal)) as string
             )
-          )
+          ) {
+            await client.moveFile(
+              file.filename,
+              file.filename.replace(
+                (' - ' + i18n.t('song', oldVal)) as string,
+                (' - ' + i18n.t('song', newVal)) as string
+              )
+            )
+          }
         } else if (
           file.basename.includes(
             (' - ' + i18n.t('paragraph', oldVal)) as string
           )
         ) {
-          await client.moveFile(
-            file.filename,
+          if (
+            file.filename !==
             file.filename.replace(
               (' - ' + i18n.t('paragraph', oldVal)) as string,
               (' - ' + i18n.t('paragraph', newVal)) as string
             )
-          )
+          ) {
+            await client.moveFile(
+              file.filename,
+              file.filename.replace(
+                (' - ' + i18n.t('paragraph', oldVal)) as string,
+                (' - ' + i18n.t('paragraph', newVal)) as string
+              )
+            )
+          }
         } else if (file.type === 'directory') {
           const date = $dayjs(
             file.basename,
@@ -265,7 +281,9 @@ const plugin: Plugin = (
           if (date.isValid() && newName !== file.filename) {
             const contents = store.state.cong.contents as FileStat[]
             if (!contents.find(({ filename }) => filename === newName)) {
-              await client.moveFile(file.filename, newName)
+              if (file.filename !== newName) {
+                await client.moveFile(file.filename, newName)
+              }
             }
           }
         }
