@@ -119,7 +119,13 @@ const plugin: Plugin = (
           })
 
           obs.on('ConnectionError', (e) => {
-            console.warn('built in', e)
+            console.warn('built in', {
+              name: e.name,
+              cause: e.cause,
+              code: e.code,
+              message: e.message,
+              stack: e.stack,
+            })
             $error('errorObs', e)
           })
 
