@@ -185,14 +185,7 @@ export default Vue.extend({
   },
   computed: {
     id(): string {
-      return (
-        'mediaitem-' +
-        basename(this.src as string)
-          .replaceAll(' ', '')
-          .replaceAll('-', '')
-          .replaceAll('.', '')
-          .replaceAll("'", '')
-      )
+      return this.$strip('mediaitem-' + basename(this.src as string))
     },
     url(): string {
       return pathToFileURL(this.src).href

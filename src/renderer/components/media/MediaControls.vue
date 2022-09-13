@@ -232,13 +232,7 @@ export default Vue.extend({
         .sort((a, b) => basename(a).localeCompare(basename(b)))
         .map((path) => {
           return {
-            id:
-              'mediaitem-' +
-              basename(path)
-                .replaceAll(' ', '')
-                .replaceAll('-', '')
-                .replaceAll("'", '')
-                .replaceAll('.', ''),
+            id: this.$strip('mediaitem-' + basename(path)),
             path,
             play: false,
             stop: false,

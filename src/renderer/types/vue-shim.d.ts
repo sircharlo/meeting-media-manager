@@ -143,6 +143,7 @@ interface CustomProps {
   $resetPrefs: () => void
   $rm: (files: string | string[]) => void
   $sanitize: (name: string, isFile: boolean = false) => string
+  $strip: (value: string, type: string = 'id') => string
   $sentry: typeof import('@sentry/vue')
   $setAllPrefs: (settings: ElectronStore) => void
   $setDb: (pub: string, issue: string, db: Database) => void

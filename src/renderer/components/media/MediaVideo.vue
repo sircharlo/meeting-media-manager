@@ -166,15 +166,7 @@ export default Vue.extend({
       return this.$vuetify.theme.dark
     },
     id(): string {
-      return (
-        'video-' +
-        basename(this.src)
-          .replaceAll(' ', '')
-          .replaceAll('-', '')
-          .replaceAll('.', '')
-          .replaceAll("'", '')
-          .replaceAll(/\d/g, '')
-      )
+      return this.$strip('video-' + basename(this.src)).replaceAll(/\d/g, '')
     },
     duration(): string {
       return this.format(

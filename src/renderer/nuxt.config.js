@@ -181,13 +181,13 @@ module.exports = {
       new DefinePlugin({
         'process.env.FLUENTFFMPEG_COV': JSON.stringify(false),
       }),
-      new DefinePlugin({
-        __SENTRY_DEBUG__: false,
-        __SENTRY_TRACING__: false,
-      }),
       new SentryPlugin({
-        release: 'meeting-media-manager@' + pkg.version,
-        include: './dist',
+        validate: true,
+        release:
+          'meeting-media-manager@' + process.env.NODE_ENV === 'production'
+            ? pkg.version
+            : 'dev',
+        include: [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }],
       }),
     ],
     externals: [
