@@ -54,12 +54,10 @@ const plugin: Plugin = (
           })
 
           obs.on('error', (e) => {
-            console.warn('built in', e)
             if (e.error.code === 'NOT_CONNECTED') {
-              $warn('errorObsNotRunning')
+              $warn('errorObs')
             } else if (e.error.code === 'CONNECTION_ERROR') {
-              // OBS not running
-              $warn('errorObsNotRunning')
+              $warn('errorObs')
             } else {
               $error('errorObs', e.error)
             }
@@ -78,7 +76,6 @@ const plugin: Plugin = (
             } else {
               $error('errorObs', e)
             }
-            console.warn('connect v4', e)
             resetOBS()
           }
         } else {
@@ -119,35 +116,35 @@ const plugin: Plugin = (
           })
 
           obs.on('ConnectionError', (e) => {
-            console.warn('built in', {
-              name: e.name,
-              cause: e.cause,
-              code: e.code,
-              message: e.message,
-              stack: e.stack,
-            })
-            $error('errorObs', e)
+            if (!e.stack?.includes('resetOBS')) {
+              $error('errorObs', e)
+            }
           })
 
           obs.on('ConnectionOpened', () => {
             $log.info('OBS Success! Connected & authenticated.')
           })
 
-          /*
-OBS off: v5 error onclose disconnect reset
-          */
+          // OBS off: v5 error in connection establishments (vendors/app.js:84202:17)
 
           try {
             await obs.connect(`ws://127.0.0.1:${port}`, password as string)
           } catch (e: any) {
+            if (e.code === 4009) {
+              $warn('errorObsAuth')
+            }
+            // caused by resetOBS trying to disconnect
+            else if (e.code === 1006) {
+              resetOBS()
+              return obs
+            } else {
+              $error('errorObs', e)
+            }
             resetOBS()
-            console.warn('connect v5', JSON.stringify(e))
-            $error('errorObs', e)
           }
         }
         store.commit('obs/setConnected', !!obs)
       } catch (e: any) {
-        console.warn('last resort', e)
         resetOBS()
         $error('errorObs', e)
       }
@@ -203,7 +200,6 @@ OBS off: v5 error onclose disconnect reset
       return scenes
     } catch (e: any) {
       if (store.state.obs.connected) {
-        console.warn('getScenes', e)
         $error('errorObs', e)
       }
       return []
@@ -224,7 +220,6 @@ OBS off: v5 error onclose disconnect reset
       }
     } catch (e: any) {
       if (store.state.obs.connected) {
-        console.warn('setScene', e)
         $error('errorObs', e)
       }
     }
