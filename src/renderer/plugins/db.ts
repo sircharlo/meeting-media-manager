@@ -36,7 +36,8 @@ const plugin: Plugin = ({ store, $log }, inject) => {
 
       try {
         const SQL = await sqljs({
-          locateFile: (filename: string) => `/${filename}`,
+          locateFile: (filename: string) =>
+            `https://sql.js.org/dist/${filename}`,
         })
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })
