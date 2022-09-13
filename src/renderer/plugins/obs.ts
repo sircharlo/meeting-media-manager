@@ -118,6 +118,11 @@ const plugin: Plugin = (
             await getScenes()
           })
 
+          obs.on('ConnectionError', (e) => {
+            console.warn('built in', e)
+            $error('errorObs', e)
+          })
+
           obs.on('ConnectionOpened', () => {
             $log.info('OBS Success! Connected & authenticated.')
           })
