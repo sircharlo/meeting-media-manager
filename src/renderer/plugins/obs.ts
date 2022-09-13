@@ -158,7 +158,9 @@ OBS off: v5 error onclose disconnect reset
 
   function resetOBS() {
     if (obs && $getPrefs('app.obs.useV4')) {
-      ;(obs as OBSWebSocketV4).disconnect()
+      try {
+        ;(obs as OBSWebSocketV4).disconnect()
+      } catch (e: any) {}
     } else if (obs) {
       ;(obs as OBSWebSocket).disconnect().catch(() => {})
     }
