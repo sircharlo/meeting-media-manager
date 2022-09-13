@@ -1,16 +1,9 @@
 <template>
-  <v-menu
-    ref="menu"
-    v-model="menu"
-    attach
-    :close-on-content-click="false"
-    :nudge-left="160"
+  <v-dialog
+    ref="dialog"
+    v-model="dialog"
     :return-value.sync="$attrs.value"
-    transition="scale-transition"
-    offset-y
-    top
-    max-width="290px"
-    min-width="290px"
+    width="290px"
   >
     <template #activator="{ on, attrs }">
       <form-input
@@ -32,17 +25,17 @@
       </form-input>
     </template>
     <v-time-picker
-      v-if="menu"
+      v-if="dialog"
       id="timepicker"
       ref="field"
       v-model="$attrs.value"
       full-width
       :use-seconds="useSeconds"
       format="24hr"
-      @click:minute="$refs.menu.save($attrs.value)"
+      @click:minute="$refs.dialog.save($attrs.value)"
       @change="$emit('input', $event)"
     />
-  </v-menu>
+  </v-dialog>
 </template>
 <script>
 import Vue from 'vue'
@@ -64,7 +57,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      menu: false,
+      dialog: false,
     }
   },
   computed: {
