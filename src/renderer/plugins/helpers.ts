@@ -8,10 +8,10 @@ const plugin: Plugin = (_ctx, inject) => {
   inject('strip', (value: string, type: string = 'id') => {
     switch (type) {
       case 'id':
-        return value.replace(/[^a-zA-Z0-9-.:_]/g, '')
+        return value.replace(/[^a-zA-Z0-9\-:_]/g, '')
       case 'file':
         return value
-          .replace(/[^a-zA-Z0-9 ()-_]/g, '')
+          .replace(/[^a-zA-Z0-9 \-_]/g, '')
           .replace(/ *[—?;:|.!?] */g, ' - ')
       default:
         throw new Error('Invalid type: ' + type)

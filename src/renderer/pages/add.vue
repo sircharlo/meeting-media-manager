@@ -337,6 +337,7 @@ export default Vue.extend({
     document.removeEventListener('drop', this.handleDrop)
   },
   async mounted() {
+    console.log(this.$strip('test(1).pm4', 'file'))
     await this.getMeetingData()
     this.getExistingMedia()
     document.addEventListener('dragover', this.stopEvent)
@@ -363,7 +364,7 @@ export default Vue.extend({
       this.dragging = false
       this.files = Array.from(e.dataTransfer?.files ?? []).map((file) => {
         return {
-          safeName: '- ' + file.name,
+          safeName: '- ' + this.$sanitize(file.name),
           filepath: file.path,
         }
       })
@@ -395,7 +396,7 @@ export default Vue.extend({
       })
       if (result && !result.canceled) {
         this.files = result.filePaths.map((file: string) => ({
-          safeName: '- ' + basename(file),
+          safeName: '- ' + this.$sanitize(basename(file), true),
           filepath: file,
         }))
         this.fileString = result.filePaths.join(';')

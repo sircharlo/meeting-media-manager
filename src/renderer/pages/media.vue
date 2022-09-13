@@ -173,6 +173,7 @@ export default Vue.extend({
             this.mediaDisplay.append(video)
             this.mediaDisplay.style.background = 'black'
           } else if (this.$isImage(media.path)) {
+            console.log(pathToFileURL(media.path).href)
             this.mediaDisplay.style.background = `url(${
               pathToFileURL(media.path).href
             }) black center center / contain no-repeat`
