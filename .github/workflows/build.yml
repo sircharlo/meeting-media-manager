@@ -59,7 +59,7 @@ jobs:
         run: yarn set version stable
 
       - name: Install dependencies
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
+        run: yarn install
 
       - name: Set env variables
         run: |
@@ -106,7 +106,7 @@ jobs:
         run: yarn set version stable
 
       - name: Install dependencies
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
+        run: yarn install
 
       - name: Set env variables
         run: |
