@@ -42,7 +42,7 @@ test('render the presentation mode page correctly', async () => {
   )
 
   // Expand media setup
-  await page.locator('button', { hasText: 'Media setup' }).click()
+  await page.locator('button', { hasText: locale.optionsMedia }).click()
 
   // Turn media presention mode on
   await page.locator(`text=${locale.enableMediaDisplayButton}`).check()

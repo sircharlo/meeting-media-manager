@@ -38,7 +38,7 @@ test('render the home page correctly', async () => {
   expect(title).toBe('Home - Meeting Media Manager')
 })
 
-test('fetch button is clickable', async () => {
+test('fetch is successfull', async () => {
   // Click on fetch button
   await page.locator('button', { hasText: locale.fetchMedia }).click()
 

@@ -12,7 +12,7 @@ import { _electron as electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
 import prefsOld from './../mocks/prefsOld.json'
 
-export async function startApp() {
+export async function startApp(options: any = {}) {
   // find the latest build in the out directory
   const latestBuild = findLatestBuild('build')
   // parse the directory and find paths and other info
@@ -21,6 +21,7 @@ export async function startApp() {
   process.env.CI = 'e2e'
 
   const electronApp = await electron.launch({
+    ...options,
     args: [appInfo.main],
     executablePath:
       platform() === 'linux'
