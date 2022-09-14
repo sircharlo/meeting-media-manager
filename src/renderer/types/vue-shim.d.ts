@@ -128,15 +128,15 @@ interface CustomProps {
     path: string,
     oldName: string,
     newName: string,
-    action?: string,
-    type?: string
+    action?: string = 'rename',
+    type?: string = 'string'
   ) => void
   $renameAll: (
     dir: string,
     search: string,
     newName: string,
-    action?: string,
-    type?: string
+    action?: string = 'rename',
+    type?: string = 'string'
   ) => void
   $renamePubs: (oldVal: string, newVal: string) => Promise<void>
   $resetOBS: () => void

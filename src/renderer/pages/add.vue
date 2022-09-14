@@ -364,7 +364,7 @@ export default Vue.extend({
       this.dragging = false
       this.files = Array.from(e.dataTransfer?.files ?? []).map((file) => {
         return {
-          safeName: '- ' + this.$sanitize(file.name),
+          safeName: '- ' + this.$sanitize(file.name, true),
           filepath: file.path,
         }
       })

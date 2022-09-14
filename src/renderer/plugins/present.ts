@@ -88,8 +88,9 @@ const plugin: Plugin = (
   inject('closeMediaWindow', closeMediaWindow)
 
   async function toggleMediaWindow(action?: string) {
-    if (!action)
+    if (!action) {
       action = $getPrefs('media.enableMediaDisplayButton') ? 'open' : 'close'
+    }
     if (action === 'open') {
       await showMediaWindow()
       await refreshBackgroundImgPreview()

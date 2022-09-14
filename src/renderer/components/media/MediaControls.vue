@@ -105,7 +105,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { basename, join } from 'upath'
+import { basename, dirname, join } from 'upath'
 import draggable from 'vuedraggable'
 import { ipcRenderer } from 'electron'
 import {
@@ -231,9 +231,13 @@ export default Vue.extend({
         })
         .sort((a, b) => basename(a).localeCompare(basename(b)))
         .map((path) => {
+          const cleanName = this.$sanitize(basename(path), true)
+          if (basename(path) !== cleanName) {
+            this.$rename(path, basename(path), cleanName)
+          }
           return {
-            id: this.$strip('mediaitem-' + basename(path)),
-            path,
+            id: this.$strip('mediaitem-' + cleanName),
+            path: join(dirname(path), cleanName),
             play: false,
             stop: false,
             deactivate: false,
