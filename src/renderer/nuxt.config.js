@@ -7,6 +7,9 @@ const pkg = require('./../../package.json')
 const { LOCAL_LANGS } = require('./constants/lang.ts')
 require('dotenv').config()
 
+const isDev = process.env.NODE_ENV !== 'production'
+console.log(process.env.NODE_ENV, isDev)
+
 const initSentry =
   !!process.env.SENTRY_DSN &&
   !!process.env.SENTRY_ORG &&
@@ -23,10 +26,7 @@ if (initSentry) {
   webpackPlugins.push(
     new SentryPlugin({
       validate: true,
-      release:
-        'meeting-media-manager@' + process.env.NODE_ENV === 'production'
-          ? pkg.version
-          : 'dev',
+      release: `meeting-media-manager@${isDev ? 'dev' : pkg.version}`,
       include: process.env.SENTRY_DISABLE
         ? []
         : [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }],
@@ -217,7 +217,7 @@ module.exports = {
   },
   publicRuntimeConfig: {
     author: pkg.author.name,
-    isDev: process.env.NODE_ENV !== 'production',
+    isDev,
     name: pkg.name,
     repo: pkg.repository.url
       .replace('mtdvlpr', 'sircharlo')
