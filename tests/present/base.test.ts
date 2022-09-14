@@ -6,7 +6,6 @@
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
-import dayjs from 'dayjs'
 import { expect, test } from '@playwright/test'
 import { ipcRendererInvoke } from 'electron-playwright-helpers'
 import jimp from 'jimp'
@@ -14,6 +13,7 @@ import { ElectronApplication, Page } from 'playwright'
 import { join } from 'upath'
 import { version } from '../../package.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
+import { getDate } from './../helpers/generalHelpers'
 import prefs from './../mocks/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
 
@@ -65,9 +65,7 @@ test('render the presentation mode page correctly', async () => {
   // If one date or todays date, that one gets opened automatically
   const mediaPath = await ipcRendererInvoke(page, 'downloads')
   if (
-    existsSync(
-      join(mediaPath, 'E', dayjs().format(prefs.outputFolderDateFormat))
-    ) ||
+    existsSync(join(mediaPath, 'E', getDate())) ||
     sync(join(mediaPath, 'E', '*'), {
       onlyDirectories: true,
     }).length === 1

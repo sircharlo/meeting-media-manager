@@ -10,7 +10,7 @@ import {
 } from 'electron-playwright-helpers'
 import { _electron as electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
-import prefs from './../mocks/prefsOld.json'
+import prefsOld from './../mocks/prefsOld.json'
 
 export async function startApp() {
   // find the latest build in the out directory
@@ -45,16 +45,24 @@ export async function startApp() {
   return electronApp
 }
 
-export async function openHomePage(app: ElectronApplication) {
+export async function openHomePage(
+  app: ElectronApplication,
+  prefsObject?: any
+) {
   // Set first browser window as page
   const page = await app.firstWindow()
 
-  // Insert mock preferences
+  // Set mock preferences
   const congId = 'test'
+  const prefs = prefsObject ?? prefsOld
+
   const appPath = (await ipcRendererInvoke(page, 'userData')) as string
   expect(appPath.endsWith(name)).toBe(true)
+
   const downloadsPath = (await ipcRendererInvoke(page, 'downloads')) as string
   prefs.localOutputPath = downloadsPath
+
+  // Insert mock preferences
   writeFileSync(join(appPath, `prefs-${congId}.json`), JSON.stringify(prefs))
 
   // Open the home page as test congregation

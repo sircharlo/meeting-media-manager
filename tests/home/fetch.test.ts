@@ -6,11 +6,11 @@
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
-import dayjs from 'dayjs'
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 import { ipcRendererInvoke } from 'electron-playwright-helpers'
 import { join } from 'upath'
+import { getDate } from './../helpers/generalHelpers'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
 import prefs from './../mocks/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
@@ -57,17 +57,7 @@ test('fetch button is clickable', async () => {
   expect(existsSync(join(mediaPath, 'E'))).toBe(true)
 
   // Test if the weekend media folder has media files
-  expect(
-    sync(
-      join(
-        mediaPath,
-        'E',
-        dayjs()
-          .startOf('week')
-          .add(parseInt(prefs.weDay) + 1, 'days')
-          .format(prefs.outputFolderDateFormat),
-        '*'
-      )
-    ).length
-  ).toBeGreaterThan(0)
+  expect(sync(join(mediaPath, 'E', getDate('we'), '*')).length).toBeGreaterThan(
+    0
+  )
 })
