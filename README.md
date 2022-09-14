@@ -1,4 +1,4 @@
-<img style='max-height: 20vh' src="https://github.com/sircharlo/meeting-media-manager/blob/master/build/icon.png?raw=true" alt="M³" />
+<img style='max-height: 20vh' src="/build/icon.png?raw=true" alt="M³" />
 
 <h3 id="mmm">What is M³?</h3>
 
