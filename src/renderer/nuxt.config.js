@@ -8,7 +8,6 @@ const { LOCAL_LANGS } = require('./constants/lang.ts')
 require('dotenv').config()
 
 const isDev = process.env.NODE_ENV !== 'production'
-console.log(process.env.NODE_ENV, isDev)
 
 const initSentry =
   !!process.env.SENTRY_DSN &&
@@ -27,9 +26,9 @@ if (initSentry) {
     new SentryPlugin({
       validate: true,
       release: `meeting-media-manager@${isDev ? 'dev' : pkg.version}`,
-      include: process.env.SENTRY_DISABLE
-        ? []
-        : [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }],
+      include: !process.env.SENTRY_DISABLE
+        ? [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }]
+        : [],
     })
   )
 }
