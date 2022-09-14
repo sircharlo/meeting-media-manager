@@ -13,7 +13,7 @@
   "dontForgetToGetMedia": "Don't forget to update the media folders on the computer used to present media at congregation meetings!",
   "enableMediaDisplayButton": "Present media on an external monitor or in a separate window",
   "enableMusicButton": "Enable button to play Kingdom songs on shuffle",
-  "enableObs": "Enable OBS Studio compatibility mode <em>(requires obs-websocket)</em>",
+  "enableObs": "Enable OBS Studio compatibility mode <em>(requires compatibility obs-websocket)</em>",
   "enableVlcPlaylistCreation": "Create playlists for use with <em>VLC</em>",
   "error": "Error",
   "errorAdditionalMedia": "An error occurred while importing media. Please contact your videoconference organizer.",
