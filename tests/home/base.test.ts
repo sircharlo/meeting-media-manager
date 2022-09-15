@@ -1,8 +1,3 @@
-/**
- * Example Playwright script for Electron
- * showing/testing various API features
- * in both renderer and main processes
- */
 // eslint-disable-next-line import/named
 import { expect, test } from '@playwright/test'
 import { ipcRendererInvoke } from 'electron-playwright-helpers'
@@ -10,7 +5,7 @@ import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
-import prefs from './../mocks/prefsOld.json'
+import prefs from './../mocks/prefs/prefsOld.json'
 
 let electronApp: ElectronApplication
 

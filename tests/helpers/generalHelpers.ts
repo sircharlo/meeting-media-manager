@@ -1,7 +1,7 @@
 /* eslint-disable import/no-named-as-default-member */
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
-import prefs from './../mocks/prefsOld.json'
+import prefs from './../mocks/prefs/prefsOld.json'
 const { LOCAL_LANGS } = require('./../../src/renderer/constants/lang') as {
   LOCAL_LANGS: string[]
 }
@@ -28,4 +28,12 @@ export function getDate(type: string = 'now'): string {
     default:
       throw new Error('invalid type: ' + type)
   }
+}
+
+export function delay(ms: number): Promise<void> {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, ms)
+  })
 }

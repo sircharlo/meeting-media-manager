@@ -1,8 +1,3 @@
-/**
- * Example Playwright script for Electron
- * showing/testing various API features
- * in both renderer and main processes
- */
 // eslint-disable-next-line import/named
 import { expect, test } from '@playwright/test'
 import { ipcRendererInvoke } from 'electron-playwright-helpers'
