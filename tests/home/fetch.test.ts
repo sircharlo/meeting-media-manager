@@ -49,10 +49,10 @@ test('fetch is successfull', async () => {
 
   // Test if the media folder has a E folder for English media
   const mediaPath = await ipcRendererInvoke(page, 'downloads')
-  expect(existsSync(join(mediaPath, 'E'))).toBe(true)
+  expect(existsSync(join(mediaPath, prefs.lang))).toBe(true)
 
   // Test if the weekend media folder has media files
-  expect(sync(join(mediaPath, 'E', getDate('we'), '*')).length).toBeGreaterThan(
-    0
-  )
+  expect(
+    sync(join(mediaPath, prefs.lang, getDate('we'), '*')).length
+  ).toBeGreaterThan(0)
 })

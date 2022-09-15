@@ -60,10 +60,10 @@ test('render the presentation mode page correctly', async () => {
   // If one date or todays date, that one gets opened automatically
   const mediaPath = await ipcRendererInvoke(page, 'downloads')
   if (
-    existsSync(join(mediaPath, 'E', getDate())) ||
-    sync(join(mediaPath, 'E', '*'), {
+    existsSync(join(mediaPath, prefs.lang, getDate())) ||
+    sync(join(mediaPath, prefs.lang, '*'), {
       onlyDirectories: true,
-      ignore: [join(mediaPath, 'E', 'Recurring')],
+      ignore: [join(mediaPath, prefs.lang, 'Recurring')],
     }).length === 1
   ) {
     // Check if toggle prefix button is present
