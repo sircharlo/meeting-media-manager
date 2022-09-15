@@ -6,7 +6,7 @@ const config: PlaywrightTestConfig = {
   workers: 1,
   retries: process.env.CI ? 2 : 0, // set to 2 when running on CI
   reporter: process.env.CI ? 'github' : 'list',
-  maxFailures: 1,
+  maxFailures: process.env.CI ? 2 : 1,
   use: {
     trace: 'on-first-retry', // record traces on first retry of each test
   },
