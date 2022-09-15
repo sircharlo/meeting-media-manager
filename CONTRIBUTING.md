@@ -54,6 +54,8 @@ yarn lint
 # Lint all JS/TS/Vue files in `src/` and fix all auto-fixable errors
 yarn lint:fix
 
+# Run e2e tests using Playwright
+yarn test
 ```
 
 The development environment uses a different location to store its files ([`app.getPath('appData')`](https://electronjs.org/docs/api/app#appgetpathname)/Electron) than production ([`app.getPath('appData')`](https://electronjs.org/docs/api/app#appgetpathname)/meeting-media-manager). This prevents the accidental breaking/changing of your personal production version of the application.
@@ -69,6 +71,8 @@ The renderer process is made using [Nuxt.js](https://nuxtjs.org/). The Nuxt fram
 The UI components are made using [Vuetify.js](https://vuetifyjs.com/en/). The Vuetify framework is a Vue UI library for building beautiful material design web applications.
 
 The icons used in this project are taken from the [Font Awesome](https://fontawesome.com/icons) project.
+
+The tests are written using [Playwright](https://playwright.dev/). Playwright is a browser automation tool that allows you to run the actual application and test the different features automatically.
 
 ### Release Procedure
 

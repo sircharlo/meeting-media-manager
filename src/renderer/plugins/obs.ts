@@ -158,7 +158,7 @@ const plugin: Plugin = (
         ;(obs as OBSWebSocketV4).disconnect()
       } catch (e: any) {}
     } else if (obs) {
-      ;(obs as OBSWebSocket).disconnect().catch(() => {})
+      ;(obs as OBSWebSocket).disconnect()?.catch(() => {})
     }
     obs = null
     store.commit('obs/clear')
