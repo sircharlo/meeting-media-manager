@@ -48,7 +48,11 @@
           </v-btn>
         </v-col>
         <v-col align-self="end" class="text-right pa-0">
-          <icon-btn variant="home" :disabled="!valid" />
+          <icon-btn
+            variant="home"
+            :disabled="!valid"
+            :style="valid ? undefined : 'color: red !important'"
+          />
         </v-col>
       </v-col>
     </v-footer>
