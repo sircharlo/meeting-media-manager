@@ -54,7 +54,6 @@ const plugin: Plugin = (
           })
 
           obs.on('ConnectionClosed', () => {
-            console.log('connect closed')
             $warn('errorObs')
             resetOBS()
           })
@@ -69,7 +68,6 @@ const plugin: Plugin = (
           })
 
           obs.on('error', (e) => {
-            console.log('general error')
             if (e.error.code === 'NOT_CONNECTED') {
               $warn('errorObs')
             } else if (e.error.code === 'CONNECTION_ERROR') {
@@ -86,7 +84,6 @@ const plugin: Plugin = (
               password: password as string,
             })
           } catch (e: any) {
-            console.log('connect error')
             if (e.error === 'Authentication Failed.') {
               $warn('errorObsAuth')
             } else if (e.code === 'CONNECTION_ERROR') {
@@ -165,7 +162,6 @@ const plugin: Plugin = (
         }
         store.commit('obs/setConnected', !!obs)
       } catch (e: any) {
-        console.log('last resort error')
         $error('errorObs', e)
         resetOBS()
       }
