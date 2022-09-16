@@ -19,7 +19,10 @@ export const mutations: MutationTree<Notify[]> = {
 
     // Prevent duplicate messages
     const match = state.find(
-      ({ type, message }) => type === msg.type && message === msg.message
+      ({ type, message, identifier }) =>
+        type === msg.type &&
+        message === msg.message &&
+        identifier === msg.identifier
     )
     if (match) {
       match.timestamp = Date.now()
