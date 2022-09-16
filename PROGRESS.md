@@ -54,6 +54,7 @@
 - DOCS: Documentation site now supports multiple languages. Time to translate my dear volunteers!
 - GENERAL: Automatically log in to congregation when computer username matches congregation name
 - GENERAL: Better error tracking through Sentry
+- GENERAL: MacOS icon now has rounded corners to better fit with MacOS native style
 - GENERAL: Support Debian package
 - GENERAL: Tests to ensure everything stays working between releases
 - MEDIA MANAGER: Auto determine drag and dropped file type (custom / jwpub)
