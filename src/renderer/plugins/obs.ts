@@ -53,6 +53,20 @@ const plugin: Plugin = (
             $log.info('OBS Success! Connected & authenticated.')
           })
 
+          obs.on('ConnectionClosed', () => {
+            $warn('errorObs')
+            resetOBS()
+          })
+
+          obs.on('AuthenticationFailure', () => {
+            $warn('errorObsAuth')
+            resetOBS()
+          })
+
+          obs.on('Exiting', () => {
+            $log.info('Existing OBS...')
+          })
+
           obs.on('error', (e) => {
             if (e.error.code === 'NOT_CONNECTED') {
               $warn('errorObs')
@@ -61,6 +75,7 @@ const plugin: Plugin = (
             } else {
               $error('errorObs', e.error)
             }
+            resetOBS()
           })
 
           try {
@@ -116,16 +131,18 @@ const plugin: Plugin = (
           })
 
           obs.on('ConnectionError', (e) => {
-            if (!e.stack?.includes('resetOBS')) {
-              $error('errorObs', e)
+            if (
+              !e.stack?.includes('resetOBS') &&
+              !e.stack?.includes('.disconnect')
+            ) {
+              $warn('errorObs')
+              resetOBS()
             }
           })
 
           obs.on('ConnectionOpened', () => {
             $log.info('OBS Success! Connected & authenticated.')
           })
-
-          // OBS off: v5 error in connection establishments (vendors/app.js:84202:17)
 
           try {
             await obs.connect(`ws://127.0.0.1:${port}`, password as string)
@@ -145,8 +162,8 @@ const plugin: Plugin = (
         }
         store.commit('obs/setConnected', !!obs)
       } catch (e: any) {
-        resetOBS()
         $error('errorObs', e)
+        resetOBS()
       }
     }
     return obs
@@ -171,18 +188,37 @@ const plugin: Plugin = (
       let currentScene = ''
       let scenes: string[] = []
       if ($getPrefs('app.obs.useV4')) {
-        const obs = (await connect()) as OBSWebSocketV4
-        if (!obs) return []
+        obs = (await connect()) as OBSWebSocketV4
+
+        // Try once again if connection failed
+        if (!store.state.obs.connected) {
+          obs = (await connect()) as OBSWebSocketV4
+        }
+
+        // Return empty list on second failure
+        if (!obs || !store.state.obs.connected) return []
+
+        // Get scene list and current scene from obs
         const result = await obs.send('GetSceneList')
         scenes = result.scenes.map(({ name }) => name)
         currentScene = result['current-scene']
       } else {
-        const obs = (await connect()) as OBSWebSocket
-        if (!obs) return []
+        obs = (await connect()) as OBSWebSocket
+
+        // Try once again if connection failed
+        if (!store.state.obs.connected) {
+          obs = (await connect()) as OBSWebSocket
+        }
+
+        // Return empty list on second failure
+        if (!obs || !store.state.obs.connected) return []
+
+        // Get scene list and current scene from obs
         const result = await obs.call('GetSceneList')
         scenes = result.scenes
           .sort((a, b) => (b.sceneIndex as number) - (a.sceneIndex as number))
           .map(({ sceneName }) => sceneName as string)
+
         currentScene = result.currentProgramSceneName
       }
 
@@ -210,11 +246,11 @@ const plugin: Plugin = (
   async function setScene(scene: string) {
     try {
       if ($getPrefs('app.obs.useV4')) {
-        const obs = (await connect()) as OBSWebSocketV4
+        obs = (await connect()) as OBSWebSocketV4
         if (!obs) return
         await obs.send('SetCurrentScene', { 'scene-name': scene })
       } else {
-        const obs = (await connect()) as OBSWebSocket
+        obs = (await connect()) as OBSWebSocket
         if (!obs) return
         await obs.call('SetCurrentProgramScene', { sceneName: scene })
       }

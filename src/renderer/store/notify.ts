@@ -16,7 +16,16 @@ export const state = () => [] as Notify[]
 export const mutations: MutationTree<Notify[]> = {
   show(state, payload: Notify) {
     const msg = { ...defaultState, ...payload, timestamp: Date.now() }
-    state.push(msg)
+
+    // Prevent duplicate messages
+    const match = state.find(
+      ({ type, message }) => type === msg.type && message === msg.message
+    )
+    if (match) {
+      match.timestamp = Date.now()
+    } else {
+      state.push(msg)
+    }
   },
   delete(state, index: number) {
     state.splice(index, 1)

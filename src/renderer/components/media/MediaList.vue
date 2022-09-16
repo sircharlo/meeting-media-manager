@@ -285,10 +285,14 @@ export default Vue.extend({
       }
     },
     async saveNewName() {
+      const cleanName = this.$sanitize(
+        this.edit?.newName + this.edit?.ext,
+        true
+      )
       this.$rename(
         join(this.$mediaPath(), this.date, this.edit?.safeName),
         this.edit?.safeName,
-        this.edit?.newName + this.edit?.ext
+        cleanName
       )
 
       // Change the name of the file in every date folder that it appears in
@@ -296,11 +300,7 @@ export default Vue.extend({
         this.$findAll(
           join(this.$mediaPath() as string, '*', this.edit?.safeName)
         ).forEach((file) => {
-          this.$rename(
-            file,
-            this.edit?.safeName,
-            this.edit?.newName + this.edit?.ext
-          )
+          this.$rename(file, this.edit?.safeName, cleanName)
         })
       }
 
@@ -312,14 +312,11 @@ export default Vue.extend({
           this.date
         )
         if (
-          !this.contents.find(
-            (c) =>
-              c.filename === join(dirPath, this.edit?.newName + this.edit?.ext)
-          )
+          !this.contents.find((c) => c.filename === join(dirPath, cleanName))
         ) {
           await this.client.moveFile(
             join(dirPath, this.edit?.safeName),
-            join(dirPath, this.edit?.newName + this.edit?.ext)
+            join(dirPath, cleanName)
           )
         }
         await this.$updateContent()

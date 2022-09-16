@@ -11,6 +11,7 @@ on:
       - 'package.json'
       - 'src/main/**/*'
       - 'src/renderer/nuxt.config.js'
+      - 'tests/**/*.test.ts'
       - 'yarn.lock'
 
 jobs:

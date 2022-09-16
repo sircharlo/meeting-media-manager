@@ -216,8 +216,8 @@ export default Vue.extend({
     scenes(): string[] {
       return this.$store.state.obs.scenes as string[]
     },
-    forcedPrefs() {
-      return this.$store.state.cong.prefs
+    forcedPrefs(): ElectronStore {
+      return this.$store.state.cong.prefs as ElectronStore
     },
   },
   watch: {
@@ -244,6 +244,9 @@ export default Vue.extend({
       async handler() {
         if (this.obsComplete) {
           await this.$getScenes()
+          if (this.$refs.form) {
+            this.$refs.form.validate()
+          }
         }
       },
     },
@@ -323,10 +326,14 @@ export default Vue.extend({
       },
     },
   },
-  mounted() {
+  async mounted() {
     Object.assign(this.app, this.$getPrefs('app'))
     this.app.localAppLang = this.$i18n.locale
     this.$emit('valid', this.valid)
+
+    if (this.obsComplete) {
+      await this.refreshOBS()
+    }
 
     // Validate form (for new congregations)
     if (this.$refs.form) {
@@ -337,6 +344,10 @@ export default Vue.extend({
     async refreshOBS() {
       this.$resetOBS()
       await this.$getScenes()
+
+      if (this.$refs.form) {
+        this.$refs.form.validate()
+      }
     },
     async setLocalOutputPath() {
       const result = await ipcRenderer.invoke('openDialog', {
@@ -352,15 +363,18 @@ export default Vue.extend({
       const keys = key.split('.')
 
       // If app key is not in forcedPrefs, don't lock
-      if (!this.forcedPrefs[keys[0]]) return false
+      if (!this.forcedPrefs[keys[0] as keyof ElectronStore]) return false
       if (keys.length === 2) {
+        // @ts-ignore
         return this.forcedPrefs[keys[0]][keys[1]] !== undefined
       }
       // If pref is in a sub object (e.g. app.obs.enable)
       else if (keys.length === 3) {
+        // @ts-ignore
         if (!this.forcedPrefs[keys[0]][keys[1]]) {
           return false
         }
+        // @ts-ignore
         return this.forcedPrefs[keys[0]][keys[1]][keys[2]] !== undefined
       } else {
         throw new Error('Invalid key')

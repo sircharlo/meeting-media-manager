@@ -253,6 +253,7 @@ const plugin: Plugin = (
     const mediaFolder = tree.find(({ basename }) => basename === 'Media')
     const hiddenFolder = tree.find(({ basename }) => basename === 'Hidden')
     const dates = [
+      'Recurring',
       now.format($getPrefs('app.outputFolderDateFormat') as string),
     ]
     let day = now.add(1, 'day')

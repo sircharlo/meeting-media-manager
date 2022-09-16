@@ -301,13 +301,7 @@ const plugin: Plugin = (
     const ext = isFile ? extname(name).toLowerCase() : ''
 
     // Remove special characters from filename
-    name =
-      $strip(
-        basename(name, ext)
-          .replace(/\u00A0/g, ' ')
-          .replace(/[ -]+$/g, ''),
-        'file'
-      ).trim() + ext
+    name = $strip(basename(name, ext), 'file') + ext
 
     if (isFile && mediaPath()) {
       // Cutoff filename if path is longer than 245 characters

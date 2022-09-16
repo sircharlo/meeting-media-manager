@@ -1,8 +1,3 @@
-/**
- * Example Playwright script for Electron
- * showing/testing various API features
- * in both renderer and main processes
- */
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
@@ -12,7 +7,7 @@ import { ipcRendererInvoke } from 'electron-playwright-helpers'
 import { join } from 'upath'
 import { getDate } from './../helpers/generalHelpers'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
-import prefs from './../mocks/prefsOld.json'
+import prefs from './../mocks/prefs/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
 
 let electronApp: ElectronApplication
@@ -54,10 +49,10 @@ test('fetch is successfull', async () => {
 
   // Test if the media folder has a E folder for English media
   const mediaPath = await ipcRendererInvoke(page, 'downloads')
-  expect(existsSync(join(mediaPath, 'E'))).toBe(true)
+  expect(existsSync(join(mediaPath, prefs.lang))).toBe(true)
 
   // Test if the weekend media folder has media files
-  expect(sync(join(mediaPath, 'E', getDate('we'), '*')).length).toBeGreaterThan(
-    0
-  )
+  expect(
+    sync(join(mediaPath, prefs.lang, getDate('we'), '*')).length
+  ).toBeGreaterThan(0)
 })

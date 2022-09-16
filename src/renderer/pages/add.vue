@@ -337,7 +337,6 @@ export default Vue.extend({
     document.removeEventListener('drop', this.handleDrop)
   },
   async mounted() {
-    console.log(this.$strip('test(1).pm4', 'file'))
     await this.getMeetingData()
     this.getExistingMedia()
     document.addEventListener('dragover', this.stopEvent)

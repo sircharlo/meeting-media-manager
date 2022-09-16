@@ -1,8 +1,3 @@
-/**
- * Example Playwright script for Electron
- * showing/testing various API features
- * in both renderer and main processes
- */
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
@@ -14,7 +9,7 @@ import { join } from 'upath'
 import { version } from '../../package.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
 import { getDate } from './../helpers/generalHelpers'
-import prefs from './../mocks/prefsOld.json'
+import prefs from './../mocks/prefs/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
 
 let electronApp: ElectronApplication
@@ -65,9 +60,10 @@ test('render the presentation mode page correctly', async () => {
   // If one date or todays date, that one gets opened automatically
   const mediaPath = await ipcRendererInvoke(page, 'downloads')
   if (
-    existsSync(join(mediaPath, 'E', getDate())) ||
-    sync(join(mediaPath, 'E', '*'), {
+    existsSync(join(mediaPath, prefs.lang, getDate())) ||
+    sync(join(mediaPath, prefs.lang, '*'), {
       onlyDirectories: true,
+      ignore: [join(mediaPath, prefs.lang, 'Recurring')],
     }).length === 1
   ) {
     // Check if toggle prefix button is present

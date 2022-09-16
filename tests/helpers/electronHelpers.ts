@@ -10,7 +10,7 @@ import {
 } from 'electron-playwright-helpers'
 import { _electron as electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
-import prefsOld from './../mocks/prefsOld.json'
+import prefsOld from './../mocks/prefs/prefsOld.json'
 
 export async function startApp(options: any = {}) {
   // find the latest build in the out directory
