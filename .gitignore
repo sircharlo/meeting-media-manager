@@ -85,6 +85,9 @@ build/*
 # Service worker
 sw.*
 
+# MacOS system files
+.DS_Store
+
 # Playwright reports
 test-results
 playwright-report
