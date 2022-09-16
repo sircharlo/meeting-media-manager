@@ -10,9 +10,21 @@ const plugin: Plugin = (_ctx, inject) => {
       case 'id':
         return value.replace(/[^a-zA-Z0-9\-:_]/g, '')
       case 'file':
-        return value
-          .replace(/[^a-zA-Z0-9 \-_]/g, '')
-          .replace(/ *[—?;:|.!?] */g, ' - ')
+        return (
+          value
+            // Common seperators
+            .replace(/ *[—?;:|.!?] */g, ' - ')
+            // Breaking space
+            .replace(/\u00A0\t/g, ' ')
+            // Illegal filename characters
+            .replace(
+              // eslint-disable-next-line no-control-regex
+              /["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F\u0000-\u001F]/g,
+              ''
+            )
+            .trim()
+            .replace(/[ -]+$/g, '')
+        )
       default:
         throw new Error('Invalid type: ' + type)
     }

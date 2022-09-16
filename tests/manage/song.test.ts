@@ -6,7 +6,7 @@ import { ipcRendererInvoke } from 'electron-playwright-helpers'
 import { join } from 'upath'
 import prefs from './../mocks/prefs/prefsOld.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
-import { delay } from './../helpers/generalHelpers'
+import { delay, strip } from './../helpers/generalHelpers'
 import locale from './../../src/renderer/locales/en.json'
 
 let electronApp: ElectronApplication
@@ -48,9 +48,7 @@ test('add song', async () => {
   await page.locator('.v-select').click()
 
   // Get song title
-  filename = (await page.locator('text=1. ').first().innerText())
-    .replace(/[^a-zA-Z0-9 \-_]/g, '')
-    .replace(/ *[—?;:|!?] */g, ' - ')
+  filename = strip(await page.locator('text=1. ').first().innerText())
 
   // Select first song
   await page.locator('text=1. ').first().click()
@@ -80,7 +78,6 @@ test('add song', async () => {
 
   // Expect song to be present in media folder
   mediaPath = (await ipcRendererInvoke(page, 'downloads')) as string
-  console.log(filename)
   expect(existsSync(join(mediaPath, prefs.lang, 'Recurring', filename))).toBe(
     true
   )
@@ -97,14 +94,10 @@ test('rename song', async () => {
   await page.locator('input[type=text]').fill('')
 
   // Rename song to 'new song name with special characters'
-  filename = 'new song name with ()!@#$%^&'
+  filename = 'new song name with ()[]{}?|*'
   await page.locator('input[type=text]').fill(filename)
 
-  filename =
-    filename
-      .replace(/[^a-zA-Z0-9 \-_]/g, '')
-      .replace(/ *[—?;:|!?] */g, ' - ')
-      .trim() + '.mp4'
+  filename = strip(filename) + '.mp4'
 
   // Click check button
   await page.locator('svg.fa-check').click()
