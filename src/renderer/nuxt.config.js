@@ -21,7 +21,7 @@ const webpackPlugins = [
   }),
 ]
 
-if (initSentry && !process.env.SENTRY_DISABLE) {
+if (initSentry && process.env.SENTRY_SOURCE_MAPS) {
   webpackPlugins.push(
     new SentryPlugin({
       validate: true,
