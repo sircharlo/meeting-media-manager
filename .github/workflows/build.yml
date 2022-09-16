@@ -9,6 +9,7 @@ on:
       - '.electron-nuxt/**/*'
       - 'builder.config.js'
       - 'package.json'
+      - 'playwright.config.ts'
       - 'src/main/**/*'
       - 'src/renderer/nuxt.config.js'
       - 'tests/**/*.test.ts'
