@@ -73,7 +73,7 @@ jobs:
           echo SENTRY_DISABLE=1 >> .env
 
       - name: Upload source maps to Sentry
-        if: startsWith(github.ref, 'refs/tags/v')
+        #if: startsWith(github.ref, 'refs/tags/v')
         run: echo SENTRY_SOURCE_MAPS=1 >> .env
 
       - name: Build Electron app
