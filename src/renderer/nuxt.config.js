@@ -27,7 +27,7 @@ if (initSentry && process.env.SENTRY_SOURCE_MAPS) {
     new SentryPlugin({
       release: `meeting-media-manager@${isDev ? 'dev' : pkg.version}`,
       include: [
-        { paths: [path.resolve('./dist/renderer')], urlPrefix: 'app://./' },
+        { paths: [path.resolve('.nuxt/dist/client')], urlPrefix: 'app://./' },
       ],
     })
   )
