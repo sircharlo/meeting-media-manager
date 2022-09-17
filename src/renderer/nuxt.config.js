@@ -1,6 +1,7 @@
 /* eslint-disable nuxt/no-cjs-in-config */
 // const path = require('path')
 // const fs = require('fs')
+const path = require('path')
 const { DefinePlugin } = require('webpack')
 const SentryPlugin = require('@sentry/webpack-plugin')
 const pkg = require('./../../package.json')
@@ -25,7 +26,9 @@ if (initSentry && process.env.SENTRY_SOURCE_MAPS) {
   webpackPlugins.push(
     new SentryPlugin({
       release: `meeting-media-manager@${isDev ? 'dev' : pkg.version}`,
-      include: [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }],
+      include: [
+        { paths: [path.resolve('./dist/renderer')], urlPrefix: 'app://./' },
+      ],
     })
   )
 }
