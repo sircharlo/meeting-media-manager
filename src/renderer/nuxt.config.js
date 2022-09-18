@@ -22,7 +22,11 @@ const webpackPlugins = [
   }),
 ]
 
-if (initSentry && process.env.SENTRY_SOURCE_MAPS) {
+if (
+  initSentry &&
+  !process.env.SENTRY_DISABLE &&
+  process.env.SENTRY_SOURCE_MAPS
+) {
   webpackPlugins.push(
     new SentryPlugin({
       release: `meeting-media-manager@${isDev ? 'dev' : pkg.version}`,
