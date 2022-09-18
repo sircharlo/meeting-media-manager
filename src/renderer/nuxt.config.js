@@ -1,13 +1,14 @@
 /* eslint-disable nuxt/no-cjs-in-config */
 // const path = require('path')
 // const fs = require('fs')
+const path = require('upath')
 const { DefinePlugin } = require('webpack')
 const SentryPlugin = require('@sentry/webpack-plugin')
 const pkg = require('./../../package.json')
 const { LOCAL_LANGS } = require('./constants/lang.ts')
 require('dotenv').config()
 
-const isDev = process.env.NODE_ENV !== 'production'
+const isDev = process.env.NODE_ENV !== 'production' || !process.env.CI
 
 const initSentry =
   !!process.env.SENTRY_DSN &&
@@ -22,12 +23,18 @@ const webpackPlugins = [
 ]
 
 if (initSentry && process.env.SENTRY_SOURCE_MAPS) {
+  console.log('current dir:', __dirname)
+  console.log(
+    'path',
+    path.resolve('src', 'renderer', '.nuxt', 'dist', 'client')
+  )
+  console.log('joined', path.join(__dirname, '.nuxt', 'dist', 'client'))
   webpackPlugins.push(
     new SentryPlugin({
-      debug: true,
-      validate: true,
       release: `meeting-media-manager@${isDev ? 'dev' : pkg.version}`,
-      include: [{ paths: ['./dist/renderer'] }],
+      include: [
+        { paths: [path.resolve('src', 'renderer', '.nuxt', 'dist', 'client')] },
+      ],
     })
   )
 }
