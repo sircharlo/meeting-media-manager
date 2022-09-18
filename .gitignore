@@ -2,6 +2,12 @@
 langs.json
 prefs.json
 
+.yarn
+build
+!build/icon.*
+src
+
+
 # Logs
 logs
 *.log
