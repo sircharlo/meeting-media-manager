@@ -2,7 +2,7 @@
 <template>
   <v-text-field
     v-if="field == 'text' || field == 'password' || field == 'number'"
-    :id="$attrs['data-id']"
+    :id="safeId"
     ref="field"
     v-model="$attrs.value"
     :type="field === 'password' && showPassword ? 'text' : field"
@@ -36,7 +36,7 @@
   </v-text-field>
   <v-autocomplete
     v-else-if="field == 'autocomplete'"
-    :id="$attrs['data-id']"
+    :id="safeId"
     ref="field"
     v-model="$attrs.value"
     :disabled="$attrs.disabled || locked"
@@ -63,7 +63,7 @@
   </v-autocomplete>
   <v-select
     v-else-if="field == 'select'"
-    :id="$attrs['data-id']"
+    :id="safeId"
     ref="field"
     v-model="$attrs.value"
     :readonly="$attrs.disabled || locked"
@@ -89,7 +89,7 @@
   </v-select>
   <v-textarea
     v-else-if="field == 'textarea'"
-    :id="$attrs['data-id']"
+    :id="safeId"
     ref="field"
     v-model="$attrs.value"
     :disabled="$attrs.disabled || locked"
@@ -111,7 +111,7 @@
   </v-textarea>
   <v-checkbox
     v-else-if="field == 'checkbox'"
-    :id="$attrs['data-id']"
+    :id="safeId"
     ref="field"
     v-model="$attrs.value"
     :readonly="$attrs.disabled || locked"
@@ -137,7 +137,7 @@
   </v-checkbox>
   <v-switch
     v-else-if="field == 'switch'"
-    :id="$attrs['data-id']"
+    :id="safeId"
     ref="field"
     v-model="$attrs.value"
     :readonly="$attrs.disabled || locked"
@@ -173,7 +173,7 @@
     </v-col>
     <v-col align-self="center" class="text-right">
       <v-btn-toggle
-        :id="$attrs['data-id']"
+        :id="safeId"
         ref="field"
         v-model="$attrs.value"
         :color="required && $attrs.value === null ? 'error' : 'primary'"
@@ -184,6 +184,7 @@
       >
         <v-btn
           v-for="(item, key) in groupItems"
+          :id="safeId + '-' + key"
           :key="key"
           :value="item.value"
           :disabled="$attrs.disabled || locked"
@@ -211,7 +212,7 @@
     </v-col>
     <v-col align-self="center" class="text-right">
       <v-slider
-        :id="$attrs['data-id']"
+        :id="safeId"
         ref="field"
         v-model="$attrs.value"
         :disabled="$attrs.disabled || locked"
@@ -267,6 +268,10 @@ enum FieldType {
 }
 export default Vue.extend({
   props: {
+    id: {
+      type: String,
+      default: null,
+    },
     field: {
       type: String,
       default: 'text',
@@ -327,6 +332,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    safeId() {
+      return this.id ? this.$strip(this.id, 'id') : this.$attrs['data-id']
+    },
     faLock() {
       return faLock
     },

@@ -7,7 +7,7 @@
   >
     <template #activator="{ on, attrs }">
       <form-input
-        id="timepicker-field"
+        :id="id ? id + '-field' : 'timepicker-field'"
         ref="field"
         v-model="$attrs.value"
         :label="label"
@@ -26,7 +26,7 @@
     </template>
     <v-time-picker
       v-if="dialog"
-      id="timepicker"
+      :id="id ? id + '-picker' : 'timepicker'"
       ref="field"
       v-model="$attrs.value"
       full-width
@@ -42,6 +42,10 @@ import Vue from 'vue'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 export default Vue.extend({
   props: {
+    id: {
+      type: String,
+      default: null,
+    },
     label: {
       type: String,
       required: true,

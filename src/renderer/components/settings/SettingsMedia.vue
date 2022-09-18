@@ -2,6 +2,7 @@
 <template>
   <v-form ref="form" v-model="valid">
     <form-input
+      id="media.lang"
       v-model="media.lang"
       field="autocomplete"
       :label="$t('mediaLang')"
@@ -14,6 +15,7 @@
       required
     />
     <form-input
+      id="media.maxRes"
       v-model="media.maxRes"
       field="btn-group"
       :group-label="$t('maxRes')"
@@ -22,6 +24,7 @@
     />
     <v-divider class="mb-6" />
     <form-input
+      id="media.enableMp4Conversion"
       v-model="media.enableMp4Conversion"
       field="switch"
       :locked="locked('media.enableMp4Conversion')"
@@ -29,6 +32,7 @@
     />
     <form-input
       v-if="media.enableMp4Conversion"
+      id="media.keepOriginalsAfterConversion"
       v-model="media.keepOriginalsAfterConversion"
       field="switch"
       :locked="locked('media.keepOriginalsAfterConversion')"
@@ -36,6 +40,7 @@
     />
     <v-divider class="mb-6" />
     <form-input
+      id="media.enableMediaDisplayButton"
       v-model="media.enableMediaDisplayButton"
       field="switch"
       :locked="locked('media.enableMediaDisplayButton')"
@@ -44,6 +49,7 @@
     <template v-if="media.enableMediaDisplayButton">
       <form-input
         v-if="screens.length > 0"
+        id="media.preferredOutput"
         v-model="media.preferredOutput"
         field="select"
         item-value="id"
@@ -97,12 +103,14 @@
       </v-row>
       <form-input
         v-if="isWindows"
+        id="media.hideMediaLogo"
         v-model="media.hideMediaLogo"
         field="switch"
         :locked="locked('media.hideMediaLogo')"
         :label="$t('hideMediaLogo')"
       />
       <form-input
+        id="media.enablePp"
         v-model="media.enablePp"
         field="switch"
         :locked="locked('media.enablePp')"
@@ -110,6 +118,7 @@
       />
       <template v-if="media.enablePp">
         <form-input
+          id="media.ppForward"
           v-model="media.ppForward"
           :locked="locked('media.ppForward')"
           placeholder="e.g. PageDown / ALT+F / ALT+N"
@@ -117,6 +126,7 @@
           :required="media.enablePp"
         />
         <form-input
+          id="media.ppBackward"
           v-model="media.ppBackward"
           placeholder="e.g. PageUp / ALT+B / ALT+P"
           :locked="locked('media.ppBackward')"
@@ -127,6 +137,7 @@
     </template>
     <v-divider class="mb-6" />
     <form-input
+      id="media.enableVlcPlaylistCreation"
       v-model="media.enableVlcPlaylistCreation"
       field="switch"
       :locked="locked('media.enableVlcPlaylistCreation')"
@@ -137,6 +148,7 @@
     </form-input>
     <v-divider class="mb-6" />
     <form-input
+      id="media.excludeTh"
       v-model="media.excludeTh"
       field="switch"
       :locked="locked('media.excludeTh')"
@@ -146,6 +158,7 @@
       </template>
     </form-input>
     <form-input
+      id="media.excludeLffi"
       v-model="media.excludeLffi"
       field="switch"
       :locked="locked('media.excludeLffi')"
@@ -155,6 +168,7 @@
       </template>
     </form-input>
     <form-input
+      id="media.excludeLffiImages"
       v-model="media.excludeLffiImages"
       field="switch"
       :locked="locked('media.excludeLffiImages')"

@@ -2,6 +2,7 @@
 // const path = require('path')
 // const fs = require('fs')
 const resolve = require('path').resolve
+const platform = require('os').platform
 const { DefinePlugin } = require('webpack')
 const SentryPlugin = require('@sentry/webpack-plugin')
 const pkg = require('./../../package.json')
@@ -30,6 +31,7 @@ if (
   webpackPlugins.push(
     new SentryPlugin({
       release: `meeting-media-manager@${isDev ? 'dev' : pkg.version}`,
+      dist: platform().replace('32', ''),
       include: [
         { paths: [resolve('src', 'renderer', '.nuxt', 'dist', 'client')] },
       ],

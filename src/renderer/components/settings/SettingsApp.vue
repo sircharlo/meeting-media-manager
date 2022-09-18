@@ -2,6 +2,7 @@
 <template>
   <v-form ref="form" v-model="valid">
     <form-input
+      id="app.theme"
       v-model="app.theme"
       field="select"
       :items="[
@@ -13,12 +14,14 @@
       :locked="locked('app.theme')"
     />
     <form-input
+      id="app.congregationName"
       v-model="app.congregationName"
       :label="$t('congregationName')"
       :locked="locked('app.congregationName')"
       required
     />
     <form-input
+      id="app.localAppLang"
       v-model="app.localAppLang"
       field="autocomplete"
       :label="$t('localAppLang')"
@@ -32,6 +35,7 @@
     <v-row>
       <v-col cols="auto" class="pr-0 text-left">
         <v-btn
+          id="app.localOutputPathBtn"
           color="primary"
           style="height: 40px"
           :disabled="locked('app.localOutputPath')"
@@ -42,6 +46,7 @@
       </v-col>
       <v-col class="pl-0">
         <form-input
+          id="app.localOutputPath"
           v-model="app.localOutputPath"
           :label="$t('mediaSaveFolder')"
           readonly
@@ -51,6 +56,7 @@
       </v-col>
     </v-row>
     <form-input
+      id="app.outputFolderDateFormat"
       v-model="app.outputFolderDateFormat"
       field="select"
       :label="$t('outputFolderDateFormat')"
@@ -62,12 +68,14 @@
     <v-divider class="mb-6" />
     <form-input
       v-if="!isLinux"
+      id="app.autoRunAtBoot"
       v-model="app.autoRunAtBoot"
       field="switch"
       :label="$t('runAtStartup')"
       :locked="locked('app.runAtStartup')"
     />
     <form-input
+      id="app.autoStartSync"
       v-model="app.autoStartSync"
       field="switch"
       :label="$t('syncOnLaunch')"
@@ -75,12 +83,14 @@
     />
     <v-divider class="mb-6" />
     <form-input
+      id="app.autoOpenFolderWhenDone"
       v-model="app.autoOpenFolderWhenDone"
       field="switch"
       :label="$t('openTargetFolderAfterSync')"
       :locked="locked('app.openTargetFolderAfterSync')"
     />
     <form-input
+      id="app.autoQuitWhenDone"
       v-model="app.autoQuitWhenDone"
       field="switch"
       :label="$t('quitAfterSync')"
@@ -88,6 +98,7 @@
     />
     <v-divider class="mb-6" />
     <form-input
+      id="app.obs.enable"
       v-model="app.obs.enable"
       field="switch"
       :locked="locked('app.obs.enable')"
@@ -98,6 +109,7 @@
     </form-input>
     <template v-if="app.obs.enable">
       <form-input
+        id="app.obs.useV4"
         v-model="app.obs.useV4"
         field="switch"
         :locked="locked('app.obs.useV4')"
@@ -107,12 +119,14 @@
         </template>
       </form-input>
       <form-input
+        id="app.obs.port"
         v-model="app.obs.port"
         :label="$t('port')"
         :locked="locked('app.obs.port')"
         :required="app.obs.enable"
       />
       <form-input
+        id="app.obs.password"
         v-model="app.obs.password"
         field="password"
         :label="$t('password')"
@@ -122,6 +136,7 @@
       />
       <v-col cols="12" class="text-right pr-0">
         <v-btn
+          id="app.obs.refreshOBS"
           :disabled="!obsComplete"
           :color="scenes.length > 0 ? 'success' : 'primary'"
           @click="refreshOBS()"
@@ -130,6 +145,7 @@
         </v-btn>
       </v-col>
       <form-input
+        id="app.obs.cameraScene"
         v-model="app.obs.cameraScene"
         field="select"
         :items="cameraScenes"
@@ -139,6 +155,7 @@
         :required="app.obs.enable"
       />
       <form-input
+        id="app.obs.mediaScene"
         v-model="app.obs.mediaScene"
         field="select"
         :items="mediaScenes"
@@ -150,6 +167,7 @@
     </template>
     <v-divider class="mb-6" />
     <form-input
+      id="app.disableHardwareAcceleration"
       v-model="app.disableHardwareAcceleration"
       field="switch"
       :locked="locked('app.disableHardwareAcceleration')"

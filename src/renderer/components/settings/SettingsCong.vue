@@ -25,6 +25,7 @@
       </v-list>
     </v-menu>
     <form-input
+      id="cong.server"
       v-model="cong.server"
       :label="$t('hostname')"
       prefix="https://"
@@ -32,12 +33,14 @@
     />
     <!--<form-input v-model="cong.port" :label="$t('port')" />-->
     <form-input
+      id="cong.user"
       v-model="cong.user"
       :label="$t('username')"
       :required="!!cong.server"
       :rules="[!complete || error !== 'credentials']"
     />
     <form-input
+      id="cong.password"
       v-model="cong.password"
       field="password"
       :label="$t('password')"
@@ -45,6 +48,7 @@
       :rules="[!complete || error !== 'credentials']"
     />
     <form-input
+      id="cong.dir"
       v-model="cong.dir"
       :label="$t('webdavFolder')"
       :required="!!cong.server"

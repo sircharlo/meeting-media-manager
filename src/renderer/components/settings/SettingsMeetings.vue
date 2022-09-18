@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form" v-model="valid">
     <form-input
+      id="meeting.mwDay"
       v-model="meeting.mwDay"
       field="btn-group"
       :group-label="$t('mwMeetingDay')"
@@ -11,6 +12,7 @@
       required
     >
       <form-time-picker
+        id="meeting.mwStartTime"
         v-model="meeting.mwStartTime"
         :label="''"
         required
@@ -18,6 +20,7 @@
       />
     </form-input>
     <form-input
+      id="meeting.weDay"
       v-model="meeting.weDay"
       field="btn-group"
       :group-label="$t('weMeetingDay')"
@@ -28,6 +31,7 @@
       required
     >
       <form-time-picker
+        id="meeting.weStartTime"
         v-model="meeting.weStartTime"
         :label="''"
         required
@@ -36,6 +40,7 @@
     </form-input>
     <v-divider class="mb-6" />
     <form-input
+      id="meeting.enableMusicButton"
       v-model="meeting.enableMusicButton"
       field="switch"
       :locked="locked('meeting.enableMusicButton')"
@@ -43,6 +48,7 @@
     />
     <template v-if="meeting.enableMusicButton">
       <form-input
+        id="meeting.musicVolume"
         v-model="meeting.musicVolume"
         field="slider"
         :locked="locked('meeting.musicVolume')"
@@ -52,6 +58,7 @@
         :max="100"
       />
       <form-input
+        id="meeting.enableMusicFadeOut"
         v-model="meeting.enableMusicFadeOut"
         field="switch"
         :locked="locked('meeting.enableMusicFadeOut')"
@@ -64,6 +71,7 @@
       >
         <v-col align-self="center" class="text-left">
           <v-slider
+            id="meeting.musicFadeOutTime"
             v-model="meeting.musicFadeOutTime"
             :min="5"
             :max="60"
@@ -74,6 +82,7 @@
         </v-col>
         <v-col cols="auto" align-self="center" class="text-right">
           <v-btn-toggle
+            id="meeting.musicFadeOutType"
             v-model="meeting.musicFadeOutType"
             color="primary"
             mandatory
