@@ -72,10 +72,6 @@ jobs:
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
           echo SENTRY_DISABLE=1 >> .env
 
-      - name: Upload source maps to Sentry
-        #if: startsWith(github.ref, 'refs/tags/v')
-        run: echo SENTRY_SOURCE_MAPS=1 >> .env
-
       - name: Build Electron app
         env:
           GH_TOKEN: ${{ secrets.github_token }}
@@ -121,6 +117,10 @@ jobs:
           echo SENTRY_ORG=${{ secrets.SENTRY_ORG }} >> .env
           echo SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }} >> .env
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
+
+      - name: Upload source maps to Sentry
+        if: startsWith(github.event.head_commit.message, 'chore(release)')
+        run: echo SENTRY_SOURCE_MAPS=1 >> .env
 
       - name: Build/release Electron app
         env:
