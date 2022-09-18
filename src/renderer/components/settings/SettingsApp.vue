@@ -315,8 +315,10 @@ export default Vue.extend({
     'app.outputFolderDateFormat': {
       async handler(newVal: string, oldVal: string) {
         if (newVal !== oldVal) {
-          // Change the folder format of the current folders in the media path
-          this.$renameAll(this.$mediaPath(), oldVal, newVal, 'rename', 'date')
+          if (this.$getPrefs('media.lang')) {
+            // Change the folder format of the current folders in the media path
+            this.$renameAll(this.$mediaPath(), oldVal, newVal, 'rename', 'date')
+          }
 
           // Change the date keys in the media store
           await this.$store.dispatch('media/updateDateFormat', {
