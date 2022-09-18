@@ -34,6 +34,9 @@ test('render the settings page correctly', async () => {
 })
 
 test('app theme', async () => {
+  // Expand application setup
+  await page.locator('button', { hasText: locale.optionsApp }).click()
+
   // Check light theme
   await page.locator(`text=${locale.themePreference}`).click()
   await page.locator(`text=${locale.light}`).click()
@@ -43,8 +46,4 @@ test('app theme', async () => {
   await page.locator(`text=${locale.themePreference}`).click()
   await page.locator(`text=${locale.dark}`).click()
   expect(await page.locator('div.v-application.theme--dark').count()).toBe(1)
-})
-
-test('display lang', async () => {
-  await page.locator(`text=${locale.localAppLang}`).click()
 })

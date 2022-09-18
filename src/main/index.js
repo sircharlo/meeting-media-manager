@@ -20,7 +20,9 @@ if (initSentry) {
   init({
     environment: isDev ? 'development' : 'production',
     enabled: !process.env.SENTRY_DISABLE,
-    release: `meeting-media-manager@${isDev ? 'dev' : app.getVersion()}`,
+    release: `meeting-media-manager@${
+      isDev || !process.env.CI ? 'dev' : app.getVersion()
+    }`,
     dsn: process.env.SENTRY_DSN,
   })
 }
