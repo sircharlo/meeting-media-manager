@@ -24,8 +24,10 @@ const webpackPlugins = [
 if (initSentry && process.env.SENTRY_SOURCE_MAPS) {
   webpackPlugins.push(
     new SentryPlugin({
+      debug: true,
+      validate: true,
       release: `meeting-media-manager@${isDev ? 'dev' : pkg.version}`,
-      include: [{ paths: ['.nuxt/dist/client'], urlPrefix: 'app://./' }],
+      include: [{ paths: ['./dist/renderer'], urlPrefix: 'app://./' }],
     })
   )
 }

@@ -2867,18 +2867,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.13.0":
-  version: 7.13.0
-  resolution: "@sentry/browser@npm:7.13.0"
-  dependencies:
-    "@sentry/core": 7.13.0
-    "@sentry/types": 7.13.0
-    "@sentry/utils": 7.13.0
-    tslib: ^1.9.3
-  checksum: 693cc983330cd6eaee2354ee33d42166072eab35ef632ed9bcaafe9649c977c6996674647076025af9b5e83a40e002b2f405c65ae5c950c8f39decaeecb07098
-  languageName: node
-  linkType: hard
-
 "@sentry/cli@npm:^1.74.4":
   version: 1.74.5
   resolution: "@sentry/cli@npm:1.74.5"
@@ -2905,18 +2893,6 @@ __metadata:
     "@sentry/utils": 7.12.1
     tslib: ^1.9.3
   checksum: c8cd62220a327bb4f7b1a97503c19b40710da0d880d7b881384e224aa470c983410c836d5dd85a2cd88166301771a0cea3fd2f93b53d17b29e82457282bb7d01
-  languageName: node
-  linkType: hard
-
-"@sentry/core@npm:7.13.0":
-  version: 7.13.0
-  resolution: "@sentry/core@npm:7.13.0"
-  dependencies:
-    "@sentry/hub": 7.13.0
-    "@sentry/types": 7.13.0
-    "@sentry/utils": 7.13.0
-    tslib: ^1.9.3
-  checksum: 8fd5b0eab630a54ea1beec1b3fe7deb388e95ca3312c1f0eaffa32090882ca7792287b5e7d157fc1c408a0ec1bfb769ac45a77a5385068dcd8fc6f3e6949f8a1
   languageName: node
   linkType: hard
 
@@ -3020,18 +2996,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^7.13.0":
-  version: 7.13.0
-  resolution: "@sentry/vue@npm:7.13.0"
+"@sentry/vue@npm:7.12.1":
+  version: 7.12.1
+  resolution: "@sentry/vue@npm:7.12.1"
   dependencies:
-    "@sentry/browser": 7.13.0
-    "@sentry/core": 7.13.0
-    "@sentry/types": 7.13.0
-    "@sentry/utils": 7.13.0
+    "@sentry/browser": 7.12.1
+    "@sentry/core": 7.12.1
+    "@sentry/types": 7.12.1
+    "@sentry/utils": 7.12.1
     tslib: ^1.9.3
   peerDependencies:
     vue: 2.x || 3.x
-  checksum: d37574d7f98a67e29a9857ac51877feef87cfdb4907f7b6b3bcc0834c78ed0a609a5c5d432d79952ce49f484591637ec63a1a0876ac2097c051ef84eed483d91
+  checksum: 108d2bc39126b9e562e2fadc0b78fc8f028a99f0df7da9e71f9dbfd310cb1f450f2b7b7491cd143ea49534b00bcf23885d69251f6622be651d583fbcb7c4c699
   languageName: node
   linkType: hard
 
@@ -11427,7 +11403,7 @@ __metadata:
     "@playwright/test": ^1.25.2
     "@sentry/electron": ^4.0.2
     "@sentry/tracing": ^7.13.0
-    "@sentry/vue": ^7.13.0
+    "@sentry/vue": 7.12.1
     "@sentry/webpack-plugin": ^1.19.0
     "@types/adm-zip": ^0.5.0
     "@types/fluent-ffmpeg": ^2.1.20

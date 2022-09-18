@@ -3,7 +3,7 @@ name: build/release
 on:
   workflow_dispatch:
   pull_request:
-    branches: [main, master]
+    branches: [main, master, refactor/next]
   push:
     paths:
       - '.electron-nuxt/**/*'
@@ -33,7 +33,7 @@ jobs:
         run: yarn set version stable
 
       - name: Install dependencies
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
+        run: yarn install
 
       - name: Run linter
         run: yarn lint
@@ -61,7 +61,7 @@ jobs:
         run: yarn set version stable
 
       - name: Install dependencies
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
+        run: yarn install
 
       - name: Set env variables
         run: |
