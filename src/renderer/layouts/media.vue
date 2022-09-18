@@ -14,7 +14,7 @@ export default Vue.extend({
       title: 'Media Window',
       titleTemplate: '%s - M³',
       htmlAttrs: {
-        lang: this.$i18n.locale,
+        lang: this.$i18n.localeProperties.iso ?? this.$i18n.locale,
       },
     }
   },

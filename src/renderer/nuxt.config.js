@@ -137,6 +137,7 @@ module.exports = {
     vueI18n: {
       fallbackLocale: 'en',
     },
+    detectBrowserLanguage: false,
     locales: [
       { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch (German)' },
       { code: 'en', iso: 'en-US', file: 'en.json', name: 'English (English)' },

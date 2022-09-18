@@ -20,13 +20,13 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav/dist/web/types'
-import { ShortJWLang, CongPrefs, Release, Asset } from '~/types'
+import { ShortJWLang, CongPrefs, Release, Asset, ElectronStore } from '~/types'
 export default Vue.extend({
   name: 'DefaultLayout',
   head() {
     return {
       htmlAttrs: {
-        lang: this.$i18n.locale,
+        lang: this.$i18n.localeProperties.iso ?? this.$i18n.locale,
       },
     }
   },
@@ -215,14 +215,19 @@ export default Vue.extend({
   methods: {
     async initPrefs(name: string, isNew = false) {
       this.$initStore(name)
-      const lang = this.$getPrefs('app.localAppLang') as string
       let newCong = false
+      let lang = this.$getPrefs('app.localAppLang') as string
+      if (!lang) {
+        lang = this.$i18n.getBrowserLocale() ?? this.$i18n.defaultLocale
+        this.$setPrefs('app.localAppLang', lang)
+        console.debug(`Setting app lang to ${lang}`)
+      }
 
       // If current cong does not equal new cong, set new cong
       if ('prefs-' + this.cong !== name) {
         newCong = true
         let path = this.$route.path
-        if (lang !== this.$i18n.locale) {
+        if (lang && lang !== this.$i18n.locale) {
           path = this.switchLocalePath(lang)
         }
         if (isNew) {
@@ -236,11 +241,11 @@ export default Vue.extend({
         })
       }
       // If congs lang is different from current lang, set new lang
-      else if (lang !== this.$i18n.locale) {
+      else if (lang && lang !== this.$i18n.locale) {
         this.$router.replace(this.switchLocalePath(lang))
       }
 
-      this.$dayjs.locale(lang.split('-')[0])
+      this.$dayjs.locale((lang ?? 'en').split('-')[0])
       this.$log.debug(this.$appPath())
 
       // Set disabledHardwareAcceleration to user pref
@@ -289,7 +294,9 @@ export default Vue.extend({
       if (
         newCong &&
         mediaLang &&
-        !this.$i18n.locales.map((l: any) => l.code).includes(mediaLang.symbol)
+        !this.$i18n.locales
+          .map((l: any) => l.code)
+          .includes(this.convertSignLang(mediaLang.symbol))
       ) {
         this.$notify('wannaHelpExplain', {
           type: 'wannaHelp',
@@ -331,7 +338,11 @@ export default Vue.extend({
       } else {
         this.$store.commit('obs/clear')
       }
-      await this.updateCleanup()
+
+      // Regular Cleanup
+      await this.cleanup()
+
+      // Setup Sentry context
       this.$sentry.setUser({
         username: this.$getPrefs('app.congregationName') as string,
       })
@@ -378,14 +389,15 @@ export default Vue.extend({
         }
       })
     },
-    async updateCleanup() {
+    async cleanup() {
       let lastVersion = '0'
       const versionPath = join(this.$appPath(), 'lastRunVersion.json')
       const appDataPath = await ipcRenderer.invoke('appData')
       const JWMMF = join(appDataPath, 'jw-meeting-media-fetcher')
 
-      // Try to get previous version
+      // Cleanup old JWMMF/M3 files
       try {
+        // Try to get previous version
         if (existsSync(versionPath)) {
           lastVersion = readFileSync(versionPath, 'utf8')
         } else if (existsSync(join(JWMMF, 'lastRunVersion.json'))) {
@@ -428,6 +440,36 @@ export default Vue.extend({
           }
         }
       }
+
+      // Cleanup old pref files
+      if (this.cong) {
+        for (const file of this.$findAll(
+          join(this.$appPath(), 'prefs-*.json'),
+          {
+            ignore: [join(this.$appPath(), `prefs-${this.cong}.json`)],
+          }
+        )) {
+          const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
+          if (!prefs.app.congregationName) {
+            this.$rm(file)
+          }
+        }
+      }
+    },
+    convertSignLang(symbol: string) {
+      return symbol
+        .replace('ase', 'en')
+        .replace('bfi', 'en')
+        .replace('bzs', 'pt')
+        .replace('rsl', 'ru')
+        .replace('gsg', 'de')
+        .replace('ssp', 'es')
+        .replace('fse', 'fi')
+        .replace('fsl', 'fr')
+        .replace('ise', 'it')
+        .replace('dse', 'nl')
+        .replace('psr', 'pt-pt')
+        .replace('swl', 'sv')
     },
   },
 })

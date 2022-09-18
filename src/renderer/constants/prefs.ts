@@ -6,7 +6,7 @@ const PREFS = {
     autoStartSync: false,
     congregationName: null,
     disableHardwareAcceleration: false,
-    localAppLang: 'en',
+    localAppLang: null,
     localOutputPath: null,
     obs: {
       enable: false,

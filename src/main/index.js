@@ -197,6 +197,7 @@ if (gotTheLock) {
   })
 
   // ipcMain events for general purposes
+  ipcMain.handle('locale', () => app.getLocale())
   ipcMain.handle('userData', () => normalize(app.getPath('userData')))
   ipcMain.handle('mediaWinOpen', () => !!mediaWin)
   ipcMain.handle('mediaWinVisible', () => mediaWin && mediaWin.isVisible())
