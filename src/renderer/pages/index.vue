@@ -23,6 +23,7 @@
       </v-col>
       <v-col cols="5" sm="4" md="3">
         <v-select
+          id="cong-select"
           v-model="cong"
           :items="congs"
           item-text="name"
@@ -60,7 +61,7 @@
             </v-list-item-content>
           </template>
           <template #append-item>
-            <v-list-item @click="addCong()">
+            <v-list-item id="add-cong-option" @click="addCong()">
               <v-list-item-action>
                 <font-awesome-icon
                   :icon="faSquarePlus"
@@ -165,6 +166,7 @@
       </v-col>
       <v-col class="text-center">
         <v-select
+          id="week-select"
           v-model="currentWeek"
           :items="upcomingWeeks"
           item-text="label"

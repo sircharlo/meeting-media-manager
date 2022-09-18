@@ -33,7 +33,7 @@ const schema: Schema<ElectronStore> = {
         default: PREFS.app.disableHardwareAcceleration,
       },
       localAppLang: {
-        type: 'string',
+        type: ['string', 'null'],
         default: PREFS.app.localAppLang,
       },
       localOutputPath: {

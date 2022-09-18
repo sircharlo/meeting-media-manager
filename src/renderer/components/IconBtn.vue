@@ -1,6 +1,7 @@
 <template>
   <v-btn
     v-if="variant === 'shuffle' && musicFadeOut && !clickedOnce"
+    :id="variant"
     :aria-label="variant"
     color="warning"
     title="ALT+K"
@@ -13,6 +14,7 @@
   </v-btn>
   <v-btn
     v-else-if="variant === 'pause'"
+    :id="variant"
     color="warning"
     :aria-label="variant"
     v-bind="$attrs"
@@ -23,6 +25,7 @@
   </v-btn>
   <v-btn
     v-else-if="variant === 'toggleScreen'"
+    :id="variant"
     :aria-label="variant"
     :color="mediaVisible ? 'warning' : 'primary'"
     v-bind="$attrs"
@@ -47,6 +50,7 @@
   <v-tooltip v-else-if="clickedOnce" v-bind="tooltipObj">
     <template #activator="{ on, attrs }">
       <v-btn
+        :id="variant"
         ref="btn"
         v-model="$attrs.value"
         :aria-label="variant"
@@ -80,6 +84,7 @@
   </v-tooltip>
   <v-btn
     v-else
+    :id="variant"
     ref="btn"
     v-model="$attrs.value"
     :aria-label="variant"

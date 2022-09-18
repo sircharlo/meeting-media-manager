@@ -23,7 +23,7 @@ export interface AppPrefs {
   autoStartSync: boolean
   congregationName: string | null
   disableHardwareAcceleration: boolean
-  localAppLang: string
+  localAppLang: string | null
   localOutputPath: string | null
   obs: ObsPrefs
   outputFolderDateFormat: DateFormat

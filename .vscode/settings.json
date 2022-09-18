@@ -5,6 +5,10 @@
     "source.fixAll.markdownlint": true
   },
   "cSpell.words": [
+    "EPUB",
+    "FLUENTFFMPEG",
+    "JWMMF",
+    "VUEJS",
     "aaron",
     "americas",
     "booknum",
@@ -18,15 +22,12 @@
     "docid",
     "dont",
     "eesti",
-    "EPUB",
     "esbenp",
     "esnext",
     "español",
-    "FLUENTFFMPEG",
     "icns",
     "italiano",
     "jekyll",
-    "JWMMF",
     "jworg",
     "kohler",
     "koofr",
@@ -52,7 +53,6 @@
     "visualstudioexptteam",
     "vscodeintellicode",
     "vuedraggable",
-    "VUEJS",
     "webdav",
     "wtlocale",
     "xpda",
@@ -61,5 +61,5 @@
     "русский"
   ],
   "cSpell.ignoreWords": ["transform", "PDF", "TERMS"],
-  "cSpell.ignorePaths": ["src/renderer/locales/*", "docs/_data/*"]
+  "cSpell.ignorePaths": ["src/renderer/locales/*"]
 }
