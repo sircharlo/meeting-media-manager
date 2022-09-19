@@ -67,7 +67,7 @@ export async function openHomePage(
   writeFileSync(join(appPath, `prefs-${congId}.json`), JSON.stringify(prefs))
 
   // Open the home page as test congregation
-  await page.goto(`${page.url()}?cong=${congId}`)
+  await page.goto(`app://./index.html?cong=${congId}`)
   await page.waitForSelector('.fa-photo-film')
 
   return page
