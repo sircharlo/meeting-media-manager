@@ -53,6 +53,9 @@ export async function openHomePage(
   // Set first browser window as page
   const page = await app.firstWindow()
 
+  // Wait for page to finish loading
+  await page.waitForLoadState('domcontentloaded')
+
   // Set mock preferences
   const congId = 'test'
   const prefs = prefsObject ?? prefsOld
