@@ -126,7 +126,6 @@ jobs:
 
       - name: Build Electron app
         if: |
-          ${{ success() }} &&
           startsWith(github.ref, 'refs/tags/v') ||
           !startsWith(github.event.head_commit.message, 'chore(release)')
         env:
@@ -135,7 +134,6 @@ jobs:
 
       - name: Release Electron app
         if: |
-          ${{ success() }} &&
           !startsWith(github.ref, 'refs/tags/v') &&
           startsWith(github.event.head_commit.message, 'chore(release)')
         env:
