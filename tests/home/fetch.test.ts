@@ -34,11 +34,15 @@ test('render the home page correctly', async () => {
 })
 
 test('fetch is successfull', async () => {
+  test.slow()
+
   // Click on fetch button
   await page.locator('button', { hasText: locale.fetchMedia }).click()
 
   // Wait for jw sync to complete successfully
-  await page.waitForSelector('div.success:has-text("JW.org (English)")')
+  await page.waitForSelector('div.success:has-text("JW.org (English)")', {
+    timeout: 0,
+  })
 
   // Check if recurring media has a success state
   expect(

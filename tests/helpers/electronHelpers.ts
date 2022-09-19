@@ -71,7 +71,15 @@ export async function openHomePage(
 
   // Open the home page as test congregation
   await page.goto(`app://./index.html?cong=${congId}`)
+  await page.reload({ waitUntil: 'domcontentloaded' })
   await page.waitForSelector('.fa-photo-film')
+  if ((await page.locator(`text=${prefs.congregationName}`).count()) !== 1) {
+    await page.locator(`input#cong-select`).click()
+    await page.locator(`text=${prefs.congregationName}`).click()
+    await page.waitForLoadState('domcontentloaded')
+    await page.waitForSelector('.fa-photo-film')
+    await page.waitForSelector(`text=${prefs.congregationName}`)
+  }
 
   return page
 }
