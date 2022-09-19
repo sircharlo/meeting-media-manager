@@ -71,10 +71,10 @@ export async function openHomePage(
 
   // Open the home page as test congregation
   await page.goto(`app://./index.html?cong=${congId}`)
-  await page.reload({ waitUntil: 'domcontentloaded' })
 
   // If not on correct cong, switch cong through menu
   if ((await page.locator(`text=${prefs.congregationName}`).count()) !== 1) {
+    await page.reload({ waitUntil: 'domcontentloaded' })
     await page.locator(`input#cong-select`).click()
     await page.locator(`text=${prefs.congregationName}`).click()
   }
