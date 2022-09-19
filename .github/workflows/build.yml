@@ -119,17 +119,25 @@ jobs:
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
 
       - name: Upload source maps to Sentry
-        if: startsWith(github.event.head_commit.message, 'chore(release)')
+        if: |
+          "!startsWith(github.ref, 'refs/tags/v')" &&
+          startsWith(github.event.head_commit.message, 'chore(release)')
         run: echo SENTRY_SOURCE_MAPS=1 >> .env
 
       - name: Build Electron app
-        if: "!startsWith(github.event.head_commit.message, 'chore(release)')"
+        if: |
+          ${{ success() }} &&
+          startsWith(github.ref, 'refs/tags/v') ||
+          "!startsWith(github.event.head_commit.message, 'chore(release)')"
         env:
           GH_TOKEN: ${{ secrets.github_token }}
         run: yarn run build -p never
 
       - name: Release Electron app
-        if: startsWith(github.event.head_commit.message, 'chore(release)')
+        if: |
+          ${{ success() }} &&
+          "!startsWith(github.ref, 'refs/tags/v')" &&
+          startsWith(github.event.head_commit.message, 'chore(release)')
         env:
           GH_TOKEN: ${{ secrets.github_token }}
         run: yarn run build -p onTagOrDraft
