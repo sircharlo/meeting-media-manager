@@ -6,6 +6,7 @@ const plugin: Plugin = (_ctx, inject) => {
     return cloneDeep(value)
   })
   inject('strip', (value: string, type: string = 'id') => {
+    if (!value) return ''
     switch (type) {
       case 'id':
         return value.replace(/[^a-zA-Z0-9\-:_]/g, '')

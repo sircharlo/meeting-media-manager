@@ -427,6 +427,12 @@ export default Vue.extend({
         this.mediaList.splice(this.mediaList.indexOf(item), 1)
         this.$rm(join(this.$mediaPath(), this.date, item.safeName as string))
 
+        if (this.date === 'Recurring') {
+          this.$rm(
+            this.$findAll(join(this.$mediaPath(), '*', item.safeName as string))
+          )
+        }
+
         // Remove item in cong server
         if (item.congSpecific) {
           try {

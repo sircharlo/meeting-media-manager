@@ -295,11 +295,11 @@ export default Vue.extend({
 
         // Change the language of the app by changing it in the URL
         if ((val ?? oldVal) !== this.$i18n.locale) {
-          this.$router.replace(this.switchLocalePath(val))
+          this.$router.replace(this.switchLocalePath(val ?? oldVal))
         }
 
         // Rename all the local files with 'song' and 'paragraph' in the name
-        if ((val ?? oldVal) !== oldVal) {
+        if (val && oldVal && val !== oldVal) {
           await this.$renamePubs(oldVal, val)
           this.$store.commit('media/clear')
         }
