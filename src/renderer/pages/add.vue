@@ -329,6 +329,12 @@ export default Vue.extend({
         this.prefix1 = this.prefix2 = this.prefix3 = ''
       }
     },
+    song(val) {
+      if (val) {
+        this.prefix1 = '00'
+        this.prefix2 = '00'
+      }
+    },
   },
   beforeDestroy() {
     document.removeEventListener('dragover', this.stopEvent)
