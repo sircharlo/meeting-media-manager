@@ -51,19 +51,12 @@ const plugin: Plugin = (
       })) as FileStat[]
 
       // Clean up old dates
-      for (const dir of contents.filter(({ type }) => type === 'directory')) {
-        const date = $dayjs(
-          dir.basename,
-          $getPrefs('app.outputFolderDateFormat') as string
-        )
-        if (date.isValid() && date.isBefore($dayjs().subtract(1, 'day'))) {
-          try {
-            await client.deleteFile(dir.filename)
-          } catch (e: any) {
-            $error('errorWebdavRm', e, dir.filename)
-          }
-        }
-      }
+      const promises: Promise<void>[] = []
+      contents
+        .filter(({ type }) => type === 'directory')
+        .forEach((dir) => {
+          promises.push(removeOldDate(client, dir))
+        })
 
       const bg = contents.find(({ basename }) =>
         basename.startsWith('media-window-background-image')
@@ -81,6 +74,8 @@ const plugin: Plugin = (
           )
         )
       }
+
+      await Promise.allSettled(promises)
 
       store.commit('cong/setContents', contents)
       store.commit('cong/setClient', client)
@@ -106,6 +101,20 @@ const plugin: Plugin = (
     }
   }
   inject('connect', connect)
+
+  async function removeOldDate(client: WebDAVClient, dir: FileStat) {
+    const date = $dayjs(
+      dir.basename,
+      $getPrefs('app.outputFolderDateFormat') as string
+    )
+    if (date.isValid() && date.isBefore($dayjs().subtract(1, 'day'))) {
+      try {
+        await client.deleteFile(dir.filename)
+      } catch (e: any) {
+        $error('errorWebdavRm', e, dir.filename)
+      }
+    }
+  }
 
   inject('updateContent', async () => {
     if (store.state.cong.client) {
@@ -274,8 +283,9 @@ const plugin: Plugin = (
     // Get cong media
     if (mediaFolder?.children) {
       let recurringMedia: MeetingFile[] = []
-      for (const date of mediaFolder.children) {
-        if (date.children) {
+      mediaFolder.children
+        .filter((date) => !!date.children)
+        .forEach((date) => {
           const day = $dayjs(
             date.basename,
             $getPrefs('app.outputFolderDateFormat') as string
@@ -287,7 +297,7 @@ const plugin: Plugin = (
             now.isSameOrBefore(day)
 
           if (isRecurring || isMeetingDay) {
-            const media = date.children.map((mediaFile) => {
+            const media = date.children?.map((mediaFile) => {
               return {
                 safeName: mediaFile.basename,
                 congSpecific: true,
@@ -306,8 +316,7 @@ const plugin: Plugin = (
               recurringMedia = $clone(media)
             }
           }
-        }
-      }
+        })
 
       // Set recurring media for each date
       dates.forEach((date) => {
@@ -340,8 +349,10 @@ const plugin: Plugin = (
         string,
         Map<number, MeetingFile[]>
       >
-      for (const date of hiddenFolder.children) {
-        if (date.children) {
+
+      hiddenFolder.children
+        .filter((date) => !!date.children)
+        .forEach((date) => {
           const mediaMap = meetings.get(date.basename)
           const day = $dayjs(
             date.basename,
@@ -353,7 +364,7 @@ const plugin: Plugin = (
             now.isSameOrBefore(day)
 
           if (isMeetingDay && mediaMap) {
-            for (const hiddenFile of date.children) {
+            for (const hiddenFile of date.children ?? []) {
               for (const [par, media] of mediaMap.entries()) {
                 const result = media.find(
                   ({ safeName }) => safeName === hiddenFile.basename
@@ -380,8 +391,7 @@ const plugin: Plugin = (
               }
             }
           }
-        }
-      }
+        })
     }
     store.commit('stats/stopPerf', {
       func: 'getCongMedia',
@@ -442,15 +452,15 @@ const plugin: Plugin = (
     )
 
     initProgress(total)
-    const promises = []
+    const promises: Promise<void>[] = []
 
-    for (const [date, parts] of meetings.entries()) {
-      for (const [, media] of parts.entries()) {
-        for (const item of media) {
+    meetings.forEach((parts, date) => {
+      parts.forEach((media) => {
+        media.forEach((item) => {
           promises.push(syncCongMediaItem(date, item, setProgress))
-        }
-      }
-    }
+        })
+      })
+    })
 
     await Promise.allSettled(promises)
 

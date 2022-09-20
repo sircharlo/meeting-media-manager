@@ -700,23 +700,28 @@ const plugin: Plugin = (
 
     // Get document multimedia and add them to the media list
     const mms = await getDocumentMultiMedia(db, docId)
+    const promises: Promise<void>[] = []
     for (const mm of mms) {
-      await addMediaItemToPart(
-        date,
-        mm.BeginParagraphOrdinal as number,
-        mm,
-        'internal'
+      promises.push(
+        addMediaItemToPart(
+          date,
+          mm.BeginParagraphOrdinal as number,
+          mm,
+          'internal'
+        )
       )
     }
 
     // Get document extracts and add them to the media list
     const extracts = await getDocumentExtract(db, docId, setProgress)
     for (const extract of extracts) {
-      await addMediaItemToPart(
-        date,
-        extract.BeginParagraphOrdinal as number,
-        extract,
-        'external'
+      promises.push(
+        addMediaItemToPart(
+          date,
+          extract.BeginParagraphOrdinal as number,
+          extract,
+          'external'
+        )
       )
     }
 
@@ -730,14 +735,18 @@ const plugin: Plugin = (
       const refMedia = await getDocumentMultiMedia(db, ref.DocumentId)
 
       for (const refMediaFile of refMedia) {
-        await addMediaItemToPart(
-          date,
-          ref.BeginParagraphOrdinal,
-          refMediaFile,
-          'internal'
+        promises.push(
+          addMediaItemToPart(
+            date,
+            ref.BeginParagraphOrdinal,
+            refMediaFile,
+            'internal'
+          )
         )
       }
     }
+
+    await Promise.allSettled(promises)
   })
 
   inject('getWeMedia', async (date: string, setProgress?: Function) => {
@@ -789,29 +798,9 @@ const plugin: Plugin = (
     WHERE Document.DocumentId = ${docId} AND Multimedia.CategoryType <> 9 GROUP BY DocumentMultimedia.MultimediaId`
     ) as MultiMediaItem[]
 
-    for (const img of images) {
-      if ($isImage(img.FilePath)) {
-        const LocalPath = join($pubPath(), 'w', issue, '0', img.FilePath)
-        const FileName = $sanitize(
-          img.Caption.length > img.Label.length ? img.Caption : img.Label
-        )
-        const pictureObj = {
-          title: FileName,
-          filepath: LocalPath,
-          filesize: statSync(LocalPath).size,
-          queryInfo: img,
-        } as ImageFile
-        await addMediaItemToPart(date, 1, pictureObj)
-      } else {
-        const media = await getMediaLinks({
-          pubSymbol: img.KeySymbol ?? '',
-          track: img.Track as number,
-          issue: img.IssueTagNumber?.toString(),
-        })
-        if (media?.length > 0)
-          addMediaItemToPart(date, 1, media[0] as VideoFile)
-      }
-    }
+    const promises: Promise<void>[] = []
+
+    images.forEach((img) => promises.push(addImgToPart(date, issue, img)))
 
     const songs = $query(
       db,
@@ -850,21 +839,59 @@ const plugin: Plugin = (
       $log.error(e)
     }
 
-    for (const [i, song] of songs.entries()) {
-      const songMedia = await getMediaLinks({
-        pubSymbol: song.KeySymbol as string,
-        track: song.Track as number,
-        lang: songLangs[i],
-      })
-      if (songMedia?.length > 0) {
-        const songObj = songMedia[0] as VideoFile
-        songObj.queryInfo = song
-        await addMediaItemToPart(date, 2 * i, songObj)
-      } else {
-        $error('errorGetWeMedia', new Error('No WE songs found!'))
-      }
-    }
+    songs.forEach((song, i) => {
+      promises.push(addSongToPart(date, songLangs, song, i))
+    })
+
+    await Promise.allSettled(promises)
   })
+
+  async function addImgToPart(
+    date: string,
+    issue: string,
+    img: MultiMediaItem
+  ) {
+    if ($isImage(img.FilePath)) {
+      const LocalPath = join($pubPath(), 'w', issue, '0', img.FilePath)
+      const FileName = $sanitize(
+        img.Caption.length > img.Label.length ? img.Caption : img.Label
+      )
+      const pictureObj = {
+        title: FileName,
+        filepath: LocalPath,
+        filesize: statSync(LocalPath).size,
+        queryInfo: img,
+      } as ImageFile
+      await addMediaItemToPart(date, 1, pictureObj)
+    } else {
+      const media = await getMediaLinks({
+        pubSymbol: img.KeySymbol ?? '',
+        track: img.Track as number,
+        issue: img.IssueTagNumber?.toString(),
+      })
+      if (media?.length > 0) addMediaItemToPart(date, 1, media[0] as VideoFile)
+    }
+  }
+
+  async function addSongToPart(
+    date: string,
+    songLangs: string[],
+    song: MultiMediaItem,
+    i: number
+  ) {
+    const songMedia = await getMediaLinks({
+      pubSymbol: song.KeySymbol as string,
+      track: song.Track as number,
+      lang: songLangs[i],
+    })
+    if (songMedia?.length > 0) {
+      const songObj = songMedia[0] as VideoFile
+      songObj.queryInfo = song
+      await addMediaItemToPart(date, 2 * i, songObj)
+    } else {
+      $error('errorGetWeMedia', new Error('No WE songs found!'))
+    }
+  }
 
   inject('createMediaNames', () => {
     store.commit('stats/startPerf', {
@@ -1000,7 +1027,7 @@ const plugin: Plugin = (
       )
 
       initProgress(total)
-      const promises = []
+      const promises: Promise<void>[] = []
 
       for (const [date, parts] of meetings.entries()) {
         for (const [, media] of parts.entries()) {

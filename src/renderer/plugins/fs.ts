@@ -226,55 +226,64 @@ const plugin: Plugin = (
     // Rename files containing localized 'song' or 'paragraph' strings and date folders on cong server
     const client = store.state.cong.client as WebDAVClient
     if (client) {
-      for (const file of store.state.cong.contents as FileStat[]) {
-        if (
-          file.basename.includes((' - ' + i18n.t('song', oldVal)) as string)
-        ) {
-          const newName = file.filename.replace(
-            (' - ' + i18n.t('song', oldVal)) as string,
-            (' - ' + i18n.t('song', newVal)) as string
-          )
+      const promises: Promise<any>[] = []
 
+      store.state.cong.contents.forEach((file: FileStat) => {
+        promises.push(renameCongFile(client, file, oldVal, newVal))
+      })
+
+      await Promise.allSettled(promises)
+    }
+  })
+
+  async function renameCongFile(
+    client: WebDAVClient,
+    file: FileStat,
+    oldVal: string,
+    newVal: string
+  ) {
+    if (file.basename.includes((' - ' + i18n.t('song', oldVal)) as string)) {
+      const newName = file.filename.replace(
+        (' - ' + i18n.t('song', oldVal)) as string,
+        (' - ' + i18n.t('song', newVal)) as string
+      )
+
+      if (file.filename !== newName) {
+        await client.moveFile(file.filename, newName)
+      }
+    } else if (
+      file.basename.includes((' - ' + i18n.t('paragraph', oldVal)) as string)
+    ) {
+      const newName = file.filename.replace(
+        (' - ' + i18n.t('paragraph', oldVal)) as string,
+        (' - ' + i18n.t('paragraph', newVal)) as string
+      )
+      if (file.filename !== newName) {
+        await client.moveFile(file.filename, newName)
+      }
+    } else if (file.type === 'directory') {
+      const date = $dayjs(
+        file.basename,
+        $getPrefs('app.outputFolderDateFormat') as string,
+        oldVal.split('-')[0]
+      )
+
+      const newName = file.filename.replace(
+        file.basename,
+        date
+          .locale(newVal)
+          .format($getPrefs('app.outputFolderDateFormat') as string)
+      )
+      if (date.isValid() && newName !== file.filename) {
+        const contents = store.state.cong.contents as FileStat[]
+        if (!contents.find(({ filename }) => filename === newName)) {
           if (file.filename !== newName) {
             await client.moveFile(file.filename, newName)
-          }
-        } else if (
-          file.basename.includes(
-            (' - ' + i18n.t('paragraph', oldVal)) as string
-          )
-        ) {
-          const newName = file.filename.replace(
-            (' - ' + i18n.t('paragraph', oldVal)) as string,
-            (' - ' + i18n.t('paragraph', newVal)) as string
-          )
-          if (file.filename !== newName) {
-            await client.moveFile(file.filename, newName)
-          }
-        } else if (file.type === 'directory') {
-          const date = $dayjs(
-            file.basename,
-            $getPrefs('app.outputFolderDateFormat') as string,
-            oldVal.split('-')[0]
-          )
-
-          const newName = file.filename.replace(
-            file.basename,
-            date
-              .locale(newVal)
-              .format($getPrefs('app.outputFolderDateFormat') as string)
-          )
-          if (date.isValid() && newName !== file.filename) {
-            const contents = store.state.cong.contents as FileStat[]
-            if (!contents.find(({ filename }) => filename === newName)) {
-              if (file.filename !== newName) {
-                await client.moveFile(file.filename, newName)
-              }
-            }
           }
         }
       }
     }
-  })
+  }
 
   inject('isVideo', (filepath: string) => {
     if (!filepath) return false

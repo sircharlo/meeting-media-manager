@@ -443,17 +443,14 @@ export default Vue.extend({
 
       // Cleanup old pref files
       if (this.cong) {
-        for (const file of this.$findAll(
-          join(this.$appPath(), 'prefs-*.json'),
-          {
-            ignore: [join(this.$appPath(), `prefs-${this.cong}.json`)],
-          }
-        )) {
+        this.$findAll(join(this.$appPath(), 'prefs-*.json'), {
+          ignore: [join(this.$appPath(), `prefs-${this.cong}.json`)],
+        }).forEach((file) => {
           const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
           if (!prefs.app.congregationName) {
             this.$rm(file)
           }
-        }
+        })
       }
     },
     convertSignLang(symbol: string) {

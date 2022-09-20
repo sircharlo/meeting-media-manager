@@ -4,6 +4,7 @@ import { pathToFileURL } from 'url'
 import { Dayjs } from 'dayjs'
 import { Plugin } from '@nuxt/types'
 import { XMLBuilder } from 'fast-xml-parser'
+import ffmpeg from 'fluent-ffmpeg'
 import {
   accessSync,
   chmodSync,
@@ -75,35 +76,36 @@ const plugin: Plugin = (
   }
 
   inject('convertToVLC', () => {
-    for (const date of $findAll(join($mediaPath(), '*/'), {
+    $findAll(join($mediaPath(), '*/'), {
       onlyDirectories: true,
     })
       .map((d) => basename(d))
       .filter((d) =>
         $dayjs(d, $getPrefs('app.outputFolderDateFormat') as string).isValid()
-      )) {
-      const playlistItems = {
-        '?xml': {
-          '@_version': '1.0',
-          '@_encoding': 'UTF-8',
-        },
-        playlist: {
-          title: date,
-          trackList: {
-            track: $findAll(join($mediaPath(), date, '*')).map((k) => ({
-              location: pathToFileURL(k).href,
-            })),
-          },
-          '@_xmlns': 'http://xspf.org/ns/0/',
-          '@_xmlns:vlc': 'http://www.videolan.org/vlc/playlist/ns/0/',
-          '@_version': '1',
-        },
-      }
-      $write(
-        join($mediaPath(), date, `${date}.xspf`),
-        new XMLBuilder({ ignoreAttributes: false }).build(playlistItems)
       )
-    }
+      .forEach((date) => {
+        const playlistItems = {
+          '?xml': {
+            '@_version': '1.0',
+            '@_encoding': 'UTF-8',
+          },
+          playlist: {
+            title: date,
+            trackList: {
+              track: $findAll(join($mediaPath(), date, '*')).map((k) => ({
+                location: pathToFileURL(k).href,
+              })),
+            },
+            '@_xmlns': 'http://xspf.org/ns/0/',
+            '@_xmlns:vlc': 'http://www.videolan.org/vlc/playlist/ns/0/',
+            '@_version': '1',
+          },
+        }
+        $write(
+          join($mediaPath(), date, `${date}.xspf`),
+          new XMLBuilder({ ignoreAttributes: false }).build(playlistItems)
+        )
+      })
   })
 
   async function convertPdf(mediaFile: string) {
@@ -181,24 +183,25 @@ const plugin: Plugin = (
   }
 
   inject('convertUnusableFiles', async (dir: string) => {
-    for (const pdf of $findAll(join(dir, '**', '*pdf'), {
-      ignore: [join(dir, 'Recurring')],
-    })) {
-      await convertPdf(pdf)
-    }
+    const promises: Promise<void>[] = []
 
-    for (const svg of $findAll(join(dir, '**', '*svg'), {
+    $findAll(join(dir, '**', '*pdf'), {
       ignore: [join(dir, 'Recurring')],
-    })) {
+    }).forEach((pdf) => {
+      promises.push(convertPdf(pdf))
+    })
+
+    $findAll(join(dir, '**', '*svg'), {
+      ignore: [join(dir, 'Recurring')],
+    }).forEach((svg) => {
       convertSvg(svg)
-    }
+    })
+
+    await Promise.allSettled(promises)
   })
 
   // Setup FFmpeg for video conversion
-  async function setupFFmpeg(
-    ffmpeg: typeof import('fluent-ffmpeg'),
-    setProgress: Function
-  ) {
+  async function setupFFmpeg(setProgress: Function) {
     if (store.state.media.ffMpeg) return
     const osType = type()
     let target = 'linux-64'
@@ -249,6 +252,7 @@ const plugin: Plugin = (
     } catch (e: any) {
       chmodSync(entryPath, '777')
     }
+    // eslint-disable-next-line import/no-named-as-default-member
     ffmpeg.setFfmpegPath(entryPath)
     store.commit('media/setFFmpeg', true)
   }
@@ -319,9 +323,7 @@ const plugin: Plugin = (
       try {
         // If mp3, just add audio to empty video
         if (extname(file).includes('mp3')) {
-          const ffmpeg =
-            require('fluent-ffmpeg') as typeof import('fluent-ffmpeg')
-          setupFFmpeg(ffmpeg, setProgress).then(() => {
+          setupFFmpeg(setProgress).then(() => {
             ffmpeg(file)
               .noVideo()
               .save(join(output))
@@ -390,6 +392,7 @@ const plugin: Plugin = (
                 encoder.delete()
                 div.remove()
                 if (!$getPrefs('media.keepOriginalsAfterConversion')) $rm(file)
+                increaseProgress(setProgress)
                 return resolve()
               }
               img.src = pathToFileURL(file).href
@@ -400,9 +403,23 @@ const plugin: Plugin = (
         }
       } catch (e: any) {
         $warn('warnMp4ConversionFailure', { identifier: basename(file) }, e)
+        increaseProgress(setProgress)
         return resolve()
       }
     })
+  }
+
+  let progress = 0
+  let total = 0
+
+  function initProgress(amount: number) {
+    progress = 0
+    total = amount
+  }
+
+  function increaseProgress(setProgress: Function) {
+    progress++
+    setProgress(progress, total, true)
   }
 
   inject(
@@ -430,14 +447,14 @@ const plugin: Plugin = (
         )
         .flat()
 
-      let i = 0
-      setProgress(i, files.length, true)
+      const promises: Promise<void>[] = []
+      initProgress(files.length)
 
-      for (const file of files) {
-        await createVideo(file, setProgress)
-        i++
-        setProgress(i, files.length, true)
-      }
+      files.forEach((file) => {
+        promises.push(createVideo(file, setProgress))
+      })
+
+      await Promise.allSettled(promises)
     }
   )
 }
