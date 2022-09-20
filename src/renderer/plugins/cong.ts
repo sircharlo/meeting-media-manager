@@ -389,6 +389,19 @@ const plugin: Plugin = (
     })
   })
 
+  let progress = 0
+  let total = 0
+
+  function initProgress(amount: number) {
+    progress = 0
+    total = amount
+  }
+
+  function increaseProgress(setProgress: Function) {
+    progress++
+    setProgress(progress, total, true)
+  }
+
   inject('syncCongMedia', async (baseDate: Dayjs, setProgress: Function) => {
     store.commit('stats/startPerf', {
       func: 'syncCongMedia',
@@ -428,104 +441,113 @@ const plugin: Plugin = (
       parts.forEach((media) => (total += media.length))
     )
 
-    let progress = 0
+    initProgress(total)
+    const promises = []
+
     for (const [date, parts] of meetings.entries()) {
       for (const [, media] of parts.entries()) {
         for (const item of media) {
-          if (!item.hidden && !item.isLocal) {
-            if (item.filesize) {
-              $log.info(
-                `%c[congMedia] [${date}] ${item.safeName}`,
-                'background-color: #d1ecf1; color: #0c5460'
-              )
-
-              // Prevent duplicates
-              const duplicate = $findOne(
-                join(
-                  $mediaPath(),
-                  item.folder as string,
-                  '*' + item.safeName?.substring(8).replace('.svg', '.png')
-                )
-              )
-              if (
-                duplicate &&
-                (statSync(duplicate).size === item.filesize ||
-                  extname(item.safeName as string) === '.svg')
-              ) {
-                if (basename(duplicate) !== item.safeName) {
-                  $rename(
-                    duplicate,
-                    basename(duplicate),
-                    (item.safeName as string).replace('.svg', '.png')
-                  )
-                }
-                store.commit('stats/setDownloads', {
-                  origin: 'cong',
-                  source: 'cache',
-                  file: item,
-                })
-              } else {
-                const client = store.state.cong.client as WebDAVClient
-                if (client) {
-                  const perf: any = {
-                    start: performance.now(),
-                    bytes: item.filesize,
-                    name: item.safeName,
-                  }
-                  const file = (await client.getFileContents(
-                    item.url as string,
-                    {
-                      onDownloadProgress: (progress) => {
-                        setProgress(progress.loaded, progress.total)
-                      },
-                    }
-                  )) as ArrayBuffer
-                  perf.end = performance.now()
-                  perf.bits = perf.bytes * 8
-                  perf.ms = perf.end - perf.start
-                  perf.s = perf.ms / 1000
-                  perf.bps = perf.bits / perf.s
-                  perf.MBps = perf.bps / 1000000
-                  perf.dir = 'down'
-                  $log.debug(perf)
-
-                  $write(
-                    join(
-                      $mediaPath(),
-                      item.folder as string,
-                      item.safeName as string
-                    ),
-                    Buffer.from(new Uint8Array(file))
-                  )
-                  store.commit('stats/setDownloads', {
-                    origin: 'cong',
-                    source: 'live',
-                    file: item,
-                  })
-                }
-              }
-            } else {
-              $warn('warnFileNotAvailable', {
-                identifier: [
-                  item.queryInfo?.KeySymbol,
-                  item.queryInfo?.Track,
-                  item.queryInfo?.IssueTagNumber,
-                ]
-                  .filter(Boolean)
-                  .join('_'),
-              })
-            }
-          }
-          progress++
-          setProgress(progress, total, true)
+          promises.push(syncCongMediaItem(date, item, setProgress))
         }
       }
     }
+
+    await Promise.allSettled(promises)
+
     store.commit('stats/stopPerf', {
       func: 'syncCongMedia',
       stop: performance.now(),
     })
   })
+
+  async function syncCongMediaItem(
+    date: string,
+    item: MeetingFile,
+    setProgress: Function
+  ) {
+    if (!item.hidden && !item.isLocal) {
+      if (item.filesize) {
+        $log.info(
+          `%c[congMedia] [${date}] ${item.safeName}`,
+          'background-color: #d1ecf1; color: #0c5460'
+        )
+
+        // Prevent duplicates
+        const duplicate = $findOne(
+          join(
+            $mediaPath(),
+            item.folder as string,
+            '*' + item.safeName?.substring(8).replace('.svg', '.png')
+          )
+        )
+        if (
+          duplicate &&
+          (statSync(duplicate).size === item.filesize ||
+            extname(item.safeName as string) === '.svg')
+        ) {
+          if (basename(duplicate) !== item.safeName) {
+            $rename(
+              duplicate,
+              basename(duplicate),
+              (item.safeName as string).replace('.svg', '.png')
+            )
+          }
+          store.commit('stats/setDownloads', {
+            origin: 'cong',
+            source: 'cache',
+            file: item,
+          })
+        } else {
+          const client = store.state.cong.client as WebDAVClient
+          if (client) {
+            const perf: any = {
+              start: performance.now(),
+              bytes: item.filesize,
+              name: item.safeName,
+            }
+            const file = (await client.getFileContents(item.url as string, {
+              onDownloadProgress: (progress) => {
+                setProgress(progress.loaded, progress.total)
+              },
+            })) as ArrayBuffer
+            perf.end = performance.now()
+            perf.bits = perf.bytes * 8
+            perf.ms = perf.end - perf.start
+            perf.s = perf.ms / 1000
+            perf.bps = perf.bits / perf.s
+            perf.MBps = perf.bps / 1000000
+            perf.dir = 'down'
+            $log.debug(perf)
+
+            $write(
+              join(
+                $mediaPath(),
+                item.folder as string,
+                item.safeName as string
+              ),
+              Buffer.from(new Uint8Array(file))
+            )
+            store.commit('stats/setDownloads', {
+              origin: 'cong',
+              source: 'live',
+              file: item,
+            })
+          }
+        }
+      } else {
+        $warn('warnFileNotAvailable', {
+          identifier: [
+            item.queryInfo?.KeySymbol,
+            item.queryInfo?.Track,
+            item.queryInfo?.IssueTagNumber,
+          ]
+            .filter(Boolean)
+            .join('_'),
+        })
+      }
+    }
+    increaseProgress(setProgress)
+  }
 }
 
 export default plugin
