@@ -946,6 +946,19 @@ const plugin: Plugin = (
     )
   })
 
+  let progress = 0
+  let total = 0
+
+  function initProgress(amount: number) {
+    progress = 0
+    total = amount
+  }
+
+  function increaseProgress(setProgress: Function) {
+    progress++
+    setProgress(progress, total, true)
+  }
+
   inject(
     'syncJWMedia',
     async (dryrun: boolean, baseDate: Dayjs, setProgress: Function) => {
@@ -986,108 +999,111 @@ const plugin: Plugin = (
         parts.forEach((media) => (total += media.length))
       )
 
-      let progress = 0
+      initProgress(total)
+      const promises = []
+
       for (const [date, parts] of meetings.entries()) {
         for (const [, media] of parts.entries()) {
           for (const item of media) {
             if (!dryrun) {
-              if (item.filesize && (item.url || item.filepath)) {
-                $log.info(
-                  `%c[jwOrg] [${date}] ${item.safeName}`,
-                  'background-color: #cce5ff; color: #004085;'
-                )
-                // Set markers for sign language videos
-                if (item.markers) {
-                  const markers = Array.from(
-                    new Set(
-                      item.markers.markers.map(
-                        ({
-                          duration,
-                          label,
-                          startTime,
-                          endTransitionDuration,
-                        }) =>
-                          JSON.stringify({
-                            duration,
-                            label,
-                            startTime,
-                            endTransitionDuration,
-                          })
-                      )
-                    )
-                  ).map((m) => JSON.parse(m))
-                  $write(
-                    join(
-                      $mediaPath(),
-                      item.folder as string,
-                      changeExt(item.safeName as string, 'json')
-                    ),
-                    JSON.stringify(markers)
-                  )
-                }
-
-                // Prevent duplicates
-                const duplicate = $findOne(
-                  join(
-                    $mediaPath(),
-                    item.folder as string,
-                    '*' + item.safeName?.substring(8).replace('.svg', '.png')
-                  )
-                )
-
-                if (
-                  duplicate &&
-                  basename(duplicate) !== item.safeName &&
-                  (statSync(duplicate).size === item.filesize ||
-                    extname(item.safeName as string) === '.svg')
-                ) {
-                  $rename(
-                    duplicate,
-                    basename(duplicate),
-                    (item.safeName as string).replace('.svg', '.png')
-                  )
-                } else if (item.url) {
-                  await downloadIfRequired(
-                    JSON.parse(JSON.stringify(item as SmallMediaFile)),
-                    setProgress
-                  )
-                } else if (item.filepath) {
-                  const dest = join(
-                    $mediaPath(),
-                    item.folder as string,
-                    item.safeName as string
-                  )
-                  if (
-                    !existsSync(dest) ||
-                    statSync(dest).size !== item.filesize
-                  ) {
-                    $copy(item.filepath as string, dest)
-                  }
-                }
-              } else {
-                $warn(
-                  'warnFileNotAvailable',
-                  {
-                    persistent: true,
-                    identifier: [
-                      item.queryInfo?.KeySymbol,
-                      item.queryInfo?.Track,
-                      item.queryInfo?.IssueTagNumber,
-                    ]
-                      .filter(Boolean)
-                      .join('_'),
-                  },
-                  item
-                )
-              }
+              promises.push(syncMediaItem(date, item, setProgress))
             }
-            progress++
-            setProgress(progress, total, true)
           }
         }
       }
+
+      await Promise.allSettled(promises)
     }
   )
+
+  async function syncMediaItem(
+    date: string,
+    item: MeetingFile,
+    setProgress: Function
+  ) {
+    if (item.filesize && (item.url || item.filepath)) {
+      $log.info(
+        `%c[jwOrg] [${date}] ${item.safeName}`,
+        'background-color: #cce5ff; color: #004085;'
+      )
+      // Set markers for sign language videos
+      if (item.markers) {
+        const markers = Array.from(
+          new Set(
+            item.markers.markers.map(
+              ({ duration, label, startTime, endTransitionDuration }) =>
+                JSON.stringify({
+                  duration,
+                  label,
+                  startTime,
+                  endTransitionDuration,
+                })
+            )
+          )
+        ).map((m) => JSON.parse(m))
+        $write(
+          join(
+            $mediaPath(),
+            item.folder as string,
+            changeExt(item.safeName as string, 'json')
+          ),
+          JSON.stringify(markers)
+        )
+      }
+
+      // Prevent duplicates
+      const duplicate = $findOne(
+        join(
+          $mediaPath(),
+          item.folder as string,
+          '*' + item.safeName?.substring(8).replace('.svg', '.png')
+        )
+      )
+
+      if (
+        duplicate &&
+        basename(duplicate) !== item.safeName &&
+        (statSync(duplicate).size === item.filesize ||
+          extname(item.safeName as string) === '.svg')
+      ) {
+        $rename(
+          duplicate,
+          basename(duplicate),
+          (item.safeName as string).replace('.svg', '.png')
+        )
+      } else if (item.url) {
+        await downloadIfRequired(
+          JSON.parse(JSON.stringify(item as SmallMediaFile)),
+          setProgress
+        )
+      } else if (item.filepath) {
+        const dest = join(
+          $mediaPath(),
+          item.folder as string,
+          item.safeName as string
+        )
+        if (!existsSync(dest) || statSync(dest).size !== item.filesize) {
+          $copy(item.filepath as string, dest)
+        }
+      }
+    } else {
+      $warn(
+        'warnFileNotAvailable',
+        {
+          persistent: true,
+          identifier: [
+            item.queryInfo?.KeySymbol,
+            item.queryInfo?.Track,
+            item.queryInfo?.IssueTagNumber,
+          ]
+            .filter(Boolean)
+            .join('_'),
+        },
+        item
+      )
+    }
+    increaseProgress(setProgress)
+  }
 
   async function shuffleMusic(stop: boolean = false) {
     if (stop) {

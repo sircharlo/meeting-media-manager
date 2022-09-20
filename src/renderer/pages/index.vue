@@ -555,6 +555,40 @@ export default Vue.extend({
       if (this.currentProgress === 100) this.currentProgress = 0
       if (this.totalProgress === 100) this.totalProgress = 0
     },
+    async getMwMedia(mwDay: Dayjs, filter: string = 'all') {
+      if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {
+        this.setDayColor(this.$getPrefs('meeting.mwDay'), 'warning')
+        try {
+          await this.$getMwMedia(
+            mwDay.format(
+              this.$getPrefs('app.outputFolderDateFormat') as string
+            ),
+            this.setProgress
+          )
+          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'success')
+        } catch (e: any) {
+          this.$error('errorGetMwMedia', e)
+          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'error')
+        }
+      }
+    },
+    async getWeMedia(weDay: Dayjs, filter: string = 'all') {
+      if (filter !== 'mw' && this.now.isSameOrBefore(weDay)) {
+        this.setDayColor(this.$getPrefs('meeting.weDay'), 'warning')
+        try {
+          await this.$getWeMedia(
+            weDay.format(
+              this.$getPrefs('app.outputFolderDateFormat') as string
+            ),
+            this.setProgress
+          )
+          this.setDayColor(this.$getPrefs('meeting.weDay'), 'success')
+        } catch (e: any) {
+          this.$error('errorGetWeMedia', e)
+          this.setDayColor(this.$getPrefs('meeting.weDay'), 'error')
+        }
+      }
+    },
     async syncJWorgMedia(dryrun: boolean = false) {
       this.$store.commit('stats/startPerf', {
         func: 'syncJWorgMedia',
@@ -604,39 +638,12 @@ export default Vue.extend({
           start: performance.now(),
         })
 
-        // Get midweek media
-        if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {
-          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'warning')
-          try {
-            await this.$getMwMedia(
-              mwDay.format(
-                this.$getPrefs('app.outputFolderDateFormat') as string
-              ),
-              this.setProgress
-            )
-            this.setDayColor(this.$getPrefs('meeting.mwDay'), 'success')
-          } catch (e: any) {
-            this.$error('errorGetMwMedia', e)
-            this.setDayColor(this.$getPrefs('meeting.mwDay'), 'error')
-          }
-        }
+        // Get media
+        await Promise.allSettled([
+          this.getMwMedia(mwDay, filter),
+          this.getWeMedia(weDay, filter),
+        ])
 
-        // Get weekend media
-        if (filter !== 'mw' && this.now.isSameOrBefore(weDay)) {
-          this.setDayColor(this.$getPrefs('meeting.weDay'), 'warning')
-          try {
-            await this.$getWeMedia(
-              weDay.format(
-                this.$getPrefs('app.outputFolderDateFormat') as string
-              ),
-              this.setProgress
-            )
-            this.setDayColor(this.$getPrefs('meeting.weDay'), 'success')
-          } catch (e: any) {
-            this.$error('errorGetWeMedia', e)
-            this.setDayColor(this.$getPrefs('meeting.weDay'), 'error')
-          }
-        }
         this.$store.commit('stats/stopPerf', {
           func: 'getJwOrgMedia',
           stop: performance.now(),
