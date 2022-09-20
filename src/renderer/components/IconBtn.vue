@@ -125,6 +125,7 @@ import {
   faSliders,
   faUserCog,
   faShuffle,
+  faCircleArrowLeft,
   faMusic,
   faSort,
   faHome,
@@ -154,6 +155,7 @@ export default Vue.extend({
       validator: (val: string) => {
         return [
           'home',
+          'homeVariant',
           'settings',
           'play',
           'pause',
@@ -199,6 +201,18 @@ export default Vue.extend({
             color: 'btn',
           },
           icons: [{ text: faHome, props: { class: 'white--text' } }],
+        },
+        homeVariant: {
+          props: {
+            'min-width': '32px',
+            color: 'error',
+          },
+          icons: [
+            {
+              text: faCircleArrowLeft,
+              props: { class: 'white--text', size: 'lg' },
+            },
+          ],
         },
         present: {
           to: '/present',

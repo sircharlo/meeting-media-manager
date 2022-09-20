@@ -32,6 +32,7 @@
             v-model="type"
             color="primary"
             style="width: 100%"
+            :mandatory="!!type"
             @change="fileString = ''"
           >
             <v-btn width="33.3%" value="song" :disabled="loading">{{
@@ -169,20 +170,13 @@
       />
       <v-footer fixed>
         <v-col class="text-left">
-          <v-btn
+          <icon-btn
             v-if="song || files.length > 0"
-            nuxt
+            variant="homeVariant"
             :disabled="loading"
-            color="error"
-            :to="localePath('/?cong=') + cong"
-            min-width="32px"
-          >
-            <font-awesome-icon
-              :icon="faCircleArrowLeft"
-              class="white--text"
-              size="lg"
-            />
-          </v-btn>
+            click-twice
+            @click="goHome()"
+          />
         </v-col>
         <v-col class="text-center">
           <v-btn
@@ -233,7 +227,7 @@ export default Vue.extend({
       totalProgress: 0,
       currentProgress: 0,
       loading: true,
-      type: '',
+      type: 'custom',
       fileString: '',
       song: null as VideoFile | null,
       files: [] as (LocalFile | VideoFile)[],
@@ -352,6 +346,15 @@ export default Vue.extend({
     this.loading = false
   },
   methods: {
+    goHome() {
+      this.$router.push({
+        path: this.localePath('/'),
+        query: {
+          ...this.$route.query,
+          date: undefined,
+        },
+      })
+    },
     handleDrag(e: DragEvent) {
       if (
         !this.dragging ||
