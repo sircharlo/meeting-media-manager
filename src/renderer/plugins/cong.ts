@@ -374,8 +374,10 @@ const plugin: Plugin = (
             now.isSameOrBefore(day)
 
           if (isMeetingDay && mediaMap) {
-            for (const hiddenFile of date.children ?? []) {
-              for (const [par, media] of mediaMap.entries()) {
+            date.children?.forEach((hiddenFile) => {
+              let found = false
+              mediaMap.forEach((media, par) => {
+                if (found) return
                 const result = media.find(
                   ({ safeName }) => safeName === hiddenFile.basename
                 )
@@ -396,10 +398,10 @@ const plugin: Plugin = (
                       hiddenFile.basename,
                     'background-color: #fff3cd; color: #856404;'
                   )
-                  break
+                  found = true
                 }
-              }
-            }
+              })
+            })
           }
         })
     }
