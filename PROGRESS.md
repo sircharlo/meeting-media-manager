@@ -54,6 +54,7 @@
 - DOCS: Documentation site now supports multiple languages. Time to translate my dear volunteers!
 - GENERAL: Automatically log in to congregation when computer username matches congregation name
 - GENERAL: Better error tracking through Sentry
+- GENERAL: Greatly improved fetching speed by performing tasks simultaneously (e.g. 53080ms -> 27113ms)
 - GENERAL: MacOS icon now has rounded corners to better fit with MacOS native style
 - GENERAL: Support Debian package
 - GENERAL: Tests to ensure everything stays working between releases
