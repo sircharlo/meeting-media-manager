@@ -87,12 +87,12 @@ export default Vue.extend({
     },
   },
   async mounted(): Promise<void> {
-    const db = await this.$getDbFromJWPUB(
+    const db = (await this.$getDbFromJWPUB(
       undefined,
       undefined,
       this.setProgress,
       this.file
-    )
+    )) as Database
     this.db = db
 
     const table =
@@ -193,7 +193,8 @@ export default Vue.extend({
         } as LocalFile
 
         if (CategoryType && CategoryType !== -1) {
-          tempMedia.contents = this.$getZipContentsByName(this.file, FilePath)
+          tempMedia.contents =
+            this.$getZipContentsByName(this.file, FilePath) ?? undefined
         } else {
           // Try to get external media
           const externalMedia = (await this.$getMediaLinks(

@@ -135,16 +135,18 @@ ${JSON.stringify(logs.error, null, 2)}
 
     for (const [origin, sources] of Object.entries(downloads)) {
       for (const [source, files] of Object.entries(sources)) {
-        log.info(
-          `%c[perf] [${origin} Fetch] from ${source}: ${(
-            (files as MeetingFile[])
-              .map((file) => file.filesize as number)
-              .reduce((a, b) => a + b, 0) /
-            1024 /
-            1024
-          ).toFixed(1)}MB`,
-          'background-color: #fbe9e7; color: #000;'
-        )
+        if ((files as MeetingFile[]).length > 0) {
+          log.info(
+            `%c[perf] [${origin} Fetch] from ${source}: ${(
+              (files as MeetingFile[])
+                .map((file) => file.filesize as number)
+                .reduce((a, b) => a + b, 0) /
+              1024 /
+              1024
+            ).toFixed(1)}MB`,
+            'background-color: #fbe9e7; color: #000;'
+          )
+        }
       }
     }
   })

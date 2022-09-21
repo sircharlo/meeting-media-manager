@@ -205,6 +205,104 @@ const plugin: Plugin = (
     }
   }
 
+  async function processMultiMediaItem(
+    db: Database,
+    mmItem: MultiMediaItem,
+    targetParNrExists: boolean,
+    silent: boolean,
+    keySymbol: string,
+    issueTagNumber: string,
+    memOnly: boolean
+  ) {
+    if (targetParNrExists) {
+      const result = $query(
+        db,
+        `SELECT TargetParagraphNumberLabel From Question WHERE DocumentId = ${mmItem.DocumentId} AND TargetParagraphOrdinal = ${mmItem.BeginParagraphOrdinal}`
+      )
+      if (result.length === 1) Object.assign(mmItem, result[0])
+      if (
+        (
+          $query(db, 'SELECT COUNT(*) as Count FROM Question') as {
+            Count: number
+          }[]
+        )[0].Count > 0
+      ) {
+        mmItem.tableQuestionIsUsed = true
+        const result = $query(
+          db,
+          `SELECT TargetParagraphNumberLabel, TargetParagraphOrdinal From Question WHERE DocumentId = ${mmItem.DocumentId} AND TargetParagraphOrdinal > ${mmItem.BeginParagraphOrdinal} LIMIT 1`
+        ) as {
+          TargetParagraphNumberLabel: string
+          TargetParagraphOrdinal: number
+        }[]
+        if (result.length > 0)
+          mmItem.NextParagraphOrdinal = result[0].TargetParagraphOrdinal
+      }
+    }
+    try {
+      // Get Video file
+      if (
+        mmItem.MimeType.includes('audio') ||
+        mmItem.MimeType.includes('video')
+      ) {
+        const json =
+          ((
+            await getMediaLinks(
+              {
+                pubSymbol: mmItem.KeySymbol as string,
+                track: mmItem.Track as number,
+                issue: (mmItem.IssueTagNumber as number)?.toString(),
+                docId: mmItem.MultiMeps as number,
+              },
+              silent
+            )
+          )[0] as VideoFile) ?? {}
+        json.queryInfo = mmItem
+        json.BeginParagraphOrdinal = mmItem.BeginParagraphOrdinal
+        return json as VideoFile
+      } else {
+        if (!mmItem.KeySymbol) {
+          mmItem.KeySymbol = keySymbol
+          mmItem.IssueTagNumber = +issueTagNumber
+          if (!memOnly) {
+            mmItem.LocalPath = join(
+              $pubPath(),
+              mmItem.KeySymbol as string,
+              mmItem.IssueTagNumber.toString(),
+              '0',
+              mmItem.FilePath
+            )
+          }
+        }
+        mmItem.FileName = $sanitize(
+          mmItem.Caption.length > mmItem.Label.length
+            ? mmItem.Caption
+            : mmItem.Label
+        )
+        const picture = {
+          BeginParagraphOrdinal: mmItem.BeginParagraphOrdinal,
+          title: mmItem.FileName,
+          queryInfo: mmItem,
+          filepath: memOnly ? undefined : mmItem.LocalPath,
+          filesize: memOnly
+            ? undefined
+            : statSync(mmItem.LocalPath as string).size,
+        } as ImageFile
+
+        return picture
+      }
+    } catch (e: any) {
+      $warn(
+        'errorJwpubMediaExtract',
+        {
+          identifier: `${keySymbol}-${issueTagNumber}`,
+        },
+        e
+      )
+    }
+    return null
+  }
+
   async function getDocumentMultiMedia(
     db: Database,
     docId: number | null,
@@ -289,101 +387,50 @@ const plugin: Plugin = (
         }
       }
 
-      for (const mmItem of $query(
+      const promises: Promise<VideoFile | ImageFile | null>[] = []
+
+      const items = $query(
         db,
         `${select} ${from} ${where} ${groupAndSort}`
-      ) as MultiMediaItem[]) {
-        if (targetParNrExists) {
-          const result = $query(
-            db,
-            `SELECT TargetParagraphNumberLabel From Question WHERE DocumentId = ${mmItem.DocumentId} AND TargetParagraphOrdinal = ${mmItem.BeginParagraphOrdinal}`
-          )
-          if (result.length === 1) Object.assign(mmItem, result[0])
-          if (
-            (
-              $query(db, 'SELECT COUNT(*) as Count FROM Question') as {
-                Count: number
-              }[]
-            )[0].Count > 0
-          ) {
-            mmItem.tableQuestionIsUsed = true
-            const result = $query(
-              db,
-              `SELECT TargetParagraphNumberLabel, TargetParagraphOrdinal From Question WHERE DocumentId = ${mmItem.DocumentId} AND TargetParagraphOrdinal > ${mmItem.BeginParagraphOrdinal} LIMIT 1`
-            ) as {
-              TargetParagraphNumberLabel: string
-              TargetParagraphOrdinal: number
-            }[]
-            if (result.length > 0)
-              mmItem.NextParagraphOrdinal = result[0].TargetParagraphOrdinal
-          }
-        }
-        try {
-          // Get Video file
-          if (
-            mmItem.MimeType.includes('audio') ||
-            mmItem.MimeType.includes('video')
-          ) {
-            const json =
-              ((
-                await getMediaLinks(
-                  {
-                    pubSymbol: mmItem.KeySymbol as string,
-                    track: mmItem.Track as number,
-                    issue: (mmItem.IssueTagNumber as number)?.toString(),
-                    docId: mmItem.MultiMeps as number,
-                  },
-                  silent
-                )
-              )[0] as VideoFile) ?? {}
-            json.queryInfo = mmItem
-            json.BeginParagraphOrdinal = mmItem.BeginParagraphOrdinal
-            mmItems.push(json as VideoFile)
-          } else {
-            if (!mmItem.KeySymbol) {
-              mmItem.KeySymbol = keySymbol
-              mmItem.IssueTagNumber = +issueTagNumber
-              if (!memOnly) {
-                mmItem.LocalPath = join(
-                  $pubPath(),
-                  mmItem.KeySymbol as string,
-                  mmItem.IssueTagNumber.toString(),
-                  '0',
-                  mmItem.FilePath
-                )
-              }
-            }
-            mmItem.FileName = $sanitize(
-              mmItem.Caption.length > mmItem.Label.length
-                ? mmItem.Caption
-                : mmItem.Label
-            )
-            const picture = {
-              BeginParagraphOrdinal: mmItem.BeginParagraphOrdinal,
-              title: mmItem.FileName,
-              queryInfo: mmItem,
-              filepath: memOnly ? undefined : mmItem.LocalPath,
-              filesize: memOnly
-                ? undefined
-                : statSync(mmItem.LocalPath as string).size,
-            } as ImageFile
+      ) as MultiMediaItem[]
 
-            mmItems.push(picture)
-          }
-        } catch (e: any) {
-          $warn(
-            'errorJwpubMediaExtract',
-            {
-              identifier: `${keySymbol}-${issueTagNumber}`,
-            },
-            e
+      items.forEach((mmItem) => {
+        promises.push(
+          processMultiMediaItem(
+            db,
+            mmItem,
+            targetParNrExists,
+            silent,
+            keySymbol,
+            issueTagNumber,
+            memOnly
           )
+        )
+      })
+
+      const results = await Promise.allSettled(promises)
+      results.forEach((result) => {
+        if (result.status === 'fulfilled') {
+          if (result.value) {
+            mmItems.push(result.value)
+          }
         }
-      }
+      })
     }
     return mmItems
   }
   inject('getDocumentMultiMedia', getDocumentMultiMedia)
+
+  async function getAdditionalData(item: SmallMediaFile, id: string) {
+    const result = (await $mediaItems.$get(
+      `${$getPrefs('media.lang')}/${id}_VIDEO`
+    )) as MediaItemResult
+
+    if (result?.media?.length > 0) {
+      item.thumbnail = result?.media[0]?.images?.wss?.sm
+      item.primaryCategory = result?.media[0]?.primaryCategory
+    }
+  }
 
   async function getMediaLinks(
     mediaItem: {
@@ -525,8 +572,10 @@ const plugin: Plugin = (
           }
         ) as SmallMediaFile[]
 
+        const promises: Promise<void>[] = []
+
         // Get thumbnail and primaryCategory
-        for (const item of smallMediaFiles) {
+        smallMediaFiles.forEach((item) => {
           if (
             (item.duration as number) > 0 &&
             (!item.trackImage || !item.pub)
@@ -540,16 +589,12 @@ const plugin: Plugin = (
                 ]
                   .filter(Boolean)
                   .join('_')}`
-            const result = (await $mediaItems.$get(
-              `${$getPrefs('media.lang')}/${id}_VIDEO`
-            )) as MediaItemResult
 
-            if (result?.media?.length > 0) {
-              item.thumbnail = result?.media[0]?.images?.wss?.sm
-              item.primaryCategory = result?.media[0]?.primaryCategory
-            }
+            promises.push(getAdditionalData(item, id))
           }
-        }
+        })
+
+        await Promise.allSettled(promises)
       } else if (!silent) {
         $warn('infoPubIgnored', {
           identifier: Object.values(mediaItem).filter(Boolean).join('_'),
@@ -694,6 +739,29 @@ const plugin: Plugin = (
 
   inject('downloadIfRequired', downloadIfRequired)
 
+  async function processInternalRefs(
+    db: Database,
+    ref: MultiMediaExtractRef,
+    date: string
+  ) {
+    const promises: Promise<void>[] = []
+
+    const refMedia = await getDocumentMultiMedia(db, ref.DocumentId)
+
+    refMedia.forEach((refMediaFile) => {
+      promises.push(
+        addMediaItemToPart(
+          date,
+          ref.BeginParagraphOrdinal,
+          refMediaFile,
+          'internal'
+        )
+      )
+    })
+
+    await Promise.allSettled(promises)
+  }
+
   inject(
     'getMwMedia',
     async (date: string, setProgress?: Function): Promise<void> => {
@@ -723,7 +791,8 @@ const plugin: Plugin = (
       // Get document multimedia and add them to the media list
       const mms = await getDocumentMultiMedia(db, docId)
       const promises: Promise<void>[] = []
-      for (const mm of mms) {
+
+      mms.forEach((mm) => {
         promises.push(
           addMediaItemToPart(
             date,
@@ -732,11 +801,12 @@ const plugin: Plugin = (
             'internal'
           )
         )
-      }
+      })
 
       // Get document extracts and add them to the media list
       const extracts = await getDocumentExtract(db, docId, setProgress)
-      for (const extract of extracts) {
+
+      extracts.forEach((extract) => {
         promises.push(
           addMediaItemToPart(
             date,
@@ -745,7 +815,7 @@ const plugin: Plugin = (
             'external'
           )
         )
-      }
+      })
 
       // Get document multimedia of internal references
       const internalRefs = $query(
@@ -753,20 +823,9 @@ const plugin: Plugin = (
         `SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = ${docId} AND Document.Class <> 94`
       ) as MultiMediaExtractRef[]
 
-      for (const ref of internalRefs) {
-        const refMedia = await getDocumentMultiMedia(db, ref.DocumentId)
-
-        for (const refMediaFile of refMedia) {
-          promises.push(
-            addMediaItemToPart(
-              date,
-              ref.BeginParagraphOrdinal,
-              refMediaFile,
-              'internal'
-            )
-          )
-        }
-      }
+      internalRefs.forEach((ref) => {
+        promises.push(processInternalRefs(db, ref, date))
+      })
 
       await Promise.allSettled(promises)
     }
@@ -929,11 +988,12 @@ const plugin: Plugin = (
       string,
       Map<number, MeetingFile[]>
     >
-    for (const [, parts] of meetings.entries()) {
+
+    meetings.forEach((parts) => {
       let i = 1
-      for (const [, media] of [...parts.entries()].sort(
-        (a, b) => a[0] - b[0]
-      )) {
+      const sorted = [...parts.entries()].sort((a, b) => a[0] - b[0])
+
+      sorted.forEach(([, media]) => {
         media
           .filter((m) => !m.safeName)
           .forEach((item, j) => {
@@ -958,8 +1018,8 @@ const plugin: Plugin = (
             }
           })
         i++
-      }
-    }
+      })
+    })
     $log.debug(meetings)
     /* log.debug(Object.entries(get("meetingMedia")).map(meeting => { meeting[1] = meeting[1]
     .filter(mediaItem => mediaItem.media.length > 0)
@@ -1060,15 +1120,15 @@ const plugin: Plugin = (
       initProgress(total)
       const promises: Promise<void>[] = []
 
-      for (const [date, parts] of meetings.entries()) {
-        for (const [, media] of parts.entries()) {
-          for (const item of media) {
+      meetings.forEach((parts, date) => {
+        parts.forEach((media) => {
+          media.forEach((item) => {
             if (!dryrun) {
               promises.push(syncMediaItem(date, item, setProgress))
             }
-          }
-        }
-      }
+          })
+        })
+      })
 
       await Promise.allSettled(promises)
     }
