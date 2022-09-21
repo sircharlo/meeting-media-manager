@@ -18,7 +18,7 @@ const plugin: Plugin = (
   },
   inject
 ) => {
-  async function connect() {
+  async function connect(): Promise<OBSWebSocket | OBSWebSocketV4 | null> {
     const { enable, port, password, useV4 } = $getPrefs('app.obs') as ObsPrefs
     if (!enable && obs) {
       resetOBS()
@@ -169,7 +169,7 @@ const plugin: Plugin = (
     return obs
   }
 
-  function resetOBS() {
+  function resetOBS(): void {
     if (obs && $getPrefs('app.obs.useV4')) {
       try {
         ;(obs as OBSWebSocketV4).disconnect()
@@ -183,7 +183,9 @@ const plugin: Plugin = (
   }
   inject('resetOBS', resetOBS)
 
-  async function getScenes(current: boolean = false) {
+  async function getScenes(
+    current: boolean = false
+  ): Promise<string | string[]> {
     try {
       let currentScene = ''
       let scenes: string[] = []
@@ -243,7 +245,7 @@ const plugin: Plugin = (
   }
   inject('getScenes', getScenes)
 
-  async function setScene(scene: string) {
+  async function setScene(scene: string): Promise<void> {
     try {
       if ($getPrefs('app.obs.useV4')) {
         obs = (await connect()) as OBSWebSocketV4

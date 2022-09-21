@@ -21,7 +21,7 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
     debug: {},
   }
 
-  function logger(type: keyof Logs, args: [msg: any, ...args: any[]]) {
+  function logger(type: keyof Logs, args: [msg: any, ...args: any[]]): void {
     const now = +new Date()
     if (!logs[type][now]) logs[type][now] = []
     logs[type][now].push(
@@ -52,7 +52,7 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
 
   inject('log', log)
 
-  const bugURL = () => {
+  const bugURL = (): string => {
     const prefs = JSON.stringify(
       Object.fromEntries(
         Object.entries($getAllPrefs()).map(([scope, prefs]) => {
@@ -121,7 +121,7 @@ ${JSON.stringify(logs.error, null, 2)}
 
   inject('bugURL', bugURL)
 
-  inject('printStats', () => {
+  inject('printStats', (): void => {
     const performance = store.state.stats.performance as Map<string, Perf>
     const downloads = store.state.stats.downloads as Stats
     for (const [func, perf] of [...performance.entries()].sort(

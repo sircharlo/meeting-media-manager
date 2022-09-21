@@ -49,11 +49,89 @@ const plugin: Plugin = (
   },
   inject
 ) => {
+  async function extractMediaItems(
+    extract: MultiMediaExtract,
+    setProgress?: Function
+  ): Promise<MeetingFile[]> {
+    extract.Lang = $getPrefs('media.lang') as string
+    if (extract.Link) {
+      try {
+        const matches = extract.Link.match(/\/(.*)\//)
+        if (matches && matches.length > 0) {
+          extract.Lang = (matches.pop() as string).split(':')[0]
+        }
+      } catch (e: any) {
+        $log.error(e)
+      }
+    }
+
+    const symbol = extract.UniqueEnglishSymbol.replace(/[0-9]/g, '')
+
+    // exclude the "old new songs" songbook, as we don't need images from that
+    if (symbol !== 'snnw') {
+      const extractDb = await getDbFromJWPUB(
+        symbol,
+        extract.IssueTagNumber,
+        setProgress
+      )
+      if (extractDb) {
+        return (
+          await getDocumentMultiMedia(
+            extractDb,
+            null,
+            extract.RefMepsDocumentId
+          )
+        )
+          .filter((mmItem) => {
+            if (
+              mmItem?.queryInfo?.tableQuestionIsUsed &&
+              mmItem.queryInfo.NextParagraphOrdinal &&
+              !mmItem?.queryInfo?.TargetParagraphNumberLabel
+            ) {
+              mmItem.BeginParagraphOrdinal =
+                mmItem.queryInfo.NextParagraphOrdinal
+            }
+
+            // include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
+            if (
+              (
+                $getLocalJWLangs().find(
+                  (lang) => lang.langcode === $getPrefs('media.lang')
+                ) as ShortJWLang
+              ).isSignLanguage &&
+              !!mmItem?.queryInfo?.FilePath &&
+              $isVideo(mmItem?.queryInfo?.FilePath) &&
+              !mmItem?.queryInfo?.TargetParagraphNumberLabel
+            ) {
+              return true
+            } else if (
+              mmItem.BeginParagraphOrdinal &&
+              extract.RefBeginParagraphOrdinal &&
+              extract.RefEndParagraphOrdinal
+            ) {
+              return (
+                extract.RefBeginParagraphOrdinal <=
+                  mmItem.BeginParagraphOrdinal &&
+                mmItem.BeginParagraphOrdinal <= extract.RefEndParagraphOrdinal
+              )
+            } else {
+              return true
+            }
+          })
+          .map((mmItem) => {
+            mmItem.BeginParagraphOrdinal = extract.BeginParagraphOrdinal
+            return mmItem
+          })
+      }
+    }
+    return []
+  }
+
   async function getDocumentExtract(
     db: Database,
     docId: number,
     setProgress?: Function
-  ) {
+  ): Promise<MeetingFile[]> {
     const songPub = store.state.media.songPub as string
     const excludeTh = $getPrefs('media.excludeTh')
     let extractMultimediaItems: MeetingFile[] = []
@@ -72,82 +150,21 @@ const plugin: Plugin = (
         ${excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ''}
       ORDER BY DocumentExtract.BeginParagraphOrdinal`
     ) as MultiMediaExtract[]
-    for (const extract of extracts) {
-      extract.Lang = $getPrefs('media.lang') as string
-      if (extract.Link) {
-        try {
-          const matches = extract.Link.match(/\/(.*)\//)
-          if (matches && matches.length > 0) {
-            extract.Lang = (matches.pop() as string).split(':')[0]
-          }
-        } catch (e: any) {
-          $log.error(e)
-        }
+
+    const promises: Promise<MeetingFile[]>[] = []
+
+    extracts.forEach((extract) => {
+      promises.push(extractMediaItems(extract, setProgress))
+    })
+
+    const result = await Promise.allSettled(promises)
+
+    result.forEach((mediaItems) => {
+      if (mediaItems.status === 'fulfilled') {
+        extractMultimediaItems = extractMultimediaItems.concat(mediaItems.value)
       }
+    })
 
-      const symbol = extract.UniqueEnglishSymbol.replace(/[0-9]/g, '')
-
-      // exclude the "old new songs" songbook, as we don't need images from that
-      if (symbol !== 'snnw') {
-        const extractDb = await getDbFromJWPUB(
-          symbol,
-          extract.IssueTagNumber,
-          setProgress
-        )
-        if (extractDb) {
-          extractMultimediaItems = extractMultimediaItems.concat(
-            (
-              await getDocumentMultiMedia(
-                extractDb,
-                null,
-                extract.RefMepsDocumentId
-              )
-            )
-              .filter((mmItem) => {
-                if (
-                  mmItem?.queryInfo?.tableQuestionIsUsed &&
-                  mmItem.queryInfo.NextParagraphOrdinal &&
-                  !mmItem?.queryInfo?.TargetParagraphNumberLabel
-                ) {
-                  mmItem.BeginParagraphOrdinal =
-                    mmItem.queryInfo.NextParagraphOrdinal
-                }
-
-                // include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
-                if (
-                  (
-                    $getLocalJWLangs().find(
-                      (lang) => lang.langcode === $getPrefs('media.lang')
-                    ) as ShortJWLang
-                  ).isSignLanguage &&
-                  !!mmItem?.queryInfo?.FilePath &&
-                  $isVideo(mmItem?.queryInfo?.FilePath) &&
-                  !mmItem?.queryInfo?.TargetParagraphNumberLabel
-                ) {
-                  return true
-                } else if (
-                  mmItem.BeginParagraphOrdinal &&
-                  extract.RefBeginParagraphOrdinal &&
-                  extract.RefEndParagraphOrdinal
-                ) {
-                  return (
-                    extract.RefBeginParagraphOrdinal <=
-                      mmItem.BeginParagraphOrdinal &&
-                    mmItem.BeginParagraphOrdinal <=
-                      extract.RefEndParagraphOrdinal
-                  )
-                } else {
-                  return true
-                }
-              })
-              .map((mmItem) => {
-                mmItem.BeginParagraphOrdinal = extract.BeginParagraphOrdinal
-                return mmItem
-              })
-          )
-        }
-      }
-    }
     return extractMultimediaItems
   }
 
@@ -156,7 +173,7 @@ const plugin: Plugin = (
     par: number,
     media: MeetingFile,
     source?: string
-  ) {
+  ): Promise<void> {
     const mediaList = (await store.dispatch('media/get', {
       date,
       par,
@@ -194,7 +211,7 @@ const plugin: Plugin = (
     mepsId?: number,
     memOnly: boolean = false,
     silent: boolean = false
-  ) {
+  ): Promise<MeetingFile[]> {
     const result = $query(
       db,
       "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'"
@@ -378,7 +395,7 @@ const plugin: Plugin = (
       lang?: string
     },
     silent: boolean = false
-  ) {
+  ): Promise<SmallMediaFile[]> {
     if (mediaItem.lang) {
       $log.debug(mediaItem)
       $log.debug($getPrefs('media.lang'))
@@ -566,16 +583,16 @@ const plugin: Plugin = (
     issue?: string,
     setProgress?: Function,
     localPath: string = ''
-  ) {
-    let db: Database
+  ): Promise<Database | null> {
+    let db: Database | null
     try {
       // Extract db from local JWPUB file
       if (localPath) {
-        db = await $getDb({
+        db = (await $getDb({
           pub,
           issue,
-          file: $getZipContentsByExt(localPath, '.db'),
-        })
+          file: $getZipContentsByExt(localPath, '.db') ?? undefined,
+        })) as Database
 
         try {
           const jwpubInfo: {
@@ -621,7 +638,10 @@ const plugin: Plugin = (
 
   inject('getDbFromJWPUB', getDbFromJWPUB)
 
-  async function downloadIfRequired(file: VideoFile, setProgress?: Function) {
+  async function downloadIfRequired(
+    file: VideoFile,
+    setProgress?: Function
+  ): Promise<string> {
     // Set extra properties
     file.downloadRequired = true
     file.cacheDir = $pubPath(file) as string
@@ -674,183 +694,190 @@ const plugin: Plugin = (
 
   inject('downloadIfRequired', downloadIfRequired)
 
-  inject('getMwMedia', async (date: string, setProgress?: Function) => {
-    const mwDay = $dayjs(
-      date,
-      $getPrefs('app.outputFolderDateFormat') as string
-    )
-    const baseDate = mwDay.startOf('week')
-
-    let issue = baseDate.format('YYYYMM') + '00'
-    if (parseInt(baseDate.format('M')) % 2 === 0) {
-      issue = baseDate.subtract(1, 'month').format('YYYYMM') + '00'
-    }
-
-    // Get document id of this weeks mwb issue
-    const db = (await getDbFromJWPUB('mwb', issue, setProgress)) as Database
-    if (!db) throw new Error(`No MW media data found for ${date}!`)
-    const docId = (
-      $query(
-        db,
-        `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${baseDate.format(
-          'YYYYMMDD'
-        )}`
-      ) as { DocumentId: number }[]
-    )[0].DocumentId
-
-    // Get document multimedia and add them to the media list
-    const mms = await getDocumentMultiMedia(db, docId)
-    const promises: Promise<void>[] = []
-    for (const mm of mms) {
-      promises.push(
-        addMediaItemToPart(
-          date,
-          mm.BeginParagraphOrdinal as number,
-          mm,
-          'internal'
-        )
+  inject(
+    'getMwMedia',
+    async (date: string, setProgress?: Function): Promise<void> => {
+      const mwDay = $dayjs(
+        date,
+        $getPrefs('app.outputFolderDateFormat') as string
       )
-    }
+      const baseDate = mwDay.startOf('week')
 
-    // Get document extracts and add them to the media list
-    const extracts = await getDocumentExtract(db, docId, setProgress)
-    for (const extract of extracts) {
-      promises.push(
-        addMediaItemToPart(
-          date,
-          extract.BeginParagraphOrdinal as number,
-          extract,
-          'external'
-        )
-      )
-    }
+      let issue = baseDate.format('YYYYMM') + '00'
+      if (parseInt(baseDate.format('M')) % 2 === 0) {
+        issue = baseDate.subtract(1, 'month').format('YYYYMM') + '00'
+      }
 
-    // Get document multimedia of internal references
-    const internalRefs = $query(
-      db,
-      `SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = ${docId} AND Document.Class <> 94`
-    ) as MultiMediaExtractRef[]
+      // Get document id of this weeks mwb issue
+      const db = (await getDbFromJWPUB('mwb', issue, setProgress)) as Database
+      if (!db) throw new Error(`No MW media data found for ${date}!`)
+      const docId = (
+        $query(
+          db,
+          `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${baseDate.format(
+            'YYYYMMDD'
+          )}`
+        ) as { DocumentId: number }[]
+      )[0].DocumentId
 
-    for (const ref of internalRefs) {
-      const refMedia = await getDocumentMultiMedia(db, ref.DocumentId)
-
-      for (const refMediaFile of refMedia) {
+      // Get document multimedia and add them to the media list
+      const mms = await getDocumentMultiMedia(db, docId)
+      const promises: Promise<void>[] = []
+      for (const mm of mms) {
         promises.push(
           addMediaItemToPart(
             date,
-            ref.BeginParagraphOrdinal,
-            refMediaFile,
+            mm.BeginParagraphOrdinal as number,
+            mm,
             'internal'
           )
         )
       }
-    }
 
-    await Promise.allSettled(promises)
-  })
+      // Get document extracts and add them to the media list
+      const extracts = await getDocumentExtract(db, docId, setProgress)
+      for (const extract of extracts) {
+        promises.push(
+          addMediaItemToPart(
+            date,
+            extract.BeginParagraphOrdinal as number,
+            extract,
+            'external'
+          )
+        )
+      }
 
-  inject('getWeMedia', async (date: string, setProgress?: Function) => {
-    const weDay = $dayjs(
-      date,
-      $getPrefs('app.outputFolderDateFormat') as string
-    )
-    const baseDate = weDay.startOf('week')
-
-    // Get week nr from db
-    const getWeekNr = (database: Database) => {
-      if (!db) return -1
-      return $query(
-        database,
-        'SELECT FirstDateOffset FROM DatedText'
-      ).findIndex((weekItem: any) => {
-        return $dayjs(
-          weekItem.FirstDateOffset.toString(),
-          'YYYYMMDD'
-        ).isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
-      })
-    }
-
-    let issue = baseDate.subtract(8, 'weeks').format('YYYYMM') + '00'
-    let db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
-    let weekNr = getWeekNr(db)
-
-    if (weekNr < 0) {
-      issue = baseDate.subtract(9, 'weeks').format('YYYYMM') + '00'
-      db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
-      weekNr = getWeekNr(db)
-    }
-    if (weekNr < 0) throw new Error(`No WE meeting data found for ${date}!`)
-
-    const docId = (
-      $query(
+      // Get document multimedia of internal references
+      const internalRefs = $query(
         db,
-        `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`
-      ) as { DocumentId: number }[]
-    )[0].DocumentId
+        `SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = ${docId} AND Document.Class <> 94`
+      ) as MultiMediaExtractRef[]
 
-    const images = $query(
-      db,
-      `SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel
+      for (const ref of internalRefs) {
+        const refMedia = await getDocumentMultiMedia(db, ref.DocumentId)
+
+        for (const refMediaFile of refMedia) {
+          promises.push(
+            addMediaItemToPart(
+              date,
+              ref.BeginParagraphOrdinal,
+              refMediaFile,
+              'internal'
+            )
+          )
+        }
+      }
+
+      await Promise.allSettled(promises)
+    }
+  )
+
+  inject(
+    'getWeMedia',
+    async (date: string, setProgress?: Function): Promise<void> => {
+      const weDay = $dayjs(
+        date,
+        $getPrefs('app.outputFolderDateFormat') as string
+      )
+      const baseDate = weDay.startOf('week')
+
+      // Get week nr from db
+      const getWeekNr = (database: Database) => {
+        if (!db) return -1
+        return $query(
+          database,
+          'SELECT FirstDateOffset FROM DatedText'
+        ).findIndex((weekItem: any) => {
+          return $dayjs(
+            weekItem.FirstDateOffset.toString(),
+            'YYYYMMDD'
+          ).isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
+        })
+      }
+
+      let issue = baseDate.subtract(8, 'weeks').format('YYYYMM') + '00'
+      let db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
+      let weekNr = getWeekNr(db)
+
+      if (weekNr < 0) {
+        issue = baseDate.subtract(9, 'weeks').format('YYYYMM') + '00'
+        db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
+        weekNr = getWeekNr(db)
+      }
+      if (weekNr < 0) throw new Error(`No WE meeting data found for ${date}!`)
+
+      const docId = (
+        $query(
+          db,
+          `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`
+        ) as { DocumentId: number }[]
+      )[0].DocumentId
+
+      const images = $query(
+        db,
+        `SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel
     FROM DocumentMultimedia
       INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId
       INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
       LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
     WHERE Document.DocumentId = ${docId} AND Multimedia.CategoryType <> 9 GROUP BY DocumentMultimedia.MultimediaId`
-    ) as MultiMediaItem[]
+      ) as MultiMediaItem[]
 
-    const promises: Promise<void>[] = []
+      const promises: Promise<void>[] = []
 
-    images.forEach((img) => promises.push(addImgToPart(date, issue, img)))
+      images.forEach((img) => promises.push(addImgToPart(date, issue, img)))
 
-    const songs = $query(
-      db,
-      `SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET ${
-        2 * weekNr
-      }`
-    ) as MultiMediaItem[]
+      const songs = $query(
+        db,
+        `SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET ${
+          2 * weekNr
+        }`
+      ) as MultiMediaItem[]
 
-    let songLangs = songs.map(() => $getPrefs('media.lang') as string)
+      let songLangs = songs.map(() => $getPrefs('media.lang') as string)
 
-    try {
-      songLangs = (
-        $query(
-          db,
-          `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal FROM Extract INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId WHERE Extract.RefMepsDocumentClass = 31 ORDER BY Extract.ExtractId LIMIT 2 OFFSET ${
-            2 * weekNr
-          }`
-        ) as {
-          ExtractId: number
-          Link: string
-          BeginParagraphOrdinal: number
-        }[]
-      )
-        .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
-        .map((item) => {
-          const match = item.Link.match(/\/(.*)\//)
-          if (match) {
-            return (
-              match.pop()?.split(':')[0] ?? ($getPrefs('media.lang') as string)
-            )
-          } else {
-            return $getPrefs('media.lang') as string
-          }
-        })
-    } catch (e: any) {
-      $log.error(e)
+      try {
+        songLangs = (
+          $query(
+            db,
+            `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal FROM Extract INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId WHERE Extract.RefMepsDocumentClass = 31 ORDER BY Extract.ExtractId LIMIT 2 OFFSET ${
+              2 * weekNr
+            }`
+          ) as {
+            ExtractId: number
+            Link: string
+            BeginParagraphOrdinal: number
+          }[]
+        )
+          .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
+          .map((item) => {
+            const match = item.Link.match(/\/(.*)\//)
+            if (match) {
+              return (
+                match.pop()?.split(':')[0] ??
+                ($getPrefs('media.lang') as string)
+              )
+            } else {
+              return $getPrefs('media.lang') as string
+            }
+          })
+      } catch (e: any) {
+        $log.error(e)
+      }
+
+      songs.forEach((song, i) => {
+        promises.push(addSongToPart(date, songLangs, song, i))
+      })
+
+      await Promise.allSettled(promises)
     }
-
-    songs.forEach((song, i) => {
-      promises.push(addSongToPart(date, songLangs, song, i))
-    })
-
-    await Promise.allSettled(promises)
-  })
+  )
 
   async function addImgToPart(
     date: string,
     issue: string,
     img: MultiMediaItem
-  ) {
+  ): Promise<void> {
     if ($isImage(img.FilePath)) {
       const LocalPath = join($pubPath(), 'w', issue, '0', img.FilePath)
       const FileName = $sanitize(
@@ -878,7 +905,7 @@ const plugin: Plugin = (
     songLangs: string[],
     song: MultiMediaItem,
     i: number
-  ) {
+  ): Promise<void> {
     const songMedia = await getMediaLinks({
       pubSymbol: song.KeySymbol as string,
       track: song.Track as number,
@@ -893,7 +920,7 @@ const plugin: Plugin = (
     }
   }
 
-  inject('createMediaNames', () => {
+  inject('createMediaNames', (): void => {
     store.commit('stats/startPerf', {
       func: 'createMediaNames',
       start: performance.now(),
@@ -945,7 +972,7 @@ const plugin: Plugin = (
     })
   })
 
-  inject('syncLocalRecurringMedia', (baseDate: Dayjs) => {
+  inject('syncLocalRecurringMedia', (baseDate: Dayjs): void => {
     const meetings = store.getters['media/meetings'] as Map<
       string,
       Map<number, MeetingFile[]>
@@ -976,19 +1003,23 @@ const plugin: Plugin = (
   let progress = 0
   let total = 0
 
-  function initProgress(amount: number) {
+  function initProgress(amount: number): void {
     progress = 0
     total = amount
   }
 
-  function increaseProgress(setProgress: Function) {
+  function increaseProgress(setProgress: Function): void {
     progress++
     setProgress(progress, total, true)
   }
 
   inject(
     'syncJWMedia',
-    async (dryrun: boolean, baseDate: Dayjs, setProgress: Function) => {
+    async (
+      dryrun: boolean,
+      baseDate: Dayjs,
+      setProgress: Function
+    ): Promise<void> => {
       const meetings = new Map(
         Array.from(
           store.getters['media/meetings'] as Map<
@@ -1047,7 +1078,7 @@ const plugin: Plugin = (
     date: string,
     item: MeetingFile,
     setProgress: Function
-  ) {
+  ): Promise<void> {
     if (item.filesize && (item.url || item.filepath)) {
       $log.info(
         `%c[jwOrg] [${date}] ${item.safeName}`,
@@ -1132,7 +1163,7 @@ const plugin: Plugin = (
     increaseProgress(setProgress)
   }
 
-  async function shuffleMusic(stop: boolean = false) {
+  async function shuffleMusic(stop: boolean = false): Promise<void> {
     if (stop) {
       const audio = document.querySelector('#meetingMusic') as HTMLAudioElement
       /* const animation = audio.animate([{ volume: 0 }], {
@@ -1210,7 +1241,7 @@ const plugin: Plugin = (
     songs: (VideoFile | { title: string; track: string; path: string })[],
     index: number,
     fadeOut: boolean
-  ) {
+  ): Promise<void> {
     const audio = document.createElement('audio')
     audio.autoplay = true
     audio.id = 'meetingMusic'

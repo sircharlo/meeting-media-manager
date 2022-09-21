@@ -23,7 +23,7 @@ const plugin: Plugin = (
   inject
 ) => {
   // Paths
-  inject('pubPath', (file?: MeetingFile) => {
+  inject('pubPath', (file?: MeetingFile): string => {
     const pubPath = joinSafe(
       $appPath(),
       'Publications',
@@ -52,7 +52,7 @@ const plugin: Plugin = (
     }
   })
 
-  function mediaPath(file?: MeetingFile) {
+  function mediaPath(file?: MeetingFile): string {
     const mediaPath = joinSafe(
       $getPrefs('app.localOutputPath'),
       $getPrefs('media.lang')
@@ -68,7 +68,7 @@ const plugin: Plugin = (
   }
   inject('mediaPath', mediaPath)
 
-  inject('wtFontPath', async () => {
+  inject('wtFontPath', async (): Promise<string> => {
     const appDataPath = await ipcRenderer.invoke('appData')
     const localAppData = sync(joinSafe(appDataPath, '../local'), {
       onlyDirectories: true,
@@ -88,7 +88,7 @@ const plugin: Plugin = (
     )
   })
 
-  inject('ytPath', (lang?: string) => {
+  inject('ytPath', (lang?: string): string => {
     return joinSafe(
       $appPath(),
       'Publications',
@@ -100,27 +100,30 @@ const plugin: Plugin = (
   })
 
   // Improved fs/glob functions
-  inject('findOne', (path: string | string[], options?: Options) => {
+  inject('findOne', (path: string | string[], options?: Options): string => {
     return sync(path, options)[0]
   })
 
-  inject('findAll', (path: string | string[], options?: Options) => {
+  inject('findAll', (path: string | string[], options?: Options): string[] => {
     const results = sync(path, options)
     $log.debug(path, results)
     return results
   })
 
-  inject('rm', (files: string | string[]) => {
+  inject('rm', (files: string | string[]): void => {
     if (!Array.isArray(files)) files = [files]
     files.forEach((file) => removeSync(file))
   })
 
-  inject('write', (file: string, data: string | NodeJS.ArrayBufferView) => {
-    ensureFileSync(file)
-    writeFileSync(file, data)
-  })
+  inject(
+    'write',
+    (file: string, data: string | NodeJS.ArrayBufferView): void => {
+      ensureFileSync(file)
+      writeFileSync(file, data)
+    }
+  )
 
-  inject('copy', (src: string, dest: string) => {
+  inject('copy', (src: string, dest: string): void => {
     ensureFileSync(dest)
     copyFileSync(src, dest)
   })
@@ -131,7 +134,7 @@ const plugin: Plugin = (
     newName: string,
     action: string = 'rename',
     type: string = 'string'
-  ) {
+  ): void {
     if (existsSync(path)) {
       const dir = dirname(path)
       const file = basename(path)
@@ -172,7 +175,7 @@ const plugin: Plugin = (
       newName: string,
       action: string = 'rename',
       type: string = 'string'
-    ) => {
+    ): void => {
       if (existsSync(dir)) {
         readdirSync(dir).forEach((file) => {
           rename(join(dir, file), search, newName, action, type)
@@ -181,67 +184,70 @@ const plugin: Plugin = (
     }
   )
 
-  inject('renamePubs', async (oldVal: string, newVal: string) => {
-    if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) return
-    readdirSync(mediaPath()).forEach((dir) => {
-      const date = $dayjs(
-        dir,
-        $getPrefs('app.outputFolderDateFormat') as string,
-        oldVal.split('-')[0]
-      )
-      if (date.isValid()) {
-        // Rename all files that include the localized 'song' or 'paragraph' strings
-        readdirSync(join(mediaPath(), dir)).forEach((file) => {
-          const newName = file
-            .replace(
-              (' - ' + i18n.t('song', oldVal)) as string,
-              (' - ' + i18n.t('song', newVal)) as string
-            )
-            .replace(
-              (' - ' + i18n.t('paragraph', oldVal)) as string,
-              (' - ' + i18n.t('paragraph', newVal)) as string
-            )
-
-          if (file !== newName) {
-            renameSync(
-              join(mediaPath(), dir, file),
-              join(mediaPath(), dir, newName)
-            )
-          }
-        })
-
-        // Rename the date folder to the new localized format
-        const newPath = join(
-          mediaPath(),
-          date
-            .locale(newVal.split('-')[0])
-            .format($getPrefs('app.outputFolderDateFormat') as string)
+  inject(
+    'renamePubs',
+    async (oldVal: string, newVal: string): Promise<void> => {
+      if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) return
+      readdirSync(mediaPath()).forEach((dir) => {
+        const date = $dayjs(
+          dir,
+          $getPrefs('app.outputFolderDateFormat') as string,
+          oldVal.split('-')[0]
         )
-        if (!existsSync(newPath)) {
-          renameSync(join(mediaPath(), dir), newPath)
+        if (date.isValid()) {
+          // Rename all files that include the localized 'song' or 'paragraph' strings
+          readdirSync(join(mediaPath(), dir)).forEach((file) => {
+            const newName = file
+              .replace(
+                (' - ' + i18n.t('song', oldVal)) as string,
+                (' - ' + i18n.t('song', newVal)) as string
+              )
+              .replace(
+                (' - ' + i18n.t('paragraph', oldVal)) as string,
+                (' - ' + i18n.t('paragraph', newVal)) as string
+              )
+
+            if (file !== newName) {
+              renameSync(
+                join(mediaPath(), dir, file),
+                join(mediaPath(), dir, newName)
+              )
+            }
+          })
+
+          // Rename the date folder to the new localized format
+          const newPath = join(
+            mediaPath(),
+            date
+              .locale(newVal.split('-')[0])
+              .format($getPrefs('app.outputFolderDateFormat') as string)
+          )
+          if (!existsSync(newPath)) {
+            renameSync(join(mediaPath(), dir), newPath)
+          }
         }
-      }
-    })
-
-    // Rename files containing localized 'song' or 'paragraph' strings and date folders on cong server
-    const client = store.state.cong.client as WebDAVClient
-    if (client) {
-      const promises: Promise<any>[] = []
-
-      store.state.cong.contents.forEach((file: FileStat) => {
-        promises.push(renameCongFile(client, file, oldVal, newVal))
       })
 
-      await Promise.allSettled(promises)
+      // Rename files containing localized 'song' or 'paragraph' strings and date folders on cong server
+      const client = store.state.cong.client as WebDAVClient
+      if (client) {
+        const promises: Promise<void>[] = []
+
+        store.state.cong.contents.forEach((file: FileStat) => {
+          promises.push(renameCongFile(client, file, oldVal, newVal))
+        })
+
+        await Promise.allSettled(promises)
+      }
     }
-  })
+  )
 
   async function renameCongFile(
     client: WebDAVClient,
     file: FileStat,
     oldVal: string,
     newVal: string
-  ) {
+  ): Promise<void> {
     if (file.basename.includes((' - ' + i18n.t('song', oldVal)) as string)) {
       const newName = file.filename.replace(
         (' - ' + i18n.t('song', oldVal)) as string,
@@ -306,7 +312,7 @@ const plugin: Plugin = (
     )
   })
 
-  inject('sanitize', (name: string, isFile: boolean = false) => {
+  inject('sanitize', (name: string, isFile: boolean = false): string => {
     const ext = isFile ? extname(name).toLowerCase() : ''
 
     // Remove special characters from filename
@@ -339,12 +345,12 @@ const plugin: Plugin = (
   })
 
   // Zipper functions
-  inject('extractAllTo', (zip: string, file: string, dest: string) => {
+  inject('extractAllTo', (zip: string, file: string, dest: string): void => {
     const zipFile = new Zipper(zip).readFile(file)
     if (zipFile) new Zipper(zipFile).extractAllTo(dest)
   })
 
-  inject('getZipContentsByExt', (zip: string, ext: string) => {
+  inject('getZipContentsByExt', (zip: string, ext: string): Buffer | null => {
     const contents = new Zipper(zip).readFile('contents')
     if (contents) {
       const entryName = new Zipper(contents)
@@ -355,7 +361,7 @@ const plugin: Plugin = (
     return contents
   })
 
-  inject('getZipContentsByName', (zip: string, name: string) => {
+  inject('getZipContentsByName', (zip: string, name: string): Buffer | null => {
     const contents = new Zipper(zip).readFile('contents')
     if (contents) {
       const entryName = new Zipper(contents)

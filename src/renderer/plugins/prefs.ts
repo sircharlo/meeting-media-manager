@@ -384,13 +384,15 @@ const plugin: Plugin = ({ $sentry }, inject) => {
   inject('getCongPrefs', async () => {
     return sync(join(await ipcRenderer.invoke('userData'), 'prefs-*.json'))
       .map((file) => {
-        const prefs = JSON.parse(readFileSync(file, 'utf8'))
+        const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
         return {
-          name: prefs?.app?.congregationName ?? prefs?.congregationName,
+          name:
+            // @ts-ignore
+            prefs?.app?.congregationName ?? (prefs?.congregationName as string),
           path: file,
         }
       })
-      .filter((cong) => cong.name)
+      .filter((cong) => !!cong.name)
       .sort((a, b) => b.name.localeCompare(a.name))
   })
   function initStore(name: string) {
@@ -404,7 +406,7 @@ const plugin: Plugin = ({ $sentry }, inject) => {
     return dirname(normalizeSafe(store?.path ?? ''))
   })
   inject('appVersion', async () => {
-    return await ipcRenderer.invoke('appVersion')
+    return (await ipcRenderer.invoke('appVersion')) as string
   })
   inject('switchCong', (path: string) => {
     initStore(basename(path, '.json'))

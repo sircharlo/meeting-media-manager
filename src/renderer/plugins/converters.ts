@@ -33,7 +33,7 @@ const plugin: Plugin = (
   },
   inject
 ) => {
-  function convertSvg(mediaFile: string) {
+  function convertSvg(mediaFile: string): void {
     const div = document.createElement('div')
     const image = document.createElement('img')
     const canvas = document.createElement('canvas')
@@ -75,7 +75,7 @@ const plugin: Plugin = (
     image.src = pathToFileURL(mediaFile).href
   }
 
-  inject('convertToVLC', () => {
+  inject('convertToVLC', (): void => {
     $findAll(join($mediaPath(), '*/'), {
       onlyDirectories: true,
     })
@@ -108,7 +108,7 @@ const plugin: Plugin = (
       })
   })
 
-  async function convertPdf(mediaFile: string) {
+  async function convertPdf(mediaFile: string): Promise<void> {
     const pdfjsLib = require('pdfjs-dist') as typeof import('pdfjs-dist')
     try {
       pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
@@ -129,7 +129,7 @@ const plugin: Plugin = (
     mediaFile: string,
     pdf: PDFDocumentProxy,
     pageNr: number
-  ) {
+  ): Promise<void> {
     try {
       // Set pdf page
       const page = await pdf.getPage(pageNr)
@@ -182,7 +182,7 @@ const plugin: Plugin = (
     }
   }
 
-  inject('convertUnusableFiles', async (dir: string) => {
+  inject('convertUnusableFiles', async (dir: string): Promise<void> => {
     const promises: Promise<void>[] = []
 
     $findAll(join(dir, '**', '*pdf'), {
@@ -201,7 +201,7 @@ const plugin: Plugin = (
   })
 
   // Setup FFmpeg for video conversion
-  async function setupFFmpeg(setProgress: Function) {
+  async function setupFFmpeg(setProgress: Function): Promise<void> {
     if (store.state.media.ffMpeg) return
     const osType = type()
     let target = 'linux-64'
@@ -257,7 +257,12 @@ const plugin: Plugin = (
     store.commit('media/setFFmpeg', true)
   }
 
-  function resize(x: number, y: number, xMax?: number, yMax?: number) {
+  function resize(
+    x: number,
+    y: number,
+    xMax?: number,
+    yMax?: number
+  ): number[] {
     if (xMax && yMax) {
       // Maximum values of height and width given, aspect ratio preserved.
       if (y > x) {
@@ -276,7 +281,7 @@ const plugin: Plugin = (
     }
   }
 
-  inject('escapeHTML', (str: string) => {
+  inject('escapeHTML', (str: string): string => {
     const match = /["'&<>]/.exec(str)
     if (!match) return str
 
@@ -317,7 +322,7 @@ const plugin: Plugin = (
     return lastIndex !== index ? html + str.substring(lastIndex, index) : html
   })
 
-  function createVideo(file: string, setProgress: Function) {
+  function createVideo(file: string, setProgress: Function): Promise<void> {
     const output = changeExt(file, '.mp4')
     return new Promise<void>((resolve) => {
       try {
@@ -412,19 +417,23 @@ const plugin: Plugin = (
   let progress = 0
   let total = 0
 
-  function initProgress(amount: number) {
+  function initProgress(amount: number): void {
     progress = 0
     total = amount
   }
 
-  function increaseProgress(setProgress: Function) {
+  function increaseProgress(setProgress: Function): void {
     progress++
     setProgress(progress, total, true)
   }
 
   inject(
     'convertToMP4',
-    async (baseDate: Dayjs, now: Dayjs, setProgress: Function) => {
+    async (
+      baseDate: Dayjs,
+      now: Dayjs,
+      setProgress: Function
+    ): Promise<void> => {
       const files = $findAll(join($mediaPath(), '*'), {
         onlyDirectories: true,
       })

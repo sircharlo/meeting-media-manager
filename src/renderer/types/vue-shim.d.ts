@@ -1,4 +1,3 @@
-import { WebDAVClient } from 'webdav/dist/web/types'
 /* eslint-disable import/named */
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { Options } from 'fast-glob'
@@ -21,7 +20,7 @@ interface CustomProps {
     username: string,
     password: string,
     dir: string = '/'
-  ) => Promise<WebDAVClient | string>
+  ) => Promise<string | null>
   $convertToMP4: (
     baseDate: Dayjs,
     now: Dayjs,
@@ -54,13 +53,13 @@ interface CustomProps {
     file?: Buffer
     pub?: string
     issue?: string
-  }) => Promise<Database>
+  }) => Promise<Database | null>
   $getDbFromJWPUB: (
     pub?: string,
     issue?: string,
     setProgess?: Function,
     localPath: string = ''
-  ) => Promise<Database>
+  ) => Promise<Database | null>
   $getDocumentMultiMedia: (
     db: Database,
     docId: number | null,
@@ -89,9 +88,9 @@ interface CustomProps {
   $getMwMedia: (date: string, setProgress?: Function) => Promise<void>
   $getScenes: (current: boolean = false) => Promise<string[] | string>
   $getWeMedia: (date: string, setProgress?: Function) => Promise<void>
-  $getYearText: (force: boolean = false) => Promise<string>
-  $getZipContentsByExt: (zip: string, ext: string) => Buffer
-  $getZipContentsByName: (zip: string, name: string) => Buffer
+  $getYearText: (force: boolean = false) => Promise<string | null>
+  $getZipContentsByExt: (zip: string, ext: string) => Buffer | null
+  $getZipContentsByName: (zip: string, name: string) => Buffer | null
   $ghApi: NuxtAxiosInstance
   $initStore: (name: string) => void
   $isAudio: (filepath: string) => boolean

@@ -13,7 +13,7 @@ const plugin: Plugin = ({ store, $log }, inject) => {
         persistent?: boolean
       },
       error?: any
-    ) => {
+    ): void => {
       if (error) {
         if (!props) {
           props = {}
@@ -49,7 +49,7 @@ const plugin: Plugin = ({ store, $log }, inject) => {
         identifier?: string
         persistent?: boolean
       }
-    ) => {
+    ): void => {
       store.commit('notify/show', {
         message,
         type: 'success',
@@ -68,7 +68,7 @@ const plugin: Plugin = ({ store, $log }, inject) => {
         persistent?: boolean
       },
       error?: any
-    ) => {
+    ): void => {
       let action
       if (error) {
         $log.warn(error)
@@ -90,7 +90,7 @@ const plugin: Plugin = ({ store, $log }, inject) => {
     }
   )
 
-  inject('error', (message: string, error: any, identifier?: string) => {
+  inject('error', (message: string, error: any, identifier?: string): void => {
     $log.error(error)
     store.commit('notify/show', {
       message,

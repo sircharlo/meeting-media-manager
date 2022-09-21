@@ -5,7 +5,7 @@ const plugin: Plugin = (_ctx, inject) => {
   inject('clone', (value: any) => {
     return cloneDeep(value)
   })
-  inject('strip', (value: string, type: string = 'id') => {
+  inject('strip', (value: string, type: string = 'id'): string => {
     if (!value) return ''
     switch (type) {
       case 'id':

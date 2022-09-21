@@ -27,10 +27,13 @@ const plugin: Plugin = ({ store, $log, $config }, inject) => {
       file?: Buffer
       pub?: string
       issue?: string
-    }) => {
+    }): Promise<Database | null> => {
       // Get saved db if available
       if (pub && issue) {
-        const result = await store.dispatch('db/get', { pub, issue })
+        const result = (await store.dispatch('db/get', {
+          pub,
+          issue,
+        })) as Database
         if (result) return result
       }
 
@@ -46,7 +49,7 @@ const plugin: Plugin = ({ store, $log, $config }, inject) => {
         $log.error(e)
       }
 
-      return undefined
+      return null
     }
   )
 

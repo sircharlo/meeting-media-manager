@@ -113,7 +113,7 @@ const plugin: Plugin = (
         if (backgrounds.length === 0) {
           const yeartext = await $getYearText(force)
           const root = document.createElement('div')
-          root.innerHTML = yeartext
+          root.innerHTML = yeartext ?? ''
           let yeartextString = ''
           for (let i = 0; i < root.children.length; i++) {
             yeartextString += root.children.item(i)?.textContent

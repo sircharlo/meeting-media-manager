@@ -12,6 +12,7 @@ import {
   MeetingPrefs,
   CongFile,
   MeetingFile,
+  ElectronStore,
 } from '~/types'
 
 const plugin: Plugin = (
@@ -40,7 +41,7 @@ const plugin: Plugin = (
     username: string,
     password: string,
     dir: string = '/'
-  ) {
+  ): Promise<string | null> {
     try {
       const client = createClient('https://' + host, {
         username,
@@ -102,7 +103,10 @@ const plugin: Plugin = (
   }
   inject('connect', connect)
 
-  async function removeOldDate(client: WebDAVClient, dir: FileStat) {
+  async function removeOldDate(
+    client: WebDAVClient,
+    dir: FileStat
+  ): Promise<void> {
     const date = $dayjs(
       dir.basename,
       $getPrefs('app.outputFolderDateFormat') as string
@@ -116,7 +120,7 @@ const plugin: Plugin = (
     }
   }
 
-  inject('updateContent', async () => {
+  inject('updateContent', async (): Promise<void> => {
     if (store.state.cong.client) {
       const contents = (await store.state.cong.client.getDirectoryContents(
         $getPrefs('cong.dir'),
@@ -128,76 +132,82 @@ const plugin: Plugin = (
     }
   })
 
-  inject('forcePrefs', async (refresh: boolean = false) => {
-    if (!refresh && store.state.cong.prefs) {
-      return store.state.cong.prefs
-    }
-    try {
-      const client = store.state.cong.client as WebDAVClient
-      const path = join($getPrefs('cong.dir'), 'forcedPrefs.json')
-      if (
-        (store.state.cong.contents as FileStat[]).find(
-          ({ filename }) => filename === path
-        )
-      ) {
-        const json = await client.getFileContents(path, {
-          format: 'text',
-        })
-
-        const prefs = JSON.parse(json as string)
-
-        // Migration of old pref structures
-        for (const key of Object.keys(prefs)) {
-          // Skip root keys
-          if (
-            key === 'app' ||
-            key === 'cong' ||
-            key === 'media' ||
-            key === 'meeting'
-          ) {
-            continue
-          }
-
-          const newProp = $migrate2290(key, prefs[key])
-          delete prefs[key]
-
-          const keys = newProp.key.split('.')
-          if (!prefs[keys[0]]) prefs[keys[0]] = {}
-          if (keys.length === 2) {
-            prefs[keys[0]][keys[1]] = newProp.val
-          } else if (keys.length === 3) {
-            if (!prefs[keys[0]][keys[1]]) prefs[keys[0]][keys[1]] = {}
-            prefs[keys[0]][keys[1]][keys[2]] = newProp.val
-          }
-        }
-
-        store.commit('cong/setPrefs', JSON.parse(JSON.stringify(prefs)))
-        if (!prefs.app) prefs.app = {}
-        prefs.app.obs = Object.assign(
-          $getPrefs('app.obs') as ObsPrefs,
-          prefs.app.obs ?? {}
-        )
-        const newPrefs = {
-          app: Object.assign($getPrefs('app') as AppPrefs, prefs.app ?? {}),
-          cong: Object.assign($getPrefs('cong') as CongPrefs, prefs.cong ?? {}),
-          media: Object.assign(
-            $getPrefs('media') as MediaPrefs,
-            prefs.media ?? {}
-          ),
-          meeting: Object.assign(
-            $getPrefs('meeting') as MeetingPrefs,
-            prefs.meeting ?? {}
-          ),
-        }
-
-        $setAllPrefs(newPrefs)
+  inject(
+    'forcePrefs',
+    async (refresh: boolean = false): Promise<ElectronStore | undefined> => {
+      if (!refresh && store.state.cong.prefs) {
+        return store.state.cong.prefs as ElectronStore
       }
-    } catch (e: any) {
-      $error('errorForcedSettingsEnforce', e)
-    }
-  })
+      try {
+        const client = store.state.cong.client as WebDAVClient
+        const path = join($getPrefs('cong.dir'), 'forcedPrefs.json')
+        if (
+          (store.state.cong.contents as FileStat[]).find(
+            ({ filename }) => filename === path
+          )
+        ) {
+          const json = await client.getFileContents(path, {
+            format: 'text',
+          })
 
-  function updateContentsTree() {
+          const prefs = JSON.parse(json as string)
+
+          // Migration of old pref structures
+          for (const key of Object.keys(prefs)) {
+            // Skip root keys
+            if (
+              key === 'app' ||
+              key === 'cong' ||
+              key === 'media' ||
+              key === 'meeting'
+            ) {
+              continue
+            }
+
+            const newProp = $migrate2290(key, prefs[key])
+            delete prefs[key]
+
+            const keys = newProp.key.split('.')
+            if (!prefs[keys[0]]) prefs[keys[0]] = {}
+            if (keys.length === 2) {
+              prefs[keys[0]][keys[1]] = newProp.val
+            } else if (keys.length === 3) {
+              if (!prefs[keys[0]][keys[1]]) prefs[keys[0]][keys[1]] = {}
+              prefs[keys[0]][keys[1]][keys[2]] = newProp.val
+            }
+          }
+
+          store.commit('cong/setPrefs', JSON.parse(JSON.stringify(prefs)))
+          if (!prefs.app) prefs.app = {}
+          prefs.app.obs = Object.assign(
+            $getPrefs('app.obs') as ObsPrefs,
+            prefs.app.obs ?? {}
+          )
+          const newPrefs = {
+            app: Object.assign($getPrefs('app') as AppPrefs, prefs.app ?? {}),
+            cong: Object.assign(
+              $getPrefs('cong') as CongPrefs,
+              prefs.cong ?? {}
+            ),
+            media: Object.assign(
+              $getPrefs('media') as MediaPrefs,
+              prefs.media ?? {}
+            ),
+            meeting: Object.assign(
+              $getPrefs('meeting') as MeetingPrefs,
+              prefs.meeting ?? {}
+            ),
+          }
+
+          $setAllPrefs(newPrefs)
+        }
+      } catch (e: any) {
+        $error('errorForcedSettingsEnforce', e)
+      }
+    }
+  )
+
+  function updateContentsTree(): CongFile[] {
     const tree: CongFile[] = []
     const root = $getPrefs('cong.dir')
     const contents = $clone(store.state.cong.contents) as FileStat[]
@@ -253,7 +263,7 @@ const plugin: Plugin = (
   }
   inject('updateContentsTree', updateContentsTree)
 
-  inject('getCongMedia', (baseDate: Dayjs, now: Dayjs) => {
+  inject('getCongMedia', (baseDate: Dayjs, now: Dayjs): void => {
     store.commit('stats/startPerf', {
       func: 'getCongMedia',
       start: performance.now(),
@@ -402,79 +412,82 @@ const plugin: Plugin = (
   let progress = 0
   let total = 0
 
-  function initProgress(amount: number) {
+  function initProgress(amount: number): void {
     progress = 0
     total = amount
   }
 
-  function increaseProgress(setProgress: Function) {
+  function increaseProgress(setProgress: Function): void {
     progress++
     setProgress(progress, total, true)
   }
 
-  inject('syncCongMedia', async (baseDate: Dayjs, setProgress: Function) => {
-    store.commit('stats/startPerf', {
-      func: 'syncCongMedia',
-      start: performance.now(),
-    })
-    const meetings = new Map(
-      Array.from(
-        store.getters['media/meetings'] as Map<
-          string,
-          Map<number, MeetingFile[]>
-        >
+  inject(
+    'syncCongMedia',
+    async (baseDate: Dayjs, setProgress: Function): Promise<void> => {
+      store.commit('stats/startPerf', {
+        func: 'syncCongMedia',
+        start: performance.now(),
+      })
+      const meetings = new Map(
+        Array.from(
+          store.getters['media/meetings'] as Map<
+            string,
+            Map<number, MeetingFile[]>
+          >
+        )
+          .filter(([date, _parts]) => {
+            if (date === 'Recurring') return true
+            const dateObj = $dayjs(
+              date,
+              $getPrefs('app.outputFolderDateFormat') as string
+            ) as Dayjs
+            return (
+              dateObj.isValid() &&
+              dateObj.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
+            )
+          })
+          .map((meeting) => {
+            meeting[1] = new Map(
+              Array.from(meeting[1]).filter((part) => {
+                part[1] = part[1].filter(({ congSpecific }) => congSpecific)
+                return part
+              })
+            )
+            return meeting
+          })
       )
-        .filter(([date, _parts]) => {
-          if (date === 'Recurring') return true
-          const dateObj = $dayjs(
-            date,
-            $getPrefs('app.outputFolderDateFormat') as string
-          ) as Dayjs
-          return (
-            dateObj.isValid() &&
-            dateObj.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
-          )
-        })
-        .map((meeting) => {
-          meeting[1] = new Map(
-            Array.from(meeting[1]).filter((part) => {
-              part[1] = part[1].filter(({ congSpecific }) => congSpecific)
-              return part
-            })
-          )
-          return meeting
-        })
-    )
 
-    let total = 0
-    meetings.forEach((parts) =>
-      parts.forEach((media) => (total += media.length))
-    )
+      let total = 0
+      meetings.forEach((parts) =>
+        parts.forEach((media) => (total += media.length))
+      )
 
-    initProgress(total)
-    const promises: Promise<void>[] = []
+      initProgress(total)
+      const promises: Promise<void>[] = []
 
-    meetings.forEach((parts, date) => {
-      parts.forEach((media) => {
-        media.forEach((item) => {
-          promises.push(syncCongMediaItem(date, item, setProgress))
+      meetings.forEach((parts, date) => {
+        parts.forEach((media) => {
+          media.forEach((item) => {
+            promises.push(syncCongMediaItem(date, item, setProgress))
+          })
         })
       })
-    })
 
-    await Promise.allSettled(promises)
+      await Promise.allSettled(promises)
 
-    store.commit('stats/stopPerf', {
-      func: 'syncCongMedia',
-      stop: performance.now(),
-    })
-  })
+      store.commit('stats/stopPerf', {
+        func: 'syncCongMedia',
+        stop: performance.now(),
+      })
+    }
+  )
 
   async function syncCongMediaItem(
     date: string,
     item: MeetingFile,
     setProgress: Function
-  ) {
+  ): Promise<void> {
     if (!item.hidden && !item.isLocal) {
       if (item.filesize) {
         $log.info(
