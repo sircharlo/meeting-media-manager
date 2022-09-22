@@ -34,7 +34,6 @@ test('render the home page correctly', async () => {
 })
 
 test('fetch is successfull', async () => {
-  test.skip()
   test.setTimeout(0)
 
   // Click on fetch button
