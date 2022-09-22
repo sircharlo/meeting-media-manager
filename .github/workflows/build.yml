@@ -78,7 +78,7 @@ jobs:
         run: yarn build -l AppImage -p never
 
       - name: Run tests
-        run: yarn test tests/home/fetch.test.ts
+        run: yarn test
       - uses: actions/upload-artifact@v3
         if: always()
         with:

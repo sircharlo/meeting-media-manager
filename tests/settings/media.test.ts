@@ -39,7 +39,7 @@ test('render the settings page correctly', async () => {
 })
 
 test('vlc playlist', async () => {
-  test.slow()
+  test.setTimeout(0)
 
   // Expand application setup
   await page.locator('button', { hasText: locale.optionsMedia }).click()
