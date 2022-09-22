@@ -10,7 +10,7 @@ import {
 } from 'electron-playwright-helpers'
 import { _electron as electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
-import prefsOld from './../mocks/prefs/prefsOld.json'
+import prefsNew from './../mocks/prefs/prefsNew.json'
 
 export async function startApp(options: any = {}) {
   // find the latest build in the out directory
@@ -58,25 +58,32 @@ export async function openHomePage(
 
   // Set mock preferences
   const congId = 'test'
-  const prefs = prefsObject ?? prefsOld
+  const prefs = prefsObject ?? prefsNew
 
   const appPath = (await ipcRendererInvoke(page, 'userData')) as string
   expect(appPath.endsWith(name)).toBe(true)
 
   const downloadsPath = (await ipcRendererInvoke(page, 'downloads')) as string
-  prefs.localOutputPath = downloadsPath
+  if (prefs.app) {
+    prefs.app.localOutputPath = downloadsPath
+  } else {
+    prefs.localOutputPath = downloadsPath
+  }
+
+  const congName = prefs.app
+    ? prefs.app.congregationName
+    : prefs.congregationName
 
   const onCongSelect = (await page.locator('.fa-building-user').count()) > 0
-  const congPresent =
-    (await page.locator(`text=${prefs.congregationName}`).count()) > 0
+  const congPresent = (await page.locator(`text=${congName}`).count()) > 0
 
   // Insert mock preferences
   writeFileSync(join(appPath, `prefs-${congId}.json`), JSON.stringify(prefs))
 
   if (onCongSelect && congPresent) {
-    if (await page.locator(`text=${prefs.congregationName}`).isVisible()) {
+    if (await page.locator(`text=${congName}`).isVisible()) {
       // Select congregation from list
-      await page.locator(`text=${prefs.congregationName}`).click()
+      await page.locator(`text=${congName}`).click()
     }
   } else if (onCongSelect) {
     // Click on first cong in list
@@ -88,16 +95,16 @@ export async function openHomePage(
   }
 
   // If not on correct cong, switch cong through menu
-  if ((await page.locator(`text=${prefs.congregationName}`).count()) !== 1) {
+  if ((await page.locator(`text=${congName}`).count()) !== 1) {
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.locator(`input#cong-select`).click()
-    await page.locator(`text=${prefs.congregationName}`).last().click()
+    await page.locator(`text=${congName}`).last().click()
   }
 
   // Wait for page to finish loading
   await page.waitForLoadState('domcontentloaded')
   await page.waitForSelector('.fa-photo-film')
-  await page.waitForSelector(`text=${prefs.congregationName}`)
+  await page.waitForSelector(`text=${congName}`)
 
   return page
 }

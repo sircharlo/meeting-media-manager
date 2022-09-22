@@ -20,7 +20,7 @@ test.afterAll(async () => {
 let page: Page
 
 test('render the home page correctly', async () => {
-  page = await openHomePage(electronApp)
+  page = await openHomePage(electronApp, prefs)
 
   // Check that the correct congregation is loaded
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
