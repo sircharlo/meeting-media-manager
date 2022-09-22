@@ -144,14 +144,18 @@ const plugin: Plugin = (
             // Convert date folder to new format
             const date = $dayjs(file, oldName)
             if (date.isValid())
-              renameSync(join(dir, file), join(dir, date.format(newName)))
+              if (file !== date.format(newName)) {
+                renameSync(join(dir, file), join(dir, date.format(newName)))
+              }
           } else if (file === oldName) {
             // Rename a file
-            renameSync(join(dir, file), join(dir, newName))
+            if (file !== newName) {
+              renameSync(join(dir, file), join(dir, newName))
+            }
           }
           break
         case 'replace': // replace a string within a filename (e.g. song or paragraph)
-          if (file.includes(oldName)) {
+          if (oldName !== newName && file.includes(oldName)) {
             renameSync(
               join(dir, file),
               join(dir, file.replace(oldName, newName))
