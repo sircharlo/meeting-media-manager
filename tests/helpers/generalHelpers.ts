@@ -2,12 +2,14 @@
 import dayjs from 'dayjs'
 import { basename, extname, join } from 'upath'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import prefs from './../mocks/prefs/prefsOld.json'
 const { LOCAL_LANGS } = require('./../../src/renderer/constants/lang') as {
   LOCAL_LANGS: string[]
 }
 
 dayjs.extend(updateLocale)
+dayjs.extend(isSameOrBefore)
 LOCAL_LANGS.forEach((l) => {
   require(`dayjs/locale/${l}`)
   dayjs.updateLocale(l, { weekStart: 1 })
@@ -29,6 +31,12 @@ export function getDate(type: string = 'now'): string {
     default:
       throw new Error('invalid type: ' + type)
   }
+}
+
+export function mwDayPresent(): boolean {
+  return dayjs()
+    .hour(0)
+    .isSameOrBefore(dayjs().startOf('week').add(parseInt(prefs.mwDay), 'days'))
 }
 
 export function delay(ms: number): Promise<void> {
@@ -59,6 +67,8 @@ export function strip(value: string, type: string = 'file') {
           .trim()
           .replace(/[ -]+$/g, '')
       )
+    case 'html':
+      return value.substring(0, value.indexOf('<em>'))
     default:
       throw new Error('Invalid type: ' + type)
   }

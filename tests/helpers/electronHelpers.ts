@@ -66,17 +66,32 @@ export async function openHomePage(
   const downloadsPath = (await ipcRendererInvoke(page, 'downloads')) as string
   prefs.localOutputPath = downloadsPath
 
+  const onCongSelect = (await page.locator('.fa-building-user').count()) > 0
+  const congPresent =
+    (await page.locator(`text=${prefs.congregationName}`).count()) > 0
+
   // Insert mock preferences
   writeFileSync(join(appPath, `prefs-${congId}.json`), JSON.stringify(prefs))
 
-  // Open the home page as test congregation
-  await page.goto(`app://./index.html?cong=${congId}`)
+  if (onCongSelect && congPresent) {
+    if (await page.locator(`text=${prefs.congregationName}`).isVisible()) {
+      // Select congregation from list
+      await page.locator(`text=${prefs.congregationName}`).click()
+    }
+  } else if (onCongSelect) {
+    // Click on first cong in list
+    await page.locator(`.v-list-item`).first().click()
+  } else if (page.url().includes('settings')) {
+    // Open the home page as test congregation
+    await page.goto(`app://./index.html?cong=${congId}`)
+    await page.reload({ waitUntil: 'domcontentloaded' })
+  }
 
   // If not on correct cong, switch cong through menu
   if ((await page.locator(`text=${prefs.congregationName}`).count()) !== 1) {
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.locator(`input#cong-select`).click()
-    await page.locator(`text=${prefs.congregationName}`).click()
+    await page.locator(`text=${prefs.congregationName}`).last().click()
   }
 
   // Wait for page to finish loading
