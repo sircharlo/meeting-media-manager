@@ -9,6 +9,8 @@ import prefs from './../mocks/prefs/prefsOld.json'
 
 let electronApp: ElectronApplication
 
+test.describe.configure({ mode: 'serial' })
+
 test.beforeAll(async () => {
   electronApp = await startApp()
 })

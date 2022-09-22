@@ -8,6 +8,8 @@ import { startApp, openHomePage } from './../helpers/electronHelpers'
 
 let electronApp: ElectronApplication
 
+test.describe.configure({ mode: 'serial' })
+
 test.beforeAll(async () => {
   electronApp = await startApp()
 })

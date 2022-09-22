@@ -12,6 +12,8 @@ import { startApp, openHomePage } from './../helpers/electronHelpers'
 
 let electronApp: ElectronApplication
 
+test.describe.configure({ mode: 'serial' })
+
 test.beforeAll(async () => {
   electronApp = await startApp()
 })
@@ -39,6 +41,8 @@ test('render the settings page correctly', async () => {
 })
 
 test('vlc playlist', async () => {
+  test.slow()
+
   // Expand application setup
   await page.locator('button', { hasText: locale.optionsMedia }).click()
 
