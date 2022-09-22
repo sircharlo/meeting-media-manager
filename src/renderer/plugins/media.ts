@@ -307,8 +307,8 @@ const plugin: Plugin = (
     db: Database,
     docId: number | null,
     mepsId?: number,
-    memOnly: boolean = false,
-    silent: boolean = false
+    memOnly?: boolean,
+    silent?: boolean
   ): Promise<MeetingFile[]> {
     const result = $query(
       db,
@@ -400,10 +400,10 @@ const plugin: Plugin = (
             db,
             mmItem,
             targetParNrExists,
-            silent,
+            !!silent,
             keySymbol,
             issueTagNumber,
-            memOnly
+            !!memOnly
           )
         )
       })
@@ -434,14 +434,14 @@ const plugin: Plugin = (
 
   async function getMediaLinks(
     mediaItem: {
+      pubSymbol: string
       docId?: number
       track?: number
-      pubSymbol: string
       issue?: string
       format?: string
       lang?: string
     },
-    silent: boolean = false
+    silent?: boolean
   ): Promise<SmallMediaFile[]> {
     if (mediaItem.lang) {
       $log.debug(mediaItem)

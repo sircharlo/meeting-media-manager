@@ -18,7 +18,7 @@ const plugin: Plugin = (
   },
   inject
 ) => {
-  async function connect(): Promise<OBSWebSocket | OBSWebSocketV4 | null> {
+  async function connectOBS(): Promise<OBSWebSocket | OBSWebSocketV4 | null> {
     const { enable, port, password, useV4 } = $getPrefs('app.obs') as ObsPrefs
     if (!enable && obs) {
       resetOBS()
@@ -190,11 +190,11 @@ const plugin: Plugin = (
       let currentScene = ''
       let scenes: string[] = []
       if ($getPrefs('app.obs.useV4')) {
-        obs = (await connect()) as OBSWebSocketV4
+        obs = (await connectOBS()) as OBSWebSocketV4
 
         // Try once again if connection failed
         if (!store.state.obs.connected) {
-          obs = (await connect()) as OBSWebSocketV4
+          obs = (await connectOBS()) as OBSWebSocketV4
         }
 
         // Return empty list on second failure
@@ -205,11 +205,11 @@ const plugin: Plugin = (
         scenes = result.scenes.map(({ name }) => name)
         currentScene = result['current-scene']
       } else {
-        obs = (await connect()) as OBSWebSocket
+        obs = (await connectOBS()) as OBSWebSocket
 
         // Try once again if connection failed
         if (!store.state.obs.connected) {
-          obs = (await connect()) as OBSWebSocket
+          obs = (await connectOBS()) as OBSWebSocket
         }
 
         // Return empty list on second failure
@@ -248,11 +248,11 @@ const plugin: Plugin = (
   async function setScene(scene: string): Promise<void> {
     try {
       if ($getPrefs('app.obs.useV4')) {
-        obs = (await connect()) as OBSWebSocketV4
+        obs = (await connectOBS()) as OBSWebSocketV4
         if (!obs) return
         await obs.send('SetCurrentScene', { 'scene-name': scene })
       } else {
-        obs = (await connect()) as OBSWebSocket
+        obs = (await connectOBS()) as OBSWebSocket
         if (!obs) return
         await obs.call('SetCurrentProgramScene', { sceneName: scene })
       }

@@ -399,13 +399,13 @@ const plugin: Plugin = ({ $sentry }, inject) => {
     store = new Store<ElectronStore>(storeOptions(name))
   }
   inject('initStore', initStore)
-  inject('storePath', () =>
+  inject('storePath', (): string | undefined =>
     store?.path ? normalizeSafe(store.path) : undefined
   )
-  inject('appPath', () => {
+  inject('appPath', (): string => {
     return dirname(normalizeSafe(store?.path ?? ''))
   })
-  inject('appVersion', async () => {
+  inject('appVersion', async (): Promise<string> => {
     return (await ipcRenderer.invoke('appVersion')) as string
   })
   inject('switchCong', (path: string) => {
@@ -414,10 +414,14 @@ const plugin: Plugin = ({ $sentry }, inject) => {
   inject('removeCong', (path: string) => {
     removeSync(path)
   })
-  inject('getPrefs', (key: string) => {
+  inject('getPrefs', (key: string): unknown => {
     return store?.get(key)
   })
-  inject('getAllPrefs', () => JSON.parse(readFileSync(store.path, 'utf8')))
+  inject(
+    'getAllPrefs',
+    (): ElectronStore =>
+      JSON.parse(readFileSync(store.path, 'utf8')) as ElectronStore
+  )
 
   inject('setPrefs', (key: string, value: unknown) => {
     store.set(key, value)

@@ -2,12 +2,16 @@
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { Options } from 'fast-glob'
 import { Database } from 'sql.js'
+import { Dayjs } from 'dayjs'
 import Vue from 'vue'
 import {
   MeetingFile,
   SmallMediaFile,
   ElectronStore,
   ShortJWLang,
+  NotifyAction,
+  VideoFile,
+  CongFile,
 } from '~/types'
 
 interface CustomProps {
@@ -31,7 +35,7 @@ interface CustomProps {
   $copy: (src: string, dest: string) => void
   $createMediaNames: () => void
   $downloadIfRequired: (
-    file: SmallMediaFile,
+    file: VideoFile,
     setProgress?: Function
   ) => Promise<string>
   $error: (message: string, error: Error, identifier?: string) => void
@@ -40,11 +44,12 @@ interface CustomProps {
   $findAll: (path: string | string[], options?: Options) => string[]
   $findOne: (path: string | string[], options?: Options) => string
   $flash: (message: string, type?: string) => void
-  $forcePrefs: (refresh: boolean = false) => Promise<void>
+  $forcePrefs: (refresh: boolean = false) => Promise<ElectronStore | undefined>
   $getAllPrefs: () => ElectronStore
   $getCongMedia: (baseDate: Dayjs, now: Dayjs) => void
-  $getCongPrefs: () => Promise<{ name: string | null; path: string }[]>
+  $getCongPrefs: () => Promise<{ name: string; path: string }[]>
   $updateContentsTree: () => CongFile[]
+  $getAllPrefs: () => ElectronStore
   $getDb: ({
     file,
     pub,
@@ -64,8 +69,8 @@ interface CustomProps {
     db: Database,
     docId: number | null,
     mepsId?: number,
-    memOnly: boolean = false,
-    silent: boolean = false
+    memOnly?: boolean,
+    silent?: boolean
   ) => Promise<MeetingFile[]>
   $getLocalJWLangs: () => ShortJWLang[]
   $getJWLangs: (forceReload: boolean = false) => Promise<ShortJWLang[]>
@@ -79,7 +84,7 @@ interface CustomProps {
       format?: string
       lang?: string
     },
-    silent: boolean = false
+    silent?: boolean
   ) => Promise<SmallMediaFile[]>
   $getMediaWindowDestination: () => Promise<{
     destination: number
@@ -127,15 +132,15 @@ interface CustomProps {
     path: string,
     oldName: string,
     newName: string,
-    action?: string = 'rename',
-    type?: string = 'string'
+    action: string = 'rename',
+    type: string = 'string'
   ) => void
   $renameAll: (
     dir: string,
     search: string,
     newName: string,
-    action?: string = 'rename',
-    type?: string = 'string'
+    action: string = 'rename',
+    type: string = 'string'
   ) => void
   $renamePubs: (oldVal: string, newVal: string) => Promise<void>
   $resetOBS: () => void
@@ -154,7 +159,7 @@ interface CustomProps {
     domain: string = 'mediaWindow'
   ) => Promise<void>
   $shuffleMusic: (stop: boolean = false) => Promise<void>
-  $storePath: () => string
+  $storePath: () => string | undefined
   $success: (
     message: string,
     props?: {
