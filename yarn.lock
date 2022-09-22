@@ -2836,15 +2836,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.25.2":
-  version: 1.25.2
-  resolution: "@playwright/test@npm:1.25.2"
+"@playwright/test@npm:^1.26.0":
+  version: 1.26.0
+  resolution: "@playwright/test@npm:1.26.0"
   dependencies:
     "@types/node": "*"
-    playwright-core: 1.25.2
+    playwright-core: 1.26.0
   bin:
     playwright: cli.js
-  checksum: 3c24027bd9b305a3985cae35a4046e656dd0ffb76ef4dfcfc864f6c8492a643fc21c79048ee8169c5c1562d3cae493e7223a5473b127fef3bda7c7c52795c17d
+  checksum: ce85c07e91f26f9f9ae9951011030347469ec3aa0fc2b2ab525e202cbcb9ba6dafe12d12ee10c13675c4ae8786f9ecd7b54bbe88034ad5f83b35d940cefc022c
   languageName: node
   linkType: hard
 
@@ -7408,16 +7408,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:20.1.4":
-  version: 20.1.4
-  resolution: "electron@npm:20.1.4"
+"electron@npm:20.2.0":
+  version: 20.2.0
+  resolution: "electron@npm:20.2.0"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: eef52472e608eb85568fe568b34423964d5d4997ead68208c16ca78359f4816969f3a6def6fce85d15431a5a6e2dad85232b66f049236601187311c55c31556b
+  checksum: 3982a0c47f5186ce39c2ba12a997c487b6ffb3f45d4b317f645e6729e60d83f70c416e6a2872b4c8e2d068cdf305e0f17a51300cf6f80bc0d111999e6156e49e
   languageName: node
   linkType: hard
 
@@ -11441,7 +11441,7 @@ __metadata:
     "@nuxtjs/eslint-config-typescript": ^11.0.0
     "@nuxtjs/i18n": ^7.3.0
     "@nuxtjs/vuetify": ^1.12.3
-    "@playwright/test": ^1.25.2
+    "@playwright/test": ^1.26.0
     "@sentry/electron": ^4.0.2
     "@sentry/tracing": ^7.13.0
     "@sentry/vue": ^7.13.0
@@ -11463,7 +11463,7 @@ __metadata:
     css-loader: ^5.2.7
     deepmerge: ^4.2.2
     dotenv: ^16.0.2
-    electron: 20.1.4
+    electron: 20.2.0
     electron-builder: 23.3.3
     electron-devtools-installer: ^3.2.0
     electron-playwright-helpers: ^1.2.0
@@ -11493,7 +11493,7 @@ __metadata:
     obs-websocket-js: ^4.0.3
     obs-websocket-js-v5: "npm:obs-websocket-js@^5.0.1"
     pdfjs-dist: ^2.16.105
-    playwright: ^1.25.2
+    playwright: ^1.26.0
     prettier: ^2.7.1
     sass-loader: ^10.3.1
     sql.js: ^1.8.0
@@ -13254,23 +13254,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.25.2":
-  version: 1.25.2
-  resolution: "playwright-core@npm:1.25.2"
+"playwright-core@npm:1.26.0":
+  version: 1.26.0
+  resolution: "playwright-core@npm:1.26.0"
   bin:
     playwright: cli.js
-  checksum: 24ada61e2132bd7278cf0aa0ef711280e1519c437efa0088a99c47ef994202f4c9880521d8c0c51ab854bef08806f372477d754aac1e790ea64f18cd346b5b2f
+  checksum: bd1da7baad202d48e51eb4810ff75960e5a61d137059031dd71a55856f4387e5b42086ea0d3e37d9a595cb5f65d19e2db19e0e06b873dd30a2f0d7177d5d7b41
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.25.2":
-  version: 1.25.2
-  resolution: "playwright@npm:1.25.2"
+"playwright@npm:^1.26.0":
+  version: 1.26.0
+  resolution: "playwright@npm:1.26.0"
   dependencies:
-    playwright-core: 1.25.2
+    playwright-core: 1.26.0
   bin:
     playwright: cli.js
-  checksum: e500b45c2961140fdae665331d357ecf1cc308041e0fd8e6765b4da2195600a8a358d3e723bac6215bd9135979f7e7a350cdb1347f6cefa3773e85aa262ce879
+  checksum: 86cab6f54b317445e704ffb52c13105a3a83b38610dc5d85bb69be4e3652f7fdbb2cd4f470cc38a5801e0a38ea1fbd6efe8d67ecba6b9771094544e3f3b2515d
   languageName: node
   linkType: hard
 
