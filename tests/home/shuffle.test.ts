@@ -10,8 +10,6 @@ import locale from './../../src/renderer/locales/en.json'
 let electronApp: ElectronApplication
 let page: Page
 
-test.describe.configure({ mode: 'serial' })
-
 test.beforeAll(async () => {
   electronApp = await startApp()
 })
