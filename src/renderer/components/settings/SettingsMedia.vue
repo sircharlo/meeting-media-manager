@@ -396,11 +396,13 @@ export default Vue.extend({
             )
           )
         } catch (e: any) {
-          this.$error(
-            'errorWebdavRm',
-            e,
-            'media-window-background-image' + extname(this.background)
-          )
+          if (e.status !== 404) {
+            this.$error(
+              'errorWebdavRm',
+              e,
+              'media-window-background-image' + extname(this.background)
+            )
+          }
         }
       }
 

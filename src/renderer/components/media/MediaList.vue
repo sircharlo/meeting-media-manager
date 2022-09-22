@@ -403,7 +403,9 @@ export default Vue.extend({
                 try {
                   await this.client.deleteFile(filePath)
                 } catch (e) {
-                  this.$error('errorWebdavRm', e, filePath)
+                  if (e.status !== 404) {
+                    this.$error('errorWebdavRm', e, filePath)
+                  }
                 }
               } else {
                 await this.client.putFileContents(filePath, '')
@@ -438,7 +440,9 @@ export default Vue.extend({
           try {
             await this.client.deleteFile(item.url as string)
           } catch (e: any) {
-            this.$error('errorWebdavRm', e, item.url as string)
+            if (e.status !== 404) {
+              this.$error('errorWebdavRm', e, item.url as string)
+            }
           }
           await this.$updateContent()
         }

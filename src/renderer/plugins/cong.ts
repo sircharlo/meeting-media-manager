@@ -115,7 +115,9 @@ const plugin: Plugin = (
       try {
         await client.deleteFile(dir.filename)
       } catch (e: any) {
-        $error('errorWebdavRm', e, dir.filename)
+        if (e.status !== 404) {
+          $error('errorWebdavRm', e, dir.filename)
+        }
       }
     }
   }
