@@ -447,7 +447,9 @@ export default Vue.extend({
           ignore: [join(this.$appPath(), `prefs-${this.cong}.json`)],
         }).forEach((file) => {
           const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
-          if (!prefs.app.congregationName) {
+          if (prefs.app && !prefs.app.congregationName) {
+            this.$rm(file)
+          } else if (!prefs.app && !prefs.congregationName) {
             this.$rm(file)
           }
         })
