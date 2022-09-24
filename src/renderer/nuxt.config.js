@@ -34,6 +34,8 @@ if (
         isDev || !process.env.CI ? 'dev' : pkg.version
       }`,
       dist: platform().replace('32', ''),
+      validate: true,
+      urlPrefix: '~/_nuxt/',
       include: [
         { paths: [resolve('src', 'renderer', '.nuxt', 'dist', 'client')] },
       ],
