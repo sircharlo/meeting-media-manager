@@ -73,6 +73,7 @@ const plugin: Plugin = (
             } else if (e.error.code === 'CONNECTION_ERROR') {
               $warn('errorObs')
             } else {
+              $log.debug('OBS v4 onError')
               $error('errorObs', e.error)
             }
             resetOBS()
@@ -89,6 +90,7 @@ const plugin: Plugin = (
             } else if (e.code === 'CONNECTION_ERROR') {
               $warn('errorObs')
             } else {
+              $log.debug('OBS connect v4')
               $error('errorObs', e)
             }
             resetOBS()
@@ -155,6 +157,7 @@ const plugin: Plugin = (
               resetOBS()
               return obs
             } else {
+              $log.debug('OBS connect v5')
               $error('errorObs', e)
             }
             resetOBS()
@@ -162,6 +165,7 @@ const plugin: Plugin = (
         }
         store.commit('obs/setConnected', !!obs)
       } catch (e: any) {
+        $log.debug('Unknown OBS error')
         $error('errorObs', e)
         resetOBS()
       }
@@ -237,7 +241,8 @@ const plugin: Plugin = (
       if (current) return currentScene
       return scenes
     } catch (e: any) {
-      if (store.state.obs.connected) {
+      if (store.state.obs.connected && e.message !== 'Socket not identified') {
+        $log.debug('getScenes()')
         $error('errorObs', e)
       }
       return []
@@ -258,6 +263,7 @@ const plugin: Plugin = (
       }
     } catch (e: any) {
       if (store.state.obs.connected) {
+        $log.debug('setScene()')
         $error('errorObs', e)
       }
     }
