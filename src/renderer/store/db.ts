@@ -1,4 +1,5 @@
 import { MutationTree, ActionTree, GetterTree } from 'vuex'
+// eslint-disable-next-line import/named
 import { Database } from 'sql.js'
 
 interface DBStore {

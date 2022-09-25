@@ -46,6 +46,7 @@
 </template>
 <script lang="ts">
 import { ipcRenderer } from 'electron'
+// eslint-disable-next-line import/named
 import { Database } from 'sql.js'
 import { basename, extname, trimExt } from 'upath'
 import Vue from 'vue'

@@ -1,4 +1,5 @@
 import { Plugin } from '@nuxt/types'
+// eslint-disable-next-line import/named
 import sqljs, { Database } from 'sql.js'
 
 const plugin: Plugin = ({ store, $log, $config }, inject) => {
