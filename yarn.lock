@@ -1672,14 +1672,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@humanwhocodes/config-array@npm:^0.10.4":
-  version: 0.10.4
-  resolution: "@humanwhocodes/config-array@npm:0.10.4"
+"@humanwhocodes/config-array@npm:^0.10.5":
+  version: 0.10.5
+  resolution: "@humanwhocodes/config-array@npm:0.10.5"
   dependencies:
     "@humanwhocodes/object-schema": ^1.2.1
     debug: ^4.1.1
     minimatch: ^3.0.4
-  checksum: d480e5d57e6d787565b6cff78e27c3d1b380692d4ffb0ada7d7f5957a56c9032f034da05a3e443065dbd0671ebf4d859036ced34e96b325bbc1badbae3c05300
+  checksum: af4fa2633c57414be22ddba0a072cc611ef9a07104542fa24bde918a0153b89b6e08ca6a20ccc9079de6079e219e2406e38414d1b662db8bb59a3ba9d6eee6e3
   languageName: node
   linkType: hard
 
@@ -3551,13 +3551,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sql.js@npm:^1.4.3":
-  version: 1.4.3
-  resolution: "@types/sql.js@npm:1.4.3"
+"@types/sql.js@npm:^1.4.4":
+  version: 1.4.4
+  resolution: "@types/sql.js@npm:1.4.4"
   dependencies:
     "@types/emscripten": "*"
     "@types/node": "*"
-  checksum: ba02fdc13efd96e0a59590b198cc62326dc30e252bda2c494beab9dcea16cd0cb7a145da473d4b3aaf2abc682b8caa0cd8febe0e0093a76cb596d131cbf58359
+  checksum: c71928d76b59e4899da4b137a4f1bbf8cc0cf198928efa183bba90880ae69331da23a99175b88a7f5eaa34ce9ebef8f94dd1dcca8e4abdac2abb560d860e6636
   languageName: node
   linkType: hard
 
@@ -7975,12 +7975,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.23.1":
-  version: 8.23.1
-  resolution: "eslint@npm:8.23.1"
+"eslint@npm:^8.24.0":
+  version: 8.24.0
+  resolution: "eslint@npm:8.24.0"
   dependencies:
     "@eslint/eslintrc": ^1.3.2
-    "@humanwhocodes/config-array": ^0.10.4
+    "@humanwhocodes/config-array": ^0.10.5
     "@humanwhocodes/gitignore-to-minimatch": ^1.0.2
     "@humanwhocodes/module-importer": ^1.0.1
     ajv: ^6.10.0
@@ -8020,7 +8020,7 @@ __metadata:
     text-table: ^0.2.0
   bin:
     eslint: bin/eslint.js
-  checksum: a727e15492786a03b438bcf021db49f715680679846a7b8d79b98ad34576f2a570404ffe882d3c3e26f6359bff7277ef11fae5614bfe8629adb653f20d018c71
+  checksum: ca293ce7116599b742d7ab4d43db469beec22f40dd272092d809498be3cff3a7c567769f9763bdf6799aac13dd53447b93a99629b7b54092783046eb57eaced6
   languageName: node
   linkType: hard
 
@@ -11450,7 +11450,7 @@ __metadata:
     "@types/fluent-ffmpeg": ^2.1.20
     "@types/fullname": ^4.0.0
     "@types/lodash.clonedeep": ^4.5.7
-    "@types/sql.js": ^1.4.3
+    "@types/sql.js": ^1.4.4
     "@xpda-dev/core": ^0.1.6
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
@@ -11469,7 +11469,7 @@ __metadata:
     electron-playwright-helpers: ^1.2.0
     electron-store: ^8.1.0
     electron-updater: ^5.2.1
-    eslint: ^8.23.1
+    eslint: ^8.24.0
     eslint-config-prettier: ^8.5.0
     eslint-friendly-formatter: ^4.0.1
     eslint-plugin-nuxt: ^4.0.0
