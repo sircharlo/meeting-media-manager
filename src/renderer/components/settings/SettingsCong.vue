@@ -47,34 +47,39 @@
       :required="!!cong.server"
       :rules="[!complete || error !== 'credentials']"
     />
-    <form-input
-      id="cong.dir"
-      v-model="cong.dir"
-      :label="$t('webdavFolder')"
-      :required="!!cong.server"
-      :locked="locked('cong.dir')"
-      :rules="[!complete || error !== 'dir']"
-    />
-    <v-col v-if="client" cols="12" class="d-flex px-0">
-      <v-col class="text-left pl-0" align-self="center">
-        {{ $t('settingsLocked') }}
-      </v-col>
-      <v-col class="text-right pr-0">
-        <v-btn color="primary" @click="setPrefs = true">
-          <font-awesome-icon :icon="faCog" size="lg" />
-        </v-btn>
-      </v-col>
+    <v-col class="d-flex pa-0 pb-2 align-center">
+      <form-input
+        id="cong.dir"
+        v-model="cong.dir"
+        :label="$t('webdavFolder')"
+        :required="!!cong.server"
+        :locked="locked('cong.dir')"
+        :rules="[!complete || error !== 'dir']"
+        hide-details="auto"
+      />
+      <v-btn
+        class="ml-2"
+        :color="error === 'success' ? 'success' : 'primary'"
+        :loading="loading"
+        :disabled="!complete"
+        @click="submit()"
+      >
+        <font-awesome-icon :icon="faGlobe" size="lg" />
+      </v-btn>
     </v-col>
-    <cong-dir-list v-if="client" :contents="contents" @open="openDir($event)" />
-    <v-btn
-      :color="error === 'success' ? 'success' : 'primary'"
-      class="float-right"
-      :loading="loading"
-      :disabled="!complete"
-      @click="submit()"
-    >
-      <font-awesome-icon :icon="faGlobe" size="lg" />
-    </v-btn>
+    <template v-if="client">
+      <cong-dir-list :contents="contents" @open="openDir($event)" />
+      <v-col cols="12" class="d-flex px-0">
+        <v-col class="text-left pl-0" align-self="center">
+          {{ $t('settingsLocked') }}
+        </v-col>
+        <v-col class="text-right pr-0">
+          <v-btn color="primary" @click="setPrefs = true">
+            <font-awesome-icon :icon="faCog" size="lg" />
+          </v-btn>
+        </v-col>
+      </v-col>
+    </template>
   </v-form>
 </template>
 <script lang="ts">
