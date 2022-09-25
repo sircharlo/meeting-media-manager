@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center" class="fill-height mb-0">
     <v-col cols="12" class="text-center" style="margin-bottom: 72px">
-      <v-expansion-panels v-model="panel" multiple>
+      <v-expansion-panels v-model="panel" multiple focusable popout>
         <v-expansion-panel
           v-for="(header, i) in headers"
           :key="header.component"
@@ -9,7 +9,7 @@
           <v-expansion-panel-header>
             {{ header.name }}
           </v-expansion-panel-header>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content class="pt-4">
             <component
               :is="header.component"
               @valid="headers[i].valid = $event"
