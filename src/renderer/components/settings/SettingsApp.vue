@@ -305,6 +305,15 @@ export default Vue.extend({
         }
       },
     },
+    'app.localOutputPath': {
+      handler(val: string) {
+        const badCharacters = val.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g)
+        if (badCharacters) {
+          this.$warn('errorBadOutputPath', badCharacters.join(' '))
+          this.app.localOutputPath = null
+        }
+      },
+    },
     'app.congregationName': {
       handler(val: string) {
         this.$sentry.setUser({

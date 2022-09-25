@@ -95,12 +95,12 @@ export default Vue.extend({
       const toReturn = {} as any
 
       for (const i in ob) {
-        if (!ob[i]) continue
+        if (ob[i] === undefined) continue
 
         if (typeof ob[i] === 'object' && ob[i] !== null) {
           const flatObject = this.flattenObject(ob[i])
           for (const x in flatObject) {
-            if (!flatObject[x]) continue
+            if (flatObject[x] === undefined) continue
 
             toReturn[i + '.' + x] = flatObject[x]
           }
@@ -142,32 +142,43 @@ export default Vue.extend({
       }
       this.loading = true
       const forcedPrefs = {} as any
-      this.forcable
-        .filter(({ forced }) => forced)
-        .forEach((pref) => {
-          const keys = pref.key.split('.')
-          if (!forcedPrefs[keys[0]]) {
-            forcedPrefs[keys[0]] = {}
-          }
 
-          if (keys.length === 2) {
-            forcedPrefs[keys[0]][keys[1]] = pref.value
-          } else if (keys.length === 3) {
-            if (!forcedPrefs[keys[0]][keys[1]]) {
-              forcedPrefs[keys[0]][keys[1]] = {}
+      try {
+        this.forcable
+          .filter(({ forced }) => forced)
+          .forEach((pref) => {
+            const keys = pref.key.split('.')
+            if (!forcedPrefs[keys[0]]) {
+              forcedPrefs[keys[0]] = {}
             }
-            forcedPrefs[keys[0]][keys[1]][keys[2]] = pref.value
-          }
-        })
 
-      // Update forcedPrefs.json
-      await this.client.putFileContents(
-        join(this.$getPrefs('cong.dir'), 'forcedPrefs.json'),
-        JSON.stringify(forcedPrefs, null, 2)
-      )
-      await this.$forcePrefs(true)
-      this.loading = false
-      this.$emit('done')
+            if (keys.length === 2) {
+              forcedPrefs[keys[0]][keys[1]] = pref.value
+            } else if (keys.length === 3) {
+              if (!forcedPrefs[keys[0]][keys[1]]) {
+                forcedPrefs[keys[0]][keys[1]] = {}
+              }
+              forcedPrefs[keys[0]][keys[1]][keys[2]] = pref.value
+            }
+          })
+
+        // Update forcedPrefs.json
+        this.$log.debug(JSON.stringify(forcedPrefs, null, 2))
+        await this.client.putFileContents(
+          join(this.$getPrefs('cong.dir'), 'forcedPrefs.json'),
+          JSON.stringify(forcedPrefs, null, 2)
+        )
+        await this.$forcePrefs(true)
+      } catch (e: any) {
+        this.$error(
+          'errorForcedSettingsEnforce',
+          e,
+          join(this.$getPrefs('cong.dir'), 'forcedPrefs.json')
+        )
+      } finally {
+        this.loading = false
+        this.$emit('done')
+      }
     },
   },
 })
