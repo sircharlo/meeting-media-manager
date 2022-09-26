@@ -28,6 +28,7 @@
           :items="congs"
           item-text="name"
           item-value="path"
+          :disabled="loading"
           :label="$t('congregationName')"
           dense
           solo
