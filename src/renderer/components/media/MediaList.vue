@@ -1,6 +1,6 @@
 <!-- Media list in the media manager page -->
 <template>
-  <v-list>
+  <v-list dense>
     <v-dialog v-if="edit" :value="true">
       <v-card>
         <v-col class="text-right">

@@ -148,7 +148,7 @@
       </v-btn>
       <v-btn
         v-if="$config.isDev"
-        color="primary"
+        color="warning"
         :disabled="!online"
         :loading="loading"
         @click="testApp()"
