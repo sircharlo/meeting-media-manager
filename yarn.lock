@@ -3201,6 +3201,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/electron-window-state@npm:^5":
+  version: 5.0.0
+  resolution: "@types/electron-window-state@npm:5.0.0"
+  dependencies:
+    electron-window-state: "*"
+  checksum: 9180c9e7d4f4651499678e4cc3f5e911cda8332e6403e955c732d1454c8f16cef608a30e514a38648d5e4102b1a1dfbf4f6288c4c9dbdc133b25793c54d9d363
+  languageName: node
+  linkType: hard
+
 "@types/emscripten@npm:*":
   version: 1.39.6
   resolution: "@types/emscripten@npm:1.39.6"
@@ -7408,6 +7417,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"electron-window-state@npm:*, electron-window-state@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "electron-window-state@npm:5.0.3"
+  dependencies:
+    jsonfile: ^4.0.0
+    mkdirp: ^0.5.1
+  checksum: 955868c1db598cfb5111612c9df93f61b8999b339fb56cb37ba884a9141478feaef9e9b4d9e777079cdad80fb0bb64b61ae706c85f1f91ba5904f8596d30d7e9
+  languageName: node
+  linkType: hard
+
 "electron@npm:20.2.0":
   version: 20.2.0
   resolution: "electron@npm:20.2.0"
@@ -11447,6 +11466,7 @@ __metadata:
     "@sentry/vue": ^7.13.0
     "@sentry/webpack-plugin": ^1.19.0
     "@types/adm-zip": ^0.5.0
+    "@types/electron-window-state": ^5
     "@types/fluent-ffmpeg": ^2.1.20
     "@types/fullname": ^4.0.0
     "@types/lodash.clonedeep": ^4.5.7
@@ -11469,6 +11489,7 @@ __metadata:
     electron-playwright-helpers: ^1.2.0
     electron-store: ^8.1.0
     electron-updater: ^5.2.1
+    electron-window-state: ^5.0.3
     eslint: ^8.24.0
     eslint-config-prettier: ^8.5.0
     eslint-friendly-formatter: ^4.0.1

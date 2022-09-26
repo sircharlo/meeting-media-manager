@@ -6,8 +6,10 @@ import { existsSync } from 'fs-extra'
 import { join, normalize } from 'upath'
 import { autoUpdater } from 'electron-updater'
 import BrowserWinHandler from './BrowserWinHandler'
+import { getScreenInfo, fadeWindow, setMediaWindowPosition } from './utils'
 require('dotenv').config()
 const { platform } = require('os')
+const windowStateKeeper = require('electron-window-state')
 const isDev = process.env.NODE_ENV === 'development'
 
 const initSentry =
@@ -55,10 +57,12 @@ if (platform() === 'darwin') iconType = 'icns'
 if (platform() === 'win32') iconType = 'ico'
 
 // Main window
-function createMainWindow() {
+function createMainWindow(pos = { width: 700, height: 700 }) {
   winHandler = new BrowserWinHandler({
-    height: 700,
-    width: 700,
+    x: pos.x,
+    y: pos.y,
+    height: pos.height,
+    width: pos.width,
     minWidth: 670,
     minHeight: 435,
     icon: join(__dirname, '../../build', 'icons', `icon.${iconType}`),
@@ -67,9 +71,13 @@ function createMainWindow() {
 
   win = winHandler.browserWindow
 
+  if (pos.manage) {
+    pos.manage(win)
+  }
+
   win.on('will-move', () => {
     if (mediaWin) {
-      const screenInfo = getScreenInfo()
+      const screenInfo = getScreenInfo(win, mediaWin)
       if (screenInfo.otherScreens.length > 0) {
         if (screenInfo.winMidpoints) {
           const mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints)
@@ -102,84 +110,6 @@ function createMainWindow() {
   winHandler.loadPage('/')
 }
 
-// Show/hide media window
-function fadeWindow(browserWindow) {
-  if (!browserWindow.isVisible()) {
-    browserWindow.show()
-    win.webContents.send('mediaWindowVisibilityChanged', 'shown')
-  } else {
-    browserWindow.hide()
-    win.webContents.send('mediaWindowVisibilityChanged', 'hidden')
-  }
-}
-
-// Get screen information
-function getScreenInfo() {
-  let displays = []
-  const winMidpoints = {}
-  const winCoordinates = {}
-  try {
-    winCoordinates.main = win.getPosition().concat(win.getSize())
-    winMidpoints.main = {
-      x: winCoordinates.main[0] + winCoordinates.main[2] / 2,
-      y: winCoordinates.main[1] + winCoordinates.main[3] / 2,
-    }
-    if (mediaWin) {
-      winCoordinates.media = mediaWin.getPosition().concat(win.getSize())
-      winMidpoints.media = {
-        x: winCoordinates.media[0] + winCoordinates.media[2] / 2,
-        y: winCoordinates.media[1] + winCoordinates.media[3] / 2,
-      }
-    }
-    displays = screen.getAllDisplays().map((display, i) => {
-      display.humanFriendlyNumber = i + 1
-      return display
-    })
-  } catch (err) {
-    console.error(err)
-  }
-  return {
-    displays,
-    winMidpoints,
-    otherScreens: displays.filter(
-      (display) =>
-        display.id !== screen.getDisplayNearestPoint(winMidpoints.main).id
-    ),
-  }
-}
-
-// Se position of the media window
-function setMediaWindowPosition(mediaWinOptions) {
-  try {
-    if (mediaWin) {
-      const screenInfo = getScreenInfo()
-      mediaWin.setBounds({
-        x:
-          screenInfo.displays.find(
-            (display) => display.id === mediaWinOptions.destination
-          ).bounds.x + 50,
-        y:
-          screenInfo.displays.find(
-            (display) => display.id === mediaWinOptions.destination
-          ).bounds.y + 50,
-        ...(mediaWinOptions.type === 'window' && { width: 1280 }),
-        ...(mediaWinOptions.type === 'window' && { height: 720 }),
-      })
-      if (
-        mediaWinOptions.type === 'fullscreen' &&
-        screenInfo.otherScreens.length > 0 &&
-        !mediaWin.isFullScreen()
-      ) {
-        mediaWin.setFullScreen(true)
-      } else if (mediaWinOptions.type === 'window' && mediaWin.isFullScreen()) {
-        mediaWin.setFullScreen(false)
-      }
-    }
-  } catch (err) {
-    console.error(err)
-  }
-}
-
 function closeMediaWindow() {
   if (mediaWin) {
     authorizedCloseMediaWin = true
@@ -206,7 +136,7 @@ if (gotTheLock) {
   ipcMain.handle('appData', () => normalize(app.getPath('appData')))
   ipcMain.handle('downloads', () => normalize(app.getPath('downloads')))
   ipcMain.handle('appVersion', () => app.getVersion())
-  ipcMain.handle('getScreenInfo', () => getScreenInfo())
+  ipcMain.handle('getScreenInfo', () => getScreenInfo(win, mediaWin))
   ipcMain.handle('darkMode', () => nativeTheme.shouldUseDarkColors)
 
   nativeTheme.on('updated', () => {
@@ -254,7 +184,7 @@ if (gotTheLock) {
     const globalShortcut = require('electron').globalShortcut
     const functions = {
       toggleMediaWindow: () => {
-        fadeWindow(mediaWin)
+        fadeWindow(win, mediaWin)
       },
       openPresentMode: () => {
         win.webContents.send('openPresentMode')
@@ -345,17 +275,17 @@ if (gotTheLock) {
     allowClose = val
   })
   ipcMain.on('setMediaWindowPosition', (_e, mediaWinOptions) => {
-    setMediaWindowPosition(mediaWinOptions)
+    setMediaWindowPosition(win, mediaWin, mediaWinOptions)
   })
   ipcMain.on('toggleMediaWindowFocus', () => {
-    fadeWindow(mediaWin)
+    fadeWindow(win, mediaWin)
   })
   ipcMain.on('closeMediaWindow', () => {
     closeMediaWindow()
   })
   ipcMain.on('showMediaWindow', (_e, mediaWinOptions) => {
     if (!mediaWin) {
-      const screenInfo = getScreenInfo()
+      const screenInfo = getScreenInfo(win, mediaWin)
       const windowOptions = {
         title: 'Media Window',
         icon: join(
@@ -411,7 +341,7 @@ if (gotTheLock) {
         })
       win.webContents.send('mediaWindowShown')
     } else {
-      setMediaWindowPosition(mediaWinOptions)
+      setMediaWindowPosition(win, mediaWin, mediaWinOptions)
     }
   })
 
@@ -459,7 +389,12 @@ if (gotTheLock) {
     screen.on('display-added', () => {
       win.webContents.send('displaysChanged')
     })
-    createMainWindow()
+    createMainWindow(
+      windowStateKeeper({
+        defaultWidth: 700,
+        defaultHeight: 700,
+      })
+    )
   })
 
   // Quit when all windows are closed.
