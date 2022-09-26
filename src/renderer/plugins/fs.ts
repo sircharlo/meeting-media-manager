@@ -19,7 +19,7 @@ import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import { MeetingFile } from '~/types'
 
 const plugin: Plugin = (
-  { $getPrefs, $log, store, $appPath, $dayjs, i18n, $strip },
+  { $getPrefs, $log, store, $appPath, $dayjs, i18n, $strip, $warn },
   inject
 ) => {
   // Paths
@@ -29,7 +29,11 @@ const plugin: Plugin = (
       'Publications',
       $getPrefs('media.lang')
     )
-    ensureDirSync(pubPath)
+    try {
+      ensureDirSync(pubPath)
+    } catch (e: any) {
+      $warn('errorSetVars', { identifier: pubPath })
+    }
 
     // Get path for specific file
     if (file) {
@@ -57,7 +61,13 @@ const plugin: Plugin = (
       $getPrefs('app.localOutputPath'),
       $getPrefs('media.lang')
     )
-    ensureDirSync(mediaPath)
+
+    try {
+      ensureDirSync(mediaPath)
+    } catch (e: any) {
+      $warn('errorSetVars', { identifier: mediaPath })
+    }
+
     if (file)
       return joinSafe(
         mediaPath,
@@ -118,14 +128,22 @@ const plugin: Plugin = (
   inject(
     'write',
     (file: string, data: string | NodeJS.ArrayBufferView): void => {
-      ensureFileSync(file)
-      writeFileSync(file, data)
+      try {
+        ensureFileSync(file)
+        writeFileSync(file, data)
+      } catch (e: any) {
+        $warn('errorSetVars', { identifier: dirname(file) })
+      }
     }
   )
 
   inject('copy', (src: string, dest: string): void => {
-    ensureFileSync(dest)
-    copyFileSync(src, dest)
+    try {
+      ensureFileSync(dest)
+      copyFileSync(src, dest)
+    } catch (e: any) {
+      $warn('errorSetVars', { identifier: dirname(dest) })
+    }
   })
 
   function rename(

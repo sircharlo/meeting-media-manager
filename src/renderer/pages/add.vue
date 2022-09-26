@@ -523,7 +523,7 @@ export default Vue.extend({
         if (this.client) await this.$updateContent()
         this.getExistingMedia()
       } catch (e: any) {
-        this.$error('errorAdditionalMediaList', e)
+        this.$error('errorAdditionalMedia', e, this.fileString)
       } finally {
         this.type = ''
         this.song = null
@@ -542,20 +542,24 @@ export default Vue.extend({
       if (this.totalProgress === 100) this.totalProgress = 0
     },
     async getMeetingData() {
-      const day = this.$dayjs(
-        this.date,
-        this.$getPrefs('app.outputFolderDateFormat') as string
-      ) as Dayjs
-      if (!day.isValid()) return
-      const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
-      if (weekDay === (this.$getPrefs('meeting.mwDay') as number)) {
-        await this.$getMwMedia(this.date)
-      } else if (weekDay === (this.$getPrefs('meeting.weDay') as number)) {
-        await this.$getWeMedia(this.date)
-      }
-      this.$createMediaNames()
-      if (this.client) {
-        await this.$updateContent()
+      try {
+        const day = this.$dayjs(
+          this.date,
+          this.$getPrefs('app.outputFolderDateFormat') as string
+        ) as Dayjs
+        if (!day.isValid()) return
+        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
+        if (weekDay === (this.$getPrefs('meeting.mwDay') as number)) {
+          await this.$getMwMedia(this.date)
+        } else if (weekDay === (this.$getPrefs('meeting.weDay') as number)) {
+          await this.$getWeMedia(this.date)
+        }
+        this.$createMediaNames()
+        if (this.client) {
+          await this.$updateContent()
+        }
+      } catch (e: any) {
+        this.$error('errorAdditionalMediaList', e)
       }
     },
     async getSongs() {
@@ -572,47 +576,57 @@ export default Vue.extend({
       this.loadingSongs = false
     },
     getExistingMedia() {
-      const day = this.$dayjs(
-        this.date,
-        this.$getPrefs('app.outputFolderDateFormat') as string
-      ) as Dayjs
-      this.$getCongMedia(
-        day.isValid() ? day.startOf('week') : this.now.startOf('week'),
-        this.now
-      )
-      const meetings = this.$store.getters['media/meetings'] as Map<
-        string,
-        Map<number, MeetingFile[]>
-      >
-      const localMedia: LocalFile[] = []
+      try {
+        const day = this.$dayjs(
+          this.date,
+          this.$getPrefs('app.outputFolderDateFormat') as string
+        ) as Dayjs
+        this.$getCongMedia(
+          day.isValid() ? day.startOf('week') : this.now.startOf('week'),
+          this.now
+        )
+        const meetings = this.$store.getters['media/meetings'] as Map<
+          string,
+          Map<number, MeetingFile[]>
+        >
+        const localMedia: LocalFile[] = []
 
-      const jwMedia: MeetingFile[] = []
-      for (const [, media] of meetings.get(this.date) ?? []) {
-        for (const m of media) {
-          m.isLocal = false
-        }
-        jwMedia.push(...media)
-      }
-
-      // If jw media is already dowloaded, set isLocal of jw media to true, else add local file to list
-      const path = join(this.$mediaPath(), this.date)
-      if (existsSync(path)) {
-        readdirSync(path).forEach((filename) => {
-          const jwMatch = jwMedia.find(({ safeName }) => safeName === filename)
-          if (jwMatch) {
-            jwMatch.isLocal = true
-          } else {
-            localMedia.push({
-              safeName: filename,
-              isLocal: true,
-              filepath: join(this.$mediaPath() as string, this.date, filename),
-            })
+        const jwMedia: MeetingFile[] = []
+        for (const [, media] of meetings.get(this.date) ?? []) {
+          for (const m of media) {
+            m.isLocal = false
           }
+          jwMedia.push(...media)
+        }
+
+        // If jw media is already dowloaded, set isLocal of jw media to true, else add local file to list
+        const path = join(this.$mediaPath(), this.date)
+        if (existsSync(path)) {
+          readdirSync(path).forEach((filename) => {
+            const jwMatch = jwMedia.find(
+              ({ safeName }) => safeName === filename
+            )
+            if (jwMatch) {
+              jwMatch.isLocal = true
+            } else {
+              localMedia.push({
+                safeName: filename,
+                isLocal: true,
+                filepath: join(
+                  this.$mediaPath() as string,
+                  this.date,
+                  filename
+                ),
+              })
+            }
+          })
+        }
+        this.media = [...jwMedia, ...localMedia].sort((a, b) => {
+          return (a.safeName as string).localeCompare(b.safeName as string)
         })
+      } catch (e: any) {
+        this.$error('errorAdditionalMediaList', e)
       }
-      this.media = [...jwMedia, ...localMedia].sort((a, b) => {
-        return (a.safeName as string).localeCompare(b.safeName as string)
-      })
     },
   },
 })
