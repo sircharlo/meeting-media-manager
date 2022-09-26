@@ -263,8 +263,13 @@ const plugin: Plugin = (
       }
     } catch (e: any) {
       if (store.state.obs.connected) {
-        $log.debug('setScene()')
-        $error('errorObs', e)
+        if (e.message === 'Not connected') {
+          $warn('errorObs')
+          resetOBS()
+        } else {
+          $log.debug('setScene()')
+          $error('errorObs', e)
+        }
       }
     }
   }
