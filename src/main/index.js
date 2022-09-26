@@ -19,6 +19,7 @@ const initSentry =
 if (initSentry) {
   init({
     environment: isDev ? 'development' : 'production',
+    dist: platform().replace('32', ''),
     enabled: !process.env.SENTRY_DISABLE,
     release: `meeting-media-manager@${
       isDev || !process.env.CI ? 'dev' : app.getVersion()

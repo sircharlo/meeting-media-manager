@@ -1,3 +1,4 @@
+import { platform } from 'os'
 import Vue from 'vue'
 import * as Sentry from '@sentry/vue'
 import { BrowserTracing } from '@sentry/tracing'
@@ -8,6 +9,7 @@ const plugin: Plugin = ({ $config, app }, inject) => {
     Sentry.init({
       Vue,
       dsn: $config.sentryDSN,
+      dist: platform().replace('32', ''),
       enabled: $config.sentryEnabled,
       release: `meeting-media-manager@${
         $config.isDev || !$config.ci ? 'dev' : $config.version.substring(1)
