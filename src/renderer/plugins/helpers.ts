@@ -9,8 +9,6 @@ const plugin: Plugin = (_ctx, inject) => {
     if (!value) return ''
     switch (type) {
       case 'id':
-        console.debug('strip:', value)
-        console.debug(value.replace(/[^a-zA-Z0-9\-:_]/g, ''))
         return value.replace(/[^a-zA-Z0-9\-:_]/g, '')
       case 'file':
         return (
