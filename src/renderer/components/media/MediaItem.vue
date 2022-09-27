@@ -33,7 +33,7 @@
           <runtime-template-compiler :template="title" :parent="parent" />
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action class="d-flex flex-row">
+      <v-list-item-action class="align-self-center d-flex flex-row">
         <template v-if="active">
           <icon-btn
             v-if="!isImage && !end.startsWith('00:00:00')"
