@@ -158,13 +158,6 @@
       </v-btn>
     </v-col>
     <v-col cols="12" align-self="end" class="d-flex pa-0">
-      <v-col>
-        <icon-btn
-          v-if="$getPrefs('meeting.enableMusicButton')"
-          variant="shuffle"
-          click-twice
-        />
-      </v-col>
       <v-col class="text-center">
         <v-select
           id="week-select"
@@ -182,6 +175,12 @@
         />
       </v-col>
       <v-col class="d-flex justify-end">
+        <icon-btn
+          v-if="$getPrefs('meeting.enableMusicButton')"
+          variant="shuffle"
+          click-twice
+          class="mr-2"
+        />
         <template v-if="$getPrefs('media.enableMediaDisplayButton')">
           <icon-btn variant="toggleScreen" class="mr-2" />
           <icon-btn variant="present" :disabled="loading" class="mr-2" />
