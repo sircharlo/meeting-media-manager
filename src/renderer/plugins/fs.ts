@@ -19,7 +19,7 @@ import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import { MeetingFile } from '~/types'
 
 const plugin: Plugin = (
-  { $getPrefs, $log, store, $appPath, $dayjs, i18n, $strip, $warn },
+  { $getPrefs, $log, store, $appPath, $dayjs, $translate, $strip, $warn },
   inject
 ) => {
   // Paths
@@ -221,12 +221,12 @@ const plugin: Plugin = (
           readdirSync(join(mediaPath(), dir)).forEach((file) => {
             const newName = file
               .replace(
-                (' - ' + i18n.t('song', oldVal)) as string,
-                (' - ' + i18n.t('song', newVal)) as string
+                (' - ' + $translate('song', oldVal)) as string,
+                (' - ' + $translate('song', newVal)) as string
               )
               .replace(
-                (' - ' + i18n.t('paragraph', oldVal)) as string,
-                (' - ' + i18n.t('paragraph', newVal)) as string
+                (' - ' + $translate('paragraph', oldVal)) as string,
+                (' - ' + $translate('paragraph', newVal)) as string
               )
 
             if (file !== newName) {
@@ -270,21 +270,25 @@ const plugin: Plugin = (
     oldVal: string,
     newVal: string
   ): Promise<void> {
-    if (file.basename.includes((' - ' + i18n.t('song', oldVal)) as string)) {
+    if (
+      file.basename.includes((' - ' + $translate('song', oldVal)) as string)
+    ) {
       const newName = file.filename.replace(
-        (' - ' + i18n.t('song', oldVal)) as string,
-        (' - ' + i18n.t('song', newVal)) as string
+        (' - ' + $translate('song', oldVal)) as string,
+        (' - ' + $translate('song', newVal)) as string
       )
 
       if (file.filename !== newName) {
         await client.moveFile(file.filename, newName)
       }
     } else if (
-      file.basename.includes((' - ' + i18n.t('paragraph', oldVal)) as string)
+      file.basename.includes(
+        (' - ' + $translate('paragraph', oldVal)) as string
+      )
     ) {
       const newName = file.filename.replace(
-        (' - ' + i18n.t('paragraph', oldVal)) as string,
-        (' - ' + i18n.t('paragraph', newVal)) as string
+        (' - ' + $translate('paragraph', oldVal)) as string,
+        (' - ' + $translate('paragraph', newVal)) as string
       )
       if (file.filename !== newName) {
         await client.moveFile(file.filename, newName)

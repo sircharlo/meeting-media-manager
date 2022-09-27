@@ -33,7 +33,7 @@ const plugin: Plugin = (
     $extractAllTo,
     $getPrefs,
     $mediaItems,
-    i18n,
+    $translate,
     $write,
     $findOne,
     $error,
@@ -1002,12 +1002,12 @@ const plugin: Plugin = (
               .padStart(2, '0')} -`
             if (!item.congSpecific) {
               if (item.queryInfo?.TargetParagraphNumberLabel) {
-                item.safeName += ` ${i18n.t('paragraph')} ${
+                item.safeName += ` ${$translate('paragraph')} ${
                   item.queryInfo?.TargetParagraphNumberLabel
                 } -`
               }
               if (item.pub?.includes('sjj')) {
-                item.safeName += ` ${i18n.t('song')}`
+                item.safeName += ` ${$translate('song')}`
               }
               item.safeName = $sanitize(
                 `${item.safeName} ${item.title || ''}${extname(

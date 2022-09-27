@@ -209,6 +209,10 @@ const schema: Schema<ElectronStore> = {
         maximum: 6,
         default: PREFS.meeting.mwDay,
       },
+      specialCong: {
+        type: 'boolean',
+        default: PREFS.meeting.specialCong,
+      },
       weDay: {
         type: ['number', 'null'],
         minimum: 0,

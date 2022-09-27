@@ -35,15 +35,15 @@
             :mandatory="!!type"
             @change="fileString = ''"
           >
-            <v-btn width="33.3%" value="song" :disabled="loading">{{
-              $t('song')
-            }}</v-btn>
-            <v-btn width="33.3%" value="custom" :disabled="loading">{{
-              $t('custom')
-            }}</v-btn>
-            <v-btn width="33.3%" value="jwpub" :disabled="loading">{{
-              $t('jwpub')
-            }}</v-btn>
+            <v-btn
+              v-for="t in types"
+              :key="t.value"
+              width="33.3%"
+              :value="t.value"
+              :disabled="loading"
+            >
+              {{ t.label }}
+            </v-btn>
           </v-btn-toggle>
         </v-col>
       </v-row>
@@ -547,7 +547,7 @@ export default Vue.extend({
           this.date,
           this.$getPrefs('app.outputFolderDateFormat') as string
         ) as Dayjs
-        if (!day.isValid()) return
+        if (!day.isValid() || this.$getPrefs('meeting.specialCong')) return
         const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
         if (weekDay === (this.$getPrefs('meeting.mwDay') as number)) {
           await this.$getMwMedia(this.date)
@@ -570,7 +570,7 @@ export default Vue.extend({
       })) as VideoFile[]
       result.forEach((song) => {
         song.safeName =
-          this.$sanitize(`- ${this.$t('song')} ${song.title}`) + '.mp4'
+          this.$sanitize(`- ${this.$translate('song')} ${song.title}`) + '.mp4'
       })
       this.songs = result
       this.loadingSongs = false
