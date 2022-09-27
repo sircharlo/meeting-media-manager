@@ -151,11 +151,11 @@ export default Vue.extend({
     valid(val: boolean) {
       this.$emit(
         'valid',
-        val &&
-          this.meeting.mwDay !== null &&
-          this.meeting.weDay !== null &&
-          this.meeting.mwStartTime &&
-          this.meeting.weStartTime
+        (val && this.meeting.specialCong) ||
+          (this.meeting.mwDay !== null &&
+            this.meeting.weDay !== null &&
+            this.meeting.mwStartTime &&
+            this.meeting.weStartTime)
       )
     },
     meeting: {
@@ -163,11 +163,11 @@ export default Vue.extend({
         this.$setPrefs('meeting', val)
         this.$emit(
           'valid',
-          val &&
-            this.meeting.mwDay !== null &&
-            this.meeting.weDay !== null &&
-            this.meeting.mwStartTime &&
-            this.meeting.weStartTime
+          (val && this.meeting.specialCong) ||
+            (this.meeting.mwDay !== null &&
+              this.meeting.weDay !== null &&
+              this.meeting.mwStartTime &&
+              this.meeting.weStartTime)
         )
       },
       deep: true,

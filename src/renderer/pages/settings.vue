@@ -20,7 +20,12 @@
     </v-col>
     <v-footer fixed class="justify-space-between">
       <v-col cols="12" align-self="end" class="d-flex">
-        <v-col class="d-flex pa-0" align-self="center">
+        <v-col class="d-flex pa-0 align-center" align-self="center">
+          <icon-btn
+            v-if="cancel && isNew"
+            variant="homeVariant"
+            @click="goBack()"
+          />
           <v-btn
             small
             :color="updateSuccess ? undefined : 'error'"
@@ -84,6 +89,7 @@ export default Vue.extend({
   data() {
     return {
       cache: 0,
+      cancel: false,
       mounted: false,
       cacheColor: 'warning',
       loading: false,
@@ -119,6 +125,9 @@ export default Vue.extend({
     cong(): string {
       return this.$route.query.cong as string
     },
+    isNew(): boolean {
+      return !!this.$route.query.new
+    },
     valid(): boolean {
       return this.headers.every(({ valid }) => valid)
     },
@@ -149,10 +158,23 @@ export default Vue.extend({
       deep: true,
     },
   },
-  mounted() {
+  async mounted() {
+    let congs = await this.$getCongPrefs()
+    console.log([...congs])
+    congs = congs.filter((c: { name: string; path: string }) => {
+      return c.path !== join(this.$appPath(), `prefs-${this.cong}.json`)
+    })
+
+    if (congs.length > 0) {
+      this.cancel = true
+    }
+
     this.calcCache()
   },
   methods: {
+    goBack() {
+      this.$router.back()
+    },
     calcCache(): void {
       if (
         !this.$getPrefs('app.localOutputPath') ||

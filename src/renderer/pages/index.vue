@@ -43,7 +43,7 @@
                 size="xs"
                 @click.stop="atCongClick(item)"
               />
-              <v-tooltip v-else right>
+              <v-tooltip v-else left>
                 <template #activator="{ on, attrs }">
                   <font-awesome-icon
                     v-bind="attrs"
@@ -510,7 +510,7 @@ export default Vue.extend({
       this.$switchCong(join(this.$appPath(), 'prefs-' + id + '.json'))
       this.$router.push({
         path: this.localePath('/settings'),
-        query: { cong: id },
+        query: { cong: id, new: true },
       })
     },
     changeCong(path: string) {
