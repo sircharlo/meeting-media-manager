@@ -468,10 +468,15 @@ export default Vue.extend({
         5: 'accent',
         6: 'accent',
       }
-      this.dayColors[this.$getPrefs('meeting.mwDay')]  =
-          'secondary'
-      this.dayColors[this.$getPrefs('meeting.weDay')]  =
-          'secondary'
+      if (!this.$getPrefs('meeting.specialCong')) {
+        if (this.currentWeek === this.$dayjs().isoWeek()) {
+          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
+          this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
+        } else {
+          this.dayColors[this.$getPrefs('meeting.mwDay')] = 'secondary'
+          this.dayColors[this.$getPrefs('meeting.weDay')] = 'secondary'
+        }
+      }
     },
     async testApp() {
       const previousLang = this.$clone(this.$getPrefs('media.lang')) as string
