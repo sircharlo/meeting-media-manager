@@ -28,7 +28,7 @@
           :items="congs"
           item-text="name"
           item-value="path"
-          :disabled="loading"
+          :disabled="loading || musicPlaying"
           :label="$t('congregationName')"
           dense
           solo
@@ -302,6 +302,9 @@ export default Vue.extend({
     },
     online(): boolean {
       return this.$store.state.stats.online
+    },
+    musicPlaying(): boolean {
+      return !!this.$store.state.media.musicFadeOut
     },
     congParam(): string {
       return this.$route.query.cong as string

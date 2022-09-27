@@ -222,11 +222,11 @@ export default Vue.extend({
             "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>"
           )
           .replace(
-            new RegExp(`${this.$t('song')} (\\d+) -`, 'g'),
+            new RegExp(`${this.$translate('song')} (\\d+) -`, 'g'),
             `<span class="song v-btn pa-1"><font-awesome-icon :icon="faMusic" size="sm" pull="left"/>$1</span>`
           )
           .replace(
-            new RegExp(`${this.$t('paragraph')} (\\d+) -`, 'g'),
+            new RegExp(`${this.$translate('paragraph')} (\\d+) -`, 'g'),
             `<span class="paragraph v-btn pa-1"><font-awesome-icon :icon="faParagraph" size="sm" pull="left"/>$1</span>`
           ) +
         `</div>`

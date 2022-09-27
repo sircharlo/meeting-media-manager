@@ -35,15 +35,15 @@
             :mandatory="!!type"
             @change="fileString = ''"
           >
-            <v-btn width="33.3%" value="song" :disabled="loading">{{
-              $t('song')
-            }}</v-btn>
-            <v-btn width="33.3%" value="custom" :disabled="loading">{{
-              $t('custom')
-            }}</v-btn>
-            <v-btn width="33.3%" value="jwpub" :disabled="loading">{{
-              $t('jwpub')
-            }}</v-btn>
+            <v-btn
+              v-for="t in types"
+              :key="t.value"
+              width="33.3%"
+              :value="t.value"
+              :disabled="loading"
+            >
+              {{ t.label }}
+            </v-btn>
           </v-btn-toggle>
         </v-col>
       </v-row>
@@ -570,7 +570,7 @@ export default Vue.extend({
       })) as VideoFile[]
       result.forEach((song) => {
         song.safeName =
-          this.$sanitize(`- ${this.$t('song')} ${song.title}`) + '.mp4'
+          this.$sanitize(`- ${this.$translate('song')} ${song.title}`) + '.mp4'
       })
       this.songs = result
       this.loadingSongs = false
