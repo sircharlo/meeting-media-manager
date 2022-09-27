@@ -73,6 +73,7 @@
 - OBS: Support for obs-websocket v5 (default is v4 for backwards compatibility, but can be changed in the settings)
 - SETTINGS: Port field for cong sync is no longer necessary
 - SETTINGS: Set your theme preference (light, dark, system) inside the app
+- SETTINGS: Special cong option to disable regular meeting media sync (e.g. for schools)
 - SETTINGS: Toggle password visibility
 
 ## Background Changes
