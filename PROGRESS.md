@@ -84,6 +84,6 @@
 - Refactored docs to use sass instead of css
 - Refactored the entire code base to be more stable and easier to maintain
 - Using electron-store instead of home grown version
-- Using webdav client instead of home grown version
+- Using webdav-client instead of home grown version
 
 The new documentation site is hosted [here](https://mtdvlpr.github.io/meeting-media-manager/en/)
