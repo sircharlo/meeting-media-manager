@@ -173,6 +173,16 @@ export default Vue.extend({
         }
       },
     },
+    'meeting.musicVolume': {
+      handler(val: number) {
+        const audio = document.querySelector(
+          '#meetingMusic'
+        ) as HTMLAudioElement
+        if (audio) {
+          audio.volume = val / 100
+        }
+      },
+    },
   },
   mounted() {
     Object.assign(this.meeting, this.$getPrefs('meeting'))
