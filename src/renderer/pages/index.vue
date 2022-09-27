@@ -462,6 +462,10 @@ export default Vue.extend({
         5: 'accent',
         6: 'accent',
       }
+      this.dayColors[this.$getPrefs('meeting.mwDay')]  =
+          'secondary'
+      this.dayColors[this.$getPrefs('meeting.weDay')]  =
+          'secondary'
     },
     async testApp() {
       const previousLang = this.$clone(this.$getPrefs('media.lang')) as string
