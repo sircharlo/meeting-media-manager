@@ -111,7 +111,7 @@ const plugin: Plugin = (
 
         // If no custom background, set yeartext as background
         if (backgrounds.length === 0) {
-          const yeartext = await $getYearText()
+          const yeartext = await $getYearText(force)
           const root = document.createElement('div')
           root.innerHTML = yeartext ?? ''
           let yeartextString = ''
