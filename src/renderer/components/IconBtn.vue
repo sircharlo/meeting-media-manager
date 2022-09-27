@@ -95,7 +95,11 @@
     }"
     :nuxt="!!style.to || $attrs.nuxt"
     :loading="loading || $attrs.loading"
-    :to="style.to ? localePath(`${style.to}?cong=${cong}`) : $attrs.to"
+    :to="
+      style.to
+        ? localePath(`${style.to}?cong=${cong}&week=${weekNr}`)
+        : $attrs.to
+    "
     @click.stop="atClick()"
   >
     <font-awesome-icon
@@ -260,6 +264,9 @@ export default Vue.extend({
   computed: {
     faStop(): IconDefinition {
       return faStop
+    },
+    weekNr(): number {
+      return parseInt((this.$route.query.week as string) ?? -1)
     },
     pauseIcon(): IconDefinition {
       return this.toggled ? faPlay : faPause
