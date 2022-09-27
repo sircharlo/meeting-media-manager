@@ -368,8 +368,9 @@ export default Vue.extend({
 
         // Add meeting day
         if (
-          weekDay === this.$getPrefs('meeting.mwDay') ||
-          weekDay === this.$getPrefs('meeting.weDay')
+          !this.$getPrefs('meeting.specialCong') &&
+          (weekDay === this.$getPrefs('meeting.mwDay') ||
+            weekDay === this.$getPrefs('meeting.weDay'))
         ) {
           days.push({
             first: day.format('D MMM'),
@@ -407,8 +408,10 @@ export default Vue.extend({
         query: this.$route.query,
       })
     }
-    this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
-    this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
+    if (!this.$getPrefs('meeting.specialCong')) {
+      this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
+      this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
+    }
 
     // Get all congregations
     this.congs = (await this.$getCongPrefs()).map(
@@ -643,10 +646,12 @@ export default Vue.extend({
         })
 
         // Get media
-        await Promise.allSettled([
-          this.getMwMedia(mwDay, filter),
-          this.getWeMedia(weDay, filter),
-        ])
+        if (!this.$getPrefs('meeting.specialCong')) {
+          await Promise.allSettled([
+            this.getMwMedia(mwDay, filter),
+            this.getWeMedia(weDay, filter),
+          ])
+        }
 
         this.$store.commit('stats/stopPerf', {
           func: 'getJwOrgMedia',

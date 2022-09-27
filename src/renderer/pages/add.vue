@@ -547,7 +547,7 @@ export default Vue.extend({
           this.date,
           this.$getPrefs('app.outputFolderDateFormat') as string
         ) as Dayjs
-        if (!day.isValid()) return
+        if (!day.isValid() || this.$getPrefs('meeting.specialCong')) return
         const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
         if (weekDay === (this.$getPrefs('meeting.mwDay') as number)) {
           await this.$getMwMedia(this.date)

@@ -1,43 +1,52 @@
 <template>
   <v-form ref="form" v-model="valid">
     <form-input
-      id="meeting.mwDay"
-      v-model="meeting.mwDay"
-      field="btn-group"
-      :group-label="$t('mwMeetingDay')"
-      :group-items="localeDays"
-      :locked="locked('meeting.mwDay')"
-      height="56px"
-      :mandatory="meeting.mwDay !== null"
-      required
-    >
-      <form-time-picker
-        id="meeting.mwStartTime"
-        v-model="meeting.mwStartTime"
-        :label="''"
+      id="meeting.specialCong"
+      v-model="meeting.specialCong"
+      field="switch"
+      :locked="locked('meeting.specialCong')"
+      :label="$t('specialCong')"
+    />
+    <template v-if="!meeting.specialCong">
+      <form-input
+        id="meeting.mwDay"
+        v-model="meeting.mwDay"
+        field="btn-group"
+        :group-label="$t('mwMeetingDay')"
+        :group-items="localeDays"
+        :locked="locked('meeting.mwDay')"
+        height="56px"
+        :mandatory="meeting.mwDay !== null"
         required
-        :locked="locked('meeting.mwStartTime')"
-      />
-    </form-input>
-    <form-input
-      id="meeting.weDay"
-      v-model="meeting.weDay"
-      field="btn-group"
-      :group-label="$t('weMeetingDay')"
-      :locked="locked('meeting.weDay')"
-      :group-items="localeDays"
-      height="56px"
-      :mandatory="meeting.weDay !== null"
-      required
-    >
-      <form-time-picker
-        id="meeting.weStartTime"
-        v-model="meeting.weStartTime"
-        :label="''"
+      >
+        <form-time-picker
+          id="meeting.mwStartTime"
+          v-model="meeting.mwStartTime"
+          :label="''"
+          required
+          :locked="locked('meeting.mwStartTime')"
+        />
+      </form-input>
+      <form-input
+        id="meeting.weDay"
+        v-model="meeting.weDay"
+        field="btn-group"
+        :group-label="$t('weMeetingDay')"
+        :locked="locked('meeting.weDay')"
+        :group-items="localeDays"
+        height="56px"
+        :mandatory="meeting.weDay !== null"
         required
-        :locked="locked('meeting.weStartTime')"
-      />
-    </form-input>
+      >
+        <form-time-picker
+          id="meeting.weStartTime"
+          v-model="meeting.weStartTime"
+          :label="''"
+          required
+          :locked="locked('meeting.weStartTime')"
+        />
+      </form-input>
+    </template>
     <v-divider class="mb-6" />
     <form-input
       id="meeting.enableMusicButton"

@@ -76,6 +76,7 @@ export interface MeetingPrefs {
   musicVolume: number | null
   mwDay: MeetingDay | null
   mwStartTime: string | null
+  specialCong: boolean
   weDay: MeetingDay | null
   weStartTime: string | null
 }

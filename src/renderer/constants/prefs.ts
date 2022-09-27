@@ -51,6 +51,7 @@ const PREFS = {
     musicVolume: 100,
     mwDay: null,
     mwStartTime: null,
+    specialCong: false,
     weDay: null,
     weStartTime: null,
   },
