@@ -35,7 +35,7 @@
           @change="changeCong($event)"
         >
           <template #item="{ item }">
-            <v-list-item-action v-if="congs.length > 1">
+            <v-list-item-action v-if="congs.length > 1" class="me-0">
               <font-awesome-icon
                 v-if="item.color === 'warning'"
                 :icon="faSquareMinus"
