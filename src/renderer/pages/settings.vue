@@ -38,6 +38,7 @@
             {{ $t('reportIssue') }}
           </v-btn>
           <v-btn
+            v-if="cacheColor === 'warning'"
             small
             :color="cacheColor"
             :loading="loading"
@@ -46,6 +47,22 @@
           >
             {{ `${$t('cleanCache')} (${cache}MB)` }}
           </v-btn>
+          <v-tooltip v-else top>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                small
+                :color="cacheColor"
+                :loading="loading"
+                class="black--text"
+                v-bind="attrs"
+                v-on="on"
+                @click="removeCache()"
+              >
+                {{ `${$t('cleanCache')} (${cache}MB)` }}
+              </v-btn>
+            </template>
+            <span>{{ $t('clickAgain') }}</span>
+          </v-tooltip>
         </v-col>
         <v-col align-self="end" class="text-right pa-0">
           <icon-btn

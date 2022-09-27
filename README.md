@@ -10,7 +10,7 @@
 
 <sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
 
-## What van M³ do?
+## What can M³ do?
 
 M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
