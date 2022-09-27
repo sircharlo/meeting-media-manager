@@ -227,6 +227,7 @@ export default Vue.extend({
         if (yeartext && yeartext.length > 0) {
           const root = document.createElement('div')
           root.innerHTML = yeartext
+          this.yeartext.innerHTML = ''     
 
           // For each element of the yeartext, add it as a paragraph
           for (let i = 0; i < root.children.length; i++) {
