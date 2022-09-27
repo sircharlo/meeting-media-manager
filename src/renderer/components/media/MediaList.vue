@@ -15,10 +15,15 @@
       v-for="item in mediaList"
       :key="item.safeName"
       dense
+      :disabled="item.loading"
       @click="atClick(item)"
     >
+      <v-list-item-action v-if="item.loading" class="my-0">
+        <v-progress-circular indeterminate size="16" width="2" />
+      </v-list-item-action>
       <v-list-item-action
-        v-if="!item.recurring && (item.isLocal || item.congSpecific)"
+        v-else-if="!item.recurring && (item.isLocal || item.congSpecific)"
+        class="my-0"
       >
         <font-awesome-icon
           v-if="item.color === 'warning'"
@@ -39,11 +44,11 @@
           <span>{{ $t('clickAgain') }}</span>
         </v-tooltip>
       </v-list-item-action>
-      <v-list-item-action v-else-if="item.isLocal === undefined">
+      <v-list-item-action v-else-if="item.isLocal === undefined" class="my-0">
         <font-awesome-icon :icon="faSquarePlus" size="xs" />
       </v-list-item-action>
-      <v-list-item-action v-else>
-        <font-awesome-icon v-if="item.hidden" :icon="faSquare" />
+      <v-list-item-action v-else class="my-0">
+        <font-awesome-icon v-if="item.hidden" :icon="faSquare" size="xs" />
         <font-awesome-icon v-else :icon="faSquareCheck" size="xs" />
       </v-list-item-action>
       <v-hover v-slot="{ hover }">
@@ -67,7 +72,7 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-hover>
-      <v-list-item-action>
+      <v-list-item-action class="my-0">
         <font-awesome-icon
           v-if="item.recurring"
           :icon="faSyncAlt"
@@ -378,7 +383,6 @@ export default Vue.extend({
         for (const [, media] of mediaMap) {
           const match = media.find((m) => m.safeName === item.safeName)
           if (match) {
-            match.hidden = !match.hidden
             if (this.client) {
               const hiddenPath = join(this.$getPrefs('cong.dir'), 'Hidden')
               const datePath = join(hiddenPath, this.date)
@@ -412,15 +416,21 @@ export default Vue.extend({
               }
               await this.$updateContent()
             }
+            match.hidden = !match.hidden
+            item.loading = false
+            this.$emit('refresh')
+            return
           }
         }
-        this.$emit('refresh')
       }
     },
     async atClick(item: MeetingFile | LocalFile) {
+      if (item.loading) return
       if (!item.recurring && (item.isLocal || item.congSpecific)) {
+        item.loading = item.color === 'error'
         await this.removeItem(item)
       } else if (item.isLocal !== undefined) {
+        item.loading = true
         await this.toggleVisibility(item)
       }
     },
@@ -446,6 +456,7 @@ export default Vue.extend({
           }
           await this.$updateContent()
         }
+        item.loading = false
         this.$emit('refresh')
       } else {
         // Make user click twice to remove

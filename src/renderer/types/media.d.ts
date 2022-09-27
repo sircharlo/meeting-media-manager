@@ -15,6 +15,7 @@ export interface MeetingFileBase {
   recurring?: boolean
   safeName?: string
   uniqueId?: string
+  loading?: boolean
 }
 
 export interface VideoFile extends SmallMediaFile, MeetingFileBase {
@@ -55,6 +56,7 @@ export interface LocalFile {
   thumbnail?: undefined
   trackImage?: undefined
   url?: string
+  loading?: boolean
 }
 
 export declare type MeetingFile = ImageFile | VideoFile
