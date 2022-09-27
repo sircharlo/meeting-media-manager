@@ -143,6 +143,7 @@
         color="primary"
         :disabled="!online"
         :loading="loading"
+        large
         @click="startMediaSync()"
       >
         {{ $t('fetchMedia') }}
