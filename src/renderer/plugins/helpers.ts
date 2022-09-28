@@ -35,11 +35,6 @@ const plugin: Plugin = ({ $getPrefs, i18n }, inject) => {
   inject('translate', (word: string, fallback?: string) => {
     const mediaLang = $getPrefs('media.lang') as string
     const langs = i18n.locales as LocaleObject[]
-    console.log(langs)
-    console.log(i18n.t('song', 'nl'))
-    console.log(i18n.t('song', 'en'))
-    console.log(i18n.t('song', 'pt'))
-    console.log(langs.find((l) => l.jw === mediaLang)?.code)
     const locale =
       langs.find((l) => l.jw === mediaLang)?.code ?? fallback ?? i18n.locale
 

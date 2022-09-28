@@ -43,7 +43,7 @@
                 size="xs"
                 @click.stop="atCongClick(item)"
               />
-              <v-tooltip v-else right>
+              <v-tooltip v-else left>
                 <template #activator="{ on, attrs }">
                   <font-awesome-icon
                     v-bind="attrs"
@@ -294,6 +294,9 @@ export default Vue.extend({
     congSync(): boolean {
       return !!this.$store.state.cong.client
     },
+    weekParam(): number {
+      return parseInt(this.$route.query.week ?? -1)
+    },
     mediaScreenVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible
     },
@@ -400,8 +403,19 @@ export default Vue.extend({
         window.location.reload()
       }
     },
+    currentWeek(val: number) {
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          week: val,
+        },
+      })
+    },
   },
   async mounted() {
+    if (this.weekParam > -1) {
+      this.currentWeek = this.weekParam
+    }
     if (!this.jwSync) {
       this.$router.push({
         path: this.localePath('/settings'),
@@ -519,7 +533,7 @@ export default Vue.extend({
       this.$switchCong(join(this.$appPath(), 'prefs-' + id + '.json'))
       this.$router.push({
         path: this.localePath('/settings'),
-        query: { cong: id },
+        query: { cong: id, new: true },
       })
     },
     changeCong(path: string) {
