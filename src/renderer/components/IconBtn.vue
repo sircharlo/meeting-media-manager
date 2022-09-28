@@ -131,7 +131,6 @@ import {
   faShuffle,
   faCircleArrowLeft,
   faMusic,
-  faSort,
   faHome,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
@@ -164,7 +163,6 @@ export default Vue.extend({
           'play',
           'pause',
           'stop',
-          'sort',
           'toggleScreen',
           'present',
           'shuffle',
@@ -250,10 +248,6 @@ export default Vue.extend({
               props: { size: 'xl', class: 'black--text' },
             },
           ],
-        },
-        sort: {
-          props: { color: 'info', class: { 'sort-btn': true } },
-          icons: [faSort],
         },
         toggleScreen: {
           icons: [faDesktop, faBan, faCircle],
