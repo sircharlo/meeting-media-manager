@@ -2836,15 +2836,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.26.0":
-  version: 1.26.0
-  resolution: "@playwright/test@npm:1.26.0"
+"@playwright/test@npm:^1.26.1":
+  version: 1.26.1
+  resolution: "@playwright/test@npm:1.26.1"
   dependencies:
     "@types/node": "*"
-    playwright-core: 1.26.0
+    playwright-core: 1.26.1
   bin:
     playwright: cli.js
-  checksum: ce85c07e91f26f9f9ae9951011030347469ec3aa0fc2b2ab525e202cbcb9ba6dafe12d12ee10c13675c4ae8786f9ecd7b54bbe88034ad5f83b35d940cefc022c
+  checksum: 872bc58dfa8f8a94547b69aaf7e88178213e2201a17aced1b425ef6b13bdd2b53e7274ae8f7ca57dfc189b214be5da5e3290f80b03e5bf5bdc4f3ff0ccd38375
   languageName: node
   linkType: hard
 
@@ -11460,7 +11460,7 @@ __metadata:
     "@nuxtjs/eslint-config-typescript": ^11.0.0
     "@nuxtjs/i18n": ^7.3.0
     "@nuxtjs/vuetify": ^1.12.3
-    "@playwright/test": ^1.26.0
+    "@playwright/test": ^1.26.1
     "@sentry/electron": ^4.0.2
     "@sentry/tracing": ^7.13.0
     "@sentry/vue": ^7.13.0
@@ -11514,12 +11514,12 @@ __metadata:
     obs-websocket-js: ^4.0.3
     obs-websocket-js-v5: "npm:obs-websocket-js@^5.0.1"
     pdfjs-dist: ^2.16.105
-    playwright: ^1.26.0
+    playwright: ^1.26.1
     prettier: ^2.7.1
     sass-loader: ^10.3.1
     sql.js: ^1.8.0
     ts-loader: ^8.4.0
-    typescript: ^4.8.3
+    typescript: ^4.8.4
     upath: ^2.0.1
     v-mask: ^2.3.0
     vue: 2.7.10
@@ -13275,23 +13275,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.26.0":
-  version: 1.26.0
-  resolution: "playwright-core@npm:1.26.0"
+"playwright-core@npm:1.26.1":
+  version: 1.26.1
+  resolution: "playwright-core@npm:1.26.1"
   bin:
     playwright: cli.js
-  checksum: bd1da7baad202d48e51eb4810ff75960e5a61d137059031dd71a55856f4387e5b42086ea0d3e37d9a595cb5f65d19e2db19e0e06b873dd30a2f0d7177d5d7b41
+  checksum: 6347224c28c1ec21d49b659ae35452955e2d8a8ff7aa578f0a0dbb1eccfbcea97e7400446335e966c2a1cbb356381d78131ea65e4a2f19a3eccfb58d33aed0ca
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.26.0":
-  version: 1.26.0
-  resolution: "playwright@npm:1.26.0"
+"playwright@npm:^1.26.1":
+  version: 1.26.1
+  resolution: "playwright@npm:1.26.1"
   dependencies:
-    playwright-core: 1.26.0
+    playwright-core: 1.26.1
   bin:
     playwright: cli.js
-  checksum: 86cab6f54b317445e704ffb52c13105a3a83b38610dc5d85bb69be4e3652f7fdbb2cd4f470cc38a5801e0a38ea1fbd6efe8d67ecba6b9771094544e3f3b2515d
+  checksum: 42af6e949af68dec3327d5cce2e7f2f0d6d175528ba983b9b76f8f21995ae223f901d672799e655446b71ec5d19223464f7c587d3f569312a452718cbf8a706a
   languageName: node
   linkType: hard
 
@@ -16793,13 +16793,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.8.3":
-  version: 4.8.3
-  resolution: "typescript@npm:4.8.3"
+"typescript@npm:^4.8.4":
+  version: 4.8.4
+  resolution: "typescript@npm:4.8.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 8286a5edcaf3d68e65c451aa1e7150ad1cf53ee0813c07ec35b7abdfdb10f355ecaa13c6a226a694ae7a67785fd7eeebf89f845da0b4f7e4a35561ddc459aba0
+  checksum: 3e4f061658e0c8f36c820802fa809e0fd812b85687a9a2f5430bc3d0368e37d1c9605c3ce9b39df9a05af2ece67b1d844f9f6ea8ff42819f13bcb80f85629af0
   languageName: node
   linkType: hard
 
@@ -16813,13 +16813,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.8.3#~builtin<compat/typescript>":
-  version: 4.8.3
-  resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=a1c5e5"
+"typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>":
+  version: 4.8.4
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2222d2382fb3146089b1d27ce2b55e9d1f99cc64118f1aba75809b693b856c5d3c324f052f60c75b577947fc538bc1c27bad0eb76cbdba9a63a253489504ba7e
+  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
   languageName: node
   linkType: hard
 
