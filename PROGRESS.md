@@ -46,6 +46,8 @@
 - Correctly set app icon for Linux
 - Download markers for sign language when adding a song with the song picker
 - Hiding jw logo for media window works instantly
+- Possibility to cancel creating a congregation
+- Save meeting week selection between pages
 - Setting custom media background works instantly
 
 ## New Features
