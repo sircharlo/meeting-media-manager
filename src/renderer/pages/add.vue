@@ -480,12 +480,14 @@ export default Vue.extend({
             const datePathExists = !!this.contents.find(
               ({ filename }) => filename === datePath
             )
+
             if (!mediaPathExists) {
               await this.client.createDirectory(mediaPath)
             }
             if (!datePathExists) {
               await this.client.createDirectory(datePath)
             }
+
             const perf: any = {
               start: performance.now(),
               bytes: statSync(path).size,
@@ -524,6 +526,9 @@ export default Vue.extend({
         if (this.client) await this.$updateContent()
         this.getExistingMedia()
       } catch (e: any) {
+        if (this.client) {
+          console.debug(JSON.stringify(this.contents))
+        }
         this.$error('errorAdditionalMedia', e, this.fileString)
       } finally {
         this.type = ''
