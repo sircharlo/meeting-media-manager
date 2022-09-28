@@ -391,9 +391,11 @@ export default Vue.extend({
             client.destroy()
             resolve(true)
           })
-          client.on('error', (e) => {
+          client.on('error', (_e) => {
             if (!silent) {
-              this.$error('errorSiteCheck', e, `${hostname}:${port}`)
+              this.$warn('errorSiteCheck', {
+                identifier: `${hostname}:${port}`,
+              })
             }
             resolve(false)
           })

@@ -21,11 +21,6 @@
     <v-footer fixed class="justify-space-between">
       <v-col cols="12" align-self="end" class="d-flex">
         <v-col class="d-flex pa-0 align-center" align-self="center">
-          <icon-btn
-            v-if="cancel && isNew"
-            variant="homeVariant"
-            @click="goBack()"
-          />
           <v-btn
             small
             :color="updateSuccess ? undefined : 'error'"
@@ -71,6 +66,12 @@
         </v-col>
         <v-col align-self="end" class="text-right pa-0">
           <icon-btn
+            v-if="cancel && isNew && !valid"
+            variant="homeVariant"
+            @click="goBack()"
+          />
+          <icon-btn
+            v-else
             variant="home"
             :disabled="!valid"
             :style="valid ? undefined : 'color: red !important'"
