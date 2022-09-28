@@ -34,6 +34,11 @@ export default Vue.extend({
     isDark(): boolean {
       return window.matchMedia('(prefers-color-scheme:dark)').matches
     },
+    atHome() {
+      return (
+        this.$route.path === '/' || this.$route.path === `/${this.$i18n.locale}`
+      )
+    },
     cong() {
       return this.$route.query.cong
     },
@@ -59,6 +64,11 @@ export default Vue.extend({
     isDark(val: boolean) {
       if (this.$getPrefs('app.theme') === 'system') {
         this.$vuetify.theme.dark = val
+      }
+    },
+    async atHome(val: boolean) {
+      if (val) {
+        await this.updateOnlineStatus()
       }
     },
   },
@@ -196,7 +206,9 @@ export default Vue.extend({
         this.$store.commit('stats/setUpdateSuccess', false)
       }
     })
-    await this.updateOnlineStatus()
+    if (this.atHome) {
+      await this.updateOnlineStatus()
+    }
   },
   beforeDestroy() {
     ipcRenderer.removeAllListeners('error')
@@ -353,12 +365,14 @@ export default Vue.extend({
       })
     },
     async updateOnlineStatus(firstTry: boolean = true) {
-      this.checkInternet(await this.isReachable('www.jw.org', 443, firstTry))
+      if (this.atHome) {
+        this.checkInternet(await this.isReachable('www.jw.org', 443, firstTry))
+      }
     },
     checkInternet(online: boolean) {
       if (online) {
         ipcRenderer.send('checkForUpdates')
-      } else {
+      } else if (this.atHome) {
         setTimeout(async () => {
           await this.updateOnlineStatus(false)
         }, 10000)

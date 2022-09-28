@@ -55,7 +55,14 @@
           :disabled="videoActive"
           @click="play()"
         />
-        <icon-btn v-if="sortable" variant="sort" class="ml-2" />
+        <v-btn
+          v-if="sortable"
+          color="info"
+          class="sort-btn ml-2"
+          aria-label="Sort items"
+        >
+          <font-awesome-icon :icon="faSort" />
+        </v-btn>
       </v-list-item-action>
       <template v-if="!isImage">
         <v-slider
@@ -124,7 +131,7 @@ import { ipcRenderer } from 'electron'
 import Vue from 'vue'
 // @ts-ignore
 import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
-import { faMusic, faParagraph } from '@fortawesome/free-solid-svg-icons'
+import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
 // eslint-disable-next-line import/named
 import { existsSync, readFileSync } from 'fs-extra'
 import { Marker } from '~/types'
@@ -198,6 +205,9 @@ export default Vue.extend({
     },
     faMusic() {
       return faMusic
+    },
+    faSort() {
+      return faSort
     },
     scene(): string {
       return this.$store.state.obs.currentScene as string

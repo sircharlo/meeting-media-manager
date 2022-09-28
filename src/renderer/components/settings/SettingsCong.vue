@@ -29,7 +29,7 @@
       v-model="cong.server"
       :label="$t('hostname')"
       prefix="https://"
-      :rules="[!complete || error !== 'host']"
+      :rules="[!complete || error !== 'host' || !online]"
     />
     <!--<form-input v-model="cong.port" :label="$t('port')" />-->
     <form-input
@@ -129,6 +129,9 @@ export default Vue.extend({
   computed: {
     faGlobe() {
       return faGlobe
+    },
+    online(): boolean {
+      return this.$store.state.stats.online as boolean
     },
     faCog() {
       return faCog
