@@ -300,16 +300,16 @@ const plugin: Plugin = (
         oldVal.split('-')[0]
       )
 
-      const newName = file.filename.replace(
-        file.basename,
-        date
-          .locale(newVal)
-          .format($getPrefs('app.outputFolderDateFormat') as string)
-      )
-      if (date.isValid() && newName !== file.filename) {
-        const contents = store.state.cong.contents as FileStat[]
-        if (!contents.find(({ filename }) => filename === newName)) {
-          if (file.filename !== newName) {
+      if (date.isValid()) {
+        const newName = file.filename.replace(
+          file.basename,
+          date
+            .locale(newVal)
+            .format($getPrefs('app.outputFolderDateFormat') as string)
+        )
+        if (file.filename !== newName) {
+          const contents = store.state.cong.contents as FileStat[]
+          if (!contents.find(({ filename }) => filename === newName)) {
             await client.moveFile(file.filename, newName)
           }
         }

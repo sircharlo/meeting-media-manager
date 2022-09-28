@@ -161,7 +161,6 @@ export default Vue.extend({
   },
   async mounted() {
     let congs = await this.$getCongPrefs()
-    console.log([...congs])
     congs = congs.filter((c: { name: string; path: string }) => {
       return c.path !== join(this.$appPath(), `prefs-${this.cong}.json`)
     })
