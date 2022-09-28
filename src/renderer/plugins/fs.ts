@@ -24,6 +24,7 @@ const plugin: Plugin = (
 ) => {
   // Paths
   inject('pubPath', (file?: MeetingFile): string => {
+    if (!$getPrefs('media.lang')) return ''
     const pubPath = joinSafe(
       $appPath(),
       'Publications',
@@ -57,6 +58,10 @@ const plugin: Plugin = (
   })
 
   function mediaPath(file?: MeetingFile): string {
+    if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) {
+      return ''
+    }
+
     const mediaPath = joinSafe(
       $getPrefs('app.localOutputPath'),
       $getPrefs('media.lang')

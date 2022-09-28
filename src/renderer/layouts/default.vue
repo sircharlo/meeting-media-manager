@@ -158,6 +158,7 @@ export default Vue.extend({
         this.$getPrefs('media.enableMediaDisplayButton') &&
         this.$route.path !== this.localePath('/present')
       ) {
+        console.debug('Trigger present mode via Electron')
         this.$router.push({
           path: this.localePath('/present'),
           query: this.$route.query,
@@ -245,15 +246,19 @@ export default Vue.extend({
         if (isNew) {
           path = this.localePath('/settings', lang)
         }
-        this.$router.replace({
-          path,
-          query: {
-            cong: name.replace('prefs-', ''),
-          },
-        })
+        if (path !== this.$route.path) {
+          console.debug('Set correct lang and/or open settings for new cong')
+          this.$router.replace({
+            path,
+            query: {
+              cong: name.replace('prefs-', ''),
+            },
+          })
+        }
       }
       // If congs lang is different from current lang, set new lang
       else if (lang && lang !== this.$i18n.locale) {
+        console.debug(`Change lang from ${this.$i18n.locale} to ${lang}`)
         this.$router.replace(this.switchLocalePath(lang))
       }
 

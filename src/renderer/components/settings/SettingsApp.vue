@@ -295,6 +295,7 @@ export default Vue.extend({
 
         // Change the language of the app by changing it in the URL
         if ((val ?? oldVal) !== this.$i18n.locale) {
+          console.debug('Change localAppLang')
           this.$router.replace(this.switchLocalePath(val ?? oldVal))
         }
 

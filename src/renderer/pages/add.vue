@@ -347,6 +347,7 @@ export default Vue.extend({
   },
   methods: {
     goHome() {
+      console.debug('Go back home')
       this.$router.push({
         path: this.localePath('/'),
         query: {
