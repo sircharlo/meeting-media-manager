@@ -1,9 +1,10 @@
 import { WebDAVClient, createClient, FileStat } from 'webdav/web'
 import { Plugin } from '@nuxt/types'
-import { basename, dirname, extname, join } from 'upath'
+import { basename, dirname, extname, join, resolve } from 'upath'
 import { Dayjs } from 'dayjs'
 // eslint-disable-next-line import/named
 import { statSync } from 'fs-extra'
+import { XMLParser } from 'fast-xml-parser'
 import {
   ObsPrefs,
   AppPrefs,
@@ -20,6 +21,7 @@ const plugin: Plugin = (
     store,
     $log,
     $dayjs,
+    $axios,
     $migrate2290,
     $findOne,
     $mediaPath,
@@ -47,9 +49,16 @@ const plugin: Plugin = (
         username,
         password,
       })
-      const contents = (await client.getDirectoryContents(dir, {
-        deep: true,
-      })) as FileStat[]
+
+      let contents: FileStat[] = []
+
+      if (host.includes('4shared')) {
+        contents = await getCongDirectory(host, username, password, dir)
+      } else {
+        contents = (await client.getDirectoryContents(dir, {
+          deep: true,
+        })) as FileStat[]
+      }
 
       // Clean up old dates
       const promises: Promise<void>[] = []
@@ -81,7 +90,7 @@ const plugin: Plugin = (
       store.commit('cong/setContents', contents)
       store.commit('cong/setClient', client)
 
-      const unsupportedHosts = ['4shared']
+      const unsupportedHosts: string[] = []
 
       if (unsupportedHosts.find((h) => host.includes(h))) {
         $warn(`errorWebdavNotSupported`, { identifier: host })
@@ -110,6 +119,105 @@ const plugin: Plugin = (
   }
   inject('connect', connect)
 
+  async function getFolderContent(
+    host: string,
+    username: string,
+    password: string,
+    dir: string = '/'
+  ): Promise<FileStat[]> {
+    const result = await $axios.$request({
+      // @ts-ignore
+      method: 'PROPFIND',
+      url: `https://${host}${dir}`,
+      auth: {
+        username,
+        password,
+      },
+      responseType: 'text',
+      headers: {
+        Accept: 'text/plain',
+        Depth: '1',
+      },
+    })
+
+    const parsed = new XMLParser({ removeNSPrefix: true }).parse(result)
+    if (Array.isArray(parsed?.multistatus?.response)) {
+      const items: FileStat[] = parsed.multistatus.response
+        .filter((item: any) => {
+          return resolve(decodeURIComponent(item.href)) !== resolve(dir)
+        })
+        .map((item: any) => {
+          const href = decodeURIComponent(item.href)
+          return {
+            filename: href.endsWith('/') ? href.slice(0, -1) : href,
+            basename: basename(href),
+            lastmod: item.propstat.prop.getlastmodified,
+            type:
+              typeof item.propstat.prop.resourcetype === 'object' &&
+              'collection' in item.propstat.prop.resourcetype
+                ? 'directory'
+                : 'file',
+            size: item.propstat.prop.getcontentlength ?? 0,
+          } as FileStat
+        })
+      return items
+    } else {
+      throw new TypeError('Invalid response')
+    }
+  }
+
+  async function getCongDirectory(
+    host: string,
+    username: string,
+    password: string,
+    dir: string = '/'
+  ): Promise<FileStat[]> {
+    let contents: FileStat[] = []
+
+    // Get root content
+    const rootFiles = await getFolderContent(host, username, password, dir)
+    contents = contents.concat(rootFiles)
+
+    // Get date folders
+    let dateFolders: FileStat[] = []
+    const datePromises: Promise<FileStat[]>[] = []
+    rootFiles
+      .filter(({ type }) => type === 'directory')
+      .forEach((dir) => {
+        datePromises.push(
+          getFolderContent(host, username, password, dir.filename)
+        )
+      })
+
+    const dateFolderResult = await Promise.allSettled(datePromises)
+    dateFolderResult.forEach((dateDirs) => {
+      if (dateDirs.status === 'fulfilled') {
+        dateFolders = dateFolders.concat(dateDirs.value)
+      }
+    })
+
+    // Get media files
+    let mediaFiles: FileStat[] = []
+    const mediaPromises: Promise<FileStat[]>[] = []
+    dateFolders
+      .filter(({ type }) => type === 'directory')
+      .forEach((dir) => {
+        mediaPromises.push(
+          getFolderContent(host, username, password, dir.filename)
+        )
+      })
+
+    const mediaFolderResult = await Promise.allSettled(mediaPromises)
+    mediaFolderResult.forEach((media) => {
+      if (media.status === 'fulfilled') {
+        mediaFiles = mediaFiles.concat(media.value)
+      }
+    })
+
+    // Return all files and directories
+    return contents.concat(dateFolders, mediaFiles)
+  }
+
   async function removeOldDate(
     client: WebDAVClient,
     dir: FileStat
@@ -119,7 +227,6 @@ const plugin: Plugin = (
       $getPrefs('app.outputFolderDateFormat') as string
     )
     if (date.isValid() && date.isBefore($dayjs().subtract(1, 'day'))) {
-      console.log('Removing old date', dir.filename)
       try {
         await client.deleteFile(dir.filename)
       } catch (e: any) {
@@ -132,12 +239,24 @@ const plugin: Plugin = (
 
   inject('updateContent', async (): Promise<void> => {
     if (store.state.cong.client) {
-      const contents = (await store.state.cong.client.getDirectoryContents(
-        $getPrefs('cong.dir'),
-        {
-          deep: true,
-        }
-      )) as FileStat[]
+      const { server, user, password, dir } = $getPrefs('cong') as CongPrefs
+      let contents: FileStat[] = []
+      if (server?.includes('4shared')) {
+        contents = await getCongDirectory(
+          server,
+          user as string,
+          password as string,
+          dir as string
+        )
+      } else {
+        contents = (await store.state.cong.client.getDirectoryContents(
+          $getPrefs('cong.dir'),
+          {
+            deep: true,
+          }
+        )) as FileStat[]
+      }
+
       store.commit('cong/setContents', contents)
     }
   })
