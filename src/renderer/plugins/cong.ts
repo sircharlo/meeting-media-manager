@@ -80,6 +80,13 @@ const plugin: Plugin = (
 
       store.commit('cong/setContents', contents)
       store.commit('cong/setClient', client)
+
+      const unsupportedHosts = ['4shared']
+
+      if (unsupportedHosts.find((h) => host.includes(h))) {
+        $warn(`errorWebdavNotSupported`, { identifier: host })
+      }
+
       return 'success'
     } catch (e: any) {
       store.commit('cong/clear')

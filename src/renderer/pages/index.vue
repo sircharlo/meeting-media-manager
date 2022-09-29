@@ -172,6 +172,7 @@
           dense
           hide-details="auto"
           class="justify-center"
+          style="max-width: 250px"
           @change="resetColors()"
         />
       </v-col>

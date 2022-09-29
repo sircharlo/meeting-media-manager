@@ -34,6 +34,7 @@
   "errorSiteCheck": "Unable to establish a connection to the following site:",
   "errorSyncCongMedia": "An error occurred while fetching media from congregation sync. Please try again later or contact your videoconference organizer.",
   "errorWebdavLs": "An error occurred while attempting to read the following directory. Please contact your videoconference organizer.",
+  "errorWebdavNotSupported": "The service you are using for your congregation server is currently not supported. It might not work as intended.",
   "errorWebdavPut": "An error occurred while attempting to write the following file. Please contact your videoconference organizer.",
   "errorWebdavRm": "An error occurred while attempting to delete the following file. Please contact your videoconference organizer.",
   "errorWebdavTooBig": "The file you are attempting to upload is too large (max 512MB). The file has been added locally, but not to the cong server.",

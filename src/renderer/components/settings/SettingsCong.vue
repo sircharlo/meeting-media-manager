@@ -99,12 +99,12 @@ export default Vue.extend({
         ...PREFS.cong,
       } as CongPrefs,
       hosts: [
-        {
+        /* {
           name: '4shared',
           server: 'webdav.4shared.com',
           port: '443',
           dir: '/',
-        },
+        }, */
         {
           name: 'Box',
           server: 'webdav.box.com',
