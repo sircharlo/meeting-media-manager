@@ -209,6 +209,7 @@ export default Vue.extend({
         }, 3000)
       } else {
         this.loading = true
+        console.log('clearing cache...')
 
         const folders = []
 
@@ -220,16 +221,15 @@ export default Vue.extend({
           folders.push(join(this.$mediaPath(), '*'))
         }
 
-        if (this.$getPrefs('app.localOutputPath') && this.$getPrefs(''))
-          // Remove cache
-          this.$rm(
-            this.$findAll(folders, {
-              ignore: this.$mediaPath()
-                ? [join(this.$mediaPath(), 'Recurring')]
-                : [],
-              onlyDirectories: true,
-            })
-          )
+        // Remove cache
+        this.$rm(
+          this.$findAll(folders, {
+            ignore: this.$mediaPath()
+              ? [join(this.$mediaPath(), 'Recurring')]
+              : [],
+            onlyDirectories: true,
+          })
+        )
 
         // Force refresh jw langs
         await this.$getJWLangs(true)
