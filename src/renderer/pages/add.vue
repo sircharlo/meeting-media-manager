@@ -494,10 +494,11 @@ export default Vue.extend({
 
             try {
               if (!datePathExists) {
+                console.debug(JSON.stringify(this.contents))
                 await this.client.createDirectory(datePath)
               }
             } catch (e: any) {
-              console.error(e)
+              console.debug(JSON.stringify(this.contents))
               if (!(await this.client.exists(datePath))) {
                 this.$warn('errorWebdavPut', { identifier: datePath })
               }
