@@ -124,6 +124,8 @@
         :label="$t('port')"
         :locked="locked('app.obs.port')"
         :required="app.obs.enable"
+        @blur="refreshOBS()"
+        @keydown.enter.prevent="refreshOBS()"
       />
       <form-input
         id="app.obs.password"
@@ -133,6 +135,8 @@
         :locked="locked('app.obs.password')"
         hide-details="auto"
         :required="app.obs.enable"
+        @blur="refreshOBS()"
+        @keydown.enter.prevent="refreshOBS()"
       />
       <v-col cols="12" class="text-right pr-0">
         <v-btn
@@ -372,8 +376,10 @@ export default Vue.extend({
   },
   methods: {
     async refreshOBS() {
-      this.$resetOBS()
-      await this.$getScenes()
+      if (this.obsComplete) {
+        this.$resetOBS()
+        await this.$getScenes()
+      }
 
       if (this.$refs.form) {
         this.$refs.form.validate()

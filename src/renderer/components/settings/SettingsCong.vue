@@ -30,6 +30,8 @@
       :label="$t('hostname')"
       prefix="https://"
       :rules="[!complete || error !== 'host' || !online]"
+      @blur="submit()"
+      @keydown.enter.prevent="submit()"
     />
     <!--<form-input v-model="cong.port" :label="$t('port')" />-->
     <form-input
@@ -38,6 +40,8 @@
       :label="$t('username')"
       :required="!!cong.server"
       :rules="[!complete || error !== 'credentials']"
+      @blur="submit()"
+      @keydown.enter.prevent="submit()"
     />
     <form-input
       id="cong.password"
@@ -46,6 +50,8 @@
       :label="$t('password')"
       :required="!!cong.server"
       :rules="[!complete || error !== 'credentials']"
+      @blur="submit()"
+      @keydown.enter.prevent="submit()"
     />
     <v-col class="d-flex pa-0 pb-2 align-center">
       <form-input
@@ -56,6 +62,8 @@
         :locked="locked('cong.dir')"
         :rules="[!complete || error !== 'dir']"
         hide-details="auto"
+        @blur="submit()"
+        @keydown.enter.prevent="submit()"
       />
       <v-btn
         class="ml-2"
@@ -68,6 +76,9 @@
       </v-btn>
     </v-col>
     <template v-if="client">
+      <v-btn v-if="cong.dir !== '/'" class="mb-2" @click="moveDirUp()">
+        {{ $t('webdavFolderUp') }}
+      </v-btn>
       <cong-dir-list :contents="contents" @open="openDir($event)" />
       <v-col cols="12" class="d-flex px-0">
         <v-col class="text-left pl-0" align-self="center">
@@ -188,6 +199,21 @@ export default Vue.extend({
     }
   },
   methods: {
+    async moveDirUp() {
+      if (!this.cong.dir) return
+      if (this.cong.dir.endsWith('/')) {
+        this.cong.dir =
+          this.cong.dir.substring(
+            0,
+            this.cong.dir.slice(0, -1).lastIndexOf('/') + 1
+          ) || '/'
+      } else {
+        this.cong.dir =
+          this.cong.dir.substring(0, this.cong.dir.lastIndexOf('/')) || '/'
+      }
+
+      await this.submit()
+    },
     async submit() {
       if (this.complete) {
         this.loading = true
