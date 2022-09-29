@@ -339,6 +339,7 @@ const plugin: Plugin = (
   function updateContentsTree(): CongFile[] {
     const tree: CongFile[] = []
     let root = $getPrefs('cong.dir') as string
+    if (!root) return []
     if (root.length > 1 && root.endsWith('/')) root = root.slice(0, -1)
     const contents = $clone(store.state.cong.contents) as FileStat[]
 
