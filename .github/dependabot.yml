@@ -15,6 +15,8 @@ updates:
       interval: 'daily'
     ignore:
       - dependency-name: '@babel/core'
+      - dependency-name: '@nuxtjs/i18n'
+        update-types: ['version-update:semver-major']
       - dependency-name: 'css-loader'
         update-types: ['version-update:semver-major']
       - dependency-name: 'eslint-webpack-plugin'
