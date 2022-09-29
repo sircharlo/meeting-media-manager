@@ -648,7 +648,7 @@ export default Vue.extend({
         // Remove old and invalid date directories
         if (!dryrun) {
           this.$rm(
-            this.$findAll(join(this.$mediaPath(), '*/'), {
+            this.$findAll(join(this.$mediaPath(), '*'), {
               ignore: [join(this.$mediaPath(), 'Recurring')],
               onlyDirectories: true,
             }).filter((dir: string) => {

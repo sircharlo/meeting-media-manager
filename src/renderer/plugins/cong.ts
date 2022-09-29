@@ -112,6 +112,7 @@ const plugin: Plugin = (
       $getPrefs('app.outputFolderDateFormat') as string
     )
     if (date.isValid() && date.isBefore($dayjs().subtract(1, 'day'))) {
+      console.log('Removing old date', dir.filename)
       try {
         await client.deleteFile(dir.filename)
       } catch (e: any) {

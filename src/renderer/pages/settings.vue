@@ -174,6 +174,7 @@ export default Vue.extend({
   methods: {
     goBack() {
       console.debug('Go back')
+      this.$removeCong(join(this.$appPath(), `prefs-${this.cong}.json`))
       this.$router.back()
     },
     calcCache(): void {

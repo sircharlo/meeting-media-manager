@@ -481,11 +481,26 @@ export default Vue.extend({
               ({ filename }) => filename === datePath
             )
 
-            if (!mediaPathExists) {
-              await this.client.createDirectory(mediaPath)
+            try {
+              if (!mediaPathExists) {
+                await this.client.createDirectory(mediaPath)
+              }
+            } catch (e: any) {
+              console.error(e)
+              if (!(await this.client.exists(mediaPath))) {
+                this.$warn('errorWebdavPut', { identifier: mediaPath })
+              }
             }
-            if (!datePathExists) {
-              await this.client.createDirectory(datePath)
+
+            try {
+              if (!datePathExists) {
+                await this.client.createDirectory(datePath)
+              }
+            } catch (e: any) {
+              console.error(e)
+              if (!(await this.client.exists(datePath))) {
+                this.$warn('errorWebdavPut', { identifier: datePath })
+              }
             }
 
             const perf: any = {
@@ -526,9 +541,6 @@ export default Vue.extend({
         if (this.client) await this.$updateContent()
         this.getExistingMedia()
       } catch (e: any) {
-        if (this.client) {
-          console.debug(JSON.stringify(this.contents))
-        }
         this.$error('errorAdditionalMedia', e, this.fileString)
       } finally {
         this.type = ''
