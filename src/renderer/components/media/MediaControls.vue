@@ -2,18 +2,34 @@
 <template>
   <v-row>
     <v-app-bar fixed>
-      <v-col class="text-left" cols="auto">
+      <v-col class="text-left" cols="4">
+        <v-btn
+          icon
+          aria-label="Refresh"
+          :disabled="mediaActive"
+          @click="getMedia()"
+        >
+          <font-awesome-icon :icon="faRotateRight" />
+        </v-btn>
+        <v-btn icon aria-label="Open media folder" @click="openFolder()">
+          <font-awesome-icon :icon="faFolderOpen" />
+        </v-btn>
         <v-btn icon aria-label="Toggle prefix" @click="togglePrefix()">
           <font-awesome-icon :icon="faEye" />
           <font-awesome-icon :icon="faListOl" />
         </v-btn>
       </v-col>
       <v-col class="text-center d-flex justify-center">
-        <v-btn color="secondary" :disabled="mediaActive" @click="clearDate()">
+        <v-btn
+          class="px-3"
+          color="secondary"
+          :disabled="mediaActive"
+          @click="clearDate()"
+        >
           {{ date }}
         </v-btn>
       </v-col>
-      <v-col class="text-right" cols="auto">
+      <v-col class="text-right" cols="4">
         <template v-if="$getPrefs('media.enablePp')">
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
@@ -47,14 +63,6 @@
           </v-tooltip>
         </template>
         <v-btn
-          icon
-          aria-label="Refresh"
-          :disabled="mediaActive"
-          @click="getMedia()"
-        >
-          <font-awesome-icon :icon="faRotateRight" />
-        </v-btn>
-        <v-btn
           v-if="sortable"
           aria-label="Save order"
           icon
@@ -70,9 +78,6 @@
           @click="sortable = true"
         >
           <font-awesome-icon :icon="faArrowDownShortWide" />
-        </v-btn>
-        <v-btn icon aria-label="Open media folder" @click="openFolder()">
-          <font-awesome-icon :icon="faFolderOpen" />
         </v-btn>
       </v-col>
     </v-app-bar>

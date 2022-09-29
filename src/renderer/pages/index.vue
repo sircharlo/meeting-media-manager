@@ -35,7 +35,7 @@
           @change="changeCong($event)"
         >
           <template #item="{ item }">
-            <v-list-item-action v-if="congs.length > 1">
+            <v-list-item-action v-if="congs.length > 1" class="me-0">
               <font-awesome-icon
                 v-if="item.color === 'warning'"
                 :icon="faSquareMinus"
@@ -143,13 +143,14 @@
         color="primary"
         :disabled="!online"
         :loading="loading"
+        large
         @click="startMediaSync()"
       >
         {{ $t('fetchMedia') }}
       </v-btn>
       <v-btn
         v-if="$config.isDev"
-        color="primary"
+        color="warning"
         :disabled="!online"
         :loading="loading"
         @click="testApp()"
@@ -158,13 +159,6 @@
       </v-btn>
     </v-col>
     <v-col cols="12" align-self="end" class="d-flex pa-0">
-      <v-col>
-        <icon-btn
-          v-if="$getPrefs('meeting.enableMusicButton')"
-          variant="shuffle"
-          click-twice
-        />
-      </v-col>
       <v-col class="text-center">
         <v-select
           id="week-select"
@@ -182,6 +176,12 @@
         />
       </v-col>
       <v-col class="d-flex justify-end">
+        <icon-btn
+          v-if="$getPrefs('meeting.enableMusicButton')"
+          variant="shuffle"
+          click-twice
+          class="mr-2"
+        />
         <template v-if="$getPrefs('media.enableMediaDisplayButton')">
           <icon-btn variant="toggleScreen" class="mr-2" />
           <icon-btn variant="present" :disabled="loading" class="mr-2" />
@@ -485,6 +485,15 @@ export default Vue.extend({
         4: 'accent',
         5: 'accent',
         6: 'accent',
+      }
+      if (!this.$getPrefs('meeting.specialCong')) {
+        if (this.currentWeek === this.$dayjs().isoWeek()) {
+          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
+          this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
+        } else {
+          this.dayColors[this.$getPrefs('meeting.mwDay')] = 'secondary'
+          this.dayColors[this.$getPrefs('meeting.weDay')] = 'secondary'
+        }
       }
     },
     async testApp() {

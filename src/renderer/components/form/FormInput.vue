@@ -326,7 +326,7 @@ export default Vue.extend({
       showPassword: false,
       style: {
         dense: true,
-        filled: true,
+        // filled: true,
         outlined: true,
       } as any,
     }
@@ -367,7 +367,7 @@ export default Vue.extend({
     } else if (this.variant === 'round') {
       this.style = {
         dense: true,
-        filled: true,
+        // filled: true,
         rounded: true,
         flat: true,
         rules: [],

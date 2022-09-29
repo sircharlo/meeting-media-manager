@@ -88,9 +88,9 @@
           >
             {{ $t('browse') }}
           </v-btn>
-          <v-btn v-else color="error" class="mb-2" @click="removeBg()">{{
-            $t('delete')
-          }}</v-btn>
+          <v-btn v-else color="error" class="mb-2" @click="removeBg()">
+            {{ $t('delete') }}
+          </v-btn>
           <v-btn
             color="warning"
             class="mb-2"
@@ -260,7 +260,9 @@ export default Vue.extend({
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
         await this.$getJWLangs()
-        this.$refreshBackgroundImgPreview(true)
+        if (this.bg === 'yeartext') {
+          await this.$refreshBackgroundImgPreview(true)
+        }
       },
     },
     'media.preferredOutput': {
@@ -315,7 +317,6 @@ export default Vue.extend({
     if (this.$refs.form) {
       this.$refs.form.validate()
     }
-    this.bg = await this.$refreshBackgroundImgPreview()
   },
   methods: {
     toggleListener(enable: boolean, field: 'backward' | 'forward') {

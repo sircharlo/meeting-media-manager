@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center" class="fill-height mb-0">
     <v-col cols="12" class="text-center" style="margin-bottom: 72px">
-      <v-expansion-panels v-model="panel" multiple focusable popout>
+      <v-expansion-panels v-model="panel" multiple focusable accordion>
         <v-expansion-panel
           v-for="(header, i) in headers"
           :key="header.component"

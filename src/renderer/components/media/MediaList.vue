@@ -1,6 +1,6 @@
 <!-- Media list in the media manager page -->
 <template>
-  <v-list>
+  <v-list dense>
     <v-dialog v-if="edit" :value="true">
       <v-card>
         <v-col class="text-right">
@@ -94,11 +94,12 @@
           fixed-width
         />
       </v-list-item-action>
-      <v-list-item-action>
+      <v-list-item-action class="ms-2">
         <font-awesome-icon
           v-if="item.congSpecific"
           :icon="faCloud"
           class="info--text"
+          size="sm"
         />
         <font-awesome-icon
           v-else-if="item.isLocal"

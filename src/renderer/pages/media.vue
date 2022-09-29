@@ -225,6 +225,8 @@ export default Vue.extend({
         const yeartext = existsSync(path) ? readFileSync(path, 'utf8') : null
         const fontPath = await this.$wtFontPath() // Only works when watchtower library is installed on the user's machine
         if (yeartext && yeartext.length > 0) {
+          this.yeartext.innerHTML = ''
+
           const root = document.createElement('div')
           root.innerHTML = yeartext
 
