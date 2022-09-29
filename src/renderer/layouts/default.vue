@@ -54,8 +54,9 @@ export default Vue.extend({
   },
   watch: {
     cong: {
-      handler(val: string) {
-        if (val) {
+      handler(val: string, oldVal: string | null) {
+        if (oldVal && val) {
+          console.log('cong changed')
           this.initPrefs('prefs-' + val)
         }
       },
@@ -73,20 +74,25 @@ export default Vue.extend({
     },
   },
   async beforeMount() {
-    if (!this.cong) {
+    if (this.cong) {
+      this.initPrefs('prefs-' + this.cong)
+    } else {
       const congs = await this.$getCongPrefs()
 
       // If not congs, make a new one
       if (congs.length === 0) {
         const id = Math.random().toString(36).substring(2, 15)
         if (this.$route.path === this.localePath('/')) {
+          console.log('no congs, at home')
           this.initPrefs('prefs-' + id, true)
         } else {
+          console.log('no congs, already at settings')
           this.initPrefs('prefs-' + id)
         }
       }
       // If one congregation, open that one
       else if (congs.length === 1) {
+        console.log('one cong')
         this.initPrefs(basename(congs[0].path, '.json'))
       }
       // If computer username matches congregation name, auto login
@@ -97,6 +103,7 @@ export default Vue.extend({
           (c) => c.name?.toLowerCase().trim() === username.toLowerCase().trim()
         )
         if (match) {
+          console.log('username matches cong')
           this.initPrefs(basename(match.path, '.json'))
         }
       }
@@ -158,6 +165,7 @@ export default Vue.extend({
         this.$getPrefs('media.enableMediaDisplayButton') &&
         this.$route.path !== this.localePath('/present')
       ) {
+        console.debug('Trigger present mode via Electron')
         this.$router.push({
           path: this.localePath('/present'),
           query: this.$route.query,
@@ -245,6 +253,7 @@ export default Vue.extend({
         if (isNew) {
           path = this.localePath('/settings', lang)
         }
+        console.debug('Set correct lang and/or open settings for new cong')
         this.$router.replace({
           path,
           query: {
@@ -254,6 +263,7 @@ export default Vue.extend({
       }
       // If congs lang is different from current lang, set new lang
       else if (lang && lang !== this.$i18n.locale) {
+        console.debug(`Change lang from ${this.$i18n.locale} to ${lang}`)
         this.$router.replace(this.switchLocalePath(lang))
       }
 

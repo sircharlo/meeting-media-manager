@@ -161,7 +161,6 @@ export default Vue.extend({
   },
   async mounted() {
     let congs = await this.$getCongPrefs()
-    console.log([...congs])
     congs = congs.filter((c: { name: string; path: string }) => {
       return c.path !== join(this.$appPath(), `prefs-${this.cong}.json`)
     })
@@ -174,6 +173,8 @@ export default Vue.extend({
   },
   methods: {
     goBack() {
+      console.debug('Go back')
+      this.$removeCong(join(this.$appPath(), `prefs-${this.cong}.json`))
       this.$router.back()
     },
     calcCache(): void {
@@ -209,13 +210,26 @@ export default Vue.extend({
       } else {
         this.loading = true
 
-        // Remove cache
-        this.$rm(
-          this.$findAll([join(this.$mediaPath(), '*'), this.$pubPath()], {
-            ignore: [join(this.$mediaPath(), 'Recurring')],
-            onlyDirectories: true,
-          })
-        )
+        const folders = []
+
+        if (this.$pubPath()) {
+          folders.push(this.$pubPath())
+        }
+
+        if (this.$mediaPath()) {
+          folders.push(join(this.$mediaPath(), '*'))
+        }
+
+        if (this.$getPrefs('app.localOutputPath') && this.$getPrefs(''))
+          // Remove cache
+          this.$rm(
+            this.$findAll(folders, {
+              ignore: this.$mediaPath()
+                ? [join(this.$mediaPath(), 'Recurring')]
+                : [],
+              onlyDirectories: true,
+            })
+          )
 
         // Force refresh jw langs
         await this.$getJWLangs(true)

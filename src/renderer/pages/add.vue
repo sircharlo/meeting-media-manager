@@ -347,6 +347,7 @@ export default Vue.extend({
   },
   methods: {
     goHome() {
+      console.debug('Go back home')
       this.$router.push({
         path: this.localePath('/'),
         query: {
@@ -479,12 +480,29 @@ export default Vue.extend({
             const datePathExists = !!this.contents.find(
               ({ filename }) => filename === datePath
             )
-            if (!mediaPathExists) {
-              await this.client.createDirectory(mediaPath)
+
+            try {
+              if (!mediaPathExists) {
+                await this.client.createDirectory(mediaPath)
+              }
+            } catch (e: any) {
+              console.error(e)
+              if (!(await this.client.exists(mediaPath))) {
+                this.$warn('errorWebdavPut', { identifier: mediaPath })
+              }
             }
-            if (!datePathExists) {
-              await this.client.createDirectory(datePath)
+
+            try {
+              if (!datePathExists) {
+                await this.client.createDirectory(datePath)
+              }
+            } catch (e: any) {
+              console.error(e)
+              if (!(await this.client.exists(datePath))) {
+                this.$warn('errorWebdavPut', { identifier: datePath })
+              }
             }
+
             const perf: any = {
               start: performance.now(),
               bytes: statSync(path).size,

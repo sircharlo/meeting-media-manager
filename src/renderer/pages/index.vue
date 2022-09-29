@@ -403,7 +403,8 @@ export default Vue.extend({
         window.location.reload()
       }
     },
-    currentWeek(val: number) {
+    currentWeek(val: number, oldVal: number) {
+      console.debug(`Change current week from ${oldVal} to ${val}`)
       this.$router.replace({
         query: {
           ...this.$route.query,
@@ -417,6 +418,7 @@ export default Vue.extend({
       this.currentWeek = this.weekParam
     }
     if (!this.jwSync) {
+      console.debug('Open settings to fill in media lang')
       this.$router.push({
         path: this.localePath('/settings'),
         query: this.$route.query,
@@ -463,6 +465,7 @@ export default Vue.extend({
       this.dayColors[this.daysOfWeek.length + day - 7] = color
     },
     openDate(date: string) {
+      console.debug('Manage specific day')
       this.$router.push({
         path: this.localePath('/add'),
         query: { ...this.$route.query, date },
@@ -531,12 +534,14 @@ export default Vue.extend({
       // Create new cong and switch to it
       const id = Math.random().toString(36).substring(2, 15)
       this.$switchCong(join(this.$appPath(), 'prefs-' + id + '.json'))
+      console.debug('Create new cong via select')
       this.$router.push({
         path: this.localePath('/settings'),
         query: { cong: id, new: true },
       })
     },
     changeCong(path: string) {
+      console.debug('Switched cong via select')
       this.$router.push({
         query: {
           cong: basename(path, '.json').replace('prefs-', ''),
@@ -555,6 +560,7 @@ export default Vue.extend({
         this.$removeCong(item.path)
 
         // Switch to the first other congregation found
+        console.debug('Switch to existing cong')
         this.$router.push({
           query: {
             cong: basename(
@@ -651,7 +657,7 @@ export default Vue.extend({
         // Remove old and invalid date directories
         if (!dryrun) {
           this.$rm(
-            this.$findAll(join(this.$mediaPath(), '*/'), {
+            this.$findAll(join(this.$mediaPath(), '*'), {
               ignore: [join(this.$mediaPath(), 'Recurring')],
               onlyDirectories: true,
             }).filter((dir: string) => {

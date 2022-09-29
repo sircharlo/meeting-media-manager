@@ -174,7 +174,7 @@ const plugin: Plugin = (
             screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id
           mediaWinOptions.type = 'fullscreen'
         } else {
-          mediaWinOptions.destination = screenInfo.displays[0].id
+          mediaWinOptions.destination = screenInfo.displays[0]?.id ?? null
         }
       }
     } catch (e: any) {

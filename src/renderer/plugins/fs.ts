@@ -24,6 +24,7 @@ const plugin: Plugin = (
 ) => {
   // Paths
   inject('pubPath', (file?: MeetingFile): string => {
+    if (!$getPrefs('media.lang')) return ''
     const pubPath = joinSafe(
       $appPath(),
       'Publications',
@@ -57,6 +58,10 @@ const plugin: Plugin = (
   })
 
   function mediaPath(file?: MeetingFile): string {
+    if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) {
+      return ''
+    }
+
     const mediaPath = joinSafe(
       $getPrefs('app.localOutputPath'),
       $getPrefs('media.lang')
@@ -300,16 +305,16 @@ const plugin: Plugin = (
         oldVal.split('-')[0]
       )
 
-      const newName = file.filename.replace(
-        file.basename,
-        date
-          .locale(newVal)
-          .format($getPrefs('app.outputFolderDateFormat') as string)
-      )
-      if (date.isValid() && newName !== file.filename) {
-        const contents = store.state.cong.contents as FileStat[]
-        if (!contents.find(({ filename }) => filename === newName)) {
-          if (file.filename !== newName) {
+      if (date.isValid()) {
+        const newName = file.filename.replace(
+          file.basename,
+          date
+            .locale(newVal)
+            .format($getPrefs('app.outputFolderDateFormat') as string)
+        )
+        if (file.filename !== newName) {
+          const contents = store.state.cong.contents as FileStat[]
+          if (!contents.find(({ filename }) => filename === newName)) {
             await client.moveFile(file.filename, newName)
           }
         }
