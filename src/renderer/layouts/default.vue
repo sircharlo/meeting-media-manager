@@ -59,7 +59,9 @@ export default Vue.extend({
       immediate: true,
     },
     online(val: boolean) {
-      if (!val) {
+      if (val) {
+        ipcRenderer.send('checkForUpdates')
+      } else {
         this.$warn('errorOffline')
       }
     },
@@ -211,7 +213,10 @@ export default Vue.extend({
     })
 
     // Listen for online status
-    this.$store.commit('stats/setOnline', navigator.onLine)
+    if (navigator.onLine) {
+      this.$store.commit('stats/setOnline', true)
+      ipcRenderer.send('checkForUpdates')
+    }
     window.addEventListener('offline', (_e) => {
       this.$store.commit('stats/setOnline', false)
     })
