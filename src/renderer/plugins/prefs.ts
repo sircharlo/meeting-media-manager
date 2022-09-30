@@ -277,14 +277,15 @@ function storeOptions(name: string = 'prefs') {
       console.debug(`[main-config] versions: ${context.versions}`)
     },
     migrations: {
-      '<=22.9.0-alpha.99': (store) => {
+      '0.0.1': (store) => {
         for (const key of Object.keys(store.store)) {
           // Skip root keys
           if (
             key === 'app' ||
             key === 'cong' ||
             key === 'media' ||
-            key === 'meeting'
+            key === 'meeting' ||
+            key === '__internal__'
           ) {
             continue
           }

@@ -4,7 +4,7 @@
       id="meeting.specialCong"
       v-model="meeting.specialCong"
       field="switch"
-      :locked="locked('meeting.specialCong')"
+      :locked="$isLocked('meeting.specialCong')"
       :label="$t('specialCong')"
     />
     <template v-if="!meeting.specialCong">
@@ -14,7 +14,7 @@
         field="btn-group"
         :group-label="$t('mwMeetingDay')"
         :group-items="localeDays"
-        :locked="locked('meeting.mwDay')"
+        :locked="$isLocked('meeting.mwDay')"
         height="56px"
         :mandatory="meeting.mwDay !== null"
         required
@@ -24,7 +24,7 @@
           v-model="meeting.mwStartTime"
           :label="''"
           required
-          :locked="locked('meeting.mwStartTime')"
+          :locked="$isLocked('meeting.mwStartTime')"
         />
       </form-input>
       <form-input
@@ -32,7 +32,7 @@
         v-model="meeting.weDay"
         field="btn-group"
         :group-label="$t('weMeetingDay')"
-        :locked="locked('meeting.weDay')"
+        :locked="$isLocked('meeting.weDay')"
         :group-items="localeDays"
         height="56px"
         :mandatory="meeting.weDay !== null"
@@ -43,7 +43,7 @@
           v-model="meeting.weStartTime"
           :label="''"
           required
-          :locked="locked('meeting.weStartTime')"
+          :locked="$isLocked('meeting.weStartTime')"
         />
       </form-input>
     </template>
@@ -52,7 +52,7 @@
       id="meeting.enableMusicButton"
       v-model="meeting.enableMusicButton"
       field="switch"
-      :locked="locked('meeting.enableMusicButton')"
+      :locked="$isLocked('meeting.enableMusicButton')"
       :label="$t('enableMusicButton')"
     />
     <template v-if="meeting.enableMusicButton">
@@ -60,7 +60,7 @@
         id="meeting.musicVolume"
         v-model="meeting.musicVolume"
         field="slider"
-        :locked="locked('meeting.musicVolume')"
+        :locked="$isLocked('meeting.musicVolume')"
         :group-label="$t('musicVolume')"
         label-suffix="%"
         :min="1"
@@ -70,7 +70,7 @@
         id="meeting.enableMusicFadeOut"
         v-model="meeting.enableMusicFadeOut"
         field="switch"
-        :locked="locked('meeting.enableMusicFadeOut')"
+        :locked="$isLocked('meeting.enableMusicFadeOut')"
         :label="$t('musicFadeOutType')"
       />
       <v-row
@@ -85,7 +85,7 @@
             :min="5"
             :max="60"
             :step="5"
-            :locked="locked('meeting.musicFadeOutTime')"
+            :locked="$isLocked('meeting.musicFadeOutTime')"
             hide-details="auto"
           />
         </v-col>
@@ -95,12 +95,18 @@
             v-model="meeting.musicFadeOutType"
             color="primary"
             mandatory
-            :locked="locked('meeting.musicFadeOutType')"
+            :locked="$isLocked('meeting.musicFadeOutType')"
           >
-            <v-btn value="smart" :disabled="locked('meeting.musicFadeOutType')">
+            <v-btn
+              value="smart"
+              :disabled="$isLocked('meeting.musicFadeOutType')"
+            >
               {{ musicFadeOutSmart }}
             </v-btn>
-            <v-btn value="timer" :disabled="locked('meeting.musicFadeOutType')">
+            <v-btn
+              value="timer"
+              :disabled="$isLocked('meeting.musicFadeOutType')"
+            >
               {{ musicFadeOutTimer }}
             </v-btn>
           </v-btn-toggle>
@@ -142,9 +148,6 @@ export default Vue.extend({
         '<span>XX</span>',
         (this.meeting.musicFadeOutTime as number).toString()
       )
-    },
-    forcedPrefs() {
-      return this.$store.state.cong.prefs
     },
   },
   watch: {
@@ -200,23 +203,6 @@ export default Vue.extend({
     if (this.$refs.form) {
       this.$refs.form.validate()
     }
-  },
-  methods: {
-    locked(key: string) {
-      if (!this.forcedPrefs) return false
-      const keys = key.split('.')
-      if (!this.forcedPrefs[keys[0]]) return false
-      if (keys.length === 2) {
-        return this.forcedPrefs[keys[0]][keys[1]] !== undefined
-      } else if (keys.length === 3) {
-        if (!this.forcedPrefs[keys[0]][keys[1]]) {
-          return false
-        }
-        return this.forcedPrefs[keys[0]][keys[1]][keys[2]] !== undefined
-      } else {
-        throw new Error('Invalid key')
-      }
-    },
   },
 })
 </script>

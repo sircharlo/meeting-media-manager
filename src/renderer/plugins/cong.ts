@@ -16,6 +16,8 @@ import {
   ElectronStore,
 } from '~/types'
 
+const { FORCABLE } = require('~/constants/prefs') as { FORCABLE: string[] }
+
 const plugin: Plugin = (
   {
     store,
@@ -261,6 +263,32 @@ const plugin: Plugin = (
     }
   })
 
+  inject('isLocked', (key: string): boolean => {
+    // If no forced prefs, don't lock
+    if (!store.state.cong.prefs) return false
+
+    // If pref is not forcable, don't lock
+    if (!FORCABLE.includes(key)) return false
+
+    const keys = key.split('.')
+
+    // If app key is not in forcedPrefs, don't lock
+    if (!store.state.cong.prefs[keys[0] as keyof ElectronStore]) return false
+
+    if (keys.length === 2) {
+      return store.state.cong.prefs[keys[0]][keys[1]] !== undefined
+    }
+    // If pref is in a sub object (e.g. app.obs.enable)
+    else if (keys.length === 3) {
+      if (!store.state.cong.prefs[keys[0]][keys[1]]) {
+        return false
+      }
+      return store.state.cong.prefs[keys[0]][keys[1]][keys[2]] !== undefined
+    } else {
+      throw new Error('Invalid key')
+    }
+  })
+
   inject(
     'forcePrefs',
     async (refresh: boolean = false): Promise<ElectronStore | undefined> => {
@@ -288,7 +316,8 @@ const plugin: Plugin = (
               key === 'app' ||
               key === 'cong' ||
               key === 'media' ||
-              key === 'meeting'
+              key === 'meeting' ||
+              key === '__internal__'
             ) {
               continue
             }

@@ -10,7 +10,7 @@
       item-text="name"
       item-value="langcode"
       :loading="loading"
-      :locked="locked('media.lang')"
+      :locked="$isLocked('media.lang')"
       auto-select-first
       required
     />
@@ -19,7 +19,7 @@
       v-model="media.maxRes"
       field="btn-group"
       :group-label="$t('maxRes')"
-      :locked="locked('media.maxRes')"
+      :locked="$isLocked('media.maxRes')"
       :group-items="resolutions"
     />
     <v-divider class="mb-6" />
@@ -27,7 +27,7 @@
       id="media.enableMp4Conversion"
       v-model="media.enableMp4Conversion"
       field="switch"
-      :locked="locked('media.enableMp4Conversion')"
+      :locked="$isLocked('media.enableMp4Conversion')"
       :label="$t('convertDownloaded')"
     />
     <form-input
@@ -35,7 +35,7 @@
       id="media.keepOriginalsAfterConversion"
       v-model="media.keepOriginalsAfterConversion"
       field="switch"
-      :locked="locked('media.keepOriginalsAfterConversion')"
+      :locked="$isLocked('media.keepOriginalsAfterConversion')"
       :label="$t('keepOriginalsAfterConversion')"
     />
     <v-divider class="mb-6" />
@@ -43,7 +43,7 @@
       id="media.enableMediaDisplayButton"
       v-model="media.enableMediaDisplayButton"
       field="switch"
-      :locked="locked('media.enableMediaDisplayButton')"
+      :locked="$isLocked('media.enableMediaDisplayButton')"
       :label="$t('enableMediaDisplayButton')"
     />
     <template v-if="media.enableMediaDisplayButton">
@@ -54,7 +54,7 @@
         field="select"
         item-value="id"
         :items="[{ id: 'window', text: $t('window') }, ...screens]"
-        :locked="locked('media.preferredOutput')"
+        :locked="$isLocked('media.preferredOutput')"
         :label="$t('preferredOutput')"
       />
       <v-row v-if="bg" class="mb-4">
@@ -106,21 +106,21 @@
         id="media.hideMediaLogo"
         v-model="media.hideMediaLogo"
         field="switch"
-        :locked="locked('media.hideMediaLogo')"
+        :locked="$isLocked('media.hideMediaLogo')"
         :label="$t('hideMediaLogo')"
       />
       <form-input
         id="media.enablePp"
         v-model="media.enablePp"
         field="switch"
-        :locked="locked('media.enablePp')"
+        :locked="$isLocked('media.enablePp')"
         :label="$t('enablePp')"
       />
       <template v-if="media.enablePp">
         <form-input
           id="media.ppForward"
           v-model="media.ppForward"
-          :locked="locked('media.ppForward')"
+          :locked="$isLocked('media.ppForward')"
           placeholder="e.g. PageDown / ALT+F / ALT+N"
           :label="$t('ppForward')"
           :required="media.enablePp"
@@ -129,7 +129,7 @@
           id="media.ppBackward"
           v-model="media.ppBackward"
           placeholder="e.g. PageUp / ALT+B / ALT+P"
-          :locked="locked('media.ppBackward')"
+          :locked="$isLocked('media.ppBackward')"
           :label="$t('ppBackward')"
           :required="media.enablePp"
         />
@@ -140,7 +140,7 @@
       id="media.enableVlcPlaylistCreation"
       v-model="media.enableVlcPlaylistCreation"
       field="switch"
-      :locked="locked('media.enableVlcPlaylistCreation')"
+      :locked="$isLocked('media.enableVlcPlaylistCreation')"
     >
       <template #label>
         <span v-html="$t('enableVlcPlaylistCreation')" />
@@ -151,7 +151,7 @@
       id="media.excludeTh"
       v-model="media.excludeTh"
       field="switch"
-      :locked="locked('media.excludeTh')"
+      :locked="$isLocked('media.excludeTh')"
     >
       <template #label>
         <span v-html="$t('excludeTh')" />
@@ -161,7 +161,7 @@
       id="media.excludeLffi"
       v-model="media.excludeLffi"
       field="switch"
-      :locked="locked('media.excludeLffi')"
+      :locked="$isLocked('media.excludeLffi')"
     >
       <template #label>
         <span v-html="$t('excludeLffi')" />
@@ -171,7 +171,7 @@
       id="media.excludeLffiImages"
       v-model="media.excludeLffiImages"
       field="switch"
-      :locked="locked('media.excludeLffiImages')"
+      :locked="$isLocked('media.excludeLffiImages')"
     >
       <template #label>
         <span v-html="$t('excludeLffiImages')" />
@@ -229,9 +229,6 @@ export default Vue.extend({
     },
     isWindows() {
       return platform() === 'win32'
-    },
-    forcedPrefs() {
-      return this.$store.state.cong.prefs
     },
     background() {
       return this.$store.state.present.background
@@ -409,21 +406,6 @@ export default Vue.extend({
 
       // Refresh the media screen background
       this.bg = await this.$refreshBackgroundImgPreview()
-    },
-    locked(key: string) {
-      if (!this.forcedPrefs) return false
-      const keys = key.split('.')
-      if (!this.forcedPrefs[keys[0]]) return false
-      if (keys.length === 2) {
-        return this.forcedPrefs[keys[0]][keys[1]] !== undefined
-      } else if (keys.length === 3) {
-        if (!this.forcedPrefs[keys[0]][keys[1]]) {
-          return false
-        }
-        return this.forcedPrefs[keys[0]][keys[1]][keys[2]] !== undefined
-      } else {
-        throw new Error('Invalid key')
-      }
     },
   },
 })

@@ -11,13 +11,13 @@
         { text: $t('system'), value: 'system' },
       ]"
       :label="$t('themePreference')"
-      :locked="locked('app.theme')"
+      :locked="$isLocked('app.theme')"
     />
     <form-input
       id="app.congregationName"
       v-model="app.congregationName"
       :label="$t('congregationName')"
-      :locked="locked('app.congregationName')"
+      :locked="$isLocked('app.congregationName')"
       required
     />
     <form-input
@@ -30,7 +30,7 @@
       item-value="code"
       required
       auto-select-first
-      :locked="locked('app.localAppLang')"
+      :locked="$isLocked('app.localAppLang')"
     />
     <v-row>
       <v-col cols="auto" class="pr-0 text-left">
@@ -38,7 +38,7 @@
           id="app.localOutputPathBtn"
           color="primary"
           style="height: 40px"
-          :disabled="locked('app.localOutputPath')"
+          :disabled="$isLocked('app.localOutputPath')"
           @click="setLocalOutputPath"
         >
           {{ $t('browse') }}
@@ -51,7 +51,7 @@
           :label="$t('mediaSaveFolder')"
           readonly
           required
-          :locked="locked('app.localOutputPath')"
+          :locked="$isLocked('app.localOutputPath')"
         />
       </v-col>
     </v-row>
@@ -63,7 +63,7 @@
       :items="dateFormats"
       item-text="label"
       item-value="value"
-      :locked="locked('app.outputFolderDateFormat')"
+      :locked="$isLocked('app.outputFolderDateFormat')"
     />
     <v-divider class="mb-6" />
     <form-input
@@ -72,14 +72,14 @@
       v-model="app.autoRunAtBoot"
       field="switch"
       :label="$t('runAtStartup')"
-      :locked="locked('app.runAtStartup')"
+      :locked="$isLocked('app.runAtStartup')"
     />
     <form-input
       id="app.autoStartSync"
       v-model="app.autoStartSync"
       field="switch"
       :label="$t('syncOnLaunch')"
-      :locked="locked('app.autoStartSync')"
+      :locked="$isLocked('app.autoStartSync')"
     />
     <v-divider class="mb-6" />
     <form-input
@@ -87,21 +87,21 @@
       v-model="app.autoOpenFolderWhenDone"
       field="switch"
       :label="$t('openTargetFolderAfterSync')"
-      :locked="locked('app.openTargetFolderAfterSync')"
+      :locked="$isLocked('app.openTargetFolderAfterSync')"
     />
     <form-input
       id="app.autoQuitWhenDone"
       v-model="app.autoQuitWhenDone"
       field="switch"
       :label="$t('quitAfterSync')"
-      :locked="locked('app.autoQuitWhenDone')"
+      :locked="$isLocked('app.autoQuitWhenDone')"
     />
     <v-divider class="mb-6" />
     <form-input
       id="app.obs.enable"
       v-model="app.obs.enable"
       field="switch"
-      :locked="locked('app.obs.enable')"
+      :locked="$isLocked('app.obs.enable')"
     >
       <template #label>
         <span v-html="$t('enableObs')" />
@@ -112,7 +112,7 @@
         id="app.obs.useV4"
         v-model="app.obs.useV4"
         field="switch"
-        :locked="locked('app.obs.useV4')"
+        :locked="$isLocked('app.obs.useV4')"
       >
         <template #label>
           <span v-html="$t('obsUseV4')" />
@@ -122,7 +122,7 @@
         id="app.obs.port"
         v-model="app.obs.port"
         :label="$t('port')"
-        :locked="locked('app.obs.port')"
+        :locked="$isLocked('app.obs.port')"
         :required="app.obs.enable"
         @blur="refreshOBS()"
         @keydown.enter.prevent="refreshOBS()"
@@ -132,7 +132,7 @@
         v-model="app.obs.password"
         field="password"
         :label="$t('password')"
-        :locked="locked('app.obs.password')"
+        :locked="$isLocked('app.obs.password')"
         hide-details="auto"
         :required="app.obs.enable"
         @blur="refreshOBS()"
@@ -155,7 +155,7 @@
         :items="cameraScenes"
         :label="$t('obsCameraScene')"
         :disabled="cameraScenes.length === 0"
-        :locked="locked('app.obs.cameraScene')"
+        :locked="$isLocked('app.obs.cameraScene')"
         :required="app.obs.enable"
       />
       <form-input
@@ -165,7 +165,7 @@
         :items="mediaScenes"
         :label="$t('obsMediaScene')"
         :disabled="cameraScenes.length === 0"
-        :locked="locked('app.obs.mediaScene')"
+        :locked="$isLocked('app.obs.mediaScene')"
         :required="app.obs.enable"
       />
     </template>
@@ -174,7 +174,7 @@
       id="app.disableHardwareAcceleration"
       v-model="app.disableHardwareAcceleration"
       field="switch"
-      :locked="locked('app.disableHardwareAcceleration')"
+      :locked="$isLocked('app.disableHardwareAcceleration')"
     >
       <template #label>
         <span v-html="$t('disableHardwareAcceleration')" />
@@ -237,9 +237,6 @@ export default Vue.extend({
     },
     scenes(): string[] {
       return this.$store.state.obs.scenes as string[]
-    },
-    forcedPrefs(): ElectronStore {
-      return this.$store.state.cong.prefs as ElectronStore
     },
   },
   watch: {
@@ -391,29 +388,6 @@ export default Vue.extend({
       })
       if (result && !result.canceled) {
         this.app.localOutputPath = result.filePaths[0]
-      }
-    },
-    locked(key: string) {
-      // If no forced prefs, don't lock
-      if (!this.forcedPrefs) return false
-      const keys = key.split('.')
-
-      // If app key is not in forcedPrefs, don't lock
-      if (!this.forcedPrefs[keys[0] as keyof ElectronStore]) return false
-      if (keys.length === 2) {
-        // @ts-ignore
-        return this.forcedPrefs[keys[0]][keys[1]] !== undefined
-      }
-      // If pref is in a sub object (e.g. app.obs.enable)
-      else if (keys.length === 3) {
-        // @ts-ignore
-        if (!this.forcedPrefs[keys[0]][keys[1]]) {
-          return false
-        }
-        // @ts-ignore
-        return this.forcedPrefs[keys[0]][keys[1]][keys[2]] !== undefined
-      } else {
-        throw new Error('Invalid key')
       }
     },
   },

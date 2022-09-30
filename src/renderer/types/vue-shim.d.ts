@@ -100,6 +100,7 @@ interface CustomProps {
   $initStore: (name: string) => void
   $isAudio: (filepath: string) => boolean
   $isImage: (filepath: string) => boolean
+  $isLocked: (key: string) => boolean
   $isVideo: (filepath: string) => boolean
   $log: {
     debug: (msg: any, ...args: any[]) => void
