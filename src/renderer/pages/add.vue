@@ -596,14 +596,18 @@ export default Vue.extend({
     },
     getExistingMedia() {
       try {
-        const day = this.$dayjs(
-          this.date,
-          this.$getPrefs('app.outputFolderDateFormat') as string
-        ) as Dayjs
-        this.$getCongMedia(
-          day.isValid() ? day.startOf('week') : this.now.startOf('week'),
-          this.now
-        )
+        if (this.client) {
+          const day = this.$dayjs(
+            this.date,
+            this.$getPrefs('app.outputFolderDateFormat') as string
+          ) as Dayjs
+
+          this.$getCongMedia(
+            day.isValid() ? day.startOf('week') : this.now.startOf('week'),
+            this.now
+          )
+        }
+
         const meetings = this.$store.getters['media/meetings'] as Map<
           string,
           Map<number, MeetingFile[]>
