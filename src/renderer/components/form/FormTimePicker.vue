@@ -15,7 +15,7 @@
         :locked="locked"
         :dense="false"
         v-bind="{ ...attrs, ...$attrs }"
-        hide-details="auto"
+        hide-details
         style="min-width: 85px; max-width: 85px"
         v-on="on"
       >

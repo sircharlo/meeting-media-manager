@@ -1,9 +1,26 @@
 <template>
   <v-row justify="center" class="fill-height mb-0">
     <v-col cols="12" class="text-center" style="margin-bottom: 72px">
-      <v-expansion-panels v-model="panel" multiple focusable accordion>
+      <v-tabs v-model="tab" grow>
+        <v-tab>{{ $t('all') }}</v-tab>
+        <v-tab
+          v-for="h in headers"
+          :key="h.component"
+          :class="{ 'error--text': !h.valid }"
+        >
+          {{ getInitials(h.name) }}
+        </v-tab>
+      </v-tabs>
+      <v-expansion-panels
+        v-model="panel"
+        multiple
+        focusable
+        accordion
+        :readonly="tab !== 0"
+      >
         <v-expansion-panel
           v-for="(header, i) in headers"
+          v-show="tab === 0 || tab === i + 1"
           :key="header.component"
         >
           <v-expansion-panel-header>
@@ -12,7 +29,7 @@
           <v-expansion-panel-content class="pt-4">
             <component
               :is="header.component"
-              @valid="headers[i].valid = $event"
+              @valid="setValid(header.component, $event)"
             />
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -90,6 +107,7 @@ export default Vue.extend({
   data() {
     return {
       cache: 0,
+      tab: 0,
       cancel: false,
       mounted: false,
       cacheColor: 'warning',
@@ -116,7 +134,7 @@ export default Vue.extend({
           component: 'settings-meetings',
           valid: false,
         },
-      ],
+      ] as { name: string; component: string; valid: boolean }[],
     }
   },
   head() {
@@ -142,6 +160,14 @@ export default Vue.extend({
   watch: {
     valid(val: boolean) {
       if (val) this.calcCache()
+    },
+    tab(val: number) {
+      if (this.tab === 0) this.panel = []
+      else if (val > 0) {
+        if (!this.panel.includes(val - 1)) {
+          this.panel.push(val - 1)
+        }
+      }
     },
     headers: {
       handler() {
@@ -172,6 +198,16 @@ export default Vue.extend({
     this.calcCache()
   },
   methods: {
+    getInitials(word: string) {
+      return word
+        .split(' ')
+        .map((w) => w[0])
+        .join('')
+    },
+    setValid(component: string, valid: boolean) {
+      const header = this.headers.find((h) => h.component === component)
+      if (header) header.valid = valid
+    },
     goBack() {
       console.debug('Go back')
       this.$removeCong(join(this.$appPath(), `prefs-${this.cong}.json`))

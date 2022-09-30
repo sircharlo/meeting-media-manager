@@ -1,4 +1,5 @@
 {
+  "all": "All",
   "browse": "Browse",
   "cantCloseMediaWindowOpen": "Please exit media controller mode before attempting to quit M³.",
   "cleanCache": "Clean media cache",
