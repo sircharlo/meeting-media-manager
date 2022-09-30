@@ -66,7 +66,9 @@
       />
       <v-btn
         class="ml-2"
-        :color="error === 'success' ? 'success' : 'primary'"
+        :color="
+          online ? (error === 'success' ? 'success' : 'primary') : 'warning'
+        "
         :loading="loading"
         :disabled="!complete"
         @click="submit()"
@@ -141,7 +143,7 @@ export default Vue.extend({
       return faGlobe
     },
     online(): boolean {
-      return this.$store.state.stats.online && !this.$getPrefs('app.offline')
+      return this.$store.state.stats.online && this.error !== 'offline'
     },
     faCog() {
       return faCog

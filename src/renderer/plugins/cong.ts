@@ -46,6 +46,7 @@ const plugin: Plugin = (
     password: string,
     dir: string = '/'
   ): Promise<string | null> {
+    if ($getPrefs('app.offline')) return 'offline'
     try {
       const client = createClient('https://' + host, {
         username,

@@ -53,7 +53,11 @@ export default Vue.extend({
       ignore: [join(this.$mediaPath(), 'Recurring')],
     })
       .map((date) => basename(date))
-      .filter((date) => this.validDate(date))
+      .filter(
+        (date) =>
+          this.validDate(date) &&
+          this.$findAll(join(this.$mediaPath(), date, '*')).length > 0
+      )
 
     // If the user is not trying to change the date he previously selected
     if (this.firstChoice) {
