@@ -646,6 +646,7 @@ export default Vue.extend({
       })
     },
     async startMediaSync(dryrun: boolean = false, filter: string = 'all') {
+      this.$store.commit('notify/deleteByMessage', 'dontForgetToGetMedia')
       this.loading = true
       this.$store.commit('stats/startPerf', {
         func: 'total',
