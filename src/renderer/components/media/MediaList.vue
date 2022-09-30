@@ -200,6 +200,9 @@ export default Vue.extend({
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
     },
+    online() {
+      return this.$store.state.stats.online && !this.$getPrefs('app.offline')
+    },
     contents(): FileStat[] {
       return this.$store.state.cong.contents as FileStat[]
     },
@@ -311,7 +314,7 @@ export default Vue.extend({
       }
 
       // Change the name in the cong server
-      if (this.client && this.edit.congSpecific) {
+      if (this.client && this.online && this.edit.congSpecific) {
         const dirPath = join(
           this.$getPrefs('cong.dir') as string,
           'Media',
@@ -350,7 +353,7 @@ export default Vue.extend({
           item.contents.toString('base64')
       } else if (item.filepath && this.$isImage(item.filepath)) {
         this.preview = pathToFileURL(item.filepath).href
-      } else if (item.url && this.$isImage(item.url)) {
+      } else if (this.online && item.url && this.$isImage(item.url)) {
         if (item.congSpecific) {
           this.client.getFileContents(item.url as string).then((contents) => {
             this.preview =
@@ -384,7 +387,7 @@ export default Vue.extend({
         for (const [, media] of mediaMap) {
           const match = media.find((m) => m.safeName === item.safeName)
           if (match) {
-            if (this.client) {
+            if (this.client && this.online) {
               const hiddenPath = join(this.$getPrefs('cong.dir'), 'Hidden')
               const datePath = join(hiddenPath, this.date)
               const filePath = join(datePath, item.safeName)
@@ -447,7 +450,7 @@ export default Vue.extend({
         }
 
         // Remove item in cong server
-        if (item.congSpecific) {
+        if (item.congSpecific && this.online) {
           try {
             await this.client.deleteFile(item.url as string)
           } catch (e: any) {
