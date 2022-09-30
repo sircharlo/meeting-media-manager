@@ -305,7 +305,7 @@ export default Vue.extend({
       return this.$vuetify.theme.dark
     },
     online(): boolean {
-      return this.$store.state.stats.online
+      return this.$store.state.stats.online && !this.$getPrefs('app.offline')
     },
     musicPlaying(): boolean {
       return !!this.$store.state.media.musicFadeOut

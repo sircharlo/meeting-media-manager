@@ -16,7 +16,6 @@ export const dateFormats = [
 export type DateFormat = typeof dateFormats[number]
 
 export interface AppPrefs {
-  theme: 'light' | 'dark' | 'system'
   autoOpenFolderWhenDone: boolean
   autoQuitWhenDone: boolean
   autoRunAtBoot: boolean
@@ -26,7 +25,9 @@ export interface AppPrefs {
   localAppLang: string | null
   localOutputPath: string | null
   obs: ObsPrefs
+  offline: boolean
   outputFolderDateFormat: DateFormat
+  theme: 'light' | 'dark' | 'system'
 }
 
 export interface CongPrefs {

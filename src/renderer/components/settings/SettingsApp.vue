@@ -2,6 +2,13 @@
 <template>
   <v-form ref="form" v-model="valid">
     <form-input
+      id="app.offline"
+      v-model="app.offline"
+      field="switch"
+      :label="$t('offlineMode')"
+      :locked="$isLocked('app.offline')"
+    />
+    <form-input
       id="app.theme"
       v-model="app.theme"
       field="select"

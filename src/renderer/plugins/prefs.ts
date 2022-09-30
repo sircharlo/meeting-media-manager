@@ -44,6 +44,10 @@ const schema: Schema<ElectronStore> = {
         type: ['string', 'null'],
         default: PREFS.app.congregationName,
       },
+      offline: {
+        type: 'boolean',
+        default: PREFS.app.offline,
+      },
       outputFolderDateFormat: {
         type: 'string',
         enum: [

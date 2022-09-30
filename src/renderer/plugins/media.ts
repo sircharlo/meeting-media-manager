@@ -1274,7 +1274,7 @@ const plugin: Plugin = (
 
       // Get songs from jw.org or from local cache
       const songs = (
-        store.state.stats.online
+        store.state.stats.online && !$getPrefs('app.offline')
           ? (
               (await getMediaLinks({
                 pubSymbol: 'sjjm',
@@ -1328,7 +1328,7 @@ const plugin: Plugin = (
 
     const source = document.createElement('source')
     source.type = 'audio/mpeg'
-    if (store.state.stats.online) {
+    if (store.state.stats.online && !$getPrefs('app.offline')) {
       source.src = pathToFileURL(
         await downloadIfRequired(songs[index] as VideoFile)
       ).href

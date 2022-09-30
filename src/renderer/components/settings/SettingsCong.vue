@@ -141,7 +141,7 @@ export default Vue.extend({
       return faGlobe
     },
     online(): boolean {
-      return this.$store.state.stats.online as boolean
+      return this.$store.state.stats.online && !this.$getPrefs('app.offline')
     },
     faCog() {
       return faCog

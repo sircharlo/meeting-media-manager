@@ -10,7 +10,6 @@
   </v-app>
 </template>
 <script lang="ts">
-import { createConnection } from 'net'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { platform, userInfo } from 'os'
 import { basename, join } from 'upath'
@@ -34,10 +33,8 @@ export default Vue.extend({
     isDark(): boolean {
       return window.matchMedia('(prefers-color-scheme:dark)').matches
     },
-    atHome() {
-      return (
-        this.$route.path === '/' || this.$route.path === `/${this.$i18n.locale}`
-      )
+    online(): boolean {
+      return this.$store.state.stats.online as boolean
     },
     cong() {
       return this.$route.query.cong
@@ -61,14 +58,14 @@ export default Vue.extend({
       },
       immediate: true,
     },
+    online(val: boolean) {
+      if (!val) {
+        this.$warn('errorOffline')
+      }
+    },
     isDark(val: boolean) {
       if (this.$getPrefs('app.theme') === 'system') {
         this.$vuetify.theme.dark = val
-      }
-    },
-    async atHome(val: boolean) {
-      if (val) {
-        await this.updateOnlineStatus()
       }
     },
   },
@@ -76,7 +73,10 @@ export default Vue.extend({
     if (this.cong) {
       this.initPrefs('prefs-' + this.cong)
     } else {
-      const congs = await this.$getCongPrefs()
+      const congs = (await this.$getCongPrefs()) as {
+        name: string
+        path: string
+      }[]
 
       // If not congs, make a new one
       if (congs.length === 0) {
@@ -209,9 +209,16 @@ export default Vue.extend({
         this.$store.commit('stats/setUpdateSuccess', false)
       }
     })
-    if (this.atHome) {
-      await this.updateOnlineStatus()
-    }
+
+    // Listen for online status
+    this.$store.commit('stats/setOnline', navigator.onLine)
+    window.addEventListener('offline', (_e) => {
+      this.$store.commit('stats/setOnline', false)
+    })
+
+    window.addEventListener('online', (_e) => {
+      this.$store.commit('stats/setOnline', true)
+    })
   },
   beforeDestroy() {
     ipcRenderer.removeAllListeners('error')
@@ -337,7 +344,7 @@ export default Vue.extend({
       }
 
       // If all cong fields are filled in, try to connect to the server
-      if (!this.client) {
+      if (!this.client && !this.$getPrefs('app.offline')) {
         const { server, user, password, dir } = this.$getPrefs(
           'cong'
         ) as CongPrefs
@@ -367,47 +374,6 @@ export default Vue.extend({
       this.$sentry.setContext('prefs', {
         ...this.$getAllPrefs(),
         obs: this.$getPrefs('app.obs'),
-      })
-    },
-    async updateOnlineStatus(firstTry: boolean = true) {
-      if (this.atHome) {
-        this.checkInternet(await this.isReachable('www.jw.org', 443, firstTry))
-      }
-    },
-    checkInternet(online: boolean) {
-      if (online) {
-        ipcRenderer.send('checkForUpdates')
-      } else if (this.atHome) {
-        setTimeout(async () => {
-          await this.updateOnlineStatus(false)
-        }, 10000)
-      }
-      this.$store.commit('stats/setOnline', online)
-    },
-    isReachable(hostname: string, port: number, silent: boolean) {
-      return new Promise<boolean>((resolve) => {
-        try {
-          const client = createConnection(port, hostname)
-          client.setTimeout(3000)
-          client.on('timeout', () => {
-            client.destroy(new Error('Timeout: ' + hostname + ':' + port))
-          })
-          client.on('connect', () => {
-            client.destroy()
-            resolve(true)
-          })
-          client.on('error', (_e) => {
-            if (!silent) {
-              this.$warn('errorSiteCheck', {
-                identifier: `${hostname}:${port}`,
-              })
-            }
-            resolve(false)
-          })
-        } catch (e: any) {
-          console.error(e)
-          resolve(false)
-        }
       })
     },
     async cleanup() {
@@ -464,9 +430,11 @@ export default Vue.extend({
 
       // Cleanup old pref files
       if (this.cong) {
-        this.$findAll(join(this.$appPath(), 'prefs-*.json'), {
-          ignore: [join(this.$appPath(), `prefs-${this.cong}.json`)],
-        }).forEach((file) => {
+        ;(
+          this.$findAll(join(this.$appPath(), 'prefs-*.json'), {
+            ignore: [join(this.$appPath(), `prefs-${this.cong}.json`)],
+          }) as string[]
+        ).forEach((file) => {
           const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
           if (prefs.app && !prefs.app.congregationName) {
             this.$rm(file)

@@ -254,6 +254,9 @@ export default Vue.extend({
     return { title: `Manage ${this.date}`, titleTemplate: '%s - M³' }
   },
   computed: {
+    online() {
+      return this.$store.state.stats.online && !this.$getPrefs('app.offline')
+    },
     faSave(): IconDefinition {
       return faSave
     },
@@ -337,7 +340,11 @@ export default Vue.extend({
     document.removeEventListener('drop', this.handleDrop)
   },
   async mounted() {
-    await this.getMeetingData()
+    if (this.online) {
+      await this.getMeetingData()
+    } else {
+      this.$warn('errorOffline')
+    }
     this.getExistingMedia()
     document.addEventListener('dragover', this.stopEvent)
     document.addEventListener('dragenter', this.handleDrag)
@@ -467,7 +474,7 @@ export default Vue.extend({
           }
 
           // Upload media to the cong server
-          if (this.client) {
+          if (this.client && this.online) {
             const mediaPath = join(
               this.$getPrefs('cong.dir') as string,
               'Media'
@@ -596,7 +603,7 @@ export default Vue.extend({
     },
     getExistingMedia() {
       try {
-        if (this.client) {
+        if (this.client && this.online) {
           const day = this.$dayjs(
             this.date,
             this.$getPrefs('app.outputFolderDateFormat') as string

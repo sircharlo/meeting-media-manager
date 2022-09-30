@@ -11506,7 +11506,6 @@ __metadata:
     jimp: ^0.16.2
     lodash.clonedeep: ^4.5.0
     minify-css-string: ^1.0.0
-    net: ^1.0.2
     node-gyp: ^9.1.0
     node-sass: ^6.0.1
     nuxt: ^2.15.8
@@ -12074,13 +12073,6 @@ __metadata:
   version: 4.0.0
   resolution: "nested-property@npm:4.0.0"
   checksum: 9c86f2c722429e167876d5becf276139a6aa4b8732b6d9e32de9aa44dfd017702b60614cc87aec961dea47ae50dae0951d5b5f66fc30288f18bf581c16e42ca2
-  languageName: node
-  linkType: hard
-
-"net@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "net@npm:1.0.2"
-  checksum: d97e215d922e87e9aa86e87daae73ce7f4e291f2d71365a115f2f51831b1add86e73584e944285daafcad4058c09bb85e33250da84834a26a83020740d45b4a1
   languageName: node
   linkType: hard
 
