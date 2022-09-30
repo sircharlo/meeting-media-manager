@@ -34,10 +34,7 @@ export const mutations: MutationTree<Notify[]> = {
     state.splice(index, 1)
   },
   deleteByMessage(state, msg: string) {
-    console.log('trying to delete', msg)
-    console.log(JSON.stringify(state))
     const match = state.find(({ message }) => message === msg)
-    console.log(match)
     if (match) {
       state.splice(state.indexOf(match), 1)
     }

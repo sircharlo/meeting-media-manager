@@ -209,8 +209,6 @@ export default Vue.extend({
         }, 3000)
       } else {
         this.loading = true
-        console.log('clearing cache...')
-
         const folders = []
 
         if (this.$pubPath()) {
