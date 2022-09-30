@@ -147,6 +147,9 @@ export default Vue.extend({
     isNew(): boolean {
       return !!this.$route.query.new
     },
+    online() {
+      return this.$store.state.stats.online && !this.$getPrefs('app.offline')
+    },
     valid(): boolean {
       return this.headers.every(({ valid }) => valid)
     },
@@ -266,7 +269,9 @@ export default Vue.extend({
         )
 
         // Force refresh jw langs
-        await this.$getJWLangs(true)
+        if (this.online) {
+          await this.$getJWLangs(true)
+        }
         this.cacheColor = 'warning'
         this.calcCache()
       }
