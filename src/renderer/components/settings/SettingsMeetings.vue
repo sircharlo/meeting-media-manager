@@ -48,7 +48,7 @@
       </form-input>
     </template>
     <v-divider class="mb-6" />
-    <v-col class="d-flex pa-0 pb-2 align-center">
+    <v-col class="d-flex pa-0 pb-2 align-center justify-space-between">
       <form-input
         id="meeting.enableMusicButton"
         v-model="meeting.enableMusicButton"
@@ -58,6 +58,7 @@
       />
       <v-btn
         v-if="meeting.enableMusicButton"
+        small
         :loading="status === 'loading'"
         :color="
           status ? (status === 'loading' ? 'primary' : status) : 'primary'
@@ -129,7 +130,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { extname } from 'upath'
+import { extname, join } from 'upath'
 import { MeetingPrefs, ElectronStore, VideoFile } from '~/types'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
@@ -162,6 +163,15 @@ export default Vue.extend({
         '<span>XX</span>',
         (this.meeting.musicFadeOutTime as number).toString()
       )
+    },
+    shuffleMusicCached() {
+      const nrOfLocalSongs = this.$findAll(
+        join(this.$pubPath(), this.$store.state.media.songPub, '**', '*.mp3')
+      ).length
+
+      console.log(nrOfLocalSongs)
+
+      return nrOfLocalSongs === 151
     },
   },
   watch: {
@@ -213,6 +223,10 @@ export default Vue.extend({
   mounted() {
     Object.assign(this.meeting, this.$getPrefs('meeting'))
     this.$emit('valid', this.valid)
+
+    if (this.shuffleMusicCached) {
+      this.status = 'success'
+    }
 
     if (this.$refs.form) {
       this.$refs.form.validate()
