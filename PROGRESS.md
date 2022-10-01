@@ -73,6 +73,7 @@
 - OBS: Auto detect current scene change when changed from OBS directly
 - OBS: Auto detect sceneName change for camera/media/current scene (websocket v5 only)
 - OBS: Support for obs-websocket v5 (default is v4 for backwards compatibility, but can be changed in the settings)
+- SETTINGS: Ability to predownload all shuffle music for offline use
 - SETTINGS: Offline mode (only use internet when adding a last minute song to the media)
 - SETTINGS: Port field for cong sync is no longer necessary
 - SETTINGS: Set your theme preference (light, dark, system) inside the app
