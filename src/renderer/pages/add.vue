@@ -37,6 +37,7 @@
           >
             <v-btn
               v-for="t in types"
+              :id="`btn-select-${t.value}`"
               :key="t.value"
               width="33.3%"
               :value="t.value"
@@ -54,6 +55,7 @@
         <v-col cols="11">
           <form-input
             v-if="type === 'song'"
+            id="select-song"
             v-model="song"
             field="autocomplete"
             :items="songs"
@@ -67,6 +69,7 @@
           <v-row v-else-if="type === 'custom'" align="center">
             <v-col cols="auto" class="pr-0 text-left">
               <v-btn
+                id="btn-browse-custom"
                 color="primary"
                 style="height: 40px"
                 :disabled="loading"
@@ -82,6 +85,7 @@
           <v-row v-else-if="type === 'jwpub'" align="center">
             <v-col cols="auto" class="pr-0 text-left">
               <v-btn
+                id="btn-browse-jwpub"
                 color="primary"
                 style="height: 40px"
                 :disabled="loading"
@@ -108,6 +112,7 @@
         <v-col cols="11" class="d-flex">
           <v-col cols="4">
             <v-otp-input
+              id="input-prefix-1"
               v-model="prefix1"
               type="number"
               length="2"
@@ -119,6 +124,7 @@
           <v-col cols="4">
             <v-otp-input
               v-if="prefix1"
+              id="input-prefix-2"
               ref="prefix2"
               v-model="prefix2"
               type="number"
@@ -131,6 +137,7 @@
           <v-col cols="4">
             <v-otp-input
               v-if="prefix2"
+              id="input-prefix-3"
               ref="prefix3"
               v-model="prefix3"
               type="number"

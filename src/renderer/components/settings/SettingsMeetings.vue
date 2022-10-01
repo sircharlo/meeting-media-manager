@@ -48,13 +48,25 @@
       </form-input>
     </template>
     <v-divider class="mb-6" />
-    <form-input
-      id="meeting.enableMusicButton"
-      v-model="meeting.enableMusicButton"
-      field="switch"
-      :locked="$isLocked('meeting.enableMusicButton')"
-      :label="$t('enableMusicButton')"
-    />
+    <v-col class="d-flex pa-0 pb-2 align-center">
+      <form-input
+        id="meeting.enableMusicButton"
+        v-model="meeting.enableMusicButton"
+        field="switch"
+        :locked="$isLocked('meeting.enableMusicButton')"
+        :label="$t('enableMusicButton')"
+      />
+      <v-btn
+        v-if="meeting.enableMusicButton"
+        :loading="status === 'loading'"
+        :color="
+          status ? (status === 'loading' ? 'primary' : status) : 'primary'
+        "
+        @click="downloadShuffleMusic()"
+      >
+        {{ $t('downloadShuffleMusic') }}
+      </v-btn>
+    </v-col>
     <template v-if="meeting.enableMusicButton">
       <form-input
         id="meeting.musicVolume"
@@ -117,11 +129,13 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { MeetingPrefs, ElectronStore } from '~/types'
+import { extname } from 'upath'
+import { MeetingPrefs, ElectronStore, VideoFile } from '~/types'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
   data() {
     return {
+      status: '',
       valid: true,
       meeting: {
         ...PREFS.meeting,
@@ -203,6 +217,29 @@ export default Vue.extend({
     if (this.$refs.form) {
       this.$refs.form.validate()
     }
+  },
+  methods: {
+    async downloadShuffleMusic() {
+      this.status = 'loading'
+      try {
+        const songs = (await this.$getMediaLinks({
+          pubSymbol: 'sjjm',
+          format: 'MP3',
+          lang: 'E',
+        })) as VideoFile[]
+
+        const promises: Promise<void>[] = []
+
+        songs
+          .filter((item) => extname(item.url) === '.mp3')
+          .forEach((s) => promises.push(this.$downloadIfRequired(s)))
+
+        await Promise.allSettled(promises)
+        this.status = 'success'
+      } catch (e: any) {
+        this.status = 'error'
+      }
+    },
   },
 })
 </script>
