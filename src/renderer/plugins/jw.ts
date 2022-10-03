@@ -54,9 +54,16 @@ const plugin: Plugin = (
         }
       }
 
-      const langs = JSON.parse(
-        readFileSync(langPath, 'utf8') ?? '[]'
-      ) as ShortJWLang[]
+      let langs: ShortJWLang[] = []
+
+      try {
+        langs = JSON.parse(
+          readFileSync(langPath, 'utf8') ?? '[]'
+        ) as ShortJWLang[]
+      } catch (e: any) {
+        $warn('errorOffline')
+      }
+
       const langPrefInLangs = langs.find(
         (lang) => lang.langcode === $getPrefs('media.lang')
       )
@@ -105,9 +112,16 @@ const plugin: Plugin = (
   )
   inject('getLocalJWLangs', (): ShortJWLang[] => {
     try {
-      const langs = JSON.parse(
-        readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
-      ) as ShortJWLang[]
+      let langs: ShortJWLang[] = []
+
+      try {
+        langs = JSON.parse(
+          readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
+        ) as ShortJWLang[]
+      } catch (e: any) {
+        $log.error(e)
+      }
+
       const langPrefInLangs = langs.find(
         (lang) => lang.langcode === $getPrefs('media.lang')
       )
@@ -118,6 +132,7 @@ const plugin: Plugin = (
       )
       return langs
     } catch (e: any) {
+      $log.error(e)
       return []
     }
   })
