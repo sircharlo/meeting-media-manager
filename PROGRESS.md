@@ -80,6 +80,26 @@
 - SETTINGS: Special cong option to disable regular meeting media sync (e.g. for schools)
 - SETTINGS: Toggle password visibility
 
+## New Local Phrases
+
+- all
+- dark
+- downloadShuffleMusic
+- errorObsAuth
+- errorOffline
+- errorWebdavNotSupported
+- errorWebdavTooBig
+- fieldMax
+- fieldRequired
+- light
+- obsUseV4
+- offlineMode
+- specialCong
+- system
+- themePreference
+- updateError
+- webdavFolderUp
+
 ## Background Changes
 
 - Added build workflow for documentation to validate pull requests
