@@ -189,7 +189,7 @@ export default Vue.extend({
     }
 
     // If all the cong fields are filled in, try to connect
-    if (this.complete) {
+    if (this.complete && this.online) {
       await this.submit()
       if (this.client) {
         this.$updateContentsTree()

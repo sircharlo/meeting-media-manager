@@ -60,6 +60,7 @@
         v-if="meeting.enableMusicButton"
         small
         :loading="status === 'loading'"
+        :disabled="!online"
         :color="
           status ? (status === 'loading' ? 'primary' : status) : 'primary'
         "
@@ -144,6 +145,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    online() {
+      return this.$store.state.stats.online
+    },
     localeDays() {
       return this.$dayjs.weekdaysMin(true).map((day, i) => {
         return {

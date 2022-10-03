@@ -216,6 +216,8 @@ export default Vue.extend({
     if (navigator.onLine) {
       this.$store.commit('stats/setOnline', true)
       ipcRenderer.send('checkForUpdates')
+    } else {
+      this.$warn('errorOffline')
     }
     window.addEventListener('offline', (_e) => {
       this.$store.commit('stats/setOnline', false)
@@ -349,7 +351,7 @@ export default Vue.extend({
       }
 
       // If all cong fields are filled in, try to connect to the server
-      if (!this.client && !this.$getPrefs('app.offline')) {
+      if (!this.client && this.online && !this.$getPrefs('app.offline')) {
         const { server, user, password, dir } = this.$getPrefs(
           'cong'
         ) as CongPrefs
