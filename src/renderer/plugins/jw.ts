@@ -6,7 +6,17 @@ import { existsSync, readFileSync } from 'fs-extra'
 import { JWLang, ShortJWLang } from '~/types'
 
 const plugin: Plugin = (
-  { $appPath, $write, $getPrefs, $ytPath, $log, $setPrefs, $dayjs, store },
+  {
+    $appPath,
+    $write,
+    $getPrefs,
+    $ytPath,
+    $log,
+    $warn,
+    $setPrefs,
+    $dayjs,
+    store,
+  },
   inject
 ) => {
   inject(
@@ -18,7 +28,10 @@ const plugin: Plugin = (
         !!lastUpdate ||
         $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
 
-      if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
+      if (
+        store.state.stats.online &&
+        (forceReload || !existsSync(langPath) || !recentlyUpdated)
+      ) {
         try {
           const result = await ipcRenderer.invoke('getFromJWOrg', {
             url: 'https://www.jw.org/en/languages',
@@ -62,7 +75,7 @@ const plugin: Plugin = (
     'getYearText',
     async (force: boolean = false): Promise<string | null> => {
       let yeartext = null
-      if (force || !existsSync($ytPath())) {
+      if (store.state.stats.online && (force || !existsSync($ytPath()))) {
         try {
           const result = await ipcRenderer.invoke('getFromJWOrg', {
             url: 'https://wol.jw.org/wol/finder',
@@ -81,7 +94,11 @@ const plugin: Plugin = (
           $log.error(e)
         }
       } else {
-        yeartext = readFileSync($ytPath(), 'utf8')
+        try {
+          yeartext = readFileSync($ytPath(), 'utf8')
+        } catch (e: any) {
+          $warn('errorOffline')
+        }
       }
       return yeartext
     }
