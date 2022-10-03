@@ -118,7 +118,7 @@
               length="2"
               dense
               :disabled="loading"
-              @finish="$refs.prefix2.focus()"
+              @finish="focus($refs.prefix2)"
             />
           </v-col>
           <v-col cols="4">
@@ -131,7 +131,7 @@
               length="2"
               dense
               :disabled="loading"
-              @finish="$refs.prefix3.focus()"
+              @finish="focus($refs.prefix3)"
             />
           </v-col>
           <v-col cols="4">
@@ -360,6 +360,9 @@ export default Vue.extend({
     this.loading = false
   },
   methods: {
+    focus(ref: any) {
+      if (ref) ref.focus()
+    },
     goHome() {
       console.debug('Go back home')
       this.$router.push({
