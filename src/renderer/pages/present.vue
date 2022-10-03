@@ -38,6 +38,7 @@
         </v-btn-toggle>
         <form-input
           v-else
+          id="input-select-obs-scene"
           v-model="scene"
           field="select"
           :items="scenes"
@@ -47,6 +48,7 @@
       <v-col class="text-right" cols="auto">
         <icon-btn variant="toggleScreen" class="mr-2" />
         <v-btn
+          id="present-to-home"
           nuxt
           :to="localePath('/?cong=') + cong"
           color="warning"

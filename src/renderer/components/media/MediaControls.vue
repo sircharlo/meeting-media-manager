@@ -4,6 +4,7 @@
     <v-app-bar fixed>
       <v-col class="text-left" cols="4">
         <v-btn
+          id="btn-refresh-media"
           icon
           aria-label="Refresh"
           :disabled="mediaActive"
@@ -11,16 +12,27 @@
         >
           <font-awesome-icon :icon="faRotateRight" />
         </v-btn>
-        <v-btn icon aria-label="Open media folder" @click="openFolder()">
+        <v-btn
+          if="btn-open-media-folder"
+          icon
+          aria-label="Open media folder"
+          @click="openFolder()"
+        >
           <font-awesome-icon :icon="faFolderOpen" />
         </v-btn>
-        <v-btn icon aria-label="Toggle prefix" @click="togglePrefix()">
+        <v-btn
+          id="btn-toggle-prefix"
+          icon
+          aria-label="Toggle prefix"
+          @click="togglePrefix()"
+        >
           <font-awesome-icon :icon="faEye" />
           <font-awesome-icon :icon="faListOl" />
         </v-btn>
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
+          if="btn-toggle-meeting-date"
           class="px-3"
           color="secondary"
           :disabled="mediaActive"
@@ -34,6 +46,7 @@
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
               <v-btn
+                id="btn-pp-previous"
                 icon
                 aria-label="Previous"
                 :disabled="!mediaActive && currentIndex < 1"
@@ -49,6 +62,7 @@
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
               <v-btn
+                id="btn-pp-next"
                 icon
                 aria-label="Next"
                 v-bind="attrs"
@@ -64,6 +78,7 @@
         </template>
         <v-btn
           v-if="sortable"
+          id="btn-order-save"
           aria-label="Save order"
           icon
           @click="sortable = false"
@@ -72,6 +87,7 @@
         </v-btn>
         <v-btn
           v-else
+          id="btn-order-change"
           icon
           aria-label="Sort items"
           :disabled="mediaActive"

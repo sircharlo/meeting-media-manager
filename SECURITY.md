@@ -4,10 +4,10 @@
 
 The latest version of the app will always be the only one supported, as it automatically updates on launch anyways.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| latest release   | :white_check_mark: |
-| older release   | :x:                |
+| Version        | Supported          |
+| -------------- | ------------------ |
+| latest release | :white_check_mark: |
+| older release  | :x:                |
 
 ## Reporting Vulnerabilities
 
