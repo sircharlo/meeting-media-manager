@@ -800,7 +800,9 @@ export default Vue.extend({
   }
 
   .accent *,
-  .success * {
+  .success *, 
+  .warning *, 
+  .info * {
     color: #000 !important;
   }
 }
@@ -810,7 +812,9 @@ export default Vue.extend({
   }
 
   .accent *,
-  .success * {
+  .success *, 
+  .warning *, 
+  .info * {
     color: #000 !important;
   }
 }
