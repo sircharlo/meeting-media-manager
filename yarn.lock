@@ -6265,10 +6265,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.25.3":
-  version: 3.25.3
-  resolution: "core-js@npm:3.25.3"
-  checksum: 26ca0a5e575e6da03dc30099f48bc00db50a1c0a3f81299165f111cb163869ae453de5e345f2cb7bc8be85a9adcee11fca94f0fbdbdf6d483c68e1c55a9efc5a
+"core-js@npm:^3.25.4":
+  version: 3.25.4
+  resolution: "core-js@npm:3.25.4"
+  checksum: bdcd545637082e8cfa7e47e33e0a210d91c6defea3869af3d2c39b4b66fef5683c83bd91760c32ae486497301a801a9862cc3064322859babd5b73cf601d1b84
   languageName: node
   linkType: hard
 
@@ -11478,7 +11478,7 @@ __metadata:
     adm-zip: ^0.5.9
     axios: ^0.27.2
     consola: ^2.15.3
-    core-js: ^3.25.3
+    core-js: ^3.25.4
     cross-env: ^7.0.3
     css-loader: ^5.2.7
     deepmerge: ^4.2.2
@@ -11511,7 +11511,7 @@ __metadata:
     nuxt: ^2.15.8
     nuxt-webfontloader: ^1.1.0
     obs-websocket-js: ^4.0.3
-    obs-websocket-js-v5: "npm:obs-websocket-js@^5.0.1"
+    obs-websocket-js-v5: "npm:obs-websocket-js@5.0.2"
     pdfjs-dist: ^2.16.105
     playwright: ^1.26.1
     prettier: ^2.7.1
@@ -12559,9 +12559,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"obs-websocket-js-v5@npm:obs-websocket-js@^5.0.1":
-  version: 5.0.1
-  resolution: "obs-websocket-js@npm:5.0.1"
+"obs-websocket-js-v5@npm:obs-websocket-js@5.0.2":
+  version: 5.0.2
+  resolution: "obs-websocket-js@npm:5.0.2"
   dependencies:
     "@msgpack/msgpack": ^2.7.1
     crypto-js: ^4.1.1
@@ -12570,7 +12570,7 @@ __metadata:
     isomorphic-ws: ^4.0.1
     type-fest: ^2.3.2
     ws: ^8.2.2
-  checksum: e8eb3e2a9c744c1a448efeb99874205f70027d7567fa78d6c758676185ff2180855051f0ea5ccc8752178c5c8820b9af18dc85caac34806aed537965c52b0d9d
+  checksum: 9501cc3abda2e34fc51d6ca730c47a581fb212cc9ea37422cb34675700207af291567ac777d89241129598972dccbe27773782ccfe7cf97fb8502c9b94f82f29
   languageName: node
   linkType: hard
 
