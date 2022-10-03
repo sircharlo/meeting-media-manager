@@ -106,12 +106,14 @@ const plugin: Plugin = (
       // Return error message
       if (e.message === 'Network Error') {
         return 'host'
-      } else if (e.message === 'Invalid response: 401 Unauthorized') {
+      } else if (
+        e.message.startsWith('Invalid response: 401') // Unauthorized
+      ) {
         return 'credentials'
       } else if (
-        e.message === 'Invalid response: 403 Forbidden' ||
-        e.message === 'Invalid response: 404 Not Found' ||
-        e.message === 'Invalid response: 405 Method Not Allowed'
+        e.message.startsWith('Invalid response: 403') || // Forbidden
+        e.message.startsWith('Invalid response: 404') || // Not Found
+        e.message.startsWith('Invalid response: 405') // Method not Allowed
       ) {
         return 'dir'
       } else {
