@@ -40,6 +40,7 @@ const plugin: Plugin = (
   },
   inject
 ) => {
+  // Try to connect to the cong server and get a list of files in the given directory
   async function connect(
     host: string,
     username: string,
@@ -124,6 +125,7 @@ const plugin: Plugin = (
   }
   inject('connect', connect)
 
+  // Get the immediate contents of a directory
   async function getFolderContent(
     host: string,
     username: string,
@@ -171,6 +173,7 @@ const plugin: Plugin = (
     }
   }
 
+  // Fallback to get the entire directory contents of the cong server
   async function getCongDirectory(
     host: string,
     username: string,
@@ -223,6 +226,7 @@ const plugin: Plugin = (
     return contents.concat(dateFolders, mediaFiles)
   }
 
+  // Remove old date folders that are not used any more
   async function removeOldDate(
     client: WebDAVClient,
     dir: FileStat
@@ -242,6 +246,7 @@ const plugin: Plugin = (
     }
   }
 
+  // Update the local contents of the cong server
   inject('updateContent', async (): Promise<void> => {
     if (store.state.cong.client) {
       const { server, user, password, dir } = $getPrefs('cong') as CongPrefs
@@ -266,6 +271,7 @@ const plugin: Plugin = (
     }
   })
 
+  // Check if a specific preference/setting is locked according to the cong server
   inject('isLocked', (key: string): boolean => {
     // If no forced prefs, don't lock
     if (!store.state.cong.prefs) return false
@@ -292,6 +298,7 @@ const plugin: Plugin = (
     }
   })
 
+  // Force the specified preferences/settings according to the cong server for the current user
   inject(
     'forcePrefs',
     async (refresh: boolean = false): Promise<ElectronStore | undefined> => {
@@ -368,6 +375,7 @@ const plugin: Plugin = (
     }
   )
 
+  // Update the contents tree of the cong server
   function updateContentsTree(): CongFile[] {
     const tree: CongFile[] = []
     let root = $getPrefs('cong.dir') as string
@@ -426,6 +434,7 @@ const plugin: Plugin = (
   }
   inject('updateContentsTree', updateContentsTree)
 
+  // Get the required cong media for a specific week
   inject('getCongMedia', (baseDate: Dayjs, now: Dayjs): void => {
     store.commit('stats/startPerf', {
       func: 'getCongMedia',
@@ -587,6 +596,7 @@ const plugin: Plugin = (
     setProgress(progress, total, true)
   }
 
+  // Sync the cong media to the local disk
   inject(
     'syncCongMedia',
     async (baseDate: Dayjs, setProgress: Function): Promise<void> => {
@@ -648,6 +658,7 @@ const plugin: Plugin = (
     }
   )
 
+  // Sync a single media item to the local disk
   async function syncCongMediaItem(
     date: string,
     item: MeetingFile,

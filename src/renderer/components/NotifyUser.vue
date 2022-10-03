@@ -1,4 +1,5 @@
 <!-- eslint-disable vue/no-v-html -->
+<!-- A message that notifies the user of something -->
 <template>
   <div class="n-messages">
     <v-snackbar

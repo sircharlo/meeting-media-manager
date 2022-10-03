@@ -1,3 +1,4 @@
+<!-- A loading indicator -->
 <template>
   <div class="text-center my-10">
     <v-progress-circular indeterminate />

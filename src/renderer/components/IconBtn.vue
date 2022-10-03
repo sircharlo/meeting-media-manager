@@ -1,3 +1,4 @@
+<!-- Icon buttons that are used multiple times across the application -->
 <template>
   <v-btn
     v-if="variant === 'shuffle' && musicFadeOut && !clickedOnce"

@@ -1,3 +1,4 @@
+<!-- A preview overlay of an automatic action that is about to happen (e.g. auto fetch media or auto quit app) -->
 <template>
   <v-overlay :value="true" :opacity="1">
     <v-container class="d-flex flex-column align-center">

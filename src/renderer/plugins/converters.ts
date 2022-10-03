@@ -33,6 +33,7 @@ const plugin: Plugin = (
   },
   inject
 ) => {
+  // Convert a svg file png, so it can be used
   function convertSvg(mediaFile: string): void {
     const div = document.createElement('div')
     const image = document.createElement('img')
@@ -75,6 +76,7 @@ const plugin: Plugin = (
     image.src = pathToFileURL(mediaFile).href
   }
 
+  // Create a VLC playlist file based on the media of a specific meeting
   inject('convertToVLC', (): void => {
     $findAll(join($mediaPath(), '*/'), {
       onlyDirectories: true,
@@ -108,6 +110,7 @@ const plugin: Plugin = (
       })
   })
 
+  // Convert PDF files to images, so they can be used
   async function convertPdf(mediaFile: string): Promise<void> {
     const pdfjsLib = require('pdfjs-dist') as typeof import('pdfjs-dist')
     try {
@@ -125,6 +128,7 @@ const plugin: Plugin = (
     }
   }
 
+  // Convert a single PDF page to a PNG file
   async function convertPdfPage(
     mediaFile: string,
     pdf: PDFDocumentProxy,
@@ -182,6 +186,7 @@ const plugin: Plugin = (
     }
   }
 
+  // Convert all unusable files to usable files (e.g. PDF to PNG)
   inject('convertUnusableFiles', async (dir: string): Promise<void> => {
     const promises: Promise<void>[] = []
 
@@ -257,6 +262,7 @@ const plugin: Plugin = (
     store.commit('media/setFFmpeg', true)
   }
 
+  // Resize an image to a given size
   function resize(
     x: number,
     y: number,
@@ -281,6 +287,7 @@ const plugin: Plugin = (
     }
   }
 
+  // Correctly parse HTML in a string
   inject('escapeHTML', (str: string): string => {
     const match = /["'&<>]/.exec(str)
     if (!match) return str
@@ -322,6 +329,7 @@ const plugin: Plugin = (
     return lastIndex !== index ? html + str.substring(lastIndex, index) : html
   })
 
+  // Convert images to videos so they can be shared through the Zoom video share option
   function createVideo(file: string, setProgress: Function): Promise<void> {
     const output = changeExt(file, '.mp4')
     return new Promise<void>((resolve) => {
@@ -427,6 +435,7 @@ const plugin: Plugin = (
     setProgress(progress, total, true)
   }
 
+  // Convert all images to videos
   inject(
     'convertToMP4',
     async (
