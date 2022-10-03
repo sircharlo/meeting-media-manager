@@ -1,5 +1,6 @@
 # TODOS
 
+- [ ] Shuffle Music: Download and play videos for shuffle music in sign language
 - [ ] Test: Check if build artifacts work correctly on MacOS
 - [ ] Test: test for 3 displays
 - [X] Cong sync: Allow navigation of cong sync folder through the treeview
