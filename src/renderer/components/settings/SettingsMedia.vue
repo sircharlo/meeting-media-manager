@@ -63,10 +63,12 @@
         </v-col>
         <v-col
           id="mediaWindowBackground"
+          class="align-center col d-flex justify-center text-no-wrap"
           :style="
-            bg === 'yeartext'
-              ? 'background-color: black; color: white'
-              : 'color: white'
+            (bg === 'yeartext'
+              ? 'background-color: black;'
+              : '')
+            + 'color: white; aspect-ratio: 16/9; font-size: 90%;'
           "
         >
           <v-img

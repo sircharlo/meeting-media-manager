@@ -12,6 +12,10 @@ html {
   opacity: 0;
 }
 
+#mediaWindowBackground p {
+  margin-bottom: 0;
+}
+
 .pulse-danger {
   animation: pulseDanger 1s infinite;
 }
