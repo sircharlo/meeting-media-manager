@@ -1282,9 +1282,7 @@ const plugin: Plugin = (
                 lang: 'E',
               })) as VideoFile[]
             ).filter((item) => extname(item.url) === '.mp3')
-          : $findAll(
-              join($pubPath(), store.state.media.songPub, '**', '*.mp3')
-            ).map((item) => ({
+          : $findAll(join($pubPath(), 'sjjm', '**', '*.mp3')).map((item) => ({
               title: basename(item),
               track: basename(resolve(item, '..')),
               path: item,

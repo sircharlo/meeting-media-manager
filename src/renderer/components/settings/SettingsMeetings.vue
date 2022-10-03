@@ -170,7 +170,7 @@ export default Vue.extend({
     },
     shuffleMusicCached() {
       const nrOfLocalSongs = this.$findAll(
-        join(this.$pubPath(), this.$store.state.media.songPub, '**', '*.mp3')
+        join(this.$pubPath(), 'sjjm', '**', '*.mp3')
       ).length
 
       console.log(nrOfLocalSongs)
