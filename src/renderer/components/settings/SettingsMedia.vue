@@ -79,7 +79,7 @@
             max-width="300px"
             max-height="100px"
           />
-          <span v-else>{{ background }}</span>
+          <div v-else v-html="background"/>
         </v-col>
         <v-col cols="auto" align-self="center">
           <v-btn
