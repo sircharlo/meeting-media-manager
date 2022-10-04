@@ -8,7 +8,7 @@
       <v-divider />
     </v-col>
     <v-col cols="12">
-      <v-list>
+      <v-list v-if="dates.length > 0">
         <template v-for="(date, i) in dates">
           <v-list-item
             :key="date"
@@ -22,6 +22,7 @@
           <v-divider :key="i" />
         </template>
       </v-list>
+      <p v-else>{{ $t('noMeetings') }}</p>
     </v-col>
   </v-row>
 </template>

@@ -1,6 +1,6 @@
 <!-- Media list in the media manager page -->
 <template>
-  <v-list dense>
+  <v-list v-if="mediaList.length > 0" dense>
     <v-dialog v-if="edit" :value="true">
       <v-card>
         <v-col class="text-right">
@@ -115,6 +115,7 @@
       </v-list-item-action>
     </v-list-item>
   </v-list>
+  <p v-else>{{ $t('noMedia') }}</p>
 </template>
 <script lang="ts">
 // eslint-disable-next-line import/named
