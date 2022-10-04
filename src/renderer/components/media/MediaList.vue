@@ -184,10 +184,6 @@ export default Vue.extend({
       type: String,
       default: '',
     },
-    setProgress: {
-      type: Function,
-      default: null,
-    },
   },
   data() {
     return {

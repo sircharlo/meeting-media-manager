@@ -301,9 +301,6 @@ export default Vue.extend({
     weekParam(): number {
       return parseInt(this.$route.query.week ?? -1)
     },
-    mediaScreenVisible(): boolean {
-      return this.$store.state.present.mediaScreenVisible
-    },
     isDark() {
       return this.$vuetify.theme.dark
     },
@@ -580,14 +577,6 @@ export default Vue.extend({
         this.$removeCong(item.path)
         window.location.reload()
       }
-    },
-    isMeetingDay(day: number): boolean {
-      const date = (this.$dayjs() as Dayjs).add(day, 'days')
-      const weekDay = date.day() === 0 ? '6' : (date.day() - 1).toString() // Day is 0 indexed and starts with Sunday
-      return (
-        weekDay === this.$getPrefs('meeting.mwDay') ||
-        weekDay === this.$getPrefs('meeting.weDay')
-      )
     },
     setProgress(loaded: number, total: number, global: boolean = false) {
       if (global) {

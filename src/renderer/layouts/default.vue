@@ -46,9 +46,6 @@ export default Vue.extend({
     client() {
       return this.$store.state.cong.client as WebDAVClient | null
     },
-    store() {
-      return this.$storePath()
-    },
   },
   watch: {
     cong: {

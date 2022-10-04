@@ -317,29 +317,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    toggleListener(enable: boolean, field: 'backward' | 'forward') {
-      if (enable) {
-        window.addEventListener(
-          'keydown',
-          field === 'backward' ? this.addPpBackwardKey : this.addPpForwardKey
-        )
-      } else {
-        window.removeEventListener(
-          'keydown',
-          field === 'backward' ? this.addPpBackwardKey : this.addPpForwardKey
-        )
-      }
-    },
-    addPpForwardKey(e: KeyboardEvent) {
-      e.preventDefault()
-      const val = this.media.ppForward
-      this.media.ppForward = val ? val + `+${e.key}` : e.key
-    },
-    addPpBackwardKey(e: KeyboardEvent) {
-      e.preventDefault()
-      const val = this.media.ppBackward
-      this.media.ppBackward = val ? val + `+${e.key}` : e.key
-    },
     async uploadBg() {
       const result = await ipcRenderer.invoke('openDialog', {
         properties: ['openFile'],

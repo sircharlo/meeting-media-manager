@@ -167,9 +167,6 @@ export default Vue.extend({
     poster(): string {
       return this.$isVideo(this.src) ? this.videoIcon : this.audioIcon
     },
-    isDark(): boolean {
-      return this.$vuetify.theme.dark
-    },
     id(): string {
       return this.$strip('video-' + basename(this.src))
     },

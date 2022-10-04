@@ -141,9 +141,6 @@ export default Vue.extend({
     cong(): string {
       return this.$route.query.cong as string
     },
-    mediaScreenVisible(): boolean {
-      return this.$store.state.present.mediaScreenVisible as boolean
-    },
   },
   watch: {
     date(val: string) {

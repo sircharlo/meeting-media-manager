@@ -22,7 +22,7 @@
         <form-time-picker
           id="meeting.mwStartTime"
           v-model="meeting.mwStartTime"
-          :label="''"
+          label=""
           required
           :locked="$isLocked('meeting.mwStartTime')"
         />
@@ -41,7 +41,7 @@
         <form-time-picker
           id="meeting.weStartTime"
           v-model="meeting.weStartTime"
-          :label="''"
+          label=""
           required
           :locked="$isLocked('meeting.weStartTime')"
         />

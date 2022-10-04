@@ -212,7 +212,6 @@ import { MetaInfo } from 'vue-meta'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import {
   faArrowDown19,
-  faCircleArrowLeft,
   faCloud,
   faFileExport,
   faFolderOpen,
@@ -291,17 +290,11 @@ export default Vue.extend({
     faArrowDown19(): IconDefinition {
       return faArrowDown19
     },
-    faCircleArrowLeft(): IconDefinition {
-      return faCircleArrowLeft
-    },
     faFileExport(): IconDefinition {
       return faFileExport
     },
     now(): Dayjs {
       return (this.$dayjs() as Dayjs).hour(0).minute(0).second(0).millisecond(0)
-    },
-    cong(): string {
-      return this.$route.query.cong as string
     },
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient

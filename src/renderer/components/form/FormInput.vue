@@ -287,7 +287,7 @@ export default Vue.extend({
       },
     } as PropOptions<'default' | 'round' | 'basic'>,
     max: {
-      type: [Number, Boolean],
+      type: [Boolean, Number],
       default: false,
       validator: (val: number | boolean) => {
         if (typeof val === 'number') {
