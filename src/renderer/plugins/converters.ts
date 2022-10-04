@@ -16,7 +16,14 @@ import { basename, changeExt, dirname, extname, join } from 'upath'
 import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api'
 import Zipper from 'adm-zip'
 import sizeOf from 'image-size'
-import { FULL_HD } from '~/constants/general'
+import {
+  CHAR_AMP,
+  CHAR_GT,
+  CHAR_LT,
+  CHAR_QUOTE,
+  CHAR_SQ,
+  FULL_HD,
+} from '~/constants/general'
 
 const plugin: Plugin = (
   {
@@ -299,19 +306,19 @@ const plugin: Plugin = (
 
     for (index = match.index; index < str.length; index++) {
       switch (str.charCodeAt(index)) {
-        case 34: // "
+        case CHAR_QUOTE: // "
           escape = '&quot;'
           break
-        case 38: // &
+        case CHAR_AMP: // &
           escape = '&amp;'
           break
-        case 39: // '
+        case CHAR_SQ: // '
           escape = '&#39;'
           break
-        case 60: // <
+        case CHAR_LT: // <
           escape = '&lt;'
           break
-        case 62: // >
+        case CHAR_GT: // >
           escape = '&gt;'
           break
         default:

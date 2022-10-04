@@ -14,6 +14,7 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import { faPause, faPersonRunning } from '@fortawesome/free-solid-svg-icons'
+import { MS_IN_SEC } from '~/constants/general'
 export default Vue.extend({
   props: {
     text: {
@@ -51,7 +52,7 @@ export default Vue.extend({
       if (this.timer === 0) {
         this.$emit('perform')
       }
-    }, 1000)
+    }, MS_IN_SEC)
   },
 })
 </script>

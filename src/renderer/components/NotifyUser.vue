@@ -143,12 +143,13 @@ ${JSON.stringify(
     },
     // Get combined height of previous messages to calculate where to place the next message
     getCombinedHeight(index: number) {
+      const MARGIN_BETWEEN_MESSAGES = 8
       let height = 0
       for (let i = 0; i < index; i++) {
         height += this.getHeight(i) // The height of each message
-        height += 8 // The margin between messages
+        height += MARGIN_BETWEEN_MESSAGES // The margin between messages
       }
-      return height + 8 // The start margin for the first message
+      return height + MARGIN_BETWEEN_MESSAGES // The start margin for the first message
     },
     // Calculate the height of a message
     getHeight(index: number) {

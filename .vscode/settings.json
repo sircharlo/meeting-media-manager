@@ -28,6 +28,7 @@
     "jekyll",
     "JWMMF",
     "jworg",
+    "KIBIBYTE",
     "kohler",
     "koofr",
     "lffi",
@@ -62,6 +63,6 @@
     "yzhang",
     "русский"
   ],
-  "cSpell.ignoreWords": ["transform", "PDF", "TERMS"],
+  "cSpell.ignoreWords": ["transform", "PDF", "TERMS", "shorthand"],
   "cSpell.ignorePaths": ["src/renderer/locales/*"]
 }

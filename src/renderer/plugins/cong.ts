@@ -15,6 +15,12 @@ import {
   MeetingFile,
   ElectronStore,
 } from '~/types'
+import {
+  BITS_IN_BYTE,
+  BYTES_IN_MB,
+  MS_IN_SEC,
+  NOT_FOUND,
+} from '~/constants/general'
 
 const { FORCABLE } = require('~/constants/prefs') as { FORCABLE: string[] }
 
@@ -239,7 +245,7 @@ const plugin: Plugin = (
       try {
         await client.deleteFile(dir.filename)
       } catch (e: any) {
-        if (e.status !== 404) {
+        if (e.status !== NOT_FOUND) {
           $error('errorWebdavRm', e, dir.filename)
         }
       }
@@ -622,14 +628,14 @@ const plugin: Plugin = (
               dateObj.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
             )
           })
-          .map((meeting) => {
-            meeting[1] = new Map(
-              Array.from(meeting[1]).filter((part) => {
-                part[1] = part[1].filter(({ congSpecific }) => congSpecific)
-                return part
+          .map(([date, parts]) => {
+            parts = new Map(
+              Array.from(parts).filter(([part, media]) => {
+                media = media.filter(({ congSpecific }) => congSpecific)
+                return [part, media]
               })
             )
-            return meeting
+            return [date, parts]
           })
       )
 
@@ -672,11 +678,15 @@ const plugin: Plugin = (
         )
 
         // Prevent duplicates
+        const PREFIX_MAX_LENGTH = 9
         const duplicate = $findOne(
           join(
             $mediaPath(),
             item.folder as string,
-            '*' + item.safeName?.substring(8).replace('.svg', '.png')
+            '*' +
+              item.safeName
+                ?.substring(PREFIX_MAX_LENGTH)
+                .replace('.svg', '.png')
           )
         )
         if (
@@ -709,12 +719,13 @@ const plugin: Plugin = (
                 setProgress(progress.loaded, progress.total)
               },
             })) as ArrayBuffer
+
             perf.end = performance.now()
-            perf.bits = perf.bytes * 8
+            perf.bits = perf.bytes * BITS_IN_BYTE
             perf.ms = perf.end - perf.start
-            perf.s = perf.ms / 1000
+            perf.s = perf.ms / MS_IN_SEC
             perf.bps = perf.bits / perf.s
-            perf.MBps = perf.bps / 1000000
+            perf.MBps = perf.bps / BYTES_IN_MB
             perf.dir = 'down'
             $log.debug(perf)
 

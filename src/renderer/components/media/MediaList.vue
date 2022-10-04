@@ -143,6 +143,7 @@ import {
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
 import { LocalFile, MeetingFile, VideoFile } from '~/types'
+import { MS_IN_SEC, NOT_FOUND } from '~/constants/general'
 export default Vue.extend({
   filters: {
     ext(filename: string) {
@@ -412,7 +413,7 @@ export default Vue.extend({
                 try {
                   await this.client.deleteFile(filePath)
                 } catch (e) {
-                  if (e.status !== 404) {
+                  if (e.status !== NOT_FOUND) {
                     this.$error('errorWebdavRm', e, filePath)
                   }
                 }
@@ -455,7 +456,7 @@ export default Vue.extend({
           try {
             await this.client.deleteFile(item.url as string)
           } catch (e: any) {
-            if (e.status !== 404) {
+            if (e.status !== NOT_FOUND) {
               this.$error('errorWebdavRm', e, item.url as string)
             }
           }
@@ -476,7 +477,7 @@ export default Vue.extend({
               Object.assign(newItem, { color: 'warning' })
             )
           }
-        }, 3000)
+        }, 3 * MS_IN_SEC)
       }
     },
   },

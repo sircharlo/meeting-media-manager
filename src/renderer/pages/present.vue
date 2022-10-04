@@ -61,6 +61,7 @@
     </v-footer>
   </v-container>
 </template>
+<!-- eslint-disable no-magic-numbers -->
 <script lang="ts">
 import Vue from 'vue'
 import { MetaInfo } from 'vue-meta'

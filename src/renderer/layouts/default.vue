@@ -20,6 +20,7 @@ import { ipcRenderer } from 'electron'
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { ShortJWLang, CongPrefs, Release, Asset, ElectronStore } from '~/types'
+import { LAST_JWMMF_VERSION } from '~/constants/general'
 export default Vue.extend({
   name: 'DefaultLayout',
   head() {
@@ -82,6 +83,7 @@ export default Vue.extend({
 
       // If not congs, make a new one
       if (congs.length === 0) {
+        // eslint-disable-next-line no-magic-numbers
         const id = Math.random().toString(36).substring(2, 15)
         if (this.$route.path === this.localePath('/')) {
           this.initPrefs('prefs-' + id, true)
@@ -402,10 +404,11 @@ export default Vue.extend({
       } finally {
         if (lastVersion !== this.$config.version) {
           try {
-            // one-time migrate from JWMMF to mmm
+            // One-time migrate from JWMMF to mmm
             if (
-              parseInt(lastVersion.replace(/\D/g, '')) <= 2255 &&
-              parseInt(this.$config.version.replace(/\D/g, '')) >= 2256
+              parseInt(lastVersion.replace(/\D/g, '')) <= LAST_JWMMF_VERSION &&
+              parseInt(this.$config.version.replace(/\D/g, '')) >
+                LAST_JWMMF_VERSION
             ) {
               const files = this.$findAll([
                 join(JWMMF, 'pref*.json'),

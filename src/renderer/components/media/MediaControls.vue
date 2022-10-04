@@ -172,6 +172,7 @@ import {
   faArrowDownShortWide,
   faFolderOpen,
 } from '@fortawesome/free-solid-svg-icons'
+import { MS_IN_SEC } from '~/constants/general'
 export default Vue.extend({
   components: {
     draggable,
@@ -331,7 +332,7 @@ export default Vue.extend({
       this.showPrefix = true
       setTimeout(() => {
         this.showPrefix = false
-      }, 3000)
+      }, 3 * MS_IN_SEC)
     },
     openFolder(): void {
       ipcRenderer.send('openPath', join(this.$mediaPath(), this.date))

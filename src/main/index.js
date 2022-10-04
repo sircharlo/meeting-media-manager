@@ -92,6 +92,8 @@ function createMainWindow(pos = { width: 700, height: 700 }) {
   })
 
   win.on('close', (e) => {
+    const MS_IN_SEC = 1000
+
     if (!allowClose && closeAttempts < 2) {
       e.preventDefault()
       win.webContents.send('notifyUser', [
@@ -101,7 +103,7 @@ function createMainWindow(pos = { width: 700, height: 700 }) {
       closeAttempts++
       setTimeout(() => {
         closeAttempts--
-      }, 10000)
+      }, 10 * MS_IN_SEC)
     } else if (mediaWin) {
       mediaWin.destroy()
     }
@@ -129,7 +131,7 @@ if (gotTheLock) {
     }
   })
 
-  // ipcMain events for general purposes
+  // IpcMain events for general purposes
   ipcMain.handle('userData', () => normalize(app.getPath('userData')))
   ipcMain.handle('mediaWinOpen', () => !!mediaWin)
   ipcMain.handle('mediaWinVisible', () => mediaWin && mediaWin.isVisible())
@@ -165,8 +167,9 @@ if (gotTheLock) {
   })
 
   ipcMain.on('restart', () => {
+    const RESTART_CODE = 250
     if (isDev) {
-      app.exit(250)
+      app.exit(RESTART_CODE)
     } else {
       let options
       if (process.env.APPIMAGE) {
@@ -230,7 +233,7 @@ if (gotTheLock) {
     }
   })
 
-  // ipcMain events for the presentation window
+  // IpcMain events for the presentation window
   ipcMain.on('videoProgress', (_e, percent) => {
     win.webContents.send('videoProgress', percent)
   })
@@ -245,7 +248,7 @@ if (gotTheLock) {
     win.webContents.send('readyToListen')
   })
 
-  // ipcMain events for the media window
+  // IpcMain events for the media window
   ipcMain.on('showMedia', (_e, media) => {
     mediaWin.webContents.send('showMedia', media)
     win.webContents.send('showingMedia', [
@@ -270,7 +273,7 @@ if (gotTheLock) {
     mediaWin.webContents.send('startMediaDisplay', prefs)
   })
 
-  // ipcMain events to control the windows
+  // IpcMain events to control the windows
   ipcMain.on('allowQuit', (_e, val) => {
     allowClose = val
   })
@@ -286,6 +289,8 @@ if (gotTheLock) {
   ipcMain.on('showMediaWindow', (_e, mediaWinOptions) => {
     if (!mediaWin) {
       const screenInfo = getScreenInfo(win, mediaWin)
+      const STARTING_POSITION = 50
+
       const windowOptions = {
         title: 'Media Window',
         icon: join(
@@ -307,11 +312,11 @@ if (gotTheLock) {
         x:
           screenInfo.displays.find(
             (display) => display.id === mediaWinOptions.destination
-          ).bounds.x + 50,
+          ).bounds.x + STARTING_POSITION,
         y:
           screenInfo.displays.find(
             (display) => display.id === mediaWinOptions.destination
-          ).bounds.y + 50,
+          ).bounds.y + STARTING_POSITION,
       }
 
       if (mediaWinOptions.type === 'fullscreen') windowOptions.fullscreen = true
@@ -323,7 +328,10 @@ if (gotTheLock) {
         mediaWin.setMenuBarVisibility(false)
       }
 
-      mediaWin.setAspectRatio(16 / 9)
+      const AR_WIDTH = 16
+      const AR_HEIGHT = 9
+
+      mediaWin.setAspectRatio(AR_WIDTH / AR_HEIGHT)
       mediaWinHandler.loadPage('/media')
 
       mediaWin
@@ -406,7 +414,7 @@ if (gotTheLock) {
 }
 
 /*
-app.on(
+App.on(
   'certificate-error',
   (event, _webContents, url, _error, _cert, callback) => {
     // Do some verification based on the URL to not allow potentially malicious certs:

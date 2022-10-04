@@ -1,6 +1,7 @@
 import { type, release } from 'os'
 import { Plugin } from '@nuxt/types'
 import { MeetingFile, Perf, Stats } from '~/types'
+import { BYTES_IN_KIBIBYTE } from '~/constants/general'
 
 const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
   interface Log {
@@ -141,8 +142,8 @@ ${JSON.stringify(logs.error, null, 2)}
               (files as MeetingFile[])
                 .map((file) => file.filesize as number)
                 .reduce((a, b) => a + b, 0) /
-              1024 /
-              1024
+              BYTES_IN_KIBIBYTE /
+              BYTES_IN_KIBIBYTE
             ).toFixed(1)}MB`,
             'background-color: #fbe9e7; color: #000;'
           )

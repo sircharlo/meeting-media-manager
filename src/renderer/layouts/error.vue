@@ -11,6 +11,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import { NOT_FOUND } from '~/constants/general'
 export default Vue.extend({
   name: 'ErrorPage',
   props: {
@@ -27,7 +28,7 @@ export default Vue.extend({
   },
   head() {
     const title: string =
-      this.error.statusCode === 404 ? this.pageNotFound : this.otherError
+      this.error.statusCode === NOT_FOUND ? this.pageNotFound : this.otherError
     return {
       title,
       titleTemplate: '%s - M³',

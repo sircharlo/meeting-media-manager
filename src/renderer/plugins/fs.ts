@@ -17,6 +17,7 @@ import { sync, Options } from 'fast-glob'
 import Zipper from 'adm-zip'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import { MeetingFile } from '~/types'
+import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
 
 const plugin: Plugin = (
   { $getPrefs, $log, store, $appPath, $dayjs, $translate, $strip, $warn },
@@ -179,7 +180,7 @@ const plugin: Plugin = (
               }
             }
             break
-          case 'replace': // replace a string within a filename (e.g. song or paragraph)
+          case 'replace': // Replace a string within a filename (e.g. song or paragraph)
             if (oldName !== newName && file.includes(oldName)) {
               renameSync(path, join(dir, file.replace(oldName, newName)))
             }
@@ -368,7 +369,7 @@ const plugin: Plugin = (
 
       // Cutoff filename until path is smaller than 200 bytes
       let currentBytes = Buffer.byteLength(name, 'utf8')
-      while (currentBytes > 200) {
+      while (currentBytes > MAX_BYTES_IN_FILENAME) {
         name = basename(name, ext).slice(0, -1).trim() + ext
         currentBytes = Buffer.byteLength(name, 'utf8')
       }

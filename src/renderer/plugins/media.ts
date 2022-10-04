@@ -6,6 +6,11 @@ import { emptyDirSync, existsSync, readFileSync, statSync } from 'fs-extra'
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { basename, changeExt, extname, join, resolve } from 'upath'
 import { Database } from 'sql.js'
+import {
+  HUNDRED_PERCENT,
+  JAN_2008,
+  MAX_PREFIX_LENGTH,
+} from './../constants/general'
 import { ImageFile, MeetingFile, VideoFile } from './../types/media.d'
 import {
   MediaFile,
@@ -67,7 +72,7 @@ const plugin: Plugin = (
 
     const symbol = extract.UniqueEnglishSymbol.replace(/[0-9]/g, '')
 
-    // exclude the "old new songs" songbook, as we don't need images from that
+    // Exclude the "old new songs" songbook, as we don't need images from that
     if (symbol !== 'snnw') {
       const extractDb = await getDbFromJWPUB(
         symbol,
@@ -92,7 +97,7 @@ const plugin: Plugin = (
                 mmItem.queryInfo.NextParagraphOrdinal
             }
 
-            // include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
+            // Include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
             if (
               (
                 $getLocalJWLangs().find(
@@ -455,7 +460,7 @@ const plugin: Plugin = (
       if (
         mediaItem.pubSymbol === 'w' &&
         mediaItem.issue &&
-        parseInt(mediaItem.issue) >= 20080101 &&
+        parseInt(mediaItem.issue) >= JAN_2008 &&
         mediaItem.issue.toString().slice(-2) === '01'
       ) {
         mediaItem.pubSymbol = 'wp'
@@ -854,11 +859,13 @@ const plugin: Plugin = (
         })
       }
 
+      // eslint-disable-next-line no-magic-numbers
       let issue = baseDate.subtract(8, 'weeks').format('YYYYMM') + '00'
       let db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
       let weekNr = getWeekNr(db)
 
       if (weekNr < 0) {
+        // eslint-disable-next-line no-magic-numbers
         issue = baseDate.subtract(9, 'weeks').format('YYYYMM') + '00'
         db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
         weekNr = getWeekNr(db)
@@ -1174,7 +1181,8 @@ const plugin: Plugin = (
         join(
           $mediaPath(),
           item.folder as string,
-          '*' + item.safeName?.substring(8).replace('.svg', '.png')
+          '*' +
+            item.safeName?.substring(MAX_PREFIX_LENGTH).replace('.svg', '.png')
         )
       )
 
@@ -1236,7 +1244,7 @@ const plugin: Plugin = (
       if ($getPrefs('meeting.enableMusicFadeOut')) {
         const now = $dayjs()
         if ($getPrefs('meeting.musicFadeOutType') === 'smart') {
-          const today = now.day() === 0 ? 6 : now.day() - 1 // day is 0 indexed and starts with Sunday
+          const today = now.day() === 0 ? 6 : now.day() - 1 // Day is 0 indexed and starts with Sunday
           if (
             today === $getPrefs('meeting.mwDay') ||
             today === $getPrefs('meeting.weDay')
@@ -1309,7 +1317,8 @@ const plugin: Plugin = (
       createAudioElement(songs, index < songs.length - 1 ? ++index : 0, fadeOut)
     }
     audio.oncanplay = () => {
-      audio.volume = ($getPrefs('meeting.musicVolume') as number) / 100
+      audio.volume =
+        ($getPrefs('meeting.musicVolume') as number) / HUNDRED_PERCENT
       if (!fadeOut) {
         store.commit('media/setMusicFadeOut', '00:00')
       }

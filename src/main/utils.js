@@ -51,15 +51,16 @@ export function setMediaWindowPosition(win, mediaWin, mediaWinOptions) {
   try {
     if (mediaWin) {
       const screenInfo = getScreenInfo(win, mediaWin)
+      const STARTING_POSITION = 50
       mediaWin.setBounds({
         x:
           screenInfo.displays.find(
             (display) => display.id === mediaWinOptions.destination
-          ).bounds.x + 50,
+          ).bounds.x + STARTING_POSITION,
         y:
           screenInfo.displays.find(
             (display) => display.id === mediaWinOptions.destination
-          ).bounds.y + 50,
+          ).bounds.y + STARTING_POSITION,
         ...(mediaWinOptions.type === 'window' && { width: 1280 }),
         ...(mediaWinOptions.type === 'window' && { height: 720 }),
       })

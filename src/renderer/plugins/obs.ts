@@ -1,6 +1,7 @@
 import { Plugin } from '@nuxt/types'
 import OBSWebSocket from 'obs-websocket-js-v5'
 import OBSWebSocketV4 from 'obs-websocket-js'
+import { OBS_AUTH_ERROR, OBS_CONNECTION_ERROR } from './../constants/general'
 import { ObsPrefs } from '~/types'
 
 let obs = null as OBSWebSocket | OBSWebSocketV4 | null
@@ -149,11 +150,11 @@ const plugin: Plugin = (
           try {
             await obs.connect(`ws://127.0.0.1:${port}`, password as string)
           } catch (e: any) {
-            if (e.code === 4009) {
+            if (e.code === OBS_AUTH_ERROR) {
               $warn('errorObsAuth')
             }
-            // caused by resetOBS trying to disconnect
-            else if (e.code === 1006) {
+            // Caused by resetOBS trying to disconnect
+            else if (e.code === OBS_CONNECTION_ERROR) {
               resetOBS()
               return obs
             } else {

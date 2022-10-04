@@ -223,6 +223,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { Dayjs } from 'dayjs'
 import { LocalFile, MeetingFile, VideoFile } from '~/types'
+import {
+  BITS_IN_BYTE,
+  BYTES_IN_MB,
+  HUNDRED_PERCENT,
+  MS_IN_SEC,
+} from '~/constants/general'
 export default Vue.extend({
   name: 'AddPage',
   data() {
@@ -318,7 +324,7 @@ export default Vue.extend({
       ) as Dayjs
       const mwDay = this.$getPrefs('meeting.mwDay') as number
       const weDay = this.$getPrefs('meeting.weDay') as number
-      const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
+      const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
       return mwDay === weekDay || weDay === weekDay
     },
   },
@@ -545,11 +551,11 @@ export default Vue.extend({
             }
 
             perf.end = performance.now()
-            perf.bits = perf.bytes * 8
+            perf.bits = perf.bytes * BITS_IN_BYTE
             perf.ms = perf.end - perf.start
-            perf.s = perf.ms / 1000
+            perf.s = perf.ms / MS_IN_SEC
             perf.bps = perf.bits / perf.s
-            perf.MBps = perf.bps / 1000000
+            perf.MBps = perf.bps / BYTES_IN_MB
             perf.dir = 'up'
             this.$log.debug(perf)
           }
@@ -570,12 +576,12 @@ export default Vue.extend({
     },
     setProgress(loaded: number, total: number, global: boolean = false) {
       if (global) {
-        this.totalProgress = (100 * loaded) / total
+        this.totalProgress = (HUNDRED_PERCENT * loaded) / total
       } else {
-        this.currentProgress = (100 * loaded) / total
+        this.currentProgress = (HUNDRED_PERCENT * loaded) / total
       }
-      if (this.currentProgress === 100) this.currentProgress = 0
-      if (this.totalProgress === 100) this.totalProgress = 0
+      if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
+      if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
     },
     async getMeetingData() {
       try {
@@ -584,7 +590,7 @@ export default Vue.extend({
           this.$getPrefs('app.outputFolderDateFormat') as string
         ) as Dayjs
         if (!day.isValid() || this.$getPrefs('meeting.specialCong')) return
-        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
+        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
         if (weekDay === (this.$getPrefs('meeting.mwDay') as number)) {
           await this.$getMwMedia(this.date)
         } else if (weekDay === (this.$getPrefs('meeting.weDay') as number)) {

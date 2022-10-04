@@ -135,6 +135,7 @@ import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
 // eslint-disable-next-line import/named
 import { existsSync, readFileSync } from 'fs-extra'
 import { Marker } from '~/types'
+import { HUNDRED_PERCENT } from '~/constants/general'
 export default Vue.extend({
   components: {
     RuntimeTemplateCompiler,
@@ -214,11 +215,16 @@ export default Vue.extend({
     },
     clippedStart(): number {
       if (!this.video) return 0
-      return (this.video.clipped.start * 100) / this.video.original.end
+      return (
+        (this.video.clipped.start * HUNDRED_PERCENT) / this.video.original.end
+      )
     },
     clippedEnd(): number {
       if (!this.video) return 0
-      return 100 - (this.video.clipped.end * 100) / this.video.original.end
+      return (
+        HUNDRED_PERCENT -
+        (this.video.clipped.end * HUNDRED_PERCENT) / this.video.original.end
+      )
     },
     isImage(): boolean {
       return this.$isImage(this.src)
