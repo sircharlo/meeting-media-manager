@@ -169,13 +169,10 @@ export default Vue.extend({
       )
     },
     shuffleMusicCached() {
-      const nrOfLocalSongs = this.$findAll(
-        join(this.$pubPath(), 'sjjm', '**', '*.mp3')
-      ).length
-
-      console.log(nrOfLocalSongs)
-
-      return nrOfLocalSongs === 151
+      return (
+        this.$findAll(join(this.$pubPath(), 'sjjm', '**', '*.mp3')).length ===
+        151
+      )
     },
   },
   watch: {

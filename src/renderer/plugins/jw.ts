@@ -6,7 +6,17 @@ import { existsSync, readFileSync } from 'fs-extra'
 import { JWLang, ShortJWLang } from '~/types'
 
 const plugin: Plugin = (
-  { $appPath, $write, $getPrefs, $ytPath, $log, $setPrefs, $dayjs, store },
+  {
+    $appPath,
+    $write,
+    $getPrefs,
+    $ytPath,
+    $log,
+    $warn,
+    $setPrefs,
+    $dayjs,
+    store,
+  },
   inject
 ) => {
   inject(
@@ -18,7 +28,10 @@ const plugin: Plugin = (
         !!lastUpdate ||
         $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
 
-      if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
+      if (
+        store.state.stats.online &&
+        (forceReload || !existsSync(langPath) || !recentlyUpdated)
+      ) {
         try {
           const result = await ipcRenderer.invoke('getFromJWOrg', {
             url: 'https://www.jw.org/en/languages',
@@ -41,9 +54,16 @@ const plugin: Plugin = (
         }
       }
 
-      const langs = JSON.parse(
-        readFileSync(langPath, 'utf8') ?? '[]'
-      ) as ShortJWLang[]
+      let langs: ShortJWLang[] = []
+
+      try {
+        langs = JSON.parse(
+          readFileSync(langPath, 'utf8') ?? '[]'
+        ) as ShortJWLang[]
+      } catch (e: any) {
+        $warn('errorOffline')
+      }
+
       const langPrefInLangs = langs.find(
         (lang) => lang.langcode === $getPrefs('media.lang')
       )
@@ -62,7 +82,7 @@ const plugin: Plugin = (
     'getYearText',
     async (force: boolean = false): Promise<string | null> => {
       let yeartext = null
-      if (force || !existsSync($ytPath())) {
+      if (store.state.stats.online && (force || !existsSync($ytPath()))) {
         try {
           const result = await ipcRenderer.invoke('getFromJWOrg', {
             url: 'https://wol.jw.org/wol/finder',
@@ -81,16 +101,27 @@ const plugin: Plugin = (
           $log.error(e)
         }
       } else {
-        yeartext = readFileSync($ytPath(), 'utf8')
+        try {
+          yeartext = readFileSync($ytPath(), 'utf8')
+        } catch (e: any) {
+          $warn('errorOffline')
+        }
       }
       return yeartext
     }
   )
   inject('getLocalJWLangs', (): ShortJWLang[] => {
     try {
-      const langs = JSON.parse(
-        readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
-      ) as ShortJWLang[]
+      let langs: ShortJWLang[] = []
+
+      try {
+        langs = JSON.parse(
+          readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
+        ) as ShortJWLang[]
+      } catch (e: any) {
+        $log.error(e)
+      }
+
       const langPrefInLangs = langs.find(
         (lang) => lang.langcode === $getPrefs('media.lang')
       )
@@ -101,6 +132,7 @@ const plugin: Plugin = (
       )
       return langs
     } catch (e: any) {
+      $log.error(e)
       return []
     }
   })
