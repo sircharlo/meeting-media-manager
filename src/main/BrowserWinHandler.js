@@ -63,6 +63,23 @@ export default class BrowserWinHandler {
         appId: appLongName,
       })
 
+    /* session.defaultSession.webRequest.onHeadersReceived(
+      {
+        urls: [
+          'https://download-a.akamaihd.net/*',
+          'https://webdav.4shared.com/*',
+        ],
+      },
+      (details, resolve) => {
+        resolve({
+          responseHeaders: {
+            ...details.responseHeaders,
+            'Access-Control-Allow-Origin': '*',
+          },
+        })
+      }
+    ) */
+
     this.browserWindow.on('closed', () => {
       // Dereference the window object
       this.browserWindow = null
