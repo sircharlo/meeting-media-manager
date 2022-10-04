@@ -68,6 +68,7 @@
   "musicFadeOutType": "Automatically stop playing songs",
   "musicVolume": "Song playback volume",
   "mwMeetingDay": "Midweek meeting",
+  "noMedia": "There is no media yet for this date. Add a song, custom media or extract media from a JWPUB file.",
   "noMeetings": "There are no meetings available. Please try updating the media folders from the homescreen.",
   "notAnImage": "This is not a valid image file. Please try again.",
   "obsCameraScene": "Default stage view scene in OBS Studio",
