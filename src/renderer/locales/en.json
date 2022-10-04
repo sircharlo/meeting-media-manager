@@ -68,6 +68,7 @@
   "musicFadeOutType": "Automatically stop playing songs",
   "musicVolume": "Song playback volume",
   "mwMeetingDay": "Midweek meeting",
+  "noMeetings": "There are no meetings available. Please try updating the media folders from the homescreen.",
   "notAnImage": "This is not a valid image file. Please try again.",
   "obsCameraScene": "Default stage view scene in OBS Studio",
   "obsMediaScene": "Media window scene in OBS Studio",

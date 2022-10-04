@@ -68,6 +68,7 @@
   "musicFadeOutType": "Automatisch stoppen met liederen afspelen",
   "musicVolume": "Afspeelvolume liederen",
   "mwMeetingDay": "Doordeweekse vergadering",
+  "noMeetings": "Er zijn geen vergaderingen beschikbaar. Probeer alsjeblieft media op te halen vanuit het beginscherm.",
   "notAnImage": "Dit is geen correct plaatjes bestand. Probeer het alsjeblieft nogmaals.",
   "obsCameraScene": "Standaard podiumbeeld scene in OBS Studio",
   "obsMediaScene": "Media beeld scene in OBS Studio",
