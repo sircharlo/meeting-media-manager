@@ -64,12 +64,7 @@
         <v-col
           id="mediaWindowBackground"
           class="align-center col d-flex justify-center text-no-wrap"
-          :style="
-            (bg === 'yeartext'
-              ? 'background-color: black;'
-              : '')
-            + 'color: white; aspect-ratio: 16/9; font-size: 90%;'
-          "
+          :style="bg === 'yeartext' ? 'background-color: black;' : ''"
         >
           <v-img
             v-if="bg === 'custom'"
@@ -79,7 +74,7 @@
             max-width="300px"
             max-height="100px"
           />
-          <div v-else v-html="background"/>
+          <div v-else v-html="background" />
         </v-col>
         <v-col cols="auto" align-self="center">
           <v-btn
@@ -390,3 +385,15 @@ export default Vue.extend({
   },
 })
 </script>
+<style lang="scss">
+#mediaWindowBackground {
+  color: white;
+  aspect-ratio: 16/9;
+  font-size: 90%;
+  max-width: 250px;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+</style>

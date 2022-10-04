@@ -1,4 +1,4 @@
-html { 
+html {
   overflow-y: auto !important;
   user-select: none;
 }
@@ -10,10 +10,6 @@ html {
 .page-enter,
 .page-leave-to {
   opacity: 0;
-}
-
-#mediaWindowBackground p {
-  margin-bottom: 0;
 }
 
 .pulse-danger {

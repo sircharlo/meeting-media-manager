@@ -72,7 +72,7 @@
           v-else
           v-bind="icon.props ? icon.props : {}"
           :key="i"
-          :pull="style.icons.length > 0 ? (i == 0 ? 'left' : 'right') : null"
+          :pull="style.icons.length > 1 ? (i == 0 ? 'left' : 'right') : null"
           :icon="icon.text ? icon.text : icon"
           :style="{
             color: isDark || variant !== 'shuffle' ? 'white' : 'black',
