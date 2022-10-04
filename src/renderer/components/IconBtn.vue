@@ -8,9 +8,14 @@
     title="ALT+K"
     v-bind="$attrs"
     :loading="loading || $attrs.loading"
+    :style="{ color: isDark ? 'white' : 'black' }"
     @click="atClick()"
   >
-    <font-awesome-icon :icon="faStop" pull="left" />
+    <font-awesome-icon
+      :icon="faStop"
+      pull="left"
+      :style="{ color: isDark ? 'white' : 'black' }"
+    />
     {{ timeRemaining }}
   </v-btn>
   <v-btn
@@ -65,17 +70,19 @@
           v-if="variant === 'shuffle' && musicFadeOut"
           :icon="faStop"
           size="xl"
-          :style="{ color: 'white' }"
         />
         <font-awesome-icon
           v-for="(icon, i) in style.icons"
           v-else
           v-bind="icon.props ? icon.props : {}"
           :key="i"
-          :pull="style.icons.length > 0 ? (i == 0 ? 'left' : 'right') : null"
+          :pull="style.icons.length > 1 ? (i == 0 ? 'left' : 'right') : null"
           :icon="icon.text ? icon.text : icon"
           :style="{
-            color: isDark || variant !== 'shuffle' ? 'white' : 'black',
+            color:
+              isDark || variant !== 'shuffle'
+                ? 'white !important'
+                : 'black !important',
           }"
         />
         <slot v-for="(_, name) in $slots" :slot="name" :name="name" />

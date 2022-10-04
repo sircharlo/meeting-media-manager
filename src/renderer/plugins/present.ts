@@ -116,7 +116,7 @@ const plugin: Plugin = (
           root.innerHTML = yeartext ?? ''
           let yeartextString = ''
           for (let i = 0; i < root.children.length; i++) {
-            yeartextString += root.children.item(i)?.textContent
+            yeartextString += "<p>" + root.children.item(i)?.textContent + "</p>"
           }
           store.commit('present/setBackground', yeartextString)
         } else {
