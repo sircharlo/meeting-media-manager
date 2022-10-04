@@ -228,6 +228,13 @@ module.exports = {
       },
     ],
   },
+  typescript: {
+    typeCheck: {
+      eslint: {
+        files: './**/*.{ts,js,vue}',
+      },
+    },
+  },
   /*
   server: {
     https: {
