@@ -17,6 +17,7 @@ import { sync, Options } from 'fast-glob'
 import Zipper from 'adm-zip'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import { MeetingFile } from '~/types'
+import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
 
 const plugin: Plugin = (
   { $getPrefs, $log, store, $appPath, $dayjs, $translate, $strip, $warn },
@@ -161,32 +162,34 @@ const plugin: Plugin = (
     if (existsSync(path)) {
       const dir = dirname(path)
       const file = basename(path)
-      switch (action) {
-        case 'rename':
-          if (type === 'date') {
-            // Convert date folder to new format
-            const date = $dayjs(file, oldName)
-            if (date.isValid())
-              if (file !== date.format(newName)) {
-                renameSync(join(dir, file), join(dir, date.format(newName)))
+
+      try {
+        switch (action) {
+          case 'rename':
+            if (type === 'date') {
+              // Convert date folder to new format
+              const date = $dayjs(file, oldName)
+              if (date.isValid())
+                if (file !== date.format(newName)) {
+                  renameSync(path, join(dir, date.format(newName)))
+                }
+            } else if (file === oldName) {
+              // Rename a file
+              if (file !== newName) {
+                renameSync(path, join(dir, newName))
               }
-          } else if (file === oldName) {
-            // Rename a file
-            if (file !== newName) {
-              renameSync(join(dir, file), join(dir, newName))
             }
-          }
-          break
-        case 'replace': // replace a string within a filename (e.g. song or paragraph)
-          if (oldName !== newName && file.includes(oldName)) {
-            renameSync(
-              join(dir, file),
-              join(dir, file.replace(oldName, newName))
-            )
-          }
-          break
-        default:
-          throw new Error('Invalid type for renameAll() function: ' + type)
+            break
+          case 'replace': // Replace a string within a filename (e.g. song or paragraph)
+            if (oldName !== newName && file.includes(oldName)) {
+              renameSync(path, join(dir, file.replace(oldName, newName)))
+            }
+            break
+          default:
+            throw new Error('Invalid type for rename() function: ' + type)
+        }
+      } catch (e: any) {
+        $warn('errorRename', { identifier: path }, e)
       }
     }
   }
@@ -366,7 +369,7 @@ const plugin: Plugin = (
 
       // Cutoff filename until path is smaller than 200 bytes
       let currentBytes = Buffer.byteLength(name, 'utf8')
-      while (currentBytes > 200) {
+      while (currentBytes > MAX_BYTES_IN_FILENAME) {
         name = basename(name, ext).slice(0, -1).trim() + ext
         currentBytes = Buffer.byteLength(name, 'utf8')
       }

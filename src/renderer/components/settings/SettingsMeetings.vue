@@ -22,7 +22,7 @@
         <form-time-picker
           id="meeting.mwStartTime"
           v-model="meeting.mwStartTime"
-          :label="''"
+          label=""
           required
           :locked="$isLocked('meeting.mwStartTime')"
         />
@@ -41,7 +41,7 @@
         <form-time-picker
           id="meeting.weStartTime"
           v-model="meeting.weStartTime"
-          :label="''"
+          label=""
           required
           :locked="$isLocked('meeting.weStartTime')"
         />
@@ -133,6 +133,7 @@
 import Vue from 'vue'
 import { extname, join } from 'upath'
 import { MeetingPrefs, ElectronStore, VideoFile } from '~/types'
+import { HUNDRED_PERCENT, NR_OF_KINGDOM_SONGS } from '~/constants/general'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
   data() {
@@ -171,7 +172,7 @@ export default Vue.extend({
     shuffleMusicCached() {
       return (
         this.$findAll(join(this.$pubPath(), 'sjjm', '**', '*.mp3')).length ===
-        151
+        NR_OF_KINGDOM_SONGS
       )
     },
   },
@@ -216,7 +217,7 @@ export default Vue.extend({
           '#meetingMusic'
         ) as HTMLAudioElement
         if (audio) {
-          audio.volume = val / 100
+          audio.volume = val / HUNDRED_PERCENT
         }
       },
     },

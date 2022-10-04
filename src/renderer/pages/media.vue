@@ -17,6 +17,7 @@ import { readFileSync, existsSync } from 'fs-extra'
 import { join } from 'upath'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
+import { HUNDRED_PERCENT } from '~/constants/general'
 
 export default Vue.extend({
   name: 'MediaPage',
@@ -50,7 +51,7 @@ export default Vue.extend({
     ) as HTMLDivElement
     this.dimensions = document.querySelector('#dimensions') as HTMLDivElement
 
-    // ipcRenderer listeners
+    // IpcRenderer listeners
     ipcRenderer.on('showMedia', (_e, media) => {
       this.transitionToMedia(media)
     })
@@ -72,7 +73,7 @@ export default Vue.extend({
     })
     ipcRenderer.on('videoScrub', (_e, timeAsPercent) => {
       const video = document.querySelector('video') as HTMLVideoElement
-      video.currentTime = (video.duration * timeAsPercent) / 100
+      video.currentTime = (video.duration * timeAsPercent) / HUNDRED_PERCENT
     })
     ipcRenderer.on('hideMedia', async () => {
       await this.hideMedia()
@@ -181,6 +182,7 @@ export default Vue.extend({
           this.mediaDisplay.style.background = 'transparent'
         }
         this.blackOverlay.style.opacity = '0'
+        // eslint-disable-next-line no-magic-numbers
       }, 400)
     },
     resizingNow(width: number, height: number) {
@@ -210,6 +212,7 @@ export default Vue.extend({
       setTimeout(() => {
         this.mediaDisplay.style.background = 'transparent'
         this.blackOverlay.style.opacity = '0'
+        // eslint-disable-next-line no-magic-numbers
       }, 400)
     },
     async setYearText(prefs: ElectronStore) {

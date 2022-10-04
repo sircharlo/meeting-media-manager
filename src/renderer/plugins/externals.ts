@@ -19,5 +19,5 @@ library.add(faChevronDown, faCaretDown, faTimesCircle)
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 Vue.component('FontAwesomeLayers', FontAwesomeLayers)
 
-// v-mask
+// V-mask
 Vue.use(VueMask)

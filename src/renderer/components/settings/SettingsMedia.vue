@@ -192,6 +192,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
+import { NOT_FOUND } from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
@@ -318,29 +319,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    toggleListener(enable: boolean, field: 'backward' | 'forward') {
-      if (enable) {
-        window.addEventListener(
-          'keydown',
-          field === 'backward' ? this.addPpBackwardKey : this.addPpForwardKey
-        )
-      } else {
-        window.removeEventListener(
-          'keydown',
-          field === 'backward' ? this.addPpBackwardKey : this.addPpForwardKey
-        )
-      }
-    },
-    addPpForwardKey(e: KeyboardEvent) {
-      e.preventDefault()
-      const val = this.media.ppForward
-      this.media.ppForward = val ? val + `+${e.key}` : e.key
-    },
-    addPpBackwardKey(e: KeyboardEvent) {
-      e.preventDefault()
-      const val = this.media.ppBackward
-      this.media.ppBackward = val ? val + `+${e.key}` : e.key
-    },
     async uploadBg() {
       const result = await ipcRenderer.invoke('openDialog', {
         properties: ['openFile'],
@@ -396,7 +374,7 @@ export default Vue.extend({
             )
           )
         } catch (e: any) {
-          if (e.status !== 404) {
+          if (e.status !== NOT_FOUND) {
             this.$error(
               'errorWebdavRm',
               e,

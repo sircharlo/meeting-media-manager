@@ -137,6 +137,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faCircle } from '@fortawesome/free-regular-svg-icons'
 import { ipcRenderer } from 'electron'
+import { MS_IN_SEC } from '~/constants/general'
 
 interface Style {
   to?: string
@@ -309,7 +310,7 @@ export default Vue.extend({
         this.clickedOnce = true
         setTimeout(() => {
           this.clickedOnce = false
-        }, 3000)
+        }, 3 * MS_IN_SEC)
       } else if (this.variant === 'shuffle') {
         this.loading = true
         this.clickedOnce = false
@@ -341,7 +342,7 @@ export default Vue.extend({
               this.loading = false
             }
           }
-        }, 1000)
+        }, MS_IN_SEC)
         // Stop the interval if music stopped
       } else if (this.interval) {
         clearInterval(this.interval as NodeJS.Timer)

@@ -61,6 +61,7 @@
     </v-footer>
   </v-container>
 </template>
+<!-- eslint-disable no-magic-numbers -->
 <script lang="ts">
 import Vue from 'vue'
 import { MetaInfo } from 'vue-meta'
@@ -139,9 +140,6 @@ export default Vue.extend({
     },
     cong(): string {
       return this.$route.query.cong as string
-    },
-    mediaScreenVisible(): boolean {
-      return this.$store.state.present.mediaScreenVisible as boolean
     },
   },
   watch: {

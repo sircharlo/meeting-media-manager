@@ -102,6 +102,7 @@
 import { join } from 'upath'
 import Vue from 'vue'
 import { faHandPointRight } from '@fortawesome/free-solid-svg-icons'
+import { BYTES_IN_KIBIBYTE, MS_IN_SEC } from '~/constants/general'
 export default Vue.extend({
   name: 'SettingsPage',
   data() {
@@ -183,7 +184,7 @@ export default Vue.extend({
             this.panel.splice(match, 1)
           }
         })
-        this.mounted = this.mounted || this.valid
+        this.mounted ||= this.valid
       },
       deep: true,
     },
@@ -235,8 +236,8 @@ export default Vue.extend({
           )
             .map((file: any) => file.stats.size)
             .reduce((a: number, b: number) => a + b, 0) /
-          1024 /
-          1024
+          BYTES_IN_KIBIBYTE /
+          BYTES_IN_KIBIBYTE
         ).toFixed(1)
       )
     },
@@ -245,7 +246,7 @@ export default Vue.extend({
         this.cacheColor = 'error'
         setTimeout(() => {
           this.cacheColor = 'warning'
-        }, 3000)
+        }, 3 * MS_IN_SEC)
       } else {
         this.loading = true
         const folders = []

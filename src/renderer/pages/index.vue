@@ -221,6 +221,7 @@ import {
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { ShortJWLang } from '~/types'
+import { DAYS_IN_WEEK, HUNDRED_PERCENT, MS_IN_SEC } from '~/constants/general'
 
 export default Vue.extend({
   name: 'HomePage',
@@ -300,9 +301,6 @@ export default Vue.extend({
     weekParam(): number {
       return parseInt(this.$route.query.week ?? -1)
     },
-    mediaScreenVisible(): boolean {
-      return this.$store.state.present.mediaScreenVisible
-    },
     isDark() {
       return this.$vuetify.theme.dark
     },
@@ -367,10 +365,10 @@ export default Vue.extend({
     },
     daysOfWeek(): { first: string; second: string; formatted: string }[] {
       const days: { first: string; second: string; formatted: string }[] = []
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < DAYS_IN_WEEK; i++) {
         const day = this.baseDate.add(i, 'days')
         if (day.isBefore(this.now)) continue
-        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // day is 0 indexed and starts with Sunday
+        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
 
         // Add meeting day
         if (
@@ -408,12 +406,14 @@ export default Vue.extend({
     },
     currentWeek(val: number, oldVal: number) {
       console.debug(`Change current week from ${oldVal} to ${val}`)
-      this.$router.replace({
-        query: {
-          ...this.$route.query,
-          week: val,
-        },
-      })
+      if (val !== this.weekParam) {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            week: val,
+          },
+        })
+      }
     },
   },
   async mounted() {
@@ -465,7 +465,7 @@ export default Vue.extend({
       }
     },
     setDayColor(day: number, color: string) {
-      this.dayColors[this.daysOfWeek.length + day - 7] = color
+      this.dayColors[this.daysOfWeek.length + day - DAYS_IN_WEEK] = color
     },
     openDate(date: string) {
       console.debug('Manage specific day')
@@ -535,6 +535,7 @@ export default Vue.extend({
       this.$store.commit('obs/clear')
 
       // Create new cong and switch to it
+      // eslint-disable-next-line no-magic-numbers
       const id = Math.random().toString(36).substring(2, 15)
       this.$switchCong(join(this.$appPath(), 'prefs-' + id + '.json'))
       console.debug('Create new cong via select')
@@ -556,7 +557,7 @@ export default Vue.extend({
         item.color = 'error'
         setTimeout(() => {
           item.color = 'warning'
-        }, 3000)
+        }, 3 * MS_IN_SEC)
       }
       // Remove current congregation
       else if (this.cong === item.path) {
@@ -577,22 +578,14 @@ export default Vue.extend({
         window.location.reload()
       }
     },
-    isMeetingDay(day: number): boolean {
-      const date = (this.$dayjs() as Dayjs).add(day, 'days')
-      const weekDay = date.day() === 0 ? '6' : (date.day() - 1).toString() // day is 0 indexed and starts with Sunday
-      return (
-        weekDay === this.$getPrefs('meeting.mwDay') ||
-        weekDay === this.$getPrefs('meeting.weDay')
-      )
-    },
     setProgress(loaded: number, total: number, global: boolean = false) {
       if (global) {
-        this.totalProgress = (100 * loaded) / total
+        this.totalProgress = (HUNDRED_PERCENT * loaded) / total
       } else {
-        this.currentProgress = (100 * loaded) / total
+        this.currentProgress = (HUNDRED_PERCENT * loaded) / total
       }
-      if (this.currentProgress === 100) this.currentProgress = 0
-      if (this.totalProgress === 100) this.totalProgress = 0
+      if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
+      if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
     },
     async getMwMedia(mwDay: Dayjs, filter: string = 'all') {
       if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {

@@ -106,7 +106,12 @@ import {
   faRotateLeft,
   faFilm,
 } from '@fortawesome/free-solid-svg-icons'
-import { AUDIO_ICON, VIDEO_ICON } from '~/constants/general'
+import {
+  AUDIO_ICON,
+  HUNDRED_PERCENT,
+  MS_IN_SEC,
+  VIDEO_ICON,
+} from '~/constants/general'
 export default Vue.extend({
   props: {
     src: {
@@ -161,9 +166,6 @@ export default Vue.extend({
     },
     poster(): string {
       return this.$isVideo(this.src) ? this.videoIcon : this.audioIcon
-    },
-    isDark(): boolean {
-      return this.$vuetify.theme.dark
     },
     id(): string {
       return this.$strip('video-' + basename(this.src))
@@ -277,7 +279,8 @@ export default Vue.extend({
 
     // Get video progress
     ipcRenderer.on('videoProgress', (_e, progress) => {
-      const percentage = (100 * 1000 * progress[0]) / this.original.end
+      const percentage =
+        (HUNDRED_PERCENT * MS_IN_SEC * progress[0]) / this.original.end
       this.progress = progress.map((seconds: number) => {
         return this.format(this.$dayjs.duration(seconds, 's'))
       })
@@ -302,11 +305,14 @@ export default Vue.extend({
         this.clickedOnce = true
         setTimeout(() => {
           this.clickedOnce = false
-        }, 3000)
+        }, 3 * MS_IN_SEC)
       }
     },
     setTime(): void {
-      if (this.clippedMs.end < 1000 || this.clippedMs.end > this.original.end) {
+      if (
+        this.clippedMs.end < MS_IN_SEC ||
+        this.clippedMs.end > this.original.end
+      ) {
         this.resetClipped()
       } else {
         this.$emit('clipped', {
