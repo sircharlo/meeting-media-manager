@@ -3,32 +3,53 @@
   <v-row>
     <v-app-bar fixed>
       <v-col class="text-left" cols="4">
-        <v-btn
-          id="btn-refresh-media"
-          icon
-          aria-label="Refresh"
-          :disabled="mediaActive"
-          @click="getMedia()"
-        >
-          <font-awesome-icon :icon="faRotateRight" />
-        </v-btn>
-        <v-btn
-          if="btn-open-media-folder"
-          icon
-          aria-label="Open media folder"
-          @click="openFolder()"
-        >
-          <font-awesome-icon :icon="faFolderOpen" />
-        </v-btn>
-        <v-btn
-          id="btn-toggle-prefix"
-          icon
-          aria-label="Toggle prefix"
-          @click="togglePrefix()"
-        >
-          <font-awesome-icon :icon="faEye" />
-          <font-awesome-icon :icon="faListOl" />
-        </v-btn>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              id="btn-refresh-media"
+              icon
+              aria-label="Refresh"
+              :disabled="mediaActive"
+              v-bind="attrs"
+              v-on="on"
+              @click="getMedia()"
+            >
+              <font-awesome-icon :icon="faRotateRight" />
+            </v-btn>
+          </template>
+          <span>{{ $t('refresh') }}</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              if="btn-open-media-folder"
+              icon
+              aria-label="Open media folder"
+              v-bind="attrs"
+              v-on="on"
+              @click="openFolder()"
+            >
+              <font-awesome-icon :icon="faFolderOpen" />
+            </v-btn>
+          </template>
+          <span>{{ $t('openFolder') }}</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              id="btn-toggle-prefix"
+              icon
+              aria-label="Toggle prefix"
+              v-bind="attrs"
+              v-on="on"
+              @click="togglePrefix()"
+            >
+              <font-awesome-icon :icon="faEye" />
+              <font-awesome-icon :icon="faListOl" />
+            </v-btn>
+          </template>
+          <span>{{ $t('showPrefix') }}</span>
+        </v-tooltip>
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
@@ -41,7 +62,7 @@
           {{ date }}
         </v-btn>
       </v-col>
-      <v-col class="text-right" cols="4">
+      <v-col class="text-right pr-8" cols="4">
         <template v-if="$getPrefs('media.enablePp')">
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
@@ -76,25 +97,37 @@
             <span>{{ $getPrefs('media.ppForward') }}</span>
           </v-tooltip>
         </template>
-        <v-btn
-          v-if="sortable"
-          id="btn-order-save"
-          aria-label="Save order"
-          icon
-          @click="sortable = false"
-        >
-          <font-awesome-icon :icon="faSquareCheck" />
-        </v-btn>
-        <v-btn
-          v-else
-          id="btn-order-change"
-          icon
-          aria-label="Sort items"
-          :disabled="mediaActive"
-          @click="sortable = true"
-        >
-          <font-awesome-icon :icon="faArrowDownShortWide" />
-        </v-btn>
+        <v-tooltip v-if="sortable" bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              id="btn-order-save"
+              aria-label="Save order"
+              icon
+              v-bind="attrs"
+              v-on="on"
+              @click="sortable = false"
+            >
+              <font-awesome-icon :icon="faSquareCheck" />
+            </v-btn>
+          </template>
+          <span>{{ $t('sortSave') }}</span>
+        </v-tooltip>
+        <v-tooltip v-else bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              id="btn-order-change"
+              icon
+              aria-label="Sort items"
+              :disabled="mediaActive"
+              v-bind="attrs"
+              v-on="on"
+              @click="sortable = true"
+            >
+              <font-awesome-icon :icon="faArrowDownShortWide" />
+            </v-btn>
+          </template>
+          <span>{{ $t('sortMedia') }}</span>
+        </v-tooltip>
       </v-col>
     </v-app-bar>
     <loading-icon v-if="loading" />
