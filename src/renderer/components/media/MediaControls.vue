@@ -292,6 +292,8 @@ export default Vue.extend({
             `#${this.items[this.currentIndex - 2].id}`
           )
           if (el) el.scrollIntoView()
+        } else {
+          window.scrollTo(0, 0)
         }
       }
     },
