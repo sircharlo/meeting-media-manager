@@ -267,6 +267,16 @@ export default Vue.extend({
       } else if (this.currentIndex > 0) {
         this.currentIndex--
         this.items[this.currentIndex].play = true
+
+        // Auto scroll to current item
+        if (this.currentIndex > 1) {
+          const el = document.querySelector(
+            `#${this.items[this.currentIndex - 2].id}`
+          )
+          if (el) el.scrollIntoView()
+        } else {
+          window.scrollTo(0, 0)
+        }
       }
     },
     next() {
@@ -275,6 +285,14 @@ export default Vue.extend({
       } else if (this.currentIndex < this.items.length - 1) {
         this.currentIndex++
         this.items[this.currentIndex].play = true
+
+        // Auto scroll to current item
+        if (this.currentIndex > 1) {
+          const el = document.querySelector(
+            `#${this.items[this.currentIndex - 2].id}`
+          )
+          if (el) el.scrollIntoView()
+        }
       }
     },
     getMedia() {
