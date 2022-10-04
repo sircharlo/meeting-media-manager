@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center" class="fill-height mb-0">
     <v-col cols="12" class="text-center" style="margin-bottom: 72px">
-      <v-tabs v-model="tab" grow>
+      <v-tabs v-model="tab" grow style="position: sticky; top: 0; z-index: 99">
         <v-tab>{{ $t('all') }}</v-tab>
         <v-tab
           v-for="h in headers"

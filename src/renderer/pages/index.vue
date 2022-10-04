@@ -417,6 +417,7 @@ export default Vue.extend({
     },
   },
   async mounted() {
+    this.$store.commit('notify/deleteByMessage', 'cantCloseMediaWindowOpen')
     if (this.weekParam > -1) {
       this.currentWeek = this.weekParam
     }
