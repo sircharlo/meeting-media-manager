@@ -161,32 +161,34 @@ const plugin: Plugin = (
     if (existsSync(path)) {
       const dir = dirname(path)
       const file = basename(path)
-      switch (action) {
-        case 'rename':
-          if (type === 'date') {
-            // Convert date folder to new format
-            const date = $dayjs(file, oldName)
-            if (date.isValid())
-              if (file !== date.format(newName)) {
-                renameSync(join(dir, file), join(dir, date.format(newName)))
+
+      try {
+        switch (action) {
+          case 'rename':
+            if (type === 'date') {
+              // Convert date folder to new format
+              const date = $dayjs(file, oldName)
+              if (date.isValid())
+                if (file !== date.format(newName)) {
+                  renameSync(path, join(dir, date.format(newName)))
+                }
+            } else if (file === oldName) {
+              // Rename a file
+              if (file !== newName) {
+                renameSync(path, join(dir, newName))
               }
-          } else if (file === oldName) {
-            // Rename a file
-            if (file !== newName) {
-              renameSync(join(dir, file), join(dir, newName))
             }
-          }
-          break
-        case 'replace': // replace a string within a filename (e.g. song or paragraph)
-          if (oldName !== newName && file.includes(oldName)) {
-            renameSync(
-              join(dir, file),
-              join(dir, file.replace(oldName, newName))
-            )
-          }
-          break
-        default:
-          throw new Error('Invalid type for renameAll() function: ' + type)
+            break
+          case 'replace': // replace a string within a filename (e.g. song or paragraph)
+            if (oldName !== newName && file.includes(oldName)) {
+              renameSync(path, join(dir, file.replace(oldName, newName)))
+            }
+            break
+          default:
+            throw new Error('Invalid type for rename() function: ' + type)
+        }
+      } catch (e: any) {
+        $warn('errorRename', { identifier: path }, e)
       }
     }
   }

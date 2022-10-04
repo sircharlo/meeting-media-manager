@@ -408,12 +408,14 @@ export default Vue.extend({
     },
     currentWeek(val: number, oldVal: number) {
       console.debug(`Change current week from ${oldVal} to ${val}`)
-      this.$router.replace({
-        query: {
-          ...this.$route.query,
-          week: val,
-        },
-      })
+      if (val !== this.weekParam) {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            week: val,
+          },
+        })
+      }
     },
   },
   async mounted() {
