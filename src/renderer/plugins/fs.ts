@@ -10,6 +10,7 @@ import {
   ensureFileSync,
   removeSync,
   writeFileSync,
+  statSync,
 } from 'fs-extra'
 import { join, extname, basename, dirname, joinSafe } from 'upath'
 import { Plugin } from '@nuxt/types'
@@ -224,7 +225,7 @@ const plugin: Plugin = (
           $getPrefs('app.outputFolderDateFormat') as string,
           oldVal.split('-')[0]
         )
-        if (date.isValid()) {
+        if (statSync(dir).isDirectory() && date.isValid()) {
           // Rename all files that include the localized 'song' or 'paragraph' strings
           readdirSync(join(mediaPath(), dir)).forEach((file) => {
             const newName = file
