@@ -1238,7 +1238,10 @@ const plugin: Plugin = (
         duration: 6000,
       })
       await animation.finished */
+
+      if (!audio) return
       audio.remove()
+      console.log('no audio to remove')
       store.commit('media/setMusicFadeOut', '')
     } else {
       if ($getPrefs('meeting.enableMusicFadeOut')) {

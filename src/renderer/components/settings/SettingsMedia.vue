@@ -233,7 +233,7 @@ export default Vue.extend({
     },
     screens() {
       return this.$store.state.present.screens as {
-        id: string
+        id: number
         class: string
         text: string
       }[]
@@ -278,6 +278,14 @@ export default Vue.extend({
 
         // Initialize the media screen background
         this.bg = await this.$refreshBackgroundImgPreview()
+
+        // If second screen is present, use it for media display
+        if (
+          this.media.preferredOutput === 'window' &&
+          this.screens.length > 1
+        ) {
+          this.media.preferredOutput = this.screens[0].id
+        }
       },
     },
     'media.hideMediaLogo': {

@@ -8402,14 +8402,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:^4.0.10":
-  version: 4.0.10
-  resolution: "fast-xml-parser@npm:4.0.10"
+"fast-xml-parser@npm:^4.0.11":
+  version: 4.0.11
+  resolution: "fast-xml-parser@npm:4.0.11"
   dependencies:
     strnum: ^1.0.5
   bin:
     fxparser: src/cli/cli.js
-  checksum: 001625c63f428117b4af230fe9177589b089d21ecb1ae5b06fdb30b36d2afafb0d7d948d03102be3559a20164971865597664c08610ac15a047a562d87b028a4
+  checksum: d8a08e4d5597e0fc00a86735195872eeb03008913e298830941516f3766e16ee555e2d431acc92e1dda887938edc445252ec5b59494aab60a8389888bd13719c
   languageName: node
   linkType: hard
 
@@ -11497,7 +11497,7 @@ __metadata:
     eslint-plugin-vue: ^9.6.0
     eslint-webpack-plugin: ^2.7.0
     fast-glob: ^3.2.12
-    fast-xml-parser: ^4.0.10
+    fast-xml-parser: ^4.0.11
     fluent-ffmpeg: ^2.1.2
     fs-extra: ^10.1.0
     fullname: ^4.0.1
@@ -11527,7 +11527,7 @@ __metadata:
     vue-server-renderer: 2.7.10
     vue-template-compiler: 2.7.10
     vuedraggable: ^2.24.3
-    vuetify: ^2.6.10
+    vuetify: ^2.6.11
     vuetify-loader: ^1.9.2
     vuex: ^3.6.2
     webdav: ^4.11.0
@@ -17573,12 +17573,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuetify@npm:^2.6.10":
-  version: 2.6.10
-  resolution: "vuetify@npm:2.6.10"
+"vuetify@npm:^2.6.11":
+  version: 2.6.11
+  resolution: "vuetify@npm:2.6.11"
   peerDependencies:
     vue: ^2.6.4
-  checksum: def5c3897cca432e5761059df947c3af3bccc47d23f481c91acca5bd5551aa1a35efcd3c146e59e8f37363b3a5729489d40a41345426d213ef9f3903e997c313
+  checksum: b7d1b571dbe0f493e5cdf1dbb8b93b7667edef7f65094597d66f14741ff0f2ff233f0afbc94014bcb59abf600777155f4e2b4b70fb57ffd6b5365a0039d96e7b
   languageName: node
   linkType: hard
 
