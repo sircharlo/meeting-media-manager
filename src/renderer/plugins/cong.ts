@@ -11,6 +11,7 @@ import {
   CongPrefs,
   MediaPrefs,
   MeetingPrefs,
+  Host,
   CongFile,
   MeetingFile,
   ElectronStore,
@@ -22,6 +23,10 @@ import {
   NOT_FOUND,
 } from '~/constants/general'
 
+const { HOSTS, UNSUPPORTED } = require('~/constants/cong') as {
+  HOSTS: Host[]
+  UNSUPPORTED: string[]
+}
 const { FORCABLE } = require('~/constants/prefs') as { FORCABLE: string[] }
 
 const plugin: Plugin = (
@@ -100,9 +105,7 @@ const plugin: Plugin = (
       store.commit('cong/setContents', contents)
       store.commit('cong/setClient', client)
 
-      const unsupportedHosts: string[] = []
-
-      if (unsupportedHosts.find((h) => host.includes(h))) {
+      if (UNSUPPORTED.find((h) => host.includes(h))) {
         $warn(`errorWebdavNotSupported`, { identifier: host })
       }
 
@@ -124,8 +127,13 @@ const plugin: Plugin = (
       ) {
         return 'dir'
       } else {
-        $error('errorWebdavLs', e, dir)
-        return null
+        const match = HOSTS.find((h) => h.server === host)
+        if (match && !dir.startsWith(match.dir)) {
+          return 'dir'
+        } else {
+          $error('errorWebdavLs', e, dir)
+          return null
+        }
       }
     }
   }
