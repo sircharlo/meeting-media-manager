@@ -98,8 +98,9 @@
 import Vue from 'vue'
 import { faCog, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
-import { CongFile, CongPrefs, ElectronStore } from '~/types'
+import { CongFile, CongPrefs, ElectronStore, Host } from '~/types'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
+const { HOSTS } = require('~/constants/cong') as { HOSTS: Host[] }
 export default Vue.extend({
   data() {
     return {
@@ -110,32 +111,7 @@ export default Vue.extend({
       cong: {
         ...PREFS.cong,
       } as CongPrefs,
-      hosts: [
-        {
-          name: '4shared',
-          server: 'webdav.4shared.com',
-          port: '443',
-          dir: '/',
-        },
-        {
-          name: 'Box',
-          server: 'webdav.box.com',
-          port: '443',
-          dir: '/dav/',
-        },
-        {
-          name: 'Koofr',
-          server: 'app.koofr.net',
-          port: '443',
-          dir: '/dav/Koofr/',
-        },
-        {
-          name: 'PowerFolder',
-          server: 'my.powerfolder.com',
-          port: '443',
-          dir: '/webdav/',
-        },
-      ],
+      hosts: HOSTS,
     }
   },
   computed: {
