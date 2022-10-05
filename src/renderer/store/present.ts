@@ -4,7 +4,7 @@ interface PresentStore {
   mediaScreenInit: boolean
   mediaScreenVisible: boolean
   background: string
-  screens: { id: string; class: string; text: string }[]
+  screens: { id: number; class: string; text: string }[]
   shortcuts: { name: string; domain: string; fn: string }[]
 }
 
@@ -28,10 +28,10 @@ export const mutations: MutationTree<PresentStore> = {
   setMediaScreenInit(state, init: boolean) {
     state.mediaScreenInit = init
   },
-  addScreen(state, screen: { id: string; class: string; text: string }) {
+  addScreen(state, screen: { id: number; class: string; text: string }) {
     state.screens.push(screen)
   },
-  setScreens(state, screens: { id: string; class: string; text: string }[]) {
+  setScreens(state, screens: { id: number; class: string; text: string }[]) {
     state.screens = screens
   },
   addShortcut(state, shortcut: { name: string; domain: string; fn: string }) {
