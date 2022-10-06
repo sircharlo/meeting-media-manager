@@ -29,8 +29,8 @@ jobs:
           check-latest: true
           cache: 'yarn'
 
-      - name: Install yarn@latest
-        run: yarn set version stable
+      - name: Install yarn@3.2.4
+        run: yarn set version 3.2.4
 
       - name: Install dependencies
         run: yarn install
@@ -57,8 +57,8 @@ jobs:
           check-latest: true
           cache: 'yarn'
 
-      - name: Install yarn@latest
-        run: yarn set version stable
+      - name: Install yarn@3.2.4
+        run: yarn set version 3.2.4
 
       - name: Install dependencies
         run: yarn install
@@ -104,8 +104,8 @@ jobs:
           check-latest: true
           cache: 'yarn'
 
-      - name: Install yarn@latest
-        run: yarn set version stable
+      - name: Install yarn@3.2.4
+        run: yarn set version 3.2.4
 
       - name: Install dependencies
         run: yarn install

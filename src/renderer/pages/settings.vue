@@ -184,7 +184,7 @@ export default Vue.extend({
             this.panel.splice(match, 1)
           }
         })
-        this.mounted ||= this.valid
+        this.mounted = this.mounted || this.valid
       },
       deep: true,
     },
