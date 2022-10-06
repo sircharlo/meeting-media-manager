@@ -2855,15 +2855,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.12.1":
-  version: 7.12.1
-  resolution: "@sentry/browser@npm:7.12.1"
+"@sentry/browser@npm:7.13.0":
+  version: 7.13.0
+  resolution: "@sentry/browser@npm:7.13.0"
   dependencies:
-    "@sentry/core": 7.12.1
-    "@sentry/types": 7.12.1
-    "@sentry/utils": 7.12.1
+    "@sentry/core": 7.13.0
+    "@sentry/types": 7.13.0
+    "@sentry/utils": 7.13.0
     tslib: ^1.9.3
-  checksum: 7aba4ea056a2aa1b8d619f85f0f20643392fb288598e4399c6d83dd35991f174311030979a5f7a61a9e57a4ecc43c0989ba4e0fae98554bed2528e095071e8e2
+  checksum: 693cc983330cd6eaee2354ee33d42166072eab35ef632ed9bcaafe9649c977c6996674647076025af9b5e83a40e002b2f405c65ae5c950c8f39decaeecb07098
   languageName: node
   linkType: hard
 
@@ -2896,15 +2896,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.12.1":
-  version: 7.12.1
-  resolution: "@sentry/core@npm:7.12.1"
+"@sentry/core@npm:7.13.0":
+  version: 7.13.0
+  resolution: "@sentry/core@npm:7.13.0"
   dependencies:
-    "@sentry/hub": 7.12.1
-    "@sentry/types": 7.12.1
-    "@sentry/utils": 7.12.1
+    "@sentry/hub": 7.13.0
+    "@sentry/types": 7.13.0
+    "@sentry/utils": 7.13.0
     tslib: ^1.9.3
-  checksum: c8cd62220a327bb4f7b1a97503c19b40710da0d880d7b881384e224aa470c983410c836d5dd85a2cd88166301771a0cea3fd2f93b53d17b29e82457282bb7d01
+  checksum: 8fd5b0eab630a54ea1beec1b3fe7deb388e95ca3312c1f0eaffa32090882ca7792287b5e7d157fc1c408a0ec1bfb769ac45a77a5385068dcd8fc6f3e6949f8a1
   languageName: node
   linkType: hard
 
@@ -2920,30 +2920,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/electron@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "@sentry/electron@npm:4.0.2"
+"@sentry/electron@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "@sentry/electron@npm:4.0.3"
   dependencies:
-    "@sentry/browser": 7.12.1
-    "@sentry/core": 7.12.1
-    "@sentry/hub": 7.12.1
-    "@sentry/node": 7.12.1
-    "@sentry/types": 7.12.1
-    "@sentry/utils": 7.12.1
-    deepmerge: ^4.2.2
+    "@sentry/browser": 7.13.0
+    "@sentry/core": 7.13.0
+    "@sentry/hub": 7.13.0
+    "@sentry/node": 7.13.0
+    "@sentry/types": 7.13.0
+    "@sentry/utils": 7.13.0
+    deepmerge: 4.2.2
     tslib: ^2.3.1
-  checksum: 59389df2326612a9501fb9def7f68d8a76f1f3465100265a54773db040659fccfb26e924f6f384571829bf2f898bdef0f1a642fde563a4bb0a76a83484bf69d3
+  checksum: d83c400298c134d099c167e069310cac1452ff7724c8eb31cfab493ed613198b7f9266a1db865c0d56285ea91ef4c54696079400419dd80774dfae27375fd9d1
   languageName: node
   linkType: hard
 
-"@sentry/hub@npm:7.12.1":
-  version: 7.12.1
-  resolution: "@sentry/hub@npm:7.12.1"
+"@sentry/hub@npm:7.13.0":
+  version: 7.13.0
+  resolution: "@sentry/hub@npm:7.13.0"
   dependencies:
-    "@sentry/types": 7.12.1
-    "@sentry/utils": 7.12.1
+    "@sentry/types": 7.13.0
+    "@sentry/utils": 7.13.0
     tslib: ^1.9.3
-  checksum: f6607969a0dd16e6892ec56675a5dadcde20f39a031a39541816ae1a56a65cc4f26b942859c85ce40992c8a0959020bf0c27e4bd68bdc96adcf499ce6f147252
+  checksum: 690f1eecd4d9f0a87ca4344b551b990df234ec7197b21175293fb713f917c6171ed44f35042af5b83a0bae5e0963a520490bfd905d48bd040a2f2532247e04d6
   languageName: node
   linkType: hard
 
@@ -2958,19 +2958,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:7.12.1":
-  version: 7.12.1
-  resolution: "@sentry/node@npm:7.12.1"
+"@sentry/node@npm:7.13.0":
+  version: 7.13.0
+  resolution: "@sentry/node@npm:7.13.0"
   dependencies:
-    "@sentry/core": 7.12.1
-    "@sentry/hub": 7.12.1
-    "@sentry/types": 7.12.1
-    "@sentry/utils": 7.12.1
+    "@sentry/core": 7.13.0
+    "@sentry/hub": 7.13.0
+    "@sentry/types": 7.13.0
+    "@sentry/utils": 7.13.0
     cookie: ^0.4.1
     https-proxy-agent: ^5.0.0
     lru_map: ^0.3.3
     tslib: ^1.9.3
-  checksum: 57a06fb397ce72ff7df10c9397022c4ae109ade63bc3df530ac1be94f2fd3c3ef2b78ae0f2820ce9c52710cb8b44e382cd72d001e6429964bb6e70c7d4901d02
+  checksum: 36de86c7bb8e62fe93c0cc72dfbd0d77925ef18b6abd98a034b676853c9cca705be276fee617ddcedbf89659454055cd79ab82f3f7b77d465617810787d8775d
   languageName: node
   linkType: hard
 
@@ -2986,10 +2986,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.12.1":
-  version: 7.12.1
-  resolution: "@sentry/types@npm:7.12.1"
-  checksum: 5a60d8c92ecf4f69a5e584441312d42acbc87f7865e78079e8f8757474874b0deae69707f2d0e74ea0e6bf1665b1d7887e201a53154ddfecb2630a0d5a200342
+"@sentry/types@npm:7.13.0":
+  version: 7.13.0
+  resolution: "@sentry/types@npm:7.13.0"
+  checksum: 8bd94d1cf735af61a3cea77e7e925e487dc84b925fa1e1a0aa9a566096e5d99d3bb72c6ea2f03c20d7894824f35edbb8b25352b3a1c78e62729a77a93a1abf71
   languageName: node
   linkType: hard
 
@@ -3000,13 +3000,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.12.1":
-  version: 7.12.1
-  resolution: "@sentry/utils@npm:7.12.1"
+"@sentry/utils@npm:7.13.0":
+  version: 7.13.0
+  resolution: "@sentry/utils@npm:7.13.0"
   dependencies:
-    "@sentry/types": 7.12.1
+    "@sentry/types": 7.13.0
     tslib: ^1.9.3
-  checksum: 22fa506c6e3116ec950a10aaf98929b70264c90fa83bfb4752da779753f312277a44f705c45102ce06b1781d99db2ea4e4e66662d0fde1792e8cae2559e63b5b
+  checksum: e655e2bd444c9f8aedac4bc52e9a75bf74ef0086ffb1b9efc9cf6670aab9b0deca45e9d7c808e7d19e51ff4b40bcd178b6c5b2ea55e8cfb81da630db6b75bfe2
   languageName: node
   linkType: hard
 
@@ -6852,7 +6852,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2":
+"deepmerge@npm:4.2.2, deepmerge@npm:^4.2.2":
   version: 4.2.2
   resolution: "deepmerge@npm:4.2.2"
   checksum: a8c43a1ed8d6d1ed2b5bf569fa4c8eb9f0924034baf75d5d406e47e157a451075c4db353efea7b6bcc56ec48116a8ce72fccf867b6e078e7c561904b5897530b
@@ -7427,16 +7427,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:21.0.1":
-  version: 21.0.1
-  resolution: "electron@npm:21.0.1"
+"electron@npm:21.1.0":
+  version: 21.1.0
+  resolution: "electron@npm:21.1.0"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 1362c1a820187c7061cb3de84d91f0b8839fdfa9428c12d59d4e9966d691b747dcaf34ca55649216b5724296ddf53b303222b6f52c1982717cdaa4078ce99a71
+  checksum: ca74353bd645cfbaa427a813d1d20e621b115ad657dd138482a55573f87f9fe4157522977e5485b4707003a794f61fa0b074a74d8092a5fa86c9d094a9bcf054
   languageName: node
   linkType: hard
 
@@ -11461,7 +11461,7 @@ __metadata:
     "@nuxtjs/i18n": ^7.3.0
     "@nuxtjs/vuetify": ^1.12.3
     "@playwright/test": ^1.26.1
-    "@sentry/electron": ^4.0.2
+    "@sentry/electron": ^4.0.3
     "@sentry/tracing": ^7.14.1
     "@sentry/vue": ^7.14.1
     "@sentry/webpack-plugin": ^1.19.0
@@ -11483,7 +11483,7 @@ __metadata:
     css-loader: ^5.2.7
     deepmerge: ^4.2.2
     dotenv: ^16.0.3
-    electron: 21.0.1
+    electron: 21.1.0
     electron-builder: 23.3.3
     electron-devtools-installer: ^3.2.0
     electron-playwright-helpers: ^1.2.0
