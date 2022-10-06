@@ -64,5 +64,6 @@
     "русский"
   ],
   "cSpell.ignoreWords": ["transform", "PDF", "TERMS", "shorthand"],
-  "cSpell.ignorePaths": ["src/renderer/locales/*"]
+  "cSpell.ignorePaths": ["src/renderer/locales/*"],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
