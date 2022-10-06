@@ -256,8 +256,14 @@ module.exports = {
             '@nuxt/babel-preset-app',
             {
               corejs: { version: 3 },
+              useBuiltIns: 'usage',
               shippedProposals: true,
               targets: envTargets[envName],
+              include: [
+                '@babel/plugin-proposal-logical-assignment-operators',
+                '@babel/plugin-proposal-nullish-coalescing-operator',
+                '@babel/plugin-proposal-optional-chaining',
+              ],
             },
           ],
         ]
