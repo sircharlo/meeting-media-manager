@@ -219,21 +219,31 @@ export default Vue.extend({
     },
     calcCache(): void {
       if (
-        !this.$getPrefs('app.localOutputPath') ||
+        !this.$getPrefs('app.localOutputPath') &&
         !this.$getPrefs('media.lang')
       ) {
         this.cache = 0
         return
       }
+
+      const folders = []
+
+      if (this.$pubPath()) {
+        folders.push(this.$pubPath(), '**')
+      }
+
+      if (this.$mediaPath()) {
+        folders.push(join(this.$mediaPath(), '**'))
+      }
+
       this.cache = parseFloat(
         (
-          this.$findAll(
-            [join(this.$mediaPath(), '**'), join(this.$pubPath(), '**')],
-            {
-              ignore: [join(this.$mediaPath(), 'Recurring')],
-              stats: true,
-            }
-          )
+          this.$findAll(folders, {
+            ignore: this.$mediaPath()
+              ? [join(this.$mediaPath(), 'Recurring')]
+              : [],
+            stats: true,
+          })
             .map((file: any) => file.stats.size)
             .reduce((a: number, b: number) => a + b, 0) /
           BYTES_IN_KIBIBYTE /
