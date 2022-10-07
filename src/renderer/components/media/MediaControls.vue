@@ -153,6 +153,7 @@
         :show-prefix="showPrefix"
         :sortable="sortable"
         @playing="setIndex(i)"
+        @deactivated="resetDeactivate(i)"
       />
     </draggable>
   </v-row>
@@ -255,6 +256,10 @@ export default Vue.extend({
     })
   },
   methods: {
+    resetDeactivate(index: number) {
+      const item = this.items[index]
+      item.deactivate = false
+    },
     setIndex(index: number) {
       const previousItem = this.items[this.currentIndex]
       if (previousItem && this.currentIndex !== index) {
