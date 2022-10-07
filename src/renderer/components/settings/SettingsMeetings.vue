@@ -171,8 +171,8 @@ export default Vue.extend({
     },
     shuffleMusicCached() {
       return (
-        this.$findAll(join(this.$pubPath(), 'sjjm', '**', '*.mp3')).length ===
-        NR_OF_KINGDOM_SONGS
+        this.$findAll(join(this.$pubPath(), '..', 'E', 'sjjm', '**', '*.mp3'))
+          .length === NR_OF_KINGDOM_SONGS
       )
     },
   },

@@ -229,7 +229,7 @@ export default Vue.extend({
       const folders = []
 
       if (this.$pubPath()) {
-        folders.push(this.$pubPath(), '**')
+        folders.push(join(this.$pubPath(), '**'))
       }
 
       if (this.$mediaPath()) {

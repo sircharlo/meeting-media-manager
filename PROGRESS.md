@@ -1,5 +1,6 @@
 # TODOS
 
+- [ ] Test: Test if downloadIfRequired saves mp3 songs correctly
 - [ ] Test: Check if build artifacts work correctly on MacOS
 - [ ] Test: test for 3 displays
 - [X] Cong sync: Allow navigation of cong sync folder through the treeview

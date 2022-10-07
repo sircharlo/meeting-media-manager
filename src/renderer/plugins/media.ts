@@ -694,8 +694,8 @@ const plugin: Plugin = (
   ): Promise<string> {
     // Set extra properties
     file.downloadRequired = true
-    file.cacheDir = $pubPath(file) as string
     file.cacheFilename = basename(file.url || '') || file.safeName
+    file.cacheDir = $pubPath(file) as string
     file.cacheFile = join(file.cacheDir, file.cacheFilename as string)
     file.destFilename = file.folder ? file.safeName : file.cacheFilename
     if (existsSync(file.cacheFile)) {
@@ -1293,11 +1293,13 @@ const plugin: Plugin = (
                 lang: 'E',
               })) as VideoFile[]
             ).filter((item) => extname(item.url) === '.mp3')
-          : $findAll(join($pubPath(), 'sjjm', '**', '*.mp3')).map((item) => ({
-              title: basename(item),
-              track: basename(resolve(item, '..')),
-              path: item,
-            }))
+          : $findAll(join($pubPath(), '..', 'E', 'sjjm', '**', '*.mp3')).map(
+              (item) => ({
+                title: basename(item),
+                track: basename(resolve(item, '..')),
+                path: item,
+              })
+            )
       ).sort(() => 0.5 - Math.random())
 
       createAudioElement(songs, 0, !!store.state.media.musicFadeOut)

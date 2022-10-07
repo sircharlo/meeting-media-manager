@@ -27,11 +27,14 @@ const plugin: Plugin = (
   // Paths
   inject('pubPath', (file?: MeetingFile): string => {
     if (!$getPrefs('media.lang')) return ''
-    const pubPath = joinSafe(
-      $appPath(),
-      'Publications',
-      $getPrefs('media.lang')
-    )
+
+    let mediaFolder = $getPrefs('media.lang')
+    if (file) console.log('file', file)
+    if (/sjjm_E_\d+.mp3/g.test(basename(file?.url || ''))) {
+      mediaFolder = 'E'
+    }
+
+    const pubPath = joinSafe($appPath(), 'Publications', mediaFolder)
     try {
       ensureDirSync(pubPath)
     } catch (e: any) {
