@@ -29,7 +29,6 @@ const plugin: Plugin = (
     if (!$getPrefs('media.lang')) return ''
 
     let mediaFolder = $getPrefs('media.lang')
-    if (file) console.log('file', file)
     if (/sjjm_E_\d+.mp3/g.test(basename(file?.url || ''))) {
       mediaFolder = 'E'
     }

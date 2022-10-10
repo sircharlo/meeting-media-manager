@@ -268,7 +268,6 @@ export default Vue.extend({
     },
     deactivate(val: boolean) {
       if (val) {
-        console.log('deactivate', this.id)
         this.active = false
         this.current = false
         this.$emit('deactivated')
@@ -278,7 +277,6 @@ export default Vue.extend({
       if (val && !this.active) {
         this.current = false
       } else if (!val) {
-        console.log('mediaActive', this.id)
         this.active = false
       }
     },
@@ -313,7 +311,6 @@ export default Vue.extend({
   mounted() {
     this.getMarkers()
     ipcRenderer.on('videoEnd', () => {
-      console.log('videoEnd', this.id)
       this.active = false
     })
   },

@@ -1241,7 +1241,6 @@ const plugin: Plugin = (
 
       if (!audio) return
       audio.remove()
-      console.log('no audio to remove')
       store.commit('media/setMusicFadeOut', '')
     } else {
       if ($getPrefs('meeting.enableMusicFadeOut')) {

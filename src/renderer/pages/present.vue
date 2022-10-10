@@ -162,8 +162,6 @@ export default Vue.extend({
   mounted() {
     this.setWindowWidth()
     window.onresize = this.setWindowWidth
-    console.log(10.2 * this.combinedScenesLength)
-    console.log(this.windowWidth - 320 - (25 * this.scenes.length + 1))
     ipcRenderer.on('showingMedia', (_e, val) => {
       this.mediaActive = val[0]
       this.videoActive = val[1]
