@@ -99,17 +99,25 @@ export default Vue.extend({
       },
     },
     showShortText(): boolean {
-      return (
-        10.1 * this.combinedScenesLength >
-        this.windowWidth - 320 - (25 * this.scenes.length + 1)
-      )
+      return this.combinedScenesLength > this.availableWidth
+    },
+    availableWidth(): number {
+      const WIDTH_OF_OTHER_ELEMENTS = 337
+      return this.windowWidth - WIDTH_OF_OTHER_ELEMENTS
     },
     combinedScenesLength(): number {
-      let length = 0
+      let nrOfChars = 0
+      const PADDING_PER_SCENE = 25
+      const BORDER_WIDTH = 1
+      const WIDTH_PER_CHAR = 10.3
+
       for (const scene of this.scenes) {
-        length += scene.value.length
+        nrOfChars += scene.value.length
       }
-      return length
+      return (
+        WIDTH_PER_CHAR * nrOfChars +
+        (PADDING_PER_SCENE * this.scenes.length + BORDER_WIDTH)
+      )
     },
     scenes(): {
       value: string
@@ -125,6 +133,8 @@ export default Vue.extend({
             text: `ALT+${i + 1}: ${scene}`,
             value: scene,
             shortText: scene
+              .replace('+', ' + ')
+              .replace('  ', ' ')
               .split(' ')
               .map((w) => w[0])
               .join('')
@@ -152,6 +162,8 @@ export default Vue.extend({
   mounted() {
     this.setWindowWidth()
     window.onresize = this.setWindowWidth
+    console.log(10.2 * this.combinedScenesLength)
+    console.log(this.windowWidth - 320 - (25 * this.scenes.length + 1))
     ipcRenderer.on('showingMedia', (_e, val) => {
       this.mediaActive = val[0]
       this.videoActive = val[1]
