@@ -1283,8 +1283,9 @@ const plugin: Plugin = (
       }
 
       // Get songs from jw.org or from local cache
+      const isOnline = store.state.stats.online && !$getPrefs('app.offline')
       const songs = (
-        store.state.stats.online && !$getPrefs('app.offline')
+        isOnline
           ? (
               (await getMediaLinks({
                 pubSymbol: 'sjjm',
@@ -1301,7 +1302,7 @@ const plugin: Plugin = (
             )
       ).sort(() => 0.5 - Math.random())
 
-      createAudioElement(songs, 0, !!store.state.media.musicFadeOut)
+      createAudioElement(songs, 0, !!store.state.media.musicFadeOut, isOnline)
     }
   }
 
@@ -1310,7 +1311,8 @@ const plugin: Plugin = (
   async function createAudioElement(
     songs: (VideoFile | { title: string; track: string; path: string })[],
     index: number,
-    fadeOut: boolean
+    fadeOut: boolean,
+    isOnline: boolean
   ): Promise<void> {
     const audio = document.createElement('audio')
     audio.autoplay = true
@@ -1318,7 +1320,12 @@ const plugin: Plugin = (
     audio.setAttribute('track', songs[index].track.toString())
     audio.onended = () => {
       audio.remove()
-      createAudioElement(songs, index < songs.length - 1 ? ++index : 0, fadeOut)
+      createAudioElement(
+        songs,
+        index < songs.length - 1 ? ++index : 0,
+        fadeOut,
+        isOnline
+      )
     }
     audio.oncanplay = () => {
       audio.volume =
@@ -1339,7 +1346,7 @@ const plugin: Plugin = (
 
     const source = document.createElement('source')
     source.type = 'audio/mpeg'
-    if (store.state.stats.online && !$getPrefs('app.offline')) {
+    if (isOnline) {
       source.src = pathToFileURL(
         await downloadIfRequired(songs[index] as VideoFile)
       ).href
