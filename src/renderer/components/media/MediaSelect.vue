@@ -27,7 +27,7 @@
           <v-divider :key="'divider-' + i" />
         </template>
       </v-list>
-      <v-list v-else>
+      <v-list v-else style="max-height: 300px; overflow-y: auto">
         <template v-for="item in items">
           <v-list-item
             :key="item.DocumentId"
@@ -41,6 +41,18 @@
           <v-divider :key="'divider' + item.DocumentId" />
         </template>
       </v-list>
+      <v-card-actions v-if="!loading">
+        <v-col class="d-flex justify-space-between">
+          <icon-btn variant="cancel" @click="$emit('empty')" />
+          <v-btn
+            v-if="missingMedia.length > 0"
+            color="primary"
+            @click="finish()"
+          >
+            <font-awesome-icon :icon="faSave" size="lg" />
+          </v-btn>
+        </v-col>
+      </v-card-actions>
     </v-col>
   </v-card>
 </template>
@@ -50,6 +62,7 @@ import { ipcRenderer } from 'electron'
 import { Database } from 'sql.js'
 import { basename, extname, trimExt } from 'upath'
 import Vue from 'vue'
+import { faSave } from '@fortawesome/free-solid-svg-icons'
 import { MultiMediaItem, VideoFile, LocalFile } from '~/types'
 export default Vue.extend({
   props: {
@@ -72,16 +85,16 @@ export default Vue.extend({
       missingMedia: [] as string[],
     }
   },
+  computed: {
+    faSave() {
+      return faSave
+    },
+  },
   watch: {
     mediaFiles: {
-      handler(val: (LocalFile | VideoFile)[]): void {
+      handler(): void {
         if (!this.loading && this.missingMedia.length === 0) {
-          this.$emit(
-            'select',
-            val.sort((a, b) =>
-              (a.safeName as string).localeCompare(b.safeName as string)
-            )
-          )
+          this.finish()
         }
       },
       deep: true,
@@ -134,6 +147,16 @@ export default Vue.extend({
     }
   },
   methods: {
+    finish() {
+      this.$emit(
+        'select',
+        this.mediaFiles
+          .filter((m) => !this.missingMedia.includes(m.filename as string))
+          .sort((a, b) =>
+            (a.safeName as string).localeCompare(b.safeName as string)
+          )
+      )
+    },
     async uploadMissingFile(name: string): Promise<void> {
       const result = await ipcRenderer.invoke('openDialog', {
         title: name,

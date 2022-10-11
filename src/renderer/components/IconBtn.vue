@@ -167,7 +167,7 @@ export default Vue.extend({
       validator: (val: string) => {
         return [
           'home',
-          'homeVariant',
+          'cancel',
           'settings',
           'play',
           'pause',
@@ -213,7 +213,7 @@ export default Vue.extend({
           },
           icons: [{ text: faHome, props: { class: 'white--text' } }],
         },
-        homeVariant: {
+        cancel: {
           props: {
             'min-width': '32px',
             color: 'error',

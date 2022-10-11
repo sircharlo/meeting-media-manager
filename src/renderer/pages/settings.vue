@@ -84,7 +84,7 @@
         <v-col align-self="end" class="text-right pa-0">
           <icon-btn
             v-if="cancel && isNew && !valid"
-            variant="homeVariant"
+            variant="cancel"
             @click="goBack()"
           />
           <icon-btn

@@ -1,10 +1,11 @@
 <template>
   <v-container fluid fill-height>
-    <v-dialog v-if="fileString && type === 'jwpub'" :value="true">
+    <v-dialog v-if="fileString && type === 'jwpub'" persistent :value="true">
       <media-select
         :file="fileString"
         :set-progress="setProgress"
         @select="addMedia($event)"
+        @empty="reset()"
       />
     </v-dialog>
     <v-row class="fill-height" align-content="start">
@@ -179,7 +180,7 @@
         <v-col class="text-left">
           <icon-btn
             v-if="song || files.length > 0"
-            variant="homeVariant"
+            variant="cancel"
             :disabled="loading"
             click-twice
             @click="goHome()"
@@ -560,12 +561,15 @@ export default Vue.extend({
       } catch (e: any) {
         this.$error('errorAdditionalMedia', e, this.fileString)
       } finally {
-        this.type = ''
-        this.song = null
-        this.files = []
-        this.fileString = ''
+        this.reset()
         this.loading = false
       }
+    },
+    reset() {
+      this.type = ''
+      this.song = null
+      this.files = []
+      this.fileString = ''
     },
     setProgress(loaded: number, total: number, global: boolean = false) {
       if (global) {
