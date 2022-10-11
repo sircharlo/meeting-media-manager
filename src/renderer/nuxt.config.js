@@ -91,9 +91,9 @@ module.exports = {
     '~/plugins/logger',
     // Depends on logger
     '~/plugins/db',
-    '~/plugins/fs',
     '~/plugins/notify',
     // Depends on db/fs/notify/
+    '~/plugins/fs',
     '~/plugins/cong',
     '~/plugins/converters',
     '~/plugins/jw',
