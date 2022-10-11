@@ -11,15 +11,7 @@
       style="margin-bottom: 72px"
       :first-choice="firstChoice"
     />
-    <v-footer fixed class="justify-space-between">
-      <v-col class="text-left" cols="auto">
-        <icon-btn
-          v-if="$getPrefs('meeting.enableMusicButton')"
-          variant="shuffle"
-          click-twice
-          :disabled="mediaActive"
-        />
-      </v-col>
+    <v-footer fixed class="justify-end">
       <v-col v-if="scene && scenes.length > 1" class="d-flex justify-center">
         <v-btn-toggle
           v-if="scenes.length <= 6"
@@ -46,7 +38,13 @@
         />
       </v-col>
       <v-col class="text-right" cols="auto">
-        <icon-btn variant="toggleScreen" class="mr-2" />
+        <icon-btn
+          v-if="shuffleEnabled"
+          variant="shuffle"
+          click-twice
+          :disabled="mediaActive"
+        />
+        <icon-btn variant="toggleScreen" class="mx-2" />
         <v-btn
           id="present-to-home"
           nuxt
@@ -101,8 +99,11 @@ export default Vue.extend({
     showShortText(): boolean {
       return this.combinedScenesLength > this.availableWidth
     },
+    shuffleEnabled(): boolean {
+      return !!this.$getPrefs('meeting.enableMusicButton')
+    },
     availableWidth(): number {
-      const WIDTH_OF_OTHER_ELEMENTS = 337
+      const WIDTH_OF_OTHER_ELEMENTS = this.shuffleEnabled ? 317 : 243
       return this.windowWidth - WIDTH_OF_OTHER_ELEMENTS
     },
     combinedScenesLength(): number {
