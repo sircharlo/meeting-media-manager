@@ -14,7 +14,7 @@
     <v-footer fixed class="justify-end">
       <v-col v-if="scene && scenes.length > 1" class="d-flex justify-center">
         <v-btn-toggle
-          v-if="scenes.length <= 6"
+          v-if="showButtons"
           v-model="scene"
           mandatory
           color="primary"
@@ -22,10 +22,10 @@
           <v-tooltip v-for="s in scenes" :key="s.name" top>
             <template #activator="{ on, attrs }">
               <v-btn :value="s.value" v-bind="attrs" v-on="on">
-                {{ showShortText ? s.shortText : s.value }}
+                {{ showShortButtons ? s.shortText : s.value }}
               </v-btn>
             </template>
-            <span>{{ showShortText ? s.text : s.shortcut }}</span>
+            <span>{{ showShortButtons ? s.text : s.shortcut }}</span>
           </v-tooltip>
         </v-btn-toggle>
         <form-input
@@ -96,7 +96,10 @@ export default Vue.extend({
         }
       },
     },
-    showShortText(): boolean {
+    showButtons(): boolean {
+      return this.shortScenesLength < this.availableWidth
+    },
+    showShortButtons(): boolean {
       return this.combinedScenesLength > this.availableWidth
     },
     shuffleEnabled(): boolean {
@@ -114,6 +117,20 @@ export default Vue.extend({
 
       for (const scene of this.scenes) {
         nrOfChars += scene.value.length
+      }
+      return (
+        WIDTH_PER_CHAR * nrOfChars +
+        (PADDING_PER_SCENE * this.scenes.length + BORDER_WIDTH)
+      )
+    },
+    shortScenesLength(): number {
+      let nrOfChars = 0
+      const PADDING_PER_SCENE = 25
+      const BORDER_WIDTH = 1
+      const WIDTH_PER_CHAR = 22
+
+      for (const scene of this.scenes) {
+        nrOfChars += scene.shortText.length
       }
       return (
         WIDTH_PER_CHAR * nrOfChars +
