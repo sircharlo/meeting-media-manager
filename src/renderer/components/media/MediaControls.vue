@@ -1,7 +1,7 @@
 <!-- Media controls for the presentation mode -->
 <template>
   <v-row>
-    <v-app-bar fixed>
+    <v-app-bar fixed height="64px">
       <v-col class="text-left" cols="4">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
@@ -14,7 +14,7 @@
               v-on="on"
               @click="getMedia()"
             >
-              <font-awesome-icon :icon="faRotateRight" />
+              <font-awesome-icon :icon="faRotateRight" size="lg" />
             </v-btn>
           </template>
           <span>{{ $t('refresh') }}</span>
@@ -25,11 +25,12 @@
               if="btn-open-media-folder"
               icon
               aria-label="Open media folder"
+              class="mx-2"
               v-bind="attrs"
               v-on="on"
               @click="openFolder()"
             >
-              <font-awesome-icon :icon="faFolderOpen" />
+              <font-awesome-icon :icon="faFolderOpen" size="lg" />
             </v-btn>
           </template>
           <span>{{ $t('openFolder') }}</span>
@@ -44,8 +45,8 @@
               v-on="on"
               @click="togglePrefix()"
             >
-              <font-awesome-icon :icon="faEye" />
-              <font-awesome-icon :icon="faListOl" />
+              <font-awesome-icon pull="left" :icon="faEye" size="lg" />
+              <font-awesome-icon :icon="faListOl" size="lg" />
             </v-btn>
           </template>
           <span>{{ $t('showPrefix') }}</span>
@@ -57,6 +58,7 @@
           class="px-3"
           color="secondary"
           :disabled="mediaActive"
+          large
           @click="clearDate()"
         >
           {{ date }}
@@ -75,7 +77,7 @@
                 v-on="on"
                 @click="previous()"
               >
-                <font-awesome-icon :icon="faBackward" />
+                <font-awesome-icon :icon="faBackward" size="lg" />
               </v-btn>
             </template>
             <span>{{ $getPrefs('media.ppBackward') }}</span>
@@ -87,11 +89,12 @@
                 icon
                 aria-label="Next"
                 v-bind="attrs"
+                class="mr-2"
                 :disabled="!mediaActive && currentIndex == items.length - 1"
                 v-on="on"
                 @click="next()"
               >
-                <font-awesome-icon :icon="faForward" />
+                <font-awesome-icon :icon="faForward" size="lg" />
               </v-btn>
             </template>
             <span>{{ $getPrefs('media.ppForward') }}</span>
@@ -107,7 +110,7 @@
               v-on="on"
               @click="sortable = false"
             >
-              <font-awesome-icon :icon="faSquareCheck" />
+              <font-awesome-icon :icon="faSquareCheck" size="lg" />
             </v-btn>
           </template>
           <span>{{ $t('sortSave') }}</span>
@@ -123,7 +126,7 @@
               v-on="on"
               @click="sortable = true"
             >
-              <font-awesome-icon :icon="faArrowDownShortWide" />
+              <font-awesome-icon :icon="faArrowDownShortWide" size="lg" />
             </v-btn>
           </template>
           <span>{{ $t('sortMedia') }}</span>
@@ -137,7 +140,7 @@
       tag="v-list"
       handle=".sort-btn"
       group="media-items"
-      style="width: 100%; margin-top: 56px"
+      style="width: 100%; margin-top: 64px"
       @start="dragging = true"
       @end="dragging = false"
     >
