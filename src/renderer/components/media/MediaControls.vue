@@ -136,6 +136,7 @@
     <loading-icon v-if="loading" />
     <div
       v-else
+      id="media-list-container"
       :style="`
         width: 100%;
         overflow-y: auto;
@@ -293,15 +294,16 @@ export default Vue.extend({
         this.currentIndex--
         this.items[this.currentIndex].play = true
 
-        // Auto scroll to current item
-        if (this.currentIndex > 1) {
-          const el = document.querySelector(
-            `#${this.items[this.currentIndex - 2].id}`
-          )
-          if (el) el.scrollIntoView()
-        } else {
-          window.scrollTo(0, 0)
-        }
+        this.scrollToItem(this.currentIndex)
+      }
+    },
+    scrollToItem(index: number) {
+      if (index >= 1) {
+        const el = document.querySelector(`#${this.items[index - 1].id}`)
+        if (el) el.scrollIntoView()
+      } else {
+        const el = document.querySelector('#media-list-container')
+        if (el) el.scrollTo(0, 0)
       }
     },
     next() {
@@ -311,15 +313,7 @@ export default Vue.extend({
         this.currentIndex++
         this.items[this.currentIndex].play = true
 
-        // Auto scroll to current item
-        if (this.currentIndex > 1) {
-          const el = document.querySelector(
-            `#${this.items[this.currentIndex - 2].id}`
-          )
-          if (el) el.scrollIntoView()
-        } else {
-          window.scrollTo(0, 0)
-        }
+        this.scrollToItem(this.currentIndex)
       }
     },
     getMedia() {
