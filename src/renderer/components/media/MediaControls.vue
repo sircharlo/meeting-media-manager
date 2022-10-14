@@ -1,7 +1,7 @@
 <!-- Media controls for the presentation mode -->
 <template>
   <v-row>
-    <v-app-bar fixed height="64px">
+    <v-app-bar height="64px">
       <v-col class="text-left" cols="4">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
@@ -134,31 +134,39 @@
       </v-col>
     </v-app-bar>
     <loading-icon v-if="loading" />
-    <draggable
+    <div
       v-else
-      v-model="items"
-      tag="v-list"
-      handle=".sort-btn"
-      group="media-items"
-      style="width: 100%; margin-top: 64px"
-      @start="dragging = true"
-      @end="dragging = false"
+      :style="`
+        width: 100%;
+        overflow-y: auto;
+        ${listHeight}
+      `"
     >
-      <media-item
-        v-for="(item, i) in items"
-        :key="item.id"
-        :src="item.path"
-        :play-now="item.play"
-        :stop-now="item.stop"
-        :deactivate="item.deactivate"
-        :media-active="mediaActive"
-        :video-active="videoActive"
-        :show-prefix="showPrefix"
-        :sortable="sortable"
-        @playing="setIndex(i)"
-        @deactivated="resetDeactivate(i)"
-      />
-    </draggable>
+      <draggable
+        v-model="items"
+        tag="v-list"
+        handle=".sort-btn"
+        group="media-items"
+        class="ma-4"
+        @start="dragging = true"
+        @end="dragging = false"
+      >
+        <media-item
+          v-for="(item, i) in items"
+          :key="item.id"
+          :src="item.path"
+          :play-now="item.play"
+          :stop-now="item.stop"
+          :deactivate="item.deactivate"
+          :media-active="mediaActive"
+          :video-active="videoActive"
+          :show-prefix="showPrefix"
+          :sortable="sortable"
+          @playing="setIndex(i)"
+          @deactivated="resetDeactivate(i)"
+        />
+      </draggable>
+    </div>
   </v-row>
 </template>
 <script lang="ts">
@@ -190,6 +198,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    windowHeight: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -208,6 +220,10 @@ export default Vue.extend({
     }
   },
   computed: {
+    listHeight(): string {
+      const OTHER_ELEMENTS = 136
+      return `max-height: ${this.windowHeight - OTHER_ELEMENTS}px`
+    },
     date(): string {
       return this.$route.query.date as string
     },

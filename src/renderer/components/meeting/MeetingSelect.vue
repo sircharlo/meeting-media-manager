@@ -8,7 +8,14 @@
       <v-divider />
     </v-col>
     <v-col cols="12">
-      <v-list v-if="dates.length > 0">
+      <v-list
+        v-if="dates.length > 0"
+        :style="`
+        width: 100%;
+        overflow-y: auto;
+        ${listHeight}
+      `"
+      >
         <template v-for="(date, i) in dates">
           <v-list-item
             :key="date"
@@ -35,6 +42,10 @@ export default Vue.extend({
       type: Boolean,
       default: true,
     },
+    windowHeight: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -46,6 +57,10 @@ export default Vue.extend({
       return this.$dayjs().format(
         this.$getPrefs('app.outputFolderDateFormat') as string
       )
+    },
+    listHeight(): string {
+      const OTHER_ELEMENTS = 181
+      return `max-height: ${this.windowHeight - OTHER_ELEMENTS}px`
     },
   },
   mounted() {

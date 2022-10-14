@@ -44,9 +44,11 @@
   "private": true,
   "resolutions": {
     "@types/node": "16.11.56",
-    "vue": "2.7.10",
-    "vue-server-renderer": "2.7.10",
-    "vue-template-compiler": "2.7.10"
+    "chokidar": "3.5.2",
+    "core-js": "3.25.5",
+    "vue": "2.7.13",
+    "vue-server-renderer": "2.7.13",
+    "vue-template-compiler": "2.7.13"
   },
   "packageManager": "yarn@3.2.4",
   "devDependencies": {
@@ -81,6 +83,7 @@
     "@xpda-dev/webpack-step": "^0.1.6",
     "adm-zip": "^0.5.9",
     "axios": "^0.27.2",
+    "chokidar": "^3.5.3",
     "consola": "^2.15.3",
     "core-js": "^3.25.5",
     "cross-env": "^7.0.3",
@@ -88,7 +91,7 @@
     "deepmerge": "^4.2.2",
     "dotenv": "^16.0.3",
     "electron": "21.1.1",
-    "electron-builder": "23.3.3",
+    "electron-builder": "23.6.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-playwright-helpers": "^1.2.0",
     "electron-store": "^8.1.0",

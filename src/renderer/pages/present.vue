@@ -1,62 +1,71 @@
 <template>
-  <v-container fluid fill-height class="align-start">
+  <v-container
+    fluid
+    fill-height
+    class="align-start align-content-space-between pa-0"
+  >
     <media-controls
       v-if="date"
-      style="margin-bottom: 72px"
       :media-active="mediaActive"
       :video-active="videoActive"
+      :window-height="windowHeight"
     />
     <meeting-select
       v-else
-      style="margin-bottom: 72px"
       :first-choice="firstChoice"
+      :window-height="windowHeight"
     />
-    <v-footer fixed class="justify-end">
-      <v-col v-if="scene && scenes.length > 1" class="d-flex justify-center">
-        <v-btn-toggle
-          v-if="showButtons"
-          v-model="scene"
-          mandatory
-          color="primary"
+    <v-row>
+      <v-footer width="100%" height="72px" class="justify-end">
+        <v-col
+          v-if="scene && scenes.length > 1"
+          class="d-flex justify-center pa-1"
         >
-          <v-tooltip v-for="s in scenes" :key="s.name" top>
-            <template #activator="{ on, attrs }">
-              <v-btn :value="s.value" v-bind="attrs" v-on="on">
-                {{ showShortButtons ? s.shortText : s.value }}
-              </v-btn>
-            </template>
-            <span>{{ showShortButtons ? s.text : s.shortcut }}</span>
-          </v-tooltip>
-        </v-btn-toggle>
-        <form-input
-          v-else
-          id="input-select-obs-scene"
-          v-model="scene"
-          field="select"
-          :items="scenes"
-          hide-details="auto"
-        />
-      </v-col>
-      <v-col class="text-right" cols="auto">
-        <icon-btn
-          v-if="shuffleEnabled"
-          variant="shuffle"
-          click-twice
-          :disabled="mediaActive"
-        />
-        <icon-btn variant="toggleScreen" class="mx-2" />
-        <v-btn
-          id="present-to-home"
-          nuxt
-          :to="localePath('/?cong=') + cong"
-          color="warning"
-          aria-label="Go to home"
-          :disabled="mediaActive"
-        >
-          <font-awesome-icon :icon="faHome" class="black--text" size="xl" />
-        </v-btn>
-      </v-col>
-    </v-footer>
+          <v-btn-toggle
+            v-if="showButtons"
+            v-model="scene"
+            mandatory
+            color="primary"
+          >
+            <v-tooltip v-for="s in scenes" :key="s.name" top>
+              <template #activator="{ on, attrs }">
+                <v-btn :value="s.value" v-bind="attrs" v-on="on">
+                  {{ showShortButtons ? s.shortText : s.value }}
+                </v-btn>
+              </template>
+              <span>{{ showShortButtons ? s.text : s.shortcut }}</span>
+            </v-tooltip>
+          </v-btn-toggle>
+          <form-input
+            v-else
+            id="input-select-obs-scene"
+            v-model="scene"
+            field="select"
+            :items="scenes"
+            hide-details="auto"
+          />
+        </v-col>
+        <v-col class="text-right" cols="auto">
+          <icon-btn
+            v-if="shuffleEnabled"
+            variant="shuffle"
+            click-twice
+            :disabled="mediaActive"
+          />
+          <icon-btn variant="toggleScreen" class="mx-2" />
+          <v-btn
+            id="present-to-home"
+            nuxt
+            :to="localePath('/?cong=') + cong"
+            color="warning"
+            aria-label="Go to home"
+            :disabled="mediaActive"
+          >
+            <font-awesome-icon :icon="faHome" class="black--text" size="xl" />
+          </v-btn>
+        </v-col>
+      </v-footer>
+    </v-row>
   </v-container>
 </template>
 <!-- eslint-disable no-magic-numbers -->
@@ -73,6 +82,7 @@ export default Vue.extend({
       videoActive: false,
       firstChoice: true,
       windowWidth: 0,
+      windowHeight: 0,
     }
   },
   head(): MetaInfo {
@@ -106,14 +116,14 @@ export default Vue.extend({
       return !!this.$getPrefs('meeting.enableMusicButton')
     },
     availableWidth(): number {
-      const WIDTH_OF_OTHER_ELEMENTS = this.shuffleEnabled ? 317 : 243
+      const WIDTH_OF_OTHER_ELEMENTS = this.shuffleEnabled ? 301 : 227
       return this.windowWidth - WIDTH_OF_OTHER_ELEMENTS
     },
     combinedScenesLength(): number {
       let nrOfChars = 0
       const PADDING_PER_SCENE = 25
       const BORDER_WIDTH = 1
-      const WIDTH_PER_CHAR = 10.3
+      const WIDTH_PER_CHAR = 9
 
       for (const scene of this.scenes) {
         nrOfChars += scene.value.length
@@ -127,7 +137,7 @@ export default Vue.extend({
       let nrOfChars = 0
       const PADDING_PER_SCENE = 25
       const BORDER_WIDTH = 1
-      const WIDTH_PER_CHAR = 22
+      const WIDTH_PER_CHAR = 14
 
       for (const scene of this.scenes) {
         nrOfChars += scene.shortText.length
@@ -177,9 +187,14 @@ export default Vue.extend({
       }
     },
   },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.setWindowSize)
+    ipcRenderer.removeAllListeners('showingMedia')
+    this.$unsetShortcuts('presentMode')
+  },
   mounted() {
-    this.setWindowWidth()
-    window.onresize = this.setWindowWidth
+    this.setWindowSize()
+    window.onresize = this.setWindowSize
     ipcRenderer.on('showingMedia', (_e, val) => {
       this.mediaActive = val[0]
       this.videoActive = val[1]
@@ -202,14 +217,10 @@ export default Vue.extend({
       )
     }
   },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.setWindowWidth)
-    ipcRenderer.removeAllListeners('showingMedia')
-    this.$unsetShortcuts('presentMode')
-  },
   methods: {
-    setWindowWidth() {
+    setWindowSize() {
       this.windowWidth = window.innerWidth
+      this.windowHeight = window.innerHeight
     },
   },
 })
