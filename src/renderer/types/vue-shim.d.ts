@@ -48,7 +48,6 @@ interface CustomProps {
   $getAllPrefs: () => ElectronStore
   $getCongMedia: (baseDate: Dayjs, now: Dayjs) => void
   $getCongPrefs: () => Promise<{ name: string; path: string }[]>
-  $updateContentsTree: () => CongFile[]
   $getAllPrefs: () => ElectronStore
   $getDb: ({
     file,
@@ -101,6 +100,8 @@ interface CustomProps {
   $isAudio: (filepath: string) => boolean
   $isImage: (filepath: string) => boolean
   $isLocked: (key: string) => boolean
+  $isShortcutAvailable: (shortcut: string) => boolean
+  $isShortcutValid: (shortcut: string) => boolean
   $isVideo: (filepath: string) => boolean
   $log: {
     debug: (msg: any, ...args: any[]) => void
@@ -181,8 +182,10 @@ interface CustomProps {
   $toggleMediaWindow: (action?: string) => Promise<void>
   $translate: (word: string, fallback?: string) => string
   $unsetPrefs: (key: keyof ElectronStore) => void
+  $unsetShortcut: (shortcut: string) => void
   $unsetShortcuts: (filter: string = 'all') => void
   $updateContent: () => Promise<void>
+  $updateContentsTree: () => CongFile[]
   $warn: (
     message: string,
     props?: {

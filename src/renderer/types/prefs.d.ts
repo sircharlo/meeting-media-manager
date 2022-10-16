@@ -54,9 +54,11 @@ export interface MediaPrefs {
   lang: string | null
   langUpdatedLast: string | null
   maxRes: Res
+  mediaWinShortcut: string | null
   ppBackward: string | null
   ppForward: string | null
   preferredOutput: 'window' | number
+  presentShortcut: string | null
 }
 
 export const enum MeetingDay {
@@ -77,6 +79,7 @@ export interface MeetingPrefs {
   musicVolume: number | null
   mwDay: MeetingDay | null
   mwStartTime: string | null
+  shuffleShortcut: string | null
   specialCong: boolean
   weDay: MeetingDay | null
   weStartTime: string | null

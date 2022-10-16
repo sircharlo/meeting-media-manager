@@ -194,6 +194,14 @@ const schema: Schema<ElectronStore> = {
         oneOf: [{ type: 'string' }, { type: 'number' }],
         default: PREFS.media.preferredOutput,
       },
+      mediaWinShortcut: {
+        type: 'string',
+        default: PREFS.media.mediaWinShortcut,
+      },
+      presentShortcut: {
+        type: 'string',
+        default: PREFS.media.presentShortcut,
+      },
     },
   },
   meeting: {
@@ -202,6 +210,10 @@ const schema: Schema<ElectronStore> = {
       enableMusicButton: {
         type: 'boolean',
         default: PREFS.meeting.enableMusicButton,
+      },
+      shuffleShortcut: {
+        type: 'string',
+        default: PREFS.meeting.shuffleShortcut,
       },
       enableMusicFadeOut: {
         type: 'boolean',

@@ -5,7 +5,7 @@
     :id="variant"
     :aria-label="variant"
     color="warning"
-    title="ALT+K"
+    :title="$getPrefs('meeting.shuffleShortcut')"
     v-bind="$attrs"
     :loading="loading || $attrs.loading"
     :style="{ color: isDark ? 'white' : 'black' }"
@@ -36,7 +36,7 @@
     :color="mediaVisible ? 'warning' : 'primary'"
     v-bind="$attrs"
     :class="{ 'pulse-danger': !mediaVisible }"
-    title="ALT+Z"
+    :title="$getPrefs('media.mediaWinShortcut')"
     @click="toggleMediaScreen()"
   >
     <font-awesome-layers class="fa-lg" fixed-width>
@@ -96,6 +96,13 @@
     ref="btn"
     v-model="$attrs.value"
     :aria-label="variant"
+    :title="
+      variant === 'present'
+        ? $getPrefs('media.presentShortcut')
+        : variant === 'shuffle'
+        ? $getPrefs('meeting.shuffleShortcut')
+        : undefined
+    "
     v-bind="{ ...style.props, ...$attrs }"
     :class="{
       ...style.props.class,
@@ -227,7 +234,7 @@ export default Vue.extend({
         },
         present: {
           to: '/present',
-          props: { color: 'primary', title: 'ALT+D' },
+          props: { color: 'primary' },
           icons: [faPlay, faSliders],
         },
         settings: {
@@ -239,7 +246,7 @@ export default Vue.extend({
           icons: [{ text: faUserCog, props: { class: 'white--text' } }],
         },
         shuffle: {
-          props: { color: 'info', title: 'ALT+K' },
+          props: { color: 'info' },
           icons: [
             { text: faMusic, props: { size: 'lg' } },
             { text: faShuffle, props: { size: 'lg' } },

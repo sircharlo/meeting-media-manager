@@ -99,6 +99,34 @@
         </v-col>
       </v-row>
       <form-input
+        id="media.mediaWinShortcut"
+        v-model="media.mediaWinShortcut"
+        :locked="$isLocked('media.mediaWinShortcut')"
+        placeholder="e.g. Alt+Z"
+        :label="$t('mediaWinShortcut')"
+        :required="media.enableMediaDisplayButton"
+        :rules="[
+          (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
+          (v) =>
+            $isShortcutAvailable(v, 'toggleMediaWindow') ||
+            $t('fieldShortcutTaken'),
+        ]"
+      />
+      <form-input
+        id="media.presentShortcut"
+        v-model="media.presentShortcut"
+        :locked="$isLocked('media.presentShortcut')"
+        placeholder="e.g. Alt+D"
+        :label="$t('presentShortcut')"
+        :required="media.enableMediaDisplayButton"
+        :rules="[
+          (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
+          (v) =>
+            $isShortcutAvailable(v, 'openPresentMode') ||
+            $t('fieldShortcutTaken'),
+        ]"
+      />
+      <form-input
         v-if="isWindows"
         id="media.hideMediaLogo"
         v-model="media.hideMediaLogo"
@@ -118,17 +146,29 @@
           id="media.ppForward"
           v-model="media.ppForward"
           :locked="$isLocked('media.ppForward')"
-          placeholder="e.g. PageDown / ALT+F / ALT+N"
+          placeholder="e.g. PageDown / Alt+F / Alt+N"
           :label="$t('ppForward')"
           :required="media.enablePp"
+          :rules="[
+            (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
+            (v) =>
+              $isShortcutAvailable(v, 'nextMediaItem') ||
+              $t('fieldShortcutTaken'),
+          ]"
         />
         <form-input
           id="media.ppBackward"
           v-model="media.ppBackward"
-          placeholder="e.g. PageUp / ALT+B / ALT+P"
+          placeholder="e.g. PageUp / Alt+B / Alt+P"
           :locked="$isLocked('media.ppBackward')"
           :label="$t('ppBackward')"
           :required="media.enablePp"
+          :rules="[
+            (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
+            (v) =>
+              $isShortcutAvailable(v, 'previousMediaItem') ||
+              $t('fieldShortcutTaken'),
+          ]"
         />
       </template>
     </template>
@@ -291,6 +331,28 @@ export default Vue.extend({
     'media.hideMediaLogo': {
       async handler() {
         await this.$refreshBackgroundImgPreview(true)
+      },
+    },
+    'media.mediaWinShortcut': {
+      handler(val: string) {
+        if (
+          this.$isShortcutValid(val) &&
+          this.$isShortcutAvailable(val, 'toggleMediaWindow')
+        ) {
+          this.$unsetShortcut('toggleMediaWindow')
+          this.$setShortcut(val, 'toggleMediaWindow')
+        }
+      },
+    },
+    'media.presentShortcut': {
+      handler(val: string) {
+        if (
+          this.$isShortcutValid(val) &&
+          this.$isShortcutAvailable(val, 'openPresentMode')
+        ) {
+          this.$unsetShortcut('openPresentMode')
+          this.$setShortcut(val, 'openPresentMode')
+        }
       },
     },
     bg(val: string) {

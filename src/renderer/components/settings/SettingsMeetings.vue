@@ -66,10 +66,30 @@
         "
         @click="downloadShuffleMusic()"
       >
-        {{ $t('downloadShuffleMusic') }}
+        {{
+          $t(
+            status == 'success'
+              ? 'shuffleMusicDownloaded'
+              : 'downloadShuffleMusic'
+          )
+        }}
       </v-btn>
     </v-col>
     <template v-if="meeting.enableMusicButton">
+      <form-input
+        id="meeting.shuffleShortcut"
+        v-model="meeting.shuffleShortcut"
+        :locked="$isLocked('meeting.shuffleShortcut')"
+        placeholder="e.g. Alt+K"
+        :label="$t('shuffleShortcut')"
+        :required="meeting.enableMusicButton"
+        :rules="[
+          (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
+          (v) =>
+            $isShortcutAvailable(v, 'toggleMusicShuffle') ||
+            $t('fieldShortcutTaken'),
+        ]"
+      />
       <form-input
         id="meeting.musicVolume"
         v-model="meeting.musicVolume"
@@ -205,9 +225,24 @@ export default Vue.extend({
       // Set or unset the music shuffle shortcut
       async handler(val: boolean) {
         if (val) {
-          await this.$setShortcut('ALT+K', 'toggleMusicShuffle', 'music')
+          await this.$setShortcut(
+            this.meeting.shuffleShortcut,
+            'toggleMusicShuffle',
+            'music'
+          )
         } else {
           await this.$unsetShortcuts('music')
+        }
+      },
+    },
+    'meeting.shuffleShortcut': {
+      handler(val: string) {
+        if (
+          this.$isShortcutValid(val) &&
+          this.$isShortcutAvailable(val, 'toggleMusicShuffle')
+        ) {
+          this.$unsetShortcut('toggleMusicShuffle')
+          this.$setShortcut(val, 'toggleMusicShuffle')
         }
       },
     },

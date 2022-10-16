@@ -346,7 +346,11 @@ export default Vue.extend({
 
       // Set music shuffle shortcut if enabled
       if (this.$getPrefs('meeting.enableMusicButton')) {
-        await this.$setShortcut('ALT+K', 'toggleMusicShuffle', 'music')
+        await this.$setShortcut(
+          this.$getPrefs('meeting.shuffleShortcut') as string,
+          'toggleMusicShuffle',
+          'music'
+        )
       }
 
       // If all cong fields are filled in, try to connect to the server
