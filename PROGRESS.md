@@ -41,17 +41,9 @@
 
 - Volume animation on musicFadeOut does not work
 
-## Bug Fixes
+## What's Changed
 
-- Correctly set app icon for Linux
-- Custom media background is saved per congregation instead of globally
-- Download markers for sign language when adding a song with the song picker
-- Hiding jw logo for media window works instantly
-- Possibility to cancel creating a congregation
-- Save meeting week selection between pages
-- Setting custom media background works instantly
-
-## New Features
+### New Features
 
 - DOCS: Documentation filter searches entire website and highlights results with yellow background
 - DOCS: Documentation site now supports multiple languages. Time to translate my dear volunteers!
@@ -84,6 +76,16 @@
 - SETTINGS: Special cong option to disable regular meeting media sync (e.g. for schools)
 - SETTINGS: Toggle password visibility
 
+### Bug Fixes
+
+- Correctly set app icon for Linux
+- Custom media background is saved per congregation instead of globally
+- Download markers for sign language when adding a song with the song picker
+- Hiding jw logo for media window works instantly
+- Possibility to cancel creating a congregation
+- Save meeting week selection between pages
+- Setting custom media background works instantly
+
 ## Background Changes
 
 - Added build workflow for documentation to validate pull requests
@@ -95,4 +97,4 @@
 - Using electron-store instead of home grown version
 - Using webdav-client instead of home grown version
 
-The new documentation site is hosted [here](https://mtdvlpr.github.io/meeting-media-manager/en/)
+The new documentation site is hosted [here](https://mtdvlpr.github.io/meeting-media-manager/)
