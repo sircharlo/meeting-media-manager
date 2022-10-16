@@ -51,6 +51,7 @@
   "fieldShortcutInvalid": "This is not a valid shortcut",
   "fieldShortcutTaken": "This shortcut is already taken",
   "hideMediaLogo": "Hide logo from media presentation window",
+  "hideWinAfterMedia": "Hide media window after media finished playing",
   "hostname": "Hostname",
   "info": "Information",
   "infoPubIgnored": "Unable to fetch media for the following publication:",

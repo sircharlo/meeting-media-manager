@@ -50,6 +50,7 @@ export interface MediaPrefs {
   excludeLffiImages: boolean
   excludeTh: boolean
   hideMediaLogo: boolean
+  hideWinAfterMedia: boolean
   keepOriginalsAfterConversion: boolean
   lang: string | null
   langUpdatedLast: string | null

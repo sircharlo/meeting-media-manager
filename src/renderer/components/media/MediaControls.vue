@@ -252,14 +252,25 @@ export default Vue.extend({
     faFolderOpen() {
       return faFolderOpen
     },
+    mediaVisible(): boolean {
+      return this.$store.state.present.mediaScreenVisible
+    },
   },
   watch: {
-    mediaActive() {
+    mediaActive(val: boolean) {
       this.items.forEach((item) => {
         item.play = false
         item.stop = false
         item.deactivate = false
       })
+
+      if (
+        !val &&
+        this.$getPrefs('media.hideWinAfterMedia') &&
+        this.mediaVisible
+      ) {
+        ipcRenderer.send('toggleMediaWindowFocus')
+      }
     },
   },
   beforeDestroy() {

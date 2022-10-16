@@ -51,6 +51,7 @@
   "fieldShortcutInvalid": "Dit is geen correcte sneltoets",
   "fieldShortcutTaken": "Deze sneltoets is al in gebruik",
   "hideMediaLogo": "Verberg logo in media presentatie modus",
+  "hideWinAfterMedia": "Verberg media scherm nadat media is afgespeeld",
   "hostname": "Hostnaam",
   "info": "Informatie",
   "infoPubIgnored": "Kon de media van de volgende publicatie niet ophalen:",

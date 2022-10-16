@@ -170,6 +170,10 @@ const schema: Schema<ElectronStore> = {
         type: 'boolean',
         default: PREFS.media.hideMediaLogo,
       },
+      hideWinAfterMedia: {
+        type: 'boolean',
+        default: PREFS.media.hideWinAfterMedia,
+      },
       excludeTh: {
         type: 'boolean',
         default: PREFS.media.excludeTh,

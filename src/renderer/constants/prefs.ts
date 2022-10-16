@@ -36,6 +36,7 @@ const PREFS = {
     excludeLffiImages: false,
     excludeTh: false,
     hideMediaLogo: false,
+    hideWinAfterMedia: false,
     keepOriginalsAfterConversion: false,
     lang: null,
     langUpdatedLast: null,

@@ -135,6 +135,13 @@
         :label="$t('hideMediaLogo')"
       />
       <form-input
+        id="media.hideWinAfterMedia"
+        v-model="media.hideWinAfterMedia"
+        field="switch"
+        :locked="$isLocked('media.hideWinAfterMedia')"
+        :label="$t('hideWinAfterMedia')"
+      />
+      <form-input
         id="media.enablePp"
         v-model="media.enablePp"
         field="switch"

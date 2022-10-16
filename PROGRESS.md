@@ -75,6 +75,8 @@
 - OBS: Support for obs-websocket v5 (default is v4 for backwards compatibility, but can be changed in the settings)
 - SETTINGS: Ability to predownload all shuffle music for offline use
 - SETTINGS: Automatically detect local language and set is as default if supported
+- SETTINGS: Change the default shortcuts (Alt+Z to toggle media window, Alt+D to open present mode, Alt+K to shuffle music)
+- SETTINGS: Option to hide the media window after media has finished playing
 - SETTINGS: Offline mode (only use internet when adding a last minute song to the media)
 - SETTINGS: Port field for cong sync is no longer necessary
 - SETTINGS: Set your theme preference (light, dark, system) inside the app
