@@ -199,6 +199,7 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync } from 'fs-extra'
 import { faGlobe } from '@fortawesome/free-solid-svg-icons'
+import { WebDAVClient } from 'webdav/dist/web/types'
 import { AppPrefs, ElectronStore } from '~/types'
 import { DateFormat } from '~/types/prefs'
 const dateFormats = [
@@ -386,23 +387,29 @@ export default Vue.extend({
   },
   methods: {
     async renameBg() {
-      const bgName = (congName: string) => `custom-background-image-${congName}`
-      const bg = this.$findOne(
-        join(this.$appPath(), bgName(this.oldName) + '*')
-      )
-      renameSync(
-        bg,
-        join(this.$appPath(), bgName(this.app.congregationName) + extname(bg))
-      )
-
-      if (this.client) {
-        await this.client.moveFile(
-          join(this.$getPrefs('cong.dir'), bgName(this.oldName) + extname(bg)),
-          join(
-            this.$getPrefs('cong.dir'),
-            bgName(this.app.congregationName) + extname(bg)
-          )
+      if (this.oldName && this.app.congregationName) {
+        const bgName = (congName: string) =>
+          `custom-background-image-${congName}`
+        const bg = this.$findOne(
+          join(this.$appPath(), bgName(this.oldName) + '*')
         )
+        renameSync(
+          bg,
+          join(this.$appPath(), bgName(this.app.congregationName) + extname(bg))
+        )
+
+        if (this.client) {
+          await this.client.moveFile(
+            join(
+              this.$getPrefs('cong.dir'),
+              bgName(this.oldName) + extname(bg)
+            ),
+            join(
+              this.$getPrefs('cong.dir'),
+              bgName(this.app.congregationName) + extname(bg)
+            )
+          )
+        }
       }
 
       this.oldName = this.app.congregationName
