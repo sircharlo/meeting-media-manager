@@ -26,6 +26,7 @@
       :label="$t('congregationName')"
       :locked="$isLocked('app.congregationName')"
       required
+      @blur="renameBg()"
     />
     <form-input
       id="app.localAppLang"
@@ -193,10 +194,10 @@
 import { platform } from 'os'
 import Vue from 'vue'
 import { Dayjs } from 'dayjs'
-import { join } from 'upath'
+import { extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
-import { existsSync } from 'fs-extra'
+import { existsSync, renameSync } from 'fs-extra'
 import { faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { AppPrefs, ElectronStore } from '~/types'
 import { DateFormat } from '~/types/prefs'
@@ -211,6 +212,7 @@ export default Vue.extend({
   data() {
     return {
       valid: true,
+      oldName: PREFS.app.congregationName,
       app: {
         ...PREFS.app,
       } as AppPrefs,
@@ -235,6 +237,9 @@ export default Vue.extend({
       return (
         this.app.obs.enable && !!this.app.obs.port && !!this.app.obs.password
       )
+    },
+    client(): WebDAVClient {
+      return this.$store.state.cong.client as WebDAVClient
     },
     cameraScenes(): string[] {
       return this.scenes.filter((scene) => scene !== this.app.obs.mediaScene)
@@ -366,6 +371,7 @@ export default Vue.extend({
   },
   async mounted() {
     Object.assign(this.app, this.$getPrefs('app'))
+    this.oldName = this.app.congregationName
     this.app.localAppLang = this.$i18n.locale
     this.$emit('valid', this.valid)
 
@@ -379,6 +385,28 @@ export default Vue.extend({
     }
   },
   methods: {
+    async renameBg() {
+      const bgName = (congName) => `custom-background-image-${congName}`
+      const bg = this.$findOne(
+        join(this.$appPath(), bgName(this.oldName) + '*')
+      )
+      renameSync(
+        bg,
+        join(this.$appPath(), bgName(this.app.congregationName) + extname(bg))
+      )
+
+      if (this.client) {
+        await this.client.moveFile(
+          join(this.$getPrefs('cong.dir'), bgName(this.oldName) + extname(bg)),
+          join(
+            this.$getPrefs('cong.dir'),
+            bgName(this.app.congregationName) + extname(bg)
+          )
+        )
+      }
+
+      this.oldName = this.app.congregationName
+    },
     async refreshOBS() {
       if (this.obsComplete) {
         this.$resetOBS()

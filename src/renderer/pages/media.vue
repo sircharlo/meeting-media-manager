@@ -14,7 +14,7 @@ import { pathToFileURL } from 'url'
 import Vue from 'vue'
 // eslint-disable-next-line import/named
 import { readFileSync, existsSync } from 'fs-extra'
-import { join } from 'upath'
+import { join, basename } from 'upath'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
 import { HUNDRED_PERCENT } from '~/constants/general'
@@ -88,13 +88,20 @@ export default Vue.extend({
       const bgImage = this.$findOne(
         join(
           await ipcRenderer.invoke('userData'),
-          'media-window-background-image*'
+          `custom-background-image-${prefs.app.congregationName}*`
         )
       )
       if (bgImage) {
-        main.style.background = `url(${
-          pathToFileURL(bgImage).href
-        }) black center center / contain no-repeat`
+        const response = await this.$axios.get(pathToFileURL(bgImage).href, {
+          responseType: 'blob',
+        })
+        const file = new File([response.data], basename(bgImage), {
+          type: response.headers['content-type'],
+        })
+
+        main.style.background = `url(${URL.createObjectURL(
+          file
+        )}) black center center / contain no-repeat`
       } else {
         await this.setYearText(prefs)
       }

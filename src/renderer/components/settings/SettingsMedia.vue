@@ -68,6 +68,7 @@
         >
           <v-img
             v-if="bg === 'custom'"
+            :key="refresh"
             :src="background"
             alt="Custom Background"
             contain
@@ -92,7 +93,7 @@
             color="warning"
             class="mb-2"
             min-width="32px"
-            @click="$refreshBackgroundImgPreview(true)"
+            @click="refreshBg()"
           >
             <font-awesome-icon :icon="faArrowsRotate" class="black--text" />
           </v-btn>
@@ -241,6 +242,7 @@ export default Vue.extend({
   data() {
     return {
       bg: '',
+      refresh: false,
       valid: true,
       loading: true,
       media: {
@@ -391,6 +393,13 @@ export default Vue.extend({
     }
   },
   methods: {
+    bgFileName(): string {
+      return `custom-background-image-${this.$getPrefs('app.congregationName')}`
+    },
+    async refreshBg() {
+      await this.$refreshBackgroundImgPreview(true)
+      this.$forceUpdate()
+    },
     async uploadBg() {
       const result = await ipcRenderer.invoke('openDialog', {
         properties: ['openFile'],
@@ -402,22 +411,14 @@ export default Vue.extend({
         if (this.$isImage(result.filePaths[0])) {
           const bg = result.filePaths[0]
           this.$rm(
-            this.$findAll(
-              join(this.$appPath(), 'media-window-background-image*')
-            )
+            this.$findAll(join(this.$appPath(), this.bgFileName() + '*'))
           )
-          this.$copy(
-            bg,
-            join(this.$appPath(), 'media-window-background-image' + extname(bg))
-          )
+          this.$copy(bg, join(this.$appPath(), this.bgFileName() + extname(bg)))
 
           // Upload the background to the cong server
           if (this.client) {
             await this.client.putFileContents(
-              join(
-                this.$getPrefs('cong.dir'),
-                'media-window-background-image' + extname(bg)
-              ),
+              join(this.$getPrefs('cong.dir'), this.bgFileName() + extname(bg)),
               readFileSync(bg),
               {
                 overwrite: true,
@@ -432,9 +433,7 @@ export default Vue.extend({
       }
     },
     async removeBg() {
-      this.$rm(
-        this.$findAll(join(this.$appPath(), 'media-window-background-image*'))
-      )
+      this.$rm(this.$findAll(join(this.$appPath(), this.bgFileName() + '*')))
 
       // Remove the background from the cong server
       if (this.client) {
@@ -442,7 +441,7 @@ export default Vue.extend({
           await this.client.deleteFile(
             join(
               this.$getPrefs('cong.dir'),
-              'media-window-background-image' + extname(this.background)
+              this.bgFileName() + extname(this.background)
             )
           )
         } catch (e: any) {
@@ -450,7 +449,7 @@ export default Vue.extend({
             this.$error(
               'errorWebdavRm',
               e,
-              'media-window-background-image' + extname(this.background)
+              this.bgFileName() + extname(this.background)
             )
           }
         }

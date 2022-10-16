@@ -84,12 +84,21 @@ const plugin: Plugin = (
         })
 
       const bg = contents.find(({ basename }) =>
-        basename.startsWith('media-window-background-image')
+        basename.startsWith(
+          `custom-background-image-${$getPrefs('app.congregationName')}`
+        )
       )
 
       // If bg on cong server, force it to be used
       if (bg) {
-        $rm($findAll(join($appPath(), 'media-window-background-image*')))
+        $rm(
+          $findAll(
+            join(
+              $appPath(),
+              `custom-background-image-${$getPrefs('app.congregationName')}*`
+            )
+          )
+        )
         $write(
           join($appPath(), bg.basename),
           Buffer.from(

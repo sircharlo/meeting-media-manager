@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'url'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
-import { join } from 'upath'
+import { basename, join } from 'upath'
 import { MediaPrefs } from '~/types'
 
 const plugin: Plugin = (
@@ -12,6 +12,7 @@ const plugin: Plugin = (
     $getYearText,
     $findAll,
     $getPrefs,
+    $axios,
     $getAllPrefs,
     i18n,
     store,
@@ -175,7 +176,10 @@ const plugin: Plugin = (
       if ($getPrefs('media.enableMediaDisplayButton')) {
         let type = 'yeartext'
         const backgrounds = $findAll(
-          join($appPath(), 'media-window-background-image*')
+          join(
+            $appPath(),
+            `custom-background-image-${$getPrefs('app.congregationName')}*`
+          )
         )
 
         // If no custom background, set yeartext as background
@@ -190,10 +194,16 @@ const plugin: Plugin = (
           }
           store.commit('present/setBackground', yeartextString)
         } else {
-          store.commit(
-            'present/setBackground',
-            pathToFileURL(backgrounds[0]).href
+          const response = await $axios.get(
+            pathToFileURL(backgrounds[0]).href,
+            { responseType: 'blob' }
           )
+          const file = new File([response.data], basename(backgrounds[0]), {
+            type: response.headers['content-type'],
+          })
+
+          URL.revokeObjectURL(store.state.present.background)
+          store.commit('present/setBackground', URL.createObjectURL(file))
           type = 'custom'
         }
         ipcRenderer.send('startMediaDisplay', $getAllPrefs())
