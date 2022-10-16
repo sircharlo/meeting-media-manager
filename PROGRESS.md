@@ -44,6 +44,7 @@
 ## Bug Fixes
 
 - Correctly set app icon for Linux
+- Custom media background is saved per congregation instead of globally
 - Download markers for sign language when adding a song with the song picker
 - Hiding jw logo for media window works instantly
 - Possibility to cancel creating a congregation
