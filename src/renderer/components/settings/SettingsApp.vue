@@ -386,7 +386,7 @@ export default Vue.extend({
   },
   methods: {
     async renameBg() {
-      const bgName = (congName) => `custom-background-image-${congName}`
+      const bgName = (congName: string) => `custom-background-image-${congName}`
       const bg = this.$findOne(
         join(this.$appPath(), bgName(this.oldName) + '*')
       )
