@@ -386,7 +386,7 @@ export default Vue.extend({
 
           marker.customStartTime = this.$dayjs
             .duration({
-              hours: +startTime.format('h'),
+              hours: +startTime.format('H'),
               minutes: +startTime.format('m'),
               seconds: +startTime.format('s'),
               milliseconds: +startTime.format('SSS'),
@@ -396,7 +396,7 @@ export default Vue.extend({
           marker.customEndTime = startTime
             .add(
               this.$dayjs.duration({
-                hours: +duration.format('h'),
+                hours: +duration.format('H'),
                 minutes: +duration.format('m'),
                 seconds: +duration.format('s'),
                 milliseconds: +duration.format('SSS'),
@@ -404,7 +404,7 @@ export default Vue.extend({
             )
             .subtract(
               this.$dayjs.duration({
-                hours: +transition.format('h'),
+                hours: +transition.format('H'),
                 minutes: +transition.format('m'),
                 seconds: +transition.format('s'),
                 milliseconds: +transition.format('SSS'),
