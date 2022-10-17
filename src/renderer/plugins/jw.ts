@@ -87,7 +87,7 @@ const plugin: Plugin = (
           const result = await ipcRenderer.invoke('getFromJWOrg', {
             url: 'https://wol.jw.org/wol/finder',
             params: {
-              docid: '1102022800',
+              docid: `110${new Date().getFullYear()}800`,
               wtlocale: $getPrefs('media.lang') ?? 'E',
               format: 'json',
               snip: 'yes',
