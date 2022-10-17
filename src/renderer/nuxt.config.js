@@ -255,7 +255,7 @@ module.exports = {
           [
             '@nuxt/babel-preset-app',
             {
-              corejs: { version: 3 },
+              corejs: { version: '3.25' },
               useBuiltIns: 'usage',
               shippedProposals: true,
               targets: envTargets[envName],
