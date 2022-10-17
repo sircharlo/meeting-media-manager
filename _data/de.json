@@ -1,0 +1,58 @@
+{
+  "lang": "de",
+  "name": "Deutsch",
+  "language": "Sprache:",
+  "shared": {
+    "optionsApp": "Einstellungen: Anwendung",
+    "optionsCongSync": "Einstellungen: Versammlungs-Synchronisierung",
+    "optionsMedia": "Einstellungen: Medien",
+    "optionsMeetings": "Einstellungen: Zusammenkunft",
+    "password": "Passwort",
+    "port": "Port"
+  },
+  "home": {},
+  "bug-feature": {},
+  "configuration": {
+    "convertDownloaded": "Medien in MP4-Format konvertieren",
+    "disableHardwareAcceleration": "Hardwarebeschleunigung deaktivieren",
+    "enableMediaDisplayButton": "Schaltfläche zum Präsentieren von Medien auf einem zweiten Monitor oder in einem separaten Fenster",
+    "enableMusicButton": "Schaltfläche für Zufallswiedergabe von Königreichsliedern",
+    "enableObs": "OBS Studio-Kompatibilitätsmodus aktivieren",
+    "enableVlcPlaylistCreation": "Wiedergabeliste für <em>VLC</em> erstellen",
+    "excludeLffi": "Audio- und Videodateien der <em>lffi</em> Broschüre ausschließen",
+    "excludeLffiImages": "Bilder der <em>lffi</em> Broschüre ausschließen",
+    "excludeTh": "Alle Medien der <em>th</em> Broschüre ausschließen",
+    "keepOriginalsAfterConversion": "Original-Mediendateien nach der Konvertierung behalten",
+    "localAppLang": "Anzeigesprache",
+    "maxRes": "Höchste Auflösung für Videos",
+    "mediaLang": "Mediensprache",
+    "mediaWindowBackground": "Hintergrundbild für Medienpräsentationsmodus",
+    "mediaSaveFolder": "Medienordner",
+    "musicFadeOutType": "Liedwiedergabe automatisch beenden",
+    "musicVolume": "Wiedergabelautstärke",
+    "mwMeetingDay": "Zusammenkunft unter der Woche",
+    "obsCameraScene": "Bühnenszene in OBS Studio",
+    "obsMediaScene": "Medienszene in OBS Studio",
+    "openTargetFolderAfterSync": "Ordner nach Mediensynchronisierung öffnen",
+    "quitAfterSync": "Anwendung nach Mediensynchronisierung beenden",
+    "runAtStartup": "Anwendung beim Systemstart öffnen",
+    "syncOnLaunch": "Mediensynchronisierung automatisch starten",
+    "weMeetingDay": "Zusammenkunft am Wochenende"
+  },
+  "congregation-sync": {
+    "fetchMedia": "Medienordner aktualisieren",
+    "hostname": "Hostname",
+    "username": "Benutzername",
+    "webdavFolder": "Synchronisations-Ordner",
+    "settingsLocked": "Versammlungsweite Einstellungen"
+  },
+  "faq": {},
+  "installation": {},
+  "usage-notes": {},
+  "manage-media": {
+    "song": "Lied",
+    "jwpub": "JWPUB",
+    "custom": "Eigene"
+  },
+  "present-media": {}
+}

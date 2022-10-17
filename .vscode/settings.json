@@ -1,0 +1,39 @@
+{
+  "files.associations": {
+    "main.scss": "liquid"
+  },
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.markdownlint": true
+  },
+  "cSpell.words": [
+    "aaron",
+    "codeql",
+    "congs",
+    "davidanson",
+    "dbaeumer",
+    "descr",
+    "EPUB",
+    "esbenp",
+    "helaili",
+    "jekyll",
+    "JWMMF",
+    "kohler",
+    "koofr",
+    "lffi",
+    "necolas",
+    "sircharlo",
+    "sjjm",
+    "snnw",
+    "unmute",
+    "usernamehw",
+    "userns",
+    "visualstudioexptteam",
+    "vscodeintellicode",
+    "webdav",
+    "yzhang"
+  ],
+  "cSpell.ignoreWords": ["TERMS", "PDF", "transform", "focusring"],
+  "cSpell.ignorePaths": ["_data/*", "!_data/en.json"]
+}

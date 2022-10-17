@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang="{{page.lang}}">
+  <head>
+    <title>{{ site.title }}</title>
+    <meta charset="utf-8" />
+    <base href="{{site.url}}{{site.baseurl}}/" target="_blank" />
+    <meta name="description" content="Documentation website" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="./assets/main.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./icon.ico" />
+    {% assign pages=site.pages | sort: 'lang' %} {% for page in pages %}{% if
+    page.lang %}
+    <link rel="alternate" hreflang="{{ page.lang }}" href="{{ page.url }}" />
+    {% endif %}{% endfor %}
+  </head>
+
+  <body>
+    {{ content }}
+
+    <!--[if lt IE 9
+      ]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script
+    ><![endif]-->
+    <script src="./assets/js/lang.min.js"></script>
+    <script src="./assets/js/search.min.js"></script>
+    <script src="./assets/js/articles.min.js"></script>
+  </body>
+</html>

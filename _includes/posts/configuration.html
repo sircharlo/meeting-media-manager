@@ -1,0 +1,533 @@
+{% assign posts=site.posts | where:"lang", page.lang %} {% assign post=posts |
+where:"ref", "present-media" %} {% assign link= '<a href="[LANG]/#[POSTURL]"
+  >[POSTTITLE]</a
+>' | strip_newlines | strip | replace: '[POSTURL]', post[0].ref | replace:
+'[LANG]', page.lang %} {% assign linkPresentMedia=link | replace: '[POSTTITLE]',
+post[0].title %} {% assign post=posts | where:"ref", "congregation-sync" %} {%
+assign link= '<a href="[LANG]/#[POSTURL]">[POSTTITLE]</a>' | strip_newlines |
+strip | replace: '[POSTURL]', post[0].ref | replace: '[LANG]', page.lang %} {%
+assign linkCongSync=link | replace: '[POSTTITLE]', post[0].title %}
+<p>
+  {% include t.html lang=include.lang page="configuration" key="settingsScreen"
+  %}
+</p>
+
+<h3>{% include t.html lang=include.lang page="shared" key="optionsApp" %}</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>
+        {% include t.html lang=include.lang page="shared" key="setting" %}
+      </th>
+      <th>
+        {% include t.html lang=include.lang page="shared" key="explanation" %}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="localAppLang" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="appLangDesc" %}<br />
+        <br />
+        {% include t.html lang=include.lang page="configuration"
+        key="thankContributors" %} {% assign string=
+        include.lang.configuration.askHelp %} {% if string == nil %} {% assign
+        string= site.data.en.configuration.askHelp %} {% endif %} {% assign
+        link='<a
+          href="{{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,+LANGUAGE"
+          >"discussion"</a
+        >' | replace: '{{site.github}}', site.github %} {{ string | replace:
+        '[GH DISCUSSION]', link }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="mediaSaveFolder" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="folderDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="runAtStartup" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="startupDesc" %}<br />
+        <br />
+        <blockquote>
+          {% include t.html lang=include.lang page="configuration"
+          key="startupNote" %}
+        </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="syncOnLaunch" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="syncDesc"
+        %}<br />
+        <br />
+        <blockquote>
+          {% include t.html lang=include.lang page="configuration"
+          key="syncNote" %}
+        </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="openTargetFolderAfterSync" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="openFolderDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="quitAfterSync" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="quitDesc"
+        %}<br />
+        <br />
+        <blockquote>
+          {% include t.html lang=include.lang page="configuration"
+          key="quitNote" %}
+        </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="enableObs" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="obsDesc"
+        %}<br />
+        <br />
+        <blockquote>
+          {% include t.html lang=include.lang page="configuration"
+          key="obsWebsocket" %} {% include t.html lang=include.lang
+          page="configuration" key="obsWebsocketVersion" %}<br />
+          <br />
+          {% include t.html lang=include.lang page="configuration"
+          key="obsScenes" %} {% include t.html lang=include.lang
+          page="configuration" key="obsScenesMin" %}<br />
+          <br />
+          {% include t.html lang=include.lang page="configuration" key="obsAlso"
+          %}
+          <ul>
+            <li>
+              {% include t.html lang=include.lang page="configuration"
+              key="obsLecturn" %}
+            </li>
+            <li>
+              {% include t.html lang=include.lang page="configuration"
+              key="obsStage" %}
+            </li>
+            <li>
+              {% include t.html lang=include.lang page="configuration"
+              key="obsLecturnReader" %}
+            </li>
+            <li>
+              {% include t.html lang=include.lang page="configuration"
+              key="obsTable" %}
+            </li>
+          </ul>
+        </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="shared" key="port" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="obsPortDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="shared" key="password"
+          %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="obsPassDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="obsCameraScene" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="obsCameraDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="obsMediaScene" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="obsMediaDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="disableHardwareAcceleration" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="disableHADesc" %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% assign string= include.lang.configuration.congLink %} {% if string == nil %}
+{% assign string= site.data.en.configuration.congLink %} {% endif %}
+<h3>
+  {% include t.html lang=include.lang page="shared" key="optionsCongSync" %}
+</h3>
+
+{{ string | stip_newlines | strip | replace: '[CONG LINK]', linkCongSync }}
+
+<h3>{% include t.html lang=include.lang page="shared" key="optionsMedia" %}</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>
+        {% include t.html lang=include.lang page="shared" key="setting" %}
+      </th>
+      <th>
+        {% include t.html lang=include.lang page="shared" key="explanation" %}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="mediaLang" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="mediaLangDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration" key="maxRes"
+          %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="resDesc"
+        %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="convertDownloaded" %}</code
+        >
+      </td>
+      {% assign link='<a href="assets/img/other/zoom-mp4-share.png"
+        >"native MP4 sharing feature"</a
+      >' %} {% assign string= include.lang.configuration.convertDesc %} {% if
+      string == nil %} {% assign string= site.data.en.configuration.convertDesc
+      %} {% endif %}
+      <td>
+        {{ string | stip_newlines | strip | replace: '[NATIVE FEATURE]', link }}
+        {% include t.html lang=include.lang page="configuration"
+        key="convertExplain" %}<br />
+        <br />
+        <blockquote>
+          {% assign presentMode=
+          include.lang.configuration.enableMediaDisplayButton %} {% if
+          presentMode == nil %} {% assign presentMode=
+          site.data.en.configuration.enableMediaDisplayButton %} {% endif %} {%
+          assign string= include.lang.configuration.convertPresentLink %} {% if
+          string == nil %} {% assign string=
+          site.data.en.configuration.convertPresentLink %} {% endif %} {%
+          include t.html lang=include.lang page="configuration"
+          key="convertNote" %} {{ string | stip_newlines | strip | replace:
+          '[PRESENT LINK]', linkPresentMedia | replace: '[PRESENT]', presentMode
+          }}
+        </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          {% include t.html lang=include.lang page="configuration"
+          key="keepOriginalsAfterConversion" %}
+        </code>
+      </td>
+      {% assign string= include.lang.configuration.keepSee %} {% if string ==
+      nil %} {% assign string= site.data.en.configuration.keepSee %} {% endif %}
+      {% assign keep= include.lang.configuration.convertDownloaded %} {% if keep
+      == nil %} {% assign keep= site.data.en.configuration.convertDownloaded %}
+      {% endif %}
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="keepDesc"
+        %} {% include t.html lang=include.lang page="configuration"
+        key="keepResult" %} {{ string | replace: '[CONVERT]', keep }}<br />
+        <br />
+        {% assign string= include.lang.configuration.keepNote %} {% if string ==
+        nil %} {% assign string= site.data.en.configuration.keepNote %} {% endif
+        %}
+        <blockquote>{{ string | replace: '[CONVERT]', keep }}</blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>{{presentMode}}</code>
+      </td>
+      {% assign string= include.lang.configuration.presentLink %} {% if string
+      == nil %} {% assign string= site.data.en.configuration.presetLink %} {%
+      endif %}
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="presentDesc" %} {{ string | replace: '[PRESENT MODE]', title }}<br />
+        <br />
+        {% include t.html lang=include.lang page="configuration"
+        key="presentExplain" %}<br />
+        <br />
+        <blockquote>
+          {% include t.html lang=include.lang page="configuration"
+          key="presentNote" %}<br />
+          <br />
+          {% assign string= include.lang.configuration.presentConvertLink %} {%
+          if string == nil %} {% assign string=
+          site.data.en.configuration.presentConvertLink %} {% endif %} {{ string
+          | replace: '[CONVERT]', keep }}
+        </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          {% include t.html lang=include.lang page="configuration"
+          key="mediaWindowBackground" %}
+        </code>
+      </td>
+      {% assign string= include.lang.configuration.bgDesc %} {% if string == nil
+      %} {% assign string= site.data.en.configuration.bgDesc %} {% endif %}
+      <td>
+        {{ string | replace: '[PRESENT MODE]', linkPresentMedia }} {% include
+        t.html lang=include.lang page="configuration" key="bgFails" %}<br />
+        <br />
+        {% assign string= include.lang.configuration.bgNote %} {% if string ==
+        nil %} {% assign string= site.data.en.configuration.bgNote %} {% endif
+        %}
+        <blockquote>
+          {{ string | replace: '[CONG SYNC]', linkCongSync }}
+        </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          {% include t.html lang=include.lang page="configuration"
+          key="enableVlcPlaylistCreation" %}
+        </code>
+      </td>
+      {% assign string= include.lang.configuration.vlcDesc %} {% if string ==
+      nil %} {% assign string= site.data.en.configuration.vlcDesc %} {% endif %}
+      <td>{{ string | replace: '[PRESENT MODE]', linkPresentMedia }}</td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="excludeTh" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="thDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="excludeLffi" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="lffiDesc"
+        %} {% include t.html lang=include.lang page="configuration"
+        key="lffiNote" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="excludeLffiImages" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration"
+        key="lffiImgDesc" %} {% include t.html lang=include.lang
+        page="configuration" key="lffiImgNote" %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>
+  {% include t.html lang=include.lang page="shared" key="optionsMeetings" %}
+</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>
+        {% include t.html lang=include.lang page="shared" key="setting" %}
+      </th>
+      <th>
+        {% include t.html lang=include.lang page="shared" key="explanation" %}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="mwMeetingDay" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="mwDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="weMeetingDay" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="weDesc" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="enableMusicButton" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="musicDesc"
+        %} {% include t.html lang=include.lang page="configuration"
+        key="musicNote" %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code
+          >{% include t.html lang=include.lang page="configuration"
+          key="musicVolume" %}</code
+        >
+      </td>
+      <td>
+        {% include t.html lang=include.lang page="configuration" key="volDesc"
+        %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          {% include t.html lang=include.lang page="configuration"
+          key="musicFadeOutType" %}
+        </code>
+      </td>
+      {% assign musicBtn= include.lang.configuration.bgDesc %} {% if musicBtn ==
+      nil %} {% assign musicBtn= site.data.en.configuration.bgDesc %} {% endif
+      %} {% assign string= include.lang.configuration.fadeDesc %} {% if string
+      == nil %} {% assign string= site.data.en.configuration.fadeDesc %} {%
+      endif %}
+      <td>
+        {{ string | replace: '[MUSIC OPTION]', musicBtn }}<br />
+        <br />
+        {% include t.html lang=include.lang page="configuration"
+        key="fadeOptions" %}
+        <ul>
+          <li>
+            {% include t.html lang=include.lang page="configuration"
+            key="fadeMinutes" %}
+          </li>
+          <li>
+            {% include t.html lang=include.lang page="configuration"
+            key="fadeMeeting" %}
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>
+  {% include t.html lang=include.lang page="configuration" key="screenshots" %}
+</h3>
+
+<table class="showcase" markdown="0">
+  {% include image.html src="settings/app.png" alt="optionsApp"
+  lang=include.lang page="shared" %} {% include image.html
+  src="settings/media.png" alt="optionsMedia" lang=include.lang page="shared" %}
+  {% include image.html src="settings/meeting.png" alt="optionsMeetings"
+  lang=include.lang page="shared" %}
+</table>

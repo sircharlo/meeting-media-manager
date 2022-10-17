@@ -1,0 +1,58 @@
+{
+  "lang": "sv",
+  "name": "Svenska",
+  "language": "Språk:",
+  "shared": {
+    "optionsApp": "Programinställningar",
+    "optionsCongSync": "Inställningar för församlingssynkronisering",
+    "optionsMedia": "Mediainställningar",
+    "optionsMeetings": "Mötesinställningar",
+    "password": "Lösenord",
+    "port": "Port"
+  },
+  "home": {},
+  "bug-feature": {},
+  "configuration": {
+    "convertDownloaded": "Konvertera media till MP4-format",
+    "enableMediaDisplayButton": "Schaltfläche zum Präsentieren von Medien auf einem zweiten Monitor oder in einem separaten Fenster",
+    "enableMusicButton": "Schaltfläche für Zufallswiedergabe von Königreichsliedern",
+    "enableObs": "OBS Studio-Kompatibilitätsmodus aktivieren",
+    "enableVlcPlaylistCreation": "Skapa spellistor för <em>VLC</em>",
+    "excludeLffi": "Exkludera audio- och videofiler från broschyren <em>lffi</em>",
+    "excludeLffiImages": "Exkludera bilder från broschyren <em>lffi</em>",
+    "excludeTh": "Exkludera all media från broschyren <em>th</em>",
+    "disableHardwareAcceleration": "Inaktivera hårdvaruacceleration",
+    "keepOriginalsAfterConversion": "Behåll ursprungliga filer efter konvertering.",
+    "localAppLang": "Programspråk",
+    "maxRes": "Videoupplösning",
+    "mediaWindowBackground": "Bakgrundsbild för mediavisning",
+    "mediaLang": "Mediaspråk",
+    "mediaSaveFolder": "Mapp för media",
+    "musicFadeOutType": "Stoppa musikspelning automatiskt",
+    "musicVolume": "Musikvolym",
+    "mwMeetingDay": "Veckomöte",
+    "obsCameraScene": "Standard scenvy i OBS Studio",
+    "obsMediaScene": "Mediascen i OBS Studio",
+    "openTargetFolderAfterSync": "Öppna mapp efter mediasynkronisering",
+    "quitAfterSync": "Stäng programmet efter mediasynkronisering",
+    "runAtStartup": "Starta programmet när datorn startas",
+    "syncOnLaunch": "Initiera mediasynkronisering automatiskt ",
+    "weMeetingDay": "Helgmöte"
+  },
+  "congregation-sync": {
+    "fetchMedia": "Uppdatera mediamappar",
+    "hostname": "Värdnamn",
+    "username": "Användarnamn",
+    "webdavFolder": "Församlingens synkroniseringsmapp",
+    "settingsLocked": "Övergripande församlingsinställningar"
+  },
+  "faq": {},
+  "installation": {},
+  "usage-notes": {},
+  "manage-media": {
+    "song": "Sång",
+    "jwpub": "JWPUB",
+    "custom": "Anpassa"
+  },
+  "present-media": {}
+}

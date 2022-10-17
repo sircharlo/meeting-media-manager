@@ -1,0 +1,58 @@
+{
+  "lang": "pt-BR",
+  "name": "Português - Brasil",
+  "language": "Idioma:",
+  "shared": {
+    "optionsApp": "Configuração do programa",
+    "optionsCongSync": "Configuração do servidor da congregação",
+    "optionsMedia": "Configuração de mídia",
+    "optionsMeetings": "Configuração da reunião",
+    "password": "Senha",
+    "port": "Porta"
+  },
+  "home": {},
+  "bug-feature": {},
+  "configuration": {
+    "convertDownloaded": "Converter mídias para MP4",
+    "enableMediaDisplayButton": "Exibir as mídias numa tela secundária",
+    "enableMusicButton": "Habilitar botão para reproduzir cânticos aleatoriamente",
+    "enableObs": "Habilitar compatibilidade com OBS Studio",
+    "enableVlcPlaylistCreation": "Criar lista de reprodução para usar no <em>VLC</em>",
+    "excludeLffi": "Excluir arquivos de áudio e vídeo da publicação <em>lffi</em>",
+    "excludeLffiImages": "Excluir imagens da publicação <em>lffi</em>",
+    "excludeTh": "Excluir todas as mídias da publicação <em>th</em>",
+    "disableHardwareAcceleration": "Desativar a aceleração de hardware",
+    "keepOriginalsAfterConversion": "Manter os arquivos de mídia originais após a conversão",
+    "localAppLang": "Idioma do programa",
+    "maxRes": "Resolução dos vídeos",
+    "mediaWindowBackground": "Imagem de fundo da tela secundária",
+    "mediaLang": "Idioma das mídias",
+    "mediaSaveFolder": "Pasta para salvar as mídias",
+    "musicFadeOutType": "Parar a reprodução dos cânticos",
+    "musicVolume": "Volume de reprodução dos cânticos",
+    "mwMeetingDay": "Reunião de meio de semana",
+    "obsCameraScene": "Nome da cena de câmera do OBS Studio",
+    "obsMediaScene": "Nome da cena de mídia do OBS Studio",
+    "openTargetFolderAfterSync": "Abrir pasta após baixar as mídias",
+    "quitAfterSync": "Fechar o programa após baixar as mídias",
+    "runAtStartup": "Executar o programa após a inicialização do sistema",
+    "syncOnLaunch": "Baixar as mídias ao abrir o programa",
+    "weMeetingDay": "Reunião de fim de semana"
+  },
+  "congregation-sync": {
+    "fetchMedia": "Baixar mídias!",
+    "hostname": "Nome do host",
+    "username": "Usuário",
+    "webdavFolder": "Caminho da pasta",
+    "settingsLocked": "Configurações para todos da congregação"
+  },
+  "faq": {},
+  "installation": {},
+  "usage-notes": {},
+  "manage-media": {
+    "song": "Cântico",
+    "jwpub": "JWPUB",
+    "custom": "Personalizado"
+  },
+  "present-media": {}
+}

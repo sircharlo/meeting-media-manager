@@ -1,0 +1,66 @@
+<nav id="sidebar">{% include nav.html %}</nav>
+
+<section id="content">
+  <button class="control show">
+    {% include t.html lang=include.lang page="home" key="expand" %}
+  </button>
+  <button class="control hide">
+    {% include t.html lang=include.lang page="home" key="collapse" %}
+  </button>
+  <h3 id="mmm-is">
+    {% include t.html lang=include.lang page="home" key="whatIsM3" %}
+  </h3>
+
+  <p>
+    {% include t.html lang=include.lang page="home" key="what" %} {% include
+    t.html lang=include.lang page="home" key="summary" %}
+  </p>
+
+  <h3 id="mmm-do">
+    {% include t.html lang=include.lang page="home" key="whatDoesM3" %}
+  </h3>
+
+  <p>{% include t.html lang=include.lang page="home" key="m3Can" %}</p>
+  <p>{% include t.html lang=include.lang page="home" key="presentMode" %}</p>
+  <ul>
+    <li>{% include t.html lang=include.lang page="home" key="thumbnails" %}</li>
+    <li>{% include t.html lang=include.lang page="home" key="playback" %}</li>
+    <li>{% include t.html lang=include.lang page="home" key="music" %}</li>
+    <li>{% include t.html lang=include.lang page="home" key="monitors" %}</li>
+    <li>{% include t.html lang=include.lang page="home" key="obs" %}</li>
+  </ul>
+
+  <p>{% include t.html lang=include.lang page="home" key="remote" %}</p>
+
+  <h3 id="language">
+    {% include t.html lang=include.lang page="home" key="doesM3Work" %}
+  </h3>
+
+  <p>{% include t.html lang=include.lang page="home" key="m3Works" %}</p>
+
+  <p>{% include t.html lang=include.lang page="home" key="m3Translated" %}</p>
+
+  <p>{% include t.html lang=include.lang page="home" key="closing" %}</p>
+
+  <h3>{% include t.html lang=include.lang page="home" key="screenshots" %}</h3>
+
+  <table class="showcase">
+    {% include image.html src="main/update-folders.gif" alt="syncInProgress"
+    lang=include.lang page="home" %} {% include image.html
+    src="main/main-screen.png" alt="mainScreen" lang=include.lang page="home" %}
+    {% include image.html src="main/date-picker.png" alt="chooseWeek"
+    lang=include.lang page="home" %} {% include image.html
+    src="main/sync-complete.png" alt="syncComplete" lang=include.lang
+    page="home" %} {% include image.html src="main/music-playing.png"
+    alt="musicPlaying" lang=include.lang page="home" %}
+  </table>
+  {% assign posts=site.posts | where:"lang", page.lang %} {% for post in posts
+  %}
+  <article class="{{ post.type }}">
+    <a id="{{ post.ref }}" href="{{page.lang}}/#{{ post.ref }}">
+      <h2>{{ post.title }}</h2>
+    </a>
+    <section class="body">{{ post.content }}</section>
+  </article>
+  {% endfor %}
+</section>

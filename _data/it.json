@@ -1,0 +1,50 @@
+{
+  "lang": "it",
+  "name": "Italiano",
+  "language": "Lingua:",
+  "shared": {
+    "optionsApp": "Impostazioni App",
+    "optionsCongSync": "Impostazioni di Sincronizzazione Congregazione",
+    "optionsMedia": "Impostazioni Media",
+    "optionsMeetings": "Impostazioni Adunanza",
+    "password": "Password",
+    "port": "Porta"
+  },
+  "home": {},
+  "bug-feature": {},
+  "configuration": {
+    "convertDownloaded": "Converti Media in formato MP4",
+    "enableMusicButton": "Attiva la possibilità di Avviare l'Audio dei Cantici in modalità casuale",
+    "excludeLffi": "Escludi i files Audio/Video dall'uposcolo <em>lffi</em>",
+    "excludeLffiImages": "Escludi le immagini dall'uposcolo <em>lffi</em>",
+    "excludeTh": "Escludi tutti i media dall'uposcolo <em>th</em>",
+    "keepOriginalsAfterConversion": "Mantieni il Media originali dopo la conversione",
+    "localAppLang": "Lingua dell'interfaccia",
+    "maxRes": "Risoluzione massima dei Video",
+    "mediaLang": "Lingua dei Media",
+    "mediaSaveFolder": "Cartella dove salvare i Media",
+    "musicFadeOutType": "Interrompi automaticamente la riproduzione Audio",
+    "mwMeetingDay": "Adunanza infrasettimanale",
+    "openTargetFolderAfterSync": "Apri la cartella dopo la generazione dei Media",
+    "quitAfterSync": "Chiudi l'App dopo la generazione dei Media",
+    "runAtStartup": "Apri l'App all'avvio del sistema",
+    "syncOnLaunch": "Avvia la Sincro. Media all'avvio dell'App",
+    "weMeetingDay": "Adunanza del fine settimana"
+  },
+  "congregation-sync": {
+    "fetchMedia": "Genera i Media!",
+    "hostname": "Hostname",
+    "username": "Username",
+    "webdavFolder": "Cartella di Sincronizzazione Congregazione",
+    "settingsLocked": "Congregation-wide settings"
+  },
+  "faq": {},
+  "installation": {},
+  "usage-notes": {},
+  "manage-media": {
+    "song": "Song",
+    "jwpub": "JWPUB",
+    "custom": "Personalizza"
+  },
+  "present-media": {}
+}

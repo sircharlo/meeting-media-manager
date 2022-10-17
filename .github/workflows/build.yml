@@ -1,0 +1,26 @@
+name: Test Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [docs]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+
+    - name: Build jekyll site
+      uses:  helaili/jekyll-action@v2
+      with:
+        build_only: true

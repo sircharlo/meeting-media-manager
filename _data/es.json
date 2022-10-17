@@ -1,0 +1,58 @@
+{
+  "lang": "es",
+  "name": "español",
+  "language": "Idioma:",
+  "shared": {
+    "optionsApp": "Configuración de la aplicación",
+    "optionsCongSync": "Configuración de sincronización de la congregación",
+    "optionsMedia": "Configuración de la multimedia",
+    "optionsMeetings": "Configuración de la reunión",
+    "password": "Contraseña",
+    "port": "Puerto"
+  },
+  "home": {},
+  "bug-feature": {},
+  "configuration": {
+    "convertDownloaded": "Convertir multimedia a formato MP4",
+    "disableHardwareAcceleration": "Deshabilite la aceleración por hardware",
+    "enableMediaDisplayButton": "Habilitar botón para presentar multimedia en un pantalla externa o en una ventana separada",
+    "enableMusicButton": "Habilitar botón para reproducir canciones del Reino en modo aleatorio",
+    "enableObs": "Habilite el modo de compatibilidad de OBS Studio",
+    "enableVlcPlaylistCreation": "Crear listas de reproducción para usar con <em>VLC</em>",
+    "excludeLffi": "Excluir archivos de audio y video del folleto / libro <em>lffi</em>",
+    "excludeLffiImages": "Excluir ilustraciones del folleto / libro <em>lffi</em>",
+    "excludeTh": "Excluir contenido multimedia del folleto <em>th</em>",
+    "keepOriginalsAfterConversion": "Mantenga los archivos multimedia originales después de la conversión",
+    "localAppLang": "Idioma a mostrar",
+    "maxRes": "Resolución máxima para videos",
+    "mediaLang": "Idioma del contenido multimedia",
+    "mediaWindowBackground": "Ilustración de fondo para el modo de presentación multimedia",
+    "mediaSaveFolder": "Carpeta en la que guardar los contenidos multimedia",
+    "musicFadeOutType": "Dejar de reproducir canciones automáticamente",
+    "musicVolume": "Volumen de reproducción de la canción",
+    "mwMeetingDay": "Reunión entre semana",
+    "obsCameraScene": "Escena de vista predeterminada en OBS Studio",
+    "obsMediaScene": "Escena de ventana multimedia en OBS Studio",
+    "openTargetFolderAfterSync": "Abrir carpeta después de la sincronización de multimedia",
+    "quitAfterSync": "Salir de la aplicación después de la sincronización de la multimedia",
+    "runAtStartup": "Ejecutar la aplicación al iniciar el sistema",
+    "syncOnLaunch": "Iniciar automáticamente la sincronización de la multimedia",
+    "weMeetingDay": "Reunión de fin de semana"
+  },
+  "congregation-sync": {
+    "fetchMedia": "¡Actualizar multimedia!",
+    "hostname": "Nombre de host",
+    "username": "Nombre de usuario",
+    "webdavFolder": "Carpeta de sincronización de la congregación",
+    "settingsLocked": "Configuración de toda la congregación"
+  },
+  "faq": {},
+  "installation": {},
+  "usage-notes": {},
+  "manage-media": {
+    "song": "Canción",
+    "jwpub": "JWPUB",
+    "custom": "Personalizar"
+  },
+  "present-media": {}
+}
