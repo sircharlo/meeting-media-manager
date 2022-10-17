@@ -67,6 +67,8 @@
 - OBS: Auto detect sceneName change for camera/media/current scene (websocket v5 only)
 - OBS: Support for obs-websocket v5 (default is v4 for backwards compatibility, but can be changed in the settings)
 - PRESENTATION MODE: Auto scroll when using keyboard shortcuts to play media
+- PRESENTATION MODE: Auto stop shuffle music when playing videos
+- PRESENTATION MODE: Tooltips for icon buttons
 - SETTINGS: Ability to predownload all shuffle music for offline use
 - SETTINGS: Automatically detect local language and set it as default if supported
 - SETTINGS: Change the default shortcuts (Alt+Z to toggle media window, Alt+D to open present mode, Alt+K to shuffle music)
