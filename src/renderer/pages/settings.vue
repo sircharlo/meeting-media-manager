@@ -164,6 +164,17 @@ export default Vue.extend({
   watch: {
     valid(val: boolean) {
       if (val) this.calcCache()
+
+      if (this.$getPrefs('media.enableMediaDisplayButton')) {
+        if (val) {
+          this.$setShortcut(
+            this.$getPrefs('media.presentShortcut') as string,
+            'openPresentMode'
+          )
+        } else {
+          this.$unsetShortcut('openPresentMode')
+        }
+      }
     },
     tab(val: number) {
       if (this.tab === 0) this.panel = []

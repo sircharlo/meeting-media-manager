@@ -204,6 +204,9 @@ export default Vue.extend({
     faParagraph() {
       return faParagraph
     },
+    musicPlaying(): boolean {
+      return !!this.$store.state.media.musicFadeOut
+    },
     faMusic() {
       return faMusic
     },
@@ -321,6 +324,10 @@ export default Vue.extend({
     async play(marker?: Marker) {
       if (!this.mediaVisible) {
         ipcRenderer.send('toggleMediaWindowFocus')
+      }
+
+      if (!this.isImage && this.musicPlaying) {
+        await this.$shuffleMusic(true)
       }
 
       // If it's a marker, set custom start and end times

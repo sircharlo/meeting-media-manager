@@ -136,7 +136,7 @@ export default Vue.extend({
       )
     })
     ipcRenderer.on('toggleMusicShuffle', async () => {
-      await this.$shuffleMusic(this.$store.state.media.musicFadeOut)
+      await this.$shuffleMusic(!!this.$store.state.media.musicFadeOut)
     })
     ipcRenderer.on('setObsScene', async (_e, i: number) => {
       await this.$setScene(this.scenes[i])

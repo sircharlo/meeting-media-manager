@@ -186,6 +186,19 @@ export default Vue.extend({
         this.firstChoice = false
       }
     },
+    async mediaActive(val: boolean) {
+      if (this.shuffleEnabled) {
+        if (val) {
+          this.$unsetShortcut('toggleMusicShuffle')
+        } else {
+          await this.$setShortcut(
+            this.$getPrefs('meeting.shuffleShortcut'),
+            'toggleMusicShuffle',
+            'music'
+          )
+        }
+      }
+    },
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.setWindowSize)
