@@ -393,6 +393,9 @@ export default Vue.extend({
         const bg = this.$findOne(
           join(this.$appPath(), bgName(this.oldName) + '*')
         )
+
+        if (!bg) return
+
         renameSync(
           bg,
           join(this.$appPath(), bgName(this.app.congregationName) + extname(bg))

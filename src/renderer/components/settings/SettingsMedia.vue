@@ -433,24 +433,18 @@ export default Vue.extend({
       }
     },
     async removeBg() {
-      this.$rm(this.$findAll(join(this.$appPath(), this.bgFileName() + '*')))
+      const bg = this.$findAll(join(this.$appPath(), this.bgFileName() + '*'))
+      this.$rm(bg)
 
       // Remove the background from the cong server
       if (this.client) {
         try {
           await this.client.deleteFile(
-            join(
-              this.$getPrefs('cong.dir'),
-              this.bgFileName() + extname(this.background)
-            )
+            join(this.$getPrefs('cong.dir'), this.bgFileName() + extname(bg[0]))
           )
         } catch (e: any) {
           if (e.status !== NOT_FOUND) {
-            this.$error(
-              'errorWebdavRm',
-              e,
-              this.bgFileName() + extname(this.background)
-            )
+            this.$error('errorWebdavRm', e, this.bgFileName() + extname(bg[0]))
           }
         }
       }
