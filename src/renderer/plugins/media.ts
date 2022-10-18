@@ -1240,6 +1240,10 @@ const plugin: Plugin = (
       await animation.finished */
 
       if (!audio) return
+      while (audio.volume > 0) {
+        audio.volume -= Math.min(audio.volume, 0.01)
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
       audio.remove()
       store.commit('media/setMusicFadeOut', '')
     } else {
