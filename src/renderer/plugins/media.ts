@@ -1241,7 +1241,9 @@ const plugin: Plugin = (
         ) as HTMLAudioElement
 
         if (!audio) return
-        const MS_TO_STOP = 3 * MS_IN_SEC
+
+        // Fade out audio
+        const MS_TO_STOP = 3 * MS_IN_SEC // Let fadeout last 3 seconds
         const TOTAL_VOL = audio.volume
         while (audio.volume > 0) {
           audio.volume -= Math.min(audio.volume, (10 * TOTAL_VOL) / MS_TO_STOP)
