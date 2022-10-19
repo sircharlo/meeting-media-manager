@@ -37,10 +37,6 @@
 - [X] Test: Make sure light mode looks good as well
 - [X] Test: test if auto updater works correctly
 
-## Known Bugs without immediate fix
-
-- Volume animation on musicFadeOut does not work
-
 ## What's Changed
 
 ### New Features
@@ -52,6 +48,7 @@
 - GENERAL: Greatly improved fetching speed by performing tasks simultaneously (e.g. 53080ms -> 27113ms)
 - GENERAL: MacOS icon now has rounded corners to better fit with MacOS native style
 - GENERAL: Save window size and position between sessions
+- GENERAL: Shuffle music for sign languages now plays songs with video
 - GENERAL: Support Debian package (without auto-update support)
 - GENERAL: Tests to ensure everything stays working between releases
 - MEDIA MANAGER: Auto determine drag and dropped file type (custom / jwpub)

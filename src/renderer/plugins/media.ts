@@ -1367,14 +1367,14 @@ const plugin: Plugin = (
       ? await downloadIfRequired(songs[index] as VideoFile)
       : (songs[index] as { title: string; track: string; path: string }).path
 
-    if (store.state.media.musicFadeOut && !fadeOut) {
-      ipcRenderer.on('videoProgress', (_e, progress) => {
+    ipcRenderer.on('videoProgress', (_e, progress) => {
+      if (store.state.media.musicFadeOut && !fadeOut) {
         store.commit(
           'media/setMusicFadeOut',
           $dayjs.duration(progress[1] - progress[0], 's').format('mm:ss')
         )
-      })
-    }
+      }
+    })
 
     ipcRenderer.send('showMedia', { path })
 
