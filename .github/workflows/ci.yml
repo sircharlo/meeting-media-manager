@@ -1,4 +1,4 @@
-name: build/release
+name: ci
 
 on:
   workflow_dispatch:
@@ -28,9 +28,6 @@ jobs:
           node-version: 16
           check-latest: true
           cache: 'yarn'
-
-      - name: Install yarn@3.2.4
-        run: yarn set version 3.2.4
 
       - name: Install dependencies
         run: yarn install

@@ -1,6 +1,7 @@
 /* eslint-disable import/named */
 import { pathToFileURL } from 'url'
 import { Dayjs } from 'dayjs'
+import { ipcRenderer } from 'electron'
 import { Plugin } from '@nuxt/types'
 import { emptyDirSync, existsSync, readFileSync, statSync } from 'fs-extra'
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
@@ -1233,18 +1234,27 @@ const plugin: Plugin = (
 
   async function shuffleMusic(stop: boolean = false): Promise<void> {
     if (stop) {
-      const audio = document.querySelector('#meetingMusic') as HTMLAudioElement
-      /* const animation = audio.animate([{ volume: 0 }], {
+      if (store.state.media.songPub === 'sjjm') {
+        const audio = document.querySelector(
+          '#meetingMusic'
+        ) as HTMLAudioElement
+        /* const animation = audio.animate([{ volume: 0 }], {
         duration: 6000,
       })
       await animation.finished */
 
-      if (!audio) return
-      while (audio.volume > 0) {
-        audio.volume -= Math.min(audio.volume, 0.01)
-        await new Promise(resolve => setTimeout(resolve, 100))
+        if (!audio) return
+        while (audio.volume > 0) {
+          audio.volume -= Math.min(audio.volume, 1 / HUNDRED_PERCENT)
+          await new Promise((resolve) => setTimeout(resolve, HUNDRED_PERCENT))
+        }
+        audio.remove()
+      } else {
+        ipcRenderer.removeAllListeners('videoProgress')
+        ipcRenderer.removeAllListeners('videoEnd')
+        ipcRenderer.send('hideMedia')
       }
-      audio.remove()
+
       store.commit('media/setMusicFadeOut', '')
     } else {
       if ($getPrefs('meeting.enableMusicFadeOut')) {
@@ -1288,29 +1298,91 @@ const plugin: Plugin = (
 
       // Get songs from jw.org or from local cache
       const isOnline = store.state.stats.online && !$getPrefs('app.offline')
+      const signLanguage =
+        store.state.media.songPub === 'sjj' &&
+        $getPrefs('media.enableMediaDisplayButton')
       const songs = (
         isOnline
           ? (
               (await getMediaLinks({
-                pubSymbol: 'sjjm',
-                format: 'MP3',
-                lang: 'E',
+                pubSymbol: signLanguage ? 'sjj' : 'sjjm',
+                format: signLanguage ? 'MP4' : 'MP3',
+                lang: signLanguage ? undefined : 'E',
               })) as VideoFile[]
-            ).filter((item) => extname(item.url) === '.mp3')
-          : $findAll(join($pubPath(), '..', 'E', 'sjjm', '**', '*.mp3')).map(
-              (item) => ({
-                title: basename(item),
-                track: basename(resolve(item, '..')),
-                path: item,
-              })
+            ).filter((item) =>
+              extname(item.url) === signLanguage ? '.mp4' : '.mp3'
             )
+          : $findAll(
+              join(
+                $pubPath(),
+                '..',
+                signLanguage ? $getPrefs('media.lang') : 'E',
+                signLanguage ? 'sjj' : 'sjjm',
+                '**',
+                signLanguage ? '*.mp4' : '*.mp3'
+              )
+            ).map((item) => ({
+              title: basename(item),
+              track: basename(resolve(item, '..')),
+              path: item,
+            }))
       ).sort(() => 0.5 - Math.random())
 
-      createAudioElement(songs, 0, !!store.state.media.musicFadeOut, isOnline)
+      if (signLanguage) {
+        playSignLanguageSong(
+          songs,
+          0,
+          !!store.state.media.musicFadeOut,
+          isOnline
+        )
+      } else {
+        createAudioElement(songs, 0, !!store.state.media.musicFadeOut, isOnline)
+      }
     }
   }
 
   inject('shuffleMusic', shuffleMusic)
+
+  async function playSignLanguageSong(
+    songs: (VideoFile | { title: string; track: string; path: string })[],
+    index: number,
+    fadeOut: boolean,
+    isOnline: boolean
+  ) {
+    if (!store.state.present.mediaScreenVisible) {
+      ipcRenderer.send('toggleMediaWindowFocus')
+    }
+
+    const path = isOnline
+      ? await downloadIfRequired(songs[index] as VideoFile)
+      : (songs[index] as { title: string; track: string; path: string }).path
+
+    ipcRenderer.on('videoProgress', (_e, progress) => {
+      if (store.state.media.musicFadeOut && !fadeOut) {
+        store.commit(
+          'media/setMusicFadeOut',
+          $dayjs.duration(progress[1] - progress[0], 's').format('mm:ss')
+        )
+      }
+    })
+
+    ipcRenderer.send('showMedia', { path })
+
+    if (!fadeOut) {
+      store.commit('media/setMusicFadeOut', '00:00')
+    }
+
+    ipcRenderer.on('videoEnd', (_e) => {
+      ipcRenderer.removeAllListeners('videoProgress')
+      ipcRenderer.removeAllListeners('videoEnd')
+      playSignLanguageSong(
+        songs,
+        index < songs.length - 1 ? ++index : 0,
+        fadeOut,
+        isOnline
+      )
+    })
+  }
 
   async function createAudioElement(
     songs: (VideoFile | { title: string; track: string; path: string })[],
