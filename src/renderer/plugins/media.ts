@@ -8,6 +8,7 @@ import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { basename, changeExt, extname, join, resolve } from 'upath'
 import { Database } from 'sql.js'
 import {
+  MS_IN_SEC,
   HUNDRED_PERCENT,
   JAN_2008,
   MAX_PREFIX_LENGTH,
@@ -1232,22 +1233,35 @@ const plugin: Plugin = (
     increaseProgress(setProgress)
   }
 
-  async function shuffleMusic(stop: boolean = false): Promise<void> {
+  async function shuffleMusic(
+    stop: boolean = false,
+    immediately: boolean = false
+  ): Promise<void> {
     if (stop) {
+      ipcRenderer.removeAllListeners('videoProgress')
+      ipcRenderer.removeAllListeners('videoEnd')
+
       if (store.state.media.songPub === 'sjjm') {
         const audio = document.querySelector(
           '#meetingMusic'
         ) as HTMLAudioElement
-        /* const animation = audio.animate([{ volume: 0 }], {
-        duration: 6000,
-      })
-      await animation.finished */
 
         if (!audio) return
+
+        if (!immediately) {
+          // Fade out audio
+          const MS_TO_STOP = 3 * MS_IN_SEC // Let fadeout last 3 seconds
+          const TOTAL_VOL = audio.volume
+          while (audio.volume > 0) {
+            audio.volume -= Math.min(
+              audio.volume,
+              (10 * TOTAL_VOL) / MS_TO_STOP
+            )
+            await new Promise((resolve) => setTimeout(resolve, 10))
+          }
+        }
         audio.remove()
       } else {
-        ipcRenderer.removeAllListeners('videoProgress')
-        ipcRenderer.removeAllListeners('videoEnd')
         ipcRenderer.send('hideMedia')
       }
 
@@ -1353,14 +1367,14 @@ const plugin: Plugin = (
       ? await downloadIfRequired(songs[index] as VideoFile)
       : (songs[index] as { title: string; track: string; path: string }).path
 
-    ipcRenderer.on('videoProgress', (_e, progress) => {
-      if (store.state.media.musicFadeOut && !fadeOut) {
+    if (store.state.media.musicFadeOut && !fadeOut) {
+      ipcRenderer.on('videoProgress', (_e, progress) => {
         store.commit(
           'media/setMusicFadeOut',
           $dayjs.duration(progress[1] - progress[0], 's').format('mm:ss')
         )
-      }
-    })
+      })
+    }
 
     ipcRenderer.send('showMedia', { path })
 

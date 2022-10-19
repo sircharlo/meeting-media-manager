@@ -2,6 +2,7 @@
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'
+import { MS_IN_SEC } from './../../src/renderer/constants/general'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
 import { delay } from './../helpers/generalHelpers'
 import prefs from './../mocks/prefs/prefsOld.json'
@@ -55,7 +56,7 @@ test('shuffle music starts', async () => {
 
   // Wait for stop icon to appear
   await page.waitForSelector('.fa-stop')
-  await delay(2000)
+  await delay(2 * MS_IN_SEC)
 
   // Expect time remaining to appear
   expect(await shuffleBtn.innerText()).toMatch(/\d{2}:\d{2}/g)
@@ -72,6 +73,9 @@ test('stop shuffle correctly', async () => {
 
   // Click button again
   await shuffleBtn.click()
+
+  // Wait 4 seconds for music fade out
+  await delay(4 * MS_IN_SEC)
 
   // Verify blue color
   expect((await shuffleBtn.getAttribute('class'))?.includes('info')).toBe(true)
