@@ -152,7 +152,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { extname, join } from 'upath'
-import { MeetingPrefs, ElectronStore, VideoFile } from '~/types'
+import { MeetingPrefs, ElectronStore, VideoFile, ShortJWLang } from '~/types'
 import { HUNDRED_PERCENT, NR_OF_KINGDOM_SONGS } from '~/constants/general'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default Vue.extend({
@@ -189,11 +189,33 @@ export default Vue.extend({
         (this.meeting.musicFadeOutTime as number).toString()
       )
     },
-    shuffleMusicCached() {
-      return (
-        this.$findAll(join(this.$pubPath(), '..', 'E', 'sjjm', '**', '*.mp3'))
-          .length === NR_OF_KINGDOM_SONGS
+    isSignLanguage(): boolean {
+      const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
+        ({ langcode }) => langcode === this.$getPrefs('media.lang')
       )
+
+      return !!lang?.isSignLanguage
+    },
+    shuffleMusicCached() {
+      if (this.isSignLanguage) {
+        return (
+          this.$findAll(
+            join(
+              this.$pubPath(),
+              '..',
+              this.$getPrefs('media.lang'),
+              'sjj',
+              '**',
+              '*.mp4'
+            )
+          ).length === NR_OF_KINGDOM_SONGS
+        )
+      } else {
+        return (
+          this.$findAll(join(this.$pubPath(), '..', 'E', 'sjjm', '**', '*.mp3'))
+            .length === NR_OF_KINGDOM_SONGS
+        )
+      }
     },
   },
   watch: {
@@ -274,15 +296,17 @@ export default Vue.extend({
       this.status = 'loading'
       try {
         const songs = (await this.$getMediaLinks({
-          pubSymbol: 'sjjm',
-          format: 'MP3',
-          lang: 'E',
+          pubSymbol: this.isSignLanguage ? 'sjj' : 'sjjm',
+          format: this.isSignLanguage ? 'MP4' : 'MP3',
+          lang: this.isSignLanguage ? this.$getPrefs('media.lang') : 'E',
         })) as VideoFile[]
 
         const promises: Promise<void>[] = []
 
         songs
-          .filter((item) => extname(item.url) === '.mp3')
+          .filter((item) =>
+            extname(item.url) === this.isSignLanguage ? '.mp4' : '.mp3'
+          )
           .forEach((s) => promises.push(this.$downloadIfRequired(s)))
 
         await Promise.allSettled(promises)
