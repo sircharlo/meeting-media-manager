@@ -160,7 +160,10 @@ interface CustomProps {
     fn: string,
     domain: string = 'mediaWindow'
   ) => Promise<void>
-  $shuffleMusic: (stop: boolean = false) => Promise<void>
+  $shuffleMusic: (
+    stop: boolean = false,
+    immediately: boolean = false
+  ) => Promise<void>
   $storePath: () => string | undefined
   $success: (
     message: string,

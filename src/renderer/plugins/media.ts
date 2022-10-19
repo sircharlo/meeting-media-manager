@@ -1233,7 +1233,10 @@ const plugin: Plugin = (
     increaseProgress(setProgress)
   }
 
-  async function shuffleMusic(stop: boolean = false): Promise<void> {
+  async function shuffleMusic(
+    stop: boolean = false,
+    immediately: boolean = false
+  ): Promise<void> {
     if (stop) {
       if (store.state.media.songPub === 'sjjm') {
         const audio = document.querySelector(
@@ -1242,12 +1245,17 @@ const plugin: Plugin = (
 
         if (!audio) return
 
-        // Fade out audio
-        const MS_TO_STOP = 3 * MS_IN_SEC // Let fadeout last 3 seconds
-        const TOTAL_VOL = audio.volume
-        while (audio.volume > 0) {
-          audio.volume -= Math.min(audio.volume, (10 * TOTAL_VOL) / MS_TO_STOP)
-          await new Promise((resolve) => setTimeout(resolve, 10))
+        if (!immediately) {
+          // Fade out audio
+          const MS_TO_STOP = 3 * MS_IN_SEC // Let fadeout last 3 seconds
+          const TOTAL_VOL = audio.volume
+          while (audio.volume > 0) {
+            audio.volume -= Math.min(
+              audio.volume,
+              (10 * TOTAL_VOL) / MS_TO_STOP
+            )
+            await new Promise((resolve) => setTimeout(resolve, 10))
+          }
         }
         audio.remove()
       } else {
