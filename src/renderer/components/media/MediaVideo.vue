@@ -228,20 +228,30 @@ export default Vue.extend({
     },
   },
   watch: {
-    tempClipped(val: { start: string; end: string }) {
-      if (val) {
-        this.clipped = this.tempClipped
-        this.setTime()
-      }
-    },
     playing(val: boolean) {
-      if (!val) {
+      if (val) {
+        ipcRenderer.on('videoProgress', (_e, progress) => {
+          const percentage =
+            (HUNDRED_PERCENT * MS_IN_SEC * progress[0]) / this.original.end
+          this.progress = progress.map((seconds: number) => {
+            return this.format(this.$dayjs.duration(seconds, 's'))
+          })
+          if (this.playing) this.$emit('progress', percentage)
+        })
+      } else {
         this.current = 0
         this.progress = []
         if (this.tempClipped) {
           this.resetClipped()
           this.$emit('resetClipped')
         }
+        ipcRenderer.removeAllListeners('videoProgress')
+      }
+    },
+    tempClipped(val: { start: string; end: string }) {
+      if (val) {
+        this.clipped = this.tempClipped
+        this.setTime()
       }
     },
   },
@@ -276,19 +286,6 @@ export default Vue.extend({
       })
     }
     div?.replaceChild(video, div.firstChild as ChildNode)
-
-    // Get video progress
-    ipcRenderer.on('videoProgress', (_e, progress) => {
-      const percentage =
-        (HUNDRED_PERCENT * MS_IN_SEC * progress[0]) / this.original.end
-      this.progress = progress.map((seconds: number) => {
-        return this.format(this.$dayjs.duration(seconds, 's'))
-      })
-      if (this.playing) this.$emit('progress', percentage)
-    })
-  },
-  beforeDestroy() {
-    ipcRenderer.removeAllListeners('videoProgress')
   },
   methods: {
     format(duration: Duration) {

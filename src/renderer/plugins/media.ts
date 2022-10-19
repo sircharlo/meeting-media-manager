@@ -1238,6 +1238,9 @@ const plugin: Plugin = (
     immediately: boolean = false
   ): Promise<void> {
     if (stop) {
+      ipcRenderer.removeAllListeners('videoProgress')
+      ipcRenderer.removeAllListeners('videoEnd')
+
       if (store.state.media.songPub === 'sjjm') {
         const audio = document.querySelector(
           '#meetingMusic'
@@ -1259,8 +1262,6 @@ const plugin: Plugin = (
         }
         audio.remove()
       } else {
-        ipcRenderer.removeAllListeners('videoProgress')
-        ipcRenderer.removeAllListeners('videoEnd')
         ipcRenderer.send('hideMedia')
       }
 
@@ -1366,14 +1367,14 @@ const plugin: Plugin = (
       ? await downloadIfRequired(songs[index] as VideoFile)
       : (songs[index] as { title: string; track: string; path: string }).path
 
-    ipcRenderer.on('videoProgress', (_e, progress) => {
-      if (store.state.media.musicFadeOut && !fadeOut) {
+    if (store.state.media.musicFadeOut && !fadeOut) {
+      ipcRenderer.on('videoProgress', (_e, progress) => {
         store.commit(
           'media/setMusicFadeOut',
           $dayjs.duration(progress[1] - progress[0], 's').format('mm:ss')
         )
-      }
-    })
+      })
+    }
 
     ipcRenderer.send('showMedia', { path })
 
