@@ -303,6 +303,16 @@ export default Vue.extend({
         this.$vuetify.theme.dark = themePref === 'dark'
       }
 
+      // Setup Sentry context
+      this.$sentry.setUser({
+        username: this.$getPrefs('app.congregationName') as string,
+      })
+
+      this.$sentry.setContext('prefs', {
+        ...this.$getAllPrefs(),
+        obs: this.$getPrefs('app.obs'),
+      })
+
       // Open or close the media window depending on prefs
       if (
         this.$getPrefs('media.enableMediaDisplayButton') &&
@@ -366,25 +376,14 @@ export default Vue.extend({
         }
       }
 
-      // Connect or disconnect to OBS depending on prefs
+      // Connect to OBS depending on prefs
+      this.$store.commit('obs/clear')
       if (this.$getPrefs('app.obs.enable')) {
         await this.$getScenes()
-      } else {
-        this.$store.commit('obs/clear')
       }
 
       // Regular Cleanup
       await this.cleanup()
-
-      // Setup Sentry context
-      this.$sentry.setUser({
-        username: this.$getPrefs('app.congregationName') as string,
-      })
-
-      this.$sentry.setContext('prefs', {
-        ...this.$getAllPrefs(),
-        obs: this.$getPrefs('app.obs'),
-      })
     },
     async cleanup() {
       let lastVersion = '0'

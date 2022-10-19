@@ -23,7 +23,15 @@ const plugin: Plugin = (
     const { enable, port, password, useV4 } = $getPrefs('app.obs') as ObsPrefs
     if (!enable && obs) {
       resetOBS()
-    } else if (enable && !obs) {
+    } else if (enable) {
+      if (obs) {
+        if (useV4 && obs instanceof OBSWebSocketV4) {
+          return obs
+        } else if (!useV4 && obs instanceof OBSWebSocket) {
+          return obs
+        }
+      }
+
       try {
         if (useV4) {
           obs = new OBSWebSocketV4()
