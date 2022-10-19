@@ -8,6 +8,7 @@ import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { basename, changeExt, extname, join, resolve } from 'upath'
 import { Database } from 'sql.js'
 import {
+  MS_IN_SEC,
   HUNDRED_PERCENT,
   JAN_2008,
   MAX_PREFIX_LENGTH,
@@ -1238,15 +1239,13 @@ const plugin: Plugin = (
         const audio = document.querySelector(
           '#meetingMusic'
         ) as HTMLAudioElement
-        /* const animation = audio.animate([{ volume: 0 }], {
-        duration: 6000,
-      })
-      await animation.finished */
 
         if (!audio) return
+        const MS_TO_STOP = 3 * MS_IN_SEC
+        const TOTAL_VOL = audio.volume
         while (audio.volume > 0) {
-          audio.volume -= Math.min(audio.volume, 1 / HUNDRED_PERCENT)
-          await new Promise((resolve) => setTimeout(resolve, HUNDRED_PERCENT))
+          audio.volume -= Math.min(audio.volume, (10 * TOTAL_VOL) / MS_TO_STOP)
+          await new Promise((resolve) => setTimeout(resolve, 10))
         }
         audio.remove()
       } else {
