@@ -327,7 +327,7 @@ export default Vue.extend({
       }
 
       // Check if the app is available in the current media lang
-      const langs = this.$getLocalJWLangs() as ShortJWLang[]
+      const langs = (await this.$getJWLangs()) as ShortJWLang[]
       const mediaLang = langs.find(
         (l) => l.langcode === this.$getPrefs('media.lang')
       )
