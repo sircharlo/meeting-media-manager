@@ -42,7 +42,8 @@ test('add song', async () => {
   await page.locator('button', { hasText: locale.song }).click()
 
   // Wait for songs to be loaded
-  await delay(1500)
+  const DELAY = 1500
+  await delay(DELAY)
 
   // Click song dropdown
   await page.locator('.v-select').click()
