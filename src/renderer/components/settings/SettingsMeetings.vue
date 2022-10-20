@@ -264,7 +264,7 @@ export default Vue.extend({
           this.$isShortcutAvailable(val, 'toggleMusicShuffle')
         ) {
           this.$unsetShortcut('toggleMusicShuffle')
-          this.$setShortcut(val, 'toggleMusicShuffle')
+          this.$setShortcut(val, 'toggleMusicShuffle', 'music')
         }
       },
     },
@@ -304,8 +304,9 @@ export default Vue.extend({
         const promises: Promise<void>[] = []
 
         songs
-          .filter((item) =>
-            extname(item.url) === this.isSignLanguage ? '.mp4' : '.mp3'
+          .filter(
+            (item) =>
+              extname(item.url) === (this.isSignLanguage ? '.mp4' : '.mp3')
           )
           .forEach((s) => promises.push(this.$downloadIfRequired(s)))
 
