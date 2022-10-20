@@ -3,7 +3,6 @@
 ## Todos
 
 - [ ] Test: Check if build artifacts work correctly on MacOS
-- [ ] Test: test for 3 displays
 - [X] Cong sync: Allow navigation of cong sync folder through the treeview
 - [X] Cong sync: Congregation sync
 - [X] Cong sync: Sync custom media background when congregation sync is enabled
@@ -37,6 +36,7 @@
 - [X] Test: Check if build artifacts work correctly on Linux
 - [X] Test: Check if build artifacts work correctly on Windows
 - [X] Test: Make sure light mode looks good as well
+- [X] Test: test for 3 displays
 - [X] Test: test if auto updater works correctly
 
 ## What's Changed
