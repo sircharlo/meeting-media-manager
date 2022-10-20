@@ -1,4 +1,6 @@
-# TODOS
+# Progress
+
+## Todos
 
 - [ ] Test: Check if build artifacts work correctly on MacOS
 - [ ] Test: test for 3 displays
