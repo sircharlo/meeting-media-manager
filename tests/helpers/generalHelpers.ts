@@ -4,6 +4,7 @@ import { basename, extname, join } from 'upath'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import prefs from './../mocks/prefs/prefsOld.json'
+import { MAX_BYTES_IN_FILENAME } from './../../src/renderer/constants/general'
 const { LOCAL_LANGS } = require('./../../src/renderer/constants/lang') as {
   LOCAL_LANGS: string[]
 }
@@ -101,7 +102,7 @@ export function sanitize(
 
     // Cutoff filename until path is smaller than 200 bytes
     let currentBytes = Buffer.byteLength(name, 'utf8')
-    while (currentBytes > 200) {
+    while (currentBytes > MAX_BYTES_IN_FILENAME) {
       name = basename(name, ext).slice(0, -1).trim() + ext
       currentBytes = Buffer.byteLength(name, 'utf8')
     }

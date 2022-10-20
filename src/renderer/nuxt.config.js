@@ -297,6 +297,7 @@ module.exports = {
     ci: !!process.env.CI,
     isDev,
     name: pkg.name,
+    // TODO: Remove .replace('mtdvlpr', 'sircharlo')
     repo: pkg.repository.url
       .replace('mtdvlpr', 'sircharlo')
       .replace('.git', ''),
