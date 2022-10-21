@@ -121,18 +121,23 @@ const plugin: Plugin = (
       return 'success'
     } catch (e: any) {
       store.commit('cong/clear')
+      console.debug('error:', e.message)
 
       // Return error message
       if (e.message === 'Network Error') {
         return 'host'
       } else if (
-        e.message.startsWith('Invalid response: 401') // Unauthorized
+        e.message.startsWith('Invalid response: 401') || // Unauthorized
+        e.message === 'Request failed with status code 401'
       ) {
         return 'credentials'
       } else if (
         e.message.startsWith('Invalid response: 403') || // Forbidden
+        e.message === 'Request failed with status code 403' ||
         e.message.startsWith('Invalid response: 404') || // Not Found
-        e.message.startsWith('Invalid response: 405') // Method not Allowed
+        e.message === 'Request failed with status code 404' ||
+        e.message.startsWith('Invalid response: 405') || // Method not Allowed
+        e.message === 'Request failed with status code 405'
       ) {
         return 'dir'
       } else {
