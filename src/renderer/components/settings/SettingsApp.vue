@@ -285,7 +285,7 @@ export default Vue.extend({
     'app.obs.useV4': {
       async handler() {
         if (this.obsComplete) {
-          await this.refreshOBS()
+          await this.$getScenes()
         }
       },
     },
@@ -377,7 +377,7 @@ export default Vue.extend({
     this.$emit('valid', this.valid)
 
     if (this.obsComplete) {
-      await this.refreshOBS()
+      await this.$getScenes()
     }
 
     // Validate form (for new congregations)
@@ -419,7 +419,7 @@ export default Vue.extend({
     },
     async refreshOBS() {
       if (this.obsComplete) {
-        this.$resetOBS()
+        await this.$resetOBS()
         await this.$getScenes()
       }
 

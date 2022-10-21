@@ -22,7 +22,7 @@ const plugin: Plugin = (
   async function connectOBS(): Promise<OBSWebSocket | OBSWebSocketV4 | null> {
     const { enable, port, password, useV4 } = $getPrefs('app.obs') as ObsPrefs
     if (!enable && obs) {
-      resetOBS()
+      await resetOBS()
     } else if (enable) {
       if (obs) {
         if (useV4 && obs instanceof OBSWebSocketV4) {
@@ -62,21 +62,16 @@ const plugin: Plugin = (
             $log.info('OBS Success! Connected & authenticated.')
           })
 
-          obs.on('ConnectionClosed', () => {
-            $warn('errorObs')
-            resetOBS()
-          })
-
-          obs.on('AuthenticationFailure', () => {
+          obs.on('AuthenticationFailure', async () => {
             $warn('errorObsAuth')
-            resetOBS()
+            await resetOBS()
           })
 
           obs.on('Exiting', () => {
             $log.info('Existing OBS...')
           })
 
-          obs.on('error', (e) => {
+          obs.on('error', async (e) => {
             if (e.error.code === 'NOT_CONNECTED') {
               $warn('errorObs')
             } else if (e.error.code === 'CONNECTION_ERROR') {
@@ -85,7 +80,7 @@ const plugin: Plugin = (
               $log.debug('OBS v4 onError')
               $error('errorObs', e.error)
             }
-            resetOBS()
+            await resetOBS()
           })
 
           try {
@@ -102,7 +97,7 @@ const plugin: Plugin = (
               $log.debug('OBS connect v4')
               $error('errorObs', e)
             }
-            resetOBS()
+            await resetOBS()
           }
         } else {
           obs = new OBSWebSocket()
@@ -141,13 +136,13 @@ const plugin: Plugin = (
             await getScenes()
           })
 
-          obs.on('ConnectionError', (e) => {
+          obs.on('ConnectionError', async (e) => {
             if (
               !e.stack?.includes('resetOBS') &&
               !e.stack?.includes('.disconnect')
             ) {
               $warn('errorObs')
-              resetOBS()
+              await resetOBS()
             }
           })
 
@@ -163,33 +158,34 @@ const plugin: Plugin = (
             }
             // Caused by resetOBS trying to disconnect
             else if (e.code === OBS_CONNECTION_ERROR) {
-              resetOBS()
+              await resetOBS()
               return obs
             } else {
               $log.debug('OBS connect v5')
               $error('errorObs', e)
             }
-            resetOBS()
+            await resetOBS()
           }
         }
         store.commit('obs/setConnected', !!obs)
       } catch (e: any) {
         $log.debug('Unknown OBS error')
         $error('errorObs', e)
-        resetOBS()
+        await resetOBS()
       }
     }
     return obs
   }
 
-  function resetOBS(): void {
-    if (obs && $getPrefs('app.obs.useV4')) {
-      try {
-        ;(obs as OBSWebSocketV4).disconnect()
-      } catch (e: any) {}
-    } else if (obs) {
-      ;(obs as OBSWebSocket).disconnect()?.catch(() => {})
-    }
+  async function resetOBS(): Promise<void> {
+    try {
+      if (obs && obs instanceof OBSWebSocketV4) {
+        obs.disconnect()
+      } else if (obs) {
+        await obs.disconnect()
+      }
+    } catch (e: any) {}
+
     obs = null
     store.commit('obs/clear')
     $unsetShortcuts('obs')
@@ -274,7 +270,7 @@ const plugin: Plugin = (
       if (store.state.obs.connected) {
         if (e.message === 'Not connected') {
           $warn('errorObs')
-          resetOBS()
+          await resetOBS()
         } else {
           $log.debug('setScene()')
           $error('errorObs', e)
