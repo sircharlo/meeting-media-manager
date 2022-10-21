@@ -127,17 +127,13 @@ const plugin: Plugin = (
       if (e.message === 'Network Error') {
         return 'host'
       } else if (
-        e.message.startsWith('Invalid response: 401') || // Unauthorized
-        e.message === 'Request failed with status code 401'
+        e.message.includes('401') // Unauthorized
       ) {
         return 'credentials'
       } else if (
-        e.message.startsWith('Invalid response: 403') || // Forbidden
-        e.message === 'Request failed with status code 403' ||
-        e.message.startsWith('Invalid response: 404') || // Not Found
-        e.message === 'Request failed with status code 404' ||
-        e.message.startsWith('Invalid response: 405') || // Method not Allowed
-        e.message === 'Request failed with status code 405'
+        e.message.includes('403') || // Forbidden
+        e.message.includes('404') || // Not Found
+        e.message.includes('405') // Method not Allowed
       ) {
         return 'dir'
       } else {
