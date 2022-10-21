@@ -33,6 +33,10 @@ In addition, M³ itself has been translated, by many volunteers, into 12 languag
 
 Go to the [documentation](https://sircharlo.github.io/meeting-media-manager/) for M³ to find information about installation, configuration, media presentation mode, congregation media sync, and more.
 
+## Want to contribute?
+
+We welcome contributions of all kinds! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to contribute to M³.
+
 This app is made with love and a bit of spare time.
 Enjoy!
 

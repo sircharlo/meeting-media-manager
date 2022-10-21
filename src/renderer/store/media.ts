@@ -3,10 +3,10 @@ import dayjs, { Dayjs } from 'dayjs'
 import { MediaStore, MeetingFile } from '~/types'
 
 const defaultState: MediaStore = {
-  songPub: 'sjjm',
-  ffMpeg: false,
-  musicFadeOut: '',
-  meetings: new Map(),
+  songPub: 'sjjm', // The song publication (sjj for sign language)
+  ffMpeg: false, // Whether FFmpeg has been initialized
+  musicFadeOut: '', // The fade out time for shuffle music
+  meetings: new Map(), // A map of meetings and their media
 }
 
 export const state = () => Object.assign({}, defaultState)

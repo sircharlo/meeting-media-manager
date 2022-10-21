@@ -31,7 +31,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      timer: 5,
+      timer: 5, // seconds
     }
   },
   computed: {

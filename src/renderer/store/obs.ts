@@ -7,9 +7,9 @@ interface OBSStore {
 }
 
 const defaultState: OBSStore = {
-  connected: false,
-  scenes: [],
-  currentScene: '',
+  connected: false, // Whether OBS is connected
+  scenes: [], // The available OBS scenes
+  currentScene: '', // The current scene in OBS
 }
 
 export const state = () => Object.assign({}, defaultState)

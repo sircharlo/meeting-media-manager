@@ -2,11 +2,12 @@ import { MutationTree } from 'vuex'
 import { MeetingFile, StatStore, Perf, Stats, Origin } from '~/types'
 
 const defaultState: StatStore = {
-  online: false,
-  initialLoad: true,
-  updateSuccess: true,
-  performance: new Map(),
+  online: false, // Whether the user is connected to the internet
+  initialLoad: true, // Whether the app is loading for the first time
+  updateSuccess: true, // Whether the update was successful
+  performance: new Map(), // A map of performance data about how fast a file was downloaded
   downloads: {
+    // How much data was fetched from the internet and how much was already in the cache
     jworg: {
       cache: [],
       live: [],

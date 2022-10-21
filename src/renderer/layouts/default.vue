@@ -275,7 +275,7 @@ export default Vue.extend({
         this.$router.replace(this.switchLocalePath(lang))
       }
 
-      this.$dayjs.locale((lang ?? 'en').split('-')[0])
+      this.$dayjs.locale((lang ?? 'en').split('-')[0]) // pt-pt gets converted to pt
       this.$log.debug(this.$appPath())
 
       // Set disabledHardwareAcceleration to user pref
@@ -458,8 +458,8 @@ export default Vue.extend({
     },
     convertSignLang(symbol: string) {
       return symbol
-        .replace('ase', 'en')
-        .replace('bfi', 'en')
+        .replace('ase', 'en') // American Sign Language
+        .replace('bfi', 'en') // British Sign Language
         .replace('bzs', 'pt')
         .replace('rsl', 'ru')
         .replace('gsg', 'de')

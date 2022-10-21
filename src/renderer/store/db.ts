@@ -3,7 +3,7 @@ import { MutationTree, ActionTree, GetterTree } from 'vuex'
 import { Database } from 'sql.js'
 
 interface DBStore {
-  dbs: Map<string, Map<string, Database>>
+  dbs: Map<string, Map<string, Database>> // A map of databases to extract media from jwpub files
 }
 
 const defaultState: DBStore = {

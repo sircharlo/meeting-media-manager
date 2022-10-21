@@ -2,13 +2,13 @@ import { MutationTree } from 'vuex'
 import { Notify } from '~/types'
 
 const defaultState: Notify = {
-  action: undefined,
-  type: 'info',
-  dismiss: true,
-  identifier: undefined,
-  message: '',
-  persistent: false,
-  timestamp: 0,
+  action: undefined, // A button to click
+  type: 'info', // Info, warning, error
+  dismiss: true, // Whether the user is allowed to dismiss the notification
+  identifier: undefined, // A unique identifier (usually a filename or path that triggered the notification)
+  message: '', // The message to display
+  persistent: false, // Whether the notification dismiss automatically or not
+  timestamp: 0, // The timestamp of when the notification was triggered
 }
 
 export const state = () => [] as Notify[]

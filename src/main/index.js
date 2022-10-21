@@ -412,19 +412,3 @@ if (gotTheLock) {
 } else {
   app.quit()
 }
-
-/*
-App.on(
-  'certificate-error',
-  (event, _webContents, url, _error, _cert, callback) => {
-    // Do some verification based on the URL to not allow potentially malicious certs:
-    if (url.startsWith('https://localhost')) {
-      // Hint: For more security, you may actually perform some checks against
-      // the passed certificate (parameter "cert") right here
-
-      event.preventDefault() // Stop Chromium from rejecting the certificate
-      callback(true) // Trust this certificate
-    } else callback(false) // Let Chromium do its thing
-  }
-)
-*/

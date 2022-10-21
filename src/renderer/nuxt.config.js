@@ -1,6 +1,4 @@
 /* eslint-disable nuxt/no-cjs-in-config */
-// const path = require('path')
-// const fs = require('fs')
 const resolve = require('path').resolve
 const platform = require('os').platform
 const { DefinePlugin } = require('webpack')
@@ -11,6 +9,7 @@ require('dotenv').config()
 
 const isDev = process.env.NODE_ENV !== 'production'
 
+// Only initialize Sentry if all required env vars are set
 const initSentry =
   !!process.env.SENTRY_DSN &&
   !!process.env.SENTRY_ORG &&
@@ -23,6 +22,7 @@ const webpackPlugins = [
   }),
 ]
 
+// Only upload source maps in production
 if (
   initSentry &&
   !process.env.SENTRY_DISABLE &&
@@ -33,7 +33,7 @@ if (
       release: `meeting-media-manager@${
         isDev || !process.env.CI ? 'dev' : pkg.version
       }`,
-      dist: platform().replace('32', ''),
+      dist: platform().replace('32', ''), // Remove 32 from win32
       validate: true,
       urlPrefix: '~/_nuxt/',
       include: [
@@ -50,8 +50,8 @@ if (
  */
 
 module.exports = {
-  ssr: false,
-  target: 'static',
+  ssr: false, // Server Side Rendering is not supported in combination with Electron.js
+  target: 'static', // Create static html/js/css files
   head: {
     title: 'M³',
     titleTemplate: '%s - Meeting Media Manager',
@@ -79,6 +79,7 @@ module.exports = {
     '@fortawesome/fontawesome-svg-core/styles.css',
     '~/assets/scss/main.scss',
   ],
+  // !Order is important here
   plugins: [
     // No dependencies
     '~/plugins/sentry',
@@ -151,7 +152,7 @@ module.exports = {
       // envName: server, client, modern
       presets({ envName }) {
         const envTargets = {
-          client: { browsers: ['Chrome >= 106'] },
+          client: { browsers: ['Chrome >= 106'] }, // Electron.js uses Chrome 106 (currently)
           server: { node: 'current' },
         }
         return [
@@ -176,8 +177,8 @@ module.exports = {
       config.module = {
         ...config.module,
         noParse: [
-          /node_modules\/?\\?pdfjs-dist\/?\\?build\/?\\?pdf/,
-          /node_modules\/?\\?sql\.js\/?\\?dist\/?\\?sql-wasm/,
+          /node_modules\/?\\?pdfjs-dist\/?\\?build\/?\\?pdf/, // Don't parse pdfjs-dist files
+          /node_modules\/?\\?sql\.js\/?\\?dist\/?\\?sql-wasm/, // Don't parse sql-wasm files
         ],
       }
       if (isClient) {
@@ -195,6 +196,7 @@ module.exports = {
       },
     ],
   },
+  // Make env vars available in the app through $config
   publicRuntimeConfig: {
     author: pkg.author.name,
     ci: !!process.env.CI,

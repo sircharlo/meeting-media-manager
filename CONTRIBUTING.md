@@ -22,7 +22,7 @@ In order to help maintain this application, the following information will help 
 
 ### Getting Started
 
-To get started, you first have to install Git, Node.js and VS Code (see their respective documentation for more information). Once you have installed those, you van easily install Yarn by executing the following commands:
+To get started, you first have to install Git, Node.js and VS Code (see their respective documentation for more information). Once you have installed those, you can easily install Yarn by executing the following commands:
 
 ```bash
 # Enable corepack feature of Node.js (includes yarn)
@@ -42,7 +42,7 @@ The following commands are used during the development of the application to tes
 # Install dependencies
 yarn install
 
-# Serve app with hot reload
+# Serve app with hot reload on localhost:3000
 yarn dev
 
 # Build electron application for production
@@ -76,7 +76,7 @@ The tests are written using [Playwright](https://playwright.dev/). Playwright is
 
 ### Release Procedure
 
-To release a new version of the application, you first create a draft release on GitHub. Then, you can change the [package.json](package.json) version to the desired version and commit the changes. Then, the build/release workflow will be executed and will fill the release draft with the new artifacts. After that, you can add a description of the release (features, bug fixes, etc.) and publish it.
+To release a new version of the application, you first create a draft release on GitHub. Then, you can change the [package.json](package.json) version to the desired version and commit the changes with the message `chore(release): vx.x.x` (e.g. `chore(release): v22.9.0`). Then, the build/release workflow will be executed and will fill the release draft with the new artifacts. After that, you can add a description of the release (features, bug fixes, etc.) and publish it.
 
 ### Run documentation website locally
 

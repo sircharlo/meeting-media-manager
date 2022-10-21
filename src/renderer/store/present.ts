@@ -9,11 +9,11 @@ interface PresentStore {
 }
 
 const defaultState: PresentStore = {
-  mediaScreenInit: false,
-  mediaScreenVisible: true,
-  background: 'yeartext.png',
-  screens: [],
-  shortcuts: [],
+  mediaScreenInit: false, // Whether the media screen has been initialized (is it open)
+  mediaScreenVisible: true, // Whether the media screen is visible (is it minimized or not)
+  background: '', // Either html of the yeartext (<p>...</p>) or a URL to the custom background
+  screens: [], // The available monitors
+  shortcuts: [], // The shortcuts that have been registered
 }
 
 export const state = () => Object.assign({}, defaultState)
