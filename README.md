@@ -40,7 +40,6 @@ Enjoy!
 *- COS*
 
 ---
-<!-- //TODO change mtdvlpr to sircharlo -->
-![Media Presentation Mode](https://github.com/mtdvlpr/meeting-media-manager/raw/docs/assets/img/present/standby-mode.png?raw=true)
+![Media Presentation Mode](https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/present/standby-mode.png?raw=true)
 
-![Media Sync in progress](https://github.com/mtdvlpr/meeting-media-manager/raw/docs/assets/img/main/update-folders.gif?raw=true)
+![Media Sync in progress](https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/main/update-folders.gif?raw=true)
