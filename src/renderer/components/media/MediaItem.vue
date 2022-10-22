@@ -283,7 +283,7 @@ export default Vue.extend({
         this.active = false
       }
     },
-    async active(val: boolean) {
+    active(val: boolean) {
       if (val) {
         this.current = this.$getPrefs('media.enablePp') as boolean
       } else {
@@ -293,9 +293,6 @@ export default Vue.extend({
         this.progress = 0
         this.newProgress = 0
         this.paused = false
-        if (this.scene && !this.deactivate) {
-          await this.$setScene(this.scene)
-        }
       }
     },
     showPrefix(val: boolean) {

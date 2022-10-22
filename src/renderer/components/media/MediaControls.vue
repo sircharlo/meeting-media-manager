@@ -255,14 +255,21 @@ export default Vue.extend({
     mediaVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible
     },
+    scene(): string {
+      return this.$store.state.obs.currentScene as string
+    },
   },
   watch: {
-    mediaActive(val: boolean) {
+    async mediaActive(val: boolean) {
       this.items.forEach((item) => {
         item.play = false
         item.stop = false
         item.deactivate = false
       })
+
+      if (!val && this.scene) {
+        await this.$setScene(this.scene)
+      }
 
       if (
         !val &&

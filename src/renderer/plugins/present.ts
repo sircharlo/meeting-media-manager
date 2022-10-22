@@ -70,6 +70,7 @@ const plugin: Plugin = (
   })
 
   inject('isShortcutValid', (shortcut: string) => {
+    if (!shortcut) return false
     const modifiers =
       /^(Command|Cmd|Control|Ctrl|CommandOrControl|CmdOrCtrl|Alt|Option|AltGr|Shift|Super)$/
     const keyCodes =
