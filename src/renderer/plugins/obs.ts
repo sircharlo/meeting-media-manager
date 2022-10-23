@@ -119,11 +119,6 @@ const plugin: Plugin = (
           obs.on('SceneNameChanged', ({ oldSceneName, sceneName }) => {
             const camera = $getPrefs('app.obs.cameraScene')
             const media = $getPrefs('app.obs.mediaScene')
-            const current = store.state.obs.currentScene
-
-            if (oldSceneName === current) {
-              store.commit('obs/setCurrentScene', sceneName)
-            }
 
             if (oldSceneName === camera) {
               $setPrefs('app.obs.cameraScene', sceneName)
