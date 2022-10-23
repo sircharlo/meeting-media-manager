@@ -36,16 +36,18 @@
       <v-list-item-action class="align-self-center d-flex flex-row">
         <template v-if="active">
           <icon-btn
-            v-if="!isImage && !end.startsWith('00:00:00')"
             variant="pause"
-            class="mr-2"
             :toggled="paused"
+            :is-video="isVideo"
+            tooltip="top"
             @click="togglePaused()"
-          />
+          />            
+          </v-btn>
           <icon-btn
             variant="stop"
             tooltip="top"
-            :click-twice="!isImage && !end.startsWith('00:00:00')"
+            class="ml-2"
+            :click-twice="isVideo"
             @click="stop()"
           />
         </template>
@@ -229,6 +231,9 @@ export default Vue.extend({
         (this.video.clipped.end * HUNDRED_PERCENT) / this.video.original.end
       )
     },
+    isVideo(): boolean {
+      return !this.isImage && !this.end?.startsWith('00:00:00')
+    },
     isImage(): boolean {
       return this.$isImage(this.src)
     },
@@ -360,8 +365,10 @@ export default Vue.extend({
             : this.scene
         )
       }
-      this.newProgress = this.progress
+      if (this.isVideo) {
+        this.newProgress = this.progress
       ipcRenderer.send(this.paused ? 'playVideo' : 'pauseVideo')
+      }
       this.paused = !this.paused
     },
     stop() {

@@ -89,6 +89,8 @@
   "outputFolderDateFormat": "Date format for meeting folders",
   "paragraph": "Paragraph",
   "password": "Password",
+  "pause": "Pause/resume video",
+  "pauseImg": "Hide/show image on Zoom",
   "port": "Port",
   "ppBackward": "Key combination to play previous media item",
   "ppForward": "Key combination to play next media item",

@@ -18,17 +18,26 @@
     />
     {{ timeRemaining }}
   </v-btn>
-  <v-btn
-    v-else-if="variant === 'pause'"
-    :id="variant"
-    color="warning"
-    :aria-label="variant"
-    v-bind="$attrs"
-    :class="{ 'pulse-danger': toggled }"
-    @click="$emit('click')"
-  >
-    <font-awesome-icon :icon="pauseIcon" size="xl" class="black--text" />
-  </v-btn>
+  <v-tooltip v-else-if="variant === 'pause'" v-bind="tooltipObj">
+    <template #activator="{ on, attrs }">
+      <v-btn
+        :id="variant"
+        color="warning"
+        :aria-label="variant"
+        v-bind="{ ...$attrs, ...attrs }"
+        :class="{ 'pulse-danger': toggled }"
+        v-on="on"
+        @click="$emit('click')"
+      >
+        <font-awesome-icon
+          :icon="isVideo ? pauseIcon : pauseImageIcon"
+          size="xl"
+          class="black--text"
+        />
+      </v-btn>
+    </template>
+    <span>{{ $t(isVideo ? 'pause' : 'pauseImg') }}</span>
+  </v-tooltip>
   <v-btn
     v-else-if="variant === 'toggleScreen'"
     :id="variant"
@@ -139,6 +148,8 @@ import {
   faStop,
   faPlay,
   faPause,
+  faVideo,
+  faVideoSlash,
   faDesktop,
   faBan,
   faSliders,
@@ -199,6 +210,10 @@ export default Vue.extend({
     iconColor: {
       type: String,
       default: '',
+    },
+    isVideo: {
+      type: Boolean,
+      default: false,
     },
     toggled: {
       type: Boolean,
@@ -274,6 +289,9 @@ export default Vue.extend({
   computed: {
     faStop(): IconDefinition {
       return faStop
+    },
+    pauseImageIcon(): IconDefinition {
+      return this.toggled ? faVideo : faVideoSlash
     },
     weekNr(): number {
       return parseInt((this.$route.query.week as string) ?? -1)

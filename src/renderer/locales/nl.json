@@ -89,6 +89,8 @@
   "outputFolderDateFormat": "Datum formaat voor vergadering folders",
   "paragraph": "Alinea",
   "password": "Wachtwoord",
+  "pause": "Pauzeer/hervat filmpje",
+  "pauseImg": "Toon/verberg plaatje op Zoom",
   "port": "Poort",
   "ppBackward": "Sneltoets om vorige media af te spelen",
   "ppForward": "Sneltoets om volgende media af te spelen",

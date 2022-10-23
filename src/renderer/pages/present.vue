@@ -205,13 +205,17 @@ export default Vue.extend({
     ipcRenderer.removeAllListeners('showingMedia')
     this.$unsetShortcuts('presentMode')
   },
-  mounted() {
+  async mounted() {
     this.setWindowSize()
     window.onresize = this.setWindowSize
     ipcRenderer.on('showingMedia', (_e, val) => {
       this.mediaActive = val[0]
       this.videoActive = val[1]
     })
+
+    if (this.$getPrefs('app.obs.enable')) {
+      await this.$getScenes()
+    }
 
     if (this.$store.state.obs.connected) {
       this.$setScene(this.$getPrefs('app.obs.cameraScene'))

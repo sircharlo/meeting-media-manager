@@ -5,7 +5,7 @@
     :id="safeId"
     ref="field"
     v-model="$attrs.value"
-    :type="field === 'password' && showPassword ? 'text' : field"
+    :type="field === 'password' && passwordVisible ? 'text' : field"
     :disabled="$attrs.disabled || locked"
     v-bind="{ ...style, ...$attrs }"
     :rules="rules"
@@ -16,7 +16,7 @@
       <font-awesome-icon
         :icon="passIcon"
         size="lg"
-        @click="showPassword = !showPassword"
+        @click="passwordVisible = !passwordVisible"
       />
     </template>
     <template v-else-if="locked" #append>
@@ -323,7 +323,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      showPassword: false,
+      passwordVisible: false,
       style: {
         dense: true,
         // filled: true,
@@ -339,7 +339,7 @@ export default Vue.extend({
       return faLock
     },
     passIcon(): IconDefinition {
-      return this.showPassword ? faEye : faEyeSlash
+      return this.passwordVisible ? faEyeSlash : faEye
     },
     rules() {
       const rules = (this.$attrs.rules as unknown as any[]) ?? []
