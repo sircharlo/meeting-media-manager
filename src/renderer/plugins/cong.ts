@@ -655,12 +655,9 @@ const plugin: Plugin = (
                 return [part, newMedia]
               })
             )
-            console.log(date, $clone(newParts))
             return [date, newParts]
           })
       )
-
-      console.log($clone(meetings))
 
       let total = 0
       meetings.forEach((parts) =>
