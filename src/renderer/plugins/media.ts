@@ -1107,17 +1107,17 @@ const plugin: Plugin = (
               dateObj.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
             )
           })
-          .map((meeting) => {
-            meeting[1] = new Map(
-              Array.from(meeting[1]).filter((part) => {
-                part[1] = part[1].filter(
+          .map(([date, parts]) => {
+            const newParts = new Map(
+              Array.from(parts).map(([part, media]) => {
+                const newMedia = media.filter(
                   ({ congSpecific, hidden, isLocal }) =>
                     !congSpecific && !hidden && !isLocal // Filter out cong specific media, hidden media and local media
                 )
-                return part
+                return [part, newMedia]
               })
             )
-            return meeting
+            return [date, newParts]
           })
       )
 

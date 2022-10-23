@@ -647,15 +647,20 @@ const plugin: Plugin = (
             )
           })
           .map(([date, parts]) => {
-            parts = new Map(
-              Array.from(parts).filter(([part, media]) => {
-                media = media.filter(({ congSpecific }) => congSpecific)
-                return [part, media]
+            const newParts = new Map(
+              Array.from(parts).map(([part, media]) => {
+                const newMedia = media.filter(
+                  ({ congSpecific }) => !!congSpecific
+                )
+                return [part, newMedia]
               })
             )
-            return [date, parts]
+            console.log(date, $clone(newParts))
+            return [date, newParts]
           })
       )
+
+      console.log($clone(meetings))
 
       let total = 0
       meetings.forEach((parts) =>
