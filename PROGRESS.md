@@ -67,6 +67,7 @@
 - OBS: Support for obs-websocket v5 (default is v4 for backwards compatibility, but can be changed in the settings)
 - PRESENTATION MODE: Auto scroll when using keyboard shortcuts to play media
 - PRESENTATION MODE: Auto stop shuffle music when playing videos
+- PRESENTATION MODE: Hide image only for Zoom, while still showing it in the Kingdom Hall
 - PRESENTATION MODE: Switch between full name buttons, short name buttons and dropdown for OBS scenes based on available space
 - PRESENTATION MODE: Tooltips for icon buttons
 - SETTINGS: Ability to predownload all shuffle music for offline use
