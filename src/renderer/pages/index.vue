@@ -622,6 +622,34 @@ export default Vue.extend({
         }
       }
     },
+    async syncCongMedia() {
+      if (this.congSync) {
+        try {
+          await this.$syncCongMedia(this.baseDate, this.setProgress)
+          if (this.congSyncColor === 'warning') {
+            this.congSyncColor = 'success'
+          }
+        } catch (e: any) {
+          this.congSyncColor = 'error'
+          this.$error('errorSyncCongMedia', e)
+        }
+      }
+    },
+    async syncLocalRecurringMedia() {
+      try {
+        this.recurringColor = 'warning'
+        if (
+          !this.congSync &&
+          existsSync(join(this.$mediaPath(), 'Recurring'))
+        ) {
+          await this.$syncLocalRecurringMedia(this.baseDate)
+        }
+        this.recurringColor = 'success'
+      } catch (e: any) {
+        this.$log.error(e)
+        this.recurringColor = 'error'
+      }
+    },
     async syncJWorgMedia(dryrun: boolean = false) {
       this.$store.commit('stats/startPerf', {
         func: 'syncJWorgMedia',
@@ -704,33 +732,11 @@ export default Vue.extend({
 
         // If not dryrun, download all media
         if (!dryrun) {
-          if (this.congSync) {
-            try {
-              await this.$syncCongMedia(this.baseDate, this.setProgress)
-              if (this.congSyncColor === 'warning') {
-                this.congSyncColor = 'success'
-              }
-            } catch (e: any) {
-              this.congSyncColor = 'error'
-              this.$error('errorSyncCongMedia', e)
-            }
-          }
-
-          await this.syncJWorgMedia(dryrun)
-
-          try {
-            this.recurringColor = 'warning'
-            if (
-              !this.congSync &&
-              existsSync(join(this.$mediaPath(), 'Recurring'))
-            ) {
-              await this.$syncLocalRecurringMedia(this.baseDate)
-            }
-            this.recurringColor = 'success'
-          } catch (e: any) {
-            this.$log.error(e)
-            this.recurringColor = 'error'
-          }
+          await Promise.allSettled([
+            this.syncCongMedia(),
+            this.syncLocalRecurringMedia(),
+            this.syncJWorgMedia(dryrun),
+          ])
         }
 
         await this.$convertUnusableFiles(this.$mediaPath())
