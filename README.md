@@ -1,6 +1,6 @@
 # Meeting Media Manager
 
-<img src='https://github.com/sircharlo/meeting-media-manager/raw/master/build/icon.png?raw=true' alt='The M³ Logo' style='max-height: 20vh' />
+<img src='https://github.com/sircharlo/meeting-media-manager/raw/master/build/icons/icon.png?raw=true' alt='The M³ Logo' style='max-height: 20vh' />
 
 > A Meeting Media Manager for meetings of Jehovah's Witnesses.
 
