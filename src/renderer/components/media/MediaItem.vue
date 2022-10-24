@@ -36,19 +36,21 @@
       <v-list-item-action class="align-self-center d-flex flex-row">
         <template v-if="active">
           <icon-btn
+            v-if="isVideo || scene"
             variant="pause"
             :toggled="paused"
             :is-video="isVideo"
             tooltip="top"
             @click="togglePaused()"
           />
-          <icon-btn
-            variant="stop"
-            tooltip="top"
-            class="ml-2"
-            :click-twice="isVideo"
-            @click="stop()"
-          />
+          <div class="ml-2">
+            <icon-btn
+              variant="stop"
+              tooltip="top"
+              :click-twice="isVideo"
+              @click="stop()"
+            />
+          </div>
         </template>
         <icon-btn
           v-else
