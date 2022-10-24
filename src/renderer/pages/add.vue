@@ -208,7 +208,7 @@
 import { readdirSync, existsSync, readFileSync, statSync } from 'fs-extra'
 import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import {
@@ -229,7 +229,7 @@ import {
   HUNDRED_PERCENT,
   MS_IN_SEC,
 } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   name: 'AddPage',
   data() {
     return {
@@ -445,7 +445,7 @@ export default Vue.extend({
 
           // JWPUB extract
           if (file.contents) {
-            this.$write(path, file.contents)
+            this.$write(path, file.contents as Buffer)
           }
           // Local file
           else if (file.filepath) {
@@ -454,6 +454,7 @@ export default Vue.extend({
           // External file from jw.org
           else if (file.safeName) {
             file.folder = this.date
+            // @ts-ignore
             await this.$downloadIfRequired(file, this.setProgress)
 
             // Download markers if required

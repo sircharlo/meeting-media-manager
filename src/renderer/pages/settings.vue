@@ -100,10 +100,10 @@
 </template>
 <script lang="ts">
 import { join } from 'upath'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { faHandPointRight } from '@fortawesome/free-solid-svg-icons'
 import { BYTES_IN_KIBIBYTE, MS_IN_SEC } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   name: 'SettingsPage',
   data() {
     return {

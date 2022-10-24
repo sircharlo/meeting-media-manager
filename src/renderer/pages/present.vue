@@ -70,11 +70,11 @@
 </template>
 <!-- eslint-disable no-magic-numbers -->
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
 import { faHome, IconDefinition } from '@fortawesome/free-solid-svg-icons'
-export default Vue.extend({
+export default defineComponent({
   name: 'PresentPage',
   data() {
     return {
@@ -192,7 +192,7 @@ export default Vue.extend({
           this.$unsetShortcut('toggleMusicShuffle')
         } else {
           await this.$setShortcut(
-            this.$getPrefs('meeting.shuffleShortcut'),
+            this.$getPrefs('meeting.shuffleShortcut') as string,
             'toggleMusicShuffle',
             'music'
           )
@@ -218,7 +218,7 @@ export default Vue.extend({
     }
 
     if (this.$store.state.obs.connected) {
-      this.$setScene(this.$getPrefs('app.obs.cameraScene'))
+      this.$setScene(this.$getPrefs('app.obs.cameraScene') as string)
     }
 
     if (this.$getPrefs('media.enablePp')) {
