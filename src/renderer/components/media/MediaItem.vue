@@ -41,8 +41,7 @@
             :is-video="isVideo"
             tooltip="top"
             @click="togglePaused()"
-          />            
-          </v-btn>
+          />
           <icon-btn
             variant="stop"
             tooltip="top"
@@ -367,7 +366,7 @@ export default Vue.extend({
       }
       if (this.isVideo) {
         this.newProgress = this.progress
-      ipcRenderer.send(this.paused ? 'playVideo' : 'pauseVideo')
+        ipcRenderer.send(this.paused ? 'playVideo' : 'pauseVideo')
       }
       this.paused = !this.paused
     },

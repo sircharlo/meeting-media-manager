@@ -63,7 +63,12 @@ export default Vue.extend({
     return {
       change: false,
       loading: true,
-      forcable: [] as { key: string; value: any; forced: boolean }[],
+      forcable: [] as {
+        key: string
+        value: any
+        forced: boolean
+        description: string
+      }[],
     }
   },
   computed: {

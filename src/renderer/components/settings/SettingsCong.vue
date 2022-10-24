@@ -209,7 +209,7 @@ export default Vue.extend({
       await this.$updateContent()
       this.$updateContentsTree()
     },
-    setHost(host: CongPrefs) {
+    setHost(host: Host) {
       this.cong.server = host.server
       this.cong.port = host.port
       this.cong.dir = host.dir
