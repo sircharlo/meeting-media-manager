@@ -161,7 +161,7 @@
             :new-files="files"
             :prefix="prefix"
             :media="media"
-            :set-progess="setProgress"
+            :set-progress="setProgress"
             @refresh="getExistingMedia()"
           />
         </template>
@@ -642,7 +642,7 @@ export default Vue.extend({
           jwMedia.push(...media)
         }
 
-        // If jw media is already dowloaded, set isLocal of jw media to true, else add local file to list
+        // If jw media is already downloaded, set isLocal of jw media to true, else add local file to list
         const path = join(this.$mediaPath(), this.date)
         if (existsSync(path)) {
           readdirSync(path).forEach((filename) => {

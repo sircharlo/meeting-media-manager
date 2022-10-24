@@ -510,7 +510,7 @@ export default Vue.extend({
       M: Romanian
       R: Armenian (West)
       S: Spanish
-      T: Portugese (Brazil)
+      T: Portuguese (Brazil)
       U: Russian
       X: German
       */

@@ -4,13 +4,13 @@ import sqljs, { Database } from 'sql.js'
 
 const plugin: Plugin = ({ store, $log, $config }, inject) => {
   function executeQuery(db: Database, query: string) {
-    const vals = db.exec(query)[0]
+    const result = db.exec(query)[0]
     const valObj: any[] = []
-    if (vals) {
-      for (let v = 0; v < vals.values.length; v++) {
+    if (result) {
+      for (let v = 0; v < result.values.length; v++) {
         valObj[v] = {}
-        for (let c = 0; c < vals.columns.length; c++) {
-          valObj[v][vals.columns[c]] = vals.values[v][c]
+        for (let c = 0; c < result.columns.length; c++) {
+          valObj[v][result.columns[c]] = result.values[v][c]
         }
       }
     }

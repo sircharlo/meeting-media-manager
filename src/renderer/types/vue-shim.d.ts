@@ -61,7 +61,7 @@ interface CustomProps {
   $getDbFromJWPUB: (
     pub?: string,
     issue?: string,
-    setProgess?: Function,
+    setProgress?: Function,
     localPath: string = ''
   ) => Promise<Database | null>
   $getDocumentMultiMedia: (

@@ -284,10 +284,10 @@ const plugin: Plugin = (
         return [xMax, Math.round((xMax * y) / x)]
       }
     } else if (xMax) {
-      // Width given, height automagically selected to preserve aspect ratio.
+      // Width given, height automatically selected to preserve aspect ratio.
       return [xMax, Math.round((xMax * y) / x)]
     } else if (yMax) {
-      // Height given, width automagically selected to preserve aspect ratio.
+      // Height given, width automatically selected to preserve aspect ratio.
       return [Math.round((yMax * x) / y), yMax]
     } else {
       throw new Error('No maximum values given.')

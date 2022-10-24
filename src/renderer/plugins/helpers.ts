@@ -17,7 +17,7 @@ const plugin: Plugin = ({ $getPrefs, i18n }, inject) => {
       case 'file':
         return (
           value
-            // Common seperators
+            // Common separators
             .replace(/ *[—?;:|.!?] */g, ' - ')
             // Breaking space
             .replace(/\u00A0\t/g, ' ')
