@@ -38,10 +38,8 @@ search.onkeyup = () => {
     const links = category.querySelectorAll('ul > li')
 
     links.forEach((link) => {
-      const id = link
-        .querySelector('a')
-        .getAttribute('href')
-        .substring(link.getAttribute('href').indexOf('#') + 1)
+      const href = link.querySelector('a').getAttribute('href')
+      const id = href.substring(href.indexOf('#') + 1)
       const header = document.getElementById(id)
       const article = header.closest('article')
       const body = article.querySelector('.body')
