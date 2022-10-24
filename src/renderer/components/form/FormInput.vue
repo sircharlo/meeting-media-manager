@@ -345,6 +345,9 @@ export default defineComponent({
       const rules = (this.$attrs.rules as unknown as any[]) ?? []
       if (this.required) {
         rules.push((v: any) => {
+          if (typeof v === 'string') {
+            return !!v.trim() || this.$t('fieldRequired')
+          }
           return !!v || this.$t('fieldRequired')
         })
       }
