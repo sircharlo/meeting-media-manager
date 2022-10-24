@@ -45,7 +45,7 @@
   "resolutions": {
     "@types/node": "16.11.56",
     "chokidar": "3.5.3",
-    "core-js": "3.25.5",
+    "core-js": "3.26.0",
     "vue": "2.7.13",
     "vue-server-renderer": "2.7.13",
     "vue-template-compiler": "2.7.13"
@@ -81,7 +81,7 @@
     "adm-zip": "^0.5.9",
     "chokidar": "3.5.3",
     "consola": "^2.15.3",
-    "core-js": "3.25.5",
+    "core-js": "3.26.0",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.7",
     "deepmerge": "^4.2.2",

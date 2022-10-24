@@ -5849,25 +5849,25 @@ __metadata:
   linkType: hard
 
 "core-js-compat@npm:^3.12.1, core-js-compat@npm:^3.25.1":
-  version: 3.25.5
-  resolution: "core-js-compat@npm:3.25.5"
+  version: 3.26.0
+  resolution: "core-js-compat@npm:3.26.0"
   dependencies:
     browserslist: ^4.21.4
-  checksum: 30686b750d675b685426ee25e41e30b83aa05ff7b79def94b457529d05c1ad123cd4d0b70d9162b077a15dc9f6f177ee997d846d0a3324176dd3c504e917309c
+  checksum: 120780ec33d441e476810abac9bf57199c2083006b179dc23d0ab0cfea096eff2a2fc3e9cb315d245735df661cfa4b76a8b8c37f5056fd02428a3cd2ea1d9f36
   languageName: node
   linkType: hard
 
 "core-js-pure@npm:^3.25.1":
-  version: 3.25.5
-  resolution: "core-js-pure@npm:3.25.5"
-  checksum: e48799a8ab28f00ef3db18377142ff2c578574ab2b18ebddde6cbf12823e0181a57c80e3caa6046ce2a2e439d603a252be767583ddc54248e3d1060bc5012127
+  version: 3.26.0
+  resolution: "core-js-pure@npm:3.26.0"
+  checksum: bbf5fa65cf3368a25f9d9cc525863acc8082fa3797efc8dc514f85d7f4aa870f4999b68863f3c7b96ed0b062add261a448758e6d337626c2535ad89ee8481a92
   languageName: node
   linkType: hard
 
-"core-js@npm:3.25.5":
-  version: 3.25.5
-  resolution: "core-js@npm:3.25.5"
-  checksum: 208b308c49bc022f90d4349d4c99802a73c9d55053976b3c529f10014c1e37845926defad8c519f2c7f71ea0acf18d2b323ab6aaee34dc85b4c4b3ced0623f3f
+"core-js@npm:3.26.0":
+  version: 3.26.0
+  resolution: "core-js@npm:3.26.0"
+  checksum: 0149eb9d3909fde9c17626af3a6e625c326e8598d0bb5e6c5b48a18e5fcd4eaf48d4964d873667d8148542ff590fb98eb3f93618da114ca54999d6bc0349734b
   languageName: node
   linkType: hard
 
@@ -10844,7 +10844,7 @@ __metadata:
     adm-zip: ^0.5.9
     chokidar: 3.5.3
     consola: ^2.15.3
-    core-js: 3.25.5
+    core-js: 3.26.0
     cross-env: ^7.0.3
     css-loader: ^5.2.7
     deepmerge: ^4.2.2
@@ -16050,11 +16050,11 @@ __metadata:
   linkType: hard
 
 "uglify-js@npm:^3.5.1":
-  version: 3.17.3
-  resolution: "uglify-js@npm:3.17.3"
+  version: 3.17.4
+  resolution: "uglify-js@npm:3.17.4"
   bin:
     uglifyjs: bin/uglifyjs
-  checksum: 2650b2e0385fe6bf68bc0b7746028fd004bbe839447c28a59f8a9e458187e897a5057900cb715b3be4cf7cf3f1d10217198210c5c23c0bffcb20feca2de5bb17
+  checksum: 7b3897df38b6fc7d7d9f4dcd658599d81aa2b1fb0d074829dd4e5290f7318dbca1f4af2f45acb833b95b1fe0ed4698662ab61b87e94328eb4c0a0d3435baf924
   languageName: node
   linkType: hard
 
