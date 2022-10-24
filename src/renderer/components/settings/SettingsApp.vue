@@ -242,6 +242,9 @@ export default defineComponent({
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
     },
+    forcedPrefs(): ElectronStore {
+      return this.$store.state.cong.prefs as ElectronStore
+    },
     cameraScenes(): string[] {
       return this.scenes.filter((scene) => scene !== this.app.obs.mediaScene)
     },
@@ -261,6 +264,10 @@ export default defineComponent({
         this.$setPrefs('app', val)
       },
       deep: true,
+    },
+    forcedPrefs() {
+      Object.assign(this.app, this.$getPrefs('app'))
+      this.oldName = this.app.congregationName
     },
     'app.theme': {
       async handler(val: 'light' | 'dark' | 'system') {

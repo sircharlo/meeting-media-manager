@@ -246,6 +246,9 @@ export default defineComponent({
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
     },
+    forcedPrefs(): ElectronStore {
+      return this.$store.state.cong.prefs as ElectronStore
+    },
     resolutions(): { label: Res; value: Res }[] {
       return resolutions.map((val) => {
         return {
@@ -277,6 +280,9 @@ export default defineComponent({
         this.$setPrefs('media', val)
       },
       deep: true,
+    },
+    forcedPrefs() {
+      Object.assign(this.media, this.$getPrefs('media'))
     },
     'media.lang': {
       async handler() {

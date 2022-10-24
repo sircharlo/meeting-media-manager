@@ -165,6 +165,9 @@ export default defineComponent({
     online() {
       return this.$store.state.stats.online
     },
+    forcedPrefs(): ElectronStore {
+      return this.$store.state.cong.prefs as ElectronStore
+    },
     localeDays() {
       return this.$dayjs.weekdaysMin(true).map((day, i) => {
         return {
@@ -239,6 +242,9 @@ export default defineComponent({
         )
       },
       deep: true,
+    },
+    forcedPrefs() {
+      Object.assign(this.meeting, this.$getPrefs('meeting'))
     },
     'meeting.enableMusicButton': {
       // Set or unset the music shuffle shortcut
