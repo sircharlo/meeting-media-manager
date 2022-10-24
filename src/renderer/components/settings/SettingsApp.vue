@@ -192,7 +192,7 @@
 </template>
 <script lang="ts">
 import { platform } from 'os'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
@@ -209,7 +209,7 @@ const dateFormats = [
   'YYYY-MM-DD - dddd',
 ] as DateFormat[]
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
-export default Vue.extend({
+export default defineComponent({
   data() {
     return {
       valid: true,
@@ -242,6 +242,9 @@ export default Vue.extend({
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
     },
+    forcedPrefs(): ElectronStore {
+      return this.$store.state.cong.prefs as ElectronStore
+    },
     cameraScenes(): string[] {
       return this.scenes.filter((scene) => scene !== this.app.obs.mediaScene)
     },
@@ -262,6 +265,10 @@ export default Vue.extend({
       },
       deep: true,
     },
+    forcedPrefs() {
+      Object.assign(this.app, this.$getPrefs('app'))
+      this.oldName = this.app.congregationName
+    },
     'app.theme': {
       async handler(val: 'light' | 'dark' | 'system') {
         ipcRenderer.send('setTheme', val)
@@ -277,6 +284,7 @@ export default Vue.extend({
         if (this.obsComplete) {
           await this.$getScenes()
           if (this.$refs.appForm) {
+            // @ts-ignore
             this.$refs.appForm.validate()
           }
         }
@@ -324,7 +332,9 @@ export default Vue.extend({
       handler(val: string) {
         const badCharacters = val.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g)
         if (badCharacters) {
-          this.$warn('errorBadOutputPath', badCharacters.join(' '))
+          this.$warn('errorBadOutputPath', {
+            identifier: badCharacters.join(' '),
+          })
           this.app.localOutputPath = null
         }
       },
@@ -382,6 +392,7 @@ export default Vue.extend({
 
     // Validate form (for new congregations)
     if (this.$refs.appForm) {
+      // @ts-ignore
       this.$refs.appForm.validate()
     }
   },
@@ -424,6 +435,7 @@ export default Vue.extend({
       }
 
       if (this.$refs.appForm) {
+        // @ts-ignore
         this.$refs.appForm.validate()
       }
     },

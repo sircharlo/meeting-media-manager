@@ -106,12 +106,7 @@
         placeholder="e.g. Alt+Z"
         :label="$t('mediaWinShortcut')"
         :required="media.enableMediaDisplayButton"
-        :rules="[
-          (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
-          (v) =>
-            $isShortcutAvailable(v, 'toggleMediaWindow') ||
-            $t('fieldShortcutTaken'),
-        ]"
+        :rules="getShortcutRules('toggleMediaWindow')"
       />
       <form-input
         id="media.presentShortcut"
@@ -120,12 +115,7 @@
         placeholder="e.g. Alt+D"
         :label="$t('presentShortcut')"
         :required="media.enableMediaDisplayButton"
-        :rules="[
-          (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
-          (v) =>
-            $isShortcutAvailable(v, 'openPresentMode') ||
-            $t('fieldShortcutTaken'),
-        ]"
+        :rules="getShortcutRules('openPresentMode')"
       />
       <form-input
         v-if="isWindows"
@@ -157,12 +147,7 @@
           placeholder="e.g. PageDown / Alt+F / Alt+N"
           :label="$t('ppForward')"
           :required="media.enablePp"
-          :rules="[
-            (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
-            (v) =>
-              $isShortcutAvailable(v, 'nextMediaItem') ||
-              $t('fieldShortcutTaken'),
-          ]"
+          :rules="getShortcutRules('nextMediaItem')"
         />
         <form-input
           id="media.ppBackward"
@@ -171,12 +156,7 @@
           :locked="$isLocked('media.ppBackward')"
           :label="$t('ppBackward')"
           :required="media.enablePp"
-          :rules="[
-            (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
-            (v) =>
-              $isShortcutAvailable(v, 'previousMediaItem') ||
-              $t('fieldShortcutTaken'),
-          ]"
+          :rules="getShortcutRules('previousMediaItem')"
         />
       </template>
     </template>
@@ -226,7 +206,7 @@
 </template>
 <script lang="ts">
 import { platform } from 'os'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'
 // eslint-disable-next-line import/named
@@ -238,7 +218,7 @@ import { Res } from '~/types/prefs'
 import { NOT_FOUND } from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
-export default Vue.extend({
+export default defineComponent({
   data() {
     return {
       bg: '',
@@ -265,6 +245,9 @@ export default Vue.extend({
     },
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
+    },
+    forcedPrefs(): ElectronStore {
+      return this.$store.state.cong.prefs as ElectronStore
     },
     resolutions(): { label: Res; value: Res }[] {
       return resolutions.map((val) => {
@@ -297,6 +280,9 @@ export default Vue.extend({
         this.$setPrefs('media', val)
       },
       deep: true,
+    },
+    forcedPrefs() {
+      Object.assign(this.media, this.$getPrefs('media'))
     },
     'media.lang': {
       async handler() {
@@ -389,10 +375,19 @@ export default Vue.extend({
     this.$emit('valid', this.valid)
 
     if (this.$refs.mediaForm) {
+      // @ts-ignore
       this.$refs.mediaForm.validate()
     }
   },
   methods: {
+    getShortcutRules(fn: string) {
+      return [
+        (v: string) =>
+          this.$isShortcutValid(v) || this.$t('fieldShortcutInvalid'),
+        (v: string) =>
+          this.$isShortcutAvailable(v, fn) || this.$t('fieldShortcutTaken'),
+      ]
+    },
     bgFileName(): string {
       return `custom-background-image-${this.$getPrefs('app.congregationName')}`
     },

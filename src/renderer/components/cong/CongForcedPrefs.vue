@@ -53,17 +53,22 @@
   </v-card>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { join } from 'upath'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 const { FORCABLE } = require('~/constants/prefs') as { FORCABLE: string[] }
-export default Vue.extend({
+export default defineComponent({
   data() {
     return {
       change: false,
       loading: true,
-      forcable: [] as { key: string; value: any; forced: boolean }[],
+      forcable: [] as {
+        key: string
+        value: any
+        forced: boolean
+        description: string
+      }[],
     }
   },
   computed: {

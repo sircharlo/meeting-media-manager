@@ -97,7 +97,7 @@
 import { pathToFileURL } from 'url'
 import { Duration } from 'dayjs/plugin/duration'
 import { basename } from 'upath'
-import Vue, { PropOptions } from 'vue'
+import { defineComponent, PropOptions } from 'vue'
 import { ipcRenderer } from 'electron'
 import {
   faBackwardStep,
@@ -112,7 +112,7 @@ import {
   MS_IN_SEC,
   VIDEO_ICON,
 } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   props: {
     src: {
       type: String,
@@ -248,9 +248,9 @@ export default Vue.extend({
         ipcRenderer.removeAllListeners('videoProgress')
       }
     },
-    tempClipped(val: { start: string; end: string }) {
+    tempClipped(val: { start: string; end: string }): void {
       if (val) {
-        this.clipped = this.tempClipped
+        this.clipped = val
         this.setTime()
       }
     },

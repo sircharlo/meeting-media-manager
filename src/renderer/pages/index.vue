@@ -206,7 +206,7 @@
 </template>
 <script lang="ts">
 import { fileURLToPath, pathToFileURL } from 'url'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { Dayjs } from 'dayjs'
 import { basename, join } from 'upath'
 import { ipcRenderer } from 'electron'
@@ -223,7 +223,7 @@ import { existsSync } from 'fs-extra'
 import { ShortJWLang } from '~/types'
 import { DAYS_IN_WEEK, HUNDRED_PERCENT, MS_IN_SEC } from '~/constants/general'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'HomePage',
   filters: {
     icon(action: string) {
@@ -299,7 +299,7 @@ export default Vue.extend({
       return !!this.$store.state.cong.client
     },
     weekParam(): number {
-      return parseInt(this.$route.query.week ?? -1)
+      return parseInt((this.$route.query.week as string) ?? -1)
     },
     isDark() {
       return this.$vuetify.theme.dark
@@ -410,7 +410,7 @@ export default Vue.extend({
         this.$router.replace({
           query: {
             ...this.$route.query,
-            week: val,
+            week: val.toString(),
           },
         })
       }
@@ -429,8 +429,8 @@ export default Vue.extend({
       })
     }
     if (!this.$getPrefs('meeting.specialCong')) {
-      this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
-      this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
+      this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'secondary')
+      this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'secondary')
     }
 
     // Get all congregations
@@ -492,11 +492,19 @@ export default Vue.extend({
       }
       if (!this.$getPrefs('meeting.specialCong')) {
         if (this.currentWeek === this.$dayjs().isoWeek()) {
-          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'secondary')
-          this.setDayColor(this.$getPrefs('meeting.weDay'), 'secondary')
+          this.setDayColor(
+            this.$getPrefs('meeting.mwDay') as number,
+            'secondary'
+          )
+          this.setDayColor(
+            this.$getPrefs('meeting.weDay') as number,
+            'secondary'
+          )
         } else {
-          this.dayColors[this.$getPrefs('meeting.mwDay')] = 'secondary'
-          this.dayColors[this.$getPrefs('meeting.weDay')] = 'secondary'
+          this.dayColors[this.$getPrefs('meeting.mwDay') as number] =
+            'secondary'
+          this.dayColors[this.$getPrefs('meeting.weDay') as number] =
+            'secondary'
         }
       }
     },
@@ -542,7 +550,7 @@ export default Vue.extend({
       console.debug('Create new cong via select')
       this.$router.push({
         path: this.localePath('/settings'),
-        query: { cong: id, new: true },
+        query: { cong: id, new: 'true' },
       })
     },
     changeCong(path: string) {
@@ -590,7 +598,7 @@ export default Vue.extend({
     },
     async getMwMedia(mwDay: Dayjs, filter: string = 'all') {
       if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {
-        this.setDayColor(this.$getPrefs('meeting.mwDay'), 'warning')
+        this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'warning')
         try {
           await this.$getMwMedia(
             mwDay.format(
@@ -598,16 +606,16 @@ export default Vue.extend({
             ),
             this.setProgress
           )
-          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'success')
+          this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'success')
         } catch (e: any) {
           this.$error('errorGetMwMedia', e)
-          this.setDayColor(this.$getPrefs('meeting.mwDay'), 'error')
+          this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'error')
         }
       }
     },
     async getWeMedia(weDay: Dayjs, filter: string = 'all') {
       if (filter !== 'mw' && this.now.isSameOrBefore(weDay)) {
-        this.setDayColor(this.$getPrefs('meeting.weDay'), 'warning')
+        this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'warning')
         try {
           await this.$getWeMedia(
             weDay.format(
@@ -615,10 +623,10 @@ export default Vue.extend({
             ),
             this.setProgress
           )
-          this.setDayColor(this.$getPrefs('meeting.weDay'), 'success')
+          this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'success')
         } catch (e: any) {
           this.$error('errorGetWeMedia', e)
-          this.setDayColor(this.$getPrefs('meeting.weDay'), 'error')
+          this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'error')
         }
       }
     },
@@ -677,8 +685,14 @@ export default Vue.extend({
         start: performance.now(),
       })
       try {
-        const mwDay = this.baseDate.add(this.$getPrefs('meeting.mwDay'), 'days')
-        const weDay = this.baseDate.add(this.$getPrefs('meeting.weDay'), 'days')
+        const mwDay = this.baseDate.add(
+          this.$getPrefs('meeting.mwDay') as number,
+          'days'
+        )
+        const weDay = this.baseDate.add(
+          this.$getPrefs('meeting.weDay') as number,
+          'days'
+        )
 
         // Remove old and invalid date directories
         if (!dryrun) {
@@ -689,7 +703,7 @@ export default Vue.extend({
             }).filter((dir: string) => {
               const date = this.$dayjs(
                 basename(dir),
-                this.$getPrefs('app.outputFolderDateFormat')
+                this.$getPrefs('app.outputFolderDateFormat') as string
               ) as Dayjs
               return !date.isValid() || date.isBefore(this.now)
             })

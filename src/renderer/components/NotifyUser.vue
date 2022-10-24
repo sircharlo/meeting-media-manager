@@ -58,7 +58,7 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import {
   faInfoCircle,
   faExclamationCircle,
@@ -66,7 +66,7 @@ import {
   faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { Notify, NotifyAction } from '~/types'
-export default Vue.extend({
+export default defineComponent({
   filters: {
     iconColor(type: string) {
       switch (type) {

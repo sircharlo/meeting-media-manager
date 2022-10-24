@@ -369,7 +369,6 @@ const plugin: Plugin = (
             }
           }
 
-          store.commit('cong/setPrefs', JSON.parse(JSON.stringify(prefs)))
           if (!prefs.app) prefs.app = {}
           prefs.app.obs = Object.assign(
             $getPrefs('app.obs') as ObsPrefs,
@@ -392,6 +391,7 @@ const plugin: Plugin = (
           }
 
           $setAllPrefs(newPrefs)
+          store.commit('cong/setPrefs', JSON.parse(JSON.stringify(prefs)))
         }
       } catch (e: any) {
         $error('errorForcedSettingsEnforce', e)

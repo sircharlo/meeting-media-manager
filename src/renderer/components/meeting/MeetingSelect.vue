@@ -35,8 +35,8 @@
 </template>
 <script lang="ts">
 import { join, basename } from 'upath'
-import Vue from 'vue'
-export default Vue.extend({
+import { defineComponent } from 'vue'
+export default defineComponent({
   props: {
     firstChoice: {
       type: Boolean,
@@ -53,7 +53,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    today() {
+    today(): string {
       return this.$dayjs().format(
         this.$getPrefs('app.outputFolderDateFormat') as string
       )

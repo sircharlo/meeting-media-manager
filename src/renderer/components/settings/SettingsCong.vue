@@ -95,13 +95,13 @@
   </v-form>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { faCog, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { CongFile, CongPrefs, ElectronStore, Host } from '~/types'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 const { HOSTS } = require('~/constants/cong') as { HOSTS: Host[] }
-export default Vue.extend({
+export default defineComponent({
   data() {
     return {
       setPrefs: false,
@@ -161,6 +161,7 @@ export default Vue.extend({
     this.$emit('valid', this.valid)
 
     if (this.$refs.congForm) {
+      // @ts-ignore
       this.$refs.congForm.validate()
     }
 
@@ -209,7 +210,7 @@ export default Vue.extend({
       await this.$updateContent()
       this.$updateContentsTree()
     },
-    setHost(host: CongPrefs) {
+    setHost(host: Host) {
       this.cong.server = host.server
       this.cong.port = host.port
       this.cong.dir = host.dir

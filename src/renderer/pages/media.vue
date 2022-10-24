@@ -11,7 +11,7 @@
 </template>
 <script lang="ts">
 import { pathToFileURL } from 'url'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 // eslint-disable-next-line import/named
 import { readFileSync, existsSync } from 'fs-extra'
 import { join, basename } from 'upath'
@@ -19,7 +19,7 @@ import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
 import { HUNDRED_PERCENT } from '~/constants/general'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'MediaPage',
   layout: 'media',
   data() {

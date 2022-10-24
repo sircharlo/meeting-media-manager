@@ -10,9 +10,9 @@
   </v-container>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { NOT_FOUND } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   name: 'ErrorPage',
   props: {
     error: {

@@ -142,7 +142,7 @@
   </v-btn>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { Dayjs } from 'dayjs'
 import {
   faStop,
@@ -177,7 +177,7 @@ interface Styles {
   [key: string]: Style
 }
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     variant: {
       type: String,

@@ -50,6 +50,7 @@ export interface LocalFile {
   filename?: string
   filepath?: string
   folder?: string
+  hidden?: boolean
   isLocal?: boolean
   recurring?: boolean
   safeName: string
