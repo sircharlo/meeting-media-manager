@@ -46,6 +46,7 @@
     "@types/node": "16.11.56",
     "chokidar": "3.5.3",
     "core-js": "3.26.0",
+    "sass": "1.55.0",
     "vue": "2.7.13",
     "vue-server-renderer": "2.7.13",
     "vue-template-compiler": "2.7.13"
@@ -110,7 +111,6 @@
     "lodash.clonedeep": "^4.5.0",
     "minify-css-string": "^1.0.0",
     "node-gyp": "^9.3.0",
-    "node-sass": "^6.0.1",
     "nuxt": "^2.15.8",
     "nuxt-webfontloader": "^1.1.0",
     "obs-websocket-js": "^4.0.3",
@@ -118,6 +118,7 @@
     "pdfjs-dist": "^2.16.105",
     "playwright": "^1.27.1",
     "prettier": "^2.7.1",
+    "sass": "1.55.0",
     "sass-loader": "^10.3.1",
     "sql.js": "^1.8.0",
     "ts-loader": "^8.4.0",

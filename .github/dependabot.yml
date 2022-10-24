@@ -21,8 +21,6 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: 'eslint-webpack-plugin'
         update-types: ['version-update:semver-major']
-      - dependency-name: 'node-sass'
-        update-types: ['version-update:semver-major']
       - dependency-name: 'obs-websocket-js'
         update-types: ['version-update:semver-major']
       - dependency-name: 'sass-loader'
