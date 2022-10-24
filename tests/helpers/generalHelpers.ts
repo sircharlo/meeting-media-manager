@@ -55,7 +55,7 @@ export function strip(value: string, type: string = 'file') {
     case 'file':
       return (
         value
-          // Common seperators
+          // Common separators
           .replace(/ *[—?;:|.!?] */g, ' - ')
           // Breaking space
           .replace(/\u00A0/g, ' ')

@@ -33,7 +33,7 @@ test('render the home page correctly', async () => {
   expect(title).toBe('Home - Meeting Media Manager')
 })
 
-test('fetch is successfull', async () => {
+test('fetch is successful', async () => {
   test.slow()
 
   // Click on fetch button
