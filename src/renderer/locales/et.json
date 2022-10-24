@@ -11,6 +11,7 @@
   "delete": "Kustuta",
   "disableHardwareAcceleration": "Keela riistvaraline kiirendus <em>(Märkus. Lubage see seade ainult siis, kui teil on meediumiesitlusega probleeme. Selle seade muutmine põhjustab M³-i taaskäivitamise.)</em>",
   "dontForgetToGetMedia": "Ärge unustage uuendada koguduse koosolekutel meedia esitlemiseks kasutatava arvuti meedia kaustu!",
+  "enableMediaDisplayButton": "Esita meediat teisel monitoril või eraldi aknas",
   "enableMusicButton": "Luba nupp kuningriigi laulude juhuesituses esitamiseks",
   "enableObs": "Luba OBS Studio ühilduvusrežiim <em>(vajab obs-websocket)</em>",
   "enableVlcPlaylistCreation": "Looge <em>VLC-ga</em> kasutamiseks esitusloendeid",
