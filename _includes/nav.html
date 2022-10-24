@@ -1,5 +1,5 @@
 {% assign posts=site.posts | where:"lang", page.lang %}
-<h1><a href="{{page.lang}}/#content" target="_self"><img src="{{site.github}}/blob/master/build/icon.png?raw=true" alt="M³" style="max-height: 4rem;" /></a>M³ docs</h1>
+<h1><a href="{{page.lang}}/#content" target="_self"><img src="{{site.github}}/blob/master/build/icons/icon.png?raw=true" alt="M³" style="max-height: 4rem;" /></a>M³ docs</h1>
 <ul id='links'>
   <input id="search" type="search" placeholder="Filter by keyword" />
   <li><a href="{{page.lang}}/#content" target="_self">Home</a></li>{% for post in posts %}{% if post.tag == null %}
