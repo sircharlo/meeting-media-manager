@@ -4,7 +4,6 @@ about: Create a report to help us improve
 title: "[BUG]"
 labels: bug
 assignees: sircharlo
-
 ---
 
 **Describe the bug**
@@ -12,6 +11,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Do '....'
@@ -27,8 +27,9 @@ Please include the contents of the console tab of the inspector view. To open th
 If possible, add screenshots to help explain your problem.
 
 **System specs (please complete the following information):**
- - OS: [e.g. Windows 10]
- - App Version [e.g. 0.8.10]
+
+- OS: [e.g. Windows 10]
+- App Version [e.g. 22.8.1]
 
 **Additional context**
 Add any other context about the problem here.

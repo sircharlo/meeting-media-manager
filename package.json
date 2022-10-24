@@ -1,103 +1,141 @@
 {
   "name": "meeting-media-manager",
-  "version": "22.8.1",
+  "version": "22.9.0-beta.3",
   "description": "Meeting Media Manager",
-  "main": "main.js",
+  "keywords": [
+    "M³",
+    "jw",
+    "m3",
+    "meeting media manager"
+  ],
+  "homepage": "https://sircharlo.github.io/meeting-media-manager/",
+  "bugs": "https://github.com/sircharlo/meeting-media-manager/issues",
+  "license": "ISC",
+  "author": {
+    "name": "sircharlo",
+    "email": "sircharlo@gmail.com",
+    "url": "https://github.com/sircharlo/"
+  },
+  "main": "./dist/main/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sircharlo/meeting-media-manager.git"
-  },
-  "dependencies": {
-    "@electron/remote": "^2.0.8",
-    "@fortawesome/fontawesome-free": "^6.1.2",
-    "@popperjs/core": "^2.11.6",
-    "adm-zip": "^0.5.9",
-    "aspectratio": "^2.2.2",
-    "axios": "^0.27.2",
-    "bootstrap": "^5.2.0",
-    "bootstrap-dark-5": "^1.1.3",
-    "dayjs": "^1.11.5",
-    "electron-updater": "^5.2.2",
-    "escape-html": "^1.0.3",
-    "eslint": "^8.23.0",
-    "fast-glob": "^3.2.11",
-    "fast-xml-parser": "^4.0.9",
-    "flatpickr": "^4.6.13",
-    "fluent-ffmpeg": "^2.1.2",
-    "fs-extra": "^10.1.0",
-    "h264-mp4-encoder": "^1.0.12",
-    "i18n": "^0.15.0",
-    "image-size": "^1.0.2",
-    "inputmask": "^5.0.7",
-    "is-audio": "^0.0.0",
-    "is-image": "^3.1.0",
-    "is-video": "^1.0.1",
-    "jquery": "^3.6.1",
-    "jquery-ui": "^1.13.2",
-    "obs-websocket-js": "^4.0.3",
-    "os": "^0.1.2",
-    "pdfjs-dist": "^2.16.105",
-    "select2": "^4.1.0-rc.0",
-    "sql.js": "^1.7.0",
-    "upath": "^2.0.1"
-  },
-  "build": {
-    "appId": "sircharlo.meeting-media-manager",
-    "productName": "Meeting Media Manager",
-    "nsis": {
-      "guid": "d9bcf07e-55a1-51f4-83c6-e268a864b225",
-      "oneClick": false
-    },
-    "win": {
-      "target": "NSIS",
-      "icon": "build/icon.ico",
-      "publish": [
-        "github"
-      ]
-    },
-    "linux": {
-      "category": "Utility",
-      "target": "AppImage",
-      "icon": "build/icon.png",
-      "publish": [
-        "github"
-      ]
-    },
-    "mac": {
-      "target": {
-        "target": "dmg",
-        "arch": [
-          "universal"
-        ]
-      },
-      "publish": [
-        "github"
-      ]
-    },
-    "buildDependenciesFromSource": true
-  },
-  "devDependencies": {
-    "electron": "^20.1.0",
-    "electron-builder": "^23.4.0"
+    "url": "https://github.com/mtdvlpr/meeting-media-manager.git"
   },
   "scripts": {
-    "lint:js": "eslint --fix --ext \".js\" .",
-    "start-debug": "electron .  --trace-warnings > ./app-run.log  2>&1",
-    "start": "electron .",
-    "pack-win": "electron-builder --win",
-    "pack-win-test": "electron-builder --dir --win",
-    "pack-linux-test": "electron-builder --dir --linux",
-    "pack-linux": "electron-builder --linux",
-    "pack-mac": "electron-builder --mac",
-    "publish": "electron-builder --win -p always",
-    "publish-linux": "electron-builder --linux -p always",
-    "postinstall": "electron-builder install-app-deps",
-    "release": "electron-builder"
+    "dev": "./pre-build.sh && node .electron-nuxt/dev.js",
+    "build": "./pre-build.sh && node .electron-nuxt/build.js",
+    "win-dev": "node .electron-nuxt/dev.js",
+    "win-build": "node .electron-nuxt/build.js",
+    "lint": "node_modules/.bin/eslint --ext .js,.vue,.ts --ignore-path .gitignore -f ./node_modules/eslint-friendly-formatter ./src",
+    "lint:fix": "yarn lint --fix",
+    "test": "xvfb-maybe -- playwright test",
+    "preinstall": "node .electron-nuxt/check-engines.js",
+    "postinstall": "electron-builder install-app-deps"
   },
-  "eslintIgnore": [
-    "docs",
-    "node_modules"
+  "engines": {
+    "node": "^16.15.0",
+    "yarn": "^3.2.3"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
   ],
-  "author": "sircharlo",
-  "license": "ISC"
+  "private": true,
+  "resolutions": {
+    "@types/node": "16.11.56",
+    "chokidar": "3.5.3",
+    "core-js": "3.26.0",
+    "vue": "2.7.13",
+    "vue-server-renderer": "2.7.13",
+    "vue-template-compiler": "2.7.13"
+  },
+  "packageManager": "yarn@3.2.4",
+  "devDependencies": {
+    "@babel/core": "7.19.6",
+    "@babel/runtime-corejs3": "7.19.6",
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-regular-svg-icons": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/vue-fontawesome": "^2.0.8",
+    "@nuxt/types": "^2.15.8",
+    "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/dayjs": "^1.4.1",
+    "@nuxtjs/eslint-config-typescript": "^11.0.0",
+    "@nuxtjs/i18n": "^7.3.0",
+    "@nuxtjs/vuetify": "^1.12.3",
+    "@playwright/test": "^1.27.1",
+    "@sentry/electron": "^4.1.0",
+    "@sentry/tracing": "^7.16.0",
+    "@sentry/vue": "^7.16.0",
+    "@sentry/webpack-plugin": "^1.19.1",
+    "@types/adm-zip": "^0.5.0",
+    "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/lodash.clonedeep": "^4.5.7",
+    "@types/sql.js": "^1.4.4",
+    "@xpda-dev/core": "^0.1.6",
+    "@xpda-dev/electron-builder": "^0.2.1",
+    "@xpda-dev/electron-launcher": "^0.3.0",
+    "@xpda-dev/webpack-step": "^0.1.6",
+    "adm-zip": "^0.5.9",
+    "chokidar": "3.5.3",
+    "consola": "^2.15.3",
+    "core-js": "3.26.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^5.2.7",
+    "deepmerge": "^4.2.2",
+    "dotenv": "^16.0.3",
+    "electron": "21.2.0",
+    "electron-builder": "23.6.0",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-playwright-helpers": "^1.2.0",
+    "electron-store": "^8.1.0",
+    "electron-updater": "^5.3.0",
+    "electron-window-state": "^5.0.3",
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-plugin-nuxt": "^4.0.0",
+    "eslint-plugin-vue": "^9.6.0",
+    "eslint-webpack-plugin": "^2.7.0",
+    "fast-glob": "^3.2.12",
+    "fast-xml-parser": "^4.0.11",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^10.1.0",
+    "fullname": "^4.0.1",
+    "h264-mp4-encoder": "^1.0.12",
+    "image-size": "^1.0.2",
+    "jimp": "^0.16.2",
+    "lodash.clonedeep": "^4.5.0",
+    "minify-css-string": "^1.0.0",
+    "node-gyp": "^9.3.0",
+    "node-sass": "^6.0.1",
+    "nuxt": "^2.15.8",
+    "nuxt-webfontloader": "^1.1.0",
+    "obs-websocket-js": "^4.0.3",
+    "obs-websocket-js-v5": "npm:obs-websocket-js@5.0.2",
+    "pdfjs-dist": "^2.16.105",
+    "playwright": "^1.27.1",
+    "prettier": "^2.7.1",
+    "sass-loader": "^10.3.1",
+    "sql.js": "^1.8.0",
+    "ts-loader": "^8.4.0",
+    "typescript": "^4.8.4",
+    "upath": "^2.0.1",
+    "v-mask": "^2.3.0",
+    "vue": "2.7.13",
+    "vue-router": "^3.6.5",
+    "vue-runtime-template-compiler": "^1.3.0",
+    "vue-server-renderer": "2.7.13",
+    "vue-template-compiler": "2.7.13",
+    "vuedraggable": "^2.24.3",
+    "vuetify": "^2.6.12",
+    "vuetify-loader": "^1.9.2",
+    "vuex": "^3.6.2",
+    "webdav": "^4.11.0",
+    "webpack": "^4.46.0",
+    "webpack-node-externals": "^3.0.0",
+    "xvfb-maybe": "^0.2.1"
+  }
 }
