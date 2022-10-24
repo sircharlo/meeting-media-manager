@@ -67,7 +67,6 @@
     "enableObs": "Zet <em>OBS Studio</em> integratie modus aan",
     "obsDesc": "Als deze optie aan staat, zal M³ verbinding maken met OBS Studio om automatisch de scenes aan te passen voor en na het delen van media.",
     "obsWebsocket": "Als je deze optie wilt gebruiken, moet je zorgen dat OBS Studio gebruikt maakt van de <code>obs-websocket</code> plugin, die M³ in staat stelt om met OBS Studio te verbinden.",
-    "obsWebsocketVersion": "Voor nu wordt <code>v5</code> nog niet ondersteunt in M³, dus zorg dat je de laatste versie van <code>obs-websocket v4</code> (momenteel <code>v4.9.1-compat</code>) installeert om problemen te voorkomen.",
     "obsScenes": "Bovendien moet je alle nodige scenes for media delen en podium tonen instellen in OBS.",
     "obsScenesMin": "Op z'n minst heb je een scene nodig met <code>Window Capture</code> (aanbevolen) of <code>Display Capture</code> ingesteld om het media presentatie scherm van M³ te tonen, of het externe scherm waar de media gepresenteerd wordt.",
     "obsAlso": "Je moet ook alle gewilde scenes voor het podium beeld instellen, bijvoorbeeld:",
