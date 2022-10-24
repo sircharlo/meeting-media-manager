@@ -86,8 +86,8 @@ typings/
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
-# Next.js build output
-.next
+# Jekyll build output
+_site
 
 # Nuxt.js build / generate output
 .nuxt
