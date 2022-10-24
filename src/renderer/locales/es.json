@@ -11,7 +11,7 @@
   "delete": "Borrar",
   "disableHardwareAcceleration": "Deshabilite la aceleración por hardware <em>(Nota: solo habilite esta configuración si tiene problemas con la presentación de medios. Cambiar esta configuración hará que M³ se reinicie).</em>",
   "dontForgetToGetMedia": "¡No olvide actualizar las carpetas de medios en la computadora que se usa para presentar los medios en las reuniones de la congregación!",
-  "enableMediaDisplayButton": "Habilitar botón para presentar multimedia en un pantalla externa o en una ventana separada",
+  "enableMediaDisplayButton": "Esita meediat teisel monitoril või eraldi aknas",
   "enableMusicButton": "Habilitar botón para reproducir canciones del Reino en modo aleatorio",
   "enableObs": "Habilite el modo de compatibilidad de OBS Studio <em>(requiere obs-websocket)</em>",
   "enablePp": "Activar control remoto PowerPoint USB",
@@ -103,7 +103,7 @@
   "warnPdfConversionFailure": "Las páginas del siguiente archivo PDF no se pudieron extraer como ilustraciones:",
   "warnSvgConversionFailure": "El siguiente archivo no se reconoció como una ilustración SVG válida:",
   "warnUnknownLastVersion": "No se puede establecer la versión previamente instalada de M³. Suponiendo que la aplicación se acaba de actualizar.",
-  "warning": "Advertencia",
+  "warning": "Hoiatus",
   "weMeetingDay": "Reunión de fin de semana",
   "webdavFolder": "Carpeta de sincronización de la congregación",
   "window": "Ventana móvil"
