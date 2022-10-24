@@ -77,7 +77,7 @@
       </v-col>
     </v-row>
     <v-col cols="12">
-      <v-col cols="12" class="d-flex pb-0">
+      <v-col cols="12" class="d-flex pb-0 justify-center">
         <v-col
           v-for="(day, i) in daysOfWeek"
           :key="day.formatted"

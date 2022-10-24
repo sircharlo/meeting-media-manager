@@ -91,7 +91,7 @@
             v-else
             variant="home"
             :disabled="!valid"
-            :style="valid ? undefined : 'color: red !important'"
+            :style="valid ? undefined : 'background-color: #B71C1C !important'"
           />
         </v-col>
       </v-col>
