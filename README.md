@@ -10,7 +10,7 @@
 
 <sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
 
-## What van M³ do?
+## What can M³ do?
 
 M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
@@ -32,6 +32,10 @@ In addition, M³ itself has been translated, by many volunteers, into 12 languag
 ## How do I get started?
 
 Go to the [documentation](https://sircharlo.github.io/meeting-media-manager/) for M³ to find information about installation, configuration, media presentation mode, congregation media sync, and more.
+
+## Want to contribute?
+
+We welcome contributions of all kinds! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to contribute to M³.
 
 This app is made with love and a bit of spare time.
 Enjoy!
