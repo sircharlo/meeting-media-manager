@@ -94,6 +94,7 @@
   "warnPdfConversionFailure": "Järgmise PDF-faili lehti ei saanud piltidena ekstraktida:",
   "warnSvgConversionFailure": "Järgmist faili ei tuvastatud kehtiva SVG-pildina:",
   "warnUnknownLastVersion": "M³-i varem installitud versiooni ei saa luua. Eeldan, et rakendust just värskendati.",
+  "warning": "Hoiatus",
   "weMeetingDay": "Nädalavahetuse koosolek",
   "webdavFolder": "Koguduse sünkroonimiskaust",
   "window": "Liigutatav aken"
