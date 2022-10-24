@@ -13,6 +13,16 @@
     "port": "Poort",
     "setting": "Instelling"
   },
+  "nav": {
+    "bugFeature": "Problemen en functieverzoeken",
+    "configuration": "Instellingen",
+    "congSync": "Gemeente sync",
+    "faq": "Veelgestelde vragen",
+    "installation": "Installatie",
+    "manageMedia": "Media beheren",
+    "presentMedia": "Media presentatie modus",
+    "usageNotes": "Technische gebruiksnotities"
+  },
   "home": {
     "expand": "Open alle artikelen",
     "collapse": "Sluit alle artikelen",
