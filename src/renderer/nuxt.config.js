@@ -202,9 +202,7 @@ module.exports = {
     ci: !!process.env.CI,
     isDev,
     name: pkg.name,
-    // TODO: Remove .replace('mtdvlpr', 'sircharlo')
     repo: pkg.repository.url
-      .replace('mtdvlpr', 'sircharlo')
       .replace('.git', ''),
     sentryDSN: process.env.SENTRY_DSN,
     sentryEnabled: initSentry && !process.env.SENTRY_DISABLE,
