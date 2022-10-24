@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <v-form ref="form" v-model="valid">
+  <v-form ref="mediaForm" v-model="valid">
     <form-input
       id="media.lang"
       v-model="media.lang"
@@ -388,8 +388,8 @@ export default Vue.extend({
     this.loading = false
     this.$emit('valid', this.valid)
 
-    if (this.$refs.form) {
-      this.$refs.form.validate()
+    if (this.$refs.mediaForm) {
+      this.$refs.mediaForm.validate()
     }
   },
   methods: {

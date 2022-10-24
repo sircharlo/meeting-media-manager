@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <v-form ref="form" v-model="valid">
+  <v-form ref="appForm" v-model="valid">
     <form-input
       id="app.offline"
       v-model="app.offline"
@@ -276,8 +276,8 @@ export default Vue.extend({
       async handler() {
         if (this.obsComplete) {
           await this.$getScenes()
-          if (this.$refs.form) {
-            this.$refs.form.validate()
+          if (this.$refs.appForm) {
+            this.$refs.appForm.validate()
           }
         }
       },
@@ -381,8 +381,8 @@ export default Vue.extend({
     }
 
     // Validate form (for new congregations)
-    if (this.$refs.form) {
-      this.$refs.form.validate()
+    if (this.$refs.appForm) {
+      this.$refs.appForm.validate()
     }
   },
   methods: {
@@ -423,8 +423,8 @@ export default Vue.extend({
         await this.$getScenes()
       }
 
-      if (this.$refs.form) {
-        this.$refs.form.validate()
+      if (this.$refs.appForm) {
+        this.$refs.appForm.validate()
       }
     },
     async setLocalOutputPath() {

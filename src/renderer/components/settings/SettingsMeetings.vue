@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" v-model="valid">
+  <v-form ref="meetingsForm" v-model="valid">
     <form-input
       id="meeting.specialCong"
       v-model="meeting.specialCong"
@@ -191,6 +191,7 @@ export default Vue.extend({
       )
     },
     isSignLanguage(): boolean {
+      if (!this.$getPrefs('media.lang')) return false
       const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
         ({ langcode }) => langcode === this.$getPrefs('media.lang')
       )
@@ -288,8 +289,8 @@ export default Vue.extend({
       this.status = 'success'
     }
 
-    if (this.$refs.form) {
-      this.$refs.form.validate()
+    if (this.$refs.meetingsForm) {
+      this.$refs.meetingsForm.validate()
     }
   },
   methods: {

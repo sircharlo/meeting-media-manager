@@ -1,6 +1,6 @@
 <template>
   <v-form
-    ref="form"
+    ref="congForm"
     v-model="valid"
     class="text-left"
     @submit.prevent="submit()"
@@ -160,8 +160,8 @@ export default Vue.extend({
     Object.assign(this.cong, this.$getPrefs('cong'))
     this.$emit('valid', this.valid)
 
-    if (this.$refs.form) {
-      this.$refs.form.validate()
+    if (this.$refs.congForm) {
+      this.$refs.congForm.validate()
     }
 
     // If all the cong fields are filled in, try to connect
