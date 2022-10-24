@@ -13,6 +13,16 @@
     "port": "Port",
     "setting": "Setting"
   },
+  "nav": {
+    "bugFeature": "Issues and feature requests",
+    "configuration": "Settings",
+    "congSync": "Congregation sync",
+    "faq": "FAQ",
+    "installation": "Installation",
+    "manageMedia": "Managing media",
+    "presentMedia": "Media Presentation Mode",
+    "usageNotes": "Technical usage notes"
+  },
   "home": {
     "expand": "Expand all articles",
     "collapse": "Collapse all articles",
