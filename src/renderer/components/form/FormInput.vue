@@ -251,7 +251,7 @@ import {
   faEyeSlash,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
-import Vue, { PropOptions } from 'vue'
+import { defineComponent, PropOptions } from 'vue'
 enum FieldType {
   text = 'text',
   password = 'password',
@@ -266,7 +266,7 @@ enum FieldType {
   'btn-group' = 'btn-group',
   slider = 'slider',
 }
-export default Vue.extend({
+export default defineComponent({
   props: {
     id: {
       type: String,
@@ -332,7 +332,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    safeId() {
+    safeId(): string {
       return this.id ? this.$strip(this.id, 'id') : this.$attrs['data-id']
     },
     faLock() {
@@ -341,7 +341,7 @@ export default Vue.extend({
     passIcon(): IconDefinition {
       return this.passwordVisible ? faEyeSlash : faEye
     },
-    rules() {
+    rules(): any[] {
       const rules = (this.$attrs.rules as unknown as any[]) ?? []
       if (this.required) {
         rules.push((v: any) => {

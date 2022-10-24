@@ -129,7 +129,7 @@
 import { pathToFileURL } from 'url'
 import { basename, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 // @ts-ignore
 import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
 import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
@@ -137,7 +137,7 @@ import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
 import { existsSync, readFileSync } from 'fs-extra'
 import { Marker } from '~/types'
 import { HUNDRED_PERCENT } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   components: {
     RuntimeTemplateCompiler,
   },

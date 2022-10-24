@@ -12,10 +12,10 @@
   </v-overlay>
 </template>
 <script lang="ts">
-import Vue, { PropOptions } from 'vue'
+import { PropOptions, defineComponent } from 'vue'
 import { faPause, faPersonRunning } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   props: {
     text: {
       type: String,

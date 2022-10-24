@@ -100,7 +100,7 @@ interface CustomProps {
   $isAudio: (filepath: string) => boolean
   $isImage: (filepath: string) => boolean
   $isLocked: (key: string) => boolean
-  $isShortcutAvailable: (shortcut: string) => boolean
+  $isShortcutAvailable: (shortcut: string, func: string) => boolean
   $isShortcutValid: (shortcut: string) => boolean
   $isVideo: (filepath: string) => boolean
   $log: {

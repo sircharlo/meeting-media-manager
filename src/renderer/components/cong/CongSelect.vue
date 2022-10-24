@@ -27,8 +27,8 @@
 <script lang="ts">
 import { faBuildingUser } from '@fortawesome/free-solid-svg-icons'
 import { basename } from 'upath'
-import Vue from 'vue'
-export default Vue.extend({
+import { defineComponent } from 'vue'
+export default defineComponent({
   data() {
     return {
       congs: [] as { name: string | null; path: string; filename: string }[],

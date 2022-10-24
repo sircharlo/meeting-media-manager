@@ -171,7 +171,7 @@
   </v-row>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { basename, dirname, join } from 'upath'
 import draggable from 'vuedraggable'
 import { ipcRenderer } from 'electron'
@@ -186,7 +186,7 @@ import {
   faFolderOpen,
 } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   components: {
     draggable,
   },

@@ -29,9 +29,9 @@ import {
   faArrowRight,
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
-import Vue, { PropOptions } from 'vue'
+import { defineComponent, PropOptions } from 'vue'
 import { CongFile } from '~/types'
-export default Vue.extend({
+export default defineComponent({
   props: {
     contents: {
       type: Array,

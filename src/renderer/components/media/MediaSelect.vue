@@ -61,10 +61,10 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { Database } from 'sql.js'
 import { basename, extname, trimExt } from 'upath'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import { MultiMediaItem, VideoFile, LocalFile } from '~/types'
-export default Vue.extend({
+export default defineComponent({
   props: {
     file: {
       type: String,

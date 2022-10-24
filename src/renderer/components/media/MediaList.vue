@@ -121,7 +121,7 @@
 // eslint-disable-next-line import/named
 import { pathToFileURL } from 'url'
 import { extname, join, trimExt } from 'upath'
-import Vue, { PropOptions } from 'vue'
+import { defineComponent, PropOptions } from 'vue'
 import { WebDAVClient, FileStat } from 'webdav/dist/web/types'
 import {
   faImage,
@@ -144,7 +144,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { LocalFile, MeetingFile, VideoFile } from '~/types'
 import { MS_IN_SEC, NOT_FOUND } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   filters: {
     ext(filename: string) {
       return extname(filename)
@@ -198,7 +198,7 @@ export default Vue.extend({
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
     },
-    online() {
+    online(): boolean {
       return this.$store.state.stats.online && !this.$getPrefs('app.offline')
     },
     contents(): FileStat[] {
@@ -261,10 +261,14 @@ export default Vue.extend({
   methods: {
     setMediaList() {
       // If new files are being uploaded, add them to the list
-      if (this.newFile || this.newFiles.length > 0) {
-        this.mediaList = [this.newFile, ...this.newFiles, ...this.media]
-
-          .filter(Boolean)
+      if (this.newFile || (this.newFiles && this.newFiles.length > 0)) {
+        this.mediaList = (
+          [
+            this.newFile,
+            ...(this.newFiles ?? []),
+            ...(this.media ?? []),
+          ].filter(Boolean) as (MeetingFile | LocalFile)[]
+        )
           .map((m) => {
             m.color = 'warning'
             return m
@@ -284,7 +288,7 @@ export default Vue.extend({
           })
       } else {
         this.mediaList = [
-          ...this.media.map((m) => {
+          ...(this.media ?? []).map((m) => {
             m.color = 'warning'
             return m
           }),
@@ -408,7 +412,7 @@ export default Vue.extend({
               if (this.contents.find(({ filename }) => filename === filePath)) {
                 try {
                   await this.client.deleteFile(filePath)
-                } catch (e) {
+                } catch (e: any) {
                   if (e.status !== NOT_FOUND) {
                     this.$error('errorWebdavRm', e, filePath)
                   }

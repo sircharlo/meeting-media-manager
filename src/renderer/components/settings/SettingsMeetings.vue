@@ -84,12 +84,7 @@
         placeholder="e.g. Alt+K"
         :label="$t('shuffleShortcut')"
         :required="meeting.enableMusicButton"
-        :rules="[
-          (v) => $isShortcutValid(v) || $t('fieldShortcutInvalid'),
-          (v) =>
-            $isShortcutAvailable(v, 'toggleMusicShuffle') ||
-            $t('fieldShortcutTaken'),
-        ]"
+        :rules="getShortcutRules('toggleMusicShuffle')"
       />
       <form-input
         id="meeting.musicVolume"
@@ -151,12 +146,12 @@
   </v-form>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import { extname, join } from 'upath'
 import { MeetingPrefs, ElectronStore, VideoFile, ShortJWLang } from '~/types'
 import { HUNDRED_PERCENT, NR_OF_KINGDOM_SONGS } from '~/constants/general'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
-export default Vue.extend({
+export default defineComponent({
   data() {
     return {
       status: '',
@@ -248,7 +243,7 @@ export default Vue.extend({
     'meeting.enableMusicButton': {
       // Set or unset the music shuffle shortcut
       async handler(val: boolean) {
-        if (val) {
+        if (val && this.meeting.shuffleShortcut) {
           await this.$setShortcut(
             this.meeting.shuffleShortcut,
             'toggleMusicShuffle',
@@ -290,20 +285,31 @@ export default Vue.extend({
     }
 
     if (this.$refs.meetingsForm) {
+      // @ts-ignore
       this.$refs.meetingsForm.validate()
     }
   },
   methods: {
+    getShortcutRules(fn: string) {
+      return [
+        (v: string) =>
+          this.$isShortcutValid(v) || this.$t('fieldShortcutInvalid'),
+        (v: string) =>
+          this.$isShortcutAvailable(v, fn) || this.$t('fieldShortcutTaken'),
+      ]
+    },
     async downloadShuffleMusic() {
       this.status = 'loading'
       try {
         const songs = (await this.$getMediaLinks({
           pubSymbol: this.isSignLanguage ? 'sjj' : 'sjjm',
           format: this.isSignLanguage ? 'MP4' : 'MP3',
-          lang: this.isSignLanguage ? this.$getPrefs('media.lang') : 'E',
+          lang: this.isSignLanguage
+            ? (this.$getPrefs('media.lang') as string)
+            : 'E',
         })) as VideoFile[]
 
-        const promises: Promise<void>[] = []
+        const promises: Promise<string>[] = []
 
         songs
           .filter(

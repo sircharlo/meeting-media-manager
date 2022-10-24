@@ -13,7 +13,7 @@
 import { fileURLToPath, pathToFileURL } from 'url'
 import { platform, userInfo } from 'os'
 import { basename, join } from 'upath'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import getUsername from 'fullname'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
@@ -21,7 +21,7 @@ import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { ShortJWLang, CongPrefs, Release, Asset, ElectronStore } from '~/types'
 import { LAST_JWMMF_VERSION } from '~/constants/general'
-export default Vue.extend({
+export default defineComponent({
   name: 'DefaultLayout',
   head() {
     return {
