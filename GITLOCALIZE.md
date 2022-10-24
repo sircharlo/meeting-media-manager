@@ -4,4 +4,4 @@ Thank you for your interest in translating this project! This is the GitLocalize
 
 Kind regards,
 
-[@sircharlo](/u/sircharlo) & [@mtdvlpr](/u/mtdvlpr)
+[@sircharlo](/users/sircharlo) & [@mtdvlpr](/users/mtdvlpr)
