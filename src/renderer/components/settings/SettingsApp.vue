@@ -330,12 +330,14 @@ export default defineComponent({
     },
     'app.localOutputPath': {
       handler(val: string) {
-        const badCharacters = val.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g)
-        if (badCharacters) {
-          this.$warn('errorBadOutputPath', {
-            identifier: badCharacters.join(' '),
-          })
-          this.app.localOutputPath = null
+        if (val) {
+          const badCharacters = val.match(/(\\?)([()*?[\]{|}]|^!|[!+@](?=\())/g)
+          if (badCharacters) {
+            this.$warn('errorBadOutputPath', {
+              identifier: badCharacters.join(' '),
+            })
+            this.app.localOutputPath = null
+          }
         }
       },
     },

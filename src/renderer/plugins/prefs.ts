@@ -310,6 +310,8 @@ function storeOptions(name: string = 'prefs') {
             continue
           }
 
+          console.debug(`Processing ${key}=${store.get(key)} (${typeof store.get(key)})...`)
+
           const newProp = migrate2290(key, store.get(key))
 
           // Set new key and value and delete old one
