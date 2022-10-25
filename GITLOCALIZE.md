@@ -6,4 +6,4 @@ After having translated a file, please make sure to also send the a pull request
 
 Kind regards,
 
-[@sircharlo](/users/sircharlo)
+The M³ team
