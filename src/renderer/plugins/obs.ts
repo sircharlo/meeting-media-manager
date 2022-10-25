@@ -228,6 +228,14 @@ const plugin: Plugin = (
         currentScene = result.currentProgramSceneName
       }
 
+      if (!scenes.includes($getPrefs('app.obs.cameraScene') as string)) {
+        $warn('errorObsCameraScene')
+      }
+
+      if (!scenes.includes($getPrefs('app.obs.mediaScene') as string)) {
+        $warn('errorObsMediaScene')
+      }
+
       store.commit('obs/setScenes', scenes)
       store.commit('obs/setCurrentScene', currentScene)
 
@@ -266,6 +274,8 @@ const plugin: Plugin = (
         if (e.message === 'Not connected') {
           $warn('errorObs')
           await resetOBS()
+        } else if (scene === $getPrefs('app.obs.cameraScene')) {
+          $warn('errorObsCameraScene')
         } else {
           $log.debug('setScene()')
           $error('errorObs', e)

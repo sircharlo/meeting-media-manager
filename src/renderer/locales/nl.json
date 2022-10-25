@@ -32,6 +32,8 @@
   "errorJwpubMediaExtract": "Er ging iets fout tijdens het ophalen van media uit de volgende publicatie:",
   "errorObs": "Er is iets fout gegaan tijdens het verbinden met OBS Studio. Controleer of OBS Studio draait en dat de <code>obs-websocket</code> goed is ingesteld.",
   "errorObsAuth": "Het wachtwoord voor de OBS Studio integratie is waarschijnlijk fout. Zorg ervoor dat je het juiste wachtwoord hebt ingevoerd en probeer het opnieuw.",
+  "errorObsCameraScene": "De ingestelde standaard podium scene bestaat niet meer. Stel een nieuwe in in de instellingen.",
+  "errorObsMediaScene": "De ingestelde media scene bestaat niet meer. Stel een nieuwe in in de instellingen.",
   "errorOffline": "De applicatie is offline. Kan geen data downloaden of uploaden!",
   "errorRename": "Er ging iets fout tijdens het hernoemen van het volgende bestand of de volgende folder:",
   "errorSetVars": "Er ging iets fout tijdens het aanmaken van of toegang krijgen tot een folder. Zorg alsjeblieft dat je toegang hebt tot het volgende pad op je computer.",
