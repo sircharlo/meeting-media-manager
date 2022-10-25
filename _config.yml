@@ -58,6 +58,10 @@ defaults:
     values:
       lang: 'fr'
   - scope:
+      path: 'locales/hu/**/*'
+    values:
+      lang: 'hu'
+  - scope:
       path: 'locales/it/**/*'
     values:
       lang: 'it'
