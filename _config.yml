@@ -11,6 +11,7 @@ exclude:
     'CONTRIBUTING.md',
     'Gemfile',
     'Gemfile.lock',
+    'GITLOCALIZE.md'
     'README.md',
     'assets/js/articles.js',
     'assets/js/lang.js',
