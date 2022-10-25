@@ -342,6 +342,7 @@ const plugin: Plugin = (
           })
 
           const prefs = JSON.parse(json as string)
+          const forcedPrefs = $clone(prefs)
 
           // Migration of old pref structures
           for (const key of Object.keys(prefs)) {
@@ -391,7 +392,7 @@ const plugin: Plugin = (
           }
 
           $setAllPrefs(newPrefs)
-          store.commit('cong/setPrefs', JSON.parse(JSON.stringify(prefs)))
+          store.commit('cong/setPrefs', JSON.parse(JSON.stringify(forcedPrefs)))
         }
       } catch (e: any) {
         $error('errorForcedSettingsEnforce', e)

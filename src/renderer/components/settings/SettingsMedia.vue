@@ -317,7 +317,7 @@ export default defineComponent({
         // If second screen is present, use it for media display
         if (
           this.media.preferredOutput === 'window' &&
-          this.screens.length > 1
+          this.screens.length > 0
         ) {
           this.media.preferredOutput = this.screens[0].id
         }

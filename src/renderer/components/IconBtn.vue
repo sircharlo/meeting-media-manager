@@ -68,6 +68,7 @@
         :id="variant"
         ref="btn"
         v-model="$attrs.value"
+        v-click-outside="revertClickedOnce"
         :aria-label="variant"
         :loading="loading || $attrs.loading"
         v-bind="{ ...style.props, ...$attrs, ...attrs }"
@@ -336,6 +337,9 @@ export default defineComponent({
     }
   },
   methods: {
+    revertClickedOnce() {
+      this.clickedOnce = false
+    },
     async atClick(): Promise<void> {
       // If click twice is enabled, wait for second click
       if (this.clickTwice && !this.clickedOnce) {

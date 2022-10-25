@@ -3,7 +3,7 @@ name: ci
 on:
   workflow_dispatch:
   pull_request:
-    branches: [main, master, refactor/next]
+    branches: [main, master]
   push:
     paths:
       - '.electron-nuxt/**/*'
