@@ -456,6 +456,7 @@ export default defineComponent({
   &:hover {
     cursor: default;
   }
+  transition: border-left 0.5s;
 }
 
 .media-played {
