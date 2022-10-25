@@ -468,6 +468,7 @@ export default defineComponent({
         .replace('fsl', 'fr')
         .replace('ise', 'it')
         .replace('dse', 'nl')
+        .replace('hsh', 'hu')
         .replace('psr', 'pt-pt')
         .replace('swl', 'sv')
     },

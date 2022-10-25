@@ -222,14 +222,15 @@ const plugin: Plugin = (
     async (oldVal: string, newVal: string): Promise<void> => {
       if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) return
       readdirSync(mediaPath()).forEach((dir) => {
+        const path = join(mediaPath(), dir)
         const date = $dayjs(
           dir,
           $getPrefs('app.outputFolderDateFormat') as string,
           oldVal.split('-')[0]
         )
-        if (statSync(dir).isDirectory() && date.isValid()) {
+        if (statSync(path).isDirectory() && date.isValid()) {
           // Rename all files that include the localized 'song' or 'paragraph' strings
-          readdirSync(join(mediaPath(), dir)).forEach((file) => {
+          readdirSync(path).forEach((file) => {
             const newName = file
               .replace(
                 (' - ' + $translate('song', oldVal)) as string,
@@ -241,10 +242,7 @@ const plugin: Plugin = (
               )
 
             if (file !== newName) {
-              renameSync(
-                join(mediaPath(), dir, file),
-                join(mediaPath(), dir, newName)
-              )
+              renameSync(join(path, file), join(path, newName))
             }
           })
 
@@ -256,7 +254,7 @@ const plugin: Plugin = (
               .format($getPrefs('app.outputFolderDateFormat') as string)
           )
           if (!existsSync(newPath)) {
-            renameSync(join(mediaPath(), dir), newPath)
+            renameSync(path, newPath)
           }
         }
       })
