@@ -5,6 +5,7 @@ const LOCAL_LANGS = [
   'et',
   'fi',
   'fr',
+  'hu',
   'it',
   'nl',
   'pt',
@@ -54,6 +55,13 @@ const LOCALES = [
     file: 'fr.json',
     jw: 'F',
     name: 'Français (French)',
+  },
+  {
+    code: 'hu',
+    iso: 'hu-HU',
+    file: 'hu.json',
+    jw: 'H',
+    name: 'magyar (Hungarian)',
   },
   {
     code: 'it',
