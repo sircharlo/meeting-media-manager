@@ -53,4 +53,16 @@ If you want to add a new language to the application, you will need to do the fo
       lang: '[language code]'
   ```
 
-**Note:** The language code used in the permalink, config.yml and root index.html should be a proper locale code. For example, the Brazilian Portuguese locale code is `pt-BR`, not `pt`.
+**Note:** When there are multiple locales for the same language (e.g. `pt-BR` and `pt-PT`), you should set the locale as follows:
+
+- root index.html: `pt-PT`
+- `permalink: /[language code]/` becomes `permalink: /pt-PT/`
+- `site.data.[language code]` becomes `site.data.pt-pt`
+- config.yml:
+
+  ``` yaml
+  - scope:
+      path: 'locales/pt-pt/**/*'
+    values:
+      lang: 'pt-PT'
+  ```
