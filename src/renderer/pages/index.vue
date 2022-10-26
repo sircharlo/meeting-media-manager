@@ -421,8 +421,8 @@ export default defineComponent({
     if (this.weekParam > -1) {
       this.currentWeek = this.weekParam
     }
-    if (!this.jwSync) {
-      console.debug('Open settings to fill in media lang')
+    if (!this.jwSync || !this.$mediaPath()) {
+      console.debug('Open settings to fill in mediaLang/localOutputFolder')
       this.$router.push({
         path: this.localePath('/settings'),
         query: this.$route.query,
@@ -678,6 +678,8 @@ export default defineComponent({
       })
     },
     async startMediaSync(dryrun: boolean = false, filter: string = 'all') {
+      const mediaPath = this.$mediaPath()
+      if (!mediaPath) return
       this.$store.commit('notify/deleteByMessage', 'dontForgetToGetMedia')
       this.loading = true
       this.$store.commit('stats/startPerf', {
@@ -695,10 +697,10 @@ export default defineComponent({
         )
 
         // Remove old and invalid date directories
-        if (!dryrun && this.$mediaPath()) {
+        if (!dryrun) {
           this.$rm(
-            this.$findAll(join(this.$mediaPath(), '*'), {
-              ignore: [join(this.$mediaPath(), 'Recurring')],
+            this.$findAll(join(mediaPath, '*'), {
+              ignore: [join(mediaPath, 'Recurring')],
               onlyDirectories: true,
             }).filter((dir: string) => {
               const date = this.$dayjs(
@@ -753,7 +755,7 @@ export default defineComponent({
           ])
         }
 
-        await this.$convertUnusableFiles(this.$mediaPath())
+        await this.$convertUnusableFiles(mediaPath)
 
         // Convert media to mp4 if enabled
         if (this.$getPrefs('media.enableMp4Conversion')) {
@@ -785,7 +787,7 @@ export default defineComponent({
         if (this.$getPrefs('app.autoOpenFolderWhenDone')) {
           ipcRenderer.send(
             'openPath',
-            fileURLToPath(pathToFileURL(this.$mediaPath()).href)
+            fileURLToPath(pathToFileURL(mediaPath).href)
           )
         }
 
