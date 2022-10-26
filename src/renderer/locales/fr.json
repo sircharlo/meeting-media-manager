@@ -33,6 +33,7 @@
   "errorObs": "Une erreur s'est produite lors de la connexion à OBS Studio. Veuillez vérifier que OBS Studio est bien lancé et que la configuration de <code>obs-websocket</code> est correcte.",
   "errorObsAuth": "Le mot de passe pour l'intégration d'OBS Studio être peut-être incorrect. Veuillez vérifier que le mot de passe est correct et réessayer.",
   "errorObsCameraScene": "La scène de caméra par défaut configurée n'existe plus. Veuillez la modifier dans les paramètres.",
+  "errorObsMediaScene": "La scène média configurée n'existe plus. Veuillez le modifier dans les paramètres.",
   "errorOffline": "L'application est hors ligne. Les données ne peuvent pas être téléchargées !",
   "errorRename": "Une erreur s'est produite lors de la tentative de renommer le fichier ou le répertoire suivant :",
   "errorSetVars": "Une erreur s'est produite lors de la création ou de l'accès à un répertoire. Veuillez vous assurer que vous avez les droits d'accès au chemin suivant sur votre ordinateur.",
