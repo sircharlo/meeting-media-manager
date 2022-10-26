@@ -317,11 +317,15 @@ function storeOptions(name: string = 'prefs') {
             `Processing ${key}=${store.get(key)} (${typeof store.get(key)})...`
           )
 
-          const newProp = migrate2290(key, store.get(key))
+          try {
+            const newProp = migrate2290(key, store.get(key))
 
-          // Set new key and value and delete old one
-          store.set(newProp.key, newProp.val)
-          store.delete(key as keyof ElectronStore)
+            // Set new key and value and delete old one
+            store.set(newProp.key, newProp.val)
+            store.delete(key as keyof ElectronStore)
+          } catch (e: any) {
+            console.error(e)
+          }
         }
       },
     },
@@ -427,6 +431,27 @@ function migrate2290(key: string, newVal: any) {
       } catch (e: any) {
         setDefaultValue()
       }
+    }
+  }
+
+  // Final check against the schema
+  const schemaType = isObsPref
+    ? // @ts-ignore
+      schema?.app?.properties?.obs?.properties[newKey]?.type
+    : // @ts-ignore
+      schema[root]?.properties[newKey]?.type
+  if (schemaType) {
+    if (typeof schemaType === 'string') {
+      // eslint-disable-next-line valid-typeof
+      if (typeof newVal !== schemaType) {
+        setDefaultValue()
+      }
+    } else if (
+      !schemaType
+        .map((t: string) => t.replace('null', 'object'))
+        .includes(typeof newVal)
+    ) {
+      setDefaultValue()
     }
   }
 
