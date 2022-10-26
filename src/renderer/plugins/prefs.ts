@@ -14,7 +14,10 @@ import {
   ElectronStore,
 } from '~/types'
 
-const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
+const { PREFS, ENUMS } = require('~/constants/prefs') as {
+  PREFS: ElectronStore
+  ENUMS: { key: string; values: string[] }[]
+}
 
 // Define your schema per the ajv/JSON spec
 // But you also need to create a mirror of that spec in TS
@@ -310,7 +313,9 @@ function storeOptions(name: string = 'prefs') {
             continue
           }
 
-          console.debug(`Processing ${key}=${store.get(key)} (${typeof store.get(key)})...`)
+          console.debug(
+            `Processing ${key}=${store.get(key)} (${typeof store.get(key)})...`
+          )
 
           const newProp = migrate2290(key, store.get(key))
 
@@ -363,30 +368,47 @@ function migrate2290(key: string, newVal: any) {
     isMeetingPref = true
   }
 
-  // Convert null values to (new) default values
-  if (isObsPref) {
-    if (newVal === null || newVal === undefined) {
+  function setDefaultValue() {
+    if (isObsPref) {
       newVal = PREFS.app.obs[newKey as keyof ObsPrefs]
-    }
-  } else if (isMeetingPref) {
-    if (newVal === null || newVal === undefined) {
+    } else if (isMeetingPref) {
       newVal = PREFS.meeting[newKey as keyof MeetingPrefs]
-    }
-  } else if (isMediaPref) {
-    if (newVal === null || newVal === undefined) {
+    } else if (isMediaPref) {
       newVal = PREFS.media[newKey as keyof MediaPrefs]
-    }
-  } else if (isCongPref) {
-    if (newVal === null || newVal === undefined) {
+    } else if (isCongPref) {
       newVal = PREFS.cong[newKey as keyof CongPrefs]
+    } else {
+      newVal = PREFS.app[newKey as keyof AppPrefs]
     }
-  } else if (newVal === null || newVal === undefined) {
-    newVal = PREFS.app[newKey as keyof AppPrefs]
+  }
+
+  // Convert null values to (new) default values
+  if (newVal === null || newVal === undefined) {
+    setDefaultValue()
+  }
+
+  // Validate preferredOutput
+  if (key === 'preferredOutput') {
+    if (typeof newVal === 'string' && newVal !== 'window') {
+      setDefaultValue()
+    }
+  }
+
+  // Validate enums
+  const match = ENUMS.find((e) => e.key === key)
+  if (match) {
+    if (!match.values.includes(newVal)) {
+      setDefaultValue()
+    }
   }
 
   // Values that were converted from number to string
-  if (key === 'congServerPort' && newVal) {
-    newVal = newVal.toString()
+  if (key === 'congServerPort') {
+    try {
+      newVal = newVal.toString()
+    } catch (e: any) {
+      setDefaultValue()
+    }
   }
 
   // Values that were converted from string to number
@@ -396,7 +418,16 @@ function migrate2290(key: string, newVal: any) {
     key === 'mwDay' ||
     key === 'weDay'
   ) {
-    if (typeof newVal === 'string') newVal = parseInt(newVal)
+    if (typeof newVal === 'string') {
+      try {
+        newVal = parseInt(newVal)
+        if (isNaN(newVal)) {
+          setDefaultValue()
+        }
+      } catch (e: any) {
+        setDefaultValue()
+      }
+    }
   }
 
   if (isObsPref) {

@@ -62,6 +62,30 @@ const PREFS = {
   },
 }
 
+const ENUMS = [
+  {
+    key: 'theme',
+    values: ['system', 'light', 'dark'],
+  },
+  {
+    key: 'musicFadeOutType',
+    values: ['smart', 'timer'],
+  },
+  {
+    key: 'outputFolderDateFormat',
+    values: [
+      'YYYY-MM-DD',
+      'YYYY-MM-DD - dddd',
+      'DD-MM-YYYY',
+      'DD-MM-YYYY - dddd',
+    ],
+  },
+  {
+    key: 'maxRes',
+    values: ['240p', '360p', '480p', '720p'],
+  },
+]
+
 const FORCABLE = [
   'app.congregationName',
   'app.obs.cameraScene',
@@ -97,5 +121,6 @@ const FORCABLE = [
 
 module.exports = {
   PREFS,
+  ENUMS,
   FORCABLE,
 }
