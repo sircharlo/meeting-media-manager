@@ -315,15 +315,6 @@ export default defineComponent({
     style(): Style {
       return this.styles[this.variant as keyof Styles]
     },
-    screens(): number[] {
-      return (
-        this.$store.state.present.screens as {
-          id: number
-          class: string
-          text: string
-        }[]
-      ).map((screen) => screen.id)
-    },
     updateSuccess(): boolean {
       return this.$store.state.stats.updateSuccess as boolean
     },
