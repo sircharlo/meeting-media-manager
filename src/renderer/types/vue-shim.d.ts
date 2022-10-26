@@ -110,7 +110,7 @@ interface CustomProps {
     error: (msg: any, ...args: any[]) => void
   }
   $mediaItems: NuxtAxiosInstance
-  $mediaPath: (file?: MeetingFile) => string
+  $mediaPath: (file?: MeetingFile) => string | undefined
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
   $notify: (
     message: string,
@@ -126,7 +126,7 @@ interface CustomProps {
   $prefsInitialized: () => boolean
   $printStats: () => void
   $pubMedia: NuxtAxiosInstance
-  $pubPath: (file?: MeetingFile) => string
+  $pubPath: (file?: MeetingFile) => string | undefined
   $query: (db: Database, query: string) => unknown[]
   $refreshBackgroundImgPreview: (force: boolean = false) => Promise<string>
   $removeCong: (path: string) => void

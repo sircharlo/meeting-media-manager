@@ -315,6 +315,15 @@ export default defineComponent({
     style(): Style {
       return this.styles[this.variant as keyof Styles]
     },
+    screens(): number[] {
+      return (
+        this.$store.state.present.screens as {
+          id: number
+          class: string
+          text: string
+        }[]
+      ).map((screen) => screen.id)
+    },
     updateSuccess(): boolean {
       return this.$store.state.stats.updateSuccess as boolean
     },
@@ -356,7 +365,17 @@ export default defineComponent({
         this.$emit('click')
       }
     },
-    toggleMediaScreen() {
+    async toggleMediaScreen() {
+      if (
+        !this.mediaVisible &&
+        this.$getPrefs('media.preferredOutput') !== 'window' &&
+        this.screens.includes(this.$getPrefs('media.preferredOutput') as number)
+      ) {
+        ipcRenderer.send(
+          'setMediaWindowPosition',
+          await this.$getMediaWindowDestination()
+        )
+      }
       ipcRenderer.send('toggleMediaWindowFocus')
     },
     // Set time remaining for music shuffle

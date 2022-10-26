@@ -695,7 +695,7 @@ export default defineComponent({
         )
 
         // Remove old and invalid date directories
-        if (!dryrun) {
+        if (!dryrun && this.$mediaPath()) {
           this.$rm(
             this.$findAll(join(this.$mediaPath(), '*'), {
               ignore: [join(this.$mediaPath(), 'Recurring')],

@@ -703,6 +703,9 @@ const plugin: Plugin = (
     if (existsSync(file.cacheFile)) {
       file.downloadRequired = file.filesize !== statSync(file.cacheFile).size
     }
+
+    const filePath = $mediaPath(file)
+
     if (file.downloadRequired) {
       if (extname(file.cacheFile) === '.jwpub') {
         emptyDirSync(file.cacheDir)
@@ -719,9 +722,11 @@ const plugin: Plugin = (
           })
         )
       )
+
       $write(file.cacheFile, downloadedFile)
-      if (file.folder) {
-        $write($mediaPath(file), downloadedFile)
+
+      if (file.folder && filePath) {
+        $write(filePath, downloadedFile)
       }
       store.commit('stats/setDownloads', {
         origin: 'jworg',
@@ -732,8 +737,8 @@ const plugin: Plugin = (
         $extractAllTo(file.cacheFile, 'contents', file.cacheDir)
       }
     } else {
-      if (file.folder) {
-        $copy(file.cacheFile, $mediaPath(file))
+      if (file.folder && filePath) {
+        $copy(file.cacheFile, filePath)
       }
       store.commit('stats/setDownloads', {
         origin: 'jworg',

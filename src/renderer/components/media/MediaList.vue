@@ -300,6 +300,7 @@ export default defineComponent({
         this.edit?.newName + this.edit?.ext,
         true
       )
+
       this.$rename(
         join(this.$mediaPath(), this.date, this.edit?.safeName),
         this.edit?.safeName,
