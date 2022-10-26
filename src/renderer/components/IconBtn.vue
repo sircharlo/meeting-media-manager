@@ -365,17 +365,7 @@ export default defineComponent({
         this.$emit('click')
       }
     },
-    async toggleMediaScreen() {
-      if (
-        !this.mediaVisible &&
-        this.$getPrefs('media.preferredOutput') !== 'window' &&
-        this.screens.includes(this.$getPrefs('media.preferredOutput') as number)
-      ) {
-        ipcRenderer.send(
-          'setMediaWindowPosition',
-          await this.$getMediaWindowDestination()
-        )
-      }
+    toggleMediaScreen() {
       ipcRenderer.send('toggleMediaWindowFocus')
     },
     // Set time remaining for music shuffle
