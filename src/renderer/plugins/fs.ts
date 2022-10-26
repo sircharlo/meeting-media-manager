@@ -77,12 +77,16 @@ const plugin: Plugin = (
       $warn('errorSetVars', { identifier: mediaPath })
     }
 
-    if (file)
+    if (file) {
+      console.log('folder', file.folder)
+      console.log('dest', file.destFilename)
       return joinSafe(
         mediaPath,
         file.folder as string,
         file.destFilename as string
       )
+    }
+
     return mediaPath
   }
   inject('mediaPath', mediaPath)
