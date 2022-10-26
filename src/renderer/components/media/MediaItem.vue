@@ -291,7 +291,7 @@ export default defineComponent({
     },
     active(val: boolean) {
       if (val) {
-        this.current = this.$getPrefs('media.enablePp') as boolean
+        this.current = true
       } else {
         this.markers.forEach((m) => {
           m.playing = false

@@ -249,9 +249,18 @@ const plugin: Plugin = (
       if (current) return currentScene
       return scenes
     } catch (e: any) {
-      if (store.state.obs.connected && e.message !== 'Socket not identified') {
-        $log.debug('getScenes()')
-        $error('errorObs', e)
+      if (store.state.obs.connected) {
+        if (
+          e.error === 'There is no Socket connection available.' ||
+          e.message === 'Socket not identified' ||
+          e.message === 'Not connected'
+        ) {
+          $warn('errorObs')
+          await resetOBS()
+        } else {
+          $log.debug('getScenes()')
+          $error('errorObs', e)
+        }
       }
       return []
     }
@@ -271,7 +280,10 @@ const plugin: Plugin = (
       }
     } catch (e: any) {
       if (store.state.obs.connected) {
-        if (e.message === 'Not connected') {
+        if (
+          e.error === 'There is no Socket connection available.' ||
+          e.message === 'Not connected'
+        ) {
           $warn('errorObs')
           await resetOBS()
         } else if (scene === $getPrefs('app.obs.cameraScene')) {
