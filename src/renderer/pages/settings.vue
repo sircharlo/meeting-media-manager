@@ -272,20 +272,21 @@ export default defineComponent({
         this.loading = true
         const folders = []
 
-        if (this.$pubPath()) {
-          folders.push(this.$pubPath())
+        const pubPath = this.$pubPath()
+        const mediaPath = this.$mediaPath()
+
+        if (pubPath) {
+          folders.push(pubPath)
         }
 
-        if (this.$mediaPath()) {
-          folders.push(join(this.$mediaPath(), '*'))
+        if (mediaPath) {
+          folders.push(join(mediaPath, '*'))
         }
 
         // Remove cache
         this.$rm(
           this.$findAll(folders, {
-            ignore: this.$mediaPath()
-              ? [join(this.$mediaPath(), 'Recurring')]
-              : [],
+            ignore: mediaPath ? [join(mediaPath, 'Recurring')] : [],
             onlyDirectories: true,
           })
         )

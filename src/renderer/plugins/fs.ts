@@ -25,8 +25,8 @@ const plugin: Plugin = (
   inject
 ) => {
   // Paths
-  inject('pubPath', (file?: MeetingFile): string => {
-    if (!$getPrefs('media.lang')) return ''
+  inject('pubPath', (file?: MeetingFile): string | undefined => {
+    if (!$getPrefs('media.lang')) return undefined
 
     let mediaFolder = $getPrefs('media.lang')
     if (/sjjm_E_\d+.mp3/g.test(basename(file?.url || ''))) {
@@ -61,9 +61,9 @@ const plugin: Plugin = (
     }
   })
 
-  function mediaPath(file?: MeetingFile): string {
+  function mediaPath(file?: MeetingFile): string | undefined {
     if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) {
-      return ''
+      return undefined
     }
 
     const mediaPath = joinSafe(
@@ -77,12 +77,16 @@ const plugin: Plugin = (
       $warn('errorSetVars', { identifier: mediaPath })
     }
 
-    if (file)
+    if (file) {
+      console.log('folder', file.folder)
+      console.log('dest', file.destFilename)
       return joinSafe(
         mediaPath,
         file.folder as string,
         file.destFilename as string
       )
+    }
+
     return mediaPath
   }
   inject('mediaPath', mediaPath)
@@ -220,8 +224,9 @@ const plugin: Plugin = (
   inject(
     'renamePubs',
     async (oldVal: string, newVal: string): Promise<void> => {
-      if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) return
-      readdirSync(mediaPath()).forEach((dir) => {
+      const path = mediaPath()
+      if (!path) return
+      readdirSync(path).forEach((dir) => {
         const path = join(mediaPath(), dir)
         const date = $dayjs(
           dir,

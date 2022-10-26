@@ -351,9 +351,10 @@ export default defineComponent({
     'app.outputFolderDateFormat': {
       async handler(newVal: string, oldVal: string) {
         if (newVal !== oldVal) {
-          if (this.$getPrefs('media.lang')) {
+          const mediaPath = this.$mediaPath()
+          if (mediaPath) {
             // Change the folder format of the current folders in the media path
-            this.$renameAll(this.$mediaPath(), oldVal, newVal, 'rename', 'date')
+            this.$renameAll(mediaPath, oldVal, newVal, 'rename', 'date')
           }
 
           // Change the date keys in the media store
