@@ -201,7 +201,7 @@ export default defineComponent({
         )
 
         // Open the downloaded file
-        await ipcRenderer.invoke(
+        ipcRenderer.send(
           'openPath',
           fileURLToPath(pathToFileURL(downloadsPath).href)
         )

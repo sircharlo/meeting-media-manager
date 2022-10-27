@@ -197,11 +197,13 @@ export default defineComponent({
       return !!lang?.isSignLanguage
     },
     shuffleMusicCached() {
+      const pubPath = this.$pubPath()
+      if (!pubPath) return false
       if (this.isSignLanguage) {
         return (
           this.$findAll(
             join(
-              this.$pubPath(),
+              pubPath,
               '..',
               this.$getPrefs('media.lang'),
               'sjj',
@@ -212,7 +214,7 @@ export default defineComponent({
         )
       } else {
         return (
-          this.$findAll(join(this.$pubPath(), '..', 'E', 'sjjm', '**', '*.mp3'))
+          this.$findAll(join(pubPath, '..', 'E', 'sjjm', '**', '*.mp3'))
             .length === NR_OF_KINGDOM_SONGS
         )
       }
