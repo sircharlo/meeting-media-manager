@@ -48,6 +48,7 @@ let mediaWin = null
 let mediaWinHandler = null
 let closeAttempts = 0
 let allowClose = true
+let updateDownloaded = false
 let authorizedCloseMediaWin = false
 const appLongName = 'Meeting Media Manager'
 
@@ -155,6 +156,12 @@ if (gotTheLock) {
 
   ipcMain.on('exit', () => {
     app.exit()
+  })
+
+  ipcMain.on('installNow', () => {
+    if (updateDownloaded) {
+      autoUpdater.quitAndInstall(false)
+    }
   })
 
   ipcMain.on('openPath', (_e, path) => {
@@ -386,6 +393,7 @@ if (gotTheLock) {
     }
   })
   autoUpdater.on('update-downloaded', () => {
+    updateDownloaded = true
     win.webContents.send('notifyUser', ['updateDownloaded'])
   })
 
