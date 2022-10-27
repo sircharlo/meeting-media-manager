@@ -13,6 +13,9 @@ const LOCAL_LANGS = [
   'sv',
 ]
 
+// Languages that have no active translator
+const STALE_LANGS = ['it']
+
 const LOCALES = [
   {
     code: 'de',
@@ -109,5 +112,6 @@ const LOCALES = [
 
 module.exports = {
   LOCALES,
+  STALE_LANGS,
   LOCAL_LANGS,
 }

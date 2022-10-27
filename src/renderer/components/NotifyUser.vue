@@ -54,6 +54,14 @@
           {{ $t(m.action.label) }}
         </v-btn>
       </template>
+      <template
+        v-else-if="m.message === 'updateDownloaded'"
+        #action="{ attrs }"
+      >
+        <v-btn v-bind="attrs" small color="primary" @click="installNow()">
+          {{ $t('installNow') }}
+        </v-btn>
+      </template>
     </v-snackbar>
   </div>
 </template>
@@ -65,6 +73,7 @@ import {
   faXmark,
   faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons'
+import { ipcRenderer } from 'electron'
 import { Notify, NotifyAction } from '~/types'
 export default defineComponent({
   filters: {
@@ -107,6 +116,9 @@ export default defineComponent({
     },
   },
   methods: {
+    installNow() {
+      ipcRenderer.send('installNow')
+    },
     openActionURL(action: NotifyAction) {
       let url = action.url as string
 
