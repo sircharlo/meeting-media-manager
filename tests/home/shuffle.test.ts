@@ -19,9 +19,11 @@ test.afterAll(async () => {
   await electronApp.close()
 })
 
-test('shuffle music starts', async () => {
-  page = await openHomePage(electronApp)
+test.beforeEach(async () => {
+  if (!page) page = await openHomePage(electronApp)
+})
 
+test('shuffle button works correctly', async () => {
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
 
@@ -60,10 +62,6 @@ test('shuffle music starts', async () => {
 
   // Expect time remaining to appear
   expect(await shuffleBtn.innerText()).toMatch(/\d{2}:\d{2}/g)
-})
-
-test('stop shuffle correctly', async () => {
-  const shuffleBtn = page.locator('[aria-label="shuffle"]')
 
   // Click shuffle button to stop
   await shuffleBtn.click()
@@ -74,8 +72,8 @@ test('stop shuffle correctly', async () => {
   // Click button again
   await shuffleBtn.click()
 
-  // Wait 5 seconds for music fade out
-  await delay(5 * MS_IN_SEC)
+  // Wait 4 seconds for music fade out
+  await delay(4 * MS_IN_SEC)
 
   // Verify blue color
   expect((await shuffleBtn.getAttribute('class'))?.includes('info')).toBe(true)

@@ -10,6 +10,7 @@ import { startApp, openHomePage } from './../helpers/electronHelpers'
 import prefs from './../mocks/prefs/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
 
+let page: Page
 let electronApp: ElectronApplication
 
 test.beforeAll(async () => {
@@ -20,11 +21,11 @@ test.afterAll(async () => {
   await electronApp.close()
 })
 
-let page: Page
+test.beforeEach(async () => {
+  if (!page) page = await openHomePage(electronApp)
+})
 
 test('render the home page correctly', async () => {
-  page = await openHomePage(electronApp)
-
   // Check that the correct congregation is loaded
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
 
@@ -35,8 +36,6 @@ test('render the home page correctly', async () => {
 
 test('fetch is successful', async () => {
   test.slow()
-
-  if (!page) page = await openHomePage(electronApp)
 
   // Click on fetch button
   await page.locator('button', { hasText: locale.fetchMedia }).click()

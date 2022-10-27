@@ -10,6 +10,9 @@ import { delay, strip } from './../helpers/generalHelpers'
 import locale from './../../src/renderer/locales/en.json'
 
 let electronApp: ElectronApplication
+let page: Page
+let filename: string
+let mediaPath: string
 
 test.beforeAll(async () => {
   electronApp = await startApp()
@@ -19,16 +22,16 @@ test.afterAll(async () => {
   await electronApp.close()
 })
 
-let page: Page
-let filename: string
-let mediaPath: string
+test.beforeEach(async () => {
+  if (!page) {
+    page = await openHomePage(electronApp)
+
+    // Open add page
+    await page.locator('.v-card', { hasText: locale.recurring }).click()
+  }
+})
 
 test('render the add media page correctly', async () => {
-  page = await openHomePage(electronApp)
-
-  // Open add page
-  await page.locator('.v-card', { hasText: locale.recurring }).click()
-
   // Check for correct heading
   expect(await page.locator('h1').innerText()).toBe(`Recurring`)
 

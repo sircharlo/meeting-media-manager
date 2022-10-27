@@ -11,6 +11,7 @@ import prefs from './../mocks/prefs/prefsOld.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
 
 let electronApp: ElectronApplication
+let page: Page
 
 test.beforeAll(async () => {
   electronApp = await startApp()
@@ -20,14 +21,16 @@ test.afterAll(async () => {
   await electronApp.close()
 })
 
-let page: Page
+test.beforeEach(async () => {
+  if (!page) {
+    page = await openHomePage(electronApp)
+
+    // Open settings page
+    await page.locator('[aria-label="settings"]').click()
+  }
+})
 
 test('render the settings page correctly', async () => {
-  page = await openHomePage(electronApp)
-
-  // Open settings page
-  await page.locator('[aria-label="settings"]').click()
-
   // Check for correct version
   expect((await page.locator('text=M³ v').innerText()).toLowerCase()).toBe(
     `m³ v${version}`
