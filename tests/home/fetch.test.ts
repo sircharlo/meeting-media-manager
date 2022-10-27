@@ -36,6 +36,8 @@ test('render the home page correctly', async () => {
 test('fetch is successful', async () => {
   test.slow()
 
+  if (!page) page = await openHomePage(electronApp)
+
   // Click on fetch button
   await page.locator('button', { hasText: locale.fetchMedia }).click()
 
