@@ -16,19 +16,14 @@ let mediaPath: string
 
 test.beforeAll(async () => {
   electronApp = await startApp()
+  page = await openHomePage(electronApp)
+
+  // Open add page
+  await page.locator('.v-card', { hasText: locale.recurring }).click()
 })
 
 test.afterAll(async () => {
   await electronApp.close()
-})
-
-test.beforeEach(async () => {
-  if (!page) {
-    page = await openHomePage(electronApp)
-
-    // Open add page
-    await page.locator('.v-card', { hasText: locale.recurring }).click()
-  }
 })
 
 test('render the add media page correctly', async () => {

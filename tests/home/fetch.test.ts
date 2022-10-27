@@ -15,14 +15,11 @@ let electronApp: ElectronApplication
 
 test.beforeAll(async () => {
   electronApp = await startApp()
+  page = await openHomePage(electronApp)
 })
 
 test.afterAll(async () => {
   await electronApp.close()
-})
-
-test.beforeEach(async () => {
-  if (!page) page = await openHomePage(electronApp)
 })
 
 test('render the home page correctly', async () => {

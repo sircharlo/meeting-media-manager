@@ -15,19 +15,14 @@ let page: Page
 
 test.beforeAll(async () => {
   electronApp = await startApp()
+  page = await openHomePage(electronApp)
+
+  // Open settings page
+  await page.locator('[aria-label="settings"]').click()
 })
 
 test.afterAll(async () => {
   await electronApp.close()
-})
-
-test.beforeEach(async () => {
-  if (!page) {
-    page = await openHomePage(electronApp)
-
-    // Open settings page
-    await page.locator('[aria-label="settings"]').click()
-  }
 })
 
 test('render the settings page correctly', async () => {
