@@ -129,6 +129,7 @@
   "updateNotDownloaded": "Er is een update beschikbaar voor M³, maar deze kon niet automatisch gedownload worden. Download de update alsjeblieft handmatig.",
   "username": "Gebruikersnaam",
   "wannaHelp": "Zou je willen helpen?",
+  "wannaHelpExisting": "De gekozen applicatie taal wordt momenteel niet actief bijgehouden. Zou je willen helpen met M³ te vertalen voor gebruikers die deze taal spreken?",
   "wannaHelpExplain": "De gekozen media taal is nog niet beschikbaar als applicatietaal voor M³. Zou je willen helpen met M³ te vertalen voor gebruikers die deze taal spreken?",
   "wannaHelpForSure": "Help bij het vertalen van deze app",
   "wannaHelpWillGoAway": "Deze melding wordt alleen getoond wanneer een nieuwe versie van M³ beschikbaar is.",

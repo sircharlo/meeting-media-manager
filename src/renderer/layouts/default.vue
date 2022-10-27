@@ -21,6 +21,9 @@ import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { ShortJWLang, CongPrefs, Release, Asset, ElectronStore } from '~/types'
 import { LAST_JWMMF_VERSION } from '~/constants/general'
+const { STALE_LANGS } = require('./../constants/lang') as {
+  STALE_LANGS: string[]
+}
 export default defineComponent({
   name: 'DefaultLayout',
   head() {
@@ -333,6 +336,10 @@ export default defineComponent({
       const mediaLang = langs.find(
         (l) => l.langcode === this.$getPrefs('media.lang')
       )
+      const appLang = langs.find(
+        (l) => l.symbol === this.$getPrefs('app.localAppLang')
+      )
+
       if (
         newCong &&
         mediaLang &&
@@ -347,6 +354,16 @@ export default defineComponent({
             type: 'link',
             label: 'wannaHelpForSure',
             url: `${this.$config.repo}/discussions/new?category=translations&title=New+translation+in+${mediaLang.name}&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,${mediaLang.name} (${mediaLang.langcode}/${mediaLang.symbol}).`,
+          },
+        })
+      } else if (newCong && appLang && STALE_LANGS.includes(appLang.symbol)) {
+        this.$notify('wannaHelpExisting', {
+          type: 'wannaHelp',
+          identifier: `${appLang.name} (${appLang.langcode}/${appLang.symbol})`,
+          action: {
+            type: 'link',
+            label: 'wannaHelpForSure',
+            url: `${this.$config.repo}/discussions/new?category=translations&title=New+translation+in+${appLang.name}&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,${appLang.name} (${appLang.langcode}/${appLang.symbol}).`,
           },
         })
       }
