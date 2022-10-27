@@ -74,8 +74,8 @@ test('stop shuffle correctly', async () => {
   // Click button again
   await shuffleBtn.click()
 
-  // Wait 4 seconds for music fade out
-  await delay(4 * MS_IN_SEC)
+  // Wait 5 seconds for music fade out
+  await delay(5 * MS_IN_SEC)
 
   // Verify blue color
   expect((await shuffleBtn.getAttribute('class'))?.includes('info')).toBe(true)
