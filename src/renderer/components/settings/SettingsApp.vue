@@ -131,7 +131,7 @@
         v-model="app.obs.port"
         :label="$t('port')"
         :locked="$isLocked('app.obs.port')"
-        :required="app.obs.enable"
+        required
         @blur="refreshOBS()"
         @keydown.enter.prevent="refreshOBS()"
       />
@@ -142,7 +142,7 @@
         :label="$t('password')"
         :locked="$isLocked('app.obs.password')"
         hide-details="auto"
-        :required="app.obs.enable"
+        required
         @blur="refreshOBS()"
         @keydown.enter.prevent="refreshOBS()"
       />
@@ -164,7 +164,7 @@
         :label="$t('obsCameraScene')"
         :disabled="cameraScenes.length === 0"
         :locked="$isLocked('app.obs.cameraScene')"
-        :required="app.obs.enable"
+        required
       />
       <form-input
         id="app.obs.mediaScene"
@@ -174,7 +174,7 @@
         :label="$t('obsMediaScene')"
         :disabled="cameraScenes.length === 0"
         :locked="$isLocked('app.obs.mediaScene')"
-        :required="app.obs.enable"
+        required
       />
     </template>
     <v-divider class="mb-6" />

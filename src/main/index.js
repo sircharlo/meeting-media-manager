@@ -75,7 +75,7 @@ function createMainWindow(pos = { width: 700, height: 700 }) {
     pos.manage(win)
   }
 
-  win.on('will-move', () => {
+  win.on('move', () => {
     if (mediaWin) {
       const screenInfo = getScreenInfo(win, mediaWin)
       if (screenInfo.otherScreens.length > 0) {

@@ -59,6 +59,7 @@ export default defineComponent({
     online(val: boolean) {
       if (val) {
         ipcRenderer.send('checkForUpdates')
+        this.$store.commit('notify/deleteByMessage', 'errorOffline')
       } else {
         this.$warn('errorOffline')
       }
@@ -70,6 +71,7 @@ export default defineComponent({
     },
   },
   async beforeMount() {
+    await this.$getJWLangs()
     if (this.cong) {
       this.initPrefs('prefs-' + this.cong)
     } else {
@@ -201,7 +203,7 @@ export default defineComponent({
         )
 
         // Open the downloaded file
-        await ipcRenderer.invoke(
+        ipcRenderer.send(
           'openPath',
           fileURLToPath(pathToFileURL(downloadsPath).href)
         )

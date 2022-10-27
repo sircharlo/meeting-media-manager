@@ -114,9 +114,11 @@ const plugin: Plugin = (
     try {
       let langs: ShortJWLang[] = []
 
+      if (!existsSync(join($appPath(), 'langs.json'))) return []
+
       try {
         langs = JSON.parse(
-          readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
+          readFileSync(join($appPath(), 'langs.json'), 'utf8')
         ) as ShortJWLang[]
       } catch (e: any) {
         $log.error(e)

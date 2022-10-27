@@ -421,13 +421,19 @@ export default defineComponent({
     if (this.weekParam > -1) {
       this.currentWeek = this.weekParam
     }
-    if (!this.jwSync || !this.$mediaPath()) {
+
+    if (!this.$mediaPath()) {
       console.debug('Open settings to fill in mediaLang/localOutputFolder')
       this.$router.push({
         path: this.localePath('/settings'),
         query: this.$route.query,
       })
     }
+
+    if (!this.jwSync) {
+      await this.$getJWLangs()
+    }
+
     if (!this.$getPrefs('meeting.specialCong')) {
       this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'secondary')
       this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'secondary')

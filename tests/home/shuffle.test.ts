@@ -13,15 +13,14 @@ let page: Page
 
 test.beforeAll(async () => {
   electronApp = await startApp()
+  page = await openHomePage(electronApp)
 })
 
 test.afterAll(async () => {
   await electronApp.close()
 })
 
-test('shuffle music starts', async () => {
-  page = await openHomePage(electronApp)
-
+test('shuffle button works correctly', async () => {
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
 
@@ -60,10 +59,6 @@ test('shuffle music starts', async () => {
 
   // Expect time remaining to appear
   expect(await shuffleBtn.innerText()).toMatch(/\d{2}:\d{2}/g)
-})
-
-test('stop shuffle correctly', async () => {
-  const shuffleBtn = page.locator('[aria-label="shuffle"]')
 
   // Click shuffle button to stop
   await shuffleBtn.click()

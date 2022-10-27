@@ -105,7 +105,7 @@
         :locked="$isLocked('media.mediaWinShortcut')"
         placeholder="e.g. Alt+Z"
         :label="$t('mediaWinShortcut')"
-        :required="media.enableMediaDisplayButton"
+        required
         :rules="getShortcutRules('toggleMediaWindow')"
       />
       <form-input
@@ -114,7 +114,7 @@
         :locked="$isLocked('media.presentShortcut')"
         placeholder="e.g. Alt+D"
         :label="$t('presentShortcut')"
-        :required="media.enableMediaDisplayButton"
+        required
         :rules="getShortcutRules('openPresentMode')"
       />
       <form-input
@@ -146,7 +146,7 @@
           :locked="$isLocked('media.ppForward')"
           placeholder="e.g. PageDown / Alt+F / Alt+N"
           :label="$t('ppForward')"
-          :required="media.enablePp"
+          required
           :rules="getShortcutRules('nextMediaItem')"
         />
         <form-input
@@ -155,7 +155,7 @@
           placeholder="e.g. PageUp / Alt+B / Alt+P"
           :locked="$isLocked('media.ppBackward')"
           :label="$t('ppBackward')"
-          :required="media.enablePp"
+          required
           :rules="getShortcutRules('previousMediaItem')"
         />
       </template>
@@ -320,6 +320,14 @@ export default defineComponent({
           this.screens.length > 0
         ) {
           this.media.preferredOutput = this.screens[0].id
+        }
+      },
+    },
+    'media.enablePp': {
+      handler() {
+        if (this.$refs.mediaForm) {
+          // @ts-ignore
+          this.$refs.mediaForm.validate()
         }
       },
     },

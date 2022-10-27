@@ -8,7 +8,7 @@ const config: PlaywrightTestConfig = {
   reporter: process.env.CI ? 'github' : 'list',
   maxFailures: process.env.CI ? 2 : 1,
   use: {
-    trace: 'on-first-retry', // record traces on first retry of each test
+    trace: 'retain-on-failure', // record traces on first retry of each test
   },
   expect: {
     toMatchSnapshot: { threshold: 0.2 },
