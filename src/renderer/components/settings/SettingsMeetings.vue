@@ -83,7 +83,7 @@
         :locked="$isLocked('meeting.shuffleShortcut')"
         placeholder="e.g. Alt+K"
         :label="$t('shuffleShortcut')"
-        :required="meeting.enableMusicButton"
+        required
         :rules="getShortcutRules('toggleMusicShuffle')"
       />
       <form-input
