@@ -19,7 +19,14 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav/dist/web/types'
-import { ShortJWLang, CongPrefs, Release, Asset, ElectronStore } from '~/types'
+import {
+  ShortJWLang,
+  CongPrefs,
+  Release,
+  Asset,
+  ElectronStore,
+  ObsPrefs,
+} from '~/types'
 import { LAST_JWMMF_VERSION } from '~/constants/general'
 const { STALE_LANGS } = require('./../constants/lang') as {
   STALE_LANGS: string[]
@@ -397,7 +404,8 @@ export default defineComponent({
 
       // Connect to OBS depending on prefs
       this.$store.commit('obs/clear')
-      if (this.$getPrefs('app.obs.enable')) {
+      const { enable, port, password } = this.$getPrefs('app.obs') as ObsPrefs
+      if (enable && port && password) {
         await this.$getScenes()
       }
 
