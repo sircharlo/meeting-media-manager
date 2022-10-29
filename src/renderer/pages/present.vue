@@ -156,9 +156,12 @@ export default defineComponent({
       return (this.$store.state.obs.scenes as string[])
         .filter((scene) => scene !== this.$getPrefs('app.obs.mediaScene'))
         .map((scene, i) => {
+          let shortcut = `Alt+${i + 1}`
+          if (i === 9) shortcut = `Alt+0`
+          if (i > 9) shortcut = ''
           return {
-            shortcut: `ALT+${i + 1}`,
-            text: `ALT+${i + 1}: ${scene}`,
+            shortcut,
+            text: `${shortcut}: ${scene}`,
             value: scene,
             shortText: scene
               .replace('+', ' + ')
