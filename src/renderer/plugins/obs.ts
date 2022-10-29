@@ -243,7 +243,12 @@ const plugin: Plugin = (
       for (const [i] of scenes
         .filter((scene) => scene !== $getPrefs('app.obs.mediaScene'))
         .entries()) {
-        await $setShortcut(`ALT+${i + 1}`, 'setObsScene', 'obs')
+        const MAX_SHORTCUT = 9
+        if (i < MAX_SHORTCUT) {
+          await $setShortcut(`ALT+${i + 1}`, 'setObsScene', 'obs')
+        } else if (i === MAX_SHORTCUT) {
+          await $setShortcut('ALT+0', 'setObsScene', 'obs')
+        }
       }
 
       if (current) return currentScene
