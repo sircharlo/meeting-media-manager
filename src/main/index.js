@@ -164,6 +164,10 @@ if (gotTheLock) {
     }
   })
 
+  ipcMain.on('toggleAutoUpdate', (val) => {
+    autoUpdater.autoInstallOnAppQuit = val
+  })
+
   ipcMain.on('openPath', (_e, path) => {
     require('electron').shell.openPath(
       path.replaceAll('/', platform() === 'win32' ? '\\' : '/')
