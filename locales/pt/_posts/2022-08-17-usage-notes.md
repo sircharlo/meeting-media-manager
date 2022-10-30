@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: Technical usage notes
+title: Como instalar o M³
 ref: usage-notes
 ---
 

@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Congregation sync'
+title: 'Koguduse sünkroonimine'
 ref: congregation-sync
 ---
 

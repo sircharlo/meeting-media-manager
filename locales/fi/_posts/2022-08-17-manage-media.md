@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: 'Managing media'
+title: 'Median hallinta'
 ref: manage-media
 ---
 
