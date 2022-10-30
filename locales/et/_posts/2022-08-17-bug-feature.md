@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: 'Issues and feature requests'
+title: 'Probleemid ja funktsioonitaotlused'
 ref: bug-feature
 ---
 
