@@ -21,6 +21,7 @@ export interface AppPrefs {
   autoRunAtBoot: boolean
   autoStartSync: boolean
   congregationName: string | null
+  disableAutoUpdate: boolean
   disableHardwareAcceleration: boolean
   localAppLang: string | null
   localOutputPath: string | null

@@ -31,6 +31,10 @@ const schema: Schema<ElectronStore> = {
         enum: ['dark', 'light', 'system'],
         default: PREFS.app.theme,
       },
+      disableAutoUpdate: {
+        type: 'boolean',
+        default: PREFS.app.disableAutoUpdate,
+      },
       disableHardwareAcceleration: {
         type: 'boolean',
         default: PREFS.app.disableHardwareAcceleration,

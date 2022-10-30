@@ -5,6 +5,7 @@ const PREFS = {
     autoRunAtBoot: false,
     autoStartSync: false,
     congregationName: null,
+    disableAutoUpdate: false,
     disableHardwareAcceleration: false,
     localAppLang: null,
     localOutputPath: null,
