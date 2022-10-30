@@ -11,6 +11,7 @@
   "custom": "Personalizado",
   "dark": "Escuro",
   "delete": "Excluir",
+  "disableAutoUpdate": "Desativar atualização automática",
   "disableHardwareAcceleration": "Desativar a aceleração de hardware <em>(Observação: ative essa opção somente se apresentar problemas na exibição das mídias na tela secundária. Ao alterar essa opção o M³ será reiniciado.)</em>",
   "dontForgetToGetMedia": "Não se esqueça de baixar as mídias no computador usado para exibir as mídias nas reuniões congregacionais!",
   "downloadShuffleMusic": "Baixar todos os cânticos em MP3",
