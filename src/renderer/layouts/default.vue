@@ -380,6 +380,12 @@ export default defineComponent({
         ipcRenderer.send('runAtBoot', this.$getPrefs('app.autoRunAtBoot'))
       }
 
+      // Set disable auto update depending on prefs
+      ipcRenderer.send(
+        'toggleAutoUpdate',
+        !this.$getPrefs('app.disableAutoUpdate')
+      )
+
       // Set music shuffle shortcut if enabled
       if (this.$getPrefs('meeting.enableMusicButton')) {
         await this.$setShortcut(
