@@ -13,6 +13,16 @@
     "port": "Portti",
     "setting": "Asetus"
   },
+  "nav": {
+    "bugFeature": "Ongelmat ja ominaisuuspyynnöt",
+    "configuration": "Asetukset",
+    "congSync": "Seurakunnan synkronointi",
+    "faq": "FAQ",
+    "installation": "Asennus",
+    "manageMedia": "Median hallinta",
+    "presentMedia": "Median esitystila",
+    "usageNotes": "Tekniset käyttöohjeet"
+  },
   "home": {
     "expand": "Laajenna kaikki artikkelit",
     "collapse": "Kutista kaikki artikkelit",

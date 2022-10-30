@@ -13,6 +13,16 @@
     "port": "Port",
     "setting": "Inställning"
   },
+  "nav": {
+    "bugFeature": "Problem och funktionsförfrågningar",
+    "configuration": "inställningar",
+    "congSync": "Församlingssynkronisering",
+    "faq": "FAQ",
+    "installation": "Installation",
+    "manageMedia": "Hantera media",
+    "presentMedia": "Mediapresentationsläge",
+    "usageNotes": "Anmärkningar om teknisk användning"
+  },
   "home": {
     "expand": "Utöka alla artiklar",
     "collapse": "Komprimera alla artiklar",
