@@ -65,15 +65,13 @@ const plugin: Plugin = (
         password,
       })
 
-      let contents: FileStat[] = []
-
-      if (host.includes('4shared')) {
-        contents = await getCongDirectory(host, username, password, dir)
-      } else {
-        contents = (await client.getDirectoryContents(dir, {
-          deep: true,
-        })) as FileStat[]
-      }
+      const contents: FileStat[] = await getCongDirectory(
+        client,
+        host,
+        username,
+        password,
+        dir
+      )
 
       // Clean up old dates
       const promises: Promise<void>[] = []
@@ -199,55 +197,63 @@ const plugin: Plugin = (
 
   // Fallback to get the entire directory contents of the cong server
   async function getCongDirectory(
+    client: WebDAVClient,
     host: string,
     username: string,
     password: string,
     dir: string = '/'
   ): Promise<FileStat[]> {
-    let contents: FileStat[] = []
+    const brokenServers = ['4shared', 'cloudwise']
+    if (!brokenServers.some((s) => host.includes(s))) {
+      return (await client.getDirectoryContents(dir, {
+        deep: true,
+      })) as FileStat[]
+    } else {
+      let contents: FileStat[] = []
 
-    // Get root content
-    const rootFiles = await getFolderContent(host, username, password, dir)
-    contents = contents.concat(rootFiles)
+      // Get root content
+      const rootFiles = await getFolderContent(host, username, password, dir)
+      contents = contents.concat(rootFiles)
 
-    // Get date folders
-    let dateFolders: FileStat[] = []
-    const datePromises: Promise<FileStat[]>[] = []
-    rootFiles
-      .filter(({ type }) => type === 'directory')
-      .forEach((dir) => {
-        datePromises.push(
-          getFolderContent(host, username, password, dir.filename)
-        )
+      // Get date folders
+      let dateFolders: FileStat[] = []
+      const datePromises: Promise<FileStat[]>[] = []
+      rootFiles
+        .filter(({ type }) => type === 'directory')
+        .forEach((dir) => {
+          datePromises.push(
+            getFolderContent(host, username, password, dir.filename)
+          )
+        })
+
+      const dateFolderResult = await Promise.allSettled(datePromises)
+      dateFolderResult.forEach((dateDirs) => {
+        if (dateDirs.status === 'fulfilled') {
+          dateFolders = dateFolders.concat(dateDirs.value)
+        }
       })
 
-    const dateFolderResult = await Promise.allSettled(datePromises)
-    dateFolderResult.forEach((dateDirs) => {
-      if (dateDirs.status === 'fulfilled') {
-        dateFolders = dateFolders.concat(dateDirs.value)
-      }
-    })
+      // Get media files
+      let mediaFiles: FileStat[] = []
+      const mediaPromises: Promise<FileStat[]>[] = []
+      dateFolders
+        .filter(({ type }) => type === 'directory')
+        .forEach((dir) => {
+          mediaPromises.push(
+            getFolderContent(host, username, password, dir.filename)
+          )
+        })
 
-    // Get media files
-    let mediaFiles: FileStat[] = []
-    const mediaPromises: Promise<FileStat[]>[] = []
-    dateFolders
-      .filter(({ type }) => type === 'directory')
-      .forEach((dir) => {
-        mediaPromises.push(
-          getFolderContent(host, username, password, dir.filename)
-        )
+      const mediaFolderResult = await Promise.allSettled(mediaPromises)
+      mediaFolderResult.forEach((media) => {
+        if (media.status === 'fulfilled') {
+          mediaFiles = mediaFiles.concat(media.value)
+        }
       })
 
-    const mediaFolderResult = await Promise.allSettled(mediaPromises)
-    mediaFolderResult.forEach((media) => {
-      if (media.status === 'fulfilled') {
-        mediaFiles = mediaFiles.concat(media.value)
-      }
-    })
-
-    // Return all files and directories
-    return contents.concat(dateFolders, mediaFiles)
+      // Return all files and directories
+      return contents.concat(dateFolders, mediaFiles)
+    }
   }
 
   // Remove old date folders that are not used any more
@@ -275,22 +281,13 @@ const plugin: Plugin = (
     if (store.state.cong.client) {
       const { server, user, password, dir } = $getPrefs('cong') as CongPrefs
       let contents: FileStat[] = []
-      if (server?.includes('4shared')) {
-        contents = await getCongDirectory(
-          server,
-          user as string,
-          password as string,
-          dir as string
-        )
-      } else {
-        contents = (await store.state.cong.client.getDirectoryContents(
-          $getPrefs('cong.dir'),
-          {
-            deep: true,
-          }
-        )) as FileStat[]
-      }
-
+      contents = await getCongDirectory(
+        store.state.cong.client,
+        server as string,
+        user as string,
+        password as string,
+        dir as string
+      )
       store.commit('cong/setContents', contents)
     }
   })

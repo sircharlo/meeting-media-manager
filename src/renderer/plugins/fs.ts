@@ -78,8 +78,6 @@ const plugin: Plugin = (
     }
 
     if (file) {
-      console.log('folder', file.folder)
-      console.log('dest', file.destFilename)
       return joinSafe(
         mediaPath,
         file.folder as string,
