@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Congregation sync'
+title: 'Configuração do servidor da congregação'
 ref: congregation-sync
 ---
 

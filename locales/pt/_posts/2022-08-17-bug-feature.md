@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: 'Issues and feature requests'
+title: 'Problemas e solicitações de recursos'
 ref: bug-feature
 ---
 

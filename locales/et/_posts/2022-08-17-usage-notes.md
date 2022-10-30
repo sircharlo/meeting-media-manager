@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: Technical usage notes
+title: Tehnilised kasutusjuhised
 ref: usage-notes
 ---
 

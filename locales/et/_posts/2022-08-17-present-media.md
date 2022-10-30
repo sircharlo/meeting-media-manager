@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: 'Media Presentation Mode'
+title: 'Meedia esitlusrežiim'
 ref: present-media
 ---
 
