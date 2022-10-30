@@ -328,6 +328,16 @@ function storeOptions(name: string = 'prefs') {
           }
         }
       },
+      '22.10.1': (store) => {
+        if (store.get('app.ppEnable') !== undefined) {
+          store.set(
+            'media.enablePp',
+            store.get('app.ppEnable') || store.get('media.enablePp')
+          )
+          // @ts-ignore
+          store.delete('app.ppEnable')
+        }
+      },
     },
   } as Store.Options<ElectronStore>
 }
@@ -350,6 +360,10 @@ function migrate2290(key: string, newVal: any) {
   if (key === 'enableObs') {
     isObsPref = true
     newKey = 'enable'
+  } else if (key === 'ppEnable') {
+    newKey = 'enablePp'
+    root = 'media'
+    isMediaPref = true
   } else if (key.startsWith('obs')) {
     isObsPref = true
     newKey = key.replace('obs', '') as keyof ObsPrefs
