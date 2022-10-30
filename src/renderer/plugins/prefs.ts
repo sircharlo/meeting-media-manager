@@ -327,6 +327,9 @@ function storeOptions(name: string = 'prefs') {
             // Set new key and value and delete old one
             store.set(newProp.key, newProp.val)
             store.delete(key as keyof ElectronStore)
+
+            // @ts-ignore
+            store.reset('cong.port')
           } catch (e: any) {
             console.error(e)
           }
