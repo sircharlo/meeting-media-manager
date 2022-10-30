@@ -1,4 +1,26 @@
 {
   "lang": "hu",
-  "name": "magyar nyelv"
+  "name": "magyar",
+  "shared": {
+  },
+  "nav": {
+  },
+  "home": {
+  },
+  "bug-feature": {
+  },
+  "configuration": {
+  },
+  "congregation-sync": {
+  },
+  "faq": {
+  },
+  "installation": {
+  },
+  "usage-notes": {
+  },
+  "manage-media": {
+  },
+  "present-media": {
+  }
 }
