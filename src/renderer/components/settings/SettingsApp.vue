@@ -179,6 +179,16 @@
     </template>
     <v-divider class="mb-6" />
     <form-input
+      id="app.disableAutoUpdate"
+      v-model="app.disableAutoUpdate"
+      field="switch"
+      :locked="$isLocked('app.disableAutoUpdate')"
+    >
+      <template #label>
+        <span v-html="$t('disableAutoUpdate')" />
+      </template>
+    </form-input>
+    <form-input
       id="app.disableHardwareAcceleration"
       v-model="app.disableHardwareAcceleration"
       field="switch"
@@ -364,6 +374,11 @@ export default defineComponent({
             oldFormat: oldVal,
           })
         }
+      },
+    },
+    'app.disableAutoUpdate': {
+      handler(val: boolean) {
+        ipcRenderer.send('toggleAutoUpdate', !val)
       },
     },
     'app.disableHardwareAcceleration': {
