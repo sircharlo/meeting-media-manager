@@ -644,27 +644,31 @@ export default defineComponent({
         }
 
         // If jw media is already downloaded, set isLocal of jw media to true, else add local file to list
-        const path = join(this.$mediaPath(), this.date)
-        if (existsSync(path)) {
-          readdirSync(path).forEach((filename) => {
-            const jwMatch = jwMedia.find(
-              ({ safeName }) => safeName === filename
-            )
-            if (jwMatch) {
-              jwMatch.isLocal = true
-            } else {
-              localMedia.push({
-                safeName: filename,
-                isLocal: true,
-                filepath: join(
-                  this.$mediaPath() as string,
-                  this.date,
-                  filename
-                ),
-              })
-            }
-          })
+        const mediaPath = this.$mediaPath()
+        if (mediaPath) {
+          const path = join(mediaPath, this.date)
+          if (existsSync(path)) {
+            readdirSync(path).forEach((filename) => {
+              const jwMatch = jwMedia.find(
+                ({ safeName }) => safeName === filename
+              )
+              if (jwMatch) {
+                jwMatch.isLocal = true
+              } else {
+                localMedia.push({
+                  safeName: filename,
+                  isLocal: true,
+                  filepath: join(
+                    this.$mediaPath() as string,
+                    this.date,
+                    filename
+                  ),
+                })
+              }
+            })
+          }
         }
+
         this.media = [...jwMedia, ...localMedia].sort((a, b) => {
           return (a.safeName as string).localeCompare(b.safeName as string)
         })
