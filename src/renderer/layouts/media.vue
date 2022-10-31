@@ -11,8 +11,8 @@ export default defineComponent({
   name: 'MediaLayout',
   head() {
     return {
-      title: 'Media Window',
-      titleTemplate: '%s - M³',
+      title: 'Media Window', // Changing this causes configured OBS Window Captures to break
+      titleTemplate: '%s - M³', // Changing this causes configured OBS Window Captures to break
       htmlAttrs: {
         lang: this.$i18n.localeProperties.iso ?? this.$i18n.locale,
       },
