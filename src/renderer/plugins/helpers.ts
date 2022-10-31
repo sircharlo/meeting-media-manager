@@ -4,7 +4,7 @@ import cloneDeep from 'lodash.clonedeep'
 
 const plugin: Plugin = ({ $getPrefs, i18n }, inject) => {
   // Clone an object, so that the two objects are not linked
-  inject('clone', (value: any) => {
+  inject('clone', (value: unknown) => {
     return cloneDeep(value)
   })
 

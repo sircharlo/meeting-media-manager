@@ -1,5 +1,6 @@
-/* eslint-disable import/named */
 import { platform } from 'os'
+import { Entry, sync, Options } from 'fast-glob'
+/* eslint-disable import/named */
 import { ipcRenderer } from 'electron'
 import {
   existsSync,
@@ -14,7 +15,6 @@ import {
 } from 'fs-extra'
 import { join, extname, basename, dirname, joinSafe } from 'upath'
 import { Plugin } from '@nuxt/types'
-import { sync, Options } from 'fast-glob'
 import Zipper from 'adm-zip'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import { MeetingFile } from '~/types'
@@ -36,7 +36,7 @@ const plugin: Plugin = (
     const pubPath = joinSafe($appPath(), 'Publications', mediaFolder)
     try {
       ensureDirSync(pubPath)
-    } catch (e: any) {
+    } catch (e: unknown) {
       $warn('errorSetVars', { identifier: pubPath })
     }
 
@@ -73,7 +73,7 @@ const plugin: Plugin = (
 
     try {
       ensureDirSync(mediaPath)
-    } catch (e: any) {
+    } catch (e: unknown) {
       $warn('errorSetVars', { identifier: mediaPath })
     }
 
@@ -131,6 +131,18 @@ const plugin: Plugin = (
     return results
   })
 
+  inject(
+    'findAllStats',
+    (path: string | string[], options?: Options): Entry[] => {
+      const results = sync(path, {
+        ...options,
+        stats: true,
+      })
+      $log.debug(path, results)
+      return results
+    }
+  )
+
   inject('rm', (files: string | string[]): void => {
     if (!Array.isArray(files)) files = [files]
     files.forEach((file) => removeSync(file))
@@ -142,7 +154,7 @@ const plugin: Plugin = (
       try {
         ensureFileSync(file)
         writeFileSync(file, data)
-      } catch (e: any) {
+      } catch (e: unknown) {
         $warn('errorSetVars', { identifier: dirname(file) })
       }
     }
@@ -152,7 +164,7 @@ const plugin: Plugin = (
     try {
       ensureFileSync(dest)
       copyFileSync(src, dest)
-    } catch (e: any) {
+    } catch (e: unknown) {
       $warn('errorSetVars', { identifier: dirname(dest) })
     }
   })
@@ -193,7 +205,7 @@ const plugin: Plugin = (
           default:
             throw new Error('Invalid type for rename() function: ' + type)
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         $warn('errorRename', { identifier: path }, e)
       }
     }

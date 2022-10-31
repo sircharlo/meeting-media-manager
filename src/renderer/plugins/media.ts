@@ -67,7 +67,7 @@ const plugin: Plugin = (
         if (matches && matches.length > 0) {
           extract.Lang = (matches.pop() as string).split(':')[0]
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         $log.error(e)
       }
     }
@@ -298,7 +298,7 @@ const plugin: Plugin = (
 
         return picture
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       $warn(
         'errorJwpubMediaExtract',
         {
@@ -493,7 +493,7 @@ const plugin: Plugin = (
         result = await $pubMedia.get('', {
           params,
         })
-      } catch (e: any) {
+      } catch (e: unknown) {
         $log.debug(params, mediaItem)
         try {
           result = await $pubMedia.get('', {
@@ -505,7 +505,7 @@ const plugin: Plugin = (
               langwritten: mediaLang,
             },
           })
-        } catch (e: any) {
+        } catch (e: unknown) {
           $log.debug(`pub: ${mediaItem.pubSymbol + 'm'}`, mediaItem)
           try {
             result = await $pubMedia.get('', {
@@ -517,7 +517,7 @@ const plugin: Plugin = (
                 langwritten: mediaLang,
               },
             })
-          } catch (e: any) {
+          } catch (e: unknown) {
             $log.debug(`pub: ${mediaItem.pubSymbol.slice(0, -1)}`, mediaItem)
           }
         }
@@ -607,7 +607,7 @@ const plugin: Plugin = (
           identifier: Object.values(mediaItem).filter(Boolean).join('_'),
         })
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (silent) {
         $log.warn(e)
       } else {
@@ -659,7 +659,7 @@ const plugin: Plugin = (
           pub = jwpubInfo.UniqueEnglishSymbol.replace(/[0-9]/g, '')
           issue = jwpubInfo.IssueTagNumber
           $setDb(pub, issue, db)
-        } catch (e: any) {
+        } catch (e: unknown) {
           $log.error(e)
         }
       } else if (pub) {
@@ -681,7 +681,7 @@ const plugin: Plugin = (
           return null
         }
       } else return null
-    } catch (e: any) {
+    } catch (e: unknown) {
       $warn('errorJwpubDbFetch', { identifier: `${pub}-${issue}` }, e)
       return null
     }
@@ -940,7 +940,7 @@ const plugin: Plugin = (
               return $getPrefs('media.lang') as string
             }
           })
-      } catch (e: any) {
+      } catch (e: unknown) {
         $log.error(e)
       }
 

@@ -217,7 +217,7 @@ export default defineComponent({
           'openPath',
           fileURLToPath(pathToFileURL(downloadsPath).href)
         )
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$error('updateNotDownloaded', e, this.$config.version)
         this.$store.commit('stats/setUpdateSuccess', false)
       }
@@ -432,7 +432,7 @@ export default defineComponent({
         } else if (existsSync(join(JWMMF, 'lastRunVersion.json'))) {
           lastVersion = readFileSync(join(JWMMF, 'lastRunVersion.json'), 'utf8')
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$error('warnUnknownLastVersion', e)
       } finally {
         if (lastVersion !== this.$config.version) {
@@ -465,7 +465,7 @@ export default defineComponent({
               })
             }
             this.$write(versionPath, this.$config.version)
-          } catch (e: any) {
+          } catch (e: unknown) {
             this.$log.error(e)
           }
         }

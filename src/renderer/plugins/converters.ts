@@ -130,7 +130,7 @@ const plugin: Plugin = (
         await convertPdfPage(mediaFile, pdf, pageNr)
       }
       $rm(mediaFile)
-    } catch (e: any) {
+    } catch (e: unknown) {
       $warn('warnPdfConversionFailure', { identifier: basename(mediaFile) }, e)
     }
   }
@@ -182,7 +182,7 @@ const plugin: Plugin = (
           'base64'
         )
       )
-    } catch (e: any) {
+    } catch (e: unknown) {
       $warn(
         'warnPdfConversionFailure',
         {
@@ -263,7 +263,7 @@ const plugin: Plugin = (
 
     try {
       accessSync(entryPath, constants.X_OK)
-    } catch (e: any) {
+    } catch (e: unknown) {
       chmodSync(entryPath, '777')
     }
     // eslint-disable-next-line import/no-named-as-default-member
@@ -362,7 +362,7 @@ const plugin: Plugin = (
           let convertedDimensions: number[] = []
           const dimensions = sizeOf(file)
           if (dimensions.orientation && dimensions.orientation >= 5) {
-            [dimensions.width, dimensions.height] = [
+            ;[dimensions.width, dimensions.height] = [
               dimensions.height,
               dimensions.width,
             ]
@@ -426,7 +426,7 @@ const plugin: Plugin = (
             throw new Error('Could not determine dimensions of image.')
           }
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         $warn('warnMp4ConversionFailure', { identifier: basename(file) }, e)
         increaseProgress(setProgress)
         return resolve()

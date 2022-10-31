@@ -328,7 +328,7 @@ export default defineComponent({
 
         await Promise.allSettled(promises)
         this.status = 'success'
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.status = 'error'
       }
     },

@@ -41,7 +41,7 @@ const plugin: Plugin = (
           fn,
         })
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       $log.error(e)
     } finally {
       if (!res) {
@@ -106,7 +106,7 @@ const plugin: Plugin = (
     if (match) {
       try {
         ipcRenderer.send('unregisterShortcut', match.name)
-      } catch (e: any) {
+      } catch (e: unknown) {
         $log.error(e)
       }
 
@@ -130,7 +130,7 @@ const plugin: Plugin = (
       if (filter === 'all' || domain === filter) {
         try {
           ipcRenderer.send('unregisterShortcut', name)
-        } catch (e: any) {
+        } catch (e: unknown) {
           $log.error(e)
         }
       } else {
@@ -210,7 +210,7 @@ const plugin: Plugin = (
         ipcRenderer.send('startMediaDisplay', $getAllPrefs())
         return type
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       $log.error(e)
     }
   }
@@ -258,7 +258,7 @@ const plugin: Plugin = (
           mediaWinOptions.destination = screenInfo.displays[0]?.id ?? null
         }
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       $log.error(e)
     }
     return mediaWinOptions

@@ -613,7 +613,7 @@ export default defineComponent({
             this.setProgress
           )
           this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'success')
-        } catch (e: any) {
+        } catch (e: unknown) {
           this.$error('errorGetMwMedia', e)
           this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'error')
         }
@@ -630,7 +630,7 @@ export default defineComponent({
             this.setProgress
           )
           this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'success')
-        } catch (e: any) {
+        } catch (e: unknown) {
           this.$error('errorGetWeMedia', e)
           this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'error')
         }
@@ -643,7 +643,7 @@ export default defineComponent({
           if (this.congSyncColor === 'warning') {
             this.congSyncColor = 'success'
           }
-        } catch (e: any) {
+        } catch (e: unknown) {
           this.congSyncColor = 'error'
           this.$error('errorSyncCongMedia', e)
         }
@@ -659,7 +659,7 @@ export default defineComponent({
           await this.$syncLocalRecurringMedia(this.baseDate)
         }
         this.recurringColor = 'success'
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$log.error(e)
         this.recurringColor = 'error'
       }
@@ -674,7 +674,7 @@ export default defineComponent({
       try {
         await this.$syncJWMedia(dryrun, this.baseDate, this.setProgress)
         this.jwSyncColor = 'success'
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$log.error(e)
         this.jwSyncColor = 'error'
       }
@@ -746,7 +746,7 @@ export default defineComponent({
             if (dryrun) {
               this.congSyncColor = 'success'
             }
-          } catch (e: any) {
+          } catch (e: unknown) {
             this.$error('errorGetCongMedia', e)
             this.congSyncColor = 'error'
           }
@@ -773,7 +773,7 @@ export default defineComponent({
           try {
             await this.$convertToMP4(this.baseDate, this.now, this.setProgress)
             this.mp4Color = 'success'
-          } catch (e: any) {
+          } catch (e: unknown) {
             this.$log.error(e)
             this.mp4Color = 'error'
           } finally {
@@ -806,7 +806,7 @@ export default defineComponent({
         if (this.$getPrefs('app.autoQuitWhenDone')) {
           this.action = 'quitApp'
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$error('error', e)
       } finally {
         this.loading = false

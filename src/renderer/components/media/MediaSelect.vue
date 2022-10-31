@@ -61,7 +61,7 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { Database } from 'sql.js'
 import { basename, extname, trimExt } from 'upath'
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import { MultiMediaItem, VideoFile, LocalFile } from '~/types'
 export default defineComponent({
@@ -71,7 +71,9 @@ export default defineComponent({
       required: true,
     },
     setProgress: {
-      type: Function,
+      type: Function as PropType<
+        (loaded: number, total: number, global?: boolean) => void
+      >,
       default: null,
     },
   },

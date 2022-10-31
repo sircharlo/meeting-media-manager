@@ -46,7 +46,7 @@ const plugin: Plugin = ({ store, $log, $config }, inject) => {
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })
         return db
-      } catch (e: any) {
+      } catch (e: unknown) {
         $log.error(e)
       }
 

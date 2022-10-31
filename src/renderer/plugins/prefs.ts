@@ -330,7 +330,7 @@ function storeOptions(name: string = 'prefs') {
 
             // @ts-ignore
             store.reset('cong.port')
-          } catch (e: any) {
+          } catch (e: unknown) {
             console.error(e)
           }
         }
@@ -431,7 +431,7 @@ function migrate2290(key: string, newVal: any) {
   if (key === 'congServerPort') {
     try {
       newVal = newVal.toString()
-    } catch (e: any) {
+    } catch (e: unknown) {
       setDefaultValue()
     }
   }
@@ -449,7 +449,7 @@ function migrate2290(key: string, newVal: any) {
         if (isNaN(newVal)) {
           setDefaultValue()
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         setDefaultValue()
       }
     }

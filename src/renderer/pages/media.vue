@@ -267,7 +267,7 @@ export default defineComponent({
               // @ts-ignore
               document.fonts.add(loadedFont)
               this.yeartext.classList.replace('font-fallback', 'font-native')
-            } catch (e: any) {
+            } catch (e: unknown) {
               console.error(e)
             } finally {
               this.yeartext.classList.remove('loading')
@@ -296,7 +296,7 @@ export default defineComponent({
             this.ytLogo.innerHTML = "<div id='importedYearTextLogo'></div>"
           }
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.error(e)
       }
     },

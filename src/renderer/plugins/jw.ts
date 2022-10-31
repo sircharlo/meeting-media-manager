@@ -49,7 +49,7 @@ const plugin: Plugin = (
             })
           $write(langPath, JSON.stringify(langs, null, 2))
           $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
-        } catch (e: any) {
+        } catch (e: unknown) {
           $log.error(e)
         }
       }
@@ -60,7 +60,7 @@ const plugin: Plugin = (
         langs = JSON.parse(
           readFileSync(langPath, 'utf8') ?? '[]'
         ) as ShortJWLang[]
-      } catch (e: any) {
+      } catch (e: unknown) {
         $warn('errorOffline')
       }
 
@@ -97,13 +97,13 @@ const plugin: Plugin = (
             yeartext = JSON.parse(JSON.stringify(result.content)) as string
             $write($ytPath(), yeartext)
           }
-        } catch (e: any) {
+        } catch (e: unknown) {
           $log.error(e)
         }
       } else {
         try {
           yeartext = readFileSync($ytPath(), 'utf8')
-        } catch (e: any) {
+        } catch (e: unknown) {
           $warn('errorOffline')
         }
       }
@@ -120,7 +120,7 @@ const plugin: Plugin = (
         langs = JSON.parse(
           readFileSync(join($appPath(), 'langs.json'), 'utf8')
         ) as ShortJWLang[]
-      } catch (e: any) {
+      } catch (e: unknown) {
         $log.error(e)
       }
 
@@ -133,7 +133,7 @@ const plugin: Plugin = (
         langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'
       )
       return langs
-    } catch (e: any) {
+    } catch (e: unknown) {
       $log.error(e)
       return []
     }

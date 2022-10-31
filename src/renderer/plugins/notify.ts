@@ -12,7 +12,7 @@ const plugin: Plugin = ({ store, $log }, inject) => {
         identifier?: string
         persistent?: boolean
       },
-      error?: any
+      error?: unknown
     ): void => {
       if (error) {
         if (!props) {
@@ -67,7 +67,7 @@ const plugin: Plugin = ({ store, $log }, inject) => {
         identifier?: string
         persistent?: boolean
       },
-      error?: any
+      error?: unknown
     ): void => {
       let action
       if (error) {
@@ -90,20 +90,23 @@ const plugin: Plugin = ({ store, $log }, inject) => {
     }
   )
 
-  inject('error', (message: string, error: any, identifier?: string): void => {
-    $log.error(error)
-    store.commit('notify/show', {
-      message,
-      type: 'error',
-      persistent: true,
-      identifier,
-      action: {
+  inject(
+    'error',
+    (message: string, error: unknown, identifier?: string): void => {
+      $log.error(error)
+      store.commit('notify/show', {
+        message,
         type: 'error',
-        label: 'reportIssue',
-        url: error,
-      },
-    })
-  })
+        persistent: true,
+        identifier,
+        action: {
+          type: 'error',
+          label: 'reportIssue',
+          url: error,
+        },
+      })
+    }
+  )
 }
 
 export default plugin
