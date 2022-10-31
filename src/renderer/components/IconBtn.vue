@@ -400,14 +400,3 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="scss">
-.theme--light {
-  .v-btn {
-    &.info {
-      i {
-        color: #000 !important;
-      }
-    }
-  }
-}
-</style>
