@@ -454,7 +454,7 @@ export default defineComponent({
           // External file from jw.org
           else if (file.safeName) {
             file.folder = this.date
-            // @ts-ignore
+            // @ts-ignore: file is not recognized as type Buffer
             await this.$downloadIfRequired(file, this.setProgress)
 
             // Download markers if required
@@ -503,7 +503,7 @@ export default defineComponent({
               if (!mediaPathExists) {
                 await this.client.createDirectory(mediaPath)
               }
-            } catch (e: any) {
+            } catch (e: unknown) {
               console.error(e)
               if (!(await this.client.exists(mediaPath))) {
                 this.$warn('errorWebdavPut', { identifier: mediaPath })
@@ -515,7 +515,7 @@ export default defineComponent({
                 console.debug(JSON.stringify(this.contents))
                 await this.client.createDirectory(datePath)
               }
-            } catch (e: any) {
+            } catch (e: unknown) {
               console.debug(JSON.stringify(this.contents))
               if (!(await this.client.exists(datePath))) {
                 this.$warn('errorWebdavPut', { identifier: datePath })
@@ -559,7 +559,7 @@ export default defineComponent({
         await this.$convertUnusableFiles(this.$mediaPath() as string)
         if (this.client) await this.$updateContent()
         this.getExistingMedia()
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$error('errorAdditionalMedia', e, this.fileString)
       } finally {
         this.reset()
@@ -598,7 +598,7 @@ export default defineComponent({
         if (this.client) {
           await this.$updateContent()
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$error('errorAdditionalMediaList', e)
       }
     },
@@ -672,7 +672,7 @@ export default defineComponent({
         this.media = [...jwMedia, ...localMedia].sort((a, b) => {
           return (a.safeName as string).localeCompare(b.safeName as string)
         })
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$error('errorAdditionalMediaList', e)
       }
     },

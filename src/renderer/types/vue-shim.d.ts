@@ -4,6 +4,7 @@ import { Options } from 'fast-glob'
 import { Database } from 'sql.js'
 import { Dayjs } from 'dayjs'
 import Vue from 'vue'
+import { Entry } from 'fast-glob/out/types'
 import {
   MeetingFile,
   SmallMediaFile,
@@ -18,7 +19,7 @@ interface CustomProps {
   $appPath: () => string
   $appVersion: () => Promise<string>
   $bugURL: () => string
-  $clone: (value: any) => any
+  $clone: (value: unknown) => any
   $connect: (
     host: string,
     username: string,
@@ -28,7 +29,7 @@ interface CustomProps {
   $convertToMP4: (
     baseDate: Dayjs,
     now: Dayjs,
-    setProgress: Function
+    setProgress: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
   $convertToVLC: () => void
   $convertUnusableFiles: (dir: string) => Promise<void>
@@ -36,12 +37,13 @@ interface CustomProps {
   $createMediaNames: () => void
   $downloadIfRequired: (
     file: VideoFile,
-    setProgress?: Function
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<string>
-  $error: (message: string, error: Error, identifier?: string) => void
+  $error: (message: string, error: unknown, identifier?: string) => void
   $escapeHTML: (str: string) => string
   $extractAllTo: (zip: string, file: string, dest: string) => void
   $findAll: (path: string | string[], options?: Options) => string[]
+  $findAllStats: (path: string | string[], options?: Options) => Entry[]
   $findOne: (path: string | string[], options?: Options) => string
   $flash: (message: string, type?: string) => void
   $forcePrefs: (refresh: boolean = false) => Promise<ElectronStore | undefined>
@@ -61,7 +63,7 @@ interface CustomProps {
   $getDbFromJWPUB: (
     pub?: string,
     issue?: string,
-    setProgress?: Function,
+    setProgress?: (loaded: number, total: number, global?: boolean) => void,
     localPath: string = ''
   ) => Promise<Database | null>
   $getDocumentMultiMedia: (
@@ -89,9 +91,15 @@ interface CustomProps {
     destination: number
     type: 'window' | 'fullscreen'
   }>
-  $getMwMedia: (date: string, setProgress?: Function) => Promise<void>
+  $getMwMedia: (
+    date: string,
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
+  ) => Promise<void>
   $getScenes: (current: boolean = false) => Promise<string[] | string>
-  $getWeMedia: (date: string, setProgress?: Function) => Promise<void>
+  $getWeMedia: (
+    date: string,
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
+  ) => Promise<void>
   $getYearText: (force: boolean = false) => Promise<string | null>
   $getZipContentsByExt: (zip: string, ext: string) => Buffer | null
   $getZipContentsByName: (zip: string, name: string) => Buffer | null
@@ -121,7 +129,7 @@ interface CustomProps {
       persistent?: boolean
       type?: string
     },
-    error?: any
+    error?: unknown
   ) => void
   $prefsInitialized: () => boolean
   $printStats: () => void
@@ -175,11 +183,14 @@ interface CustomProps {
     }
   ) => void
   $switchCong: (path: string) => void
-  $syncCongMedia: (baseDate: Dayjs, setProgress: Function) => Promise<void>
+  $syncCongMedia: (
+    baseDate: Dayjs,
+    setProgress: (loaded: number, total: number, global?: boolean) => void
+  ) => Promise<void>
   $syncJWMedia: (
     dryrun: boolean,
     baseDate: Dayjs,
-    setProgress: Function
+    setProgress: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
   $syncLocalRecurringMedia: (baseDate: Dayjs) => void
   $toggleMediaWindow: (action?: string) => Promise<void>
@@ -196,7 +207,7 @@ interface CustomProps {
       identifier?: string
       persistent?: boolean
     },
-    error?: any
+    error?: unknown
   ) => void
   $write: (file: string, data: string | NodeJS.ArrayBufferView) => void
   $wtFontPath: () => Promise<string>

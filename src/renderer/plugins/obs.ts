@@ -45,7 +45,7 @@ const plugin: Plugin = (
               ) {
                 store.commit('obs/setCurrentScene', newScene['scene-name'])
               }
-            } catch (e: any) {
+            } catch (e: unknown) {
               $log.error(e)
             }
           })
@@ -111,7 +111,7 @@ const plugin: Plugin = (
               ) {
                 store.commit('obs/setCurrentScene', newScene.sceneName)
               }
-            } catch (e: any) {
+            } catch (e: unknown) {
               $log.error(e)
             }
           })
@@ -179,7 +179,7 @@ const plugin: Plugin = (
       } else if (obs) {
         await obs.disconnect()
       }
-    } catch (e: any) {}
+    } catch (e: unknown) {}
 
     obs = null
     store.commit('obs/clear')

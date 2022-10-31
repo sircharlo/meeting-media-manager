@@ -65,7 +65,7 @@ export default defineComponent({
       loading: true,
       forcable: [] as {
         key: string
-        value: any
+        value: unknown
         forced: boolean
         description: string
       }[],
@@ -174,7 +174,7 @@ export default defineComponent({
           JSON.stringify(forcedPrefs, null, 2)
         )
         await this.$forcePrefs(true)
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.$error(
           'errorForcedSettingsEnforce',
           e,

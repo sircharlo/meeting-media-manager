@@ -155,7 +155,7 @@ const plugin: Plugin = (
     dir: string = '/'
   ): Promise<FileStat[]> {
     const result = await $axios.$request({
-      // @ts-ignore
+      // @ts-ignore: PROPFIND is not a valid method
       method: 'PROPFIND',
       url: `https://${host}${dir}`,
       auth: {
@@ -613,7 +613,9 @@ const plugin: Plugin = (
     total = amount
   }
 
-  function increaseProgress(setProgress: Function): void {
+  function increaseProgress(
+    setProgress: (loaded: number, total: number, global?: boolean) => void
+  ): void {
     progress++
     setProgress(progress, total, true)
   }
@@ -621,7 +623,10 @@ const plugin: Plugin = (
   // Sync the cong media to the local disk
   inject(
     'syncCongMedia',
-    async (baseDate: Dayjs, setProgress: Function): Promise<void> => {
+    async (
+      baseDate: Dayjs,
+      setProgress: (loaded: number, total: number, global?: boolean) => void
+    ): Promise<void> => {
       store.commit('stats/startPerf', {
         func: 'syncCongMedia',
         start: performance.now(),
@@ -686,7 +691,7 @@ const plugin: Plugin = (
   async function syncCongMediaItem(
     date: string,
     item: MeetingFile,
-    setProgress: Function
+    setProgress: (loaded: number, total: number, global?: boolean) => void
   ): Promise<void> {
     if (!item.hidden && !item.isLocal) {
       if (item.filesize) {

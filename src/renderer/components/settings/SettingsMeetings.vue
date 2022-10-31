@@ -293,7 +293,7 @@ export default defineComponent({
     }
 
     if (this.$refs.meetingsForm) {
-      // @ts-ignore
+      // @ts-ignore: validate is not a function on type Element
       this.$refs.meetingsForm.validate()
     }
   },
@@ -328,7 +328,7 @@ export default defineComponent({
 
         await Promise.allSettled(promises)
         this.status = 'success'
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.status = 'error'
       }
     },

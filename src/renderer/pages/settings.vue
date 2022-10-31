@@ -249,13 +249,12 @@ export default defineComponent({
 
       this.cache = parseFloat(
         (
-          this.$findAll(folders, {
+          this.$findAllStats(folders, {
             ignore: this.$mediaPath()
               ? [join(this.$mediaPath(), 'Recurring')]
               : [],
-            stats: true,
           })
-            .map((file: any) => file.stats.size)
+            .map((file) => file.stats?.size ?? 0)
             .reduce((a: number, b: number) => a + b, 0) /
           BYTES_IN_KIBIBYTE /
           BYTES_IN_KIBIBYTE

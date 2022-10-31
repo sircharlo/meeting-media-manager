@@ -132,7 +132,7 @@ import { pathToFileURL } from 'url'
 import { basename, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'
-// @ts-ignore
+// @ts-ignore: RuntimeTemplateCompiler implicitly has an 'any' type
 import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
 import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
 // eslint-disable-next-line import/named
@@ -182,7 +182,10 @@ export default defineComponent({
       current: false,
       active: false as boolean,
       played: false,
-      video: null as any,
+      video: null as {
+        original: { start: number; end: number }
+        clipped: { start: number; end: number }
+      } | null,
       paused: false as boolean,
       progress: 0,
       newProgress: 0,
@@ -191,7 +194,7 @@ export default defineComponent({
       end: undefined as string | undefined,
       parent: this,
       markers: [] as Marker[],
-      tempClipped: null as any,
+      tempClipped: null as { start?: string; end?: string } | null,
     }
   },
   computed: {
@@ -435,9 +438,9 @@ export default defineComponent({
       clipped,
       formatted,
     }: {
-      original: any
-      clipped: any
-      formatted: any
+      original: { start: number; end: number }
+      clipped: { start: number; end: number }
+      formatted: { start: string; end: string }
     }) {
       this.start = formatted.start
       this.end = formatted.end
