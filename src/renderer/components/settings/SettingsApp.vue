@@ -294,7 +294,7 @@ export default defineComponent({
         if (this.obsComplete) {
           await this.$getScenes()
           if (this.$refs.appForm) {
-            // @ts-ignore
+            // @ts-ignore: validate is not a function on type Element
             this.$refs.appForm.validate()
           }
         }
@@ -410,7 +410,7 @@ export default defineComponent({
 
     // Validate form (for new congregations)
     if (this.$refs.appForm) {
-      // @ts-ignore
+      // @ts-ignore: validate is not a function on type Element
       this.$refs.appForm.validate()
     }
   },
@@ -453,7 +453,7 @@ export default defineComponent({
       }
 
       if (this.$refs.appForm) {
-        // @ts-ignore
+        // @ts-ignore: validate is not a function on type Element
         this.$refs.appForm.validate()
       }
     },

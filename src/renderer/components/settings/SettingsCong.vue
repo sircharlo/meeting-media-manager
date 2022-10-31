@@ -161,7 +161,7 @@ export default defineComponent({
     this.$emit('valid', this.valid)
 
     if (this.$refs.congForm) {
-      // @ts-ignore
+      // @ts-ignore: validate is not a function on type Element
       this.$refs.congForm.validate()
     }
 

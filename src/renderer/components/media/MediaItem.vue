@@ -132,7 +132,7 @@ import { pathToFileURL } from 'url'
 import { basename, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'
-// @ts-ignore
+// @ts-ignore: RuntimeTemplateCompiler implicitly has an 'any' type
 import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
 import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
 // eslint-disable-next-line import/named

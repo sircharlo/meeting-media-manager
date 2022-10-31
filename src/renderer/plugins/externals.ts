@@ -1,5 +1,5 @@
 import Vue from 'vue'
-// @ts-ignore
+// @ts-ignore: VueMask has implicitly an any type
 import VueMask from 'v-mask'
 import { library, config } from '@fortawesome/fontawesome-svg-core'
 import {

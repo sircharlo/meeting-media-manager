@@ -482,7 +482,7 @@ export default defineComponent({
           if (prefs.app && !prefs.app.congregationName) {
             this.$rm(file)
           }
-          // @ts-ignore
+          // @ts-ignore: congregationName doesn't exist in ElectronStore
           else if (!prefs.app && !prefs.congregationName) {
             this.$rm(file)
           }

@@ -293,7 +293,7 @@ export default defineComponent({
     }
 
     if (this.$refs.meetingsForm) {
-      // @ts-ignore
+      // @ts-ignore: validate is not a function on type Element
       this.$refs.meetingsForm.validate()
     }
   },

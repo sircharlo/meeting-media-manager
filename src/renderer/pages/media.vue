@@ -257,14 +257,14 @@ export default defineComponent({
           // If WT library is installed, set the font to the WT font
           const fontFile = this.$findOne(join(fontPath, 'Wt-ClearText-Bold.*'))
           if (fontFile) {
-            // @ts-ignore
+            // @ts-ignore: FontFace is not defined in the types
             const font = new FontFace(
               'Wt-ClearText-Bold',
               `url(${pathToFileURL(fontFile).href})`
             )
             try {
               const loadedFont = await font.load()
-              // @ts-ignore
+              // @ts-ignore: fonts does not exist on document
               document.fonts.add(loadedFont)
               this.yeartext.classList.replace('font-fallback', 'font-native')
             } catch (e: unknown) {
@@ -283,13 +283,13 @@ export default defineComponent({
         } else {
           const logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
           if (logoFontFile) {
-            // @ts-ignore
+            // @ts-ignore: FontFace is not defined in the types
             const logoFont = new FontFace(
               'JW-Icons',
               `url(${pathToFileURL(logoFontFile).href})`
             )
             const loadedFont = await logoFont.load()
-            // @ts-ignore
+            // @ts-ignore: fonts does not exist on document
             document.fonts.add(loadedFont)
             this.ytLogo.setAttribute('style', '')
             this.ytLogo.style.fontFamily = '"JW-Icons"'

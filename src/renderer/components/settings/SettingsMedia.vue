@@ -326,7 +326,7 @@ export default defineComponent({
     'media.enablePp': {
       handler() {
         if (this.$refs.mediaForm) {
-          // @ts-ignore
+          // @ts-ignore: validate is not a function on type Element
           this.$refs.mediaForm.validate()
         }
       },
@@ -383,7 +383,7 @@ export default defineComponent({
     this.$emit('valid', this.valid)
 
     if (this.$refs.mediaForm) {
-      // @ts-ignore
+      // @ts-ignore: validate is not a function on type Element
       this.$refs.mediaForm.validate()
     }
   },

@@ -454,7 +454,7 @@ export default defineComponent({
           // External file from jw.org
           else if (file.safeName) {
             file.folder = this.date
-            // @ts-ignore
+            // @ts-ignore: file is not recognized as type Buffer
             await this.$downloadIfRequired(file, this.setProgress)
 
             // Download markers if required

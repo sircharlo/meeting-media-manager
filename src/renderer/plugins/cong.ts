@@ -155,7 +155,7 @@ const plugin: Plugin = (
     dir: string = '/'
   ): Promise<FileStat[]> {
     const result = await $axios.$request({
-      // @ts-ignore
+      // @ts-ignore: PROPFIND is not a valid method
       method: 'PROPFIND',
       url: `https://${host}${dir}`,
       auth: {

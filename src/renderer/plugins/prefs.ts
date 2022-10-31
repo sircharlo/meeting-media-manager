@@ -328,7 +328,7 @@ function storeOptions(name: string = 'prefs') {
             store.set(newProp.key, newProp.val)
             store.delete(key as keyof ElectronStore)
 
-            // @ts-ignore
+            // @ts-ignore: 'cong.port' is not defined as a key of ElectronStore
             store.reset('cong.port')
           } catch (e: unknown) {
             console.error(e)
@@ -341,7 +341,7 @@ function storeOptions(name: string = 'prefs') {
             'media.enablePp',
             store.get('app.ppEnable') || store.get('media.enablePp')
           )
-          // @ts-ignore
+          // @ts-ignore: 'app.ppEnable' is not defined as a key of ElectronStore
           store.delete('app.ppEnable')
         }
       },
@@ -457,9 +457,9 @@ function migrate2290(key: string, newVal: any) {
 
   // Final check against the schema
   const schemaType = isObsPref
-    ? // @ts-ignore
+    ? // @ts-ignore: newkey is not defined as a key of properties
       schema?.app?.properties?.obs?.properties[newKey]?.type
-    : // @ts-ignore
+    : // @ts-ignore: newkey is not defined as a key of properties
       schema[root]?.properties[newKey]?.type
   if (schemaType) {
     if (typeof schemaType === 'string') {
@@ -491,7 +491,7 @@ const plugin: Plugin = ({ $sentry }, inject) => {
         const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
         return {
           name:
-            // @ts-ignore
+            // @ts-ignore: prefs.congregationName does not exist on type ElectronStore
             prefs?.app?.congregationName ?? (prefs?.congregationName as string),
           path: file,
         }
