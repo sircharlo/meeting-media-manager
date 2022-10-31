@@ -634,7 +634,7 @@ const plugin: Plugin = (
     pub?: string,
     issue?: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void,
-    localPath: string = ''
+    localPath = ''
   ): Promise<Database | null> {
     let db: Database | null
     try {
@@ -1242,8 +1242,8 @@ const plugin: Plugin = (
   }
 
   async function shuffleMusic(
-    stop: boolean = false,
-    immediately: boolean = false
+    stop = false,
+    immediately = false
   ): Promise<void> {
     if (stop) {
       ipcRenderer.removeAllListeners('videoProgress')

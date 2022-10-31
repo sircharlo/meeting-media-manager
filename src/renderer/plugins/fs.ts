@@ -173,8 +173,8 @@ const plugin: Plugin = (
     path: string,
     oldName: string,
     newName: string,
-    action: string = 'rename',
-    type: string = 'string'
+    action = 'rename',
+    type = 'string'
   ): void {
     if (existsSync(path)) {
       const dir = dirname(path)
@@ -220,8 +220,8 @@ const plugin: Plugin = (
       dir: string,
       search: string,
       newName: string,
-      action: string = 'rename',
-      type: string = 'string'
+      action = 'rename',
+      type = 'string'
     ): void => {
       if (existsSync(dir)) {
         readdirSync(dir).forEach((file) => {
@@ -358,7 +358,7 @@ const plugin: Plugin = (
     )
   })
 
-  inject('sanitize', (name: string, isFile: boolean = false): string => {
+  inject('sanitize', (name: string, isFile = false): string => {
     const ext = isFile ? extname(name).toLowerCase() : ''
 
     // Remove special characters from filename

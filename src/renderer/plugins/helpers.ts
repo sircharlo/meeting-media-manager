@@ -9,7 +9,7 @@ const plugin: Plugin = ({ $getPrefs, i18n }, inject) => {
   })
 
   // Strip a string to make it compatible with the desired format
-  inject('strip', (value: string, type: string = 'id'): string => {
+  inject('strip', (value: string, type = 'id'): string => {
     if (!value) return ''
     switch (type) {
       case 'id':

@@ -189,7 +189,7 @@ const plugin: Plugin = (
   inject('resetOBS', resetOBS)
 
   async function getScenes(
-    current: boolean = false
+    current = false
   ): Promise<string | string[]> {
     try {
       let currentScene = ''

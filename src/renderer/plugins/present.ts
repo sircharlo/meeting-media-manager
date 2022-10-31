@@ -22,7 +22,7 @@ const plugin: Plugin = (
   async function setShortcut(
     shortcut: string,
     fn: string,
-    domain: string = 'mediaWindow'
+    domain = 'mediaWindow'
   ) {
     let res = false
     const shortcuts = store.state.present.shortcuts as {
@@ -117,7 +117,7 @@ const plugin: Plugin = (
     }
   })
 
-  function unsetShortcuts(filter: string = 'all') {
+  function unsetShortcuts(filter = 'all') {
     const shortcuts = store.state.present.shortcuts as {
       name: string
       domain: string
@@ -172,7 +172,7 @@ const plugin: Plugin = (
   }
   inject('toggleMediaWindow', toggleMediaWindow)
 
-  async function refreshBackgroundImgPreview(force: boolean = false) {
+  async function refreshBackgroundImgPreview(force = false) {
     try {
       if ($getPrefs('media.enableMediaDisplayButton')) {
         let type = 'yeartext'
