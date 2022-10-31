@@ -56,7 +56,7 @@ const plugin: Plugin = (
     host: string,
     username: string,
     password: string,
-    dir: string = '/'
+    dir = '/'
   ): Promise<string | null> {
     if ($getPrefs('app.offline')) return 'offline'
     try {
@@ -152,7 +152,7 @@ const plugin: Plugin = (
     host: string,
     username: string,
     password: string,
-    dir: string = '/'
+    dir = '/'
   ): Promise<FileStat[]> {
     const result = await $axios.$request({
       // @ts-ignore: PROPFIND is not a valid method
@@ -201,7 +201,7 @@ const plugin: Plugin = (
     host: string,
     username: string,
     password: string,
-    dir: string = '/'
+    dir = '/'
   ): Promise<FileStat[]> {
     const brokenServers = ['4shared', 'cloudwise']
     if (!brokenServers.some((s) => host.includes(s))) {
@@ -322,7 +322,7 @@ const plugin: Plugin = (
   // Force the specified preferences/settings according to the cong server for the current user
   inject(
     'forcePrefs',
-    async (refresh: boolean = false): Promise<ElectronStore | undefined> => {
+    async (refresh = false): Promise<ElectronStore | undefined> => {
       if (!refresh && store.state.cong.prefs) {
         return store.state.cong.prefs as ElectronStore
       }

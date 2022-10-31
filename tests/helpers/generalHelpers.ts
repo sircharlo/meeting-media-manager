@@ -19,7 +19,7 @@ LOCAL_LANGS.forEach((l) => {
 const locale = prefs.localAppLang.split('-')[0]
 dayjs.locale(locale)
 
-export function getDate(type: string = 'now'): string {
+export function getDate(type = 'now'): string {
   switch (type) {
     case 'now':
       return dayjs().format(prefs.outputFolderDateFormat)
@@ -48,7 +48,7 @@ export function delay(ms: number): Promise<void> {
   })
 }
 
-export function strip(value: string, type: string = 'file') {
+export function strip(value: string, type = 'file') {
   switch (type) {
     case 'id':
       return value.replace(/[^a-zA-Z0-9\-:_]/g, '')
@@ -56,13 +56,13 @@ export function strip(value: string, type: string = 'file') {
       return (
         value
           // Common separators
-          .replace(/ *[—?;:|.!?] */g, ' - ')
+          .replace(/ *[—?;:|.!?] */gu, ' - ')
           // Breaking space
-          .replace(/\u00A0/g, ' ')
+          .replace(/\u00A0/gu, ' ')
           // Illegal filename characters
           .replace(
             // eslint-disable-next-line no-control-regex
-            /["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F\u0000-\u001F]/g,
+            /["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F\u0000-\u001F]/gu,
             ''
           )
           .trim()
@@ -78,7 +78,7 @@ export function strip(value: string, type: string = 'file') {
 export function sanitize(
   name: string,
   mediaPath?: string,
-  isFile: boolean = false
+  isFile = false
 ) {
   const ext = isFile ? extname(name).toLowerCase() : ''
 
