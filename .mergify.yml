@@ -1,11 +1,12 @@
 pull_request_rules:
   - name: Automatic merge for gitlocalize-app and dependabot
     conditions:
-        - or:
-            - author=gitlocalize-app[bot]
-            - and:
-                - author=dependabot[bot]
-                - title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.
+      - or:
+          - author=mtdvlpr
+          - author=gitlocalize-app[bot]
+          - and:
+              - author=dependabot[bot]
+              - title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.
     actions:
       merge:
         method: merge
