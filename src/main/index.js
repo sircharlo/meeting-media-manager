@@ -98,7 +98,6 @@ function createMainWindow(pos = { width: 700, height: 700 }) {
     width: pos.width,
     minWidth: 670,
     minHeight: 435,
-    icon: join(__dirname, '../../build', 'icons', `icon.${iconType}`),
     title: appLongName,
   })
 
@@ -305,13 +304,7 @@ if (gotTheLock) {
 
       const windowOptions = {
         title: 'Media Window',
-        icon: join(
-          __dirname,
-          '../../build',
-          'icons',
-          'videoPlayer',
-          `videoPlayer.${iconType}`
-        ),
+        icon: join(process.resourcesPath, 'videoPlayer', `videoPlayer.${iconType}`),
         frame: false,
         backgroundColor: 'black',
         roundedCorners: false,
