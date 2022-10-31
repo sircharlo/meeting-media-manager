@@ -833,5 +833,9 @@ export default defineComponent({
   .accent * {
     color: #000 !important;
   }
+
+  .success * {
+    color: #000 !important;
+  }
 }
 </style>
