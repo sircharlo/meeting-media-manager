@@ -33,7 +33,6 @@
       @blur="submit()"
       @keydown.enter.prevent="submit()"
     />
-    <!--<form-input v-model="cong.port" :label="$t('port')" />-->
     <form-input
       id="cong.user"
       v-model="cong.user"
