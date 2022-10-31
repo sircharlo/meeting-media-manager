@@ -1,0 +1,7 @@
+pull_request_rules:
+  - name: Automatic merge for gitlocalize-app
+    conditions:
+      - author=gitlocalize-app[bot]
+    actions:
+      merge:
+        method: merge
