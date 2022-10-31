@@ -56,13 +56,13 @@ export function strip(value: string, type = 'file') {
       return (
         value
           // Common separators
-          .replace(/ *[—?;:|.!?] */g, ' - ')
+          .replace(/ *[—?;:|.!?] */gu, ' - ')
           // Breaking space
-          .replace(/\u00A0/g, ' ')
+          .replace(/\u00A0/gu, ' ')
           // Illegal filename characters
           .replace(
             // eslint-disable-next-line no-control-regex
-            /["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F\u0000-\u001F]/g,
+            /["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F\u0000-\u001F]/gu,
             ''
           )
           .trim()

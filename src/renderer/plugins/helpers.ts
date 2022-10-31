@@ -18,13 +18,13 @@ const plugin: Plugin = ({ $getPrefs, i18n }, inject) => {
         return (
           value
             // Common separators
-            .replace(/ *[—?;:|.!] */g, ' - ')
+            .replace(/ *[—?;:|.!] */gu, ' - ')
             // Breaking space
-            .replace(/\u00A0\t/g, ' ')
+            .replace(/\u00A0\t/gu, ' ')
             // Illegal filename characters
             .replace(
               // eslint-disable-next-line no-control-regex
-              /["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F\u0000-\u001F]/g,
+              /["»“”‘’«(){}№+[\]$<>,/\\:*\x00-\x1F\x80-\x9F\u0000-\u001F]/gu,
               ''
             )
             .trim()
