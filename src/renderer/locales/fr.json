@@ -14,7 +14,7 @@
   "disableAutoUpdate": "Désactiver la mise à jour automatique de l'application",
   "disableHardwareAcceleration": "Désactiver l'accélération matérielle <em>(Remarque : N'activez ce paramètre que si vous rencontrez des problèmes avec le mode de présentation des médias. Si ce paramètre est modifié, M³ sera relancé.)</em>",
   "dontForgetToGetMedia": "N'oubliez pas de rafraîchir les dossiers multimédias sur l'ordinateur utilisé pour présenter les médias lors des réunions de l'assemblée locale !",
-  "downloadShuffleMusic": "Télécharger les cantiques pour le mode aléatoire",
+  "downloadShuffleMusic": "Télécharger tous les cantiques",
   "enableMediaDisplayButton": "Présenter les médias sur un écran externe ou dans une fenêtre séparée",
   "enableMusicButton": "Activer le bouton pour jouer des cantiques en mode aléatoire",
   "enableObs": "Activer le mode de compatibilité avec OBS Studio <em>(nécéssite obs-websocket)</em>",
