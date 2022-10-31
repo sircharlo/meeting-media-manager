@@ -583,10 +583,7 @@ const plugin: Plugin = (
 
         // Get thumbnail and primaryCategory
         smallMediaFiles.forEach((item) => {
-          if (
-            (item.duration as number) > 0 &&
-            (!item.trackImage || !item.pub)
-          ) {
+          if (item.duration > 0 && (!item.trackImage || !item.pub)) {
             const id = mediaItem.docId
               ? `docid-${mediaItem.docId}_1`
               : `pub-${[
@@ -1162,7 +1159,8 @@ const plugin: Plugin = (
         'background-color: #cce5ff; color: #004085;'
       )
       // Set markers for sign language videos
-      if (item.markers) {
+      const mediaPath = $mediaPath()
+      if (item.markers && mediaPath) {
         const markers = Array.from(
           new Set(
             item.markers.markers.map(
@@ -1178,7 +1176,7 @@ const plugin: Plugin = (
         ).map((m) => JSON.parse(m))
         $write(
           join(
-            $mediaPath(),
+            mediaPath,
             item.folder as string,
             changeExt(item.safeName as string, 'json')
           ),
@@ -1187,14 +1185,18 @@ const plugin: Plugin = (
       }
 
       // Prevent duplicates
-      const duplicate = $findOne(
-        join(
-          $mediaPath(),
-          item.folder as string,
-          '*' +
-            item.safeName?.substring(MAX_PREFIX_LENGTH).replace('.svg', '.png')
-        )
-      )
+      const duplicate = mediaPath
+        ? $findOne(
+            join(
+              mediaPath,
+              item.folder as string,
+              '*' +
+                item.safeName
+                  ?.substring(MAX_PREFIX_LENGTH)
+                  .replace('.svg', '.png')
+            )
+          )
+        : null
 
       if (
         duplicate &&
@@ -1212,14 +1214,10 @@ const plugin: Plugin = (
           JSON.parse(JSON.stringify(item as SmallMediaFile)),
           setProgress
         )
-      } else if (item.filepath) {
-        const dest = join(
-          $mediaPath(),
-          item.folder as string,
-          item.safeName as string
-        )
+      } else if (item.filepath && item.folder && item.safeName) {
+        const dest = join($mediaPath(), item.folder, item.safeName)
         if (!existsSync(dest) || statSync(dest).size !== item.filesize) {
-          $copy(item.filepath as string, dest)
+          $copy(item.filepath, dest)
         }
       }
     } else {
