@@ -72,7 +72,7 @@ const plugin: Plugin = (
       }
     }
 
-    const symbol = extract.UniqueEnglishSymbol.replace(/[0-9]/g, '')
+    const symbol = extract.UniqueEnglishSymbol.replace(/\d/g, '')
 
     // Exclude the "old new songs" songbook, as we don't need images from that
     if (symbol !== 'snnw') {
@@ -328,7 +328,7 @@ const plugin: Plugin = (
       $query(db, 'SELECT UniqueEnglishSymbol FROM Publication') as {
         UniqueEnglishSymbol: string
       }[]
-    )[0].UniqueEnglishSymbol.replace(/[0-9]*/g, '') as string
+    )[0].UniqueEnglishSymbol.replace(/\d*/g, '') as string
 
     const issueTagNumber = (
       $query(db, 'SELECT IssueTagNumber FROM Publication') as {
@@ -656,7 +656,7 @@ const plugin: Plugin = (
               'SELECT UniqueEnglishSymbol, IssueTagNumber FROM Publication'
             ) as { UniqueEnglishSymbol: string; IssueTagNumber: string }[]
           )[0]
-          pub = jwpubInfo.UniqueEnglishSymbol.replace(/[0-9]/g, '')
+          pub = jwpubInfo.UniqueEnglishSymbol.replace(/\d/g, '')
           issue = jwpubInfo.IssueTagNumber
           $setDb(pub, issue, db)
         } catch (e: unknown) {
@@ -1041,11 +1041,6 @@ const plugin: Plugin = (
       })
     })
     $log.debug(meetings)
-    /* log.debug(Object.entries(get("meetingMedia")).map(meeting => { meeting[1] = meeting[1]
-    .filter(mediaItem => mediaItem.media.length > 0)
-    .map(item => item.media)
-    .flat(); return meeting;
-  })) */
     store.commit('stats/stopPerf', {
       func: 'createMediaNames',
       stop: performance.now(),
@@ -1324,25 +1319,34 @@ const plugin: Plugin = (
       const signLanguage =
         store.state.media.songPub === 'sjj' &&
         $getPrefs('media.enableMediaDisplayButton')
+
+      let songPub = 'sjjm'
+      let mediaFormat = 'mp4'
+      let mediaLang = 'E'
+
+      if (signLanguage) {
+        songPub = 'sjj'
+        mediaFormat = 'mp4'
+        mediaLang = $getPrefs('media.lang') as string
+      }
+
       const songs = (
         isOnline
           ? (
               (await getMediaLinks({
-                pubSymbol: signLanguage ? 'sjj' : 'sjjm',
-                format: signLanguage ? 'MP4' : 'MP3',
-                lang: signLanguage ? undefined : 'E',
+                pubSymbol: songPub,
+                format: mediaFormat.toUpperCase(),
+                lang: mediaLang,
               })) as VideoFile[]
-            ).filter((item) =>
-              extname(item.url) === signLanguage ? '.mp4' : '.mp3'
-            )
+            ).filter((item) => extname(item.url) === `.${mediaFormat}`)
           : $findAll(
               join(
                 $pubPath(),
                 '..',
-                signLanguage ? $getPrefs('media.lang') : 'E',
-                signLanguage ? 'sjj' : 'sjjm',
+                mediaLang,
+                songPub,
                 '**',
-                signLanguage ? '*.mp4' : '*.mp3'
+                `*.${mediaFormat}`
               )
             ).map((item) => ({
               title: basename(item),

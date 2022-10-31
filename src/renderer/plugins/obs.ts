@@ -25,9 +25,10 @@ const plugin: Plugin = (
       await resetOBS()
     } else if (enable) {
       if (obs) {
-        if (useV4 && obs instanceof OBSWebSocketV4) {
-          return obs
-        } else if (!useV4 && obs instanceof OBSWebSocket) {
+        const correctVersion =
+          (useV4 && obs instanceof OBSWebSocketV4) ||
+          (!useV4 && obs instanceof OBSWebSocket)
+        if (correctVersion) {
           return obs
         }
       }

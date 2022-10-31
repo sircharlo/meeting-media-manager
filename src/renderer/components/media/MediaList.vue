@@ -357,16 +357,16 @@ export default defineComponent({
       } else if (item.filepath && this.$isImage(item.filepath)) {
         this.preview = pathToFileURL(item.filepath).href
       } else if (this.online && item.url && this.$isImage(item.url)) {
-        if (item.congSpecific) {
-          this.client.getFileContents(item.url as string).then((contents) => {
+        if (item.congSpecific && item.url) {
+          this.client.getFileContents(item.url).then((contents) => {
             this.preview =
               `data:;base64,` +
               Buffer.from(new Uint8Array(contents as ArrayBuffer)).toString(
                 'base64'
               )
           })
-        } else {
-          this.preview = pathToFileURL(item.url as string).href
+        } else if (item.url) {
+          this.preview = pathToFileURL(item.url).href
         }
       } else {
         this.preview = ''
@@ -374,6 +374,11 @@ export default defineComponent({
       this.loading = false
       this.previewName = item.safeName as string
       return this.preview
+    },
+    async createDirIfNotExists(dir: string) {
+      if (!this.contents.find(({ filename }) => filename === dir)) {
+        await this.client.createDirectory(dir)
+      }
     },
     async toggleVisibility(item: MeetingFile | LocalFile) {
       const mediaMap = (
@@ -389,45 +394,34 @@ export default defineComponent({
       ) {
         for (const [, media] of mediaMap) {
           const match = media.find((m) => m.safeName === item.safeName)
-          if (match) {
-            if (this.client && this.online) {
-              const hiddenPath = join(this.$getPrefs('cong.dir'), 'Hidden')
-              const datePath = join(hiddenPath, this.date)
-              const filePath = join(datePath, item.safeName)
+          if (!match) continue
+          if (this.client && this.online) {
+            const hiddenPath = join(this.$getPrefs('cong.dir'), 'Hidden')
+            const datePath = join(hiddenPath, this.date)
+            const filePath = join(datePath, item.safeName)
 
-              // Create hidden dir if not exists
-              if (
-                !this.contents.find(({ filename }) => filename === hiddenPath)
-              ) {
-                await this.client.createDirectory(hiddenPath)
-              }
+            // Create hidden/date dir if not exists
+            await this.createDirIfNotExists(hiddenPath)
+            await this.createDirIfNotExists(datePath)
 
-              // Create date dir if not exists
-              if (
-                !this.contents.find(({ filename }) => filename === datePath)
-              ) {
-                await this.client.createDirectory(datePath)
-              }
-
-              // Remove file if exists or add it if it doesn't
-              if (this.contents.find(({ filename }) => filename === filePath)) {
-                try {
-                  await this.client.deleteFile(filePath)
-                } catch (e: any) {
-                  if (e.status !== NOT_FOUND) {
-                    this.$error('errorWebdavRm', e, filePath)
-                  }
+            // Remove file if exists or add it if it doesn't
+            if (this.contents.find(({ filename }) => filename === filePath)) {
+              try {
+                await this.client.deleteFile(filePath)
+              } catch (e: any) {
+                if (e.status !== NOT_FOUND) {
+                  this.$error('errorWebdavRm', e, filePath)
                 }
-              } else {
-                await this.client.putFileContents(filePath, '')
               }
-              await this.$updateContent()
+            } else {
+              await this.client.putFileContents(filePath, '')
             }
-            match.hidden = !match.hidden
-            item.loading = false
-            this.$emit('refresh')
-            return
+            await this.$updateContent()
           }
+          match.hidden = !match.hidden
+          item.loading = false
+          this.$emit('refresh')
+          return
         }
       }
     },

@@ -248,12 +248,12 @@ const plugin: Plugin = (
           readdirSync(path).forEach((file) => {
             const newName = file
               .replace(
-                (' - ' + $translate('song', oldVal)) as string,
-                (' - ' + $translate('song', newVal)) as string
+                ' - ' + $translate('song', oldVal),
+                ' - ' + $translate('song', newVal)
               )
               .replace(
-                (' - ' + $translate('paragraph', oldVal)) as string,
-                (' - ' + $translate('paragraph', newVal)) as string
+                ' - ' + $translate('paragraph', oldVal),
+                ' - ' + $translate('paragraph', newVal)
               )
 
             if (file !== newName) {
@@ -294,25 +294,21 @@ const plugin: Plugin = (
     oldVal: string,
     newVal: string
   ): Promise<void> {
-    if (
-      file.basename.includes((' - ' + $translate('song', oldVal)) as string)
-    ) {
+    if (file.basename.includes(' - ' + $translate('song', oldVal))) {
       const newName = file.filename.replace(
-        (' - ' + $translate('song', oldVal)) as string,
-        (' - ' + $translate('song', newVal)) as string
+        ' - ' + $translate('song', oldVal),
+        ' - ' + $translate('song', newVal)
       )
 
       if (file.filename !== newName) {
         await client.moveFile(file.filename, newName)
       }
     } else if (
-      file.basename.includes(
-        (' - ' + $translate('paragraph', oldVal)) as string
-      )
+      file.basename.includes(' - ' + $translate('paragraph', oldVal))
     ) {
       const newName = file.filename.replace(
-        (' - ' + $translate('paragraph', oldVal)) as string,
-        (' - ' + $translate('paragraph', newVal)) as string
+        ' - ' + $translate('paragraph', oldVal),
+        ' - ' + $translate('paragraph', newVal)
       )
       if (file.filename !== newName) {
         await client.moveFile(file.filename, newName)

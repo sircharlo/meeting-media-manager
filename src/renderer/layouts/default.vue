@@ -479,11 +479,8 @@ export default defineComponent({
           }) as string[]
         ).forEach((file) => {
           const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
-          if (prefs.app && !prefs.app.congregationName) {
-            this.$rm(file)
-          }
           // @ts-ignore: congregationName doesn't exist in ElectronStore
-          else if (!prefs.app && !prefs.congregationName) {
+          if (!prefs.congregationName && !prefs.app?.congregationName) {
             this.$rm(file)
           }
         })

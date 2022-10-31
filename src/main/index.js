@@ -57,6 +57,38 @@ let iconType = 'png'
 if (platform() === 'darwin') iconType = 'icns'
 if (platform() === 'win32') iconType = 'ico'
 
+function onMove() {
+  if (!mediaWin) return
+  const screenInfo = getScreenInfo(win, mediaWin)
+  if (screenInfo.winMidpoints && screenInfo.otherScreens.length > 0) {
+    const mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints)
+      .map((item) => screen.getDisplayNearestPoint(item[1]))
+      .every((val, _i, arr) => val.id === arr[0].id)
+
+    if (mainWinSameAsMedia) {
+      win.webContents.send('moveMediaWindowToOtherScreen')
+    }
+  }
+}
+
+function onClose(e) {
+  const MS_IN_SEC = 1000
+
+  if (!allowClose && closeAttempts < 2) {
+    e.preventDefault()
+    win.webContents.send('notifyUser', [
+      'cantCloseMediaWindowOpen',
+      { type: 'warning' },
+    ])
+    closeAttempts++
+    setTimeout(() => {
+      closeAttempts--
+    }, 10 * MS_IN_SEC)
+  } else if (mediaWin) {
+    mediaWin.destroy()
+  }
+}
+
 // Main window
 function createMainWindow(pos = { width: 700, height: 700 }) {
   winHandler = new BrowserWinHandler({
@@ -76,39 +108,8 @@ function createMainWindow(pos = { width: 700, height: 700 }) {
     pos.manage(win)
   }
 
-  win.on('move', () => {
-    if (mediaWin) {
-      const screenInfo = getScreenInfo(win, mediaWin)
-      if (screenInfo.otherScreens.length > 0) {
-        if (screenInfo.winMidpoints) {
-          const mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints)
-            .map((item) => screen.getDisplayNearestPoint(item[1]))
-            .every((val, _i, arr) => val.id === arr[0].id)
-          if (mainWinSameAsMedia) {
-            win.webContents.send('moveMediaWindowToOtherScreen')
-          }
-        }
-      }
-    }
-  })
-
-  win.on('close', (e) => {
-    const MS_IN_SEC = 1000
-
-    if (!allowClose && closeAttempts < 2) {
-      e.preventDefault()
-      win.webContents.send('notifyUser', [
-        'cantCloseMediaWindowOpen',
-        { type: 'warning' },
-      ])
-      closeAttempts++
-      setTimeout(() => {
-        closeAttempts--
-      }, 10 * MS_IN_SEC)
-    } else if (mediaWin) {
-      mediaWin.destroy()
-    }
-  })
+  win.on('move', onMove)
+  win.on('close', onClose)
 
   winHandler.loadPage('/')
 }

@@ -14,7 +14,7 @@ const plugin: Plugin = ({ store, $log }, inject) => {
       },
       error?: unknown
     ): void => {
-      if (error) {
+      if (error !== undefined) {
         if (!props) {
           props = {}
         }
@@ -25,9 +25,9 @@ const plugin: Plugin = ({ store, $log }, inject) => {
         }
         props.persistent = true
 
-        if (error && props.type === 'warning') {
+        if (props.type === 'warning') {
           $log.warn(error)
-        } else if (error) {
+        } else {
           $log.error(error)
         }
       }

@@ -18,7 +18,7 @@ const plugin: Plugin = ({ $getPrefs, i18n }, inject) => {
         return (
           value
             // Common separators
-            .replace(/ *[—?;:|.!?] */g, ' - ')
+            .replace(/ *[—?;:|.!] */g, ' - ')
             // Breaking space
             .replace(/\u00A0\t/g, ' ')
             // Illegal filename characters
