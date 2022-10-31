@@ -362,7 +362,7 @@ const plugin: Plugin = (
           let convertedDimensions: number[] = []
           const dimensions = sizeOf(file)
           if (dimensions.orientation && dimensions.orientation >= 5) {
-            ;[dimensions.width, dimensions.height] = [
+            [dimensions.width, dimensions.height] = [
               dimensions.height,
               dimensions.width,
             ]

@@ -1395,7 +1395,7 @@ const plugin: Plugin = (
       store.commit('media/setMusicFadeOut', '00:00')
     }
 
-    ipcRenderer.on('videoEnd', (_e) => {
+    ipcRenderer.on('videoEnd', () => {
       ipcRenderer.removeAllListeners('videoProgress')
       ipcRenderer.removeAllListeners('videoEnd')
       playSignLanguageSong(

@@ -30,7 +30,7 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
         ? args[0]
         : args[0]?.message ?? args[0]?.description
     )
-    console[type].apply(console, args)
+    console[type](...args)
   }
 
   const log = {
