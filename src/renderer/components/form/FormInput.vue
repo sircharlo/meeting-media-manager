@@ -341,10 +341,10 @@ export default defineComponent({
     passIcon(): IconDefinition {
       return this.passwordVisible ? faEyeSlash : faEye
     },
-    rules(): any[] {
+    rules(): ((v: unknown) => true | string)[] {
       const rules = (this.$attrs.rules as unknown as any[]) ?? []
       if (this.required) {
-        rules.push((v: any) => {
+        rules.push((v: unknown) => {
           if (typeof v === 'string') {
             return !!v.trim() || this.$t('fieldRequired')
           }
@@ -353,7 +353,7 @@ export default defineComponent({
       }
       if (this.max) {
         rules.push(
-          (v: any) =>
+          (v: string) =>
             !v ||
             v.length <= this.max ||
             (this.$t('fieldMax') as string).replace('XX', this.max.toString())

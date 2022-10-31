@@ -143,7 +143,7 @@
   </v-btn>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import {
   faStop,
@@ -202,7 +202,7 @@ export default defineComponent({
       default: false,
     },
     tooltip: {
-      type: String,
+      type: String as PropType<'top' | 'left' | 'right' | 'bottom'>,
       default: 'right',
       validator: (val: string) => {
         return ['right', 'left', 'top', 'bottom'].includes(val)
@@ -318,8 +318,18 @@ export default defineComponent({
     updateSuccess(): boolean {
       return this.$store.state.stats.updateSuccess as boolean
     },
-    tooltipObj(): any {
-      const obj = {} as any
+    tooltipObj(): {
+      top?: boolean
+      left?: boolean
+      right?: boolean
+      bottom?: boolean
+    } {
+      const obj = {} as {
+        top?: boolean
+        left?: boolean
+        right?: boolean
+        bottom?: boolean
+      }
       obj[this.tooltip] = true
       return obj
     },
