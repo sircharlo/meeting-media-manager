@@ -291,7 +291,7 @@ export const STORE_KEYS: { [key: string]: keyof ElectronStore } = {
 
 let store: Store<ElectronStore>
 
-function storeOptions(name: string = 'prefs') {
+function storeOptions(name = 'prefs') {
   return {
     name,
     schema,

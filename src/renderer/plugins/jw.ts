@@ -21,7 +21,7 @@ const plugin: Plugin = (
 ) => {
   inject(
     'getJWLangs',
-    async (forceReload: boolean = false): Promise<ShortJWLang[]> => {
+    async (forceReload = false): Promise<ShortJWLang[]> => {
       const langPath = join($appPath(), 'langs.json')
       const lastUpdate = $getPrefs('media.langUpdatedLast') as string
       const recentlyUpdated =
@@ -80,7 +80,7 @@ const plugin: Plugin = (
   // Get yeartext from WT online library
   inject(
     'getYearText',
-    async (force: boolean = false): Promise<string | null> => {
+    async (force = false): Promise<string | null> => {
       let yeartext = null
       if (store.state.stats.online && (force || !existsSync($ytPath()))) {
         try {
