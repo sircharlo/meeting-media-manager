@@ -58,7 +58,7 @@ const plugin: Plugin = (
 ) => {
   async function extractMediaItems(
     extract: MultiMediaExtract,
-    setProgress?: Function
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
   ): Promise<MeetingFile[]> {
     extract.Lang = $getPrefs('media.lang') as string
     if (extract.Link) {
@@ -137,7 +137,7 @@ const plugin: Plugin = (
   async function getDocumentExtract(
     db: Database,
     docId: number,
-    setProgress?: Function
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
   ): Promise<MeetingFile[]> {
     const songPub = store.state.media.songPub as string
     const excludeTh = $getPrefs('media.excludeTh')
@@ -633,7 +633,7 @@ const plugin: Plugin = (
   async function getDbFromJWPUB(
     pub?: string,
     issue?: string,
-    setProgress?: Function,
+    setProgress?: (loaded: number, total: number, global?: boolean) => void,
     localPath: string = ''
   ): Promise<Database | null> {
     let db: Database | null
@@ -692,7 +692,7 @@ const plugin: Plugin = (
 
   async function downloadIfRequired(
     file: VideoFile,
-    setProgress?: Function
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
   ): Promise<string> {
     // Set extra properties
     file.downloadRequired = true
@@ -776,7 +776,10 @@ const plugin: Plugin = (
 
   inject(
     'getMwMedia',
-    async (date: string, setProgress?: Function): Promise<void> => {
+    async (
+      date: string,
+      setProgress?: (loaded: number, total: number, global?: boolean) => void
+    ): Promise<void> => {
       const mwDay = $dayjs(
         date,
         $getPrefs('app.outputFolderDateFormat') as string
@@ -845,7 +848,10 @@ const plugin: Plugin = (
 
   inject(
     'getWeMedia',
-    async (date: string, setProgress?: Function): Promise<void> => {
+    async (
+      date: string,
+      setProgress?: (loaded: number, total: number, global?: boolean) => void
+    ): Promise<void> => {
       const weDay = $dayjs(
         date,
         $getPrefs('app.outputFolderDateFormat') as string
@@ -1082,7 +1088,9 @@ const plugin: Plugin = (
     total = amount
   }
 
-  function increaseProgress(setProgress: Function): void {
+  function increaseProgress(
+    setProgress: (loaded: number, total: number, global?: boolean) => void
+  ): void {
     progress++
     setProgress(progress, total, true)
   }
@@ -1092,7 +1100,7 @@ const plugin: Plugin = (
     async (
       dryrun: boolean,
       baseDate: Dayjs,
-      setProgress: Function
+      setProgress: (loaded: number, total: number, global?: boolean) => void
     ): Promise<void> => {
       const meetings = new Map(
         Array.from(
@@ -1151,7 +1159,7 @@ const plugin: Plugin = (
   async function syncMediaItem(
     date: string,
     item: MeetingFile,
-    setProgress: Function
+    setProgress: (loaded: number, total: number, global?: boolean) => void
   ): Promise<void> {
     if (item.filesize && (item.url || item.filepath)) {
       $log.info(

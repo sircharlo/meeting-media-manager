@@ -213,7 +213,9 @@ const plugin: Plugin = (
   })
 
   // Setup FFmpeg for video conversion
-  async function setupFFmpeg(setProgress: Function): Promise<void> {
+  async function setupFFmpeg(
+    setProgress: (loaded: number, total: number, global?: boolean) => void
+  ): Promise<void> {
     if (store.state.media.ffMpeg) return
     const osType = type()
     let target = 'linux-64'
@@ -337,7 +339,10 @@ const plugin: Plugin = (
   })
 
   // Convert images to videos so they can be shared through the Zoom video share option
-  function createVideo(file: string, setProgress: Function): Promise<void> {
+  function createVideo(
+    file: string,
+    setProgress: (loaded: number, total: number, global?: boolean) => void
+  ): Promise<void> {
     const output = changeExt(file, '.mp4')
     return new Promise<void>((resolve) => {
       try {
@@ -437,7 +442,9 @@ const plugin: Plugin = (
     total = amount
   }
 
-  function increaseProgress(setProgress: Function): void {
+  function increaseProgress(
+    setProgress: (loaded: number, total: number, global?: boolean) => void
+  ): void {
     progress++
     setProgress(progress, total, true)
   }
@@ -448,7 +455,7 @@ const plugin: Plugin = (
     async (
       baseDate: Dayjs,
       now: Dayjs,
-      setProgress: Function
+      setProgress: (loaded: number, total: number, global?: boolean) => void
     ): Promise<void> => {
       const files = $findAll(join($mediaPath(), '*'), {
         onlyDirectories: true,
