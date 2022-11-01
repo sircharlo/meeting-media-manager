@@ -266,10 +266,10 @@ export default defineComponent({
     isWindows() {
       return platform() === 'win32'
     },
-    background() {
-      return this.$store.state.present.background
+    background(): string {
+      return this.$store.state.present.background as string
     },
-    screens() {
+    screens(): { id: number; class: string; text: string }[] {
       return this.$store.state.present.screens as {
         id: number
         class: string

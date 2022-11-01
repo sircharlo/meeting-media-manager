@@ -49,6 +49,7 @@
   "excludeLffiImages": "Exclude images from the <em>lffi</em> brochure",
   "excludeTh": "Exclude all media from the <em>th</em> brochure",
   "fetchMedia": "Update media folders",
+  "fieldInvalid": "This is not a valid value for this field.",
   "fieldMax": "Max XX characters.",
   "fieldRequired": "This field is required.",
   "fieldShortcutInvalid": "This is not a valid shortcut",

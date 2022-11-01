@@ -132,6 +132,7 @@
         :label="$t('port')"
         :locked="$isLocked('app.obs.port')"
         required
+        :rules="[(v) => !v || isValidPort(v) || $t('fieldInvalid')]"
         @blur="refreshOBS()"
         @keydown.enter.prevent="refreshOBS()"
       />
@@ -252,7 +253,9 @@ export default defineComponent({
     },
     obsComplete(): boolean {
       return (
-        this.app.obs.enable && !!this.app.obs.port && !!this.app.obs.password
+        this.app.obs.enable &&
+        this.isValidPort(this.app.obs.port) &&
+        !!this.app.obs.password
       )
     },
     client(): WebDAVClient {
@@ -423,6 +426,15 @@ export default defineComponent({
     }
   },
   methods: {
+    isValidPort(port: string | null) {
+      if (!port) return false
+
+      // Regular expression to check if number is a valid port number
+      const regexExp =
+        /^((6553[0-5])|(655[0-2]\d)|(65[0-4]\d{2})|(6[0-4]\d{3})|([1-5]\d{4})|([0-5]{0,5})|(\d{1,4}))$/gi
+
+      return regexExp.test(port)
+    },
     async renameBg() {
       if (this.oldName && this.app.congregationName) {
         const bgName = (congName: string) =>
