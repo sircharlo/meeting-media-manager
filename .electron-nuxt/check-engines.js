@@ -14,7 +14,7 @@ function checkNodeVersion() {
   if (compare(requiredMinVersion, installedVersion) === 1) {
     console.log(FG_RED)
     console.log(
-      `\tYou are running version v${installedVersion} of Node.js, which is not supported by Electron-nuxt.`
+      `\tYou are running version v${installedVersion} of Node.js, which is not supported for meeting-media-manager.`
     )
     console.log(
       `\tThe official Node.js version that is supported is ${requiredMinVersion} or greater.`
@@ -33,7 +33,7 @@ function disallowNpm() {
   const execPath = process.env.npm_execpath
   if (!execPath.includes('yarn')) {
     console.log(FG_RED)
-    console.log(`\tElectron-nuxt supports only Yarn package manager.`)
+    console.log(`\tMeeting-media-manager supports only Yarn package manager.`)
     console.log(RESET)
     console.log(
       '\n\tPlease visit https://legacy.yarnpkg.com/en/docs/install to find instructions on how to install Yarn.\n'
