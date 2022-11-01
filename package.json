@@ -43,6 +43,7 @@
   ],
   "private": true,
   "resolutions": {
+    "@types/node": "16.18.3",
     "chokidar": "3.5.3",
     "core-js": "3.26.0",
     "vue": "2.7.13",
