@@ -324,26 +324,17 @@ export default defineComponent({
     },
     upcomingWeeks(): { iso: number; label: string }[] {
       const weeks: { iso: number; label: string }[] = []
+      const dateFormat = this.$getPrefs('app.outputFolderDateFormat') as string
 
       for (let i = 0; i < 5; i++) {
         const monday = (this.$dayjs() as Dayjs)
           .add(i, 'weeks')
           .startOf('week')
-          .format(
-            (this.$getPrefs('app.outputFolderDateFormat') as string).replace(
-              ' - dddd',
-              ''
-            )
-          )
+          .format(dateFormat.replace(' - dddd', ''))
         const sunday = (this.$dayjs() as Dayjs)
           .add(i, 'weeks')
           .endOf('week')
-          .format(
-            (this.$getPrefs('app.outputFolderDateFormat') as string).replace(
-              ' - dddd',
-              ''
-            )
-          )
+          .format(dateFormat.replace(' - dddd', ''))
         weeks.push({
           iso: (this.$dayjs() as Dayjs).add(i, 'weeks').isoWeek(),
           label: `${monday} - ${sunday}`,

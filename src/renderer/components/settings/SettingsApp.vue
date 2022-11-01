@@ -202,7 +202,7 @@
 </template>
 <script lang="ts">
 import { platform } from 'os'
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
@@ -220,6 +220,12 @@ const dateFormats = [
 ] as DateFormat[]
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
+  props: {
+    prefs: {
+      type: Object as PropType<ElectronStore>,
+      required: true,
+    },
+  },
   data() {
     return {
       valid: true,
@@ -272,6 +278,7 @@ export default defineComponent({
     app: {
       handler(val: AppPrefs) {
         this.$setPrefs('app', val)
+        this.$emit('refresh', val)
       },
       deep: true,
     },
@@ -403,6 +410,7 @@ export default defineComponent({
     this.oldName = this.app.congregationName
     this.app.localAppLang = this.$i18n.locale
     this.$emit('valid', this.valid)
+    this.$emit('refresh', this.app)
 
     if (this.obsComplete) {
       await this.$getScenes()
@@ -430,14 +438,11 @@ export default defineComponent({
           join(this.$appPath(), bgName(this.app.congregationName) + extname(bg))
         )
 
-        if (this.client) {
+        if (this.client && this.prefs.cong.dir) {
           await this.client.moveFile(
+            join(this.prefs.cong.dir, bgName(this.oldName) + extname(bg)),
             join(
-              this.$getPrefs('cong.dir'),
-              bgName(this.oldName) + extname(bg)
-            ),
-            join(
-              this.$getPrefs('cong.dir'),
+              this.prefs.cong.dir,
               bgName(this.app.congregationName) + extname(bg)
             )
           )

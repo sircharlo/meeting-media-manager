@@ -143,32 +143,57 @@
         </v-col>
       </v-row>
     </template>
+    <v-progress-linear
+      v-if="currentProgress || totalProgress"
+      fixed
+      bottom
+      stream
+      striped
+      :height="8"
+      style="bottom: 72px"
+      :buffer-value="currentProgress"
+      :value="totalProgress"
+    />
   </v-form>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { extname, join } from 'upath'
 import { MeetingPrefs, ElectronStore, VideoFile, ShortJWLang } from '~/types'
 import { HUNDRED_PERCENT, NR_OF_KINGDOM_SONGS } from '~/constants/general'
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
+  props: {
+    prefs: {
+      type: Object as PropType<ElectronStore>,
+      required: true,
+    },
+    cache: {
+      type: Number,
+      required: true,
+    },
+  },
   data() {
     return {
       status: '',
+      cached: false,
       valid: true,
+      processed: 0,
+      currentProgress: 0,
+      totalProgress: 0,
       meeting: {
         ...PREFS.meeting,
       } as MeetingPrefs,
     }
   },
   computed: {
-    online() {
+    online(): boolean {
       return this.$store.state.stats.online
     },
     forcedPrefs(): ElectronStore {
       return this.$store.state.cong.prefs as ElectronStore
     },
-    localeDays() {
+    localeDays(): { label: string; value: number }[] {
       return this.$dayjs.weekdaysMin(true).map((day, i) => {
         return {
           label: day,
@@ -179,45 +204,22 @@ export default defineComponent({
     musicFadeOutSmart(): string {
       return (this.$t('musicFadeOutSmart') as string).replace(
         '<span>XX</span>',
-        (this.meeting.musicFadeOutTime as number).toString()
+        (this.meeting.musicFadeOutTime ?? 5).toString()
       )
     },
     musicFadeOutTimer(): string {
       return (this.$t('musicFadeOutTimer') as string).replace(
         '<span>XX</span>',
-        (this.meeting.musicFadeOutTime as number).toString()
+        (this.meeting.musicFadeOutTime ?? 5).toString()
       )
     },
     isSignLanguage(): boolean {
-      if (!this.$getPrefs('media.lang')) return false
+      if (!this.prefs.media.lang) return false
       const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
-        ({ langcode }) => langcode === this.$getPrefs('media.lang')
+        ({ langcode }) => langcode === this.prefs.media.lang
       )
 
       return !!lang?.isSignLanguage
-    },
-    shuffleMusicCached() {
-      const pubPath = this.$pubPath()
-      if (!pubPath) return false
-      if (this.isSignLanguage) {
-        return (
-          this.$findAll(
-            join(
-              pubPath,
-              '..',
-              this.$getPrefs('media.lang'),
-              'sjj',
-              '**',
-              '*.mp4'
-            )
-          ).length === NR_OF_KINGDOM_SONGS
-        )
-      } else {
-        return (
-          this.$findAll(join(pubPath, '..', 'E', 'sjjm', '**', '*.mp3'))
-            .length === NR_OF_KINGDOM_SONGS
-        )
-      }
     },
   },
   watch: {
@@ -234,19 +236,28 @@ export default defineComponent({
     meeting: {
       handler(val: MeetingPrefs) {
         this.$setPrefs('meeting', val)
+        this.$emit('refresh', val)
         this.$emit(
           'valid',
-          (val && this.meeting.specialCong) ||
-            (this.meeting.mwDay !== null &&
-              this.meeting.weDay !== null &&
-              this.meeting.mwStartTime &&
-              this.meeting.weStartTime)
+          val.specialCong ||
+            (val.mwDay !== null &&
+              val.weDay !== null &&
+              val.mwStartTime &&
+              val.weStartTime)
         )
       },
       deep: true,
     },
     forcedPrefs() {
       Object.assign(this.meeting, this.$getPrefs('meeting'))
+    },
+    cache() {
+      this.cached = this.shuffleMusicCached()
+    },
+    cached(val: boolean) {
+      if (!val && this.status === 'success') {
+        this.status = ''
+      }
     },
     'meeting.enableMusicButton': {
       // Set or unset the music shuffle shortcut
@@ -287,8 +298,10 @@ export default defineComponent({
   mounted() {
     Object.assign(this.meeting, this.$getPrefs('meeting'))
     this.$emit('valid', this.valid)
+    this.$emit('refresh', this.meeting)
 
-    if (this.shuffleMusicCached) {
+    this.cached = this.shuffleMusicCached()
+    if (this.cached) {
       this.status = 'success'
     }
 
@@ -298,6 +311,32 @@ export default defineComponent({
     }
   },
   methods: {
+    shuffleMusicCached(): boolean {
+      const pubPath = this.$pubPath()
+      if (!pubPath) return false
+      if (!this.prefs.media.lang) return false
+      if (this.isSignLanguage) {
+        return (
+          this.$findAll(
+            join(pubPath, '..', this.prefs.media.lang, 'sjj', '**', '*.mp4')
+          ).length === NR_OF_KINGDOM_SONGS
+        )
+      } else {
+        return (
+          this.$findAll(join(pubPath, '..', 'E', 'sjjm', '**', '*.mp3'))
+            .length === NR_OF_KINGDOM_SONGS
+        )
+      }
+    },
+    setProgress(loaded: number, total: number, global: boolean = false) {
+      if (global) {
+        this.totalProgress = (HUNDRED_PERCENT * loaded) / total
+      } else {
+        this.currentProgress = (HUNDRED_PERCENT * loaded) / total
+      }
+      if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
+      if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
+    },
     getShortcutRules(fn: string) {
       return [
         (v: string) =>
@@ -306,28 +345,35 @@ export default defineComponent({
           this.$isShortcutAvailable(v, fn) || this.$t('fieldShortcutTaken'),
       ]
     },
+    async downloadSong(song: VideoFile) {
+      await this.$downloadIfRequired(song, this.setProgress)
+      this.setProgress(++this.processed, NR_OF_KINGDOM_SONGS, true)
+    },
     async downloadShuffleMusic() {
       this.status = 'loading'
+      if (!this.prefs.media.lang) {
+        this.status = 'error'
+        return
+      }
       try {
         const songs = (await this.$getMediaLinks({
           pubSymbol: this.isSignLanguage ? 'sjj' : 'sjjm',
           format: this.isSignLanguage ? 'MP4' : 'MP3',
-          lang: this.isSignLanguage
-            ? (this.$getPrefs('media.lang') as string)
-            : 'E',
+          lang: this.isSignLanguage ? this.prefs.media.lang : 'E',
         })) as VideoFile[]
 
-        const promises: Promise<string>[] = []
+        const promises: Promise<void>[] = []
 
         songs
           .filter(
             (item) =>
               extname(item.url) === (this.isSignLanguage ? '.mp4' : '.mp3')
           )
-          .forEach((s) => promises.push(this.$downloadIfRequired(s)))
+          .forEach((s) => promises.push(this.downloadSong(s)))
 
         await Promise.allSettled(promises)
         this.status = 'success'
+        this.$emit('cache')
       } catch (e: unknown) {
         this.status = 'error'
       }

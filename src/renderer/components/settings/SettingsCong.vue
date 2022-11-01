@@ -151,6 +151,7 @@ export default defineComponent({
     cong: {
       handler(val: CongPrefs) {
         this.$setPrefs('cong', val)
+        this.$emit('refresh', val)
       },
       deep: true,
     },
@@ -158,6 +159,7 @@ export default defineComponent({
   async mounted() {
     Object.assign(this.cong, this.$getPrefs('cong'))
     this.$emit('valid', this.valid)
+    this.$emit('refresh', this.cong)
 
     if (this.$refs.congForm) {
       // @ts-ignore: validate is not a function on type Element

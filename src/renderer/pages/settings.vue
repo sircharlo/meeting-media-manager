@@ -29,7 +29,11 @@
           <v-expansion-panel-content class="pt-4">
             <component
               :is="header.component"
+              :prefs="prefs"
+              :cache="cache"
               @valid="setValid(header.component, $event)"
+              @refresh="refreshPrefs(header.key, $event)"
+              @cache="calcCache()"
             />
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -102,13 +106,18 @@
 import { join } from 'upath'
 import { defineComponent } from 'vue'
 import { faHandPointRight } from '@fortawesome/free-solid-svg-icons'
+import { ShortJWLang, ElectronStore } from '~/types'
 import { BYTES_IN_KIBIBYTE, MS_IN_SEC } from '~/constants/general'
+const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
   name: 'SettingsPage',
   data() {
     return {
       cache: 0,
       tab: 0,
+      prefs: {
+        ...PREFS,
+      } as ElectronStore,
       cancel: false,
       mounted: false,
       cacheColor: 'warning',
@@ -116,26 +125,35 @@ export default defineComponent({
       panel: [0, 1, 2, 3] as number[],
       headers: [
         {
+          key: 'app',
           name: this.$t('optionsApp'),
           component: 'settings-app',
           valid: false,
         },
         {
+          key: 'cong',
           name: this.$t('optionsCongSync'),
           component: 'settings-cong',
           valid: false,
         },
         {
+          key: 'media',
           name: this.$t('optionsMedia'),
           component: 'settings-media',
           valid: false,
         },
         {
+          key: 'meeting',
           name: this.$t('optionsMeetings'),
           component: 'settings-meetings',
           valid: false,
         },
-      ] as { name: string; component: string; valid: boolean }[],
+      ] as {
+        key: keyof ElectronStore
+        name: string
+        component: string
+        valid: boolean
+      }[],
     }
   },
   head() {
@@ -148,8 +166,8 @@ export default defineComponent({
     isNew(): boolean {
       return !!this.$route.query.new
     },
-    online() {
-      return this.$store.state.stats.online && !this.$getPrefs('app.offline')
+    online(): boolean {
+      return this.$store.state.stats.online && !this.prefs.app.offline
     },
     valid(): boolean {
       return this.headers.every(({ valid }) => valid)
@@ -160,17 +178,29 @@ export default defineComponent({
     updateSuccess(): boolean {
       return this.$store.state.stats.updateSuccess as boolean
     },
+    shuffleMusicFiles(): string {
+      const pubPath = this.$pubPath()
+      if (!pubPath) return ''
+      return this.isSignLanguage
+        ? join(pubPath, '..', this.prefs.media.lang, 'sjj', '**', '*.mp4')
+        : join(pubPath, '..', 'E', 'sjjm', '**', '*.mp3')
+    },
+    isSignLanguage(): boolean {
+      if (!this.prefs.media.lang) return false
+      const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
+        ({ langcode }) => langcode === this.prefs.media.lang
+      )
+
+      return !!lang?.isSignLanguage
+    },
   },
   watch: {
     valid(val: boolean) {
       if (val) this.calcCache()
 
-      if (this.$getPrefs('media.enableMediaDisplayButton')) {
-        if (val) {
-          this.$setShortcut(
-            this.$getPrefs('media.presentShortcut') as string,
-            'openPresentMode'
-          )
+      if (this.prefs.media.enableMediaDisplayButton) {
+        if (val && this.prefs.media.presentShortcut) {
+          this.$setShortcut(this.prefs.media.presentShortcut, 'openPresentMode')
         } else {
           this.$unsetShortcut('openPresentMode')
         }
@@ -213,6 +243,9 @@ export default defineComponent({
     this.calcCache()
   },
   methods: {
+    refreshPrefs(key: keyof ElectronStore, val: any) {
+      this.prefs[key] = val
+    },
     getInitials(word: string) {
       return word
         .split(' ')
@@ -229,30 +262,28 @@ export default defineComponent({
       this.$router.back()
     },
     calcCache(): void {
-      if (
-        !this.$getPrefs('app.localOutputPath') &&
-        !this.$getPrefs('media.lang')
-      ) {
+      if (!this.prefs.app.localOutputPath && !this.prefs.media.lang) {
         this.cache = 0
         return
       }
 
       const folders = []
+      const pubPath = this.$pubPath()
+      const mediaPath = this.$mediaPath()
 
-      if (this.$pubPath()) {
-        folders.push(join(this.$pubPath(), '**'))
+      if (pubPath) {
+        folders.push(join(pubPath, '**'))
+        folders.push(this.shuffleMusicFiles)
       }
 
-      if (this.$mediaPath()) {
-        folders.push(join(this.$mediaPath(), '**'))
+      if (mediaPath) {
+        folders.push(join(mediaPath, '**'))
       }
 
       this.cache = parseFloat(
         (
           this.$findAllStats(folders, {
-            ignore: this.$mediaPath()
-              ? [join(this.$mediaPath(), 'Recurring')]
-              : [],
+            ignore: mediaPath ? [join(mediaPath, 'Recurring')] : [],
           })
             .map((file) => file.stats?.size ?? 0)
             .reduce((a: number, b: number) => a + b, 0) /
@@ -276,6 +307,7 @@ export default defineComponent({
 
         if (pubPath) {
           folders.push(pubPath)
+          this.$rm(this.$findAll(this.shuffleMusicFiles))
         }
 
         if (mediaPath) {
