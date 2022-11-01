@@ -188,9 +188,7 @@ const plugin: Plugin = (
   }
   inject('resetOBS', resetOBS)
 
-  async function getScenes(
-    current = false
-  ): Promise<string | string[]> {
+  async function getScenes(current = false): Promise<string | string[]> {
     try {
       let currentScene = ''
       let scenes: string[] = []
@@ -294,6 +292,8 @@ const plugin: Plugin = (
           await resetOBS()
         } else if (scene === $getPrefs('app.obs.cameraScene')) {
           $warn('errorObsCameraScene')
+        } else if (scene === $getPrefs('app.obs.mediaScene')) {
+          $warn('errorObsMediaScene')
         } else {
           $log.debug('setScene()')
           $error('errorObs', e)
