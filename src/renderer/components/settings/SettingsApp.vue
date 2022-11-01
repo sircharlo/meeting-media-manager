@@ -132,6 +132,7 @@
         :label="$t('port')"
         :locked="$isLocked('app.obs.port')"
         required
+        :rules="[(v) => !v || isValidPort(v) || $t('fieldInvalid')]"
         @blur="refreshOBS()"
         @keydown.enter.prevent="refreshOBS()"
       />
@@ -202,7 +203,7 @@
 </template>
 <script lang="ts">
 import { platform } from 'os'
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
@@ -220,6 +221,12 @@ const dateFormats = [
 ] as DateFormat[]
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
+  props: {
+    prefs: {
+      type: Object as PropType<ElectronStore>,
+      required: true,
+    },
+  },
   data() {
     return {
       valid: true,
@@ -246,7 +253,9 @@ export default defineComponent({
     },
     obsComplete(): boolean {
       return (
-        this.app.obs.enable && !!this.app.obs.port && !!this.app.obs.password
+        this.app.obs.enable &&
+        this.isValidPort(this.app.obs.port) &&
+        !!this.app.obs.password
       )
     },
     client(): WebDAVClient {
@@ -272,6 +281,7 @@ export default defineComponent({
     app: {
       handler(val: AppPrefs) {
         this.$setPrefs('app', val)
+        this.$emit('refresh', val)
       },
       deep: true,
     },
@@ -403,6 +413,7 @@ export default defineComponent({
     this.oldName = this.app.congregationName
     this.app.localAppLang = this.$i18n.locale
     this.$emit('valid', this.valid)
+    this.$emit('refresh', this.app)
 
     if (this.obsComplete) {
       await this.$getScenes()
@@ -415,6 +426,15 @@ export default defineComponent({
     }
   },
   methods: {
+    isValidPort(port: string | null) {
+      if (!port) return false
+
+      // Regular expression to check if number is a valid port number
+      const regexExp =
+        /^((6553[0-5])|(655[0-2]\d)|(65[0-4]\d{2})|(6[0-4]\d{3})|([1-5]\d{4})|([0-5]{0,5})|(\d{1,4}))$/gi
+
+      return regexExp.test(port)
+    },
     async renameBg() {
       if (this.oldName && this.app.congregationName) {
         const bgName = (congName: string) =>
@@ -430,14 +450,11 @@ export default defineComponent({
           join(this.$appPath(), bgName(this.app.congregationName) + extname(bg))
         )
 
-        if (this.client) {
+        if (this.client && this.prefs.cong.dir) {
           await this.client.moveFile(
+            join(this.prefs.cong.dir, bgName(this.oldName) + extname(bg)),
             join(
-              this.$getPrefs('cong.dir'),
-              bgName(this.oldName) + extname(bg)
-            ),
-            join(
-              this.$getPrefs('cong.dir'),
+              this.prefs.cong.dir,
               bgName(this.app.congregationName) + extname(bg)
             )
           )

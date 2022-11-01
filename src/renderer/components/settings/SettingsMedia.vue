@@ -206,7 +206,7 @@
 </template>
 <script lang="ts">
 import { platform } from 'os'
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'
 // eslint-disable-next-line import/named
@@ -219,6 +219,12 @@ import { NOT_FOUND } from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
+  props: {
+    prefs: {
+      type: Object as PropType<ElectronStore>,
+      required: true,
+    },
+  },
   data() {
     return {
       bg: '',
@@ -260,10 +266,10 @@ export default defineComponent({
     isWindows() {
       return platform() === 'win32'
     },
-    background() {
-      return this.$store.state.present.background
+    background(): string {
+      return this.$store.state.present.background as string
     },
-    screens() {
+    screens(): { id: number; class: string; text: string }[] {
       return this.$store.state.present.screens as {
         id: number
         class: string
@@ -278,6 +284,7 @@ export default defineComponent({
     media: {
       handler(val: MediaPrefs) {
         this.$setPrefs('media', val)
+        this.$emit('refresh', val)
       },
       deep: true,
     },
@@ -381,6 +388,7 @@ export default defineComponent({
     }
     this.loading = false
     this.$emit('valid', this.valid)
+    this.$emit('refresh', this.media)
 
     if (this.$refs.mediaForm) {
       // @ts-ignore: validate is not a function on type Element
@@ -397,7 +405,7 @@ export default defineComponent({
       ]
     },
     bgFileName(): string {
-      return `custom-background-image-${this.$getPrefs('app.congregationName')}`
+      return `custom-background-image-${this.prefs.app.congregationName}`
     },
     async refreshBg() {
       await this.$refreshBackgroundImgPreview(true)
@@ -419,9 +427,9 @@ export default defineComponent({
           this.$copy(bg, join(this.$appPath(), this.bgFileName() + extname(bg)))
 
           // Upload the background to the cong server
-          if (this.client) {
+          if (this.client && this.prefs.cong.dir) {
             await this.client.putFileContents(
-              join(this.$getPrefs('cong.dir'), this.bgFileName() + extname(bg)),
+              join(this.prefs.cong.dir, this.bgFileName() + extname(bg)),
               readFileSync(bg),
               {
                 overwrite: true,
@@ -440,10 +448,10 @@ export default defineComponent({
       this.$rm(bg)
 
       // Remove the background from the cong server
-      if (this.client) {
+      if (this.client && this.prefs.cong.dir) {
         try {
           await this.client.deleteFile(
-            join(this.$getPrefs('cong.dir'), this.bgFileName() + extname(bg[0]))
+            join(this.prefs.cong.dir, this.bgFileName() + extname(bg[0]))
           )
         } catch (e: any) {
           if (e.status !== NOT_FOUND) {
