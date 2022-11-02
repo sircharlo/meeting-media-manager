@@ -134,5 +134,8 @@ jobs:
         if: always()
         with:
           name: release-files
-          path: build/
+          path: |
+            build/
+            !build/icons/
+            !build/*-unpacked/
           retention-days: 30
