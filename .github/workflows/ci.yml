@@ -138,4 +138,5 @@ jobs:
             build/
             !build/icons/
             !build/*-unpacked/
+            !build/mac-universal/
           retention-days: 30
