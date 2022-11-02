@@ -49,6 +49,7 @@
   "excludeLffiImages": "Ne vegye figyelembe a képeket az <em>lffi</em> kiadványból.",
   "excludeTh": "Ne vegye figyelembe a médiát a <em>th</em> kiadványból",
   "fetchMedia": "Médiamappák frissítése",
+  "fieldInvalid": "Ez nem érvényes érték erre a mezőre.",
   "fieldMax": "Max. XX karakter.",
   "fieldRequired": "Kötelező kitölteni.",
   "fieldShortcutInvalid": "Ez nem érvényes parancsikon",
