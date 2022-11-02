@@ -130,3 +130,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.github_token }}
         run: yarn run build -p onTagOrDraft
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: release-files
+          path: build/
+          retention-days: 30

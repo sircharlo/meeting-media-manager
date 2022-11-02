@@ -3,7 +3,12 @@ const ICONS_DIR = 'build/icons/'
 const windowsOS = {
   win: {
     icon: ICONS_DIR + 'icon.ico',
-    target: 'nsis',
+    target: [
+      {
+        target: 'nsis',
+        arch: ['x64', 'ia32'],
+      },
+    ],
     publish: ['github'],
   },
 
