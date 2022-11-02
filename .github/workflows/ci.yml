@@ -131,7 +131,9 @@ jobs:
           GH_TOKEN: ${{ secrets.github_token }}
         run: yarn run build -p onTagOrDraft
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: |
+          startsWith(github.ref, 'refs/tags/v') ||
+          !startsWith(github.event.head_commit.message, 'chore(release)')
         with:
           name: release-files
           path: |
