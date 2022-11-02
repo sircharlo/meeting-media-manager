@@ -49,6 +49,7 @@
   "excludeLffiImages": "Sluit afbeeldingen van de <em>lffi</em> brochure uit",
   "excludeTh": "Sluit alle media van de <em>th</em> brochure uit",
   "fetchMedia": "Haal media op!",
+  "fieldInvalid": "Dit is geen correcte waarde voor dit veld.",
   "fieldMax": "Maximaal XX karakters.",
   "fieldRequired": "Dit veld is verplicht.",
   "fieldShortcutInvalid": "Dit is geen correcte sneltoets",
