@@ -41,7 +41,7 @@ module.exports = {
   productName: 'Meeting Media Manager',
   appId: 'sircharlo.meeting-media-manager',
   // eslint-disable-next-line no-template-curly-in-string
-  artifactName: 'meeting-media-manager-${version}_${arch}.${ext}',
+  artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
   buildDependenciesFromSource: true,
   directories: {
     output: 'build',
