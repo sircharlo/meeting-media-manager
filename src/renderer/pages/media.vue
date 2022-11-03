@@ -42,7 +42,6 @@ export default defineComponent({
       this.container.style.cursor = val ? 'zoom-in' : 'default'
       // @ts-ignore
       document.body.style['app-region'] = val ? 'none' : 'drag'
-      if (!val) window.location.reload()
     },
     scale(val: number) {
       if (val === 1) {
@@ -90,6 +89,7 @@ export default defineComponent({
     ipcRenderer.on('showMedia', (_e, media) => {
       if (this.panzoom) this.panzoom.reset()
       this.zoomEnabled = media && this.$isImage(media.path)
+      if (!media) window.location.reload()
       this.transitionToMedia(media)
     })
     ipcRenderer.on('pauseVideo', () => {
