@@ -104,7 +104,7 @@
     "convertPresentLink": "Ha <strong>hibrid</strong> vagy <strong>hagyományos</strong> gyülekezeti összejöveteleket tartanak, akkor nézze meg a [PRESENT LINK] használatát a <code>[PRESENT]</code> opció aktiválásával, és kapcsolja ki ezt az opciót.",
     "keepOriginalsAfterConversion": "Az eredeti médiafájlok megtartása a konvertálás után",
     "keepDesc": "Ha ez a beállítás engedélyezve van, a kép- és hangfájlok az MP4 formátumba konvertálás után a média mappában maradnak, és nem kerülnek törlésre.",
-    "keepResult": "Ez egy némileg rendezettebb médiamappát eredményez, és általában nem kell engedélyezni, ha a Zoom MP4 megosztás funkcióval osztja meg a médiát.",
+    "keepResult": "Ez egy némileg zsúfoltabb médiamappát eredményez, és általában nem kell engedélyezni, ha a Zoom MP4 megosztás funkcióval osztja meg a médiát.",
     "keepSee": "(Lásd a fenti <code>[CONVERT]</code>-t.)",
     "keepNote": "<strong>Megjegyzés:</strong> Csak akkor látható, ha a <code>[CONVERT]</code> is engedélyezve van.",
     "enableMediaDisplayButton": "Média megjelenítése külső megjelenítőn vagy külön ablakban",
