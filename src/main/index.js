@@ -283,6 +283,9 @@ if (gotTheLock) {
   ipcMain.on('startMediaDisplay', (_e, prefs) => {
     mediaWin.webContents.send('startMediaDisplay', prefs)
   })
+  ipcMain.on('zoom', (_e, deltaY) => {
+    mediaWin.webContents.send('zoom', deltaY)
+  })
 
   // IpcMain events to control the windows
   ipcMain.on('allowQuit', (_e, val) => {
@@ -304,7 +307,11 @@ if (gotTheLock) {
 
       const windowOptions = {
         title: 'Media Window',
-        icon: join(process.resourcesPath, 'videoPlayer', `videoPlayer.${iconType}`),
+        icon: join(
+          process.resourcesPath,
+          'videoPlayer',
+          `videoPlayer.${iconType}`
+        ),
         frame: false,
         backgroundColor: 'black',
         roundedCorners: false,

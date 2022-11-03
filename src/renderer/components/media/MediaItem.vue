@@ -18,6 +18,7 @@
         contain
         max-width="144"
         max-height="80"
+        @wheel.prevent="zoom"
       />
       <media-video
         v-else
@@ -327,6 +328,14 @@ export default defineComponent({
     ipcRenderer.removeAllListeners('videoEnd')
   },
   methods: {
+    handleKeyPress(e: KeyboardEvent) {
+      console.log(e)
+    },
+    zoom(e: WheelEvent) {
+      if (this.active) {
+        ipcRenderer.send('zoom', e.deltaY)
+      }
+    },
     async play(marker?: Marker) {
       if (!this.mediaVisible) {
         ipcRenderer.send('toggleMediaWindowFocus')
