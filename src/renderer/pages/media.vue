@@ -83,7 +83,7 @@ export default defineComponent({
 
     // @ts-ignore
     document.body.style['app-region'] = 'drag'
-    this.container.addEventListener('wheel', this.zoom)
+    this.container.addEventListener('wheel', this.handleWheelEvent)
 
     // IpcRenderer listeners
     ipcRenderer.on('showMedia', (_e, media) => {
@@ -107,6 +107,9 @@ export default defineComponent({
     })
     ipcRenderer.on('windowResized', () => {
       this.resizingDone()
+    })
+    ipcRenderer.on('zoom', (_e, deltaY) => {
+      this.zoom(deltaY)
     })
     ipcRenderer.on('videoScrub', (_e, timeAsPercent) => {
       const video = document.querySelector('video') as HTMLVideoElement
@@ -155,13 +158,16 @@ export default defineComponent({
     ipcRenderer.removeAllListeners('playVideo')
     ipcRenderer.removeAllListeners('pauseVideo')
     ipcRenderer.removeAllListeners('showMedia')
-    document.removeEventListener('wheel', this.zoom)
+    document.removeEventListener('wheel', this.handleWheelEvent)
   },
   methods: {
-    zoom(e: WheelEvent) {
+    handleWheelEvent(e: WheelEvent) {
+      this.zoom(e.deltaY)
+    },
+    zoom(deltaY: number) {
       if (this.panzoom && this.zoomEnabled) {
         // eslint-disable-next-line no-magic-numbers
-        this.scale += e.deltaY * -0.01
+        this.scale += deltaY * -0.01
 
         // Restrict scale
         // eslint-disable-next-line no-magic-numbers
