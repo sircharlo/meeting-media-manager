@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: Technical usage notes
+title: Műszaki használati jegyzetek
 ref: usage-notes
 ---
 
