@@ -89,7 +89,7 @@ export default defineComponent({
     ipcRenderer.on('showMedia', (_e, media) => {
       if (this.panzoom) this.panzoom.reset()
       this.zoomEnabled = media && this.$isImage(media.path)
-      if (!media) window.location.reload()
+      if (!media) window.location.reload() // Reload page to allow dragging again
       this.transitionToMedia(media)
     })
     ipcRenderer.on('pauseVideo', () => {
