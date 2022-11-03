@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="media-win-container">
     <div id="importedYearText" class="font-fallback loading" />
     <div id="importedYearTextLogoContainer" style="display: none" />
     <div id="mediaDisplay" />
@@ -15,6 +15,7 @@ import { defineComponent } from 'vue'
 // eslint-disable-next-line import/named
 import { readFileSync, existsSync } from 'fs-extra'
 import { join, basename } from 'upath'
+import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
 import { HUNDRED_PERCENT } from '~/constants/general'
@@ -24,6 +25,10 @@ export default defineComponent({
   layout: 'media',
   data() {
     return {
+      scale: 1,
+      zoomEnabled: false,
+      panzoom: null as null | PanzoomObject,
+      container: document.createElement('div'),
       yeartext: document.createElement('div'),
       ytLogo: document.createElement('div'),
       mediaDisplay: document.createElement('div'),
@@ -32,8 +37,23 @@ export default defineComponent({
       dimensions: document.createElement('div'),
     }
   },
+  watch: {
+    zoomEnabled(val: boolean) {
+      this.container.style.cursor = val ? 'zoom-in' : 'default'
+    },
+    scale(val: number) {
+      if (val === 1) {
+        this.container.style.cursor = this.zoomEnabled ? 'zoom-in' : 'default'
+      } else {
+        this.container.style.cursor = 'move'
+      }
+    },
+  },
   mounted() {
     // Set global html elements
+    this.container = document.querySelector(
+      '#media-win-container'
+    ) as HTMLDivElement
     this.yeartext = document.querySelector(
       '#importedYearText'
     ) as HTMLDivElement
@@ -51,8 +71,20 @@ export default defineComponent({
     ) as HTMLDivElement
     this.dimensions = document.querySelector('#dimensions') as HTMLDivElement
 
+    this.panzoom = Panzoom(this.mediaDisplay, {
+      animate: true,
+      canvas: true,
+      contain: 'outside',
+      cursor: 'default',
+      panOnlyWhenZoomed: true,
+    })
+
+    this.container.addEventListener('wheel', this.zoom)
+
     // IpcRenderer listeners
     ipcRenderer.on('showMedia', (_e, media) => {
+      if (this.panzoom) this.panzoom.reset()
+      this.zoomEnabled = media && this.$isImage(media.path)
       this.transitionToMedia(media)
     })
     ipcRenderer.on('pauseVideo', () => {
@@ -118,8 +150,22 @@ export default defineComponent({
     ipcRenderer.removeAllListeners('playVideo')
     ipcRenderer.removeAllListeners('pauseVideo')
     ipcRenderer.removeAllListeners('showMedia')
+    document.removeEventListener('wheel', this.zoom)
   },
   methods: {
+    zoom(e: WheelEvent) {
+      if (this.panzoom && this.zoomEnabled) {
+        // eslint-disable-next-line no-magic-numbers
+        this.scale += e.deltaY * -0.01
+
+        // Restrict scale
+        // eslint-disable-next-line no-magic-numbers
+        this.scale = Math.min(Math.max(0.125, this.scale), 4)
+        if (this.scale < 1) this.scale = 1
+        this.panzoom?.zoom(this.scale)
+        if (this.scale === 1) this.panzoom.reset()
+      }
+    },
     transitionToMedia(media: { path: string; start?: string; end?: string }) {
       this.resizingDone()
       this.blackOverlay.style.opacity = '1'
@@ -311,7 +357,7 @@ export default defineComponent({
 
 html,
 body {
-  -webkit-app-region: drag;
+  // -webkit-app-region: drag;
   background: black;
   user-select: auto;
 }
