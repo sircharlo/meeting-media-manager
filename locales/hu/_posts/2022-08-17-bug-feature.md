@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: 'Issues and feature requests'
+title: 'Problémák és funkcióigénylések'
 ref: bug-feature
 ---
 
