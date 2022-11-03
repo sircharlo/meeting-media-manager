@@ -65,6 +65,7 @@
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "@nuxtjs/i18n": "^7.3.0",
     "@nuxtjs/vuetify": "^1.12.3",
+    "@panzoom/panzoom": "^4.5.1",
     "@playwright/test": "^1.27.1",
     "@sentry/electron": "^4.1.0",
     "@sentry/tracing": "^7.17.3",
