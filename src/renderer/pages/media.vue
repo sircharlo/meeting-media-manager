@@ -40,6 +40,8 @@ export default defineComponent({
   watch: {
     zoomEnabled(val: boolean) {
       this.container.style.cursor = val ? 'zoom-in' : 'default'
+      // @ts-ignore
+      document.body.style['app-region'] = val ? 'none' : 'drag'
     },
     scale(val: number) {
       if (val === 1) {
@@ -79,12 +81,15 @@ export default defineComponent({
       panOnlyWhenZoomed: true,
     })
 
+    // @ts-ignore
+    document.body.style['app-region'] = 'drag'
     this.container.addEventListener('wheel', this.zoom)
 
     // IpcRenderer listeners
     ipcRenderer.on('showMedia', (_e, media) => {
       if (this.panzoom) this.panzoom.reset()
       this.zoomEnabled = media && this.$isImage(media.path)
+      if (!media) window.location.reload() // Reload page to allow dragging again
       this.transitionToMedia(media)
     })
     ipcRenderer.on('pauseVideo', () => {
@@ -357,7 +362,6 @@ export default defineComponent({
 
 html,
 body {
-  // -webkit-app-region: drag;
   background: black;
   user-select: auto;
 }
