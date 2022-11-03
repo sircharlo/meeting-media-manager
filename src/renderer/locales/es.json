@@ -49,6 +49,7 @@
   "excludeLffiImages": "Excluir ilustraciones del folleto / libro <em>lffi</em>",
   "excludeTh": "Excluir contenido multimedia del folleto <em>th</em>",
   "fetchMedia": "¡Actualizar multimedia!",
+  "fieldInvalid": "Este no es un valor válido para este campo.",
   "fieldMax": "Max XX caracteres.",
   "fieldRequired": "Este campo es requerido.",
   "fieldShortcutInvalid": "Este no es un atajo válido",
