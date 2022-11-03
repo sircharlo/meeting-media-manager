@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: 'Managing media'
+title: 'Média kezelése'
 ref: manage-media
 ---
 
