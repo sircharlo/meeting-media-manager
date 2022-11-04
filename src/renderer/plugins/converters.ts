@@ -230,13 +230,17 @@ const plugin: Plugin = (
     const result = await $axios.$get(
       'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest'
     )
+    console.log('fetched')
     const version = result.assets.filter(
       (a: { name: string }) =>
         a.name.includes(target) && a.name.includes('ffmpeg')
     )[0]
     const ffMpegPath = join($appPath(), 'ffmpeg')
+    console.log(ffMpegPath)
     const zipPath = join(ffMpegPath, 'zip', version.name)
+    console.log(zipPath)
     if (!existsSync(zipPath) || statSync(zipPath).size !== version.size) {
+      console.log('writing')
       $rm(join(ffMpegPath, 'zip'))
       $write(
         zipPath,
