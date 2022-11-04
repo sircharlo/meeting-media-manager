@@ -753,6 +753,12 @@ const plugin: Plugin = (
         const filePath = $mediaPath(file)
         if (filePath) $copy(file.cacheFile, filePath)
       }
+      if (
+        extname(file.cacheFile) === '.jwpub' &&
+        !$findOne(join(file.cacheDir, '*.db'))
+      ) {
+        await $extractAllTo(file.cacheFile, 'contents', file.cacheDir)
+      }
       store.commit('stats/setDownloads', {
         origin: 'jworg',
         source: 'cache',
