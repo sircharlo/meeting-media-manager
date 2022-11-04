@@ -25,9 +25,9 @@ export async function startApp(options: any = {}) {
     ...options,
     args: [appInfo.main],
     executablePath:
-      platform() === 'win32'
-        ? appInfo.executable
-        : join(appInfo.executable, appInfo.name),
+      platform() === 'linux'
+        ? join(appInfo.executable, appInfo.name)
+        : appInfo.executable,
   })
 
   electronApp.on('window', (page) => {
