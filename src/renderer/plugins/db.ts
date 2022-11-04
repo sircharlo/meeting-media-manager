@@ -2,7 +2,7 @@ import { Plugin } from '@nuxt/types'
 // eslint-disable-next-line import/named
 import sqljs, { Database } from 'sql.js'
 
-const plugin: Plugin = ({ store, $log, $config }, inject) => {
+const plugin: Plugin = ({ store, $log }, inject) => {
   function executeQuery(db: Database, query: string) {
     const result = db.exec(query)[0]
     const valObj: any[] = []
@@ -39,12 +39,8 @@ const plugin: Plugin = ({ store, $log, $config }, inject) => {
       }
 
       try {
-        /* const SQL = await sqljs({
-          locateFile: (filename: string) => `/${filename}`, // Gave problems for Windows when trying to fetch the file from root
-        }) */
         const SQL = await sqljs({
-          locateFile: (filename: string) =>
-            `https://cdnjs.cloudflare.com/ajax/libs/sql.js/${$config.sqlJsVersion}/${filename}`,
+          locateFile: (filename: string) => `/${filename}`,
         })
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })
