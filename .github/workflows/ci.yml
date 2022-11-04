@@ -73,7 +73,7 @@ jobs:
       - name: Run tests
         run: yarn test
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: failure()
         with:
           name: test-results
           path: test-results/
