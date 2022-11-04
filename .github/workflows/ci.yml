@@ -75,7 +75,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: test-results
+          name: test-results ${{ matrix.os }}
           path: test-results/
           retention-days: 30
 
