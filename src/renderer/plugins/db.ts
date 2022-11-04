@@ -1,8 +1,9 @@
+import { platform } from 'os'
 import { Plugin } from '@nuxt/types'
 // eslint-disable-next-line import/named
 import sqljs, { Database } from 'sql.js'
 
-const plugin: Plugin = ({ store, $log }, inject) => {
+const plugin: Plugin = ({ store, $log, $config }, inject) => {
   function executeQuery(db: Database, query: string) {
     const result = db.exec(query)[0]
     const valObj: any[] = []
@@ -39,8 +40,12 @@ const plugin: Plugin = ({ store, $log }, inject) => {
       }
 
       try {
+        const remotePath = (filename: string) =>
+          `https://cdnjs.cloudflare.com/ajax/libs/sql.js/${$config.sqlJsVersion}/${filename}`
+
         const SQL = await sqljs({
-          locateFile: (filename: string) => `/${filename}`,
+          locateFile: (filename: string) =>
+            platform() === 'linux' ? remotePath(filename) : `/${filename}`,
         })
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })
