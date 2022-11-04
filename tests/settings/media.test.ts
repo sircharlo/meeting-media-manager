@@ -39,7 +39,7 @@ test('render the settings page correctly', async () => {
 
 test('vlc playlist', async () => {
   test.slow()
-  if (platform() !== 'linux') {
+  if (platform() === 'win32') {
     test.skip()
   }
 

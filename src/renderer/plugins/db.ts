@@ -45,7 +45,7 @@ const plugin: Plugin = ({ store, $log, $config }, inject) => {
 
         const SQL = await sqljs({
           locateFile: (filename: string) =>
-            platform() === 'linux' ? remotePath(filename) : `/${filename}`,
+            platform() === 'win32' ? `/${filename}` : remotePath(filename),
         })
         const db = new SQL.Database(file)
         if (pub && issue) store.commit('db/set', { pub, issue, db })
