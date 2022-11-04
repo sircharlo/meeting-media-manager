@@ -207,7 +207,7 @@
   "usage-notes": {
     "run": "Sovelluksen pitäisi toimia useimmissa nykyaikaisissa Windows-, Linux- tai Mac-tietokoneissa.",
     "install": "Asennus ja ensimmäinen käynnistys",
-    "winError": "Kun avaat asennusohjelman, saatat saada [VIRHE], joka ilmaisee, että \"Windows SmartScreen esti tunnistamattoman sovelluksen käynnistymisen\".",
+    "winError": "Kun avaat asennusohjelman, saatat saada [ERROR], joka ilmaisee, että \"Windows SmartScreen esti tunnistamattoman sovelluksen käynnistymisen\".",
     "winErrorExplain": "Tämä johtuu siitä, että sovelluksella ei ole suurta määrää latauksia, ja siksi Windows ei ole \"luottanut\" siihen.",
     "winErrorSolution": "Voit kiertää tämän napsauttamalla \"Lisätietoja\" ja sitten \"Suorita silti\".",
     "linDocTitle": "virallinen AppImage-dokumentaatio",
@@ -216,7 +216,7 @@
     "linArticleLink": "mitä tämä pitää sisällään",
     "linArticle": "Muista lukea [LINKKI] ennen kuin teet tämän.",
     "macApple": "Applen tukisivu",
-    "macArticle": "Jos saat sovelluksen käynnistämisen yhteydessä varoituksen, että sovellusta ei voi avata, joko siksi, että \"se ei ole ladattu App Storesta\" tai koska \"kehittäjää ei voida vahvistaa\", tämä [SIVU] auttaa sinua pääsemään ohi että.",
+    "macArticle": "Jos saat sovelluksen käynnistämisen yhteydessä varoituksen, että sovellusta ei voi avata, joko siksi, että \"se ei ole ladattu App Storesta\" tai koska \"kehittäjää ei voida vahvistaa\", tämä [PAGE] auttaa sinua pääsemään ohi että.",
     "macLink": "tämä sivu",
     "macWarning": "Jos saat viestin, joka ilmoittaa, että sinulla ei ole oikeutta avata sovellusta, kokeile joitain ratkaisuja osoitteesta [LINKKI].",
     "macExample": "Voit esimerkiksi yrittää suorittaa tämän komennon terminaalissa:",
