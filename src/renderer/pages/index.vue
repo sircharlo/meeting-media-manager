@@ -325,6 +325,7 @@ export default defineComponent({
     upcomingWeeks(): { iso: number; label: string }[] {
       const weeks: { iso: number; label: string }[] = []
       const dateFormat = this.$getPrefs('app.outputFolderDateFormat') as string
+      if (!dateFormat) return []
 
       for (let i = 0; i < 5; i++) {
         const monday = (this.$dayjs() as Dayjs)
