@@ -68,7 +68,7 @@ jobs:
       - name: Build Electron app
         env:
           GH_TOKEN: ${{ secrets.github_token }}
-        run: yarn build -l AppImage -p never
+        run: yarn build -p never
 
       - name: Run tests
         run: yarn test
