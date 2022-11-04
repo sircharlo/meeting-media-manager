@@ -667,16 +667,24 @@ const plugin: Plugin = (
             format: 'JWPUB',
           })
         )[0] as VideoFile
-        if (jwpub) {
-          await downloadIfRequired(jwpub, setProgress)
-          db = await $getDb({
-            pub,
-            issue,
-            file: readFileSync($findOne(join($pubPath(jwpub), '*.db'))),
-          })
-        } else {
+
+        if (!jwpub) return null
+        await downloadIfRequired(jwpub, setProgress)
+        const pubPath = $pubPath(jwpub)
+        if (!pubPath) {
+          $log.debug(`No path for jwpub file`, jwpub)
           return null
         }
+        const dbPath = $findOne(join(pubPath, '*.db'))
+        if (!dbPath) {
+          $log.debug('No db file found in pubPath', pubPath)
+          return null
+        }
+        db = await $getDb({
+          pub,
+          issue,
+          file: readFileSync(dbPath),
+        })
       } else return null
     } catch (e: unknown) {
       $warn('errorJwpubDbFetch', { identifier: `${pub}-${issue}` }, e)
