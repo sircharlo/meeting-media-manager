@@ -746,7 +746,7 @@ const plugin: Plugin = (
         file,
       })
       if (extname(file.cacheFile) === '.jwpub') {
-        await $extractAllTo(file.cacheFile, 'contents', file.cacheDir)
+        await $extractAllTo(file.cacheFile, file.cacheDir)
       }
     } else {
       if (file.folder) {
@@ -757,7 +757,7 @@ const plugin: Plugin = (
         extname(file.cacheFile) === '.jwpub' &&
         !$findOne(join(file.cacheDir, '*.db'))
       ) {
-        await $extractAllTo(file.cacheFile, 'contents', file.cacheDir)
+        await $extractAllTo(file.cacheFile, file.cacheDir)
       }
       store.commit('stats/setDownloads', {
         origin: 'jworg',

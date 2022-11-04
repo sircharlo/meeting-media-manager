@@ -41,7 +41,7 @@ interface CustomProps {
   ) => Promise<string>
   $error: (message: string, error: unknown, identifier?: string) => void
   $escapeHTML: (str: string) => string
-  $extractAllTo: (zip: string, file: string, dest: string) => Promise<void>
+  $extractAllTo: (zip: string, dest: string) => Promise<void>
   $findAll: (path: string | string[], options?: Options) => string[]
   $findAllStats: (path: string | string[], options?: Options) => Entry[]
   $findOne: (path: string | string[], options?: Options) => string
