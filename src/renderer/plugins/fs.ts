@@ -12,11 +12,12 @@ import {
   removeSync,
   writeFileSync,
   statSync,
+  readFileSync,
 } from 'fs-extra'
 import { join, extname, basename, dirname, joinSafe } from 'upath'
 import { Plugin } from '@nuxt/types'
-import Zipper from 'adm-zip'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
+import JSZip from 'jszip'
 import { MeetingFile } from '~/types'
 import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
 
@@ -390,33 +391,58 @@ const plugin: Plugin = (
     return name
   })
 
+  async function getContentsFromJWPUB(
+    jwpub: string
+  ): Promise<ArrayBuffer | undefined> {
+    const zipFile = readFileSync(jwpub)
+    const zipper = new JSZip()
+    const zipContents = await zipper.loadAsync(zipFile)
+    return zipContents.file('contents')?.async('arraybuffer')
+  }
+
   // Zipper functions
-  inject('extractAllTo', (zip: string, file: string, dest: string): void => {
-    const zipFile = new Zipper(zip).readFile(file)
-    if (zipFile) new Zipper(zipFile).extractAllTo(dest)
+  inject('extractAllTo', async (jwpub: string, dest: string): Promise<void> => {
+    const zipper = new JSZip()
+    const fileBuffer = await getContentsFromJWPUB(jwpub)
+    if (!fileBuffer) throw new Error('Could not extract files from zip')
+    const contents = await zipper.loadAsync(fileBuffer)
+    for (const [filename, fileObject] of Object.entries(contents.files)) {
+      const data = await fileObject.async('nodebuffer')
+      writeFileSync(join(dest, filename), data)
+    }
   })
 
-  inject('getZipContentsByExt', (zip: string, ext: string): Buffer | null => {
-    const contents = new Zipper(zip).readFile('contents')
-    if (contents) {
-      const entryName = new Zipper(contents)
-        .getEntries()
-        .filter((entry) => extname(entry.entryName) === ext)[0].entryName
-      return new Zipper(contents).readFile(entryName)
+  inject(
+    'getZipContentsByExt',
+    async (zip: string, ext: string): Promise<Buffer | null> => {
+      const zipper = new JSZip()
+      const fileBuffer = await getContentsFromJWPUB(zip)
+      if (!fileBuffer) throw new Error('Could not extract files from zip')
+      const contents = await zipper.loadAsync(fileBuffer)
+      for (const [filename, fileObject] of Object.entries(contents.files)) {
+        if (extname(filename).toLowerCase() === ext) {
+          return fileObject.async('nodebuffer')
+        }
+      }
+      return null
     }
-    return contents
-  })
+  )
 
-  inject('getZipContentsByName', (zip: string, name: string): Buffer | null => {
-    const contents = new Zipper(zip).readFile('contents')
-    if (contents) {
-      const entryName = new Zipper(contents)
-        .getEntries()
-        .filter((entry) => entry.name === name)[0].entryName
-      return new Zipper(contents).readFile(entryName)
+  inject(
+    'getZipContentsByName',
+    async (zip: string, name: string): Promise<Buffer | null> => {
+      const zipper = new JSZip()
+      const fileBuffer = await getContentsFromJWPUB(zip)
+      if (!fileBuffer) throw new Error('Could not extract files from zip')
+      const contents = await zipper.loadAsync(fileBuffer)
+      for (const [filename, fileObject] of Object.entries(contents.files)) {
+        if (filename === name) {
+          return fileObject.async('nodebuffer')
+        }
+      }
+      return null
     }
-    return contents
-  })
+  )
 }
 
 export default plugin

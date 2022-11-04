@@ -2,6 +2,7 @@
 import { type } from 'os'
 import { pathToFileURL } from 'url'
 import { Dayjs } from 'dayjs'
+import JSZip from 'jszip'
 import { Plugin } from '@nuxt/types'
 import { XMLBuilder } from 'fast-xml-parser'
 import ffmpeg from 'fluent-ffmpeg'
@@ -10,11 +11,12 @@ import {
   chmodSync,
   constants,
   existsSync,
+  readFileSync,
   statSync,
+  writeFileSync,
 } from 'fs-extra'
 import { basename, changeExt, dirname, extname, join } from 'upath'
 import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api'
-import Zipper from 'adm-zip'
 import sizeOf from 'image-size'
 import {
   CHAR_AMP,
@@ -228,13 +230,17 @@ const plugin: Plugin = (
     const result = await $axios.$get(
       'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest'
     )
+    console.log('fetched')
     const version = result.assets.filter(
       (a: { name: string }) =>
         a.name.includes(target) && a.name.includes('ffmpeg')
     )[0]
     const ffMpegPath = join($appPath(), 'ffmpeg')
+    console.log(ffMpegPath)
     const zipPath = join(ffMpegPath, 'zip', version.name)
+    console.log(zipPath)
     if (!existsSync(zipPath) || statSync(zipPath).size !== version.size) {
+      console.log('writing')
       $rm(join(ffMpegPath, 'zip'))
       $write(
         zipPath,
@@ -249,26 +255,30 @@ const plugin: Plugin = (
       )
     }
 
-    const zip = new Zipper(zipPath)
-    const entry = zip
-      .getEntries()
-      .filter((e) => !e.entryName.includes('MACOSX'))[0]
-    const entryPath = join(ffMpegPath, entry.entryName)
-    if (
-      !existsSync(entryPath) ||
-      statSync(entryPath).size !== entry.header.size
-    ) {
-      zip.extractEntryTo(entry.entryName, ffMpegPath, true, true)
+    const zipper = new JSZip()
+    const zipFile = await zipper.loadAsync(readFileSync(zipPath))
+    let entry
+    let entryPath
+    for (const [filename, fileObject] of Object.entries(zipFile.files)) {
+      if (!filename.includes('MACOSX')) {
+        entry = fileObject
+        entryPath = join(ffMpegPath, filename)
+      }
     }
 
-    try {
-      accessSync(entryPath, constants.X_OK)
-    } catch (e: unknown) {
-      chmodSync(entryPath, '777')
+    if (entry && entryPath) {
+      writeFileSync(entryPath, await entry.async('nodebuffer'))
+      try {
+        accessSync(entryPath, constants.X_OK)
+      } catch (e: unknown) {
+        chmodSync(entryPath, '777')
+      }
+      // eslint-disable-next-line import/no-named-as-default-member
+      ffmpeg.setFfmpegPath(entryPath)
+      store.commit('media/setFFmpeg', true)
+    } else {
+      throw new Error('Could not extract FFmpeg!')
     }
-    // eslint-disable-next-line import/no-named-as-default-member
-    ffmpeg.setFfmpegPath(entryPath)
-    store.commit('media/setFFmpeg', true)
   }
 
   // Resize an image to a given size

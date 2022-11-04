@@ -3,7 +3,12 @@ const ICONS_DIR = 'build/icons/'
 const windowsOS = {
   win: {
     icon: ICONS_DIR + 'icon.ico',
-    target: 'nsis',
+    target: [
+      {
+        target: 'nsis',
+        arch: ['x64', 'ia32'],
+      },
+    ],
     publish: ['github'],
   },
 
@@ -36,7 +41,7 @@ module.exports = {
   productName: 'Meeting Media Manager',
   appId: 'sircharlo.meeting-media-manager',
   // eslint-disable-next-line no-template-curly-in-string
-  artifactName: 'meeting-media-manager-${version}.${ext}',
+  artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
   buildDependenciesFromSource: true,
   directories: {
     output: 'build',
