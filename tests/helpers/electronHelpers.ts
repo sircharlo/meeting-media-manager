@@ -10,6 +10,7 @@ import {
 } from 'electron-playwright-helpers'
 import { _electron as electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
+import { delay } from './generalHelpers'
 import prefsNew from './../mocks/prefs/prefsNew.json'
 
 export async function startApp(options: any = {}) {
@@ -90,8 +91,18 @@ export async function openHomePage(
     await page.locator(`.v-list-item`).first().click()
   } else if (page.url().includes('settings')) {
     // Open the home page as test congregation
-    await page.goto(`app://./index.html?cong=${congId}`)
+    await page.goto(`app://./index.html#/?cong=${congId}`)
     await page.reload({ waitUntil: 'domcontentloaded' })
+  }
+
+  // While still on the settings page, click on the home page button, until the prefs are accepted as valid
+  await delay(10 ** 3)
+  let url = page.url()
+
+  while (url.includes('settings')) {
+    await page.getByRole('link', { disabled: false }).click()
+    await delay(10 ** 3)
+    url = page.url()
   }
 
   // If not on correct cong, switch cong through menu
