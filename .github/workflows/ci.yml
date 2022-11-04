@@ -141,4 +141,6 @@ jobs:
             !build/icons/
             !build/*-unpacked/
             !build/mac-universal/
+            !build/*.blockmap
+            !build/*.yml
           retention-days: 30
