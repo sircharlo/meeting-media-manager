@@ -12,11 +12,13 @@ import {
   removeSync,
   writeFileSync,
   statSync,
+  readFileSync,
 } from 'fs-extra'
 import { join, extname, basename, dirname, joinSafe } from 'upath'
 import { Plugin } from '@nuxt/types'
 import Zipper from 'adm-zip'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
+import JSZip from 'jszip'
 import { MeetingFile } from '~/types'
 import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
 
@@ -391,10 +393,25 @@ const plugin: Plugin = (
   })
 
   // Zipper functions
-  inject('extractAllTo', (zip: string, file: string, dest: string): void => {
-    const zipFile = new Zipper(zip).readFile(file)
-    if (zipFile) new Zipper(zipFile).extractAllTo(dest)
-  })
+  inject(
+    'extractAllTo',
+    async (zip: string, file: string, dest: string): Promise<void> => {
+      /* const zipFile = new Zipper(zip).readFile(file)
+    if (zipFile) new Zipper(zipFile).extractAllTo(dest) */
+      const zipFile = readFileSync(zip)
+      const zipper = new JSZip()
+      const contents = await zipper.loadAsync(zipFile)
+      const subFile = contents.file(file)
+      const zipper2 = new JSZip()
+      const subFileBuffer = await subFile?.async('arraybuffer')
+      if (!subFileBuffer) throw new Error('Could not extract files from zip')
+      const contents2 = await zipper2.loadAsync(subFileBuffer)
+      for (const [filename, fileObject] of Object.entries(contents2.files)) {
+        const data = await fileObject.async('nodebuffer')
+        writeFileSync(join(dest, filename), data)
+      }
+    }
+  )
 
   inject('getZipContentsByExt', (zip: string, ext: string): Buffer | null => {
     const contents = new Zipper(zip).readFile('contents')

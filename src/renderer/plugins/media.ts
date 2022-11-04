@@ -746,7 +746,7 @@ const plugin: Plugin = (
         file,
       })
       if (extname(file.cacheFile) === '.jwpub') {
-        $extractAllTo(file.cacheFile, 'contents', file.cacheDir)
+        await $extractAllTo(file.cacheFile, 'contents', file.cacheDir)
       }
     } else {
       if (file.folder) {
