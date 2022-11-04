@@ -634,6 +634,9 @@ const plugin: Plugin = (
     localPath = ''
   ): Promise<Database | null> {
     let db: Database | null
+    $log.warn('pub', pub)
+    $log.warn('issue', issue)
+    $log.warn('localpath', localPath)
     try {
       // Extract db from local JWPUB file
       if (localPath) {
@@ -668,16 +671,21 @@ const plugin: Plugin = (
           })
         )[0] as VideoFile
 
-        if (!jwpub) return null
+        if (!jwpub) {
+          $log.error('No JWPUB file found for:')
+          $log.error('pub', pub)
+          $log.error('issue', issue)
+          return null
+        }
         await downloadIfRequired(jwpub, setProgress)
         const pubPath = $pubPath(jwpub)
         if (!pubPath) {
-          $log.debug(`No path for jwpub file`, jwpub)
+          $log.error(`No path for jwpub file`, jwpub)
           return null
         }
         const dbPath = $findOne(join(pubPath, '*.db'))
         if (!dbPath) {
-          $log.debug('No db file found in pubPath', pubPath)
+          $log.error('No db file found in pubPath', pubPath)
           return null
         }
         db = await $getDb({
