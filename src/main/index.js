@@ -314,7 +314,7 @@ if (gotTheLock) {
         ),
         frame: false,
         backgroundColor: 'black',
-        roundedCorners: false,
+        // roundedCorners: false, disabled again until this issue is fixed: https://github.com/electron/electron/issues/36251
         minHeight: 110,
         minWidth: 195,
         width: 1280,
