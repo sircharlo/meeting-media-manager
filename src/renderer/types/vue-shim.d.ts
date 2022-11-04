@@ -41,7 +41,7 @@ interface CustomProps {
   ) => Promise<string>
   $error: (message: string, error: unknown, identifier?: string) => void
   $escapeHTML: (str: string) => string
-  $extractAllTo: (zip: string, file: string, dest: string) => void
+  $extractAllTo: (zip: string, dest: string) => Promise<void>
   $findAll: (path: string | string[], options?: Options) => string[]
   $findAllStats: (path: string | string[], options?: Options) => Entry[]
   $findOne: (path: string | string[], options?: Options) => string
@@ -101,8 +101,8 @@ interface CustomProps {
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
   $getYearText: (force: boolean = false) => Promise<string | null>
-  $getZipContentsByExt: (zip: string, ext: string) => Buffer | null
-  $getZipContentsByName: (zip: string, name: string) => Buffer | null
+  $getZipContentsByExt: (zip: string, ext: string) => Promise<Buffer | null>
+  $getZipContentsByName: (zip: string, name: string) => Promise<Buffer | null>
   $ghApi: NuxtAxiosInstance
   $initStore: (name: string) => void
   $isAudio: (filepath: string) => boolean

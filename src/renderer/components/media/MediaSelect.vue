@@ -220,7 +220,7 @@ export default defineComponent({
 
         if (CategoryType && CategoryType !== -1) {
           tempMedia.contents =
-            this.$getZipContentsByName(this.file, FilePath) ?? undefined
+            (await this.$getZipContentsByName(this.file, FilePath)) ?? undefined
         } else {
           // Try to get external media
           const externalMedia = (await this.$getMediaLinks(
