@@ -34,7 +34,7 @@ test('render the home page correctly', async () => {
 
 test('fetch is successful', async () => {
   test.slow()
-  if (platform() === 'win32') {
+  if (platform() !== 'linux') {
     test.skip()
   }
 
