@@ -73,9 +73,9 @@ const plugin: Plugin = (
           })
 
           obs.on('error', async (e) => {
-            if (e.error.code === 'NOT_CONNECTED') {
+            if (e.error?.code === 'NOT_CONNECTED') {
               $warn('errorObs')
-            } else if (e.error.code === 'CONNECTION_ERROR') {
+            } else if (e.error?.code === 'CONNECTION_ERROR') {
               $warn('errorObs')
             } else {
               $log.debug('OBS v4 onError')
