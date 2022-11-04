@@ -101,8 +101,8 @@ interface CustomProps {
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
   $getYearText: (force: boolean = false) => Promise<string | null>
-  $getZipContentsByExt: (zip: string, ext: string) => Buffer | null
-  $getZipContentsByName: (zip: string, name: string) => Buffer | null
+  $getZipContentsByExt: (zip: string, ext: string) => Promise<Buffer | null>
+  $getZipContentsByName: (zip: string, name: string) => Promise<Buffer | null>
   $ghApi: NuxtAxiosInstance
   $initStore: (name: string) => void
   $isAudio: (filepath: string) => boolean

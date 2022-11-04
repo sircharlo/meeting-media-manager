@@ -643,7 +643,7 @@ const plugin: Plugin = (
         db = (await $getDb({
           pub,
           issue,
-          file: $getZipContentsByExt(localPath, '.db') ?? undefined,
+          file: (await $getZipContentsByExt(localPath, '.db')) ?? undefined,
         })) as Database
 
         try {
