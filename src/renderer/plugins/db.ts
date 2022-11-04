@@ -39,6 +39,9 @@ const plugin: Plugin = ({ store, $log, $config }, inject) => {
       }
 
       try {
+        /* const SQL = await sqljs({
+          locateFile: (filename: string) => `/${filename}`, // Gave problems for Windows when trying to fetch the file from root
+        }) */
         const SQL = await sqljs({
           locateFile: (filename: string) =>
             `https://cdnjs.cloudflare.com/ajax/libs/sql.js/${$config.sqlJsVersion}/${filename}`,

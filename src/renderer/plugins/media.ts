@@ -1418,7 +1418,7 @@ const plugin: Plugin = (
     const audio = document.createElement('audio')
     audio.autoplay = true
     audio.id = 'meetingMusic'
-    audio.setAttribute('track', songs[index].track.toString())
+    audio.setAttribute('track', songs[index]?.track.toString() ?? 'Unknown')
     audio.onended = () => {
       audio.remove()
       createAudioElement(
