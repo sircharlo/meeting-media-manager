@@ -106,7 +106,7 @@
     "keepDesc": "Als deze optie aan staat zullen de originele plaatjes en auto bestanden die worden omgezet naar MP4 formaat behouden worden in plaats van verwijderd en vervangen door de filmpjes.",
     "keepResult": "Dit zorgt dat de media folder wat chaotischer eruit komt te zien en hoeft over het algemeen niet aangezet worden om media via Zoom MP4 delen te tonen.",
     "keepSee": "(Zie <code>[CONVERT]</code> hierboven.)",
-    "keepNote": "<strong>Let op:</strong> Alleen zichtbaar als <code>Converteer media naar MP4 formaat</code> aan staat.",
+    "keepNote": "<strong>Let op:</strong> Alleen zichtbaar als <code>[CONVERT]</code> aan staat.",
     "enableMediaDisplayButton": "Zet knop aan om media op een externe monitor of apart scherm af te spelen",
     "presentDesc": "Deze instelling stelt je in staat om de gedownloade media te presenteren tijdens <strong>hybride</strong> of <strong>gewone</strong> gemeente vergaderingen.",
     "presentLink": "[PRESENT MODE] kan dan geopend worden door op de ▶️ (play) knop op het beginscherm van M³ te klikken.",

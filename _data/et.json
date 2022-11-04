@@ -53,14 +53,14 @@
     "report": "Kuidas teavitada ilmnenud probleemist või veast?",
     "ghIssues": "Kui teil tekib M³-ga probleeme, kasutage sellest teatamiseks [GH ISSUES]. Veaparandusi väljastatakse regulaarselt, tavaliselt kord kuus.",
     "request": "Kuidas saan taotleda uusi funktsioone?",
-    "ghDiscussions": "Olen ettepanekutele avatud! Kasutage potentsiaalsete uute funktsioonide arutamiseks [GH ARUTUSED]."
+    "ghDiscussions": "Olen ettepanekutele avatud! Kasutage potentsiaalsete uute funktsioonide arutamiseks [GH DISCUSSIONS]."
   },
   "configuration": {
     "settingsScreen": "Seadete ekraan on jagatud 4 osaks. Enamik valikuid on iseenesestmõistetavad, kuid siin on mõned täiendavad üksikasjad.",
     "localAppLang": "Kuvatav keel",
     "appLangDesc": "Määrab keele, milles M³ kuvatakse.",
     "thankContributors": "Täname meie paljusid kaastöötajaid rakenduse nii paljudesse keeltesse tõlkimise eest!",
-    "askHelp": "Kui soovite aidata parandada olemasolevat tõlget või lisada uut, avage uus [GH ARUTELU].",
+    "askHelp": "Kui soovite aidata parandada olemasolevat tõlget või lisada uut, avage uus [GH DISCUSSION].",
     "mediaSaveFolder": "Kaust, kuhu meedia salvestada",
     "folderDesc": "Koosolekumeedia salvestatakse sellesse kausta hilisemaks jagamiseks ja kasutamiseks.",
     "runAtStartup": "Käivitage rakendus arvuti operatsioonisüsteemi käivitamisel",
