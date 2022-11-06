@@ -105,6 +105,9 @@ export default defineComponent({
     ipcRenderer.on('zoom', (_e, deltaY) => {
       this.zoom(deltaY)
     })
+    ipcRenderer.on('resetZoom', () => {
+      if (this.panzoom) this.panzoom.reset()
+    })
     ipcRenderer.on('pan', (_e, { x, y }: { x: number; y: number }) => {
       if (this.panzoom) {
         this.panzoom.pan(

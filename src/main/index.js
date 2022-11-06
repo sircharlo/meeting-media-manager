@@ -355,6 +355,8 @@ if (gotTheLock) {
         })
         .on('will-resize', () => {
           mediaWin.webContents.send('windowResizing', mediaWin.getSize())
+          win.webContents.send('resetZoom')
+          mediaWin.webContents.send('resetZoom')
         })
         .on('resized', () => {
           mediaWin.webContents.send('windowResized')
