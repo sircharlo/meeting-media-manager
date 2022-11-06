@@ -471,6 +471,9 @@ const plugin: Plugin = (
       // Set correct song publication (e.g. sjj for sign language)
       if (mediaItem.pubSymbol === 'sjjm') {
         mediaItem.pubSymbol = store.state.media.songPub
+        if (store.state.media.songPub === 'sjj') {
+          $log.debug('Using sign language song publication')
+        }
       }
 
       const mediaLang = mediaItem.lang || $getPrefs('media.lang')
