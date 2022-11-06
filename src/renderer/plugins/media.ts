@@ -675,7 +675,9 @@ const plugin: Plugin = (
           $log.debug(`No JWPUB file found for ${pub} ${issue}`)
           return null
         }
-        await downloadIfRequired(jwpub, setProgress)
+
+        store.commit('media/setProgress', {key: jwpub.url, promise: downloadIfRequired(jwpub, setProgress)})
+        await (store.state.media.progress as Map<string, Promise<string>>).get(jwpub.url)
         const pubPath = $pubPath(jwpub)
         if (!pubPath) {
           $log.debug(`No path for jwpub file`, jwpub)
@@ -705,6 +707,11 @@ const plugin: Plugin = (
     file: VideoFile,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ): Promise<string> {
+    const progressMap = store.state.media.progress as Map<string, Promise<string>>
+    const downloadInProgress = progressMap.get(file.url)
+    if (downloadInProgress) {
+      return await downloadInProgress
+    }
     // Set extra properties
     file.downloadRequired = true
     file.cacheFilename = basename(file.url || '') || file.safeName
@@ -1230,10 +1237,9 @@ const plugin: Plugin = (
           (item.safeName as string).replace('.svg', '.png')
         )
       } else if (item.url) {
-        await downloadIfRequired(
-          JSON.parse(JSON.stringify(item as SmallMediaFile)),
-          setProgress
-        )
+        const newItem = JSON.parse(JSON.stringify(item as SmallMediaFile)) as SmallMediaFile
+        store.commit('media/setProgress', {key: newItem.url, promise: downloadIfRequired(newItem, setProgress)})
+        await (store.state.media.progress as Map<string, Promise<string>>).get(newItem.url)
       } else if (item.filepath && item.folder && item.safeName) {
         const dest = join($mediaPath(), item.folder, item.safeName)
         if (!existsSync(dest) || statSync(dest).size !== item.filesize) {
