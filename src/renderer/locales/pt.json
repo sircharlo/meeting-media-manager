@@ -49,6 +49,7 @@
   "excludeLffiImages": "Excluir imagens da publicação <em>lffi</em>",
   "excludeTh": "Excluir todas as mídias da publicação <em>th</em>",
   "fetchMedia": "Baixar mídias!",
+  "fieldInvalid": "Este não é um valor válido para este campo.",
   "fieldMax": "Excede o máximo de caracteres.",
   "fieldRequired": "É obrigatório selecionar o idioma das mídias.",
   "fieldShortcutInvalid": "Esse atalho não pode ser usado",
