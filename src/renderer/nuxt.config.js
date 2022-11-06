@@ -4,7 +4,7 @@ const platform = require('os').platform
 const { DefinePlugin } = require('webpack')
 const SentryPlugin = require('@sentry/webpack-plugin')
 const pkg = require('./../../package.json')
-const { LOCAL_LANGS, LOCALES } = require('./constants/lang.ts')
+const { DAYJS_LOCALES, LOCALES } = require('./constants/lang.ts')
 require('dotenv').config()
 
 const isDev = process.env.NODE_ENV !== 'production'
@@ -114,7 +114,7 @@ module.exports = {
   ],
 
   dayjs: {
-    locales: LOCAL_LANGS,
+    locales: DAYJS_LOCALES,
     defaultLocale: 'en',
     plugins: [
       'customParseFormat',

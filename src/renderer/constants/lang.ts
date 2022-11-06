@@ -1,4 +1,4 @@
-const LOCAL_LANGS = [
+const DAYJS_LOCALES = [
   'de',
   'en',
   'es',
@@ -121,5 +121,5 @@ const LOCALES = [
 module.exports = {
   LOCALES,
   STALE_LANGS,
-  LOCAL_LANGS,
+  DAYJS_LOCALES,
 }
