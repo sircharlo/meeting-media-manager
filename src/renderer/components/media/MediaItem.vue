@@ -301,6 +301,12 @@ export default defineComponent({
       if (this.panzoom) this.resetZoom()
       if (val) {
         this.current = true
+        ipcRenderer.on('videoEnd', () => {
+          this.active = false
+        })
+        ipcRenderer.on('resetZoom', () => {
+          this.resetZoom()
+        })
       } else {
         this.markers.forEach((m) => {
           m.playing = false
@@ -308,6 +314,9 @@ export default defineComponent({
         this.progress = 0
         this.newProgress = 0
         this.paused = false
+
+        ipcRenderer.removeAllListeners('videoEnd')
+        ipcRenderer.removeAllListeners('resetZoom')
       }
     },
     showPrefix(val: boolean) {
@@ -325,9 +334,6 @@ export default defineComponent({
   },
   mounted() {
     this.getMarkers()
-    ipcRenderer.on('videoEnd', () => {
-      this.active = false
-    })
 
     if (this.isImage) {
       this.panzoom = Panzoom(
@@ -361,9 +367,6 @@ export default defineComponent({
       )
       this.resetZoom()
     }
-  },
-  beforeDestroy() {
-    ipcRenderer.removeAllListeners('videoEnd')
   },
   methods: {
     handleKeyPress(e: KeyboardEvent) {

@@ -354,9 +354,19 @@ if (gotTheLock) {
           if (!authorizedCloseMediaWin) e.preventDefault()
         })
         .on('will-resize', () => {
+          // Not working on Linux
           mediaWin.webContents.send('windowResizing', mediaWin.getSize())
+          win.webContents.send('resetZoom')
+          mediaWin.webContents.send('resetZoom')
+        })
+        .on('resize', () => {
+          if (platform() === 'linux') {
+            win.webContents.send('resetZoom')
+            mediaWin.webContents.send('resetZoom')
+          }
         })
         .on('resized', () => {
+          // Not working on Linux
           mediaWin.webContents.send('windowResized')
         })
         .once('ready-to-show', () => {
