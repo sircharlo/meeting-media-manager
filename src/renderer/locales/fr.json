@@ -49,6 +49,7 @@
   "excludeLffiImages": "Exclure les images de la brochure <em>lffi</em>",
   "excludeTh": "Exclure tous les médias de la brochure <em>th</em>",
   "fetchMedia": "Rafraîchir les dossiers multimédias",
+  "fieldInvalid": "Cette valeur est invalide pour ce champ.",
   "fieldMax": "Max. XX caractères.",
   "fieldRequired": "Ce champ est requis.",
   "fieldShortcutInvalid": "Ceci n'est pas un raccourci valide",
