@@ -18,7 +18,10 @@ import { join, basename } from 'upath'
 import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
-import { HUNDRED_PERCENT } from '~/constants/general'
+import { 
+  MS_IN_SEC,
+  HUNDRED_PERCENT 
+} from '~/constants/general'
 
 export default defineComponent({
   name: 'MediaPage',
@@ -36,20 +39,6 @@ export default defineComponent({
       resizeOverlay: document.createElement('div'),
       dimensions: document.createElement('div'),
     }
-  },
-  watch: {
-    zoomEnabled(val: boolean) {
-      this.container.style.cursor = val ? 'zoom-in' : 'default'
-      // @ts-ignore
-      document.body.style['app-region'] = val ? 'none' : 'drag'
-    },
-    scale(val: number) {
-      if (val === 1) {
-        this.container.style.cursor = this.zoomEnabled ? 'zoom-in' : 'default'
-      } else {
-        this.container.style.cursor = 'move'
-      }
-    },
   },
   mounted() {
     // Set global html elements
@@ -79,17 +68,25 @@ export default defineComponent({
       contain: 'outside',
       cursor: 'default',
       panOnlyWhenZoomed: true,
+      setTransform: (
+        el: HTMLElement,
+        { scale, x, y }: { scale: number; x: number; y: number }
+      ) => {
+        const maxY = (el.clientHeight * scale - window.innerHeight) / 2 / scale
+        const isValidY = y <= maxY && y >= -maxY
+        const validY = isValidY ? y : y > 0 ? maxY : -maxY
+        if (this.panzoom) {
+          this.panzoom.setStyle(
+            'transform',
+            `scale(${scale}) translate(${x}px, ${validY}px)`
+          )
+        }
+      },
     })
-
-    // @ts-ignore
-    document.body.style['app-region'] = 'drag'
-    this.container.addEventListener('wheel', this.handleWheelEvent)
-
     // IpcRenderer listeners
     ipcRenderer.on('showMedia', (_e, media) => {
       if (this.panzoom) this.panzoom.reset()
       this.zoomEnabled = media && this.$isImage(media.path)
-      if (!media) window.location.reload() // Reload page to allow dragging again
       this.transitionToMedia(media)
     })
     ipcRenderer.on('pauseVideo', () => {
@@ -110,6 +107,14 @@ export default defineComponent({
     })
     ipcRenderer.on('zoom', (_e, deltaY) => {
       this.zoom(deltaY)
+    })
+    ipcRenderer.on('pan', (_e, { x, y }: { x: number; y: number }) => {
+      if (this.panzoom) {
+        this.panzoom.pan(
+          this.mediaDisplay.clientWidth * x,
+          this.mediaDisplay.clientHeight * y
+        )
+      }
     })
     ipcRenderer.on('videoScrub', (_e, timeAsPercent) => {
       const video = document.querySelector('video') as HTMLVideoElement
@@ -158,12 +163,8 @@ export default defineComponent({
     ipcRenderer.removeAllListeners('playVideo')
     ipcRenderer.removeAllListeners('pauseVideo')
     ipcRenderer.removeAllListeners('showMedia')
-    document.removeEventListener('wheel', this.handleWheelEvent)
   },
   methods: {
-    handleWheelEvent(e: WheelEvent) {
-      this.zoom(e.deltaY)
-    },
     zoom(deltaY: number) {
       if (this.panzoom && this.zoomEnabled) {
         // eslint-disable-next-line no-magic-numbers
@@ -173,7 +174,7 @@ export default defineComponent({
         // eslint-disable-next-line no-magic-numbers
         this.scale = Math.min(Math.max(0.125, this.scale), 4)
         if (this.scale < 1) this.scale = 1
-        this.panzoom?.zoom(this.scale)
+        this.panzoom.zoom(this.scale)
         if (this.scale === 1) this.panzoom.reset()
       }
     },
@@ -260,24 +261,25 @@ export default defineComponent({
       const video = document.querySelector('video') as HTMLVideoElement
 
       // Animate out
-      if (video) {
-        const animation = video.animate(
-          [
-            { opacity: 1, volume: 100 },
-            { opacity: 0, volume: 0 },
-          ],
-          {
-            duration: 400,
-          }
-        )
-        await animation.finished
-        video.remove()
-      }
+      this.blackOverlay.style.opacity = '1'
       setTimeout(() => {
         this.mediaDisplay.style.background = 'transparent'
+        if (video) video.remove()
         this.blackOverlay.style.opacity = '0'
         // eslint-disable-next-line no-magic-numbers
-      }, 400)
+      }, 0.4 * MS_IN_SEC)
+      if (video) {
+        // eslint-disable-next-line no-magic-numbers
+        const MS_TO_STOP = 0.4 * MS_IN_SEC // Let fadeout last 400ms
+          const TOTAL_VOL = video.volume
+          while (video.volume > 0) {
+            video.volume -= Math.min(
+              video.volume,
+              (10 * TOTAL_VOL) / MS_TO_STOP
+            )
+            await new Promise((resolve) => setTimeout(resolve, 10))
+          }
+      }
     },
     async setYearText(prefs: ElectronStore) {
       const path = join(
@@ -368,6 +370,7 @@ export default defineComponent({
 
 html,
 body {
+  -webkit-app-region: drag;
   background: black;
   user-select: auto;
 }
