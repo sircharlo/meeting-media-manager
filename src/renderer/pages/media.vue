@@ -37,20 +37,6 @@ export default defineComponent({
       dimensions: document.createElement('div'),
     }
   },
-  watch: {
-    zoomEnabled(val: boolean) {
-      this.container.style.cursor = val ? 'zoom-in' : 'default'
-      // @ts-ignore
-      document.body.style['app-region'] = val ? 'none' : 'drag'
-    },
-    scale(val: number) {
-      if (val === 1) {
-        this.container.style.cursor = this.zoomEnabled ? 'zoom-in' : 'default'
-      } else {
-        this.container.style.cursor = 'move'
-      }
-    },
-  },
   mounted() {
     // Set global html elements
     this.container = document.querySelector(
@@ -84,7 +70,6 @@ export default defineComponent({
         { scale, x, y }: { scale: number; x: number; y: number }
       ) => {
         const maxY = (el.clientHeight * scale - window.innerHeight) / 2 / scale
-        console.log(el.offsetHeight)
         const isValidY = y <= maxY && y >= -maxY
         const validY = isValidY ? y : y > 0 ? maxY : -maxY
         if (this.panzoom) {
@@ -95,16 +80,10 @@ export default defineComponent({
         }
       },
     })
-
-    // @ts-ignore
-    document.body.style['app-region'] = 'drag'
-    this.container.addEventListener('wheel', this.handleWheelEvent)
-
     // IpcRenderer listeners
     ipcRenderer.on('showMedia', (_e, media) => {
       if (this.panzoom) this.panzoom.reset()
       this.zoomEnabled = media && this.$isImage(media.path)
-      if (!media) window.location.reload() // Reload page to allow dragging again
       this.transitionToMedia(media)
     })
     ipcRenderer.on('pauseVideo', () => {
@@ -181,12 +160,8 @@ export default defineComponent({
     ipcRenderer.removeAllListeners('playVideo')
     ipcRenderer.removeAllListeners('pauseVideo')
     ipcRenderer.removeAllListeners('showMedia')
-    document.removeEventListener('wheel', this.handleWheelEvent)
   },
   methods: {
-    handleWheelEvent(e: WheelEvent) {
-      this.zoom(e.deltaY)
-    },
     zoom(deltaY: number) {
       if (this.panzoom && this.zoomEnabled) {
         // eslint-disable-next-line no-magic-numbers
@@ -391,6 +366,7 @@ export default defineComponent({
 
 html,
 body {
+  -webkit-app-region: drag;
   background: black;
   user-select: auto;
 }
