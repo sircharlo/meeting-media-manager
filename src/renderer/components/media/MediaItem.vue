@@ -12,14 +12,15 @@
         'current-media-item': current,
       }"
     >
-      <v-img
-        v-if="isImage"
-        :src="url"
-        contain
-        max-width="144"
-        max-height="80"
-        @wheel.prevent="zoom"
-      />
+      <div v-if="isImage">
+        <img
+          :id="id + '-preview'"
+          :src="url"
+          style="max-width: 144px; max-height: 80px"
+          @wheel.prevent="zoom"
+        />
+      </div>
+
       <media-video
         v-else
         :src="src"
@@ -133,6 +134,7 @@ import { pathToFileURL } from 'url'
 import { basename, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'
+import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 // @ts-ignore: RuntimeTemplateCompiler implicitly has an 'any' type
 import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
 import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
@@ -180,6 +182,8 @@ export default defineComponent({
   },
   data() {
     return {
+      scale: 1,
+      panzoom: null as null | PanzoomObject,
       current: false,
       active: false as boolean,
       played: false,
@@ -294,6 +298,7 @@ export default defineComponent({
       }
     },
     active(val: boolean) {
+      if (this.panzoom) this.resetZoom()
       if (val) {
         this.current = true
       } else {
@@ -323,6 +328,39 @@ export default defineComponent({
     ipcRenderer.on('videoEnd', () => {
       this.active = false
     })
+
+    if (this.isImage) {
+      this.panzoom = Panzoom(
+        document.querySelector(`#${this.id}-preview`) as HTMLElement,
+        {
+          animate: true,
+          canvas: true,
+          contain: 'outside',
+          cursor: 'default',
+          panOnlyWhenZoomed: true,
+          setTransform: (
+            el: HTMLElement,
+            { scale, x, y }: { scale: number; x: number; y: number }
+          ) => {
+            this.pan({
+              // eslint-disable-next-line no-magic-numbers
+              x: x / el.clientWidth,
+              // eslint-disable-next-line no-magic-numbers
+              y: y / el.clientHeight,
+            })
+            if (this.panzoom) {
+              this.panzoom.setStyle(
+                'transform',
+                `scale(${scale}) translate(${scale === 1 ? 0 : x}px, ${
+                  scale === 1 ? 0 : y
+                }px)`
+              )
+            }
+          },
+        }
+      )
+      this.resetZoom()
+    }
   },
   beforeDestroy() {
     ipcRenderer.removeAllListeners('videoEnd')
@@ -331,9 +369,35 @@ export default defineComponent({
     handleKeyPress(e: KeyboardEvent) {
       console.log(e)
     },
+    pan({ x, y }: { x: number; y: number }) {
+      ipcRenderer.send('pan', { x, y })
+    },
     zoom(e: WheelEvent) {
       if (this.active) {
         ipcRenderer.send('zoom', e.deltaY)
+        this.zoomPreview(e.deltaY)
+      }
+    },
+    resetZoom() {
+      if (this.panzoom) {
+        this.scale = 1
+        this.panzoom.setStyle('transform', 'scale(1) translate(0px, 0px)')
+      }
+    },
+    zoomPreview(deltaY: number) {
+      if (this.panzoom) {
+        // eslint-disable-next-line no-magic-numbers
+        this.scale += deltaY * -0.01
+
+        // Restrict scale
+        // eslint-disable-next-line no-magic-numbers
+        this.scale = Math.min(Math.max(0.125, this.scale), 4)
+        console.log('scale', this.scale)
+        if (this.scale > 1) {
+          this.panzoom.zoom(this.scale)
+        } else {
+          this.resetZoom()
+        }
       }
     },
     async play(marker?: Marker) {
