@@ -6,4 +6,5 @@ export interface MediaStore {
   ffMpeg: boolean
   musicFadeOut: Dayjs | string
   meetings: Map<string, Map<number, MeetingFile[]>>
+  progress: Map<string, Promise<string>>
 }
