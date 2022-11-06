@@ -12,11 +12,11 @@
         'current-media-item': current,
       }"
     >
-      <div v-if="isImage">
+      <div v-if="isImage" class="lightBg">
         <img
           :id="id + '-preview'"
           :src="url"
-          style="max-width: 144px; max-height: 80px"
+          style="max-width: 144px; max-height: 80px; aspect-ratio: 16 / 9; object-fit: contain; vertical-align: middle;"
           @wheel.prevent="zoom"
         />
       </div>
@@ -528,6 +528,10 @@ export default defineComponent({
 <style lang="scss">
 .media-title {
   font-size: 1rem !important;
+}
+
+.lightBg {
+  background: lightgray;
 }
 
 .v-list-item {
