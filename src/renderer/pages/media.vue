@@ -79,6 +79,21 @@ export default defineComponent({
       contain: 'outside',
       cursor: 'default',
       panOnlyWhenZoomed: true,
+      setTransform: (
+        el: HTMLElement,
+        { scale, x, y }: { scale: number; x: number; y: number }
+      ) => {
+        const maxY = (el.clientHeight * scale - window.innerHeight) / 2 / scale
+        console.log(el.offsetHeight)
+        const isValidY = y <= maxY && y >= -maxY
+        const validY = isValidY ? y : y > 0 ? maxY : -maxY
+        if (this.panzoom) {
+          this.panzoom.setStyle(
+            'transform',
+            `scale(${scale}) translate(${x}px, ${validY}px)`
+          )
+        }
+      },
     })
 
     // @ts-ignore
@@ -110,6 +125,14 @@ export default defineComponent({
     })
     ipcRenderer.on('zoom', (_e, deltaY) => {
       this.zoom(deltaY)
+    })
+    ipcRenderer.on('pan', (_e, { x, y }: { x: number; y: number }) => {
+      if (this.panzoom) {
+        this.panzoom.pan(
+          this.mediaDisplay.clientWidth * x,
+          this.mediaDisplay.clientHeight * y
+        )
+      }
     })
     ipcRenderer.on('videoScrub', (_e, timeAsPercent) => {
       const video = document.querySelector('video') as HTMLVideoElement
@@ -173,7 +196,7 @@ export default defineComponent({
         // eslint-disable-next-line no-magic-numbers
         this.scale = Math.min(Math.max(0.125, this.scale), 4)
         if (this.scale < 1) this.scale = 1
-        this.panzoom?.zoom(this.scale)
+        this.panzoom.zoom(this.scale)
         if (this.scale === 1) this.panzoom.reset()
       }
     },

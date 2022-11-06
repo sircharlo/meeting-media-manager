@@ -286,6 +286,9 @@ if (gotTheLock) {
   ipcMain.on('zoom', (_e, deltaY) => {
     mediaWin.webContents.send('zoom', deltaY)
   })
+  ipcMain.on('pan', (_e, cors) => {
+    mediaWin.webContents.send('pan', cors)
+  })
 
   // IpcMain events to control the windows
   ipcMain.on('allowQuit', (_e, val) => {
