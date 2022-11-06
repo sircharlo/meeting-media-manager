@@ -1,3 +1,4 @@
+import { platform } from 'os'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
@@ -33,6 +34,9 @@ test('render the home page correctly', async () => {
 
 test('fetch is successful', async () => {
   test.slow()
+  if (platform() === 'win32') {
+    test.skip()
+  }
 
   // Click on fetch button
   await page.locator('button', { hasText: locale.fetchMedia }).click()

@@ -1,3 +1,4 @@
+import { platform } from 'os'
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 import { ipcRendererInvoke } from 'electron-playwright-helpers'
@@ -38,6 +39,9 @@ test('render the settings page correctly', async () => {
 
 test('vlc playlist', async () => {
   test.slow()
+  if (platform() === 'win32') {
+    test.skip()
+  }
 
   // Expand application setup
   await page.locator('button', { hasText: locale.optionsMedia }).click()
