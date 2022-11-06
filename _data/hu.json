@@ -294,7 +294,7 @@
     "mediaVideoStop": "A videók automatikusan leállnak, ha lejátszásuk befejeződött.",
     "mediaButtons": "A jobb alsó sarokban található a \"home\" gomb, amely kilép a médiavezérlő módból, valamint a \"médiabemutató ablak elrejtése/megjelenítése\" gomb.",
     "m3ZoomOBS": "Hibrid összejövetelek lebonyolítása az M³, az OBS Studio és a Zoom kombinációjával",
-    "together": "A hibrid értekezletek során a média megosztásának messze legegyszerűbb módja az OBS Studio, az M³ és a Zoom együttes konfigurálása.",
+    "together": "A hibrid összejövetelek során a média megosztásának messze legegyszerűbb módja az OBS Studio, az M³ és a Zoom együttes konfigurálása.",
     "configKH": "Első beállítás: Királyság-terem számítógép",
     "monitor": "Állítsa a külső monitor képernyőfelbontását 1280x720-ra vagy egy ehhez közeli értékre.",
     "sound": "Állítsa be, hogy a számítógép hangkártyájának kimenete a keverőpult egyik bemenetére, a keverőpult kombinált kimenete pedig a számítógép hangkártyájának bemenetére csatlakozzon!",
