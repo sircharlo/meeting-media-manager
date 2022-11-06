@@ -66,3 +66,7 @@ If you want to add a new language to the application, you will need to do the fo
     values:
       lang: 'pt-PT'
   ```
+
+### Contribute to M³ itself
+
+More information about contributing to M³ itself can be found in the [CONTRIBUTING.md](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) of the master branch.
