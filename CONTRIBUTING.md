@@ -78,19 +78,8 @@ The tests are written using [Playwright](https://playwright.dev/). Playwright is
 
 To release a new version of the application, you first create a draft release on GitHub. Then, you can change the [package.json](package.json) version to the desired version and commit the changes with the message `chore(release): vx.x.x` (e.g. `chore(release): v22.9.0`). Then, the build/release workflow will be executed and will fill the release draft with the new artifacts. After that, you can add a description of the release (features, bug fixes, etc.) and publish it.
 
-### Run documentation website locally
+### Contribute to the documentation site
 
-The documentation website is hosted on [GitHub Pages](https://pages.github.com/) and generated with [Jekyll](https://jekyllrb.com/docs/installation/). To run the documentation site locally, you can follow the [instructions](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) of GitHub Pages. Once you have installed [Bundler](https://bundler.io/), you can run the following commands:
-
-``` bash
-# Checkout the docs branch
-git checkout docs
-
-# Install dependencies
-bundle install
-
-# Serve website with hot reload on localhost:4000
-bundle exec jekyll serve
-```
+More information about contributing to the documentation site specifically can be found in the [CONTRIBUTING.md](https://github.com/sircharlo/meeting-media-manager/blob/docs/CONTRIBUTING.md) of the docs branch.
 
 The documentation website will automatically be updated when changes are pushed to the docs branch.
