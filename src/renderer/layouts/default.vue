@@ -501,6 +501,7 @@ export default defineComponent({
         .replace('hsh', 'hu')
         .replace('psr', 'pt-pt')
         .replace('swl', 'sv')
+        .replace('mzc', 'mg')
     },
   },
 })

@@ -7,6 +7,7 @@ const LOCAL_LANGS = [
   'fr',
   'hu',
   'it',
+  'mg',
   'nl',
   'pt',
   'ru',
@@ -72,6 +73,13 @@ const LOCALES = [
     file: 'it.json',
     jw: 'I',
     name: 'Italiano (Italian)',
+  },
+  {
+    code: 'mg',
+    iso: 'mg-MG',
+    file: 'mg.json',
+    jw: 'MG',
+    name: 'Malagasy (Malagasy)',
   },
   {
     code: 'nl',
