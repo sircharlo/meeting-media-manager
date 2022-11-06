@@ -116,14 +116,18 @@ export default defineComponent({
       return !!this.$getPrefs('meeting.enableMusicButton')
     },
     availableWidth(): number {
-      const WIDTH_OF_OTHER_ELEMENTS = this.shuffleEnabled ? 301 : 227
+      const FOOTER_PADDING = 32
+      const BUTTONS = this.shuffleEnabled ? 246 : 172
+      const OBS_MENU_PADDING = 8
+      const WIDTH_OF_OTHER_ELEMENTS =
+        FOOTER_PADDING + BUTTONS + OBS_MENU_PADDING
       return this.windowWidth - WIDTH_OF_OTHER_ELEMENTS
     },
     combinedScenesLength(): number {
       let nrOfChars = 0
       const PADDING_PER_SCENE = 25
       const BORDER_WIDTH = 1
-      const WIDTH_PER_CHAR = 9
+      const WIDTH_PER_CHAR = 10
 
       for (const scene of this.scenes) {
         nrOfChars += scene.value.length
