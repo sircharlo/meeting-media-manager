@@ -4,7 +4,7 @@ const platform = require('os').platform
 const { DefinePlugin } = require('webpack')
 const SentryPlugin = require('@sentry/webpack-plugin')
 const pkg = require('./../../package.json')
-const { LANGS_WITH_DAYJS_LOCALE, LOCALES } = require('./constants/lang.ts')
+const { LOCAL_LANGS, LOCALES } = require('./constants/lang.ts')
 require('dotenv').config()
 
 const isDev = process.env.NODE_ENV !== 'production'
@@ -114,7 +114,7 @@ module.exports = {
   ],
 
   dayjs: {
-    locales: LANGS_WITH_DAYJS_LOCALE,
+    locales: LOCAL_LANGS,
     defaultLocale: 'en',
     plugins: [
       'customParseFormat',
@@ -202,8 +202,7 @@ module.exports = {
     ci: !!process.env.CI,
     isDev,
     name: pkg.name,
-    repo: pkg.repository.url
-      .replace('.git', ''),
+    repo: pkg.repository.url.replace('.git', ''),
     sentryDSN: process.env.SENTRY_DSN,
     sentryEnabled: initSentry && !process.env.SENTRY_DISABLE,
     sentryInit: initSentry,
