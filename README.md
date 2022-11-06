@@ -29,6 +29,20 @@ As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion f
 
 In addition, M³ itself has been translated, by many volunteers, into 12 languages and counting! You can therefore configure the language you would like to be displayed in M³'s interface. Do you want to help translate M³ into your language? Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to do so.
 
+[![gitlocalized](https://gitlocalize.com/repo/8097/de/badge.svg)](https://gitlocalize.com/repo/8097/de?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/es/badge.svg)](https://gitlocalize.com/repo/8097/es?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/et/badge.svg)](https://gitlocalize.com/repo/8097/et?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/fi/badge.svg)](https://gitlocalize.com/repo/8097/fi?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/fr/badge.svg)](https://gitlocalize.com/repo/8097/fr?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/hu/badge.svg)](https://gitlocalize.com/repo/8097/hu?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/it/badge.svg)](https://gitlocalize.com/repo/8097/it?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/mg/badge.svg)](https://gitlocalize.com/repo/8097/mg?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/nl/badge.svg)](https://gitlocalize.com/repo/8097/nl?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/pt/badge.svg)](https://gitlocalize.com/repo/8097/pt?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/pt-br/badge.svg)](https://gitlocalize.com/repo/8097/pt-br?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/ru/badge.svg)](https://gitlocalize.com/repo/8097/ru?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/sv/badge.svg)](https://gitlocalize.com/repo/8097/sv?utm_source=badge)
+
 ## How do I get started?
 
 Go to the [documentation](https://sircharlo.github.io/meeting-media-manager/) for M³ to find information about installation, configuration, media presentation mode, congregation media sync, and more.

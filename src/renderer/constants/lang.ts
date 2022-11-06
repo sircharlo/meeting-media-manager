@@ -7,11 +7,15 @@ const LOCAL_LANGS = [
   'fr',
   'hu',
   'it',
+  'mg',
   'nl',
   'pt',
   'ru',
   'sv',
 ]
+
+// Exclude languages that have no corresponding dayjs locale
+const LANGS_WITH_DAYJS_LOCALE = LOCAL_LANGS.filter(x => !['mg'].includes(x))
 
 // Languages that have no active translator
 const STALE_LANGS = ['it']
@@ -74,6 +78,13 @@ const LOCALES = [
     name: 'Italiano (Italian)',
   },
   {
+    code: 'mg',
+    iso: 'mg-MG',
+    file: 'mg.json',
+    jw: 'MG',
+    name: 'Malagasy (Malagasy)',
+  },
+  {
     code: 'nl',
     iso: 'nl-NL',
     file: 'nl.json',
@@ -114,4 +125,5 @@ module.exports = {
   LOCALES,
   STALE_LANGS,
   LOCAL_LANGS,
+  LANGS_WITH_DAYJS_LOCALE
 }

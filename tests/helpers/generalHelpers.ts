@@ -5,13 +5,14 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import prefs from './../mocks/prefs/prefsOld.json'
 import { MAX_BYTES_IN_FILENAME } from './../../src/renderer/constants/general'
-const { LOCAL_LANGS } = require('./../../src/renderer/constants/lang') as {
-  LOCAL_LANGS: string[]
-}
+const { LANGS_WITH_DAYJS_LOCALE } =
+  require('./../../src/renderer/constants/lang') as {
+    LANGS_WITH_DAYJS_LOCALE: string[]
+  }
 
 dayjs.extend(updateLocale)
 dayjs.extend(isSameOrBefore)
-LOCAL_LANGS.forEach((l) => {
+LANGS_WITH_DAYJS_LOCALE.forEach((l) => {
   require(`dayjs/locale/${l}`)
   dayjs.updateLocale(l, { weekStart: 1 })
 })
@@ -75,11 +76,7 @@ export function strip(value: string, type = 'file') {
   }
 }
 
-export function sanitize(
-  name: string,
-  mediaPath?: string,
-  isFile = false
-) {
+export function sanitize(name: string, mediaPath?: string, isFile = false) {
   const ext = isFile ? extname(name).toLowerCase() : ''
 
   // Remove special characters from filename

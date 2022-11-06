@@ -1,10 +1,12 @@
 import { Plugin } from '@nuxt/types'
 
-const { LOCAL_LANGS } = require('~/constants/lang') as { LOCAL_LANGS: string[] }
+const { LANGS_WITH_DAYJS_LOCALE } = require('~/constants/lang') as {
+  LANGS_WITH_DAYJS_LOCALE: string[]
+}
 
 const plugin: Plugin = ({ $dayjs }) => {
   // Always start the week on Monday
-  LOCAL_LANGS.forEach((l) => {
+  LANGS_WITH_DAYJS_LOCALE.forEach((l) => {
     $dayjs.updateLocale(l, { weekStart: 1 })
   })
 }
