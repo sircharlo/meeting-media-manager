@@ -1,4 +1,4 @@
-# Contributing
+# Contributing to the documentation site
 
 You are welcome to contribute to this project. If you want to do so, here you will find some useful information to get you started.
 
