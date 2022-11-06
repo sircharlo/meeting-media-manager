@@ -402,7 +402,8 @@ const plugin: Plugin = (
 
   // Zipper functions
   inject('extractAllTo', async (jwpub: string, dest: string): Promise<void> => {
-    const zipper = new JSZip()
+    try {
+      const zipper = new JSZip()
     const fileBuffer = await getContentsFromJWPUB(jwpub)
     if (!fileBuffer) throw new Error('Could not extract files from zip')
     const contents = await zipper.loadAsync(fileBuffer)
@@ -410,12 +411,16 @@ const plugin: Plugin = (
       const data = await fileObject.async('nodebuffer')
       writeFileSync(join(dest, filename), data)
     }
+    } catch (e: unknown) {
+      $warn('errorExtractFromJWPUB', {identifier: jwpub})
+    }
   })
 
   inject(
     'getZipContentsByExt',
     async (zip: string, ext: string): Promise<Buffer | null> => {
-      const zipper = new JSZip()
+      try {
+        const zipper = new JSZip()
       const fileBuffer = await getContentsFromJWPUB(zip)
       if (!fileBuffer) throw new Error('Could not extract files from zip')
       const contents = await zipper.loadAsync(fileBuffer)
@@ -424,6 +429,9 @@ const plugin: Plugin = (
           return fileObject.async('nodebuffer')
         }
       }
+      } catch (e: unknown) {
+        $warn('errorExtractFromJWPUB', {identifier: zip})
+      }
       return null
     }
   )
@@ -431,7 +439,8 @@ const plugin: Plugin = (
   inject(
     'getZipContentsByName',
     async (zip: string, name: string): Promise<Buffer | null> => {
-      const zipper = new JSZip()
+      try {
+        const zipper = new JSZip()
       const fileBuffer = await getContentsFromJWPUB(zip)
       if (!fileBuffer) throw new Error('Could not extract files from zip')
       const contents = await zipper.loadAsync(fileBuffer)
@@ -439,6 +448,9 @@ const plugin: Plugin = (
         if (filename === name) {
           return fileObject.async('nodebuffer')
         }
+      }
+      } catch (e: unknown) {
+        $warn('errorExtractFromJWPUB', {identifier: zip})
       }
       return null
     }
