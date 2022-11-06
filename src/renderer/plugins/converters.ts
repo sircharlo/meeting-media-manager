@@ -364,6 +364,7 @@ const plugin: Plugin = (
               .save(join(output))
               .on('end', () => {
                 if (!$getPrefs('media.keepOriginalsAfterConversion')) $rm(file)
+                increaseProgress(setProgress)
                 return resolve()
               })
           })
