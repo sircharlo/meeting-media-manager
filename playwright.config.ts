@@ -8,7 +8,9 @@ const config: PlaywrightTestConfig = {
   reporter: process.env.CI ? 'github' : 'list',
   maxFailures: process.env.CI ? 2 : 1,
   use: {
-    trace: 'retain-on-failure', // record traces of failed tests
+    screenshot: process.env.CI ? 'on' : 'only-on-failure',
+    trace: process.env.CI ? 'on' : 'retain-on-failure', // record traces of failed tests
+    video: process.env.CI ? 'on' : 'retain-on-failure', // record traces of failed tests
   },
   expect: {
     toMatchSnapshot: { threshold: 0.2 },
