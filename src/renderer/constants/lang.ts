@@ -1,4 +1,4 @@
-const LOCAL_LANGS = [
+const DAYJS_LOCALES = [
   'de',
   'en',
   'es',
@@ -7,15 +7,12 @@ const LOCAL_LANGS = [
   'fr',
   'hu',
   'it',
-  'mg',
+  // 'mg', not yet supported by dayjs
   'nl',
   'pt',
   'ru',
   'sv',
 ]
-
-// Exclude languages that have no corresponding dayjs locale
-const LANGS_WITH_DAYJS_LOCALE = LOCAL_LANGS.filter(x => !['mg'].includes(x))
 
 // Languages that have no active translator
 const STALE_LANGS = ['it']
@@ -124,6 +121,5 @@ const LOCALES = [
 module.exports = {
   LOCALES,
   STALE_LANGS,
-  LOCAL_LANGS,
-  LANGS_WITH_DAYJS_LOCALE
+  DAYJS_LOCALES,
 }

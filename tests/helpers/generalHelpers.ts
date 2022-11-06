@@ -5,14 +5,13 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import prefs from './../mocks/prefs/prefsOld.json'
 import { MAX_BYTES_IN_FILENAME } from './../../src/renderer/constants/general'
-const { LANGS_WITH_DAYJS_LOCALE } =
-  require('./../../src/renderer/constants/lang') as {
-    LANGS_WITH_DAYJS_LOCALE: string[]
-  }
+const { DAYJS_LOCALES } = require('./../../src/renderer/constants/lang') as {
+  DAYJS_LOCALES: string[]
+}
 
 dayjs.extend(updateLocale)
 dayjs.extend(isSameOrBefore)
-LANGS_WITH_DAYJS_LOCALE.forEach((l) => {
+DAYJS_LOCALES.forEach((l) => {
   require(`dayjs/locale/${l}`)
   dayjs.updateLocale(l, { weekStart: 1 })
 })
