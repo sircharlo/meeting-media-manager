@@ -18,7 +18,10 @@ import { join, basename } from 'upath'
 import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
-import { HUNDRED_PERCENT } from '~/constants/general'
+import { 
+  MS_IN_SEC,
+  HUNDRED_PERCENT 
+} from '~/constants/general'
 
 export default defineComponent({
   name: 'MediaPage',
@@ -261,24 +264,25 @@ export default defineComponent({
       const video = document.querySelector('video') as HTMLVideoElement
 
       // Animate out
-      if (video) {
-        const animation = video.animate(
-          [
-            { opacity: 1, volume: 100 },
-            { opacity: 0, volume: 0 },
-          ],
-          {
-            duration: 400,
-          }
-        )
-        await animation.finished
-        video.remove()
-      }
+      this.blackOverlay.style.opacity = '1'
       setTimeout(() => {
         this.mediaDisplay.style.background = 'transparent'
+        if (video) video.remove()
         this.blackOverlay.style.opacity = '0'
         // eslint-disable-next-line no-magic-numbers
-      }, 400)
+      }, 0.4 * MS_IN_SEC)
+      if (video) {
+        // eslint-disable-next-line no-magic-numbers
+        const MS_TO_STOP = 0.4 * MS_IN_SEC // Let fadeout last 400ms
+          const TOTAL_VOL = video.volume
+          while (video.volume > 0) {
+            video.volume -= Math.min(
+              video.volume,
+              (10 * TOTAL_VOL) / MS_TO_STOP
+            )
+            await new Promise((resolve) => setTimeout(resolve, 10))
+          }
+      }
     },
     async setYearText(prefs: ElectronStore) {
       const path = join(
