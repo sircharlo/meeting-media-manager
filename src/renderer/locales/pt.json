@@ -24,6 +24,7 @@
   "errorAdditionalMedia": "Ocorreu um erro ao importar as mídias. Por favor fale com o organizador de vídeoconferência da sua congregação.",
   "errorAdditionalMediaList": "Ocorreu um erro ao listar os arquivos de mídia. Tente novamente mais tarde ou entre em contato com o organizador de vídeoconferência da sua congregação.",
   "errorBadOutputPath": "O caminho especificado tem caracteres inválidos. Certifique-se de que esses caracteres não estejam no caminho:",
+  "errorExtractFromJWPUB": "Ocorreu um erro ao tentar extrair a mídia desse arquivo JWPUB:",
   "errorForcedSettingsEnforce": "Ocorreu um erro ao salvar as configurações da congregação. Entre em contato com o organizador de vídeoconferência da sua congregação.",
   "errorGetCongMedia": "Ocorreu um erro ao baixar os arquivos de mídia da congregação. Verifique as configurações do servidor ou entre em contato com o organizador de vídeoconferência da sua congregação.",
   "errorGetMwMedia": "Ocorreu um erro ao baixar os arquivos de mídia para a reunião de meio de semana. Tente novamente mais tarde ou entre em contato com o organizador de vídeoconferência da sua congregação.",
