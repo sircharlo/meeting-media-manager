@@ -134,6 +134,9 @@ const plugin: Plugin = (
         e.message.includes('405') // Method not Allowed
       ) {
         return 'dir'
+      } else if (e.message.includes('429')) {
+        $warn('errorWebdavTooManyRequests')
+        return null
       } else {
         const match = HOSTS.find((h) => h.server === host)
         if (match && !dir.startsWith(match.dir)) {
