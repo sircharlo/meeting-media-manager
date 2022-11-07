@@ -46,6 +46,7 @@
   "errorWebdavPut": "Une erreur s'est produite lors de l'écriture du fichier suivant.  Veuillez contacter votre organisateur des vidéoconférences.",
   "errorWebdavRm": "Une erreur s'est produite lors de la suppression du fichier suivant.  Veuillez contacter votre organisateur des vidéoconférencess.",
   "errorWebdavTooBig": "Le fichier que vous tentez de téléverser est trop volumineux (max 512 Mo). Le fichier a été ajouté localement, mais pas sur le serveur de l'assemblée locale.",
+  "errorWebdavTooManyRequests": "Trop de requêtes ont été envoyées au serveur. Veuillez réessayer plus tard.",
   "excludeLffi": "Exclure les fichiers audio et vidéo de la brochure <em>lffi</em>",
   "excludeLffiImages": "Exclure les images de la brochure <em>lffi</em>",
   "excludeTh": "Exclure tous les médias de la brochure <em>th</em>",
