@@ -218,7 +218,7 @@
     "macApple": "Apple támogatási oldal",
     "macArticle": "Ha az alkalmazás elindításakor figyelmeztetést kap, hogy az alkalmazás nem nyitható meg, mert \"nem az App Store-ból lett letöltve\", vagy mert \"a fejlesztő nem ellenőrizhető\", akkor ez az [PAGE] segít, hogy túljusson ezen.",
     "macLink": "az oldalon.",
-    "macWarning": "Ha azt az üzenetet kapja, hogy \"nincs jogosultsága az alkalmazás megnyitásához\", próbáljon ki néhány megoldást ezen a [LINK]",
+    "macWarning": "Ha azt az üzenetet kapja, hogy \"nincs jogosultsága az alkalmazás megnyitásához\", próbáljon ki néhány megoldást ezen [LINK]",
     "macExample": "Például megpróbálhatja futtatni ezt a parancsot a Terminálban:",
     "macAutoUpdate": "Automatikus frissítés",
     "macUnlike": "A Windowstól és a Linuxtól eltérően az automatikus frissítési funkció <strong>nincs</strong> implementálva a macOS rendszeren, és technikai okokból valószínűleg soha nem is lesz.",
