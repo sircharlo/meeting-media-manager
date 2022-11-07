@@ -134,6 +134,7 @@ import {
   faQuestionCircle,
   faSquareMinus,
   faFolderOpen,
+  faHeadphones,
   faSquarePlus,
   faFileCode,
   faPen,
@@ -154,6 +155,8 @@ export default defineComponent({
         return faImage
       } else if (['.mp4'].includes(extname(filename))) {
         return faFilm
+      } else if (['.mp3'].includes(extname(filename))) {
+        return faHeadphones
       } else if (extname(filename) === '.pdf') {
         return faFilePdf
       } else if (['.xspf', '.json'].includes(extname(filename))) {
