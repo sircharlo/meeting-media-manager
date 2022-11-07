@@ -1,11 +1,12 @@
 import { MutationTree, ActionTree, GetterTree } from 'vuex'
 import dayjs, { Dayjs } from 'dayjs'
-import { MediaStore, MeetingFile } from '~/types'
+import { MediaStore, MeetingFile, ShortJWLang } from '~/types'
 
 const defaultState: MediaStore = {
   songPub: 'sjjm', // The song publication (sjj for sign language)
   ffMpeg: false, // Whether FFmpeg has been initialized
   musicFadeOut: '', // The fade out time for shuffle music
+  mediaLang: null, // The media language object
   meetings: new Map(), // A map of meetings and their media
   progress: new Map(), // A map with downloadIfRequired() calls. If a file is already downloading, it will be returned from the map
 }
@@ -15,6 +16,9 @@ export const state = () => Object.assign({}, defaultState)
 export const mutations: MutationTree<MediaStore> = {
   setSongPub(state, pub: string) {
     state.songPub = pub
+  },
+  setMediaLang(state, lang: ShortJWLang | null) {
+    state.mediaLang = lang
   },
   setProgress(
     state,
