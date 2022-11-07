@@ -1345,7 +1345,7 @@ const plugin: Plugin = (
         $getPrefs('media.enableMediaDisplayButton')
 
       let songPub = 'sjjm'
-      let mediaFormat = 'mp4'
+      let mediaFormat = 'mp3'
       let mediaLang = 'E'
 
       if (signLanguage) {
