@@ -307,6 +307,14 @@ export default defineComponent({
     },
     active(val: boolean) {
       if (this.panzoom) this.resetZoom()
+      const imgPreview = document.querySelector(
+        `#${this.id}-preview`
+      ) as HTMLElement
+
+      if (imgPreview) {
+        imgPreview.style.cursor = val ? 'zoom-in' : 'default'
+      }
+
       if (val) {
         this.current = true
         ipcRenderer.on('videoEnd', () => {
@@ -375,9 +383,6 @@ export default defineComponent({
     }
   },
   methods: {
-    handleKeyPress(e: KeyboardEvent) {
-      console.log(e)
-    },
     pan({ x, y }: { x: number; y: number }) {
       ipcRenderer.send('pan', { x, y })
     },
@@ -394,7 +399,7 @@ export default defineComponent({
       }
     },
     zoomByClick() {
-      if (!this.panzoom) return
+      if (!this.panzoom || !this.active) return
       if (!this.clickedOnce) {
         this.clickedOnce = true
         setTimeout(() => {
