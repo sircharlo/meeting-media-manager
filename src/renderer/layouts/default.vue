@@ -81,7 +81,6 @@ export default defineComponent({
     },
   },
   async beforeMount() {
-    await this.$getJWLangs()
     if (this.cong) {
       this.initPrefs('prefs-' + this.cong)
     } else {

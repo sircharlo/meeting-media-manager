@@ -25,10 +25,7 @@ const plugin: Plugin = (
     const recentlyUpdated =
       lastUpdate && $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
 
-    if (
-      store.state.stats.online &&
-      (forceReload || !existsSync(langPath) || !recentlyUpdated)
-    ) {
+    if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
       try {
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://www.jw.org/en/languages',
