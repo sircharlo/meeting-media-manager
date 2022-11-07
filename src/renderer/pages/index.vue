@@ -802,6 +802,7 @@ export default defineComponent({
         this.$error('error', e)
       } finally {
         this.loading = false
+        this.$store.commit('media/clearProgress')
       }
     },
   },

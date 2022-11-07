@@ -7,7 +7,7 @@ const defaultState: MediaStore = {
   ffMpeg: false, // Whether FFmpeg has been initialized
   musicFadeOut: '', // The fade out time for shuffle music
   meetings: new Map(), // A map of meetings and their media
-  progress: new Map()
+  progress: new Map(), // A map with downloadIfRequired() calls. If a file is already downloading, it will be returned from the map
 }
 
 export const state = () => Object.assign({}, defaultState)
@@ -16,7 +16,10 @@ export const mutations: MutationTree<MediaStore> = {
   setSongPub(state, pub: string) {
     state.songPub = pub
   },
-  setProgress(state, {key, promise }: {key: string, promise: Promise<string>}) {
+  setProgress(
+    state,
+    { key, promise }: { key: string; promise: Promise<string> }
+  ) {
     state.progress.set(key, promise)
   },
   setFFmpeg(state, ffMpeg: boolean) {
@@ -110,6 +113,10 @@ export const mutations: MutationTree<MediaStore> = {
   },
   clear(state) {
     state.meetings = new Map()
+    state.progress = new Map()
+  },
+  clearProgress(state) {
+    state.progress = new Map()
   },
 }
 

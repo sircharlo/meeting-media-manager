@@ -328,6 +328,9 @@ export default defineComponent({
         }
         this.cacheColor = 'warning'
         this.calcCache()
+
+        this.$store.commit('media/clear')
+        this.$store.commit('db/clear')
       }
       this.loading = false
     },
