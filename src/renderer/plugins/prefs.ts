@@ -345,6 +345,12 @@ function storeOptions(name = 'prefs') {
           store.delete('app.ppEnable')
         }
       },
+      '22.12.0': (store) => {
+        if (store.get('app.localAdditionalMediaPrompt') !== undefined) {
+          // @ts-ignore: 'app.ppEnable' is not defined as a key of ElectronStore
+          store.delete('app.localAdditionalMediaPrompt')
+        }
+      },
     },
   } as Store.Options<ElectronStore>
 }
