@@ -406,6 +406,8 @@ export default defineComponent({
           this.clickedOnce = false
         }, 1 * MS_IN_SEC)
         return
+      } else {
+        this.clickedOnce = false
       }
 
       let deltaY = 1000
