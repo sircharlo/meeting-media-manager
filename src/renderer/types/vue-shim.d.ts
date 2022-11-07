@@ -73,7 +73,6 @@ interface CustomProps {
     memOnly?: boolean,
     silent?: boolean
   ) => Promise<MeetingFile[]>
-  $getLocalJWLangs: () => ShortJWLang[]
   $getJWLangs: (forceReload: boolean = false) => Promise<ShortJWLang[]>
   $getPrefs: (key: string) => unknown
   $getMediaLinks: (

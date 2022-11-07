@@ -313,12 +313,14 @@ export default defineComponent({
     congParam(): string {
       return this.$route.query.cong as string
     },
+    mediaLangObject(): ShortJWLang | null {
+      return this.$store.state.media.mediaLang as ShortJWLang | null
+    },
     jwSync(): string {
-      const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
-        (lang) => lang.langcode === (this.$getPrefs('media.lang') as string)
-      ) as ShortJWLang
-      if (lang?.vernacularName) {
-        return `${this.$t('syncJwOrgMedia')} (${lang?.vernacularName})`
+      if (this.mediaLangObject?.vernacularName) {
+        return `${this.$t('syncJwOrgMedia')} (${
+          this.mediaLangObject?.vernacularName
+        })`
       }
       return ''
     },

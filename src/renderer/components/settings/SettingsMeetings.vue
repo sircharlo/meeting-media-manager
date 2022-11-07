@@ -213,13 +213,11 @@ export default defineComponent({
         (this.meeting.musicFadeOutTime ?? 5).toString()
       )
     },
+    mediaLangObject(): ShortJWLang | null {
+      return this.$store.state.media.mediaLang as ShortJWLang | null
+    },
     isSignLanguage(): boolean {
-      if (!this.prefs.media.lang) return false
-      const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
-        ({ langcode }) => langcode === this.prefs.media.lang
-      )
-
-      return !!lang?.isSignLanguage
+      return !!this.mediaLangObject?.isSignLanguage
     },
   },
   watch: {
