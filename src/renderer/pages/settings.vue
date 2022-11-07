@@ -185,13 +185,12 @@ export default defineComponent({
         ? join(pubPath, '..', this.prefs.media.lang, 'sjj', '**', '*.mp4')
         : join(pubPath, '..', 'E', 'sjjm', '**', '*.mp3')
     },
+    mediaLangObject(): ShortJWLang | null {
+      return this.$store.state.media.mediaLang as ShortJWLang | null
+    },
     isSignLanguage(): boolean {
       if (!this.prefs.media.lang) return false
-      const lang = (this.$getLocalJWLangs() as ShortJWLang[]).find(
-        ({ langcode }) => langcode === this.prefs.media.lang
-      )
-
-      return !!lang?.isSignLanguage
+      return !!this.mediaLangObject?.isSignLanguage
     },
   },
   watch: {
