@@ -395,7 +395,7 @@ export default defineComponent({
     resetZoom() {
       if (this.panzoom) {
         this.scale = 1
-        this.panzoom.setStyle('transform', 'scale(1) translate(0px, 0px)')
+        this.panzoom.zoom(1)
       }
     },
     zoomByClick() {
@@ -408,9 +408,11 @@ export default defineComponent({
         return
       }
 
-      let deltaY = 300
-      // eslint-disable-next-line no-magic-numbers
-      if (this.scale < 4) deltaY = -1 * HUNDRED_PERCENT
+      let deltaY = 1000
+      if (this.scale < 4) {
+        // eslint-disable-next-line no-magic-numbers
+        deltaY = (-1.5 * this.scale + this.scale) * HUNDRED_PERCENT
+      }
 
       ipcRenderer.send('zoom', deltaY)
       this.zoomPreview(deltaY)
