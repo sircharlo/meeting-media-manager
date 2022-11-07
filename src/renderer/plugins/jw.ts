@@ -23,7 +23,7 @@ const plugin: Plugin = (
     const langPath = join($appPath(), 'langs.json')
     const lastUpdate = $getPrefs('media.langUpdatedLast') as string
     const recentlyUpdated =
-      !!lastUpdate || $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
+      lastUpdate && $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
 
     if (
       store.state.stats.online &&
@@ -47,7 +47,11 @@ const plugin: Plugin = (
         $write(langPath, JSON.stringify(langs, null, 2))
         $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
       } catch (e: unknown) {
-        $log.error(e)
+        if (!store.state.stats.online) {
+          $warn('errorOffline')
+        } else {
+          $log.error(e)
+        }
       }
     }
 
@@ -58,7 +62,7 @@ const plugin: Plugin = (
         readFileSync(langPath, 'utf8') ?? '[]'
       ) as ShortJWLang[]
     } catch (e: unknown) {
-      $warn('errorOffline')
+      $log.error(e)
     }
 
     const langPrefInLangs = langs.find(

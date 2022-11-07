@@ -81,6 +81,7 @@ export default defineComponent({
     },
   },
   async beforeMount() {
+    await this.$getJWLangs()
     if (this.cong) {
       this.initPrefs('prefs-' + this.cong)
     } else {
@@ -117,7 +118,6 @@ export default defineComponent({
     }
   },
   async mounted() {
-    await this.$getJWLangs()
     console.debug('sentry', this.$config.sentryEnabled)
     const mediaWinOpen = await ipcRenderer.invoke('mediaWinOpen')
     this.$store.commit('present/setMediaScreenInit', mediaWinOpen)
