@@ -72,7 +72,7 @@ The UI components are made using [Vuetify.js](https://vuetifyjs.com/en/). The Vu
 
 The icons used in this project are taken from the [Font Awesome](https://fontawesome.com/icons) project.
 
-The tests are written using [Playwright](https://playwright.dev/). Playwright is a browser automation tool that allows you to run the actual application and test the different features automatically.
+The tests are written using [Playwright](https://playwright.dev/). Playwright is a browser automation tool that allows you to run the actual application and test the different features automatically. Good to know: when testing locally, make sure you build the app first using `yarn build`.
 
 ### Release Procedure
 
