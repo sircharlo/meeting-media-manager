@@ -29,7 +29,7 @@ If possible, add screenshots to help explain your problem.
 **System specs (please complete the following information):**
 
 - OS: [e.g. Windows 10]
-- App Version [e.g. 22.10.1]
+- App Version [e.g. 22.11.0]
 
 **Additional context**
 Add any other context about the problem here.
