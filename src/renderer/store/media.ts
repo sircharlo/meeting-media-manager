@@ -115,6 +115,9 @@ export const mutations: MutationTree<MediaStore> = {
     state.meetings = new Map()
     state.progress = new Map()
   },
+  clearProgress(state) {
+    state.progress = new Map()
+  },
 }
 
 export const actions: ActionTree<MediaStore, MediaStore> = {
