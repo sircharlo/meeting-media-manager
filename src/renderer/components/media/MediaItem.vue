@@ -16,7 +16,14 @@
         <img
           :id="id + '-preview'"
           :src="url"
-          style="max-width: 144px; max-height: 80px; aspect-ratio: 16 / 9; object-fit: contain; vertical-align: middle;"
+          style="
+            max-width: 144px;
+            max-height: 80px;
+            aspect-ratio: 16 / 9;
+            object-fit: contain;
+            vertical-align: middle;
+          "
+          @click="zoomByClick"
           @wheel.prevent="zoom"
         />
       </div>
@@ -141,7 +148,7 @@ import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
 // eslint-disable-next-line import/named
 import { existsSync, readFileSync } from 'fs-extra'
 import { Marker } from '~/types'
-import { HUNDRED_PERCENT } from '~/constants/general'
+import { MS_IN_SEC, HUNDRED_PERCENT } from '~/constants/general'
 export default defineComponent({
   components: {
     RuntimeTemplateCompiler,
@@ -183,6 +190,7 @@ export default defineComponent({
   data() {
     return {
       scale: 1,
+      clickedOnce: false,
       panzoom: null as null | PanzoomObject,
       current: false,
       active: false as boolean,
@@ -349,9 +357,7 @@ export default defineComponent({
             { scale, x, y }: { scale: number; x: number; y: number }
           ) => {
             this.pan({
-              // eslint-disable-next-line no-magic-numbers
               x: x / el.clientWidth,
-              // eslint-disable-next-line no-magic-numbers
               y: y / el.clientHeight,
             })
             if (this.panzoom) {
@@ -387,15 +393,30 @@ export default defineComponent({
         this.panzoom.setStyle('transform', 'scale(1) translate(0px, 0px)')
       }
     },
+    zoomByClick() {
+      if (!this.panzoom) return
+      if (!this.clickedOnce) {
+        this.clickedOnce = true
+        setTimeout(() => {
+          this.clickedOnce = false
+        }, 1 * MS_IN_SEC)
+        return
+      }
+
+      let deltaY = 300
+      // eslint-disable-next-line no-magic-numbers
+      if (this.scale < 4) deltaY = -1 * HUNDRED_PERCENT
+
+      ipcRenderer.send('zoom', deltaY)
+      this.zoomPreview(deltaY)
+    },
     zoomPreview(deltaY: number) {
       if (this.panzoom) {
-        // eslint-disable-next-line no-magic-numbers
-        this.scale += deltaY * -0.01
+        this.scale += (-1 * deltaY) / HUNDRED_PERCENT
 
         // Restrict scale
         // eslint-disable-next-line no-magic-numbers
         this.scale = Math.min(Math.max(0.125, this.scale), 4)
-        console.log('scale', this.scale)
         if (this.scale > 1) {
           this.panzoom.zoom(this.scale)
         } else {
