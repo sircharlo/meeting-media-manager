@@ -217,7 +217,7 @@ export default defineComponent({
       return this.$store.state.media.mediaLang as ShortJWLang | null
     },
     isSignLanguage(): boolean {
-      return this.mediaLangObject?.isSignLanguage
+      return !!this.mediaLangObject?.isSignLanguage
     },
   },
   watch: {
