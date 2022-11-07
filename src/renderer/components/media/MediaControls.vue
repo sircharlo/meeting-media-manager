@@ -336,24 +336,26 @@ export default defineComponent({
     },
     getMedia() {
       this.loading = true
-      this.items = this.$findAll(join(this.$mediaPath(), this.date, '*'))
-        .filter((f) => {
-          return this.$isImage(f) || this.$isVideo(f) || this.$isAudio(f)
-        })
-        .sort((a, b) => basename(a).localeCompare(basename(b)))
-        .map((path) => {
-          const cleanName = this.$sanitize(basename(path), true)
-          if (basename(path) !== cleanName) {
-            this.$rename(path, basename(path), cleanName)
-          }
-          return {
-            id: this.$strip('mediaitem-' + cleanName),
-            path: join(dirname(path), cleanName),
-            play: false,
-            stop: false,
-            deactivate: false,
-          }
-        })
+      if (!!this.$mediaPath() && !!this.date) {    
+        this.items = this.$findAll(join(this.$mediaPath(), this.date, '*'))
+          .filter((f) => {
+            return this.$isImage(f) || this.$isVideo(f) || this.$isAudio(f)
+          })
+          .sort((a, b) => basename(a).localeCompare(basename(b)))
+          .map((path) => {
+            const cleanName = this.$sanitize(basename(path), true)
+            if (basename(path) !== cleanName) {
+              this.$rename(path, basename(path), cleanName)
+            }
+            return {
+              id: this.$strip('mediaitem-' + cleanName),
+              path: join(dirname(path), cleanName),
+              play: false,
+              stop: false,
+              deactivate: false,
+            }
+          })
+      }
       this.loading = false
     },
     clearDate() {
