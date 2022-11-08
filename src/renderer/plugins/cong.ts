@@ -281,18 +281,18 @@ const plugin: Plugin = (
 
   // Update the local contents of the cong server
   inject('updateContent', async (): Promise<void> => {
-    if (store.state.cong.client) {
-      const { server, user, password, dir } = $getPrefs('cong') as CongPrefs
-      let contents: FileStat[] = []
-      contents = await getCongDirectory(
-        store.state.cong.client,
-        server as string,
-        user as string,
-        password as string,
-        dir as string
-      )
-      store.commit('cong/setContents', contents)
-    }
+    if (!store.state.cong.client) return
+
+    const { server, user, password, dir } = $getPrefs('cong') as CongPrefs
+    let contents: FileStat[] = []
+    contents = await getCongDirectory(
+      store.state.cong.client,
+      server as string,
+      user as string,
+      password as string,
+      dir as string
+    )
+    store.commit('cong/setContents', contents)
   })
 
   // Check if a specific preference/setting is locked according to the cong server
@@ -329,6 +329,7 @@ const plugin: Plugin = (
       if (!refresh && store.state.cong.prefs) {
         return store.state.cong.prefs as ElectronStore
       }
+
       try {
         const client = store.state.cong.client as WebDAVClient
         const path = join($getPrefs('cong.dir'), 'forcedPrefs.json')

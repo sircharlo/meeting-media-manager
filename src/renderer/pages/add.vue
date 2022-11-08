@@ -416,10 +416,12 @@ export default defineComponent({
       }
       const properties = ['openFile']
       if (multi) properties.push('multiSelections')
+
       const result = await ipcRenderer.invoke('openDialog', {
         filters: [{ name: exts[0], extensions: exts }],
         properties,
       })
+
       if (result && !result.canceled) {
         this.files = result.filePaths.map((file: string) => ({
           safeName: '- ' + this.$sanitize(basename(file), true),
@@ -587,14 +589,19 @@ export default defineComponent({
           this.date,
           this.$getPrefs('app.outputFolderDateFormat') as string
         ) as Dayjs
+
         if (!day.isValid() || this.$getPrefs('meeting.specialCong')) return
+
         const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
+
         if (weekDay === (this.$getPrefs('meeting.mwDay') as number)) {
           await this.$getMwMedia(this.date)
         } else if (weekDay === (this.$getPrefs('meeting.weDay') as number)) {
           await this.$getWeMedia(this.date)
         }
+
         this.$createMediaNames()
+
         if (this.client) {
           await this.$updateContent()
         }
@@ -634,8 +641,8 @@ export default defineComponent({
           Map<number, MeetingFile[]>
         >
         const localMedia: LocalFile[] = []
-
         const jwMedia: MeetingFile[] = []
+
         for (const [, media] of meetings.get(this.date) ?? []) {
           for (const m of media) {
             m.isLocal = false

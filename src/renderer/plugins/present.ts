@@ -71,6 +71,7 @@ const plugin: Plugin = (
 
   inject('isShortcutValid', (shortcut: string) => {
     if (!shortcut) return false
+
     const modifiers =
       /^(Command|Cmd|Control|Ctrl|CommandOrControl|CmdOrCtrl|Alt|Option|AltGr|Shift|Super)$/
     const keyCodes =
@@ -103,18 +104,18 @@ const plugin: Plugin = (
 
     const match = shortcuts.find(({ fn }) => fn === func)
 
-    if (match) {
-      try {
-        ipcRenderer.send('unregisterShortcut', match.name)
-      } catch (e: unknown) {
-        $log.error(e)
-      }
+    if (!match) return
 
-      store.commit(
-        'present/setShortcuts',
-        shortcuts.filter(({ name }) => name !== match.name)
-      )
+    try {
+      ipcRenderer.send('unregisterShortcut', match.name)
+    } catch (e: unknown) {
+      $log.error(e)
     }
+
+    store.commit(
+      'present/setShortcuts',
+      shortcuts.filter(({ name }) => name !== match.name)
+    )
   })
 
   function unsetShortcuts(filter = 'all') {
@@ -173,43 +174,41 @@ const plugin: Plugin = (
   inject('toggleMediaWindow', toggleMediaWindow)
 
   async function refreshBackgroundImgPreview(force = false) {
+    if (!$getPrefs('media.enableMediaDisplayButton')) return
+
     try {
-      if ($getPrefs('media.enableMediaDisplayButton')) {
-        let type = 'yeartext'
-        const backgrounds = $findAll(
-          join(
-            $appPath(),
-            `custom-background-image-${$getPrefs('app.congregationName')}*`
-          )
+      let type = 'yeartext'
+      const backgrounds = $findAll(
+        join(
+          $appPath(),
+          `custom-background-image-${$getPrefs('app.congregationName')}*`
         )
+      )
 
-        // If no custom background, set yeartext as background
-        if (backgrounds.length === 0) {
-          const yeartext = await $getYearText(force)
-          const root = document.createElement('div')
-          root.innerHTML = yeartext ?? ''
-          let yeartextString = ''
-          for (let i = 0; i < root.children.length; i++) {
-            yeartextString +=
-              '<p>' + root.children.item(i)?.textContent + '</p>'
-          }
-          store.commit('present/setBackground', yeartextString)
-        } else {
-          const response = await $axios.get(
-            pathToFileURL(backgrounds[0]).href,
-            { responseType: 'blob' }
-          )
-          const file = new File([response.data], basename(backgrounds[0]), {
-            type: response.headers['content-type'],
-          })
-
-          URL.revokeObjectURL(store.state.present.background)
-          store.commit('present/setBackground', URL.createObjectURL(file))
-          type = 'custom'
+      // If no custom background, set yeartext as background
+      if (backgrounds.length === 0) {
+        const yeartext = await $getYearText(force)
+        const root = document.createElement('div')
+        root.innerHTML = yeartext ?? ''
+        let yeartextString = ''
+        for (let i = 0; i < root.children.length; i++) {
+          yeartextString += '<p>' + root.children.item(i)?.textContent + '</p>'
         }
-        ipcRenderer.send('startMediaDisplay', $getAllPrefs())
-        return type
+        store.commit('present/setBackground', yeartextString)
+      } else {
+        const response = await $axios.get(pathToFileURL(backgrounds[0]).href, {
+          responseType: 'blob',
+        })
+        const file = new File([response.data], basename(backgrounds[0]), {
+          type: response.headers['content-type'],
+        })
+
+        URL.revokeObjectURL(store.state.present.background)
+        store.commit('present/setBackground', URL.createObjectURL(file))
+        type = 'custom'
       }
+      ipcRenderer.send('startMediaDisplay', $getAllPrefs())
+      return type
     } catch (e: unknown) {
       $log.error(e)
     }
@@ -222,41 +221,41 @@ const plugin: Plugin = (
       type: 'window',
     }
 
+    if (!$getPrefs('media.enableMediaDisplayButton')) return mediaWinOptions
+
     try {
-      if ($getPrefs('media.enableMediaDisplayButton')) {
-        const screenInfo = await ipcRenderer.invoke('getScreenInfo')
-        store.commit(
-          'present/setScreens',
-          screenInfo.otherScreens.map(
-            (screen: {
-              id: number
-              humanFriendlyNumber: number
-              size: { width: number; height: number }
-            }) => {
-              return {
-                id: screen.id,
-                class: 'display',
-                text: `${i18n.t('screen')} ${screen.humanFriendlyNumber} ${
-                  screen.size?.width && screen.size?.height
-                    ? ` (${screen.size.width}x${screen.size.height}) (ID: ${screen.id})`
-                    : ''
-                }`,
-              }
+      const screenInfo = await ipcRenderer.invoke('getScreenInfo')
+      store.commit(
+        'present/setScreens',
+        screenInfo.otherScreens.map(
+          (screen: {
+            id: number
+            humanFriendlyNumber: number
+            size: { width: number; height: number }
+          }) => {
+            return {
+              id: screen.id,
+              class: 'display',
+              text: `${i18n.t('screen')} ${screen.humanFriendlyNumber} ${
+                screen.size?.width && screen.size?.height
+                  ? ` (${screen.size.width}x${screen.size.height}) (ID: ${screen.id})`
+                  : ''
+              }`,
             }
-          )
+          }
         )
-        const output = $getPrefs('media.preferredOutput')
-        if (output !== 'window' && screenInfo.otherScreens.length > 0) {
-          const pref = screenInfo.otherScreens.find(
-            (d: { id: number }) => d.id === output
-          )
-          mediaWinOptions.destination =
-            pref?.id ??
-            screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id
-          mediaWinOptions.type = 'fullscreen'
-        } else {
-          mediaWinOptions.destination = screenInfo.displays[0]?.id ?? null
-        }
+      )
+      const output = $getPrefs('media.preferredOutput')
+      if (output !== 'window' && screenInfo.otherScreens.length > 0) {
+        const pref = screenInfo.otherScreens.find(
+          (d: { id: number }) => d.id === output
+        )
+        mediaWinOptions.destination =
+          pref?.id ??
+          screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id
+        mediaWinOptions.type = 'fullscreen'
+      } else {
+        mediaWinOptions.destination = screenInfo.displays[0]?.id ?? null
       }
     } catch (e: unknown) {
       $log.error(e)

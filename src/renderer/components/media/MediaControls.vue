@@ -336,8 +336,9 @@ export default defineComponent({
     },
     getMedia() {
       this.loading = true
-      if (!!this.$mediaPath() && !!this.date) {    
-        this.items = this.$findAll(join(this.$mediaPath(), this.date, '*'))
+      const mediaPath = this.$mediaPath()
+      if (mediaPath && this.date) {
+        this.items = this.$findAll(join(mediaPath, this.date, '*'))
           .filter((f) => {
             return this.$isImage(f) || this.$isVideo(f) || this.$isAudio(f)
           })
