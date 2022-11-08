@@ -32,7 +32,10 @@ interface CustomProps {
     setProgress: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
   $convertToVLC: () => void
-  $convertUnusableFiles: (dir: string) => Promise<void>
+  $convertUnusableFiles: (
+    dir: string,
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
+  ) => Promise<void>
   $copy: (src: string, dest: string) => void
   $createMediaNames: () => void
   $downloadIfRequired: (
