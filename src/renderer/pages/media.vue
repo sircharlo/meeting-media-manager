@@ -166,7 +166,7 @@ export default defineComponent({
   },
   methods: {
     zoom(deltaY: number) {
-      if (!this.zoompan || !this.zoomEnabled) return
+      if (!this.panzoom || !this.zoomEnabled) return
 
       // eslint-disable-next-line no-magic-numbers
       this.scale += deltaY * -0.01
