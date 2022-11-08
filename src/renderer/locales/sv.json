@@ -46,6 +46,7 @@
   "errorWebdavPut": "Ett fel uppstod vid skrivning till följande fil. Vänligen kontakta organisatören för videokonferensen.",
   "errorWebdavRm": "Ett fel uppstod när följande fil skulle raderas. Vänligen kontakta organisatören för videokonferensen.",
   "errorWebdavTooBig": "Filen du försöker ladda upp är för stor (max 512 MB). Filen har lagts till lokalt, men inte på cong-servern.",
+  "errorWebdavTooManyRequests": "För många förfrågningar har skickats till servern. Vänligen försök igen senare.",
   "excludeLffi": "Exkludera audio- och videofiler från broschyren <em>lffi</em>",
   "excludeLffiImages": "Exkludera bilder från broschyren <em>lffi</em>",
   "excludeTh": "Exkludera all media från broschyren <em>th</em>",
