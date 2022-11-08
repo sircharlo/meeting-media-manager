@@ -27,9 +27,9 @@ const plugin: Plugin = (
 ) => {
   // Paths
   inject('pubPath', (file?: MeetingFile): string | undefined => {
-    if (!$getPrefs('media.lang')) return undefined
+    let mediaFolder = $getPrefs('media.lang') as string
+    if (!mediaFolder) return undefined
 
-    let mediaFolder = $getPrefs('media.lang')
     if (/sjjm_E_\d+.mp3/g.test(basename(file?.url || ''))) {
       mediaFolder = 'E'
     }
@@ -41,36 +41,31 @@ const plugin: Plugin = (
       $warn('errorSetVars', { identifier: pubPath })
     }
 
+    if (!file) return pubPath
+
     // Get path for specific file
-    if (file) {
-      const pubFolder = (
-        file.pub ||
-        file.queryInfo?.KeySymbol ||
-        file.queryInfo?.MultiMeps ||
-        file.primaryCategory ||
-        'unknown'
-      ).toString()
-      const issueFolder = (
-        file.issue ||
-        file.queryInfo?.IssueTagNumber ||
-        0
-      ).toString()
-      const trackFolder = (file.track || file.queryInfo?.Track || 0).toString()
-      return joinSafe(pubPath, pubFolder, issueFolder, trackFolder)
-    } else {
-      return pubPath
-    }
+    const pubFolder = (
+      file.pub ||
+      file.queryInfo?.KeySymbol ||
+      file.queryInfo?.MultiMeps ||
+      file.primaryCategory ||
+      'unknown'
+    ).toString()
+    const issueFolder = (
+      file.issue ||
+      file.queryInfo?.IssueTagNumber ||
+      0
+    ).toString()
+    const trackFolder = (file.track || file.queryInfo?.Track || 0).toString()
+    return joinSafe(pubPath, pubFolder, issueFolder, trackFolder)
   })
 
   function mediaPath(file?: MeetingFile): string | undefined {
-    if (!$getPrefs('app.localOutputPath') || !$getPrefs('media.lang')) {
-      return undefined
-    }
+    const mediaLang = $getPrefs('media.lang') as string
+    const outputPath = $getPrefs('app.localOutputPath') as string
+    if (!outputPath || !mediaLang) return undefined
 
-    const mediaPath = joinSafe(
-      $getPrefs('app.localOutputPath'),
-      $getPrefs('media.lang')
-    )
+    const mediaPath = joinSafe(outputPath, mediaLang)
 
     try {
       ensureDirSync(mediaPath)
@@ -78,15 +73,13 @@ const plugin: Plugin = (
       $warn('errorSetVars', { identifier: mediaPath })
     }
 
-    if (file) {
-      return joinSafe(
-        mediaPath,
-        file.folder as string,
-        file.destFilename as string
-      )
-    }
+    if (!file) return mediaPath
 
-    return mediaPath
+    return joinSafe(
+      mediaPath,
+      file.folder as string,
+      file.destFilename as string
+    )
   }
   inject('mediaPath', mediaPath)
 
@@ -177,38 +170,38 @@ const plugin: Plugin = (
     action = 'rename',
     type = 'string'
   ): void {
-    if (existsSync(path)) {
-      const dir = dirname(path)
-      const file = basename(path)
+    if (!existsSync(path)) return
 
-      try {
-        switch (action) {
-          case 'rename':
-            if (type === 'date') {
-              // Convert date folder to new format
-              const date = $dayjs(file, oldName)
-              if (date.isValid())
-                if (file !== date.format(newName)) {
-                  renameSync(path, join(dir, date.format(newName)))
-                }
-            } else if (file === oldName) {
-              // Rename a file
-              if (file !== newName) {
-                renameSync(path, join(dir, newName))
-              }
+    const dir = dirname(path)
+    const file = basename(path)
+
+    try {
+      switch (action) {
+        case 'rename':
+          if (type === 'date') {
+            // Convert date folder to new format
+            const date = $dayjs(file, oldName)
+            if (!date.isValid()) return
+            if (file !== date.format(newName)) {
+              renameSync(path, join(dir, date.format(newName)))
             }
-            break
-          case 'replace': // Replace a string within a filename (e.g. song or paragraph)
-            if (oldName !== newName && file.includes(oldName)) {
-              renameSync(path, join(dir, file.replace(oldName, newName)))
+          } else if (file === oldName) {
+            // Rename a file
+            if (file !== newName) {
+              renameSync(path, join(dir, newName))
             }
-            break
-          default:
-            throw new Error('Invalid type for rename() function: ' + type)
-        }
-      } catch (e: unknown) {
-        $warn('errorRename', { identifier: path }, e)
+          }
+          break
+        case 'replace': // Replace a string within a filename (e.g. song or paragraph)
+          if (oldName !== newName && file.includes(oldName)) {
+            renameSync(path, join(dir, file.replace(oldName, newName)))
+          }
+          break
+        default:
+          throw new Error('Invalid type for rename() function: ' + type)
       }
+    } catch (e: unknown) {
+      $warn('errorRename', { identifier: path }, e)
     }
   }
 
@@ -224,26 +217,28 @@ const plugin: Plugin = (
       action = 'rename',
       type = 'string'
     ): void => {
-      if (existsSync(dir)) {
-        readdirSync(dir).forEach((file) => {
-          rename(join(dir, file), search, newName, action, type)
-        })
-      }
+      if (!existsSync(dir)) return
+
+      readdirSync(dir).forEach((file) => {
+        rename(join(dir, file), search, newName, action, type)
+      })
     }
   )
 
   inject(
     'renamePubs',
     async (oldVal: string, newVal: string): Promise<void> => {
-      const path = mediaPath()
-      if (!path) return
-      readdirSync(path).forEach((dir) => {
-        const path = join(mediaPath(), dir)
+      const mPath = mediaPath()
+      if (!mPath) return
+
+      readdirSync(mPath).forEach((dir) => {
+        const path = join(mPath, dir)
         const date = $dayjs(
           dir,
           $getPrefs('app.outputFolderDateFormat') as string,
           oldVal.split('-')[0]
         )
+
         if (statSync(path).isDirectory() && date.isValid()) {
           // Rename all files that include the localized 'song' or 'paragraph' strings
           readdirSync(path).forEach((file) => {
@@ -264,7 +259,7 @@ const plugin: Plugin = (
 
           // Rename the date folder to the new localized format
           const newPath = join(
-            mediaPath(),
+            mPath,
             date
               .locale(newVal.split('-')[0])
               .format($getPrefs('app.outputFolderDateFormat') as string)
@@ -364,12 +359,13 @@ const plugin: Plugin = (
 
     // Remove special characters from filename
     name = $strip(basename(name, ext), 'file') + ext
+    const mPath = mediaPath()
 
-    if (isFile && mediaPath()) {
+    if (isFile && mPath) {
       // Cutoff filename if path is longer than 245 characters
       const maxCharactersInPath = 245
       const projectedPathCharLength = join(
-        mediaPath(),
+        mPath,
         '9999-99-99 - AAAAAAAAAA AAAAAAAAAA',
         name
       ).length
@@ -404,15 +400,15 @@ const plugin: Plugin = (
   inject('extractAllTo', async (jwpub: string, dest: string): Promise<void> => {
     try {
       const zipper = new JSZip()
-    const fileBuffer = await getContentsFromJWPUB(jwpub)
-    if (!fileBuffer) throw new Error('Could not extract files from zip')
-    const contents = await zipper.loadAsync(fileBuffer)
-    for (const [filename, fileObject] of Object.entries(contents.files)) {
-      const data = await fileObject.async('nodebuffer')
-      writeFileSync(join(dest, filename), data)
-    }
+      const fileBuffer = await getContentsFromJWPUB(jwpub)
+      if (!fileBuffer) throw new Error('Could not extract files from zip')
+      const contents = await zipper.loadAsync(fileBuffer)
+      for (const [filename, fileObject] of Object.entries(contents.files)) {
+        const data = await fileObject.async('nodebuffer')
+        writeFileSync(join(dest, filename), data)
+      }
     } catch (e: unknown) {
-      $warn('errorExtractFromJWPUB', {identifier: jwpub})
+      $warn('errorExtractFromJWPUB', { identifier: jwpub })
     }
   })
 
@@ -421,16 +417,16 @@ const plugin: Plugin = (
     async (zip: string, ext: string): Promise<Buffer | null> => {
       try {
         const zipper = new JSZip()
-      const fileBuffer = await getContentsFromJWPUB(zip)
-      if (!fileBuffer) throw new Error('Could not extract files from zip')
-      const contents = await zipper.loadAsync(fileBuffer)
-      for (const [filename, fileObject] of Object.entries(contents.files)) {
-        if (extname(filename).toLowerCase() === ext) {
-          return fileObject.async('nodebuffer')
+        const fileBuffer = await getContentsFromJWPUB(zip)
+        if (!fileBuffer) throw new Error('Could not extract files from zip')
+        const contents = await zipper.loadAsync(fileBuffer)
+        for (const [filename, fileObject] of Object.entries(contents.files)) {
+          if (extname(filename).toLowerCase() === ext) {
+            return fileObject.async('nodebuffer')
+          }
         }
-      }
       } catch (e: unknown) {
-        $warn('errorExtractFromJWPUB', {identifier: zip})
+        $warn('errorExtractFromJWPUB', { identifier: zip })
       }
       return null
     }
@@ -441,16 +437,16 @@ const plugin: Plugin = (
     async (zip: string, name: string): Promise<Buffer | null> => {
       try {
         const zipper = new JSZip()
-      const fileBuffer = await getContentsFromJWPUB(zip)
-      if (!fileBuffer) throw new Error('Could not extract files from zip')
-      const contents = await zipper.loadAsync(fileBuffer)
-      for (const [filename, fileObject] of Object.entries(contents.files)) {
-        if (filename === name) {
-          return fileObject.async('nodebuffer')
+        const fileBuffer = await getContentsFromJWPUB(zip)
+        if (!fileBuffer) throw new Error('Could not extract files from zip')
+        const contents = await zipper.loadAsync(fileBuffer)
+        for (const [filename, fileObject] of Object.entries(contents.files)) {
+          if (filename === name) {
+            return fileObject.async('nodebuffer')
+          }
         }
-      }
       } catch (e: unknown) {
-        $warn('errorExtractFromJWPUB', {identifier: zip})
+        $warn('errorExtractFromJWPUB', { identifier: zip })
       }
       return null
     }

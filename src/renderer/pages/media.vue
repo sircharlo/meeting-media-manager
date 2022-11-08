@@ -18,10 +18,7 @@ import { join, basename } from 'upath'
 import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
-import { 
-  MS_IN_SEC,
-  HUNDRED_PERCENT 
-} from '~/constants/general'
+import { MS_IN_SEC, HUNDRED_PERCENT } from '~/constants/general'
 
 export default defineComponent({
   name: 'MediaPage',
@@ -169,17 +166,17 @@ export default defineComponent({
   },
   methods: {
     zoom(deltaY: number) {
-      if (this.panzoom && this.zoomEnabled) {
-        // eslint-disable-next-line no-magic-numbers
-        this.scale += deltaY * -0.01
+      if (!this.zoompan || !this.zoomEnabled) return
 
-        // Restrict scale
-        // eslint-disable-next-line no-magic-numbers
-        this.scale = Math.min(Math.max(0.125, this.scale), 4)
-        if (this.scale < 1) this.scale = 1
-        this.panzoom.zoom(this.scale)
-        if (this.scale === 1) this.panzoom.reset()
-      }
+      // eslint-disable-next-line no-magic-numbers
+      this.scale += deltaY * -0.01
+
+      // Restrict scale
+      // eslint-disable-next-line no-magic-numbers
+      this.scale = Math.min(Math.max(0.125, this.scale), 4)
+      if (this.scale < 1) this.scale = 1
+      this.panzoom.zoom(this.scale)
+      if (this.scale === 1) this.panzoom.reset()
     },
     transitionToMedia(media: { path: string; start?: string; end?: string }) {
       this.resizingDone()
@@ -274,14 +271,11 @@ export default defineComponent({
       if (video) {
         // eslint-disable-next-line no-magic-numbers
         const MS_TO_STOP = 0.4 * MS_IN_SEC // Let fadeout last 400ms
-          const TOTAL_VOL = video.volume
-          while (video.volume > 0) {
-            video.volume -= Math.min(
-              video.volume,
-              (10 * TOTAL_VOL) / MS_TO_STOP
-            )
-            await new Promise((resolve) => setTimeout(resolve, 10))
-          }
+        const TOTAL_VOL = video.volume
+        while (video.volume > 0) {
+          video.volume -= Math.min(video.volume, (10 * TOTAL_VOL) / MS_TO_STOP)
+          await new Promise((resolve) => setTimeout(resolve, 10))
+        }
       }
     },
     async setYearText(prefs: ElectronStore) {

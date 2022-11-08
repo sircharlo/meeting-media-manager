@@ -78,7 +78,9 @@ const plugin: Plugin = (
   // Get yeartext from WT online library
   inject('getYearText', async (force = false): Promise<string | null> => {
     let yeartext = null
-    if (store.state.stats.online && (force || !existsSync($ytPath()))) {
+    const ytPath = $ytPath()
+
+    if (store.state.stats.online && (force || !existsSync(ytPath))) {
       try {
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://wol.jw.org/wol/finder',
@@ -91,14 +93,14 @@ const plugin: Plugin = (
         })
         if (result.content) {
           yeartext = JSON.parse(JSON.stringify(result.content)) as string
-          $write($ytPath(), yeartext)
+          $write(ytPath, yeartext)
         }
       } catch (e: unknown) {
         $log.error(e)
       }
     } else {
       try {
-        yeartext = readFileSync($ytPath(), 'utf8')
+        yeartext = readFileSync(ytPath, 'utf8')
       } catch (e: unknown) {
         $warn('errorOffline')
       }

@@ -74,60 +74,53 @@ const plugin: Plugin = (
     const symbol = extract.UniqueEnglishSymbol.replace(/\d/g, '')
 
     // Exclude the "old new songs" songbook, as we don't need images from that
-    if (symbol !== 'snnw') {
-      const extractDb = await getDbFromJWPUB(
-        symbol,
-        extract.IssueTagNumber,
-        setProgress
-      )
-      if (extractDb) {
-        return (
-          await getDocumentMultiMedia(
-            extractDb,
-            null,
-            extract.RefMepsDocumentId
-          )
-        )
-          .filter((mmItem) => {
-            if (
-              mmItem?.queryInfo?.tableQuestionIsUsed &&
-              mmItem.queryInfo.NextParagraphOrdinal &&
-              !mmItem?.queryInfo?.TargetParagraphNumberLabel
-            ) {
-              mmItem.BeginParagraphOrdinal =
-                mmItem.queryInfo.NextParagraphOrdinal
-            }
+    if (symbol === 'snnw') return []
 
-            // Include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
-            const mediaLang = store.state.media.mediaLang as ShortJWLang
-            if (
-              mediaLang.isSignLanguage &&
-              !!mmItem?.queryInfo?.FilePath &&
-              $isVideo(mmItem?.queryInfo?.FilePath) &&
-              !mmItem?.queryInfo?.TargetParagraphNumberLabel
-            ) {
-              return true
-            } else if (
-              mmItem.BeginParagraphOrdinal &&
-              extract.RefBeginParagraphOrdinal &&
-              extract.RefEndParagraphOrdinal
-            ) {
-              return (
-                extract.RefBeginParagraphOrdinal <=
-                  mmItem.BeginParagraphOrdinal &&
-                mmItem.BeginParagraphOrdinal <= extract.RefEndParagraphOrdinal
-              )
-            } else {
-              return true
-            }
-          })
-          .map((mmItem) => {
-            mmItem.BeginParagraphOrdinal = extract.BeginParagraphOrdinal
-            return mmItem
-          })
-      }
-    }
-    return []
+    const extractDb = await getDbFromJWPUB(
+      symbol,
+      extract.IssueTagNumber,
+      setProgress
+    )
+    if (!extractDb) return []
+
+    return (
+      await getDocumentMultiMedia(extractDb, null, extract.RefMepsDocumentId)
+    )
+      .filter((mmItem) => {
+        if (
+          mmItem?.queryInfo?.tableQuestionIsUsed &&
+          mmItem.queryInfo.NextParagraphOrdinal &&
+          !mmItem?.queryInfo?.TargetParagraphNumberLabel
+        ) {
+          mmItem.BeginParagraphOrdinal = mmItem.queryInfo.NextParagraphOrdinal
+        }
+
+        // Include videos with no specific paragraph for sign language, as they are sometimes used (ie the CBS chapter video)
+        const mediaLang = store.state.media.mediaLang as ShortJWLang
+        if (
+          mediaLang.isSignLanguage &&
+          !!mmItem?.queryInfo?.FilePath &&
+          $isVideo(mmItem?.queryInfo?.FilePath) &&
+          !mmItem?.queryInfo?.TargetParagraphNumberLabel
+        ) {
+          return true
+        } else if (
+          mmItem.BeginParagraphOrdinal &&
+          extract.RefBeginParagraphOrdinal &&
+          extract.RefEndParagraphOrdinal
+        ) {
+          return (
+            extract.RefBeginParagraphOrdinal <= mmItem.BeginParagraphOrdinal &&
+            mmItem.BeginParagraphOrdinal <= extract.RefEndParagraphOrdinal
+          )
+        } else {
+          return true
+        }
+      })
+      .map((mmItem) => {
+        mmItem.BeginParagraphOrdinal = extract.BeginParagraphOrdinal
+        return mmItem
+      })
   }
 
   async function getDocumentExtract(
@@ -1076,10 +1069,14 @@ const plugin: Plugin = (
   })
 
   inject('syncLocalRecurringMedia', (baseDate: Dayjs): void => {
+    const mediaPath = $mediaPath()
+    if (!mediaPath) return
+
     const meetings = store.getters['media/meetings'] as Map<
       string,
       Map<number, MeetingFile[]>
     >
+
     const dates = [...meetings.keys()].filter((date) => {
       if (date === 'Recurring') return false
       const day = $dayjs(
@@ -1091,13 +1088,11 @@ const plugin: Plugin = (
         day.isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
       )
     })
-    $findAll(join($mediaPath(), 'Recurring', '*')).forEach(
+
+    $findAll(join(mediaPath, 'Recurring', '*')).forEach(
       (recurringItem: string) => {
         dates.forEach((date) => {
-          $copy(
-            recurringItem,
-            join($mediaPath(), date, basename(recurringItem))
-          )
+          $copy(recurringItem, join(mediaPath, date, basename(recurringItem)))
         })
       }
     )
@@ -1251,8 +1246,8 @@ const plugin: Plugin = (
         await (store.state.media.progress as Map<string, Promise<string>>).get(
           newItem.url
         )
-      } else if (item.filepath && item.folder && item.safeName) {
-        const dest = join($mediaPath(), item.folder, item.safeName)
+      } else if (mediaPath && item.filepath && item.folder && item.safeName) {
+        const dest = join(mediaPath, item.folder, item.safeName)
         if (!existsSync(dest) || statSync(dest).size !== item.filesize) {
           $copy(item.filepath, dest)
         }
@@ -1312,29 +1307,27 @@ const plugin: Plugin = (
     } else {
       if ($getPrefs('meeting.enableMusicFadeOut')) {
         const now = $dayjs()
+        const fadeOutTime = $getPrefs('meeting.musicFadeOutTime') as number
         if ($getPrefs('meeting.musicFadeOutType') === 'smart') {
+          const mwDay = $getPrefs('meeting.mwDay') as number
+          const weDay = $getPrefs('meeting.weDay') as number
           const today = now.day() === 0 ? 6 : now.day() - 1 // Day is 0 indexed and starts with Sunday
-          if (
-            today === $getPrefs('meeting.mwDay') ||
-            today === $getPrefs('meeting.weDay')
-          ) {
+
+          if (today === mwDay || today === weDay) {
             // Set stop time depending on mw or we day
-            let meetingStarts = null
-            if (today === $getPrefs('meeting.mwDay')) {
-              meetingStarts = (
-                $getPrefs('meeting.mwStartTime') as string
-              ).split(':')
-            } else {
-              meetingStarts = (
-                $getPrefs('meeting.weStartTime') as string
-              ).split(':')
-            }
+            let day = 'mw'
+            if (today === weDay) day = 'we'
+
+            const meetingStarts = (
+              $getPrefs(`meeting.${day}StartTime`) as string
+            ).split(':')
+
             const timeToStop = now
               .hour(+meetingStarts[0])
               .minute(+meetingStarts[1])
               .second(0)
               .millisecond(0)
-              .subtract($getPrefs('meeting.musicFadeOutTime') as number, 's')
+              .subtract(fadeOutTime, 's')
               .subtract(6, 's')
 
             if (timeToStop.isAfter(now)) {
@@ -1342,10 +1335,7 @@ const plugin: Plugin = (
             }
           }
         } else {
-          store.commit(
-            'media/setMusicFadeOut',
-            now.add($getPrefs('meeting.musicFadeOutTime') as number, 'm')
-          )
+          store.commit('media/setMusicFadeOut', now.add(fadeOutTime, 'm'))
         }
       }
 
