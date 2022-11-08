@@ -174,7 +174,8 @@ if (gotTheLock) {
     )
   })
   ipcMain.handle('openDialog', async (_e, options) => {
-    return await require('electron').dialog.showOpenDialog(options)
+    const result = await require('electron').dialog.showOpenDialog(options)
+    return result
   })
 
   ipcMain.on('restart', () => {
