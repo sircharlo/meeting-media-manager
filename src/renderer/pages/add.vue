@@ -558,7 +558,10 @@ export default defineComponent({
           }
         }
 
-        await this.$convertUnusableFiles(this.$mediaPath() as string)
+        await this.$convertUnusableFiles(
+          this.$mediaPath() as string,
+          this.setProgress
+        )
         if (this.client) await this.$updateContent()
         this.getExistingMedia()
       } catch (e: unknown) {

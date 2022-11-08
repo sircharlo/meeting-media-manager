@@ -120,7 +120,10 @@ const plugin: Plugin = (
   })
 
   // Convert PDF files to images, so they can be used
-  async function convertPdf(mediaFile: string): Promise<void> {
+  async function convertPdf(
+    mediaFile: string,
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
+  ): Promise<void> {
     const pdfjsLib = require('pdfjs-dist') as typeof import('pdfjs-dist')
     try {
       pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
@@ -128,26 +131,43 @@ const plugin: Plugin = (
         url: pathToFileURL(mediaFile).href,
         verbosity: 0,
       }).promise
-      for (let pageNr = 1; pageNr <= pdf.numPages; pageNr++) {
-        await convertPdfPage(mediaFile, pdf, pageNr)
+
+      let loaded = 0
+      const promises: Promise<void>[] = []
+
+      // eslint-disable-next-line no-inner-declarations
+      function increasePageProgress() {
+        loaded++
+        if (setProgress) {
+          setProgress(loaded, pdf.numPages)
+        }
       }
+
+      for (let pageNr = 1; pageNr <= pdf.numPages; pageNr++) {
+        promises.push(
+          convertPdfPage(mediaFile, pdf, pageNr, increasePageProgress)
+        )
+      }
+      await Promise.allSettled(promises)
       $rm(mediaFile)
     } catch (e: unknown) {
       $warn('warnPdfConversionFailure', { identifier: basename(mediaFile) }, e)
     }
+    if (setProgress) increaseProgress(setProgress)
   }
 
   // Convert a single PDF page to a PNG file
   async function convertPdfPage(
     mediaFile: string,
     pdf: PDFDocumentProxy,
-    pageNr: number
+    pageNr: number,
+    increasePageProgress: () => void
   ): Promise<void> {
     try {
       // Set pdf page
       const page = await pdf.getPage(pageNr)
       const div = document.createElement('div')
-      div.id = 'pdf'
+      div.id = `pdf-${pageNr}`
       div.style.display = 'none'
 
       // Set canvas
@@ -193,26 +213,39 @@ const plugin: Plugin = (
         e
       )
     }
+    increasePageProgress()
   }
 
   // Convert all unusable files to usable files (e.g. PDF to PNG)
-  inject('convertUnusableFiles', async (dir: string): Promise<void> => {
-    const promises: Promise<void>[] = []
+  inject(
+    'convertUnusableFiles',
+    async (
+      dir: string,
+      setProgress?: (loaded: number, total: number, global?: boolean) => void
+    ): Promise<void> => {
+      const promises: Promise<void>[] = []
+      const pdfFiles = $findAll(join(dir, '**', '*pdf'), {
+        ignore: [join(dir, 'Recurring')],
+      })
 
-    $findAll(join(dir, '**', '*pdf'), {
-      ignore: [join(dir, 'Recurring')],
-    }).forEach((pdf) => {
-      promises.push(convertPdf(pdf))
-    })
+      const svgFiles = $findAll(join(dir, '**', '*svg'), {
+        ignore: [join(dir, 'Recurring')],
+      })
 
-    $findAll(join(dir, '**', '*svg'), {
-      ignore: [join(dir, 'Recurring')],
-    }).forEach((svg) => {
-      convertSvg(svg)
-    })
+      if (setProgress) initProgress(pdfFiles.length + svgFiles.length)
 
-    await Promise.allSettled(promises)
-  })
+      pdfFiles.forEach((pdf) => {
+        promises.push(convertPdf(pdf, setProgress))
+      })
+
+      svgFiles.forEach((svg) => {
+        convertSvg(svg)
+        if (setProgress) increaseProgress(setProgress)
+      })
+
+      await Promise.allSettled(promises)
+    }
+  )
 
   // Setup FFmpeg for video conversion
   async function setupFFmpeg(
