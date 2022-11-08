@@ -34,7 +34,7 @@ const plugin: Plugin = (
       const match = shortcuts.find(({ name }) => name === shortcut)
       if (match) {
         res = match.domain === domain && match.fn === fn
-      } else {
+      } else if (shortcut && fn && domain) {
         store.commit('present/addShortcut', { name: shortcut, domain, fn })
         res = await ipcRenderer.invoke('registerShortcut', {
           shortcut,

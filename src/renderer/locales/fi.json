@@ -46,6 +46,7 @@
   "errorWebdavPut": "Tapahtui virhe yritettäessä kirjoittaa seuraavaa tiedostoa. Ota yhteyttä videokonferenssin järjestäjään.",
   "errorWebdavRm": "Virhe yritettäessä poistaa seuraavaa tiedostoa. Ota yhteyttä videokonferenssin järjestäjään.",
   "errorWebdavTooBig": "Tiedosto, jota yrität ladata, on liian suuri (enintään 512 Mt). Tiedosto on lisätty paikallisesti, mutta ei cong-palvelimelle.",
+  "errorWebdavTooManyRequests": "Liian monta pyyntöä on lähetetty palvelimelle. Yritä uudelleen myöhemmin.",
   "excludeLffi": "Jäta ääni- ja videotiedostot pois <em>lffi</em>-esitteestä",
   "excludeLffiImages": "Jätä kuvat pois <em>lffi</em>-esitteestä",
   "excludeTh": "Jätä kaikki media pois <em>th</em>-esitteestä",
