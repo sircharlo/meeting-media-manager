@@ -525,7 +525,7 @@ const plugin: Plugin = (
         })
         .map((dir) =>
           $findAll(join($mediaPath(), dir, '*'), {
-            ignore: ['!**/(*.mp4|*.xspf|*.json)'], // Don't convert videos, playlists or markers
+            ignore: ['!**/(*.mp4|*.xspf|*.vtt|*.json)'], // Don't convert videos, playlists or markers
           })
         )
         .flat()

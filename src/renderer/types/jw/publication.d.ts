@@ -35,6 +35,8 @@ export interface PubImage {
   url: string
 }
 
+export interface Subtitle extends PubImage {}
+
 export interface PubFile extends PubImage {
   stream: string
 }
@@ -46,6 +48,7 @@ export interface BaseMediaFile {
   pub: string
   title: string
   track: number
+  subtitles: Subtitle | null
 }
 
 export interface SmallMediaFile extends BaseMediaFile {

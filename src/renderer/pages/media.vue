@@ -14,7 +14,7 @@ import { pathToFileURL } from 'url'
 import { defineComponent } from 'vue'
 // eslint-disable-next-line import/named
 import { readFileSync, existsSync } from 'fs-extra'
-import { join, basename } from 'upath'
+import { join, basename, changeExt } from 'upath'
 import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
@@ -27,6 +27,8 @@ export default defineComponent({
     return {
       scale: 1,
       zoomEnabled: false,
+      withSubtitles: false,
+      subtitleLang: null as null | string,
       panzoom: null as null | PanzoomObject,
       container: document.createElement('div'),
       yeartext: document.createElement('div'),
@@ -129,11 +131,20 @@ export default defineComponent({
     ipcRenderer.on('hideMedia', async () => {
       await this.hideMedia()
     })
-    ipcRenderer.on('startMediaDisplay', async (_e, prefs) => {
+    ipcRenderer.on('toggleSubtitles', (_e, enabled) => {
+      const video = document.querySelector('video') as HTMLVideoElement
+      if (video) {
+        video.textTracks[0].mode = enabled ? 'showing' : 'hidden'
+      }
+    })
+    ipcRenderer.on('startMediaDisplay', async (_e, prefs: ElectronStore) => {
       // Reset screen
       this.yeartext.innerHTML = ''
       const main = document.querySelector('main') as HTMLElement
       main.style.background = 'black'
+
+      this.withSubtitles = !!prefs.media.enableSubtitles
+      this.subtitleLang = prefs.media.langSubs
 
       // Look for a custom background
       const bgImage = this.$findOne(
@@ -213,8 +224,27 @@ export default defineComponent({
             video.controls = false
             video.src = src
 
+            if (
+              this.withSubtitles &&
+              existsSync(changeExt(media.path, 'vtt'))
+            ) {
+              const track = document.createElement('track')
+              track.kind = 'subtitles'
+              track.src = pathToFileURL(changeExt(media.path, 'vtt')).href
+              track.default = true
+              track.srclang = 'en' // Needs a valid srclang, but we don't use it
+              video.appendChild(track)
+            }
+
             // If the video is short (converted image), pause it, so it doesn't stop automatically
             video.oncanplay = () => {
+              if (
+                this.withSubtitles &&
+                existsSync(changeExt(media.path, 'vtt'))
+              ) {
+                console.log(video.textTracks)
+                video.textTracks[0].mode = 'showing'
+              }
               if (video.duration < 0.1) {
                 video.classList.add('shortVideoPaused')
                 video.pause()

@@ -4,7 +4,6 @@ import { Dayjs } from 'dayjs'
 import { ipcRenderer } from 'electron'
 import { Plugin } from '@nuxt/types'
 import { emptyDirSync, existsSync, readFileSync, statSync } from 'fs-extra'
-import { NuxtAxiosInstance } from '@nuxtjs/axios'
 import { basename, changeExt, extname, join, resolve } from 'upath'
 import { Database } from 'sql.js'
 import {
@@ -37,6 +36,7 @@ const plugin: Plugin = (
     $rename,
     $setDb,
     $copy,
+    $rm,
     $extractAllTo,
     $getPrefs,
     $mediaItems,
@@ -428,7 +428,7 @@ const plugin: Plugin = (
     }
   }
 
-  async function getMediaLinks(
+  async function getSmallMediaFiles(
     mediaItem: {
       pubSymbol: string
       docId?: number
@@ -439,10 +439,6 @@ const plugin: Plugin = (
     },
     silent?: boolean
   ): Promise<SmallMediaFile[]> {
-    if (mediaItem.lang) {
-      $log.debug(mediaItem)
-      $log.debug($getPrefs('media.lang'))
-    }
     let mediaFiles: MediaFile[] = []
     let smallMediaFiles: SmallMediaFile[] = []
 
@@ -554,6 +550,7 @@ const plugin: Plugin = (
             trackImage,
             track,
             pub,
+            subtitles,
             markers,
           }) => {
             return {
@@ -566,36 +563,104 @@ const plugin: Plugin = (
               trackImage: trackImage.url,
               track,
               pub,
+              subtitles: $getPrefs('media.enableSubtitles') ? subtitles : [],
               markers,
             }
           }
         ) as SmallMediaFile[]
-
-        const promises: Promise<void>[] = []
-
-        // Get thumbnail and primaryCategory
-        smallMediaFiles.forEach((item) => {
-          if (item.duration > 0 && (!item.trackImage || !item.pub)) {
-            const id = mediaItem.docId
-              ? `docid-${mediaItem.docId}_1`
-              : `pub-${[
-                  mediaItem.pubSymbol,
-                  mediaItem.issue?.toString().replace(/(\d{6})00$/gm, '$1'),
-                  mediaItem.track,
-                ]
-                  .filter(Boolean)
-                  .join('_')}`
-
-            promises.push(getAdditionalData(item, id))
-          }
-        })
-
-        await Promise.allSettled(promises)
       } else if (!silent) {
         $warn('infoPubIgnored', {
           identifier: Object.values(mediaItem).filter(Boolean).join('_'),
         })
       }
+    } catch (e: unknown) {
+      if (silent) {
+        $log.warn(e)
+      } else {
+        $warn(
+          'infoPubIgnored',
+          {
+            identifier: Object.values(mediaItem).filter(Boolean).join('_'),
+          },
+          e
+        )
+      }
+    }
+    $log.debug(smallMediaFiles)
+    return smallMediaFiles
+  }
+
+  async function getMediaLinks(
+    mediaItem: {
+      pubSymbol: string
+      docId?: number
+      track?: number
+      issue?: string
+      format?: string
+      lang?: string
+    },
+    silent?: boolean
+  ): Promise<SmallMediaFile[]> {
+    if (mediaItem.lang) {
+      $log.debug(mediaItem)
+      $log.debug($getPrefs('media.lang'))
+    }
+    let smallMediaFiles: SmallMediaFile[] = []
+
+    try {
+      const mediaPromises: Promise<SmallMediaFile[]>[] = [
+        getSmallMediaFiles(mediaItem, silent),
+      ]
+
+      const subsLang = $getPrefs('media.langSubs') as string
+      const subtitlesEnabled =
+        !!$getPrefs('media.enableSubtitles') && !!subsLang
+
+      if (subtitlesEnabled) {
+        mediaPromises.push(
+          getSmallMediaFiles(
+            {
+              ...mediaItem,
+              lang: subsLang,
+            },
+            silent
+          )
+        )
+      }
+      const result = await Promise.allSettled(mediaPromises)
+
+      smallMediaFiles = result[0].status === 'fulfilled' ? result[0].value : []
+      const subsResult = result[1]
+
+      if (subtitlesEnabled && subsResult?.status === 'fulfilled') {
+        smallMediaFiles.forEach((file) => {
+          const matchingFile = subsResult.value.find(
+            (sub) => file.pub === sub.pub && file.track === sub.track
+          )
+          file.subtitles = matchingFile?.subtitles ?? null
+        })
+      }
+
+      const promises: Promise<void>[] = []
+
+      // Get thumbnail and primaryCategory
+      smallMediaFiles.forEach((item) => {
+        if (item.duration > 0 && (!item.trackImage || !item.pub)) {
+          const id = mediaItem.docId
+            ? `docid-${mediaItem.docId}_1`
+            : `pub-${[
+                mediaItem.pubSymbol,
+                mediaItem.issue?.toString().replace(/(\d{6})00$/gm, '$1'),
+                mediaItem.track,
+              ]
+                .filter(Boolean)
+                .join('_')}`
+
+          promises.push(getAdditionalData(item, id))
+        }
+      })
+
+      await Promise.allSettled(promises)
     } catch (e: unknown) {
       if (silent) {
         $log.warn(e)
@@ -709,6 +774,7 @@ const plugin: Plugin = (
     if (downloadInProgress) {
       return await downloadInProgress
     }
+
     // Set extra properties
     file.downloadRequired = true
     file.cacheFilename = basename(file.url || '') || file.safeName
@@ -719,13 +785,24 @@ const plugin: Plugin = (
       file.downloadRequired = file.filesize !== statSync(file.cacheFile).size
     }
 
+    const subtitlesEnabled = $getPrefs('media.enableSubtitles')
+    const subsLang = $getPrefs('media.langSubs') as string
+    let subtitle = null
+
+    if (subtitlesEnabled && subsLang && file.subtitles) {
+      subtitle = $axios.$get(file.subtitles.url, {
+        responseType: 'arraybuffer',
+      })
+    }
+
     if (file.downloadRequired) {
       if (extname(file.cacheFile) === '.jwpub') {
         emptyDirSync(file.cacheDir)
       }
+
       const downloadedFile = Buffer.from(
         new Uint8Array(
-          await ($axios as NuxtAxiosInstance).$get(file.url, {
+          await $axios.$get(file.url, {
             responseType: 'arraybuffer',
             onDownloadProgress: (progressEvent) => {
               if (setProgress) {
@@ -740,7 +817,17 @@ const plugin: Plugin = (
 
       if (file.folder) {
         const filePath = $mediaPath(file)
-        if (filePath) $write(filePath, downloadedFile)
+        if (filePath) {
+          $write(filePath, downloadedFile)
+          if (subtitle) {
+            $write(
+              changeExt(filePath, '.vtt'),
+              Buffer.from(new Uint8Array(await subtitle))
+            )
+          } else {
+            $rm(changeExt(filePath, '.vtt'))
+          }
+        }
       }
       store.commit('stats/setDownloads', {
         origin: 'jworg',
@@ -753,7 +840,17 @@ const plugin: Plugin = (
     } else {
       if (file.folder) {
         const filePath = $mediaPath(file)
-        if (filePath) $copy(file.cacheFile, filePath)
+        if (filePath) {
+          $copy(file.cacheFile, filePath)
+          if (subtitle) {
+            $write(
+              changeExt(filePath, '.vtt'),
+              Buffer.from(new Uint8Array(await subtitle))
+            )
+          } else {
+            $rm(changeExt(filePath, '.vtt'))
+          }
+        }
       }
       if (
         extname(file.cacheFile) === '.jwpub' &&

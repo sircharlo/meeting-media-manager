@@ -46,6 +46,7 @@ export interface MediaPrefs {
   enableMediaDisplayButton: boolean
   enableMp4Conversion: boolean
   enablePp: boolean
+  enableSubtitles: boolean
   enableVlcPlaylistCreation: boolean
   excludeLffi: boolean
   excludeLffiImages: boolean
@@ -54,6 +55,7 @@ export interface MediaPrefs {
   hideWinAfterMedia: boolean
   keepOriginalsAfterConversion: boolean
   lang: string | null
+  langSubs: string | null
   langUpdatedLast: string | null
   maxRes: Res
   mediaWinShortcut: string | null

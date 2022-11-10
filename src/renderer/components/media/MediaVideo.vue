@@ -91,12 +91,24 @@
           : `${duration}`
       }}
     </v-btn>
+    <v-btn
+      v-if="playing && ccAvailable"
+      x-small
+      absolute
+      tile
+      depressed
+      :color="ccEnabled ? 'primary' : undefined"
+      style="left: 123px; bottom: 7.5px"
+      @click="ccEnabled = !ccEnabled"
+    >
+      <font-awesome-icon :icon="ccIcon" />
+    </v-btn>
   </div>
 </template>
 <script lang="ts">
 import { pathToFileURL } from 'url'
 import { Duration } from 'dayjs/plugin/duration'
-import { basename } from 'upath'
+import { basename, changeExt } from 'upath'
 import { defineComponent, PropOptions } from 'vue'
 import { ipcRenderer } from 'electron'
 import {
@@ -105,7 +117,11 @@ import {
   faSquareCheck,
   faRotateLeft,
   faFilm,
+  faClosedCaptioning,
+  IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
+import { faClosedCaptioning as farClosedCaptioning } from '@fortawesome/free-regular-svg-icons'
+import { existsSync } from 'original-fs'
 import {
   AUDIO_ICON,
   HUNDRED_PERCENT,
@@ -132,6 +148,8 @@ export default defineComponent({
       progress: [] as string[],
       clickedOnce: false,
       changeTime: false,
+      ccAvailable: false,
+      ccEnabled: false,
       audioIcon: AUDIO_ICON,
       videoIcon: VIDEO_ICON,
       original: {
@@ -146,6 +164,9 @@ export default defineComponent({
     }
   },
   computed: {
+    ccIcon(): IconDefinition {
+      return this.ccEnabled ? faClosedCaptioning : farClosedCaptioning
+    },
     faForwardStep() {
       return faForwardStep
     },
@@ -239,6 +260,7 @@ export default defineComponent({
           if (this.playing) this.$emit('progress', percentage)
         })
       } else {
+        this.ccEnabled = this.ccAvailable
         this.current = 0
         this.progress = []
         if (this.tempClipped) {
@@ -248,6 +270,9 @@ export default defineComponent({
         ipcRenderer.removeAllListeners('videoProgress')
       }
     },
+    ccEnabled(val: boolean) {
+      this.toggleSubtitles(val)
+    },
     tempClipped(val: { start: string; end: string }): void {
       if (val) {
         this.clipped = val
@@ -256,6 +281,8 @@ export default defineComponent({
     },
   },
   mounted(): void {
+    this.setCCAvailable()
+    this.ccEnabled = this.ccAvailable
     const div = document.querySelector(`#${this.id}`)
     const source = document.createElement('source')
     source.src = this.url
@@ -288,6 +315,14 @@ export default defineComponent({
     div?.replaceChild(video, div.firstChild as ChildNode)
   },
   methods: {
+    setCCAvailable() {
+      this.ccAvailable =
+        !!this.$getPrefs('media.enableSubtitles') &&
+        existsSync(changeExt(this.src, '.vtt'))
+    },
+    toggleSubtitles(enabled: boolean) {
+      ipcRenderer.send('toggleSubtitles', enabled)
+    },
     format(duration: Duration) {
       if (duration.hours() > 0) {
         return duration.format('HH:mm:ss')

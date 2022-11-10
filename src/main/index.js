@@ -278,6 +278,9 @@ if (gotTheLock) {
   ipcMain.on('playVideo', () => {
     mediaWin.webContents.send('playVideo')
   })
+  ipcMain.on('toggleSubtitles', (_e, enabled) => {
+    mediaWin.webContents.send('toggleSubtitles', enabled)
+  })
   ipcMain.on('videoScrub', (_e, timeAsPercent) => {
     mediaWin.webContents.send('videoScrub', timeAsPercent)
   })

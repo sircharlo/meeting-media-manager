@@ -144,6 +144,10 @@ const schema: Schema<ElectronStore> = {
         type: ['string', 'null'],
         default: PREFS.media.lang,
       },
+      langSubs: {
+        type: ['string', 'null'],
+        default: PREFS.media.langSubs,
+      },
       langUpdatedLast: {
         type: ['string', 'null'],
         default: PREFS.media.langUpdatedLast,
@@ -160,6 +164,10 @@ const schema: Schema<ElectronStore> = {
       enableMp4Conversion: {
         type: 'boolean',
         default: PREFS.media.enableMp4Conversion,
+      },
+      enableSubtitles: {
+        type: 'boolean',
+        default: PREFS.media.enableSubtitles,
       },
       keepOriginalsAfterConversion: {
         type: 'boolean',
