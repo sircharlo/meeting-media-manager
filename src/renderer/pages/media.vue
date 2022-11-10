@@ -90,13 +90,17 @@ export default defineComponent({
     })
     ipcRenderer.on('pauseVideo', () => {
       const video = document.querySelector('video') as HTMLVideoElement
-      video.classList.add('manuallyPaused')
-      video.pause()
+      if (video) {
+        video.classList.add('manuallyPaused')
+        video.pause()
+      }
     })
     ipcRenderer.on('playVideo', () => {
       const video = document.querySelector('video') as HTMLVideoElement
-      video.classList.remove('manuallyPaused', 'shortVideoPaused')
-      video.play()
+      if (video) {
+        video.classList.remove('manuallyPaused', 'shortVideoPaused')
+        video.play()
+      }
     })
     ipcRenderer.on('windowResizing', (_e, args) => {
       this.resizingNow(args[0], args[1])
@@ -120,7 +124,9 @@ export default defineComponent({
     })
     ipcRenderer.on('videoScrub', (_e, timeAsPercent) => {
       const video = document.querySelector('video') as HTMLVideoElement
-      video.currentTime = (video.duration * timeAsPercent) / HUNDRED_PERCENT
+      if (video) {
+        video.currentTime = (video.duration * timeAsPercent) / HUNDRED_PERCENT
+      }
     })
     ipcRenderer.on('hideMedia', async () => {
       await this.hideMedia()
