@@ -527,11 +527,10 @@ const plugin: Plugin = ({ $sentry }, inject) => {
   inject('getPrefs', (key: string): unknown => {
     return store?.get(key)
   })
-  inject(
-    'getAllPrefs',
-    (): ElectronStore =>
-      JSON.parse(readFileSync(store.path, 'utf8')) as ElectronStore
-  )
+  inject('getAllPrefs', (): ElectronStore => {
+    if (!store) return PREFS
+    return JSON.parse(readFileSync(store.path, 'utf8')) as ElectronStore
+  })
 
   inject('setPrefs', (key: string, value: unknown) => {
     store.set(key, value)

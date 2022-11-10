@@ -330,9 +330,12 @@ const plugin: Plugin = (
         return store.state.cong.prefs as ElectronStore
       }
 
+      const dir = $getPrefs('cong.dir') as string
+      if (!dir) return undefined
+
       try {
         const client = store.state.cong.client as WebDAVClient
-        const path = join($getPrefs('cong.dir'), 'forcedPrefs.json')
+        const path = join(dir, 'forcedPrefs.json')
         if (
           (store.state.cong.contents as FileStat[]).find(
             ({ filename }) => filename === path
