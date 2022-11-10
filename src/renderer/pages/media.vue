@@ -226,8 +226,7 @@ export default defineComponent({
               track.kind = 'subtitles'
               track.src = pathToFileURL(changeExt(media.path, 'vtt')).href
               track.default = true
-              track.label = this.subtitleLang ?? 'English'
-              track.srclang = 'en'
+              track.srclang = 'en' // Needs a valid srclang, but we don't use it
               video.appendChild(track)
             }
 
