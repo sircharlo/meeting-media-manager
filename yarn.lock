@@ -3668,14 +3668,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-sfc@npm:2.7.13":
-  version: 2.7.13
-  resolution: "@vue/compiler-sfc@npm:2.7.13"
+"@vue/compiler-sfc@npm:2.7.14":
+  version: 2.7.14
+  resolution: "@vue/compiler-sfc@npm:2.7.14"
   dependencies:
     "@babel/parser": ^7.18.4
     postcss: ^8.4.14
     source-map: ^0.6.1
-  checksum: c5e21f55f8951e184294b3dbfd13cb1b2bdc70be88c47c7ca1209f85b19bdb9df0a34dfa3720d75b538e34b63a5c9b8fa28b87eeedf3b84dbd03122f601dcf82
+  checksum: 25e00abaecb311f1effbf539bc3e4fdeedb39d35f9c2947b2640187a047e6a7400e693fd7da1d3a98977b9078c5bf629ca47f8b9a59dc14a080c0a1e1dd06a49
   languageName: node
   linkType: hard
 
@@ -6909,16 +6909,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:21.2.2":
-  version: 21.2.2
-  resolution: "electron@npm:21.2.2"
+"electron@npm:21.2.3":
+  version: 21.2.3
+  resolution: "electron@npm:21.2.3"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 29f2671209b698a15def5dab205f543b6b7d0c6f93a455e0146ba7debd6d01d2bad628b82863668cb5074b08b6ab4e0a6c7e8531e1a265c08f4a94b45e98fbe5
+  checksum: 9e871c38a07fb9bb4b2d1d7957c5b39f5b5acab95746c0cbcc4a8f4b5c22a4a05d96e340584aa58aa58903d625174dbbe6834da3d4c5cf6d8246a0ad9225ba15
   languageName: node
   linkType: hard
 
@@ -10561,12 +10561,14 @@ __metadata:
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
     "@xpda-dev/webpack-step": ^0.1.6
+    chokidar: ^3.5.3
     consola: ^2.15.3
+    core-js: ^3.26.0
     cross-env: ^7.0.3
     css-loader: ^5.2.7
     deepmerge: ^4.2.2
     dotenv: ^16.0.3
-    electron: 21.2.2
+    electron: 21.2.3
     electron-builder: 23.6.0
     electron-devtools-installer: ^3.2.0
     electron-playwright-helpers: ^1.2.0
@@ -10604,7 +10606,7 @@ __metadata:
     typescript: ^4.8.4
     upath: ^2.0.1
     v-mask: ^2.3.0
-    vue: 2.7.13
+    vue: 2.7.14
     vue-router: ^3.6.5
     vue-runtime-template-compiler: ^1.3.0
     vuedraggable: ^2.24.3
@@ -15988,9 +15990,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-server-renderer@npm:2.7.13":
-  version: 2.7.13
-  resolution: "vue-server-renderer@npm:2.7.13"
+"vue-server-renderer@npm:2.7.14":
+  version: 2.7.14
+  resolution: "vue-server-renderer@npm:2.7.14"
   dependencies:
     chalk: ^4.1.2
     hash-sum: ^2.0.0
@@ -16000,7 +16002,7 @@ __metadata:
     resolve: ^1.22.0
     serialize-javascript: ^6.0.0
     source-map: 0.5.6
-  checksum: 32b25897d34369b4aade71c9b5942724ced0967b220b42dc7917aa1f4123cb5c0613a4fdfa73eac3691a5098170462700aa817c2903f064b84e11ca1b5bc0fc6
+  checksum: 736672de638287d89c23b68a833e5d46e6c202cbd8af9850fac5da37e6682022932a866b0beafc40b50c9d699532e0d2446d11fae8153f0dc1938b75574671d4
   languageName: node
   linkType: hard
 
@@ -16014,13 +16016,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-template-compiler@npm:2.7.13":
-  version: 2.7.13
-  resolution: "vue-template-compiler@npm:2.7.13"
+"vue-template-compiler@npm:2.7.14":
+  version: 2.7.14
+  resolution: "vue-template-compiler@npm:2.7.14"
   dependencies:
     de-indent: ^1.0.2
     he: ^1.2.0
-  checksum: d16d5416326dbe048559301e13e34437ecd52e9e80eef865c107e548ea48786f73539991aa361d213caeacc5420ee5a9c2d462da7aca9bc6fd439df83019ac19
+  checksum: eba9d2eed6b7110c963bc356b47bdd11d4023d25148abb7e5f7826db2fefe7ad8a575787ee0d8fa47701d44a6f54bde475279b1319f44e1049271eb2419f93a7
   languageName: node
   linkType: hard
 
@@ -16031,13 +16033,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:2.7.13":
-  version: 2.7.13
-  resolution: "vue@npm:2.7.13"
+"vue@npm:2.7.14":
+  version: 2.7.14
+  resolution: "vue@npm:2.7.14"
   dependencies:
-    "@vue/compiler-sfc": 2.7.13
+    "@vue/compiler-sfc": 2.7.14
     csstype: ^3.1.0
-  checksum: b54f6a307f19ebeca5ed24a08befb7141e57e56d0367dc8179dca69ca3f6fc8cf18cbf084387d79b4e8528bb53b645af5338d1322359009e2c27a19fb25a1a8f
+  checksum: 8b06da67cc40870c66a30b7a6bc2874950cd4383792c371eb30497dd14fc7b41cf308b1c4517368d8f0e7ac16198c08de19236f6a79fe43f4bdbc4a1d9d4ad07
   languageName: node
   linkType: hard
 
