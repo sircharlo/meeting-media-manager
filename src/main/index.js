@@ -1,5 +1,12 @@
 /* eslint-disable import/named */
-import { app, ipcMain, nativeTheme, screen } from 'electron'
+import {
+  app,
+  BrowserView,
+  ipcMain,
+  nativeTheme,
+  screen,
+  session,
+} from 'electron'
 import { init } from '@sentry/electron'
 import { initRenderer } from 'electron-store'
 import { existsSync } from 'fs-extra'
@@ -44,6 +51,7 @@ try {
 // Initial values
 let win = null
 let winHandler = null
+let website = null
 let mediaWin = null
 let mediaWinHandler = null
 let closeAttempts = 0
@@ -278,6 +286,27 @@ if (gotTheLock) {
   ipcMain.on('playVideo', () => {
     mediaWin.webContents.send('playVideo')
   })
+  ipcMain.on('openWebsite', (_e, url) => {
+    if (website) {
+      mediaWin.removeBrowserView(website)
+    } else {
+      website = new BrowserView()
+      mediaWin.setBrowserView(website)
+      website.setBounds({
+        x: 0,
+        y: 0,
+        width: mediaWin.getBounds().width,
+        height: mediaWin.getBounds().height,
+      })
+      website.setAutoResize({
+        width: true,
+        height: true,
+        horizontal: true,
+        vertical: true,
+      })
+      website.webContents.loadURL(url)
+    }
+  })
   ipcMain.on('toggleSubtitles', (_e, enabled) => {
     mediaWin.webContents.send('toggleSubtitles', enabled)
   })
@@ -421,6 +450,16 @@ if (gotTheLock) {
 
   // When ready create main window
   app.whenReady().then(() => {
+    session.defaultSession.webRequest.onBeforeSendHeaders(
+      { urls: ['*://*.jw.org/*'] },
+      (details, resolve) => {
+        details.requestHeaders = {
+          cookie: 'ckLang=E;',
+        }
+        resolve({ requestHeaders: details.requestHeaders })
+      }
+    )
+
     screen.on('display-removed', () => {
       win.webContents.send('displaysChanged')
     })

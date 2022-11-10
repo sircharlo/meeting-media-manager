@@ -46,6 +46,7 @@
           />
         </v-col>
         <v-col class="text-right" cols="auto">
+          <v-btn @click="openWebsite()">JW</v-btn>
           <icon-btn
             v-if="shuffleEnabled"
             variant="shuffle"
@@ -242,6 +243,9 @@ export default defineComponent({
     }
   },
   methods: {
+    openWebsite() {
+      ipcRenderer.send('openWebsite', 'https://jw.org')
+    },
     setWindowSize() {
       this.windowWidth = window.innerWidth
       this.windowHeight = window.innerHeight
