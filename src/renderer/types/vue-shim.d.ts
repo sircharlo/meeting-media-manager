@@ -78,6 +78,10 @@ interface CustomProps {
   ) => Promise<MeetingFile[]>
   $getJWLangs: (forceReload: boolean = false) => Promise<ShortJWLang[]>
   $getPrefs: (key: string) => unknown
+  $getPubAvailability: (
+    lang: string,
+    reload?: boolean
+  ) => Promise<{ mwb: boolean; w: boolean }>
   $getMediaLinks: (
     mediaItem: {
       docId?: number

@@ -3,7 +3,7 @@ import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { existsSync, readFileSync } from 'fs-extra'
-import { JWLang, ShortJWLang } from '~/types'
+import { Filter, JWLang, ShortJWLang } from '~/types'
 
 const plugin: Plugin = (
   {
@@ -73,6 +73,71 @@ const plugin: Plugin = (
     )
 
     return langs
+  })
+
+  inject('getPubAvailability', async (lang: string, refresh = 'false') => {
+    let mwb
+    let w
+
+    const url = (cat: string, filter: string, lang: string) =>
+      `https://www.jw.org/en/library/${cat}/json/filters/${filter}/?contentLanguageFilter=${lang}`
+
+    try {
+      const langPath = join($appPath(), 'langs.json')
+      const langs = JSON.parse(
+        readFileSync(langPath, 'utf8') ?? '[]'
+      ) as ShortJWLang[]
+
+      const langObject = langs.find((l) => l.langcode === lang)
+      if (!langObject) return { w, mwb }
+      if (
+        !refresh &&
+        langObject.mwbAvailable !== undefined &&
+        langObject.wAvailable !== undefined
+      ) {
+        return { w: langObject.wAvailable, mwb: langObject.mwbAvailable }
+      }
+
+      const wAvailabilityEndpoint = url(
+        'magazines',
+        'MagazineViewsFilter',
+        langObject.symbol
+      )
+      const mwbAvailabilityEndpoint = url(
+        'jw-meeting-workbook',
+        'IssueYearViewsFilter',
+        langObject.symbol
+      )
+
+      const result = await Promise.allSettled([
+        ipcRenderer.invoke('getFromJWOrg', {
+          url: mwbAvailabilityEndpoint,
+        }) as Promise<Filter>,
+        ipcRenderer.invoke('getFromJWOrg', {
+          url: wAvailabilityEndpoint,
+        }) as Promise<Filter>,
+      ])
+
+      const mwbResult = result[0]
+      const wResult = result[1]
+
+      if (mwbResult.status === 'fulfilled') {
+        mwb = !!mwbResult.value.choices.find(
+          (c) => c.optionValue === new Date().getFullYear()
+        )
+      }
+      if (wResult.status === 'fulfilled') {
+        w = !!wResult.value.choices.find((c) => c.optionValue === 'w')
+      }
+
+      langObject.mwbAvailable = mwb
+      langObject.wAvailable = w
+      $write(langPath, JSON.stringify(langs, null, 2))
+    } catch (e: unknown) {
+      $log.error(e)
+    }
+
+    return { mwb, w }
   })
 
   // Get yeartext from WT online library

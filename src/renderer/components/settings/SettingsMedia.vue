@@ -318,11 +318,12 @@ export default defineComponent({
       Object.assign(this.media, this.$getPrefs('media'))
     },
     'media.lang': {
-      async handler() {
+      async handler(val: string) {
         // Clear the db and media store and refresh the langs from jw.org
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
         await this.$getJWLangs()
+        await this.$getPubAvailability(val)
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview(true)
         }
