@@ -131,6 +131,12 @@ export default defineComponent({
     ipcRenderer.on('hideMedia', async () => {
       await this.hideMedia()
     })
+    ipcRenderer.on('toggleSubtitles', (_e, enabled) => {
+      const video = document.querySelector('video') as HTMLVideoElement
+      if (video) {
+        video.textTracks[0].mode = enabled ? 'showing' : 'hidden'
+      }
+    })
     ipcRenderer.on('startMediaDisplay', async (_e, prefs: ElectronStore) => {
       // Reset screen
       this.yeartext.innerHTML = ''
