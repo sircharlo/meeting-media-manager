@@ -24,6 +24,28 @@
     />
     <v-divider class="mb-6" />
     <form-input
+      id="media.enableSubtitles"
+      v-model="media.enableSubtitles"
+      field="switch"
+      :locked="$isLocked('media.enableSubtitles')"
+      :label="$t('enableSubtitles')"
+    />
+    <form-input
+      v-if="media.enableSubtitles"
+      id="media.langSubs"
+      v-model="media.langSubs"
+      field="autocomplete"
+      :label="$t('subsLang')"
+      :items="subLangs"
+      item-text="name"
+      item-value="langcode"
+      :loading="loading"
+      :locked="$isLocked('media.langSubs')"
+      auto-select-first
+      required
+    />
+    <v-divider class="mb-6" />
+    <form-input
       id="media.enableMp4Conversion"
       v-model="media.enableMp4Conversion"
       field="switch"
@@ -241,13 +263,17 @@ export default defineComponent({
     faArrowsRotate() {
       return faArrowsRotate
     },
-    langs(): { name: string; langcode: string }[] {
+    langs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
       return this.jwLangs.map((lang) => {
         return {
           name: `${lang.vernacularName} (${lang.name})`,
           langcode: lang.langcode,
+          isSignLanguage: lang.isSignLanguage,
         }
       })
+    },
+    subLangs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
+      return this.langs.filter((lang) => !lang.isSignLanguage)
     },
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient

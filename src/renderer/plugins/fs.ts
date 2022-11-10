@@ -38,7 +38,7 @@ const plugin: Plugin = (
     try {
       ensureDirSync(pubPath)
     } catch (e: unknown) {
-      $warn('errorSetVars', { identifier: pubPath })
+      $warn('errorSetVars', { identifier: pubPath }, e)
     }
 
     if (!file) return pubPath
@@ -70,7 +70,7 @@ const plugin: Plugin = (
     try {
       ensureDirSync(mediaPath)
     } catch (e: unknown) {
-      $warn('errorSetVars', { identifier: mediaPath })
+      $warn('errorSetVars', { identifier: mediaPath }, e)
     }
 
     if (!file) return mediaPath
@@ -149,7 +149,7 @@ const plugin: Plugin = (
         ensureFileSync(file)
         writeFileSync(file, data)
       } catch (e: unknown) {
-        $warn('errorSetVars', { identifier: dirname(file) })
+        $warn('errorSetVars', { identifier: dirname(file) }, e)
       }
     }
   )
@@ -159,7 +159,7 @@ const plugin: Plugin = (
       ensureFileSync(dest)
       copyFileSync(src, dest)
     } catch (e: unknown) {
-      $warn('errorSetVars', { identifier: dirname(dest) })
+      $warn('errorSetVars', { identifier: dirname(dest) }, e)
     }
   })
 
