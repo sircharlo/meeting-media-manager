@@ -36,6 +36,7 @@ const plugin: Plugin = (
     $rename,
     $setDb,
     $copy,
+    $rm,
     $extractAllTo,
     $getPrefs,
     $mediaItems,
@@ -633,9 +634,10 @@ const plugin: Plugin = (
 
       if (subtitlesEnabled && subsResult?.status === 'fulfilled') {
         smallMediaFiles.forEach((file) => {
-          file.subtitles =
-            subsResult.value.find((sub) => file.url === sub.url)?.subtitles ??
-            []
+          const matchingFile = subsResult.value.find(
+            (sub) => file.pub === sub.pub && file.track === sub.track
+          )
+          file.subtitles = matchingFile?.subtitles ?? null
         })
       }
 
@@ -760,18 +762,6 @@ const plugin: Plugin = (
 
   inject('getDbFromJWPUB', getDbFromJWPUB)
 
-  async function syncSubtitle(url: string, dest: string) {
-    const subtitle = Buffer.from(
-      new Uint8Array(
-        await $axios.$get(url, {
-          responseType: 'arraybuffer',
-        })
-      )
-    )
-
-    $write(dest, subtitle)
-  }
-
   async function downloadIfRequired(
     file: VideoFile,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
@@ -784,6 +774,7 @@ const plugin: Plugin = (
     if (downloadInProgress) {
       return await downloadInProgress
     }
+
     // Set extra properties
     file.downloadRequired = true
     file.cacheFilename = basename(file.url || '') || file.safeName
@@ -795,18 +786,18 @@ const plugin: Plugin = (
     }
 
     const subtitlesEnabled = $getPrefs('media.enableSubtitles')
+    const subsLang = $getPrefs('media.langSubs') as string
+    let subtitle = null
+
+    if (subtitlesEnabled && subsLang && file.subtitles) {
+      subtitle = $axios.$get(file.subtitles.url, {
+        responseType: 'arraybuffer',
+      })
+    }
 
     if (file.downloadRequired) {
       if (extname(file.cacheFile) === '.jwpub') {
         emptyDirSync(file.cacheDir)
-      }
-
-      let subtitle = null
-      if (subtitlesEnabled && file.subtitles.length > 0) {
-        console.log('get subtitle...')
-        subtitle = $axios.$get(file.subtitles[0].url, {
-          responseType: 'arraybuffer',
-        })
       }
 
       const downloadedFile = Buffer.from(
@@ -823,12 +814,6 @@ const plugin: Plugin = (
       )
 
       $write(file.cacheFile, downloadedFile)
-      if (subtitle) {
-        $write(
-          changeExt(file.cacheFile, '.vtt'),
-          Buffer.from(new Uint8Array(await subtitle))
-        )
-      }
 
       if (file.folder) {
         const filePath = $mediaPath(file)
@@ -839,6 +824,8 @@ const plugin: Plugin = (
               changeExt(filePath, '.vtt'),
               Buffer.from(new Uint8Array(await subtitle))
             )
+          } else {
+            $rm(changeExt(filePath, '.vtt'))
           }
         }
       }
@@ -855,12 +842,13 @@ const plugin: Plugin = (
         const filePath = $mediaPath(file)
         if (filePath) {
           $copy(file.cacheFile, filePath)
-          if (subtitlesEnabled) {
-            const subPath = changeExt(file.cacheFile, '.vtt')
-            if (!existsSync(subPath)) {
-              await syncSubtitle(file.subtitles[0].url, subPath)
-            }
-            $copy(subPath, changeExt(filePath, '.vtt'))
+          if (subtitle) {
+            $write(
+              changeExt(filePath, '.vtt'),
+              Buffer.from(new Uint8Array(await subtitle))
+            )
+          } else {
+            $rm(changeExt(filePath, '.vtt'))
           }
         }
       }

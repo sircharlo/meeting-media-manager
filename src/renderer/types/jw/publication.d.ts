@@ -48,7 +48,7 @@ export interface BaseMediaFile {
   pub: string
   title: string
   track: number
-  subtitles: Subtitle[]
+  subtitles: Subtitle | null
 }
 
 export interface SmallMediaFile extends BaseMediaFile {
