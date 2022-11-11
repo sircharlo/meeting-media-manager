@@ -49,6 +49,7 @@ export function createWebsiteController(pos) {
   const win = winHandler.browserWindow
   win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
   win.maximize()
+  return winHandler
 }
 
 // Get screen information
