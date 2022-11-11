@@ -1,12 +1,5 @@
 /* eslint-disable import/named */
-import {
-  app,
-  BrowserView,
-  ipcMain,
-  nativeTheme,
-  screen,
-  session,
-} from 'electron'
+import { app, ipcMain, nativeTheme, screen, session } from 'electron'
 import { init } from '@sentry/electron'
 import { initRenderer } from 'electron-store'
 import { existsSync } from 'fs-extra'
@@ -18,6 +11,8 @@ require('dotenv').config()
 const { platform } = require('os')
 const windowStateKeeper = require('electron-window-state')
 const isDev = process.env.NODE_ENV === 'development'
+
+app.commandLine.appendSwitch('disable-site-isolation-trials')
 
 const initSentry =
   !!process.env.SENTRY_DSN &&
@@ -52,8 +47,11 @@ try {
 let win = null
 let winHandler = null
 let website = null
+let websiteWinHandler = null
 let mediaWin = null
 let mediaWinHandler = null
+let websiteController = null
+let websiteControllerWinHandler = null
 let closeAttempts = 0
 let allowClose = true
 let updateDownloaded = false
@@ -126,6 +124,7 @@ function closeMediaWindow() {
     authorizedCloseMediaWin = true
     mediaWin.close()
     mediaWin = null
+    mediaWinHandler = null
     authorizedCloseMediaWin = false
   }
 }
@@ -286,26 +285,76 @@ if (gotTheLock) {
   ipcMain.on('playVideo', () => {
     mediaWin.webContents.send('playVideo')
   })
+  ipcMain.on('scrollWebsite', (_e, pos) => {
+    website.webContents.send('scrollWebsite', pos)
+  })
+  ipcMain.on('clickOnWebsite', (_e, target) => {
+    website.webContents.send('clickOnWebsite', target)
+  })
   ipcMain.on('openWebsite', (_e, url) => {
-    if (website) {
-      mediaWin.removeBrowserView(website)
-    } else {
-      website = new BrowserView()
-      mediaWin.setBrowserView(website)
-      website.setBounds({
-        x: 0,
-        y: 0,
-        width: mediaWin.getBounds().width,
-        height: mediaWin.getBounds().height,
-      })
-      website.setAutoResize({
-        width: true,
-        height: true,
-        horizontal: true,
-        vertical: true,
-      })
-      website.webContents.loadURL(url)
+    if (website && websiteController) {
+      websiteWinHandler.loadPage('/browser?url=' + url)
+      websiteControllerWinHandler.loadPage(
+        '/browser?controller=true&url=' + url
+      )
+      return
     }
+
+    websiteWinHandler = new BrowserWinHandler({
+      title: 'Website Window',
+      x: mediaWin.getBounds().x,
+      y: mediaWin.getBounds().y,
+      width: mediaWin.getBounds().width,
+      height: mediaWin.getBounds().height,
+      frame: false,
+      minHeight: 360,
+      minWidth: 640,
+      thinkFrame: false,
+      backgroundColor: 'black',
+      fullscreen: mediaWin.isFullScreen(),
+    })
+
+    website = websiteWinHandler.browserWindow
+    websiteWinHandler.loadPage('/browser?url=' + url)
+
+    if (platform() !== 'darwin') {
+      mediaWin.setAlwaysOnTop(false)
+      website.setAlwaysOnTop(true, 'screen-saver')
+      website.setMenuBarVisibility(false)
+    }
+
+    const AR_WIDTH = 16
+    const AR_HEIGHT = 9
+
+    website.setAspectRatio(AR_WIDTH / AR_HEIGHT)
+
+    websiteControllerWinHandler = new BrowserWinHandler({
+      title: 'Website Controller Window',
+      x: win.getBounds().x,
+      y: win.getBounds().y,
+      minHeight: 720,
+      minWidth: 1280,
+      width: 1280,
+      height: 720,
+    })
+
+    websiteController = websiteControllerWinHandler.browserWindow
+    websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
+
+    websiteController.on('close', () => {
+      authorizedCloseMediaWin = true
+      if (website) {
+        website.destroy()
+        website = null
+        websiteWinHandler = null
+      }
+      websiteController = null
+      websiteControllerWinHandler = null
+      authorizedCloseMediaWin = false
+      if (mediaWin) {
+        mediaWin.setAlwaysOnTop(true, 'screen-saver')
+      }
+    })
   })
   ipcMain.on('toggleSubtitles', (_e, enabled) => {
     mediaWin.webContents.send('toggleSubtitles', enabled)
@@ -453,10 +502,38 @@ if (gotTheLock) {
     session.defaultSession.webRequest.onBeforeSendHeaders(
       { urls: ['*://*.jw.org/*'] },
       (details, resolve) => {
+        let cookies =
+          'cookieConsent-STRICTLY_NECESSARY=true; cookieConsent-FUNCTIONAL=true; cookieConsent-DIAGNOSTIC=false; cookieConsent-USAGE=false; ckLang=E;'
+        if (details.requestHeaders.cookie) {
+          cookies += ' ' + details.requestHeaders.cookie
+        } else if (details.requestHeaders.Cookie) {
+          cookies += ' ' + details.requestHeaders.Cookie
+        }
         details.requestHeaders = {
-          cookie: 'ckLang=E;',
+          ...details.requestHeaders,
+          Cookie: cookies,
+          'User-Agent': details.requestHeaders['User-Agent'].replace(
+            /Electron\/\d+\.\d+\.\d+ /,
+            ''
+          ),
         }
         resolve({ requestHeaders: details.requestHeaders })
+      }
+    )
+
+    session.defaultSession.webRequest.onHeadersReceived(
+      { urls: ['*://*.jw.org/*'] },
+      (details, resolve) => {
+        details.responseHeaders['x-frame-options'] = 'ALLOWALL'
+        const setCookie = details.responseHeaders['set-cookie']
+        if (setCookie) {
+          details.responseHeaders['set-cookie'] = setCookie.map((c) =>
+            c
+              .replace('HttpOnly', 'Secure')
+              .replace('Secure', 'SameSite=None; Secure')
+          )
+        }
+        resolve({ responseHeaders: details.responseHeaders })
       }
     )
 

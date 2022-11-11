@@ -46,7 +46,7 @@
           />
         </v-col>
         <v-col class="text-right" cols="auto">
-          <v-btn @click="openWebsite()">JW</v-btn>
+          <v-btn color="primary" @click="openWebsite()">JW.ORG</v-btn>
           <icon-btn
             v-if="shuffleEnabled"
             variant="shuffle"
@@ -244,7 +244,10 @@ export default defineComponent({
   },
   methods: {
     openWebsite() {
-      ipcRenderer.send('openWebsite', 'https://jw.org')
+      ipcRenderer.send(
+        'openWebsite',
+        `https://www.jw.org/${this.$getPrefs('app.localAppLang')}/`
+      )
     },
     setWindowSize() {
       this.windowWidth = window.innerWidth
