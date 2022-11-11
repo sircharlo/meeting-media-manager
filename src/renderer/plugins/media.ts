@@ -612,11 +612,12 @@ const plugin: Plugin = (
         getSmallMediaFiles(mediaItem, silent),
       ]
 
+      const mediaLang = mediaItem.lang || ($getPrefs('media.lang') as string)
       const subsLang = $getPrefs('media.langSubs') as string
       const subtitlesEnabled =
         !!$getPrefs('media.enableSubtitles') && !!subsLang
 
-      if (subtitlesEnabled) {
+      if (subtitlesEnabled && mediaLang !== subsLang) {
         mediaPromises.push(
           getSmallMediaFiles(
             {
@@ -632,7 +633,11 @@ const plugin: Plugin = (
       smallMediaFiles = result[0].status === 'fulfilled' ? result[0].value : []
       const subsResult = result[1]
 
-      if (subtitlesEnabled && subsResult?.status === 'fulfilled') {
+      if (
+        subtitlesEnabled &&
+        mediaLang !== subsLang &&
+        subsResult?.status === 'fulfilled'
+      ) {
         smallMediaFiles.forEach((file) => {
           const matchingFile = subsResult.value.find(
             (sub) => file.pub === sub.pub && file.track === sub.track
