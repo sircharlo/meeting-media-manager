@@ -1,4 +1,55 @@
 import { screen } from 'electron'
+import BrowserWinHandler from './BrowserWinHandler'
+const { platform } = require('os')
+
+const AR_WIDTH = 16
+const AR_HEIGHT = 9
+
+// Create a generic Media Window
+export function createMediaWindow(windowOpts) {
+  const winHandler = new BrowserWinHandler({
+    title: 'Media Window',
+    backgroundColor: 'black',
+    width: 1280,
+    height: 720,
+    minHeight: 110,
+    minWidth: 195,
+    frame: false,
+    thinkFrame: false,
+    show: false,
+    ...windowOpts,
+  })
+
+  const win = winHandler.browserWindow
+  win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
+  if (platform() !== 'darwin') {
+    win.setAlwaysOnTop(true, 'screen-saver')
+    win.setMenuBarVisibility(false)
+  }
+
+  win.once('ready-to-show', () => {
+    win.show()
+  })
+
+  return winHandler
+}
+
+// Create a website controller window
+export function createWebsiteController(pos) {
+  const winHandler = new BrowserWinHandler({
+    title: 'Website Controller Window',
+    x: pos.x,
+    y: pos.y,
+    minHeight: 720,
+    minWidth: 1280,
+    width: 1280,
+    height: 720,
+  })
+
+  const win = winHandler.browserWindow
+  win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
+  win.maximize()
+}
 
 // Get screen information
 export function getScreenInfo(win, mediaWin) {

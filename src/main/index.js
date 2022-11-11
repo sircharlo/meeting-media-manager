@@ -6,7 +6,13 @@ import { existsSync } from 'fs-extra'
 import { join, normalize } from 'upath'
 import { autoUpdater } from 'electron-updater'
 import BrowserWinHandler from './BrowserWinHandler'
-import { getScreenInfo, fadeWindow, setMediaWindowPosition } from './utils'
+import {
+  getScreenInfo,
+  fadeWindow,
+  setMediaWindowPosition,
+  createMediaWindow,
+  createWebsiteController,
+} from './utils'
 require('dotenv').config()
 const { platform } = require('os')
 const windowStateKeeper = require('electron-window-state')
@@ -300,17 +306,14 @@ if (gotTheLock) {
       return
     }
 
-    websiteWinHandler = new BrowserWinHandler({
+    websiteWinHandler = createMediaWindow({
       title: 'Website Window',
       x: mediaWin.getBounds().x,
       y: mediaWin.getBounds().y,
       width: mediaWin.getBounds().width,
       height: mediaWin.getBounds().height,
-      frame: false,
       minHeight: 360,
       minWidth: 640,
-      thinkFrame: false,
-      backgroundColor: 'black',
       fullscreen: mediaWin.isFullScreen(),
     })
 
@@ -318,25 +321,10 @@ if (gotTheLock) {
     websiteWinHandler.loadPage('/browser?url=' + url)
 
     if (platform() !== 'darwin') {
-      mediaWin.setAlwaysOnTop(false)
-      website.setAlwaysOnTop(true, 'screen-saver')
-      website.setMenuBarVisibility(false)
+      mediaWin.setAlwaysOnTop(false) // Allow browser window to be on top
     }
 
-    const AR_WIDTH = 16
-    const AR_HEIGHT = 9
-
-    website.setAspectRatio(AR_WIDTH / AR_HEIGHT)
-
-    websiteControllerWinHandler = new BrowserWinHandler({
-      title: 'Website Controller Window',
-      x: win.getBounds().x,
-      y: win.getBounds().y,
-      minHeight: 720,
-      minWidth: 1280,
-      width: 1280,
-      height: 720,
-    })
+    websiteControllerWinHandler = createWebsiteController(win.getBounds())
 
     websiteController = websiteControllerWinHandler.browserWindow
     websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
@@ -391,21 +379,12 @@ if (gotTheLock) {
       const STARTING_POSITION = 50
 
       const windowOptions = {
-        title: 'Media Window',
         icon: join(
           process.resourcesPath,
           'videoPlayer',
           `videoPlayer.${iconType}`
         ),
-        frame: false,
-        backgroundColor: 'black',
         // roundedCorners: false, disabled again until this issue is fixed: https://github.com/electron/electron/issues/36251
-        minHeight: 110,
-        minWidth: 195,
-        width: 1280,
-        height: 720,
-        show: false,
-        thickFrame: false,
         x:
           screenInfo.displays.find(
             (display) => display.id === mediaWinOptions.destination
@@ -417,18 +396,9 @@ if (gotTheLock) {
       }
 
       if (mediaWinOptions.type === 'fullscreen') windowOptions.fullscreen = true
-      mediaWinHandler = new BrowserWinHandler(windowOptions)
+      mediaWinHandler = createMediaWindow(mediaWinOptions)
       mediaWin = mediaWinHandler.browserWindow
 
-      if (platform() !== 'darwin') {
-        mediaWin.setAlwaysOnTop(true, 'screen-saver')
-        mediaWin.setMenuBarVisibility(false)
-      }
-
-      const AR_WIDTH = 16
-      const AR_HEIGHT = 9
-
-      mediaWin.setAspectRatio(AR_WIDTH / AR_HEIGHT)
       mediaWinHandler.loadPage('/media')
 
       mediaWin
@@ -450,9 +420,6 @@ if (gotTheLock) {
         .on('resized', () => {
           // Not working on Linux
           mediaWin.webContents.send('windowResized')
-        })
-        .once('ready-to-show', () => {
-          mediaWin.show()
         })
       win.webContents.send('mediaWindowShown')
     } else {
