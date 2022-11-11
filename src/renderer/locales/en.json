@@ -19,7 +19,7 @@
   "enableMusicButton": "Enable button to play Kingdom songs on shuffle",
   "enableObs": "Enable OBS Studio compatibility mode <em>(requires obs-websocket)</em>",
   "enablePp": "Enable keyboard shortcuts during media playback (for use with a USB remote control, for example)",
-  "enableSubtitles": "Enable subtitles for media",
+  "enableSubtitles": "Enable subtitles for videos",
   "enableVlcPlaylistCreation": "Create playlists for use with <em>VLC</em>",
   "error": "Error",
   "errorAdditionalMedia": "An error occurred while importing media. Please contact your videoconference organizer.",
