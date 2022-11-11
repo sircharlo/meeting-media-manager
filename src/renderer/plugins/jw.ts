@@ -62,6 +62,12 @@ const plugin: Plugin = (
       $log.error(e)
     }
 
+    const promises: Promise<{ lang: string; w?: boolean; mwb?: boolean }>[] = []
+    langs
+      .filter((l) => l.wAvailable === undefined || l.mwbAvailable === undefined)
+      .splice(0, 10)
+      .forEach((l) => promises.push(getPubAvailability(l.langcode)))
+
     const langPrefInLangs = langs.find(
       (lang) => lang.langcode === $getPrefs('media.lang')
     )
@@ -72,12 +78,30 @@ const plugin: Plugin = (
       langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'
     )
 
+    const result = await Promise.allSettled(promises)
+    result.forEach((r) => {
+      if (r.status === 'fulfilled') {
+        const match = langs.find((l) => l.langcode === r.value.lang)
+        if (match) {
+          match.wAvailable = r.value.w
+          match.mwbAvailable = r.value.mwb
+        }
+      }
+    })
+
+    $write(langPath, JSON.stringify(langs, null, 2))
+
     return langs
   })
 
-  inject('getPubAvailability', async (lang: string, refresh = 'false') => {
+  async function getPubAvailability(
+    lang: string,
+    refresh = false
+  ): Promise<{ lang: string; w?: boolean; mwb?: boolean }> {
     let mwb
     let w
+
+    $log.debug(`Checking availability of ${lang}`)
 
     const url = (cat: string, filter: string, lang: string) =>
       `https://www.jw.org/en/library/${cat}/json/filters/${filter}/?contentLanguageFilter=${lang}`
@@ -89,13 +113,13 @@ const plugin: Plugin = (
       ) as ShortJWLang[]
 
       const langObject = langs.find((l) => l.langcode === lang)
-      if (!langObject) return { w, mwb }
+      if (!langObject) return { lang, w, mwb }
       if (
         !refresh &&
         langObject.mwbAvailable !== undefined &&
         langObject.wAvailable !== undefined
       ) {
-        return { w: langObject.wAvailable, mwb: langObject.mwbAvailable }
+        return { lang, w: langObject.wAvailable, mwb: langObject.mwbAvailable }
       }
 
       const wAvailabilityEndpoint = url(
@@ -137,8 +161,10 @@ const plugin: Plugin = (
       $log.error(e)
     }
 
-    return { mwb, w }
-  })
+    return { lang, mwb, w }
+  }
+
+  inject('getPubAvailability', getPubAvailability)
 
   // Get yeartext from WT online library
   inject('getYearText', async (force = false): Promise<string | null> => {

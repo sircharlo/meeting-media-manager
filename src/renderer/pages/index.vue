@@ -411,6 +411,7 @@ export default defineComponent({
     },
   },
   async mounted() {
+    const promise = this.$getJWLangs()
     this.$store.commit('notify/deleteByMessage', 'cantCloseMediaWindowOpen')
     if (this.weekParam > -1) {
       this.currentWeek = this.weekParam
@@ -422,10 +423,6 @@ export default defineComponent({
         path: this.localePath('/settings'),
         query: this.$route.query,
       })
-    }
-
-    if (!this.jwSync) {
-      await this.$getJWLangs()
     }
 
     if (!this.$getPrefs('meeting.specialCong')) {
@@ -450,6 +447,7 @@ export default defineComponent({
       this.action = 'startMediaSync'
     }
     this.$store.commit('stats/setInitialLoad', false)
+    await promise
   },
   methods: {
     async execute(action: string) {

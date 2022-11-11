@@ -264,13 +264,20 @@ export default defineComponent({
       return faArrowsRotate
     },
     langs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
-      return this.jwLangs.map((lang) => {
-        return {
-          name: `${lang.vernacularName} (${lang.name})`,
-          langcode: lang.langcode,
-          isSignLanguage: lang.isSignLanguage,
-        }
-      })
+      return this.jwLangs
+        .filter(
+          (l) =>
+            l.langcode === this.media.lang ||
+            l.wAvailable !== false ||
+            l.mwbAvailable !== false
+        )
+        .map((lang) => {
+          return {
+            name: `${lang.vernacularName} (${lang.name})`,
+            langcode: lang.langcode,
+            isSignLanguage: lang.isSignLanguage,
+          }
+        })
     },
     subLangs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
       return this.langs.filter((lang) => !lang.isSignLanguage)

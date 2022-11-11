@@ -81,7 +81,7 @@ interface CustomProps {
   $getPubAvailability: (
     lang: string,
     reload?: boolean
-  ) => Promise<{ mwb: boolean; w: boolean }>
+  ) => Promise<{ lang: string; mwb: boolean; w: boolean }>
   $getMediaLinks: (
     mediaItem: {
       docId?: number
