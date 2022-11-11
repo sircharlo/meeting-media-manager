@@ -324,6 +324,11 @@ export default defineComponent({
     forcedPrefs() {
       Object.assign(this.media, this.$getPrefs('media'))
     },
+    'media.langSubs': {
+      async handler(val: string) {
+        await this.$getPubAvailability(val)
+      },
+    },
     'media.lang': {
       async handler(val: string) {
         // Clear the db and media store and refresh the langs from jw.org
