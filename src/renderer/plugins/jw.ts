@@ -62,15 +62,16 @@ const plugin: Plugin = (
       $log.error(e)
     }
 
+    const mediaLang = $getPrefs('media.lang') as string
     const promises: Promise<{ lang: string; w?: boolean; mwb?: boolean }>[] = []
+    if (mediaLang) promises.push(getPubAvailability(mediaLang))
+
     langs
       .filter((l) => l.wAvailable === undefined || l.mwbAvailable === undefined)
       .splice(0, 10)
       .forEach((l) => promises.push(getPubAvailability(l.langcode)))
 
-    const langPrefInLangs = langs.find(
-      (lang) => lang.langcode === $getPrefs('media.lang')
-    )
+    const langPrefInLangs = langs.find((lang) => lang.langcode === mediaLang)
 
     store.commit('media/setMediaLang', langPrefInLangs ?? null)
     store.commit(

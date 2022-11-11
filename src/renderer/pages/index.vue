@@ -595,7 +595,10 @@ export default defineComponent({
       if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
     },
     async getMwMedia(mwDay: Dayjs, filter: string = 'all') {
-      if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {
+      if (this.mediaLangObject?.mwbAvailable === false) {
+        this.$warn('errorMwbUnavailable')
+        this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'error')
+      } else if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {
         this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'warning')
         try {
           await this.$getMwMedia(
@@ -612,7 +615,10 @@ export default defineComponent({
       }
     },
     async getWeMedia(weDay: Dayjs, filter: string = 'all') {
-      if (filter !== 'mw' && this.now.isSameOrBefore(weDay)) {
+      if (this.mediaLangObject?.wAvailable === false) {
+        this.$warn('errorWUnavailable')
+        this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'error')
+      } else if (filter !== 'mw' && this.now.isSameOrBefore(weDay)) {
         this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'warning')
         try {
           await this.$getWeMedia(

@@ -329,8 +329,8 @@ export default defineComponent({
         // Clear the db and media store and refresh the langs from jw.org
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
-        await this.$getJWLangs()
         await this.$getPubAvailability(val)
+        await this.$getJWLangs()
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview(true)
         }
