@@ -545,7 +545,7 @@ const plugin: Plugin = ({ $sentry }, inject) => {
     const prefs = JSON.parse(readFileSync(store.path, 'utf8')) as ElectronStore
     $sentry.setContext('prefs', {
       ...prefs,
-      obs: prefs.app.obs,
+      obs: prefs.app?.obs,
     })
   })
 

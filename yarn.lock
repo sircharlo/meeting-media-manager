@@ -10606,7 +10606,7 @@ __metadata:
     typescript: ^4.8.4
     upath: ^2.0.1
     v-mask: ^2.3.0
-    vue: 2.7.14
+    vue: ^2.7.14
     vue-router: ^3.6.5
     vue-runtime-template-compiler: ^1.3.0
     vuedraggable: ^2.24.3
