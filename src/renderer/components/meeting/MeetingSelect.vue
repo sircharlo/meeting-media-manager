@@ -64,15 +64,23 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.dates = this.$findAll(join(this.$mediaPath(), '*'), {
+    const mediaPath = this.$mediaPath()
+    if (!mediaPath) {
+      this.$router.push({
+        path: this.localePath('/settings'),
+        query: this.$route.query,
+      })
+      return
+    }
+    this.dates = this.$findAll(join(mediaPath, '*'), {
       onlyDirectories: true,
-      ignore: [join(this.$mediaPath(), 'Recurring')],
+      ignore: [join(mediaPath, 'Recurring')],
     })
       .map((date) => basename(date))
       .filter(
         (date) =>
           this.validDate(date) &&
-          this.$findAll(join(this.$mediaPath(), date, '*')).length > 0
+          this.$findAll(join(mediaPath, date, '*')).length > 0
       )
 
     // If the user is not trying to change the date he previously selected
