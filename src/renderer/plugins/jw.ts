@@ -63,32 +63,25 @@ const plugin: Plugin = (
     }
 
     const mediaLang = $getPrefs('media.lang') as string
-    const promises: Promise<{ lang: string; w?: boolean; mwb?: boolean }>[] = []
-    if (mediaLang) promises.push(getPubAvailability(mediaLang))
-
-    langs
-      .filter((l) => l.wAvailable === undefined || l.mwbAvailable === undefined)
-      .splice(0, 10)
-      .forEach((l) => promises.push(getPubAvailability(l.langcode)))
-
     const langPrefInLangs = langs.find((lang) => lang.langcode === mediaLang)
+
+    // Check current lang if it hasn't been checked yet
+    if (
+      mediaLang &&
+      langPrefInLangs &&
+      (langPrefInLangs.mwbAvailable === undefined ||
+        langPrefInLangs.mwbAvailable === undefined)
+    ) {
+      const availability = await getPubAvailability(mediaLang)
+      langPrefInLangs.wAvailable = availability.w
+      langPrefInLangs.mwbAvailable = availability.mwb
+    }
 
     store.commit('media/setMediaLang', langPrefInLangs ?? null)
     store.commit(
       'media/setSongPub',
       langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'
     )
-
-    const result = await Promise.allSettled(promises)
-    result.forEach((r) => {
-      if (r.status === 'fulfilled') {
-        const match = langs.find((l) => l.langcode === r.value.lang)
-        if (match) {
-          match.wAvailable = r.value.w
-          match.mwbAvailable = r.value.mwb
-        }
-      }
-    })
 
     $write(langPath, JSON.stringify(langs, null, 2))
 
