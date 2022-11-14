@@ -52,8 +52,7 @@ try {
 // Initial values
 let win = null
 let winHandler = null
-let website = null
-let websiteWinHandler = null
+let website = false
 let mediaWin = null
 let mediaWinHandler = null
 let websiteController = null
@@ -292,56 +291,30 @@ if (gotTheLock) {
     mediaWin.webContents.send('playVideo')
   })
   ipcMain.on('scrollWebsite', (_e, pos) => {
-    website.webContents.send('scrollWebsite', pos)
+    mediaWin.webContents.send('scrollWebsite', pos)
   })
   ipcMain.on('clickOnWebsite', (_e, target) => {
-    website.webContents.send('clickOnWebsite', target)
+    mediaWin.webContents.send('clickOnWebsite', target)
   })
   ipcMain.on('openWebsite', (_e, url) => {
     if (website && websiteController) {
-      websiteWinHandler.loadPage('/browser?url=' + url)
+      mediaWinHandler.loadPage('/browser?url=' + url)
       websiteControllerWinHandler.loadPage(
         '/browser?controller=true&url=' + url
       )
       return
     }
 
-    websiteWinHandler = createMediaWindow({
-      title: 'Website Window',
-      x: mediaWin.getBounds().x,
-      y: mediaWin.getBounds().y,
-      width: mediaWin.getBounds().width,
-      height: mediaWin.getBounds().height,
-      minHeight: 360,
-      minWidth: 640,
-      fullscreen: mediaWin.isFullScreen(),
-    })
-
-    website = websiteWinHandler.browserWindow
-    websiteWinHandler.loadPage('/browser?url=' + url)
-
-    if (platform() !== 'darwin') {
-      mediaWin.setAlwaysOnTop(false) // Allow browser window to be on top
-    }
+    mediaWinHandler.loadPage('/browser?url=' + url)
+    website = true
 
     websiteControllerWinHandler = createWebsiteController(win.getBounds())
-
     websiteController = websiteControllerWinHandler.browserWindow
     websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
 
     websiteController.on('close', () => {
-      authorizedCloseMediaWin = true
-      if (website) {
-        website.destroy()
-        website = null
-        websiteWinHandler = null
-      }
-      websiteController = null
-      websiteControllerWinHandler = null
-      authorizedCloseMediaWin = false
-      if (mediaWin) {
-        mediaWin.setAlwaysOnTop(true, 'screen-saver')
-      }
+      mediaWinHandler.loadPage('/media')
+      website = false
     })
   })
   ipcMain.on('toggleSubtitles', (_e, enabled) => {
@@ -384,7 +357,7 @@ if (gotTheLock) {
           'videoPlayer',
           `videoPlayer.${iconType}`
         ),
-        // roundedCorners: false, disabled again until this issue is fixed: https://github.com/electron/electron/issues/36251
+        fullscreen: mediaWinOptions.type === 'fullscreen',
         x:
           screenInfo.displays.find(
             (display) => display.id === mediaWinOptions.destination
@@ -395,11 +368,8 @@ if (gotTheLock) {
           ).bounds.y + STARTING_POSITION,
       }
 
-      if (mediaWinOptions.type === 'fullscreen') windowOptions.fullscreen = true
-      mediaWinHandler = createMediaWindow(mediaWinOptions)
+      mediaWinHandler = createMediaWindow(windowOptions)
       mediaWin = mediaWinHandler.browserWindow
-
-      mediaWinHandler.loadPage('/media')
 
       mediaWin
         .on('close', (e) => {
@@ -421,6 +391,7 @@ if (gotTheLock) {
           // Not working on Linux
           mediaWin.webContents.send('windowResized')
         })
+
       win.webContents.send('mediaWindowShown')
     } else {
       setMediaWindowPosition(win, mediaWin, mediaWinOptions)

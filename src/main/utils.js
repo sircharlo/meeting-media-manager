@@ -9,6 +9,7 @@ const AR_HEIGHT = 9
 export function createMediaWindow(windowOpts) {
   const winHandler = new BrowserWinHandler({
     title: 'Media Window',
+    // roundedCorners: false, disabled again until this issue is fixed: https://github.com/electron/electron/issues/36251
     backgroundColor: 'black',
     width: 1280,
     height: 720,
@@ -26,6 +27,8 @@ export function createMediaWindow(windowOpts) {
     win.setAlwaysOnTop(true, 'screen-saver')
     win.setMenuBarVisibility(false)
   }
+
+  winHandler.loadPage('/media')
 
   win.once('ready-to-show', () => {
     win.show()
