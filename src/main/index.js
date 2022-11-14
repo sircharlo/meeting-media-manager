@@ -297,6 +297,7 @@ if (gotTheLock) {
     mediaWin.webContents.send('clickOnWebsite', target)
   })
   ipcMain.on('openWebsite', (_e, url) => {
+    win.webContents.send('showingMedia', [true, true])
     if (website && websiteController) {
       mediaWinHandler.loadPage('/browser?url=' + url)
       websiteControllerWinHandler.loadPage(
@@ -313,6 +314,7 @@ if (gotTheLock) {
     websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
 
     websiteController.on('close', () => {
+      win.webContents.send('showingMedia', [false, false])
       mediaWinHandler.loadPage('/media')
       website = false
     })

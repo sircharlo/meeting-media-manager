@@ -5,11 +5,17 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
 
 export default defineComponent({
   name: 'BrowserPage',
   layout: 'media',
+  head(): MetaInfo {
+    return {
+      title: this.controller ? 'Website Controller' : 'Media Window',
+    }
+  },
   computed: {
     url() {
       return this.$route.query.url
