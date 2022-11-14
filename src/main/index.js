@@ -18,7 +18,7 @@ const { platform } = require('os')
 const windowStateKeeper = require('electron-window-state')
 const isDev = process.env.NODE_ENV === 'development'
 
-app.commandLine.appendSwitch('disable-site-isolation-trials')
+app.commandLine.appendSwitch('disable-site-isolation-trials') // Allow listeners to work in iFrames
 
 const initSentry =
   !!process.env.SENTRY_DSN &&
