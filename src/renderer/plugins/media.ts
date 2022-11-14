@@ -79,7 +79,8 @@ const plugin: Plugin = (
     const extractDb = await getDbFromJWPUB(
       symbol,
       extract.IssueTagNumber,
-      setProgress
+      setProgress,
+      extract.Lang
     )
     if (!extractDb) return []
 
@@ -208,7 +209,8 @@ const plugin: Plugin = (
     silent: boolean,
     keySymbol: string,
     issueTagNumber: string,
-    memOnly: boolean
+    memOnly: boolean,
+    lang?: string
   ) {
     if (targetParNrExists) {
       const result = $query(
@@ -249,6 +251,7 @@ const plugin: Plugin = (
                 track: mmItem.Track as number,
                 issue: (mmItem.IssueTagNumber as number)?.toString(),
                 docId: mmItem.MultiMeps as number,
+                lang,
               },
               silent
             )
@@ -303,6 +306,7 @@ const plugin: Plugin = (
     db: Database,
     docId: number | null,
     mepsId?: number,
+    lang?: string,
     memOnly?: boolean,
     silent?: boolean
   ): Promise<MeetingFile[]> {
@@ -399,7 +403,8 @@ const plugin: Plugin = (
             !!silent,
             keySymbol,
             issueTagNumber,
-            !!memOnly
+            !!memOnly,
+            lang
           )
         )
       })
@@ -693,6 +698,7 @@ const plugin: Plugin = (
     pub?: string,
     issue?: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void,
+    lang?: string,
     localPath = ''
   ): Promise<Database | null> {
     let db: Database | null
@@ -727,6 +733,7 @@ const plugin: Plugin = (
             pubSymbol: pub,
             issue,
             format: 'JWPUB',
+            lang,
           })
         )[0] as VideoFile
 

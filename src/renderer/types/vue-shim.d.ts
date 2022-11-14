@@ -67,12 +67,14 @@ interface CustomProps {
     pub?: string,
     issue?: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void,
+    lang?: string,
     localPath: string = ''
   ) => Promise<Database | null>
   $getDocumentMultiMedia: (
     db: Database,
     docId: number | null,
     mepsId?: number,
+    lang?: string,
     memOnly?: boolean,
     silent?: boolean
   ) => Promise<MeetingFile[]>
