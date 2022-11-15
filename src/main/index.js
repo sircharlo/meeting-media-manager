@@ -306,6 +306,8 @@ if (gotTheLock) {
       return
     }
 
+    // eslint-disable-next-line no-magic-numbers
+    mediaWin.setMinimumSize(1280, 720)
     mediaWinHandler.loadPage('/browser?url=' + url)
     website = true
 
@@ -330,6 +332,8 @@ if (gotTheLock) {
     websiteController.on('close', () => {
       win.webContents.send('showingMedia', [false, false])
       mediaWinHandler.loadPage('/media')
+      // eslint-disable-next-line no-magic-numbers
+      mediaWin.setMinimumSize(195, 110)
       website = false
     })
   })
