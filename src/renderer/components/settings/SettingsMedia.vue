@@ -264,13 +264,20 @@ export default defineComponent({
       return faArrowsRotate
     },
     langs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
-      return this.jwLangs.map((lang) => {
-        return {
-          name: `${lang.vernacularName} (${lang.name})`,
-          langcode: lang.langcode,
-          isSignLanguage: lang.isSignLanguage,
-        }
-      })
+      return this.jwLangs
+        .filter(
+          (l) =>
+            l.langcode === this.media.lang ||
+            l.wAvailable !== false ||
+            l.mwbAvailable !== false
+        )
+        .map((lang) => {
+          return {
+            name: `${lang.vernacularName} (${lang.name})`,
+            langcode: lang.langcode,
+            isSignLanguage: lang.isSignLanguage,
+          }
+        })
     },
     subLangs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
       return this.langs.filter((lang) => !lang.isSignLanguage)
@@ -317,11 +324,17 @@ export default defineComponent({
     forcedPrefs() {
       Object.assign(this.media, this.$getPrefs('media'))
     },
+    'media.langSubs': {
+      async handler(val: string) {
+        await this.$getPubAvailability(val)
+      },
+    },
     'media.lang': {
-      async handler() {
+      async handler(val: string) {
         // Clear the db and media store and refresh the langs from jw.org
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
+        await this.$getPubAvailability(val)
         await this.$getJWLangs()
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview(true)
