@@ -85,7 +85,12 @@ const plugin: Plugin = (
     if (!extractDb) return []
 
     return (
-      await getDocumentMultiMedia(extractDb, null, extract.RefMepsDocumentId)
+      await getDocumentMultiMedia(
+        extractDb,
+        null,
+        extract.RefMepsDocumentId,
+        extract.Lang
+      )
     )
       .filter((mmItem) => {
         if (
@@ -212,6 +217,16 @@ const plugin: Plugin = (
     memOnly: boolean,
     lang?: string
   ) {
+    if (mmItem.Link) {
+      try {
+        const matches = mmItem.Link.match(/\/(.*)\//)
+        if (matches && matches.length > 0) {
+          lang = (matches.pop() as string).split(':')[0]
+        }
+      } catch (e: unknown) {
+        $log.error(e)
+      }
+    }
     if (targetParNrExists) {
       const result = $query(
         db,
@@ -265,10 +280,11 @@ const plugin: Plugin = (
           mmItem.IssueTagNumber = +issueTagNumber
           if (!memOnly) {
             mmItem.LocalPath = join(
-              $pubPath(),
-              mmItem.KeySymbol as string,
-              mmItem.IssueTagNumber.toString(),
-              '0',
+              $pubPath({
+                BeginParagraphOrdinal: 0,
+                title: '',
+                queryInfo: mmItem,
+              }),
               mmItem.FilePath
             )
           }
@@ -357,9 +373,9 @@ const plugin: Plugin = (
       let groupAndSort = ''
 
       if (mmTable === 'DocumentMultimedia') {
-        select += `, ${mmTable}.BeginParagraphOrdinal, ${mmTable}.EndParagraphOrdinal, Multimedia.KeySymbol, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber`
-        from += ` INNER JOIN Multimedia ON Multimedia.MultimediaId = ${mmTable}.MultimediaId`
-        groupAndSort = `GROUP BY ${mmTable}.MultimediaId ORDER BY BeginParagraphOrdinal`
+        select += `, ${mmTable}.BeginParagraphOrdinal, ${mmTable}.EndParagraphOrdinal, Extract.Link, Multimedia.KeySymbol, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber`
+        from += ` INNER JOIN Multimedia ON Multimedia.MultimediaId = ${mmTable}.MultimediaId LEFT JOIN DocumentExtract ON DocumentExtract.DocumentId = ${mmTable}.DocumentId AND DocumentExtract.BeginParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal AND DocumentExtract.EndParagraphOrdinal = ${mmTable}.EndParagraphOrdinal LEFT JOIN Extract ON Extract.ExtractId = DocumentExtract.ExtractId`
+        groupAndSort = `GROUP BY ${mmTable}.MultimediaId ORDER BY ${mmTable}.BeginParagraphOrdinal`
 
         if (targetParNrExists) {
           select += `, Question.TargetParagraphNumberLabel`
@@ -422,9 +438,14 @@ const plugin: Plugin = (
   }
   inject('getDocumentMultiMedia', getDocumentMultiMedia)
 
-  async function getAdditionalData(item: SmallMediaFile, id: string) {
+  async function getAdditionalData(
+    item: SmallMediaFile,
+    id: string,
+    lang?: string
+  ) {
+    const mediaLang = lang || $getPrefs('media.lang')
     const result = (await $mediaItems.$get(
-      `${$getPrefs('media.lang')}/${id}_VIDEO`
+      `${mediaLang}/${id}_VIDEO`
     )) as MediaItemResult
 
     if (result?.media?.length > 0) {
@@ -666,7 +687,7 @@ const plugin: Plugin = (
                 .filter(Boolean)
                 .join('_')}`
 
-          promises.push(getAdditionalData(item, id))
+          promises.push(getAdditionalData(item, id, mediaLang))
         }
       })
 
