@@ -393,7 +393,7 @@ if (gotTheLock) {
   autoUpdater.on('error', (e) => {
     win.webContents.send('notifyUser', [
       'updateError',
-      { type: 'warning', identifier: e.message },
+      { type: 'error', identifier: e.message },
       e,
     ])
   })
