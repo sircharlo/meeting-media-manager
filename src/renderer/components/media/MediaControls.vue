@@ -28,9 +28,6 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <v-btn color="primary" :disabled="mediaActive" @click="openWebsite()"
-          >jw.org</v-btn
-        >
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
@@ -161,6 +158,7 @@ import {
   faRotateRight,
   faBackward,
   faForward,
+  faGlobe,
   faSquareCheck,
   faEllipsisVertical,
   faArrowDownShortWide,
@@ -219,6 +217,13 @@ export default defineComponent({
           icons: [faEye, faListOl],
           // @ts-ignore
           action: this.togglePrefix,
+        },
+        {
+          title: this.$t('openJWorg'),
+          icons: [faGlobe],
+          // @ts-ignore
+          action: this.openWebsite,
+          disabled: true,
         },
       ] as {
         title: string

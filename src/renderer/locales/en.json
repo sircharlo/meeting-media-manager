@@ -91,6 +91,7 @@
   "obsUseV4": "Use <em>obs-websocket v4</em>",
   "offlineMode": "Offline mode",
   "openFolder": "Open media folder",
+  "openJWorg": "Open JW.org",
   "openTargetFolderAfterSync": "Open folder after media sync",
   "optionsApp": "Application setup",
   "optionsCongSync": "Congregation sync setup",
