@@ -5,7 +5,7 @@
       <v-col class="text-left" cols="4">
         <v-menu bottom right>
           <template #activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
+            <v-btn icon aria-label="More actions" v-bind="attrs" v-on="on">
               <font-awesome-icon :icon="faEllipsisVertical" size="lg" />
             </v-btn>
           </template>

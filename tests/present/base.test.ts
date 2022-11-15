@@ -65,7 +65,7 @@ test('render the presentation mode page correctly', async () => {
     // Check if toggle prefix button is present
     expect(
       await page
-        .locator('[aria-label="Toggle prefix"]')
+        .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
   } else {
