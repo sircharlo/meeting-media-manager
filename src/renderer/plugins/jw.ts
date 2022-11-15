@@ -161,17 +161,21 @@ const plugin: Plugin = (
   inject('getPubAvailability', getPubAvailability)
 
   // Get yeartext from WT online library
-  inject('getYearText', async (force = false): Promise<string | null> => {
+  async function getYearText(
+    force = false,
+    lang?: string
+  ): Promise<string | null> {
     let yeartext = null
-    const ytPath = $ytPath()
-
-    if (store.state.stats.online && (force || !existsSync(ytPath))) {
+    const ytPath = $ytPath(lang)
+    const wtlocale = lang ?? ($getPrefs('media.lang') as string | null) ?? 'E'
+    if (force || !existsSync(ytPath)) {
+      $log.debug('Fetching yeartext', wtlocale)
       try {
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://wol.jw.org/wol/finder',
           params: {
             docid: `110${new Date().getFullYear()}800`,
-            wtlocale: $getPrefs('media.lang') ?? 'E',
+            wtlocale,
             format: 'json',
             snip: 'yes',
           },
@@ -179,9 +183,25 @@ const plugin: Plugin = (
         if (result.content) {
           yeartext = JSON.parse(JSON.stringify(result.content)) as string
           $write(ytPath, yeartext)
+        } else if (
+          wtlocale !== 'E' &&
+          result.message === 'Request failed with status code 404'
+        ) {
+          $log.warn(`Yeartext not found for ${wtlocale}`)
+          return await getYearText(force, 'E')
+        } else {
+          $log.error(result)
         }
-      } catch (e: unknown) {
-        $log.error(e)
+      } catch (e: any) {
+        if (
+          wtlocale !== 'E' &&
+          e.message === 'Request failed with status code 404'
+        ) {
+          $log.warn(`Yeartext not found for ${wtlocale}`)
+          return await getYearText(force, 'E')
+        } else {
+          $log.error(e)
+        }
       }
     } else {
       try {
@@ -191,7 +211,8 @@ const plugin: Plugin = (
       }
     }
     return yeartext
-  })
+  }
+  inject('getYearText', getYearText)
 }
 
 export default plugin
