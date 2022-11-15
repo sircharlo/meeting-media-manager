@@ -18,7 +18,7 @@ import { join, extname, basename, dirname, joinSafe } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import JSZip from 'jszip'
-import { MeetingFile } from '~/types'
+import { MeetingFile, ShortJWLang } from '~/types'
 import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
 
 const plugin: Plugin = (
@@ -27,11 +27,31 @@ const plugin: Plugin = (
 ) => {
   // Paths
   inject('pubPath', (file?: MeetingFile): string | undefined => {
-    let mediaFolder = $getPrefs('media.lang') as string
-    if (!mediaFolder) return undefined
+    // url: something/{pub}_{lang}.jwpub or something/{pub}_{lang}_{track}.mp4
+    let validMediaLangs: ShortJWLang[] = []
+    try {
+      validMediaLangs = JSON.parse(
+        readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
+      ) as ShortJWLang[]
+    } catch (e: unknown) {
+      $log.error(e)
+      validMediaLangs = []
+    }
 
-    if (/sjjm_E_\d+.mp3/g.test(basename(file?.url || ''))) {
-      mediaFolder = 'E'
+    let mediaFolder = basename(file?.url || '_')
+      .split('_')[1]
+      .split('.')[0]
+    if (
+      !mediaFolder ||
+      !validMediaLangs.find((l) => l.langcode === mediaFolder)
+    ) {
+      mediaFolder = basename(file?.queryInfo?.FilePath || '_').split('_')[1]
+      if (
+        !mediaFolder ||
+        !validMediaLangs.find((l) => l.langcode === mediaFolder)
+      )
+        mediaFolder = $getPrefs('media.lang') as string
+      if (!mediaFolder) return
     }
 
     const pubPath = joinSafe($appPath(), 'Publications', mediaFolder)

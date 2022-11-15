@@ -67,17 +67,23 @@ interface CustomProps {
     pub?: string,
     issue?: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void,
+    lang?: string,
     localPath: string = ''
   ) => Promise<Database | null>
   $getDocumentMultiMedia: (
     db: Database,
     docId: number | null,
     mepsId?: number,
+    lang?: string,
     memOnly?: boolean,
     silent?: boolean
   ) => Promise<MeetingFile[]>
   $getJWLangs: (forceReload: boolean = false) => Promise<ShortJWLang[]>
   $getPrefs: (key: string) => unknown
+  $getPubAvailability: (
+    lang: string,
+    reload?: boolean
+  ) => Promise<{ lang: string; mwb: boolean; w: boolean }>
   $getMediaLinks: (
     mediaItem: {
       docId?: number
@@ -102,7 +108,10 @@ interface CustomProps {
     date: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
-  $getYearText: (force: boolean = false) => Promise<string | null>
+  $getYearText: (
+    force: boolean = false,
+    lang?: string
+  ) => Promise<string | null>
   $getZipContentsByExt: (zip: string, ext: string) => Promise<Buffer | null>
   $getZipContentsByName: (zip: string, name: string) => Promise<Buffer | null>
   $ghApi: NuxtAxiosInstance

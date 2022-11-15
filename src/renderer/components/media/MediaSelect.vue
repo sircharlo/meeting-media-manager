@@ -107,6 +107,7 @@ export default defineComponent({
       undefined,
       undefined,
       this.setProgress,
+      undefined,
       this.file
     )) as Database
     this.db = db
@@ -179,6 +180,7 @@ export default defineComponent({
       const mmItems = await this.$getDocumentMultiMedia(
         this.db as Database,
         docId,
+        undefined,
         undefined,
         true,
         true
