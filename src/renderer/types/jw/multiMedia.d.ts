@@ -18,6 +18,7 @@ export interface MultiMediaItem {
   KeySymbol?: string | null
   Label: string
   LabelRich?: string | null
+  Link?: string | null
   LocalPath?: string
   LinkMultimediaId?: number | null
   MajorType: number

@@ -4,6 +4,8 @@ export interface ShortJWLang {
   name: string
   symbol: string
   vernacularName: string
+  mwbAvailable?: boolean
+  wAvailable?: boolean
 }
 
 export interface JWLang extends ShortJWLang {
@@ -12,4 +14,19 @@ export interface JWLang extends ShortJWLang {
   hasWebContent: boolean
   isCounted: boolean
   script: string
+}
+
+export interface Choice {
+  optionName: string
+  optionValue: string | number | null
+  altSpellings: string
+  optionLang: string | null
+  optionLangDir: string | null
+  optionClasses: string | null
+}
+
+export interface Filter {
+  title: string
+  id: string
+  choices: Choice[]
 }
