@@ -38,20 +38,19 @@ export function createMediaWindow(windowOpts) {
 }
 
 // Create a website controller window
-export function createWebsiteController(pos) {
+export function createWebsiteController(opts, maximize = true) {
   const winHandler = new BrowserWinHandler({
     title: 'Website Controller Window',
-    x: pos.x,
-    y: pos.y,
     minHeight: 720,
     minWidth: 1280,
     width: 1280,
     height: 720,
+    ...opts,
   })
 
   const win = winHandler.browserWindow
   win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
-  win.maximize()
+  if (maximize) win.maximize()
   return winHandler
 }
 

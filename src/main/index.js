@@ -309,7 +309,21 @@ if (gotTheLock) {
     mediaWinHandler.loadPage('/browser?url=' + url)
     website = true
 
-    websiteControllerWinHandler = createWebsiteController(win.getBounds())
+    const windowOpts = {
+      x: win.getBounds().x,
+      y: win.getBounds().y,
+    }
+
+    const mediaFullscreen = mediaWin.isFullScreen()
+
+    if (!mediaFullscreen) {
+      windowOpts.width = mediaWin.getBounds().width
+      windowOpts.height = mediaWin.getBounds().height
+    }
+    websiteControllerWinHandler = createWebsiteController(
+      windowOpts,
+      mediaFullscreen
+    )
     websiteController = websiteControllerWinHandler.browserWindow
     websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
 
