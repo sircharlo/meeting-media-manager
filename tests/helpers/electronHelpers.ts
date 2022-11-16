@@ -1,7 +1,6 @@
 import { platform } from 'os'
 import { basename, dirname, join, resolve } from 'upath'
 import * as ASAR from '@electron/asar'
-import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs-extra'
 import { expect, Page } from '@playwright/test'
@@ -124,6 +123,8 @@ export function ipcRendererInvoke(
 ): Promise<unknown> {
   return window.evaluate(
     async ({ message, args }) => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { ipcRenderer } = require('electron')
       return await ipcRenderer.invoke(message, ...args)
     },
     { message, args }
