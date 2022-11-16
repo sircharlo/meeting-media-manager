@@ -37,7 +37,7 @@ assign link='<a href="https://lwn.net/Articles/673597/">[TITLE]</a>' | replace:
 if string == nil %} {% assign string= site.data.en.usage-notes.linArticle %} {%
 endif %}
 
-<p>{{ string | replace: '[LINK]', string}}</p>
+<p>{{ link | replace: '[LINK]', string}}</p>
 
 <h3>MacOS</h3>
 
@@ -71,7 +71,7 @@ site.data.en.usage-notes.macWarning %} {% endif %}
   {% include t.html lang=include.lang page="usage-notes" key="macAutoUpdate" %}
 </h4>
 
-<p>{% include t.html lang=include.lang page="usage-notes" key="macUnlike" %}</p>
+<p>{% include t.html lang=include.lang page="usage-notes" key="macUnlike" %} {% include t.html lang=include.lang page="usage-notes" key="macHowever" %}</p>
 
 <ul>
   <li>
