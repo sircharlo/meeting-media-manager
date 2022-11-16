@@ -2,10 +2,13 @@ import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
-import { ipcRendererInvoke } from 'electron-playwright-helper-package'
 import { join } from 'upath'
+import {
+  ipcRendererInvoke,
+  startApp,
+  openHomePage,
+} from './../helpers/electronHelpers'
 import prefs from './../mocks/prefs/prefsOld.json'
-import { startApp, openHomePage } from './../helpers/electronHelpers'
 import { delay, strip } from './../helpers/generalHelpers'
 import locale from './../../src/renderer/locales/en.json'
 
