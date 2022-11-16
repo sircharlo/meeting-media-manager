@@ -4,10 +4,13 @@ import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
-import { ipcRendererInvoke } from 'electron-playwright-helper-package'
 import { join } from 'upath'
+import {
+  startApp,
+  openHomePage,
+  ipcRendererInvoke,
+} from './../helpers/electronHelpers'
 import { getDate } from './../helpers/generalHelpers'
-import { startApp, openHomePage } from './../helpers/electronHelpers'
 import prefs from './../mocks/prefs/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
 

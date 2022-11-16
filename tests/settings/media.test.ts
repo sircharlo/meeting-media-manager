@@ -1,7 +1,6 @@
 import { platform } from 'os'
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
-import { ipcRendererInvoke } from 'electron-playwright-helper-package'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { join } from 'upath'
@@ -9,7 +8,11 @@ import { version } from '../../package.json'
 import { getDate, strip } from '../helpers/generalHelpers'
 import locale from './../../src/renderer/locales/en.json'
 import prefs from './../mocks/prefs/prefsOld.json'
-import { startApp, openHomePage } from './../helpers/electronHelpers'
+import {
+  startApp,
+  openHomePage,
+  ipcRendererInvoke,
+} from './../helpers/electronHelpers'
 
 let electronApp: ElectronApplication
 let page: Page
