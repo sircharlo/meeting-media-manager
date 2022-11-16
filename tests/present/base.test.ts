@@ -2,7 +2,7 @@
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
 import { expect, test } from '@playwright/test'
-import { ipcRendererInvoke } from 'electron-playwright-helpers'
+import { ipcRendererInvoke } from 'electron-playwright-helper-package'
 import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
 import { join } from 'upath'
