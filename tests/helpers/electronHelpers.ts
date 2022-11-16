@@ -7,7 +7,7 @@ import {
   findLatestBuild,
   parseElectronApp,
   ipcRendererInvoke,
-} from 'electron-playwright-helpers'
+} from 'electron-playwright-helper-package'
 import { _electron as electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
 import { delay } from './generalHelpers'
