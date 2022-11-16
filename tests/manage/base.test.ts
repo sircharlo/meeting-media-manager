@@ -1,10 +1,13 @@
 // eslint-disable-next-line import/named
 import { expect, test } from '@playwright/test'
-import { ipcRendererInvoke } from 'electron-playwright-helper-package'
 import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'
-import { startApp, openHomePage } from './../helpers/electronHelpers'
+import {
+  startApp,
+  openHomePage,
+  ipcRendererInvoke,
+} from './../helpers/electronHelpers'
 import locale from './../../src/renderer/locales/en.json'
 
 let electronApp: ElectronApplication
