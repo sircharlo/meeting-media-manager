@@ -4,4 +4,10 @@ title: Problemen en functieverzoeken
 ref: bug-feature
 ---
 
-{% include posts/bug-feature.html lang=site.data.nl %}
+### Hoe rapporteer ik een probleem met de applicatie?
+
+Als je ooit een probleem tegenkomt met M³, gebruik dan alsjeblieft [GitHub Issues](%7B%7Bsite.github%7D%7D/issues/new?labels=bug,from+app&template=bug_report.md) om het te rapporteren. Oplossingen voor problemen worden regelmatig doorgevoerd, vaak maandelijks.
+
+### Hoe kan ik een suggestie geven voor een nieuwe functionaliteit?
+
+Suggesties zijn welkom! Maak alsjeblieft gebruik van [GitHub Discussions](%7B%7Bsite.github%7D%7D/discussions) om ideeën met elkaar en mij uit te te wisselen.
