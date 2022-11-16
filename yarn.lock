@@ -1338,6 +1338,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@electron/asar@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "@electron/asar@npm:3.2.2"
+  dependencies:
+    "@types/glob": ^7.1.1
+    chromium-pickle-js: ^0.2.0
+    commander: ^5.0.0
+    glob: ^7.1.6
+    minimatch: ^3.0.4
+  dependenciesMeta:
+    "@types/glob":
+      optional: true
+  bin:
+    asar: bin/asar.js
+  checksum: 38a3b4a47180f2033a599421175f03706941ba05a32591a639127f6374e0007c6a7c8bde550129de394f4072a0bf39c24aea202540fe1faba6d74b4181c007a8
+  languageName: node
+  linkType: hard
+
 "@electron/get@npm:^1.14.1":
   version: 1.14.1
   resolution: "@electron/get@npm:1.14.1"
@@ -6840,12 +6858,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-playwright-helpers@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "electron-playwright-helpers@npm:1.2.0"
+"electron-playwright-helper-package@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "electron-playwright-helper-package@npm:1.2.1"
   dependencies:
-    asar: ^3.1.0
-  checksum: 46c03d19c5410fdbfd0172826b9031c4ad485f0d499724821a5ae60054bc4c55815b9d15f208645ed95342259fcf634769dcbaa594bac20d4bb9018eed734171
+    "@electron/asar": ^3.2.2
+  checksum: 38fbf6922d88b81e92860de11b534ac79c6118093d8784e334b036fd96c5ad828e137db32d26389b78fe6e56932b49849fda8a14d88fc24bd9cd8e0a9af40543
   languageName: node
   linkType: hard
 
@@ -10570,7 +10588,7 @@ __metadata:
     electron: 21.2.3
     electron-builder: 23.6.0
     electron-devtools-installer: ^3.2.0
-    electron-playwright-helpers: ^1.2.0
+    electron-playwright-helper-package: ^1.2.1
     electron-store: ^8.1.0
     electron-updater: ^5.3.0
     electron-window-state: ^5.0.3
