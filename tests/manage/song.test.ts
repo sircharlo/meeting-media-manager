@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
-import { ipcRendererInvoke } from 'electron-playwright-helpers'
+import { ipcRendererInvoke } from 'electron-playwright-helper-package'
 import { join } from 'upath'
 import prefs from './../mocks/prefs/prefsOld.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'

@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
 import { expect, test } from '@playwright/test'
-import { ipcRendererInvoke } from 'electron-playwright-helpers'
+import { ipcRendererInvoke } from 'electron-playwright-helper-package'
 import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'

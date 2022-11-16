@@ -1,7 +1,7 @@
 import { platform } from 'os'
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
-import { ipcRendererInvoke } from 'electron-playwright-helpers'
+import { ipcRendererInvoke } from 'electron-playwright-helper-package'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { join } from 'upath'
