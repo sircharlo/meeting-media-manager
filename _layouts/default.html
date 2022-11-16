@@ -22,26 +22,27 @@
 
   <body>
     {% include nav.html %}
+    {% assign translations=site.data | where:"lang", page.lang %}
 
     <section id="content">
       <button class="control show">
-        {% include t.html lang=page.lang page="home" key="expand" %}
+        {% include t.html lang=translations page="home" key="expand" %}
       </button>
       <button class="control hide">
-        {% include t.html lang=page.lang page="home" key="collapse" %}
+        {% include t.html lang=translations page="home" key="collapse" %}
       </button>
 
       {{ content }}
 
       <table class="showcase">
         {% include image.html src="main/update-folders.gif" alt="syncInProgress"
-        lang=page.lang page="home" %} {% include image.html
-        src="main/main-screen.png" alt="mainScreen" lang=page.lang page="home" %}
+        lang=translations page="home" %} {% include image.html
+        src="main/main-screen.png" alt="mainScreen" lang=translations page="home" %}
         {% include image.html src="main/date-picker.png" alt="chooseWeek"
-        lang=page.lang page="home" %} {% include image.html
-        src="main/sync-complete.png" alt="syncComplete" lang=page.lang
+        lang=translations page="home" %} {% include image.html
+        src="main/sync-complete.png" alt="syncComplete" lang=translations
         page="home" %} {% include image.html src="main/music-playing.png"
-        alt="musicPlaying" lang=page.lang page="home" %}
+        alt="musicPlaying" lang=translations page="home" %}
       </table>
       
       {% assign posts=site.posts | where:"lang", page.lang %} {% for post in posts

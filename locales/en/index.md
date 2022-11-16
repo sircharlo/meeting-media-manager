@@ -20,7 +20,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Automatic external monitor recognition and management
 - OBS Studio integration
 
-As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature."
+As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature.
 
 ### Does M³ work in my language?
 

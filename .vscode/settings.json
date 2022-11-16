@@ -35,5 +35,5 @@
     "yzhang"
   ],
   "cSpell.ignoreWords": ["TERMS", "PDF", "transform", "focusring"],
-  "cSpell.ignorePaths": ["_data/*", "!_data/en.json"]
+  "cSpell.ignorePaths": ["_data/*", "!_data/en.json", "locales/*", "!locales/en/*"]
 }
