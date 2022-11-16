@@ -5,7 +5,7 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs-extra'
 import { expect, Page } from '@playwright/test'
-import { _electron as electron, ElectronApplication } from 'playwright'
+import { _electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
 import { delay } from './generalHelpers'
 import prefsNew from './../mocks/prefs/prefsNew.json'
@@ -18,7 +18,7 @@ export async function startApp(options: any = {}) {
   // set the CI environment variable to true
   process.env.CI = 'e2e'
 
-  const electronApp = await electron.launch({
+  const electronApp = await _electron.launch({
     ...options,
     args: [appInfo.main],
     executablePath:
