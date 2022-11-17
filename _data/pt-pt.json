@@ -10,6 +10,7 @@
     "password": "Senha",
     "port": "Porta"
   },
+  "home": {},
   "configuration": {
     "convertDownloaded": "Converter multimédias para MP4",
     "enableMediaDisplayButton": "Exibir as multimédias num ecrã secundário",
@@ -48,5 +49,6 @@
     "song": "Cântico",
     "jwpub": "JWPUB",
     "custom": "Personalizado"
-  }
+  },
+  "present-media": {}
 }

@@ -10,6 +10,7 @@
     "password": "Password",
     "port": "Porta"
   },
+  "home": {},
   "configuration": {
     "convertDownloaded": "Converti Media in formato MP4",
     "enableMusicButton": "Attiva la possibilità di Avviare l'Audio dei Cantici in modalità casuale",
@@ -40,5 +41,6 @@
     "song": "Song",
     "jwpub": "JWPUB",
     "custom": "Personalizza"
-  }
+  },
+  "present-media": {}
 }

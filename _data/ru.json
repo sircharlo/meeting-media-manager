@@ -10,6 +10,7 @@
     "password": "Пароль",
     "port": "Порт"
   },
+  "home": {},
   "configuration": {
     "convertDownloaded": "Преобразовать медиафайлы в формат MP4",
     "enableMediaDisplayButton": "Воспроизводить медиафайлы на внешнем экране или в отдельном окне",
@@ -48,5 +49,6 @@
     "song": "Песня",
     "jwpub": "JWPUB",
     "custom": "Разное"
-  }
+  },
+  "present-media": {}
 }
