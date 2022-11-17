@@ -10,8 +10,6 @@
     "password": "Пароль",
     "port": "Порт"
   },
-  "home": {},
-  "bug-feature": {},
   "configuration": {
     "convertDownloaded": "Преобразовать медиафайлы в формат MP4",
     "enableMediaDisplayButton": "Воспроизводить медиафайлы на внешнем экране или в отдельном окне",
@@ -46,13 +44,9 @@
     "webdavFolder": "Папка для собрания",
     "settingsLocked": "Настройки для всего собрания"
   },
-  "faq": {},
-  "installation": {},
-  "usage-notes": {},
   "manage-media": {
     "song": "Песня",
     "jwpub": "JWPUB",
     "custom": "Разное"
-  },
-  "present-media": {}
+  }
 }

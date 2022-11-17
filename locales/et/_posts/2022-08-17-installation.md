@@ -8,9 +8,9 @@ M³ ei vaja installimiseks ega käivitamiseks administraatoriõigusi. M³ instal
 
 | Operatsioonisüsteem | Allalaaditav fail  |
 | ---------------- | ---------------- |
-| Windows | `meeting-media-manager-[VERSION].exe` |
-| macOS | `meeting-media-manager-[VERSION]-universal.dmg` |
-| Linux | `meeting-media-manager-[VERSION].AppImage` |
+| Windows | `meeting-media-manager-[VERSION]-[ARCH].exe` |
+| macOS | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
+| Linux | `meeting-media-manager-[VERSION]-[ARCH].AppImage` |
 
 ### Mis järgmiseks
 

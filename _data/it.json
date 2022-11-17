@@ -10,8 +10,6 @@
     "password": "Password",
     "port": "Porta"
   },
-  "home": {},
-  "bug-feature": {},
   "configuration": {
     "convertDownloaded": "Converti Media in formato MP4",
     "enableMusicButton": "Attiva la possibilità di Avviare l'Audio dei Cantici in modalità casuale",
@@ -38,13 +36,9 @@
     "webdavFolder": "Cartella di Sincronizzazione Congregazione",
     "settingsLocked": "Congregation-wide settings"
   },
-  "faq": {},
-  "installation": {},
-  "usage-notes": {},
   "manage-media": {
     "song": "Song",
     "jwpub": "JWPUB",
     "custom": "Personalizza"
-  },
-  "present-media": {}
+  }
 }
