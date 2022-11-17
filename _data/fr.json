@@ -10,8 +10,6 @@
     "password": "Mot de passe",
     "port": "Port"
   },
-  "home": {},
-  "bug-feature": {},
   "configuration": {
     "convertDownloaded": "Convertir médias en format MP4",
     "disableHardwareAcceleration": "Désactiver l'accélération matérielle",
@@ -46,13 +44,9 @@
     "webdavFolder": "Dossier de l'assemblée locale",
     "settingsLocked": "Paramètres bloqués pour l'assemblée locale"
   },
-  "faq": {},
-  "installation": {},
-  "usage-notes": {},
   "manage-media": {
     "song": "Cantique",
     "jwpub": "JWPUB",
     "custom": "Autre"
-  },
-  "present-media": {}
+  }
 }

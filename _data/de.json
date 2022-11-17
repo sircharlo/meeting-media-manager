@@ -10,8 +10,6 @@
     "password": "Passwort",
     "port": "Port"
   },
-  "home": {},
-  "bug-feature": {},
   "configuration": {
     "convertDownloaded": "Medien in MP4-Format konvertieren",
     "disableHardwareAcceleration": "Hardwarebeschleunigung deaktivieren",
@@ -46,13 +44,9 @@
     "webdavFolder": "Synchronisations-Ordner",
     "settingsLocked": "Versammlungsweite Einstellungen"
   },
-  "faq": {},
-  "installation": {},
-  "usage-notes": {},
   "manage-media": {
     "song": "Lied",
     "jwpub": "JWPUB",
     "custom": "Eigene"
-  },
-  "present-media": {}
+  }
 }
