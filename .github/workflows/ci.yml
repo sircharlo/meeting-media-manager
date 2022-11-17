@@ -65,23 +65,10 @@ jobs:
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
           echo SENTRY_DISABLE=1 >> .env
 
-      - name: Build Electron app for Linux
+      - name: Build Electron app
         env:
           GH_TOKEN: ${{ secrets.github_token }}
-        run: yarn build -l AppImage -p never
-        if: matrix.os == 'ubuntu-latest'
-
-      - name: Build Electron app for MacOS
-        env:
-          GH_TOKEN: ${{ secrets.github_token }}
-        run: yarn build -p never
-        if: matrix.os == 'macos-latest'
-
-      - name: Build Electron app for Windows
-        env:
-          GH_TOKEN: ${{ secrets.github_token }}
-        run: yarn build -w --ia32 false -p never
-        if: matrix.os == 'windows-latest'
+        run: yarn build -c builder-dev.config.js -p never
 
       - name: Run tests
         run: yarn test
