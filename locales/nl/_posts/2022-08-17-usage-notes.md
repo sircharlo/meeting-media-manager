@@ -6,7 +6,7 @@ ref: usage-notes
 
 Deze applicatie zou moeten werken op de meeste moderne computers met Windows, Linux of Mac.
 
-### Windows: Install
+### Windows: Installatie en eerste keer opstarten
 
 Bij het openen van het installatiebestand krijg je misschien een [error](assets/img/other/win-smartscreen.png) die het volgende zegt: "Windows SmartScreen voorkwam dat een niet herkende applicatie geïnstalleerd werd." Dit komt omdat deze applicatie geen hoof aantal downloads heeft en daarom niet expliciet "vertrouwd" wordt door Windows. Om dit op te lossen klik je op "Meer info" en dan "Toch uitvoeren".
 
