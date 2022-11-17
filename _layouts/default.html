@@ -45,8 +45,8 @@
         alt="musicPlaying" lang=translations page="home" %}
       </table>
       
-      {% assign posts=site.posts | where:"lang", page.lang %} {% for post in posts
-      %}
+      {% assign posts=site.posts | where:"lang", page.lang %} 
+      {% for post in posts %}
         <article class="{{ post.type }}">
           <a id="{{ post.ref }}" href="{{page.lang}}/#{{ post.ref }}">
             <h2>{{ post.title }}</h2>
@@ -55,10 +55,6 @@
         </article>
       {% endfor %}
     </section>
-
-    <!--[if lt IE 9
-      ]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script
-    ><![endif]-->
     <script src="./assets/js/lang.min.js"></script>
     <script src="./assets/js/search.min.js"></script>
     <script src="./assets/js/articles.min.js"></script>

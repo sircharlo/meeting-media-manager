@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Hulp
 title: Technische gebruiksnotities
 ref: usage-notes
 ---

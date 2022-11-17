@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Configuratie
 title: 'Gemeente sync'
 ref: congregation-sync
 ---
