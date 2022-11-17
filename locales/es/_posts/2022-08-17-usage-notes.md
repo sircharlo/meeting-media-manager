@@ -12,7 +12,7 @@ Al abrir el instalador, es posible que obtenga un [error](assets/img/other/win-s
 
 ### Linux: Instalación y primeros pasos
 
-Según [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), si la aplicación no se abre correctamente, confirme el resultado del siguiente comando:
+Según [documentación oficial de AppImage](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), si la aplicación no se abre correctamente, confirme el resultado del siguiente comando:
 
 `ysctl kernel.unprivileged_userns_clone`
 

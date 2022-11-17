@@ -12,7 +12,7 @@ Installeri avamisel võite saada [error](assets/img/other/win-smartscreen.png), 
 
 ### Linux: Paigaldamine ja esimene käivitamine
 
-Vastavalt [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html)-le, kui rakendus ei avane korralikult, kinnitage järgmise käsu väljund:
+Vastavalt [ametlik AppImage dokumentatsioon](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html)-le, kui rakendus ei avane korralikult, kinnitage järgmise käsu väljund:
 
 `ysctl kernel.unprivileged_userns_clone`
 
