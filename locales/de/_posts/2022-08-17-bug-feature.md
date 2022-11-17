@@ -4,4 +4,4 @@ title: 'Issues and feature requests'
 ref: bug-feature
 ---
 
-{% include posts/bug-feature.html lang=site.data.de %}
+{% include posts/bug-feature.md lang=site.data.de %}

@@ -4,4 +4,4 @@ title: 'Installation'
 ref: installation
 ---
 
-{% include posts/installation.html lang=site.data.pt-pt %}
+{% include posts/installation.md lang=site.data.pt-pt %}

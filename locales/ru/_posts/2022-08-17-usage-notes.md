@@ -4,4 +4,4 @@ title: Technical usage notes
 ref: usage-notes
 ---
 
-{% include posts/usage-notes.html lang=site.data.ru %}
+{% include posts/usage-notes.md lang=site.data.ru %}

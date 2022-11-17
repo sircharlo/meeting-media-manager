@@ -2,4 +2,4 @@
 permalink: /it/
 ---
 
-{% include index.html lang=site.data.it %}
+{% include index.md lang=site.data.it %}
