@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Configuratie
 title: 'Installatie'
 ref: installation
 ---

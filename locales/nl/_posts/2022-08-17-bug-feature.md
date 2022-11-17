@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Hulp
 title: Problemen en functieverzoeken
 ref: bug-feature
 ---
