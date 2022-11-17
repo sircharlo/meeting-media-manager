@@ -14,8 +14,8 @@ M³ no requiere privilegios administrativos para instalarse o ejecutarse. Para i
 
 ### Qué es lo siguiente
 
-Configure la aplicación en la pantalla [Ajustes](es/#configuration).
+Configure la aplicación en la pantalla [Ajustes]({{page.lang}}/#configuration).
 
 ### ¿Problemas para instalar?
 
-Consulte las [Notas técnicas de uso](es/#usage-notes) para obtener ayuda.
+Consulte las [Notas técnicas de uso]({{page.lang}}/#usage-notes) para obtener ayuda.

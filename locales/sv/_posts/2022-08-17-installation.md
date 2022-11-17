@@ -14,8 +14,8 @@ M³ kräver inga administrativa rättigheter för installation eller användning
 
 ### Vad kommer härnäst
 
-Konfigurera appen med hjälp av skärmen [Inställningar](sv/#configuration).
+Konfigurera appen med hjälp av skärmen [Inställningar]({{page.lang}}/#configuration).
 
 ### Problem att installera?
 
-Kontrollera [Anmärkningar om teknisk användning](sv/#usage-notes) för hjälp.
+Kontrollera [Anmärkningar om teknisk användning]({{page.lang}}/#usage-notes) för hjälp.

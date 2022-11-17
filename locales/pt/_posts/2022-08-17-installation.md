@@ -14,8 +14,8 @@ O M³ não requer privilégios de administrador para instalação ou execução.
 
 ### Qual é o próximo
 
-Configure o aplicativo usando a tela de [Configurações](pt/#configuration).
+Configure o aplicativo usando a tela de [Configurações]({{page.lang}}/#configuration).
 
 ### Problemas para instalar?
 
-Verifique as [Como instalar o M³](pt/#usage-notes) para obter ajuda.
+Verifique as [Como instalar o M³]({{page.lang}}/#usage-notes) para obter ajuda.

@@ -14,8 +14,8 @@ M³ ei vaja installimiseks ega käivitamiseks administraatoriõigusi. M³ instal
 
 ### Mis järgmiseks
 
-Seadistage rakendus [Seaded](et/#configuration) ekraani abil.
+Seadistage rakendus [Seaded]({{page.lang}}/#configuration) ekraani abil.
 
 ### Kas installimisel on probleeme?
 
-Abi saamiseks vaadake jaotist [Tehnilised kasutusjuhised](et/#usage-notes).
+Abi saamiseks vaadake jaotist [Tehnilised kasutusjuhised]({{page.lang}}/#usage-notes).
