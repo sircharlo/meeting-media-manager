@@ -19,7 +19,7 @@ link='<a
 >' | replace: '[TITLE]', string %} {% assign string=
 include.lang.usage-notes.linDocs %} {% if string == nil %} {% assign string=
 site.data.en.usage-notes.linDocs %} {% endif %}
-<p>{{string | replace: '[DOCS]', title}}</p>
+<p>{{string | replace: '[DOCS]', link}}</p>
 
 <code>sysctl kernel.unprivileged_userns_clone</code>
 
