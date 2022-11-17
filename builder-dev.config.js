@@ -14,6 +14,7 @@ const windowsOS = {
 
   nsis: {
     oneClick: false,
+    differentialPackage: false,
   },
 }
 
@@ -34,6 +35,10 @@ const macOS = {
       arch: ['universal'],
     },
     publish: ['github'],
+  },
+
+  dmg: {
+    writeUpdateInfo: false,
   },
 }
 

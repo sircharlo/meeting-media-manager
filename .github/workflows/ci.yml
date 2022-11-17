@@ -120,7 +120,7 @@ jobs:
           !startsWith(github.event.head_commit.message, 'chore(release)')
         env:
           GH_TOKEN: ${{ secrets.github_token }}
-        run: yarn run build -p never
+        run: yarn run build -c builder-dev.config.js -p never
 
       - name: Release Electron app
         if: |
