@@ -161,6 +161,7 @@ import { defineComponent, PropType } from 'vue'
 import { extname, join } from 'upath'
 import { MeetingPrefs, ElectronStore, VideoFile, ShortJWLang } from '~/types'
 import { HUNDRED_PERCENT, NR_OF_KINGDOM_SONGS } from '~/constants/general'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
   props: {
@@ -326,7 +327,7 @@ export default defineComponent({
         )
       }
     },
-    setProgress(loaded: number, total: number, global: boolean = false) {
+    setProgress(loaded: number, total: number, global = false) {
       if (global) {
         this.totalProgress = (HUNDRED_PERCENT * loaded) / total
       } else {

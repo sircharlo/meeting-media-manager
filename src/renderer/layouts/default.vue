@@ -28,6 +28,7 @@ import {
   ObsPrefs,
 } from '~/types'
 import { LAST_JWMMF_VERSION } from '~/constants/general'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { STALE_LANGS } = require('./../constants/lang') as {
   STALE_LANGS: string[]
 }

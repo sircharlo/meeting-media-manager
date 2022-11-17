@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'

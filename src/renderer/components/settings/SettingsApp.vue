@@ -219,6 +219,7 @@ const dateFormats = [
   'DD-MM-YYYY - dddd',
   'YYYY-MM-DD - dddd',
 ] as DateFormat[]
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
   props: {

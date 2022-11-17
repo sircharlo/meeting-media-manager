@@ -5,6 +5,7 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import prefs from './../mocks/prefs/prefsOld.json'
 import { MAX_BYTES_IN_FILENAME } from './../../src/renderer/constants/general'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { DAYJS_LOCALES } = require('./../../src/renderer/constants/lang') as {
   DAYJS_LOCALES: string[]
 }

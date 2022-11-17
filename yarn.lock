@@ -2337,8 +2337,8 @@ __metadata:
   linkType: hard
 
 "@nuxt/telemetry@npm:^1.3.3":
-  version: 1.3.8
-  resolution: "@nuxt/telemetry@npm:1.3.8"
+  version: 1.3.9
+  resolution: "@nuxt/telemetry@npm:1.3.9"
   dependencies:
     arg: ^5.0.2
     chalk: ^4.1.1
@@ -2359,7 +2359,7 @@ __metadata:
     std-env: ^2.3.0
   bin:
     nuxt-telemetry: bin/nuxt-telemetry.js
-  checksum: 81ad46d9d98adaa4dd04c7eb1a3d54597341d52ede6c7df62ab2a3ad0ce9584e83409eb5279de262fcd4f8edd1af71c371c8393017fffa2bbee115d85ea6654a
+  checksum: 2597de7f9b49770f9f68ca3fbd29200a7a2e1224de17e8b7f77ef8dd03221f8397e751242812212ea940958e89cdaf7f8cf8eb465a2588ea6dac5af5b9b1931a
   languageName: node
   linkType: hard
 
@@ -2537,35 +2537,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtjs/eslint-config-typescript@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@nuxtjs/eslint-config-typescript@npm:11.0.0"
+"@nuxtjs/eslint-config-typescript@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "@nuxtjs/eslint-config-typescript@npm:12.0.0"
   dependencies:
-    "@nuxtjs/eslint-config": ^11.0.0
-    "@typescript-eslint/eslint-plugin": ^5.36.1
-    "@typescript-eslint/parser": ^5.36.1
-    eslint-import-resolver-typescript: ^3.5.0
+    "@nuxtjs/eslint-config": ^12.0.0
+    "@typescript-eslint/eslint-plugin": ^5.42.1
+    "@typescript-eslint/parser": ^5.42.1
+    eslint-import-resolver-typescript: ^3.5.2
     eslint-plugin-import: ^2.26.0
+    eslint-plugin-vue: ^9.7.0
   peerDependencies:
     eslint: ^8.23.0
-  checksum: 7e24a15c41901b70670773e97ffc2d9dbfcc232993b0cfe7179707c41e449fc7d0ac166612a8d56a2a1ec99b018de34872089e75fd39d9c373528e17e5c17f01
+  checksum: 9276e17dd5ec5d6b8a6753e7c726ca2232da50fee4259e9af8e7f5e34144ec95baa63567ed35c1eef061da8f8ac69ceb81cb0c3ed95cd96cf9cd6e59509cae3b
   languageName: node
   linkType: hard
 
-"@nuxtjs/eslint-config@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@nuxtjs/eslint-config@npm:11.0.0"
+"@nuxtjs/eslint-config@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "@nuxtjs/eslint-config@npm:12.0.0"
   dependencies:
     eslint-config-standard: ^17.0.0
     eslint-plugin-import: ^2.26.0
-    eslint-plugin-n: ^15.2.5
+    eslint-plugin-n: ^15.5.1
     eslint-plugin-node: ^11.1.0
-    eslint-plugin-promise: ^6.0.1
-    eslint-plugin-unicorn: ^43.0.2
-    eslint-plugin-vue: ^9.4.0
+    eslint-plugin-promise: ^6.1.1
+    eslint-plugin-unicorn: ^44.0.2
+    eslint-plugin-vue: ^9.7.0
+    local-pkg: ^0.4.2
   peerDependencies:
     eslint: ^8.23.0
-  checksum: 302632d6cb05d60630a7bd75fac35d23a2b19294a6f23c29ce8cbff20fc78fd6faa4edec37f3626fa4cbf0190130ff62a8efc51407ec192dd6f9323d5018dffe
+  checksum: 25f65cd98ae87cb767d17dd85a57765c3181abb844b6b76084c99c39eafd302aa4b93c4b2e1ec4b1c7e67bd846a3cafcb725b4e7767df715e93fdd943ec997c0
   languageName: node
   linkType: hard
 
@@ -2643,15 +2645,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.27.1":
-  version: 1.27.1
-  resolution: "@playwright/test@npm:1.27.1"
+"@playwright/test@npm:^1.28.0":
+  version: 1.28.0
+  resolution: "@playwright/test@npm:1.28.0"
   dependencies:
     "@types/node": "*"
-    playwright-core: 1.27.1
+    playwright-core: 1.28.0
   bin:
     playwright: cli.js
-  checksum: 92f219a78c21da03c6599d92c313c914e73cc374306366130fb3bd4701555179394ec5a3000d9375ce59f5a03c00f20d1ddaae50c85583ce475e17795a622699
+  checksum: 5b90a4fd7a30e989f0b7ff97201eb3ab91d56b93ac5cd020ca6e36cd90a0f9386770214375b6c50471def75cbe0e7219f77f2c126d5d31655c5228bd16ab4f1a
   languageName: node
   linkType: hard
 
@@ -2674,15 +2676,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.19.0":
-  version: 7.19.0
-  resolution: "@sentry/browser@npm:7.19.0"
+"@sentry/browser@npm:7.20.0":
+  version: 7.20.0
+  resolution: "@sentry/browser@npm:7.20.0"
   dependencies:
-    "@sentry/core": 7.19.0
-    "@sentry/types": 7.19.0
-    "@sentry/utils": 7.19.0
+    "@sentry/core": 7.20.0
+    "@sentry/types": 7.20.0
+    "@sentry/utils": 7.20.0
     tslib: ^1.9.3
-  checksum: c267fe90352174c151c2733b98ec7016c2873fa008d3c498a10bc8e3a5ddca7fe6375482f6b652eef9797d0a4931aeb9acec865a19a256e12b313b29ac24ce6e
+  checksum: 740903325b83d6e1776040424eec2223a32a1fe2e785b9c3903ae985096f2ce0cc3bc8da0868b05fbac36e5d41518b997948df6a6135454809b9f2a673f6ca6f
   languageName: node
   linkType: hard
 
@@ -2714,14 +2716,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.19.0":
-  version: 7.19.0
-  resolution: "@sentry/core@npm:7.19.0"
+"@sentry/core@npm:7.20.0":
+  version: 7.20.0
+  resolution: "@sentry/core@npm:7.20.0"
   dependencies:
-    "@sentry/types": 7.19.0
-    "@sentry/utils": 7.19.0
+    "@sentry/types": 7.20.0
+    "@sentry/utils": 7.20.0
     tslib: ^1.9.3
-  checksum: c75731c51abd28126cc9396852880e9d63b6e3eb7741cd6ba86d03e8ac21b915649fa82f46fcf64cddddbc345b0cfc78eea698c092aaa1435473a2d70c95da5a
+  checksum: 3998605dff85a56f83efaae747567b76941d4b6de9a30202f280d50ad38fb176ed8560067f122238fb1170c133dfc9a063ae71ee66b6ebd639977b44f3f8311c
   languageName: node
   linkType: hard
 
@@ -2755,15 +2757,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/tracing@npm:^7.19.0":
-  version: 7.19.0
-  resolution: "@sentry/tracing@npm:7.19.0"
+"@sentry/tracing@npm:^7.20.0":
+  version: 7.20.0
+  resolution: "@sentry/tracing@npm:7.20.0"
   dependencies:
-    "@sentry/core": 7.19.0
-    "@sentry/types": 7.19.0
-    "@sentry/utils": 7.19.0
+    "@sentry/core": 7.20.0
+    "@sentry/types": 7.20.0
+    "@sentry/utils": 7.20.0
     tslib: ^1.9.3
-  checksum: 510367409d145d2d34a535fb3912a8cbfc4e6365023434f631fbba1e949370bd11599799ff320787816b8422468b8ce5e4f76e38d47fda9bff65ac045ec233b0
+  checksum: 12a13c374b113081faffedf772fee36e4a0d5f9f06c0d11023d18bb836002d6394532751e4254b43eb9c6b44e69894533be46a8180fa734feb711f82af485e30
   languageName: node
   linkType: hard
 
@@ -2774,10 +2776,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.19.0":
-  version: 7.19.0
-  resolution: "@sentry/types@npm:7.19.0"
-  checksum: e7a309ff0a23af003f8afbf2c8a7158ce8070e5e63015dc6d06cca11de846fc8c51bea29d9486af0c32191031e6bb42a3c4500f437afe61252fbd20f3c8bfa28
+"@sentry/types@npm:7.20.0":
+  version: 7.20.0
+  resolution: "@sentry/types@npm:7.20.0"
+  checksum: eb012cb9cd83b2747ffb256e9d1f783c5508b54f78e45a2714090bd6d44e472b5f8655c4614e9cf4da042b0ec277675cf9dd2ab7d864e04e58d1b67c43289ff9
   languageName: node
   linkType: hard
 
@@ -2791,28 +2793,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.19.0":
-  version: 7.19.0
-  resolution: "@sentry/utils@npm:7.19.0"
+"@sentry/utils@npm:7.20.0":
+  version: 7.20.0
+  resolution: "@sentry/utils@npm:7.20.0"
   dependencies:
-    "@sentry/types": 7.19.0
+    "@sentry/types": 7.20.0
     tslib: ^1.9.3
-  checksum: 8d1e8c9288e60aed5a1ac22722a5da9606ae821ac39232a0eeba128b1512c48cf22145f7b989f7dca4ad55274bf4e1189871b672bb7387c66866009e0a5f4448
+  checksum: 510753d5afce22a521f5780ab87767ed1496eb24bad6adda14848abef69dac8aa3d3168d8bc861ddf7d7af4f7476b70e1d84405991ec5b000008743d63ad3820
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^7.19.0":
-  version: 7.19.0
-  resolution: "@sentry/vue@npm:7.19.0"
+"@sentry/vue@npm:^7.20.0":
+  version: 7.20.0
+  resolution: "@sentry/vue@npm:7.20.0"
   dependencies:
-    "@sentry/browser": 7.19.0
-    "@sentry/core": 7.19.0
-    "@sentry/types": 7.19.0
-    "@sentry/utils": 7.19.0
+    "@sentry/browser": 7.20.0
+    "@sentry/core": 7.20.0
+    "@sentry/types": 7.20.0
+    "@sentry/utils": 7.20.0
     tslib: ^1.9.3
   peerDependencies:
     vue: 2.x || 3.x
-  checksum: 97f984469ddd8c64108460658e4ac393edd14a0173b4169592fd4053092195de3ca3921988c2135496b0d97a430c6db8fe19d5330d259d6e4f0adfdfabc60a06
+  checksum: 20a2e12e21bb84e909a75dac41cb577f476d44dfa07086d6c52a4937aefc9f9ad8b73f2435895925153c2a18761d0349f93cb235c1283a3cb2fe9e0931c08976
   languageName: node
   linkType: hard
 
@@ -3447,7 +3449,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.36.1":
+"@typescript-eslint/eslint-plugin@npm:^5.42.1":
   version: 5.43.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.43.0"
   dependencies:
@@ -3470,7 +3472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.36.1":
+"@typescript-eslint/parser@npm:^5.42.1":
   version: 5.43.0
   resolution: "@typescript-eslint/parser@npm:5.43.0"
   dependencies:
@@ -5313,7 +5315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ci-info@npm:^3.1.1, ci-info@npm:^3.2.0, ci-info@npm:^3.3.2, ci-info@npm:^3.6.1":
+"ci-info@npm:^3.1.1, ci-info@npm:^3.2.0, ci-info@npm:^3.4.0, ci-info@npm:^3.6.1":
   version: 3.6.1
   resolution: "ci-info@npm:3.6.1"
   checksum: e463ed7152e795467c298268d58974d5e769fc7a0da2f72a53480042e01809e87908544b883a073391f446f46045b0d656c4a1fda3796c93740cd2be1c2d5f6f
@@ -6917,16 +6919,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:21.2.3":
-  version: 21.2.3
-  resolution: "electron@npm:21.2.3"
+"electron@npm:21.3.0":
+  version: 21.3.0
+  resolution: "electron@npm:21.3.0"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 9e871c38a07fb9bb4b2d1d7957c5b39f5b5acab95746c0cbcc4a8f4b5c22a4a05d96e340584aa58aa58903d625174dbbe6834da3d4c5cf6d8246a0ad9225ba15
+  checksum: c0f170299609410a4aeb2daa9bf4d6ac2872ca226a6ba16b0c97d9dfcfbfa27e0d3339c3b71c66b59dd333d471f813ca16933e7b4e7ce10342799dc60cbdf066
   languageName: node
   linkType: hard
 
@@ -7196,7 +7198,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-typescript@npm:^3.5.0":
+"eslint-import-resolver-typescript@npm:^3.5.2":
   version: 3.5.2
   resolution: "eslint-import-resolver-typescript@npm:3.5.2"
   dependencies:
@@ -7273,7 +7275,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:^15.2.5":
+"eslint-plugin-n@npm:^15.5.1":
   version: 15.5.1
   resolution: "eslint-plugin-n@npm:15.5.1"
   dependencies:
@@ -7318,7 +7320,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-promise@npm:^6.0.1":
+"eslint-plugin-promise@npm:^6.1.1":
   version: 6.1.1
   resolution: "eslint-plugin-promise@npm:6.1.1"
   peerDependencies:
@@ -7327,17 +7329,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-unicorn@npm:^43.0.2":
-  version: 43.0.2
-  resolution: "eslint-plugin-unicorn@npm:43.0.2"
+"eslint-plugin-unicorn@npm:^44.0.2":
+  version: 44.0.2
+  resolution: "eslint-plugin-unicorn@npm:44.0.2"
   dependencies:
-    "@babel/helper-validator-identifier": ^7.18.6
-    ci-info: ^3.3.2
+    "@babel/helper-validator-identifier": ^7.19.1
+    ci-info: ^3.4.0
     clean-regexp: ^1.0.0
     eslint-utils: ^3.0.0
     esquery: ^1.4.0
     indent-string: ^4.0.0
-    is-builtin-module: ^3.1.0
+    is-builtin-module: ^3.2.0
     lodash: ^4.17.21
     pluralize: ^8.0.0
     read-pkg-up: ^7.0.1
@@ -7346,8 +7348,8 @@ __metadata:
     semver: ^7.3.7
     strip-indent: ^3.0.0
   peerDependencies:
-    eslint: ">=8.18.0"
-  checksum: 1b63eb013cbc0b3c9ef131a1e049b4b53d8e208393675d5f97d3fa83c050ebcb695a7fd210f4de1460f42f89c2ecca261280488834591d5c21e146d297a9ee2e
+    eslint: ">=8.23.1"
+  checksum: b0ed6b3a60e36efab5b19a0e2a1ea4e4faba79ef315aa1eff9bdebaf28b70ada059837a0a4cdf20e0b678d8eee6155afc2c6300d0ff7d51b68eced4f0bcb56e0
   languageName: node
   linkType: hard
 
@@ -8553,11 +8555,11 @@ __metadata:
   linkType: hard
 
 "globals@npm:^13.15.0":
-  version: 13.17.0
-  resolution: "globals@npm:13.17.0"
+  version: 13.18.0
+  resolution: "globals@npm:13.18.0"
   dependencies:
     type-fest: ^0.20.2
-  checksum: fbaf4112e59b92c9f5575e85ce65e9e17c0b82711196ec5f58beb08599bbd92fd72703d6dfc9b080381fd35b644e1b11dcf25b38cc2341ec21df942594cbc8ce
+  checksum: 9fdaa74cfd5d4ac91319662f512c29b11d1d2deb9c8a20d3998097671deba83d195f20730b2345887de3ddab958a6fa68952feed9ae836ee4594a82ace62fdb4
   languageName: node
   linkType: hard
 
@@ -9389,7 +9391,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-builtin-module@npm:^3.1.0":
+"is-builtin-module@npm:^3.2.0":
   version: 3.2.0
   resolution: "is-builtin-module@npm:3.2.0"
   dependencies:
@@ -10212,6 +10214,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"local-pkg@npm:^0.4.2":
+  version: 0.4.2
+  resolution: "local-pkg@npm:0.4.2"
+  checksum: 22be451353c25c4411b552bf01880ebc9e995b93574b2facc7757968d888356df59199cacada14162ab53bbc9da055bb692c907b4171f008dbce45a2afc777c1
+  languageName: node
+  linkType: hard
+
 "locate-path@npm:^3.0.0":
   version: 3.0.0
   resolution: "locate-path@npm:3.0.0"
@@ -10554,14 +10563,14 @@ __metadata:
     "@nuxt/typescript-build": ^2.1.0
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
-    "@nuxtjs/eslint-config-typescript": ^11.0.0
+    "@nuxtjs/eslint-config-typescript": ^12.0.0
     "@nuxtjs/i18n": ^7.3.0
     "@nuxtjs/vuetify": ^1.12.3
     "@panzoom/panzoom": ^4.5.1
-    "@playwright/test": ^1.27.1
+    "@playwright/test": ^1.28.0
     "@sentry/electron": ^4.1.1
-    "@sentry/tracing": ^7.19.0
-    "@sentry/vue": ^7.19.0
+    "@sentry/tracing": ^7.20.0
+    "@sentry/vue": ^7.20.0
     "@sentry/webpack-plugin": ^1.20.0
     "@types/fluent-ffmpeg": ^2.1.20
     "@types/lodash.clonedeep": ^4.5.7
@@ -10575,7 +10584,7 @@ __metadata:
     css-loader: ^5.2.7
     deepmerge: ^4.2.2
     dotenv: ^16.0.3
-    electron: 21.2.3
+    electron: 21.3.0
     electron-builder: 23.6.0
     electron-devtools-installer: ^3.2.0
     electron-store: ^8.1.0
@@ -10604,9 +10613,8 @@ __metadata:
     obs-websocket-js: ^4.0.3
     obs-websocket-js-v5: "npm:obs-websocket-js@5.0.2"
     pdfjs-dist: ^3.0.279
-    playwright: ^1.27.1
+    playwright: ^1.28.0
     prettier: ^2.7.1
-    sass-loader: ^10.4.0
     sql.js: ^1.8.0
     ts-loader: ^8.4.0
     typescript: ^4.9.3
@@ -12202,23 +12210,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.27.1":
-  version: 1.27.1
-  resolution: "playwright-core@npm:1.27.1"
+"playwright-core@npm:1.28.0":
+  version: 1.28.0
+  resolution: "playwright-core@npm:1.28.0"
   bin:
     playwright: cli.js
-  checksum: fd65d3eb29978e0e7a755158625e8922a66ca9d599b7c24ddf920822b261d81c51a5964ef8e0e5ed9b2b12dc64541c5949b6a898d965e107f43261964e8c29a0
+  checksum: 4bd13bf83bca37f239f1573fcad7f3b559b3b5e28925f57fa66055446b2aef90c4403f9dbb4a9c34f6bd03a2461e61c97eb7fe5faed6b88f027c0bc3727cd096
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.27.1":
-  version: 1.27.1
-  resolution: "playwright@npm:1.27.1"
+"playwright@npm:^1.28.0":
+  version: 1.28.0
+  resolution: "playwright@npm:1.28.0"
   dependencies:
-    playwright-core: 1.27.1
+    playwright-core: 1.28.0
   bin:
     playwright: cli.js
-  checksum: 7bb31998e1783f96443bd1a38f0d7838d1b6fd0cf410ac83ef480c0f0e3e930b809b7e42ccda35b9e272c84aaa8f15e0ee8bdddc19a60b224eecc57d285bf92f
+  checksum: c6a50efe0ed3ea92a2b6fe579ef8dcf0ad3dec753e7dbc0dc3c6b3bf4638e7aebb98c3c6046ac97ee851e23d411a15915354528ef90a586296a2f0ad6ad7f780
   languageName: node
   linkType: hard
 
@@ -13403,13 +13411,13 @@ __metadata:
   linkType: hard
 
 "rc9@npm:^1.2.0":
-  version: 1.2.2
-  resolution: "rc9@npm:1.2.2"
+  version: 1.2.4
+  resolution: "rc9@npm:1.2.4"
   dependencies:
     defu: ^6.0.0
     destr: ^1.1.1
     flat: ^5.0.0
-  checksum: 0450751aabda0da99c13cd743d863a4e0909735907d9d72ceef20fdc9bd2b6762dd3bd10c7e6a3994ca51a4778e508fdee15af6dbfecff4f958cd176cac8fa1c
+  checksum: 88d2fcd53d4c3fb4bfcb20e51d06e1710aaa0a703c6701e18189d2913fbf6e9c7c597bffac631b5923a253c420ba25e5b19be04cde28713a626f840a3e3e84cd
   languageName: node
   linkType: hard
 
@@ -13947,7 +13955,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass-loader@npm:^10.2.0, sass-loader@npm:^10.4.0":
+"sass-loader@npm:^10.2.0":
   version: 10.4.1
   resolution: "sass-loader@npm:10.4.1"
   dependencies:

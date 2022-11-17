@@ -585,7 +585,7 @@ export default defineComponent({
         window.location.reload()
       }
     },
-    setProgress(loaded: number, total: number, global: boolean = false) {
+    setProgress(loaded: number, total: number, global = false) {
       if (global) {
         this.totalProgress = (HUNDRED_PERCENT * loaded) / total
       } else {
@@ -594,7 +594,7 @@ export default defineComponent({
       if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
       if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
     },
-    async getMwMedia(mwDay: Dayjs, filter: string = 'all') {
+    async getMwMedia(mwDay: Dayjs, filter = 'all') {
       if (this.mediaLangObject?.mwbAvailable === false) {
         this.$warn('errorMwbUnavailable')
         this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'error')
@@ -614,7 +614,7 @@ export default defineComponent({
         }
       }
     },
-    async getWeMedia(weDay: Dayjs, filter: string = 'all') {
+    async getWeMedia(weDay: Dayjs, filter = 'all') {
       if (this.mediaLangObject?.wAvailable === false) {
         this.$warn('errorWUnavailable')
         this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'error')
@@ -662,7 +662,7 @@ export default defineComponent({
         this.recurringColor = 'error'
       }
     },
-    async syncJWorgMedia(dryrun: boolean = false) {
+    async syncJWorgMedia(dryrun = false) {
       this.$store.commit('stats/startPerf', {
         func: 'syncJWorgMedia',
         start: performance.now(),
@@ -681,7 +681,7 @@ export default defineComponent({
         stop: performance.now(),
       })
     },
-    async startMediaSync(dryrun: boolean = false, filter: string = 'all') {
+    async startMediaSync(dryrun = false, filter = 'all') {
       const mediaPath = this.$mediaPath()
       if (!mediaPath) return
       this.$store.commit('notify/deleteByMessage', 'dontForgetToGetMedia')

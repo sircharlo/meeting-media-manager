@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable import/named */
+import { platform } from 'os'
 import { app, ipcMain, nativeTheme, screen, session } from 'electron'
 import { init } from '@sentry/electron'
 import { initRenderer } from 'electron-store'
@@ -14,7 +16,6 @@ import {
   createWebsiteController,
 } from './utils'
 require('dotenv').config()
-const { platform } = require('os')
 const windowStateKeeper = require('electron-window-state')
 const isDev = process.env.NODE_ENV === 'development'
 
