@@ -10,6 +10,7 @@
     "password": "Mot de passe",
     "port": "Port"
   },
+  "home": {},
   "configuration": {
     "convertDownloaded": "Convertir médias en format MP4",
     "disableHardwareAcceleration": "Désactiver l'accélération matérielle",
@@ -48,5 +49,6 @@
     "song": "Cantique",
     "jwpub": "JWPUB",
     "custom": "Autre"
-  }
+  },
+  "present-media": {}
 }

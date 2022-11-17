@@ -1,4 +1,10 @@
 {
   "lang": "mg",
-  "name": "malagasy"
+  "name": "malagasy",
+  "shared": {},
+  "home": {},
+  "configuration": {},
+  "congregation-sync": {},
+  "manage-media": {},
+  "present-media": {}
 }

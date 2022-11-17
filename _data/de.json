@@ -10,6 +10,7 @@
     "password": "Passwort",
     "port": "Port"
   },
+  "home": {},
   "configuration": {
     "convertDownloaded": "Medien in MP4-Format konvertieren",
     "disableHardwareAcceleration": "Hardwarebeschleunigung deaktivieren",
@@ -48,5 +49,6 @@
     "song": "Lied",
     "jwpub": "JWPUB",
     "custom": "Eigene"
-  }
+  },
+  "present-media": {}
 }
