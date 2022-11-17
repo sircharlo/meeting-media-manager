@@ -1,5 +1,6 @@
 import { Plugin } from '@nuxt/types'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { DAYJS_LOCALES } = require('~/constants/lang') as {
   DAYJS_LOCALES: string[]
 }

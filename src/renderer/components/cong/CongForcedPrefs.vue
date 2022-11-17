@@ -57,6 +57,7 @@ import { defineComponent } from 'vue'
 import { join } from 'upath'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { FORCABLE } = require('~/constants/prefs') as { FORCABLE: string[] }
 export default defineComponent({
   data() {

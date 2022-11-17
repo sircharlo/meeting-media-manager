@@ -239,6 +239,7 @@ import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
 import { NOT_FOUND } from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
   props: {

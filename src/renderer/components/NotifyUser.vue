@@ -148,7 +148,7 @@ ${JSON.stringify(
           return 'primary'
       }
     },
-    hideMessage(key: number, val: boolean = false) {
+    hideMessage(key: number, val = false) {
       if (!val) {
         this.$store.commit('notify/delete', key)
       }

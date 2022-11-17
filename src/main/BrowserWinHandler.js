@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events'
+import { platform } from 'os'
 import { BrowserWindow, app, shell } from 'electron'
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL
 const isDev = process.env.NODE_ENV === 'development'
-const { platform } = require('os')
 const appLongName = 'Meeting Media Manager'
 
 export default class BrowserWinHandler {

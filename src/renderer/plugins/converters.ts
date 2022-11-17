@@ -124,6 +124,7 @@ const plugin: Plugin = (
     mediaFile: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const pdfjsLib = require('pdfjs-dist') as typeof import('pdfjs-dist')
     try {
       pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
@@ -441,6 +442,7 @@ const plugin: Plugin = (
             div.append(img, canvas)
             document.body.appendChild(div)
 
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
             const createH264MP4Encoder = require('h264-mp4-encoder')
               .createH264MP4Encoder as typeof import('h264-mp4-encoder').createH264MP4Encoder
             createH264MP4Encoder().then((encoder) => {

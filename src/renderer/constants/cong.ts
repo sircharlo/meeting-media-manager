@@ -1,4 +1,6 @@
-export const HOSTS = [
+import { Host } from '~/types'
+
+export const HOSTS: Host[] = [
   {
     name: '4shared',
     server: 'webdav.4shared.com',
@@ -25,4 +27,4 @@ export const HOSTS = [
   },
 ]
 
-export const UNSUPPORTED = []
+export const UNSUPPORTED: string[] = []
