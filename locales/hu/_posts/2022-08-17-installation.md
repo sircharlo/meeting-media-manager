@@ -4,4 +4,18 @@ title: 'Telepítés'
 ref: installation
 ---
 
-{% include posts/installation.html lang=site.data.hu %}
+Az M³ telepítéséhez, illetve futtatásához nem szükséges rendszergazdai jogosultság. Az M³ telepítéséhez egyszerűen [töltse le](({{site.github}}/releases/latest)) és futtassa.
+
+| Operációs rendszer  | Fájl letöltése |
+| ---------------- | ---------------- |
+| Windows | `meeting-media-manager-[VERSION].exe` |
+| macOS | `meeting-media-manager-[VERSION]-universal.dmg` |
+| Linux | `meeting-media-manager-[VERSION].AppImage` |
+
+### Mi lesz a következő
+
+Konfigurálja az alkalmazást a [Beállítások](hu/#configuration) képernyőn.
+
+### Hiba történt a telepítés során?
+
+Segítségért nézze meg ezt: [Műszaki használati jegyzetek](hu/#usage-notes).

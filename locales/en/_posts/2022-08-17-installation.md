@@ -14,8 +14,8 @@ M³ does not require administrative privileges to install or run. To install M³
 
 ### What's next
 
-Configure the app using the [Settings](en/#installation) screen.
+Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
 
 ### Trouble installing?
 
-Check the [Technical usage notes](en/#usage-notes) for help.
+Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.
