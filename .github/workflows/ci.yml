@@ -80,7 +80,7 @@ jobs:
       - name: Build Electron app for Windows
         env:
           GH_TOKEN: ${{ secrets.github_token }}
-        run: yarn build -w --x64 -p never
+        run: yarn build -w --ia32 false -p never
         if: matrix.os == 'windows-latest'
 
       - name: Run tests
