@@ -19,27 +19,27 @@
   </head>
 
   <body>
-    {% include nav.html %}{% assign translations=site.data | where:"lang", page.lang %}
+    {% include nav.html %}{% assign translations=site.data | where:"lang", page.lang %}{% assign language=translations[0] %}
     
     <section id="content">
       <button class="control show">
-        {% include t.html lang=translations[0] page="home" key="expand" %}
+        {% include t.html lang=language page="home" key="expand" %}
       </button>
       <button class="control hide">
-        {% include t.html lang=translations[0] page="home" key="collapse" %}
+        {% include t.html lang=language page="home" key="collapse" %}
       </button>
 
       {{ content }}
 
       <table class="showcase">
         {% include image.html src="main/update-folders.gif" alt="syncInProgress"
-        lang=translations[0] page="home" %} {% include image.html
-        src="main/main-screen.png" alt="mainScreen" lang=translations[0] page="home" %}
+        lang=language page="home" %} {% include image.html
+        src="main/main-screen.png" alt="mainScreen" lang=language page="home" %}
         {% include image.html src="main/date-picker.png" alt="chooseWeek"
-        lang=translations[0] page="home" %} {% include image.html
-        src="main/sync-complete.png" alt="syncComplete" lang=translations[0]
+        lang=language page="home" %} {% include image.html
+        src="main/sync-complete.png" alt="syncComplete" lang=language
         page="home" %} {% include image.html src="main/music-playing.png"
-        alt="musicPlaying" lang=translations[0] page="home" %}
+        alt="musicPlaying" lang=language page="home" %}
       </table>
       
       {% assign posts=site.posts | where:"lang", page.lang %} 
