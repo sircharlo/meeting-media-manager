@@ -98,8 +98,9 @@ import { defineComponent } from 'vue'
 import { faCog, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { CongFile, CongPrefs, ElectronStore, Host } from '~/types'
+import { HOSTS } from '~/constants/cong'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
-const { HOSTS } = require('~/constants/cong') as { HOSTS: Host[] }
 export default defineComponent({
   data() {
     return {

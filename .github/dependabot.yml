@@ -24,8 +24,6 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: 'obs-websocket-js'
         update-types: ['version-update:semver-major']
-      - dependency-name: 'sass-loader'
-        update-types: ['version-update:semver-major']
       - dependency-name: 'ts-loader'
         update-types: ['version-update:semver-major']
       - dependency-name: 'vue'

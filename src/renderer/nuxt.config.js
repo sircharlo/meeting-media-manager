@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable nuxt/no-cjs-in-config */
 const resolve = require('path').resolve
 const platform = require('os').platform

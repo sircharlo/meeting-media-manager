@@ -410,7 +410,7 @@ export default defineComponent({
       this.files = media
       this.type = ''
     },
-    async addFiles(multi: boolean = true, ...exts: string[]) {
+    async addFiles(multi = true, ...exts: string[]) {
       if (exts.length === 0) {
         exts.push('*')
       }
@@ -577,7 +577,7 @@ export default defineComponent({
       this.files = []
       this.fileString = ''
     },
-    setProgress(loaded: number, total: number, global: boolean = false) {
+    setProgress(loaded: number, total: number, global = false) {
       if (global) {
         this.totalProgress = (HUNDRED_PERCENT * loaded) / total
       } else {

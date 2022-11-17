@@ -11,7 +11,6 @@ import {
   CongPrefs,
   MediaPrefs,
   MeetingPrefs,
-  Host,
   CongFile,
   MeetingFile,
   ElectronStore,
@@ -23,10 +22,8 @@ import {
   NOT_FOUND,
 } from '~/constants/general'
 
-const { HOSTS, UNSUPPORTED } = require('~/constants/cong') as {
-  HOSTS: Host[]
-  UNSUPPORTED: string[]
-}
+import { HOSTS, UNSUPPORTED } from '~/constants/cong'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { FORCABLE } = require('~/constants/prefs') as { FORCABLE: string[] }
 
 const plugin: Plugin = (

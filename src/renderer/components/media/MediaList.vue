@@ -118,7 +118,6 @@
   <p v-else>{{ $t('noMedia') }}</p>
 </template>
 <script lang="ts">
-// eslint-disable-next-line import/named
 import { pathToFileURL } from 'url'
 import { extname, join, trimExt } from 'upath'
 import { defineComponent, PropOptions } from 'vue'

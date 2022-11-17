@@ -14,6 +14,7 @@ import {
   ElectronStore,
 } from '~/types'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS, ENUMS } = require('~/constants/prefs') as {
   PREFS: ElectronStore
   ENUMS: { key: string; values: string[] }[]
@@ -477,7 +478,6 @@ function migrate2290(key: string, newVal: any) {
       schema[root]?.properties[newKey]?.type
   if (schemaType) {
     if (typeof schemaType === 'string') {
-      // eslint-disable-next-line valid-typeof
       if (typeof newVal !== schemaType) {
         setDefaultValue()
       }
