@@ -1,25 +1,18 @@
-{% assign posts=site.posts | where:"lang", page.lang %}
-<nav id="sidebar">
-  <h1><a href="{{page.lang}}/#content" target="_self"><img src="{{site.github}}/blob/master/build/icons/icon.png?raw=true" alt="M³" style="max-height: 4rem;" /></a>M³ docs</h1>
-  <ul id='links'>
-    <input id="search" type="search" placeholder="Filter by keyword" />
-    <li><a href="{{page.lang}}/#content" target="_self">Home</a></li>{% for post in posts %}{% if post.tag == null %}
-    <li><a href='{{page.lang}}/#{{ post.ref }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}{% for tag in site.tags reversed %}
-    {% assign posts=tag[1] | where:"lang", page.lang %}
-    {% assign size = posts.size %}{% if size > 0 %}
-    <li>
-      <h2>{{ tag[0] }}</h2>
-      <ul>{% for post in posts %}{% if post.ref %}
-        <li class='{{ post.type }}'><a href='{{page.lang}}/#{{ post.ref }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}
+{% assign posts=site.posts | where:"lang", page.lang %}<nav id="sidebar">
+      <h1><a href="{{page.lang}}/#content" target="_self"><img src="{{site.github}}/blob/master/build/icons/icon.png?raw=true" alt="M³" style="max-height: 4rem;" /></a>M³ docs</h1>
+      <ul id='links'>
+        <input id="search" type="search" placeholder="Filter by keyword" />
+        <li><a href="{{page.lang}}/#content" target="_self">Home</a></li>{% for post in posts %}{% if post.tag == null %}
+        <li><a href='{{page.lang}}/#{{ post.ref }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}{% for tag in site.tags reversed %}{% assign posts=tag[1] | where:"lang", page.lang %}{% assign size = posts.size %}{% if size > 0 %}
+        <li>
+          <h2>{{ tag[0] }}</h2>
+          <ul>{% for post in posts %}{% if post.ref %}
+            <li class='{{ post.type }}'><a href='{{page.lang}}/#{{ post.ref }}' target="_self">{{ post.title }}</a></li>{% endif %}{% endfor %}
+          </ul>
+        </li>{% endif %}{% endfor %}{% assign lang=site.data | where:"lang", page.lang %}
+        <label for="select-lang">{{lang[0].language}}</label>
+        <select id="select-lang" name="select-lang">{% for p in site.pages %}{% if p.lang %}{% assign language=site.data | where:"lang", p.lang %}
+          <option value="{{ p.lang }}"{% if p.lang == page.lang %} selected="selected"{% endif %}>{{ language[0].name }}</option>{% endif %}{% endfor %}
+        </select>
       </ul>
-    </li>{% endif %}{% endfor %}
-    {% assign lang=site.data | where:"lang", page.lang %}
-    <label for="select-lang">{{lang[0].language}}</label>
-    <select id="select-lang" name="select-lang">
-      {% for p in site.pages %}{% if p.lang %}
-      {% assign language=site.data | where:"lang", p.lang %}
-      <option value="{{ p.lang }}"{% if p.lang == page.lang %} selected="selected"{% endif %}>{{ language[0].name }}</option>
-      {% endif %}{% endfor %}
-    </select>
-  </ul>
-</nav>
+    </nav>
