@@ -14,8 +14,8 @@
     />
     <link href="./assets/main.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" type="image/x-icon" href="./icon.ico" />
-    {% assign pages=site.pages | sort: 'lang' %} {% for page in pages %}{% if
-    page.lang %}<link rel="alternate" hreflang="{{ page.lang }}" href="{{ page.url }}" />{% endif %}{% endfor %}
+    {% assign pages=site.pages | sort: 'lang' %} {% for page in pages %}{% if page.lang %}
+    <link rel="alternate" hreflang="{{ page.lang }}" href="{{ page.url }}" />{% endif %}{% endfor %}
   </head>
 
   <body>
