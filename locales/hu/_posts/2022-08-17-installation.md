@@ -14,8 +14,8 @@ Az M³ telepítéséhez, illetve futtatásához nem szükséges rendszergazdai j
 
 ### Mi lesz a következő
 
-Konfigurálja az alkalmazást a [Beállítások](hu/#configuration) képernyőn.
+Konfigurálja az alkalmazást a [Beállítások]({{page.lang}}/#configuration) képernyőn.
 
 ### Hiba történt a telepítés során?
 
-Segítségért nézze meg ezt: [Műszaki használati jegyzetek](hu/#usage-notes).
+Segítségért nézze meg ezt: [Műszaki használati jegyzetek]({{page.lang}}/#usage-notes).

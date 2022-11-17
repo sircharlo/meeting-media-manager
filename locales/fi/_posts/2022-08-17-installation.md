@@ -14,8 +14,8 @@ ref: installation
 
 ### Mitä seuraavaksi
 
-Määritä sovellus [Asetukset](fi/#configuration)-näytön avulla.
+Määritä sovellus [Asetukset]({{page.lang}}/#configuration)-näytön avulla.
 
 ### Onko asennuksessa ongelmia?
 
-Katso [Tekniset käyttöohjeet](fi/#usage-notes) saadaksesi apua.
+Katso [Tekniset käyttöohjeet]({{page.lang}}/#usage-notes) saadaksesi apua.
