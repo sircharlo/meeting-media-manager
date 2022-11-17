@@ -1,6 +1,6 @@
 <p>{% include t.html lang=include.lang page="usage-notes" key="run" %}</p>
 
-<h3>{% include t.html lang=include.lang page="usage-notes" key="install" %}</h3>
+<h3>Windows: {% include t.html lang=include.lang page="usage-notes" key="install" %}</h3>
 {% assign link='<a href="assets/img/other/win-smartscreen.png">error</a>' %} {%
 assign string= include.lang.usage-notes.winError %} {% if string == nil %} {%
 assign string= site.data.en.usage-notes.winError %} {% endif %}
@@ -10,7 +10,7 @@ assign string= site.data.en.usage-notes.winError %} {% endif %}
   lang=include.lang page="usage-notes" key="winErrorSolution" %}
 </p>
 
-<h3>{% include t.html lang=include.lang page="usage-notes" key="install" %}</h3>
+<h3>Linux: {% include t.html lang=include.lang page="usage-notes" key="install" %}</h3>
 {% assign string= include.lang.usage-notes.linDocTitle %} {% if string == nil %}
 {% assign string= site.data.en.usage-notes.linDocTitle %} {% endif %} {% assign
 link='<a
@@ -39,9 +39,7 @@ endif %}
 
 <p>{{ string | replace: '[LINK]', link}}</p>
 
-<h3>MacOS</h3>
-
-<h4>{% include t.html lang=include.lang page="usage-notes" key="install" %}</h4>
+<h3>MacOS: {% include t.html lang=include.lang page="usage-notes" key="install" %}</h3>
 
 {% assign string= include.lang.usage-notes.macApple %} {% if string == nil %} {%
 assign string= site.data.en.usage-notes.macApple %} {% endif %} {% assign
@@ -67,9 +65,7 @@ site.data.en.usage-notes.macWarning %} {% endif %}
   codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"
 </code>
 
-<h4>
-  {% include t.html lang=include.lang page="usage-notes" key="macAutoUpdate" %}
-</h4>
+<h3>MacOS: {% include t.html lang=include.lang page="usage-notes" key="macAutoUpdate" %}</h3>
 
 <p>{% include t.html lang=include.lang page="usage-notes" key="macUnlike" %} {% include t.html lang=include.lang page="usage-notes" key="macHowever" %}</p>
 
