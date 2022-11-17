@@ -15,34 +15,31 @@
     <link href="./assets/main.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" type="image/x-icon" href="./icon.ico" />
     {% assign pages=site.pages | sort: 'lang' %} {% for page in pages %}{% if
-    page.lang %}
-    <link rel="alternate" hreflang="{{ page.lang }}" href="{{ page.url }}" />
-    {% endif %}{% endfor %}
+    page.lang %}<link rel="alternate" hreflang="{{ page.lang }}" href="{{ page.url }}" />{% endif %}{% endfor %}
   </head>
 
   <body>
-    {% include nav.html %}
-    {% assign translations=site.data | where:"lang", page.lang %}
-
+    {% include nav.html %}{% assign translations=site.data | where:"lang", page.lang %}
+    
     <section id="content">
       <button class="control show">
-        {% include t.html lang=translations page="home" key="expand" %}
+        {% include t.html lang=translations[0] page="home" key="expand" %}
       </button>
       <button class="control hide">
-        {% include t.html lang=translations page="home" key="collapse" %}
+        {% include t.html lang=translations[0] page="home" key="collapse" %}
       </button>
 
       {{ content }}
 
       <table class="showcase">
         {% include image.html src="main/update-folders.gif" alt="syncInProgress"
-        lang=translations page="home" %} {% include image.html
-        src="main/main-screen.png" alt="mainScreen" lang=translations page="home" %}
+        lang=translations[0] page="home" %} {% include image.html
+        src="main/main-screen.png" alt="mainScreen" lang=translations[0] page="home" %}
         {% include image.html src="main/date-picker.png" alt="chooseWeek"
-        lang=translations page="home" %} {% include image.html
-        src="main/sync-complete.png" alt="syncComplete" lang=translations
+        lang=translations[0] page="home" %} {% include image.html
+        src="main/sync-complete.png" alt="syncComplete" lang=translations[0]
         page="home" %} {% include image.html src="main/music-playing.png"
-        alt="musicPlaying" lang=translations page="home" %}
+        alt="musicPlaying" lang=translations[0] page="home" %}
       </table>
       
       {% assign posts=site.posts | where:"lang", page.lang %} 
