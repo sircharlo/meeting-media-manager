@@ -8,7 +8,7 @@ Az alkalmazásnak probléma nélkül futnia kell a legtöbb modern —Windows, L
 
 ### Windows: Telepítés és első lépések
 
-A telepítő megnyitásakor egy [error](assets/img/other/win-smartscreen.png) jelzést kaphat, amely szerint "A Windows SmartScreen megakadályozta egy ismeretlen alkalmazás elindítását". Ennek az az oka, hogy az alkalmazás nem rendelkezik nagyszámú letöltéssel, és ezért a Windows nem "bízik meg" benne. Ennek megkerüléséhez egyszerűen kattintson a "További információ", majd a "Futtatás mindenképpen" elemre.
+A telepítő megnyitásakor egy [hibajelzést](assets/img/other/win-smartscreen.png) kaphat, amely szerint "A Windows SmartScreen megakadályozta egy ismeretlen alkalmazás elindítását". Ennek az az oka, hogy az alkalmazás nem rendelkezik nagyszámú letöltéssel, és ezért a Windows nem "bízik meg" benne. Ennek megkerüléséhez egyszerűen kattintson a "További információ", majd a "Futtatás mindenképpen" elemre.
 
 ### Linux: Telepítés és első lépések
 
@@ -20,7 +20,7 @@ Ha a kimenet `0`, akkor az AppImage **nem** fog futni, hacsak nem futtatja a kö
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Mielőtt ezt megteszi, mindenképpen olvassa el a [mivel jár ez](https://lwn.net/Articles/673597/)-et.
+Mielőtt ezt megteszi, mindenképpen olvassa el, hogy [mivel jár ez](https://lwn.net/Articles/673597/).
 
 ### MacOS: Telepítés és első lépések
 
