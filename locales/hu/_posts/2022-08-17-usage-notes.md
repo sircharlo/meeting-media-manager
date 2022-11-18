@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Súgó
 title: Műszaki használati jegyzetek
 ref: usage-notes
 ---
