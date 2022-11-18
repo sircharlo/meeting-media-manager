@@ -6,10 +6,13 @@ import {
   ipcMain,
   nativeTheme,
   screen,
+  Point,
   session,
   BrowserWindow,
   BrowserWindowConstructorOptions,
   Event,
+  RelaunchOptions,
+  OpenDialogOptions,
 } from 'electron'
 import { init } from '@sentry/electron'
 import { initRenderer } from 'electron-store'
@@ -25,6 +28,7 @@ import {
   createMediaWindow,
   createWebsiteController,
 } from './utils'
+import { ElectronStore } from './../renderer/types'
 require('dotenv').config()
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -203,7 +207,7 @@ if (gotTheLock) {
       path.replaceAll('/', platform() === 'win32' ? '\\' : '/')
     )
   })
-  ipcMain.handle('openDialog', async (_e, options) => {
+  ipcMain.handle('openDialog', async (_e, options: OpenDialogOptions) => {
     const result = await require('electron').dialog.showOpenDialog(options)
     return result
   })
@@ -213,7 +217,7 @@ if (gotTheLock) {
     if (isDev) {
       app.exit(RESTART_CODE)
     } else {
-      let options
+      let options: RelaunchOptions
       if (process.env.APPIMAGE) {
         options = {
           execPath: process.env.APPIMAGE,
@@ -258,7 +262,7 @@ if (gotTheLock) {
       return globalShortcut.register(shortcut, functions[fn])
     }
   )
-  ipcMain.on('unregisterShortcut', (_e, shortcut) => {
+  ipcMain.on('unregisterShortcut', (_e, shortcut: string) => {
     const globalShortcut = require('electron').globalShortcut
     if (globalShortcut.isRegistered(shortcut)) {
       globalShortcut.unregister(shortcut)
@@ -282,7 +286,7 @@ if (gotTheLock) {
   })
 
   // IpcMain events for the presentation window
-  ipcMain.on('videoProgress', (_e, percent) => {
+  ipcMain.on('videoProgress', (_e, percent: number[]) => {
     win.webContents.send('videoProgress', percent)
   })
   ipcMain.on('videoEnd', () => {
@@ -297,13 +301,13 @@ if (gotTheLock) {
   })
 
   // IpcMain events for the media window
-  ipcMain.on('showMedia', (_e, media) => {
-    mediaWin.webContents.send('showMedia', media)
-    win.webContents.send('showingMedia', [
-      !!media,
-      media ? !!media.start : false,
-    ])
-  })
+  ipcMain.on(
+    'showMedia',
+    (_e, media: { path: string; start?: string; end?: string } | null) => {
+      mediaWin.webContents.send('showMedia', media)
+      win.webContents.send('showingMedia', [!!media, !!media?.start])
+    }
+  )
   ipcMain.on('hideMedia', () => {
     mediaWin.webContents.send('hideMedia')
     win.webContents.send('showingMedia', false)
@@ -314,13 +318,27 @@ if (gotTheLock) {
   ipcMain.on('playVideo', () => {
     mediaWin.webContents.send('playVideo')
   })
-  ipcMain.on('scrollWebsite', (_e, pos) => {
+  ipcMain.on('scrollWebsite', (_e, pos: Point) => {
     mediaWin.webContents.send('scrollWebsite', pos)
   })
-  ipcMain.on('clickOnWebsite', (_e, target) => {
-    mediaWin.webContents.send('clickOnWebsite', target)
-  })
-  ipcMain.on('openWebsite', (_e, url) => {
+  ipcMain.on(
+    'clickOnWebsite',
+    (
+      _e,
+      target: {
+        tag: string
+        id: string
+        className?: string
+        text: string | null
+        alt: string | null
+        src: string | null
+        href: string | null
+      }
+    ) => {
+      mediaWin.webContents.send('clickOnWebsite', target)
+    }
+  )
+  ipcMain.on('openWebsite', (_e, url: string) => {
     win.webContents.send('showingMedia', [true, true])
     if (website && websiteController) {
       mediaWinHandler.loadPage('/browser?url=' + url)
@@ -361,86 +379,104 @@ if (gotTheLock) {
       website = false
     })
   })
-  ipcMain.on('toggleSubtitles', (_e, enabled) => {
+  ipcMain.on('toggleSubtitles', (_e, enabled: boolean) => {
     mediaWin.webContents.send('toggleSubtitles', enabled)
   })
-  ipcMain.on('videoScrub', (_e, timeAsPercent) => {
+  ipcMain.on('videoScrub', (_e, timeAsPercent: number) => {
     mediaWin.webContents.send('videoScrub', timeAsPercent)
   })
-  ipcMain.on('startMediaDisplay', (_e, prefs) => {
+  ipcMain.on('startMediaDisplay', (_e, prefs: ElectronStore) => {
     mediaWin.webContents.send('startMediaDisplay', prefs)
   })
-  ipcMain.on('zoom', (_e, deltaY) => {
+  ipcMain.on('zoom', (_e, deltaY: number) => {
     mediaWin.webContents.send('zoom', deltaY)
   })
-  ipcMain.on('pan', (_e, cors) => {
-    mediaWin.webContents.send('pan', cors)
+  ipcMain.on('pan', (_e, coords: Point) => {
+    mediaWin.webContents.send('pan', coords)
   })
 
   // IpcMain events to control the windows
-  ipcMain.on('allowQuit', (_e, val) => {
+  ipcMain.on('allowQuit', (_e, val: boolean) => {
     allowClose = val
   })
-  ipcMain.on('setMediaWindowPosition', (_e, mediaWinOptions) => {
-    setMediaWindowPosition(win, mediaWin, mediaWinOptions)
-  })
+  ipcMain.on(
+    'setMediaWindowPosition',
+    (
+      _e,
+      mediaWinOptions: {
+        destination: number
+        type: 'fullscreen' | 'window'
+      }
+    ) => {
+      setMediaWindowPosition(win, mediaWin, mediaWinOptions)
+    }
+  )
   ipcMain.on('toggleMediaWindowFocus', () => {
     fadeWindow(win, mediaWin)
   })
   ipcMain.on('closeMediaWindow', () => {
     closeMediaWindow()
   })
-  ipcMain.on('showMediaWindow', (_e, mediaWinOptions) => {
-    if (!mediaWin) {
-      const screenInfo = getScreenInfo(win, mediaWin)
-      const STARTING_POSITION = 50
-
-      const windowOptions = {
-        icon: join(
-          process.resourcesPath,
-          'videoPlayer',
-          `videoPlayer.${iconType}`
-        ),
-        fullscreen: mediaWinOptions.type === 'fullscreen',
-        x:
-          screenInfo.displays.find(
-            (display) => display.id === mediaWinOptions.destination
-          ).bounds.x + STARTING_POSITION,
-        y:
-          screenInfo.displays.find(
-            (display) => display.id === mediaWinOptions.destination
-          ).bounds.y + STARTING_POSITION,
+  ipcMain.on(
+    'showMediaWindow',
+    (
+      _e,
+      mediaWinOptions: {
+        destination: number
+        type: 'fullscreen' | 'window'
       }
+    ) => {
+      if (!mediaWin) {
+        const screenInfo = getScreenInfo(win, mediaWin)
+        const STARTING_POSITION = 50
 
-      mediaWinHandler = createMediaWindow(windowOptions)
-      mediaWin = mediaWinHandler.browserWindow
+        const windowOptions = {
+          icon: join(
+            process.resourcesPath,
+            'videoPlayer',
+            `videoPlayer.${iconType}`
+          ),
+          fullscreen: mediaWinOptions.type === 'fullscreen',
+          x:
+            screenInfo.displays.find(
+              (display) => display.id === mediaWinOptions.destination
+            ).bounds.x + STARTING_POSITION,
+          y:
+            screenInfo.displays.find(
+              (display) => display.id === mediaWinOptions.destination
+            ).bounds.y + STARTING_POSITION,
+        }
 
-      mediaWin
-        .on('close', (e) => {
-          if (!authorizedCloseMediaWin) e.preventDefault()
-        })
-        .on('will-resize', () => {
-          // Not working on Linux
-          mediaWin.webContents.send('windowResizing', mediaWin.getSize())
-          win.webContents.send('resetZoom')
-          mediaWin.webContents.send('resetZoom')
-        })
-        .on('resize', () => {
-          if (platform() === 'linux') {
+        mediaWinHandler = createMediaWindow(windowOptions)
+        mediaWin = mediaWinHandler.browserWindow
+
+        mediaWin
+          .on('close', (e) => {
+            if (!authorizedCloseMediaWin) e.preventDefault()
+          })
+          .on('will-resize', () => {
+            // Not working on Linux
+            mediaWin.webContents.send('windowResizing', mediaWin.getSize())
             win.webContents.send('resetZoom')
             mediaWin.webContents.send('resetZoom')
-          }
-        })
-        .on('resized', () => {
-          // Not working on Linux
-          mediaWin.webContents.send('windowResized')
-        })
+          })
+          .on('resize', () => {
+            if (platform() === 'linux') {
+              win.webContents.send('resetZoom')
+              mediaWin.webContents.send('resetZoom')
+            }
+          })
+          .on('resized', () => {
+            // Not working on Linux
+            mediaWin.webContents.send('windowResized')
+          })
 
-      win.webContents.send('mediaWindowShown')
-    } else {
-      setMediaWindowPosition(win, mediaWin, mediaWinOptions)
+        win.webContents.send('mediaWindowShown')
+      } else {
+        setMediaWindowPosition(win, mediaWin, mediaWinOptions)
+      }
     }
-  })
+  )
 
   // Auto updater events
   autoUpdater.logger = console
