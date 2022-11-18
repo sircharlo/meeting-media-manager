@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: 'Modo de exibição de mídia'
+title: Modo de exibição de mídia
 ref: present-media
 ---
 

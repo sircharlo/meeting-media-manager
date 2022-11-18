@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Instalación'
+title: Instalación
 ref: installation
 ---
 

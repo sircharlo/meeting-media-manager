@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Asennus'
+title: Asennus
 ref: installation
 ---
 

@@ -1,6 +1,6 @@
 ---
 tag: Gebruik
-title: 'Media beheren'
+title: Media beheren
 ref: manage-media
 ---
 

@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Seaded'
+title: Seaded
 ref: configuration
 ---
 

@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Paigaldamine'
+title: Paigaldamine
 ref: installation
 ---
 

@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Beállítások'
+title: Beállítások
 ref: configuration
 ---
 

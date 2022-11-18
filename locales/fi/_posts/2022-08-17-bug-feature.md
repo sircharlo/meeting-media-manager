@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: 'Ongelmat ja ominaisuuspyynnöt'
+title: Ongelmat ja ominaisuuspyynnöt
 ref: bug-feature
 ---
 

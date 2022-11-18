@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Församlingssynkronisering'
+title: Församlingssynkronisering
 ref: congregation-sync
 ---
 

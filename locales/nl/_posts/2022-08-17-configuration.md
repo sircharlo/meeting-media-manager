@@ -1,6 +1,6 @@
 ---
 tag: Configuratie
-title: 'Instellingen'
+title: Instellingen
 ref: configuration
 ---
 

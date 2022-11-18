@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: 'Meedia esitlusrežiim'
+title: Meedia esitlusrežiim
 ref: present-media
 ---
 

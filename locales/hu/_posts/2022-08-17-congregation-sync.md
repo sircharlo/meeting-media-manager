@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Gyülekezet szinkronizálás'
+title: Gyülekezet szinkronizálás
 ref: congregation-sync
 ---
 

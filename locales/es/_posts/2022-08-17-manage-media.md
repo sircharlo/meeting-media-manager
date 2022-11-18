@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: 'Gestión de contenidos'
+title: Gestión de contenidos
 ref: manage-media
 ---
 

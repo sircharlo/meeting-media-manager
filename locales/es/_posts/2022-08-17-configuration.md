@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Ajustes'
+title: Ajustes
 ref: configuration
 ---
 

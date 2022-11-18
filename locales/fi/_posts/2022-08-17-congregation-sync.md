@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Seurakunnan synkronointi'
+title: Seurakunnan synkronointi
 ref: congregation-sync
 ---
 

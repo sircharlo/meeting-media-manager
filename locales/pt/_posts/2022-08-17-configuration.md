@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Configurações'
+title: Configurações
 ref: configuration
 ---
 
