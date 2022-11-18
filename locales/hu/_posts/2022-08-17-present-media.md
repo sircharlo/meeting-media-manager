@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: Médiabemutató mód2
+title: Médiabemutató mód
 ref: present-media
 ---
 
