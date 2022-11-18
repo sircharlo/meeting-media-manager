@@ -1,6 +1,6 @@
 ---
 tag: Gebruik
-title: Media presentatie modus2
+title: Media presentatie modus
 ref: present-media
 ---
 
