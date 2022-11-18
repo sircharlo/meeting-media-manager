@@ -1,6 +1,6 @@
+import { platform } from 'os'
 import { screen } from 'electron'
 import BrowserWinHandler from './BrowserWinHandler'
-const { platform } = require('os')
 
 const AR_WIDTH = 16
 const AR_HEIGHT = 9
