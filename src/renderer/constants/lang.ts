@@ -12,6 +12,7 @@ const DAYJS_LOCALES = [
   'pt',
   'ru',
   'sv',
+  // 'wes-x-pgw', // not yet supported by dayjs
 ]
 
 // Languages that have no active translator
@@ -115,6 +116,13 @@ const LOCALES = [
     file: 'sv.json',
     jw: 'Z',
     name: 'Svenska (Swedish)',
+  },
+  {
+    code: 'wes-x-pgw',
+    iso: 'wes-x-pgw',
+    file: 'wes-x-pgw.json',
+    jw: 'PGW',
+    name: 'Pidgin - West Africa (Pidgin - West Africa)',
   },
 ]
 
