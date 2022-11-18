@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: Median esitystila2
+title: Median esitystila
 ref: present-media
 ---
 
