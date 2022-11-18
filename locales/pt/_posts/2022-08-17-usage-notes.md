@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Ajuda
 title: Como instalar o M³
 ref: usage-notes
 ---
