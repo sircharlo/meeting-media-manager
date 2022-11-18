@@ -111,7 +111,8 @@ export default class BrowserWinHandler {
   onCreated(callback: (win: BrowserWindow) => void) {
     if (this.browserWindow !== null) return callback(this.browserWindow)
     this._eventEmitter.once('created', () => {
-      callback(this.browserWindow)
+      // eslint-disable-next-line n/no-callback-literal
+      callback(this.browserWindow as BrowserWindow)
     })
   }
 

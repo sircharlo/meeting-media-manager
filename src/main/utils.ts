@@ -27,7 +27,7 @@ export function createMediaWindow(windowOpts: BrowserWindowConstructorOptions) {
     ...windowOpts,
   })
 
-  const win = winHandler.browserWindow
+  const win = winHandler.browserWindow as BrowserWindow
   win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
   if (platform() !== 'darwin') {
     win.setAlwaysOnTop(true, 'screen-saver')
@@ -57,7 +57,7 @@ export function createWebsiteController(
     ...opts,
   })
 
-  const win = winHandler.browserWindow
+  const win = winHandler.browserWindow as BrowserWindow
   win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
   if (maximize) win.maximize()
   return winHandler
@@ -68,31 +68,36 @@ interface Screen extends Display {
 }
 
 // Get screen information
-export function getScreenInfo(win: BrowserWindow, mediaWin: BrowserWindow) {
+export function getScreenInfo(
+  win: BrowserWindow | null,
+  mediaWin: BrowserWindow | null
+) {
   let displays: Screen[] = []
   const winMidpoints: { main?: Point; media?: Point } = {}
   const winCoordinates: { main?: Point; media?: Point } = {}
-  try {
-    let posSize = win.getPosition().concat(win.getSize())
-    winMidpoints.main = {
-      x: posSize[0] + posSize[2] / 2,
-      y: posSize[1] + posSize[3] / 2,
-    }
-    if (mediaWin) {
-      posSize = mediaWin.getPosition().concat(win.getSize())
-      winMidpoints.media = {
+  if (win) {
+    try {
+      let posSize = win.getPosition().concat(win.getSize())
+      winMidpoints.main = {
         x: posSize[0] + posSize[2] / 2,
         y: posSize[1] + posSize[3] / 2,
       }
-    }
-    displays = screen.getAllDisplays().map((display, i) => {
-      return {
-        ...display,
-        humanFriendlyNumber: i + 1,
+      if (mediaWin) {
+        posSize = mediaWin.getPosition().concat(win.getSize())
+        winMidpoints.media = {
+          x: posSize[0] + posSize[2] / 2,
+          y: posSize[1] + posSize[3] / 2,
+        }
       }
-    })
-  } catch (err) {
-    console.error(err)
+      displays = screen.getAllDisplays().map((display, i) => {
+        return {
+          ...display,
+          humanFriendlyNumber: i + 1,
+        }
+      })
+    } catch (err) {
+      console.error(err)
+    }
   }
   return {
     displays,
@@ -100,26 +105,31 @@ export function getScreenInfo(win: BrowserWindow, mediaWin: BrowserWindow) {
     winCoordinates,
     otherScreens: displays.filter(
       (display) =>
-        display.id !== screen.getDisplayNearestPoint(winMidpoints.main).id
+        display.id !==
+        screen.getDisplayNearestPoint(winMidpoints.main as Point).id
     ),
   }
 }
 
 // Show/hide media window
-export function fadeWindow(win: BrowserWindow, browserWindow: BrowserWindow) {
+export function fadeWindow(
+  win: BrowserWindow | null,
+  browserWindow: BrowserWindow | null
+) {
+  if (!browserWindow) return
   if (!browserWindow.isVisible()) {
     browserWindow.show()
-    win.webContents.send('mediaWindowVisibilityChanged', 'shown')
+    win?.webContents.send('mediaWindowVisibilityChanged', 'shown')
   } else {
     browserWindow.hide()
-    win.webContents.send('mediaWindowVisibilityChanged', 'hidden')
+    win?.webContents.send('mediaWindowVisibilityChanged', 'hidden')
   }
 }
 
 // Set position of the media window
 export function setMediaWindowPosition(
-  win: BrowserWindow,
-  mediaWin: BrowserWindow,
+  win: BrowserWindow | null,
+  mediaWin: BrowserWindow | null,
   mediaWinOptions: {
     destination: number
     type: 'window' | 'fullscreen'
@@ -131,13 +141,13 @@ export function setMediaWindowPosition(
       const STARTING_POSITION = 50
       mediaWin.setBounds({
         x:
-          screenInfo.displays.find(
+          (screenInfo.displays.find(
             (display) => display.id === mediaWinOptions.destination
-          ).bounds.x + STARTING_POSITION,
+          )?.bounds?.x ?? 0) + STARTING_POSITION,
         y:
-          screenInfo.displays.find(
+          (screenInfo.displays.find(
             (display) => display.id === mediaWinOptions.destination
-          ).bounds.y + STARTING_POSITION,
+          )?.bounds?.y ?? 0) + STARTING_POSITION,
         ...(mediaWinOptions.type === 'window' && { width: 1280 }),
         ...(mediaWinOptions.type === 'window' && { height: 720 }),
       })

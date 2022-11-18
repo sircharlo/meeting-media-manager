@@ -91,7 +91,7 @@ function onMove() {
       .every((val, _i, arr) => val.id === arr[0].id)
 
     if (mainWinSameAsMedia) {
-      win.webContents.send('moveMediaWindowToOtherScreen')
+      win?.webContents.send('moveMediaWindowToOtherScreen')
     }
   }
 }
@@ -101,7 +101,7 @@ function onClose(e: Event) {
 
   if (!allowClose && closeAttempts < 2) {
     e.preventDefault()
-    win.webContents.send('notifyUser', [
+    win?.webContents.send('notifyUser', [
       'cantCloseMediaWindowOpen',
       { type: 'warning' },
     ])
@@ -134,7 +134,7 @@ function createMainWindow(pos: Pos = { width: 700, height: 700 }) {
     title: appLongName,
   })
 
-  win = winHandler.browserWindow
+  win = winHandler.browserWindow as BrowserWindow
 
   if (pos.manage) {
     pos.manage(win)
@@ -177,7 +177,7 @@ if (gotTheLock) {
   ipcMain.handle('darkMode', () => nativeTheme.shouldUseDarkColors)
 
   nativeTheme.on('updated', () => {
-    win.webContents.send('themeUpdated', nativeTheme.shouldUseDarkColors)
+    win?.webContents.send('themeUpdated', nativeTheme.shouldUseDarkColors)
   })
 
   ipcMain.on('setTheme', (_e, val) => {
@@ -217,7 +217,7 @@ if (gotTheLock) {
     if (isDev) {
       app.exit(RESTART_CODE)
     } else {
-      let options: RelaunchOptions
+      let options: RelaunchOptions = {}
       if (process.env.APPIMAGE) {
         options = {
           execPath: process.env.APPIMAGE,
@@ -241,19 +241,19 @@ if (gotTheLock) {
           fadeWindow(win, mediaWin)
         },
         openPresentMode: () => {
-          win.webContents.send('openPresentMode')
+          win?.webContents.send('openPresentMode')
         },
         toggleMusicShuffle: () => {
-          win.webContents.send('toggleMusicShuffle')
+          win?.webContents.send('toggleMusicShuffle')
         },
         setObsScene: () => {
-          win.webContents.send('setObsScene', +shortcut.split('+')[1])
+          win?.webContents.send('setObsScene', +shortcut.split('+')[1])
         },
         previousMediaItem: () => {
-          win.webContents.send('play', 'previous')
+          win?.webContents.send('play', 'previous')
         },
         nextMediaItem: () => {
-          win.webContents.send('play', 'next')
+          win?.webContents.send('play', 'next')
         },
       }
       if (globalShortcut.isRegistered(shortcut)) {
@@ -287,39 +287,39 @@ if (gotTheLock) {
 
   // IpcMain events for the presentation window
   ipcMain.on('videoProgress', (_e, percent: number[]) => {
-    win.webContents.send('videoProgress', percent)
+    win?.webContents.send('videoProgress', percent)
   })
   ipcMain.on('videoEnd', () => {
-    win.webContents.send('videoEnd')
-    win.webContents.send('showingMedia', false)
+    win?.webContents.send('videoEnd')
+    win?.webContents.send('showingMedia', false)
   })
   ipcMain.on('videoPaused', () => {
-    win.webContents.send('videoPaused')
+    win?.webContents.send('videoPaused')
   })
   ipcMain.on('readyToListen', () => {
-    win.webContents.send('readyToListen')
+    win?.webContents.send('readyToListen')
   })
 
   // IpcMain events for the media window
   ipcMain.on(
     'showMedia',
     (_e, media: { path: string; start?: string; end?: string } | null) => {
-      mediaWin.webContents.send('showMedia', media)
-      win.webContents.send('showingMedia', [!!media, !!media?.start])
+      mediaWin?.webContents.send('showMedia', media)
+      win?.webContents.send('showingMedia', [!!media, !!media?.start])
     }
   )
   ipcMain.on('hideMedia', () => {
-    mediaWin.webContents.send('hideMedia')
-    win.webContents.send('showingMedia', false)
+    mediaWin?.webContents.send('hideMedia')
+    win?.webContents.send('showingMedia', false)
   })
   ipcMain.on('pauseVideo', () => {
-    mediaWin.webContents.send('pauseVideo')
+    mediaWin?.webContents.send('pauseVideo')
   })
   ipcMain.on('playVideo', () => {
-    mediaWin.webContents.send('playVideo')
+    mediaWin?.webContents.send('playVideo')
   })
   ipcMain.on('scrollWebsite', (_e, pos: Point) => {
-    mediaWin.webContents.send('scrollWebsite', pos)
+    mediaWin?.webContents.send('scrollWebsite', pos)
   })
   ipcMain.on(
     'clickOnWebsite',
@@ -335,13 +335,13 @@ if (gotTheLock) {
         href: string | null
       }
     ) => {
-      mediaWin.webContents.send('clickOnWebsite', target)
+      mediaWin?.webContents.send('clickOnWebsite', target)
     }
   )
   ipcMain.on('openWebsite', (_e, url: string) => {
-    win.webContents.send('showingMedia', [true, true])
-    if (website && websiteController) {
-      mediaWinHandler.loadPage('/browser?url=' + url)
+    win?.webContents.send('showingMedia', [true, true])
+    if (website && websiteControllerWinHandler) {
+      mediaWinHandler?.loadPage('/browser?url=' + url)
       websiteControllerWinHandler.loadPage(
         '/browser?controller=true&url=' + url
       )
@@ -349,50 +349,51 @@ if (gotTheLock) {
     }
 
     // eslint-disable-next-line no-magic-numbers
-    mediaWin.setMinimumSize(1280, 720)
-    mediaWinHandler.loadPage('/browser?url=' + url)
+    mediaWin?.setMinimumSize(1280, 720)
+    mediaWinHandler?.loadPage('/browser?url=' + url)
     website = true
 
     const windowOpts: BrowserWindowConstructorOptions = {
-      x: win.getBounds().x,
-      y: win.getBounds().y,
+      x: win?.getBounds().x,
+      y: win?.getBounds().y,
     }
 
-    const mediaFullscreen = mediaWin.isFullScreen()
+    const mediaFullscreen = mediaWin?.isFullScreen()
 
     if (!mediaFullscreen) {
-      windowOpts.width = mediaWin.getBounds().width
-      windowOpts.height = mediaWin.getBounds().height
+      windowOpts.width = mediaWin?.getBounds().width
+      windowOpts.height = mediaWin?.getBounds().height
     }
     websiteControllerWinHandler = createWebsiteController(
       windowOpts,
       mediaFullscreen
     )
-    websiteController = websiteControllerWinHandler.browserWindow
+    websiteController =
+      websiteControllerWinHandler.browserWindow as BrowserWindow
     websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
 
     websiteController.on('close', () => {
-      win.webContents.send('showingMedia', [false, false])
-      mediaWinHandler.loadPage('/media')
+      win?.webContents.send('showingMedia', [false, false])
+      mediaWinHandler?.loadPage('/media')
       // eslint-disable-next-line no-magic-numbers
-      mediaWin.setMinimumSize(195, 110)
+      mediaWin?.setMinimumSize(195, 110)
       website = false
     })
   })
   ipcMain.on('toggleSubtitles', (_e, enabled: boolean) => {
-    mediaWin.webContents.send('toggleSubtitles', enabled)
+    mediaWin?.webContents.send('toggleSubtitles', enabled)
   })
   ipcMain.on('videoScrub', (_e, timeAsPercent: number) => {
-    mediaWin.webContents.send('videoScrub', timeAsPercent)
+    mediaWin?.webContents.send('videoScrub', timeAsPercent)
   })
   ipcMain.on('startMediaDisplay', (_e, prefs: ElectronStore) => {
-    mediaWin.webContents.send('startMediaDisplay', prefs)
+    mediaWin?.webContents.send('startMediaDisplay', prefs)
   })
   ipcMain.on('zoom', (_e, deltaY: number) => {
-    mediaWin.webContents.send('zoom', deltaY)
+    mediaWin?.webContents.send('zoom', deltaY)
   })
   ipcMain.on('pan', (_e, coords: Point) => {
-    mediaWin.webContents.send('pan', coords)
+    mediaWin?.webContents.send('pan', coords)
   })
 
   // IpcMain events to control the windows
@@ -438,17 +439,17 @@ if (gotTheLock) {
           ),
           fullscreen: mediaWinOptions.type === 'fullscreen',
           x:
-            screenInfo.displays.find(
+            (screenInfo.displays.find(
               (display) => display.id === mediaWinOptions.destination
-            ).bounds.x + STARTING_POSITION,
+            )?.bounds?.x ?? 0) + STARTING_POSITION,
           y:
-            screenInfo.displays.find(
+            (screenInfo.displays.find(
               (display) => display.id === mediaWinOptions.destination
-            ).bounds.y + STARTING_POSITION,
+            )?.bounds?.y ?? 0) + STARTING_POSITION,
         }
 
         mediaWinHandler = createMediaWindow(windowOptions)
-        mediaWin = mediaWinHandler.browserWindow
+        mediaWin = mediaWinHandler.browserWindow as BrowserWindow
 
         mediaWin
           .on('close', (e) => {
@@ -456,22 +457,22 @@ if (gotTheLock) {
           })
           .on('will-resize', () => {
             // Not working on Linux
-            mediaWin.webContents.send('windowResizing', mediaWin.getSize())
-            win.webContents.send('resetZoom')
-            mediaWin.webContents.send('resetZoom')
+            mediaWin?.webContents.send('windowResizing', mediaWin.getSize())
+            win?.webContents.send('resetZoom')
+            mediaWin?.webContents.send('resetZoom')
           })
           .on('resize', () => {
             if (platform() === 'linux') {
-              win.webContents.send('resetZoom')
-              mediaWin.webContents.send('resetZoom')
+              win?.webContents.send('resetZoom')
+              mediaWin?.webContents.send('resetZoom')
             }
           })
           .on('resized', () => {
             // Not working on Linux
-            mediaWin.webContents.send('windowResized')
+            mediaWin?.webContents.send('windowResized')
           })
 
-        win.webContents.send('mediaWindowShown')
+        win?.webContents.send('mediaWindowShown')
       } else {
         setMediaWindowPosition(win, mediaWin, mediaWinOptions)
       }
@@ -487,7 +488,7 @@ if (gotTheLock) {
   })
 
   autoUpdater.on('error', (e) => {
-    win.webContents.send('notifyUser', [
+    win?.webContents.send('notifyUser', [
       'updateError',
       { type: 'error', identifier: e.message },
       e,
@@ -495,14 +496,14 @@ if (gotTheLock) {
   })
   autoUpdater.on('update-available', (info) => {
     if (platform() === 'darwin') {
-      win.webContents.send('macUpdate')
+      win?.webContents.send('macUpdate')
     } else {
-      win.webContents.send('notifyUser', [
+      win?.webContents.send('notifyUser', [
         'updateDownloading',
         { identifier: 'v' + info.version },
       ])
       autoUpdater.downloadUpdate().catch((e) => {
-        win.webContents.send('notifyUser', [
+        win?.webContents.send('notifyUser', [
           'updateNotDownloaded',
           { type: 'warning' },
           e,
@@ -512,7 +513,7 @@ if (gotTheLock) {
   })
   autoUpdater.on('update-downloaded', () => {
     updateDownloaded = true
-    win.webContents.send('notifyUser', ['updateDownloaded'])
+    win?.webContents.send('notifyUser', ['updateDownloaded'])
   })
 
   // When ready create main window
@@ -542,6 +543,7 @@ if (gotTheLock) {
     session.defaultSession.webRequest.onHeadersReceived(
       { urls: ['*://*.jw.org/*'] },
       (details, resolve) => {
+        if (!details.responseHeaders) details.responseHeaders = {}
         details.responseHeaders['x-frame-options'] = ['ALLOWALL']
         const setCookie = details.responseHeaders['set-cookie']
         if (setCookie) {
@@ -556,10 +558,10 @@ if (gotTheLock) {
     )
 
     screen.on('display-removed', () => {
-      win.webContents.send('displaysChanged')
+      win?.webContents.send('displaysChanged')
     })
     screen.on('display-added', () => {
-      win.webContents.send('displaysChanged')
+      win?.webContents.send('displaysChanged')
     })
     createMainWindow(
       windowStateKeeper({
