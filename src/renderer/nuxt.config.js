@@ -53,6 +53,7 @@ if (
 module.exports = {
   ssr: false, // Server Side Rendering is not supported in combination with Electron.js
   target: 'static', // Create static html/js/css files
+  telemetry: false,
   head: {
     title: 'M³',
     titleTemplate: '%s - Meeting Media Manager',

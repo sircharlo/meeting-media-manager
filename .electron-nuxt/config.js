@@ -11,7 +11,7 @@ const config = {
 
   PROJECT_ROOT,
   SRC_DIR,
-  MAIN_PROCESS_DIR: join(SRC_DIR, 'main'),
+  MAIN_PROCESS_DIR: join(SRC_DIR, 'main', 'dist'),
   RENDERER_PROCESS_DIR: join(SRC_DIR, 'renderer'),
   RESOURCES_DIR: join(SRC_DIR, 'extraResources'),
   DIST_DIR: join(PROJECT_ROOT, 'dist'),

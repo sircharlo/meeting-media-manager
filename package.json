@@ -22,10 +22,10 @@
     "url": "https://github.com/sircharlo/meeting-media-manager.git"
   },
   "scripts": {
-    "dev": "./pre-build.sh && node .electron-nuxt/dev.js",
-    "build": "./pre-build.sh && node .electron-nuxt/build.js",
-    "win-dev": "node .electron-nuxt/dev.js",
-    "win-build": "node .electron-nuxt/build.js",
+    "prebuild": "./pre-build.sh",
+    "compile": "./node_modules/.bin/tsc -p src/main/tsconfig.json",
+    "dev": "node .electron-nuxt/dev.js",
+    "build": "node .electron-nuxt/build.js",
     "lint": "node_modules/.bin/eslint --ext .js,.vue,.ts --ignore-path .gitignore -f ./node_modules/eslint-friendly-formatter ./src",
     "lint:fix": "yarn lint --fix",
     "test": "xvfb-maybe -- playwright test",

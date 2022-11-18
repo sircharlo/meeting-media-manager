@@ -1,12 +1,22 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable import/named */
 import { platform } from 'os'
-import { app, ipcMain, nativeTheme, screen, session } from 'electron'
+import {
+  app,
+  ipcMain,
+  nativeTheme,
+  screen,
+  session,
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  Event,
+} from 'electron'
 import { init } from '@sentry/electron'
 import { initRenderer } from 'electron-store'
 import { existsSync } from 'fs-extra'
 import { join, normalize } from 'upath'
 import { autoUpdater } from 'electron-updater'
+import windowStateKeeper = require('electron-window-state')
 import BrowserWinHandler from './BrowserWinHandler'
 import {
   getScreenInfo,
@@ -16,7 +26,6 @@ import {
   createWebsiteController,
 } from './utils'
 require('dotenv').config()
-const windowStateKeeper = require('electron-window-state')
 const isDev = process.env.NODE_ENV === 'development'
 
 app.commandLine.appendSwitch('disable-site-isolation-trials') // Allow listeners to work in iFrames
@@ -51,13 +60,13 @@ try {
 }
 
 // Initial values
-let win = null
-let winHandler = null
+let win: BrowserWindow | null = null
+let winHandler: BrowserWinHandler | null = null
 let website = false
-let mediaWin = null
-let mediaWinHandler = null
-let websiteController = null
-let websiteControllerWinHandler = null
+let mediaWin: BrowserWindow | null = null
+let mediaWinHandler: BrowserWinHandler | null = null
+let websiteController: BrowserWindow | null = null
+let websiteControllerWinHandler: BrowserWinHandler | null = null
 let closeAttempts = 0
 let allowClose = true
 let updateDownloaded = false
@@ -83,7 +92,7 @@ function onMove() {
   }
 }
 
-function onClose(e) {
+function onClose(e: Event) {
   const MS_IN_SEC = 1000
 
   if (!allowClose && closeAttempts < 2) {
@@ -101,8 +110,16 @@ function onClose(e) {
   }
 }
 
+interface Pos {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  manage?: (win: BrowserWindow) => void
+}
+
 // Main window
-function createMainWindow(pos = { width: 700, height: 700 }) {
+function createMainWindow(pos: Pos = { width: 700, height: 700 }) {
   winHandler = new BrowserWinHandler({
     x: pos.x,
     y: pos.y,
@@ -177,7 +194,7 @@ if (gotTheLock) {
     }
   })
 
-  ipcMain.on('toggleAutoUpdate', (val) => {
+  ipcMain.on('toggleAutoUpdate', (_e, val: boolean) => {
     autoUpdater.autoInstallOnAppQuit = val
   })
 
@@ -208,33 +225,39 @@ if (gotTheLock) {
     }
   })
 
-  ipcMain.handle('registerShortcut', (_e, { shortcut, fn }) => {
-    const globalShortcut = require('electron').globalShortcut
-    const functions = {
-      toggleMediaWindow: () => {
-        fadeWindow(win, mediaWin)
-      },
-      openPresentMode: () => {
-        win.webContents.send('openPresentMode')
-      },
-      toggleMusicShuffle: () => {
-        win.webContents.send('toggleMusicShuffle')
-      },
-      setObsScene: () => {
-        win.webContents.send('setObsScene', +shortcut.split('+')[1])
-      },
-      previousMediaItem: () => {
-        win.webContents.send('play', 'previous')
-      },
-      nextMediaItem: () => {
-        win.webContents.send('play', 'next')
-      },
+  ipcMain.handle(
+    'registerShortcut',
+    (
+      _e,
+      { shortcut, fn }: { shortcut: string; fn: keyof typeof functions }
+    ) => {
+      const globalShortcut = require('electron').globalShortcut
+      const functions = {
+        toggleMediaWindow: () => {
+          fadeWindow(win, mediaWin)
+        },
+        openPresentMode: () => {
+          win.webContents.send('openPresentMode')
+        },
+        toggleMusicShuffle: () => {
+          win.webContents.send('toggleMusicShuffle')
+        },
+        setObsScene: () => {
+          win.webContents.send('setObsScene', +shortcut.split('+')[1])
+        },
+        previousMediaItem: () => {
+          win.webContents.send('play', 'previous')
+        },
+        nextMediaItem: () => {
+          win.webContents.send('play', 'next')
+        },
+      }
+      if (globalShortcut.isRegistered(shortcut)) {
+        globalShortcut.unregister(shortcut)
+      }
+      return globalShortcut.register(shortcut, functions[fn])
     }
-    if (globalShortcut.isRegistered(shortcut)) {
-      globalShortcut.unregister(shortcut)
-    }
-    return globalShortcut.register(shortcut, functions[fn])
-  })
+  )
   ipcMain.on('unregisterShortcut', (_e, shortcut) => {
     const globalShortcut = require('electron').globalShortcut
     if (globalShortcut.isRegistered(shortcut)) {
@@ -312,7 +335,7 @@ if (gotTheLock) {
     mediaWinHandler.loadPage('/browser?url=' + url)
     website = true
 
-    const windowOpts = {
+    const windowOpts: BrowserWindowConstructorOptions = {
       x: win.getBounds().x,
       y: win.getBounds().y,
     }
@@ -483,7 +506,7 @@ if (gotTheLock) {
     session.defaultSession.webRequest.onHeadersReceived(
       { urls: ['*://*.jw.org/*'] },
       (details, resolve) => {
-        details.responseHeaders['x-frame-options'] = 'ALLOWALL'
+        details.responseHeaders['x-frame-options'] = ['ALLOWALL']
         const setCookie = details.responseHeaders['set-cookie']
         if (setCookie) {
           details.responseHeaders['set-cookie'] = setCookie.map((c) =>

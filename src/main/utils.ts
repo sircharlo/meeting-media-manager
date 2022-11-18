@@ -1,12 +1,18 @@
 import { platform } from 'os'
-import { screen } from 'electron'
+import {
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  Display,
+  Point,
+  screen,
+} from 'electron'
 import BrowserWinHandler from './BrowserWinHandler'
 
 const AR_WIDTH = 16
 const AR_HEIGHT = 9
 
 // Create a generic Media Window
-export function createMediaWindow(windowOpts) {
+export function createMediaWindow(windowOpts: BrowserWindowConstructorOptions) {
   const winHandler = new BrowserWinHandler({
     title: 'Media Window',
     // roundedCorners: false, disabled again until this issue is fixed: https://github.com/electron/electron/issues/36251
@@ -16,7 +22,7 @@ export function createMediaWindow(windowOpts) {
     minHeight: 110,
     minWidth: 195,
     frame: false,
-    thinkFrame: false,
+    thickFrame: false,
     show: false,
     ...windowOpts,
   })
@@ -38,7 +44,10 @@ export function createMediaWindow(windowOpts) {
 }
 
 // Create a website controller window
-export function createWebsiteController(opts, maximize = true) {
+export function createWebsiteController(
+  opts: BrowserWindowConstructorOptions,
+  maximize = true
+) {
   const winHandler = new BrowserWinHandler({
     title: 'Website Controller Window',
     minHeight: 720,
@@ -54,27 +63,33 @@ export function createWebsiteController(opts, maximize = true) {
   return winHandler
 }
 
+interface Screen extends Display {
+  humanFriendlyNumber: number
+}
+
 // Get screen information
-export function getScreenInfo(win, mediaWin) {
-  let displays = []
-  const winMidpoints = {}
-  const winCoordinates = {}
+export function getScreenInfo(win: BrowserWindow, mediaWin: BrowserWindow) {
+  let displays: Screen[] = []
+  const winMidpoints: { main?: Point; media?: Point } = {}
+  const winCoordinates: { main?: Point; media?: Point } = {}
   try {
-    winCoordinates.main = win.getPosition().concat(win.getSize())
+    let posSize = win.getPosition().concat(win.getSize())
     winMidpoints.main = {
-      x: winCoordinates.main[0] + winCoordinates.main[2] / 2,
-      y: winCoordinates.main[1] + winCoordinates.main[3] / 2,
+      x: posSize[0] + posSize[2] / 2,
+      y: posSize[1] + posSize[3] / 2,
     }
     if (mediaWin) {
-      winCoordinates.media = mediaWin.getPosition().concat(win.getSize())
+      posSize = mediaWin.getPosition().concat(win.getSize())
       winMidpoints.media = {
-        x: winCoordinates.media[0] + winCoordinates.media[2] / 2,
-        y: winCoordinates.media[1] + winCoordinates.media[3] / 2,
+        x: posSize[0] + posSize[2] / 2,
+        y: posSize[1] + posSize[3] / 2,
       }
     }
     displays = screen.getAllDisplays().map((display, i) => {
-      display.humanFriendlyNumber = i + 1
-      return display
+      return {
+        ...display,
+        humanFriendlyNumber: i + 1,
+      }
     })
   } catch (err) {
     console.error(err)
@@ -82,6 +97,7 @@ export function getScreenInfo(win, mediaWin) {
   return {
     displays,
     winMidpoints,
+    winCoordinates,
     otherScreens: displays.filter(
       (display) =>
         display.id !== screen.getDisplayNearestPoint(winMidpoints.main).id
@@ -90,7 +106,7 @@ export function getScreenInfo(win, mediaWin) {
 }
 
 // Show/hide media window
-export function fadeWindow(win, browserWindow) {
+export function fadeWindow(win: BrowserWindow, browserWindow: BrowserWindow) {
   if (!browserWindow.isVisible()) {
     browserWindow.show()
     win.webContents.send('mediaWindowVisibilityChanged', 'shown')
@@ -101,7 +117,14 @@ export function fadeWindow(win, browserWindow) {
 }
 
 // Set position of the media window
-export function setMediaWindowPosition(win, mediaWin, mediaWinOptions) {
+export function setMediaWindowPosition(
+  win: BrowserWindow,
+  mediaWin: BrowserWindow,
+  mediaWinOptions: {
+    destination: number
+    type: 'window' | 'fullscreen'
+  }
+) {
   try {
     if (mediaWin) {
       const screenInfo = getScreenInfo(win, mediaWin)
