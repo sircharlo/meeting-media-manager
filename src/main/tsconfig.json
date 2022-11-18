@@ -12,6 +12,10 @@
     "noImplicitAny": false,
     "suppressImplicitAnyIndexErrors": true
   },
+  "paths": {
+    "~/*": ["./*"],
+    "@/*": ["./*"]
+  },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules"]
 }
