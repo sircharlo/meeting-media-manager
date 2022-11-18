@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: 'Probleemid ja funktsioonitaotlused'
+title: Probleemid ja funktsioonitaotlused
 ref: bug-feature
 ---
 

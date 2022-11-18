@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: 'Mediapresentationsläge'
+title: Mediapresentationsläge
 ref: present-media
 ---
 

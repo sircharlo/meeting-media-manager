@@ -1,6 +1,6 @@
 ---
 tag: Help
-title: 'Problemas y solicitudes de funciones'
+title: Problemas y solicitudes de funciones
 ref: bug-feature
 ---
 

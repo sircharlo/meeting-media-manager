@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Asetukset'
+title: Asetukset
 ref: configuration
 ---
 

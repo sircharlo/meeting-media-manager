@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Telepítés'
+title: Telepítés
 ref: installation
 ---
 

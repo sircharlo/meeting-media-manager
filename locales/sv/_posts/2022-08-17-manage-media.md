@@ -1,6 +1,6 @@
 ---
 tag: Usage
-title: 'Hantera media'
+title: Hantera media
 ref: manage-media
 ---
 

@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: 'Koguduse sünkroonimine'
+title: Koguduse sünkroonimine
 ref: congregation-sync
 ---
 
