@@ -30,6 +30,19 @@ export default defineComponent({
     if (this.controller) {
       iframe.onload = () => {
         const win = iframe.contentWindow
+        const doc = iframe.contentDocument
+        if (doc) {
+          const head = doc.querySelector('head')
+          if (head) {
+            const style = document.createElement('style')
+            style.innerHTML = `
+                .lnc-firstRunPopup {
+                  display: none !important;
+                }
+              `
+            head.appendChild(style)
+          }
+        }
         if (win) {
           win.onscroll = () => {
             ipcRenderer.send('scrollWebsite', {
@@ -65,6 +78,21 @@ export default defineComponent({
         }
       }
     } else {
+      iframe.onload = () => {
+        const doc = iframe.contentDocument
+        if (!doc) return
+
+        const head = doc.querySelector('head')
+        if (!head) return
+
+        const style = document.createElement('style')
+        style.innerHTML = `
+                .lnc-firstRunPopup {
+                  display: none !important;
+                }
+              `
+        head.appendChild(style)
+      }
       ipcRenderer.on('scrollWebsite', (_e, pos) => {
         const win = iframe.contentWindow
         if (win) {

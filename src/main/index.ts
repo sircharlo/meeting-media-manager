@@ -521,8 +521,7 @@ if (gotTheLock) {
     session.defaultSession.webRequest.onBeforeSendHeaders(
       { urls: ['*://*.jw.org/*'] },
       (details, resolve) => {
-        let cookies =
-          'cookieConsent-STRICTLY_NECESSARY=true; cookieConsent-FUNCTIONAL=true; cookieConsent-DIAGNOSTIC=false; cookieConsent-USAGE=false; ckLang=E;'
+        let cookies = 'ckLang=E;'
         if (details.requestHeaders.cookie) {
           cookies += ' ' + details.requestHeaders.cookie
         } else if (details.requestHeaders.Cookie) {
