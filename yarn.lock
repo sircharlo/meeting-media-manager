@@ -8878,10 +8878,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-patcher@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "hot-patcher@npm:0.5.0"
-  checksum: 07d1dfa658e36aa9105a42569f7d6a7461bc65570358f80612545e1a6d44cb06c8f07a7c6128fd4b7d214c363137fd524523b9dfe130daf4bc7cddb5d60e8839
+"hot-patcher@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "hot-patcher@npm:1.0.0"
+  checksum: 7f410e5fe1a24498ff68821654df30d501b48f957bf577de86b36bd254947e355823557bd11f0707c043fc7765fc7f513250fd0a8d5150666e37af83157c68a8
   languageName: node
   linkType: hard
 
@@ -10629,7 +10629,7 @@ __metadata:
     vuetify: ^2.6.12
     vuetify-loader: ^1.9.2
     vuex: ^3.6.2
-    webdav: ^4.11.0
+    webdav: ^4.11.2
     webpack: ^4.46.0
     webpack-node-externals: ^3.0.0
     xvfb-maybe: ^0.2.1
@@ -16155,16 +16155,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webdav@npm:^4.11.0":
-  version: 4.11.0
-  resolution: "webdav@npm:4.11.0"
+"webdav@npm:^4.11.2":
+  version: 4.11.2
+  resolution: "webdav@npm:4.11.2"
   dependencies:
     axios: ^0.27.2
     base-64: ^1.0.0
     byte-length: ^1.0.2
     fast-xml-parser: ^3.19.0
     he: ^1.2.0
-    hot-patcher: ^0.5.0
+    hot-patcher: ^1.0.0
     layerr: ^0.1.2
     md5: ^2.3.0
     minimatch: ^5.1.0
@@ -16172,7 +16172,7 @@ __metadata:
     path-posix: ^1.0.0
     url-join: ^4.0.1
     url-parse: ^1.5.10
-  checksum: 0a7aab0a3118deea20485d3c417fda40e71c3930b866a92cfff5dedce4a25c0fbed0cd083bf14ac5a4ee7cab55136265d5011b2601cbb2a1b359da551910ec97
+  checksum: 6fe040b43e350cb15febf688d8eabe45dbe3c74922c94a3730d63911139def435de7f410439e4e1eac6b46d545b6a3631808cc773647b04e6e41731f8ad5f011
   languageName: node
   linkType: hard
 
