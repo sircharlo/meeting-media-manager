@@ -2727,9 +2727,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/electron@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "@sentry/electron@npm:4.1.1"
+"@sentry/electron@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "@sentry/electron@npm:4.1.2"
   dependencies:
     "@sentry/browser": 7.16.0
     "@sentry/core": 7.16.0
@@ -2738,7 +2738,7 @@ __metadata:
     "@sentry/utils": 7.16.0
     deepmerge: 4.2.2
     tslib: ^2.3.1
-  checksum: 791372dadcab9057da457bd798ee71a723ee8e731972c934994c7bc58330ba0c6093c634b016559609b2abf0aba0682985b408f79cbc03824af9a765754caff4
+  checksum: d5e413fd019d38894c8ec91ba5dcb8cf76891abdf55a0162cda783c592525aa6d3db32cd85013ce5365ab2e0de4a3e5fba6db60f752a403768d2451686c3c122
   languageName: node
   linkType: hard
 
@@ -10568,7 +10568,7 @@ __metadata:
     "@nuxtjs/vuetify": ^1.12.3
     "@panzoom/panzoom": ^4.5.1
     "@playwright/test": ^1.28.0
-    "@sentry/electron": ^4.1.1
+    "@sentry/electron": ^4.1.2
     "@sentry/tracing": ^7.20.0
     "@sentry/vue": ^7.20.0
     "@sentry/webpack-plugin": ^1.20.0
