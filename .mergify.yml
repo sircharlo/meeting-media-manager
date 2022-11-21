@@ -6,7 +6,9 @@ pull_request_rules:
           - author=gitlocalize-app[bot]
           - and:
               - author=dependabot[bot]
-              - title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.
+              - or:
+                 - title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.
+                 - title~=^chore\(deps-dev\). bump [^\s]+ from ([\d]+)\..+ to \1\.
     actions:
       merge:
         method: merge
