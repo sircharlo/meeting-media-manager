@@ -2,6 +2,7 @@
   "lang": "hu",
   "name": "magyar",
   "language": "Nyelv:",
+  "search": "Szűrés kulcsszó alapján",
   "shared": {
     "explanation": "Magyarázat",
     "option": "Opció",
