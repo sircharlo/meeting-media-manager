@@ -1510,7 +1510,9 @@ const plugin: Plugin = (
             }))
       ).sort(() => 0.5 - Math.random())
 
-      if (signLanguage) {
+      if (songs.length === 0) {
+        $warn('errorNoShuffleSongs')
+      } else if (signLanguage) {
         playSignLanguageSong(
           songs,
           0,
@@ -1537,7 +1539,7 @@ const plugin: Plugin = (
 
     const path = isOnline
       ? await downloadIfRequired(songs[index] as VideoFile)
-      : (songs[index] as { title: string; track: string; path: string }).path
+      : (songs[index] as { title: string; track: string; path: string })?.path
 
     ipcRenderer.on('videoProgress', (_e, progress) => {
       if (store.state.media.musicFadeOut && !fadeOut) {
@@ -1610,7 +1612,8 @@ const plugin: Plugin = (
       ).href
     } else {
       source.src = pathToFileURL(
-        (songs[index] as { title: string; track: string; path: string }).path
+        (songs[index] as { title: string; track: string; path: string })
+          ?.path ?? ''
       ).href
     }
     audio.appendChild(source)
