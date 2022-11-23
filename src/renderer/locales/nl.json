@@ -34,6 +34,7 @@
   "errorJwpubDbFetch": "Er ging iets fout tijdens het ophalen van de volgende publicatie:",
   "errorJwpubMediaExtract": "Er ging iets fout tijdens het ophalen van media uit de volgende publicatie:",
   "errorMwbUnavailable": "Het werkboek voor vergaderingen is niet beschikbaar in jouw taal. Selecteer een andere taal of neem contact op met jouw videoconferentie organisator.",
+  "errorNoShuffleSongs": "Er was geen shuffle muziek gevonden. Probeer het later opnieuw of neem contact op met jouw videoconferentie organisator.",
   "errorObs": "Er is iets fout gegaan tijdens het verbinden met OBS Studio. Controleer of OBS Studio draait en dat de <code>obs-websocket</code> goed is ingesteld.",
   "errorObsAuth": "Het wachtwoord voor de OBS Studio integratie is waarschijnlijk fout. Zorg ervoor dat je het juiste wachtwoord hebt ingevoerd en probeer het opnieuw.",
   "errorObsCameraScene": "De ingestelde standaard podium scene bestaat niet meer. Stel een nieuwe in in de instellingen.",
