@@ -3,7 +3,7 @@ import { readFileSync, removeSync } from 'fs-extra'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import Store, { Schema } from 'electron-store'
-import { basename, dirname, join, normalizeSafe } from 'upath'
+import { basename, dirname, join, joinSafe, normalizeSafe } from 'upath'
 import { sync } from 'fast-glob'
 import {
   AppPrefs,
@@ -515,7 +515,16 @@ const plugin: Plugin = ({ $sentry }, inject) => {
       .sort((a, b) => b.name.localeCompare(a.name))
   })
   function initStore(name: string) {
-    store = new Store<ElectronStore>(storeOptions(name))
+    try {
+      store = new Store<ElectronStore>(storeOptions(name))
+    } catch (e: unknown) {
+      console.debug('Resetting the store...')
+      $sentry.captureException(e)
+      const tempStore = new Store<ElectronStore>(storeOptions('temp'))
+      removeSync(joinSafe(dirname(tempStore.path), `${name}.json`))
+      store = new Store<ElectronStore>(storeOptions(name))
+      removeSync(normalizeSafe(tempStore.path))
+    }
   }
   inject('initStore', initStore)
   inject('storePath', (): string | undefined =>
