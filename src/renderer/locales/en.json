@@ -34,6 +34,7 @@
   "errorJwpubDbFetch": "An error occurred while attempting to fetch the following publication:",
   "errorJwpubMediaExtract": "An error occurred while extracting media from the following publication:",
   "errorMwbUnavailable": "The Meeting Workbook is not available in your selected language. Please select a different language or contact your videoconference organizer.",
+  "errorNoShuffleSongs": "There were no songs found to shuffle. Please try again later or contact your videoconference organizer.",
   "errorObs": "An error occurred while attempting to connect to OBS Studio. Please verify that OBS Studio is running and that the <code>obs-websocket</code> configuration is correct.",
   "errorObsAuth": "The password for the OBS Studio integration might be incorrect. Please verify that the password is correct and try again.",
   "errorObsCameraScene": "The configured default camera scene does not exist anymore. Please change it in the settings.",
