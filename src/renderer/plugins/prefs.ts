@@ -519,6 +519,7 @@ const plugin: Plugin = ({ $sentry }, inject) => {
       store = new Store<ElectronStore>(storeOptions(name))
     } catch (e: unknown) {
       console.debug('Resetting the store...')
+      $sentry.captureException(e)
       const tempStore = new Store<ElectronStore>(storeOptions('temp'))
       removeSync(joinSafe(dirname(tempStore.path), `${name}.json`))
       store = new Store<ElectronStore>(storeOptions(name))
