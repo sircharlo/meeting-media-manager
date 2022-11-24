@@ -1,7 +1,7 @@
 <!-- Video in presentation mode -->
 <template>
   <div :id="id">
-    <div />
+    <div :id="id + '-container'" />
     <v-overlay
       absolute
       :value="changeTime"
@@ -128,6 +128,7 @@ import {
   MS_IN_SEC,
   VIDEO_ICON,
 } from '~/constants/general'
+import { MeetingFile } from '~/types'
 export default defineComponent({
   props: {
     src: {
@@ -182,8 +183,28 @@ export default defineComponent({
     faFilm() {
       return faFilm
     },
+    meetings(): Map<string, Map<number, MeetingFile[]>> {
+      return this.$store.state.media.meetings as Map<
+        string,
+        Map<number, MeetingFile[]>
+      >
+    },
     url(): string {
-      return pathToFileURL(this.src).href + '#t=5'
+      return pathToFileURL(this.src).href + (this.thumbnail ? '' : '#t=5')
+    },
+    thumbnail(): string | null {
+      let thumbnail: string | null = null
+      const meetingMedia = this.meetings.get(this.$route.query.date as string)
+      if (!meetingMedia) return null
+
+      meetingMedia.forEach((media) => {
+        if (thumbnail) return
+        const file = media.find((m) => m.safeName === basename(this.src))
+        if (file) {
+          thumbnail = file.thumbnail ?? null
+        }
+      })
+      return thumbnail
     },
     poster(): string {
       return this.$isVideo(this.src) ? this.videoIcon : this.audioIcon
@@ -283,14 +304,14 @@ export default defineComponent({
   mounted(): void {
     this.setCCAvailable()
     this.ccEnabled = this.ccAvailable
-    const div = document.querySelector(`#${this.id}`)
+    const div = document.querySelector(`#${this.id}-container`)
     const source = document.createElement('source')
     source.src = this.url
     const video = document.createElement('video')
     video.width = 144
     video.height = 80
     video.preload = 'metadata'
-    video.poster = this.poster
+    video.poster = this.thumbnail ?? this.poster
     video.appendChild(source)
 
     // When video has been loaded, set clipped to original
@@ -312,7 +333,7 @@ export default defineComponent({
         formatted: this.originalString,
       })
     }
-    div?.replaceChild(video, div.firstChild as ChildNode)
+    if (div) div.appendChild(video)
   },
   methods: {
     setCCAvailable() {
