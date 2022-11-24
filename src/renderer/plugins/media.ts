@@ -8,13 +8,16 @@ import { basename, changeExt, extname, join, resolve } from 'upath'
 import { Database } from 'sql.js'
 import {
   MS_IN_SEC,
+  THV_POSTER,
   HUNDRED_PERCENT,
   JAN_2008,
   MAX_PREFIX_LENGTH,
 } from './../constants/general'
-import { ImageFile, MeetingFile, VideoFile } from './../types/media.d'
 import {
   MediaFile,
+  ImageFile,
+  MeetingFile,
+  VideoFile,
   MediaItemResult,
   MultiMediaExtract,
   MultiMediaItem,
@@ -443,14 +446,18 @@ const plugin: Plugin = (
     id: string,
     lang?: string
   ) {
-    const mediaLang = lang || $getPrefs('media.lang')
-    const result = (await $mediaItems.$get(
-      `${mediaLang}/${id}_VIDEO`
-    )) as MediaItemResult
+    if (item.pub === 'thv') {
+      item.thumbnail = THV_POSTER
+    } else {
+      const mediaLang = lang || $getPrefs('media.lang')
+      const result = (await $mediaItems.$get(
+        `${mediaLang}/${id}_VIDEO`
+      )) as MediaItemResult
 
-    if (result?.media?.length > 0) {
-      item.thumbnail = result?.media[0]?.images?.wss?.sm
-      item.primaryCategory = result?.media[0]?.primaryCategory
+      if (result?.media?.length > 0) {
+        item.thumbnail = result?.media[0]?.images?.wss?.sm
+        item.primaryCategory = result?.media[0]?.primaryCategory
+      }
     }
   }
 
