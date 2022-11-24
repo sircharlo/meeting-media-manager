@@ -140,6 +140,7 @@ const plugin: Plugin = (
     const songPub = store.state.media.songPub as string
     const excludeTh = $getPrefs('media.excludeTh')
     let extractMultimediaItems: MeetingFile[] = []
+
     const extracts = $query(
       db,
       `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
@@ -915,6 +916,16 @@ const plugin: Plugin = (
     date: string
   ) {
     const promises: Promise<void>[] = []
+
+    // Process internalRefs of the internalRefs
+    const internalRefs = $query(
+      db,
+      `SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = ${ref.DocumentId} AND Document.Class <> 94`
+    ) as MultiMediaExtractRef[]
+
+    internalRefs.forEach((ref) => {
+      promises.push(processInternalRefs(db, ref, date))
+    })
 
     const refMedia = await getDocumentMultiMedia(db, ref.DocumentId)
 
