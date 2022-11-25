@@ -219,7 +219,7 @@
     "configOBS": "Initial configuration: OBS Studio",
     "obsInstall": "Install OBS Studio, or download the portable version.",
     "obsVirtualCam": "If using the portable version of OBS Studio, install the [Virtualcam] plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.",
-    "obsWebsocket": "Install the [obs-websocket] plugin. For the moment, <code>v5</code> is not supported in M³, so make sure that you install the latest version of <code>v4</code> (currently <code>v4.9.1-compat</code>) to avoid any issues. Configure a port number and password for obs-websocket.",
+    "obsWebsocket": "Install the [obs-websocket] plugin. Both v4 (OBS Studio < v27) and v5 (OBS Studio v28+) are supported. Configure a port number and password for obs-websocket.",
     "obsSettings": "In the OBS settings, under <code>General</code> > <code>System Tray</code>, enable all checkboxes. Under <code>Output</code> > <code>Streaming</code>, enable a hardware encoder if available.",
     "obsSettingsVideo": "Under <code>Video</code> > <code>Base (Canvas) Resolution</code> and <code>Output (Scaled) Resolution</code>, choose <code>1280x720</code>, and under <code>Downscale Filter</code>, choose <code>Bilinear</code>.",
     "obsScenes": "Set up at least 2 scenes: one for the media display (<code>Window Capture</code> or <code>Display Capture</code> with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (<code>Video Capture Device</code> with the KH camera selected).",
