@@ -219,7 +219,7 @@
     "configOBS": "Eerste opzet: OBS Studio",
     "obsInstall": "Installeer OBS Studio, of download een portable versie van OBS Studio.",
     "obsVirtualCam": "Als je de portable versie van OBS gebruikt, installeer de [Virtualcam] plugin, en als je de portable versie van OBS Studio gebruikt, voeg de virtual camera toe aan Windows door dubbel te klikken op het gegeven installatie script.",
-    "obsWebsocket": "Installeer de [obs-websocket] plugin. Configureer het poortnummer en het wachtwoord voor obs-websocket.",
+    "obsWebsocket": "Als je OBS Studio v27 of ouder hebt, moet je de [obs-websocket] plugin installeren. Anders is de plugin inbegrepen. Configureer het poortnummer en het wachtwoord voor obs-websocket.",
     "obsSettings": "In de instellingen van OBS, onder <code>General</code> > <code>System Tray</code>, vink alle checkboxes aan. Onder <code>Output</code> > <code>Streaming</code>, zet een hardware encoder aan als er een beschikbaar is.",
     "obsSettingsVideo": "Onder <code>Video</code> > <code>Base (Canvas) Resolution</code> en <code>Output (Scaled) Resolution</code>, kies <code>1280x720</code>, en onder <code>Downscale Filter</code>, kies <code>Bilinear</code>.",
     "obsScenes": "Zet ten minste 2 scenes op: een voor de media (<code>Window Capture</code> or <code>Display Capture</code> met de muis cursor uitgeschakeld en het juiste scherm geselecteerd), en een voor het podiumbeeld (<code>Video Capture Device</code> met de camera van de zaal geselecteerd).",
