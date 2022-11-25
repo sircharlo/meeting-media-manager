@@ -218,7 +218,7 @@
     "configOBS": "Initial konfiguration: OBS Studio",
     "obsInstall": "Installera OBS Studio, eller ladda ner den portabla versionen.",
     "obsVirtualCam": "Om du använder den portabla versionen av OBS Studio, installera plugin-programmet [Virtualcam] och om du använder den portabla versionen av OBS Studio, lägg till den virtuella kameran till Windows genom att dubbelklicka på det medföljande installationsskriptet.",
-    "obsWebsocket": "Installera plugin-programmet [obs-websocket]. För närvarande stöds inte <code>v5</code> i M³, så se till att du installerar den senaste versionen av <code>v4</code> (för närvarande <code>v4.9.1-compat</code> ) för att undvika problem. Konfigurera ett portnummer och lösenord för obs-websocket.",
+    "obsWebsocket": "Installera plugin-programmet [obs-websocket]. Konfigurera ett portnummer och lösenord för obs-websocket.",
     "obsSettings": "I OBS-inställningarna, under <code>General</code> > <code>System tray</code>, aktivera alla kryssrutor. Under <code>Output</code> > <code>Streaming</code>, aktivera en hårdvarukodare om tillgänglig.",
     "obsSettingsVideo": "Under <code>Video</code> > <code>Base (Canvas) Resolution</code> och <code>Output (Scaled) Resolution</code> väljer du <code>1280x720</code> och under <code> >Downscale Filter</code>, välj <code>Bilinear</code>.",
     "obsScenes": "Ställ in minst 2 scener: en för mediadisplayen (<code>Window Capture</code> eller <code>Display Capture</code> med muspekaren inaktiverad och lämplig fönstertitel/bildskärm vald), och en för scenvyn (<code>Video Capture Device</code> med kameran vald).",

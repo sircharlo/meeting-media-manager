@@ -218,7 +218,7 @@
     "configOBS": "Configuración inicial: OBS Studio",
     "obsInstall": "Instale OBS Studio o descargue la versión portable.",
     "obsVirtualCam": "Si usa la versión portable de OBS Studio, instale el complemento [Virtualcam] y, si usa la versión portable de OBS Studio, agregue la cámara virtual a Windows haciendo doble clic en el script de instalación proporcionado.",
-    "obsWebsocket": "Instale el complemento [obs-websocket]. Por el momento, <code>v5</code> no es compatible con M³, así que asegúrese de instalar la última versión de <code>v4</code> (actualmente <code>v4.9.1-compatible</code> ) para evitar problemas. Configure un número de puerto y una contraseña para obs-websocket.",
+    "obsWebsocket": "Instale el complemento [obs-websocket]. Configure un número de puerto y una contraseña para obs-websocket.",
     "obsSettings": "En la configuración de OBS, en <code>General</code> > <code>Bandeja del sistema</code>, active todas las casillas de verificación. En <code>Output</code> > <code>Streaming</code>, habilite un codificador de hardware si está disponible.",
     "obsSettingsVideo": "En <code>Vídeo</code> > <code>Resolución base (lienzo)</code> y <code>Resolución de salida (escalada)</code>, elija <code>1280x720</code>, y en <code >Filtro de reducción de escala</code>, elija <code>Bilineal</code>.",
     "obsScenes": "Configure al menos 2 escenas: una para la visualización de contenidos (<code>Captura de ventana</code> o <code>Captura de pantalla</code> con el cursor del mouse deshabilitado y el título de ventana/monitor apropiado seleccionado), y otra para la vista de la plataforma (<code>Video Capture Device</code> con la cámara del Salón del Reino seleccionada).",
