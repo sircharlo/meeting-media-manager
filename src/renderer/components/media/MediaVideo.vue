@@ -207,7 +207,7 @@ export default defineComponent({
           thumbnail = file.thumbnail || file.trackImage || null
         }
       })
-      return thumbnail
+      return thumbnail ?? null
     },
     poster(): string {
       return this.$isVideo(this.src) ? this.videoIcon : this.audioIcon
