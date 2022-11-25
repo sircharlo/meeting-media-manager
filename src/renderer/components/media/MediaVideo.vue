@@ -193,7 +193,7 @@ export default defineComponent({
       return pathToFileURL(this.src).href + (this.thumbnail ? '' : '#t=5')
     },
     thumbnail(): string | null {
-      let thumbnail: string | null
+      let thumbnail: string | null | undefined
 
       const meetingMedia = this.meetings.get(this.$route.query.date as string)
       if (!meetingMedia) return null
@@ -207,8 +207,8 @@ export default defineComponent({
           thumbnail = file.thumbnail || file.trackImage || null
         }
       })
-      if (!thumbnail) thumbnail = null
-      return thumbnail
+
+      return thumbnail ?? null
     },
     poster(): string {
       return this.$isVideo(this.src) ? this.videoIcon : this.audioIcon
