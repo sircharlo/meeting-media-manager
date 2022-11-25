@@ -34,6 +34,7 @@
   "errorJwpubDbFetch": "Ocorreu um erro ao tentar descarregar a publicação:",
   "errorJwpubMediaExtract": "Ocorreu um erro ao extrair a multimédia da publicação:",
   "errorMwbUnavailable": "A pasta com os arquivos da reunião não está disponível no idioma selecionado. Selecione um idioma diferente ou entre em contato com o organizador de videoconferência.",
+  "errorNoShuffleSongs": "Não foram encontrados cânticos para reproduzir aleatoriamente. Tente novamente mais tarde ou entre em contato com o organizador de videoconferência.",
   "errorObs": "Ocorreu um erro ao tentar se conectar ao OBS Studio. Verifique se o OBS Studio está em execução e se a configuração do <code>obs-websocket</code> está correta.",
   "errorObsAuth": "A senha do plugin obs-websocket está incorreta. Verifique e tente novamente.",
   "errorObsCameraScene": "A cena de câmera padrão configurada não existe mais. Por favor, mude a cena nas configurações do M³.",
