@@ -691,7 +691,7 @@ const plugin: Plugin = (
                 mediaItem.issue?.toString().replace(/(\d{6})00$/gm, '$1'),
                 mediaItem.track,
               ]
-                .filter(Boolean)
+                .filter((v) => !!v && v !== '0')
                 .join('_')}`
 
           promises.push(getAdditionalData(item, id, mediaLang))

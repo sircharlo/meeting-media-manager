@@ -193,18 +193,22 @@ export default defineComponent({
       return pathToFileURL(this.src).href + (this.thumbnail ? '' : '#t=5')
     },
     thumbnail(): string | null {
-      let thumbnail: string | null = null
+      let thumbnail: string | null | undefined
+
       const meetingMedia = this.meetings.get(this.$route.query.date as string)
       if (!meetingMedia) return null
 
       meetingMedia.forEach((media) => {
-        if (thumbnail) return
+        if (thumbnail !== undefined) return
         const file = media.find((m) => m.safeName === basename(this.src))
-        if (file) {
-          thumbnail = file.thumbnail ?? null
+        if (file?.pub?.startsWith('sjj')) {
+          thumbnail = null
+        } else if (file) {
+          thumbnail = file.thumbnail || file.trackImage || null
         }
       })
-      return thumbnail
+
+      return thumbnail ?? null
     },
     poster(): string {
       return this.$isVideo(this.src) ? this.videoIcon : this.audioIcon
