@@ -92,6 +92,7 @@
   "obsUseV4": "Käytä <em>obs-websocket v4:tä</em>",
   "offlineMode": "Offline-tila",
   "openFolder": "Avaa mediakansio",
+  "openJWorg": "Avaa JW.org",
   "openTargetFolderAfterSync": "Avaa kansio mediasynkronoinnin jälkeen",
   "optionsApp": "Sovelluksen asetukset",
   "optionsCongSync": "Seurakunnan synkronoinnin asetukset",
