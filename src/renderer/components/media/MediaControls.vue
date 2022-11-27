@@ -219,7 +219,7 @@ export default defineComponent({
           action: this.togglePrefix,
         },
         {
-          title: this.$t('openJWorg'),
+          title: this.$t('openJWorg') + ' [BETA]',
           icons: [faGlobe],
           // @ts-ignore
           action: this.openWebsite,
