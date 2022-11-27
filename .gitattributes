@@ -39,6 +39,3 @@
 
 # Don't try and merge these files
 yarn.lock       -diff
-
-# Ignore these files for repository statistics
-docs/*          linguist-vendored

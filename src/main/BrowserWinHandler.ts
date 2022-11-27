@@ -1,16 +1,25 @@
 import { EventEmitter } from 'events'
 import { platform } from 'os'
-import { BrowserWindow, app, shell } from 'electron'
+import {
+  BrowserWindow,
+  app,
+  shell,
+  BrowserWindowConstructorOptions,
+} from 'electron'
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL
 const isDev = process.env.NODE_ENV === 'development'
 const appLongName = 'Meeting Media Manager'
 
 export default class BrowserWinHandler {
+  _eventEmitter: EventEmitter
+  allowRecreate: boolean
+  options: BrowserWindowConstructorOptions
+  browserWindow: BrowserWindow | null
   /**
    * @param [options] {object} - browser window options
    * @param [allowRecreate] {boolean}
    */
-  constructor(options, allowRecreate = true) {
+  constructor(options: BrowserWindowConstructorOptions, allowRecreate = true) {
     this._eventEmitter = new EventEmitter()
     this.allowRecreate = allowRecreate
     this.options = options
@@ -99,14 +108,15 @@ export default class BrowserWinHandler {
    *
    * @param callback {onReadyCallback}
    */
-  onCreated(callback) {
+  onCreated(callback: (win: BrowserWindow) => void) {
     if (this.browserWindow !== null) return callback(this.browserWindow)
     this._eventEmitter.once('created', () => {
-      callback(this.browserWindow)
+      // eslint-disable-next-line n/no-callback-literal
+      callback(this.browserWindow as BrowserWindow)
     })
   }
 
-  async loadPage(pagePath) {
+  async loadPage(pagePath: string) {
     if (!this.browserWindow)
       return Promise.reject(
         new Error("The page could not be loaded before win 'created' event")

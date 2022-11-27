@@ -3,54 +3,31 @@
   <v-row>
     <v-app-bar height="64px">
       <v-col class="text-left" cols="4">
-        <v-tooltip bottom>
+        <v-menu bottom right>
           <template #activator="{ on, attrs }">
-            <v-btn
-              id="btn-refresh-media"
-              icon
-              aria-label="Refresh"
-              :disabled="mediaActive"
-              v-bind="attrs"
-              v-on="on"
-              @click="getMedia()"
-            >
-              <font-awesome-icon :icon="faRotateRight" size="lg" />
+            <v-btn icon aria-label="More actions" v-bind="attrs" v-on="on">
+              <font-awesome-icon :icon="faEllipsisVertical" size="lg" />
             </v-btn>
           </template>
-          <span>{{ $t('refresh') }}</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              if="btn-open-media-folder"
-              icon
-              aria-label="Open media folder"
-              class="mx-2"
-              v-bind="attrs"
-              v-on="on"
-              @click="openFolder()"
+          <v-list>
+            <v-list-item
+              v-for="(action, i) in actions"
+              :key="i"
+              :disabled="action.disabled ? mediaActive : false"
+              @click="action.action()"
             >
-              <font-awesome-icon :icon="faFolderOpen" size="lg" />
-            </v-btn>
-          </template>
-          <span>{{ $t('openFolder') }}</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              id="btn-toggle-prefix"
-              icon
-              aria-label="Toggle prefix"
-              v-bind="attrs"
-              v-on="on"
-              @click="togglePrefix()"
-            >
-              <font-awesome-icon pull="left" :icon="faEye" size="lg" />
-              <font-awesome-icon :icon="faListOl" size="lg" />
-            </v-btn>
-          </template>
-          <span>{{ $t('showPrefix') }}</span>
-        </v-tooltip>
+              <v-list-item-icon>
+                <font-awesome-icon
+                  v-for="(icon, j) in action.icons"
+                  :key="j"
+                  :icon="icon"
+                  size="sm"
+                />
+              </v-list-item-icon>
+              <v-list-item-title>{{ action.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
@@ -181,9 +158,12 @@ import {
   faRotateRight,
   faBackward,
   faForward,
+  faGlobe,
   faSquareCheck,
+  faEllipsisVertical,
   faArrowDownShortWide,
   faFolderOpen,
+  IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
@@ -218,6 +198,38 @@ export default defineComponent({
         stop: boolean
         deactivate: boolean
       }[],
+      actions: [
+        {
+          title: this.$t('refresh'),
+          icons: [faRotateRight],
+          // @ts-ignore
+          action: this.getMedia,
+          disabled: true,
+        },
+        {
+          title: this.$t('openFolder'),
+          icons: [faFolderOpen],
+          // @ts-ignore
+          action: this.openFolder,
+        },
+        {
+          title: this.$t('showPrefix'),
+          icons: [faEye, faListOl],
+          // @ts-ignore
+          action: this.togglePrefix,
+        },
+        {
+          title: this.$t('openJWorg'),
+          icons: [faGlobe],
+          // @ts-ignore
+          action: this.openWebsite,
+          disabled: true,
+        },
+      ] as {
+        title: string
+        icons: IconDefinition[]
+        action: () => void
+      }[],
     }
   },
   computed: {
@@ -228,14 +240,11 @@ export default defineComponent({
     date(): string {
       return this.$route.query.date as string
     },
-    faEye() {
-      return faEye
+    faEllipsisVertical() {
+      return faEllipsisVertical
     },
     faArrowDownShortWide() {
       return faArrowDownShortWide
-    },
-    faListOl() {
-      return faListOl
     },
     faBackward() {
       return faBackward
@@ -243,14 +252,8 @@ export default defineComponent({
     faForward() {
       return faForward
     },
-    faRotateRight() {
-      return faRotateRight
-    },
     faSquareCheck() {
       return faSquareCheck
-    },
-    faFolderOpen() {
-      return faFolderOpen
     },
     mediaVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible
@@ -294,6 +297,12 @@ export default defineComponent({
     })
   },
   methods: {
+    openWebsite() {
+      ipcRenderer.send(
+        'openWebsite',
+        `https://www.jw.org/${this.$getPrefs('app.localAppLang')}/`
+      )
+    },
     resetDeactivate(index: number) {
       const item = this.items[index]
       item.deactivate = false

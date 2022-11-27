@@ -42,10 +42,16 @@ The following commands are used during the development of the application to tes
 # Install dependencies
 yarn install
 
+# Run the pre-build.sh script (necessary for dev and build scripts)
+yarn prebuild
+
+# Compile Electron ts files to js (necessary for dev and build scripts)
+yarn compile
+
 # Serve app with hot reload on localhost:3000
 yarn dev
 
-# Build electron application for production
+# Build electron application for production (necessary for test script)
 yarn build
 
 # Lint all JS/TS/Vue files in `src/`
