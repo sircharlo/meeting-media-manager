@@ -151,6 +151,7 @@ const plugin: Plugin = (
         INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
         INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId
       WHERE DocumentExtract.DocumentId = ${docId}
+        AND NOT RefPublication.PublicationCategorySymbol = 'web'
         ${songPub === 'sjjm' ? "AND NOT UniqueEnglishSymbol = 'sjj' " : ''}
         AND NOT UniqueEnglishSymbol = 'mwbr'
         ${excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ''}
