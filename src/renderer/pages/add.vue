@@ -237,6 +237,8 @@ export default defineComponent({
       prefix1: '',
       prefix2: '',
       prefix3: '',
+      uploadedFiles: 0,
+      totalFiles: 0,
       totalProgress: 0,
       currentProgress: 0,
       loading: true,
@@ -430,133 +432,145 @@ export default defineComponent({
         this.fileString = result.filePaths.join(';')
       }
     },
+    async processFile(file: LocalFile | VideoFile) {
+      if (!file?.safeName) {
+        this.increaseProgress()
+        return
+      }
+      if (this.prefix) {
+        file.safeName = this.prefix + ' ' + file.safeName
+      }
+
+      const path = join(this.$mediaPath() as string, this.date, file.safeName)
+
+      // JWPUB extract
+      if (file.contents) {
+        this.$write(path, file.contents as Buffer)
+      }
+      // Local file
+      else if (file.filepath) {
+        this.$copy(file.filepath, path)
+      }
+      // External file from jw.org
+      else if (file.safeName) {
+        file.folder = this.date
+        // @ts-ignore: file is not recognized as type Buffer
+        await this.$downloadIfRequired(file, this.setProgress)
+
+        // Download markers if required
+        if ((file as VideoFile).markers) {
+          const markers = Array.from(
+            new Set(
+              (file as VideoFile).markers?.markers?.map(
+                ({ duration, label, startTime, endTransitionDuration }) =>
+                  JSON.stringify({
+                    duration,
+                    label,
+                    startTime,
+                    endTransitionDuration,
+                  })
+              )
+            )
+          ).map((m) => JSON.parse(m))
+
+          this.$write(
+            join(
+              this.$mediaPath(),
+              file.folder as string,
+              changeExt(file.safeName as string, 'json')
+            ),
+            JSON.stringify(markers)
+          )
+        }
+      }
+
+      // Upload media to the cong server
+      if (this.client && this.online) {
+        const mediaPath = join(this.$getPrefs('cong.dir') as string, 'Media')
+        const datePath = join(mediaPath, this.date)
+        const filePath = join(datePath, file.safeName)
+        const mediaPathExists = !!this.contents.find(
+          ({ filename }) => filename === mediaPath
+        )
+        const datePathExists = !!this.contents.find(
+          ({ filename }) => filename === datePath
+        )
+
+        try {
+          if (!mediaPathExists) {
+            await this.client.createDirectory(mediaPath)
+          }
+        } catch (e: unknown) {
+          console.error(e)
+          if (!(await this.client.exists(mediaPath))) {
+            this.$warn('errorWebdavPut', { identifier: mediaPath })
+          }
+        }
+
+        try {
+          if (!datePathExists) {
+            console.debug(JSON.stringify(this.contents))
+            await this.client.createDirectory(datePath)
+          }
+        } catch (e: unknown) {
+          console.debug(JSON.stringify(this.contents))
+          if (!(await this.client.exists(datePath))) {
+            this.$warn('errorWebdavPut', { identifier: datePath })
+          }
+        }
+
+        const perf: any = {
+          start: performance.now(),
+          bytes: statSync(path).size,
+          name: file.safeName,
+        }
+        try {
+          await this.client.putFileContents(filePath, readFileSync(path), {
+            overwrite: true,
+            onUploadProgress: ({ loaded, total }) => {
+              console.log('loaded', loaded)
+              console.log('total', total)
+              this.setProgress(loaded, total)
+            },
+          })
+        } catch (e: any) {
+          if (
+            e.message ===
+            'Cannot create a string longer than 0x1fffffe8 characters'
+          ) {
+            this.$warn('errorWebdavTooBig', { identifier: basename(path) })
+          } else {
+            this.$error('errorWebdavPut', e, `${basename(path)}`)
+          }
+        }
+
+        perf.end = performance.now()
+        perf.bits = perf.bytes * BITS_IN_BYTE
+        perf.ms = perf.end - perf.start
+        perf.s = perf.ms / MS_IN_SEC
+        perf.bps = perf.bits / perf.s
+        perf.MBps = perf.bps / BYTES_IN_MB
+        perf.dir = 'up'
+        this.$log.debug(perf)
+      }
+      this.increaseProgress()
+    },
+    increaseProgress() {
+      this.uploadedFiles += 1
+      this.setProgress(this.uploadedFiles, this.totalFiles, true)
+      console.log(`Uploaded ${this.uploadedFiles} of ${this.totalFiles}`)
+    },
     async saveFiles() {
       this.loading = true
       try {
-        for (const file of [...this.files, this.song]) {
-          if (!file?.safeName) continue
-          if (this.prefix) {
-            file.safeName = this.prefix + ' ' + file.safeName
-          }
+        const promises: Promise<void>[] = []
+        const files = [...this.files, this.song] as (VideoFile | LocalFile)[]
+        this.totalFiles = files.length
+        files.forEach((file) => {
+          promises.push(this.processFile(file))
+        })
 
-          const path = join(
-            this.$mediaPath() as string,
-            this.date,
-            file.safeName
-          )
-
-          // JWPUB extract
-          if (file.contents) {
-            this.$write(path, file.contents as Buffer)
-          }
-          // Local file
-          else if (file.filepath) {
-            this.$copy(file.filepath, path)
-          }
-          // External file from jw.org
-          else if (file.safeName) {
-            file.folder = this.date
-            // @ts-ignore: file is not recognized as type Buffer
-            await this.$downloadIfRequired(file, this.setProgress)
-
-            // Download markers if required
-            if ((file as VideoFile).markers) {
-              const markers = Array.from(
-                new Set(
-                  (file as VideoFile).markers?.markers?.map(
-                    ({ duration, label, startTime, endTransitionDuration }) =>
-                      JSON.stringify({
-                        duration,
-                        label,
-                        startTime,
-                        endTransitionDuration,
-                      })
-                  )
-                )
-              ).map((m) => JSON.parse(m))
-
-              this.$write(
-                join(
-                  this.$mediaPath(),
-                  file.folder as string,
-                  changeExt(file.safeName as string, 'json')
-                ),
-                JSON.stringify(markers)
-              )
-            }
-          }
-
-          // Upload media to the cong server
-          if (this.client && this.online) {
-            const mediaPath = join(
-              this.$getPrefs('cong.dir') as string,
-              'Media'
-            )
-            const datePath = join(mediaPath, this.date)
-            const filePath = join(datePath, file.safeName)
-            const mediaPathExists = !!this.contents.find(
-              ({ filename }) => filename === mediaPath
-            )
-            const datePathExists = !!this.contents.find(
-              ({ filename }) => filename === datePath
-            )
-
-            try {
-              if (!mediaPathExists) {
-                await this.client.createDirectory(mediaPath)
-              }
-            } catch (e: unknown) {
-              console.error(e)
-              if (!(await this.client.exists(mediaPath))) {
-                this.$warn('errorWebdavPut', { identifier: mediaPath })
-              }
-            }
-
-            try {
-              if (!datePathExists) {
-                console.debug(JSON.stringify(this.contents))
-                await this.client.createDirectory(datePath)
-              }
-            } catch (e: unknown) {
-              console.debug(JSON.stringify(this.contents))
-              if (!(await this.client.exists(datePath))) {
-                this.$warn('errorWebdavPut', { identifier: datePath })
-              }
-            }
-
-            const perf: any = {
-              start: performance.now(),
-              bytes: statSync(path).size,
-              name: file.safeName,
-            }
-            try {
-              await this.client.putFileContents(filePath, readFileSync(path), {
-                overwrite: true,
-                onUploadProgress: ({ loaded, total }) => {
-                  this.setProgress(loaded, total, true)
-                },
-              })
-            } catch (e: any) {
-              if (
-                e.message ===
-                'Cannot create a string longer than 0x1fffffe8 characters'
-              ) {
-                this.$warn('errorWebdavTooBig', { identifier: basename(path) })
-              } else {
-                this.$error('errorWebdavPut', e, `${basename(path)}`)
-              }
-            }
-
-            perf.end = performance.now()
-            perf.bits = perf.bytes * BITS_IN_BYTE
-            perf.ms = perf.end - perf.start
-            perf.s = perf.ms / MS_IN_SEC
-            perf.bps = perf.bits / perf.s
-            perf.MBps = perf.bps / BYTES_IN_MB
-            perf.dir = 'up'
-            this.$log.debug(perf)
-          }
-        }
+        await Promise.allSettled(promises)
 
         await this.$convertUnusableFiles(
           this.$mediaPath() as string,
@@ -576,6 +590,8 @@ export default defineComponent({
       this.song = null
       this.files = []
       this.fileString = ''
+      this.uploadedFiles = 0
+      this.totalFiles = 0
     },
     setProgress(loaded: number, total: number, global = false) {
       if (global) {
