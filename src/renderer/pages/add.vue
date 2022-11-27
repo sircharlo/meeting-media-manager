@@ -528,8 +528,6 @@ export default defineComponent({
           await this.client.putFileContents(filePath, readFileSync(path), {
             overwrite: true,
             onUploadProgress: ({ loaded, total }) => {
-              console.log('loaded', loaded)
-              console.log('total', total)
               this.setProgress(loaded, total)
             },
           })
@@ -558,7 +556,6 @@ export default defineComponent({
     increaseProgress() {
       this.uploadedFiles += 1
       this.setProgress(this.uploadedFiles, this.totalFiles, true)
-      console.log(`Uploaded ${this.uploadedFiles} of ${this.totalFiles}`)
     },
     async saveFiles() {
       this.loading = true

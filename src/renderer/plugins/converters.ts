@@ -500,7 +500,6 @@ const plugin: Plugin = (
   ): void {
     progress++
     setProgress(progress, total, true)
-    console.log(`converted ${progress} of ${total}`)
   }
 
   // Convert all images to videos

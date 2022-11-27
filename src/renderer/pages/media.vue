@@ -242,7 +242,6 @@ export default defineComponent({
                 this.withSubtitles &&
                 existsSync(changeExt(media.path, 'vtt'))
               ) {
-                console.log(video.textTracks)
                 video.textTracks[0].mode = 'showing'
               }
               if (video.duration < 0.1) {
