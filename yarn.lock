@@ -8257,6 +8257,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fs-extra@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "fs-extra@npm:11.0.0"
+  dependencies:
+    graceful-fs: ^4.2.0
+    jsonfile: ^6.0.1
+    universalify: ^2.0.0
+  checksum: fd29fc5b4f26f91f8adfd3c6e5e87eb73df92630c132765d63a62a3cf41ee706a45533dda75e6be9e2e4d1fc3667e0dcdfcc20e44f957d71cdcf138a4369ce4a
+  languageName: node
+  linkType: hard
+
 "fs-extra@npm:^8.1.0":
   version: 8.1.0
   resolution: "fs-extra@npm:8.1.0"
@@ -10682,7 +10693,7 @@ __metadata:
     fast-glob: ^3.2.12
     fast-xml-parser: ^4.0.12
     fluent-ffmpeg: ^2.1.2
-    fs-extra: ^10.1.0
+    fs-extra: ^11.0.0
     fullname: ^4.0.1
     h264-mp4-encoder: ^1.0.12
     image-size: ^1.0.2
