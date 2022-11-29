@@ -59,10 +59,11 @@ export default defineComponent({
             console.debug('Clicked', e.target)
             e.stopImmediatePropagation()
             let el = e.target as Element
-            const invalidTags = ['svg', 'path']
+            const invalidTags = ['svg', 'path', 'span']
             if (invalidTags.includes(el.tagName.toLowerCase())) {
               el = el.closest('button') ?? el.closest('a') ?? el
             }
+
             const target = {
               tag: el.tagName.toLowerCase(),
               id: el.id,
@@ -77,7 +78,14 @@ export default defineComponent({
               href: el.getAttribute('href'),
             }
             console.debug('Target', target)
-            ipcRenderer.send('clickOnWebsite', target)
+
+            // @ts-ignore: target does not exist on type Element
+            if (target.tag === 'a' && el.target === '_blank') {
+              e.preventDefault()
+              ipcRenderer.send('openWebsite', target.href)
+            } else {
+              ipcRenderer.send('clickOnWebsite', target)
+            }
           }
         }
       }

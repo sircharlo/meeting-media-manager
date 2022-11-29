@@ -544,6 +544,7 @@ if (gotTheLock) {
       (details, resolve) => {
         if (!details.responseHeaders) details.responseHeaders = {}
         details.responseHeaders['x-frame-options'] = ['ALLOWALL']
+        details.responseHeaders['content-security-policy'] = []
         const setCookie = details.responseHeaders['set-cookie']
         if (setCookie) {
           details.responseHeaders['set-cookie'] = setCookie.map((c) =>
