@@ -1,10 +1,11 @@
-/* eslint-disable import/named */
 import { pathToFileURL } from 'url'
+import { existsSync, readFileSync, statSync } from 'fs'
+import { emptyDirSync } from 'fs-extra'
 import { Dayjs } from 'dayjs'
 import { ipcRenderer } from 'electron'
 import { Plugin } from '@nuxt/types'
-import { emptyDirSync, existsSync, readFileSync, statSync } from 'fs-extra'
 import { basename, changeExt, extname, join, resolve } from 'upath'
+// eslint-disable-next-line import/named
 import { Database } from 'sql.js'
 import {
   MS_IN_SEC,

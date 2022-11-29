@@ -1,9 +1,8 @@
+import { statSync } from 'fs'
 import { WebDAVClient, createClient, FileStat } from 'webdav/web'
 import { Plugin } from '@nuxt/types'
 import { basename, dirname, extname, join, resolve } from 'upath'
 import { Dayjs } from 'dayjs'
-// eslint-disable-next-line import/named
-import { statSync } from 'fs-extra'
 import { XMLParser } from 'fast-xml-parser'
 import {
   ObsPrefs,

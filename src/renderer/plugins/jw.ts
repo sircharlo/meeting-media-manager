@@ -1,8 +1,7 @@
+import { existsSync, readFileSync } from 'fs'
 import { join } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
-// eslint-disable-next-line import/named
-import { existsSync, readFileSync } from 'fs-extra'
 import { Filter, JWLang, ShortJWLang } from '~/types'
 
 const plugin: Plugin = (
