@@ -58,7 +58,12 @@ export default defineComponent({
           win.onclick = (e: MouseEvent) => {
             console.debug('Clicked', e.target)
             e.stopImmediatePropagation()
-            const el = e.target as Element
+            let el = e.target as Element
+            const invalidTags = ['svg', 'path', 'span']
+            if (invalidTags.includes(el.tagName.toLowerCase())) {
+              el = el.closest('button') ?? el.closest('a') ?? el
+            }
+
             const target = {
               tag: el.tagName.toLowerCase(),
               id: el.id,
@@ -73,7 +78,14 @@ export default defineComponent({
               href: el.getAttribute('href'),
             }
             console.debug('Target', target)
-            ipcRenderer.send('clickOnWebsite', target)
+
+            // @ts-ignore: target does not exist on type Element
+            if (target.tag === 'a' && el.target === '_blank') {
+              e.preventDefault()
+              ipcRenderer.send('openWebsite', target.href)
+            } else {
+              ipcRenderer.send('clickOnWebsite', target)
+            }
           }
         }
       }
@@ -135,7 +147,14 @@ export default defineComponent({
             } catch (e: unknown) {
               try {
                 console.debug('Trying to click the parent')
-                el.parentElement?.click()
+                const button = el.closest('button')
+                if (button) {
+                  console.debug('Found button', button)
+                  button.click()
+                } else {
+                  const link = el.closest('a')
+                  if (link) link.click()
+                }
               } catch (e) {
                 console.error(e)
               }
