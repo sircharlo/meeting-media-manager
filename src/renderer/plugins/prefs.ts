@@ -478,7 +478,6 @@ function migrate2290(key: string, newVal: any) {
       schema[root]?.properties[newKey]?.type
   if (schemaType) {
     if (typeof schemaType === 'string') {
-      // eslint-disable-next-line valid-typeof
       if (typeof newVal !== schemaType) {
         setDefaultValue()
       }
