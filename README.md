@@ -38,6 +38,7 @@ In addition, the documentation website of M³ has been translated, by many volun
 [![gitlocalized](https://gitlocalize.com/repo/8177/it/badge.svg)](https://gitlocalize.com/repo/8177/it?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8177/mg/badge.svg)](https://gitlocalize.com/repo/8177/mg?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8177/nl/badge.svg)](https://gitlocalize.com/repo/8177/nl?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/pcm/badge.svg)](https://gitlocalize.com/repo/8177/pcm?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8177/pt-PT/badge.svg)](https://gitlocalize.com/repo/8177/pt-PT?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8177/pt-BR/badge.svg)](https://gitlocalize.com/repo/8177/pt-BR?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8177/ru/badge.svg)](https://gitlocalize.com/repo/8177/ru?utm_source=badge)
@@ -57,7 +58,7 @@ Enjoy!
 <!-- markdownlint-disable-next-line -->
 *- COS*
 
----
+___
 
 ![Media Presentation Mode](./assets/img/present/standby-mode.png)
 
