@@ -247,7 +247,7 @@ if (gotTheLock) {
           win?.webContents.send('toggleMusicShuffle')
         },
         setObsScene: () => {
-          win?.webContents.send('setObsScene', +shortcut.split('+')[1])
+          win?.webContents.send('setObsScene', +shortcut.split('+')[1] - 1)
         },
         previousMediaItem: () => {
           win?.webContents.send('play', 'previous')
