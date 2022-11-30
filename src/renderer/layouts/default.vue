@@ -150,8 +150,10 @@ export default defineComponent({
     ipcRenderer.on('toggleMusicShuffle', async () => {
       await this.$shuffleMusic(!!this.$store.state.media.musicFadeOut)
     })
-    ipcRenderer.on('setObsScene', async (_e, i: number) => {
-      await this.$setScene(this.scenes[i])
+    ipcRenderer.on('setObsScene', async (_e, key: number) => {
+      // eslint-disable-next-line no-magic-numbers
+      const index = key === 0 ? 9 : key - 1
+      await this.$setScene(this.scenes[index])
     })
     ipcRenderer.on('themeUpdated', (_e, isDark) => {
       if (this.$getPrefs('app.theme') === 'system') {
