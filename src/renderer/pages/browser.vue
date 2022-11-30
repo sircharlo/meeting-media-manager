@@ -125,7 +125,7 @@ export default defineComponent({
           if (id) {
             el = doc.getElementById(id)
           } else if (className && text) {
-            const selector = `${tag}.${className.replaceAll(' ', '.')}`
+            const selector = `${tag}.${className.trim().replaceAll(/\s+/g, '.')}`
             el =
               (Array.from(doc.querySelectorAll(selector)).find(
                 (e) => e.textContent === text
@@ -137,7 +137,7 @@ export default defineComponent({
           } else if (href) {
             el = doc.querySelector(`${tag}[href="${href}"]`)
           } else if (className) {
-            const selector = `${tag}.${className.replaceAll(' ', '.')}`
+            const selector = `${tag}.${className.trim().replaceAll(/\s+/g, '.')}`
             el = doc.querySelector(selector)
           }
           console.debug('el', el)
