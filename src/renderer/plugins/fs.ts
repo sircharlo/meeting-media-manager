@@ -26,13 +26,15 @@ const plugin: Plugin = (
   inject('pubPath', (file?: MeetingFile): string | undefined => {
     // url: something/{pub}_{lang}.jwpub or something/{pub}_{lang}_{track}.mp4
     let validMediaLangs: ShortJWLang[] = []
-    try {
-      validMediaLangs = JSON.parse(
-        readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
-      ) as ShortJWLang[]
-    } catch (e: unknown) {
-      $log.error(e)
-      validMediaLangs = []
+    if (file) {
+      try {
+        validMediaLangs = JSON.parse(
+          readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
+        ) as ShortJWLang[]
+      } catch (e: unknown) {
+        $log.error(e)
+        validMediaLangs = []
+      }
     }
 
     let mediaFolder = basename(file?.url || '_')
