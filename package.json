@@ -46,6 +46,7 @@
     "@types/node": "16.18.3",
     "chokidar": "3.5.3",
     "core-js": "3.26.1",
+    "minimatch": "5.1.1",
     "vue": "2.7.14",
     "vue-server-renderer": "2.7.14",
     "vue-template-compiler": "2.7.14"
