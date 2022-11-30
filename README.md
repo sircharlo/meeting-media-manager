@@ -39,8 +39,8 @@ In addition, M³ itself has been translated, by many volunteers, into several la
 [![gitlocalized](https://gitlocalize.com/repo/8097/mg/badge.svg)](https://gitlocalize.com/repo/8097/mg?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8097/nl/badge.svg)](https://gitlocalize.com/repo/8097/nl?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8097/pcm/badge.svg)](https://gitlocalize.com/repo/8097/pcm?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8097/pt/badge.svg)](https://gitlocalize.com/repo/8097/pt?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8097/pt-br/badge.svg)](https://gitlocalize.com/repo/8097/pt-br?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/pt-BR/badge.svg)](https://gitlocalize.com/repo/8097/pt-BR?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8097/pt-PT/badge.svg)](https://gitlocalize.com/repo/8097/pt-PT?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8097/ru/badge.svg)](https://gitlocalize.com/repo/8097/ru?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8097/sv/badge.svg)](https://gitlocalize.com/repo/8097/sv?utm_source=badge)
 ___
