@@ -29,19 +29,19 @@ As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion f
 
 In addition, M³ itself has been translated, by many volunteers, into 12 languages and counting! You can therefore configure the language you would like to be displayed in M³'s interface. Do you want to help translate M³ into your language? Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to do so.
 
-[![gitlocalized](https://gitlocalize.com/repo/8096/de/badge.svg)](https://gitlocalize.com/repo/8096/de?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/es/badge.svg)](https://gitlocalize.com/repo/8096/es?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/et/badge.svg)](https://gitlocalize.com/repo/8096/et?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/fi/badge.svg)](https://gitlocalize.com/repo/8096/fi?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/fr/badge.svg)](https://gitlocalize.com/repo/8096/fr?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/hu/badge.svg)](https://gitlocalize.com/repo/8096/hu?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/it/badge.svg)](https://gitlocalize.com/repo/8096/it?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/mg/badge.svg)](https://gitlocalize.com/repo/8096/mg?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/nl/badge.svg)](https://gitlocalize.com/repo/8096/nl?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/pt-PT/badge.svg)](https://gitlocalize.com/repo/8096/pt-PT?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/pt-BR/badge.svg)](https://gitlocalize.com/repo/8096/pt-BR?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/ru/badge.svg)](https://gitlocalize.com/repo/8096/ru?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8096/sv/badge.svg)](https://gitlocalize.com/repo/8096/sv?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/de/badge.svg)](https://gitlocalize.com/repo/8177/de?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/es/badge.svg)](https://gitlocalize.com/repo/8177/es?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/et/badge.svg)](https://gitlocalize.com/repo/8177/et?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/fi/badge.svg)](https://gitlocalize.com/repo/8177/fi?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/fr/badge.svg)](https://gitlocalize.com/repo/8177/fr?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/hu/badge.svg)](https://gitlocalize.com/repo/8177/hu?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/it/badge.svg)](https://gitlocalize.com/repo/8177/it?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/mg/badge.svg)](https://gitlocalize.com/repo/8177/mg?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/nl/badge.svg)](https://gitlocalize.com/repo/8177/nl?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/pt-PT/badge.svg)](https://gitlocalize.com/repo/8177/pt-PT?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/pt-BR/badge.svg)](https://gitlocalize.com/repo/8177/pt-BR?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/ru/badge.svg)](https://gitlocalize.com/repo/8177/ru?utm_source=badge)
+[![gitlocalized](https://gitlocalize.com/repo/8177/sv/badge.svg)](https://gitlocalize.com/repo/8177/sv?utm_source=badge)
 
 ## How do I get started?
 
