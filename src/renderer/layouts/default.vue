@@ -12,7 +12,8 @@
 <script lang="ts">
 import { fileURLToPath, pathToFileURL } from 'url'
 import { platform, userInfo } from 'os'
-import { existsSync, renameSync, readFileSync, removeSync } from 'fs'
+import { existsSync, renameSync, readFileSync } from 'fs'
+import { removeSync } from 'fs-extra'
 import { basename, join } from 'upath'
 import { defineComponent } from 'vue'
 import getUsername from 'fullname'
