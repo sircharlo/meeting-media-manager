@@ -228,11 +228,10 @@
 </template>
 <script lang="ts">
 import { platform } from 'os'
+import { readFileSync } from 'fs'
 import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'
-// eslint-disable-next-line import/named
-import { readFileSync } from 'fs-extra'
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'

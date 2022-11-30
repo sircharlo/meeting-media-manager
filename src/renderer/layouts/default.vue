@@ -12,12 +12,12 @@
 <script lang="ts">
 import { fileURLToPath, pathToFileURL } from 'url'
 import { platform, userInfo } from 'os'
+import { existsSync, renameSync, readFileSync } from 'fs'
+import { removeSync } from 'fs-extra'
 import { basename, join } from 'upath'
 import { defineComponent } from 'vue'
 import getUsername from 'fullname'
 import { ipcRenderer } from 'electron'
-// eslint-disable-next-line import/named
-import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import {
   ShortJWLang,

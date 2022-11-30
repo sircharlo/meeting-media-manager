@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable import/named */
 import { platform } from 'os'
+import { existsSync } from 'fs'
 import {
   app,
   ipcMain,
@@ -15,8 +15,8 @@ import {
   OpenDialogOptions,
 } from 'electron'
 import { init } from '@sentry/electron'
+// eslint-disable-next-line import/named
 import { initRenderer } from 'electron-store'
-import { existsSync } from 'fs-extra'
 import { join, normalize } from 'upath'
 import { autoUpdater } from 'electron-updater'
 import windowStateKeeper = require('electron-window-state')

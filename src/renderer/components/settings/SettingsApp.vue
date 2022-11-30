@@ -203,12 +203,11 @@
 </template>
 <script lang="ts">
 import { platform } from 'os'
+import { existsSync, renameSync } from 'fs'
 import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
-// eslint-disable-next-line import/named
-import { existsSync, renameSync } from 'fs-extra'
 import { faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { AppPrefs, ElectronStore } from '~/types'

@@ -138,6 +138,7 @@
 </template>
 <script lang="ts">
 import { pathToFileURL } from 'url'
+import { existsSync, readFileSync } from 'fs'
 import { basename, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'
@@ -145,8 +146,6 @@ import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 // @ts-ignore: RuntimeTemplateCompiler implicitly has an 'any' type
 import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
 import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
-// eslint-disable-next-line import/named
-import { existsSync, readFileSync } from 'fs-extra'
 import { Marker } from '~/types'
 import { MS_IN_SEC, HUNDRED_PERCENT } from '~/constants/general'
 export default defineComponent({

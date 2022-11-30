@@ -1,11 +1,5 @@
-/* eslint-disable import/named */
 import { type } from 'os'
 import { pathToFileURL } from 'url'
-import { Dayjs } from 'dayjs'
-import JSZip from 'jszip'
-import { Plugin } from '@nuxt/types'
-import { XMLBuilder } from 'fast-xml-parser'
-import ffmpeg from 'fluent-ffmpeg'
 import {
   accessSync,
   chmodSync,
@@ -14,7 +8,12 @@ import {
   readFileSync,
   statSync,
   writeFileSync,
-} from 'fs-extra'
+} from 'fs'
+import { Dayjs } from 'dayjs'
+import JSZip from 'jszip'
+import { Plugin } from '@nuxt/types'
+import { XMLBuilder } from 'fast-xml-parser'
+import ffmpeg from 'fluent-ffmpeg'
 import { basename, changeExt, dirname, extname, join } from 'upath'
 import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api'
 import sizeOf from 'image-size'

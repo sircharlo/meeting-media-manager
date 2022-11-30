@@ -206,6 +206,7 @@
 </template>
 <script lang="ts">
 import { fileURLToPath, pathToFileURL } from 'url'
+import { existsSync } from 'fs'
 import { defineComponent } from 'vue'
 import { Dayjs } from 'dayjs'
 import { basename, join } from 'upath'
@@ -218,8 +219,6 @@ import {
   faSquarePlus,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
-// eslint-disable-next-line import/named
-import { existsSync } from 'fs-extra'
 import { ShortJWLang } from '~/types'
 import { DAYS_IN_WEEK, HUNDRED_PERCENT, MS_IN_SEC } from '~/constants/general'
 
