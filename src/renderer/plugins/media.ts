@@ -519,6 +519,7 @@ const plugin: Plugin = (
         })
       } catch (e: unknown) {
         $log.debug(params, mediaItem)
+        $log.error(e)
         try {
           result = await $pubMedia.get('', {
             params: {
