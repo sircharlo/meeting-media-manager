@@ -138,13 +138,21 @@ const plugin: Plugin = (
       const mwbResult = result[0]
       const wResult = result[1]
 
-      if (mwbResult.status === 'fulfilled' && mwbResult.value.choices) {
-        mwb = !!mwbResult.value.choices.find(
-          (c) => c.optionValue === new Date().getFullYear()
-        )
+      if (mwbResult.status === 'fulfilled') {
+        if (mwbResult.value.choices) {
+          mwb = !!mwbResult.value.choices.find(
+            (c) => c.optionValue === new Date().getFullYear()
+          )
+        } else {
+          $log.error(mwbResult.value)
+        }
       }
-      if (wResult.status === 'fulfilled' && wResult.value.choices) {
-        w = !!wResult.value.choices.find((c) => c.optionValue === 'w')
+      if (wResult.status === 'fulfilled') {
+        if (wResult.value.choices) {
+          w = !!wResult.value.choices.find((c) => c.optionValue === 'w')
+        } else {
+          $log.error(wResult.value)
+        }
       }
 
       langObject.mwbAvailable = mwb
