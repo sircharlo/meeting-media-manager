@@ -138,12 +138,12 @@ const plugin: Plugin = (
       const mwbResult = result[0]
       const wResult = result[1]
 
-      if (mwbResult.status === 'fulfilled') {
+      if (mwbResult.status === 'fulfilled' && mwbResult.value.choices) {
         mwb = !!mwbResult.value.choices.find(
           (c) => c.optionValue === new Date().getFullYear()
         )
       }
-      if (wResult.status === 'fulfilled') {
+      if (wResult.status === 'fulfilled' && wResult.value.choices) {
         w = !!wResult.value.choices.find((c) => c.optionValue === 'w')
       }
 
