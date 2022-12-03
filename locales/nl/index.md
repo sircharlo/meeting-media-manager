@@ -4,7 +4,7 @@ permalink: "/nl/"
 
 ### Wat is M³?
 
-**Meeting Media Manager**, or **M³** verkort, is een applicatie voor Windows, macOS en Linux, die automatisch de nodige plaatjes en filmpjes download voor vergadering van Jehovah's Getuigen, in elke taal die op jw.org beschikbaar is.
+**Meeting Media Manager**, or **M³** verkort, is een applicatie voor Windows, macOS en Linux, die automatisch de nodige plaatjes en filmpjes download voor vergaderingen van Jehovah's Getuigen, in elke taal die op jw.org beschikbaar is.
 
 De applicatie beschikt over terugkomende en eigen media management, als ook de optie om media te syncen voor leden van dezelfde gemeente en instellingen voor meerdere gemeentes of groepen die dezelfde computer gebruiken.
 
@@ -12,7 +12,7 @@ De applicatie beschikt over terugkomende en eigen media management, als ook de o
 
 M³ stelt je in staat om makkelijk en automatisch media voor alle vergaderingen te downloaden, syncen, delen en presenteren.
 
-Voor **hybride** of **fysieke** gemeente vergaderingen, de media presentatie modus heeft alle nodige functies om de taak van media te delen zo simpel mogelijk te maken. Deze functies zijn onder andere:
+Voor **hybride** of **fysieke** gemeente vergaderingen, heeft de media presentatie modus alle nodige functies om de taak van media delen zo simpel mogelijk te maken. Deze functies zijn onder andere:
 
 - Media previews
 - Makkelijk te gebruiken pauze, spelen en stop knoppen om het afspelen van media te controleren
@@ -20,7 +20,7 @@ Voor **hybride** of **fysieke** gemeente vergaderingen, de media presentatie mod
 - Automatische herkenning en beheer van externe schermen
 - OBS Studio integratie
 
-Voor volledige **digitale** Zoom gemeente vergaderingen, is er de ingebouwde MP4 conversie functie die je in staat stelt om alle media makkelijk te delen via Zoom's eigen MP4 deel functie.
+Voor volledig **digitale** Zoom gemeente vergaderingen, is er de ingebouwde MP4 conversie functie die je in staat stelt om alle media makkelijk te delen via Zoom's eigen MP4 deel functie.
 
 ### Werkt M³ in mijn eigen taal?
 
