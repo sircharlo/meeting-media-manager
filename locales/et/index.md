@@ -26,7 +26,7 @@ Täielikult **kaugjuhtivate** koguduse Zoomi koosolekute puhul võimaldab M³ si
 
 **Jah!** Jehoova tunnistajate koosolekute meediat saab automaatselt alla laadida mis tahes sadades keeles, mis on saidil JW.org saadaval. Saadaolevate keelte loendit uuendatakse dünaamiliselt; kõik, mida pead tegema, on valida, millist soovid.
 
-Lisaks on M³ ennast tõlgitud 12 keelde ja paljude vabatahtlike poolt; seega saate seadistada keele, mida soovite M³ liideses kuvada.
+Lisaks on M³ ennast tõlgitud 15 keelde ja paljude vabatahtlike poolt; seega saate seadistada keele, mida soovite M³ liideses kuvada.
 
 See rakendus on tehtud armastusega ja vähese vaba ajaga. Nautige!
 
