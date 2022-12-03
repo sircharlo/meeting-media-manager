@@ -26,7 +26,7 @@ Quanto às reuniões realizadas **apenas no Zoom**, o recurso de conversão MP4 
 
 **Sim!** A mídia para as reuniões das Testemunhas de Jeová pode ser baixada automaticamente em qualquer uma das centenas de idiomas disponíveis no JW.org. A lista de idiomas disponíveis é sempre atualizada; tudo que você precisa fazer é selecionar qual você quer.
 
-Além disso, o M³ foi traduzido por muitos voluntários em 12 idiomas até o momento. Se já houver uma tradução para o seu idioma, você pode configurá-lo para ser exibido na interface do M³.
+Além disso, o M³ foi traduzido por muitos voluntários em 15 idiomas até o momento. Se já houver uma tradução para o seu idioma, você pode configurá-lo para ser exibido na interface do M³.
 
 Este aplicativo foi feito com amor e um pouco de tempo livre. Aproveite!
 

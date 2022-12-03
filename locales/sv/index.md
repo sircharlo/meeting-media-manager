@@ -26,7 +26,7 @@ När det gäller helt **fjärr** Zoom-möten för församlingar, gör den inbygg
 
 **Ja!** Media för möten med Jehovas vittnen kan laddas ned automatiskt på något av de hundratals språk som finns på JW.org. Listan över tillgängliga språk uppdateras dynamiskt; allt du behöver göra är att välja vilken du vill ha.
 
-Dessutom har M³ själv översatts till 12 språk och många, av många frivilliga; du kan därför konfigurera det språk du vill ska visas i M³s gränssnitt.
+Dessutom har M³ själv översatts till 15 språk och många, av många frivilliga; du kan därför konfigurera det språk du vill ska visas i M³s gränssnitt.
 
 Denna app är gjord med kärlek och lite fritid. Njut av!
 

@@ -26,7 +26,7 @@ Ami a teljesen **online** gyülekezeti Zoom összejöveteleket illeti, az M³ be
 
 **Igen!** Jehova Tanúi összejöveteleinek médiaanyagai automatikusan letölthetőek a JW.org oldalon elérhető több száz nyelv bármelyikén. Az elérhető nyelvek listája dinamikusan frissül; Önnek csak ki kell választania a gyülekezetének megfelelőt.
 
-A programot 12 nyelvre fordították le számos önkéntes segítségével; ennek köszönhetően beállíthatja, hogy milyen nyelven szeretné megjeleníteni az M³-at.
+A programot 15 nyelvre fordították le számos önkéntes segítségével; ennek köszönhetően beállíthatja, hogy milyen nyelven szeretné megjeleníteni az M³-at.
 
 Ezt az alkalmazást szeretettel készítettem a szabadidőmben. Használja bátran!
 
