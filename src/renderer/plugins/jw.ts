@@ -29,19 +29,24 @@ const plugin: Plugin = (
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://www.jw.org/en/languages',
         })
-        const langs = (result.languages as JWLang[])
-          .filter((lang) => lang.hasWebContent)
-          .map((lang) => {
-            return {
-              name: lang.name,
-              langcode: lang.langcode,
-              symbol: lang.symbol,
-              vernacularName: lang.vernacularName,
-              isSignLanguage: lang.isSignLanguage,
-            } as ShortJWLang
-          })
-        $write(langPath, JSON.stringify(langs, null, 2))
-        $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
+
+        if (result.languages) {
+          const langs = (result.languages as JWLang[])
+            .filter((lang) => lang.hasWebContent)
+            .map((lang) => {
+              return {
+                name: lang.name,
+                langcode: lang.langcode,
+                symbol: lang.symbol,
+                vernacularName: lang.vernacularName,
+                isSignLanguage: lang.isSignLanguage,
+              } as ShortJWLang
+            })
+          $write(langPath, JSON.stringify(langs, null, 2))
+          $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
+        } else {
+          $log.error(result)
+        }
       } catch (e: unknown) {
         if (!store.state.stats.online) {
           $warn('errorOffline')
