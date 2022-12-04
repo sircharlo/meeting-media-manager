@@ -140,7 +140,6 @@
         :rules="getShortcutRules('openPresentMode')"
       />
       <form-input
-        v-if="isWindows"
         id="media.hideMediaLogo"
         v-model="media.hideMediaLogo"
         field="switch"
@@ -227,7 +226,6 @@
   </v-form>
 </template>
 <script lang="ts">
-import { platform } from 'os'
 import { readFileSync } from 'fs'
 import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
@@ -295,9 +293,6 @@ export default defineComponent({
           value: val,
         }
       })
-    },
-    isWindows() {
-      return platform() === 'win32'
     },
     background(): string {
       return this.$store.state.present.background as string

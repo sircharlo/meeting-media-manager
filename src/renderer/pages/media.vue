@@ -375,6 +375,7 @@ export default defineComponent({
         if (prefs.media.hideMediaLogo) {
           this.ytLogo.setAttribute('style', 'display: none')
         } else {
+          this.ytLogo.setAttribute('style', '')
           const logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
           if (logoFontFile) {
             // @ts-ignore: FontFace is not defined in the types
@@ -385,10 +386,11 @@ export default defineComponent({
             const loadedFont = await logoFont.load()
             // @ts-ignore: fonts does not exist on document
             document.fonts.add(loadedFont)
-            this.ytLogo.setAttribute('style', '')
             this.ytLogo.style.fontFamily = '"JW-Icons"'
-            this.ytLogo.innerHTML = "<div id='importedYearTextLogo'></div>"
+          } else {
+            this.ytLogo.style.fontFamily = '"JW-Icons-Fallback"'
           }
+          this.ytLogo.innerHTML = "<div id='importedYearTextLogo'></div>"
         }
       } catch (e: unknown) {
         console.error(e)
@@ -401,6 +403,14 @@ export default defineComponent({
 @font-face {
   font-family: NotoSerif;
   src: url('/NotoSerif-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: Wt-ClearText;
+  src: url('/Wt-ClearText-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: JW-Icons-Fallback;
+  src: url('/jw-icons.woff') format('woff');
 }
 
 html,
@@ -449,12 +459,12 @@ video,
   font-weight: 800;
 
   &.font-fallback {
-    font-family: 'NotoSerif', serif;
+    font-family: 'Wt-ClearText', 'NotoSerif', serif;
     letter-spacing: 0.05rem;
   }
 
   &.font-native {
-    font-family: 'Wt-ClearText-Bold', 'NotoSerif', serif;
+    font-family: 'Wt-ClearText-Bold', 'Wt-ClearText', 'NotoSerif', serif;
   }
 
   &.loading {
