@@ -219,7 +219,6 @@
     "configOBS": "Alkukokoonpano: OBS Studio",
     "obsInstall": "Asenna OBS Studio tai lataa kannettava versio.",
     "obsVirtualCam": "Jos käytät OBS Studion siirretävää versiota, asenna [Virtualcam]-laajennus, ja jos käytät OBS Studion siirrettävää versiota, lisää virtuaalikamera Windowsiin kaksoisnapsauttamalla mukana toimitettua asennuskomentosarjaa.",
-    "obsWebsocket": "Asenna [obs-websocket]-laajennus. Määritä portin numero ja salasana obs-websocketille.",
     "obsSettings": "Ota kaikki valintaruudut käyttöön OBS-asetuksissa kohdassa <code>General</code> > <code>System Tray</code>. Ota käyttöön laitteistokooderi, jos se on saatavilla kohdassa <code>Output</code> > <code>Streaming</code>.",
     "obsSettingsVideo": "Valitse <code>Video</code> > <code>Base (kanvas) -Resolution</code>- ja <code>Output(Scaled) Resolution</code> -kohdassa <code>1280 x 720</code> ja valitse kohdasta <code >Downscale Filter</code>, valitse <code>Bilinear</code>.",
     "obsScenes": "Määritä vähintään kaksi kohtausta: yksi medianäyttöä varten (<code>Window Capture</code> tai <code>Display Capture</code>, kun hiiren osoitin ei ole käytössä ja oikea ikkunan otsikko/näyttö on valittuna) ja toinen lavanäkymä (<code>Video Capture Device</code> Salin kameran ollessa valittuna).",
