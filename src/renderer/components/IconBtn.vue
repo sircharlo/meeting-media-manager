@@ -52,7 +52,6 @@
         v-model="$attrs.value"
         v-click-outside="revertClickedOnce"
         :aria-label="variant"
-        :loading="loading || $attrs.loading"
         v-bind="{ ...style.props, ...$attrs, ...attrs }"
         color="error"
         v-on="on"
@@ -88,7 +87,6 @@
       'pulse-danger': variant === 'settings' && !updateSuccess,
     }"
     :nuxt="!!style.to || $attrs.nuxt"
-    :loading="loading || $attrs.loading"
     :to="
       style.to
         ? localePath(`${style.to}?cong=${cong}&week=${weekNr}`)
@@ -188,7 +186,6 @@ export default defineComponent({
   },
   data() {
     return {
-      loading: false,
       clickedOnce: false,
       styles: {
         home: {
