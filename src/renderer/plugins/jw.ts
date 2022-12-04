@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, statSync } from 'fs'
-import { basename, join } from 'upath'
+import { join } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import { JW_ICONS_FONT, WT_CLEARTEXT_FONT } from './../constants/general'
@@ -250,7 +250,6 @@ const plugin: Plugin = (
           url: font,
           responseType: 'arraybuffer',
         })
-        $log.debug(basename(font), result)
         if (result instanceof Uint8Array) {
           $write(fontPath, Buffer.from(new Uint8Array(result)))
         } else {
