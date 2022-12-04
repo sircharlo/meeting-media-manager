@@ -518,7 +518,7 @@ const plugin: Plugin = (
           params,
         })
       } catch (e: unknown) {
-        $log.debug(params, mediaItem)
+        $log.debug(result)
         $log.error(e)
         try {
           result = await $pubMedia.get('', {
@@ -531,7 +531,7 @@ const plugin: Plugin = (
             },
           })
         } catch (e: unknown) {
-          $log.debug(`pub: ${mediaItem.pubSymbol + 'm'}`, mediaItem)
+          $log.debug(result)
           try {
             result = await $pubMedia.get('', {
               params: {
@@ -543,7 +543,7 @@ const plugin: Plugin = (
               },
             })
           } catch (e: unknown) {
-            $log.debug(`pub: ${mediaItem.pubSymbol.slice(0, -1)}`, mediaItem)
+            $log.debug(result)
           }
         }
       }
