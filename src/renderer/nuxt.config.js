@@ -154,7 +154,7 @@ module.exports = {
       // envName: server, client, modern
       presets({ envName }) {
         const envTargets = {
-          client: { browsers: ['Chrome >= 106'] }, // Electron.js uses Chrome 106 (currently)
+          client: { browsers: ['Chrome >= 108'] }, // Electron.js uses Chrome 108S (currently)
           server: { node: 'current' },
         }
         return [
