@@ -2,7 +2,6 @@
   "lang": "hu",
   "name": "magyar",
   "language": "Nyelv:",
-  "search": "Szűrés kulcsszó alapján",
   "shared": {
     "explanation": "Magyarázat",
     "option": "Opció",
@@ -219,7 +218,6 @@
     "configOBS": "Első beállítás: OBS Studio",
     "obsInstall": "Telepítse az OBS Studio-t, vagy töltse le a hordozható verzióját.",
     "obsVirtualCam": "Ha az OBS Studio hordozható verzióját használja, telepítse a [Virtualcam] bővítményt, és ha a hordozható verziót használja, adja hozzá a virtuális kamerát a Windows-hoz a mellékelt telepítő szkriptre való dupla kattintással.",
-    "obsWebsocket": "Telepítse az [obs-websocket] bővítményt. Konfiguráljon egy portszámot és jelszót az obs-websocket számára.",
     "obsSettings": "Az OBS-beállításokban az <code>Általános</code>  > <code>Értesítési terület</code> menüpontban kapcsolja be az összes jelölőnégyzetet. A <code>Kimenet</code> > <code>Közvetítés</code> menüpontban engedélyezze a Hardveres kódolót, ha rendelkezésre áll.",
     "obsSettingsVideo": "A <code>Videó</code> > <code>Alap (vászon) felbontás</code> és a <code>Kimeneti (skálázott) felbontás</code> menüpontban válassza az <code>1280x720-as</code> felbontást, a <code>Leskálázási szűrőt</code> pedig állítsa <code>Bilineáris</code> értékre.",
     "obsScenes": "Állítson be legalább 2 jelenetet: egyet a média megjelenítéséhez (<code>Ablak felvétele</code> vagy <code>Kijelző felvétele</code> az egérkurzor kikapcsolásával és a megfelelő ablakcím/monitor kiválasztásával), és egyet a színpadi nézethez (<code>Videorögzítő eszköz</code> a Királyság-terem kamerájának kiválasztásával).",
