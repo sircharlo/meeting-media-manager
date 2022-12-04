@@ -272,11 +272,9 @@ if (gotTheLock) {
   ipcMain.handle('getFromJWOrg', async (_e, opt) => {
     const options = {
       adapter: require('axios/lib/adapters/http'),
-      headers: {},
-      params: {},
+      ...opt,
     }
-    if (opt.headers) options.headers = opt.headers
-    if (opt.params) options.params = opt.params
+    options.url = undefined
     try {
       const result = await require('axios').get(opt.url, options)
       return result.data

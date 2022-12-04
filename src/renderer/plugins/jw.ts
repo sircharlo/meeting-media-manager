@@ -1,7 +1,8 @@
-import { existsSync, readFileSync } from 'fs'
-import { join } from 'upath'
+import { existsSync, readFileSync, statSync } from 'fs'
+import { basename, join } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
+import { JW_ICONS_FONT, WT_CLEARTEXT_FONT } from './../constants/general'
 import { Filter, JWLang, ShortJWLang } from '~/types'
 
 const plugin: Plugin = (
@@ -12,6 +13,7 @@ const plugin: Plugin = (
     $ytPath,
     $log,
     $warn,
+    $localFontPath,
     $setPrefs,
     $dayjs,
     store,
@@ -177,6 +179,7 @@ const plugin: Plugin = (
     force = false,
     lang?: string
   ): Promise<string | null> {
+    const fontsPromise = getWtFonts()
     let yeartext = null
     const ytPath = $ytPath(lang)
     const wtlocale = lang ?? ($getPrefs('media.lang') as string | null) ?? 'E'
@@ -222,9 +225,42 @@ const plugin: Plugin = (
         $warn('errorOffline')
       }
     }
+    await fontsPromise
     return yeartext
   }
   inject('getYearText', getYearText)
+
+  async function getWtFonts() {
+    const fonts = [WT_CLEARTEXT_FONT, JW_ICONS_FONT]
+
+    const promises: Promise<void>[] = []
+
+    fonts.forEach((font) => {
+      promises.push(getWtFont(font))
+    })
+
+    await Promise.allSettled(promises)
+  }
+
+  async function getWtFont(font: string) {
+    const fontPath = $localFontPath(font)
+    if (!existsSync(fontPath) || statSync(fontPath).size === 0) {
+      try {
+        const result = await ipcRenderer.invoke('getFromJWOrg', {
+          url: font,
+          responseType: 'arraybuffer',
+        })
+        $log.debug(basename(font), result)
+        if (result instanceof Uint8Array) {
+          $write(fontPath, Buffer.from(new Uint8Array(result)))
+        } else {
+          $log.error(result)
+        }
+      } catch (e: unknown) {
+        $log.error(e)
+      }
+    }
+  }
 }
 
 export default plugin
