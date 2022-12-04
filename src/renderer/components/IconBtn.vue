@@ -285,7 +285,7 @@ export default defineComponent({
     revertClickedOnce() {
       this.clickedOnce = false
     },
-    atClick(): Promise<void> {
+    atClick() {
       // If click twice is enabled, wait for second click
       if (this.clickTwice && !this.clickedOnce) {
         this.clickedOnce = true
