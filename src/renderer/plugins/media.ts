@@ -79,13 +79,25 @@ const plugin: Plugin = (
 
     // Exclude the "old new songs" songbook, as we don't need images from that
     if (symbol === 'snnw') return []
+    const mediaLang = $getPrefs('media.lang') as string
+    const fallbackLang = $getPrefs('media.langFallback') as string
 
-    const extractDb = await getDbFromJWPUB(
+    let extractDb = await getDbFromJWPUB(
       symbol,
       extract.IssueTagNumber,
       setProgress,
-      extract.Lang
+      fallbackLang ? mediaLang : extract.Lang
     )
+
+    if (!extractDb && fallbackLang) {
+      extractDb = await getDbFromJWPUB(
+        symbol,
+        extract.IssueTagNumber,
+        setProgress,
+        extract.Lang === mediaLang ? fallbackLang : extract.Lang ?? fallbackLang
+      )
+    }
+
     if (!extractDb) return []
 
     return (
@@ -258,25 +270,44 @@ const plugin: Plugin = (
           mmItem.NextParagraphOrdinal = result[0].TargetParagraphOrdinal
       }
     }
+    const fallbackLang = $getPrefs('media.langFallback') as string
     try {
       // Get Video file
       if (
         mmItem.MimeType.includes('audio') ||
         mmItem.MimeType.includes('video')
       ) {
-        const json =
-          ((
-            await getMediaLinks(
-              {
-                pubSymbol: mmItem.KeySymbol as string,
-                track: mmItem.Track as number,
-                issue: (mmItem.IssueTagNumber as number)?.toString(),
-                docId: mmItem.MultiMeps as number,
-                lang,
-              },
-              silent
-            )
-          )[0] as VideoFile) ?? {}
+        const mediaLang = $getPrefs('media.lang') as string
+
+        let json = (
+          await getMediaLinks(
+            {
+              pubSymbol: mmItem.KeySymbol as string,
+              track: mmItem.Track as number,
+              issue: (mmItem.IssueTagNumber as number)?.toString(),
+              docId: mmItem.MultiMeps as number,
+              lang: fallbackLang ? mediaLang : lang,
+            },
+            silent
+          )
+        )[0] as VideoFile
+
+        if (!json && fallbackLang) {
+          json =
+            ((
+              await getMediaLinks(
+                {
+                  pubSymbol: mmItem.KeySymbol as string,
+                  track: mmItem.Track as number,
+                  issue: (mmItem.IssueTagNumber as number)?.toString(),
+                  docId: mmItem.MultiMeps as number,
+                  lang:
+                    lang === mediaLang ? fallbackLang : lang ?? fallbackLang,
+                },
+                silent
+              )
+            )[0] as VideoFile) ?? {}
+        }
         json.queryInfo = mmItem
         json.BeginParagraphOrdinal = mmItem.BeginParagraphOrdinal
         return json as VideoFile
@@ -295,11 +326,25 @@ const plugin: Plugin = (
             )
           }
         }
+
+        if (mmItem.LocalPath && !existsSync(mmItem.LocalPath)) {
+          mmItem.LocalPath = join(
+            $pubPath({
+              BeginParagraphOrdinal: 0,
+              title: '',
+              url: `url_${fallbackLang}.jpg`,
+              queryInfo: mmItem,
+            } as MeetingFile),
+            mmItem.FilePath
+          )
+        }
+
         mmItem.FileName = $sanitize(
           mmItem.Caption.length > mmItem.Label.length
             ? mmItem.Caption
             : mmItem.Label
         )
+
         const picture = {
           BeginParagraphOrdinal: mmItem.BeginParagraphOrdinal,
           title: mmItem.FileName,
@@ -444,17 +489,12 @@ const plugin: Plugin = (
   }
   inject('getDocumentMultiMedia', getDocumentMultiMedia)
 
-  async function getAdditionalData(
-    item: SmallMediaFile,
-    id: string,
-    lang?: string
-  ) {
+  async function getAdditionalData(item: SmallMediaFile, id: string) {
     if (item.pub === 'thv') {
       item.thumbnail = THV_POSTER
     } else {
-      const mediaLang = lang || $getPrefs('media.lang')
       const result = (await $mediaItems.$get(
-        `${mediaLang}/${id}_VIDEO`
+        `E/${id}_VIDEO`
       )) as MediaItemResult
 
       if (result?.media?.length > 0) {
@@ -512,6 +552,7 @@ const plugin: Plugin = (
         params.docid = mediaItem.docId
       }
       params.langwritten = mediaLang
+      const fallbackLang = $getPrefs('media.langFallback') as string
 
       try {
         result = await $pubMedia.get('', {
@@ -519,7 +560,9 @@ const plugin: Plugin = (
         })
       } catch (e: unknown) {
         $log.debug(result)
-        $log.error(e)
+        if (!fallbackLang) {
+          $log.error(e)
+        }
         try {
           result = await $pubMedia.get('', {
             params: {
@@ -532,18 +575,31 @@ const plugin: Plugin = (
           })
         } catch (e: unknown) {
           $log.debug(result)
-          try {
-            result = await $pubMedia.get('', {
-              params: {
-                pub: mediaItem.pubSymbol.slice(0, -1),
-                track: mediaItem.track,
-                issue: mediaItem.issue,
-                fileformat: mediaItem.format,
-                langwritten: mediaLang,
-              },
-            })
-          } catch (e: unknown) {
-            $log.debug(result)
+          if (fallbackLang && !mediaItem.lang) {
+            try {
+              result = await $pubMedia.get('', {
+                params: {
+                  ...params,
+                  langwritten: fallbackLang,
+                },
+              })
+            } catch (e: unknown) {
+              $log.debug(result)
+              $log.error(e)
+              try {
+                result = await $pubMedia.get('', {
+                  params: {
+                    pub: mediaItem.pubSymbol + 'm',
+                    track: mediaItem.track,
+                    issue: mediaItem.issue,
+                    fileformat: mediaItem.format,
+                    langwritten: fallbackLang,
+                  },
+                })
+              } catch (e: unknown) {
+                $log.debug(result)
+              }
+            }
           }
         }
       }
@@ -605,7 +661,7 @@ const plugin: Plugin = (
             }
           }
         ) as SmallMediaFile[]
-      } else if (!silent) {
+      } else if (!silent && (!fallbackLang || !mediaItem.lang)) {
         $warn('infoPubIgnored', {
           identifier: Object.values(mediaItem).filter(Boolean).join('_'),
         })
@@ -698,7 +754,7 @@ const plugin: Plugin = (
                 .filter((v) => !!v && v !== '0')
                 .join('_')}`
 
-          promises.push(getAdditionalData(item, id, mediaLang))
+          promises.push(getAdditionalData(item, id))
         }
       })
 
@@ -1130,7 +1186,17 @@ const plugin: Plugin = (
     img: MultiMediaItem
   ): Promise<void> {
     if ($isImage(img.FilePath)) {
-      const LocalPath = join($pubPath(), 'w', issue, '0', img.FilePath)
+      let LocalPath = join($pubPath(), 'w', issue, '0', img.FilePath)
+      if (!existsSync(LocalPath)) {
+        LocalPath = join(
+          $pubPath({
+            pub: 'w',
+            issue,
+            url: `url_${$getPrefs('media.langFallback')}.jpg`,
+          } as MeetingFile),
+          img.FilePath
+        )
+      }
       const FileName = $sanitize(
         img.Caption.length > img.Label.length ? img.Caption : img.Label
       )
@@ -1157,11 +1223,22 @@ const plugin: Plugin = (
     song: MultiMediaItem,
     i: number
   ): Promise<void> {
-    const songMedia = await getMediaLinks({
+    const mediaLang = $getPrefs('media.lang') as string
+    const fallbackLang = $getPrefs('media.langFallback') as string
+    let songMedia = await getMediaLinks({
       pubSymbol: song.KeySymbol as string,
       track: song.Track as number,
-      lang: songLangs[i],
+      lang: fallbackLang ? mediaLang : songLangs[i],
     })
+
+    if (fallbackLang && (!songMedia || songMedia.length === 0)) {
+      songMedia = await getMediaLinks({
+        pubSymbol: song.KeySymbol as string,
+        track: song.Track as number,
+        lang: mediaLang === songLangs[i] ? fallbackLang : songLangs[i],
+      })
+    }
+
     if (songMedia?.length > 0) {
       const songObj = songMedia[0] as VideoFile
       songObj.queryInfo = song

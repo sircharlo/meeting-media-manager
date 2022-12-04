@@ -67,7 +67,9 @@ const plugin: Plugin = (
     }
 
     const mediaLang = $getPrefs('media.lang') as string
+    const fallbackLang = $getPrefs('media.fallbackLang') as string
     const langPrefInLangs = langs.find((lang) => lang.langcode === mediaLang)
+    const fallbackLangObj = langs.find((lang) => lang.langcode === fallbackLang)
 
     // Check current lang if it hasn't been checked yet
     if (
@@ -81,7 +83,19 @@ const plugin: Plugin = (
       langPrefInLangs.mwbAvailable = availability.mwb
     }
 
+    if (
+      fallbackLang &&
+      fallbackLangObj &&
+      (fallbackLangObj.mwbAvailable === undefined ||
+        fallbackLangObj.mwbAvailable === undefined)
+    ) {
+      const availability = await getPubAvailability(fallbackLang)
+      fallbackLangObj.wAvailable = availability.w
+      fallbackLangObj.mwbAvailable = availability.mwb
+    }
+
     store.commit('media/setMediaLang', langPrefInLangs ?? null)
+    store.commit('media/setFallbackLang', fallbackLangObj ?? null)
     store.commit(
       'media/setSongPub',
       langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'

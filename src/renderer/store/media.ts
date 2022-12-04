@@ -7,6 +7,7 @@ const defaultState: MediaStore = {
   ffMpeg: false, // Whether FFmpeg has been initialized
   musicFadeOut: '', // The fade out time for shuffle music
   mediaLang: null, // The media language object
+  fallbackLang: null, // The fallback language object
   meetings: new Map(), // A map of meetings and their media
   progress: new Map(), // A map with downloadIfRequired() calls. If a file is already downloading, it will be returned from the map
 }
@@ -19,6 +20,9 @@ export const mutations: MutationTree<MediaStore> = {
   },
   setMediaLang(state, lang: ShortJWLang | null) {
     state.mediaLang = lang
+  },
+  setFallbackLang(state, lang: ShortJWLang | null) {
+    state.fallbackLang = lang
   },
   setProgress(
     state,

@@ -73,6 +73,7 @@
   "localAppLang": "Applicatie taal",
   "maxRes": "Maximale resolutie voor videos",
   "mediaLang": "Media taal",
+  "mediaLangFallback": "Alternatieve media taal",
   "mediaSaveFolder": "Folder waar media opgeslagen wordt",
   "mediaWinShortcut": "Sneltoets om mediascherm te tonen/verbergen",
   "mediaWindowBackground": "Achtergrondplaatje voor media presentatie modus",

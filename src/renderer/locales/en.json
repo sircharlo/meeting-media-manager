@@ -73,6 +73,7 @@
   "localAppLang": "Display language",
   "maxRes": "Maximum resolution for videos",
   "mediaLang": "Media language",
+  "mediaLangFallback": "Fallback media language",
   "mediaSaveFolder": "Folder in which to save media",
   "mediaWinShortcut": "Shortcut to toggle media window visibility",
   "mediaWindowBackground": "Background image for media presentation mode",

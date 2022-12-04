@@ -40,18 +40,35 @@ const plugin: Plugin = (
     let mediaFolder = basename(file?.url || '_')
       .split('_')[1]
       .split('.')[0]
+
     if (
       !mediaFolder ||
       !validMediaLangs.find((l) => l.langcode === mediaFolder)
     ) {
       mediaFolder = basename(file?.queryInfo?.FilePath || '_').split('_')[1]
-      if (
-        !mediaFolder ||
-        !validMediaLangs.find((l) => l.langcode === mediaFolder)
-      )
-        mediaFolder = $getPrefs('media.lang') as string
-      if (!mediaFolder) return
     }
+
+    if (
+      !mediaFolder ||
+      !validMediaLangs.find((l) => l.langcode === mediaFolder)
+    ) {
+      try {
+        const matches = file?.queryInfo?.Link?.match(/\/(.*)\//)
+        if (matches && matches.length > 0) {
+          mediaFolder = (matches.pop() as string).split(':')[0]
+        }
+      } catch (e: unknown) {
+        $log.error(e)
+      }
+    }
+
+    if (
+      !mediaFolder ||
+      !validMediaLangs.find((l) => l.langcode === mediaFolder)
+    ) {
+      mediaFolder = $getPrefs('media.lang') as string
+    }
+    if (!mediaFolder) return
 
     const pubPath = joinSafe($appPath(), 'Publications', mediaFolder)
     try {

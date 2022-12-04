@@ -315,6 +315,9 @@ export default defineComponent({
     mediaLangObject(): ShortJWLang | null {
       return this.$store.state.media.mediaLang as ShortJWLang | null
     },
+    fallbackLangObject(): ShortJWLang | null {
+      return this.$store.state.media.fallbackLang as ShortJWLang | null
+    },
     jwSync(): string {
       if (this.mediaLangObject?.vernacularName) {
         return `${this.$t('syncJwOrgMedia')} (${
@@ -594,7 +597,11 @@ export default defineComponent({
       if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
     },
     async getMwMedia(mwDay: Dayjs, filter = 'all') {
-      if (this.mediaLangObject?.mwbAvailable === false) {
+      if (
+        this.mediaLangObject?.mwbAvailable === false &&
+        (!this.fallbackLangObject ||
+          this.fallbackLangObject?.mwbAvailable === false)
+      ) {
         this.$warn('errorMwbUnavailable')
         this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'error')
       } else if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {
@@ -614,7 +621,11 @@ export default defineComponent({
       }
     },
     async getWeMedia(weDay: Dayjs, filter = 'all') {
-      if (this.mediaLangObject?.wAvailable === false) {
+      if (
+        this.mediaLangObject?.wAvailable === false &&
+        (!this.fallbackLangObject ||
+          this.fallbackLangObject?.wAvailable === false)
+      ) {
         this.$warn('errorWUnavailable')
         this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'error')
       } else if (filter !== 'mw' && this.now.isSameOrBefore(weDay)) {
