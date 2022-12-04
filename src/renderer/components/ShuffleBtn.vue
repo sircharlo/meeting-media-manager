@@ -7,7 +7,7 @@
         v-model="$attrs.value"
         v-click-outside="revertClickedOnce"
         aria-label="shuffle"
-        v-bind="{ ...$attrs, ...attrs }"
+        v-bind="attrs"
         :color="musicFadeOut ? 'error' : 'warning'"
         v-on="on"
         @click="atClick()"
@@ -30,13 +30,12 @@
     <span>{{ $t('clickAgain') }}</span>
   </v-tooltip>
   <v-btn
-    v-else-if="musicFadeOut || loading || $attrs.loading"
+    v-else-if="musicFadeOut || loading"
     id="shuffle"
     aria-label="shuffle"
     color="warning"
     :title="$getPrefs('meeting.shuffleShortcut')"
-    v-bind="$attrs"
-    :loading="loading || $attrs.loading"
+    :loading="loading"
     :style="{ color: isDark ? 'white' : 'black' }"
     @click="atClick()"
   >
@@ -54,7 +53,6 @@
     v-model="$attrs.value"
     aria-label="shuffle"
     :title="$getPrefs('meeting.shuffleShortcut')"
-    v-bind="$attrs"
     color="info"
     @click.stop="atClick()"
   >
