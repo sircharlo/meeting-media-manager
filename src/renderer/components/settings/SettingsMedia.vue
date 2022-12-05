@@ -368,6 +368,9 @@ export default defineComponent({
         this.$store.commit('media/clear')
         if (val) await this.$getPubAvailability(val)
         await this.$getJWLangs()
+        if (this.bg === 'yeartext') {
+          await this.$refreshBackgroundImgPreview(true)
+        }
       },
     },
     'media.preferredOutput': {

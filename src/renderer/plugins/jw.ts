@@ -193,7 +193,9 @@ const plugin: Plugin = (
   ): Promise<string | null> {
     let yeartext = null
     const ytPath = $ytPath(lang)
-    const wtlocale = lang ?? ($getPrefs('media.lang') as string | null) ?? 'E'
+    const fallbackLang = $getPrefs('media.langFallback') as string | null
+    const wtlocale = lang ?? ($getPrefs('media.lang') as string | null)
+    if (!wtlocale) return null
     if (force || !existsSync(ytPath)) {
       $log.debug('Fetching yeartext', wtlocale)
       try {
@@ -210,21 +212,23 @@ const plugin: Plugin = (
           yeartext = JSON.parse(JSON.stringify(result.content)) as string
           $write(ytPath, yeartext)
         } else if (
-          wtlocale !== 'E' &&
+          fallbackLang &&
+          wtlocale !== fallbackLang &&
           result.message === 'Request failed with status code 404'
         ) {
           $log.warn(`Yeartext not found for ${wtlocale}`)
-          return await getYearText(force, 'E')
+          return await getYearText(force, fallbackLang)
         } else {
           $log.error(result)
         }
       } catch (e: any) {
         if (
-          wtlocale !== 'E' &&
+          fallbackLang &&
+          wtlocale !== fallbackLang &&
           e.message === 'Request failed with status code 404'
         ) {
           $log.warn(`Yeartext not found for ${wtlocale}`)
-          return await getYearText(force, 'E')
+          return await getYearText(force, fallbackLang)
         } else {
           $log.error(e)
         }
