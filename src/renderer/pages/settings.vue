@@ -43,7 +43,6 @@
       <v-col cols="12" align-self="end" class="d-flex">
         <v-col class="d-flex pa-0 align-center" align-self="center">
           <v-btn
-            small
             :color="updateSuccess ? undefined : 'error'"
             :class="{ 'mr-2': true, 'pulse-danger': !updateSuccess }"
             @click="openReleases()"
@@ -55,23 +54,17 @@
             />
             M³ {{ $config.isDev ? 'dev' : $config.version }}
           </v-btn>
-          <v-btn small class="mr-2" @click="report()">
-            {{ $t('reportIssue') }}
-          </v-btn>
-          <v-btn
-            v-if="cacheColor === 'warning'"
-            small
-            :color="cacheColor"
-            :loading="loading"
-            class="black--text"
-            @click="removeCache()"
-          >
-            {{ `${$t('cleanCache')} (${cache}MB)` }}
-          </v-btn>
-          <v-tooltip v-else top>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-btn class="mr-2" v-bind="attrs" v-on="on" @click="report()">
+                <font-awesome-icon :icon="faBug" />
+              </v-btn>
+            </template>
+            <span>{{ $t('reportIssue') }}</span>
+          </v-tooltip>
+          <v-tooltip top>
             <template #activator="{ on, attrs }">
               <v-btn
-                small
                 :color="cacheColor"
                 :loading="loading"
                 class="black--text"
@@ -79,10 +72,13 @@
                 v-on="on"
                 @click="removeCache()"
               >
-                {{ `${$t('cleanCache')} (${cache}MB)` }}
+                <font-awesome-icon :icon="faTrash" pull="left" />
+                {{ `${cache}MB` }}
               </v-btn>
             </template>
-            <span>{{ $t('clickAgain') }}</span>
+            <span>{{
+              cacheColor === 'warning' ? $t('cleanCache') : $t('clickAgain')
+            }}</span>
           </v-tooltip>
         </v-col>
         <v-col align-self="end" class="text-right pa-0">
@@ -105,7 +101,11 @@
 <script lang="ts">
 import { join } from 'upath'
 import { defineComponent } from 'vue'
-import { faHandPointRight } from '@fortawesome/free-solid-svg-icons'
+import {
+  faHandPointRight,
+  faBug,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons'
 import { ShortJWLang, ElectronStore } from '~/types'
 import { BYTES_IN_KIBIBYTE, MS_IN_SEC } from '~/constants/general'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -175,6 +175,12 @@ export default defineComponent({
     },
     faHandPointRight() {
       return faHandPointRight
+    },
+    faBug() {
+      return faBug
+    },
+    faTrash() {
+      return faTrash
     },
     updateSuccess(): boolean {
       return this.$store.state.stats.updateSuccess as boolean
