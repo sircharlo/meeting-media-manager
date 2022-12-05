@@ -67,7 +67,7 @@ const plugin: Plugin = (
     }
 
     const mediaLang = $getPrefs('media.lang') as string
-    const fallbackLang = $getPrefs('media.fallbackLang') as string
+    const fallbackLang = $getPrefs('media.langFallback') as string
     const langPrefInLangs = langs.find((lang) => lang.langcode === mediaLang)
     const fallbackLangObj = langs.find((lang) => lang.langcode === fallbackLang)
 
