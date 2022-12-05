@@ -219,6 +219,7 @@
     "configOBS": "Configuração inicial: OBS Studio",
     "obsInstall": "Instale o OBS Studio ou baixe a versão portátil.",
     "obsVirtualCam": "Se estiver usando a versão portátil do OBS Studio, instale o plug-in [Virtualcam] e, se estiver usando a versão portátil do OBS Studio, adicione a câmera virtual ao Windows clicando duas vezes no script de instalação.",
+    "obsWebsocket": "Se você tiver o OBS Studio v27 ou anterior, precisará instalar o plugin [obs-websocket]. Caso contrário, o obs-websocket estará incluído. Configure um número de porta e senha para obs-websocket.",
     "obsSettings": "Nas configurações do OBS, em <code>Geral</code> > <code>Bandeja do sistema</code>, marque todas as caixas de seleção. Em <code>Saída</code> > <code>Transmissão</code>, habilite um codificador de hardware, se disponível.",
     "obsSettingsVideo": "Em <code>Vídeo</code> > <code>Resolução de base (canvas)</code> e <code>Resolução de saída (escalonada)</code>, escolha <code>1280x720</code> e em <code >Filtro</code>, escolha <code>Bilinear</code>.",
     "obsScenes": "Configure pelo menos 2 cenas: uma para a exibição de mídia (<code>Captura de janela</code> ou <code>Captura de tela</code> com o cursor do mouse desativado e o título/monitor de janela apropriado selecionado) e uma para a visualização do palco (<code>Dispositivo de captura de vídeo</code> com a câmera do Salão do Reino selecionada).",
