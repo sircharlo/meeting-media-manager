@@ -46,12 +46,7 @@
           />
         </v-col>
         <v-col class="text-right" cols="auto">
-          <icon-btn
-            v-if="shuffleEnabled"
-            variant="shuffle"
-            click-twice
-            :disabled="mediaActive"
-          />
+          <shuffle-btn v-if="shuffleEnabled" :disabled="mediaActive" />
           <icon-btn variant="toggleScreen" class="mx-2" />
           <v-btn
             id="present-to-home"
