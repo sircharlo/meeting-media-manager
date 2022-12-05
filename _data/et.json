@@ -2,6 +2,7 @@
   "lang": "et",
   "name": "eesti",
   "language": "Keel:",
+  "search": "Filtreerige märksõna järgi",
   "shared": {
     "explanation": "Selgitus",
     "option": "Võimalus",
@@ -218,6 +219,7 @@
     "configOBS": "Esialgne konfiguratsioon: OBS Studio",
     "obsInstall": "Installige OBS Studio või laadige alla kaasaskantav versioon.",
     "obsVirtualCam": "Kui kasutate OBS Studio kaasaskantavat versiooni, installige pistikprogramm [Virtualcam] ja kui kasutate OBS Studio kaasaskantavat versiooni, lisage virtuaalkaamera Windowsile, topeltklõpsates kaasasoleval installiskriptil.",
+    "obsWebsocket": "Kui teil on OBS Studio v27 või vanem, peate installima pistikprogrammi [obs-websocket]. Uuema versiooni jaoks on obs-websocket vaikimis olemas. Konfigureerige obs-websocketi pordi number ja parool.",
     "obsSettings": "Lubage OBS-i seadetes jaotises <code>General</code> > <code>System Tray</code> kõik märkeruudud. Jaotises <code>Väljund</code> > <code>Voogesitus</code> lubage riistvarakooder, kui see on saadaval.",
     "obsSettingsVideo": "Jaotises <code>Video</code> > <code>Põhi (lõuendi) eraldusvõime</code> ja <code>Väljundi (skaalatud) eraldusvõime</code> valige <code>1280 x 720</code> ja jaotises <code> >Downscale Filter</code>, valige <code>Bilineaarne</code>.",
     "obsScenes": "Seadistage vähemalt 2 stseeni: üks meediumikuva jaoks (<code>Window Capture</code> või <code>Display Capture</code>, kus hiirekursor on keelatud ja sobiv akna pealkiri/monitor on valitud) ja üks lavavaade (<code>videohõiveseade</code>, kus on valitud KH-kaamera).",
