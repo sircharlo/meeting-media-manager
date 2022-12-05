@@ -572,7 +572,7 @@ const plugin: Plugin = (
         result = await $pubMedia.get('', {
           params,
         })
-      } catch (e: unknown) {
+      } catch (e: any) {
         if (!fallbackLang) {
           $log.error(e)
         }
@@ -582,7 +582,7 @@ const plugin: Plugin = (
           if (!validOptions.includes(mediaItem.pubSymbol)) {
             throw e
           }
-          $log.debug('result1', result)
+          $log.debug('result1', result ?? e.message)
 
           result = await $pubMedia.get('', {
             params: {
@@ -593,8 +593,8 @@ const plugin: Plugin = (
               langwritten: mediaLang,
             },
           })
-        } catch (e: unknown) {
-          $log.debug('result2', result)
+        } catch (e: any) {
+          $log.debug('result2', result ?? e.message)
           if (fallbackLang && !mediaItem.lang) {
             try {
               result = await $pubMedia.get('', {
@@ -603,7 +603,7 @@ const plugin: Plugin = (
                   langwritten: fallbackLang,
                 },
               })
-            } catch (e: unknown) {
+            } catch (e: any) {
               $log.error(e)
 
               try {
@@ -611,7 +611,7 @@ const plugin: Plugin = (
                 if (!validOptions.includes(mediaItem.pubSymbol)) {
                   throw e
                 }
-                $log.debug('result3', result)
+                $log.debug('result3', result ?? e.message)
 
                 result = await $pubMedia.get('', {
                   params: {
@@ -622,8 +622,8 @@ const plugin: Plugin = (
                     langwritten: fallbackLang,
                   },
                 })
-              } catch (e: unknown) {
-                $log.debug('result4', result)
+              } catch (e: any) {
+                $log.debug('result4', result ?? e.message)
               }
             }
           }
