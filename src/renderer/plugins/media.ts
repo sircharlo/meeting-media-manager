@@ -573,11 +573,17 @@ const plugin: Plugin = (
           params,
         })
       } catch (e: unknown) {
-        $log.debug(result)
         if (!fallbackLang) {
           $log.error(e)
         }
+
         try {
+          const validOptions = ['iasn', 'sjj'] // Has an alternative pub with an extra m
+          if (!validOptions.includes(mediaItem.pubSymbol)) {
+            throw e
+          }
+          $log.debug('result1', result)
+
           result = await $pubMedia.get('', {
             params: {
               pub: mediaItem.pubSymbol + 'm',
@@ -588,7 +594,7 @@ const plugin: Plugin = (
             },
           })
         } catch (e: unknown) {
-          $log.debug(result)
+          $log.debug('result2', result)
           if (fallbackLang && !mediaItem.lang) {
             try {
               result = await $pubMedia.get('', {
@@ -598,9 +604,15 @@ const plugin: Plugin = (
                 },
               })
             } catch (e: unknown) {
-              $log.debug(result)
               $log.error(e)
+
               try {
+                const validOptions = ['iasn', 'sjj'] // Has an alternative pub with an extra m
+                if (!validOptions.includes(mediaItem.pubSymbol)) {
+                  throw e
+                }
+                $log.debug('result3', result)
+
                 result = await $pubMedia.get('', {
                   params: {
                     pub: mediaItem.pubSymbol + 'm',
@@ -611,7 +623,7 @@ const plugin: Plugin = (
                   },
                 })
               } catch (e: unknown) {
-                $log.debug(result)
+                $log.debug('result4', result)
               }
             }
           }
