@@ -554,6 +554,20 @@ const plugin: Plugin = (
       params.langwritten = mediaLang
       const fallbackLang = $getPrefs('media.langFallback') as string
 
+      if (fallbackLang) {
+        if (
+          params.pub === 'w' &&
+          store.state.media.mediaLang.wAvailable === false
+        ) {
+          params.langwritten = fallbackLang
+        } else if (
+          params.pub === 'mwb' &&
+          store.state.media.mediaLang.mwbAvailable === false
+        ) {
+          params.langwritten = fallbackLang
+        }
+      }
+
       try {
         result = await $pubMedia.get('', {
           params,
