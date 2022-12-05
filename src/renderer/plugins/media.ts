@@ -166,7 +166,7 @@ const plugin: Plugin = (
       WHERE DocumentExtract.DocumentId = ${docId}
         AND NOT RefPublication.PublicationCategorySymbol = 'web'
         ${songPub === 'sjjm' ? "AND NOT UniqueEnglishSymbol = 'sjj' " : ''}
-        AND NOT UniqueEnglishSymbol = 'mwbr'
+        AND NOT UniqueEnglishSymbol LIKE 'mwbr%'
         ${excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ''}
       ORDER BY DocumentExtract.BeginParagraphOrdinal`
     ) as MultiMediaExtract[]
