@@ -55,7 +55,7 @@ test('shuffle button works correctly', async () => {
 
   // Wait for stop icon to appear
   await page.waitForSelector('.fa-stop')
-  await delay(2 * MS_IN_SEC)
+  await delay(4 * MS_IN_SEC)
 
   // Expect time remaining to appear
   expect(await shuffleBtn.innerText()).toMatch(/\d{2}:\d{2}/g)
