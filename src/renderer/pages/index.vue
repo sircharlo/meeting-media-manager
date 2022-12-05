@@ -178,12 +178,7 @@
       </v-col>
       <v-col class="d-flex justify-end">
         <div class="mr-2">
-          <icon-btn
-            v-if="$getPrefs('meeting.enableMusicButton')"
-            variant="shuffle"
-            click-twice
-            tooltip="top"
-          />
+          <shuffle-btn v-if="$getPrefs('meeting.enableMusicButton')" />
         </div>
         <template v-if="$getPrefs('media.enableMediaDisplayButton')">
           <icon-btn variant="toggleScreen" class="mr-2" />

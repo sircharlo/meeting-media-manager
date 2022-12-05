@@ -1,24 +1,6 @@
 <!-- Icon buttons that are used multiple times across the application -->
 <template>
-  <v-btn
-    v-if="variant === 'shuffle' && musicFadeOut && !clickedOnce"
-    :id="variant"
-    :aria-label="variant"
-    color="warning"
-    :title="$getPrefs('meeting.shuffleShortcut')"
-    v-bind="$attrs"
-    :loading="loading || $attrs.loading"
-    :style="{ color: isDark ? 'white' : 'black' }"
-    @click="atClick()"
-  >
-    <font-awesome-icon
-      :icon="faStop"
-      pull="left"
-      :style="{ color: isDark ? 'white' : 'black' }"
-    />
-    {{ timeRemaining }}
-  </v-btn>
-  <v-tooltip v-else-if="variant === 'pause'" v-bind="tooltipObj">
+  <v-tooltip v-if="variant === 'pause'" v-bind="tooltipObj">
     <template #activator="{ on, attrs }">
       <v-btn
         :id="variant"
@@ -70,29 +52,19 @@
         v-model="$attrs.value"
         v-click-outside="revertClickedOnce"
         :aria-label="variant"
-        :loading="loading || $attrs.loading"
         v-bind="{ ...style.props, ...$attrs, ...attrs }"
-        :color="variant === 'shuffle' && !musicFadeOut ? 'warning' : 'error'"
+        color="error"
         v-on="on"
         @click="atClick()"
       >
         <font-awesome-icon
-          v-if="variant === 'shuffle' && musicFadeOut"
-          :icon="faStop"
-          size="xl"
-        />
-        <font-awesome-icon
           v-for="(icon, i) in style.icons"
-          v-else
           v-bind="icon.props ? icon.props : {}"
           :key="i"
           :pull="style.icons.length > 1 ? (i == 0 ? 'left' : 'right') : null"
           :icon="icon.text ? icon.text : icon"
           :style="{
-            color:
-              isDark || variant !== 'shuffle'
-                ? 'white !important'
-                : 'black !important',
+            color: 'white !important',
           }"
         />
         <slot v-for="(_, name) in $slots" :slot="name" :name="name" />
@@ -107,11 +79,7 @@
     v-model="$attrs.value"
     :aria-label="variant"
     :title="
-      variant === 'present'
-        ? $getPrefs('media.presentShortcut')
-        : variant === 'shuffle'
-        ? $getPrefs('meeting.shuffleShortcut')
-        : undefined
+      variant === 'present' ? $getPrefs('media.presentShortcut') : undefined
     "
     v-bind="{ ...style.props, ...$attrs }"
     :class="{
@@ -119,7 +87,6 @@
       'pulse-danger': variant === 'settings' && !updateSuccess,
     }"
     :nuxt="!!style.to || $attrs.nuxt"
-    :loading="loading || $attrs.loading"
     :to="
       style.to
         ? localePath(`${style.to}?cong=${cong}&week=${weekNr}`)
@@ -144,7 +111,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { Dayjs } from 'dayjs'
 import {
   faStop,
   faPlay,
@@ -155,9 +121,7 @@ import {
   faBan,
   faSliders,
   faUserCog,
-  faShuffle,
   faCircleArrowLeft,
-  faMusic,
   faHome,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
@@ -193,7 +157,6 @@ export default defineComponent({
           'stop',
           'toggleScreen',
           'present',
-          'shuffle',
         ].includes(val)
       },
     },
@@ -223,10 +186,7 @@ export default defineComponent({
   },
   data() {
     return {
-      loading: false,
       clickedOnce: false,
-      timeRemaining: '',
-      interval: null as null | NodeJS.Timer,
       styles: {
         home: {
           to: '/',
@@ -261,13 +221,6 @@ export default defineComponent({
           },
           icons: [{ text: faUserCog, props: { class: 'white--text' } }],
         },
-        shuffle: {
-          props: { color: 'info' },
-          icons: [
-            { text: faMusic, props: { size: 'lg' } },
-            { text: faShuffle, props: { size: 'lg' } },
-          ],
-        },
         play: {
           props: { color: 'primary' },
           icons: [{ text: faPlay, props: { size: 'lg' } }],
@@ -288,9 +241,6 @@ export default defineComponent({
     }
   },
   computed: {
-    faStop(): IconDefinition {
-      return faStop
-    },
     pauseImageIcon(): IconDefinition {
       return this.toggled ? faVideo : faVideoSlash
     },
@@ -303,14 +253,8 @@ export default defineComponent({
     cong(): string {
       return this.$route.query.cong as string
     },
-    isDark(): boolean {
-      return this.$vuetify.theme.dark as boolean
-    },
     mediaVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible
-    },
-    musicFadeOut(): Dayjs {
-      return this.$store.state.media.musicFadeOut as Dayjs
     },
     style(): Style {
       return this.styles[this.variant as keyof Styles]
@@ -334,68 +278,23 @@ export default defineComponent({
       return obj
     },
   },
-  watch: {
-    musicFadeOut(val: Dayjs) {
-      if (!!val !== !!this.interval) {
-        this.setTimeRemaining()
-      }
-    },
-  },
-  mounted() {
-    if (!!this.musicFadeOut !== !!this.interval) {
-      this.setTimeRemaining()
-    }
-  },
   methods: {
     revertClickedOnce() {
       this.clickedOnce = false
     },
-    async atClick(): Promise<void> {
+    atClick() {
       // If click twice is enabled, wait for second click
       if (this.clickTwice && !this.clickedOnce) {
         this.clickedOnce = true
         setTimeout(() => {
           this.clickedOnce = false
         }, 3 * MS_IN_SEC)
-      } else if (this.variant === 'shuffle') {
-        this.loading = true
-        this.clickedOnce = false
-        await this.$shuffleMusic(!!this.musicFadeOut)
-        this.loading = false
       } else {
         this.$emit('click')
       }
     },
     toggleMediaScreen() {
       ipcRenderer.send('toggleMediaWindowFocus')
-    },
-    // Set time remaining for music shuffle
-    setTimeRemaining() {
-      this.loading = true
-      if (this.musicFadeOut) {
-        this.interval = setInterval(async () => {
-          if (typeof this.musicFadeOut === 'string') {
-            this.timeRemaining = this.musicFadeOut
-          } else {
-            this.timeRemaining = this.$dayjs
-              .duration(this.musicFadeOut.diff(this.$dayjs()), 'ms')
-              .format('mm:ss')
-
-            // Stop music shuffle at 0
-            if (this.timeRemaining === '00:00') {
-              this.loading = true
-              await this.$shuffleMusic(true)
-              this.loading = false
-            }
-          }
-        }, MS_IN_SEC)
-        // Stop the interval if music stopped
-      } else if (this.interval) {
-        clearInterval(this.interval as NodeJS.Timer)
-        this.timeRemaining = ''
-        this.interval = null
-      }
-      this.loading = false
     },
   },
 })
