@@ -57,24 +57,32 @@
         :label="$t('enableMusicButton')"
         class="mr-4"
       />
-      <v-btn
-        v-if="meeting.enableMusicButton"
-        small
-        :loading="status === 'loading'"
-        :disabled="!online"
-        :color="
-          status ? (status === 'loading' ? 'primary' : status) : 'primary'
-        "
-        @click="downloadShuffleMusic()"
-      >
-        {{
-          $t(
-            status == 'success'
-              ? 'shuffleMusicDownloaded'
-              : 'downloadShuffleMusic'
-          )
-        }}
-      </v-btn>
+      <v-tooltip v-if="meeting.enableMusicButton" top>
+        <template #activator="{ on, attrs }">
+          <v-btn
+            :loading="status === 'loading'"
+            :disabled="!online"
+            :color="
+              status ? (status === 'loading' ? 'primary' : status) : 'primary'
+            "
+            v-bind="attrs"
+            v-on="on"
+            @click="downloadShuffleMusic()"
+          >
+            <font-awesome-icon :icon="faDownload" size="lg" pull="left" />
+            <font-awesome-icon :icon="faMusic" size="lg" pull="right" />
+          </v-btn>
+        </template>
+        <span>
+          {{
+            $t(
+              status == 'success'
+                ? 'shuffleMusicDownloaded'
+                : 'downloadShuffleMusic'
+            )
+          }}
+        </span>
+      </v-tooltip>
     </v-col>
     <template v-if="meeting.enableMusicButton">
       <form-input
@@ -159,6 +167,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { extname, join } from 'upath'
+import { faDownload, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { MeetingPrefs, ElectronStore, VideoFile, ShortJWLang } from '~/types'
 import { HUNDRED_PERCENT, NR_OF_KINGDOM_SONGS } from '~/constants/general'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -190,6 +199,12 @@ export default defineComponent({
   computed: {
     online(): boolean {
       return this.$store.state.stats.online
+    },
+    faMusic() {
+      return faMusic
+    },
+    faDownload() {
+      return faDownload
     },
     forcedPrefs(): ElectronStore {
       return this.$store.state.cong.prefs as ElectronStore
