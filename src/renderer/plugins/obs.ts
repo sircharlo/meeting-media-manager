@@ -262,7 +262,7 @@ const plugin: Plugin = (
           $warn('errorObs')
           await resetOBS()
         } else {
-          $log.debug('getScenes()')
+          $log.debug(`getScenes(${current})`)
           $error('errorObs', e)
         }
       }
@@ -295,7 +295,7 @@ const plugin: Plugin = (
         } else if (scene === $getPrefs('app.obs.mediaScene')) {
           $warn('errorObsMediaScene')
         } else {
-          $log.debug('setScene()')
+          $log.debug(`setScene(${scene})`)
           $error('errorObs', e)
         }
       }
