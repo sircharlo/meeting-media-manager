@@ -12,6 +12,7 @@ const plugin: Plugin = (
     $getPrefs,
     $ytPath,
     $log,
+    $axios,
     $warn,
     $localFontPath,
     $setPrefs,
@@ -179,12 +180,12 @@ const plugin: Plugin = (
     force = false,
     lang?: string
   ): Promise<string | null> {
-    const fontsPromise = getWtFonts()
     let yeartext = null
     const ytPath = $ytPath(lang)
     const wtlocale = lang ?? ($getPrefs('media.lang') as string | null) ?? 'E'
     if (force || !existsSync(ytPath)) {
       $log.debug('Fetching yeartext', wtlocale)
+      const fontsPromise = getWtFonts()
       try {
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://wol.jw.org/wol/finder',
@@ -218,6 +219,7 @@ const plugin: Plugin = (
           $log.error(e)
         }
       }
+      await fontsPromise
     } else {
       try {
         yeartext = readFileSync(ytPath, 'utf8')
@@ -225,7 +227,6 @@ const plugin: Plugin = (
         $warn('errorOffline')
       }
     }
-    await fontsPromise
     return yeartext
   }
   inject('getYearText', getYearText)
@@ -244,13 +245,30 @@ const plugin: Plugin = (
 
   async function getWtFont(font: string) {
     const fontPath = $localFontPath(font)
-    if (!existsSync(fontPath) || statSync(fontPath).size === 0) {
+    let size = -1
+
+    try {
+      const result = await $axios.request({
+        method: 'HEAD',
+        url: font,
+      })
+
+      size = +result.headers['content-length']
+    } catch (e: unknown) {
+      $log.error(e)
+    }
+
+    console.log('serverSize', typeof size)
+    const localSize = existsSync(fontPath) ? statSync(fontPath).size : 0
+    console.log('localSize', typeof localSize)
+    console.log(size === localSize)
+
+    if (!existsSync(fontPath) || statSync(fontPath).size !== size) {
       try {
-        const result = await ipcRenderer.invoke('getFromJWOrg', {
-          url: font,
+        const result = await $axios.$get(font, {
           responseType: 'arraybuffer',
         })
-        if (result instanceof Uint8Array) {
+        if (result instanceof ArrayBuffer || result instanceof Uint8Array) {
           $write(fontPath, Buffer.from(new Uint8Array(result)))
         } else {
           $log.error(result)
