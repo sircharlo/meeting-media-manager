@@ -153,7 +153,9 @@ export default defineComponent({
       shortText: string
     }[] {
       return (this.$store.state.obs.scenes as string[])
-        .filter((scene) => scene !== this.$getPrefs('app.obs.mediaScene'))
+        .filter(
+          (scene) => !!scene && scene !== this.$getPrefs('app.obs.mediaScene')
+        )
         .map((scene, i) => {
           let shortcut = `Alt+${i + 1}`
           if (i === 9) shortcut = `Alt+0`
@@ -220,7 +222,12 @@ export default defineComponent({
     }
 
     if (this.$store.state.obs.connected) {
-      this.$setScene(this.$getPrefs('app.obs.cameraScene') as string)
+      const cameraScene = this.$getPrefs('app.obs.cameraScene') as string
+      if (cameraScene) {
+        await this.$setScene(cameraScene)
+      } else {
+        this.$warn('errorObsCameraScene')
+      }
     }
 
     if (this.$getPrefs('media.enablePp')) {

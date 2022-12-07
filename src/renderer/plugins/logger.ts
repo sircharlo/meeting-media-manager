@@ -57,6 +57,7 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
     const prefs = JSON.stringify(
       Object.fromEntries(
         Object.entries($getAllPrefs()).map(([scope, prefs]) => {
+          if (!prefs) return [scope, {}]
           return [
             scope,
             Object.fromEntries(
