@@ -314,12 +314,17 @@ export default defineComponent({
       return this.$store.state.media.fallbackLang as ShortJWLang | null
     },
     jwSync(): string {
+      let jwSyncString = ''
       if (this.mediaLangObject?.vernacularName) {
-        return `${this.$t('syncJwOrgMedia')} (${
+        jwSyncString = `${this.$t('syncJwOrgMedia')} (${
           this.mediaLangObject?.vernacularName
-        })`
+        }`
+        if (this.fallbackLangObject?.vernacularName) {
+          jwSyncString += ` / ${this.fallbackLangObject?.vernacularName}`
+        }
+        jwSyncString += ')'
       }
-      return ''
+      return jwSyncString
     },
     upcomingWeeks(): { iso: number; label: string }[] {
       const weeks: { iso: number; label: string }[] = []
