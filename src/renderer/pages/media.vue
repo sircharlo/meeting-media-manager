@@ -353,10 +353,10 @@ export default defineComponent({
             }
           }
 
-          // If WT library is installed, set the font to the WT font
-          let fontFile = this.$findOne(join(fontPath, 'Wt-ClearText-Bold.*'))
-          if (!fontFile) {
-            fontFile = join(userData, 'Fonts', basename(WT_CLEARTEXT_FONT))
+          // Use fetched font if available, fallback to WT Library
+          let fontFile = join(userData, 'Fonts', basename(WT_CLEARTEXT_FONT))
+          if (!existsSync(fontFile)) {
+            fontFile = this.$findOne(join(fontPath, 'Wt-ClearText-Bold.*'))
           }
           if (fontFile && existsSync(fontFile)) {
             // @ts-ignore: FontFace is not defined in the types
@@ -381,9 +381,11 @@ export default defineComponent({
           this.ytLogo.setAttribute('style', 'display: none')
         } else {
           this.ytLogo.setAttribute('style', '')
-          let logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
-          if (!logoFontFile) {
-            logoFontFile = join(userData, 'Fonts', basename(JW_ICONS_FONT))
+
+          // Use fetched font if available, fallback to WT Library
+          let logoFontFile = join(userData, 'Fonts', basename(JW_ICONS_FONT))
+          if (!existsSync(logoFontFile)) {
+            logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
           }
           if (logoFontFile && existsSync(logoFontFile)) {
             // @ts-ignore: FontFace is not defined in the types
