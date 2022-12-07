@@ -36,6 +36,7 @@
 *.ttf           -text diff
 *.eot           -text diff
 *.woff          -text diff
+*.woff2          -text diff
 
 # Don't try and merge these files
 yarn.lock       -diff

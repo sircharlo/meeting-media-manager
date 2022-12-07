@@ -122,6 +122,10 @@ const plugin: Plugin = (
   }
   inject('mediaPath', mediaPath)
 
+  inject('localFontPath', (font: string) => {
+    return join($appPath(), 'Fonts', basename(font))
+  })
+
   inject('wtFontPath', async (): Promise<string> => {
     const appDataPath = await ipcRenderer.invoke('appData')
     const localAppData = sync(joinSafe(appDataPath, '../local'), {
