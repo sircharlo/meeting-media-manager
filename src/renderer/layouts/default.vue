@@ -151,6 +151,7 @@ export default defineComponent({
       await this.$shuffleMusic(!!this.$store.state.media.musicFadeOut)
     })
     ipcRenderer.on('setObsScene', async (_e, key: number) => {
+      console.debug('Set obs scene via shortcut', key)
       // eslint-disable-next-line no-magic-numbers
       const index = key === 0 ? 9 : key - 1
       await this.$setScene(this.scenes[index])
@@ -175,7 +176,7 @@ export default defineComponent({
         this.$getPrefs('media.enableMediaDisplayButton') &&
         this.$route.path !== this.localePath('/present')
       ) {
-        console.debug('Trigger present mode via Electron')
+        console.debug('Trigger present mode via shortcut')
         this.$router.push({
           path: this.localePath('/present'),
           query: this.$route.query,

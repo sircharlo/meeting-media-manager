@@ -456,7 +456,12 @@ export default defineComponent({
 
       // Set OBS scene
       if (this.scene) {
-        await this.$setScene(this.$getPrefs('app.obs.mediaScene') as string)
+        const mediaScene = this.$getPrefs('app.obs.mediaScene') as string
+        if (mediaScene) {
+          await this.$setScene(mediaScene)
+        } else {
+          this.$warn('errorObsMediaScene')
+        }
       }
 
       // Show media
@@ -466,13 +471,18 @@ export default defineComponent({
         end: marker ? marker.customEndTime : this.end,
       })
     },
-    togglePaused(): void {
+    async togglePaused(): void {
       if (this.scene) {
-        this.$setScene(
-          this.paused
-            ? (this.$getPrefs('app.obs.mediaScene') as string)
-            : this.scene
-        )
+        if (this.paused) {
+          const mediaScene = this.$getPrefs('app.obs.mediaScene') as string
+          if (mediaScene) {
+            await this.$setScene(mediaScene)
+          } else {
+            this.$warn('errorObsMediaScene')
+          }
+        } else {
+          await this.$setScene(this.scene)
+        }
       }
       if (this.isVideo) {
         this.newProgress = this.progress
