@@ -529,15 +529,20 @@ const plugin: Plugin = (
         mediaItem.pubSymbol = 'wp'
       }
 
+      const mediaLang = mediaItem.lang || $getPrefs('media.lang')
+
       // Set correct song publication (e.g. sjj for sign language)
-      if (mediaItem.pubSymbol === 'sjjm') {
-        mediaItem.pubSymbol = store.state.media.songPub
-        if (store.state.media.songPub === 'sjj') {
+      const mediaLangObj = store.state.media.mediaLang as ShortJWLang
+      const fallbackObj = store.state.media.fallbackLang as ShortJWLang
+      if (mediaItem.pubSymbol === 'sjj' || mediaItem.pubSymbol === 'sjjm') {
+        if (mediaLangObj.langcode === mediaLang) {
+          mediaItem.pubSymbol = mediaLangObj.isSignLanguage ? 'sjj' : 'sjjm'
+          $log.debug('Using sign language song publication')
+        } else if (fallbackObj.langcode === mediaLang) {
+          mediaItem.pubSymbol = fallbackObj.isSignLanguage ? 'sjj' : 'sjjm'
           $log.debug('Using sign language song publication')
         }
       }
-
-      const mediaLang = mediaItem.lang || $getPrefs('media.lang')
 
       // Get publication from jw api
       let result = null
@@ -578,7 +583,7 @@ const plugin: Plugin = (
         }
 
         try {
-          const validOptions = ['iasn', 'sjj'] // Has an alternative pub with an extra m
+          const validOptions = ['iasn'] // Has an alternative pub with an extra m
           if (!validOptions.includes(mediaItem.pubSymbol)) {
             throw e
           }
@@ -596,6 +601,9 @@ const plugin: Plugin = (
         } catch (e: any) {
           $log.debug('result2', result ?? e.message)
           if (fallbackLang && !mediaItem.lang) {
+            if (params.pub === 'sjj' || params.pub === 'sjjm') {
+              params.pub = fallbackObj.isSignLanguage ? 'sjj' : 'sjjm'
+            }
             try {
               result = await $pubMedia.get('', {
                 params: {
