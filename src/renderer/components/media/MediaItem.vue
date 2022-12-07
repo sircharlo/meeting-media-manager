@@ -471,7 +471,7 @@ export default defineComponent({
         end: marker ? marker.customEndTime : this.end,
       })
     },
-    async togglePaused(): void {
+    async togglePaused() {
       if (this.scene) {
         if (this.paused) {
           const mediaScene = this.$getPrefs('app.obs.mediaScene') as string
