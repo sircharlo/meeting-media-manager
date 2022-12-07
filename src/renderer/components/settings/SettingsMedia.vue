@@ -276,28 +276,33 @@ export default defineComponent({
     faArrowsRotate() {
       return faArrowsRotate
     },
-    langs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
-      return this.jwLangs
-        .filter(
-          (l) =>
-            l.langcode === this.media.lang ||
-            l.wAvailable !== false ||
-            l.mwbAvailable !== false
-        )
-        .map((lang) => {
-          return {
-            name: `${lang.vernacularName} (${lang.name})`,
-            langcode: lang.langcode,
-            isSignLanguage: lang.isSignLanguage,
-          }
-        })
+    langs(): {
+      name: string
+      langcode: string
+      isSignLanguage: boolean
+      mwbAvailable?: boolean
+      wAvailable?: boolean
+    }[] {
+      return this.jwLangs.map((lang) => {
+        return {
+          name: `${lang.vernacularName} (${lang.name})`,
+          langcode: lang.langcode,
+          isSignLanguage: lang.isSignLanguage,
+          mwbAvailable: lang.mwbAvailable,
+          wAvailable: lang.wAvailable,
+        }
+      })
     },
     fallbackLangs(): {
       name: string
       langcode: string
       isSignLanguage: boolean
     }[] {
-      return this.langs.filter((lang) => lang.langcode !== this.media.lang)
+      return this.langs.filter(
+        (l) =>
+          l.langcode !== this.media.lang &&
+          (l.wAvailable !== false || l.mwbAvailable !== false)
+      )
     },
     subLangs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
       return this.langs.filter((lang) => !lang.isSignLanguage)
