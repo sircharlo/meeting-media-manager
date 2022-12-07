@@ -55,6 +55,7 @@ export interface MediaPrefs {
   hideWinAfterMedia: boolean
   keepOriginalsAfterConversion: boolean
   lang: string | null
+  langFallback: string | null
   langSubs: string | null
   langUpdatedLast: string | null
   maxRes: Res

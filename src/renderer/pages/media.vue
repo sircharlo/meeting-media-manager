@@ -319,23 +319,29 @@ export default defineComponent({
     },
     async setYearText(prefs: ElectronStore) {
       const userData = await ipcRenderer.invoke('userData')
-      const path = (lang: string) =>
-        join(
+      const path = (lang: string | null) => {
+        if (!lang) return ''
+        return join(
           userData,
           'Publications',
           lang,
           `yeartext-${lang}-${new Date().getFullYear().toString()}`
         )
+      }
       try {
-        const preferredPath = path(prefs.media.lang ?? 'E')
-        const fallbackPath = path('E')
-        const yeartext = existsSync(preferredPath)
-          ? readFileSync(preferredPath, 'utf8')
-          : readFileSync(fallbackPath, 'utf8')
         const fontPath = await this.$wtFontPath() // Only works when watchtower library is installed on the user's machine
-        if (yeartext && yeartext.length > 0) {
-          this.yeartext.innerHTML = ''
 
+        const preferredPath = path(prefs.media.lang)
+        const fallbackPath = path(prefs.media.langFallback)
+        let yeartext = null as string | null
+        if (preferredPath && existsSync(preferredPath)) {
+          yeartext = readFileSync(preferredPath, 'utf8')
+        } else if (fallbackPath && existsSync(fallbackPath)) {
+          yeartext = readFileSync(fallbackPath, 'utf8')
+        }
+
+        this.yeartext.innerHTML = ''
+        if (yeartext && yeartext.length > 0) {
           const root = document.createElement('div')
           root.innerHTML = yeartext
 

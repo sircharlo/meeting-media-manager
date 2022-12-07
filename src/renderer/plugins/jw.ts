@@ -70,7 +70,9 @@ const plugin: Plugin = (
     }
 
     const mediaLang = $getPrefs('media.lang') as string
+    const fallbackLang = $getPrefs('media.langFallback') as string
     const langPrefInLangs = langs.find((lang) => lang.langcode === mediaLang)
+    const fallbackLangObj = langs.find((lang) => lang.langcode === fallbackLang)
 
     // Check current lang if it hasn't been checked yet
     if (
@@ -84,7 +86,19 @@ const plugin: Plugin = (
       langPrefInLangs.mwbAvailable = availability.mwb
     }
 
+    if (
+      fallbackLang &&
+      fallbackLangObj &&
+      (fallbackLangObj.mwbAvailable === undefined ||
+        fallbackLangObj.mwbAvailable === undefined)
+    ) {
+      const availability = await getPubAvailability(fallbackLang)
+      fallbackLangObj.wAvailable = availability.w
+      fallbackLangObj.mwbAvailable = availability.mwb
+    }
+
     store.commit('media/setMediaLang', langPrefInLangs ?? null)
+    store.commit('media/setFallbackLang', fallbackLangObj ?? null)
     store.commit(
       'media/setSongPub',
       langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'
@@ -181,8 +195,12 @@ const plugin: Plugin = (
     lang?: string
   ): Promise<string | null> {
     let yeartext = null
-    const wtlocale = lang ?? ($getPrefs('media.lang') as string | null) ?? 'E'
-    const ytPath = $ytPath(wtlocale)
+
+    const fallbackLang = $getPrefs('media.langFallback') as string | null
+    const wtlocale = lang ?? ($getPrefs('media.lang') as string | null)
+    if (!wtlocale) return null
+    const ytPath = $ytPath(lang)
+
     if (force || !existsSync(ytPath)) {
       $log.debug('Fetching yeartext', wtlocale)
       const fontsPromise = getWtFonts()
@@ -200,21 +218,23 @@ const plugin: Plugin = (
           yeartext = JSON.parse(JSON.stringify(result.content)) as string
           $write(ytPath, yeartext)
         } else if (
-          wtlocale !== 'E' &&
+          fallbackLang &&
+          wtlocale !== fallbackLang &&
           result.message === 'Request failed with status code 404'
         ) {
           $log.warn(`Yeartext not found for ${wtlocale}`)
-          return await getYearText(force, 'E')
+          return await getYearText(force, fallbackLang)
         } else {
           $log.error(result)
         }
       } catch (e: any) {
         if (
-          wtlocale !== 'E' &&
+          fallbackLang &&
+          wtlocale !== fallbackLang &&
           e.message === 'Request failed with status code 404'
         ) {
           $log.warn(`Yeartext not found for ${wtlocale}`)
-          return await getYearText(force, 'E')
+          return await getYearText(force, fallbackLang)
         } else {
           $log.error(e)
         }

@@ -145,6 +145,10 @@ const schema: Schema<ElectronStore> = {
         type: ['string', 'null'],
         default: PREFS.media.lang,
       },
+      langFallback: {
+        type: ['string', 'null'],
+        default: PREFS.media.langFallback,
+      },
       langSubs: {
         type: ['string', 'null'],
         default: PREFS.media.langSubs,

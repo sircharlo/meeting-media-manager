@@ -15,6 +15,19 @@
       required
     />
     <form-input
+      id="media.langFallback"
+      v-model="media.langFallback"
+      field="autocomplete"
+      :label="$t('mediaLangFallback')"
+      :items="fallbackLangs"
+      item-text="name"
+      item-value="langcode"
+      :loading="loading"
+      :locked="$isLocked('media.langFallback')"
+      auto-select-first
+      clearable
+    />
+    <form-input
       id="media.maxRes"
       v-model="media.maxRes"
       field="btn-group"
@@ -261,21 +274,33 @@ export default defineComponent({
     faArrowsRotate() {
       return faArrowsRotate
     },
-    langs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
-      return this.jwLangs
-        .filter(
-          (l) =>
-            l.langcode === this.media.lang ||
-            l.wAvailable !== false ||
-            l.mwbAvailable !== false
-        )
-        .map((lang) => {
-          return {
-            name: `${lang.vernacularName} (${lang.name})`,
-            langcode: lang.langcode,
-            isSignLanguage: lang.isSignLanguage,
-          }
-        })
+    langs(): {
+      name: string
+      langcode: string
+      isSignLanguage: boolean
+      mwbAvailable?: boolean
+      wAvailable?: boolean
+    }[] {
+      return this.jwLangs.map((lang) => {
+        return {
+          name: `${lang.vernacularName} (${lang.name})`,
+          langcode: lang.langcode,
+          isSignLanguage: lang.isSignLanguage,
+          mwbAvailable: lang.mwbAvailable,
+          wAvailable: lang.wAvailable,
+        }
+      })
+    },
+    fallbackLangs(): {
+      name: string
+      langcode: string
+      isSignLanguage: boolean
+    }[] {
+      return this.langs.filter(
+        (l) =>
+          l.langcode !== this.media.lang &&
+          (l.wAvailable !== false || l.mwbAvailable !== false)
+      )
     },
     subLangs(): { name: string; langcode: string; isSignLanguage: boolean }[] {
       return this.langs.filter((lang) => !lang.isSignLanguage)
@@ -329,7 +354,19 @@ export default defineComponent({
         // Clear the db and media store and refresh the langs from jw.org
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
-        await this.$getPubAvailability(val)
+        if (val) await this.$getPubAvailability(val)
+        await this.$getJWLangs()
+        if (this.bg === 'yeartext') {
+          await this.$refreshBackgroundImgPreview(true)
+        }
+      },
+    },
+    'media.langFallback': {
+      async handler(val: string) {
+        // Clear the db and media store and refresh the langs from jw.org
+        this.$store.commit('db/clear')
+        this.$store.commit('media/clear')
+        if (val) await this.$getPubAvailability(val)
         await this.$getJWLangs()
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview()

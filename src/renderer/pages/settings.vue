@@ -212,6 +212,12 @@ export default defineComponent({
         }
       }
     },
+    prefs: {
+      handler() {
+        this.calcCache()
+      },
+      deep: true,
+    },
     tab(val: number) {
       if (this.tab === 0) this.panel = []
       else if (val > 0) {
@@ -279,6 +285,9 @@ export default defineComponent({
 
       if (pubPath) {
         folders.push(join(pubPath, '**'))
+        if (this.prefs.media.langFallback) {
+          folders.push(join(pubPath, '..', this.prefs.media.langFallback, '**'))
+        }
         folders.push(this.shuffleMusicFiles)
       }
 
@@ -313,6 +322,11 @@ export default defineComponent({
 
         if (pubPath) {
           folders.push(pubPath)
+          if (this.prefs.media.langFallback) {
+            folders.push(
+              join(pubPath, '..', this.prefs.media.langFallback, '**')
+            )
+          }
           this.$rm(this.$findAll(this.shuffleMusicFiles))
         }
 

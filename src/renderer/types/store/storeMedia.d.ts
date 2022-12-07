@@ -5,6 +5,7 @@ export interface MediaStore {
   songPub: string
   ffMpeg: boolean
   mediaLang: ShortJWLang | null
+  fallbackLang: ShortJWLang | null
   musicFadeOut: Dayjs | string
   meetings: Map<string, Map<number, MeetingFile[]>>
   progress: Map<string, Promise<string>>
