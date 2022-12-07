@@ -307,6 +307,8 @@ const plugin: Plugin = (
                 silent
               )
             )[0] as VideoFile) ?? {}
+        } else if (!json) {
+          json = {} as VideoFile
         }
         json.queryInfo = mmItem
         json.BeginParagraphOrdinal = mmItem.BeginParagraphOrdinal
@@ -321,22 +323,34 @@ const plugin: Plugin = (
                 BeginParagraphOrdinal: 0,
                 title: '',
                 queryInfo: mmItem,
-              }),
+              } as MeetingFile),
               mmItem.FilePath
             )
-          }
-        }
 
-        if (mmItem.LocalPath && !existsSync(mmItem.LocalPath)) {
-          mmItem.LocalPath = join(
-            $pubPath({
-              BeginParagraphOrdinal: 0,
-              title: '',
-              url: `url_${fallbackLang}.jpg`,
-              queryInfo: mmItem,
-            } as MeetingFile),
-            mmItem.FilePath
-          )
+            if (lang && !mmItem.Link && !existsSync(mmItem.LocalPath)) {
+              mmItem.LocalPath = join(
+                $pubPath({
+                  BeginParagraphOrdinal: 0,
+                  title: '',
+                  url: `url_${lang}.jpg`,
+                  queryInfo: mmItem,
+                } as MeetingFile),
+                mmItem.FilePath
+              )
+            }
+
+            if (fallbackLang && !existsSync(mmItem.LocalPath)) {
+              mmItem.LocalPath = join(
+                $pubPath({
+                  BeginParagraphOrdinal: 0,
+                  title: '',
+                  url: `url_${fallbackLang}.jpg`,
+                  queryInfo: mmItem,
+                } as MeetingFile),
+                mmItem.FilePath
+              )
+            }
+          }
         }
 
         mmItem.FileName = $sanitize(
@@ -532,14 +546,14 @@ const plugin: Plugin = (
       const mediaLang = mediaItem.lang || $getPrefs('media.lang')
 
       // Set correct song publication (e.g. sjj for sign language)
-      const mediaLangObj = store.state.media.mediaLang as ShortJWLang
-      const fallbackObj = store.state.media.fallbackLang as ShortJWLang
+      const mediaLangObj = store.state.media.mediaLang as ShortJWLang | null
+      const fallbackObj = store.state.media.fallbackLang as ShortJWLang | null
       if (mediaItem.pubSymbol === 'sjj' || mediaItem.pubSymbol === 'sjjm') {
-        if (mediaLangObj.langcode === mediaLang) {
-          mediaItem.pubSymbol = mediaLangObj.isSignLanguage ? 'sjj' : 'sjjm'
+        if (mediaLangObj?.langcode === mediaLang) {
+          mediaItem.pubSymbol = mediaLangObj?.isSignLanguage ? 'sjj' : 'sjjm'
           $log.debug('Using sign language song publication')
-        } else if (fallbackObj.langcode === mediaLang) {
-          mediaItem.pubSymbol = fallbackObj.isSignLanguage ? 'sjj' : 'sjjm'
+        } else if (fallbackObj?.langcode === mediaLang) {
+          mediaItem.pubSymbol = fallbackObj?.isSignLanguage ? 'sjj' : 'sjjm'
           $log.debug('Using sign language song publication')
         }
       }
@@ -602,7 +616,7 @@ const plugin: Plugin = (
           $log.debug('result2', result ?? e.message)
           if (fallbackLang && !mediaItem.lang) {
             if (params.pub === 'sjj' || params.pub === 'sjjm') {
-              params.pub = fallbackObj.isSignLanguage ? 'sjj' : 'sjjm'
+              params.pub = fallbackObj?.isSignLanguage ? 'sjj' : 'sjjm'
             }
             try {
               result = await $pubMedia.get('', {

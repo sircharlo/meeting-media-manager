@@ -27,6 +27,7 @@ const plugin: Plugin = (
     // url: something/{pub}_{lang}.jwpub or something/{pub}_{lang}_{track}.mp4
     let validMediaLangs: ShortJWLang[] = []
     if (file) {
+      console.debug('Pub path', file)
       try {
         validMediaLangs = JSON.parse(
           readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
@@ -69,6 +70,8 @@ const plugin: Plugin = (
       mediaFolder = $getPrefs('media.lang') as string
     }
     if (!mediaFolder) return
+
+    if (file) console.debug('Pub lang', mediaFolder)
 
     const pubPath = joinSafe($appPath(), 'Publications', mediaFolder)
     try {
