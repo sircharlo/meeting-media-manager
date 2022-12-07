@@ -73,6 +73,7 @@
   "localAppLang": "Langue d'affichage",
   "maxRes": "Résolution maximale pour vidéos",
   "mediaLang": "Langue des médias",
+  "mediaLangFallback": "Langue secondaire, dans le cas où un média ne serait pas disponible dans la langue principale ",
   "mediaSaveFolder": "Dossier d'enregistrement des médias",
   "mediaWinShortcut": "Raccourci pour basculer la visibilité de la fenêtre multimédia",
   "mediaWindowBackground": "Image d'arrière plan pour le mode de présentation des médias",
