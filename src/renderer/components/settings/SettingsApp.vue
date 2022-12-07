@@ -318,9 +318,9 @@ export default defineComponent({
       },
     },
     'app.obs.cameraScene': {
-      handler(val: string) {
+      async handler(val: string) {
         if (val && this.obsComplete) {
-          this.$setScene(val)
+          await this.$setScene(val)
         }
       },
     },
