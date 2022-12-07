@@ -181,8 +181,8 @@ const plugin: Plugin = (
     lang?: string
   ): Promise<string | null> {
     let yeartext = null
-    const ytPath = $ytPath(lang)
     const wtlocale = lang ?? ($getPrefs('media.lang') as string | null) ?? 'E'
+    const ytPath = $ytPath(wtlocale)
     if (force || !existsSync(ytPath)) {
       $log.debug('Fetching yeartext', wtlocale)
       const fontsPromise = getWtFonts()
@@ -257,11 +257,6 @@ const plugin: Plugin = (
     } catch (e: unknown) {
       $log.error(e)
     }
-
-    console.log('serverSize', typeof size)
-    const localSize = existsSync(fontPath) ? statSync(fontPath).size : 0
-    console.log('localSize', typeof localSize)
-    console.log(size === localSize)
 
     if (!existsSync(fontPath) || statSync(fontPath).size !== size) {
       try {

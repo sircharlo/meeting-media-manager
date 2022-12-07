@@ -332,7 +332,7 @@ export default defineComponent({
         await this.$getPubAvailability(val)
         await this.$getJWLangs()
         if (this.bg === 'yeartext') {
-          await this.$refreshBackgroundImgPreview(true)
+          await this.$refreshBackgroundImgPreview()
         }
       },
     },
@@ -374,7 +374,7 @@ export default defineComponent({
     },
     'media.hideMediaLogo': {
       async handler() {
-        await this.$refreshBackgroundImgPreview(true)
+        await this.$refreshBackgroundImgPreview()
       },
     },
     'media.mediaWinShortcut': {
@@ -442,7 +442,7 @@ export default defineComponent({
       return `custom-background-image-${this.prefs.app.congregationName}`
     },
     async refreshBg() {
-      await this.$refreshBackgroundImgPreview(true)
+      await this.$refreshBackgroundImgPreview()
       this.$forceUpdate()
     },
     async uploadBg() {
