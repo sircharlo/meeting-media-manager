@@ -140,7 +140,6 @@
         :rules="getShortcutRules('openPresentMode')"
       />
       <form-input
-        v-if="isWindows"
         id="media.hideMediaLogo"
         v-model="media.hideMediaLogo"
         field="switch"
@@ -227,7 +226,6 @@
   </v-form>
 </template>
 <script lang="ts">
-import { platform } from 'os'
 import { readFileSync } from 'fs'
 import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
@@ -296,9 +294,6 @@ export default defineComponent({
         }
       })
     },
-    isWindows() {
-      return platform() === 'win32'
-    },
     background(): string {
       return this.$store.state.present.background as string
     },
@@ -337,7 +332,7 @@ export default defineComponent({
         await this.$getPubAvailability(val)
         await this.$getJWLangs()
         if (this.bg === 'yeartext') {
-          await this.$refreshBackgroundImgPreview(true)
+          await this.$refreshBackgroundImgPreview()
         }
       },
     },
@@ -379,7 +374,7 @@ export default defineComponent({
     },
     'media.hideMediaLogo': {
       async handler() {
-        await this.$refreshBackgroundImgPreview(true)
+        await this.$refreshBackgroundImgPreview()
       },
     },
     'media.mediaWinShortcut': {
@@ -447,7 +442,7 @@ export default defineComponent({
       return `custom-background-image-${this.prefs.app.congregationName}`
     },
     async refreshBg() {
-      await this.$refreshBackgroundImgPreview(true)
+      await this.$refreshBackgroundImgPreview()
       this.$forceUpdate()
     },
     async uploadBg() {

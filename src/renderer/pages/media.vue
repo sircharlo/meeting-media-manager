@@ -17,7 +17,12 @@ import { join, basename, changeExt } from 'upath'
 import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
-import { MS_IN_SEC, HUNDRED_PERCENT } from '~/constants/general'
+import {
+  MS_IN_SEC,
+  HUNDRED_PERCENT,
+  WT_CLEARTEXT_FONT,
+  JW_ICONS_FONT,
+} from '~/constants/general'
 
 export default defineComponent({
   name: 'MediaPage',
@@ -348,9 +353,12 @@ export default defineComponent({
             }
           }
 
-          // If WT library is installed, set the font to the WT font
-          const fontFile = this.$findOne(join(fontPath, 'Wt-ClearText-Bold.*'))
-          if (fontFile) {
+          // Use fetched font if available, fallback to WT Library
+          let fontFile = join(userData, 'Fonts', basename(WT_CLEARTEXT_FONT))
+          if (!existsSync(fontFile)) {
+            fontFile = this.$findOne(join(fontPath, 'Wt-ClearText-Bold.*'))
+          }
+          if (fontFile && existsSync(fontFile)) {
             // @ts-ignore: FontFace is not defined in the types
             const font = new FontFace(
               'Wt-ClearText-Bold',
@@ -363,31 +371,40 @@ export default defineComponent({
               this.yeartext.classList.replace('font-fallback', 'font-native')
             } catch (e: unknown) {
               console.error(e)
-            } finally {
-              this.yeartext.classList.remove('loading')
             }
-          } else {
-            this.yeartext.classList.remove('loading')
           }
+          this.yeartext.classList.remove('loading')
         }
 
         // If media logo is enabled, try to show it
         if (prefs.media.hideMediaLogo) {
           this.ytLogo.setAttribute('style', 'display: none')
         } else {
-          const logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
-          if (logoFontFile) {
+          this.ytLogo.setAttribute('style', '')
+
+          // Use fetched font if available, fallback to WT Library
+          let logoFontFile = join(userData, 'Fonts', basename(JW_ICONS_FONT))
+          if (!existsSync(logoFontFile)) {
+            logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
+          }
+          if (logoFontFile && existsSync(logoFontFile)) {
             // @ts-ignore: FontFace is not defined in the types
             const logoFont = new FontFace(
               'JW-Icons',
               `url(${pathToFileURL(logoFontFile).href})`
             )
-            const loadedFont = await logoFont.load()
-            // @ts-ignore: fonts does not exist on document
-            document.fonts.add(loadedFont)
-            this.ytLogo.setAttribute('style', '')
-            this.ytLogo.style.fontFamily = '"JW-Icons"'
-            this.ytLogo.innerHTML = "<div id='importedYearTextLogo'></div>"
+            try {
+              const loadedFont = await logoFont.load()
+              // @ts-ignore: fonts does not exist on document
+              document.fonts.add(loadedFont)
+              this.ytLogo.style.fontFamily = '"JW-Icons"'
+              this.ytLogo.innerHTML = "<div id='importedYearTextLogo'></div>"
+            } catch (e: unknown) {
+              console.error(e)
+              this.ytLogo.setAttribute('style', 'display: none')
+            }
+          } else {
+            this.ytLogo.setAttribute('style', 'display: none')
           }
         }
       } catch (e: unknown) {

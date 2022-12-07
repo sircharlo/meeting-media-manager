@@ -1,3 +1,9 @@
+// Fonts
+export const WT_CLEARTEXT_FONT =
+  'https://b.jw-cdn.org/fonts/wt-clear-text/1.019/Wt-ClearText-Bold.woff2'
+export const JW_ICONS_FONT =
+  'https://wol.jw.org/assets/fonts/jw-icons-external-1970474.woff'
+
 // Icons/images
 export const THV_POSTER =
   'https://assetsnffrgf-a.akamaihd.net/assets/m/1102019342/univ/art/1102019342_univ_wss_sm.jpg'

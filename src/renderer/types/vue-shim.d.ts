@@ -122,6 +122,7 @@ interface CustomProps {
   $isShortcutAvailable: (shortcut: string, func: string) => boolean
   $isShortcutValid: (shortcut: string) => boolean
   $isVideo: (filepath: string) => boolean
+  $localFontPath: (font: string) => string
   $log: {
     debug: (msg: any, ...args: any[]) => void
     info: (msg: any, ...args: any[]) => void
