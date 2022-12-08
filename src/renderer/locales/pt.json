@@ -73,6 +73,7 @@
   "localAppLang": "Idioma do programa",
   "maxRes": "Resolução dos vídeos",
   "mediaLang": "Idioma das mídias",
+  "mediaLangFallback": "Idioma alternativo para mídias",
   "mediaSaveFolder": "Pasta para salvar as mídias",
   "mediaWinShortcut": "Atalho para ocultar/mostrar a tela secundária",
   "mediaWindowBackground": "Imagem de fundo da tela secundária",
