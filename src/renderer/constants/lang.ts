@@ -16,7 +16,7 @@ const DAYJS_LOCALES = [
 ]
 
 // Languages that have no active translator
-const STALE_LANGS = []
+const STALE_LANGS: string[] = []
 
 const LOCALES = [
   {
