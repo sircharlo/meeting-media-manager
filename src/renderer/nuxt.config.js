@@ -5,7 +5,7 @@ const platform = require('os').platform
 const { DefinePlugin } = require('webpack')
 const SentryPlugin = require('@sentry/webpack-plugin')
 const pkg = require('./../../package.json')
-const { DAYJS_LOCALES, LOCALES } = require('./constants/lang.ts')
+const { DAYJS_LOCALES, LOCALES } = require('./constants/lang.js')
 require('dotenv').config()
 
 const isDev = process.env.NODE_ENV !== 'production'
