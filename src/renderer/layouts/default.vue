@@ -152,7 +152,6 @@ export default defineComponent({
     })
     ipcRenderer.on('setObsScene', async (_e, key: number) => {
       console.debug('Set obs scene via shortcut', key)
-      // eslint-disable-next-line no-magic-numbers
       const index = key === 0 ? 9 : key - 1
       await this.$setScene(this.scenes[index])
     })

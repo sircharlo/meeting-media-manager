@@ -63,7 +63,6 @@
     </v-row>
   </v-container>
 </template>
-<!-- eslint-disable no-magic-numbers -->
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
@@ -112,6 +111,7 @@ export default defineComponent({
     },
     availableWidth(): number {
       const FOOTER_PADDING = 32
+      // eslint-disable-next-line no-magic-numbers
       const BUTTONS = this.shuffleEnabled ? 246 : 172
       const OBS_MENU_PADDING = 8
       const WIDTH_OF_OTHER_ELEMENTS =
