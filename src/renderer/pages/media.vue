@@ -18,7 +18,6 @@ import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
 import {
-  MS_IN_SEC,
   HUNDRED_PERCENT,
   WT_CLEARTEXT_FONT,
   JW_ICONS_FONT,
@@ -286,8 +285,7 @@ export default defineComponent({
           this.mediaDisplay.style.background = 'transparent'
         }
         this.blackOverlay.style.opacity = '0'
-        // eslint-disable-next-line no-magic-numbers
-      }, 400)
+      }, 4 * HUNDRED_PERCENT)
     },
     resizingNow(width: number, height: number) {
       this.resizeOverlay.style.opacity = '1'
@@ -305,11 +303,9 @@ export default defineComponent({
         this.mediaDisplay.style.background = 'transparent'
         if (video) video.remove()
         this.blackOverlay.style.opacity = '0'
-        // eslint-disable-next-line no-magic-numbers
-      }, 0.4 * MS_IN_SEC)
+      }, 4 * HUNDRED_PERCENT)
       if (video) {
-        // eslint-disable-next-line no-magic-numbers
-        const MS_TO_STOP = 0.4 * MS_IN_SEC // Let fadeout last 400ms
+        const MS_TO_STOP = 4 * HUNDRED_PERCENT // Let fadeout last 400ms
         const TOTAL_VOL = video.volume
         while (video.volume > 0) {
           video.volume -= Math.min(video.volume, (10 * TOTAL_VOL) / MS_TO_STOP)

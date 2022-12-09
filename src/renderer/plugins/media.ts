@@ -1148,13 +1148,11 @@ const plugin: Plugin = (
         })
       }
 
-      // eslint-disable-next-line no-magic-numbers
       let issue = baseDate.subtract(8, 'weeks').format('YYYYMM') + '00'
       let db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
       let weekNr = getWeekNr(db)
 
       if (weekNr < 0) {
-        // eslint-disable-next-line no-magic-numbers
         issue = baseDate.subtract(9, 'weeks').format('YYYYMM') + '00'
         db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
         weekNr = getWeekNr(db)
