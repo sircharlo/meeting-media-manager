@@ -1,7 +1,7 @@
 ---
 tag: Configurazione
 title: Installazione
-ref: installazione
+ref: installation
 ---
 
 M³ non richiede privilegi di amministratore per l'installazione o l'esecuzione. Per installare M³, [scarica  il programma di installazione più recente](%7B%7Bsite.github%7D%7D/releases/latest) ed eseguilo.
