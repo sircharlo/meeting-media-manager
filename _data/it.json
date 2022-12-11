@@ -66,7 +66,7 @@
     "maxRes": "Risoluzione massima dei video",
     "resDesc": "I video saranno scaricati da JW.org con questa risoluzione oppure con quella immediatamente inferiore. Utile per connessioni limitate o con scarsa banda.",
     "convertDownloaded": "Converti media nel formato MP4",
-    "convertDesc": "Immagini e file audio saranno automaticamente convertiti nel formato MP4 per essere utilizzati direttamente con Zoom [funzione nativa] durante le adunanze di congregazione <strong>completamente in remoto</strong> tenute con Zoom.",
+    "convertDesc": "Immagini e file audio saranno automaticamente convertiti nel formato MP4 per essere utilizzati direttamente con Zoom [NATIVE FEATURE] durante le adunanze di congregazione <strong>completamente in remoto</strong> tenute con Zoom.",
     "convertExplain": "Ciò include tutte le immagini e i file multimediali scaricati da JW.org, nonché i file multimediali aggiunti dall'utente o dall'OV.",
     "convertNote": "<strong>Nota:</strong> Questa opzione adatta per le riunioni Zoom della congregazione  tenute <strong>solo da remoto</strong>.",
     "convertPresentLink": "Se conduci adunanze di congregazione <strong>ibride</strong> o <strong>regolari</strong>, cerca di utilizzare [PRESENT LINK] attivando invece l'opzione <code>[PRESENT]</code> e disattiva questa opzione .",
