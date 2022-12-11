@@ -432,7 +432,7 @@ export default defineComponent({
       }
     },
     async processFile(file: LocalFile | VideoFile) {
-      if (!file?.safeName) {
+      if (!file?.safeName || file.ignored) {
         this.increaseProgress()
         return
       }
