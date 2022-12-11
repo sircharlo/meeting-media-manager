@@ -1,6 +1,6 @@
 ---
-tag: Usage
-title: Managing media
+tag: Utilizzo
+title: Gestione media
 ref: manage-media
 ---
 
