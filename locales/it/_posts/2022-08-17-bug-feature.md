@@ -1,7 +1,7 @@
 ---
 tag: Aiuto
 title: Problemi e richieste di funzionalità
-ref: bug-funzionalità
+ref: bug-feature
 ---
 
 ### Come posso segnalare un problema o un bug che ho riscontrato?
