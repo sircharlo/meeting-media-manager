@@ -61,12 +61,19 @@
             max-width="200px"
             contain
           />
-          <v-list-item-title v-if="item.isLocal === undefined">
+          <v-list-item-title
+            v-if="item.isLocal === undefined"
+            :class="{
+              'text-decoration-line-through': item.ignored,
+            }"
+          >
             {{ prefix + ' ' + item.safeName }}
           </v-list-item-title>
           <v-list-item-title
             v-else
-            :class="{ 'text-decoration-line-through': item.hidden }"
+            :class="{
+              'text-decoration-line-through': item.hidden,
+            }"
           >
             {{ item.safeName }}
           </v-list-item-title>
@@ -435,6 +442,8 @@ export default defineComponent({
       } else if (item.isLocal !== undefined) {
         item.loading = true
         await this.toggleVisibility(item)
+      } else if (item.isLocal === undefined) {
+        item.ignored = !item.ignored
       }
     },
     async removeItem(item: MeetingFile | LocalFile) {

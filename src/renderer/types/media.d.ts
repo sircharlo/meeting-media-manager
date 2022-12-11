@@ -16,6 +16,7 @@ export interface MeetingFileBase {
   safeName?: string
   uniqueId?: string
   loading?: boolean
+  ignored?: boolean
 }
 
 export interface VideoFile extends SmallMediaFile, MeetingFileBase {
@@ -58,6 +59,7 @@ export interface LocalFile {
   trackImage?: undefined
   url?: string
   loading?: boolean
+  ignored?: boolean
 }
 
 export declare type MeetingFile = ImageFile | VideoFile
