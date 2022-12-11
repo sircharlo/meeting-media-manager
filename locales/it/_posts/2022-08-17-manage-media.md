@@ -1,7 +1,7 @@
 ---
 tag: Utilizzo
 title: Gestione media
-ref: gestione-media
+ref: manage-media
 ---
 
 {% include posts/manage-media.html lang=site.data.it %}

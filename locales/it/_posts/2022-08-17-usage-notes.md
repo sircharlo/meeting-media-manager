@@ -1,7 +1,7 @@
 ---
 tag: Aiuto
 title: Note tecniche di utilizzo
-ref: note-utilizzo
+ref: usage-notes
 ---
 
 L'app dovrebbe funzionare sulla maggior parte dei computer moderni che eseguono Windows, Linux o Mac.
