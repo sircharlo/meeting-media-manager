@@ -107,7 +107,6 @@ export default defineComponent({
       // If computer username matches congregation name, auto login
       else {
         const username = (await getUsername()) ?? userInfo().username
-        this.$log.debug(`current user: ${username}`)
         const match = congs.find(
           (c) => c.name?.toLowerCase().trim() === username.toLowerCase().trim()
         )

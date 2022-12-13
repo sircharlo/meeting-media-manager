@@ -551,10 +551,8 @@ const plugin: Plugin = (
       if (mediaItem.pubSymbol === 'sjj' || mediaItem.pubSymbol === 'sjjm') {
         if (mediaLangObj?.langcode === mediaLang) {
           mediaItem.pubSymbol = mediaLangObj?.isSignLanguage ? 'sjj' : 'sjjm'
-          $log.debug('Using sign language song publication')
         } else if (fallbackObj?.langcode === mediaLang) {
           mediaItem.pubSymbol = fallbackObj?.isSignLanguage ? 'sjj' : 'sjjm'
-          $log.debug('Using sign language song publication')
         }
       }
 
