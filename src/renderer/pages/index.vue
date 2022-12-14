@@ -201,7 +201,8 @@
 </template>
 <script lang="ts">
 import { fileURLToPath, pathToFileURL } from 'url'
-import { existsSync } from 'fs'
+// eslint-disable-next-line import/named
+import { existsSync } from 'fs-extra'
 import { defineComponent } from 'vue'
 import { Dayjs } from 'dayjs'
 import { basename, join } from 'upath'

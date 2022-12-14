@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 import { type } from 'os'
 import { pathToFileURL } from 'url'
 import {
@@ -8,7 +9,7 @@ import {
   readFileSync,
   statSync,
   writeFileSync,
-} from 'fs'
+} from 'fs-extra'
 import { Dayjs } from 'dayjs'
 import JSZip from 'jszip'
 import { Plugin } from '@nuxt/types'

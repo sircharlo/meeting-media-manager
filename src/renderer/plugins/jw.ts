@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, statSync } from 'fs'
+// eslint-disable-next-line import/named
+import { existsSync, readFileSync, statSync } from 'fs-extra'
 import { join } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
@@ -21,7 +22,7 @@ const plugin: Plugin = (
   },
   inject
 ) => {
-  inject('getJWLangs', async (forceReload = false): Promise<ShortJWLang[]> => {
+  async function getJWLangs(forceReload = false): Promise<ShortJWLang[]> {
     const langPath = join($appPath(), 'langs.json')
     const lastUpdate = $getPrefs('media.langUpdatedLast') as string
     const recentlyUpdated =
@@ -61,12 +62,31 @@ const plugin: Plugin = (
 
     let langs: ShortJWLang[] = []
 
-    try {
-      langs = JSON.parse(
-        readFileSync(langPath, 'utf8') ?? '[]'
-      ) as ShortJWLang[]
-    } catch (e: unknown) {
-      $log.error(e)
+    function readLangs(firstTry = true): string {
+      try {
+        const fileContent = readFileSync(langPath, 'utf8')
+        return fileContent
+      } catch (e: unknown) {
+        if (firstTry) {
+          return readLangs(false)
+        } else {
+          $log.error(e)
+          return ''
+        }
+      }
+    }
+
+    const fileContent = readLangs()
+    if (fileContent) {
+      try {
+        langs = JSON.parse(fileContent) as ShortJWLang[]
+      } catch (e: any) {
+        if (e.message.includes('Unexpected token')) {
+          return getJWLangs(true)
+        } else {
+          $log.error(e)
+        }
+      }
     }
 
     const mediaLang = $getPrefs('media.lang') as string
@@ -107,7 +127,8 @@ const plugin: Plugin = (
     $write(langPath, JSON.stringify(langs, null, 2))
 
     return langs
-  })
+  }
+  inject('getJWLangs', getJWLangs)
 
   async function getPubAvailability(
     lang: string,

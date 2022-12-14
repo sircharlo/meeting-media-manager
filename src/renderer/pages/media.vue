@@ -11,7 +11,8 @@
 </template>
 <script lang="ts">
 import { pathToFileURL } from 'url'
-import { readFileSync, existsSync } from 'fs'
+// eslint-disable-next-line import/named
+import { readFileSync, existsSync } from 'fs-extra'
 import { defineComponent } from 'vue'
 import { join, basename, changeExt } from 'upath'
 import Panzoom, { PanzoomObject } from '@panzoom/panzoom'

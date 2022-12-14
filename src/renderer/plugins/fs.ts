@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 import { platform } from 'os'
 import {
   existsSync,
@@ -7,10 +8,12 @@ import {
   writeFileSync,
   statSync,
   readFileSync,
-} from 'fs'
+  ensureDirSync,
+  ensureFileSync,
+  removeSync,
+} from 'fs-extra'
 import { Entry, sync, Options } from 'fast-glob'
 import { ipcRenderer } from 'electron'
-import { ensureDirSync, ensureFileSync, removeSync } from 'fs-extra'
 import { join, extname, basename, dirname, joinSafe } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'

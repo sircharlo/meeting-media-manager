@@ -239,7 +239,8 @@
   </v-form>
 </template>
 <script lang="ts">
-import { readFileSync } from 'fs'
+// eslint-disable-next-line import/named
+import { readFileSync } from 'fs-extra'
 import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'

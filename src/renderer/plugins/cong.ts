@@ -1,4 +1,5 @@
-import { statSync } from 'fs'
+// eslint-disable-next-line import/named
+import { statSync } from 'fs-extra'
 import { WebDAVClient, createClient, FileStat } from 'webdav/web'
 import { Plugin } from '@nuxt/types'
 import { basename, dirname, extname, join, resolve } from 'upath'

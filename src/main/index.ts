@@ -1,6 +1,7 @@
+/* eslint-disable import/named */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { platform } from 'os'
-import { existsSync } from 'fs'
+import { existsSync } from 'fs-extra'
 import {
   app,
   ipcMain,
@@ -15,7 +16,6 @@ import {
   OpenDialogOptions,
 } from 'electron'
 import { init } from '@sentry/electron'
-// eslint-disable-next-line import/named
 import { initRenderer } from 'electron-store'
 import { join, normalize } from 'upath'
 import { autoUpdater } from 'electron-updater'
