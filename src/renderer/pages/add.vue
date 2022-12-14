@@ -204,7 +204,8 @@
   </v-container>
 </template>
 <script lang="ts">
-import { readdirSync, existsSync, readFileSync, statSync } from 'fs'
+// eslint-disable-next-line import/named
+import { readdirSync, existsSync, readFileSync, statSync } from 'fs-extra'
 import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'

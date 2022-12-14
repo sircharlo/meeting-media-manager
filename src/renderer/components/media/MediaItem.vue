@@ -138,7 +138,8 @@
 </template>
 <script lang="ts">
 import { pathToFileURL } from 'url'
-import { existsSync, readFileSync } from 'fs'
+// eslint-disable-next-line import/named
+import { existsSync, readFileSync } from 'fs-extra'
 import { basename, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'

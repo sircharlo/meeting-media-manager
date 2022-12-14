@@ -203,7 +203,8 @@
 </template>
 <script lang="ts">
 import { platform } from 'os'
-import { existsSync, renameSync } from 'fs'
+// eslint-disable-next-line import/named
+import { existsSync, renameSync } from 'fs-extra'
 import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'

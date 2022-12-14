@@ -1,5 +1,5 @@
-import { readFileSync } from 'fs'
-import { removeSync } from 'fs-extra'
+// eslint-disable-next-line import/named
+import { readFileSync, removeSync } from 'fs-extra'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import Store, { Schema } from 'electron-store'

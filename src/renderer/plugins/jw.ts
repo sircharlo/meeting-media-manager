@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, statSync } from 'fs'
+// eslint-disable-next-line import/named
+import { existsSync, readFileSync, statSync } from 'fs-extra'
 import { join } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
@@ -65,8 +66,18 @@ const plugin: Plugin = (
       langs = JSON.parse(
         readFileSync(langPath, 'utf8') ?? '[]'
       ) as ShortJWLang[]
-    } catch (e: unknown) {
-      $log.error(e)
+    } catch (e: any) {
+      if (e.message.includes('ECONNRESET')) {
+        try {
+          langs = JSON.parse(
+            readFileSync(langPath, 'utf8') ?? '[]'
+          ) as ShortJWLang[]
+        } catch (e: unknown) {
+          $log.error(e)
+        }
+      } else {
+        $log.error(e)
+      }
     }
 
     const mediaLang = $getPrefs('media.lang') as string
