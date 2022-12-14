@@ -40,6 +40,7 @@
   "errorObsCameraScene": "The configured default camera scene does not exist anymore. Please change it in the settings.",
   "errorObsMediaScene": "The configured media scene does not exist anymore. Please change it in the settings.",
   "errorOffline": "The application is offline. Data can't be downloaded or uploaded!",
+  "errorPpEnable": "The keyboard shortcuts during media playback could not be enabled. Please check if your settings are valid.",
   "errorRename": "An error occured while attempting to rename the following file or directory:",
   "errorSetVars": "An error occurred while attempting to create or access a directory. Please make sure that you have access to the following path on your computer.",
   "errorSiteCheck": "Unable to establish a connection to the following site:",

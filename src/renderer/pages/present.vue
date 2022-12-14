@@ -92,11 +92,11 @@ export default defineComponent({
       get(): string {
         return this.$store.state.obs.currentScene as string
       },
-      async set(value: string) {
-        if (this.mediaActive) {
-          this.$store.commit('obs/setCurrentScene', value)
-        } else {
-          await this.$setScene(value)
+      async set(val: string) {
+        if (val && this.mediaActive) {
+          this.$store.commit('obs/setCurrentScene', val)
+        } else if (val) {
+          await this.$setScene(val)
         }
       },
     },
@@ -195,11 +195,16 @@ export default defineComponent({
         if (val) {
           this.$unsetShortcut('toggleMusicShuffle')
         } else {
-          await this.$setShortcut(
-            this.$getPrefs('meeting.shuffleShortcut') as string,
-            'toggleMusicShuffle',
-            'music'
-          )
+          const shuffleShortcut = this.$getPrefs(
+            'meeting.shuffleShortcut'
+          ) as string
+          if (shuffleShortcut) {
+            await this.$setShortcut(
+              shuffleShortcut,
+              'toggleMusicShuffle',
+              'music'
+            )
+          }
         }
       }
     },
@@ -231,16 +236,15 @@ export default defineComponent({
     }
 
     if (this.$getPrefs('media.enablePp')) {
-      this.$setShortcut(
-        this.$getPrefs('media.ppForward') as string,
-        'nextMediaItem',
-        'presentMode'
-      )
-      this.$setShortcut(
-        this.$getPrefs('media.ppBackward') as string,
-        'previousMediaItem',
-        'presentMode'
-      )
+      const ppForward = this.$getPrefs('media.ppForward') as string
+      const ppBackward = this.$getPrefs('media.ppBackward') as string
+
+      if (ppForward && ppBackward) {
+        this.$setShortcut(ppForward, 'nextMediaItem', 'presentMode')
+        this.$setShortcut(ppBackward, 'previousMediaItem', 'presentMode')
+      } else {
+        this.$warn('errorPpEnable')
+      }
     }
   },
   methods: {

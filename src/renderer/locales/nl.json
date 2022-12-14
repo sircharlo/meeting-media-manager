@@ -40,6 +40,7 @@
   "errorObsCameraScene": "De ingestelde standaard podium scene bestaat niet meer. Stel een nieuwe in in de instellingen.",
   "errorObsMediaScene": "De ingestelde media scene bestaat niet meer. Stel een nieuwe in in de instellingen.",
   "errorOffline": "De applicatie is offline. Kan geen data downloaden of uploaden!",
+  "errorPpEnable": "De sneltoetsen tijdens het presenteren van media konden niet worden ingeschakeld. Controleer of je instellingen correct zijn ingesteld.",
   "errorRename": "Er ging iets fout tijdens het hernoemen van het volgende bestand of de volgende folder:",
   "errorSetVars": "Er ging iets fout tijdens het aanmaken van of toegang krijgen tot een folder. Zorg alsjeblieft dat je toegang hebt tot het volgende pad op je computer.",
   "errorSiteCheck": "Kon geen verbinding maken met de volgende website:",
