@@ -45,7 +45,7 @@
       </v-list-item-content>
       <v-list-item-action class="align-self-center d-flex flex-row">
         <v-btn
-          v-if="streamingFile && !streamDownloaded"
+          v-if="streamingFile && !streamDownloaded && !active"
           :loading="downloading"
           class="mr-2"
           @click="downloadSong()"
