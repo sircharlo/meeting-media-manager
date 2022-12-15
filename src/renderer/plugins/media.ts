@@ -12,6 +12,7 @@ import {
   HUNDRED_PERCENT,
   JAN_2008,
   MAX_PREFIX_LENGTH,
+  NR_OF_KINGDOM_SONGS,
 } from './../constants/general'
 import {
   MediaFile,
@@ -1691,7 +1692,7 @@ const plugin: Plugin = (
       }
     })
 
-    ipcRenderer.send('showMedia', { path })
+    ipcRenderer.send('showMedia', { src: path })
 
     if (!fadeOut) {
       store.commit('media/setMusicFadeOut', '00:00')
@@ -1760,6 +1761,37 @@ const plugin: Plugin = (
     audio.appendChild(source)
     document.body.appendChild(audio)
   }
+
+  inject('getSongs', async (): Promise<VideoFile[]> => {
+    const result = (await getMediaLinks({
+      pubSymbol: store.state.media.songPub,
+      format: 'MP4',
+    })) as VideoFile[]
+
+    const fallbackLang = $getPrefs('media.langFallback') as string
+
+    if (fallbackLang && result.length < NR_OF_KINGDOM_SONGS) {
+      const fallback = (await getMediaLinks({
+        pubSymbol: store.state.media.songPub,
+        format: 'MP4',
+        lang: fallbackLang,
+      })) as VideoFile[]
+
+      fallback.forEach((song) => {
+        if (!result.find((s) => s.track === song.track)) {
+          result.push(song)
+        }
+      })
+      result.sort((a, b) => a.track - b.track)
+    }
+
+    result.forEach((song) => {
+      song.safeName =
+        $sanitize(`- ${$translate('song')} ${song.title}`) + '.mp4'
+    })
+
+    return result
+  })
 }
 
 export default plugin
