@@ -301,7 +301,15 @@ if (gotTheLock) {
   // IpcMain events for the media window
   ipcMain.on(
     'showMedia',
-    (_e, media: { path: string; start?: string; end?: string } | null) => {
+    (
+      _e,
+      media: {
+        src: string
+        stream?: boolean
+        start?: string
+        end?: string
+      } | null
+    ) => {
       mediaWin?.webContents.send('showMedia', media)
       win?.webContents.send('showingMedia', [!!media, !!media?.start])
     }
