@@ -370,9 +370,7 @@ export default defineComponent({
     },
     previous() {
       if (this.mediaActive) {
-        if (this.song && this.currentIndex === -1) {
-          this.song.stop = true
-        } else {
+        if (this.currentIndex >= 0) {
           this.items[this.currentIndex].stop = true
         }
       } else if (this.currentIndex > 0) {
@@ -393,9 +391,7 @@ export default defineComponent({
     },
     next() {
       if (this.mediaActive) {
-        if (this.song && this.currentIndex === -1) {
-          this.song.stop = true
-        } else {
+        if (this.currentIndex >= 0) {
           this.items[this.currentIndex].stop = true
         }
       } else if (this.currentIndex < this.items.length - 1) {
