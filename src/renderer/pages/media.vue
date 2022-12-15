@@ -87,22 +87,11 @@ export default defineComponent({
       },
     })
     // IpcRenderer listeners
-    ipcRenderer.on(
-      'showMedia',
-      (
-        _e,
-        media: {
-          src: string
-          stream?: boolean
-          start?: string
-          end?: string
-        } | null
-      ) => {
-        if (this.panzoom) this.panzoom.reset()
-        this.zoomEnabled = !!media && this.$isImage(media.src)
-        this.transitionToMedia(media)
-      }
-    )
+    ipcRenderer.on('showMedia', (_e, media) => {
+      if (this.panzoom) this.panzoom.reset()
+      this.zoomEnabled = media && this.$isImage(media.path)
+      this.transitionToMedia(media)
+    })
     ipcRenderer.on('pauseVideo', () => {
       const video = document.querySelector('video') as HTMLVideoElement
       if (video) {
@@ -210,18 +199,11 @@ export default defineComponent({
       this.panzoom.zoom(this.scale)
       if (this.scale === 1) this.panzoom.reset()
     },
-    transitionToMedia(
-      media: {
-        src: string
-        stream?: boolean
-        start?: string
-        end?: string
-      } | null
-    ) {
+    transitionToMedia(media: { path: string; start?: string; end?: string }) {
       this.resizingDone()
       this.blackOverlay.style.opacity = '1'
       setTimeout(() => {
-        if (media?.src) {
+        if (media?.path) {
           const videos = document.querySelectorAll('#mediaDisplay video')
 
           // Remove all videos
@@ -230,8 +212,8 @@ export default defineComponent({
               video.remove()
             })
           }
-          if (this.$isVideo(media.src) || this.$isAudio(media.src)) {
-            let src = media.stream ? media.src : pathToFileURL(media.src).href
+          if (this.$isVideo(media.path) || this.$isAudio(media.path)) {
+            let src = pathToFileURL(media.path).href
 
             // Set start and end times
             if (media.start || media.end) {
@@ -246,10 +228,13 @@ export default defineComponent({
             video.controls = false
             video.src = src
 
-            if (this.withSubtitles && existsSync(changeExt(media.src, 'vtt'))) {
+            if (
+              this.withSubtitles &&
+              existsSync(changeExt(media.path, 'vtt'))
+            ) {
               const track = document.createElement('track')
               track.kind = 'subtitles'
-              track.src = pathToFileURL(changeExt(media.src, 'vtt')).href
+              track.src = pathToFileURL(changeExt(media.path, 'vtt')).href
               track.default = true
               track.srclang = 'en' // Needs a valid srclang, but we don't use it
               video.appendChild(track)
@@ -259,7 +244,7 @@ export default defineComponent({
             video.oncanplay = () => {
               if (
                 this.withSubtitles &&
-                existsSync(changeExt(media.src, 'vtt'))
+                existsSync(changeExt(media.path, 'vtt'))
               ) {
                 video.textTracks[0].mode = 'showing'
               }
@@ -292,9 +277,9 @@ export default defineComponent({
             }
             this.mediaDisplay.append(video)
             this.mediaDisplay.style.background = 'black'
-          } else if (this.$isImage(media.src)) {
+          } else if (this.$isImage(media.path)) {
             this.mediaDisplay.style.background = `url(${
-              pathToFileURL(media.src).href
+              pathToFileURL(media.path).href
             }) black center center / contain no-repeat`
           }
         } else {

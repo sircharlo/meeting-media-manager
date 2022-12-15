@@ -139,10 +139,6 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    stream: {
-      type: Boolean,
-      default: false,
-    },
     tempClipped: {
       type: Object,
       default: null,
@@ -194,10 +190,7 @@ export default defineComponent({
       >
     },
     url(): string {
-      return (
-        (this.stream ? this.src : pathToFileURL(this.src).href) +
-        (this.thumbnail ? '' : '#t=5')
-      )
+      return pathToFileURL(this.src).href + (this.thumbnail ? '' : '#t=5')
     },
     thumbnail(): string | null {
       let thumbnail: string | null | undefined
