@@ -228,6 +228,7 @@ import {
   BYTES_IN_MB,
   HUNDRED_PERCENT,
   MS_IN_SEC,
+  NR_OF_KINGDOM_SONGS,
 } from '~/constants/general'
 export default defineComponent({
   name: 'AddPage',
@@ -627,7 +628,33 @@ export default defineComponent({
     },
     async getSongs() {
       this.loadingSongs = true
-      this.songs = await this.$getSongs()
+      const result = (await this.$getMediaLinks({
+        pubSymbol: this.$store.state.media.songPub,
+        format: 'MP4',
+      })) as VideoFile[]
+
+      const fallbackLang = this.$getPrefs('media.langFallback') as string
+
+      if (fallbackLang && result.length < NR_OF_KINGDOM_SONGS) {
+        const fallback = (await this.$getMediaLinks({
+          pubSymbol: this.$store.state.media.songPub,
+          format: 'MP4',
+          lang: fallbackLang,
+        })) as VideoFile[]
+
+        fallback.forEach((song) => {
+          if (!result.find((s) => s.track === song.track)) {
+            result.push(song)
+          }
+        })
+        result.sort((a, b) => a.track - b.track)
+      }
+
+      result.forEach((song) => {
+        song.safeName =
+          this.$sanitize(`- ${this.$translate('song')} ${song.title}`) + '.mp4'
+      })
+      this.songs = result
       this.loadingSongs = false
     },
     getExistingMedia() {

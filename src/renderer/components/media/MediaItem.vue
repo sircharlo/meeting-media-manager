@@ -30,9 +30,8 @@
 
       <media-video
         v-else
-        :src="!!streamingFile && streamDownloaded ? localStreamPath : src"
+        :src="src"
         :playing="active"
-        :stream="!!streamingFile && !streamDownloaded"
         :temp-clipped="tempClipped"
         @clipped="setTime($event)"
         @reset-clipped="tempClipped = null"
@@ -44,14 +43,6 @@
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action class="align-self-center d-flex flex-row">
-        <v-btn
-          v-if="streamingFile && !streamDownloaded && !active"
-          :loading="downloading"
-          class="mr-2"
-          @click="downloadSong()"
-        >
-          <font-awesome-icon :icon="faDownload" size="lg" />
-        </v-btn>
         <template v-if="active">
           <icon-btn
             v-if="isVideo || scene"
@@ -149,19 +140,14 @@
 import { pathToFileURL } from 'url'
 // eslint-disable-next-line import/named
 import { existsSync, readFileSync } from 'fs-extra'
-import { basename, changeExt, join } from 'upath'
+import { basename, changeExt } from 'upath'
 import { ipcRenderer } from 'electron'
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 // @ts-ignore: RuntimeTemplateCompiler implicitly has an 'any' type
 import { RuntimeTemplateCompiler } from 'vue-runtime-template-compiler'
-import {
-  faMusic,
-  faParagraph,
-  faSort,
-  faDownload,
-} from '@fortawesome/free-solid-svg-icons'
-import { Marker, VideoFile } from '~/types'
+import { faMusic, faParagraph, faSort } from '@fortawesome/free-solid-svg-icons'
+import { Marker } from '~/types'
 import { MS_IN_SEC, HUNDRED_PERCENT } from '~/constants/general'
 export default defineComponent({
   components: {
@@ -200,16 +186,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    streamingFile: {
-      type: Object as PropType<VideoFile>,
-      default: null,
-    },
   },
   data() {
     return {
       scale: 1,
-      downloading: false,
-      streamDownloaded: false,
       clickedOnce: false,
       panzoom: null as null | PanzoomObject,
       current: false,
@@ -249,18 +229,8 @@ export default defineComponent({
     faMusic() {
       return faMusic
     },
-    faDownload() {
-      return faDownload
-    },
     faSort() {
       return faSort
-    },
-    localStreamPath(): string {
-      if (!this.streamingFile) return ''
-      return join(
-        this.$pubPath(this.streamingFile),
-        basename(this.streamingFile.url)
-      )
     },
     scene(): string {
       return this.$store.state.obs.currentScene as string
@@ -287,7 +257,7 @@ export default defineComponent({
     title(): string {
       return (
         `<div style="line-break: anywhere">` +
-        (this.streamingFile?.safeName ?? basename(this.src))
+        basename(this.src)
           .replace(
             /^((\d{1,2}-?)* ?- )/,
             "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>"
@@ -380,9 +350,6 @@ export default defineComponent({
   },
   mounted() {
     this.getMarkers()
-    if (this.streamingFile) {
-      this.streamDownloaded = existsSync(this.localStreamPath)
-    }
 
     if (this.isImage) {
       this.panzoom = Panzoom(
@@ -416,13 +383,6 @@ export default defineComponent({
     }
   },
   methods: {
-    async downloadSong() {
-      if (!this.streamingFile) return
-      this.downloading = true
-      await this.$downloadIfRequired(this.streamingFile)
-      this.downloading = false
-      this.streamDownloaded = existsSync(this.localStreamPath)
-    },
     pan({ x, y }: { x: number; y: number }) {
       ipcRenderer.send('pan', { x, y })
     },
@@ -507,11 +467,7 @@ export default defineComponent({
 
       // Show media
       ipcRenderer.send('showMedia', {
-        src:
-          !!this.streamingFile && this.streamDownloaded
-            ? this.localStreamPath
-            : this.src,
-        stream: !!this.streamingFile && !this.streamDownloaded,
+        path: this.src,
         start: marker ? marker.customStartTime : this.start,
         end: marker ? marker.customEndTime : this.end,
       })
