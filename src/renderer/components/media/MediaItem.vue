@@ -243,9 +243,6 @@ export default defineComponent({
     faParagraph() {
       return faParagraph
     },
-    musicPlaying(): boolean {
-      return !!this.$store.state.media.musicFadeOut
-    },
     faMusic() {
       return faMusic
     },
@@ -476,10 +473,6 @@ export default defineComponent({
     async play(marker?: Marker) {
       if (!this.mediaVisible) {
         ipcRenderer.send('toggleMediaWindowFocus')
-      }
-
-      if (!this.isImage && this.musicPlaying) {
-        await this.$shuffleMusic(true, true)
       }
 
       // If it's a marker, set custom start and end times
