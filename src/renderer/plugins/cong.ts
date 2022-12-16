@@ -191,6 +191,8 @@ const plugin: Plugin = (
         })
       return items
     } else {
+      $log.debug('result', result)
+      $log.debug('parsed', parsed)
       throw new TypeError('Invalid response')
     }
   }
