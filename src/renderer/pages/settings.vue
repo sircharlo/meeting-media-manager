@@ -11,7 +11,7 @@
           {{ getInitials(h.name) }}
         </v-tab>
       </v-tabs>
-      <v-skeleton-loader v-if="mounting" type="card-heading@4" />
+      <v-skeleton-loader v-if="mounting" type="list-item@4" />
       <v-expansion-panels
         v-show="!mounting"
         v-model="panel"
