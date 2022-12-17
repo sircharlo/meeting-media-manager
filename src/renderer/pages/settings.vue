@@ -6,7 +6,7 @@
         <v-tab
           v-for="h in headers"
           :key="h.component"
-          :class="{ 'error--text': !h.valid }"
+          :class="{ 'error--text': !mounting && !h.valid }"
         >
           {{ getInitials(h.name) }}
         </v-tab>
@@ -92,8 +92,9 @@
           <icon-btn
             v-else
             variant="home"
+            :loading="mounting"
             :disabled="!valid"
-            :style="valid ? undefined : 'background-color: #B71C1C !important'"
+            :style="(valid || mounting) ? undefined : 'background-color: #B71C1C !important'"
           />
         </v-col>
       </v-col>
