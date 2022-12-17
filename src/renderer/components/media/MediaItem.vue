@@ -438,10 +438,6 @@ export default defineComponent({
         ipcRenderer.send('toggleMediaWindowFocus')
       }
 
-      if (!this.isImage && this.musicPlaying) {
-        await this.$shuffleMusic(true, true)
-      }
-
       // If it's a marker, set custom start and end times
       if (marker) {
         marker.played = true

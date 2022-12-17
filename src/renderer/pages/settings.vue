@@ -6,12 +6,14 @@
         <v-tab
           v-for="h in headers"
           :key="h.component"
-          :class="{ 'error--text': !h.valid }"
+          :class="{ 'error--text': !mounting && !h.valid }"
         >
           {{ getInitials(h.name) }}
         </v-tab>
       </v-tabs>
+      <v-skeleton-loader v-if="mounting" type="list-item@4" />
       <v-expansion-panels
+        v-show="!mounting"
         v-model="panel"
         multiple
         focusable
@@ -90,8 +92,9 @@
           <icon-btn
             v-else
             variant="home"
+            :loading="mounting"
             :disabled="!valid"
-            :style="valid ? undefined : 'background-color: #B71C1C !important'"
+            :style="(valid || mounting) ? undefined : 'background-color: #B71C1C !important'"
           />
         </v-col>
       </v-col>
@@ -120,6 +123,7 @@ export default defineComponent({
         ...PREFS,
       } as ElectronStore,
       cancel: false,
+      mounting: true,
       mounted: false,
       cacheColor: 'warning',
       loading: false,
@@ -253,6 +257,9 @@ export default defineComponent({
     }
 
     this.calcCache()
+    setTimeout(() => {
+      this.mounting = false
+    }, 0.5 * MS_IN_SEC)
   },
   methods: {
     refreshPrefs(key: keyof ElectronStore, val: any) {
