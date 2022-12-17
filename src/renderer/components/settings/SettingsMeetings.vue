@@ -243,8 +243,8 @@ export default defineComponent({
         (val && this.meeting.specialCong) ||
           (this.meeting.mwDay !== null &&
             this.meeting.weDay !== null &&
-            this.meeting.mwStartTime &&
-            this.meeting.weStartTime)
+            !!this.meeting.mwStartTime &&
+            !!this.meeting.weStartTime)
       )
     },
     meeting: {
@@ -256,8 +256,8 @@ export default defineComponent({
           val.specialCong ||
             (val.mwDay !== null &&
               val.weDay !== null &&
-              val.mwStartTime &&
-              val.weStartTime)
+              !!val.mwStartTime &&
+              !!val.weStartTime)
         )
       },
       deep: true,

@@ -11,7 +11,9 @@
           {{ getInitials(h.name) }}
         </v-tab>
       </v-tabs>
+      <v-skeleton-loader v-if="mounting" type="card-heading@4" />
       <v-expansion-panels
+        v-show="!mounting"
         v-model="panel"
         multiple
         focusable
@@ -120,6 +122,7 @@ export default defineComponent({
         ...PREFS,
       } as ElectronStore,
       cancel: false,
+      mounting: true,
       mounted: false,
       cacheColor: 'warning',
       loading: false,
@@ -253,6 +256,9 @@ export default defineComponent({
     }
 
     this.calcCache()
+    setTimeout(() => {
+      this.mounting = false
+    }, 0.5 * MS_IN_SEC)
   },
   methods: {
     refreshPrefs(key: keyof ElectronStore, val: any) {
