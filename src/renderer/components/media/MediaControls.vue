@@ -28,9 +28,21 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <v-btn icon aria-label="Add song" @click="addSong = !addSong">
-          <font-awesome-icon :icon="faMusic" size="lg" />
-        </v-btn>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              aria-label="Add song"
+              v-bind="attrs"
+              v-on="on"
+              @click="addSong = !addSong"
+            >
+              <font-awesome-icon :icon="faMusic" pull="left" size="lg" />
+              <font-awesome-icon :icon="faPlus" pull="right" size="lg" />
+            </v-btn>
+          </template>
+          <span>{{ $t('lastMinuteSong') }}</span>
+        </v-tooltip>
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
@@ -138,21 +150,24 @@
         :loading="loadingSongs"
         return-object
       />
-      <v-list v-if="song" class="ma-4">
-        <media-item
-          :key="song.url"
-          :src="song.url"
-          :play-now="song.play"
-          :stop-now="song.stop"
-          :deactivate="song.deactivate"
-          :media-active="mediaActive"
-          :video-active="videoActive"
-          :show-prefix="showPrefix"
-          :streaming-file="song"
-          @playing="setIndex(-1)"
-          @deactivated="song.deactivate = false"
-        />
-      </v-list>
+      <template v-if="song">
+        <v-list class="ma-4">
+          <media-item
+            :key="song.url"
+            :src="song.url"
+            :play-now="song.play"
+            :stop-now="song.stop"
+            :deactivate="song.deactivate"
+            :media-active="mediaActive"
+            :video-active="videoActive"
+            :show-prefix="showPrefix"
+            :streaming-file="song"
+            @playing="setIndex(-1)"
+            @deactivated="song.deactivate = false"
+          />
+        </v-list>
+        <v-divider class="mx-4" />
+      </template>
       <draggable
         v-model="items"
         tag="v-list"
@@ -192,6 +207,7 @@ import {
   faBackward,
   faForward,
   faMusic,
+  faPlus,
   faGlobe,
   faSquareCheck,
   faEllipsisVertical,
@@ -281,6 +297,9 @@ export default defineComponent({
     },
     faMusic() {
       return faMusic
+    },
+    faPlus() {
+      return faPlus
     },
     faEllipsisVertical() {
       return faEllipsisVertical

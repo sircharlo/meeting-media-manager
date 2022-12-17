@@ -44,14 +44,6 @@
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action class="align-self-center d-flex flex-row">
-        <v-btn
-          v-if="streamingFile && !streamDownloaded && !active"
-          :loading="downloading"
-          class="mr-2"
-          @click="downloadSong()"
-        >
-          <font-awesome-icon :icon="faDownload" size="lg" />
-        </v-btn>
         <template v-if="active">
           <icon-btn
             v-if="isVideo || scene"
@@ -379,6 +371,9 @@ export default defineComponent({
     this.getMarkers()
     if (this.streamingFile) {
       this.streamDownloaded = existsSync(this.localStreamPath)
+      if (!this.streamDownloaded) {
+        this.downloadSong()
+      }
     }
 
     if (this.isImage) {
