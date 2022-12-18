@@ -283,7 +283,7 @@ export default defineComponent({
             return m
           })
           .sort((a, b) => {
-              return ((a.isLocal === undefined ? this.prefix + " " : "") + a.safeName as string).localeCompare((b.isLocal === undefined ? this.prefix + " " : "") + b.safeName as string, undefined, {numeric: true})
+              return ((!!this.prefix && a.isLocal === undefined ? this.prefix + " " : "") + a.safeName as string).localeCompare((!!this.prefix && b.isLocal === undefined ? this.prefix + " " : "") + b.safeName as string, undefined, {numeric: true})
           })
       } else {
         this.mediaList = [
