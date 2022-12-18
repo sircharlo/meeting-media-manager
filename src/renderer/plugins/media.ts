@@ -45,6 +45,7 @@ const plugin: Plugin = (
     $mediaItems,
     $translate,
     $write,
+    $getJWLangs,
     $findOne,
     $error,
     $getDb,
@@ -242,6 +243,14 @@ const plugin: Plugin = (
         }
       } catch (e: unknown) {
         $log.error(e)
+      }
+    } else if (mmItem.FilePath) {
+      const extractedLang = mmItem.FilePath.split('_')[1]
+      console.log('lang from filepath', extractedLang)
+      const langs = await $getJWLangs()
+      if (langs.find((l) => l.langcode === extractedLang)) {
+        console.log('found')
+        lang = extractedLang
       }
     }
     if (targetParNrExists) {
