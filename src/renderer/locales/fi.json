@@ -40,6 +40,7 @@
   "errorObsCameraScene": "Määritettyä kameran oletusnäkymää ei enää ole. Muuta se asetuksissa.",
   "errorObsMediaScene": "Määritettyä medianäkymää ei ole enää olemassa. Muuta se asetuksissa.",
   "errorOffline": "Sovellus on offline-tilassa. Tietoja ei voi ladata ylös tai alas!",
+  "errorPpEnable": "Pikanäppäimiä mediatoiston aikana ei voitu ottaa käyttöön. Tarkista, ovatko asetuksesi oikein.",
   "errorRename": "Virhe yritettäessä nimetä uudelleen seuraava tiedosto tai hakemisto:",
   "errorSetVars": "Virhe yritettäessä luoda hakemistoa tai käyttää sitä. Varmista, että sinulla on pääsy seuraavaan polkuun tietokoneellasi.",
   "errorSiteCheck": "Yhteyttä ei voi muodostaa seuraavaan sivustoon:",
