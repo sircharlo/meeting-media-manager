@@ -102,7 +102,7 @@
               v-on="on"
               @click="sortable = false"
             >
-              <font-awesome-icon :icon="faSquareCheck" size="lg" />
+              <font-awesome-icon :icon="faArrowDownUpLock" size="lg" />
             </v-btn>
           </template>
           <span>{{ $t('sortSave') }}</span>
@@ -118,7 +118,7 @@
               v-on="on"
               @click="sortable = true"
             >
-              <font-awesome-icon :icon="faArrowDownShortWide" size="lg" />
+              <font-awesome-icon :icon="faArrowDownUpAcrossLine" size="lg" />
             </v-btn>
           </template>
           <span>{{ $t('sortMedia') }}</span>
@@ -209,9 +209,9 @@ import {
   faMusic,
   faPlus,
   faGlobe,
-  faSquareCheck,
+  faArrowDownUpLock,
   faEllipsisVertical,
-  faArrowDownShortWide,
+  faArrowDownUpAcrossLine,
   faFolderOpen,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
@@ -304,8 +304,8 @@ export default defineComponent({
     faEllipsisVertical() {
       return faEllipsisVertical
     },
-    faArrowDownShortWide() {
-      return faArrowDownShortWide
+    faArrowDownUpAcrossLine() {
+      return faArrowDownUpAcrossLine
     },
     faBackward() {
       return faBackward
@@ -313,8 +313,8 @@ export default defineComponent({
     faForward() {
       return faForward
     },
-    faSquareCheck() {
-      return faSquareCheck
+    faArrowDownUpLock() {
+      return faArrowDownUpLock
     },
     mediaVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible

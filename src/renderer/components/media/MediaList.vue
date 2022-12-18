@@ -283,17 +283,7 @@ export default defineComponent({
             return m
           })
           .sort((a, b) => {
-            if (this.prefix && a.isLocal === undefined) {
-              return (this.prefix + ' ' + (a.safeName as string)).localeCompare(
-                b.safeName as string
-              )
-            } else if (this.prefix && b.isLocal === undefined) {
-              return (a.safeName as string).localeCompare(
-                this.prefix + ' ' + (b.safeName as string)
-              )
-            } else {
-              return (a.safeName as string).localeCompare(b.safeName as string)
-            }
+              return ((!!this.prefix && a.isLocal === undefined ? this.prefix + " " : "") + a.safeName as string).localeCompare((!!this.prefix && b.isLocal === undefined ? this.prefix + " " : "") + b.safeName as string, undefined, {numeric: true})
           })
       } else {
         this.mediaList = [

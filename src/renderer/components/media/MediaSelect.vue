@@ -210,7 +210,7 @@ export default defineComponent({
           [KeySymbol, Track, IssueTagNumber].filter(Boolean).join('_')
 
         const ext = FilePath ? extname(FilePath) : type ?? ''
-        const name = this.$sanitize(title) + ext
+        const name = this.$sanitize(title, true) + ext
 
         const tempMedia = {
           safeName: `${prefix} - ${name}`,
