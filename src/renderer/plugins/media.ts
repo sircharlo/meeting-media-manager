@@ -464,8 +464,6 @@ const plugin: Plugin = (
       const lffiString = `(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')`
       const lffiImgString = `(Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 6 AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`
 
-      if (keySymbol !== 'lffi')
-        where += ` AND (${lffiString} OR ${lffiImgString})`
       if (keySymbol === 'lffi') {
         if (!excludeLffi && !excludeLffiImages) {
           where += ` AND (${lffiString} OR ${lffiImgString})`
@@ -474,6 +472,8 @@ const plugin: Plugin = (
         } else if (!excludeLffiImages) {
           where += ` AND ${lffiImgString}`
         }
+      } else {
+        where += ` AND (${lffiString} OR ${lffiImgString})`
       }
 
       const promises: Promise<VideoFile | ImageFile | null>[] = []
