@@ -236,6 +236,16 @@
         <span v-html="$t('excludeLffiImages')" />
       </template>
     </form-input>
+    <form-input
+      id="media.includePrintedMedia"
+      v-model="media.includePrintedMedia"
+      field="switch"
+      :locked="$isLocked('media.includePrintedMedia')"
+    >
+      <template #label>
+        <span v-html="$t('includePrintedMedia')" />
+      </template>
+    </form-input>
   </v-form>
 </template>
 <script lang="ts">

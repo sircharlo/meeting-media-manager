@@ -60,7 +60,7 @@
 import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { Database } from 'sql.js'
-import { basename, extname, trimExt } from 'upath'
+import { extname, trimExt } from 'upath'
 import { defineComponent, PropType } from 'vue'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import { MultiMediaItem, VideoFile, LocalFile } from '~/types'
@@ -186,6 +186,7 @@ export default defineComponent({
         true
       )
       for (const [i, mm] of mmItems.entries()) {
+        console.log(`mm ${i + 1}`, mm)
         this.setProgress(i + 1, mmItems.length)
         const {
           Label,
@@ -196,7 +197,6 @@ export default defineComponent({
           IssueTagNumber,
           MimeType,
           CategoryType,
-          MultiMeps,
         } = mm.queryInfo as MultiMediaItem
 
         const prefix = (i + 1).toString().padStart(2, '0')
@@ -204,6 +204,7 @@ export default defineComponent({
           '.' + MimeType ? (MimeType.includes('video') ? '.mp4' : '.mp3') : ''
 
         const title =
+          mm.title ||
           Label ||
           Caption ||
           trimExt(FilePath ?? '') ||
@@ -223,26 +224,10 @@ export default defineComponent({
         if (CategoryType && CategoryType !== -1) {
           tempMedia.contents =
             (await this.$getZipContentsByName(this.file, FilePath)) ?? undefined
+        } else if (mm.url) {
+          Object.assign(tempMedia, mm)
         } else {
-          // Try to get external media
-          const externalMedia = (await this.$getMediaLinks(
-            {
-              pubSymbol: KeySymbol as string,
-              track: Track ?? undefined,
-              issue: IssueTagNumber?.toString(),
-              docId: MultiMeps ?? undefined,
-            },
-            true
-          )) as VideoFile[]
-
-          if (externalMedia.length > 0) {
-            Object.assign(tempMedia, externalMedia[0])
-            tempMedia.safeName = `${prefix} - ${basename(
-              tempMedia.url as string
-            )}`
-          } else {
-            this.missingMedia.push(tempMedia.filename as string)
-          }
+          this.missingMedia.push(tempMedia.filename as string)
         }
         this.mediaFiles.push(tempMedia)
       }

@@ -94,7 +94,11 @@
             variant="home"
             :loading="mounting"
             :disabled="!valid"
-            :style="(valid || mounting) ? undefined : 'background-color: #B71C1C !important'"
+            :style="
+              valid || mounting
+                ? undefined
+                : 'background-color: #B71C1C !important'
+            "
           />
         </v-col>
       </v-col>
@@ -238,7 +242,9 @@ export default defineComponent({
           if (!valid && match === -1) {
             this.panel.push(i)
           } else if (!this.mounted && valid && match > -1) {
-            this.panel.splice(match, 1)
+            if (this.tab === 0) {
+              this.panel.splice(match, 1)
+            }
           }
         })
         this.mounted ||= this.valid

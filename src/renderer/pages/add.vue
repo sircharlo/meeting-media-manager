@@ -210,7 +210,7 @@ import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
-import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
+import { WebDAVClient } from 'webdav/dist/web/types'
 import {
   faArrowDown19,
   faCloud,
@@ -301,9 +301,6 @@ export default defineComponent({
     },
     client(): WebDAVClient {
       return this.$store.state.cong.client as WebDAVClient
-    },
-    contents(): FileStat[] {
-      return this.$store.state.cong.contents as FileStat[]
     },
     date(): string {
       return this.$route.query.date as string
@@ -489,34 +486,17 @@ export default defineComponent({
         const mediaPath = join(this.$getPrefs('cong.dir') as string, 'Media')
         const datePath = join(mediaPath, this.date)
         const filePath = join(datePath, file.safeName)
-        const mediaPathExists = !!this.contents.find(
-          ({ filename }) => filename === mediaPath
-        )
-        const datePathExists = !!this.contents.find(
-          ({ filename }) => filename === datePath
-        )
 
         try {
-          if (!mediaPathExists) {
-            await this.client.createDirectory(mediaPath)
-          }
+          await this.$createCongDir(mediaPath)
         } catch (e: unknown) {
-          console.error(e)
-          if (!(await this.client.exists(mediaPath))) {
-            this.$warn('errorWebdavPut', { identifier: mediaPath })
-          }
+          this.$error('errorWebdavPut', e, mediaPath)
         }
 
         try {
-          if (!datePathExists) {
-            console.debug(JSON.stringify(this.contents))
-            await this.client.createDirectory(datePath)
-          }
+          await this.$createCongDir(datePath)
         } catch (e: unknown) {
-          console.debug(JSON.stringify(this.contents))
-          if (!(await this.client.exists(datePath))) {
-            this.$warn('errorWebdavPut', { identifier: datePath })
-          }
+          this.$error('errorWebdavPut', e, datePath)
         }
 
         const perf: any = {

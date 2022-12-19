@@ -46,6 +46,7 @@ const plugin: Plugin = (
     $mediaItems,
     $translate,
     $write,
+    $getJWLangs,
     $findOne,
     $error,
     $getDb,
@@ -243,6 +244,12 @@ const plugin: Plugin = (
         }
       } catch (e: unknown) {
         $log.error(e)
+      }
+    } else if (mmItem.FilePath) {
+      const extractedLang = mmItem.FilePath.split('_')[1]
+      const langs = await $getJWLangs()
+      if (langs.find((l) => l.langcode === extractedLang)) {
+        lang = extractedLang
       }
     }
     if (targetParNrExists) {
@@ -453,11 +460,12 @@ const plugin: Plugin = (
         where += ` AND Multimedia.SuppressZoom <> 1`
       }
 
+      const includePrinted = $getPrefs('media.includePrintedMedia')
       const lffiString = `(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')`
-      const lffiImgString = `(Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 6 AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`
+      const lffiImgString = `(Multimedia.MimeType LIKE '%image%' ${
+        includePrinted ? '' : 'AND Multimedia.CategoryType <> 6'
+      } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`
 
-      if (keySymbol !== 'lffi')
-        where += ` AND (${lffiString} OR ${lffiImgString})`
       if (keySymbol === 'lffi') {
         if (!excludeLffi && !excludeLffiImages) {
           where += ` AND (${lffiString} OR ${lffiImgString})`
@@ -466,6 +474,8 @@ const plugin: Plugin = (
         } else if (!excludeLffiImages) {
           where += ` AND ${lffiImgString}`
         }
+      } else {
+        where += ` AND (${lffiString} OR ${lffiImgString})`
       }
 
       const promises: Promise<VideoFile | ImageFile | null>[] = []
@@ -842,6 +852,7 @@ const plugin: Plugin = (
         db = (await $getDb({
           pub,
           issue,
+          lang,
           file: (await $getZipContentsByExt(localPath, '.db')) ?? undefined,
         })) as Database
 
@@ -896,6 +907,7 @@ const plugin: Plugin = (
         db = await $getDb({
           pub,
           issue,
+          lang,
           file: readFileSync(dbPath),
         })
       } else return null

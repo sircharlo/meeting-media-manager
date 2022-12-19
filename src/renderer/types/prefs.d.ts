@@ -53,6 +53,7 @@ export interface MediaPrefs {
   excludeTh: boolean
   hideMediaLogo: boolean
   hideWinAfterMedia: boolean
+  includePrintedMedia: boolean
   keepOriginalsAfterConversion: boolean
   lang: string | null
   langFallback: string | null

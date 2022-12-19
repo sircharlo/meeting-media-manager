@@ -201,7 +201,6 @@ import { basename, dirname, join } from 'upath'
 import draggable from 'vuedraggable'
 import { ipcRenderer } from 'electron'
 import {
-  faEye,
   faListOl,
   faRotateRight,
   faBackward,
@@ -269,7 +268,7 @@ export default defineComponent({
         },
         {
           title: this.$t('showPrefix'),
-          icons: [faEye, faListOl],
+          icons: [faListOl],
           // @ts-ignore
           action: this.togglePrefix,
         },
