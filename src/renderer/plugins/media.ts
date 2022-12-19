@@ -461,8 +461,11 @@ const plugin: Plugin = (
         where += ` AND Multimedia.SuppressZoom <> 1`
       }
 
+      const includePrinted = $getPrefs('media.includePrintedMedia')
       const lffiString = `(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')`
-      const lffiImgString = `(Multimedia.MimeType LIKE '%image%' AND Multimedia.CategoryType <> 6 AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`
+      const lffiImgString = `(Multimedia.MimeType LIKE '%image%' ${
+        includePrinted ? '' : 'AND Multimedia.CategoryType <> 6'
+      } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`
 
       if (keySymbol === 'lffi') {
         if (!excludeLffi && !excludeLffiImages) {
