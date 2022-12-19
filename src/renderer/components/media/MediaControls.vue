@@ -28,6 +28,21 @@
             </v-list-item>
           </v-list>
         </v-menu>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              aria-label="Add song"
+              v-bind="attrs"
+              v-on="on"
+              @click="addSong = !addSong"
+            >
+              <font-awesome-icon :icon="faMusic" pull="left" size="lg" />
+              <font-awesome-icon :icon="faPlus" pull="right" size="lg" />
+            </v-btn>
+          </template>
+          <span>{{ $t('lastMinuteSong') }}</span>
+        </v-tooltip>
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
@@ -120,6 +135,39 @@
         ${listHeight}
       `"
     >
+      <form-input
+        v-if="addSong"
+        id="select-song"
+        ref="songPicker"
+        v-model="song"
+        field="autocomplete"
+        :items="songs"
+        item-text="title"
+        item-value="safeName"
+        hide-details="auto"
+        class="pa-4"
+        clearable
+        :loading="loadingSongs"
+        return-object
+      />
+      <template v-if="song">
+        <v-list class="ma-4">
+          <media-item
+            :key="song.url"
+            :src="song.url"
+            :play-now="song.play"
+            :stop-now="song.stop"
+            :deactivate="song.deactivate"
+            :media-active="mediaActive"
+            :video-active="videoActive"
+            :show-prefix="showPrefix"
+            :streaming-file="song"
+            @playing="setIndex(-1)"
+            @deactivated="song.deactivate = false"
+          />
+        </v-list>
+        <v-divider class="mx-4" />
+      </template>
       <draggable
         v-model="items"
         tag="v-list"
@@ -157,6 +205,8 @@ import {
   faRotateRight,
   faBackward,
   faForward,
+  faMusic,
+  faPlus,
   faGlobe,
   faArrowDownUpLock,
   faEllipsisVertical,
@@ -164,6 +214,7 @@ import {
   faFolderOpen,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
+import { VideoFile } from '~/types'
 import { MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
   components: {
@@ -189,6 +240,10 @@ export default defineComponent({
       dragging: false,
       sortable: false,
       loading: true,
+      addSong: false,
+      song: null as null | VideoFile,
+      songs: [] as VideoFile[],
+      loadingSongs: true,
       showPrefix: false,
       items: [] as {
         id: string
@@ -239,6 +294,12 @@ export default defineComponent({
     date(): string {
       return this.$route.query.date as string
     },
+    faMusic() {
+      return faMusic
+    },
+    faPlus() {
+      return faPlus
+    },
     faEllipsisVertical() {
       return faEllipsisVertical
     },
@@ -262,6 +323,9 @@ export default defineComponent({
     },
   },
   watch: {
+    song() {
+      this.addSong = false
+    },
     async mediaActive(val: boolean) {
       this.items.forEach((item) => {
         item.play = false
@@ -285,7 +349,8 @@ export default defineComponent({
   beforeDestroy() {
     ipcRenderer.removeAllListeners('play')
   },
-  mounted() {
+  async mounted() {
+    const promise = this.getSongs()
     this.getMedia()
     ipcRenderer.on('play', (_e, type: 'next' | 'previous') => {
       if (type === 'next') {
@@ -294,8 +359,15 @@ export default defineComponent({
         this.previous()
       }
     })
+
+    await promise
   },
   methods: {
+    async getSongs() {
+      this.loadingSongs = true
+      this.songs = await this.$getSongs()
+      this.loadingSongs = false
+    },
     openWebsite() {
       ipcRenderer.send(
         'openWebsite',
@@ -309,13 +381,16 @@ export default defineComponent({
     setIndex(index: number) {
       const previousItem = this.items[this.currentIndex]
       if (previousItem && this.currentIndex !== index) {
+        // @ts-ignore
         previousItem.deactivate = true
       }
       this.currentIndex = index
     },
     previous() {
       if (this.mediaActive) {
-        this.items[this.currentIndex].stop = true
+        if (this.currentIndex >= 0) {
+          this.items[this.currentIndex].stop = true
+        }
       } else if (this.currentIndex > 0) {
         this.currentIndex--
         this.items[this.currentIndex].play = true
@@ -334,7 +409,9 @@ export default defineComponent({
     },
     next() {
       if (this.mediaActive) {
-        this.items[this.currentIndex].stop = true
+        if (this.currentIndex >= 0) {
+          this.items[this.currentIndex].stop = true
+        }
       } else if (this.currentIndex < this.items.length - 1) {
         this.currentIndex++
         this.items[this.currentIndex].play = true

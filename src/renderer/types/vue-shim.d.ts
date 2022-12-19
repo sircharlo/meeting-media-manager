@@ -107,6 +107,7 @@ interface CustomProps {
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
   $getScenes: (current: boolean = false) => Promise<string[] | string>
+  $getSongs: () => Promise<VideoFile[]>
   $getWeMedia: (
     date: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
