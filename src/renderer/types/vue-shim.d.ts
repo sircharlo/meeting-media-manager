@@ -59,10 +59,12 @@ interface CustomProps {
     file,
     pub,
     issue,
+    lang,
   }: {
     file?: Buffer
     pub?: string
     issue?: string
+    lang?: string
   }) => Promise<Database | null>
   $getDbFromJWPUB: (
     pub?: string,

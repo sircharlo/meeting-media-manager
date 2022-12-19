@@ -3,7 +3,7 @@ import { Plugin } from '@nuxt/types'
 // eslint-disable-next-line import/named
 import sqljs, { Database } from 'sql.js'
 
-const plugin: Plugin = ({ store, $log, $config }, inject) => {
+const plugin: Plugin = ({ store, $log, $config, $getPrefs }, inject) => {
   function executeQuery(db: Database, query: string) {
     const result = db.exec(query)[0]
     const valObj: any[] = []
@@ -25,16 +25,20 @@ const plugin: Plugin = ({ store, $log, $config }, inject) => {
       file,
       pub,
       issue,
+      lang,
     }: {
       file?: Buffer
       pub?: string
       issue?: string
+      lang?: string
     }): Promise<Database | null> => {
       // Get saved db if available
+      if (!lang) lang = $getPrefs('media.lang') as string
       if (pub && issue) {
         const result = (await store.dispatch('db/get', {
           pub,
           issue,
+          lang,
         })) as Database
         if (result) return result
       }
@@ -48,7 +52,7 @@ const plugin: Plugin = ({ store, $log, $config }, inject) => {
             platform() === 'win32' ? `/${filename}` : remotePath(filename),
         })
         const db = new SQL.Database(file)
-        if (pub && issue) store.commit('db/set', { pub, issue, db })
+        if (pub && issue) store.commit('db/set', { lang, pub, issue, db })
         return db
       } catch (e: unknown) {
         $log.error(e)

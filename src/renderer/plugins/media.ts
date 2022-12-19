@@ -246,10 +246,8 @@ const plugin: Plugin = (
       }
     } else if (mmItem.FilePath) {
       const extractedLang = mmItem.FilePath.split('_')[1]
-      console.log('lang from filepath', extractedLang)
       const langs = await $getJWLangs()
       if (langs.find((l) => l.langcode === extractedLang)) {
-        console.log('found')
         lang = extractedLang
       }
     }
@@ -853,6 +851,7 @@ const plugin: Plugin = (
         db = (await $getDb({
           pub,
           issue,
+          lang,
           file: (await $getZipContentsByExt(localPath, '.db')) ?? undefined,
         })) as Database
 
@@ -907,6 +906,7 @@ const plugin: Plugin = (
         db = await $getDb({
           pub,
           issue,
+          lang,
           file: readFileSync(dbPath),
         })
       } else return null
