@@ -278,8 +278,23 @@ const plugin: Plugin = (
     }
   }
 
+  inject('createCongDir', async (dir: string) => {
+    const contents = store.state.cong.contents as FileStat[]
+    if (!contents.find(({ filename }) => filename === dir)) {
+      const client = store.state.cong.client as WebDAVClient
+      try {
+        await client.createDirectory(dir)
+      } catch (e: unknown) {
+        if (await client.exists(dir)) {
+          return
+        }
+        throw e
+      }
+    }
+  })
+
   // Update the local contents of the cong server
-  inject('updateContent', async (): Promise<void> => {
+  async function updateContent(): Promise<void> {
     if (!store.state.cong.client) return
 
     const { server, user, password, dir } = $getPrefs('cong') as CongPrefs
@@ -292,7 +307,8 @@ const plugin: Plugin = (
       dir as string
     )
     store.commit('cong/setContents', contents)
-  })
+  }
+  inject('updateContent', updateContent)
 
   // Check if a specific preference/setting is locked according to the cong server
   inject('isLocked', (key: string): boolean => {

@@ -37,6 +37,7 @@ interface CustomProps {
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
   $copy: (src: string, dest: string) => void
+  $createCongDir: (dir: string) => Promise<void>
   $createMediaNames: () => void
   $downloadIfRequired: (
     file: VideoFile,

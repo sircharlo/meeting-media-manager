@@ -283,7 +283,17 @@ export default defineComponent({
             return m
           })
           .sort((a, b) => {
-              return ((!!this.prefix && a.isLocal === undefined ? this.prefix + " " : "") + a.safeName as string).localeCompare((!!this.prefix && b.isLocal === undefined ? this.prefix + " " : "") + b.safeName as string, undefined, {numeric: true})
+            return (
+              ((!!this.prefix && a.isLocal === undefined
+                ? this.prefix + ' '
+                : '') + a.safeName) as string
+            ).localeCompare(
+              ((!!this.prefix && b.isLocal === undefined
+                ? this.prefix + ' '
+                : '') + b.safeName) as string,
+              undefined,
+              { numeric: true }
+            )
           })
       } else {
         this.mediaList = [
@@ -374,11 +384,6 @@ export default defineComponent({
       this.previewName = item.safeName as string
       return this.preview
     },
-    async createDirIfNotExists(dir: string) {
-      if (!this.contents.find(({ filename }) => filename === dir)) {
-        await this.client.createDirectory(dir)
-      }
-    },
     async toggleVisibility(item: MeetingFile | LocalFile) {
       const mediaMap = (
         this.$store.getters['media/meetings'] as Map<
@@ -400,8 +405,8 @@ export default defineComponent({
             const filePath = join(datePath, item.safeName)
 
             // Create hidden/date dir if not exists
-            await this.createDirIfNotExists(hiddenPath)
-            await this.createDirIfNotExists(datePath)
+            await this.$createCongDir(hiddenPath)
+            await this.createCongDir(datePath)
 
             // Remove file if exists or add it if it doesn't
             if (this.contents.find(({ filename }) => filename === filePath)) {
