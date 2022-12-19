@@ -406,7 +406,7 @@ export default defineComponent({
 
             // Create hidden/date dir if not exists
             await this.$createCongDir(hiddenPath)
-            await this.createCongDir(datePath)
+            await this.$createCongDir(datePath)
 
             // Remove file if exists or add it if it doesn't
             if (this.contents.find(({ filename }) => filename === filePath)) {
