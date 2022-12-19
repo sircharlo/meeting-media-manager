@@ -62,7 +62,8 @@ const plugin: Plugin = (
 ) => {
   async function extractMediaItems(
     extract: MultiMediaExtract,
-    setProgress?: (loaded: number, total: number, global?: boolean) => void
+    setProgress?: (loaded: number, total: number, global?: boolean) => void,
+    imagesOnly = false
   ): Promise<MeetingFile[]> {
     extract.Lang = $getPrefs('media.lang') as string
     if (extract.Link) {
@@ -110,6 +111,10 @@ const plugin: Plugin = (
       )
     )
       .filter((mmItem) => {
+        if (imagesOnly && $isVideo(mmItem?.queryInfo?.FilePath ?? '')) {
+          return false
+        }
+
         if (
           mmItem?.queryInfo?.tableQuestionIsUsed &&
           mmItem.queryInfo.NextParagraphOrdinal &&
@@ -175,7 +180,17 @@ const plugin: Plugin = (
     const promises: Promise<MeetingFile[]>[] = []
 
     extracts.forEach((extract) => {
-      promises.push(extractMediaItems(extract, setProgress))
+      let imagesOnly = false
+      if (extract.UniqueEnglishSymbol === 'lff') {
+        const match = extracts.find(
+          (e) =>
+            e.UniqueEnglishSymbol === 'lff' &&
+            e.BeginParagraphOrdinal !== extract.BeginParagraphOrdinal
+        )
+        imagesOnly =
+          !!match && extract.BeginParagraphOrdinal < match.BeginParagraphOrdinal
+      }
+      promises.push(extractMediaItems(extract, setProgress, imagesOnly))
     })
 
     const result = await Promise.allSettled(promises)
