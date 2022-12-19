@@ -69,8 +69,8 @@
             v-on="on"
             @click="downloadShuffleMusic()"
           >
-            <font-awesome-icon :icon="faDownload" size="lg" pull="left" />
-            <font-awesome-icon :icon="faMusic" size="lg" pull="right" />
+            <font-awesome-icon :icon="faMusic" size="lg" pull="left" />
+            <font-awesome-icon :icon="faDownload" size="lg" pull="right" />
           </v-btn>
         </template>
         <span>
