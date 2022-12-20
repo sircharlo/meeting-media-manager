@@ -445,13 +445,12 @@ const plugin: Plugin = (
     // Get directories
     const dirs = [
       ...contents.filter(({ type }) => type === 'directory'),
-    ] as CongFile[]
+    ].sort((a, b) => a.basename.localeCompare(b.basename)) as CongFile[]
 
     // Get files
     const files = [
       ...contents.filter(({ type }) => type === 'file'),
-    ] as CongFile[]
-
+    ].sort((a, b) => a.basename.localeCompare(b.basename)) as CongFile[]    
     // Add each file to its directory
     files.forEach((file) => {
       const fileDir = dirname(file.filename)
