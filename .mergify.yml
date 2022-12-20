@@ -3,5 +3,6 @@ pull_request_rules:
     conditions:
       - author=gitlocalize-app[bot]
     actions:
+      update:
       merge:
         method: merge
