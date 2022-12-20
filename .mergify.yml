@@ -10,5 +10,6 @@ pull_request_rules:
                  - title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.
                  - title~=^chore\(deps-dev\). bump [^\s]+ from ([\d]+)\..+ to \1\.
     actions:
+      update:
       merge:
         method: merge
