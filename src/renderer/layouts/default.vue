@@ -52,7 +52,9 @@ export default defineComponent({
       return this.$route.query.cong
     },
     scenes(): string[] {
-      return this.$store.state.obs.scenes as string[]
+      return (this.$store.state.obs.scenes as string[]).filter(
+        (s) => s !== this.$getPrefs('app.obs.mediaScene')
+      )
     },
     client() {
       return this.$store.state.cong.client as WebDAVClient | null
