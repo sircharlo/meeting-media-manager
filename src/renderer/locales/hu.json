@@ -49,8 +49,6 @@
   "errorWebdavRm": "Hiba történt a következő fájl törlése közben. Kérjük, lépjen kapcsolatba a videokonferencia szervezőjével.",
   "errorWebdavTooBig": "A feltölteni kívánt fájl túl nagy (maximum 512 MB). A fájl helyileg hozzá lett adva, de a gyülekezet szerveréhez nem.",
   "errorWebdavTooManyRequests": "Túl sok kérés érkezett a kiszolgálóhoz. Kérjük, próbálja meg később újra.",
-  "excludeLffi": "Ne vegye figyelembe az audio- és videofájlokat az <em>lffi</em> kiadványból.",
-  "excludeLffiImages": "Ne vegye figyelembe a képeket az <em>lffi</em> kiadványból.",
   "excludeTh": "Ne vegye figyelembe a médiát a <em>th (Odaadóan fogalkozz a tanítással)</em> kiadványból",
   "fetchMedia": "Médiamappák frissítése",
   "fieldInvalid": "Ez nem érvényes érték erre a mezőre.",

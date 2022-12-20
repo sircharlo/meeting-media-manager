@@ -52,8 +52,6 @@
   "errorWebdavTooBig": "Filen du försöker ladda upp är för stor (max 512 MB). Filen har lagts till lokalt, men inte på cong-servern.",
   "errorWebdavTooManyRequests": "För många förfrågningar har skickats till servern. Vänligen försök igen senare.",
   "errorWUnavailable": "Studieupplagan av Vakttornet är inte tillgänglig på det valda språket. Överväg att ställa in ett reservspråk som kommer används när ditt språk saknas.",
-  "excludeLffi": "Exkludera audio- och videofiler från broschyren <em>lffi</em>",
-  "excludeLffiImages": "Exkludera bilder från broschyren <em>lffi</em>",
   "excludeTh": "Exkludera all media från broschyren <em>th</em>",
   "fetchMedia": "Uppdatera mediamappar",
   "fieldInvalid": "Detta är inte ett giltigt värde för det här fältet.",

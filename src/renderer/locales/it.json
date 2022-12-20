@@ -51,8 +51,6 @@
   "errorWebdavTooBig": "Il file che stai tentando di caricare è troppo grande (massimo 512 MB). Il file è stato aggiunto localmente, ma non al server della congregazione.",
   "errorWebdavTooManyRequests": "Sono state inviate troppe richieste al server. Per favore riprova più tardi.",
   "errorWUnavailable": "L'edizione per lo studio della Torre di Guardia non è disponibile nella lingua selezionata. Prendi in considerazione l'impostazione di una lingua di riserva da utilizzare quando necessario.",
-  "excludeLffi": "Escludi i file audio e video dell'opuscolo <em>lffi</em>",
-  "excludeLffiImages": "Escludi le immagini dell'opuscolo <em>lffi</em>",
   "excludeTh": "Escludi tutti i media dell'opuscolo <em>th</em>",
   "fetchMedia": "Aggiorna le cartelle con i media",
   "fieldInvalid": "Questo non è un valore valido per questo campo.",

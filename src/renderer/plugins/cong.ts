@@ -361,7 +361,6 @@ const plugin: Plugin = (
           })
 
           const prefs = JSON.parse(json as string)
-          const forcedPrefs = $clone(prefs)
 
           // Migration of old pref structures
           for (const key of Object.keys(prefs)) {
@@ -388,6 +387,22 @@ const plugin: Plugin = (
               prefs[keys[0]][keys[1]][keys[2]] = newProp.val
             }
           }
+
+          console.log('Forced prefs', $clone(prefs))
+
+          if (prefs.media.excludeLffi !== undefined) {
+            console.log('Migrating excludeLffi')
+            delete prefs.media.excludeLffi
+          }
+
+          if (prefs.media.excludeLffiImages !== undefined) {
+            console.log('Migrating excludeLffiImages')
+            prefs.media.excludeLffImages = $clone(prefs.media.excludeLffiImages)
+            delete prefs.media.excludeLffiImages
+          }
+
+          const forcedPrefs = $clone(prefs)
+          console.log(forcedPrefs)
 
           if (!prefs.app) prefs.app = {}
           prefs.app.obs = Object.assign(
