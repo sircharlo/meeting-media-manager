@@ -103,7 +103,7 @@ const FORCABLE = [
   'media.enableMp4Conversion',
   'media.enablePp',
   'media.enableVlcPlaylistCreation',
-  'media.includePrintedMedia',
+  'media.includePrinted',
   'media.excludeLffi',
   'media.excludeLffiImages',
   'media.excludeTh',
