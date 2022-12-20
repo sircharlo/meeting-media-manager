@@ -64,7 +64,7 @@
   "hideMediaLogo": "Verberg logo in media presentatie modus",
   "hideWinAfterMedia": "Verberg media scherm nadat media is afgespeeld",
   "hostname": "Hostnaam",
-  "includePrintedMedia": "Haal geprinte media op als het beschikbaar is",
+  "includePrinted": "Haal geprinte media op als het beschikbaar is",
   "info": "Informatie",
   "infoPubIgnored": "Kon de media van de volgende publicatie niet ophalen:",
   "infoShortcutSetFail": "M³ kon de volgende toetsenbord sneltoets niet activeren. Zorg ervoor dat andere apps deze sneltoets niet gebruikt and start M³ opnieuw op.",
