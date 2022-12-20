@@ -64,7 +64,7 @@
   "hideMediaLogo": "Hide logo from media presentation window",
   "hideWinAfterMedia": "Hide media window after media finished playing",
   "hostname": "Hostname",
-  "includePrintedMedia": "Include printed media when available",
+  "includePrinted": "Include printed media when available",
   "info": "Information",
   "infoPubIgnored": "Unable to fetch media for the following publication:",
   "infoShortcutSetFail": "M³ was unable to activate the following keyboard shortcut. If you wish to use this keyboard shortcut, please make sure that no other app is using it, and relaunch M³. Otherwise, no action is required.",
