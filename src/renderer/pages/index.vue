@@ -647,6 +647,7 @@ export default defineComponent({
     },
     async syncCongMedia() {
       if (this.congSync) {
+        console.log('sync cong media')
         try {
           await this.$syncCongMedia(this.baseDate, this.setProgress)
           if (this.congSyncColor === 'warning') {
@@ -811,6 +812,8 @@ export default defineComponent({
           stop: performance.now(),
         })
         this.$printStats()
+        this.$store.commit('stats/clearPerf')
+        this.$store.commit('stats/clearDownloadStats')
 
         if (this.$getPrefs('app.autoQuitWhenDone')) {
           this.action = 'quitApp'
