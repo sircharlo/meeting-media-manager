@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip v-if="clickedOnce" top>
+  <v-tooltip v-if="clickedOnce" top :close-delay="3 * ms">
     <template #activator="{ on, attrs }">
       <v-btn
         id="shuffle"
@@ -84,6 +84,7 @@ export default defineComponent({
       timeRemaining: '',
       interval: null as null | NodeJS.Timer,
       icons: [faMusic, faShuffle],
+      ms: MS_IN_SEC,
     }
   },
   computed: {
