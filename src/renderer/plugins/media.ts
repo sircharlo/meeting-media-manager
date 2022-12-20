@@ -475,7 +475,7 @@ const plugin: Plugin = (
         where += ` AND Multimedia.SuppressZoom <> 1`
       }
 
-      const includePrinted = $getPrefs('media.includePrintedMedia')
+      const includePrinted = $getPrefs('media.includePrinted')
       const lffiString = `(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')`
       const lffiImgString = `(Multimedia.MimeType LIKE '%image%' ${
         includePrinted ? '' : 'AND Multimedia.CategoryType <> 6'
