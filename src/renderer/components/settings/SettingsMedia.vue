@@ -237,13 +237,13 @@
       </template>
     </form-input>
     <form-input
-      id="media.includePrintedMedia"
-      v-model="media.includePrintedMedia"
+      id="media.includePrinted"
+      v-model="media.includePrinted"
       field="switch"
-      :locked="$isLocked('media.includePrintedMedia')"
+      :locked="$isLocked('media.includePrinted')"
     >
       <template #label>
-        <span v-html="$t('includePrintedMedia')" />
+        <span v-html="$t('includePrinted')" />
       </template>
     </form-input>
   </v-form>
