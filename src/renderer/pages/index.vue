@@ -43,7 +43,7 @@
                 size="xs"
                 @click.stop="atCongClick(item)"
               />
-              <v-tooltip v-else left>
+              <v-tooltip v-else left :disabled="true" :value="true">
                 <template #activator="{ on, attrs }">
                   <font-awesome-icon
                     v-bind="attrs"

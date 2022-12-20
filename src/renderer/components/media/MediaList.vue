@@ -31,7 +31,7 @@
           class="warning--text"
           size="xs"
         />
-        <v-tooltip v-else right>
+        <v-tooltip v-else right :disabled="true" :value="true">
           <template #activator="{ on, attrs }">
             <font-awesome-icon
               v-bind="attrs"

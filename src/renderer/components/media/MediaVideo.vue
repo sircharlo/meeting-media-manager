@@ -49,7 +49,7 @@
         </v-col>
       </v-row>
     </v-overlay>
-    <v-tooltip v-if="clickedOnce" right>
+    <v-tooltip v-if="clickedOnce" right :disabled="true" :value="true">
       <template #activator="{ on, attrs }">
         <v-btn
           x-small

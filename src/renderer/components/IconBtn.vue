@@ -44,7 +44,12 @@
       />
     </font-awesome-layers>
   </v-btn>
-  <v-tooltip v-else-if="clickedOnce" v-bind="tooltipObj">
+  <v-tooltip
+    v-else-if="clickedOnce"
+    v-bind="tooltipObj"
+    :value="true"
+    :disabled="true"
+  >
     <template #activator="{ on, attrs }">
       <v-btn
         :id="variant"
