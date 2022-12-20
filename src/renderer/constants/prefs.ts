@@ -39,7 +39,7 @@ const PREFS = {
     excludeTh: false,
     hideMediaLogo: false,
     hideWinAfterMedia: false,
-    includePrintedMedia: false,
+    includePrinted: false,
     keepOriginalsAfterConversion: false,
     lang: null,
     langFallback: null,
