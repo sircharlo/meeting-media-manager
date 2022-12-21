@@ -217,23 +217,13 @@
       </template>
     </form-input>
     <form-input
-      id="media.excludeLffi"
-      v-model="media.excludeLffi"
+      id="media.excludeLffImages"
+      v-model="media.excludeLffImages"
       field="switch"
-      :locked="$isLocked('media.excludeLffi')"
+      :locked="$isLocked('media.excludeLffImages')"
     >
       <template #label>
-        <span v-html="$t('excludeLffi')" />
-      </template>
-    </form-input>
-    <form-input
-      id="media.excludeLffiImages"
-      v-model="media.excludeLffiImages"
-      field="switch"
-      :locked="$isLocked('media.excludeLffiImages')"
-    >
-      <template #label>
-        <span v-html="$t('excludeLffiImages')" />
+        <span v-html="$t('excludeLffImages')" />
       </template>
     </form-input>
     <form-input

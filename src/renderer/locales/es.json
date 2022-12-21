@@ -49,8 +49,6 @@
   "errorWebdavRm": "Se produjo un error al intentar eliminar el siguiente archivo. Póngase en contacto con el organizador de su videoconferencia.",
   "errorWebdavTooBig": "El archivo que está intentando cargar es demasiado grande (máximo 512 MB). El archivo se agregó localmente, pero no al servidor de configuración..",
   "errorWebdavTooManyRequests": "Se han enviado demasiadas solicitudes al servidor. Por favor, inténtelo de nuevo más tarde.",
-  "excludeLffi": "Excluir archivos de audio y video del folleto <em>lffi</em>",
-  "excludeLffiImages": "Excluir ilustraciones del folleto <em>lffi</em>",
   "excludeTh": "Excluir contenido multimedia del folleto <em>th</em>",
   "fetchMedia": "¡Actualizar multimedia!",
   "fieldInvalid": "Este no es un valor válido para este campo.",

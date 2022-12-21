@@ -52,8 +52,6 @@
   "errorWebdavTooBig": "O ficheiro que você está tentando enviar é muito grande (excede o máximo de 512 MB). Ele foi incluído na pasta, mas não foi enviado ao servidor da congregação.",
   "errorWebdavTooManyRequests": "Foram enviadas muitas solicitações ao servidor. Por favor, tente novamente mais tarde.",
   "errorWUnavailable": "A Edição de Estudo da Sentinela não está disponível no idioma selecionado. Defina um idioma alternativo para usar sempre que necessário.",
-  "excludeLffi": "Eliminar ficheiros de áudio e vídeo da publicação <em>lffi</em>",
-  "excludeLffiImages": "Excluir imagens da publicação <em>lffi</em>",
   "excludeTh": "Eliminar todas as multimédias da publicação <em>th</em>",
   "fetchMedia": "Descarregar multimédias!",
   "fieldInvalid": "Este não é um valor válido para este campo.",

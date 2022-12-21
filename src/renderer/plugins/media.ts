@@ -62,7 +62,8 @@ const plugin: Plugin = (
 ) => {
   async function extractMediaItems(
     extract: MultiMediaExtract,
-    setProgress?: (loaded: number, total: number, global?: boolean) => void
+    setProgress?: (loaded: number, total: number, global?: boolean) => void,
+    imagesOnly = false
   ): Promise<MeetingFile[]> {
     extract.Lang = $getPrefs('media.lang') as string
     if (extract.Link) {
@@ -110,6 +111,10 @@ const plugin: Plugin = (
       )
     )
       .filter((mmItem) => {
+        if (imagesOnly && $isVideo(mmItem?.queryInfo?.FilePath ?? '')) {
+          return false
+        }
+
         if (
           mmItem?.queryInfo?.tableQuestionIsUsed &&
           mmItem.queryInfo.NextParagraphOrdinal &&
@@ -175,7 +180,20 @@ const plugin: Plugin = (
     const promises: Promise<MeetingFile[]>[] = []
 
     extracts.forEach((extract) => {
-      promises.push(extractMediaItems(extract, setProgress))
+      let imagesOnly = false
+      const excludeLffImages = $getPrefs('media.excludeLffImages')
+      if (extract.UniqueEnglishSymbol === 'lff') {
+        const match = extracts.find(
+          (e) =>
+            e.UniqueEnglishSymbol === 'lff' &&
+            e.BeginParagraphOrdinal !== extract.BeginParagraphOrdinal
+        )
+        imagesOnly =
+          !!match && extract.BeginParagraphOrdinal < match.BeginParagraphOrdinal
+      }
+      if (!imagesOnly || !excludeLffImages) {
+        promises.push(extractMediaItems(extract, setProgress, imagesOnly))
+      }
     })
 
     const result = await Promise.allSettled(promises)
@@ -431,84 +449,69 @@ const plugin: Plugin = (
 
     const mmItems: MeetingFile[] = []
 
-    const excludeLffi = $getPrefs('media.excludeLffi')
-    const excludeLffiImages = $getPrefs('media.excludeLffiImages')
+    let select = `SELECT ${mmTable}.DocumentId, ${mmTable}.MultimediaId, Multimedia.MimeType, Multimedia.DataType, Multimedia.MajorType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType`
+    let from = `FROM ${mmTable} INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`
+    let where = `WHERE ${
+      docId || docId === 0
+        ? `${mmTable}.DocumentId = ${docId}`
+        : `Document.MepsDocumentId = ${mepsId}`
+    }`
+    let groupAndSort = ''
 
-    if (!(keySymbol === 'lffi' && excludeLffi && excludeLffiImages)) {
-      let select = `SELECT ${mmTable}.DocumentId, ${mmTable}.MultimediaId, Multimedia.MimeType, Multimedia.DataType, Multimedia.MajorType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType`
-      let from = `FROM ${mmTable} INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`
-      let where = `WHERE ${
-        docId || docId === 0
-          ? `${mmTable}.DocumentId = ${docId}`
-          : `Document.MepsDocumentId = ${mepsId}`
-      }`
-      let groupAndSort = ''
+    const includePrinted = $getPrefs('media.includePrinted')
+    const videoString = `(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')`
+    const imgString = `(Multimedia.MimeType LIKE '%image%' ${
+      includePrinted ? '' : 'AND Multimedia.CategoryType <> 6'
+    } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`
 
-      if (mmTable === 'DocumentMultimedia') {
-        select += `, ${mmTable}.BeginParagraphOrdinal, ${mmTable}.EndParagraphOrdinal, Extract.Link, Multimedia.KeySymbol, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber`
-        from += ` INNER JOIN Multimedia ON Multimedia.MultimediaId = ${mmTable}.MultimediaId LEFT JOIN DocumentExtract ON DocumentExtract.DocumentId = ${mmTable}.DocumentId AND DocumentExtract.BeginParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal AND DocumentExtract.EndParagraphOrdinal = ${mmTable}.EndParagraphOrdinal LEFT JOIN Extract ON Extract.ExtractId = DocumentExtract.ExtractId`
-        groupAndSort = `GROUP BY ${mmTable}.MultimediaId ORDER BY ${mmTable}.BeginParagraphOrdinal`
+    where += ` AND (${videoString} OR ${imgString})`
 
-        if (targetParNrExists) {
-          select += `, Question.TargetParagraphNumberLabel`
-          from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`
-        }
+    if (mmTable === 'DocumentMultimedia') {
+      select += `, ${mmTable}.BeginParagraphOrdinal, ${mmTable}.EndParagraphOrdinal, Extract.Link, Multimedia.KeySymbol, Multimedia.MepsDocumentId AS MultiMeps, Document.MepsDocumentId, Multimedia.Track, Multimedia.IssueTagNumber`
+      from += ` INNER JOIN Multimedia ON Multimedia.MultimediaId = ${mmTable}.MultimediaId LEFT JOIN DocumentExtract ON DocumentExtract.DocumentId = ${mmTable}.DocumentId AND DocumentExtract.BeginParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal AND DocumentExtract.EndParagraphOrdinal = ${mmTable}.EndParagraphOrdinal LEFT JOIN Extract ON Extract.ExtractId = DocumentExtract.ExtractId`
+      groupAndSort = `GROUP BY ${mmTable}.MultimediaId ORDER BY ${mmTable}.BeginParagraphOrdinal`
+
+      if (targetParNrExists) {
+        select += `, Question.TargetParagraphNumberLabel`
+        from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`
       }
-
-      if (suppressZoomExists) {
-        select += `, Multimedia.SuppressZoom`
-        where += ` AND Multimedia.SuppressZoom <> 1`
-      }
-
-      const includePrinted = $getPrefs('media.includePrinted')
-      const lffiString = `(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')`
-      const lffiImgString = `(Multimedia.MimeType LIKE '%image%' ${
-        includePrinted ? '' : 'AND Multimedia.CategoryType <> 6'
-      } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`
-
-      if (keySymbol === 'lffi') {
-        if (!excludeLffi && !excludeLffiImages) {
-          where += ` AND (${lffiString} OR ${lffiImgString})`
-        } else if (!excludeLffi) {
-          where += ` AND ${lffiString}`
-        } else if (!excludeLffiImages) {
-          where += ` AND ${lffiImgString}`
-        }
-      } else {
-        where += ` AND (${lffiString} OR ${lffiImgString})`
-      }
-
-      const promises: Promise<VideoFile | ImageFile | null>[] = []
-
-      const items = $query(
-        db,
-        `${select} ${from} ${where} ${groupAndSort}`
-      ) as MultiMediaItem[]
-
-      items.forEach((mmItem) => {
-        promises.push(
-          processMultiMediaItem(
-            db,
-            mmItem,
-            targetParNrExists,
-            !!silent,
-            keySymbol,
-            issueTagNumber,
-            !!memOnly,
-            lang
-          )
-        )
-      })
-
-      const results = await Promise.allSettled(promises)
-      results.forEach((result) => {
-        if (result.status === 'fulfilled') {
-          if (result.value) {
-            mmItems.push(result.value)
-          }
-        }
-      })
     }
+
+    if (suppressZoomExists) {
+      select += `, Multimedia.SuppressZoom`
+      where += ` AND Multimedia.SuppressZoom <> 1`
+    }
+
+    const promises: Promise<VideoFile | ImageFile | null>[] = []
+
+    const items = $query(
+      db,
+      `${select} ${from} ${where} ${groupAndSort}`
+    ) as MultiMediaItem[]
+
+    items.forEach((mmItem) => {
+      promises.push(
+        processMultiMediaItem(
+          db,
+          mmItem,
+          targetParNrExists,
+          !!silent,
+          keySymbol,
+          issueTagNumber,
+          !!memOnly,
+          lang
+        )
+      )
+    })
+
+    const results = await Promise.allSettled(promises)
+    results.forEach((result) => {
+      if (result.status === 'fulfilled') {
+        if (result.value) {
+          mmItems.push(result.value)
+        }
+      }
+    })
     return mmItems
   }
   inject('getDocumentMultiMedia', getDocumentMultiMedia)

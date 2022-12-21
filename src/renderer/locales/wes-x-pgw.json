@@ -49,8 +49,6 @@
   "errorWebdavRm": "Something go wrong when we try delete this file. Abeg, make you speak to the person wey de organize wuna video conference.",
   "errorWebdavTooBig": "The file wey you try to de upload na too big (512MB or smaller). We add this one here, but we no fit put-am for cong. server.",
   "errorWebdavTooManyRequests": "The server don get plenty request them. Abeg, make you wait small-small and try-am again.",
-  "excludeLffi": "No use audio or video from the <em>lffi</em> brochure",
-  "excludeLffiImages": "No show picture them from the <em>lffi</em> brochure",
   "excludeTh": "No show nothing from the <em>th</em> brochure",
   "fetchMedia": "Update media folders",
   "fieldInvalid": "You no fit enter this one for this box.",

@@ -45,8 +45,6 @@
   "errorWebdavPut": "Beim Versuch, die folgende Datei zu schreiben, ist ein Fehler aufgetreten. Bitte den Videokonferenz-Organisator kontaktieren.",
   "errorWebdavRm": "Beim Versuch, die folgende Datei zu löschen, ist ein Fehler aufgetreten. Bitte den Videokonferenz-Organisator kontaktieren.",
   "errorWebdavTooBig": "Die Datei, die hochgeladen werden soll, ist zu groß (maximal 512 MB). Die Datei wurde lokal hinzugefügt, aber nicht auf dem Versammlungs-Server.",
-  "excludeLffi": "Audio- und Videodateien der <em>lffi</em> Broschüre ausschließen",
-  "excludeLffiImages": "Bilder der <em>lffi</em> Broschüre ausschließen",
   "excludeTh": "Alle Medien der <em>th</em> Broschüre ausschließen",
   "fetchMedia": "Medienordner aktualisieren",
   "fieldInvalid": "Dies ist kein gültiger Wert für dieses Feld.",
