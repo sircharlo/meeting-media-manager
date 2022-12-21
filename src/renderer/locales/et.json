@@ -48,8 +48,6 @@
   "errorWebdavRm": "Selle faili kustutamisel ilmnes viga. Võtke ühendust oma videokonverentsi korraldajaga.",
   "errorWebdavTooBig": "Fail, mida proovite üles laadida, on liiga suur (max 512 MB). Fail on lisatud kohapeal, kuid mitte koguduse serverisse.",
   "errorWebdavTooManyRequests": "Serverile on saadetud liiga palju päringuid. Palun proovi hiljem uuesti.",
-  "excludeLffi": "Ära arvesta heli- ja videofailie <em>lffi</em> brošüürist",
-  "excludeLffiImages": "Ära arvesta pilte <em>lffi</em> brošüürist",
   "excludeTh": "Ära arvesta <em>th</em> brošüürist kogu meediat",
   "fetchMedia": "Värskenda meediakaustu",
   "fieldInvalid": "See väärtus ei ole selle välja jaoks sobiv.",

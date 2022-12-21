@@ -48,8 +48,7 @@ export interface MediaPrefs {
   enablePp: boolean
   enableSubtitles: boolean
   enableVlcPlaylistCreation: boolean
-  excludeLffi: boolean
-  excludeLffiImages: boolean
+  excludeLffImages: boolean
   excludeTh: boolean
   hideMediaLogo: boolean
   hideWinAfterMedia: boolean

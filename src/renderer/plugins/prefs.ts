@@ -202,13 +202,9 @@ const schema: Schema<ElectronStore> = {
         type: 'boolean',
         default: PREFS.media.excludeTh,
       },
-      excludeLffi: {
+      excludeLffImages: {
         type: 'boolean',
-        default: PREFS.media.excludeLffi,
-      },
-      excludeLffiImages: {
-        type: 'boolean',
-        default: PREFS.media.excludeLffiImages,
+        default: PREFS.media.excludeLffImages,
       },
       ppBackward: {
         type: ['string', 'null'],
@@ -364,8 +360,20 @@ function storeOptions(name = 'prefs') {
       },
       '22.12.0': (store) => {
         if (store.get('app.localAdditionalMediaPrompt') !== undefined) {
-          // @ts-ignore: 'app.ppEnable' is not defined as a key of ElectronStore
+          // @ts-ignore: 'app.localAdditionalMediaPrompt' is not defined as a key of ElectronStore
           store.delete('app.localAdditionalMediaPrompt')
+        }
+      },
+      '23.1.0': (store) => {
+        if (store.get('media.excludeLffi') !== undefined) {
+          // @ts-ignore: 'app.excludeLffi' is not defined as a key of ElectronStore
+          store.delete('media.excludeLffi')
+        }
+        const excludeLffiImages = store.get('media.excludeLffiImages')
+        if (excludeLffiImages !== undefined) {
+          store.set('media.excludeLffImages', excludeLffiImages)
+          // @ts-ignore: 'app.excludeLffiImages' is not defined as a key of ElectronStore
+          store.delete('media.excludeLffiImages')
         }
       },
     },
