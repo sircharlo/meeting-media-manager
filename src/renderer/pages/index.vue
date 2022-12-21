@@ -647,7 +647,6 @@ export default defineComponent({
     },
     async syncCongMedia() {
       if (this.congSync) {
-        console.log('sync cong media')
         try {
           await this.$syncCongMedia(this.baseDate, this.setProgress)
           if (this.congSyncColor === 'warning') {

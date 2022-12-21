@@ -186,7 +186,6 @@ export default defineComponent({
         true
       )
       for (const [i, mm] of mmItems.entries()) {
-        console.log(`mm ${i + 1}`, mm)
         this.setProgress(i + 1, mmItems.length)
         const {
           Label,
