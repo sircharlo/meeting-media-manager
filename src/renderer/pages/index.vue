@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <template>
   <v-row justify="center" class="fill-height">
     <action-preview
@@ -44,7 +45,7 @@
                 @click.stop="atCongClick(item)"
               />
               <v-tooltip v-else left :value="true">
-                <template #activator>
+                <template #activator="data">
                   <font-awesome-icon
                     :icon="faSquareMinus"
                     class="error--text"

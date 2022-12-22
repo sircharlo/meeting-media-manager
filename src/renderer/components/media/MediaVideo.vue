@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <!-- Video in presentation mode -->
 <template>
   <div :id="id">
@@ -50,7 +51,7 @@
       </v-row>
     </v-overlay>
     <v-tooltip v-if="clickedOnce" right :value="true">
-      <template #activator>
+      <template #activator="data">
         <v-btn
           x-small
           absolute

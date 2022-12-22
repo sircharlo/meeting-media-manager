@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <!-- Icon buttons that are used multiple times across the application -->
 <template>
   <v-tooltip v-if="variant === 'pause'" v-bind="tooltipObj">
@@ -45,7 +46,7 @@
     </font-awesome-layers>
   </v-btn>
   <v-tooltip v-else-if="clickedOnce" v-bind="tooltipObj" :value="true">
-    <template #activator>
+    <template #activator="data">
       <v-btn
         :id="variant"
         ref="btn"

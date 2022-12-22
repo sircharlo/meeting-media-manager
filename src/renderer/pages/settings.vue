@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <template>
   <v-row justify="center" class="fill-height mb-0">
     <v-col cols="12" class="text-center" style="margin-bottom: 72px">
@@ -86,7 +87,7 @@
             <span>{{ $t('cleanCache') }}</span>
           </v-tooltip>
           <v-tooltip v-else :value="true" top>
-            <template #activator>
+            <template #activator="data">
               <v-btn
                 :color="cacheColor"
                 :loading="loading"

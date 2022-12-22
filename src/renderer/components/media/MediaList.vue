@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <!-- Media list in the media manager page -->
 <template>
   <v-list v-if="mediaList.length > 0" dense>
@@ -32,7 +33,7 @@
           size="xs"
         />
         <v-tooltip v-else right :value="true">
-          <template #activator>
+          <template #activator="data">
             <font-awesome-icon
               :icon="faSquareMinus"
               class="error--text"

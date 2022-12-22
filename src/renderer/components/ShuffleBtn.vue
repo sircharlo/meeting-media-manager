@@ -1,6 +1,7 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <template>
   <v-tooltip v-if="clickedOnce" top :value="true">
-    <template #activator>
+    <template #activator="data">
       <v-btn
         id="shuffle"
         ref="btn"
