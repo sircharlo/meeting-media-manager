@@ -89,6 +89,7 @@ jobs:
           retention-days: 30
 
   build:
+    needs: test
     runs-on: ${{ matrix.os }}
 
     strategy:
