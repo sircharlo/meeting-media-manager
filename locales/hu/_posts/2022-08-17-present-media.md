@@ -40,7 +40,7 @@ Ha az OBS Studio hordozható verzióját használja, telepítse a [Virtualcam](h
 
 If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
 
-Az OBS-beállításokban az `Általános` > `Értesítési terület` menüpontban kapcsolja be az összes jelölőnégyzetet. A `Kimenet` > `Közvetítés` menüpontban engedélyezze a Hardveres kódolót, ha rendelkezésre áll. A `Videó` > `Alap (vászon) felbontás` és a `Kimeneti (skálázott) felbontás` menüpontban válassza az `1280x720-as` felbontást, a `Leskálázási szűrőt` pedig állítsa `Bilineáris` értékre.
+Az OBS-beállításokban az `Általános` &gt; `Értesítési terület` menüpontban kapcsolja be az összes jelölőnégyzetet. A `Kimenet` &gt; `Közvetítés` menüpontban engedélyezze a Hardveres kódolót, ha rendelkezésre áll. A `Videó` &gt; `Alap (vászon) felbontás` és a `Kimeneti (skálázott) felbontás` menüpontban válassza az `1280x720-as` felbontást, a `Leskálázási szűrőt` pedig állítsa `Bilineáris` értékre.
 
 Állítson be legalább 2 jelenetet: egyet a média megjelenítéséhez (`Ablak felvétele` vagy `Kijelző felvétele` az egérkurzor kikapcsolásával és a megfelelő ablakcím/monitor kiválasztásával), és egyet a színpadi nézethez (`Videorögzítő eszköz` a Királyság-terem kamerájának kiválasztásával). Annyi jelenetet adhat hozzá, amennyit csak akar, a kamera beállításával, nagyításával és vágásával, amennyire szükséges (nézet a pódiumról, nézet az előadóról és a felolvasóról, nézet az asztalról stb.).
 
@@ -103,7 +103,8 @@ Engedélyezze a `Média megjelenítése külső megjelenítőn vagy külön abla
 #### Az összejövetel megkezdése
 
 Ugyanaz, mint a fent említett megfelelő szakaszban.
-A személyes részek közvetítése a Királyság-terem színpadjáról a Zoom-on keresztül
+
+#### A személyes részek közvetítése a Királyság-terem színpadjáról a Zoom-on keresztül
 
 Ugyanaz, mint a fent említett megfelelő szakaszban.
 
