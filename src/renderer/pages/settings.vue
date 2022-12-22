@@ -64,7 +64,7 @@
             </template>
             <span>{{ $t('reportIssue') }}</span>
           </v-tooltip>
-          <v-tooltip top>
+          <v-tooltip :open-on-click="false" :open-on-focus="false" top>
             <template #activator="{ on, attrs }">
               <v-btn
                 :color="cacheColor"
