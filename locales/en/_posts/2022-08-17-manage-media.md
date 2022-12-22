@@ -17,7 +17,7 @@ Here's how to **add** media from the media management screen.
 | Option           | Explanation                                         |
 | ---------------- | --------------------------------------------------- |
 | `Type of upload` | Choose from one of the 3 `media types` (see below). |
-| `Media to add`   | Depends on the media type chosen (see below).       |
+| `Media to add`   | Depends on the `media type` chosen (see below).       |
 | `Filename prefix` | Up to 6 digits can be added before the media filename(s), to help with sorting. |
 | `Media list` | This shows the currently planned media for the selected date tile. |
 

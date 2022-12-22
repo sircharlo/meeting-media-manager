@@ -40,7 +40,7 @@ Ha az OBS Studio hordozható verzióját használja, telepítse a [Virtualcam](h
 
 If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
 
-Az OBS-beállításokban az `Általános` &gt; `Értesítési terület` menüpontban kapcsolja be az összes jelölőnégyzetet. A `Kimenet` &gt; `Közvetítés` menüpontban engedélyezze a Hardveres kódolót, ha rendelkezésre áll. A `Videó` &gt; `Alap (vászon) felbontás` és a `Kimeneti (skálázott) felbontás` menüpontban válassza az `1280x720-as` felbontást, a `Leskálázási szűrőt` pedig állítsa `Bilineáris` értékre.
+Az OBS-beállításokban az `Általános` > `Értesítési terület` menüpontban kapcsolja be az összes jelölőnégyzetet. A `Kimenet` > `Közvetítés` menüpontban engedélyezze a Hardveres kódolót, ha rendelkezésre áll. A `Videó` > `Alap (vászon) felbontás` és a `Kimeneti (skálázott) felbontás` menüpontban válassza az `1280x720-as` felbontást, a `Leskálázási szűrőt` pedig állítsa `Bilineáris` értékre.
 
 Állítson be legalább 2 jelenetet: egyet a média megjelenítéséhez (`Ablak felvétele` vagy `Kijelző felvétele` az egérkurzor kikapcsolásával és a megfelelő ablakcím/monitor kiválasztásával), és egyet a színpadi nézethez (`Videorögzítő eszköz` a Királyság-terem kamerájának kiválasztásával). Annyi jelenetet adhat hozzá, amennyit csak akar, a kamera beállításával, nagyításával és vágásával, amennyire szükséges (nézet a pódiumról, nézet az előadóról és a felolvasóról, nézet az asztalról stb.).
 
@@ -54,7 +54,7 @@ A Zoom-ot úgy kell beállítani, hogy két monitort használjon. A Zoom globál
 
 #### Első beállítás: M³
 
-Engedélyezze a Média megjelenítése külső megjelenítőn vagy külön ablakban opciót.
+Engedélyezze a `Média megjelenítése külső megjelenítőn vagy külön ablakban` opciót.
 
 Engedélyezze és konfigurálja az OBS Studio kompatibilitási módját az OBS Studio konfigurációja során megadott port- és jelszóadatokkal.
 
@@ -82,11 +82,11 @@ Ha befejezte a média megosztását, nyomja meg a "stop" gombot az M³-ban. Vegy
 
 #### Zoom résztvevők megjelenítése a Királyság-terem monitorján
 
-Nyomja meg az M³ médiavezérlő képernyőjének jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy az <kbd>Alt Z</kbd> kombinációt ahhoz, hogy elrejtse a médiabemutató ablakot. A Zoom meeting mostantól látható lesz a Királyságterem kijelzőin.
+Nyomja meg az M³ médiavezérlő képernyőjének jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy az <kbd>Alt Z</kbd> kombinációt ahhoz, hogy **elrejtse** a médiabemutató ablakot. A Zoom meeting mostantól látható lesz a Királyságterem kijelzőin.
 
 > Ha a résztvevőnek médiát kell bemutatnia, kövesse a **Média megosztása a Királyság-teremben és a Zoom-ban** alcím alatti lépéseket.
 
-Miután a testvér befejezte a programját, nyomja meg az M³ médialejátszás vezérlőablakának jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy az <kbd>Alt Z</kbd> kombinációt a médiabemutató ablak megjelenítéséhez. A Királyság-terem monitorján mostantól az éviszöveg jelenik meg.
+Miután a testvér befejezte a programját, nyomja meg az M³ médialejátszás vezérlőablakának jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy az <kbd>Alt Z</kbd> kombinációt a médiabemutató ablak **megjelenítéséhez**. A Királyság-terem monitorján mostantól az éviszöveg jelenik meg.
 
 ### Hibrid összejövetelek lebonyolítása kizárólag az M³ és Zoom használatával
 

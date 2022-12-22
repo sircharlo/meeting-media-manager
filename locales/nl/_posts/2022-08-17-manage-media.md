@@ -16,8 +16,8 @@ Zo kan je media **toevoegen** via het media beheer scherm:
 
 | Optie           | Uitleg                                         |
 | ---------------- | --------------------------------------------------- |
-| `Type bestand` | Kies een van de 3 soorten media typen (zie hieronder)  |
-| `Media om toe te voegen`   | Afhankelijk van het gekozen media type (zie hieronder)       |
+| `Type bestand` | Kies een van de 3 soorten `media typen` (zie hieronder)  |
+| `Media om toe te voegen`   | Afhankelijk van het gekozen `media type` (zie hieronder)       |
 | `Bestandsnaam prefix` | Tot 6 getallen die voor de bestandsnaam/bestandsnamen komen te staan om te kunnen sorteren |
 | `Medialijst` | Deze lijst toont de huidige media die gepland staat voor de gekozen datum |
 

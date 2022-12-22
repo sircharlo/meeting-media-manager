@@ -40,7 +40,7 @@ Jos käytät OBS Studion siirretävää versiota, asenna [Virtualcam](https://ob
 
 Jos sinulla on OBS Studio v27 tai vanhempi, sinun on asennettava [obs-websocket](https://github.com/obsproject/obs-websocket)-laajennus. Obs-websocket sisältyy uudemmissa versiossa. Määritä portin numero ja salasana obs-websocketille.
 
-Ota kaikki valintaruudut käyttöön OBS-asetuksissa kohdassa `General` &gt; `System Tray`. Ota käyttöön laitteistokooderi, jos se on saatavilla kohdassa `Output` &gt; `Streaming`. Valitse `Video` &gt; `Base (kanvas) -Resolution`- ja `Output(Scaled) Resolution` -kohdassa `1280 x 720` ja valitse kohdasta `Downscale Filter`, valitse `Bilinear`.
+Ota kaikki valintaruudut käyttöön OBS-asetuksissa kohdassa `General` > `System Tray`. Ota käyttöön laitteistokooderi, jos se on saatavilla kohdassa `Output` > `Streaming`. Valitse `Video` > `Base (kanvas) -Resolution`- ja `Output(Scaled) Resolution` -kohdassa `1280 x 720` ja valitse kohdasta `Downscale Filter`, valitse `Bilinear`.
 
 Määritä vähintään kaksi kohtausta: yksi medianäyttöä varten (`Window Capture` tai `Display Capture`, kun hiiren osoitin ei ole käytössä ja oikea ikkunan otsikko/näyttö on valittuna) ja toinen lavanäkymä (`Video Capture Device` Salin kameran ollessa valittuna). Voit lisätä tarpeen mukaan niin monta kohtausta kun haluat, jossa kameraa on säädetty, lähennetty ja rajattu tarpeen mukaan (lavanäkymä, lukijanäkymä, pöytänäkymä jne.).
 
@@ -82,11 +82,11 @@ Kun olet lopettanut median jakamisen, paina "stop"-painiketta M³:ssa. Huomaa, e
 
 #### Näyttää Zoomin etäosapuolet valtakunnansalin näytöllä
 
-Paina "piilota/näytä mediaesitysikkuna" -painiketta M³ mediaohjaimen näytön oikeassa alakulmassa tai <kbd>Alt Z</kbd> piilota. mediaesitysikkuna. Zoom-kokous näkyy nyt valtakunnansalin näytöllä.
+Paina "piilota/näytä mediaesitysikkuna" -painiketta M³ mediaohjaimen näytön oikeassa alakulmassa tai <kbd>Alt Z</kbd> **piilota**. mediaesitysikkuna. Zoom-kokous näkyy nyt valtakunnansalin näytöllä.
 
 > Jos osallistujalla on näytettävää mediaa, noudata **Median jakaminen valtakunnansalissa ja Zoomissa**-alaotsikon ohjeita.
 
-Kun osallistuja on suorittanut osuutensa, paina "piilota/näytä mediaesitysikkuna" -painiketta M³ mediatoiston ohjausikkunan oikeassa alakulmassa tai <kbd>Alt Z</kbd>, näytä mediaesitysikkuna. Valtakunnansalin näyttö näyttää nyt vuositekstin.
+Kun osallistuja on suorittanut osuutensa, paina "piilota/näytä mediaesitysikkuna" -painiketta M³ mediatoiston ohjausikkunan oikeassa alakulmassa tai <kbd>Alt Z</kbd>, **näytä** mediaesitysikkuna. Valtakunnansalin näyttö näyttää nyt vuositekstin.
 
 ### Hybridikokousten pitäminen vain M³:lla ja Zoomilla
 

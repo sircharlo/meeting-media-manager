@@ -14,7 +14,7 @@ Wanneer er geen media getoond wordt, zal de achtergrondfoto die is ingesteld in 
 
 Als er geen achtergrondfoto is ingesteld en de jaartekst niet beschikbaar is, zal er een zwart scherm getoond worden.
 
-Media presentatie modus kan geopend worden door op de ▶️ (play) knop op het beginscherm van M³ te klikken, of door de toetsenbord snelkoppeling Alt D (voor externe display).
+Media presentatie modus kan geopend worden door op de ▶️ (play) knop op het beginscherm van M³ te klikken, of door de toetsenbord snelkoppeling <kbd>Alt D</kbd> (voor externe display).
 
 Zodra je de presentatie modus hebt geopend, zal er een selectiescherm verschijnen waar je de datum die je wilt presenteren kan aanklikken. Als de datum van vandaag bestaat, zal die automatisch geopend worden. Je kan altijd de datum veranderen door op de knop met de gekozen datum te klikken bovenin het scherm.
 
@@ -40,7 +40,7 @@ Als je de portable versie van OBS gebruikt, installeer de [Virtualcam](https://o
 
 Als je OBS Studio v27 of ouder hebt, moet je de [obs-websocket](https://github.com/obsproject/obs-websocket) plugin installeren. Anders is de plugin inbegrepen. Configureer het poortnummer en het wachtwoord voor obs-websocket.
 
-In de instellingen van OBS, onder `General` &gt; `System Tray`, vink alle checkboxes aan. Onder `Output` &gt; `Streaming`, zet een hardware encoder aan als er een beschikbaar is. Onder `Video` &gt; `Base (Canvas) Resolution` en `Output (Scaled) Resolution`, kies `1280x720`, en onder `Downscale Filter`, kies `Bilinear`.
+In de instellingen van OBS, onder `General` > `System Tray`, vink alle checkboxes aan. Onder `Output` > `Streaming`, zet een hardware encoder aan als er een beschikbaar is. Onder `Video` > `Base (Canvas) Resolution` en `Output (Scaled) Resolution`, kies `1280x720`, en onder `Downscale Filter`, kies `Bilinear`.
 
 Zet ten minste 2 scenes op: een voor de media (`Window Capture` of `Display Capture` met de muis cursor uitgeschakeld en het juiste scherm geselecteerd), en een voor het podiumbeeld (`Video Capture Device` met de camera van de zaal geselecteerd). Je kan zo veel scenes maken als je maar nodig hebt, met een andere camera stand of ingezoomd bijvoorbeeld (spreker, studieleider met lezer, demonstratie, etc.).
 
@@ -62,7 +62,7 @@ Ze de OBS Studio integratie aan, gebruik makend van het poortnummer en wachtwoor
 
 Start de Zoom vergadering en breng het tweede zoom scherm naar de externe monitor. Maak het tweede Zoom scherm fullscreen als dat gewild is. Dit is waar de Zoom aandelen op getoond worden zodat de mensen in de zaal het kunnen volgen.
 
-Zodra Zoom getoond wordt op het externe scherm, open je M³. Het mediascherm zal automatisch geopend worden bovenop het Zoom scherm op de externe monitor. Haal de nodige media media and open de media presentatie modus door op de ▶️ (play) knop op het beginscherm van M³ te drukken, of met Alt D.
+Zodra Zoom getoond wordt op het externe scherm, open je M³. Het mediascherm zal automatisch geopend worden bovenop het Zoom scherm op de externe monitor. Haal de nodige media media and open de media presentatie modus door op de ▶️ (play) knop op het beginscherm van M³ te drukken, of met <kbd>Alt D</kbd>.
 
 Zet de video van de zaal in in Zoom (<kbd>Alt V</kbd>), en "spotlight" (indien nodig) de zaal video zodat de Zoom deelnemers het podium kunnen zien. Zet je microfoon in Zoom (<kbd>Alt A</kbd>) aan. Het zou niet nodig moeten zijn om de video of microfoon uit te zetten tijdens de vergadering.
 

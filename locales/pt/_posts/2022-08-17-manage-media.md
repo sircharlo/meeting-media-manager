@@ -16,8 +16,8 @@ Veja como **adicionar** as mídias na tela de gerenciamento de mídia.
 
 | Opção           | Explicação                                         |
 | ---------------- | --------------------------------------------------- |
-| `Tipo de arquivo` | Escolha um dos 3 tipos de mídia (veja abaixo). |
-| `Mídia para adicionar`   | Depende do tipo de mídia escolhido (veja abaixo).       |
+| `Tipo de arquivo` | Escolha um dos 3 `tipos de mídia` (veja abaixo). |
+| `Mídia para adicionar`   | Depende do `tipo de mídia` escolhido (veja abaixo).       |
 | `Numeração antes do nome do arquivo` | Até 6 dígitos podem ser adicionados antes do(s) nome(s) de arquivo de mídia, para deixá-los na ordem desejada. |
 | `Lista de mídia` |  Aqui mostra as mídias da reunião para a data selecionada. |
 
