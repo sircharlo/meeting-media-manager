@@ -180,11 +180,11 @@ if (gotTheLock) {
     win?.webContents.send('themeUpdated', nativeTheme.shouldUseDarkColors)
   })
 
-  ipcMain.on('setTheme', (_e, val) => {
+  ipcMain.on('setTheme', (_e, val: 'system' | 'light' | 'dark') => {
     nativeTheme.themeSource = val
   })
 
-  ipcMain.on('runAtBoot', (_e, val) => {
+  ipcMain.on('runAtBoot', (_e, val: boolean) => {
     app.setLoginItemSettings({ openAtLogin: val })
   })
 
@@ -202,7 +202,7 @@ if (gotTheLock) {
     autoUpdater.autoInstallOnAppQuit = val
   })
 
-  ipcMain.on('openPath', (_e, path) => {
+  ipcMain.on('openPath', (_e, path: string) => {
     require('electron').shell.openPath(
       path.replaceAll('/', platform() === 'win32' ? '\\' : '/')
     )
