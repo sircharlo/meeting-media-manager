@@ -22,6 +22,7 @@ exclude:
     'locales/**/_posts',
     'node_modules',
     'src',
+    'test-results',
     'vendor'
   ]
 defaults:
