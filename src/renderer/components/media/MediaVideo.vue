@@ -287,7 +287,7 @@ export default defineComponent({
           this.progress = progress.map((seconds: number) => {
             return this.format(this.$dayjs.duration(seconds, 's'))
           })
-          if (this.playing) this.$emit('progress', percentage)
+          if (val) this.$emit('progress', percentage)
         })
       } else {
         this.ccEnabled = this.ccAvailable

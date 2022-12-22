@@ -85,6 +85,7 @@
           dense
           aria-label="Video scrubber"
           hide-details="auto"
+          step="any"
           :min="clippedStart"
           :max="100 - clippedEnd"
           class="video-scrubber"
@@ -518,7 +519,6 @@ export default defineComponent({
         }
       }
       if (this.isVideo) {
-        this.newProgress = this.progress
         ipcRenderer.send(this.paused ? 'playVideo' : 'pauseVideo')
       }
       this.paused = !this.paused
