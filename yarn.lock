@@ -10781,7 +10781,7 @@ __metadata:
     obs-websocket-js: ^4.0.3
     obs-websocket-js-v5: "npm:obs-websocket-js@5.0.2"
     pdfjs-dist: ^3.1.81
-    playwright: ^1.29.0
+    playwright: ^1.29.1
     prettier: ^2.8.1
     sql.js: ^1.8.0
     ts-loader: ^8.4.0
@@ -12371,14 +12371,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.29.0":
-  version: 1.29.0
-  resolution: "playwright@npm:1.29.0"
-  dependencies:
-    playwright-core: 1.29.0
+"playwright-core@npm:1.29.1":
+  version: 1.29.1
+  resolution: "playwright-core@npm:1.29.1"
   bin:
     playwright: cli.js
-  checksum: e3b7dcefde55e53d62fab26d8c069bf76c93e7a2572272ea4d19e4fb6aa7451d386541faedf1140ba45e3f69f3e37b510492f5433cfbe084d4020d61722e103e
+  checksum: e1c8423db4d28f44e5365a353f321b04a07709c8bf26d0c908f06d2c2669f715315170f84ca98a532951c2ac6324f5f48f651dca1abe43092c7637bdb4703303
+  languageName: node
+  linkType: hard
+
+"playwright@npm:^1.29.1":
+  version: 1.29.1
+  resolution: "playwright@npm:1.29.1"
+  dependencies:
+    playwright-core: 1.29.1
+  bin:
+    playwright: cli.js
+  checksum: ef20f71b20420d9e0eaf45ac5f936422dc6961a863eb71192abe911d3f951722b3c464a36ea04cac8484368c876b5513db04171375f970831fb2bccb9fbb1b7b
   languageName: node
   linkType: hard
 
