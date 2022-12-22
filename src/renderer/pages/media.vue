@@ -22,6 +22,7 @@ import {
   HUNDRED_PERCENT,
   WT_CLEARTEXT_FONT,
   JW_ICONS_FONT,
+  MS_IN_SEC,
 } from '~/constants/general'
 
 export default defineComponent({
@@ -32,6 +33,7 @@ export default defineComponent({
       scale: 1,
       zoomEnabled: false,
       withSubtitles: false,
+      interval: null as null | number,
       subtitleLang: null as null | string,
       panzoom: null as null | PanzoomObject,
       container: document.createElement('div'),
@@ -268,15 +270,23 @@ export default defineComponent({
                 video.pause()
               }
             }
-            video.ontimeupdate = () => {
-              ipcRenderer.send('videoProgress', [
-                video.currentTime,
-                video.duration,
-              ])
+
+            video.onplay = () => {
+              this.interval = setInterval(() => {
+                if (video) {
+                  ipcRenderer.send('videoProgress', [
+                    video.currentTime,
+                    video.duration,
+                  ])
+                }
+              }, 0.5 * MS_IN_SEC) as unknown as number
             }
 
             // If media is paused externally, stop the video
             video.onpause = async () => {
+              if (this.interval) {
+                clearInterval(this.interval)
+              }
               if (
                 !(
                   video.classList.contains('manuallyPaused') ||
@@ -288,6 +298,9 @@ export default defineComponent({
               }
             }
             video.onended = () => {
+              if (this.interval) {
+                clearInterval(this.interval)
+              }
               ipcRenderer.send('videoEnd')
             }
             this.mediaDisplay.append(video)
