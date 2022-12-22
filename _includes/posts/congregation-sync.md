@@ -1,9 +1,3 @@
----
-tag: Configuration
-title: Congregation sync
-ref: congregation-sync
----
-
 The brother designated as _videoconference organizer_ (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
 
 The VO, or someone designated by him, can:

@@ -4,4 +4,4 @@ title: Congregation sync
 ref: congregation-sync
 ---
 
-{% include posts/congregation-sync.html lang=site.data.de %}
+{% include posts/congregation-sync.md lang=site.data.de %}
