@@ -38,7 +38,9 @@ Instale OBS Studio o descargue la versión portable.
 
 Si usa la versión portable de OBS Studio, instale el complemento [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) y, si usa la versión portable de OBS Studio, agregue la cámara virtual a Windows haciendo doble clic en el script de instalación proporcionado.
 
- En la configuración de OBS, en `General` > `Bandeja del sistema`, active todas las casillas de verificación. En `Output` > `Streaming`, habilite un codificador de hardware si está disponible. En `Vídeo` > `Resolución base (lienzo)` y `Resolución de salida (escalada)`, elija `1280x720`, y en `Filtro de reducción de escala`, elija `Bilineal`.
+If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
+
+En la configuración de OBS, en `General` &gt; `Bandeja del sistema`, active todas las casillas de verificación. En `Output` &gt; `Streaming`, habilite un codificador de hardware si está disponible. En `Vídeo` &gt; `Resolución base (lienzo)` y `Resolución de salida (escalada)`, elija `1280x720`, y en `Filtro de reducción de escala`, elija `Bilineal`.
 
 Configure al menos 2 escenas: una para la visualización de contenidos (`Captura de ventana` o `Captura de pantalla` con el cursor del mouse deshabilitado y el título de ventana/monitor apropiado seleccionado), y otra para la vista de la plataforma (`Video Capture Device` con la cámara del Salón del Reino seleccionada). Puede agregar tantas escenas como sea necesario, con la cámara ajustada, ampliada y recortada según sea necesario (vista de atril, vista de conductor y lector, vista de mesa, etc.).
 
@@ -108,7 +110,7 @@ Igual que la sección correspondiente anterior.
 
 #### Compartiendo contenidos en el Salón del Reino y por Zoom
 
-Comience a compartir en Zoom presionando <kbd>Alt S</kbd>.  En la ventana Compartir de Zoom que aparece, elija el monitor externo y habilite ambas casillas de verificación en la parte inferior izquierda (para optimización de sonido y video). El texto del año ahora se compartirá a través de Zoom.
+Comience a compartir en Zoom presionando <kbd>Alt S</kbd>. En la ventana Compartir de Zoom que aparece, elija el monitor externo y habilite ambas casillas de verificación en la parte inferior izquierda (para optimización de sonido y video). El texto del año ahora se compartirá a través de Zoom.
 
 Encuentre los contenidos que desea compartir en la ventana de control de reproducción de contenidos de M³ y presione el botón "reproducir".
 
