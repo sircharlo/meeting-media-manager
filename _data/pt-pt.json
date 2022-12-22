@@ -45,10 +45,6 @@
     "webdavFolder": "Caminho da pasta",
     "settingsLocked": "Configurações para todos da congregação"
   },
-  "manage-media": {
-    "song": "Cântico",
-    "jwpub": "JWPUB",
-    "custom": "Personalizado"
-  },
+  "manage-media": {},
   "present-media": {}
 }

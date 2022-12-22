@@ -45,10 +45,6 @@
     "webdavFolder": "Synchronisations-Ordner",
     "settingsLocked": "Versammlungsweite Einstellungen"
   },
-  "manage-media": {
-    "song": "Lied",
-    "jwpub": "JWPUB",
-    "custom": "Eigene"
-  },
+  "manage-media": {},
   "present-media": {}
 }

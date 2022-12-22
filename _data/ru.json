@@ -45,10 +45,6 @@
     "webdavFolder": "Папка для собрания",
     "settingsLocked": "Настройки для всего собрания"
   },
-  "manage-media": {
-    "song": "Песня",
-    "jwpub": "JWPUB",
-    "custom": "Разное"
-  },
+  "manage-media": {},
   "present-media": {}
 }
