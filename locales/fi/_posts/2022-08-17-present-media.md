@@ -40,7 +40,7 @@ Jos käytät OBS Studion siirretävää versiota, asenna [Virtualcam](https://ob
 
 Jos sinulla on OBS Studio v27 tai vanhempi, sinun on asennettava [obs-websocket](https://github.com/obsproject/obs-websocket)-laajennus. Obs-websocket sisältyy uudemmissa versiossa. Määritä portin numero ja salasana obs-websocketille.
 
-Ota kaikki valintaruudut käyttöön OBS-asetuksissa kohdassa `General` > `System Tray`. Ota käyttöön laitteistokooderi, jos se on saatavilla kohdassa `Output` > `Streaming`. Valitse `Video` > `Base (kanvas) -Resolution`- ja `Output(Scaled) Resolution` -kohdassa `1280 x 720` ja valitse kohdasta `Downscale Filter`, valitse `Bilinear`.
+Ota kaikki valintaruudut käyttöön OBS-asetuksissa kohdassa `General` &gt; `System Tray`. Ota käyttöön laitteistokooderi, jos se on saatavilla kohdassa `Output` &gt; `Streaming`. Valitse `Video` &gt; `Base (kanvas) -Resolution`- ja `Output(Scaled) Resolution` -kohdassa `1280 x 720` ja valitse kohdasta `Downscale Filter`, valitse `Bilinear`.
 
 Määritä vähintään kaksi kohtausta: yksi medianäyttöä varten (`Window Capture` tai `Display Capture`, kun hiiren osoitin ei ole käytössä ja oikea ikkunan otsikko/näyttö on valittuna) ja toinen lavanäkymä (`Video Capture Device` Salin kameran ollessa valittuna). Voit lisätä tarpeen mukaan niin monta kohtausta kun haluat, jossa kameraa on säädetty, lähennetty ja rajattu tarpeen mukaan (lavanäkymä, lukijanäkymä, pöytänäkymä jne.).
 
@@ -98,8 +98,9 @@ Sama kuin vastaava jakso yllä. Lisätty Zoomin yleinen pikanäppäin näytön j
 
 #### Alkukokoonpano: M³
 
-Ota Esitä media ulkoisella näytöllä tai erillisessä ikkunassa-vaihtoehto käyttöön.
-Kokouksen aloittaminen
+Ota `Esitä media ulkoisella näytöllä tai erillisessä ikkunassa`-vaihtoehto käyttöön.
+
+#### Kokouksen aloittaminen
 
 Sama kuin vastaava jakso yllä.
 
