@@ -64,7 +64,12 @@
             </template>
             <span>{{ $t('reportIssue') }}</span>
           </v-tooltip>
-          <v-tooltip :open-on-click="false" :open-on-focus="false" top>
+          <v-tooltip
+            v-if="cacheColor === 'warning'"
+            :open-on-click="false"
+            :open-on-focus="false"
+            top
+          >
             <template #activator="{ on, attrs }">
               <v-btn
                 :color="cacheColor"
@@ -78,9 +83,21 @@
                 {{ `${cache}MB` }}
               </v-btn>
             </template>
-            <span>{{
-              cacheColor === 'warning' ? $t('cleanCache') : $t('clickAgain')
-            }}</span>
+            <span>{{ $t('cleanCache') }}</span>
+          </v-tooltip>
+          <v-tooltip v-else :value="true" top>
+            <template #activator>
+              <v-btn
+                :color="cacheColor"
+                :loading="loading"
+                class="black--text"
+                @click="removeCache()"
+              >
+                <font-awesome-icon :icon="faTrash" pull="left" />
+                {{ `${cache}MB` }}
+              </v-btn>
+            </template>
+            <span>{{ $t('clickAgain') }}</span>
           </v-tooltip>
         </v-col>
         <v-col align-self="end" class="text-right pa-0">

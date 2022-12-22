@@ -31,14 +31,12 @@
           class="warning--text"
           size="xs"
         />
-        <v-tooltip v-else right :disabled="true" :value="true">
-          <template #activator="{ on, attrs }">
+        <v-tooltip v-else right :value="true">
+          <template #activator>
             <font-awesome-icon
-              v-bind="attrs"
               :icon="faSquareMinus"
               class="error--text"
               size="xs"
-              v-on="on"
             />
           </template>
           <span>{{ $t('clickAgain') }}</span>

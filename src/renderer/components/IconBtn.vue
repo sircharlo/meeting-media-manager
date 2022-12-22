@@ -44,22 +44,16 @@
       />
     </font-awesome-layers>
   </v-btn>
-  <v-tooltip
-    v-else-if="clickedOnce"
-    v-bind="tooltipObj"
-    :value="true"
-    :disabled="true"
-  >
-    <template #activator="{ on, attrs }">
+  <v-tooltip v-else-if="clickedOnce" v-bind="tooltipObj" :value="true">
+    <template #activator>
       <v-btn
         :id="variant"
         ref="btn"
         v-model="$attrs.value"
         v-click-outside="revertClickedOnce"
         :aria-label="variant"
-        v-bind="{ ...style.props, ...$attrs, ...attrs }"
+        v-bind="{ ...style.props, ...$attrs }"
         color="error"
-        v-on="on"
         @click="atClick()"
       >
         <font-awesome-icon
