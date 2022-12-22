@@ -40,7 +40,7 @@ Se utilizzi la versione portatile di OBS Studio, installa il plug-in [Virtualcam
 
 Se hai OBS Studio v27 o precedente, devi installare il plug-in [obs-websocket](https://github.com/obsproject/obs-websocket). Altrimenti è incluso obs-websocket. Configurare un numero di porta e una password per obs-websocket.
 
-Nelle impostazioni di OBS, sotto `General` > `System Tray`, attiva tutte le caselle di controllo. In `Output` > `Streaming`, abilita un codificatore hardware se disponibile. Sotto `Video` > `Base (Canvas) Resolution` e `Output (Scaled) Resolution`, scegli `1280x720`, e sotto `Downscale Filter`, scegli `Bilinear`.
+Nelle impostazioni di OBS, sotto `General` &gt; `System Tray`, attiva tutte le caselle di controllo. In `Output` &gt; `Streaming`, abilita un codificatore hardware se disponibile. Sotto `Video` &gt; `Base (Canvas) Resolution` e `Output (Scaled) Resolution`, scegli `1280x720`, e sotto `Downscale Filter`, scegli `Bilinear`.
 
 Impostare almeno 2 scene: una per la visualizzazione dei media (`Window Capture` o `Display Capture` con il cursore del mouse disabilitato e il titolo della finestra/monitor appropriato selezionato), e una per la vista del palco (`Video Capture Device` con la videocamera della Sala del Regno selezionata). È possibile aggiungere tutte le scene necessarie, con la telecamera regolata, ingrandita e ritagliata secondo necessità (vista leggio, vista conduttore e lettore, vista tavolo, ecc.).
 
@@ -79,7 +79,8 @@ Nessuna azione necessaria.
 Trova il file multimediale che desideri condividere nella finestra di controllo della riproduzione multimediale M³ e premi il pulsante "riproduci".
 
 Quando hai finito di condividere i media, premi il pulsante "stop" in M³. Tieni presente che i video si interrompono automaticamente una volta completati.
-Visualizzazione dei partecipanti Zoom remoti sul monitor della Sala del Regno
+
+#### Visualizzazione dei partecipanti Zoom remoti sul monitor della Sala del Regno
 
 Premi il pulsante "nascondi/mostra la finestra di presentazione multimediale" nell'angolo in basso a destra della schermata del controller multimediale M³ o <kbd>Alt Z</kbd> per **nascondere** la finestra di presentazione multimediale. La riunione Zoom sarà ora visibile sul monitor della Sala del Regno.
 
