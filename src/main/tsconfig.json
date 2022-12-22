@@ -2,6 +2,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "target": "es5",
+    "lib": ["es2021"],
     "module": "commonjs",
     "skipLibCheck": true,
     "moduleResolution": "node",
