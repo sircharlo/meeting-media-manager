@@ -143,6 +143,10 @@ export default defineComponent({
       const video = document.querySelector('video') as HTMLVideoElement
       if (video) {
         video.currentTime = (video.duration * timeAsPercent) / HUNDRED_PERCENT
+        ipcRenderer.send('videoProgress', [
+          video.currentTime,
+          video.duration,
+        ])
       }
     })
     ipcRenderer.on('hideMedia', async () => {
@@ -295,6 +299,11 @@ export default defineComponent({
               ) {
                 await this.hideMedia()
                 ipcRenderer.send('videoEnd')
+              } else {
+                ipcRenderer.send('videoProgress', [
+                    video.currentTime,
+                    video.duration,
+                  ])
               }
             }
             video.onended = () => {
