@@ -41,4 +41,4 @@ Una vez que se complete la configuración de sincronización de la congregación
 
 ### Capturas de pantalla de la sincronización de la congregación en acción
 
-{% include screenshots/congregation-sync.md lang=site.data.es %}
+{% include screenshots/congregation-sync.html lang=site.data.es %}

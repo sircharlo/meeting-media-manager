@@ -41,4 +41,4 @@ Kui koguduse sünkroonimise seadistamine on lõpule viidud, olete valmis alustam
 
 ### Kuvatõmmised koguduse sünkroonimise tegevusest
 
-{% include screenshots/congregation-sync.md lang=site.data.et %}
+{% include screenshots/congregation-sync.html lang=site.data.et %}
