@@ -4,4 +4,4 @@ title: Managing media
 ref: manage-media
 ---
 
-{% include posts/manage-media.html lang=site.data.wes-x-pgw %}
+{% include posts/manage-media.md lang=site.data.wes-x-pgw %}
