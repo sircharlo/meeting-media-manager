@@ -45,10 +45,6 @@
     "webdavFolder": "Dossier de l'assemblée locale",
     "settingsLocked": "Paramètres bloqués pour l'assemblée locale"
   },
-  "manage-media": {
-    "song": "Cantique",
-    "jwpub": "JWPUB",
-    "custom": "Autre"
-  },
+  "manage-media": {},
   "present-media": {}
 }

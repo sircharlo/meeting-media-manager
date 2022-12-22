@@ -54,7 +54,7 @@ A Zoom-ot úgy kell beállítani, hogy két monitort használjon. A Zoom globál
 
 #### Első beállítás: M³
 
-Engedélyezze a Média megjelenítése külső megjelenítőn vagy külön ablakban opciót.
+Engedélyezze a `Média megjelenítése külső megjelenítőn vagy külön ablakban` opciót.
 
 Engedélyezze és konfigurálja az OBS Studio kompatibilitási módját az OBS Studio konfigurációja során megadott port- és jelszóadatokkal.
 
@@ -82,11 +82,11 @@ Ha befejezte a média megosztását, nyomja meg a "stop" gombot az M³-ban. Vegy
 
 #### Zoom résztvevők megjelenítése a Királyság-terem monitorján
 
-Nyomja meg az M³ médiavezérlő képernyőjének jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy az <kbd>Alt Z</kbd> kombinációt ahhoz, hogy elrejtse a médiabemutató ablakot. A Zoom meeting mostantól látható lesz a Királyságterem kijelzőin.
+Nyomja meg az M³ médiavezérlő képernyőjének jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy az <kbd>Alt Z</kbd> kombinációt ahhoz, hogy **elrejtse** a médiabemutató ablakot. A Zoom meeting mostantól látható lesz a Királyságterem kijelzőin.
 
 > Ha a résztvevőnek médiát kell bemutatnia, kövesse a **Média megosztása a Királyság-teremben és a Zoom-ban** alcím alatti lépéseket.
 
-Miután a testvér befejezte a programját, nyomja meg az M³ médialejátszás vezérlőablakának jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy az <kbd>Alt Z</kbd> kombinációt a médiabemutató ablak megjelenítéséhez. A Királyság-terem monitorján mostantól az éviszöveg jelenik meg.
+Miután a testvér befejezte a programját, nyomja meg az M³ médialejátszás vezérlőablakának jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy az <kbd>Alt Z</kbd> kombinációt a médiabemutató ablak **megjelenítéséhez**. A Királyság-terem monitorján mostantól az éviszöveg jelenik meg.
 
 ### Hibrid összejövetelek lebonyolítása kizárólag az M³ és Zoom használatával
 
@@ -103,7 +103,8 @@ Engedélyezze a `Média megjelenítése külső megjelenítőn vagy külön abla
 #### Az összejövetel megkezdése
 
 Ugyanaz, mint a fent említett megfelelő szakaszban.
-A személyes részek közvetítése a Királyság-terem színpadjáról a Zoom-on keresztül
+
+#### A személyes részek közvetítése a Királyság-terem színpadjáról a Zoom-on keresztül
 
 Ugyanaz, mint a fent említett megfelelő szakaszban.
 

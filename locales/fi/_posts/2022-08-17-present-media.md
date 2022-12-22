@@ -82,11 +82,11 @@ Kun olet lopettanut median jakamisen, paina "stop"-painiketta M³:ssa. Huomaa, e
 
 #### Näyttää Zoomin etäosapuolet valtakunnansalin näytöllä
 
-Paina "piilota/näytä mediaesitysikkuna" -painiketta M³ mediaohjaimen näytön oikeassa alakulmassa tai <kbd>Alt Z</kbd> piilota. mediaesitysikkuna. Zoom-kokous näkyy nyt valtakunnansalin näytöllä.
+Paina "piilota/näytä mediaesitysikkuna" -painiketta M³ mediaohjaimen näytön oikeassa alakulmassa tai <kbd>Alt Z</kbd> **piilota**. mediaesitysikkuna. Zoom-kokous näkyy nyt valtakunnansalin näytöllä.
 
 > Jos osallistujalla on näytettävää mediaa, noudata **Median jakaminen valtakunnansalissa ja Zoomissa**-alaotsikon ohjeita.
 
-Kun osallistuja on suorittanut osuutensa, paina "piilota/näytä mediaesitysikkuna" -painiketta M³ mediatoiston ohjausikkunan oikeassa alakulmassa tai <kbd>Alt Z</kbd>, näytä mediaesitysikkuna. Valtakunnansalin näyttö näyttää nyt vuositekstin.
+Kun osallistuja on suorittanut osuutensa, paina "piilota/näytä mediaesitysikkuna" -painiketta M³ mediatoiston ohjausikkunan oikeassa alakulmassa tai <kbd>Alt Z</kbd>, **näytä** mediaesitysikkuna. Valtakunnansalin näyttö näyttää nyt vuositekstin.
 
 ### Hybridikokousten pitäminen vain M³:lla ja Zoomilla
 
@@ -98,8 +98,9 @@ Sama kuin vastaava jakso yllä. Lisätty Zoomin yleinen pikanäppäin näytön j
 
 #### Alkukokoonpano: M³
 
-Ota Esitä media ulkoisella näytöllä tai erillisessä ikkunassa-vaihtoehto käyttöön.
-Kokouksen aloittaminen
+Ota `Esitä media ulkoisella näytöllä tai erillisessä ikkunassa`-vaihtoehto käyttöön.
+
+#### Kokouksen aloittaminen
 
 Sama kuin vastaava jakso yllä.
 

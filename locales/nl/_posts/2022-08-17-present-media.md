@@ -14,7 +14,7 @@ Wanneer er geen media getoond wordt, zal de achtergrondfoto die is ingesteld in 
 
 Als er geen achtergrondfoto is ingesteld en de jaartekst niet beschikbaar is, zal er een zwart scherm getoond worden.
 
-Media presentatie modus kan geopend worden door op de ▶️ (play) knop op het beginscherm van M³ te klikken, of door de toetsenbord snelkoppeling Alt D (voor externe display).
+Media presentatie modus kan geopend worden door op de ▶️ (play) knop op het beginscherm van M³ te klikken, of door de toetsenbord snelkoppeling <kbd>Alt D</kbd> (voor externe display).
 
 Zodra je de presentatie modus hebt geopend, zal er een selectiescherm verschijnen waar je de datum die je wilt presenteren kan aanklikken. Als de datum van vandaag bestaat, zal die automatisch geopend worden. Je kan altijd de datum veranderen door op de knop met de gekozen datum te klikken bovenin het scherm.
 
@@ -62,7 +62,7 @@ Ze de OBS Studio integratie aan, gebruik makend van het poortnummer en wachtwoor
 
 Start de Zoom vergadering en breng het tweede zoom scherm naar de externe monitor. Maak het tweede Zoom scherm fullscreen als dat gewild is. Dit is waar de Zoom aandelen op getoond worden zodat de mensen in de zaal het kunnen volgen.
 
-Zodra Zoom getoond wordt op het externe scherm, open je M³. Het mediascherm zal automatisch geopend worden bovenop het Zoom scherm op de externe monitor. Haal de nodige media media and open de media presentatie modus door op de ▶️ (play) knop op het beginscherm van M³ te drukken, of met Alt D.
+Zodra Zoom getoond wordt op het externe scherm, open je M³. Het mediascherm zal automatisch geopend worden bovenop het Zoom scherm op de externe monitor. Haal de nodige media media and open de media presentatie modus door op de ▶️ (play) knop op het beginscherm van M³ te drukken, of met <kbd>Alt D</kbd>.
 
 Zet de video van de zaal in in Zoom (<kbd>Alt V</kbd>), en "spotlight" (indien nodig) de zaal video zodat de Zoom deelnemers het podium kunnen zien. Zet je microfoon in Zoom (<kbd>Alt A</kbd>) aan. Het zou niet nodig moeten zijn om de video of microfoon uit te zetten tijdens de vergadering.
 
@@ -79,7 +79,8 @@ De verschillende camera/zoom standen kunnen gekozen worden door het menu onderin
 Vind de media die je wilt delen in M³ en druk op de "play" knop.
 
 Wanneer je klaar bent met delen, druk je op de "stop" knop in M³. Bedenk dat filmpjes automatisch stoppen zodra ze afgelopen zijn.
-Zoom aandelen tonen in de koninkrijkszaal
+
+#### Zoom aandelen tonen in de koninkrijkszaal
 
 Druk op de "toon/verberg mediascherm" knop rechtsonder in M³ of gebruik <kbd>Alt Z</kbd>, om het mediascherm te **verbergen**. De Zoom vergadering is nu zichtbaar op het externe scherm.
 

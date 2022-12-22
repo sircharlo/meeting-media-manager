@@ -1,9 +1,3 @@
----
-tag: Usage
-title: Managing media
-ref: manage-media
----
-
 The media management screen allows the user to add or remove media for any given meeting, manage recurring media, and even add special media for other dates on which no meeting is normally scheduled.
 
 ### Managing media for any particular day

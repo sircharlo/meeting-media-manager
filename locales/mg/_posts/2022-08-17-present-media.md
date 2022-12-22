@@ -4,4 +4,4 @@ title: Media Presentation mode
 ref: present-media
 ---
 
-{% include posts/present-media.html lang=site.data.mg %}
+{% include posts/present-media.md lang=site.data.mg %}

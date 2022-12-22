@@ -121,3 +121,5 @@ Quando terminar de compartilhar a mídia, pressione <kbd>Alt S</kbd> para encerr
 Igual à seção acima.
 
 ### Capturas de tela do modo de exibição
+
+{% include screenshots/present-media.html lang=site.data.pt %}

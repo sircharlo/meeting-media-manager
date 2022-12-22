@@ -79,13 +79,14 @@ Nessuna azione necessaria.
 Trova il file multimediale che desideri condividere nella finestra di controllo della riproduzione multimediale M³ e premi il pulsante "riproduci".
 
 Quando hai finito di condividere i media, premi il pulsante "stop" in M³. Tieni presente che i video si interrompono automaticamente una volta completati.
-Visualizzazione dei partecipanti Zoom remoti sul monitor della Sala del Regno
+
+#### Visualizzazione dei partecipanti Zoom remoti sul monitor della Sala del Regno
 
 Premi il pulsante "nascondi/mostra la finestra di presentazione multimediale" nell'angolo in basso a destra della schermata del controller multimediale M³ o <kbd>Alt Z</kbd> per **nascondere** la finestra di presentazione multimediale. La riunione Zoom sarà ora visibile sul monitor della Sala del Regno.
 
 > Se il partecipante ha contenuti multimediali da mostrare, segui i passaggi sotto il sottotitolo **Condivisione di contenuti multimediali nella Sala del Regno e tramite Zoom**.
 
-Una volta che il partecipante ha terminato la sua parte, premi il pulsante "nascondi/mostra la finestra di presentazione multimediale" nell'angolo in basso a destra della finestra di controllo della riproduzione multimediale M³, oppure <kbd>Alt Z</kbd>, per mostrare la finestra di presentazione multimediale. Il monitor della Sala del Regno ora mostrerà il testo della scrittura dell'anno.
+Una volta che il partecipante ha terminato la sua parte, premi il pulsante "nascondi/mostra la finestra di presentazione multimediale" nell'angolo in basso a destra della finestra di controllo della riproduzione multimediale M³, oppure <kbd>Alt Z</kbd>, per **mostrare** la finestra di presentazione multimediale. Il monitor della Sala del Regno ora mostrerà il testo della scrittura dell'anno.
 
 ### Condurre riunioni ibride utilizzando solo M³ e Zoom
 

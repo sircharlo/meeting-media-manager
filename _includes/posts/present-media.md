@@ -1,9 +1,3 @@
----
-tag: Usage
-title: Media Presentation mode
-ref: present-media
----
-
 ### Using media presentation mode
 
 The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.

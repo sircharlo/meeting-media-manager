@@ -82,11 +82,11 @@ Kui olete meedia jagamise lõpetanud, vajutage M³ nuppu "stopp". Pange tähele,
 
 #### Suumi kaugosalejate kuvamine kuningriigisaali monitoril
 
-Vajutage M³ meediumikontrolleri ekraani alumises paremas nurgas nuppu „peida/näita meediaesitluse aken” või peitmiseks <kbd>Alt Z</kbd> meediaesitluse aken. Zoomi koosolek on nüüd nähtav kuningriigisaali monitoril.
+Vajutage M³ meediumikontrolleri ekraani alumises paremas nurgas nuppu „peida/näita meediaesitluse aken” või **peitmiseks** <kbd>Alt Z</kbd> meediaesitluse aken. Zoomi koosolek on nüüd nähtav kuningriigisaali monitoril.
 
 > Kui osalejal on näidata meediat, järgige alampealkirja **Meedia jagamine kuningriigisaalis ja Zoomi kaudu** all olevaid juhiseid.
 
-Kui osaleja on oma osa lõpetanud, vajutage M³ meedia taasesituse juhtakna alumises paremas nurgas nuppu "peida/näita meediaesitluse aken" või <kbd>Alt Z</kbd>, meediaesitluse akna kuvamiseks. Kuningriigisaali monitor näitab nüüd aastateksti.
+Kui osaleja on oma osa lõpetanud, vajutage M³ meedia taasesituse juhtakna alumises paremas nurgas nuppu "peida/näita meediaesitluse aken" või <kbd>Alt Z</kbd>, meediaesitluse akna **kuvamiseks**. Kuningriigisaali monitor näitab nüüd aastateksti.
 
 ### Hübriidkoosolekute läbiviimine, kasutades ainult M³ ja Zoom
 
