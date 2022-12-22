@@ -91,7 +91,3 @@ defaults:
       path: 'locales/sv/**/*'
     values:
       lang: 'sv'
-  - scope:
-      path: 'locales/wes-x-pgw/**/*'
-    values:
-      lang: 'wes-x-pgw'
