@@ -4,4 +4,4 @@ title: Seurakunnan synkronointi
 ref: congregation-sync
 ---
 
-{% include posts/congregation-sync.html lang=site.data.fi %}
+{% include posts/congregation-sync.md lang=site.data.fi %}
