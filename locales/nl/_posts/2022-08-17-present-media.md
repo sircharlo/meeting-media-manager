@@ -40,7 +40,7 @@ Als je de portable versie van OBS gebruikt, installeer de [Virtualcam](https://o
 
 Als je OBS Studio v27 of ouder hebt, moet je de [obs-websocket](https://github.com/obsproject/obs-websocket) plugin installeren. Anders is de plugin inbegrepen. Configureer het poortnummer en het wachtwoord voor obs-websocket.
 
-In de instellingen van OBS, onder `General` > `System Tray`, vink alle checkboxes aan. Onder `Output` > `Streaming`, zet een hardware encoder aan als er een beschikbaar is. Onder `Video` > `Base (Canvas) Resolution` en `Output (Scaled) Resolution`, kies `1280x720`, en onder `Downscale Filter`, kies `Bilinear`.
+In de instellingen van OBS, onder `General` &gt; `System Tray`, vink alle checkboxes aan. Onder `Output` &gt; `Streaming`, zet een hardware encoder aan als er een beschikbaar is. Onder `Video` &gt; `Base (Canvas) Resolution` en `Output (Scaled) Resolution`, kies `1280x720`, en onder `Downscale Filter`, kies `Bilinear`.
 
 Zet ten minste 2 scenes op: een voor de media (`Window Capture` of `Display Capture` met de muis cursor uitgeschakeld en het juiste scherm geselecteerd), en een voor het podiumbeeld (`Video Capture Device` met de camera van de zaal geselecteerd). Je kan zo veel scenes maken als je maar nodig hebt, met een andere camera stand of ingezoomd bijvoorbeeld (spreker, studieleider met lezer, demonstratie, etc.).
 
@@ -79,7 +79,8 @@ De verschillende camera/zoom standen kunnen gekozen worden door het menu onderin
 Vind de media die je wilt delen in M³ en druk op de "play" knop.
 
 Wanneer je klaar bent met delen, druk je op de "stop" knop in M³. Bedenk dat filmpjes automatisch stoppen zodra ze afgelopen zijn.
-Zoom aandelen tonen in de koninkrijkszaal
+
+#### Zoom aandelen tonen in de koninkrijkszaal
 
 Druk op de "toon/verberg mediascherm" knop rechtsonder in M³ of gebruik <kbd>Alt Z</kbd>, om het mediascherm te **verbergen**. De Zoom vergadering is nu zichtbaar op het externe scherm.
 
