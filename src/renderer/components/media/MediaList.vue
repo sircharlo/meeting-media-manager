@@ -45,12 +45,18 @@
           <span>{{ $t('clickAgain') }}</span>
         </v-tooltip>
       </v-list-item-action>
-      <v-list-item-action v-else-if="item.isLocal === undefined" class="my-0">
-        <font-awesome-icon :icon="faSquarePlus" size="xs" />
-      </v-list-item-action>
       <v-list-item-action v-else class="my-0">
         <v-btn icon @click="atClick(item)">
-          <font-awesome-icon v-if="item.hidden" :icon="faSquare" size="xs" />
+          <font-awesome-icon
+            v-if="item.isLocal === undefined"
+            :icon="faSquarePlus"
+            size="xs"
+          />
+          <font-awesome-icon
+            v-else-if="item.hidden"
+            :icon="faSquare"
+            size="xs"
+          />
           <font-awesome-icon v-else :icon="faSquareCheck" size="xs" />
         </v-btn>
       </v-list-item-action>
