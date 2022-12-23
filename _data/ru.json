@@ -11,13 +11,6 @@
     "port": "Порт"
   },
   "home": {},
-  "congregation-sync": {
-    "fetchMedia": "Обновить папки с медиафайлами",
-    "hostname": "Веб-адрес",
-    "username": "Имя пользователя",
-    "webdavFolder": "Папка для собрания",
-    "settingsLocked": "Настройки для всего собрания"
-  },
   "manage-media": {},
   "present-media": {}
 }

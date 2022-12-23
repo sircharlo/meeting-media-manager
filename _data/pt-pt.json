@@ -11,13 +11,6 @@
     "port": "Porta"
   },
   "home": {},
-  "congregation-sync": {
-    "fetchMedia": "Descarregar multimédias!",
-    "hostname": "Nome do host",
-    "username": "Usuário",
-    "webdavFolder": "Caminho da pasta",
-    "settingsLocked": "Configurações para todos da congregação"
-  },
   "manage-media": {},
   "present-media": {}
 }
