@@ -9,6 +9,7 @@ Seadete ekraan on jagatud 4 osaks. Enamik valikuid on iseenesestmõistetavad, ku
 ### Rakenduse sätted
 
 | Seadistamine | Selgitus |
+| ------- | ----------- |
 | `Kuvatav keel` | Määrab keele, milles M³ kuvatakse. <br><br> Täname meie paljusid kaastöötajaid rakenduse nii paljudesse keeltesse tõlkimise eest! Kui soovite aidata parandada olemasolevat tõlget või lisada uut, avage uus ["discussion"]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE). |
 | `Kaust, kuhu meedia salvestada` | Koosolekumeedia salvestatakse sellesse kausta hilisemaks jagamiseks ja kasutamiseks. |
 | `Käivitage rakendus arvuti operatsioonisüsteemi käivitamisel` | Kui see on lubatud, käivitub M³, kui praegune kasutaja arvutisse sisse logib. <br><br> _**Märkus.** pole Linuxis saadaval._ |
@@ -29,6 +30,7 @@ Mida see täpselt teeb ja kuidas seda jaotist konfigureerida, vaadake jaotisest 
 ### Meedia sätted
 
 | Seadistamine | Selgitus |
+| ------- | ----------- |
 | `Meedia keel` | Valige oma koguduse või rühma keel. Kogu meedia laaditakse saidilt JW.org selles keeles alla. |
 | `Maksimaalne eraldusvõime videote jaoks` | Veebisaidilt JW.org alla laaditud videod laaditakse alla selle eraldusvõimega või järgmise saadaoleva madalama eraldusvõimega. Kasulik piiratud või väikese ribalaiusega olukordades. |
 | `Teisenda meedia MP4-vormingusse` | See teisendab kõik pildi- ja helifailid automaatselt MP4-vormingusse, et neid saaks kasutada koos Zoomi funktsiooniga["native MP4 sharing feature"](assets/img/other/zoom-mp4-share.png)**täielikult kauge** koguduse Zoomi koosolekutel. See hõlmab kõiki JW.org-ist alla laaditud pilte ja meediumifaile, samuti kasutaja või VO lisatud täiendavaid meediumifaile. <br><br> _**Märkus.** See valik sobib kõige paremini **ainult kaugjuhtimise** koguduse koosolekute jaoks. Kui korraldate kas **hübriid** või **regulaarseid** koguduse koosolekuid, proovige kasutada [Meedia esitlusrežiim]({{page.lang}}/#present-media), aktiveerides selle asemel valiku `Esita meediat teisel monitoril või eraldi aknas` ja keelake see valik ._ |
@@ -42,6 +44,7 @@ Mida see täpselt teeb ja kuidas seda jaotist konfigureerida, vaadake jaotisest 
 ### Koosoleku sätted
 
 | Seadistamine | Selgitus |
+| ------- | ----------- |
 | `Nädalasisene koosolek` | Märkige kesknädalase koosoleku tavaline päev ja kellaaeg; kasutatakse kaustade nimetamiseks ja taustamuusika automaatseks tuhmumiseks (vt allpool). |
 | `Nädalavahetuse koosolek` | Märkige nädalavahetuse koosoleku päev ja kellaaeg. |
 | `Luba nupp kuningriigi laulude juhuesituses esitamiseks` | Lubage põhikuval nupp, mis esitab juhuslikus järjekorras kuningriigi laule sarjast _sjjm_. See on kasulik näiteks laulude esitamiseks enne ja pärast koosolekuid kuningriigisaalis taustamuusikana. |

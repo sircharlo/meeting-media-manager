@@ -9,6 +9,7 @@ La schermata delle impostazioni è suddivisa in 4 sezioni. Molte opzioni si spie
 ### Impostazioni applicazione
 
 | Impostazioni | Spiegazione |
+| ------- | ----------- |
 | `Lingua interfaccia` | Imposta la lingua in cui M³ viene mostrato. <br><br> Grazie ai nostri numerosi aiutanti per aver tradotto l'app in così tante lingue! Se vuoi aiutare a migliorare una traduzione esistente o aggiungerne una, per favore apri una nuova ["discussion"]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE). |
 | `Cartella dove salvare i media` | I media dell'adunanza saranno salvati in questa cartella per essere condivisi e utilizzati in seguito. |
 | `Apri l'applicazione all'avvio del sistema` | Se abilitato, M³ sarà avviato quando l'utente corrente eseguirà l'accesso al computer. <br><br> _**Nota:** Non disponibile su Linux._ |
@@ -29,6 +30,7 @@ Vedere la sezione [Sincronizzazione della congregazione]({{page.lang}}/#congrega
 ### Impostazioni media
 
 | Impostazioni | Spiegazione |
+| ------- | ----------- |
 | `Lingua dei media` | Seleziona la lingua della tua congregazione o gruppo. Tutti i media saranno scaricati da JW.org in questa lingua. |
 | `Risoluzione massima dei video` | I video saranno scaricati da JW.org con questa risoluzione oppure con quella immediatamente inferiore. Utile per connessioni limitate o con scarsa banda. |
 | `Converti media nel formato MP4` | Immagini e file audio saranno automaticamente convertiti nel formato MP4 per essere utilizzati direttamente con Zoom["native MP4 sharing feature"](assets/img/other/zoom-mp4-share.png)durante le adunanze di congregazione **completamente in remoto** tenute con Zoom. Ciò include tutte le immagini e i file multimediali scaricati da JW.org, nonché i file multimediali aggiunti dall'utente o dall'OV. <br><br> _**Nota:** Questa opzione adatta per le riunioni Zoom della congregazione tenute **solo da remoto**. Se conduci adunanze di congregazione **ibride** o **regolari**, cerca di utilizzare [Modalità presentazione multimedia]({{page.lang}}/#present-media) attivando invece l'opzione `Mostra i media su un monitor esterno o in una finestra separata` e disattiva questa opzione ._ |
@@ -42,6 +44,7 @@ Vedere la sezione [Sincronizzazione della congregazione]({{page.lang}}/#congrega
 ### Impostazioni adunanza
 
 | Impostazioni | Spiegazione |
+| ------- | ----------- |
 | `Adunanza infrasettimanale` | Indicare il giorno e l'ora abituale della riunione infrasettimanale; utilizzato per nominare le cartelle e la dissolvenza automatica della musica di sottofondo (vedi sotto). |
 | `Adunanza del fine settimana` | Indicare il giorno e l'ora abituali per l'adunanza del fine settimana. |
 | `Abilita il pulsante per riprodurre i cantici in ordine casuale` | Abilita il pulsante nella schermata principale che riprodurrà i cantici da _sjjm_ in ordine casuale. Questo è utile, ad esempio, per riprodurre i cantici come musica di sottofondo prima e dopo le adunanze nella Sala del Regno. |

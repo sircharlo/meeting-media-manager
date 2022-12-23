@@ -9,6 +9,7 @@ A Beállítások képernyő 4 részre van osztva. A legtöbb beállítás könny
 ### Alkalmazás beállítása
 
 | Beállítás | Magyarázat |
+| ------- | ----------- |
 | `Megjelenítési nyelv` | Beállítja az M³ megjelenítési nyelvét. <br><br> Köszönjük számos közreműködőnknek, hogy az alkalmazást ilyen sok nyelvre lefordították! Ha szeretne segíteni egy meglévő fordítás javításában vagy egy új fordítás elkészítésében, kérjük, nyisson egy új ["discussion"]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE)-t (angol nyelven). |
 | `Mappa, amelybe a médiát menteni kívánja` | Az összejövetel médiája ebbe a mappába kerül mentésre a későbbi megosztás és felhasználás céljából. |
 | `Alkalmazás futtatása a rendszer indításakor` | Ha engedélyezve van, az M³ elindul, amikor a jelenlegi felhasználó bejelentkezik a számítógépre. <br><br> _**Megjegyzés:** Linux operációs-rendszeren nem elérhető._ |
@@ -29,6 +30,7 @@ A [Gyülekezet szinkronizálás]({{page.lang}}/#congregation-sync) szakaszban r�
 ### Média beállítása
 
 | Beállítás | Magyarázat |
+| ------- | ----------- |
 | `Média nyelve` | Válassza ki a gyülekezete vagy csoportja nyelvét. Minden médiatartalom ezen a nyelven kerül letöltésre a JW.org-ról. |
 | `Maximális felbontás a videókhoz` | A JW.org-ról letöltött videók ebben a felbontásban vagy a következő rendelkezésre álló felbontásban kerülnek letöltésre. Hasznos forgalmi díjas vagy alacsony sávszélességű internetkapcsolat esetén. |
 | `Média konvertálása MP4 formátumba` | Ez automatikusan átalakítja az összes kép- és hangfájlt MP4 formátumba, hogy a Zoom["native MP4 sharing feature"](assets/img/other/zoom-mp4-share.png)segítségével használhassa a **teljesen online** gyülekezeti Zoom összejövetelek során. Ez magában foglalja a JW.org-ról letöltött összes képet és médiafájlt, valamint a felhasználó vagy a videokonferencia-szervező által hozzáadott további médiafájlokat. <br><br> _**Megjegyzés:** Ez az opció a **kizárólag Zoom-on tartott** gyülekezeti összejövetelekhez a legalkalmasabb. Ha **hibrid** vagy **hagyományos** gyülekezeti összejöveteleket tartanak, akkor nézze meg a [Médiabemutató mód]({{page.lang}}/#present-media) használatát a `Média megjelenítése külső megjelenítőn vagy külön ablakban` opció aktiválásával, és kapcsolja ki ezt az opciót._ |
@@ -42,6 +44,7 @@ A [Gyülekezet szinkronizálás]({{page.lang}}/#congregation-sync) szakaszban r�
 ### Összejövetel beállítása
 
 | Beállítás | Magyarázat |
+| ------- | ----------- |
 | `Hétköznapi összejövetel` | A hétközi összejövetel szokásos napjának és időpontjának feltüntetése; a mappák elnevezéséhez és a háttérzene automatikus kikapcsolásához használatos (lásd alább). |
 | `Hétvégi összejövetel` | Adja meg a hétvégi összejövetel szokásos napját és időpontját. |
 | `Engedélyező gomb a Királyság-énekek véletlenszerű lejátszásához` | Bekapcsol egy gombot a főképernyőn, amely az _Énekeljünk örömmel (sjj)_ című kiadványból véletlenszerű sorrendben lejátssza az énekeket. Ez hasznos például arra, hogy a Királyság-teremben tartott összejövetelek előtt és után háttérzeneként lejátsszuk a dalokat. |

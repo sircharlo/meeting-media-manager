@@ -9,6 +9,7 @@ Skärmen Inställningar är uppdelad i 4 sektioner. De flesta av alternativen ä
 ### Programinställningar
 
 | Inställning | Förklaring |
+| ------- | ----------- |
 | `Programspråk` | Ställer in språket som M³ visas på. <br><br> Tack till våra många bidragsgivare för att du har översatt appen till så många språk! Om du vill hjälpa till att förbättra en befintlig översättning eller lägga till en ny, vänligen öppna en ny ["discussion"]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE). |
 | `Mapp för media` | Mötesmedia kommer att sparas i den här mappen för senare delning och användning. |
 | `Starta programmet när datorn startas` | Om aktiverat, kommer M³ att starta när den aktuella användaren loggar in på datorn. <br><br> _**Obs!** Ej tillgängligt på Linux._ |
@@ -29,6 +30,7 @@ Se avsnittet [Församlingssynkronisering]({{page.lang}}/#congregation-sync) för
 ### Mediainställningar
 
 | Inställning | Förklaring |
+| ------- | ----------- |
 | `Mediaspråk` | Välj språket för din församling eller grupp. Alla media kommer att laddas ner från JW.org på detta språk. |
 | `Videoupplösning` | Videor som laddas ner från JW.org kommer att laddas ner med denna upplösning, eller nästa tillgängliga lägre upplösning. Användbar för situationer med begränsad eller låg bandbredd. |
 | `Konvertera media till MP4-format` | Detta kommer automatiskt att konvertera alla bild- och ljudfiler till MP4-format, för användning med Zooms["native MP4 sharing feature"](assets/img/other/zoom-mp4-share.png)under **helt digitala** församlingsmöten via Zoom. Detta inkluderar alla bilder och mediefiler som laddats ner från JW.org, såväl som ytterligare mediefiler som lagts till av användaren eller VO. <br><br> _**Obs:** Det här alternativet är bäst lämpat för **enbart digitala** församlingsmöten via Zoom. Om du genomför antingen **hybrid** eller **vanliga** församlingsmöten, titta på att använda [Mediapresentationsläge]({{page.lang}}/#present-media) genom att aktivera alternativet `Visa media på en extern skärm eller i ett separat fönster` istället och inaktivera det här alternativet ._ |
@@ -42,6 +44,7 @@ Se avsnittet [Församlingssynkronisering]({{page.lang}}/#congregation-sync) för
 ### Mötesinställningar
 
 | Inställning | Förklaring |
+| ------- | ----------- |
 | `Veckomöte` | Ange vanlig dag och tid för veckomötet; används för mappnamn och automatisk uttoning av bakgrundsmusik (se nedan). |
 | `Helgmöte` | Ange vanlig dag och tid för helgmötet. |
 | `Aktivera knapp för spelnings av slumpvalda Rikets sånger.` | Aktivera en knapp på huvudskärmen som kommer att spela Rikets sånger från _sjjm_-serien, i slumpmässig ordning. Detta är till exempel användbart för att spela sånger före och efter möten i Rikets sal som bakgrundsmusik. |

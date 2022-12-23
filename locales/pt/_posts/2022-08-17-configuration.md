@@ -9,6 +9,7 @@ A tela Configurações é dividida em 4 seções. A maioria das opções é auto
 ### Configuração do programa
 
 | Configuração | Explicação |
+| ------- | ----------- |
 | `Idioma do programa` | Define o idioma de exibição da interface do M³. <br><br> Obrigado aos nossos muitos colaboradores por traduzir o aplicativo em tantos idiomas! Se você quiser ajudar a melhorar uma tradução existente ou adicionar uma nova, abra uma nova ["discussion"]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE). |
 | `Pasta para salvar as mídias` | A mídia da reunião será salva nesta pasta. |
 | `Executar o programa após a inicialização do sistema` | Se ativado, o M³ será iniciado quando o usuário atual fizer login no computador. <br><br> _**Observação:** não está disponível no Linux._ |
@@ -29,6 +30,7 @@ Consulte a seção [Configuração do servidor da congregação]({{page.lang}}/#
 ### Configuração de mídia
 
 | Configuração | Explicação |
+| ------- | ----------- |
 | `Idioma das mídias` | Selecione o idioma de sua congregação ou grupo. Todas as mídias serão baixadas do JW.org neste idioma. |
 | `Resolução dos vídeos` | Os vídeos baixados do JW.org serão baixados nessa resolução ou na menor resolução disponível. Útil para situações de internet baixa ou limitada. |
 | `Converter mídias para MP4` | Nessa opção serão convertidos automaticamente todos os arquivos de imagem e áudio para o formato MP4, para uso com o["native MP4 sharing feature"](assets/img/other/zoom-mp4-share.png)do Zoom durante as reuniões **apenas pelo Zoom.**. Isso inclui todas as imagens e arquivos de mídia baixados do JW.org, bem como arquivos de mídia adicionais adicionados pelo usuário ou pelo Organizador de Videoconferência. <br><br> _**Observação:** essa opção é mais adequada para reuniões que são realizadas **apenas pelo Zoom**. Se estiver realizando reuniões **híbridas** ou **regulares**, tente usar [Modo de exibição de mídia]({{page.lang}}/#present-media) ativando a opção `Exibir as mídias numa tela secundária` e desative essa opção ._|
@@ -42,6 +44,7 @@ Consulte a seção [Configuração do servidor da congregação]({{page.lang}}/#
 ### Configuração da reunião
 
 | Configuração | Explicação |
+| ------- | ----------- |
 | `Reunião de meio de semana` | Selecione o dia e a hora da sua reunião do meio da semana; usado para nomeação de pastas e parar automáticamente os cânticos de fundo (veja abaixo). |
 | `Reunião de fim de semana` | Escolha o dia e horário da sua reunião do fim de semana. |
 | `Habilitar botão para reproduzir cânticos aleatoriamente` | Nessa opção o M³ mostra um botão na tela principal que ao clicado duas vezes vai reproduzir cânticos _sjjm_, aleatoriamente. Isso é útil, por exemplo, para reproduzir cânticos antes e depois das reuniões no Salão do Reino como música de fundo. |
