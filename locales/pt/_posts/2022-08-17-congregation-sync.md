@@ -40,4 +40,4 @@ Quando a configuração de sincronização da congregação estiver concluída, 
 
 ### Captura da configuração do servidor da congregação
 
-{% include posts/congregation-sync.html lang=site.data.pt %}
+{% include screenshots/congregation-sync.html lang=site.data.pt %}
