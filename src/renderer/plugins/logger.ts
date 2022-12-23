@@ -1,4 +1,4 @@
-import { type, release } from 'os'
+import { type, release, arch } from 'os'
 import { Plugin } from '@nuxt/types'
 import { MeetingFile, Perf, Stats } from '~/types'
 import { BYTES_IN_KIBIBYTE } from '~/constants/general'
@@ -83,39 +83,19 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
       2
     )
     return (
-      `${$config.repo}/issues/new?labels=bug,from-app&title=ISSUE DESCRIPTION HERE&body=` +
+      `${
+        $config.repo
+      }/issues/new?assignees=mtdvlpr,sircharlo&labels=bug,from-app&template=bug_report.yml&title=[Bug]%3A+<title>&version=${
+        $config.version
+      }&logs=${JSON.stringify(logs.error, null, 2).replace(
+        /\n/g,
+        '%0D%0A'
+      )}&additional-context=` +
       encodeURIComponent(
-        `### Describe the bug
-A clear and concise description of what the bug is.
-
-### To Reproduce
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Do '....'
-4. See error
-
-### Expected behavior
-A clear and concise description of what you expected to happen.
-
-### Screenshots
-If possible, add screenshots to help explain your problem.
-
-### System specs
-- ${type()} ${release()}
-- M³ ${$config.version}
-
-### Additional context
-Add any other context about the problem here.
-
+        `${type()} ${release()} ${arch()}
 ### Anonymized \`prefs.json\`
 \`\`\`
 ${prefs}
-\`\`\`
-
-### Full error log
-\`\`\`
-${JSON.stringify(logs.error, null, 2)}
 \`\`\``
       ).replace(/\n/g, '%0D%0A')
     )
