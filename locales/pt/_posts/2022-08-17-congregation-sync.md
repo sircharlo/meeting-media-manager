@@ -12,7 +12,7 @@ O OV, ou alguém que foi designado por ele, pode:
 - **ocultar** mídia do JW.org que não será usada numa reunião, por exemplo, quando uma parte for substítuida.
 - adicionar ou remover mídia **recorrente**, como um vídeo de texto do ano ou slides
 
-Todos os que estiverem sincronizados com o mesmo servidor da congregação receberão exatamente a mesma mídia quando clicarem no botão **Baixar mídias!**.
+Todos os que estiverem sincronizados com o mesmo servidor da congregação receberão exatamente a mesma mídia quando clicarem no botão _Baixar mídias!_.
 
 Observe que o recurso do servidor da congregação é totalmente opcional.
 
