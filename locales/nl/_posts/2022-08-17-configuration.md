@@ -45,7 +45,7 @@ Zie de [Gemeente sync]({{page.lang}}/#congregation-sync) sectie voor details ove
 
 | Instelling | Uitleg |
 | ------- | ----------- |
-| `Doordeweekse vergadering | Stel in welke dag en tijd de doordeweekse vergadering normaal gehouden wordt. Dit wordt gebruikt voor de naamgeving van de media folders en het automatisch stoppen van achtergrond muziek (zie hieronder). |
+| `Doordeweekse vergadering` | Stel in welke dag en tijd de doordeweekse vergadering normaal gehouden wordt. Dit wordt gebruikt voor de naamgeving van de media folders en het automatisch stoppen van achtergrond muziek (zie hieronder). |
 |`Weekend vergadering`| Stel in welke dag en tijd de weekend vergadering normaal gehouden wordt. |
 |`Zet knop aan om koninkrijksliederen op shuffle af te spelen`| Deze knop knop om het beginscherm te staan en speelt koninkrijksliederen van _sjjm_ serie, in willekeurige volgorde, af. Dit is handig om bijvoorbeeld voor en na de vergadering achtergrond muziek af te spelen in de Koninkrijkszaal. |
 |`Muziek afspeelvolume`| Stelt het volume in voor de achtergrondmuziek. |
