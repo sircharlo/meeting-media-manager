@@ -1,19 +1,19 @@
 ---
 name: Feature request
-about: Create a report to help us improve
-title: "[Feature] "
+about: Suggest an idea for this project
+title: "[Feature]: <title>"
 labels: enhancement
 assignees: sircharlo
 ---
 
-**Describe the feature**
-A clear and concise description of what the feature/improvement is.
+**Is your feature request related to a problem? Please describe.**
+A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-**How would this feature work?**
-Describe how this feature would ideally work in your opinion.
+**Describe the solution you'd like**
+A clear and concise description of what you want to happen.
 
-**Who would benefit from it?**
-A reason why this feature would be useful.
+**Describe alternatives you've considered**
+A clear and concise description of any alternative solutions or features you've considered.
 
 **Additional context**
-Add any other context about the feature here.
+Add any other context or screenshots about the feature request here.
