@@ -192,7 +192,7 @@
         >
           {{ item.label }}
         </v-btn>
-        <v-btn v-if="locked" icon :disabled="true" :style="`height: ${height}`">
+        <v-btn v-if="locked" icon disabled :style="`height: ${height}`">
           <font-awesome-icon :icon="faLock" />
         </v-btn>
       </v-btn-toggle>
