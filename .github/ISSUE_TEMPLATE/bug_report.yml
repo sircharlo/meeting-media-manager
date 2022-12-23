@@ -1,5 +1,5 @@
 name: Bug Report
-description: File a bug report
+description: Create a report to help us improve
 title: '[Bug]: <title>'
 labels: ['bug']
 assignees:
@@ -47,7 +47,9 @@ body:
     id: version
     attributes:
       label: Version
-      description: What version of M3 are you running?
+      description: |
+        What version of M³ are you running?
+        You can find your version in the settings.
       placeholder: vXX.X.X
     validations:
       required: true
@@ -56,7 +58,7 @@ body:
     attributes:
       label: What platform are you seeing the problem on?
       options:
-        - Windows (Default)
+        - Windows
         - MacOS
         - Linux
     validations:
