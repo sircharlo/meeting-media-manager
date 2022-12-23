@@ -41,7 +41,7 @@ jobs:
         run: yarn lint
       - name: Cancel workflow
         if: failure()
-        uses: andymckay/cancel-action@0.2
+        uses: andymckay/cancel-action@0.3
 
   test:
     runs-on: ${{ matrix.os }}
@@ -95,7 +95,7 @@ jobs:
 
       - name: Cancel workflow
         if: failure()
-        uses: andymckay/cancel-action@0.2
+        uses: andymckay/cancel-action@0.3
   build:
     runs-on: ${{ matrix.os }}
 
@@ -169,4 +169,4 @@ jobs:
 
       - name: Cancel workflow
         if: failure()
-        uses: andymckay/cancel-action@0.2
+        uses: andymckay/cancel-action@0.3
