@@ -59,7 +59,7 @@ body:
         - Windows (Default)
         - MacOS
         - Linux
-      validations:
+    validations:
       required: true
   - type: textarea
     id: logs
