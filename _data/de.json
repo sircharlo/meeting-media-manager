@@ -11,13 +11,6 @@
     "port": "Port"
   },
   "home": {},
-  "congregation-sync": {
-    "fetchMedia": "Medienordner aktualisieren",
-    "hostname": "Hostname",
-    "username": "Benutzername",
-    "webdavFolder": "Synchronisations-Ordner",
-    "settingsLocked": "Versammlungsweite Einstellungen"
-  },
   "manage-media": {},
   "present-media": {}
 }
