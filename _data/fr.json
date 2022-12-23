@@ -11,13 +11,6 @@
     "port": "Port"
   },
   "home": {},
-  "congregation-sync": {
-    "fetchMedia": "Rafraîchir les dossiers multimédias",
-    "hostname": "Adresse du serveur",
-    "username": "Nom d'utilisateur",
-    "webdavFolder": "Dossier de l'assemblée locale",
-    "settingsLocked": "Paramètres bloqués pour l'assemblée locale"
-  },
   "manage-media": {},
   "present-media": {}
 }
