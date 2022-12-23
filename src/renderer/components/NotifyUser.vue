@@ -11,7 +11,7 @@
       rounded
       :elevation="24"
       :color="color"
-      :vertical="true"
+      vertical
       :value="true"
       min-width="350px"
       width="30%"

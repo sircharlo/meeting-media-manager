@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <!-- Video in presentation mode -->
 <template>
   <div :id="id">
@@ -49,18 +50,16 @@
         </v-col>
       </v-row>
     </v-overlay>
-    <v-tooltip v-if="clickedOnce" right>
-      <template #activator="{ on, attrs }">
+    <v-tooltip v-if="clickedOnce" right :value="true">
+      <template #activator="data">
         <v-btn
           x-small
           absolute
           left
           tile
           depressed
-          v-bind="attrs"
           style="bottom: 7.5px"
           :class="{ 'pulse-danger': isClipped }"
-          v-on="on"
           @click="atClick()"
         >
           <font-awesome-icon :icon="faFilm" pull="left" />
