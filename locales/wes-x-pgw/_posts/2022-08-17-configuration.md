@@ -4,4 +4,4 @@ title: Settings
 ref: configuration
 ---
 
-{% include posts/configuration.html lang=site.data.wes-x-pgw %}
+{% include posts/configuration.md lang=site.data.wes-x-pgw %}

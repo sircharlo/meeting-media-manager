@@ -1,9 +1,3 @@
----
-tag: Configuration
-title: Settings
-ref: configuration
----
-
 The Settings screen is divided into 4 sections. Most of the options are self-explanatory, but here are a few additional details.
 
 ### Application setup
