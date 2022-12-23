@@ -17,6 +17,7 @@ Todos os que estiverem sincronizados com o mesmo servidor da congregação receb
 Observe que o recurso do servidor da congregação é totalmente opcional.
 
 ### Como funciona
+
 O M³ usa o recurso de WebDAV para sincronizar arquivos com um servidor. Isso significa que o OV (ou alguém sob sua supervisão) precisa:
 
 - configurar um servidor WebDAV seguro que seja acessível pela Web, **ou**
