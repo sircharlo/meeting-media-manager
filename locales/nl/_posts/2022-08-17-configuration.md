@@ -39,7 +39,7 @@ Zie de [Gemeente sync]({{page.lang}}/#congregation-sync) sectie voor details ove
 | `Achtergrondplaatje voor media presentatie modus` | Standaard zal M³ proberen om de jaartekst van dit jaar in de gekozen media taal proberen op te halen om die als achtergrond te tonen in de [Media presentatie modus]({{page.lang}}/#present-media) wanneer er geen media wordt afgespeeld. Als het ophalen van jaartekst mislukt of je om een andere reden een andere achtergrond wilt gebruiken kan je de 'Blader' knop gebruiken om een andere plaatje te selecteren of de 'refresh' knop gebruiken om de jaartekst nog een keer op te halen. <br><br> _**Let op:** Als [Gemeente sync]({{page.lang}}/#congregation-sync) aan is gezet, zal de achtergrond automatisch gesynchroniseerd worden met alle andere gebruikers van jullie gemeente._ |
 | ` Maak playlists voor het gebruik met VLC ` | Zet deze optie aan om automatisch playlists te genereren van elke vergaderingen, om die in VLC te laden als je VLC gebruikt in plaats van de [Media presentatie modus]({{page.lang}}/#present-media). |
 | `Sluit alle media van de _th_ brochure uit` | Als deze optie aan staat, zal de media van de _Leg je toe op_ brochure niet worden gedownload voor de doordeweekse vergadering. |
-| `Sluit afbeeldingen van de _lffi_ brochure uit` | Als deze optie aan staat, zullen de plaatjes van de_Voor eeuwig gelukkig_brochure (_lffi_), van bijvoorbeeld de bijbelstudie, niet gedownload worden. |
+| `Sluit afbeeldingen van het _lff_ boek uit buien gemeentebijelstudie` | Als deze optie aan staat, zullen de plaatjes van het _Voor eeuwig gelukkig_ boek (_lff_), van bijvoorbeeld de bijbelstudie, niet gedownload worden. |
 
 ### Vergadering setup
 
