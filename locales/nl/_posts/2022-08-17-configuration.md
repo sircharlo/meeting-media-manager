@@ -10,7 +10,7 @@ Het instellingen scherm is verdeeld in 4 secties. De meeste opties spreken voor 
 
 | Instelling | Uitleg |
 | ------- | ----------- |
-| `Applicatie taal | De taal waarin M³ wordt weergegeven. <br><br> Alle vrijwilliger, enorm bedankt voor het vertalen van deze app in zo veel talen! Als je wilt meehelpen aan het verbeteren van een bestaande vertaling of een nieuwe taal wilt toevoegen, open dan alsjeblieft een nieuwe ["discussion"]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE). |
+| `Applicatie taal` | De taal waarin M³ wordt weergegeven. <br><br> Alle vrijwilliger, enorm bedankt voor het vertalen van deze app in zo veel talen! Als je wilt meehelpen aan het verbeteren van een bestaande vertaling of een nieuwe taal wilt toevoegen, open dan alsjeblieft een nieuwe ["discussion"]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE). |
 |`Folder waar de media wordt opgeslagen`| Media voor de vergaderingen wordt in deze folder opgeslagen voor later gebruik. |
 |`Start de app bij systeem opstarten`| Als deze optie aan staat, zal M³ automatisch opstarten zodra de huidige gebruiker inlogt op de computer. <br><br> _**Let op:** Niet beschikbaar voor Linux._ |
 |`Automatisch media syncen`| Als deze optie aan staat, zal M³ automatisch media gaan ophalen 5 seconden nadat de applicatie is opgestart. <br><br>_te voorkomen dat media wordt opgehaald kan je op de ⏸ (pauze) knop drukken voordat de 5-seconden timer om is._ |
