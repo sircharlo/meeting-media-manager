@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <template>
   <v-row justify="center" class="fill-height">
     <action-preview
@@ -43,14 +44,12 @@
                 size="xs"
                 @click.stop="atCongClick(item)"
               />
-              <v-tooltip v-else left>
-                <template #activator="{ on, attrs }">
+              <v-tooltip v-else left :value="true">
+                <template #activator="data">
                   <font-awesome-icon
-                    v-bind="attrs"
                     :icon="faSquareMinus"
                     class="error--text"
                     size="xs"
-                    v-on="on"
                     @click.stop="atCongClick(item)"
                   />
                 </template>
@@ -647,7 +646,6 @@ export default defineComponent({
     },
     async syncCongMedia() {
       if (this.congSync) {
-        console.log('sync cong media')
         try {
           await this.$syncCongMedia(this.baseDate, this.setProgress)
           if (this.congSyncColor === 'warning') {

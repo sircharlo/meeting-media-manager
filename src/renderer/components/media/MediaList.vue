@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <!-- Media list in the media manager page -->
 <template>
   <v-list v-if="mediaList.length > 0" dense>
@@ -31,14 +32,12 @@
           class="warning--text"
           size="xs"
         />
-        <v-tooltip v-else right>
-          <template #activator="{ on, attrs }">
+        <v-tooltip v-else right :value="true">
+          <template #activator="data">
             <font-awesome-icon
-              v-bind="attrs"
               :icon="faSquareMinus"
               class="error--text"
               size="xs"
-              v-on="on"
             />
           </template>
           <span>{{ $t('clickAgain') }}</span>

@@ -1,15 +1,14 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <template>
-  <v-tooltip v-if="clickedOnce" top :close-delay="3 * ms">
-    <template #activator="{ on, attrs }">
+  <v-tooltip v-if="clickedOnce" top :value="true">
+    <template #activator="data">
       <v-btn
         id="shuffle"
         ref="btn"
         v-model="$attrs.value"
         v-click-outside="revertClickedOnce"
         aria-label="shuffle"
-        v-bind="attrs"
         :color="musicFadeOut ? 'error' : 'warning'"
-        v-on="on"
         @click="atClick()"
       >
         <font-awesome-icon v-if="musicFadeOut" pull="left" :icon="faStop" />
@@ -84,7 +83,6 @@ export default defineComponent({
       timeRemaining: '',
       interval: null as null | NodeJS.Timer,
       icons: [faMusic, faShuffle],
-      ms: MS_IN_SEC,
     }
   },
   computed: {
