@@ -17,7 +17,6 @@
       :key="item.safeName"
       dense
       :disabled="item.loading"
-      @click="atClick(item)"
     >
       <v-list-item-action v-if="item.loading" class="my-0">
         <v-progress-circular indeterminate size="16" width="2" />
@@ -26,29 +25,40 @@
         v-else-if="!item.recurring && (item.isLocal || item.congSpecific)"
         class="my-0"
       >
-        <font-awesome-icon
-          v-if="item.color === 'warning'"
-          :icon="faSquareMinus"
-          class="warning--text"
-          size="xs"
-        />
+        <v-btn v-if="item.color === 'warning'" icon @click="atClick(item)">
+          <font-awesome-icon
+            :icon="faSquareMinus"
+            class="warning--text"
+            size="xs"
+          />
+        </v-btn>
         <v-tooltip v-else right :value="true">
           <template #activator="data">
-            <font-awesome-icon
-              :icon="faSquareMinus"
-              class="error--text"
-              size="xs"
-            />
+            <v-btn icon @click="atClick(item)">
+              <font-awesome-icon
+                :icon="faSquareMinus"
+                class="error--text"
+                size="xs"
+              />
+            </v-btn>
           </template>
           <span>{{ $t('clickAgain') }}</span>
         </v-tooltip>
       </v-list-item-action>
-      <v-list-item-action v-else-if="item.isLocal === undefined" class="my-0">
-        <font-awesome-icon :icon="faSquarePlus" size="xs" />
-      </v-list-item-action>
       <v-list-item-action v-else class="my-0">
-        <font-awesome-icon v-if="item.hidden" :icon="faSquare" size="xs" />
-        <font-awesome-icon v-else :icon="faSquareCheck" size="xs" />
+        <v-btn icon @click="atClick(item)">
+          <font-awesome-icon
+            v-if="item.isLocal === undefined"
+            :icon="faSquarePlus"
+            size="xs"
+          />
+          <font-awesome-icon
+            v-else-if="item.hidden"
+            :icon="faSquare"
+            size="xs"
+          />
+          <font-awesome-icon v-else :icon="faSquareCheck" size="xs" />
+        </v-btn>
       </v-list-item-action>
       <v-hover v-slot="{ hover }">
         <v-list-item-content>
