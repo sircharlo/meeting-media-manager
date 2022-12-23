@@ -4,4 +4,4 @@ title: Församlingssynkronisering
 ref: congregation-sync
 ---
 
-{% include posts/congregation-sync.md lang=site.data.sv %}
+{% include posts/congregation-sync.html lang=site.data.sv %}

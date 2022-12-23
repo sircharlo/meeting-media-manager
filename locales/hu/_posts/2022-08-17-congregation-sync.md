@@ -4,4 +4,4 @@ title: Gyülekezet szinkronizálás
 ref: congregation-sync
 ---
 
-{% include posts/congregation-sync.md lang=site.data.hu %}
+{% include posts/congregation-sync.html lang=site.data.hu %}

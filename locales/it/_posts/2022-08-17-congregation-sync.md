@@ -4,4 +4,4 @@ title: Sincronizzazione della congregazione
 ref: congregation-sync
 ---
 
-{% include posts/congregation-sync.md lang=site.data.it %}
+{% include posts/congregation-sync.html lang=site.data.it %}

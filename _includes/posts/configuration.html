@@ -143,25 +143,9 @@ assign linkCongSync=link | replace: '[POSTTITLE]', post[0].title %}
           page="configuration" key="obsScenesMin" %}<br />
           <br />
           {% include t.html lang=include.lang page="configuration" key="obsAlso"
-          %}
-          <ul>
-            <li>
-              {% include t.html lang=include.lang page="configuration"
-              key="obsLecturn" %}
-            </li>
-            <li>
-              {% include t.html lang=include.lang page="configuration"
-              key="obsStage" %}
-            </li>
-            <li>
-              {% include t.html lang=include.lang page="configuration"
-              key="obsLecturnReader" %}
-            </li>
-            <li>
-              {% include t.html lang=include.lang page="configuration"
-              key="obsTable" %}
-            </li>
-          </ul>
+          %} {% include t.html lang=include.lang page="configuration"
+          key="obsLecturn" %}, {% include t.html lang=include.lang page="configuration"
+          key="obsStage" %}, etc.
         </blockquote>
       </td>
     </tr>
@@ -399,26 +383,12 @@ assign linkCongSync=link | replace: '[POSTTITLE]', post[0].title %}
       <td>
         <code
           >{% include t.html lang=include.lang page="configuration"
-          key="excludeLffi" %}</code
-        >
-      </td>
-      <td>
-        {% include t.html lang=include.lang page="configuration" key="lffiDesc"
-        %} {% include t.html lang=include.lang page="configuration"
-        key="lffiNote" %}
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code
-          >{% include t.html lang=include.lang page="configuration"
           key="excludeLffiImages" %}</code
         >
       </td>
       <td>
         {% include t.html lang=include.lang page="configuration"
-        key="lffiImgDesc" %} {% include t.html lang=include.lang
-        page="configuration" key="lffiImgNote" %}
+        key="lffiImgDesc" %}
       </td>
     </tr>
   </tbody>
@@ -494,7 +464,7 @@ assign linkCongSync=link | replace: '[POSTTITLE]', post[0].title %}
           key="musicFadeOutType" %}
         </code>
       </td>
-      {% assign musicBtn= include.lang.configuration.bgDesc %} {% if musicBtn ==
+      {% assign musicBtn= include.lang.configuration.enableMusicButton %} {% if musicBtn ==
       nil %} {% assign musicBtn= site.data.en.configuration.bgDesc %} {% endif
       %} {% assign string= include.lang.configuration.fadeDesc %} {% if string
       == nil %} {% assign string= site.data.en.configuration.fadeDesc %} {%
@@ -503,17 +473,9 @@ assign linkCongSync=link | replace: '[POSTTITLE]', post[0].title %}
         {{ string | replace: '[MUSIC OPTION]', musicBtn }}<br />
         <br />
         {% include t.html lang=include.lang page="configuration"
-        key="fadeOptions" %}
-        <ul>
-          <li>
-            {% include t.html lang=include.lang page="configuration"
-            key="fadeMinutes" %}
-          </li>
-          <li>
-            {% include t.html lang=include.lang page="configuration"
-            key="fadeMeeting" %}
-          </li>
-        </ul>
+        key="fadeOptions" %} {% include t.html lang=include.lang page="configuration"
+        key="fadeMinutes" %} {% include t.html lang=include.lang page="configuration"
+        key="fadeMeeting" %}
       </td>
     </tr>
   </tbody>
