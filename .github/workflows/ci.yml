@@ -88,7 +88,9 @@ jobs:
           name: test-results ${{ matrix.os }}
           path: test-results/
           retention-days: 30
-
+      - name: Cancelling parallel jobs if current job failed
+        if: failure()
+        uses: andymckay/cancel-action@0.2
   build:
     runs-on: ${{ matrix.os }}
 
@@ -158,3 +160,6 @@ jobs:
             !build/*.blockmap
             !build/*.yml
           retention-days: 30
+      - name: Cancelling parallel jobs if current job failed
+        if: failure()
+        uses: andymckay/cancel-action@0.2
