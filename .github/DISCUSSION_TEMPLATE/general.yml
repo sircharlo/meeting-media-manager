@@ -1,0 +1,9 @@
+title: "<title>"
+labels: [general]
+body:
+- type: textarea
+  attributes:
+    label: Body
+    description: Start your discussion!
+  validations:
+    required: true
