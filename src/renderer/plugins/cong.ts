@@ -18,6 +18,7 @@ import {
 import {
   BITS_IN_BYTE,
   BYTES_IN_MB,
+  LOCKED,
   MS_IN_SEC,
   NOT_FOUND,
 } from '~/constants/general'
@@ -271,7 +272,9 @@ const plugin: Plugin = (
       try {
         await client.deleteFile(dir.filename)
       } catch (e: any) {
-        if (e.status !== NOT_FOUND) {
+        if (e.message.includes(LOCKED.toString())) {
+          $warn('errorWebdavLocked', { identifier: dir.filename })
+        } else if (e.status !== NOT_FOUND) {
           $error('errorWebdavRm', e, dir.filename)
         }
       }
@@ -443,14 +446,14 @@ const plugin: Plugin = (
     const contents = $clone(store.state.cong.contents) as FileStat[]
 
     // Get directories
-    const dirs = [
-      ...contents.filter(({ type }) => type === 'directory'),
-    ].sort((a, b) => a.basename.localeCompare(b.basename)) as CongFile[]
+    const dirs = [...contents.filter(({ type }) => type === 'directory')].sort(
+      (a, b) => a.basename.localeCompare(b.basename)
+    ) as CongFile[]
 
     // Get files
-    const files = [
-      ...contents.filter(({ type }) => type === 'file'),
-    ].sort((a, b) => a.basename.localeCompare(b.basename)) as CongFile[]    
+    const files = [...contents.filter(({ type }) => type === 'file')].sort(
+      (a, b) => a.basename.localeCompare(b.basename)
+    ) as CongFile[]
     // Add each file to its directory
     files.forEach((file) => {
       const fileDir = dirname(file.filename)

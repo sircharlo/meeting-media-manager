@@ -248,7 +248,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
-import { NOT_FOUND } from '~/constants/general'
+import { NOT_FOUND, LOCKED } from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
@@ -526,7 +526,11 @@ export default defineComponent({
             join(this.prefs.cong.dir, this.bgFileName() + extname(bg[0]))
           )
         } catch (e: any) {
-          if (e.status !== NOT_FOUND) {
+          if (e.message.includes(LOCKED.toString())) {
+            this.$warn('errorWebdavLocked', {
+              identifier: this.bgFileName() + extname(bg[0]),
+            })
+          } else if (e.status !== NOT_FOUND) {
             this.$error('errorWebdavRm', e, this.bgFileName() + extname(bg[0]))
           }
         }
