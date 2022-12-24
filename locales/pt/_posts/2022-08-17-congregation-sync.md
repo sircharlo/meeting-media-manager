@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Configuração
 title: Configuração do servidor da congregação
 ref: congregation-sync
 ---
