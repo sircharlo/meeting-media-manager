@@ -53,7 +53,7 @@
   "errorWebdavTooBig": "O ficheiro que você está tentando enviar é muito grande (excede o máximo de 512 MB). Ele foi incluído na pasta, mas não foi enviado ao servidor da congregação.",
   "errorWebdavTooManyRequests": "Foram enviadas muitas solicitações ao servidor. Por favor, tente novamente mais tarde.",
   "errorWUnavailable": "A Edição de Estudo da Sentinela não está disponível no idioma selecionado. Defina um idioma alternativo para usar sempre que necessário.",
-  "excludeLffImages": "Excluir imagens do livro <em>lff</em> fora do Estudo Bíblico de Congregação",
+  "excludeLffImages": "Excluir imagens do livro <em>lff</em> que não serão consideradas no Estudo Bíblico de Congregação",
   "excludeTh": "Eliminar todas as multimédias da publicação <em>th</em>",
   "fetchMedia": "Descarregar multimédias!",
   "fieldInvalid": "Este não é um valor válido para este campo.",
