@@ -1,4 +1,5 @@
 title: "[New translation]: <language>"
+labels: ["translations"]
 body:
   - type: markdown
     attributes:
