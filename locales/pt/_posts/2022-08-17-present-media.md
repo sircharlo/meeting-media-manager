@@ -1,5 +1,5 @@
 ---
-tag: Usage
+tag: Uso
 title: Modo de exibição de mídia
 ref: present-media
 ---
@@ -40,7 +40,7 @@ Se estiver usando a versão portátil do OBS Studio, instale o plug-in [Virtualc
 
 Se você tiver o OBS Studio v27 ou anterior, precisará instalar o plugin [obs-websocket](https://github.com/obsproject/obs-websocket). Caso contrário, o obs-websocket estará incluído. Configure um número de porta e senha para obs-websocket.
 
-Nas configurações do OBS, em `Geral` > `Bandeja do sistema`, marque todas as caixas de seleção. Em `Saída` > `Transmissão`, habilite um codificador de hardware, se disponível. Em `Vídeo` > `Resolução de base (canvas)` e `Resolução de saída (escalonada)`, escolha `1280x720` e em `Filtro`, escolha `Bilinear`.
+Nas configurações do OBS, em `Geral` &gt; `Bandeja do sistema`, marque todas as caixas de seleção. Em `Saída` &gt; `Transmissão`, habilite um codificador de hardware, se disponível. Em `Vídeo` &gt; `Resolução de base (canvas)` e `Resolução de saída (escalonada)`, escolha `1280x720` e em `Filtro`, escolha `Bilinear`.
 
 Configure pelo menos 2 cenas: uma para a exibição de mídia (`Captura de janela` ou `Captura de tela` com o cursor do mouse desativado e o título/monitor de janela apropriado selecionado) e uma para a visualização do palco (`Dispositivo de captura de vídeo` com a câmera do Salão do Reino selecionada). Você pode adicionar quantas cenas forem necessárias, em diferentes cortes de câmera como (uma cena da tribuna, uma cena do dirigente e leitor, uma cena da mesa, etc.).
 
