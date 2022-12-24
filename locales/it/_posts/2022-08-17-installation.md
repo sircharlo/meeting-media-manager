@@ -4,7 +4,7 @@ title: Installazione
 ref: installation
 ---
 
-M³ non richiede privilegi di amministratore per l'installazione o l'esecuzione. Per installare M³, [scarica  il programma di installazione più recente](%7B%7Bsite.github%7D%7D/releases/latest) ed eseguilo.
+M³ non richiede privilegi di amministratore per l'installazione o l'esecuzione. Per installare M³, [scarica  il programma di installazione più recente]({{site.github}}/releases/latest) ed eseguilo.
 
 Sistema operativo | File da scaricare
 --- | ---
@@ -14,8 +14,8 @@ Linux | `meeting-media-manager-[VERSION]-[ARCH].AppImage`
 
 ### E dopo
 
-Configurare l'app utilizzando la schermata [Impostazioni](%7B%7Bpage.lang%7D%7D/#configuration).
+Configurare l'app utilizzando la schermata [Impostazioni]({{page.lang}}/#configuration).
 
 ### Problemi durante l'installazione?
 
-Controlla le [Note tecniche di utilizzo](%7B%7Bpage.lang%7D%7D/#usage-notes) per aiuto.
+Controlla le [Note tecniche di utilizzo]({{page.lang}}/#usage-notes) per aiuto.
