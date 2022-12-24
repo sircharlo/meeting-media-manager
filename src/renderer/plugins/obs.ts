@@ -79,7 +79,7 @@ const plugin: Plugin = (
               $warn('errorObs')
             } else {
               $log.debug('OBS v4 onError')
-              $error('errorObs', e.error)
+              $error('errorObs', e.error ?? e)
             }
             await resetOBS()
           })
