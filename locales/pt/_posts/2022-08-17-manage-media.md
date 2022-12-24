@@ -1,5 +1,5 @@
 ---
-tag: Usage
+tag: Uso
 title: Gerenciando mídia
 ref: manage-media
 ---
@@ -25,7 +25,7 @@ No campo `Mídia para adicionar`, você verá diferentes opções, dependendo do
 
 `Tipo de mídia` | O campo `Mídia para adicionar`
 --- | ---
-`Cântico` | ... mostra um menu com todos os cânticos *sjjm*, no idioma da mídia. Escolha esta opção, por exemplo, para adicionar um cântico para o discurso público ou para as visitas do superintendente de circuito. <br><br> O cântico selecionado será baixado automaticamente do JW.org, no idioma da congregação ou grupo, conforme escolhido em [Configurações]({{page.lang}}/#configuration).
+`Cântico` | ... mostra um menu com todos os cânticos *sjjm*, no idioma da mídia. Escolha esta opção, por exemplo, para adicionar um cântico para o discurso público ou para as visitas do superintendente de circuito. <br><br> O cântico selecionado será baixado automaticamente do JW.org, no idioma da congregação ou grupo, conforme escolhido em [Configurações](%7B%7Bpage.lang%7D%7D/#configuration).
 `JWPUB` | ... permite que você navegue até (ou arraste e solte) um arquivo JWPUB. <br><br> Você será solicitado a selecionar a seção ou capítulo que deseja adicionar essa mídia. Isso adicionará a mídia incluída dessa seção no arquivo JWPUB. <br><br> Um exemplo de arquivo JWPUB muito usado é o S-34, mas qualquer arquivo JWPUB pode ser usado aqui.
 `Personalizado` | ... permite que você navegue (ou arraste e solte) por qualquer outro arquivo(s) de mídia do seu computador. <br><br> *Todos os arquivos PDF e SVG serão automaticamente convertidos em imagens de alta resolução pelo M³.*
 
