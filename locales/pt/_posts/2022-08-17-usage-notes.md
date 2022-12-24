@@ -8,11 +8,11 @@ O aplicativo funciona nos sistemas operacionais Windows, Linux ou Mac.
 
 ### Windows: Instalação e primeira execução
 
-Ao abrir o instalador, pode aparecer um [error](assets/img/other/win-smartscreen.png) indicando que "O Windows SmartScreen impediu que um aplicativo não reconhecido fosse iniciado". Isso ocorre porque o aplicativo não possui um número alto de downloads e, consequentemente, não é "confiável" pelo Windows. Para resolver isso, basta clicar em "Mais informações" e depois em "Executar assim mesmo".
+Ao abrir o instalador, pode aparecer um [erro](assets/img/other/win-smartscreen.png) indicando que "O Windows SmartScreen impediu que um aplicativo não reconhecido fosse iniciado". Isso ocorre porque o aplicativo não possui um número alto de downloads e, consequentemente, não é "confiável" pelo Windows. Para resolver isso, basta clicar em "Mais informações" e depois em "Executar assim mesmo".
 
 ### Linux: Instalação e primeira execução
 
-De acordo com o [documentação oficial do AppImage](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), se o aplicativo não abrir corretamente, confirme a saída do seguinte comando:
+De acordo com a [documentação oficial do AppImage](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), se o aplicativo não abrir corretamente, confirme a saída do seguinte comando:
 
 `ysctl kernel.unprivileged_userns_clone`
 
@@ -20,11 +20,11 @@ Se a saída for `0`, o AppImage **não** será executado, a menos que você exec
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Certifique-se de ler a informação desse [o que isso implica](https://lwn.net/Articles/673597/) antes de fazer isso.
+Certifique-se de ler [o que isso implica](https://lwn.net/Articles/673597/) antes de fazer isso.
 
 ### MacOS: Instalação e primeira execução
 
-Se ao iniciar o aplicativo, você receber um aviso de que o aplicativo não pode ser aberto, seja porque "não foi baixado da App Store" ou porque "o desenvolvedor não pode ser verificado", esta [Página de suporte da Apple](https://support.apple.com/en-ca/HT202491) ajudará você.
+Se ao iniciar o aplicativo, você receber um aviso de que o aplicativo não pode ser aberto, seja porque "não foi baixado da App Store" ou porque "o desenvolvedor não pode ser verificado", esta [página de suporte da Apple](https://support.apple.com/en-ca/HT202491) ajudará você.
 
 Se aparecer uma mensagem que você "não tem permissão para abrir o aplicativo", tente algumas soluções [nessa página](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
 
