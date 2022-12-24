@@ -31,6 +31,7 @@ export const DAYS_IN_WEEK = 7
 
 // HTTP Status Codes
 export const NOT_FOUND = 404
+export const LOCKED = 423
 
 // Error Codes
 export const OBS_AUTH_ERROR = 4009
