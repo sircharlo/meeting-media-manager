@@ -25,7 +25,7 @@ jobs:
           echo ${{ inputs.branch }}
           echo "refs/pull/${{ github.event.pull_request.number }}/merge"
           BRANCH=${{ inputs.branch || github.event.pull_request.number }}
-          echo "refs/pull/$BRANCH/merge" > $BRANCH
+          BRANCH="refs/pull/$BRANCH/merge"
 
           echo "Fetching list of cache key"
           echo $REPO
