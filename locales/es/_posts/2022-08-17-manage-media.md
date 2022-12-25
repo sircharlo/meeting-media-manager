@@ -25,7 +25,7 @@ En el campo `Contenido a agregar`, se le presentarán diferentes opciones, segú
 
 `Tipo de contenido` | El campo `Contenido a agregar`
 --- | ---
-`Canción` | ... mostrar un menú con todos los videos de canciones del Reino de la serie *sjjm*, en el idioma de los medios. Elija esta opción, por ejemplo, para agregar una canción para el discurso público o para las visitas del superintendente de circuito. <br><br> La canción seleccionada se descargará automáticamente de JW.org, en el idioma de la congregación o del grupo, según se haya configurado en [Ajustes](%7B%7Bpage.lang%7D%7D/#configuration).
+`Canción` | ... mostrar un menú con todos los videos de canciones del Reino de la serie *sjjm*, en el idioma de los medios. Elija esta opción, por ejemplo, para agregar una canción para el discurso público o para las visitas del superintendente de circuito. <br><br> La canción seleccionada se descargará automáticamente de JW.org, en el idioma de la congregación o del grupo, según se haya configurado en [Ajustes]({{page.lang}}/#configuration).
 `JWPUB` | ... le permite buscar (o arrastrar y soltar) un archivo JWPUB <br><br> A continuación, se le pedirá que seleccione la sección o el capítulo desde el que desea agregar medios. Esto agregará medios incrustados y referenciados de esa sección en el archivo JWPUB. <br><br> Un ejemplo de un archivo JWPUB de uso común es el S-34, pero aquí se puede usar cualquier archivo JWPUB.
 `Personalizar` | ... le permite buscar (o arrastrar y soltar) cualquier otro archivo multimedia desde su computadora. <br><br> *Tenga en cuenta que M³ convertirá automáticamente todos los archivos PDF y SVG en imágenes de alta resolución.*
 

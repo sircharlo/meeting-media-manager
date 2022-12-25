@@ -40,7 +40,7 @@ Si usa la versión portable de OBS Studio, instale el complemento [Virtualcam](h
 
 Si tiene OBS Studio v27 o anterior, debe instalar el complemento [obs-websocket](https://github.com/obsproject/obs-websocket). Si su versión de OBS es superior, obs-websocket ya viene instalado. Configure un número de puerto y una contraseña para obs-websocket.
 
-En la configuración de OBS, en `General` &gt; `Bandeja del sistema`, active todas las casillas de verificación. En `Output` &gt; `Streaming`, habilite un codificador de hardware si está disponible. En `Vídeo` &gt; `Resolución base (lienzo)` y `Resolución de salida (escalada)`, elija `1280x720`, y en `Filtro de reducción de escala`, elija `Bilineal`.
+En la configuración de OBS, en `General` > `Bandeja del sistema`, active todas las casillas de verificación. En `Output` > `Streaming`, habilite un codificador de hardware si está disponible. En `Vídeo` > `Resolución base (lienzo)` y `Resolución de salida (escalada)`, elija `1280x720`, y en `Filtro de reducción de escala`, elija `Bilineal`.
 
 Configure al menos 2 escenas: una para la visualización de contenidos (`Captura de ventana` o `Captura de pantalla` con el cursor del mouse deshabilitado y el título de ventana/monitor apropiado seleccionado), y otra para la vista de la plataforma (`Video Capture Device` con la cámara del Salón del Reino seleccionada). Puede agregar tantas escenas como sea necesario, con la cámara ajustada, ampliada y recortada según sea necesario (vista de atril, vista de conductor y lector, vista de mesa, etc.).
 

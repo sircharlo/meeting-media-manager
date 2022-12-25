@@ -33,11 +33,11 @@ Ajuste | Explicación
 `Nombre de usuario` | Nombre de usuario para el servicio WebDAV.
 `Contraseña` | Contraseña para el servicio WebDAV. <br><br> ***Nota:** Como se detalla en sus respectivas páginas de soporte, es posible que se deba crear una contraseña específica de la aplicación para[Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) y [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) para habilitar las conexiones WebDAV a sus servicios.*
 `Carpeta de sincronización de la congregación` | Esta es la carpeta que se usará para sincronizar contenidos para todos los usuarios de sincronización de la congregación. Puede escribir/pegar una ruta o usar el ratón para navegar a la carpeta de destino. <br><br> ***Nota:** Asegúrese de que todos los usuarios de sincronización de la congregación ingresen la misma ruta de carpeta; de lo contrario, la sincronización no funcionará como esperaba.*
-`Configuración de toda la congregación` | Una vez que el OV ha configurado las secciones *Configuración de multimedia* y *Configuración de la reunión* de [Ajustes](%7B%7Bpage.lang%7D%7D/#configuration) en su propia computadora, puede usar este botón para aplicar ciertas configuraciones para todos los usuarios de sincronización de la congregación (por ejemplo, días de reunión, idioma de los contenidos, configuración de conversión, etc.). Esto significa que la configuración seleccionada se aplicará a la fuerza a todos los usuarios sincronizados cada vez que abran M³.
+`Configuración de toda la congregación` | Una vez que el OV ha configurado las secciones *Configuración de multimedia* y *Configuración de la reunión* de [Ajustes]({{page.lang}}/#configuration) en su propia computadora, puede usar este botón para aplicar ciertas configuraciones para todos los usuarios de sincronización de la congregación (por ejemplo, días de reunión, idioma de los contenidos, configuración de conversión, etc.). Esto significa que la configuración seleccionada se aplicará a la fuerza a todos los usuarios sincronizados cada vez que abran M³.
 
 ### Usar la sincronización de la congregación para administrar los contenidos
 
-Una vez que se complete la configuración de sincronización de la congregación, estará listo para iniciar [gestionar medios](%7B%7Bpage.lang%7D%7D/#manage-media) para el equipo de soporte técnico AV de su congregación.
+Una vez que se complete la configuración de sincronización de la congregación, estará listo para iniciar [gestionar medios]({{page.lang}}/#manage-media) para el equipo de soporte técnico AV de su congregación.
 
 ### Capturas de pantalla de la sincronización de la congregación en acción
 
