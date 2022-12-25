@@ -4,6 +4,12 @@ on:
     types:
       - closed
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch reference to delete caches for'
+        required: true
+        default: 'master'
+        type: string
 
 jobs:
   cleanup:
@@ -35,3 +41,4 @@ jobs:
           echo "Done"
         env:
           GH_TOKEN: ${{ github.token }}
+          CUSTOM_BRANCH: ${{ inputs.branch }}
