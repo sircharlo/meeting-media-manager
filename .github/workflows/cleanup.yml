@@ -1,12 +1,12 @@
-name: cleanup caches by a branch
+name: Cleanup after merge
 on:
-  pull_request:
+  pull_request:S
     types:
       - closed
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch reference to delete caches for'
+        description: 'PR number to delete caches for'
         required: true
         type: string
 
@@ -17,7 +17,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         
-      - name: Cleanup
+      - name: Cleanup cache
         run: |
           gh extension install actions/gh-actions-cache
           
