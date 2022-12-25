@@ -22,8 +22,8 @@ jobs:
           gh extension install actions/gh-actions-cache
           
           REPO=${{ github.server_url }}/${{ github.repository }}
-          REF=${{ inputs.branch || github.event.pull_request.number }}
-          BRANCH=${{ inputs.branch || "refs/pull/$REF/merge" }}
+          REF=${{ github.event.pull_request.number }}
+          BRANCH=${{ inputs.branch || 'refs/pull/$REF/merge' }}
 
           echo "Fetching list of cache key"
           echo $BRANCH
