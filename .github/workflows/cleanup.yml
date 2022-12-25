@@ -33,4 +33,4 @@ jobs:
           done
           echo "Done"
         env:
-          GH_TOKEN: $
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
