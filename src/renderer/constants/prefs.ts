@@ -106,6 +106,7 @@ const FORCABLE = [
   'media.excludeLffImages',
   'media.excludeTh',
   'media.hideMediaLogo',
+  'media.hideWinAfterMedia',
   'media.keepOriginalsAfterConversion',
   'media.lang',
   'media.langFallback',
