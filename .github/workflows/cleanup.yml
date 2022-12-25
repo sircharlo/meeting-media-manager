@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'PR number to delete caches for'
+        description: 'Branch ref to delete caches for'
         required: true
         type: string
 
@@ -20,11 +20,13 @@ jobs:
       - name: Cleanup cache
         run: |
           gh extension install actions/gh-actions-cache
-
+          
           REPO=${{ github.server_url }}/${{ github.repository }}
-          BRANCH=${{ inputs.branch || github.event.pull_request.number }}
-          BRANCH="refs/pull/$BRANCH/merge"
+          REF=${{ github.event.pull_request.number }}
+          BRANCH=${{ inputs.branch || 'refs/pull/$REF/merge' }}
 
+          echo "Fetching list of cache key"
+          echo $BRANCH
           cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )
           echo $cacheKeysForPR
 
