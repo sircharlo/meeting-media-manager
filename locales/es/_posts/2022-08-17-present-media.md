@@ -1,5 +1,5 @@
 ---
-tag: Usage
+tag: Uso
 title: Modo de presentación multimedia
 ref: present-media
 ---
@@ -38,7 +38,7 @@ Instale OBS Studio o descargue la versión portable.
 
 Si usa la versión portable de OBS Studio, instale el complemento [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) y, si usa la versión portable de OBS Studio, agregue la cámara virtual a Windows haciendo doble clic en el script de instalación proporcionado.
 
-If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
+Si tiene OBS Studio v27 o anterior, debe instalar el complemento [obs-websocket](https://github.com/obsproject/obs-websocket). Si su versión de OBS es superior, obs-websocket ya viene instalado. Configure un número de puerto y una contraseña para obs-websocket.
 
 En la configuración de OBS, en `General` > `Bandeja del sistema`, active todas las casillas de verificación. En `Output` > `Streaming`, habilite un codificador de hardware si está disponible. En `Vídeo` > `Resolución base (lienzo)` y `Resolución de salida (escalada)`, elija `1280x720`, y en `Filtro de reducción de escala`, elija `Bilineal`.
 

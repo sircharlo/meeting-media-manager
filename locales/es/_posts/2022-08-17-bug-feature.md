@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Ayuda
 title: Problemas y solicitudes de funciones
 ref: bug-feature
 ---
