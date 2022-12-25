@@ -4,6 +4,12 @@ on:
     types:
       - closed
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch reference to delete caches for'
+        required: true
+        default: 'docs'
+        type: string
 
 jobs:
   cleanup:
@@ -17,7 +23,7 @@ jobs:
           gh extension install actions/gh-actions-cache
           
           REPO=${{ github.server_url }}/${{ github.repository }}
-          BRANCH=${{ github.ref || 'docs' }}
+          BRANCH=${{ GITHUB_REF || $CUSTOM_BRANCH }}
 
           echo "Fetching list of cache key"
           echo $REPO
@@ -35,3 +41,4 @@ jobs:
           echo "Done"
         env:
           GH_TOKEN: ${{ github.token }}
+          CUSTOM_BRANCH: ${{ inputs.branch }}
