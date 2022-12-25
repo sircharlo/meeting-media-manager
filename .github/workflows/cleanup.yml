@@ -1,4 +1,4 @@
-name: cleanup caches by a branch
+name: Cleanup after merge
 on:
   pull_request:
     types:
@@ -6,9 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch reference to delete caches for'
+        description: 'PR number to delete caches for'
         required: true
-        default: 'master'
         type: string
 
 jobs:
@@ -18,16 +17,14 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Cleanup
+      - name: Cleanup cache
         run: |
           gh extension install actions/gh-actions-cache
 
           REPO=${{ github.server_url }}/${{ github.repository }}
-          BRANCH=${{ inputs.branch }} || $GITHUB_REF
+          BRANCH=${{ inputs.branch || github.event.pull_request.number }}
+          BRANCH="refs/pull/$BRANCH/merge"
 
-          echo "Fetching list of cache key"
-          echo $REPO
-          echo $BRANCH
           cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )
           echo $cacheKeysForPR
 

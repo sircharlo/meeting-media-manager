@@ -82,6 +82,7 @@ const plugin: Plugin = (
         langs = JSON.parse(fileContent) as ShortJWLang[]
       } catch (e: any) {
         if (e.message.includes('Unexpected token')) {
+          $log.debug(`Invalid JSON: ${fileContent}`)
           return getJWLangs(true)
         } else {
           $log.error(e)
