@@ -26,6 +26,7 @@ jobs:
           BRANCH=${{ inputs.branch || "refs/pull/$REF/merge" }}
 
           echo "Fetching list of cache key"
+          echo $BRANCH
           cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )
           echo $cacheKeysForPR
 
