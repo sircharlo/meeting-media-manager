@@ -1,6 +1,6 @@
 name: Cleanup after merge
 on:
-  pull_request:S
+  pull_request:
     types:
       - closed
   workflow_dispatch:
