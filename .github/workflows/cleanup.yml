@@ -23,7 +23,7 @@ jobs:
           gh extension install actions/gh-actions-cache
           
           REPO=${{ github.server_url }}/${{ github.repository }}
-          BRANCH=${{ inputs.branch }} || $GITHUB_REF
+          BRANCH=${{ inputs.branch || github.ref }}
 
           echo "Fetching list of cache key"
           echo $REPO
