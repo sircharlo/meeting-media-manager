@@ -1,7 +1,7 @@
 ---
 tag: Uso
 title: Modo de presentación multimedia
-ref: presentación-medios
+ref: present-media
 ---
 
 ### Uso del modo de presentación multimedia
