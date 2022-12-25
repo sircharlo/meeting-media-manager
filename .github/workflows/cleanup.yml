@@ -23,6 +23,7 @@ jobs:
           echo REPO
           echo BRANCH
           cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )
+          echo cacheKeysForPR
 
           ## Setting this to not fail the workflow while deleting cache keys. 
           set +e
@@ -33,4 +34,4 @@ jobs:
           done
           echo "Done"
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
