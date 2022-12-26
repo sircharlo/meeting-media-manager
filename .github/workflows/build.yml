@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [docs]
+  push:
+    branches: [docs]
+    paths:
+      - 'Gemfile'
+      - 'Gemfile.lock'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
