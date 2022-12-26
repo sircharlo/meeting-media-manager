@@ -17,7 +17,12 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS, ENUMS } = require('~/constants/prefs') as {
   PREFS: ElectronStore
-  ENUMS: { key: string; values: string[] }[]
+  ENUMS: {
+    theme: string[]
+    musicFadeOutType: string[]
+    outputFolderDateFormat: string[]
+    maxRes: string[]
+  }
 }
 
 // Define your schema per the ajv/JSON spec
@@ -29,7 +34,7 @@ const schema: Schema<ElectronStore> = {
     properties: {
       theme: {
         type: 'string',
-        enum: ['dark', 'light', 'system'],
+        enum: ENUMS.theme,
         default: PREFS.app.theme,
       },
       disableAutoUpdate: {
@@ -58,12 +63,7 @@ const schema: Schema<ElectronStore> = {
       },
       outputFolderDateFormat: {
         type: 'string',
-        enum: [
-          'YYYY-MM-DD',
-          'YYYY-MM-DD - dddd',
-          'DD-MM-YYYY',
-          'DD-MM-YYYY - dddd',
-        ],
+        enum: ENUMS.outputFolderDateFormat,
         default: PREFS.app.outputFolderDateFormat,
       },
       autoStartSync: {
@@ -159,7 +159,7 @@ const schema: Schema<ElectronStore> = {
       },
       maxRes: {
         type: 'string',
-        enum: ['240p', '360p', '480p', '720p'],
+        enum: ENUMS.maxRes,
         default: PREFS.media.maxRes,
       },
       enablePp: {
@@ -261,7 +261,7 @@ const schema: Schema<ElectronStore> = {
       },
       musicFadeOutType: {
         type: 'string',
-        enum: ['smart', 'timer'],
+        enum: ENUMS.musicFadeOutType,
         default: PREFS.meeting.musicFadeOutType,
       },
       musicFadeOutTime: {
@@ -451,9 +451,9 @@ function migrate2290(key: string, newVal: any) {
   }
 
   // Validate enums
-  const match = ENUMS.find((e) => e.key === key)
+  const match = ENUMS[key as keyof typeof ENUMS]
   if (match) {
-    if (!match.values.includes(newVal)) {
+    if (!match.includes(newVal)) {
       setDefaultValue()
     }
   }
