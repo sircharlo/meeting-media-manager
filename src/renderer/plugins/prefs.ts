@@ -452,10 +452,8 @@ function migrate2290(key: string, newVal: any) {
 
   // Validate enums
   const match = ENUMS[key as keyof typeof ENUMS]
-  if (match) {
-    if (!match.includes(newVal)) {
-      setDefaultValue()
-    }
+  if (match && !match.includes(newVal)) {
+    setDefaultValue()
   }
 
   // Values that were converted from number to string
