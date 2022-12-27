@@ -91,7 +91,7 @@ jobs:
         with:
           name: test-results ${{ matrix.os }}
           path: test-results/
-          retention-days: 30
+          retention-days: 7
 
       - name: Cancel workflow
         if: failure()
@@ -165,7 +165,7 @@ jobs:
             !build/mac-universal/
             !build/*.blockmap
             !build/*.yml
-          retention-days: 30
+          retention-days: 2
 
       - name: Cancel workflow
         if: failure()
