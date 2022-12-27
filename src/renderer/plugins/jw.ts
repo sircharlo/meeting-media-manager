@@ -60,6 +60,10 @@ const plugin: Plugin = (
       }
     }
 
+    if (!existsSync(langPath)) {
+      return getJWLangs(true)
+    }
+
     let langs: ShortJWLang[] = []
 
     function readLangs(firstTry = true): string {
