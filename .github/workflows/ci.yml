@@ -61,14 +61,6 @@ jobs:
           check-latest: true
           cache: 'yarn'
 
-      - name: Set Playwright env variable on Windows
-        if: matrix.os == 'windows-latest'
-        run: set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-
-      - name: Set Playwright env variable on Linux and macOS
-        if: matrix.os != 'windows-latest'
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-
       - name: Install dependencies
         run: yarn install
 
@@ -122,15 +114,12 @@ jobs:
           check-latest: true
           cache: 'yarn'
 
-      - name: Set Playwright env variable on Windows
-        if: matrix.os == 'windows-latest'
-        run: set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-
-      - name: Set Playwright env variable on Linux and macOS
-        if: matrix.os != 'windows-latest'
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-
       - name: Install dependencies
+        if: matrix.os != 'windows-latest'
+        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
+
+      - name: Install dependencies on Windows
+        if: matrix.os == 'windows-latest'
         run: yarn install
 
       - name: Set env variables
