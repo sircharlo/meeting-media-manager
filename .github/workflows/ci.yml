@@ -63,7 +63,9 @@ jobs:
 
       - name: Install dependencies
         if: matrix.os != 'windows-latest'
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
+        run: |
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
+          npx playwright install chrome
 
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
