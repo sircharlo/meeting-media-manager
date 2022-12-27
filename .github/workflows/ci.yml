@@ -35,7 +35,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
 
       - name: Run linter
         run: yarn lint
@@ -62,7 +62,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
 
       - name: Set env variables
         run: |
@@ -115,7 +115,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
 
       - name: Set env variables
         run: |
