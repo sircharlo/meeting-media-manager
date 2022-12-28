@@ -233,9 +233,9 @@ export default defineComponent({
     text(action: string) {
       switch (action) {
         case 'quitApp':
-          return 'quitAfterSync'
+          return 'autoQuitWhenDone'
         case 'startMediaSync':
-          return 'syncOnLaunch'
+          return 'autoStartSync'
         default:
           throw new Error(`Unknown action: ${action}`)
       }

@@ -194,48 +194,21 @@
         />
       </template>
     </template>
-    <v-divider class="mb-6" />
-    <form-input
-      id="media.enableVlcPlaylistCreation"
-      v-model="media.enableVlcPlaylistCreation"
-      field="switch"
-      :locked="$isLocked('media.enableVlcPlaylistCreation')"
-    >
-      <template #label>
-        <span v-html="$t('enableVlcPlaylistCreation')" />
-      </template>
-    </form-input>
-    <v-divider class="mb-6" />
-    <form-input
-      id="media.excludeTh"
-      v-model="media.excludeTh"
-      field="switch"
-      :locked="$isLocked('media.excludeTh')"
-    >
-      <template #label>
-        <span v-html="$t('excludeTh')" />
-      </template>
-    </form-input>
-    <form-input
-      id="media.excludeLffImages"
-      v-model="media.excludeLffImages"
-      field="switch"
-      :locked="$isLocked('media.excludeLffImages')"
-    >
-      <template #label>
-        <span v-html="$t('excludeLffImages')" />
-      </template>
-    </form-input>
-    <form-input
-      id="media.includePrinted"
-      v-model="media.includePrinted"
-      field="switch"
-      :locked="$isLocked('media.includePrinted')"
-    >
-      <template #label>
-        <span v-html="$t('includePrinted')" />
-      </template>
-    </form-input>
+    <template v-for="(option, i) in includeOptions">
+      <v-divider v-if="option === 'div'" :key="'div-' + i" class="mb-6" />
+      <form-input
+        v-else
+        :id="`media.${option}`"
+        :key="option"
+        v-model="media[option]"
+        field="switch"
+        :locked="$isLocked(`media.${option}`)"
+      >
+        <template #label>
+          <span v-html="$t(option)" />
+        </template>
+      </form-input>
+    </template>
   </v-form>
 </template>
 <script lang="ts">
@@ -269,6 +242,14 @@ export default defineComponent({
         ...PREFS.media,
       } as MediaPrefs,
       jwLangs: [] as ShortJWLang[],
+      includeOptions: [
+        'div',
+        'enableVlcPlaylistCreation',
+        'div',
+        'excludeTh',
+        'excludeLffImages',
+        'includePrinted',
+      ],
     }
   },
   computed: {

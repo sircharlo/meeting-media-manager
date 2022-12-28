@@ -9,41 +9,24 @@
     />
     <template v-if="!meeting.specialCong">
       <form-input
+        v-for="day in ['mw', 'we']"
         id="meeting.mwDay"
-        v-model="meeting.mwDay"
+        :key="day"
+        v-model="meeting[`${day}Day`]"
         field="btn-group"
-        :group-label="$t('mwMeetingDay')"
+        :group-label="$t(`${day}MeetingDay`)"
         :group-items="localeDays"
-        :locked="$isLocked('meeting.mwDay')"
+        :locked="$isLocked(`meeting.${day}Day`)"
         height="56px"
-        :mandatory="meeting.mwDay !== null"
+        :mandatory="meeting[`${day}Day`] !== null"
         required
       >
         <form-time-picker
-          id="meeting.mwStartTime"
-          v-model="meeting.mwStartTime"
+          :id="`meeting.${day}StartTime`"
+          v-model="meeting[`${day}StartTime`]"
           label=""
           required
-          :locked="$isLocked('meeting.mwStartTime')"
-        />
-      </form-input>
-      <form-input
-        id="meeting.weDay"
-        v-model="meeting.weDay"
-        field="btn-group"
-        :group-label="$t('weMeetingDay')"
-        :locked="$isLocked('meeting.weDay')"
-        :group-items="localeDays"
-        height="56px"
-        :mandatory="meeting.weDay !== null"
-        required
-      >
-        <form-time-picker
-          id="meeting.weStartTime"
-          v-model="meeting.weStartTime"
-          label=""
-          required
-          :locked="$isLocked('meeting.weStartTime')"
+          :locked="$isLocked(`meeting.${day}StartTime`)"
         />
       </form-input>
     </template>
