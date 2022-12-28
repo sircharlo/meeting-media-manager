@@ -57,7 +57,7 @@
   "port": "Port",
   "recurring": "Sary/Video miverimberina",
   "reportIssue": "Hampandre olana",
-  "runAtStartup": "Alefa hoazy ity programa ity rehefa velona ity fitaovana ity",
+  "autoRunAtBoot": "Alefa hoazy ity programa ity rehefa velona ity fitaovana ity",
   "screen": "Efijery",
   "selectDocument": "Misafidiana rakitra hakana ny Sary/Video",
   "song": "Hira",
