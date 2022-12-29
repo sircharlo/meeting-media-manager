@@ -640,7 +640,7 @@ const plugin: Plugin = (
               $log.error(e)
 
               try {
-                const validOptions = ['iasn', 'sjj'] // Has an alternative pub with an extra m
+                const validOptions = ['iasn'] // Has an alternative pub with an extra m
                 if (!validOptions.includes(mediaItem.pubSymbol)) {
                   throw e
                 }
@@ -738,7 +738,7 @@ const plugin: Plugin = (
         )
       }
     }
-    $log.debug(smallMediaFiles)
+    $log.debug('smf', smallMediaFiles)
     return smallMediaFiles
   }
 
@@ -754,8 +754,8 @@ const plugin: Plugin = (
     silent?: boolean
   ): Promise<SmallMediaFile[]> {
     if (mediaItem.lang) {
-      $log.debug(mediaItem)
-      $log.debug($getPrefs('media.lang'))
+      $log.debug('mi', mediaItem)
+      $log.debug('ml', $getPrefs('media.lang'))
     }
     let smallMediaFiles: SmallMediaFile[] = []
 
@@ -831,7 +831,7 @@ const plugin: Plugin = (
         )
       }
     }
-    $log.debug(smallMediaFiles)
+    $log.debug('smf', smallMediaFiles)
     return smallMediaFiles
   }
   inject('getMediaLinks', getMediaLinks)
@@ -1348,7 +1348,7 @@ const plugin: Plugin = (
         i++
       })
     })
-    $log.debug(meetings)
+    $log.debug('meetings', meetings)
     store.commit('stats/stopPerf', {
       func: 'createMediaNames',
       stop: performance.now(),
