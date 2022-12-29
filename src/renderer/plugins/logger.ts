@@ -33,6 +33,8 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
     console[type](...args)
   }
 
+  const IGNORED_ERRORS = ['Network Error', 'timeout of 0ms exceeded']
+
   const log = {
     debug: function (msg: any, ...args: any[]) {
       logger('debug', [msg, ...args])
@@ -45,7 +47,7 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
     },
     error: function (msg: any, ...args: any[]) {
       logger('error', [msg, ...args])
-      if (typeof msg !== 'string') {
+      if (typeof msg !== 'string' && !IGNORED_ERRORS.includes(msg.message)) {
         $sentry.captureException(msg)
       }
     },
