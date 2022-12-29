@@ -34,6 +34,8 @@
       :group-label="$t('maxRes')"
       :locked="$isLocked('media.maxRes')"
       :group-items="resolutions"
+      mandatory
+      required
     />
     <v-divider class="mb-6" />
     <form-input
@@ -440,13 +442,13 @@ export default defineComponent({
       this.media.lang = null
     }
     this.loading = false
-    this.$emit('valid', this.valid)
     this.$emit('refresh', this.media)
 
     if (this.$refs.mediaForm) {
       // @ts-ignore: validate is not a function on type Element
       this.$refs.mediaForm.validate()
     }
+    if (this.valid) this.$emit('valid', this.valid)
   },
   methods: {
     getShortcutRules(fn: string) {

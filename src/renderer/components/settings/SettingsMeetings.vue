@@ -10,7 +10,7 @@
     <template v-if="!meeting.specialCong">
       <form-input
         v-for="day in ['mw', 'we']"
-        id="meeting.mwDay"
+        :id="`meeting.${day}Day`"
         :key="day"
         v-model="meeting[`${day}Day`]"
         field="btn-group"
@@ -189,6 +189,14 @@ export default defineComponent({
     faDownload() {
       return faDownload
     },
+    meetingDaysValid(): boolean {
+      return (
+        this.meeting.mwDay !== null &&
+        this.meeting.weDay !== null &&
+        !!this.meeting.mwStartTime &&
+        !!this.meeting.weStartTime
+      )
+    },
     forcedPrefs(): ElectronStore {
       return this.$store.state.cong.prefs as ElectronStore
     },
@@ -223,11 +231,7 @@ export default defineComponent({
     valid(val: boolean) {
       this.$emit(
         'valid',
-        (val && this.meeting.specialCong) ||
-          (this.meeting.mwDay !== null &&
-            this.meeting.weDay !== null &&
-            !!this.meeting.mwStartTime &&
-            !!this.meeting.weStartTime)
+        val && (this.meeting.specialCong || this.meetingDaysValid)
       )
     },
     meeting: {
@@ -236,11 +240,7 @@ export default defineComponent({
         this.$emit('refresh', val)
         this.$emit(
           'valid',
-          val.specialCong ||
-            (val.mwDay !== null &&
-              val.weDay !== null &&
-              !!val.mwStartTime &&
-              !!val.weStartTime)
+          this.valid && (val.specialCong || this.meetingDaysValid)
         )
       },
       deep: true,
@@ -294,7 +294,6 @@ export default defineComponent({
   },
   mounted() {
     Object.assign(this.meeting, this.$getPrefs('meeting'))
-    this.$emit('valid', this.valid)
     this.$emit('refresh', this.meeting)
 
     this.cached = this.shuffleMusicCached()
@@ -306,6 +305,10 @@ export default defineComponent({
       // @ts-ignore: validate is not a function on type Element
       this.$refs.meetingsForm.validate()
     }
+    this.$emit(
+      'valid',
+      this.valid && (this.meeting.specialCong || this.meetingDaysValid)
+    )
   },
   methods: {
     shuffleMusicCached(): boolean {
