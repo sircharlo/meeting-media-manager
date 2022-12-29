@@ -402,7 +402,6 @@ export default defineComponent({
     Object.assign(this.app, this.$getPrefs('app'))
     this.oldName = this.app.congregationName
     this.app.localAppLang = this.$i18n.locale
-    this.$emit('valid', this.valid)
     this.$emit('refresh', this.app)
 
     if (this.obsComplete) {
