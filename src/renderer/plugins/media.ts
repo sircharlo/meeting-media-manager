@@ -1600,14 +1600,17 @@ const plugin: Plugin = (
           const weDay = $getPrefs('meeting.weDay') as number
           const today = now.day() === 0 ? 6 : now.day() - 1 // Day is 0 indexed and starts with Sunday
 
-          if (today === mwDay || today === weDay) {
+          if (
+            (today === mwDay || today === weDay) &&
+            !$getPrefs('meeting.specialCong')
+          ) {
             // Set stop time depending on mw or we day
             let day = 'mw'
             if (today === weDay) day = 'we'
 
             const meetingStarts = (
               $getPrefs(`meeting.${day}StartTime`) as string
-            ).split(':')
+            )?.split(':') ?? ['0', '0']
 
             const timeToStop = now
               .hour(+meetingStarts[0])
