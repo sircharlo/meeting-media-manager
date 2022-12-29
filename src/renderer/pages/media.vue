@@ -100,6 +100,7 @@ export default defineComponent({
           end?: string
         } | null
       ) => {
+        console.debug('showMedia', media)
         if (this.panzoom) this.panzoom.reset()
         this.zoomEnabled = !!media && this.$isImage(media.src)
         this.transitionToMedia(media)
@@ -156,6 +157,7 @@ export default defineComponent({
       }
     })
     ipcRenderer.on('startMediaDisplay', async (_e, prefs: ElectronStore) => {
+      console.debug('startMediaDisplay', prefs)
       // Reset screen
       this.yeartext.innerHTML = ''
       const main = document.querySelector('main') as HTMLElement
@@ -260,6 +262,7 @@ export default defineComponent({
 
             // If the video is short (converted image), pause it, so it doesn't stop automatically
             video.oncanplay = () => {
+              console.debug('canplay start')
               if (
                 this.withSubtitles &&
                 existsSync(changeExt(media.src, 'vtt'))
@@ -270,6 +273,7 @@ export default defineComponent({
                 video.classList.add('shortVideoPaused')
                 video.pause()
               }
+              console.debug('canplay end')
             }
 
             video.onplay = () => {
@@ -320,6 +324,7 @@ export default defineComponent({
           this.mediaDisplay.style.background = 'transparent'
         }
         this.blackOverlay.style.opacity = '0'
+        console.debug('mediaDisplay transitioned')
       }, 4 * HUNDRED_PERCENT)
     },
     resizingNow(width: number, height: number) {
