@@ -355,6 +355,7 @@ export default defineComponent({
       let y = 0
       if (this.currentWeek < this.$dayjs().isoWeek()) y = 1
       const week = (this.$dayjs() as Dayjs)
+        .startOf('week')
         .add(y, 'years')
         .isoWeek(this.currentWeek)
       return week.startOf('week')
