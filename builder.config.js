@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 const ICONS_DIR = 'build/icons/'
 
 const windowsOS = {
@@ -14,6 +15,7 @@ const windowsOS = {
 
   nsis: {
     oneClick: false,
+    artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
   },
 }
 
@@ -40,8 +42,7 @@ const macOS = {
 module.exports = {
   productName: 'Meeting Media Manager',
   appId: 'sircharlo.meeting-media-manager',
-  // eslint-disable-next-line no-template-curly-in-string
-  artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
+  artifactName: 'meeting-media-manager-${version}.${ext}',
   buildDependenciesFromSource: true,
   directories: {
     output: 'build',

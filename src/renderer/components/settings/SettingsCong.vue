@@ -159,13 +159,13 @@ export default defineComponent({
   },
   async mounted() {
     Object.assign(this.cong, this.$getPrefs('cong'))
-    this.$emit('valid', this.valid)
     this.$emit('refresh', this.cong)
 
     if (this.$refs.congForm) {
       // @ts-ignore: validate is not a function on type Element
       this.$refs.congForm.validate()
     }
+    if (this.valid) this.$emit('valid', this.valid)
 
     // If all the cong fields are filled in, try to connect
     if (this.complete && this.online) {

@@ -9,41 +9,24 @@
     />
     <template v-if="!meeting.specialCong">
       <form-input
-        id="meeting.mwDay"
-        v-model="meeting.mwDay"
+        v-for="day in ['mw', 'we']"
+        :id="`meeting.${day}Day`"
+        :key="day"
+        v-model="meeting[`${day}Day`]"
         field="btn-group"
-        :group-label="$t('mwMeetingDay')"
+        :group-label="$t(`${day}MeetingDay`)"
         :group-items="localeDays"
-        :locked="$isLocked('meeting.mwDay')"
+        :locked="$isLocked(`meeting.${day}Day`)"
         height="56px"
-        :mandatory="meeting.mwDay !== null"
+        :mandatory="meeting[`${day}Day`] !== null"
         required
       >
         <form-time-picker
-          id="meeting.mwStartTime"
-          v-model="meeting.mwStartTime"
+          :id="`meeting.${day}StartTime`"
+          v-model="meeting[`${day}StartTime`]"
           label=""
           required
-          :locked="$isLocked('meeting.mwStartTime')"
-        />
-      </form-input>
-      <form-input
-        id="meeting.weDay"
-        v-model="meeting.weDay"
-        field="btn-group"
-        :group-label="$t('weMeetingDay')"
-        :locked="$isLocked('meeting.weDay')"
-        :group-items="localeDays"
-        height="56px"
-        :mandatory="meeting.weDay !== null"
-        required
-      >
-        <form-time-picker
-          id="meeting.weStartTime"
-          v-model="meeting.weStartTime"
-          label=""
-          required
-          :locked="$isLocked('meeting.weStartTime')"
+          :locked="$isLocked(`meeting.${day}StartTime`)"
         />
       </form-input>
     </template>
@@ -206,6 +189,14 @@ export default defineComponent({
     faDownload() {
       return faDownload
     },
+    meetingDaysValid(): boolean {
+      return (
+        this.meeting.mwDay !== null &&
+        this.meeting.weDay !== null &&
+        !!this.meeting.mwStartTime &&
+        !!this.meeting.weStartTime
+      )
+    },
     forcedPrefs(): ElectronStore {
       return this.$store.state.cong.prefs as ElectronStore
     },
@@ -240,11 +231,7 @@ export default defineComponent({
     valid(val: boolean) {
       this.$emit(
         'valid',
-        (val && this.meeting.specialCong) ||
-          (this.meeting.mwDay !== null &&
-            this.meeting.weDay !== null &&
-            !!this.meeting.mwStartTime &&
-            !!this.meeting.weStartTime)
+        val && (this.meeting.specialCong || this.meetingDaysValid)
       )
     },
     meeting: {
@@ -253,11 +240,7 @@ export default defineComponent({
         this.$emit('refresh', val)
         this.$emit(
           'valid',
-          val.specialCong ||
-            (val.mwDay !== null &&
-              val.weDay !== null &&
-              !!val.mwStartTime &&
-              !!val.weStartTime)
+          this.valid && (val.specialCong || this.meetingDaysValid)
         )
       },
       deep: true,
@@ -311,7 +294,6 @@ export default defineComponent({
   },
   mounted() {
     Object.assign(this.meeting, this.$getPrefs('meeting'))
-    this.$emit('valid', this.valid)
     this.$emit('refresh', this.meeting)
 
     this.cached = this.shuffleMusicCached()
@@ -323,6 +305,10 @@ export default defineComponent({
       // @ts-ignore: validate is not a function on type Element
       this.$refs.meetingsForm.validate()
     }
+    this.$emit(
+      'valid',
+      this.valid && (this.meeting.specialCong || this.meetingDaysValid)
+    )
   },
   methods: {
     shuffleMusicCached(): boolean {

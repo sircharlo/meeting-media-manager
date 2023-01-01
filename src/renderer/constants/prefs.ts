@@ -66,29 +66,17 @@ const PREFS = {
   },
 }
 
-const ENUMS = [
-  {
-    key: 'theme',
-    values: ['system', 'light', 'dark'],
-  },
-  {
-    key: 'musicFadeOutType',
-    values: ['smart', 'timer'],
-  },
-  {
-    key: 'outputFolderDateFormat',
-    values: [
-      'YYYY-MM-DD',
-      'YYYY-MM-DD - dddd',
-      'DD-MM-YYYY',
-      'DD-MM-YYYY - dddd',
-    ],
-  },
-  {
-    key: 'maxRes',
-    values: ['240p', '360p', '480p', '720p'],
-  },
-]
+const ENUMS = {
+  theme: ['system', 'light', 'dark'],
+  musicFadeOutType: ['smart', 'timer'],
+  outputFolderDateFormat: [
+    'YYYY-MM-DD',
+    'YYYY-MM-DD - dddd',
+    'DD-MM-YYYY',
+    'DD-MM-YYYY - dddd',
+  ],
+  maxRes: ['240p', '360p', '480p', '720p'],
+}
 
 const FORCABLE = [
   'app.congregationName',
@@ -101,14 +89,17 @@ const FORCABLE = [
   'media.enableMediaDisplayButton',
   'media.enableMp4Conversion',
   'media.enablePp',
+  'media.enableSubtitles',
   'media.enableVlcPlaylistCreation',
-  'media.includePrinted',
   'media.excludeLffImages',
   'media.excludeTh',
   'media.hideMediaLogo',
+  'media.hideWinAfterMedia',
+  'media.includePrinted',
   'media.keepOriginalsAfterConversion',
   'media.lang',
   'media.langFallback',
+  'media.langSubs',
   'media.maxRes',
   'media.ppBackward',
   'media.ppForward',
@@ -120,6 +111,7 @@ const FORCABLE = [
   'meeting.musicVolume',
   'meeting.mwDay',
   'meeting.mwStartTime',
+  'meeting.specialCong',
   'meeting.weDay',
   'meeting.weStartTime',
 ]

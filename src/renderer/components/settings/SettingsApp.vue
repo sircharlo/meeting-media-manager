@@ -79,32 +79,21 @@
       id="app.autoRunAtBoot"
       v-model="app.autoRunAtBoot"
       field="switch"
-      :label="$t('runAtStartup')"
-      :locked="$isLocked('app.runAtStartup')"
+      :label="$t('autoRunAtBoot')"
+      :locked="$isLocked('app.autoRunAtBoot')"
     />
-    <form-input
-      id="app.autoStartSync"
-      v-model="app.autoStartSync"
-      field="switch"
-      :label="$t('syncOnLaunch')"
-      :locked="$isLocked('app.autoStartSync')"
-    />
-    <v-divider class="mb-6" />
-    <form-input
-      id="app.autoOpenFolderWhenDone"
-      v-model="app.autoOpenFolderWhenDone"
-      field="switch"
-      :label="$t('openTargetFolderAfterSync')"
-      :locked="$isLocked('app.openTargetFolderAfterSync')"
-    />
-    <form-input
-      id="app.autoQuitWhenDone"
-      v-model="app.autoQuitWhenDone"
-      field="switch"
-      :label="$t('quitAfterSync')"
-      :locked="$isLocked('app.autoQuitWhenDone')"
-    />
-    <v-divider class="mb-6" />
+    <template v-for="(option, i) in automationOptions">
+      <v-divider v-if="option === 'div'" :key="'div-' + i" class="mb-6" />
+      <form-input
+        v-else
+        :id="`app.auto${option}`"
+        :key="option"
+        v-model="app[`auto${option}`]"
+        field="switch"
+        :label="$t(`auto${option}`)"
+        :locked="$isLocked(`app.auto${option}`)"
+      />
+    </template>
     <form-input
       id="app.obs.enable"
       v-model="app.obs.enable"
@@ -180,23 +169,15 @@
     </template>
     <v-divider class="mb-6" />
     <form-input
-      id="app.disableAutoUpdate"
-      v-model="app.disableAutoUpdate"
+      v-for="option in disableOptions"
+      :id="`app.disable${option}`"
+      :key="option"
+      v-model="app[`disable${option}`]"
       field="switch"
-      :locked="$isLocked('app.disableAutoUpdate')"
+      :locked="$isLocked(`app.disable${option}`)"
     >
       <template #label>
-        <span v-html="$t('disableAutoUpdate')" />
-      </template>
-    </form-input>
-    <form-input
-      id="app.disableHardwareAcceleration"
-      v-model="app.disableHardwareAcceleration"
-      field="switch"
-      :locked="$isLocked('app.disableHardwareAcceleration')"
-    >
-      <template #label>
-        <span v-html="$t('disableHardwareAcceleration')" />
+        <span v-html="$t(`disable${option}`)" />
       </template>
     </form-input>
   </v-form>
@@ -235,6 +216,14 @@ export default defineComponent({
       app: {
         ...PREFS.app,
       } as AppPrefs,
+      automationOptions: [
+        'StartSync',
+        'div',
+        'OpenFolderWhenDone',
+        'QuitWhenDone',
+        'div',
+      ],
+      disableOptions: ['AutoUpdate', 'HardwareAcceleration'],
     }
   },
   computed: {
@@ -413,7 +402,6 @@ export default defineComponent({
     Object.assign(this.app, this.$getPrefs('app'))
     this.oldName = this.app.congregationName
     this.app.localAppLang = this.$i18n.locale
-    this.$emit('valid', this.valid)
     this.$emit('refresh', this.app)
 
     if (this.obsComplete) {

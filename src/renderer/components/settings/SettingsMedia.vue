@@ -34,6 +34,8 @@
       :group-label="$t('maxRes')"
       :locked="$isLocked('media.maxRes')"
       :group-items="resolutions"
+      mandatory
+      required
     />
     <v-divider class="mb-6" />
     <form-input
@@ -194,48 +196,21 @@
         />
       </template>
     </template>
-    <v-divider class="mb-6" />
-    <form-input
-      id="media.enableVlcPlaylistCreation"
-      v-model="media.enableVlcPlaylistCreation"
-      field="switch"
-      :locked="$isLocked('media.enableVlcPlaylistCreation')"
-    >
-      <template #label>
-        <span v-html="$t('enableVlcPlaylistCreation')" />
-      </template>
-    </form-input>
-    <v-divider class="mb-6" />
-    <form-input
-      id="media.excludeTh"
-      v-model="media.excludeTh"
-      field="switch"
-      :locked="$isLocked('media.excludeTh')"
-    >
-      <template #label>
-        <span v-html="$t('excludeTh')" />
-      </template>
-    </form-input>
-    <form-input
-      id="media.excludeLffImages"
-      v-model="media.excludeLffImages"
-      field="switch"
-      :locked="$isLocked('media.excludeLffImages')"
-    >
-      <template #label>
-        <span v-html="$t('excludeLffImages')" />
-      </template>
-    </form-input>
-    <form-input
-      id="media.includePrinted"
-      v-model="media.includePrinted"
-      field="switch"
-      :locked="$isLocked('media.includePrinted')"
-    >
-      <template #label>
-        <span v-html="$t('includePrinted')" />
-      </template>
-    </form-input>
+    <template v-for="(option, i) in includeOptions">
+      <v-divider v-if="option === 'div'" :key="'div-' + i" class="mb-6" />
+      <form-input
+        v-else
+        :id="`media.${option}`"
+        :key="option"
+        v-model="media[option]"
+        field="switch"
+        :locked="$isLocked(`media.${option}`)"
+      >
+        <template #label>
+          <span v-html="$t(option)" />
+        </template>
+      </form-input>
+    </template>
   </v-form>
 </template>
 <script lang="ts">
@@ -248,7 +223,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
-import { NOT_FOUND } from '~/constants/general'
+import { NOT_FOUND, LOCKED } from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
@@ -269,6 +244,14 @@ export default defineComponent({
         ...PREFS.media,
       } as MediaPrefs,
       jwLangs: [] as ShortJWLang[],
+      includeOptions: [
+        'div',
+        'enableVlcPlaylistCreation',
+        'div',
+        'excludeTh',
+        'excludeLffImages',
+        'includePrinted',
+      ],
     }
   },
   computed: {
@@ -459,13 +442,13 @@ export default defineComponent({
       this.media.lang = null
     }
     this.loading = false
-    this.$emit('valid', this.valid)
     this.$emit('refresh', this.media)
 
     if (this.$refs.mediaForm) {
       // @ts-ignore: validate is not a function on type Element
       this.$refs.mediaForm.validate()
     }
+    if (this.valid) this.$emit('valid', this.valid)
   },
   methods: {
     getShortcutRules(fn: string) {
@@ -526,7 +509,11 @@ export default defineComponent({
             join(this.prefs.cong.dir, this.bgFileName() + extname(bg[0]))
           )
         } catch (e: any) {
-          if (e.status !== NOT_FOUND) {
+          if (e.message.includes(LOCKED.toString())) {
+            this.$warn('errorWebdavLocked', {
+              identifier: this.bgFileName() + extname(bg[0]),
+            })
+          } else if (e.status !== NOT_FOUND) {
             this.$error('errorWebdavRm', e, this.bgFileName() + extname(bg[0]))
           }
         }

@@ -159,7 +159,7 @@ import {
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
 import { LocalFile, MeetingFile, VideoFile } from '~/types'
-import { MS_IN_SEC, NOT_FOUND } from '~/constants/general'
+import { LOCKED, MS_IN_SEC, NOT_FOUND } from '~/constants/general'
 export default defineComponent({
   filters: {
     ext(filename: string) {
@@ -422,7 +422,9 @@ export default defineComponent({
               try {
                 await this.client.deleteFile(filePath)
               } catch (e: any) {
-                if (e.status !== NOT_FOUND) {
+                if (e.message.includes(LOCKED.toString())) {
+                  this.$warn('errorWebdavLocked', { identifier: filePath })
+                } else if (e.status !== NOT_FOUND) {
                   this.$error('errorWebdavRm', e, filePath)
                 }
               }
@@ -466,7 +468,11 @@ export default defineComponent({
           try {
             await this.client.deleteFile(item.url as string)
           } catch (e: any) {
-            if (e.status !== NOT_FOUND) {
+            if (e.message.includes(LOCKED.toString())) {
+              this.$warn('errorWebdavLocked', {
+                identifier: item.url as string,
+              })
+            } else if (e.status !== NOT_FOUND) {
               this.$error('errorWebdavRm', e, item.url as string)
             }
           }

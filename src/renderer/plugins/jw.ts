@@ -60,6 +60,10 @@ const plugin: Plugin = (
       }
     }
 
+    if (!existsSync(langPath)) {
+      return getJWLangs(true)
+    }
+
     let langs: ShortJWLang[] = []
 
     function readLangs(firstTry = true): string {
@@ -82,6 +86,7 @@ const plugin: Plugin = (
         langs = JSON.parse(fileContent) as ShortJWLang[]
       } catch (e: any) {
         if (e.message.includes('Unexpected token')) {
+          $log.debug(`Invalid JSON: ${fileContent}`)
           return getJWLangs(true)
         } else {
           $log.error(e)
