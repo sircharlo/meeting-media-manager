@@ -9,6 +9,7 @@
   "convertDownloaded": "Converteer media naar MP4 formaat",
   "convertExternal": "Bied aan om extra media te importeren",
   "custom": "Anders",
+  "customCachePath": "Andere cache locatie (voor publicaties, etc.)",
   "dark": "Donker",
   "delete": "Verwijder",
   "disableAutoUpdate": "Zet automatisch updaten uit",

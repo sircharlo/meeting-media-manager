@@ -9,6 +9,7 @@
   "convertDownloaded": "Convert media to MP4 format",
   "convertExternal": "Offer to import additional media",
   "custom": "Custom",
+  "customCachePath": "Custom cache path (for publications, etc.)",
   "dark": "Dark",
   "delete": "Delete",
   "disableAutoUpdate": "Disable automatic app update",

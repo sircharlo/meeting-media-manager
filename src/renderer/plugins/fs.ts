@@ -76,7 +76,11 @@ const plugin: Plugin = (
 
     if (file) console.debug('Pub lang', mediaFolder)
 
-    const pubPath = joinSafe($appPath(), 'Publications', mediaFolder)
+    const pubPath = joinSafe(
+      $getPrefs('app.customCachePath') || $appPath(),
+      'Publications',
+      mediaFolder
+    )
     try {
       ensureDirSync(pubPath)
     } catch (e: unknown) {
@@ -126,7 +130,11 @@ const plugin: Plugin = (
   inject('mediaPath', mediaPath)
 
   inject('localFontPath', (font: string) => {
-    return join($appPath(), 'Fonts', basename(font))
+    return join(
+      $getPrefs('app.customCachePath') || $appPath(),
+      'Fonts',
+      basename(font)
+    )
   })
 
   inject('wtFontPath', async (): Promise<string> => {
@@ -150,13 +158,13 @@ const plugin: Plugin = (
   })
 
   inject('ytPath', (lang?: string): string => {
+    const ytLang =
+      lang || $getPrefs('media.lang') || $getPrefs('media.langFallback') || 'E'
     return joinSafe(
-      $appPath(),
+      $getPrefs('app.customCachePath') || $appPath(),
       'Publications',
-      lang ?? $getPrefs('media.lang') ?? 'E',
-      `yeartext-${lang ?? $getPrefs('media.lang') ?? 'E'}-${new Date()
-        .getFullYear()
-        .toString()}`
+      ytLang,
+      `yeartext-${ytLang}-${new Date().getFullYear().toString()}`
     )
   })
 

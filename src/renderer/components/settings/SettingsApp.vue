@@ -63,6 +63,29 @@
         />
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="auto" class="pr-0 text-left">
+        <v-btn
+          id="app.customCachePathBtn"
+          color="primary"
+          style="height: 40px"
+          :disabled="$isLocked('app.customCachePath')"
+          @click="setCustomCachePath"
+        >
+          {{ $t('browse') }}
+        </v-btn>
+      </v-col>
+      <v-col class="pl-0">
+        <form-input
+          id="app.customCachePath"
+          v-model="app.customCachePath"
+          :label="$t('customCachePath')"
+          readonly
+          clearable
+          :locked="$isLocked('app.customCachePath')"
+        />
+      </v-col>
+    </v-row>
     <form-input
       id="app.outputFolderDateFormat"
       v-model="app.outputFolderDateFormat"
@@ -351,6 +374,36 @@ export default defineComponent({
         }
       },
     },
+    'app.customCachePath': {
+      handler(val: string, oldVal: string) {
+        const defaultPath = (folder: string) => join(this.$appPath(), folder)
+        if (val && !oldVal) {
+          if (existsSync(defaultPath('Publications'))) {
+            renameSync(defaultPath('Publications'), join(val, 'Publications'))
+          }
+          if (existsSync(defaultPath('Fonts'))) {
+            renameSync(defaultPath('Fonts'), join(val, 'Fonts'))
+          }
+        } else if (!val && oldVal) {
+          if (existsSync(join(oldVal, 'Publications'))) {
+            renameSync(
+              join(oldVal, 'Publications'),
+              defaultPath('Publications')
+            )
+          }
+          if (existsSync(join(oldVal, 'Fonts'))) {
+            renameSync(join(oldVal, 'Fonts'), defaultPath('Fonts'))
+          }
+        } else {
+          if (existsSync(join(oldVal, 'Publications'))) {
+            renameSync(join(oldVal, 'Publications'), join(val, 'Publications'))
+          }
+          if (existsSync(join(oldVal, 'Fonts'))) {
+            renameSync(join(oldVal, 'Fonts'), join(val, 'Fonts'))
+          }
+        }
+      },
+    },
     'app.congregationName': {
       handler(val: string) {
         this.$sentry.setUser({
@@ -469,6 +522,14 @@ export default defineComponent({
       })
       if (result && !result.canceled) {
         this.app.localOutputPath = result.filePaths[0]
+      }
+    },
+    async setCustomCachePath() {
+      const result = await ipcRenderer.invoke('openDialog', {
+        properties: ['openDirectory'],
+      })
+      if (result && !result.canceled) {
+        this.app.customCachePath = result.filePaths[0]
       }
     },
   },
