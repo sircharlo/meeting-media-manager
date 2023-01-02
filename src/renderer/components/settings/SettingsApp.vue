@@ -378,27 +378,45 @@ export default defineComponent({
       handler(val: string, oldVal: string) {
         const defaultPath = (folder: string) => join(this.$appPath(), folder)
         if (val && !oldVal) {
-          if (existsSync(defaultPath('Publications'))) {
+          if (
+            existsSync(defaultPath('Publications')) &&
+            !existsSync(join(val, 'Publications'))
+          ) {
             renameSync(defaultPath('Publications'), join(val, 'Publications'))
           }
-          if (existsSync(defaultPath('Fonts'))) {
+          if (
+            existsSync(defaultPath('Fonts')) &&
+            !existsSync(join(val, 'Fonts'))
+          ) {
             renameSync(defaultPath('Fonts'), join(val, 'Fonts'))
           }
         } else if (!val && oldVal) {
-          if (existsSync(join(oldVal, 'Publications'))) {
+          if (
+            existsSync(join(oldVal, 'Publications')) &&
+            !existsSync(defaultPath('Publications'))
+          ) {
             renameSync(
               join(oldVal, 'Publications'),
               defaultPath('Publications')
             )
           }
-          if (existsSync(join(oldVal, 'Fonts'))) {
+          if (
+            existsSync(join(oldVal, 'Fonts')) &&
+            !existsSync(defaultPath('Fonts'))
+          ) {
             renameSync(join(oldVal, 'Fonts'), defaultPath('Fonts'))
           }
         } else {
-          if (existsSync(join(oldVal, 'Publications'))) {
+          if (
+            existsSync(join(oldVal, 'Publications')) &&
+            !existsSync(join(val, 'Publications'))
+          ) {
             renameSync(join(oldVal, 'Publications'), join(val, 'Publications'))
           }
-          if (existsSync(join(oldVal, 'Fonts'))) {
+          if (
+            existsSync(join(oldVal, 'Fonts')) &&
+            !existsSync(join(val, 'Fonts'))
+          ) {
             renameSync(join(oldVal, 'Fonts'), join(val, 'Fonts'))
           }
         }
