@@ -391,11 +391,11 @@ const plugin: Plugin = (
             }
           }
 
-          if (prefs.media.excludeLffi !== undefined) {
+          if (prefs.media?.excludeLffi !== undefined) {
             delete prefs.media.excludeLffi
           }
 
-          if (prefs.media.excludeLffiImages !== undefined) {
+          if (prefs.media?.excludeLffiImages !== undefined) {
             prefs.media.excludeLffImages = $clone(prefs.media.excludeLffiImages)
             delete prefs.media.excludeLffiImages
           }
