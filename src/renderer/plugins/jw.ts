@@ -243,13 +243,11 @@ const plugin: Plugin = (
         if (result.content) {
           yeartext = JSON.parse(JSON.stringify(result.content)) as string
           $write(ytPath, yeartext)
-        } else if (
-          fallbackLang &&
-          wtlocale !== fallbackLang &&
-          result.message === 'Request failed with status code 404'
-        ) {
+        } else if (result.message === 'Request failed with status code 404') {
           $log.warn(`Yeartext not found for ${wtlocale}`)
-          return await getYearText(force, fallbackLang)
+          if (fallbackLang && wtlocale !== fallbackLang) {
+            return await getYearText(force, fallbackLang)
+          }
         } else {
           $log.error(result)
         }
