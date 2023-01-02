@@ -373,15 +373,17 @@ export default defineComponent({
           await this.$toggleMediaWindow(val ? 'open' : 'close')
         }
 
-        // Initialize the media screen background
-        this.bg = await this.$refreshBackgroundImgPreview()
+        if (val) {
+          // Initialize the media screen background
+          this.bg = await this.$refreshBackgroundImgPreview()
 
-        // If second screen is present, use it for media display
-        if (
-          this.media.preferredOutput === 'window' &&
-          this.screens.length > 0
-        ) {
-          this.media.preferredOutput = this.screens[0].id
+          // If second screen is present, use it for media display
+          if (
+            this.media.preferredOutput === 'window' &&
+            this.screens.length > 0
+          ) {
+            this.media.preferredOutput = this.screens[0].id
+          }
         }
       },
     },
