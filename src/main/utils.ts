@@ -15,7 +15,7 @@ const AR_HEIGHT = 9
 export function createMediaWindow(windowOpts: BrowserWindowConstructorOptions) {
   const winHandler = new BrowserWinHandler({
     title: 'Media Window',
-    // roundedCorners: false, disabled again until this issue is fixed: https://github.com/electron/electron/issues/36251
+    roundedCorners: windowOpts.fullscreen,
     backgroundColor: 'black',
     width: 1280,
     height: 720,

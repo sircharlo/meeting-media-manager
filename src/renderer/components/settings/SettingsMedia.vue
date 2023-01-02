@@ -361,7 +361,7 @@ export default defineComponent({
       async handler() {
         // Change the position of the media window to the preferred output
         ipcRenderer.send(
-          'setMediaWindowPosition',
+          'showMediaWindow',
           await this.$getMediaWindowDestination()
         )
       },

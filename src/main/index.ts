@@ -406,18 +406,6 @@ if (gotTheLock) {
   ipcMain.on('allowQuit', (_e, val: boolean) => {
     allowClose = val
   })
-  ipcMain.on(
-    'setMediaWindowPosition',
-    (
-      _e,
-      mediaWinOptions: {
-        destination: number
-        type: 'fullscreen' | 'window'
-      }
-    ) => {
-      setMediaWindowPosition(win, mediaWin, mediaWinOptions)
-    }
-  )
   ipcMain.on('toggleMediaWindowFocus', () => {
     fadeWindow(win, mediaWin)
   })
@@ -433,7 +421,17 @@ if (gotTheLock) {
         type: 'fullscreen' | 'window'
       }
     ) => {
-      if (!mediaWin) {
+      if (
+        mediaWin &&
+        platform() === 'darwin' &&
+        (mediaWinOptions.type === 'window') === mediaWin.isFullScreen()
+      ) {
+        closeMediaWindow()
+      }
+
+      if (mediaWin) {
+        setMediaWindowPosition(win, mediaWin, mediaWinOptions)
+      } else {
         const screenInfo = getScreenInfo(win, mediaWin)
         const STARTING_POSITION = 50
 
@@ -479,8 +477,6 @@ if (gotTheLock) {
           })
 
         win?.webContents.send('mediaWindowShown')
-      } else {
-        setMediaWindowPosition(win, mediaWin, mediaWinOptions)
       }
     }
   )

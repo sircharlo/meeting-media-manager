@@ -138,13 +138,13 @@ export default defineComponent({
     })
     ipcRenderer.on('moveMediaWindowToOtherScreen', async () => {
       ipcRenderer.send(
-        'setMediaWindowPosition',
+        'showMediaWindow',
         await this.$getMediaWindowDestination()
       )
     })
     ipcRenderer.on('displaysChanged', async () => {
       ipcRenderer.send(
-        'setMediaWindowPosition',
+        'showMediaWindow',
         await this.$getMediaWindowDestination()
       )
     })
