@@ -137,16 +137,20 @@ export default defineComponent({
       ipcRenderer.send('startMediaDisplay', this.$getAllPrefs())
     })
     ipcRenderer.on('moveMediaWindowToOtherScreen', async () => {
-      ipcRenderer.send(
-        'showMediaWindow',
-        await this.$getMediaWindowDestination()
-      )
+      if (this.$store.state.present.mediaScreenInit) {
+        ipcRenderer.send(
+          'showMediaWindow',
+          await this.$getMediaWindowDestination()
+        )
+      }
     })
     ipcRenderer.on('displaysChanged', async () => {
-      ipcRenderer.send(
-        'showMediaWindow',
-        await this.$getMediaWindowDestination()
-      )
+      if (this.$store.state.present.mediaScreenInit) {
+        ipcRenderer.send(
+          'showMediaWindow',
+          await this.$getMediaWindowDestination()
+        )
+      }
     })
     ipcRenderer.on('toggleMusicShuffle', async () => {
       await this.$shuffleMusic(!!this.$store.state.media.musicFadeOut)

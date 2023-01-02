@@ -360,10 +360,12 @@ export default defineComponent({
     'media.preferredOutput': {
       async handler() {
         // Change the position of the media window to the preferred output
-        ipcRenderer.send(
-          'showMediaWindow',
-          await this.$getMediaWindowDestination()
-        )
+        if (this.media.enableMediaDisplayButton) {
+          ipcRenderer.send(
+            'showMediaWindow',
+            await this.$getMediaWindowDestination()
+          )
+        }
       },
     },
     'media.enableMediaDisplayButton': {
