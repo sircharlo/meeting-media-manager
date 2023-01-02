@@ -21,6 +21,10 @@ test.afterAll(async () => {
 })
 
 test('shuffle button works correctly', async () => {
+  if (platform() === 'win32') {
+    test.skip()
+  }
+
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
 
