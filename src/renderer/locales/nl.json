@@ -53,6 +53,7 @@
   "errorWebdavTooBig": "Het bestand dat je wilde uploaden is te groot (max 512MB). Het bestand is lokaal toegevoegd, maar niet toegevoegd aan de gemeente server.",
   "errorWebdavTooManyRequests": "Er zijn te veel verzoeken naar de gemeente server gestuurd. Probeer het later opnieuw.",
   "errorWUnavailable": "De Wachttoren Studie Uitgave is niet beschikbaar in jouw taal. Stel een alternatieve taal in naast jouw huidige taal.",
+  "errorYeartextNotFound": "De jaartekst voor de volgende taal is niet beschikbaar. Stel een alternatieve taal in naast jouw huidige taal.",
   "excludeLffImages": "Sluit plaatjes uit van het <em>lff</em> boek buiten de gemeentebijbelstudie",
   "excludeTh": "Sluit alle media van de <em>th</em> brochure uit",
   "fetchMedia": "Haal media op!",
