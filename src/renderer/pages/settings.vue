@@ -312,7 +312,7 @@ export default defineComponent({
         return
       }
 
-      const folders = []
+      const folders = [join(this.$localFontPath('font'), '..')]
       const pubPath = this.$pubPath()
       const mediaPath = this.$mediaPath()
 
@@ -348,7 +348,7 @@ export default defineComponent({
         }, 3 * MS_IN_SEC)
       } else {
         this.loading = true
-        const folders = []
+        const folders = [join(this.$localFontPath('font'), '..')]
 
         const pubPath = this.$pubPath()
         const mediaPath = this.$mediaPath()
@@ -378,6 +378,7 @@ export default defineComponent({
         // Force refresh jw langs
         if (this.online) {
           await this.$getJWLangs(true)
+          await this.$getYearText(true)
         }
         this.cacheColor = 'warning'
         this.calcCache()
