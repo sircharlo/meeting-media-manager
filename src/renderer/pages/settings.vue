@@ -312,7 +312,7 @@ export default defineComponent({
         return
       }
 
-      const folders = [join(this.$localFontPath('font'), '..')]
+      const folders = []
       const pubPath = this.$pubPath()
       const mediaPath = this.$mediaPath()
 
@@ -348,7 +348,7 @@ export default defineComponent({
         }, 3 * MS_IN_SEC)
       } else {
         this.loading = true
-        const folders = [join(this.$localFontPath('font'), '..')]
+        const folders = []
 
         const pubPath = this.$pubPath()
         const mediaPath = this.$mediaPath()

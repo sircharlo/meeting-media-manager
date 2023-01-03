@@ -221,6 +221,7 @@ const plugin: Plugin = (
     lang?: string
   ): Promise<string | null> {
     let yeartext = null
+    const fontsPromise = getWtFonts(force)
 
     const fallbackLang = $getPrefs('media.langFallback') as string | null
     const wtlocale = lang ?? ($getPrefs('media.lang') as string | null)
@@ -229,7 +230,6 @@ const plugin: Plugin = (
 
     if (force || !existsSync(ytPath)) {
       $log.debug('Fetching yeartext', wtlocale)
-      const fontsPromise = getWtFonts()
       try {
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://wol.jw.org/wol/finder',
@@ -264,7 +264,6 @@ const plugin: Plugin = (
           $log.error(e)
         }
       }
-      await fontsPromise
     } else {
       try {
         yeartext = readFileSync(ytPath, 'utf8')
@@ -272,38 +271,42 @@ const plugin: Plugin = (
         $warn('errorOffline')
       }
     }
+
+    await fontsPromise
     return yeartext
   }
   inject('getYearText', getYearText)
 
-  async function getWtFonts() {
+  async function getWtFonts(force = false) {
     const fonts = [WT_CLEARTEXT_FONT, JW_ICONS_FONT]
 
     const promises: Promise<void>[] = []
 
     fonts.forEach((font) => {
-      promises.push(getWtFont(font))
+      promises.push(getWtFont(font, force))
     })
 
     await Promise.allSettled(promises)
   }
 
-  async function getWtFont(font: string) {
+  async function getWtFont(font: string, force = false) {
     const fontPath = $localFontPath(font)
     let size = -1
 
-    try {
-      const result = await $axios.request({
-        method: 'HEAD',
-        url: font,
-      })
+    if (!force) {
+      try {
+        const result = await $axios.request({
+          method: 'HEAD',
+          url: font,
+        })
 
-      size = +result.headers['content-length']
-    } catch (e: unknown) {
-      $log.error(e)
+        size = +result.headers['content-length']
+      } catch (e: unknown) {
+        $log.error(e)
+      }
     }
 
-    if (!existsSync(fontPath) || statSync(fontPath).size !== size) {
+    if (force || !existsSync(fontPath) || statSync(fontPath).size !== size) {
       try {
         const result = await $axios.$get(font, {
           responseType: 'arraybuffer',
