@@ -133,9 +133,18 @@ export default defineComponent({
           if (typeof this.musicFadeOut === 'string') {
             this.timeRemaining = this.musicFadeOut
           } else {
-            this.timeRemaining = this.$dayjs
-              .duration(this.musicFadeOut.diff(this.$dayjs()), 'ms')
-              .format('mm:ss')
+            const timeLeft = this.$dayjs.duration(
+              this.musicFadeOut.diff(this.$dayjs()),
+              'ms'
+            )
+
+            const twoDigits = (num: number) =>
+              num < 10 ? `0${num}` : num.toString()
+
+            this.timeRemaining = `${
+              // eslint-disable-next-line no-magic-numbers
+              twoDigits(timeLeft.hours() * 60 + timeLeft.minutes())
+            }:${twoDigits(timeLeft.seconds())}`
 
             // Stop music shuffle at 0
             if (this.timeRemaining === '00:00') {
