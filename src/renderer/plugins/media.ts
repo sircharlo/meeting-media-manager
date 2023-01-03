@@ -182,7 +182,9 @@ const plugin: Plugin = (
     extracts.forEach((extract) => {
       let imagesOnly = false
       const excludeLffImages = $getPrefs('media.excludeLffImages')
-      if (extract.UniqueEnglishSymbol === 'lff') {
+      if (extract.UniqueEnglishSymbol === 'lffi') {
+        imagesOnly = true
+      } else if (extract.UniqueEnglishSymbol === 'lff') {
         const match = extracts.find(
           (e) =>
             e.UniqueEnglishSymbol === 'lff' &&
