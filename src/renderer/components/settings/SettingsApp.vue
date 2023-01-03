@@ -208,7 +208,7 @@
 <script lang="ts">
 import { platform } from 'os'
 // eslint-disable-next-line import/named
-import { existsSync, renameSync } from 'fs-extra'
+import { existsSync } from 'fs-extra'
 import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
@@ -378,47 +378,18 @@ export default defineComponent({
       handler(val: string, oldVal: string) {
         const defaultPath = (folder: string) => join(this.$appPath(), folder)
         if (val && !oldVal) {
-          if (
-            existsSync(defaultPath('Publications')) &&
-            !existsSync(join(val, 'Publications'))
-          ) {
-            renameSync(defaultPath('Publications'), join(val, 'Publications'))
-          }
-          if (
-            existsSync(defaultPath('Fonts')) &&
-            !existsSync(join(val, 'Fonts'))
-          ) {
-            renameSync(defaultPath('Fonts'), join(val, 'Fonts'))
-          }
+          this.$move(defaultPath('Publications'), join(val, 'Publications'))
+          this.$move(defaultPath('Fonts'), join(val, 'Fonts'))
         } else if (!val && oldVal) {
-          if (
-            existsSync(join(oldVal, 'Publications')) &&
-            !existsSync(defaultPath('Publications'))
-          ) {
-            renameSync(
-              join(oldVal, 'Publications'),
-              defaultPath('Publications')
-            )
-          }
-          if (
-            existsSync(join(oldVal, 'Fonts')) &&
-            !existsSync(defaultPath('Fonts'))
-          ) {
-            renameSync(join(oldVal, 'Fonts'), defaultPath('Fonts'))
-          }
+          this.$move(
+            join(oldVal, 'Publications'),
+            defaultPath('Publications'),
+            true
+          )
+          this.$move(join(oldVal, 'Fonts'), defaultPath('Fonts'), true)
         } else {
-          if (
-            existsSync(join(oldVal, 'Publications')) &&
-            !existsSync(join(val, 'Publications'))
-          ) {
-            renameSync(join(oldVal, 'Publications'), join(val, 'Publications'))
-          }
-          if (
-            existsSync(join(oldVal, 'Fonts')) &&
-            !existsSync(join(val, 'Fonts'))
-          ) {
-            renameSync(join(oldVal, 'Fonts'), join(val, 'Fonts'))
-          }
+          this.$move(join(oldVal, 'Publications'), join(val, 'Publications'))
+          this.$move(join(oldVal, 'Fonts'), join(val, 'Fonts'))
         }
       },
     },
@@ -505,9 +476,13 @@ export default defineComponent({
 
         if (!bg) return
 
-        renameSync(
+        this.$move(
           bg,
-          join(this.$appPath(), bgName(this.app.congregationName) + extname(bg))
+          join(
+            this.$appPath(),
+            bgName(this.app.congregationName) + extname(bg)
+          ),
+          true
         )
 
         if (this.client && this.prefs.cong.dir) {

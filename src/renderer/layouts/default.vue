@@ -13,7 +13,7 @@
 import { fileURLToPath, pathToFileURL } from 'url'
 import { platform, userInfo } from 'os'
 // eslint-disable-next-line import/named
-import { existsSync, renameSync, readFileSync, removeSync } from 'fs-extra'
+import { existsSync, readFileSync, removeSync } from 'fs-extra'
 import { basename, join } from 'upath'
 import { defineComponent } from 'vue'
 import getUsername from 'fullname'
@@ -452,7 +452,7 @@ export default defineComponent({
               ]) as string[]
 
               files.forEach((file) => {
-                renameSync(file, join(this.$appPath(), basename(file)))
+                this.$move(file, join(this.$appPath(), basename(file)), true)
               })
               removeSync(JWMMF)
             }

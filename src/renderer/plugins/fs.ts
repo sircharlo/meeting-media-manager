@@ -22,7 +22,17 @@ import { MeetingFile, ShortJWLang } from '~/types'
 import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
 
 const plugin: Plugin = (
-  { $getPrefs, $log, store, $appPath, $dayjs, $translate, $strip, $warn },
+  {
+    $getPrefs,
+    $log,
+    store,
+    $appPath,
+    $dayjs,
+    $translate,
+    $strip,
+    $warn,
+    $error,
+  },
   inject
 ) => {
   // Paths
@@ -214,6 +224,24 @@ const plugin: Plugin = (
       copyFileSync(src, dest)
     } catch (e: unknown) {
       $warn('errorSetVars', { identifier: dirname(dest) }, e)
+    }
+  })
+
+  inject('move', (src: string, dest: string, overwrite = false): void => {
+    if (!existsSync(src)) return
+    if (existsSync(dest)) {
+      if (overwrite) {
+        removeSync(dest)
+      } else {
+        $warn('errorDestExists', { identifier: dest })
+        return
+      }
+    }
+
+    try {
+      renameSync(src, dest)
+    } catch (e: unknown) {
+      $error('errorSetVars', e, dest)
     }
   })
 
