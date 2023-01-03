@@ -213,6 +213,7 @@ import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
+import { LocaleObject } from '@nuxtjs/i18n'
 import { faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { AppPrefs, ElectronStore } from '~/types'
@@ -346,7 +347,11 @@ export default defineComponent({
     },
     'app.localAppLang': {
       async handler(val: string, oldVal: string) {
-        this.$dayjs.locale((val ?? oldVal).split('-')[0])
+        const locales = this.$i18n.locales as LocaleObject[]
+        const locale =
+          locales.find((l) => l.code === val) ??
+          locales.find((l) => l.code === oldVal)
+        this.$dayjs.locale(locale?.dayjs ?? val ?? oldVal)
 
         // Change the language of the app by changing it in the URL
         if ((val ?? oldVal) !== this.$i18n.locale) {
@@ -411,7 +416,7 @@ export default defineComponent({
 
           // Change the date keys in the media store
           await this.$store.dispatch('media/updateDateFormat', {
-            locale: this.$i18n.locale.split('-')[0],
+            locale: this.$i18n.localeProperties.dayjs ?? this.$i18n.locale,
             newFormat: newVal,
             oldFormat: oldVal,
           })

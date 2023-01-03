@@ -10,6 +10,7 @@ const DAYJS_LOCALES = [
   // 'mg', not yet supported by dayjs
   'nl',
   'pt',
+  'pt-br',
   'ru',
   'sv',
   // 'wes-x-pgw', // not yet supported by dayjs
@@ -80,6 +81,7 @@ const LOCALES = [
     iso: 'mg-MG',
     file: 'mg.json',
     jw: 'MG',
+    dayjs: 'en',
     name: 'Malagasy (Malagasy)',
   },
   {
@@ -94,6 +96,7 @@ const LOCALES = [
     iso: 'pt-PT',
     file: 'pt-pt.json',
     jw: 'TPO',
+    dayjs: 'pt',
     name: 'Português - Portugal (Portuguese - Portugal)',
   },
   {
@@ -101,6 +104,7 @@ const LOCALES = [
     iso: 'pt-BR',
     file: 'pt.json',
     jw: 'T',
+    dayjs: 'pt-br',
     name: 'Português - Brasil (Portuguese - Brazil)',
   },
   {
@@ -122,6 +126,7 @@ const LOCALES = [
     iso: 'wes-x-pgw',
     file: 'wes-x-pgw.json',
     jw: 'PGW',
+    dayjs: 'en',
     name: 'Pidgin - West Africa (Pidgin - West Africa)',
   },
 ]
