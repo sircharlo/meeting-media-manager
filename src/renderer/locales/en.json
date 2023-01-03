@@ -55,7 +55,7 @@
   "errorWebdavTooBig": "The file you are attempting to upload is too large (max 512MB). The file has been added locally, but not to the cong server.",
   "errorWebdavTooManyRequests": "Too many requests have been sent to the server. Please try again later.",
   "errorWUnavailable": "The Study Edition of the Watchtower is not available in your selected language. Consider setting a fallback language to use whenever necessary.",
-  "errorYeartextNotFound": "The yeartext for the following language could not be found. Consider setting a fallback language to use whenever necessary.",
+  "errorYeartextNotFound": "The yeartext for the following language is not (yet) available. Consider setting a fallback language to use whenever necessary.",
   "excludeLffImages": "Exclude images from the <em>lff</em> book outside the Congregation Bible Study",
   "excludeTh": "Exclude all media from the <em>th</em> brochure",
   "fetchMedia": "Update media folders",
