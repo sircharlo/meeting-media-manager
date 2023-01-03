@@ -24,7 +24,7 @@ interface CustomProps {
     host: string,
     username: string,
     password: string,
-    dir: string = '/'
+    dir = '/'
   ) => Promise<string | null>
   $convertToMP4: (
     baseDate: Dayjs,
@@ -50,7 +50,7 @@ interface CustomProps {
   $findAllStats: (path: string | string[], options?: Options) => Entry[]
   $findOne: (path: string | string[], options?: Options) => string
   $flash: (message: string, type?: string) => void
-  $forcePrefs: (refresh: boolean = false) => Promise<ElectronStore | undefined>
+  $forcePrefs: (refresh = false) => Promise<ElectronStore | undefined>
   $getAllPrefs: () => ElectronStore
   $getCongMedia: (baseDate: Dayjs, now: Dayjs) => void
   $getCongPrefs: () => Promise<{ name: string; path: string }[]>
@@ -71,7 +71,7 @@ interface CustomProps {
     issue?: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void,
     lang?: string,
-    localPath: string = ''
+    localPath = ''
   ) => Promise<Database | null>
   $getDocumentMultiMedia: (
     db: Database,
@@ -81,7 +81,7 @@ interface CustomProps {
     memOnly?: boolean,
     silent?: boolean
   ) => Promise<MeetingFile[]>
-  $getJWLangs: (forceReload: boolean = false) => Promise<ShortJWLang[]>
+  $getJWLangs: (forceReload = false) => Promise<ShortJWLang[]>
   $getPrefs: (key: string) => unknown
   $getPubAvailability: (
     lang: string,
@@ -106,16 +106,13 @@ interface CustomProps {
     date: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
-  $getScenes: (current: boolean = false) => Promise<string[] | string>
+  $getScenes: (current = false) => Promise<string[] | string>
   $getSongs: () => Promise<VideoFile[]>
   $getWeMedia: (
     date: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
-  $getYearText: (
-    force: boolean = false,
-    lang?: string
-  ) => Promise<string | null>
+  $getYearText: (force = false, lang?: string) => Promise<string | null>
   $getZipContentsByExt: (zip: string, ext: string) => Promise<Buffer | null>
   $getZipContentsByName: (zip: string, name: string) => Promise<Buffer | null>
   $ghApi: NuxtAxiosInstance
@@ -136,6 +133,7 @@ interface CustomProps {
   $mediaItems: NuxtAxiosInstance
   $mediaPath: (file?: MeetingFile) => string | undefined
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
+  $move: (src: string, dest: string, overwrite = false) => void
   $notify: (
     message: string,
     props?: {
@@ -152,28 +150,28 @@ interface CustomProps {
   $pubMedia: NuxtAxiosInstance
   $pubPath: (file?: MeetingFile) => string | undefined
   $query: (db: Database, query: string) => unknown[]
-  $refreshBackgroundImgPreview: (force: boolean = false) => Promise<string>
+  $refreshBackgroundImgPreview: (force = false) => Promise<string>
   $removeCong: (path: string) => void
   $rename: (
     path: string,
     oldName: string,
     newName: string,
-    action: string = 'rename',
-    type: string = 'string'
+    action = 'rename',
+    type = 'string'
   ) => void
   $renameAll: (
     dir: string,
     search: string,
     newName: string,
-    action: string = 'rename',
-    type: string = 'string'
+    action = 'rename',
+    type = 'string'
   ) => void
   $renamePubs: (oldVal: string, newVal: string) => Promise<void>
   $resetOBS: () => Promise<void>
   $resetPrefs: () => void
   $rm: (files: string | string[]) => void
-  $sanitize: (name: string, isFile: boolean = false) => string
-  $strip: (value: string, type: string = 'id') => string
+  $sanitize: (name: string, isFile = false) => string
+  $strip: (value: string, type = 'id') => string
   $sentry: typeof import('@sentry/vue')
   $setAllPrefs: (settings: ElectronStore) => void
   $setDb: (pub: string, issue: string, db: Database) => void
@@ -182,12 +180,9 @@ interface CustomProps {
   $setShortcut: (
     shortcut: string,
     fn: string,
-    domain: string = 'mediaWindow'
+    domain = 'mediaWindow'
   ) => Promise<void>
-  $shuffleMusic: (
-    stop: boolean = false,
-    immediately: boolean = false
-  ) => Promise<void>
+  $shuffleMusic: (stop = false, immediately = false) => Promise<void>
   $storePath: () => string | undefined
   $success: (
     message: string,
@@ -213,7 +208,7 @@ interface CustomProps {
   $translate: (word: string, fallback?: string) => string
   $unsetPrefs: (key: keyof ElectronStore) => void
   $unsetShortcut: (shortcut: string) => void
-  $unsetShortcuts: (filter: string = 'all') => void
+  $unsetShortcuts: (filter = 'all') => void
   $updateContent: () => Promise<void>
   $updateContentsTree: () => CongFile[]
   $warn: (

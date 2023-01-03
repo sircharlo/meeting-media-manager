@@ -1,4 +1,5 @@
 import { MutationTree } from 'vuex'
+import cloneDeep from 'lodash.clonedeep'
 import { MeetingFile, StatStore, Perf, Stats, Origin } from '~/types'
 
 const defaultState: StatStore = {
@@ -19,7 +20,7 @@ const defaultState: StatStore = {
   },
 }
 
-export const state = () => Object.assign({}, defaultState)
+export const state = () => cloneDeep(defaultState)
 
 export const mutations: MutationTree<StatStore> = {
   setOnline(state, online: boolean) {
@@ -57,9 +58,10 @@ export const mutations: MutationTree<StatStore> = {
     state.performance = new Map()
   },
   clearDownloadStats(state: StatStore) {
-    Object.assign(state.downloads, defaultState.downloads)
+    state.downloads = cloneDeep(defaultState.downloads)
   },
   clearAll(state: StatStore) {
-    Object.assign(state, defaultState)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    state = cloneDeep(defaultState)
   },
 }
