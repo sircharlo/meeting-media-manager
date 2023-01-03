@@ -113,7 +113,7 @@
             max-width="300px"
             max-height="100px"
           />
-          <div v-else v-html="background" />
+          <div v-else id="yeartextContainer" v-html="background" />
         </v-col>
         <v-col cols="auto" align-self="center">
           <v-btn
@@ -528,6 +528,15 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
+@font-face {
+  font-family: NotoSerif;
+  src: url('/NotoSerif-Bold.ttf') format('truetype');
+}
+
+#yeartextContainer {
+  font-family: 'NotoSerif', serif;
+}
+
 #mediaWindowBackground {
   color: white;
   aspect-ratio: 16/9;

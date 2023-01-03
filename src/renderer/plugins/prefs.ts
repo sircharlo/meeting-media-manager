@@ -49,6 +49,10 @@ const schema: Schema<ElectronStore> = {
         type: ['string', 'null'],
         default: PREFS.app.localAppLang,
       },
+      customCachePath: {
+        type: ['string', 'null'],
+        default: PREFS.app.customCachePath,
+      },
       localOutputPath: {
         type: ['string', 'null'],
         default: PREFS.app.localOutputPath,

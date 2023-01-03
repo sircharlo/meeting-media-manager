@@ -354,18 +354,22 @@ export default defineComponent({
       }
     },
     async setYearText(prefs: ElectronStore) {
-      const userData = await ipcRenderer.invoke('userData')
+      let cachePath = prefs.app.customCachePath
+      if (!cachePath) {
+        cachePath = (await ipcRenderer.invoke('userData')) as string
+      }
+
       const path = (lang: string | null) => {
         if (!lang) return ''
         return join(
-          userData,
+          cachePath,
           'Publications',
           lang,
           `yeartext-${lang}-${new Date().getFullYear().toString()}`
         )
       }
       try {
-        const fontPath = await this.$wtFontPath() // Only works when watchtower library is installed on the user's machine
+        const fontPath = this.$wtFontPath() // Only works when watchtower library is installed on the user's machine
 
         const preferredPath = path(prefs.media.lang)
         const fallbackPath = path(prefs.media.langFallback)
@@ -396,9 +400,11 @@ export default defineComponent({
           }
 
           // Use fetched font if available, fallback to WT Library
-          let fontFile = join(userData, 'Fonts', basename(WT_CLEARTEXT_FONT))
+          let fontFile = join(cachePath, 'Fonts', basename(WT_CLEARTEXT_FONT))
           if (!existsSync(fontFile)) {
-            fontFile = this.$findOne(join(fontPath, 'Wt-ClearText-Bold.*'))
+            fontFile = this.$findOne(
+              join(await fontPath, 'Wt-ClearText-Bold.*')
+            )
           }
           if (fontFile && existsSync(fontFile)) {
             // @ts-ignore: FontFace is not defined in the types
@@ -425,9 +431,9 @@ export default defineComponent({
           this.ytLogo.setAttribute('style', '')
 
           // Use fetched font if available, fallback to WT Library
-          let logoFontFile = join(userData, 'Fonts', basename(JW_ICONS_FONT))
+          let logoFontFile = join(cachePath, 'Fonts', basename(JW_ICONS_FONT))
           if (!existsSync(logoFontFile)) {
-            logoFontFile = this.$findOne(join(fontPath, 'jw-icons*'))
+            logoFontFile = this.$findOne(join(await fontPath, 'jw-icons*'))
           }
           if (logoFontFile && existsSync(logoFontFile)) {
             // @ts-ignore: FontFace is not defined in the types

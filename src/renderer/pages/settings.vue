@@ -149,6 +149,7 @@ export default defineComponent({
       mounted: false,
       cacheColor: 'warning',
       loading: false,
+      shuffleMusicFiles: '',
       panel: [0, 1, 2, 3] as number[],
       headers: [
         {
@@ -210,13 +211,6 @@ export default defineComponent({
     },
     updateSuccess(): boolean {
       return this.$store.state.stats.updateSuccess as boolean
-    },
-    shuffleMusicFiles(): string {
-      const pubPath = this.$pubPath()
-      if (!pubPath) return ''
-      return this.isSignLanguage
-        ? join(pubPath, '..', this.prefs.media.lang, 'sjj', '**', '*.mp4')
-        : join(pubPath, '..', 'E', 'sjjm', '**', '*.mp3')
     },
     mediaLangObject(): ShortJWLang | null {
       return this.$store.state.media.mediaLang as ShortJWLang | null
@@ -295,6 +289,13 @@ export default defineComponent({
         .map((w) => w[0])
         .join('')
     },
+    setShuffleMusicFiles() {
+      const pubPath = this.$pubPath()
+      if (!pubPath) return ''
+      this.shuffleMusicFiles = this.isSignLanguage
+        ? join(pubPath, '..', this.prefs.media.lang, 'sjj', '**', '*.mp4')
+        : join(pubPath, '..', 'E', 'sjjm', '**', '*.mp3')
+    },
     setValid(component: string, valid: boolean) {
       const header = this.headers.find((h) => h.component === component)
       if (header) header.valid = valid
@@ -305,6 +306,7 @@ export default defineComponent({
       this.$router.back()
     },
     calcCache(): void {
+      this.setShuffleMusicFiles()
       if (!this.prefs.app.localOutputPath && !this.prefs.media.lang) {
         this.cache = 0
         return
@@ -376,6 +378,7 @@ export default defineComponent({
         // Force refresh jw langs
         if (this.online) {
           await this.$getJWLangs(true)
+          await this.$getYearText(true)
         }
         this.cacheColor = 'warning'
         this.calcCache()
