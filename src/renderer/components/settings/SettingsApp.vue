@@ -351,9 +351,7 @@ export default defineComponent({
         const locale =
           locales.find((l) => l.code === val) ??
           locales.find((l) => l.code === oldVal)
-        this.$dayjs.locale(
-          locale?.dayjs ?? val ?? oldVal
-        )
+        this.$dayjs.locale(locale?.dayjs ?? val ?? oldVal)
 
         // Change the language of the app by changing it in the URL
         if ((val ?? oldVal) !== this.$i18n.locale) {
@@ -415,8 +413,6 @@ export default defineComponent({
             // Change the folder format of the current folders in the media path
             this.$renameAll(mediaPath, oldVal, newVal, 'rename', 'date')
           }
-
-          console.log(this.$dayjs.locale)
 
           // Change the date keys in the media store
           await this.$store.dispatch('media/updateDateFormat', {
