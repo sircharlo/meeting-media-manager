@@ -81,6 +81,7 @@ const LOCALES = [
     iso: 'mg-MG',
     file: 'mg.json',
     jw: 'MG',
+    dayjs: 'en',
     name: 'Malagasy (Malagasy)',
   },
   {
@@ -125,6 +126,7 @@ const LOCALES = [
     iso: 'wes-x-pgw',
     file: 'wes-x-pgw.json',
     jw: 'PGW',
+    dayjs: 'en',
     name: 'Pidgin - West Africa (Pidgin - West Africa)',
   },
 ]
