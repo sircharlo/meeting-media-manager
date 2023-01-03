@@ -62,7 +62,7 @@ test('shuffle button works correctly', async () => {
   await delay(4 * MS_IN_SEC)
 
   // Expect time remaining to appear
-  expect(await shuffleBtn.innerText()).toMatch(/\d{2}:\d{2}/g)
+  expect(await shuffleBtn.innerText()).toMatch(/\d+:\d{2}/g)
 
   // Click shuffle button to stop
   await shuffleBtn.click()
