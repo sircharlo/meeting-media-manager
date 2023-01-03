@@ -503,7 +503,7 @@ export default defineComponent({
       this.$rm(bg)
 
       // Remove the background from the cong server
-      if (this.client && this.prefs.cong.dir) {
+      if (this.client && bg.length > 0 && this.prefs.cong.dir) {
         try {
           await this.client.deleteFile(
             join(this.prefs.cong.dir, this.bgFileName() + extname(bg[0]))
