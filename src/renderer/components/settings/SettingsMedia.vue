@@ -64,6 +64,7 @@
       id="media.enableMp4Conversion"
       v-model="media.enableMp4Conversion"
       field="switch"
+      explanation="convertDownloadedExplain"
       :locked="$isLocked('media.enableMp4Conversion')"
       :label="$t('convertDownloaded')"
     />
@@ -165,6 +166,7 @@
         id="media.hideWinAfterMedia"
         v-model="media.hideWinAfterMedia"
         field="switch"
+        explanation="hideWinAfterMediaExplain"
         :locked="$isLocked('media.hideWinAfterMedia')"
         :label="$t('hideWinAfterMedia')"
       />

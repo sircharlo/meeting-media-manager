@@ -32,6 +32,20 @@
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
     </template>
+    <template v-else-if="explanation" #append>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faCircleQuestion"
+            size="lg"
+            style="margin-top: 2px"
+            v-on="on"
+          />
+        </template>
+        <span>{{ $t(explanation) }}</span>
+      </v-tooltip>
+    </template>
     <slot v-for="(_, name) in $slots" :slot="name" :name="name" />
   </v-text-field>
   <v-autocomplete
@@ -60,6 +74,20 @@
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
     </template>
+    <template v-else-if="explanation" #append>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <font-awesome-icon
+            v-bind="attrs"
+            size="lg"
+            :icon="faCircleQuestion"
+            style="margin-top: 2px"
+            v-on="on"
+          />
+        </template>
+        <span>{{ $t(explanation) }}</span>
+      </v-tooltip>
+    </template>
   </v-autocomplete>
   <v-select
     v-else-if="field == 'select'"
@@ -86,6 +114,20 @@
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
     </template>
+    <template v-else-if="explanation" #append>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faCircleQuestion"
+            size="lg"
+            style="margin-top: 2px"
+            v-on="on"
+          />
+        </template>
+        <span>{{ $t(explanation) }}</span>
+      </v-tooltip>
+    </template>
   </v-select>
   <v-textarea
     v-else-if="field == 'textarea'"
@@ -106,6 +148,19 @@
           <font-awesome-icon v-bind="attrs" :icon="faLock" v-on="on" />
         </template>
         <span>{{ $t('settingLocked') }}</span>
+      </v-tooltip>
+    </template>
+    <template v-else-if="explanation" #append>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <font-awesome-icon
+            v-bind="attrs"
+            size="lg"
+            :icon="faCircleQuestion"
+            v-on="on"
+          />
+        </template>
+        <span>{{ $t(explanation) }}</span>
       </v-tooltip>
     </template>
   </v-textarea>
@@ -134,6 +189,20 @@
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
     </template>
+    <template v-else-if="explanation" #append>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <font-awesome-icon
+            v-bind="attrs"
+            size="lg"
+            :icon="faCircleQuestion"
+            style="margin-top: 3px"
+            v-on="on"
+          />
+        </template>
+        <span>{{ $t(explanation) }}</span>
+      </v-tooltip>
+    </template>
   </v-checkbox>
   <v-switch
     v-else-if="field == 'switch'"
@@ -158,6 +227,20 @@
           />
         </template>
         <span>{{ $t('settingLocked') }}</span>
+      </v-tooltip>
+    </template>
+    <template v-else-if="explanation" #append>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faCircleQuestion"
+            style="margin-top: 3px"
+            size="lg"
+            v-on="on"
+          />
+        </template>
+        <span>{{ $t(explanation) }}</span>
       </v-tooltip>
     </template>
   </v-switch>
@@ -237,6 +320,20 @@
             <span>{{ $t('settingLocked') }}</span>
           </v-tooltip>
         </template>
+        <template v-else-if="explanation" #append>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <font-awesome-icon
+                v-bind="attrs"
+                size="lg"
+                :icon="faCircleQuestion"
+                style="margin-top: 2px"
+                v-on="on"
+              />
+            </template>
+            <span>{{ $t(explanation) }}</span>
+          </v-tooltip>
+        </template>
       </v-slider>
     </v-col>
     <v-col v-if="hasSlot()" cols="2" align-self="center">
@@ -248,6 +345,7 @@
 import {
   faLock,
   faEye,
+  faCircleQuestion,
   faEyeSlash,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
@@ -320,6 +418,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    explanation: {
+      type: String,
+      default: null,
+    },
   },
   data() {
     return {
@@ -337,6 +439,9 @@ export default defineComponent({
     },
     faLock() {
       return faLock
+    },
+    faCircleQuestion() {
+      return faCircleQuestion
     },
     passIcon(): IconDefinition {
       return this.passwordVisible ? faEyeSlash : faEye
