@@ -19,6 +19,7 @@ import { defineComponent } from 'vue'
 import getUsername from 'fullname'
 import { ipcRenderer } from 'electron'
 import { WebDAVClient } from 'webdav/dist/web/types'
+import { LocaleObject } from '@nuxtjs/i18n'
 import {
   ShortJWLang,
   CongPrefs,
@@ -294,7 +295,9 @@ export default defineComponent({
         this.$router.replace(this.switchLocalePath(lang))
       }
 
-      this.$dayjs.locale((lang ?? 'en').split('-')[0]) // pt-pt gets converted to pt
+      const locales = this.$i18n.locales as LocaleObject[]
+      const locale = locales.find((l) => l.code === lang)
+      this.$dayjs.locale(locale?.dayjs ?? lang ?? 'en')
       this.$log.debug(this.$appPath())
 
       // Set disabledHardwareAcceleration to user pref

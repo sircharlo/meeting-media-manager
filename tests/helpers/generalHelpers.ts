@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable import/no-named-as-default-member */
 import dayjs from 'dayjs'
 import { basename, extname, join } from 'upath'
@@ -5,10 +6,11 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import prefs from './../mocks/prefs/prefsOld.json'
 import { MAX_BYTES_IN_FILENAME } from './../../src/renderer/constants/general'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { DAYJS_LOCALES } = require('./../../src/renderer/constants/lang') as {
-  DAYJS_LOCALES: string[]
-}
+const { DAYJS_LOCALES, LOCALES } =
+  require('./../../src/renderer/constants/lang') as {
+    LOCALES: { code: string; dayjs?: string }[]
+    DAYJS_LOCALES: string[]
+  }
 
 dayjs.extend(updateLocale)
 dayjs.extend(isSameOrBefore)
@@ -17,7 +19,9 @@ DAYJS_LOCALES.forEach((l) => {
   dayjs.updateLocale(l, { weekStart: 1 })
 })
 
-const locale = prefs.localAppLang.split('-')[0]
+const locale =
+  LOCALES.find((l) => l.code === prefs.localAppLang)?.dayjs ??
+  prefs.localAppLang
 dayjs.locale(locale)
 
 export function getDate(type = 'now'): string {

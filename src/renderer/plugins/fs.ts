@@ -12,6 +12,7 @@ import {
   ensureFileSync,
   removeSync,
 } from 'fs-extra'
+import { LocaleObject } from '@nuxtjs/i18n'
 import { Entry, sync, Options } from 'fast-glob'
 import { ipcRenderer } from 'electron'
 import { join, extname, basename, dirname, joinSafe } from 'upath'
@@ -30,6 +31,7 @@ const plugin: Plugin = (
     $dayjs,
     $translate,
     $strip,
+    i18n,
     $warn,
     $error,
   },
@@ -313,12 +315,16 @@ const plugin: Plugin = (
       const mPath = mediaPath()
       if (!mPath) return
 
+      const locales = i18n.locales as LocaleObject[]
+      const oldLocale = locales.find((l) => l.code === oldVal)
+      const newLocale = locales.find((l) => l.code === newVal)
+
       readdirSync(mPath).forEach((dir) => {
         const path = join(mPath, dir)
         const date = $dayjs(
           dir,
           $getPrefs('app.outputFolderDateFormat') as string,
-          oldVal.split('-')[0]
+          oldLocale?.dayjs ?? oldVal
         )
 
         if (statSync(path).isDirectory() && date.isValid()) {
@@ -343,7 +349,7 @@ const plugin: Plugin = (
           const newPath = join(
             mPath,
             date
-              .locale(newVal.split('-')[0])
+              .locale(newLocale?.dayjs ?? newVal)
               .format($getPrefs('app.outputFolderDateFormat') as string)
           )
           if (!existsSync(newPath)) {
@@ -392,10 +398,12 @@ const plugin: Plugin = (
         await client.moveFile(file.filename, newName)
       }
     } else if (file.type === 'directory') {
+      const locales = i18n.locales as LocaleObject[]
+      const oldLocale = locales.find((l) => l.code === oldVal)
       const date = $dayjs(
         file.basename,
         $getPrefs('app.outputFolderDateFormat') as string,
-        oldVal.split('-')[0]
+        oldLocale?.dayjs ?? oldVal
       )
 
       if (date.isValid()) {
