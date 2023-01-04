@@ -216,8 +216,9 @@
   </v-form>
 </template>
 <script lang="ts">
+import { pathToFileURL } from 'url'
 // eslint-disable-next-line import/named
-import { readFileSync } from 'fs-extra'
+import { readFileSync, existsSync } from 'fs-extra'
 import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'
@@ -225,7 +226,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
-import { NOT_FOUND, LOCKED } from '~/constants/general'
+import { NOT_FOUND, LOCKED, WT_CLEARTEXT_FONT } from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
@@ -451,6 +452,27 @@ export default defineComponent({
       this.$refs.mediaForm.validate()
     }
     if (this.valid) this.$emit('valid', this.valid)
+
+    let fontFile = this.$localFontPath(WT_CLEARTEXT_FONT)
+    if (!existsSync(fontFile)) {
+      fontFile = this.$findOne(
+        join(await this.$wtFontPath(), 'Wt-ClearText-Bold.*')
+      )
+    }
+    if (fontFile && existsSync(fontFile)) {
+      // @ts-ignore: FontFace is not defined in the types
+      const font = new FontFace(
+        'Wt-ClearText-Bold',
+        `url(${pathToFileURL(fontFile).href})`
+      )
+      try {
+        const loadedFont = await font.load()
+        // @ts-ignore: fonts does not exist on document
+        document.fonts.add(loadedFont)
+      } catch (e: unknown) {
+        console.error(e)
+      }
+    }
   },
   methods: {
     getShortcutRules(fn: string) {
@@ -535,7 +557,6 @@ export default defineComponent({
 
 #yeartextContainer {
   font-family: 'Wt-ClearText-Bold', 'NotoSerif', serif;
-  font-size: 1.35cqw;
 }
 
 #mediaWindowBackground {
