@@ -538,7 +538,8 @@ export default defineComponent({
 }
 
 #yeartextContainer {
-  font-family: 'NotoSerif', serif;
+  font-family: 'Wt-ClearText-Bold', 'NotoSerif', serif;
+  font-size: 1.35cqw;
 }
 
 #mediaWindowBackground {
