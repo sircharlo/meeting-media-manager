@@ -519,6 +519,7 @@ export default defineComponent({
         }
       }
       if (this.isVideo) {
+        this.newProgress = this.progress
         ipcRenderer.send(this.paused ? 'playVideo' : 'pauseVideo')
       }
       this.paused = !this.paused
