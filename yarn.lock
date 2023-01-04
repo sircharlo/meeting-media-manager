@@ -2676,16 +2676,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.28.1":
-  version: 7.28.1
-  resolution: "@sentry/browser@npm:7.28.1"
+"@sentry/browser@npm:7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/browser@npm:7.29.0"
   dependencies:
-    "@sentry/core": 7.28.1
-    "@sentry/replay": 7.28.1
-    "@sentry/types": 7.28.1
-    "@sentry/utils": 7.28.1
+    "@sentry/core": 7.29.0
+    "@sentry/replay": 7.29.0
+    "@sentry/types": 7.29.0
+    "@sentry/utils": 7.29.0
     tslib: ^1.9.3
-  checksum: 6cbafc58a08a47db078a56b41544cb483f3898a980db37449cf81553776ac2e1716d9006a9bdc08027ce1666a88eddf20e54ee65870cfcb16f22f61905af000a
+  checksum: 136b9d03a9ff38e72f4d8fd335f23469341d0095d1f075a36d85ef2cd6bd0763635a7e1cbc7abe14508291e88cffe549eda6016c858564b55c1d4e81ef67882f
   languageName: node
   linkType: hard
 
@@ -2728,6 +2728,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/core@npm:7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/core@npm:7.29.0"
+  dependencies:
+    "@sentry/types": 7.29.0
+    "@sentry/utils": 7.29.0
+    tslib: ^1.9.3
+  checksum: d9330ed3528f2328b524cb237e400368dcb6c36b8afb791d28141e98ab5c0b56dc306a65cfc7164108cb5616346dabe793a39a140257f723906dc25a03b7ebcd
+  languageName: node
+  linkType: hard
+
 "@sentry/electron@npm:^4.1.2":
   version: 4.1.2
   resolution: "@sentry/electron@npm:4.1.2"
@@ -2758,16 +2769,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/replay@npm:7.28.1":
-  version: 7.28.1
-  resolution: "@sentry/replay@npm:7.28.1"
+"@sentry/replay@npm:7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/replay@npm:7.29.0"
   dependencies:
-    "@sentry/core": 7.28.1
-    "@sentry/types": 7.28.1
-    "@sentry/utils": 7.28.1
+    "@sentry/core": 7.29.0
+    "@sentry/types": 7.29.0
+    "@sentry/utils": 7.29.0
   peerDependencies:
     "@sentry/browser": ">=7.24.0"
-  checksum: e47d40d5e6044b78aba3d0612dcf03240bb0d507106bb9e111c1beae60a1c972112c6ff442393cc2c47aed77079f645bd4614069315c4f44a1bb7514bb09b0dc
+  checksum: 539e18c128bb7966c9d4ea91ebd9cde6d42f42f96fa648d7ead5bff699e643f3792f57a344376586fab26f659f5e1431176faf0e12e6ea53508fd48ba928dd12
   languageName: node
   linkType: hard
 
@@ -2797,6 +2808,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/types@npm:7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/types@npm:7.29.0"
+  checksum: 53815b66662a193cfd7024b9fb2477afb8178a771aa59f3bef10578cc940a9d7207722f9f04e2ca65a8e118cef012ac42f4936aa921aacdfc00a914bec88b009
+  languageName: node
+  linkType: hard
+
 "@sentry/utils@npm:7.16.0":
   version: 7.16.0
   resolution: "@sentry/utils@npm:7.16.0"
@@ -2817,18 +2835,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^7.28.1":
-  version: 7.28.1
-  resolution: "@sentry/vue@npm:7.28.1"
+"@sentry/utils@npm:7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/utils@npm:7.29.0"
   dependencies:
-    "@sentry/browser": 7.28.1
-    "@sentry/core": 7.28.1
-    "@sentry/types": 7.28.1
-    "@sentry/utils": 7.28.1
+    "@sentry/types": 7.29.0
+    tslib: ^1.9.3
+  checksum: 9914a2129692a5713453437d75b957a18ad5a4ef8085776e5499208ad329dea8da27ee2e2b74fdc089a3831b4e2929f8e6c0f3bc75528f41023d85de5077f462
+  languageName: node
+  linkType: hard
+
+"@sentry/vue@npm:^7.29.0":
+  version: 7.29.0
+  resolution: "@sentry/vue@npm:7.29.0"
+  dependencies:
+    "@sentry/browser": 7.29.0
+    "@sentry/core": 7.29.0
+    "@sentry/types": 7.29.0
+    "@sentry/utils": 7.29.0
     tslib: ^1.9.3
   peerDependencies:
     vue: 2.x || 3.x
-  checksum: 801e92e735cc4eab23cb4f1221489b1c3efcfec19cc8801203a5a0af5633481417bf2c95787426d60798dbbab73b649cf75bf1e5dcf31b8043765b6fa4ba6617
+  checksum: 43075adb90bae368ef8c40168ed63be60d1913d8dfd2b256ee429981f51303ebecef93f95eccdb50b753d2c7593fe8705ae1f178bc3b396989308190daeb49c3
   languageName: node
   linkType: hard
 
@@ -10588,7 +10616,7 @@ __metadata:
     "@playwright/test": ^1.29.1
     "@sentry/electron": ^4.1.2
     "@sentry/tracing": ^7.28.1
-    "@sentry/vue": ^7.28.1
+    "@sentry/vue": ^7.29.0
     "@sentry/webpack-plugin": ^1.20.0
     "@types/fluent-ffmpeg": ^2.1.20
     "@types/lodash.clonedeep": ^4.5.7
