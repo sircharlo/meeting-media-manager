@@ -51,8 +51,11 @@ yarn compile
 # Serve app with hot reload on localhost:3000
 yarn dev
 
-# Build electron application for production (necessary for test script)
+# Build electron application for production
 yarn build
+
+# Build with minimal release files (necessary for test script)
+yarn build-dev
 
 # Lint all JS/TS/Vue files in `src/`
 yarn lint
