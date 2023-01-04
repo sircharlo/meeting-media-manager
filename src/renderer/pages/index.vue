@@ -592,7 +592,10 @@ export default defineComponent({
       if (global) {
         this.totalProgress = (HUNDRED_PERCENT * loaded) / total
       } else {
-        this.currentProgress = this.totalProgress ? this.totalProgress + (HUNDRED_PERCENT - this.totalProgress) * loaded / total : (HUNDRED_PERCENT * loaded) / total
+        this.currentProgress = this.totalProgress
+          ? this.totalProgress +
+            ((HUNDRED_PERCENT - this.totalProgress) * loaded) / total
+          : (HUNDRED_PERCENT * loaded) / total
       }
       if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
       if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
@@ -800,10 +803,14 @@ export default defineComponent({
 
         // Open media folder if enabled
         if (this.$getPrefs('app.autoOpenFolderWhenDone')) {
-          ipcRenderer.send(
-            'openPath',
-            fileURLToPath(pathToFileURL(mediaPath).href)
-          )
+          try {
+            ipcRenderer.send(
+              'openPath',
+              fileURLToPath(pathToFileURL(mediaPath).href)
+            )
+          } catch (e: unknown) {
+            this.$warn('errorSetVars', { identifier: mediaPath }, e)
+          }
         }
 
         this.$store.commit('stats/stopPerf', {
@@ -811,8 +818,6 @@ export default defineComponent({
           stop: performance.now(),
         })
         this.$printStats()
-        this.$store.commit('stats/clearPerf')
-        this.$store.commit('stats/clearDownloadStats')
 
         if (this.$getPrefs('app.autoQuitWhenDone')) {
           this.action = 'quitApp'
@@ -821,6 +826,8 @@ export default defineComponent({
         this.$error('error', e)
       } finally {
         this.loading = false
+        this.$store.commit('stats/clearPerf')
+        this.$store.commit('stats/clearDownloadStats')
         this.$store.commit('media/clearProgress')
       }
     },
