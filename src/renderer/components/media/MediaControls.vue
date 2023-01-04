@@ -459,7 +459,15 @@ export default defineComponent({
       }, 3 * MS_IN_SEC)
     },
     openFolder(): void {
-      ipcRenderer.send('openPath', join(this.$mediaPath(), this.date))
+      try {
+        ipcRenderer.send('openPath', join(this.$mediaPath(), this.date))
+      } catch (e: unknown) {
+        this.$warn(
+          'errorSetVars',
+          { identifier: join(this.$mediaPath(), this.date) },
+          e
+        )
+      }
     },
   },
 })
