@@ -4,8 +4,8 @@
   <div class="n-messages">
     <v-snackbar
       v-for="(m, i) in messages"
-      :id="`msg-${m.timestamp}`"
-      :key="`${m.timestamp}-${m.message}`"
+      :id="`msg-${m.timestamp}-${m.message}-${m.identifier}`"
+      :key="`${m.timestamp}-${m.message}-${m.identifier}`"
       top
       right
       rounded
@@ -165,8 +165,9 @@ ${JSON.stringify(
     },
     // Calculate the height of a message
     getHeight(index: number) {
+      const msg = this.messages[index]
       const el = document.getElementById(
-        `msg-${this.messages[index].timestamp}`
+        `msg-${msg.timestamp}-${msg.message}-${msg.identifier}`
       )
       if (el) {
         return el.children[0].clientHeight
