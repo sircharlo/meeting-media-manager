@@ -803,10 +803,14 @@ export default defineComponent({
 
         // Open media folder if enabled
         if (this.$getPrefs('app.autoOpenFolderWhenDone')) {
-          ipcRenderer.send(
-            'openPath',
-            fileURLToPath(pathToFileURL(mediaPath).href)
-          )
+          try {
+            ipcRenderer.send(
+              'openPath',
+              fileURLToPath(pathToFileURL(mediaPath).href)
+            )
+          } catch (e: unknown) {
+            this.$warn('errorSetVars', { identifier: mediaPath }, e)
+          }
         }
 
         this.$store.commit('stats/stopPerf', {
@@ -814,8 +818,6 @@ export default defineComponent({
           stop: performance.now(),
         })
         this.$printStats()
-        this.$store.commit('stats/clearPerf')
-        this.$store.commit('stats/clearDownloadStats')
 
         if (this.$getPrefs('app.autoQuitWhenDone')) {
           this.action = 'quitApp'
@@ -824,6 +826,8 @@ export default defineComponent({
         this.$error('errorUnknown', e)
       } finally {
         this.loading = false
+        this.$store.commit('stats/clearPerf')
+        this.$store.commit('stats/clearDownloadStats')
         this.$store.commit('media/clearProgress')
       }
     },

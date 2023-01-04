@@ -340,21 +340,17 @@ const plugin: Plugin = (
                 ' - ' + $translate('paragraph', newVal)
               )
 
-            if (file !== newName) {
-              renameSync(join(path, file), join(path, newName))
-            }
+            rename(join(path, file), file, newName)
           })
 
           // Rename the date folder to the new localized format
-          const newPath = join(
-            mPath,
+          rename(
+            path,
+            dir,
             date
               .locale(newLocale?.dayjs ?? newVal)
               .format($getPrefs('app.outputFolderDateFormat') as string)
           )
-          if (!existsSync(newPath)) {
-            renameSync(path, newPath)
-          }
         }
       })
 
