@@ -4,19 +4,14 @@ const ICONS_DIR = 'build/icons/'
 const windowsOS = {
   win: {
     icon: ICONS_DIR + 'icon.ico',
-    target: [
-      {
-        target: 'nsis',
-        arch: ['x64'],
-      },
-    ],
+    target: 'nsis',
     publish: ['github'],
   },
 
   nsis: {
     oneClick: false,
     differentialPackage: false,
-    artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
+    artifactName: 'meeting-media-manager-${version}.${ext}',
   },
 }
 
