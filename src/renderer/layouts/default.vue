@@ -134,15 +134,18 @@ export default defineComponent({
     ipcRenderer.on('mediaWindowVisibilityChanged', (_e, status: string) => {
       this.$store.commit('present/setMediaScreenVisible', status === 'shown')
     })
+    ipcRenderer.on('log', (_e, msg) => {
+      console.log('main', msg)
+    })
     ipcRenderer.on('readyToListen', () => {
       ipcRenderer.send('startMediaDisplay', this.$getAllPrefs())
     })
     ipcRenderer.on('moveMediaWindowToOtherScreen', async () => {
+      console.log('on moveMediaWindowToOtherScreen')
       if (this.$store.state.present.mediaScreenInit) {
-        ipcRenderer.send(
-          'showMediaWindow',
-          await this.$getMediaWindowDestination()
-        )
+        const dest = await this.$getMediaWindowDestination()
+        console.log('send showMediaWindow', dest)
+        ipcRenderer.send('showMediaWindow', dest)
       }
     })
     ipcRenderer.on('displaysChanged', async () => {
