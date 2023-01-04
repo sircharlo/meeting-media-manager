@@ -26,6 +26,7 @@
     "compile": "./node_modules/.bin/tsc -p src/main/tsconfig.json",
     "dev": "node .electron-nuxt/dev.js",
     "build": "node .electron-nuxt/build.js",
+    "build-dev": "yarn build -c builder-dev.config.js -p never",
     "lint": "node_modules/.bin/eslint --ext .js,.vue,.ts --ignore-path .gitignore -f ./node_modules/eslint-friendly-formatter ./src",
     "lint:fix": "yarn lint --fix",
     "test": "xvfb-maybe -- playwright test",
