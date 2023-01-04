@@ -236,6 +236,7 @@ export default defineComponent({
   data() {
     return {
       valid: true,
+      mounted: false,
       oldName: PREFS.app.congregationName,
       app: {
         ...PREFS.app,
@@ -381,6 +382,10 @@ export default defineComponent({
     },
     'app.customCachePath': {
       handler(val: string, oldVal: string) {
+        if (!this.mounted) {
+          this.mounted = true
+          return
+        }
         const defaultPath = (folder: string) => join(this.$appPath(), folder)
         if (val && !oldVal) {
           this.$move(defaultPath('Publications'), join(val, 'Publications'))
