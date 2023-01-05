@@ -599,11 +599,10 @@ export default defineComponent({
 
 #yeartextLogoContainer {
   font-family: JW-Icons;
-  font-size: 1.7cqw;
+  font-size: 1.6cqw;
   position: absolute;
   bottom: 1.5cqw;
-  right: 1.7cqw;
-  line-height: normal;
+  right: 1.5cqw;
   box-sizing: unset;
   color: black !important;
   background: rgba(255, 255, 255, 0.2);
@@ -613,7 +612,7 @@ export default defineComponent({
   height: 1.2cqw;
 
   #yeartextLogo {
-    margin: -0.25cqw -0.25cqw;
+    margin: -0.5cqw -0.45cqw;
   }
 }
 
