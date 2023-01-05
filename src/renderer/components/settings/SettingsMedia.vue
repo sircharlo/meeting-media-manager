@@ -113,7 +113,10 @@
             max-width="300px"
             max-height="100px"
           />
-          <div v-else id="yeartextContainer" v-html="background" />
+          <div v-else>
+            <div id="importedYearTextLogoContainer"><div id='importedYearTextLogo'></div></div>
+            <div id="yeartextContainer" v-html="background" />
+          </div>
         </v-col>
         <v-col cols="auto" align-self="center">
           <v-btn
@@ -226,7 +229,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
-import { NOT_FOUND, LOCKED, WT_CLEARTEXT_FONT } from '~/constants/general'
+import { NOT_FOUND, LOCKED, WT_CLEARTEXT_FONT, JW_ICONS_FONT } from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
@@ -397,8 +400,12 @@ export default defineComponent({
       },
     },
     'media.hideMediaLogo': {
-      async handler() {
+      async handler(val: boolean) {
         await this.$refreshBackgroundImgPreview()
+        const ytLogo = document.querySelector(
+         '#importedYearTextLogoContainer'
+        ) as HTMLDivElement
+        if (ytLogo) ytLogo.style.display = !val ? "block" : "none";
       },
     },
     'media.mediaWinShortcut': {
@@ -463,6 +470,26 @@ export default defineComponent({
       // @ts-ignore: FontFace is not defined in the types
       const font = new FontFace(
         'Wt-ClearText-Bold',
+        `url(${pathToFileURL(fontFile).href})`
+      )
+      try {
+        const loadedFont = await font.load()
+        // @ts-ignore: fonts does not exist on document
+        document.fonts.add(loadedFont)
+      } catch (e: unknown) {
+        console.error(e)
+      }
+    }
+    fontFile = this.$localFontPath(JW_ICONS_FONT)
+    if (!existsSync(fontFile)) {
+      fontFile = this.$findOne(
+        join(await this.$wtFontPath(), 'jw-icons*')
+      )
+    }
+    if (fontFile && existsSync(fontFile)) {
+      // @ts-ignore: FontFace is not defined in the types
+      const font = new FontFace(
+        'JW-Icons',
         `url(${pathToFileURL(fontFile).href})`
       )
       try {
@@ -557,13 +584,25 @@ export default defineComponent({
 
 #yeartextContainer {
   font-family: 'Wt-ClearText-Bold', 'NotoSerif', serif;
+  font-size: 1cqw;
+}
+
+#importedYearTextLogoContainer {
+  font-family: JW-Icons;
+    font-size: 1.7cqw;
+    position: absolute;
+    bottom: 1.5cqw;
+    right: 1.7cqw;
+    line-height: normal;
+    border: rgba(255, 255, 255, 0) 0.15cqw solid;
+    overflow: hidden;
 }
 
 #mediaWindowBackground {
   color: white;
   aspect-ratio: 16/9;
-  font-size: 90%;
-  max-width: 250px;
+  max-width: 25vw;
+  position: relative;
 
   p {
     margin-bottom: 0;
