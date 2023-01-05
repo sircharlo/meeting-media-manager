@@ -143,7 +143,6 @@ export function setMediaWindowPosition(
   try {
     if (mediaWin) {
       const screenInfo = getScreenInfo(win, mediaWin)
-      win?.webContents.send('log', screenInfo)
       const STARTING_POSITION = 50
       mediaWin.setBounds({
         x:
@@ -162,10 +161,8 @@ export function setMediaWindowPosition(
         screenInfo.otherScreens.length > 0 &&
         !mediaWin.isFullScreen()
       ) {
-        win?.webContents.send('log', 'set fullscreen')
         mediaWin.setFullScreen(true)
       } else if (mediaWinOptions.type === 'window' && mediaWin.isFullScreen()) {
-        win?.webContents.send('log', 'unset fullscreen')
         mediaWin.setFullScreen(false)
       }
     }

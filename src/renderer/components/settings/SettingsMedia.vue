@@ -113,7 +113,12 @@
             max-width="300px"
             max-height="100px"
           />
-          <div v-else id="yeartextContainer" v-html="background" />
+          <div v-else>
+            <div id="yeartextLogoContainer">
+              <div id="yeartextLogo"></div>
+            </div>
+            <div id="yeartextContainer" v-html="background" />
+          </div>
         </v-col>
         <v-col cols="auto" align-self="center">
           <v-btn
@@ -216,8 +221,9 @@
   </v-form>
 </template>
 <script lang="ts">
+import { pathToFileURL } from 'url'
 // eslint-disable-next-line import/named
-import { readFileSync } from 'fs-extra'
+import { readFileSync, existsSync } from 'fs-extra'
 import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'
@@ -225,7 +231,12 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
-import { NOT_FOUND, LOCKED } from '~/constants/general'
+import {
+  NOT_FOUND,
+  LOCKED,
+  WT_CLEARTEXT_FONT,
+  JW_ICONS_FONT,
+} from '~/constants/general'
 const resolutions = ['240p', '360p', '480p', '720p'] as Res[]
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
@@ -400,8 +411,12 @@ export default defineComponent({
       },
     },
     'media.hideMediaLogo': {
-      async handler() {
+      async handler(val: boolean) {
         await this.$refreshBackgroundImgPreview()
+        const ytLogo = document.querySelector(
+          '#yeartextLogoContainer'
+        ) as HTMLDivElement
+        if (ytLogo) ytLogo.style.display = !val ? 'block' : 'none'
       },
     },
     'media.mediaWinShortcut': {
@@ -438,6 +453,7 @@ export default defineComponent({
     },
   },
   async mounted(): Promise<void> {
+    const promises = [this.loadWtFont(), this.loadJwIconsFont()]
     Object.assign(this.media, this.$getPrefs('media'))
     this.jwLangs = await this.$getJWLangs()
     if (
@@ -455,8 +471,51 @@ export default defineComponent({
       this.$refs.mediaForm.validate()
     }
     if (this.valid) this.$emit('valid', this.valid)
+    await Promise.allSettled(promises)
   },
   methods: {
+    async loadWtFont() {
+      let fontFile = this.$localFontPath(WT_CLEARTEXT_FONT)
+      if (!existsSync(fontFile)) {
+        fontFile = this.$findOne(
+          join(await this.$wtFontPath(), 'Wt-ClearText-Bold.*')
+        )
+      }
+      if (fontFile && existsSync(fontFile)) {
+        // @ts-ignore: FontFace is not defined in the types
+        const font = new FontFace(
+          'Wt-ClearText-Bold',
+          `url(${pathToFileURL(fontFile).href})`
+        )
+        try {
+          const loadedFont = await font.load()
+          // @ts-ignore: fonts does not exist on document
+          document.fonts.add(loadedFont)
+        } catch (e: unknown) {
+          console.error(e)
+        }
+      }
+    },
+    async loadJwIconsFont() {
+      let fontFile = this.$localFontPath(JW_ICONS_FONT)
+      if (!existsSync(fontFile)) {
+        fontFile = this.$findOne(join(await this.$wtFontPath(), 'jw-icons*'))
+      }
+      if (fontFile && existsSync(fontFile)) {
+        // @ts-ignore: FontFace is not defined in the types
+        const font = new FontFace(
+          'JW-Icons',
+          `url(${pathToFileURL(fontFile).href})`
+        )
+        try {
+          const loadedFont = await font.load()
+          // @ts-ignore: fonts does not exist on document
+          document.fonts.add(loadedFont)
+        } catch (e: unknown) {
+          console.error(e)
+        }
+      }
+    },
     getShortcutRules(fn: string) {
       return [
         (v: string) =>
@@ -539,14 +598,33 @@ export default defineComponent({
 
 #yeartextContainer {
   font-family: 'Wt-ClearText-Bold', 'NotoSerif', serif;
-  font-size: 1.35cqw;
+  font-size: 1cqw;
+}
+
+#yeartextLogoContainer {
+  font-family: JW-Icons;
+  font-size: 1.6cqw;
+  position: absolute;
+  bottom: 1.5cqw;
+  right: 1.5cqw;
+  box-sizing: unset;
+  color: black !important;
+  background: rgba(255, 255, 255, 0.2);
+  border: rgba(255, 255, 255, 0) 0.15cqw solid;
+  overflow: hidden;
+  width: 1.2cqw;
+  height: 1.2cqw;
+
+  #yeartextLogo {
+    margin: -0.6cqw -0.45cqw;
+  }
 }
 
 #mediaWindowBackground {
   color: white;
   aspect-ratio: 16/9;
-  font-size: 90%;
-  max-width: 250px;
+  max-width: 25vw;
+  position: relative;
 
   p {
     margin-bottom: 0;

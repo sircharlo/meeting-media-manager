@@ -246,6 +246,7 @@ export default defineComponent({
   data() {
     return {
       valid: true,
+      mounted: false,
       oldName: PREFS.app.congregationName,
       app: {
         ...PREFS.app,
@@ -337,13 +338,15 @@ export default defineComponent({
       },
     },
     'app.obs.enable': {
-      async handler() {
-        if (this.obsComplete) {
+      async handler(val: boolean) {
+        if (val && this.obsComplete) {
           await this.$getScenes()
           if (this.$refs.appForm) {
             // @ts-ignore: validate is not a function on type Element
             this.$refs.appForm.validate()
           }
+        } else {
+          await this.$resetOBS()
         }
       },
     },
@@ -404,6 +407,10 @@ export default defineComponent({
     },
     'app.customCachePath': {
       handler(val: string, oldVal: string) {
+        if (!this.mounted) {
+          this.mounted = true
+          return
+        }
         const defaultPath = (folder: string) => join(this.$appPath(), folder)
         if (val && !oldVal) {
           this.$move(defaultPath('Publications'), join(val, 'Publications'))

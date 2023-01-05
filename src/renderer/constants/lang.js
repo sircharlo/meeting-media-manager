@@ -13,6 +13,7 @@ const DAYJS_LOCALES = [
   'pt-br',
   'ru',
   'sv',
+  'uk',
   // 'wes-x-pgw', // not yet supported by dayjs
 ]
 
@@ -120,6 +121,13 @@ const LOCALES = [
     file: 'sv.json',
     jw: 'Z',
     name: 'Svenska (Swedish)',
+  },
+  {
+    code: 'uk',
+    iso: 'uk-UA',
+    file: 'uk.json',
+    jw: 'K',
+    name: 'українська (Ukrainian)',
   },
   {
     code: 'wes-x-pgw',

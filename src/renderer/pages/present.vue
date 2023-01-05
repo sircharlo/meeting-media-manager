@@ -88,8 +88,9 @@ import {
   faHome,
   IconDefinition,
   faHouseUser,
-  faPodcast
+  faPodcast,
 } from '@fortawesome/free-solid-svg-icons'
+import { ObsPrefs } from '~/types'
 export default defineComponent({
   name: 'PresentPage',
   data() {
@@ -280,7 +281,9 @@ export default defineComponent({
       this.videoActive = val[1]
     })
 
-    if (this.$getPrefs('app.obs.enable')) {
+    const { enable, port, password } = this.$getPrefs('app.obs') as ObsPrefs
+
+    if (enable && port && password) {
       await this.$getScenes()
     }
 
