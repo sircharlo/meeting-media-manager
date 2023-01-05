@@ -85,7 +85,6 @@ if (platform() === 'win32') iconType = 'ico'
 function onMove() {
   if (!mediaWin) return
   const screenInfo = getScreenInfo(win, mediaWin)
-  win?.webContents.send('log', screenInfo)
   if (screenInfo.winMidpoints && screenInfo.otherScreens.length > 0) {
     const mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints)
       .map((item) => screen.getDisplayNearestPoint(item[1]))
@@ -427,16 +426,13 @@ if (gotTheLock) {
         platform() === 'darwin' &&
         (mediaWinOptions.type === 'window') === mediaWin.isFullScreen()
       ) {
-        win?.webContents.send('log', 'Closing media window')
         closeMediaWindow()
       }
 
       if (mediaWin) {
-        win?.webContents.send('log', 'set pos')
         setMediaWindowPosition(win, mediaWin, mediaWinOptions)
       } else {
         const screenInfo = getScreenInfo(win, mediaWin)
-        win?.webContents.send('log', screenInfo)
         const STARTING_POSITION = 50
 
         const windowOptions = {

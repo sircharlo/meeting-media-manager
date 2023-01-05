@@ -141,10 +141,8 @@ export default defineComponent({
       ipcRenderer.send('startMediaDisplay', this.$getAllPrefs())
     })
     ipcRenderer.on('moveMediaWindowToOtherScreen', async () => {
-      console.log('on moveMediaWindowToOtherScreen')
       if (this.$store.state.present.mediaScreenInit) {
         const dest = await this.$getMediaWindowDestination()
-        console.log('send showMediaWindow', dest)
         ipcRenderer.send('showMediaWindow', dest)
       }
     })
