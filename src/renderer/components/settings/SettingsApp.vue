@@ -315,13 +315,15 @@ export default defineComponent({
       },
     },
     'app.obs.enable': {
-      async handler() {
-        if (this.obsComplete) {
+      async handler(val: boolean) {
+        if (val && this.obsComplete) {
           await this.$getScenes()
           if (this.$refs.appForm) {
             // @ts-ignore: validate is not a function on type Element
             this.$refs.appForm.validate()
           }
+        } else {
+          await this.$resetOBS()
         }
       },
     },

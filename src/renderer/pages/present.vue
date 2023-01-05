@@ -68,6 +68,7 @@ import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
 import { faHome, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import { ObsPrefs } from '~/types'
 export default defineComponent({
   name: 'PresentPage',
   data() {
@@ -222,7 +223,9 @@ export default defineComponent({
       this.videoActive = val[1]
     })
 
-    if (this.$getPrefs('app.obs.enable')) {
+    const { enable, port, password } = this.$getPrefs('app.obs') as ObsPrefs
+
+    if (enable && port && password) {
       await this.$getScenes()
     }
 
