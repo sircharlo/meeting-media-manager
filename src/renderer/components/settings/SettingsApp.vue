@@ -195,6 +195,7 @@
         field="select"
         :items="zoomScenes"
         :label="$t('obsZoomScene')"
+        explanation="obsZoomSceneExplain"
         :disabled="cameraScenes.length === 0"
         :locked="$isLocked('app.obs.zoomScene')"
       />

@@ -19,13 +19,20 @@
     <v-row>
       <v-footer width="100%" height="72px" class="justify-end">
         <v-col v-if="scene && zoomScene" :cols="zoomPart ? undefined : 'auto'">
-          <v-btn icon @click="zoomPart = !zoomPart">
-            <font-awesome-icon
-              :icon="faHouseUser"
-              size="xl"
-              :class="{ 'success--text': zoomPart }"
-            />
-          </v-btn>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-btn icon @click="zoomPart = !zoomPart">
+                <font-awesome-icon
+                  :icon="faHouseUser"
+                  size="xl"
+                  v-bind="attrs"
+                  :class="{ 'success--text': zoomPart }"
+                  v-on="on"
+                />
+              </v-btn>
+            </template>
+            <span>{{ $t('obsZoomSceneToggle') }}</span>
+          </v-tooltip>
         </v-col>
         <v-col
           v-if="scene && !zoomPart && scenes.length > 1"

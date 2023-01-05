@@ -101,6 +101,8 @@
   "obsMediaScene": "Media window scene in OBS Studio",
   "obsUseV4": "Use <em>obs-websocket v4</em>",
   "obsZoomScene": "Scene for Zoom parts in OBS Studio",
+  "obsZoomSceneExplain": "Used to efficiently show Zoom parts with media",
+  "obsZoomSceneToggle": "Toggle Zoom part mode",
   "offlineMode": "Offline mode",
   "openFolder": "Open media folder",
   "openJWorg": "Open JW.org",
