@@ -225,6 +225,7 @@ const plugin: Plugin = (
 
     try {
       const screenInfo = await ipcRenderer.invoke('getScreenInfo')
+      console.log(screenInfo)
       store.commit(
         'present/setScreens',
         screenInfo.otherScreens.map(
@@ -246,10 +247,12 @@ const plugin: Plugin = (
         )
       )
       const output = $getPrefs('media.preferredOutput')
+      console.log('output', output)
       if (output !== 'window' && screenInfo.otherScreens.length > 0) {
         const pref = screenInfo.otherScreens.find(
           (d: { id: number }) => d.id === output
         )
+        console.log('pref screen', pref)
         mediaWinOptions.destination =
           pref?.id ??
           screenInfo.otherScreens[screenInfo.otherScreens.length - 1].id

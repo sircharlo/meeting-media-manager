@@ -823,7 +823,7 @@ export default defineComponent({
           this.action = 'quitApp'
         }
       } catch (e: unknown) {
-        this.$error('error', e)
+        this.$error('errorUnknown', e)
       } finally {
         this.loading = false
         this.$store.commit('stats/clearPerf')
