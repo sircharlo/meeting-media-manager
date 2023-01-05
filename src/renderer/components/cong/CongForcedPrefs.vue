@@ -171,7 +171,7 @@ export default defineComponent({
           })
 
         // Update forcedPrefs.json
-        this.$log.debug(JSON.stringify(forcedPrefs, null, 2))
+        this.$log.debug('prefs', forcedPrefs)
         await this.client.putFileContents(
           join(this.$getPrefs('cong.dir'), 'forcedPrefs.json'),
           JSON.stringify(forcedPrefs, null, 2)
