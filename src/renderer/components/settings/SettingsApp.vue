@@ -189,6 +189,16 @@
         :locked="$isLocked('app.obs.mediaScene')"
         required
       />
+      <form-input
+        id="app.obs.zoomScene"
+        v-model="app.obs.zoomScene"
+        field="select"
+        :items="zoomScenes"
+        :label="$t('obsZoomScene')"
+        explanation="obsZoomSceneExplain"
+        :disabled="cameraScenes.length === 0"
+        :locked="$isLocked('app.obs.zoomScene')"
+      />
     </template>
     <v-divider class="mb-6" />
     <form-input
@@ -279,10 +289,23 @@ export default defineComponent({
       return this.$store.state.cong.prefs as ElectronStore
     },
     cameraScenes(): string[] {
-      return this.scenes.filter((scene) => scene !== this.app.obs.mediaScene)
+      return this.scenes.filter(
+        (scene) =>
+          scene !== this.app.obs.mediaScene && scene !== this.app.obs.zoomScene
+      )
     },
     mediaScenes(): string[] {
-      return this.scenes.filter((scene) => scene !== this.app.obs.cameraScene)
+      return this.scenes.filter(
+        (scene) =>
+          scene !== this.app.obs.cameraScene && scene !== this.app.obs.zoomScene
+      )
+    },
+    zoomScenes(): string[] {
+      return this.scenes.filter(
+        (scene) =>
+          scene !== this.app.obs.cameraScene &&
+          scene !== this.app.obs.mediaScene
+      )
     },
     scenes(): string[] {
       return this.$store.state.obs.scenes as string[]

@@ -9,6 +9,7 @@
       :media-active="mediaActive"
       :video-active="videoActive"
       :window-height="windowHeight"
+      :zoom-part="zoomPart"
     />
     <meeting-select
       v-else
@@ -17,8 +18,24 @@
     />
     <v-row>
       <v-footer width="100%" height="72px" class="justify-end">
+        <v-col v-if="scene && zoomScene">
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-btn icon @click="zoomPart = !zoomPart">
+                <font-awesome-icon
+                  :icon="zoomPart ? faPodcast : faHouseUser"
+                  size="xl"
+                  v-bind="attrs"
+                  :class="{ 'success--text': zoomPart }"
+                  v-on="on"
+                />
+              </v-btn>
+            </template>
+            <span>{{ $t('obsZoomSceneToggle') }}</span>
+          </v-tooltip>
+        </v-col>
         <v-col
-          v-if="scene && scenes.length > 1"
+          v-if="scene && !zoomPart && scenes.length > 1"
           class="d-flex justify-center pa-1"
         >
           <v-btn-toggle
@@ -27,7 +44,7 @@
             mandatory
             color="primary"
           >
-            <v-tooltip v-for="s in scenes" :key="s.name" top>
+            <v-tooltip v-for="s in scenes" :key="s.value" top>
               <template #activator="{ on, attrs }">
                 <v-btn :value="s.value" v-bind="attrs" v-on="on">
                   {{ showShortButtons ? s.shortText : s.value }}
@@ -67,11 +84,17 @@
 import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
-import { faHome, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import {
+  faHome,
+  IconDefinition,
+  faHouseUser,
+  faPodcast
+} from '@fortawesome/free-solid-svg-icons'
 export default defineComponent({
   name: 'PresentPage',
   data() {
     return {
+      zoomPart: false,
       mediaActive: false,
       videoActive: false,
       firstChoice: true,
@@ -100,6 +123,14 @@ export default defineComponent({
         }
       },
     },
+    allScenes(): string[] {
+      return this.$store.state.obs.scenes as string[]
+    },
+    zoomScene(): string | null {
+      const zoomScene = this.$getPrefs('app.obs.zoomScene') as string | null
+      if (!zoomScene || !this.allScenes.includes(zoomScene)) return null
+      return zoomScene
+    },
     showButtons(): boolean {
       return this.shortScenesLength < this.availableWidth
     },
@@ -110,9 +141,12 @@ export default defineComponent({
       return !!this.$getPrefs('meeting.enableMusicButton')
     },
     availableWidth(): number {
+      let BUTTONS = 172
       const FOOTER_PADDING = 32
-      // eslint-disable-next-line no-magic-numbers
-      const BUTTONS = this.shuffleEnabled ? 246 : 172
+      const ZOOM_BUTTON = 65
+      const SHUFFLE_BUTTON = 72
+      if (this.zoomScene) BUTTONS += ZOOM_BUTTON
+      if (this.shuffleEnabled) BUTTONS += SHUFFLE_BUTTON
       const OBS_MENU_PADDING = 8
       const WIDTH_OF_OTHER_ELEMENTS =
         FOOTER_PADDING + BUTTONS + OBS_MENU_PADDING
@@ -152,9 +186,12 @@ export default defineComponent({
       text: string
       shortText: string
     }[] {
-      return (this.$store.state.obs.scenes as string[])
+      return this.allScenes
         .filter(
-          (scene) => !!scene && scene !== this.$getPrefs('app.obs.mediaScene')
+          (scene) =>
+            !!scene &&
+            scene !== this.$getPrefs('app.obs.mediaScene') &&
+            scene !== this.$getPrefs('app.obs.zoomScene')
         )
         .map((scene, i) => {
           let shortcut = `Alt+${i + 1}`
@@ -180,6 +217,12 @@ export default defineComponent({
     faHome(): IconDefinition {
       return faHome as IconDefinition
     },
+    faHouseUser(): IconDefinition {
+      return faHouseUser as IconDefinition
+    },
+    faPodcast(): IconDefinition {
+      return faPodcast as IconDefinition
+    },
     cong(): string {
       return this.$route.query.cong as string
     },
@@ -188,6 +231,21 @@ export default defineComponent({
     date(val: string) {
       if (val) {
         this.firstChoice = false
+      }
+    },
+    zoomScene(val: string | null) {
+      if (val) {
+        this.$store.commit('notify/deleteByMessage', 'errorObsZoomScene')
+      } else {
+        this.zoomPart = false
+      }
+    },
+    zoomPart(val: boolean) {
+      if (this.mediaActive) return
+      if (val && this.zoomScene) {
+        this.$setScene(this.zoomScene)
+      } else if (!val) {
+        this.$setScene(this.scene)
       }
     },
     async mediaActive(val: boolean) {

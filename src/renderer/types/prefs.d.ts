@@ -4,6 +4,7 @@ export interface ObsPrefs {
   password: string | null
   mediaScene: string | null
   cameraScene: string | null
+  zoomScene: string | null
   useV4: boolean
 }
 

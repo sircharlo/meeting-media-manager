@@ -42,7 +42,8 @@ const plugin: Plugin = (
             try {
               if (
                 newScene['scene-name'] &&
-                newScene['scene-name'] !== $getPrefs('app.obs.mediaScene')
+                newScene['scene-name'] !== $getPrefs('app.obs.mediaScene') &&
+                newScene['scene-name'] !== $getPrefs('app.obs.zoomScene')
               ) {
                 store.commit('obs/setCurrentScene', newScene['scene-name'])
               }
@@ -108,7 +109,8 @@ const plugin: Plugin = (
             try {
               if (
                 newScene.sceneName &&
-                newScene.sceneName !== $getPrefs('app.obs.mediaScene')
+                newScene.sceneName !== $getPrefs('app.obs.mediaScene') &&
+                newScene.sceneName !== $getPrefs('app.obs.zoomScene')
               ) {
                 store.commit('obs/setCurrentScene', newScene.sceneName)
               }
@@ -235,12 +237,22 @@ const plugin: Plugin = (
         $warn('errorObsMediaScene')
       }
 
+      const zoomScene = $getPrefs('app.obs.zoomScene') as string
+
+      if (zoomScene && !scenes.includes(zoomScene)) {
+        $warn('errorObsZoomScene')
+      }
+
       store.commit('obs/setScenes', scenes)
       store.commit('obs/setCurrentScene', currentScene)
 
       // Set shortcuts for scenes
       for (const [i] of scenes
-        .filter((scene) => scene !== $getPrefs('app.obs.mediaScene'))
+        .filter(
+          (scene) =>
+            scene !== $getPrefs('app.obs.mediaScene') &&
+            scene !== $getPrefs('app.obs.zoomScene')
+        )
         .entries()) {
         const MAX_SHORTCUT = 9
         if (i < MAX_SHORTCUT) {
@@ -294,6 +306,8 @@ const plugin: Plugin = (
           $warn('errorObsCameraScene')
         } else if (scene === $getPrefs('app.obs.mediaScene')) {
           $warn('errorObsMediaScene')
+        } else if (scene === $getPrefs('app.obs.zoomScene')) {
+          $warn('errorObsZoomScene')
         } else {
           $log.debug(`setScene(${scene})`)
           $error('errorObs', e)
