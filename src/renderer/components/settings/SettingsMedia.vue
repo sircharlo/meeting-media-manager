@@ -612,7 +612,7 @@ export default defineComponent({
   height: 1.2cqw;
 
   #yeartextLogo {
-    margin: -0.5cqw -0.45cqw;
+    margin: -0.6cqw -0.45cqw;
   }
 }
 
