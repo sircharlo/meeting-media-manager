@@ -17,8 +17,8 @@ export default defineComponent({
     }
   },
   computed: {
-    url() {
-      return this.$route.query.url
+    url(): string {
+      return this.$route.query.url as string
     },
     controller(): boolean {
       return !!this.$route.query.controller
@@ -125,7 +125,9 @@ export default defineComponent({
           if (id) {
             el = doc.getElementById(id)
           } else if (className && text) {
-            const selector = `${tag}.${className.trim().replaceAll(/\s+/g, '.')}`
+            const selector = `${tag}.${className
+              .trim()
+              .replaceAll(/\s+/g, '.')}`
             el =
               (Array.from(doc.querySelectorAll(selector)).find(
                 (e) => e.textContent === text
@@ -137,7 +139,9 @@ export default defineComponent({
           } else if (href) {
             el = doc.querySelector(`${tag}[href="${href}"]`)
           } else if (className) {
-            const selector = `${tag}.${className.trim().replaceAll(/\s+/g, '.')}`
+            const selector = `${tag}.${className
+              .trim()
+              .replaceAll(/\s+/g, '.')}`
             el = doc.querySelector(selector)
           }
           console.debug('el', el)

@@ -12,17 +12,19 @@
         @click="atClick()"
       >
         <font-awesome-icon v-if="musicFadeOut" pull="left" :icon="faStop" />
-        <font-awesome-icon
-          v-for="(icon, i) in icons"
-          v-else
-          :key="i"
-          size="lg"
-          :pull="i == 0 ? 'left' : 'right'"
-          :icon="icon"
-          :style="{
-            color: isDark ? 'white !important' : 'black !important',
-          }"
-        />
+        <template v-else>
+          <font-awesome-icon
+            v-for="(icon, i) in icons"
+            :key="i"
+            size="lg"
+            :pull="i == 0 ? 'left' : 'right'"
+            :icon="icon"
+            :style="{
+              color: isDark ? 'white !important' : 'black !important',
+            }"
+          />
+        </template>
+
         {{ timeRemaining }}
       </v-btn>
     </template>

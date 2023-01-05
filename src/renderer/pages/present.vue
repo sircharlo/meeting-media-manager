@@ -126,7 +126,9 @@ export default defineComponent({
       return this.$store.state.obs.scenes as string[]
     },
     zoomScene(): string | null {
-      return this.$getPrefs('app.obs.zoomScene') as string | null
+      const zoomScene = this.$getPrefs('app.obs.zoomScene') as string | null
+      if (!zoomScene || !this.allScenes.includes(zoomScene)) return null
+      return zoomScene
     },
     showButtons(): boolean {
       return this.shortScenesLength < this.availableWidth
@@ -225,6 +227,13 @@ export default defineComponent({
     date(val: string) {
       if (val) {
         this.firstChoice = false
+      }
+    },
+    zoomScene(val: string | null) {
+      if (val) {
+        this.$store.commit('notify/deleteByMessage', 'errorObsZoomScene')
+      } else {
+        this.zoomPart = false
       }
     },
     zoomPart(val: boolean) {
