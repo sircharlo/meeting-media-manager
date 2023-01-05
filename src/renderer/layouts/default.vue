@@ -222,7 +222,7 @@ export default defineComponent({
           fileURLToPath(pathToFileURL(downloadsPath).href)
         )
       } catch (e: unknown) {
-        this.$error('updateNotDownloaded', e, this.$config.version)
+        this.$error('updateNotDownloaded', e)
         this.$store.commit('stats/setUpdateSuccess', false)
       }
     })
