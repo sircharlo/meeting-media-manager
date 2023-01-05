@@ -162,6 +162,7 @@
             :video-active="videoActive"
             :show-prefix="showPrefix"
             :streaming-file="song"
+            :zoom-part="zoomPart"
             @playing="setIndex(-1)"
             @deactivated="song.deactivate = false"
           />
@@ -188,6 +189,7 @@
           :video-active="videoActive"
           :show-prefix="showPrefix"
           :sortable="sortable"
+          :zoom-part="zoomPart"
           @playing="setIndex(i)"
           @deactivated="resetDeactivate(i)"
         />
@@ -232,6 +234,10 @@ export default defineComponent({
     windowHeight: {
       type: Number,
       required: true,
+    },
+    zoomPart: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -321,6 +327,9 @@ export default defineComponent({
     scene(): string {
       return this.$store.state.obs.currentScene as string
     },
+    zoomScene(): string | null {
+      return this.$getPrefs('app.obs.zoomScene') as string | null
+    },
   },
   watch: {
     song() {
@@ -334,13 +343,15 @@ export default defineComponent({
       })
 
       if (!val && this.scene) {
-        await this.$setScene(this.scene)
+        await this.$setScene(
+          this.zoomPart ? this.zoomScene ?? this.scene : this.scene
+        )
       }
 
       if (
         !val &&
-        this.$getPrefs('media.hideWinAfterMedia') &&
-        this.mediaVisible
+        this.mediaVisible &&
+        (this.zoomPart || this.$getPrefs('media.hideWinAfterMedia'))
       ) {
         ipcRenderer.send('toggleMediaWindowFocus')
       }

@@ -16,6 +16,7 @@ const PREFS = {
       password: null,
       mediaScene: null,
       cameraScene: null,
+      zoomScene: null,
       useV4: true,
     },
     offline: false,
