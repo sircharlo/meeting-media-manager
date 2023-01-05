@@ -37,8 +37,10 @@ export const mutations: MutationTree<StatStore> = {
   },
   stopPerf(state, { func, stop }: { func: string; stop: number }) {
     const perf = state.performance.get(func) as Perf
-    perf.stop = stop
-    state.performance.set(func, perf)
+    if (perf) {
+      perf.stop = stop
+      state.performance.set(func, perf)
+    }
   },
   setDownloads(
     state,
