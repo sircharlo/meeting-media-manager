@@ -519,7 +519,12 @@ if (gotTheLock) {
   })
   autoUpdater.on('update-downloaded', () => {
     updateDownloaded = true
-    win?.webContents.send('notifyUser', ['updateDownloaded'])
+    win?.webContents.send('notifyUser', [
+      'updateDownloaded',
+      {
+        persistent: true,
+      },
+    ])
   })
 
   // When ready create main window
