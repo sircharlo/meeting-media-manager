@@ -131,7 +131,7 @@ import { MS_IN_SEC } from '~/constants/general'
 
 interface Style {
   to?: string
-  props?: Record<string, any>
+  props: Record<string, any>
   icons: (
     | IconDefinition
     | { text: IconDefinition; props?: Record<string, any> }
@@ -236,6 +236,7 @@ export default defineComponent({
         },
         toggleScreen: {
           icons: [faDesktop, faBan, faCircle],
+          props: {},
         },
       } as Styles,
     }

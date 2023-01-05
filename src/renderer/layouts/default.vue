@@ -54,7 +54,9 @@ export default defineComponent({
     },
     scenes(): string[] {
       return (this.$store.state.obs.scenes as string[]).filter(
-        (s) => s !== this.$getPrefs('app.obs.mediaScene')
+        (s) =>
+          s !== this.$getPrefs('app.obs.mediaScene') &&
+          s !== this.$getPrefs('app.obs.zoomScene')
       )
     },
     client() {

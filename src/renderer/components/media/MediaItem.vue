@@ -46,7 +46,7 @@
       <v-list-item-action class="align-self-center d-flex flex-row">
         <template v-if="active">
           <icon-btn
-            v-if="isVideo || scene"
+            v-if="isVideo || (scene && !zoomPart)"
             variant="pause"
             :toggled="paused"
             :is-video="isVideo"
@@ -197,6 +197,10 @@ export default defineComponent({
       type: Object as PropType<VideoFile>,
       default: null,
     },
+    zoomPart: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -254,6 +258,9 @@ export default defineComponent({
     },
     scene(): string {
       return this.$store.state.obs.currentScene as string
+    },
+    zoomScene(): string | null {
+      return this.$getPrefs('app.obs.zoomScene') as string | null
     },
     clippedStart(): number {
       if (!this.video) return 0
@@ -515,7 +522,9 @@ export default defineComponent({
             this.$warn('errorObsMediaScene')
           }
         } else {
-          await this.$setScene(this.scene)
+          await this.$setScene(
+            this.zoomPart ? this.zoomScene ?? this.scene : this.scene
+          )
         }
       }
       if (this.isVideo) {
