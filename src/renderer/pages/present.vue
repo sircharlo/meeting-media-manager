@@ -44,7 +44,7 @@
             mandatory
             color="primary"
           >
-            <v-tooltip v-for="s in scenes" :key="s.name" top>
+            <v-tooltip v-for="s in scenes" :key="s.value" top>
               <template #activator="{ on, attrs }">
                 <v-btn :value="s.value" v-bind="attrs" v-on="on">
                   {{ showShortButtons ? s.shortText : s.value }}
@@ -122,6 +122,9 @@ export default defineComponent({
         }
       },
     },
+    allScenes(): string[] {
+      return this.$store.state.obs.scenes as string[]
+    },
     zoomScene(): string | null {
       return this.$getPrefs('app.obs.zoomScene') as string | null
     },
@@ -180,7 +183,7 @@ export default defineComponent({
       text: string
       shortText: string
     }[] {
-      return (this.$store.state.obs.scenes as string[])
+      return this.allScenes
         .filter(
           (scene) =>
             !!scene &&
