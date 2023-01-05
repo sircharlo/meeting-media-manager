@@ -15,7 +15,7 @@ const AR_HEIGHT = 9
 export function createMediaWindow(windowOpts: BrowserWindowConstructorOptions) {
   const winHandler = new BrowserWinHandler({
     title: 'Media Window',
-    // roundedCorners: false, disabled again until this issue is fixed: https://github.com/electron/electron/issues/36251
+    roundedCorners: windowOpts.fullscreen,
     backgroundColor: 'black',
     width: 1280,
     height: 720,
@@ -96,6 +96,11 @@ export function getScreenInfo(
         }
       })
     } catch (err) {
+      win?.webContents.send('notifyUser', [
+        'errorUnknown',
+        { type: 'error' },
+        err,
+      ])
       console.error(err)
     }
   }
@@ -138,6 +143,7 @@ export function setMediaWindowPosition(
   try {
     if (mediaWin) {
       const screenInfo = getScreenInfo(win, mediaWin)
+      win?.webContents.send('log', screenInfo)
       const STARTING_POSITION = 50
       mediaWin.setBounds({
         x:
@@ -156,12 +162,19 @@ export function setMediaWindowPosition(
         screenInfo.otherScreens.length > 0 &&
         !mediaWin.isFullScreen()
       ) {
+        win?.webContents.send('log', 'set fullscreen')
         mediaWin.setFullScreen(true)
       } else if (mediaWinOptions.type === 'window' && mediaWin.isFullScreen()) {
+        win?.webContents.send('log', 'unset fullscreen')
         mediaWin.setFullScreen(false)
       }
     }
   } catch (err) {
+    win?.webContents.send('notifyUser', [
+      'errorUnknown',
+      { type: 'error' },
+      err,
+    ])
     console.error(err)
   }
 }

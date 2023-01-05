@@ -85,6 +85,7 @@ if (platform() === 'win32') iconType = 'ico'
 function onMove() {
   if (!mediaWin) return
   const screenInfo = getScreenInfo(win, mediaWin)
+  win?.webContents.send('log', screenInfo)
   if (screenInfo.winMidpoints && screenInfo.otherScreens.length > 0) {
     const mainWinSameAsMedia = Object.entries(screenInfo.winMidpoints)
       .map((item) => screen.getDisplayNearestPoint(item[1]))
@@ -406,18 +407,6 @@ if (gotTheLock) {
   ipcMain.on('allowQuit', (_e, val: boolean) => {
     allowClose = val
   })
-  ipcMain.on(
-    'setMediaWindowPosition',
-    (
-      _e,
-      mediaWinOptions: {
-        destination: number
-        type: 'fullscreen' | 'window'
-      }
-    ) => {
-      setMediaWindowPosition(win, mediaWin, mediaWinOptions)
-    }
-  )
   ipcMain.on('toggleMediaWindowFocus', () => {
     fadeWindow(win, mediaWin)
   })
@@ -433,8 +422,21 @@ if (gotTheLock) {
         type: 'fullscreen' | 'window'
       }
     ) => {
-      if (!mediaWin) {
+      if (
+        mediaWin &&
+        platform() === 'darwin' &&
+        (mediaWinOptions.type === 'window') === mediaWin.isFullScreen()
+      ) {
+        win?.webContents.send('log', 'Closing media window')
+        closeMediaWindow()
+      }
+
+      if (mediaWin) {
+        win?.webContents.send('log', 'set pos')
+        setMediaWindowPosition(win, mediaWin, mediaWinOptions)
+      } else {
         const screenInfo = getScreenInfo(win, mediaWin)
+        win?.webContents.send('log', screenInfo)
         const STARTING_POSITION = 50
 
         const windowOptions = {
@@ -479,8 +481,6 @@ if (gotTheLock) {
           })
 
         win?.webContents.send('mediaWindowShown')
-      } else {
-        setMediaWindowPosition(win, mediaWin, mediaWinOptions)
       }
     }
   )
