@@ -18,12 +18,12 @@
     />
     <v-row>
       <v-footer width="100%" height="72px" class="justify-end">
-        <v-col v-if="scene && zoomScene" :cols="zoomPart ? undefined : 'auto'">
+        <v-col v-if="scene && zoomScene">
           <v-tooltip top>
             <template #activator="{ on, attrs }">
               <v-btn icon @click="zoomPart = !zoomPart">
                 <font-awesome-icon
-                  :icon="faHouseUser"
+                  :icon="zoomPart ? faPodcast : faHouseUser"
                   size="xl"
                   v-bind="attrs"
                   :class="{ 'success--text': zoomPart }"
@@ -88,6 +88,7 @@ import {
   faHome,
   IconDefinition,
   faHouseUser,
+  faPodcast
 } from '@fortawesome/free-solid-svg-icons'
 export default defineComponent({
   name: 'PresentPage',
@@ -218,6 +219,9 @@ export default defineComponent({
     },
     faHouseUser(): IconDefinition {
       return faHouseUser as IconDefinition
+    },
+    faPodcast(): IconDefinition {
+      return faPodcast as IconDefinition
     },
     cong(): string {
       return this.$route.query.cong as string
