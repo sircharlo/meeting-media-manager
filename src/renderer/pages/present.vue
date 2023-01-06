@@ -135,6 +135,9 @@ export default defineComponent({
     showButtons(): boolean {
       return this.shortScenesLength < this.availableWidth
     },
+    mediaWinVisible(): boolean {
+      return this.$store.state.present.mediaScreenVisible
+    },
     showShortButtons(): boolean {
       return this.combinedScenesLength > this.availableWidth
     },
@@ -247,6 +250,9 @@ export default defineComponent({
         this.$setScene(this.zoomScene)
       } else if (!val) {
         this.$setScene(this.scene)
+        if (!this.mediaWinVisible) {
+          ipcRenderer.send('toggleMediaWindowFocus')
+        }
       }
     },
     async mediaActive(val: boolean) {
