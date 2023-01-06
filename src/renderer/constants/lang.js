@@ -12,6 +12,7 @@ const DAYJS_LOCALES = [
   'pt',
   'pt-br',
   'ru',
+  'sk',
   'sv',
   'uk',
   // 'wes-x-pgw', // not yet supported by dayjs
@@ -114,6 +115,13 @@ const LOCALES = [
     file: 'ru.json',
     jw: 'U',
     name: 'русский (Russian)',
+  },
+  {
+    code: 'sk',
+    iso: 'sk-SK',
+    file: 'sk.json',
+    jw: 'V',
+    name: 'slovenčina (Slovak)',
   },
   {
     code: 'sv',

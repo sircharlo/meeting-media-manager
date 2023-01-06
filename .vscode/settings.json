@@ -86,6 +86,7 @@
     "resourcetype",
     "sircharlo",
     "sjjm",
+    "slovenčina",
     "snnw",
     "sqlite",
     "sqljs",
@@ -114,7 +115,8 @@
     "yeartext",
     "yzhang",
     "zipball",
-    "русский"
+    "русский",
+    "українська"
   ],
   "cSpell.ignoreWords": ["transform", "PDF", "TERMS", "shorthand"],
   "cSpell.ignorePaths": ["src/renderer/locales/*"],
