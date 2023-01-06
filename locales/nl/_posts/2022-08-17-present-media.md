@@ -6,7 +6,7 @@ ref: present-media
 
 ### Media presentatie modus gebruiken
 
-De media presentatie modus heeft als doel simpel te zijn om fouten tijdens de vergadering te voorkomen.
+De media presentatie modus heeft als doel zo simpel mogelijk te zijn om fouten tijdens de vergadering te voorkomen.
 
 Zodra de optie `Zet knop aan om media op een externe monitor of apart scherm af te spelen` aan staat, zal het media presentatie scherm automatisch verschijnen op een externe monitor als die er is. Zo niet, zal hij in een apart sleepbaar scherm verschijnen.
 
