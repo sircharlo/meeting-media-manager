@@ -95,7 +95,7 @@
         />
         <v-progress-linear
           v-else
-          v-model="progress"
+          :value="progress"
           absolute
           bottom
           aria-label="Video progress"
