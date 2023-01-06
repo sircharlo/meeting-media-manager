@@ -4,6 +4,15 @@
     fill-height
     class="align-start align-content-space-between pa-0"
   >
+    <confirm-dialog
+      v-model="dialog"
+      content="obsZoomSceneActivate"
+      @cancel="dialog = false"
+      @confirm="
+        dialog = false
+        zoomPart = true
+      "
+    />
     <media-controls
       v-if="date"
       :media-active="mediaActive"
@@ -21,7 +30,7 @@
         <v-col v-if="scene && zoomScene">
           <v-tooltip top>
             <template #activator="{ on, attrs }">
-              <v-btn icon @click="zoomPart = !zoomPart">
+              <v-btn icon @click="toggleZoomPart()">
                 <font-awesome-icon
                   :icon="zoomPart ? faPodcast : faHouseUser"
                   size="xl"
@@ -95,6 +104,7 @@ export default defineComponent({
   name: 'PresentPage',
   data() {
     return {
+      dialog: false,
       zoomPart: false,
       mediaActive: false,
       videoActive: false,
@@ -248,6 +258,9 @@ export default defineComponent({
       if (this.mediaActive) return
       if (val && this.zoomScene) {
         this.$setScene(this.zoomScene)
+        if (this.mediaWinVisible) {
+          ipcRenderer.send('toggleMediaWindowFocus')
+        }
       } else if (!val) {
         this.$setScene(this.scene)
         if (!this.mediaWinVisible) {
@@ -315,6 +328,13 @@ export default defineComponent({
     }
   },
   methods: {
+    toggleZoomPart() {
+      if (this.zoomPart) {
+        this.zoomPart = false
+      } else {
+        this.dialog = true
+      }
+    },
     setWindowSize() {
       this.windowWidth = window.innerWidth
       this.windowHeight = window.innerHeight
