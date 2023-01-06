@@ -105,7 +105,7 @@
   "obsMediaScene": "Media window scene in OBS Studio",
   "obsUseV4": "Use <em>obs-websocket v4</em>",
   "obsZoomScene": "OBS Studio scene to display Zoom participants",
-  "obsZoomSceneActivate": "Make sure the Zoom window is ready to be shown. The media window will be hidden automatically.",
+  "obsZoomSceneActivate": "Make sure the Zoom participants are ready to be shown. The media window will be hidden automatically until media is displayed.",
   "obsZoomSceneExplain": "Used to quickly and efficiently manage the display of Zoom participants during a hybrid meeting",
   "obsZoomSceneToggle": "Toggle Zoom part mode",
   "offlineMode": "Offline mode",
