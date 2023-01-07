@@ -463,7 +463,9 @@ const plugin: Plugin = (
     const includePrinted = $getPrefs('media.includePrinted')
     const videoString = `(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')`
     const imgString = `(Multimedia.MimeType LIKE '%image%' ${
-      includePrinted ? '' : 'AND Multimedia.CategoryType <> 6'
+      includePrinted
+        ? ''
+        : 'AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
     } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`
 
     where += ` AND (${videoString} OR ${imgString})`
