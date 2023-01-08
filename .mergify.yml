@@ -1,10 +1,14 @@
 pull_request_rules:
-  - name: Automatic merge for gitlocalize-app and dependabot
+  - name: Automatic merge for gitlocalize-app, crowdin and dependabot
     conditions:
       - or:
           - author=mtdvlpr
           - author=gitlocalize-app[bot]
-          - title~=^New Crowdin
+          - and:
+              - or:
+                  - author=mtdvlpr
+                  - author=sircharlo
+              - title~=^New Crowdin
           - and:
               - author=dependabot[bot]
               - or:
