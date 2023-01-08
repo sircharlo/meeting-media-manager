@@ -1,0 +1,6 @@
+targets:
+  - name: Image captions
+    sources:
+      - /_data/en.json
+    file: /_data/%two_letters_code%.json
+    format: crowdin-json
