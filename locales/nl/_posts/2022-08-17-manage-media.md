@@ -4,7 +4,7 @@ title: Media beheren
 ref: manage-media
 ---
 
-Het media beheer scherm staat de gebruiker toe om media toe te voegen en te verwijderen for elke vergadering, terugkerende media te beheren en zelfs om speciale media voor andere dagen in de week te beheren.
+Het media beheer scherm staat de gebruiker toe om media toe te voegen en te verwijderen voor elke vergadering, terugkerende media te beheren en zelfs om speciale media voor andere dagen in de week te beheren.
 
 ### Media beheren voor elke dag van de week
 
@@ -26,7 +26,7 @@ In het `Media toevoegen` veld heb je verschillende opties, afhankelijk van het g
 | `Media type` | Het `Media om toe te voegen` veld |
 | ------------ | ------------------------ |
 | `Lied` | ... toont een menu met koninkrijksliederen van de *sjjm* serie, in jouw media taal. Kies deze optie om bijvoorbeeld het lied van de openbare lezing of van de kringopziener toe te voegen. <br><br> Het gekozen lied zal automatisch gedownload worden van JW.org in de taal van jouw gemeente of groep, zoals ingesteld in de [instellingen]({{page.lang}}/#configuration). |
-| `JWPUB` | Kies (of drag en drop) een JWPUB bestand. <br><br> Je zal gevraagd worden om een sectie of hoofdstuk te selecteren waarvan je de media wilt toevoegen. Deze optie zal zowel de bijgeleverde als de gerefereerde media toevoegen. <br><br> Een voorbeeld van een vaak gebruikte JWPUB bestand is het S-34 formulier, maar elk JWPUB bestand kan gebruikt worden. |
+| `JWPUB` | Kies (of drag en drop) een JWPUB bestand. <br><br> Je zult gevraagd worden om een sectie of hoofdstuk te selecteren waarvan je de media wilt toevoegen. Deze optie zal zowel de bijgeleverde als de gerefereerde media toevoegen. <br><br> Een voorbeeld van een vaak gebruikte JWPUB bestand is het S-34 formulier, maar elk JWPUB bestand kan gebruikt worden. |
 | `Anders` | ... Kies (of sleep) andere bestanden van je computer. <br><br> *Bedenk dat alle PDF en SVG bestanden automatisch worden omgezet in plaatjes van hoge resolutie door M³.* |
 
 ### Media verwijderen, verbergen en tonen
