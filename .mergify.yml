@@ -4,6 +4,7 @@ pull_request_rules:
       - or:
           - author=mtdvlpr
           - author=gitlocalize-app[bot]
+          - title~=^New Crowdin
           - and:
               - author=dependabot[bot]
               - or:
