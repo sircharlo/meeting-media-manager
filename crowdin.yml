@@ -4,3 +4,13 @@ targets:
       - /_data/en.json
     file: /_data/%two_letters_code%.json
     format: crowdin-json
+  - name: Main docs page
+    sources:
+      - /locales/en/index.md
+    file: /locales/%two_letters_code%/index.md
+    format: macosx
+  - name: Help pages
+    sources:
+      - /locales/en/_posts/*
+    file: /locales/%two_letters_code%/_posts/%original_file_name%
+    format: crowdin-json
