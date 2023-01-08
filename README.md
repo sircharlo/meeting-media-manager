@@ -46,7 +46,6 @@ In addition, M³ itself has been translated, by many volunteers, into several la
 [![gitlocalized](https://gitlocalize.com/repo/8097/sv/badge.svg)](https://gitlocalize.com/repo/8097/sv?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8097/uk/badge.svg)](https://gitlocalize.com/repo/8097/uk?utm_source=badge)
 ___
-
 [![gitlocalized](https://gitlocalize.com/repo/8097/whole_project/badge.svg)](https://gitlocalize.com/repo/8097/?utm_source=badge)
 
 ## How do I get started?
