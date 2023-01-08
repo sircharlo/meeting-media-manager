@@ -1,6 +1,3 @@
-targets:
-  - name: App strings
-    sources:
-      - /src/renderer/locales/en.json
-    file: /src/renderer/locales/%two_letters_code%.json
-    format: crowdin-json
+files:
+  - source: /src/renderer/locales/en.json
+    translation: /src/renderer/locales/%two_letters_code%.json
