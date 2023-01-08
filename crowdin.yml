@@ -1,16 +1,7 @@
-targets:
-  - name: Image captions
-    sources:
-      - /_data/en.json
-    file: /_data/%two_letters_code%.json
-    format: crowdin-json
-  - name: Main docs page
-    sources:
-      - /locales/en/index.md
-    file: /locales/%two_letters_code%/index.md
-    format: macosx
-  - name: Help pages
-    sources:
-      - /locales/en/_posts/*
-    file: /locales/%two_letters_code%/_posts/%original_file_name%
-    format: crowdin-json
+files:
+  - source: /_data/en.json
+    translation: /_data/%two_letters_code%.json
+  - source: /locales/en/index.md
+    translation: /locales/%two_letters_code%/index.md
+  - source: /locales/en/_posts/*
+    translation: /locales/%two_letters_code%/_posts/%original_file_name%
