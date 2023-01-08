@@ -50,7 +50,7 @@ Voeg een snelkoppeling van OBS Studio toe met de `--startvirtualcam` parameter, 
 
 Zoom moet ingesteld worden met "dual monitors". Zet de globale snelkoppelingen voor Zoom om de microfoon aan en uit te zetten (<kbd>Alt A</kbd>), en om de video te starten/stoppen (<kbd>Alt V</kbd>) aan.
 
-Zet de standaard "microphone" op de gecombineerde output van de geluidsinstallatie (zodat alles wat in de zaal te horen is naar Zoom wordt gestuurd, inclusief microfoons en media) and de "camera" op de virtuale camera van OBS Studio.
+Zet de standaard "microphone" op de gecombineerde output van de geluidsinstallatie (zodat alles wat in de zaal te horen is naar Zoom wordt gestuurd, inclusief microfoons en media) and de "camera" op de virtuele camera van OBS Studio.
 
 #### Eerste opzet: M³
 

@@ -10,7 +10,7 @@ De VO, of iemand anders die door hem is aangesteld, kan:
 
 - **extra** media uploaden om te delen tijdens een vergadering, zoals wanneer de kringopziener komt of voor een openbare lezing
 - Media van JW.org **verbergen** dat niet relevant is voor de gekozen vergadering, bijvoorbeeld, wanneer een aandeel wordt vervangen door een plaatselijke behoefte
-- **Terugkerende** media verwijderen of toeviegen, zoals een jaartekst filmpje of een mededelingen slideshow
+- **Terugkerende** media verwijderen of toevoegen, zoals een jaartekst filmpje of een mededelingen slideshow
 
 Iedereen die verbonden is met dezelfde gemeente ontvangt deze wijzigingen automatisch wanneer ze op de *Haal media op* knop drukken.
 
