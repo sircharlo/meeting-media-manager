@@ -25,9 +25,9 @@ I fältet `Media att lägga till` kommer du att presenteras med olika alternativ
 
 | `Mediatyp` | Fältet `Media att lägga till` |
 | ------------ | ------------------------ |
-| `Sång` | ... visa en meny med alla Riketssång-låtvideor från _sjjm_-serien, på mediespråket. Välj det här alternativet för att till exempel lägga till en sång för det offentliga talet eller för kretstillsyningsbesök. <br><br> Den valda låten kommer automatiskt att laddas ner från JW.org, på församlingens eller gruppens språk, som konfigurerats i [inställningar]({{page.lang}}/#configuration). |
+| `Sång` | ... visa en meny med alla Riketssång-låtvideor från *sjjm_-serien, på mediespråket. Välj det här alternativet för att till exempel lägga till en sång för det offentliga talet eller för kretstillsyningsbesök. <br><br> Den valda låten kommer automatiskt att laddas ner från JW.org, på församlingens eller gruppens språk, som konfigurerats i [inställningar]({{page.lang}}/#configuration). |
 | `JWPUB` | ... låter dig bläddra till (eller dra och släppa) en JWPUB-fil. <br><br> Du kommer sedan att bli ombedd att välja avsnittet, eller kapitlet, från vilket du vill lägga till media. Detta kommer att lägga till både inbäddade och refererade media från det avsnittet i JWPUB-filen. <br><br> Ett exempel på en vanlig JWPUB-fil är S-34, men vilken JWPUB-fil som helst kan användas här. |
-| `Anpassa` | ... låter dig bläddra till (eller dra och släpp) andra mediafiler från din dator. <br><br> _Observera att alla PDF- och SVG-filer automatiskt kommer att konverteras till högupplösta bilder av M³._ |
+| `Anpassa` | ... låter dig bläddra till (eller dra och släpp) andra mediafiler från din dator. <br><br> *Observera att alla PDF- och SVG-filer automatiskt kommer att konverteras till högupplösta bilder av M³.* |
 
 ### Ta bort, dölja och visa media
 
@@ -35,7 +35,7 @@ För att **ta bort**, **dölja** eller **visa** media, leta upp den mediefil du 
 
 | Media har en röd 🥥 (radera) ikon | Media har en ☑️ (markerad kryssruta)-ikon | Media har en 🔲-ikon (omarkerad kryssruta) |
 | ---------------------- | --------------------------- | ------------------------------ |
-| Mediafilen lades till dagens media av dig eller VO. | Mediefilen hänvisas till i mötets material. <br><br> Den _kommer_ att laddas ner från JW.org eller extraheras från den relevanta publikationen. | Mediefilen hänvisas till i mötets material. <br><br> Den gömdes av dig eller VO, så den _kommer inte_ att laddas ner eller läggas till i mötets media. |
+| Mediafilen lades till dagens media av dig eller VO. | Mediefilen hänvisas till i mötets material. <br><br> Den *kommer* att laddas ner från JW.org eller extraheras från den relevanta publikationen. | Mediefilen hänvisas till i mötets material. <br><br> Den gömdes av dig eller VO, så den *kommer inte* att laddas ner eller läggas till i mötets media. |
 
 ### Skärmdumpar av mediehanteringsskärmen
 
