@@ -10,7 +10,7 @@ Skärmen Inställningar är uppdelad i 4 sektioner. De flesta av alternativen ä
 
 Inställning | Förklaring
 --- | ---
-`Programspråk` | Ställ in språket som M³ visas på.<br><br> Tack till våra många medarbetare för att de har översatt appen till så många språk! Om du vill hjälpa till att förbättra en befintlig översättning eller lägga till en ny, öppna en ny [diskussion]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE) .
+`Programspråk` | Ställ in språket som M³ visas på. <br><br> Tack till våra många medarbetare för att de har översatt appen till så många språk! Om du vill hjälpa till att förbättra en befintlig översättning eller lägga till en ny, öppna en ny [diskussion]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE) .
 `Mapp för media` | Mötesmedia kommer att sparas i den här mappen för senare delning och användning.
 `Starta programmet när datorn startas` | Om aktiverat, kommer M³ att starta när den aktuella användaren loggar in på datorn. <br><br> ***Obs!** Ej tillgängligt på Linux.*
 `Initiera mediasynkronisering automatiskt` | Om det är aktiverat kommer det här alternativet automatiskt att initiera en mediasynkronisering 5 sekunder efter att M³ har startat. <br><br> *För att förhindra att den automatiska synkroniseringen inträffar när den här inställningen är aktiverad, tryck på ⏸-knappen (paus) innan 5-sekunderstimern är slut.*

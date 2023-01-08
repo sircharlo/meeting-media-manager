@@ -10,7 +10,7 @@ La schermata delle impostazioni è suddivisa in 4 sezioni. Molte opzioni si spie
 
 Impostazioni | Spiegazione
 --- | ---
-`Lingua interfaccia` | Imposta la lingua in cui viene visualizzato M³.<br><br> Grazie ai nostri numerosi volontari per aver tradotto l'app in così tante lingue! Se desideri contribuire a migliorare una traduzione esistente o aggiungerne una nuova, apri una nuova [discussione]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE) .
+`Lingua interfaccia` | Imposta la lingua in cui viene visualizzato M³. <br><br> Grazie ai nostri numerosi volontari per aver tradotto l'app in così tante lingue! Se desideri contribuire a migliorare una traduzione esistente o aggiungerne una nuova, apri una nuova [discussione]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE) .
 `Cartella dove salvare i media` | I media dell'adunanza saranno salvati in questa cartella per essere condivisi e utilizzati in seguito.
 `Apri l'applicazione all'avvio del sistema` | Se abilitato, M³ sarà avviato quando l'utente corrente eseguirà l'accesso al computer. <br><br> ***Nota:** Non disponibile su Linux.*
 `Avvia automaticamente la sincronizzazione dei media` | Questa opzione, se abilitata, attiva la sincronizzazione automatica dei media 5 secondi dopo l'avvio di M³. <br><br> *Per impedire la sincronizzazione automatica quando questa opzione è abilitata, premere il pulsante ⏸ (pausa) prima che trascorrano 5 secondi.*

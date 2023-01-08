@@ -10,7 +10,7 @@ Asetukset-näyttö on jaettu 4 osaan. Useimmat vaihtoehdot ovat itsestään selv
 
 Asetus | Selitys
 --- | ---
-`Näytön kieli` | Asettaa kielen, jolla M³ näytetään.<br><br> Kiitos monille avustajillemme sovelluksen kääntämisestä niin monille kielille! Jos haluat auttaa parantamaan olemassa olevaa käännöstä tai lisätä uuden, avaa uusi [keskustelu]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE) .
+`Näytön kieli` | Asettaa kielen, jolla M³ näytetään. <br><br> Kiitos monille avustajillemme sovelluksen kääntämisestä niin monille kielille! Jos haluat auttaa parantamaan olemassa olevaa käännöstä tai lisätä uuden, avaa uusi [keskustelu]({{site.github}}/discussions/new?category=translations&title=New+translation+in+LANGUAGE&body=I+would+like+to+help+to+translate+M%C2%B3+into+a+language+I+speak,+LANGUAGE) .
 `Kansio, johon media tallennetaan` | Kokousmedia tallennetaan tähän kansioon myöhempää jakamista ja käyttöä varten.
 `Käynnistä sovellus järjestelmän käynnistyksen yhteydessä` | Jos käytössä, M³ käynnistyy, kun nykyinen käyttäjä kirjautuu sisään tietokoneeseen. <br><br> ***Huomaa:** ei saatavilla Linuxissa.*
 `Aloita median synkronointi automaattisesti` | Jos tämä asetus on käytössä, tämä vaihtoehto aloittaa mediasynkronoinnin automaattisesti 5 sekunnin kuluttua M³:n käynnistämisestä. <br><br> *Voit estää automaattisen synkronoinnin tapahtumisen, kun tämä asetus on käytössä, painamalla ⏸ (tauko) -painiketta ennen kuin 5 sekunnin ajastin on kulunut.*
