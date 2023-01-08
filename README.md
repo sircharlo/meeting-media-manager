@@ -45,7 +45,7 @@ In addition, the documentation website of M³ has been translated, by many volun
 [![gitlocalized](https://gitlocalize.com/repo/8177/sk/badge.svg)](https://gitlocalize.com/repo/8177/sk?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8177/sv/badge.svg)](https://gitlocalize.com/repo/8177/sv?utm_source=badge)
 [![gitlocalized](https://gitlocalize.com/repo/8177/uk/badge.svg)](https://gitlocalize.com/repo/8177/uk?utm_source=badge)
-
+___
 [![gitlocalized](https://gitlocalize.com/repo/8177/whole_project/badge.svg)](https://gitlocalize.com/repo/8177/?utm_source=badge)
 
 ## How do I get started?
