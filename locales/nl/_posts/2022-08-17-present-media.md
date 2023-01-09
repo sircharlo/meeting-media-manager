@@ -36,11 +36,11 @@ Stel de computer zo in dat het geluid van de computer naar een van de geluidsins
 
 Installeer OBS Studio, of download een portable versie van OBS Studio.
 
-Als je de portable versie van OBS gebruikt, installeer de [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, en als je de portable versie van OBS Studio gebruikt, voeg de virtual camera toe aan Windows door dubbel te klikken op het gegeven installatie script.
+Als je de portable versie van OBS gebruikt, installeer de [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, en als je de portable versie van OBS Studio gebruikt, voeg de virtuele camera toe aan Windows door dubbel te klikken op het gegeven installatie script.
 
 Als je OBS Studio v27 of ouder hebt, moet je de [obs-websocket](https://github.com/obsproject/obs-websocket) plugin installeren. Anders is de plugin inbegrepen. Configureer het poortnummer en het wachtwoord voor obs-websocket.
 
-In de instellingen van OBS, onder `General` > `System Tray`, vink alle checkboxes aan. Onder `Output` > `Streaming`, zet een hardware encoder aan als er een beschikbaar is. Onder `Video` > `Base (Canvas) Resolution` en `Output (Scaled) Resolution`, kies `1280x720`, en onder `Downscale Filter`, kies `Bilinear`.
+In de instellingen van OBS, onder `Algemeen` > `System Tray`, vink alle checkboxen aan. Onder `Output` > `Streaming`, zet een hardware encoder aan als er een beschikbaar is. Onder `Video` > `Base (Canvas) Resolution` en `Output (Scaled) Resolution`, kies `1280x720`, en onder `Downscale Filter`, kies `Bilinear`.
 
 Zet ten minste 2 scenes op: een voor de media (`Window Capture` of `Display Capture` met de muis cursor uitgeschakeld en het juiste scherm geselecteerd), en een voor het podiumbeeld (`Video Capture Device` met de camera van de zaal geselecteerd). Je kan zo veel scenes maken als je maar nodig hebt, met een andere camera stand of ingezoomd bijvoorbeeld (spreker, studieleider met lezer, demonstratie, etc.).
 
@@ -64,7 +64,7 @@ Start de Zoom vergadering en breng het tweede zoom scherm naar de externe monito
 
 Zodra Zoom getoond wordt op het externe scherm, open je M³. Het mediascherm zal automatisch geopend worden bovenop het Zoom scherm op de externe monitor. Haal de nodige media media and open de media presentatie modus door op de ▶️ (play) knop op het beginscherm van M³ te drukken, of met <kbd>Alt D</kbd>.
 
-Zet de video van de zaal in in Zoom (<kbd>Alt V</kbd>), en "spotlight" (indien nodig) de zaal video zodat de Zoom deelnemers het podium kunnen zien. Zet je microfoon in Zoom (<kbd>Alt A</kbd>) aan. Het zou niet nodig moeten zijn om de video of microfoon uit te zetten tijdens de vergadering.
+Zet de video van de zaal in Zoom aan (<kbd>Alt V</kbd>), en "spotlight" indien nodig de zaal video zodat de Zoom deelnemers het podium kunnen zien. Zet je microfoon in Zoom (<kbd>Alt A</kbd>) aan. Het zou niet nodig moeten zijn om de video of microfoon uit te zetten tijdens de vergadering.
 
 Start de achtergrond muziek door op de knop linksonder te drukken, of met <kbd>Alt K</kbd>.
 
