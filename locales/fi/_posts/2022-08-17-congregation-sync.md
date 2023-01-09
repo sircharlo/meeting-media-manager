@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Asetukset
 title: Seurakunnan synkronointi
 ref: congregation-sync
 ---
@@ -18,7 +18,7 @@ Huomaa, että seurakunnan synkronointiominaisuus on valinnainen.
 
 ### Kuinka se toimii
 
-M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+M³:n taustalla oleva synkronointimekanismi käyttää WebDAV:ta. This means that the VO (or someone under his supervision) needs to either:
 
 - määriteltävä suojattu WebDAV-palvelin, joka on käytettävissä verkossa, **tai**
 - käyttää kolmannen osapuolen pilvitallennuspalvelua, joka tukee WebDAV-protokollaa (katso Isäntänimi-asetus *Seurakunnan synkronoinnin asetukset* -osiossa alla).
