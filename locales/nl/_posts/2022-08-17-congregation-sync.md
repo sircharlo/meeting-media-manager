@@ -25,7 +25,7 @@ M³'s onderliggende sync mechanisme gebruikt WebDAV. Dat bekent dat de VO (of ie
 
 Alle gebruikers die gesynchroniseerd willen worden moeten verbinden met dezelfde WebDAV server door gebruik te maken van de informatie en inloggegevens die de VO heeft opgegeven.
 
-### Gemeente sync setup
+### Gemeente sync configuratie
 
 | Instelling                    | Uitleg                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
