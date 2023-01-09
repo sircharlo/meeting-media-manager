@@ -6,10 +6,10 @@
   "shared": {
     "explanation": "Uitleg",
     "option": "Optie",
-    "optionsApp": "Applicatie setup",
-    "optionsCongSync": "Gemeente sync setup",
+    "optionsApp": "Applicatie configuratie",
+    "optionsCongSync": "Gemeente sync configuratie",
     "optionsMedia": "Media configuratie",
-    "optionsMeetings": "Vergadering setup",
+    "optionsMeetings": "Vergadering configuratie",
     "password": "Wachtwoord",
     "port": "Poort",
     "setting": "Instelling"
@@ -35,7 +35,7 @@
     "imgSelectMeeting": "Selecteer een vergadering waarvoor je media wilt tonen",
     "imgBG": "Standaard media achtergrond, met jaartekst",
     "imgMediaList": "Lijst van de media die getoond kan worden",
-    "imgStandby": "M³ mediascherm in standby modus",
+    "imgStandby": "M³ mediascherm in stand-by modus",
     "imgDisplayPic": "Een afbeelding tonen",
     "imgPlayVideo": "Een filmpje afspelen",
     "imgVideoScrub": "Naar een specifiek moment in het filmpje springen"
