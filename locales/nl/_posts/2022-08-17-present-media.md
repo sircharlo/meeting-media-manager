@@ -68,7 +68,7 @@ Zet de video van de zaal in in Zoom (<kbd>Alt V</kbd>), en "spotlight" (indien n
 
 Start de achtergrond muziek door op de knop linksonder te drukken, of met <kbd>Alt K</kbd>.
 
-#### Fysieke aandelen in de koninkrijkszaal tonen via Zoom
+#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom
 
 Geen actie nodig.
 
@@ -116,7 +116,7 @@ Vind de media die je wilt delen in M³ en druk op de "play" knop.
 
 Wanneer je klaar bent, druk je weer op <kbd>Alt S</kbd> om de Zoom share te stoppen.
 
-#### Zoom aandelen tonen in de koninkrijkszaal
+#### Displaying remote Zoom participants on the Kingdom Hall monitor without OBS
 
 Hetzelfde als de gelijknamige sectie hierboven.
 
