@@ -1,6 +1,6 @@
 ---
 tag: Ajuda
-title: Technical usage notes
+title: Instalação e atualização
 ref: usage-notes
 ---
 
