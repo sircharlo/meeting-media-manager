@@ -4,7 +4,7 @@ title: Media beheren
 ref: manage-media
 ---
 
-Het media beheer scherm staat de gebruiker toe om media toe te voegen en te verwijderen voor elke vergadering, terugkerende media te beheren en zelfs om speciale media voor andere dagen in de week te beheren.
+Het mediabeheer scherm staat de gebruiker toe om media toe te voegen en te verwijderen voor elke vergadering, terugkerende media te beheren en zelfs om speciale media voor andere dagen in de week te beheren.
 
 ### Media beheren voor elke dag van de week
 
@@ -12,12 +12,12 @@ Om media te beheren voor een specifieke vergadering of dag, kan je eenvoudig op 
 
 ### Media toevoegen
 
-Zo kan je media **toevoegen** via het media beheer scherm:
+Zo kan je media **toevoegen** via het mediabeheer scherm:
 
 | Optie                    | Uitleg                                                                                      |
 | ------------------------ | ------------------------------------------------------------------------------------------- |
-| `Type bestand`           | Kies een van de 3 soorten `media typen` (zie hieronder)                                     |
-| `Media om toe te voegen` | Afhankelijk van het gekozen `media type` (zie hieronder)                                    |
+| `Type bestand`           | Kies een van de 3 soorten `media typen` (zie hieronder).                                    |
+| `Media om toe te voegen` | Afhankelijk van het gekozen `media type` (zie hieronder).                                   |
 | `Bestandsnaam prefix`    | Tot 6 getallen die voor de bestandsnaam/bestandsnamen komen te staan om te kunnen sorteren. |
 | `Medialijst`             | Deze lijst toont de huidige media die gepland staat voor de gekozen datum.                  |
 
