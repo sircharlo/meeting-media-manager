@@ -1,5 +1,5 @@
 ---
-tag: Usage
+tag: Käyttö
 title: Median hallinta
 ref: manage-media
 ---
@@ -23,19 +23,19 @@ Näin voit **lisätä** mediaa medianhallintanäytöstä.
 
 `Media lisättäväksi`-kentässä sinulle esitetään erilaisia vaihtoehtoja valitun mediatyypin mukaan.
 
-| `Mediatyyppi` | `Media lisättäväksi`-kenttä                                                                                                                                                                                                                                                                                                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Laulu`       | ... show a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br> The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [Settings]({{page.lang}}/#configuration). |
-| `JWPUB`       | ... allow you to browse to (or drag and drop) a JWPUB file. <br><br> You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.      |
-| `Mukautettu`  | ... allow you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                        |
+| `Mediatyyppi` | `Media lisättäväksi`-kenttä                                                                                                                                                                                                                                                                                                                                               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Laulu`       | ... näytä valikko, jossa on laulukirjan *sjjm* videot median kielellä. Valitse tämä vaihtoehto esimerkiksi lisätäksesi laulun esitelmään tai kierrosviikkoa varten. <br><br> Valittu laulu ladataan automaattisesti JW.org:sta, seurakunnan tai ryhmän kielellä, sellaisena kuin se on määritetty [Asetuksissa]({{page.lang}}/#configuration).                |
+| `JWPUB`       | ... voit selata (tai vetää ja pudottaa) JWPUB tiedoston. <br><br> Tämän jälkeen sinua pyydetään valitsemaan osio tai luku, josta haluat lisätä mediaa. Tämä lisää JWPUB-tiedostosta sekä upotettuja että referoituja medioita. <br><br> Esimerkki yleisestä JWPUB tiedostosta on S-34, mutta mitä tahansa JWPUB tiedostoa voidaan käyttää täällä. |
+| `Mukautettu`  | ... voit selata tai vetää ja pudottaa mihin tahansa muuhun mediatiedostoon tietokoneeltasi. <br><br> *Huomaa, että kaikki PDF- ja SVG-tiedostot muunnetaan automaattisesti korkean resoluution kuviksi M³:n avulla*                                                                                                                                           |
 
 ### Median poistaminen, piilottaminen ja näyttäminen
 
 Jos haluat **poistaa**, **piilottaa** tai **näytä** median, etsi mediatiedosto, jota et halua, ja napsauta asianmukaista kuvaketta.
 
-| Mediassa on punainen 🟥 (poista) -kuvake                    | Mediassa on ☑️ (valittu valintaruutu) -kuvake                                                                                                                | Mediassa on kuvake 🔲 (valintaruutua ei ole valittu).                                                                                                                         |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Sinä tai VO lisäsi mediatiedoston kyseisen päivän mediaan. | The media file is referenced in the meeting's material. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file is referenced in the meeting's material. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
+| Mediassa on punainen 🟥 (poista) -kuvake                    | Mediassa on ☑️ (valittu valintaruutu) -kuvake                                                                                      | Mediassa on kuvake 🔲 (valintaruutua ei ole valittu).                                                                                                               |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Sinä tai VO lisäsi mediatiedoston kyseisen päivän mediaan. | Mediatiedostoon on viitattu kokouksen aineistossa. <br><br> Se ** ladataan JW.org tai uutetaan kyseisestä julkaisusta. | Mediatiedostoon on viitattu kokouksen aineistossa. <br><br> Sinä tai VJ on piiloittannut median joten sitä *ei* ole ladattu tai lisättu kokousmediaan. |
 
 ### Kuvakaappaukset medianhallintanäytöstä
 

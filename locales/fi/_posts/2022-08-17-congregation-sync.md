@@ -21,7 +21,7 @@ Huomaa, että seurakunnan synkronointiominaisuus on valinnainen.
 M³:n taustalla oleva synkronointimekanismi käyttää WebDAV:ta. Tämä tarkoittaa, että VJ:n (tai jonkun hänen valvonnassaan olevan) on joko:
 
 - määriteltävä suojattu WebDAV-palvelin, joka on käytettävissä verkossa, **tai**
-- käyttää kolmannen osapuolen pilvitallennuspalvelua, joka tukee WebDAV-protokollaa (katso Isäntänimi-asetus *Seurakunnan synkronoinnin asetukset* -osiossa alla).
+- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
 
 Kaikkien käyttäjien, jotka haluavat olla synkronoitu yhdessä, on muodostettava yhteys samaan WebDAV-palvelimeen käyttämällä yhteystietoja ja valtuustietoja, jotka heidän VJ:nsa on antanut heille.
 

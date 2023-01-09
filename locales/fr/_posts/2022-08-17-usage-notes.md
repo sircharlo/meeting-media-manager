@@ -1,38 +1,38 @@
 ---
 tag: Aide
-title: Technical usage notes
+title: Notes techniques
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or Mac.
+L'application devrait fonctionner tel quel sur la plupart des ordinateurs modernes sous Windows, Linux ou macOS.
 
-### Windows: Installation and first launch
+### Windows : Installation et premier lancement
 
-On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+Lors de l'ouverture de l'installateur, vous pourriez avoir une [erreur](assets/img/other/win-smartscreen.png) indiquant que « Windows SmartScreen a empêché une application non reconnue de démarrer ». Ceci est dû au fait que l'application n'a pas un nombre élevé de téléchargements, et par conséquent n'est pas explicitement "reconnue" par Windows. Pour contourner ce problème, cliquez simplement sur "Plus d'infos", puis "Exécuter quand même".
 
-### Linux: Installation and first launch
+### Linux : Installation et premier lancement
 
-As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
+Conformément à la documentation officielle de [AppImage](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), si l'application ne s'ouvre pas correctement, confirmez le résultat de la commande suivante :
 
 `ysctl kernel.unprivileged_userns_clone`
 
-If the output is `0`, then the AppImage will **not** run unless you run the following command, followed by a reboot:
+Si le résultat est `0`, alors l'AppImage **ne fonctionnera pas**, à moins que vous n'exécutiez la commande suivante, suivie d'un redémarrage :
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Make sure you read up on [what this entails](https://lwn.net/Articles/673597/) before you do this.
+Assurez-vous de lire sur [ce que cela implique](https://lwn.net/Articles/673597/) avant de le faire.
 
-### MacOS: Installation and first launch
+### macOS : Installation et premier lancement
 
-If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or because "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
+Si au lancement de l'application, vous recevez un avertissement indiquant que l'application ne peut pas être ouverte, soit parce que "elle n'a pas été téléchargée depuis l'App Store" ou parce que "le développeur ne peut pas être vérifié", alors cette [page de support Apple](https://support.apple.com/en-ca/HT202491) vous aidera à passer outre cela.
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
+Si vous recevez un message indiquant que vous "n'avez pas la permission d'ouvrir l'application", essayez quelques-unes des solutions que l'on peut retrouver sur [cette page-ci](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### MacOS: Auto-update
+### macOS : Mise à jour automatique de l'application
 
-Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for Mac users when an update is available:
+Contrairement à Windows et Linux, la fonctionnalité de mise à jour automatique **n'est pas implémentée** sur macOS, et pour des raisons techniques probablement ne le sera jamais. Cependant, une des deux choses suivantes se passera pour les utilisateurs de macOS lorsqu'une mise à jour sera disponible :
 
-- M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
-- If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
+- M³ tentera de télécharger le paquet de mise à jour et l'ouvrira automatiquement, après quoi l'utilisateur devra terminer manuellement l'installation de la mise à jour de M³ en glissant/déposant l'application mise à jour dans son dossier Applications. Ensuite, ils pourront lancer le M³ mis à jour à partir de leur dossier Applications comme d'habitude.
+- Si l'étape précédente échoue, M³ affichera une notification indiquant qu'une mise à jour est disponible, avec un lien vers la mise à jour elle-même. Une notification rouge clignotante s'affichera également sur le bouton Réglages de l'écran principal de M³. Le numéro de version M³ dans l'écran des réglages se transformera en un bouton qui, une fois cliqué, ouvrira automatiquement la page de téléchargement de la dernière version.
