@@ -1,34 +1,34 @@
 ---
-tag: Usage
-title: Media Presentation mode
+tag: Utilisation
+title: Mode de présentation des médias
 ref: present-media
 ---
 
-### Using media presentation mode
+### Utiliser le mode de présentation des médias
 
-The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
+Le mode de gestion et présentation des médias est conçu pour être simple et éviter les erreurs lors des réunions.
 
-Once the option `Present media on an external monitor or in a separate window` is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
+Une fois que l'option `Présenter les médias sur un écran externe ou dans une fenêtre séparée` est activée, l'écran de présentation des médias apparaîtra automatiquement sur le moniteur externe si détecté, ou dans une fenêtre séparée, glissable et redimensionnable si aucun moniteur externe n'a été détecté.
 
-When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
+En mode veille, l'écran de présentation des médias affiche l'image d'arrière-plan qui est configurée dans les réglages. Si aucune image d'arrière-plan n'a été configurée, M³ tentera alors de récupérer automatiquement et d'afficher le texte de l'année.
 
-If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
+Si aucune image de fond n'est configurée dans les réglages et que le texte de l'année n'a pu être chargé automatiquement, un fond noir sera affiché en mode veille.
 
-Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt D</kbd> (for external display).
+Vous pouvez accéder au mode de présentation des médias en cliquant sur le bouton ▶️ (lecture) sur l'écran principal de M³, ou en utilisant le raccourci clavier <kbd>Alt D</kbd>.
 
-Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
+Une fois que vous êtes entré en mode présentation, l'écran de sélection de dossier vous permettra de sélectionner la date pour laquelle vous souhaitez afficher les médias. Si un dossier existe avec la date du jour actuel, il sera automatiquement présélectionné. Une fois qu'une date est sélectionnée, vous pouvez modifier la date sélectionnée à tout moment en cliquant sur le bouton de sélection de la date, dans la section supérieure.
 
-### Presenting media
+### Présentation des médias
 
-To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
+Pour lire des médias, appuyez sur le bouton ▶️ (lecture) pour le fichier que vous souhaitez. Pour masquer le média, appuyez sur le bouton ⏹️ (arrêt). Une vidéo peut être reculée ou avancée rapidement lorsqu'elle est sur pause, si désiré. Veuillez noter que pour les vidéos, le bouton d'arrêt doit être appuyé **deux fois** pour arrêter la vidéo. Ceci est pour éviter d'arrêter accidentellement et prématurément une vidéo pendant qu'elle est en cours de lecture devant l'assemblée locale. Une vidéo s'arrête automatiquement lorsqu'elle a été visionné au complet.
 
-### Conducting hybrid meetings using a combination of M³, OBS Studio, and Zoom
+### Tenir des réunions hybrides en utilisant M³, OBS Studio et Zoom
 
-By far the simplest way to share media during hybrid meetings is by configuring OBS Studio, M³ and Zoom to work together.
+La façon la plus simple de partager des médias lors de réunions hybrides consiste à configurer OBS Studio, M³ et Zoom pour qu'ils travaillent ensemble.
 
-#### Initial configuration: Kingdom Hall computer
+#### Configuration initiale : Ordinateur de la Salle du Royaume
 
-Set the external monitor's screen resolution to 1280x720, or something close to that.
+Réglez la résolution du moniteur externe à 1280x720.
 
 Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
 
