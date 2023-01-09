@@ -21,7 +21,7 @@ Observera att funktionen för församlingssynkronisering är helt valfri.
 M³:s underliggande synkningsmekanism använder WebDAV. Detta innebär att MO (eller någon under hans övervakning) behöver antingen:
 
 - konfigurera en säker WebDAV-server som är tillgänglig på webben, **eller**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- använd en tredjeparts molnlagringstjänst som stöder WebDAV-protokollet (se *Webaddress* inställningar i avsnittet *Inställningar för församlingssynkronisering* nedan).
 
 Alla användare som vill synkroniseras tillsammans måste ansluta till samma WebDAV-server med hjälp av den anslutningsinformation och uppgifter som tillhandahålls av deras MO.
 
