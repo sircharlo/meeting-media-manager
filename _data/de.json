@@ -32,12 +32,12 @@
   },
   "present-media": {
     "imgButton": "Schaltfläche zum Einschalten des Mediencontroller-Modus",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgSelectMeeting": "Wählen Sie eine Zusammenkunft für die Medien angezeigt werden soll",
+    "imgBG": "Standard-Medien-Hintergrund mit automatisch generiertem Jahrestext",
+    "imgMediaList": "Liste der Medien, die zum Freigeben bereit ist",
+    "imgStandby": "M³ Media Präsentation im Standby-Modus",
+    "imgDisplayPic": "Bild anzeigen",
+    "imgPlayVideo": "Video abspielen",
+    "imgVideoScrub": "Zu einer bestimmten Zeit in einem Video wechseln"
   }
 }
