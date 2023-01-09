@@ -4,7 +4,7 @@ permalink: /fi/
   
 ### Mikä on M³?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+**Meeting Media Manager**, tai **M³** lyhennys, on Windows, macOS ja Linux sovellus, joka lataa automaattisesti kuvia ja videoita, jota käytetään Jehovan todistajien kokouksissa, millä tahansa JW.org:n kielellä.
 
 Se sisältää toistuvan ja mukautetun mediahallinnan sekä valinnaisen synkronointiominaisuuden saman seurakunnan jäsenille sekä tuen useille seurakunnille ja/tai ryhmille, jotka käyttävät samaa tietokonetiliä.
 
@@ -24,10 +24,10 @@ Mitä tulee täysin **etä** seurakunnan Zoom-kokouksiin, M³:n sisäänrakennet
 
 ### Toimiiko M³ kielelläni?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
+**Kyllä!** Jehovan todistajien kokouksiin tarkoitetut tiedotusvälineet voidaan ladata automaattisesti millä tahansa sadoilla kielellä JW.orgista. Käytettävissä olevien kielten luettelo on dynaamisesti päivitetty; sinun tarvitsee vain valita haluamasi kieli.
 
-In addition, M³ itself has been translated into 15 languages and counting, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Lisäksi monet vapaaehtoiset ovat kääntäneet M³ sovelluksen 15 kielelle ja lisää kieliä on tulossa. Voit siksi valita kielen, jonka haluat M³:n käyttävän.
 
-This app is made with love and a bit of spare time. Enjoy!
+Tämä sovellus on tehty rakkaudella ja hieman vapaa-ajalla. Nauti!
 
 ### Kuvakaappaukset
