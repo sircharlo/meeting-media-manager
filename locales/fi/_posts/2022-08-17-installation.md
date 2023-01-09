@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Asetukset
 title: Asennus
 ref: installation
 ---
