@@ -5,13 +5,13 @@ permalink: /es/
 ### ¿Qué es M³?
 
 **Meeting Media Manager**, o **M³** para abreviar, es una aplicación para Windows, macOS y Linux que descarga automáticamente imágenes y videos que se usarán durante las reuniones de congregación de los testigos de Jehová, en cualquier idioma que se encuentre en JW.org.
-  
+
 Cuenta con administración de medios personalizados y recurrentes, así como una función de sincronización opcional para miembros de la misma congregación, demás de soporte para múltiples congregaciones y/o grupos que usan la misma cuenta de computadora.
 
 ### ¿Qué puede hacer M³?
 
 M³ le permite descargar, sincronizar, compartir y presentar fácil y automáticamente todos los contenidos de la reunión.
-  
+
 Para reuniones de congregación **híbridas** o **en persona**, el modo de presentación de contenidos integrado tiene todas las funciones necesarias para simplificar la tarea de compartir contenidos con la congregación, que incluyen:
 
 - Miniaturas multimedia
