@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Hjälp
 title: Anmärkningar om teknisk användning
 ref: usage-notes
 ---
