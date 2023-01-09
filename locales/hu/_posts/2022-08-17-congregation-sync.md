@@ -21,7 +21,7 @@ Felhívjuk figyelmét, hogy a gyülekezet szinkronizálási funkció választhat
 M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
 
 - egy biztonságos WebDAV-kiszolgáló beállítása, amely az interneten keresztül elérhető, **vagy**
-- olyan harmadik féltől származó felhő alapú tárhelyszolgáltatást használ, amely támogatja a WebDAV protokollt (lásd a Hosztnév beállítást az alábbi *Gyülekezeti szinkronizálás beállítása* szakaszban).
+- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
 
 A szinkronizálni szándékozó összes felhasználót ugyanahhoz a WebDAV-kiszolgálóhoz kell csatlakoztatni a videokonferencia-szervező által megadott kapcsolódási információk és hitelesítő adatok segítségével.
 
