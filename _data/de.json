@@ -2,9 +2,9 @@
   "lang": "de",
   "name": "Deutsch",
   "language": "Sprache:",
-  "search": "Filter by keyword",
+  "search": "Nach Stichwort filtern",
   "shared": {
-    "explanation": "Explanation",
+    "explanation": "Erklärung",
     "option": "Option",
     "optionsApp": "Einstellungen: Anwendung",
     "optionsCongSync": "Einstellungen: Versammlungs-Synchronisierung",
@@ -12,26 +12,26 @@
     "optionsMeetings": "Einstellungen: Zusammenkunft",
     "password": "Passwort",
     "port": "Port",
-    "setting": "Setting"
+    "setting": "Einstellung"
   },
   "home": {
-    "expand": "Expand all articles",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
-    "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
-    "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "expand": "Alle Abschnitte ausklappen",
+    "collapse": "Alle Abschnitte einklappen",
+    "syncInProgress": "Medien-Synchronisation läuft",
+    "mainScreen": "Hauptseite",
+    "chooseWeek": "Woche auswählen",
+    "syncComplete": "Synchronisation abgeschlossen!",
+    "musicPlaying": "Musik vor und nach den Zusammenkünften abspielen"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgAddSong": "Ein Lied für einen öffentlichen Vortrag hinzufügen",
+    "imgAddPic": "Ein zusätzliches Bild hinzufügen",
+    "imgImportJWPUB": "Medien aus einem Abschnitt in einer JWPUB-Datei importieren",
+    "imgPreviewJWPUB": "Vorschau von Medien aus einer JWPUB-Datei vor dem Importieren",
+    "imgRename": "Umbenennen einer Mediendatei"
   },
   "present-media": {
-    "imgButton": "Button to enter media controller mode",
+    "imgButton": "Schaltfläche zum Einschalten des Mediencontroller-Modus",
     "imgSelectMeeting": "Selecting a meeting for which to display media",
     "imgBG": "Default media background, with automatically generated yeartext",
     "imgMediaList": "List of media that is ready to be presented",
