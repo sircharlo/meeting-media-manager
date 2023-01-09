@@ -6,8 +6,8 @@ ref: bug-feature
 
 ### Miten ilmoitan havaitsemastani ongelmasta tai bugista?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+Jos kohtaat ongelmia M³:n kanssa, ole hyvä ja käytä [GitHub -kysymyksiä]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) raportoidaksesi siitä. Virheenkorjauksia tehdään säännöllisesti, yleensä kuukausittain.
 
 ### Miten voin pyytää uusia ominaisuuksia?
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+Olen avoin ehdotuksille! Ole hyvä ja käytä [GitHub keskustelut]({{site.github}}/discussions) keskustellaksesi mahdollisista uusista ominaisuuksista.
