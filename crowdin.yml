@@ -1,5 +1,4 @@
 project_id: "559843"
-api_token_env: "CROWDIN_PERSONAL_TOKEN"
 commit_message: "chore: new translations for %language%"
 append_commit_message: false
 files:
