@@ -30,7 +30,7 @@ A maneira mais simples de exibir as mídias durante reuniões híbridas é confi
 
 Defina a resolução da tela externa para 1280x720, ou algo próximo disso.
 
-Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
+Conecte o cabo P10 na mesa de som e o P2 na saída de áudio do computador para mandar o áudio do computador para os auto-falantes do Salão do Reino. E um cabo P10 ou RCA na entrada de gravação da mesa de som, e o P2 na saída de microfone do computador.
 
 #### Configuração inicial: OBS Studio
 
