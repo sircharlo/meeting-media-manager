@@ -21,7 +21,7 @@ Pange tähele, et koguduse sünkroonimise funktsioon on täiesti valikuline.
 M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
 
 - seadistage turvaline WebDAV-server, millele on juurdepääs veebis, **või**
-- kasutada kolmanda osapoole pilvesalvestusteenust, mis toetab WebDAV-protokolli (vt sätet Hostinimi allolevas jaotises *Koguduse sünkroonimise sätted_).
+- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
 
 Kõik kasutajad, kes soovivad koos sünkroonida, peavad looma ühenduse sama WebDAV-serveriga, kasutades ühenduse teavet ja mandaate, mille neile annab nende VO.
 
