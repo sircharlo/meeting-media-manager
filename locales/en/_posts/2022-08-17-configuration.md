@@ -39,7 +39,7 @@ See the [Congregation sync]({{page.lang}}/#congregation-sync) section for detail
 | `Background image for media presentation mode` | By default, M³ will attempt to fetch the current year's text in the language selected previously, in order to display it on a black background when in [Media Presentation mode]({{page.lang}}/#present-media) and no other media is being played. If the automatic yeartext retrieval fails for some reason, or if you wish to display a different background image, you can either use the 'Browse' button to select a custom picture, or the 'Refresh' button to try fetching the yeartext automatically again. <br><br> ***Note:** If [Congregation sync]({{page.lang}}/#congregation-sync) is enabled, selecting a custom background image will synchronize it for all congregation sync users automatically.* |
 | `Create playlists for use with VLC` | Enable this if you want to generate playlists for every meeting automatically, which can then be loaded in VLC, if you are using that app to display media instead of [Media Presentation mode]({{page.lang}}/#present-media). |
 | `Exclude all media from the th brochure` | If enabled, this will prevent media from the *Apply Yourself* brochure from being included at every midweek meeting. |
-| `Exclude images from the lff book outside congregation bible study` | If enabled, this will prevent images from the *Live Forever* book (*lff*) from being included, for example for student assignments during the midweek meeting. |
+| `Exclude Enjoy Life Forever images outside the Congregation Bible Study` | If enabled, this will prevent images from the *Live Forever* book (*lff*) from being included, for example for student assignments during the midweek meeting. |
 
 ### Meeting setup
 
