@@ -4,18 +4,18 @@ title: Installation
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+M³ ne nécessite pas de droits d'administrateur pour s'installer ou s'exécuter. Pour installer M³, il vous suffit de [télécharger le dernier installateur]({{site.github}}/releases/latest) et de l'exécuter.
 
-| Operating System | File to download                                       |
-| ---------------- | ------------------------------------------------------ |
-| Windows          | `meeting-media-manager-[VERSION]-[ARCH].exe`           |
-| macOS            | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
-| Linux            | `meeting-media-manager-[VERSION]-[ARCH].AppImage`      |
+| Système d'exploitation | Fichier à télécharger                                  |
+| ---------------------- | ------------------------------------------------------ |
+| Windows                | `meeting-media-manager-[VERSION]-[ARCH].exe`           |
+| macOS                  | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
+| Linux                  | `meeting-media-manager-[VERSION]-[ARCH].AppImage`      |
 
-### What's next
+### Et maintenant ?
 
-Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
+Configurez l'application à l'aide de l'écran [Réglages]({{page.lang}}/#configuration).
 
-### Trouble installing?
+### Des problèmes d'installation ?
 
-Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.
+Consultez les [Notes techniques]({{page.lang}}/#usage-notes) pour obtenir de l'aide.
