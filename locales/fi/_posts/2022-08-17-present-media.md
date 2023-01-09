@@ -1,5 +1,5 @@
 ---
-tag: Usage
+tag: Käyttö
 title: Median esitystila
 ref: present-media
 ---
@@ -10,17 +10,17 @@ Mediaesitys- ja ohjaintilat on suunniteltu yksinkertaiseksi ja estämään virhe
 
 Kun vaihtoehto `Esitä media ulkoisella näytöllä tai erillisessä ikkunassa on käytössä`, mediaesitysnäyttö tulee automaattisesti näkyviin ulkoiselle näytölle, jos sellainen on, tai erillisessä, vedettävässä ja muutettavassa ikkunassa, jos ulkoista näyttöä ei havaittu.
 
-When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
+Kun tila on käytössä, median esitysnäyttö näyttää taustakuvan, joka on määritetty asetuksissa. Jos taustakuvaa ei ole määritetty, M³ yrittää automaattisesti noutaa ja näyttää vuositekstin.
 
 Jos taustakuvaa ei ole määritetty asetuksissa eikä vuositekstiä voitu ladata automaattisesti, valmiustilassa näkyy musta tausta.
 
 Mediaohjaintilaan pääsee napsauttamalla ▶️ (toisto) -painiketta M³:n päänäytössä tai käyttämällä pikanäppäintä <kbd>Alt D</kbd> (ulkoiselle näytölle).
 
-Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
+Mediantoistotilassa voi valita mille päivämäärälle haluat näyttää median. Jos nykyisen päivän kansio on olemassa, se valitaan automaattisesti. Kun päivämäärä on valittu, voit silti muuttaa valittua päivämäärää milloin tahansa klikkaamalla päivämäärän valintapainiketta, ylimmässä osiossa.
 
 ### Median esittely
 
-To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
+Toistaaksesi mediaa, paina ▶️ (Toista) painiketta. Voit piilottaa median, paina ⏹️ (stop) painiketta. Videota voidaan kelata taakse tai eteenpäin vain pause-tilassa. Huomaa, että videoiden osalta, pysäytyspainiketta on painettava **kahdesti** estääksesi videon pysäyttämisen vahingossa. Videot pysähtyvät automaattisesti, kun ne ovat pelanneet kokonaan.
 
 ### Hybridikokousten johtaminen M³:n, OBS Studion ja Zoomin yhdistelmällä
 
@@ -38,17 +38,17 @@ Asenna OBS Studio tai lataa kannettava versio.
 
 Jos käytät OBS Studion siirretävää versiota, asenna [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/)-laajennus, ja jos käytät OBS Studion siirrettävää versiota, lisää virtuaalikamera Windowsiin kaksoisnapsauttamalla mukana toimitettua asennuskomentosarjaa.
 
-If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
+Jos sinulla on OBS Studio v27 tai vanhempi, sinun täytyy asentaa [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Muuten obs-websocket sisältyy. Määritä obs-websocketin porttinumero ja salasana.
 
-In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
+OBS asetuksissa kohdassa `Yleistä` > `Järjestelmän ilmoitusalue`, salli kaikki valintaruudut. Ota `Output` > `Streaming`käyttöön laitteistoenkooderi jos käytettävissä. Kohteena `Video` > `Base (Canvas)` ja `Output (Scaled)`, valitse `1280x720`, ja alle `Alamittakaavan Suodatin`, valitse `Bilinear`.
 
-Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
+Määritä vähintään 2 skeneä: yksi mediatiedonäytölle (`Ikkunan kaappaus` tai `Näyttö` kun hiiren kursori on poistettu käytöstä ja sopiva ikkunan otsikko/näyttö valittu), ja toinen näyttämölle (`Video Capture Laite` salin kamera valittu). Voit lisätä niin monta skenea kuin tarvitset, kamera on säädetty, zoomed-in ja rajataan tarpeen mukaan (puhuja ja lukijan näkymä jne.).
 
 Lisää OBS Studion pikakuvake `--startvirtualcam`-parametrilla Windowsin käyttäjäprofiilin Käynnistys-kansioon varmistaaksesi, että OBS Studio käynnistyy automaattisesti, kun käyttäjä kirjautuu sisään.
 
 #### Alkukokoonpano: Valtakunnan sali Zoom
 
-Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
+Zoom on konfiguroitava käyttämään kahta näyttöä. Ota käyttöön globaali näppäimistön pikakuvakkeet Zoomia varten, jotta voit mykistää tai poistaa mykistys salin ääntä Zoomissa (<kbd>Alt A</kbd>), ja aloittaa / lopettaa salin video syöte Zoomiin (<kbd>Alt V</kbd>).
 
 Aseta oletus"mikrofoniksi" mikserin yhdistetty ulostulo (jotta kaikki valtakunnansalin äänijärjestelmän kautta kuuluva välitetään Zoomin kautta, mukaan lukien mikrofonit ja media) ja "kameraksi" OBS Studion tarjoama virtuaalikamera.
 
@@ -60,15 +60,15 @@ Ota käyttöön ja määritä OBS Studion yhteensopivuustila käyttämällä por
 
 #### Kokouksen aloittaminen
 
-Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
+Aloita Zoom-kokous ja siirrä toissijainen zoomausikkuna ulkoiseen näyttöön. Tee se halutessasi koko näytölle. Tässä kohdassa kaikki etäkokouksen osallistujat näytetään seurakunnalle.
 
-Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
+Kun Zoom-kokous on näkyvissä ulkoisessa näytössä, avaa M³. Median esitysikkuna aukeaa automaattisesti ulkoisen monitorin Zoom päälle. Synkronoi mediaa tarvittaessa ja kirjoita mediasäätimen tila klikkaamalla ▶️ (play) painiketta M3:n pääruudulla, tai <kbd>Alt D</kbd>.
 
-Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
+Ota käyttöön salin video syöte (<kbd>Alt V</kbd>), ja spotlightaa salin video syöte tarvittaessa, jotta Zoom osallistujat näkevät salin lavan. Poista mykistys salin äänisyötteestä Zoomissa (<kbd>Alt A</kbd>). Ei pitäisi olla tarpeen poistaa video- tai äänilähtöä Zoomista kokouksen aikana.
 
 Aloita taustamusiikin toisto painamalla vasemmassa alakulmassa olevaa painiketta tai <kbd>Alt K</kbd>.
 
-#### Henkilökohtaisten osien lähettäminen valtakunnansalin näyttämöltä Zoomin kautta
+#### Lähettää osa salin lavaa Zoomin kautta
 
 Toimenpiteitä ei tarvita.
 
@@ -78,15 +78,15 @@ Erilaisia kamerakulmia/zoomauksia voidaan valita kokouksen aikana käyttämäll�
 
 Etsi mediaa, jonka haluat jakaa M³ mediatoiston ohjausikkunasta ja paina "toisto"-painiketta.
 
-When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
+Kun olet valmis jakaamaan mediaa, paina "pysäytä" -painiketta M³:ssa. Huomaa, että videot pysähtyvät automaattisesti kun ne on valmiita.
 
 #### Näyttää Zoomin etäosapuolet valtakunnansalin näytöllä
 
-Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+Paina "piilota / näytä median esitysikkuna" -painiketta M³ media ikkunan alakulmassa, tai <kbd>Alt Z</kbd>, **piiloittaa** median esitysikkunan. Zoom kokous tulee nyt näkyviin salin näyttööni.
 
 > Jos osallistujalla on näytettävää mediaa, noudata **Median jakaminen valtakunnansalissa ja Zoomissa**-alaotsikon ohjeita.
 
-Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
+Kun osallistuja on suorittanut osuutensa, paina "piilota / näytä median esitysikkuna" -painiketta M³-median oikeassa alakulmassa, tai <kbd>Alt Z</kbd>, **näyttää** medianäyttö ikkunan. The Kingdom Hall monitor will now show the yeartext.
 
 ### Hybridikokousten pitäminen vain M³:lla ja Zoomilla
 
