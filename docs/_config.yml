@@ -1,0 +1,84 @@
+domain: sircharlo.github.io # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
+url: https://sircharlo.github.io # the base hostname and protocol for your site, e.g. http://example.com
+baseurl: /meeting-media-manager # place folder name if the site is served in a subfolder
+github: 'https://github.com/sircharlo/meeting-media-manager'
+title: 'M³ - Meeting Media Manager'
+permalink: 'nothing'
+sass:
+  style: compressed
+exclude:
+  [
+    'Gemfile',
+    'Gemfile.lock',
+    'assets/js/articles.js',
+    'assets/js/lang.js',
+    'assets/js/search.js',
+    'locales/**/_posts',
+    'vendor'
+  ]
+defaults:
+  - scope:
+      path: ''
+      type: 'pages'
+    values:
+      layout: 'default'
+  - scope:
+      path: 'locales/**/posts/*'
+    values:
+      output: false
+  - scope:
+      path: 'locales/de/**/*'
+    values:
+      lang: 'de'
+  - scope:
+      path: 'locales/en/**/*'
+    values:
+      lang: 'en'
+  - scope:
+      path: 'locales/es/**/*'
+    values:
+      lang: 'es'
+  - scope:
+      path: 'locales/et/**/*'
+    values:
+      lang: 'et'
+  - scope:
+      path: 'locales/fi/**/*'
+    values:
+      lang: 'fi'
+  - scope:
+      path: 'locales/fr/**/*'
+    values:
+      lang: 'fr'
+  - scope:
+      path: 'locales/hu/**/*'
+    values:
+      lang: 'hu'
+  - scope:
+      path: 'locales/it/**/*'
+    values:
+      lang: 'it'
+  - scope:
+      path: 'locales/mg/**/*'
+    values:
+      lang: 'mg'
+  - scope:
+      path: 'locales/nl/**/*'
+    values:
+      lang: 'nl'
+  - scope:
+      path: 'locales/pt/**/*'
+    values:
+      lang: 'pt-BR'
+  - scope:
+      path: 'locales/pt-pt/**/*'
+    values:
+      lang: 'pt-PT'
+  - scope:
+      path: 'locales/ru/**/*'
+    values:
+      lang: 'ru'
+  - scope:
+      path: 'locales/sv/**/*'
+    values:
+      lang: 'sv'

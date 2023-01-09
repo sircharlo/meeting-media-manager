@@ -1,0 +1,43 @@
+{
+  "lang": "pt-BR",
+  "name": "Português - Brasil",
+  "language": "Idioma:",
+  "search": "Filtrar por palavra-chave",
+  "shared": {
+    "explanation": "Explicação",
+    "option": "Opção",
+    "optionsApp": "Configuração do programa",
+    "optionsCongSync": "Configuração do servidor da congregação",
+    "optionsMedia": "Configuração de mídia",
+    "optionsMeetings": "Configuração da reunião",
+    "password": "Senha",
+    "port": "Porta",
+    "setting": "Configuração\n"
+  },
+  "home": {
+    "expand": "Expandir todos os tópicos",
+    "collapse": "Reduzir todos os tópicos",
+    "syncInProgress": "Baixando as mídias da reunião.",
+    "mainScreen": "Tela principal",
+    "chooseWeek": "Escolha uma semana",
+    "syncComplete": "Baixou todas as mídias!",
+    "musicPlaying": "Reproduzindo cânticos antes e depois das reuniões"
+  },
+  "manage-media": {
+    "imgAddSong": "Adicionando um cântico para um discurso público",
+    "imgAddPic": "Adicionando uma imagem",
+    "imgImportJWPUB": "Importando mídia de um tópico em um arquivo JWPUB",
+    "imgPreviewJWPUB": "Visualizando mídia de um arquivo JWPUB antes de importar",
+    "imgRename": "Renomeando um arquivo de mídia"
+  },
+  "present-media": {
+    "imgButton": "Botão para entrar no modo de exibição de mídia",
+    "imgSelectMeeting": "Selecionando uma reunião para exibir a mídia",
+    "imgBG": "Plano de fundo de mídia padrão, com texto do ano gerado automaticamente",
+    "imgMediaList": "Lista de mídias que estão prontas para serem exibidas",
+    "imgStandby": "Tela de exibição de mídias sem nenhuma mídia em reprodução",
+    "imgDisplayPic": "Exibindo uma imagem",
+    "imgPlayVideo": "Reproduzindo um vídeo",
+    "imgVideoScrub": "Arrastando a linha do tempo para um momento específico de um vídeo"
+  }
+}

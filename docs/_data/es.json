@@ -1,0 +1,43 @@
+{
+  "lang": "es",
+  "name": "Español",
+  "language": "Idioma:",
+  "search": "Filtrar por palabra clave",
+  "shared": {
+    "explanation": "Explicación",
+    "option": "Opción",
+    "optionsApp": "Configuración de la aplicación",
+    "optionsCongSync": "Configuración de sincronización de la congregación",
+    "optionsMedia": "Configuración de multimedia",
+    "optionsMeetings": "Configuración de la reunión",
+    "password": "Contraseña",
+    "port": "Puerto",
+    "setting": "Ajuste"
+  },
+  "home": {
+    "expand": "Expandir todos los artículos",
+    "collapse": "Contraer todos los artículos",
+    "syncInProgress": "Sincronización de contenidos de reunión en curso",
+    "mainScreen": "Pantalla principal",
+    "chooseWeek": "Elija una semana",
+    "syncComplete": "¡Sincronización completa!",
+    "musicPlaying": "Reproducción de música antes y después de la reunión"
+  },
+  "manage-media": {
+    "imgAddSong": "Agregar una canción para un discurso público",
+    "imgAddPic": "Agregar una imagen adicional",
+    "imgImportJWPUB": "Importación de contenido desde una sección en un archivo JWPUB",
+    "imgPreviewJWPUB": "Vista previa de contenido desde un archivo JWPUB antes de importar",
+    "imgRename": "Cambiar el nombre de un archivo multimedia"
+  },
+  "present-media": {
+    "imgButton": "Botón para entrar en el modo de controlador de contenidos",
+    "imgSelectMeeting": "Selección de una reunión para la que mostrar contenidos",
+    "imgBG": "Fondo multimedia predeterminado, con texto de año generado automáticamente",
+    "imgMediaList": "Lista de contenidos que está lista para ser presentada",
+    "imgStandby": "Presentación multimedia M³ en modo de espera",
+    "imgDisplayPic": "Mostrar una imagen",
+    "imgPlayVideo": "Reproducir un video",
+    "imgVideoScrub": "Moverse a un momento específico en un video"
+  }
+}

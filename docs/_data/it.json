@@ -1,0 +1,43 @@
+{
+  "lang": "it",
+  "name": "Italiano",
+  "language": "Lingua:",
+  "search": "Filtra per parola chiave",
+  "shared": {
+    "explanation": "Spiegazione",
+    "option": "Opzione",
+    "optionsApp": "Impostazioni applicazione",
+    "optionsCongSync": "Impostazioni sincronizzazione congregazione",
+    "optionsMedia": "Impostazioni media",
+    "optionsMeetings": "Impostazioni adunanza",
+    "password": "Password",
+    "port": "Porta",
+    "setting": "Impostazioni"
+  },
+  "home": {
+    "expand": "Espandere tutti gli articoli",
+    "collapse": "Comprimi tutti gli articoli",
+    "syncInProgress": "Sincronizzazione media in corso",
+    "mainScreen": "Schermo principale",
+    "chooseWeek": "Scegliere la settimana",
+    "syncComplete": "Sincronizzazione completa!",
+    "musicPlaying": "Riproduzione musica pre e post adunanza"
+  },
+  "manage-media": {
+    "imgAddSong": "Aggiunta di un cantico per un discorso pubblico",
+    "imgAddPic": "Aggiunta di un'altra immagine",
+    "imgImportJWPUB": "Importa file multimediali da una sezione di un file JWPUB",
+    "imgPreviewJWPUB": "Anteprima dei media da un file JWPUB prima di importarli",
+    "imgRename": "Ridenominazione di un file multimediale"
+  },
+  "present-media": {
+    "imgButton": "Pulsante per accedere alla modalità controllo multimediale",
+    "imgSelectMeeting": "Selezione di un'adunanza per la quale visualizzare i contenuti multimediali",
+    "imgBG": "Sfondo predefinito, con testo della scrittura dell'anno generato automaticamente",
+    "imgMediaList": "Elenco dei media pronti per essere mostrati",
+    "imgStandby": "Presentazione media di M³ in standby",
+    "imgDisplayPic": "Mostra immagine",
+    "imgPlayVideo": "Riproduce video",
+    "imgVideoScrub": "Passare a un punto specifico di un video"
+  }
+}

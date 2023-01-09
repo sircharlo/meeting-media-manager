@@ -17,6 +17,7 @@ In order to help maintain this application, the following information will help 
 - [Git](https://git-scm.com/) >= v2.34.1
 - [Node.js](https://nodejs.org/en/) >= v16.13.0
 - [Yarn](https://yarnpkg.com/) >= v3.2.3
+- [Bundler](https://bundler.io/) >= v2.3.5 (for the documentation site)
 - [VS Code](https://code.visualstudio.com/) >= v1.70.2
   - VS Code extensions: see [extensions.json](./.vscode/extensions.json)
 
@@ -89,6 +90,17 @@ To release a new version of the application, you first create a draft release on
 
 ### Contribute to the documentation site
 
-More information about contributing to the documentation site specifically can be found in the [CONTRIBUTING.md](https://github.com/sircharlo/meeting-media-manager/blob/docs/CONTRIBUTING.md) of the docs branch.
+The documentation website is hosted on [GitHub Pages](https://pages.github.com/) and generated with [Jekyll](https://jekyllrb.com/docs/installation/). To run the documentation site locally, you can follow the [instructions](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) of GitHub Pages. Once you have installed [Bundler](https://bundler.io/), you can run the following commands:
 
-The documentation website will automatically be updated when changes are pushed to the docs branch.
+``` bash
+# Open the docs folder
+cd docs
+
+# Install dependencies
+bundle install
+
+# Serve website with hot reload on localhost:4000
+bundle exec jekyll serve
+```
+
+The documentation website will automatically be updated when changes are pushed to the docs folder.

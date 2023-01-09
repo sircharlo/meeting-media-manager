@@ -1,0 +1,47 @@
+---
+layout: null
+permalink: '/'
+---
+
+<!-- Auto detect preferred language and serve it if it's available -->
+<script>
+  const available = [
+    'de',
+    'en',
+    'es',
+    'et',
+    'fi',
+    'fr',
+    'hu',
+    'it',
+    'mg',
+    'nl',
+    'pt-PT',
+    'pt-BR',
+    'ru',
+    'sv',
+    //'wes-x-pgw'
+  ]
+  let foundLang = false
+  for (const lang of navigator.languages) {
+    if (available.includes(lang)) { // Exact match (e.g. 'en' gets '/en/')
+      foundLang = true
+      window.location.replace(`${lang}/`)
+      break
+    } else if (available.includes(lang.split('-')[0])) { // User is using a specific dialect of a language (e.g. 'en-US' gets '/en/')
+      foundLang = true
+      window.location.replace(`${lang.split('-')[0]}/`)
+      break
+    } else { // Exact match not found, try to find a language that starts with the same string (e.g. 'pt' gets '/pt-PT/')
+      const match = available.find((l) => split('-')[0] === lang.split('-')[0])
+      if (match) {
+        foundLang = true
+        window.location.replace(`${match}/`)
+        break
+      }
+    }
+  }
+  if (!foundLang) {
+    window.location.replace('en/')
+  }
+</script>

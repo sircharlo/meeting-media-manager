@@ -118,8 +118,21 @@
     "русский",
     "українська"
   ],
-  "cSpell.ignoreWords": ["transform", "PDF", "TERMS", "shorthand"],
-  "cSpell.ignorePaths": ["src/renderer/locales/*"],
+  "cSpell.ignoreWords": [
+    "transform",
+    "PDF",
+    "TERMS",
+    "shorthand",
+    "transform",
+    "focusring"
+  ],
+  "cSpell.ignorePaths": [
+    "src/renderer/locales/*",
+    "docs/_data/*",
+    "!docs/_data/en.json",
+    "docs/locales/*",
+    "!docs/locales/en/*"
+  ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.enabled": true
 }

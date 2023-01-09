@@ -1,0 +1,43 @@
+{
+  "lang": "hu",
+  "name": "magyar",
+  "language": "Nyelv:",
+  "search": "Szűrés kulcsszó alapján",
+  "shared": {
+    "explanation": "Magyarázat",
+    "option": "Opció",
+    "optionsApp": "Alkalmazás beállítása",
+    "optionsCongSync": "Gyülekezeti szinkronizálás beállítása",
+    "optionsMedia": "Média beállítása",
+    "optionsMeetings": "Összejövetel beállítása",
+    "password": "Jelszó",
+    "port": "Port",
+    "setting": "Beállítás"
+  },
+  "home": {
+    "expand": "Összes cikk kibontása",
+    "collapse": "Összes cikk bezárása",
+    "syncInProgress": "Összejövetel médiaszinkronizálása folyamatban",
+    "mainScreen": "Főképernyő",
+    "chooseWeek": "Válasszon egy hetet",
+    "syncComplete": "Szinkronizálás befejezve!",
+    "musicPlaying": "Összejövetel előtti és utáni zenelejátszás"
+  },
+  "manage-media": {
+    "imgAddSong": "Ének hozzáadása egy nyilvános előadáshoz",
+    "imgAddPic": "További képek hozzáadása",
+    "imgImportJWPUB": "Média importálása egy JWPUB fájl adott részéből",
+    "imgPreviewJWPUB": "Média előnézet a JWPUB fájlból importálás előtt",
+    "imgRename": "Médiafájl átnevezése"
+  },
+  "present-media": {
+    "imgButton": "Gomb a médiavezérlő üzemmódba lépéshez",
+    "imgSelectMeeting": "A média megjelenítésére tervezett összejövetel kiválasztása",
+    "imgBG": "Alapértelmezett média háttér, automatikusan frissített éviszöveggel",
+    "imgMediaList": "A megjelenítésre kész média listája",
+    "imgStandby": "M³ médiamegjelenítés készenléti üzemmódban",
+    "imgDisplayPic": "Egy kép megjelenítése",
+    "imgPlayVideo": "Egy videó lejátszása",
+    "imgVideoScrub": "Egy adott időpontra ugrás egy videóban"
+  }
+}

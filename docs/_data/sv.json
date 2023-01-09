@@ -1,0 +1,43 @@
+{
+  "lang": "sv",
+  "name": "Svenska",
+  "language": "Språk:",
+  "search": "Filtrera efter nyckelord",
+  "shared": {
+    "explanation": "Förklaring",
+    "option": "Alternativ",
+    "optionsApp": "Programinställningar",
+    "optionsCongSync": "Inställningar för församlingssynkronisering",
+    "optionsMedia": "Mediainställningar",
+    "optionsMeetings": "Mötesinställningar",
+    "password": "Lösenord",
+    "port": "Port",
+    "setting": "Inställning"
+  },
+  "home": {
+    "expand": "Utöka alla artiklar",
+    "collapse": "Komprimera alla artiklar",
+    "syncInProgress": "Synkronisering av mötesmedia pågår",
+    "mainScreen": "Huvudskärm",
+    "chooseWeek": "Välj en vecka",
+    "syncComplete": "Synkronisering klar!",
+    "musicPlaying": "Musik före och efter mötet spelas"
+  },
+  "manage-media": {
+    "imgAddSong": "Lägger till en låt för ett offentligt föredrag",
+    "imgAddPic": "Lägger till ytterligare en bild",
+    "imgImportJWPUB": "Importera media från en sektion i en JWPUB-fil",
+    "imgPreviewJWPUB": "Förhandsgranska media från en JWPUB-fil innan import",
+    "imgRename": "Byter namn på en mediefil"
+  },
+  "present-media": {
+    "imgButton": "Knapp för att gå in i mediakontrollläge",
+    "imgSelectMeeting": "Välja ett möte för vilket media ska visas",
+    "imgBG": "Standard mediebakgrund, med automatiskt genererad årstext",
+    "imgMediaList": "Lista över media som är redo att presenteras",
+    "imgStandby": "M³ mediapresentation i standbyläge",
+    "imgDisplayPic": "Visar en bild",
+    "imgPlayVideo": "Spelar upp en video",
+    "imgVideoScrub": "Flytta till en specifik tidpunkt i en video"
+  }
+}

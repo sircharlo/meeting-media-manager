@@ -1,0 +1,16 @@
+{
+  "lang": "de",
+  "name": "Deutsch",
+  "language": "Sprache:",
+  "shared": {
+    "optionsApp": "Einstellungen: Anwendung",
+    "optionsCongSync": "Einstellungen: Versammlungs-Synchronisierung",
+    "optionsMedia": "Einstellungen: Medien",
+    "optionsMeetings": "Einstellungen: Zusammenkunft",
+    "password": "Passwort",
+    "port": "Port"
+  },
+  "home": {},
+  "manage-media": {},
+  "present-media": {}
+}

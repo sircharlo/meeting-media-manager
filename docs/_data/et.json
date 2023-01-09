@@ -1,0 +1,43 @@
+{
+  "lang": "et",
+  "name": "eesti",
+  "language": "Keel:",
+  "search": "Filtreerige märksõna järgi",
+  "shared": {
+    "explanation": "Selgitus",
+    "option": "Võimalus",
+    "optionsApp": "Rakenduse sätted",
+    "optionsCongSync": "Koguduse sünkroonimise sätted",
+    "optionsMedia": "Meedia sätted",
+    "optionsMeetings": "Koosoleku sätted",
+    "password": "Parool",
+    "port": "Port",
+    "setting": "Seadistamine"
+  },
+  "home": {
+    "expand": "Laienda kõiki valikud",
+    "collapse": "Ahenda kõik valikud",
+    "syncInProgress": "Koosoleku meedia sünkroonimine on pooleli",
+    "mainScreen": "Peaekraan",
+    "chooseWeek": "Valige nädal",
+    "syncComplete": "Sünkroonimine on lõpetatud!",
+    "musicPlaying": "Muusika mängimine enne ja pärast koosolekut"
+  },
+  "manage-media": {
+    "imgAddSong": "Laulu lisamine avalikuks kõneks",
+    "imgAddPic": "Lisapildi lisamine",
+    "imgImportJWPUB": "Meediumi importimine JWPUB-faili jaotisest",
+    "imgPreviewJWPUB": "Meediumi eelvaade JWPUB-failist enne importimist",
+    "imgRename": "Meediumifaili ümbernimetamine"
+  },
+  "present-media": {
+    "imgButton": "Nupp meediumikontrolleri režiimi sisenemiseks",
+    "imgSelectMeeting": "Meediumi kuvamiseks koosoleku valimine",
+    "imgBG": "Vaikimisi meediumitaust automaatselt genereeritud aastatekstiga",
+    "imgMediaList": "Meediumite loend, mis on esitlemiseks valmis",
+    "imgStandby": "M³ meediumiesitlus ooterežiimis",
+    "imgDisplayPic": "Pildi kuvamine",
+    "imgPlayVideo": "Video esitamine",
+    "imgVideoScrub": "Liikumine videos kindlale ajale"
+  }
+}

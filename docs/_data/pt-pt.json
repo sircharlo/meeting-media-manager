@@ -1,0 +1,16 @@
+{
+  "lang": "pt-PT",
+  "name": "Português - Portugal",
+  "language": "Língua:",
+  "shared": {
+    "optionsApp": "Configuração do programa",
+    "optionsCongSync": "Configuração do servidor da congregação",
+    "optionsMedia": "Configuração de multimédia",
+    "optionsMeetings": "Configuração da reunião",
+    "password": "Senha",
+    "port": "Porta"
+  },
+  "home": {},
+  "manage-media": {},
+  "present-media": {}
+}

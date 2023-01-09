@@ -1,0 +1,16 @@
+{
+  "lang": "fr",
+  "name": "Français",
+  "language": "Langue:",
+  "shared": {
+    "optionsApp": "Configuration de l'appli",
+    "optionsCongSync": "Configuration de la synchronisation au niveau de l'assemblée locale",
+    "optionsMedia": "Configuration des médias",
+    "optionsMeetings": "Configuration des réunions",
+    "password": "Mot de passe",
+    "port": "Port"
+  },
+  "home": {},
+  "manage-media": {},
+  "present-media": {}
+}

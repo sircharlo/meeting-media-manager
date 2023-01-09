@@ -1,0 +1,43 @@
+{
+  "lang": "nl",
+  "name": "Nederlands",
+  "language": "Taal:",
+  "search": "Zoek op trefwoord",
+  "shared": {
+    "explanation": "Uitleg",
+    "option": "Optie",
+    "optionsApp": "Applicatie setup",
+    "optionsCongSync": "Gemeente sync setup",
+    "optionsMedia": "Media setup",
+    "optionsMeetings": "Vergadering setup",
+    "password": "Wachtwoord",
+    "port": "Poort",
+    "setting": "Instelling"
+  },
+  "home": {
+    "expand": "Open alle artikelen",
+    "collapse": "Sluit alle artikelen",
+    "syncInProgress": "Meeting media sync bezig",
+    "mainScreen": "Beginscherm",
+    "chooseWeek": "Kies een week",
+    "syncComplete": "Sync compleet!",
+    "musicPlaying": "Voor en na vergadering muziek afspelen"
+  },
+  "manage-media": {
+    "imgAddSong": "Een lied toevoegen voor een openbare lezing",
+    "imgAddPic": "Een extra plaatje toevoegen",
+    "imgImportJWPUB": "Media importeren van een JWPUB bestand",
+    "imgPreviewJWPUB": "Media tonen van een JWPUB bestand voordat het geïmporteerd wordt",
+    "imgRename": "Een mediabestand hernoemen"
+  },
+  "present-media": {
+    "imgButton": "Knop om de media presentatie modus te openen",
+    "imgSelectMeeting": "Selecteer een vergadering waarvoor je media wilt tonen",
+    "imgBG": "Standaard media achtergrond, met jaartekst",
+    "imgMediaList": "Lijst van de media die getoond kan worden",
+    "imgStandby": "M³ mediascherm in standby modus",
+    "imgDisplayPic": "Een afbeelding tonen",
+    "imgPlayVideo": "Een filmpje afspelen",
+    "imgVideoScrub": "Naar een specifiek moment in het filmpje springen"
+  }
+}

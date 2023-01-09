@@ -1,0 +1,16 @@
+{
+  "lang": "ru",
+  "name": "русский",
+  "language": "Язык:",
+  "shared": {
+    "optionsApp": "Настройка приложения",
+    "optionsCongSync": "Настройка синхронизации на уровне местного собрания",
+    "optionsMedia": "Настройка медиафайлов",
+    "optionsMeetings": "Настройки, связанные со встречами",
+    "password": "Пароль",
+    "port": "Порт"
+  },
+  "home": {},
+  "manage-media": {},
+  "present-media": {}
+}

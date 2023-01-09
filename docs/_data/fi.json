@@ -1,0 +1,43 @@
+{
+  "lang": "fi",
+  "name": "suomi",
+  "language": "Kieli:",
+  "search": "Suodata avainsanan mukaan ",
+  "shared": {
+    "explanation": "Selitys",
+    "option": "Vaihtoehto",
+    "optionsApp": "Sovelluksen asetukset",
+    "optionsCongSync": "Seurakunnan synkronoinnin asetukset",
+    "optionsMedia": "Mediaasetukset",
+    "optionsMeetings": "Kokousasetukset",
+    "password": "Salasana",
+    "port": "Portti",
+    "setting": "Asetus"
+  },
+  "home": {
+    "expand": "Laajenna kaikki artikkelit",
+    "collapse": "Kutista kaikki artikkelit",
+    "syncInProgress": "Kokousmedian synkronointi käynnissä",
+    "mainScreen": "Päänäyttö",
+    "chooseWeek": "Valitse viikko",
+    "syncComplete": "Synkronointi valmis!",
+    "musicPlaying": "Musiikin soitto ennen kokousta ja sen jälkeen"
+  },
+  "manage-media": {
+    "imgAddSong": "Laulun lisääminen julkiseen keskusteluun",
+    "imgAddPic": "Lisäkuvan lisääminen",
+    "imgImportJWPUB": "Median tuominen JWPUB-tiedoston osiosta",
+    "imgPreviewJWPUB": "Median esikatselu JWPUB-tiedostosta ennen tuontia",
+    "imgRename": "Mediatiedoston nimeäminen uudelleen"
+  },
+  "present-media": {
+    "imgButton": "Painike siirtyäksesi mediaohjaintilaan",
+    "imgSelectMeeting": "Kokouksen valitseminen, jolle näytetään media",
+    "imgBG": "Median oletustausta automaattisesti luodulla vuositekstillä",
+    "imgMediaList": "Luettelo mediasta, joka on valmis esitettäväksi",
+    "imgStandby": "M³ mediaesitys valmiustilassa",
+    "imgDisplayPic": "Kuvan näyttäminen",
+    "imgPlayVideo": "Toistaa videota",
+    "imgVideoScrub": "Siirtyminen tiettyyn aikaan videossa"
+  }
+}
