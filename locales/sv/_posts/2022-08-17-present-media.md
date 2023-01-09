@@ -10,17 +10,17 @@ Mediepresentationen och kontrolllägena är designade för enkelhet och för att
 
 När alternativet `Visa media på en extern skärm eller i ett separat fönster` är aktiverat, kommer mediapresentationsskärmen automatiskt att visas på den externa monitorn om den finns, eller i ett separat, dragbart och storleksändringsbart fönster om ingen extern monitor upptäcktes.
 
-I standby-läge kommer mediepresentationsskärmen att visa bakgrundsbilden som är konfigurerad i inställningarna. Om ingen bakgrundsbild har konfigurerats kommer M³ att försöka hämta och visa årstexten automatiskt.
+When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
 
 Om ingen bakgrundsbild är konfigurerad i inställningarna och årstexten inte kunde laddas automatiskt, kommer en svart bakgrund att visas i standbyläge.
 
 Mediekontrollläget kan nås genom att klicka på knappen ▶️ (spela upp) på huvudskärmen i M³, eller genom att använda kortkommandot <kbd>Alt D</kbd> (för extern skärm).
 
-När du väl har gått in i kontrollläget låter skärmen för val av mapp dig välja vilket datum du vill visa media. Om den aktuella dagens mapp finns kommer den automatiskt att väljas. När ett datum väl har valts kan du fortfarande ändra det valda datumet när som helst genom att klicka på datumvalsknappen i den övre delen.
+Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
 
 ### Presentera media
 
-För att spela media trycker du på knappen ▶️ (spela upp) för filen du vill ha. Om du vill dölja media trycker du på knappen ⏹️ (stopp). En video kan spolas bakåt eller framåt medan den är pausad, om så önskas. Observera att för videor måste stoppknappen tryckas ned **två gånger** för att förhindra att en video av misstag och för tidigt stoppas medan den spelas upp för församlingen. Videor stoppas automatiskt när de har spelats upp i sin helhet.
+To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
 
 ### Genomför hybridmöten med en kombination av M³, OBS Studio och Zoom
 
@@ -38,17 +38,17 @@ Installera OBS Studio, eller ladda ner den portabla versionen.
 
 Om du använder den portabla versionen av OBS Studio, installera plugin-programmet [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) och om du använder den portabla versionen av OBS Studio, lägg till den virtuella kameran till Windows genom att dubbelklicka på det medföljande installationsskriptet.
 
-Om du har OBS Studio v27 eller äldre måste du installera plugin-programmet [obs-websocket](https://github.com/obsproject/obs-websocket). Annars ingår obs-websocket i nyare versioner. Konfigurera ett portnummer och lösenord för obs-websocket.
+If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
 
-I OBS-inställningarna, under `General` > `System tray`, aktivera alla kryssrutor. Under `Output` > `Streaming`, aktivera en hårdvarukodare om tillgänglig. Under `Video` > `Base (Canvas) Resolution` och `Output (Scaled) Resolution` väljer du `1280x720` och under `Downscale Filter`, välj `Bilinear`.
+In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 
-Ställ in minst 2 scener: en för mediadisplayen (`Window Capture` eller `Display Capture` med muspekaren inaktiverad och lämplig fönstertitel/bildskärm vald), och en för scenvyn (`Video Capture Device` med kameran vald). Du kan lägga till så många scener som behövs, med kameran justerad, inzoomad och beskuren efter behov (talstolsvy, dirigent- och läsarvy, tabellvy, etc.).
+Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
 
 Lägg till en genväg till OBS Studio, med parametern `--startvirtualcam`, till Startup-mappen i Windows användarprofil, för att säkerställa att OBS Studio startar automatiskt när användaren loggar in.
 
 #### Initial konfiguration: Kingdom Hall Zoom
 
-Zoom bör konfigureras för att använda dubbla bildskärmar. Aktivera globala kortkommandon för Zoom för att stänga av/slå på ljudet i Rikets sal i Zoom (<kbd>Alt A</kbd>), och starta/stoppa Rikets sals videoflöde i Zoom ( <kbd>Alt V</kbd>).
+Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
 
 Ställ in standard "mikrofon" för att vara mixerns kombinerade utgång (så att allt som hörs över Rikets sals ljudsystem sänds över Zoom, inklusive mikrofoner och media) och "kameran" att vara den virtuella kameran från OBS Studio .
 
@@ -60,11 +60,11 @@ Aktivera och konfigurera OBS Studio-kompatibilitetsläget med hjälp av port- oc
 
 #### Startar mötet
 
-Starta Zoom-mötet och flytta det sekundära Zoom-mötesfönstret till den externa monitorn. Gör den i helskärm om så önskas. Det är här alla deltagare i fjärrmötet kommer att visas för församlingen att se.
+Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
 
-När Zoom-mötet visas på den externa monitorn, öppna M³. Mediapresentationsfönstret öppnas automatiskt ovanpå Zoom på den externa bildskärmen. Synkronisera media om det behövs och gå in i mediekontrollläge genom att klicka på knappen ▶️ (spela upp) på huvudskärmen i M³, eller <kbd>Alt D</kbd>.
+Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
 
-Aktivera Rikets sals videoflöde (<kbd>Alt V</kbd>), och lyft fram Rikets sals videoflöde om det behövs så att Zoom-deltagare ser Rikets salens podie. Slå på ljudet för Rikets salens ljudflöde i Zoom (<kbd>Alt A</kbd>). Det ska inte vara nödvändigt att inaktivera video- eller ljudflödet i Zoom under mötets varaktighet.
+Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
 
 Starta uppspelning av bakgrundsmusik med knappen längst ner till vänster, eller <kbd>Alt K</kbd>.
 
@@ -78,15 +78,15 @@ Olika kameravinklar/zoom kan väljas under mötet genom att använda menyn läng
 
 Hitta media du vill dela i M³ medieuppspelningskontrollfönstret och tryck på "spela upp"-knappen.
 
-När du är klar med att dela media, tryck på "stopp"-knappen i M³. Observera att videor automatiskt stoppas när de är färdiga.
+When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
 
 #### Visar fjärrzoomdeltagare på Rikets sals monitor
 
-Tryck på knappen "dölj/visa mediepresentationsfönster" i det nedre högra hörnet av M³ mediekontrollskärmen, eller <kbd>Alt Z</kbd> för att **gömma** mediapresentationsfönstret. Zoommötet kommer nu att synas på Rikets sals skärm.
+Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
 
 > Om deltagaren har media att visa, följ stegen under underrubriken **Dela media i Rikets sal och över Zoom**.
 
-När deltagaren har avslutat sin del, tryck på knappen "dölj/visa mediepresentationsfönster" i det nedre högra hörnet av M³ mediauppspelningskontrollfönstret, eller <kbd>Alt Z</kbd>, för att **visa** mediepresentationsfönstret. Rikets salens skärm kommer nu att visa årstexten.
+Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
 
 ### Genomför hybridmöten med endast M³ och Zoom
 
@@ -94,7 +94,7 @@ Om du av någon anledning inte vill använda OBS Studio, kan följande förslag 
 
 #### Första konfiguration: Rikets sal-dator
 
-Samma som motsvarande avsnitt ovan. Med tillägget av den globala kortkommandon för Zoom för att starta/stoppa skärmdelning (<kbd>Alt S</kbd>). "Kameran" kommer att vara kameraflödet från Rikets salskameran.
+Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
 
 #### Första konfiguration: M³
 
@@ -110,7 +110,7 @@ Samma som motsvarande avsnitt ovan.
 
 #### Dela media i Rikets sal och över Zoom
 
-Börja dela i Zoom genom att trycka på <kbd>Alt S</kbd>. I fönstret för zoomdelning som dyker upp väljer du den externa bildskärmen och aktiverar båda kryssrutorna längst ner till vänster (för ljud- och videooptimering). Årstexten kommer nu att delas över Zoom.
+Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
 
 Hitta media du vill dela i M³ medieuppspelningskontrollfönstret och tryck på "spela upp"-knappen.
 
