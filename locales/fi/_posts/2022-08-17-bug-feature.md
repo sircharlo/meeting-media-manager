@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Tuki
 title: Ongelmat ja ominaisuuspyynnöt
 ref: bug-feature
 ---
