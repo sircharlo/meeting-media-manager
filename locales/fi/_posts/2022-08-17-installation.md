@@ -4,7 +4,7 @@ title: Asennus
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+M³ ei vaadi hallinnollisia oikeuksia asentaamiseen. Asentaaksesi M³:n [lataa uusin versio]({{site.github}}/releases/latest) ja asenna se.
 
 | Käyttöjärjestelmä | Ladattava tiedosto                                     |
 | ----------------- | ------------------------------------------------------ |
