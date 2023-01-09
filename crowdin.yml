@@ -1,6 +1,7 @@
 project_id: "559843"
 api_token_env: "CROWDIN_PERSONAL_TOKEN"
-branch: "master"
+commit_message: "chore: new translations for %language%"
+append_commit_message: false
 files:
   - source: /src/renderer/locales/en.json
     translation: /src/renderer/locales/%two_letters_code%.json
