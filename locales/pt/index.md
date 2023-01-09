@@ -17,7 +17,7 @@ Em reuniões **híbridas** ou **presenciais**, o modo de exibição de mídias i
 - Miniaturas de mídia
 - Botões de pausar/reproduzir/parar fáceis de usar para controlar a reprodução de arquivos de mídia
 - Reprodução fácil de cânticos de fundo, com parada automática antes do início das reuniões
-- Automatic external monitor recognition and management
+- Gerenciamento de telas adicionais automaticamente
 - Integração com o OBS Studio
 
 Quanto às reuniões realizadas **apenas no Zoom**, o recurso de conversão MP4 do M³ permite que você compartilhe arquivos de mídia de todos os tipos facilmente, usando o recurso de compartilhamento MP4 nativo do Zoom.

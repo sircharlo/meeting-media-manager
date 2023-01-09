@@ -39,6 +39,6 @@ Para sincronizar todos os computadores com o servidor WebDAV, todos precisam est
 
 Quando a configuração de sincronização da congregação estiver concluída, você estará pronto para [Gerenciar Mídia]({{page.lang}}/#manage-media) para a equipe de áudio e vídeo da sua congregação.
 
-### Screenshots of congregation sync in action
+### Capturas de tela do servidor da congregação
 
 {% include screenshots/congregation-sync.html lang=site.data.pt %}

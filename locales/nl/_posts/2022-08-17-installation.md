@@ -12,7 +12,7 @@ M³ heeft geen administratieve rechten nodig om te installeren en te gebruiken. 
 | macOS             | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
 | Linux             | `meeting-media-manager-[VERSION]-[ARCH].AppImage`      |
 
-### What's next
+### Wat nu?
 
 Configureer de applicatie via het [Instellingen]({{page.lang}}/#configuration) scherm.
 

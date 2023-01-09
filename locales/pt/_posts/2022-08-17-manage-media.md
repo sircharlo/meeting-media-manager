@@ -33,7 +33,7 @@ No campo `Mídia para adicionar`, você verá diferentes opções, dependendo do
 
 Para **remover**, **ocultar** ou **mostrar** mídia, basta encontrar o arquivo de mídia que você não deseja e clicar no ícone.
 
-| A mídia tem um ícone vermelho 🟥 (excluir)                                  | A ☑️ (checked checkbox) icon                                                                                                 | A 🔲 (unchecked checkbox) icon                                                                                                                                                   |
+| A mídia tem um ícone vermelho 🟥 (excluir)                                  | Ícone ☑️ (caixa marcada)                                                                                                     | Ícone 🔲 (caixa desmarcada)                                                                                                                                                      |
 | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | O arquivo de mídia foi adicionado à mídia daquele dia por você ou pelo OV. | O arquivo de mídia está na apostila da reunião. <br><br> Ele *será* baixado do JW.org ou extraído da publicação. | O arquivo de mídia é referenciado no material da reunião. <br><br> Ele foi oculto por você ou pelo OV, então *não* será baixado ou adicionado às mídias da reunião. |
 
