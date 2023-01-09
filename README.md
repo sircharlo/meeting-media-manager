@@ -29,24 +29,7 @@ As for fully **remote** congregation Zoom meetings, the built-in MP4 conversion 
 
 In addition, the documentation website of M³ has been translated, by many volunteers, into several languages! Do you want to help translate M³ into your language? Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to do so.
 
-[![gitlocalized](https://gitlocalize.com/repo/8177/de/badge.svg)](https://gitlocalize.com/repo/8177/de?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/es/badge.svg)](https://gitlocalize.com/repo/8177/es?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/et/badge.svg)](https://gitlocalize.com/repo/8177/et?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/fi/badge.svg)](https://gitlocalize.com/repo/8177/fi?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/fr/badge.svg)](https://gitlocalize.com/repo/8177/fr?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/hu/badge.svg)](https://gitlocalize.com/repo/8177/hu?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/it/badge.svg)](https://gitlocalize.com/repo/8177/it?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/mg/badge.svg)](https://gitlocalize.com/repo/8177/mg?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/nl/badge.svg)](https://gitlocalize.com/repo/8177/nl?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/pcm/badge.svg)](https://gitlocalize.com/repo/8177/pcm?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/pt-BR/badge.svg)](https://gitlocalize.com/repo/8177/pt-BR?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/pt-PT/badge.svg)](https://gitlocalize.com/repo/8177/pt-PT?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/ru/badge.svg)](https://gitlocalize.com/repo/8177/ru?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/sk/badge.svg)](https://gitlocalize.com/repo/8177/sk?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/sv/badge.svg)](https://gitlocalize.com/repo/8177/sv?utm_source=badge)
-[![gitlocalized](https://gitlocalize.com/repo/8177/uk/badge.svg)](https://gitlocalize.com/repo/8177/uk?utm_source=badge)
-___
-[![gitlocalized](https://gitlocalize.com/repo/8177/whole_project/badge.svg)](https://gitlocalize.com/repo/8177/?utm_source=badge)
+[![Crowdin](https://badges.crowdin.net/meeting-media-manager/localized.svg)](https://crowdin.com/project/meeting-media-manager)
 
 ## How do I get started?
 
