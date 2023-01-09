@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Tuki
 title: Tekniset käyttöohjeet
 ref: usage-notes
 ---
