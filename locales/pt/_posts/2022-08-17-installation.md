@@ -12,7 +12,7 @@ O M³ não requer privilégios de administrador para instalação ou execução.
 | macOS               | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
 | Linux               | `meeting-media-manager-[VERSION]-[ARCH]. AppImage`     |
 
-### Qual é o próximo
+### O que eu faço depois
 
 Configure o aplicativo usando a tela de [Configurações]({{page.lang}}/#configuration).
 

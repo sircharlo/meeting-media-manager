@@ -94,7 +94,7 @@ Om du av någon anledning inte vill använda OBS Studio, kan följande förslag 
 
 #### Första konfiguration: Rikets sal-dator
 
-Samma som motsvarande avsnitt ovan. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
+Samma som motsvarande avsnitt ovan. Med tillägg av den globala kortkommandot för Zoom för att starta/stoppa skärmdelning (<kbd>Alt S</kbd>). "Kamera" kommer att vara kameraflödet från Rikets sal.
 
 #### Första konfiguration: M³
 
@@ -110,7 +110,7 @@ Samma som motsvarande avsnitt ovan.
 
 #### Dela media i Rikets sal och över Zoom
 
-Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
+Börja dela i Zoom genom att trycka på <kbd>Alt S</kbd>. I Zoom-delningsfönstret som dyker upp väljer du den externa bildskärmen och aktiverar båda kryssrutorna längst ner till vänster (för ljud- och videooptimering). Årstexten kommer nu att delas över Zoom.
 
 Hitta media du vill dela i M³ medieuppspelningskontrollfönstret och tryck på "spela upp"-knappen.
 
