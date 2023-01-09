@@ -8,7 +8,7 @@ Medianhallintanäytön avulla käyttäjä voi lisätä tai poistaa mediaa mitä 
 
 ### Median hallinta jollekin tietylle päivälle
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Voit hallita mediaa tiettyyn kokoukseen tai päivään, klikkaa tuon päivän ruutua M³:n päänäytössä. Jos haluat hallita mediaa, joka toistuu jokaisessa kokouksessa, klikkaa ruutua Toistuvaa mediatilaa.
 
 ### Median lisääminen
 
