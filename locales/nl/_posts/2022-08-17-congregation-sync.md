@@ -21,7 +21,7 @@ Bedenk dat de gemeente sync optie geheel optioneel is.
 M³'s onderliggende sync mechanisme gebruikt WebDAV. Dat bekent dat de VO (of iemand onder zijn leiding) een van de volgende opties moet kiezen:
 
 - Een veilige WebDAV server opzetten die bereikbaar is via het internet, **of**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- een externe cloud storage service gebruiken die het WebDAV protocol ondersteunt (zie de *Hostnaam* optie in de *Gemeente sync setup* sectie hieronder).
 
 Alle gebruikers die gesynchroniseerd willen worden moeten verbinden met dezelfde WebDAV server door gebruik te maken van de informatie en inloggegevens die de VO heeft opgegeven.
 

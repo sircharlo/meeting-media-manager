@@ -86,7 +86,7 @@ Paina "piilota / näytä median esitysikkuna" -painiketta M³ media ikkunan alak
 
 > Jos osallistujalla on näytettävää mediaa, noudata **Median jakaminen valtakunnansalissa ja Zoomissa**-alaotsikon ohjeita.
 
-Kun osallistuja on suorittanut osuutensa, paina "piilota / näytä median esitysikkuna" -painiketta M³-median oikeassa alakulmassa, tai <kbd>Alt Z</kbd>, **näyttää** medianäyttö ikkunan. The Kingdom Hall monitor will now show the yeartext.
+Kun osallistuja on suorittanut osuutensa, paina "piilota / näytä median esitysikkuna" -painiketta M³-median oikeassa alakulmassa, tai <kbd>Alt Z</kbd>, **näyttää** medianäyttö ikkunan. Salin näytössä näkyy nyt vuositeksti.
 
 ### Hybridikokousten pitäminen vain M³:lla ja Zoomilla
 
@@ -94,7 +94,7 @@ Jos et jostain syystä halua käyttää OBS Studiota, seuraavat ehdotukset voiva
 
 #### Alkukokoonpano: Valtakunnansalin tietokone
 
-Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
+Sama kuin vastaava jakso yllä. Lisäämällä globaalin näppäimistön pikanäppäimen Zoom näytön jakamisen käynnistämistä tai pysäyttämistä varten (<kbd>Alt S</kbd>). "Kamera" on salin kamerasyöte.
 
 #### Alkukokoonpano: M³
 
@@ -110,7 +110,7 @@ Sama kuin vastaava jakso yllä.
 
 #### Median jakaminen valtakunnansalissa ja Zoomissa
 
-Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
+Aloita jakaminen Zoomissa painamalla<kbd>Alt S</kbd>. Zoomauksen jakamisikkunassa, joka ponnahtaa ylös, valitse ulkoinen näyttö ja ota käyttöön molemmat vasemmassa alakulmassa olevat valintaruudut (äänen ja videon optimointi). Vuositeksti jaetaan nyt Zoomin kautta.
 
 Etsi mediaa, jonka haluat jakaa M³ mediatoiston ohjausikkunasta ja paina "toisto"-painiketta.
 

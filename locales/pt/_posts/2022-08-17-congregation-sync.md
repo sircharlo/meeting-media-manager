@@ -21,7 +21,7 @@ Observe que o recurso do servidor da congregação é totalmente opcional.
 O M³ usa o recurso de WebDAV para sincronizar arquivos com um servidor. Isso significa que o OV (ou alguém sob sua supervisão) precisa:
 
 - configurar um servidor WebDAV seguro que seja acessível pela Web, **ou**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- usar um serviço de armazenamento em nuvem de terceiros que suporte o protocolo WebDAV (consulte a configuração *Nome do host* na seção *Configuração do servidor da congregação* abaixo).
 
 Para sincronizar todos os computadores com o servidor WebDAV, todos precisam estar conectados no mesmo servidor, usando os dados de conexão por quem criou o servidor.
 
