@@ -24,10 +24,10 @@ När det gäller helt **fjärr** Zoom-möten för församlingar, gör den inbygg
 
 ### Fungerar M³ på mitt språk?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
+**Ja!** Media för möten med Jehovas vittnen kan laddas ner automatiskt på något av de hundratals språk som finns på JW.org. Listan över tillgängliga språk uppdateras dynamiskt; allt du behöver göra är att välja önskad språk.
 
 Dessutom har M³ själv översatts till 15 språk och många, av många frivilliga; du kan därför konfigurera det språk du vill ska visas i M³s gränssnitt.
 
-This app is made with love and a bit of spare time. Enjoy!
+Denna program är gjord med kärlek och lite fritid. Njut!
 
 ### Skärmdumpar
