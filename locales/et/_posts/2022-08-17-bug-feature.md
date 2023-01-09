@@ -6,8 +6,8 @@ ref: bug-feature
 
 ### Kuidas teavitada ilmnenud probleemist või veast?
 
-Kui teil tekib M³-ga probleeme, kasutage sellest teatamiseks [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md). Veaparandusi väljastatakse regulaarselt, tavaliselt kord kuus.
+If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) to report it. Bug fixes are issued on a regularly basis, usually monthly.
 
 ### Kuidas saan taotleda uusi funktsioone?
 
-Olen ettepanekutele avatud! Kasutage potentsiaalsete uute funktsioonide arutamiseks [GitHub Discussions]({{site.github}}/discussions).
+I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
