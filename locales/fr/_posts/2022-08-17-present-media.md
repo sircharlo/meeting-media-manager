@@ -30,13 +30,13 @@ La façon la plus simple de partager des médias lors de réunions hybrides cons
 
 Réglez la résolution du moniteur externe à 1280x720.
 
-Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
+Configurez la sortie de la carte de son de l'ordinateur pour aller à l'une des entrées du mixeur de son de la Salle du Royaume et la sortie combinée du mixeur pour aller à l'entrée de la carte de son de l'ordinateur.
 
-#### Initial configuration: OBS Studio
+#### Configuration initiale : OBS Studio
 
-Install OBS Studio, or download the portable version.
+Installez OBS Studio ou téléchargez la version portable.
 
-If using the portable version of OBS Studio, install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+Si vous utilisez la version portable d'OBS Studio, installez le plugin [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) , et si vous utilisez la version portable d'OBS Studio, ajoutez la caméra virtuelle à Windows en double-cliquant sur le script d'installation fourni.
 
 If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
 
