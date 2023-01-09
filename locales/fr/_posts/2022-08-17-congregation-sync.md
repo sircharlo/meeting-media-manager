@@ -4,41 +4,41 @@ title: Synchronisation au niveau de l'assemblée locale
 ref: congregation-sync
 ---
 
-The brother designated as *videoconference organizer* (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
+Le frère désigné comme *organisateur des visioconférences* (OV) par le collège des anciens peut utiliser M³ pour gérer les médias mis à la disposition de l'équipe de soutien technique A/V de son assemblée locale.
 
-The VO, or someone designated by him, can:
+Le OV, ou quelqu'un désigné par lui, peut :
 
-- upload **additional** media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
-- **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
-- add or remove **recurring** media, such as a year-text video, or an announcement slide
+- téléverser des **médias supplémentaires** à partager lors d'une réunion, par exemple pour la visite du responsable de circonscription, ou pour les discours publics
+- **masquer** certains médias de JW.org qui ne sont pas pertinents pour une réunion donnée, par exemple, lorsqu'une partie a été remplacée par la filiale
+- ajouter ou supprimer des **médias récurrents**, tels qu'une vidéo du texte de l'année ou une diapositive d'annonce
 
-All who are synced to the same congregation will then receive the exact samemedia when they click the *Update media folders* button.
+Tous ceux qui sont synchronisés avec la même assemblée locale recevront alors exactement les mêmes médias lorsqu'ils cliqueront sur le bouton *Rafraîchir les dossiers multimédias*.
 
-Please note that the congregation sync feature is opt-in and entirely optional.
+Veuillez noter que la fonction de synchronisation de l'assemblée locale est optionnelle et entièrement facultative.
 
-### How it works
+### Comment cela fonctionne
 
-M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+Le mécanisme de synchronisation sous-jacent de M³ utilise la technologie WebDAV. Cela signifie que l'OV (ou quelqu'un sous sa supervision) doit soit :
 
-- set up a secured WebDAV server that is web-accessible, **or**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the Hostname setting in the *Congregation sync setup* section below).
+- configurer un serveur WebDAV sécurisé accessible par le web, **ou bien**
+- utiliser un service de stockage cloud qui prend en charge le protocole WebDAV (voir le paramètre Adresse du serveur dans la section *Configuration de la synchronisation au niveau de l'assemblée locale* ci-dessous).
 
-All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
+Tous les utilisateurs qui souhaitent être synchronisés ensemble devront se connecter au même serveur WebDAV en utilisant les informations de connexion et les identifiants qui leur sont fournis par l'OV.
 
 ### Configuration de la synchronisation au niveau de l'assemblée locale
 
-| Réglage                                      | Explication                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Hostname`                                   | Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br> ***Note:** The label for this field is actually a button that, once clicked, will show a list of WebDAV providers that have been known to be compatible with M³, and will automatically prefill certain settings for those providers. <br><br> This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...* |
-| `Nom d'utilisateur`                          | Username for the WebDAV service.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `Mot de passe`                               | Password for the WebDAV service. <br><br> ***Note:** As detailed in their respective support pages, an app-specific password might need to be created for [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) and [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) in order to enable WebDAV connections to their services.*                                                                                               |
-| `Dossier de l'assemblée locale`              | This is the folder that will be used to synchronize media for all congregation sync users. You can either type/paste in a path, or use your mouse to navigate to the target folder. <br><br> ***Note:** Make sure that all congregation sync users input the same folder path; otherwise the sync won't work as expected.*                                                                                                                                                                               |
-| `Paramètres bloqués pour l'assemblée locale` | Once the VO has configured the *Media setup* and *Meeting setup* sections of the [Settings]({{page.lang}}/#configuration) on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open M³.                                                                                   |
+| Réglage                                      | Explication                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Hostname`                                   | Adresse web du serveur WebDAV. Le protocole HTTP sécurisé (HTTPS) est requis. <br><br> ***Remarque :** L'étiquette de ce champ est en fait un bouton qui, une fois cliqué, affichera une liste des fournisseurs WebDAV qui sont connus pour être compatibles avec M³, et préremplira automatiquement certains paramètres pour ces fournisseurs. <br><br> Cette liste est fournie à titre de courtoisie et ne représente en aucun cas un endossement d'un service ou d'un fournisseur en particulier. Le meilleur serveur est toujours celui qui vous appartient...* |
+| `Nom d'utilisateur`                          | Nom d'utilisateur pour le service WebDAV.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `Mot de passe`                               | Mot de passe pour le service WebDAV. <br><br> ***Remarque :** Tel qu'indiqué sur leurs pages d'assistance respectives, il se peut qu'un mot de passe spécifique à l'application doit être créé pour [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) et [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) afin d'activer les connexions WebDAV à leurs services.*                                                                                                                               |
+| `Dossier de l'assemblée locale`              | Il s'agit du dossier qui sera utilisé pour synchroniser les médias pour tous les utilisateurs de la synchronisation de l'assemblée locale. Vous pouvez soit taper un chemin d'accès ou le coller, soit utiliser votre souris pour naviguer vers le dossier cible. <br><br> ***Remarque :** Assurez-vous que tous les utilisateurs de l'assemblée locale utilisent le même chemin d'accès de dossier ; sinon, la synchronisation ne fonctionnera pas comme prévu.*                                                                                                               |
+| `Paramètres bloqués pour l'assemblée locale` | Une fois que l'OV a configuré les sections *Configuration des médias* et *Configuration des réunions* des [réglages]({{page.lang}}/#configuration) sur son propre ordinateur, il peut ensuite utiliser ce bouton pour imposer certains réglages à tous les utilisateurs synchronisés de l'assemblée locale (par exemple, les jours de réunion, la langue des médias, les paramètres de conversion, etc.). Cela signifie que les paramètres sélectionnés seront appliqués de manière forcée pour tous les utilisateurs synchronisés chaque fois qu'ils ouvrent M³.                           |
 
-### Using congregation sync to manage media
+### Utilisation de la synchronisation d'assemblée locale pour gérer les médias
 
-Once the congregation sync setup is complete, you're ready to start [Managing media]({{page.lang}}/#manage-media) for your congregation's technical AV support team.
+Une fois que la configuration de la synchronisation de l'assemblée locale est terminée, vous êtes prêt à commencer à [gérer les médias]({{page.lang}}/#manage-media) pour votre équipe d'assistance technique AV.
 
-### Screenshots of congregation sync in action
+### Captures d'écran de la synchronisation de l'assemblée locale à l'œuvre
 
 {% include posts/congregation-sync.md lang=site.data.fr %}
