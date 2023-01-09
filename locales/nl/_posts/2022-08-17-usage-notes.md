@@ -8,7 +8,7 @@ Deze applicatie zou moeten werken op de meeste moderne computers met Windows, Li
 
 ### Windows: Installatie en eerste keer opstarten
 
-Bij het openen van het installatiebestand krijg je misschien een [error](assets/img/other/win-smartscreen.png) die het volgende zegt: "Windows SmartScreen voorkwam dat een niet herkende applicatie geïnstalleerd werd." Dit komt omdat deze applicatie geen hoog aantal downloads heeft en daarom niet expliciet "vertrouwd" wordt door Windows. Om dit op te lossen klik je op "Meer info" en dan "Toch uitvoeren".
+Bij het openen van het installatiebestand krijg je misschien een [error](assets/img/other/win-smartscreen.png) die het volgende zegt: "Windows SmartScreen voorkwam dat een niet herkende applicatie geïnstalleerd werd." Dit komt omdat deze applicatie geen hoog aantal downloads heeft en daarom niet expliciet "vertrouwd" wordt door Windows. This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. Om dit op te lossen klik je op "Meer info" en dan "Toch uitvoeren".
 
 ### Linux: Installatie en eerste keer opstarten
 
@@ -20,7 +20,7 @@ Als het resultaat `0` is, dan wordt de applicatie **niet** uitgevoerd, behalve a
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Zorg ervoor dat je weet [wat deze verandering inhoudt](https://lwn.net/Articles/673597/) voor je het commando uitvoert.
+Make sure you read up on [what this entails](https://lwn.net/Articles/673597/) before you do this.
 
 ### MacOS: Installatie en eerste keer opstarten
 
