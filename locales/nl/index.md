@@ -1,7 +1,7 @@
 ---
-permalink: "/nl/"
+permalink: /nl/
 ---
-
+  
 ### Wat is M³?
 
 **Meeting Media Manager**, or **M³** verkort, is een applicatie voor Windows, macOS en Linux, die automatisch de nodige plaatjes en filmpjes download voor vergaderingen van Jehovah's Getuigen, in elke taal die op jw.org beschikbaar is.
@@ -24,7 +24,7 @@ Voor volledig **digitale** Zoom gemeente vergaderingen, is er de ingebouwde MP4 
 
 ### Werkt M³ in mijn eigen taal?
 
-**Ja!** Media voor vergaderingen van Jehovah's Getuigen wordt automatisch gedownload in een van de honderden talen die beschikbaar zijn op JW.org. De lijst van beschikbare talen wordt automatisch bijgehouden; je hoeft alleen maar de taal te kiezen die jij wilt gebruiken.
+**Ja!** Media voor vergaderingen van Jehovah's Getuigen wordt automatisch gedownload in een van de honderden talen die beschikbaar zijn op JW.org. De lijst van beschikbare talen wordt automatisch bijgehouden; je hoeft alleen maar de taal te kiezen die jij wilt gebruiken. The list of available languages is dynamically updated; all you need to do is select which one you want.
 
 Bovendien is M³ zelf momenteel al vertaald in maar liefst 15 talen door velen vrijwilligers; je kan dus de taal kiezen die je graag wilt zien in de applicatie.
 

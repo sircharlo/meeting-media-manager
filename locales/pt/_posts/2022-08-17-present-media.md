@@ -30,7 +30,7 @@ A maneira mais simples de exibir as mídias durante reuniões híbridas é confi
 
 Defina a resolução da tela externa para 1280x720, ou algo próximo disso.
 
-Na entrada de microfone do seu computador conecte um cabo P2 x RCA ou P2 x P10 direto na mesa de som para pegar todo o áudio que sai da mesa. E na entrada de áudio do seu computador, conecte um cabo P2 x P10 para enviar o áudio do computador para a mesa de som.
+Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
 
 #### Configuração inicial: OBS Studio
 

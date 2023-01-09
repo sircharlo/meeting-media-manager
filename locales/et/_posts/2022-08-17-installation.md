@@ -4,13 +4,13 @@ title: Paigaldamine
 ref: installation
 ---
 
-M³ ei vaja installimiseks ega käivitamiseks administraatoriõigusi. M³ installimiseks lihtsalt [laadige alla uusim versioon]({{site.github}}/releases/latest) ja käivitage see.
+M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
 
-| Operatsioonisüsteem | Allalaaditav fail  |
-| ---------------- | ---------------- |
-| Windows | `meeting-media-manager-[VERSION]-[ARCH].exe` |
-| macOS | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
-| Linux | `meeting-media-manager-[VERSION]-[ARCH].AppImage` |
+| Operatsioonisüsteem | Allalaaditav fail                                      |
+| ------------------- | ------------------------------------------------------ |
+| Windows             | `meeting-media-manager-[VERSION]-[ARCH].exe`           |
+| macOS               | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
+| Linux               | `meeting-media-manager-[VERSION]-[ARCH].AppImage`      |
 
 ### Mis järgmiseks
 

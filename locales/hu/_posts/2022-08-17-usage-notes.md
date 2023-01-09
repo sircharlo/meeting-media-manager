@@ -8,7 +8,7 @@ Az alkalmazásnak probléma nélkül futnia kell a legtöbb modern —Windows, L
 
 ### Windows: Telepítés és első lépések
 
-A telepítő megnyitásakor egy [hibajelzést](assets/img/other/win-smartscreen.png) kaphat, amely szerint "A Windows SmartScreen megakadályozta egy ismeretlen alkalmazás elindítását". Ennek az az oka, hogy az alkalmazás nem rendelkezik nagyszámú letöltéssel, és ezért a Windows nem "bízik meg" benne. Ennek megkerüléséhez egyszerűen kattintson a "További információ", majd a "Futtatás mindenképpen" elemre.
+On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
 
 ### Linux: Telepítés és első lépések
 
@@ -32,7 +32,7 @@ Ha azt az üzenetet kapja, hogy "nincs jogosultsága az alkalmazás megnyitásá
 
 ### MacOS: Automatikus frissítés
 
-A Windowstól és a Linuxtól eltérően az automatikus frissítési funkció **nincs** implementálva a macOS rendszeren, és technikai okokból valószínűleg soha nem is lesz. A Mac-felhasználókkal azonban két dolog fog történni, amikor a frissítés elérhetővé válik:
+Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for Mac users when an update is available:
 
-- Az M³ megpróbálja letölteni és automatikusan megnyitni a frissítőcsomagot, majd Önnek manuálisan kell befejeznie a frissítés telepítését úgy, hogy a frissített programot az Alkalmazások mappába helyezi. Ezután a szokásos módon elindíthatják az újonnan frissített M³ programot az Alkalmazások mappából.
-- Ha az előző lépés bármelyik szakaszában sikertelen, az M³ egy állandó értesítést jelenít meg, amely jelzi, hogy elérhető a frissítés, és hivatkozik erre a frissítésre. Az M³ főképernyőjének beállítások gombján egy piros, pulzáló értesítés is megjelenik. A beállítások képernyőn az M³ verziószám egy gombként fog megjelenni, amelyre kattintva automatikusan megnyílik a legújabb kiadás letöltési oldala.
+- M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
+- If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.

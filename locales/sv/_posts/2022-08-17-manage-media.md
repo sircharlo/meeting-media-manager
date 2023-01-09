@@ -8,34 +8,34 @@ Mediahanteringsskärmen låter användaren lägga till eller ta bort media för 
 
 ### Hantera media för en viss dag
 
-För att hantera media för ett visst möte eller en viss dag, klicka helt enkelt på dagens ruta på huvudskärmen i M³. För att hantera media som upprepas vid varje möte, klicka på rutan Återkommande media.
+To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
 
 ### Lägger till media
 
 Så här **lägger du till** media från mediehanteringsskärmen.
 
-| Alternativ           | Förklaring                                         |
-| ---------------- | --------------------------------------------------- |
-| `Typ av uppladdning` | Välj mellan en av de tre `medietyperna` (se nedan). |
-| `Media att lägga till`   | Beror på vald `mediatyp` (se nedan).       |
-| `Filnamnsprefix` | Upp till 6 siffror kan läggas till före mediafilnamnen, för att hjälpa till med sorteringen. |
-| `Medialista` | Detta visar de för närvarande planerade media för det valda datumet. |
+| Alternativ             | Förklaring                                                                                   |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| `Typ av uppladdning`   | Välj mellan en av de tre `medietyperna` (se nedan).                                          |
+| `Media att lägga till` | Beror på vald `mediatyp` (se nedan).                                                         |
+| `Filnamnsprefix`       | Upp till 6 siffror kan läggas till före mediafilnamnen, för att hjälpa till med sorteringen. |
+| `Medialista`           | Detta visar de för närvarande planerade media för det valda datumet.                         |
 
 I fältet `Media att lägga till` kommer du att presenteras med olika alternativ, beroende på vald mediatyp.
 
-| `Mediatyp` | Fältet `Media att lägga till` |
-| ------------ | ------------------------ |
-| `Sång` | ... visa en meny med alla Riketssång-låtvideor från *sjjm_-serien, på mediespråket. Välj det här alternativet för att till exempel lägga till en sång för det offentliga talet eller för kretstillsyningsbesök. <br><br> Den valda låten kommer automatiskt att laddas ner från JW.org, på församlingens eller gruppens språk, som konfigurerats i [inställningar]({{page.lang}}/#configuration). |
-| `JWPUB` | ... låter dig bläddra till (eller dra och släppa) en JWPUB-fil. <br><br> Du kommer sedan att bli ombedd att välja avsnittet, eller kapitlet, från vilket du vill lägga till media. Detta kommer att lägga till både inbäddade och refererade media från det avsnittet i JWPUB-filen. <br><br> Ett exempel på en vanlig JWPUB-fil är S-34, men vilken JWPUB-fil som helst kan användas här. |
-| `Anpassa` | ... låter dig bläddra till (eller dra och släpp) andra mediafiler från din dator. <br><br> *Observera att alla PDF- och SVG-filer automatiskt kommer att konverteras till högupplösta bilder av M³.* |
+| `Mediatyp` | Fältet `Media att lägga till`                                                                                                                                                                                                                                                                                                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Sång`     | ... show a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br> The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [Settings]({{page.lang}}/#configuration). |
+| `JWPUB`    | ... allow you to browse to (or drag and drop) a JWPUB file. <br><br> You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.      |
+| `Anpassa`  | ... allow you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                        |
 
 ### Ta bort, dölja och visa media
 
 För att **ta bort**, **dölja** eller **visa** media, leta upp den mediefil du inte vill ha och klicka på den relevanta ikonen.
 
-| Media har en röd 🥥 (radera) ikon | Media har en ☑️ (markerad kryssruta)-ikon | Media har en 🔲-ikon (omarkerad kryssruta) |
-| ---------------------- | --------------------------- | ------------------------------ |
-| Mediafilen lades till dagens media av dig eller VO. | Mediefilen hänvisas till i mötets material. <br><br> Den *kommer* att laddas ner från JW.org eller extraheras från den relevanta publikationen. | Mediefilen hänvisas till i mötets material. <br><br> Den gömdes av dig eller VO, så den *kommer inte* att laddas ner eller läggas till i mötets media. |
+| Media har en röd 🥥 (radera) ikon                    | Media har en ☑️ (markerad kryssruta)-ikon                                                                                                                    | Media har en 🔲-ikon (omarkerad kryssruta)                                                                                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mediafilen lades till dagens media av dig eller VO. | The media file is referenced in the meeting's material. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file is referenced in the meeting's material. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
 
 ### Skärmdumpar av mediehanteringsskärmen
 

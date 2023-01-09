@@ -10,17 +10,17 @@ Meediumiesitluse ja kontrolleri režiimid on loodud lihtsuse huvides ja koosolek
 
 Kui valik `Esita meediat teisel monitoril või eraldi aknas` on lubatud, ilmub meediumiesitluse ekraan automaatselt välisele monitorile, kui see on olemas, või eraldi, lohistatavas ja suurust muudetavas aknas, kui välist monitori ei tuvastatud.
 
-Ooterežiimis kuvatakse meediumiesitluse ekraanil seadetes konfigureeritud taustpilt. Kui taustapilti pole seadistatud, proovib M³ automaatselt tuua ja kuvada aastateksti.
+When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
 
 Kui seadetes pole taustapilti konfigureeritud ja aastateksti ei saanud automaatselt laadida, kuvatakse ooterežiimis must taust.
 
 Meediumikontrolleri režiimile pääseb juurde, klõpsates M³ põhiekraanil nuppu ▶️ (esita) või kasutades kiirklahvi <kbd>Alt D</kbd> (välise kuva jaoks).
 
-Kui olete kontrolleri režiimi sisenenud, võimaldab kausta valimise ekraan teil valida kuupäeva, mille jaoks soovite meediumit kuvada. Kui praeguse päeva kaust on olemas, valitakse see automaatselt. Kui kuupäev on valitud, saate valitud kuupäeva igal ajal muuta, klõpsates ülaosas kuupäeva valiku nuppu.
+Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
 
 ### Meedia esitlemine
 
-Meediumi esitamiseks vajutage soovitud faili nuppu ▶️ (esitus). Meediumi peitmiseks vajutage nuppu ⏹️ (stopp). Soovi korral saab videot peatatud ajal tagasi või edasi kerida. Pange tähele, et videote puhul tuleb stopp-nuppu vajutada **kaks korda**, et vältida video kogemata ja enneaegset peatamist koguduse heaks esitamise ajal. Videod peatuvad automaatselt, kui need on täielikult esitatud.
+To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
 
 ### Hübriidkoosolekute läbiviimine, kasutades M³, OBS Studio ja Zoom kombinatsiooni
 
@@ -38,17 +38,17 @@ Installige OBS Studio või laadige alla kaasaskantav versioon.
 
 Kui kasutate OBS Studio kaasaskantavat versiooni, installige pistikprogramm [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) ja kui kasutate OBS Studio kaasaskantavat versiooni, lisage virtuaalkaamera Windowsile, topeltklõpsates kaasasoleval installiskriptil.
 
-Kui teil on OBS Studio v27 või vanem, peate installima pistikprogrammi [obs-websocket](https://github.com/obsproject/obs-websocket). Uuema versiooni jaoks on obs-websocket vaikimis olemas. Konfigureerige obs-websocketi pordi number ja parool.
+If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
 
-Lubage OBS-i seadetes jaotises `General` > `System Tray` kõik märkeruudud. Jaotises `Väljund` > `Voogesitus` lubage riistvarakooder, kui see on saadaval. Jaotises `Video` > `Põhi (lõuendi) eraldusvõime` ja `Väljundi (skaalatud) eraldusvõime` valige `1280 x 720` ja jaotises `Downscale Filter`, valige `Bilineaarne`.
+In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 
-Seadistage vähemalt 2 stseeni: üks meediumikuva jaoks (`Window Capture` või `Display Capture`, kus hiirekursor on keelatud ja sobiv akna pealkiri/monitor on valitud) ja üks lavavaade (`videohõiveseade`, kus on valitud KH-kaamera). Saate lisada nii palju stseene, kui vaja, kui kaamera on reguleeritud, sisse suumitud ja kärbitud (kõnepuldi vaade, juhi- ja lugejavaade, tabelivaade jne).
+Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
 
 Lisage OBS Studio otsetee parameetriga `--startvirtualcam` Windowsi kasutajaprofiili käivituskausta tagamaks, et OBS Studio käivitub kasutaja sisselogimisel automaatselt.
 
 #### Esialgne konfiguratsioon: Kuningriigisaali suum
 
-Suum tuleks konfigureerida kahe monitori kasutamiseks. Lubage Zoomi globaalsed klaviatuuri otseteed, et vaigistada / vaigistada suumis kuningriigisaali heli (<kbd>Alt A</kbd>) ja käivitada/peatada kuningriigisaali videovoog suumis ( <kbd>Alt V</kbd>).
+Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
 
 Seadke vaikimisi "mikrofon" mikseri kombineeritud väljundiks (nii et kõik kuningriigisaali helisüsteemi kaudu kostuv heli edastatakse Zoomi kaudu, sealhulgas mikrofonid ja meedia) ja "kaameraks" OBS Studio pakutav virtuaalne kaamera .
 
@@ -60,11 +60,11 @@ Lubage ja konfigureerige OBS Studio ühilduvusrežiim, kasutades OBS Studio sead
 
 #### Koosoleku alustamine
 
-Käivitage Zoomi koosolek ja teisaldage teisene Zoom koosoleku aken välisele monitorile. Soovi korral tehke see täisekraaniks See on koht, kus kogudusel kuvatakse kõik kaugkoosolekul osalejad.
+Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
 
-Kui Zoomi koosolekut kuvatakse välisel monitoril, avage M³. Meediumiesitluse aken avaneb automaatselt välise monitori suumi ülaosas. Vajadusel sünkroonige meediumid ja sisenege meediumikontrolleri režiimi, klõpsates M³ põhiekraanil nuppu ▶️ (esita) või <kbd>Alt D</kbd>.
+Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
 
-Lubage kuningriigisaali videovoog (<kbd>Alt V</kbd>) ja tõstke vajadusel esile kuningriigisaali videovoog, et Suumi osalejad näeksid kuningriigisaali lava. Tühista kuningriigisaali helivoo vaigistus suumis (<kbd>Alt A</kbd>). Koosoleku ajaks ei tohiks Zoomis video- või helivoogu välja lülitada.
+Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
 
 Alustage taustamuusika taasesitamist vasakpoolses allnurgas oleva nupu või <kbd>Alt K</kbd> abil.
 
@@ -78,15 +78,15 @@ Koosoleku ajal saab valida erinevaid kaameranurki/suumi, kasutades M³ meedia ta
 
 Otsige M³ meedia taasesituse juhtaknas üles meedium, mida soovite jagada, ja vajutage nuppu "Esita".
 
-Kui olete meedia jagamise lõpetanud, vajutage M³ nuppu "stopp". Pange tähele, et videod peatuvad automaatselt pärast lõpetamist.
+When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
 
 #### Suumi kaugosalejate kuvamine kuningriigisaali monitoril
 
-Vajutage M³ meediumikontrolleri ekraani alumises paremas nurgas nuppu „peida/näita meediaesitluse aken” või **peitmiseks** <kbd>Alt Z</kbd> meediaesitluse aken. Zoomi koosolek on nüüd nähtav kuningriigisaali monitoril.
+Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
 
 > Kui osalejal on näidata meediat, järgige alampealkirja **Meedia jagamine kuningriigisaalis ja Zoomi kaudu** all olevaid juhiseid.
 
-Kui osaleja on oma osa lõpetanud, vajutage M³ meedia taasesituse juhtakna alumises paremas nurgas nuppu "peida/näita meediaesitluse aken" või <kbd>Alt Z</kbd>, meediaesitluse akna **kuvamiseks**. Kuningriigisaali monitor näitab nüüd aastateksti.
+Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
 
 ### Hübriidkoosolekute läbiviimine, kasutades ainult M³ ja Zoom
 
@@ -94,7 +94,7 @@ Kui te ei soovi mingil põhjusel OBS Studiot kasutada, aitavad järgmised soovit
 
 #### Algkonfiguratsioon: kuningriigisaali arvuti
 
-Sama, mis ülaltoodud vastav jaotis. Suumi globaalse kiirklahvi lisamisega ekraani jagamise alustamiseks/peatamiseks (<kbd>Alt S</kbd>). "Kaamera" on kuningriigisaali kaamera kaameravoog.
+Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
 
 #### Esialgne konfiguratsioon: M³
 
@@ -110,7 +110,7 @@ Sama, mis ülaltoodud vastav jaotis.
 
 #### Meedia jagamine kuningriigisaalis ja Zoomi kaudu
 
-Alustage suumis jagamist, vajutades <kbd>Alt S</kbd>. Valige avanevas suumi jagamise aknas väline monitor ja lubage mõlemad all vasakul olevad märkeruudud (heli ja video optimeerimiseks). Aastateksti jagatakse nüüd Zoomi kaudu.
+Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
 
 Otsige M³ meedia taasesituse juhtaknas üles meedium, mida soovite jagada, ja vajutage nuppu "Esita".
 

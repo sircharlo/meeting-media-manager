@@ -1,17 +1,17 @@
 ---
 permalink: /fi/
 ---
-
+  
 ### Mikä on M³?
 
-**Meeting Media Manager** tai lyhennettynä **M³** on sovellus Windowsille, macOS:lle ja Linuxille, joka lataa automaattisesti kuvia ja videoita, joita tarkastellaan Jehovan todistajien seurakunnan kokouksissa. millä tahansa JW.org:n kielellä.
-  
+**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+
 Se sisältää toistuvan ja mukautetun mediahallinnan sekä valinnaisen synkronointiominaisuuden saman seurakunnan jäsenille sekä tuen useille seurakunnille ja/tai ryhmille, jotka käyttävät samaa tietokonetiliä.
 
 ### Mitä M³ voi tehdä?
 
 M³:n avulla voit helposti ja automaattisesti ladata, synkronoida, jakaa ja esittää kaiken kokousmedian.
-  
+
 **Hybridi-** tai **henkilökohtaisissa** seurakunnan kokouksissa integroidussa mediaesitystilassa on kaikki ominaisuudet, joita tarvitaan median jakamisen yksinkertaistamiseksi seurakunnan kanssa, mukaan lukien:
 
 - Median pikkukuvat
@@ -24,10 +24,10 @@ Mitä tulee täysin **etä** seurakunnan Zoom-kokouksiin, M³:n sisäänrakennet
 
 ### Toimiiko M³ kielelläni?
 
-**Kyllä!** Jehovan todistajien kokousten mediat voidaan ladata automaattisesti millä tahansa sadoista kielistä, jotka ovat saatavilla JW.org:ssa. Käytettävissä olevien kielten luettelo päivitetään dynaamisesti; sinun tarvitsee vain valita haluamasi.
+**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
 
-Lisäksi monet vapaaehtoiset ovat kääntäneet itse M³:n 15 kielelle. voit siis määrittää kielen, jonka haluat näkyvän M³:n käyttöliittymässä.
+In addition, M³ itself has been translated into 15 languages and counting, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
-Tämä sovellus on tehty rakkaudella vapaa-ajalla. Nauti!
+This app is made with love and a bit of spare time. Enjoy!
 
 ### Kuvakaappaukset

@@ -4,13 +4,13 @@ title: Asennus
 ref: installation
 ---
 
- M³ ei vaadi järjestelmänvalvojan oikeuksia asentamiseen tai käyttämiseen. Asenna M³ yksinkertaisesti [lataa uusin asennusohjelma](({{site.github}}/releases/latest)) ja asenna.
+M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
 
-| Käyttöjärjestelmä | Ladattava tiedosto  |
-| ---------------- | ---------------- |
-| Windows | `meeting-media-manager-[VERSION]-[ARCH].exe` |
-| macOS | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
-| Linux | `meeting-media-manager-[VERSION]-[ARCH].AppImage` |
+| Käyttöjärjestelmä | Ladattava tiedosto                                     |
+| ----------------- | ------------------------------------------------------ |
+| Windows           | `meeting-media-manager-[VERSION]-[ARCH].exe`           |
+| macOS             | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
+| Linux             | `meeting-media-manager-[VERSION]-[ARCH].AppImage`      |
 
 ### Mitä seuraavaksi
 

@@ -100,7 +100,7 @@ Uguale alla sezione corrispondente sopra. Con l'aggiunta della scorciatoia da ta
 
 Abilita l'opzione `Mostra i media su un monitor esterno o in una finestra separata`.
 
-#### Avvio dell'adunanza
+#### Starting the meeting without OBS
 
 Uguale alla sezione corrispondente sopra.
 
