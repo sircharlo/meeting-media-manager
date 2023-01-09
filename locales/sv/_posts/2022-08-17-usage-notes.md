@@ -8,7 +8,7 @@ Appen bör kunna köras som den är på de flesta moderna datorer som kör Windo
 
 ### Windows: Installation och första uppstart
 
-När du öppnar installationsprogrammet kan du få ett [error](assets/img/other/win-smartscreen.png) som indikerar att "Windows SmartScreen förhindrade att en okänd app startade". Detta beror på att appen inte har ett högt antal nedladdningar, och följaktligen inte är explicit "betrodd" av Windows. För att komma runt detta klickar du helt enkelt på "Mer info" och sedan på "Kör ändå".
+On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
 
 ### Linux: Installation och första uppstart
 
@@ -32,7 +32,7 @@ Om du får ett meddelande som indikerar att du "inte har behörighet att öppna 
 
 ### MacOS: Automatisk uppdatering
 
-Till skillnad från Windows och Linux är funktionalitet för automatisk uppdatering **inte** implementerad på macOS, och av tekniska skäl kommer förmodligen aldrig att bli det. Men en av två saker kommer att hända för Mac-användare när en uppdatering är tillgänglig:
+Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for Mac users when an update is available:
 
-- M³ kommer att försöka ladda ner uppdateringspaketet och öppna det automatiskt, varefter användaren måste manuellt slutföra installationen av M³-uppdateringen genom att dra och släppa den uppdaterade appen till sin Applikations-mapp. Sedan kommer de att kunna starta den nyligen uppdaterade M³ från deras Applikations-mapp som vanligt.
-- Om det föregående steget misslyckas i något skede kommer M³ att visa ett ihållande meddelande som indikerar att en uppdatering är tillgänglig, med en länk till själva uppdateringen. Ett rött, pulserande meddelande kommer också att visas på inställningsknappen på huvudskärmen i M³. M³-versionsnumret på inställningsskärmen kommer att förvandlas till en knapp som, när den klickas, öppnar den senaste versionens nedladdningssida automatiskt.
+- M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
+- If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
