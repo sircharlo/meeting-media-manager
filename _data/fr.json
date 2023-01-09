@@ -27,17 +27,17 @@
     "imgAddSong": "Ajout d'un cantique pour un discours public",
     "imgAddPic": "Ajout d'une image supplémentaire",
     "imgImportJWPUB": "Importation de médias à partir d'un document dans un fichier JWPUB",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgPreviewJWPUB": "Aperçu des médias d'un fichier JWPUB avant de les importer",
+    "imgRename": "Renommage d'un fichier média"
   },
   "present-media": {
-    "imgButton": "Button to enter media controller mode",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgButton": "Bouton pour passer en mode contrôleur média",
+    "imgSelectMeeting": "Sélection d'une réunion pour laquelle afficher les médias",
+    "imgBG": "Arrière-plan par défaut, avec texte de l'année généré automatiquement",
+    "imgMediaList": "Liste des médias prêts à être présentés",
+    "imgStandby": "Présentation des médias M³ en mode veille",
+    "imgDisplayPic": "Affichage d'une image",
+    "imgPlayVideo": "Lecture d'une vidéo",
+    "imgVideoScrub": "Recherche d'un moment spécifique dans une vidéo"
   }
 }

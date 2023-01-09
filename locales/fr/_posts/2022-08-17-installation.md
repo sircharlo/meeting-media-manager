@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Paramètres
 title: Installation
 ref: installation
 ---

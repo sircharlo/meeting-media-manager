@@ -1,13 +1,13 @@
 ---
-tag: Help
-title: Issues and feature requests
+tag: Aide
+title: Bogues et demandes de fonctionnalités
 ref: bug-feature
 ---
 
-### How do I report an issue or bug I encountered?
+### Comment signaler un problème ou un bogue que j'ai rencontré ?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+Si jamais vous rencontrez des problèmes avec M³, veuillez utiliser [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) pour le signaler. Les corrections de bogues sont publiées régulièrement, généralement chaque mois.
 
-### How can I request new features?
+### Comment puis-je demander de nouvelles fonctionnalités ?
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+Nous sommes ouverts aux suggestions ! Veuillez utiliser [GitHub Discussions]({{site.github}}/discussions) pour discuter de nouvelles fonctionnalités potentielles.

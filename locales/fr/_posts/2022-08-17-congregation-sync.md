@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Paramètres
 title: Synchronisation au niveau de l'assemblée locale
 ref: congregation-sync
 ---
