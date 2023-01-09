@@ -4,7 +4,7 @@ You are welcome to contribute to this project. If you want to do so, here you wi
 
 ## Help translate this application
 
-If any one of you would like to volunteer to become a M³ language moderator for a language you speak, please [sign into Crowdin](https://accounts.crowdin.com/authorize/github) using your GitHub account, and then let me know by [creating a new discussion](https://github.com/sircharlo/meeting-media-manager/discussions/categories/translations) in the **Translations** category.
+If any one of you would like to volunteer to become a M³ language moderator for a language you speak, please [sign into Crowdin](https://accounts.crowdin.com) using your GitHub account, and then let me know by [creating a new discussion](https://github.com/sircharlo/meeting-media-manager/discussions/categories/translations) in the **Translations** category.
 
 As language moderator, you will get notified of changes to the English original strings, have a nice and easy to use interface to review existing as well as untranslated strings in your language, and submit new translations to the repo easily.
 
