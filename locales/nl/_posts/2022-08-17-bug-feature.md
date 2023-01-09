@@ -10,4 +10,4 @@ Als je ooit een probleem tegenkomt met M³, gebruik dan alsjeblieft [GitHub Issu
 
 ### Hoe kan ik een suggestie geven voor een nieuwe functionaliteit?
 
-Suggesties zijn welkom! Maak alsjeblieft gebruik van [GitHub Discussions]({{site.github}}/discussions) om ideeën met elkaar en het team uit te te wisselen.
+Suggesties zijn welkom! Maak alsjeblieft gebruik van [GitHub Discussies]({{site.github}}/discussions) om ideeën met elkaar en het team uit te wisselen.

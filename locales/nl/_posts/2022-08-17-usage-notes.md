@@ -8,7 +8,7 @@ Deze applicatie zou moeten werken op de meeste moderne computers met Windows, Li
 
 ### Windows: Installatie en eerste keer opstarten
 
-Bij het openen van het installatiebestand krijg je misschien een [error](assets/img/other/win-smartscreen.png) die het volgende zegt: "Windows SmartScreen voorkwam dat een niet herkende applicatie geïnstalleerd werd." Dit komt omdat deze applicatie geen hoog aantal downloads heeft en daarom niet expliciet "vertrouwd" wordt door Windows. This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. Om dit op te lossen klik je op "Meer info" en dan "Toch uitvoeren".
+Bij het openen van het installatiebestand krijg je misschien een [error](assets/img/other/win-smartscreen.png) die het volgende zegt: "Windows SmartScreen voorkwam dat een niet herkende applicatie geïnstalleerd werd". Dit komt omdat deze applicatie geen hoog aantal downloads heeft en daarom niet uitdrukkelijk "vertrouwd" wordt door Windows. Om dit op te lossen klik je op "Meer info" en dan "Toch uitvoeren".
 
 ### Linux: Installatie en eerste keer opstarten
 
@@ -20,7 +20,7 @@ Als het resultaat `0` is, dan wordt de applicatie **niet** uitgevoerd, behalve a
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Make sure you read up on [what this entails](https://lwn.net/Articles/673597/) before you do this.
+Zorg ervoor dat je [weet wat dit inhoudt](https://lwn.net/Articles/673597/) voordat je dit doet.
 
 ### MacOS: Installatie en eerste keer opstarten
 
@@ -35,4 +35,4 @@ Als je de waarschuwing "je hebt geen toestemming om de applicatie te openen" kri
 Niet zoals Windows and Linux, is de automatisch updaten functie **niet** beschikbaar voor macOS en voor technische redenen zal dat waarschijnlijk nooit gebeuren. Een van de volgende dingen zal gebeuren als er een update beschikbaar is voor Mac gebruikers:
 
 - M³ zal proberen de update te downloaden en openen, waarna de gebruiker zelf handmatig de installatie van de update moet voltooien door de nieuwe versie te slepen naar de applicatie folder zoals gewoonlijk. Daarna, kan je de nieuwe versie van M³ vanaf de applicatie folder openen zoals gewoonlijk.
-- Als de vorige stap mislukt, zal M³ een notificatie tonen die aangeeft dat er een update beschikbaar is met een link om de update te downloaden. De instellingen knop zal een rode kleur krijgen. Het M³ versie nummer linkonder in het instellingen scherm zal een link worden die je verwijst naar de download pagina voor de update.
+- Als de vorige stap mislukt, zal M³ een notificatie tonen die aangeeft dat er een update beschikbaar is met een link om de update te downloaden. De instellingen-knop zal een rode kleur krijgen. Het M³ versie nummer linksonder in het instellingen scherm zal een link worden die je verwijst naar de download pagina voor de update.

@@ -1,10 +1,10 @@
 {
   "lang": "fr",
   "name": "Français",
-  "language": "Langue:",
-  "search": "Filter by keyword",
+  "language": "Langue :",
+  "search": "Filter par mot clé",
   "shared": {
-    "explanation": "Explanation",
+    "explanation": "Explication",
     "option": "Option",
     "optionsApp": "Configuration de l'appli",
     "optionsCongSync": "Configuration de la synchronisation au niveau de l'assemblée locale",
@@ -12,21 +12,21 @@
     "optionsMeetings": "Configuration des réunions",
     "password": "Mot de passe",
     "port": "Port",
-    "setting": "Setting"
+    "setting": "Réglage"
   },
   "home": {
-    "expand": "Expand all articles",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
-    "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
-    "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "expand": "Montrer tous les articles",
+    "collapse": "Réduire tous les articles",
+    "syncInProgress": "Synchronisation des médias en cours",
+    "mainScreen": "Écran principal",
+    "chooseWeek": "Sélectionnez une semaine",
+    "syncComplete": "Synchronisation réussie !",
+    "musicPlaying": "Lecture de musique avant et après une réunion"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
+    "imgAddSong": "Ajout d'un cantique pour un discours public",
+    "imgAddPic": "Ajout d'une image supplémentaire",
+    "imgImportJWPUB": "Importation de médias à partir d'un document dans un fichier JWPUB",
     "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
     "imgRename": "Renaming a media file"
   },

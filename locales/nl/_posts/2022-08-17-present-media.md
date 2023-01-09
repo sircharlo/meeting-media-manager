@@ -68,7 +68,7 @@ Zet de video van de zaal in in Zoom (<kbd>Alt V</kbd>), en "spotlight" (indien n
 
 Start de achtergrond muziek door op de knop linksonder te drukken, of met <kbd>Alt K</kbd>.
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom
+#### Fysieke aandelen in de koninkrijkszaal tonen via Zoom
 
 Geen actie nodig.
 
@@ -110,13 +110,13 @@ Hetzelfde als de gelijknamige sectie hierboven.
 
 #### Media delen in de koninkrijkszaal en via Zoom zonder OBS
 
-Start het delen in Zoom door <kbd>Alt S</kbd> in te drukken. In Zoom komt er een scherm in beeld. Kies de externe monitor en vink beide checkboxes aan linksonderin (voor geluid en video optimalisatie). De jaartekst wordt nu via Zoom gedeeld.
+Start het delen in Zoom door <kbd>Alt S</kbd> in te drukken. In Zoom komt er een scherm in beeld. Kies de externe monitor en vink beide checkboxen aan linksonderin (voor geluid en video-optimalisatie). De jaartekst wordt nu via Zoom gedeeld.
 
 Vind de media die je wilt delen in M³ en druk op de "play" knop.
 
 Wanneer je klaar bent, druk je weer op <kbd>Alt S</kbd> om de Zoom share te stoppen.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor without OBS
+#### Zoom aandelen tonen in de koninkrijkszaal zonder OBS
 
 Hetzelfde als de gelijknamige sectie hierboven.
 

@@ -24,7 +24,7 @@ Voor volledig **digitale** Zoom gemeente vergaderingen, is er de ingebouwde MP4 
 
 ### Werkt M³ in mijn eigen taal?
 
-**Ja!** Media voor vergaderingen van Jehovah's Getuigen wordt automatisch gedownload in een van de honderden talen die beschikbaar zijn op JW.org. De lijst van beschikbare talen wordt automatisch bijgehouden; je hoeft alleen maar de taal te kiezen die jij wilt gebruiken. The list of available languages is dynamically updated; all you need to do is select which one you want.
+**Ja!** Media voor vergaderingen van Jehovah's Getuigen wordt automatisch gedownload in een van de honderden talen die beschikbaar zijn op JW.org. De lijst van beschikbare talen wordt automatisch bijgehouden; je hoeft alleen maar de taal te kiezen die jij wilt gebruiken.
 
 Bovendien is M³ zelf momenteel al vertaald in maar liefst 15 talen door velen vrijwilligers; je kan dus de taal kiezen die je graag wilt zien in de applicatie.
 
