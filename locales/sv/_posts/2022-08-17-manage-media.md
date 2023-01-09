@@ -33,9 +33,9 @@ I fältet `Media att lägga till` kommer du att presenteras med olika alternativ
 
 För att **ta bort**, **dölja** eller **visa** media, leta upp den mediefil du inte vill ha och klicka på den relevanta ikonen.
 
-| Media har en röd 🥥 (radera) ikon                    | Media har en ☑️ (markerad kryssruta)-ikon                                                                                                                    | Media har en 🔲-ikon (omarkerad kryssruta)                                                                                                                                    |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mediafilen lades till dagens media av dig eller VO. | The media file is referenced in the meeting's material. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file is referenced in the meeting's material. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
+| Media har en röd 🥥 (radera) ikon                                    | Media har en ☑️ (markerad kryssruta)-ikon                                                                                                                    | Media har en 🔲-ikon (omarkerad kryssruta)                                                                                                                        |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mediafilen lades till dagens media av dig eller mötesorganisatören. | The media file is referenced in the meeting's material. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file is referenced in the meeting's material. <br><br>Dold av dig eller av MO, så det kommer *inte* bli nedladdat eller tillagd som media. |
 
 ### Skärmdumpar av mediehanteringsskärmen
 
