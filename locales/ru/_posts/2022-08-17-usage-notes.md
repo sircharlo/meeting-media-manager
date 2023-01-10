@@ -22,17 +22,17 @@ ref: usage-notes
 
 Убедитесь, что вы прочитали о том, [что это подразумевает](https://lwn.net/Articles/673597/), прежде чем это сделать.
 
-### macOS: Installation and first launch
+### macOS: Установка и первый запуск
 
-If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or because "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
+Если при запуске приложения, вы получите предупреждение о том, что приложение не может быть открыто, либо потому, что "оно не было загружено из App Store" или потому, что "разработчик не может быть проверен", тогда эта [страница поддержки Apple](https://support.apple.com/en-ca/HT202491) поможет вам преодолеть эту ошибку.
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
+Если вы получили сообщение о том, что вы «не имеете разрешения на открытие приложения», тогда попробуйте некоторые из следующих решений на [этой странице](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Auto-update
+### macOS: Автоматическое обновление приложений
 
-Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for macOS users when an update is available:
+В отличие от Windows и Linux, функция автоматического обновления **не внедрена** в macOS, и по техническим причинам, вероятно, никогда не будет внедрена. Однако, когда обновление будет доступно, для пользователей macOS произойдет одно из двух событий:
 
-- M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
-- If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
+- M³ попытается загрузить пакет обновления и открыть его автоматически, после чего пользователю придется вручную завершить установку обновления M³, перетащив обновленное приложение в папку приложений. Затем они смогут запустить только что обновленное приложение M³ из папки приложений, как обычно.
+- Если предыдущий шаг на каком-либо этапе окажется неудачным, M³ выведет на экран постоянное уведомление о том, что обновление доступно, со ссылкой на само обновление. Красный, пульсирующее уведомление также будет отображаться на кнопке настроек на главном экране M³. На экране настроек, номер версии M³ превратится в кнопку, при нажатии на которую автоматически откроется страница загрузки последней версии.
