@@ -122,4 +122,4 @@ Same as corresponding section above.
 
 ### Screenshots of Presentation Mode
 
-{% include screenshots/present-media.html lang=site.data.sk %}
+{% include screenshots/present-media.html lang=site.data.en %}
