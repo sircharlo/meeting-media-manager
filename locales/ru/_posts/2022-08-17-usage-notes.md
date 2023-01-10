@@ -1,26 +1,26 @@
 ---
-tag: Help
-title: Technical usage notes
+tag: Справка
+title: Технические примечания
 ref: usage-notes
 ---
 
 The app should run as is on most modern computers running Windows, Linux, or macOS.
 
-### Windows: Installation and first launch
+### Виндовс: Установка и первый запуск
 
-On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+При открытии программы установки может быть обнаружена [ошибка](assets/img/other/win-smartscreen.png), указывающая на то, что Windows SmartScreen не запускал нераспознанное приложение. Это связано с тем, что приложение не имеет большого количества загрузок и, следовательно, не является полностью доверенным в Windows. Чтобы обойти эту проблему, просто нажмите на "Подробнее", затем "Выполнить все равно".
 
-### Linux: Installation and first launch
+### Linux: Установка и первый запуск
 
-As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
+Согласно официальной документации [AppImage](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), если приложение не открывается должным образом, подтвердите вывод следующей команды:
 
-`ysctl kernel.unprivileged_userns_clone`
+`sysctl kernel.unprivileged_userns_clone`
 
-If the output is `0`, then the AppImage will **not** run unless you run the following command, followed by a reboot:
+Если на выходе получается `0`, то AppImage **не запустится**, пока вы не выполните следующую команду и затем не перезагрузитесь:
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Make sure you read up on [what this entails](https://lwn.net/Articles/673597/) before you do this.
+Убедитесь, что вы прочитали о том, [что это подразумевает](https://lwn.net/Articles/673597/), прежде чем это сделать.
 
 ### macOS: Installation and first launch
 
