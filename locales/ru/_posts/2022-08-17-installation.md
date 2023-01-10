@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Настройки
 title: Installation
 ref: installation
 ---
