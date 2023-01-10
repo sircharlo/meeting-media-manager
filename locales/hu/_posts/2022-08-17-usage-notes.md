@@ -4,7 +4,7 @@ title: Műszaki használati jegyzetek
 ref: usage-notes
 ---
 
-Az alkalmazásnak probléma nélkül futnia kell a legtöbb modern —Windows, Linux vagy macOS rendszert futtató — számítógépen.
+The app should run as is on most modern computers running Windows, Linux, or macOS.
 
 ### Windows: Telepítés és első lépések
 
@@ -14,7 +14,7 @@ On opening the installer, you might get an [error](assets/img/other/win-smartscr
 
 A [hivatalos AppImage dokumentáció](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html) szerint, ha az alkalmazás nem nyílik meg megfelelően, ellenőrizze a következő parancs kimenetét:
 
-`ysctl kernel.unprivileged_userns_clone`
+`sysctl kernel.unprivileged_userns_clone`
 
 Ha a kimenet `0`, akkor az AppImage **nem** fog futni, hacsak nem futtatja a következő parancsot, amelyet egy újraindítás követ:
 
@@ -22,7 +22,7 @@ Ha a kimenet `0`, akkor az AppImage **nem** fog futni, hacsak nem futtatja a kö
 
 Mielőtt ezt megteszi, mindenképpen olvassa el, hogy [mivel jár ez](https://lwn.net/Articles/673597/).
 
-### macOS: Telepítés és első lépések
+### macOS: Installation and first launch
 
 Ha az alkalmazás elindításakor figyelmeztetést kap, hogy az alkalmazás nem nyitható meg, mert "nem az App Store-ból lett letöltve", vagy mert "a fejlesztő nem ellenőrizhető", akkor ez az [Apple támogatási oldal](https://support.apple.com/en-ca/HT202491) segít, hogy túljusson ezen.
 
@@ -30,7 +30,7 @@ Ha azt az üzenetet kapja, hogy "nincs jogosultsága az alkalmazás megnyitásá
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Automatikus frissítés
+### macOS: Auto-update
 
 Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for macOS users when an update is available:
 
