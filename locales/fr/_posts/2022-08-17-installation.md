@@ -8,9 +8,9 @@ M³ ne nécessite pas de droits d'administrateur pour s'installer ou s'exécuter
 
 | Système d'exploitation | Fichier à télécharger                                  |
 | ---------------------- | ------------------------------------------------------ |
-| Windows                | `meeting-media-manager-[VERSION]-[ARCH].exe`           |
-| macOS                  | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
-| Linux                  | `meeting-media-manager-[VERSION]-[ARCH].AppImage`      |
+| Windows                | `meeting-media-manager-[VERSION].exe`           |
+| macOS                  | `meeting-media-manager-[VERSION].dmg` |
+| Linux                  | `meeting-media-manager-[VERSION].AppImage`      |
 
 ### Et maintenant ?
 

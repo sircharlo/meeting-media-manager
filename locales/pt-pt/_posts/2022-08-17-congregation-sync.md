@@ -41,4 +41,4 @@ Once the congregation sync setup is complete, you're ready to start [Managing me
 
 ### Screenshots of congregation sync in action
 
-{% include posts/congregation-sync.md lang=site.data.pt-pt %}
+{% include screenshots/congregation-sync.html lang=site.data.pt-pt %}

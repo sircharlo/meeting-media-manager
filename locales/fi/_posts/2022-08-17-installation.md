@@ -8,9 +8,9 @@ M³ ei vaadi hallinnollisia oikeuksia asentaamiseen. Asentaaksesi M³:n [lataa u
 
 | Käyttöjärjestelmä | Ladattava tiedosto                                     |
 | ----------------- | ------------------------------------------------------ |
-| Windows           | `meeting-media-manager-[VERSION]-[ARCH].exe`           |
-| macOS             | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
-| Linux             | `meeting-media-manager-[VERSION]-[ARCH].AppImage`      |
+| Windows           | `meeting-media-manager-[VERSION].exe`           |
+| macOS             | `meeting-media-manager-[VERSION].dmg` |
+| Linux             | `meeting-media-manager-[VERSION].AppImage`      |
 
 ### Mitä seuraavaksi
 

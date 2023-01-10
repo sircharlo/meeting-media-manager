@@ -53,4 +53,4 @@ Voir la section [Synchronisation de l'assemblée locale]({{page.lang}}/#congrega
 
 ### Captures d'écran de l'écran des réglages
 
-{% include posts/configuration.md lang=site.data.fr %}
+{% include screenshots/configuration.html lang=site.data.fr %}
