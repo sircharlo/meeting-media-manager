@@ -308,6 +308,8 @@ const plugin: Plugin = (
           $warn('errorObsMediaScene')
         } else if (scene === $getPrefs('app.obs.zoomScene')) {
           $warn('errorObsZoomScene')
+        } else if (e?.message?.includes('No source was found')) {
+          $warn('errorObsScene', { identifier: scene })
         } else {
           $log.debug(`setScene(${scene})`)
           $error('errorObs', e)

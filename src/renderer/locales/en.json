@@ -45,6 +45,7 @@
   "errorObsAuth": "The password for the OBS Studio integration might be incorrect. Please verify that the password is correct and try again.",
   "errorObsCameraScene": "The configured default camera scene does not exist anymore. Please change it in the settings.",
   "errorObsMediaScene": "The configured media scene does not exist anymore. Please change it in the settings.",
+  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
   "errorObsZoomScene": "The configured Zoom scene does not exist anymore. Please change it in the settings.",
   "errorOffline": "The application is offline. Data can't be downloaded or uploaded!",
   "errorPpEnable": "The keyboard shortcuts during media playback could not be enabled. Please check if your settings are valid.",
