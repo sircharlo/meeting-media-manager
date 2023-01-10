@@ -1,43 +1,43 @@
 {
   "lang": "ru",
-  "name": "русский",
+  "name": "Русский",
   "language": "Язык:",
-  "search": "Filter by keyword",
+  "search": "Фильтр по ключевым словам",
   "shared": {
-    "explanation": "Explanation",
-    "option": "Option",
+    "explanation": "Обьяснение",
+    "option": "Настройки",
     "optionsApp": "Настройка приложения",
     "optionsCongSync": "Настройка синхронизации на уровне местного собрания",
-    "optionsMedia": "Настройка медиафайлов",
+    "optionsMedia": "Настройка мультимедиа",
     "optionsMeetings": "Настройки, связанные со встречами",
     "password": "Пароль",
     "port": "Порт",
-    "setting": "Setting"
+    "setting": "Настройки"
   },
   "home": {
-    "expand": "Expand all articles",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
-    "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
-    "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "expand": "Показать все статьи",
+    "collapse": "Свернуть все статьи",
+    "syncInProgress": "Выполняется синхронизация мультимедиа",
+    "mainScreen": "Главный экран",
+    "chooseWeek": "Выберите неделю",
+    "syncComplete": "Синхронизация завершена!",
+    "musicPlaying": "Воспроизведение музыки до и после встречи"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgAddSong": "Добавление песни для публичной речи",
+    "imgAddPic": "Добавление дополнительного изображения",
+    "imgImportJWPUB": "Импорт мультимедиа из определенного раздела в JWPUB-файле",
+    "imgPreviewJWPUB": "Предварительный просмотр медиа из JWPUB-файла перед импортом",
+    "imgRename": "Переименование медиа-файла"
   },
   "present-media": {
-    "imgButton": "Button to enter media controller mode",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgButton": "Кнопка для входа в режим управления мультимедиа",
+    "imgSelectMeeting": "Выбор встречи, для которой будут отображаться медиа",
+    "imgBG": "Фон по умолчанию, с автоматически загружаемым годовым текстом",
+    "imgMediaList": "Список мультимедиа, готовых к презентации",
+    "imgStandby": "Презентация мультимедиа в режиме ожидания",
+    "imgDisplayPic": "Презентация изображения",
+    "imgPlayVideo": "Воспроизведение видео",
+    "imgVideoScrub": "Переход к определенному моменту в видео"
   }
 }
