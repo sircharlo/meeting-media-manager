@@ -12,7 +12,7 @@ M³ does not require administrative privileges to install or run. To install M³
 | macOS | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
 | Linux | `meeting-media-manager-[VERSION]-[ARCH].AppImage` |
 
-### What's next
+### What's next?
 
 Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
 

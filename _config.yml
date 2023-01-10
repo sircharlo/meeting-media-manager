@@ -88,6 +88,18 @@ defaults:
     values:
       lang: 'ru'
   - scope:
+      path: 'locales/sk/**/*'
+    values:
+      lang: 'sk'
+  - scope:
       path: 'locales/sv/**/*'
     values:
       lang: 'sv'
+  - scope:
+      path: 'locales/uk/**/*'
+    values:
+      lang: 'uk'
+  - scope:
+      path: 'locales/wes-x-pgw/**/*'
+    values:
+      lang: 'wes-x-pgw'
