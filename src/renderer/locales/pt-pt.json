@@ -45,6 +45,7 @@
   "errorObsAuth": "A senha do plugin obs-websocket está incorreta. Verifique e tente novamente.",
   "errorObsCameraScene": "A cena de câmera padrão configurada não existe mais. Por favor, mude a cena nas configurações do M³.",
   "errorObsMediaScene": "A cena de mídia configurada não existe mais. Por favor, mude a cena nas configurações do M³.",
+  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
   "errorObsZoomScene": "A cena para partes pelo Zoom configurada não existe mais. Por favor, altere-a nas configurações.",
   "errorOffline": "O aplicativo está off-line. As multimédias não serão baixadas ou carregadas!",
   "errorPpEnable": "Os atalhos de teclado durante a reprodução de mídia não puderam ser ativados. Verifique se suas configurações estão válidas.",

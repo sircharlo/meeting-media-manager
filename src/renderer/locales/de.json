@@ -45,6 +45,7 @@
   "errorObsAuth": "Das Passwort für die OBS Studio-Integration ist möglicherweise falsch. Bitte überprüfen und erneut versuchen.",
   "errorObsCameraScene": "Die konfigurierte Standard-Kameraszene existiert nicht mehr. Bitte in den Einstellungen ändern.",
   "errorObsMediaScene": "Die konfigurierte Medienszene existiert nicht mehr. Bitte in den Einstellungen ändern.",
+  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
   "errorObsZoomScene": "Die konfigurierte Zoom Szene existiert nicht mehr. Bitte ändere diese in den Einstellungen.",
   "errorOffline": "Die Anwendung ist offline. Daten können nicht herunter- oder hochgeladen werden!",
   "errorPpEnable": "Die Tastaturkürzel während der Medienwiedergabe konnten nicht aktiviert werden. Bitte überprüfe, ob deine Einstellungen korrekt sind.",

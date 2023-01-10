@@ -45,6 +45,7 @@
   "errorObsAuth": "OBS Studio integreerimise parool võib olla vale. Veenduge, et parool on õige, ja proovige uuesti.",
   "errorObsCameraScene": "Seadistatud kaamera vaikestseeni enam ei eksisteeri. Palun muutke seda seadetes.",
   "errorObsMediaScene": "Seadistatud meediastseeni pole enam olemas. Palun muutke seda seadetes.",
+  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
   "errorObsZoomScene": "The configured Zoom scene does not exist anymore. Please change it in the settings.",
   "errorOffline": "Rakendus on võrguühenduseta. Andmeid ei saa alla laadida ega üles laadida!",
   "errorPpEnable": "The keyboard shortcuts during media playback could not be enabled. Please check if your settings are valid.",

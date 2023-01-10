@@ -45,6 +45,7 @@
   "errorObsAuth": "Lösenordet för OBS Studio-integrationen kan vara felaktigt. Kontrollera att lösenordet är korrekt och försök igen.",
   "errorObsCameraScene": "Den konfigurerade standardkamerascenen finns inte längre. Vänligen ändra det i inställningarna.",
   "errorObsMediaScene": "Den konfigurerade mediascenen finns inte längre. Vänligen ändra det i inställningarna.",
+  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
   "errorObsZoomScene": "Den konfigurerade mediascenen finns inte längre. Vänligen ändra det i inställningarna.",
   "errorOffline": "Programmet är offline. Data kan inte laddas ner eller laddas upp!",
   "errorPpEnable": "Tangentbordsgenvägarna under mediauppspelning kunde inte aktiveras. Kontrollera om dina inställningar är korrekta.",
