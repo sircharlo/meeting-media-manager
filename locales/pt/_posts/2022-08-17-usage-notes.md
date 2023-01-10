@@ -4,7 +4,7 @@ title: Instalação e atualização
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+O aplicativo funciona nos sistemas operacionais Windows, Linux ou Mac.
 
 ### Windows: Instalação e primeira execução
 
@@ -22,7 +22,7 @@ Se a saída for `0`, o AppImage **não** será executado, a menos que você exec
 
 Certifique-se de ler [o que isso implica](https://lwn.net/Articles/673597/) antes de fazer isso.
 
-### macOS: Installation and first launch
+### macOS: Instalação e primeira execução
 
 Se ao iniciar o aplicativo, você receber um aviso de que o aplicativo não pode ser aberto, seja porque "não foi baixado da App Store" ou porque "o desenvolvedor não pode ser verificado", esta [página de suporte da Apple](https://support.apple.com/en-ca/HT202491) ajudará você.
 
@@ -30,9 +30,9 @@ Se aparecer uma mensagem que você "não tem permissão para abrir o aplicativo"
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Auto-update
+### macOS: Atualização automática
 
-Ao contrário do Windows e do Linux, a funcionalidade de atualização automática **não é** implementada no macOS e, por motivos técnicos, provavelmente nunca será. However, one of two things will happen for macOS users when an update is available:
+Ao contrário do Windows e do Linux, a funcionalidade de atualização automática **não é** implementada no macOS e, por motivos técnicos, provavelmente nunca será. No entanto, uma das duas coisas acontecerá aos usuários do macOS quando uma atualização estiver disponível:
 
 - O M³ tentará baixar o arquivo de atualização e abri-lo automaticamente, após isso o usuário terá que concluir manualmente a instalação da atualização do M³ arrastando e soltando o aplicativo atualizado na pasta Aplicativos. Em seguida, você pode iniciar o M³ atualizado na sua pasta Aplicativos, como de costume.
 - Se isso não funcionar, o M³ exibirá uma notificação indicando que uma atualização está disponível, com um link para a atualização. Uma notificação vermelha também será exibida no botão de configurações na tela principal do M³. Você também pode clicar no botão do número da versão do M³ na tela de configurações, nele vai abrir a página para você baixar a última versão.
