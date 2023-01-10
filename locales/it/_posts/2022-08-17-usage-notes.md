@@ -4,7 +4,7 @@ title: Note tecniche di utilizzo
 ref: usage-notes
 ---
 
-L'app dovrebbe funzionare sulla maggior parte dei computer moderni che eseguono Windows, Linux o Mac.
+L'app dovrebbe funzionare sulla maggior parte dei computer moderni che eseguono Windows, Linux o macOS.
 
 ### Windows: installazione e primo avvio
 
@@ -22,7 +22,7 @@ Se l'output è `0`, allora AppImage **non** si avvierà a meno che non esegui il
 
 Assicurati di leggere [cosa comporta](https://lwn.net/Articles/673597/) prima di farlo.
 
-### MacOS: Installazione e primo avvio
+### macOS: Installazione e primo avvio
 
 Se durante l'installazione ottieni un avviso che l'app non può essere avviata perché "non è stata scaricata dall'App store" oppure "lo sviluppatore non può essere verificato", allora questa [pagina del supporto Apple](https://support.apple.com/en-ca/HT202491) potrà aiutarti.
 
@@ -30,7 +30,7 @@ Se ricevi un messaggio indicante che "non hai il permesso di aprire l'applicazio
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### MacOS: Aggiornamento automatico
+### macOS: Aggiornamento automatico
 
 Diversamente da Windows e Linux, la funzione di aggiornamento automatico **non** è disponibile in macOS, e per ragioni tecniche probabilmente non lo sarà mai. Tuttavia quando è disponibile un aggiornamento potrà verificarsi una di queste due cose:
 

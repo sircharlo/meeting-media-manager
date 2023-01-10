@@ -4,7 +4,7 @@ title: Műszaki használati jegyzetek
 ref: usage-notes
 ---
 
-Az alkalmazásnak probléma nélkül futnia kell a legtöbb modern —Windows, Linux vagy Mac rendszert futtató — számítógépen.
+Az alkalmazásnak probléma nélkül futnia kell a legtöbb modern —Windows, Linux vagy macOS rendszert futtató — számítógépen.
 
 ### Windows: Telepítés és első lépések
 
@@ -22,7 +22,7 @@ Ha a kimenet `0`, akkor az AppImage **nem** fog futni, hacsak nem futtatja a kö
 
 Mielőtt ezt megteszi, mindenképpen olvassa el, hogy [mivel jár ez](https://lwn.net/Articles/673597/).
 
-### MacOS: Telepítés és első lépések
+### macOS: Telepítés és első lépések
 
 Ha az alkalmazás elindításakor figyelmeztetést kap, hogy az alkalmazás nem nyitható meg, mert "nem az App Store-ból lett letöltve", vagy mert "a fejlesztő nem ellenőrizhető", akkor ez az [Apple támogatási oldal](https://support.apple.com/en-ca/HT202491) segít, hogy túljusson ezen.
 
@@ -30,9 +30,9 @@ Ha azt az üzenetet kapja, hogy "nincs jogosultsága az alkalmazás megnyitásá
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### MacOS: Automatikus frissítés
+### macOS: Automatikus frissítés
 
-Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for Mac users when an update is available:
+Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for macOS users when an update is available:
 
 - M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
 - If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
