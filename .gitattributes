@@ -6,7 +6,7 @@
 # When the pattern matches the path in question, the attributes listed on the line are given to the path.
 # Each attribute can be in one of these states for a given path:
 # FIX CRLF always when developer has not set
-# Linux/Mac: git config --global core.autocrlf input
+# Linux/macOS: git config --global core.autocrlf input
 # Windows: git config --global core.autocrlf true
 # Auto detect text files and perform LF normalization
 * text=auto
