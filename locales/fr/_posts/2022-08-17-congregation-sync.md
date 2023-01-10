@@ -41,4 +41,4 @@ Une fois que la configuration de la synchronisation de l'assemblée locale est t
 
 ### Captures d'écran de la synchronisation de l'assemblée locale à l'œuvre
 
-{% include screenshots/congregation-sync.html lang=site.data.fr %}
+{% include posts/congregation-sync.md lang=site.data.fr %}
