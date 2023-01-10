@@ -45,6 +45,7 @@
   "errorObsAuth": "La password per la connessione con OBS Studio potrebbe non essere corretta. Verifica che la password sia corretta e riprova.",
   "errorObsCameraScene": "La scena configurata come telecamera predefinita non esiste più. Si prega di modificarla nelle impostazioni.",
   "errorObsMediaScene": "La scena configurata per i media non esiste più. Si prega di modificarlo nelle impostazioni.",
+  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
   "errorObsZoomScene": "The configured Zoom scene does not exist anymore. Please change it in the settings.",
   "errorOffline": "L'applicazione è offline. I dati non possono essere scaricati o caricati!",
   "errorPpEnable": "Non è stato possibile abilitare le scorciatoie da tastiera durante la riproduzione dei media. Controlla se le tue impostazioni sono valide.",
