@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Настройки
 title: Синхронизация собрания
 ref: congregation-sync
 ---
@@ -27,7 +27,7 @@ All users that wish to be synchronized together will need to connect to the same
 
 ### Настройка синхронизации на уровне местного собрания
 
-| Setting                        | Explanation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Настройки                      | Обьяснение                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Веб адрес`                    | Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br> ***Note:** The label for this field is actually a button that, once clicked, will show a list of WebDAV providers that have been known to be compatible with M³, and will automatically prefill certain settings for those providers. <br><br> This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...* |
 | `Имя пользователя`             | Username for the WebDAV service.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
