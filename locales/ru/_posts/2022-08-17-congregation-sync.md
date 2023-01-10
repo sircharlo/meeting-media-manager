@@ -4,13 +4,13 @@ title: Синхронизация собрания
 ref: congregation-sync
 ---
 
-The brother designated as *videoconference organizer* (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
+Брат, названный *организатором видеоконференций* (ОВ) советом старейшин, может использовать M³ для управления тем, какие мультимедиа будут предоставлены команде аудио/видео техподдержки в его собрании.
 
-The VO, or someone designated by him, can:
+ОВ, или назначенные ему лица, может:
 
-- upload **additional** media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
-- **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
-- add or remove **recurring** media, such as a year-text video, or an announcement slide
+- загрузить **дополнительные** медиа для встреч, например, для посещения районного старейшины или для публичных речей
+- **скрыть** медиа из JW.org, которые не актуальны для какой-то встречи, например, когда часть была заменена местным филиалом
+- добавить или удалить **повторяющиеся** медиа, такие как видео с годовым текстом или слайд с объявлением
 
 All who are synced to the same congregation will then receive the exact samemedia when they click the *Update media folders* button.
 
