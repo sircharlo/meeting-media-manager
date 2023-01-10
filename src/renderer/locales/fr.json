@@ -45,7 +45,7 @@
   "errorObsAuth": "Le mot de passe pour l'intégration d'OBS Studio être peut-être incorrect. Veuillez vérifier que le mot de passe est correct et réessayer.",
   "errorObsCameraScene": "La scène de caméra par défaut configurée n'existe plus. Veuillez la modifier dans les paramètres.",
   "errorObsMediaScene": "La scène média configurée n'existe plus. Veuillez la modifier dans les paramètres.",
-  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
+  "errorObsScene": "La scène suivante n'a pas pu être trouvée. Assurez-vous qu'elle existe ou reconnectez-vous à OBS Studio dans les réglages.",
   "errorObsZoomScene": "La scène Zoom configurée n'existe plus. Veuillez la modifier dans les paramètres.",
   "errorOffline": "L'application est hors ligne. Les données ne peuvent pas être téléchargées !",
   "errorPpEnable": "Les raccourcis clavier pour lecture de multimédia n'ont pas pu être activés. Veuillez vérifier si les paramètres sont valides.",
