@@ -1,13 +1,13 @@
 ---
-tag: Help
-title: Issues and feature requests
+tag: Справка
+title: Проблемы и запросы на новые функции
 ref: bug-feature
 ---
 
-### How do I report an issue or bug I encountered?
+### Как мне сообщить о проблеме или ошибке, с которой я столкнулся?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+Если вы столкнулись с какими-либо проблемами в M³, пожалуйста, используйте [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md), чтобы сообщить об этом. Исправления ошибок выпускаются на регулярной основе, как правило, ежемесячно.
 
-### How can I request new features?
+### Как мне запросить новые функции?
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+Мы всегда рады предложениям! Пожалуйста, используйте [GitHub Discussions]({{site.github}}/discussions) для обсуждения потенциальных новых функций.
