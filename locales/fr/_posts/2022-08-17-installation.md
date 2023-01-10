@@ -12,7 +12,7 @@ M³ ne nécessite pas de droits d'administrateur pour s'installer ou s'exécuter
 | macOS                  | `meeting-media-manager-[VERSION].dmg`      |
 | Linux                  | `meeting-media-manager-[VERSION].AppImage` |
 
-### What's next?
+### Et ensuite ?
 
 Configurez l'application à l'aide de l'écran [Réglages]({{page.lang}}/#configuration).
 
