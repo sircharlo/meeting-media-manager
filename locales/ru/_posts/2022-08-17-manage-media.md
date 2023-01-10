@@ -14,7 +14,7 @@ To manage media for a certain meeting or day, simply click on that day's tile on
 
 Here's how to **add** media from the media management screen.
 
-| Option            | Explanation                                                                     |
+| Настройки         | Обьяснение                                                                      |
 | ----------------- | ------------------------------------------------------------------------------- |
 | `Type of upload`  | Choose from one of the 3 `media types` (see below).                             |
 | `Media to add`    | Depends on the `media type` chosen (see below).                                 |
@@ -39,4 +39,4 @@ To **remove**, **hide**, or **show** media, simply find the media file you don't
 
 ### Screenshots of the media management screen
 
-{% include screenshots/manage-media.html lang=site.data.ru %}
+{% include posts/manage-media.md lang=site.data.ru %}
