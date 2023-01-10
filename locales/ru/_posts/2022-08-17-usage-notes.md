@@ -4,7 +4,7 @@ title: Технические примечания
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+Приложение должно работать без проблем на большинстве современных компьютеров с операционными системами Виндовс, Linux или macOS.
 
 ### Виндовс: Установка и первый запуск
 
