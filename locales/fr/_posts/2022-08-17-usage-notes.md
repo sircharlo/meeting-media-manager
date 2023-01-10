@@ -4,7 +4,7 @@ title: Notes techniques
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+L'application devrait fonctionner tel quel sur la plupart des ordinateurs modernes sous Windows, Linux ou macOS.
 
 ### Windows : Installation et premier lancement
 
@@ -22,7 +22,7 @@ Si le résultat est `0`, alors l'AppImage **ne fonctionnera pas**, à moins que 
 
 Assurez-vous de lire sur [ce que cela implique](https://lwn.net/Articles/673597/) avant de le faire.
 
-### macOS: Installation and first launch
+### macOS : Installation et premier lancement
 
 Si au lancement de l'application, vous recevez un avertissement indiquant que l'application ne peut pas être ouverte, soit parce que "elle n'a pas été téléchargée depuis l'App Store" ou parce que "le développeur ne peut pas être vérifié", alors cette [page de support Apple](https://support.apple.com/en-ca/HT202491) vous aidera à passer outre cela.
 
@@ -30,9 +30,9 @@ Si vous recevez un message indiquant que vous "n'avez pas la permission d'ouvrir
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Auto-update
+### macOS : Mise à jour automatique de l'application
 
-Contrairement à Windows et Linux, la fonctionnalité de mise à jour automatique **n'est pas implémentée** sur macOS, et pour des raisons techniques probablement ne le sera jamais. However, one of two things will happen for macOS users when an update is available:
+Contrairement à Windows et Linux, la fonctionnalité de mise à jour automatique **n'est pas implémentée** sur macOS, et pour des raisons techniques probablement ne le sera jamais. Cependant, une des deux choses suivantes se passera pour les utilisateurs de macOS lorsqu'une mise à jour sera disponible :
 
 - M³ tentera de télécharger le paquet de mise à jour et l'ouvrira automatiquement, après quoi l'utilisateur devra terminer manuellement l'installation de la mise à jour de M³ en glissant/déposant l'application mise à jour dans son dossier Applications. Ensuite, ils pourront lancer le M³ mis à jour à partir de leur dossier Applications comme d'habitude.
 - Si l'étape précédente échoue, M³ affichera une notification indiquant qu'une mise à jour est disponible, avec un lien vers la mise à jour elle-même. Une notification rouge clignotante s'affichera également sur le bouton Réglages de l'écran principal de M³. Le numéro de version M³ dans l'écran des réglages se transformera en un bouton qui, une fois cliqué, ouvrira automatiquement la page de téléchargement de la dernière version.
