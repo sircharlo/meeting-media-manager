@@ -45,6 +45,7 @@
   "errorObsAuth": "Maybe the password for your OBS Studio integration dey wrong. Abeg, make you check if you type the correct password, and try again.",
   "errorObsCameraScene": "The default camera scene wey you don choose no dey anymore. Abeg, make you change-am for inside settings.",
   "errorObsMediaScene": "The picture or video scene wey you don choose no dey anymore. Abeg, make you change-am for inside settings.",
+  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
   "errorObsZoomScene": "The Zoom scene wey you don choose no dey anymore. Abeg, make you change-am for inside settings.",
   "errorOffline": "The application dey offline. We no fit download or upload anything!",
   "errorPpEnable": "We no fit set the keyboard shortcuts for play video or music. Abeg, make you check your settings.",
