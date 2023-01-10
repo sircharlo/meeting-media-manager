@@ -310,7 +310,7 @@ const plugin: Plugin = (
           $warn('errorObsZoomScene')
         } else {
           $log.debug(`setScene(${scene})`)
-          $error('errorObs', e)
+          $error('errorObs', e, scene)
         }
       }
     }
