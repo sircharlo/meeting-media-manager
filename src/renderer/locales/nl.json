@@ -45,7 +45,7 @@
   "errorObsAuth": "Het wachtwoord voor de OBS Studio integratie is waarschijnlijk fout. Zorg ervoor dat je het juiste wachtwoord hebt ingevoerd en probeer het opnieuw.",
   "errorObsCameraScene": "De ingestelde standaard podium scene bestaat niet meer. Stel een nieuwe in de instellingen in.",
   "errorObsMediaScene": "De ingestelde media scene bestaat niet meer. Stel een nieuwe scene in de instellingen in.",
-  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
+  "errorObsScene": "De volgende scène kon niet worden gevonden. Zorg ervoor dat deze bestaat of maak opnieuw verbinding met OBS via de instellingen.",
   "errorObsZoomScene": "De ingestelde zoom scene bestaat niet meer. Stel een nieuwe scene in de instellingen in.",
   "errorOffline": "De applicatie is offline. Kan geen data downloaden of uploaden!",
   "errorPpEnable": "De sneltoetsen tijdens het presenteren van media konden niet worden ingeschakeld. Controleer of je instellingen correct zijn ingesteld.",
