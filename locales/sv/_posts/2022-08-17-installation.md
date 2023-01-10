@@ -8,9 +8,9 @@ M³ kräver inte administrativa rättigheter för att installera eller köra. F�
 
 | Operativsystem | Fil att ladda ner                                      |
 | -------------- | ------------------------------------------------------ |
-| Windows        | `meeting-media-manager-[VERSION]-[ARCH].exe`           |
-| macOS          | `meeting-media-manager-[VERSION]-[ARCH]-universal.dmg` |
-| Linux          | `meeting-media-manager-[VERSION]-[ARCH].AppImage`      |
+| Windows        | `meeting-media-manager-[VERSION].exe`           |
+| macOS          | `meeting-media-manager-[VERSION].dmg` |
+| Linux          | `meeting-media-manager-[VERSION].AppImage`      |
 
 ### Vad kommer härnäst
 
