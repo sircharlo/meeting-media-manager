@@ -45,6 +45,7 @@
   "errorObsAuth": "Előfordulhat, hogy az OBS Studio integrációjának jelszava helytelen. Kérjük, ellenőrizze, hogy a jelszó helyes-e, és próbálja újra.",
   "errorObsCameraScene": "A konfigurált alapértelmezett OBS kamerajelenet már nem létezik. Kérjük, módosítsa azt a beállításokban.",
   "errorObsMediaScene": "A konfigurált OBS médiajelenet már nem létezik. Kérjük, módosítsa azt a beállításokban.",
+  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
   "errorObsZoomScene": "A konfigurált zoomjelenet már nem létezik. Kérjük, változtassa meg a beállításokban.",
   "errorOffline": "Az alkalmazás offline állapotban van. Az adatokat nem lehet letölteni vagy feltölteni!",
   "errorPpEnable": "A médialejátszás közbeni billentyűparancsokat nem sikerült engedélyezni. Kérjük, ellenőrizze, hogy a beállítások érvényesek-e.",
