@@ -53,4 +53,4 @@ See the [Congregation sync]({{page.lang}}/#congregation-sync) section for detail
 
 ### Screenshots of the settings screen
 
-{% include posts/configuration.md lang=site.data.ru %}
+{% include screenshots/configuration.md lang=site.data.ru %}

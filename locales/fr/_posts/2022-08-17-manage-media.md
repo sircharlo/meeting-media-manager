@@ -39,4 +39,4 @@ Pour **supprimer**, **masquer**, ou **afficher** des médias, il vous suffit de 
 
 ### Captures d'écran de l'écran de gestion des médias
 
-{% include posts/manage-media.md lang=site.data.fr %}
+{% include screenshots/manage-media.md lang=site.data.fr %}

@@ -53,4 +53,4 @@ Consulte la sección [Congregation sync]({{page.lang}}/#congregation-sync) para 
 
 ### Capturas de pantalla de la pantalla de configuración
 
-{% include posts/configuration.md lang=site.data.es %}
+{% include screenshots/configuration.md lang=site.data.es %}

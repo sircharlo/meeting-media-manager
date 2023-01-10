@@ -122,4 +122,4 @@ Identique à la section correspondante ci-dessus.
 
 ### Captures d'écran du mode de présentation des médias
 
-{% include posts/present-media.md lang=site.data.fr %}
+{% include screenshots/present-media.md lang=site.data.fr %}
