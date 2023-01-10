@@ -14,7 +14,7 @@ On opening the installer, you might get an [error](assets/img/other/win-smartscr
 
 As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
 
-`ysctl kernel.unprivileged_userns_clone`
+`sysctl kernel.unprivileged_userns_clone`
 
 If the output is `0`, then the AppImage will **not** run unless you run the following command, followed by a reboot:
 

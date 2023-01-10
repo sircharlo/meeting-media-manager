@@ -4,7 +4,7 @@ title: Note tecniche di utilizzo
 ref: usage-notes
 ---
 
-L'app dovrebbe funzionare sulla maggior parte dei computer moderni che eseguono Windows, Linux o macOS.
+The app should run as is on most modern computers running Windows, Linux, or macOS.
 
 ### Windows: installazione e primo avvio
 
@@ -14,7 +14,7 @@ Avviando l'installazione potresti ottenere un [errore](assets/img/other/win-smar
 
 Come per la [documentazione AppImage ufficiale](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), se l'app non riesce ad avviarsi correttamente , conferma l'output del comando seguente:
 
-`ysctl kernel.unprivileged_userns_clone`
+`sysctl kernel.unprivileged_userns_clone`
 
 Se l'output è `0`, allora AppImage **non** si avvierà a meno che non esegui il comando seguente, seguito da un riavvio:
 
@@ -22,7 +22,7 @@ Se l'output è `0`, allora AppImage **non** si avvierà a meno che non esegui il
 
 Assicurati di leggere [cosa comporta](https://lwn.net/Articles/673597/) prima di farlo.
 
-### macOS: Installazione e primo avvio
+### macOS: Installation and first launch
 
 Se durante l'installazione ottieni un avviso che l'app non può essere avviata perché "non è stata scaricata dall'App store" oppure "lo sviluppatore non può essere verificato", allora questa [pagina del supporto Apple](https://support.apple.com/en-ca/HT202491) potrà aiutarti.
 
@@ -30,9 +30,9 @@ Se ricevi un messaggio indicante che "non hai il permesso di aprire l'applicazio
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Aggiornamento automatico
+### macOS: Auto-update
 
-Diversamente da Windows e Linux, la funzione di aggiornamento automatico **non** è disponibile in macOS, e per ragioni tecniche probabilmente non lo sarà mai. Tuttavia quando è disponibile un aggiornamento potrà verificarsi una di queste due cose:
+Diversamente da Windows e Linux, la funzione di aggiornamento automatico **non** è disponibile in macOS, e per ragioni tecniche probabilmente non lo sarà mai. However, one of two things will happen for macOS users when an update is available:
 
 - M³ tenterà di scaricare il pacchetto di aggiornamento e aprirlo automaticamente, dopodiché l'utente dovrà completare manualmente l'installazione dell'aggiornamento di M³ trascinando e rilasciando l'app aggiornata nella propria cartella Applicazioni. Quindi, si potrà avviare M³ appena aggiornato dalla cartella Applicazioni come di consueto.
 - Se il passaggio precedente fallisce sempre, M³ visualizzerà una notifica persistente che indica che è disponibile un aggiornamento, con un collegamento all'aggiornamento stesso. Una notifica rossa lampeggiante verrà visualizzata anche sul pulsante delle impostazioni nella schermata principale di M³. Il numero di versione di M³ nella schermata delle impostazioni si trasformerà in un pulsante che, una volta cliccato, apre automaticamente la pagina di download dell'ultima versione.

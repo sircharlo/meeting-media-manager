@@ -4,7 +4,7 @@ title: Tekniset käyttöohjeet
 ref: usage-notes
 ---
 
-Sovelluksen pitäisi toimia useimmissa nykyaikaisissa Windows-, Linux- tai macOS-tietokoneissa.
+The app should run as is on most modern computers running Windows, Linux, or macOS.
 
 ### Windows: Asennus ja ensimmäinen käynnistys
 
@@ -14,7 +14,7 @@ Asennusohjelman avaamisen yhteydessä saatat saada [virheen](assets/img/other/wi
 
 [virallinen AppImage-dokumentaatio](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html):n mukaisesti, jos sovellus ei avaudu kunnolla, vahvista seuraavan komennon tulos:
 
-`ysctl kernel.unprivileged_userns_clone`
+`sysctl kernel.unprivileged_userns_clone`
 
 Jos tulos on `0`, AppImage **ei** suoriteta, ellet suorita seuraavaa komentoa ja sen jälkeen uudelleenkäynnistystä:
 
@@ -22,7 +22,7 @@ Jos tulos on `0`, AppImage **ei** suoriteta, ellet suorita seuraavaa komentoa ja
 
 Muista lukea [mitä tämä pitää sisällään](https://lwn.net/Articles/673597/) ennen kuin teet tämän.
 
-### macOS: Asennus ja ensimmäinen käynnistys
+### macOS: Installation and first launch
 
 Jos saat sovelluksen käynnistämisen yhteydessä varoituksen, että sovellusta ei voi avata, joko siksi, että "se ei ole ladattu App Storesta" tai koska "kehittäjää ei voida vahvistaa", tämä [Applen tukisivu](https://support.apple.com/en-ca/HT202491) auttaa sinua pääsemään ohi että.
 
@@ -30,9 +30,9 @@ Jos saat viestin, joka ilmoittaa, että sinulla ei ole oikeutta avata sovellusta
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Automaattinen päivitys
+### macOS: Auto-update
 
-Toisin kuin Windows ja Linux, macOSOs **ei** ole ottanut automaattipäivitystoimintoa käyttöön, ja teknisistä syistä luultavasti ei koskaan tule tekemään niin. Kuitenkin toinen kahdesta asiasta tapahtuu macOSin käyttäjille, kun päivitys on saatavilla:
+Toisin kuin Windows ja Linux, MacOs **ei** ole ottanut automaattipäivitystoimintoa käyttöön, ja teknisistä syistä luultavasti ei koskaan tule tekemään niin. However, one of two things will happen for macOS users when an update is available:
 
 - M³ yrittää ladata päivityspaketin ja avata sen automaattisesti, jonka jälkeen käyttäjän on suoritettava M³-päivityksen asennus manuaalisesti vetämällä ja pudottamalla päivitetty sovellus heidän Sovelluskansioon. Sitten he voivat käynnistää äskettäin päivitetyn M³ kansiosta normaalisti.
 - Jos edellinen vaihe ei onnistu missään vaiheessa, M³ näyttää jatkuvan ilmoituksen, joka osoittaa, että päivitys on saatavilla ja linkki itse päivitykseen. Punainen, sykkivä ilmoitus tulee näkyviin myös asetuspainikkeessa, joka on M³:n päänäytössä. M³-version numero asetusnäytössä muuttuu painikkeeksi joka kerran avaa lataussivun automaattisesti.

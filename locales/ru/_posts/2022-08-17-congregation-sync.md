@@ -12,33 +12,33 @@ ref: congregation-sync
 - **скрыть** медиа из JW.org, которые не актуальны для какой-то встречи, например, когда часть была заменена местным филиалом
 - добавить или удалить **повторяющиеся** медиа, такие как видео с годовым текстом или слайд с объявлением
 
-All who are synced to the same congregation will then receive the exact samemedia when they click the *Update media folders* button.
+Все, кто синхронизирован с одним и тем же собранием, получат точно такие же мультимедийные файлы, когда они нажмут кнопку *Обновить папки мультимедиа*.
 
-Please note that the congregation sync feature is opt-in and entirely optional.
+Обратите внимание, что функция синхронизации собраний является опциональной и совершенно необязательной.
 
-### How it works
+### Как это работает
 
-M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+Механизм синхронизации собраний, используемый в M³, основан на WebDAV. Это означает, что ОВ (или кто-то под его руководством) должен либо:
 
-- set up a secured WebDAV server that is web-accessible, **or**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- установить защищенный WebDAV-сервер, доступный через Интернет, **либо**
+- использовать сторонний сервис облачного хранения данных, который поддерживает протокол WebDAV (см. опцию *Веб адрес* в разделе *Настройка синхронизации на уровне местного собрания* ниже).
 
-All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
+Все пользователи, желающие синхронизироваться вместе, должны будут подключаться к тому же WebDAV-серверу, используя информацию о подключении и учетные данные, предоставленные им ОВ.
 
 ### Настройка синхронизации на уровне местного собрания
 
-| Настройки                      | Обьяснение                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Веб адрес`                    | Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br> ***Note:** The label for this field is actually a button that, once clicked, will show a list of WebDAV providers that have been known to be compatible with M³, and will automatically prefill certain settings for those providers. <br><br> This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...* |
-| `Имя пользователя`             | Username for the WebDAV service.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `Пароль`                       | Password for the WebDAV service. <br><br> ***Note:** As detailed in their respective support pages, an app-specific password might need to be created for [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) and [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) in order to enable WebDAV connections to their services.*                                                                                               |
-| `Папка для собрания`           | This is the folder that will be used to synchronize media for all congregation sync users. You can either type/paste in a path, or use your mouse to navigate to the target folder. <br><br> ***Note:** Make sure that all congregation sync users input the same folder path; otherwise the sync won't work as expected.*                                                                                                                                                                               |
-| `Настройки для всего собрания` | Once the VO has configured the *Media setup* and *Meeting setup* sections of the [Settings]({{page.lang}}/#configuration) on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open M³.                                                                                   |
+| Настройки                      | Обьяснение                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Веб адрес`                    | Веб адрес WebDAV-сервера. Требуется безопасный HTTP (HTTPS). <br><br> ***Примечание:** Метка для этого поля на самом деле является кнопкой, которая после нажатия покажет список WebDAV-провайдеров совместимые с M³, и автоматически заполнят определенные настройки для этих провайдеров. <br><br> Этот список предоставляется как есть и ни в коем случае не является одобрением какой-либо конкретной услуги или провайдера. Самый лучший сервер - это всегда тот, который принадлежит вам...* |
+| `Имя пользователя`             | Имя пользователя для WebDAV-провайдера.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `Пароль`                       | Пароль для WebDAV-провайдера. <br><br> ***Примечание:** Как подробно описано на их страницах поддержки, может потребоваться создание пароля для конкретного приложения для [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) и [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) для того, чтобы включить WebDAV-соединения с их службами.*                                                                                     |
+| `Папка для собрания`           | Это папка, которая будет использоваться для синхронизации мультимедиа для всех пользователей синхронизации собрания. Вы можете набрать/вставить путь или использовать мышку для перехода в целевую папку. <br><br> ***Примечание:** Убедитесь, что все пользователи синхронизации вводит один и тот же путь к папке; иначе синхронизация не будет работать так как ожидалось.*                                                                                                                                 |
+| `Настройки для всего собрания` | После того, как ОВ настроил разделы *медиа* и *встречи* в [настройках]({{page.lang}}/#configuration) на своем компьютере, затем он может использовать эту кнопку, чтобы применить определенные настройки для всех пользователей синхронизации (например, дни встречи, язык мультимедиа, настройки конверсии и т. д.). Это означает, что выбранные настройки будут принудительно применены для всех синхронизированных пользователей при каждом открытии M³.                                                                |
 
-### Using congregation sync to manage media
+### Использование синхронизации собрания для управления медиа
 
-Once the congregation sync setup is complete, you're ready to start [Managing media]({{page.lang}}/#manage-media) for your congregation's technical AV support team.
+После завершения установки синхронизации собрания, вы готовы [управлять медиа]({{page.lang}}/#manage-media) для команды аудио/видео техподдержки.
 
-### Screenshots of congregation sync in action
+### Скриншоты синхронизации собрания
 
 {% include screenshots/congregation-sync.html lang=site.data.ru %}
