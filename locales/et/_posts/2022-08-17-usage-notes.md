@@ -4,7 +4,7 @@ title: Tehnilised kasutusjuhised
 ref: usage-notes
 ---
 
-Rakendus peaks töötama nii nagu enamikus kaasaegsetes Windowsi, Linuxi või macOSi arvutites.
+The app should run as is on most modern computers running Windows, Linux, or macOS.
 
 ### Windows: Paigaldamine ja esimene käivitamine
 
@@ -14,7 +14,7 @@ On opening the installer, you might get an [error](assets/img/other/win-smartscr
 
 Vastavalt [ametlik AppImage dokumentatsioon](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html)-le, kui rakendus ei avane korralikult, kinnitage järgmise käsu väljund:
 
-`ysctl kernel.unprivileged_userns_clone`
+`sysctl kernel.unprivileged_userns_clone`
 
 Kui väljund on `0`, siis rakendust AppImage **ei** käivitata, kui te ei käivita järgmist käsku, millele järgneb taaskäivitamine:
 
@@ -22,7 +22,7 @@ Kui väljund on `0`, siis rakendust AppImage **ei** käivitata, kui te ei käivi
 
 Enne selle tegemist lugege kindlasti läbi sait [mida see endaga kaasa toob](https://lwn.net/Articles/673597/).
 
-### macOS: Paigaldamine ja esimene käivitamine
+### macOS: Installation and first launch
 
 If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or because "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
 
@@ -30,7 +30,7 @@ Kui teile kuvatakse teade, et teil pole luba rakenduse avamiseks, proovige mõnd
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Automaatne värskendus
+### macOS: Auto-update
 
 Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for macOS users when an update is available:
 
