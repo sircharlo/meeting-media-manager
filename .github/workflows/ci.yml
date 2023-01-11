@@ -86,6 +86,20 @@ jobs:
       - name: Run tests
         run: yarn test
 
+      - name: Upload screenshots to docs
+        if: matrix.os == 'ubuntu-latest'
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.github_token }}
+        with:
+          source_file: 'screenshots'
+          destination_repo: 'mtdvlpr/meeting-media-manager'
+          destination_branch: 'docs'
+          destination_folder: 'assets/test'
+          user_email: '149895ja@gmail.com'
+          user_name: 'mtdvlpr'
+          commit_message: 'chore: update screenshots'
+
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
@@ -159,7 +173,6 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         if: |
-          startsWith(github.ref, 'refs/tags/v') ||
           !startsWith(github.event.head_commit.message, 'chore(release)')
         with:
           name: release-files

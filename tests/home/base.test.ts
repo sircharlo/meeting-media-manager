@@ -30,6 +30,7 @@ test('render the home page correctly', async () => {
   // Test if title is correct
   const title = await page.title()
   expect(title).toBe('Home - Meeting Media Manager')
+  await page.screenshot({ path: 'screenshots/home.png' })
 })
 /*
 test('send IPC message from renderer', async () => {
