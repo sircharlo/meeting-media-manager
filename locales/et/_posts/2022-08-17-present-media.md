@@ -50,7 +50,7 @@ Lisage OBS Studio otsetee parameetriga `--startvirtualcam` Windowsi kasutajaprof
 
 Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
 
-Seadke vaikimisi "mikrofon" mikseri kombineeritud väljundiks (nii et kõik kuningriigisaali helisüsteemi kaudu kostuv heli edastatakse Zoomi kaudu, sealhulgas mikrofonid ja meedia) ja "kaameraks" OBS Studio pakutav virtuaalne kaamera .
+Seadke vaikimisi "mikrofon" mikseri kombineeritud väljundiks (nii et kõik kuningriigisaali helisüsteemi kaudu kostuv heli edastatakse Zoomi kaudu, sealhulgas mikrofonid ja meedia) ja "kaameraks" OBS Studio pakutav virtuaalne kaamera.
 
 #### Esialgne konfiguratsioon: M³
 

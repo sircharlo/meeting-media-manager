@@ -4,7 +4,7 @@ title: Paigaldamine
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+M³ ei nõua administraatori õigusi, et seda arvutisse paigaldada. Et paigaldada M³, lihtsalt [lae alla viimane versioon]({{site.github}}/releases/latest) ja käivita see.
 
 | Operatsioonisüsteem | Allalaaditav fail                          |
 | ------------------- | ------------------------------------------ |
@@ -12,10 +12,10 @@ M³ does not require administrative privileges to install or run. To install M³
 | macOS               | `meeting-media-manager-[VERSION].dmg`      |
 | Linux               | `meeting-media-manager-[VERSION].AppImage` |
 
-### What's next?
+### Mis järgmiseks?
 
 Seadistage rakendus [Seaded]({{page.lang}}/#configuration) ekraani abil.
 
-### Kas installimisel on probleeme?
+### Kas paigaldamisel on probleeme?
 
 Abi saamiseks vaadake jaotist [Tehnilised kasutusjuhised]({{page.lang}}/#usage-notes).

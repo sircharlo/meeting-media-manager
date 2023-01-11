@@ -30,7 +30,7 @@ A hibrid összejövetelek során a média megosztásának messze legegyszerűbb 
 
 Állítsa a külső monitor képernyőfelbontását 1280x720-ra vagy egy ehhez közeli értékre.
 
-Állítsa be, hogy a számítógép hangkártyájának kimenete a keverőpult egyik bemenetére, a keverőpult kombinált kimenete pedig a számítógép hangkártyájának bemenetére csatlakozzon!
+Állítsa be, hogy a számítógép hangkártyájának kimenete a keverőpult egyik bemenetére, a keverőpult kombinált kimenete pedig a számítógép hangkártyájának bemenetére csatlakozzon.
 
 #### Első beállítás: OBS Studio
 
