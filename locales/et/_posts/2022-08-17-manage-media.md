@@ -8,26 +8,26 @@ Meediumihalduse ekraan võimaldab kasutajal lisada või eemaldada meediat mis ta
 
 ### Meedia haldamine konkreetse päeva jaoks
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Meedia haldamiseks konkreetsel koosoolekul või päeval, vajuta lihtsalt selle päeva ruudule M³-e avaekraanil. Et hallata korduvkasutatavat meediat, vajuta Korduv meedia ruudule.
 
-### Meediumi lisamine
+### Meeda lisamine
 
 Siit saate teada, kuidas **lisada** meediat meediahalduse ekraanilt.
 
-| Võimalus             | Selgitus                                                                         |
-| -------------------- | -------------------------------------------------------------------------------- |
-| `Üleslaadimise tüüp` | Valige üks kolmest `meediumitüübist` (vaata allpool)                             |
-| `Meedia lisamiseks`  | Oleneb valitud `meediumitüübist` (vt allpool).                                   |
-| `Failinime eesliide` | Meediumifaili nime(de) ette saab sortimise hõlbustamiseks lisada kuni 6 numbrit. |
-| `Meedia nimekiri`    | See näitab valitud kuupäeva jaoks praegu kavandatud meediumit.                   |
+| Võimalus             | Selgitus                                                                       |
+| -------------------- | ------------------------------------------------------------------------------ |
+| `Üleslaadimise tüüp` | Valige üks kolmest `meedia tüübist` (vaata allpool).                           |
+| `Meedia lisamiseks`  | Oleneb valitud `meedia tüübist` (vt allpool).                                  |
+| `Failinime eesliide` | Meediafaili nime(de) ette saab sortimise hõlbustamiseks lisada kuni 6 numbrit. |
+| `Meedia nimekiri`    | See näitab valitud kuupäeva jaoks praegu kavandatud meediat.                   |
 
-Väljal `Meedia lisamiseks` kuvatakse teile sõltuvalt valitud meediumitüübist erinevad valikud.
+Väljal `Meedia lisamiseks` kuvatakse teile sõltuvalt valitud meedia tüübist erinevad valikud.
 
-| `Meedia tüüp`       | Väli `Meedia lisamiseks`                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Laul`              | ... show a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br> The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [Settings]({{page.lang}}/#configuration). |
-| `JWPUB`             | ... allow you to browse to (or drag and drop) a JWPUB file. <br><br> You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.      |
-| `Kohandatud sätted` | ... allow you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                        |
+| `Meedia tüüp`       | Väli `Meedia lisamiseks`                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Laul`              | ... näitab nimekirja kõikidest kuningriigilaulude videotest *sjjm* seerias, rakenduses seadistatud keeles. Vali see, kui soovid lisada avaliku kõne avalaulu või laule RÜ külastuseks. <br><br>Valitud laul laaditakse autmaatselt alla JW.org lehelt, seadistatud keeles, nii kuidas see on valitud [Seaded]({{page.lang}}/#configuration) lehel.           |
+| `JWPUB`             | ... lubab sul valida (või lohistada) JWPUB fail. <br><br>Sellisel juhul palutakse sul valida, millisest osast, või peatükist sa soovid meediat lisada. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here. |
+| `Kohandatud sätted` | ... allow you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                      |
 
 ### Meediumi eemaldamine, peitmine ja näitamine
 
