@@ -50,7 +50,7 @@ Adicione um atalho para o OBS Studio, com o parâmetro `--startvirtualcam`, na p
 
 O zoom deve ser configurado para usar monitores duplos. Ative os atalhos de teclado globais para Zoom para silenciar/ativar o áudio do Salão do Reino no Zoom (<kbd>Alt A</kbd>) e iniciar/parar o vídeo do Salão do Reino no Zoom ( <kbd>Alt V</kbd>).
 
-Defina o "microfone" padrão como a placa externa de som ou do próprio computador (para que tudo o que for ouvido pelo sistema de som do Salão do Reino seja transmitido pelo Zoom, incluindo microfones e mídia) e a "câmera" para ser a câmera virtual do OBS Studio .
+Defina o "microfone" padrão como a placa externa de som ou do próprio computador (para que tudo o que for ouvido pelo sistema de som do Salão do Reino seja transmitido pelo Zoom, incluindo microfones e mídia) e a "câmera" para ser a câmera virtual do OBS Studio.
 
 #### Configuração inicial: M³
 
