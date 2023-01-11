@@ -2,6 +2,7 @@
 langs.json
 prefs-*.json
 lastRunVersion.json
+img/
 
 # sql.js file
 src/renderer/static/sql-wasm.wasm

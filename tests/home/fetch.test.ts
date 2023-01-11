@@ -64,4 +64,6 @@ test('fetch is successful', async () => {
   expect(
     sync(join(mediaPath, prefs.lang, getDate('we'), '*')).length
   ).toBeGreaterThan(0)
+
+  await page.screenshot({ path: 'img/main/sync-complete.png' })
 })

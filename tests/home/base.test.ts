@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'
+import { delay } from '../helpers/generalHelpers'
 import {
   ipcRendererInvoke,
   startApp,
@@ -30,6 +31,13 @@ test('render the home page correctly', async () => {
   // Test if title is correct
   const title = await page.title()
   expect(title).toBe('Home - Meeting Media Manager')
+  await page.screenshot({ path: 'img/main/main-screen.png' })
+
+  // Open date picker
+  await page.locator('#week-select').click()
+  // eslint-disable-next-line no-magic-numbers
+  await delay(500)
+  await page.screenshot({ path: 'img/main/date-picker.png' })
 })
 /*
 test('send IPC message from renderer', async () => {

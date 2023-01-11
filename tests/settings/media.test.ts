@@ -5,7 +5,7 @@ import { ElectronApplication, Page } from 'playwright'
 import { existsSync } from 'fs-extra'
 import { join } from 'upath'
 import { version } from '../../package.json'
-import { getDate, strip } from '../helpers/generalHelpers'
+import { delay, getDate, strip } from '../helpers/generalHelpers'
 import locale from './../../src/renderer/locales/en.json'
 import prefs from './../mocks/prefs/prefsOld.json'
 import {
@@ -46,8 +46,11 @@ test('vlc playlist', async () => {
     test.skip()
   }
 
-  // Expand application setup
+  // Expand media setup
   await page.locator('button', { hasText: locale.optionsMedia }).click()
+  // eslint-disable-next-line no-magic-numbers
+  await delay(1000)
+  await page.screenshot({ path: 'img/settings/media.png' })
 
   // Enable vlc playlist option
   await page
