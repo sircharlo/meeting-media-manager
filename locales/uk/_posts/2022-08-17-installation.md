@@ -1,21 +1,21 @@
 ---
-tag: Configuration
-title: Installation
+tag: Налаштування
+title: Встановлення
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+M³ не потребує привілеїв адміністратора для встановлення або запуску програми. Щоб встановити M³, просто [завантажте останню версію інсталятора]({{site.github}}/releases/latest) і запустіть його.
 
-| Operating System | File to download                           |
-| ---------------- | ------------------------------------------ |
-| Windows          | `meeting-media-manager-[VERSION].exe`      |
-| macOS            | `meeting-media-manager-[VERSION].dmg`      |
-| Linux            | `meeting-media-manager-[VERSION].AppImage` |
+| Операційна система | Файл для завантаження                      |
+| ------------------ | ------------------------------------------ |
+| Windows            | `meeting-media-manager-[VERSION].exe`      |
+| macOS              | `meeting-media-manager-[VERSION].dmg`      |
+| Linux              | `meeting-media-manager-[VERSION].AppImage` |
 
-### What's next?
+### Що далі?
 
-Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
+Налаштуйте додаток за допомогою меню [Налаштування]({{page.lang}}/#configuration).
 
-### Trouble installing?
+### Не вдалося встановити?
 
-Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.
+Зверніться за допомогою до [Технічної довідки]({{page.lang}}/#usage-notes).
