@@ -14,7 +14,7 @@ Bildskärmen för media kommer att visa bakgrundsbilden som är konfigurerad i i
 
 Om ingen bakgrundsbild är konfigurerad i inställningarna och årstexten inte kunde laddas automatiskt, kommer en svart bakgrund att visas i standbyläge.
 
-Mediekontrollläget kan nås genom att klicka på knappen ▶️ (spela upp) på huvudskärmen i M³, eller genom att använda kortkommandot <kbd>Alt D</kbd> (för extern skärm).
+Mediekontrolläget kan nås genom att klicka på knappen ▶️ (spela upp) på huvudskärmen i M³, eller genom att använda kortkommandot <kbd>Alt D</kbd> (för extern skärm).
 
 I mediapresentationsläge kan du välja vilket datum du vill visa media för. Om den aktuella dagens mapp finns kommer den automatiskt att väljas. När ett datum är valt kan du kan fortfarande ändra det valda datumet när som helst genom att klicka på knappen datumval i det översta avsnittet.
 
@@ -32,7 +32,7 @@ Ställ in den externa bildskärmens skärmupplösning till 1280x720, eller någo
 
 Konfigurera datorns ljudkorts utgång så att den går till en av mixerns ingångar och mixerns kombinerade utgång för att gå till datorns ljudkortsingång.
 
-#### Initial konfiguration: OBS Studio
+#### Ställa in: OBS Studio
 
 Installera OBS Studio, eller ladda ner den portabla versionen.
 
@@ -46,13 +46,13 @@ Konfigurera minst 2 scener: en för media display (`Window Capture` eller `Displ
 
 Lägg till en genväg till OBS Studio, med parametern `--startvirtualcam`, till Startup-mappen i Windows användarprofil, för att säkerställa att OBS Studio startar automatiskt när användaren loggar in.
 
-#### Initial konfiguration: Kingdom Hall Zoom
+#### Ställa in: Zoom på Rikets sal
 
 Zoom bör konfigureras för att använda dubbla bildskärmar. Aktivera globala kortkommandon för Zoom för att stänga av/på ljudet från Rikets sal i Zoom (<kbd>Alt A</kbd>), och starta/stoppa videoflöde i Zoom (<kbd>Alt V</kbd>).
 
 Ställ in standard "mikrofon" för att vara mixerns kombinerade utgång (så att allt som hörs över Rikets sals ljudsystem sänds över Zoom, inklusive mikrofoner och media) och "kameran" att vara den virtuella kameran från OBS Studio .
 
-#### Första konfiguration: M³
+#### Ställa in: M³
 
 Aktivera alternativet `Visa media på en extern skärm eller i ett separat fönster`.
 
@@ -80,9 +80,9 @@ Hitta media du vill dela i M³ medieuppspelningskontrollfönstret och tryck på 
 
 När du är klar med att dela media, tryck på "stopp"-knappen i M³. Observera att videoklipp stoppas automatiskt.
 
-#### Visar fjärrzoomdeltagare på Rikets sals monitor
+#### Visar zoomdeltagare på skärmen i Rikets sal
 
-Tryck på knappen "dölj/visa mediapresentationsläget" i nedre högra hörnet av M³ media styrenheten, eller <kbd>Alt Z</kbd>, att **dölja** media presentationsfönstret. Zoommötet kommer nu att synas på i Rikets sal.
+Tryck på knappen "dölj/visa mediapresentationsläget" i nedre högra hörnet av M³ media styrenheten, eller <kbd>Alt Z</kbd>, att **dölja** media presentationsfönstret. Zoommötet kommer nu att synas i skärmen på Rikets sal.
 
 > Om deltagaren har media att visa, följ stegen under underrubriken **Dela media i Rikets sal och över Zoom**.
 
@@ -92,23 +92,23 @@ När deltagaren har avslutat sin del, Tryck på knappen "dölja/visa mediapresen
 
 Om du av någon anledning inte vill använda OBS Studio, kan följande förslag kanske hjälpa dig att ställa in saker och ting så enkelt som möjligt.
 
-#### Första konfiguration: Rikets sal-dator
+#### Ställa in: Rikets sal-datorn
 
 Samma som motsvarande avsnitt ovan. Med tillägg av den globala kortkommandot för Zoom för att starta/stoppa skärmdelning (<kbd>Alt S</kbd>). "Kamera" kommer att vara kameraflödet från Rikets sal.
 
-#### Första konfiguration: M³
+#### Ställa in: M³ utan OBS Studio
 
 Aktivera alternativet `Visa media på en extern skärm eller i ett separat fönster`.
 
-#### Startar mötet
+#### Startar mötet utan OBS Studio
 
 Samma som motsvarande avsnitt ovan.
 
-#### Sänder delar från Rikets salens podie över Zoom
+#### Sänder delar från Rikets salens podie över Zoom utan OBS Studio
 
 Samma som motsvarande avsnitt ovan.
 
-#### Dela media i Rikets sal och över Zoom
+#### Dela media i Rikets sal och över Zoom utan OBS Studio
 
 Börja dela i Zoom genom att trycka på <kbd>Alt S</kbd>. I Zoom-delningsfönstret som dyker upp väljer du den externa bildskärmen och aktiverar båda kryssrutorna längst ner till vänster (för ljud- och videooptimering). Årstexten kommer nu att delas över Zoom.
 
@@ -116,7 +116,7 @@ Hitta media du vill dela i M³ medieuppspelningskontrollfönstret och tryck på 
 
 När du är klar med att dela media, tryck på <kbd>Alt S</kbd> för att avsluta delning av zoomskärm.
 
-#### Visar fjärrzoomdeltagare på Rikets sals monitor
+#### Visar fjärrzoomdeltagare på skärmen i Rikets sal utan OBS Studio
 
 Samma som motsvarande avsnitt ovan.
 
