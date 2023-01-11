@@ -8,7 +8,7 @@ The app should run as is on most modern computers running Windows, Linux, or mac
 
 ### Windows: installazione e primo avvio
 
-Avviando l'installazione potresti ottenere un [errore](assets/img/other/win-smartscreen.png) indicante che  "Windows SmartScreen blocca l'avvio di app sconosciute". Questo a causa del fatto che l'app non ha un alto numero di download e di conseguenza non è considerata sicura da Windows. Per ovviare a questo, clicca su "Altre informazioni poi "Avvia comunque".
+Avviando l'installazione potresti ottenere un [errore](assets/img/other/win-smartscreen.png) indicante che "Windows SmartScreen blocca l'avvio di app sconosciute". Questo a causa del fatto che l'app non ha un alto numero di download e di conseguenza non è considerata sicura da Windows. Per ovviare a questo, clicca su "Altre informazioni poi "Avvia comunque".
 
 ### Linux: Installazione e primo avvio
 
