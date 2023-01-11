@@ -63,7 +63,6 @@ test('shuffle button works correctly', async () => {
 
   // Expect time remaining to appear
   expect(await shuffleBtn.innerText()).toMatch(/\d+:\d{2}/g)
-  await shuffleBtn.highlight();
 
   await page.screenshot({ path: 'img/main/music-playing.png' })
 
