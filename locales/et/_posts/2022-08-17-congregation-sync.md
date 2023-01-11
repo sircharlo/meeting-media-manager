@@ -12,7 +12,7 @@ VO või tema määratud isik saab:
 - **peida** JW.org-ist meedia, mis ei ole antud koosoleku jaoks asjakohane, näiteks kui osa on asendatud kohaliku filiaaliga
 - lisage või eemaldage **korduv** meedia, nt aastateksti video või teadaande slaid
 
-Kõik, kes on sünkroonitud sama kogudusega, saavad täpselt sama meediumi, kui nad klõpsavad nupul *Värskenda meediakaustu_.
+Kõik, kes on sünkroonitud sama kogudusega, saavad täpselt sama meediumi, kui nad klõpsavad nupul *Värskenda meediakaustu*.
 
 Pange tähele, et koguduse sünkroonimise funktsioon on täiesti valikuline.
 
