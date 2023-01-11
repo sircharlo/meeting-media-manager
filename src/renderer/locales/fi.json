@@ -163,7 +163,7 @@
   "wannaHelpExplain": "Tällä hetkellä määritetty mediakieli ei ole vielä käytettävissä M³:n näyttökielenä. Haluatko auttaa M³:n kääntämisessä käyttäjille, jotka puhuvat tätä kieltä?",
   "wannaHelpForSure": "Auta kääntämään tämä sovellus",
   "wannaHelpWillGoAway": "Tämä ilmoitus tulee näkyviin vain, kun M³:n uusi versio julkaistaan.",
-  "warnFileNotAvailable": "Seuraava tiedosto ei ole vielä saatavilla. Yritä myöhemmin uudelleen tai ota yhteyttä videokonferenssin järjestäjään",
+  "warnFileNotAvailable": "Seuraava tiedosto ei ole vielä saatavilla. Yritä myöhemmin uudelleen tai ota yhteyttä videokonferenssin järjestäjään.",
   "warnMp4ConversionFailure": "Seuraavaa tiedostoa ei voitu muuntaa MP4-muotoon:",
   "warnNoDocumentsFound": "Mediaa ei löytynyt mistään valituista JWPUB:n asiakirjoista. Vahvista tiedosto tai ota yhteyttä tämän sovelluksen kehittäjään.",
   "warnPdfConversionFailure": "Seuraavan PDF-tiedoston sivuja ei voitu purkaa kuvina:",
