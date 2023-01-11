@@ -17,7 +17,7 @@
   "home": {
     "expand": "Expandir todos os tópicos",
     "collapse": "Reduzir todos os tópicos",
-    "syncInProgress": "Baixando as mídias da reunião.",
+    "syncInProgress": "Baixando as mídias da reunião",
     "mainScreen": "Tela principal",
     "chooseWeek": "Escolhendo uma semana",
     "syncComplete": "Todas as mídias foram baixadas!",
