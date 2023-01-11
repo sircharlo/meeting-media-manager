@@ -12,7 +12,7 @@ Avviando l'installazione potresti ottenere un [errore](assets/img/other/win-smar
 
 ### Linux: Installazione e primo avvio
 
-Come per la [documentazione AppImage ufficiale](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), se l'app non riesce ad avviarsi correttamente , conferma l'output del comando seguente:
+Come per la [documentazione AppImage ufficiale](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), se l'app non riesce ad avviarsi correttamente, conferma l'output del comando seguente:
 
 `sysctl kernel.unprivileged_userns_clone`
 
