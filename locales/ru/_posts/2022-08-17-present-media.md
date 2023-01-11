@@ -1,14 +1,14 @@
 ---
 tag: Использование
-title: Media Presentation mode
+title: Режим презентации медиа
 ref: present-media
 ---
 
 ### Использование режима презентации медиа
 
-The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
+Режимы презентации и управления мультимедиа разработаны с целью простого использования и предотвращения ошибок во время встреч.
 
-Once the option `Present media on an external monitor or in a separate window` is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
+После того как опция `Воспроизводить медиафайлы на внешнем экране или в отдельном окне` включена, экран презентации мультимедиа будет автоматически отображаться на внешнем мониторе если таковой имеется, или в отдельном окне с возможностью перетаскивать и изменять размер, если внешний монитор не был обнаружен.
 
 When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
 
@@ -106,7 +106,7 @@ Enable `the Present media on an external monitor or in a separate window` option
 
 #### Broadcasting in-person parts from the Kingdom Hall stage over Zoom without OBS
 
-Same as corresponding section above.
+То же, что и в соответствующем разделе выше.
 
 #### Sharing media at the Kingdom Hall and over Zoom without OBS
 
@@ -118,7 +118,7 @@ When you're done sharing media, hit <kbd>Alt S</kbd> to end Zoom screen sharing.
 
 #### Displaying remote Zoom participants on the Kingdom Hall monitor without OBS
 
-Same as corresponding section above.
+То же, что и в соответствующем разделе выше.
 
 ### Screenshots of Presentation Mode
 
