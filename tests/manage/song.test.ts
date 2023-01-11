@@ -68,6 +68,9 @@ test('add song', async () => {
     await page.locator(`text=01-23-45 - ${locale.song} ${filename}.mp4`).count()
   ).toBe(1)
 
+  // Take screenshot
+  await page.screenshot({ path: 'img/manage/song-media.png' })
+
   // Click save button
   await page.locator('svg.fa-floppy-disk').click()
 
@@ -98,6 +101,9 @@ test('rename song', async () => {
   // Rename song to 'new song name with special characters'
   filename = 'new song name with ()[]{}?|*'
   await page.locator('input[type=text]').fill(filename)
+
+  // Take screenshot
+  await page.screenshot({ path: 'img/manage/rename-media.png' })
 
   filename = strip(filename) + '.mp4'
 

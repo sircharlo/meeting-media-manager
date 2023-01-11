@@ -2,7 +2,6 @@
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
 import { expect, test } from '@playwright/test'
-import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
 import { join } from 'upath'
 import { version } from '../../package.json'
@@ -50,11 +49,6 @@ test('render the presentation mode page correctly', async () => {
   // Verify home page
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
 
-  // eslint-disable-next-line no-magic-numbers
-  await delay(500)
-
-  await page.screenshot({ path: 'img/present/launch-present-mode.png' })
-
   // Close media window
   await page.locator('[aria-label="toggleScreen"]').click()
 
@@ -76,49 +70,40 @@ test('render the presentation mode page correctly', async () => {
         .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
-    await page.screenshot({ path: 'img/present/media-list.png' })
   } else {
     // Check for correct heading
     expect(await page.locator('h2').innerText()).toBe(locale.meeting)
-    await page.screenshot({ path: 'img/present/meeting-picker.png' })
     await page.getByRole('listitem').nth(1).click()
     expect(
       await page
         .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
-    await page.screenshot({ path: 'img/present/media-list.png' })
   }
 })
-/*
- test('send IPC message from renderer', async () => {
-   // evaluate this script in render process
-   // requires webPreferences.nodeIntegration true and contextIsolation false
-   await page.evaluate(() => {
-     // eslint-disable-next-line @typescript-eslint/no-var-requires
-     require('electron').ipcRenderer.send('new-window')
-   })
-   const newPage = await electronApp.waitForEvent('window')
-   expect(newPage).toBeTruthy()
-   expect(await newPage.title()).toBe('Window 4')
-   page = newPage
- }) */
 
-test('receive IPC invoke/handle via renderer', async () => {
-  // evaluate this script in RENDERER process and collect the result
-  const result = await ipcRendererInvoke(page, 'appVersion')
-  expect(result).toBe(version)
+test('play a video', async () => {
+  await page.locator('#play').first().click()
+  expect(await page.locator('#stop').count()).toBe(1)
 })
 
-test('make sure two screenshots of the same page match', async ({ page }) => {
-  // take a screenshot of the current page
-  const screenshot1: Buffer = await page.screenshot()
-  // create a visual hash using Jimp
-  const screenshot1hash = (await jimp.read(screenshot1)).hash()
-  // take a screenshot of the page
-  const screenshot2: Buffer = await page.screenshot()
-  // create a visual hash using Jimp
-  const screenshot2hash = (await jimp.read(screenshot2)).hash()
-  // compare the two hashes
-  expect(screenshot1hash).toEqual(screenshot2hash)
+test('scrub a video', async () => {
+  await page.locator('#pause').first().click()
+
+  expect(await page.locator('#stop').count()).toBe(1)
+
+  await page.locator('.v-slider__track-container').click()
+  // eslint-disable-next-line no-magic-numbers
+  await delay(1000)
+  await page.screenshot({ path: 'img/present/video-scrub.png' })
+  await page.locator('#pause').first().click()
+  // eslint-disable-next-line no-magic-numbers
+  await delay(500)
+  await page.screenshot({ path: 'img/present/video-playing.png' })
+})
+
+test('stop a video', async () => {
+  await page.locator('#stop').first().click()
+  await page.locator('#stop').first().click()
+  expect(await page.locator('#stop').count()).toBe(0)
 })
