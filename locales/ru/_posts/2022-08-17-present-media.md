@@ -48,21 +48,21 @@ Add a shortcut to OBS Studio, with the `--startvirtualcam` parameter, to the Sta
 
 #### Начальная конфигурация: Zoom Зала Царства
 
-Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
+Zoom должен быть настроен таким образом, чтобы использовать два монитора. Включите глобальные сочетания клавиш для Zoom, чтобы выключить/включить звук Зала Царства в Zoom (<kbd>Alt A</kbd>) и запустить/остановить видеопоток Зала Царства в Zoom (<kbd>Alt V</kbd>).
 
-Set the default "microphone" to be sound booth mixer's combined output (so that everything that is heard over the Kingdom Hall sound system is transmitted over Zoom, including microphones and media) and the "camera" to be the virtual camera provided by OBS Studio.
+Установите "микрофон" по умолчанию на объединенный выход микшера звукового пульта (чтобы все, что слышно через звуковую систему Зала Царства, передавалось через Zoom, включая микрофоны и мультимедиа), а "камеру" - на виртуальную камеру, предоставляемую OBS Studio.
 
 #### Начальная конфигурация: M³
 
-Enable the `Present media on an external monitor or in a separate window` option.
+Включить опцию `Воспроизводить медиафайлы на внешнем экране или в отдельном окне`.
 
-Enable and configure OBS Studio compatibility mode, using the port and password information configured in the OBS Studio configuration step.
+Включите и настройте режим совместимости с OBS Studio, используя данные порта и пароля, настроенные на этапе настройки OBS Studio.
 
 #### Начало встречи
 
-Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
+Запустите встречу Zoom и переместите вторичное окно встречи Zoom на внешний монитор. При желании сделайте его полноэкранным. Здесь будут отображаться все удаленные участники встречи, чтобы собрание могло их видеть.
 
-Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
+После того как встреча Zoom отобразится на внешнем мониторе, откройте M³. Окно презентации мультимедиа автоматически откроется поверх окна Zoom на внешнем мониторе. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
 
 Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
 
