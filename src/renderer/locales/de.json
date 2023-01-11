@@ -75,7 +75,7 @@
   "hideWinAfterMedia": "Medienfenster nach der Wiedergabe ausblenden",
   "hideWinAfterMediaExplain": "Nützlich vor allem bei Versammlungen in Gebärdensprache",
   "hostname": "Web-Adresse",
-  "includePrinted": "Lade Druckausgaben, wenn verfügbar.",
+  "includePrinted": "Lade Druckausgaben, wenn verfügbar",
   "info": "Hinweis",
   "infoPubIgnored": "Medien für die folgende Publikation können nicht abgerufen werden:",
   "infoShortcutSetFail": "M³ konnte die folgende Tastenkombination nicht aktivieren. Um diese Tastenkombination zu verwenden, darf sie von keiner andere App benutzt werden; ggf. muss M³ neu gestartet werden. Andernfalls ist keine Aktion erforderlich.",
