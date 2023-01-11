@@ -24,8 +24,10 @@ test.beforeAll(async () => {
 })
 
 test.afterAll(async () => {
-  await page.locator('[aria-label="Go to home"]').click()
-  await electronApp.close()
+  if (page) {
+    await page.locator('[aria-label="Go to home"]').click()
+  }
+  if (electronApp) await electronApp.close()
 })
 
 test('render the presentation mode page correctly', async () => {

@@ -19,19 +19,20 @@ let electronApp: ElectronApplication
 let page: Page
 
 test.beforeAll(async () => {
+  if (platform() === 'win32') {
+    test.skip()
+  }
   electronApp = await startApp()
 })
 
 test.afterAll(async () => {
-  await page.locator('[aria-label="Go to home"]').click()
-  await electronApp.close()
+  if (page) {
+    await page.locator('[aria-label="Go to home"]').click()
+  }
+  if (electronApp) await electronApp.close()
 })
 
 test('render the presentation mode page correctly', async () => {
-  if (platform() === 'win32') {
-    test.skip()
-  }
-
   page = await openHomePage(electronApp)
 
   // Open settings page
@@ -91,10 +92,6 @@ test('render the presentation mode page correctly', async () => {
 })
 
 test('play a video', async () => {
-  if (platform() === 'win32') {
-    test.skip()
-  }
-
   await page.locator('#play').first().click()
   expect(await page.locator('#stop').count()).toBe(1)
 })
@@ -118,10 +115,6 @@ test('scrub a video', async () => {
 })
 
 test('stop a video', async () => {
-  if (platform() === 'win32') {
-    test.skip()
-  }
-
   await page.locator('#stop').first().click()
   await page.locator('#stop').first().click()
   expect(await page.locator('#stop').count()).toBe(0)
