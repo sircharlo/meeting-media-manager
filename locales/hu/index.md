@@ -16,7 +16,7 @@ A **hibrid** vagy **személyes** gyülekezeti összejövetelekhez az integrált 
 
 - Médiaképek miniatűrjei
 - Egyszerűen használható szünet/lejátszás/stop gombok a médiafájlok lejátszásának kezeléséhez
-- Egyszerű háttérzene-lejátszás, az összejövetelek megkezdése előtti automatikus leállítással.
+- Egyszerű háttérzene-lejátszás, az összejövetelek megkezdése előtti automatikus leállítással
 - Automatikus külső monitorfelismerés és -kezelés
 - OBS Studio integráció
 
