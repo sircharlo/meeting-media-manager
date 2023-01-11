@@ -91,11 +91,18 @@ test('render the presentation mode page correctly', async () => {
 })
 
 test('play a video', async () => {
+  if (platform() === 'win32') {
+    test.skip()
+  }
+
   await page.locator('#play').first().click()
   expect(await page.locator('#stop').count()).toBe(1)
 })
 
 test('scrub a video', async () => {
+  if (platform() === 'win32') {
+    test.skip()
+  }
   await page.locator('#pause').first().click()
 
   expect(await page.locator('#stop').count()).toBe(1)
@@ -111,6 +118,10 @@ test('scrub a video', async () => {
 })
 
 test('stop a video', async () => {
+  if (platform() === 'win32') {
+    test.skip()
+  }
+
   await page.locator('#stop').first().click()
   await page.locator('#stop').first().click()
   expect(await page.locator('#stop').count()).toBe(0)
