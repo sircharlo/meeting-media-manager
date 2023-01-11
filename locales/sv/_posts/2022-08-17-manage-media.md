@@ -33,9 +33,9 @@ I fältet `Media att lägga till` kommer du att presenteras med olika alternativ
 
 För att **ta bort**, **dölja** eller **visa** media, leta upp den mediefil du inte vill ha och klicka på den relevanta ikonen.
 
-| Media har en röd 🥥 (radera) ikon                                    | Media har en ☑️ (markerad kryssruta)-ikon                                                                                                            | Media har en 🔲-ikon (omarkerad kryssruta)                                                                                                             |
+| En röd 🟥 (ta bort) ikon                                             | En ☑️ (markerad kryssruta)-ikon                                                                                                                      | En 🔲-ikon (omarkerad kryssruta)                                                                                                                       |
 | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mediafilen lades till dagens media av dig eller mötesorganisatören. | Mediafilen refereras till i mötets material. <br><br> Den *kommer* att laddas ned från JW.org eller extraheras från aktuell publikation. | Mediafilen refereras till i mötets material. <br><br>Dold av dig eller av MO, så det kommer *inte* bli nedladdat eller tillagd som media. |
+| Mediafilen lades till dagens media av dig eller mötesorganisatören. | Mediafilen refereras till i mötets material. <br><br> Den *kommer* att laddas ned från JW.org eller extraheras från aktuell publikation. | Mediafilen refereras till i mötets material. <br><br>Dold av dig eller av MO, så den kommer *inte* bli nedladdat eller tillagd som media. |
 
 ### Skärmdumpar av mediehanteringsskärmen
 

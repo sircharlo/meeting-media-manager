@@ -24,7 +24,7 @@
     "musicPlaying": "Musik före och efter mötet spelas"
   },
   "manage-media": {
-    "imgAddSong": "Lägger till en låt för ett offentligt föredrag",
+    "imgAddSong": "Lägger till en sång för offentliga föredraget",
     "imgAddPic": "Lägger till ytterligare en bild",
     "imgImportJWPUB": "Importera media från en sektion i en JWPUB-fil",
     "imgPreviewJWPUB": "Förhandsgranska media från en JWPUB-fil innan import",
