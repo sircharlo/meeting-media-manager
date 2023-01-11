@@ -33,7 +33,7 @@ Näin voit **lisätä** mediaa medianhallintanäytöstä.
 
 Jos haluat **poistaa**, **piilottaa** tai **näytä** median, etsi mediatiedosto, jota et halua, ja napsauta asianmukaista kuvaketta.
 
-| Mediassa on punainen 🟥 (poista) -kuvake                    | Mediassa on ☑️ (valittu valintaruutu) -kuvake                                                                                      | Mediassa on kuvake 🔲 (valintaruutua ei ole valittu).                                                                                                               |
+| Mediassa on punainen 🟥 (poista) -kuvake                    | Mediassa on ☑️ (valittu valintaruutu) -kuvake                                                                                      | Mediassa on kuvake 🔲 (valintaruutua ei ole valittu)                                                                                                                |
 | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Sinä tai VO lisäsi mediatiedoston kyseisen päivän mediaan. | Mediatiedostoon on viitattu kokouksen aineistossa. <br><br> Se ** ladataan JW.org tai uutetaan kyseisestä julkaisusta. | Mediatiedostoon on viitattu kokouksen aineistossa. <br><br> Sinä tai VJ on piiloittannut median joten sitä *ei* ole ladattu tai lisättu kokousmediaan. |
 
