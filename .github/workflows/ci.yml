@@ -93,11 +93,11 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.github_token }}
         with:
           source_file: 'screenshots'
-          destination_repo: 'mtdvlpr/meeting-media-manager'
+          destination_repo: 'sircharlo/meeting-media-manager'
           destination_branch: 'docs'
           destination_folder: 'assets/test'
-          user_email: '149895ja@email.com'
-          user_name: 'mtdvlpr'
+          user_email: 'sircharlo@email.com'
+          user_name: 'sircharlo'
           commit_message: 'chore: update screenshots'
 
       - uses: actions/upload-artifact@v3
