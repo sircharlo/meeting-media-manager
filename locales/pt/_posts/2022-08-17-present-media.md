@@ -1,22 +1,22 @@
 ---
 tag: Uso
-title: Modo de exibição de mídia
+title: Modo de controle de mídias
 ref: present-media
 ---
 
-### Usando o modo de exibição de mídia
+### Usando o modo de controle de mídias
 
 Exibir mídias pelo M³ é simples e evita erros durante as reuniões.
 
-Assim que a opção `Exibir as mídias numa tela secundária` estiver habilitada, a tela de exibição de mídia aparecerá automaticamente numa tela, se conectada, ou em uma janela separada, que pode ser movida e redimensionável, se nenhuma tela externa for detectada.
+Assim que a opção `Habilitar tela para exibição de mídias` estiver ativa, a tela de exibição de mídia aparecerá automaticamente numa tela, se conectada, ou em uma janela separada, que pode ser movida e redimensionável, se nenhuma tela externa for detectada.
 
 Quando nenhum vídeo ou imagem estiver sendo exibido, a tela de exibição de mídia do M³ exibirá a imagem de fundo escolhida nas configurações. Se nenhuma imagem de fundo tiver sido selecionada, o M³ tentará buscar e exibir automaticamente o texto do ano.
 
 Se nenhuma imagem de fundo estiver selecionada nas configurações e o texto do ano não puder ser carregado automaticamente, um fundo preto será exibido quando nenhuma mídia estiver sendo executada.
 
-O modo de exibição de mídia pode ser acessado clicando no botão ▶️ (reproduzir) na tela principal do M³, ou usando o atalho de teclado <kbd>Alt D</kbd> (para exibir numa tela externa).
+O modo de controle de mídias pode ser acessado clicando no botão ▶️ (reproduzir) na tela principal do M³, ou usando o atalho de teclado <kbd>Alt D</kbd> (para exibir numa tela externa).
 
-Depois de entrar no modo de exibição, a tela para selecionar a pasta permitirá que você selecione a data que deseja para exibir a mídia. Se a pasta do dia atual existir, ela será selecionada automaticamente. Depois que uma data é selecionada, você ainda pode alterar a data selecionada a qualquer momento clicando no botão de seleção de data, no quadrado superior.
+Depois de entrar no modo de controle, a tela para selecionar a pasta permitirá que você selecione a data que deseja para exibir a mídia. Se a pasta do dia atual existir, ela será selecionada automaticamente. Depois que uma data é selecionada, você ainda pode alterar a data selecionada a qualquer momento clicando no botão de seleção de data, no quadrado superior.
 
 ### Exibindo mídia
 
