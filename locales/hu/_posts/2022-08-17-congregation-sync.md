@@ -8,9 +8,9 @@ A vének testülete által *videokonferencia-szervezőnek* (VO) kijelölt testv�
 
 A videokonferencia szervezője vagy az általa kijelölt személy a következőket teheti:
 
-- **kiegészítő** média feltöltése, amelyet az összejövetel során kell megosztani, például a körzetfelvigyázó látogatásához vagy a nyilvános előadók előadásaihoz.
-- **elrejti** az olyan médiát a JW.org-ról, amely nem releváns az adott összejövetel szempontjából, például ha egy programrészt a helyi gyülekezet lecserélt.
-- **ismétlődő** média hozzáadása vagy eltávolítása, például egy éviszöveges videó vagy egy bejelentés.
+- **kiegészítő** média feltöltése, amelyet az összejövetel során kell megosztani, például a körzetfelvigyázó látogatásához vagy a nyilvános előadók előadásaihoz
+- **elrejti** az olyan médiát a JW.org-ról, amely nem releváns az adott összejövetel szempontjából, például ha egy programrészt a helyi gyülekezet lecserélt
+- **ismétlődő** média hozzáadása vagy eltávolítása, például egy éviszöveges videó vagy egy bejelentés
 
 Mindenki, aki ugyanahhoz a gyülekezethez van szinkronizálva, pontosan ugyanazt a médiát fogja kapni, amikor a *Médiamappák frissítése* gombra kattint.
 
