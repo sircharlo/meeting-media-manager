@@ -152,7 +152,7 @@ export default defineComponent({
     })
     ipcRenderer.on('toggleSubtitles', (_e, enabled) => {
       const video = document.querySelector('video') as HTMLVideoElement
-      if (video) {
+      if (video && video.textTracks.length > 0) {
         video.textTracks[0].mode = enabled ? 'showing' : 'hidden'
       }
     })
@@ -251,10 +251,13 @@ export default defineComponent({
             video.controls = false
             video.src = src
 
-            if (this.withSubtitles && existsSync(changeExt(media.src, 'vtt'))) {
+            const subsPath = changeExt(media.src, 'vtt')
+
+            if (this.withSubtitles && existsSync(subsPath)) {
+              console.debug('Adding subtitles', subsPath)
               const track = document.createElement('track')
               track.kind = 'subtitles'
-              track.src = pathToFileURL(changeExt(media.src, 'vtt')).href
+              track.src = pathToFileURL(subsPath).href
               track.default = true
               track.srclang = 'en' // Needs a valid srclang, but we don't use it
               video.appendChild(track)
@@ -265,7 +268,8 @@ export default defineComponent({
               console.debug('canplay start')
               if (
                 this.withSubtitles &&
-                existsSync(changeExt(media.src, 'vtt'))
+                existsSync(subsPath) &&
+                video.textTracks.length > 0
               ) {
                 video.textTracks[0].mode = 'showing'
               }
