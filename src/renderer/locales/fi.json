@@ -45,7 +45,7 @@
   "errorObsAuth": "OBS Studion integroinnin salasana saattaa olla väärä. Varmista, että salasana on oikein, ja yritä uudelleen.",
   "errorObsCameraScene": "Määritettyä kameran oletusnäkymää ei enää ole. Muuta se asetuksissa.",
   "errorObsMediaScene": "Määritettyä medianäkymää ei ole enää olemassa. Muuta se asetuksissa.",
-  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
+  "errorObsScene": "Seuraavaa skeneä ei löytynyt. Varmista, että se on olemassa tai yhdistyy uudelleen OBS:ään asetusten kautta.",
   "errorObsZoomScene": "Määritettyä medianäkymää ei ole enää olemassa. Muuta se asetuksissa.",
   "errorOffline": "Sovellus on offline-tilassa. Tietoja ei voi ladata ylös tai alas!",
   "errorPpEnable": "Pikanäppäimiä mediatoiston aikana ei voitu ottaa käyttöön. Tarkista, ovatko asetuksesi oikein.",
