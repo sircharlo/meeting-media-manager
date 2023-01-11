@@ -4,7 +4,7 @@ title: Anmärkningar om teknisk användning
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+Programmet ska köras som på de flesta moderna datorer som kör Windows, Linux eller macOS.
 
 ### Windows: Installation och första uppstart
 
@@ -22,7 +22,7 @@ Om utdata är `0` kommer AppImage **inte** att köras om du inte kör följande 
 
 Se till att du läser på [vad detta innebär](https://lwn.net/Articles/673597/) innan du gör detta.
 
-### macOS: Installation and first launch
+### macOS: Installation och första uppstart
 
 Om du när du startar appen får en varning om att appen inte kan öppnas, antingen för att "den inte laddades ner från App Store" eller för att "utvecklaren inte kan verifieras", så hjälper denna [Apples supportsida](https://support.apple.com/en-ca/HT202491) dig att komma förbi det.
 
@@ -30,9 +30,9 @@ Om du får ett meddelande som indikerar att du "inte har behörighet att öppna 
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Auto-update
+### macOS: Automatisk uppdatering
 
-Till skillnad från Windows och Linux är autouppdatering **inte** implementerat på macOS och kommer troligen av tekniska skäl aldrig att bli det heller. However, one of two things will happen for macOS users when an update is available:
+Till skillnad från Windows och Linux är autouppdatering **inte** implementerat på macOS och kommer troligen av tekniska skäl aldrig att bli det heller. Men en av två saker kommer att hända för macOS-användare när en uppdatering är tillgänglig:
 
 - M3 kommer att försöka hämta uppdateringspaketet och öppna det automatiskt, varefter användaren måste manuellt slutföra installationen av M³-uppdateringen genom att dra och släppa den uppdaterade programmet till sin programmapp. Sedan kommer de att kunna starta den nyligen uppdaterade M3 från sin programmapp som vanligt.
 - Om föregående steg misslyckas i något skede, kommer M³ att visa en avisering som indikerar att en uppdatering är tillgänglig, med en länk till själva uppdateringen. En röd, pulserande notifiering kommer också att visas på inställningsknappen i huvudskärmen på M³.  M³ versionsnummer i inställningsskärmen kommer att förvandlas till en knapp som öppnar senaste utgåvans nedladdningssida automatiskt.
