@@ -33,6 +33,7 @@ test('render the add media page correctly', async () => {
   // Test if title is correct
   const title = await page.title()
   expect(title).toBe('Manage Recurring - M³')
+  await page.screenshot({ path: 'screenshots/manage.png' })
 })
 /*
  test('send IPC message from renderer', async () => {

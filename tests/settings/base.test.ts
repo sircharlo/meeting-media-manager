@@ -34,6 +34,7 @@ test('render the settings page correctly', async () => {
   // Test if title is correct
   const title = await page.title()
   expect(title).toBe('Settings - Meeting Media Manager')
+  await page.screenshot({ path: 'screenshots/settings.png' })
 })
 /*
  test('send IPC message from renderer', async () => {

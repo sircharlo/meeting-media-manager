@@ -71,6 +71,7 @@ test('render the presentation mode page correctly', async () => {
         .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
+    await page.screenshot({ path: 'screenshots/present.png' })
   } else {
     // Check for correct heading
     expect(await page.locator('h2').innerText()).toBe(locale.meeting)
