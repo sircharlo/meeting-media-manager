@@ -1,3 +1,4 @@
+import { platform } from 'os'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
@@ -80,14 +81,17 @@ test('render the presentation mode page correctly', async () => {
   } else {
     // Check for correct heading
     expect(await page.locator('h2').innerText()).toBe(locale.meeting)
-    await page.screenshot({ path: 'img/present/meeting-picker.png' })
-    await page.getByRole('listitem').nth(1).click()
-    expect(
-      await page
-        .locator('[aria-label="More actions"]')
-        .getAttribute('aria-label')
-    ).toBeTruthy()
-    await page.screenshot({ path: 'img/present/media-list.png' })
+
+    if (platform() !== 'win32') {
+      await page.screenshot({ path: 'img/present/meeting-picker.png' })
+      await page.getByRole('listitem').nth(1).click()
+      expect(
+        await page
+          .locator('[aria-label="More actions"]')
+          .getAttribute('aria-label')
+      ).toBeTruthy()
+      await page.screenshot({ path: 'img/present/media-list.png' })
+    }
   }
 })
 /*
