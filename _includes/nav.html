@@ -11,7 +11,7 @@
           </ul>
         </li>{% endif %}{% endfor %}
         <label for="select-lang">{{lang[0].language}}</label>
-        <select id="select-lang" name="select-lang">{% for p in site.pages %}{% if p.lang %}{% assign language=site.data | where:"lang", p.lang %}
+        <select id="select-lang" name="select-lang">{% assign sorted_pages = site.pages | sort: 'lang' %}{% for p in sorted_pages %}{% if p.lang %}{% assign language=site.data | where:"lang", p.lang %}
           <option value="{{ p.lang }}"{% if p.lang == page.lang %} selected="selected"{% endif %}>{{ language[0].name }}</option>{% endif %}{% endfor %}
         </select>
       </ul>
