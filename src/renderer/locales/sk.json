@@ -22,7 +22,7 @@
   "downloadShuffleMusic": "Stiahnuť všetky piesne",
   "enableMediaDisplayButton": "Otvárať médiá na externom monitore alebo v samostatnom okne",
   "enableMusicButton": "Povoliť náhodné prehrávanie piesní Kráľovstva",
-  "enableObs": "Povoliť komatibilný mód pre OBS Studio <em>(vyžaduje obs-websocket</em>",
+  "enableObs": "Povoliť komatibilný mód pre OBS Studio <em>(vyžaduje obs-websocket)</em>",
   "enablePp": "Povoliť klávesové skratky počas prehrávania médií (napríklad na použitie s USB diaľkovým ovládačom)",
   "enableSubtitles": "Povoliť titulky pre videá",
   "enableVlcPlaylistCreation": "Vytvoriť playlist pre použitie s <em>VLC</em>",
