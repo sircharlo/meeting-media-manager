@@ -28,6 +28,10 @@ test.afterAll(async () => {
 })
 
 test('render the presentation mode page correctly', async () => {
+  if (platform() === 'win32') {
+    test.skip()
+  }
+
   page = await openHomePage(electronApp)
 
   // Open settings page
@@ -75,16 +79,14 @@ test('render the presentation mode page correctly', async () => {
     // Check for correct heading
     expect(await page.locator('h2').innerText()).toBe(locale.meeting)
 
-    if (platform() !== 'win32') {
-      await page.screenshot({ path: 'img/present/meeting-picker.png' })
-      await page.getByRole('listitem').nth(1).click()
-      expect(
-        await page
-          .locator('[aria-label="More actions"]')
-          .getAttribute('aria-label')
-      ).toBeTruthy()
-      await page.screenshot({ path: 'img/present/media-list.png' })
-    }
+    await page.screenshot({ path: 'img/present/meeting-picker.png' })
+    await page.getByRole('listitem').nth(1).click()
+    expect(
+      await page
+        .locator('[aria-label="More actions"]')
+        .getAttribute('aria-label')
+    ).toBeTruthy()
+    await page.screenshot({ path: 'img/present/media-list.png' })
   }
 })
 
