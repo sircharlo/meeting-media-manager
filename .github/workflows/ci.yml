@@ -87,6 +87,7 @@ jobs:
         run: yarn test
 
       - name: Upload screenshots to docs
+        if: matrix.os == 'windows-latest'
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.github_token }}
