@@ -24,21 +24,21 @@ ref: present-media
 
 ### Проведение гибридных встреч, используя M³, OBS Studio, и Zoom
 
-By far the simplest way to share media during hybrid meetings is by configuring OBS Studio, M³ and Zoom to work together.
+Самым простым способом показать медиа во время гибридных встреч - это настроить OBS Studio, M³ и Zoom так, чтобы они функционировали вместе.
 
 #### Начальная конфигурация: Компьютер Зала Царства
 
 Установите разрешение экрана внешнего монитора на 1280x720.
 
-Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
+Настройте выход звуковой карты компьютера на один из входов микшера звукового пульта, а объединенный выход микшера звукового пульта - на вход звуковой карты компьютера.
 
 #### Начальная конфигурация: OBS Studio
 
-Install OBS Studio, or download the portable version.
+Установите OBS Studio, или скачайте портативную версию.
 
-If using the portable version of OBS Studio, install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+Если используется портативная версия OBS Studio, установите плагин [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/), и установите виртуальную камеру в Windows с помощью прилагаемого скрипта установки.
 
-If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
+Если у вас OBS Studio v27 или старше, вам необходимо установить плагин [obs-websocket](https://github.com/obsproject/obs-websocket). В противном случае obs-websocket уже включен. Настройте номер порта и пароль для obs-websocket.
 
 In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 
@@ -88,27 +88,27 @@ Press the "hide/show media presentation window" button in the lower right corner
 
 Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
 
-### Conducting hybrid meetings using only M³ and Zoom
+### Проведение гибридных встреч с помощью только M³ и Zoom, без OBS Studio
 
-If you do not wish to use OBS Studio for any reason, the following suggestions will perhaps help you to set things up as simply as possible.
+Если по каким-либо причинам вы не хотите использовать OBS Studio, следующие предложения, возможно, помогут вам настроить все как можно проще.
 
-#### Initial configuration without OBS: Kingdom Hall computer
+#### Без OBS Studio: Начальная конфигурация: Компьютер Зала Царства
 
-Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
+То же, что и в соответствующем разделе выше. Кроме того, настройте глобальное сочетание клавиш в Zoom для запуска/остановки презентации экрана (<kbd>Alt S</kbd>). В качестве "камеры" будет использоваться поток с камеры Зала Царства.
 
-#### Initial configuration without OBS: M³
+#### Без OBS Studio: Начальная конфигурация: M³
 
-Enable `the Present media on an external monitor or in a separate window` option.
+Включить опцию `Воспроизводить медиафайлы на внешнем экране или в отдельном окне`.
 
-#### Starting the meeting without OBS
-
-То же, что и в соответствующем разделе выше.
-
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom without OBS
+#### Без OBS Studio: Начало встречи
 
 То же, что и в соответствующем разделе выше.
 
-#### Sharing media at the Kingdom Hall and over Zoom without OBS
+#### Без OBS Studio: Трансляция частей со сцены Зала Царства на Zoom
+
+То же, что и в соответствующем разделе выше.
+
+#### Без OBS Studio: Презентация мультимедиа в Зале Царства и через Zoom
 
 Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
 
@@ -116,7 +116,7 @@ Find the media you want to share in the M³ media playback control window, and p
 
 When you're done sharing media, hit <kbd>Alt S</kbd> to end Zoom screen sharing.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor without OBS
+#### Без OBS Studio: Отображение удаленных участников Zoom на мониторе Зала Царства
 
 То же, что и в соответствующем разделе выше.
 
