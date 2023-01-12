@@ -10,17 +10,17 @@ ref: present-media
 
 После того как опция `Воспроизводить медиафайлы на внешнем экране или в отдельном окне` включена, экран презентации мультимедиа будет автоматически отображаться на внешнем мониторе если таковой имеется, или в отдельном окне с возможностью перетаскивать и изменять размер, если внешний монитор не был обнаружен.
 
-When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
+В режиме ожидания на экране презентации мультимедиа будет отображаться фоновое изображение, выбранное в настройках. Если фоновое изображение не было настроено, то M³ попытается автоматически загрузить и отобразить годовой текст.
 
-If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
+Если в настройках не установлено фоновое изображение и годовой текст не удалось загрузить автоматически, в режиме ожидания будет отображаться черный фон.
 
-Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt D</kbd> (for external display).
+В режим презентации мультимедиа можно попасть, нажав кнопку ▶️ (воспроизведение) на главном экране M³ или с помощью сочетания клавиш <kbd>Alt D</kbd>.
 
-Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
+Как только вы войдете в режим презентации, на экране выбора папок вы сможете выбрать дату, за которую вы хотите отобразить медиа. Если папка текущего дня существует, она автоматически будет выбрана. Можно изменить выбранную дату в любое время, нажав на кнопку выбора даты в верхнем разделе.
 
 ### Презентация мультимедиа
 
-To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
+Чтобы воспроизвести мультимедиа, нажмите кнопку ▶️ (воспроизведение) для нужного файла. Чтобы скрыть медиа, нажмите кнопку ⏹️ (остановить). A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
 
 ### Проведение гибридных встреч, используя M³, OBS Studio, и Zoom
 
