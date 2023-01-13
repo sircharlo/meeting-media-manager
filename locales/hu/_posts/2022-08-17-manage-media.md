@@ -1,20 +1,20 @@
 ---
-tag: Usage
+tag: Használat
 title: Média kezelése
 ref: manage-media
 ---
 
 A médiakezelő képernyő lehetővé teszi a felhasználó számára, hogy bármely adott összejövetelhez médiát adjon hozzá vagy távolítson el, kezelje az ismétlődő médiafájlokat, sőt, olyan időpontokhoz is adhat egyedi fájlokat, amelyekre nincs beütemezve összejövetel.
 
-### A média kezelése bármelyik napra
+### A média kezelése bármely napra vonatkozóan
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Egy adott összejövetel vagy nap médiájának kezeléséhez egyszerűen kattintson az adott nap csempéjére az M³ főképernyőjén. A minden összejövetelen ismétlődő média kezeléséhez kattintson az Ismétlődő média csempére.
 
 ### Média hozzáadása
 
-Így adhat hozzá **médiát** a médiakezelő képernyőn.
+A következő módon **adhat hozzá** médiát a médiakezelő képernyőn.
 
-| Opció               | Magyarázat                                                                                 |
+| Lehetőség           | Magyarázat                                                                                 |
 | ------------------- | ------------------------------------------------------------------------------------------ |
 | `Feltöltés típusa`  | Válasszon a 3 `médiatípus` közül (lásd alább).                                             |
 | `Hozzáadandó média` | A kiválasztott `médiatípustól` függ (lásd alább).                                          |
