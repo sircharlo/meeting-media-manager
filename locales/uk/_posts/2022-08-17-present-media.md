@@ -1,10 +1,10 @@
 ---
 tag: Використання
-title: Media Presentation mode
+title: Режим презентації медіа
 ref: present-media
 ---
 
-### Using media presentation mode
+### Використання режиму презентації медіа
 
 The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
 
