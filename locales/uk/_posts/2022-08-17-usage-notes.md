@@ -1,16 +1,16 @@
 ---
 tag: Довідка
-title: Technical usage notes
+title: Технічні нотатки
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+Додаток має без проблем працювати на більшості сучасних комп'ютерів, які працюють Windows, Linux або macOS.
 
-### Windows: Installation and first launch
+### Windows: Встановлення та перший запуск програми
 
-On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+При відкритті програми ви можете отримати [помилку](assets/img/other/win-smartscreen.png), що Windows SmartScreent забороняє запуск програми з невідомого джерела. Це звʼязано з тим, що програма не має багато завантажень, а отже Windows не може розпізнати її першоджерело. Щоб обійти це, просто натисніть "Більше інформації", а тоді "Запустити в будь-якому випадку".
 
-### Linux: Installation and first launch
+### Linux: Встановлення та перший запуск програми
 
 As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
 
