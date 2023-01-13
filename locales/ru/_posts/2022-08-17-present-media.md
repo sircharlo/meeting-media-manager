@@ -40,11 +40,11 @@ ref: present-media
 
 Если у вас OBS Studio v27 или старше, вам необходимо установить плагин [obs-websocket](https://github.com/obsproject/obs-websocket). В противном случае obs-websocket уже включен. Настройте номер порта и пароль для obs-websocket.
 
-In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
+В настройках OBS под разделом `Общее` > `Системная область` установите все флажки. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 
 Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
 
-Add a shortcut to OBS Studio, with the `--startvirtualcam` parameter, to the Startup folder of the Windows user profile, to ensure that OBS Studio gets started automatically when the user logs in.
+Добавьте ярлык на OBS Studio с параметром `--startvirtualcam` в папку запуска профиля пользователя Windows, чтобы OBS Studio запускалось автоматически при входе пользователя в систему.
 
 #### Начальная конфигурация: Zoom Зала Царства
 
@@ -82,7 +82,7 @@ When you're done sharing media, press the "stop" button in M³. Note that videos
 
 #### Отображение удаленных участников Zoom на мониторе Зала Царства
 
-Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. Теперь участники встречи Zoom будут видны на мониторе в Зале Царства.
 
 > Если удаленному участнику нужно показать медиа, следуйте шагам в подразделе **Презентация мультимедиа в Зале Царства и через Zoom**.
 
@@ -110,11 +110,11 @@ Once the participant has finished their part, press the "hide/show media present
 
 #### Без OBS Studio: Презентация мультимедиа в Зале Царства и через Zoom
 
-Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
+Начните презентацию в Zoom, нажав <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+Найдите мультимедийный файл, который вы хотите показать, в списке мультимедийных файлов M³ и нажмите на кнопку "воспроизвести".
 
-When you're done sharing media, hit <kbd>Alt S</kbd> to end Zoom screen sharing.
+Когда презентация мультимедийных файлов закончена, нажмите <kbd>Alt S</kbd>, чтобы прекратить функцию обмена экрана Zoom.
 
 #### Без OBS Studio: Отображение удаленных участников Zoom на мониторе Зала Царства
 
