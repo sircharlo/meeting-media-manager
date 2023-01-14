@@ -6,7 +6,12 @@
       <v-card>
         <v-col class="text-right">
           <form-input v-model="edit.newName" :suffix="edit.ext" />
-          <v-btn color="primary" aria-label="save" @click="saveNewName()">
+          <v-btn
+            color="primary"
+            :loading="renaming"
+            aria-label="save"
+            @click="saveNewName()"
+          >
             <font-awesome-icon :icon="faCheck" />
           </v-btn>
         </v-col>
@@ -207,6 +212,7 @@ export default defineComponent({
     return {
       edit: null as any,
       preview: '',
+      renaming: false,
       previewName: '',
       loading: false,
       mediaList: [] as (MeetingFile | LocalFile)[],
@@ -314,6 +320,8 @@ export default defineComponent({
       }
     },
     async saveNewName() {
+      if (this.renaming) return
+      this.renaming = true
       const cleanName = this.$sanitize(
         this.edit?.newName + this.edit?.ext,
         true
@@ -352,6 +360,7 @@ export default defineComponent({
         await this.$updateContent()
       }
       this.edit = null
+      this.renaming = false
       this.$emit('refresh')
     },
     editItem(item: MeetingFile | LocalFile) {
