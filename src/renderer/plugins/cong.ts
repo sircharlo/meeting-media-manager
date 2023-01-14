@@ -191,9 +191,13 @@ const plugin: Plugin = (
           } as FileStat
         })
       return items
+    } else if (
+      parsed?.multistatus?.response.propstat?.status?.includes('200')
+    ) {
+      return []
     } else {
       $log.debug('result', result)
-      $log.debug('parsed', parsed)
+      $log.debug('parsed:', JSON.stringify(parsed))
       throw new TypeError('Invalid response')
     }
   }
