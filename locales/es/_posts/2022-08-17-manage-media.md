@@ -8,7 +8,7 @@ La pantalla de administración de contenidos permite al usuario agregar o elimin
 
 ### Gestionar contenidos para un día en particular
 
-Para administrar los contenidos para una determinada reunión o día, simplemente haga clic en el mosaico de ese día en la pantalla principal de M³. Para administrar los contenidos que se repiten en cada reunión, haga clic en el mosaico Contenidos recurrentes.
+Para administrar los contenidos de una determinada reunión o día, simplemente haga clic en el botón de ese día en la pantalla principal de M³. Para administrar los contenidos que se repiten en cada reunión, haga clic en el botón *Recurrente*.
 
 ### Agregar contenidos
 
@@ -19,7 +19,7 @@ Aquí se explica cómo **añadir** contenidos desde la pantalla de administraci�
 | `Tipo de subida`               | Elija uno de los `3 tipos de contenidos` (vea abajo).                                                              |
 | `Contenido a añadir`           | Depende del `tipo de contenido` elegido (vea abajo).                                                               |
 | `Prefijo de nombre de archivo` | Se pueden agregar hasta 6 dígitos antes de los nombres de los archivos multimedia para facilitar la clasificación. |
-| `Lista de contenidos`          | Esto muestra los contenidos planificados actualmente para el mosaico de fecha seleccionado.                        |
+| `Lista de contenidos`          | Esto muestra los contenidos planificados actualmente para la fecha seleccionada.                                   |
 
 En el campo `Contenido a agregar`, se le presentarán diferentes opciones, según el tipo de contenido seleccionado.
 
