@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Si è verificato un errore durante la preparazione dell'elenco dei media. Riprova più tardi o contatta l'organizzatore della videoconferenza.",
   "errorBadOutputPath": "Il percorso specificato contiene caratteri non validi. Assicurati che i seguenti caratteri non siano presenti nel percorso:",
   "errorDestExists": "The following file or directory already exists:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Si è verificato un errore durante il tentativo di estrarre i media dal seguente file JWPUB:",
   "errorForcedSettingsEnforce": "Si è verificato un errore durante l'applicazione delle impostazioni della congregazione. Si prega di contattare l'organizzatore della videoconferenza.",
   "errorGetCongMedia": "Si è verificato un errore durante il recupero dei contenuti multimediali della congregazione. Verifica le impostazioni di sincronizzazione della tua congregazione o contatta l'organizzatore della videoconferenza.",
