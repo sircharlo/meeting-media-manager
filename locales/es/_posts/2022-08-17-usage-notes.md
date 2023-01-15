@@ -4,7 +4,7 @@ title: Notas técnicas de uso
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+La aplicación debería ejecutarse tal como está en la mayoría de las computadoras modernas con Windows, Linux o Mac.
 
 ### Windows: Instalación y primeros pasos
 
@@ -22,7 +22,7 @@ Si el resultado es `0`, AppImage **no** se ejecutará a menos que ejecute el sig
 
 Asegúrate de leer [lo que esto implica](https://lwn.net/Articles/673597/) antes de hacer esto.
 
-### macOS: Installation and first launch
+### macOS: Instalación y primeros pasos
 
 Si al iniciar la aplicación, recibe una advertencia de que la aplicación no se puede abrir, ya sea porque "no se descargó de la tienda de aplicaciones" o porque "no se puede verificar el desarrollador", entonces esta [página de soporte de Apple](https://support.apple.com/en-ca/HT202491) lo ayudará a seguir adelante.
 
@@ -30,9 +30,9 @@ Si recibe un mensaje que indica que "no tiene permiso para abrir la aplicación"
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Auto-update
+### macOS: Actualización Automática
 
-A diferencia de Windows y Linux, la funcionalidad de actualización automática **no** está implementada en macOS y, por razones técnicas, probablemente nunca lo estará. However, one of two things will happen for macOS users when an update is available:
+A diferencia de Windows y Linux, la funcionalidad de actualización automática **no** está implementada en macOS y, por razones técnicas, probablemente nunca lo estará. Sin embargo, una de estas dos cosas sucederá para los usuarios de Mac cuando haya una actualización disponible:
 
 - M³ intentará descargar el paquete de actualización y lo abrirá automáticamente, después de lo cual el usuario deberá completar manualmente la instalación de la actualización de M³ arrastrando y soltando la aplicación actualizada en su carpeta Aplicaciones. Luego, podrán iniciar M³ recién actualizado desde su carpeta de Aplicaciones como de costumbre.
 - Si el paso anterior falla en cualquier etapa, M³ mostrará una notificación persistente que indica que hay una actualización disponible, con un enlace a la actualización en sí. También se mostrará una notificación roja intermitente en el botón de configuración en la pantalla principal de M³. El número de versión de M³ en la pantalla de configuración se convertirá en un botón que, una vez que se haga clic, abre automáticamente la página de descarga de la última versión.
