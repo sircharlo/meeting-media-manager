@@ -98,7 +98,7 @@ Same as corresponding section above. With the addition of the global keyboard sh
 
 #### Initial configuration without OBS: M³
 
-Enable `the Present media on an external monitor or in a separate window` option.
+Enable the `Present media on an external monitor or in a separate window` option.
 
 #### Starting the meeting without OBS
 
