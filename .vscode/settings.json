@@ -119,7 +119,10 @@
     "українська"
   ],
   "cSpell.ignoreWords": ["transform", "PDF", "TERMS", "shorthand"],
-  "cSpell.ignorePaths": ["src/renderer/locales/*"],
+  "cSpell.ignorePaths": [
+    "src/renderer/locales/*",
+    "!src/renderer/locales/en.json"
+  ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.enabled": true
 }
