@@ -45,7 +45,7 @@
   "errorObsAuth": "La contraseña para la integración de OBS Studio puede ser incorrecta. Verifique que la contraseña sea correcta y vuelva a intentarlo.",
   "errorObsCameraScene": "La escena configurada como cámara predeterminada ya no existe. Por favor, cámbielo en la configuración.",
   "errorObsMediaScene": "La escena configurada como multimedia ya no existe. Por favor, cámbielo en la configuración.",
-  "errorObsScene": "The following scene could not be found. Make sure it exists or reconnect with OBS through the settings.",
+  "errorObsScene": "No se pudo encontrar la siguiente escena. Asegúrese de que existe o vuelva a conectar con OBS a través de la configuración.",
   "errorObsZoomScene": "La escena de Zoom configurada ya no existe. Por favor, cámbielo en la configuración.",
   "errorOffline": "La aplicación está fuera de línea. ¡No se pueden cargar ni descargar contenidos!",
   "errorPpEnable": "No se pudieron habilitar los atajos de teclado durante la reproducción de contenidos. Por favor, compruebe si su configuración es válida.",
