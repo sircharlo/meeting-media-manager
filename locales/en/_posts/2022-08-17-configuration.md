@@ -9,7 +9,7 @@ The Settings screen is divided into 4 sections. Most of the options are self-exp
 ### Application setup
 
 | Setting | Explanation |
-| ------- | ----------- |
+| --- | --- |
 | `Offline mode` | If enabled, M³ will not attempt to connect to JW.org or your congregation server. This is useful for when you have a poor internet connection and want to save bandwidth. |
 | `Theme preference` | Select the theme you prefer. If you select `System`, M³ will use the system's theme. |
 | `Congregation name` | The name of your congregation. This is used to support multiple congregations who share the same computer. |
@@ -37,7 +37,7 @@ See the [Congregation sync]({{page.lang}}/#congregation-sync) section for detail
 ### Media setup
 
 | Setting | Explanation |
-| ------- | ----------- |
+| --- | --- |
 | `Media language` | Select the language of your congregation or group. All media will be downloaded from JW.org in this language. |
 | `Fallback media language` | This language is used whenever the primary media language is not available. <br><br> For example, if you select Irish as your media language and English as your fallback, whenever a publication or video is not available in Irish, it will be fetched in English. |
 | `Maximum resolution for videos` | Videos downloaded from JW.org will be downloaded at this resolution, or the next available lower resolution. Useful for limited or low-bandwidth situations. |
@@ -56,7 +56,7 @@ See the [Congregation sync]({{page.lang}}/#congregation-sync) section for detail
 ### Meeting setup
 
 | Setting | Explanation |
-| ------- | ----------- |
+| --- | --- |
 | `Special congregation` | If enabled, no media will be downloaded from JW.org. Only manually added media will be available. This is useful for theocratic schools, for example. |
 | `Midweek meeting` | Indicate the usual day and time for the midweek meeting; used for folder naming and automatic background music fade-out (see below). |
 | `Weekend meeting` | Indicate the usual day and time for the weekend meeting. |
