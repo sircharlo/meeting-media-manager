@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Ocorreu um erro ao listar os ficheiros de multimédia. Tente novamente mais tarde ou entre em contacte com o organizador de vídeoconferência da sua congregação.",
   "errorBadOutputPath": "O caminho especificado tem caracteres inválidos. Certifique-se de que estes caracteres não estão no caminho:",
   "errorDestExists": "O seguinte arquivo ou pasta já existe:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Ocorreu um erro ao tentar extrair a mídia desse arquivo JWPUB:",
   "errorForcedSettingsEnforce": "Ocorreu um erro ao aplicar as configurações da congregação. Entre em contacto com o organizador de vídeoconferência da sua congregação.",
   "errorGetCongMedia": "Ocorreu um erro ao descarregar os ficheiros de multimédia da congregação. Verifique as configurações do servidor ou entre em contacto com o organizador de vídeoconferência da sua congregação.",
