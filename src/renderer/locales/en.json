@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "An error occurred while listing media. Please try again later or contact your videoconference organizer.",
   "errorBadOutputPath": "The path you specified contains illegal characters. Please ensure that the following characters are not present in the path:",
   "errorDestExists": "The following file or directory already exists:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "An error occured while trying to extract media from the following JWPUB file:",
   "errorForcedSettingsEnforce": "An error occurred while enforcing congregation settings. Please contact your videoconference organizer.",
   "errorGetCongMedia": "An error occurred while fetching congregation media. Please verify your congregation sync settings or contact your videoconference organizer.",
