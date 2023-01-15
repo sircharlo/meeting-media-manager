@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Nastala chyba pri zobrazovaní zoznamu médií. Prosím, skúste to znova alebo kontaktujte organizátora videokonferencie.",
   "errorBadOutputPath": "Cesta, ktorú si zadal obsahuje neplatné znaky. Prosím, nahraď tieto znaky:",
   "errorDestExists": "Tento súbor alebo priečinok už existuje:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Nastala chyba pri extrahovaní médií z tohto JWPUB súboru:",
   "errorForcedSettingsEnforce": "Nastala chyba pri uplatnovaní nastavení zboru. Prosím, kontaktujte organizátora videokonferencie.",
   "errorGetCongMedia": "Nastala chyba pri získavaní zborových médií. Prosím, skontroluj nastavenia synchronizácie zboru alebo kontaktuj organizátora videokonferencie.",

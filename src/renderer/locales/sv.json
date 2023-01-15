@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Ett fel har uppstått vid listning av media. Vänligen prova igen senare eller kontakta organisatören för videokonferensen.",
   "errorBadOutputPath": "Sökvägen du angav innehåller ogiltiga tecken. Se till att följande tecken inte finns i sökvägen:",
   "errorDestExists": "Följande fil eller katalog finns redan:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Ett fel uppstod vid försök att extrahera media från följande JWPUB-fil:",
   "errorForcedSettingsEnforce": "Ett fel har uppstått vid inläsning av församlingsinställningar. Vänligen kontakta organisatören för videokonferensen.",
   "errorGetCongMedia": "Ett fel har uppstått vid inläsning av församlingens media. Vänligen kontrollera församlingens synkroniseringsinställningar eller kontakta organisatören för videokonferensen.",

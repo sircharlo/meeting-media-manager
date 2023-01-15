@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Meedialoendi esitamisel ilmnes viga. Proovige hiljem uuesti või võtke ühendust oma videokonverentsi korraldajaga.",
   "errorBadOutputPath": "Teie määratud kausta tee sisaldab lubamatuid märke. Veenduge, et kausta teel ei esineks järgmisi märke:",
   "errorDestExists": "See fail või asukoht juba eksisteerib:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Meedia importimisel järgmisest JWPUB-failist ilmnes viga:",
   "errorForcedSettingsEnforce": "Koguduse seadete jõustumisel ilmnes viga. Võtke ühendust oma videokonverentsi korraldajaga.",
   "errorGetCongMedia": "Koguduse meedia toomisel ilmnes viga. Kontrollige oma koguduse sünkroonimisseadeid või võtke ühendust videokonverentsi korraldajaga.",

@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Misy olana amin'ny fampisehoana ny listrin'ny Sary/Video. Avereno indray azafady na miresaha amin'ny mpiandraikitrin'ny \"video conférence\".",
   "errorBadOutputPath": "Misy tarehimarika tsy mety ny soratra nampidirinao. Azafady, ataovy azo antoka hoe tsy misy an'ireto ny soratra:",
   "errorDestExists": "Efa misy io \"fichier\" na \"dossier\" io:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Nisy olana teo amin'ny fakàna ny Sary/Video amin'ity JWPUB ity:",
   "errorForcedSettingsEnforce": "Nisy olana amin'ny firafitry ny fiangonana. Azafady, resaho ireo rahalahy miandraikitra ny video conference.",
   "errorGetCongMedia": "Nisy olana nitranga teo am-pakàna ny Sary/Video'ny fiangonana. Azafady, hamarino ny firafitry ny fandrindrana ny fiangonanao na mifandraisa amin'ny mpikarakara ny video conference.",

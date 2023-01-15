@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Se produjo un error al enumerar los contenidos. Vuelva a intentarlo más tarde o póngase en contacto con el organizador de la videoconferencia.",
   "errorBadOutputPath": "La ruta que especificó contiene caracteres no permitidos. Asegúrese de que los siguientes caracteres no estén presentes en la ruta:",
   "errorDestExists": "El siguiente archivo o directorio ya existe:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Se produjo un error al intentar extraer medios del siguiente archivo JWPUB:",
   "errorForcedSettingsEnforce": "Se produjo un error al aplicar la configuración de la congregación. Póngase en contacto con el organizador de su videoconferencia.",
   "errorGetCongMedia": "Se produjo un error al obtener los medios de la congregación. Verifique la configuración de sincronización de su congregación o comuníquese con el organizador de su videoconferencia.",
