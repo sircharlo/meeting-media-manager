@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Median luetteloinnissa tapahtui virhe. Yritä myöhemmin uudelleen tai ota yhteyttä videokonferenssin järjestäjään.",
   "errorBadOutputPath": "Määrittämäsi polku sisältää virheellisiä merkkejä. Varmista, että polussa ei ole seuraavia merkkejä:",
   "errorDestExists": "Seuraava tiedosto tai kansio on jo olemassa:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Virhe yritettäessä purkaa mediaa seuraavasta JWPUB-tiedostosta:",
   "errorForcedSettingsEnforce": "Virhe pakotettaessa seurakunnan asetuksia. Ota yhteyttä videokonferenssin järjestäjään.",
   "errorGetCongMedia": "Virhe haettaessa seurakunnan mediaa. Tarkista seurakuntasi synkronointiasetukset tai ota yhteyttä videokonferenssin järjestäjään.",

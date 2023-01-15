@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Something go wrong when we try show all picture and videos. Abeg, make you try again later, or speak to the person wey de organize wuna video conference.",
   "errorBadOutputPath": "The path wey you don enter get illegal letters. You no fit use this letters for inside the path:",
   "errorDestExists": "This file or folder already dey:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Something go wrong when we try to get picture and video from this JWPUB file:",
   "errorForcedSettingsEnforce": "Something go wrong when we want apply congregation settings. Abeg, make you speak to the person wey de organize wuna video conference.",
   "errorGetCongMedia": "Something go wrong when we try load picture and video for congregation. Abeg, make you check the congregation sync settings, or speak to the person wey de organize wuna video conference.",

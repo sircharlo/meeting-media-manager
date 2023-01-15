@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Er ging iets fout tijdens het laten zien van media. Probeer het later opnieuw of neem contact op met jouw videoconferentie organisator.",
   "errorBadOutputPath": "Het pad dat je gekozen hebt, bevat illegale karakters. Zorg ervoor dat de volgende karakters niet in het pad zitten:",
   "errorDestExists": "Het volgende bestand of folder bestaat al:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Er ging iets fout tijdens het uitpakken van media uit het volgende JWPUB bestand:",
   "errorForcedSettingsEnforce": "Er ging iets fout tijdens het inschakelen van gemeente-instellingen. Neem alsjeblieft contact op met jouw videoconferentie organisator.",
   "errorGetCongMedia": "Er ging iets fout tijdens het ophalen van gemeente media. Controleer je gemeente sync instellingen of neem contact op met jouw videoconferentie organisator.",

@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Произошла ошибка при составлении списка мультимедиа. Повторите попытку позже или свяжитесь с организатором видеоконференции.",
   "errorBadOutputPath": "Указанный вами путь к папке содержит недопустимые символы. Убедитесь, что в пути к папке отсутствуют следующие символы:",
   "errorDestExists": "Следующий файл или папка уже существует:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Произошла ошибка при попытке извлечь медиафайлы из следующего файла JWPUB:",
   "errorForcedSettingsEnforce": "Произошла ошибка при применении настроек собрания. Свяжитесь с организатором видеоконференции.",
   "errorGetCongMedia": "Произошла ошибка при загрузке мультимедиа собрания. Проверьте настройки синхронизации собрания или свяжитесь с организатором видеоконференции.",
