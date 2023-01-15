@@ -955,52 +955,59 @@ const plugin: Plugin = (
     let subtitle = null
 
     if (subtitlesEnabled && subsLang && file.subtitles) {
-      subtitle = $axios.$get(file.subtitles.url, {
-        responseType: 'arraybuffer',
-      })
+      try {
+        subtitle = $axios.$get(file.subtitles.url, {
+          responseType: 'arraybuffer',
+        })
+      } catch (e: unknown) {
+        $warn('errorDownloadSubs', { identifier: file.destFilename }, e)
+      }
     }
 
     if (file.downloadRequired) {
-      if (extname(file.cacheFile) === '.jwpub') {
-        emptyDirSync(file.cacheDir)
-      }
-
-      const downloadedFile = Buffer.from(
-        new Uint8Array(
-          await $axios.$get(file.url, {
-            responseType: 'arraybuffer',
-            onDownloadProgress: (progressEvent) => {
-              if (setProgress) {
-                setProgress(progressEvent.loaded, progressEvent.total)
-              }
-            },
-          })
+      try {
+        const downloadedFile = Buffer.from(
+          new Uint8Array(
+            await $axios.$get(file.url, {
+              responseType: 'arraybuffer',
+              onDownloadProgress: (progressEvent) => {
+                if (setProgress) {
+                  setProgress(progressEvent.loaded, progressEvent.total)
+                }
+              },
+            })
+          )
         )
-      )
 
-      $write(file.cacheFile, downloadedFile)
+        if (extname(file.cacheFile) === '.jwpub') {
+          emptyDirSync(file.cacheDir)
+        }
+        $write(file.cacheFile, downloadedFile)
 
-      if (file.folder) {
-        const filePath = $mediaPath(file)
-        if (filePath) {
-          $write(filePath, downloadedFile)
-          if (subtitle) {
-            $write(
-              changeExt(filePath, '.vtt'),
-              Buffer.from(new Uint8Array(await subtitle))
-            )
-          } else {
-            $rm(changeExt(filePath, '.vtt'))
+        if (file.folder) {
+          const filePath = $mediaPath(file)
+          if (filePath) {
+            $write(filePath, downloadedFile)
+            if (subtitle) {
+              $write(
+                changeExt(filePath, '.vtt'),
+                Buffer.from(new Uint8Array(await subtitle))
+              )
+            } else {
+              $rm(changeExt(filePath, '.vtt'))
+            }
           }
         }
-      }
-      store.commit('stats/setDownloads', {
-        origin: 'jworg',
-        source: 'live',
-        file,
-      })
-      if (extname(file.cacheFile) === '.jwpub') {
-        await $extractAllTo(file.cacheFile, file.cacheDir)
+        store.commit('stats/setDownloads', {
+          origin: 'jworg',
+          source: 'live',
+          file,
+        })
+        if (extname(file.cacheFile) === '.jwpub') {
+          await $extractAllTo(file.cacheFile, file.cacheDir)
+        }
+      } catch (e: unknown) {
+        $warn('errorDownload', { identifier: file.destFilename }, e)
       }
     } else {
       if (file.folder) {

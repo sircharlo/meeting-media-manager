@@ -29,6 +29,23 @@ As for fully **remote** congregation Zoom meetings, the built-in MP4 conversion 
 
 In addition, M³ itself has been translated, by many volunteers, into several languages! You can therefore configure the language you would like to be displayed in M³'s interface. Do you want to help translate M³ into your language? Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to do so.
 
+![de translation](https://img.shields.io/badge/dynamic/json?color=blue&label=de&style=flat&logo=crowdin&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![es-ES translation](https://img.shields.io/badge/dynamic/json?color=blue&label=es-ES&style=flat&logo=crowdin&query=%24.progress.1.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![et translation](https://img.shields.io/badge/dynamic/json?color=blue&label=et&style=flat&logo=crowdin&query=%24.progress.2.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![fi translation](https://img.shields.io/badge/dynamic/json?color=blue&label=fi&style=flat&logo=crowdin&query=%24.progress.3.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![fr translation](https://img.shields.io/badge/dynamic/json?color=blue&label=fr&style=flat&logo=crowdin&query=%24.progress.4.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![hu translation](https://img.shields.io/badge/dynamic/json?color=blue&label=hu&style=flat&logo=crowdin&query=%24.progress.5.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![it translation](https://img.shields.io/badge/dynamic/json?color=blue&label=it&style=flat&logo=crowdin&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![mg translation](https://img.shields.io/badge/dynamic/json?color=blue&label=mg&style=flat&logo=crowdin&query=%24.progress.7.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![nl translation](https://img.shields.io/badge/dynamic/json?color=blue&label=nl&style=flat&logo=crowdin&query=%24.progress.8.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![pcm translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pcm&style=flat&logo=crowdin&query=%24.progress.9.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![pt-BR translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pt-BR&style=flat&logo=crowdin&query=%24.progress.10.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![pt-PT translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pt-PT&style=flat&logo=crowdin&query=%24.progress.11.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![ru translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ru&style=flat&logo=crowdin&query=%24.progress.12.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![sk translation](https://img.shields.io/badge/dynamic/json?color=blue&label=sk&style=flat&logo=crowdin&query=%24.progress.13.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![sv-SE translation](https://img.shields.io/badge/dynamic/json?color=blue&label=sv-SE&style=flat&logo=crowdin&query=%24.progress.14.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+![uk translation](https://img.shields.io/badge/dynamic/json?color=blue&label=uk&style=flat&logo=crowdin&query=%24.progress.15.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
+___
 [![Crowdin](https://badges.crowdin.net/meeting-media-manager/localized.svg)](https://crowdin.com/project/meeting-media-manager)
 
 ## How do I get started?
