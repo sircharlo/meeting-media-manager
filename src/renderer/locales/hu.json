@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Hiba történt az összejövetel médiatartalmának lekérése közben. Kérjük, próbálja újra később, vagy forduljon a videokonferencia szervezőjéhez.",
   "errorBadOutputPath": "A megadott elérési út nem támogatott karaktereket tartalmaz. Győződjön meg arról, hogy a következő karakterek nem szerepelnek az elérési útban:",
   "errorDestExists": "A következő fájl vagy könyvtár már létezik:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Hiba lépett fel a következő JWPUB fájlból származó média kinyerése közben:",
   "errorForcedSettingsEnforce": "Hiba történt a gyülekezeti beállítások érvényesítése során. Kérjük, lépjen kapcsolatba a videokonferencia szervezőjével.",
   "errorGetCongMedia": "Hiba történt a gyülekezeti média lekérése közben. Kérjük, ellenőrizze a gyülekezet szinkronizálási beállításait, vagy lépjen kapcsolatba a videokonferencia szervezőjével.",
