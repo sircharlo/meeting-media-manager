@@ -6,11 +6,11 @@ ref: installation
 
 M³ ei vaadi hallinnollisia oikeuksia asentaamiseen. Asentaaksesi M³:n [lataa uusin versio]({{site.github}}/releases/latest) ja asenna se.
 
-| Käyttöjärjestelmä | Ladattava tiedosto                         |
-| ----------------- | ------------------------------------------ |
-| Windows           | `meeting-media-manager-[VERSION].exe`      |
-| macOS             | `meeting-media-manager-[VERSION].dmg`      |
-| Linux             | `meeting-media-manager-[VERSION].AppImage` |
+| Käyttöjärjestelmä | Ladattava tiedosto |
+| --- | --- |
+| Windows | `meeting-media-manager-[VERSION].exe` |
+| macOS | `meeting-media-manager-[VERSION].dmg` |
+| Linux | `meeting-media-manager-[VERSION].AppImage` |
 
 ### Mitä seuraavaksi?
 
