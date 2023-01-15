@@ -6,11 +6,11 @@ ref: installation
 
 M³ не требует административных привилегий для установки или запуска. Чтобы установить M³, просто [загрузите последнюю программу установки]({{site.github}}/releases/latest) и запустите ее.
 
-| Операционная система | Соответствующий файл |
-| --- | --- |
-| Виндовс | `meeting-media-manager-[VERSION].exe` |
-| macOS | `meeting-media-manager-[VERSION].dmg` |
-| Linux | `meeting-media-manager-[VERSION].AppImage` |
+| Операционная система | Соответствующий файл                       |
+| -------------------- | ------------------------------------------ |
+| Виндовс              | `meeting-media-manager-[VERSION].exe`      |
+| macOS                | `meeting-media-manager-[VERSION].dmg`      |
+| Linux                | `meeting-media-manager-[VERSION].AppImage` |
 
 ### Что дальше?
 
