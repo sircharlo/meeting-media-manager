@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Beim Auflisten von Medien ist ein Fehler aufgetreten. Bitte später erneut versuchen oder den Videokonferenz-Organisator kontaktieren.",
   "errorBadOutputPath": "Der angegebene Pfad enthält unzulässige Zeichen. Bitte sicherstellen, dass die folgenden Zeichen nicht im Pfad enthalten sind:",
   "errorDestExists": "Das folgende Verzeichnis existiert bereits:",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Es trat ein Fehler beim Extrahieren der folgenden JWPUB-Datei auf:",
   "errorForcedSettingsEnforce": "Beim Anwenden der Versammlungseinstellungen ist ein Fehler aufgetretet. Bitte den Videokonferenz-Organisator kontaktieren.",
   "errorGetCongMedia": "Beim Holen der Versammlungs-Medien ist ein Fehler aufgetreten. Bitte die Einstellungen der Versammlungs-Synchronisation überprüfen oder den Videokonferenz-Organisator kontaktieren.",
