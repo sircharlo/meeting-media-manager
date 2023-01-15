@@ -31,6 +31,8 @@
   "errorAdditionalMediaList": "Une erreur s'est produite lors de l'énumération des médias. Veuillez réessayer plus tard ou contacter votre organisateur des vidéoconférences.",
   "errorBadOutputPath": "Le chemin d'accès que vous avez spécifié contient des caractères non autorisés. Veuillez vous assurer que les caractères suivants ne sont pas présents dans le chemin d'accès :",
   "errorDestExists": "Le fichier ou répertoire suivant existe déjà :",
+  "errorDownload": "An error occured while trying to download the following file:",
+  "errorDownloadSubs": "An erorr occured while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "Une erreur s'est produite lors de l'extraction des médias du fichier JWPUB suivant :",
   "errorForcedSettingsEnforce": "Une erreur s'est produite lors de l'application des paramètres de l'assemblée locale. Veuillez contacter votre organisateur des vidéoconférences.",
   "errorGetCongMedia": "Une erreur s'est produite lors de la récupération des médias de l'assemblée locale. Veuillez vérifier les paramètres de synchronisation de l'assemblée locale ou contacter votre organisateur des vidéoconférences.",
