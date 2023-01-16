@@ -9,6 +9,7 @@ sass:
 exclude:
   [
     'CONTRIBUTING.md',
+    'crowdin.yml',
     'Gemfile',
     'Gemfile.lock',
     'GITLOCALIZE.md',
