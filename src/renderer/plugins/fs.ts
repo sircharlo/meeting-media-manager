@@ -23,18 +23,7 @@ import { MeetingFile, ShortJWLang } from '~/types'
 import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
 
 const plugin: Plugin = (
-  {
-    $getPrefs,
-    $log,
-    store,
-    $appPath,
-    $dayjs,
-    $translate,
-    $strip,
-    i18n,
-    $warn,
-    $error,
-  },
+  { $getPrefs, $log, store, $appPath, $dayjs, $translate, $strip, i18n, $warn },
   inject
 ) => {
   // Paths
@@ -182,30 +171,64 @@ const plugin: Plugin = (
 
   // Improved fs/glob functions
   inject('findOne', (path: string | string[], options?: Options): string => {
-    return sync(path, options)[0]
+    try {
+      return sync(path, options)[0]
+    } catch (e: unknown) {
+      const identifier = path instanceof Array ? path[0] : path
+      $warn('errorSetVars', { identifier }, e)
+    }
+    return ''
   })
 
   inject('findAll', (path: string | string[], options?: Options): string[] => {
-    const results = sync(path, options)
-    $log.debug(path, results)
-    return results
+    try {
+      const results = sync(path, options)
+      $log.debug(path, results)
+      return results
+    } catch (e: any) {
+      if (e.message?.includes('operation not permitted')) {
+        const identifier = e.message.split("'")[1]
+        $warn('errorSetVars', { identifier }, e)
+      } else {
+        const identifier = path instanceof Array ? path[0] : path
+        $warn('errorSetVars', { identifier }, e)
+      }
+    }
+    return []
   })
 
   inject(
     'findAllStats',
     (path: string | string[], options?: Options): Entry[] => {
-      const results = sync(path, {
-        ...options,
-        stats: true,
-      })
-      $log.debug(path, results)
-      return results
+      try {
+        const results = sync(path, {
+          ...options,
+          stats: true,
+        })
+        $log.debug(path, results)
+        return results
+      } catch (e: any) {
+        if (e.message?.includes('operation not permitted')) {
+          const identifier = e.message.split("'")[1]
+          $warn('errorSetVars', { identifier }, e)
+        } else {
+          const identifier = path instanceof Array ? path[0] : path
+          $warn('errorSetVars', { identifier }, e)
+        }
+      }
+      return []
     }
   )
 
   inject('rm', (files: string | string[]): void => {
     if (!Array.isArray(files)) files = [files]
-    files.forEach((file) => removeSync(file))
+    files.forEach((file) => {
+      try {
+        removeSync(file)
+      } catch (e: unknown) {
+        $warn('errorWebdavRm', { identifier: file }, e)
+      }
+    })
   })
 
   inject(
@@ -243,7 +266,7 @@ const plugin: Plugin = (
     try {
       renameSync(src, dest)
     } catch (e: unknown) {
-      $error('errorSetVars', e, dest)
+      $warn('errorSetVars', { identifier: dest }, e)
     }
   })
 
