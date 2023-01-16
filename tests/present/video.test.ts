@@ -56,9 +56,6 @@ test('render the presentation mode page correctly', async () => {
   // Verify home page
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
 
-  // Close media window
-  await page.locator('[aria-label="toggleScreen"]').click()
-
   // Open presentation mode
   await page.locator('[aria-label="present"]').click()
 
@@ -98,6 +95,8 @@ test('play a video', async () => {
   }
 
   await page.locator('#play').first().click()
+  // eslint-disable-next-line no-magic-numbers
+  await delay(2000)
   expect(await page.locator('#stop').count()).toBe(1)
 })
 
@@ -124,7 +123,7 @@ test('stop a video', async () => {
   if (platform() === 'win32') {
     test.skip()
   }
-  
+
   await page.locator('#stop').first().click()
   await page.locator('#stop').first().click()
   expect(await page.locator('#stop').count()).toBe(0)
