@@ -6,9 +6,13 @@
 
 ## What is M³?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org. It features recurring and custom media management, as well as an optional sync feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
+**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org. It features support for managing custom and recurring media, an optional synchronization feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
 
 <sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
+
+## How do I get started?
+
+Go to the [documentation](https://sircharlo.github.io/meeting-media-manager/) for M³ to find information about installation, configuration, media presentation mode, congregation media sync, and more.
 
 ## What can M³ do?
 
@@ -16,7 +20,7 @@ M³ allows you to easily and automatically download, synchronize, share and pres
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
 
 - media thumbnails
-- easy-to-use pause/play/stop buttons to manage - playback of media files
+- easy-to-use pause/play/stop buttons to manage playback of media files
 - easy background music playback, with automatic stop before the start of regularly scheduled meetings
 - automatic external monitor recognition and management
 - OBS Studio integration
@@ -47,10 +51,6 @@ In addition, M³ itself has been translated, by many volunteers, into several la
 ![uk translation](https://img.shields.io/badge/dynamic/json?color=blue&label=uk&style=flat&logo=crowdin&query=%24.progress.15.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15262852-559843.json)
 ___
 [![Crowdin](https://badges.crowdin.net/meeting-media-manager/localized.svg)](https://crowdin.com/project/meeting-media-manager)
-
-## How do I get started?
-
-Go to the [documentation](https://sircharlo.github.io/meeting-media-manager/) for M³ to find information about installation, configuration, media presentation mode, congregation media sync, and more.
 
 ## Want to contribute?
 
