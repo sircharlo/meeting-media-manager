@@ -64,7 +64,7 @@ Zoom должен быть настроен таким образом, чтоб�
 
 После того как встреча Zoom отобразится на внешнем мониторе, откройте M³. Окно презентации мультимедиа автоматически откроется поверх окна Zoom на внешнем мониторе. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
 
-Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
+Включите видеопоток Зала Царства (<kbd>Alt V</kbd>) и при необходимости осветите его, чтобы зрители в Zoom видели сцену Зала Царства. Включите звук Зала Царства в Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
 
 Запустите воспроизведение фоновой музыки с помощью кнопки слева внизу, или <kbd>Alt K</kbd>.
 
@@ -82,7 +82,7 @@ Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom
 
 #### Отображение удаленных участников Zoom на мониторе Зала Царства
 
-Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. Теперь участники встречи Zoom будут видны на мониторе в Зале Царства.
+Нажмите кнопку "скрыть/показать окно презентации медиа" в нижнем правом углу экрана управления медиа M³, или <kbd>Alt Z</kbd>, чтобы **скрыть** окно презентации медиа. Теперь участники встречи Zoom будут видны на мониторе в Зале Царства.
 
 > Если удаленному участнику нужно показать медиа, следуйте шагам в подразделе **Презентация мультимедиа в Зале Царства и через Zoom**.
 
