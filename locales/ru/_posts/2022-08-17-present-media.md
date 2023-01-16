@@ -66,13 +66,13 @@ Zoom должен быть настроен таким образом, чтоб�
 
 Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
 
-Start background music playback using the button on the bottom left, or <kbd>Alt K</kbd>.
+Запустите воспроизведение фоновой музыки с помощью кнопки слева внизу, или <kbd>Alt K</kbd>.
 
 #### Трансляция частей со сцены Зала Царства на Zoom
 
 Никаких действий не требуется.
 
-Various camera angles/zoom can be chosen during the meeting by using the menu on the bottom of the M³ media playback control window; this menu will contain a list of all configured camera view scenes in OBS.
+Во время встречи можно выбрать различные углы обзора/масштаб камеры, используя меню в нижней части окна управления воспроизведением мультимедиа M³; это меню будет содержать список всех настроенных сцен с видом камеры в OBS.
 
 #### Презентация мультимедиа в Зале Царства и через Zoom
 
