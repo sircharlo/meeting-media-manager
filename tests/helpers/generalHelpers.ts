@@ -40,9 +40,10 @@ export function getDate(type = 'now'): string {
 }
 
 export function mwDayPresent(): boolean {
-  return dayjs()
-    .hour(0)
-    .isSameOrBefore(dayjs().startOf('week').add(parseInt(prefs.mwDay), 'days'))
+  return (
+    dayjs().day() ===
+    dayjs().startOf('week').add(parseInt(prefs.mwDay), 'days').day()
+  )
 }
 
 export function delay(ms: number): Promise<void> {
