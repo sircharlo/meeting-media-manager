@@ -78,7 +78,7 @@ Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom
 
 Найдите мультимедийный файл, который вы хотите показать, в списке мультимедийных файлов M³ и нажмите на кнопку "воспроизвести".
 
-When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
+Когда вы завершите презентацию мультимедиа, нажмите кнопку "остановить" в M³. Обратите внимание, что видео автоматически останавливаются после завершения.
 
 #### Отображение удаленных участников Zoom на мониторе Зала Царства
 
@@ -86,7 +86,7 @@ Press the "hide/show media presentation window" button in the lower right corner
 
 > Если удаленному участнику нужно показать медиа, следуйте шагам в подразделе **Презентация мультимедиа в Зале Царства и через Zoom**.
 
-Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
+Как только участник закончит свою часть, нажмите кнопку "скрыть/показать окно презентации медиа" в нижнем правом углу окна управления мультимедиа M³, или <kbd>Alt Z</kbd>, чтобы **показать** окно презентации медиа. На мониторах Зала Царства теперь будет отображаться годовой текст.
 
 ### Проведение гибридных встреч с помощью только M³ и Zoom, без OBS Studio
 
