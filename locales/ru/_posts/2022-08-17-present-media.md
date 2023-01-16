@@ -76,7 +76,7 @@ Various camera angles/zoom can be chosen during the meeting by using the menu on
 
 #### Презентация мультимедиа в Зале Царства и через Zoom
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+Найдите мультимедийный файл, который вы хотите показать, в списке мультимедийных файлов M³ и нажмите на кнопку "воспроизвести".
 
 When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
 
@@ -120,6 +120,6 @@ Once the participant has finished their part, press the "hide/show media present
 
 То же, что и в соответствующем разделе выше.
 
-### Screenshots of Presentation Mode
+### Скриншоты режима презентации
 
 {% include screenshots/present-media.html lang=site.data.ru %}
