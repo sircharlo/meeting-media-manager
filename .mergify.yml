@@ -1,17 +1,9 @@
 pull_request_rules:
-  - name: Automatic merge for crowdin translations
-    conditions:
-      - and:
-          - author=sircharlo
-          - title~=^chore. new translations
-    actions:
-      update:
-      merge:
-        method: squash
   - name: Automatic merge for trusted authors and dependabot
     conditions:
       - or:
           - author=mtdvlpr
+          - author=sircharlo
           - and:
               - author=dependabot[bot]
               - or:
@@ -20,3 +12,4 @@ pull_request_rules:
     actions:
       update:
       merge:
+        method: squash
