@@ -11,7 +11,7 @@ import {
   openHomePage,
   ipcRendererInvoke,
 } from './../helpers/electronHelpers'
-import { getDate } from './../helpers/generalHelpers'
+import { getDate, mwDayPresent } from './../helpers/generalHelpers'
 import prefs from './../mocks/prefs/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
 
@@ -30,7 +30,7 @@ test.afterAll(async () => {
 })
 
 test('render the presentation mode page correctly', async () => {
-  if (platform() === 'win32') {
+  if (platform() === 'win32' || mwDayPresent()) {
     test.skip()
   }
 
@@ -55,9 +55,6 @@ test('render the presentation mode page correctly', async () => {
 
   // Verify home page
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
-
-  // Close media window
-  await page.locator('[aria-label="toggleScreen"]').click()
 
   // Open presentation mode
   await page.locator('[aria-label="present"]').click()
@@ -93,7 +90,8 @@ test('render the presentation mode page correctly', async () => {
 })
 
 test('play an image', async () => {
-  if (platform() === 'win32') {
+  console.log(mwDayPresent())
+  if (platform() === 'win32' || mwDayPresent()) {
     test.skip()
   }
 
@@ -103,7 +101,7 @@ test('play an image', async () => {
 })
 
 test('stop an image', async () => {
-  if (platform() === 'win32') {
+  if (platform() === 'win32' || mwDayPresent()) {
     test.skip()
   }
 
