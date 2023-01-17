@@ -6,7 +6,9 @@ permalink: /et/
 
 **Meeting Media Manager**, ehk **M³** lühidalt, on rakendus Windows, macOS ja Linux arvutitele, mis automaatselt laeb alla pildid ja videod, mida näidatakse Jehoova tunnistajate koosolekutel keeltes, mis on olemas JW.org lehel.
 
-See sisaldab korduvat ja kohandatud meediahaldust, samuti valikulist sünkroonimisfunktsiooni sama koguduse liikmete jaoks, samuti tuge mitmele sama arvutikontot kasutavale kogudusele ja/või rühmale.
+It features support for managing custom and recurring media, an optional synchronization feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
+
+<sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
 
 ### Mida saab M³-ga teha?
 
