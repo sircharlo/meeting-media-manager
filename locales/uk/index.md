@@ -2,32 +2,34 @@
 permalink: /uk/
 ---
   
-### What is M³?
+### Що таке M³?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+**Meeting Media Manager**, або **M³** скорочено, це додаток для Windows, macOS та Linux, який автоматично завантажує ілюстрації та відео, які будуть розглядатись під час зібрань Свідків Єгови будь-якою мовою доступною на JW.org.
 
-It features recurring and custom media management, as well as an optional sync feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
+Серед можливостей програми варто виділити керування повторюваними та власними (користувацькими) медіафайлами, додаткова функція синхронізації для членів одного збору, а також можливість використовувати один компʼютер для багатьох зборів і/чи груп.
 
-### What can M³ do?
+<sup>Примітка: M³ був знаний як JWMMF (JW Meeting Media Fetcher), але був перейменований в травні 2022 року.</sup>
 
-M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+### Які функції виконує M³?
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+M³ дозволяє легко й автоматично завантажувати, синхронізувати та транслювати всі медіафайли для зібрання.
 
-- Media thumbnails
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
-- OBS Studio integration
+Для **гібридних** та **звичайних** зібрань, вбудований режим трансляції медіа має всі необхідні функції для спрощення показу медіа на зібраннях, в тому числі:
 
-As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature.
+- Мініатюри ілюстрацій
+- Зручні кнопки паузи/відтворення/зупинки для керування відтворення медіафайлів
+- Зручне відтворення фонової музики з автоматичною зупинкою пере початком запланованого зібрання
+- Автоматичне розпізнавання та керування зовнішнім монітором
+- Інтеграція з OBS Studio
 
-### Does M³ work in my language?
+Що стосується повністю **віддалених** зібрань збору, вбудована функція конвертації MP4 в M³ дозволяє вам легко транслювати файли всіх типів, використовуючи вбудовану в Zoom функцію транслювання MP4.
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
+### Чи працює M³ з моєю мовою?
 
-In addition, M³ itself has been translated into 15 languages and counting, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+**Так!** Медіа для зібрань Свідків Єгови можуть бути завантажені будь-якою з сотень мов доступних на JW.org. Список доступних мов оновлюється автоматично, все що вам потрібно це обрати потрібну вам мову зі списку.
 
-This app is made with love and a bit of spare time. Enjoy!
+На додаток до цього, сама M³ була перекладена на 15 мов і це число зростає завдяки багатьом добровольцям. Тому ви можете обрати одну з цих мов для інтерфейсу M³.
 
-### Screenshots
+Цей додаток був створений з любовʼю та у наш вільний час. Насолоджуйтесь!
+
+### Скриншоти

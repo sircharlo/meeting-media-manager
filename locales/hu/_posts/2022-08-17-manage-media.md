@@ -1,20 +1,20 @@
 ---
-tag: Usage
+tag: Használat
 title: Média kezelése
 ref: manage-media
 ---
 
 A médiakezelő képernyő lehetővé teszi a felhasználó számára, hogy bármely adott összejövetelhez médiát adjon hozzá vagy távolítson el, kezelje az ismétlődő médiafájlokat, sőt, olyan időpontokhoz is adhat egyedi fájlokat, amelyekre nincs beütemezve összejövetel.
 
-### A média kezelése bármelyik napra
+### A média kezelése bármely napra vonatkozóan
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Egy adott összejövetel vagy nap médiájának kezeléséhez egyszerűen kattintson az adott nap csempéjére az M³ főképernyőjén. A minden összejövetelen ismétlődő média kezeléséhez kattintson az Ismétlődő média csempére.
 
 ### Média hozzáadása
 
-Így adhat hozzá **médiát** a médiakezelő képernyőn.
+A következő módon **adhat hozzá** médiát a médiakezelő képernyőn.
 
-| Opció               | Magyarázat                                                                                 |
+| Lehetőség           | Magyarázat                                                                                 |
 | ------------------- | ------------------------------------------------------------------------------------------ |
 | `Feltöltés típusa`  | Válasszon a 3 `médiatípus` közül (lásd alább).                                             |
 | `Hozzáadandó média` | A kiválasztott `médiatípustól` függ (lásd alább).                                          |
@@ -23,11 +23,11 @@ To manage media for a certain meeting or day, simply click on that day's tile on
 
 A `Hozzáadandó média` mezőben a kiválasztott médiatípustól függően különböző lehetőségek jelennek meg.
 
-| `Média típusa` | A `Hozzáadandó média` mező                                                                                                                                                                                                                                                                                                                                                                 |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Ének`         | ... show a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br> The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [Settings]({{page.lang}}/#configuration). |
-| `JWPUB`        | ... allow you to browse to (or drag and drop) a JWPUB file. <br><br> You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.      |
-| `Egyedi`       | ... allow you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                        |
+| `Média típusa` | A `Hozzáadandó média` mező                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ének`         | ... megjelenít egy menüt a *Királyság énekek* videóival, a kiválasztott nyelven. Válassza ezt az opciót például a nyilvános előadáshoz, vagy a körzetfelvigyázói látogatásokhoz szükséges ének hozzáadásához. <br><br> A kiválasztott dal automatikusan letöltődik a JW.org-ról, a gyülekezet vagy csoport nyelvén, ahogyan azt a [Beállítások]({{{page.lang}}/#configuration) oldalon konfigurálta.  |
+| `JWPUB`        | ... lehetővé teszi, hogy tallózzon (vagy fogd és vidd) egy JWPUB fájlt. <br><br> Ezután a program felkéri, hogy válassza ki azt a részt vagy fejezetet, amelyből médiát szeretne hozzáadni. Ez a beágyazott és a hivatkozott médiát is hozzáadja a JWPUB-fájlhoz az adott szakaszból. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here. |
+| `Egyedi`       | ... allow you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                                               |
 
 ### Média eltávolítása, elrejtése vagy megjelenítése
 

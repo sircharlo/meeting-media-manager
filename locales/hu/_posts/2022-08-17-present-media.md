@@ -1,5 +1,5 @@
 ---
-tag: Usage
+tag: Használat
 title: Médiabemutató mód
 ref: present-media
 ---

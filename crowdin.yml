@@ -1,3 +1,4 @@
+pull_request_title: "chore: new translations"
 files:
   - source: /_data/en.json
     translation: /_data/%two_letters_code%.json

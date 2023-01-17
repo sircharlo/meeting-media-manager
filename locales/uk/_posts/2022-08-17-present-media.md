@@ -1,10 +1,10 @@
 ---
-tag: Usage
-title: Media Presentation mode
+tag: Використання
+title: Режим презентації медіа
 ref: present-media
 ---
 
-### Using media presentation mode
+### Використання режиму презентації медіа
 
 The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
 
@@ -98,7 +98,7 @@ Same as corresponding section above. With the addition of the global keyboard sh
 
 #### Initial configuration without OBS: M³
 
-Enable `the Present media on an external monitor or in a separate window` option.
+Enable the `Present media on an external monitor or in a separate window` option.
 
 #### Starting the meeting without OBS
 

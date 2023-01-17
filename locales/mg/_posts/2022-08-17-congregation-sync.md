@@ -25,7 +25,7 @@ M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone 
 
 All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
 
-### Congregation sync setup
+### Firafitrin'ny fifampifanarahan'ny fiangonana
 
 | Setting                      | Explanation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

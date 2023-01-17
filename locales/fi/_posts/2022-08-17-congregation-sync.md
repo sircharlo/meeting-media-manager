@@ -12,7 +12,7 @@ VJ tai hänen nimeämänsä henkilö voi:
 - **piilota** JW.org:sta media, joka ei ole relevanttia tietyn kokouksen kannalta, esimerkiksi kun paikallinen haaratoimisto on korvannut ohjelmanosan
 - lisää tai poista **toistuva** media, kuten vuositekstivideo tai ilmoitusdia
 
-Kaikki samaan seurakuntaan synkronoidut saavat sitten täsmälleen saman median, kun he napsauttavat *Päivitä mediakansiot_-painiketta.
+Kaikki samaan seurakuntaan synkronoidut saavat sitten täsmälleen saman median, kun he napsauttavat *Päivitä mediakansiot*-painiketta.
 
 Huomaa, että seurakunnan synkronointiominaisuus on valinnainen.
 

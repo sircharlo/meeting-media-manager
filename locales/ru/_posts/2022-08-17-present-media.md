@@ -1,125 +1,125 @@
 ---
 tag: Использование
-title: Media Presentation mode
+title: Режим презентации медиа
 ref: present-media
 ---
 
-### Using media presentation mode
+### Использование режима презентации медиа
 
-The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
+Режимы презентации и управления мультимедиа разработаны с целью простого использования и предотвращения ошибок во время встреч.
 
-Once the option `Present media on an external monitor or in a separate window` is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
+После того как опция `Воспроизводить медиафайлы на внешнем экране или в отдельном окне` включена, экран презентации мультимедиа будет автоматически отображаться на внешнем мониторе если таковой имеется, или в отдельном окне с возможностью перетаскивать и изменять размер, если внешний монитор не был обнаружен.
 
-When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
+В режиме ожидания на экране презентации мультимедиа будет отображаться фоновое изображение, выбранное в настройках. Если фоновое изображение не было настроено, то M³ попытается автоматически загрузить и отобразить годовой текст.
 
-If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
+Если в настройках не установлено фоновое изображение и годовой текст не удалось загрузить автоматически, в режиме ожидания будет отображаться черный фон.
 
-Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt D</kbd> (for external display).
+В режим презентации мультимедиа можно попасть, нажав кнопку ▶️ (воспроизведение) на главном экране M³ или с помощью сочетания клавиш <kbd>Alt D</kbd>.
 
-Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
+Как только вы войдете в режим презентации, на экране выбора папок вы сможете выбрать дату, за которую вы хотите отобразить медиа. Если папка текущего дня существует, она автоматически будет выбрана. Можно изменить выбранную дату в любое время, нажав на кнопку выбора даты в верхнем разделе.
 
-### Presenting media
+### Презентация мультимедиа
 
-To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
+Чтобы воспроизвести мультимедиа, нажмите кнопку ▶️ (воспроизведение) для нужного файла. Чтобы скрыть медиа, нажмите кнопку ⏹️ (остановить). При желании видео можно перемотать назад или вперед, когда оно поставлено на паузу. Обратите внимание, что для видеороликов кнопку остановки необходимо нажать **дважды**, чтобы предотвратить случайную и преждевременную остановку видеоролика во время его воспроизведения перед собранием. Видео будет автоматически останавливаться после полного воспроизведения.
 
-### Conducting hybrid meetings using a combination of M³, OBS Studio, and Zoom
+### Проведение гибридных встреч, используя M³, OBS Studio, и Zoom
 
-By far the simplest way to share media during hybrid meetings is by configuring OBS Studio, M³ and Zoom to work together.
+Самым простым способом показать медиа во время гибридных встреч - это настроить OBS Studio, M³ и Zoom так, чтобы они функционировали вместе.
 
-#### Initial configuration: Kingdom Hall computer
+#### Начальная конфигурация: Компьютер Зала Царства
 
-Set the external monitor's screen resolution to 1280x720, or something close to that.
+Установите разрешение экрана внешнего монитора на 1280x720.
 
-Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
+Настройте выход звуковой карты компьютера на один из входов микшера звукового пульта, а объединенный выход микшера звукового пульта - на вход звуковой карты компьютера.
 
-#### Initial configuration: OBS Studio
+#### Начальная конфигурация: OBS Studio
 
-Install OBS Studio, or download the portable version.
+Установите OBS Studio, или скачайте портативную версию.
 
-If using the portable version of OBS Studio, install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+Если используется портативная версия OBS Studio, установите плагин [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/), и установите виртуальную камеру в Windows с помощью прилагаемого скрипта установки.
 
-If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
+Если у вас OBS Studio v27 или старше, вам необходимо установить плагин [obs-websocket](https://github.com/obsproject/obs-websocket). В противном случае obs-websocket уже включен. Настройте номер порта и пароль для obs-websocket.
 
-In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
+В настройках OBS под разделом `Общее` > `Системная область` установите все флажки. В разделе `Вывод` > `Потоковая передача` включите аппаратный кодер, если таковой имеется. В разделе `Видео` > `Базовое разрешение` и `Выходное (масштабированное) разрешение`, выберите `1280x720`, а в разделе `Фильтр понижения масштаба` выберите `Билинейный`.
 
-Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
+Настройте как минимум 2 сцены: одну для презентации медиа (`Захват окна` или `Захват монитора` с выключенным курсором мыши и выбранным соответствующим названием окна/монитора), и одну с видом на сцену (`Устройство захвата видео` с камерой Зала Царства). Можно добавить столько сцен, сколько потребуется, с настройкой камеры, увеличением и обрезкой изображения по мере необходимости (вид на пюпитр, вид на ведущего и чтеца, вид на стол, и т. д.).
 
-Add a shortcut to OBS Studio, with the `--startvirtualcam` parameter, to the Startup folder of the Windows user profile, to ensure that OBS Studio gets started automatically when the user logs in.
+Добавьте ярлык на OBS Studio с параметром `--startvirtualcam` в папку запуска профиля пользователя Windows, чтобы OBS Studio запускалось автоматически при входе пользователя в систему.
 
-#### Initial configuration: Kingdom Hall Zoom
+#### Начальная конфигурация: Zoom Зала Царства
 
-Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
+Zoom должен быть настроен таким образом, чтобы использовать два монитора. Включите глобальные сочетания клавиш для Zoom, чтобы выключить/включить звук Зала Царства в Zoom (<kbd>Alt A</kbd>) и запустить/остановить видеопоток Зала Царства в Zoom (<kbd>Alt V</kbd>).
 
-Set the default "microphone" to be sound booth mixer's combined output (so that everything that is heard over the Kingdom Hall sound system is transmitted over Zoom, including microphones and media) and the "camera" to be the virtual camera provided by OBS Studio.
+Установите "микрофон" по умолчанию на объединенный выход микшера звукового пульта (чтобы все, что слышно через звуковую систему Зала Царства, передавалось через Zoom, включая микрофоны и мультимедиа), а "камеру" - на виртуальную камеру, предоставляемую OBS Studio.
 
-#### Initial configuration: M³
+#### Начальная конфигурация: M³
 
-Enable the `Present media on an external monitor or in a separate window` option.
+Включить опцию `Воспроизводить медиафайлы на внешнем экране или в отдельном окне`.
 
-Enable and configure OBS Studio compatibility mode, using the port and password information configured in the OBS Studio configuration step.
+Включите и настройте режим совместимости с OBS Studio, используя данные порта и пароля, настроенные на этапе настройки OBS Studio.
 
-#### Starting the meeting
+#### Начало встречи
 
-Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
+Запустите встречу Zoom и переместите вторичное окно встречи Zoom на внешний монитор. При желании сделайте его полноэкранным. Здесь будут отображаться все удаленные участники встречи, чтобы собрание могло их видеть.
 
-Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
+После того как встреча Zoom отобразится на внешнем мониторе, откройте M³. Окно презентации мультимедиа автоматически откроется поверх окна Zoom на внешнем мониторе. При необходимости синхронизируйте мультимедиа и перейдите в режим управления мультимедиа, нажав кнопку ▶️ (воспроизвести) на главном экране M³, или <kbd>Alt D</kbd>.
 
-Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
+Включите видеопоток Зала Царства (<kbd>Alt V</kbd>) и при необходимости осветите его, чтобы зрители в Zoom видели сцену Зала Царства. Включите звук Зала Царства в Zoom (<kbd>Alt A</kbd>). Отключать видео- или аудиопоток Зала Царства в Zoom во время встречи не нужно.
 
-Start background music playback using the button on the bottom left, or <kbd>Alt K</kbd>.
+Запустите воспроизведение фоновой музыки с помощью кнопки слева внизу, или <kbd>Alt K</kbd>.
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom
+#### Трансляция частей со сцены Зала Царства на Zoom
 
-No action necessary.
+Никаких действий не требуется.
 
-Various camera angles/zoom can be chosen during the meeting by using the menu on the bottom of the M³ media playback control window; this menu will contain a list of all configured camera view scenes in OBS.
+Во время встречи можно выбрать различные углы обзора/масштаб камеры, используя меню в нижней части окна управления воспроизведением мультимедиа M³; это меню будет содержать список всех настроенных сцен с видом камеры в OBS.
 
-#### Sharing media at the Kingdom Hall and over Zoom
+#### Презентация мультимедиа в Зале Царства и через Zoom
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+Найдите мультимедийный файл, который вы хотите показать, в списке мультимедийных файлов M³ и нажмите на кнопку "воспроизвести".
 
-When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
+Когда вы завершите презентацию мультимедиа, нажмите кнопку "остановить" в M³. Обратите внимание, что видео автоматически останавливаются после завершения.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor
+#### Отображение удаленных участников Zoom на мониторе Зала Царства
 
-Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+Нажмите кнопку "скрыть/показать окно презентации медиа" в нижнем правом углу экрана управления медиа M³, или <kbd>Alt Z</kbd>, чтобы **скрыть** окно презентации медиа. Теперь участники встречи Zoom будут видны на мониторе в Зале Царства.
 
-> If the participant has media to show, follow the steps under the **Sharing media at the Kingdom Hall and over Zoom** subheading.
+> Если удаленному участнику нужно показать медиа, следуйте шагам в подразделе **Презентация мультимедиа в Зале Царства и через Zoom**.
 
-Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
+Как только участник закончит свою часть, нажмите кнопку "скрыть/показать окно презентации медиа" в нижнем правом углу окна управления мультимедиа M³, или <kbd>Alt Z</kbd>, чтобы **показать** окно презентации медиа. На мониторах Зала Царства теперь будет отображаться годовой текст.
 
-### Conducting hybrid meetings using only M³ and Zoom
+### Проведение гибридных встреч с помощью только M³ и Zoom, без OBS Studio
 
-If you do not wish to use OBS Studio for any reason, the following suggestions will perhaps help you to set things up as simply as possible.
+Если по каким-либо причинам вы не хотите использовать OBS Studio, следующие предложения, возможно, помогут вам настроить все как можно проще.
 
-#### Initial configuration without OBS: Kingdom Hall computer
+#### Без OBS Studio: Начальная конфигурация: Компьютер Зала Царства
 
-Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
+То же, что и в соответствующем разделе выше. Кроме того, настройте глобальное сочетание клавиш в Zoom для запуска/остановки презентации экрана (<kbd>Alt S</kbd>). В качестве "камеры" будет использоваться поток с камеры Зала Царства.
 
-#### Initial configuration without OBS: M³
+#### Без OBS Studio: Начальная конфигурация: M³
 
-Enable `the Present media on an external monitor or in a separate window` option.
+Включить опцию `Воспроизводить медиафайлы на внешнем экране или в отдельном окне`.
 
-#### Starting the meeting without OBS
+#### Без OBS Studio: Начало встречи
 
-Same as corresponding section above.
+То же, что и в соответствующем разделе выше.
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom without OBS
+#### Без OBS Studio: Трансляция частей со сцены Зала Царства на Zoom
 
-Same as corresponding section above.
+То же, что и в соответствующем разделе выше.
 
-#### Sharing media at the Kingdom Hall and over Zoom without OBS
+#### Без OBS Studio: Презентация мультимедиа в Зале Царства и через Zoom
 
-Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
+Начните презентацию в Zoom, нажав <kbd>Alt S</kbd>. В появившемся окне презентации Zoom выберите внешний монитор и включите оба флажка внизу слева (для оптимизации звука и видео). Теперь годовой текст будет отображаться в Zoom.
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+Найдите мультимедийный файл, который вы хотите показать, в списке мультимедийных файлов M³ и нажмите на кнопку "воспроизвести".
 
-When you're done sharing media, hit <kbd>Alt S</kbd> to end Zoom screen sharing.
+Когда презентация мультимедийных файлов закончена, нажмите <kbd>Alt S</kbd>, чтобы прекратить функцию обмена экрана Zoom.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor without OBS
+#### Без OBS Studio: Отображение удаленных участников Zoom на мониторе Зала Царства
 
-Same as corresponding section above.
+То же, что и в соответствующем разделе выше.
 
-### Screenshots of Presentation Mode
+### Скриншоты режима презентации
 
 {% include screenshots/present-media.html lang=site.data.ru %}

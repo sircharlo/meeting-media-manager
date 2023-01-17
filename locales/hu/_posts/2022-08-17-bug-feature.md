@@ -6,8 +6,8 @@ ref: bug-feature
 
 ### Hogyan jelenthetek be egy felmerült problémát vagy programhibát?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+Ha bármikor problémába ütközne az M³ használata során, kérjük, használja a [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) lehetőséget a bejelentéshez. A hibajavítások rendszeresen, jellemzően havonta kerülnek kiadásra.
 
 ### Hogyan igényelhetek új funkciókat?
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+Nyitott vagyok a javaslatokra! Kérjük, használja a [GitHub Discussions]({{site.github}}/discussions) lehetőséget a lehetséges új funkciók megosztására.

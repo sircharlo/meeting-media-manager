@@ -6,12 +6,12 @@
   "shared": {
     "explanation": "Explanation",
     "option": "Option",
-    "optionsApp": "Application setup",
-    "optionsCongSync": "Congregation sync setup",
+    "optionsApp": "Firafitrin'ny fitaovana",
+    "optionsCongSync": "Firafitrin'ny fifampifanarahan'ny fiangonana",
     "optionsMedia": "Media setup",
     "optionsMeetings": "Meeting setup",
     "password": "Tenimiafina",
-    "port": "Port",
+    "port": "\"Port\"",
     "setting": "Setting"
   },
   "home": {

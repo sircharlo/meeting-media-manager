@@ -1,4 +1,0 @@
-pretranslate:
-  segments:
-    ignore_frontmatter_keys:
-    - "ref"

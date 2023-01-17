@@ -4,15 +4,17 @@ permalink: /pt-BR/
   
 ### O que é o M³?
 
-**Meeting Media Manager**, ou **M³** abreviado, é um aplicativo para Windows, macOS e Linux, que baixa automaticamente as imagens e vídeos das reuniões congregacionais das Testemunhas de Jeová, em qualquer idioma encontrado no JW.org.
+**Meeting Media Manager**, ou **M³** abreviado, é um programa disponível para Windows, macOS e Linux, que baixa imagens e vídeos das reuniões congregacionais das Testemunhas de Jeová, em qualquer idioma encontrado no JW.org.
 
-Com ele você pode escolher as mídias que serão usadas em todas as reuniões e pode adicionar qualquer mídia ou arquivo que você quiser, e ainda conta com um recurso de sincronização com um servidor, que é opcional para irmãos da mesma congregação, bem como suporte para várias congregações e/ou grupos usando o mesmo computador.
+Com o M³ você pode gerenciar mídias personalizadas e recorrentes. Há um recurso opcional em que o coordenador da equipe técnica pode gerenciar as mídias que serão usadas nas reuniões do seu computador. Isso é muito útil quando não tem um computador fixo no Salão. Em casos em que há um computador fixo no salão, você pode usar criar um perfil de configuração para cada congregação.
+
+<sup>Nota: O M³ era conhecido como JWMMF (JW Meeting Media Fetcher), mas seu nome foi alterado em Maio de 2022.</sup>
 
 ### O que o M³ faz?
 
-O M³ baixa, sincroniza com um servidor da congregação, compartilha e exibe de forma fácil e automática todas as mídias da reunião.
+O M³ permite que você baixe facilmente, compartilhe e exiba todas as mídias de reunião.
 
-Em reuniões **híbridas** ou **presenciais**, o modo de controle de mídias integrado tem todos os recursos necessários para simplificar o compartilhamento ou exibição das mídias nas reuniões, incluindo:
+Em reuniões **híbridas** ou **presenciais**, o modo de exibição de mídias integrado tem todos os recursos necessários para simplificar o compartilhamento ou exibição das mídias nas reuniões, incluindo:
 
 - Miniaturas de mídia
 - Botões de pausar/reproduzir/parar fáceis de usar para controlar a reprodução de mídias

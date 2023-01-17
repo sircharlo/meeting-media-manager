@@ -8,6 +8,8 @@ permalink: /fr/
 
 Elle inclut la gestion des médias récurrents et personnalisés, une fonction optionnelle de synchronisation pour les membres d'une assemblée locale, ainsi que la prise en charge de plusieurs assemblées locales et/ou groupes sous le même compte d'utilisateur sur l'ordinateur.
 
+<sup>Remarque : M³ était auparavant connu sous le nom de JWMMF (JW Meeting Media Fetcher), mais a été renommé en mai 2022.</sup>
+
 ### M³: le fonctionnement
 
 M³ vous permet de télécharger, synchroniser, partager et présenter tous les médias pour les réunions, facilement et automatiquement.
