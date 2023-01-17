@@ -84,7 +84,7 @@
     }
 
     > a {
-      background: $purple-primary;
+      background: $blue-primary;
       border-radius: 2px;
       -moz-border-radius: 2px;
       -webkit-border-radius: 2px;
@@ -93,7 +93,7 @@
       padding: 15px;
 
       &:hover {
-        background: $purple-secondary;
+        background: $blue-secondary;
         text-decoration: none;
       }
     }
