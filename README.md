@@ -67,4 +67,3 @@ ___
 ![Media Presentation Mode](./assets/img/present/standby-mode.png?raw=true)
 
 ![Media Sync in progress](./assets/img/main/update-folders.gif?raw=true)
-
