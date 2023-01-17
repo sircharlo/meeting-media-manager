@@ -6,9 +6,9 @@ permalink: /ru/
 
 **Meeting Media Manager**, или **M³**, это приложение для Windows, macOS и Linux, которая автоматически загружает изображения и видео, которые будут рассматриваться во время встреч собрания Свидетелей Иеговы на любом языке, доступном на сайте JW.org.
 
-It features support for managing custom and recurring media, an optional synchronization feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
+В число его возможностей входит управление повторяющимися и пользовательскими медиа, опциональная функция синхронизации для членов одного и того же собрания, а также возможность использовать один и тот же компьютер для многих собраний и/или групп.
 
-<sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
+<sup>Примечание: M³ раньше было известно как JWMMF (JW Meeting Media Fetcher), но было переименовано в мае 2022 года.</sup>
 
 ### Каковы функции M³?
 
