@@ -2679,6 +2679,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/browser@npm:7.31.1":
+  version: 7.31.1
+  resolution: "@sentry/browser@npm:7.31.1"
+  dependencies:
+    "@sentry/core": 7.31.1
+    "@sentry/replay": 7.31.1
+    "@sentry/types": 7.31.1
+    "@sentry/utils": 7.31.1
+    tslib: ^1.9.3
+  checksum: 83e15bc8e0bd1c3ef1226716b5faf02f5a048fa0f628c808e5b54796c417424cdb95f7c2128aee3601fa048ac4e5438d4f1a0fab86bfc414e46b4c2272753349
+  languageName: node
+  linkType: hard
+
 "@sentry/cli@npm:^1.74.6":
   version: 1.74.6
   resolution: "@sentry/cli@npm:1.74.6"
@@ -2761,6 +2774,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/replay@npm:7.31.1":
+  version: 7.31.1
+  resolution: "@sentry/replay@npm:7.31.1"
+  dependencies:
+    "@sentry/core": 7.31.1
+    "@sentry/types": 7.31.1
+    "@sentry/utils": 7.31.1
+  checksum: 09432a8f15a9907589c6d783a75ace9d09056b1c3070e7864bf09fec36ad49f46319ecb8b00610f0390113b07b33f9567191196a2eebe9a1ef42146c2c62bcf0
+  languageName: node
+  linkType: hard
+
 "@sentry/tracing@npm:^7.31.1":
   version: 7.31.1
   resolution: "@sentry/tracing@npm:7.31.1"
@@ -2807,18 +2831,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^7.30.0":
-  version: 7.30.0
-  resolution: "@sentry/vue@npm:7.30.0"
+"@sentry/vue@npm:^7.31.1":
+  version: 7.31.1
+  resolution: "@sentry/vue@npm:7.31.1"
   dependencies:
-    "@sentry/browser": 7.30.0
-    "@sentry/core": 7.30.0
-    "@sentry/types": 7.30.0
-    "@sentry/utils": 7.30.0
+    "@sentry/browser": 7.31.1
+    "@sentry/core": 7.31.1
+    "@sentry/types": 7.31.1
+    "@sentry/utils": 7.31.1
     tslib: ^1.9.3
   peerDependencies:
     vue: 2.x || 3.x
-  checksum: d9ffd8b5b7c40db0f40a72e698b2a42c11a15e2cfc309b13bdfba10ae76d4b90480c7a09b5abcf0eb79b62fdf6922b124d7fa02e9e4b11369caf564f061dd8df
+  checksum: 99435e076fe5ec23f321b314a86de159ce0d133ceada799c71ee14fda4fa030a19186958101b0ef223ae65e7f5f7065c114b05400132fdcfa533ef401a93247f
   languageName: node
   linkType: hard
 
@@ -10660,7 +10684,7 @@ __metadata:
     "@playwright/test": ^1.29.2
     "@sentry/electron": ^4.2.0
     "@sentry/tracing": ^7.31.1
-    "@sentry/vue": ^7.30.0
+    "@sentry/vue": ^7.31.1
     "@sentry/webpack-plugin": ^1.20.0
     "@types/fluent-ffmpeg": ^2.1.20
     "@types/lodash.clonedeep": ^4.5.7
