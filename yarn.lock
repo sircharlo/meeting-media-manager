@@ -1342,9 +1342,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/asar@npm:^3.2.2":
-  version: 3.2.2
-  resolution: "@electron/asar@npm:3.2.2"
+"@electron/asar@npm:^3.2.3":
+  version: 3.2.3
+  resolution: "@electron/asar@npm:3.2.3"
   dependencies:
     "@types/glob": ^7.1.1
     chromium-pickle-js: ^0.2.0
@@ -1356,7 +1356,7 @@ __metadata:
       optional: true
   bin:
     asar: bin/asar.js
-  checksum: 38a3b4a47180f2033a599421175f03706941ba05a32591a639127f6374e0007c6a7c8bde550129de394f4072a0bf39c24aea202540fe1faba6d74b4181c007a8
+  checksum: 67ce7170fc4fc1d4157c03e4d2a03cba461835f77df449d659a71eaf69a412a765bf27198935d8d4ce6c9070bb563dd9fe2a2618863830c0ec2708e53d48dc5c
   languageName: node
   linkType: hard
 
@@ -10668,7 +10668,7 @@ __metadata:
   dependencies:
     "@babel/core": 7.20.12
     "@babel/runtime-corejs3": 7.20.7
-    "@electron/asar": ^3.2.2
+    "@electron/asar": ^3.2.3
     "@fortawesome/fontawesome-svg-core": ^6.2.1
     "@fortawesome/free-regular-svg-icons": ^6.2.1
     "@fortawesome/free-solid-svg-icons": ^6.2.1
