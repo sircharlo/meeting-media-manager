@@ -1,6 +1,6 @@
 {
   "lang": "de",
-  "name": "Deutsch",
+  "name": "Englisch",
   "language": "Sprache:",
   "search": "Nach Stichwort filtern",
   "shared": {
@@ -31,12 +31,12 @@
     "imgRename": "Umbenennen einer Mediendatei"
   },
   "present-media": {
-    "imgButton": "Schaltfläche zum Einschalten des Mediencontroller-Modus",
-    "imgSelectMeeting": "Wählen Sie eine Zusammenkunft für die Medien angezeigt werden soll",
+    "imgButton": "Schaltfläche zum Einschalten des Mediensteuerungsmodus",
+    "imgSelectMeeting": "Eine Zusammenkunft auswählen, für die Medien angezeigt werden sollen",
     "imgBG": "Standard-Medien-Hintergrund mit automatisch generiertem Jahrestext",
-    "imgMediaList": "Liste der Medien, die zum Freigeben bereit ist",
+    "imgMediaList": "Liste von Medien, die gezeigt werden können",
     "imgStandby": "M³ Media Präsentation im Standby-Modus",
-    "imgDisplayPic": "Bild anzeigen",
+    "imgDisplayPic": "Ein Bild anzeigen",
     "imgPlayVideo": "Video abspielen",
     "imgVideoScrub": "Zu einer bestimmten Zeit in einem Video wechseln"
   }
