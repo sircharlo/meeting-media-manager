@@ -1,6 +1,6 @@
 {
   "lang": "de",
-  "name": "Englisch",
+  "name": "Deutsch",
   "language": "Sprache:",
   "search": "Nach Stichwort filtern",
   "shared": {
@@ -15,8 +15,8 @@
     "setting": "Einstellung"
   },
   "home": {
-    "expand": "Alle Abschnitte ausklappen",
-    "collapse": "Alle Abschnitte einklappen",
+    "expand": "Alle Abschnitte erweitern",
+    "collapse": "Alle Abschnitte komprimieren",
     "syncInProgress": "Medien-Synchronisation läuft",
     "mainScreen": "Hauptseite",
     "chooseWeek": "Woche auswählen",
@@ -28,7 +28,7 @@
     "imgAddPic": "Ein zusätzliches Bild hinzufügen",
     "imgImportJWPUB": "Medien aus einem Abschnitt in einer JWPUB-Datei importieren",
     "imgPreviewJWPUB": "Vorschau von Medien aus einer JWPUB-Datei vor dem Importieren",
-    "imgRename": "Umbenennen einer Mediendatei"
+    "imgRename": "Eine Mediendatei umbenennen"
   },
   "present-media": {
     "imgButton": "Schaltfläche zum Einschalten des Mediensteuerungsmodus",
