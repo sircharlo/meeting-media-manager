@@ -370,7 +370,7 @@ export default defineComponent({
         // Add meeting day
         if (
           !this.$getPrefs('meeting.specialCong') &&
-          (weekDay === this.$getPrefs('meeting.mwDay') ||
+          (weekDay === this.$getMwDay(this.baseDate) ||
             weekDay === this.$getPrefs('meeting.weDay'))
         ) {
           days.push({
@@ -429,7 +429,7 @@ export default defineComponent({
     }
 
     if (!this.$getPrefs('meeting.specialCong')) {
-      this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'secondary')
+      this.setDayColor(this.$getMwDay(this.baseDate), 'secondary')
       this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'secondary')
     }
 
@@ -493,17 +493,13 @@ export default defineComponent({
       }
       if (!this.$getPrefs('meeting.specialCong')) {
         if (this.currentWeek === this.$dayjs().isoWeek()) {
-          this.setDayColor(
-            this.$getPrefs('meeting.mwDay') as number,
-            'secondary'
-          )
+          this.setDayColor(this.$getMwDay(this.baseDate), 'secondary')
           this.setDayColor(
             this.$getPrefs('meeting.weDay') as number,
             'secondary'
           )
         } else {
-          this.dayColors[this.$getPrefs('meeting.mwDay') as number] =
-            'secondary'
+          this.dayColors[this.$getMwDay(this.baseDate)] = 'secondary'
           this.dayColors[this.$getPrefs('meeting.weDay') as number] =
             'secondary'
         }
@@ -607,9 +603,9 @@ export default defineComponent({
           this.fallbackLangObject?.mwbAvailable === false)
       ) {
         this.$warn('errorMwbUnavailable')
-        this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'error')
+        this.setDayColor(this.$getMwDay(this.baseDate), 'error')
       } else if (filter !== 'we' && this.now.isSameOrBefore(mwDay)) {
-        this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'warning')
+        this.setDayColor(this.$getMwDay(this.baseDate), 'warning')
         try {
           await this.$getMwMedia(
             mwDay.format(
@@ -617,10 +613,10 @@ export default defineComponent({
             ),
             this.setProgress
           )
-          this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'success')
+          this.setDayColor(this.$getMwDay(this.baseDate), 'success')
         } catch (e: unknown) {
           this.$error('errorGetMwMedia', e)
-          this.setDayColor(this.$getPrefs('meeting.mwDay') as number, 'error')
+          this.setDayColor(this.$getMwDay(this.baseDate), 'error')
         }
       }
     },
@@ -705,10 +701,7 @@ export default defineComponent({
         start: performance.now(),
       })
       try {
-        const mwDay = this.baseDate.add(
-          this.$getPrefs('meeting.mwDay') as number,
-          'days'
-        )
+        const mwDay = this.baseDate.add(this.$getMwDay(this.baseDate), 'days')
         const weDay = this.baseDate.add(
           this.$getPrefs('meeting.weDay') as number,
           'days'

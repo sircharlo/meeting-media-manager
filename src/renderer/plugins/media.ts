@@ -41,6 +41,7 @@ const plugin: Plugin = (
     $setDb,
     $copy,
     $rm,
+    $getMwDay,
     $extractAllTo,
     $getPrefs,
     $mediaItems,
@@ -1607,7 +1608,7 @@ const plugin: Plugin = (
         const now = $dayjs()
         const fadeOutTime = $getPrefs('meeting.musicFadeOutTime') as number
         if ($getPrefs('meeting.musicFadeOutType') === 'smart') {
-          const mwDay = $getPrefs('meeting.mwDay') as number
+          const mwDay = $getMwDay()
           const weDay = $getPrefs('meeting.weDay') as number
           const today = now.day() === 0 ? 6 : now.day() - 1 // Day is 0 indexed and starts with Sunday
 

@@ -29,6 +29,15 @@
           :locked="$isLocked(`meeting.${day}StartTime`)"
         />
       </form-input>
+      <form-date-picker
+        id="meeting.coWeek"
+        v-model="meeting.coWeek"
+        :label="$t('coWeek')"
+        :min="$dayjs().startOf('week').format('YYYY-MM-DD')"
+        :locked="$isLocked('meeting.coWeek')"
+        :allowed-dates="isMonday"
+        :format="prefs.app.outputFolderDateFormat"
+      />
     </template>
     <v-divider class="mb-6" />
     <v-col class="d-flex pa-0 pb-2 align-center justify-space-between">
@@ -311,6 +320,9 @@ export default defineComponent({
     )
   },
   methods: {
+    isMonday(date: string) {
+      return this.$dayjs(date, 'YYYY-MM-DD').day() === 1
+    },
     shuffleMusicCached(): boolean {
       const pubPath = this.$pubPath()
       if (!pubPath) return false
@@ -332,7 +344,10 @@ export default defineComponent({
       if (global) {
         this.totalProgress = (HUNDRED_PERCENT * loaded) / total
       } else {
-        this.currentProgress = this.totalProgress ? this.totalProgress + (HUNDRED_PERCENT - this.totalProgress) * loaded / total : (HUNDRED_PERCENT * loaded) / total
+        this.currentProgress = this.totalProgress
+          ? this.totalProgress +
+            ((HUNDRED_PERCENT - this.totalProgress) * loaded) / total
+          : (HUNDRED_PERCENT * loaded) / total
       }
       if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
       if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0

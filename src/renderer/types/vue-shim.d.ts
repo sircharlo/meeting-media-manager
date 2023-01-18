@@ -102,6 +102,7 @@ interface CustomProps {
     destination: number
     type: 'window' | 'fullscreen'
   }>
+  $getMwDay: (baseDate?: Dayjs) => number
   $getMwMedia: (
     date: string,
     setProgress?: (loaded: number, total: number, global?: boolean) => void

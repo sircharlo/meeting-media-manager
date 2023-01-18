@@ -14,7 +14,7 @@ export const dateFormats = [
   'DD-MM-YYYY - dddd',
   'YYYY-MM-DD - dddd',
 ] as const
-export type DateFormat = typeof dateFormats[number]
+export type DateFormat = (typeof dateFormats)[number]
 
 export interface AppPrefs {
   autoOpenFolderWhenDone: boolean
@@ -42,7 +42,7 @@ export interface CongPrefs {
 }
 
 export const resolutions = ['240p', '360p', '480p', '720p'] as const
-export type Res = typeof resolutions[number]
+export type Res = (typeof resolutions)[number]
 
 export interface MediaPrefs {
   enableMediaDisplayButton: boolean
@@ -81,6 +81,7 @@ export const enum MeetingDay {
 export interface MeetingPrefs {
   enableMusicButton: boolean
   enableMusicFadeOut: boolean
+  coWeek: string | null
   musicFadeOutTime: number | null
   musicFadeOutType: 'smart' | 'timer'
   musicVolume: number | null
