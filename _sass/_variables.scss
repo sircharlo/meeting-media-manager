@@ -1,15 +1,59 @@
+// Base colors
+$base-color: #171734;
+$base-background: #fff;
+
+$base-color-dark: #f0f0f0;
+$base-background-dark: #000;
+
 // Main colors
 $blue-primary: #006ffd;
 $blue-secondary: #004db0;
-$blue-tertiary: #002b63; 
+$blue-tertiary: #002b63;
+
+$blue-primary-dark: #002b63;
+$blue-secondary-dark: #004db0;
+$blue-tertiary-dark: #006ffd;
+
+// Sidebar colors
+$sidebar-color: #fff;
+$sidebar-border: #ccc;
+$sidebar-heading: #ffffff80;
+
+$sidebar-color-dark: #fff;
+$sidebar-border-dark: #ccc;
+$sidebar-heading-dark: #ffffff80;
+
+// Article colors
+$article-header: #fff;
+
+$article-header-dark: #fff;
 
 // Code colors
 $code-background: #eef1f2;
+$code-color: #657e8b;
 $code-border: #e2e7ea;
-$code-delete: #e02a10;
-$code-post: #52ce0e;
-$code-put: #e08f10;
 
-// Shadow colors
-$shadow-active: rgba(0, 0, 0, 0.1);
-$shadow-base: rgba(0, 0, 0, 0.2);
+$code-background-dark: #282828;
+$code-color-dark: #e2e7ea;
+$code-border-dark: #969696;
+
+// Highlight colors
+$highlight: yellow;
+$highlight-dark: #9b9725;
+
+// Blockquote colors
+$blockquote-border: #333;
+
+$blockquote-border-dark: #333;
+
+// Kbd colors (keyboard keys)
+$kbd-background: #e6e6e6;
+$kbd-border: #d2d2d2;
+
+$kbd-background-dark: #323232;
+$kbd-border-dark: #696969;
+
+// Table row colors
+$table-row-bg: #f0f0f0;
+
+$table-row-bg-dark: #393939;
