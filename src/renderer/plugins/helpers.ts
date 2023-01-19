@@ -36,14 +36,19 @@ const plugin: Plugin = ({ $getPrefs, $dayjs, i18n }, inject) => {
     }
   })
 
-  inject('getMwDay', (baseDate: Dayjs = $dayjs().startOf('week')) => {
+  function isCoWeek(baseDate: Dayjs = $dayjs().startOf('week')) {
     const coWeek = $getPrefs('meeting.coWeek') as string
-    if (
+    return (
       coWeek &&
       $dayjs(coWeek, 'YYYY-MM-DD')
         .add(1, 'day')
         .isBetween(baseDate, baseDate.add(2, 'days'))
-    ) {
+    )
+  }
+  inject('isCoWeek', isCoWeek)
+
+  inject('getMwDay', (baseDate: Dayjs = $dayjs().startOf('week')) => {
+    if (isCoWeek(baseDate)) {
       return 1 // return Tuesday
     }
     return $getPrefs('meeting.mwDay') as number // return original meeting day

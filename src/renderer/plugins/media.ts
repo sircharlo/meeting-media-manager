@@ -43,6 +43,7 @@ const plugin: Plugin = (
     $rm,
     $getMwDay,
     $extractAllTo,
+    $isCoWeek,
     $getPrefs,
     $mediaItems,
     $translate,
@@ -155,6 +156,7 @@ const plugin: Plugin = (
   async function getDocumentExtract(
     db: Database,
     docId: number,
+    baseDate: Dayjs,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ): Promise<MeetingFile[]> {
     const songPub = store.state.media.songPub as string
@@ -194,7 +196,13 @@ const plugin: Plugin = (
         imagesOnly =
           !!match && extract.BeginParagraphOrdinal < match.BeginParagraphOrdinal
       }
-      if (!imagesOnly || !excludeLffImages) {
+
+      const skipCBS =
+        $isCoWeek(baseDate) &&
+        extract.UniqueEnglishSymbol === 'lff' &&
+        !imagesOnly
+
+      if (!skipCBS && (!imagesOnly || !excludeLffImages)) {
         promises.push(extractMediaItems(extract, setProgress, imagesOnly))
       }
     })
@@ -1120,7 +1128,12 @@ const plugin: Plugin = (
       })
 
       // Get document extracts and add them to the media list
-      const extracts = await getDocumentExtract(db, docId, setProgress)
+      const extracts = await getDocumentExtract(
+        db,
+        docId,
+        baseDate,
+        setProgress
+      )
 
       extracts.forEach((extract) => {
         promises.push(
@@ -1244,7 +1257,9 @@ const plugin: Plugin = (
       }
 
       songs.forEach((song, i) => {
-        promises.push(addSongToPart(date, songLangs, song, i))
+        if (!($isCoWeek(baseDate) && i > 0)) {
+          promises.push(addSongToPart(date, songLangs, song, i))
+        }
       })
 
       await Promise.allSettled(promises)

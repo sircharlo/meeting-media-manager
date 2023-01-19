@@ -119,6 +119,7 @@ interface CustomProps {
   $ghApi: NuxtAxiosInstance
   $initStore: (name: string) => void
   $isAudio: (filepath: string) => boolean
+  $isCoWeek: (baseDate?: Dayjs) => boolean
   $isImage: (filepath: string) => boolean
   $isLocked: (key: string) => boolean
   $isShortcutAvailable: (shortcut: string, func: string) => boolean
