@@ -21,7 +21,7 @@ Tenga en cuenta que la función de sincronización de la congregación totalment
 El mecanismo de sincronización subyacente de M³ utiliza WebDAV. Esto significa que el OV (o alguien bajo su supervisión) debe:
 
 - configurar un servidor WebDAV seguro que sea accesible desde la web, **o**
-- utilizar un servicio de almacenamiento en la nube de terceros que admita el protocolo WebDAV (consulte la configuración Nombre del host en la sección *Configuración de sincronización de la congregación* a continuación).
+- utilizar un servicio de almacenamiento en la nube de terceros que admita el protocolo WebDAV (consulte la configuración *Nombre del host* en la sección *Configuración de sincronización de la congregación* a continuación).
 
 Todos los usuarios que deseen sincronizarse juntos deberán conectarse al mismo servidor WebDAV utilizando la información de conexión y las credenciales que les proporcionó su OV.
 
