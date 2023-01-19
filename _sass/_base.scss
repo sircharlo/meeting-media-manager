@@ -5,18 +5,30 @@ body {
 
 body {
   min-width: 960px;
-  background: #fff;
+  background: $base-background;
+
+  @media (prefers-color-scheme: dark) {
+    background: $base-background-dark;
+  }
 }
 
 body,
 input,
 textarea {
-  color: #231734;
+  color: $base-color;
   font: 1em 'Open Sans', Arial, sans-serif;
+
+  @media (prefers-color-scheme: dark) {
+    color: $base-color-dark;
+  }
 }
 
 .highlight {
-  background-color: yellow !important;
+  background-color: $highlight !important;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: $highlight-dark !important;
+  }
 }
 
 .showcase img {
@@ -30,6 +42,14 @@ a {
   &:hover {
     color: $blue-secondary;
     text-decoration: underline;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    color: $blue-tertiary-dark;
+
+    &:hover {
+      color: $blue-secondary-dark;
+    }
   }
 }
 /*
@@ -55,19 +75,28 @@ code {
 }
 
 blockquote {
-  border-left: 0.5em #333 solid;
+  border-left: 0.5em $blockquote-border solid;
   margin: 0;
   padding: 0.5em 2em;
   font-style: italic;
+
+  @media (prefers-color-scheme: dark) {
+    border-color: $blockquote-border-dark;
+  }
 }
 
 kbd {
   font-family: monospace;
-  background: rgb(230, 230, 230);
+  background: $kbd-background;
   padding: 0.1rem 0.3rem;
   border-radius: 0.2rem;
-  border: solid rgb(210, 210, 210) 2px;
+  border: solid $kbd-border 2px;
   font-weight: bold;
+
+  @media (prefers-color-scheme: dark) {
+    background: $kbd-background-dark;
+    border-color: $kbd-border-dark;
+  }
 }
 
 table {
@@ -91,7 +120,11 @@ table {
   tbody {
     tr {
       &:nth-child(odd) {
-        background: rgb(240, 240, 240);
+        background: $table-row-bg;
+
+        @media (prefers-color-scheme: dark) {
+          background: $table-row-bg-dark;
+        }
       }
     }
   }

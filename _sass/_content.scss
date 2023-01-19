@@ -21,6 +21,10 @@
     width: 100%;
     transition: max-height .5s ease-in-out;
 
+    @media (prefers-color-scheme: dark) {
+      border-top-color: $code-background-dark;
+    }
+
     &.active {
       transition: max-height .5s ease-in-out;
       max-height: 10000px
@@ -32,17 +36,27 @@
       border-radius: 2px;
       -moz-border-radius: 2px;
       -webkit-border-radius: 2px;
-      color: #546974;
+      color: $code-color;
       padding: 0 1px;
+
+      @media (prefers-color-scheme: dark) {
+        background: $code-background-dark;
+        border-color: $code-border-dark;
+        color: $code-color-dark;
+      }
     }
   }
 
   a {
     h2 {
-      color: #fff;
+      color: $article-header;
       font-size: 18px;
       font-weight: normal;
       margin: 0;
+
+      @media (prefers-color-scheme: dark) {
+        color: $article-header-dark;
+      }
 
       code {
         float: right;
@@ -52,35 +66,25 @@
           border-radius: 2px;
           -moz-border-radius: 2px;
           -webkit-border-radius: 2px;
-          color: #fff;
+          color: $article-header;
           font-weight: normal;
           padding: 3px 6px;
+
+          @media (prefers-color-scheme: dark) {
+            color: $article-header-dark;
+          }
         }
       }
     }
   }
 
   article {
-    $code-color: #657e8b;
-
     clear: both;
     margin: 15px 0;
     border-color: $code-border;
 
-    &.GET {
-      $code-color: $blue-primary;
-    }
-
-    &.POST {
-      $code-color: $code-post;
-    }
-
-    &.PUT {
-      $code-color: $code-put;
-    }
-
-    &.DELETE {
-      $code-color: $code-delete;
+    @media (prefers-color-scheme: dark) {
+      border-color: $code-border-dark;
     }
 
     > a {
@@ -96,6 +100,14 @@
         background: $blue-secondary;
         text-decoration: none;
       }
+
+      @media (prefers-color-scheme: dark) {
+        background: $blue-primary-dark;
+
+        &:hover {
+          background: $blue-secondary-dark;
+        }
+      }
     }
 
     a {
@@ -106,6 +118,14 @@
           b {
             background: $code-color;
             text-transform: uppercase;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: $code-color-dark;
+
+            b {
+              background: $code-color-dark;
+            }
           }
         }
       }

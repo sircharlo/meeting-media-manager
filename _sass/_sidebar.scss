@@ -1,12 +1,17 @@
 #sidebar {
   background: $blue-secondary;
-  color: #fff;
+  color: $sidebar-color;
   float: left;
   height: 100%;
   overflow: auto;
   position: fixed;
   top: 0;
   width: 240px;
+
+  @media (prefers-color-scheme: dark) {
+    background: $blue-secondary-dark;
+    color: $sidebar-color-dark;
+  }
 
   h1 {
     background: $blue-primary;
@@ -19,35 +24,49 @@
     display: -webkit-flex;
     justify-content: space-between;
     align-items: center;
+
+    @media (prefers-color-scheme: dark) {
+      background: $blue-primary-dark;
+    }
   }
 
   h2 {
-    color: rgba(255, 255, 255, 0.5);
+    color: $sidebar-heading;
     font-size: 90%;
     margin: 0;
     margin-bottom: 10px;
     text-transform: uppercase;
+
+    @media (prefers-color-scheme: dark) {
+      color: $sidebar-heading-dark;
+    }
   }
 
   input {
     background: $blue-tertiary;
-    border: 0;
+    border: 1px solid $blue-tertiary;
+    color: $sidebar-color;
     border-radius: 2px;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
-    box-shadow: inset 0 0 5px $shadow-base;
-    -moz-box-shadow: inset 0 1px 5px $shadow-base;
-    -webkit-box-shadow: inset 0 1px 5px $shadow-base;
     margin-bottom: 20px;
     padding: 5px 10px;
 
     &:active,
     &:focus {
-      border-color: #ccc;
-      box-shadow: inset 0 0 5px $shadow-active;
-      -moz-box-shadow: inset 0 1px 5px $shadow-active;
-      -webkit-box-shadow: inset 0 1px 5px $shadow-active;
+      border-color: $blue-primary;
       outline: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background: $blue-tertiary-dark;
+      border-color: $blue-tertiary-dark;
+      color: $sidebar-color-dark;
+
+      &:active,
+      &:focus {
+        border-color: $blue-primary-dark;
+      }
     }
   }
 
@@ -66,9 +85,13 @@
 
     li {
       a {
-        color: #fff;
+        color: $sidebar-color;
         display: block;
         padding: 0 0 15px;
+
+        @media (prefers-color-scheme: dark) {
+          color: $sidebar-color-dark;
+        }
 
         &:active,
         &.active {
