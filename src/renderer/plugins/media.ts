@@ -1328,15 +1328,18 @@ const plugin: Plugin = (
       Map<number, MeetingFile[]>
     >
 
-    meetings.forEach((parts) => {
+    meetings.forEach((parts, date) => {
       let i = 1
+      const day = $dayjs(date, $getPrefs('app.outputFolderDateFormat') as string)
+      const weekDay = day.day() === 0 ? 6 : day.day() - 1
+      const isWeDay = weekDay === ($getPrefs('meeting.weDay') as number)
       const sorted = [...parts.entries()].sort((a, b) => a[0] - b[0])
 
       sorted.forEach(([, media]) => {
         media
           .filter((m) => !m.safeName)
           .forEach((item, j) => {
-            item.safeName = `${i.toString().padStart(2, '0')}-${(j + 1)
+            item.safeName = `${(isWeDay ? i + 2 : i).toString().padStart(2, '0')}-${(j + 1)
               .toString()
               .padStart(2, '0')} -`
             if (!item.congSpecific) {
