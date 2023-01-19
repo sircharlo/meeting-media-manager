@@ -130,7 +130,7 @@ function createMainWindow(pos: Pos = { width: 700, height: 700 }) {
     height: pos.height,
     width: pos.width,
     minWidth: 670,
-    minHeight: 435,
+    minHeight: 475,
     title: appLongName,
   })
 
