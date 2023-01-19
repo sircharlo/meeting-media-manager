@@ -8,7 +8,7 @@ La pantalla de administración de contenidos permite al usuario agregar o elimin
 
 ### Gestionar contenidos para un día en particular
 
-Para administrar los contenidos de una determinada reunión o día, simplemente haga clic en el botón de ese día en la pantalla principal de M³. Para administrar los contenidos que se repiten en cada reunión, haga clic en el botón *Recurrente*.
+Para administrar los contenidos de una determinada reunión o día, simplemente haga clic en el botón de ese día en la pantalla principal de M³. Para administrar los contenidos que se repiten en cada reunión, haga clic en el botón Recurrente.
 
 ### Agregar contenidos
 
