@@ -58,6 +58,10 @@
       outline: none;
     }
 
+    &::placeholder {
+      color: $sidebar-heading;
+    }
+
     @media (prefers-color-scheme: dark) {
       background: $blue-tertiary-dark;
       border-color: $blue-tertiary-dark;
