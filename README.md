@@ -64,6 +64,6 @@ Enjoy!
 
 ___
 
-![Media Presentation Mode](./assets/img/present/standby-mode.png?raw=true)
+<img src="https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/present/media-list.png" alt="Media Presentation Mode" width="45%" /><img src="https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/present/default-bg.png" alt="Media Window" width="55%" />
 
 ![Media Sync in progress](./assets/img/main/update-folders.gif?raw=true)
