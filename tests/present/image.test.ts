@@ -19,10 +19,18 @@ let electronApp: ElectronApplication
 let page: Page
 
 test.beforeAll(async () => {
+  if (platform() === 'win32' || mwDayPresent()) {
+    return
+  }
+
   electronApp = await startApp()
 })
 
 test.afterAll(async () => {
+  if (platform() === 'win32' || mwDayPresent()) {
+    return
+  }
+
   if (page) {
     await page.locator('[aria-label="Go to home"]').click()
   }
