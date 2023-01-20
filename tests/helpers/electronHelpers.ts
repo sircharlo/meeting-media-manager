@@ -1,8 +1,14 @@
+/* eslint-disable import/named */
 import { platform } from 'os'
 import { basename, dirname, join, resolve } from 'upath'
 import * as ASAR from '@electron/asar'
-// eslint-disable-next-line import/named
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs-extra'
+import {
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+  existsSync,
+} from 'fs-extra'
 import { expect, Page } from '@playwright/test'
 import { _electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
@@ -38,7 +44,7 @@ export async function startApp(options: any = {}) {
       console.log(msg.text())
     })
 
-    if (filename === 'media') {
+    if (filename === 'media' && !existsSync('img/present/default-bg.png')) {
       // eslint-disable-next-line no-magic-numbers
       await delay(1000)
       await page.screenshot({ path: 'img/present/default-bg.png' })
