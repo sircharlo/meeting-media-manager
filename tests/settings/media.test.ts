@@ -48,6 +48,7 @@ test('vlc playlist', async () => {
 
   // Expand media setup
   await page.locator('button', { hasText: locale.optionsMedia }).click()
+
   // eslint-disable-next-line no-magic-numbers
   await delay(1000)
   await page.screenshot({ path: 'img/settings/media.png' })
