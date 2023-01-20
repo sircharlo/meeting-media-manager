@@ -373,7 +373,7 @@ export default defineComponent({
           action: {
             type: 'link',
             label: 'wannaHelpForSure',
-            url: `${this.$config.repo}/discussions/new?category=translations&title=New+translation+in+${mediaLang.name}&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,${mediaLang.name} (${mediaLang.langcode}/${mediaLang.symbol}).`,
+            url: `${this.$config.repo}/discussions/new?category=translations&labels=translations&title=New+translation+in+${mediaLang.name}&body=I+would+like+to+help+translate+M³+into+a+language+I+speak,+${mediaLang.name} (${mediaLang.langcode}/${mediaLang.symbol}).`,
           },
         })
       } else if (newCong && appLang && STALE_LANGS.includes(appLang.symbol)) {
@@ -383,7 +383,7 @@ export default defineComponent({
           action: {
             type: 'link',
             label: 'wannaHelpForSure',
-            url: `${this.$config.repo}/discussions/new?category=translations&title=New+translation+in+${appLang.name}&body=I+would+like+to+help+to+translate+M³+into+a+language+I+speak,${appLang.name} (${appLang.langcode}/${appLang.symbol}).`,
+            url: `${this.$config.repo}/discussions/new?category=translations&labels=translations&title=New+translator+for+${appLang.name}&body=I+would+like+to+help+translate+M³+into+a+language+I+speak,+${appLang.name} (${appLang.langcode}/${appLang.symbol}).`,
           },
         })
       }
