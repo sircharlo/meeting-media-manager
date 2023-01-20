@@ -136,6 +136,10 @@ table {
         @media (prefers-color-scheme: dark) {
           background: $table-row-bg-dark;
         }
+
+        &.showcase {
+          background: transparent !important;
+        }
       }
     }
   }
