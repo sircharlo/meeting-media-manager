@@ -26,10 +26,9 @@ export async function startApp(options: any = {}) {
         : appInfo.executable,
   })
 
-  electronApp.on('window', (page) => {
+  electronApp.on('window', async (page) => {
     const filename = page.url()?.split('/').pop()
     console.log(`Window opened: ${filename}`)
-
     // capture errors
     page.on('pageerror', (error) => {
       console.error(error)
@@ -38,6 +37,12 @@ export async function startApp(options: any = {}) {
     page.on('console', (msg) => {
       console.log(msg.text())
     })
+
+    if (filename === 'media') {
+      // eslint-disable-next-line no-magic-numbers
+      await delay(1000)
+      await page.screenshot({ path: 'img/present/default-bg.png' })
+    }
   })
 
   return electronApp
