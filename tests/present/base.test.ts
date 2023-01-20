@@ -24,6 +24,7 @@ test.beforeAll(async () => {
 })
 
 test.afterAll(async () => {
+  test.setTimeout(0)
   if (page) {
     await page.locator('[aria-label="Go to home"]').click()
   }
@@ -58,8 +59,12 @@ test('render the presentation mode page correctly', async () => {
 
   await page.screenshot({ path: 'img/present/launch-present-mode.png' })
 
-  // Close media window
-  await page.locator('[aria-label="toggleScreen"]').click()
+  const mediaWin = electronApp
+    .windows()
+    .find((win) => win.url()?.split('/').pop() === 'media')
+  if (mediaWin) {
+    await mediaWin.screenshot({ path: 'img/present/default-bg.png' })
+  }
 
   // Open presentation mode
   await page.locator('[aria-label="present"]').click()
