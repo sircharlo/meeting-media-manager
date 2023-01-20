@@ -32,7 +32,7 @@ textarea {
 }
 
 .showcase img {
-  max-width: 702px;
+  max-width: min(50vw, 702px);
 }
 
 a {
