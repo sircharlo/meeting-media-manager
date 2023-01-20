@@ -1,7 +1,7 @@
+/* eslint-disable import/named */
 import { platform } from 'os'
 import { basename, dirname, join, resolve } from 'upath'
 import * as ASAR from '@electron/asar'
-// eslint-disable-next-line import/named
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs-extra'
 import { expect, Page } from '@playwright/test'
 import { _electron, ElectronApplication } from 'playwright'
@@ -34,6 +34,7 @@ export async function startApp(options: any = {}) {
     page.on('pageerror', (error) => {
       console.error(error)
     })
+
     // capture console messages
     page.on('console', (msg) => {
       console.log(msg.text())
