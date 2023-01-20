@@ -2,13 +2,7 @@
 import { platform } from 'os'
 import { basename, dirname, join, resolve } from 'upath'
 import * as ASAR from '@electron/asar'
-import {
-  readdirSync,
-  readFileSync,
-  statSync,
-  writeFileSync,
-  existsSync,
-} from 'fs-extra'
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs-extra'
 import { expect, Page } from '@playwright/test'
 import { _electron, ElectronApplication } from 'playwright'
 import { name } from '../../package.json'
@@ -32,23 +26,19 @@ export async function startApp(options: any = {}) {
         : appInfo.executable,
   })
 
-  electronApp.on('window', async (page) => {
+  electronApp.on('window', (page) => {
     const filename = page.url()?.split('/').pop()
     console.log(`Window opened: ${filename}`)
+
     // capture errors
     page.on('pageerror', (error) => {
       console.error(error)
     })
+
     // capture console messages
     page.on('console', (msg) => {
       console.log(msg.text())
     })
-
-    if (filename === 'media' && !existsSync('img/present/default-bg.png')) {
-      // eslint-disable-next-line no-magic-numbers
-      await delay(1000)
-      await page.screenshot({ path: 'img/present/default-bg.png' })
-    }
   })
 
   return electronApp
