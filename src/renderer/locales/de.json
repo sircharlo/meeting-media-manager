@@ -128,7 +128,7 @@
   "ppBackward": "Tastenkürzel zum Abspielen des vorherigen Medienelements",
   "ppForward": "Tastenkürzel zum Abspielen des nächsten Medienelements",
   "preferredOutput": "Medienpräsentation auf",
-  "presentShortcut": "Verknüpfung zum Öffnen des Medienpräsentationsmodus",
+  "presentShortcut": "Tastenkürzel zum Öffnen des Medienpräsentationsmodus",
   "autoQuitWhenDone": "Anwendung nach Mediensynchronisierung beenden",
   "recurring": "Wiederkehrende Medien",
   "refresh": "Medienliste aktualisieren",
