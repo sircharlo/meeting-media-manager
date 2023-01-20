@@ -102,6 +102,7 @@ kbd {
 table {
   margin: 1em 0;
   table-layout: auto;
+  border-collapse: collapse;
   width: 100%;
   /*
   code {
@@ -115,6 +116,14 @@ table {
   th,
   td {
     padding: 0.5em 1em;
+  }
+
+  thead {
+    background: $blue-primary;
+
+    @media (prefers-color-scheme: dark) {
+      background: $blue-primary-dark;
+    }
   }
 
   tbody {
