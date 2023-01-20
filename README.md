@@ -63,7 +63,6 @@ Enjoy!
 *- COS*
 
 ___
-<img src="https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/present/media-list.png" alt="Media Presentation Mode" width="38%" />
-<img src="https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/present/default-bg.png" alt="Media Window" width="61%" />
+<img src="https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/present/media-list.png" alt="Media Presentation Mode" width="45%" /><img src="https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/present/default-bg.png" alt="Media Window" width="55%" />
 
 ![Media Sync in progress](https://github.com/sircharlo/meeting-media-manager/raw/docs/assets/img/main/update-folders.gif?raw=true)
