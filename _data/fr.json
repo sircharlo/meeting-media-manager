@@ -31,7 +31,7 @@
     "imgRename": "Renommage d'un fichier média"
   },
   "present-media": {
-    "imgButton": "Bouton pour passer en mode contrôleur média",
+    "imgButton": "Blue play button to enter media controller mode",
     "imgSelectMeeting": "Sélection d'une réunion pour laquelle afficher les médias",
     "imgBG": "Arrière-plan par défaut, avec texte de l'année généré automatiquement",
     "imgMediaList": "Liste des médias prêts à être présentés",
