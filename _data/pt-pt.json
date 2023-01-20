@@ -31,7 +31,7 @@
     "imgRename": "Renaming a media file"
   },
   "present-media": {
-    "imgButton": "Button to enter media controller mode",
+    "imgButton": "Blue play button to enter media controller mode",
     "imgSelectMeeting": "Selecting a meeting for which to display media",
     "imgBG": "Default media background, with automatically generated yeartext",
     "imgMediaList": "List of media that is ready to be presented",
