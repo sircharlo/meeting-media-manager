@@ -119,10 +119,12 @@ table {
   }
 
   thead {
-    background: $blue-primary;
+    color: $article-header;
+    background: $blue-secondary;
 
     @media (prefers-color-scheme: dark) {
-      background: $blue-primary-dark;
+      color: $article-header-dark;
+      background: $blue-secondary-dark;
     }
   }
 
