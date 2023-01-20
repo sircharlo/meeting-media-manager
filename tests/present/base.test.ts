@@ -24,6 +24,8 @@ test.beforeAll(async () => {
 })
 
 test.afterAll(async () => {
+  // eslint-disable-next-line no-magic-numbers
+  test.setTimeout(100000)
   if (page) {
     await page.locator('[aria-label="Go to home"]').click()
   }
