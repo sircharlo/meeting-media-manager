@@ -10,7 +10,7 @@
   ],
   "homepage": "https://sircharlo.github.io/meeting-media-manager/",
   "bugs": "https://github.com/sircharlo/meeting-media-manager/issues",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "author": {
     "name": "sircharlo",
     "email": "sircharlo@gmail.com",
