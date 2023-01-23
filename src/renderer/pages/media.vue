@@ -91,7 +91,7 @@ export default defineComponent({
     // IpcRenderer listeners
     ipcRenderer.on(
       'showMedia',
-      (
+      async (
         _e,
         media: {
           src: string
@@ -101,9 +101,13 @@ export default defineComponent({
         } | null
       ) => {
         console.debug('showMedia', media)
-        if (this.panzoom) this.panzoom.reset()
-        this.zoomEnabled = !!media && this.$isImage(media.src)
-        this.transitionToMedia(media)
+        try {
+          await this.transitionToMedia(media)
+        } catch (e: unknown) {
+          console.log('Error transitioning media', e)
+          await this.hideMedia()
+          ipcRenderer.send('videoEnd')
+        }
       }
     )
     ipcRenderer.on('pauseVideo', () => {
@@ -113,11 +117,11 @@ export default defineComponent({
         video.pause()
       }
     })
-    ipcRenderer.on('playVideo', () => {
+    ipcRenderer.on('playVideo', async () => {
       const video = document.querySelector('video') as HTMLVideoElement
       if (video) {
         video.classList.remove('manuallyPaused', 'shortVideoPaused')
-        video.play()
+        await video.play()
       }
     })
     ipcRenderer.on('windowResizing', (_e, args) => {
@@ -215,7 +219,7 @@ export default defineComponent({
       this.panzoom.zoom(this.scale)
       if (this.scale === 1) this.panzoom.reset()
     },
-    transitionToMedia(
+    async loadMedia(
       media: {
         src: string
         stream?: boolean
@@ -223,18 +227,18 @@ export default defineComponent({
         end?: string
       } | null
     ) {
-      this.resizingDone()
-      this.blackOverlay.style.opacity = '1'
-      setTimeout(() => {
+      const video: HTMLVideoElement = document.createElement('video')
+
+      try {
         if (media?.src) {
-          const videos = document.querySelectorAll('#mediaDisplay video')
+          const videos = document.querySelectorAll('video')
 
           // Remove all videos
-          if (videos.length > 0) {
-            videos.forEach((video) => {
-              video.remove()
-            })
-          }
+          videos.forEach((video) => {
+            video.pause()
+            video.remove()
+          })
+
           if (this.$isVideo(media.src) || this.$isAudio(media.src)) {
             let src = media.stream ? media.src : pathToFileURL(media.src).href
 
@@ -245,7 +249,6 @@ export default defineComponent({
               }`
             }
 
-            const video = document.createElement('video')
             video.id = 'mediaVideo'
             video.autoplay = true
             video.controls = false
@@ -329,7 +332,34 @@ export default defineComponent({
         }
         this.blackOverlay.style.opacity = '0'
         console.debug('mediaDisplay transitioned')
-      }, 4 * HUNDRED_PERCENT)
+      } catch (e: unknown) {
+        this.$log.error(e)
+        video.pause()
+        video.remove()
+        if (media && (this.$isVideo(media.src) || this.$isAudio(media.src))) {
+          await this.hideMedia()
+        } else {
+          await this.transitionToMedia(null)
+        }
+        ipcRenderer.send('videoEnd')
+      }
+    },
+    async transitionToMedia(
+      media: {
+        src: string
+        stream?: boolean
+        start?: string
+        end?: string
+      } | null
+    ) {
+      if (this.panzoom) this.panzoom.reset()
+      this.zoomEnabled = !!media && this.$isImage(media.src)
+      this.resizingDone()
+      this.blackOverlay.style.opacity = '1'
+
+      await new Promise((resolve) => setTimeout(resolve, 4 * HUNDRED_PERCENT))
+
+      await this.loadMedia(media)
     },
     resizingNow(width: number, height: number) {
       this.resizeOverlay.style.opacity = '1'
@@ -339,16 +369,20 @@ export default defineComponent({
       this.resizeOverlay.style.opacity = '0'
     },
     async hideMedia() {
-      const video = document.querySelector('video') as HTMLVideoElement
+      const videos = document.querySelectorAll('video')
 
       // Animate out
       this.blackOverlay.style.opacity = '1'
       setTimeout(() => {
         this.mediaDisplay.style.background = 'transparent'
-        if (video) video.remove()
+        videos.forEach((video) => {
+          video.pause()
+          video.remove()
+        })
         this.blackOverlay.style.opacity = '0'
       }, 4 * HUNDRED_PERCENT)
-      if (video) {
+      if (videos.length > 0) {
+        const video = videos[0]
         const MS_TO_STOP = 4 * HUNDRED_PERCENT // Let fadeout last 400ms
         const TOTAL_VOL = video.volume
         while (video.volume > 0) {
