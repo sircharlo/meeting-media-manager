@@ -423,8 +423,17 @@ export default defineComponent({
             const filePath = join(datePath, item.safeName)
 
             // Create hidden/date dir if not exists
-            await this.$createCongDir(hiddenPath)
-            await this.$createCongDir(datePath)
+            try {
+              await this.$createCongDir(hiddenPath)
+            } catch (e: unknown) {
+              this.$error('errorWebdavPut', e, hiddenPath)
+            }
+
+            try {
+              await this.$createCongDir(datePath)
+            } catch (e: unknown) {
+              this.$error('errorWebdavPut', e, datePath)
+            }
 
             // Remove file if exists or add it if it doesn't
             if (this.contents.find(({ filename }) => filename === filePath)) {
