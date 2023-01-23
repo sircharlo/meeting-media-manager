@@ -274,14 +274,15 @@ export default defineComponent({
         console.debug(`Setting app lang to ${lang}`)
       }
 
+      let path = this.$route.path
+
       // If current cong does not equal new cong, set new cong
       if ('prefs-' + this.cong !== name) {
         newCong = true
-        let path = this.$route.path
         if (lang && lang !== this.$i18n.locale) {
           path = this.switchLocalePath(lang)
         }
-        if (isNew) {
+        if (isNew || !this.$mediaPath()) {
           path = this.localePath('/settings', lang)
         }
         console.debug('Set correct lang and/or open settings for new cong')
@@ -295,7 +296,13 @@ export default defineComponent({
       // If congs lang is different from current lang, set new lang
       else if (lang && lang !== this.$i18n.locale) {
         console.debug(`Change lang from ${this.$i18n.locale} to ${lang}`)
-        this.$router.replace(this.switchLocalePath(lang))
+        path = this.switchLocalePath(lang)
+
+        if (!this.$mediaPath()) {
+          path = this.localePath('/settings', lang)
+        }
+
+        this.$router.replace(path)
       }
 
       const locales = this.$i18n.locales as LocaleObject[]

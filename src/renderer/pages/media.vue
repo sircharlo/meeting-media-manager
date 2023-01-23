@@ -121,7 +121,11 @@ export default defineComponent({
       const video = document.querySelector('video') as HTMLVideoElement
       if (video) {
         video.classList.remove('manuallyPaused', 'shortVideoPaused')
-        await video.play()
+        try {
+          await video.play()
+        } catch (e: unknown) {
+          this.$log.error(e)
+        }
       }
     })
     ipcRenderer.on('windowResizing', (_e, args) => {
