@@ -32,6 +32,20 @@
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
     </template>
+    <template v-else-if="explanation && appendOuter" #append-outer>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <font-awesome-icon
+            v-bind="attrs"
+            :icon="faCircleQuestion"
+            size="lg"
+            style="margin-top: 2px"
+            v-on="on"
+          />
+        </template>
+        <span>{{ $t(explanation) }}</span>
+      </v-tooltip>
+    </template>
     <template v-else-if="explanation" #append>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
@@ -74,7 +88,7 @@
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
     </template>
-    <template v-else-if="explanation" #append>
+    <template v-else-if="explanation" #append-outer>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
           <font-awesome-icon
@@ -114,7 +128,7 @@
         <span>{{ $t('settingLocked') }}</span>
       </v-tooltip>
     </template>
-    <template v-else-if="explanation" #append>
+    <template v-else-if="explanation" #append-outer>
       <v-tooltip top>
         <template #activator="{ on, attrs }">
           <font-awesome-icon
@@ -415,6 +429,10 @@ export default defineComponent({
       default: '',
     },
     locked: {
+      type: Boolean,
+      default: false,
+    },
+    appendOuter: {
       type: Boolean,
       default: false,
     },

@@ -16,6 +16,7 @@
         :locked="locked"
         :dense="false"
         v-bind="{ ...attrs, ...$attrs }"
+        append-outer
         hide-details
         @click:clear="
           $emit('input', null)

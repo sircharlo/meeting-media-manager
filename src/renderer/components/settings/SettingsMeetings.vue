@@ -36,10 +36,11 @@
         :min="$dayjs().startOf('week').format('YYYY-MM-DD')"
         :locked="$isLocked('meeting.coWeek')"
         :allowed-dates="isMonday"
+        explanation="coWeekExplain"
         :format="prefs.app.outputFolderDateFormat"
       />
     </template>
-    <v-divider class="mb-6" />
+    <v-divider :class="{ 'mb-6': true, 'mt-6': !meeting.specialCong }" />
     <v-col class="d-flex pa-0 pb-2 align-center justify-space-between">
       <form-input
         id="meeting.enableMusicButton"
