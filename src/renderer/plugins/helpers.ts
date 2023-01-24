@@ -1,8 +1,9 @@
 import { Plugin } from '@nuxt/types'
+import { Dayjs } from 'dayjs'
 import { LocaleObject } from '@nuxtjs/i18n'
 import cloneDeep from 'lodash.clonedeep'
 
-const plugin: Plugin = ({ $getPrefs, i18n }, inject) => {
+const plugin: Plugin = ({ $getPrefs, $dayjs, i18n }, inject) => {
   // Clone an object, so that the two objects are not linked
   inject('clone', (value: unknown) => {
     return cloneDeep(value)
@@ -33,6 +34,23 @@ const plugin: Plugin = ({ $getPrefs, i18n }, inject) => {
       default:
         throw new Error('Invalid type: ' + type)
     }
+  })
+
+  function isCoWeek(baseDate: Dayjs = $dayjs().startOf('week')) {
+    const coWeek = $getPrefs('meeting.coWeek') as string
+    return (
+      coWeek &&
+      $dayjs(coWeek, 'YYYY-MM-DD')
+        .isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
+    )
+  }
+  inject('isCoWeek', isCoWeek)
+
+  inject('getMwDay', (baseDate: Dayjs = $dayjs().startOf('week')) => {
+    if (isCoWeek(baseDate)) {
+      return 1 // return Tuesday
+    }
+    return $getPrefs('meeting.mwDay') as number // return original meeting day
   })
 
   // Translate something in another language than the current one

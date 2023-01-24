@@ -56,6 +56,7 @@ const PREFS = {
   meeting: {
     enableMusicButton: false,
     enableMusicFadeOut: false,
+    coWeek: null,
     musicFadeOutTime: 5,
     musicFadeOutType: 'smart',
     musicVolume: 100,
@@ -108,6 +109,7 @@ const FORCABLE = [
   'media.preferredOutput',
   'meeting.enableMusicButton',
   'meeting.enableMusicFadeOut',
+  'meeting.coWeek',
   'meeting.musicFadeOutTime',
   'meeting.musicFadeOutType',
   'meeting.musicVolume',

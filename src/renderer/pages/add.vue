@@ -315,7 +315,8 @@ export default defineComponent({
         this.date,
         this.$getPrefs('app.outputFolderDateFormat') as string
       ) as Dayjs
-      const mwDay = this.$getPrefs('meeting.mwDay') as number
+      if (!day.isValid() || this.$getPrefs('meeting.specialCong')) return false
+      const mwDay = this.$getMwDay(day.startOf('week'))
       const weDay = this.$getPrefs('meeting.weDay') as number
       const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
       return mwDay === weekDay || weDay === weekDay
@@ -574,7 +575,10 @@ export default defineComponent({
       if (global) {
         this.totalProgress = (HUNDRED_PERCENT * loaded) / total
       } else {
-        this.currentProgress = this.totalProgress ? this.totalProgress + (HUNDRED_PERCENT - this.totalProgress) * loaded / total : (HUNDRED_PERCENT * loaded) / total
+        this.currentProgress = this.totalProgress
+          ? this.totalProgress +
+            ((HUNDRED_PERCENT - this.totalProgress) * loaded) / total
+          : (HUNDRED_PERCENT * loaded) / total
       }
       if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
       if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
@@ -590,7 +594,7 @@ export default defineComponent({
 
         const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
 
-        if (weekDay === (this.$getPrefs('meeting.mwDay') as number)) {
+        if (weekDay === this.$getMwDay(day.startOf('week'))) {
           await this.$getMwMedia(this.date)
         } else if (weekDay === (this.$getPrefs('meeting.weDay') as number)) {
           await this.$getWeMedia(this.date)
