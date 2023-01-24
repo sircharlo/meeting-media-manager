@@ -370,9 +370,9 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-/*#zoomMeeting {
+#zoomMeeting {
   width: 0;
   height: 0;
   z-index: 999;
-}*/
+}
 </style>

@@ -175,5 +175,7 @@
   "weMeetingDay": "Weekend meeting",
   "webdavFolder": "Congregation sync folder",
   "webdavFolderUp": "Move directory up",
-  "window": "Moveable window"
+  "window": "Moveable window",
+  "zoomId": "Zoom Meeting ID",
+  "zoomName": "Zoom participant name"
 }

@@ -95,10 +95,8 @@ const plugin: Plugin = (
   }
 
   function setCoHost() {
-    console.log('setcohost')
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (client) {
-      console.log('cohost', client.isCoHost())
       store.commit('zoom/setCoHost', client.isCoHost())
     }
   }
