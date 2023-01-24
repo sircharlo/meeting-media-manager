@@ -36,7 +36,7 @@
       v-model="$attrs.value"
       full-width
       :locale="locale"
-      :first-day-of-week="1"
+      :first-day-of-week="0"
       :allowed-dates="allowedDates"
       :min="min ? min : undefined"
       @change="

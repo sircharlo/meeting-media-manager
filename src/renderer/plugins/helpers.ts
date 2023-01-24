@@ -42,7 +42,7 @@ const plugin: Plugin = ({ $getPrefs, $dayjs, i18n }, inject) => {
       coWeek &&
       $dayjs(coWeek, 'YYYY-MM-DD')
         .add(1, 'day')
-        .isBetween(baseDate, baseDate.add(2, 'days'))
+        .isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
     )
   }
   inject('isCoWeek', isCoWeek)
