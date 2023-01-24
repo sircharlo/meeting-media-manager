@@ -12,6 +12,8 @@
   "convertDownloaded": "Avadika ho MP4 ny video",
   "convertDownloadedExplain": "Ilaina ohatra rehefa alefa manokana amin'ny fivoriana Zoom",
   "convertExternal": "Afaka mampiditra Sary/Video hafa",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Hafa",
   "customCachePath": "Toerana misy ny \"cache\" (Ohatra: ho an'ny \"Zavatra misy\", sns.)",
   "dark": "Maizina",

@@ -41,7 +41,9 @@ const plugin: Plugin = (
     $setDb,
     $copy,
     $rm,
+    $getMwDay,
     $extractAllTo,
+    $isCoWeek,
     $getPrefs,
     $mediaItems,
     $translate,
@@ -154,6 +156,7 @@ const plugin: Plugin = (
   async function getDocumentExtract(
     db: Database,
     docId: number,
+    baseDate: Dayjs,
     setProgress?: (loaded: number, total: number, global?: boolean) => void
   ): Promise<MeetingFile[]> {
     const songPub = store.state.media.songPub as string
@@ -193,7 +196,13 @@ const plugin: Plugin = (
         imagesOnly =
           !!match && extract.BeginParagraphOrdinal < match.BeginParagraphOrdinal
       }
-      if (!imagesOnly || !excludeLffImages) {
+
+      const skipCBS =
+        $isCoWeek(baseDate) &&
+        extract.UniqueEnglishSymbol === 'lff' &&
+        !imagesOnly
+
+      if (!skipCBS && (!imagesOnly || !excludeLffImages)) {
         promises.push(extractMediaItems(extract, setProgress, imagesOnly))
       }
     })
@@ -1107,6 +1116,13 @@ const plugin: Plugin = (
       const mms = await getDocumentMultiMedia(db, docId)
       const promises: Promise<void>[] = []
 
+      // remove the last song if it's the co week
+      if ($isCoWeek(baseDate)) {
+        mms.splice(
+          mms.reverse().findIndex((m) => m.pub === store.state.media.songPub),
+          1
+        )
+      }
       mms.forEach((mm) => {
         promises.push(
           addMediaItemToPart(
@@ -1119,7 +1135,12 @@ const plugin: Plugin = (
       })
 
       // Get document extracts and add them to the media list
-      const extracts = await getDocumentExtract(db, docId, setProgress)
+      const extracts = await getDocumentExtract(
+        db,
+        docId,
+        baseDate,
+        setProgress
+      )
 
       extracts.forEach((extract) => {
         promises.push(
@@ -1243,7 +1264,9 @@ const plugin: Plugin = (
       }
 
       songs.forEach((song, i) => {
-        promises.push(addSongToPart(date, songLangs, song, i))
+        if (!($isCoWeek(baseDate) && i > 0)) {
+          promises.push(addSongToPart(date, songLangs, song, i))
+        }
       })
 
       await Promise.allSettled(promises)
@@ -1330,7 +1353,10 @@ const plugin: Plugin = (
 
     meetings.forEach((parts, date) => {
       let i = 1
-      const day = $dayjs(date, $getPrefs('app.outputFolderDateFormat') as string)
+      const day = $dayjs(
+        date,
+        $getPrefs('app.outputFolderDateFormat') as string
+      )
       const weekDay = day.day() === 0 ? 6 : day.day() - 1
       const isWeDay = weekDay === ($getPrefs('meeting.weDay') as number)
       const sorted = [...parts.entries()].sort((a, b) => a[0] - b[0])
@@ -1339,9 +1365,9 @@ const plugin: Plugin = (
         media
           .filter((m) => !m.safeName)
           .forEach((item, j) => {
-            item.safeName = `${(isWeDay ? i + 2 : i).toString().padStart(2, '0')}-${(j + 1)
+            item.safeName = `${(isWeDay ? i + 2 : i)
               .toString()
-              .padStart(2, '0')} -`
+              .padStart(2, '0')}-${(j + 1).toString().padStart(2, '0')} -`
             if (!item.congSpecific) {
               if (item.queryInfo?.TargetParagraphNumberLabel) {
                 item.safeName += ` ${$translate('paragraph')} ${
@@ -1610,7 +1636,7 @@ const plugin: Plugin = (
         const now = $dayjs()
         const fadeOutTime = $getPrefs('meeting.musicFadeOutTime') as number
         if ($getPrefs('meeting.musicFadeOutType') === 'smart') {
-          const mwDay = $getPrefs('meeting.mwDay') as number
+          const mwDay = $getMwDay()
           const weDay = $getPrefs('meeting.weDay') as number
           const today = now.day() === 0 ? 6 : now.day() - 1 // Day is 0 indexed and starts with Sunday
 

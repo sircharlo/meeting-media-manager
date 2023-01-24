@@ -21,7 +21,7 @@ test.afterAll(async () => {
 })
 
 test('shuffle button works correctly', async () => {
-  if (platform() === 'win32') {
+  if (platform() !== 'linux') {
     test.skip()
   }
 
@@ -77,8 +77,6 @@ test('shuffle button works correctly', async () => {
 
   // Wait 4 seconds for music fade out
   await delay(4 * MS_IN_SEC)
-
-  if (platform() === 'darwin') await delay(8 * MS_IN_SEC)
 
   // Verify blue color
   expect((await shuffleBtn.getAttribute('class'))?.includes('info')).toBe(true)

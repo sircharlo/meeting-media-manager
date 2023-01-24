@@ -12,6 +12,8 @@
   "convertDownloaded": "Convertir multimedia a formato MP4",
   "convertDownloadedExplain": "Útil para reuniones de Zoom totalmente remotas, para usar con la función nativa de uso compartido de archivos MP4 de Zoom",
   "convertExternal": "Permitir importar contenidos adicionales",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Personalizar",
   "customCachePath": "Ruta de caché personalizada (para publicaciones, etc.)",
   "dark": "Oscuro",

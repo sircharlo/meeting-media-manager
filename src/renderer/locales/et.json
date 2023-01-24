@@ -12,6 +12,8 @@
   "convertDownloaded": "Teisenda meedia MP4-vormingusse",
   "convertDownloadedExplain": "Kasulik funktsioon koosolekute jaoks, kui ei mängi meediat Zoomiga, samas kasutamiseks ka koos Zoomi MP4-failide jagamise funktsiooniga",
   "convertExternal": "Paku lisameedia importimist",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Kohandatud sätted",
   "customCachePath": "Ajutiste failide asukoht ( nt: väljaanded, jne)",
   "dark": "Tume",

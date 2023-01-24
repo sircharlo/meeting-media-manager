@@ -12,6 +12,8 @@
   "convertDownloaded": "Преобразовать медиафайлы в формат MP4",
   "convertDownloadedExplain": "Полезно для полностью удаленных встреч Zoom, используется с встроенной функцией обмена файлами MP4 в Zoom",
   "convertExternal": "Включить функцию импорта дополнительного мультимедиа",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Разное",
   "customCachePath": "Пользовательская папка кэша (для публикаций и т. д.)",
   "dark": "Темный",
