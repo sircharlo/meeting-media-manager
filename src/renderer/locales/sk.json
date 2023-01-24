@@ -12,6 +12,8 @@
   "convertDownloaded": "Konvertovať médiá do formátu MP4",
   "convertDownloadedExplain": "Užitočné pri online zhromaždení cez Zoom - používa natívne MP4 zdielanie Zoomu",
   "convertExternal": "Ponuka importovania dodatočných médií",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Vlastné",
   "customCachePath": "Vlastná cesta pre cache (pre publikácie atd.)",
   "dark": "Tmavá",
