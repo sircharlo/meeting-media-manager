@@ -12,6 +12,8 @@
   "convertDownloaded": "Média konvertálása MP4 formátumba",
   "convertDownloadedExplain": "Hasznos a teljesen távoli Zoom megbeszélésekhez, a Zoom natív MP4 fájlmegosztási funkciójával való használatra",
   "convertExternal": "További média importálásának felajánlása",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Egyedi",
   "customCachePath": "Egyéni gyorsítótár elérési útvonal (kiadványokhoz stb.)",
   "dark": "Sötét",
