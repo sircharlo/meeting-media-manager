@@ -12,6 +12,8 @@
   "convertDownloaded": "Converteer media naar MP4 formaat",
   "convertDownloadedExplain": "Handig voor vergadering via Zoom om media te delen via Zoom's deel MP4 functie",
   "convertExternal": "Bied aan om extra media te importeren",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Anders",
   "customCachePath": "Andere cache locatie (voor publicaties, etc.)",
   "dark": "Donker",
