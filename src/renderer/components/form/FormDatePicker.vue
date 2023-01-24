@@ -86,7 +86,8 @@ export default defineComponent({
       return faCalendar
     },
     formattedDate() {
-      return this.$dayjs(this.$attrs.value, 'YYYY-MM-DD').format(this.format)
+      const date = this.$dayjs(this.$attrs.value, 'YYYY-MM-DD')
+      return date.isValid() ? date.format(this.format) : null
     },
     locale() {
       return this.$i18n.localeProperties.iso.toLowerCase()

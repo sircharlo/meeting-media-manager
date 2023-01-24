@@ -14,6 +14,8 @@ updates:
     schedule:
       interval: 'daily'
     ignore:
+      - dependency-name: '@fortawesome/vue-fontawesome'
+        update-types: ['version-update:semver-major']
       - dependency-name: 'nuxt'
         update-types: ['version-update:semver-major']
       - dependency-name: '@nuxtjs/i18n'

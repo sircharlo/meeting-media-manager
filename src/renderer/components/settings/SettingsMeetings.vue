@@ -304,6 +304,12 @@ export default defineComponent({
   },
   mounted() {
     Object.assign(this.meeting, this.$getPrefs('meeting'))
+    if (this.meeting.coWeek) {
+      const date = this.$dayjs(this.meeting.coWeek, 'YYYY-MM-DD')
+      if (date.isBefore(this.$dayjs().startOf('week'))) {
+        this.meeting.coWeek = null
+      }
+    }
     this.$emit('refresh', this.meeting)
 
     this.cached = this.shuffleMusicCached()

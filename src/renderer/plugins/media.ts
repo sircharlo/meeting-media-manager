@@ -1116,7 +1116,13 @@ const plugin: Plugin = (
       const mms = await getDocumentMultiMedia(db, docId)
       const promises: Promise<void>[] = []
 
-      if ($isCoWeek(baseDate)) mms.splice(mms.findLastIndex(m => m.pub === store.state.media.songPub), 1) // remove the last song if it's the co week
+      // remove the last song if it's the co week
+      if ($isCoWeek(baseDate)) {
+        mms.splice(
+          mms.reverse().findIndex((m) => m.pub === store.state.media.songPub),
+          1
+        )
+      }
       mms.forEach((mm) => {
         promises.push(
           addMediaItemToPart(
@@ -1347,7 +1353,10 @@ const plugin: Plugin = (
 
     meetings.forEach((parts, date) => {
       let i = 1
-      const day = $dayjs(date, $getPrefs('app.outputFolderDateFormat') as string)
+      const day = $dayjs(
+        date,
+        $getPrefs('app.outputFolderDateFormat') as string
+      )
       const weekDay = day.day() === 0 ? 6 : day.day() - 1
       const isWeDay = weekDay === ($getPrefs('meeting.weDay') as number)
       const sorted = [...parts.entries()].sort((a, b) => a[0] - b[0])
@@ -1356,9 +1365,9 @@ const plugin: Plugin = (
         media
           .filter((m) => !m.safeName)
           .forEach((item, j) => {
-            item.safeName = `${(isWeDay ? i + 2 : i).toString().padStart(2, '0')}-${(j + 1)
+            item.safeName = `${(isWeDay ? i + 2 : i)
               .toString()
-              .padStart(2, '0')} -`
+              .padStart(2, '0')}-${(j + 1).toString().padStart(2, '0')} -`
             if (!item.congSpecific) {
               if (item.queryInfo?.TargetParagraphNumberLabel) {
                 item.safeName += ` ${$translate('paragraph')} ${
