@@ -318,20 +318,17 @@ export default defineComponent({
       const client = zoomSDK.createClient()
       this.$store.commit('zoom/setClient', client)
       client.init({
-        zoomAppRoot: document.getElementById('zoomMeeting'),
+        zoomAppRoot: document.getElementById('zoomMeeting') ?? undefined,
         language: this.$i18n.localeProperties.iso,
       })
       await this.$connectZoom()
       const originalSend = WebSocket.prototype.send
       window.sockets = []
       WebSocket.prototype.send = function (...args) {
+        console.log('send:', args)
         if (!window.sockets.includes(this)) {
           window.sockets.push(this)
-          this.addEventListener('message', (event) => {
-            console.log(event)
-          })
         }
-        console.log('send:', args)
         return originalSend.call(this, ...args)
       }
     }

@@ -135,6 +135,7 @@ interface CustomProps {
   $mediaPath: (file?: MeetingFile) => string | undefined
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
   $move: (src: string, dest: string, overwrite = false) => void
+  $muteAll: (socket: WebSocket) => void
   $notify: (
     message: string,
     props?: {
@@ -205,7 +206,12 @@ interface CustomProps {
     setProgress: (loaded: number, total: number, global?: boolean) => void
   ) => Promise<void>
   $syncLocalRecurringMedia: (baseDate: Dayjs) => void
+  $toggleAllowUnmute: (socket: WebSocket, allow: boolean) => void
+  $toggleAudio: (socket: WebSocket, enable: boolean) => void
   $toggleMediaWindow: (action?: string) => Promise<void>
+  $toggleMic: (socket: WebSocket, mute: boolean) => void
+  $toggleSplotlight: (socket: WebSocket, enable: boolean) => void
+  $toggleVideo: (socket: WebSocket, enable: boolean) => void
   $translate: (word: string, fallback?: string) => string
   $unsetPrefs: (key: keyof ElectronStore) => void
   $unsetShortcut: (shortcut: string) => void
@@ -242,4 +248,10 @@ declare module '@nuxt/types' {
 
 declare module '*.vue' {
   export default Vue
+}
+
+export declare global {
+  interface Window {
+    sockets: WebSocket[]
+  }
 }
