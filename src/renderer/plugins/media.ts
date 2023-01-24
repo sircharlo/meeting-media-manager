@@ -1116,6 +1116,7 @@ const plugin: Plugin = (
       const mms = await getDocumentMultiMedia(db, docId)
       const promises: Promise<void>[] = []
 
+      if ($isCoWeek(baseDate)) mms.splice(mms.findLastIndex(m => m.pub === store.state.media.songPub), 1) // remove the last song if it's the co week
       mms.forEach((mm) => {
         promises.push(
           addMediaItemToPart(
