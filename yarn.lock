@@ -1445,13 +1445,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/vue-fontawesome@npm:^2.0.9":
-  version: 2.0.9
-  resolution: "@fortawesome/vue-fontawesome@npm:2.0.9"
+"@fortawesome/vue-fontawesome@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@fortawesome/vue-fontawesome@npm:3.0.3"
   peerDependencies:
     "@fortawesome/fontawesome-svg-core": ~1 || ~6
-    vue: ~2
-  checksum: 18c35058ebc76472073d225565ce36d1bc80e818b9d586e47eb20cbdcc8cab1bcc80a118e6052f6d7528ae5d23918a4ec9e537db71c5de0255f0cd67db780b37
+    vue: ">= 3.0.0 < 4"
+  checksum: a3ec4db7c849c8378eb25c35a8e7905a37df9d3263d5284d0ce8bd9cff1d79bc7015ec68e7a2d29aedb521408f2d47bfb90a8756262394e8e2cb6e9bc73a3b41
   languageName: node
   linkType: hard
 
@@ -10671,7 +10671,7 @@ __metadata:
     "@fortawesome/fontawesome-svg-core": ^6.2.1
     "@fortawesome/free-regular-svg-icons": ^6.2.1
     "@fortawesome/free-solid-svg-icons": ^6.2.1
-    "@fortawesome/vue-fontawesome": ^2.0.9
+    "@fortawesome/vue-fontawesome": ^3.0.3
     "@nuxt/types": ^2.15.8
     "@nuxt/typescript-build": ^2.1.0
     "@nuxtjs/axios": ^5.13.6
