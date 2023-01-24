@@ -26,6 +26,7 @@ interface CustomProps {
     password: string,
     dir = '/'
   ) => Promise<string | null>
+  $connectZoom: () => Promise<void>
   $convertToMP4: (
     baseDate: Dayjs,
     now: Dayjs,

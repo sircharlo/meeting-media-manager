@@ -13,6 +13,7 @@
         zoomPart = true
       "
     />
+    <div id="zoomMeeting" />
     <media-controls
       v-if="date"
       :media-active="mediaActive"
@@ -93,13 +94,14 @@
 import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
+import zoomSDK, { EmbeddedClient } from '@zoomus/websdk/embedded'
 import {
   faHome,
   IconDefinition,
   faHouseUser,
   faPodcast,
 } from '@fortawesome/free-solid-svg-icons'
-import { ObsPrefs } from '~/types'
+import { ObsPrefs, ZoomPrefs } from '~/types'
 export default defineComponent({
   name: 'PresentPage',
   data() {
@@ -287,10 +289,15 @@ export default defineComponent({
       }
     },
   },
-  beforeDestroy() {
+  async beforeDestroy() {
     window.removeEventListener('resize', this.setWindowSize)
     ipcRenderer.removeAllListeners('showingMedia')
     this.$unsetShortcuts('presentMode')
+    const client = this.$store.state.zoom.client as typeof EmbeddedClient
+    if (client) {
+      await client.leaveMeeting()
+      this.$store.commit('zoom/clear')
+    }
   },
   async mounted() {
     this.setWindowSize()
@@ -304,6 +311,29 @@ export default defineComponent({
 
     if (enable && port && password) {
       await this.$getScenes()
+    }
+
+    const zoom = this.$getPrefs('app.zoom') as ZoomPrefs
+    if (zoom.enable && zoom.name && zoom.id && zoom.password) {
+      const client = zoomSDK.createClient()
+      this.$store.commit('zoom/setClient', client)
+      client.init({
+        zoomAppRoot: document.getElementById('zoomMeeting'),
+        language: this.$i18n.localeProperties.iso,
+      })
+      await this.$connectZoom()
+      const originalSend = WebSocket.prototype.send
+      window.sockets = []
+      WebSocket.prototype.send = function (...args) {
+        if (!window.sockets.includes(this)) {
+          window.sockets.push(this)
+          this.addEventListener('message', (event) => {
+            console.log(event)
+          })
+        }
+        console.log('send:', args)
+        return originalSend.call(this, ...args)
+      }
     }
 
     if (this.$store.state.obs.connected) {
@@ -342,3 +372,10 @@ export default defineComponent({
   },
 })
 </script>
+<style lang="scss">
+/*#zoomMeeting {
+  width: 0;
+  height: 0;
+  z-index: 999;
+}*/
+</style>

@@ -8,13 +8,20 @@ export interface ObsPrefs {
   useV4: boolean
 }
 
+export interface ZoomPrefs {
+  enable: boolean
+  name: string | null
+  id: string | null
+  password: string | null
+}
+
 export const dateFormats = [
   'DD-MM-YYYY',
   'YYYY-MM-DD',
   'DD-MM-YYYY - dddd',
   'YYYY-MM-DD - dddd',
 ] as const
-export type DateFormat = typeof dateFormats[number]
+export type DateFormat = (typeof dateFormats)[number]
 
 export interface AppPrefs {
   autoOpenFolderWhenDone: boolean
@@ -31,6 +38,7 @@ export interface AppPrefs {
   offline: boolean
   outputFolderDateFormat: DateFormat
   theme: 'light' | 'dark' | 'system'
+  zoom: ZoomPrefs
 }
 
 export interface CongPrefs {
@@ -42,7 +50,7 @@ export interface CongPrefs {
 }
 
 export const resolutions = ['240p', '360p', '480p', '720p'] as const
-export type Res = typeof resolutions[number]
+export type Res = (typeof resolutions)[number]
 
 export interface MediaPrefs {
   enableMediaDisplayButton: boolean

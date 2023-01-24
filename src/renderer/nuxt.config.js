@@ -105,6 +105,7 @@ module.exports = {
     '~/plugins/present',
     // Depends on present
     '~/plugins/obs',
+    '~/plugins/zoom',
   ],
 
   buildModules: ['@nuxt/typescript-build'],
@@ -210,5 +211,7 @@ module.exports = {
     sentryInit: initSentry,
     sqlJsVersion: pkg.devDependencies['sql.js'].replace('^', ''),
     version: 'v' + pkg.version,
+    zoomSdkKey: process.env.ZOOM_SDK_KEY,
+    zoomSignatureEndpoint: process.env.ZOOM_SIGNATURE_ENDPOINT,
   },
 }

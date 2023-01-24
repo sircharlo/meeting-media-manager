@@ -202,6 +202,41 @@
     </template>
     <v-divider class="mb-6" />
     <form-input
+      id="app.zoom.enable"
+      v-model="app.zoom.enable"
+      field="switch"
+      :locked="$isLocked('app.zoom.enable')"
+    >
+      <template #label>
+        <span v-html="$t('enableZoom')" />
+      </template>
+    </form-input>
+    <template v-if="app.zoom.enable">
+      <form-input
+        id="app.zoom.name"
+        v-model="app.zoom.name"
+        :label="$t('zoomName')"
+        :locked="$isLocked('app.zoom.name')"
+        required
+      />
+      <form-input
+        id="app.zoom.id"
+        v-model="app.zoom.id"
+        :label="$t('zoomId')"
+        :locked="$isLocked('app.zoom.id')"
+        required
+      />
+      <form-input
+        id="app.zoom.password"
+        v-model="app.zoom.password"
+        field="password"
+        :label="$t('password')"
+        :locked="$isLocked('app.zoom.password')"
+        required
+      />
+    </template>
+    <v-divider class="mb-6" />
+    <form-input
       v-for="option in disableOptions"
       :id="`app.disable${option}`"
       :key="option"

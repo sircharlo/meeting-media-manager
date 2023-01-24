@@ -22,6 +22,12 @@ const PREFS = {
     offline: false,
     outputFolderDateFormat: 'YYYY-MM-DD',
     theme: 'system',
+    zoom: {
+      enable: false,
+      name: null,
+      id: null,
+      password: null,
+    },
   },
   cong: {
     server: null,
@@ -88,6 +94,10 @@ const FORCABLE = [
   'app.obs.password',
   'app.obs.port',
   'app.outputFolderDateFormat',
+  'app.zoom.enable',
+  'app.zoom.id',
+  'app.zoom.name',
+  'app.zoom.password',
   'media.enableMediaDisplayButton',
   'media.enableMp4Conversion',
   'media.enablePp',

@@ -124,6 +124,11 @@ export default defineComponent({
         case 'app.obs.cameraScene':
         case 'app.obs.mediaScene':
           return `obs${lastKey.charAt(0).toUpperCase() + lastKey.slice(1)}`
+        case 'app.zoom.enable':
+          return 'enableZoom'
+        case 'app.zoom.id':
+        case 'app.zoom.name':
+          return `zoom${lastKey.charAt(0).toUpperCase() + lastKey.slice(1)}`
         case 'media.enableMp4Conversion':
           return 'convertDownloaded'
         case 'media.lang':

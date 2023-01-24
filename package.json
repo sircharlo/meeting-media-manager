@@ -82,6 +82,7 @@
     "@xpda-dev/electron-builder": "^0.2.1",
     "@xpda-dev/electron-launcher": "^0.3.0",
     "@xpda-dev/webpack-step": "^0.1.6",
+    "@zoomus/websdk": "^2.9.7",
     "chokidar": "^3.5.3",
     "consola": "^2.15.3",
     "core-js": "^3.27.2",
