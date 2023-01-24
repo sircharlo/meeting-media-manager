@@ -12,6 +12,8 @@
   "convertDownloaded": "Muunna media MP4-muotoon",
   "convertDownloadedExplain": "Hyödyllinen täysin kauko ei-hybridi-zoom-kokouksiin, käytettäväksi Zoomin natiivin MP4-tiedostojen jakamisominaisuuden kanssa",
   "convertExternal": "Tarjoa lisämedian tuontia",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Mukautettu",
   "customCachePath": "Mukautettu välimuistin polku (julkaisut jne.)",
   "dark": "Tumma",
