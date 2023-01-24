@@ -89,6 +89,7 @@ export const enum MeetingDay {
 export interface MeetingPrefs {
   enableMusicButton: boolean
   enableMusicFadeOut: boolean
+  coWeek: string | null
   musicFadeOutTime: number | null
   musicFadeOutType: 'smart' | 'timer'
   musicVolume: number | null

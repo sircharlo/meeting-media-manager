@@ -12,6 +12,8 @@
   "convertDownloaded": "Medien in MP4-Format konvertieren",
   "convertDownloadedExplain": "Nützlich für reine Zoom-Meetings, um die native MP4-Dateifreigabefunktion von Zoom zu nutzen",
   "convertExternal": "Zusätzliche Medien importieren",
+  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Eigene",
   "customCachePath": "Benutzerdefinierter Zwischenspeicher-Ordner (für Publikationen usw.)",
   "dark": "Dunkel",
