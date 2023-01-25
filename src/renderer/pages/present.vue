@@ -247,6 +247,9 @@ export default defineComponent({
     coHost(): boolean {
       return this.$store.state.zoom.coHost as boolean
     },
+    zoomClient(): typeof EmbeddedClient {
+      return this.$store.state.zoom.client as typeof EmbeddedClient
+    },
   },
   watch: {
     coHost(val: boolean) {
@@ -303,9 +306,10 @@ export default defineComponent({
     window.removeEventListener('resize', this.setWindowSize)
     ipcRenderer.removeAllListeners('showingMedia')
     this.$unsetShortcuts('presentMode')
-    const client = this.$store.state.zoom.client as typeof EmbeddedClient
-    if (client) {
-      await client.leaveMeeting()
+    if (this.zoomClient) {
+      this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
+      this.$stopMeeting(window.sockets[window.sockets.length - 1])
+      await this.zoomClient.leaveMeeting()
       this.$store.commit('zoom/clear')
     }
   },

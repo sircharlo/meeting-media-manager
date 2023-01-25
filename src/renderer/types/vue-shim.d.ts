@@ -187,6 +187,7 @@ interface CustomProps {
   ) => Promise<void>
   $shuffleMusic: (stop = false, immediately = false) => Promise<void>
   $startMeeting: (socket: WebSocket) => void
+  $stopMeeting: (socket: WebSocket) => void
   $storePath: () => string | undefined
   $success: (
     message: string,
