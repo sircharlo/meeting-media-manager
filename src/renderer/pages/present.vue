@@ -102,6 +102,7 @@ import {
   faPodcast,
 } from '@fortawesome/free-solid-svg-icons'
 import { ObsPrefs, ZoomPrefs } from '~/types'
+import { MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
   name: 'PresentPage',
   data() {
@@ -113,6 +114,7 @@ export default defineComponent({
       firstChoice: true,
       windowWidth: 0,
       windowHeight: 0,
+      zoomInterval: null as null | NodeJS.Timer,
     }
   },
   head(): MetaInfo {
@@ -242,8 +244,16 @@ export default defineComponent({
     cong(): string {
       return this.$route.query.cong as string
     },
+    coHost(): boolean {
+      return this.$store.state.zoom.coHost as boolean
+    },
   },
   watch: {
+    coHost(val: boolean) {
+      if (val) {
+        this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
+      }
+    },
     date(val: string) {
       if (val) {
         this.firstChoice = false
@@ -330,6 +340,38 @@ export default defineComponent({
           window.sockets.push(this)
         }
         return originalSend.call(this, ...args)
+      }
+
+      const mwDay = this.$getMwDay()
+      const weDay = this.$getPrefs('meeting.weDay') as number
+      const today = this.$dayjs().day() === 0 ? 6 : this.$dayjs().day() - 1 // Day is 0 indexed and starts with Sunday
+      if (
+        this.$getPrefs('app.zoom.autoStartMeeting') &&
+        (today === mwDay || today === weDay)
+      ) {
+        const startTime = this.$getPrefs(
+          `meeting.${today === mwDay ? 'mw' : 'we'}StartTime`
+        ) as string
+        const meetingStarts = startTime?.split(':') ?? ['0', '0']
+        const timeToStop = this.$dayjs()
+          .hour(+meetingStarts[0])
+          .minute(+meetingStarts[1])
+          .second(0)
+          .millisecond(0)
+          .subtract(this.$getPrefs('app.zoom.autoStartTime') as number, 'm')
+
+        this.zoomInterval = setInterval(() => {
+          const timeLeft = this.$dayjs
+            .duration(timeToStop.diff(this.$dayjs()), 'ms')
+            .asSeconds()
+          console.log('timeLeft:', timeLeft.toFixed(0))
+          if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
+            this.$startMeeting(window.sockets[window.sockets.length - 1])
+            clearInterval(this.zoomInterval as NodeJS.Timer)
+          } else if (timeLeft < 0) {
+            clearInterval(this.zoomInterval as NodeJS.Timer)
+          }
+        }, MS_IN_SEC)
       }
     }
 

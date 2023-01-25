@@ -1,10 +1,9 @@
-/* eslint-disable no-magic-numbers */
 import { Plugin } from '@nuxt/types'
 import { EmbeddedClient } from '@zoomus/websdk/embedded'
 import { ZoomPrefs } from '@/types'
 
 const plugin: Plugin = (
-  { $getPrefs, $log, $axios, $config, store },
+  { $getPrefs, $warn, $notify, $log, $axios, $config, store },
   inject
 ) => {
   async function connectZoom() {
@@ -19,6 +18,8 @@ const plugin: Plugin = (
       return
     }
 
+    $notify('remindNeedCoHost')
+
     try {
       await client.join({
         sdkKey: $config.zoomSdkKey,
@@ -32,7 +33,6 @@ const plugin: Plugin = (
           })
         ).signature,
       })
-
       client.on('user-updated', setCoHost)
       store.commit('zoom/setConnected', true)
     } catch (e: unknown) {
@@ -41,55 +41,108 @@ const plugin: Plugin = (
   }
   inject('connectZoom', connectZoom)
 
-  inject('toggleAllowUnmute', (socket: WebSocket, allow: boolean) => {
-    sendToWebSocket(socket, 4149, `{"bOn":${allow}}`)
+  inject('startMeeting', (socket: WebSocket) => {
+    if (!store.state.zoom.coHost) {
+      $warn('errorNotCoHost')
+    }
+    toggleAllowUnmute(socket, false)
+    muteAll(socket)
+    toggleAudio(socket, true)
+    toggleVideo(socket, true)
+    toggleMic(socket, false)
+    if ($getPrefs('app.zoom.spotlight')) {
+      toggleSplotlight(socket, true)
+    }
   })
 
-  inject('muteAll', (socket: WebSocket) => {
-    sendToWebSocket(socket, 8201, `{"bMute":true}`)
+  inject('stopMeeting', (socket: WebSocket) => {
+    if (!store.state.zoom.coHost) {
+      $warn('errorNotCoHost')
+    }
+    toggleSplotlight(socket, false)
+    toggleAudio(socket, false)
+    toggleVideo(socket, false)
+    toggleAllowUnmute(socket, true)
   })
 
-  inject('toggleAudio', (socket: WebSocket, enable: boolean) => {
-    sendToWebSocket(socket, 8203, `{"bOn":${enable}}`)
-  })
+  function toggleAllowUnmute(socket: WebSocket, allow: boolean) {
+    sendToWebSocket(socket, {
+      evt: 4149,
+      body: { bOn: allow },
+    })
+  }
 
-  inject('toggleMic', (socket: WebSocket, mute: boolean) => {
-    const client = store.state.zoom.client as typeof EmbeddedClient | null
-    if (client) {
+  function muteAll(socket: WebSocket) {
+    sendToWebSocket(socket, {
+      evt: 8201,
+      body: { bMute: true },
+    })
+  }
+
+  function toggleAudio(socket: WebSocket, enable: boolean) {
+    sendToWebSocket(socket, {
+      evt: 8203,
+      body: { bOn: enable },
+    })
+  }
+
+  function toggleMic(socket: WebSocket, mute: boolean) {
+    sendToWebSocket(
+      socket,
+      {
+        evt: 8193,
+        body: { bMute: mute },
+      },
+      true
+    )
+  }
+
+  function toggleVideo(socket: WebSocket, enable: boolean) {
+    sendToWebSocket(
+      socket,
+      {
+        evt: 12297,
+        body: { bOn: !enable },
+      },
+      true
+    )
+    sendToWebSocket(socket, {
+      evt: 4167,
+      body: {},
+    })
+  }
+
+  function toggleSplotlight(socket: WebSocket, enable: boolean) {
+    if (enable) {
       sendToWebSocket(
         socket,
-        8193,
-        `{"bMute":${mute}},"id":${client.getCurrentUser()?.userId}`
+        {
+          evt: 4219,
+          body: { bReplace: false, bSpotlight: true },
+        },
+        true
       )
-    }
-  })
-
-  inject('toggleVideo', (socket: WebSocket, enable: boolean) => {
-    sendToWebSocket(socket, 12297, `{"bOn":${enable}}`)
-  })
-
-  inject('toggleSplotlight', (socket: WebSocket, enable: boolean) => {
-    if (enable) {
-      const client = store.state.zoom.client as typeof EmbeddedClient | null
-      if (client) {
-        sendToWebSocket(
-          socket,
-          4219,
-          `{"bReplace":false,"bSpotlight":true,"id":${
-            client.getCurrentUser()?.userId
-          }}`
-        )
-      }
     } else {
-      sendToWebSocket(socket, 4219, `{"bUnSpotlightAll":true}`)
+      sendToWebSocket(socket, {
+        evt: 4219,
+        body: { bUnSpotlightAll: true },
+      })
     }
-  })
+  }
 
-  function sendToWebSocket(socket: WebSocket, event: number, body: string) {
+  function sendToWebSocket(
+    socket: WebSocket,
+    msg: { evt: number; body: { [key: string]: any }; seq?: number },
+    withUser = false
+  ) {
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (client) {
       const sequence = store.state.zoom.sequence as number
-      socket.send(`{"evt":${event},"body":${body},"seq":${sequence}}`)
+      msg.seq = sequence
+      if (withUser) {
+        msg.body.id = client.getCurrentUser()?.userId
+      }
+      socket.send(JSON.stringify(msg))
       store.commit('zoom/increaseSequence')
     }
   }

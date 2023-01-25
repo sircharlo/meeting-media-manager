@@ -138,6 +138,20 @@ const schema: Schema<ElectronStore> = {
             type: ['string', 'null'],
             default: PREFS.app.obs.password,
           },
+          spotlight: {
+            type: 'boolean',
+            default: PREFS.app.zoom.spotlight,
+          },
+          autoStartMeeting: {
+            type: 'boolean',
+            default: PREFS.app.zoom.autoStartMeeting,
+          },
+          autoStartTime: {
+            type: 'number',
+            minimum: 1,
+            maximum: 10,
+            default: PREFS.app.zoom.autoStartTime,
+          },
         },
       },
     },

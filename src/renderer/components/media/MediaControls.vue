@@ -43,6 +43,26 @@
           </template>
           <span>{{ $t('lastMinuteSong') }}</span>
         </v-tooltip>
+        <v-tooltip v-if="zoomIntegration" bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              class="ml-4"
+              aria-label="Toggle zoom component"
+              v-bind="attrs"
+              v-on="on"
+              @click="showZoomComponent = !showZoomComponent"
+            >
+              <font-awesome-icon :icon="faZ" pull="left" size="lg" />
+              <font-awesome-icon
+                :icon="showZoomComponent ? faEyeSlash : faEye"
+                pull="right"
+                size="lg"
+              />
+            </v-btn>
+          </template>
+          <span>{{ $t('zoomToggleComponent') }}</span>
+        </v-tooltip>
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
@@ -209,6 +229,9 @@ import {
   faForward,
   faMusic,
   faPlus,
+  faZ,
+  faEye,
+  faEyeSlash,
   faGlobe,
   faArrowDownUpLock,
   faEllipsisVertical,
@@ -251,6 +274,7 @@ export default defineComponent({
       songs: [] as VideoFile[],
       loadingSongs: true,
       showPrefix: false,
+      showZoomComponent: true,
       items: [] as {
         id: string
         path: string
@@ -306,6 +330,15 @@ export default defineComponent({
     faPlus() {
       return faPlus
     },
+    faZ() {
+      return faZ
+    },
+    faEye() {
+      return faEye
+    },
+    faEyeSlash() {
+      return faEyeSlash
+    },
     faEllipsisVertical() {
       return faEllipsisVertical
     },
@@ -327,6 +360,9 @@ export default defineComponent({
     scene(): string {
       return this.$store.state.obs.currentScene as string
     },
+    zoomIntegration(): boolean {
+      return !!this.$store.state.zoom.client
+    },
     zoomScene(): string | null {
       return this.$getPrefs('app.obs.zoomScene') as string | null
     },
@@ -334,6 +370,11 @@ export default defineComponent({
   watch: {
     song() {
       this.addSong = false
+    },
+    showZoomComponent(show: boolean) {
+      const el = document.getElementById('zoomMeeting')
+      if (!el) return
+      el.style.display = show ? 'flex' : 'none'
     },
     async mediaActive(val: boolean) {
       this.items.forEach((item) => {

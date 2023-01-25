@@ -28,6 +28,7 @@
   "enablePp": "Enable keyboard shortcuts during media playback (for use with a USB remote control, for example)",
   "enableSubtitles": "Enable subtitles for videos",
   "enableVlcPlaylistCreation": "Create playlists for use with <em>VLC</em>",
+  "enableZoom": "Enable Zoom integration",
   "error": "Error",
   "errorAdditionalMedia": "An error occurred while importing media. Please contact your videoconference organizer.",
   "errorAdditionalMediaList": "An error occurred while listing media. Please try again later or contact your videoconference organizer.",
@@ -45,6 +46,7 @@
   "errorJwpubMediaExtract": "An error occurred while extracting media from the following publication:",
   "errorMwbUnavailable": "The Meeting Workbook is not available in your selected language. Consider setting a fallback language to use whenever necessary.",
   "errorNoShuffleSongs": "There were no songs found to shuffle. Please try again later or contact your videoconference organizer.",
+  "errorNotCoHost": "The Zoom integration user is not a co-host. Please make sure that the user is a co-host and try again.",
   "errorObs": "An error occurred while attempting to connect to OBS Studio. Please verify that OBS Studio is running and that the <code>obs-websocket</code> configuration is correct.",
   "errorObsAuth": "The password for the OBS Studio integration might be incorrect. Please verify that the password is correct and try again.",
   "errorObsCameraScene": "The configured default camera scene does not exist anymore. Please change it in the settings.",
@@ -134,6 +136,7 @@
   "autoQuitWhenDone": "Quit app after media sync",
   "recurring": "Recurring media",
   "refresh": "Refresh media list",
+  "remindNeedCoHost": "Don't forget to make the Zoom integration user a co-host",
   "reportIssue": "Report an issue",
   "autoRunAtBoot": "Run app at system start-up",
   "screen": "Screen",
@@ -178,6 +181,9 @@
   "webdavFolder": "Congregation sync folder",
   "webdavFolderUp": "Move directory up",
   "window": "Moveable window",
+  "zoomAutoStartMeeting": "Automatically perform start meeting actions",
+  "zoomAutoStartTime": "Execute X minutes before the meeting",
   "zoomId": "Zoom Meeting ID",
-  "zoomName": "Zoom participant name"
+  "zoomName": "Zoom participant name",
+  "zoomSpotlight": "Spotlight video when starting the meeting"
 }

@@ -234,6 +234,36 @@
         :locked="$isLocked('app.zoom.password')"
         required
       />
+      <form-input
+        id="app.zoom.spotlight"
+        v-model="app.zoom.spotlight"
+        field="switch"
+        :locked="$isLocked('app.zoom.spotlight')"
+      >
+        <template #label>
+          <span v-html="$t('zoomSpotlight')" />
+        </template>
+      </form-input>
+      <form-input
+        id="app.zoom.autoStartMeeting"
+        v-model="app.zoom.autoStartMeeting"
+        field="switch"
+        :locked="$isLocked('app.zoom.autoStartMeeting')"
+      >
+        <template #label>
+          <span v-html="$t('zoomAutoStartMeeting')" />
+        </template>
+      </form-input>
+      <form-input
+        v-if="app.zoom.autoStartMeeting"
+        id="meeting.zoom.autoStartTime"
+        v-model="app.zoom.autoStartTime"
+        field="slider"
+        :min="1"
+        :max="10"
+        :group-label="$t('zoomAutoStartTime')"
+        :locked="$isLocked('app.zoom.autoStartTime')"
+      />
     </template>
     <v-divider class="mb-6" />
     <form-input

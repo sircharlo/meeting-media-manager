@@ -13,6 +13,9 @@ export interface ZoomPrefs {
   name: string | null
   id: string | null
   password: string | null
+  spotlight: boolean
+  autoStartMeeting: boolean
+  autoStartTime: number | null
 }
 
 export const dateFormats = [
