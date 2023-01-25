@@ -12,7 +12,7 @@ const plugin: Plugin = (
 
     if (!client || !enable || !id || !password || !name) {
       if (client) {
-        client.off('user-updated', setCoHost)
+        client.off('user-updated', setUserProps)
       }
       store.commit('zoom/clear')
       return
@@ -33,7 +33,7 @@ const plugin: Plugin = (
           })
         ).signature,
       })
-      client.on('user-updated', setCoHost)
+      client.on('user-updated', setUserProps)
       store.commit('zoom/setConnected', true)
     } catch (e: unknown) {
       $log.error(e)
@@ -97,8 +97,8 @@ const plugin: Plugin = (
     )
   }
 
-  function toggleVideo(socket: WebSocket, enable: boolean) {
-    sendToWebSocket(
+  function toggleVideo(_: WebSocket, enable: boolean) {
+    /* sendToWebSocket(
       socket,
       {
         evt: 12297,
@@ -109,7 +109,8 @@ const plugin: Plugin = (
     sendToWebSocket(socket, {
       evt: 4167,
       body: {},
-    })
+    }) */
+    store.commit('zoom/toggleVideo', enable)
   }
 
   function toggleSplotlight(socket: WebSocket, enable: boolean) {
@@ -147,10 +148,11 @@ const plugin: Plugin = (
     }
   }
 
-  function setCoHost() {
+  function setUserProps() {
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (client) {
       store.commit('zoom/setCoHost', client.isCoHost())
+      store.commit('zoom/setVideo', !!client.getCurrentUser()?.bVideoOn)
     }
   }
 }

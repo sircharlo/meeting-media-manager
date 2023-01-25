@@ -247,11 +247,20 @@ export default defineComponent({
     coHost(): boolean {
       return this.$store.state.zoom.coHost as boolean
     },
+    videoOn(): boolean {
+      return this.$store.state.zoom.video as boolean
+    },
+    videoToggle(): boolean {
+      return this.$store.state.zoom.toggleVideo as boolean
+    },
     zoomClient(): typeof EmbeddedClient {
       return this.$store.state.zoom.client as typeof EmbeddedClient
     },
   },
   watch: {
+    videoToggle(val: boolean) {
+      this.toggleVideo(val)
+    },
     coHost(val: boolean) {
       if (val) {
         this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
@@ -401,6 +410,14 @@ export default defineComponent({
     }
   },
   methods: {
+    toggleVideo(enable: boolean) {
+      const cameraButton = document.querySelector(
+        '#zoomMeeting > div > div > div:nth-child(2) > button:nth-child(2)'
+      ) as HTMLButtonElement
+      if (cameraButton && this.videoOn !== enable) {
+        cameraButton.click()
+      }
+    },
     toggleZoomPart() {
       if (this.zoomPart) {
         this.zoomPart = false
