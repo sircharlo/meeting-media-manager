@@ -20,12 +20,23 @@ const plugin: Plugin = (
 
     $notify('remindNeedCoHost')
 
+    if (!$config.zoomSdkKey) {
+      console.warn('No Zoom SDK Key provided')
+    }
+
+    if (!$config.zoomSignatureEndpoint) {
+      console.warn('No Zoom Signature Endpoint provided')
+    }
+
     try {
       await client.join({
         sdkKey: $config.zoomSdkKey,
         meetingNumber: id,
         password,
         userName: name,
+        error: (e: unknown) => {
+          $log.error(e)
+        },
         signature: (
           await $axios.$post($config.zoomSignatureEndpoint, {
             meetingNumber: id,
