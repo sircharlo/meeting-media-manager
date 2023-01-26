@@ -136,6 +136,10 @@ const plugin: Plugin = (
     msg: { evt: number; body: { [key: string]: any }; seq?: number },
     withUser = false
   ) {
+    if (!socket) {
+      $warn('errorNoSocket')
+      return
+    }
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (client) {
       const sequence = store.state.zoom.sequence as number

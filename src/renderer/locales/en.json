@@ -46,6 +46,7 @@
   "errorJwpubMediaExtract": "An error occurred while extracting media from the following publication:",
   "errorMwbUnavailable": "The Meeting Workbook is not available in your selected language. Consider setting a fallback language to use whenever necessary.",
   "errorNoShuffleSongs": "There were no songs found to shuffle. Please try again later or contact your videoconference organizer.",
+  "errorNoSocket": "No WebSocket was found. There is no active connection to the Zoom meeting for automation.",
   "errorNotCoHost": "The Zoom integration user is not a co-host. Please make sure that the user is a co-host and try again.",
   "errorObs": "An error occurred while attempting to connect to OBS Studio. Please verify that OBS Studio is running and that the <code>obs-websocket</code> configuration is correct.",
   "errorObsAuth": "The password for the OBS Studio integration might be incorrect. Please verify that the password is correct and try again.",
