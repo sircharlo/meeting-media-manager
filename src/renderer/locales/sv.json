@@ -12,7 +12,7 @@
   "convertDownloaded": "Konvertera media till MP4-format",
   "convertDownloadedExplain": "Användbar för helt fjärranslutna icke-hybrid-Zoom-möten, för användning med Zooms inbyggda MP4-fildelningsfunktion",
   "convertExternal": "Möjlighet att importera tilläggsmedia",
-  "coWeek": "Next planned visit of the Circuit Overseer",
+  "coWeek": "Nästa planerade besök av kretstillsyningsmannen",
   "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Anpassa",
   "customCachePath": "Anpassad cache sökväg (för publikationer, etc.)",
