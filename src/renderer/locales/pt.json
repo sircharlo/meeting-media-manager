@@ -13,7 +13,7 @@
   "convertDownloadedExplain": "Útil para reuniões realizadas apenas pelo Zoom. Ideal para ser utilizado com o recurso de compartilhamento de arquivos MP4 nativo do Zoom",
   "convertExternal": "Habilitar conversão de mídia adicional",
   "coWeek": "Data da visita do Superintendente de Circuito",
-  "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
+  "coWeekExplain": "Com essa opção, o M³ define automaticamente a reunião do meio de semana para terça-feira e só busca as mídias necessárias",
   "custom": "Personalizado",
   "customCachePath": "Pasta de cache personalizado (para publicações, etc.)",
   "dark": "Escuro",
