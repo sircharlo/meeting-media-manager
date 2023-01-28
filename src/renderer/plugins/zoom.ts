@@ -35,6 +35,7 @@ const plugin: Plugin = (
         password,
         userName: name,
         error: (e: unknown) => {
+          console.debug('Caught join error')
           $log.error(e)
         },
         signature: (
@@ -47,6 +48,7 @@ const plugin: Plugin = (
       client.on('user-updated', setUserProps)
       store.commit('zoom/setConnected', true)
     } catch (e: unknown) {
+      console.debug('caught Zoom error')
       $log.error(e)
     }
   }
