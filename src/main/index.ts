@@ -490,11 +490,7 @@ if (gotTheLock) {
   })
 
   autoUpdater.on('error', (e) => {
-    win?.webContents.send('notifyUser', [
-      'updateError',
-      { type: 'error', identifier: e.message },
-      e,
-    ])
+    win?.webContents.send('notifyUser', ['updateError', { type: 'error' }, e])
   })
   autoUpdater.on('update-available', (info) => {
     if (platform() === 'darwin') {
