@@ -20,7 +20,7 @@
     "syncInProgress": "Medien werden synchronisiert",
     "mainScreen": "Hauptseite",
     "chooseWeek": "Eine Woche auswählen",
-    "syncComplete": "Synchronisation abgeschlossen!",
+    "syncComplete": "Synchronisierung abgeschlossen!",
     "musicPlaying": "Musikwiedergabe vor und nach den Zusammenkünften"
   },
   "manage-media": {
@@ -31,13 +31,13 @@
     "imgRename": "Eine Mediendatei umbenennen"
   },
   "present-media": {
-    "imgButton": "Blue play button to enter media controller mode",
+    "imgButton": "Blaue Wiedergabe-Schaltfläche, um in den Mediensteuerungsmodus zu gelangen",
     "imgSelectMeeting": "Eine Zusammenkunft auswählen, für die Medien angezeigt werden sollen",
-    "imgBG": "Standard-Medien-Hintergrund mit automatisch generiertem Jahrestext",
+    "imgBG": "Standard-Hintergrundbild mit automatisch erstelltem Jahrestext",
     "imgMediaList": "Liste der Medien, die gezeigt werden können",
-    "imgStandby": "M³ Media Präsentation im Standby-Modus",
+    "imgStandby": "M³ Medienpräsentation im Standby-Modus",
     "imgDisplayPic": "Ein Bild anzeigen",
     "imgPlayVideo": "Ein Video abspielen",
-    "imgVideoScrub": "Zu einer bestimmten Zeit in einem Video wechseln"
+    "imgVideoScrub": "Zu einer bestimmten Stelle in einem Video springen"
   }
 }
