@@ -142,6 +142,10 @@ const schema: Schema<ElectronStore> = {
             type: 'boolean',
             default: PREFS.app.zoom.spotlight,
           },
+          hideComponent: {
+            type: 'boolean',
+            default: PREFS.app.zoom.hideComponent,
+          },
           autoRename: {
             type: 'array',
             default: PREFS.app.zoom.autoRename,

@@ -128,6 +128,8 @@ export default defineComponent({
           return 'enableZoom'
         case 'app.zoom.autoStartMeeting':
         case 'app.zoom.autoStartTime':
+        case 'app.zoom.autoRename':
+        case 'app.zoom.hideComponent':
         case 'app.zoom.id':
         case 'app.zoom.name':
         case 'app.zoom.spotlight':

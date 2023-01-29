@@ -245,6 +245,16 @@
         </template>
       </form-input>
       <form-input
+        id="app.zoom.hideComponent"
+        v-model="app.zoom.hideComponent"
+        field="switch"
+        :locked="$isLocked('app.zoom.hideComponent')"
+      >
+        <template #label>
+          <span v-html="$t('zoomHideComponent')" />
+        </template>
+      </form-input>
+      <form-input
         id="app.zoom.autoStartMeeting"
         v-model="app.zoom.autoStartMeeting"
         field="switch"

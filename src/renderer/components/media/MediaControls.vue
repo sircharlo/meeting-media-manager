@@ -444,6 +444,8 @@ export default defineComponent({
       }
     })
 
+    this.showZoomComponent = !this.$getPrefs('app.zoom.hideComponent')
+
     await promise
   },
   methods: {
