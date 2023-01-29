@@ -7,6 +7,7 @@ interface ZoomStore {
   coHost: boolean
   video: boolean
   sequence: number
+  started: boolean
   toggleVideo: boolean
   websocket: WebSocket | null
 }
@@ -17,6 +18,7 @@ const defaultState: ZoomStore = {
   coHost: false,
   video: false,
   sequence: 1,
+  started: false,
   toggleVideo: false,
   websocket: null,
 }
@@ -26,6 +28,9 @@ export const state = () => Object.assign({}, defaultState)
 export const mutations: MutationTree<ZoomStore> = {
   setClient(state, client: typeof EmbeddedClient) {
     state.client = client
+  },
+  setStarted(state, started: boolean) {
+    state.started = started
   },
   setWebSocket(state, websocket: WebSocket) {
     state.websocket = websocket

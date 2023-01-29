@@ -186,7 +186,7 @@ interface CustomProps {
     domain = 'mediaWindow'
   ) => Promise<void>
   $shuffleMusic: (stop = false, immediately = false) => Promise<void>
-  $startMeeting: (socket: WebSocket) => void
+  $startMeeting: (socket: WebSocket) => Promise<void>
   $stopMeeting: (socket: WebSocket) => void
   $storePath: () => string | undefined
   $success: (

@@ -64,6 +64,8 @@ const plugin: Plugin = (
   inject('startMeeting', async (socket: WebSocket) => {
     if (!store.state.zoom.coHost) {
       $warn('errorNotCoHost')
+    } else {
+      store.commit('zoom/setStarted', true)
     }
     toggleAllowUnmute(socket, false)
     await muteAll(socket)
@@ -78,6 +80,8 @@ const plugin: Plugin = (
   inject('stopMeeting', (socket: WebSocket) => {
     if (!store.state.zoom.coHost) {
       $warn('errorNotCoHost')
+    } else {
+      store.commit('zoom/setStarted', false)
     }
     toggleSplotlight(socket, false)
     toggleAudio(socket, false)
@@ -235,9 +239,11 @@ const plugin: Plugin = (
       })
   }
 
-  const setUserProps: typeof event_user_updated = (payload) => {
-    store.commit('zoom/setCoHost', payload.bCoHost)
-    store.commit('zoom/setVideo', payload.bVideoOn)
+  const setUserProps: typeof event_user_updated = () => {
+    const client = store.state.zoom.client as typeof EmbeddedClient | null
+    if (!client) return
+    store.commit('zoom/setCoHost', client.isCoHost())
+    store.commit('zoom/setVideo', client.getCurrentUser()?.bVideoOn)
   }
 }
 

@@ -43,26 +43,6 @@
           </template>
           <span>{{ $t('lastMinuteSong') }}</span>
         </v-tooltip>
-        <v-tooltip v-if="zoomIntegration" bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              class="ml-4"
-              aria-label="Toggle zoom component"
-              v-bind="attrs"
-              v-on="on"
-              @click="showZoomComponent = !showZoomComponent"
-            >
-              <font-awesome-icon :icon="faZ" pull="left" size="lg" />
-              <font-awesome-icon
-                :icon="showZoomComponent ? faEyeSlash : faEye"
-                pull="right"
-                size="lg"
-              />
-            </v-btn>
-          </template>
-          <span>{{ $t('zoomToggleComponent') }}</span>
-        </v-tooltip>
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
@@ -142,6 +122,47 @@
             </v-btn>
           </template>
           <span>{{ $t('sortMedia') }}</span>
+        </v-tooltip>
+      </v-col>
+    </v-app-bar>
+    <v-app-bar v-if="zoomIntegration" color="primary" class="text-left">
+      <v-app-bar-nav-icon>
+        <font-awesome-icon :icon="faZ" size="lg" />
+      </v-app-bar-nav-icon>
+      <v-col>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              aria-label="Toggle zoom component"
+              v-bind="attrs"
+              v-on="on"
+              @click="showZoomComponent = !showZoomComponent"
+            >
+              <font-awesome-icon
+                :icon="showZoomComponent ? faEyeSlash : faEye"
+                size="lg"
+              />
+            </v-btn>
+          </template>
+          <span>{{ $t('zoomToggleComponent') }}</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              aria-label="Toggle zoom meeting"
+              v-bind="attrs"
+              v-on="on"
+              @click="toggleZoomMeeting()"
+            >
+              <font-awesome-icon
+                :icon="zoomStarted ? faStop : faPlay"
+                size="lg"
+              />
+            </v-btn>
+          </template>
+          <span>{{ $t(`Zoom${zoomStarted ? 'Stop' : 'Start'}Meeting`) }}</span>
         </v-tooltip>
       </v-col>
     </v-app-bar>
@@ -230,6 +251,8 @@ import {
   faMusic,
   faPlus,
   faZ,
+  faPlay,
+  faStop,
   faEye,
   faEyeSlash,
   faGlobe,
@@ -327,6 +350,12 @@ export default defineComponent({
     faMusic() {
       return faMusic
     },
+    faPlay() {
+      return faPlay
+    },
+    faStop() {
+      return faStop
+    },
     faPlus() {
       return faPlus
     },
@@ -362,6 +391,9 @@ export default defineComponent({
     },
     zoomIntegration(): boolean {
       return !!this.$store.state.zoom.client
+    },
+    zoomStarted(): boolean {
+      return this.$store.state.zoom.started as boolean
     },
     zoomScene(): string | null {
       return this.$getPrefs('app.obs.zoomScene') as string | null
@@ -415,6 +447,13 @@ export default defineComponent({
     await promise
   },
   methods: {
+    async toggleZoomMeeting() {
+      if (this.zoomStarted) {
+        this.$stopMeeting(window.sockets[window.sockets.length - 1])
+      } else {
+        await this.$startMeeting(window.sockets[window.sockets.length - 1])
+      }
+    },
     async getSongs() {
       this.loadingSongs = true
       this.songs = await this.$getSongs()

@@ -189,5 +189,7 @@
   "zoomId": "Zoom Meeting ID",
   "zoomName": "Zoom participant name",
   "zoomSpotlight": "Spotlight video when starting the meeting",
+  "zoomStartMeeting": "Start Zoom meeting",
+  "zoomStopMeeting": "Stop Zoom meeting",
   "zoomToggleComponent": "Toggle Zoom component visibility"
 }
