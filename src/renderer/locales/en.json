@@ -182,9 +182,12 @@
   "webdavFolder": "Congregation sync folder",
   "webdavFolderUp": "Move directory up",
   "window": "Moveable window",
+  "zoomAutoRename": "Automatically rename Zoom participants",
+  "zoomAutoRenameFormat": "Old Name=New Name",
   "zoomAutoStartMeeting": "Automatically perform start meeting actions",
   "zoomAutoStartTime": "Execute X minutes before the meeting",
   "zoomId": "Zoom Meeting ID",
   "zoomName": "Zoom participant name",
-  "zoomSpotlight": "Spotlight video when starting the meeting"
+  "zoomSpotlight": "Spotlight video when starting the meeting",
+  "zoomToggleComponent": "Toggle Zoom component visibility"
 }

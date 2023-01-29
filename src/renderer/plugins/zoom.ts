@@ -1,5 +1,10 @@
+/* eslint-disable camelcase */
 import { Plugin } from '@nuxt/types'
-import { EmbeddedClient } from '@zoomus/websdk/embedded'
+import {
+  EmbeddedClient,
+  event_user_added,
+  event_user_updated,
+} from '@zoomus/websdk/embedded'
 import { ZoomPrefs } from '@/types'
 
 const plugin: Plugin = (
@@ -13,6 +18,7 @@ const plugin: Plugin = (
     if (!client || !enable || !id || !password || !name) {
       if (client) {
         client.off('user-updated', setUserProps)
+        client.off('user-added', onUserAdded)
       }
       store.commit('zoom/clear')
       return
@@ -46,6 +52,7 @@ const plugin: Plugin = (
         ).signature,
       })
       client.on('user-updated', setUserProps)
+      client.on('user-added', onUserAdded)
       store.commit('zoom/setConnected', true)
     } catch (e: unknown) {
       console.debug('caught Zoom error')
@@ -54,15 +61,15 @@ const plugin: Plugin = (
   }
   inject('connectZoom', connectZoom)
 
-  inject('startMeeting', (socket: WebSocket) => {
+  inject('startMeeting', async (socket: WebSocket) => {
     if (!store.state.zoom.coHost) {
       $warn('errorNotCoHost')
     }
     toggleAllowUnmute(socket, false)
-    muteAll(socket)
+    await muteAll(socket)
     toggleAudio(socket, true)
     toggleVideo(socket, true)
-    toggleMic(socket, false)
+    await toggleMic(socket, false)
     if ($getPrefs('app.zoom.spotlight')) {
       toggleSplotlight(socket, true)
     }
@@ -85,11 +92,38 @@ const plugin: Plugin = (
     })
   }
 
-  function muteAll(socket: WebSocket) {
-    sendToWebSocket(socket, {
-      evt: 8201,
-      body: { bMute: true },
-    })
+  async function rename(
+    socket: WebSocket | null,
+    name: string,
+    user: { id: number; name?: string }
+  ) {
+    const client = store.state.zoom.client as typeof EmbeddedClient | null
+    if (!client) return
+    try {
+      await client.rename(name, user.id)
+    } catch (e: unknown) {
+      sendToWebSocket(socket, {
+        evt: 4109,
+        body: {
+          id: user.id,
+          dn2: window.btoa(name),
+          olddn2: window.btoa(user.name ?? ''),
+        },
+      })
+    }
+  }
+
+  async function muteAll(socket: WebSocket) {
+    const client = store.state.zoom.client as typeof EmbeddedClient | null
+    if (!client) return
+    try {
+      await client.muteAll(true)
+    } catch (e: unknown) {
+      sendToWebSocket(socket, {
+        evt: 8201,
+        body: { bMute: true },
+      })
+    }
   }
 
   function toggleAudio(socket: WebSocket, enable: boolean) {
@@ -99,15 +133,21 @@ const plugin: Plugin = (
     })
   }
 
-  function toggleMic(socket: WebSocket, mute: boolean) {
-    sendToWebSocket(
-      socket,
-      {
-        evt: 8193,
-        body: { bMute: mute },
-      },
-      true
-    )
+  async function toggleMic(socket: WebSocket, mute: boolean) {
+    const client = store.state.zoom.client as typeof EmbeddedClient | null
+    if (!client) return
+    try {
+      await client.mute(mute)
+    } catch (e: unknown) {
+      sendToWebSocket(
+        socket,
+        {
+          evt: 8193,
+          body: { bMute: mute },
+        },
+        true
+      )
+    }
   }
 
   function toggleVideo(_: WebSocket, enable: boolean) {
@@ -145,14 +185,21 @@ const plugin: Plugin = (
   }
 
   function sendToWebSocket(
-    socket: WebSocket,
+    socket: WebSocket | null,
     msg: { evt: number; body: { [key: string]: any }; seq?: number },
     withUser = false
   ) {
-    if (!socket) {
-      $warn('errorNoSocket')
-      return
+    let webSocket = store.state.zoom.websocket as WebSocket | null
+    if (!webSocket) {
+      if (socket) {
+        webSocket = socket
+        store.commit('zoom/setWebSocket', socket)
+      } else {
+        $warn('errorNoSocket')
+        return
+      }
     }
+    store.commit('zoom/setWebSocket', socket)
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (client) {
       const sequence = store.state.zoom.sequence as number
@@ -160,17 +207,37 @@ const plugin: Plugin = (
       if (withUser) {
         msg.body.id = client.getCurrentUser()?.userId
       }
-      socket.send(JSON.stringify(msg))
+      webSocket.send(JSON.stringify(msg))
       store.commit('zoom/increaseSequence')
     }
   }
 
-  function setUserProps() {
-    const client = store.state.zoom.client as typeof EmbeddedClient | null
-    if (client) {
-      store.commit('zoom/setCoHost', client.isCoHost())
-      store.commit('zoom/setVideo', !!client.getCurrentUser()?.bVideoOn)
-    }
+  const onUserAdded: typeof event_user_added = (payload) => {
+    console.log('user added:', payload)
+    // @ts-ignore
+    const users = payload as (typeof payload)[]
+    users
+      .filter((user) => !user.bHold)
+      .forEach((user) => {
+        const renameList = $getPrefs('app.zoom.autoRename') as string[]
+        const names = renameList.map((name) => {
+          const [old, new_] = name.split('=')
+          return { old: old.trim(), new: new_.trim() }
+        })
+        const name = names.find((name) => name.old === user.displayName)
+        if (name) {
+          console.log('renaming...')
+          rename(null, name.new, {
+            id: user.userId,
+            name: name.old,
+          })
+        }
+      })
+  }
+
+  const setUserProps: typeof event_user_updated = (payload) => {
+    store.commit('zoom/setCoHost', payload.bCoHost)
+    store.commit('zoom/setVideo', payload.bVideoOn)
   }
 }
 

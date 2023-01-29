@@ -256,7 +256,7 @@
       </form-input>
       <form-input
         v-if="app.zoom.autoStartMeeting"
-        id="meeting.zoom.autoStartTime"
+        id="app.zoom.autoStartTime"
         v-model="app.zoom.autoStartTime"
         field="slider"
         :min="1"
@@ -264,6 +264,29 @@
         :group-label="$t('zoomAutoStartTime')"
         :locked="$isLocked('app.zoom.autoStartTime')"
       />
+      <v-col class="d-flex pa-0 pb-2 align-center">
+        <form-input
+          id="app.zoom.autoRename"
+          v-model="newAutoRename"
+          :label="$t('zoomAutoRename')"
+          :placeholder="$t('zoomAutoRenameFormat')"
+          hide-details="auto"
+        />
+        <v-btn class="ml-2" color="primary" @click="addAutoRename()">
+          <font-awesome-icon :icon="faAdd" size="lg" />
+        </v-btn>
+      </v-col>
+      <v-col>
+        <v-chip
+          v-for="(name, i) in app.zoom.autoRename"
+          :key="name"
+          close
+          class="mb-2 mr-2"
+          @click:close="removeAutoRename(i)"
+        >
+          {{ name }}
+        </v-chip>
+      </v-col>
     </template>
     <v-divider class="mb-6" />
     <form-input
@@ -289,7 +312,7 @@ import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
 import { LocaleObject } from '@nuxtjs/i18n'
-import { faGlobe } from '@fortawesome/free-solid-svg-icons'
+import { faGlobe, faAdd } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { AppPrefs, ElectronStore } from '~/types'
 import { DateFormat } from '~/types/prefs'
@@ -312,6 +335,7 @@ export default defineComponent({
     return {
       valid: true,
       mounted: false,
+      newAutoRename: '',
       oldName: PREFS.app.congregationName,
       app: {
         ...PREFS.app,
@@ -329,6 +353,9 @@ export default defineComponent({
   computed: {
     faGlobe() {
       return faGlobe
+    },
+    faAdd() {
+      return faAdd
     },
     dateFormats(): { label: string; value: DateFormat }[] {
       return dateFormats.map((val) => {
@@ -557,6 +584,14 @@ export default defineComponent({
     }
   },
   methods: {
+    addAutoRename() {
+      if (!this.newAutoRename) return
+      this.app.zoom.autoRename.push(this.newAutoRename)
+      this.newAutoRename = ''
+    },
+    removeAutoRename(index: number) {
+      this.app.zoom.autoRename.splice(index, 1)
+    },
     isValidPort(port: string | null) {
       if (!port) return false
 

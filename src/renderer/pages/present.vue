@@ -316,10 +316,11 @@ export default defineComponent({
     ipcRenderer.removeAllListeners('showingMedia')
     this.$unsetShortcuts('presentMode')
     if (this.zoomClient) {
-      this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
       this.$stopMeeting(window.sockets[window.sockets.length - 1])
       await this.zoomClient.leaveMeeting()
       this.$store.commit('zoom/clear')
+      this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
+      this.$store.commit('notify/deleteByMessage', 'errorNotCoHost')
     }
   },
   async mounted() {
@@ -408,6 +409,15 @@ export default defineComponent({
         this.$warn('errorPpEnable')
       }
     }
+    setTimeout(() => {
+      if (window.sockets.length > 0) {
+        console.debug('Found socket')
+        this.$store.commit(
+          'zoom/setWebSocket',
+          window.sockets[window.sockets.length - 1]
+        )
+      }
+    }, MS_IN_SEC)
   },
   methods: {
     toggleVideo(enable: boolean) {

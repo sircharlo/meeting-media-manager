@@ -28,6 +28,7 @@ const PREFS = {
       id: null,
       password: null,
       spotlight: false,
+      autoRename: [],
       autoStartMeeting: false,
       autoStartTime: 1,
     },

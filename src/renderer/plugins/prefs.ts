@@ -142,6 +142,13 @@ const schema: Schema<ElectronStore> = {
             type: 'boolean',
             default: PREFS.app.zoom.spotlight,
           },
+          autoRename: {
+            type: 'array',
+            default: PREFS.app.zoom.autoRename,
+            items: {
+              type: 'string',
+            },
+          },
           autoStartMeeting: {
             type: 'boolean',
             default: PREFS.app.zoom.autoStartMeeting,
