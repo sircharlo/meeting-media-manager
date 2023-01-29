@@ -16,6 +16,8 @@ updates:
     ignore:
       - dependency-name: '@fortawesome/vue-fontawesome'
         update-types: ['version-update:semver-major']
+      - dependency-name: 'minimatch'
+        update-types: ['version-update:semver-major']
       - dependency-name: 'nuxt'
         update-types: ['version-update:semver-major']
       - dependency-name: '@nuxtjs/i18n'
