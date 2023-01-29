@@ -8,7 +8,7 @@ ref: present-media
 
 Los modos de presentación multimedia y controlador están diseñados para simplificar y evitar errores durante las reuniones.
 
-Una vez que la opción `Habilitar botón para presentar multimedia en un pantalla externa o en una ventana separada` está habilitada, la pantalla de presentación de contenidos aparecerá automáticamente en el monitor externo si está presente, o en una ventana separada, arrastrable y redimensionable si no se detectó un monitor externo.
+Una vez que la opción `Habilitar botón para presentar multimedia en un pantalla externa o en una ventana separada` está habilitada, la pantalla de presentación de contenidos aparecerá automáticamente en el monitor externo si está presente, o en una ventana separada, movible y redimensionable si no se detectó un monitor externo.
 
 Cuando esté en modo de espera, la pantalla de presentación multimedia mostrará la imagen de fondo que está configurada en los ajustes. Si no se ha configurado una imagen de fondo, M³ intentará obtener y mostrar automáticamente el texto del año.
 
@@ -42,19 +42,19 @@ Si tiene OBS Studio v27 o anterior, debe instalar el complemento [obs-websocket]
 
 En la configuración de OBS, en `General` > `Bandeja del sistema`, active todas las casillas de verificación. En `Output` > `Streaming`, habilite un codificador de hardware si está disponible. En `Vídeo` > `Resolución base (lienzo)` y `Resolución de salida (escalada)`, elija `1280x720`, y en `Filtro de reducción de escala`, elija `Bilineal`.
 
-Configure al menos 2 escenas: una para la visualización de contenidos (`Captura de ventana` o `Captura de pantalla` con el cursor del mouse deshabilitado y el título de ventana/monitor apropiado seleccionado), y otra para la vista de la plataforma (`Video Capture Device` con la cámara del Salón del Reino seleccionada). Puede agregar tantas escenas como sea necesario, con la cámara ajustada, ampliada y recortada según sea necesario (vista de atril, vista de conductor y lector, vista de mesa, etc.).
+Configure al menos 2 escenas: una para la visualización de contenidos (`Captura de ventana` o `Captura de pantalla` con el cursor del ratón deshabilitado y el título de ventana/monitor apropiado seleccionado), y otra para la vista de la plataforma (`Video Capture Device` con la cámara del Salón del Reino seleccionada). Puede agregar tantas escenas como sea necesario, con la cámara ajustada, ampliada y recortada según sea necesario (vista de atril, vista de conductor y lector, vista de mesa, etc.).
 
 Agregue un acceso directo a OBS Studio, con el parámetro `--startvirtualcam`, a la carpeta de inicio del perfil de usuario de Windows, para garantizar que OBS Studio se inicie automáticamente cuando el usuario inicie sesión.
 
 #### Configuración inicial: Zoom Salón del Reino
 
-Zoom debe configurarse para usar monitores duales. Habilite los métodos abreviados de teclado globales para que Zoom silencie/active el audio del Salón del Reino en Zoom (<kbd>Alt A</kbd>), e inicie/detenga la transmisión de video del Salón del Reino en Zoom (<kbd>Alt V</kbd>).
+Zoom debe configurarse para usar monitores duales. Habilite los atajos de teclado globales para que Zoom silencie/active el audio del Salón del Reino en Zoom (<kbd>Alt A</kbd>), e inicie/detenga la transmisión de video del Salón del Reino en Zoom (<kbd>Alt V</kbd>).
 
-onfigure el "micrófono" predeterminado para que sea la salida combinada del mezclador del equipo de sonido (para que todo lo que se escuche a través del sistema de sonido del Salón del Reino se transmita a través de Zoom, incluidos los micrófonos y los contenidos) y la "cámara" para que sea la cámara virtual proporcionada por OBS Studio.
+Configure el "micrófono" predeterminado para que sea la salida combinada del mezclador del equipo de sonido (para que todo lo que se escuche a través del sistema de sonido del Salón del Reino se transmita a través de Zoom, incluidos los micrófonos y los contenidos) y la "cámara" para que sea la cámara virtual proporcionada por OBS Studio.
 
 #### Configuración inicial: M³
 
-Habilite la opción `Habilitar botón para presentar multimedia en un pantalla externa o en una ventana separada`.
+Habilite la opción `Habilitar botón para presentar multimedia en una pantalla externa o en una ventana separada`.
 
 Habilite y configure el modo de compatibilidad de OBS Studio, utilizando la información de puerto y contraseña establecida en el paso de configuración de OBS Studio.
 
@@ -98,7 +98,7 @@ Igual que la sección correspondiente anterior. Con la adición del atajo de tec
 
 #### Configuración inicial: M³
 
-Habilite la opción `Habilitar botón para presentar multimedia en un pantalla externa o en una ventana separada`.
+Habilite la opción `Habilitar botón para presentar multimedia en una pantalla externa o en una ventana separada`.
 
 #### Comenzando la reunión
 
