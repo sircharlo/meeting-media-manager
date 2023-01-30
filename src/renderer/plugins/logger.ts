@@ -68,10 +68,10 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
                   if (value) {
                     if (scope === 'cong') value = '***'
                     if (key === 'localOutputPath') value = '***'
+                    if (key === 'customCachePath') value = '***'
                     if (key === 'password' || key === 'port') value = '***'
                     if (key === 'obs') {
                       if (value.password) value.password = '***'
-                      if (value.port) value.port = '***'
                     }
                   }
                   return [key, value]
