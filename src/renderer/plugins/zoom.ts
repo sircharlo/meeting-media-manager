@@ -234,7 +234,8 @@ const plugin: Plugin = (
           return { old: old.trim(), new: new_.trim() }
         })
         const name = names.find(
-          (name) => name.old.toLowerCase() === user.displayName?.toLowerCase()
+          (name) =>
+            name.old.toLowerCase() === user.displayName?.trim().toLowerCase()
         )
         if (name) {
           console.log('renaming...')
