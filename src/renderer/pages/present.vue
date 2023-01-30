@@ -341,10 +341,20 @@ export default defineComponent({
     if (zoom.enable && zoom.name && zoom.id && zoom.password) {
       const client = zoomSDK.createClient()
       this.$store.commit('zoom/setClient', client)
-      client.init({
-        zoomAppRoot: document.getElementById('zoomMeeting') ?? undefined,
-        language: this.$i18n.localeProperties.iso,
-      })
+      try {
+        await client
+          .init({
+            zoomAppRoot: document.getElementById('zoomMeeting') ?? undefined,
+            language: this.$i18n.localeProperties.iso,
+          })
+          .catch((e) => {
+            console.debug('Caught init promise error')
+            console.error(e)
+          })
+      } catch (e: unknown) {
+        console.debug('Caught init error')
+        console.error(e)
+      }
       await this.$connectZoom()
       const originalSend = WebSocket.prototype.send
       window.sockets = []

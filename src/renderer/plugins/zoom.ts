@@ -35,22 +35,27 @@ const plugin: Plugin = (
     }
 
     try {
-      await client.join({
-        sdkKey: $config.zoomSdkKey,
-        meetingNumber: id,
-        password,
-        userName: name,
-        error: (e: unknown) => {
-          console.debug('Caught join error')
+      await client
+        .join({
+          sdkKey: $config.zoomSdkKey,
+          meetingNumber: id,
+          password,
+          userName: name,
+          error: (e: unknown) => {
+            console.debug('Caught join error')
+            $log.error(e)
+          },
+          signature: (
+            await $axios.$post($config.zoomSignatureEndpoint, {
+              meetingNumber: id,
+              role: 0,
+            })
+          ).signature,
+        })
+        .catch((e: unknown) => {
+          console.debug('Caught join promise error')
           $log.error(e)
-        },
-        signature: (
-          await $axios.$post($config.zoomSignatureEndpoint, {
-            meetingNumber: id,
-            role: 0,
-          })
-        ).signature,
-      })
+        })
       client.on('user-updated', setUserProps)
       client.on('user-added', onUserAdded)
       store.commit('zoom/setConnected', true)
