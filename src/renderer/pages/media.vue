@@ -104,7 +104,7 @@ export default defineComponent({
         try {
           await this.transitionToMedia(media)
         } catch (e: unknown) {
-          console.log('Error transitioning media', e)
+          console.error('Error transitioning media', e)
           await this.hideMedia()
           ipcRenderer.send('videoEnd')
         }

@@ -98,7 +98,6 @@ test('render the presentation mode page correctly', async () => {
 })
 
 test('play an image', async () => {
-  console.log(mwDayPresent())
   if (platform() === 'win32' || mwDayPresent()) {
     test.skip()
   }

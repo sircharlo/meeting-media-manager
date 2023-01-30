@@ -362,7 +362,7 @@ export default defineComponent({
       const originalSend = WebSocket.prototype.send
       window.sockets = []
       WebSocket.prototype.send = function (...args) {
-        console.log('send:', args)
+        console.debug('send:', args)
         if (!window.sockets.includes(this)) {
           window.sockets.push(this)
         }
@@ -391,7 +391,6 @@ export default defineComponent({
           const timeLeft = this.$dayjs
             .duration(timeToStop.diff(this.$dayjs()), 'ms')
             .asSeconds()
-          console.log('timeLeft:', timeLeft.toFixed(0))
           if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
             if (!this.zoomStarted) {
               await this.$startMeeting(

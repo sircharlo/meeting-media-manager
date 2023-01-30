@@ -222,7 +222,6 @@ const plugin: Plugin = (
   }
 
   const onUserAdded: typeof event_user_added = (payload) => {
-    console.log('user added:', payload)
     // @ts-ignore
     const users = payload as (typeof payload)[]
     users
@@ -238,7 +237,6 @@ const plugin: Plugin = (
             name.old.toLowerCase() === user.displayName?.trim().toLowerCase()
         )
         if (name) {
-          console.log('renaming...')
           rename(null, name.new, {
             id: user.userId,
             name: name.old,
