@@ -151,6 +151,7 @@
           <template #activator="{ on, attrs }">
             <v-btn
               icon
+              :loading="loadingZoom"
               aria-label="Toggle zoom meeting"
               v-bind="attrs"
               v-on="on"
@@ -162,7 +163,7 @@
               />
             </v-btn>
           </template>
-          <span>{{ $t(`Zoom${zoomStarted ? 'Stop' : 'Start'}Meeting`) }}</span>
+          <span>{{ $t(`zoom${zoomStarted ? 'Stop' : 'Start'}Meeting`) }}</span>
         </v-tooltip>
       </v-col>
     </v-app-bar>
@@ -296,6 +297,7 @@ export default defineComponent({
       song: null as null | VideoFile,
       songs: [] as VideoFile[],
       loadingSongs: true,
+      loadingZoom: false,
       showPrefix: false,
       showZoomComponent: true,
       items: [] as {
@@ -450,11 +452,13 @@ export default defineComponent({
   },
   methods: {
     async toggleZoomMeeting() {
+      this.loadingZoom = true
       if (this.zoomStarted) {
         this.$stopMeeting(window.sockets[window.sockets.length - 1])
       } else {
         await this.$startMeeting(window.sockets[window.sockets.length - 1])
       }
+      this.loadingZoom = false
     },
     async getSongs() {
       this.loadingSongs = true
