@@ -208,7 +208,7 @@
       :locked="$isLocked('app.zoom.enable')"
     >
       <template #label>
-        <span v-html="`[BETA] ${$t('enableZoom')}`" />
+        <span v-html="`${$t('enableZoom')} [BETA]`" />
       </template>
     </form-input>
     <template v-if="app.zoom.enable">
