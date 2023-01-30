@@ -410,7 +410,7 @@ export default defineComponent({
       }
     }
     setTimeout(() => {
-      if (window.sockets.length > 0) {
+      if (window.sockets && window.sockets.length > 0) {
         console.debug('Found socket')
         this.$store.commit(
           'zoom/setWebSocket',
