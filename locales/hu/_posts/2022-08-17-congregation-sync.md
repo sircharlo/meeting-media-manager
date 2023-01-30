@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Konfiguráció
 title: Gyülekezet szinkronizálás
 ref: congregation-sync
 ---
