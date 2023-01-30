@@ -68,7 +68,7 @@
   "errorWUnavailable": "Die Studienausgabe des Wachtturms ist in der ausgewählten Sprache nicht verfügbar. Vielleicht kann eine Ausweichsprache festgelegt werden.",
   "errorYeartextNotFound": "Der Jahrestext ist für die folgende Sprache (noch) nicht verfügbar. Vielleicht kann eine Ausweichsprache festgelegt werden.",
   "excludeLffImages": "Alle Bilder aus <em>Glücklich – für immer</em> außerhalb des Versammlungsbibelstudiums ausschließen",
-  "excludeTh": "Alle Medien der <em>th</em> Broschüre ausschließen",
+  "excludeTh": "Alle Medien der <em>Lesen-und-Lehren-Broschüre</em> ausschließen",
   "fetchMedia": "Medienordner aktualisieren",
   "fieldInvalid": "Das ist kein gültiger Wert für dieses Feld.",
   "fieldMax": "Höchstens XX Zeichen.",
