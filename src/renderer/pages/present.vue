@@ -256,6 +256,9 @@ export default defineComponent({
     zoomClient(): typeof EmbeddedClient {
       return this.$store.state.zoom.client as typeof EmbeddedClient
     },
+    zoomStarted(): boolean {
+      return this.$store.state.zoom.started as boolean
+    },
   },
   watch: {
     videoToggle(val: boolean) {
@@ -384,13 +387,17 @@ export default defineComponent({
           .millisecond(0)
           .subtract(this.$getPrefs('app.zoom.autoStartTime') as number, 'm')
 
-        this.zoomInterval = setInterval(() => {
+        this.zoomInterval = setInterval(async () => {
           const timeLeft = this.$dayjs
             .duration(timeToStop.diff(this.$dayjs()), 'ms')
             .asSeconds()
           console.log('timeLeft:', timeLeft.toFixed(0))
           if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
-            this.$startMeeting(window.sockets[window.sockets.length - 1])
+            if (!this.zoomStarted) {
+              await this.$startMeeting(
+                window.sockets[window.sockets.length - 1]
+              )
+            }
             clearInterval(this.zoomInterval as NodeJS.Timer)
           } else if (timeLeft < 0) {
             clearInterval(this.zoomInterval as NodeJS.Timer)
