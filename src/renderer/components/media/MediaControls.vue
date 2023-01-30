@@ -1,7 +1,7 @@
 <!-- Media controls for the presentation mode -->
 <template>
   <v-row>
-    <v-app-bar height="64px">
+    <v-app-bar height="64px" width="100%">
       <v-col class="text-left" cols="4">
         <v-menu bottom right>
           <template #activator="{ on, attrs }">
