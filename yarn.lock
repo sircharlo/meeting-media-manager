@@ -6423,6 +6423,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"deepmerge@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "deepmerge@npm:4.3.0"
+  checksum: c7980eb5c5be040b371f1df0d566473875cfabed9f672ccc177b81ba8eee5686ce2478de2f1d0076391621cbe729e5eacda397179a59ef0f68901849647db126
+  languageName: node
+  linkType: hard
+
 "defaults@npm:^1.0.3":
   version: 1.0.4
   resolution: "defaults@npm:1.0.4"
@@ -10697,7 +10704,7 @@ __metadata:
     core-js: ^3.27.2
     cross-env: ^7.0.3
     css-loader: ^5.2.7
-    deepmerge: ^4.2.2
+    deepmerge: ^4.3.0
     dotenv: ^16.0.3
     electron: 22.1.0
     electron-builder: 23.6.0
