@@ -127,6 +127,7 @@
     </v-app-bar>
     <v-app-bar
       v-if="zoomIntegration"
+      id="zoom-app-bar"
       height="56"
       color="primary"
       class="text-left"
@@ -455,7 +456,16 @@ export default defineComponent({
       }
     })
 
-    this.showZoomComponent = !this.$getPrefs('app.zoom.hideComponent')
+    setTimeout(() => {
+      this.showZoomComponent = !this.$getPrefs('app.zoom.hideComponent')
+      const el = document.querySelector(
+        '#zoom-app-bar button.v-app-bar__nav-icon'
+      ) as HTMLButtonElement
+
+      if (el) {
+        el.disabled = true
+      }
+    }, MS_IN_SEC)
 
     await promise
   },
@@ -578,3 +588,14 @@ export default defineComponent({
   },
 })
 </script>
+<style lang="scss">
+#zoom-app-bar {
+  button.v-app-bar__nav-icon {
+    cursor: initial !important;
+
+    &:before {
+      opacity: 0 !important;
+    }
+  }
+}
+</style>
