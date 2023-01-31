@@ -348,10 +348,12 @@ export default defineComponent({
   },
   computed: {
     listHeight(): string {
-      let OTHER_ELEMENTS = 136
+      const FOOTER = 72
+      const TOP_BAR = 64
       const ZOOM_BAR = 56
-      if (this.zoomIntegration) OTHER_ELEMENTS += ZOOM_BAR
-      return `max-height: ${this.windowHeight - OTHER_ELEMENTS}px`
+      let otherElements = FOOTER + TOP_BAR
+      if (this.zoomIntegration) otherElements += ZOOM_BAR
+      return `max-height: ${this.windowHeight - otherElements}px`
     },
     date(): string {
       return this.$route.query.date as string
