@@ -72,13 +72,18 @@ const plugin: Plugin = (
     } else {
       store.commit('zoom/setStarted', true)
     }
+
+    const userID = store.state.zoom.userID as number
+    const hostID = store.state.zoom.hostID as number
+    const automateAudio = $getPrefs('app.zoom.automateAudio') as boolean
+
     toggleAllowUnmute(socket, false)
     await muteAll(socket)
-    toggleAudio(socket, true)
-    toggleVideo(socket, true)
-    await toggleMic(socket, false)
-    if ($getPrefs('app.zoom.spotlight')) {
-      toggleSplotlight(socket, true)
+    if (automateAudio) toggleAudio(socket, true)
+    toggleVideo(socket, true, hostID)
+    await toggleMic(socket, false, automateAudio ? userID : hostID)
+    if (automateAudio || $getPrefs('app.zoom.spotlight')) {
+      toggleSplotlight(socket, true, hostID)
     }
   })
 
@@ -88,9 +93,13 @@ const plugin: Plugin = (
     } else {
       store.commit('zoom/setStarted', false)
     }
+
+    const hostID = store.state.zoom.hostID as number
+    const automateAudio = $getPrefs('app.zoom.automateAudio') as boolean
+
     toggleSplotlight(socket, false)
-    toggleAudio(socket, false)
-    toggleVideo(socket, false)
+    if (automateAudio) toggleAudio(socket, false)
+    toggleVideo(socket, false, hostID)
     toggleAllowUnmute(socket, true)
   })
 
@@ -142,11 +151,11 @@ const plugin: Plugin = (
     })
   }
 
-  async function toggleMic(socket: WebSocket, mute: boolean) {
+  async function toggleMic(socket: WebSocket, mute: boolean, userID?: number) {
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (!client) return
     try {
-      await client.mute(mute)
+      await client.mute(mute, userID)
     } catch (e: unknown) {
       sendToWebSocket(
         socket,
@@ -154,28 +163,29 @@ const plugin: Plugin = (
           evt: 8193,
           body: { bMute: mute },
         },
-        true
+        true,
+        userID
       )
     }
   }
 
-  function toggleVideo(_: WebSocket, enable: boolean) {
-    /* sendToWebSocket(
+  function toggleVideo(socket: WebSocket, enable: boolean, userID: number) {
+    sendToWebSocket(
       socket,
       {
         evt: 12297,
         body: { bOn: !enable },
       },
-      true
+      true,
+      userID
     )
-    sendToWebSocket(socket, {
-      evt: 4167,
-      body: {},
-    }) */
-    store.commit('zoom/toggleVideo', enable)
   }
 
-  function toggleSplotlight(socket: WebSocket, enable: boolean) {
+  function toggleSplotlight(
+    socket: WebSocket,
+    enable: boolean,
+    userID?: number
+  ) {
     if (enable) {
       sendToWebSocket(
         socket,
@@ -183,7 +193,8 @@ const plugin: Plugin = (
           evt: 4219,
           body: { bReplace: false, bSpotlight: true },
         },
-        true
+        true,
+        userID
       )
     } else {
       sendToWebSocket(socket, {
@@ -196,7 +207,8 @@ const plugin: Plugin = (
   function sendToWebSocket(
     socket: WebSocket | null,
     msg: { evt: number; body: { [key: string]: any }; seq?: number },
-    withUser = false
+    withUser = false,
+    userID?: number
   ) {
     let webSocket = store.state.zoom.websocket as WebSocket | null
     if (!webSocket) {
@@ -214,7 +226,7 @@ const plugin: Plugin = (
       const sequence = store.state.zoom.sequence as number
       msg.seq = sequence
       if (withUser) {
-        msg.body.id = client.getCurrentUser()?.userId
+        msg.body.id = userID ?? client.getCurrentUser()?.userId
       }
       webSocket.send(JSON.stringify(msg))
       store.commit('zoom/increaseSequence')
@@ -248,6 +260,9 @@ const plugin: Plugin = (
   const setUserProps: typeof event_user_updated = () => {
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (!client) return
+    const host = client.getAttendeeslist().find((user) => user.isHost)
+    store.commit('zoom/setUserID', client.getCurrentUser()?.userId)
+    store.commit('zoom/setHostID', host?.userId)
     store.commit('zoom/setCoHost', client.isCoHost())
     store.commit('zoom/setVideo', client.getCurrentUser()?.bVideoOn)
   }

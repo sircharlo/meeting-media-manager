@@ -5,22 +5,22 @@ interface ZoomStore {
   client: typeof EmbeddedClient | null
   connected: boolean
   coHost: boolean
-  video: boolean
   sequence: number
   started: boolean
-  toggleVideo: boolean
   websocket: WebSocket | null
+  userID: number | null
+  hostID: number | null
 }
 
 const defaultState: ZoomStore = {
   client: null,
   connected: false,
   coHost: false,
-  video: false,
   sequence: 1,
   started: false,
-  toggleVideo: false,
   websocket: null,
+  userID: null,
+  hostID: null,
 }
 
 export const state = () => Object.assign({}, defaultState)
@@ -29,18 +29,17 @@ export const mutations: MutationTree<ZoomStore> = {
   setClient(state, client: typeof EmbeddedClient) {
     state.client = client
   },
+  setUserID(state, userID: number) {
+    state.userID = userID
+  },
+  setHostID(state, hostID: number) {
+    state.hostID = hostID
+  },
   setStarted(state, started: boolean) {
     state.started = started
   },
   setWebSocket(state, websocket: WebSocket) {
     state.websocket = websocket
-  },
-  toggleVideo(state, enable: boolean) {
-    state.toggleVideo = enable
-  },
-  setVideo(state, video: boolean) {
-    state.video = video
-    state.toggleVideo = video
   },
   increaseSequence(state) {
     state.sequence += 1

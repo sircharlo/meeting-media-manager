@@ -129,6 +129,7 @@
       v-if="zoomIntegration"
       id="zoom-app-bar"
       height="56"
+      dark
       color="primary"
       class="text-left"
     >

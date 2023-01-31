@@ -146,6 +146,10 @@ const schema: Schema<ElectronStore> = {
             type: 'boolean',
             default: PREFS.app.zoom.hideComponent,
           },
+          automateAudio: {
+            type: 'boolean',
+            default: PREFS.app.zoom.automateAudio,
+          },
           autoRename: {
             type: 'array',
             default: PREFS.app.zoom.autoRename,

@@ -29,6 +29,7 @@ const PREFS = {
       password: null,
       spotlight: false,
       hideComponent: false,
+      automateAdio: false,
       autoRename: [],
       autoStartMeeting: false,
       autoStartTime: 1,
