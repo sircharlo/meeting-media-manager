@@ -351,7 +351,7 @@ export default defineComponent({
     listHeight(): string {
       const FOOTER = 72
       const TOP_BAR = 64
-      const ZOOM_BAR = 56
+      const ZOOM_BAR = 57
       let otherElements = FOOTER + TOP_BAR
       if (this.zoomIntegration) otherElements += ZOOM_BAR
       return `max-height: ${this.windowHeight - otherElements}px`
