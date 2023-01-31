@@ -125,7 +125,12 @@
         </v-tooltip>
       </v-col>
     </v-app-bar>
-    <v-app-bar v-if="zoomIntegration" color="primary" class="text-left">
+    <v-app-bar
+      v-if="zoomIntegration"
+      height="56"
+      color="primary"
+      class="text-left"
+    >
       <v-app-bar-nav-icon>
         <font-awesome-icon :icon="faZ" size="lg" />
       </v-app-bar-nav-icon>
@@ -343,7 +348,9 @@ export default defineComponent({
   },
   computed: {
     listHeight(): string {
-      const OTHER_ELEMENTS = 136
+      let OTHER_ELEMENTS = 136
+      const ZOOM_BAR = 56
+      if (this.zoomIntegration) OTHER_ELEMENTS += ZOOM_BAR
       return `max-height: ${this.windowHeight - OTHER_ELEMENTS}px`
     },
     date(): string {
