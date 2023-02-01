@@ -211,6 +211,11 @@ interface CustomProps {
   ) => Promise<void>
   $syncLocalRecurringMedia: (baseDate: Dayjs) => void
   $toggleMediaWindow: (action?: string) => Promise<void>
+  $toggleMic: (
+    socket: WebSocket,
+    mute: boolean,
+    userID?: number
+  ) => Promise<void>
   $toggleSpotlight: (
     socket: WebSocket,
     enable: boolean,

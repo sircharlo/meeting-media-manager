@@ -199,6 +199,7 @@ const plugin: Plugin = (
       )
     }
   }
+  inject('toggleMic', toggleMic)
 
   function toggleVideo(socket: WebSocket, enable: boolean, userID: number) {
     sendToWebSocket(

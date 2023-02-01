@@ -196,6 +196,7 @@
             item-text="displayName"
             item-value="userId"
             :label="$t('spotlightParticipants')"
+            :disabled="spotlightActive"
             :items="allParticipants"
             hide-details="auto"
             chips
@@ -342,6 +343,7 @@ export default defineComponent({
       dragging: false,
       sortable: false,
       loading: true,
+      spotlightActive: false,
       participants: [] as Participant[],
       addSong: false,
       song: null as null | VideoFile,
@@ -461,7 +463,10 @@ export default defineComponent({
       return this.$store.state.zoom.coHost as boolean
     },
     allParticipants(): Participant[] {
-      return this.$store.state.zoom.participants as Participant[]
+      const participants = this.$store.state.zoom.participants as Participant[]
+      return participants.filter(
+        (p) => p.displayName !== this.$getPrefs('app.zoom.name')
+      )
     },
     zoomScene(): string | null {
       return this.$getPrefs('app.obs.zoomScene') as string | null
@@ -526,20 +531,44 @@ export default defineComponent({
     await promise
   },
   methods: {
-    spotlightParticipants() {
+    async spotlightParticipants() {
       if (!this.isCoHost) {
         this.$warn('errorNotCoHost')
         return
       }
+
       this.$toggleSpotlight(window.sockets[window.sockets.length - 1], false)
-      this.participants.forEach((p) => {
-        this.$toggleSpotlight(
-          window.sockets[window.sockets.length - 1],
-          true,
-          p.userId
-        )
-      })
-      this.participants = []
+
+      if (this.spotlightActive) {
+        this.$muteParticipants(window.sockets[window.sockets.length - 1])
+
+        const hostID = this.$store.state.zoom.hostID as number
+        const automateAudio = this.$getPrefs(
+          'app.zoom.automateAudio'
+        ) as boolean
+        if (automateAudio || this.$getPrefs('app.zoom.spotlight')) {
+          this.$toggleSpotlight(
+            window.sockets[window.sockets.length - 1],
+            true,
+            hostID
+          )
+        }
+        this.participants = []
+      } else {
+        for (const p of this.participants) {
+          this.$toggleSpotlight(
+            window.sockets[window.sockets.length - 1],
+            true,
+            p.userId
+          )
+          await this.$toggleMic(
+            window.sockets[window.sockets.length - 1],
+            false,
+            p.userId
+          )
+        }
+      }
+      this.spotlightActive = !this.spotlightActive
     },
     async toggleZoomMeeting() {
       this.loadingZoom = true
