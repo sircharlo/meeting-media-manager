@@ -59,6 +59,7 @@ const plugin: Plugin = (
       client.on('user-updated', setUserProps)
       client.on('user-added', onUserAdded)
       store.commit('zoom/setConnected', true)
+      store.commit('zoom/setParticipants', client.getAttendeeslist())
     } catch (e: unknown) {
       console.debug('caught Zoom error')
       $log.error(e)
@@ -104,6 +105,11 @@ const plugin: Plugin = (
   })
 
   inject('muteParticipants', (socket: WebSocket) => {
+    if (!store.state.zoom.coHost) {
+      $warn('errorNotCoHost')
+      return
+    }
+
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (!client) return
 
@@ -228,6 +234,7 @@ const plugin: Plugin = (
       })
     }
   }
+  inject('toggleSpotlight', toggleSplotlight)
 
   function sendToWebSocket(
     socket: WebSocket | null,
@@ -259,6 +266,13 @@ const plugin: Plugin = (
   }
 
   const onUserAdded: typeof event_user_added = (payload) => {
+    const client = store.state.zoom.client as typeof EmbeddedClient | null
+    if (client) {
+      const participants = client.getAttendeeslist()
+      console.log('setParticipants', participants)
+      store.commit('zoom/setParticipants', participants)
+    }
+
     // @ts-ignore
     const users = payload as (typeof payload)[]
     users

@@ -211,6 +211,11 @@ interface CustomProps {
   ) => Promise<void>
   $syncLocalRecurringMedia: (baseDate: Dayjs) => void
   $toggleMediaWindow: (action?: string) => Promise<void>
+  $toggleSpotlight: (
+    socket: WebSocket,
+    enable: boolean,
+    userID?: number
+  ) => void
   $translate: (word: string, fallback?: string) => string
   $unsetPrefs: (key: keyof ElectronStore) => void
   $unsetShortcut: (shortcut: string) => void

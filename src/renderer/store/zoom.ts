@@ -1,8 +1,9 @@
 import { MutationTree } from 'vuex'
-import zoomSDK, { EmbeddedClient } from '@zoomus/websdk/embedded'
+import zoomSDK, { EmbeddedClient, Participant } from '@zoomus/websdk/embedded'
 
 interface ZoomStore {
   client: typeof EmbeddedClient | null
+  participants: Participant[]
   connected: boolean
   coHost: boolean
   sequence: number
@@ -14,6 +15,7 @@ interface ZoomStore {
 
 const defaultState: ZoomStore = {
   client: null,
+  participants: [],
   connected: false,
   coHost: false,
   sequence: 1,
@@ -34,6 +36,9 @@ export const mutations: MutationTree<ZoomStore> = {
   },
   setHostID(state, hostID: number) {
     state.hostID = hostID
+  },
+  setParticipants(state, participants: Participant[]) {
+    state.participants = participants
   },
   setStarted(state, started: boolean) {
     state.started = started

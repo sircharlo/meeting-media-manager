@@ -136,7 +136,7 @@
       <v-app-bar-nav-icon>
         <font-awesome-icon :icon="faZ" size="lg" />
       </v-app-bar-nav-icon>
-      <v-col>
+      <v-col cols="auto">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
             <v-btn
@@ -176,7 +176,6 @@
           <template #activator="{ on, attrs }">
             <v-btn
               icon
-              :disabled="loadingZoom"
               aria-label="Mute Zoom participants"
               v-bind="attrs"
               v-on="on"
@@ -187,6 +186,31 @@
           </template>
           <span>{{ $t('zoomMuteParticipants') }}</span>
         </v-tooltip>
+      </v-col>
+      <v-col class="d-flex flex-row pr-0">
+        <v-col class="d-flex align-center pr-0">
+          <form-input
+            v-model="participants"
+            field="autocomplete"
+            color="white"
+            item-text="displayName"
+            item-value="userId"
+            :label="$t('spotlightParticipants')"
+            :items="allParticipants"
+            hide-details="auto"
+            chips
+            small-chips
+            deletable-chips
+            multiple
+            clearable
+            return-object
+          />
+        </v-col>
+        <v-col cols="auto" class="px-0">
+          <v-btn icon @click="spotlightParticipants()">
+            <font-awesome-icon :icon="faUsersRectangle" size="lg" />
+          </v-btn>
+        </v-col>
       </v-col>
     </v-app-bar>
     <loading-icon v-if="loading" />
@@ -266,6 +290,7 @@ import { defineComponent } from 'vue'
 import { basename, dirname, join } from 'upath'
 import draggable from 'vuedraggable'
 import { ipcRenderer } from 'electron'
+import { Participant } from '@zoomus/websdk/embedded'
 import {
   faListOl,
   faRotateRight,
@@ -277,6 +302,7 @@ import {
   faPlay,
   faStop,
   faMicrophoneSlash,
+  faUsersRectangle,
   faEye,
   faEyeSlash,
   faGlobe,
@@ -316,6 +342,7 @@ export default defineComponent({
       dragging: false,
       sortable: false,
       loading: true,
+      participants: [] as Participant[],
       addSong: false,
       song: null as null | VideoFile,
       songs: [] as VideoFile[],
@@ -382,6 +409,9 @@ export default defineComponent({
     faMusic() {
       return faMusic
     },
+    faUsersRectangle() {
+      return faUsersRectangle
+    },
     faPlay() {
       return faPlay
     },
@@ -426,6 +456,12 @@ export default defineComponent({
     },
     zoomStarted(): boolean {
       return this.$store.state.zoom.started as boolean
+    },
+    isCoHost(): boolean {
+      return this.$store.state.zoom.coHost as boolean
+    },
+    allParticipants(): Participant[] {
+      return this.$store.state.zoom.participants as Participant[]
     },
     zoomScene(): string | null {
       return this.$getPrefs('app.obs.zoomScene') as string | null
@@ -490,6 +526,21 @@ export default defineComponent({
     await promise
   },
   methods: {
+    spotlightParticipants() {
+      if (!this.isCoHost) {
+        this.$warn('errorNotCoHost')
+        return
+      }
+      this.$toggleSpotlight(window.sockets[window.sockets.length - 1], false)
+      this.participants.forEach((p) => {
+        this.$toggleSpotlight(
+          window.sockets[window.sockets.length - 1],
+          true,
+          p.userId
+        )
+      })
+      this.participants = []
+    },
     async toggleZoomMeeting() {
       this.loadingZoom = true
       if (this.zoomStarted) {
