@@ -137,6 +137,7 @@ interface CustomProps {
   $mediaPath: (file?: MeetingFile) => string | undefined
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
   $move: (src: string, dest: string, overwrite = false) => void
+  $muteParticipants: (socket: WebSocket) => void
   $notify: (
     message: string,
     props?: {

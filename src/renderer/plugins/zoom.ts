@@ -103,6 +103,31 @@ const plugin: Plugin = (
     toggleAllowUnmute(socket, true)
   })
 
+  inject('muteParticipants', (socket: WebSocket) => {
+    const client = store.state.zoom.client as typeof EmbeddedClient | null
+    if (!client) return
+
+    const openParticipants = client
+      .getAttendeeslist()
+      .filter((p) => !p.isHost && !p.isCoHost && !p.muted)
+    openParticipants.forEach((p) => {
+      toggleMic(socket, true, p.userId)
+      lowerHand(socket, p.userId)
+    })
+  })
+
+  function lowerHand(socket: WebSocket, userID: number) {
+    sendToWebSocket(
+      socket,
+      {
+        evt: 4131,
+        body: { bOn: false },
+      },
+      true,
+      userID
+    )
+  }
+
   function toggleAllowUnmute(socket: WebSocket, allow: boolean) {
     sendToWebSocket(socket, {
       evt: 4149,
@@ -264,7 +289,6 @@ const plugin: Plugin = (
     store.commit('zoom/setUserID', client.getCurrentUser()?.userId)
     store.commit('zoom/setHostID', host?.userId)
     store.commit('zoom/setCoHost', client.isCoHost())
-    store.commit('zoom/setVideo', client.getCurrentUser()?.bVideoOn)
   }
 }
 

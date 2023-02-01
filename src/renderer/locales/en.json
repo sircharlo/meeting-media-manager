@@ -189,6 +189,7 @@
   "zoomAutoStartTime": "Execute X minutes before the meeting",
   "zoomHideComponent": "Hide Zoom component by default",
   "zoomId": "Zoom Meeting ID",
+  "zoomMuteParticipants": "Mute Zoom participants",
   "zoomName": "Zoom participant name",
   "zoomSpotlight": "Spotlight video when starting the meeting",
   "zoomStartMeeting": "Start Zoom meeting",

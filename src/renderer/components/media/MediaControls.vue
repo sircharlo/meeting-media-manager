@@ -172,6 +172,21 @@
           </template>
           <span>{{ $t(`zoom${zoomStarted ? 'Stop' : 'Start'}Meeting`) }}</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              :disabled="loadingZoom"
+              aria-label="Mute Zoom participants"
+              v-bind="attrs"
+              v-on="on"
+              @click="$muteParticipants()"
+            >
+              <font-awesome-icon :icon="faMicrophoneSlash" size="lg" />
+            </v-btn>
+          </template>
+          <span>{{ $t('zoomMuteParticipants') }}</span>
+        </v-tooltip>
       </v-col>
     </v-app-bar>
     <loading-icon v-if="loading" />
@@ -261,6 +276,7 @@ import {
   faZ,
   faPlay,
   faStop,
+  faMicrophoneSlash,
   faEye,
   faEyeSlash,
   faGlobe,
@@ -359,6 +375,9 @@ export default defineComponent({
     },
     date(): string {
       return this.$route.query.date as string
+    },
+    faMicrophoneSlash() {
+      return faMicrophoneSlash
     },
     faMusic() {
       return faMusic
