@@ -269,7 +269,6 @@ const plugin: Plugin = (
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (client) {
       const participants = client.getAttendeeslist()
-      console.log('setParticipants', participants)
       store.commit('zoom/setParticipants', participants)
     }
 
