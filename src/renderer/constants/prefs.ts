@@ -107,6 +107,7 @@ const FORCABLE = [
   'app.zoom.enable',
   'app.zoom.id',
   'app.zoom.name',
+  'app.zoom.hideComponent',
   'app.zoom.password',
   'app.zoom.spotlight',
   'media.enableMediaDisplayButton',
