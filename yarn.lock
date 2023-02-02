@@ -2679,16 +2679,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.35.0":
-  version: 7.35.0
-  resolution: "@sentry/browser@npm:7.35.0"
+"@sentry/browser@npm:7.36.0":
+  version: 7.36.0
+  resolution: "@sentry/browser@npm:7.36.0"
   dependencies:
-    "@sentry/core": 7.35.0
-    "@sentry/replay": 7.35.0
-    "@sentry/types": 7.35.0
-    "@sentry/utils": 7.35.0
+    "@sentry/core": 7.36.0
+    "@sentry/replay": 7.36.0
+    "@sentry/types": 7.36.0
+    "@sentry/utils": 7.36.0
     tslib: ^1.9.3
-  checksum: 98134d6cc59d1c5ce31b8121c71d078dd5722ab0c2cb1d6d8eaffe23ae66df08c8cf2339a83f6ae90068ae627130fb616d9a5d6ca9a90915790c4aa0ae636ad6
+  checksum: 463a6a5cc8b8108dbe4359622c471cc650e5509052fc7015dc21c113a4e9afe0981071a3dc1588b7f60c667e9d9f75b58922ad5613639b024422e6ab70b73f8c
   languageName: node
   linkType: hard
 
@@ -2717,17 +2717,6 @@ __metadata:
     "@sentry/utils": 7.30.0
     tslib: ^1.9.3
   checksum: 661a068bbe1afc66668f1808667fec09320b549e8bf06c0a4263398d7bac023a533535073fe469c656ea925d625a5e3fb93dd6535f3226893854b33e7813ab8c
-  languageName: node
-  linkType: hard
-
-"@sentry/core@npm:7.35.0":
-  version: 7.35.0
-  resolution: "@sentry/core@npm:7.35.0"
-  dependencies:
-    "@sentry/types": 7.35.0
-    "@sentry/utils": 7.35.0
-    tslib: ^1.9.3
-  checksum: 127e31527e60f1f5e22967ab5a3d4fa70de2b03bae209a60812677da601b295bc415fd2c8263dc1bd663b0698b556f911a25de19c04792c12d78a6a99ebbedf2
   languageName: node
   linkType: hard
 
@@ -2785,14 +2774,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/replay@npm:7.35.0":
-  version: 7.35.0
-  resolution: "@sentry/replay@npm:7.35.0"
+"@sentry/replay@npm:7.36.0":
+  version: 7.36.0
+  resolution: "@sentry/replay@npm:7.36.0"
   dependencies:
-    "@sentry/core": 7.35.0
-    "@sentry/types": 7.35.0
-    "@sentry/utils": 7.35.0
-  checksum: 7b1109f76ccb242a5fcb4d605bebeb1e43ecb54d6d32a67dd49722388b8ec3ae98fe45ca8953c356805e0f48fd2d7d5668ada000e22a24918c9465f680aaa291
+    "@sentry/core": 7.36.0
+    "@sentry/types": 7.36.0
+    "@sentry/utils": 7.36.0
+  checksum: dd5fcf2389c0801e2c5499f67010265768e5131f20eb06e647f46b014c0da7273674ed52673a63df72a5506165eff6fd703af9d25903d678d1f315b967bf04fe
   languageName: node
   linkType: hard
 
@@ -2815,13 +2804,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.35.0":
-  version: 7.35.0
-  resolution: "@sentry/types@npm:7.35.0"
-  checksum: b0d9398c5c303f9b5a05b7508e4bf10db8dd1b87f0927154e48e778f5b5ff097545829c06e6c71fe273038ce388053ad435d666572740a7565154e1b958d6daf
-  languageName: node
-  linkType: hard
-
 "@sentry/types@npm:7.36.0":
   version: 7.36.0
   resolution: "@sentry/types@npm:7.36.0"
@@ -2839,16 +2821,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.35.0":
-  version: 7.35.0
-  resolution: "@sentry/utils@npm:7.35.0"
-  dependencies:
-    "@sentry/types": 7.35.0
-    tslib: ^1.9.3
-  checksum: 297a8eb0538e4542c0c877b96fa0748b31374d4b9ef03aeee48bb6b42e2649cf8700d3f6c724fe965f76a3f81b32e1082e17e6833ea77112bdc2f73f662f0308
-  languageName: node
-  linkType: hard
-
 "@sentry/utils@npm:7.36.0":
   version: 7.36.0
   resolution: "@sentry/utils@npm:7.36.0"
@@ -2859,18 +2831,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^7.35.0":
-  version: 7.35.0
-  resolution: "@sentry/vue@npm:7.35.0"
+"@sentry/vue@npm:^7.36.0":
+  version: 7.36.0
+  resolution: "@sentry/vue@npm:7.36.0"
   dependencies:
-    "@sentry/browser": 7.35.0
-    "@sentry/core": 7.35.0
-    "@sentry/types": 7.35.0
-    "@sentry/utils": 7.35.0
+    "@sentry/browser": 7.36.0
+    "@sentry/core": 7.36.0
+    "@sentry/types": 7.36.0
+    "@sentry/utils": 7.36.0
     tslib: ^1.9.3
   peerDependencies:
     vue: 2.x || 3.x
-  checksum: 074720f967aed533b2079f74c57df16dca189a85da8cd2a2402f6ec544a551294c1ee11c7c2290a5bfb6c233bbc6ee444cc4c19cab4c683ea7a9737ecdb11782
+  checksum: bea11503cee8f5bba266962d17b417d2d7b9f5e192d64b9fc92807c6023b23dffa8c5e5ff479ac5d67962b9862e9bf987218d42ab08d99eebb3561c03f6cbfe0
   languageName: node
   linkType: hard
 
@@ -10718,7 +10690,7 @@ __metadata:
     "@playwright/test": ^1.30.0
     "@sentry/electron": ^4.2.0
     "@sentry/tracing": ^7.36.0
-    "@sentry/vue": ^7.35.0
+    "@sentry/vue": ^7.36.0
     "@sentry/webpack-plugin": ^1.20.0
     "@types/fluent-ffmpeg": ^2.1.20
     "@types/lodash.clonedeep": ^4.5.7
