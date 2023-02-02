@@ -195,6 +195,7 @@
             color="white"
             item-text="displayName"
             item-value="userId"
+            :loading="allParticipants.length == 0"
             :label="$t('spotlightParticipants')"
             :disabled="spotlightActive"
             :items="allParticipants"
@@ -208,7 +209,11 @@
           />
         </v-col>
         <v-col cols="auto" class="px-0">
-          <v-btn icon @click="spotlightParticipants()">
+          <v-btn
+            icon
+            :disabled="participants.length == 0"
+            @click="spotlightParticipants()"
+          >
             <font-awesome-icon :icon="faUsersRectangle" size="lg" />
           </v-btn>
         </v-col>
@@ -465,7 +470,7 @@ export default defineComponent({
     allParticipants(): Participant[] {
       const participants = this.$store.state.zoom.participants as Participant[]
       return participants.filter(
-        (p) => p.displayName !== this.$getPrefs('app.zoom.name')
+        (p) => !p.bHold && p.displayName !== this.$getPrefs('app.zoom.name')
       )
     },
     zoomScene(): string | null {

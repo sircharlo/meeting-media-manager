@@ -299,7 +299,9 @@ const plugin: Plugin = (
   const setUserProps: typeof event_user_updated = () => {
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (!client) return
-    const host = client.getAttendeeslist().find((user) => user.isHost)
+    const participants = client.getAttendeeslist()
+    const host = participants.find((user) => user.isHost)
+    store.commit('zoom/setParticipants', participants)
     store.commit('zoom/setUserID', client.getCurrentUser()?.userId)
     store.commit('zoom/setHostID', host?.userId)
     store.commit('zoom/setCoHost', client.isCoHost())
