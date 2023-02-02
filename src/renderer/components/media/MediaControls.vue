@@ -214,7 +214,10 @@
             :disabled="participants.length == 0"
             @click="spotlightParticipants()"
           >
-            <font-awesome-icon :icon="faUsersRectangle" size="lg" />
+            <font-awesome-icon
+              :icon="spotlightActive ? faUsersSlash : faUsersRectangle"
+              size="lg"
+            />
           </v-btn>
         </v-col>
       </v-col>
@@ -301,6 +304,7 @@ import {
   faStop,
   faMicrophoneSlash,
   faUsersRectangle,
+  faUsersSlash,
   faEye,
   faEyeSlash,
   faGlobe,
@@ -402,6 +406,9 @@ export default defineComponent({
     },
     faMicrophoneSlash() {
       return faMicrophoneSlash
+    },
+    faUsersSlash() {
+      return faUsersSlash
     },
     faMusic() {
       return faMusic
