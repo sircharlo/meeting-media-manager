@@ -472,7 +472,7 @@ export default defineComponent({
     openDate(date: string) {
       console.debug('Manage specific day')
       this.$router.push({
-        path: this.localePath('/add'),
+        path: this.localePath('/manage'),
         query: { ...this.$route.query, date },
       })
     },

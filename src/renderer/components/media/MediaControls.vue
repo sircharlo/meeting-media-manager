@@ -135,20 +135,12 @@
         ${listHeight}
       `"
     >
-      <form-input
+      <song-picker
         v-if="addSong"
-        id="select-song"
         ref="songPicker"
         v-model="song"
-        field="autocomplete"
-        :items="songs"
-        item-text="title"
-        item-value="safeName"
-        hide-details="auto"
         class="pa-4"
         clearable
-        :loading="loadingSongs"
-        return-object
       />
       <template v-if="song">
         <v-list class="ma-4">
@@ -248,8 +240,6 @@ export default defineComponent({
       loading: true,
       addSong: false,
       song: null as null | VideoFile,
-      songs: [] as VideoFile[],
-      loadingSongs: true,
       showPrefix: false,
       items: [] as {
         id: string
@@ -360,8 +350,7 @@ export default defineComponent({
   beforeDestroy() {
     ipcRenderer.removeAllListeners('play')
   },
-  async mounted() {
-    const promise = this.getSongs()
+  mounted() {
     this.getMedia()
     ipcRenderer.on('play', (_e, type: 'next' | 'previous') => {
       if (type === 'next') {
@@ -370,15 +359,8 @@ export default defineComponent({
         this.previous()
       }
     })
-
-    await promise
   },
   methods: {
-    async getSongs() {
-      this.loadingSongs = true
-      this.songs = await this.$getSongs()
-      this.loadingSongs = false
-    },
     openWebsite() {
       ipcRenderer.send(
         'openWebsite',
