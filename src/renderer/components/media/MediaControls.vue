@@ -568,6 +568,11 @@ export default defineComponent({
           )
         }
       }
+
+      if (this.mediaVisible !== this.spotlightActive) {
+        ipcRenderer.send('toggleMediaWindowFocus')
+      }
+
       this.spotlightActive = !this.spotlightActive
     },
     async toggleZoomMeeting() {
