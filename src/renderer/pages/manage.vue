@@ -1,7 +1,7 @@
 <template>
   <v-container fluid fill-height>
     <v-dialog v-if="fileString && type === 'jwpub'" persistent :value="true">
-      <media-select
+      <manage-select-document
         :file="fileString"
         :set-progress="setProgress"
         @select="addMedia($event)"
@@ -9,153 +9,37 @@
       />
     </v-dialog>
     <v-row class="fill-height" align-content="start">
-      <v-row align="center" class="mb-4" style="width: 100%">
-        <v-col cols="1" class="text-center">
-          <font-awesome-icon
-            size="2x"
-            :icon="isMeetingDay || client ? faCloud : faFolderOpen"
-            :class="{
-              'secondary--text': !isDark,
-              'accent--text': isDark,
-            }"
-          />
-        </v-col>
-        <v-col cols="11" class="text-center">
-          <h1>{{ date }}</h1>
-        </v-col>
-      </v-row>
-      <v-row align="center" style="width: 100%">
-        <v-col cols="1" class="text-center" align-self="center">
-          <font-awesome-icon :icon="faPhotoFilm" />
-        </v-col>
-        <v-col cols="11">
-          <v-btn-toggle
-            v-model="type"
-            color="primary"
-            style="width: 100%"
-            :mandatory="!!type"
-            @change="fileString = ''"
-          >
-            <v-btn
-              v-for="t in types"
-              :id="`btn-select-${t.value}`"
-              :key="t.value"
-              width="33.3%"
-              :value="t.value"
-              :disabled="loading"
-            >
-              {{ t.label }}
-            </v-btn>
-          </v-btn-toggle>
-        </v-col>
-      </v-row>
+      <manage-header />
+      <manage-select-type v-model="type" :disabled="loading" />
       <v-row v-if="type" align="center" class="mb-0">
         <v-col cols="1" class="text-center" align-self="center">
           <font-awesome-icon :icon="faFileExport" />
         </v-col>
         <v-col cols="11">
-          <form-input
+          <song-picker
             v-if="type === 'song'"
-            id="select-song"
             v-model="song"
-            field="autocomplete"
-            :items="songs"
-            item-text="title"
-            item-value="safeName"
-            hide-details="auto"
             :disabled="loading"
-            :loading="loadingSongs"
-            return-object
           />
-          <v-row v-else-if="type === 'custom'" align="center">
-            <v-col cols="auto" class="pr-0 text-left">
-              <v-btn
-                id="btn-browse-custom"
-                color="primary"
-                style="height: 40px"
-                :disabled="loading"
-                @click="addFiles()"
-              >
-                {{ $t('browse') }}
-              </v-btn>
-            </v-col>
-            <v-col class="pl-0">
-              <form-input :value="fileString" readonly hide-details="auto" />
-            </v-col>
-          </v-row>
-          <v-row v-else-if="type === 'jwpub'" align="center">
-            <v-col cols="auto" class="pr-0 text-left">
-              <v-btn
-                id="btn-browse-jwpub"
-                color="primary"
-                style="height: 40px"
-                :disabled="loading"
-                @click="addFiles(false, 'JWPUB', 'jwpub')"
-              >
-                {{ $t('browse') }}
-              </v-btn>
-            </v-col>
-            <v-col class="pl-0">
-              <form-input :value="fileString" readonly hide-details="auto" />
-            </v-col>
-          </v-row>
+          <manage-select-file
+            v-else
+            :type="type"
+            :path="fileString"
+            :loading="loading"
+            @click="
+              type == 'custom' ? addFiles() : addFiles(false, 'JWPUB', 'jwpub')
+            "
+          />
         </v-col>
       </v-row>
-      <v-row
-        v-if="song || files.length > 0"
-        align="center"
-        class="my-n4"
-        style="width: 100%"
-      >
-        <v-col cols="1" class="text-center" align-self="center">
-          <font-awesome-icon :icon="faArrowDown19" />
-        </v-col>
-        <v-col cols="11" class="d-flex">
-          <v-col cols="4">
-            <v-otp-input
-              id="input-prefix-1"
-              v-model="prefix1"
-              type="number"
-              length="2"
-              dense
-              :disabled="loading"
-              @finish="focus($refs.prefix2)"
-            />
-          </v-col>
-          <v-col cols="4">
-            <v-otp-input
-              v-if="prefix1"
-              id="input-prefix-2"
-              ref="prefix2"
-              v-model="prefix2"
-              type="number"
-              length="2"
-              dense
-              :disabled="loading"
-              @finish="focus($refs.prefix3)"
-            />
-          </v-col>
-          <v-col cols="4">
-            <v-otp-input
-              v-if="prefix2"
-              id="input-prefix-3"
-              ref="prefix3"
-              v-model="prefix3"
-              type="number"
-              length="2"
-              dense
-              :disabled="loading"
-            />
-          </v-col>
-        </v-col>
-      </v-row>
+      <manage-media-prefix v-if="song || files.length > 0" v-model="prefix" />
       <v-col cols="12" class="px-0" style="margin-bottom: 72px">
         <loading-icon v-if="loading" />
         <template v-else>
           <v-overlay :value="dragging">
             <font-awesome-icon :icon="faDownload" size="3x" bounce />
           </v-overlay>
-          <media-list
+          <manage-media-list
             :date="date"
             :new-file="song"
             :new-files="files"
@@ -212,11 +96,7 @@ import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import {
-  faArrowDown19,
-  faCloud,
   faFileExport,
-  faFolderOpen,
-  faPhotoFilm,
   faDownload,
   faSave,
   IconDefinition,
@@ -230,13 +110,11 @@ import {
   MS_IN_SEC,
 } from '~/constants/general'
 export default defineComponent({
-  name: 'AddPage',
+  name: 'ManagePage',
   data() {
     return {
+      prefix: '',
       dragging: false,
-      prefix1: '',
-      prefix2: '',
-      prefix3: '',
       uploadedFiles: 0,
       totalFiles: 0,
       totalProgress: 0,
@@ -246,23 +124,7 @@ export default defineComponent({
       fileString: '',
       song: null as VideoFile | null,
       files: [] as (LocalFile | VideoFile)[],
-      loadingSongs: true,
-      songs: [] as VideoFile[],
       media: [] as (MeetingFile | LocalFile)[],
-      types: [
-        {
-          label: this.$t('song') as string,
-          value: 'song',
-        },
-        {
-          label: this.$t('custom') as string,
-          value: 'custom',
-        },
-        {
-          label: this.$t('jwpub') as string,
-          value: 'jwpub',
-        },
-      ] as { label: string; value: string }[],
     }
   },
   head(): MetaInfo {
@@ -278,21 +140,6 @@ export default defineComponent({
     faDownload(): IconDefinition {
       return faDownload
     },
-    faFolderOpen(): IconDefinition {
-      return faFolderOpen
-    },
-    faCloud(): IconDefinition {
-      return faCloud
-    },
-    faPhotoFilm(): IconDefinition {
-      return faPhotoFilm
-    },
-    isDark(): boolean {
-      return this.$vuetify.theme.dark as boolean
-    },
-    faArrowDown19(): IconDefinition {
-      return faArrowDown19
-    },
     faFileExport(): IconDefinition {
       return faFileExport
     },
@@ -305,38 +152,19 @@ export default defineComponent({
     date(): string {
       return this.$route.query.date as string
     },
-    prefix(): string {
-      return [this.prefix1, this.prefix2, this.prefix3]
-        .filter(Boolean)
-        .join('-')
-    },
-    isMeetingDay(): boolean {
-      const day = this.$dayjs(
-        this.date,
-        this.$getPrefs('app.outputFolderDateFormat') as string
-      ) as Dayjs
-      if (!day.isValid() || this.$getPrefs('meeting.specialCong')) return false
-      const mwDay = this.$getMwDay(day.startOf('week'))
-      const weDay = this.$getPrefs('meeting.weDay') as number
-      const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
-      return mwDay === weekDay || weDay === weekDay
-    },
   },
   watch: {
-    async type(newType: string) {
-      if (newType === 'song' && this.songs.length === 0) {
-        await this.getSongs()
-      }
+    type() {
+      this.fileString = ''
     },
     fileString(val: string) {
       if (!val) {
-        this.prefix1 = this.prefix2 = this.prefix3 = ''
+        this.prefix = ''
       }
     },
     song(val) {
       if (val) {
-        this.prefix1 = '00'
-        this.prefix2 = '00'
+        this.prefix = '00-00'
       }
     },
   },
@@ -360,9 +188,6 @@ export default defineComponent({
     this.loading = false
   },
   methods: {
-    focus(ref: any) {
-      if (ref) ref.focus()
-    },
     goHome() {
       console.debug('Go back home')
       this.$router.push({
@@ -608,11 +433,6 @@ export default defineComponent({
       } catch (e: unknown) {
         this.$error('errorAdditionalMediaList', e)
       }
-    },
-    async getSongs() {
-      this.loadingSongs = true
-      this.songs = await this.$getSongs()
-      this.loadingSongs = false
     },
     getExistingMedia() {
       try {

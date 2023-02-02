@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-unused-vars -->
 <template>
   <v-row justify="center" class="fill-height">
     <action-preview
@@ -8,134 +7,18 @@
       @abort="action = ''"
       @perform="execute(action)"
     />
-    <v-row class="pa-4">
-      <v-col cols="5" sm="4" md="3" />
-      <v-col cols="2" sm="4" md="6" class="text-center">
-        <font-awesome-icon
-          :icon="statusIcon"
-          size="3x"
-          :flip="loading"
-          :class="{
-            'primary--text': loading,
-            'secondary--text': !loading && !isDark,
-            'accent--text': !loading && isDark,
-          }"
-        />
-      </v-col>
-      <v-col cols="5" sm="4" md="3">
-        <v-select
-          id="cong-select"
-          v-model="cong"
-          :items="congs"
-          item-text="name"
-          item-value="path"
-          :disabled="loading || musicPlaying"
-          :label="$t('congregationName')"
-          dense
-          solo
-          @change="changeCong($event)"
-        >
-          <template #item="{ item }">
-            <v-list-item-action v-if="congs.length > 1" class="me-0">
-              <font-awesome-icon
-                v-if="item.color === 'warning'"
-                :icon="faSquareMinus"
-                class="warning--text"
-                size="xs"
-                @click.stop="atCongClick(item)"
-              />
-              <v-tooltip v-else left :value="true">
-                <template #activator="data">
-                  <font-awesome-icon
-                    :icon="faSquareMinus"
-                    class="error--text"
-                    size="xs"
-                    @click.stop="atCongClick(item)"
-                  />
-                </template>
-                <span>{{ $t('clickAgain') }}</span>
-              </v-tooltip>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
-            </v-list-item-content>
-          </template>
-          <template #append-item>
-            <v-list-item id="add-cong-option" @click="addCong()">
-              <v-list-item-action>
-                <font-awesome-icon
-                  :icon="faSquarePlus"
-                  class="success--text"
-                  size="xs"
-                />
-              </v-list-item-action>
-              <v-list-item-content />
-            </v-list-item>
-          </template>
-        </v-select>
-      </v-col>
-    </v-row>
+    <home-header :loading="loading" :jw="jwSyncColor" :cong="congSyncColor" />
     <v-col cols="12">
-      <v-col cols="12" class="d-flex pb-0 justify-center">
-        <v-col
-          v-for="(day, i) in daysOfWeek"
-          :key="day.formatted"
-          class="text-center flex-shrink-1 px-1 pb-0"
-        >
-          <v-card
-            :color="dayColors[i]"
-            class="fill-height d-flex justify-center flex-column"
-            @click="openDate(day.formatted)"
-          >
-            <v-card-text class="pb-0 pt-2">{{ day.first }}</v-card-text>
-            <v-card-text class="pt-0 pb-2">{{ day.second }}</v-card-text>
-          </v-card>
-        </v-col>
-        <v-col class="pb-0 px-1">
-          <v-card
-            class="fill-height d-flex align-center"
-            :color="recurringColor"
-            @click="openDate('Recurring')"
-          >
-            <v-card-text class="text-center py-2">
-              {{ $t('recurring') }}
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-col>
-      <v-col cols="12" class="d-flex py-0">
-        <v-col class="text-center flex-shrink-1 px-1 pb-0">
-          <v-card
-            class="fill-height d-flex justify-center flex-column pb-0"
-            :color="jwSyncColor"
-          >
-            <v-card-text class="text-center py-2">{{ jwSync }}</v-card-text>
-          </v-card>
-        </v-col>
-        <v-col v-if="congSync" class="text-center flex-shrink-1 px-1 pb-0">
-          <v-card
-            class="fill-height d-flex justify-center flex-column pb-0"
-            :color="congSyncColor"
-          >
-            <v-card-text class="text-center py-2">
-              {{ $t('congMedia') }}
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col
-          v-if="$getPrefs('media.enableMp4Conversion')"
-          class="text-center flex-shrink-1 px-1 pb-0"
-        >
-          <v-card
-            class="fill-height d-flex justify-center flex-column pb-0"
-            :color="mp4Color"
-          >
-            <v-card-text class="text-center py-2">
-              {{ $t('convertDownloaded') }}
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-col>
+      <home-week-tiles
+        :current-week="currentWeek"
+        :day-colors="dayColors"
+        :recurring-color="recurringColor"
+      />
+      <home-feature-tiles
+        :jw="jwSyncColor"
+        :cong="congSyncColor"
+        :mp4="mp4Color"
+      />
     </v-col>
     <v-col cols="12" class="text-center">
       <v-btn
@@ -206,16 +89,8 @@ import { defineComponent } from 'vue'
 import { Dayjs } from 'dayjs'
 import { basename, join } from 'upath'
 import { ipcRenderer } from 'electron'
-import {
-  faPhotoVideo,
-  faSquareMinus,
-  faDownload,
-  faCloud,
-  faSquarePlus,
-  faGlobeAmericas,
-} from '@fortawesome/free-solid-svg-icons'
 import { ShortJWLang } from '~/types'
-import { DAYS_IN_WEEK, HUNDRED_PERCENT, MS_IN_SEC } from '~/constants/general'
+import { DAYS_IN_WEEK, HUNDRED_PERCENT } from '~/constants/general'
 
 export default defineComponent({
   name: 'HomePage',
@@ -243,9 +118,7 @@ export default defineComponent({
   },
   data() {
     return {
-      cong: '',
       action: '',
-      congs: [] as { name: string; path: string; color: string }[],
       loading: true,
       currentProgress: 0,
       totalProgress: 0,
@@ -269,23 +142,6 @@ export default defineComponent({
     return { title: 'Home' }
   },
   computed: {
-    statusIcon() {
-      if (this.congSyncColor === 'warning') {
-        return faCloud
-      } else if (this.jwSyncColor === 'warning') {
-        return faDownload
-      } else if (this.loading) {
-        return faGlobeAmericas
-      } else {
-        return faPhotoVideo
-      }
-    },
-    faSquareMinus() {
-      return faSquareMinus
-    },
-    faSquarePlus() {
-      return faSquarePlus
-    },
     initialLoad(): boolean {
       return this.$store.state.stats.initialLoad as boolean
     },
@@ -295,14 +151,8 @@ export default defineComponent({
     weekParam(): number {
       return parseInt((this.$route.query.week as string) ?? -1)
     },
-    isDark() {
-      return this.$vuetify.theme.dark
-    },
     online(): boolean {
       return this.$store.state.stats.online && !this.$getPrefs('app.offline')
-    },
-    musicPlaying(): boolean {
-      return !!this.$store.state.media.musicFadeOut
     },
     congParam(): string {
       return this.$route.query.cong as string
@@ -312,19 +162,6 @@ export default defineComponent({
     },
     fallbackLangObject(): ShortJWLang | null {
       return this.$store.state.media.fallbackLang as ShortJWLang | null
-    },
-    jwSync(): string {
-      let jwSyncString = ''
-      if (this.mediaLangObject?.vernacularName) {
-        jwSyncString = `${this.$t('syncJwOrgMedia')} (${
-          this.mediaLangObject?.vernacularName
-        }`
-        if (this.fallbackLangObject?.vernacularName) {
-          jwSyncString += ` / ${this.fallbackLangObject?.vernacularName}`
-        }
-        jwSyncString += ')'
-      }
-      return jwSyncString
     },
     upcomingWeeks(): { iso: number; label: string }[] {
       const weeks: { iso: number; label: string }[] = []
@@ -432,18 +269,6 @@ export default defineComponent({
       this.setDayColor(this.$getMwDay(this.baseDate), 'secondary')
       this.setDayColor(this.$getPrefs('meeting.weDay') as number, 'secondary')
     }
-
-    // Get all congregations
-    this.congs = (await this.$getCongPrefs()).map(
-      (cong: { name: string; path: string }) => {
-        return {
-          name: cong.name,
-          path: cong.path,
-          color: 'warning',
-        }
-      }
-    )
-    this.cong = this.$storePath() as string
     this.loading = false
     this.$log.debug('v' + (await this.$appVersion()))
     if (this.initialLoad && this.$getPrefs('app.autoStartSync')) {
@@ -468,13 +293,6 @@ export default defineComponent({
     },
     setDayColor(day: number, color: string) {
       this.dayColors[this.daysOfWeek.length + day - DAYS_IN_WEEK] = color
-    },
-    openDate(date: string) {
-      console.debug('Manage specific day')
-      this.$router.push({
-        path: this.localePath('/add'),
-        query: { ...this.$route.query, date },
-      })
     },
     resetColors() {
       this.jwSyncColor =
@@ -531,57 +349,6 @@ export default defineComponent({
       this.$store.commit('media/clear')
       if (!testLangs.includes(previousLang)) {
         await this.startMediaSync(true)
-      }
-    },
-    addCong() {
-      if (this.$store.state.present.mediaScreenInit) {
-        this.$toggleMediaWindow('close')
-      }
-      this.$store.commit('cong/clear')
-      this.$store.commit('obs/clear')
-
-      // Create new cong and switch to it
-      // eslint-disable-next-line no-magic-numbers
-      const id = Math.random().toString(36).substring(2, 15)
-      this.$switchCong(join(this.$appPath(), 'prefs-' + id + '.json'))
-      console.debug('Create new cong via select')
-      this.$router.push({
-        path: this.localePath('/settings'),
-        query: { cong: id, new: 'true' },
-      })
-    },
-    changeCong(path: string) {
-      console.debug('Switched cong via select')
-      this.$router.push({
-        query: {
-          cong: basename(path, '.json').replace('prefs-', ''),
-        },
-      })
-    },
-    atCongClick(item: { name: string; path: string; color: string }): void {
-      if (item.color === 'warning') {
-        item.color = 'error'
-        setTimeout(() => {
-          item.color = 'warning'
-        }, 3 * MS_IN_SEC)
-      }
-      // Remove current congregation
-      else if (this.cong === item.path) {
-        this.$removeCong(item.path)
-
-        // Switch to the first other congregation found
-        console.debug('Switch to existing cong')
-        this.$router.push({
-          query: {
-            cong: basename(
-              this.congs.find((c) => c.path !== item.path)?.path as string,
-              '.json'
-            ).replace('prefs-', ''),
-          },
-        })
-      } else {
-        this.$removeCong(item.path)
-        window.location.reload()
       }
     },
     setProgress(loaded: number, total: number, global = false) {
