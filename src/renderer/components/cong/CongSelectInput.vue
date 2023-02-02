@@ -54,13 +54,13 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { basename } from 'upath'
+import { join, basename } from 'upath'
 import { faSquareMinus, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
   data() {
     return {
-      cong: null,
+      cong: '',
       congs: [] as { name: string; path: string; color: string }[],
       loading: true,
     }

@@ -42,7 +42,7 @@ export default defineComponent({
     },
   },
   computed: {
-    isDark() {
+    isDark(): boolean {
       return this.$vuetify.theme.dark
     },
     musicPlaying(): boolean {
