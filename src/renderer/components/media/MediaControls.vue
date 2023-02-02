@@ -521,8 +521,6 @@ export default defineComponent({
         el.disabled = true
       }
     }, MS_IN_SEC)
-
-    await promise
   },
   methods: {
     async spotlightParticipants() {
