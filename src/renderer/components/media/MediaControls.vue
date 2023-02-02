@@ -211,6 +211,7 @@
         <v-col cols="auto" class="px-0">
           <v-btn
             icon
+            :class="{ 'pulse-danger': spotlightActive }"
             :disabled="participants.length == 0"
             @click="spotlightParticipants()"
           >
