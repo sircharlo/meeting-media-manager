@@ -1,6 +1,8 @@
+import { platform } from 'os'
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'
+import { delay } from '../helpers/generalHelpers'
 import locale from './../../src/renderer/locales/en.json'
 import { startApp, openHomePage } from './../helpers/electronHelpers'
 
@@ -13,6 +15,10 @@ test.beforeAll(async () => {
 
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
+  if (platform() === 'darwin') {
+    // eslint-disable-next-line no-magic-numbers
+    await delay(500)
+  }
 })
 
 test.afterAll(async () => {
