@@ -28,7 +28,7 @@ test('render the add media page correctly', async () => {
   await page.locator('.v-card', { hasText: locale.recurring }).click()
 
   // Check for correct heading
-  expect(await page.locator('h1').innerText()).toBe(`Recurring`)
+  expect(await page.locator('h1').innerText()).toBe(locale.recurring)
 
   // Test if title is correct
   const title = await page.title()
