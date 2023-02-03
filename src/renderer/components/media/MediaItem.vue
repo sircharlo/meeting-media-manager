@@ -50,6 +50,7 @@
             variant="pause"
             :toggled="paused"
             :is-video="isVideo"
+            :disabled="isVideo && !videoStarted"
             tooltip="top"
             @click="togglePaused()"
           />
@@ -219,6 +220,7 @@ export default defineComponent({
       paused: false as boolean,
       progress: 0,
       newProgress: 0,
+      videoStarted: false,
       stopClicked: false as boolean,
       start: undefined as string | undefined,
       end: undefined as string | undefined,
@@ -307,6 +309,11 @@ export default defineComponent({
         this.scrubVideo()
       }
     },
+    progress(val: number) {
+      if (this.active && val > 0) {
+        this.videoStarted = true
+      }
+    },
     async playNow(val: boolean) {
       if (val) {
         this.current = true
@@ -356,6 +363,7 @@ export default defineComponent({
         })
         this.progress = 0
         this.newProgress = 0
+        this.videoStarted = false
         this.paused = false
 
         ipcRenderer.removeAllListeners('videoEnd')
