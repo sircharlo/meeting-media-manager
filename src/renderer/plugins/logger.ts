@@ -33,7 +33,11 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
     console[type](...args)
   }
 
-  const IGNORED_ERRORS = ['Network Error', 'timeout of 0ms exceeded']
+  const IGNORED_ERRORS = [
+    'Network Error',
+    'timeout of 0ms exceeded',
+    'timeout exceeded',
+  ]
 
   const log = {
     debug: function (msg: any, ...args: any[]) {
