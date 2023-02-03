@@ -8,7 +8,7 @@ import {
 import { ZoomPrefs } from '@/types'
 
 const plugin: Plugin = (
-  { $getPrefs, $warn, $notify, $log, $axios, $config, store },
+  { $getPrefs, $warn, $notify, $axios, $config, store },
   inject
 ) => {
   async function connectZoom() {
@@ -41,9 +41,8 @@ const plugin: Plugin = (
           meetingNumber: id,
           password,
           userName: name,
-          error: (e: unknown) => {
+          error: () => {
             console.debug('Caught join error')
-            $log.error(e)
           },
           signature: (
             await $axios.$post($config.zoomSignatureEndpoint, {
@@ -52,9 +51,8 @@ const plugin: Plugin = (
             })
           ).signature,
         })
-        .catch((e: unknown) => {
+        .catch(() => {
           console.debug('Caught join promise error')
-          $log.error(e)
         })
       client.on('user-updated', setUserProps)
       client.on('user-added', onUserAdded)
@@ -62,7 +60,6 @@ const plugin: Plugin = (
       store.commit('zoom/setParticipants', client.getAttendeeslist())
     } catch (e: unknown) {
       console.debug('caught Zoom error')
-      $log.error(e)
     }
   }
   inject('connectZoom', connectZoom)

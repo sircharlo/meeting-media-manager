@@ -341,13 +341,11 @@ export default defineComponent({
             zoomAppRoot: document.getElementById('zoomMeeting') ?? undefined,
             language: this.$i18n.localeProperties.iso,
           })
-          .catch((e) => {
+          .catch(() => {
             console.debug('Caught init promise error')
-            console.error(e)
           })
       } catch (e: unknown) {
         console.debug('Caught init error')
-        console.error(e)
       }
       await this.$connectZoom()
       const originalSend = WebSocket.prototype.send

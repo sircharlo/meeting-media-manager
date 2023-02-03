@@ -242,7 +242,6 @@ export default defineComponent({
       addSong: false,
       song: null as null | VideoFile,
       showPrefix: false,
-      showZoomComponent: true,
       items: [] as {
         id: string
         path: string
@@ -373,17 +372,6 @@ export default defineComponent({
         this.previous()
       }
     })
-
-    setTimeout(() => {
-      this.showZoomComponent = !this.$getPrefs('app.zoom.hideComponent')
-      const el = document.querySelector(
-        '#zoom-app-bar button.v-app-bar__nav-icon'
-      ) as HTMLButtonElement
-
-      if (el) {
-        el.disabled = true
-      }
-    }, MS_IN_SEC)
   },
   methods: {
     openWebsite() {
