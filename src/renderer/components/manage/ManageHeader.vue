@@ -11,7 +11,7 @@
       />
     </v-col>
     <v-col cols="11" class="text-center">
-      <h1>{{ date }}</h1>
+      <h1>{{ title }}</h1>
     </v-col>
   </v-row>
 </template>
@@ -35,6 +35,11 @@ export default defineComponent({
     },
     isDark(): boolean {
       return this.$vuetify.theme.dark as boolean
+    },
+    title(): string {
+      return this.date === 'Recurring'
+        ? (this.$t('recurring') as string)
+        : this.date
     },
     date(): string {
       return this.$route.query.date as string
