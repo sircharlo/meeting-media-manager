@@ -37,7 +37,7 @@ test('shuffle button works correctly', async () => {
   await page.locator('button', { hasText: locale.optionsMeetings }).click()
 
   // Turn shuffle music on
-  await page.locator(`text=${locale.enableMusicButton}`).check({ force: true })
+  await page.locator(`text=${locale.enableMusicButton}`).check()
 
   // Go back to home page
   await page.locator('[aria-label="home"]').click()
