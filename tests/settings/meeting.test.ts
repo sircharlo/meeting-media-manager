@@ -36,6 +36,9 @@ test('screenshot settings', async () => {
     test.skip()
   }
 
+  // Meeting setup is explanded automatically
+  // await page.locator('button', { hasText: locale.optionsMeetings }).click()
+
   // Scroll to the bottom of the page
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
 
