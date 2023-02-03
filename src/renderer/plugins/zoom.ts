@@ -161,6 +161,7 @@ const plugin: Plugin = (
       })
     }
   }
+  inject('renameParticipant', rename)
 
   async function muteAll(socket: WebSocket) {
     const client = store.state.zoom.client as typeof EmbeddedClient | null

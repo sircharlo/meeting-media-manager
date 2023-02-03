@@ -163,6 +163,11 @@ interface CustomProps {
     action = 'rename',
     type = 'string'
   ) => void
+  $renameParticipant: (
+    socket: WebSocket | null,
+    name: string,
+    user: { id: number; name?: string }
+  ) => Promise<void>
   $renameAll: (
     dir: string,
     search: string,

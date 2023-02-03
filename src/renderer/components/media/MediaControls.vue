@@ -125,104 +125,7 @@
         </v-tooltip>
       </v-col>
     </v-app-bar>
-    <v-app-bar
-      v-if="zoomIntegration"
-      id="zoom-app-bar"
-      height="56"
-      dark
-      color="primary"
-      class="text-left"
-    >
-      <v-app-bar-nav-icon>
-        <font-awesome-icon :icon="faZ" size="lg" />
-      </v-app-bar-nav-icon>
-      <v-col cols="auto">
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              aria-label="Toggle zoom component"
-              v-bind="attrs"
-              v-on="on"
-              @click="showZoomComponent = !showZoomComponent"
-            >
-              <font-awesome-icon
-                :icon="showZoomComponent ? faEyeSlash : faEye"
-                size="lg"
-              />
-            </v-btn>
-          </template>
-          <span>{{ $t('zoomToggleComponent') }}</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              :loading="loadingZoom"
-              aria-label="Toggle zoom meeting"
-              v-bind="attrs"
-              v-on="on"
-              @click="toggleZoomMeeting()"
-            >
-              <font-awesome-icon
-                :icon="zoomStarted ? faStop : faPlay"
-                size="lg"
-              />
-            </v-btn>
-          </template>
-          <span>{{ $t(`zoom${zoomStarted ? 'Stop' : 'Start'}Meeting`) }}</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              aria-label="Mute Zoom participants"
-              v-bind="attrs"
-              v-on="on"
-              @click="$muteParticipants()"
-            >
-              <font-awesome-icon :icon="faMicrophoneSlash" size="lg" />
-            </v-btn>
-          </template>
-          <span>{{ $t('zoomMuteParticipants') }}</span>
-        </v-tooltip>
-      </v-col>
-      <v-col class="d-flex flex-row pr-0">
-        <v-col class="d-flex align-center pr-0">
-          <form-input
-            v-model="participants"
-            field="autocomplete"
-            color="white"
-            item-text="displayName"
-            item-value="userId"
-            :loading="allParticipants.length == 0"
-            :label="$t('spotlightParticipants')"
-            :disabled="spotlightActive"
-            :items="allParticipants"
-            hide-details="auto"
-            chips
-            small-chips
-            deletable-chips
-            multiple
-            clearable
-            return-object
-          />
-        </v-col>
-        <v-col cols="auto" class="px-0">
-          <v-btn
-            icon
-            :class="{ 'pulse-danger': spotlightActive }"
-            :disabled="participants.length == 0"
-            @click="spotlightParticipants()"
-          >
-            <font-awesome-icon
-              :icon="spotlightActive ? faUsersSlash : faUsersRectangle"
-              size="lg"
-            />
-          </v-btn>
-        </v-col>
-      </v-col>
-    </v-app-bar>
+    <present-zoom-bar v-if="zoomIntegration" />
     <loading-icon v-if="loading" />
     <div
       v-else
@@ -292,7 +195,6 @@ import { defineComponent } from 'vue'
 import { basename, dirname, join } from 'upath'
 import draggable from 'vuedraggable'
 import { ipcRenderer } from 'electron'
-import { Participant } from '@zoomus/websdk/embedded'
 import {
   faListOl,
   faRotateRight,
@@ -300,14 +202,6 @@ import {
   faForward,
   faMusic,
   faPlus,
-  faZ,
-  faPlay,
-  faStop,
-  faMicrophoneSlash,
-  faUsersRectangle,
-  faUsersSlash,
-  faEye,
-  faEyeSlash,
   faGlobe,
   faArrowDownUpLock,
   faEllipsisVertical,
@@ -345,12 +239,9 @@ export default defineComponent({
       dragging: false,
       sortable: false,
       loading: true,
-      spotlightActive: false,
-      participants: [] as Participant[],
       addSong: false,
       song: null as null | VideoFile,
       showPrefix: false,
-      loadingZoom: false,
       showZoomComponent: true,
       items: [] as {
         id: string
@@ -405,35 +296,11 @@ export default defineComponent({
     date(): string {
       return this.$route.query.date as string
     },
-    faMicrophoneSlash() {
-      return faMicrophoneSlash
-    },
-    faUsersSlash() {
-      return faUsersSlash
-    },
     faMusic() {
       return faMusic
     },
-    faUsersRectangle() {
-      return faUsersRectangle
-    },
-    faPlay() {
-      return faPlay
-    },
-    faStop() {
-      return faStop
-    },
     faPlus() {
       return faPlus
-    },
-    faZ() {
-      return faZ
-    },
-    faEye() {
-      return faEye
-    },
-    faEyeSlash() {
-      return faEyeSlash
     },
     faEllipsisVertical() {
       return faEllipsisVertical
@@ -458,18 +325,6 @@ export default defineComponent({
     },
     zoomIntegration(): boolean {
       return !!this.$store.state.zoom.client
-    },
-    zoomStarted(): boolean {
-      return this.$store.state.zoom.started as boolean
-    },
-    isCoHost(): boolean {
-      return this.$store.state.zoom.coHost as boolean
-    },
-    allParticipants(): Participant[] {
-      const participants = this.$store.state.zoom.participants as Participant[]
-      return participants.filter(
-        (p) => !p.bHold && p.displayName !== this.$getPrefs('app.zoom.name')
-      )
     },
     zoomScene(): string | null {
       return this.$getPrefs('app.obs.zoomScene') as string | null
@@ -531,59 +386,6 @@ export default defineComponent({
     }, MS_IN_SEC)
   },
   methods: {
-    async spotlightParticipants() {
-      if (!this.isCoHost) {
-        this.$warn('errorNotCoHost')
-        return
-      }
-
-      this.$toggleSpotlight(window.sockets[window.sockets.length - 1], false)
-
-      if (this.spotlightActive) {
-        this.$muteParticipants(window.sockets[window.sockets.length - 1])
-
-        const hostID = this.$store.state.zoom.hostID as number
-        const automateAudio = this.$getPrefs(
-          'app.zoom.automateAudio'
-        ) as boolean
-        if (automateAudio || this.$getPrefs('app.zoom.spotlight')) {
-          this.$toggleSpotlight(
-            window.sockets[window.sockets.length - 1],
-            true,
-            hostID
-          )
-        }
-        this.participants = []
-      } else {
-        for (const p of this.participants) {
-          this.$toggleSpotlight(
-            window.sockets[window.sockets.length - 1],
-            true,
-            p.userId
-          )
-          await this.$toggleMic(
-            window.sockets[window.sockets.length - 1],
-            false,
-            p.userId
-          )
-        }
-      }
-
-      if (this.mediaVisible !== this.spotlightActive) {
-        ipcRenderer.send('toggleMediaWindowFocus')
-      }
-
-      this.spotlightActive = !this.spotlightActive
-    },
-    async toggleZoomMeeting() {
-      this.loadingZoom = true
-      if (this.zoomStarted) {
-        this.$stopMeeting(window.sockets[window.sockets.length - 1])
-      } else {
-        await this.$startMeeting(window.sockets[window.sockets.length - 1])
-      }
-      this.loadingZoom = false
-    },
     openWebsite() {
       ipcRenderer.send(
         'openWebsite',
