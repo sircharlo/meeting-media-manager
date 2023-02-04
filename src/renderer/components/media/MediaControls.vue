@@ -333,11 +333,6 @@ export default defineComponent({
     song() {
       this.addSong = false
     },
-    showZoomComponent(show: boolean) {
-      const el = document.getElementById('zoomMeeting')
-      if (!el) return
-      el.style.display = show ? 'flex' : 'none'
-    },
     async mediaActive(val: boolean) {
       this.items.forEach((item) => {
         item.play = false
@@ -478,14 +473,3 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="scss">
-#zoom-app-bar {
-  button.v-app-bar__nav-icon {
-    cursor: initial !important;
-
-    &:before {
-      opacity: 0 !important;
-    }
-  }
-}
-</style>

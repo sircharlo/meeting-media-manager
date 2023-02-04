@@ -275,3 +275,14 @@ export default defineComponent({
   },
 })
 </script>
+<style lang="scss">
+#zoom-app-bar {
+  button.v-app-bar__nav-icon {
+    cursor: initial !important;
+
+    &:before {
+      opacity: 0 !important;
+    }
+  }
+}
+</style>
