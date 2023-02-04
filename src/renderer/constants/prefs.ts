@@ -17,7 +17,7 @@ const PREFS = {
       mediaScene: null,
       cameraScene: null,
       zoomScene: null,
-      useV4: true,
+      useV4: false,
     },
     offline: false,
     outputFolderDateFormat: 'YYYY-MM-DD',
