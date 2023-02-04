@@ -18,7 +18,6 @@ import { basename, join } from 'upath'
 import { defineComponent } from 'vue'
 import getUsername from 'fullname'
 import { ipcRenderer } from 'electron'
-import { WebDAVClient } from 'webdav/dist/web/types'
 import { LocaleObject } from '@nuxtjs/i18n'
 import {
   ShortJWLang,
@@ -58,9 +57,6 @@ export default defineComponent({
           s !== this.$getPrefs('app.obs.mediaScene') &&
           s !== this.$getPrefs('app.obs.zoomScene')
       )
-    },
-    client() {
-      return this.$store.state.cong.client as WebDAVClient | null
     },
   },
   watch: {
@@ -417,7 +413,8 @@ export default defineComponent({
       }
 
       // If all cong fields are filled in, try to connect to the server
-      if (!this.client && this.online && !this.$getPrefs('app.offline')) {
+      this.$store.commit('client/clear')
+      if (this.online && !this.$getPrefs('app.offline')) {
         const { server, user, password, dir } = this.$getPrefs(
           'cong'
         ) as CongPrefs
@@ -425,6 +422,8 @@ export default defineComponent({
           const error = await this.$connect(server, user, password, dir)
           if (error === 'success') {
             await this.$forcePrefs()
+          } else {
+            this.$warn('errorWebdavLs', { identifier: dir })
           }
         }
       }
