@@ -91,7 +91,7 @@
               <v-list-item-title>{{ item.displayName }}</v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
-              <v-btn icon @click.stop="rename(item)">
+              <v-btn icon @click.stop="$emit('rename', item)">
                 <font-awesome-icon :icon="faPencil" size="lg" />
               </v-btn>
             </v-list-item-action>
@@ -116,6 +116,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { ipcRenderer } from 'electron'
 import { Participant } from '@zoomus/websdk/embedded'
 import {
   faZ,
@@ -210,14 +211,6 @@ export default defineComponent({
       } else {
         this.participants.push(participant)
       }
-    },
-    async rename(participant: Participant, name = '') {
-      console.log('rename', participant)
-      await this.$renameParticipant(
-        window.sockets[window.sockets.length - 1],
-        participant.displayName,
-        { id: participant.userId, name }
-      )
     },
     async spotlightParticipants() {
       if (!this.isCoHost) {

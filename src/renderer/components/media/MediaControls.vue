@@ -1,6 +1,32 @@
 <!-- Media controls for the presentation mode -->
 <template>
   <v-row>
+    <v-dialog
+      :value="!!participant"
+      max-width="700px"
+      @click:outside="participant = null"
+    >
+      <v-card>
+        <v-row no-gutters class="pa-2">
+          <v-col cols="12">
+            <form-input v-model="newName" hide-details="auto" clearable />
+          </v-col>
+          <v-col>
+            <v-checkbox v-model="saveRename" :label="$t('zoomSaveRename')" />
+          </v-col>
+          <v-col cols="auto" class="d-flex align-center">
+            <v-btn
+              color="primary"
+              :loading="renaming"
+              aria-label="save"
+              @click="rename(participant, newName)"
+            >
+              <font-awesome-icon :icon="faCheck" />
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
     <v-app-bar height="64px" width="100%">
       <v-col class="text-left" cols="4">
         <v-menu bottom right>
@@ -125,7 +151,7 @@
         </v-tooltip>
       </v-col>
     </v-app-bar>
-    <present-zoom-bar v-if="zoomIntegration" />
+    <present-zoom-bar v-if="zoomIntegration" @rename="atRename" />
     <loading-icon v-if="loading" />
     <div
       v-else
@@ -195,6 +221,7 @@ import { defineComponent } from 'vue'
 import { basename, dirname, join } from 'upath'
 import draggable from 'vuedraggable'
 import { ipcRenderer } from 'electron'
+import { Participant } from '@zoomus/websdk/embedded'
 import {
   faListOl,
   faRotateRight,
@@ -202,6 +229,7 @@ import {
   faForward,
   faMusic,
   faPlus,
+  faCheck,
   faGlobe,
   faArrowDownUpLock,
   faEllipsisVertical,
@@ -249,6 +277,10 @@ export default defineComponent({
         stop: boolean
         deactivate: boolean
       }[],
+      newName: '',
+      renaming: false,
+      saveRename: true,
+      participant: null as null | Participant,
       actions: [
         {
           title: this.$t('refresh'),
@@ -300,6 +332,9 @@ export default defineComponent({
     },
     faPlus() {
       return faPlus
+    },
+    faCheck() {
+      return faCheck
     },
     faEllipsisVertical() {
       return faEllipsisVertical
@@ -369,6 +404,28 @@ export default defineComponent({
     })
   },
   methods: {
+    atRename(participant: Participant) {
+      this.saveRename = true
+      this.participant = participant
+      this.newName = participant.displayName ?? ''
+    },
+    async rename(participant: Participant, name = '') {
+      this.renaming = true
+      await this.$renameParticipant(
+        window.sockets[window.sockets.length - 1],
+        name,
+        { id: participant.userId, name: participant.displayName }
+      )
+      if (this.saveRename) {
+        const renames = this.$getPrefs('app.zoom.autoRename') as string[]
+        if (!renames.find((r) => r.split('=')[0] === participant.displayName)) {
+          renames.push(`${participant.displayName}=${name}`)
+          this.$setPrefs('app.zoom.autoRename', renames)
+        }
+      }
+      this.participant = null
+      this.renaming = false
+    },
     openWebsite() {
       ipcRenderer.send(
         'openWebsite',
