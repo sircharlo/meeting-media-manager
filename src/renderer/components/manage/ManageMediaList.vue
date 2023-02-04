@@ -2,7 +2,12 @@
 <!-- Media list in the media manager page -->
 <template>
   <v-list v-if="mediaList.length > 0" dense>
-    <v-dialog v-if="edit" :value="true" @click:outside="edit = null">
+    <v-dialog
+      v-if="edit"
+      :value="true"
+      max-width="700px"
+      @click:outside="edit = null"
+    >
       <v-card>
         <v-col class="text-right">
           <form-input v-model="edit.newName" :suffix="edit.ext" />
