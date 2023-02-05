@@ -413,12 +413,15 @@ export default defineComponent({
 
       // If all cong fields are filled in, try to connect to the server
       this.$store.commit('client/clear')
-      if (this.online && !this.$getPrefs('app.offline')) {
+      console.log('online', this.online)
+      if (!this.$getPrefs('app.offline')) {
         const { server, user, password, dir } = this.$getPrefs(
           'cong'
         ) as CongPrefs
+        console.log('cong prefs complete', server && user && password && dir)
         if (server && user && password && dir) {
           const error = await this.$connect(server, user, password, dir)
+          console.log('result', error)
           if (error === 'success') {
             await this.$forcePrefs()
           } else {
