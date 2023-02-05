@@ -1,14 +1,14 @@
 ---
-tag: Configuration
+tag: Konfiguration
 title: Versammlungs-Synchronisation
 ref: congregation-sync
 ---
 
-The brother designated as *videoconference organizer* (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
+Der von der Ältestenschaft ernannte *Videokonferenz-Organisator* (VO) kann mithilfe von M³ den Brüdern für die Audio-/Videounterstützung in seiner Versammlung Medien zur Verfügung stellen.
 
-The VO, or someone designated by him, can:
+Der VO oder ein Gehilfe kann:
 
-- upload **additional** media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
+- **zusätzliche** Medien hochladen, die während einer Zusammenkunft benötigt werden, bspw. während der Besuchswoche des Kreisaufsehers oder für öffentliche Vorträge
 - **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
 - add or remove **recurring** media, such as a year-text video, or an announcement slide
 
