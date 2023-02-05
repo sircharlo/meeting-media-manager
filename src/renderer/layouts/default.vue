@@ -233,7 +233,6 @@ export default defineComponent({
     // Listen for online status
     if (navigator.onLine) {
       this.$store.commit('stats/setOnline', true)
-      ipcRenderer.send('checkForUpdates')
     } else {
       this.$warn('errorOffline')
     }

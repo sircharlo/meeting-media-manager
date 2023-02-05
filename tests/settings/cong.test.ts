@@ -15,6 +15,10 @@ test.beforeAll(async () => {
 
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
+  if (platform() === 'darwin') {
+    // eslint-disable-next-line no-magic-numbers
+    await delay(500)
+  }
 })
 
 test.afterAll(async () => {
