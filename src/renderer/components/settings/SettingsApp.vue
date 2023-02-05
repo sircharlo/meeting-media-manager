@@ -198,6 +198,7 @@
         explanation="obsZoomSceneExplain"
         :disabled="cameraScenes.length === 0"
         :locked="$isLocked('app.obs.zoomScene')"
+        clearable
       />
     </template>
     <v-divider class="mb-6" />
@@ -414,11 +415,15 @@ export default defineComponent({
       )
     },
     zoomScenes(): string[] {
-      return this.scenes.filter(
+      const scenes = this.scenes.filter(
         (scene) =>
           scene !== this.app.obs.cameraScene &&
           scene !== this.app.obs.mediaScene
       )
+      if (this.app.obs.zoomScene && !scenes.includes(this.app.obs.zoomScene)) {
+        scenes.push(this.app.obs.zoomScene)
+      }
+      return scenes
     },
     scenes(): string[] {
       return this.$store.state.obs.scenes as string[]
