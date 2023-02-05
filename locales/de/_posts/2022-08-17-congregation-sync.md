@@ -8,8 +8,8 @@ Der von der Ältestenschaft ernannte *Videokonferenz-Organisator* (VO) kann mith
 
 Der VO oder ein Gehilfe kann:
 
-- **zusätzliche** Medien hochladen, die während einer Zusammenkunft benötigt werden, bspw. während der Besuchswoche des Kreisaufsehers oder für öffentliche Vorträge
-- **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
+- **zusätzlich benötigte** Medien hochladen, bspw. für die Besuchswoche des Kreisaufsehers oder öffentliche Vorträge
+- nicht benötigte Medien von JW.ORG **ausblenden**, z.B. weil ein Programmpunkt durch das Zweigbüro ersetzt wurde
 - add or remove **recurring** media, such as a year-text video, or an announcement slide
 
 All who are synced to the same congregation will then receive the exact samemedia when they click the *Update media folders* button.
