@@ -11,7 +11,7 @@ import {
   openHomePage,
   ipcRendererInvoke,
 } from './../helpers/electronHelpers'
-import { getDate, mwDayPresent } from './../helpers/generalHelpers'
+import { delay, getDate, mwDayPresent } from './../helpers/generalHelpers'
 import prefs from './../mocks/prefs/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
 
@@ -46,6 +46,10 @@ test('render the presentation mode page correctly', async () => {
 
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
+  if (platform() === 'darwin') {
+    // eslint-disable-next-line no-magic-numbers
+    await delay(500)
+  }
 
   // Check for correct version
   expect((await page.locator('text=M³ v').innerText()).toLowerCase()).toBe(

@@ -36,6 +36,10 @@ test('render the presentation mode page correctly', async () => {
 
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
+  if (platform() === 'darwin') {
+    // eslint-disable-next-line no-magic-numbers
+    await delay(500)
+  }
 
   // Check for correct version
   expect((await page.locator('text=M³ v').innerText()).toLowerCase()).toBe(

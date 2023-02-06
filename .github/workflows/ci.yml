@@ -160,7 +160,6 @@ jobs:
         run: |
           yarn prebuild
           yarn compile
-          echo github.event_name
 
       - name: Build Electron app
         if: |
