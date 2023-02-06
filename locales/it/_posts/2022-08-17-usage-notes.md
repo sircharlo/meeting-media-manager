@@ -4,7 +4,7 @@ title: Note tecniche di utilizzo
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+L'app dovrebbe funzionare sulla maggior parte dei computer moderni che eseguono Windows, Linux o Mac.
 
 ### Windows: installazione e primo avvio
 
@@ -22,7 +22,7 @@ Se l'output è `0`, allora AppImage **non** si avvierà a meno che non esegui il
 
 Assicurati di leggere [cosa comporta](https://lwn.net/Articles/673597/) prima di farlo.
 
-### macOS: Installation and first launch
+### macOS: Installazione e primo avvio
 
 Se durante l'installazione ottieni un avviso che l'app non può essere avviata perché "non è stata scaricata dall'App store" oppure "lo sviluppatore non può essere verificato", allora questa [pagina del supporto Apple](https://support.apple.com/en-ca/HT202491) potrà aiutarti.
 
@@ -30,9 +30,9 @@ Se ricevi un messaggio indicante che "non hai il permesso di aprire l'applicazio
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Auto-update
+### macOS: Aggiornamento automatico
 
-Diversamente da Windows e Linux, la funzione di aggiornamento automatico **non** è disponibile in macOS, e per ragioni tecniche probabilmente non lo sarà mai. However, one of two things will happen for macOS users when an update is available:
+Diversamente da Windows e Linux, la funzione di aggiornamento automatico **non** è disponibile in macOS, e per ragioni tecniche probabilmente non lo sarà mai. Tuttavia quando è disponibile un aggiornamento potrà verificarsi una di queste due cose:
 
 - M³ tenterà di scaricare il pacchetto di aggiornamento e aprirlo automaticamente, dopodiché l'utente dovrà completare manualmente l'installazione dell'aggiornamento di M³ trascinando e rilasciando l'app aggiornata nella propria cartella Applicazioni. Quindi, si potrà avviare M³ appena aggiornato dalla cartella Applicazioni come di consueto.
 - Se il passaggio precedente fallisce sempre, M³ visualizzerà una notifica persistente che indica che è disponibile un aggiornamento, con un collegamento all'aggiornamento stesso. Una notifica rossa lampeggiante verrà visualizzata anche sul pulsante delle impostazioni nella schermata principale di M³. Il numero di versione di M³ nella schermata delle impostazioni si trasformerà in un pulsante che, una volta cliccato, apre automaticamente la pagina di download dell'ultima versione.
