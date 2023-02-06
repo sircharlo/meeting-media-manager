@@ -1,6 +1,8 @@
+import { platform } from 'os'
 import { expect, test } from '@playwright/test'
 import jimp from 'jimp'
 import { ElectronApplication, Page } from 'playwright'
+import { delay } from '../helpers/generalHelpers'
 import { version } from '../../package.json'
 import {
   startApp,
@@ -26,6 +28,10 @@ test('render the add media page correctly', async () => {
 
   // Open add page
   await page.locator('.v-card', { hasText: locale.recurring }).click()
+  if (platform() === 'darwin') {
+    // eslint-disable-next-line no-magic-numbers
+    await delay(500)
+  }
 
   // Check for correct heading
   expect(await page.locator('h1').innerText()).toBe(locale.recurring)

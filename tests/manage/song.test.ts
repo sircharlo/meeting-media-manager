@@ -1,3 +1,4 @@
+import { platform } from 'os'
 import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 // eslint-disable-next-line import/named
@@ -23,6 +24,10 @@ test.beforeAll(async () => {
 
   // Open add page
   await page.locator('.v-card', { hasText: locale.recurring }).click()
+  if (platform() === 'darwin') {
+    // eslint-disable-next-line no-magic-numbers
+    await delay(500)
+  }
 })
 
 test.afterAll(async () => {
