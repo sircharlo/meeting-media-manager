@@ -93,7 +93,7 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
     return (
       `${
         $config.repo
-      }/issues/new?assignees=mtdvlpr,sircharlo&labels=bug,from-app&template=bug_report.yml&title=[Bug]%3A+<title>&version=${
+      }/issues/new?template=bug_report.yml&title=[App][Bug]%3A+<title>&version=${
         $config.version
       }&logs=${JSON.stringify(logs.error, null, 2).replace(
         /\n/g,
