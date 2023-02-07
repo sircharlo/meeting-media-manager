@@ -1,12 +1,12 @@
 
-title: "[New translation]: <language>"
+title: "New translation in <language>"
 labels: translations
 body:
 - type: markdown
   attributes:
     value: |
       Thanks for taking the time to fill out this translations form!
-- type: input
+- type: textarea
   id: language
   attributes:
     label: What language do you speak?
@@ -17,7 +17,7 @@ body:
     value: I would like to help translate M³ into ...
   validations:
     required: true
-- type: input
+- type: textarea
   id: additional-context
   attributes:
     label: Additional context
