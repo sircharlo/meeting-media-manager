@@ -1,5 +1,5 @@
 
-title: "[New translation]: <language>"
+title: "New translation in <language>"
 labels: translations
 body:
 - type: markdown
