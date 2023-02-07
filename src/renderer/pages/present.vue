@@ -14,8 +14,10 @@
       "
     >
       <form-input
+        v-if="!!zoomClient"
         v-model="participant"
         field="select"
+        :loading="allParticipants.length === 0"
         :label="$t('unmuteParticipant')"
         :items="allParticipants"
         item-text="displayName"
