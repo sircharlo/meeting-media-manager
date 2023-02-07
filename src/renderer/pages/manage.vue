@@ -309,27 +309,19 @@ export default defineComponent({
 
       // Upload media to the cong server
       if (this.client && this.online) {
-        const mediaPath = join(this.$getPrefs('cong.dir') as string, 'Media')
-        const datePath = join(mediaPath, this.date)
-        const filePath = join(datePath, file.safeName)
-
-        try {
-          await this.$createCongDir(mediaPath)
-        } catch (e: unknown) {
-          this.$error('errorWebdavPut', e, mediaPath)
-        }
-
-        try {
-          await this.$createCongDir(datePath)
-        } catch (e: unknown) {
-          this.$error('errorWebdavPut', e, datePath)
-        }
-
         const perf: any = {
           start: performance.now(),
           bytes: statSync(path).size,
           name: file.safeName,
         }
+
+        const filePath = join(
+          this.$getPrefs('cong.dir') as string,
+          'Media',
+          this.date,
+          file.safeName
+        )
+
         try {
           await this.client.putFileContents(filePath, readFileSync(path), {
             overwrite: true,
@@ -369,6 +361,24 @@ export default defineComponent({
         const promises: Promise<void>[] = []
         const files = [...this.files, this.song] as (VideoFile | LocalFile)[]
         this.totalFiles = files.length
+
+        if (this.client && this.online) {
+          const mediaPath = join(this.$getPrefs('cong.dir') as string, 'Media')
+          const datePath = join(mediaPath, this.date)
+
+          try {
+            await this.$createCongDir(mediaPath)
+          } catch (e: unknown) {
+            this.$error('errorWebdavPut', e, mediaPath)
+          }
+
+          try {
+            await this.$createCongDir(datePath)
+          } catch (e: unknown) {
+            this.$error('errorWebdavPut', e, datePath)
+          }
+        }
+
         files.forEach((file) => {
           promises.push(this.processFile(file))
         })
