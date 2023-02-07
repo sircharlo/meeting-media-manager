@@ -39,7 +39,7 @@
         @progress="progress = $event"
       />
       <v-list-item-content class="ml-2">
-        <v-list-item-subtitle class="media-title">
+        <v-list-item-subtitle class="align-center d-flex media-title">
           <runtime-template-compiler :template="title" :parent="parent" />
         </v-list-item-subtitle>
       </v-list-item-content>
@@ -285,7 +285,7 @@ export default defineComponent({
     },
     title(): string {
       return (
-        `<div style="line-break: anywhere">` +
+        `<div class="d-flex align-center">` +
         (this.streamingFile?.safeName ?? basename(this.src))
           .replace(
             /^((\d{1,2}-?)* ?- )/,
@@ -293,11 +293,11 @@ export default defineComponent({
           )
           .replace(
             new RegExp(`${this.$translate('song')} (\\d+) -`, 'g'),
-            `<span class="song v-btn pa-1"><font-awesome-icon :icon="faMusic" size="sm" pull="left"/>$1</span>`
+            `<div class="col"><span class="song v-btn pa-1"><font-awesome-icon :icon="faMusic" size="sm" pull="left"/>$1</span></div>`
           )
           .replace(
             new RegExp(`${this.$translate('paragraph')} (\\d+) -`, 'g'),
-            `<span class="paragraph v-btn pa-1"><font-awesome-icon :icon="faParagraph" size="sm" pull="left"/>$1</span>`
+            `<div class="col"><span class="paragraph v-btn pa-1"><font-awesome-icon :icon="faParagraph" size="sm" pull="left"/>$1</span></div>`
           ) +
         `</div>`
       )
@@ -662,6 +662,11 @@ export default defineComponent({
 .theme--light {
   .media-title {
     color: rgba(0, 0, 0, 0.87) !important;
+  }
+
+  .song, .paragraph {
+    letter-spacing: 0px;
+    width: 60px;
   }
 
   .song {
