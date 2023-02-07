@@ -214,13 +214,12 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { basename, join } from 'upath'
 import draggable from 'vuedraggable'
 import { Dayjs } from 'dayjs'
 // eslint-disable-next-line import/named
 import { readFileSync } from 'fs-extra'
-import { PropType } from 'vue/types/v3-component-props'
 import { VideoFile } from '~/types'
 
 type MediaItem = {
