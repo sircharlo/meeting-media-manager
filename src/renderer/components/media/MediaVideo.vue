@@ -2,7 +2,7 @@
 <!-- Video in presentation mode -->
 <template>
   <div :id="id">
-    <div :id="id + '-container'" />
+    <div :id="id + '-container'" class="align-center d-flex" />
     <v-overlay
       absolute
       :value="changeTime"
@@ -58,7 +58,7 @@
           left
           tile
           depressed
-          style="bottom: 7.5px"
+          style="bottom: 4px"
           :class="{ 'pulse-danger': isClipped }"
           @click="atClick()"
         >
@@ -79,7 +79,7 @@
       left
       tile
       depressed
-      style="bottom: 7.5px"
+      style="bottom: 4px"
       :class="{ 'pulse-danger': isClipped }"
       @click="atClick()"
     >
@@ -97,7 +97,7 @@
       tile
       depressed
       :color="ccEnabled ? 'primary' : undefined"
-      style="left: 123px; bottom: 7.5px"
+      style="left: 123px; bottom: 4px"
       @click="ccEnabled = !ccEnabled"
     >
       <font-awesome-icon :icon="ccIcon" />
