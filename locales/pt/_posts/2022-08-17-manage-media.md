@@ -4,7 +4,7 @@ title: Gerenciando mídia
 ref: manage-media
 ---
 
-A tela de gerenciamento de mídia permite que o usuário adicione ou remova mídia para qualquer reunião, gerencie mídia recorrente e até adicione mídia especial para outras datas que não sejam reuniões de meio e fim de semana.
+A tela de gerenciamento de mídia permite que o usuário adicione ou remova mídia para qualquer reunião, gerencie mídia recorrente e até adicione mídia especial para outras datas que não sejam reuniões do meio e fim de semana.
 
 ### Gerenciando mídia para qualquer dia específico
 
