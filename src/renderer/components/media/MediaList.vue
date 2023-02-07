@@ -220,6 +220,9 @@ import draggable from 'vuedraggable'
 import { Dayjs } from 'dayjs'
 // eslint-disable-next-line import/named
 import { readFileSync } from 'fs-extra'
+import { PropType } from 'vue/types/v3-component-props'
+import { VideoFile } from '~/types'
+
 type MediaItem = {
   id: string
   path: string
@@ -235,7 +238,7 @@ export default defineComponent({
     items: {
       type: Array,
       required: true,
-    },
+    } as PropType<MediaItem[]>,
     mediaActive: {
       type: Boolean,
       default: false,
@@ -303,7 +306,7 @@ export default defineComponent({
       const file = this.$findOne(join(this.$mediaPath(), this.date, '*.title'))
       return file
         ? `${this.$t('watchtower')}: ${basename(file, '.title')}`
-        : this.$t('watchtower')
+        : (this.$t('watchtower') as string)
     },
     isMwDay(): boolean {
       return this.weekDay === this.$getMwDay(this.dateObj.startOf('week'))
