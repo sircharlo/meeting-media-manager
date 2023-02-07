@@ -616,7 +616,7 @@ const plugin: Plugin = (
           params,
         })
       } catch (e: any) {
-        if (!fallbackLang) {
+        if (!silent && !fallbackLang) {
           $log.error(e)
         }
 
@@ -650,7 +650,9 @@ const plugin: Plugin = (
                 },
               })
             } catch (e: any) {
-              $log.error(e)
+              if (!silent) {
+                $log.error(e)
+              }
 
               try {
                 const validOptions = ['iasn'] // Has an alternative pub with an extra m
