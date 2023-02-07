@@ -362,19 +362,21 @@ export default defineComponent({
         const files = [...this.files, this.song] as (VideoFile | LocalFile)[]
         this.totalFiles = files.length
 
-        const mediaPath = join(this.$getPrefs('cong.dir') as string, 'Media')
-        const datePath = join(mediaPath, this.date)
+        if (this.client && this.online) {
+          const mediaPath = join(this.$getPrefs('cong.dir') as string, 'Media')
+          const datePath = join(mediaPath, this.date)
 
-        try {
-          await this.$createCongDir(mediaPath)
-        } catch (e: unknown) {
-          this.$error('errorWebdavPut', e, mediaPath)
-        }
+          try {
+            await this.$createCongDir(mediaPath)
+          } catch (e: unknown) {
+            this.$error('errorWebdavPut', e, mediaPath)
+          }
 
-        try {
-          await this.$createCongDir(datePath)
-        } catch (e: unknown) {
-          this.$error('errorWebdavPut', e, datePath)
+          try {
+            await this.$createCongDir(datePath)
+          } catch (e: unknown) {
+            this.$error('errorWebdavPut', e, datePath)
+          }
         }
 
         files.forEach((file) => {
