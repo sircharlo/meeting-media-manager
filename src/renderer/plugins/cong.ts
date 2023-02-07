@@ -291,11 +291,14 @@ const plugin: Plugin = (
       const client = store.state.cong.client as WebDAVClient
       try {
         await client.createDirectory(dir)
-      } catch (e: unknown) {
+      } catch (e: any) {
         if (await client.exists(dir)) {
-          return
+          console.debug('Directory already exists')
+        } else if (e.message.includes(LOCKED.toString())) {
+          $warn('errorWebdavLocked', { identifier: dir })
+        } else {
+          throw e
         }
-        throw e
       }
     }
   })
