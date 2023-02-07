@@ -6,13 +6,23 @@
   >
     <confirm-dialog
       v-model="dialog"
-      content="obsZoomSceneActivate"
+      description="obsZoomSceneActivate"
       @cancel="dialog = false"
       @confirm="
         dialog = false
         zoomPart = true
       "
-    />
+    >
+      <form-input
+        v-model="participant"
+        field="select"
+        :label="$t('unmuteParticipant')"
+        :items="allParticipants"
+        item-text="displayName"
+        item-value="userId"
+        return-object
+      />
+    </confirm-dialog>
     <div id="zoomMeeting" />
     <media-controls
       v-if="date"
@@ -94,7 +104,7 @@
 import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
-import zoomSDK, { EmbeddedClient } from '@zoomus/websdk/embedded'
+import zoomSDK, { EmbeddedClient, Participant } from '@zoomus/websdk/embedded'
 import {
   faHome,
   IconDefinition,
@@ -108,6 +118,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
+      participant: null as null | Participant,
       zoomPart: false,
       mediaActive: false,
       videoActive: false,
@@ -253,6 +264,12 @@ export default defineComponent({
     zoomStarted(): boolean {
       return this.$store.state.zoom.started as boolean
     },
+    allParticipants(): Participant[] {
+      const participants = this.$store.state.zoom.participants as Participant[]
+      return participants.filter(
+        (p) => !p.bHold && p.displayName !== this.$getPrefs('app.zoom.name')
+      )
+    },
   },
   watch: {
     coHost(val: boolean) {
@@ -273,17 +290,42 @@ export default defineComponent({
       }
     },
     zoomPart(val: boolean) {
-      if (this.mediaActive) return
-      if (val && this.zoomScene) {
-        this.$setScene(this.zoomScene)
-        if (this.mediaWinVisible) {
-          ipcRenderer.send('toggleMediaWindowFocus')
+      if (this.mediaActive || !this.zoomScene) return
+      const hostID = this.$store.state.zoom.hostID as number
+
+      if (this.zoomClient) {
+        this.$toggleMic(
+          window.sockets[window.sockets.length - 1],
+          !val,
+          this.participant?.userId
+        )
+        if (val) {
+          this.$toggleSpotlight(
+            window.sockets[window.sockets.length - 1],
+            false
+          )
+          this.$toggleSpotlight(
+            window.sockets[window.sockets.length - 1],
+            true,
+            hostID
+          )
+        } else {
+          this.participant = null
         }
-      } else if (!val) {
-        this.$setScene(this.scene)
-        if (!this.mediaWinVisible) {
-          ipcRenderer.send('toggleMediaWindowFocus')
-        }
+      }
+
+      this.$setScene(val ? this.zoomScene : this.scene)
+      if (val === this.mediaWinVisible) {
+        ipcRenderer.send('toggleMediaWindowFocus')
+      }
+
+      if (this.zoomClient) {
+        this.$toggleSpotlight(window.sockets[window.sockets.length - 1], false)
+        this.$toggleSpotlight(
+          window.sockets[window.sockets.length - 1],
+          this.$getPrefs('app.zoom.spotlight') as boolean,
+          hostID
+        )
       }
     },
     async mediaActive(val: boolean) {

@@ -161,6 +161,7 @@
   "system": "System",
   "themePreference": "Theme preference",
   "understood": "I understand",
+  "unmuteParticipant": "Unmute participant",
   "updateDownloaded": "An update to M³ was downloaded successfully. The installation will begin when M³ is closed.",
   "updateDownloading": "An update to M³ is being downloaded in the background.",
   "updateError": "Something went wrong while checking for updates.",
