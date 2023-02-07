@@ -235,9 +235,9 @@ export default defineComponent({
   },
   props: {
     items: {
-      type: Array,
+      type: Array as PropType<MediaItem[]>,
       required: true,
-    } as PropType<MediaItem[]>,
+    },
     mediaActive: {
       type: Boolean,
       default: false,
