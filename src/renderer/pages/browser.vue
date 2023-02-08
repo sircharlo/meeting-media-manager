@@ -1,5 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%; overflow: hidden">
+    <span v-if="!controller" class="dot" />
     <iframe id="website" :src="url" style="width: 100%; height: 100%" />
   </div>
 </template>
@@ -44,6 +45,19 @@ export default defineComponent({
           }
         }
         if (win) {
+          win.onmousemove = (e) => {
+            console.log('mouse moved', e)
+            ipcRenderer.send('moveMouse', {
+              x:
+                e.x /
+                (win.document.firstElementChild?.scrollWidth ?? win.innerWidth),
+              y:
+                e.y /
+                (win.document.firstElementChild?.scrollHeight ??
+                  win.innerHeight),
+            })
+          }
+
           win.onscroll = () => {
             ipcRenderer.send('scrollWebsite', {
               x:
@@ -55,6 +69,7 @@ export default defineComponent({
                   win.innerHeight),
             })
           }
+
           win.onclick = (e: MouseEvent) => {
             console.debug('Clicked', e.target)
             e.stopImmediatePropagation()
@@ -105,6 +120,27 @@ export default defineComponent({
               `
         head.appendChild(style)
       }
+
+      ipcRenderer.on('moveMouse', (_e, pos) => {
+        const win = iframe.contentWindow
+        const dot = document.querySelector('.dot') as HTMLElement
+        if (win && dot) {
+          dot.style.left = `${
+            pos.x *
+              (win.document.firstElementChild?.scrollWidth ?? win.innerWidth) -
+            // eslint-disable-next-line no-magic-numbers
+            12.5
+          }px`
+          dot.style.top = `${
+            pos.y *
+              (win.document.firstElementChild?.scrollHeight ??
+                win.innerHeight) -
+            // eslint-disable-next-line no-magic-numbers
+            12.5
+          }px`
+        }
+      })
+
       ipcRenderer.on('scrollWebsite', (_e, pos) => {
         const win = iframe.contentWindow
         if (win) {
@@ -176,5 +212,16 @@ body {
   -webkit-app-region: drag;
   background: black;
   user-select: auto;
+}
+
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+  position: fixed;
+  left: -10px;
+  top: -10px;
 }
 </style>

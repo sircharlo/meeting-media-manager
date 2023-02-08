@@ -324,6 +324,9 @@ if (gotTheLock) {
   ipcMain.on('playVideo', () => {
     mediaWin?.webContents.send('playVideo')
   })
+  ipcMain.on('moveMouse', (_e, pos: Point) => {
+    mediaWin?.webContents.send('moveMouse', pos)
+  })
   ipcMain.on('scrollWebsite', (_e, pos: Point) => {
     mediaWin?.webContents.send('scrollWebsite', pos)
   })
