@@ -125,7 +125,7 @@ const plugin: Plugin = (
     return joinSafe(
       mediaPath,
       file.folder as string,
-      file.destFilename as string
+      file.destFilename ?? file.safeName
     )
   }
   inject('mediaPath', mediaPath)

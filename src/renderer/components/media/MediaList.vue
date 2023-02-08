@@ -220,7 +220,7 @@ import draggable from 'vuedraggable'
 import { Dayjs } from 'dayjs'
 // eslint-disable-next-line import/named
 import { readFileSync } from 'fs-extra'
-import { VideoFile } from '~/types'
+import { VideoFile, MeetingFile } from '~/types'
 
 type MediaItem = {
   id: string
@@ -301,6 +301,12 @@ export default defineComponent({
       const OTHER_ELEMENTS = 136
       return `max-height: ${this.windowHeight - OTHER_ELEMENTS}px`
     },
+    meetings(): Map<string, Map<number, MeetingFile[]>> {
+      return this.$store.state.media.meetings as Map<
+        string,
+        Map<number, MeetingFile[]>
+      >
+    },
     wtTitle(): string {
       const file = this.$findOne(join(this.$mediaPath(), this.date, '*.title'))
       return file
@@ -319,12 +325,34 @@ export default defineComponent({
       )
     },
     firstApplyItem(): number {
+      const meetingMap = this.meetings.get(this.date)
+      if (meetingMap) {
+        const firstApplyPar = [...meetingMap.keys()]
+          .sort((a, b) => a - b)
+          // eslint-disable-next-line no-magic-numbers
+          .find((key) => key > 12) as number
+        const firstApplyItems = meetingMap.get(firstApplyPar)
+        if (firstApplyItems && firstApplyItems[0]?.folder) {
+          return this.mediaItems.findIndex(
+            (item) => item.path === this.$mediaPath(firstApplyItems[0])
+          )
+        }
+      }
+
+      if (this.$getPrefs('media.excludeTh')) {
+        return (
+          this.mediaItems.findIndex((item) =>
+            basename(item.path).startsWith('02')
+          ) +
+          this.mediaItems.filter((item) => basename(item.path).startsWith('02'))
+            .length
+        )
+      }
+
       return (
-        this.mediaItems.findIndex((item) =>
-          basename(item.path).startsWith('02')
-        ) +
-        this.mediaItems.filter((item) => basename(item.path).startsWith('02'))
-          .length
+        this.mediaItems
+          .slice(1)
+          .findIndex((item) => /- \w+ \d{1,2} - /.test(basename(item.path))) + 2
       )
     },
     secondMwbSong(): number {
