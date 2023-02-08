@@ -36,7 +36,7 @@
     <template v-if="isMwDay">
       <v-divider class="mx-4 mt-4 treasures" />
       <v-list-item-title class="mx-4 my-2 treasures--text">
-        {{ mwbHeadings.treasures }}
+        {{ mwbHeadings.treasure }}
       </v-list-item-title>
       <draggable
         v-model="treasureItems"
@@ -310,8 +310,8 @@ export default defineComponent({
     wtTitle(): string {
       const file = this.$findOne(join(this.$mediaPath(), this.date, '*.title'))
       return file
-        ? `${this.$t('watchtower')}: ${basename(file, '.title')}`
-        : (this.$t('watchtower') as string)
+        ? `${basename(file, '.title')}`
+        : "Watchtower"
     },
     isMwDay(): boolean {
       return this.weekDay === this.$getMwDay(this.dateObj.startOf('week'))
