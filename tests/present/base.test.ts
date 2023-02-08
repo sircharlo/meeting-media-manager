@@ -88,6 +88,9 @@ test('render the presentation mode page correctly', async () => {
         .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
+
+    // eslint-disable-next-line no-magic-numbers
+    await delay(500)
     await page.screenshot({ path: 'img/present/media-list.png' })
   } else {
     // Check for correct heading
@@ -101,6 +104,9 @@ test('render the presentation mode page correctly', async () => {
           .locator('[aria-label="More actions"]')
           .getAttribute('aria-label')
       ).toBeTruthy()
+
+      // eslint-disable-next-line no-magic-numbers
+      await delay(500)
       await page.screenshot({ path: 'img/present/media-list.png' })
     }
   }
