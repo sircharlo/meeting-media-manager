@@ -10,22 +10,22 @@ Der VO oder ein Gehilfe kann:
 
 - **zusätzlich benötigte** Medien hochladen, bspw. für die Besuchswoche des Kreisaufsehers oder öffentliche Vorträge
 - nicht benötigte Medien von JW.ORG **ausblenden**, z.B. weil ein Programmpunkt durch das Zweigbüro ersetzt wurde
-- add or remove **recurring** media, such as a year-text video, or an announcement slide
+- **wiederkehrende** Medien hinzufügen oder entfernen, wie z.B. ein Jahrestext-Video oder eine Ankündigungsfolie
 
-All who are synced to the same congregation will then receive the exact samemedia when they click the *Update media folders* button.
+Jeder, der mit der gleichen Versammlung synchronisiert, erhält dann beim Klicken auf *Medienordner aktualisieren* die exakt gleichen Medien.
 
-Please note that the congregation sync feature is opt-in and entirely optional.
+Die Versammlungs-Synchronisation ist komplett optional und nicht erforderlich.
 
-### How it works
+### So funktioniert es
 
-M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+Der zugrunde liegende Sync-Mechanismus von M³ verwendet WebDAV. Das bedeutet, dass das VO (oder ein Gehilfe) entweder:
 
-- set up a secured WebDAV server that is web-accessible, **or**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- einen gesicherten WebDAV-Server erstellen muss, der per Internet zugänglich ist, **oder**
+- einen externen Cloud-Speicherdienst verwenden muss, der das WebDAV-Protokoll unterstützt (siehe die Einstellung *Web-Adresse* unter *Einstellungen: Versammlungs-Synchronisation*).
 
 All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
 
-### Einstellungen: Versammlungs-Synchronisierung
+### Einstellungen: Versammlungs-Synchronisation
 
 | Einstellung                       | Erklärung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
