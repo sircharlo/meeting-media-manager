@@ -309,9 +309,7 @@ export default defineComponent({
     },
     wtTitle(): string {
       const file = this.$findOne(join(this.$mediaPath(), this.date, '*.title'))
-      return file
-        ? `${basename(file, '.title')}`
-        : "Watchtower"
+      return file ? `${basename(file, '.title')}` : 'Watchtower'
     },
     isMwDay(): boolean {
       return this.weekDay === this.$getMwDay(this.dateObj.startOf('week'))
@@ -351,17 +349,26 @@ export default defineComponent({
 
       return (
         this.mediaItems
-          .slice(1)
-          .findIndex((item) => /- \w+ \d{1,2} - /.test(basename(item.path))) + 2
+          .slice(this.firstMwbSong + 1)
+          .findIndex((item) => /- \w+ \d{1,2} - /.test(basename(item.path))) +
+        this.firstMwbSong +
+        2
+      )
+    },
+    firstMwbSong(): number {
+      return this.mediaItems.findIndex((item) =>
+        basename(item.path).includes(` - ${this.$translate('song')} `)
       )
     },
     secondMwbSong(): number {
       return (
         this.mediaItems
-          .slice(1)
+          .slice(this.firstMwbSong + 1)
           .findIndex((item) =>
             basename(item.path).includes(` - ${this.$translate('song')} `)
-          ) + 1
+          ) +
+        this.firstMwbSong +
+        1
       )
     },
   },
