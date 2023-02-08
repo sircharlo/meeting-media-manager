@@ -22,7 +22,7 @@
 
 ### New or improved features
 
-- 🚀 A new OBS scene selector for making the display of Zoom participants easier (see #987 and #1022 for details)
+- 🚀 A new OBS scene selector for making the display of Zoom participants easier (see [#987](https://github.com/sircharlo/meeting-media-manager/pull/987) and [#1022](https://github.com/sircharlo/meeting-media-manager/pull/1022) for details)
 - 🚀 You can now set a custom cache location to store publications and media cache
 - Added informational icons with tooltips for settings that are not immediately clear
 - New language: Slovak (thanks @madroots!)
