@@ -318,7 +318,7 @@ export default defineComponent({
     const source = document.createElement('source')
     source.src = this.url
     const video = document.createElement('video')
-    video.width = 144
+    video.width = 142
     video.height = 80
     video.preload = 'metadata'
     video.poster = this.thumbnail ?? this.poster

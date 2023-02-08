@@ -17,8 +17,8 @@
           :id="id + '-preview'"
           :src="url"
           style="
-            max-width: 144px;
-            max-height: 80px;
+            width: 142px;
+            height: 80px;
             aspect-ratio: 16 / 9;
             object-fit: contain;
             vertical-align: middle;
