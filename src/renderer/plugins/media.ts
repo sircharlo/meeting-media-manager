@@ -1240,12 +1240,16 @@ const plugin: Plugin = (
         ) as { DocumentId: number }[]
       )[0].DocumentId
 
-      const title = $query(
+      const magazine = $query(
+        db,
+        `SELECT Title FROM PublicationIssueProperty LIMIT 1`
+      )[0] as { Title: string }
+      const article = $query(
         db,
         `SELECT Title FROM Document WHERE DocumentId = ${docId}`
       )[0] as { Title: string }
       $write(
-        join($mediaPath(), date, $strip(title.Title, 'file') + '.title'),
+        join($mediaPath(), date, $strip(magazine.Title + " - " + article.Title, 'file') + '.title'),
         ''
       )
 
