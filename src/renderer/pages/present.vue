@@ -376,7 +376,7 @@ export default defineComponent({
     }
 
     const zoom = this.$getPrefs('app.zoom') as ZoomPrefs
-    if (zoom.enable && zoom.name && zoom.id && zoom.password) {
+    if (zoom?.enable && zoom.name && zoom.id && zoom.password) {
       const client = zoomSDK.createClient()
       this.$store.commit('zoom/setClient', client)
       try {
