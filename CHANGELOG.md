@@ -6,7 +6,7 @@
 
 - 🚀 New field which allows selecting the date of the next visit of the Circuit Overseer; when that week comes, the midweek meeting will change to Tuesday automatically and unnecessary media (concluding songs and CBS media) will be skipped as well
 - Added a loading indicator while files are being renamed
-- Improved app icon for MacOS (thanks @advenimus!)
+- Improved app icon for MacOS (thanks [@advenimus](https://github.com/advenimus)!)
 - Improved media prefixes for weekend meetings (reserve `01` for public talk opening song, and `02` for public talk images)
 
 ### Bug fixes
@@ -25,8 +25,8 @@
 - 🚀 A new OBS scene selector for making the display of Zoom participants easier (see [#987](https://github.com/sircharlo/meeting-media-manager/pull/987) and [#1022](https://github.com/sircharlo/meeting-media-manager/pull/1022) for details)
 - 🚀 You can now set a custom cache location to store publications and media cache
 - Added informational icons with tooltips for settings that are not immediately clear
-- New language: Slovak (thanks @madroots!)
-- New language: Ukrainian (thanks @mchaplyak!)
+- New language: Slovak (thanks [@madroots](https://github.com/madroots)!)
+- New language: Ukrainian (thanks [@mchaplyak](https://github.com/mchaplyak)!)
 - Small UI improvements
 
 ### Bug fixes
@@ -37,7 +37,7 @@
 - Media from the _Enjoy Life Forever_ brochure is correctly ignored again when appropriate
 - Show a warning when the media folder could not be opened automatically from M³
 - Show a warning when the yeartext is not available in your language
-- The media window no longer has rounded corners in windowed mode for macOS (thanks @riggles!)
+- The media window no longer has rounded corners in windowed mode for macOS (thanks [@riggles](https://github.com/riggles)!)
 - Video scrubber correctly shows progress when pausing a video
 - When starting shuffle music more than one hour before the meeting, the countdown now works correctly
 - Several other small bug fixes
