@@ -65,6 +65,7 @@
         </template>
         <icon-btn
           v-else
+          class="ml-2"
           variant="play"
           :disabled="videoActive"
           @click="play()"
