@@ -292,7 +292,7 @@ export default defineComponent({
           <span class='sort-prefix text-nowrap' style='display: none;'>${filenameArray[1]}</span>
           ${filenameArray[3] ? '<div class="pr-3"><span class="song v-btn pa-1"><font-awesome-icon :icon="faMusic" size="sm" pull="left"/>' + filenameArray[3] + '</span></div>' : ''}
           ${filenameArray[5] ? '<div class="pr-3"><span class="paragraph v-btn pa-1"><font-awesome-icon :icon="faParagraph" size="sm" pull="left"/>' + filenameArray[5] + '</span></div>' : ''}
-          <div class='clamp-lines' title='${filenameArray[6]}${filenameArray[7]}'>${filenameArray[6]}<span class="ext">${filenameArray[7]}</span></div>
+          <div class='clamp-lines' title='${filenameArray[6].replace(/'/g, "&#39;")}${filenameArray[7].replace(/'/g, "&#39;")}'>${filenameArray[6]}<span class="ext">${filenameArray[7]}</span></div>
         </div>`
       )
     },
