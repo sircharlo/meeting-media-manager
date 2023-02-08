@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%; overflow: hidden">
-    <span v-if="!controller" class="dot" />
+    <span v-if="!controller" class="pointer" />
     <iframe id="website" :src="url" style="width: 100%; height: 100%" />
   </div>
 </template>
@@ -53,27 +53,17 @@ export default defineComponent({
         }
         if (win) {
           win.onmousemove = (e) => {
-            console.log('mouse moved', e)
+            console.debug('mouse moved', e)
             ipcRenderer.send('moveMouse', {
-              x:
-                e.x /
-                (win.document.firstElementChild?.scrollWidth ?? win.innerWidth),
-              y:
-                e.y /
-                (win.document.firstElementChild?.scrollHeight ??
-                  win.innerHeight),
+              x: e.x / this.getWinWidth(win),
+              y: e.y / this.getWinHeight(win),
             })
           }
 
           win.onscroll = () => {
             ipcRenderer.send('scrollWebsite', {
-              x:
-                win.scrollX /
-                (win.document.firstElementChild?.scrollWidth ?? win.innerWidth),
-              y:
-                win.scrollY /
-                (win.document.firstElementChild?.scrollHeight ??
-                  win.innerHeight),
+              x: win.scrollX / this.getWinWidth(win),
+              y: win.scrollY / this.getWinHeight(win),
             })
           }
 
@@ -130,20 +120,13 @@ export default defineComponent({
 
       ipcRenderer.on('moveMouse', (_e, pos) => {
         const win = iframe.contentWindow
-        const dot = document.querySelector('.dot') as HTMLElement
-        if (win && dot) {
-          dot.style.left = `${
-            pos.x *
-              (win.document.firstElementChild?.scrollWidth ?? win.innerWidth) -
-            // eslint-disable-next-line no-magic-numbers
-            12.5
+        const pointer = document.querySelector('.pointer') as HTMLElement
+        if (win && pointer) {
+          pointer.style.left = `${
+            pos.x * this.getWinWidth(win) - this.getElWidth(pointer) / 2
           }px`
-          dot.style.top = `${
-            pos.y *
-              (win.document.firstElementChild?.scrollHeight ??
-                win.innerHeight) -
-            // eslint-disable-next-line no-magic-numbers
-            12.5
+          pointer.style.top = `${
+            pos.y * this.getWinHeight(win) - this.getElHeight(pointer) / 2
           }px`
         }
       })
@@ -152,10 +135,8 @@ export default defineComponent({
         const win = iframe.contentWindow
         if (win) {
           win.scrollTo(
-            pos.x *
-              (win.document.firstElementChild?.scrollWidth ?? win.innerWidth),
-            pos.y *
-              (win.document.firstElementChild?.scrollHeight ?? win.innerHeight)
+            pos.x * this.getWinWidth(win),
+            pos.y * this.getWinHeight(win)
           )
         }
       })
@@ -211,6 +192,20 @@ export default defineComponent({
       })
     }
   },
+  methods: {
+    getElWidth(el: HTMLElement): number {
+      return el.offsetWidth - (el.offsetWidth - el.clientWidth)
+    },
+    getElHeight(el: HTMLElement): number {
+      return el.offsetHeight - (el.offsetHeight - el.clientHeight)
+    },
+    getWinHeight(win: Window): number {
+      return win.document.firstElementChild?.scrollHeight ?? win.innerHeight
+    },
+    getWinWidth(win: Window): number {
+      return win.document.firstElementChild?.scrollWidth ?? win.innerWidth
+    },
+  },
 })
 </script>
 <style lang="scss">
@@ -221,10 +216,10 @@ body {
   user-select: auto;
 }
 
-.dot {
-  height: 25px;
-  width: 25px;
-  background-color: red;
+.pointer {
+  height: 24px;
+  width: 24px;
+  border: 2px solid red;
   border-radius: 50%;
   display: inline-block;
   position: fixed;
