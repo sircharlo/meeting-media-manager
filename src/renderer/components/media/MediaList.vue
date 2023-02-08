@@ -36,7 +36,7 @@
     <template v-if="isMwDay">
       <v-divider class="mx-4 mt-4 treasures" />
       <v-list-item-title class="mx-4 my-2 treasures--text">
-        {{ mwbHeadings.treasure }}
+        {{ mwbHeadings.treasures }}
       </v-list-item-title>
       <draggable
         v-model="treasureItems"
@@ -271,7 +271,7 @@ export default defineComponent({
     return {
       dragging: false,
       mwbHeadings: {
-        treasure: 'TREASURES FROM GOD’S WORD',
+        treasures: 'TREASURES FROM GOD’S WORD',
         apply: 'APPLY YOURSELF TO THE FIELD MINISTRY',
         living: 'LIVING AS CHRISTIANS',
       },
@@ -392,7 +392,7 @@ export default defineComponent({
     },
     getMwbHeadings() {
       const fallback = {
-        treasure: 'TREASURES FROM GOD’S WORD',
+        treasures: 'TREASURES FROM GOD’S WORD',
         apply: 'APPLY YOURSELF TO THE FIELD MINISTRY',
         living: 'LIVING AS CHRISTIANS',
       }
