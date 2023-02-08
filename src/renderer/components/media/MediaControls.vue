@@ -208,7 +208,7 @@ import {
   faFolderOpen,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
-import { VideoFile } from '~/types'
+import { VideoFile, ObsPrefs } from '~/types'
 import { MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
   components: {
