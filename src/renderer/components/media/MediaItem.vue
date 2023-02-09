@@ -17,8 +17,8 @@
           :id="id + '-preview'"
           :src="url"
           style="
-            max-width: 144px;
-            max-height: 80px;
+            width: 142px;
+            height: 80px;
             aspect-ratio: 16 / 9;
             object-fit: contain;
             vertical-align: middle;
@@ -38,7 +38,7 @@
         @reset-clipped="tempClipped = null"
         @progress="progress = $event"
       />
-      <v-list-item-content class="ml-2">
+      <v-list-item-content class="mx-3">
         <v-list-item-subtitle class="media-title">
           <runtime-template-compiler :template="title" :parent="parent" />
         </v-list-item-subtitle>
@@ -65,6 +65,7 @@
         </template>
         <icon-btn
           v-else
+          class="ml-2"
           variant="play"
           :disabled="videoActive"
           @click="play()"
@@ -284,22 +285,16 @@ export default defineComponent({
       return this.$isImage(this.src)
     },
     title(): string {
+      const filenameArray = (this.streamingFile?.safeName ?? basename(this.src)).split(
+        new RegExp(`^((?:\\d{1,2}-?){0,2})[ -]*(${this.$translate('song')} (\\d+)[ -]*){0,1}(${this.$translate('paragraph')} (\\d+)[ -]*){0,1}(.*)(\\.[0-9a-z]+$)`)
+        );    
       return (
-        `<div style="line-break: anywhere">` +
-        (this.streamingFile?.safeName ?? basename(this.src))
-          .replace(
-            /^((\d{1,2}-?)* ?- )/,
-            "<span class='sort-prefix text-nowrap' style='display: none;'>$1</span>"
-          )
-          .replace(
-            new RegExp(`${this.$translate('song')} (\\d+) -`, 'g'),
-            `<span class="song v-btn pa-1"><font-awesome-icon :icon="faMusic" size="sm" pull="left"/>$1</span>`
-          )
-          .replace(
-            new RegExp(`${this.$translate('paragraph')} (\\d+) -`, 'g'),
-            `<span class="paragraph v-btn pa-1"><font-awesome-icon :icon="faParagraph" size="sm" pull="left"/>$1</span>`
-          ) +
-        `</div>`
+        `<div class="d-flex align-center">
+          <span class='sort-prefix text-nowrap' style='display: none;'>${filenameArray[1]}</span>
+          ${filenameArray[3] ? "<div class='pr-3' title='" + this.$translate('song') + " " + filenameArray[3].replace(/'/g, '&#39;') + "'><span class='song v-btn pa-1'><font-awesome-icon :icon='faMusic' size='sm' pull='left'/>" + filenameArray[3] + "</span></div>" : ""}
+          ${filenameArray[5] ? "<div class='pr-3' title='" + this.$translate('paragraph') + " " + filenameArray[5].replace(/'/g, '&#39;') + "'><span class='paragraph v-btn pa-1'><font-awesome-icon :icon='faMusic' size='sm' pull='left'/>" + filenameArray[5] + "</span></div>" : ""}
+          <div class='clamp-lines' title='${(filenameArray[6] + filenameArray[7]).replace(/'/g, "&#39;")}'>${filenameArray[6]}<span class="ext">${filenameArray[7]}</span></div>
+        </div>`
       )
     },
   },
@@ -659,9 +654,24 @@ export default defineComponent({
   border: 1px solid transparent;
 }
 
+.clamp-lines {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
 .theme--light {
   .media-title {
     color: rgba(0, 0, 0, 0.87) !important;
+  }
+
+  .media-title .ext {
+    color: rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .song, .paragraph {
+    letter-spacing: 0px;
+    width: 60px;
   }
 
   .song {
@@ -680,6 +690,10 @@ export default defineComponent({
 .theme--dark {
   .media-title {
     color: #ffffff !important;
+  }
+
+  .media-title .ext {
+    color: rgba(255, 255, 255, 0.5) !important;
   }
 
   .song {

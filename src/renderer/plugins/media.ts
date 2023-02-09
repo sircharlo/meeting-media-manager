@@ -40,6 +40,7 @@ const plugin: Plugin = (
     $rename,
     $setDb,
     $copy,
+    $strip,
     $rm,
     $getMwDay,
     $extractAllTo,
@@ -1114,6 +1115,32 @@ const plugin: Plugin = (
         ) as { DocumentId: number }[]
       )[0].DocumentId
 
+      const treasures = $query(
+        db,
+        'SELECT FeatureTitle FROM Document WHERE Class = 21'
+      )[0] as { FeatureTitle: string }
+      const apply = $query(
+        db,
+        'SELECT FeatureTitle FROM Document WHERE Class = 94'
+      )[0] as { FeatureTitle: string }
+      const living = $query(
+        db,
+        'SELECT FeatureTitle FROM Document WHERE Class = 10 ORDER BY FeatureTitle'
+      ) as { FeatureTitle: string }[]
+      let livingTitle = living[0].FeatureTitle
+      if (living.length > 1) {
+        livingTitle = living[living.length / 2].FeatureTitle
+      }
+
+      $write(
+        join($pubPath(), 'mwb', 'headings.json'),
+        JSON.stringify({
+          treasures: treasures.FeatureTitle,
+          apply: apply.FeatureTitle,
+          living: livingTitle,
+        })
+      )
+
       // Get document multimedia and add them to the media list
       const mms = await getDocumentMultiMedia(db, docId)
       const promises: Promise<void>[] = []
@@ -1212,6 +1239,19 @@ const plugin: Plugin = (
           `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`
         ) as { DocumentId: number }[]
       )[0].DocumentId
+
+      const magazine = $query(
+        db,
+        `SELECT Title FROM PublicationIssueProperty LIMIT 1`
+      )[0] as { Title: string }
+      const article = $query(
+        db,
+        `SELECT Title FROM Document WHERE DocumentId = ${docId}`
+      )[0] as { Title: string }
+      $write(
+        join($mediaPath(), date, $strip(magazine.Title + " - " + article.Title, 'file') + '.title'),
+        ''
+      )
 
       const images = $query(
         db,
