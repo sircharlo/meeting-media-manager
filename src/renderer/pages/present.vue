@@ -43,6 +43,21 @@
             <span>{{ $t('obsZoomSceneToggle') }}</span>
           </v-tooltip>
         </v-col>
+        <v-col v-else-if="obsEnabled && !scene">
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-btn icon :loading="obsLoading" @click="initOBS()">
+                <font-awesome-icon
+                  :icon="faRotateRight"
+                  size="xl"
+                  v-bind="attrs"
+                  v-on="on"
+                />
+              </v-btn>
+            </template>
+            <span>{{ $t('obsRefresh') }}</span>
+          </v-tooltip>
+        </v-col>
         <v-col
           v-if="scene && !zoomPart && scenes.length > 1"
           class="d-flex justify-center pa-1"
@@ -97,6 +112,7 @@ import {
   faHome,
   IconDefinition,
   faHouseUser,
+  faRotateRight,
   faPodcast,
 } from '@fortawesome/free-solid-svg-icons'
 import { ObsPrefs } from '~/types'
@@ -105,6 +121,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
+      obsLoading: false,
       zoomPart: false,
       mediaActive: false,
       videoActive: false,
@@ -133,6 +150,11 @@ export default defineComponent({
           await this.$setScene(val)
         }
       },
+    },
+    obsEnabled(): boolean {
+      const { enable, port, password } = this.$getPrefs('app.obs') as ObsPrefs
+
+      return enable && !!port && !!password
     },
     allScenes(): string[] {
       return this.$store.state.obs.scenes as string[]
@@ -234,6 +256,9 @@ export default defineComponent({
     faHouseUser(): IconDefinition {
       return faHouseUser as IconDefinition
     },
+    faRotateRight(): IconDefinition {
+      return faRotateRight as IconDefinition
+    },
     faPodcast(): IconDefinition {
       return faPodcast as IconDefinition
     },
@@ -300,10 +325,8 @@ export default defineComponent({
       this.videoActive = val[1]
     })
 
-    const { enable, port, password } = this.$getPrefs('app.obs') as ObsPrefs
-
-    if (enable && port && password) {
-      await this.$getScenes()
+    if (this.obsEnabled) {
+      await this.initOBS()
     }
 
     if (this.$store.state.obs.connected) {
@@ -328,6 +351,11 @@ export default defineComponent({
     }
   },
   methods: {
+    async initOBS() {
+      this.obsLoading = true
+      await this.$getScenes()
+      this.obsLoading = false
+    },
     toggleZoomPart() {
       if (this.zoomPart) {
         this.zoomPart = false
