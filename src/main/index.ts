@@ -98,8 +98,7 @@ function onMove() {
 
 function onClose(e: Event) {
   const MS_IN_SEC = 1000
-
-  if (!allowClose && closeAttempts < 2) {
+  if ((!allowClose || website) && closeAttempts < 2) {
     e.preventDefault()
     win?.webContents.send('notifyUser', [
       'cantCloseMediaWindowOpen',
@@ -109,8 +108,9 @@ function onClose(e: Event) {
     setTimeout(() => {
       closeAttempts--
     }, 10 * MS_IN_SEC)
-  } else if (mediaWin) {
-    mediaWin.destroy()
+  } else {
+    websiteController?.destroy()
+    mediaWin?.destroy()
   }
 }
 
@@ -324,6 +324,9 @@ if (gotTheLock) {
   ipcMain.on('playVideo', () => {
     mediaWin?.webContents.send('playVideo')
   })
+  ipcMain.on('moveMouse', (_e, pos: Point) => {
+    mediaWin?.webContents.send('moveMouse', pos)
+  })
   ipcMain.on('scrollWebsite', (_e, pos: Point) => {
     mediaWin?.webContents.send('scrollWebsite', pos)
   })
@@ -384,6 +387,8 @@ if (gotTheLock) {
       // eslint-disable-next-line no-magic-numbers
       mediaWin?.setMinimumSize(195, 110)
       website = false
+      allowClose = false
+      closeAttempts = 0
     })
   })
   ipcMain.on('toggleSubtitles', (_e, enabled: boolean) => {
