@@ -203,6 +203,9 @@ export default defineComponent({
     }, MS_IN_SEC)
   },
   methods: {
+    zoomSocket(): WebSocket {
+      return window.sockets[window.sockets.length - 1]
+    },
     toggleParticipant(participant: Participant) {
       if (this.participants.includes(participant)) {
         this.participants = this.participants.filter(
@@ -218,35 +221,23 @@ export default defineComponent({
         return
       }
 
-      this.$toggleSpotlight(window.sockets[window.sockets.length - 1], false)
+      this.$toggleSpotlight(this.zoomSocket(), false)
 
       if (this.spotlightActive) {
-        this.$muteParticipants(window.sockets[window.sockets.length - 1])
+        this.$muteParticipants(this.zoomSocket())
 
         const hostID = this.$store.state.zoom.hostID as number
         const automateAudio = this.$getPrefs(
           'app.zoom.automateAudio'
         ) as boolean
         if (automateAudio || this.$getPrefs('app.zoom.spotlight')) {
-          this.$toggleSpotlight(
-            window.sockets[window.sockets.length - 1],
-            true,
-            hostID
-          )
+          this.$toggleSpotlight(this.zoomSocket(), true, hostID)
         }
         this.participants = []
       } else {
         for (const p of this.participants) {
-          this.$toggleSpotlight(
-            window.sockets[window.sockets.length - 1],
-            true,
-            p.userId
-          )
-          await this.$toggleMic(
-            window.sockets[window.sockets.length - 1],
-            false,
-            p.userId
-          )
+          this.$toggleSpotlight(this.zoomSocket(), true, p.userId)
+          await this.$toggleMic(this.zoomSocket(), false, p.userId)
         }
       }
 
@@ -259,9 +250,9 @@ export default defineComponent({
     async toggleZoomMeeting() {
       this.loadingZoom = true
       if (this.zoomStarted) {
-        this.$stopMeeting(window.sockets[window.sockets.length - 1])
+        this.$stopMeeting(this.zoomSocket())
       } else {
-        await this.$startMeeting(window.sockets[window.sockets.length - 1])
+        await this.$startMeeting(this.zoomSocket())
       }
       this.loadingZoom = false
     },

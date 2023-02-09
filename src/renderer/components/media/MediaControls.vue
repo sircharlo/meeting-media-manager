@@ -404,6 +404,9 @@ export default defineComponent({
     })
   },
   methods: {
+    zoomSocket(): WebSocket {
+      return window.sockets[window.sockets.length - 1]
+    },
     atRename(participant: Participant) {
       this.saveRename = true
       this.participant = participant
@@ -411,11 +414,10 @@ export default defineComponent({
     },
     async rename(participant: Participant, name = '') {
       this.renaming = true
-      await this.$renameParticipant(
-        window.sockets[window.sockets.length - 1],
-        name,
-        { id: participant.userId, name: participant.displayName }
-      )
+      await this.$renameParticipant(this.zoomSocket(), name, {
+        id: participant.userId,
+        name: participant.displayName,
+      })
       if (this.saveRename) {
         const renames = this.$getPrefs('app.zoom.autoRename') as string[]
         if (!renames.find((r) => r.split('=')[0] === participant.displayName)) {

@@ -321,21 +321,10 @@ export default defineComponent({
       const hostID = this.$store.state.zoom.hostID as number
 
       if (this.zoomClient) {
-        this.$toggleMic(
-          window.sockets[window.sockets.length - 1],
-          !val,
-          this.participant?.userId
-        )
+        this.$toggleMic(this.zoomSocket(), !val, this.participant?.userId)
         if (val) {
-          this.$toggleSpotlight(
-            window.sockets[window.sockets.length - 1],
-            false
-          )
-          this.$toggleSpotlight(
-            window.sockets[window.sockets.length - 1],
-            true,
-            hostID
-          )
+          this.$toggleSpotlight(this.zoomSocket(), false)
+          this.$toggleSpotlight(this.zoomSocket(), true, hostID)
         } else {
           this.participant = null
         }
@@ -347,9 +336,9 @@ export default defineComponent({
       }
 
       if (this.zoomClient) {
-        this.$toggleSpotlight(window.sockets[window.sockets.length - 1], false)
+        this.$toggleSpotlight(this.zoomSocket(), false)
         this.$toggleSpotlight(
-          window.sockets[window.sockets.length - 1],
+          this.zoomSocket(),
           this.$getPrefs('app.zoom.spotlight') as boolean,
           hostID
         )
@@ -379,7 +368,7 @@ export default defineComponent({
     ipcRenderer.removeAllListeners('showingMedia')
     this.$unsetShortcuts('presentMode')
     if (this.zoomClient) {
-      this.$stopMeeting(window.sockets[window.sockets.length - 1])
+      this.$stopMeeting(this.zoomSocket())
       await this.zoomClient.leaveMeeting()
       this.$store.commit('zoom/clear')
       this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
@@ -419,7 +408,9 @@ export default defineComponent({
       window.sockets = []
       WebSocket.prototype.send = function (...args) {
         console.debug('send:', args)
-        if (!window.sockets.includes(this)) {
+        if (this.url.includes('zoom') && !window.sockets.includes(this)) {
+          console.log('socket', this)
+          console.log('sockets', window.sockets)
           window.sockets.push(this)
         }
         return originalSend.call(this, ...args)
@@ -449,9 +440,7 @@ export default defineComponent({
             .asSeconds()
           if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
             if (!this.zoomStarted) {
-              await this.$startMeeting(
-                window.sockets[window.sockets.length - 1]
-              )
+              await this.$startMeeting(this.zoomSocket())
             }
             clearInterval(this.zoomInterval as NodeJS.Timer)
           } else if (timeLeft < 0) {
@@ -484,14 +473,14 @@ export default defineComponent({
     setTimeout(() => {
       if (window.sockets && window.sockets.length > 0) {
         console.debug('Found socket')
-        this.$store.commit(
-          'zoom/setWebSocket',
-          window.sockets[window.sockets.length - 1]
-        )
+        this.$store.commit('zoom/setWebSocket', this.zoomSocket())
       }
     }, MS_IN_SEC)
   },
   methods: {
+    zoomSocket(): WebSocket {
+      return window.sockets[window.sockets.length - 1]
+    },
     async initOBS() {
       this.obsLoading = true
       await this.$getScenes()
