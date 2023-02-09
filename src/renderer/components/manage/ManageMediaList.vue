@@ -165,6 +165,7 @@ import {
   faPen,
   faSyncAlt,
   faFilePdf,
+  faClosedCaptioning,
   faCloud,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
@@ -176,14 +177,16 @@ export default defineComponent({
       return extname(filename)
     },
     typeIcon(filename: string) {
-      if (['.jpg', '.png', '.jpeg', '.svg'].includes(extname(filename))) {
+      if (window.$nuxt.$isImage(filename)) {
         return faImage
-      } else if (['.mp4'].includes(extname(filename))) {
+      } else if (window.$nuxt.$isVideo(filename)) {
         return faFilm
-      } else if (['.mp3'].includes(extname(filename))) {
+      } else if (window.$nuxt.$isAudio(filename)) {
         return faHeadphones
       } else if (extname(filename) === '.pdf') {
         return faFilePdf
+      } else if (extname(filename) === '.vtt') {
+        return faClosedCaptioning
       } else if (['.xspf', '.json'].includes(extname(filename))) {
         return faFileCode
       } else {
