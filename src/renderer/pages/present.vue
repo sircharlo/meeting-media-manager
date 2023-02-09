@@ -154,7 +154,7 @@ export default defineComponent({
     obsEnabled(): boolean {
       const { enable, port, password } = this.$getPrefs('app.obs') as ObsPrefs
 
-      return enable && port && !!password
+      return enable && !!port && !!password
     },
     allScenes(): string[] {
       return this.$store.state.obs.scenes as string[]
