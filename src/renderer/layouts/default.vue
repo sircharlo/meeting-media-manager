@@ -83,6 +83,7 @@ export default defineComponent({
     },
   },
   async beforeMount() {
+    this.$vuetify.theme.dark = this.isDark
     if (this.cong) {
       this.initPrefs('prefs-' + this.cong)
     } else {
