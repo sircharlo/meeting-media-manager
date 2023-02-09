@@ -98,8 +98,9 @@ function onMove() {
 
 function onClose(e: Event) {
   const MS_IN_SEC = 1000
-
-  if (!allowClose && closeAttempts < 2) {
+  if (website) {
+    e.preventDefault()
+  } else if (!allowClose && closeAttempts < 2) {
     e.preventDefault()
     win?.webContents.send('notifyUser', [
       'cantCloseMediaWindowOpen',
@@ -387,6 +388,8 @@ if (gotTheLock) {
       // eslint-disable-next-line no-magic-numbers
       mediaWin?.setMinimumSize(195, 110)
       website = false
+      allowClose = false
+      closeAttempts = 0
     })
   })
   ipcMain.on('toggleSubtitles', (_e, enabled: boolean) => {
