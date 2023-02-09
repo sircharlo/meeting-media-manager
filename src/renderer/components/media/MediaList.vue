@@ -325,15 +325,17 @@ export default defineComponent({
     firstApplyItem(): number {
       const meetingMap = this.meetings.get(this.date)
       if (meetingMap) {
+        console.log(meetingMap)
         const firstApplyPar = [...meetingMap.keys()]
           .sort((a, b) => a - b)
           // eslint-disable-next-line no-magic-numbers
           .find((key) => key > 12) as number
         const firstApplyItems = meetingMap.get(firstApplyPar)
         if (firstApplyItems && firstApplyItems[0]?.folder) {
-          return this.mediaItems.findIndex(
+          const index = this.mediaItems.findIndex(
             (item) => item.path === this.$mediaPath(firstApplyItems[0])
           )
+          if (index > 0) return index
         }
       }
 
@@ -378,6 +380,8 @@ export default defineComponent({
     },
     items(val: MediaItem[]) {
       this.setItems(val)
+      console.log('firstApplyItem', this.firstApplyItem)
+      console.log('secondMwbSong', this.secondMwbSong)
     },
   },
   mounted() {
