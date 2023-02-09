@@ -108,6 +108,7 @@
   "notAnImage": "Keine gültige Bilddatei. Bitte erneut versuchen.",
   "obsCameraScene": "Bühnenszene in OBS Studio",
   "obsMediaScene": "Medienszene in OBS Studio",
+  "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "<em>obs-websocket v4</em> verwenden",
   "obsZoomScene": "OBS Studio-Szene zum Anzeigen der Zoom-Teilnehmer",
   "obsZoomSceneActivate": "Sicherstellen, dass die Zoom-Teilnehmer bereit sind, gezeigt zu werden. Das Medienfenster wird automatisch ausgeblendet, bis Medien angezeigt werden.",

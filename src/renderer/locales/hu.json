@@ -108,6 +108,7 @@
   "notAnImage": "Ez nem érvényes fájl formátum. Kérlek próbáld újra.",
   "obsCameraScene": "Alapértelmezett színpadkép jelenet az OBS Stúdióban",
   "obsMediaScene": "Médiaablak jelenet az OBS Stúdióban",
+  "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "Használja az <em>obs-websocket v4</em>-et",
   "obsZoomScene": "OBS Studio jelenet a Zoom résztvevők megjelenítéséhez",
   "obsZoomSceneActivate": "Győződjön meg róla, hogy a Zoom résztvevők készen állnak a megjelenítésre. A médiaablak automatikusan rejtve marad, amíg a média meg nem jelenik.",

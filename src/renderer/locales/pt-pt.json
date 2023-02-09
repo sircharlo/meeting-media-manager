@@ -108,6 +108,7 @@
   "notAnImage": "Esse ficheiro não é uma imagem válida. Por favor, tente novamente.",
   "obsCameraScene": "Nome da cena de câmera do OBS Studio",
   "obsMediaScene": "Nome da cena de mídia do OBS Studio",
+  "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "Use o <em>obs-websocket v4</em>",
   "obsZoomScene": "Cena do OBS Studio para exibir os participantes pelo Zoom",
   "obsZoomSceneActivate": "Certifique-se de que os participantes pelo Zoom estejam prontos para serem exibidos. A tela secundária de exibição de mídias será ocultada automaticamente quando uma mídia não estiver sendo exibida.",
