@@ -108,6 +108,7 @@
   "notAnImage": "Dit is geen correct plaatjes bestand. Probeer het alsjeblieft nogmaals.",
   "obsCameraScene": "Standaard podiumbeeld scene in OBS Studio",
   "obsMediaScene": "Media beeld scene in OBS Studio",
+  "obsRefresh": "OBS verbinding vernieuwen",
   "obsUseV4": "Gebruik <em>obs-websocket v4</em>",
   "obsZoomScene": "OBS Studio scene om Zoom deelnemers te tonen",
   "obsZoomSceneActivate": "Zorg ervoor dat de Zoom deelnemers klaar staan. Het mediascherm zal automatisch verborgen worden tot er media getoond wordt.",
