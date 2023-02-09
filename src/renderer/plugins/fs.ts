@@ -463,7 +463,8 @@ const plugin: Plugin = (
     )
   })
 
-  inject('sanitize', (name: string, isFile = false): string => {
+  function sanitize(name: string, isFile = false, first = true): string {
+    console.log('sanitize', name)
     const ext = isFile ? extname(name).toLowerCase() : ''
 
     // Remove special characters from filename
@@ -493,8 +494,12 @@ const plugin: Plugin = (
       }
     }
 
-    return name
-  })
+    console.log('sanizited', name)
+
+    return first ? sanitize(name, isFile, false) : name
+  }
+
+  inject('sanitize', sanitize)
 
   async function getContentsFromJWPUB(
     jwpub: string
