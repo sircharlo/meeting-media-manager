@@ -354,6 +354,11 @@ export default defineComponent({
     },
     getMedia() {
       this.loading = true
+      const { enable, port, password } = this.$getPrefs('app.obs') as ObsPrefs
+
+      if (!this.scene && enable && port && password) {
+        this.$getScenes()
+      }
       const mediaPath = this.$mediaPath()
       if (mediaPath && this.date) {
         this.items = this.$findAll(join(mediaPath, this.date, '*'))
