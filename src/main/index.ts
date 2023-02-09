@@ -98,9 +98,7 @@ function onMove() {
 
 function onClose(e: Event) {
   const MS_IN_SEC = 1000
-  if (website) {
-    e.preventDefault()
-  } else if (!allowClose && closeAttempts < 2) {
+  if ((!allowClose || website) && closeAttempts < 2) {
     e.preventDefault()
     win?.webContents.send('notifyUser', [
       'cantCloseMediaWindowOpen',
@@ -110,8 +108,9 @@ function onClose(e: Event) {
     setTimeout(() => {
       closeAttempts--
     }, 10 * MS_IN_SEC)
-  } else if (mediaWin) {
-    mediaWin.destroy()
+  } else {
+    websiteController?.destroy()
+    mediaWin?.destroy()
   }
 }
 
