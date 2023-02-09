@@ -153,73 +153,25 @@
     </v-app-bar>
     <present-zoom-bar v-if="zoomIntegration" @rename="atRename" />
     <loading-icon v-if="loading" />
-    <div
+    <media-list
       v-else
-      id="media-list-container"
-      :style="`
-        width: 100%;
-        overflow-y: auto;
-        ${listHeight}
-      `"
-    >
-      <song-picker
-        v-if="addSong"
-        ref="songPicker"
-        v-model="song"
-        class="pa-4"
-        clearable
-      />
-      <template v-if="song">
-        <v-list class="ma-4">
-          <media-item
-            :key="song.url"
-            :src="song.url"
-            :play-now="song.play"
-            :stop-now="song.stop"
-            :deactivate="song.deactivate"
-            :media-active="mediaActive"
-            :video-active="videoActive"
-            :show-prefix="showPrefix"
-            :streaming-file="song"
-            :zoom-part="zoomPart"
-            @playing="setIndex(-1)"
-            @deactivated="song.deactivate = false"
-          />
-        </v-list>
-        <v-divider class="mx-4" />
-      </template>
-      <draggable
-        v-model="items"
-        tag="v-list"
-        handle=".sort-btn"
-        group="media-items"
-        class="ma-4"
-        @start="dragging = true"
-        @end="dragging = false"
-      >
-        <media-item
-          v-for="(item, i) in items"
-          :key="item.id"
-          :src="item.path"
-          :play-now="item.play"
-          :stop-now="item.stop"
-          :deactivate="item.deactivate"
-          :media-active="mediaActive"
-          :video-active="videoActive"
-          :show-prefix="showPrefix"
-          :sortable="sortable"
-          :zoom-part="zoomPart"
-          @playing="setIndex(i)"
-          @deactivated="resetDeactivate(i)"
-        />
-      </draggable>
-    </div>
+      :items="items"
+      :media-active="mediaActive"
+      :video-active="videoActive"
+      :window-height="windowHeight"
+      :zoom-part="zoomPart"
+      :show-prefix="showPrefix"
+      :sortable="sortable"
+      :add-song="addSong"
+      @index="setIndex"
+      @deactivate="resetDeactivate"
+      @song="addSong = false"
+    />
   </v-row>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { basename, dirname, join } from 'upath'
-import draggable from 'vuedraggable'
 import { ipcRenderer } from 'electron'
 import { Participant } from '@zoomus/websdk/embedded'
 import {
@@ -237,12 +189,15 @@ import {
   faFolderOpen,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
-import { VideoFile } from '~/types'
 import { MS_IN_SEC } from '~/constants/general'
+type MediaItem = {
+  id: string
+  path: string
+  play: boolean
+  stop: boolean
+  deactivate: boolean
+}
 export default defineComponent({
-  components: {
-    draggable,
-  },
   props: {
     mediaActive: {
       type: Boolean,
@@ -264,23 +219,15 @@ export default defineComponent({
   data() {
     return {
       currentIndex: -1,
-      dragging: false,
       sortable: false,
       loading: true,
       addSong: false,
-      song: null as null | VideoFile,
       showPrefix: false,
-      items: [] as {
-        id: string
-        path: string
-        play: boolean
-        stop: boolean
-        deactivate: boolean
-      }[],
       newName: '',
       renaming: false,
       saveRename: true,
       participant: null as null | Participant,
+      items: [] as MediaItem[],
       actions: [
         {
           title: this.$t('refresh'),
@@ -316,14 +263,6 @@ export default defineComponent({
     }
   },
   computed: {
-    listHeight(): string {
-      const FOOTER = 72
-      const TOP_BAR = 64
-      const ZOOM_BAR = 57
-      let otherElements = FOOTER + TOP_BAR
-      if (this.zoomIntegration) otherElements += ZOOM_BAR
-      return `max-height: ${this.windowHeight - otherElements}px`
-    },
     date(): string {
       return this.$route.query.date as string
     },
@@ -365,9 +304,6 @@ export default defineComponent({
     },
   },
   watch: {
-    song() {
-      this.addSong = false
-    },
     async mediaActive(val: boolean) {
       this.items.forEach((item) => {
         item.play = false

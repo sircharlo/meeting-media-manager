@@ -135,6 +135,7 @@
   "ppForward": "Key combination to play next media item",
   "preferredOutput": "Show media presentation window in",
   "presentShortcut": "Shortcut to open media presentation mode",
+  "publicTalk": "Public Talk",
   "autoQuitWhenDone": "Quit app after media sync",
   "recurring": "Recurring media",
   "refresh": "Refresh media list",
