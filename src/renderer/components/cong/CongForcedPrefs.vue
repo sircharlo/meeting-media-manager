@@ -138,6 +138,8 @@ export default defineComponent({
           return 'convertDownloaded'
         case 'media.lang':
           return 'mediaLang'
+        case 'media.langSubs':
+          return 'subsLang'
         case 'media.langFallback':
           return 'mediaLangFallback'
         case 'meeting.enableMusicFadeOut':
