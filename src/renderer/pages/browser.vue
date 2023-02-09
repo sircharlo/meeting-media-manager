@@ -28,6 +28,13 @@ export default defineComponent({
     const iframe = document.getElementById('website') as HTMLIFrameElement
 
     if (this.controller) {
+      const html = document.querySelector('html') as HTMLHtmlElement
+      const body = document.querySelector('body') as HTMLBodyElement
+      // @ts-ignore
+      html.style['-webkit-app-region'] = 'none'
+      // @ts-ignore
+      body.style['-webkit-app-region'] = 'none'
+
       iframe.onload = () => {
         const win = iframe.contentWindow
         const doc = iframe.contentDocument
