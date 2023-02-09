@@ -108,7 +108,7 @@
   "notAnImage": "Данный файл не является валидным изображением. Пожалуйста, попробуйте еще раз.",
   "obsCameraScene": "Вид сцены, настроенный в OBS Studio",
   "obsMediaScene": "Вид окна презентации мультимедиа, настроенный в OBS Studio",
-  "obsRefresh": "Refresh OBS connection",
+  "obsRefresh": "Переподключить к OBS",
   "obsUseV4": "Использовать <em>obs-websocket v4</em>",
   "obsZoomScene": "Сцена OBS Studio для отображения участников Zoom",
   "obsZoomSceneActivate": "Убедитесь, что участники Zoom готовы к отображению. Окно мультимедиа будет автоматически спрятано, пока не отобразится мультимедиа.",
