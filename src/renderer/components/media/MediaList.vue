@@ -393,9 +393,12 @@ export default defineComponent({
       this.mediaItems = val
       this.publicTalkItems = val.slice(0, this.firstWtSong)
       this.wtItems = val.slice(this.firstWtSong)
-      this.treasureItems = val.slice(0, this.firstApplyItem)
+      this.treasureItems = val.slice(
+        0,
+        Math.min(this.firstApplyItem, this.secondMwbSong)
+      )
       this.livingItems = val.slice(this.secondMwbSong)
-      if (this.firstApplyItem === this.secondMwbSong) {
+      if (this.firstApplyItem >= this.secondMwbSong) {
         this.applyItems = []
       } else {
         this.applyItems = val.slice(this.firstApplyItem, this.secondMwbSong)
