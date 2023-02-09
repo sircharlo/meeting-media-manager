@@ -28,7 +28,6 @@
 import { faBuildingUser } from '@fortawesome/free-solid-svg-icons'
 import { basename } from 'upath'
 import { defineComponent } from 'vue'
-import { ipcRenderer } from 'electron'
 export default defineComponent({
   data() {
     return {
@@ -41,7 +40,6 @@ export default defineComponent({
     },
   },
   async mounted() {
-    this.$vuetify.theme.dark = await ipcRenderer.invoke('darkMode')
     this.congs = (await this.$getCongPrefs()).map((c) => {
       return {
         name: c.name,
