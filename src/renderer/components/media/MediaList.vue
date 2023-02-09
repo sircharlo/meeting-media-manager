@@ -325,7 +325,6 @@ export default defineComponent({
     firstApplyItem(): number {
       const meetingMap = this.meetings.get(this.date)
       if (meetingMap) {
-        console.log(meetingMap)
         const firstApplyPar = [...meetingMap.keys()]
           .sort((a, b) => a - b)
           // eslint-disable-next-line no-magic-numbers
@@ -380,8 +379,6 @@ export default defineComponent({
     },
     items(val: MediaItem[]) {
       this.setItems(val)
-      console.log('firstApplyItem', this.firstApplyItem)
-      console.log('secondMwbSong', this.secondMwbSong)
     },
   },
   mounted() {

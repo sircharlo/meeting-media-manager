@@ -464,7 +464,6 @@ const plugin: Plugin = (
   })
 
   function sanitize(name: string, isFile = false, first = true): string {
-    console.log('sanitize', name)
     const ext = isFile ? extname(name).toLowerCase() : ''
 
     // Remove special characters from filename
@@ -493,8 +492,6 @@ const plugin: Plugin = (
         currentBytes = Buffer.byteLength(name, 'utf8')
       }
     }
-
-    console.log('sanizited', name)
 
     return first ? sanitize(name, isFile, false) : name
   }
