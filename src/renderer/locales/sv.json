@@ -108,6 +108,7 @@
   "notAnImage": "Inte en giltig mediafil. Prova igen.",
   "obsCameraScene": "Standard scenvy i OBS Studio",
   "obsMediaScene": "Mediascen i OBS Studio",
+  "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "Använd <em>obs-websocket v4</em>",
   "obsZoomScene": "OBS Studio scen för att visa Zoom deltagare",
   "obsZoomSceneActivate": "Se till att zoomdeltagarna är redo att visas. Mediafönstret kommer att döljas automatiskt tills media visas.",

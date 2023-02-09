@@ -108,6 +108,7 @@
   "notAnImage": "Tämä ei ole kelvollinen kuvatiedosto. Yritä uudelleen.",
   "obsCameraScene": "Lavanäkymän oletuskohtaus OBS Studiossa",
   "obsMediaScene": "Mediaikkunakohtaus OBS Studiossa",
+  "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "Käytä <em>obs-websocket v4:tä</em>",
   "obsZoomScene": "OBS Studio kohtaus näyttää zoomausosallistujat",
   "obsZoomSceneActivate": "Varmista, että zoomausosallistujat ovat valmiina näkyviin. Media-ikkuna piilotetaan automaattisesti, kunnes media näytetään.",
