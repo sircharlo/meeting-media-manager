@@ -165,6 +165,7 @@ import {
   faPen,
   faSyncAlt,
   faFilePdf,
+  faClosedCaptioning,
   faCloud,
   faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
@@ -184,6 +185,8 @@ export default defineComponent({
         return faHeadphones
       } else if (extname(filename) === '.pdf') {
         return faFilePdf
+      } else if (extname(filename) === '.vtt') {
+        return faClosedCaptioning
       } else if (['.xspf', '.json'].includes(extname(filename))) {
         return faFileCode
       } else {
