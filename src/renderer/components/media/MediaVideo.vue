@@ -91,7 +91,7 @@
       }}
     </v-btn>
     <v-btn
-      v-if="playing && ccAvailable"
+      v-if="ccAvailable"
       x-small
       absolute
       tile
@@ -282,6 +282,9 @@ export default defineComponent({
   watch: {
     playing(val: boolean) {
       if (val) {
+        setTimeout(() => {
+          this.toggleSubtitles(this.ccEnabled)
+        }, MS_IN_SEC)
         ipcRenderer.on('videoProgress', (_e, progress) => {
           const percentage =
             (HUNDRED_PERCENT * MS_IN_SEC * progress[0]) / this.original.end
