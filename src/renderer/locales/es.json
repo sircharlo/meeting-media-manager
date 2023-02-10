@@ -1,6 +1,7 @@
 {
   "all": "Todo",
   "areYouSure": "¿Está seguro?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Explorar",
   "cancel": "Cancelar",
   "cantCloseMediaWindowOpen": "Por favor salga del modo reproducción multimedia antes de intentar cerrar M³.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Acceso directo para alternar la visibilidad de la ventana multimedia",
   "mediaWindowBackground": "Ilustración de fondo para el modo de presentación multimedia",
   "meeting": "Reunión",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Saber más",
   "mp4Conversion": "Conversión de MP4",
   "musicFadeOutSmart": "<span>XX</span> segundos antes de la reunión",
