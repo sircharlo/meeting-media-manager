@@ -322,7 +322,7 @@ export default defineComponent({
                 this.$translate('paragraph') +
                 ' ' +
                 filenameArray[5].replace(/'/g, '&#39;') +
-                "'><span class='paragraph v-btn pa-1'><font-awesome-icon :icon='faMusic' size='sm' pull='left'/>" +
+                "'><span class='paragraph v-btn pa-1'><font-awesome-icon :icon='faParagraph size='sm' pull='left'/>" +
                 filenameArray[5] +
                 '</span></div>'
               : ''
