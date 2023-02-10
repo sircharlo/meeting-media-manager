@@ -190,7 +190,7 @@
         id="media.autoPlayFirstTime"
         v-model="media.autoPlayFirstTime"
         field="slider"
-        :min="5"
+        :min="1"
         :max="15"
         :group-label="playMinutesBeforeMeeting"
         :locked="$isLocked('media.autoPlayFirstTime')"
