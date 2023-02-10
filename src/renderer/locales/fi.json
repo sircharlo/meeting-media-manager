@@ -1,6 +1,7 @@
 {
   "all": "Kaikki",
   "areYouSure": "Oletko varma?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Selaa",
   "cancel": "Peruuta",
   "cantCloseMediaWindowOpen": "Poistu mediaohjaintilasta ennen kuin yrität sulkea M³:n.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Pikakuvake mediaikkunan näkyvyyden vaihtamiseen",
   "mediaWindowBackground": "Mediaesitystilan taustakuva",
   "meeting": "Tapaaminen",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Lue lisää",
   "mp4Conversion": "MP4 muunnos",
   "musicFadeOutSmart": "<span>XX</span> sekunttia ennen kokousta",
