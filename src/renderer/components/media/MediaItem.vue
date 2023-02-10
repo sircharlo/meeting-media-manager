@@ -290,16 +290,16 @@ export default defineComponent({
       return this.$isImage(this.src)
     },
     title(): string {
-      const filenameArray = (
-        this.streamingFile?.safeName ?? basename(this.src)
-      ).split(
-        new RegExp(
-          `^((?:\\d{1,2}-?){0,2})[ -]*(${this.$translate(
-            'song'
-          )} (\\d+)[ -]*){0,1}(${this.$translate(
-            'paragraph'
-          )} (\\d+)[ -]*){0,1}(.*)(\\.[0-9a-z]+$)`
-        )
+      const filenameArray = (this.streamingFile?.safeName ?? basename(this.src)).split(
+        new RegExp(`^((?:\\d{1,2}-?){0,2})[ -]*(${this.$translate('song')} (\\d+)[ -]*){0,1}(${this.$translate('paragraph')} (\\d+)[ -]*){0,1}(.*)(\\.[0-9a-z]+$)`)
+        );    
+      return (
+        `<div class="d-flex align-center">
+          <span class='sort-prefix text-nowrap' style='display: none;'>${filenameArray[1]}</span>
+          ${filenameArray[3] ? "<div class='pr-3' title='" + this.$translate('song') + " " + filenameArray[3].replace(/'/g, '&#39;') + "'><span class='song v-btn pa-1'><font-awesome-icon :icon='faMusic' size='sm' pull='left'/>" + filenameArray[3] + "</span></div>" : ""}
+          ${filenameArray[5] ? "<div class='pr-3' title='" + this.$translate('paragraph') + " " + filenameArray[5].replace(/'/g, '&#39;') + "'><span class='paragraph v-btn pa-1'><font-awesome-icon :icon='faMusic' size='sm' pull='left'/>" + filenameArray[5] + "</span></div>" : ""}
+          <div class='clamp-lines' title='${(filenameArray[6] + filenameArray[7]).replace(/'/g, "&#39;")}'>${filenameArray[6]}<span class="grey--text">${filenameArray[7]}</span></div>
+        </div>`
       )
       return `<div class="d-flex align-center">
           <span class='sort-prefix text-nowrap' style='display: none;'>${
@@ -702,12 +702,7 @@ export default defineComponent({
     color: rgba(0, 0, 0, 0.87) !important;
   }
 
-  .media-title .ext {
-    color: rgba(0, 0, 0, 0.6) !important;
-  }
-
-  .song,
-  .paragraph {
+  .song, .paragraph {
     letter-spacing: 0px;
     width: 60px;
   }
@@ -728,10 +723,6 @@ export default defineComponent({
 .theme--dark {
   .media-title {
     color: #ffffff !important;
-  }
-
-  .media-title .ext {
-    color: rgba(255, 255, 255, 0.5) !important;
   }
 
   .song {

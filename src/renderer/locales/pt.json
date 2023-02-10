@@ -1,7 +1,7 @@
 {
   "all": "Tudo",
   "areYouSure": "Tem certeza?",
-  "autoPlayFirst": "Automatically play first media item",
+  "autoPlayFirst": "Reproduzir automaticamente a primeira mídia da lista",
   "browse": "Selecionar",
   "cancel": "Cancelar",
   "cantCloseMediaWindowOpen": "Saia do modo de exibição de mídias antes de tentar fechar o M³.",
@@ -97,7 +97,7 @@
   "mediaWinShortcut": "Atalho para ocultar/mostrar a tela de exibição de mídias",
   "mediaWindowBackground": "Imagem de fundo da tela de exibição de mídias",
   "meeting": "Escolha a reunião",
-  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
+  "minutesBeforeMeeting": "<span>XX</span> minutos antes da reunião",
   "moreInfo": "Mais detalhes",
   "mp4Conversion": "Conversão em MP4",
   "musicFadeOutSmart": "<span>XX</span> segundos antes da reunião",
