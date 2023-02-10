@@ -209,7 +209,7 @@ const schema: Schema<ElectronStore> = {
       autoPlayFirstTime: {
         type: 'number',
         default: PREFS.media.autoPlayFirstTime,
-        minimum: 5,
+        minimum: 1,
         maximum: 15,
       },
       includePrinted: {
