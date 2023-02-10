@@ -124,6 +124,8 @@ export default defineComponent({
         case 'app.obs.cameraScene':
         case 'app.obs.mediaScene':
           return `obs${lastKey.charAt(0).toUpperCase() + lastKey.slice(1)}`
+        case 'media.autoPlayFirstTime':
+          return 'minutesBeforeMeeting'
         case 'media.enableMp4Conversion':
           return 'convertDownloaded'
         case 'media.lang':

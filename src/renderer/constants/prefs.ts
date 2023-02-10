@@ -31,6 +31,8 @@ const PREFS = {
     dir: null,
   },
   media: {
+    autoPlayFirst: false,
+    autoPlayFirstTime: 5,
     enableMediaDisplayButton: false,
     enableMp4Conversion: false,
     enablePp: false,
@@ -89,6 +91,8 @@ const FORCABLE = [
   'app.obs.password',
   'app.obs.port',
   'app.outputFolderDateFormat',
+  'media.autoPlayFirst',
+  'media.autoPlayFirstTime',
   'media.enableMediaDisplayButton',
   'media.enableMp4Conversion',
   'media.enablePp',

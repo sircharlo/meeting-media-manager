@@ -176,6 +176,27 @@
         :label="$t('hideWinAfterMedia')"
       />
       <form-input
+        id="media.autoPlayFirst"
+        v-model="media.autoPlayFirst"
+        field="switch"
+        :locked="$isLocked('media.autoPlayFirst')"
+      >
+        <template #label>
+          <span v-html="$t('autoPlayFirst')" />
+        </template>
+      </form-input>
+      <form-input
+        v-if="media.autoPlayFirst"
+        id="media.autoPlayFirstTime"
+        v-model="media.autoPlayFirstTime"
+        field="slider"
+        :min="5"
+        :max="15"
+        :group-label="playMinutesBeforeMeeting"
+        :locked="$isLocked('media.autoPlayFirstTime')"
+        hide-details="auto"
+      />
+      <form-input
         id="media.enablePp"
         v-model="media.enablePp"
         field="switch"
@@ -287,6 +308,12 @@ export default defineComponent({
           wAvailable: lang.wAvailable,
         }
       })
+    },
+    playMinutesBeforeMeeting(): string {
+      return (this.$t('minutesBeforeMeeting') as string).replace(
+        '<span>XX</span>',
+        (this.media.autoPlayFirstTime ?? 5).toString()
+      )
     },
     fallbackLangs(): {
       name: string
