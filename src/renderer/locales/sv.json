@@ -1,6 +1,7 @@
 {
   "all": "Allt",
   "areYouSure": "Är du säker?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Bläddra",
   "cancel": "Avbryt",
   "cantCloseMediaWindowOpen": "Stäng mediavisningen innan du försöker stänga M³.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Genväg för att växla mediafönsters synlighet",
   "mediaWindowBackground": "Bakgrundsbild för mediavisning",
   "meeting": "Möte",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Ta reda på mer",
   "mp4Conversion": "MP4 konvertering",
   "musicFadeOutSmart": "<span>XX</span> sekunder före möte",
