@@ -1,6 +1,7 @@
 {
   "all": "Kõik",
   "areYouSure": "Kas oled kindel?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Sirvi",
   "cancel": "Loobu",
   "cantCloseMediaWindowOpen": "Enne M³-i sulgemist väljuge koosoleku režiimist.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Otsetee meedia-akna nähtavuse sisse- ja väljalülitamiseks",
   "mediaWindowBackground": "Taustapilt koosoleku režiimi jaoks",
   "meeting": "Koosolek",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Leia rohkem infot",
   "mp4Conversion": "MP4 teisendamine",
   "musicFadeOutSmart": "<span>XX</span> sekundit enne koosolekut",

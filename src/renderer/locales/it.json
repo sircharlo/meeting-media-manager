@@ -1,6 +1,7 @@
 {
   "all": "Tutto",
   "areYouSure": "Sei sicuro?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Sfoglia",
   "cancel": "Annulla",
   "cantCloseMediaWindowOpen": "Uscire dalla modalità controllo multimedia prima di tentare di uscire da M³.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Scorciatoia da tastiera per attivare/disattivare la visibilità della finestra multimediale",
   "mediaWindowBackground": "Immagine di sfondo per la modalità di presentazione dei media",
   "meeting": "Adunanza",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Scopri di più",
   "mp4Conversion": "Conversione MP4",
   "musicFadeOutSmart": "<span>XX</span> secondi prima dell'adunanza",

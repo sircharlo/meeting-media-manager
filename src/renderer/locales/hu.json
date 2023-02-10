@@ -1,6 +1,7 @@
 {
   "all": "Összes",
   "areYouSure": "Biztos vagy benne?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Tallózás",
   "cancel": "Mégsem",
   "cantCloseMediaWindowOpen": "Kérjük, lépjen ki a médiavezérlő módból, mielőtt megpróbálna kilépni a programból.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Parancsikon a médiaablak láthatóságának állításához",
   "mediaWindowBackground": "Háttérkép médiabemutató módhoz",
   "meeting": "Összejövetel",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Tudjon meg többet",
   "mp4Conversion": "MP4 konvertálás",
   "musicFadeOutSmart": "<span>XX</span> másodperccel a megbeszélés előtt",
