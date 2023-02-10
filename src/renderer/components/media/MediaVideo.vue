@@ -138,6 +138,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    ccEnable: {
+      type: Boolean,
+      default: true,
+    },
     stream: {
       type: Boolean,
       default: false,
@@ -310,7 +314,7 @@ export default defineComponent({
           if (val) this.$emit('progress', percentage)
         })
       } else {
-        this.ccEnabled = this.ccAvailable
+        this.ccEnabled = this.ccAvailable && this.ccEnable
         this.current = 0
         this.progress = []
         if (this.tempClipped) {
@@ -319,6 +323,9 @@ export default defineComponent({
         }
         ipcRenderer.removeAllListeners('videoProgress')
       }
+    },
+    ccEnable(val: boolean) {
+      this.ccEnabled = this.ccAvailable && val
     },
     ccEnabled(val: boolean) {
       this.toggleSubtitles(val, true)
@@ -332,7 +339,7 @@ export default defineComponent({
   },
   mounted(): void {
     this.setCCAvailable()
-    this.ccEnabled = this.ccAvailable
+    this.ccEnabled = this.ccAvailable && this.ccEnable
     const div = document.querySelector(`#${this.id}-container`)
     const source = document.createElement('source')
     source.src = this.url

@@ -24,6 +24,7 @@
           :deactivate="song.deactivate"
           :media-active="mediaActive"
           :video-active="videoActive"
+          :cc-enable="ccEnable"
           :show-prefix="showPrefix"
           :streaming-file="song"
           :zoom-part="zoomPart"
@@ -56,6 +57,7 @@
           :deactivate="item.deactivate"
           :media-active="mediaActive"
           :video-active="videoActive"
+          :cc-enable="ccEnable"
           :show-prefix="showPrefix"
           :sortable="sortable"
           :zoom-part="zoomPart"
@@ -85,6 +87,7 @@
             :stop-now="item.stop"
             :deactivate="item.deactivate"
             :media-active="mediaActive"
+            :cc-enable="ccEnable"
             :video-active="videoActive"
             :show-prefix="showPrefix"
             :sortable="sortable"
@@ -115,6 +118,7 @@
           :stop-now="item.stop"
           :deactivate="item.deactivate"
           :media-active="mediaActive"
+          :cc-enable="ccEnable"
           :video-active="videoActive"
           :show-prefix="showPrefix"
           :sortable="sortable"
@@ -148,6 +152,7 @@
           :deactivate="item.deactivate"
           :media-active="mediaActive"
           :video-active="videoActive"
+          :cc-enable="ccEnable"
           :show-prefix="showPrefix"
           :sortable="sortable"
           :zoom-part="zoomPart"
@@ -175,6 +180,7 @@
           :play-now="item.play"
           :stop-now="item.stop"
           :deactivate="item.deactivate"
+          :cc-enable="ccEnable"
           :media-active="mediaActive"
           :video-active="videoActive"
           :show-prefix="showPrefix"
@@ -205,6 +211,7 @@
         :media-active="mediaActive"
         :video-active="videoActive"
         :show-prefix="showPrefix"
+        :cc-enable="ccEnable"
         :sortable="sortable"
         :zoom-part="zoomPart"
         @playing="setIndex(i)"
@@ -245,6 +252,10 @@ export default defineComponent({
     videoActive: {
       type: Boolean,
       default: false,
+    },
+    ccEnable: {
+      type: Boolean,
+      default: true,
     },
     windowHeight: {
       type: Number,
