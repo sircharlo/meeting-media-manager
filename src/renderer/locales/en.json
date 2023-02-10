@@ -1,6 +1,7 @@
 {
   "all": "All",
   "areYouSure": "Are you sure?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Browse",
   "cancel": "Cancel",
   "cantCloseMediaWindowOpen": "Please exit media controller mode before attempting to quit M³.",
@@ -99,6 +100,7 @@
   "mediaWinShortcut": "Shortcut to toggle media window visibility",
   "mediaWindowBackground": "Background image for media presentation mode",
   "meeting": "Meeting",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Find out more",
   "mp4Conversion": "MP4 conversion",
   "musicFadeOutSmart": "<span>XX</span> seconds before the meeting",

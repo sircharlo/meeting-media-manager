@@ -252,6 +252,16 @@ const schema: Schema<ElectronStore> = {
         type: 'boolean',
         default: PREFS.media.hideWinAfterMedia,
       },
+      autoPlayFirst: {
+        type: 'boolean',
+        default: PREFS.media.autoPlayFirst,
+      },
+      autoPlayFirstTime: {
+        type: 'number',
+        default: PREFS.media.autoPlayFirstTime,
+        minimum: 5,
+        maximum: 15,
+      },
       includePrinted: {
         type: 'boolean',
         default: PREFS.media.includePrinted,

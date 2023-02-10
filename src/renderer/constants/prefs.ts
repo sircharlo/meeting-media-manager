@@ -43,6 +43,8 @@ const PREFS = {
     dir: null,
   },
   media: {
+    autoPlayFirst: false,
+    autoPlayFirstTime: 5,
     enableMediaDisplayButton: false,
     enableMp4Conversion: false,
     enablePp: false,
@@ -110,6 +112,8 @@ const FORCABLE = [
   'app.zoom.name',
   'app.zoom.password',
   'app.zoom.spotlight',
+  'media.autoPlayFirst',
+  'media.autoPlayFirstTime',
   'media.enableMediaDisplayButton',
   'media.enableMp4Conversion',
   'media.enablePp',

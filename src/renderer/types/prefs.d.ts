@@ -59,6 +59,8 @@ export const resolutions = ['240p', '360p', '480p', '720p'] as const
 export type Res = (typeof resolutions)[number]
 
 export interface MediaPrefs {
+  autoPlayFirst: boolean
+  autoPlayFirstTime: number | null
   enableMediaDisplayButton: boolean
   enableMp4Conversion: boolean
   enablePp: boolean

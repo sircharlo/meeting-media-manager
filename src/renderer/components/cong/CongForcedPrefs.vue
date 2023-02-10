@@ -134,6 +134,8 @@ export default defineComponent({
         case 'app.zoom.name':
         case 'app.zoom.spotlight':
           return `zoom${lastKey.charAt(0).toUpperCase() + lastKey.slice(1)}`
+        case 'media.autoPlayFirstTime':
+          return 'minutesBeforeMeeting'
         case 'media.enableMp4Conversion':
           return 'convertDownloaded'
         case 'media.lang':
