@@ -1,6 +1,7 @@
 {
   "all": "Všetko",
   "areYouSure": "Si si istý?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Prehľadávať",
   "cancel": "Zrušiť",
   "cantCloseMediaWindowOpen": "Pred ukončením aplikácie M³ je nutné vypnúť okno s médiami.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Skratka na prepínanie viditeľnosti okna s médiami",
   "mediaWindowBackground": "Obrázok pozadia pre okno s médiami",
   "meeting": "Zhromaždenie",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Zisti viac",
   "mp4Conversion": "MP4 konverzia",
   "musicFadeOutSmart": "<span>XX</span> sekúnd pred začatím zhromaždenia",

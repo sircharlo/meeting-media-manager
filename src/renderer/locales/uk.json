@@ -1,6 +1,7 @@
 {
   "all": "Все",
   "areYouSure": "Ти впевнений?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Пошук",
   "cancel": "Відмінити",
   "cantCloseMediaWindowOpen": "Перш ніж намагатися вийти з M³, вийдіть із режиму керування медіафайлами.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Ярлик для перемикання видимості мультимедійного вікна",
   "mediaWindowBackground": "Фонове зображення для режиму презентації медіафайлів",
   "meeting": "Зібрання",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Дізнатись більше",
   "mp4Conversion": "Перетворення в MP4",
   "musicFadeOutSmart": "За <span>XX</span> секунд до зібрання",

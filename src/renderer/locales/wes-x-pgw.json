@@ -1,6 +1,7 @@
 {
   "all": "All",
   "areYouSure": "You dey sure?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Open",
   "cancel": "Cancel",
   "cantCloseMediaWindowOpen": "Abeg, make you stop to de show picture or video before you try comot M³.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Keyboard shortcut for show/hide picture window",
   "mediaWindowBackground": "Background picture when we de show picture and video",
   "meeting": "Meeting",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Find out more",
   "mp4Conversion": "MP4 conversion",
   "musicFadeOutSmart": "<span>XX</span> second before meeting go start",

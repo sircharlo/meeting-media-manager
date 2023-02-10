@@ -1,6 +1,7 @@
 {
   "all": "Все",
   "areYouSure": "Вы уверены?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Поиск",
   "cancel": "Отмена",
   "cantCloseMediaWindowOpen": "Пожалуйста, выйдите из режима управления мультимедиа перед тем, как завершить работу M³.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Ярлык для переключения видимости окна мультимедиа",
   "mediaWindowBackground": "Фоновое изображение для режима презентации мультимедиа",
   "meeting": "Встреча",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Узнать больше",
   "mp4Conversion": "Преобразование в MP4",
   "musicFadeOutSmart": "За <span>XX</span> секунд до начала встречи",

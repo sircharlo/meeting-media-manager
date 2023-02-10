@@ -1,6 +1,7 @@
 {
   "all": "Alle",
   "areYouSure": "Weet je het zeker?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Blader",
   "cancel": "Annuleer",
   "cantCloseMediaWindowOpen": "Sluit eerst de media presentatie modus voordat je M³ afsluit.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Sneltoets om mediascherm te tonen/verbergen",
   "mediaWindowBackground": "Achtergrondplaatje voor media presentatie modus",
   "meeting": "Vergadering",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Meer informatie",
   "mp4Conversion": "MP4 omzetting",
   "musicFadeOutSmart": "<span>XX</span> seconden voor de vergadering",

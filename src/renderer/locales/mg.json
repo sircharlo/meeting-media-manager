@@ -1,6 +1,7 @@
 {
   "all": "Izy rehetra",
   "areYouSure": "Azonao antoka ve?",
+  "autoPlayFirst": "Automatically play first media item",
   "browse": "Hikaroka",
   "cancel": "Hiverina",
   "cantCloseMediaWindowOpen": "Mialà amin'ny \"Fampisehoana efijery\" alohan'ny hialana amin'ny M³.",
@@ -96,6 +97,7 @@
   "mediaWinShortcut": "Shortcut to toggle media window visibility",
   "mediaWindowBackground": "Background image for media presentation mode",
   "meeting": "Fivoriana",
+  "minutesBeforeMeeting": "<span>XX</span> minutes before the meeting",
   "moreInfo": "Fanazavana fanampiny",
   "mp4Conversion": "Avadika ho MP4",
   "musicFadeOutSmart": "<span>XX</span> segondra alohan'ny hanombohan'ny fivoriana",
