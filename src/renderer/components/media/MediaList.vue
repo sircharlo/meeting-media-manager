@@ -35,7 +35,7 @@
     </template>
     <template v-if="isMwDay">
       <v-divider class="mx-4 mt-4 treasures" />
-      <v-list-item-title class="mx-4 my-2 treasures--text">
+      <v-list-item-title class="mx-4 my-2 treasures--text text-overline">
         {{ mwbHeadings.treasures }}
       </v-list-item-title>
       <draggable
@@ -65,7 +65,7 @@
       </draggable>
       <template v-if="applyItems.length > 0">
         <v-divider class="mx-4 apply" />
-        <v-list-item-title class="mx-4 my-2 apply--text">
+        <v-list-item-title class="mx-4 my-2 apply--text text-overline">
           {{ mwbHeadings.apply }}
         </v-list-item-title>
         <draggable
@@ -95,7 +95,7 @@
         </draggable>
       </template>
       <v-divider class="mx-4 living" />
-      <v-list-item-title class="mx-4 my-2 living--text">
+      <v-list-item-title class="mx-4 my-2 living--text text-overline">
         {{ mwbHeadings.living }}
       </v-list-item-title>
       <draggable
@@ -127,7 +127,7 @@
       </draggable>
     </template>
     <template v-else-if="isWeDay">
-      <v-list-item-title class="mx-4 my-4 treasures--text">
+      <v-list-item-title class="mx-4 my-4 treasures--text text-overline">
         {{ $t('publicTalk') }}
       </v-list-item-title>
       <draggable
@@ -155,8 +155,8 @@
           @deactivated="resetDeactivate(i)"
         />
       </draggable>
-      <v-divider class="mx-4 treasures" />
-      <v-list-item-title class="mx-4 my-2 treasures--text">
+      <v-divider class="mx-4 living" />
+      <v-list-item-title class="mx-4 my-2 living--text text-overline">
         {{ wtTitle }}
       </v-list-item-title>
       <draggable
