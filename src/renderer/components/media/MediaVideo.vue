@@ -127,7 +127,7 @@ import {
   MS_IN_SEC,
   VIDEO_ICON,
 } from '~/constants/general'
-import { MeetingFile } from '~/types'
+import { MeetingFile, VideoFile } from '~/types'
 export default defineComponent({
   props: {
     src: {
@@ -230,6 +230,9 @@ export default defineComponent({
     isShortVideo(): boolean {
       return this.duration === '00:00:00' || this.duration === '00:00'
     },
+    date(): string {
+      return this.$route.query.date as string
+    },
     limits(): { start: string; end: string } {
       return {
         start: this.format(this.$dayjs.duration(this.clippedMs.start, 'ms')),
@@ -282,9 +285,22 @@ export default defineComponent({
   watch: {
     playing(val: boolean) {
       if (val) {
-        setTimeout(() => {
-          this.toggleSubtitles(this.ccEnabled)
-        }, MS_IN_SEC)
+        if (this.ccAvailable) {
+          let top = false
+          const meetingMap = this.meetings.get(this.date)
+          if (meetingMap) {
+            const values = [...meetingMap.values()]
+            values.forEach((media) => {
+              const file = media.find(
+                (m) => m.safeName === basename(this.src)
+              ) as VideoFile
+              if (file) top = file.subtitled
+            })
+          }
+          setTimeout(() => {
+            this.toggleSubtitles(this.ccEnabled, top)
+          }, MS_IN_SEC)
+        }
         ipcRenderer.on('videoProgress', (_e, progress) => {
           const percentage =
             (HUNDRED_PERCENT * MS_IN_SEC * progress[0]) / this.original.end
@@ -305,7 +321,7 @@ export default defineComponent({
       }
     },
     ccEnabled(val: boolean) {
-      this.toggleSubtitles(val)
+      this.toggleSubtitles(val, true)
     },
     tempClipped(val: { start: string; end: string }): void {
       if (val) {
@@ -354,8 +370,8 @@ export default defineComponent({
         !!this.$getPrefs('media.enableSubtitles') &&
         existsSync(changeExt(this.src, '.vtt'))
     },
-    toggleSubtitles(enabled: boolean) {
-      ipcRenderer.send('toggleSubtitles', enabled)
+    toggleSubtitles(enabled: boolean, top = false) {
+      ipcRenderer.send('toggleSubtitles', { enabled, top })
     },
     format(duration: Duration) {
       if (duration.hours() > 0) {

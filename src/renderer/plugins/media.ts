@@ -718,6 +718,7 @@ const plugin: Plugin = (
             trackImage,
             track,
             pub,
+            subtitled,
             subtitles,
             markers,
           }) => {
@@ -731,7 +732,8 @@ const plugin: Plugin = (
               trackImage: trackImage.url,
               track,
               pub,
-              subtitles: $getPrefs('media.enableSubtitles') ? subtitles : [],
+              subtitled,
+              subtitles: $getPrefs('media.enableSubtitles') ? subtitles : null,
               markers,
             }
           }
