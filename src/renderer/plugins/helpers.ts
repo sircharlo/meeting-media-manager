@@ -2,6 +2,7 @@ import { Plugin } from '@nuxt/types'
 import { Dayjs } from 'dayjs'
 import { LocaleObject } from '@nuxtjs/i18n'
 import cloneDeep from 'lodash.clonedeep'
+import { MS_IN_SEC } from './../constants/general'
 
 const plugin: Plugin = ({ $getPrefs, $dayjs, i18n }, inject) => {
   // Clone an object, so that the two objects are not linked
@@ -40,18 +41,59 @@ const plugin: Plugin = ({ $getPrefs, $dayjs, i18n }, inject) => {
     const coWeek = $getPrefs('meeting.coWeek') as string
     return (
       coWeek &&
-      $dayjs(coWeek, 'YYYY-MM-DD')
-        .isBetween(baseDate, baseDate.add(6, 'days'), null, '[]')
+      $dayjs(coWeek, 'YYYY-MM-DD').isBetween(
+        baseDate,
+        baseDate.add(6, 'days'),
+        null,
+        '[]'
+      )
     )
   }
   inject('isCoWeek', isCoWeek)
 
-  inject('getMwDay', (baseDate: Dayjs = $dayjs().startOf('week')) => {
+  function getMwDay(baseDate: Dayjs = $dayjs().startOf('week')) {
     if (isCoWeek(baseDate)) {
       return 1 // return Tuesday
     }
     return $getPrefs('meeting.mwDay') as number // return original meeting day
-  })
+  }
+  inject('getMwDay', getMwDay)
+
+  const intervals: { [key: string]: NodeJS.Timer } = {}
+
+  inject(
+    'executeBeforeMeeting',
+    (name: string, mins: number, action: () => void) => {
+      if (!intervals[name]) {
+        const mwDay = getMwDay()
+        const weDay = $getPrefs('meeting.weDay') as number
+        const today = $dayjs().day() === 0 ? 6 : $dayjs().day() - 1 // Day is 0 indexed and starts with Sunday
+        if (today === mwDay || today === weDay) {
+          const startTime = $getPrefs(
+            `meeting.${today === mwDay ? 'mw' : 'we'}StartTime`
+          ) as string
+          const meetingStarts = startTime?.split(':') ?? ['0', '0']
+          const timeToStop = $dayjs()
+            .hour(+meetingStarts[0])
+            .minute(+meetingStarts[1])
+            .second(0)
+            .millisecond(0)
+            .subtract(mins, 'm')
+          intervals[name] = setInterval(() => {
+            const timeLeft = $dayjs
+              .duration(timeToStop.diff($dayjs()), 'ms')
+              .asSeconds()
+            if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
+              action()
+              clearInterval(intervals[name])
+            } else if (timeLeft < 0) {
+              clearInterval(intervals[name])
+            }
+          }, MS_IN_SEC)
+        }
+      }
+    }
+  )
 
   // Translate something in another language than the current one
   inject('translate', (word: string, fallback?: string) => {

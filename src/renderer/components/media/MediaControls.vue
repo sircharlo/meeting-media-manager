@@ -299,6 +299,18 @@ export default defineComponent({
         this.previous()
       }
     })
+    if (this.$getPrefs('media.autoPlayFirst')) {
+      this.$executeBeforeMeeting(
+        'play',
+        this.$getPrefs('media.autoPlayFirstTime') as number,
+        () => {
+          if (!this.mediaActive) {
+            this.currentIndex = -1
+            this.next()
+          }
+        }
+      )
+    }
   },
   methods: {
     openWebsite() {
