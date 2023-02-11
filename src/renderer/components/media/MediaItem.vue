@@ -307,7 +307,7 @@ export default defineComponent({
           }</span>
           ${
             filenameArray[3]
-              ? `<div class='pr-3' title='${this.$translate(
+              ? `<div class='mr-3' style='flex: 0 0 62px;' title='${this.$translate(
                   'song'
                 )} ${filenameArray[3].replace(/'/g, '&#39;')}'>
               <span class='song v-btn pa-1'>
@@ -318,7 +318,7 @@ export default defineComponent({
           }
           ${
             filenameArray[5]
-              ? `<div class='pr-3' title='${this.$translate(
+              ? `<div class='mr-3' style='flex: 0 0 62px;' title='${this.$translate(
                   'paragraph'
                 )} ${filenameArray[5].replace(/'/g, '&#39;')}'>
               <span class='paragraph v-btn pa-1'>
