@@ -324,7 +324,6 @@ export default defineComponent({
       }
     },
     ccTop(val: boolean) {
-      console.log('top', val)
       if (this.playing) {
         this.toggleSubtitles(this.ccEnable, val)
       }
