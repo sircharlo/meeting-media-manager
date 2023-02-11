@@ -307,24 +307,24 @@ export default defineComponent({
           }</span>
           ${
             filenameArray[3]
-              ? "<div class='pr-3' title='" +
-                this.$translate('song') +
-                ' ' +
-                filenameArray[3].replace(/'/g, '&#39;') +
-                "'><span class='song v-btn pa-1'><font-awesome-icon :icon='faMusic' size='sm' pull='left'/>" +
-                filenameArray[3] +
-                '</span></div>'
+              ? `<div class='pr-3' title='${this.$translate(
+                  'song'
+                )} ${filenameArray[3].replace(/'/g, '&#39;')}'>
+              <span class='song v-btn pa-1'>
+              <font-awesome-icon :icon='faMusic' size='sm' pull='left'/>
+              ${filenameArray[3]}
+              </span></div>`
               : ''
           }
           ${
             filenameArray[5]
-              ? "<div class='pr-3' title='" +
-                this.$translate('paragraph') +
-                ' ' +
-                filenameArray[5].replace(/'/g, '&#39;') +
-                "'><span class='paragraph v-btn pa-1'><font-awesome-icon :icon='faParagraph size='sm' pull='left'/>" +
-                filenameArray[5] +
-                '</span></div>'
+              ? `<div class='pr-3' title='${this.$translate(
+                  'paragraph'
+                )} ${filenameArray[5].replace(/'/g, '&#39;')}'>
+              <span class='paragraph v-btn pa-1'>
+              <font-awesome-icon :icon='faParagraph' size='sm' pull='left'/>
+              ${filenameArray[5]}
+              </span></div>`
               : ''
           }
           <div class='clamp-lines' title='${(
