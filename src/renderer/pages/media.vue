@@ -643,4 +643,8 @@ video,
     font: bold 4vw monospace;
   }
 }
+
+::cue {
+  font-size: 115%;
+}
 </style>
