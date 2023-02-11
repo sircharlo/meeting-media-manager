@@ -43,7 +43,10 @@
           </template>
           <span>{{ $t('lastMinuteSong') }}</span>
         </v-tooltip>
-        <v-tooltip v-if="$getPrefs('media.enableSubtitles')" bottom>
+        <v-tooltip
+          v-if="$getPrefs('media.enableSubtitles') && ccAvailable"
+          bottom
+        >
           <template #activator="{ on, attrs }">
             <v-btn
               icon
@@ -212,6 +215,7 @@ export default defineComponent({
       loading: true,
       addSong: false,
       ccEnable: true,
+      ccAvailable: false,
       showPrefix: false,
       items: [] as MediaItem[],
       actions: [
@@ -333,6 +337,8 @@ export default defineComponent({
         }
       )
     }
+    this.ccAvailable =
+      this.$findAll(join(this.$mediaPath(), this.date, '*.vtt')).length > 0
   },
   methods: {
     openWebsite() {
