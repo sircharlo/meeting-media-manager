@@ -337,8 +337,6 @@ export default defineComponent({
         }
       )
     }
-    this.ccAvailable =
-      this.$findAll(join(this.$mediaPath(), this.date, '*.vtt')).length > 0
   },
   methods: {
     openWebsite() {
@@ -414,6 +412,9 @@ export default defineComponent({
               deactivate: false,
             }
           })
+
+        this.ccAvailable =
+          this.$findAll(join(mediaPath, this.date, '*.vtt')).length > 0
       }
       this.loading = false
     },
