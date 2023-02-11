@@ -96,9 +96,8 @@
       absolute
       tile
       depressed
-      :color="ccEnabled ? 'primary' : undefined"
-      style="left: 123px; bottom: 4px"
-      @click="ccEnabled = !ccEnabled"
+      :style="`left: 123px; ${ccTop ? 'top' : 'bottom'}: 4px`"
+      @click="ccTop = !ccTop"
     >
       <font-awesome-icon :icon="ccIcon" />
     </v-btn>
@@ -157,7 +156,7 @@ export default defineComponent({
       clickedOnce: false,
       changeTime: false,
       ccAvailable: false,
-      ccEnabled: false,
+      ccTop: false,
       audioIcon: AUDIO_ICON,
       videoIcon: VIDEO_ICON,
       original: {
@@ -173,7 +172,7 @@ export default defineComponent({
   },
   computed: {
     ccIcon(): IconDefinition {
-      return this.ccEnabled ? faClosedCaptioning : farClosedCaptioning
+      return this.ccEnable ? faClosedCaptioning : farClosedCaptioning
     },
     faForwardStep() {
       return faForwardStep
@@ -301,8 +300,9 @@ export default defineComponent({
               if (file) top = file.subtitled
             })
           }
+          this.ccTop = top || this.ccTop
           setTimeout(() => {
-            this.toggleSubtitles(this.ccEnabled, top)
+            this.toggleSubtitles(this.ccEnable, this.ccTop)
           }, MS_IN_SEC)
         }
         ipcRenderer.on('videoProgress', (_e, progress) => {
@@ -314,7 +314,6 @@ export default defineComponent({
           if (val) this.$emit('progress', percentage)
         })
       } else {
-        this.ccEnabled = this.ccAvailable && this.ccEnable
         this.current = 0
         this.progress = []
         if (this.tempClipped) {
@@ -324,11 +323,16 @@ export default defineComponent({
         ipcRenderer.removeAllListeners('videoProgress')
       }
     },
-    ccEnable(val: boolean) {
-      this.ccEnabled = this.ccAvailable && val
+    ccTop(val: boolean) {
+      console.log('top', val)
+      if (this.playing) {
+        this.toggleSubtitles(this.ccEnable, val)
+      }
     },
-    ccEnabled(val: boolean) {
-      this.toggleSubtitles(val, true)
+    ccEnable(val: boolean) {
+      if (this.playing) {
+        this.toggleSubtitles(val, this.ccTop)
+      }
     },
     tempClipped(val: { start: string; end: string }): void {
       if (val) {
@@ -339,7 +343,6 @@ export default defineComponent({
   },
   mounted(): void {
     this.setCCAvailable()
-    this.ccEnabled = this.ccAvailable && this.ccEnable
     const div = document.querySelector(`#${this.id}-container`)
     const source = document.createElement('source')
     source.src = this.url
