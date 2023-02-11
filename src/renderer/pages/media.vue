@@ -72,6 +72,7 @@ export default defineComponent({
       canvas: true,
       contain: 'outside',
       cursor: 'default',
+      duration: 2 * MS_IN_SEC,
       panOnlyWhenZoomed: true,
       setTransform: (
         el: HTMLElement,
