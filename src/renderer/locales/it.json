@@ -59,7 +59,7 @@
   "errorSiteCheck": "Impossibile stabilire una connessione al seguente sito:",
   "errorSyncCongMedia": "Si è verificato un errore durante il recupero dei file multimediali dalla sincronizzazione della congregazione. Riprova più tardi o contatta l'organizzatore della videoconferenza.",
   "errorUnknown": "Si è verificato un errore sconosciuto. Contatta l'organizzatore della videoconferenza.",
-  "errorWebdavLocked": "Impossibile modificare il seguente file del server cong perché era bloccato. Prova a sbloccarlo o modifica il file manualmente.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Si è verificato un errore durante il tentativo di leggere la seguente cartella. Si prega di contattare l'organizzatore della videoconferenza.",
   "errorWebdavNotSupported": "Il servizio che stai utilizzando per il server della tua congregazione non è attualmente supportato. Potrebbe non funzionare come previsto.",
   "errorWebdavPut": "Si è verificato un errore durante il tentativo di scrivere il seguente file. Si prega di contattare l'organizzatore della videoconferenza.",
