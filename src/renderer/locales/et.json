@@ -59,7 +59,7 @@
   "errorSiteCheck": "Ühendust ei saa luua saidiga:",
   "errorSyncCongMedia": "Koguduse sünkroonimisest meedia importimisel ilmnes viga. Proovige hiljem uuesti või võtke ühendust oma videokonverentsi korraldajaga.",
   "errorUnknown": "Tundmatu viga. Palun võta ühendust videokonverentsi organiseerijaga.",
-  "errorWebdavLocked": "Ei saanud muuta faili koguduse serveris, sest see on lukustatud. Proovi see lukust avada või muuda faili käsitsi.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Selle kausta lugemisel ilmnes viga. Võtke ühendust oma videokonverentsi korraldajaga.",
   "errorWebdavNotSupported": "Teenust, mida kasutate oma koguduse serveri jaoks, praegu ei toetata. See ei pruugi töötada nii, nagu ette nähtud.",
   "errorWebdavPut": "Selle faili kirjutamisel ilmnes viga. Võtke ühendust oma videokonverentsi korraldajaga.",
