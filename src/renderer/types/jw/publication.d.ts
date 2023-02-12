@@ -48,6 +48,7 @@ export interface BaseMediaFile {
   pub: string
   title: string
   track: number
+  subtitled: boolean
   subtitles: Subtitle | null
 }
 
@@ -77,7 +78,6 @@ export interface MediaFile extends BaseMediaFile {
   mimetype: string
   specialty: string
   specialtyDescr: string
-  subtitled: boolean
   trackImage: PubImage
 }
 

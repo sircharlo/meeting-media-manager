@@ -69,6 +69,24 @@
           </template>
           <span>{{ $t('lastMinuteSong') }}</span>
         </v-tooltip>
+        <v-tooltip
+          v-if="$getPrefs('media.enableSubtitles') && ccAvailable"
+          bottom
+        >
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              aria-label="Toggle subtitles"
+              v-bind="attrs"
+              :color="ccEnable ? 'primary' : undefined"
+              v-on="on"
+              @click="ccEnable = !ccEnable"
+            >
+              <font-awesome-icon :icon="ccIcon" size="lg" />
+            </v-btn>
+          </template>
+          <span>{{ $t('toggleSubtitles') }}</span>
+        </v-tooltip>
       </v-col>
       <v-col class="text-center d-flex justify-center">
         <v-btn
@@ -162,6 +180,7 @@
       :zoom-part="zoomPart"
       :show-prefix="showPrefix"
       :sortable="sortable"
+      :cc-enable="ccEnable"
       :add-song="addSong"
       @index="setIndex"
       @deactivate="resetDeactivate"
@@ -186,9 +205,11 @@ import {
   faArrowDownUpLock,
   faEllipsisVertical,
   faArrowDownUpAcrossLine,
+  faClosedCaptioning,
   faFolderOpen,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
+import { faClosedCaptioning as farClosedCaptioning } from '@fortawesome/free-regular-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
 type MediaItem = {
   id: string
@@ -222,6 +243,8 @@ export default defineComponent({
       sortable: false,
       loading: true,
       addSong: false,
+      ccEnable: true,
+      ccAvailable: false,
       showPrefix: false,
       newName: '',
       renaming: false,
@@ -265,6 +288,9 @@ export default defineComponent({
   computed: {
     date(): string {
       return this.$route.query.date as string
+    },
+    ccIcon(): IconDefinition {
+      return this.ccEnable ? faClosedCaptioning : farClosedCaptioning
     },
     faMusic() {
       return faMusic
@@ -449,6 +475,9 @@ export default defineComponent({
               deactivate: false,
             }
           })
+
+        this.ccAvailable =
+          this.$findAll(join(mediaPath, this.date, '*.vtt')).length > 0
       }
       this.loading = false
     },

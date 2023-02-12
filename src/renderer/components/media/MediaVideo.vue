@@ -90,18 +90,22 @@
           : `${duration}`
       }}
     </v-btn>
-    <v-btn
-      v-if="playing && ccAvailable"
-      x-small
-      absolute
-      tile
-      depressed
-      :color="ccEnabled ? 'primary' : undefined"
-      style="left: 123px; bottom: 4px"
-      @click="ccEnabled = !ccEnabled"
-    >
-      <font-awesome-icon :icon="ccIcon" />
-    </v-btn>
+    <v-tooltip v-if="ccAvailable" right>
+      <template #activator="{ on }">
+      <v-btn
+        x-small
+        absolute
+        tile
+        depressed
+        :style="`left: 123px; ${ccTop ? 'top' : 'bottom'}: 4px`"
+        v-on="on"
+        @click="ccTop = !ccTop"
+      >
+        <font-awesome-icon :icon="ccIcon" />
+      </v-btn>
+    </template>
+    <span>{{ $t('toggleSubtitlePosition') }}</span>
+  </v-tooltip>
   </div>
 </template>
 <script lang="ts">
@@ -127,7 +131,7 @@ import {
   MS_IN_SEC,
   VIDEO_ICON,
 } from '~/constants/general'
-import { MeetingFile } from '~/types'
+import { MeetingFile, VideoFile } from '~/types'
 export default defineComponent({
   props: {
     src: {
@@ -137,6 +141,10 @@ export default defineComponent({
     playing: {
       type: Boolean,
       default: false,
+    },
+    ccEnable: {
+      type: Boolean,
+      default: true,
     },
     stream: {
       type: Boolean,
@@ -153,7 +161,7 @@ export default defineComponent({
       clickedOnce: false,
       changeTime: false,
       ccAvailable: false,
-      ccEnabled: false,
+      ccTop: false,
       audioIcon: AUDIO_ICON,
       videoIcon: VIDEO_ICON,
       original: {
@@ -169,7 +177,7 @@ export default defineComponent({
   },
   computed: {
     ccIcon(): IconDefinition {
-      return this.ccEnabled ? faClosedCaptioning : farClosedCaptioning
+      return this.ccEnable ? faClosedCaptioning : farClosedCaptioning
     },
     faForwardStep() {
       return faForwardStep
@@ -230,6 +238,9 @@ export default defineComponent({
     isShortVideo(): boolean {
       return this.duration === '00:00:00' || this.duration === '00:00'
     },
+    date(): string {
+      return this.$route.query.date as string
+    },
     limits(): { start: string; end: string } {
       return {
         start: this.format(this.$dayjs.duration(this.clippedMs.start, 'ms')),
@@ -282,6 +293,23 @@ export default defineComponent({
   watch: {
     playing(val: boolean) {
       if (val) {
+        if (this.ccAvailable) {
+          let top = false
+          const meetingMap = this.meetings.get(this.date)
+          if (meetingMap) {
+            const values = [...meetingMap.values()]
+            values.forEach((media) => {
+              const file = media.find(
+                (m) => m.safeName === basename(this.src)
+              ) as VideoFile
+              if (file) top = file.subtitled
+            })
+          }
+          this.ccTop = top || this.ccTop
+          setTimeout(() => {
+            this.toggleSubtitles(this.ccEnable, this.ccTop)
+          }, MS_IN_SEC)
+        }
         ipcRenderer.on('videoProgress', (_e, progress) => {
           const percentage =
             (HUNDRED_PERCENT * MS_IN_SEC * progress[0]) / this.original.end
@@ -291,7 +319,6 @@ export default defineComponent({
           if (val) this.$emit('progress', percentage)
         })
       } else {
-        this.ccEnabled = this.ccAvailable
         this.current = 0
         this.progress = []
         if (this.tempClipped) {
@@ -301,8 +328,15 @@ export default defineComponent({
         ipcRenderer.removeAllListeners('videoProgress')
       }
     },
-    ccEnabled(val: boolean) {
-      this.toggleSubtitles(val)
+    ccTop(val: boolean) {
+      if (this.playing) {
+        this.toggleSubtitles(this.ccEnable, val)
+      }
+    },
+    ccEnable(val: boolean) {
+      if (this.playing) {
+        this.toggleSubtitles(val, this.ccTop)
+      }
     },
     tempClipped(val: { start: string; end: string }): void {
       if (val) {
@@ -313,7 +347,6 @@ export default defineComponent({
   },
   mounted(): void {
     this.setCCAvailable()
-    this.ccEnabled = this.ccAvailable
     const div = document.querySelector(`#${this.id}-container`)
     const source = document.createElement('source')
     source.src = this.url
@@ -351,8 +384,8 @@ export default defineComponent({
         !!this.$getPrefs('media.enableSubtitles') &&
         existsSync(changeExt(this.src, '.vtt'))
     },
-    toggleSubtitles(enabled: boolean) {
-      ipcRenderer.send('toggleSubtitles', enabled)
+    toggleSubtitles(enabled: boolean, top = false) {
+      ipcRenderer.send('toggleSubtitles', { enabled, top })
     },
     format(duration: Duration) {
       if (duration.hours() > 0) {

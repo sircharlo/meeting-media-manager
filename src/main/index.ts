@@ -391,9 +391,12 @@ if (gotTheLock) {
       closeAttempts = 0
     })
   })
-  ipcMain.on('toggleSubtitles', (_e, enabled: boolean) => {
-    mediaWin?.webContents.send('toggleSubtitles', enabled)
-  })
+  ipcMain.on(
+    'toggleSubtitles',
+    (_e, payload: { enabled: boolean; top: boolean }) => {
+      mediaWin?.webContents.send('toggleSubtitles', payload)
+    }
+  )
   ipcMain.on('videoScrub', (_e, timeAsPercent: number) => {
     mediaWin?.webContents.send('videoScrub', timeAsPercent)
   })

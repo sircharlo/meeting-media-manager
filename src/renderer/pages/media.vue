@@ -159,12 +159,26 @@ export default defineComponent({
     ipcRenderer.on('hideMedia', async () => {
       await this.hideMedia()
     })
-    ipcRenderer.on('toggleSubtitles', (_e, enabled) => {
-      const video = document.querySelector('video') as HTMLVideoElement
-      if (video && video.textTracks.length > 0) {
-        video.textTracks[0].mode = enabled ? 'showing' : 'hidden'
+    ipcRenderer.on(
+      'toggleSubtitles',
+      (_e, { enabled, top }: { enabled: boolean; top: boolean }) => {
+        const video = document.querySelector('video') as HTMLVideoElement
+        if (video && video.textTracks.length > 0) {
+          video.textTracks[0].mode = enabled ? 'showing' : 'hidden'
+          const cues = video.textTracks[0].cues
+          if (cues) {
+            for (let i = 0; i < cues.length; i++) {
+              const cue = cues[i]
+              if (cue) {
+                // @ts-ignore
+                // eslint-disable-next-line no-magic-numbers
+                cue.line = top ? 5 : 90
+              }
+            }
+          }
+        }
       }
-    })
+    )
     ipcRenderer.on('startMediaDisplay', async (_e, prefs: ElectronStore) => {
       console.debug('startMediaDisplay', prefs)
       // Reset screen
@@ -629,5 +643,9 @@ video,
     height: fit-content;
     font: bold 4vw monospace;
   }
+}
+
+::cue {
+  font-size: 115%;
 }
 </style>
