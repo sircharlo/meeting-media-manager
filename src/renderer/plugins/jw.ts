@@ -155,7 +155,7 @@ const plugin: Plugin = (
     try {
       categories.forEach((category) => {
         promises.push(getCategoryMedia(category, lang))
-        if (fallback) {
+        if (fallback && fallback !== lang) {
           promises.push(getCategoryMedia(category, fallback))
         }
       })
@@ -206,13 +206,15 @@ const plugin: Plugin = (
       const subsLang = $getPrefs('media.langSubs') as string
       const newItems = []
       for (const item of items) {
-        if (subsLang) {
+        if (subsLang && subsLang !== lang) {
           newItems.push(await getMediaItemSubs(item, subsLang))
-        } else {
+        } else if (!subsLang) {
           newItems.push({
             ...item,
             files: item.files.map((file) => ({ ...file, subtitles: null })),
           })
+        } else {
+          newItems.push(item)
         }
       }
       return newItems
