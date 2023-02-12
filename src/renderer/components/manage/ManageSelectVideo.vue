@@ -54,7 +54,6 @@ export default defineComponent({
       videos: [] as MediaItem[],
     }
   },
-  computed: {},
   mounted() {
     this.getVideos()
   },
@@ -64,7 +63,7 @@ export default defineComponent({
       try {
         this.videos = await this.$getLatestJWMedia()
       } catch (e: unknown) {
-        console.error(e)
+        this.$log.error(e)
       }
       this.loading = false
     },
@@ -74,7 +73,6 @@ export default defineComponent({
     },
     selectVideo(video: MediaItem) {
       this.loading = true
-      console.log('video', video)
       const videoFiles = video.files
         .filter((file) => {
           return (
@@ -90,7 +88,7 @@ export default defineComponent({
             (this.parseRes(a.label) - +a.subtitled)
           )
         })
-      console.log(videoFiles)
+
       try {
         const meetingFile: VideoFile = {
           duration: videoFiles[0].duration,
@@ -112,7 +110,7 @@ export default defineComponent({
         }
         this.$emit('select', meetingFile)
       } catch (e: unknown) {
-        console.error(e)
+        this.$log.error(e)
       }
       this.loading = false
     },
