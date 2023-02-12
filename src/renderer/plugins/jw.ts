@@ -4,7 +4,13 @@ import { join } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import { JW_ICONS_FONT, WT_CLEARTEXT_FONT } from './../constants/general'
-import { Filter, JWLang, MediaItem, ShortJWLang } from '~/types'
+import {
+  Filter,
+  JWLang,
+  MediaCategoryResult,
+  MediaItem,
+  ShortJWLang,
+} from '~/types'
 
 const plugin: Plugin = (
   {
@@ -136,12 +142,42 @@ const plugin: Plugin = (
   }
   inject('getJWLangs', getJWLangs)
 
+  async function getLatestJWMedia(): Promise<MediaItem[]> {
+    const categories = ['FeaturedLibraryVideos', 'LatestVideos']
+    const promises: Promise<MediaItem[]>[] = []
+    const media: MediaItem[] = []
+
+    const fallback = $getPrefs('media.langFallback') as string
+
+    try {
+      categories.forEach((category) => {
+        promises.push(getCategoryMedia(category))
+        if (fallback) {
+          promises.push(getCategoryMedia(category, fallback))
+        }
+      })
+
+      const results = await Promise.allSettled(promises)
+      results.forEach((result) => {
+        if (result.status === 'fulfilled') {
+          console.log(result.value)
+          media.push(...result.value)
+        }
+      })
+    } catch (e: unknown) {
+      $log.error(e)
+    }
+
+    return media
+  }
+  inject('getLatestJWMedia', getLatestJWMedia)
+
   async function getCategoryMedia(
     category: string,
     lang?: string
   ): Promise<MediaItem[]> {
     try {
-      const result = await $mediaCategories.$get<MediaItem[]>(
+      const result = await $mediaCategories.$get<MediaCategoryResult>(
         lang ?? ($getPrefs('media.lang') as string) + `/${category}`,
         {
           params: {
@@ -150,13 +186,12 @@ const plugin: Plugin = (
         }
       )
 
-      return result
+      return result.category.media ?? []
     } catch (e: unknown) {
       $log.error(e)
     }
     return []
   }
-  inject('getCategoryMedia', getCategoryMedia)
 
   async function getPubAvailability(
     lang: string,

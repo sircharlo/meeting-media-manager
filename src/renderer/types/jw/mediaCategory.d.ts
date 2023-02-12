@@ -11,3 +11,12 @@ export interface MediaCategory {
   subCategories?: MediaCategory[]
   media?: MediaItem[]
 }
+
+export interface MediaCategoryResult {
+  category: MediaCategory
+  pagination: {
+    totalCount: number
+    offset: number
+    limit: number
+  }
+}

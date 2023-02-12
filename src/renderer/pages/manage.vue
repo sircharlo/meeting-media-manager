@@ -1,5 +1,10 @@
 <template>
   <v-container fluid fill-height>
+    <manage-select-video
+      :active="type === 'jworg'"
+      @cancel="type = 'custom'"
+      @select="selectVideo"
+    />
     <v-dialog v-if="fileString && type === 'jwpub'" persistent :value="true">
       <manage-select-document
         :file="fileString"
@@ -22,7 +27,7 @@
             :disabled="loading"
           />
           <manage-select-file
-            v-else
+            v-else-if="type !== 'jworg'"
             :type="type"
             :path="fileString"
             :loading="loading"
@@ -197,6 +202,10 @@ export default defineComponent({
           date: undefined,
         },
       })
+    },
+    selectVideo(video: VideoFile) {
+      this.song = video
+      this.type = 'custom'
     },
     handleDrag(e: DragEvent) {
       if (
