@@ -159,6 +159,8 @@
   "autoStartSync": "Sync picture and video when app de start",
   "system": "System",
   "themePreference": "Theme setting",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "I get-am",
   "updateDownloaded": "We don finish download one update for M³. We go install-am after you comot M³.",
   "updateDownloading": "We de download one update for M³ while you do other things.",
