@@ -264,6 +264,7 @@ export default defineComponent({
         file.safeName = this.prefix + ' ' + file.safeName
       }
 
+      const congPromises: Promise<void>[] = []
       const path = join(this.$mediaPath() as string, this.date, file.safeName)
 
       // JWPUB extract
@@ -296,14 +297,13 @@ export default defineComponent({
             )
           ).map((m) => JSON.parse(m))
 
-          this.$write(
-            join(
-              this.$mediaPath(),
-              file.folder as string,
-              changeExt(file.safeName as string, 'json')
-            ),
-            JSON.stringify(markers)
+          const markerPath = join(
+            this.$mediaPath(),
+            file.folder as string,
+            changeExt(file.safeName as string, 'json')
           )
+          this.$write(markerPath, JSON.stringify(markers))
+          congPromises.push(this.uploadFile(markerPath))
         }
       }
 
@@ -315,30 +315,8 @@ export default defineComponent({
           name: file.safeName,
         }
 
-        const filePath = join(
-          this.$getPrefs('cong.dir') as string,
-          'Media',
-          this.date,
-          file.safeName
-        )
-
-        try {
-          await this.client.putFileContents(filePath, readFileSync(path), {
-            overwrite: true,
-            onUploadProgress: ({ loaded, total }) => {
-              this.setProgress(loaded, total)
-            },
-          })
-        } catch (e: any) {
-          if (
-            e.message ===
-            'Cannot create a string longer than 0x1fffffe8 characters'
-          ) {
-            this.$warn('errorWebdavTooBig', { identifier: basename(path) })
-          } else {
-            this.$error('errorWebdavPut', e, `${basename(path)}`)
-          }
-        }
+        congPromises.push(this.uploadFile(path))
+        await Promise.allSettled(congPromises)
 
         perf.end = performance.now()
         perf.bits = perf.bytes * BITS_IN_BYTE
@@ -350,6 +328,32 @@ export default defineComponent({
         this.$log.debug(perf)
       }
       this.increaseProgress()
+    },
+    async uploadFile(path: string) {
+      const filePath = join(
+        this.$getPrefs('cong.dir') as string,
+        'Media',
+        this.date,
+        basename(path)
+      )
+
+      try {
+        await this.client.putFileContents(filePath, readFileSync(path), {
+          overwrite: true,
+          onUploadProgress: ({ loaded, total }) => {
+            this.setProgress(loaded, total)
+          },
+        })
+      } catch (e: any) {
+        if (
+          e.message ===
+          'Cannot create a string longer than 0x1fffffe8 characters'
+        ) {
+          this.$warn('errorWebdavTooBig', { identifier: basename(path) })
+        } else {
+          this.$error('errorWebdavPut', e, `${basename(path)}`)
+        }
+      }
     },
     increaseProgress() {
       this.uploadedFiles += 1
@@ -477,24 +481,26 @@ export default defineComponent({
         if (mediaPath) {
           const path = join(mediaPath, this.date)
           if (existsSync(path)) {
-            readdirSync(path).forEach((filename) => {
-              const jwMatch = jwMedia.find(
-                ({ safeName }) => safeName === filename
-              )
-              if (jwMatch) {
-                jwMatch.isLocal = true
-              } else {
-                localMedia.push({
-                  safeName: filename,
-                  isLocal: true,
-                  filepath: join(
-                    this.$mediaPath() as string,
-                    this.date,
-                    filename
-                  ),
-                })
-              }
-            })
+            readdirSync(path)
+              .filter((f) => extname(f) !== '.title')
+              .forEach((filename) => {
+                const jwMatch = jwMedia.find(
+                  ({ safeName }) => safeName === filename
+                )
+                if (jwMatch) {
+                  jwMatch.isLocal = true
+                } else {
+                  localMedia.push({
+                    safeName: filename,
+                    isLocal: true,
+                    filepath: join(
+                      this.$mediaPath() as string,
+                      this.date,
+                      filename
+                    ),
+                  })
+                }
+              })
           }
         }
 
