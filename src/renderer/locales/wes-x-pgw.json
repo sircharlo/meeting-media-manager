@@ -59,7 +59,7 @@
   "errorSiteCheck": "We no fit connect to this address:",
   "errorSyncCongMedia": "Something go wrong when we try load picture and video from congregation sync. Abeg, make you try again later, or speak to the person wey de organize wuna video conference.",
   "errorUnknown": "Some error don happen. Abeg, make you speak to the person wey de organize video conference for wuna.",
-  "errorWebdavLocked": "We no fit change this file on the congregation server, they lock the file. Abeg, make you try to remove the lock, or update the file on your own.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Something go wrong when we try read this folder. Abeg, make you speak to the person wey de organize wuna video conference.",
   "errorWebdavNotSupported": "For now, we no support the service wey you de use for wuna congregation server. E fit no work like you want-am.",
   "errorWebdavPut": "Something go wrong when we try write this file. Abeg, make you speak to the person wey de organize wuna video conference.",
