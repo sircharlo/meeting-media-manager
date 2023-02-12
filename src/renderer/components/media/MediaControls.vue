@@ -338,7 +338,7 @@ export default defineComponent({
       })
 
       const spotlights = this.$store.state.zoom.spotlights as number[]
-      if (!this.zoomPart && spotlights.length > 0) {
+      if (this.zoomIntegration && !this.zoomPart && spotlights.length > 0) {
         this.$toggleSpotlight(this.zoomSocket(), false)
         if (val) {
           this.$toggleSpotlight(
