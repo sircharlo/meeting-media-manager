@@ -159,6 +159,8 @@
   "autoStartSync": "Запускать синхронизацию мультимедиа при запуске приложения",
   "system": "Система",
   "themePreference": "Предпочтение темы",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "Понятно",
   "updateDownloaded": "Обновление для M³ было успешно загружено. Установка начнется после закрытия M³.",
   "updateDownloading": "Пожалуйста, подождите; в настоящее время загружается обновление M³.",
