@@ -59,7 +59,7 @@
   "errorSiteCheck": "Impossible d'établir une connexion avec le site suivant :",
   "errorSyncCongMedia": "Une erreur est survenue lors de la récupération des médias depuis la synchronisation de l'assemblée locale. Veuillez réessayer plus tard ou contacter votre organisateur des vidéoconférences.",
   "errorUnknown": "Une erreur inconnue est survenue. Veuillez contacter votre organisateur de vidéoconférence.",
-  "errorWebdavLocked": "Impossible de modifier le fichier suivant sur le serveur de l'assemblée locale, car il était verrouillé. Essayez de le déverrouiller ou modifiez le fichier manuellement.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Une erreur est survenue lors de la lecture du répertoire suivant. Veuillez contacter votre organisateur des vidéoconférences.",
   "errorWebdavNotSupported": "Le service que vous utilisez pour votre serveur de congrégation n'est pas pris en charge. Il pourrait ne pas fonctionner comme prévu.",
   "errorWebdavPut": "Une erreur est survenue lors de l'écriture du fichier suivant. Veuillez contacter votre organisateur des vidéoconférences.",
