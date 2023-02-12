@@ -59,7 +59,7 @@
   "errorSiteCheck": "Nem lehet kapcsolatot létesíteni a következő oldallal:",
   "errorSyncCongMedia": "Hiba történt a média gyülekezeti szinkronizálásból való lekérése közben. Kérjük, próbálja újra később, vagy forduljon a videokonferencia szervezőjéhez.",
   "errorUnknown": "Ismeretlen hiba történt. Kérjük, lépjen kapcsolatba a videokonferencia szervezőjével.",
-  "errorWebdavLocked": "Nem tudta módosítani a következő fájlt a gyülekezeti szerveren, mert az zárolva volt. Próbálja meg feloldani a zárolást, vagy módosítsa a fájlt kézzel.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Hiba történt a következő könyvtár beolvasása közben. Kérjük, lépjen kapcsolatba a videokonferencia szervezőjével.",
   "errorWebdavNotSupported": "Az Ön által a gyülekezeti szerverhez használt szolgáltatás jelenleg nem támogatott. Előfordulhat, hogy nem úgy működik, ahogyan azt tervezték.",
   "errorWebdavPut": "Hiba történt a következő fájl írásakor. Kérjük, forduljon a videokonferencia szervezőjéhez.",

@@ -59,7 +59,7 @@
   "errorSiteCheck": "Zu folgender Website kann keine Verbindung aufgebaut werden:",
   "errorSyncCongMedia": "Beim Abrufen von Medien über die Versammlungssynchronisierung ist ein Fehler aufgetreten. Bitte später erneut versuchen oder den Videokonferenz-Organisator kontaktieren.",
   "errorUnknown": "Es ist ein unbekannter Fehler aufgetreten. Bitte den Videokonferenz-Organisator kontaktieren.",
-  "errorWebdavLocked": "Die folgende Datei auf dem Versammlungs-Server konnte nicht bearbeitet werden, da sie gesperrt ist. Entweder entsperren oder manuell bearbeiten.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Beim Versuch, das folgende Verzeichnis zu lesen, ist ein Fehler aufgetreten. Bitte den Videokonferenz-Organisator kontaktieren.",
   "errorWebdavNotSupported": "Der für den Versammlungs-Server verwendete Dienst wird derzeit nicht unterstützt. Er funktioniert möglicherweise nicht wie beabsichtigt.",
   "errorWebdavPut": "Beim Versuch, die folgende Datei zu schreiben, ist ein Fehler aufgetreten. Bitte den Videokonferenz-Organisator kontaktieren.",

@@ -59,7 +59,7 @@
   "errorSiteCheck": "Yhteyttä ei voi muodostaa seuraavaan sivustoon:",
   "errorSyncCongMedia": "Virhe haettaessa mediaa seurakunnan synkronoinnista. Yritä myöhemmin uudelleen tai ota yhteyttä videokonferenssin järjestäjään.",
   "errorUnknown": "Tapahtui tuntematon virhe. Ota yhteyttä videokonferenssin järjestäjään.",
-  "errorWebdavLocked": "Seuraavaa cong-palvelintiedostoa ei voitu muokata, koska se oli lukittu. Yritä avata se tai muokata tiedostoa manuaalisesti.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Virhe yritettäessä lukea seuraavaa hakemistoa. Ota yhteyttä videokonferenssin järjestäjään.",
   "errorWebdavNotSupported": "Palvelua, jota käytät seurakuntapalvelimellasi, ei tällä hetkellä tueta. Se ei ehkä toimi tarkoitetulla tavalla.",
   "errorWebdavPut": "Tapahtui virhe yritettäessä kirjoittaa seuraavaa tiedostoa. Ota yhteyttä videokonferenssin järjestäjään.",

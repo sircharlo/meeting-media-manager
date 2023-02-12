@@ -59,7 +59,7 @@
   "errorSiteCheck": "Nepodarilo sa nadviazať spojenie na nasledujúcu stránku:",
   "errorSyncCongMedia": "Nastala chyba pri ziskavaní médií zo zborovej synchronizácie. Prosím, skús to znovu alebo kontaktuj organizátora videokonferencie.",
   "errorUnknown": "Nastala neznáma chyba. Prosím, kontaktuj organizátora videokonferencie.",
-  "errorWebdavLocked": "Nie je možné upraviť nasledujúci súbor na serveri zboru pretože súbor bol zamknutý. Skús ho najprv odomknúť, alebo uprav súbor manuálne.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Nastala chyba pri pokuse o čítanie nasledujúceho priečinku. Prosím, kontaktuj organizátora videokonferencie.",
   "errorWebdavNotSupported": "Služba, ktorú používaš pre zborový server je momentálne nepodorovaná. Nemusí fungovať ako by mala.",
   "errorWebdavPut": "Nastala chyba pri pokuse o zápis nasledujúceho súboru. Prosím, kontaktuj organizátora videokonferencie.",

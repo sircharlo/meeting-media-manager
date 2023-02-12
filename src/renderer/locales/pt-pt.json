@@ -59,7 +59,7 @@
   "errorSiteCheck": "Não foi possível estabelecer uma ligação com o site:",
   "errorSyncCongMedia": "Ocorreu um erro ao tentar descarregar a multimédia do servidor da congregação. Tente novamente mais tarde ou entre em contacto com o organizador de sua videoconferência.",
   "errorUnknown": "Ocorreu um erro desconhecido. Entre em contato com o organizador de videoconferência.",
-  "errorWebdavLocked": "Não foi possível modificar esse arquivo no servidor da congregação porque ele está bloqueado. Tente desbloqueá-lo ou modifique o arquivo manualmente.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Ocorreu um erro ao tentar ler essa pasta. Entre em contacto com o organizador de sua videoconferência.",
   "errorWebdavNotSupported": "O servidor que você está usando para sua congregação não é suportado no momento.",
   "errorWebdavPut": "Ocorreu um erro ao tentar gravar esse ficheiro. Entre em contacto com o organizador de sua videoconferência.",
