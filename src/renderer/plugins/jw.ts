@@ -179,7 +179,7 @@ const plugin: Plugin = (
   ): Promise<MediaItem[]> {
     try {
       const result = await $mediaCategories.$get<MediaCategoryResult>(
-        lang ?? ($getPrefs('media.lang') as string) + `/${category}`,
+        (lang ?? ($getPrefs('media.lang') as string)) + `/${category}`,
         {
           params: {
             detailed: 0,
