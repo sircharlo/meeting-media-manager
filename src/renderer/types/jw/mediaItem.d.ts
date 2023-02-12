@@ -17,7 +17,7 @@ export interface File {
   modifiedDatetime: Date
   progressiveDownloadURL: string
   subtitled: boolean
-  subtitles: Subtitles
+  subtitles: Subtitles | null
 }
 
 export interface Image {

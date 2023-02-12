@@ -290,6 +290,10 @@ export default defineComponent({
         // @ts-ignore: file is not recognized as type Buffer
         await this.$downloadIfRequired(file, this.setProgress)
 
+        if ((file as VideoFile).subtitles) {
+          congPromises.push(this.uploadFile(changeExt(path, 'vtt')))
+        }
+
         // Download markers if required
         if ((file as VideoFile).markers) {
           const markers = Array.from(

@@ -9,6 +9,7 @@ import {
   JWLang,
   MediaCategoryResult,
   MediaItem,
+  MediaItemResult,
   ShortJWLang,
 } from '~/types'
 
@@ -22,6 +23,7 @@ const plugin: Plugin = (
     $axios,
     $mediaCategories,
     $warn,
+    $mediaItems,
     $localFontPath,
     $setPrefs,
     $dayjs,
@@ -160,7 +162,6 @@ const plugin: Plugin = (
       const results = await Promise.allSettled(promises)
       results.forEach((result) => {
         if (result.status === 'fulfilled') {
-          console.log(result.value)
           media.push(...result.value)
         }
       })
@@ -186,11 +187,40 @@ const plugin: Plugin = (
         }
       )
 
-      return result.category.media ?? []
+      const items = result.category.media ?? []
+      const subsLang = $getPrefs('media.langSubs') as string
+      const newItems = []
+      for (const item of items) {
+        if (subsLang) {
+          newItems.push(await getMediaItemSubs(item, subsLang))
+        } else {
+          newItems.push({
+            ...item,
+            files: item.files.map((file) => ({ ...file, subtitles: null })),
+          })
+        }
+      }
+      return newItems
     } catch (e: unknown) {
       $log.error(e)
     }
     return []
+  }
+
+  async function getMediaItemSubs(
+    item: MediaItem,
+    lang: string
+  ): Promise<MediaItem> {
+    const result = await $mediaItems.$get<MediaItemResult>(
+      `${lang}/${item.languageAgnosticNaturalKey}`
+    )
+    return {
+      ...item,
+      files: item.files.map((file) => {
+        const match = result.media[0]?.files.find((f) => f.label === file.label)
+        return { ...file, subtitles: match?.subtitles ?? null }
+      }),
+    }
   }
 
   async function getPubAvailability(
