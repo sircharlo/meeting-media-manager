@@ -54,7 +54,7 @@
 - _Enjoy Life Forever_ videos are now only included during the Congregation Bible Study
 - Added a clear warning when a file is locked on a congregation server
 
-### Bug Fixes
+### Bug fixes
 
 - Correctly sort folders and files in the congregation sync directory tree
 - Fixed incorrect filename sorting when adding or uploading media files
