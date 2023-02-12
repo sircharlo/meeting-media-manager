@@ -408,10 +408,14 @@ export default defineComponent({
       window.sockets = []
       WebSocket.prototype.send = function (...args) {
         console.debug('send:', args)
-        if (this.url.includes('zoom') && !window.sockets.includes(this)) {
-          console.log('socket', this)
-          console.log('sockets', window.sockets)
+        console.log('socket', this)
+        if (
+          this.url.includes('zoom') &&
+          this.url.includes('dn2') &&
+          !window.sockets.includes(this)
+        ) {
           window.sockets.push(this)
+          console.log('sockets', window.sockets)
         }
         return originalSend.call(this, ...args)
       }
