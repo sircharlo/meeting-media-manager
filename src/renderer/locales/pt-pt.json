@@ -159,6 +159,8 @@
   "autoStartSync": "Descarregar as multimédias automaticamente ao abrir o programa",
   "system": "Padrão do sistema",
   "themePreference": "Preferência de tema",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "Entendi",
   "updateDownloaded": "Foi baixada uma atualização para o M³. A instalação começará quando o M³ for fechado.",
   "updateDownloading": "Por favor, aguarde. Descarregando a actualização do M³.",
