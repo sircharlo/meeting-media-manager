@@ -159,6 +159,8 @@
   "autoStartSync": "Automaticky spustiť synchronizáciu médií",
   "system": "Systém",
   "themePreference": "Nastavenie témy",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "Rozumiem",
   "updateDownloaded": "Aktualizácia na M³ bola úspešne stiahnutá. Inštalácia sa spustí po zatvorení M³.",
   "updateDownloading": "Na pozadí sa sťahuje aktualizácia M³.",

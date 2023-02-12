@@ -159,6 +159,8 @@
   "autoStartSync": "Initialiseer media sync bij het opstarten van de app",
   "system": "Systeem",
   "themePreference": "Thema voorkeur",
+  "toggleSubtitles": "Ondertiteling in-/uitschakelen",
+  "toggleSubtitlePosition": "Verander ondertiteling positie",
   "understood": "Ik begrijp het",
   "updateDownloaded": "Er is een update voor M³ gedownload. De installatie zal beginnen zodra M³ is gesloten.",
   "updateDownloading": "Moment geduld alsjeblieft; Er wordt een update gedownload voor M³.",

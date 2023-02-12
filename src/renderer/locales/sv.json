@@ -159,6 +159,8 @@
   "autoStartSync": "Initiera mediasynkronisering automatiskt ",
   "system": "System",
   "themePreference": "Temainställningar",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "Jag förstår",
   "updateDownloaded": "En uppdatering till M³ laddades ned. Installationen börjar när M³ startas om.",
   "updateDownloading": "Vänligen vänta; en uppdatering av M³ laddas ned.",
