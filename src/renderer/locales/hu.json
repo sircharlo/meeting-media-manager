@@ -159,6 +159,8 @@
   "autoStartSync": "Automatikusan kezdeményezzen médiaszinkronizálást",
   "system": "Rendszer",
   "themePreference": "Téma",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "Értem",
   "updateDownloaded": "Az M³ frissítése sikeresen letöltődött. A telepítés az M³ bezárásakor elkezdődik.",
   "updateDownloading": "Egy frissítés letöltése folyamatban a háttérben.",

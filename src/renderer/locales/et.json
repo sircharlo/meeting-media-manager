@@ -159,6 +159,8 @@
   "autoStartSync": "Käivitage meedia sünkroonimine automaatselt",
   "system": "Süsteem",
   "themePreference": "Teema eelistus",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "Ma saan aru",
   "updateDownloaded": "M³ värskenduse allalaadimine õnnestus. Paigaldamine algab pärast M³ sulgemist.",
   "updateDownloading": "Palun oota; M³-i värskendust laaditakse praegu alla.",

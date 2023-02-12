@@ -159,6 +159,8 @@
   "autoStartSync": "Lancer la synchronisation automatiquement",
   "system": "Système",
   "themePreference": "Préférence de thème",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "J'ai compris",
   "updateDownloaded": "Une mise à jour de M³ a été téléchargée avec succès. L'installation commencera dès que M³ sera fermé.",
   "updateDownloading": "Veuillez patienter, une mise à jour de M³ est en cours de téléchargement.",
