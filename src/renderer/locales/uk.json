@@ -159,6 +159,8 @@
   "autoStartSync": "Автоматично вмикати синхронізацію медіа при запуску програми",
   "system": "Система",
   "themePreference": "Налаштування теми",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "Зрозуміло",
   "updateDownloaded": "Оновлення M³ успішно завантажено. Встановлення почнеться, коли M³ буде закрито.",
   "updateDownloading": "Оновлення M³ завантажується у фоновому режимі.",
