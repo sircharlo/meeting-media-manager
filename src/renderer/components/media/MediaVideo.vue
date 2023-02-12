@@ -90,17 +90,22 @@
           : `${duration}`
       }}
     </v-btn>
-    <v-btn
-      v-if="ccAvailable"
-      x-small
-      absolute
-      tile
-      depressed
-      :style="`left: 123px; ${ccTop ? 'top' : 'bottom'}: 4px`"
-      @click="ccTop = !ccTop"
-    >
-      <font-awesome-icon :icon="ccIcon" />
-    </v-btn>
+    <v-tooltip v-if="ccAvailable" right>
+      <template #activator="{ on }">
+      <v-btn
+        x-small
+        absolute
+        tile
+        depressed
+        :style="`left: 123px; ${ccTop ? 'top' : 'bottom'}: 4px`"
+        v-on="on"
+        @click="ccTop = !ccTop"
+      >
+        <font-awesome-icon :icon="ccIcon" />
+      </v-btn>
+    </template>
+    <span>{{ $t('toggleSubtitlePosition') }}</span>
+  </v-tooltip>
   </div>
 </template>
 <script lang="ts">
