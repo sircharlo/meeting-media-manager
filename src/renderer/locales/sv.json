@@ -59,7 +59,7 @@
   "errorSiteCheck": "Kunde inte komma åt följande sida:",
   "errorSyncCongMedia": "Ett fel har uppstått vid inläsning av media från församlingssynkroniseringen. Vänligen prova igen senare eller kontakta organisatören för videokonferensen.",
   "errorUnknown": "Ett okänt fel inträffade. Kontakta din mötesorganisatör.",
-  "errorWebdavLocked": "Det gick inte att ändra följande fil på församlingsservern eftersom den var låst. Försök att låsa upp den eller ändra filen manuellt.",
+  "errorWebdavLocked": "Could not modify the following file on the congregation server because it was locked. Please try again later.",
   "errorWebdavLs": "Ett fel har uppstått när följande katalog skulle läsas in. Vänligen kontakta organisatören för videokonferensen.",
   "errorWebdavNotSupported": "Tjänsten du använder för din församlingsserver stöds för närvarande inte. Det kanske inte fungerar som det är tänkt.",
   "errorWebdavPut": "Ett fel uppstod vid skrivning till följande fil. Vänligen kontakta organisatören för videokonferensen.",
