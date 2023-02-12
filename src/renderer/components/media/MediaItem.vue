@@ -32,6 +32,7 @@
         v-else
         :src="!!streamingFile && streamDownloaded ? localStreamPath : src"
         :playing="active"
+        :cc-enable="ccEnable"
         :stream="!!streamingFile && !streamDownloaded"
         :temp-clipped="tempClipped"
         @clipped="setTime($event)"
@@ -186,6 +187,10 @@ export default defineComponent({
     sortable: {
       type: Boolean,
       default: false,
+    },
+    ccEnable: {
+      type: Boolean,
+      default: true,
     },
     mediaActive: {
       type: Boolean,
