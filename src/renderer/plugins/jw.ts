@@ -149,11 +149,12 @@ const plugin: Plugin = (
     const promises: Promise<MediaItem[]>[] = []
     const media: MediaItem[] = []
 
+    const lang = $getPrefs('media.lang') as string
     const fallback = $getPrefs('media.langFallback') as string
 
     try {
       categories.forEach((category) => {
-        promises.push(getCategoryMedia(category))
+        promises.push(getCategoryMedia(category, lang))
         if (fallback) {
           promises.push(getCategoryMedia(category, fallback))
         }
@@ -170,6 +171,20 @@ const plugin: Plugin = (
     }
 
     return media
+      .filter(function (item, pos, self) {
+        return self.findIndex((i) => i.guid === item.guid) === pos
+      })
+      .filter((item, _, self) => {
+        return (
+          item.naturalKey.includes(`_${lang}_`) ||
+          !self.find(
+            (i) =>
+              i.languageAgnosticNaturalKey ===
+                item.languageAgnosticNaturalKey &&
+              i.naturalKey.includes(`_${lang}_`)
+          )
+        )
+      })
   }
   inject('getLatestJWMedia', getLatestJWMedia)
 
