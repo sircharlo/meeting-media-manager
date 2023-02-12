@@ -477,7 +477,7 @@ export default defineComponent({
         if (mediaPath) {
           const path = join(mediaPath, this.date)
           if (existsSync(path)) {
-            readdirSync(path).forEach((filename) => {
+            readdirSync(path).filter((f) => extname(f) !== '.title').forEach((filename) => {
               const jwMatch = jwMedia.find(
                 ({ safeName }) => safeName === filename
               )
