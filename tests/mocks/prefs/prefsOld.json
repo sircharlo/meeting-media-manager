@@ -19,7 +19,7 @@
   "enableVlcPlaylistCreation": null,
   "excludeLffi": null,
   "excludeLffiImages": null,
-  "excludeTh": null,
+  "excludeTh": true,
   "hideMediaLogo": null,
   "keepOriginalsAfterConversion": null,
   "lang": "E",
