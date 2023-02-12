@@ -159,6 +159,8 @@
   "autoStartSync": "Aloita median synkronointi automaattisesti",
   "system": "Järjestelmä",
   "themePreference": "Teeman asetukset",
+  "toggleSubtitles": "Toggle subtitles",
+  "toggleSubtitlePosition": "Toggle subtitle vertical position for this video",
   "understood": "Ymmärrän",
   "updateDownloaded": "M³:n päivityksen lataaminen onnistui. Asennus alkaa, kun M³ suljetaan.",
   "updateDownloading": "Odota; M³-päivitystä ladataan parhaillaan.",
