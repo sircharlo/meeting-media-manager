@@ -234,7 +234,12 @@ export default defineComponent({
           this.$toggleSpotlight(this.zoomSocket(), true, hostID)
         }
         this.participants = []
+        this.$store.commit('zoom/setSpotlights', [])
       } else {
+        this.$store.commit(
+          'zoom/setSpotlights',
+          this.participants.map((p) => p.userId)
+        )
         for (const p of this.participants) {
           this.$toggleSpotlight(this.zoomSocket(), true, p.userId)
           await this.$toggleMic(this.zoomSocket(), false, p.userId)

@@ -337,6 +337,25 @@ export default defineComponent({
         item.deactivate = false
       })
 
+      const spotlights = this.$store.state.zoom.spotlights as number[]
+      if (!this.zoomPart && spotlights.length > 0) {
+        this.$toggleSpotlight(this.zoomSocket(), false)
+        if (val) {
+          this.$toggleSpotlight(
+            this.zoomSocket(),
+            true,
+            this.$store.state.zoom.hostID as number
+          )
+          spotlights.forEach((person) => {
+            this.$toggleSpotlight(this.zoomSocket(), true, person)
+          })
+        } else {
+          spotlights.forEach((person) => {
+            this.$toggleSpotlight(this.zoomSocket(), true, person)
+          })
+        }
+      }
+
       if (!val && this.scene) {
         await this.$setScene(
           this.zoomPart ? this.zoomScene ?? this.scene : this.scene

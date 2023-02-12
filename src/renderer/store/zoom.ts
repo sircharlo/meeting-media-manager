@@ -11,6 +11,7 @@ interface ZoomStore {
   websocket: WebSocket | null
   userID: number | null
   hostID: number | null
+  spotlights: number[]
 }
 
 const defaultState: ZoomStore = {
@@ -23,6 +24,7 @@ const defaultState: ZoomStore = {
   websocket: null,
   userID: null,
   hostID: null,
+  spotlights: [],
 }
 
 export const state = () => Object.assign({}, defaultState)
@@ -36,6 +38,9 @@ export const mutations: MutationTree<ZoomStore> = {
   },
   setHostID(state, hostID: number) {
     state.hostID = hostID
+  },
+  setSpotlights(state, spotlights: number[]) {
+    state.spotlights = spotlights
   },
   setParticipants(state, participants: Participant[]) {
     state.participants = participants
