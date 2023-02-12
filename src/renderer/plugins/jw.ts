@@ -203,12 +203,13 @@ const plugin: Plugin = (
       )
 
       const items = result.category.media ?? []
+      const enableSubs = $getPrefs('media.enableSubtitles') as boolean
       const subsLang = $getPrefs('media.langSubs') as string
       const newItems = []
       for (const item of items) {
-        if (subsLang && subsLang !== lang) {
+        if (enableSubs && subsLang && subsLang !== lang) {
           newItems.push(await getMediaItemSubs(item, subsLang))
-        } else if (!subsLang) {
+        } else if (!enableSubs || !subsLang) {
           newItems.push({
             ...item,
             files: item.files.map((file) => ({ ...file, subtitles: null })),
