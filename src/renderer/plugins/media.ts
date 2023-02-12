@@ -718,6 +718,7 @@ const plugin: Plugin = (
             trackImage,
             track,
             pub,
+            subtitled,
             subtitles,
             markers,
           }) => {
@@ -731,7 +732,8 @@ const plugin: Plugin = (
               trackImage: trackImage.url,
               track,
               pub,
-              subtitles: $getPrefs('media.enableSubtitles') ? subtitles : [],
+              subtitled,
+              subtitles: $getPrefs('media.enableSubtitles') ? subtitles : null,
               markers,
             }
           }
@@ -810,7 +812,14 @@ const plugin: Plugin = (
           const matchingFile = subsResult.value.find(
             (sub) => file.pub === sub.pub && file.track === sub.track
           )
-          file.subtitles = matchingFile?.subtitles ?? null
+          if (
+            matchingFile &&
+            Math.abs(file.duration - matchingFile.duration) < 2
+          ) {
+            file.subtitles = matchingFile.subtitles
+          } else {
+            file.subtitles = null
+          }
         })
       }
 
@@ -1249,7 +1258,11 @@ const plugin: Plugin = (
         `SELECT Title FROM Document WHERE DocumentId = ${docId}`
       )[0] as { Title: string }
       $write(
-        join($mediaPath(), date, $strip(magazine.Title + " - " + article.Title, 'file') + '.title'),
+        join(
+          $mediaPath(),
+          date,
+          $strip(magazine.Title + ' - ' + article.Title, 'file') + '.title'
+        ),
         ''
       )
 
