@@ -28,13 +28,13 @@ export interface Image {
 }
 
 export interface Images {
-  lsr: Image
-  lss: Image
-  pnr: Image
-  sqr: Image
-  sqs: Image
-  wsr: Image
-  wss: Image
+  lsr?: Image
+  lss?: Image
+  pnr?: Image
+  sqr?: Image
+  sqs?: Image
+  wsr?: Image
+  wss?: Image
 }
 
 export interface MediaItem {

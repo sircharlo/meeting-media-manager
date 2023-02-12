@@ -4,7 +4,7 @@ import { join } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import { JW_ICONS_FONT, WT_CLEARTEXT_FONT } from './../constants/general'
-import { Filter, JWLang, ShortJWLang } from '~/types'
+import { Filter, JWLang, MediaItem, ShortJWLang } from '~/types'
 
 const plugin: Plugin = (
   {
@@ -14,6 +14,7 @@ const plugin: Plugin = (
     $ytPath,
     $log,
     $axios,
+    $mediaCategories,
     $warn,
     $localFontPath,
     $setPrefs,
@@ -134,6 +135,28 @@ const plugin: Plugin = (
     return langs
   }
   inject('getJWLangs', getJWLangs)
+
+  async function getCategoryMedia(
+    category: string,
+    lang?: string
+  ): Promise<MediaItem[]> {
+    try {
+      const result = await $mediaCategories.$get<MediaItem[]>(
+        lang ?? ($getPrefs('media.lang') as string) + `/${category}`,
+        {
+          params: {
+            detailed: 0,
+          },
+        }
+      )
+
+      return result
+    } catch (e: unknown) {
+      $log.error(e)
+    }
+    return []
+  }
+  inject('getCategoryMedia', getCategoryMedia)
 
   async function getPubAvailability(
     lang: string,

@@ -137,6 +137,7 @@ interface CustomProps {
     warn: (msg: any, ...args: any[]) => void
     error: (msg: any, ...args: any[]) => void
   }
+  $mediaCategories: NuxtAxiosInstance
   $mediaItems: NuxtAxiosInstance
   $mediaPath: (file?: MeetingFile) => string | undefined
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
