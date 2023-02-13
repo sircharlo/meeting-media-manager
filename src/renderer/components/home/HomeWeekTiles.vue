@@ -10,7 +10,7 @@
         class="fill-height d-flex justify-center flex-column"
         @click="openDate(day.formatted)"
       >
-        <v-card-text class="pb-0 pt-2">{{ day.first }}</v-card-text>
+        <v-card-text class="pb-0 pt-2 text-no-wrap">{{ day.first }}</v-card-text>
         <v-card-text class="pt-0 pb-2">{{ day.second }}</v-card-text>
       </v-card>
     </v-col>
