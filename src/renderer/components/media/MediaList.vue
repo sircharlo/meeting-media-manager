@@ -316,7 +316,7 @@ export default defineComponent({
       const TOP_BAR = 64
       const FOOTER = 72
       const ZOOM_BAR = 56
-      const otherElements = TOP_BAR + FOOTER
+      let otherElements = TOP_BAR + FOOTER
       if (this.zoomIntegration) otherElements += ZOOM_BAR
       return `max-height: ${this.windowHeight - otherElements}px`
     },
