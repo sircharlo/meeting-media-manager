@@ -190,7 +190,7 @@
   "webdavFolder": "Seurakunnan synkronointikansio",
   "webdavFolderUp": "Siirrä hakemistoa ylöspäin",
   "window": "Siirrettävä ikkuna",
-  "zoomAutomateAudio": "Automate audio (uses Zoom participant audio instead of host audio",
+  "zoomAutomateAudio": "Automate audio (uses Zoom participant audio instead of host audio)",
   "zoomAutoRename": "Automatically rename Zoom participants",
   "zoomAutoRenameFormat": "Old Name=New Name",
   "zoomAutoStartMeeting": "Automatically perform start meeting actions",
