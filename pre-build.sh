@@ -1,5 +1,5 @@
 #!/bin/bash
-# Necessary sql.js file for reading sqlight databases from JWPUB files (now fetched from the internet)
+# Necessary sql.js file for reading sqlight databases from JWPUB files
 cp ./node_modules/sql.js/dist/sql-wasm.wasm ./src/renderer/static
 
 # Necessary pdfjs worker file for converting PDFs to images
