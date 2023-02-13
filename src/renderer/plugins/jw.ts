@@ -145,7 +145,7 @@ const plugin: Plugin = (
   inject('getJWLangs', getJWLangs)
 
   async function getLatestJWMedia(): Promise<MediaItem[]> {
-    const categories = ['FeaturedLibraryLanding', 'LatestVideos']
+    const categories = ['FeaturedLibraryLanding', 'FeaturedLibraryVideos', 'LatestVideos']
     const promises: Promise<MediaItem[]>[] = []
     const media: MediaItem[] = []
 
