@@ -29,6 +29,7 @@
       <present-footer
         :media-active="mediaActive"
         :zoom-part="zoomPart"
+        :window-width="windowWidth"
         @zoom-part="toggleZoomPart()"
       />
     </v-row>

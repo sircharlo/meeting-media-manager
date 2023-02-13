@@ -97,6 +97,10 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
+    windowWidth: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
