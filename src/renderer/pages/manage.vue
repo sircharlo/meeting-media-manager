@@ -1,7 +1,7 @@
 <template>
   <v-container fluid fill-height>
     <manage-select-video
-      :active="type === 'jworg'"
+      :active="type === 'jworg' && !jwFile"
       @cancel="type = 'custom'"
       @select="selectVideo"
     />
@@ -200,7 +200,6 @@ export default defineComponent({
     },
     selectVideo(video: VideoFile) {
       this.jwFile = video
-      this.type = 'custom'
     },
     handleDrag(e: DragEvent) {
       if (
@@ -285,7 +284,7 @@ export default defineComponent({
         // @ts-ignore: file is not recognized as type Buffer
         await this.$downloadIfRequired(file, this.setProgress)
 
-        if ((file as VideoFile).subtitles && this.client && this.online) {
+        if ((file as VideoFile).subtitles) {
           congPromises.push(this.uploadFile(changeExt(path, 'vtt')))
         }
 
@@ -338,6 +337,7 @@ export default defineComponent({
       this.increaseProgress()
     },
     async uploadFile(path: string) {
+      if (!this.client || !this.online) return
       const filePath = join(
         this.$getPrefs('cong.dir') as string,
         'Media',
