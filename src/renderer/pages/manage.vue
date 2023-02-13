@@ -154,8 +154,11 @@ export default defineComponent({
     },
   },
   watch: {
-    type() {
+    type(val: string) {
       this.fileString = ''
+      if (val === 'jworg') {
+        this.jwFile = null
+      }
     },
     fileString(val: string) {
       if (!val) {
