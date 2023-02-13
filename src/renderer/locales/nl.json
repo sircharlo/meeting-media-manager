@@ -147,6 +147,7 @@
   "screen": "Scherm",
   "selectDocument": "Selecteer een document om media uit te halen:",
   "selectExternalMedia": "De volgende media bestanden zitten niet in het JWPUB bestand. Klik alsjeblieft op elk bestand om het te vinden op je computer:",
+  "selectVideo": "Select a video from JW.org",
   "settingLocked": "Sommige instellingen zijn vastgezet door de videoconferentie organisator van jouw gemeente.",
   "settingsLocked": "Gemeente brede instellingen",
   "settingsLockedExplain": "De onderstaande geselecteerde instellingen worden, in de huidige staat, toegepast voor alle gebruikers die met dezelfde folder en server verbinding maken. Verander deze instellingen alleen als je de toegewezen videoconferentie organisator bent, of als je toestemming hebt van een verantwoordelijke broeder.",

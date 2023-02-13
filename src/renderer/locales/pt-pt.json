@@ -147,6 +147,7 @@
   "screen": "Tela",
   "selectDocument": "Selecione um documento para extrair a multimédia:",
   "selectExternalMedia": "Esses ficheiros de multimédia não estão incluídos no ficheiro JWPUB que você selecionou. Clique em cada um para localizá-lo em seu computador:",
+  "selectVideo": "Select a video from JW.org",
   "settingLocked": "Algumas configurações foram bloqueadas pelo organizador de videoconferência da sua congregação.",
   "settingsLocked": "Configurações para todos da congregação",
   "settingsLockedExplain": "As configurações selecionadas abaixo serão aplicadas a todos os utilizadores que se conectem à mesma pasta e servidor. Por favor, altere essas configurações apenas se você for o organizador de videoconferência designado, ou se você tiver recebido permissão para fazer isso por um irmão responsável.",

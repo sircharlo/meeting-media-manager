@@ -147,6 +147,7 @@
   "screen": "Ekraan",
   "selectDocument": "Valige dokument, millelt meedia importida:",
   "selectExternalMedia": "Need viidatud meediafailid ei sisaldu JWPUB-failis. Klõpsake igal meedial, et leida see oma arvutis:",
+  "selectVideo": "Select a video from JW.org",
   "settingLocked": "Teie koguduse videokonverentsi korraldaja on mõned seaded lukustanud.",
   "settingsLocked": "Koguduse seaded",
   "settingsLockedExplain": "Allpool valitud sätteid rakendatakse nende praeguses olekus kõigile kasutajatele, kes loovad ühenduse sama kausta ja serveriga. Palun muutke neid seadeid ainult siis, kui olete määratud videokonverentsi korraldaja või kui teile on selleks loa andnud vastutav vend.",
