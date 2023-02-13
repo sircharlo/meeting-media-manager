@@ -25,8 +25,7 @@ test.beforeAll(async () => {
   // Open add page
   await page.locator('.v-card', { hasText: locale.recurring }).click()
   if (platform() === 'darwin') {
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
+    await delay(5 * 100)
   }
 })
 
@@ -74,7 +73,9 @@ test('add song', async () => {
   ).toBe(1)
 
   // Take screenshot
-  await page.screenshot({ path: 'img/manage/song-media.png' })
+  if (platform() === 'linux') {
+    await page.screenshot({ path: 'img/manage/song-media.png' })
+  }
 
   // Click save button
   await page.locator('svg.fa-floppy-disk').click()
@@ -108,7 +109,9 @@ test('rename song', async () => {
   await page.locator('input[type=text]').fill(filename)
 
   // Take screenshot
-  await page.screenshot({ path: 'img/manage/rename-media.png' })
+  if (platform() === 'linux') {
+    await page.screenshot({ path: 'img/manage/rename-media.png' })
+  }
 
   filename = strip(filename) + '.mp4'
 

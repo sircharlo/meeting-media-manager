@@ -357,8 +357,9 @@ if (gotTheLock) {
       return
     }
 
-    // eslint-disable-next-line no-magic-numbers
-    mediaWin?.setMinimumSize(1280, 720)
+    const MIN_WIDTH = 1280
+    const MIN_HEIGHT = 720
+    mediaWin?.setMinimumSize(MIN_WIDTH, MIN_HEIGHT)
     mediaWinHandler?.loadPage('/browser?url=' + url)
     website = true
 
@@ -384,8 +385,9 @@ if (gotTheLock) {
     websiteController.on('close', () => {
       win?.webContents.send('showingMedia', [false, false])
       mediaWinHandler?.loadPage('/media')
-      // eslint-disable-next-line no-magic-numbers
-      mediaWin?.setMinimumSize(195, 110)
+      const MIN_WIDTH = 195
+      const MIN_HEIGHT = 110
+      mediaWin?.setMinimumSize(MIN_WIDTH, MIN_HEIGHT)
       website = false
       allowClose = false
       closeAttempts = 0

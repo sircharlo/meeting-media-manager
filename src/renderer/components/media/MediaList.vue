@@ -228,6 +228,7 @@ import { Dayjs } from 'dayjs'
 // eslint-disable-next-line import/named
 import { readFileSync } from 'fs-extra'
 import { VideoFile, MeetingFile } from '~/types'
+import { BIBLE_READING_PAR_NR } from '~/constants/general'
 
 type MediaItem = {
   id: string
@@ -338,8 +339,7 @@ export default defineComponent({
       if (meetingMap) {
         const firstApplyPar = [...meetingMap.keys()]
           .sort((a, b) => a - b)
-          // eslint-disable-next-line no-magic-numbers
-          .find((key) => key > 12) as number
+          .find((key) => key > BIBLE_READING_PAR_NR) as number
         const firstApplyItems = meetingMap.get(firstApplyPar)
         if (firstApplyItems && firstApplyItems[0]?.folder) {
           const index = this.mediaItems.findIndex(

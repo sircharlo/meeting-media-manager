@@ -9,7 +9,6 @@ import { Database } from 'sql.js'
 import {
   MS_IN_SEC,
   THV_POSTER,
-  HUNDRED_PERCENT,
   JAN_2008,
   MAX_PREFIX_LENGTH,
   NR_OF_KINGDOM_SONGS,
@@ -1843,8 +1842,7 @@ const plugin: Plugin = (
       )
     }
     audio.oncanplay = () => {
-      audio.volume =
-        ($getPrefs('meeting.musicVolume') as number) / HUNDRED_PERCENT
+      audio.volume = ($getPrefs('meeting.musicVolume') as number) / 100
       if (!fadeOut) {
         store.commit('media/setMusicFadeOut', '00:00')
       }

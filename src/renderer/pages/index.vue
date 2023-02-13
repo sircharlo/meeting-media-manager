@@ -90,7 +90,7 @@ import { Dayjs } from 'dayjs'
 import { basename, join } from 'upath'
 import { ipcRenderer } from 'electron'
 import { ShortJWLang } from '~/types'
-import { DAYS_IN_WEEK, HUNDRED_PERCENT } from '~/constants/general'
+import { DAYS_IN_WEEK } from '~/constants/general'
 
 export default defineComponent({
   name: 'HomePage',
@@ -353,15 +353,14 @@ export default defineComponent({
     },
     setProgress(loaded: number, total: number, global = false) {
       if (global) {
-        this.totalProgress = (HUNDRED_PERCENT * loaded) / total
+        this.totalProgress = (100 * loaded) / total
       } else {
         this.currentProgress = this.totalProgress
-          ? this.totalProgress +
-            ((HUNDRED_PERCENT - this.totalProgress) * loaded) / total
-          : (HUNDRED_PERCENT * loaded) / total
+          ? this.totalProgress + ((100 - this.totalProgress) * loaded) / total
+          : (100 * loaded) / total
       }
-      if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
-      if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
+      if (this.currentProgress === 100) this.currentProgress = 0
+      if (this.totalProgress === 100) this.totalProgress = 0
     },
     async getMwMedia(mwDay: Dayjs, filter = 'all') {
       if (

@@ -37,8 +37,7 @@ test('render the presentation mode page correctly', async () => {
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
   if (platform() === 'darwin') {
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
+    await delay(5 * 100)
   }
 
   // Check for correct version
@@ -58,10 +57,10 @@ test('render the presentation mode page correctly', async () => {
   // Verify home page
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
 
-  // eslint-disable-next-line no-magic-numbers
-  await delay(500)
-
-  await page.screenshot({ path: 'img/present/launch-present-mode.png' })
+  if (platform() === 'linux') {
+    await delay(5 * 100)
+    await page.screenshot({ path: 'img/present/launch-present-mode.png' })
+  }
 
   const mediaWin = electronApp
     .windows()
@@ -82,32 +81,36 @@ test('render the presentation mode page correctly', async () => {
       ignore: [join(mediaPath, prefs.lang, 'Recurring')],
     }).length === 1
   ) {
-    // Check if toggle prefix button is present
+    // Check if more actions button is present
     expect(
       await page
         .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
 
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
-    await page.screenshot({ path: 'img/present/media-list.png' })
+    if (platform() === 'linux') {
+      await delay(10 * 100)
+      await page.screenshot({ path: 'img/present/media-list.png' })
+    }
   } else {
     // Check for correct heading
     expect(await page.locator('h2').innerText()).toBe(locale.meeting)
 
     if (platform() !== 'win32') {
-      await page.screenshot({ path: 'img/present/meeting-picker.png' })
-      await page.getByRole('listitem').nth(1).click()
+      if (platform() === 'linux') {
+        await page.screenshot({ path: 'img/present/meeting-picker.png' })
+      }
+      await page.getByRole('listitem').nth(0).click()
       expect(
         await page
           .locator('[aria-label="More actions"]')
           .getAttribute('aria-label')
       ).toBeTruthy()
 
-      // eslint-disable-next-line no-magic-numbers
-      await delay(500)
-      await page.screenshot({ path: 'img/present/media-list.png' })
+      if (platform() === 'linux') {
+        await delay(10 * 100)
+        await page.screenshot({ path: 'img/present/media-list.png' })
+      }
     }
   }
 })
