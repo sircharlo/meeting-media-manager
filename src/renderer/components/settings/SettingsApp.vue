@@ -282,7 +282,7 @@
         field="slider"
         :min="1"
         :max="10"
-        :group-label="$t('zoomAutoStartTime')"
+        :group-label="autoStartMeeting"
         :locked="$isLocked('app.zoom.autoStartTime')"
       />
       <v-col class="d-flex pa-0 pb-2 align-center">
@@ -388,6 +388,15 @@ export default defineComponent({
     },
     isLinux() {
       return platform() === 'linux'
+    },
+    autoStartMeeting(): string {
+      return (this.$t('minutesBeforeMeeting') as string).replace(
+        '<span>XX</span>',
+        (
+          this.app.zoom.autoStartTime ??
+          (PREFS.app.zoom.autoStartTime as number)
+        ).toString()
+      )
     },
     obsComplete(): boolean {
       return (
