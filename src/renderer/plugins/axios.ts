@@ -1,12 +1,10 @@
 import { Plugin } from '@nuxt/types'
-// eslint-disable-next-line import/named
-import { NuxtAxiosInstance } from '@nuxtjs/axios'
 
 const plugin: Plugin = ({ $axios, $config }, inject) => {
   // Get media links from publication
   const pubMedia = $axios.create({
     baseURL: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
-  }) as NuxtAxiosInstance
+  })
 
   pubMedia.onRequest((config) => {
     config.params = {
@@ -19,8 +17,21 @@ const plugin: Plugin = ({ $axios, $config }, inject) => {
   // Get media item
   const mediaItems = $axios.create({
     baseURL: 'https://b.jw-cdn.org/apis/mediator/v1/media-items/',
-  }) as NuxtAxiosInstance
+  })
   inject('mediaItems', mediaItems)
+
+  // Media categories
+  const mediaCategories = $axios.create({
+    baseURL: 'https://b.jw-cdn.org/apis/mediator/v1/categories/',
+  })
+
+  mediaCategories.onRequest((config) => {
+    config.params = {
+      ...config.params,
+      clientType: 'www',
+    }
+  })
+  inject('mediaCategories', mediaCategories)
 
   // Get GitHub information
   const ghApi = $axios.create({

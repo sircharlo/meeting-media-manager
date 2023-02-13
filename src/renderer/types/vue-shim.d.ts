@@ -7,6 +7,7 @@ import Vue from 'vue'
 import { Entry } from 'fast-glob/out/types'
 import {
   MeetingFile,
+  MediaItem,
   SmallMediaFile,
   ElectronStore,
   ShortJWLang,
@@ -88,6 +89,7 @@ interface CustomProps {
     silent?: boolean
   ) => Promise<MeetingFile[]>
   $getJWLangs: (forceReload = false) => Promise<ShortJWLang[]>
+  $getLatestJWMedia: () => Promise<MediaItem[]>
   $getPrefs: (key: string) => unknown
   $getPubAvailability: (
     lang: string,
@@ -138,6 +140,7 @@ interface CustomProps {
     warn: (msg: any, ...args: any[]) => void
     error: (msg: any, ...args: any[]) => void
   }
+  $mediaCategories: NuxtAxiosInstance
   $mediaItems: NuxtAxiosInstance
   $mediaPath: (file?: MeetingFile) => string | undefined
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
