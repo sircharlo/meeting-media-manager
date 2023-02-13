@@ -15,7 +15,7 @@
           v-for="t in types"
           :id="`btn-select-${t.value}`"
           :key="t.value"
-          width="33.3%"
+          :width="`${100 / types.length}%`"
           :value="t.value"
           :disabled="disabled"
         >
@@ -49,6 +49,10 @@ export default defineComponent({
         {
           label: this.$t('jwpub') as string,
           value: 'jwpub',
+        },
+        {
+          label: this.$t('syncJwOrgMedia') as string,
+          value: 'jworg',
         },
       ] as { label: string; value: string }[],
     }

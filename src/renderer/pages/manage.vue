@@ -1,5 +1,10 @@
 <template>
   <v-container fluid fill-height>
+    <manage-select-video
+      :active="type === 'jworg' && !jwFile"
+      @cancel="type = 'custom'"
+      @select="selectVideo"
+    />
     <v-dialog v-if="fileString && type === 'jwpub'" persistent :value="true">
       <manage-select-document
         :file="fileString"
@@ -18,11 +23,11 @@
         <v-col cols="11">
           <song-picker
             v-if="type === 'song'"
-            v-model="song"
+            v-model="jwFile"
             :disabled="loading"
           />
           <manage-select-file
-            v-else
+            v-else-if="type !== 'jworg'"
             :type="type"
             :path="fileString"
             :loading="loading"
@@ -32,7 +37,7 @@
           />
         </v-col>
       </v-row>
-      <manage-media-prefix v-if="song || files.length > 0" v-model="prefix" />
+      <manage-media-prefix v-if="jwFile || files.length > 0" v-model="prefix" />
       <v-col cols="12" class="px-0" style="margin-bottom: 72px">
         <loading-icon v-if="loading" />
         <template v-else>
@@ -41,7 +46,7 @@
           </v-overlay>
           <manage-media-list
             :date="date"
-            :new-file="song"
+            :new-file="jwFile"
             :new-files="files"
             :prefix="prefix"
             :media="media"
@@ -63,7 +68,7 @@
       <v-footer fixed>
         <v-col class="text-left">
           <icon-btn
-            v-if="song || files.length > 0"
+            v-if="jwFile || files.length > 0"
             variant="cancel"
             :disabled="loading"
             click-twice
@@ -72,7 +77,7 @@
         </v-col>
         <v-col class="text-center">
           <v-btn
-            v-if="song || files.length > 0"
+            v-if="jwFile || files.length > 0"
             color="primary"
             min-width="32px"
             :loading="loading"
@@ -117,7 +122,7 @@ export default defineComponent({
       loading: true,
       type: 'custom',
       fileString: '',
-      song: null as VideoFile | null,
+      jwFile: null as VideoFile | null,
       files: [] as (LocalFile | VideoFile)[],
       media: [] as (MeetingFile | LocalFile)[],
     }
@@ -149,15 +154,18 @@ export default defineComponent({
     },
   },
   watch: {
-    type() {
+    type(val: string) {
       this.fileString = ''
+      if (val === 'jworg') {
+        this.jwFile = null
+      }
     },
     fileString(val: string) {
       if (!val) {
         this.prefix = ''
       }
     },
-    song(val) {
+    jwFile(val) {
       if (val) {
         this.prefix = '00-00'
       }
@@ -192,6 +200,9 @@ export default defineComponent({
           date: undefined,
         },
       })
+    },
+    selectVideo(video: VideoFile) {
+      this.jwFile = video
     },
     handleDrag(e: DragEvent) {
       if (
@@ -276,6 +287,10 @@ export default defineComponent({
         // @ts-ignore: file is not recognized as type Buffer
         await this.$downloadIfRequired(file, this.setProgress)
 
+        if ((file as VideoFile).subtitles) {
+          congPromises.push(this.uploadFile(changeExt(path, 'vtt')))
+        }
+
         // Download markers if required
         if ((file as VideoFile).markers) {
           const markers = Array.from(
@@ -325,6 +340,7 @@ export default defineComponent({
       this.increaseProgress()
     },
     async uploadFile(path: string) {
+      if (!this.client || !this.online) return
       const filePath = join(
         this.$getPrefs('cong.dir') as string,
         'Media',
@@ -358,7 +374,7 @@ export default defineComponent({
       this.loading = true
       try {
         const promises: Promise<void>[] = []
-        const files = [...this.files, this.song] as (VideoFile | LocalFile)[]
+        const files = [...this.files, this.jwFile] as (VideoFile | LocalFile)[]
         this.totalFiles = files.length
 
         if (this.client && this.online) {
@@ -399,7 +415,7 @@ export default defineComponent({
     },
     reset() {
       this.type = ''
-      this.song = null
+      this.jwFile = null
       this.files = []
       this.fileString = ''
       this.uploadedFiles = 0
