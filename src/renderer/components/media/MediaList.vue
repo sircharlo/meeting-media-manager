@@ -310,8 +310,10 @@ export default defineComponent({
       return this.dateObj.day() === 0 ? 6 : this.dateObj.day() - 1 // Day is 0 indexed and starts with Sunday
     },
     listHeight(): string {
-      const OTHER_ELEMENTS = 136
-      return `max-height: ${this.windowHeight - OTHER_ELEMENTS}px`
+      const TOP_BAR = 64
+      const FOOTER = 72
+      const otherElements = TOP_BAR + FOOTER
+      return `max-height: ${this.windowHeight - otherElements}px`
     },
     meetings(): Map<string, Map<number, MeetingFile[]>> {
       return this.$store.state.media.meetings as Map<
