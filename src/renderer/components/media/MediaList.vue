@@ -313,10 +313,12 @@ export default defineComponent({
       return this.dateObj.day() === 0 ? 6 : this.dateObj.day() - 1 // Day is 0 indexed and starts with Sunday
     },
     listHeight(): string {
-      let OTHER_ELEMENTS = 136
+      const TOP_BAR = 64
+      const FOOTER = 72
       const ZOOM_BAR = 56
-      OTHER_ELEMENTS += this.zoomIntegration ? ZOOM_BAR : 0
-      return `max-height: ${this.windowHeight - OTHER_ELEMENTS}px`
+      const otherElements = TOP_BAR + FOOTER
+      if (this.zoomIntegration) otherElements += ZOOM_BAR
+      return `max-height: ${this.windowHeight - otherElements}px`
     },
     meetings(): Map<string, Map<number, MeetingFile[]>> {
       return this.$store.state.media.meetings as Map<
