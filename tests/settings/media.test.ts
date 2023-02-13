@@ -6,6 +6,7 @@ import { existsSync } from 'fs-extra'
 import { join } from 'upath'
 import { version } from '../../package.json'
 import { delay, getDate, strip } from '../helpers/generalHelpers'
+import { MS_IN_SEC } from './../../src/renderer/constants/general'
 import locale from './../../src/renderer/locales/en.json'
 import prefs from './../mocks/prefs/prefsOld.json'
 import {
@@ -24,8 +25,7 @@ test.beforeAll(async () => {
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
   if (platform() === 'darwin') {
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
+    await delay(5 * 100)
   }
 })
 
@@ -53,9 +53,10 @@ test('vlc playlist', async () => {
   // Expand media setup
   await page.locator('button', { hasText: locale.optionsMedia }).click()
 
-  // eslint-disable-next-line no-magic-numbers
-  await delay(1000)
-  await page.screenshot({ path: 'img/settings/media.png' })
+  if (platform() === 'linux') {
+    await delay(MS_IN_SEC)
+    await page.screenshot({ path: 'img/settings/media.png' })
+  }
 
   // Enable vlc playlist option
   await page

@@ -158,7 +158,7 @@ import {
   faDownload,
 } from '@fortawesome/free-solid-svg-icons'
 import { Marker, VideoFile } from '~/types'
-import { MS_IN_SEC, HUNDRED_PERCENT } from '~/constants/general'
+import { MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
   components: {
     RuntimeTemplateCompiler,
@@ -272,16 +272,11 @@ export default defineComponent({
     },
     clippedStart(): number {
       if (!this.video) return 0
-      return (
-        (this.video.clipped.start * HUNDRED_PERCENT) / this.video.original.end
-      )
+      return (this.video.clipped.start * 100) / this.video.original.end
     },
     clippedEnd(): number {
       if (!this.video) return 0
-      return (
-        HUNDRED_PERCENT -
-        (this.video.clipped.end * HUNDRED_PERCENT) / this.video.original.end
-      )
+      return 100 - (this.video.clipped.end * 100) / this.video.original.end
     },
     isVideo(): boolean {
       return !this.isImage && !this.end?.startsWith('00:00:00')
@@ -493,7 +488,7 @@ export default defineComponent({
       let deltaY = 1000
       if (this.scale < 4) {
         // eslint-disable-next-line no-magic-numbers
-        deltaY = (-1.5 * this.scale + this.scale) * HUNDRED_PERCENT
+        deltaY = (-1.5 * this.scale + this.scale) * 100
       }
 
       ipcRenderer.send('zoom', deltaY)
@@ -501,7 +496,7 @@ export default defineComponent({
     },
     zoomPreview(deltaY: number) {
       if (this.panzoom) {
-        this.scale += (-1 * deltaY) / HUNDRED_PERCENT
+        this.scale += (-1 * deltaY) / 100
 
         // Restrict scale
         // eslint-disable-next-line no-magic-numbers

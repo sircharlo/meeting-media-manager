@@ -19,7 +19,6 @@ import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 import { ipcRenderer } from 'electron'
 import { ElectronStore } from '~/types'
 import {
-  HUNDRED_PERCENT,
   WT_CLEARTEXT_FONT,
   JW_ICONS_FONT,
   MS_IN_SEC,
@@ -152,7 +151,7 @@ export default defineComponent({
     ipcRenderer.on('videoScrub', (_e, timeAsPercent) => {
       const video = document.querySelector('video') as HTMLVideoElement
       if (video) {
-        video.currentTime = (video.duration * timeAsPercent) / HUNDRED_PERCENT
+        video.currentTime = (video.duration * timeAsPercent) / 100
         ipcRenderer.send('videoProgress', [video.currentTime, video.duration])
       }
     })
@@ -171,8 +170,7 @@ export default defineComponent({
               const cue = cues[i]
               if (cue) {
                 // @ts-ignore
-                // eslint-disable-next-line no-magic-numbers
-                cue.line = top ? 5 : 90
+                cue.line = top ? 5 : 100 - 10
               }
             }
           }
@@ -228,8 +226,7 @@ export default defineComponent({
     zoom(deltaY: number) {
       if (!this.panzoom || !this.zoomEnabled) return
 
-      // eslint-disable-next-line no-magic-numbers
-      this.scale += deltaY * -0.01
+      this.scale += (deltaY * -1) / 100
 
       // Restrict scale
       // eslint-disable-next-line no-magic-numbers
@@ -376,7 +373,7 @@ export default defineComponent({
       this.resizingDone()
       this.blackOverlay.style.opacity = '1'
 
-      await new Promise((resolve) => setTimeout(resolve, 4 * HUNDRED_PERCENT))
+      await new Promise((resolve) => setTimeout(resolve, 4 * 100))
 
       await this.loadMedia(media)
     },
@@ -399,10 +396,10 @@ export default defineComponent({
           video.remove()
         })
         this.blackOverlay.style.opacity = '0'
-      }, 4 * HUNDRED_PERCENT)
+      }, 4 * 100)
       if (videos.length > 0) {
         const video = videos[0]
-        const MS_TO_STOP = 4 * HUNDRED_PERCENT // Let fadeout last 400ms
+        const MS_TO_STOP = 4 * 100 // Let fadeout last 400ms
         const TOTAL_VOL = video.volume
         while (video.volume > 0) {
           video.volume -= Math.min(video.volume, (10 * TOTAL_VOL) / MS_TO_STOP)

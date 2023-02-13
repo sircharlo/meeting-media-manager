@@ -29,8 +29,7 @@ test('render the add media page correctly', async () => {
   // Open add page
   await page.locator('.v-card', { hasText: locale.recurring }).click()
   if (platform() === 'darwin') {
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
+    await delay(5 * 100)
   }
 
   // Check for correct heading

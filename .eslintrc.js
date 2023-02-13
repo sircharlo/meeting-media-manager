@@ -73,7 +73,8 @@ module.exports = {
       'error',
       {
         ignoreArrayIndexes: true,
-        ignore: [-2, -1, 0, 0.1, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        ignoreDefaultValues: true,
+        ignore: [-2, -1, 0, 0.1, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100],
       },
     ],
     'vue/no-unsupported-features': [

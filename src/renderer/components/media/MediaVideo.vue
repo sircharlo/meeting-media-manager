@@ -92,20 +92,20 @@
     </v-btn>
     <v-tooltip v-if="ccAvailable" right>
       <template #activator="{ on }">
-      <v-btn
-        x-small
-        absolute
-        tile
-        depressed
-        :style="`left: 123px; ${ccTop ? 'top' : 'bottom'}: 4px`"
-        v-on="on"
-        @click="ccTop = !ccTop"
-      >
-        <font-awesome-icon :icon="ccIcon" />
-      </v-btn>
-    </template>
-    <span>{{ $t('toggleSubtitlePosition') }}</span>
-  </v-tooltip>
+        <v-btn
+          x-small
+          absolute
+          tile
+          depressed
+          :style="`left: 123px; ${ccTop ? 'top' : 'bottom'}: 4px`"
+          v-on="on"
+          @click="ccTop = !ccTop"
+        >
+          <font-awesome-icon :icon="ccIcon" />
+        </v-btn>
+      </template>
+      <span>{{ $t('toggleSubtitlePosition') }}</span>
+    </v-tooltip>
   </div>
 </template>
 <script lang="ts">
@@ -125,12 +125,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faClosedCaptioning as farClosedCaptioning } from '@fortawesome/free-regular-svg-icons'
 import { existsSync } from 'original-fs'
-import {
-  AUDIO_ICON,
-  HUNDRED_PERCENT,
-  MS_IN_SEC,
-  VIDEO_ICON,
-} from '~/constants/general'
+import { AUDIO_ICON, MS_IN_SEC, VIDEO_ICON } from '~/constants/general'
 import { MeetingFile, VideoFile } from '~/types'
 export default defineComponent({
   props: {
@@ -311,8 +306,7 @@ export default defineComponent({
           }, MS_IN_SEC)
         }
         ipcRenderer.on('videoProgress', (_e, progress) => {
-          const percentage =
-            (HUNDRED_PERCENT * MS_IN_SEC * progress[0]) / this.original.end
+          const percentage = (100 * MS_IN_SEC * progress[0]) / this.original.end
           this.progress = progress.map((seconds: number) => {
             return this.format(this.$dayjs.duration(seconds, 's'))
           })
