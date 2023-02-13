@@ -147,6 +147,7 @@
   "screen": "Pantalla",
   "selectDocument": "Seleccione un documento para extraer contenidos:",
   "selectExternalMedia": "Estos archivos multimedia a los que se hace referencia no están incluidos en el archivo JWPUB. Haga clic en cada uno para ubicarlo en su computadora:",
+  "selectVideo": "Select a video from JW.org",
   "settingLocked": "Algunas configuraciones han sido bloqueadas por el organizador de videoconferencias de su congregación.",
   "settingsLocked": "Configuración de toda la congregación",
   "settingsLockedExplain": "La configuración seleccionada a continuación se aplicará, en su estado actual, a todos los usuarios que se conecten a la misma carpeta y servidor. Por favor, cambie esta configuración solo si usted es el Organizador de Videoconferencia, o si un hermano responsable le ha dado permiso para hacerlo.",
