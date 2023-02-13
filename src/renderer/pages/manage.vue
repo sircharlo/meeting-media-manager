@@ -285,7 +285,7 @@ export default defineComponent({
         // @ts-ignore: file is not recognized as type Buffer
         await this.$downloadIfRequired(file, this.setProgress)
 
-        if ((file as VideoFile).subtitles) {
+        if ((file as VideoFile).subtitles && this.client && this.online) {
           congPromises.push(this.uploadFile(changeExt(path, 'vtt')))
         }
 
