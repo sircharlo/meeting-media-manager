@@ -75,7 +75,7 @@ import {
   faMusic,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
-import { MS_IN_SEC } from '~/constants/general'
+import { MS_IN_SEC, SEC_IN_MIN } from '~/constants/general'
 
 export default defineComponent({
   data() {
@@ -143,10 +143,9 @@ export default defineComponent({
             const twoDigits = (num: number) =>
               num < 10 ? `0${num}` : num.toString()
 
-            this.timeRemaining = `${
-              // eslint-disable-next-line no-magic-numbers
-              twoDigits(timeLeft.hours() * 60 + timeLeft.minutes())
-            }:${twoDigits(timeLeft.seconds())}`
+            this.timeRemaining = `${twoDigits(
+              timeLeft.hours() * SEC_IN_MIN + timeLeft.minutes()
+            )}:${twoDigits(timeLeft.seconds())}`
 
             // Stop music shuffle at 0
             if (this.timeRemaining === '00:00') {

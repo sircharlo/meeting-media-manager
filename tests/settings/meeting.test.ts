@@ -4,6 +4,7 @@ import { ElectronApplication, Page } from 'playwright'
 import { version } from '../../package.json'
 import { delay } from '../helpers/generalHelpers'
 import { startApp, openHomePage } from '../helpers/electronHelpers'
+import { MS_IN_SEC } from './../../src/renderer/constants/general'
 
 let electronApp: ElectronApplication
 let page: Page
@@ -15,8 +16,7 @@ test.beforeAll(async () => {
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
   if (platform() === 'darwin') {
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
+    await delay(5 * 100)
   }
 })
 
@@ -46,7 +46,8 @@ test('screenshot settings', async () => {
   // Scroll to the bottom of the page
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
 
-  // eslint-disable-next-line no-magic-numbers
-  await delay(1000)
-  await page.screenshot({ path: 'img/settings/meeting.png' })
+  if (platform() === 'linux') {
+    await delay(MS_IN_SEC)
+    await page.screenshot({ path: 'img/settings/meeting.png' })
+  }
 })

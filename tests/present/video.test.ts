@@ -6,6 +6,7 @@ import { expect, test } from '@playwright/test'
 import { ElectronApplication, Page } from 'playwright'
 import { join } from 'upath'
 import { version } from '../../package.json'
+import { MS_IN_SEC } from './../../src/renderer/constants/general'
 import {
   startApp,
   openHomePage,
@@ -76,7 +77,7 @@ test('render the presentation mode page correctly', async () => {
       ignore: [join(mediaPath, prefs.lang, 'Recurring')],
     }).length === 1
   ) {
-    // Check if toggle prefix button is present
+    // Check if more actions button is present
     expect(
       await page
         .locator('[aria-label="More actions"]')
@@ -85,15 +86,12 @@ test('render the presentation mode page correctly', async () => {
   } else {
     // Check for correct heading
     expect(await page.locator('h2').innerText()).toBe(locale.meeting)
-
-    await page.screenshot({ path: 'img/present/meeting-picker.png' })
     await page.getByRole('listitem').nth(1).click()
     expect(
       await page
         .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
-    await page.screenshot({ path: 'img/present/media-list.png' })
   }
 })
 
@@ -103,8 +101,7 @@ test('play a video', async () => {
   }
 
   await page.locator('#play').first().click()
-  // eslint-disable-next-line no-magic-numbers
-  await delay(2000)
+  await delay(2 * MS_IN_SEC)
   expect(await page.locator('#stop').count()).toBe(1)
 })
 
@@ -118,13 +115,18 @@ test('scrub a video', async () => {
   expect(await page.locator('#stop').count()).toBe(1)
 
   await page.locator('.v-slider__track-container').click()
-  // eslint-disable-next-line no-magic-numbers
-  await delay(1000)
-  await page.screenshot({ path: 'img/present/video-scrub.png' })
+
+  if (platform() === 'linux') {
+    await delay(MS_IN_SEC)
+    await page.screenshot({ path: 'img/present/video-scrub.png' })
+  }
+
   await page.locator('#pause').first().click()
-  // eslint-disable-next-line no-magic-numbers
-  await delay(500)
-  await page.screenshot({ path: 'img/present/video-playing.png' })
+
+  if (platform() === 'linux') {
+    await delay(5 * 100)
+    await page.screenshot({ path: 'img/present/video-playing.png' })
+  }
 })
 
 test('stop a video', async () => {
