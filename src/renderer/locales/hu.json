@@ -147,6 +147,7 @@
   "screen": "Képernyő",
   "selectDocument": "Válassza ki a dokumentumot, amelyből a média kivonása szükséges:",
   "selectExternalMedia": "Ezek a hivatkozott médiafájlok nem szerepelnek a JWPUB-fájlban. Kérjük, kattintson mindegyikre, hogy megkeresse azokat a számítógépén:",
+  "selectVideo": "Select a video from JW.org",
   "settingLocked": "Egyes beállításokat zárolt a gyülekezeted videokonferencia-szervezője.",
   "settingsLocked": "Gyülekezet-szintű beállítások",
   "settingsLockedExplain": "Az alább kiválasztott beállítások a jelenlegi állapotukban minden olyan felhasználóra érvényesek lesznek, aki ugyanahhoz a mappához és kiszolgálóhoz csatlakozik. Kérjük, csak akkor módosítsa ezeket a beállításokat, ha Ön a kijelölt videokonferencia-szervező, vagy ha egy felelős testvér engedélyt adott erre.",
