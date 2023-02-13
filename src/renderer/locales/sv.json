@@ -147,6 +147,7 @@
   "screen": "Skärm",
   "selectDocument": "Välj dokument för att extrahera media:",
   "selectExternalMedia": "Hänvisade mediafiler ingår inte i JWPUB-filen. Klicka på var och en för att hitta dessa på din dator:",
+  "selectVideo": "Select a video from JW.org",
   "settingLocked": "Vissa inställningar är låsta av församlingens organisatör för videokonferensen.",
   "settingsLocked": "Övergripande församlingsinställningar",
   "settingsLockedExplain": "Nedanstående inställningar kommer införas till användare som använder samma mapp och server. Observera, dessa inställningar ska endast göras av den som är församlingens organisatör för videokonferensen eller av den som är tillförordnad av församlingen att göra detta.",
