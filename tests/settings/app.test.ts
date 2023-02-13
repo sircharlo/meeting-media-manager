@@ -16,8 +16,7 @@ test.beforeAll(async () => {
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
   if (platform() === 'darwin') {
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
+    await delay(5 * 100)
   }
 })
 
@@ -39,7 +38,10 @@ test('render the settings page correctly', async () => {
 test('app theme', async () => {
   // Expand application setup
   await page.locator('button', { hasText: locale.optionsApp }).click()
-  await page.screenshot({ path: 'img/settings/app.png' })
+
+  if (platform() === 'linux') {
+    await page.screenshot({ path: 'img/settings/app.png' })
+  }
 
   // Check light theme
   await page.locator(`text=${locale.themePreference}`).click()

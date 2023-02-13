@@ -11,7 +11,7 @@ import {
   openHomePage,
   ipcRendererInvoke,
 } from './../helpers/electronHelpers'
-import { delay, getDate, mwDayPresent } from './../helpers/generalHelpers'
+import { delay, getDate } from './../helpers/generalHelpers'
 import prefs from './../mocks/prefs/prefsOld.json'
 import locale from './../../src/renderer/locales/en.json'
 
@@ -19,7 +19,7 @@ let electronApp: ElectronApplication
 let page: Page
 
 test.beforeAll(async () => {
-  if (platform() === 'win32' || mwDayPresent()) {
+  if (platform() === 'win32') {
     return
   }
 
@@ -27,7 +27,7 @@ test.beforeAll(async () => {
 })
 
 test.afterAll(async () => {
-  if (platform() === 'win32' || mwDayPresent()) {
+  if (platform() === 'win32') {
     return
   }
 
@@ -38,7 +38,7 @@ test.afterAll(async () => {
 })
 
 test('render the presentation mode page correctly', async () => {
-  if (platform() === 'win32' || mwDayPresent()) {
+  if (platform() === 'win32') {
     test.skip()
   }
 
@@ -47,8 +47,7 @@ test('render the presentation mode page correctly', async () => {
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
   if (platform() === 'darwin') {
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
+    await delay(5 * 100)
   }
 
   // Check for correct version
@@ -73,47 +72,52 @@ test('render the presentation mode page correctly', async () => {
 
   // If one date or todays date, that one gets opened automatically
   const mediaPath = await ipcRendererInvoke(page, 'downloads')
-  if (
-    existsSync(join(mediaPath, prefs.lang, getDate())) ||
+  const oneMeeting =
     sync(join(mediaPath, prefs.lang, '*'), {
       onlyDirectories: true,
       ignore: [join(mediaPath, prefs.lang, 'Recurring')],
     }).length === 1
-  ) {
-    // Check if toggle prefix button is present
+  if (existsSync(join(mediaPath, prefs.lang, getDate())) || oneMeeting) {
+    // Check if more actions button is present
     expect(
       await page
         .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
-  } else {
-    // Check for correct heading
-    expect(await page.locator('h2').innerText()).toBe(locale.meeting)
-
-    await page.screenshot({ path: 'img/present/meeting-picker.png' })
-    await page.getByRole('listitem').nth(1).click()
-    expect(
-      await page
-        .locator('[aria-label="More actions"]')
-        .getAttribute('aria-label')
-    ).toBeTruthy()
-    await page.screenshot({ path: 'img/present/media-list.png' })
+    await page.getByText(getDate(oneMeeting ? 'we' : 'mw')).click()
   }
+  // Check for correct heading
+  expect(await page.locator('h2').innerText()).toBe(locale.meeting)
+
+  if (platform() === 'linux') {
+    await page.screenshot({ path: 'img/present/meeting-picker.png' })
+  }
+
+  await page
+    .getByRole('listitem')
+    .nth(oneMeeting ? 0 : 1)
+    .click()
+  expect(
+    await page.locator('[aria-label="More actions"]').getAttribute('aria-label')
+  ).toBeTruthy()
 })
 
 test('play an image', async () => {
-  console.log(mwDayPresent())
-  if (platform() === 'win32' || mwDayPresent()) {
+  if (platform() === 'win32') {
     test.skip()
   }
 
   await page.locator('#play').nth(1).click()
   expect(await page.locator('#stop').count()).toBe(1)
-  await page.screenshot({ path: 'img/present/picture-playing.png' })
+
+  if (platform() === 'linux') {
+    await delay(10 * 100)
+    await page.screenshot({ path: 'img/present/picture-playing.png' })
+  }
 })
 
 test('stop an image', async () => {
-  if (platform() === 'win32' || mwDayPresent()) {
+  if (platform() === 'win32') {
     test.skip()
   }
 

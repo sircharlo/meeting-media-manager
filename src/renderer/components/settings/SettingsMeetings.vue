@@ -162,7 +162,7 @@ import { defineComponent, PropType } from 'vue'
 import { extname, join } from 'upath'
 import { faDownload, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { MeetingPrefs, ElectronStore, VideoFile, ShortJWLang } from '~/types'
-import { HUNDRED_PERCENT, NR_OF_KINGDOM_SONGS } from '~/constants/general'
+import { NR_OF_KINGDOM_SONGS } from '~/constants/general'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
@@ -297,7 +297,7 @@ export default defineComponent({
           '#meetingMusic'
         ) as HTMLAudioElement
         if (audio) {
-          audio.volume = val / HUNDRED_PERCENT
+          audio.volume = val / 100
         }
       },
     },
@@ -349,15 +349,14 @@ export default defineComponent({
     },
     setProgress(loaded: number, total: number, global = false) {
       if (global) {
-        this.totalProgress = (HUNDRED_PERCENT * loaded) / total
+        this.totalProgress = (100 * loaded) / total
       } else {
         this.currentProgress = this.totalProgress
-          ? this.totalProgress +
-            ((HUNDRED_PERCENT - this.totalProgress) * loaded) / total
-          : (HUNDRED_PERCENT * loaded) / total
+          ? this.totalProgress + ((100 - this.totalProgress) * loaded) / total
+          : (100 * loaded) / total
       }
-      if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
-      if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
+      if (this.currentProgress === 100) this.currentProgress = 0
+      if (this.totalProgress === 100) this.totalProgress = 0
     },
     getShortcutRules(fn: string) {
       return [

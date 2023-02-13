@@ -28,8 +28,7 @@ test('render the settings page correctly', async () => {
   // Open settings page
   await page.locator('[aria-label="settings"]').click()
   if (platform() === 'darwin') {
-    // eslint-disable-next-line no-magic-numbers
-    await delay(500)
+    await delay(5 * 100)
   }
 
   // Check for correct version

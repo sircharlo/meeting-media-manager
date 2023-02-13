@@ -108,12 +108,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { Dayjs } from 'dayjs'
 import { LocalFile, MeetingFile, VideoFile } from '~/types'
-import {
-  BITS_IN_BYTE,
-  BYTES_IN_MB,
-  HUNDRED_PERCENT,
-  MS_IN_SEC,
-} from '~/constants/general'
+import { BITS_IN_BYTE, BYTES_IN_MB, MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
   name: 'ManagePage',
   data() {
@@ -425,15 +420,14 @@ export default defineComponent({
     },
     setProgress(loaded: number, total: number, global = false) {
       if (global) {
-        this.totalProgress = (HUNDRED_PERCENT * loaded) / total
+        this.totalProgress = (100 * loaded) / total
       } else {
         this.currentProgress = this.totalProgress
-          ? this.totalProgress +
-            ((HUNDRED_PERCENT - this.totalProgress) * loaded) / total
-          : (HUNDRED_PERCENT * loaded) / total
+          ? this.totalProgress + ((100 - this.totalProgress) * loaded) / total
+          : (100 * loaded) / total
       }
-      if (this.currentProgress === HUNDRED_PERCENT) this.currentProgress = 0
-      if (this.totalProgress === HUNDRED_PERCENT) this.totalProgress = 0
+      if (this.currentProgress === 100) this.currentProgress = 0
+      if (this.totalProgress === 100) this.totalProgress = 0
     },
     async getMeetingData() {
       try {
