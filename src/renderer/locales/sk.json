@@ -147,6 +147,7 @@
   "screen": "Obrazovka",
   "selectDocument": "Vyberte dokument, z ktorého chcete extrahovať médiá:",
   "selectExternalMedia": "Tieto odkazované mediálne súbory nie sú zahrnuté v súbore JWPUB. Kliknuťím na každú z nich ju nájdeš vo svojom počítači:",
+  "selectVideo": "Select a video from JW.org",
   "settingLocked": "Niektoré nastavenia uzamkol organizátor videokonferencie vášho zboru.",
   "settingsLocked": "Nastavenia pre celý zbor",
   "settingsLockedExplain": "Vybrané nastavenia niźšie, v ich aktuálnom stave, budú aplikované pre každého,\nkto sa pripojí do rovnakého priečinka a servera. Prosím, zmeň tieto nastavenia\nlen ak si určený organizátor videokonferencie, alebo ak máš na to povolenie\nod zodpovedného brata.",

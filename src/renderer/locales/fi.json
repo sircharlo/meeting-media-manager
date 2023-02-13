@@ -147,6 +147,7 @@
   "screen": "Näyttö",
   "selectDocument": "Valitse tiedosto, josta haluat purkaa median:",
   "selectExternalMedia": "Nämä viitatut mediatiedostot eivät sisälly JWPUB-tiedostoon. Napsauta jokaista löytääksesi ne tietokoneeltasi:",
+  "selectVideo": "Select a video from JW.org",
   "settingLocked": "Seurakuntasi videokonferenssin järjestäjä on lukinnut jotkin asetukset.",
   "settingsLocked": "Seurakuntaasetukset",
   "settingsLockedExplain": "Alla valittuja asetuksia sovelletaan niiden nykyisessä tilassa kaikkiin käyttäjiin, jotka muodostavat yhteyden samaan kansioon ja palvelimeen. Muuta näitä asetuksia vain, jos olet nimetty videokonferensin järjestäjä tai jos olet saanut luvan vanhimmistolta.",
