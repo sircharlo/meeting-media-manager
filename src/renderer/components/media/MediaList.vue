@@ -300,6 +300,9 @@ export default defineComponent({
     date(): string {
       return this.$route.query.date as string
     },
+    zoomIntegration(): boolean {
+      return !!this.$store.state.zoom.client
+    },
     dateObj(): Dayjs {
       return this.$dayjs(
         this.date,
@@ -310,7 +313,9 @@ export default defineComponent({
       return this.dateObj.day() === 0 ? 6 : this.dateObj.day() - 1 // Day is 0 indexed and starts with Sunday
     },
     listHeight(): string {
-      const OTHER_ELEMENTS = 136
+      let OTHER_ELEMENTS = 136
+      const ZOOM_BAR = 56
+      OTHER_ELEMENTS += this.zoomIntegration ? ZOOM_BAR : 0
       return `max-height: ${this.windowHeight - OTHER_ELEMENTS}px`
     },
     meetings(): Map<string, Map<number, MeetingFile[]>> {
