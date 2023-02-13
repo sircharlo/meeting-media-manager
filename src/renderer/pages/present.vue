@@ -44,6 +44,7 @@
         :zoom-part="zoomPart"
         :window-width="windowWidth"
         @zoom-part="toggleZoomPart()"
+        @clear-participant="participant = null"
       />
     </v-row>
   </v-container>
@@ -131,34 +132,6 @@ export default defineComponent({
         this.$store.commit('notify/deleteByMessage', 'errorObsZoomScene')
       } else {
         this.zoomPart = false
-      }
-    },
-    zoomPart(val: boolean) {
-      if (this.mediaActive || !this.zoomScene) return
-      const hostID = this.$store.state.zoom.hostID as number
-
-      if (this.zoomClient) {
-        this.$toggleMic(this.zoomSocket(), !val, this.participant?.userId)
-        if (val) {
-          this.$toggleSpotlight(this.zoomSocket(), false)
-          this.$toggleSpotlight(this.zoomSocket(), true, hostID)
-        } else {
-          this.participant = null
-        }
-      }
-
-      this.$setScene(val ? this.zoomScene : this.scene)
-      if (val === this.mediaWinVisible) {
-        ipcRenderer.send('toggleMediaWindowFocus')
-      }
-
-      if (this.zoomClient) {
-        this.$toggleSpotlight(this.zoomSocket(), false)
-        this.$toggleSpotlight(
-          this.zoomSocket(),
-          this.$getPrefs('app.zoom.spotlight') as boolean,
-          hostID
-        )
       }
     },
     async mediaActive(val: boolean) {

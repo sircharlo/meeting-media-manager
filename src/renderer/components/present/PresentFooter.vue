@@ -76,7 +76,7 @@
   </v-footer>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
 import {
   faHome,
@@ -85,8 +85,8 @@ import {
   faRotateRight,
   faPodcast,
 } from '@fortawesome/free-solid-svg-icons'
+import { EmbeddedClient, Participant } from '@zoomus/websdk/embedded'
 import { ObsPrefs } from '~/types'
-
 export default defineComponent({
   props: {
     mediaActive: {
@@ -99,6 +99,10 @@ export default defineComponent({
     },
     windowWidth: {
       type: Number,
+      required: true,
+    },
+    participant: {
+      type: Object as PropType<Participant>,
       required: true,
     },
   },
@@ -127,6 +131,9 @@ export default defineComponent({
     },
     allScenes(): string[] {
       return this.$store.state.obs.scenes as string[]
+    },
+    zoomClient(): typeof EmbeddedClient {
+      return this.$store.state.zoom.client as typeof EmbeddedClient
     },
     zoomScene(): string | null {
       const zoomScene = this.$getPrefs('app.obs.zoomScene') as string | null
@@ -234,17 +241,31 @@ export default defineComponent({
   },
   watch: {
     zoomPart(val: boolean) {
-      if (this.mediaActive) return
-      if (val && this.zoomScene) {
-        this.$setScene(this.zoomScene)
-        if (this.mediaWinVisible) {
-          ipcRenderer.send('toggleMediaWindowFocus')
+      if (this.mediaActive || !this.zoomScene) return
+      const hostID = this.$store.state.zoom.hostID as number
+
+      if (this.zoomClient) {
+        this.$toggleMic(this.zoomSocket(), !val, this.participant?.userId)
+        if (val) {
+          this.$toggleSpotlight(this.zoomSocket(), false)
+          this.$toggleSpotlight(this.zoomSocket(), true, hostID)
+        } else {
+          this.$emit('clear-participant')
         }
-      } else if (!val) {
-        this.$setScene(this.scene)
-        if (!this.mediaWinVisible) {
-          ipcRenderer.send('toggleMediaWindowFocus')
-        }
+      }
+
+      this.$setScene(val ? this.zoomScene : this.scene)
+      if (val === this.mediaWinVisible) {
+        ipcRenderer.send('toggleMediaWindowFocus')
+      }
+
+      if (this.zoomClient) {
+        this.$toggleSpotlight(this.zoomSocket(), false)
+        this.$toggleSpotlight(
+          this.zoomSocket(),
+          this.$getPrefs('app.zoom.spotlight') as boolean,
+          hostID
+        )
       }
     },
   },
@@ -267,6 +288,9 @@ export default defineComponent({
       this.obsLoading = true
       await this.$getScenes()
       this.obsLoading = false
+    },
+    zoomSocket(): WebSocket {
+      return window.sockets[window.sockets.length - 1]
     },
   },
 })
