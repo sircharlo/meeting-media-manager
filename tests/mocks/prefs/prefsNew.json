@@ -49,7 +49,7 @@
     "musicFadeOutTime": 5,
     "musicFadeOutType": "smart",
     "musicVolume": 100,
-    "mwDay": 0,
+    "mwDay": 3,
     "mwStartTime": "12:00",
     "weDay": 6,
     "weStartTime": "12:00"

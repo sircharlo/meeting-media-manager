@@ -100,7 +100,7 @@ test('render the presentation mode page correctly', async () => {
       if (platform() === 'linux') {
         await page.screenshot({ path: 'img/present/meeting-picker.png' })
       }
-      await page.getByRole('listitem').nth(1).click()
+      await page.getByRole('listitem').nth(0).click()
       expect(
         await page
           .locator('[aria-label="More actions"]')

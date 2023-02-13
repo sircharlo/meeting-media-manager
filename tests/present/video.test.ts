@@ -86,7 +86,7 @@ test('render the presentation mode page correctly', async () => {
   } else {
     // Check for correct heading
     expect(await page.locator('h2').innerText()).toBe(locale.meeting)
-    await page.getByRole('listitem').nth(1).click()
+    await page.getByRole('listitem').nth(0).click()
     expect(
       await page
         .locator('[aria-label="More actions"]')

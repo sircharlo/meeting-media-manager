@@ -84,7 +84,7 @@ test('render the presentation mode page correctly', async () => {
         .locator('[aria-label="More actions"]')
         .getAttribute('aria-label')
     ).toBeTruthy()
-    await page.getByText(getDate()).click()
+    await page.getByText(getDate(oneMeeting ? 'we' : 'mw')).click()
   }
   // Check for correct heading
   expect(await page.locator('h2').innerText()).toBe(locale.meeting)
