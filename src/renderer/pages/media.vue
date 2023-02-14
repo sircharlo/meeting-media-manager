@@ -33,7 +33,6 @@ export default defineComponent({
       zoomEnabled: false,
       withSubtitles: false,
       interval: null as null | number,
-      subtitleLang: null as null | string,
       panzoom: null as null | PanzoomObject,
       container: document.createElement('div'),
       yeartext: document.createElement('div'),
@@ -161,6 +160,7 @@ export default defineComponent({
     ipcRenderer.on(
       'toggleSubtitles',
       (_e, { enabled, top }: { enabled: boolean; top: boolean }) => {
+        this.withSubtitles = enabled
         const video = document.querySelector('video') as HTMLVideoElement
         if (video && video.textTracks.length > 0) {
           video.textTracks[0].mode = enabled ? 'showing' : 'hidden'
@@ -184,8 +184,8 @@ export default defineComponent({
       const main = document.querySelector('main') as HTMLElement
       main.style.background = 'black'
 
-      this.withSubtitles = !!prefs.media.enableSubtitles
-      this.subtitleLang = prefs.media.langSubs
+      this.withSubtitles =
+        !!prefs.media.enableSubtitles && !!prefs.media.langSubs
 
       // Look for a custom background
       const bgImage = this.$findOne(
