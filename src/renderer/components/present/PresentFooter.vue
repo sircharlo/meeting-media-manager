@@ -1,6 +1,6 @@
 <template>
   <v-footer width="100%" height="72px" class="justify-end">
-    <v-col v-if="scene && zoomScene">
+    <v-col v-if="scene && zoomScene" cols="auto">
       <v-tooltip top>
         <template #activator="{ on, attrs }">
           <v-btn icon @click="$emit('zoom-part')">
@@ -33,7 +33,7 @@
     </v-col>
     <v-col
       v-if="scene && !zoomPart && scenes.length > 1"
-      class="d-flex justify-center pa-1"
+      class="d-flex justify-end pa-1"
     >
       <v-btn-toggle
         v-if="showButtons"
@@ -55,6 +55,7 @@
         id="input-select-obs-scene"
         v-model="scene"
         field="select"
+        width=""
         :items="scenes"
         hide-details="auto"
       />
