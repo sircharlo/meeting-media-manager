@@ -4,6 +4,7 @@
     v-model="$attrs.value"
     field="autocomplete"
     :items="songs"
+    :label="$t('selectSong')"
     item-text="title"
     item-value="safeName"
     hide-details="auto"
