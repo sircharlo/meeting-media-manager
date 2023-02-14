@@ -1,5 +1,25 @@
 # Changelog
 
+## 23.2.1
+
+### New or improved features
+
+- 🚀 Videos can now be added directly from JW.org! Useful, for example, to add Governing Body Update videos for presentation during midweek meetings
+- 🚀 Added subheadings to presentation mode, simplifying navigation between meeting parts
+- Added a representation of the mouse cursor while presenting JW.org on the external monitors (still a beta feature)
+- Option to automatically play the first media item a predetermined number of minutes before a meeting's start
+- Option to manually reconnect to OBS Studio while in presentation mode
+- Zooming and panning a picture will now be done more gradually on the external monitors, to avoid abrupt picture motion for the audience
+- Several enhancements to the subtitle feature
+- Several minor UI improvements
+
+### Bug fixes
+
+- Only try to create new directories on synchronization server once per save action
+- Prevent closing M³ when presenting JW.org
+- When a directory is locked on synchronization server, show a friendly warning
+- System theme will now be used on the initial congregation selection screen
+
 ## 23.2.0
 
 ### New or improved features
