@@ -255,6 +255,11 @@ export default defineComponent({
   mounted() {
     this.ccAvailable =
       this.$findAll(join(this.$mediaPath(), this.date, '*.vtt')).length > 0
+
+    ipcRenderer.send('toggleSubtitles', {
+      enabled: this.$getPrefs('media.enableSubtitles') && this.ccAvailable,
+      top: false,
+    })
   },
   methods: {
     openWebsite() {

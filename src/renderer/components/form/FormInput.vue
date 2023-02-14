@@ -314,9 +314,11 @@
         v-model="$attrs.value"
         :disabled="$attrs.disabled || locked"
         v-bind="$attrs"
-        inverse-label
+        :inverse-label="!customInput"
         :max="max ? max : '100'"
-        :label="$attrs.value + labelSuffix"
+        class="align-center"
+        :step="customInput ? 0.01 : 1"
+        :label="customInput ? undefined : $attrs.value + labelSuffix"
         hide-details="auto"
         v-on="$listeners"
         @change="$emit('input', $event)"
@@ -348,6 +350,24 @@
             <span>{{ $t(explanation) }}</span>
           </v-tooltip>
         </template>
+        <template v-else-if="customInput" #append>
+          <v-text-field
+            :value="formattedSlider"
+            class="mt-0 pt-0"
+            hide-details="auto"
+            single-line
+            style="width: 65px"
+            dense
+            outlined
+            :rules="[
+              (v) => /^[0-1][0-9]:[0-9][0-9]$/.test(v) || 'mm:ss',
+              (v) => v.split(':')[0] >= 1 || '>= 01:00',
+              (v) =>
+                v.split(':')[0] < max || v === `${max}:00` || `<= ${max}:00`,
+            ]"
+            @input="update($event)"
+          />
+        </template>
       </v-slider>
     </v-col>
     <v-col v-if="hasSlot()" cols="2" align-self="center">
@@ -364,6 +384,7 @@ import {
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
 import { defineComponent, PropOptions } from 'vue'
+import { SEC_IN_MIN } from '~/constants/general'
 enum FieldType {
   text = 'text',
   password = 'password',
@@ -411,6 +432,10 @@ export default defineComponent({
     groupLabel: {
       type: String,
       default: null,
+    },
+    customInput: {
+      type: Boolean,
+      default: false,
     },
     groupItems: {
       type: Array,
@@ -464,6 +489,14 @@ export default defineComponent({
     passIcon(): IconDefinition {
       return this.passwordVisible ? faEyeSlash : faEye
     },
+    formattedSlider(): string {
+      const val = parseFloat(this.$attrs.value.toString())
+      const minutes = Math.floor(val)
+      const seconds = Math.floor((val - minutes) * SEC_IN_MIN)
+      return `${minutes.toString().padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}`
+    },
     rules(): ((v: unknown) => true | string)[] {
       const rules = (this.$attrs.rules as unknown as any[]) ?? []
       if (this.required) {
@@ -503,6 +536,22 @@ export default defineComponent({
   methods: {
     hasSlot(name = 'default') {
       return !!this.$slots[name] || !!this.$scopedSlots[name]
+    },
+    update(val: string) {
+      if (/^[0-1][0-9]:[0-9][0-9]$/.test(val)) {
+        const num = this.formattedToNumber(val)
+        if (
+          num >= 1 &&
+          // eslint-disable-next-line no-magic-numbers
+          num <= (typeof this.max === 'number' ? this.max : 15)
+        ) {
+          this.$emit('input', this.formattedToNumber(val))
+        }
+      }
+    },
+    formattedToNumber(val: string): number {
+      const [minutes, seconds] = val.split(':')
+      return parseInt(minutes) + parseInt(seconds) / SEC_IN_MIN
     },
   },
 })
