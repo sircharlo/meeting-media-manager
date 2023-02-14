@@ -38,6 +38,7 @@ test.afterAll(async () => {
 })
 
 test('render the presentation mode page correctly', async () => {
+  test.slow()
   if (platform() === 'win32') {
     test.skip()
   }
@@ -66,6 +67,14 @@ test('render the presentation mode page correctly', async () => {
 
   // Verify home page
   expect(page.locator(`text=${prefs.congregationName}`).innerText).toBeTruthy()
+
+  // Click on fetch button
+  await page.locator('button', { hasText: locale.fetchMedia }).click()
+
+  // Wait for jw sync to complete successfully
+  await page.waitForSelector('div.success:has-text("JW.org (English)")', {
+    timeout: 0,
+  })
 
   // Open presentation mode
   await page.locator('[aria-label="present"]').click()
