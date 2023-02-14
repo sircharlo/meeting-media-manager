@@ -416,7 +416,7 @@ const plugin: Plugin = (
             prefs.app.obs ?? {}
           )
           prefs.app.zoom = Object.assign(
-            $getPrefs('app.zoom') as ZoomPrefs,
+            ($getPrefs('app.zoom') as ZoomPrefs) ?? {},
             prefs.app.zoom ?? {}
           )
           const newPrefs = {
