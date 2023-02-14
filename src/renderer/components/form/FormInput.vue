@@ -543,7 +543,7 @@ export default defineComponent({
         if (
           num >= 1 &&
           // eslint-disable-next-line no-magic-numbers
-          ((num <= typeof this.max === 'number' ? this.max : 15) as number)
+          num <= (typeof this.max === 'number' ? this.max : 15)
         ) {
           this.$emit('input', this.formattedToNumber(val))
         }
