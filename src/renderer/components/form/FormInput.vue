@@ -540,7 +540,11 @@ export default defineComponent({
     update(val: string) {
       if (/^[0-1][0-9]:[0-9][0-9]$/.test(val)) {
         const num = this.formattedToNumber(val)
-        if (num >= 1 && ((num <= this.max) as number)) {
+        if (
+          num >= 1 &&
+          // eslint-disable-next-line no-magic-numbers
+          ((num <= typeof this.max === 'number' ? this.max : 15) as number)
+        ) {
           this.$emit('input', this.formattedToNumber(val))
         }
       }
