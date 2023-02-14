@@ -92,11 +92,11 @@ export default defineComponent({
   props: {
     mediaActive: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     zoomPart: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     windowWidth: {
       type: Number,
