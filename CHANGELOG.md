@@ -18,7 +18,7 @@
 - Only try to create new directories on synchronization server once per save action
 - Prevent closing M³ when presenting JW.org
 - When a directory is locked on synchronization server, show a friendly warning
-- System theme will now be used on the initial congregation selection screen
+- System theme will now be used on the initial congregation selection screen 
 
 ## 23.2.0
 
