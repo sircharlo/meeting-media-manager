@@ -80,7 +80,7 @@ export default defineComponent({
       .filter(
         (date) =>
           this.validDate(date) &&
-          this.$findAll(join(mediaPath, date, '*')).length > 0
+          this.$findAll(join(mediaPath, date, '*.!(title|vtt|json)')).length > 0
       )
 
     // If the user is not trying to change the date he previously selected
