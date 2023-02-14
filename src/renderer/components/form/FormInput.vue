@@ -362,7 +362,8 @@
             :rules="[
               (v) => /^[0-1][0-9]:[0-9][0-9]$/.test(v) || 'mm:ss',
               (v) => v.split(':')[0] >= 1 || '>= 01:00',
-              (v) => v.split(':')[0] < 15 || v === '15:00' || '<= 15:00',
+              (v) =>
+                v.split(':')[0] < max || v === `${max}:00` || `<= ${max}:00`,
             ]"
             @input="update($event)"
           />
@@ -537,11 +538,9 @@ export default defineComponent({
       return !!this.$slots[name] || !!this.$scopedSlots[name]
     },
     update(val: string) {
-      console.log('update', val)
       if (/^[0-1][0-9]:[0-9][0-9]$/.test(val)) {
         const num = this.formattedToNumber(val)
-        // eslint-disable-next-line no-magic-numbers
-        if (num >= 1 && num <= 15) {
+        if (num >= 1 && ((num <= this.max) as number)) {
           this.$emit('input', this.formattedToNumber(val))
         }
       }
