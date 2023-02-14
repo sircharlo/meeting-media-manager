@@ -192,6 +192,7 @@
         field="slider"
         :min="1"
         :max="15"
+        custom-input
         :group-label="playMinutesBeforeMeeting"
         :locked="$isLocked('media.autoPlayFirstTime')"
         hide-details="auto"
