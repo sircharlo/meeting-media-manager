@@ -147,6 +147,7 @@
   "screen": "Képernyő",
   "selectDocument": "Válassza ki a dokumentumot, amelyből a média kivonása szükséges:",
   "selectExternalMedia": "Ezek a hivatkozott médiafájlok nem szerepelnek a JWPUB-fájlban. Kérjük, kattintson mindegyikre, hogy megkeresse azokat a számítógépén:",
+  "selectSong": "Select a Kingdom Song",
   "selectVideo": "Select a video from JW.org",
   "settingLocked": "Egyes beállításokat zárolt a gyülekezeted videokonferencia-szervezője.",
   "settingsLocked": "Gyülekezet-szintű beállítások",
