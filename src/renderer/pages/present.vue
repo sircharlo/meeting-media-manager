@@ -16,7 +16,7 @@
       <form-input
         v-if="!!zoomClient"
         v-model="participant"
-        field="select"
+        field="autocomplete"
         :loading="allParticipants.length === 0"
         :label="$t('unmuteParticipant')"
         :items="allParticipants"
