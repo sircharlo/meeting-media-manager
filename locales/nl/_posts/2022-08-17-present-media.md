@@ -22,25 +22,25 @@ Zodra je de presentatie modus hebt geopend, zal er een selectiescherm verschijne
 
 Om media af te spelen, druk je op de ▶️ (play) knop, voor het bestand waar het om gaat. Om media te verbergen, druk je op de ⏹️ (stop) knop. Een filmpje kan teruggespoeld of doorgespoeld worden terwijl hij gepauzeerd is. Bedenk dat je voor filmpjes **twee keer** op de stop knop moet drukken om te voorkomen dat je per ongeluk het filmpje te vroeg stopt. Filmpjes stoppen automatisch zodra ze het einde bereikt hebben.
 
-### Extra Features
+### Extra functionaliteiten
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+M³ heeft een paar extra functies die kunnen worden gebruikt om de media-presentatie ervaring te verbeteren.
 
-#### Present JW.org
+#### Presenteer JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+Om JW.org te presenteren, kun je op de ⋮ (drie puntjes) knop bovenaan het scherm drukken en vervolgens `Open JW.org`. Dit zal een nieuw venster openen met JW.org geladen. Het media-venster zal ook JW.org weergeven. Nu kun je het besturingsvenster gebruiken om JW.org te navigeren en het media-venster zal je acties weergeven. Wanneer je klaar bent met JW.org presenteren, kan je het besturingsvenster sluiten en doorgaan met de normale media presentatie modus.
 
-#### Zoom and pan images
+#### Afbeeldingen inzoomen en slepen
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+Wanneer een afbeelding getoond wordt, kan je jouw muiswiel gebruiken terwijl je over de voorbeeldweergave zweeft om de afbeelding in en uit te zoomen. Je kunt ook dubbelklikken op de voorbeeldweergave van de afbeelding om in te zoomen. Dubbelklikken zal wisselen tussen 1.5x, 2x, 3x, 4x en terug naar 1x zoom. Je kunt ook de afbeelding ingedrukt houden en slepen om de afbeelding te slepen.
 
-#### Sort the media list
+#### Sorteer de medialijst
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+De medialijst kan worden gesorteerd door op de sorteerknop rechtsboven in het scherm te klikken. De mediabestanden krijgen een knop om het media-item omhoog of omlaag in de lijst te slepen. Wanneer je tevreden bent met de volgorde, kan je nogmaals op de sorteerknop klikken om de volgorde te vergrendelen.
 
-#### Add a last-minute song
+#### Voeg snel een lied toe
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Als je een lied op het laatste moment wilt toevoegen aan de medialijst, kan je op de `♫ +` (voeg lied toe) knop bovenaan het scherm drukken. Er zal een dropdown verschijnen met een lijst van alle koninkrijksliederen. Als je er een selecteert, wordt het onmiddellijk aan de bovenkant van de medialijst toegevoegd en kan het onmiddellijk worden afgespeeld. Het lied zal of direct gestreamd worden van JW.org of afgespeeld worden vanuit de lokale cache als het eerder is gedownload.
 
 ### Hybride vergaderingen houden met M³, OBS Studio, en Zoom
 

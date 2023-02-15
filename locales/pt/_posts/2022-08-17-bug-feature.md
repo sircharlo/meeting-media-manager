@@ -6,7 +6,7 @@ ref: bug-feature
 
 ### Como faço para reportar um erro ou bug que encontrei?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. As correções de bugs são feitas regularmente, geralmente mensalmente.
+Se você tiver qualquer problema com o M³, por favor use o [Problemas no GitHub]({{site.github}}/issues) para reportar. As correções de bugs são feitas regularmente, geralmente mensalmente.
 
 ### Como posso pedir novos recursos?
 
