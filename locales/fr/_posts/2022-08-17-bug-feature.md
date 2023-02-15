@@ -6,7 +6,7 @@ ref: bug-feature
 
 ### Comment signaler un problème ou un bogue que j'ai rencontré ?
 
-Si jamais vous rencontrez des problèmes avec M³, veuillez utiliser [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) pour le signaler. Les corrections de bogues sont publiées régulièrement, généralement chaque mois.
+If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Les corrections de bogues sont publiées régulièrement, généralement chaque mois.
 
 ### Comment puis-je demander de nouvelles fonctionnalités ?
 
