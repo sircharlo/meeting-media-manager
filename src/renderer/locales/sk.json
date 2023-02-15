@@ -176,6 +176,8 @@
   "updateInstalled": "Bola nainštalovaná aktualizácia na M³.",
   "updateNotDownloaded": "Aktualizácia na M³ je k dispozícii, ale nepodarilo sa ju stiahnuť automaticky. Stiahni si ju ručne.",
   "username": "Používateľské meno",
+  "videoTimeReset": "Reset start and end times",
+  "videoTimeSet": "Save custom start and end times",
   "wannaHelp": "Chceš pomôcť?",
   "wannaHelpExisting": "Nastavený jazyk nemá aktívneho prekladača. Chcel by si pomôcť s prekladom jazyka M³ pre používateľov, ktorí hovoria týmto jazykom?",
   "wannaHelpExplain": "Aktuálne nakonfigurovaný jazyk médií ešte nie je dostupný ako jazyk zobrazenia pre M³. Chcel by si pomôcť s prekladom jazyka M³ pre používateľov, ktorí hovoria týmto jazykom?",
