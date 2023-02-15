@@ -6,7 +6,7 @@ ref: bug-feature
 
 ### Как мне сообщить о проблеме или ошибке, с которой я столкнулся?
 
-Если вы столкнулись с какими-либо проблемами в M³, пожалуйста, используйте [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md), чтобы сообщить об этом. Исправления ошибок выпускаются на регулярной основе, как правило, ежемесячно.
+If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Исправления ошибок выпускаются на регулярной основе, как правило, ежемесячно.
 
 ### Как мне запросить новые функции?
 

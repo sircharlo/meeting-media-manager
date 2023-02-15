@@ -6,7 +6,7 @@ ref: bug-feature
 
 ### ¿Cómo informo un problema o error que encontré?
 
-Si alguna vez tiene algún problema con M³, use [GitHub Issues]({{site.github}}/issues/new?labels=bug,from+app&template=bug_report.md) para informarlo. Las correcciones de errores se publican regularmente, generalmente cada mes.
+If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Las correcciones de errores se publican regularmente, generalmente cada mes.
 
 ### ¿Cómo puedo solicitar nuevas funciones?
 
