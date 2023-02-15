@@ -22,6 +22,26 @@ I mediapresentationsläge kan du välja vilket datum du vill visa media för. Om
 
 För att spela upp media trycker du på ▶️ (play) knappen för den fil du vill visa. För att dölja media trycker du på ⏹️ (stopp) knappen. En video kan spolas bakåt eller framåt om videon pausats. Observera att stoppknappen för videor måste tryckas på **två gånger** för att förhindra oavsiktligt stopp under uppspelningen. Videor stoppas automatiskt när de har spelats upp i sin helhet.
 
+### Extra Features
+
+M³ has a few extra features that can be used to enhance the media presentation experience.
+
+#### Present JW.org
+
+To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+
+#### Zoom and pan images
+
+When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+
+#### Sort the media list
+
+The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+
+#### Add a last-minute song
+
+If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+
 ### Genomför hybridmöten med en kombination av M³, OBS Studio och Zoom
 
 Det överlägset enklaste sättet att dela media under hybridmöten är att konfigurera OBS Studio, M³ och Zoom för att fungera tillsammans.
