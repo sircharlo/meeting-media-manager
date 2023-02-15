@@ -41,12 +41,25 @@
           </v-text-field>
         </v-col>
         <v-col align-self="end" class="d-flex flex-column">
-          <v-btn icon @click="resetClipped()">
-            <font-awesome-icon :icon="faRotateLeft" />
-          </v-btn>
-          <v-btn icon @click="setTime()">
-            <font-awesome-icon :icon="faSquareCheck" class="error--text" />
-          </v-btn>
+          <v-tooltip right>
+            <template #activator="{ on }">
+              <v-btn icon v-on="on" @click="resetClipped()">
+                <font-awesome-icon :icon="faRotateLeft" />
+              </v-btn>
+            </template>
+            <span>{{ $t('videoTimeReset') }}</span>
+          </v-tooltip>
+          <v-tooltip right>
+            <template #activator="{ on }">
+              <v-btn icon v-on="on" @click="setTime()">
+                <font-awesome-icon
+                  :icon="faSquareCheck"
+                  class="success--text"
+                />
+              </v-btn>
+            </template>
+            <span>{{ $t('videoTimeSet') }}</span>
+          </v-tooltip>
         </v-col>
       </v-row>
     </v-overlay>
@@ -420,6 +433,7 @@ export default defineComponent({
         clipped: this.clippedMs,
         formatted: this.clipped,
       })
+      this.changeTime = false
     },
   },
 })
