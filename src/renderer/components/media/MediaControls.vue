@@ -16,8 +16,12 @@
             <v-checkbox v-model="saveRename" :label="$t('zoomSaveRename')" />
           </v-col>
           <v-col cols="auto" class="d-flex align-center">
+            <v-btn color="error" @click="participant = null">
+              {{ $t('cancel') }}
+            </v-btn>
             <v-btn
               color="primary"
+              class="ml-2"
               :loading="renaming"
               aria-label="save"
               @click="rename(participant, newName)"
