@@ -230,6 +230,9 @@ export default defineComponent({
     ccIcon(): IconDefinition {
       return this.ccEnable ? faClosedCaptioning : farClosedCaptioning
     },
+    scene(): string {
+      return this.$store.state.obs.currentScene as string
+    },
     faMusic() {
       return faMusic
     },
@@ -262,7 +265,17 @@ export default defineComponent({
     })
   },
   methods: {
-    openWebsite() {
+    async openWebsite() {
+      // Set OBS scene
+      if (this.scene) {
+        const mediaScene = this.$getPrefs('app.obs.mediaScene') as string
+        if (mediaScene) {
+          await this.$setScene(mediaScene)
+        } else {
+          this.$warn('errorObsMediaScene')
+        }
+      }
+
       ipcRenderer.send(
         'openWebsite',
         `https://www.jw.org/${this.$getPrefs('app.localAppLang')}/`
