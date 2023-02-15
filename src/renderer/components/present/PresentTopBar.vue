@@ -230,6 +230,9 @@ export default defineComponent({
     ccIcon(): IconDefinition {
       return this.ccEnable ? faClosedCaptioning : farClosedCaptioning
     },
+    scene(): string {
+      return this.$store.state.obs.currentScene as string
+    },
     faMusic() {
       return faMusic
     },
