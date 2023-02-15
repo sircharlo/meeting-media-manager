@@ -61,7 +61,7 @@
       </v-tooltip>
     </v-col>
     <v-col class="d-flex flex-row pr-0">
-      <v-col class="d-flex align-center pr-0">
+      <v-col class="d-flex align-center justify-end pr-0">
         <form-input
           v-model="participants"
           field="autocomplete"
@@ -72,6 +72,7 @@
           :label="$t('spotlightParticipants')"
           :disabled="spotlightActive"
           :items="allParticipants"
+          style="max-width: 500px"
           hide-details="auto"
           chips
           small-chips

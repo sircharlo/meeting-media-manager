@@ -198,7 +198,6 @@ export default defineComponent({
       window.sockets = []
       WebSocket.prototype.send = function (...args) {
         console.debug('send:', args)
-        console.log('socket', this)
         if (
           this.url.includes('zoom') &&
           this.url.includes('dn2') &&

@@ -65,6 +65,7 @@ import { defineComponent } from 'vue'
 import { basename, dirname, join } from 'upath'
 import { ipcRenderer } from 'electron'
 import { Participant } from '@zoomus/websdk/embedded'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
 type MediaItem = {
   id: string
@@ -110,6 +111,9 @@ export default defineComponent({
   computed: {
     date(): string {
       return this.$route.query.date as string
+    },
+    faCheck() {
+      return faCheck
     },
     mediaVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible

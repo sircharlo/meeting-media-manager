@@ -103,8 +103,8 @@ export default defineComponent({
       required: true,
     },
     participant: {
-      type: Object as PropType<Participant>,
-      required: true,
+      type: Object as PropType<Participant | null>,
+      default: null,
     },
   },
   data() {
