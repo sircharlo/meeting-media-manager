@@ -68,6 +68,7 @@
           color="white"
           item-text="displayName"
           item-value="userId"
+          :search-input.sync="participantSearch"
           :loading="allParticipants.length == 0"
           :label="$t('spotlightParticipants')"
           :disabled="spotlightActive"
@@ -80,6 +81,7 @@
           multiple
           clearable
           return-object
+          @change="participantSearch = ''"
         >
           <template #item="{ item }">
             <v-list-item-action>
@@ -137,6 +139,7 @@ export default defineComponent({
       loadingZoom: false,
       showZoomComponent: true,
       spotlightActive: false,
+      participantSearch: '',
       participants: [] as Participant[],
     }
   },

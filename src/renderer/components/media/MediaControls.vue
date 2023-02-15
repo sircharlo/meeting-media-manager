@@ -2,6 +2,7 @@
 <template>
   <v-row>
     <v-dialog
+      v-if="zoomIntegration"
       :value="!!participant"
       max-width="700px"
       @click:outside="participant = null"
