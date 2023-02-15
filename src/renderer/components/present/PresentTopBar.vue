@@ -262,7 +262,7 @@ export default defineComponent({
     })
   },
   methods: {
-    openWebsite() {
+    async openWebsite() {
       // Set OBS scene
       if (this.scene) {
         const mediaScene = this.$getPrefs('app.obs.mediaScene') as string
