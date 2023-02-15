@@ -195,7 +195,6 @@ export default defineComponent({
     },
     setValue(val: string) {
       if (this.isTimestamp(val)) {
-        console.log('set', val)
         const [hours, minutes, seconds] = val.split(':')
         this.hours = hours
         this.minutes = minutes
@@ -211,7 +210,6 @@ export default defineComponent({
       this.minutes = ''
       this.seconds = ''
       this.ms = ''
-      console.log('reset')
     },
     handleChange() {
       const val = `${this.hours.toString().padStart(2, '0')}:${this.minutes
@@ -219,7 +217,6 @@ export default defineComponent({
         .padStart(2, '0')}:${this.seconds.toString().padStart(2, '0')}.${this.ms
         .toString()
         .padStart(3, '0')}`
-      console.log('handleChange', val)
       this.$emit('input', val)
     },
   },
