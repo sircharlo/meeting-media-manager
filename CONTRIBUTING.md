@@ -77,7 +77,7 @@ This project uses [Electron.js](https://www.electronjs.org/) to create the deskt
 
 The renderer process is made using [Nuxt.js](https://nuxtjs.org/). The Nuxt framework is a [Vue](https://v2.vuejs.org/) framework for building web applications.
 
-The UI components are made using [Vuetify.js](https://vuetifyjs.com/en/). The Vuetify framework is a Vue UI library for building beautiful material design web applications.
+The UI components are made using [Vuetify.js](https://v2.vuetifyjs.com/en/). The Vuetify framework is a Vue UI library for building beautiful material design web applications.
 
 The icons used in this project are taken from the [Font Awesome](https://fontawesome.com/icons) project.
 
