@@ -176,6 +176,8 @@
   "updateInstalled": "An update to M³ was installed.",
   "updateNotDownloaded": "An update to M³ is available, but could not be downloaded automatically. Please download it manually.",
   "username": "Username",
+  "videoTimeReset": "Reset start and end times",
+  "videoTimeSet": "Save custom start and end times",
   "wannaHelp": "Would you like to help?",
   "wannaHelpExisting": "The local language configured has no active translator. Would you like to help to translate M³ for users who speak that language?",
   "wannaHelpExplain": "The media language currently configured is not yet available as a display language for M³. Would you like to help to translate M³ for users who speak that language?",
