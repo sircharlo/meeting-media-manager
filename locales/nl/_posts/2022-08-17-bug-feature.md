@@ -6,7 +6,7 @@ ref: bug-feature
 
 ### Hoe rapporteer ik een probleem met de applicatie?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Oplossingen voor problemen worden regelmatig doorgevoerd, vaak maandelijks.
+Als je ooit problemen ondervindt met M³, gebruik dan [GitHub Issues]({{site.github}}/issues) om dit te melden. Oplossingen voor problemen worden regelmatig doorgevoerd, vaak maandelijks.
 
 ### Hoe kan ik een suggestie geven voor een nieuwe functionaliteit?
 
