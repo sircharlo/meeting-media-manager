@@ -176,6 +176,8 @@
   "updateInstalled": "Actualização instalada!",
   "updateNotDownloaded": "Actualização disponível! Não foi possível descarregar automaticamente. Descarregue clicando no botão abaixo.",
   "username": "Usuário",
+  "videoTimeReset": "Reset start and end times",
+  "videoTimeSet": "Save custom start and end times",
   "wannaHelp": "Você gostaria de ajudar?",
   "wannaHelpExisting": "O idioma escolhido não possui tradutor. Você gostaria de ajudar a traduzir o M³ para usuários que falam esse idioma?",
   "wannaHelpExplain": "A língua definida para as multimédias não está disponível. Você gostaria de ajudar a traduzir o M³ para utilizadores que falam esta língua?",
