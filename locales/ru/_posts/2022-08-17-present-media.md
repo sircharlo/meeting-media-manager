@@ -22,21 +22,21 @@ ref: present-media
 
 Чтобы воспроизвести мультимедиа, нажмите кнопку ▶️ (воспроизведение) для нужного файла. Чтобы скрыть медиа, нажмите кнопку ⏹️ (остановить). При желании видео можно перемотать назад или вперед, когда оно поставлено на паузу. Обратите внимание, что для видеороликов кнопку остановки необходимо нажать **дважды**, чтобы предотвратить случайную и преждевременную остановку видеоролика во время его воспроизведения перед собранием. Видео будет автоматически останавливаться после полного воспроизведения.
 
-### Extra Features
+### Дополнительные функции
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+В M³ есть несколько дополнительных функций, которые можно использовать, чтобы улучшить качество презентации мультимедиа.
 
-#### Present JW.org
+#### Демонстрация JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+Чтобы демонстрировать JW.org, можно нажать кнопку ⋮ (многоточие) в верхней части экрана и выбрать `Открыть JW.org`. Откроется новое окно контроллера и загрузится JW.org. Окно медиа также будет отображать JW.org. Теперь можно использовать окно контроллера для навигации по JW.org, а в окне мультимедиа будут отображаться ваши действия. Когда демонстрация JW.org закончена, можно закрыть окно контроллера и перейти к обычному режиму демонстрации медиа.
 
-#### Zoom and pan images
+#### Масштабирование и панорамирование изображений
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+При отображении изображения, если навести курсор на предварительный просмотр изображения, можно прокрутить колесико мыши для увеличения или уменьшения масштаба. Кроме того, можно также дважды щелкнуть на предварительном просмотре изображения, чтобы увеличить его. Двойной щелчок приводит к переключению между масштабированием на 1.5x, 2x, 3x, 4x и обратно на 1x. Можно также щелкнуть и перетащить предварительный просмотр, чтобы панорамировать изображение.
 
-#### Sort the media list
+#### Сортировать список медиа
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+Список медиа можно сортировать, нажав кнопку сортировки в правом верхнем углу экрана. Рядом с каждым медиафайлом появится кнопка, с помощью которой можно перетащить этот файл вверх или вниз по списку. When you are satisfied with the order, you can click the sort button again to lock the order.
 
 #### Add a last-minute song
 
