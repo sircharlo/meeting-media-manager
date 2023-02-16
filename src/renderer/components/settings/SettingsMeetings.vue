@@ -98,6 +98,13 @@
         :max="100"
       />
       <form-input
+        id="meeting.autoStartMusic"
+        v-model="meeting.autoStartMusic"
+        field="switch"
+        :locked="$isLocked('meeting.autoStartMusic')"
+        :label="$t('autoStartMusic')"
+      />
+      <form-input
         id="meeting.enableMusicFadeOut"
         v-model="meeting.enableMusicFadeOut"
         field="switch"

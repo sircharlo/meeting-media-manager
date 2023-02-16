@@ -33,6 +33,7 @@ const plugin: Plugin = (
     $pubMedia,
     $findAll,
     $log,
+    $isMeetingDay,
     $warn,
     $mediaPath,
     $axios,
@@ -41,7 +42,6 @@ const plugin: Plugin = (
     $copy,
     $strip,
     $rm,
-    $getMwDay,
     $extractAllTo,
     $isCoWeek,
     $getPrefs,
@@ -1411,8 +1411,7 @@ const plugin: Plugin = (
         date,
         $getPrefs('app.outputFolderDateFormat') as string
       )
-      const weekDay = day.day() === 0 ? 6 : day.day() - 1
-      const isWeDay = weekDay === ($getPrefs('meeting.weDay') as number)
+      const isWeDay = $isMeetingDay(day) === 'we'
       const sorted = [...parts.entries()].sort((a, b) => a[0] - b[0])
 
       sorted.forEach(([, media]) => {
@@ -1690,18 +1689,10 @@ const plugin: Plugin = (
         const now = $dayjs()
         const fadeOutTime = $getPrefs('meeting.musicFadeOutTime') as number
         if ($getPrefs('meeting.musicFadeOutType') === 'smart') {
-          const mwDay = $getMwDay()
-          const weDay = $getPrefs('meeting.weDay') as number
-          const today = now.day() === 0 ? 6 : now.day() - 1 // Day is 0 indexed and starts with Sunday
+          const day = $isMeetingDay()
 
-          if (
-            (today === mwDay || today === weDay) &&
-            !$getPrefs('meeting.specialCong')
-          ) {
+          if (day && !$getPrefs('meeting.specialCong')) {
             // Set stop time depending on mw or we day
-            let day = 'mw'
-            if (today === weDay) day = 'we'
-
             const meetingStarts = (
               $getPrefs(`meeting.${day}StartTime`) as string
             )?.split(':') ?? ['0', '0']
