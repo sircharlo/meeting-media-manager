@@ -58,7 +58,6 @@ export function createWebsiteController(
   })
 
   const win = winHandler.browserWindow as BrowserWindow
-  win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
   if (maximize) win.maximize()
   return winHandler
 }

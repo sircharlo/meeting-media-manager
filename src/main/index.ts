@@ -156,6 +156,17 @@ function closeMediaWindow() {
   }
 }
 
+const AR_WIDTH = 16
+const AR_HEIGHT = 9
+
+function setContentAspectRatio(win) {
+  const [windowWidth, windowHeight] = win.getSize();
+  const [contentWidth, contentHeight] = win.getContentSize();
+  const simulatedContentHeight = contentWidth * (AR_HEIGHT / AR_WIDTH);
+  const aspectRatio = (windowWidth) / (windowHeight - contentHeight + simulatedContentHeight);
+  win.setAspectRatio(aspectRatio);
+}
+
 // Prevent opening the app multiple times
 const gotTheLock = app.requestSingleInstanceLock()
 if (gotTheLock) {
@@ -409,6 +420,10 @@ if (gotTheLock) {
       website = false
       allowClose = false
       closeAttempts = 0
+    }).on('resize', () => {
+      setContentAspectRatio(websiteController)
+    }).on('ready-to-show', () => {
+      setContentAspectRatio(websiteController)
     })
 
     websiteController.webContents.send('mediaSize', mediaWin?.getContentSize())
