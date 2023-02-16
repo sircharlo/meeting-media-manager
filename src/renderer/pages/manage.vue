@@ -439,14 +439,13 @@ export default defineComponent({
           this.$getPrefs('app.outputFolderDateFormat') as string
         ) as Dayjs
 
-        if (!day.isValid() || this.$getPrefs('meeting.specialCong')) return
-
-        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
-
-        if (weekDay === this.$getMwDay(day.startOf('week'))) {
+        const meetingDay = this.$isMeetingDay(day)
+        if (meetingDay === 'mw') {
           await this.$getMwMedia(this.date)
-        } else if (weekDay === (this.$getPrefs('meeting.weDay') as number)) {
+        } else if (meetingDay === 'we') {
           await this.$getWeMedia(this.date)
+        } else {
+          return
         }
 
         this.$createMediaNames()

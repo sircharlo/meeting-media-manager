@@ -2,6 +2,7 @@
   "all": "All",
   "areYouSure": "Are you sure?",
   "autoPlayFirst": "Automatically play first media item",
+  "autoStartMusic": "Automatically start playing songs for meeting days",
   "browse": "Browse",
   "cancel": "Cancel",
   "cantCloseMediaWindowOpen": "Please exit media controller mode before attempting to quit M³.",

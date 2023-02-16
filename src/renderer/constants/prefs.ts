@@ -56,6 +56,7 @@ const PREFS = {
     presentShortcut: 'Alt+D',
   },
   meeting: {
+    autoStartMusic: false,
     enableMusicButton: false,
     enableMusicFadeOut: false,
     coWeek: null,
@@ -111,6 +112,7 @@ const FORCABLE = [
   'media.ppBackward',
   'media.ppForward',
   'media.preferredOutput',
+  'meeting.autoStartMusic',
   'meeting.coWeek',
   'meeting.enableMusicButton',
   'meeting.enableMusicFadeOut',

@@ -52,11 +52,7 @@ export default defineComponent({
         this.date,
         this.$getPrefs('app.outputFolderDateFormat') as string
       ) as Dayjs
-      if (!day.isValid() || this.$getPrefs('meeting.specialCong')) return false
-      const mwDay = this.$getMwDay(day.startOf('week'))
-      const weDay = this.$getPrefs('meeting.weDay') as number
-      const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
-      return mwDay === weekDay || weDay === weekDay
+      return !!this.$isMeetingDay(day)
     },
   },
 })

@@ -197,37 +197,12 @@ export default defineComponent({
         .isoWeek(this.currentWeek)
       return week.startOf('week')
     },
-    daysOfWeek(): { first: string; second: string; formatted: string }[] {
-      const days: { first: string; second: string; formatted: string }[] = []
+    weekLength(): number {
+      let days = 0
       for (let i = 0; i < DAYS_IN_WEEK; i++) {
         const day = this.baseDate.add(i, 'days')
         if (day.isBefore(this.now)) continue
-        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
-
-        // Add meeting day
-        if (
-          !this.$getPrefs('meeting.specialCong') &&
-          (weekDay === this.$getMwDay(this.baseDate) ||
-            weekDay === this.$getPrefs('meeting.weDay'))
-        ) {
-          days.push({
-            first: day.format('D MMM'),
-            second: day.format('dddd'),
-            formatted: day.format(
-              this.$getPrefs('app.outputFolderDateFormat') as string
-            ),
-          })
-        }
-        // Add normal day
-        else {
-          days.push({
-            first: day.format('D'),
-            second: day.format('dd.'),
-            formatted: day.format(
-              this.$getPrefs('app.outputFolderDateFormat') as string
-            ),
-          })
-        }
+        days++
       }
       return days
     },
@@ -292,7 +267,7 @@ export default defineComponent({
       }
     },
     setDayColor(day: number, color: string) {
-      this.dayColors[this.daysOfWeek.length + day - DAYS_IN_WEEK] = color
+      this.dayColors[this.weekLength + day - DAYS_IN_WEEK] = color
     },
     resetColors() {
       this.jwSyncColor =
