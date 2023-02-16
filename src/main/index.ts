@@ -24,6 +24,7 @@ import BrowserWinHandler from './BrowserWinHandler'
 import {
   getScreenInfo,
   fadeWindow,
+  setContentAspectRatio,
   setMediaWindowPosition,
   createMediaWindow,
   createWebsiteController,
@@ -154,17 +155,6 @@ function closeMediaWindow() {
     mediaWinHandler = null
     authorizedCloseMediaWin = false
   }
-}
-
-const AR_WIDTH = 16
-const AR_HEIGHT = 9
-
-function setContentAspectRatio(win) {
-  const [windowWidth, windowHeight] = win.getSize();
-  const [contentWidth, contentHeight] = win.getContentSize();
-  const simulatedContentHeight = contentWidth * (AR_HEIGHT / AR_WIDTH);
-  const aspectRatio = (windowWidth) / (windowHeight - contentHeight + simulatedContentHeight);
-  win.setAspectRatio(aspectRatio);
 }
 
 // Prevent opening the app multiple times
@@ -400,31 +390,31 @@ if (gotTheLock) {
       websiteControllerWinHandler.browserWindow as BrowserWindow
     websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
 
-    websiteController.on('resize', () => {
-      websiteController?.webContents.send(
-        'mediaSize',
-        mediaWin?.getContentSize()
-      )
-      websiteController?.webContents.send(
-        'winSize',
-        websiteController?.getContentSize()
-      )
-    })
-
-    websiteController.on('close', () => {
-      win?.webContents.send('showingMedia', [false, false])
-      mediaWinHandler?.loadPage('/media')
-      const MIN_WIDTH = 195
-      const MIN_HEIGHT = 110
-      mediaWin?.setMinimumSize(MIN_WIDTH, MIN_HEIGHT)
-      website = false
-      allowClose = false
-      closeAttempts = 0
-    }).on('resize', () => {
-      setContentAspectRatio(websiteController)
-    }).on('ready-to-show', () => {
-      setContentAspectRatio(websiteController)
-    })
+    websiteController
+      .on('resize', () => {
+        setContentAspectRatio(websiteController)
+        websiteController?.webContents.send(
+          'mediaSize',
+          mediaWin?.getContentSize()
+        )
+        websiteController?.webContents.send(
+          'winSize',
+          websiteController?.getContentSize()
+        )
+      })
+      .on('close', () => {
+        win?.webContents.send('showingMedia', [false, false])
+        mediaWinHandler?.loadPage('/media')
+        const MIN_WIDTH = 195
+        const MIN_HEIGHT = 110
+        mediaWin?.setMinimumSize(MIN_WIDTH, MIN_HEIGHT)
+        website = false
+        allowClose = false
+        closeAttempts = 0
+      })
+      .on('ready-to-show', () => {
+        setContentAspectRatio(websiteController)
+      })
 
     websiteController.webContents.send('mediaSize', mediaWin?.getContentSize())
     websiteController.webContents.send(

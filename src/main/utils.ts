@@ -11,6 +11,16 @@ import BrowserWinHandler from './BrowserWinHandler'
 const AR_WIDTH = 16
 const AR_HEIGHT = 9
 
+export function setContentAspectRatio(win: BrowserWindow | null) {
+  if (!win) return
+  const [windowWidth, windowHeight] = win.getSize()
+  const [contentWidth, contentHeight] = win.getContentSize()
+  const simulatedContentHeight = contentWidth * (AR_HEIGHT / AR_WIDTH)
+  const aspectRatio =
+    windowWidth / (windowHeight - contentHeight + simulatedContentHeight)
+  win.setAspectRatio(aspectRatio)
+}
+
 // Create a generic Media Window
 export function createMediaWindow(windowOpts: BrowserWindowConstructorOptions) {
   const winHandler = new BrowserWinHandler({
