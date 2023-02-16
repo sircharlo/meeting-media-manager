@@ -50,8 +50,8 @@ export function createWebsiteController(
 ) {
   const winHandler = new BrowserWinHandler({
     title: 'Website Controller Window',
-    minHeight: 100,
-    minWidth: 100,
+    minHeight: 110,
+    minWidth: 195,
     width: 1280,
     height: 720,
     ...opts,
