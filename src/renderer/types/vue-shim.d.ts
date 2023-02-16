@@ -130,6 +130,7 @@ interface CustomProps {
   $isCoWeek: (baseDate?: Dayjs) => boolean
   $isImage: (filepath: string) => boolean
   $isLocked: (key: string) => boolean
+  $isMeetingDay: (date?: Dayjs) => string
   $isShortcutAvailable: (shortcut: string, func: string) => boolean
   $isShortcutValid: (shortcut: string) => boolean
   $isVideo: (filepath: string) => boolean

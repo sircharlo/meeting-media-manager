@@ -10,7 +10,9 @@
         class="fill-height d-flex justify-center flex-column"
         @click="openDate(day.formatted)"
       >
-        <v-card-text class="pb-0 pt-2 text-no-wrap">{{ day.first }}</v-card-text>
+        <v-card-text class="pb-0 pt-2 text-no-wrap">
+          {{ day.first }}
+        </v-card-text>
         <v-card-text class="pt-0 pb-2">{{ day.second }}</v-card-text>
       </v-card>
     </v-col>
@@ -61,17 +63,13 @@ export default defineComponent({
     },
     daysOfWeek(): { first: string; second: string; formatted: string }[] {
       const days: { first: string; second: string; formatted: string }[] = []
+      const specialCong = this.$getPrefs('meeting.specialCong') as boolean
       for (let i = 0; i < DAYS_IN_WEEK; i++) {
         const day = this.baseDate.add(i, 'days')
         if (day.isBefore(this.now)) continue
-        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
 
         // Add meeting day
-        if (
-          !this.$getPrefs('meeting.specialCong') &&
-          (weekDay === this.$getMwDay(this.baseDate) ||
-            weekDay === this.$getPrefs('meeting.weDay'))
-        ) {
+        if (!specialCong && this.$isMeetingDay(day)) {
           days.push({
             first: day.format('D MMM'),
             second: day.format('dddd'),

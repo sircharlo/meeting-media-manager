@@ -224,7 +224,6 @@
 import { defineComponent, PropType } from 'vue'
 import { basename, join } from 'upath'
 import draggable from 'vuedraggable'
-import { Dayjs } from 'dayjs'
 // eslint-disable-next-line import/named
 import { readFileSync } from 'fs-extra'
 import { VideoFile, MeetingFile } from '~/types'
@@ -282,6 +281,7 @@ export default defineComponent({
   data() {
     return {
       dragging: false,
+      meetingDay: '',
       mwbHeadings: {
         treasures: 'TREASURES FROM GOD’S WORD',
         apply: 'APPLY YOURSELF TO THE FIELD MINISTRY',
@@ -303,15 +303,6 @@ export default defineComponent({
     zoomIntegration(): boolean {
       return !!this.$store.state.zoom.client
     },
-    dateObj(): Dayjs {
-      return this.$dayjs(
-        this.date,
-        this.$getPrefs('app.outputFolderDateFormat') as string
-      )
-    },
-    weekDay(): number {
-      return this.dateObj.day() === 0 ? 6 : this.dateObj.day() - 1 // Day is 0 indexed and starts with Sunday
-    },
     listHeight(): string {
       const TOP_BAR = 64
       const FOOTER = 72
@@ -331,10 +322,10 @@ export default defineComponent({
       return file ? `${basename(file, '.title')}` : 'Watchtower'
     },
     isMwDay(): boolean {
-      return this.weekDay === this.$getMwDay(this.dateObj.startOf('week'))
+      return this.meetingDay === 'mw'
     },
     isWeDay(): boolean {
-      return this.weekDay === (this.$getPrefs('meeting.weDay') as number)
+      return this.meetingDay === 'we'
     },
     firstWtSong(): number {
       return this.mediaItems.findIndex((item) =>
@@ -402,6 +393,12 @@ export default defineComponent({
   mounted() {
     this.setItems(this.items)
     this.getMwbHeadings()
+    this.meetingDay = this.$isMeetingDay(
+      this.$dayjs(
+        this.date,
+        this.$getPrefs('app.outputFolderDateFormat') as string
+      )
+    )
   },
   methods: {
     setItems(val: MediaItem[]) {
