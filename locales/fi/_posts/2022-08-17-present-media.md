@@ -22,25 +22,25 @@ Mediantoistotilassa voi valita mille päivämäärälle haluat näyttää median
 
 Toistaaksesi mediaa, paina ▶️ (Toista) painiketta. Voit piilottaa median, paina ⏹️ (stop) painiketta. Videota voidaan kelata taakse tai eteenpäin vain pause-tilassa. Huomaa, että videoiden osalta, pysäytyspainiketta on painettava **kahdesti** estääksesi videon pysäyttämisen vahingossa. Videot pysähtyvät automaattisesti, kun ne ovat pelanneet kokonaan.
 
-### Extra Features
+### Lisäominaisuudet
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+M³ sisältää muutamia lisäominaisuuksia, joita voidaan käyttää parantamaan median esittelyn kokemusta.
 
-#### Present JW.org
+#### Näytä JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+Esittääksesi JW.orgin voit painaa näytön yläreunassa olevaa ⋮ (ellipsis) painiketta ja valita `Avaa JW.org`. Tämä avaa uuden ikkunan, jossa JW.org on ladattu. Median ikkunassa näkyy myös JW.org. Nyt voit käyttää ikkunaa navigoidaksesi JW.org:ssa, ja media-ikkuna näyttää valintasi. Kun olet valmis esittelemään JW.orgia, voit sulkea ikkunan ja jatkaa normaalia median esitystilaa.
 
-#### Zoom and pan images
+#### Zoomaa ja panoroi kuvia
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+Kun kuva on näkyvissä, voit vierittää hiiren pyörää kuvan esikatselun päälla niin kuva suurenee tai pienenee. Vaihtoehtoisesti voit myös zoomata tuplaklikkaamalla kuvan esikatselua. Tuplaklikkaus vaihtelee zoomaustasoa 1,5x, 2x, 3x, 4x ja takaisin 1x. Voit myös pitää kuvaa painettuna ja panoiroida sen vetäämällä kuvaa.
 
-#### Sort the media list
+#### Lajittele medialuettelo
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+Medialuetteloa voidaan lajitella klikkaamalla sivun oikeassa yläkulmassa olevaa lajittelupainiketta. Mediakohteiden vierellä on painike jota voidaan käyttää vetämään median ylös tai alas luettelossa. Kun olet tyytyväinen lajitteluun voit klikata lajittelupainiketta uudelleen lukitseaksesi lajittelun.
 
-#### Add a last-minute song
+#### Lisää viime minuutin laulu
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Jos haluat lisätä viime miinutun laulun medialuetteloon, voit painaa näytön yläreunassa olevaa `♫ +` (lisää laulu). Pudotusvalikko tulee näkyviin, ja siinä on luettelo kaikista valtakunnan lauluista. Kun teet valinnan se lisätään välittömästi medialuettelon alkuun ja se voidaan toistaa välittömästi. Se joko virtaa laulun JW.orgista tai soittaa laulun paikallisesta muistista, jos se on aiemmin ladattu.
 
 ### Hybridikokousten johtaminen M³:n, OBS Studion ja Zoomin yhdistelmällä
 
