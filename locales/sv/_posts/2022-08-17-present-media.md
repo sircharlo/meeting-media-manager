@@ -4,7 +4,7 @@ title: Mediapresentationsläge
 ref: present-media
 ---
 
-### Använda mediapresentationsläge
+### Använda mediapresentationsläget
 
 Mediepresentationen och kontrolllägena är designade för enkelhet och för att förhindra misstag under möten.
 
@@ -22,25 +22,25 @@ I mediapresentationsläge kan du välja vilket datum du vill visa media för. Om
 
 För att spela upp media trycker du på ▶️ (play) knappen för den fil du vill visa. För att dölja media trycker du på ⏹️ (stopp) knappen. En video kan spolas bakåt eller framåt om videon pausats. Observera att stoppknappen för videor måste tryckas på **två gånger** för att förhindra oavsiktligt stopp under uppspelningen. Videor stoppas automatiskt när de har spelats upp i sin helhet.
 
-### Extra Features
+### Extra funktioner
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+M³ har några extra funktioner som kan användas för att förbättra mediepresentationen.
 
-#### Present JW.org
+#### Visa JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+För att visa JW.org kan du trycka på ⋮ (ellipsis) knappen överst på skärmen och välja `Öppna JW.org`. Detta kommer att öppna ett nytt fönster med JW.org. Mediafönstret kommer också att visa JW.org. Nu kan du använda fönstret för att navigera på JW.org, och mediafönstret kommer att visa dina val. När du är klar med att visa JW.org, kan du stänga fönstret och fortsätta med vanliga mediapresentationsläget.
 
-#### Zoom and pan images
+#### Zooma bilder
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+När en bild visas kan du rulla mushjulet över bilden för att zooma in och ut. Alternativt kan du också dubbelklicka på bilden för att zooma in. Dubbelklick kommer att växla zoomnivåerna 1,5x, 2x, 3x, 4x och tillbaka till 1x. Du kan också hålla och dra bilden för att panorera runt bilden.
 
-#### Sort the media list
+#### Sortera medialista
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+Medialistan kan sorteras genom att klicka på sorteringsknappen längst upp till höger på skärmen. Mediaobjekten kommer att ha en knapp bredvid som kan användas för att dra medieobjektet upp eller ner i listan. När du är nöjd med ordningen kan du klicka på sorteringsknappen igen för att låsa beställningen.
 
-#### Add a last-minute song
+#### Lägg till en sista minuten-sång
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Om du behöver lägga till en sista-minuten-sång till medialistan du kan trycka på knappen `<unk> +` (lägg till sång) högst upp på skärmen. En rullgardinsmeny visas med en lista över alla Rikets sånger. När du väljer en, kommer den omedelbart att läggas till i överst på medialistan och kan spelas upp direkt. Den kommer antingen att strömma sången från JW.org, eller spela upp den från lokala minnet om den tidigare laddats ner.
 
 ### Genomför hybridmöten med en kombination av M³, OBS Studio och Zoom
 
