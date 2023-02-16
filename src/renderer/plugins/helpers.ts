@@ -51,6 +51,18 @@ const plugin: Plugin = ({ $getPrefs, $dayjs, i18n }, inject) => {
   }
   inject('isCoWeek', isCoWeek)
 
+  function isMeetingDay(date?: Dayjs) {
+    const dateToCheck = date ?? $dayjs()
+    if (!dateToCheck.isValid() || $getPrefs('meeting.specialCong')) return false
+    const mwDay = getMwDay(dateToCheck.startOf('week'))
+    const weDay = $getPrefs('meeting.weDay') as number
+    const day = dateToCheck.day() === 0 ? 6 : dateToCheck.day() - 1 // Day is 0 indexed and starts with Sunday
+    if (day === mwDay) return 'mw'
+    if (day === weDay) return 'we'
+    return ''
+  }
+  inject('isMeetingDay', isMeetingDay)
+
   function getMwDay(baseDate: Dayjs = $dayjs().startOf('week')) {
     if (isCoWeek(baseDate)) {
       return 1 // return Tuesday
@@ -65,32 +77,27 @@ const plugin: Plugin = ({ $getPrefs, $dayjs, i18n }, inject) => {
     'executeBeforeMeeting',
     (name: string, mins: number, action: () => void) => {
       if (!intervals[name]) {
-        const mwDay = getMwDay()
-        const weDay = $getPrefs('meeting.weDay') as number
-        const today = $dayjs().day() === 0 ? 6 : $dayjs().day() - 1 // Day is 0 indexed and starts with Sunday
-        if (today === mwDay || today === weDay) {
-          const startTime = $getPrefs(
-            `meeting.${today === mwDay ? 'mw' : 'we'}StartTime`
-          ) as string
-          const meetingStarts = startTime?.split(':') ?? ['0', '0']
-          const timeToStop = $dayjs()
-            .hour(+meetingStarts[0])
-            .minute(+meetingStarts[1])
-            .second(0)
-            .millisecond(0)
-            .subtract(mins, 'm')
-          intervals[name] = setInterval(() => {
-            const timeLeft = $dayjs
-              .duration(timeToStop.diff($dayjs()), 'ms')
-              .asSeconds()
-            if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
-              action()
-              clearInterval(intervals[name])
-            } else if (timeLeft < 0) {
-              clearInterval(intervals[name])
-            }
-          }, MS_IN_SEC)
-        }
+        const day = isMeetingDay()
+        if (!day) return
+        const startTime = $getPrefs(`meeting.${day}StartTime`) as string
+        const meetingStarts = startTime?.split(':') ?? ['0', '0']
+        const timeToStop = $dayjs()
+          .hour(+meetingStarts[0])
+          .minute(+meetingStarts[1])
+          .second(0)
+          .millisecond(0)
+          .subtract(mins, 'm')
+        intervals[name] = setInterval(() => {
+          const timeLeft = $dayjs
+            .duration(timeToStop.diff($dayjs()), 'ms')
+            .asSeconds()
+          if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
+            action()
+            clearInterval(intervals[name])
+          } else if (timeLeft < 0) {
+            clearInterval(intervals[name])
+          }
+        }, MS_IN_SEC)
       }
     }
   )

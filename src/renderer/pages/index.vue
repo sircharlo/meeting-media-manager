@@ -197,37 +197,12 @@ export default defineComponent({
         .isoWeek(this.currentWeek)
       return week.startOf('week')
     },
-    daysOfWeek(): { first: string; second: string; formatted: string }[] {
-      const days: { first: string; second: string; formatted: string }[] = []
+    weekLength(): number {
+      let days = 0
       for (let i = 0; i < DAYS_IN_WEEK; i++) {
         const day = this.baseDate.add(i, 'days')
         if (day.isBefore(this.now)) continue
-        const weekDay = day.day() === 0 ? 6 : day.day() - 1 // Day is 0 indexed and starts with Sunday
-
-        // Add meeting day
-        if (
-          !this.$getPrefs('meeting.specialCong') &&
-          (weekDay === this.$getMwDay(this.baseDate) ||
-            weekDay === this.$getPrefs('meeting.weDay'))
-        ) {
-          days.push({
-            first: day.format('D MMM'),
-            second: day.format('dddd'),
-            formatted: day.format(
-              this.$getPrefs('app.outputFolderDateFormat') as string
-            ),
-          })
-        }
-        // Add normal day
-        else {
-          days.push({
-            first: day.format('D'),
-            second: day.format('dd.'),
-            formatted: day.format(
-              this.$getPrefs('app.outputFolderDateFormat') as string
-            ),
-          })
-        }
+        days++
       }
       return days
     },
@@ -274,6 +249,9 @@ export default defineComponent({
     if (this.initialLoad && this.$getPrefs('app.autoStartSync')) {
       this.action = 'startMediaSync'
     }
+    if (this.initialLoad && this.$getPrefs('meeting.enableMusicButton')) {
+      this.autoStartMusic()
+    }
     this.$store.commit('stats/setInitialLoad', false)
     await promise
   },
@@ -291,8 +269,37 @@ export default defineComponent({
           throw new Error('Unknown action')
       }
     },
+    autoStartMusic() {
+      if (!this.$getPrefs('meeting.autoStartMusic')) return
+      const meetingDay = this.$isMeetingDay()
+      if (!meetingDay) return
+      const now = this.$dayjs()
+      const autoStop = this.$getPrefs('meeting.enableMusicFadeOut') as boolean
+      const stopType = this.$getPrefs('meeting.musicFadeOutType') as string
+      const fadeOutTime = autoStop
+        ? (this.$getPrefs('meeting.musicFadeOutTime') as number)
+        : 0
+      const meetingTime = (
+        this.$getPrefs(`meeting.${meetingDay}StartTime`) as string
+      )?.split(':') ?? ['0', '0']
+
+      const meetingStart = now
+        .hour(+meetingTime[0])
+        .minute(+meetingTime[1])
+        .second(0)
+        .millisecond(0)
+
+      const timeToStop = meetingStart
+        .subtract(1, 'm')
+        .subtract(fadeOutTime, stopType === 'smart' ? 's' : 'm')
+        .subtract(6, 's')
+
+      if (now.isBetween(meetingStart.subtract(1, 'h'), timeToStop)) {
+        this.$shuffleMusic()
+      }
+    },
     setDayColor(day: number, color: string) {
-      this.dayColors[this.daysOfWeek.length + day - DAYS_IN_WEEK] = color
+      this.dayColors[this.weekLength + day - DAYS_IN_WEEK] = color
     },
     resetColors() {
       this.jwSyncColor =

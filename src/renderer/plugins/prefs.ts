@@ -249,6 +249,10 @@ const schema: Schema<ElectronStore> = {
   meeting: {
     type: 'object',
     properties: {
+      autoStartMusic: {
+        type: 'boolean',
+        default: PREFS.meeting.autoStartMusic,
+      },
       enableMusicButton: {
         type: 'boolean',
         default: PREFS.meeting.enableMusicButton,
