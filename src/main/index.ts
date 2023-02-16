@@ -276,7 +276,7 @@ if (gotTheLock) {
     }
     options.url = undefined
     try {
-      const result = await require('axios').get(opt.url, options)
+      const result: any = await require('axios').get(opt.url, options)
       return result.data
     } catch (e) {
       return e
@@ -326,6 +326,13 @@ if (gotTheLock) {
   })
   ipcMain.on('moveMouse', (_e, pos: Point) => {
     mediaWin?.webContents.send('moveMouse', pos)
+  })
+  ipcMain.on('sendSize', () => {
+    websiteController?.webContents.send('mediaSize', mediaWin?.getContentSize())
+    websiteController?.webContents.send(
+      'winSize',
+      websiteController?.getContentSize()
+    )
   })
   ipcMain.on('scrollWebsite', (_e, pos: Point) => {
     mediaWin?.webContents.send('scrollWebsite', pos)
@@ -382,6 +389,17 @@ if (gotTheLock) {
       websiteControllerWinHandler.browserWindow as BrowserWindow
     websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
 
+    websiteController.on('resize', () => {
+      websiteController?.webContents.send(
+        'mediaSize',
+        mediaWin?.getContentSize()
+      )
+      websiteController?.webContents.send(
+        'winSize',
+        websiteController?.getContentSize()
+      )
+    })
+
     websiteController.on('close', () => {
       win?.webContents.send('showingMedia', [false, false])
       mediaWinHandler?.loadPage('/media')
@@ -392,6 +410,12 @@ if (gotTheLock) {
       allowClose = false
       closeAttempts = 0
     })
+
+    websiteController.webContents.send('mediaSize', mediaWin?.getContentSize())
+    websiteController.webContents.send(
+      'winSize',
+      websiteController.getContentSize()
+    )
   })
   ipcMain.on(
     'toggleSubtitles',
@@ -476,6 +500,14 @@ if (gotTheLock) {
             mediaWin?.webContents.send('resetZoom')
           })
           .on('resize', () => {
+            websiteController?.webContents.send(
+              'mediaSize',
+              mediaWin?.getContentSize()
+            )
+            websiteController?.webContents.send(
+              'winSize',
+              websiteController?.getContentSize()
+            )
             if (platform() === 'linux') {
               win?.webContents.send('resetZoom')
               mediaWin?.webContents.send('resetZoom')
