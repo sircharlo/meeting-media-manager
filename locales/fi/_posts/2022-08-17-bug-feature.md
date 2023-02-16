@@ -6,7 +6,7 @@ ref: bug-feature
 
 ### Miten ilmoitan havaitsemastani ongelmasta tai bugista?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Virheenkorjauksia tehdään säännöllisesti, yleensä kuukausittain.
+Jos koskaan kohtaat ongelmia M³:n kanssa, ole hyvä ja käytä [GitHub Issues]({{site.github}}/issues) ilmoittaaksesi siitä. Virheenkorjauksia tehdään säännöllisesti, yleensä kuukausittain.
 
 ### Miten voin pyytää uusia ominaisuuksia?
 
