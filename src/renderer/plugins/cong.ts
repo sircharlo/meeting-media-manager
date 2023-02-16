@@ -120,7 +120,10 @@ const plugin: Plugin = (
       console.debug('error:', e.message)
 
       // Return error message
-      if (e.message === 'Network Error') {
+      if (
+        e.message === 'Network Error' ||
+        e.message.includes('501') // Not Implemented
+      ) {
         return 'host'
       } else if (
         e.message.includes('401') // Unauthorized
