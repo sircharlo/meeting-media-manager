@@ -6,7 +6,7 @@ ref: bug-feature
 
 ### Hur rapporterar jag ett problem eller en bugg som jag stött på?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Buggfixar utfärdas regelbundet, vanligtvis varje månad.
+Om du någonsin stöter på några problem med M³, använd [GitHub Issues]({{site.github}}/issues) för att rapportera det. Buggfixar utfärdas regelbundet, vanligtvis varje månad.
 
 ### Hur kan jag begära nya funktioner?
 
