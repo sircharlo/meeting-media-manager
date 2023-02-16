@@ -9,57 +9,48 @@
       :opacity="1"
       class="d-flex justify-start"
     >
-      <v-row>
-        <v-col align-self="start" class="ml-2">
-          <v-text-field
+      <v-row style="max-width: 640px">
+        <v-col align-self="start" class="d-flex flex-column px-0 ml-4">
+          <form-timestamp
             v-model="clipped.start"
-            v-mask="'##:##:##.###'"
-            :rules="[
-              (v) => /\d{2}:\d{2}:\d{2}.\d{3}/.test(v) || 'hh:mm:ss.SSS',
-            ]"
-            placeholder="00:00:00.000"
-            dense
-            hide-details="auto"
+            :min="originalString.start"
+            :max="clipped.end"
+            @valid="validStart = $event"
           >
-            <template #prepend-icon>
-              <font-awesome-icon :icon="faBackwardStep" />
-            </template>
-          </v-text-field>
-          <v-text-field
+            <v-tooltip top>
+              <template #activator="{ on }">
+                <v-btn icon v-on="on" @click="resetClipped()">
+                  <font-awesome-icon :icon="faRotateLeft" />
+                </v-btn>
+              </template>
+              <span>{{ $t('videoTimeReset') }}</span>
+            </v-tooltip>
+          </form-timestamp>
+          <form-timestamp
             v-model="clipped.end"
-            v-mask="'##:##:##.###'"
-            :rules="[
-              (v) => /\d{2}:\d{2}:\d{2}.\d{3}/.test(v) || 'hh:mm:ss.SSS',
-            ]"
-            placeholder="00:00:00.000"
-            dense
-            hide-details="auto"
+            :min="clipped.start"
+            :max="originalString.end"
+            @valid="validEnd = $event"
           >
-            <template #prepend-icon>
-              <font-awesome-icon :icon="faForwardStep" />
-            </template>
-          </v-text-field>
-        </v-col>
-        <v-col align-self="end" class="d-flex flex-column">
-          <v-tooltip right>
-            <template #activator="{ on }">
-              <v-btn icon v-on="on" @click="resetClipped()">
-                <font-awesome-icon :icon="faRotateLeft" />
-              </v-btn>
-            </template>
-            <span>{{ $t('videoTimeReset') }}</span>
-          </v-tooltip>
-          <v-tooltip right>
-            <template #activator="{ on }">
-              <v-btn icon v-on="on" @click="setTime()">
-                <font-awesome-icon
-                  :icon="faSquareCheck"
-                  class="success--text"
-                />
-              </v-btn>
-            </template>
-            <span>{{ $t('videoTimeSet') }}</span>
-          </v-tooltip>
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <v-btn
+                  icon
+                  :disabled="!validStart || !validEnd"
+                  v-on="on"
+                  @click="setTime()"
+                >
+                  <font-awesome-icon
+                    :icon="faSquareCheck"
+                    :class="`${
+                      validStart && validEnd ? 'success' : 'error'
+                    }--text`"
+                  />
+                </v-btn>
+              </template>
+              <span>{{ $t('videoTimeSet') }}</span>
+            </v-tooltip>
+          </form-timestamp>
         </v-col>
       </v-row>
     </v-overlay>
@@ -128,8 +119,6 @@ import { basename, changeExt } from 'upath'
 import { defineComponent, PropOptions } from 'vue'
 import { ipcRenderer } from 'electron'
 import {
-  faBackwardStep,
-  faForwardStep,
   faSquareCheck,
   faRotateLeft,
   faFilm,
@@ -176,6 +165,8 @@ export default defineComponent({
         start: 0,
         end: 0,
       },
+      validStart: false,
+      validEnd: false,
       clipped: {
         start: '0',
         end: '0',
@@ -186,12 +177,6 @@ export default defineComponent({
   computed: {
     ccIcon(): IconDefinition {
       return this.ccEnable ? faClosedCaptioning : farClosedCaptioning
-    },
-    faForwardStep() {
-      return faForwardStep
-    },
-    faBackwardStep() {
-      return faBackwardStep
     },
     faRotateLeft() {
       return faRotateLeft
