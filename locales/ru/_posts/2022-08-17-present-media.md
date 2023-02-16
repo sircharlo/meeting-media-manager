@@ -36,11 +36,11 @@ ref: present-media
 
 #### Сортировать список медиа
 
-Список медиа можно сортировать, нажав кнопку сортировки в правом верхнем углу экрана. Рядом с каждым медиафайлом появится кнопка, с помощью которой можно перетащить этот файл вверх или вниз по списку. When you are satisfied with the order, you can click the sort button again to lock the order.
+Список медиа можно сортировать, нажав кнопку сортировки в правом верхнем углу экрана. Рядом с каждым медиафайлом появится кнопка, с помощью которой можно перетащить этот файл вверх или вниз по списку. Когда порядок верен, можно снова нажать кнопку сортировки, чтобы зафиксировать порядок.
 
-#### Add a last-minute song
+#### Добавить дополнительную песню
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Если вам нужно добавить дополнительную песню в список медиафайлов, вы можете нажать кнопку `♫ +` (добавить песню) в верхней части экрана. Появится выпадающее меню со списком всех песен Царства. Когда вы выберете одну из них, она сразу же будет добавлена в начало списка медиафайлов и ее можно будет воспроизвести моментально. Песня будет либо транслироваться прямо с сайта JW.org, либо воспроизводиться из локального кэша, если она была ранее загружена.
 
 ### Проведение гибридных встреч, используя M³, OBS Studio, и Zoom
 
