@@ -106,33 +106,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    const meetingDay = this.$isMeetingDay()
-    if (meetingDay && this.$getPrefs('meeting.autoStartMusic')) {
-      const now = this.$dayjs()
-      const autoStop = this.$getPrefs('meeting.enableMusicFadeOut') as boolean
-      const stopType = this.$getPrefs('meeting.musicFadeOutType') as string
-      const fadeOutTime = autoStop
-        ? (this.$getPrefs('meeting.musicFadeOutTime') as number)
-        : 0
-      const meetingTime = (
-        this.$getPrefs(`meeting.${meetingDay}StartTime`) as string
-      )?.split(':') ?? ['0', '0']
-
-      const meetingStart = now
-        .hour(+meetingTime[0])
-        .minute(+meetingTime[1])
-        .second(0)
-        .millisecond(0)
-
-      const timeToStop = meetingStart
-        .subtract(1, 'm')
-        .subtract(fadeOutTime, stopType === 'smart' ? 's' : 'm')
-        .subtract(6, 's')
-
-      if (now.isBetween(meetingStart.subtract(1, 'h'), timeToStop)) {
-        this.$shuffleMusic()
-      }
-    }
     if (!!this.musicFadeOut !== !!this.interval) {
       this.setTimeRemaining()
     }
