@@ -412,9 +412,6 @@ if (gotTheLock) {
         allowClose = false
         closeAttempts = 0
       })
-      .on('ready-to-show', () => {
-        setContentAspectRatio(websiteController)
-      })
 
     websiteController.webContents.send('mediaSize', mediaWin?.getContentSize())
     websiteController.webContents.send(
