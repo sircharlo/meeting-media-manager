@@ -22,7 +22,7 @@ Una volta entrato in modalità controllo, la schermata di selezione della cartel
 
 Per riprodurre contenuti multimediali, premi il pulsante ▶️ (riproduci) per il file che desideri. Per nascondere il file multimediale, premi il pulsante ⏹️ (stop). Se lo si desidera, un video può essere riavvolto o fatto avanzare velocemente mentre è in pausa. Tieni presente che per i video, il pulsante di interruzione deve essere premuto **due volte** per evitare di interrompere accidentalmente e prematuramente un video durante la riproduzione per la congregazione. I video si interromperanno automaticamente quando saranno stati riprodotti per intero.
 
-### Extra Features
+### Funzionalità extra
 
 M³ ha alcune funzionalità extra che possono essere utilizzate per migliorare l'esperienza di presentazione dei media.
 
@@ -40,7 +40,7 @@ L'elenco dei media può essere ordinato facendo clic sul pulsante di ordinamento
 
 #### Aggiungi un cantico dell'ultimo minuto
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Se è necessario aggiungere un cantico dell'ultimo minuto alla lista dei media, puoi premere il pulsante `♫ +` (aggiungi cantico) in alto sullo schermo. Apparirà un menu a tendina con una lista di tutti i cantici del Regno. Quando ne selezioni uno, verrà immediatamente aggiunto in cima alla lista dei media e può essere riprodotto all'istante. Il cantico verrà riprodotto in streaming da JW.org, oppure in locale, se è stato precedentemente scaricato.
 
 ### Condurre riunioni ibride utilizzando una combinazione di M³, OBS Studio e Zoom
 
