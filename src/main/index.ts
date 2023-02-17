@@ -393,6 +393,18 @@ if (gotTheLock) {
     websiteController
       .on('resize', () => {
         setContentAspectRatio(websiteController)
+        if (!websiteController?.isMaximized()) {
+          websiteController?.webContents.send(
+            'mediaSize',
+            mediaWin?.getContentSize()
+          )
+          websiteController?.webContents.send(
+            'winSize',
+            websiteController?.getContentSize()
+          )
+        }
+      })
+      .on('unmaximize', () => {
         websiteController?.webContents.send(
           'mediaSize',
           mediaWin?.getContentSize()
@@ -401,6 +413,10 @@ if (gotTheLock) {
           'winSize',
           websiteController?.getContentSize()
         )
+      })
+      .on('maximize', () => {
+        websiteController?.webContents.send('mediaSize', [0, 0])
+        websiteController?.webContents.send('winSize', [0, 0])
       })
       .on('close', () => {
         win?.webContents.send('showingMedia', [false, false])
