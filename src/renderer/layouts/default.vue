@@ -51,13 +51,6 @@ export default defineComponent({
     cong() {
       return this.$route.query.cong
     },
-    scenes(): string[] {
-      return (this.$store.state.obs.scenes as string[]).filter(
-        (s) =>
-          s !== this.$getPrefs('app.obs.mediaScene') &&
-          s !== this.$getPrefs('app.obs.zoomScene')
-      )
-    },
   },
   watch: {
     cong: {
@@ -156,11 +149,7 @@ export default defineComponent({
     ipcRenderer.on('toggleMusicShuffle', async () => {
       await this.$shuffleMusic(!!this.$store.state.media.musicFadeOut)
     })
-    ipcRenderer.on('setObsScene', async (_e, key: number) => {
-      console.debug('Set obs scene via shortcut', key)
-      const index = key === 0 ? 9 : key - 1
-      await this.$setScene(this.scenes[index])
-    })
+
     ipcRenderer.on('themeUpdated', (_e, isDark) => {
       if (this.$getPrefs('app.theme') === 'system') {
         this.$vuetify.theme.dark = isDark
@@ -247,7 +236,6 @@ export default defineComponent({
   },
   beforeDestroy() {
     ipcRenderer.removeAllListeners('error')
-    ipcRenderer.removeAllListeners('setObsScene')
     ipcRenderer.removeAllListeners('themeUpdated')
     ipcRenderer.removeAllListeners('openPresentMode')
     ipcRenderer.removeAllListeners('readyToListen')
