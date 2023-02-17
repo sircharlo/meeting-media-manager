@@ -60,15 +60,15 @@ Ha az OBS Studio hordozható verzióját használja, telepítse a [Virtualcam](h
 
 Ha OBS Studio v27 vagy régebbi verzióval rendelkezik, telepítenie kell az [obs-websocket](https://github.com/obsproject/obs-websocket) plugint. Újabb verzió esetén az obs-websocket része a programnak. Állítson be egy portszámot és jelszót az obs-websocket számára.
 
-In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
+Az OBS beállításaiban az `Általános` > `Értesítési terület` alatt pipálja ki az összes jelölőnégyzetet. A `Kimenet` > `Közvetítés` mezőben engedélyezze a hardveres kódolót, ha elérhető. A `Videó` > `Alap (vászon) felbontás` és a `Kimeneti (skálázott) felbontás` menüpontban válassza az `1280x720`-as felbontást, a `Leskálázási szűrő menüpontban` pedig a `Bilineáris` opciót.
 
-Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
+Állítson be legalább 2 jelenetet: egyet a média megjelenítéséhez (`Ablak felvétele` vagy `Kijelző felvétele` az egérkurzor kikapcsolásával és a megfelelő ablakcím/monitor kiválasztásával), és egyet a színpadi nézethez (`Videófelvevő eszköz` a KT kamera kiválasztásával). Annyi jelenetet adhat hozzá, amennyit csak akar, a kamera beállításával, nagyításával és vágásával, amennyire szükséges (nézet a pulpitusról, nézet az előadótól és az olvasótól, nézet az asztalról stb.).
 
 Adjon hozzá egy parancsikont az OBS Studio-hoz a `--startvirtualcam` paraméterrel a Windows felhasználói profil Indítópult mappájához, hogy az OBS Studio automatikusan elinduljon, amikor a felhasználó bejelentkezik.
 
 #### Első beállítás: Királyság-terem Zoom
 
-Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
+A Zoomot úgy kell beállítani, hogy két monitort használjon. Engedélyezze a Zoom globális billentyűparancsok használatát a Királyságterem hangjának elnémításához/lekapcsolásához a Zoomban (<kbd>Alt A</kbd>), valamint a Királyságterem videó közvetítésének elindításához/leállításához a Zoomban (<kbd>Alt V</kbd>).
 
 Állítsa be, hogy az alapértelmezett "mikrofon" a keverőpult kombinált kimenete legyen (így minden, ami a Királyság-terem hangrendszerén keresztül hallható, a Zoom-on keresztül is továbbításra kerül, beleértve a mikrofonokat és a médiát is), a "kamera" pedig az OBS Studio által biztosított virtuális kamera legyen.
 
@@ -82,9 +82,9 @@ Engedélyezze és konfigurálja az OBS Studio kompatibilitási módját az OBS S
 
 Indítsa el a Zoom-meetinget, és helyezze át a Zoom-meeting másodlagos ablakát a külső monitorra. Ha szükséges, tegye teljes képernyőre. Itt jelenik meg a gyülekezet számára az összes online résztvevő.
 
-Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
+Miután a Zoom meeting megjelenik a külső monitoron, nyissa meg az M³ programot. A médiabemutató ablak automatikusan megnyílik a külső monitoron a Zoom fölött. Szinkronizálja a médiát, ha szükséges, és lépjen médiavezérlő üzemmódba az M³ főképernyőjén a ▶️ (lejátszás) gombra kattintva, vagy az <kbd>Alt D</kbd> lenyomásával.
 
-Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting.
+Kapcsolja be a Királyságterem videoközvetítését (<kbd>Alt V</kbd>), és szükség esetén állítsa reflektorfénybe a Királyságterem videóképét, hogy a Zoom résztvevői láthassák a Királyságterem színpadját. Adja ki a Királyság terem hangját a Zoomban (<kbd>Alt A</kbd>). Az összejövetel idejére nem szükséges letiltani a videó- vagy hangtovábbítást a Zoomban.
 
 Indítsa el a háttérzene lejátszását a bal alsó sarokban lévő gombbal vagy az <kbd>Alt K</kbd> kombinációval.
 
@@ -98,15 +98,15 @@ A különböző kameraszögeket/zoomot a megbeszélés során az M³ médialejá
 
 Keresse meg a megosztani kívánt fájlt az M³ médialejátszó ablakában, és nyomja meg a "lejátszás" gombot.
 
-When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
+Ha befejezte a média megosztását, nyomja meg a "stop" gombot az M³-ban. Vegye figyelembe, hogy a videók automatikusan leállnak a befejezést követően.
 
 #### Zoom résztvevők megjelenítése a Királyság-terem monitorján
 
-Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+Nyomja meg az M³ médiavezérlő képernyőjének jobb alsó sarkában található "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy a <kbd>Alt Z</kbd> billentyűt a médiabemutató ablak **elrejtéséhez.** A Zoom meeting mostantól látható lesz a Királyság terem monitorján.
 
 > Ha a résztvevőnek médiát kell bemutatnia, kövesse a **Média megosztása a Királyság-teremben és a Zoom-ban** alcím alatti lépéseket.
 
-Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
+Miután a távoli résztvevő befejezte a feladatát, nyomja meg az M³ médialejátszás vezérlőablakának jobb alsó sarkában lévő "médiabemutató ablak elrejtése/megjelenítése" gombot, vagy a <kbd>Alt Z</kbd> gombot a médiabemutató ablak **megjelenítéséhez**. A királysági terem monitorján mostantól az éviszöveg jelenik meg.
 
 ### Hibrid összejövetelek lebonyolítása kizárólag az M³ és Zoom használatával
 
@@ -114,7 +114,7 @@ Ha bármilyen okból nem kívánja használni az OBS Studio-t, a következő jav
 
 #### Első beállítás: Királyság-terem számítógép
 
-Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
+Ugyanaz, mint a fenti megfelelő részben. A Zoom globális billentyűkombinációval kiegészítve a képernyőmegosztás elindításához/leállításához (<kbd>Alt S</kbd>). A "kamera" a királysági terem kamerájának képét mutatja majd.
 
 #### Első beállítás: M³
 
@@ -130,7 +130,7 @@ Ugyanaz, mint a fent említett megfelelő szakaszban.
 
 #### Média megosztása a Királyság-teremben és a Zoom-ban
 
-Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
+Kezdje el a megosztást a Zoomban az <kbd>Alt S</kbd> billentyűvel. A megjelenő Zoom megosztás ablakban válassza ki a külső monitort, és engedélyezze mindkét jelölőnégyzetet a bal alsó sarokban (a hang és a videó optimalizálásához). Az éviszöveg mostantól a Zoomon keresztül kerül megosztásra.
 
 Keresse meg a megosztani kívánt fájlt az M³ médialejátszó ablakában, és nyomja meg a "lejátszás" gombot.
 
