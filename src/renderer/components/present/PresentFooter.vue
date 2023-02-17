@@ -270,6 +270,9 @@ export default defineComponent({
       }
     },
   },
+  beforeDestroy() {
+    ipcRenderer.removeAllListeners('setObsScene')
+  },
   async mounted() {
     if (this.obsEnabled) {
       await this.initOBS()
@@ -283,6 +286,15 @@ export default defineComponent({
         this.$warn('errorObsCameraScene')
       }
     }
+
+    ipcRenderer.on('setObsScene', (_e, key: number) => {
+      console.debug('Set obs scene via shortcut', key)
+      const index = key === 0 ? 9 : key - 1
+      const scene = this.scenes[index]
+      if (scene) {
+        this.scene = scene.value
+      }
+    })
   },
   methods: {
     async initOBS() {
