@@ -22,25 +22,25 @@ Una vez que haya ingresado al modo de controlador, la pantalla de selección de 
 
 Para reproducir contenidos, presione el botón ▶️ (reproducir) para el archivo que desea. Para ocultar el contenido, presione el botón ⏹️ (detener). Un video se puede retroceder o avanzar rápidamente mientras está en pausa, si lo desea. Tenga en cuenta que para los videos, el botón de detener debe presionarse **dos veces** para evitar detener accidental y prematuramente un video mientras se reproduce para la congregación. Los videos se detendrán automáticamente cuando se hayan reproducido en su totalidad.
 
-### Extra Features
+### Características adicionales
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+M³ tiene algunas características adicionales que se pueden utilizar para mejorar la experiencia de presentación de contenidos.
 
-#### Present JW.org
+#### Presentar JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+Para mostrar JW.org, puede pulsar el botón ⋮ (ellipsis) en la parte superior de la pantalla y seleccionar `Abrir JW.org`. Esto abrirá una nueva ventana con JW.org cargado. La ventana de contenidos también mostrará JW.org. Ahora puede usar la ventana de controlador para navegar por JW.org, y la ventana de contenidos mostrará sus acciones. Cuando haya terminado de mostrar JW.org, puede cerrar la ventana del controlador y continuar con el modo normal de presentación de contenidos.
 
-#### Zoom and pan images
+#### Zoom y desplazamiento de imágenes
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+Cuando se muestra una imagen, puede desplazar la rueda del ratón mientras pasa el cursor sobre la vista previa de la imagen para acercarla o alejarla. Alternativamente, también puede hacer doble clic en la vista previa de la imagen para aumentarla. Doble clic alternará entre aumento 1.5x, 2x, 3x, 4x y 1x. También puede arrastrar la imagen para desplazarse por ella.
 
-#### Sort the media list
+#### Ordenar la lista de contenidos
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+La lista de contenidos se puede ordenar haciendo clic en el botón de ordenar en la parte superior derecha de la pantalla. Los elementos multimedia tendrán un botón que aparecerá junto a ellos que puede ser usado para arrastrar el elemento multimedia hacia arriba o hacia abajo en la lista. Cuando esté satisfecho con el orden, puede hacer clic de nuevo en el botón de ordenación para bloquearlo.
 
-#### Add a last-minute song
+#### Añadir una canción en el último minuto
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Si necesitas añadir una canción en el último minuto a la lista de contenidos, puedes pulsar el botón `♫ +` (añadir canción) en la parte superior de la pantalla. Un desplegable aparecerá con una lista de todas las canciones del Reino. Cuando seleccione una, se añadirá inmediatamente a la parte superior de la lista de medios y se podrá reproducir al instante. Se reproducirá la canción desde JW.org, o se reproducirá desde la caché local si se descargó previamente.
 
 ### Realización de reuniones híbridas utilizando una combinación de M³, OBS Studio y Zoom
 
