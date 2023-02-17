@@ -22,25 +22,25 @@ Miután belépett a vezérlő módba, a mappaválasztó képernyőn kiválasztha
 
 A média lejátszásához nyomja meg a ▶️ (lejátszás) gombot a kívánt fájlhoz. A média elrejtéséhez nyomja meg a ⏹️ (stop) gombot. Szükség esetén a videó szüneteltetés közben vissza- vagy előre is tekerhető. Kérjük, vegye figyelembe, hogy a videók esetében a leállítás gombot **kétszer** kell megnyomni, hogy elkerülje a videó véletlen és idő előtti leállítását, miközben az a gyülekezet számára lejátszásra kerül. A videók automatikusan leállnak, ha teljes egészében lejátszották őket.
 
-### Extra Features
+### Extra funkciók
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+Az M³ rendelkezik néhány extra funkcióval, amelyek segítségével javíthatja a médiabemutatás hatékonyságát.
 
-#### Present JW.org
+#### JW.org megjelenítése
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+A JW.org megjelenítéséhez nyomja meg a képernyő tetején található ⋮ (ellipszis) gombot, és válassza a `JW.org megnyitása` lehetőséget. Ez egy új vezérlőablakot nyit meg a JW.org betöltésével. A médiaablakban szintén megjelenik a JW.org. Most már használhatja a vezérlőablakot a JW.org navigálására, a médiaablak pedig megjeleníti a tevékenységeit. Ha befejezte a JW.org megjelenítését, bezárhatja a vezérlőablakot, és folytathatja a normál médiabemutatási módot.
 
-#### Zoom and pan images
+#### Képek nagyítása és léptetése
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+Amikor egy kép jelenik meg, az egérgörgő segítségével a kép előnézete felett görgetve nagyíthat és kicsinyíthet. Másik lehetőségként a kép előnézetére duplán kattintva is nagyíthatja a képet. A dupla kattintás felváltva változtat az 1,5x, 2x, 3x, 4x, majd vissza az 1x-es zoomra. A képet lenyomva tartva és húzva is mozgathatja a képet, amellyel körbepásztázhatja a képet.
 
-#### Sort the media list
+#### A média listájának rendezése
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+A média listája a képernyő jobb felső sarkában található rendezés gombra kattintva rendezhető. A médiatartalmak mellett megjelenik egy gomb, amellyel felfelé vagy lefelé húzhatja a médiaelemeket a listában. Ha elégedett a sorrenddel, a sorrend rögzítéséhez kattintson ismét a rendezés gombra.
 
-#### Add a last-minute song
+#### Adj hozzá egy last minute dalt
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Ha az utolsó pillanatban szeretne egy dalt hozzáadni a médialistához, akkor nyomja meg a képernyő tetején található `♫ +` (dal hozzáadása) gombot. Megjelenik egy legördülő lista a Királyság énekekkel. Ha kiválaszt egyet, az azonnal a lista tetejére kerül, és egyből lejátszható. Az alkalmazás streameli a dalt a JW.org-ról, vagy a helyi gyorsítótárból játssza le, ha korábban már letöltötte azt.
 
 ### Hibrid összejövetelek lebonyolítása az M³, az OBS Studio és a Zoom kombinációjával
 
@@ -80,7 +80,7 @@ Engedélyezze és konfigurálja az OBS Studio kompatibilitási módját az OBS S
 
 #### Az összejövetel megkezdése
 
-Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
+Indítsa el a Zoom-meetinget, és helyezze át a Zoom-meeting másodlagos ablakát a külső monitorra. Ha szükséges, tegye teljes képernyőre. Itt jelenik meg a gyülekezet számára az összes online résztvevő.
 
 Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
 
