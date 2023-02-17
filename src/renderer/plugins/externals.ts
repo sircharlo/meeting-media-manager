@@ -1,6 +1,4 @@
 import Vue from 'vue'
-// @ts-ignore: VueMask has implicitly an any type
-import VueMask from 'v-mask'
 import { library, config } from '@fortawesome/fontawesome-svg-core'
 import {
   FontAwesomeIcon,
@@ -26,6 +24,3 @@ library.add(
 
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 Vue.component('FontAwesomeLayers', FontAwesomeLayers)
-
-// V-mask
-Vue.use(VueMask)
