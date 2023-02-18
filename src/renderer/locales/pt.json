@@ -23,7 +23,7 @@
   "disableAutoUpdate": "Desativar atualização automática",
   "disableHardwareAcceleration": "Desativar a aceleração de hardware <em>(Observação: ative essa opção somente se apresentar problemas na tela de exibição de mídias. Ao alterar essa opção o M³ será reiniciado.)</em>",
   "dontForgetToGetMedia": "Não se esqueça de baixar as mídias no computador usado para exibir as mídias nas reuniões congregacionais!",
-  "downloadShuffleMusic": "Download all songs for background music",
+  "downloadShuffleMusic": "Baixar todos os cânticos de fundo",
   "enableMediaDisplayButton": "Habilitar tela para exibição de mídias",
   "enableMusicButton": "Enable button to play background music",
   "enableObs": "Habilitar compatibilidade com OBS Studio <em>(necessita do obs-websocket)</em>",
