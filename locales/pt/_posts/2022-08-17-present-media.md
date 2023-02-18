@@ -22,25 +22,25 @@ Depois de entrar no modo de exibição, a tela para selecionar a pasta permitir�
 
 Para reproduzir a mídia, clique no botão ▶️ (reproduzir) na mídia. Para parar a reprodução da mídia, clique no botão ⏹️ (parar). Um vídeo pode ser avançado ou retrocedido enquanto pausado, se desejado. Observe que, para vídeos, o botão Parar deve ser pressionado **duas vezes** para evitar que alguém aperte sem querer em parar enquanto algum vídeo estiver sendo reproduzido para a congregação. Os vídeos serão parados automaticamente ao terminar a reprodução.
 
-### Extra Features
+### Recursos adicionais
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+O M³ tem alguns recursos extras que podem ser usados para melhorar a experiência da exibição de mídias.
 
-#### Present JW.org
+#### Exibir JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+Para exibir o JW.org, você pode pressionar o botão (círculo) no topo da tela e selecionar `Abrir JW.org`. Isso abrirá uma janela de controle para o JW.org. A tela de exibição de mídia também mostrará o JW.org. Agora você pode usar a janela de controle para navegar no JW.org, e a janela de mídia exibirá suas ações. Quando terminar de exibir o JW.org, você pode fechar a janela de controle e continuar no modo normal de exibição de mídia.
 
-#### Zoom and pan images
+#### Ampliar e mover imagens
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+Quando uma imagem estiver sendo exibida, você poderá rolar a roda do mouse enquanto passar o mouse sobre a pré-visualização da imagem para aumentar e diminuir o zoom. Como alternativa, você também pode clicar duas vezes na pré-visualização da imagem para ampliar. Um clique duplo irá alternar entre 1,5x, 2x, 3x, 4x e voltar para 1x zoom. Você também pode segurar e arrastar para mover a visualização para diferentes regiões da imagem.
 
-#### Sort the media list
+#### Escolher ordem das mídias
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+A ordem das mídias pode ser definida clicando no botão no canto superior direito da tela. Ao lado de cada mídia terá um botão que pode ser usado para arrastar essa mídia para cima ou para baixo na lista. Quando você definir a ordem, pode clicar no botão no canto superior direito novamente para bloquear a ordem.
 
-#### Add a last-minute song
+#### Adicionar um cântico de última hora
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Se você precisar adicionar um cântico de última hora à lista de mídia, você pode pressionar o botão `♫+` (adicionar cântico) no topo do lado esquerdo da tela. Um menu aparecerá com uma lista de todos os cânticos. Quando você selecionar um cântico, ele vai ser adicionado ao topo da lista de mídia e poderá ser reproduzido instantaneamente. Será reproduzido o cântico do JW.org, ou se o cântico escolhido já tiver sido baixado pelo M³, será reproduzido.
 
 ### Realização de reuniões híbridas usando o M³, OBS Studio e Zoom
 
