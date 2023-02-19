@@ -176,6 +176,13 @@
         :label="$t('hideWinAfterMedia')"
       />
       <form-input
+        id="media.disableAlwaysOnTop"
+        v-model="media.disableAlwaysOnTop"
+        field="switch"
+        :locked="$isLocked('media.disableAlwaysOnTop')"
+        :label="$t('disableAlwaysOnTop')"
+      />
+      <form-input
         id="media.autoPlayFirst"
         v-model="media.autoPlayFirst"
         field="switch"
@@ -398,13 +405,19 @@ export default defineComponent({
         }
       },
     },
+    'media.disableAlwaysOnTop': {
+      handler(val: boolean) {
+        ipcRenderer.send('toggleAlwaysOnTop', !val)
+      },
+    },
     'media.preferredOutput': {
       async handler() {
         // Change the position of the media window to the preferred output
         if (this.media.enableMediaDisplayButton) {
           ipcRenderer.send(
             'showMediaWindow',
-            await this.$getMediaWindowDestination()
+            await this.$getMediaWindowDestination(),
+            this.$getPrefs('media.disableAlwaysOnTop')
           )
         }
       },

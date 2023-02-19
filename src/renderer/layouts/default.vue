@@ -135,14 +135,19 @@ export default defineComponent({
     ipcRenderer.on('moveMediaWindowToOtherScreen', async () => {
       if (this.$store.state.present.mediaScreenInit) {
         const dest = await this.$getMediaWindowDestination()
-        ipcRenderer.send('showMediaWindow', dest)
+        ipcRenderer.send(
+          'showMediaWindow',
+          dest,
+          this.$getPrefs('media.disableAlwaysOnTop')
+        )
       }
     })
     ipcRenderer.on('displaysChanged', async () => {
       if (this.$store.state.present.mediaScreenInit) {
         ipcRenderer.send(
           'showMediaWindow',
-          await this.$getMediaWindowDestination()
+          await this.$getMediaWindowDestination(),
+          this.$getPrefs('media.disableAlwaysOnTop')
         )
       }
     })
@@ -330,15 +335,10 @@ export default defineComponent({
       })
 
       // Open or close the media window depending on prefs
-      if (
-        this.$getPrefs('media.enableMediaDisplayButton') &&
-        !this.$store.state.present.mediaScreenInit
-      ) {
+      const enabled = this.$getPrefs('media.enableMediaDisplayButton')
+      if (enabled && !this.$store.state.present.mediaScreenInit) {
         this.$toggleMediaWindow('open')
-      } else if (
-        !this.$getPrefs('media.enableMediaDisplayButton') &&
-        this.$store.state.present.mediaScreenInit
-      ) {
+      } else if (!enabled && this.$store.state.present.mediaScreenInit) {
         this.$toggleMediaWindow('close')
       }
 

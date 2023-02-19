@@ -12,7 +12,10 @@ const AR_WIDTH = 16
 const AR_HEIGHT = 9
 
 // Create a generic Media Window
-export function createMediaWindow(windowOpts: BrowserWindowConstructorOptions) {
+export function createMediaWindow(
+  windowOpts: BrowserWindowConstructorOptions,
+  alwaysOnTop = true
+) {
   const winHandler = new BrowserWinHandler({
     title: 'Media Window',
     roundedCorners: windowOpts.fullscreen,
@@ -30,7 +33,7 @@ export function createMediaWindow(windowOpts: BrowserWindowConstructorOptions) {
   const win = winHandler.browserWindow as BrowserWindow
   win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
   if (platform() !== 'darwin') {
-    win.setAlwaysOnTop(true, 'screen-saver')
+    win.setAlwaysOnTop(alwaysOnTop, 'screen-saver')
     win.setMenuBarVisibility(false)
   }
 

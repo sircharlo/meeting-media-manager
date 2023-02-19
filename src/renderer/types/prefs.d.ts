@@ -47,6 +47,7 @@ export type Res = (typeof resolutions)[number]
 export interface MediaPrefs {
   autoPlayFirst: boolean
   autoPlayFirstTime: number | null
+  disableAlwaysOnTop: boolean
   enableMediaDisplayButton: boolean
   enableMp4Conversion: boolean
   enablePp: boolean

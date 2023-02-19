@@ -198,6 +198,10 @@ const schema: Schema<ElectronStore> = {
         type: 'boolean',
         default: PREFS.media.hideMediaLogo,
       },
+      disableAlwaysOnTop: {
+        type: 'boolean',
+        default: PREFS.media.disableAlwaysOnTop,
+      },
       hideWinAfterMedia: {
         type: 'boolean',
         default: PREFS.media.hideWinAfterMedia,

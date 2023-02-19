@@ -419,6 +419,9 @@ if (gotTheLock) {
   ipcMain.on('toggleMediaWindowFocus', () => {
     fadeWindow(win, mediaWin)
   })
+  ipcMain.on('toggleAlwaysOnTop', (_e, val: boolean) => {
+    mediaWin?.setAlwaysOnTop(val, 'screen-saver')
+  })
   ipcMain.on('closeMediaWindow', () => {
     closeMediaWindow()
   })
@@ -429,6 +432,7 @@ if (gotTheLock) {
       mediaWinOptions: {
         destination: number
         type: 'fullscreen' | 'window'
+        disableAlwaysOnTop: boolean
       }
     ) => {
       if (
@@ -462,7 +466,10 @@ if (gotTheLock) {
             )?.bounds?.y ?? 0) + STARTING_POSITION,
         }
 
-        mediaWinHandler = createMediaWindow(windowOptions)
+        mediaWinHandler = createMediaWindow(
+          windowOptions,
+          !mediaWinOptions.disableAlwaysOnTop
+        )
         mediaWin = mediaWinHandler.browserWindow as BrowserWindow
 
         mediaWin

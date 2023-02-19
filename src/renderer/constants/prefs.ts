@@ -33,6 +33,7 @@ const PREFS = {
   media: {
     autoPlayFirst: false,
     autoPlayFirstTime: 5,
+    disableAlwaysOnTop: false,
     enableMediaDisplayButton: false,
     enableMp4Conversion: false,
     enablePp: false,
