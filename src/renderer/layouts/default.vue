@@ -135,19 +135,14 @@ export default defineComponent({
     ipcRenderer.on('moveMediaWindowToOtherScreen', async () => {
       if (this.$store.state.present.mediaScreenInit) {
         const dest = await this.$getMediaWindowDestination()
-        ipcRenderer.send(
-          'showMediaWindow',
-          dest,
-          this.$getPrefs('media.disableAlwaysOnTop')
-        )
+        ipcRenderer.send('showMediaWindow', dest)
       }
     })
     ipcRenderer.on('displaysChanged', async () => {
       if (this.$store.state.present.mediaScreenInit) {
         ipcRenderer.send(
           'showMediaWindow',
-          await this.$getMediaWindowDestination(),
-          this.$getPrefs('media.disableAlwaysOnTop')
+          await this.$getMediaWindowDestination()
         )
       }
     })
@@ -340,6 +335,12 @@ export default defineComponent({
         this.$toggleMediaWindow('open')
       } else if (!enabled && this.$store.state.present.mediaScreenInit) {
         this.$toggleMediaWindow('close')
+      }
+      if (enabled) {
+        ipcRenderer.send(
+          'toggleAlwaysOnTop',
+          !this.$getPrefs('media.disableAlwaysOnTop')
+        )
       }
 
       // Check if the app is available in the current media lang

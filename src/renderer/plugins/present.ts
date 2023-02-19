@@ -143,11 +143,8 @@ const plugin: Plugin = (
   inject('unsetShortcuts', unsetShortcuts)
 
   async function showMediaWindow() {
-    ipcRenderer.send(
-      'showMediaWindow',
-      await getMediaWindowDestination(),
-      $getPrefs('media.disableAlwaysOnTop')
-    )
+    console.log('show method', $getPrefs('media'))
+    ipcRenderer.send('showMediaWindow', await getMediaWindowDestination())
     setShortcut($getPrefs('media.presentShortcut') as string, 'openPresentMode')
     setShortcut(
       $getPrefs('media.mediaWinShortcut') as string,
@@ -223,6 +220,7 @@ const plugin: Plugin = (
     const mediaWinOptions = {
       destination: null,
       type: 'window',
+      alwaysOnTop: !$getPrefs('media.disableAlwaysOnTop'),
     }
 
     if (!$getPrefs('media.enableMediaDisplayButton')) return mediaWinOptions

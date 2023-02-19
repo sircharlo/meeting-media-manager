@@ -141,6 +141,7 @@ export function setMediaWindowPosition(
   mediaWinOptions: {
     destination: number
     type: 'window' | 'fullscreen'
+    alwaysOnTop: boolean
   }
 ) {
   try {
@@ -168,6 +169,8 @@ export function setMediaWindowPosition(
       } else if (mediaWinOptions.type === 'window' && mediaWin.isFullScreen()) {
         mediaWin.setFullScreen(false)
       }
+
+      mediaWin.setAlwaysOnTop(mediaWinOptions.alwaysOnTop, 'screen-saver')
     }
   } catch (err) {
     win?.webContents.send('notifyUser', [

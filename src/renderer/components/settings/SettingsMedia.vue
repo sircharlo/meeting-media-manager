@@ -416,8 +416,7 @@ export default defineComponent({
         if (this.media.enableMediaDisplayButton) {
           ipcRenderer.send(
             'showMediaWindow',
-            await this.$getMediaWindowDestination(),
-            this.$getPrefs('media.disableAlwaysOnTop')
+            await this.$getMediaWindowDestination()
           )
         }
       },

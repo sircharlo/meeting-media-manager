@@ -432,7 +432,7 @@ if (gotTheLock) {
       mediaWinOptions: {
         destination: number
         type: 'fullscreen' | 'window'
-        disableAlwaysOnTop: boolean
+        alwaysOnTop: boolean
       }
     ) => {
       if (
@@ -468,7 +468,7 @@ if (gotTheLock) {
 
         mediaWinHandler = createMediaWindow(
           windowOptions,
-          !mediaWinOptions.disableAlwaysOnTop
+          mediaWinOptions.alwaysOnTop
         )
         mediaWin = mediaWinHandler.browserWindow as BrowserWindow
 
