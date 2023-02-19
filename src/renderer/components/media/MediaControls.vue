@@ -1,7 +1,7 @@
 <!-- Media controls for the presentation mode -->
 <template>
   <v-row>
-    <v-dialog :value="manageMedia" fullscreen>
+    <v-dialog :value="manageMedia" fullscreen persistent>
       <v-sheet :color="isDark ? '#121212' : '#ffffff'" class="fill-height">
         <v-container fluid fill-height>
           <manage-media
