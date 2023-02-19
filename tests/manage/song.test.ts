@@ -106,7 +106,10 @@ test('rename song', async () => {
 
   // Rename song to 'new song name with special characters'
   filename = 'new song name with ()[]{}?|*'
-  await page.locator('input[type=text]').fill(filename)
+  await page
+    .locator('div[suffix=".mp4"]')
+    .locator('input[type=text]')
+    .fill(filename)
 
   // Take screenshot
   if (platform() === 'linux') {
