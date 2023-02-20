@@ -24,6 +24,7 @@ import BrowserWinHandler from './BrowserWinHandler'
 import {
   getScreenInfo,
   fadeWindow,
+  setContentAspectRatio,
   setMediaWindowPosition,
   createMediaWindow,
   createWebsiteController,
@@ -276,7 +277,7 @@ if (gotTheLock) {
     }
     options.url = undefined
     try {
-      const result = await require('axios').get(opt.url, options)
+      const result: any = await require('axios').get(opt.url, options)
       return result.data
     } catch (e) {
       return e
@@ -326,6 +327,13 @@ if (gotTheLock) {
   })
   ipcMain.on('moveMouse', (_e, pos: Point) => {
     mediaWin?.webContents.send('moveMouse', pos)
+  })
+  ipcMain.on('sendSize', () => {
+    websiteController?.webContents.send('mediaSize', mediaWin?.getContentSize())
+    websiteController?.webContents.send(
+      'winSize',
+      websiteController?.getContentSize()
+    )
   })
   ipcMain.on('scrollWebsite', (_e, pos: Point) => {
     mediaWin?.webContents.send('scrollWebsite', pos)
@@ -382,16 +390,53 @@ if (gotTheLock) {
       websiteControllerWinHandler.browserWindow as BrowserWindow
     websiteControllerWinHandler.loadPage('/browser?controller=true&url=' + url)
 
-    websiteController.on('close', () => {
-      win?.webContents.send('showingMedia', [false, false])
-      mediaWinHandler?.loadPage('/media')
-      const MIN_WIDTH = 195
-      const MIN_HEIGHT = 110
-      mediaWin?.setMinimumSize(MIN_WIDTH, MIN_HEIGHT)
-      website = false
-      allowClose = false
-      closeAttempts = 0
-    })
+    websiteController
+      .on('resize', () => {
+        if (!websiteController?.isMaximized()) {
+          websiteController?.webContents.send(
+            'mediaSize',
+            mediaWin?.getContentSize()
+          )
+          websiteController?.webContents.send(
+            'winSize',
+            websiteController?.getContentSize()
+          )
+        }
+      })
+      // Not available for Linux
+      .on('resized', () => {
+        setContentAspectRatio(websiteController)
+      })
+      .on('unmaximize', () => {
+        websiteController?.webContents.send(
+          'mediaSize',
+          mediaWin?.getContentSize()
+        )
+        websiteController?.webContents.send(
+          'winSize',
+          websiteController?.getContentSize()
+        )
+      })
+      .on('maximize', () => {
+        websiteController?.webContents.send('mediaSize', [0, 0])
+        websiteController?.webContents.send('winSize', [0, 0])
+      })
+      .on('close', () => {
+        win?.webContents.send('showingMedia', [false, false])
+        mediaWinHandler?.loadPage('/media')
+        const MIN_WIDTH = 195
+        const MIN_HEIGHT = 110
+        mediaWin?.setMinimumSize(MIN_WIDTH, MIN_HEIGHT)
+        website = false
+        allowClose = false
+        closeAttempts = 0
+      })
+
+    websiteController.webContents.send('mediaSize', mediaWin?.getContentSize())
+    websiteController.webContents.send(
+      'winSize',
+      websiteController.getContentSize()
+    )
   })
   ipcMain.on(
     'toggleSubtitles',
@@ -476,13 +521,21 @@ if (gotTheLock) {
             mediaWin?.webContents.send('resetZoom')
           })
           .on('resize', () => {
+            websiteController?.webContents.send(
+              'mediaSize',
+              mediaWin?.getContentSize()
+            )
+            websiteController?.webContents.send(
+              'winSize',
+              websiteController?.getContentSize()
+            )
             if (platform() === 'linux') {
               win?.webContents.send('resetZoom')
               mediaWin?.webContents.send('resetZoom')
             }
           })
+          // Not available for Linux
           .on('resized', () => {
-            // Not working on Linux
             mediaWin?.webContents.send('windowResized')
           })
 
