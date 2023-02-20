@@ -1,7 +1,21 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden">
+  <div
+    :style="`overflow: hidden; width: 100%; height: 100%;${
+      mediaWidth && ratioX !== 0 ? `max-height: ${mediaHeight * ratioY}px` : ''
+    }`"
+  >
     <span v-if="!controller" class="pointer" />
-    <iframe id="website" :src="url" style="width: 100%; height: 100%" />
+    <iframe
+      id="website"
+      :src="url"
+      :style="`width: ${mediaWidth ? mediaWidth + 'px' : '100%'};height: ${
+        mediaHeight ? mediaHeight + 'px' : '100%'
+      };${
+        ratioX !== 0
+          ? `transform: scale(${ratioX},${ratioY});transform-origin: 0 0`
+          : ''
+      }`"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -12,6 +26,14 @@ import { ipcRenderer } from 'electron'
 export default defineComponent({
   name: 'BrowserPage',
   layout: 'media',
+  data() {
+    return {
+      winWidth: 0,
+      winHeight: 0,
+      mediaWidth: 0,
+      mediaHeight: 0,
+    }
+  },
   head(): MetaInfo {
     return {
       title: this.controller ? 'Website Controller' : 'Media Window',
@@ -24,11 +46,34 @@ export default defineComponent({
     controller(): boolean {
       return !!this.$route.query.controller
     },
+    ratioX(): number {
+      if (this.winWidth && this.mediaWidth) {
+        return this.winWidth / this.mediaWidth
+      } else {
+        return 0
+      }
+    },
+    ratioY(): number {
+      if (this.winHeight && this.mediaHeight) {
+        return this.winHeight / this.mediaHeight
+      } else {
+        return 0
+      }
+    },
   },
   mounted() {
     const iframe = document.getElementById('website') as HTMLIFrameElement
 
     if (this.controller) {
+      ipcRenderer.on('winSize', (_e, size: number[]) => {
+        this.winWidth = size[0]
+        this.winHeight = size[1]
+      })
+      ipcRenderer.on('mediaSize', (_e, size: number[]) => {
+        this.mediaWidth = size[0]
+        this.mediaHeight = size[1]
+      })
+      ipcRenderer.send('sendSize')
       const html = document.querySelector('html') as HTMLHtmlElement
       const body = document.querySelector('body') as HTMLBodyElement
       // @ts-ignore
