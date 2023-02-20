@@ -69,7 +69,9 @@ export function createWebsiteController(
 
   const win = winHandler.browserWindow as BrowserWindow
   win.on('ready-to-show', () => {
-    if (platform() !== 'linux') {
+    if (platform() === 'linux') {
+      win.setAspectRatio(AR_WIDTH / AR_HEIGHT)
+    } else {
       setContentAspectRatio(win)
     }
   })
