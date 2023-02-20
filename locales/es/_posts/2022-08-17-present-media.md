@@ -84,7 +84,7 @@ Inicie la reunión de Zoom y mueva la ventana secundaria de la reunión de Zoom 
 
 Una vez que se muestra la reunión de Zoom en el monitor externo, abra M³. La ventana de presentación multimedia se abrirá automáticamente sobre Zoom en el monitor externo. Sincronice los contenidos si es necesario e ingrese al modo de controlador de contenidos haciendo clic en el botón ▶️ (reproducir) en la pantalla principal de M³, o <kbd>Alt D</kbd>.
 
-Habilite la transmisión de video del Salón del Reino (<kbd>Alt V</kbd>) y destaque la transmisión de video del Salón del Reino si es necesario, para que los participantes de Zoom vean la plataforma del Salón del Reino. Active el audio del Salón del Reino en Zoom (<kbd>Alt A</kbd>). No debería ser necesario deshabilitar la transmisión de video o audio en Zoom durante la reunión.
+Habilite la transmisión de video del Salón del Reino (<kbd>Alt V</kbd>) y destaque la transmisión de video del Salón del Reino si es necesario, para que los participantes de Zoom vean la plataforma del Salón del Reino. Active el audio del Salón del Reino en Zoom (<kbd>Alt A</kbd>). No debería ser necesario deshabilitar la transmisión de video o audio en Zoom durante la reunión. Make sure that "Original sound" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
 
 Inicie la reproducción de música de fondo usando el botón en la parte inferior izquierda, o <kbd>Alt K</kbd>.
 
