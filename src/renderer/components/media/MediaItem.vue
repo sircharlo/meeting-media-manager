@@ -667,6 +667,10 @@ export default defineComponent({
   border-left: 8px solid orange !important;
 }
 
+.v-progress-linear:not([aria-valuenow="0"]) div {
+  transition: width 0.5s linear;
+}
+
 .video-scrubber {
   position: absolute;
   bottom: 0;
