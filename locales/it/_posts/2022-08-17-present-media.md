@@ -84,7 +84,7 @@ Avvia la riunione Zoom e sposta la finestra secondaria della riunione Zoom sul m
 
 Una volta che la riunione Zoom viene visualizzata sul monitor esterno, apri M³. La finestra di presentazione dei media si aprirà automaticamente sopra Zoom sul monitor esterno. Sincronizza i contenuti multimediali se necessario e accedi alla modalità controllo multimediale facendo clic sul pulsante ▶️ (riproduci) nella schermata principale di M³ o su <kbd>Alt D</kbd>.
 
-Abilita il flusso video della Sala del Regno (<kbd>Alt V</kbd>) e mettilo in evidenza, se necessario, in modo che i partecipanti di Zoom vedano il palco della Sala del Regno. Riattiva il flusso audio della Sala del Regno in Zoom (<kbd>Alt A</kbd>). Non dovrebbe essere necessario disabilitare il flusso video o audio in Zoom per tutta la durata della riunione. Make sure that "Original sound for musicians" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
+Abilita il flusso video della Sala del Regno (<kbd>Alt V</kbd>) e mettilo in evidenza, se necessario, in modo che i partecipanti di Zoom vedano il palco della Sala del Regno. Riattiva il flusso audio della Sala del Regno in Zoom (<kbd>Alt A</kbd>). Non dovrebbe essere necessario disabilitare il flusso video o audio in Zoom per tutta la durata della riunione. Assicurati che il "Audio originale per i musicisti" sia abilitato in Zoom, per garantire la migliore qualità audio per i partecipanti alle riunioni remote.
 
 Avvia la riproduzione della musica di sottofondo utilizzando il pulsante in basso a sinistra o <kbd>Alt K</kbd>.
 
