@@ -302,7 +302,7 @@ const plugin: Plugin = (
     store.commit('zoom/setParticipants', participants)
     store.commit('zoom/setUserID', client.getCurrentUser()?.userId)
     store.commit('zoom/setHostID', host?.userId)
-    store.commit('zoom/setCoHost', client.isCoHost())
+    store.commit('zoom/setCoHost', client.isCoHost() || client.isHost())
   }
 }
 
