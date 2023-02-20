@@ -57,7 +57,7 @@ const plugin: Plugin = (
       client.on('user-updated', setUserProps)
       client.on('user-added', onUserAdded)
       store.commit('zoom/setConnected', true)
-      store.commit('zoom/setParticipants', client.getAttendeeslist())
+      setUserProps({ userId: 0, bCoHost: false })
     } catch (e: unknown) {
       console.debug('caught Zoom error')
     }
@@ -267,8 +267,7 @@ const plugin: Plugin = (
   const onUserAdded: typeof event_user_added = (payload) => {
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (client) {
-      const participants = client.getAttendeeslist()
-      store.commit('zoom/setParticipants', participants)
+      setUserProps(payload)
     }
 
     // @ts-ignore
@@ -299,7 +298,9 @@ const plugin: Plugin = (
     if (!client) return
     const userIsHost = client.isHost()
     const participants = client.getAttendeeslist()
-    if (!userIsHost) {
+    if (userIsHost && !!store.state.zoom.hostID) {
+      client.makeCoHost(store.state.zoom.hostID as number)
+    } else if (!userIsHost) {
       const host = participants.find((user) => user.isHost)
       store.commit('zoom/setHostID', host?.userId)
     }
