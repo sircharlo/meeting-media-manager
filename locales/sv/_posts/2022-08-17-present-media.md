@@ -84,7 +84,7 @@ Starta Zoom-mötet och flytta fönstret för Zoom-möten till den externa bildsk
 
 När Zoom-mötet visas på den externa skärmen, öppna M³. Presentationsfönstret öppnas automatiskt ovanpå Zoom på den externa skärmen. Synkronisera media vid behov och ange mediekontrolläget genom att klicka på knappen ▶️ (play) på huvudskärmen på M³, eller <kbd>Alt D</kbd>.
 
-Aktivera Rikets salens videoflöde (<kbd>Alt V</kbd>), och spotlighta videoflödet vid behov så att Zoom deltagarna ser Rikets salscenen. Slå av/på ljudflödet från Rikes sal i Zoom (<kbd>Alt A</kbd>). Det bör inte vara nödvändigt att inaktivera video-eller ljudflödet i Zoom under mötet.
+Aktivera Rikets salens videoflöde (<kbd>Alt V</kbd>), och spotlighta videoflödet vid behov så att Zoom deltagarna ser Rikets salscenen. Slå av/på ljudflödet från Rikes sal i Zoom (<kbd>Alt A</kbd>). Det bör inte vara nödvändigt att inaktivera video-eller ljudflödet i Zoom under mötet. För att säkerställa bästa ljudkvalitet för deltagare på distansmöten säkerställ att "Original sound for musicians" är aktiverat i Zoom.
 
 Starta uppspelning av bakgrundsmusik med knappen längst ner till vänster, eller <kbd>Alt K</kbd>.
 
