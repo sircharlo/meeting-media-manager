@@ -84,7 +84,7 @@ Inicie a reunião Zoom e mova a janela secundária da reunião Zoom para a tela 
 
 Quando a reunião do Zoom estiver sendo exibida na tela externa, abra o M³. A janela de exibição de mídia será aberta automaticamente em cima do Zoom na tela externa. Baixe as mídias, se necessário, e entre no modo de exibição de mídia clicando no botão ▶️ (reproduzir) na tela principal do M³, ou <kbd>Alt D</kbd>.
 
-Ative o vídeo do Salão do Reino (<kbd>Alt V</kbd>) pelo Zoom e destaque o vídeo do Salão do Reino, se necessário, para que os participantes do Zoom vejam a câmera do Salão do Reino. Ative o áudio do Salão do Reino no Zoom (<kbd>Alt A</kbd>). Não deve ser necessário desativar a câmera ou áudio no Zoom durante a reunião. Make sure that "Original sound" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
+Ative o vídeo do Salão do Reino (<kbd>Alt V</kbd>) pelo Zoom e destaque o vídeo do Salão do Reino, se necessário, para que os participantes do Zoom vejam a câmera do Salão do Reino. Ative o áudio do Salão do Reino no Zoom (<kbd>Alt A</kbd>). Não deve ser necessário desativar a câmera ou áudio no Zoom durante a reunião. Make sure that "Original sound for musicians" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
 
 Inicie a reprodução de cânticos de fundo usando o botão no canto inferior esquerdo, ou <kbd>Alt K</kbd>.
 
