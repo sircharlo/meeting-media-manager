@@ -392,7 +392,6 @@ if (gotTheLock) {
 
     websiteController
       .on('resize', () => {
-        setContentAspectRatio(websiteController)
         if (!websiteController?.isMaximized()) {
           websiteController?.webContents.send(
             'mediaSize',
@@ -403,6 +402,10 @@ if (gotTheLock) {
             websiteController?.getContentSize()
           )
         }
+      })
+      // Not available for Linux
+      .on('resized', () => {
+        setContentAspectRatio(websiteController)
       })
       .on('unmaximize', () => {
         websiteController?.webContents.send(
@@ -531,8 +534,8 @@ if (gotTheLock) {
               mediaWin?.webContents.send('resetZoom')
             }
           })
+          // Not available for Linux
           .on('resized', () => {
-            // Not working on Linux
             mediaWin?.webContents.send('windowResized')
           })
 
