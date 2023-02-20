@@ -102,11 +102,14 @@ test('rename song', async () => {
   expect(await page.locator('svg.fa-check').isVisible()).toBe(true)
 
   // Clear name input
-  await page.locator('input[type=text]').fill('')
+  await page.locator('div[suffix=".mp4"]').locator('input[type=text]').fill('')
 
   // Rename song to 'new song name with special characters'
   filename = 'new song name with ()[]{}?|*'
-  await page.locator('input[type=text]').fill(filename)
+  await page
+    .locator('div[suffix=".mp4"]')
+    .locator('input[type=text]')
+    .fill(filename)
 
   // Take screenshot
   if (platform() === 'linux') {

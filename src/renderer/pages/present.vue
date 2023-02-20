@@ -122,7 +122,7 @@ export default defineComponent({
   },
   async mounted() {
     this.setWindowSize()
-    window.onresize = this.setWindowSize
+    window.addEventListener('resize', this.setWindowSize)
     ipcRenderer.on('showingMedia', (_e, val) => {
       this.mediaActive = val[0]
       this.videoActive = val[1]
