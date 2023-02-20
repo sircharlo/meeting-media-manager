@@ -35,7 +35,7 @@
         :label="$t('coWeek')"
         :min="$dayjs().startOf('week').format('YYYY-MM-DD')"
         :locked="$isLocked('meeting.coWeek')"
-        :allowed-dates="isMonday"
+        :allowed-dates="isTuesday"
         explanation="coWeekExplain"
         :format="prefs.app.outputFolderDateFormat"
       />
@@ -334,8 +334,8 @@ export default defineComponent({
     )
   },
   methods: {
-    isMonday(date: string) {
-      return this.$dayjs(date, 'YYYY-MM-DD').day() === 1
+    isTuesday(date: string) {
+      return this.$dayjs(date, 'YYYY-MM-DD').day() === 2
     },
     shuffleMusicCached(): boolean {
       const pubPath = this.$pubPath()

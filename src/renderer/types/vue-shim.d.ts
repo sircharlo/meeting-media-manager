@@ -88,6 +88,7 @@ interface CustomProps {
     memOnly?: boolean,
     silent?: boolean
   ) => Promise<MeetingFile[]>
+  $getFirstDayOfWeek: (lang: string) => number
   $getJWLangs: (forceReload = false) => Promise<ShortJWLang[]>
   $getLatestJWMedia: () => Promise<MediaItem[]>
   $getPrefs: (key: string) => unknown
