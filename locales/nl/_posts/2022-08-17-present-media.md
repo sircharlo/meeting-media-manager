@@ -84,7 +84,7 @@ Start de Zoom vergadering en breng het tweede zoom scherm naar de externe monito
 
 Zodra Zoom getoond wordt op het externe scherm, open je M³. Het mediascherm zal automatisch geopend worden bovenop het Zoom scherm op de externe monitor. Haal de nodige media media and open de media presentatie modus door op de ▶️ (play) knop op het beginscherm van M³ te drukken, of met <kbd>Alt D</kbd>.
 
-Zet de video van de zaal in Zoom aan (<kbd>Alt V</kbd>), en "spotlight" indien nodig de zaal video zodat de Zoom deelnemers het podium kunnen zien. Zet je microfoon in Zoom (<kbd>Alt A</kbd>) aan. Het zou niet nodig moeten zijn om de video of microfoon uit te zetten tijdens de vergadering. Zorg ervoor dat "Oorspronkelijk geluid" is ingeschakeld in Zoom, om de beste audiokwaliteit te garanderen voor externe deelnemers aan vergaderingen.
+Zet de video van de zaal in Zoom aan (<kbd>Alt V</kbd>), en "spotlight" indien nodig de zaal video zodat de Zoom deelnemers het podium kunnen zien. Zet je microfoon in Zoom (<kbd>Alt A</kbd>) aan. Het zou niet nodig moeten zijn om de video of microfoon uit te zetten tijdens de vergadering. Make sure that "Original sound for musicians" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
 
 Start de achtergrond muziek door op de knop linksonder te drukken, of met <kbd>Alt K</kbd>.
 
