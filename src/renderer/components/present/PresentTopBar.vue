@@ -154,6 +154,7 @@ import {
   faMusic,
   faPlus,
   faGlobe,
+  faFolderPlus,
   faArrowDownUpLock,
   faEllipsisVertical,
   faArrowDownUpAcrossLine,
@@ -190,6 +191,13 @@ export default defineComponent({
     return {
       ccAvailable: false,
       actions: [
+        {
+          title: this.$t('manageMedia'),
+          icons: [faFolderPlus],
+          action: () => {
+            this.$emit('manage-media')
+          },
+        },
         {
           title: this.$t('refresh'),
           icons: [faRotateRight],

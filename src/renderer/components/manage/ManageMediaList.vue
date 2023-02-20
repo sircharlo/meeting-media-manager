@@ -1,7 +1,11 @@
 <!-- eslint-disable vue/no-unused-vars -->
 <!-- Media list in the media manager page -->
 <template>
-  <v-list v-if="mediaList.length > 0" dense>
+  <v-list
+    v-if="mediaList.length > 0"
+    dense
+    :style="`overflow-y: auto;max-height: ${listHeight}px`"
+  >
     <v-dialog
       v-if="edit"
       :value="true"
@@ -215,6 +219,14 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    showPrefix: {
+      type: Boolean,
+      default: false,
+    },
+    showInput: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -223,6 +235,8 @@ export default defineComponent({
       renaming: false,
       previewName: '',
       loading: false,
+      windowWidth: 0,
+      windowHeight: 0,
       mediaList: [] as (MeetingFile | LocalFile)[],
     }
   },
@@ -235,6 +249,24 @@ export default defineComponent({
     },
     contents(): FileStat[] {
       return this.$store.state.cong.contents as FileStat[]
+    },
+    listHeight(): number {
+      const TOP_PADDING = 12
+      const HEADER = 88
+      const TYPE_SELECT = 84
+      const INPUT = 64
+      const PREFIX = 68
+      const EL_PADDING = 16
+      const FOOTER = 72
+      let otherElements =
+        FOOTER + TOP_PADDING + HEADER + TYPE_SELECT + EL_PADDING
+      if (this.showInput || this.showPrefix) {
+        otherElements += INPUT
+      }
+      if (this.showPrefix) {
+        otherElements += PREFIX
+      }
+      return this.windowHeight - otherElements
     },
     faCheck() {
       return faCheck
@@ -287,10 +319,19 @@ export default defineComponent({
       this.setMediaList()
     },
   },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.setWindowSize)
+  },
   mounted() {
     this.setMediaList()
+    this.setWindowSize()
+    window.addEventListener('resize', this.setWindowSize)
   },
   methods: {
+    setWindowSize() {
+      this.windowWidth = window.innerWidth
+      this.windowHeight = window.innerHeight
+    },
     setMediaList() {
       // If new files are being uploaded, add them to the list
       if (this.newFile || (this.newFiles && this.newFiles.length > 0)) {

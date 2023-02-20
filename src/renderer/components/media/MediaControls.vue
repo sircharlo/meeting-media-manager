@@ -32,6 +32,19 @@
         </v-row>
       </v-card>
     </v-dialog>
+    <v-dialog :value="manageMedia" fullscreen persistent>
+      <v-sheet :color="isDark ? '#121212' : '#ffffff'" class="fill-height">
+        <v-container fluid fill-height>
+          <manage-media
+            :media="localMedia"
+            :loading="loading"
+            dialog
+            @cancel="manageMedia = false"
+            @refresh="getMedia()"
+          />
+        </v-container>
+      </v-sheet>
+    </v-dialog>
     <present-top-bar
       :media-active="mediaActive"
       :current-index="currentIndex"
@@ -45,6 +58,7 @@
       @sortable="sortable = !sortable"
       @prefix="togglePrefix()"
       @refresh="getMedia()"
+      @manage-media="manageMedia = true"
     />
     <present-zoom-bar v-if="zoomIntegration" @rename="atRename" />
     <loading-icon v-if="loading" />
@@ -72,6 +86,7 @@ import { ipcRenderer } from 'electron'
 import { Participant } from '@zoomus/websdk/embedded'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
+import { LocalFile } from '~/types'
 type MediaItem = {
   id: string
   path: string
@@ -100,6 +115,7 @@ export default defineComponent({
   },
   data() {
     return {
+      manageMedia: false,
       currentIndex: -1,
       sortable: false,
       loading: true,
@@ -122,6 +138,18 @@ export default defineComponent({
     },
     mediaVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible
+    },
+    localMedia(): LocalFile[] {
+      return this.items.map((item) => {
+        return {
+          safeName: basename(item.path),
+          isLocal: true,
+          filepath: item.path,
+        }
+      })
+    },
+    isDark(): boolean {
+      return this.$vuetify.theme.dark as boolean
     },
     scene(): string {
       return this.$store.state.obs.currentScene as string
