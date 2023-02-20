@@ -192,6 +192,13 @@ export default defineComponent({
       ccAvailable: false,
       actions: [
         {
+          title: this.$t('manageMedia'),
+          icons: [faFolderPlus],
+          action: () => {
+            this.$emit('manage-media')
+          },
+        },
+        {
           title: this.$t('refresh'),
           icons: [faRotateRight],
           // @ts-ignore
@@ -203,13 +210,6 @@ export default defineComponent({
           icons: [faFolderOpen],
           // @ts-ignore
           action: this.openFolder,
-        },
-        {
-          title: this.$t('manageMedia'),
-          icons: [faFolderPlus],
-          action: () => {
-            this.$emit('manage-media')
-          },
         },
         {
           title: this.$t('showPrefix'),
