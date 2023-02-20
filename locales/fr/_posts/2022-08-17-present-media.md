@@ -84,7 +84,7 @@ Démarrez la réunion Zoom et déplacez la fenêtre de réunion de Zoom secondai
 
 Une fois que la réunion Zoom est affichée sur le moniteur externe, ouvrez M³. La fenêtre de présentation des médias s'ouvrira automatiquement par-dessus Zoom sur le moniteur externe. Synchronisez les médias si nécessaire, et entrer en mode de gestion et présentation des médias en cliquant sur le bouton ▶️ (lecture) sur l'écran principal de M³, ou <kbd>Alt D</kbd>.
 
-Activez le flux vidéo de la Salle du Royaume (<kbd>Alt V</kbd>), et mettez en évidence ("spotlight") le flux vidéo de la Salle du Royaume si nécessaire pour que les participants dans Zoom voient l'estrade de la Salle du Royaume. Activez le flux audio de la Salle du Royaume dans Zoom (<kbd>Alt A</kbd>). Il ne devrait pas être nécessaire de désactiver le flux vidéo ou audio dans Zoom pour la durée de la réunion.
+Activez le flux vidéo de la Salle du Royaume (<kbd>Alt V</kbd>), et mettez en évidence ("spotlight") le flux vidéo de la Salle du Royaume si nécessaire pour que les participants dans Zoom voient l'estrade de la Salle du Royaume. Activez le flux audio de la Salle du Royaume dans Zoom (<kbd>Alt A</kbd>). Il ne devrait pas être nécessaire de désactiver le flux vidéo ou audio dans Zoom pour la durée de la réunion. Assurez-vous que la fonctionnalité "Son original" est activée dans Zoom, afin de garantir la meilleure qualité audio pour les participants Zoom.
 
 Démarrez la lecture de la musique d'arrière-plan en utilisant le bouton en bas à gauche, ou <kbd>Alt K</kbd>.
 

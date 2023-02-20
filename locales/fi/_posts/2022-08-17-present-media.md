@@ -84,7 +84,7 @@ Aloita Zoom-kokous ja siirrä toissijainen zoomausikkuna ulkoiseen näyttöön. 
 
 Kun Zoom-kokous on näkyvissä ulkoisessa näytössä, avaa M³. Median esitysikkuna aukeaa automaattisesti ulkoisen monitorin Zoom päälle. Synkronoi mediaa tarvittaessa ja kirjoita mediasäätimen tila klikkaamalla ▶️ (play) painiketta M3:n pääruudulla, tai <kbd>Alt D</kbd>.
 
-Ota käyttöön salin video syöte (<kbd>Alt V</kbd>), ja spotlightaa salin video syöte tarvittaessa, jotta Zoom osallistujat näkevät salin lavan. Poista mykistys salin äänisyötteestä Zoomissa (<kbd>Alt A</kbd>). Ei pitäisi olla tarpeen poistaa video- tai äänilähtöä Zoomista kokouksen aikana.
+Ota käyttöön salin video syöte (<kbd>Alt V</kbd>), ja spotlightaa salin video syöte tarvittaessa, jotta Zoom osallistujat näkevät salin lavan. Poista mykistys salin äänisyötteestä Zoomissa (<kbd>Alt A</kbd>). Ei pitäisi olla tarpeen poistaa video- tai äänilähtöä Zoomista kokouksen aikana. Varmista, että "Original sound for musicians" on käytössä Zoomissa, jotta etäkokouksen osallistujien äänen laatu olisi paras mahdollinen.
 
 Aloita taustamusiikin toisto painamalla vasemmassa alakulmassa olevaa painiketta tai <kbd>Alt K</kbd>.
 
