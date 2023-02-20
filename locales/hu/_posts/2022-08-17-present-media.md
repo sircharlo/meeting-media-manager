@@ -84,7 +84,7 @@ Indítsa el a Zoom-meetinget, és helyezze át a Zoom-meeting másodlagos ablak�
 
 Miután a Zoom meeting megjelenik a külső monitoron, nyissa meg az M³ programot. A médiabemutató ablak automatikusan megnyílik a külső monitoron a Zoom fölött. Szinkronizálja a médiát, ha szükséges, és lépjen médiavezérlő üzemmódba az M³ főképernyőjén a ▶️ (lejátszás) gombra kattintva, vagy az <kbd>Alt D</kbd> lenyomásával.
 
-Kapcsolja be a Királyságterem videoközvetítését (<kbd>Alt V</kbd>), és szükség esetén állítsa reflektorfénybe a Királyságterem videóképét, hogy a Zoom résztvevői láthassák a Királyságterem színpadját. Adja ki a Királyság terem hangját a Zoomban (<kbd>Alt A</kbd>). Az összejövetel idejére nem szükséges letiltani a videó- vagy hangtovábbítást a Zoomban. Make sure that "Original sound" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
+Kapcsolja be a Királyságterem videoközvetítését (<kbd>Alt V</kbd>), és szükség esetén állítsa reflektorfénybe a Királyságterem videóképét, hogy a Zoom résztvevői láthassák a Királyságterem színpadját. Adja ki a Királyság terem hangját a Zoomban (<kbd>Alt A</kbd>). Az összejövetel idejére nem szükséges letiltani a videó- vagy hangtovábbítást a Zoomban. Make sure that "Original sound for musicians" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
 
 Indítsa el a háttérzene lejátszását a bal alsó sarokban lévő gombbal vagy az <kbd>Alt K</kbd> kombinációval.
 
