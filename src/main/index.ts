@@ -554,6 +554,7 @@ if (gotTheLock) {
 
   ipcMain.on('toggleUpdateChannel', (_e, beta: boolean) => {
     autoUpdater.allowPrerelease = beta
+    autoUpdater.checkForUpdates()
   })
 
   autoUpdater.on('error', (e) => {
