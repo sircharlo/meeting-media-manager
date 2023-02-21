@@ -60,6 +60,14 @@ test('render the presentation mode page correctly', async () => {
   if (platform() === 'linux') {
     await delay(5 * 100)
     await page.screenshot({ path: 'img/present/launch-present-mode.png' })
+    
+    // Click on fetch button
+    await page.locator('button', { hasText: locale.fetchMedia }).click()
+
+    // Wait for jw sync to complete successfully
+    await page.waitForSelector('div.success:has-text("JW.org (English)")', {
+      timeout: 0,
+    })
   }
 
   const mediaWin = electronApp
