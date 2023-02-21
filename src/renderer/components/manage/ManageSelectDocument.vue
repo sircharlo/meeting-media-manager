@@ -147,6 +147,8 @@ export default defineComponent({
     if (this.items.length === 0) {
       this.$warn('warnNoDocumentsFound')
       this.$emit('empty')
+    } else if (this.items.length === 1) {
+      this.selectDoc(this.items[0].DocumentId)
     }
   },
   methods: {
