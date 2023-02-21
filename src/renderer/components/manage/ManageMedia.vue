@@ -5,7 +5,11 @@
       @cancel="type = 'custom'"
       @select="selectVideo"
     />
-    <v-dialog v-if="fileString && type === 'jwpub'" persistent :value="true">
+    <v-dialog
+      v-if="fileString && type === 'jwpub'"
+      persistent
+      :value="selectDoc"
+    >
       <manage-select-document
         :file="fileString"
         :set-progress="setProgress"
@@ -38,7 +42,7 @@
         </v-col>
       </v-row>
       <manage-media-prefix v-if="jwFile || files.length > 0" v-model="prefix" />
-      <v-col cols="12" class="px-0">
+      <v-col cols="12" class="px-0" style="position: relative">
         <loading-icon v-if="loading || saving" />
         <template v-else>
           <v-overlay :value="dragging">
@@ -52,7 +56,6 @@
             :media="media"
             :show-input="type && type !== 'jworg'"
             :show-prefix="!!jwFile || files.length > 0"
-            :set-progress="setProgress"
             @refresh="$emit('refresh')"
           />
         </template>
@@ -142,6 +145,7 @@ export default defineComponent({
     return {
       prefix: '',
       dragging: false,
+      selectDoc: false,
       uploadedFiles: 0,
       totalFiles: 0,
       totalProgress: 0,
@@ -183,10 +187,11 @@ export default defineComponent({
     },
   },
   watch: {
-    type() {
+    type(val: string) {
       this.fileString = ''
       this.jwFile = null
       this.files = []
+      this.selectDoc = val === 'jwpub'
     },
     fileString(val: string) {
       if (!val) {
@@ -267,7 +272,7 @@ export default defineComponent({
     },
     addMedia(media: LocalFile[]) {
       this.files = media
-      this.type = ''
+      this.selectDoc = false
     },
     async addFiles(multi = true, ...exts: string[]) {
       if (exts.length === 0) {
@@ -445,6 +450,7 @@ export default defineComponent({
       this.type = 'custom'
       this.jwFile = null
       this.files = []
+      this.selectDoc = false
       this.fileString = ''
       this.uploadedFiles = 0
       this.totalFiles = 0
