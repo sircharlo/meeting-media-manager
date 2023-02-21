@@ -6,6 +6,7 @@
 
 - 🚀 Quickly access the manage media screen while presenting (top bar > `⋮` > `Manage media`)
 - 🚀 Option to automatically start playing background music before meetings
+- Added an option to enable beta updates
 - Improved the video custom start/end time feature
 - Ability to start playing the first media item a custom number of minutes and seconds before the meeting starts
 - When presenting JW.org, the website controller will now more accurately depict what is shown on the media window
