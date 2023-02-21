@@ -3,6 +3,7 @@
   "areYouSure": "Är du säker?",
   "autoPlayFirst": "Spela automatiskt upp första medieobjektet",
   "autoStartMusic": "Spela upp bakgrundsmusik automatiskt före möten",
+  "betaUpdates": "Aktivera beta-uppdateringar för testning lokalt <em>(OBS: Aktivera inte den här inställningen på datorn som används för att presentera media i Rikets sal.)</em>",
   "browse": "Bläddra",
   "cancel": "Avbryt",
   "cantCloseMediaWindowOpen": "Stäng mediavisningen innan du försöker stänga M³.",
