@@ -552,6 +552,10 @@ if (gotTheLock) {
     autoUpdater.checkForUpdates()
   })
 
+  ipcMain.on('toggleUpdateChannel', (_e, beta: boolean) => {
+    autoUpdater.channel = beta ? 'beta' : 'latest'
+  })
+
   autoUpdater.on('error', (e) => {
     win?.webContents.send('notifyUser', ['updateError', { type: 'error' }, e])
   })
