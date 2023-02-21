@@ -5,7 +5,11 @@
       @cancel="type = 'custom'"
       @select="selectVideo"
     />
-    <v-dialog v-if="fileString && type === 'jwpub'" persistent :value="true">
+    <v-dialog
+      v-if="fileString && type === 'jwpub'"
+      persistent
+      :value="selectDoc"
+    >
       <manage-select-document
         :file="fileString"
         :set-progress="setProgress"
@@ -142,6 +146,7 @@ export default defineComponent({
     return {
       prefix: '',
       dragging: false,
+      selectDoc: false,
       uploadedFiles: 0,
       totalFiles: 0,
       totalProgress: 0,
@@ -183,10 +188,11 @@ export default defineComponent({
     },
   },
   watch: {
-    type() {
+    type(val: string) {
       this.fileString = ''
       this.jwFile = null
       this.files = []
+      this.selectDoc = val === 'jwpub'
     },
     fileString(val: string) {
       if (!val) {
@@ -267,7 +273,7 @@ export default defineComponent({
     },
     addMedia(media: LocalFile[]) {
       this.files = media
-      this.type = ''
+      this.selectDoc = false
     },
     async addFiles(multi = true, ...exts: string[]) {
       if (exts.length === 0) {
@@ -445,6 +451,7 @@ export default defineComponent({
       this.type = 'custom'
       this.jwFile = null
       this.files = []
+      this.selectDoc = false
       this.fileString = ''
       this.uploadedFiles = 0
       this.totalFiles = 0
