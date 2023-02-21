@@ -22,7 +22,7 @@ const windowsOS = {
 const linuxOS = {
   linux: {
     icon: ICONS_DIR,
-    target: ['deb', 'AppImage'],
+    target: 'AppImage',
     category: 'Utility',
     publish: ['github'],
   },
@@ -44,6 +44,7 @@ module.exports = {
   appId: 'sircharlo.meeting-media-manager',
   artifactName: 'meeting-media-manager-${version}.${ext}',
   buildDependenciesFromSource: true,
+  generateUpdatesFilesForAllChannels: true,
   directories: {
     output: 'build',
   },

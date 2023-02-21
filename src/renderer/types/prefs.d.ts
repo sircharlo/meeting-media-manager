@@ -34,6 +34,7 @@ export interface AppPrefs {
   autoQuitWhenDone: boolean
   autoRunAtBoot: boolean
   autoStartSync: boolean
+  betaUpdates: boolean
   congregationName: string | null
   customCachePath: string | null
   disableAutoUpdate: boolean

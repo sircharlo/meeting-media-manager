@@ -4,6 +4,7 @@ const PREFS = {
     autoQuitWhenDone: false,
     autoRunAtBoot: false,
     autoStartSync: false,
+    betaUpdates: false,
     congregationName: null,
     customCachePath: null,
     disableAutoUpdate: false,

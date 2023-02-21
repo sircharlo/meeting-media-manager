@@ -1,0 +1,140 @@
+name: 'Release Beta Version'
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '42 10/12 * * *'
+
+jobs:
+  get-commit:
+    name: Get commit message
+    runs-on: ubuntu-latest
+    outputs:
+      msg: ${{ steps.set-msg.outputs.msg }}
+    steps:
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@v3'
+        with:
+          persist-credentials: false
+      - id: set-msg
+        name: 'Set commit message variable'
+        run: |
+          msg=$(git --no-pager log -1 --pretty=format:"%s")
+          echo "msg=${msg}" >> $GITHUB_OUTPUT
+  bump-version:
+    name: 'Bump version'
+    needs: get-commit
+    if: |
+          !startsWith(needs.get-commit.outputs.msg, 'chore(release)') &&
+          !startsWith(needs.get-commit.outputs.msg, 'ci: version bump')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@v3'
+        with:
+          persist-credentials: false
+      - name: 'Automated Version Bump'
+        id: version-bump
+        uses: 'phips28/gh-action-bump-version@master'
+        with:
+          version-type:  prerelease
+          preid: 'beta'
+          tag-prefix: 'v'
+          skip-tag:  'true'
+          bump-policy: 'last-commit'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+      - name: 'Output new version'
+        env:
+          NEW_VERSION: ${{ steps.version-bump.outputs.newTag }}
+        run: echo "new version $NEW_VERSION"
+    outputs:
+      newTag: ${{ steps.version-bump.outputs.newTag }}
+  
+  draft-release:
+    name: 'Draft release'
+    runs-on: ubuntu-latest
+    needs: bump-version
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create draft release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ needs.bump-version.outputs.newTag }}
+          tag: ${{ needs.bump-version.outputs.newTag }}
+          commit: 'master'
+          draft: true
+          prerelease: true
+          generateReleaseNotes: true
+    outputs:
+      id: ${{ steps.create_release.outputs.id }}
+  
+  build:
+    runs-on: ${{ matrix.os }}
+    needs: draft-release
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: master
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          check-latest: true
+          cache: 'yarn'
+
+      - name: Install dependencies
+        if: matrix.os != 'windows-latest'
+        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install
+
+      - name: Install dependencies on Windows
+        if: matrix.os == 'windows-latest'
+        run: yarn install
+
+      - name: Set env variables
+        run: |
+          touch .env
+          echo SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} >> .env
+          echo SENTRY_ORG=${{ secrets.SENTRY_ORG }} >> .env
+          echo SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }} >> .env
+          echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
+          echo SENTRY_SOURCE_MAPS=1 >> .env
+
+      - name: Prepare build
+        run: |
+          yarn prebuild
+          yarn compile
+
+      - name: Build Electron app
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
+        run: yarn run build -p always
+  
+  publish-release:
+    name: 'Publish release'
+    runs-on: ubuntu-latest
+    needs: [bump-version, build]
+    steps:
+      - uses: ncipollo/release-action@v1
+        with:
+          name: ${{ needs.bump-version.outputs.newTag }}
+          tag: ${{ needs.bump-version.outputs.newTag }}
+          draft: false
+          prerelease: true
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          updateOnlyUnreleased: true
+          token: ${{ secrets.PERSONAL_TOKEN }}
