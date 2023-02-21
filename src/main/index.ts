@@ -553,10 +553,11 @@ if (gotTheLock) {
   })
 
   ipcMain.on('toggleUpdateChannel', (_e, beta: boolean) => {
-    autoUpdater.channel = beta ? 'beta' : 'latest'
+    autoUpdater.allowPrerelease = beta
   })
 
   autoUpdater.on('error', (e) => {
+    win?.webContents.send('log', e.message)
     win?.webContents.send('notifyUser', ['updateError', { type: 'error' }, e])
   })
   autoUpdater.on('update-available', (info) => {
