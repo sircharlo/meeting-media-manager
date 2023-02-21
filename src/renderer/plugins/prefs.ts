@@ -37,6 +37,10 @@ const schema: Schema<ElectronStore> = {
         enum: ENUMS.theme,
         default: PREFS.app.theme,
       },
+      betaUpdates: {
+        type: 'boolean',
+        default: PREFS.app.betaUpdates,
+      },
       disableAutoUpdate: {
         type: 'boolean',
         default: PREFS.app.disableAutoUpdate,

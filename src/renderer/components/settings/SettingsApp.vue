@@ -203,6 +203,13 @@
     </template>
     <v-divider class="mb-6" />
     <form-input
+      id="app.betaUpdates"
+      v-model="app.betaUpdates"
+      field="switch"
+      :label="$t('betaUpdates')"
+      :locked="$isLocked('app.betaUpdates')"
+    />
+    <form-input
       v-for="option in disableOptions"
       :id="`app.disable${option}`"
       :key="option"
@@ -456,6 +463,12 @@ export default defineComponent({
             oldFormat: oldVal,
           })
         }
+      },
+    },
+    'app.betaUpdates': {
+      handler(val: boolean) {
+        ipcRenderer.send('toggleBetaUpdates', val)
+        ipcRenderer.send('checkForUpdates')
       },
     },
     'app.disableAutoUpdate': {
