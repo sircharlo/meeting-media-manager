@@ -3,6 +3,7 @@
   "areYouSure": "Oletko varma?",
   "autoPlayFirst": "Toista median ensimmäinen kohde automaattisesti",
   "autoStartMusic": "Soita taustamusiikkia automaattisesti ennen kokousta",
+  "betaUpdates": "Ota beta-päivitykset käyttöön testaustarkoituksiin <em>(Huomaa: Älä salli tätä asetusta tietokoneella, jota käytetään mediatiedostojen esittelyyn Valtakunnan salilla.)</em>",
   "browse": "Selaa",
   "cancel": "Peruuta",
   "cantCloseMediaWindowOpen": "Poistu mediaohjaintilasta ennen kuin yrität sulkea M³:n.",
