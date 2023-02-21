@@ -42,7 +42,7 @@
         </v-col>
       </v-row>
       <manage-media-prefix v-if="jwFile || files.length > 0" v-model="prefix" />
-      <v-col cols="12" class="px-0">
+      <v-col cols="12" class="px-0" style="position: relative">
         <loading-icon v-if="loading || saving" />
         <template v-else>
           <v-overlay :value="dragging">
@@ -56,7 +56,6 @@
             :media="media"
             :show-input="type && type !== 'jworg'"
             :show-prefix="!!jwFile || files.length > 0"
-            :set-progress="setProgress"
             @refresh="$emit('refresh')"
           />
         </template>

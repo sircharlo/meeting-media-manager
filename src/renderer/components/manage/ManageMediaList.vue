@@ -30,6 +30,7 @@
       v-for="item in mediaList"
       :key="item.safeName"
       dense
+      style="position: static"
       :disabled="item.loading"
     >
       <v-list-item-action v-if="item.loading" class="my-0">
@@ -572,6 +573,7 @@ export default defineComponent({
   position: absolute;
   bottom: 100%;
   left: 50%;
+  z-index: 999;
   transform: translate(-50%, 0);
 }
 </style>
