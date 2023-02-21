@@ -208,7 +208,11 @@
       field="switch"
       :label="$t('betaUpdates')"
       :locked="$isLocked('app.betaUpdates')"
-    />
+    >
+      <template #label>
+        <span v-html="$t('betaUpdates')" />
+      </template>
+    </form-input>
     <form-input
       v-for="option in disableOptions"
       :id="`app.disable${option}`"
