@@ -30,6 +30,7 @@
       v-for="item in mediaList"
       :key="item.safeName"
       dense
+      style="position: static"
       :disabled="item.loading"
     >
       <v-list-item-action v-if="item.loading" class="my-0">
@@ -570,7 +571,7 @@ export default defineComponent({
 .tooltip-img {
   content: ' ';
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% - 13px);
   left: 50%;
   transform: translate(-50%, 0);
 }
