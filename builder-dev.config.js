@@ -44,6 +44,7 @@ module.exports = {
   appId: 'sircharlo.meeting-media-manager',
   artifactName: 'meeting-media-manager-${version}.${ext}',
   buildDependenciesFromSource: true,
+  generateUpdatesFilesForAllChannels: true,
   directories: {
     output: 'build',
   },

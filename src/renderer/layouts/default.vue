@@ -63,7 +63,6 @@ export default defineComponent({
     },
     online(val: boolean) {
       if (val) {
-        ipcRenderer.send('checkForUpdates')
         this.$store.commit('notify/deleteByMessage', 'errorOffline')
       } else {
         this.$warn('errorOffline')
