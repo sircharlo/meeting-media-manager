@@ -557,6 +557,7 @@ if (gotTheLock) {
   })
 
   autoUpdater.on('error', (e) => {
+    win?.webContents.send('log', e.message)
     win?.webContents.send('notifyUser', ['updateError', { type: 'error' }, e])
   })
   autoUpdater.on('update-available', (info) => {
