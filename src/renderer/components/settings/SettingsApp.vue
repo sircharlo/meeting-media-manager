@@ -590,9 +590,10 @@ export default defineComponent({
       },
     },
     'app.betaUpdates': {
-      handler(val: boolean) {
-        ipcRenderer.send('toggleBetaUpdates', val)
-        ipcRenderer.send('checkForUpdates')
+      handler(val: boolean, oldVal: boolean | null) {
+        if (oldVal !== null && oldVal !== undefined) {
+          ipcRenderer.send('toggleBetaUpdates', val)
+        }
       },
     },
     'app.disableAutoUpdate': {
