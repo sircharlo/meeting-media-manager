@@ -206,7 +206,6 @@
       id="app.betaUpdates"
       v-model="app.betaUpdates"
       field="switch"
-      :label="$t('betaUpdates')"
       :locked="$isLocked('app.betaUpdates')"
     >
       <template #label>
