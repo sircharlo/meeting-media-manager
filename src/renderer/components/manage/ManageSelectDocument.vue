@@ -1,7 +1,7 @@
 <!-- Extract media from chosen JWPUB file -->
 <template>
   <v-card>
-    <v-card-title class="justify-center">
+    <v-card-title style="word-break: break-word" class="justify-center">
       {{
         !loading && missingMedia.length > 0
           ? $t('selectExternalMedia')
