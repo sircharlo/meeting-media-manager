@@ -1,5 +1,25 @@
 # Changelog
 
+## 23.2.2
+
+### New or improved features
+
+- 🚀 Quickly access the manage media screen while presenting (top bar > `⋮` > `Manage media`)
+- 🚀 Option to automatically start playing background music before meetings
+- Improved the video custom start/end time feature
+- Ability to start playing the first media item a custom number of minutes and seconds before the meeting starts
+- When presenting JW.org, the website controller will now more accurately depict what is shown on the media window
+- The circuit overseer date picker now allows selecting Tuesdays, and weeks will start on the correct day depending on the user's language
+- Several UX improvements
+
+### Bug fixes
+
+- Activate OBS Studio media scene when presenting JW.org
+- Immediately toggle subtitles when toggled in settings
+- OBS Studio scene shortcuts won't change the scene while media is active
+- Show a warning when congregation server web address is invalid
+- Show a warning when OBS Studio scene does not exist
+
 ## 23.2.1
 
 ### New or improved features
