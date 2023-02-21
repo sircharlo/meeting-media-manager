@@ -571,9 +571,8 @@ export default defineComponent({
 .tooltip-img {
   content: ' ';
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% - 13px);
   left: 50%;
-  z-index: 999;
   transform: translate(-50%, 0);
 }
 </style>
