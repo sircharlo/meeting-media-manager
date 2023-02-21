@@ -3,6 +3,7 @@
   "areYouSure": "Êtes-vous sûr ?",
   "autoPlayFirst": "Lecture automatique du premier média",
   "autoStartMusic": "Jouer automatiquement la musique de fond avant les réunions",
+  "betaUpdates": "Enable beta updates for testing purposes <em>(Note: Do not enable this setting on the computer used to present media at the Kingdom Hall.)</em>",
   "browse": "Parcourir",
   "cancel": "Annuler",
   "cantCloseMediaWindowOpen": "Veuillez quitter le mode de présentation des médias avant de quitter M³.",
