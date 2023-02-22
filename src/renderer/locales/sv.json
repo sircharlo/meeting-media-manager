@@ -118,7 +118,7 @@
   "obsMediaScene": "Mediascen i OBS Studio",
   "obsRefresh": "Uppdatera OBS-anslutning",
   "obsUseV4": "Använd <em>obs-websocket v4</em>",
-  "obsZoomScene": "OBS Studio scen för att visa Zoom deltagare",
+  "obsZoomScene": "OBS Studio scen för att visa Zoomdeltagare",
   "obsZoomSceneActivate": "Se till att zoomdeltagarna är redo att visas. Mediafönstret kommer att döljas automatiskt tills media visas.",
   "obsZoomSceneExplain": "Används för att snabbt och effektivt hantera visning av Zoomdeltagare under ett hybridmöte",
   "obsZoomSceneToggle": "Växla Zooms deltagarläge",
