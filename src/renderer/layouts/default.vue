@@ -472,7 +472,7 @@ export default defineComponent({
                 action: {
                   type: 'link',
                   label: 'moreInfo',
-                  url: `${this.$config.repo}/releases/latest`,
+                  url: `${this.$config.repo}/releases/tag/${this.$config.version}`,
                 },
               })
             }
