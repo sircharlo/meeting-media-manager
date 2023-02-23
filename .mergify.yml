@@ -8,6 +8,7 @@ pull_request_rules:
               - author=dependabot[bot]
               - or:
                  - title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.
+                 - title~=^chore\(deps\). bump [^\s]+ from ([\d]+)\..+ to \1\.
                  - title~=^chore\(deps-dev\). bump [^\s]+ from ([\d]+)\..+ to \1\.
     actions:
       update:
