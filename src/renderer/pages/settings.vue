@@ -389,7 +389,12 @@ export default defineComponent({
       this.loading = false
     },
     openReleases() {
-      window.open(`${this.$config.repo}/releases/latest`, '_blank')
+      window.open(
+        `${this.$config.repo}/releases/${
+          this.updateSuccess ? 'tag/' + this.$config.version : ''
+        }`,
+        '_blank'
+      )
     },
     report(): void {
       window.open(this.$bugURL(), '_blank')
