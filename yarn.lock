@@ -3312,12 +3312,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fluent-ffmpeg@npm:^2.1.20":
-  version: 2.1.20
-  resolution: "@types/fluent-ffmpeg@npm:2.1.20"
+"@types/fluent-ffmpeg@npm:^2.1.21":
+  version: 2.1.21
+  resolution: "@types/fluent-ffmpeg@npm:2.1.21"
   dependencies:
     "@types/node": "*"
-  checksum: f810a12a427f8e6568cec2ef250693e533112b66b7cd9ca9e10fe32b2aecb85623b8bb4ae5e51e47f79e27cdb969d3115720588b9f6fc7e4d17b4d4dc5e0d677
+  checksum: 412e29bf578a2619b6600a0c0977568b3e3c7dafb155e80a2743a5f2a8169d2e3654a6db526e7a35bd03c6437fb6f7542db5ca869b5f3b028438219ae933e593
   languageName: node
   linkType: hard
 
@@ -10692,7 +10692,7 @@ __metadata:
     "@sentry/tracing": ^7.38.0
     "@sentry/vue": ^7.38.0
     "@sentry/webpack-plugin": ^1.20.0
-    "@types/fluent-ffmpeg": ^2.1.20
+    "@types/fluent-ffmpeg": ^2.1.21
     "@types/lodash.clonedeep": ^4.5.7
     "@types/sql.js": ^1.4.4
     "@xpda-dev/core": ^0.1.6
