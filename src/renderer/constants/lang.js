@@ -11,6 +11,7 @@ const DAYJS_LOCALES = [
   'nl',
   'pt',
   'pt-br',
+  'ro',
   'ru',
   'sk',
   'sv',
@@ -108,6 +109,13 @@ const LOCALES = [
     jw: 'T',
     dayjs: 'pt-br',
     name: 'Português - Brasil (Portuguese - Brazil)',
+  },
+  {
+    code: 'ro',
+    iso: 'ro-RO',
+    file: 'ro.json',
+    jw: 'M',
+    name: 'Română (Romanian)',
   },
   {
     code: 'ru',
