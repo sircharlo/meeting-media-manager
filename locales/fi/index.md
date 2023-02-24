@@ -28,7 +28,7 @@ Mitä tulee täysin **etä** seurakunnan Zoom-kokouksiin, M³:n sisäänrakennet
 
 **Kyllä!** Jehovan todistajien kokouksiin tarkoitetut tiedotusvälineet voidaan ladata automaattisesti millä tahansa sadoilla kielellä JW.orgista. Käytettävissä olevien kielten luettelo on dynaamisesti päivitetty; sinun tarvitsee vain valita haluamasi kieli.
 
-In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Lisäksi monet vapaaehtoiset ovat kääntäneet M³-sovelluksen eri kielille ja lisää kieliä on tulossa. Voit siksi valita kielen, jonka haluat M³:n käyttävän.
 
 Tämä sovellus on tehty rakkaudella ja hieman vapaa-ajalla. Nauti!
 
