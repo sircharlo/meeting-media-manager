@@ -64,28 +64,28 @@ const plugin: Plugin = (
   }
   inject('connectZoom', connectZoom)
 
-  inject('startMeeting', async (socket: WebSocket) => {
-    if (!store.state.zoom.coHost) {
+  async function startMeeting(socket: WebSocket | null) {
+    const client = store.state.zoom.client as typeof EmbeddedClient | null
+    if (!store.state.zoom.coHost || !client) {
       $warn('errorNotCoHost')
+      if (!client) return
     } else {
       store.commit('zoom/setStarted', true)
     }
 
-    const userID = store.state.zoom.userID as number
     const hostID = store.state.zoom.hostID as number
-    const automateAudio = $getPrefs('app.zoom.automateAudio') as boolean
 
     toggleAllowUnmute(socket, false)
     await muteAll(socket)
-    if (automateAudio) toggleAudio(socket, true)
     toggleVideo(socket, true, hostID)
-    await toggleMic(socket, false, automateAudio ? userID : hostID)
-    if (automateAudio || $getPrefs('app.zoom.spotlight')) {
+    await toggleMic(socket, false, hostID)
+    if ($getPrefs('app.zoom.spotlight')) {
       toggleSplotlight(socket, true, hostID)
     }
-  })
+  }
+  inject('startMeeting', startMeeting)
 
-  inject('stopMeeting', (socket: WebSocket) => {
+  function stopMeeting(socket: WebSocket) {
     if (!store.state.zoom.coHost) {
       $warn('errorNotCoHost')
     } else {
@@ -93,13 +93,11 @@ const plugin: Plugin = (
     }
 
     const hostID = store.state.zoom.hostID as number
-    const automateAudio = $getPrefs('app.zoom.automateAudio') as boolean
-
     toggleSplotlight(socket, false)
-    if (automateAudio) toggleAudio(socket, false)
     toggleVideo(socket, false, hostID)
     toggleAllowUnmute(socket, true)
-  })
+  }
+  inject('stopMeeting', stopMeeting)
 
   inject('muteParticipants', (socket: WebSocket) => {
     if (!store.state.zoom.coHost) {
@@ -119,7 +117,7 @@ const plugin: Plugin = (
     })
   })
 
-  function lowerHand(socket: WebSocket, userID: number) {
+  function lowerHand(socket: WebSocket | null, userID: number) {
     sendToWebSocket(
       socket,
       {
@@ -131,11 +129,47 @@ const plugin: Plugin = (
     )
   }
 
-  function toggleAllowUnmute(socket: WebSocket, allow: boolean) {
+  async function toggleOnHold(
+    socket: WebSocket | null,
+    onHold: boolean,
+    userID: number
+  ) {
+    const client = store.state.zoom.client as typeof EmbeddedClient | null
+    if (!client) return
+    try {
+      if (onHold) {
+        await client.putOnHold(userID, onHold)
+      } else {
+        await client.admit(userID)
+      }
+    } catch (e: unknown) {
+      sendToWebSocket(
+        socket,
+        {
+          evt: 4113,
+          body: { bHold: onHold },
+        },
+        true,
+        userID
+      )
+    }
+  }
+  inject('toggleOnHold', toggleOnHold)
+
+  function toggleAllowUnmute(socket: WebSocket | null, allow: boolean) {
     sendToWebSocket(socket, {
       evt: 4149,
       body: { bOn: allow },
     })
+  }
+
+  function encodeName(name?: string) {
+    if (!name) return ''
+    try {
+      return Buffer.from(name).toString('base64')
+    } catch (e: unknown) {
+      console.warn('Failed to encode name:', name)
+    }
   }
 
   async function rename(
@@ -152,15 +186,15 @@ const plugin: Plugin = (
         evt: 4109,
         body: {
           id: user.id,
-          dn2: window.btoa(name),
-          olddn2: window.btoa(user.name ?? ''),
+          dn2: encodeName(name),
+          olddn2: encodeName(user.name),
         },
       })
     }
   }
   inject('renameParticipant', rename)
 
-  async function muteAll(socket: WebSocket) {
+  async function muteAll(socket: WebSocket | null) {
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (!client) return
     try {
@@ -173,14 +207,11 @@ const plugin: Plugin = (
     }
   }
 
-  function toggleAudio(socket: WebSocket, enable: boolean) {
-    sendToWebSocket(socket, {
-      evt: 8203,
-      body: { bOn: enable },
-    })
-  }
-
-  async function toggleMic(socket: WebSocket, mute: boolean, userID?: number) {
+  async function toggleMic(
+    socket: WebSocket | null,
+    mute: boolean,
+    userID?: number
+  ) {
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (!client) return
     try {
@@ -199,7 +230,11 @@ const plugin: Plugin = (
   }
   inject('toggleMic', toggleMic)
 
-  function toggleVideo(socket: WebSocket, enable: boolean, userID: number) {
+  function toggleVideo(
+    socket: WebSocket | null,
+    enable: boolean,
+    userID: number
+  ) {
     sendToWebSocket(
       socket,
       {
@@ -212,7 +247,7 @@ const plugin: Plugin = (
   }
 
   function toggleSplotlight(
-    socket: WebSocket,
+    socket: WebSocket | null,
     enable: boolean,
     userID?: number
   ) {
@@ -270,6 +305,8 @@ const plugin: Plugin = (
       setUserProps(payload)
     }
 
+    console.debug('User added', payload)
+
     // @ts-ignore
     const users = payload as (typeof payload)[]
     users
@@ -302,6 +339,7 @@ const plugin: Plugin = (
       client.makeCoHost(store.state.zoom.hostID as number)
     } else if (!userIsHost) {
       const host = participants.find((user) => user.isHost)
+      console.debug('host', host)
       store.commit('zoom/setHostID', host?.userId)
     }
     store.commit('zoom/setParticipants', participants)

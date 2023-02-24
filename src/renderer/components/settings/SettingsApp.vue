@@ -236,16 +236,6 @@
         required
       />
       <form-input
-        id="app.zoom.automateAudio"
-        v-model="app.zoom.automateAudio"
-        field="switch"
-        :locked="$isLocked('app.zoom.automateAudio')"
-      >
-        <template #label>
-          <span v-html="$t('zoomAutomateAudio')" />
-        </template>
-      </form-input>
-      <form-input
         id="app.zoom.spotlight"
         v-model="app.zoom.spotlight"
         field="switch"

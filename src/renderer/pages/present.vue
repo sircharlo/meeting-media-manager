@@ -161,8 +161,9 @@ export default defineComponent({
       this.$stopMeeting(this.zoomSocket())
       await this.zoomClient.leaveMeeting()
       this.$store.commit('zoom/clear')
-      this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
+      this.$store.commit('notify/deleteByMessage', 'errorNoSocket')
       this.$store.commit('notify/deleteByMessage', 'errorNotCoHost')
+      this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
     }
   },
   async mounted() {

@@ -231,10 +231,7 @@ export default defineComponent({
         this.$muteParticipants(this.zoomSocket())
 
         const hostID = this.$store.state.zoom.hostID as number
-        const automateAudio = this.$getPrefs(
-          'app.zoom.automateAudio'
-        ) as boolean
-        if (automateAudio || this.$getPrefs('app.zoom.spotlight')) {
+        if (this.$getPrefs('app.zoom.spotlight')) {
           this.$toggleSpotlight(this.zoomSocket(), true, hostID)
         }
         this.participants = []

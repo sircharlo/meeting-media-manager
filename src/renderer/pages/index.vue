@@ -228,6 +228,9 @@ export default defineComponent({
   async mounted() {
     const promise = this.$getJWLangs()
     this.$store.commit('notify/deleteByMessage', 'cantCloseMediaWindowOpen')
+    this.$store.commit('notify/deleteByMessage', 'errorNoSocket')
+    this.$store.commit('notify/deleteByMessage', 'errorNotCoHost')
+    this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
     if (this.weekParam > -1) {
       this.currentWeek = this.weekParam
     }
