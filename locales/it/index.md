@@ -28,7 +28,7 @@ Per quanto riguarda le riunioni Zoom della congregazione completamente **in remo
 
 **Sì!** I media per le adunanze dei Testimoni di Geova possono essere scaricati automaticamente in una qualsiasi delle centinaia di lingue disponibili su JW.org. L'elenco delle lingue disponibili viene aggiornato dinamicamente; tutto quello che devi fare è selezionare quella che vuoi.
 
-Inoltre, lo stesso M³ è stato tradotto in 15 lingue e oltre, da molti volontari; puoi quindi configurare la lingua che desideri venga visualizzata nell'interfaccia di M³.
+In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
 Questa app è fatta con amore e un po' di tempo libero. Divertiti!
 
