@@ -28,7 +28,7 @@ Für reine **Videokonferenz-**Zusammenkünfte ermöglicht die integrierte MP4-Ko
 
 **Ja!** Medien für Zusammenkünfte von Zeugen Jehovas können automatisch in jeder der Hunderten von Sprachen, die auf JW.ORG verfügbar sind, heruntergeladen werden. Die Liste der verfügbaren Sprachen wird dynamisch aktualisiert - einfach die gewünschte Sprache auswählen.
 
-Darüber hinaus ist M³ selbst bereits von Freiwilligen in 15 Sprachen übersetzt worden und es kommen weitere hinzu; somit kann die Anzeigesprache von M³ konfiguriert werden.
+In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
 Diese Anwendung wurde mit Liebe und etwas freier Zeit erstellt. Viel Freude damit!
 
