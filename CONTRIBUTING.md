@@ -40,8 +40,8 @@ The documentation website will automatically be updated when changes are pushed 
 
 If you want to add a new language to the application, you will need to do the following:
 
-- Copy the [English locales folder](./locales/en) and rename it to the language code of the language you want to add.
-- For each file in the new locales folder, change the `site.data.en` to `site.data.[language code]` (e.g. `site.data.de` for German).
+- Add the language in Crowdin and make sure the language code is the same as the one defined in the `langs.json` file.
+- For post in Crowdin that has screenshots, change the `site.data.en` to `site.data.[language code]` (e.g. `site.data.de` for German).
 - In the `locales/[language code]/index.md` file, also change the `permalink: /en/` to `permalink: /[language code]/`.
 - Then, in the root [index.html](./index.html), add the new language code to the `available` array
 - Finally, in the [config.yml](./_config.yml) file, add a new scope to the defaults property, in the following format:
