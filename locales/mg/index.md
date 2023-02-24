@@ -28,7 +28,7 @@ As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion f
 
 **Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
 
-In addition, M³ itself has been translated into 15 languages and counting, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
 This app is made with love and a bit of spare time. Enjoy!
 
