@@ -197,7 +197,6 @@
   "webdavFolder": "Carpeta de sincronización de la congregación",
   "webdavFolderUp": "Mover carpeta hacia arriba",
   "window": "Ventana móvil",
-  "zoomAutomateAudio": "Automatiza el audio (usa audio del participante de Zoom en lugar del audio del anfitrión)",
   "zoomAutoRename": "Renombra automáticamente los asistentes de Zoom",
   "zoomAutoRenameFormat": "Nombre actual=Nuevo nombre",
   "zoomAutoStartMeeting": "Ejecuta automáticamente las acciones de inicio de reunión",
