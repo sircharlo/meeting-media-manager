@@ -197,7 +197,6 @@
   "webdavFolder": "Dossier de l'assemblée locale",
   "webdavFolderUp": "Se déplacer un répertoire plus haut",
   "window": "Fenêtre déplaçable",
-  "zoomAutomateAudio": "Automatiser l'audio (utilise l'audio du participant Zoom au lieu de l'audio de l'hôte)",
   "zoomAutoRename": "Renommer automatiquement certains participants Zoom",
   "zoomAutoRenameFormat": "Ancien nom=Nouveau nom",
   "zoomAutoStartMeeting": "Exécuter automatiquement les actions de début de réunion",

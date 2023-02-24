@@ -197,7 +197,6 @@
   "webdavFolder": "Папка для збору",
   "webdavFolderUp": "Перейти вверх на одну папку",
   "window": "Пересувне вікно",
-  "zoomAutomateAudio": "Automate audio (uses Zoom participant audio instead of host audio)",
   "zoomAutoRename": "Automatically rename Zoom participants",
   "zoomAutoRenameFormat": "Old Name=New Name",
   "zoomAutoStartMeeting": "Automatically perform start meeting actions",
