@@ -28,7 +28,7 @@ Quant aux réunions de l'assemblée locale **à distance**, entièrement par Zoo
 
 **Oui !** Les médias pour les réunions des Témoins de Jéhovah peuvent être téléchargés automatiquement dans n'importe laquelle des centaines de langues disponibles sur JW.org. La liste des langues disponibles est mise à jour automatiquement ; il vous suffit de sélectionner celle que vous voulez.
 
-De plus, l'appli M³ elle-même a été traduite en plus de 15 langues, par de nombreux bénévoles ; vous pouvez donc configurer la langue que vous souhaitez voir affichée dans l'interface de M³.
+In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
 Cette appli a été faite avec amour et un peu de temps libre. Profitez !
 
