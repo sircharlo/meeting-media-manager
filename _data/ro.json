@@ -6,8 +6,8 @@
   "shared": {
     "explanation": "Explanation",
     "option": "Option",
-    "optionsApp": "Application setup",
-    "optionsCongSync": "Congregation sync setup",
+    "optionsApp": "Configurarea aplicației",
+    "optionsCongSync": "Configurare sincronizare congregație",
     "optionsMedia": "Configurare materiale media",
     "optionsMeetings": "Configurare întrunire",
     "password": "Parolă",
