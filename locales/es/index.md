@@ -28,7 +28,7 @@ Para las reuniones de Zoom de congregación totalmente **remotas**, la función 
 
 **¡Sí!** Los medios para las reuniones de los Testigos de Jehová se pueden descargar automáticamente en cualquiera de los cientos de idiomas disponibles en JW.org. La lista de idiomas disponibles se actualiza dinámicamente; todo lo que necesita hacer es seleccionar cuál desea.
 
-In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Además, M³ ha sido traducido a cada vez más idiomas, por muchos voluntarios; por lo tanto, puede configurar el idioma que le gustaría que se muestre en la interfaz de M³.
 
 Esta aplicación está hecha con amor y un poco de tiempo libre. ¡Que la disfruten!
 
