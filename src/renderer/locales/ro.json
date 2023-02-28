@@ -30,7 +30,7 @@
   "enableObs": "Activați modul de compatibilitate OBS Studio <em>(necesită obs-websocket)</em>",
   "enablePp": "Activați scurtăturile de tastatură în timpul redării media (pentru utilizarea cu o telecomandă USB, de exemplu)",
   "enableSubtitles": "Activați subtitrările pentru materialele video",
-  "enableVlcPlaylistCreation": "Creează liste de redare pentru utilizare cu <em>VLC</em>",
+  "enableVlcPlaylistCreation": "Creeați liste de redare pentru utilizare cu <em>VLC</em>",
   "enableZoom": "Activați integrarea Zoom",
   "error": "Eroare",
   "errorAdditionalMedia": "A apărut o eroare la importarea materialelor media. Vă rugăm contactați organizatorul conferinței.",
