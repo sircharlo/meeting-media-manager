@@ -2626,9 +2626,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/types@npm:^2.16.0":
-  version: 2.16.1
-  resolution: "@nuxt/types@npm:2.16.1"
+"@nuxt/types@npm:^2.16.2":
+  version: 2.16.2
+  resolution: "@nuxt/types@npm:2.16.2"
   dependencies:
     "@types/babel__core": 7.20.0
     "@types/compression": 1.7.2
@@ -2640,12 +2640,12 @@ __metadata:
     "@types/node": ^16
     "@types/optimize-css-assets-webpack-plugin": 5.0.5
     "@types/pug": 2.0.6
-    "@types/serve-static": 1.15.0
+    "@types/serve-static": 1.15.1
     "@types/terser-webpack-plugin": 4.2.1
     "@types/webpack": 4.41.33
     "@types/webpack-bundle-analyzer": 3.9.5
     "@types/webpack-hot-middleware": 2.25.5
-  checksum: a9ce120e4073a339037735a09f43a66cbba06a77fc916095b4ab3a2b692e5b8245db39e998a05b33b2a4052ac5337ebf840df2b918cc6037296fd2732b6ecbb9
+  checksum: bf6b465b449f32c88a1be1756028dadc5054bc0f28594dba9796444418bcc87560226d36be6cfc9e9e645e353646c499d3e18ef7f0695d00de2ed90f9eea8fe5
   languageName: node
   linkType: hard
 
@@ -3532,23 +3532,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/serve-static@npm:*":
+"@types/serve-static@npm:*, @types/serve-static@npm:1.15.1":
   version: 1.15.1
   resolution: "@types/serve-static@npm:1.15.1"
   dependencies:
     "@types/mime": "*"
     "@types/node": "*"
   checksum: 2e078bdc1e458c7dfe69e9faa83cc69194b8896cce57cb745016580543c7ab5af07fdaa8ac1765eb79524208c81017546f66056f44d1204f812d72810613de36
-  languageName: node
-  linkType: hard
-
-"@types/serve-static@npm:1.15.0":
-  version: 1.15.0
-  resolution: "@types/serve-static@npm:1.15.0"
-  dependencies:
-    "@types/mime": "*"
-    "@types/node": "*"
-  checksum: b6ac93d471fb0f53ddcac1f9b67572a09cd62806f7db5855244b28f6f421139626f24799392566e97d1ffc61b12f9de7f30380c39fcae3c8a161fe161d44edf2
   languageName: node
   linkType: hard
 
@@ -10602,7 +10592,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": ^6.3.0
     "@fortawesome/free-solid-svg-icons": ^6.3.0
     "@fortawesome/vue-fontawesome": latest-2
-    "@nuxt/types": ^2.16.0
+    "@nuxt/types": ^2.16.2
     "@nuxt/typescript-build": ^2.1.0
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
