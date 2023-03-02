@@ -12,6 +12,7 @@ import {
   JAN_2008,
   MAX_PREFIX_LENGTH,
   NR_OF_KINGDOM_SONGS,
+  BIBLE_READING_PAR_NR,
 } from './../constants/general'
 import {
   MediaFile,
@@ -1414,11 +1415,23 @@ const plugin: Plugin = (
       const isWeDay = $isMeetingDay(day) === 'we'
       const sorted = [...parts.entries()].sort((a, b) => a[0] - b[0])
 
-      sorted.forEach(([, media]) => {
+      let heading = '01'
+      sorted.forEach(([par, media]) => {
+        if (heading === '01' && par > BIBLE_READING_PAR_NR) {
+          heading = '02'
+          i = 1
+        }
         media
           .filter((m) => !m.safeName)
           .forEach((item, j) => {
-            item.safeName = `${(isWeDay ? i + 2 : i)
+            if (heading === '02' && item.pub?.includes('sjj')) {
+              heading = '03'
+              i = 1
+            }
+            item.safeName = `${isWeDay ? '' : heading + '-'}${(isWeDay
+              ? i + 2
+              : i
+            )
               .toString()
               .padStart(2, '0')}-${(j + 1).toString().padStart(2, '0')} -`
             if (!item.congSpecific) {
