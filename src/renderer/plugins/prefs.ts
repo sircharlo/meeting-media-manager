@@ -109,6 +109,10 @@ const schema: Schema<ElectronStore> = {
             type: ['string', 'null'],
             default: PREFS.app.obs.mediaScene,
           },
+          imageScene: {
+            type: ['string', 'null'],
+            default: PREFS.app.obs.imageScene,
+          },
           cameraScene: {
             type: ['string', 'null'],
             default: PREFS.app.obs.cameraScene,

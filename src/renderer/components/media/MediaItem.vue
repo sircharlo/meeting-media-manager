@@ -529,7 +529,10 @@ export default defineComponent({
       // Set OBS scene
       if (this.scene) {
         const mediaScene = this.$getPrefs('app.obs.mediaScene') as string
-        if (mediaScene) {
+        const imageScene = this.$getPrefs('app.obs.imageScene') as string
+        if (imageScene && this.isImage) {
+          await this.$setScene(imageScene)
+        } else if (mediaScene) {
           await this.$setScene(mediaScene)
         } else {
           this.$warn('errorObsMediaScene')
@@ -667,7 +670,7 @@ export default defineComponent({
   border-left: 8px solid orange !important;
 }
 
-.v-progress-linear:not([aria-valuenow="0"]) div {
+.v-progress-linear:not([aria-valuenow='0']) div {
   transition: width 0.5s linear;
 }
 

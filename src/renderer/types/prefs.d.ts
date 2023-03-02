@@ -3,6 +3,7 @@ export interface ObsPrefs {
   port: string | null
   password: string | null
   mediaScene: string | null
+  imageScene: string | null
   cameraScene: string | null
   zoomScene: string | null
   useV4: boolean

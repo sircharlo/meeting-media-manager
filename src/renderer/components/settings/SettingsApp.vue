@@ -190,6 +190,16 @@
         required
       />
       <form-input
+        id="app.obs.imageScene"
+        v-model="app.obs.imageScene"
+        field="select"
+        :items="imageScenes"
+        :label="$t('obsImageScene')"
+        :disabled="cameraScenes.length === 0"
+        :locked="$isLocked('app.obs.imageScene')"
+        clearable
+      />
+      <form-input
         id="app.obs.zoomScene"
         v-model="app.obs.zoomScene"
         field="select"
@@ -303,20 +313,33 @@ export default defineComponent({
     cameraScenes(): string[] {
       return this.scenes.filter(
         (scene) =>
-          scene !== this.app.obs.mediaScene && scene !== this.app.obs.zoomScene
+          scene !== this.app.obs.mediaScene &&
+          scene !== this.app.obs.zoomScene &&
+          scene !== this.app.obs.imageScene
       )
     },
     mediaScenes(): string[] {
       return this.scenes.filter(
         (scene) =>
-          scene !== this.app.obs.cameraScene && scene !== this.app.obs.zoomScene
+          scene !== this.app.obs.cameraScene &&
+          scene !== this.app.obs.zoomScene &&
+          scene !== this.app.obs.imageScene
+      )
+    },
+    imageScenes(): string[] {
+      return this.scenes.filter(
+        (scene) =>
+          scene !== this.app.obs.cameraScene &&
+          scene !== this.app.obs.mediaScene &&
+          scene !== this.app.obs.zoomScene
       )
     },
     zoomScenes(): string[] {
       const scenes = this.scenes.filter(
         (scene) =>
           scene !== this.app.obs.cameraScene &&
-          scene !== this.app.obs.mediaScene
+          scene !== this.app.obs.mediaScene &&
+          scene !== this.app.obs.imageScene
       )
       if (this.app.obs.zoomScene && !scenes.includes(this.app.obs.zoomScene)) {
         scenes.push(this.app.obs.zoomScene)
