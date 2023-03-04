@@ -563,7 +563,7 @@ if (gotTheLock) {
   })
   autoUpdater.on('update-available', (info) => {
     if (platform() === 'darwin') {
-      win?.webContents.send('macUpdate')
+      win?.webContents.send('macUpdate', info.version)
     } else {
       win?.webContents.send('notifyUser', [
         'updateDownloading',
