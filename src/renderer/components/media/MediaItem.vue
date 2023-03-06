@@ -289,7 +289,7 @@ export default defineComponent({
         this.streamingFile?.safeName ?? basename(this.src)
       ).split(
         new RegExp(
-          `^((?:\\d{1,2}-?){0,2})[ -]*(${this.$translate(
+          `^((?:\\d{1,2}-?){0,3})[ -]*(${this.$translate(
             'song'
           )} (\\d+)[ -]*){0,1}(${this.$translate(
             'paragraph'
@@ -667,7 +667,7 @@ export default defineComponent({
   border-left: 8px solid orange !important;
 }
 
-.v-progress-linear:not([aria-valuenow="0"]) div {
+.v-progress-linear:not([aria-valuenow='0']) div {
   transition: width 0.5s linear;
 }
 

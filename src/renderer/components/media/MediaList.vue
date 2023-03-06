@@ -226,8 +226,7 @@ import { basename, join } from 'upath'
 import draggable from 'vuedraggable'
 // eslint-disable-next-line import/named
 import { readFileSync } from 'fs-extra'
-import { VideoFile, MeetingFile } from '~/types'
-import { BIBLE_READING_PAR_NR } from '~/constants/general'
+import { VideoFile } from '~/types'
 
 type MediaItem = {
   id: string
@@ -311,12 +310,6 @@ export default defineComponent({
       if (this.zoomIntegration) otherElements += ZOOM_BAR
       return `max-height: ${this.windowHeight - otherElements}px`
     },
-    meetings(): Map<string, Map<number, MeetingFile[]>> {
-      return this.$store.state.media.meetings as Map<
-        string,
-        Map<number, MeetingFile[]>
-      >
-    },
     wtTitle(): string {
       const file = this.$findOne(join(this.$mediaPath(), this.date, '*.title'))
       return file ? `${basename(file, '.title')}` : 'Watchtower'
@@ -333,52 +326,13 @@ export default defineComponent({
       )
     },
     firstApplyItem(): number {
-      const meetingMap = this.meetings.get(this.date)
-      if (meetingMap) {
-        const firstApplyPar = [...meetingMap.keys()]
-          .sort((a, b) => a - b)
-          .find((key) => key > BIBLE_READING_PAR_NR) as number
-        const firstApplyItems = meetingMap.get(firstApplyPar)
-        if (firstApplyItems && firstApplyItems[0]?.folder) {
-          const index = this.mediaItems.findIndex(
-            (item) => item.path === this.$mediaPath(firstApplyItems[0])
-          )
-          if (index > 0) return index
-        }
-      }
-
-      if (this.$getPrefs('media.excludeTh')) {
-        return (
-          this.mediaItems.findIndex((item) =>
-            basename(item.path).startsWith('02')
-          ) +
-          this.mediaItems.filter((item) => basename(item.path).startsWith('02'))
-            .length
-        )
-      }
-
-      return (
-        this.mediaItems
-          .slice(this.firstMwbSong + 1)
-          .findIndex((item) => /- \w+ \d{1,2} - /.test(basename(item.path))) +
-        this.firstMwbSong +
-        2
-      )
-    },
-    firstMwbSong(): number {
       return this.mediaItems.findIndex((item) =>
-        basename(item.path).includes(` - ${this.$translate('song')} `)
+        basename(item.path).startsWith('02')
       )
     },
     secondMwbSong(): number {
-      return (
-        this.mediaItems
-          .slice(this.firstMwbSong + 1)
-          .findIndex((item) =>
-            basename(item.path).includes(` - ${this.$translate('song')} `)
-          ) +
-        this.firstMwbSong +
-        1
+      return this.mediaItems.findIndex((item) =>
+        basename(item.path).startsWith('03')
       )
     },
   },
@@ -407,10 +361,10 @@ export default defineComponent({
       this.wtItems = val.slice(this.firstWtSong)
       this.treasureItems = val.slice(
         0,
-        Math.min(this.firstApplyItem, this.secondMwbSong)
+        this.firstApplyItem === -1 ? this.secondMwbSong : this.firstApplyItem
       )
       this.livingItems = val.slice(this.secondMwbSong)
-      if (this.firstApplyItem >= this.secondMwbSong) {
+      if (this.firstApplyItem === -1) {
         this.applyItems = []
       } else {
         this.applyItems = val.slice(this.firstApplyItem, this.secondMwbSong)
