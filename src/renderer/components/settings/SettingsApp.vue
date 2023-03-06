@@ -206,6 +206,7 @@
       id="app.zoom.enable"
       v-model="app.zoom.enable"
       field="switch"
+      explanation="enableZoomExplain"
       :locked="$isLocked('app.zoom.enable')"
     >
       <template #label>
