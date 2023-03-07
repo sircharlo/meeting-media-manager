@@ -26,10 +26,10 @@ Ami a teljesen **online** gyülekezeti Zoom összejöveteleket illeti, az M³ be
 
 ### Az M³ az én nyelvemen is működik?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
+**Igen!** A Jehova Tanúi összejöveteleinek médiaanyagai automatikusan letölthetőek a JW.org oldalon elérhető több száz nyelv bármelyikén. A rendelkezésre álló nyelvek listája dinamikusan frissül; Önnek csak annyit kell tennie, hogy kiválasztja a kívánt nyelvet.
 
-In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Ráadásul magát az M³ programot is több nyelvre fordították le, sok önkéntes segítségével; ezért beállíthatja, hogy milyen nyelven szeretné, hogy megjelenjen az M³ felülete.
 
-This app is made with love and a bit of spare time. Enjoy!
+Ez az alkalmazás szeretettel és egy kis szabadidővel készült. Élvezze!
 
 ### Képernyőképek
