@@ -451,7 +451,7 @@ const plugin: Plugin = (
 
   inject('isImage', (filepath: string) => {
     if (!filepath) return false
-    return ['jpg', 'png', 'gif', 'bmp', 'jpeg', 'svg'].includes(
+    return ['jpg', 'png', 'gif', 'bmp', 'jfif', 'jpeg', 'svg'].includes(
       extname(filepath).slice(1).toLowerCase()
     )
   })
