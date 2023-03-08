@@ -32,7 +32,7 @@
   "enableSubtitles": "Enable subtitles for videos",
   "enableVlcPlaylistCreation": "Create playlists for use with <em>VLC</em>",
   "enableZoom": "Enable Zoom integration",
-  "enableZoomExplain": "Zoom integration is a work in progress. When enabled, it will toggle the microphone, video and allow to unmute option before and after meetings.",
+  "enableZoomExplain": "Zoom integration is a work in progress. When enabled, it will toggle the microphone, video and allow to unmute option before and after meetings. Test it before implementing it at the Kingdom Hall.",
   "error": "Error",
   "errorAdditionalMedia": "An error occurred while importing media. Please contact your videoconference organizer.",
   "errorAdditionalMediaList": "An error occurred while listing media. Please try again later or contact your videoconference organizer.",
