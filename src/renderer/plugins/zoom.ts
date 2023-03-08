@@ -108,9 +108,13 @@ const plugin: Plugin = (
     const client = store.state.zoom.client as typeof EmbeddedClient | null
     if (!client) return
 
+    const spotlights = store.state.zoom.spotlights as number[]
     const openParticipants = client
       .getAttendeeslist()
-      .filter((p) => !p.isHost && !p.isCoHost && !p.muted)
+      .filter(
+        (p) =>
+          !p.isHost && !p.isCoHost && !p.muted && !spotlights.includes(p.userId)
+      )
     openParticipants.forEach((p) => {
       toggleMic(socket, true, p.userId)
       lowerHand(socket, p.userId)
