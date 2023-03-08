@@ -185,6 +185,9 @@ export default defineComponent({
           spotlights.forEach((person) => {
             this.$toggleSpotlight(this.zoomSocket(), true, person)
           })
+          if (this.mediaVisible) {
+            ipcRenderer.send('toggleMediaWindowFocus')
+          }
         }
       }
 
