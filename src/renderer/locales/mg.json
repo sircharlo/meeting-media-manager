@@ -38,7 +38,7 @@
   "errorBadOutputPath": "Misy tarehimarika tsy mety ny soratra nampidirinao. Azafady, ataovy azo antoka hoe tsy misy an'ireto ny soratra:",
   "errorDestExists": "Efa misy io \"fichier\" na \"dossier\" io:",
   "errorDownload": "Nisy olana amin'ny fakàna an'ireto:",
-  "errorDownloadSubs": "An error occurred while trying to download subtitles for the following file:",
+  "errorDownloadSubs": "Nisy olana amin'ny fakàna ny \"Sous-titre\" amin'ireto:",
   "errorExtractFromJWPUB": "An error occurred while trying to extract media from the following JWPUB file:",
   "errorForcedSettingsEnforce": "Nisy olana amin'ny firafitry ny fiangonana. Azafady, resaho ireo rahalahy miandraikitra ny video conference.",
   "errorGetCongMedia": "Nisy olana nitranga teo am-pakàna ny Sary/Video'ny fiangonana. Azafady, hamarino ny firafitry ny fandrindrana ny fiangonanao na mifandraisa amin'ny mpikarakara ny video conference.",
