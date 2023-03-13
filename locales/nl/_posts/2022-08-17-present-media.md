@@ -62,7 +62,9 @@ Als je OBS Studio v27 of ouder hebt, moet je de [obs-websocket](https://github.c
 
 In de instellingen van OBS, onder `Algemeen` > `System Tray`, vink alle checkboxen aan. Onder `Output` > `Streaming`, zet een hardware encoder aan als er een beschikbaar is. Onder `Video` > `Base (Canvas) Resolution` en `Output (Scaled) Resolution`, kies `1280x720`, en onder `Downscale Filter`, kies `Bilinear`.
 
-Zet ten minste 2 scenes op: een voor de media (`Window Capture` of `Display Capture` met de muis cursor uitgeschakeld en het juiste scherm geselecteerd), en een voor het podiumbeeld (`Video Capture Device` met de camera van de zaal geselecteerd). Je kan zo veel scenes maken als je maar nodig hebt, met een andere camera stand of ingezoomd bijvoorbeeld (spreker, studieleider met lezer, demonstratie, etc.).
+Zet ten minste 2 scenes op: een voor de media (`Window Capture` of `Display Capture` met de muis cursor uitgeschakeld en het juiste scherm geselecteerd), en een voor het podiumbeeld (`Video Capture Device` met de camera van de zaal geselecteerd). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. Je kan zo veel scenes maken als je maar nodig hebt, met een andere camera stand of ingezoomd bijvoorbeeld (spreker, studieleider met lezer, demonstratie, etc.).
+
+Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
 
 Voeg een snelkoppeling van OBS Studio toe met de `--startvirtualcam` parameter, in de opstart folder van Windows om te zorgen dat OBS Studio automatisch opstart zodra de gebruiker inlogt.
 

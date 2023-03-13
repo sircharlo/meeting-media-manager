@@ -62,7 +62,9 @@ Ha OBS Studio v27 vagy régebbi verzióval rendelkezik, telepítenie kell az [ob
 
 Az OBS beállításaiban az `Általános` > `Értesítési terület` alatt pipálja ki az összes jelölőnégyzetet. A `Kimenet` > `Közvetítés` mezőben engedélyezze a hardveres kódolót, ha elérhető. A `Videó` > `Alap (vászon) felbontás` és a `Kimeneti (skálázott) felbontás` menüpontban válassza az `1280x720`-as felbontást, a `Leskálázási szűrő menüpontban` pedig a `Bilineáris` opciót.
 
-Állítson be legalább 2 jelenetet: egyet a média megjelenítéséhez (`Ablak felvétele` vagy `Kijelző felvétele` az egérkurzor kikapcsolásával és a megfelelő ablakcím/monitor kiválasztásával), és egyet a színpadi nézethez (`Videófelvevő eszköz` a KT kamera kiválasztásával). Annyi jelenetet adhat hozzá, amennyit csak akar, a kamera beállításával, nagyításával és vágásával, amennyire szükséges (nézet a pulpitusról, nézet az előadótól és az olvasótól, nézet az asztalról stb.).
+Állítson be legalább 2 jelenetet: egyet a média megjelenítéséhez (`Ablak felvétele` vagy `Kijelző felvétele` az egérkurzor kikapcsolásával és a megfelelő ablakcím/monitor kiválasztásával), és egyet a színpadi nézethez (`Videófelvevő eszköz` a KT kamera kiválasztásával). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. Annyi jelenetet adhat hozzá, amennyit csak akar, a kamera beállításával, nagyításával és vágásával, amennyire szükséges (nézet a pulpitusról, nézet az előadótól és az olvasótól, nézet az asztalról stb.).
+
+Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
 
 Adjon hozzá egy parancsikont az OBS Studio-hoz a `--startvirtualcam` paraméterrel a Windows felhasználói profil Indítópult mappájához, hogy az OBS Studio automatikusan elinduljon, amikor a felhasználó bejelentkezik.
 

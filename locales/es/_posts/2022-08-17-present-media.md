@@ -62,7 +62,9 @@ Si tiene OBS Studio v27 o anterior, debe instalar el complemento [obs-websocket]
 
 En la configuración de OBS, en `General` > `Bandeja del sistema`, active todas las casillas de verificación. En `Output` > `Streaming`, habilite un codificador de hardware si está disponible. En `Vídeo` > `Resolución base (lienzo)` y `Resolución de salida (escalada)`, elija `1280x720`, y en `Filtro de reducción de escala`, elija `Bilineal`.
 
-Configure al menos 2 escenas: una para la visualización de contenidos (`Captura de ventana` o `Captura de pantalla` con el cursor del ratón deshabilitado y el título de ventana/monitor apropiado seleccionado), y otra para la vista de la plataforma (`Video Capture Device` con la cámara del Salón del Reino seleccionada). Puede agregar tantas escenas como sea necesario, con la cámara ajustada, ampliada y recortada según sea necesario (vista de atril, vista de conductor y lector, vista de mesa, etc.).
+Configure al menos 2 escenas: una para la visualización de contenidos (`Captura de ventana` o `Captura de pantalla` con el cursor del ratón deshabilitado y el título de ventana/monitor apropiado seleccionado), y otra para la vista de la plataforma (`Video Capture Device` con la cámara del Salón del Reino seleccionada). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. Puede agregar tantas escenas como sea necesario, con la cámara ajustada, ampliada y recortada según sea necesario (vista de atril, vista de conductor y lector, vista de mesa, etc.).
+
+Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
 
 Agregue un acceso directo a OBS Studio, con el parámetro `--startvirtualcam`, a la carpeta de inicio del perfil de usuario de Windows, para garantizar que OBS Studio se inicie automáticamente cuando el usuario inicie sesión.
 
