@@ -128,7 +128,7 @@ import {
 import { faClosedCaptioning as farClosedCaptioning } from '@fortawesome/free-regular-svg-icons'
 import { existsSync } from 'original-fs'
 import { AUDIO_ICON, MS_IN_SEC, VIDEO_ICON } from '~/constants/general'
-import { MeetingFile, VideoFile } from '~/types'
+import { MeetingFile } from '~/types'
 export default defineComponent({
   props: {
     src: {
