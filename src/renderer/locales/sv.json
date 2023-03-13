@@ -116,7 +116,7 @@
   "notAnImage": "Inte en giltig mediafil. Prova igen.",
   "obsCameraScene": "Standard scenvy i OBS Studio",
   "obsMediaScene": "Mediascen i OBS Studio",
-  "obsImageScene": "Optional separate media scene for images",
+  "obsImageScene": "Valfri separat mediascen för bilder",
   "obsRefresh": "Uppdatera OBS-anslutning",
   "obsUseV4": "Använd <em>obs-websocket v4</em>",
   "obsZoomScene": "OBS Studio scen för att visa Zoomdeltagare",
