@@ -62,7 +62,9 @@ If you have OBS Studio v27 or older, you need to install the [obs-websocket](htt
 
 In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
 
-Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
+Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
+
+Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
 
 Lisage OBS Studio otsetee parameetriga `--startvirtualcam` Windowsi kasutajaprofiili käivituskausta tagamaks, et OBS Studio käivitub kasutaja sisselogimisel automaatselt.
 
