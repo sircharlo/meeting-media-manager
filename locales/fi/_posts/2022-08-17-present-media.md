@@ -62,9 +62,9 @@ Jos sinulla on OBS Studio v27 tai vanhempi, sinun täytyy asentaa [obs-websocket
 
 OBS asetuksissa kohdassa `Yleistä` > `Järjestelmän ilmoitusalue`, salli kaikki valintaruudut. Ota `Output` > `Streaming`käyttöön laitteistoenkooderi jos käytettävissä. Kohteena `Video` > `Base (Canvas)` ja `Output (Scaled)`, valitse `1280x720`, ja alle `Alamittakaavan Suodatin`, valitse `Bilinear`.
 
-Määritä vähintään 2 skeneä: yksi mediatiedonäytölle (`Ikkunan kaappaus` tai `Näyttö` kun hiiren kursori on poistettu käytöstä ja sopiva ikkunan otsikko/näyttö valittu), ja toinen näyttämölle (`Video Capture Laite` salin kamera valittu). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. Voit lisätä niin monta skenea kuin tarvitset, kamera on säädetty, zoomed-in ja rajataan tarpeen mukaan (puhuja ja lukijan näkymä jne.).
+Määritä vähintään 2 skeneä: yksi mediatiedonäytölle (`Ikkunan kaappaus` tai `Näyttö` kun hiiren kursori on poistettu käytöstä ja sopiva ikkunan otsikko/näyttö valittu), ja toinen näyttämölle (`Video Capture Laite` salin kamera valittu). Voit myös lisätä toisen kohtauksen erityisesti kuville, jossa media-ikkuna on näkyvissä yhdessä lavan kanssa kuvassa kuvassa muotona. Voit lisätä niin monta skenea kuin tarvitset, kamera on säädetty, zoomed-in ja rajataan tarpeen mukaan (puhuja ja lukijan näkymä jne.).
 
-Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
+Ota käyttöön `Scaling/Aspect Ratio` -suodatin kaikissa `Ikkunan kaappauksissa` tai `Näyttökaappauksessa` jossa `Resoluutio` `Base (Canvas) Resolution`. Näin varmistetaan, että media-ikkuna on aina skaalattu virtuaalikameran tulostustarkkuudella.
 
 Lisää OBS Studion pikakuvake `--startvirtualcam`-parametrilla Windowsin käyttäjäprofiilin Käynnistys-kansioon varmistaaksesi, että OBS Studio käynnistyy automaattisesti, kun käyttäjä kirjautuu sisään.
 
