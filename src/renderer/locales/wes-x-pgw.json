@@ -116,6 +116,7 @@
   "notAnImage": "This picture file get k-leg, e no be valid. Abeg, make you try again.",
   "obsCameraScene": "Default stage view scene for OBS Studio",
   "obsMediaScene": "Media window scene for OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "De use <em>obs-websocket v4</em>",
   "obsZoomScene": "OBS Studio scene to display Zoom participants",
