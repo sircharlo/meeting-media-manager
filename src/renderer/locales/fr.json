@@ -116,6 +116,7 @@
   "notAnImage": "Ceci n'est pas un fichier d'image valide. Veuillez réessayer à nouveau.",
   "obsCameraScene": "Vue de l'estrade configurée dans OBS Studio",
   "obsMediaScene": "Vue de la fenêtre de présentation des médias configurée dans OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Actualiser la connexion OBS",
   "obsUseV4": "Utiliser <em>obs-websocket v4</em>",
   "obsZoomScene": "Scène OBS Studio pour afficher les participants Zoom",
