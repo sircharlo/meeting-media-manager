@@ -62,7 +62,9 @@ Om du har OBS Studio v27 eller äldre, måste du installera [obs-websocket](http
 
 I OBS-inställningarna, under `Allmänt` > `systemfältet`, aktivera alla kryssrutor. Under `Output` > `Streaming`, aktivera en hårdvarukodare om tillgänglig. Under `Video` > `Base (Canvas) resolution` och `Output (Scaled) Resolution`, välj `1280x720`och under `Downscale Filter`väljer du `Bilinear`.
 
-Konfigurera minst 2 scener: en för media display (`Window Capture` eller `Display Capture` med muspekaren inaktiverad och lämplig fönstertitel/bildskärm vald), och en för scenvyn (`Video Capture Device` med RS-kameran vald). Du kan lägga till så många scener som krävs, med kameran justerad, zooma in och beskurna efter behov (talarstol, läsare, bordsvy etc.).
+Konfigurera minst 2 scener: en för media display (`Window Capture` eller `Display Capture` med muspekaren inaktiverad och lämplig fönstertitel/bildskärm vald), och en för scenvyn (`Video Capture Device` med RS-kameran vald). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. Du kan lägga till så många scener som krävs, med kameran justerad, zooma in och beskurna efter behov (talarstol, läsare, bordsvy etc.).
+
+Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
 
 Lägg till en genväg till OBS Studio, med parametern `--startvirtualcam`, till Startup-mappen i Windows användarprofil, för att säkerställa att OBS Studio startar automatiskt när användaren loggar in.
 
