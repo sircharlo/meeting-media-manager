@@ -32,6 +32,7 @@
   "enableSubtitles": "Включить субтитры для мультимедиа",
   "enableVlcPlaylistCreation": "Создать плейлист для использования в <em>VLC</em>",
   "enableZoom": "Включить интеграцию с Zoom",
+  "enableZoomExplain": "This is a work in progress. Please test test it thoroughly before implementing it. When enabled, it will attempt to automate various pre-meeting (mute all, enable the Kingdom Hall's video/audio, disable the option for participants to unmute themselves), in-meeting (select participants to spotlight and unmute them, or to mute them, lower their hand and remove the spotlight) and post-meeting (disable the Kingdom Hall's video feed, allow participants to unmute themselves) tasks.",
   "error": "Ошибка",
   "errorAdditionalMedia": "Произошла ошибка при импорте мультимедиа. Свяжитесь с организатором видеоконференции.",
   "errorAdditionalMediaList": "Произошла ошибка при составлении списка мультимедиа. Повторите попытку позже или свяжитесь с организатором видеоконференции.",

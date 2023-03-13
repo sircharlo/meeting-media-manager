@@ -32,6 +32,7 @@
   "enableSubtitles": "Activer les sous-titres pour les vidéos",
   "enableVlcPlaylistCreation": "Créer des listes de lecture (playlists) à utiliser avec <em>VLC</em>",
   "enableZoom": "Activer l'intégration avec Zoom",
+  "enableZoomExplain": "This is a work in progress. Please test test it thoroughly before implementing it. When enabled, it will attempt to automate various pre-meeting (mute all, enable the Kingdom Hall's video/audio, disable the option for participants to unmute themselves), in-meeting (select participants to spotlight and unmute them, or to mute them, lower their hand and remove the spotlight) and post-meeting (disable the Kingdom Hall's video feed, allow participants to unmute themselves) tasks.",
   "error": "Erreur",
   "errorAdditionalMedia": "Une erreur est survenue lors de l'importation des médias. Veuillez contacter votre organisateur des vidéoconférences.",
   "errorAdditionalMediaList": "Une erreur est survenue lors de l'énumération des médias. Veuillez réessayer plus tard ou contacter votre organisateur des vidéoconférences.",

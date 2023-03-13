@@ -32,6 +32,7 @@
   "enableSubtitles": "Hampiseho ny soratra eny ambany",
   "enableVlcPlaylistCreation": "Mamorona \"playlists\" hoan'ny <em>VLC</em>",
   "enableZoom": "Andefa ny fifandraisana amin'ny Zoom",
+  "enableZoomExplain": "This is a work in progress. Please test test it thoroughly before implementing it. When enabled, it will attempt to automate various pre-meeting (mute all, enable the Kingdom Hall's video/audio, disable the option for participants to unmute themselves), in-meeting (select participants to spotlight and unmute them, or to mute them, lower their hand and remove the spotlight) and post-meeting (disable the Kingdom Hall's video feed, allow participants to unmute themselves) tasks.",
   "error": "Olana",
   "errorAdditionalMedia": "Misy olana eo fampidirana ny Sary/Video. Miresaha amin'ny mpiandraikitrin'ny \"video conférence\".",
   "errorAdditionalMediaList": "Misy olana amin'ny fampisehoana ny listrin'ny Sary/Video. Avereno indray azafady na miresaha amin'ny mpiandraikitrin'ny \"video conférence\".",

@@ -32,6 +32,7 @@
   "enableSubtitles": "Show subtitles for videos",
   "enableVlcPlaylistCreation": "Create playlist for use with <em>VLC</em>",
   "enableZoom": "Enable Zoom integration",
+  "enableZoomExplain": "This is a work in progress. Please test test it thoroughly before implementing it. When enabled, it will attempt to automate various pre-meeting (mute all, enable the Kingdom Hall's video/audio, disable the option for participants to unmute themselves), in-meeting (select participants to spotlight and unmute them, or to mute them, lower their hand and remove the spotlight) and post-meeting (disable the Kingdom Hall's video feed, allow participants to unmute themselves) tasks.",
   "error": "Error",
   "errorAdditionalMedia": "Something go wrong when we try load picture or video. Abeg, make you speak to the person wey de organize wuna video conference.",
   "errorAdditionalMediaList": "Something go wrong when we try show all picture and videos. Abeg, make you try again later, or speak to the person wey de organize wuna video conference.",

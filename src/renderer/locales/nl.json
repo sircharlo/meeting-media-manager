@@ -32,6 +32,7 @@
   "enableSubtitles": "Zet ondertiteling aan voor video's",
   "enableVlcPlaylistCreation": "Maak afspeellijsten om te gebruiken met <em>VLC</em>",
   "enableZoom": "Zet Zoom integratie aan",
+  "enableZoomExplain": "Dit is een werk in uitvoering. Test het alsjeblieft grondig voordat je het gebruikt. Wanneer ingeschakeld, zal het proberen om verschillende handelingen (iedereen dempen, video/audio in- en uitschakelen, selecteer deelnemers om te spotlighten en microfoon aan te zetten, of om ze te dempen, hun hand te verlagen en de spotlight te verwijderen) zowel voor, tijdens als na de vergadering uit te voeren.",
   "error": "Error",
   "errorAdditionalMedia": "Er ging iets fout tijdens het importeren van media. Neem alsjeblieft contact op met jouw videoconferentie organisator.",
   "errorAdditionalMediaList": "Er ging iets fout tijdens het laten zien van media. Probeer het later opnieuw of neem contact op met jouw videoconferentie organisator.",
