@@ -32,7 +32,7 @@
   "enableSubtitles": "Videountertitel aktivieren",
   "enableVlcPlaylistCreation": "Wiedergabelisten für <em>VLC</em> erstellen",
   "enableZoom": "Zoom-Integration aktivieren",
-  "enableZoomExplain": "This is a work in progress. Please test test it thoroughly before implementing it. When enabled, it will attempt to automate various pre-meeting (mute all, enable the Kingdom Hall's video/audio, disable the option for participants to unmute themselves), in-meeting (select participants to spotlight and unmute them, or to mute them, lower their hand and remove the spotlight) and post-meeting (disable the Kingdom Hall's video feed, allow participants to unmute themselves) tasks.",
+  "enableZoomExplain": "Diese Funktionalität befindet sich aktuell noch in Bearbeitung. Bitte teste sie gründlich bevor vor der Benutzung. Wenn aktiviert, wird versucht, verschiedene Aufgaben zu automatisieren (alle stumm schalten, Video/Audio des Königreichssaals aktivieren, die Option für die Teilnehmer zum Entstummen deaktivieren), während der Versammlung (wähle Teilnehmer aus, um sie in den Spotlight zu setzen und zu entstummen oder stummzuschalten, die Meldung herunterzunehmen oder entfernen den Spotlight zu entfernen) und nach der Zusammenkunft (deaktivieren der Kamerea des Königreichssaals , erlauben der Teilnehmern sich selbst zu entstummen).",
   "error": "Fehler",
   "errorAdditionalMedia": "Beim Medienimport ist ein Fehler aufgetreten. Bitte den Videokonferenz-Organisator kontaktieren.",
   "errorAdditionalMediaList": "Beim Auflisten von Medien ist ein Fehler aufgetreten. Bitte später erneut versuchen oder den Videokonferenz-Organisator kontaktieren.",
