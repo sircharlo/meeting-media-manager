@@ -32,6 +32,7 @@
   "enableSubtitles": "Feliratok bekapcsolása a videókhoz",
   "enableVlcPlaylistCreation": "Hozzon létre lejátszási listákat a <em>VLC-vel</em> történő használatra",
   "enableZoom": "Zoom integráció bekapcsolása",
+  "enableZoomExplain": "This is a work in progress. Please test test it thoroughly before implementing it. When enabled, it will attempt to automate various pre-meeting (mute all, enable the Kingdom Hall's video/audio, disable the option for participants to unmute themselves), in-meeting (select participants to spotlight and unmute them, or to mute them, lower their hand and remove the spotlight) and post-meeting (disable the Kingdom Hall's video feed, allow participants to unmute themselves) tasks.",
   "error": "Hiba",
   "errorAdditionalMedia": "Hiba történt a média importálása közben. Kérjük, lépjen kapcsolatba a videokonferencia szervezőjével.",
   "errorAdditionalMediaList": "Hiba történt az összejövetel médiatartalmának lekérése közben. Kérjük, próbálja újra később, vagy forduljon a videokonferencia szervezőjéhez.",
