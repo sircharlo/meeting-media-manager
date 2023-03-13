@@ -116,6 +116,7 @@
   "notAnImage": "Це недійсний файл зображення. Будь ласка спробуйте ще раз.",
   "obsCameraScene": "Вигляд сцени, налаштований в OBS Studio",
   "obsMediaScene": "Вигляд вікна медіа-презентації, налаштований в OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Оновити з'єднання з OBS",
   "obsUseV4": "Використовувати <em>obs-websocket v4</em>",
   "obsZoomScene": "Сцена OBS Studio для відображення учасників у Zoom",

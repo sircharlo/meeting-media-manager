@@ -116,6 +116,7 @@
   "notAnImage": "See ei ole kehtiv pildifail. Palun proovi uuesti.",
   "obsCameraScene": "Vaikimisi lavavaate stseen OBS Studios",
   "obsMediaScene": "Meediaakna stseen OBS Studios",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Värskenda OBS ühendust",
   "obsUseV4": "Kasutage <em>obs-websocket v4</em>",
   "obsZoomScene": "OBS Studio meedia stseen, mida näidata Zoomi osalejatele",

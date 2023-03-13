@@ -116,6 +116,7 @@
   "notAnImage": "Este no es un archivo de ilustración válido. Inténtalo de nuevo.",
   "obsCameraScene": "Escena de vista predeterminada en OBS Studio",
   "obsMediaScene": "Escena de ventana multimedia en OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Actualizar conexión con OBS",
   "obsUseV4": "Utilice <em>obs-websocket v4</em>",
   "obsZoomScene": "Escena de OBS Studio para mostrar a los asistentes por Zoom",

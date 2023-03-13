@@ -116,6 +116,7 @@
   "notAnImage": "Questo non è un file immagine valido. Per favore riprova.",
   "obsCameraScene": "Scena di visualizzazione del palco predefinita in OBS Studio",
   "obsMediaScene": "Scena della finestra multimediale in OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Aggiorna connessione OBS",
   "obsUseV4": "Usa <em>obs-websocket v4</em>",
   "obsZoomScene": "Scena di OBS Studio per visualizzare i partecipanti Zoom",

@@ -116,6 +116,7 @@
   "notAnImage": "Esse ficheiro não é uma imagem válida. Por favor, tente novamente.",
   "obsCameraScene": "Nome da cena de câmera do OBS Studio",
   "obsMediaScene": "Nome da cena de mídia do OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "Use o <em>obs-websocket v4</em>",
   "obsZoomScene": "Cena do OBS Studio para exibir os participantes pelo Zoom",
