@@ -116,6 +116,7 @@
   "notAnImage": "Nepodporovaný typ obrázku. Skús prosím znovu.",
   "obsCameraScene": "Prednastavená scéna zobrazenia v OBS Studio",
   "obsMediaScene": "Scéna mediálneho okna v OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "Použi <em>obs-websocket v4</em>",
   "obsZoomScene": "Scéna OBS Studio na zobrazenie účastníkov Zoomu",
