@@ -123,6 +123,7 @@ export default defineComponent({
           return 'enableObs'
         case 'app.obs.cameraScene':
         case 'app.obs.mediaScene':
+        case 'app.obs.imageScene':
           return `obs${lastKey.charAt(0).toUpperCase() + lastKey.slice(1)}`
         case 'media.autoPlayFirstTime':
           return 'minutesBeforeMeeting'

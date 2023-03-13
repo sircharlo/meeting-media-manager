@@ -529,7 +529,10 @@ export default defineComponent({
       // Set OBS scene
       if (this.scene) {
         const mediaScene = this.$getPrefs('app.obs.mediaScene') as string
-        if (mediaScene) {
+        const imageScene = this.$getPrefs('app.obs.imageScene') as string
+        if (imageScene && this.isImage) {
+          await this.$setScene(imageScene)
+        } else if (mediaScene) {
           await this.$setScene(mediaScene)
         } else {
           this.$warn('errorObsMediaScene')
@@ -551,7 +554,10 @@ export default defineComponent({
       if (this.scene) {
         if (this.paused) {
           const mediaScene = this.$getPrefs('app.obs.mediaScene') as string
-          if (mediaScene) {
+          const imageScene = this.$getPrefs('app.obs.imageScene') as string
+          if (imageScene && this.isImage) {
+            await this.$setScene(imageScene)
+          } else if (mediaScene) {
             await this.$setScene(mediaScene)
           } else {
             this.$warn('errorObsMediaScene')
