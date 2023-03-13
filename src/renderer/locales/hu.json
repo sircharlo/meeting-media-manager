@@ -116,6 +116,7 @@
   "notAnImage": "Ez nem érvényes fájl formátum. Kérlek próbáld újra.",
   "obsCameraScene": "Alapértelmezett színpadkép jelenet az OBS Stúdióban",
   "obsMediaScene": "Médiaablak jelenet az OBS Stúdióban",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "OBS kapcsolat frissítése",
   "obsUseV4": "Használja az <em>obs-websocket v4</em>-et",
   "obsZoomScene": "OBS Studio jelenet a Zoom résztvevők megjelenítéséhez",
