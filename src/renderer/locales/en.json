@@ -32,7 +32,7 @@
   "enableSubtitles": "Enable subtitles for videos",
   "enableVlcPlaylistCreation": "Create playlists for use with <em>VLC</em>",
   "enableZoom": "Enable Zoom integration",
-  "enableZoomExplain": "Note: The Zoom integration is a work in progress. Please test this feature out thoroughly at the Kingdom Hall before implementing it for use during live meetings. When enabled, it will attempt to automate various pre-meeting (mute all participants, enable the Kingdom Hall's video and audio feed, disable the option for participants to unmute themselves), in-meeting (select one or more participants to spotlight and unmute them, or to mute them, lower their hand and remove the spotlight) and post-meeting (disable the Kingdom Hall's video feed, allow participants to unmute themselves) tasks.",
+  "enableZoomExplain": "This is a work in progress. Please test test it thoroughly before implementing it. When enabled, it will attempt to automate various pre-meeting (mute all, enable the Kingdom Hall's video/audio, disable the option for participants to unmute themselves), in-meeting (select participants to spotlight and unmute them, or to mute them, lower their hand and remove the spotlight) and post-meeting (disable the Kingdom Hall's video feed, allow participants to unmute themselves) tasks.",
   "error": "Error",
   "errorAdditionalMedia": "An error occurred while importing media. Please contact your videoconference organizer.",
   "errorAdditionalMediaList": "An error occurred while listing media. Please try again later or contact your videoconference organizer.",
