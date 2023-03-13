@@ -116,6 +116,7 @@
   "notAnImage": "Aceasta nu este o imagine validă. Vă rugăm să încercați din nou.",
   "obsCameraScene": "Scena implicită din OBS Studio",
   "obsMediaScene": "Scena din OBS Studio pentru materiale media",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Actualizare conexiune OBS",
   "obsUseV4": "Folosiți <em>obs-websocket v4</em>",
   "obsZoomScene": "Scena din OBS Studio pentru a afișa participanții Zoom",

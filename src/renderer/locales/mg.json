@@ -116,6 +116,7 @@
   "notAnImage": "Tsy mety ity sary ity. Misafidiana hafa azafady.",
   "obsCameraScene": "Default stage view scene in OBS Studio",
   "obsMediaScene": "Media window scene in OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "Ampiasa <em>obs-websocket v4</em>",
   "obsZoomScene": "OBS Studio scene to display Zoom participants",
