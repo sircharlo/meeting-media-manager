@@ -101,9 +101,9 @@
           absolute
           tile
           depressed
-          :style="`left: 123px; ${ccTop ? 'top' : 'bottom'}: 4px`"
+          :style="`left: 123px; ${ccToggle ? 'top' : 'bottom'}: 4px`"
           v-on="on"
-          @click="ccTop = !ccTop"
+          @click="ccToggle = !ccToggle"
         >
           <font-awesome-icon :icon="ccIcon" />
         </v-btn>
@@ -158,7 +158,7 @@ export default defineComponent({
       clickedOnce: false,
       changeTime: false,
       ccAvailable: false,
-      ccTop: false,
+      ccToggle: false,
       audioIcon: AUDIO_ICON,
       videoIcon: VIDEO_ICON,
       original: {
@@ -231,9 +231,6 @@ export default defineComponent({
     isShortVideo(): boolean {
       return this.duration === '00:00:00' || this.duration === '00:00'
     },
-    date(): string {
-      return this.$route.query.date as string
-    },
     limits(): { start: string; end: string } {
       return {
         start: this.format(this.$dayjs.duration(this.clippedMs.start, 'ms')),
@@ -287,20 +284,8 @@ export default defineComponent({
     playing(val: boolean) {
       if (val) {
         if (this.ccAvailable) {
-          let top = false
-          const meetingMap = this.meetings.get(this.date)
-          if (meetingMap) {
-            const values = [...meetingMap.values()]
-            values.forEach((media) => {
-              const file = media.find(
-                (m) => m.safeName === basename(this.src)
-              ) as VideoFile
-              if (file) top = file.subtitled
-            })
-          }
-          this.ccTop = top || this.ccTop
           setTimeout(() => {
-            this.toggleSubtitles(this.ccEnable, this.ccTop)
+            this.toggleSubtitles(this.ccEnable, this.ccToggle)
           }, MS_IN_SEC)
         }
         ipcRenderer.on('videoProgress', (_e, progress) => {
@@ -320,14 +305,14 @@ export default defineComponent({
         ipcRenderer.removeAllListeners('videoProgress')
       }
     },
-    ccTop(val: boolean) {
+    ccToggle() {
       if (this.playing) {
-        this.toggleSubtitles(this.ccEnable, val)
+        this.toggleSubtitles(this.ccEnable, true)
       }
     },
     ccEnable(val: boolean) {
       if (this.playing) {
-        this.toggleSubtitles(val, this.ccTop)
+        this.toggleSubtitles(val, this.ccToggle)
       }
     },
     tempClipped(val: { start: string; end: string }): void {
@@ -376,8 +361,8 @@ export default defineComponent({
         !!this.$getPrefs('media.enableSubtitles') &&
         existsSync(changeExt(this.src, '.vtt'))
     },
-    toggleSubtitles(enabled: boolean, top = false) {
-      ipcRenderer.send('toggleSubtitles', { enabled, top })
+    toggleSubtitles(enabled: boolean, toggle = false) {
+      ipcRenderer.send('toggleSubtitles', { enabled, toggle })
     },
     format(duration: Duration) {
       if (duration.hours() > 0) {

@@ -159,7 +159,7 @@ export default defineComponent({
     })
     ipcRenderer.on(
       'toggleSubtitles',
-      (_e, { enabled, top }: { enabled: boolean; top: boolean }) => {
+      (_e, { enabled, toggle }: { enabled: boolean; toggle: boolean }) => {
         this.withSubtitles = enabled
         const video = document.querySelector('video') as HTMLVideoElement
         if (video && video.textTracks.length > 0) {
@@ -168,9 +168,9 @@ export default defineComponent({
           if (cues) {
             for (let i = 0; i < cues.length; i++) {
               const cue = cues[i]
-              if (cue) {
+              if (cue && toggle) {
                 // @ts-ignore
-                cue.line = top ? 5 : 100 - 10
+                cue.line = Math.abs(cue.line - 100 ) // top ? 5 : 100 - 10
               }
             }
           }
