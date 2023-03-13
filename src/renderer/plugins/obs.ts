@@ -110,7 +110,8 @@ const plugin: Plugin = (
               if (
                 newScene.sceneName &&
                 newScene.sceneName !== $getPrefs('app.obs.mediaScene') &&
-                newScene.sceneName !== $getPrefs('app.obs.zoomScene')
+                newScene.sceneName !== $getPrefs('app.obs.zoomScene') &&
+                newScene.sceneName !== $getPrefs('app.obs.imageScene')
               ) {
                 store.commit('obs/setCurrentScene', newScene.sceneName)
               }

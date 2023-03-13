@@ -117,6 +117,7 @@
   "notAnImage": "This is not a valid image file. Please try again.",
   "obsCameraScene": "Default stage view scene in OBS Studio",
   "obsMediaScene": "Media window scene in OBS Studio",
+  "obsImageScene": "Optional separate media scene for images",
   "obsRefresh": "Refresh OBS connection",
   "obsUseV4": "Use <em>obs-websocket v4</em>",
   "obsZoomScene": "OBS Studio scene to display Zoom participants",

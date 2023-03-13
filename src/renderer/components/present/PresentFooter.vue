@@ -201,7 +201,8 @@ export default defineComponent({
           (scene) =>
             !!scene &&
             scene !== this.$getPrefs('app.obs.mediaScene') &&
-            scene !== this.$getPrefs('app.obs.zoomScene')
+            scene !== this.$getPrefs('app.obs.zoomScene') &&
+            scene !== this.$getPrefs('app.obs.imageScene')
         )
         .map((scene, i) => {
           let shortcut = `Alt+${i + 1}`
