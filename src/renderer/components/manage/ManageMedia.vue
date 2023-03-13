@@ -247,7 +247,6 @@ export default defineComponent({
       e.stopPropagation()
     },
     handleDrop(e: DragEvent) {
-      console.log(JSON.stringify(e.dataTransfer?.files))
       this.stopEvent(e)
       this.dragging = false
       this.files = Array.from(e.dataTransfer?.files ?? []).map((file) => {
@@ -256,8 +255,6 @@ export default defineComponent({
           filepath: file.path,
         }
       })
-
-      console.log(this.files)
 
       // If one jwpub was dropped, set media type to jwpub
       if (

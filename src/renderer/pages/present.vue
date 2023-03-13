@@ -205,7 +205,7 @@ export default defineComponent({
           !window.sockets.includes(this)
         ) {
           window.sockets.push(this)
-          console.log('sockets', window.sockets)
+          console.debug('sockets', window.sockets)
         }
         return originalSend.call(this, ...args)
       }
