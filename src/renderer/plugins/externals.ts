@@ -8,14 +8,18 @@ import {
   faChevronLeft,
   faChevronRight,
   faChevronDown,
+  faSquareCheck,
   faCaretDown,
   faTimesCircle,
 } from '@fortawesome/free-solid-svg-icons'
+import { faSquare } from '@fortawesome/free-regular-svg-icons'
 
 // Font-Awesome
 config.autoAddCss = false
 library.add(
   faChevronDown,
+  faSquare,
+  faSquareCheck,
   faChevronLeft,
   faChevronRight,
   faCaretDown,

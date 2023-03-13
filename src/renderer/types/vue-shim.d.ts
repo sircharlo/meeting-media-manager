@@ -27,6 +27,7 @@ interface CustomProps {
     password: string,
     dir = '/'
   ) => Promise<string | null>
+  $connectZoom: () => Promise<void>
   $convertToMP4: (
     baseDate: Dayjs,
     now: Dayjs,
@@ -146,6 +147,7 @@ interface CustomProps {
   $mediaPath: (file?: MeetingFile) => string | undefined
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
   $move: (src: string, dest: string, overwrite = false) => void
+  $muteParticipants: (socket: WebSocket) => void
   $notify: (
     message: string,
     props?: {
@@ -171,6 +173,11 @@ interface CustomProps {
     action = 'rename',
     type = 'string'
   ) => void
+  $renameParticipant: (
+    socket: WebSocket | null,
+    name: string,
+    user: { id: number; name?: string }
+  ) => Promise<void>
   $renameAll: (
     dir: string,
     search: string,
@@ -195,6 +202,8 @@ interface CustomProps {
     domain = 'mediaWindow'
   ) => Promise<void>
   $shuffleMusic: (stop = false, immediately = false) => Promise<void>
+  $startMeeting: (socket: WebSocket) => Promise<void>
+  $stopMeeting: (socket: WebSocket) => void
   $storePath: () => string | undefined
   $success: (
     message: string,
@@ -217,6 +226,16 @@ interface CustomProps {
   ) => Promise<void>
   $syncLocalRecurringMedia: (baseDate: Dayjs) => void
   $toggleMediaWindow: (action?: string) => Promise<void>
+  $toggleMic: (
+    socket: WebSocket,
+    mute: boolean,
+    userID?: number
+  ) => Promise<void>
+  $toggleSpotlight: (
+    socket: WebSocket,
+    enable: boolean,
+    userID?: number
+  ) => void
   $translate: (word: string, fallback?: string) => string
   $unsetPrefs: (key: keyof ElectronStore) => void
   $unsetShortcut: (shortcut: string) => void
@@ -253,4 +272,10 @@ declare module '@nuxt/types' {
 
 declare module '*.vue' {
   export default Vue
+}
+
+export declare global {
+  interface Window {
+    sockets: WebSocket[]
+  }
 }

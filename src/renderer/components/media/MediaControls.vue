@@ -1,6 +1,37 @@
 <!-- Media controls for the presentation mode -->
 <template>
   <v-row>
+    <v-dialog
+      v-if="zoomIntegration"
+      :value="!!participant"
+      max-width="700px"
+      @click:outside="participant = null"
+    >
+      <v-card>
+        <v-row no-gutters class="pa-2">
+          <v-col cols="12">
+            <form-input v-model="newName" hide-details="auto" clearable />
+          </v-col>
+          <v-col>
+            <v-checkbox v-model="saveRename" :label="$t('zoomSaveRename')" />
+          </v-col>
+          <v-col cols="auto" class="d-flex align-center">
+            <v-btn color="error" @click="participant = null">
+              {{ $t('cancel') }}
+            </v-btn>
+            <v-btn
+              color="primary"
+              class="ml-2"
+              :loading="renaming"
+              aria-label="save"
+              @click="rename(participant, newName)"
+            >
+              <font-awesome-icon :icon="faCheck" />
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
     <v-dialog :value="manageMedia" fullscreen persistent>
       <v-sheet :color="isDark ? '#121212' : '#ffffff'" class="fill-height">
         <v-container fluid fill-height>
@@ -29,6 +60,7 @@
       @refresh="getMedia()"
       @manage-media="manageMedia = true"
     />
+    <present-zoom-bar v-if="zoomIntegration" @rename="atRename" />
     <loading-icon v-if="loading" />
     <media-list
       v-else
@@ -51,6 +83,8 @@
 import { defineComponent } from 'vue'
 import { basename, dirname, join } from 'upath'
 import { ipcRenderer } from 'electron'
+import { Participant } from '@zoomus/websdk/embedded'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
 import { LocalFile } from '~/types'
 type MediaItem = {
@@ -88,12 +122,19 @@ export default defineComponent({
       addSong: false,
       ccEnable: true,
       showPrefix: false,
+      newName: '',
+      renaming: false,
+      saveRename: true,
+      participant: null as null | Participant,
       items: [] as MediaItem[],
     }
   },
   computed: {
     date(): string {
       return this.$route.query.date as string
+    },
+    faCheck() {
+      return faCheck
     },
     mediaVisible(): boolean {
       return this.$store.state.present.mediaScreenVisible
@@ -113,6 +154,9 @@ export default defineComponent({
     scene(): string {
       return this.$store.state.obs.currentScene as string
     },
+    zoomIntegration(): boolean {
+      return !!this.$store.state.zoom.client
+    },
     zoomScene(): string | null {
       return this.$getPrefs('app.obs.zoomScene') as string | null
     },
@@ -124,6 +168,28 @@ export default defineComponent({
         item.stop = false
         item.deactivate = false
       })
+
+      const spotlights = this.$store.state.zoom.spotlights as number[]
+      if (this.zoomIntegration && !this.zoomPart && spotlights.length > 0) {
+        this.$toggleSpotlight(this.zoomSocket(), false)
+        if (val) {
+          this.$toggleSpotlight(
+            this.zoomSocket(),
+            true,
+            this.$store.state.zoom.hostID as number
+          )
+          spotlights.forEach((person) => {
+            this.$toggleSpotlight(this.zoomSocket(), true, person)
+          })
+        } else {
+          spotlights.forEach((person) => {
+            this.$toggleSpotlight(this.zoomSocket(), true, person)
+          })
+          if (this.mediaVisible) {
+            ipcRenderer.send('toggleMediaWindowFocus')
+          }
+        }
+      }
 
       if (!val && this.scene) {
         await this.$setScene(
@@ -166,6 +232,30 @@ export default defineComponent({
     }
   },
   methods: {
+    zoomSocket(): WebSocket {
+      return window.sockets[window.sockets.length - 1]
+    },
+    atRename(participant: Participant) {
+      this.saveRename = true
+      this.participant = participant
+      this.newName = participant.displayName ?? ''
+    },
+    async rename(participant: Participant, name = '') {
+      this.renaming = true
+      await this.$renameParticipant(this.zoomSocket(), name, {
+        id: participant.userId,
+        name: participant.displayName,
+      })
+      if (this.saveRename) {
+        const renames = this.$getPrefs('app.zoom.autoRename') as string[]
+        if (!renames.find((r) => r.split('=')[0] === participant.displayName)) {
+          renames.push(`${participant.displayName}=${name}`)
+          this.$setPrefs('app.zoom.autoRename', renames)
+        }
+      }
+      this.participant = null
+      this.renaming = false
+    },
     resetDeactivate(index: number) {
       const item = this.items[index]
       item.deactivate = false

@@ -14,6 +14,7 @@ import {
   CongFile,
   MeetingFile,
   ElectronStore,
+  ZoomPrefs,
 } from '~/types'
 import {
   BITS_IN_BYTE,
@@ -416,6 +417,10 @@ const plugin: Plugin = (
           prefs.app.obs = Object.assign(
             $getPrefs('app.obs') as ObsPrefs,
             prefs.app.obs ?? {}
+          )
+          prefs.app.zoom = Object.assign(
+            ($getPrefs('app.zoom') as ZoomPrefs) ?? {},
+            prefs.app.zoom ?? {}
           )
           const newPrefs = {
             app: Object.assign($getPrefs('app') as AppPrefs, prefs.app ?? {}),

@@ -125,6 +125,16 @@ export default defineComponent({
         case 'app.obs.mediaScene':
         case 'app.obs.imageScene':
           return `obs${lastKey.charAt(0).toUpperCase() + lastKey.slice(1)}`
+        case 'app.zoom.enable':
+          return 'enableZoom'
+        case 'app.zoom.autoStartMeeting':
+        case 'app.zoom.autoStartTime':
+        case 'app.zoom.autoRename':
+        case 'app.zoom.hideComponent':
+        case 'app.zoom.id':
+        case 'app.zoom.name':
+        case 'app.zoom.spotlight':
+          return `zoom${lastKey.charAt(0).toUpperCase() + lastKey.slice(1)}`
         case 'media.autoPlayFirstTime':
           return 'minutesBeforeMeeting'
         case 'media.enableMp4Conversion':

@@ -6,9 +6,11 @@
       </v-card-title>
 
       <v-card-text>
-        {{ $t(content) }}
+        {{ $t(description) }}
       </v-card-text>
-
+      <v-card-text>
+        <slot />
+      </v-card-text>
       <v-card-actions>
         <v-spacer />
 
@@ -27,7 +29,7 @@
 import { defineComponent } from 'vue'
 export default defineComponent({
   props: {
-    content: {
+    description: {
       type: String,
       required: true,
     },

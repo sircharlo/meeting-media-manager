@@ -213,6 +213,105 @@
     </template>
     <v-divider class="mb-6" />
     <form-input
+      id="app.zoom.enable"
+      v-model="app.zoom.enable"
+      field="switch"
+      explanation="enableZoomExplain"
+      :locked="$isLocked('app.zoom.enable')"
+    >
+      <template #label>
+        <span v-html="`${$t('enableZoom')} [BETA]`" />
+      </template>
+    </form-input>
+    <template v-if="app.zoom.enable">
+      <form-input
+        id="app.zoom.name"
+        v-model="app.zoom.name"
+        :label="$t('zoomName')"
+        :locked="$isLocked('app.zoom.name')"
+        required
+      />
+      <form-input
+        id="app.zoom.id"
+        v-model="app.zoom.id"
+        :label="$t('zoomId')"
+        :locked="$isLocked('app.zoom.id')"
+        required
+      />
+      <form-input
+        id="app.zoom.password"
+        v-model="app.zoom.password"
+        field="password"
+        :label="$t('password')"
+        :locked="$isLocked('app.zoom.password')"
+        required
+      />
+      <form-input
+        id="app.zoom.spotlight"
+        v-model="app.zoom.spotlight"
+        field="switch"
+        :locked="$isLocked('app.zoom.spotlight')"
+      >
+        <template #label>
+          <span v-html="$t('zoomSpotlight')" />
+        </template>
+      </form-input>
+      <form-input
+        id="app.zoom.hideComponent"
+        v-model="app.zoom.hideComponent"
+        field="switch"
+        :locked="$isLocked('app.zoom.hideComponent')"
+      >
+        <template #label>
+          <span v-html="$t('zoomHideComponent')" />
+        </template>
+      </form-input>
+      <form-input
+        id="app.zoom.autoStartMeeting"
+        v-model="app.zoom.autoStartMeeting"
+        field="switch"
+        :locked="$isLocked('app.zoom.autoStartMeeting')"
+      >
+        <template #label>
+          <span v-html="$t('zoomAutoStartMeeting')" />
+        </template>
+      </form-input>
+      <form-input
+        v-if="app.zoom.autoStartMeeting"
+        id="app.zoom.autoStartTime"
+        v-model="app.zoom.autoStartTime"
+        field="slider"
+        :min="1"
+        :max="10"
+        :group-label="autoStartMeeting"
+        :locked="$isLocked('app.zoom.autoStartTime')"
+      />
+      <v-col class="d-flex pa-0 pb-2 align-center">
+        <form-input
+          id="app.zoom.autoRename"
+          v-model="newAutoRename"
+          :label="$t('zoomAutoRename')"
+          :placeholder="$t('zoomAutoRenameFormat')"
+          hide-details="auto"
+        />
+        <v-btn class="ml-2" color="primary" @click="addAutoRename()">
+          <font-awesome-icon :icon="faAdd" size="lg" />
+        </v-btn>
+      </v-col>
+      <v-col>
+        <v-chip
+          v-for="(name, i) in app.zoom.autoRename"
+          :key="name"
+          close
+          class="mb-2 mr-2"
+          @click:close="removeAutoRename(i)"
+        >
+          {{ name }}
+        </v-chip>
+      </v-col>
+    </template>
+    <v-divider class="mb-6" />
+    <form-input
       id="app.betaUpdates"
       v-model="app.betaUpdates"
       field="switch"
@@ -245,7 +344,7 @@ import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
 import { ipcRenderer } from 'electron'
 import { LocaleObject } from '@nuxtjs/i18n'
-import { faGlobe } from '@fortawesome/free-solid-svg-icons'
+import { faGlobe, faAdd } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { AppPrefs, ElectronStore } from '~/types'
 import { DateFormat } from '~/types/prefs'
@@ -268,6 +367,7 @@ export default defineComponent({
     return {
       valid: true,
       mounted: false,
+      newAutoRename: '',
       oldName: PREFS.app.congregationName,
       app: {
         ...PREFS.app,
@@ -286,6 +386,9 @@ export default defineComponent({
     faGlobe() {
       return faGlobe
     },
+    faAdd() {
+      return faAdd
+    },
     dateFormats(): { label: string; value: DateFormat }[] {
       return dateFormats.map((val) => {
         return {
@@ -296,6 +399,15 @@ export default defineComponent({
     },
     isLinux() {
       return platform() === 'linux'
+    },
+    autoStartMeeting(): string {
+      return (this.$t('minutesBeforeMeeting') as string).replace(
+        '<span>XX</span>',
+        (
+          this.app.zoom.autoStartTime ??
+          (PREFS.app.zoom.autoStartTime as number)
+        ).toString()
+      )
     },
     obsComplete(): boolean {
       return (
@@ -537,6 +649,14 @@ export default defineComponent({
     }
   },
   methods: {
+    addAutoRename() {
+      if (!this.newAutoRename) return
+      this.app.zoom.autoRename.push(this.newAutoRename)
+      this.newAutoRename = ''
+    },
+    removeAutoRename(index: number) {
+      this.app.zoom.autoRename.splice(index, 1)
+    },
     isValidPort(port: string | null) {
       if (!port) return false
 

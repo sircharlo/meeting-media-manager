@@ -299,10 +299,15 @@ export default defineComponent({
     date(): string {
       return this.$route.query.date as string
     },
+    zoomIntegration(): boolean {
+      return !!this.$store.state.zoom.client
+    },
     listHeight(): string {
       const TOP_BAR = 64
       const FOOTER = 72
-      const otherElements = TOP_BAR + FOOTER
+      const ZOOM_BAR = 56
+      let otherElements = TOP_BAR + FOOTER
+      if (this.zoomIntegration) otherElements += ZOOM_BAR
       return `max-height: ${this.windowHeight - otherElements}px`
     },
     wtTitle(): string {

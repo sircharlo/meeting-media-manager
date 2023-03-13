@@ -6,13 +6,26 @@
   >
     <confirm-dialog
       v-model="dialog"
-      content="obsZoomSceneActivate"
+      description="obsZoomSceneActivate"
       @cancel="dialog = false"
       @confirm="
         dialog = false
         zoomPart = true
       "
-    />
+    >
+      <form-input
+        v-if="!!zoomClient"
+        v-model="participant"
+        field="autocomplete"
+        :loading="allParticipants.length === 0"
+        :label="$t('unmuteParticipant')"
+        :items="allParticipants"
+        item-text="displayName"
+        item-value="userId"
+        return-object
+      />
+    </confirm-dialog>
+    <div id="zoomMeeting" />
     <media-controls
       v-if="date"
       :media-active="mediaActive"
@@ -31,6 +44,7 @@
         :zoom-part="zoomPart"
         :window-width="windowWidth"
         @zoom-part="toggleZoomPart()"
+        @clear-participant="participant = null"
       />
     </v-row>
   </v-container>
@@ -39,12 +53,15 @@
 import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
-import { ObsPrefs } from '~/types'
+import zoomSDK, { EmbeddedClient, Participant } from '@zoomus/websdk/embedded'
+import { ObsPrefs, ZoomPrefs } from '~/types'
+import { MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
   name: 'PresentPage',
   data() {
     return {
       dialog: false,
+      participant: null as null | Participant,
       obsLoading: false,
       zoomPart: false,
       mediaActive: false,
@@ -52,6 +69,7 @@ export default defineComponent({
       firstChoice: true,
       windowWidth: 0,
       windowHeight: 0,
+      zoomInterval: null as null | NodeJS.Timer,
     }
   },
   head(): MetaInfo {
@@ -82,8 +100,28 @@ export default defineComponent({
     date(): string {
       return this.$route.query.date as string
     },
+    coHost(): boolean {
+      return this.$store.state.zoom.coHost as boolean
+    },
+    zoomClient(): typeof EmbeddedClient {
+      return this.$store.state.zoom.client as typeof EmbeddedClient
+    },
+    zoomStarted(): boolean {
+      return this.$store.state.zoom.started as boolean
+    },
+    allParticipants(): Participant[] {
+      const participants = this.$store.state.zoom.participants as Participant[]
+      return participants.filter(
+        (p) => !p.bHold && p.displayName !== this.$getPrefs('app.zoom.name')
+      )
+    },
   },
   watch: {
+    coHost(val: boolean) {
+      if (val) {
+        this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
+      }
+    },
     date(val: string) {
       if (val) {
         this.firstChoice = false
@@ -115,10 +153,18 @@ export default defineComponent({
       }
     },
   },
-  beforeDestroy() {
+  async beforeDestroy() {
     window.removeEventListener('resize', this.setWindowSize)
     ipcRenderer.removeAllListeners('showingMedia')
     this.$unsetShortcuts('presentMode')
+    if (this.zoomClient) {
+      this.$stopMeeting(this.zoomSocket())
+      await this.zoomClient.leaveMeeting()
+      this.$store.commit('zoom/clear')
+      this.$store.commit('notify/deleteByMessage', 'errorNoSocket')
+      this.$store.commit('notify/deleteByMessage', 'errorNotCoHost')
+      this.$store.commit('notify/deleteByMessage', 'remindNeedCoHost')
+    }
   },
   async mounted() {
     this.setWindowSize()
@@ -130,6 +176,72 @@ export default defineComponent({
 
     if (this.obsEnabled) {
       await this.initOBS()
+    }
+
+    const zoom = this.$getPrefs('app.zoom') as ZoomPrefs
+    if (zoom?.enable && zoom.name && zoom.id && zoom.password) {
+      const client = zoomSDK.createClient()
+      this.$store.commit('zoom/setClient', client)
+      try {
+        await client
+          .init({
+            zoomAppRoot: document.getElementById('zoomMeeting') ?? undefined,
+            language: this.$i18n.localeProperties.iso,
+          })
+          .catch(() => {
+            console.debug('Caught init promise error')
+          })
+      } catch (e: unknown) {
+        console.debug('Caught init error')
+      }
+      await this.$connectZoom()
+      const originalSend = WebSocket.prototype.send
+      window.sockets = []
+      WebSocket.prototype.send = function (...args) {
+        console.debug('send:', args)
+        if (
+          this.url.includes('zoom') &&
+          this.url.includes('dn2') &&
+          !window.sockets.includes(this)
+        ) {
+          window.sockets.push(this)
+          console.log('sockets', window.sockets)
+        }
+        return originalSend.call(this, ...args)
+      }
+
+      const mwDay = this.$getMwDay()
+      const weDay = this.$getPrefs('meeting.weDay') as number
+      const today = this.$dayjs().day() === 0 ? 6 : this.$dayjs().day() - 1 // Day is 0 indexed and starts with Sunday
+      if (
+        this.$getPrefs('app.zoom.autoStartMeeting') &&
+        (today === mwDay || today === weDay)
+      ) {
+        const startTime = this.$getPrefs(
+          `meeting.${today === mwDay ? 'mw' : 'we'}StartTime`
+        ) as string
+        const meetingStarts = startTime?.split(':') ?? ['0', '0']
+        const timeToStop = this.$dayjs()
+          .hour(+meetingStarts[0])
+          .minute(+meetingStarts[1])
+          .second(0)
+          .millisecond(0)
+          .subtract(this.$getPrefs('app.zoom.autoStartTime') as number, 'm')
+
+        this.zoomInterval = setInterval(async () => {
+          const timeLeft = this.$dayjs
+            .duration(timeToStop.diff(this.$dayjs()), 'ms')
+            .asSeconds()
+          if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
+            if (!this.zoomStarted) {
+              await this.$startMeeting(this.zoomSocket())
+            }
+            clearInterval(this.zoomInterval as NodeJS.Timer)
+          } else if (timeLeft < 0) {
+            clearInterval(this.zoomInterval as NodeJS.Timer)
+          }
+        }, MS_IN_SEC)
+      }
     }
 
     if (this.$store.state.obs.connected) {
@@ -152,8 +264,17 @@ export default defineComponent({
         this.$warn('errorPpEnable')
       }
     }
+    setTimeout(() => {
+      if (window.sockets && window.sockets.length > 0) {
+        console.debug('Found socket')
+        this.$store.commit('zoom/setWebSocket', this.zoomSocket())
+      }
+    }, MS_IN_SEC)
   },
   methods: {
+    zoomSocket(): WebSocket {
+      return window.sockets[window.sockets.length - 1]
+    },
     async initOBS() {
       this.obsLoading = true
       await this.$getScenes()
@@ -173,3 +294,10 @@ export default defineComponent({
   },
 })
 </script>
+<style lang="scss">
+#zoomMeeting {
+  width: 0;
+  height: 0;
+  z-index: 999;
+}
+</style>

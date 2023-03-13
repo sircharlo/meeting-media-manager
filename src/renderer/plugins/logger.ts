@@ -74,8 +74,10 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
                     if (key === 'localOutputPath') value = '***'
                     if (key === 'customCachePath') value = '***'
                     if (key === 'password' || key === 'port') value = '***'
-                    if (key === 'obs') {
+                    if (key === 'obs' || key === 'zoom') {
                       if (value.password) value.password = '***'
+                      if (value.id) value.id = '***'
+                      if (value.autoRename) value.autoRename = '***'
                     }
                   }
                   return [key, value]

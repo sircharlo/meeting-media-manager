@@ -127,6 +127,52 @@ const schema: Schema<ElectronStore> = {
           },
         },
       },
+      zoom: {
+        type: 'object',
+        properties: {
+          enable: {
+            type: 'boolean',
+            default: PREFS.app.zoom.enable,
+          },
+          name: {
+            type: ['string', 'null'],
+            default: PREFS.app.zoom.name,
+          },
+          id: {
+            type: ['string', 'null'],
+            default: PREFS.app.zoom.id,
+          },
+          password: {
+            type: ['string', 'null'],
+            default: PREFS.app.obs.password,
+          },
+          spotlight: {
+            type: 'boolean',
+            default: PREFS.app.zoom.spotlight,
+          },
+          hideComponent: {
+            type: 'boolean',
+            default: PREFS.app.zoom.hideComponent,
+          },
+          autoRename: {
+            type: 'array',
+            default: PREFS.app.zoom.autoRename,
+            items: {
+              type: 'string',
+            },
+          },
+          autoStartMeeting: {
+            type: 'boolean',
+            default: PREFS.app.zoom.autoStartMeeting,
+          },
+          autoStartTime: {
+            type: 'number',
+            minimum: 1,
+            maximum: 10,
+            default: PREFS.app.zoom.autoStartTime,
+          },
+        },
+      },
     },
   },
   cong: {
@@ -603,6 +649,7 @@ const plugin: Plugin = ({ $sentry }, inject) => {
     $sentry.setContext('prefs', {
       ...prefs,
       obs: prefs.app?.obs,
+      zoom: prefs.app?.zoom,
     })
   })
 

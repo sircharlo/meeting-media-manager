@@ -74,6 +74,8 @@ jobs:
           echo SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }} >> .env
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
           echo SENTRY_DISABLE=1 >> .env
+          echo ZOOM_SDK_KEY=${{ secrets.ZOOM_SDK_KEY }} >> .env
+          echo ZOOM_SIGNATURE_ENDPOINT=${{ secrets.ZOOM_SIGNATURE_ENDPOINT }} >> .env
 
       - name: Prepare Build
         run: |
@@ -150,6 +152,8 @@ jobs:
           echo SENTRY_ORG=${{ secrets.SENTRY_ORG }} >> .env
           echo SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }} >> .env
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
+          echo ZOOM_SDK_KEY=${{ secrets.ZOOM_SDK_KEY }} >> .env
+          echo ZOOM_SIGNATURE_ENDPOINT=${{ secrets.ZOOM_SIGNATURE_ENDPOINT }} >> .env
 
       - name: Upload source maps to Sentry
         if: |
