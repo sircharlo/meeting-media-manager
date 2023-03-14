@@ -62,9 +62,9 @@ Se você tiver o OBS Studio v27 ou anterior, precisará instalar o plugin [obs-w
 
 Nas configurações do OBS, em `Geral` > `Bandeja do sistema`, marque todas as caixas de seleção. Em `Saída` > `Transmissão`, habilite um codificador de hardware, se disponível. Em `Vídeo` > `Resolução de base (canvas)` e `Resolução de saída (escalonada)`, escolha `1280x720` e em `Filtro`, escolha `Bilinear`.
 
-Configure pelo menos 2 cenas: uma para a exibição de mídia (`Captura de janela` ou `Captura de tela` com o cursor do mouse desativado e o título/monitor de janela apropriado selecionado) e uma para a visualização do palco (`Dispositivo de captura de vídeo` com a câmera do Salão do Reino selecionada). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. Você pode adicionar quantas cenas forem necessárias, em diferentes cortes de câmera como (uma cena da tribuna, uma cena do dirigente e leitor, uma cena da mesa, etc.).
+Configure pelo menos 2 cenas: uma para a exibição de mídia (`Captura de janela` ou `Captura de tela` com o cursor do mouse desativado e o título/monitor de janela apropriado selecionado) e uma para a visualização do palco (`Dispositivo de captura de vídeo` com a câmera do Salão do Reino selecionada). Você também pode adicionar outra cena para imagens. Ideal para mostrar a tela de exibição de mídias em tela cheia configurada no OBS e a câmera do Salão do Reino no canto no estilo Picture-in-Picture. Você pode adicionar quantas cenas forem necessárias, em diferentes cortes de câmera como (uma cena da tribuna, uma cena do dirigente e leitor, uma cena da mesa, etc.).
 
-Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
+Adicione um filtro de `Dimensionamento/proporção` na `Captura de janela` ou `Captura de tela` configurada para `Resolução Base (Tela)`. Isso garantirá que a tela de exibição de mídias seja sempre ajustada à resolução de saída da câmera virtual.
 
 Adicione um atalho para o OBS Studio, com o parâmetro `--startvirtualcam`, na pasta Iniciar do perfil de usuário do Windows, para garantir que o OBS Studio seja iniciado automaticamente ao iniciar o computador.
 
@@ -86,7 +86,7 @@ Inicie a reunião Zoom e mova a janela secundária da reunião Zoom para a tela 
 
 Quando a reunião do Zoom estiver sendo exibida na tela externa, abra o M³. A janela de exibição de mídia será aberta automaticamente em cima do Zoom na tela externa. Baixe as mídias, se necessário, e entre no modo de exibição de mídia clicando no botão ▶️ (reproduzir) na tela principal do M³, ou <kbd>Alt D</kbd>.
 
-Ative o vídeo do Salão do Reino (<kbd>Alt V</kbd>) pelo Zoom e destaque o vídeo do Salão do Reino, se necessário, para que os participantes do Zoom vejam a câmera do Salão do Reino. Ative o áudio do Salão do Reino no Zoom (<kbd>Alt A</kbd>). Não deve ser necessário desativar a câmera ou áudio no Zoom durante a reunião. Make sure that "Original sound for musicians" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
+Ative o vídeo do Salão do Reino (<kbd>Alt V</kbd>) pelo Zoom e destaque o vídeo do Salão do Reino, se necessário, para que os participantes do Zoom vejam a câmera do Salão do Reino. Ative o áudio do Salão do Reino no Zoom (<kbd>Alt A</kbd>). Não deve ser necessário desativar a câmera ou áudio no Zoom durante a reunião. Certifique-se de que o "Som original" esteja ativado no Zoom, para garantir a melhor qualidade de áudio.
 
 Inicie a reprodução de cânticos de fundo usando o botão no canto inferior esquerdo, ou <kbd>Alt K</kbd>.
 
