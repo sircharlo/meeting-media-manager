@@ -28,7 +28,7 @@ Quanto às reuniões realizadas **apenas no Zoom**, o recurso de conversão MP4 
 
 **Sim!** Todas as mídias das reuniões podem ser baixadas automaticamente em qualquer uma das centenas de idiomas disponíveis no JW.org. A lista de idiomas disponíveis é sempre atualizada; tudo que você precisa fazer é selecionar qual você quer.
 
-In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Além disso, o M³ foi traduzido em vários idiomas, por muitos voluntários; você pode configurar o idioma que você gostaria de ser exibido na interface do M³.
 
 Este aplicativo foi feito com amor e um pouco de tempo livre. Aproveite!
 
