@@ -368,13 +368,16 @@ export default defineComponent({
         end?: string
       } | null
     ) {
-      if (this.panzoom) this.panzoom.reset()
       this.zoomEnabled = !!media && this.$isImage(media.src)
       this.resizingDone()
       this.blackOverlay.style.opacity = '1'
 
       await new Promise((resolve) => setTimeout(resolve, 4 * 100))
 
+      if (this.panzoom) {
+        this.panzoom.reset({ animate: false })
+        this.scale = 1
+      }
       await this.loadMedia(media)
     },
     resizingNow(width: number, height: number) {
