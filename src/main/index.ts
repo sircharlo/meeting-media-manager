@@ -450,8 +450,8 @@ if (gotTheLock) {
   ipcMain.on('startMediaDisplay', (_e, prefs: ElectronStore) => {
     mediaWin?.webContents.send('startMediaDisplay', prefs)
   })
-  ipcMain.on('zoom', (_e, deltaY: number) => {
-    mediaWin?.webContents.send('zoom', deltaY)
+  ipcMain.on('zoom', (_e, scale: number) => {
+    mediaWin?.webContents.send('zoom', scale)
   })
   ipcMain.on('pan', (_e, coords: Point) => {
     mediaWin?.webContents.send('pan', coords)

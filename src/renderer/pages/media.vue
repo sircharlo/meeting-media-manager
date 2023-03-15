@@ -29,7 +29,6 @@ export default defineComponent({
   layout: 'media',
   data() {
     return {
-      scale: 1,
       zoomEnabled: false,
       withSubtitles: false,
       interval: null as null | number,
@@ -68,24 +67,8 @@ export default defineComponent({
     this.panzoom = Panzoom(this.mediaDisplay, {
       animate: true,
       canvas: true,
-      contain: 'outside',
       cursor: 'default',
-      duration: 2 * MS_IN_SEC,
-      panOnlyWhenZoomed: true,
-      setTransform: (
-        el: HTMLElement,
-        { scale, x, y }: { scale: number; x: number; y: number }
-      ) => {
-        const maxY = (el.clientHeight * scale - window.innerHeight) / 2 / scale
-        const isValidY = y <= maxY && y >= -maxY
-        const validY = isValidY ? y : y > 0 ? maxY : -maxY
-        if (this.panzoom) {
-          this.panzoom.setStyle(
-            'transform',
-            `scale(${scale}) translate(${x}px, ${validY}px)`
-          )
-        }
-      },
+      duration: 1 * MS_IN_SEC,
     })
     // IpcRenderer listeners
     ipcRenderer.on(
@@ -133,11 +116,11 @@ export default defineComponent({
     ipcRenderer.on('windowResized', () => {
       this.resizingDone()
     })
-    ipcRenderer.on('zoom', (_e, deltaY) => {
-      this.zoom(deltaY)
+    ipcRenderer.on('zoom', (_e, scale) => {
+      this.zoom(scale)
     })
     ipcRenderer.on('resetZoom', () => {
-      if (this.panzoom) this.panzoom.reset()
+      this.panzoom?.reset()
     })
     ipcRenderer.on('pan', (_e, { x, y }: { x: number; y: number }) => {
       if (this.panzoom) {
@@ -223,17 +206,10 @@ export default defineComponent({
     ipcRenderer.removeAllListeners('showMedia')
   },
   methods: {
-    zoom(deltaY: number) {
-      if (!this.panzoom || !this.zoomEnabled) return
-
-      this.scale += (deltaY * -1) / 100
-
-      // Restrict scale
-      // eslint-disable-next-line no-magic-numbers
-      this.scale = Math.min(Math.max(0.125, this.scale), 4)
-      if (this.scale < 1) this.scale = 1
-      this.panzoom.zoom(this.scale)
-      if (this.scale === 1) this.panzoom.reset()
+    zoom(scale: number) {
+      if (!this.panzoom || !this.zoomEnabled) return;
+      // @ts-ignore
+      this.panzoom[scale === 1 ? 'reset' : 'zoom'](Math.max(scale, 1));
     },
     async loadMedia(
       media: {
@@ -374,10 +350,7 @@ export default defineComponent({
 
       await new Promise((resolve) => setTimeout(resolve, 4 * 100))
 
-      if (this.panzoom) {
-        this.panzoom.reset({ animate: false })
-        this.scale = 1
-      }
+      this.panzoom?.reset({ animate: false })
       await this.loadMedia(media)
     },
     resizingNow(width: number, height: number) {

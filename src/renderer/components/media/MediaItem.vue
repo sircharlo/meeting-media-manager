@@ -24,7 +24,7 @@
             vertical-align: middle;
           "
           @click="zoomByClick"
-          @wheel.prevent="zoom"
+          @wheel.prevent="zoomWithWheel"
         />
       </div>
 
@@ -211,7 +211,6 @@ export default defineComponent({
   },
   data() {
     return {
-      scale: 1,
       downloading: false,
       streamDownloaded: false,
       clickedOnce: false,
@@ -420,33 +419,21 @@ export default defineComponent({
     }
 
     if (this.isImage) {
+      const previewEl = document.querySelector(`#${this.id}-preview`) as HTMLElement
       this.panzoom = Panzoom(
-        document.querySelector(`#${this.id}-preview`) as HTMLElement,
+        previewEl,
         {
           animate: true,
           canvas: true,
           contain: 'outside',
           cursor: 'default',
           panOnlyWhenZoomed: true,
-          setTransform: (
-            el: HTMLElement,
-            { scale, x, y }: { scale: number; x: number; y: number }
-          ) => {
-            this.pan({
-              x: x / el.clientWidth,
-              y: y / el.clientHeight,
-            })
-            if (this.panzoom) {
-              this.panzoom.setStyle(
-                'transform',
-                `scale(${scale}) translate(${scale === 1 ? 0 : x}px, ${
-                  scale === 1 ? 0 : y
-                }px)`
-              )
-            }
-          },
         }
       )
+      previewEl.addEventListener('panzoomchange', (event) => {
+        // @ts-ignore
+        ipcRenderer.send('pan', {x: event.detail.x / previewEl.clientWidth, y: event.detail.y / previewEl.clientHeight})
+      })
       this.resetZoom()
     }
   },
@@ -458,20 +445,8 @@ export default defineComponent({
       this.downloading = false
       this.streamDownloaded = existsSync(this.localStreamPath)
     },
-    pan({ x, y }: { x: number; y: number }) {
-      ipcRenderer.send('pan', { x, y })
-    },
-    zoom(e: WheelEvent) {
-      if (this.active) {
-        ipcRenderer.send('zoom', e.deltaY)
-        this.zoomPreview(e.deltaY)
-      }
-    },
     resetZoom() {
-      if (this.panzoom) {
-        this.scale = 1
-        this.panzoom.zoom(1)
-      }
+      this.panzoom?.reset()
     },
     zoomByClick() {
       if (!this.panzoom || !this.active) return
@@ -484,28 +459,16 @@ export default defineComponent({
       } else {
         this.clickedOnce = false
       }
-
-      let deltaY = 1000
-      if (this.scale < 4) {
-        // eslint-disable-next-line no-magic-numbers
-        deltaY = (-1.5 * this.scale + this.scale) * 100
-      }
-
-      ipcRenderer.send('zoom', deltaY)
-      this.zoomPreview(deltaY)
+      const currentScale = this.panzoom.getScale();
+      const newZoom = currentScale >= 4 ? this.panzoom.reset() : this.panzoom.zoomIn();
+      ipcRenderer.send('zoom', newZoom.scale)
     },
-    zoomPreview(deltaY: number) {
-      if (this.panzoom) {
-        this.scale += (-1 * deltaY) / 100
-
-        // Restrict scale
-        // eslint-disable-next-line no-magic-numbers
-        this.scale = Math.min(Math.max(0.125, this.scale), 4)
-        if (this.scale > 1) {
-          this.panzoom.zoom(this.scale)
-        } else {
-          this.resetZoom()
-        }
+    zoomWithWheel(e: WheelEvent) {
+      if (this.active && this.panzoom) {
+        const newZoom = this.panzoom.zoomWithWheel(e)
+        const previewEl = document.querySelector(`#${this.id}-preview`) as HTMLElement
+        ipcRenderer.send('zoom', newZoom.scale)
+        ipcRenderer.send('pan', {x: newZoom.x / previewEl.clientWidth, y: newZoom. y / previewEl.clientHeight})
       }
     },
     async play(marker?: Marker) {
