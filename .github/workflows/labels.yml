@@ -1,0 +1,14 @@
+name: Add Label
+
+on:
+  pull_request:
+    branches: ['docs']
+
+jobs:
+  add_label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: documentation
