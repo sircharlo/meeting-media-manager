@@ -69,6 +69,7 @@ export default defineComponent({
       canvas: true,
       cursor: 'default',
       duration: 1 * MS_IN_SEC,
+      minScale: 1,
     })
     // IpcRenderer listeners
     ipcRenderer.on(

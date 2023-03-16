@@ -428,6 +428,7 @@ export default defineComponent({
           contain: 'outside',
           cursor: 'default',
           panOnlyWhenZoomed: true,
+          minScale: 1,
         }
       )
       previewEl.addEventListener('panzoomchange', (event) => {
@@ -448,7 +449,7 @@ export default defineComponent({
     resetZoom() {
       this.panzoom?.reset()
     },
-    zoomByClick() {
+    zoomByClick(e: MouseEvent) {
       if (!this.panzoom || !this.active) return
       if (!this.clickedOnce) {
         this.clickedOnce = true
@@ -459,8 +460,11 @@ export default defineComponent({
       } else {
         this.clickedOnce = false
       }
+      const { maxScale = 4, step = 0.3 } = this.panzoom.getOptions();
       const currentScale = this.panzoom.getScale();
-      const newZoom = currentScale >= 4 ? this.panzoom.reset() : this.panzoom.zoomIn();
+      const newZoom = currentScale >= maxScale
+        ? this.panzoom.reset()
+        : this.panzoom.zoomToPoint(currentScale * (1 + step), e);
       ipcRenderer.send('zoom', newZoom.scale)
     },
     zoomWithWheel(e: WheelEvent) {
