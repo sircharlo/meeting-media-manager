@@ -447,7 +447,7 @@ export default defineComponent({
       this.streamDownloaded = existsSync(this.localStreamPath)
     },
     resetZoom() {
-      this.panzoom?.reset()
+      return this.panzoom?.reset({silent: true}) ?? {scale: 1}
     },
     zoomByClick(e: MouseEvent) {
       if (!this.panzoom || !this.active) return
@@ -463,7 +463,7 @@ export default defineComponent({
       const { maxScale = 4, step = 0.3 } = this.panzoom.getOptions();
       const currentScale = this.panzoom.getScale();
       const newZoom = currentScale >= maxScale
-        ? this.panzoom.reset()
+        ? this.resetZoom()
         : this.panzoom.zoomToPoint(currentScale * (1 + step), e);
       ipcRenderer.send('zoom', newZoom.scale)
     },
