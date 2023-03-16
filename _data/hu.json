@@ -24,17 +24,17 @@
     "musicPlaying": "Összejövetel előtti és utáni zenelejátszás"
   },
   "manage-media": {
-    "imgAddSong": "Ének hozzáadása egy nyilvános előadáshoz",
+    "imgAddSong": "Ének felvétele egy nyilvános előadáshoz",
     "imgAddPic": "További képek hozzáadása",
-    "imgImportJWPUB": "Média importálása egy JWPUB fájl adott részéből",
-    "imgPreviewJWPUB": "Média előnézet a JWPUB fájlból importálás előtt",
+    "imgImportJWPUB": "Média importálása egy JWPUB fájl adott szakaszából",
+    "imgPreviewJWPUB": "Média előnézeti megjelenítése a JWPUB fájlból importálás előtt",
     "imgRename": "Médiafájl átnevezése"
   },
   "present-media": {
     "imgButton": "Kék lejátszás gomb a médiavezérlő módba lépéshez",
-    "imgSelectMeeting": "A média megjelenítésére tervezett összejövetel kiválasztása",
+    "imgSelectMeeting": "Összejövetel kiválasztása a média megjelenítéséhez",
     "imgBG": "Alapértelmezett média háttér, automatikusan frissített éviszöveggel",
-    "imgMediaList": "A megjelenítésre kész média listája",
+    "imgMediaList": "A bemutatásra kész médiatartalmak listája",
     "imgStandby": "M³ médiamegjelenítés készenléti üzemmódban",
     "imgDisplayPic": "Egy kép megjelenítése",
     "imgPlayVideo": "Egy videó lejátszása",
