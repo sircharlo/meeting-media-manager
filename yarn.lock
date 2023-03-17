@@ -2694,9 +2694,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/types@npm:^2.16.2":
-  version: 2.16.2
-  resolution: "@nuxt/types@npm:2.16.2"
+"@nuxt/types@npm:^2.16.3":
+  version: 2.16.3
+  resolution: "@nuxt/types@npm:2.16.3"
   dependencies:
     "@types/babel__core": 7.20.0
     "@types/compression": 1.7.2
@@ -2713,7 +2713,7 @@ __metadata:
     "@types/webpack": 4.41.33
     "@types/webpack-bundle-analyzer": 3.9.5
     "@types/webpack-hot-middleware": 2.25.5
-  checksum: bf6b465b449f32c88a1be1756028dadc5054bc0f28594dba9796444418bcc87560226d36be6cfc9e9e645e353646c499d3e18ef7f0695d00de2ed90f9eea8fe5
+  checksum: 01322f138e628173715bea26a2c18faa4e643b63d61d7a887b7c4b6e0e5023e998dee176ec4fde7739eac236c209de2507dad9d50c5ab54bf428823bf44b3022
   languageName: node
   linkType: hard
 
@@ -10802,7 +10802,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": ^6.3.0
     "@fortawesome/free-solid-svg-icons": ^6.3.0
     "@fortawesome/vue-fontawesome": latest-2
-    "@nuxt/types": ^2.16.2
+    "@nuxt/types": ^2.16.3
     "@nuxt/typescript-build": ^2.1.0
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
