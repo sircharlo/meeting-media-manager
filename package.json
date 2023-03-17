@@ -62,7 +62,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@fortawesome/vue-fontawesome": "latest-2",
-    "@nuxt/types": "^2.16.2",
+    "@nuxt/types": "^2.16.3",
     "@nuxt/typescript-build": "^2.1.0",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/dayjs": "^1.4.1",
