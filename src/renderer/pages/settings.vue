@@ -9,6 +9,7 @@
           :key="h.component"
           :class="{ 'error--text': !mounting && !h.valid }"
         >
+          <font-awesome-icon :icon="getHeaderIcon(h.key)" pull="left" />
           {{ getInitials(h.name) }}
         </v-tab>
       </v-tabs>
@@ -129,6 +130,10 @@ import { defineComponent } from 'vue'
 import {
   faHandPointRight,
   faBug,
+  faPeopleRoof,
+  faPhotoFilm,
+  faCloud,
+  faSliders,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons'
 import { ShortJWLang, ElectronStore } from '~/types'
@@ -288,6 +293,18 @@ export default defineComponent({
         .split(' ')
         .map((w) => w[0])
         .join('')
+    },
+    getHeaderIcon(key: string) {
+      switch (key) {
+        case 'cong':
+          return faCloud
+        case 'media':
+          return faPhotoFilm
+        case 'meeting':
+          return faPeopleRoof
+        default:
+          return faSliders
+      }
     },
     setShuffleMusicFiles() {
       const pubPath = this.$pubPath()
