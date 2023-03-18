@@ -107,7 +107,7 @@
             variant="cancel"
             @click="goBack()"
           />
-          <icon-btn
+          <!-- <icon-btn
             v-else
             variant="home"
             :loading="mounting"
@@ -117,7 +117,7 @@
                 ? undefined
                 : 'background-color: #B71C1C !important'
             "
-          />
+          /> -->
         </v-col>
       </v-col>
     </v-footer>

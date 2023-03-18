@@ -6,7 +6,7 @@
     <v-btn class="mr-2" @click="report()">
       {{ $t('reportIssue') }}
     </v-btn>
-    <icon-btn variant="home" @click="refresh()" />
+    <!-- <icon-btn variant="home" @click="refresh()" /> -->
   </v-container>
 </template>
 <script lang="ts">

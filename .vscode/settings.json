@@ -1,5 +1,5 @@
 {
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
     "source.fixAll.markdownlint": true
@@ -24,6 +24,7 @@
     "Bibleand",
     "booknum",
     "cacheable",
+    "Chromecast",
     "CLEARTEXT",
     "clonedeep",
     "codeql",
@@ -135,5 +136,7 @@
     "zipball",
     "русский",
     "українська"
-  ]
+  ],
+  "eslint.codeActionsOnSave.rules": null,
+  "editor.formatOnSaveMode": "modifications"
 }

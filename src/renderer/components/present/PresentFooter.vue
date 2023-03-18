@@ -63,7 +63,7 @@
     <v-col class="text-right" cols="auto">
       <shuffle-btn v-if="shuffleEnabled" :disabled="mediaActive" />
       <icon-btn variant="toggleScreen" class="mx-2" />
-      <v-btn
+      <!-- <v-btn
         id="present-to-home"
         nuxt
         :to="localePath('/?cong=') + cong"
@@ -72,7 +72,7 @@
         :disabled="mediaActive"
       >
         <font-awesome-icon :icon="faHome" class="black--text" size="xl" />
-      </v-btn>
+      </v-btn> -->
     </v-col>
   </v-footer>
 </template>

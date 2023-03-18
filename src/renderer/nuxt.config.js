@@ -75,7 +75,7 @@ module.exports = {
     },
   },
   router: {
-    middleware: ['reminders', 'allowQuit'],
+    middleware: ['reminders', 'allowQuit', "congregationSelect"],
   },
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css',

@@ -13,9 +13,9 @@
         }"
       />
     </v-col>
-    <v-col cols="5" sm="4" md="3">
+    <!-- <v-col cols="5" sm="4" md="3">
       <cong-select-input :disabled="loading || musicPlaying" />
-    </v-col>
+    </v-col> -->
   </v-row>
 </template>
 <script lang="ts">

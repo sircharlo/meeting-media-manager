@@ -98,7 +98,7 @@
           >
             <font-awesome-icon :icon="faXmark" size="lg" class="white--text" />
           </v-btn>
-          <icon-btn v-else variant="home" :disabled="loading || saving" />
+          <!-- <icon-btn v-else variant="home" :disabled="loading || saving" /> -->
         </v-col>
         <v-col />
       </v-footer>
