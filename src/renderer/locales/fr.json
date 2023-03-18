@@ -14,7 +14,6 @@
   "congregationName": "Nom de l'assemblée locale",
   "convertDownloaded": "Convertir médias en format MP4",
   "convertDownloadedExplain": "Utile pour les réunions virtuelles Zoom non hybrides ; à utiliser en conjonction avec la fonctionnalité de partage de vidéos MP4 de Zoom",
-  "convertExternal": "Permettre l'import de médias additionnels",
   "coWeek": "Prochaine visite prévue du responsable de circonscription",
   "coWeekExplain": "Déplacera automatiquement la réunion de semaine au mardi et sautera les médias non utilisés pour cette semaine",
   "custom": "Autre",
