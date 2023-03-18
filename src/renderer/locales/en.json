@@ -14,7 +14,6 @@
   "congregationName": "Congregation name",
   "convertDownloaded": "Convert media to MP4 format",
   "convertDownloadedExplain": "Useful for fully remote non-hybrid Zoom meetings, for use with Zoom's native MP4 file sharing feature",
-  "convertExternal": "Offer to import additional media",
   "coWeek": "Next planned visit of the circuit overseer",
   "coWeekExplain": "Will automatically set the midweek meeting to Tuesday and skip unnecessary media for that week",
   "custom": "Custom",
