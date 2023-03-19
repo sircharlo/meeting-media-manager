@@ -1122,7 +1122,10 @@ const plugin: Plugin = (
             'YYYYMMDD'
           )}`
         ) as { DocumentId: number }[]
-      )[0].DocumentId
+      )[0]?.DocumentId
+
+      // Return without error if no document id was found (e.g. memorial week)
+      if (!docId) return
 
       const treasures = $query(
         db,

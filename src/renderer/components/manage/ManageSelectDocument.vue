@@ -178,59 +178,66 @@ export default defineComponent({
       this.loading = true
       this.docId = docId
 
-      // Get media from jwpub file
-      const mmItems = await this.$getDocumentMultiMedia(
-        this.db as Database,
-        docId,
-        undefined,
-        undefined,
-        true,
-        true
-      )
-      for (const [i, mm] of mmItems.entries()) {
-        this.setProgress(i + 1, mmItems.length)
-        const {
-          Label,
-          Caption,
-          FilePath,
-          KeySymbol,
-          Track,
-          IssueTagNumber,
-          MimeType,
-          CategoryType,
-        } = mm.queryInfo as MultiMediaItem
+      try {
+        // Get media from jwpub file
+        const mmItems = await this.$getDocumentMultiMedia(
+          this.db as Database,
+          docId,
+          undefined,
+          undefined,
+          true,
+          true
+        )
+        for (const [i, mm] of mmItems.entries()) {
+          this.setProgress(i + 1, mmItems.length)
+          const {
+            Label,
+            Caption,
+            FilePath,
+            KeySymbol,
+            Track,
+            IssueTagNumber,
+            MimeType,
+            CategoryType,
+          } = mm.queryInfo as MultiMediaItem
 
-        const prefix = (i + 1).toString().padStart(2, '0')
-        const type =
-          '.' + MimeType ? (MimeType.includes('video') ? '.mp4' : '.mp3') : ''
+          const prefix = (i + 1).toString().padStart(2, '0')
+          const type =
+            '.' + MimeType ? (MimeType.includes('video') ? '.mp4' : '.mp3') : ''
 
-        const title =
-          mm.title ||
-          Label ||
-          Caption ||
-          trimExt(FilePath ?? '') ||
-          [KeySymbol, Track, IssueTagNumber].filter(Boolean).join('_')
+          const title =
+            mm.title ||
+            Label ||
+            Caption ||
+            trimExt(FilePath ?? '') ||
+            [KeySymbol, Track, IssueTagNumber].filter(Boolean).join('_')
 
-        const ext = FilePath ? extname(FilePath) : type ?? ''
-        const name = this.$sanitize(title, true) + ext
+          const ext = FilePath ? extname(FilePath) : type ?? ''
+          const name = this.$sanitize(title, true) + ext
 
-        const tempMedia = {
-          safeName: `${prefix} - ${name}`,
-          filename: name,
-          contents: undefined as undefined | Buffer,
-          url: undefined as string | undefined,
-          filepath: undefined as string | undefined,
-        } as LocalFile
+          const tempMedia = {
+            safeName: `${prefix} - ${name}`,
+            filename: name,
+            contents: undefined as undefined | Buffer,
+            url: undefined as string | undefined,
+            filepath: undefined as string | undefined,
+          } as LocalFile
 
-        if (CategoryType && CategoryType !== -1) {
-          tempMedia.contents =
-            (await this.$getZipContentsByName(this.file, FilePath)) ?? undefined
-        } else if (mm.url) {
-          Object.assign(tempMedia, mm)
-        } else {
-          this.missingMedia.push(tempMedia.filename as string)
+          if (CategoryType && CategoryType !== -1) {
+            tempMedia.contents =
+              (await this.$getZipContentsByName(this.file, FilePath)) ??
+              undefined
+          } else if (mm.url) {
+            Object.assign(tempMedia, mm)
+          } else {
+            this.missingMedia.push(tempMedia.filename as string)
+          }
+          this.mediaFiles.push(tempMedia)
         }
-        this.mediaFiles.push(tempMedia)
+      } catch (e: unknown) {
+        this.$log.error(e)
+        this.loading = false
+        this.finish()
       }
       this.loading = false
     },

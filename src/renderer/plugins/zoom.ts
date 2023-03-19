@@ -85,7 +85,7 @@ const plugin: Plugin = (
   }
   inject('startMeeting', startMeeting)
 
-  function stopMeeting(socket: WebSocket) {
+  function stopMeeting(socket: WebSocket | null) {
     if (!store.state.zoom.coHost) {
       $warn('errorNotCoHost')
     } else {
@@ -99,7 +99,7 @@ const plugin: Plugin = (
   }
   inject('stopMeeting', stopMeeting)
 
-  inject('muteParticipants', (socket: WebSocket) => {
+  inject('muteParticipants', (socket: WebSocket | null) => {
     if (!store.state.zoom.coHost) {
       $warn('errorNotCoHost')
       return
