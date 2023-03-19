@@ -207,8 +207,11 @@ export default defineComponent({
     }, MS_IN_SEC)
   },
   methods: {
-    zoomSocket(): WebSocket {
-      return window.sockets[window.sockets.length - 1]
+    zoomSocket(): WebSocket | null {
+      if (window.sockets && window.sockets.length > 0) {
+        return window.sockets[window.sockets.length - 1]
+      }
+      return null
     },
     toggleParticipant(participant: Participant) {
       if (this.participants.includes(participant)) {

@@ -232,8 +232,11 @@ export default defineComponent({
     }
   },
   methods: {
-    zoomSocket(): WebSocket {
-      return window.sockets[window.sockets.length - 1]
+    zoomSocket(): WebSocket | null {
+      if (window.sockets && window.sockets.length > 0) {
+        return window.sockets[window.sockets.length - 1]
+      }
+      return null
     },
     atRename(participant: Participant) {
       this.saveRename = true

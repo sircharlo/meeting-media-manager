@@ -147,7 +147,7 @@ interface CustomProps {
   $mediaPath: (file?: MeetingFile) => string | undefined
   $migrate2290: (key: string, newVal: any) => { key: string; val: unknown }
   $move: (src: string, dest: string, overwrite = false) => void
-  $muteParticipants: (socket: WebSocket) => void
+  $muteParticipants: (socket: WebSocket | null) => void
   $notify: (
     message: string,
     props?: {
@@ -202,8 +202,8 @@ interface CustomProps {
     domain = 'mediaWindow'
   ) => Promise<void>
   $shuffleMusic: (stop = false, immediately = false) => Promise<void>
-  $startMeeting: (socket: WebSocket) => Promise<void>
-  $stopMeeting: (socket: WebSocket) => void
+  $startMeeting: (socket: WebSocket | null) => Promise<void>
+  $stopMeeting: (socket: WebSocket | null) => void
   $storePath: () => string | undefined
   $success: (
     message: string,
@@ -227,12 +227,12 @@ interface CustomProps {
   $syncLocalRecurringMedia: (baseDate: Dayjs) => void
   $toggleMediaWindow: (action?: string) => Promise<void>
   $toggleMic: (
-    socket: WebSocket,
+    socket: WebSocket | null,
     mute: boolean,
     userID?: number
   ) => Promise<void>
   $toggleSpotlight: (
-    socket: WebSocket,
+    socket: WebSocket | null,
     enable: boolean,
     userID?: number
   ) => void
