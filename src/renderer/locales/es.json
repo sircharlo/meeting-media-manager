@@ -31,7 +31,7 @@
   "enableSubtitles": "Habilitar subtítulos para contenidos",
   "enableVlcPlaylistCreation": "Crear listas de reproducción para usar con <em>VLC</em>",
   "enableZoom": "Habilitar integración con Zoom",
-  "enableZoomExplain": "Este es un trabajo en progreso. Por favor, pruébalo a fondo antes de implementarlo. Cuando esté activado, intentará automatizar varias tareas previas a la reunión (silenciar a todos, habilitar video/audio del Salón del Reino, desactivar la opción para que los participantes abran sus micros), durante en la reunión (selecciona participantes para destacarlos y solicitar abrir micros, o para silenciarlos, bajar la mano y dejar de destacar) y después de la reunión (cerrar la cámara de vídeo del Salón del Reino y permitir que los participantes abran sus micros).",
+  "enableZoomExplain": "Esta es una característica en desarrollo. Por favor, pruébelo a fondo antes de implementarlo. Si la activa, intentará automatizar varias tareas previas a la reunión (silenciar a todos, impedir que los asistentes abran sus micros, destacar para todos video/audio del Salón del Reino), durante en la reunión (seleccionar participantes para destacarlos y solicitar abrir micros o silenciarlos, bajar la mano y dejar de destacar) y después de la reunión (cerrar la cámara de vídeo del Salón del Reino y permitir que los asistentes abran sus micros).",
   "error": "Error",
   "errorAdditionalMedia": "Ocurrió un error al importar contenidos. Póngase en contacto con su Organizador de Videoconferencia.",
   "errorAdditionalMediaList": "Se produjo un error al enumerar los contenidos. Vuelva a intentarlo más tarde o póngase en contacto con su Organizador de Videoconferencia.",
