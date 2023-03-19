@@ -1250,7 +1250,10 @@ const plugin: Plugin = (
           db,
           `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`
         ) as { DocumentId: number }[]
-      )[0].DocumentId
+      )[0]?.DocumentId
+
+      // Return without error if no document id was found (e.g. memorial week)
+      if (!docId) return
 
       const magazine = $query(
         db,
