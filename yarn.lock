@@ -2957,6 +2957,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry-internal/tracing@npm:7.44.0":
+  version: 7.44.0
+  resolution: "@sentry-internal/tracing@npm:7.44.0"
+  dependencies:
+    "@sentry/core": 7.44.0
+    "@sentry/types": 7.44.0
+    "@sentry/utils": 7.44.0
+    tslib: ^1.9.3
+  checksum: b15fd1546787980a081c91e58c7ffc71274341d6c7210e67c7bddf72289bf4b0aa7401b0f1a003d92ca9a9c32e37dbb5a2fcd7222a263b8b5d3c31ce901f707d
+  languageName: node
+  linkType: hard
+
 "@sentry/browser@npm:7.37.1":
   version: 7.37.1
   resolution: "@sentry/browser@npm:7.37.1"
@@ -3021,6 +3033,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/core@npm:7.44.0":
+  version: 7.44.0
+  resolution: "@sentry/core@npm:7.44.0"
+  dependencies:
+    "@sentry/types": 7.44.0
+    "@sentry/utils": 7.44.0
+    tslib: ^1.9.3
+  checksum: 29591ea7b2835a0f7bf6bbe63cdb93a6e0456c81f666b2599e0de29b84e8002fc312e0af774ae09db1601c4bbb21cef9538b00c82aa34553f250da1d91eea0ac
+  languageName: node
+  linkType: hard
+
 "@sentry/electron@npm:^4.3.0":
   version: 4.3.0
   resolution: "@sentry/electron@npm:4.3.0"
@@ -3073,15 +3096,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/tracing@npm:^7.43.0":
-  version: 7.43.0
-  resolution: "@sentry/tracing@npm:7.43.0"
+"@sentry/tracing@npm:^7.44.0":
+  version: 7.44.0
+  resolution: "@sentry/tracing@npm:7.44.0"
   dependencies:
-    "@sentry/core": 7.43.0
-    "@sentry/types": 7.43.0
-    "@sentry/utils": 7.43.0
-    tslib: ^1.9.3
-  checksum: 6dcbd7b1b44f4e9b68a1702bacc57554e45c9b73c20fad21b3d33d16cba9f83eaa612b8faa46e7ab9ed10c508dc896ffa0f5e14fd175aeb9466ad7ae7a75a7d0
+    "@sentry-internal/tracing": 7.44.0
+  checksum: 1286c86fc1949f47d71e7c6e9de4eb6ace72769090827a294861f47d63b2bf4cd0b2e8b3165cd66ce753bdb5fee2be885b5b7c8d1ddd9d5ac5b0ca9016c05f60
   languageName: node
   linkType: hard
 
@@ -3096,6 +3116,13 @@ __metadata:
   version: 7.43.0
   resolution: "@sentry/types@npm:7.43.0"
   checksum: fc28b9996f85fde7d9e092f067a5f1e5a9882f9b212014adcf58fa134fc14149f3118240d93c8ae52f33c74cfc889a4f4d1b52bb9f57c2dda295f8c18f242df3
+  languageName: node
+  linkType: hard
+
+"@sentry/types@npm:7.44.0":
+  version: 7.44.0
+  resolution: "@sentry/types@npm:7.44.0"
+  checksum: d053f37e329791274e349a27fcac5c2ddeac784ee2aeb39e58d823df097ccbb39eb6d5d357b624cee32b2792bdc461aa59148e41cf5304ab663eadfc2cb3e002
   languageName: node
   linkType: hard
 
@@ -3116,6 +3143,16 @@ __metadata:
     "@sentry/types": 7.43.0
     tslib: ^1.9.3
   checksum: 1b99986c7120710c8fcece9debecff32d4daa48395b044bada57095913116f91fb7eda8b4dc7b52824cb9329e9aaf627a8c521b32df337f9f2ed5ae354c425d8
+  languageName: node
+  linkType: hard
+
+"@sentry/utils@npm:7.44.0":
+  version: 7.44.0
+  resolution: "@sentry/utils@npm:7.44.0"
+  dependencies:
+    "@sentry/types": 7.44.0
+    tslib: ^1.9.3
+  checksum: 2f19481b620c9d8aab4f745d538a8c210e067291250fdc9df33f89392c321baeef72f6ef4c201f8a87f27bd12d1643615356dcd48615813bf5f70213c50f07b0
   languageName: node
   linkType: hard
 
@@ -10736,7 +10773,7 @@ __metadata:
     "@panzoom/panzoom": ^4.5.1
     "@playwright/test": ^1.31.2
     "@sentry/electron": ^4.3.0
-    "@sentry/tracing": ^7.43.0
+    "@sentry/tracing": ^7.44.0
     "@sentry/vue": ^7.43.0
     "@sentry/webpack-plugin": ^1.20.0
     "@types/fluent-ffmpeg": ^2.1.21
