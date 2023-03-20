@@ -2717,17 +2717,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/typescript-build@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@nuxt/typescript-build@npm:2.1.0"
+"@nuxt/typescript-build@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@nuxt/typescript-build@npm:3.0.0"
   dependencies:
     consola: ^2.15.3
-    fork-ts-checker-webpack-plugin: ^6.1.1
-    ts-loader: ^8.0.17
-    typescript: ~4.2
+    fork-ts-checker-webpack-plugin: ^6.5.3
+    ts-loader: ^8.4.0
   peerDependencies:
     "@nuxt/types": ">=2.13.1"
-  checksum: 1589023f12516698dc0ce4c035a49f5afaa126e680fb001f41d7b823b9a7e959ed49935d61a0f4efc3a6b6709cd9c0056ce651b3edf720098a998992a5d1dbc6
+    typescript: 4.x
+  checksum: 4c701840ed7f29cd4eeedf54cac0abf686a5271289031db91205df2e4d8c7ccf9f4ccb2506dfdb7bf8639c35fd2a94fa2079e058e1046755c50c3761354a4fea
   languageName: node
   linkType: hard
 
@@ -8372,7 +8372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fork-ts-checker-webpack-plugin@npm:^6.1.1":
+"fork-ts-checker-webpack-plugin@npm:^6.5.3":
   version: 6.5.3
   resolution: "fork-ts-checker-webpack-plugin@npm:6.5.3"
   dependencies:
@@ -10813,7 +10813,7 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": ^6.3.0
     "@fortawesome/vue-fontawesome": latest-2
     "@nuxt/types": ^2.16.3
-    "@nuxt/typescript-build": ^2.1.0
+    "@nuxt/typescript-build": ^3.0.0
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
     "@nuxtjs/eslint-config-typescript": ^12.0.0
@@ -15552,7 +15552,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^8.0.17, ts-loader@npm:^8.4.0":
+"ts-loader@npm:^8.4.0":
   version: 8.4.0
   resolution: "ts-loader@npm:8.4.0"
   dependencies:
@@ -15720,16 +15720,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:~4.2":
-  version: 4.2.4
-  resolution: "typescript@npm:4.2.4"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 89c397df192f239359ad798b96d8e8d552e12c0c189ac5676cec4c20c410d6eec636b8e59a88f2aef0a56d961a9678d99c400099be9b7cae2f7b062eb4b7b171
-  languageName: node
-  linkType: hard
-
 "typescript@patch:typescript@^5.0.2#~builtin<compat/typescript>":
   version: 5.0.2
   resolution: "typescript@patch:typescript@npm%3A5.0.2#~builtin<compat/typescript>::version=5.0.2&hash=701156"
@@ -15737,16 +15727,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: bdbf3d0aac0d6cf010fbe0536753dc19f278eb4aba88140dcd25487dfe1c56ca8b33abc0dcd42078790a939b08ebc4046f3e9bb961d77d3d2c3cfa9829da4d53
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@~4.2#~builtin<compat/typescript>":
-  version: 4.2.4
-  resolution: "typescript@patch:typescript@npm%3A4.2.4#~builtin<compat/typescript>::version=4.2.4&hash=701156"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: eb86e0e8022e5297f7a7b871b6edfbf33b57049416ada8bf97c358760125c7c79f074fbebd1b8e8230f858ae05eb22ad0e805e8f6acd5eae1fa886681624c15e
   languageName: node
   linkType: hard
 
