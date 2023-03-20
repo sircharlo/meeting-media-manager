@@ -423,14 +423,8 @@ export default defineComponent({
       },
     } as PropOptions<'default' | 'round' | 'basic'>,
     max: {
-      type: [Boolean, Number],
-      default: false,
-      validator: (val: number | boolean) => {
-        if (typeof val === 'number') {
-          return val > 0
-        }
-        return typeof val === 'boolean'
-      },
+      type: Number,
+      default: 0,
     },
     groupLabel: {
       type: String,
