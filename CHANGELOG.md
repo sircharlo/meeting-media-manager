@@ -1,5 +1,19 @@
 # Changelog
 
+## 23.3.1
+
+### New or improved features
+
+- The tabs in settings have an icon for easier recognition
+- Zoom and pan has been reworked to be accurate whether using the mousewheel or double click
+
+### Bug fixes
+
+- Don't try to fetch non-existing meeting media for the week of the Memorial
+- Subtitles are now individually rendered according to their intended positions by default
+- Zoom and pan is now reset when changing or "stopping" pictures
+- Various minor bugfixes
+
 ## 23.3.0
 
 ### New or improved features
