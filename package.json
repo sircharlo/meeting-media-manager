@@ -22,7 +22,7 @@
     "url": "https://github.com/sircharlo/meeting-media-manager.git"
   },
   "scripts": {
-    "prebuild": "./pre-build.sh",
+    "prebuild": "./pre-build.sh ",
     "compile": "./node_modules/.bin/tsc -p src/main/tsconfig.json",
     "dev": "node .electron-nuxt/dev.js",
     "build": "node .electron-nuxt/build.js",
