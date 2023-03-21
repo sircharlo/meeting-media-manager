@@ -73,7 +73,7 @@
     "@playwright/test": "^1.31.2",
     "@sentry/electron": "^4.3.0",
     "@sentry/tracing": "^7.44.0",
-    "@sentry/vue": "^7.44.0",
+    "@sentry/vue": "^7.44.2",
     "@sentry/webpack-plugin": "^1.20.0",
     "@types/fluent-ffmpeg": "^2.1.21",
     "@types/lodash.clonedeep": "^4.5.7",
