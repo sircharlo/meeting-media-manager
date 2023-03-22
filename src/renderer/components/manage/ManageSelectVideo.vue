@@ -108,7 +108,7 @@ export default defineComponent({
             extname(videoFiles[0].progressiveDownloadURL),
           url: videoFiles[0].progressiveDownloadURL,
           checksum: videoFiles[0].checksum,
-          trackImage: getVideoImg(video.images),
+          trackImage: this.getVideoImg(video.images),
           primaryCategory: video.primaryCategory,
         }
         this.$emit('select', meetingFile)
