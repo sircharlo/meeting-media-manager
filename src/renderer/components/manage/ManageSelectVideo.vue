@@ -20,7 +20,7 @@
             @click="selectVideo(video)"
           >
             <v-img
-              :src="video.images.lss.lg"
+              :src="getVideoImg(video.images)"
               :aspect-ratio="2 / 1"
               width="100%"
               height="100%"
@@ -40,7 +40,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { extname } from 'upath'
-import { MediaItem, VideoFile } from '~/types'
+import { MediaItem, VideoFile, Images } from '~/types'
 export default defineComponent({
   props: {
     active: {
@@ -70,6 +70,9 @@ export default defineComponent({
     parseRes(res?: string): number {
       if (!res) return 0
       return +res.replace(/\D/g, '')
+    },
+    getVideoImg(images: Images) {
+      return images.lss?.lg ?? images.sqr?.lg ?? ''
     },
     selectVideo(video: MediaItem) {
       this.loading = true
@@ -105,7 +108,7 @@ export default defineComponent({
             extname(videoFiles[0].progressiveDownloadURL),
           url: videoFiles[0].progressiveDownloadURL,
           checksum: videoFiles[0].checksum,
-          trackImage: video.images.lss?.lg ?? '',
+          trackImage: getVideoImg(video.images),
           primaryCategory: video.primaryCategory,
         }
         this.$emit('select', meetingFile)
