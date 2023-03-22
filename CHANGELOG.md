@@ -1,5 +1,12 @@
 # Changelog
 
+## 23.3.2
+
+### Bug fixes
+
+- Fix global layout bug for input fields
+- Fix "select video from jw.org" feature not working in some use cases
+
 ## 23.3.1
 
 ### New or improved features
