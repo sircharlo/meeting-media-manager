@@ -9,7 +9,7 @@
     :disabled="$attrs.disabled || locked"
     v-bind="{ ...style, ...$attrs }"
     :rules="rules"
-    :counter="max"
+    :counter="max > 0 ? max : false"
     v-on="$listeners"
   >
     <template v-if="field === 'password'" #append>
@@ -70,7 +70,7 @@
     :disabled="$attrs.disabled || locked"
     v-bind="{ ...style, ...$attrs }"
     :rules="rules"
-    :counter="max"
+    :counted="max > 0 ? max : false"
     hide-no-data
     v-on="$listeners"
   >
@@ -154,7 +154,7 @@
     :disabled="$attrs.disabled || locked"
     v-bind="{ ...style, ...$attrs }"
     :rules="rules"
-    :counter="max"
+    :counted="max > 0 ? max : false"
     rows="4"
     v-on="$listeners"
   >
@@ -318,7 +318,7 @@
         :disabled="$attrs.disabled || locked"
         v-bind="$attrs"
         :inverse-label="!customInput"
-        :max="max ? max : '100'"
+        :max="max > 0 ? max : '100'"
         class="align-center"
         :step="customInput ? 0.01 : 1"
         :label="customInput ? undefined : $attrs.value + labelSuffix"
@@ -504,7 +504,7 @@ export default defineComponent({
           return !!v || this.$t('fieldRequired')
         })
       }
-      if (this.max) {
+      if (this.max > 0) {
         rules.push(
           (v: string) =>
             !v ||
