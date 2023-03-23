@@ -1696,9 +1696,9 @@ __metadata:
   linkType: hard
 
 "@eslint-community/regexpp@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "@eslint-community/regexpp@npm:4.4.0"
-  checksum: 2d127af0c752b80e8a782eacfe996a86925d21de92da3ffc6f9e615e701145e44a62e26bdd88bfac2cd76779c39ba8d9875a91046ec5e7e5f23cb647c247ea6a
+  version: 4.4.1
+  resolution: "@eslint-community/regexpp@npm:4.4.1"
+  checksum: db97d8d08e784147b55ab0dda5892503c1a0eebad94d1c4646d89a94f02ca70b25f05d8e021fc05a075e7eb312e03e21f63d84f0b327719f8cf3bb64e66917cb
   languageName: node
   linkType: hard
 
@@ -2926,19 +2926,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.31.2":
-  version: 1.31.2
-  resolution: "@playwright/test@npm:1.31.2"
+"@playwright/test@npm:^1.32.0":
+  version: 1.32.0
+  resolution: "@playwright/test@npm:1.32.0"
   dependencies:
     "@types/node": "*"
     fsevents: 2.3.2
-    playwright-core: 1.31.2
+    playwright-core: 1.32.0
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 5459ee0ce15b9a54337f4c26e2ee2d29c11e67e6207c167158eb180a4bea6659c988a2897f51dbebf591fc879f0d81f417e70936b9d8a001448c957939882588
+  checksum: 73664460dc9f0e455704fb47f346683ca7d0b6377d11001190f65fcbaa5448eab6adc3c87a0f0164fe14e736b96c83e5ac2528152cdcbe84ba626b3815d9e78a
   languageName: node
   linkType: hard
 
@@ -3595,9 +3595,9 @@ __metadata:
   linkType: hard
 
 "@types/scheduler@npm:*":
-  version: 0.16.2
-  resolution: "@types/scheduler@npm:0.16.2"
-  checksum: b6b4dcfeae6deba2e06a70941860fb1435730576d3689225a421280b7742318d1548b3d22c1f66ab68e414f346a9542f29240bc955b6332c5b11e561077583bc
+  version: 0.16.3
+  resolution: "@types/scheduler@npm:0.16.3"
+  checksum: 2b0aec39c24268e3ce938c5db2f2e77f5c3dd280e05c262d9c2fe7d890929e4632a6b8e94334017b66b45e4f92a5aa42ba3356640c2a1175fa37bef2f5200767
   languageName: node
   linkType: hard
 
@@ -6258,11 +6258,11 @@ __metadata:
   linkType: hard
 
 "css-declaration-sorter@npm:^6.3.1":
-  version: 6.3.1
-  resolution: "css-declaration-sorter@npm:6.3.1"
+  version: 6.4.0
+  resolution: "css-declaration-sorter@npm:6.4.0"
   peerDependencies:
     postcss: ^8.0.9
-  checksum: ff0d9989ee21ec4c42430b9bb86c43f973ed5024d68f30edc1e3fb07a22828ce3c3e5b922019f2ccbff606722e43c407c5c76e3cddac523ac4afcb31e4b2601c
+  checksum: b716bc3d79154d3d618a90bd192533adf6604307c176e25e715a3b7cde587ef16971769fbf496118a376794280edf97016653477936c38c5a74cc852d6e38873
   languageName: node
   linkType: hard
 
@@ -7056,9 +7056,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.284":
-  version: 1.4.335
-  resolution: "electron-to-chromium@npm:1.4.335"
-  checksum: a3c9ee2412427ed0853f065f1dde64db1b567abf53d5e50e8cfba1544af4bda970f59a4f4df3dad81078c948b3277dffb42042e6a859288246d68b58db81a555
+  version: 1.4.337
+  resolution: "electron-to-chromium@npm:1.4.337"
+  checksum: b7da59afa5e3239f222c3e146d27757cef10bdcb4180f3f77d7a7d339d1ee7c99d0e281807fe47a865426995a3d1c06809743ca71dddc0aaf65e749e66a8be40
   languageName: node
   linkType: hard
 
@@ -7554,7 +7554,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:^9.10.0":
+"eslint-plugin-vue@npm:^9.10.0, eslint-plugin-vue@npm:^9.4.0, eslint-plugin-vue@npm:^9.7.0":
   version: 9.10.0
   resolution: "eslint-plugin-vue@npm:9.10.0"
   dependencies:
@@ -7568,23 +7568,6 @@ __metadata:
   peerDependencies:
     eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
   checksum: 91c6f1ab59433cfa3ade0e6003ca4a9f3ee50e1fd6b49ad9487805dc582f1865ef27796ff18b89e92f37f9ed39d7bfb8c8ccd029c2b77bb3e26ce9b705713070
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-vue@npm:^9.4.0, eslint-plugin-vue@npm:^9.7.0":
-  version: 9.9.0
-  resolution: "eslint-plugin-vue@npm:9.9.0"
-  dependencies:
-    eslint-utils: ^3.0.0
-    natural-compare: ^1.4.0
-    nth-check: ^2.0.1
-    postcss-selector-parser: ^6.0.9
-    semver: ^7.3.5
-    vue-eslint-parser: ^9.0.1
-    xml-name-validator: ^4.0.0
-  peerDependencies:
-    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
-  checksum: 059f9c1915504d074adf64bc3371d1e174f8844088d0e08800c958cbef09d7fdf2a0a949634187231645435a1ef31595c8c81f441000ec43589bb58a1282fe3c
   languageName: node
   linkType: hard
 
@@ -8494,7 +8477,7 @@ __metadata:
 
 "fsevents@patch:fsevents@2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
   dependencies:
     node-gyp: latest
   conditions: os=darwin
@@ -10752,7 +10735,7 @@ __metadata:
     "@nuxtjs/i18n": ^7.3.1
     "@nuxtjs/vuetify": ^1.12.3
     "@panzoom/panzoom": ^4.5.1
-    "@playwright/test": ^1.31.2
+    "@playwright/test": ^1.32.0
     "@sentry/electron": ^4.3.0
     "@sentry/tracing": ^7.44.2
     "@sentry/vue": ^7.44.2
@@ -10803,7 +10786,7 @@ __metadata:
     obs-websocket-js: ^4.0.3
     obs-websocket-js-v5: "npm:obs-websocket-js@5.0.2"
     pdfjs-dist: ^3.4.120
-    playwright: ^1.31.2
+    playwright: ^1.32.0
     prettier: ^2.8.6
     sql.js: ^1.8.0
     ts-loader: ^8.4.0
@@ -11191,11 +11174,11 @@ __metadata:
   linkType: hard
 
 "mkdirp@npm:^2.1.3":
-  version: 2.1.5
-  resolution: "mkdirp@npm:2.1.5"
+  version: 2.1.6
+  resolution: "mkdirp@npm:2.1.6"
   bin:
     mkdirp: dist/cjs/src/bin.js
-  checksum: 039998e3a55f056f48dbd025ad1f5095c78464ed62bd666fcaf78d07fd15b73218aabe3237e7a500b3f6cacdce684f6bbbc9a773792dce7cceab0dc266e95238
+  checksum: 8a1d09ffac585e55f41c54f445051f5bc33a7de99b952bb04c576cafdf1a67bb4bae8cb93736f7da6838771fbf75bc630430a3a59e1252047d2278690bd150ee
   languageName: node
   linkType: hard
 
@@ -12368,23 +12351,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.31.2":
-  version: 1.31.2
-  resolution: "playwright-core@npm:1.31.2"
+"playwright-core@npm:1.32.0":
+  version: 1.32.0
+  resolution: "playwright-core@npm:1.32.0"
   bin:
     playwright: cli.js
-  checksum: bf1257b7d80b9d027c99cbfa7ab9d47a2110ec804422b3e3d623bbb3c43e06df7bec4764ca1d852a6d62c76e35c8776efb19941f42ce738db9bc92e7f1b6281c
+  checksum: f53fc45573c35ceb18926a9a517add7a467e4a6900325a72592cbc6b09c4d0df2a1b8e0453176e04ff546cd0b6ec87b3e4bfecbdccdaf1d9fa74ae6fd31faee9
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.31.2":
-  version: 1.31.2
-  resolution: "playwright@npm:1.31.2"
+"playwright@npm:^1.32.0":
+  version: 1.32.0
+  resolution: "playwright@npm:1.32.0"
   dependencies:
-    playwright-core: 1.31.2
+    playwright-core: 1.32.0
   bin:
     playwright: cli.js
-  checksum: da7a190275ca6ce14aee0ecf40307b46f014ecca4a5c1b103a308c4be6a03b0825b17721728a69c140654d124487ca35d2fc2d5558bade4969c9363e5b4bd290
+  checksum: 0d61d20042422855ec16859354dac504d626e9f45be74c042226dbd85012b04814c1be14411be8b22a7c6de1b039a80f3a2a239d8b26c7889d44d29c746b715c
   languageName: node
   linkType: hard
 
@@ -13905,7 +13888,7 @@ __metadata:
 
 "resolve@patch:resolve@^1.1.7#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.1#~builtin<compat/resolve>":
   version: 1.22.1
-  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"
+  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=c3c19d"
   dependencies:
     is-core-module: ^2.9.0
     path-parse: ^1.0.7
@@ -15645,11 +15628,11 @@ __metadata:
 
 "typescript@patch:typescript@^5.0.2#~builtin<compat/typescript>":
   version: 5.0.2
-  resolution: "typescript@patch:typescript@npm%3A5.0.2#~builtin<compat/typescript>::version=5.0.2&hash=701156"
+  resolution: "typescript@patch:typescript@npm%3A5.0.2#~builtin<compat/typescript>::version=5.0.2&hash=85af82"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: bdbf3d0aac0d6cf010fbe0536753dc19f278eb4aba88140dcd25487dfe1c56ca8b33abc0dcd42078790a939b08ebc4046f3e9bb961d77d3d2c3cfa9829da4d53
+  checksum: b63cb742fbb9aeb3085e002ad8f10d5fd963606aa4d6b3b65b4e76c396ff09739f03b5dbae08e1698c3bce9d5619d3f67aeb7ee470ed4016bd345b3cfe37b54a
   languageName: node
   linkType: hard
 
