@@ -957,9 +957,7 @@ const plugin: Plugin = (
       Promise<string>
     >
     const downloadInProgress = progressMap.get(file.url)
-    if (downloadInProgress) {
-      return await downloadInProgress
-    }
+    if (downloadInProgress) await downloadInProgress
 
     // Set extra properties
     file.downloadRequired = true
