@@ -180,7 +180,7 @@ export default defineComponent({
     ipcRenderer.on('macUpdate', async (_e, version) => {
       try {
         const latestRelease = (await this.$ghApi.$get(
-          `releases/tag/v${version}`
+          `releases/tags/v${version}`
         )) as Release
 
         const macDownload = latestRelease.assets.find(({ name }) =>
