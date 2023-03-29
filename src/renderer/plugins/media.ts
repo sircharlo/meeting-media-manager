@@ -1273,28 +1273,49 @@ const plugin: Plugin = (
 
       const promises: Promise<void>[] = []
 
-      const media = $query(
+      const images = $query(
         db,
-        `SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel
-    FROM DocumentMultimedia
-      INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId
-      INNER JOIN Multimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
-      LEFT JOIN Question ON Question.DocumentId = DocumentMultimedia.DocumentId AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
-    WHERE Document.DocumentId = ${docId} AND Multimedia.CategoryType <> 9 GROUP BY DocumentMultimedia.MultimediaId`
+        `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, MimeType, BeginParagraphOrdinal, FilePath, Label, Caption, TargetParagraphNumberLabel
+         FROM DocumentMultimedia
+         INNER JOIN Multimedia
+           ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
+         LEFT JOIN Question
+           ON Question.DocumentId = DocumentMultimedia.DocumentId 
+           AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
+         WHERE DocumentMultimedia.DocumentId = ${docId}
+           AND CategoryType <> 9 
+           AND CategoryType <> -1
+         GROUP BY DocumentMultimedia.MultimediaId`
       ) as MultiMediaItem[]
 
-      const images = media.filter((m) => m.KeySymbol !== 'sjjm')
       images.forEach((img) => promises.push(addImgToPart(date, issue, img)))
 
-      let songs = media.filter((m) => m.KeySymbol === 'sjjm')
+      let songs = $query(
+        db,
+        `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, KeySymbol, Track, IssueTagNumber, MimeType
+         FROM DocumentMultimedia
+         INNER JOIN Multimedia
+           ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
+         INNER JOIN DocumentExtract
+           ON DocumentExtract.DocumentId = DocumentMultimedia.DocumentId
+           AND DocumentExtract.BeginParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
+         WHERE DocumentMultimedia.DocumentId = ${docId}
+           AND CategoryType <> 9
+           AND CategoryType <> 8
+         GROUP BY DocumentMultimedia.MultimediaId`
+      ) as MultiMediaItem[]
 
       // Watchtowers before Feb 2023 didn't include songs in DocumentMultimedia
       if (+issue < FEB_2023) {
         songs = $query(
           db,
-          `SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET ${
-            2 * weekNr
-          }`
+          `SELECT *
+          FROM Multimedia
+          INNER JOIN DocumentMultimedia
+            ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
+          WHERE DataType = 2
+          ORDER BY BeginParagraphOrdinal
+          LIMIT 2 OFFSET ${2 * weekNr}`
         ) as MultiMediaItem[]
       }
 
