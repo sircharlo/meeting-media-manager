@@ -1290,20 +1290,7 @@ const plugin: Plugin = (
 
       images.forEach((img) => promises.push(addImgToPart(date, issue, img)))
 
-      let songs = $query(
-        db,
-        `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, KeySymbol, Track, IssueTagNumber, MimeType
-         FROM DocumentMultimedia
-         INNER JOIN Multimedia
-           ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
-         INNER JOIN DocumentExtract
-           ON DocumentExtract.DocumentId = DocumentMultimedia.DocumentId
-           AND DocumentExtract.BeginParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
-         WHERE DocumentMultimedia.DocumentId = ${docId}
-           AND CategoryType <> 9
-           AND CategoryType <> 8
-         GROUP BY DocumentMultimedia.MultimediaId`
-      ) as MultiMediaItem[]
+      let songs: MultiMediaItem[] = []
 
       // Watchtowers before Feb 2023 didn't include songs in DocumentMultimedia
       if (+issue < FEB_2023) {
@@ -1316,6 +1303,21 @@ const plugin: Plugin = (
           WHERE DataType = 2
           ORDER BY BeginParagraphOrdinal
           LIMIT 2 OFFSET ${2 * weekNr}`
+        ) as MultiMediaItem[]
+      } else {
+        songs = $query(
+          db,
+          `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, KeySymbol, Track, IssueTagNumber, MimeType
+         FROM DocumentMultimedia
+         INNER JOIN Multimedia
+           ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
+         INNER JOIN DocumentExtract
+           ON DocumentExtract.DocumentId = DocumentMultimedia.DocumentId
+           AND DocumentExtract.BeginParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
+         WHERE DocumentMultimedia.DocumentId = ${docId}
+           AND CategoryType <> 9
+           AND CategoryType <> 8
+         GROUP BY DocumentMultimedia.MultimediaId`
         ) as MultiMediaItem[]
       }
 
