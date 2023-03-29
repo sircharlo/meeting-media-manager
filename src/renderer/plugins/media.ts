@@ -13,6 +13,7 @@ import {
   MAX_PREFIX_LENGTH,
   NR_OF_KINGDOM_SONGS,
   BIBLE_READING_PAR_NR,
+  FEB_2023,
 } from './../constants/general'
 import {
   MediaFile,
@@ -1270,7 +1271,9 @@ const plugin: Plugin = (
         ''
       )
 
-      const images = $query(
+      const promises: Promise<void>[] = []
+
+      const media = $query(
         db,
         `SELECT DocumentMultimedia.MultimediaId,Document.DocumentId, Multimedia.CategoryType,Multimedia.KeySymbol,Multimedia.Track,Multimedia.IssueTagNumber,Multimedia.MimeType, DocumentMultimedia.BeginParagraphOrdinal,Multimedia.FilePath,Label,Caption, Question.TargetParagraphNumberLabel
     FROM DocumentMultimedia
@@ -1280,16 +1283,20 @@ const plugin: Plugin = (
     WHERE Document.DocumentId = ${docId} AND Multimedia.CategoryType <> 9 GROUP BY DocumentMultimedia.MultimediaId`
       ) as MultiMediaItem[]
 
-      const promises: Promise<void>[] = []
-
+      const images = media.filter((m) => m.KeySymbol !== 'sjjm')
       images.forEach((img) => promises.push(addImgToPart(date, issue, img)))
 
-      const songs = $query(
-        db,
-        `SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET ${
-          2 * weekNr
-        }`
-      ) as MultiMediaItem[]
+      let songs = media.filter((m) => m.KeySymbol === 'sjjm')
+
+      // Watchtowers before Feb 2023 didn't include songs in DocumentMultimedia
+      if (+issue < FEB_2023) {
+        songs = $query(
+          db,
+          `SELECT * FROM Multimedia INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId WHERE DataType = 2 ORDER BY BeginParagraphOrdinal LIMIT 2 OFFSET ${
+            2 * weekNr
+          }`
+        ) as MultiMediaItem[]
+      }
 
       let songLangs = songs.map(() => $getPrefs('media.lang') as string)
 

@@ -45,6 +45,7 @@ export const CHAR_GT = 62
 
 // JW Specific
 export const JAN_2008 = 20080101
+export const FEB_2023 = 20230200
 export const NR_OF_KINGDOM_SONGS = 151
 export const BIBLE_READING_PAR_NR = 12
 
