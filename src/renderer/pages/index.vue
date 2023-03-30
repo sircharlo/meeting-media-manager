@@ -249,7 +249,7 @@ export default defineComponent({
     }
     this.loading = false
     this.$log.debug('v' + (await this.$appVersion()))
-    if (this.initialLoad && this.$getPrefs('app.autoStartSync')) {
+    if (this.initialLoad && this.$getPrefs('app.autoStartSync') && this.online) {
       this.action = 'startMediaSync'
     }
     if (this.initialLoad && this.$getPrefs('meeting.enableMusicButton')) {
@@ -449,6 +449,10 @@ export default defineComponent({
       }
     },
     async syncJWorgMedia(dryrun = false) {
+      if (!this.online) {
+        this.$warn('errorOffline')
+        return
+      }
       this.$store.commit('stats/startPerf', {
         func: 'syncJWorgMedia',
         start: performance.now(),
