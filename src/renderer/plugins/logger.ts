@@ -53,8 +53,8 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
       logger('error', [msg, ...args])
       if (typeof msg !== 'string' && !IGNORED_ERRORS.includes(msg.message)) {
         if (
-          Object.values(logs.error).includes('Network Error') &&
-          msg.message.includes('meeting data found for')
+          msg.message.includes('meeting data found for') &&
+          Object.values(logs.error).includes('Network Error')
         ) {
           return
         }
