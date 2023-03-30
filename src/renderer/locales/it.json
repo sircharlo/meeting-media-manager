@@ -20,7 +20,7 @@
   "customCachePath": "Percorso cache personalizzato (per pubblicazioni, ecc.)",
   "dark": "Scuro",
   "delete": "Elimina",
-  "disableAutoUpdate": "Disabilita l'aggiornamento automatico dell'app",
+  "disableAutoUpdate": "Disable non-critical automatic app updates",
   "disableHardwareAcceleration": "Disabilita l'accelerazione hardware <em>(Nota: abilita questa impostazione solo se riscontri problemi con la presentazione dei media. La modifica di questa impostazione causerà il riavvio di M³.)</em>",
   "dontForgetToGetMedia": "Non dimenticare di aggiornare le cartelle multimediali sul computer utilizzato per presentare i media alle adunanze di congregazione!",
   "downloadShuffleMusic": "Scarica tutti i cantici per la musica di sottofondo",
