@@ -20,7 +20,7 @@
   "customCachePath": "Ajutiste failide asukoht ( nt: väljaanded, jne)",
   "dark": "Tume",
   "delete": "Kustuta",
-  "disableAutoUpdate": "Keela automaatne rakenduse värskendus",
+  "disableAutoUpdate": "Disable non-critical automatic app updates",
   "disableHardwareAcceleration": "Keela riistvaraline kiirendus <em>(Märkus. Lubage see seade ainult siis, kui teil on meediumiesitlusega probleeme. Selle seade muutmine põhjustab M³-i taaskäivitamise.)</em>",
   "dontForgetToGetMedia": "Ärge unustage uuendada koguduse koosolekutel meedia esitlemiseks kasutatava arvuti meedia kaustu!",
   "downloadShuffleMusic": "Laadi alla kõik taustamuusika failid",
