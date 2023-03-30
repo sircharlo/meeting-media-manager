@@ -20,7 +20,7 @@
   "customCachePath": "Andere cache locatie (voor publicaties, etc.)",
   "dark": "Donker",
   "delete": "Verwijder",
-  "disableAutoUpdate": "Zet automatisch updaten uit",
+  "disableAutoUpdate": "Disable non-critical automatic app updates",
   "disableHardwareAcceleration": "Zet hardware acceleratie uit <em>(Let op: Zet deze optie alleen aan als je problemen ondervindt met media presentatie modus. Na deze optie te veranderen zal M³ opnieuw opstarten.)</em>",
   "dontForgetToGetMedia": "Vergeet niet de media folders op de computer in de koninkrijkszaal bij te werken!",
   "downloadShuffleMusic": "Download alle liederen voor achtergrondmuziek",
