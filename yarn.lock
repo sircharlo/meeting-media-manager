@@ -9773,6 +9773,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-internet-available@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "is-internet-available@npm:3.1.0"
+  dependencies:
+    lodash: ^4.17.19
+  checksum: 968434feb2030680e60cf84cd387ae95698e9b947ef0b5caebee8a126e48462a49de61ef2e6e8972bdcf936c72c27836130eda3bb4b4302a12357ba6f7ad29aa
+  languageName: node
+  linkType: hard
+
 "is-lambda@npm:^1.0.1":
   version: 1.0.1
   resolution: "is-lambda@npm:1.0.1"
@@ -10837,6 +10846,7 @@ __metadata:
     fullname: ^4.0.1
     h264-mp4-encoder: ^1.0.12
     image-size: ^1.0.2
+    is-internet-available: ^3.1.0
     jimp: ^0.22.7
     jszip: ^3.10.1
     lodash.clonedeep: ^4.5.0

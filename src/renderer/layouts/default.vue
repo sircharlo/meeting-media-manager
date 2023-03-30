@@ -19,6 +19,8 @@ import { defineComponent } from 'vue'
 import getUsername from 'fullname'
 import { ipcRenderer } from 'electron'
 import { LocaleObject } from '@nuxtjs/i18n'
+// @ts-ignore
+import { InternetAvailabilityService } from 'is-internet-available'
 import {
   ShortJWLang,
   CongPrefs,
@@ -225,13 +227,25 @@ export default defineComponent({
     } else {
       this.$warn('errorOffline')
     }
-    window.addEventListener('offline', (_e) => {
+    window.addEventListener('offline', () => {
+      console.log("online: false");
       this.$store.commit('stats/setOnline', false)
     })
 
-    window.addEventListener('online', (_e) => {
+    window.addEventListener('online', () => {
+      console.log("online: true");
       this.$store.commit('stats/setOnline', true)
     })
+
+    // Fallback connectivity check in case online/offline event listeners fail for some reason
+    const onlineChecker = new InternetAvailabilityService(/* {
+      authority: 'https://www.jw.org', // if ever we want to check a site other than the default one (Google)
+      rate: 5000 // if ever we want to change the rate at which connectivity is checked
+    } */);
+    onlineChecker.on('status', (isOnline: boolean) => {
+      console.log(`online: ${isOnline}`);
+      this.$store.commit('stats/setOnline', isOnline)
+    });
   },
   beforeDestroy() {
     ipcRenderer.removeAllListeners('error')
