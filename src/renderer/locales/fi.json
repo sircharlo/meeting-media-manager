@@ -20,7 +20,7 @@
   "customCachePath": "Mukautettu välimuistin polku (julkaisut jne.)",
   "dark": "Tumma",
   "delete": "Poista",
-  "disableAutoUpdate": "Poista automaattinen sovelluspäivitys käytöstä",
+  "disableAutoUpdate": "Poista ei-kriittiset sovelluspäivitykset käytöstä",
   "disableHardwareAcceleration": "Poista laitteistokiihdytys käytöstä <em>(Huomaa: ota tämä asetus käyttöön vain, jos sinulla on ongelmia mediaesityksen kanssa. Tämän asetuksen muuttaminen saa M³:n käynnistymään uudelleen.)</em>",
   "dontForgetToGetMedia": "Älä unohda päivittää mediakansioita tietokoneelle, jota käytetään median esittämiseen seurakunnan kokouksissa!",
   "downloadShuffleMusic": "Lataa kaikki laulut taustamusiikkia varten",

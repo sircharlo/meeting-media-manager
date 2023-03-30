@@ -20,7 +20,7 @@
   "customCachePath": "Benutzerdefinierter Zwischenspeicher-Ordner (für Publikationen usw.)",
   "dark": "Dunkel",
   "delete": "Löschen",
-  "disableAutoUpdate": "Automatische Updates deaktivieren",
+  "disableAutoUpdate": "Disable non-critical automatic app updates",
   "disableHardwareAcceleration": "Hardwarebeschleunigung deaktivieren <em>(Anmerkung: Diese Einstellung nur bei Problemen mit der Medienpräsentation aktivieren. Änderung erzwingt einen Neustart von M³.)</em>",
   "dontForgetToGetMedia": "Nicht vergessen, die Medienordner auf dem Computer zu aktualisieren, der zum Präsentieren von Medien bei Versammlungszusammenkünften verwendet wird!",
   "downloadShuffleMusic": "Alle Lieder für Hintergrundmusik herunterladen",

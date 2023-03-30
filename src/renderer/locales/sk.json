@@ -20,7 +20,7 @@
   "customCachePath": "Vlastná cesta pre cache (pre publikácie atd.)",
   "dark": "Tmavá",
   "delete": "Vymazať",
-  "disableAutoUpdate": "Vypnúť automatické aktualizácie aplikácie",
+  "disableAutoUpdate": "Disable non-critical automatic app updates",
   "disableHardwareAcceleration": "Zakázať hardvérovú akceleráciu<em>(Poznámka: Povoľ toto nastavenie len v prípade, že máš problémy so zobrazovaním médií. Zmena tohto nastavenia vyžaduje reštart aplikácie M³.)</em>",
   "dontForgetToGetMedia": "Nezabudni si aktualizovať priečinky s médiami na počítači, ktorý budeš používať na zhromaždení!",
   "downloadShuffleMusic": "Download all songs for background music",

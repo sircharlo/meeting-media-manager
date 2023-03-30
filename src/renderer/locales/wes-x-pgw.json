@@ -20,7 +20,7 @@
   "customCachePath": "Your own cache path (for book, brochure etc.)",
   "dark": "Dark",
   "delete": "Delete",
-  "disableAutoUpdate": "No load new version while you do other things",
+  "disableAutoUpdate": "Disable non-critical automatic app updates",
   "disableHardwareAcceleration": "No use hardware acceleration <em>(Note: Make you only turn this on if you get wahala when you de show picture or video. When you change-am, M³ go close and open again.)</em>",
   "dontForgetToGetMedia": "Abeg, make you always de update the picture and video folder for inside the computer wey wuna go use for show picture and video for congregation meeting!",
   "downloadShuffleMusic": "Download all songs for background music",

@@ -20,7 +20,7 @@
   "customCachePath": "Calea de cache personalizată (pentru publicații, etc.)",
   "dark": "Întunecat",
   "delete": "Șterge",
-  "disableAutoUpdate": "Dezactivați actualizarea automată",
+  "disableAutoUpdate": "Disable non-critical automatic app updates",
   "disableHardwareAcceleration": "Dezactivați accelerarea hardware <em>(Notă: activați această setare numai dacă întâmpini probleme cu prezentarea media. Modificarea acestei setări va provoca repornirea M³)</em>",
   "dontForgetToGetMedia": "Nu uita să actualizezi dosarele media de pe calculator folosite pentru a prezenta materialele media la întrunirile congregației!",
   "downloadShuffleMusic": "Descarcă toate cântările pentru muzica de fundal",
