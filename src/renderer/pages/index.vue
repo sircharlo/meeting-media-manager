@@ -449,6 +449,7 @@ export default defineComponent({
       }
     },
     async syncJWorgMedia(dryrun = false) {
+      if (!this.online) return
       this.$store.commit('stats/startPerf', {
         func: 'syncJWorgMedia',
         start: performance.now(),
