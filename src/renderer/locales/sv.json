@@ -20,7 +20,7 @@
   "customCachePath": "Anpassad cache sökväg (för publikationer, etc.)",
   "dark": "Mörk",
   "delete": "Radera",
-  "disableAutoUpdate": "Inaktivera automatisk uppdatering",
+  "disableAutoUpdate": "Inaktivera icke-kritiska automatiska uppdateringar",
   "disableHardwareAcceleration": "Inaktivera hårdvaruacceleration <em>(Obs! Aktivera den här inställningen endast om du har problem med mediapresentation. Om du ändrar den här inställningen kommer M³ att starta om.)</em>",
   "dontForgetToGetMedia": "Glöm inte att uppdatera mediamapparna på datorn som används för att presentera media på församlingsmöten!",
   "downloadShuffleMusic": "Ladda ner alla sånger för bakgrundsmusik",
