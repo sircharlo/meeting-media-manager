@@ -87,6 +87,8 @@ The tests are written using [Playwright](https://playwright.dev/). Playwright is
 
 To release a new version of the application, you first create a draft release on GitHub. Then, you can change the [package.json](package.json) version to the desired version and commit the changes with the message `chore(release): vx.x.x` (e.g. `chore(release): v23.3.1`). Then, the build/release workflow will be executed and will fill the release draft with the new artifacts. After that, you can add a description of the release (features, bug fixes, etc.) and publish it.
 
+If a release contains a critical bug fix, you can add `[critical]` to the release title. This will override the `Disable non-critical automatic app updates` setting and will force all users to update.
+
 ### Contribute to the documentation site
 
 More information about contributing to the documentation site specifically can be found in the [CONTRIBUTING.md](https://github.com/sircharlo/meeting-media-manager/blob/docs/CONTRIBUTING.md) of the docs branch.
