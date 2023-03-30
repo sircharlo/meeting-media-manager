@@ -19,6 +19,7 @@ import { defineComponent } from 'vue'
 import getUsername from 'fullname'
 import { ipcRenderer } from 'electron'
 import { LocaleObject } from '@nuxtjs/i18n'
+// @ts-ignore
 import { InternetAvailabilityService } from 'is-internet-available'
 import {
   ShortJWLang,
