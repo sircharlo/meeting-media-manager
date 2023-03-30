@@ -52,6 +52,13 @@ const plugin: Plugin = ({ $getAllPrefs, $config, $sentry, store }, inject) => {
     error: function (msg: any, ...args: any[]) {
       logger('error', [msg, ...args])
       if (typeof msg !== 'string' && !IGNORED_ERRORS.includes(msg.message)) {
+        if (
+          Object.values(logs.error).includes('Network Error') &&
+          (msg.message.startsWith('No WE meeting data found') ||
+            msg.message.startsWith('No MW meeting data found'))
+        ) {
+          return
+        }
         $sentry.captureException(msg)
       }
     },
