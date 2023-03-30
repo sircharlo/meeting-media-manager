@@ -578,14 +578,18 @@ if (gotTheLock) {
       })
     }
   })
-  autoUpdater.on('update-downloaded', () => {
-    updateDownloaded = true
-    win?.webContents.send('notifyUser', [
-      'updateDownloaded',
-      {
-        persistent: true,
-      },
-    ])
+  autoUpdater.on('update-downloaded', (e) => {
+    if (e.releaseName?.includes('[critical]')) {
+      autoUpdater.quitAndInstall(false)
+    } else {
+      updateDownloaded = true
+      win?.webContents.send('notifyUser', [
+        'updateDownloaded',
+        {
+          persistent: true,
+        },
+      ])
+    }
   })
 
   // When ready create main window
