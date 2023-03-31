@@ -1,5 +1,19 @@
 # Changelog
 
+## 23.4.0
+
+### New or improved features
+
+- Ability to force updates to install critical bug fixes when necessary
+
+### Bug fixes
+
+- Correctly download songs for Watchtower editions February 2023 and later
+- Correctly download songs that appear multiple times per week
+- Correctly toggle subtitle position
+- Don't try to fetch media items on startup when offline
+- Fix OBS optional image scene for `obs-websocket` V4
+
 ## 23.3.2
 
 ### Bug fixes
