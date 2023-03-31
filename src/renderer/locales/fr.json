@@ -20,7 +20,7 @@
   "customCachePath": "Dossier de cache personnalisé (pour les publications, etc.)",
   "dark": "Sombre",
   "delete": "Supprimer",
-  "disableAutoUpdate": "Disable non-critical automatic app updates",
+  "disableAutoUpdate": "Désactiver les mises à jour automatiques non critiques de l'appli",
   "disableHardwareAcceleration": "Désactiver l'accélération matérielle <em>(Remarque : N'activez ce paramètre que si vous rencontrez des problèmes avec le mode de présentation des médias. Si ce paramètre est modifié, M³ sera relancé.)</em>",
   "dontForgetToGetMedia": "N'oubliez pas de rafraîchir les dossiers multimédias sur l'ordinateur utilisé pour présenter les médias lors des réunions de l'assemblée locale !",
   "downloadShuffleMusic": "Télécharger tous les cantiques pour la musique de fond",
