@@ -186,6 +186,7 @@ export default defineComponent({
         await client
           .init({
             zoomAppRoot: document.getElementById('zoomMeeting') ?? undefined,
+            // @ts-ignore
             language: this.$i18n.localeProperties.iso,
           })
           .catch(() => {
