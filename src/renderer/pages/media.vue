@@ -153,8 +153,11 @@ export default defineComponent({
             for (let i = 0; i < cues.length; i++) {
               const cue = cues[i]
               if (cue && toggle) {
+                const newLine =
+                  // @ts-ignore
+                  +cue.line?.toString().replace('auto', '-1') * -1
                 // @ts-ignore
-                cue.line = Math.abs(cue.line - 100 ) // top ? 5 : 100 - 10
+                cue.line = toggle ? newLine : 'auto'
               }
             }
           }
@@ -208,9 +211,9 @@ export default defineComponent({
   },
   methods: {
     zoom(scale: number) {
-      if (!this.panzoom || !this.zoomEnabled) return;
+      if (!this.panzoom || !this.zoomEnabled) return
       // @ts-ignore
-      this.panzoom[scale === 1 ? 'reset' : 'zoom'](Math.max(scale, 1));
+      this.panzoom[scale === 1 ? 'reset' : 'zoom'](Math.max(scale, 1))
     },
     async loadMedia(
       media: {

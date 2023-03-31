@@ -285,7 +285,7 @@ export default defineComponent({
       if (val) {
         if (this.ccAvailable) {
           setTimeout(() => {
-            this.toggleSubtitles(this.ccEnable, this.ccToggle)
+            this.toggleSubtitles(this.ccEnable, false)
           }, MS_IN_SEC)
         }
         ipcRenderer.on('videoProgress', (_e, progress) => {
@@ -312,7 +312,7 @@ export default defineComponent({
     },
     ccEnable(val: boolean) {
       if (this.playing) {
-        this.toggleSubtitles(val, this.ccToggle)
+        this.toggleSubtitles(val, false)
       }
     },
     tempClipped(val: { start: string; end: string }): void {
