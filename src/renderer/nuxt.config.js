@@ -155,14 +155,14 @@ module.exports = {
       // envName: server, client, modern
       presets({ envName }) {
         const envTargets = {
-          client: { browsers: ['Chrome >= 110'] }, // Electron.js uses Chrome 110 (currently)
+          client: { browsers: ['Chrome >= 112'] }, // Electron.js uses Chrome 112 (currently)
           server: { node: 'current' },
         }
         return [
           [
             '@nuxt/babel-preset-app',
             {
-              corejs: { version: '3.28' },
+              corejs: { version: '3.30' },
               useBuiltIns: 'usage',
               shippedProposals: true,
               targets: envTargets[envName],

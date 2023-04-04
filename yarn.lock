@@ -2992,19 +2992,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.32.1":
-  version: 1.32.1
-  resolution: "@playwright/test@npm:1.32.1"
+"@playwright/test@npm:^1.32.2":
+  version: 1.32.2
+  resolution: "@playwright/test@npm:1.32.2"
   dependencies:
     "@types/node": "*"
     fsevents: 2.3.2
-    playwright-core: 1.32.1
+    playwright-core: 1.32.2
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: f997f3d235cdd5fc3e42eb89d639bc4cc4ee2817ddb7b7a7494a856194fa626dd4dafd62ee7815a4a0e751ede0b55aa68811d766c1d3c07c0a4e4513c17ac1f6
+  checksum: 3e4a9286c2a63c12b55368c3b94e8817fee15146e09e5be549be21d6938b6bcd26a32b0dc295100a3b24f1f0839fdb65be680e7a11a39014f485f36551c6844a
   languageName: node
   linkType: hard
 
@@ -6080,10 +6080,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3.29.1":
-  version: 3.29.1
-  resolution: "core-js@npm:3.29.1"
-  checksum: b38446dbfcfd3887b3d4922990da487e2c95044cb4c5717aaf95e786a4c6b218f05c056c7ed6c699169b9794a49fec890e402659d54661fc56965a0eb717e7bd
+"core-js@npm:3.30.0":
+  version: 3.30.0
+  resolution: "core-js@npm:3.30.0"
+  checksum: 276d4444a1261739ea4c350ef3f6aeab4c7ae7f36ac197f02d197a4566b42867c3a9b12c2fcda8a736aeca888d2c4131c8cb58ad17ed02294a10c9c97606df71
   languageName: node
   linkType: hard
 
@@ -7104,16 +7104,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:23.2.1":
-  version: 23.2.1
-  resolution: "electron@npm:23.2.1"
+"electron@npm:24.0.0":
+  version: 24.0.0
+  resolution: "electron@npm:24.0.0"
   dependencies:
     "@electron/get": ^2.0.0
-    "@types/node": ^16.11.26
+    "@types/node": ^18.11.18
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 38b6f25c555ccc799c2efa95b80af11416cbe0145a94c49047da13d08f4ed1fab87b5fe1b1207db2d7594d0e13bc814e675910c8c4bc4741bd8fa786520070b1
+  checksum: 6b2fe2f25e996eed5aefaac481d9d1666e0d4666843887e9029a044640a7559933c1ae9d67215af88a018c2052821201ea23475396c7ead6a7ba6716b0913fdb
   languageName: node
   linkType: hard
 
@@ -10759,7 +10759,7 @@ __metadata:
     "@nuxtjs/i18n": ^7.3.1
     "@nuxtjs/vuetify": ^1.12.3
     "@panzoom/panzoom": ^4.5.1
-    "@playwright/test": ^1.32.1
+    "@playwright/test": ^1.32.2
     "@sentry/electron": ^4.4.0
     "@sentry/tracing": ^7.46.0
     "@sentry/vue": ^7.46.0
@@ -10774,12 +10774,12 @@ __metadata:
     "@zoomus/websdk": ^2.11.0
     chokidar: ^3.5.3
     consola: ^2.15.3
-    core-js: ^3.29.1
+    core-js: ^3.30.0
     cross-env: ^7.0.3
     css-loader: ^5.2.7
     deepmerge: ^4.3.1
     dotenv: ^16.0.3
-    electron: 23.2.1
+    electron: 24.0.0
     electron-builder: 23.6.0
     electron-devtools-installer: ^3.2.0
     electron-store: ^8.1.0
@@ -10811,7 +10811,7 @@ __metadata:
     obs-websocket-js: ^4.0.3
     obs-websocket-js-v5: "npm:obs-websocket-js@5.0.2"
     pdfjs-dist: ^3.4.120
-    playwright: ^1.32.1
+    playwright: ^1.32.2
     prettier: ^2.8.7
     sql.js: ^1.8.0
     ts-loader: ^8.4.0
@@ -12376,23 +12376,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.32.1":
-  version: 1.32.1
-  resolution: "playwright-core@npm:1.32.1"
+"playwright-core@npm:1.32.2":
+  version: 1.32.2
+  resolution: "playwright-core@npm:1.32.2"
   bin:
     playwright: cli.js
-  checksum: 796185e605df3c970885845c1fbf2de53db5d089d37946850483797c91b81ab9dc87c3440695e96a8c92613324ef3deaea698afaf2c379548a23f8ce074931de
+  checksum: ff000cbf280e5d558fe70fd3edf14910a2e86ec68b04e28327176268345be7b3f88a5d22d78e8dae677dd633dce6cd493237df199773b55312f2ae1ab85d711f
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.32.1":
-  version: 1.32.1
-  resolution: "playwright@npm:1.32.1"
+"playwright@npm:^1.32.2":
+  version: 1.32.2
+  resolution: "playwright@npm:1.32.2"
   dependencies:
-    playwright-core: 1.32.1
+    playwright-core: 1.32.2
   bin:
     playwright: cli.js
-  checksum: bb2cef8812abf60cf07bbf6edb4ac480ccbf0b129e001fd4f2d499c8888918bc87dcc0f346b5954e6b67cd67528c8263593b091f3c83609a91c8a276196c8951
+  checksum: 36967299a5c4c02830bcb7fb94b96d6c6a7a2d7e749feb924509e89b1fdc34f8ee2218cfaf75e5f32572663568b468ad28fdc170bced41869d5ed69f9a7ff384
   languageName: node
   linkType: hard
 
