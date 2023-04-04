@@ -1,16 +1,16 @@
 ---
-tag: Configuration
+tag: Seadistus
 title: Koguduse sünkroonimine
 ref: congregation-sync
 ---
 
-Vanemate kogu poolt *videokonverentsi korraldajaks* (VO) määratud vend saab kasutada M³-d, et hallata, milline meedia on tema koguduse tehnilisele A/V tugimeeskonnale kättesaadavaks tehtud.
+Vanematekogu poolt *videokonverentsi organiseerija* (VO) määratud vend saab kasutada M³-d, et hallata, milline meedia on tema koguduse tehnilisele A/V tugimeeskonnale kättesaadavaks tehtud.
 
 VO või tema määratud isik saab:
 
 - laadida üles **täiendavat** meediat, mida koosoleku ajal jagada, näiteks ringkonnaülevaataja külastuse või avalike esinejate kõnede jaoks
-- **peida** JW.org-ist meedia, mis ei ole antud koosoleku jaoks asjakohane, näiteks kui osa on asendatud kohaliku filiaaliga
-- lisage või eemaldage **korduv** meedia, nt aastateksti video või teadaande slaid
+- **peita** JW.org-ist meedia, mis ei ole antud koosoleku jaoks asjakohane, näiteks kui osa on asendatud kohaliku vajaduste osaga
+- lisada või eemaldada **korduvat** meedia, nt aastateksti video või teadaande slaid
 
 All who are synced to the same congregation will then receive the exact same media when they click the *Update media folders* button.
 
