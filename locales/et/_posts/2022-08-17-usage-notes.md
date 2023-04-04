@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Abi
 title: Tehnilised kasutusjuhised
 ref: usage-notes
 ---
