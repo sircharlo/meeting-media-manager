@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Abi
 title: Probleemid ja funktsioonitaotlused
 ref: bug-feature
 ---

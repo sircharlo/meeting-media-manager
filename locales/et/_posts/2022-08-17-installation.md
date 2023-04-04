@@ -1,5 +1,5 @@
 ---
-tag: Configuration
+tag: Seadistus
 title: Paigaldamine
 ref: installation
 ---

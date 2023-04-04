@@ -1,6 +1,6 @@
 {
   "lang": "et",
-  "name": "eesti",
+  "name": "Inglise",
   "language": "Keel:",
   "search": "Filtreerige märksõna järgi",
   "shared": {
@@ -31,7 +31,7 @@
     "imgRename": "Meediumifaili ümbernimetamine"
   },
   "present-media": {
-    "imgButton": "Blue play button to enter media controller mode",
+    "imgButton": "Sinine play nupp meedia esitamise režiimi sisenemiseks",
     "imgSelectMeeting": "Meediumi kuvamiseks koosoleku valimine",
     "imgBG": "Vaikimisi meediumitaust automaatselt genereeritud aastatekstiga",
     "imgMediaList": "Meediumite loend, mis on esitlemiseks valmis",
