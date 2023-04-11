@@ -6046,6 +6046,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"consola@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "consola@npm:3.0.1"
+  checksum: 0d06afe3119ecb6b45ebb04506881942dbc70656c0abf2a7b15b6af35b9b0233f722999913ac3fb91dd118b9ff5c0158050cb77d83a829cd124eab421addcefd
+  languageName: node
+  linkType: hard
+
 "console-browserify@npm:^1.1.0":
   version: 1.2.0
   resolution: "console-browserify@npm:1.2.0"
@@ -10834,7 +10841,7 @@ __metadata:
     "@xpda-dev/webpack-step": ^0.1.6
     "@zoomus/websdk": ^2.11.0
     chokidar: ^3.5.3
-    consola: ^2.15.3
+    consola: ^3.0.1
     core-js: ^3.30.0
     cross-env: ^7.0.3
     css-loader: ^5.2.7
