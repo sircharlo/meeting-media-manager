@@ -1,5 +1,16 @@
 # Changelog
 
+## 23.4.1
+
+### New or improved features
+
+- More complete translations
+- The main M3 window now allows for a smaller window width
+
+### Bug fixes
+
+- Correctly present media that has been sorted
+
 ## 23.4.0
 
 ### New or improved features
