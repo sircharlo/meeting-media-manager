@@ -49,7 +49,7 @@
         @end="dragging = false"
       >
         <media-item
-          v-for="(item, i) in treasureItems"
+          v-for="item in treasureItems"
           :key="item.id"
           :src="item.path"
           :play-now="item.play"
@@ -61,8 +61,8 @@
           :show-prefix="showPrefix"
           :sortable="sortable"
           :zoom-part="zoomPart"
-          @playing="setIndex(i)"
-          @deactivated="resetDeactivate(i)"
+          @playing="setIndex(item.id)"
+          @deactivated="resetDeactivate(item.id)"
         />
       </draggable>
       <template v-if="applyItems.length > 0">
@@ -80,7 +80,7 @@
           @end="dragging = false"
         >
           <media-item
-            v-for="(item, i) in applyItems"
+            v-for="item in applyItems"
             :key="item.id"
             :src="item.path"
             :play-now="item.play"
@@ -92,8 +92,8 @@
             :show-prefix="showPrefix"
             :sortable="sortable"
             :zoom-part="zoomPart"
-            @playing="setIndex(treasureItems.length + i)"
-            @deactivated="resetDeactivate(treasureItems.length + i)"
+            @playing="setIndex(item.id)"
+            @deactivated="resetDeactivate(item.id)"
           />
         </draggable>
       </template>
@@ -111,7 +111,7 @@
         @end="dragging = false"
       >
         <media-item
-          v-for="(item, i) in livingItems"
+          v-for="item in livingItems"
           :key="item.id"
           :src="item.path"
           :play-now="item.play"
@@ -123,10 +123,8 @@
           :show-prefix="showPrefix"
           :sortable="sortable"
           :zoom-part="zoomPart"
-          @playing="setIndex(treasureItems.length + applyItems.length + i)"
-          @deactivated="
-            resetDeactivate(treasureItems.length + applyItems.length + i)
-          "
+          @playing="setIndex(item.id)"
+          @deactivated="resetDeactivate(item.id)"
         />
       </draggable>
     </template>
@@ -144,7 +142,7 @@
         @end="dragging = false"
       >
         <media-item
-          v-for="(item, i) in publicTalkItems"
+          v-for="item in publicTalkItems"
           :key="item.id"
           :src="item.path"
           :play-now="item.play"
@@ -156,8 +154,8 @@
           :show-prefix="showPrefix"
           :sortable="sortable"
           :zoom-part="zoomPart"
-          @playing="setIndex(i)"
-          @deactivated="resetDeactivate(i)"
+          @playing="setIndex(item.id)"
+          @deactivated="resetDeactivate(item.id)"
         />
       </draggable>
       <v-divider class="mx-4 living" />
@@ -174,7 +172,7 @@
         @end="dragging = false"
       >
         <media-item
-          v-for="(item, i) in wtItems"
+          v-for="item in wtItems"
           :key="item.id"
           :src="item.path"
           :play-now="item.play"
@@ -186,8 +184,8 @@
           :show-prefix="showPrefix"
           :sortable="sortable"
           :zoom-part="zoomPart"
-          @playing="setIndex(publicTalkItems.length + i)"
-          @deactivated="resetDeactivate(publicTalkItems.length + i)"
+          @playing="setIndex(item.id)"
+          @deactivated="resetDeactivate(item.id)"
         />
       </draggable>
     </template>
@@ -202,7 +200,7 @@
       @end="dragging = false"
     >
       <media-item
-        v-for="(item, i) in mediaItems"
+        v-for="item in mediaItems"
         :key="item.id"
         :src="item.path"
         :play-now="item.play"
@@ -214,8 +212,8 @@
         :cc-enable="ccEnable"
         :sortable="sortable"
         :zoom-part="zoomPart"
-        @playing="setIndex(i)"
-        @deactivated="resetDeactivate(i)"
+        @playing="setIndex(item.id)"
+        @deactivated="resetDeactivate(item.id)"
       />
     </draggable>
   </div>
@@ -386,11 +384,17 @@ export default defineComponent({
         this.mwbHeadings = fallback
       }
     },
-    resetDeactivate(index: number) {
-      this.$emit('deactivate', index)
+    resetDeactivate(id: string) {
+      this.$emit(
+        'deactivate',
+        this.items.findIndex((item) => item.id === id)
+      )
     },
-    setIndex(index: number) {
-      this.$emit('index', index)
+    setIndex(id: string) {
+      this.$emit(
+        'index',
+        this.items.findIndex((item) => item.id === id)
+      )
     },
   },
 })
