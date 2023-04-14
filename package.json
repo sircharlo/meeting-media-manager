@@ -46,7 +46,7 @@
   "resolutions": {
     "@types/node": "16.18.3",
     "chokidar": "3.5.3",
-    "core-js": "3.30.0",
+    "core-js": "3.30.1",
     "minimatch": "5.1.6",
     "nth-check": "2.1.1",
     "vue": "2.7.14",
@@ -85,7 +85,7 @@
     "@zoomus/websdk": "^2.11.0",
     "chokidar": "^3.5.3",
     "consola": "^2.15.3",
-    "core-js": "^3.30.0",
+    "core-js": "^3.30.1",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.7",
     "deepmerge": "^4.3.1",
