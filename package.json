@@ -117,7 +117,7 @@
     "minimatch": "^5.1.6",
     "node-gyp": "^9.3.1",
     "nth-check": "^2.1.1",
-    "nuxt": "^2.16.3",
+    "nuxt": "^3.4.2",
     "nuxt-webfontloader": "^1.1.0",
     "obs-websocket-js": "^4.0.3",
     "obs-websocket-js-v5": "npm:obs-websocket-js@5.0.2",
@@ -134,7 +134,7 @@
     "vuetify": "^2.6.15",
     "vuetify-loader": "^1.9.2",
     "webdav": "^4.11.2",
-    "webpack": "^4.46.0",
+    "webpack": "^5.81.0",
     "webpack-node-externals": "^3.0.0",
     "xvfb-maybe": "^0.2.1"
   }
