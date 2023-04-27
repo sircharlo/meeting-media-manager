@@ -20,7 +20,7 @@
   "customCachePath": "Egyéni gyorsítótár elérési útvonal (kiadványokhoz stb.)",
   "dark": "Sötét",
   "delete": "Törlés",
-  "disableAutoUpdate": "Automatikus alkalmazásfrissítés letiltása",
+  "disableAutoUpdate": "A nem kritikus alkalmazásfrissítések kihagyása",
   "disableHardwareAcceleration": "Hardveres gyorsítás letiltása <em>(Megjegyzés: Csak akkor engedélyezze ezt a beállítást, ha problémákat tapasztal a lejátszás során. A beállítás módosítása az program újraindulását eredményezi.)</em>",
   "dontForgetToGetMedia": "Ne felejtse el frissíteni a médiafájlok mappáit azon a számítógépen, amelyet a gyülekezeti összejöveteleken a média lejátszására és kivetítésére használnak!",
   "downloadShuffleMusic": "Az összes dal letöltése a háttérzenéhez",
