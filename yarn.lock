@@ -3054,8 +3054,8 @@ __metadata:
   linkType: hard
 
 "@sentry/cli@npm:^1.75.1":
-  version: 1.75.1
-  resolution: "@sentry/cli@npm:1.75.1"
+  version: 1.75.2
+  resolution: "@sentry/cli@npm:1.75.2"
   dependencies:
     https-proxy-agent: ^5.0.0
     mkdirp: ^0.5.5
@@ -3065,7 +3065,7 @@ __metadata:
     which: ^2.0.2
   bin:
     sentry-cli: bin/sentry-cli
-  checksum: d665a489946be0843cd21b035ab6b0ba2a4be06fd5aaa2c37dda253d9060e535aef400a8dbf09cba318d7d94c85c2fcbcc817e6c1975dab3f979730f7adf2dbe
+  checksum: a0f29b2766cc3054cf20741869ff6991c5543b36b355757babcee9e997182d8862caccc985a9cf360e59000a2be2adfae42d41e0f180e495329e5a41242620d7
   languageName: node
   linkType: hard
 
@@ -3202,7 +3202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/webpack-plugin@npm:^1.20.0":
+"@sentry/webpack-plugin@npm:^1.20.1":
   version: 1.20.1
   resolution: "@sentry/webpack-plugin@npm:1.20.1"
   dependencies:
@@ -7140,9 +7140,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.284":
-  version: 1.4.375
-  resolution: "electron-to-chromium@npm:1.4.375"
-  checksum: 3e0081cc18b8104460d634fbd00bcf3463a27eb8436b42519212e3fcbb2886ed2f4982537a8c1831d5d099065953129612f28c5c591fdaec8d594a3f5f278f08
+  version: 1.4.376
+  resolution: "electron-to-chromium@npm:1.4.376"
+  checksum: 881351d25e0e983432c10844540bb664ee4c54f781b81b7247c36d6e617dc85305fd87ffb5de6d9630c6a54f4432afd8e97565a11c62bb77b63051e43cb8a942
   languageName: node
   linkType: hard
 
@@ -10840,7 +10840,7 @@ __metadata:
     "@sentry/electron": ^4.5.0
     "@sentry/tracing": ^7.50.0
     "@sentry/vue": ^7.50.0
-    "@sentry/webpack-plugin": ^1.20.0
+    "@sentry/webpack-plugin": ^1.20.1
     "@types/fluent-ffmpeg": ^2.1.21
     "@types/lodash.clonedeep": ^4.5.7
     "@types/sql.js": ^1.4.4
