@@ -4,7 +4,7 @@
   "language": "Language:",
   "search": "Filter by keyword",
   "shared": {
-    "explanation": "Explanation",
+    "explanation": "Wetin e mean",
     "option": "Option",
     "optionsApp": "Application setup",
     "optionsCongSync": "Congregation sync setup",
@@ -15,29 +15,29 @@
     "setting": "Setting"
   },
   "home": {
-    "expand": "Expand all articles",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
+    "expand": "Open all articles",
+    "collapse": "Close all articles",
+    "syncInProgress": "We de download meeting pictures and videos",
     "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
-    "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "chooseWeek": "Choose one week",
+    "syncComplete": "Sync don finish!",
+    "musicPlaying": "Play music before and after the meeting"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgAddSong": "Add one song for the public talk",
+    "imgAddPic": "Add one picture wey una go need",
+    "imgImportJWPUB": "Import pictures or videos from one JWPUB file",
+    "imgPreviewJWPUB": "See the pictures and videos wey dey inside the JWPUB before you add-am",
+    "imgRename": "Rename one picture or video file"
   },
   "present-media": {
-    "imgButton": "Blue play button to enter media controller mode",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgButton": "Blue play button for start show pictures and videos",
+    "imgSelectMeeting": "Select one meeting for show the pictures and videos",
+    "imgBG": "Background for pictures and videos, the yeartext go show for there",
+    "imgMediaList": "Pictures and videos list wey we go show",
+    "imgStandby": "M³ media presentation for standby mode",
+    "imgDisplayPic": "Show one picture",
+    "imgPlayVideo": "Play one video",
+    "imgVideoScrub": "Move to one place for inside the video"
   }
 }

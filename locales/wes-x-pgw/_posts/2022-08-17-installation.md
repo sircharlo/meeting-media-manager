@@ -4,7 +4,7 @@ title: Installation
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+M³ no need admin rights when you install or start-am. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
 
 | Operating System | File to download                           |
 | ---------------- | ------------------------------------------ |
