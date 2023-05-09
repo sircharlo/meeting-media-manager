@@ -105,7 +105,7 @@ export default defineComponent({
 
         // If jw media is already downloaded, set isLocal of jw media to true, else add local file to list
         const mediaPath = this.$mediaPath()
-        if (mediaPath) {
+        if (mediaPath && this.date) {
           const path = join(mediaPath, this.date)
           if (existsSync(path)) {
             readdirSync(path)
