@@ -4,41 +4,41 @@ title: Congregation sync
 ref: congregation-sync
 ---
 
-The brother designated as *videoconference organizer* (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
+The brother wey the body of elders don choose make e be the *Person wey de organize una video conference* (Organizer) fit use M³ for manage which pictures and videos go be available for the technical A/V support team for e congregation.
 
-The VO, or someone designated by him, can:
+The Organizer, or someone wey e ask, fit:
 
-- upload **additional** media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
-- **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
-- add or remove **recurring** media, such as a year-text video, or an announcement slide
+- upload **additional** pictures or videos for share-am during a meeting, like when the circuit overseer go come, or for public talks
+- **hide** media from JW.org wey una no go need for the meeting, for example when the branch don replace one part make una discuss something else
+- add or remove **pictures and videos wey you go need every time**, like one yeartext video or some slide with announcement
 
-All who are synced to the same congregation will then receive the exact same media when they click the *Update media folders* button.
+Everybody wey de sync for the same congregation, them go really get the same pictures and videos when them de click the button for *Update media folders*.
 
-Please note that the congregation sync feature is opt-in and entirely optional.
+Remember say you no need use the congregation sync feature, but you fit use-am if you want.
 
-### How it works
+### How e de work
 
-M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+M³ de use WebDAV for inside when we de sync things. This one mean say the Organizer (or someone wey e de ask) need do one of this things:
 
-- set up a secured WebDAV server that is web-accessible, **or**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- set up one secure WebDAV server wey we fit reach for Internet, **or**
+- use one cloud service wey some company de offer. E need support the WebDAV protocol (see the setting *Web address* for the section *Congregation sync setup* below).
 
-All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
+All people wey want sync the same things go need connect to the same WebDAV server. The Organizer suppose tell everybody the connection login data.
 
 ### Congregation sync setup
 
-| Setting                    | Explanation                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Setting                    | Wetin e mean                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Host name`                | Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br> ***Note:** The Web address button, once clicked, will show a list of WebDAV providers that have been known to be compatible with M³, and will automatically prefill certain settings for those providers. <br><br> This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...* |
-| `User name`                | Username for the WebDAV service.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `Password`                 | Password for the WebDAV service. <br><br> ***Note:** As detailed in their respective support pages, an app-specific password might need to be created for [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) and [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) in order to enable WebDAV connections to their services.*                                                                   |
-| `Congregation sync folder` | This is the folder that will be used to synchronize media for all congregation sync users. You can either type/paste in a path, or use your mouse to navigate to the target folder. <br><br> ***Note:** Make sure that all congregation sync users input the same folder path; otherwise the sync won't work as expected.*                                                                                                                                                   |
-| `Congregation settings`    | Once the VO has configured the *Media setup* and *Meeting setup* sections of the [Settings]({{page.lang}}/#configuration) on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open M³.                                                       |
+| `Web address`              | Web address for the WebDAV server. You go need secure HTTP (they call-am HTTPS). <br><br> ***Note:** The Web address button, when you click-am, go show some WebDAV services wey M³ fit use. When you choose one, we go enter the settings for that one. <br><br> We just want give you some ideas. We show the list, but e no be like we de gree or recommend one of this offers. The better server na always the one wey you own yourself…*                    |
+| `User name`                | User name for the WebDAV service.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `Password`                 | Password for the WebDAV service. <br><br>***Note:** You go need one app password when you want to connect to [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) or [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) for WebDAV.*                                                                                                                                                              |
+| `Congregation sync folder` | This na the folder wey we go use for sync pictures and videos for all congregation sync users. You fit type or paste one path. Or just click the target folder. <br><br>***Note:** Make sure say everybody go fill the same folder path; or sync no go work like you expect-am.*                                                                                                                                                                                             |
+| `Congregation settings`    | After the Organizer don set up the *Picture and video setup* and *Meeting setup* sections for the [Settings]({{page.lang}}/#configuration) on e own computer, e fit click this button for copy some settings to all people wey use congregation sync (for example, meeting days, language for pictures and videos, settings for convert MP4, and so on). This one mean say the settings wey e choose go overwrite this settings for everybody wey open M³ and sync with this connection. |
 
-### Using congregation sync to manage media
+### Use congregation sync for manage pictures and videos
 
-Once the congregation sync setup is complete, you're ready to start [Managing media]({{page.lang}}/#manage-media) for your congregation's technical AV support team.
+After you don finish congregation sync setup, you fit start [manage pictures and videos]({{page.lang}}/#manage-media) for una technical A/V support team.
 
-### Screenshots of congregation sync in action
+### See how congregation sync de work
 
 {% include screenshots/congregation-sync.html lang=site.data.wes-x-pgw %}
