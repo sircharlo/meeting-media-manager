@@ -7793,9 +7793,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:^9.11.1":
-  version: 9.11.1
-  resolution: "eslint-plugin-vue@npm:9.11.1"
+"eslint-plugin-vue@npm:^9.12.0":
+  version: 9.12.0
+  resolution: "eslint-plugin-vue@npm:9.12.0"
   dependencies:
     "@eslint-community/eslint-utils": ^4.3.0
     natural-compare: ^1.4.0
@@ -7806,7 +7806,7 @@ __metadata:
     xml-name-validator: ^4.0.0
   peerDependencies:
     eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
-  checksum: dda3a135b411a0fab6dda06cfcf3dfcaebaff50150cc21860914d6fc2f17b23363e11e1ed96771904d1089f0fc7bdde3ac9fe292ed249c643d6ca9c3f51d4f6f
+  checksum: 77727261d0137f88869f978c6ea2bafe002b6275e90e95849d0ed668bb87c295e21a562aa2ef8d5b884c67c142e245163fb3fca09a3a90ec49e7b3d4b416fa99
   languageName: node
   linkType: hard
 
@@ -11055,7 +11055,7 @@ __metadata:
     eslint-config-prettier: ^8.8.0
     eslint-friendly-formatter: ^4.0.1
     eslint-plugin-nuxt: ^4.0.0
-    eslint-plugin-vue: ^9.11.1
+    eslint-plugin-vue: ^9.12.0
     eslint-webpack-plugin: ^2.7.0
     fast-glob: ^3.2.12
     fast-xml-parser: ^4.2.2
