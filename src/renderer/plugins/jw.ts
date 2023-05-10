@@ -36,6 +36,11 @@ const plugin: Plugin = (
     const lastUpdate = $getPrefs('media.langUpdatedLast') as string
     const recentlyUpdated =
       lastUpdate && $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
+    console.log("forceReload", forceReload)
+    console.log("langPath", langPath);
+    console.log("existsSync(langPath)", existsSync(langPath));
+    console.log("lastUpdate", lastUpdate);
+    console.log("recentlyUpdated", recentlyUpdated);
 
     if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
       try {
