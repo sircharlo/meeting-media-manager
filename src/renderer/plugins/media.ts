@@ -28,6 +28,8 @@ import {
   SmallMediaFile,
   MultiMediaExtractRef,
 } from '~/types'
+import { MEPS_IDS } from '~/constants/lang'
+const MEPS_IDS_TYPED: {[key: string]: string} = MEPS_IDS as {[key: string]: string};
 
 const plugin: Plugin = (
   {
@@ -315,7 +317,9 @@ const plugin: Plugin = (
         mmItem.MimeType.includes('audio') ||
         mmItem.MimeType.includes('video')
       ) {
-        const mediaLang = $getPrefs('media.lang') as string
+        const mepsLanguageIndex = mmItem.MepsLanguageIndex
+        const mepsLanguage = mepsLanguageIndex ? MEPS_IDS_TYPED[mepsLanguageIndex.toString()] : undefined
+        const mediaLang = mepsLanguage ?? $getPrefs('media.lang') as string
 
         let json = (
           await getMediaLinks(
@@ -324,7 +328,7 @@ const plugin: Plugin = (
               track: mmItem.Track as number,
               issue: (mmItem.IssueTagNumber as number)?.toString(),
               docId: mmItem.MultiMeps as number,
-              lang: fallbackLang ? mediaLang : lang,
+              lang: mediaLang ?? lang,
             },
             silent
           )
@@ -462,7 +466,7 @@ const plugin: Plugin = (
 
     const mmItems: MeetingFile[] = []
 
-    let select = `SELECT ${mmTable}.DocumentId, ${mmTable}.MultimediaId, Multimedia.MimeType, Multimedia.DataType, Multimedia.MajorType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType`
+    let select = `SELECT ${mmTable}.DocumentId, ${mmTable}.MultimediaId, Multimedia.MimeType, Multimedia.DataType, Multimedia.MajorType, Multimedia.FilePath, Multimedia.Label, Multimedia.Caption, Multimedia.CategoryType, Multimedia.MepsLanguageIndex`
     let from = `FROM ${mmTable} INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`
     let where = `WHERE ${
       docId || docId === 0
