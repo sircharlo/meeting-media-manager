@@ -13,7 +13,18 @@
       :locked="$isLocked('media.lang')"
       auto-select-first
       required
-    />
+    >
+    <template v-if="!loading && langs.length == 0" #append-outer>
+      <v-btn
+            color="warning"
+            class="mt-n1"
+            min-width="32px"
+            @click="getLangs(true)"
+          >
+            <font-awesome-icon :icon="faArrowsRotate" class="black--text" />
+          </v-btn>
+    </template>
+    </form-input>
     <form-input
       id="media.langFallback"
       v-model="media.langFallback"
@@ -483,15 +494,7 @@ export default defineComponent({
   async mounted(): Promise<void> {
     const promises = [this.loadWtFont(), this.loadJwIconsFont()]
     Object.assign(this.media, this.$getPrefs('media'))
-    this.jwLangs = await this.$getJWLangs()
-    if (
-      !this.langs
-        .map(({ langcode }) => langcode)
-        .includes(this.media.lang ?? '')
-    ) {
-      this.media.lang = null
-    }
-    this.loading = false
+    await this.getLangs()
     this.$emit('refresh', this.media)
 
     if (this.$refs.mediaForm) {
@@ -502,6 +505,19 @@ export default defineComponent({
     await Promise.allSettled(promises)
   },
   methods: {
+  async getLangs(force = false) {
+    this.loading = true
+    this.jwLangs = await this.$getJWLangs(force)
+    if (
+      this.langs.length > 0 &&
+      !this.langs
+        .map(({ langcode }) => langcode)
+        .includes(this.media.lang ?? '')
+    ) {
+      this.media.lang = null
+    }
+    this.loading = false
+  },
     async loadWtFont() {
       let fontFile = this.$localFontPath(WT_CLEARTEXT_FONT)
       if (!existsSync(fontFile)) {
