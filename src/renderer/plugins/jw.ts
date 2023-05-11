@@ -36,12 +36,19 @@ const plugin: Plugin = (
     const lastUpdate = $getPrefs('media.langUpdatedLast') as string
     const recentlyUpdated =
       lastUpdate && $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
+    console.log("forceReload", forceReload)
+    console.log("langPath", langPath);
+    console.log("existsSync(langPath)", existsSync(langPath));
+    console.log("lastUpdate", lastUpdate);
+    console.log("recentlyUpdated", recentlyUpdated);
 
     if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
       try {
+        console.log('Fetching JW languages...')
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://www.jw.org/en/languages',
         })
+        console.log('JW langs', result)
 
         if (result.languages) {
           const langs = (result.languages as JWLang[])
@@ -138,6 +145,7 @@ const plugin: Plugin = (
       langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'
     )
 
+    console.log('Updated langs', langs)
     $write(langPath, JSON.stringify(langs, null, 2))
 
     return langs
@@ -145,7 +153,11 @@ const plugin: Plugin = (
   inject('getJWLangs', getJWLangs)
 
   async function getLatestJWMedia(): Promise<MediaItem[]> {
-    const categories = ['FeaturedLibraryLanding', 'FeaturedLibraryVideos', 'LatestVideos']
+    const categories = [
+      'FeaturedLibraryLanding',
+      'FeaturedLibraryVideos',
+      'LatestVideos',
+    ]
     const promises: Promise<MediaItem[]>[] = []
     const media: MediaItem[] = []
 
@@ -255,6 +267,7 @@ const plugin: Plugin = (
 
     try {
       const langPath = join($appPath(), 'langs.json')
+      if (!existsSync(langPath)) return { lang, w, mwb }
       const langs = JSON.parse(
         readFileSync(langPath, 'utf8') ?? '[]'
       ) as ShortJWLang[]
