@@ -29,7 +29,9 @@ import {
   MultiMediaExtractRef,
 } from '~/types'
 import { MEPS_IDS } from '~/constants/lang'
-const MEPS_IDS_TYPED: {[key: string]: string} = MEPS_IDS as {[key: string]: string};
+const MEPS_IDS_TYPED: { [key: string]: string } = MEPS_IDS as {
+  [key: string]: string
+}
 
 const plugin: Plugin = (
   {
@@ -269,7 +271,10 @@ const plugin: Plugin = (
     memOnly: boolean,
     lang?: string
   ) {
-    if (mmItem.Link) {
+    if (mmItem.MepsLanguageIndex) {
+      const mepsLang = MEPS_IDS_TYPED[mmItem.MepsLanguageIndex.toString()]
+      if (mepsLang) lang = mepsLang
+    } else if (mmItem.Link) {
       try {
         const matches = mmItem.Link.match(/\/(.*)\//)
         if (matches && matches.length > 0) {
@@ -317,9 +322,7 @@ const plugin: Plugin = (
         mmItem.MimeType.includes('audio') ||
         mmItem.MimeType.includes('video')
       ) {
-        const mepsLanguageIndex = mmItem.MepsLanguageIndex
-        const mepsLanguage = mepsLanguageIndex ? MEPS_IDS_TYPED[mepsLanguageIndex.toString()] : undefined
-        const mediaLang = mepsLanguage ?? $getPrefs('media.lang') as string
+        const mediaLang = $getPrefs('media.lang') as string
 
         let json = (
           await getMediaLinks(
@@ -328,7 +331,7 @@ const plugin: Plugin = (
               track: mmItem.Track as number,
               issue: (mmItem.IssueTagNumber as number)?.toString(),
               docId: mmItem.MultiMeps as number,
-              lang: mediaLang ?? lang,
+              lang: fallbackLang ? mediaLang : lang,
             },
             silent
           )
