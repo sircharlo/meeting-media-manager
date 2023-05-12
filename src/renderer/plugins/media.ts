@@ -1165,10 +1165,18 @@ const plugin: Plugin = (
 
       // remove the last song if it's the co week
       if ($isCoWeek(baseDate)) {
-        mms.splice(
-          mms.reverse().findIndex((m) => m.pub === store.state.media.songPub),
-          1
-        )
+        const SONG_MIN_PAR = 22
+            let lastSongIdLookup = mms
+              .reverse()
+              .findIndex(
+                (m) => m.BeginParagraphOrdinal && m.BeginParagraphOrdinal >= SONG_MIN_PAR
+              )
+            if (lastSongIdLookup === -1) {
+              lastSongIdLookup = mms
+                .reverse()
+                .findIndex((m) => m.pub === store.state.media.songPub)
+            }
+            mms.splice(lastSongIdLookup, 1)
       }
       mms.forEach((mm) => {
         promises.push(
