@@ -228,12 +228,10 @@ export default defineComponent({
       this.$warn('errorOffline')
     }
     window.addEventListener('offline', () => {
-      console.log("online: false");
       this.$store.commit('stats/setOnline', false)
     })
 
     window.addEventListener('online', () => {
-      console.log("online: true");
       this.$store.commit('stats/setOnline', true)
     })
 
@@ -243,7 +241,6 @@ export default defineComponent({
       rate: 5000 // if ever we want to change the rate at which connectivity is checked
     } */);
     onlineChecker.on('status', (isOnline: boolean) => {
-      console.log(`online: ${isOnline}`);
       this.$store.commit('stats/setOnline', isOnline)
     });
   },
