@@ -1,5 +1,13 @@
 # Changelog
 
+## 23.4.2
+
+### Bug fixes
+
+- Always ignore correct song for circuit overseer visit
+- Correctly fetch jw languages when missing
+- Correctly fetch some media that's in a different language than the publication
+
 ## 23.4.1
 
 ### New or improved features
