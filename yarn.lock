@@ -4333,9 +4333,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zoomus/websdk@npm:^2.12.0":
-  version: 2.12.0
-  resolution: "@zoomus/websdk@npm:2.12.0"
+"@zoomus/websdk@npm:^2.12.2":
+  version: 2.12.2
+  resolution: "@zoomus/websdk@npm:2.12.2"
   dependencies:
     lodash: ^4.17.21
     react: 16.13.0
@@ -4350,7 +4350,7 @@ __metadata:
     react-redux: 7.2.4
     redux: 3.7.2
     redux-thunk: 2.3.0
-  checksum: b7cd42ae7046f98b12921c430b00e9a5dbcefec2a9f656fb2b773dcb5241f9a9f9d485e3b673d493101c5c86bf00f89085f3aa71e014acae9695df7c77efb894
+  checksum: 55f57f19007be13e8401089f00f3ea41b2d90374093721fcbc5150613ad3ac281ae7aa942584c68b52c95c6bd5baf876289e8d5199599fe1f6000572fa7ed467
   languageName: node
   linkType: hard
 
@@ -10936,7 +10936,7 @@ __metadata:
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
     "@xpda-dev/webpack-step": ^0.1.6
-    "@zoomus/websdk": ^2.12.0
+    "@zoomus/websdk": ^2.12.2
     chokidar: ^3.5.3
     consola: ^2.15.3
     core-js: ^3.30.2
