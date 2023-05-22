@@ -66,6 +66,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Prepare Playwright
+        run: npx playwright install --with-deps chromium
+
       - name: Set env variables
         run: |
           touch .env
@@ -118,7 +121,7 @@ jobs:
       - name: Cancel workflow
         if: failure()
         uses: andymckay/cancel-action@0.3
-  
+
   build:
     runs-on: ${{ matrix.os }}
 
@@ -234,4 +237,3 @@ jobs:
           delete_tag_pattern: beta
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-      

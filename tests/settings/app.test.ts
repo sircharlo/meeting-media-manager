@@ -1,6 +1,5 @@
 import { platform } from 'os'
-import { expect, test } from '@playwright/test'
-import { ElectronApplication, Page } from 'playwright'
+import { expect, test, ElectronApplication, Page } from '@playwright/test'
 import { version } from '../../package.json'
 import { delay } from '../helpers/generalHelpers'
 import locale from './../../src/renderer/locales/en.json'

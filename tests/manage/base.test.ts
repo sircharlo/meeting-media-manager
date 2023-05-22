@@ -1,7 +1,6 @@
 import { platform } from 'os'
-import { expect, test } from '@playwright/test'
+import { expect, test, ElectronApplication, Page } from '@playwright/test'
 import jimp from 'jimp'
-import { ElectronApplication, Page } from 'playwright'
 import { delay } from '../helpers/generalHelpers'
 import { version } from '../../package.json'
 import {
