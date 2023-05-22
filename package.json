@@ -122,7 +122,6 @@
     "obs-websocket-js": "^4.0.3",
     "obs-websocket-js-v5": "npm:obs-websocket-js@5.0.3",
     "pdfjs-dist": "^3.6.172",
-    "playwright": "^1.34.0",
     "prettier": "^2.8.8",
     "sql.js": "^1.8.0",
     "ts-loader": "^8.4.0",
