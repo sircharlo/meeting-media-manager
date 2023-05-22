@@ -2,8 +2,7 @@ import { platform } from 'os'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
-import { expect, test } from '@playwright/test'
-import { ElectronApplication, Page } from '@playwright/test'
+import { expect, test, ElectronApplication, Page } from '@playwright/test'
 import { join } from 'upath'
 import {
   startApp,
