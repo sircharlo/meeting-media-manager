@@ -67,7 +67,7 @@ jobs:
         run: yarn install
 
       - name: Prepare Playwright
-        run: npx playwright install
+        run: npx playwright install --with-deps chromium
 
       - name: Set env variables
         run: |
