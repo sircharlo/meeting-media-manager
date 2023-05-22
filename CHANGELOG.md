@@ -1,5 +1,11 @@
 # Changelog
 
+## 23.4.3
+
+### Bug fixes
+
+- Correctly fetch (sign-language) videos for Watchtower Studies
+
 ## 23.4.2
 
 ### Bug fixes
