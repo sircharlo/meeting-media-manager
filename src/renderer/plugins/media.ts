@@ -1166,17 +1166,18 @@ const plugin: Plugin = (
       // remove the last song if it's the co week
       if ($isCoWeek(baseDate)) {
         const SONG_MIN_PAR = 22
-            let lastSongIdLookup = mms
-              .reverse()
-              .findIndex(
-                (m) => m.BeginParagraphOrdinal && m.BeginParagraphOrdinal >= SONG_MIN_PAR
-              )
-            if (lastSongIdLookup === -1) {
-              lastSongIdLookup = mms
-                .reverse()
-                .findIndex((m) => m.pub === store.state.media.songPub)
-            }
-            mms.splice(lastSongIdLookup, 1)
+        let lastSongIdLookup = mms
+          .reverse()
+          .findIndex(
+            (m) =>
+              m.BeginParagraphOrdinal && m.BeginParagraphOrdinal >= SONG_MIN_PAR
+          )
+        if (lastSongIdLookup === -1) {
+          lastSongIdLookup = mms
+            .reverse()
+            .findIndex((m) => m.pub === store.state.media.songPub)
+        }
+        mms.splice(lastSongIdLookup, 1)
       }
       mms.forEach((mm) => {
         promises.push(
@@ -1288,9 +1289,10 @@ const plugin: Plugin = (
 
       const promises: Promise<void>[] = []
 
-      const images = $query(
+      // Watchtower images and videos
+      const media = $query(
         db,
-        `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, MimeType, BeginParagraphOrdinal, FilePath, Label, Caption, TargetParagraphNumberLabel
+        `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, MimeType, BeginParagraphOrdinal, FilePath, Label, Caption, TargetParagraphNumberLabel, KeySymbol, Track, IssueTagNumber
          FROM DocumentMultimedia
          INNER JOIN Multimedia
            ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
@@ -1300,10 +1302,11 @@ const plugin: Plugin = (
          WHERE DocumentMultimedia.DocumentId = ${docId}
            AND CategoryType <> 9 
            AND CategoryType <> -1
-         GROUP BY DocumentMultimedia.MultimediaId`
+         GROUP BY DocumentMultimedia.MultimediaId
+         ORDER BY BeginParagraphOrdinal`
       ) as MultiMediaItem[]
 
-      images.forEach((img) => promises.push(addImgToPart(date, issue, img)))
+      media.forEach((m) => promises.push(addMediaToPart(date, issue, m)))
 
       let songs: MultiMediaItem[] = []
 
@@ -1330,8 +1333,7 @@ const plugin: Plugin = (
            ON DocumentExtract.DocumentId = DocumentMultimedia.DocumentId
            AND DocumentExtract.BeginParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
          WHERE DocumentMultimedia.DocumentId = ${docId}
-           AND CategoryType <> 9
-           AND CategoryType <> 8
+           AND CategoryType = -1
          GROUP BY DocumentMultimedia.MultimediaId`
         ) as MultiMediaItem[]
       }
@@ -1377,7 +1379,7 @@ const plugin: Plugin = (
     }
   )
 
-  async function addImgToPart(
+  async function addMediaToPart(
     date: string,
     issue: string,
     img: MultiMediaItem
