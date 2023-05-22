@@ -128,8 +128,8 @@
     </v-list-item>
     <div class="mx-4">
       <v-btn
-        v-for="marker in markers"
-        :key="id + marker.label"
+        v-for="(marker, i) in markers"
+        :key="i"
         class="mr-2 mb-2"
         :color="
           marker.playing ? 'primary' : marker.played ? 'info darken-2' : 'info'
