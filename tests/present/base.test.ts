@@ -4,7 +4,7 @@ import { existsSync } from 'fs-extra'
 import { sync } from 'fast-glob'
 import { expect, test } from '@playwright/test'
 import jimp from 'jimp'
-import { ElectronApplication, Page } from 'playwright'
+import { ElectronApplication, Page } from '@playwright/test'
 import { join } from 'upath'
 import { version } from '../../package.json'
 import {
@@ -60,7 +60,7 @@ test('render the presentation mode page correctly', async () => {
   if (platform() === 'linux') {
     await delay(5 * 100)
     await page.screenshot({ path: 'img/present/launch-present-mode.png' })
-    
+
     // Click on fetch button
     await page.locator('button', { hasText: locale.fetchMedia }).click()
 
