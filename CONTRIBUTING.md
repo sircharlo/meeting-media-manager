@@ -42,7 +42,7 @@ The following commands are used during the development of the application to tes
 # Install dependencies
 yarn install
 
-# Run the pre-build.sh script (necessary for dev and build scripts)
+# Run the pre-build.js script (necessary for dev and build scripts)
 yarn prebuild
 
 # Compile Electron ts files to js (necessary for dev and build scripts)
