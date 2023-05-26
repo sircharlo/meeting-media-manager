@@ -38,7 +38,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.21.8, @babel/core@npm:^7.21.3":
+"@babel/core@npm:7.22.0":
+  version: 7.22.0
+  resolution: "@babel/core@npm:7.22.0"
+  dependencies:
+    "@ampproject/remapping": ^2.2.0
+    "@babel/code-frame": ^7.21.4
+    "@babel/generator": ^7.22.0
+    "@babel/helper-compilation-targets": ^7.21.5
+    "@babel/helper-module-transforms": ^7.22.0
+    "@babel/helpers": ^7.22.0
+    "@babel/parser": ^7.22.0
+    "@babel/template": ^7.21.9
+    "@babel/traverse": ^7.22.0
+    "@babel/types": ^7.22.0
+    convert-source-map: ^1.7.0
+    debug: ^4.1.0
+    gensync: ^1.0.0-beta.2
+    json5: ^2.2.2
+    semver: ^6.3.0
+  checksum: e4d3dfb79fb65a1c02d74c8c29ae67e1c164bce6c557f4737a6b99df6bdfdfc2357930b3017e1e49f8f828ce64e5c24c44b36d75e2f933848f8d366da8bebac5
+  languageName: node
+  linkType: hard
+
+"@babel/core@npm:^7.21.3":
   version: 7.21.8
   resolution: "@babel/core@npm:7.21.8"
   dependencies:
@@ -70,6 +93,18 @@ __metadata:
     "@jridgewell/trace-mapping": ^0.3.17
     jsesc: ^2.5.1
   checksum: 5bd10334ebdf7f2a30eb4a1fd99d369a57703aa2234527784449187512c254a1174fa739c9d4c31bcbb6018732012a0664bec7c314f12b5ec2458737ddbb01c7
+  languageName: node
+  linkType: hard
+
+"@babel/generator@npm:^7.22.0":
+  version: 7.22.0
+  resolution: "@babel/generator@npm:7.22.0"
+  dependencies:
+    "@babel/types": ^7.22.0
+    "@jridgewell/gen-mapping": ^0.3.2
+    "@jridgewell/trace-mapping": ^0.3.17
+    jsesc: ^2.5.1
+  checksum: 48b96cb24d1ac90d5629324123f35fc241386359d39822d80e6db89f83d1444e802142d4e8b81b49ab4095362d71a7af648d3ee3735707e9b38ee69676712c12
   languageName: node
   linkType: hard
 
@@ -214,6 +249,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/helper-module-transforms@npm:^7.22.0":
+  version: 7.22.0
+  resolution: "@babel/helper-module-transforms@npm:7.22.0"
+  dependencies:
+    "@babel/helper-environment-visitor": ^7.21.5
+    "@babel/helper-module-imports": ^7.21.4
+    "@babel/helper-simple-access": ^7.21.5
+    "@babel/helper-split-export-declaration": ^7.18.6
+    "@babel/helper-validator-identifier": ^7.19.1
+    "@babel/template": ^7.21.9
+    "@babel/traverse": ^7.22.0
+    "@babel/types": ^7.22.0
+  checksum: 47380be9819166f2285ef395671ac7a6cec04deb608a64292c8023c491ff8514b33a785cb760d82beebb8f9cb8a13b02d00517adde024876a33e0d4c44515acd
+  languageName: node
+  linkType: hard
+
 "@babel/helper-optimise-call-expression@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/helper-optimise-call-expression@npm:7.18.6"
@@ -329,6 +380,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/helpers@npm:^7.22.0":
+  version: 7.22.0
+  resolution: "@babel/helpers@npm:7.22.0"
+  dependencies:
+    "@babel/template": ^7.21.9
+    "@babel/traverse": ^7.22.0
+    "@babel/types": ^7.22.0
+  checksum: abb5889252b7b91df63ac34e552503efc2f62e67f6c840e54f5554fbc217724ab0c28ba02727ca58723aeb22c6552b6fb59dfb993d5564bab7dec696957c5442
+  languageName: node
+  linkType: hard
+
 "@babel/highlight@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/highlight@npm:7.18.6"
@@ -346,6 +408,15 @@ __metadata:
   bin:
     parser: ./bin/babel-parser.js
   checksum: 985ccc311eb286a320331fd21ff54d94935df76e081abdb304cd4591ea2051a6c799c6b0d8e26d09a9dd041797d9a91ebadeb0c50699d0101bd39fc565082d5c
+  languageName: node
+  linkType: hard
+
+"@babel/parser@npm:^7.22.0":
+  version: 7.22.0
+  resolution: "@babel/parser@npm:7.22.0"
+  bin:
+    parser: ./bin/babel-parser.js
+  checksum: 1b6528eca79c18e2186ef430ed2fe1144080bd84a995289c1f9ae61341057f2ad6ea60ccf947b0edde053b32e0c87d981911de6ef28ab7c16b8ed8537664e7c9
   languageName: node
   linkType: hard
 
@@ -1297,7 +1368,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/template@npm:^7.18.10, @babel/template@npm:^7.20.7":
+"@babel/template@npm:^7.18.10, @babel/template@npm:^7.20.7, @babel/template@npm:^7.21.9":
   version: 7.21.9
   resolution: "@babel/template@npm:7.21.9"
   dependencies:
@@ -1326,6 +1397,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/traverse@npm:^7.22.0":
+  version: 7.22.0
+  resolution: "@babel/traverse@npm:7.22.0"
+  dependencies:
+    "@babel/code-frame": ^7.21.4
+    "@babel/generator": ^7.22.0
+    "@babel/helper-environment-visitor": ^7.21.5
+    "@babel/helper-function-name": ^7.21.0
+    "@babel/helper-hoist-variables": ^7.18.6
+    "@babel/helper-split-export-declaration": ^7.18.6
+    "@babel/parser": ^7.22.0
+    "@babel/types": ^7.22.0
+    debug: ^4.1.0
+    globals: ^11.1.0
+  checksum: 4c36bda5347d45fd8d0ca85f92e5f42c94e2acbeaf01174159ee3d70a6f7e135e4d4777c9a51ac3e36f7e6ddbc9b313eae097a35cc6f136ac53987070d5d4c88
+  languageName: node
+  linkType: hard
+
 "@babel/types@npm:^7.0.0, @babel/types@npm:^7.18.6, @babel/types@npm:^7.18.9, @babel/types@npm:^7.20.0, @babel/types@npm:^7.20.5, @babel/types@npm:^7.20.7, @babel/types@npm:^7.21.0, @babel/types@npm:^7.21.4, @babel/types@npm:^7.21.5, @babel/types@npm:^7.3.0, @babel/types@npm:^7.4.4, @babel/types@npm:^7.8.3":
   version: 7.21.5
   resolution: "@babel/types@npm:7.21.5"
@@ -1334,6 +1423,17 @@ __metadata:
     "@babel/helper-validator-identifier": ^7.19.1
     to-fast-properties: ^2.0.0
   checksum: 43242a99c612d13285ee4af46cc0f1066bcb6ffd38307daef7a76e8c70f36cfc3255eb9e75c8e768b40e761176c313aec4d5c0b9d97a21e494d49d5fd123a9f7
+  languageName: node
+  linkType: hard
+
+"@babel/types@npm:^7.22.0":
+  version: 7.22.0
+  resolution: "@babel/types@npm:7.22.0"
+  dependencies:
+    "@babel/helper-string-parser": ^7.21.5
+    "@babel/helper-validator-identifier": ^7.19.1
+    to-fast-properties: ^2.0.0
+  checksum: 6ba43536f362170d1be58aa8f975210fc042729128e9db286c7a107a1ca3e096994ad741e1cda85b2ae10d02e363d189f826ceee6178a884cc638935c99e2003
   languageName: node
   linkType: hard
 
@@ -10939,7 +11039,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "meeting-media-manager@workspace:."
   dependencies:
-    "@babel/core": 7.21.8
+    "@babel/core": 7.22.0
     "@babel/runtime-corejs3": 7.21.5
     "@electron/asar": ^3.2.4
     "@fortawesome/fontawesome-svg-core": ^6.4.0
