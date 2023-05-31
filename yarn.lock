@@ -7262,6 +7262,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.1.2":
+  version: 16.1.2
+  resolution: "dotenv@npm:16.1.2"
+  checksum: d06d351fab4d7abe61a469ac8d0c9fb858f14fa0cb4fcb8f61cc8b213156d47df164c62965240f1cdb82b7b4a0164f1a62a2bab8b7a496a8c16690c72ea374f5
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^9.0.2":
   version: 9.0.2
   resolution: "dotenv@npm:9.0.2"
@@ -11169,7 +11176,7 @@ __metadata:
     cross-env: ^7.0.3
     css-loader: ^5.2.7
     deepmerge: ^4.3.1
-    dotenv: ^16.0.3
+    dotenv: ^16.1.2
     electron: 24.4.0
     electron-builder: 23.6.0
     electron-devtools-installer: ^3.2.0
