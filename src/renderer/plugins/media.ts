@@ -555,7 +555,7 @@ const plugin: Plugin = (
 
   async function getSmallMediaFiles(
     mediaItem: {
-      pubSymbol: string
+      pubSymbol?: string
       docId?: number
       track?: number
       issue?: string
@@ -631,7 +631,10 @@ const plugin: Plugin = (
 
         try {
           const validOptions = ['iasn'] // Has an alternative pub with an extra m
-          if (!validOptions.includes(mediaItem.pubSymbol)) {
+          if (
+            mediaItem.pubSymbol &&
+            !validOptions.includes(mediaItem.pubSymbol)
+          ) {
             throw e
           }
           $log.debug('result1', result ?? e.message)
@@ -665,7 +668,10 @@ const plugin: Plugin = (
 
               try {
                 const validOptions = ['iasn'] // Has an alternative pub with an extra m
-                if (!validOptions.includes(mediaItem.pubSymbol)) {
+                if (
+                  mediaItem.pubSymbol &&
+                  !validOptions.includes(mediaItem.pubSymbol)
+                ) {
                   throw e
                 }
                 $log.debug('result3', result ?? e.message)
@@ -770,7 +776,7 @@ const plugin: Plugin = (
 
   async function getMediaLinks(
     mediaItem: {
-      pubSymbol: string
+      pubSymbol?: string
       docId?: number
       track?: number
       issue?: string
@@ -1292,7 +1298,7 @@ const plugin: Plugin = (
       // Watchtower images and videos
       const media = $query(
         db,
-        `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, MimeType, BeginParagraphOrdinal, FilePath, Label, Caption, TargetParagraphNumberLabel, KeySymbol, Track, IssueTagNumber
+        `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, MepsDocumentId, CategoryType, MimeType, BeginParagraphOrdinal, FilePath, Label, Caption, TargetParagraphNumberLabel, KeySymbol, Track, IssueTagNumber
          FROM DocumentMultimedia
          INNER JOIN Multimedia
            ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
@@ -1301,7 +1307,7 @@ const plugin: Plugin = (
            AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
          WHERE DocumentMultimedia.DocumentId = ${docId}
            AND CategoryType <> 9 
-           AND CategoryType <> -1
+           AND (KeySymbol != "sjjm" OR KeySymbol IS NULL)
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY BeginParagraphOrdinal`
       ) as MultiMediaItem[]
@@ -1382,10 +1388,10 @@ const plugin: Plugin = (
   async function addMediaToPart(
     date: string,
     issue: string,
-    img: MultiMediaItem
+    mediaItem: MultiMediaItem
   ): Promise<void> {
-    if ($isImage(img.FilePath)) {
-      let LocalPath = join($pubPath(), 'w', issue, '0', img.FilePath)
+    if ($isImage(mediaItem.FilePath)) {
+      let LocalPath = join($pubPath(), 'w', issue, '0', mediaItem.FilePath)
       if (!existsSync(LocalPath)) {
         LocalPath = join(
           $pubPath({
@@ -1393,24 +1399,27 @@ const plugin: Plugin = (
             issue,
             url: `url_${$getPrefs('media.langFallback')}.jpg`,
           } as MeetingFile),
-          img.FilePath
+          mediaItem.FilePath
         )
       }
       const FileName = $sanitize(
-        img.Caption.length > img.Label.length ? img.Caption : img.Label
+        mediaItem.Caption.length > mediaItem.Label.length
+          ? mediaItem.Caption
+          : mediaItem.Label
       )
       const pictureObj = {
         title: FileName,
         filepath: LocalPath,
         filesize: statSync(LocalPath).size,
-        queryInfo: img,
+        queryInfo: mediaItem,
       } as ImageFile
       await addMediaItemToPart(date, 1, pictureObj)
     } else {
       const media = await getMediaLinks({
-        pubSymbol: img.KeySymbol ?? '',
-        track: img.Track as number,
-        issue: img.IssueTagNumber?.toString(),
+        pubSymbol: mediaItem.KeySymbol ?? undefined,
+        docId: mediaItem.MepsDocumentId ?? undefined,
+        track: mediaItem.Track!,
+        issue: mediaItem.IssueTagNumber?.toString(),
       })
       if (media?.length > 0) addMediaItemToPart(date, 1, media[0] as VideoFile)
     }
