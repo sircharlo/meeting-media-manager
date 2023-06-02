@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "23.4.4-beta.8",
+  "version": "23.4.4",
   "description": "Meeting Media Manager",
   "keywords": [
     "M³",
@@ -91,7 +91,7 @@
     "css-loader": "^5.2.7",
     "deepmerge": "^4.3.1",
     "dotenv": "^16.1.3",
-    "electron": "24.4.0",
+    "electron": "25.0.1",
     "electron-builder": "23.6.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-store": "^8.1.0",
