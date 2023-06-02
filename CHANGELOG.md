@@ -1,5 +1,11 @@
 # Changelog
 
+## 23.4.4
+
+### Bug fixes
+
+- Fetch missing referenced videos for Watchtower Studies
+
 ## 23.4.3
 
 ### Bug fixes
