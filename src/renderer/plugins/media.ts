@@ -1421,7 +1421,7 @@ const plugin: Plugin = (
         track: mediaItem.Track!,
         issue: mediaItem.IssueTagNumber?.toString(),
       })
-      if (media?.length > 0) addMediaItemToPart(date, 1, media[0] as VideoFile)
+      if (media?.length > 0) addMediaItemToPart(date, 1, {...media[0], queryInfo: mediaItem})
     }
   }
 
