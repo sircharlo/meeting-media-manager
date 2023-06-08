@@ -19,15 +19,13 @@ jobs:
       - id: set-msg
         name: 'Set commit message variable'
         run: |
-          msg=$(git --no-pager log -1 --pretty=format:"%s")
-          echo "msg=${msg}" >> $GITHUB_OUTPUT
+          commitMessages=$(git log --pretty=format:"%s" "$(git describe --tags --abbrev=0)"..HEAD)
+          echo "msg=${commitMessages}" >> $GITHUB_ENV
   bump-version:
     name: 'Bump version'
     needs: get-commit
     if: |
-          !startsWith(needs.get-commit.outputs.msg, 'chore(release)') &&
-          !startsWith(needs.get-commit.outputs.msg, 'ci: version bump') &&
-          !contains(needs.get-commit.outputs.msg, 'chore(deps-dev)')
+           needs.get-commit.outputs.msg.split('\n').any(line => !contains(line, 'chore(deps-dev)'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
