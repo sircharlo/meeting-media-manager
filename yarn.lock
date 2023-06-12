@@ -3055,11 +3055,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/types@npm:^2.16.3":
-  version: 2.16.3
-  resolution: "@nuxt/types@npm:2.16.3"
+"@nuxt/types@npm:^2.17.0":
+  version: 2.17.0
+  resolution: "@nuxt/types@npm:2.17.0"
   dependencies:
-    "@types/babel__core": 7.20.0
+    "@types/babel__core": 7.20.1
     "@types/compression": 1.7.2
     "@types/connect": 3.4.35
     "@types/etag": 1.8.1
@@ -3074,7 +3074,7 @@ __metadata:
     "@types/webpack": 4.41.33
     "@types/webpack-bundle-analyzer": 3.9.5
     "@types/webpack-hot-middleware": 2.25.5
-  checksum: 01322f138e628173715bea26a2c18faa4e643b63d61d7a887b7c4b6e0e5023e998dee176ec4fde7739eac236c209de2507dad9d50c5ab54bf428823bf44b3022
+  checksum: 1258f2383022ae95cce9eb3e935566ec699005afc58958827044629405571fbb075f905085938eda932ab63824e8139cb3d8786aa9e84f176d7b2a8f9da0b14c
   languageName: node
   linkType: hard
 
@@ -3608,16 +3608,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__core@npm:7.20.0":
-  version: 7.20.0
-  resolution: "@types/babel__core@npm:7.20.0"
+"@types/babel__core@npm:7.20.1":
+  version: 7.20.1
+  resolution: "@types/babel__core@npm:7.20.1"
   dependencies:
     "@babel/parser": ^7.20.7
     "@babel/types": ^7.20.7
     "@types/babel__generator": "*"
     "@types/babel__template": "*"
     "@types/babel__traverse": "*"
-  checksum: 49b601a0a7637f1f387442c8156bd086cfd10ff4b82b0e1994e73a6396643b5435366fb33d6b604eade8467cca594ef97adcbc412aede90bb112ebe88d0ad6df
+  checksum: 9fcd9691a33074802d9057ff70b0e3ff3778f52470475b68698a0f6714fbe2ccb36c16b43dc924eb978cd8a81c1f845e5ff4699e7a47606043b539eb8c6331a8
   languageName: node
   linkType: hard
 
@@ -11296,7 +11296,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": ^6.4.0
     "@fortawesome/free-solid-svg-icons": ^6.4.0
     "@fortawesome/vue-fontawesome": latest-2
-    "@nuxt/types": ^2.16.3
+    "@nuxt/types": ^2.17.0
     "@nuxt/typescript-build": ^3.0.1
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
