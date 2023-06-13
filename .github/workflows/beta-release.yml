@@ -22,7 +22,7 @@ jobs:
         run: |
           commitMessages=$(git --no-pager log --pretty=format:"%s" "$(git describe --tags --abbrev=0)"..HEAD)
           echo "${commitMessages}"
-          echo "msg=${commitMessages}" >> $GITHUB_ENV
+          echo "msg=${commitMessages}" >> $GITHUB_OUTPUT
   bump-version:
     name: 'Bump version'
     needs: get-commit
