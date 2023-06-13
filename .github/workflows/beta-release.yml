@@ -15,11 +15,11 @@ jobs:
       - name: 'Checkout repository'
         uses: 'actions/checkout@v3'
         with:
+          fetch-depth: 0
           persist-credentials: false
       - id: set-msg
         name: 'Set commit message variable'
         run: |
-          git fetch --tags
           commitMessages=$(git --no-pager log --pretty=format:"%s" "$(git describe --tags --abbrev=0)"..HEAD)
           echo "${commitMessages}"
           echo "msg=${commitMessages}" >> $GITHUB_ENV
