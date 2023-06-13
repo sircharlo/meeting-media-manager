@@ -19,6 +19,7 @@ jobs:
       - id: set-msg
         name: 'Set commit message variable'
         run: |
+          get fetch --tags
           commitMessages=$(git --no-pager log --pretty=format:"%s" "$(git describe --tags --abbrev=0)"..HEAD)
           echo "${commitMessages}"
           echo "msg=${commitMessages}" >> $GITHUB_ENV
