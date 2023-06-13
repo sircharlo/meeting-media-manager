@@ -26,10 +26,7 @@ jobs:
   bump-version:
     name: 'Bump version'
     needs: get-commit
-    if: |
-          ${{ needs.get-commit.outputs.msg }} != '' &&
-          !startsWith(needs.get-commit.outputs.msg, 'chore(release)') &&
-          !startsWith(needs.get-commit.outputs.msg, 'ci: version bump') &&
+    if: ${{ needs.get-commit.outputs.msg != '' && needs.get-commit.outputs.msg != null && !contains(needs.get-commit.outputs.msg, 'chore(release)') && !contains(needs.get-commit.outputs.msg, 'version bump') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
