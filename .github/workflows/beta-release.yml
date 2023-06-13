@@ -15,17 +15,21 @@ jobs:
       - name: 'Checkout repository'
         uses: 'actions/checkout@v3'
         with:
+          fetch-depth: 0
           persist-credentials: false
       - id: set-msg
         name: 'Set commit message variable'
         run: |
-          commitMessages=$(git log --pretty=format:"%s" "$(git describe --tags --abbrev=0)"..HEAD)
-          echo "msg=${commitMessages}" >> $GITHUB_ENV
+          commitMessages=$(git log $(git describe --tags --abbrev=0)..@ --pretty=format:"%s" --no-merges | sed '/chore(deps/d' | sed '2,$d')
+          echo "msg=${commitMessages}"
+          echo "msg=${commitMessages}" >> $GITHUB_OUTPUT
   bump-version:
     name: 'Bump version'
     needs: get-commit
     if: |
-           needs.get-commit.outputs.msg.split('\n').any(line => !contains(line, 'chore(deps-dev)'))
+          ${{ needs.get-commit.outputs.msg }} != '' &&
+          !startsWith(needs.get-commit.outputs.msg, 'chore(release)') &&
+          !startsWith(needs.get-commit.outputs.msg, 'ci: version bump') &&
     runs-on: ubuntu-latest
     permissions:
       contents: write
