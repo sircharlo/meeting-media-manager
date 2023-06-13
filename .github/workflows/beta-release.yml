@@ -20,12 +20,13 @@ jobs:
         name: 'Set commit message variable'
         run: |
           commitMessages=$(git log --pretty=format:"%s" "$(git describe --tags --abbrev=0)"..HEAD)
+          echo commitMessages
           echo "msg=${commitMessages}" >> $GITHUB_ENV
   bump-version:
     name: 'Bump version'
     needs: get-commit
     if: |
-           needs.get-commit.outputs.msg.split('\n').any(line => !contains(line, 'chore(deps-dev)'))
+           !contains(needs.get-commit.outputs.msg, 'chore(deps-dev)')
     runs-on: ubuntu-latest
     permissions:
       contents: write
