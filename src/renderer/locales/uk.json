@@ -81,6 +81,7 @@
   "fieldRequired": "Це поле є обов'язковим.",
   "fieldShortcutInvalid": "Це недійсний ярлик",
   "fieldShortcutTaken": "Цей ярлик уже використовується",
+  "footnote": "Footnote",
   "hideMediaLogo": "Приховати логотип у вікні презентації медіафайлів",
   "hideWinAfterMedia": "Приховати мультимедійне вікно після завершення відтворення медіа",
   "hideWinAfterMediaExplain": "Корисно переважно для зустрічей, які проводяться мовою жестів",

@@ -81,6 +81,7 @@
   "fieldRequired": "Kötelező kitölteni.",
   "fieldShortcutInvalid": "Ez nem érvényes parancsikon",
   "fieldShortcutTaken": "Ez a parancsikon már foglalt",
+  "footnote": "Footnote",
   "hideMediaLogo": "Logó elrejtése a médiabemutató ablakból",
   "hideWinAfterMedia": "Médiaablak elrejtése a lejátszás befejezése után",
   "hideWinAfterMediaExplain": "Elsősorban a jelnyelven tartott összejöveteleken hasznos",

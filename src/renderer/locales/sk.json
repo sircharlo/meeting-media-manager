@@ -81,6 +81,7 @@
   "fieldRequired": "Toto pole je povinné.",
   "fieldShortcutInvalid": "Toto nie je platná skratka",
   "fieldShortcutTaken": "Táto skratka sa už používa",
+  "footnote": "Footnote",
   "hideMediaLogo": "Skryť logo z okna zobrazovania médií",
   "hideWinAfterMedia": "Skryť okno s médiami po prehraní",
   "hideWinAfterMediaExplain": "Užitočné hlavne pre zhromaždenia v znakovom jazyku",

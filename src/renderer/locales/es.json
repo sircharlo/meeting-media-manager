@@ -81,6 +81,7 @@
   "fieldRequired": "Este campo es requerido.",
   "fieldShortcutInvalid": "Este no es un atajo válido",
   "fieldShortcutTaken": "Este atajo ya está tomado",
+  "footnote": "Footnote",
   "hideMediaLogo": "Ocultar el logotipo en la ventana de presentación multimedia",
   "hideWinAfterMedia": "Ocultar la ventana de presentación multimedia después de que los contenidos terminan de reproducirse",
   "hideWinAfterMediaExplain": "Útil principalmente para reuniones celebradas en lenguaje de señas",

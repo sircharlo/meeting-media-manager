@@ -81,6 +81,7 @@
   "fieldRequired": "Dieses Feld ist erforderlich.",
   "fieldShortcutInvalid": "Das ist kein gültiges Tastenkürzel",
   "fieldShortcutTaken": "Dieses Tastenkürzel wird bereits verwendet",
+  "footnote": "Footnote",
   "hideMediaLogo": "Logo aus dem Medienpräsentationsfenster ausblenden",
   "hideWinAfterMedia": "Medienfenster nach der Wiedergabe ausblenden",
   "hideWinAfterMediaExplain": "Hauptsächlich für Versammlungen in Gebärdensprache",
