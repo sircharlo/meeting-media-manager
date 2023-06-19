@@ -1260,7 +1260,7 @@ const plugin: Plugin = (
       let weekNr = getWeekNr(db)
 
       if (weekNr < 0) {
-        issue = baseDate.subtract(9, 'weeks').format('YYYYMM') + '00'
+        issue = baseDate.subtract(10, 'weeks').format('YYYYMM') + '00'
         db = (await getDbFromJWPUB('w', issue, setProgress)) as Database
         weekNr = getWeekNr(db)
       }
@@ -1421,7 +1421,8 @@ const plugin: Plugin = (
         track: mediaItem.Track!,
         issue: mediaItem.IssueTagNumber?.toString(),
       })
-      if (media?.length > 0) addMediaItemToPart(date, 1, {...media[0], queryInfo: mediaItem})
+      if (media?.length > 0)
+        addMediaItemToPart(date, 1, { ...media[0], queryInfo: mediaItem })
     }
   }
 
