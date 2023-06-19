@@ -1297,53 +1297,71 @@ const plugin: Plugin = (
 
       const promises: Promise<void>[] = []
 
-      // Watchtower images and videos
+      const videos = $query(
+        db,
+        `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, KeySymbol, Track, IssueTagNumber, MimeType, BeginParagraphOrdinal, TargetParagraphNumberLabel
+             FROM DocumentMultimedia
+             INNER JOIN Multimedia
+               ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
+             LEFT JOIN Question
+               ON Question.DocumentId = DocumentMultimedia.DocumentId 
+               AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
+             WHERE DocumentMultimedia.DocumentId = ${docId}
+               AND CategoryType = -1
+             GROUP BY DocumentMultimedia.MultimediaId`
+      ) as MultiMediaItem[]
+      const videosInParagraphs = videos.filter(
+        (video) => !!video.TargetParagraphNumberLabel
+      )
+      const videosNotInParagraphs = videos.filter(
+        (video) => !video.TargetParagraphNumberLabel
+      )
       const media = $query(
         db,
         `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, MepsDocumentId, CategoryType, MimeType, BeginParagraphOrdinal, FilePath, Label, Caption, TargetParagraphNumberLabel, KeySymbol, Track, IssueTagNumber
-         FROM DocumentMultimedia
-         INNER JOIN Multimedia
-           ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
-         LEFT JOIN Question
-           ON Question.DocumentId = DocumentMultimedia.DocumentId 
-           AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
-         WHERE DocumentMultimedia.DocumentId = ${docId}
-           AND CategoryType <> 9 
-           AND (KeySymbol != "sjjm" OR KeySymbol IS NULL)
-         GROUP BY DocumentMultimedia.MultimediaId
-         ORDER BY BeginParagraphOrdinal`
-      ) as MultiMediaItem[]
+             FROM DocumentMultimedia
+             INNER JOIN Multimedia
+               ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
+             LEFT JOIN Question
+               ON Question.DocumentId = DocumentMultimedia.DocumentId 
+               AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
+             WHERE DocumentMultimedia.DocumentId = ${docId}
+               AND CategoryType <> 9 
+               AND CategoryType <> -1
+               AND (KeySymbol != "sjjm" OR KeySymbol IS NULL)
+             GROUP BY DocumentMultimedia.MultimediaId
+             ORDER BY BeginParagraphOrdinal` // pictures
+      )
+        .concat(videosInParagraphs)
+        .concat(
+          // exclude the first two videos if wt is after FEB_2023, since these are the songs
+          videosNotInParagraphs
+            .slice(+issue < FEB_2023 ? 0 : 2)
+            .map((mediaObj) =>
+              mediaObj.TargetParagraphNumberLabel === null
+                ? { ...mediaObj, TargetParagraphNumberLabel: 9999 } // assign special number so we know videos are referenced by a footnote
+                : mediaObj
+            )
+        ) as MultiMediaItem[]
 
       media.forEach((m) => promises.push(addMediaToPart(date, issue, m)))
 
       let songs: MultiMediaItem[] = []
 
-      // Watchtowers before Feb 2023 didn't include songs in DocumentMultimedia
+      // Watchtowers before Feb 2023 don't include songs in DocumentMultimedia
       if (+issue < FEB_2023) {
         songs = $query(
           db,
           `SELECT *
-          FROM Multimedia
-          INNER JOIN DocumentMultimedia
-            ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
-          WHERE DataType = 2
-          ORDER BY BeginParagraphOrdinal
-          LIMIT 2 OFFSET ${2 * weekNr}`
+              FROM Multimedia
+              INNER JOIN DocumentMultimedia
+                ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
+              WHERE DataType = 2
+              ORDER BY BeginParagraphOrdinal
+              LIMIT 2 OFFSET ${2 * weekNr}`
         ) as MultiMediaItem[]
       } else {
-        songs = $query(
-          db,
-          `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, CategoryType, KeySymbol, Track, IssueTagNumber, MimeType
-         FROM DocumentMultimedia
-         INNER JOIN Multimedia
-           ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
-         INNER JOIN DocumentExtract
-           ON DocumentExtract.DocumentId = DocumentMultimedia.DocumentId
-           AND DocumentExtract.BeginParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
-         WHERE DocumentMultimedia.DocumentId = ${docId}
-           AND CategoryType = -1
-         GROUP BY DocumentMultimedia.MultimediaId`
-        ) as MultiMediaItem[]
+        songs = videosNotInParagraphs.slice(0, 2) // after FEB_2023, the first two videos from DocumentMultimedia are the songs
       }
 
       let songLangs = songs.map(() => $getPrefs('media.lang') as string)
@@ -1499,9 +1517,13 @@ const plugin: Plugin = (
               .padStart(2, '0')}-${(j + 1).toString().padStart(2, '0')} -`
             if (!item.congSpecific) {
               if (item.queryInfo?.TargetParagraphNumberLabel) {
-                item.safeName += ` ${$translate('paragraph')} ${
-                  item.queryInfo?.TargetParagraphNumberLabel
-                } -`
+                if (item.queryInfo.TargetParagraphNumberLabel === 9999) {
+                  item.safeName += ` ${$translate('footnote')} -`
+                } else {
+                  item.safeName += ` ${$translate('paragraph')} ${
+                    item.queryInfo?.TargetParagraphNumberLabel
+                  } -`
+                }
               }
               if (item.pub?.includes('sjj')) {
                 item.safeName += ` ${$translate('song')}`
