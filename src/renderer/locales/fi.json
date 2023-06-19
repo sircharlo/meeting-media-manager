@@ -81,6 +81,7 @@
   "fieldRequired": "Tämä kenttä pitää täyttää.",
   "fieldShortcutInvalid": "Tämä ei ole kelvollinen pikakuvake",
   "fieldShortcutTaken": "Tämä pikanäppäin on jo käytössä",
+  "footnote": "Footnote",
   "hideMediaLogo": "Piilota logo mediaesitysikkunasta",
   "hideWinAfterMedia": "Piilota mediaikkuna median toiston päätyttyä",
   "hideWinAfterMediaExplain": "Hyödyllinen enimmäkseen viittomakielellä pidettäviin kokouksiin",
