@@ -85,7 +85,9 @@ const plugin: Plugin = (
       }
     }
 
-    const symbol = extract.UniqueEnglishSymbol.replace(/\d/g, '')
+    const symbol = /[^a-zA-Z0-9]/.test(extract.UniqueEnglishSymbol)
+      ? extract.UniqueEnglishSymbol
+      : extract.UniqueEnglishSymbol.replace(/\d/g, '')
 
     // Exclude the "old new songs" songbook, as we don't need images from that
     if (symbol === 'snnw') return []
