@@ -81,6 +81,7 @@
   "fieldRequired": "This field is required.",
   "fieldShortcutInvalid": "This is not a valid shortcut",
   "fieldShortcutTaken": "This shortcut is already taken",
+  "footnote": "Footnote",
   "hideMediaLogo": "Hide logo from media presentation window",
   "hideWinAfterMedia": "Hide media window after media finished playing",
   "hideWinAfterMediaExplain": "Useful mostly for meetings held in sign-language",
