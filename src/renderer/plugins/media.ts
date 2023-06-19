@@ -1517,6 +1517,7 @@ const plugin: Plugin = (
               .padStart(2, '0')}-${(j + 1).toString().padStart(2, '0')} -`
             if (!item.congSpecific) {
               if (item.queryInfo?.TargetParagraphNumberLabel) {
+                // eslint-disable-next-line no-magic-numbers
                 if (item.queryInfo.TargetParagraphNumberLabel === 9999) {
                   item.safeName += ` ${$translate('footnote')} -`
                 } else {
