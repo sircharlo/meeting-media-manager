@@ -81,6 +81,7 @@
   "fieldRequired": "Ce champ est requis.",
   "fieldShortcutInvalid": "Ceci n'est pas un raccourci valide",
   "fieldShortcutTaken": "Ce raccourci est déjà en cours d'utilisation",
+  "footnote": "Footnote",
   "hideMediaLogo": "Masquer le logo dans la fenêtre de présentation des médias",
   "hideWinAfterMedia": "Masquer la fenêtre multimédia après la fin de la lecture du média",
   "hideWinAfterMediaExplain": "Utile surtout pour les réunions tenues en langue des signes",
