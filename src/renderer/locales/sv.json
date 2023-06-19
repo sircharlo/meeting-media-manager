@@ -81,6 +81,7 @@
   "fieldRequired": "Detta fält är obligatoriskt.",
   "fieldShortcutInvalid": "Detta är inte en giltig genväg",
   "fieldShortcutTaken": "Denna genväg används redan",
+  "footnote": "Footnote",
   "hideMediaLogo": "Dölj logotypen från mediapresentationsfönstret",
   "hideWinAfterMedia": "Dölj mediafönstret efter att media har spelat klart",
   "hideWinAfterMediaExplain": "Användbart för möten som hålls på teckenspråk",
