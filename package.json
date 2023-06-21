@@ -118,7 +118,7 @@
     "minimatch": "^5.1.6",
     "node-gyp": "^9.4.0",
     "nth-check": "^2.1.1",
-    "nuxt": "^2.17.0",
+    "nuxt": "^3.4.3",
     "nuxt-webfontloader": "^1.1.0",
     "obs-websocket-js": "^4.0.3",
     "obs-websocket-js-v5": "npm:obs-websocket-js@5.0.3",
