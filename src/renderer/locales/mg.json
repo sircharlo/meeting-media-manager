@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Be laotra ny hafatra alefa any amin'ny serveur. Mamerena rehefa kelikely azafady.",
   "errorWUnavailable": "The Study Edition of the Watchtower is not available in your selected language. Consider setting a fallback language to use whenever necessary.",
   "errorYeartextNotFound": "The yeartext for the following language is not (yet) available. Consider setting a fallback language to use whenever necessary.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "Exclude <em>Enjoy Life Forever</em> images outside the Congregation Bible Study",
   "excludeTh": "Exclude all media from the <em>th</em> brochure",
   "fetchMedia": "Haka an'ireo Sary/Video",
