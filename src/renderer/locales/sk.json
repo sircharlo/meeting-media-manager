@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Server dostal príliž veľa požiadaviek. Prosím, skúste to znova neskôr.",
   "errorWUnavailable": "Štúdijné vydanie Strážnej Veže nie je k dispozícií vo vybranom jazyku. Zvážte nastavenie sekundárneho jazyka, ktorý sa použije v takomto prípade.",
   "errorYeartextNotFound": "Ročný text v tomto jazyku (zatiaľ) nie je k dispozícií. Zvážte nastavenie sekundárneho jazyka, ktorý sa použije v takomto prípade.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "Vynechať obrázky z publikácie <em>Tešte sa zo života navždy</em> s výnimkou zborového štúdia biblie",
   "excludeTh": "Vynechať všetky médiá z brožúry <em>th</em>",
   "fetchMedia": "Aktualizovať priečinky s médiami",
