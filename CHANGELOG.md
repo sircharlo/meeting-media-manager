@@ -1,5 +1,18 @@
 # Changelog
 
+## 23.5.0
+
+### New or improved features
+
+- Only auto release beta releases when there are actual changes (features, fixes, translations)
+- Option to exclude media from footnotes in Watchtower Studies
+- Support `.webp` files
+
+### Bug fixes
+
+- Always include `lff` lesson header image
+- Use correct paragraph number for referenced videos
+
 ## 23.4.4
 
 ### Bug fixes
