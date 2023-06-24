@@ -274,6 +274,10 @@ const schema: Schema<ElectronStore> = {
         type: 'boolean',
         default: PREFS.media.excludeTh,
       },
+      excludeFootnotes: {
+        type: 'boolean',
+        default: PREFS.media.excludeFootnotes,
+      },
       excludeLffImages: {
         type: 'boolean',
         default: PREFS.media.excludeLffImages,

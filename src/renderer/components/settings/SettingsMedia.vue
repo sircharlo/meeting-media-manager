@@ -296,6 +296,7 @@ export default defineComponent({
         'div',
         'excludeTh',
         'excludeLffImages',
+        'excludeFootnotes',
         'includePrinted',
       ],
     }

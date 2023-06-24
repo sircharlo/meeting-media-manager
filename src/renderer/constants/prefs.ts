@@ -53,6 +53,7 @@ const PREFS = {
     enableVlcPlaylistCreation: false,
     excludeLffImages: false,
     excludeTh: false,
+    excludeFootnotes: false,
     hideMediaLogo: false,
     hideWinAfterMedia: false,
     includePrinted: false,

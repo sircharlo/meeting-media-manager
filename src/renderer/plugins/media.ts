@@ -1323,6 +1323,10 @@ const plugin: Plugin = (
       const videosNotInParagraphs = videos.filter(
         (video) => !video.TargetParagraphNumberLabel
       )
+      const FOOTNOTE_TAR_PAR = 9999
+
+      const excludeFootnotes = $getPrefs('media.excludeFootnotes') as boolean
+
       const media = $query(
         db,
         `SELECT DocumentMultimedia.MultimediaId, DocumentMultimedia.DocumentId, MepsDocumentId, CategoryType, MimeType, BeginParagraphOrdinal, FilePath, Label, Caption, TargetParagraphNumberLabel, KeySymbol, Track, IssueTagNumber
@@ -1346,9 +1350,15 @@ const plugin: Plugin = (
             .slice(+issue < FEB_2023 ? 0 : 2)
             .map((mediaObj) =>
               mediaObj.TargetParagraphNumberLabel === null
-                ? { ...mediaObj, TargetParagraphNumberLabel: 9999 } // assign special number so we know videos are referenced by a footnote
+                ? { ...mediaObj, TargetParagraphNumberLabel: FOOTNOTE_TAR_PAR } // assign special number so we know videos are referenced by a footnote
                 : mediaObj
             )
+            .filter((v) => {
+              return (
+                !excludeFootnotes ||
+                v.TargetParagraphNumberLabel < FOOTNOTE_TAR_PAR
+              )
+            })
         ) as MultiMediaItem[]
 
       media.forEach((m) => promises.push(addMediaToPart(date, issue, m)))
