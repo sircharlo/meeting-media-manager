@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Prea multe request-uri au fost trimise la server, vă rugăm să încercați din nou mai târziu.",
   "errorWUnavailable": "Turnul de Veghe (ediția de studiu) nu este disponibil în limba selectată. Luați în considerare setarea unei limbi de rezervă care să fie utilizat ori de câte ori este necesar.",
   "errorYeartextNotFound": "Textul anului pentru următoarea limbă nu este (încă) disponibil. Luați în considerare setarea unei limbi de rezervă care să fie folosită ori de câte ori este necesar.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "Excludeți imaginile din <em>Bucură-te pentru totdeauna de viață!</em> din afara Studiului Bibliei în Congregației",
   "excludeTh": "Excludeți toate materialele media din broșura <em>th</em>",
   "fetchMedia": "Actualizare foldere media",
