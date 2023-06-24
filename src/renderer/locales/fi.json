@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Liian monta pyyntöä on lähetetty palvelimelle. Yritä uudelleen myöhemmin.",
   "errorWUnavailable": "Vartiotornin tutkittavaa kirjoitusta ei ole saatavilla valitsemallasi kielellä. Harkitse varakielen asettamista käytettäväksi aina tarvittaessa.",
   "errorYeartextNotFound": "Seuraavan kielen vuositeksti ei ole (vielä) käytettävissä. Harkitse varmennuskielen asettamista käytettäväksi aina kun se on tarpeen.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "Posta kuvat <em>lff</em>-kirjasta seurakunnan raamatuntutkistelun ulkopuolella",
   "excludeTh": "Jätä kaikki media pois <em>th</em>-esitteestä",
   "fetchMedia": "Päivitä mediakansiot",

@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Er zijn te veel verzoeken naar de gemeente server gestuurd. Probeer het later opnieuw.",
   "errorWUnavailable": "De Wachttoren Studie-uitgave is niet beschikbaar in jouw taal. Stel een alternatieve taal in naast jouw huidige taal.",
   "errorYeartextNotFound": "De jaartekst voor de volgende taal is (nog) niet beschikbaar. Stel een alternatieve taal in naast jouw huidige taal.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "Sluit <em>Voor Eeuwig Gelukkig</em> plaatjes uit buiten de gemeentebijbelstudie",
   "excludeTh": "Sluit alle media van de <em>th</em> brochure uit",
   "fetchMedia": "Haal media op",

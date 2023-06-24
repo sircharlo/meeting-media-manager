@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Se han enviado demasiadas solicitudes al servidor. Por favor, inténtelo de nuevo más tarde.",
   "errorWUnavailable": "La Edición de Estudio de La Atalaya no está disponible en el idioma seleccionado. Considere establecer un idioma alternativo para usarla cuando sea necesario.",
   "errorYeartextNotFound": "El texto del año para el siguiente idioma (todavía) no está disponible. Considere establecer un idioma alternativo para usarlo cuando sea necesario.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "Excluir imágenes <em>Disfrute de la vida </em> que no sean del Estudio Bíblico de Congregación",
   "excludeTh": "Excluir contenido multimedia del folleto <em>th</em>",
   "fetchMedia": "Actualizar multimedia",

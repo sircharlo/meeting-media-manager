@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Túl sok kérés érkezett a kiszolgálóhoz. Kérjük, próbálja meg később újra.",
   "errorWUnavailable": "Az Őrtorony tanulmányozásra szánt kiadása nem érhető el az Ön által kiválasztott nyelven. Fontolja meg egy tartalék nyelv beállítását, amelyet szükség esetén használhat.",
   "errorYeartextNotFound": "A következő nyelvre vonatkozó éviszöveg (még) nem áll rendelkezésre. Fontolja meg egy tartalék nyelv beállítását, amelyet szükség esetén használni tud.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "A <em>Boldogan élhetsz örökké</em> képek kizárása a gyülekezeti bibliatanulmányozáson kívül",
   "excludeTh": "Ne vegye figyelembe a médiát a <em>th (Odaadóan fogalkozz a tanítással)</em> kiadványból",
   "fetchMedia": "Médiamappák frissítése",

@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Foram enviadas muitas solicitações ao servidor. Por favor, tente novamente mais tarde.",
   "errorWUnavailable": "A Edição de Estudo da A Sentinela não está disponível no idioma selecionado. Defina um idioma alternativo para usar sempre que necessário.",
   "errorYeartextNotFound": "O texto do ano para o seguinte idioma não está (ainda) disponível. Defina um idioma alternativo para usar sempre que necessário.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "Excluir imagens do livro <em>Seja Feliz para Sempre</em> que não serão consideradas no Estudo Bíblico de Congregação",
   "excludeTh": "Excluir todas as mídias da brochura <em>Melhore</em>",
   "fetchMedia": "Baixar mídias!",
