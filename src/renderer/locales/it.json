@@ -73,6 +73,7 @@
   "errorWebdavTooManyRequests": "Sono state inviate troppe richieste al server. Per favore riprova più tardi.",
   "errorWUnavailable": "L'edizione per lo studio della Torre di Guardia non è disponibile nella lingua selezionata. Prendi in considerazione l'impostazione di una lingua di riserva da utilizzare quando necessario.",
   "errorYeartextNotFound": "Il testo della scrittura dell'anno per la lingua seguente non è (ancora) disponibile. Considera di impostare una lingua sostitutiva da usare quando necessario.",
+  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeLffImages": "Escludere immagini dal libro <em>lff</em> oltre lo studio biblico di congregazione",
   "excludeTh": "Escludi tutti i media dell'opuscolo <em>th</em>",
   "fetchMedia": "Aggiorna le cartelle con i media",
