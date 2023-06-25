@@ -73,7 +73,7 @@
   "errorWebdavTooManyRequests": "För många förfrågningar har skickats till servern. Vänligen försök igen senare.",
   "errorWUnavailable": "Studieupplagan av Vakttornet är inte tillgänglig på det valda språket. Överväg att ställa in ett reservspråk som kommer används när ditt språk saknas.",
   "errorYeartextNotFound": "Årstexten för följande språk är inte (ännu) tillgänglig. Överväg att ställa in ett reservspråk att använda vid behov.",
-  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
+  "excludeFootnotes": "Exkludera media från fotnoter i studieutgåvan av Vakttornet",
   "excludeLffImages": "Exkludera bilder från boken <em>Ett hopp om en ljus framtid</em> utanför församlingens bibelstudie",
   "excludeTh": "Exkludera all media från broschyren <em>th</em>",
   "fetchMedia": "Uppdatera mediamappar",
