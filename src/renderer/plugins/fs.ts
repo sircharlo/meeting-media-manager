@@ -444,7 +444,7 @@ const plugin: Plugin = (
 
   inject('isVideo', (filepath: string) => {
     if (!filepath) return false
-    return ['mov', 'mp4', 'mpeg', 'mpg', 'ogg', 'ogv', 'webm'].includes(
+    return ['mov', 'mp4', 'm4v', 'mpeg', 'mpg', 'ogg', 'ogv', 'webm'].includes(
       extname(filepath).slice(1).toLowerCase()
     )
   })
