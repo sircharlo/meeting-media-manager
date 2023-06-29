@@ -73,7 +73,7 @@
   "errorWebdavTooManyRequests": "Trop de requêtes ont été envoyées au serveur. Veuillez réessayer plus tard.",
   "errorWUnavailable": "L'édition d'étude de la Tour de Garde n'est pas disponible dans la langue que vous avez sélectionné. Considérez la possibilité de définir une langue secondaire à utiliser dans de tels cas.",
   "errorYeartextNotFound": "Le texte de l'année pour la langue suivante n'est pas (encore) disponible. Pensez à définir une langue secondaire à utiliser dans de tels cas.",
-  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
+  "excludeFootnotes": "Exclure les médias des notes de bas de page pour l'étude de la Tour de Garde",
   "excludeLffImages": "Exclure les images du livre <em>lff</em>, excepté lors de l'étude biblique de l'assemblée",
   "excludeTh": "Exclure tous les médias de la brochure <em>th</em>",
   "fetchMedia": "Rafraîchir les dossiers multimédias",
