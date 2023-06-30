@@ -103,7 +103,7 @@
     "eslint-plugin-nuxt": "^4.0.0",
     "eslint-plugin-vue": "^9.15.1",
     "eslint-webpack-plugin": "^2.7.0",
-    "fast-glob": "^3.2.12",
+    "fast-glob": "^3.3.0",
     "fast-xml-parser": "^4.2.5",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.1.1",
