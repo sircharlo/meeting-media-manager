@@ -39,7 +39,7 @@
   "errorDestExists": "Efa misy io \"fichier\" na \"dossier\" io:",
   "errorDownload": "Nisy olana amin'ny fakàna an'ireto:",
   "errorDownloadSubs": "Nisy olana amin'ny fakàna ny \"Sous-titre\" amin'ireto:",
-  "errorExtractFromJWPUB": "An error occurred while trying to extract media from the following JWPUB file:",
+  "errorExtractFromJWPUB": "Nisy olana teo amin'ny fakàna ny Sary/Video amin'ity JWPUB ity:",
   "errorForcedSettingsEnforce": "Nisy olana amin'ny firafitry ny fiangonana. Azafady, resaho ireo rahalahy miandraikitra ny video conference.",
   "errorGetCongMedia": "Nisy olana nitranga teo am-pakàna ny Sary/Video'ny fiangonana. Azafady, hamarino ny firafitry ny fandrindrana ny fiangonanao na mifandraisa amin'ny mpikarakara ny video conference.",
   "errorGetMwMedia": "Misy olana amin'ny fakàna ny Sary/Video amin'ny fivoriana andavanandro. Avereno indray azafady na miresaha amin'ny mpiandraikitrin'ny \"video conférence\".",
