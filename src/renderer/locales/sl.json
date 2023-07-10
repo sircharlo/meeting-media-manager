@@ -37,7 +37,7 @@
   "errorAdditionalMediaList": "Pri pripravi seznama multimedijskih vsebin je prišlo do napake. Poskusi pozneje ali se obrni na vašega organizatorja videokonference.",
   "errorBadOutputPath": "Pot, ki si jo določil, vsebuje nedovoljene znake. Preveri, ali pot vsebuje katerega od naslednjih znakov:",
   "errorDestExists": "Naslednja datoteka ali mapa že obstaja:",
-  "errorDownload": "An error occurred while trying to download the following file:",
+  "errorDownload": "Pri poskusu prenosa naslednje datoteke je prišlo do napake:",
   "errorDownloadSubs": "An error occurred while trying to download subtitles for the following file:",
   "errorExtractFromJWPUB": "An error occurred while trying to extract media from the following JWPUB file:",
   "errorForcedSettingsEnforce": "An error occurred while enforcing congregation settings. Please contact your videoconference organizer.",
