@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: Congregation sync
+title: Občinska sinhronizacija
 ref: congregation-sync
 ---
 
