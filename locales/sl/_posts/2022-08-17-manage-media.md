@@ -40,4 +40,4 @@ To **remove**, **hide**, or **show** media, simply find the media file you don't
 
 ### Screenshots of the media management screen
 
-{% include screenshots/manage-media.html lang=site.data.en %}
+{% include screenshots/manage-media.html lang=site.data.sl %}
