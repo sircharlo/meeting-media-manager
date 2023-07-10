@@ -97,6 +97,10 @@ defaults:
     values:
       lang: 'sk'
   - scope:
+      path: 'locales/sl/**/*'
+    values:
+      lang: 'sl'
+  - scope:
       path: 'locales/sv/**/*'
     values:
       lang: 'sv'
