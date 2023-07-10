@@ -526,6 +526,7 @@ export default defineComponent({
         .replace('psr', 'pt-pt')
         .replace('swl', 'sv')
         .replace('mzc', 'mg')
+        .replace('sgn-si', 'sl')
     },
   },
 })
