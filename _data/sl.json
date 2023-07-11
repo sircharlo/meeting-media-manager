@@ -6,11 +6,11 @@
   "shared": {
     "explanation": "Explanation",
     "option": "Option",
-    "optionsApp": "Application setup",
-    "optionsCongSync": "Congregation sync setup",
-    "optionsMedia": "Media setup",
-    "optionsMeetings": "Meeting setup",
-    "password": "Password",
+    "optionsApp": "Nastavitev programa",
+    "optionsCongSync": "Nastavitev sinhronizacije na ravni občine",
+    "optionsMedia": "Nastavitev multimedijske vsebine",
+    "optionsMeetings": "Nastavitev shoda",
+    "password": "Geslo",
     "port": "Vrata",
     "setting": "Setting"
   },
