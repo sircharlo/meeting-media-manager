@@ -1,21 +1,21 @@
 {
   "lang": "sl",
   "name": "slovenščina",
-  "language": "Language:",
-  "search": "Filter by keyword",
+  "language": "Jezik:",
+  "search": "Filtriraj po ključni besedi",
   "shared": {
-    "explanation": "Explanation",
-    "option": "Option",
+    "explanation": "Pojasnilo",
+    "option": "Možnost",
     "optionsApp": "Nastavitev programa",
     "optionsCongSync": "Nastavitev sinhronizacije na ravni občine",
     "optionsMedia": "Nastavitev multimedijske vsebine",
     "optionsMeetings": "Nastavitev shoda",
     "password": "Geslo",
     "port": "Vrata",
-    "setting": "Setting"
+    "setting": "Nastavitev"
   },
   "home": {
-    "expand": "Expand all articles",
+    "expand": "Razširi vse članke",
     "collapse": "Collapse all articles",
     "syncInProgress": "Meeting media sync in progress",
     "mainScreen": "Main screen",
