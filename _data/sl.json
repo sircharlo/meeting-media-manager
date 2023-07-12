@@ -16,28 +16,28 @@
   },
   "home": {
     "expand": "Razširi vse članke",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
-    "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
-    "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "collapse": "Skrij vse članke",
+    "syncInProgress": "Poteka sinhronizacija multimedijske vsebine za shod",
+    "mainScreen": "Glavni zaslon",
+    "chooseWeek": "Izberi teden",
+    "syncComplete": "Sinhronizacija končana!",
+    "musicPlaying": "Predvajanje glasbe pred in po shodu"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgAddSong": "Dodajanje pesmi za javni govor",
+    "imgAddPic": "Dodajanje dodatne slike",
+    "imgImportJWPUB": "Uvoz multimedijske vsebine iz enega dela datoteke JWPUB",
+    "imgPreviewJWPUB": "Predogled multimedijske vsebine iz datoteke JWPUB pred uvozom",
+    "imgRename": "Preimenovanje multimedijske datoteke"
   },
   "present-media": {
-    "imgButton": "Blue play button to enter media controller mode",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgButton": "Modri gumb za predvajanje za vstop v način multimedijskega krmilnika",
+    "imgSelectMeeting": "Izbira shoda, za katerega želiš predvajati multimedijsko vsebino",
+    "imgBG": "Privzeto multimedijsko ozadje s samodejno ustvarjenim letnim stavkom",
+    "imgMediaList": "Seznam multimedijske vsebine, ki je pripravljena za predvajanje",
+    "imgStandby": "M³ predvajanje multimedijske vsebine v načinu pripravljenosti",
+    "imgDisplayPic": "Prikaz slike",
+    "imgPlayVideo": "Predvajanje videoposnetka",
+    "imgVideoScrub": "Premik na točno določen čas v videoposnetku"
   }
 }
