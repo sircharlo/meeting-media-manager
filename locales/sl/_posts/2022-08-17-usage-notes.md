@@ -1,5 +1,5 @@
 ---
-tag: Help
+tag: Pomoč
 title: Technical usage notes
 ref: usage-notes
 ---
