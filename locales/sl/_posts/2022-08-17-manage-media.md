@@ -8,15 +8,15 @@ Na zaslonu za upravljanje multimedijske vsebine lahko uporabnik dodaja ali odstr
 
 ### Upravljanje multimedijske vsebine za kateri koli dan
 
-Če želite upravljati multimedijsko vsebino za določen shod ali dan, preprosto kliknite na ploščico tistega dne na glavnem zaslonu M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Če želite upravljati multimedijsko vsebino za določen shod ali dan, preprosto kliknite na ploščico tistega dne na glavnem zaslonu M³. Če želite upravljati multimedijsko vsebino, ki se ponavlja na vsakem shodu, kliknite na ploščico Ponavljajoča se multimedijska vsebina.
 
-### Adding media
+### Dodajanje multimedijske vsebine
 
-Here's how to **add** media from the media management screen.
+Takole lahko **dodate** multimedijsko vsebino z zaslona za urejanje multimedijske vsebine.
 
 | Možnost           | Pojasnilo                                                                       |
 | ----------------- | ------------------------------------------------------------------------------- |
-| `Type of upload`  | Choose from one of the 3 `media types` (see below).                             |
+| `Vrsta nalaganja` | Izberite eno od treh `vrst multimedijskih vsebin` (glej spodaj).                |
 | `Media to add`    | Depends on the `media type` chosen (see below).                                 |
 | `Filename prefix` | Up to 6 digits can be added before the media filename(s), to help with sorting. |
 | `Media list`      | This shows the currently planned media for the selected date tile.              |
