@@ -1,14 +1,14 @@
 ---
-tag: Usage
-title: Managing media
+tag: Uporaba
+title: Upravljanje multimedijske vsebine
 ref: manage-media
 ---
 
-The media management screen allows the user to add or remove media for any given meeting, manage recurring media, and even add special media for other dates on which no meeting is normally scheduled.
+Na zaslonu za upravljanje multimedijske vsebine lahko uporabnik dodaja ali odstranjuje multimedijsko vsebino za kateri koli shod, upravlja ponavljajočo se multimedijsko vsebino in celo dodaja posebno multimedijsko vsebino za druge datume, za katere običajno ni načrtovan noben shod.
 
-### Managing media for any particular day
+### Upravljanje multimedijske vsebine za kateri koli dan
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Če želite upravljati multimedijsko vsebino za določen shod ali dan, preprosto kliknite na ploščico tistega dne na glavnem zaslonu M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
 
 ### Adding media
 
