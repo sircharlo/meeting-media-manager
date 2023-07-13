@@ -1,21 +1,21 @@
 ---
-tag: Configuration
-title: Installation
+tag: Nastavitev
+title: Namestitev
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+M³ za namestitev ali zagon ne zahteva administratorskih pravic. Če želite namestiti M³, preprosto [prenesite najnovejši namestitveni program]({{site.github}}/releases/latest) in ga zaženite.
 
-| Operating System | File to download                           |
-| ---------------- | ------------------------------------------ |
-| Windows          | `meeting-media-manager-[VERSION].exe`      |
-| macOS            | `meeting-media-manager-[VERSION].dmg`      |
-| Linux            | `meeting-media-manager-[VERSION].AppImage` |
+| Operacijski sistem | Datoteka za prenos                         |
+| ------------------ | ------------------------------------------ |
+| Windows            | `meeting-media-manager-[VERSION].exe`      |
+| macOS              | `meeting-media-manager-[VERSION].dmg`      |
+| Linux              | `meeting-media-manager-[VERSION].AppImage` |
 
-### What's next?
+### Kaj sledi?
 
-Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
+Aplikacijo konfigurirajte na zaslonu [Nastavitve]({{page.lang}}/#configuration).
 
-### Trouble installing?
+### Težave pri namestitvi?
 
-Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.
+Za pomoč si oglejte [Tehnične opombe o uporabi]({{page.lang}}/#usage-notes).
