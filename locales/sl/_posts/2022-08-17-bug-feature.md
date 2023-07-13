@@ -1,13 +1,13 @@
 ---
-tag: Help
-title: Issues and feature requests
+tag: Pomoč
+title: Vprašanja in zahteve za funkcije
 ref: bug-feature
 ---
 
-### How do I report an issue or bug I encountered?
+### Kako lahko poročam o težavi ali hrošču, na katerega sem naletel?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+Če kdaj naletite na težave z M³, kliknite na [GitHub Issues]({{site.github}}/issues), da jih prijavite. Popravki napak se izdajajo redno, običajno enkrat mesečno.
 
-### How can I request new features?
+### Kako lahko zaprosim za nove funkcije?
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+Predlogi so dobrodošli! Kliknite na [GitHub Discussions]({{site.github}}/discussions) za razpravo o morebitnih novih funkcijah.
