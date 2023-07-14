@@ -14,12 +14,12 @@ Na zaslonu za upravljanje multimedijske vsebine lahko uporabnik dodaja ali odstr
 
 Takole lahko **dodate** multimedijsko vsebino z zaslona za urejanje multimedijske vsebine.
 
-| Možnost           | Pojasnilo                                                                       |
-| ----------------- | ------------------------------------------------------------------------------- |
-| `Vrsta nalaganja` | Izberite eno od treh `vrst multimedijskih vsebin` (glej spodaj).                |
-| `Media to add`    | Depends on the `media type` chosen (see below).                                 |
-| `Filename prefix` | Up to 6 digits can be added before the media filename(s), to help with sorting. |
-| `Media list`      | This shows the currently planned media for the selected date tile.              |
+| Možnost                                       | Pojasnilo                                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------------- |
+| `Vrsta nalaganja`                             | Izberite eno od treh `vrst multimedijskih vsebin` (glej spodaj).                |
+| `Multimedijske vsebine, ki jih želite dodati` | Depends on the `media type` chosen (see below).                                 |
+| `Filename prefix`                             | Up to 6 digits can be added before the media filename(s), to help with sorting. |
+| `Media list`                                  | This shows the currently planned media for the selected date tile.              |
 
 In the `Media to add` field, you'll be presented with different options, depending on the media type selected.
 
