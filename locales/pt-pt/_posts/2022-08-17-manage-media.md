@@ -1,25 +1,25 @@
 ---
-tag: Usage
-title: Managing media
+tag: Utilização
+title: Gerir multimédia
 ref: manage-media
 ---
 
-The media management screen allows the user to add or remove media for any given meeting, manage recurring media, and even add special media for other dates on which no meeting is normally scheduled.
+A tela de gestão de multimédia permite ao utilizador adicionar ou remover a multimédia para qualquer reunião específica, gerir multimédia recorrentes e até adicionar multimédia especial para outras datas em que nenhuma reunião é normalmente programada.
 
-### Managing media for any particular day
+### Gerir a multimédia para um dia especial
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Para gerir a multimédia para uma determinada reunião ou dia, basta clicar no botão do dia na tela principal do M³. Para gerir a multimédia que se repete em todas as reuniões, clique no mosaico Multimédia recorrente.
 
-### Adding media
+### Adicionar multimédia
 
-Here's how to **add** media from the media management screen.
+Aqui está como **adicionar** multimédia a partir da tela: Gerir Multimédia.
 
-| Opção             | Explicação                                                                      |
-| ----------------- | ------------------------------------------------------------------------------- |
-| `Type of upload`  | Choose from one of the 3 `media types` (see below).                             |
-| `Media to add`    | Depends on the `media type` chosen (see below).                                 |
-| `Filename prefix` | Up to 6 digits can be added before the media filename(s), to help with sorting. |
-| `Media list`      | This shows the currently planned media for the selected date tile.              |
+| Opção                         | Explicação                                                                                          |
+| ----------------------------- | --------------------------------------------------------------------------------------------------- |
+| `Tipo de upload`              | Escolha entre um dos três `tipos de multimédia` (veja abaixo).                                      |
+| `Multimédia a adicionar`      | Depende do tipo `de mídia` escolhido (veja abaixo).                                                 |
+| `Prefixo do nome do ficheiro` | Até 6 dígitos podem ser adicionados antes do(s) nome(s) de multimédia(s), para ajudar na ordenação. |
+| `Media list`                  | This shows the currently planned media for the selected date tile.                                  |
 
 In the `Media to add` field, you'll be presented with different options, depending on the media type selected.
 

@@ -1,21 +1,21 @@
 ---
-tag: Configuration
-title: Installation
+tag: Configuração
+title: Instalação
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+O M³ não requer privilégios administrativos para instalar ou executar. Para instalar M3, simplesmente [descarregue o instalador mais recente]({{site.github}}/releases/latest) e execute-o.
 
-| Operating System | File to download                           |
-| ---------------- | ------------------------------------------ |
-| Windows          | `meeting-media-manager-[VERSION].exe`      |
-| macOS            | `meeting-media-manager-[VERSION].dmg`      |
-| Linux            | `meeting-media-manager-[VERSION].AppImage` |
+| Sistema Operativo | Ficheiros para download                    |
+| ----------------- | ------------------------------------------ |
+| Windows           | `meeting-media-manager-[VERSION].exe`      |
+| macOS             | `meeting-media-manager-[VERSION].dmg`      |
+| Linux             | `meeting-media-manager-[VERSION].AppImage` |
 
-### What's next?
+### E agora?
 
-Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
+Configure o aplicativo usando a tela [Configurações]({{page.lang}}/#configuration).
 
-### Trouble installing?
+### Problemas na instalação?
 
-Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.
+Verifique as [Notas de Uso Técnico]({{page.lang}}/#usage-notes) para obter ajuda.
