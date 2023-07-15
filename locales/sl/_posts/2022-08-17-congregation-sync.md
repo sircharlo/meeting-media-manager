@@ -37,8 +37,8 @@ Vsi uporabniki, ki želijo uporabljati isto sinhronizirano vsebino, se morajo po
 
 ### Uporaba sinhronizacije za upravljanje multimedijske vsebine
 
-Once the congregation sync setup is complete, you're ready to start [Managing media]({{page.lang}}/#manage-media) for your congregation's technical AV support team.
+Ko je nastavitev sinhronizacije končana, lahko začnete [Upravljati multimedijo]({{page.lang}}/#manage-media) za tehnično avdio/video ekipo v vaši občini.
 
-### Screenshots of congregation sync in action
+### Zaslonske slike sinhronizacije
 
 {% include screenshots/congregation-sync.html lang=site.data.sl %}
