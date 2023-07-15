@@ -1,44 +1,44 @@
 ---
-tag: Configuration
+tag: Configuração
 title: Multimédia da congregação
 ref: congregation-sync
 ---
 
-The brother designated as *videoconference organizer* (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
+O irmão designado como *responsável pelas videoconferências* (VO) pelo corpo de anciãos pode utilizar o M³ para gerir a multimédia disponibilizada à equipa de apoio técnico A/V da sua congregação.
 
-The VO, or someone designated by him, can:
+O VO ou alguém designado por ele, pode:
 
-- upload **additional** media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
-- **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
-- add or remove **recurring** media, such as a year-text video, or an announcement slide
+- carregar **ficheiros multimédia adicionais** para serem exibidos durante uma reunião, por exemplo, para a visita do superintendente do circuito ou para discursos de oradores públicos
+- **ocultar** multimédia do JW.org que não seja relevante para uma determinada reunião, por exemplo, quando uma parte da reunião foi alterada pela filial local.
+- adicionar ou remover uma multimédia **recorrente**, como um vídeo do texto do ano, ou um ‘slide’ de anúncio
 
-All who are synced to the same congregation will then receive the exact same media when they click the *Update media folders* button.
+Todos os que estiverem sincronizados com a mesma congregação receberão os mesmos ficheiros multimédia quando clicarem no botão *Atualizar pastas multimédia*.
 
-Please note that the congregation sync feature is opt-in and entirely optional.
+Tenha em atenção que a funcionalidade de sincronização da congregação é opcional e totalmente facultativa.
 
-### How it works
+### Como funciona
 
-M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+O mecanismo de sincronização subjacente do M³ usa WebDAV. Isto significa que o VO (ou alguém sob a sua supervisão) também precisa:
 
-- set up a secured WebDAV server that is web-accessible, **or**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- configurar um servidor seguro WebDAV que seja acessível pela web, **ou**
+- usar um serviço de armazenamento de nuvem de terceiros que suporte o protocolo WebDAV (veja o endereço *Web* definido na secção *Configuração do servidor da congregação* abaixo).
 
-All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
+Todos os utilizadores que pretendam ser sincronizados em conjunto terão de se ligar ao mesmo servidor WebDAV utilizando as informações de ligação e as credenciais que lhes foram fornecidas pelo seu VO.
 
 ### Configuração do servidor da congregação
 
-| Definições                           | Explicação                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Endereço web`                       | Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br> ***Note:** The Web address button, once clicked, will show a list of WebDAV providers that have been known to be compatible with M³, and will automatically prefill certain settings for those providers. <br><br> This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...* |
-| `Utilizador`                         | Username for the WebDAV service.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `Palavra-passe`                      | Password for the WebDAV service. <br><br> ***Note:** As detailed in their respective support pages, an app-specific password might need to be created for [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) and [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) in order to enable WebDAV connections to their services.*                                                                   |
-| `Caminho da pasta`                   | This is the folder that will be used to synchronize media for all congregation sync users. You can either type/paste in a path, or use your mouse to navigate to the target folder. <br><br> ***Note:** Make sure that all congregation sync users input the same folder path; otherwise the sync won't work as expected.*                                                                                                                                                   |
-| `Definições para toda a congregação` | Once the VO has configured the *Media setup* and *Meeting setup* sections of the [Settings]({{page.lang}}/#configuration) on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open M³.                                                       |
+| Definições                           | Explicação                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Endereço web`                       | Endereço web do servidor WebDAV. É necessário um HTTP (HTTPS) seguro. <br><br> ***Nota:** O botão de endereço da Web, quando clicado, irá mostrar uma lista de provedores WebDAV conhecidos por serem compatíveis com M³, e irá preencher automaticamente certas configurações para esses provedores. <br><br> Essa lista é fornecida como uma cortesia, e não representa de forma alguma um endosso a qualquer serviço ou provedor em particular. O melhor servidor é sempre aquele que você possui...* |
+| `Utilizador`                         | Nome de utilizador para o serviço WebDAV                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `Palavra-passe`                      | Palavra-passe para o serviço WebDAV. <br><br> ***Nota:** Como detalhadas nas suas respectivas páginas de suporte, uma senha específica para o aplicativo pode precisar ser criada para a [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) e [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) a fim de ativar as conexões WebDAV para os seus serviços.*                                                                             |
+| `Caminho da pasta`                   | Esta é a pasta que será utilizada para sincronizar multimédia para todos os utilizadores da sincronização de congregação. Você pode digitar/colar num caminho ou usar o mouse para navegar para a pasta de destino. <br><br> ***Nota:** Certifique-se de que todas as congregações sincronizam os utilizadores com o mesmo caminho da pasta; caso contrário, a sincronização não funcionará conforme o esperado.*                                                                                                    |
+| `Definições para toda a congregação` | Depois que o VO tiver configurado a configuração *de multimédia* e *configuração de reunião* seções, [configurações]({{page.lang}}/#configuration) no seu próprio computador, então ele pode usar este botão para impor certas configurações para todos os usuários de sincronização de congregação (por exemplo, dias de reunião, idioma da multimédia, configurações de conversão, etc. Isto significa que as definições selecionadas serão aplicadas à força a todos os utilizadores sincronizados sempre que abrirem o M³.   |
 
-### Using congregation sync to manage media
+### Ao usar a sincronização de congregação para gerir multimédia
 
-Once the congregation sync setup is complete, you're ready to start [Managing media]({{page.lang}}/#manage-media) for your congregation's technical AV support team.
+Uma vez concluída a configuração da sincronização de congregação, você está pronto para começar [a gerir a multimédia]({{page.lang}}/#manage-media) da equipa de suporte técnico de AV da sua congregação.
 
-### Screenshots of congregation sync in action
+### Capturas de ecrã da sincronização de congregação em ação
 
 {% include screenshots/congregation-sync.html lang=site.data.pt-pt %}
