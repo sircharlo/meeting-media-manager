@@ -4,38 +4,38 @@ title: Sinhronizacija
 ref: congregation-sync
 ---
 
-The brother designated as *videoconference organizer* (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
+Brat, ki ga starešinstvo postavi za *organizatorja videokonference*, lahko s pomočjo programa M³ pripravi medijsko vsebino, ki je potem na voljo skupini za tehnično avdio/video podporo v njegovi občini.
 
-The VO, or someone designated by him, can:
+Organizator videokonference ali nekdo, ki ga on določi, lahko:
 
-- upload **additional** media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
-- **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
-- add or remove **recurring** media, such as a year-text video, or an announcement slide
+- naloži **dodatno** multimedijo za shod, na primer za obisk okrajnega nadzornika ali za govore javnih govornikov;
+- **skrije** multimedijo z jw.org, ki ni pomembna za določen shod, na primer, če je točko zamenjal podružnični urad;
+- doda ali odstrani **ponavljajočo se multimedijo**, na primer videoposnetek z letnim stavkom ali diapozitiv z obvestilom.
 
-All who are synced to the same congregation will then receive the exact same media when they click the *Update media folders* button.
+Vsi, ki so sinhronizirani z isto občino, bodo nato prejeli popolnoma enako multimedijsko vsebino, ko bodo kliknili na gumb *Posodobi multimedijske mape*.
 
-Please note that the congregation sync feature is opt-in and entirely optional.
+Upoštevajte, da je funkcija sinhronizacije povsem neobvezna in da je stvar izbire.
 
-### How it works
+### Kako deluje
 
-M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+Program M³ za sinhronizacijo uporablja WebDAV. To pomeni, da mora organizator videokonference (ali oseba pod njegovim nadzorom):
 
-- set up a secured WebDAV server that is web-accessible, **or**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- nastaviti zaščiten strežnik WebDAV, ki je dostopen prek spleta, **ali**
+- uporabiti storitev shranjevanja v oblaku, ki jo ponuja tretja oseba in ki podpira protokol WebDAV (glej *Spletni naslov* v razdelku *Nastavitev sinhronizacije* spodaj).
 
-All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
+Vsi uporabniki, ki želijo uporabljati isto sinhronizirano vsebino, se morajo povezati z istim strežnikom WebDAV s podatki, ki jim jih posreduje njihov organizator videokonference.
 
 ### Nastavitev sinhronizacije
 
-| Nastavitev                           | Pojasnilo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Spletni naslov`                     | Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br> ***Note:** The Web address button, once clicked, will show a list of WebDAV providers that have been known to be compatible with M³, and will automatically prefill certain settings for those providers. <br><br> This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...* |
-| `Uporabniško ime`                    | Username for the WebDAV service.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `Geslo`                              | Password for the WebDAV service. <br><br> ***Note:** As detailed in their respective support pages, an app-specific password might need to be created for [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) and [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) in order to enable WebDAV connections to their services.*                                                                   |
-| `Mapa za sinhronizacijo`             | This is the folder that will be used to synchronize media for all congregation sync users. You can either type/paste in a path, or use your mouse to navigate to the target folder. <br><br> ***Note:** Make sure that all congregation sync users input the same folder path; otherwise the sync won't work as expected.*                                                                                                                                                   |
-| `Nastavitve na ravni celotne občine` | Once the VO has configured the *Media setup* and *Meeting setup* sections of the [Settings]({{page.lang}}/#configuration) on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open M³.                                                       |
+| Nastavitev                           | Pojasnilo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Spletni naslov`                     | Spletni naslov strežnika WebDAV. Zahteva se varna povezava HTTP (HTTPS). <br><br>***Opomba:** Ko kliknete na gumb Spletni naslov, se prikaže seznam ponudnikov WebDAV, za katere je znano, da so združljivi z M³, in ki samodejno predizpolnijo nekatere nastavitve za te ponudnike. <br><br> Ta seznam je na voljo kot predlog in nikakor ne predstavlja priporočila za določeno storitev ali ponudnika. Najboljši strežnik je vedno tisti, ki je v vaši lasti ...* |
+| `Uporabniško ime`                    | Uporabniško ime za storitev WebDAV.                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `Geslo`                              | Geslo za storitev WebDAV. <br><br>***Opomba:** Za aplikaciji [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) in [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) bo morda treba ustvariti posebno geslo (tako kot je to opisano na njunih straneh za podporo), da bi omogočili povezavo WebDAV z njunimi storitvami.*                                                                          |
+| `Mapa za sinhronizacijo`             | To je mapa, ki bo uporabljena za sinhronizacijo multimedijske vsebine za vse uporabnike, ki so povezani z občinsko sinhronizacijo. Pot lahko vnesete/prilepite ali pa z miško poiščete ciljno mapo. <br><br>***Opomba:** Poskrbite, da bodo vsi uporabniki občinske sinhronizacije vnesli isto pot do mape, sicer sinhronizacija ne bo delovala.*                                                                                                                                |
+| `Nastavitve na ravni celotne občine` | Ko organizator videokonference na svojem računalniku v [Nastavitvah]({{page.lang}}/#configuration) konfigurira razdelka *Nastavitev multimedije* in *Nastavitev shoda*, lahko s tem gumbom vsem uporabnikom občinske sinhronizacije vsili določene nastavitve (na primer dneve shodov, jezik multimedije, nastavitve pretvorbe itd.). To pomeni, da bodo izbrane nastavitve vsiljene vsem sinhroniziranim uporabnikom vsakič, ko bodo odprli M³.                                             |
 
-### Using congregation sync to manage media
+### Uporaba sinhronizacije za upravljanje multimedijske vsebine
 
 Once the congregation sync setup is complete, you're ready to start [Managing media]({{page.lang}}/#manage-media) for your congregation's technical AV support team.
 
