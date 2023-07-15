@@ -7,8 +7,8 @@
     "explanation": "Pojasnilo",
     "option": "Možnost",
     "optionsApp": "Nastavitev programa",
-    "optionsCongSync": "Nastavitev sinhronizacije na ravni občine",
-    "optionsMedia": "Nastavitev multimedijske vsebine",
+    "optionsCongSync": "Nastavitev sinhronizacije",
+    "optionsMedia": "Nastavitev multimedije",
     "optionsMeetings": "Nastavitev shoda",
     "password": "Geslo",
     "port": "Vrata",
@@ -26,16 +26,16 @@
   "manage-media": {
     "imgAddSong": "Dodajanje pesmi za javni govor",
     "imgAddPic": "Dodajanje dodatne slike",
-    "imgImportJWPUB": "Uvoz multimedijske vsebine iz enega dela datoteke JWPUB",
+    "imgImportJWPUB": "Uvoz multimedije iz enega dela datoteke JWPUB",
     "imgPreviewJWPUB": "Predogled multimedijske vsebine iz datoteke JWPUB pred uvozom",
     "imgRename": "Preimenovanje multimedijske datoteke"
   },
   "present-media": {
     "imgButton": "Modri gumb za predvajanje za vstop v način multimedijskega krmilnika",
-    "imgSelectMeeting": "Izbira shoda, za katerega želiš predvajati multimedijsko vsebino",
+    "imgSelectMeeting": "Izbira shoda, za katerega želiš predvajati multimedijo",
     "imgBG": "Privzeto multimedijsko ozadje s samodejno ustvarjenim letnim stavkom",
-    "imgMediaList": "Seznam multimedijske vsebine, ki je pripravljena za predvajanje",
-    "imgStandby": "M³ predvajanje multimedijske vsebine v načinu pripravljenosti",
+    "imgMediaList": "Seznam multimedije, ki je pripravljena za predvajanje",
+    "imgStandby": "M³ predvajanje multimedije v načinu pripravljenosti",
     "imgDisplayPic": "Prikaz slike",
     "imgPlayVideo": "Predvajanje videoposnetka",
     "imgVideoScrub": "Premik na točno določen čas v videoposnetku"
