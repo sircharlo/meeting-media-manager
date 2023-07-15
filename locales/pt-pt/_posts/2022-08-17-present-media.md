@@ -1,34 +1,34 @@
 ---
 tag: Utilização
-title: Media Presentation mode
+title: Modo de Exibição de Multimédia
 ref: present-media
 ---
 
-### Using media presentation mode
+### Usar o Modo de Exibição de Multimédia
 
-The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
+A exibição de multimédia e os modos de controlo de multimédia são concebidos para simplificar o trabalho de quem está no A/V e evitar erros durante reuniões.
 
-Once the option `Present media on an external monitor or in a separate window` is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
+Uma vez que a opção `Exibir multimédia num monitor externo ou numa janela separada` é habilitada a tela de exibição de multimédia aparecerá automaticamente no monitor externo, se estiver presente, ou numa janela separada, móvel e redimensionável se nenhum monitor externo for detetado.
 
-When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
+Quando em espera, a tela de exibição de multimédia exibirá a imagem de fundo configurada nas definições. Se nenhuma imagem de fundo foi configurada, o M³ tentará procurar e exibir automaticamente o texto.
 
-If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
+Se nenhuma imagem de fundo estiver configurada nas definições e o texto do ano não puder ser carregado automaticamente, um fundo preto será exibido no modo de espera.
 
-Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt D</kbd> (for external display).
+O modo de controlo de multimédia pode ser acedido ao clicar no botão ▶️ (play) na tela principal do M³, ou usar o atalho do teclado <kbd>Alt D</kbd> (para exibição externa).
 
-Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
+Após ter entrado no modo de controlo, a tela de seleção de pastas permitirá que selecione a data na qual gostaria de exibir a multimédia. Se existir uma pasta de dia atual, ela será pré-selecionada automaticamente. Uma vez que uma data é selecionada, ainda pode alterar a data selecionada a qualquer momento clicando no botão de seleção de data, na secção superior.
 
-### Presenting media
+### Exibir multimédia
 
-To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
+Para reproduzir a multimédia, pressione o botão ▶️ (play) para o ficheiro que desejar. Para ocultar a multimédia, pressione o botão ⏹️ (stop). Um vídeo pode ser rebobinado ou avançado rapidamente enquanto está em pausa, se desejado. Observe que para os vídeos, o botão de parar deve ser pressionado **duas vezes** para evitar parar um vídeo acidentalmente enquanto estiver a reproduzir para a congregação. Os vídeos param automaticamente quando tiverem sido reproduzidos na totalidade.
 
-### Extra Features
+### Funcionalidades Extra:
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+O M³ tem alguns recursos extras que podem ser usados para melhorar a experiência de exibição de multimédia.
 
-#### Present JW.org
+#### Exibir o JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+Para exibir o JW.org, pode pressionar o botão (reticências) na parte superior da tela e selecionar `Abrir JW.org`. Isso abrirá uma nova janela de controlo com JW.org carregada. A janela de multimédia também exibirá o JW.org. Agora você pode usar a janela do controlo para navegar no JW.org, e a janela de multimédia exibirá as suas ações. Quando terminar de exibir o JW.org, você pode fechar a janela de controlo e continuar com o modo normal de exibição de multimédia.
 
 #### Zoom and pan images
 

@@ -1,38 +1,38 @@
 ---
 tag: Ajuda
-title: Technical usage notes
+title: Notas de uso técnico
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+A aplicação deve ser executada como está nos computadores mais modernos em execução de Windows, Linux ou macOS.
 
-### Windows: Installation and first launch
+### Windows: Instalação e primeira inicialização
 
-On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+Ao abrir o instalador, você pode receber um [erro](assets/img/other/win-smartscreen.png) indicando que o "Windows SmartScreen impediu o início de um aplicativo não reconhecido". Isso deve-se ao fato de a ‘app’ não ter um número elevado de downloads, e consequentemente não ser explicitamente "confiável" pelo Windows. Para contornar isso, basta clicar em "Mais informações", depois em "Executar mesmo assim".
 
-### Linux: Installation and first launch
+### Linux: Instalação e primeira inicialização
 
-As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
+De acordo com a documentação [oficial AppImage](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), se o aplicativo não abrir corretamente, confirme a saída do seguinte comando:
 
 `sysctl kernel.unprivileged_userns_clone`
 
-If the output is `0`, then the AppImage will **not** run unless you run the following command, followed by a reboot:
+Se a saída for `0`, então o AppImage **não** será executado a menos que você execute o seguinte comando, seguido por uma reinicialização:
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Make sure you read up on [what this entails](https://lwn.net/Articles/673597/) before you do this.
+Certifique-se de ler [o que isso implica ](https://lwn.net/Articles/673597/) antes de fazer isso.
 
-### macOS: Installation and first launch
+### macOS: Instalação e primeira inicialização
 
-If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or because "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
+Se ao iniciar o aplicativo, você recebe um aviso de que o app não pode ser aberto, ou porque "não foi descarregado da App Store" ou porque "o desenvolvedor não pode ser verificado", então esta [página de suporte da Apple](https://support.apple.com/en-ca/HT202491) irá ajudá-lo a passar por isso.
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
+Se receber uma mensagem indicando que não tem permissão para abrir o aplicativo", então tente algumas soluções de [esta página](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Auto-update
+### macOS: Atualização automática
 
-Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for macOS users when an update is available:
+Ao contrário do Windows e do Linux, a funcionalidade de atualização automática não é **nem** implementada no macOS, e, por razões técnicas, provavelmente nunca será. No entanto, uma das duas coisas vai acontecer aos utilizadores do macOS quando uma atualização estiver disponível:
 
-- M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
-- If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
+- O M³ irá tentar descarregar o pacote de atualização e abri-lo automaticamente, após o qual o utilizador terá que completar a instalação manualmente da atualização M3, arrastando e largando o aplicativo atualizado na sua pasta Aplicativos. Em seguida, eles poderão iniciar o M³ recém-atualizado a partir da sua pasta Aplicativos como habitual.
+- Se o passo anterior falhar em alguma fase, O M³ mostrará uma notificação persistente, indicando que uma atualização está disponível, com um link para a própria atualização. Uma notificação vermelha e pulsante também será exibida no botão de definições na tela principal do M³. O número de versão M3 na tela de definições vai tornar-se um botão que, depois de clicado, abre a página de download da última versão automaticamente.

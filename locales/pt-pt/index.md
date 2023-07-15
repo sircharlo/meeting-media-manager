@@ -2,34 +2,34 @@
 permalink: /pt-PT/
 ---
   
-### What is M³?
+### O que é M³?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+**Meeting Media Manager**, ou **M³** para resumir, é um aplicativo para Windows, macOS e Linux, que faz o download automático de imagens e vídeos que serão considerados durante reuniões de congregação das Testemunhas de Jeová, em qualquer idioma encontrado no JW.org.
 
-It features support for managing custom and recurring media, an optional synchronization feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
+Possui suporte para gestão de multimédia personalizada e recorrente, um recurso de sincronização opcional para membros da mesma congregação, além de suporte para múltiplas congregações e/ou grupos usando a mesma conta de computador.
 
-<sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
+<sup>Nota: O M³ costumava ser conhecido como JWMMF (JW Meeting Media Fetcher), mas foi renomeado em maio de 2022.</sup>
 
-### What can M³ do?
+### O que o M³ pode fazer?
 
-M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+O M³ permite que você descarregue, sincronize, compartilhe e exiba todas as multimédias da reunião automaticamente.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+Para reuniões **híbridas** ou **presenciais** de congregação, o modo integrado de exibição de multimédia tem todos os recursos necessários para simplificar a tarefa de compartilhar multimédia com a congregação, incluindo:
 
-- Media thumbnails
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
-- OBS Studio integration
+- Miniaturas de multimédia
+- Botões de pausa/reproduzir/parar para gerir a reprodução de ficheiros multimédia
+- Fácil reprodução de música de fundo, que para automaticamente antes do início de reuniões regulares programadas
+- Gestão e reconhecimento automático de monitor externo
+- Integração com OBS Studio
 
-As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature.
+Quanto a reuniões totalmente **remotas** de congregação Zoom, o recurso de conversão MP4 embutido no M³ permite que compartilhe ficheiros multimédia de todos os tipos facilmente, usando o recurso nativo de compartilhamento MP4 do Zoom.
 
-### Does M³ work in my language?
+### O M³ funciona na minha língua?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
+**Sim!** A multimédia para reuniões de Testemunhas de Jeová pode ser descarregada automaticamente em qualquer um dos idiomas disponíveis no JW.org. A lista de idiomas disponíveis é atualizada dinamicamente; tudo o que precisa fazer é selecionar qual quer.
 
-In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Além disso, o próprio M³ foi traduzido em várias línguas, por muitos voluntários; pode, portanto, configurar o idioma que gostaria de ser exibido na interface do M³.
 
-This app is made with love and a bit of spare time. Enjoy!
+Este aplicativo é feito com amor e um pouco de tempo livre. Desfrute!
 
-### Screenshots
+### Capturas de ecrã
