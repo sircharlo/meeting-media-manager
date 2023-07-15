@@ -1,13 +1,13 @@
 ---
-tag: Help
-title: Issues and feature requests
+tag: Ajuda
+title: Problemas e pedidos de funcionalidades
 ref: bug-feature
 ---
 
-### How do I report an issue or bug I encountered?
+### Como posso comunicar um problema ou um erro que encontrei?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+Caso você tenha quaisquer problemas com o M3, por favor, use [GitHub Issues]({{site.github}}/issues) para relatá-lo. Correções de erros (bugs) são emitidas regularmente, geralmente mensalmente.
 
-### How can I request new features?
+### Como posso solicitar novos recursos?
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+Estou aberto a sugestões! Por favor, use [GitHub Discussions]({{site.github}}/discussions) para sugerir possíveis novas funcionalidades.
