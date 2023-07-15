@@ -2,42 +2,42 @@
   "lang": "pt-PT",
   "name": "Português - Portugal",
   "language": "Língua:",
-  "search": "Filter by keyword",
+  "search": "Filtrar por palavra-chave",
   "shared": {
-    "explanation": "Explanation",
-    "option": "Option",
+    "explanation": "Explicação",
+    "option": "Opção",
     "optionsApp": "Configuração do programa",
     "optionsCongSync": "Configuração do servidor da congregação",
     "optionsMedia": "Configuração de multimédia",
     "optionsMeetings": "Configuração da reunião",
     "password": "Senha",
     "port": "Porta",
-    "setting": "Setting"
+    "setting": "Definições"
   },
   "home": {
-    "expand": "Expand all articles",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
-    "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
-    "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "expand": "Expandir todos os artigos",
+    "collapse": "Recolher todos os artigos",
+    "syncInProgress": "Sincronização da multimédia da reunião em curso",
+    "mainScreen": "Tela principal",
+    "chooseWeek": "Escolha uma semana",
+    "syncComplete": "Sincronização concluída!",
+    "musicPlaying": "Reprodução de música antes e depois da reunião"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgAddSong": "Adicionar um cântico para o discurso público",
+    "imgAddPic": "Adicionar uma imagem adicional",
+    "imgImportJWPUB": "Importar multimédia de uma secção de um ficheiro JWPUB",
+    "imgPreviewJWPUB": "Pré-visualizar a multimédia de um ficheiro JWPUB antes de importar",
+    "imgRename": "Renomear um ficheiro de multimédia"
   },
   "present-media": {
-    "imgButton": "Blue play button to enter media controller mode",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgButton": "Botão de reprodução azul para entrar no modo de controlador de multimédia",
+    "imgSelectMeeting": "Selecionar a reunião em que pretende exibir a multimédia",
+    "imgBG": "Fundo padrão da tela da multimédia, com o texto do ano gerado automaticamente",
+    "imgMediaList": "Lista da multimédia pronta a ser apresentada",
+    "imgStandby": "Apresentação da multimédia do M³ em modo de espera",
+    "imgDisplayPic": "A apresentar uma imagem",
+    "imgPlayVideo": "A reproduzir um vídeo",
+    "imgVideoScrub": "Passar para um momento específico no vídeo"
   }
 }
