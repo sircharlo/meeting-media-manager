@@ -30,118 +30,118 @@ O M³ tem alguns recursos extras que podem ser usados para melhorar a experiênc
 
 Para exibir o JW.org, pode pressionar o botão (reticências) na parte superior da tela e selecionar `Abrir JW.org`. Isso abrirá uma nova janela de controlo com JW.org carregada. A janela de multimédia também exibirá o JW.org. Agora você pode usar a janela do controlo para navegar no JW.org, e a janela de multimédia exibirá as suas ações. Quando terminar de exibir o JW.org, você pode fechar a janela de controlo e continuar com o modo normal de exibição de multimédia.
 
-#### Zoom and pan images
+#### Ampliar e deslocar imagens
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+Quando uma imagem está a ser exibida, pode deslocar a roda do mouse enquanto passa o mouse sobre a pré-visualização da imagem para aumentar ou diminuir o zoom. Em alternativa, também pode fazer duplo clique na pré-visualização da imagem para aumentar o zoom. Se fizer duplo clique, alterna entre 1,5x, 2x, 3x, 4x e volta ao zoom de 1x. Também pode manter premido e arrastar a imagem para deslocar a imagem.
 
-#### Sort the media list
+#### Ordenar a lista de multimédia
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+A lista de multimédia pode ser ordenada clicando no botão de ordenação no canto superior direito da tela. Os itens de multimédia terão um botão junto a eles que pode ser utilizado para arrastar o item de multimédia para cima ou para baixo na lista. Quando estiver satisfeito com a ordem, pode clicar novamente no botão de ordenação para bloquear a ordem.
 
-#### Add a last-minute song
+#### Adicionar um cântico de última hora
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Se precisar de adicionar uma música de última hora à lista de multimédia, pode premir o botão `♫ +` (adicionar cântico) na parte superior da tela. Um menu suspenso aparecerá com uma lista de todos os cânticos. Quando seleciona um, este é imediatamente adicionado ao topo da lista de média e pode ser reproduzido instantaneamente O cântico será transmitida a partir de JW.org ou reproduzida a partir da cache local, caso tenha sido descarregada anteriormente.
 
-### Conducting hybrid meetings using a combination of M³, OBS Studio, and Zoom
+### Realizar reuniões híbridas usando uma combinação de M3, OBS Studio e Zoom
 
-By far the simplest way to share media during hybrid meetings is by configuring OBS Studio, M³ and Zoom to work together.
+De longe, a maneira mais simples de compartilhar a multimédia durante reuniões híbridas é configurar o OBS Studio, M3 e Zoom para trabalhar juntos.
 
-#### Initial configuration: Kingdom Hall computer
+#### Configuração inicial: Computador do Salão do Reino
 
-Set the external monitor's screen resolution to 1280x720, or something close to that.
+Defina a resolução de tela do monitor externo para 1280x720, ou algo próximo a isso.
 
-Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
+Configure a saída da placa de som do computador para ir para uma das entradas do misturador da cabina de som e a saída combinada do misturador da cabina de som para ir para a entrada da placa de som do computador.
 
-#### Initial configuration: OBS Studio
+#### Configuração inicial: OBS Studio
 
-Install OBS Studio, or download the portable version.
+Instale o OBS Studio ou faça o download da versão portátil.
 
-If using the portable version of OBS Studio, install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+Se usar a versão portátil do OBS Studio, instale o plugin [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) , e se estiver a usar a versão portátil do OBS Studio, adicione a câmara virtual no Windows clicando duas vezes no script de instalação fornecido.
 
-If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
+Se você tem o OBS Studio v27 ou mais antigo, você precisa instalar o plugin [obs-websocket](https://github.com/obsproject/obs-websocket). Caso contrário, obs-websocket está incluído. Configure o número da porta e senha para obs-websocket.
 
-In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
+Nas configurações do OBS, em `Geral` > `Sistema`, habilite todas as caixas de verificação. Em `Saída` > `Streaming`, habilite um codificador de hardware se disponível. Sob `Vídeo` > `Base (tela) Resolução` e `Saída (Chamado) Resolução`, escolha `1280x720`e abaixo `Filtro de Rebaixa`, escolha `Bilinear`.
 
-Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
+Configure pelo menos 2 cenas: uma para a exibição de multimédia(`Captura de janela` ou `Exibir Captura` com o cursor do mouse desativado e o título/monitor da janela apropriada selecionado), e uma para a visualização do palco (`Dispositivo de Captura de Vídeo` com a câmera KH selecionada). Você também pode adicionar outra cena especificamente para imagens, onde a janela de mídia é visível junto com o pódio em um display de estilo picture-in-pic. Pode adicionar tantas cenas quantas as necessárias, com a câmara ajustada, ampliada e cortada conforme necessário (vista do orador e do leitor, vista da mesa, etc.).
 
-Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
+Habilite o filtro `Scaling/Aspect Ratio` em todas as entradas `Captura de janela` ou `Captura de tela` com a Resolução `Resolução` da Base `(tela) Resolução`. Isso garantirá que a janela de multimédia seja sempre ajustada à resolução de saída da câmara virtual.
 
-Add a shortcut to OBS Studio, with the `--startvirtualcam` parameter, to the Startup folder of the Windows user profile, to ensure that OBS Studio gets started automatically when the user logs in.
+Adicionar um atalho ao OBS Studio, com o parâmetro `--startvirtualcam` , para a pasta Startup do perfil do utilizador do Windows, para garantir que o OBS Studio é iniciado automaticamente quando o utilizador faz o login.
 
-#### Initial configuration: Kingdom Hall Zoom
+#### Configuração inicial: Zoom do Salão do Reino
 
-Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
+O zoom deve ser configurado para utilizar monitores duplos. Habilitar atalhos de teclado globais para silenciar/desmutar o áudio da Sala do Reino no Zoom (<kbd>Alt A</kbd>), e iniciar/parar a feed de vídeo do Salão do Reino no Zoom (<kbd>Alt V</kbd>).
 
-Set the default "microphone" to be sound booth mixer's combined output (so that everything that is heard over the Kingdom Hall sound system is transmitted over Zoom, including microphones and media) and the "camera" to be the virtual camera provided by OBS Studio.
+Defina o "microfone" predefinido para ser a saída combinada do misturador da cabina de som (para que tudo o que é ouvido no sistema de som do Salão do Reino seja transmitido através do Zoom, incluindo microfones e meios de comunicação) e a "câmara" para ser a câmara virtual fornecida pelo OBS Studio.
 
-#### Initial configuration: M³
+#### Configuração inicial: M³
 
-Enable the `Present media on an external monitor or in a separate window` option.
+Habilita a Multimédia`presente num monitor externo ou numa janela separada`.
 
-Enable and configure OBS Studio compatibility mode, using the port and password information configured in the OBS Studio configuration step.
+Ativar e configurar o modo de compatibilidade do OBS Studio, usando as informações de porta e senha configuradas na etapa de configuração do OBS Studio.
 
-#### Starting the meeting
+#### Início da reunião
 
-Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
+Inicie a reunião Zoom e mova a janela secundária de reunião Zoom para o monitor externa. Torne-a tela cheia, se desejar. Aqui é onde quaisquer participantes da reunião Zoom serão exibidos para a congregação ver.
 
-Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
+Quando a reunião Zoom estiver a ser exibida no monitor externo, abra o M³. A janela de exibição de multimédia será aberta automaticamente no topo do Zoom no monitor externo. Sincronize a multimédia, se necessário, e entre no modo de controlo de multimédia, clicando no botão ▶️ (play) na tela principal do M3, ou <kbd>ALT D</kbd>.
 
-Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting. Make sure that "Original sound for musicians" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
+Habilite a fonte de vídeo do Salão do Reino (<kbd>Alt V</kbd>) e destaque-a, se necessário, para que os participantes do Zoom vejam o palco do Salão do Reino. Ative o som da fonte de áudio da Sala do Reino no Zoom (<kbd>Alt A</kbd>). Não deve ser necessário desativar a transmissão de vídeo ou áudio no Zoom durante a reunião. Certifique-se de que o "Som original para músicos" (ou algo parecido) esteja ativo no Zoom, para garantir a melhor qualidade de áudio para os participantes no Zoom.
 
-Start background music playback using the button on the bottom left, or <kbd>Alt K</kbd>.
+Inicie a reprodução de música de fundo usando o botão na parte inferior esquerda, ou <kbd>ALT K</kbd>.
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom
+#### Transmitindo partes presenciais do Salão do Reino acima do Zoom
 
-No action necessary.
+Nenhuma ação é necessária.
 
-Various camera angles/zoom can be chosen during the meeting by using the menu on the bottom of the M³ media playback control window; this menu will contain a list of all configured camera view scenes in OBS.
+Vários ângulos da câmara/zoom podem ser escolhidos durante a reunião, usando o menu na parte inferior da janela de controlo de reprodução de multimédia M3; este menu irá conter uma lista de todas as cenas de exibição de câmara configuradas no OBS.
 
-#### Sharing media at the Kingdom Hall and over Zoom
+#### Compartilhar multimédia no Salão do Reino e Zoom
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+Encontre a multimédia que deseja compartilhar na janela de controlo de reprodução de multimédia do M3 e pressione o botão "reproduzir".
 
-When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
+Quando terminar de compartilhar a multimédia, pressione o botão "parar" no M3. Observe que os vídeos param automaticamente após a sua conclusão.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor
+#### Exibindo participantes do Zoom no Salão do Reino
 
-Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+Prima o botão "mostrar/ocultar exibição de multimédia" no canto inferior direito da tela do controlador de multimédia M³ ou <kbd>Alt Z</kbd>, to **ocultar** a janela de exibição de multimédia. A reunião Zoom será visível no(s) monitor(es) externo(s) do Salão do Reino
 
-> If the participant has media to show, follow the steps under the **Sharing media at the Kingdom Hall and over Zoom** subheading.
+> Se o participante tiver multimédia a exibir, siga os passos sob a multimédia**de compartilhamento no Salão do Reino e Zoom** subtítulo.
 
-Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
+Uma vez que o usuário termine sua parte, pressione o botão "ocultar/mostrar janela de exibição de multimédia" no canto inferior direito do controlo de multimédia M3, janela de reprodução de multimédia ou <kbd>Alt Z</kbd>, para **mostrar** a janela de exibição de multimédia. O monitor Salão do Reino agora mostrará o texto do ano.
 
-### Conducting hybrid meetings using only M³ and Zoom
+### Realizar reuniões híbridas usando apenas M3 e Zoom
 
-If you do not wish to use OBS Studio for any reason, the following suggestions will perhaps help you to set things up as simply as possible.
+Se você não deseja usar o OBS Studio por qualquer motivo, as seguintes sugestões talvez o ajudem a organizar as coisas da forma mais simples possível.
 
-#### Initial configuration without OBS: Kingdom Hall computer
+#### Configuração inicial sem OBS: Computador do Salão do Reino
 
-Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
+Mesmo que a secção correspondente acima. Com a adição do atalho de teclado global para Zoom para iniciar/parar o compartilhamento de tela (<kbd>ALT S</kbd>). A "câmara" será a fonte da câmara do Salão do Reino.
 
-#### Initial configuration without OBS: M³
+#### Configuração inicial sem OBS: M3
 
-Enable the `Present media on an external monitor or in a separate window` option.
+Habilita a Multimédia`presente num monitor externo ou numa janela separada`.
 
-#### Starting the meeting without OBS
+#### Iniciar a reunião sem OBS
 
-Same as corresponding section above.
+Mesmo que a secção correspondente acima.
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom without OBS
+#### Transmitindo partes presenciais do Salão do Reino acima do Zoom sem OBS
 
-Same as corresponding section above.
+Mesmo que a secção correspondente acima.
 
-#### Sharing media at the Kingdom Hall and over Zoom without OBS
+#### Compartilhar multimédia no Salão do Reino e Zoom sem OBS
 
-Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
+Comece a compartilhar o Zoom ao pressionar<kbd>Alt S</kbd>. Na janela de compartilhamento de Zoom que aparece, escolha o monitor externo e ative as duas caixas de seleção na parte inferior esquerda (para otimização de som e vídeo). O texto do ano será agora compartilhado no Zoom.
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+Encontre a multimédia que deseja compartilhar na janela de controlo de reprodução de multimédia do M3 e pressione o botão "reproduzir".
 
-When you're done sharing media, hit <kbd>Alt S</kbd> to end Zoom screen sharing.
+Quando terminar de compartilhar a multimédia, pressione <kbd>Alt S</kbd> para finalizar o compartilhamento de tela do Zoom.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor without OBS
+#### Exibir participantes do Zoom no Salão do Reino sem OBS
 
-Same as corresponding section above.
+Mesmo que a secção correspondente acima.
 
-### Screenshots of Presentation Mode
+### Capturas de tela do Modo de exibição
 
 {% include screenshots/present-media.html lang=site.data.pt-pt %}
