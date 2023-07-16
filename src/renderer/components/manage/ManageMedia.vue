@@ -122,7 +122,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 // eslint-disable-next-line import/named
 import { Database } from 'sql.js'
-import { LocalFile, MeetingFile, VideoFile } from '~/types'
+import { LocalFile, MeetingFile, VideoFile, PlaylistItem } from '~/types'
 import { BITS_IN_BYTE, BYTES_IN_MB, MS_IN_SEC } from '~/constants/general'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { MEPS_IDS } = require('./../../constants/lang') as {
@@ -308,9 +308,6 @@ export default defineComponent({
           file: (await this.$getZipContentsByExt(filePath, '.db', false)) ?? undefined,
         })) as Database
 
-        console.log('db', db)
-        console.log(this.$query(db, 'SELECT * FROM sqlite_master'))
-
         const media = this.$query(
         db,
         `SELECT Label, FilePath, MimeType, DocumentId, Track, IssueTagNumber, KeySymbol, MepsLanguage
@@ -319,10 +316,11 @@ export default defineComponent({
           LEFT JOIN Location L ON PILM.LocationId = L.LocationId
           LEFT JOIN PlaylistItemIndependentMediaMap PIIMM ON PI.PlaylistItemId = PIIMM.PlaylistItemId
           LEFT JOIN IndependentMedia IM ON PIIMM.IndependentMediaId = IM.IndependentMediaId`
-        ) as {Label: string, FilePath: string, MimeType: string, DocumentId: number, Track: number, IssueTagNumber: string, KeySymbol: string, MepsLanguage: number}[]
+        ) as PlaylistItem[]
         
         const promises: Promise<void>[] = []
 
+        // Get correct extension
         media.map((m) => {
           if (!extname(m.Label ?? '')) {
             if (extname(m.FilePath ?? '')) {
@@ -341,7 +339,7 @@ export default defineComponent({
         await Promise.allSettled(promises)
         this.processing = false
     },
-    async processPlaylistItem(m: {Label: string, FilePath: string, MimeType: string, DocumentId: number, Track: number, IssueTagNumber: string, KeySymbol: string, MepsLanguage: number}, filePath: string) {
+    async processPlaylistItem(m: PlaylistItem, filePath: string) {
       if (m.FilePath) {
             this.files.push({
               safeName: `- ${this.$sanitize(m.Label, true)}`,
@@ -356,7 +354,6 @@ export default defineComponent({
               issue: m.IssueTagNumber,
               lang: MEPS_IDS[m.MepsLanguage],
             }) as VideoFile[]
-            console.log('playlistFile', mediaFiles)
             this.files.push(...mediaFiles.map((f) => ({
               ...f,
               safeName: `- ${this.$sanitize(
