@@ -1,5 +1,5 @@
 ---
-tag: Uso
+tag: Utilização
 title: Gerir multimédia
 ref: manage-media
 ---
