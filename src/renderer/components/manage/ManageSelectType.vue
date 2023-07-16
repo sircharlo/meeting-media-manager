@@ -51,6 +51,10 @@ export default defineComponent({
           value: 'jwpub',
         },
         {
+          label: this.$t('jwlplaylist') as string,
+          value: 'jwlplaylist',
+        },
+        {
           label: this.$t('syncJwOrgMedia') as string,
           value: 'jworg',
         },

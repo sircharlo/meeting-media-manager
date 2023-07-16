@@ -19,7 +19,7 @@
     </v-dialog>
     <v-row class="fill-height" align-content="start">
       <manage-header />
-      <manage-select-type v-model="type" :disabled="loading || saving" />
+      <manage-select-type v-model="type" :disabled="loading || saving || processing" />
       <v-row v-if="type" align="center" class="mb-0">
         <v-col cols="1" class="text-center" align-self="center">
           <font-awesome-icon :icon="faFileExport" />
@@ -28,22 +28,22 @@
           <song-picker
             v-if="type === 'song'"
             v-model="jwFile"
-            :disabled="loading || saving"
+            :disabled="loading || saving || processing"
           />
           <manage-select-file
             v-else-if="type !== 'jworg'"
             :type="type"
             :path="fileString"
-            :loading="loading || saving"
+            :loading="loading || saving || processing"
             @click="
-              type == 'custom' ? addFiles() : addFiles(false, 'JWPUB', 'jwpub')
+            addFiles(type === 'custom', type === 'custom' ? undefined : type, type === 'custom' ? undefined : type.toUpperCase())
             "
           />
         </v-col>
       </v-row>
       <manage-media-prefix v-if="jwFile || files.length > 0" v-model="prefix" />
       <v-col cols="12" class="px-0" style="position: relative">
-        <loading-icon v-if="loading || saving" />
+        <loading-icon v-if="loading || saving || processing" />
         <template v-else>
           <v-overlay :value="dragging">
             <font-awesome-icon :icon="faDownload" size="3x" bounce />
@@ -75,7 +75,7 @@
           <icon-btn
             v-if="jwFile || files.length > 0"
             variant="cancel"
-            :disabled="loading || saving"
+            :disabled="loading || saving || processing"
             click-twice
             @click="dialog ? cancel() : goHome()"
           />
@@ -85,7 +85,7 @@
             v-if="jwFile || files.length > 0"
             color="primary"
             min-width="32px"
-            :loading="loading || saving"
+            :loading="loading || saving || processing"
             @click="saveFiles()"
           >
             <font-awesome-icon :icon="faSave" size="lg" />
@@ -98,7 +98,7 @@
           >
             <font-awesome-icon :icon="faXmark" size="lg" class="white--text" />
           </v-btn>
-          <icon-btn v-else variant="home" :disabled="loading || saving" />
+          <icon-btn v-else variant="home" :disabled="loading || saving || processing" />
         </v-col>
         <v-col />
       </v-footer>
@@ -120,8 +120,14 @@ import {
   faXmark,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
+// eslint-disable-next-line import/named
+import { Database } from 'sql.js'
 import { LocalFile, MeetingFile, VideoFile } from '~/types'
 import { BITS_IN_BYTE, BYTES_IN_MB, MS_IN_SEC } from '~/constants/general'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { MEPS_IDS } = require('./../../constants/lang') as {
+  MEPS_IDS: Record<number, string>
+}
 export default defineComponent({
   props: {
     loading: {
@@ -153,6 +159,7 @@ export default defineComponent({
       type: 'custom',
       fileString: '',
       saving: false,
+      processing: false,
       jwFile: null as VideoFile | null,
       files: [] as (LocalFile | VideoFile)[],
     }
@@ -284,12 +291,82 @@ export default defineComponent({
       })
 
       if (result && !result.canceled) {
-        this.files = result.filePaths.map((file: string) => ({
+        if (this.type === 'jwlplaylist') {
+          await this.processPlaylist(result.filePaths[0])
+        } else {
+          this.files = result.filePaths.map((file: string) => ({
           safeName: '- ' + this.$sanitize(basename(file), true),
           filepath: file,
         }))
+        }
         this.fileString = result.filePaths.join(';')
       }
+    },
+    async processPlaylist(filePath: string) {
+      this.processing = true
+      const db = (await this.$getDb({
+          file: (await this.$getZipContentsByExt(filePath, '.db', false)) ?? undefined,
+        })) as Database
+
+        console.log('db', db)
+        console.log(this.$query(db, 'SELECT * FROM sqlite_master'))
+
+        const media = this.$query(
+        db,
+        `SELECT Label, FilePath, MimeType, DocumentId, Track, IssueTagNumber, KeySymbol, MepsLanguage
+        FROM PlaylistItem PI
+          LEFT JOIN PlaylistItemLocationMap PILM ON PI.PlaylistItemId = PILM.PlaylistItemId
+          LEFT JOIN Location L ON PILM.LocationId = L.LocationId
+          LEFT JOIN PlaylistItemIndependentMediaMap PIIMM ON PI.PlaylistItemId = PIIMM.PlaylistItemId
+          LEFT JOIN IndependentMedia IM ON PIIMM.IndependentMediaId = IM.IndependentMediaId`
+        ) as {Label: string, FilePath: string, MimeType: string, DocumentId: number, Track: number, IssueTagNumber: string, KeySymbol: string, MepsLanguage: number}[]
+        
+        const promises: Promise<void>[] = []
+
+        media.map((m) => {
+          if (!extname(m.Label ?? '')) {
+            if (extname(m.FilePath ?? '')) {
+              m.Label += extname(m.FilePath)
+            } else if (m.MimeType) {
+              m.Label = m.Label + '.' + m.MimeType.split('/')[1]
+            } else {
+              m.Label += '.mp4'
+            }
+          }
+          return m
+        }).forEach((m) => {
+          promises.push(this.processPlaylistItem(m, filePath))
+        })
+
+        await Promise.allSettled(promises)
+        this.processing = false
+    },
+    async processPlaylistItem(m: {Label: string, FilePath: string, MimeType: string, DocumentId: number, Track: number, IssueTagNumber: string, KeySymbol: string, MepsLanguage: number}, filePath: string) {
+      if (m.FilePath) {
+            this.files.push({
+              safeName: `- ${this.$sanitize(m.Label, true)}`,
+              contents: (await this.$getZipContentsByName(filePath, m.FilePath, false)) ??
+              undefined,
+            })
+          } else {
+            const mediaFiles = await this.$getMediaLinks({
+              pubSymbol: m.KeySymbol,
+              docId: m.DocumentId,
+              track: m.Track,
+              issue: m.IssueTagNumber,
+              lang: MEPS_IDS[m.MepsLanguage],
+            }) as VideoFile[]
+            console.log('playlistFile', mediaFiles)
+            this.files.push(...mediaFiles.map((f) => ({
+              ...f,
+              safeName: `- ${this.$sanitize(
+                `${f.title || ''}${extname(
+                  f.url || f.filepath || ''
+                )}`,
+                true
+              )}`,
+            })))
+          }
     },
     async processFile(file: LocalFile | VideoFile) {
       if (!file?.safeName || file.ignored) {
