@@ -324,7 +324,7 @@ export default defineComponent({
         media.map((m) => {
           if (!extname(m.Label ?? '')) {
             if (extname(m.FilePath ?? '')) {
-              m.Label += extname(m.FilePath)
+              m.Label += extname(m.FilePath!)
             } else if (m.MimeType) {
               m.Label = m.Label + '.' + m.MimeType.split('/')[1]
             } else {
@@ -352,7 +352,7 @@ export default defineComponent({
               docId: m.DocumentId,
               track: m.Track,
               issue: m.IssueTagNumber,
-              lang: MEPS_IDS[m.MepsLanguage],
+              lang: m.MepsLanguage ? MEPS_IDS[m.MepsLanguage] : undefined,
             }) as VideoFile[]
             this.files.push(...mediaFiles.map((f) => ({
               ...f,

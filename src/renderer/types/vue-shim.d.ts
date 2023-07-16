@@ -100,7 +100,7 @@ interface CustomProps {
     mediaItem: {
       docId?: number
       track?: number
-      pubSymbol: string
+      pubSymbol?: string
       issue?: string
       format?: string
       lang?: string
