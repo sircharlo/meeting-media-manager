@@ -332,17 +332,17 @@ export default defineComponent({
             }
           }
           return m
-        }).forEach((m) => {
-          promises.push(this.processPlaylistItem(m, filePath))
+        }).forEach((m, index) => {
+          promises.push(this.processPlaylistItem(index, m, filePath))
         })
 
         await Promise.allSettled(promises)
         this.processing = false
     },
-    async processPlaylistItem(m: PlaylistItem, filePath: string) {
+    async processPlaylistItem(index: number, m: PlaylistItem, filePath: string) {
       if (m.FilePath) {
             this.files.push({
-              safeName: `- ${this.$sanitize(m.Label, true)}`,
+              safeName: `${(index + 1).toString().padStart(2, '0')} - ${this.$sanitize(m.Label, true)}`,
               contents: (await this.$getZipContentsByName(filePath, m.FilePath, false)) ??
               undefined,
             })
@@ -356,7 +356,7 @@ export default defineComponent({
             }) as VideoFile[]
             this.files.push(...mediaFiles.map((f) => ({
               ...f,
-              safeName: `- ${this.$sanitize(
+              safeName: `${(index + 1).toString().padStart(2, '0')} - ${this.$sanitize(
                 `${f.title || ''}${extname(
                   f.url || f.filepath || ''
                 )}`,
