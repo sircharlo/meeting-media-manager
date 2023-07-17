@@ -3065,9 +3065,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/types@npm:^2.17.0":
-  version: 2.17.0
-  resolution: "@nuxt/types@npm:2.17.0"
+"@nuxt/types@npm:^2.17.1":
+  version: 2.17.1
+  resolution: "@nuxt/types@npm:2.17.1"
   dependencies:
     "@types/babel__core": 7.20.1
     "@types/compression": 1.7.2
@@ -3079,12 +3079,12 @@ __metadata:
     "@types/node": ^16
     "@types/optimize-css-assets-webpack-plugin": 5.0.5
     "@types/pug": 2.0.6
-    "@types/serve-static": 1.15.1
+    "@types/serve-static": 1.15.2
     "@types/terser-webpack-plugin": 4.2.1
     "@types/webpack": 4.41.33
     "@types/webpack-bundle-analyzer": 3.9.5
     "@types/webpack-hot-middleware": 2.25.5
-  checksum: 1258f2383022ae95cce9eb3e935566ec699005afc58958827044629405571fbb075f905085938eda932ab63824e8139cb3d8786aa9e84f176d7b2a8f9da0b14c
+  checksum: 19b71ac7d6b6893e3295b0aac6bd5a0a461fafdc31bac44a160693d5916f393ad9e76b18d4afe599787884d0e6b7ad17e7b9ae2e0bf88b7df6875e4a9411fcb5
   languageName: node
   linkType: hard
 
@@ -4058,7 +4058,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/serve-static@npm:*":
+"@types/serve-static@npm:*, @types/serve-static@npm:1.15.2":
   version: 1.15.2
   resolution: "@types/serve-static@npm:1.15.2"
   dependencies:
@@ -4066,16 +4066,6 @@ __metadata:
     "@types/mime": "*"
     "@types/node": "*"
   checksum: 15c261dbfc57890f7cc17c04d5b22b418dfa0330c912b46c5d8ae2064da5d6f844ef7f41b63c7f4bbf07675e97ebe6ac804b032635ec742ae45d6f1274259b3e
-  languageName: node
-  linkType: hard
-
-"@types/serve-static@npm:1.15.1":
-  version: 1.15.1
-  resolution: "@types/serve-static@npm:1.15.1"
-  dependencies:
-    "@types/mime": "*"
-    "@types/node": "*"
-  checksum: 2e078bdc1e458c7dfe69e9faa83cc69194b8896cce57cb745016580543c7ab5af07fdaa8ac1765eb79524208c81017546f66056f44d1204f812d72810613de36
   languageName: node
   linkType: hard
 
@@ -11488,7 +11478,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": ^6.4.0
     "@fortawesome/free-solid-svg-icons": ^6.4.0
     "@fortawesome/vue-fontawesome": latest-2
-    "@nuxt/types": ^2.17.0
+    "@nuxt/types": ^2.17.1
     "@nuxt/typescript-build": ^3.0.1
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
