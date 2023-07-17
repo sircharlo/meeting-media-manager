@@ -921,7 +921,9 @@ const plugin: Plugin = (
               'SELECT UniqueEnglishSymbol, IssueTagNumber FROM Publication'
             ) as { UniqueEnglishSymbol: string; IssueTagNumber: string }[]
           )[0]
-          pub = jwpubInfo.UniqueEnglishSymbol.replace(/\d/g, '')
+          pub = /[^a-zA-Z0-9]/.test(jwpubInfo.UniqueEnglishSymbol)
+            ? jwpubInfo.UniqueEnglishSymbol
+            : (jwpubInfo.UniqueEnglishSymbol.replace(/\d/g, '') as string)
           issue = jwpubInfo.IssueTagNumber
           $setDb(pub, issue, db)
         } catch (e: unknown) {
