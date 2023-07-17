@@ -452,11 +452,15 @@ const plugin: Plugin = (
 
     const mmTable = result.length === 0 ? 'Multimedia' : 'DocumentMultimedia'
 
-    const keySymbol = (
+    const uniqueEnglishSymbol = (
       $query(db, 'SELECT UniqueEnglishSymbol FROM Publication') as {
         UniqueEnglishSymbol: string
       }[]
-    )[0].UniqueEnglishSymbol.replace(/\d*/g, '') as string
+    )[0].UniqueEnglishSymbol as string
+
+    const keySymbol = /[^a-zA-Z0-9]/.test(uniqueEnglishSymbol)
+      ? uniqueEnglishSymbol
+      : (uniqueEnglishSymbol.replace(/\d/g, '') as string)
 
     const issueTagNumber = (
       $query(db, 'SELECT IssueTagNumber FROM Publication') as {
