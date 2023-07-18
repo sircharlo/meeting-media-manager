@@ -1,7 +1,6 @@
 import { platform } from 'os'
 import Vue from 'vue'
 import * as Sentry from '@sentry/vue'
-import { BrowserTracing } from '@sentry/tracing'
 import { Plugin } from '@nuxt/types'
 
 const plugin: Plugin = ({ $config, app }, inject) => {
@@ -17,7 +16,7 @@ const plugin: Plugin = ({ $config, app }, inject) => {
       environment: $config.isDev ? 'development' : 'production',
       integrations: app.router
         ? [
-            new BrowserTracing({
+            new Sentry.BrowserTracing({
               routingInstrumentation: Sentry.vueRouterInstrumentation(
                 app.router
               ),
