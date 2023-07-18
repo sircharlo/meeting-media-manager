@@ -498,10 +498,12 @@ const plugin: Plugin = (
 
   inject('sanitize', sanitize)
 
-  async function getContentsFromJWPUB(
-    jwpub: string
+  async function getContents(
+    file: string,
+    jwpub = true
   ): Promise<ArrayBuffer | undefined> {
-    const zipFile = readFileSync(jwpub)
+    const zipFile = readFileSync(file)
+    if (!jwpub) return zipFile
     const zipper = new JSZip()
     const zipContents = await zipper.loadAsync(zipFile)
     return zipContents.file('contents')?.async('arraybuffer')
@@ -511,7 +513,7 @@ const plugin: Plugin = (
   inject('extractAllTo', async (jwpub: string, dest: string): Promise<void> => {
     try {
       const zipper = new JSZip()
-      const fileBuffer = await getContentsFromJWPUB(jwpub)
+      const fileBuffer = await getContents(jwpub)
       if (!fileBuffer) throw new Error('Could not extract files from zip')
       const contents = await zipper.loadAsync(fileBuffer)
       for (const [filename, fileObject] of Object.entries(contents.files)) {
@@ -525,10 +527,10 @@ const plugin: Plugin = (
 
   inject(
     'getZipContentsByExt',
-    async (zip: string, ext: string): Promise<Buffer | null> => {
+    async (zip: string, ext: string, jwpub = true): Promise<Buffer | null> => {
       try {
         const zipper = new JSZip()
-        const fileBuffer = await getContentsFromJWPUB(zip)
+        const fileBuffer = await getContents(zip, jwpub)
         if (!fileBuffer) throw new Error('Could not extract files from zip')
         const contents = await zipper.loadAsync(fileBuffer)
         for (const [filename, fileObject] of Object.entries(contents.files)) {
@@ -545,10 +547,10 @@ const plugin: Plugin = (
 
   inject(
     'getZipContentsByName',
-    async (zip: string, name: string): Promise<Buffer | null> => {
+    async (zip: string, name: string, jwpub = true): Promise<Buffer | null> => {
       try {
         const zipper = new JSZip()
-        const fileBuffer = await getContentsFromJWPUB(zip)
+        const fileBuffer = await getContents(zip, jwpub)
         if (!fileBuffer) throw new Error('Could not extract files from zip')
         const contents = await zipper.loadAsync(fileBuffer)
         for (const [filename, fileObject] of Object.entries(contents.files)) {
