@@ -1,5 +1,18 @@
 # Changelog
 
+## 23.6.0
+
+### New or improved features
+
+- 🚀 Ability to import playlists from JW Library
+- New language: Slovenian (thanks @brobic74!)
+- Support `.heic` files
+- Support `.m4v` files
+
+### Bug fixes
+
+- Correctly fetch tracts
+
 ## 23.5.0
 
 ### New or improved features
