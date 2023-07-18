@@ -256,8 +256,9 @@ const plugin: Plugin = (
         ignore: [join(dir, 'Recurring')],
       })
 
-      if (setProgress)
+      if (setProgress) {
         initProgress(pdfFiles.length + svgFiles.length + heicFiles.length)
+      }
 
       pdfFiles.forEach((pdf) => {
         promises.push(convertPdf(pdf, setProgress))
