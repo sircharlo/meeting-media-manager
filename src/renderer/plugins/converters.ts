@@ -1,6 +1,7 @@
 /* eslint-disable import/named */
 import { type } from 'os'
 import { pathToFileURL } from 'url'
+import type HeicConvert from 'heic-convert'
 import {
   accessSync,
   chmodSync,
@@ -8,7 +9,6 @@ import {
   existsSync,
   readFileSync,
   statSync,
-  writeFileSync,
 } from 'fs-extra'
 import { Dayjs } from 'dayjs'
 import JSZip from 'jszip'
@@ -83,6 +83,24 @@ const plugin: Plugin = (
     }
 
     image.src = pathToFileURL(mediaFile).href
+  }
+
+  async function convertHEIC(
+    filePath: string,
+    setProgress?: (loaded: number, total: number, global?: boolean) => void
+  ): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const convert = require('heic-convert') as typeof HeicConvert
+
+    const buffer = readFileSync(filePath)
+
+    const output = await convert({
+      buffer,
+      format: 'PNG',
+    })
+
+    $write(filePath.replace('.heic', '.png'), Buffer.from(output))
+    if (setProgress) increaseProgress(setProgress)
   }
 
   // Create a VLC playlist file based on the media of a specific meeting
@@ -233,7 +251,12 @@ const plugin: Plugin = (
         ignore: [join(dir, 'Recurring')],
       })
 
-      if (setProgress) initProgress(pdfFiles.length + svgFiles.length)
+      const heicFiles = $findAll(join(dir, '**', '*heic'), {
+        ignore: [join(dir, 'Recurring')],
+      })
+
+      if (setProgress)
+        initProgress(pdfFiles.length + svgFiles.length + heicFiles.length)
 
       pdfFiles.forEach((pdf) => {
         promises.push(convertPdf(pdf, setProgress))
@@ -242,6 +265,10 @@ const plugin: Plugin = (
       svgFiles.forEach((svg) => {
         convertSvg(svg)
         if (setProgress) increaseProgress(setProgress)
+      })
+
+      heicFiles.forEach((heic) => {
+        promises.push(convertHEIC(heic, setProgress))
       })
 
       await Promise.allSettled(promises)
@@ -297,7 +324,7 @@ const plugin: Plugin = (
     }
 
     if (entry && entryPath) {
-      writeFileSync(entryPath, await entry.async('nodebuffer'))
+      $write(entryPath, await entry.async('nodebuffer'))
       try {
         accessSync(entryPath, constants.X_OK)
       } catch (e: unknown) {

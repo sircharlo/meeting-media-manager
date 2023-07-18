@@ -3809,6 +3809,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/heic-convert@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@types/heic-convert@npm:1.2.0"
+  checksum: 6a1fbce2336f0800342b6e68283f3473da0070888bc7bd88f1c093da894fc1016cac0dcc2b010b31fad674fd913ad8186272fd688374a28b37db8797f03b1be0
+  languageName: node
+  linkType: hard
+
 "@types/hoist-non-react-statics@npm:^3.3.0":
   version: 3.3.1
   resolution: "@types/hoist-non-react-statics@npm:3.3.1"
@@ -9707,6 +9714,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"heic-convert@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "heic-convert@npm:1.2.4"
+  dependencies:
+    heic-decode: ^1.1.2
+    jpeg-js: ^0.4.1
+    pngjs: ^3.4.0
+  checksum: 02b893f93c1946a72ffb697e5d46942bdd41bc15b7894b1d2618aa5d64ba91e28a6f0ac081b66be73ab575b14698116a96651e4e6a5dfed3930fee45da8d1c8d
+  languageName: node
+  linkType: hard
+
+"heic-decode@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "heic-decode@npm:1.1.2"
+  dependencies:
+    libheif-js: ^1.10.0
+  checksum: 09c6d6aef4abc77aa50b35c980d43de1f3ec935890980c14d520ca6000ca762847f483c442a4d0a9d709cc450f17890aafd4b9ec66387708ae3682fcc1f65f17
+  languageName: node
+  linkType: hard
+
 "hmac-drbg@npm:^1.0.1":
   version: 1.0.1
   resolution: "hmac-drbg@npm:1.0.1"
@@ -10746,7 +10773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jpeg-js@npm:^0.4.4":
+"jpeg-js@npm:^0.4.1, jpeg-js@npm:^0.4.4":
   version: 0.4.4
   resolution: "jpeg-js@npm:0.4.4"
   checksum: bd7cb61aa8df40a9ee2c2106839c3df6054891e56cfc22c0ac581402e06c6295f962a4754b0b2ac50a401789131b1c6dc9df8d24400f1352168be1894833c590
@@ -11019,6 +11046,13 @@ __metadata:
     prelude-ls: ^1.2.1
     type-check: ~0.4.0
   checksum: 12c5021c859bd0f5248561bf139121f0358285ec545ebf48bb3d346820d5c61a4309535c7f387ed7d84361cf821e124ce346c6b7cef8ee09a67c1473b46d0fc4
+  languageName: node
+  linkType: hard
+
+"libheif-js@npm:^1.10.0":
+  version: 1.15.1
+  resolution: "libheif-js@npm:1.15.1"
+  checksum: f5d03a53878f220e11074b88e23c272de22e86a270042d91c987f423b2a4dcfcb138226ce6c32e78d24e691a8e7dbc4cdade0cfae72e01800a8f01de843d5f75
   languageName: node
   linkType: hard
 
@@ -11490,6 +11524,7 @@ __metadata:
     "@sentry/vue": ^7.57.0
     "@sentry/webpack-plugin": ^1.20.1
     "@types/fluent-ffmpeg": ^2.1.21
+    "@types/heic-convert": ^1.2.0
     "@types/lodash.clonedeep": ^4.5.7
     "@types/sql.js": ^1.4.4
     "@xpda-dev/core": ^0.1.6
@@ -11522,6 +11557,7 @@ __metadata:
     fs-extra: ^11.1.1
     fullname: ^4.0.1
     h264-mp4-encoder: ^1.0.12
+    heic-convert: ^1.2.4
     image-size: ^1.0.2
     is-internet-available: ^3.1.0
     jimp: ^0.22.8
@@ -13214,7 +13250,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pngjs@npm:^3.0.0":
+"pngjs@npm:^3.0.0, pngjs@npm:^3.4.0":
   version: 3.4.0
   resolution: "pngjs@npm:3.4.0"
   checksum: 8bd40bd698abd16b72c97b85cb858c80894fbedc76277ce72a784aa441e14795d45d9856e97333ca469b34b67528860ffc8a7317ca6beea349b645366df00bcd
