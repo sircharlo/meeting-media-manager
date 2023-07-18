@@ -5,7 +5,7 @@
 ### New or improved features
 
 - 🚀 Ability to import playlists from JW Library
-- New language: Slovenian (thanks @brobic74!)
+- New language: Slovenian (thanks [@brobic74](https://github.com/brobic74)!)
 - Support `.heic` files
 - Support `.m4v` files
 
