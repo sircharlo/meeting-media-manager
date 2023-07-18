@@ -100,6 +100,7 @@ const plugin: Plugin = (
     })
 
     $write(filePath.replace('.heic', '.png'), Buffer.from(output))
+    $rm(filePath)
     if (setProgress) increaseProgress(setProgress)
   }
 
