@@ -96,10 +96,10 @@ const plugin: Plugin = (
 
     const output = await convert({
       buffer,
-      format: 'PNG',
+      format: 'JPEG',
     })
 
-    $write(filePath.replace('.heic', '.png'), Buffer.from(output))
+    $write(filePath.replace('.heic', '.jpg'), Buffer.from(output))
     $rm(filePath)
     if (setProgress) increaseProgress(setProgress)
   }
