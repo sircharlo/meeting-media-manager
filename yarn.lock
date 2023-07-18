@@ -10399,15 +10399,11 @@ __metadata:
   linkType: hard
 
 "is-typed-array@npm:^1.1.10, is-typed-array@npm:^1.1.9":
-  version: 1.1.11
-  resolution: "is-typed-array@npm:1.1.11"
+  version: 1.1.12
+  resolution: "is-typed-array@npm:1.1.12"
   dependencies:
-    available-typed-arrays: ^1.0.5
-    call-bind: ^1.0.2
-    for-each: ^0.3.3
-    gopd: ^1.0.1
-    has-tostringtag: ^1.0.0
-  checksum: 19e442eb1c29d7701d7ab0de391924dd6576d5efba125b5468c87f0b7f408154d7f9405356ccda419084a20e5fb83e03128d7d48d674497419d4bd10cdd5e8cf
+    which-typed-array: ^1.1.11
+  checksum: 4c89c4a3be07186caddadf92197b17fda663a9d259ea0d44a85f171558270d36059d1c386d34a12cba22dfade5aba497ce22778e866adc9406098c8fc4771796
   languageName: node
   linkType: hard
 
@@ -17559,7 +17555,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which-typed-array@npm:^1.1.10":
+"which-typed-array@npm:^1.1.10, which-typed-array@npm:^1.1.11":
   version: 1.1.11
   resolution: "which-typed-array@npm:1.1.11"
   dependencies:
