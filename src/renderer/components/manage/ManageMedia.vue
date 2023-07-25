@@ -263,12 +263,17 @@ export default defineComponent({
         }
       })
 
-      // If one jwpub was dropped, set media type to jwpub
+      if (!this.files[0].filepath) return
+      const ext = extname(this.files[0].filepath)
+
+      // If one jwpub/jwlplaylist was dropped, set media type accordingly
       if (
-        this.files.length === 1 &&
-        extname(this.files[0].filepath ?? '') === '.jwpub'
+        this.files.length === 1 && (ext === '.jwpub' || ext === '.jwlplaylist')
       ) {
-        this.type = 'jwpub'
+        this.type = ext.substring(1)
+        if (ext === '.jwlplaylist') {
+          this.processPlaylist(this.files[0].filepath)
+        }
       } else {
         this.type = 'custom'
       }
