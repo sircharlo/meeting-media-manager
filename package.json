@@ -112,7 +112,7 @@
     "heic-convert": "^1.2.4",
     "image-size": "^1.0.2",
     "is-internet-available": "^3.1.0",
-    "jimp": "^0.22.8",
+    "jimp": "^0.22.10",
     "jszip": "^3.10.1",
     "lodash.clonedeep": "^4.5.0",
     "minify-css-string": "^1.0.0",
