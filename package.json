@@ -98,7 +98,7 @@
     "electron-updater": "^6.1.4",
     "electron-window-state": "^5.0.3",
     "eslint": "^8.45.0",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-prettier": "^8.9.0",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-plugin-nuxt": "^4.0.0",
     "eslint-plugin-vue": "^9.15.1",
