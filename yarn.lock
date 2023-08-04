@@ -3220,6 +3220,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry-internal/tracing@npm:7.61.1":
+  version: 7.61.1
+  resolution: "@sentry-internal/tracing@npm:7.61.1"
+  dependencies:
+    "@sentry/core": 7.61.1
+    "@sentry/types": 7.61.1
+    "@sentry/utils": 7.61.1
+    tslib: ^2.4.1 || ^1.9.3
+  checksum: 272c3462b2d42703b900c2d5296ab69874895b48e23a26f266384609507051d8286aa0520d4446a0cd0bb73f32e1450ed65e003ca85891c7d562af0e203dd2ff
+  languageName: node
+  linkType: hard
+
 "@sentry/browser@npm:7.61.0":
   version: 7.61.0
   resolution: "@sentry/browser@npm:7.61.0"
@@ -3231,6 +3243,20 @@ __metadata:
     "@sentry/utils": 7.61.0
     tslib: ^2.4.1 || ^1.9.3
   checksum: abcb7fa09b51cb485a597b2300853017cd35368e7674117aaf25a68994e504a27a3067b7c911e44ef6d8a89b8b8ebf10af71d2f48363a9fafc6373496efc110f
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:7.61.1":
+  version: 7.61.1
+  resolution: "@sentry/browser@npm:7.61.1"
+  dependencies:
+    "@sentry-internal/tracing": 7.61.1
+    "@sentry/core": 7.61.1
+    "@sentry/replay": 7.61.1
+    "@sentry/types": 7.61.1
+    "@sentry/utils": 7.61.1
+    tslib: ^2.4.1 || ^1.9.3
+  checksum: 9d53d4dc7a4bfd58ebd3f44b72505f33775e441c35f18a59c4559c9a558e3c1cc212c9a63fed39177ba64bc587784b93dad58da9f9cd22b14bc6d2753f7d975c
   languageName: node
   linkType: hard
 
@@ -3258,6 +3284,17 @@ __metadata:
     "@sentry/utils": 7.61.0
     tslib: ^2.4.1 || ^1.9.3
   checksum: 785fbb28a6a7eb7068905f7e860b7f0d14a5b3a0266dadbf530523315289a8b1bf1729bced7faf17fb83ef7c668b8798838fc02f27ce44d8811174f5a8cd9c9e
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:7.61.1":
+  version: 7.61.1
+  resolution: "@sentry/core@npm:7.61.1"
+  dependencies:
+    "@sentry/types": 7.61.1
+    "@sentry/utils": 7.61.1
+    tslib: ^2.4.1 || ^1.9.3
+  checksum: 7e7a7d8e58c1f232f7022c96f96f1c0f3a04d9c5b06ff57340574c634ad35a2e447f5007b3138dcaa0df79e988c13a7c6825faac8ecb013de4679220bb1bf9ae
   languageName: node
   linkType: hard
 
@@ -3304,10 +3341,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/replay@npm:7.61.1":
+  version: 7.61.1
+  resolution: "@sentry/replay@npm:7.61.1"
+  dependencies:
+    "@sentry/core": 7.61.1
+    "@sentry/types": 7.61.1
+    "@sentry/utils": 7.61.1
+  checksum: 41a40e4c9040c3717513a1d2fe60cb1f5cecdcbdfdd7a9ad4fb70ec38eee61326f04902bda4fa5de8b2115177c9f5d3b9f68ab484985c5b709e3fc4517eb284c
+  languageName: node
+  linkType: hard
+
 "@sentry/types@npm:7.61.0":
   version: 7.61.0
   resolution: "@sentry/types@npm:7.61.0"
   checksum: b61cbade0870a377e4bc26274c0d471cc5ee0114a2a29519be121176f68821af708248a3c1033b65b2b74a5214331029c79f37e6c542fb43f8ad16d6a3d34ce6
+  languageName: node
+  linkType: hard
+
+"@sentry/types@npm:7.61.1":
+  version: 7.61.1
+  resolution: "@sentry/types@npm:7.61.1"
+  checksum: 959f75ecfd15cac2f2d5d41d354e817ca7bb8a9e00c557f2fdb8c923273f04ec3fdecfd3bad3d12aebdef1a1ba4c0433d2f58d84dafa3d9ffc7d376f1201eee2
   languageName: node
   linkType: hard
 
@@ -3321,18 +3376,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^7.61.0":
-  version: 7.61.0
-  resolution: "@sentry/vue@npm:7.61.0"
+"@sentry/utils@npm:7.61.1":
+  version: 7.61.1
+  resolution: "@sentry/utils@npm:7.61.1"
   dependencies:
-    "@sentry/browser": 7.61.0
-    "@sentry/core": 7.61.0
-    "@sentry/types": 7.61.0
-    "@sentry/utils": 7.61.0
+    "@sentry/types": 7.61.1
+    tslib: ^2.4.1 || ^1.9.3
+  checksum: 555b1c70b6b837b245ec1901f49e1f0a919c0be32907fa6c0b5ffaa896d3a07c44e2e16055e6e9d3d317815ae1222213fe767a34684a7f5ab592a49782e20f3f
+  languageName: node
+  linkType: hard
+
+"@sentry/vue@npm:^7.61.1":
+  version: 7.61.1
+  resolution: "@sentry/vue@npm:7.61.1"
+  dependencies:
+    "@sentry/browser": 7.61.1
+    "@sentry/core": 7.61.1
+    "@sentry/types": 7.61.1
+    "@sentry/utils": 7.61.1
     tslib: ^2.4.1 || ^1.9.3
   peerDependencies:
     vue: 2.x || 3.x
-  checksum: 7978dadb948ccf6ce487444fe2f5048c6199b2954265f2eac946bf34c2652d7e1dd716727815aa07aedc647aad518309aaa2e1a26eeb7319abbf16770cf9939c
+  checksum: 9c237a29a6270aa2b78956fe2f4a7452c613c8548f02e189bcf76697d7f951908eff8314a9cb312f8c4ef427186f1960243b31191a294be082a701046716f58a
   languageName: node
   linkType: hard
 
@@ -11263,7 +11328,7 @@ __metadata:
     "@panzoom/panzoom": ^4.5.1
     "@playwright/test": ^1.36.2
     "@sentry/electron": ^4.9.0
-    "@sentry/vue": ^7.61.0
+    "@sentry/vue": ^7.61.1
     "@sentry/webpack-plugin": ^1.20.1
     "@types/fluent-ffmpeg": ^2.1.21
     "@types/heic-convert": ^1.2.0
