@@ -622,12 +622,12 @@ const plugin: Plugin = (
       if (fallbackLang) {
         if (
           params.pub === 'w' &&
-          store.state.media.mediaLang.wAvailable === false
+          store.state.media.mediaLang?.wAvailable === false
         ) {
           params.langwritten = fallbackLang
         } else if (
           params.pub === 'mwb' &&
-          store.state.media.mediaLang.mwbAvailable === false
+          store.state.media.mediaLang?.mwbAvailable === false
         ) {
           params.langwritten = fallbackLang
         }

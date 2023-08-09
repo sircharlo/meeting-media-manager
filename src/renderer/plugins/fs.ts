@@ -33,14 +33,19 @@ const plugin: Plugin = (
     if (file) {
       console.debug('Pub path', file)
       try {
-        validMediaLangs = JSON.parse(
-          readFileSync(join($appPath(), 'langs.json'), 'utf8') ?? '[]'
-        ) as ShortJWLang[]
+        const langsFile = join($appPath(), 'langs.json')
+        console.debug('Langs file', langsFile)
+        const currentLangs = existsSync(langsFile)
+          ? readFileSync(langsFile, 'utf8')
+          : '[]'
+        console.debug('Current langs', currentLangs)
+        validMediaLangs = JSON.parse(currentLangs) as ShortJWLang[]
       } catch (e: unknown) {
         $log.error(e)
         validMediaLangs = []
       }
     }
+    console.debug('validMediaLangs', validMediaLangs)
 
     let mediaFolder = basename(file?.url || '_')
       .split('_')[1]
