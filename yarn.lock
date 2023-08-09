@@ -1502,7 +1502,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.22.6
   resolution: "@babel/runtime@npm:7.22.6"
   dependencies:
@@ -3943,7 +3943,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-redux@npm:^7.1.16":
+"@types/react-redux@npm:^7.1.20":
   version: 7.1.25
   resolution: "@types/react-redux@npm:7.1.25"
   dependencies:
@@ -4635,24 +4635,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zoomus/websdk@npm:^2.14.0":
-  version: 2.14.0
-  resolution: "@zoomus/websdk@npm:2.14.0"
+"@zoomus/websdk@npm:^2.15.0":
+  version: 2.15.0
+  resolution: "@zoomus/websdk@npm:2.15.0"
   dependencies:
     lodash: ^4.17.21
-    react: 16.13.0
-    react-dom: 16.13.0
-    react-redux: 7.2.4
+    react: 16.13.1
+    react-dom: 16.13.1
+    react-redux: 7.2.9
     redux: 3.7.2
-    redux-thunk: 2.3.0
+    redux-thunk: 2.4.2
   peerDependencies:
     lodash: ^4.17.21
-    react: 16.13.0
-    react-dom: 16.13.0
-    react-redux: 7.2.4
+    react: 16.13.1
+    react-dom: 16.13.1
+    react-redux: 7.2.9
     redux: 3.7.2
-    redux-thunk: 2.3.0
-  checksum: 703996030d8a3342d74a242a0a6af4fceeca6eb8149c8e4f6e11bac99f6c90546e93c40400ecef3cbeb3b5c3fcd0f198f07962d4453c7194de61f38b11fb3aa5
+    redux-thunk: 2.4.2
+  checksum: f9fff990eab8e7412379eaee05628be4c559a5d5d8b5d6a4a759694c8f5815161f7cc2de3345c9b8ab2fda4808c553d35b8ac02d403ce13ca6767b111379dd99
   languageName: node
   linkType: hard
 
@@ -11456,7 +11456,7 @@ __metadata:
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
     "@xpda-dev/webpack-step": ^0.1.6
-    "@zoomus/websdk": ^2.14.0
+    "@zoomus/websdk": ^2.15.0
     chokidar: ^3.5.3
     consola: ^2.15.3
     core-js: ^3.32.0
@@ -14572,17 +14572,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:16.13.0":
-  version: 16.13.0
-  resolution: "react-dom@npm:16.13.0"
+"react-dom@npm:16.13.1":
+  version: 16.13.1
+  resolution: "react-dom@npm:16.13.1"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
     prop-types: ^15.6.2
-    scheduler: ^0.19.0
+    scheduler: ^0.19.1
   peerDependencies:
-    react: ^16.0.0
-  checksum: c678fcf48a653b8c67f8519248747bcf596876b912a52d8f7626247efe3bdf52d45c06bce1368735f79e036fc3d68638e185eccc8f4113bf77a3a62360a20580
+    react: ^16.13.1
+  checksum: 5009f3ee9bca06d6d4b9cf92c832eca102c284e6d019e832179c8de3e353534571474c95b7ab975935b22823726710dcd73783596c11dd71304beb11c19281c5
   languageName: node
   linkType: hard
 
@@ -14593,35 +14593,42 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-redux@npm:7.2.4":
-  version: 7.2.4
-  resolution: "react-redux@npm:7.2.4"
+"react-is@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react-is@npm:17.0.2"
+  checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
+  languageName: node
+  linkType: hard
+
+"react-redux@npm:7.2.9":
+  version: 7.2.9
+  resolution: "react-redux@npm:7.2.9"
   dependencies:
-    "@babel/runtime": ^7.12.1
-    "@types/react-redux": ^7.1.16
+    "@babel/runtime": ^7.15.4
+    "@types/react-redux": ^7.1.20
     hoist-non-react-statics: ^3.3.2
     loose-envify: ^1.4.0
     prop-types: ^15.7.2
-    react-is: ^16.13.1
+    react-is: ^17.0.2
   peerDependencies:
-    react: ^16.8.3 || ^17
+    react: ^16.8.3 || ^17 || ^18
   peerDependenciesMeta:
     react-dom:
       optional: true
     react-native:
       optional: true
-  checksum: 214fa1a4811f95090b77d96ec7114c322adf388b6d086ebebf50cdaf03549758037283f953d2b920cf6ee2f6ffad8f35e92f1ab959b3f2c957f5075d00e16d0a
+  checksum: 369a2bdcf87915659af9e5c55abfd9f52a84e43e0d12dcc108ed17dbe6933558b7b7fc12caa9c10c1a10a8be7df89454b6c96989d8573fedec1a772c94a1f145
   languageName: node
   linkType: hard
 
-"react@npm:16.13.0":
-  version: 16.13.0
-  resolution: "react@npm:16.13.0"
+"react@npm:16.13.1":
+  version: 16.13.1
+  resolution: "react@npm:16.13.1"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
     prop-types: ^15.6.2
-  checksum: 56685a8c755c53ce9657856abb0a9a64592362569e89eeff4ad6eed5a18ac3d58ca587d32b990efa1cbc4f167a82375fd9f9bfd357f785726f3c16733b089943
+  checksum: 4508f4207caca6bef55736284cbf2ce18d2edfee4c1457fc0bb2086b34ed5bcf9b44acdb71e27574e73a5b5d4d093720b5b4ec0bf92bb89394ee3a0a7c42c2d4
   languageName: node
   linkType: hard
 
@@ -14715,10 +14722,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-thunk@npm:2.3.0":
-  version: 2.3.0
-  resolution: "redux-thunk@npm:2.3.0"
-  checksum: d13f442ffc91249b534bf14884c33feff582894be2562169637dc9d4d70aec6423bfe6d66f88c46ac027ac1c0cd07d6c2dd4a61cf7695b8e43491de679df9bcf
+"redux-thunk@npm:2.4.2":
+  version: 2.4.2
+  resolution: "redux-thunk@npm:2.4.2"
+  peerDependencies:
+    redux: ^4
+  checksum: c7f757f6c383b8ec26152c113e20087818d18ed3edf438aaad43539e9a6b77b427ade755c9595c4a163b6ad3063adf3497e5fe6a36c68884eb1f1cfb6f049a5c
   languageName: node
   linkType: hard
 
@@ -15206,7 +15215,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.19.0":
+"scheduler@npm:^0.19.1":
   version: 0.19.1
   resolution: "scheduler@npm:0.19.1"
   dependencies:
