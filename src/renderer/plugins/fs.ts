@@ -21,6 +21,7 @@ import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import JSZip from 'jszip'
 import { MeetingFile, ShortJWLang } from '~/types'
 import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
+import { FALLBACK_SITE_LANGS } from '~/constants/lang'
 
 const plugin: Plugin = (
   { $getPrefs, $log, store, $appPath, $dayjs, $translate, $strip, i18n, $warn },
@@ -31,21 +32,26 @@ const plugin: Plugin = (
     // url: something/{pub}_{lang}.jwpub or something/{pub}_{lang}_{track}.mp4
     let validMediaLangs: ShortJWLang[] = []
     if (file) {
-      console.debug('Pub path', file)
+      $log.debug('Pub path', file)
       try {
         const langsFile = join($appPath(), 'langs.json')
-        console.debug('Langs file', langsFile)
-        const currentLangs = existsSync(langsFile)
-          ? readFileSync(langsFile, 'utf8')
-          : '[]'
-        console.debug('Current langs', currentLangs)
-        validMediaLangs = JSON.parse(currentLangs) as ShortJWLang[]
+        $log.debug('Looking for langs file here:', langsFile)
+        if (existsSync(langsFile)) {
+          $log.debug('Parsing langs file')
+          validMediaLangs = JSON.parse(
+            readFileSync(langsFile, 'utf8')
+          ) as ShortJWLang[]
+        } else {
+          $log.debug('No langs file found; falling back to fallback langs')
+          validMediaLangs = FALLBACK_SITE_LANGS as ShortJWLang[]
+        }
       } catch (e: unknown) {
         $log.error(e)
-        validMediaLangs = []
+        $log.debug('Error parsing langs file; falling back to fallback langs')
+        validMediaLangs = FALLBACK_SITE_LANGS as ShortJWLang[]
       }
     }
-    console.debug('validMediaLangs', validMediaLangs)
+    $log.debug('validMediaLangs length', validMediaLangs.length)
 
     let mediaFolder = basename(file?.url || '_')
       .split('_')[1]
@@ -80,7 +86,7 @@ const plugin: Plugin = (
     }
     if (!mediaFolder) return
 
-    if (file) console.debug('Pub lang', mediaFolder)
+    if (file) $log.debug('Pub lang', mediaFolder)
 
     const pubPath = joinSafe(
       $getPrefs('app.customCachePath') || $appPath(),

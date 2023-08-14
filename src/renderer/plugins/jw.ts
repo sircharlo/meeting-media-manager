@@ -12,6 +12,7 @@ import {
   MediaItemResult,
   ShortJWLang,
 } from '~/types'
+import { FALLBACK_SITE_LANGS, FALLBACK_SITE_LANGS_DATE } from '~/constants/lang'
 
 const plugin: Plugin = (
   {
@@ -36,9 +37,13 @@ const plugin: Plugin = (
     const lastUpdate = $getPrefs('media.langUpdatedLast') as string
     const recentlyUpdated =
       lastUpdate && $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
-
+    $log.debug('langPath', langPath)
+    $log.debug('lastUpdate', lastUpdate)
+    $log.debug('recentlyUpdated', recentlyUpdated)
+    $log.debug('forceReload', forceReload)
     if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
       try {
+        $log.debug('Attempting to update langs')
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://www.jw.org/en/languages',
         })
@@ -56,51 +61,55 @@ const plugin: Plugin = (
               } as ShortJWLang
             })
           $write(langPath, JSON.stringify(langs, null, 2))
+          $log.debug('Wrote updated langs to file')
           $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
         } else {
           $log.error(result)
         }
       } catch (e: unknown) {
+        $log.debug('Updating langs failed')
         if (!store.state.stats.online) {
           $warn('errorOffline')
         } else {
           $log.error(e)
         }
+        $write(langPath, JSON.stringify(FALLBACK_SITE_LANGS, null, 2))
+        $log.debug('Wrote fallback langs to file')
+        $setPrefs(
+          'media.langUpdatedLast',
+          $dayjs(FALLBACK_SITE_LANGS_DATE).toISOString()
+        )
       }
-    }
-
-    if (!existsSync(langPath)) {
-      return getJWLangs(true)
     }
 
     let langs: ShortJWLang[] = []
 
-    function readLangs(firstTry = true): string {
-      try {
-        const fileContent = readFileSync(langPath, 'utf8')
-        return fileContent
-      } catch (e: unknown) {
-        if (firstTry) {
-          return readLangs(false)
-        } else {
-          $log.error(e)
-          return ''
-        }
+    try {
+      langs = JSON.parse(readFileSync(langPath, 'utf8')) as ShortJWLang[]
+      if (!Array.isArray(langs) || langs.length === 0) {
+        $log.debug(
+          'Langs file does not contain expected data; launching langs update...'
+        )
+        return getJWLangs(true)
       }
+    } catch (e: any) {
+      $log.debug("Couldn't parse langs from file")
+      if (e.message.includes('Unexpected token')) {
+        $log.debug(`Invalid JSON: ${langPath}`)
+        return getJWLangs(true)
+      } else {
+        $log.error(e)
+      }
+      $log.debug('Setting fallback langs as a workaround')
+      langs = FALLBACK_SITE_LANGS
     }
+    $log.debug('langs', langs)
 
-    const fileContent = readLangs()
-    if (fileContent) {
-      try {
-        langs = JSON.parse(fileContent) as ShortJWLang[]
-      } catch (e: any) {
-        if (e.message.includes('Unexpected token')) {
-          $log.debug(`Invalid JSON: ${fileContent}`)
-          return getJWLangs(true)
-        } else {
-          $log.error(e)
-        }
-      }
+    if (!Array.isArray(langs) || langs.length === 0) {
+      $log.debug(
+        'Langs file does not contain expected data; falling back to fallback langs...'
+      )
+      langs = FALLBACK_SITE_LANGS
     }
 
     const mediaLang = $getPrefs('media.lang') as string
