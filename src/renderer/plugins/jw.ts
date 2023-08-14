@@ -47,8 +47,10 @@ const plugin: Plugin = (
         const result = await ipcRenderer.invoke('getFromJWOrg', {
           url: 'https://www.jw.org/en/languages',
         })
+        $log.debug('Result from langs call:', result)
 
         if (result.languages) {
+          $log.debug('Unchanged result.languages:', result.languages)
           const langs = (result.languages as JWLang[])
             .filter((lang) => lang.hasWebContent)
             .map((lang) => {
@@ -60,9 +62,11 @@ const plugin: Plugin = (
                 isSignLanguage: lang.isSignLanguage,
               } as ShortJWLang
             })
+          $log.debug('Changed langs:', langs)
           $write(langPath, JSON.stringify(langs, null, 2))
           $log.debug('Wrote updated langs to file')
           $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
+          $log.debug('Updated langUpdatedLast')
         } else {
           $log.error(result)
         }

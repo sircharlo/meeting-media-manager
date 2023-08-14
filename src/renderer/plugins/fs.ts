@@ -33,23 +33,23 @@ const plugin: Plugin = (
     let validMediaLangs: ShortJWLang[] = []
     if (file) {
       $log.debug('Pub path', file)
-      try {
-        const langsFile = join($appPath(), 'langs.json')
-        $log.debug('Looking for langs file here:', langsFile)
-        if (existsSync(langsFile)) {
-          $log.debug('Parsing langs file')
-          validMediaLangs = JSON.parse(
-            readFileSync(langsFile, 'utf8')
-          ) as ShortJWLang[]
-        } else {
-          $log.debug('No langs file found; falling back to fallback langs')
-          validMediaLangs = FALLBACK_SITE_LANGS as ShortJWLang[]
-        }
-      } catch (e: unknown) {
-        $log.error(e)
-        $log.debug('Error parsing langs file; falling back to fallback langs')
+    }
+    try {
+      const langsFile = join($appPath(), 'langs.json')
+      $log.debug('Looking for langs file here:', langsFile)
+      if (existsSync(langsFile)) {
+        $log.debug('Parsing langs file')
+        validMediaLangs = JSON.parse(
+          readFileSync(langsFile, 'utf8')
+        ) as ShortJWLang[]
+      } else {
+        $log.debug('No langs file found; falling back to fallback langs')
         validMediaLangs = FALLBACK_SITE_LANGS as ShortJWLang[]
       }
+    } catch (e: unknown) {
+      $log.error(e)
+      $log.debug('Error parsing langs file; falling back to fallback langs')
+      validMediaLangs = FALLBACK_SITE_LANGS as ShortJWLang[]
     }
     $log.debug('validMediaLangs length', validMediaLangs.length)
 
