@@ -264,6 +264,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { WebDAVClient } from 'webdav/dist/web/types'
 import { MediaPrefs, ElectronStore, ShortJWLang } from '~/types'
 import { Res } from '~/types/prefs'
+import { FALLBACK_SITE_LANGS } from '~/constants/lang'
 import {
   NOT_FOUND,
   LOCKED,
@@ -391,8 +392,8 @@ export default defineComponent({
         // Clear the db and media store and refresh the langs from jw.org
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
+        // await this.$getJWLangs()
         if (val) await this.$getPubAvailability(val)
-        await this.$getJWLangs()
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview(true)
         }
@@ -403,8 +404,8 @@ export default defineComponent({
         // Clear the db and media store and refresh the langs from jw.org
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
+        // await this.$getJWLangs()
         if (val) await this.$getPubAvailability(val)
-        await this.$getJWLangs()
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview()
         }
@@ -497,7 +498,6 @@ export default defineComponent({
     Object.assign(this.media, this.$getPrefs('media'))
     await this.getLangs()
     this.$emit('refresh', this.media)
-
     if (this.$refs.mediaForm) {
       // @ts-ignore: validate is not a function on type Element
       this.$refs.mediaForm.validate()
@@ -508,7 +508,15 @@ export default defineComponent({
   methods: {
   async getLangs(force = false) {
     this.loading = true
+    console.debug("getLangs force", force)
     this.jwLangs = await this.$getJWLangs(force)
+    console.debug("this.jwLangs", this.jwLangs)
+    if (!Array.isArray(this.jwLangs) || this.jwLangs.length === 0) {
+      console.debug("No useable jwLangs found; falling back to fallback jwLangs")
+      this.jwLangs = FALLBACK_SITE_LANGS
+      console.debug("this.jwLangs after fallback:", this.jwLangs)
+    }
+    console.debug("this.langs", this.langs)
     if (
       this.langs.length > 0 &&
       !this.langs
