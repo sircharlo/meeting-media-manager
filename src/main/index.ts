@@ -270,20 +270,6 @@ if (gotTheLock) {
     }
   })
 
-  ipcMain.handle('getFromJWOrg', async (_e, opt) => {
-    const options = {
-      adapter: require('axios/lib/adapters/http'),
-      ...opt,
-    }
-    options.url = undefined
-    try {
-      const result: any = await require('axios').get(opt.url, options)
-      return result.data
-    } catch (e) {
-      return e
-    }
-  })
-
   // IpcMain events for the presentation window
   ipcMain.on('videoProgress', (_e, percent: number[]) => {
     win?.webContents.send('videoProgress', percent)

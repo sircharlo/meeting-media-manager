@@ -92,10 +92,10 @@ interface CustomProps {
   $getJWLangs: (forceReload = false) => Promise<ShortJWLang[]>
   $getLatestJWMedia: () => Promise<MediaItem[]>
   $getPrefs: (key: string) => unknown
-  $getPubAvailability: (
-    lang: string,
-    reload?: boolean
-  ) => Promise<{ lang: string; mwb: boolean; w: boolean }>
+  // $getPubAvailability: (
+  //   lang: string,
+  //   reload?: boolean
+  // ) => Promise<{ lang: string; mwb: boolean; w: boolean }>
   $getMediaLinks: (
     mediaItem: {
       docId?: number
