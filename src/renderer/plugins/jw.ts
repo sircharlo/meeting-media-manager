@@ -2,10 +2,8 @@
 import { existsSync, readFileSync, statSync } from 'fs-extra'
 import { join } from 'upath'
 import { Plugin } from '@nuxt/types'
-import { ipcRenderer } from 'electron'
 import { JW_ICONS_FONT, WT_CLEARTEXT_FONT } from './../constants/general'
 import {
-  Filter,
   JWLang,
   MediaCategoryResult,
   MediaItem,
@@ -44,8 +42,8 @@ const plugin: Plugin = (
     if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
       try {
         $log.debug('Attempting to update langs')
-        const result = await ipcRenderer.invoke('getFromJWOrg', {
-          url: 'https://www.jw.org/en/languages',
+        const result = await $axios.$get('https://www.jw.org/en/languages', {
+          adapter: require('axios/lib/adapters/http'),
         })
         $log.debug('Result from langs call:', result)
 
@@ -128,7 +126,7 @@ const plugin: Plugin = (
       (langPrefInLangs.mwbAvailable === undefined ||
         langPrefInLangs.mwbAvailable === undefined)
     ) {
-      const availability = await getPubAvailability(mediaLang)
+      const availability = await getPubAvailability(mediaLang, false, langs)
       langPrefInLangs.wAvailable = availability.w
       langPrefInLangs.mwbAvailable = availability.mwb
     }
@@ -139,20 +137,17 @@ const plugin: Plugin = (
       (fallbackLangObj.mwbAvailable === undefined ||
         fallbackLangObj.mwbAvailable === undefined)
     ) {
-      const availability = await getPubAvailability(fallbackLang)
+      const availability = await getPubAvailability(fallbackLang, false, langs)
       fallbackLangObj.wAvailable = availability.w
       fallbackLangObj.mwbAvailable = availability.mwb
     }
-
     store.commit('media/setMediaLang', langPrefInLangs ?? null)
     store.commit('media/setFallbackLang', fallbackLangObj ?? null)
     store.commit(
       'media/setSongPub',
       langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'
     )
-
     $write(langPath, JSON.stringify(langs, null, 2))
-
     return langs
   }
   inject('getJWLangs', getJWLangs)
@@ -260,7 +255,8 @@ const plugin: Plugin = (
 
   async function getPubAvailability(
     lang: string,
-    refresh = false
+    refresh = false,
+    langs: ShortJWLang[]
   ): Promise<{ lang: string; w?: boolean; mwb?: boolean }> {
     let mwb
     let w
@@ -271,12 +267,6 @@ const plugin: Plugin = (
       `https://www.jw.org/en/library/${cat}/json/filters/${filter}/?contentLanguageFilter=${lang}`
 
     try {
-      const langPath = join($appPath(), 'langs.json')
-      if (!existsSync(langPath)) return { lang, w, mwb }
-      const langs = JSON.parse(
-        readFileSync(langPath, 'utf8') ?? '[]'
-      ) as ShortJWLang[]
-
       const langObject = langs.find((l) => l.langcode === lang)
       if (!langObject) return { lang, w, mwb }
       if (
@@ -298,37 +288,40 @@ const plugin: Plugin = (
         langObject.symbol
       )
 
-      const result = await Promise.allSettled([
-        ipcRenderer.invoke('getFromJWOrg', {
-          url: mwbAvailabilityEndpoint,
-        }) as Promise<Filter>,
-        ipcRenderer.invoke('getFromJWOrg', {
-          url: wAvailabilityEndpoint,
-        }) as Promise<Filter>,
-      ])
+      const mwbResult = await $axios.$get(mwbAvailabilityEndpoint, {
+        adapter: require('axios/lib/adapters/http'),
+      })
+      const wResult = await $axios.$get(wAvailabilityEndpoint, {
+        adapter: require('axios/lib/adapters/http'),
+      })
 
-      const mwbResult = result[0]
-      const wResult = result[1]
-
-      if (mwbResult.status === 'fulfilled') {
+      if (mwbResult) {
         if (mwbResult.value.choices) {
           mwb = !!mwbResult.value.choices.find(
-            (c) => c.optionValue === new Date().getFullYear()
+            (c: { optionValue: string | number }) =>
+              c.optionValue === new Date().getFullYear()
           )
         } else {
-          $log.error(mwbResult.value)
+          $log.debug('mwbResult error: ', mwbResult)
         }
+      } else {
+        $log.debug('mwbResult error: ', mwbResult)
       }
-      if (wResult.status === 'fulfilled') {
+      if (wResult) {
         if (wResult.value.choices) {
-          w = !!wResult.value.choices.find((c) => c.optionValue === 'w')
+          w = !!wResult.value.choices.find(
+            (c: { optionValue: string | number }) => c.optionValue === 'w'
+          )
         } else {
-          $log.error(wResult.value)
+          $log.debug('wResult error: ', wResult)
         }
+      } else {
+        $log.debug('wResult error: ', wResult)
       }
 
       langObject.mwbAvailable = mwb
       langObject.wAvailable = w
+      const langPath = join($appPath(), 'langs.json')
       $write(langPath, JSON.stringify(langs, null, 2))
     } catch (e: unknown) {
       $log.error(e)
@@ -336,8 +329,6 @@ const plugin: Plugin = (
 
     return { lang, mwb, w }
   }
-
-  inject('getPubAvailability', getPubAvailability)
 
   // Get yeartext from WT online library
   async function getYearText(
@@ -355,8 +346,8 @@ const plugin: Plugin = (
     if (force || !existsSync(ytPath)) {
       $log.debug('Fetching yeartext', wtlocale)
       try {
-        const result = await ipcRenderer.invoke('getFromJWOrg', {
-          url: 'https://wol.jw.org/wol/finder',
+        const result = await $axios.$get('https://wol.jw.org/wol/finder', {
+          adapter: require('axios/lib/adapters/http'),
           params: {
             docid: `110${new Date().getFullYear()}800`,
             wtlocale,

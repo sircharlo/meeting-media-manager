@@ -14,11 +14,12 @@
       auto-select-first
       required
     >
-    <template v-if="!loading && langs.length == 0" #append-outer>
+    <template #append-outer>
       <v-btn
             color="warning"
-            class="mt-n1"
+            class="mt-n2"
             min-width="32px"
+            :disabled="loading"
             @click="getLangs(true)"
           >
             <font-awesome-icon :icon="faArrowsRotate" class="black--text" />
@@ -313,7 +314,14 @@ export default defineComponent({
       mwbAvailable?: boolean
       wAvailable?: boolean
     }[] {
-      return this.jwLangs.map((lang) => {
+      let langsArray = FALLBACK_SITE_LANGS as ShortJWLang[]
+      console.debug("langs() this.jwLangs", this.jwLangs)
+      if (Array.isArray(this.jwLangs) && this.jwLangs.length > 0) {
+        console.debug("Assigning langs() langsArray to this.jwLangs")
+        langsArray = this.jwLangs as ShortJWLang[]
+      }
+      console.debug("langs() langsArray", langsArray)
+      return langsArray.map((lang) => {
         return {
           name: `${lang.vernacularName} (${lang.name})`,
           langcode: lang.langcode,
@@ -382,30 +390,30 @@ export default defineComponent({
     forcedPrefs() {
       Object.assign(this.media, this.$getPrefs('media'))
     },
-    'media.langSubs': {
-      async handler(val: string) {
-        await this.$getPubAvailability(val)
-      },
-    },
+    // 'media.langSubs': {
+      // async handler(val: string) {
+      //   await this.$getPubAvailability(val)
+      // },
+    // },
     'media.lang': {
-      async handler(val: string) {
-        // Clear the db and media store and refresh the langs from jw.org
+      async handler() {
+        // Clear the db and media store
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
         // await this.$getJWLangs()
-        if (val) await this.$getPubAvailability(val)
+        // if (val) await this.$getPubAvailability(val)
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview(true)
         }
       },
     },
     'media.langFallback': {
-      async handler(val: string) {
-        // Clear the db and media store and refresh the langs from jw.org
+      async handler(/* val: string */) {
+        // Clear the db and media store
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
         // await this.$getJWLangs()
-        if (val) await this.$getPubAvailability(val)
+        // if (val) await this.$getPubAvailability(val)
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview()
         }
@@ -508,22 +516,30 @@ export default defineComponent({
   methods: {
   async getLangs(force = false) {
     this.loading = true
-    console.debug("getLangs force", force)
-    this.jwLangs = await this.$getJWLangs(force)
-    console.debug("this.jwLangs", this.jwLangs)
-    if (!Array.isArray(this.jwLangs) || this.jwLangs.length === 0) {
-      console.debug("No useable jwLangs found; falling back to fallback jwLangs")
+    try {
+      console.debug("getLangs force", force)
+      const response = await this.$getJWLangs(force)
+      console.debug("Langs fetch response", response)
+      if (!Array.isArray(response) || response.length === 0) {
+        console.debug("No useable jwLangs found; falling back to fallback jwLangs")
+        this.jwLangs = FALLBACK_SITE_LANGS
+      } else {
+        this.jwLangs = response
+      }
+      if (
+        this.langs.length > 0 &&
+        !this.langs
+          .map(({ langcode }) => langcode)
+          .includes(this.media.lang ?? '')
+      ) {
+        this.media.lang = null
+      }
+    } catch (e: unknown) {
+      console.error(e)
+      console.debug("Falling back to fallback jwLangs")
       this.jwLangs = FALLBACK_SITE_LANGS
-      console.debug("this.jwLangs after fallback:", this.jwLangs)
-    }
-    console.debug("this.langs", this.langs)
-    if (
-      this.langs.length > 0 &&
-      !this.langs
-        .map(({ langcode }) => langcode)
-        .includes(this.media.lang ?? '')
-    ) {
-      this.media.lang = null
+    } finally {
+      console.debug("this.jwLangs:", this.jwLangs)
     }
     this.loading = false
   },
