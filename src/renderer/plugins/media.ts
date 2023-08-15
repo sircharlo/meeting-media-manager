@@ -707,6 +707,7 @@ const plugin: Plugin = (
       }
 
       const publication = result?.data as Publication
+      $log.debug('publication', result, publication)
       if (publication?.files) {
         const categories = Object.values(publication.files)[0]
         mediaFiles = categories.MP4 ?? Object.values(categories)[0]
