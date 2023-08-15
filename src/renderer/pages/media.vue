@@ -317,7 +317,8 @@ export default defineComponent({
               ipcRenderer.send('videoEnd')
             }
             this.mediaDisplay.append(video)
-            this.mediaDisplay.style.background = 'black'
+            const toAudio = media && this.$isAudio(media.src)
+            this.mediaDisplay.style.background = toAudio ? 'transparent' : 'black'
           } else if (this.$isImage(media.src)) {
             this.mediaDisplay.style.background = `url(${
               pathToFileURL(media.src).href
@@ -350,7 +351,9 @@ export default defineComponent({
     ) {
       this.zoomEnabled = !!media && this.$isImage(media.src)
       this.resizingDone()
-      this.blackOverlay.style.opacity = '1'
+      const toAudio = media && this.$isAudio(media.src)
+      const fromPicture = this.mediaDisplay.style.background.includes('url(')
+      if (!(!fromPicture && toAudio)) this.blackOverlay.style.opacity = '1'
 
       await new Promise((resolve) => setTimeout(resolve, 4 * 100))
 
@@ -365,10 +368,11 @@ export default defineComponent({
       this.resizeOverlay.style.opacity = '0'
     },
     async hideMedia() {
-      const videos = document.querySelectorAll('video')
-
       // Animate out
-      this.blackOverlay.style.opacity = '1'
+      const videos = document.querySelectorAll('video')
+      const fromAudio = Array.from(videos).some((video: HTMLVideoElement) => this.$isAudio(new URL(video.src).pathname))
+      if (videos.length > 0 && !fromAudio) this.blackOverlay.style.opacity = '1'
+
       setTimeout(() => {
         this.mediaDisplay.style.background = 'transparent'
         videos.forEach((video) => {
