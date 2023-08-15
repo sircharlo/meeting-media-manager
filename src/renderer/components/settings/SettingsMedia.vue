@@ -390,13 +390,13 @@ export default defineComponent({
     forcedPrefs() {
       Object.assign(this.media, this.$getPrefs('media'))
     },
-    'media.langSubs': {
+    // 'media.langSubs': {
       // async handler(val: string) {
       //   await this.$getPubAvailability(val)
       // },
-    },
+    // },
     'media.lang': {
-      async handler(/* val: string */) {
+      async handler() {
         // Clear the db and media store
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
