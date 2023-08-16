@@ -11,6 +11,7 @@ import {
   ensureDirSync,
   ensureFileSync,
   removeSync,
+  readJsonSync,
 } from 'fs-extra'
 import { LocaleObject } from '@nuxtjs/i18n'
 import { Entry, sync, Options } from 'fast-glob'
@@ -31,33 +32,22 @@ const plugin: Plugin = (
   inject('pubPath', (file?: MeetingFile): string | undefined => {
     // url: something/{pub}_{lang}.jwpub or something/{pub}_{lang}_{track}.mp4
     let validMediaLangs: ShortJWLang[] = []
-    $log.debug('pubPath file arg:', file)
     if (file) {
-      $log.debug('Pub path', file)
+      $log.debug('pubPath file', file)
     }
     try {
-      const langsFile = join($appPath(), 'langs.json')
-      $log.debug('Looking for langs file here:', langsFile)
-      if (existsSync(langsFile)) {
-        $log.debug('Parsing langs file')
-        validMediaLangs = JSON.parse(
-          readFileSync(langsFile, 'utf8')
-        ) as ShortJWLang[]
-      } else {
-        $log.debug('No langs file found; falling back to fallback langs')
-        validMediaLangs = FALLBACK_SITE_LANGS as ShortJWLang[]
-      }
+      validMediaLangs = readJsonSync(
+        join($appPath(), 'langs.json')
+      ) as ShortJWLang[]
     } catch (e: unknown) {
       $log.error(e)
       $log.debug('Error parsing langs file; falling back to fallback langs')
       validMediaLangs = FALLBACK_SITE_LANGS as ShortJWLang[]
     }
-    $log.debug('validMediaLangs length', validMediaLangs.length)
 
     let mediaFolder = basename(file?.url || '_')
       .split('_')[1]
       .split('.')[0]
-    $log.debug('mediaFolder 1', mediaFolder)
 
     if (
       !mediaFolder ||
@@ -65,7 +55,6 @@ const plugin: Plugin = (
     ) {
       mediaFolder = basename(file?.queryInfo?.FilePath || '_').split('_')[1]
     }
-    $log.debug('mediaFolder 2', mediaFolder)
 
     if (
       !mediaFolder ||
@@ -73,7 +62,6 @@ const plugin: Plugin = (
     ) {
       try {
         const matches = file?.queryInfo?.Link?.match(/\/(.*)\//)
-        $log.debug('matches', matches)
         if (matches && matches.length > 0) {
           mediaFolder = (matches.pop() as string).split(':')[0]
         }
@@ -81,7 +69,6 @@ const plugin: Plugin = (
         $log.error(e)
       }
     }
-    $log.debug('mediaFolder 3', mediaFolder)
 
     if (
       !mediaFolder ||
@@ -89,17 +76,13 @@ const plugin: Plugin = (
     ) {
       mediaFolder = $getPrefs('media.lang') as string
     }
-    $log.debug('mediaFolder 4', mediaFolder)
     if (!mediaFolder) return
-
-    if (file) $log.debug('Pub lang', mediaFolder)
 
     const pubPath = joinSafe(
       $getPrefs('app.customCachePath') || $appPath(),
       'Publications',
       mediaFolder
     )
-    $log.debug('pubPath', pubPath)
     try {
       ensureDirSync(pubPath)
     } catch (e: unknown) {
@@ -116,20 +99,13 @@ const plugin: Plugin = (
       file.primaryCategory ||
       'unknown'
     ).toString()
-    $log.debug('pubFolder', pubFolder)
 
     const issueFolder = (
       file.issue ||
       file.queryInfo?.IssueTagNumber ||
       0
     ).toString()
-    $log.debug('issueFolder', issueFolder)
     const trackFolder = (file.track || file.queryInfo?.Track || 0).toString()
-    $log.debug('trackFolder', trackFolder)
-    $log.debug(
-      'joinSafe(pubPath, pubFolder, issueFolder, trackFolder):',
-      joinSafe(pubPath, pubFolder, issueFolder, trackFolder)
-    )
     return joinSafe(pubPath, pubFolder, issueFolder, trackFolder)
   })
 
