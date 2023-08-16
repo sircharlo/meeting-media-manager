@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/named
-import { readFileSync, removeSync } from 'fs-extra'
+import { readJsonSync, removeSync } from 'fs-extra'
 import { Plugin } from '@nuxt/types'
 import { ipcRenderer } from 'electron'
 import Store, { Schema } from 'electron-store'
@@ -600,7 +599,7 @@ const plugin: Plugin = ({ $sentry }, inject) => {
   inject('getCongPrefs', async () => {
     return sync(join(await ipcRenderer.invoke('userData'), 'prefs-*.json'))
       .map((file) => {
-        const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
+        const prefs = readJsonSync(file) as ElectronStore
         return {
           name:
             // @ts-ignore: prefs.congregationName does not exist on type ElectronStore
@@ -644,12 +643,12 @@ const plugin: Plugin = ({ $sentry }, inject) => {
   })
   inject('getAllPrefs', (): ElectronStore => {
     if (!store) return PREFS
-    return JSON.parse(readFileSync(store.path, 'utf8')) as ElectronStore
+    return readJsonSync(store.path) as ElectronStore
   })
 
   inject('setPrefs', (key: string, value: unknown) => {
     store.set(key, value)
-    const prefs = JSON.parse(readFileSync(store.path, 'utf8')) as ElectronStore
+    const prefs = readJsonSync(store.path) as ElectronStore
     $sentry.setContext('prefs', {
       ...prefs,
       obs: prefs.app?.obs,

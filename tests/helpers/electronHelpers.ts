@@ -2,7 +2,7 @@
 import { platform } from 'os'
 import { basename, dirname, join, resolve } from 'upath'
 import * as ASAR from '@electron/asar'
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs-extra'
+import { readdirSync, readJsonSync, statSync, writeFileSync } from 'fs-extra'
 import { expect, Page, _electron, ElectronApplication } from '@playwright/test'
 import { name } from '../../package.json'
 import { delay } from './generalHelpers'
@@ -299,9 +299,7 @@ function parseElectronApp(buildDir: string): ElectronAppInfo {
       )
       main = join(asarPath, packageJson.main)
     } else {
-      packageJson = JSON.parse(
-        readFileSync(join(resourcesDir, 'app', 'package.json'), 'utf8')
-      )
+      packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'))
       main = join(resourcesDir, 'app', packageJson.main)
     }
     name = packageJson.name
@@ -336,9 +334,7 @@ function parseElectronApp(buildDir: string): ElectronAppInfo {
       )
       main = join(asarPath, packageJson.main)
     } else {
-      packageJson = JSON.parse(
-        readFileSync(join(resourcesDir, 'app', 'package.json'), 'utf8')
-      )
+      packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'))
       main = join(resourcesDir, 'app', packageJson.main)
     }
     name = packageJson.name
@@ -366,9 +362,7 @@ function parseElectronApp(buildDir: string): ElectronAppInfo {
       main = join(asarPath, packageJson.main)
     } else {
       try {
-        packageJson = JSON.parse(
-          readFileSync(join(resourcesDir, 'app', 'package.json'), 'utf8')
-        )
+        packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'))
         main = join(resourcesDir, 'app', packageJson.main)
       } catch (err) {
         throw new Error(

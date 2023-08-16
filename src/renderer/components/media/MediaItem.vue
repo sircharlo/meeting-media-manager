@@ -144,7 +144,7 @@
 <script lang="ts">
 import { pathToFileURL } from 'url'
 // eslint-disable-next-line import/named
-import { existsSync, readFileSync } from 'fs-extra'
+import { existsSync, readJsonSync } from 'fs-extra'
 import { basename, changeExt, join } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent, PropType } from 'vue'
@@ -551,9 +551,7 @@ export default defineComponent({
     },
     getMarkers() {
       if (!this.isImage && existsSync(changeExt(this.src, '.json'))) {
-        const markers = JSON.parse(
-          readFileSync(changeExt(this.src, '.json'), 'utf8')
-        ) as Marker[]
+        const markers = readJsonSync(changeExt(this.src, '.json')) as Marker[]
 
         // For each marker, calculate the custom start and end time
         markers.forEach((marker) => {

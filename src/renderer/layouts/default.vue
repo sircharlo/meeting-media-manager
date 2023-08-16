@@ -13,7 +13,7 @@
 import { fileURLToPath, pathToFileURL } from 'url'
 import { platform, userInfo } from 'os'
 // eslint-disable-next-line import/named
-import { existsSync, readFileSync, removeSync } from 'fs-extra'
+import { existsSync, readFileSync, removeSync, readJsonSync } from 'fs-extra'
 import { basename, join } from 'upath'
 import { defineComponent } from 'vue'
 import getUsername from 'fullname'
@@ -239,10 +239,10 @@ export default defineComponent({
     const onlineChecker = new InternetAvailabilityService(/* {
       authority: 'https://www.jw.org', // if ever we want to check a site other than the default one (Google)
       rate: 5000 // if ever we want to change the rate at which connectivity is checked
-    } */);
+    } */)
     onlineChecker.on('status', (isOnline: boolean) => {
       this.$store.commit('stats/setOnline', isOnline)
-    });
+    })
   },
   beforeDestroy() {
     ipcRenderer.removeAllListeners('error')
@@ -354,7 +354,6 @@ export default defineComponent({
       }
 
       // Check if the app is available in the current media lang
-      console.debug("Initial language check; langUpdatedLast:", this.$getPrefs('media.langUpdatedLast'))
       const langs = (await this.$getJWLangs()) as ShortJWLang[]
       const mediaLang = langs.find(
         (l) => l.langcode === this.$getPrefs('media.lang')
@@ -502,7 +501,7 @@ export default defineComponent({
             ignore: [join(this.$appPath(), `prefs-${this.cong}.json`)],
           }) as string[]
         ).forEach((file) => {
-          const prefs = JSON.parse(readFileSync(file, 'utf8')) as ElectronStore
+          const prefs = readJsonSync(file) as ElectronStore
           // @ts-ignore: congregationName doesn't exist in ElectronStore
           if (!prefs.congregationName && !prefs.app?.congregationName) {
             this.$rm(file)

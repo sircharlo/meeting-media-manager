@@ -222,8 +222,7 @@
 import { defineComponent, PropType } from 'vue'
 import { basename, join } from 'upath'
 import draggable from 'vuedraggable'
-// eslint-disable-next-line import/named
-import { readFileSync } from 'fs-extra'
+import { readJsonSync } from 'fs-extra'
 import { VideoFile } from '~/types'
 
 type MediaItem = {
@@ -375,11 +374,7 @@ export default defineComponent({
         living: 'LIVING AS CHRISTIANS',
       }
       try {
-        const file = readFileSync(
-          join(this.$pubPath(), 'mwb', 'headings.json'),
-          'utf8'
-        )
-        this.mwbHeadings = file ? JSON.parse(file) : fallback
+        this.mwbHeadings = readJsonSync(join(this.$pubPath(), 'mwb', 'headings.json'))
       } catch (e: any) {
         this.mwbHeadings = fallback
       }

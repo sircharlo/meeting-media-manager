@@ -1,6 +1,12 @@
 /* eslint-disable import/named */
 import { pathToFileURL } from 'url'
-import { existsSync, readFileSync, statSync, emptyDirSync } from 'fs-extra'
+import {
+  existsSync,
+  readFileSync,
+  statSync,
+  emptyDirSync,
+  writeJsonSync,
+} from 'fs-extra'
 import { Dayjs } from 'dayjs'
 import { ipcRenderer } from 'electron'
 import { Plugin } from '@nuxt/types'
@@ -1172,13 +1178,14 @@ const plugin: Plugin = (
         livingTitle = living[living.length / 2].FeatureTitle
       }
 
-      $write(
+      writeJsonSync(
         join($pubPath(), 'mwb', 'headings.json'),
-        JSON.stringify({
+        {
           treasures: treasures.FeatureTitle,
           apply: apply.FeatureTitle,
           living: livingTitle,
-        })
+        },
+        { spaces: 2 }
       )
 
       // Get document multimedia and add them to the media list
@@ -1703,13 +1710,14 @@ const plugin: Plugin = (
             )
           )
         ).map((m) => JSON.parse(m))
-        $write(
+        writeJsonSync(
           join(
             mediaPath,
             item.folder as string,
             changeExt(item.safeName as string, 'json')
           ),
-          JSON.stringify(markers)
+          markers,
+          { spaces: 2 }
         )
       }
 

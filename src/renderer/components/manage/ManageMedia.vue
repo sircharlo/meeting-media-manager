@@ -107,7 +107,7 @@
 </template>
 <script lang="ts">
 // eslint-disable-next-line import/named
-import { readFileSync, statSync } from 'fs-extra'
+import { readFileSync, statSync, writeJsonSync } from 'fs-extra'
 import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
 import { defineComponent, PropType } from 'vue'
@@ -421,7 +421,7 @@ export default defineComponent({
             file.folder as string,
             changeExt(file.safeName as string, 'json')
           )
-          this.$write(markerPath, JSON.stringify(markers))
+          writeJsonSync(markerPath, markers, { spaces: 2 })
           congPromises.push(this.uploadFile(markerPath))
         }
       }
