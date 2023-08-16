@@ -288,33 +288,27 @@ const plugin: Plugin = (
         langObject.symbol
       )
 
-      const mwbResult = await $axios.$get(mwbAvailabilityEndpoint, {
+      interface Choice {
+        optionValue: string | number
+      }
+
+      const mwbPromise = $axios.$get(mwbAvailabilityEndpoint, {
         adapter: require('axios/lib/adapters/http'),
       })
-      const wResult = await $axios.$get(wAvailabilityEndpoint, {
+      const wPromise = $axios.$get(wAvailabilityEndpoint, {
         adapter: require('axios/lib/adapters/http'),
       })
+      const [mwbResult, wResult] = await Promise.all([mwbPromise, wPromise])
       $log.debug('getPubAvailability: mwbResult, wResult', mwbResult, wResult)
-      if (mwbResult) {
-        if (mwbResult.choices) {
-          mwb = !!mwbResult.choices.find(
-            (c: { optionValue: string | number }) =>
-              c.optionValue === new Date().getFullYear()
-          )
-        } else {
-          $log.debug('mwbResult error: ', mwbResult)
-        }
+      if (mwbResult?.choices) {
+        mwb = mwbResult.choices.some(
+          (c: Choice) => c.optionValue === new Date().getFullYear()
+        )
       } else {
         $log.debug('mwbResult error: ', mwbResult)
       }
-      if (wResult) {
-        if (wResult.choices) {
-          w = !!wResult.choices.find(
-            (c: { optionValue: string | number }) => c.optionValue === 'w'
-          )
-        } else {
-          $log.debug('wResult error: ', wResult)
-        }
+      if (wResult?.choices) {
+        w = wResult.choices.some((c: Choice) => c.optionValue === 'w')
       } else {
         $log.debug('wResult error: ', wResult)
       }
