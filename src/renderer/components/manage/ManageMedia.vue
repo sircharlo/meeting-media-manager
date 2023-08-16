@@ -421,7 +421,11 @@ export default defineComponent({
             file.folder as string,
             changeExt(file.safeName as string, 'json')
           )
-          writeJsonSync(markerPath, markers, { spaces: 2 })
+          try{
+            writeJsonSync(markerPath, markers, { spaces: 2 })
+          } catch(e) {
+            this.$log.error(e)
+          }
           congPromises.push(this.uploadFile(markerPath))
         }
       }

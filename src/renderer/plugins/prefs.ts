@@ -599,7 +599,7 @@ const plugin: Plugin = ({ $sentry }, inject) => {
   inject('getCongPrefs', async () => {
     return sync(join(await ipcRenderer.invoke('userData'), 'prefs-*.json'))
       .map((file) => {
-        const prefs = readJsonSync(file) as ElectronStore
+        const prefs = readJsonSync(file, { throws: false }) as ElectronStore
         return {
           name:
             // @ts-ignore: prefs.congregationName does not exist on type ElectronStore
@@ -643,12 +643,12 @@ const plugin: Plugin = ({ $sentry }, inject) => {
   })
   inject('getAllPrefs', (): ElectronStore => {
     if (!store) return PREFS
-    return readJsonSync(store.path) as ElectronStore
+    return readJsonSync(store.path, { throws: false }) as ElectronStore
   })
 
   inject('setPrefs', (key: string, value: unknown) => {
     store.set(key, value)
-    const prefs = readJsonSync(store.path) as ElectronStore
+    const prefs = readJsonSync(store.path, { throws: false }) as ElectronStore
     $sentry.setContext('prefs', {
       ...prefs,
       obs: prefs.app?.obs,

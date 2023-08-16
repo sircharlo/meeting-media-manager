@@ -75,7 +75,11 @@ export async function openHomePage(
   const congPresent = (await page.locator(`text=${congName}`).count()) > 0
 
   // Insert mock preferences
-  writeJsonSync(join(appPath, `prefs-${congId}.json`), prefs, { spaces: 2 })
+  try {
+    writeJsonSync(join(appPath, `prefs-${congId}.json`), prefs, { spaces: 2 })
+  } catch (error) {
+    console.error(error)
+  }
 
   if (onCongSelect && congPresent) {
     if (await page.locator(`text=${congName}`).isVisible()) {
@@ -299,7 +303,9 @@ function parseElectronApp(buildDir: string): ElectronAppInfo {
       )
       main = join(asarPath, packageJson.main)
     } else {
-      packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'))
+      packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'), {
+        throws: false,
+      })
       main = join(resourcesDir, 'app', packageJson.main)
     }
     name = packageJson.name
@@ -334,7 +340,9 @@ function parseElectronApp(buildDir: string): ElectronAppInfo {
       )
       main = join(asarPath, packageJson.main)
     } else {
-      packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'))
+      packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'), {
+        throws: false,
+      })
       main = join(resourcesDir, 'app', packageJson.main)
     }
     name = packageJson.name
@@ -362,7 +370,9 @@ function parseElectronApp(buildDir: string): ElectronAppInfo {
       main = join(asarPath, packageJson.main)
     } else {
       try {
-        packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'))
+        packageJson = readJsonSync(join(resourcesDir, 'app', 'package.json'), {
+          throws: false,
+        })
         main = join(resourcesDir, 'app', packageJson.main)
       } catch (err) {
         throw new Error(

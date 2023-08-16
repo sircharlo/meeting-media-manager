@@ -1178,15 +1178,19 @@ const plugin: Plugin = (
         livingTitle = living[living.length / 2].FeatureTitle
       }
 
-      writeJsonSync(
-        join($pubPath(), 'mwb', 'headings.json'),
-        {
-          treasures: treasures.FeatureTitle,
-          apply: apply.FeatureTitle,
-          living: livingTitle,
-        },
-        { spaces: 2 }
-      )
+      try {
+        writeJsonSync(
+          join($pubPath(), 'mwb', 'headings.json'),
+          {
+            treasures: treasures.FeatureTitle,
+            apply: apply.FeatureTitle,
+            living: livingTitle,
+          },
+          { spaces: 2 }
+        )
+      } catch (error) {
+        $log.error(error)
+      }
 
       // Get document multimedia and add them to the media list
       const mms = await getDocumentMultiMedia(db, docId)
@@ -1710,15 +1714,19 @@ const plugin: Plugin = (
             )
           )
         ).map((m) => JSON.parse(m))
-        writeJsonSync(
-          join(
-            mediaPath,
-            item.folder as string,
-            changeExt(item.safeName as string, 'json')
-          ),
-          markers,
-          { spaces: 2 }
-        )
+        try {
+          writeJsonSync(
+            join(
+              mediaPath,
+              item.folder as string,
+              changeExt(item.safeName as string, 'json')
+            ),
+            markers,
+            { spaces: 2 }
+          )
+        } catch (error) {
+          $log.error(error)
+        }
       }
 
       // Prevent duplicates

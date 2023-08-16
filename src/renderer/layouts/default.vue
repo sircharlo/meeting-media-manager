@@ -501,9 +501,9 @@ export default defineComponent({
             ignore: [join(this.$appPath(), `prefs-${this.cong}.json`)],
           }) as string[]
         ).forEach((file) => {
-          const prefs = readJsonSync(file) as ElectronStore
+          const prefs = readJsonSync(file, { throws: false }) as ElectronStore
           // @ts-ignore: congregationName doesn't exist in ElectronStore
-          if (!prefs.congregationName && !prefs.app?.congregationName) {
+          if (!prefs?.congregationName && !prefs?.app?.congregationName) {
             this.$rm(file)
           }
         })

@@ -551,7 +551,7 @@ export default defineComponent({
     },
     getMarkers() {
       if (!this.isImage && existsSync(changeExt(this.src, '.json'))) {
-        const markers = readJsonSync(changeExt(this.src, '.json')) as Marker[]
+        const markers = readJsonSync(changeExt(this.src, '.json'), { throws: false }) as Marker[]
 
         // For each marker, calculate the custom start and end time
         markers.forEach((marker) => {
