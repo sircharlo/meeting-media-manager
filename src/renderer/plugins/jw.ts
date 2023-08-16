@@ -294,10 +294,10 @@ const plugin: Plugin = (
       const wResult = await $axios.$get(wAvailabilityEndpoint, {
         adapter: require('axios/lib/adapters/http'),
       })
-
+      $log.debug('getPubAvailability: mwbResult, wResult', mwbResult, wResult)
       if (mwbResult) {
-        if (mwbResult.value.choices) {
-          mwb = !!mwbResult.value.choices.find(
+        if (mwbResult.choices) {
+          mwb = !!mwbResult.choices.find(
             (c: { optionValue: string | number }) =>
               c.optionValue === new Date().getFullYear()
           )
@@ -308,8 +308,8 @@ const plugin: Plugin = (
         $log.debug('mwbResult error: ', mwbResult)
       }
       if (wResult) {
-        if (wResult.value.choices) {
-          w = !!wResult.value.choices.find(
+        if (wResult.choices) {
+          w = !!wResult.choices.find(
             (c: { optionValue: string | number }) => c.optionValue === 'w'
           )
         } else {
@@ -318,7 +318,7 @@ const plugin: Plugin = (
       } else {
         $log.debug('wResult error: ', wResult)
       }
-
+      $log.debug('getPubAvailability: langObject', langObject)
       langObject.mwbAvailable = mwb
       langObject.wAvailable = w
       const langPath = join($appPath(), 'langs.json')

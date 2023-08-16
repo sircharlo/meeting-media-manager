@@ -354,6 +354,7 @@ export default defineComponent({
       }
 
       // Check if the app is available in the current media lang
+      console.debug("Initial language check; langUpdatedLast:", this.$getPrefs('media.langUpdatedLast'))
       const langs = (await this.$getJWLangs()) as ShortJWLang[]
       const mediaLang = langs.find(
         (l) => l.langcode === this.$getPrefs('media.lang')
