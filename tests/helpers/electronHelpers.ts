@@ -2,7 +2,7 @@
 import { platform } from 'os'
 import { basename, dirname, join, resolve } from 'upath'
 import * as ASAR from '@electron/asar'
-import { readdirSync, readJsonSync, statSync, writeFileSync } from 'fs-extra'
+import { readdirSync, readJsonSync, statSync, writeJsonSync } from 'fs-extra'
 import { expect, Page, _electron, ElectronApplication } from '@playwright/test'
 import { name } from '../../package.json'
 import { delay } from './generalHelpers'
@@ -75,7 +75,7 @@ export async function openHomePage(
   const congPresent = (await page.locator(`text=${congName}`).count()) > 0
 
   // Insert mock preferences
-  writeFileSync(join(appPath, `prefs-${congId}.json`), JSON.stringify(prefs))
+  writeJsonSync(join(appPath, `prefs-${congId}.json`), prefs, { spaces: 2 })
 
   if (onCongSelect && congPresent) {
     if (await page.locator(`text=${congName}`).isVisible()) {
