@@ -314,13 +314,12 @@ export default defineComponent({
       mwbAvailable?: boolean
       wAvailable?: boolean
     }[] {
-      let langsArray = FALLBACK_SITE_LANGS as ShortJWLang[]
-      console.debug("langs() this.jwLangs", this.jwLangs)
+      let langsArray: ShortJWLang[] = []
       if (Array.isArray(this.jwLangs) && this.jwLangs.length > 0) {
-        console.debug("Assigning langs() langsArray to this.jwLangs")
         langsArray = this.jwLangs as ShortJWLang[]
+      } else {
+        langsArray = FALLBACK_SITE_LANGS as ShortJWLang[]
       }
-      console.debug("langs() langsArray", langsArray)
       return langsArray.map((lang) => {
         return {
           name: `${lang.vernacularName} (${lang.name})`,
@@ -513,15 +512,16 @@ export default defineComponent({
   async getLangs(force = false) {
     this.loading = true
     try {
-      console.debug("getLangs force", force)
       const response = await this.$getJWLangs(force)
-      console.debug("Langs fetch response", response)
       if (!Array.isArray(response) || response.length === 0) {
-        console.debug("No useable jwLangs found; falling back to fallback jwLangs")
-        this.jwLangs = FALLBACK_SITE_LANGS
+        throw response
       } else {
         this.jwLangs = response
       }
+    } catch (e: unknown) {
+      console.error(e, "Falling back to fallback jwLangs")
+      this.jwLangs = FALLBACK_SITE_LANGS
+    } finally {
       if (
         this.langs.length > 0 &&
         !this.langs
@@ -530,12 +530,6 @@ export default defineComponent({
       ) {
         this.media.lang = null
       }
-    } catch (e: unknown) {
-      console.error(e)
-      console.debug("Falling back to fallback jwLangs")
-      this.jwLangs = FALLBACK_SITE_LANGS
-    } finally {
-      console.debug("this.jwLangs:", this.jwLangs)
     }
     this.loading = false
   },
