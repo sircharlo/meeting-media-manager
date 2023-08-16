@@ -390,30 +390,26 @@ export default defineComponent({
     forcedPrefs() {
       Object.assign(this.media, this.$getPrefs('media'))
     },
-    // 'media.langSubs': {
-      // async handler(val: string) {
-      //   await this.$getPubAvailability(val)
-      // },
-    // },
+    'media.langSubs': {
+      async handler(val: string) {
+        if (val) await this.$getJWLangs()
+      },
+    },
     'media.lang': {
-      async handler() {
+      async handler(val: string) {
         // Clear the db and media store
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
-        // await this.$getJWLangs()
-        // if (val) await this.$getPubAvailability(val)
-        if (this.bg === 'yeartext') {
-          await this.$refreshBackgroundImgPreview(true)
-        }
+        if (val) await this.$getJWLangs()
+        if (this.bg === 'yeartext') await this.$refreshBackgroundImgPreview(true)
       },
     },
     'media.langFallback': {
-      async handler(/* val: string */) {
+      async handler(val: string) {
         // Clear the db and media store
         this.$store.commit('db/clear')
         this.$store.commit('media/clear')
-        // await this.$getJWLangs()
-        // if (val) await this.$getPubAvailability(val)
+        if (val) await this.$getJWLangs()
         if (this.bg === 'yeartext') {
           await this.$refreshBackgroundImgPreview()
         }
