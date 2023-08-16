@@ -1,5 +1,10 @@
-// eslint-disable-next-line import/named
-import { existsSync, readFileSync, statSync } from 'fs-extra'
+import {
+  existsSync,
+  readFileSync,
+  readJsonSync,
+  statSync,
+  writeJsonSync,
+} from 'fs-extra'
 import { join } from 'upath'
 import { Plugin } from '@nuxt/types'
 import { JW_ICONS_FONT, WT_CLEARTEXT_FONT } from './../constants/general'
@@ -10,7 +15,7 @@ import {
   MediaItemResult,
   ShortJWLang,
 } from '~/types'
-import { FALLBACK_SITE_LANGS, FALLBACK_SITE_LANGS_DATE } from '~/constants/lang'
+import { FALLBACK_SITE_LANGS } from '~/constants/lang'
 
 const plugin: Plugin = (
   {
@@ -35,90 +40,57 @@ const plugin: Plugin = (
     const lastUpdate = $getPrefs('media.langUpdatedLast') as string
     const recentlyUpdated =
       lastUpdate && $dayjs(lastUpdate).isAfter($dayjs().subtract(3, 'months'))
-    $log.debug('langPath', langPath)
-    $log.debug('lastUpdate', lastUpdate)
-    $log.debug('recentlyUpdated', recentlyUpdated)
-    $log.debug('forceReload', forceReload)
+    let langs: ShortJWLang[] = []
     if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
       try {
-        $log.debug('Attempting to update langs')
         const result = await $axios.$get('https://www.jw.org/en/languages', {
           adapter: require('axios/lib/adapters/http'),
         })
         $log.debug('Result from langs call:', result)
-
-        if (result.languages) {
-          $log.debug('Unchanged result.languages:', result.languages)
-          const langs = (result.languages as JWLang[])
-            .filter((lang) => lang.hasWebContent)
-            .map((lang) => {
-              return {
-                name: lang.name,
-                langcode: lang.langcode,
-                symbol: lang.symbol,
-                vernacularName: lang.vernacularName,
-                isSignLanguage: lang.isSignLanguage,
-              } as ShortJWLang
-            })
-          $log.debug('Changed langs:', langs)
-          $write(langPath, JSON.stringify(langs, null, 2))
-          $log.debug('Wrote updated langs to file')
-          $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
-          $log.debug('Updated langUpdatedLast')
-        } else {
-          $log.error(result)
+        langs = (result.languages as JWLang[])
+          .filter((lang) => lang.hasWebContent)
+          .map((lang) => {
+            return {
+              name: lang.name,
+              langcode: lang.langcode,
+              symbol: lang.symbol,
+              vernacularName: lang.vernacularName,
+              isSignLanguage: lang.isSignLanguage,
+            } as ShortJWLang
+          })
+        if (!Array.isArray(langs) || langs.length === 0) {
+          throw new Error('Langs array does not contain expected data')
         }
       } catch (e: unknown) {
-        $log.debug('Updating langs failed')
-        if (!store.state.stats.online) {
-          $warn('errorOffline')
-        } else {
-          $log.error(e)
-        }
-        $write(langPath, JSON.stringify(FALLBACK_SITE_LANGS, null, 2))
-        $log.debug('Wrote fallback langs to file')
-        $setPrefs(
-          'media.langUpdatedLast',
-          $dayjs(FALLBACK_SITE_LANGS_DATE).toISOString()
-        )
-      }
-    }
-
-    let langs: ShortJWLang[] = []
-
-    try {
-      langs = JSON.parse(readFileSync(langPath, 'utf8')) as ShortJWLang[]
-      if (!Array.isArray(langs) || langs.length === 0) {
-        $log.debug(
-          'Langs file does not contain expected data; launching langs update...'
-        )
-        return getJWLangs(true)
-      }
-    } catch (e: any) {
-      $log.debug("Couldn't parse langs from file")
-      if (e.message.includes('Unexpected token')) {
-        $log.debug(`Invalid JSON: ${langPath}`)
-        return getJWLangs(true)
-      } else {
         $log.error(e)
+        $log.debug('Falling back to fallback langs')
+        langs = FALLBACK_SITE_LANGS
       }
-      $log.debug('Setting fallback langs as a workaround')
-      langs = FALLBACK_SITE_LANGS
+      try {
+        writeJsonSync(langPath, langs, { spaces: 2 })
+        $log.debug('Wrote langs to file')
+        $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
+      } catch (error: any) {
+        $log.error(error)
+      }
     }
-    $log.debug('langs', langs)
-
     if (!Array.isArray(langs) || langs.length === 0) {
-      $log.debug(
-        'Langs file does not contain expected data; falling back to fallback langs...'
-      )
-      langs = FALLBACK_SITE_LANGS
+      try {
+        langs = readJsonSync(langPath) as ShortJWLang[]
+        if (!Array.isArray(langs) || langs.length === 0) {
+          throw new Error('Langs file does not contain expected data')
+        }
+      } catch (e: any) {
+        $log.error(e, 'Setting fallback langs as a workaround')
+        langs = FALLBACK_SITE_LANGS
+      }
     }
 
     const mediaLang = $getPrefs('media.lang') as string
     const fallbackLang = $getPrefs('media.langFallback') as string
     const langPrefInLangs = langs.find((lang) => lang.langcode === mediaLang)
     const fallbackLangObj = langs.find((lang) => lang.langcode === fallbackLang)
-
+    let availabilityUpdated = false
     // Check current lang if it hasn't been checked yet
     if (
       mediaLang &&
@@ -129,6 +101,7 @@ const plugin: Plugin = (
       const availability = await getPubAvailability(mediaLang, false, langs)
       langPrefInLangs.wAvailable = availability.w
       langPrefInLangs.mwbAvailable = availability.mwb
+      availabilityUpdated = true
     }
 
     if (
@@ -140,6 +113,7 @@ const plugin: Plugin = (
       const availability = await getPubAvailability(fallbackLang, false, langs)
       fallbackLangObj.wAvailable = availability.w
       fallbackLangObj.mwbAvailable = availability.mwb
+      availabilityUpdated = true
     }
     store.commit('media/setMediaLang', langPrefInLangs ?? null)
     store.commit('media/setFallbackLang', fallbackLangObj ?? null)
@@ -147,7 +121,15 @@ const plugin: Plugin = (
       'media/setSongPub',
       langPrefInLangs?.isSignLanguage ? 'sjj' : 'sjjm'
     )
-    $write(langPath, JSON.stringify(langs, null, 2))
+    if (availabilityUpdated) {
+      try {
+        writeJsonSync(langPath, langs, { spaces: 2 })
+        $log.debug('Wrote langs to file')
+        $setPrefs('media.langUpdatedLast', $dayjs().toISOString())
+      } catch (error: any) {
+        $log.error(error)
+      }
+    }
     return langs
   }
   inject('getJWLangs', getJWLangs)
@@ -291,7 +273,6 @@ const plugin: Plugin = (
       interface Choice {
         optionValue: string | number
       }
-
       const mwbPromise = $axios.$get(mwbAvailabilityEndpoint, {
         adapter: require('axios/lib/adapters/http'),
       })
@@ -299,24 +280,22 @@ const plugin: Plugin = (
         adapter: require('axios/lib/adapters/http'),
       })
       const [mwbResult, wResult] = await Promise.all([mwbPromise, wPromise])
-      $log.debug('getPubAvailability: mwbResult, wResult', mwbResult, wResult)
       if (mwbResult?.choices) {
         mwb = mwbResult.choices.some(
           (c: Choice) => c.optionValue === new Date().getFullYear()
         )
       } else {
-        $log.debug('mwbResult error: ', mwbResult)
+        $log.error('getPubAvailability mwb error: ', mwbResult)
       }
       if (wResult?.choices) {
         w = wResult.choices.some((c: Choice) => c.optionValue === 'w')
       } else {
-        $log.debug('wResult error: ', wResult)
+        $log.error('getPubAvailability w error: ', wResult)
       }
-      $log.debug('getPubAvailability: langObject', langObject)
       langObject.mwbAvailable = mwb
       langObject.wAvailable = w
       const langPath = join($appPath(), 'langs.json')
-      $write(langPath, JSON.stringify(langs, null, 2))
+      writeJsonSync(langPath, langs, { spaces: 2 })
     } catch (e: unknown) {
       $log.error(e)
     }
