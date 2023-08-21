@@ -1,5 +1,17 @@
 # Changelog
 
+## 23.8.0
+
+### New or improved features
+
+- Added ability to drag-and-drop JW Library playlists directly into the media management screen
+- Playing audio files will no longer fade out the yeartext
+
+### Bug fixes
+
+- Improved fallback for when languages weren't fetched or updated successfully
+- Improved JSON file reading, writing and error catching
+
 ## 23.6.1
 
 ### New or improved features
