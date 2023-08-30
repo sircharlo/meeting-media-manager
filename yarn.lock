@@ -8569,18 +8569,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:^3.19.0":
-  version: 3.21.1
-  resolution: "fast-xml-parser@npm:3.21.1"
-  dependencies:
-    strnum: ^1.0.4
-  bin:
-    xml2js: cli.js
-  checksum: 73b9c907a424cc2f9b11a8a2f1b7448d936f1db6fa574b85cbe4be9739c2f77d99a827bb27d738a0db0047b20c71a5d663f64937fbdb9c38977fc6cd145221d2
-  languageName: node
-  linkType: hard
-
-"fast-xml-parser@npm:^4.2.7":
+"fast-xml-parser@npm:^4.2.4, fast-xml-parser@npm:^4.2.7":
   version: 4.2.7
   resolution: "fast-xml-parser@npm:4.2.7"
   dependencies:
@@ -11407,7 +11396,7 @@ __metadata:
     vuedraggable: ^2.24.3
     vuetify: ^2.7.0
     vuetify-loader: ^1.9.2
-    webdav: ^4.11.2
+    webdav: ^4.11.3
     webpack: ^4.46.0
     webpack-node-externals: ^3.0.0
     xvfb-maybe: ^0.2.1
@@ -15975,7 +15964,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strnum@npm:^1.0.4, strnum@npm:^1.0.5":
+"strnum@npm:^1.0.5":
   version: 1.0.5
   resolution: "strnum@npm:1.0.5"
   checksum: 651b2031db5da1bf4a77fdd2f116a8ac8055157c5420f5569f64879133825915ad461513e7202a16d7fec63c54fd822410d0962f8ca12385c4334891b9ae6dd2
@@ -17258,14 +17247,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webdav@npm:^4.11.2":
-  version: 4.11.2
-  resolution: "webdav@npm:4.11.2"
+"webdav@npm:^4.11.3":
+  version: 4.11.3
+  resolution: "webdav@npm:4.11.3"
   dependencies:
     axios: ^0.27.2
     base-64: ^1.0.0
     byte-length: ^1.0.2
-    fast-xml-parser: ^3.19.0
+    fast-xml-parser: ^4.2.4
     he: ^1.2.0
     hot-patcher: ^1.0.0
     layerr: ^0.1.2
@@ -17275,7 +17264,7 @@ __metadata:
     path-posix: ^1.0.0
     url-join: ^4.0.1
     url-parse: ^1.5.10
-  checksum: 6fe040b43e350cb15febf688d8eabe45dbe3c74922c94a3730d63911139def435de7f410439e4e1eac6b46d545b6a3631808cc773647b04e6e41731f8ad5f011
+  checksum: e5bfc66149088cd857c23a3a549650d7483dd5615cf1c4b6251a5b290a4ad8fef4975bfd99fca2d5842a0eaadc056bc0044e37893e0ad5447e6ce2e2dbd81da5
   languageName: node
   linkType: hard
 
