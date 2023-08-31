@@ -1,5 +1,11 @@
 # Changelog
 
+## 23.8.1
+
+### Bug fixes
+
+- Updated dependencies
+
 ## 23.8.0
 
 ### New or improved features
