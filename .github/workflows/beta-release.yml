@@ -13,7 +13,7 @@ jobs:
       msg: ${{ steps.set-msg.outputs.msg }}
     steps:
       - name: 'Checkout repository'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@v4'
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: 'Checkout repository'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@v4'
         with:
           persist-credentials: false
       - name: 'Automated Version Bump'
@@ -61,7 +61,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Create draft release
         id: create_release
         uses: ncipollo/release-action@v1
@@ -85,7 +85,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: master
 
