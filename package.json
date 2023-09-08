@@ -135,7 +135,7 @@
     "vuetify": "^2.7.0",
     "vuetify-loader": "^1.9.2",
     "webdav": "^4.11.3",
-    "webpack": "^4.46.0",
+    "webpack": "^4.47.0",
     "webpack-node-externals": "^3.0.0",
     "xvfb-maybe": "^0.2.1"
   }
