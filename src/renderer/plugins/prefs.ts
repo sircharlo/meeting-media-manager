@@ -575,7 +575,7 @@ function migrate2290(key: string, newVal: any) {
       schema[root]?.properties[newKey]?.type
   if (schemaType) {
     if (typeof schemaType === 'string') {
-      if (typeof newVal !== schemaType) {
+      if (typeof newVal !== 'string') {
         setDefaultValue()
       }
     } else if (
