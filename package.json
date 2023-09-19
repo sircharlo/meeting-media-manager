@@ -108,7 +108,7 @@
     "fast-xml-parser": "^4.2.7",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.1.1",
-    "fullname": "^4.0.1",
+    "fullname": "^5.0.0",
     "h264-mp4-encoder": "^1.0.12",
     "heic-convert": "^1.2.4",
     "image-size": "^1.0.2",
