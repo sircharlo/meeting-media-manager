@@ -93,11 +93,11 @@ const plugin: Plugin = ({ $getPrefs, $dayjs, i18n }, inject) => {
             .asSeconds()
           if (timeLeft.toFixed(0) === '0' || timeLeft.toFixed(0) === '-0') {
             action()
-            clearInterval(intervals[name])
+            clearInterval(intervals[name] as NodeJS.Timeout)
           } else if (timeLeft < 0) {
-            clearInterval(intervals[name])
+            clearInterval(intervals[name] as NodeJS.Timeout)
           }
-        }, MS_IN_SEC)
+        }, MS_IN_SEC) as NodeJS.Timeout
       }
     }
   )

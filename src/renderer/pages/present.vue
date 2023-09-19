@@ -237,11 +237,11 @@ export default defineComponent({
             if (!this.zoomStarted) {
               await this.$startMeeting(this.zoomSocket())
             }
-            clearInterval(this.zoomInterval as NodeJS.Timer)
+            clearInterval(this.zoomInterval as NodeJS.Timeout)
           } else if (timeLeft < 0) {
-            clearInterval(this.zoomInterval as NodeJS.Timer)
+            clearInterval(this.zoomInterval as NodeJS.Timeout)
           }
-        }, MS_IN_SEC)
+        }, MS_IN_SEC) as NodeJS.Timeout
       }
     }
 
