@@ -469,7 +469,7 @@ const plugin: Plugin = (
     const ext = isFile ? extname(name).toLowerCase() : ''
 
     // Remove special characters from filename
-    name = $strip(name.replace(extname(name), ''), 'file') + ext
+    name = $strip(isFile ? name.replace(extname(name), '') : name, 'file') + ext
     const mPath = mediaPath()
 
     if (isFile && mPath) {
