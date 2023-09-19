@@ -154,13 +154,13 @@ export default defineComponent({
               this.loading = false
             }
           }
-        }, MS_IN_SEC)
+        }, MS_IN_SEC) as NodeJS.Timeout
         setTimeout(() => {
           this.loading = false
         }, MS_IN_SEC)
         // Stop the interval if music stopped
       } else if (this.interval) {
-        clearInterval(this.interval as NodeJS.Timer)
+        clearInterval(this.interval as NodeJS.Timeout)
         this.timeRemaining = ''
         this.interval = null
         this.loading = false
