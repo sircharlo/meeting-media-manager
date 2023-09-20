@@ -174,7 +174,7 @@ const plugin: Plugin = (
       },
     })
 
-    const parsed = new XMLParser({ removeNSPrefix: true }).parse(result)
+    const parsed = new XMLParser({ removeNSPrefix: true }).parse(result) as any
     if (Array.isArray(parsed?.multistatus?.response)) {
       const items: FileStat[] = parsed.multistatus.response
         .filter((item: any) => {
