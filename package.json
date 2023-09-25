@@ -105,7 +105,7 @@
     "eslint-plugin-vue": "^9.17.0",
     "eslint-webpack-plugin": "^2.7.0",
     "fast-glob": "^3.3.1",
-    "fast-xml-parser": "^4.3.0",
+    "fast-xml-parser": "^4.3.1",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.1.1",
     "fullname": "^4.0.1",
