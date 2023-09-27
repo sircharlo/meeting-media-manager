@@ -1962,16 +1962,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/asar@npm:^3.2.6":
-  version: 3.2.6
-  resolution: "@electron/asar@npm:3.2.6"
+"@electron/asar@npm:^3.2.7":
+  version: 3.2.7
+  resolution: "@electron/asar@npm:3.2.7"
   dependencies:
     commander: ^5.0.0
     glob: ^7.1.6
     minimatch: ^3.0.4
   bin:
     asar: bin/asar.js
-  checksum: 9566c9f3b25a2c1a949f2ad89f013dfcb2893485eea77aa3f82f174ce535f07e8268a6aa6f1b3d18be69ffcb34f3347835bec7be282a022d6edbb9b816b07d3a
+  checksum: bd47db31f93a4823e8da7fcff9ba610b293abf7af24e2844e1a3828844f0413bb39a4bf6353d0c7cf9ad23b4e5c147c07ca6f6eeb04e67e0579440c558f4370b
   languageName: node
   linkType: hard
 
@@ -11311,7 +11311,7 @@ __metadata:
   dependencies:
     "@babel/core": 7.23.0
     "@babel/runtime-corejs3": 7.23.1
-    "@electron/asar": ^3.2.6
+    "@electron/asar": ^3.2.7
     "@fortawesome/fontawesome-svg-core": ^6.4.2
     "@fortawesome/free-regular-svg-icons": ^6.4.2
     "@fortawesome/free-solid-svg-icons": ^6.4.2
