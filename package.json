@@ -58,7 +58,7 @@
   "devDependencies": {
     "@babel/core": "7.23.0",
     "@babel/runtime-corejs3": "7.23.1",
-    "@electron/asar": "^3.2.6",
+    "@electron/asar": "^3.2.7",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-regular-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
