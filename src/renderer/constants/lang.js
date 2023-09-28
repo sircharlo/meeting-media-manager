@@ -1,5 +1,6 @@
 const DAYJS_LOCALES = [
   'de',
+  'el',
   'en',
   'es',
   'et',
@@ -18,6 +19,7 @@ const DAYJS_LOCALES = [
   'sv',
   'uk',
   // 'wes-x-pgw', // not yet supported by dayjs
+  // 'rmn-x-rmg', // not yet supported by dayjs
 ]
 
 // Languages that have no active translator
@@ -30,6 +32,13 @@ const LOCALES = [
     file: 'de.json',
     jw: 'X',
     name: 'Deutsch (German)',
+  },
+  {
+    "code": "el",
+    "iso": "el-GR",
+    "file": "el.json",
+    "jw": "G",
+    "name": "Ελληνικά (Greek)"
   },
   {
     code: 'en',
@@ -110,6 +119,13 @@ const LOCALES = [
     jw: 'T',
     dayjs: 'pt-br',
     name: 'Português - Brasil (Portuguese - Brazil)',
+  },
+  {
+    "code": "rmn-x-rmg",
+    "iso": "rmn-x-rmg",
+    "file": "rmn-x-rmg.json",
+    "jw": "RMG",
+    "name": "Ρομανί - Νότια Ελλάδα (Romany - Southern Greece)"
   },
   {
     code: 'ro',
