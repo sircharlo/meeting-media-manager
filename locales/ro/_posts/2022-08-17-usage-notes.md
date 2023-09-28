@@ -1,38 +1,38 @@
 ---
-tag: Help
-title: Technical usage notes
+tag: Ajutor
+title: Note tehnice de utilizare
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+Aplicația ar trebui să funcționeze așa cum este pe majoritatea calculatoarelor moderne care rulează Windows, Linux sau macOS.
 
-### Windows: Installation and first launch
+### Windows: Instalare și prima lansare
 
-On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+La deschiderea instalatorului, puteți obține o eroare [](assets/img/other/win-smartscreen.png) care indică faptul că "Windows SmartScreen a împiedicat pornirea unei aplicații nerecunoscute". Acest lucru se datorează faptului că aplicația nu are un număr mare de descărcări și, în consecință, nu este în mod explicit „de încredere” de către Windows. Pentru a trece peste asta, fă clic pe „Mai multe informații”, apoi „Rulează”.
 
-### Linux: Installation and first launch
+### Linux: Instalare și prima lansare
 
-As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
+Conform documentației oficiale [AppImage](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), dacă aplicația nu reușește să se deschidă corect, confirmă rezultatul următoarei comenzi:
 
-`sysctl kernel.unprivileged_userns_clone`
+`kernel.unprivileged_userns_clone`
 
-If the output is `0`, then the AppImage will **not** run unless you run the following command, followed by a reboot:
+Dacă rezultatul este `0`, apoi AppImage va rula **not** numai dacă rulați următoarea comandă, urmată de o repornire :
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Make sure you read up on [what this entails](https://lwn.net/Articles/673597/) before you do this.
+Asigură-te că ai citit pe [ce implică](https://lwn.net/Articles/673597/) înainte de a face acest lucru.
 
-### macOS: Installation and first launch
+### macOS: Instalare și lansare
 
-If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or because "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
+Dacă la lansarea aplicației, primiți un avertisment că aplicația nu poate fi deschisă, fie pentru că "nu a fost descărcat din magazinul de aplicații" sau pentru că "dezvoltatorul nu poate fi verificat", apoi acest [Pagina de suport Apple](https://support.apple.com/en-ca/HT202491) vă va ajuta să depășiți acest lucru.
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
+Dacă primiți un mesaj care indică faptul că „nu aveți permisiunea de a deschide aplicația”, apoi încercați niște soluții de la [această pagină](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
 ### macOS: Auto-update
 
-Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for macOS users when an update is available:
+Spre deosebire de Windows și Linux, funcția de auto-actualizare este **nu** implementată pe macOS și probabil din motive tehnice nu va fi niciodată. Cu toate acestea, unul dintre două lucruri se va întâmpla pentru utilizatorii macOS atunci când este disponibilă o actualizare:
 
-- M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
-- If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
+- M3 va încerca să descarce pachetul de actualizare și să îl deschidă automat, după care utilizatorul va trebui să finalizeze manual instalarea actualizării M3 prin glisarea și adăugarea aplicației actualizate în dosarul Aplicații. Apoi, vor putea lansa M3 nou actualizat din dosarul Aplicații ca de obicei.
+- Dacă pasul anterior eșuează în orice stadiu, M3 va afișa o notificare persistentă, indicând că o actualizare este disponibilă, cu un link către actualizare. O notificare roșie în pulsing va fi de asemenea afișată pe butonul de setări în ecranul principal al M3. Numărul versiunii M3 din ecranul de setări se va transforma într-un buton care, odată apăsat, deschide pagina de descărcare automată a ultimei versiuni.

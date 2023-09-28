@@ -1,13 +1,13 @@
 ---
-tag: Help
-title: Issues and feature requests
+tag: Βοήθεια
+title: Ζητήματα και αιτήματα λειτουργιών
 ref: bug-feature
 ---
 
-### How do I report an issue or bug I encountered?
+### Πώς μπορώ να αναφέρω ένα πρόβλημα ή ένα σφάλμα που αντιμετωπίζω?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+Εάν ποτέ αντιμετωπίσετε προβλήματα με το M3, παρακαλούμε χρησιμοποιήστε το [GitHub Issues]({{site.github}}/issues) για να το αναφέρετε. Οι διορθώσεις σφαλμάτων εκδίδονται σε τακτική βάση, συνήθως μηνιαία.
 
-### How can I request new features?
+### Πώς μπορώ να ζητήσω νέα χαρακτηριστικά?
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+Είμαι ανοιχτός σε προτάσεις! Παρακαλούμε χρησιμοποιήστε [GitHub Συζητήσεις]({{site.github}}/discussions) για να συζητήσετε πιθανές νέες λειτουργίες.

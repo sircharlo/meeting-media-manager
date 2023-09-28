@@ -1,21 +1,21 @@
 ---
-tag: Configuration
-title: Installation
+tag: Configurare
+title: Instalare
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+M3 nu necesită privilegii administrative pentru a instala sau rula. Pentru a instala M3, pur și simplu [descarcă cel mai recent instalator]({{site.github}}/releases/latest) și rulează-l.
 
-| Operating System | File to download                           |
-| ---------------- | ------------------------------------------ |
-| Windows          | `meeting-media-manager-[VERSION].exe`      |
-| macOS            | `meeting-media-manager-[VERSION].dmg`      |
-| Linux            | `meeting-media-manager-[VERSION].AppImage` |
+| Sistem de operare | Fișier de descărcat                        |
+| ----------------- | ------------------------------------------ |
+| Ferestre          | `meeting-media-manager-[VERSION].exe`      |
+| macOS             | `meeting-media-manager-[VERSION].dmg`      |
+| Linux             | `meeting-media-manager-[VERSION].AppImage` |
 
-### What's next?
+### Ce urmează?
 
-Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
+Configurați aplicația folosind ecranul [Setări]({{page.lang}}/#configuration).
 
-### Trouble installing?
+### Probleme de instalare?
 
 Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.

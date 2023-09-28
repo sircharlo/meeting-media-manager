@@ -1,43 +1,43 @@
 ---
-tag: Usage
-title: Managing media
+tag: Χρήση
+title: Διαχείριση πολυμέσων
 ref: manage-media
 ---
 
-The media management screen allows the user to add or remove media for any given meeting, manage recurring media, and even add special media for other dates on which no meeting is normally scheduled.
+Η οθόνη διαχείρισης μέσων επιτρέπει στο χρήστη να προσθέσει ή να αφαιρέσει πολυμέσα για κάθε δεδομένη συνάντηση, διαχείριση επαναλαμβανόμενων μέσων, ακόμη και να προσθέσετε ειδικά μέσα για άλλες ημερομηνίες κατά τις οποίες κανονικά δεν έχει προγραμματιστεί καμία συνάντηση.
 
-### Managing media for any particular day
+### Διαχείριση πολυμέσων για κάθε συγκεκριμένη ημέρα
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Για να διαχειριστείτε τα μέσα ενημέρωσης για μια συγκεκριμένη συνάντηση ή μέρα, απλά κάντε κλικ στο πλακίδιο της ημέρας στην κύρια οθόνη του M3. Για να διαχειριστείτε τα μέσα μαζικής ενημέρωσης που επαναλαμβάνονται σε κάθε συνάντηση, κάντε κλικ στο επαναλαμβανόμενο πλακίδιο πολυμέσων.
 
-### Adding media
+### Προσθήκη πολυμέσων
 
-Here's how to **add** media from the media management screen.
+Εδώ είναι πώς να **προσθέστε** πολυμέσα από την οθόνη διαχείρισης μέσων.
 
-| Option            | Explanation                                                                     |
-| ----------------- | ------------------------------------------------------------------------------- |
-| `Type of upload`  | Choose from one of the 3 `media types` (see below).                             |
-| `Media to add`    | Depends on the `media type` chosen (see below).                                 |
-| `Filename prefix` | Up to 6 digits can be added before the media filename(s), to help with sorting. |
-| `Media list`      | This shows the currently planned media for the selected date tile.              |
+| Επιλογή                    | Εξήγηση                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `Τύπος μεταφόρτωσης`       | Επιλέξτε από έναν από τους 3 τύπους μέσων `` (βλ. παρακάτω).                                           |
+| `Πολυμέσα για προσθήκη`    | Depends on the `media type` chosen (see below).                                                        |
+| `Πρόθεμα ονόματος αρχείου` | Μπορούν να προστεθούν έως 6 ψηφία πριν τα ονόματα αρχείων πολυμέσων, για να βοηθήσουν στην ταξινόμηση. |
+| `Λίστα πολυμέσων`          | Αυτό εμφανίζει τα τρέχοντα προγραμματισμένα μέσα για το επιλεγμένο πλακίδιο ημερομηνίας.               |
 
-In the `Media to add` field, you'll be presented with different options, depending on the media type selected.
+Στο πεδίο `Media για να προσθέσετε` , θα παρουσιαστείτε με διαφορετικές επιλογές, ανάλογα με τον τύπο πολυμέσων που επιλέξατε.
 
-| `Media type` | The `Media to add` field                                                                                                                                                                                                                                                                                                                                                                    |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Song`       | ... shows a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br> The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [Settings]({{page.lang}}/#configuration). |
-| `JWPUB`      | ... allows you to browse to (or drag and drop) a JWPUB file. <br><br> You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.      |
-| `Custom`     | ... allows you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                        |
-| `JW.ORG`     | ... allows you to select a video from the latest featured videos on JW.org.                                                                                                                                                                                                                                                                                                                 |
+| `Τύπος πολυμέσων` | Το πεδίο `Media για προσθήκη`                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Τραγούδι`        | ... δείχνει ένα μενού με όλα τα βίντεο τραγουδιού Βασιλείου από τη σειρά *sjm* , στη γλώσσα των μέσων. Επιλέξτε αυτή την επιλογή για παράδειγμα για να προσθέσετε ένα τραγούδι για τη δημόσια ομιλία, ή για επισκέψεις επισκέψεων του κυκλωμάτων. <br><br> Το επιλεγμένο τραγούδι θα κατέβει αυτόματα από το JW.org, στη γλώσσα του εκκλησίου ή της ομάδας, όπως έχει ρυθμιστεί στις ρυθμίσεις []({{page.lang}}/#configuration).                               |
+| `JWPUB`           | ... σας επιτρέπει να περιηγηθείτε σε (ή σύρετε και αποθέσετε) ένα αρχείο JWPUB. <br><br> Θα σας ζητηθεί να επιλέξετε την ενότητα, ή το κεφάλαιο, από το οποίο θα θέλατε να προσθέσετε πολυμέσα. Αυτό θα προσθέσει τόσο ενσωματωμένα όσο και αναφερόμενα μέσα από αυτό το τμήμα στο αρχείο JWPUB. <br><br> Ένα παράδειγμα ενός αρχείου JWPUB που χρησιμοποιείται συνήθως είναι το S-34, αλλά οποιοδήποτε αρχείο JWPUB μπορεί να χρησιμοποιηθεί εδώ. |
+| `Προσαρμοσμένο`   | ... σας επιτρέπει να περιηγηθείτε σε (ή να σύρετε και να αποθέσετε) οποιοδήποτε άλλο αρχείο πολυμέσων από τον υπολογιστή σας. <br><br> *Σημειώστε ότι όλα τα αρχεία PDF και SVG θα μετατραπούν αυτόματα σε εικόνες υψηλής ανάλυσης από M3.*                                                                                                                                                                                                                    |
+| `JW.ORG`          | ... σας επιτρέπει να επιλέξετε ένα βίντεο από τα τελευταία βίντεο που προβάλλονται στο JW.org.                                                                                                                                                                                                                                                                                                                                                                             |
 
-### Removing, hiding and showing media
+### Κατάργηση, απόκρυψη και προβολή πολυμέσων
 
-To **remove**, **hide**, or **show** media, simply find the media file you don't want, and click on the relevant icon.
+Σε **αφαιρέστε**, **απόκρυψη**, ή **εμφάνιση μέσων** , απλά βρείτε το αρχείο πολυμέσων που δεν θέλετε, και κάντε κλικ στο σχετικό εικονίδιο.
 
-| A red 🟥 (delete) icon                                          | A ☑️ (checked checkbox) icon                                                                                                                                 | A 🔲 (unchecked checkbox) icon                                                                                                                                                |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The media file was added to that day's media by you or the VO. | The media file is referenced in the meeting's material. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file is referenced in the meeting's material. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
+| Ένα εικονίδιο κόκκινου 🟥 (delete)                                                       | Ένα εικονίδιο ☑️ (επιλεγμένο πλαίσιο ελέγχου)                                                                                                                        | Ένα εικονίδιο 🔲 (μη επιλεγμένο πλαίσιο ελέγχου)                                                                                                                                      |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Το αρχείο πολυμέσων προστέθηκε στα μέσα ενημέρωσης εκείνης της ημέρας από εσάς ή το VO. | Το αρχείο μέσων ενημέρωσης αναφέρεται στο υλικό της συνάντησης. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | Το αρχείο μέσων ενημέρωσης αναφέρεται στο υλικό της συνάντησης. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
 
-### Screenshots of the media management screen
+### Στιγμιότυπα οθόνης διαχείρισης πολυμέσων
 
 {% include screenshots/manage-media.html lang=site.data.en %}

@@ -1,13 +1,13 @@
 ---
-tag: Help
-title: Issues and feature requests
+tag: Ajutor
+title: Probleme și cereri de caracteristici
 ref: bug-feature
 ---
 
-### How do I report an issue or bug I encountered?
+### Cum pot raporta o problemă sau o eroare cu care m-am confruntat?
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+Dacă vreodată întâmpini orice problemă cu M3, te rugăm să folosești [GitHub Issues]({{site.github}}/issues) pentru a o raporta. Remedierea erorilor este emisă în mod regulat, de obicei lunar.
 
-### How can I request new features?
+### Cum pot solicita noi caracteristici?
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+Sunt deschis la sugestii! Utilizați [Discuțiile GitHub]({{site.github}}/discussions) pentru a discuta potențialele funcții noi.

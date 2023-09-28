@@ -1,43 +1,43 @@
 {
   "lang": "en",
   "name": "English",
-  "language": "Language:",
-  "search": "Filter by keyword",
+  "language": "Γλώσσα:",
+  "search": "Φιλτράρισμα ανά λέξη-κλειδί",
   "shared": {
-    "explanation": "Explanation",
-    "option": "Option",
-    "optionsApp": "Application setup",
-    "optionsCongSync": "Congregation sync setup",
-    "optionsMedia": "Media setup",
-    "optionsMeetings": "Meeting setup",
-    "password": "Password",
-    "port": "Port",
-    "setting": "Setting"
+    "explanation": "Εξήγηση",
+    "option": "Επιλογή",
+    "optionsApp": "Ρύθμιση εφαρμογής",
+    "optionsCongSync": "Ρύθμιση συγχρονισμού συγκέντρωσης",
+    "optionsMedia": "Ρύθμιση πολυμέσων",
+    "optionsMeetings": "Ρύθμιση συνάντησης",
+    "password": "Κωδικός",
+    "port": "Θύρα",
+    "setting": "Ρύθμιση"
   },
   "home": {
-    "expand": "Expand all articles",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
-    "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
+    "expand": "Ανάπτυξη όλων των άρθρων",
+    "collapse": "Σύμπτυξη όλων των άρθρων",
+    "syncInProgress": "Συνάντηση συγχρονισμού μέσων σε εξέλιξη",
+    "mainScreen": "Κύρια οθόνη",
+    "chooseWeek": "Επιλέξτε μια εβδομάδα",
     "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "musicPlaying": "Παίζουν μουσική πριν και μετά τη συνάντηση"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgAddSong": "Προσθέτοντας ένα τραγούδι για μια δημόσια συζήτηση",
+    "imgAddPic": "Προσθέτοντας μια πρόσθετη εικόνα",
+    "imgImportJWPUB": "Εισαγωγή πολυμέσων από μια ενότητα σε ένα αρχείο JWPUB",
+    "imgPreviewJWPUB": "Προεπισκόπηση πολυμέσων από αρχείο JWPUB πριν από την εισαγωγή",
+    "imgRename": "Μετονομασία αρχείου πολυμέσων"
   },
   "present-media": {
-    "imgButton": "Blue play button to enter media controller mode",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgButton": "Μπλε κουμπί αναπαραγωγής για να μπείτε στη λειτουργία ελέγχου μέσων",
+    "imgSelectMeeting": "Επιλογή συνάντησης για την εμφάνιση πολυμέσων",
+    "imgBG": "Προεπιλεγμένο φόντο πολυμέσων, με αυτόματα παραγόμενο έτος κειμένου",
+    "imgMediaList": "Λίστα μέσων που είναι έτοιμα να παρουσιαστούν",
+    "imgStandby": "M3 παρουσίαση πολυμέσων σε κατάσταση αναμονής",
+    "imgDisplayPic": "Εμφάνιση εικόνας",
+    "imgPlayVideo": "Αναπαραγωγή βίντεο",
+    "imgVideoScrub": "Μετακίνηση σε μια συγκεκριμένη ώρα σε ένα βίντεο"
   }
 }

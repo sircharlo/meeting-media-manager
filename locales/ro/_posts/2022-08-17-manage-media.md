@@ -1,43 +1,43 @@
 ---
-tag: Usage
-title: Managing media
+tag: Utilizare
+title: Gestionare media
 ref: manage-media
 ---
 
-The media management screen allows the user to add or remove media for any given meeting, manage recurring media, and even add special media for other dates on which no meeting is normally scheduled.
+Ecranul de administrare media permite utilizatorului să adauge sau să elimine media pentru orice întâlnire. gestionează mass-media recurente și chiar adaugă suporturi speciale pentru alte date la care nu este programată în mod normal nicio întâlnire.
 
-### Managing media for any particular day
+### Gestionarea suporturilor pentru orice zi
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Pentru a gestiona mass-media pentru o anumită întâlnire sau zi, fă clic pe iconița acelei zile pe ecranul principal al M3. Pentru a gestiona mass-media care se repetă la fiecare întâlnire, faceți clic pe casuța media recurentă.
 
-### Adding media
+### Adăugare fișiere media
 
-Here's how to **add** media from the media management screen.
+Iată cum să adăugați **** media din ecranul de management media.
 
-| Option            | Explanation                                                                     |
-| ----------------- | ------------------------------------------------------------------------------- |
-| `Type of upload`  | Choose from one of the 3 `media types` (see below).                             |
-| `Media to add`    | Depends on the `media type` chosen (see below).                                 |
-| `Filename prefix` | Up to 6 digits can be added before the media filename(s), to help with sorting. |
-| `Media list`      | This shows the currently planned media for the selected date tile.              |
+| Opţiune              | Explicație                                                                                     |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| `Tipul încărcării`   | Alegeți din unul dintre tipurile `de media` (a se vedea mai jos).                              |
+| `Media de adăugat`   | Depinde de tipul `de media ales` (a se vedea mai jos).                                         |
+| `Prefix nume fișier` | Pot fi adăugate până la 6 cifre înainte de numele fișierului media, pentru a ajuta la sortare. |
+| `Listă media`        | Acest lucru arată media planificată în prezent pentru ciocolata datei selectate.               |
 
-In the `Media to add` field, you'll be presented with different options, depending on the media type selected.
+În câmpul `Media pentru a adăuga` , vi se vor prezenta opțiuni diferite, în funcție de tipul de fișier media selectat.
 
-| `Media type`   | The `Media to add` field                                                                                                                                                                                                                                                                                                                                                                    |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Cântec`       | ... shows a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br> The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [Settings]({{page.lang}}/#configuration). |
-| `JWPUB`        | ... allows you to browse to (or drag and drop) a JWPUB file. <br><br> You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.      |
-| `Personalizat` | ... allows you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                        |
-| `JW.ORG`       | ... allows you to select a video from the latest featured videos on JW.org.                                                                                                                                                                                                                                                                                                                 |
+| `Tip media`    | `Media pentru a adăuga câmpul`                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Cântec`       | ... afișează un meniu cu toate videoclipurile din serialele *sjm* , în limba media. Alegeți această opțiune de exemplu pentru a adăuga un cântec pentru conferința publică sau pentru vizitele supraveghetorilor de circuit. <br><br> Melodia selectată va fi descărcată automat de pe JW.org, în congregația sau în limba grupului, conform configurației [Setările]({{page.lang}}/#configuration).                  |
+| `JWPUB`        | ... vă permite să navigați la (sau drag and drop) un fișier JWPUB. <br><br> Vi se va solicita apoi să selectaţi secţiunea sau capitolul din care doriţi să adăugaţi media. Aceasta va adăuga atât media încorporată, cât şi media la referinţă din acea secţiune în fişierul JWPUB. <br><br> Un exemplu de fişier JWPUB utilizat în mod obişnuit este S-34, dar orice fişier JWPUB poate fi folosit aici. |
+| `Personalizat` | ... vă permite să navigați la (sau drag and drop) orice alte fișiere media de pe computer. <br><br> *Reţineţi că toate fişierele PDF şi SVG vor fi convertite automat în imagini de înaltă rezoluţie de M3.*                                                                                                                                                                                                          |
+| `JW.ORG`       | ... vă permite să selectaţi un videoclip din cele mai recente videoclipuri recomandate pe JW.org.                                                                                                                                                                                                                                                                                                                                 |
 
-### Removing, hiding and showing media
+### Eliminarea, ascunderea și afișarea fișierelor media
 
 To **remove**, **hide**, or **show** media, simply find the media file you don't want, and click on the relevant icon.
 
-| A red 🟥 (delete) icon                                          | A ☑️ (checked checkbox) icon                                                                                                                                 | A 🔲 (unchecked checkbox) icon                                                                                                                                                |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The media file was added to that day's media by you or the VO. | The media file is referenced in the meeting's material. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file is referenced in the meeting's material. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
+| O pictogramă roșie 🟥 (șterge)                                                    | O pictogramă ☑️ (bifată caseta)                                                                                                                             | O pictogramă 🔲 (casetă neselectată)                                                                                                                                         |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fișierul media a fost adăugat la media din ziua respectivă de către dvs. sau VO. | Dosarul media este menţionat în materialul întâlnirii. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | Dosarul media este menţionat în materialul întâlnirii. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
 
-### Screenshots of the media management screen
+### Capturi de ecran ale ecranului de management media
 
 {% include screenshots/manage-media.html lang=site.data.ro %}

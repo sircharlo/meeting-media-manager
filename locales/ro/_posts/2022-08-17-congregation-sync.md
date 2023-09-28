@@ -1,44 +1,44 @@
 ---
-tag: Configuration
+tag: Configurare
 title: Sincronizarea congregației
 ref: congregation-sync
 ---
 
-The brother designated as *videoconference organizer* (VO) by the body of elders can use M³ to manage what media is made available to the technical A/V support team in his congregation.
+Fratele desemnat ca organizator *videoConference* (VO) de corpul bătrânilor poate folosi M3 pentru a gestiona ce media este pusă la dispoziția echipei tehnice de asistență A/V în congregația sa.
 
-The VO, or someone designated by him, can:
+OV sau o persoană desemnată de acesta poate:
 
-- upload **additional** media to be shared during a meeting, such as for the circuit overseer's visit, or for public speakers' talks
-- **hide** media from JW.org that isn't relevant for a given meeting, for example, when a part has been replaced by the local branch
-- add or remove **recurring** media, such as a year-text video, or an announcement slide
+- încarcă **suplimentar** media pentru a fi partajată în timpul unei ședințe, cum ar fi pentru vizita supraveghetorului circuitului sau pentru conferințele vorbitorilor publici
+- **ascunde** media de la JW.org care nu este relevantă pentru o anumită întâlnire, de exemplu, atunci când o parte a fost înlocuită de sucursala locală
+- adăugați sau eliminați **recurente** , cum ar fi un videoclip text de an sau un slide de anunț
 
-All who are synced to the same congregation will then receive the exact same media when they click the *Update media folders* button.
+Toţi cei care sunt sincronizaţi cu aceeaşi congregaţie vor primi exact aceeaşi media atunci când fac clic pe butonul *Actualizează dosarele media*.
 
-Please note that the congregation sync feature is opt-in and entirely optional.
+Vă rugăm să reţineţi că funcţia de sincronizare a congregaţiei este opt-in şi complet opţională.
 
-### How it works
+### Cum funcţionează
 
-M³'s underlying sync mechanism uses WebDAV. This means that the VO (or someone under his supervision) needs to either:
+Mecanismul de sincronizare de bază al M3 folosește WebDAV. Aceasta înseamnă că OV (sau cineva aflat sub supravegherea sa) trebuie:
 
-- set up a secured WebDAV server that is web-accessible, **or**
-- use a third-party cloud storage service that supports the WebDAV protocol (see the *Web address* setting in the *Congregation sync setup* section below).
+- setează un server WebDAV securizat care este accesibil web, **sau**
+- utilizează un serviciu de stocare în cloud care suportă protocolul WebDAV (vezi setarea ** a adresei Web în secțiunea *Congregation sync setup* de mai jos).
 
-All users that wish to be synchronized together will need to connect to the same WebDAV server using the connection information and credentials provided to them by their VO.
+Toți utilizatorii care doresc să fie sincronizați împreună vor trebui să se conecteze la același server WebDAV folosind informațiile de conectare și acreditările oferite de către VO.
 
 ### Configurare sincronizare congregație
 
-| Setting                                | Explanation                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Adresă web`                           | Web address of the WebDAV server. Secure HTTP (HTTPS) is required. <br><br> ***Note:** The Web address button, once clicked, will show a list of WebDAV providers that have been known to be compatible with M³, and will automatically prefill certain settings for those providers. <br><br> This list is provided as a courtesy, and in no way represents an endorsement of any particular service or provider. The best server is always the one you own...* |
-| `Nume de utilizator`                   | Username for the WebDAV service.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `Parolă`                               | Password for the WebDAV service. <br><br> ***Note:** As detailed in their respective support pages, an app-specific password might need to be created for [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) and [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) in order to enable WebDAV connections to their services.*                                                                   |
-| `Configurare sincronizare congregație` | This is the folder that will be used to synchronize media for all congregation sync users. You can either type/paste in a path, or use your mouse to navigate to the target folder. <br><br> ***Note:** Make sure that all congregation sync users input the same folder path; otherwise the sync won't work as expected.*                                                                                                                                                   |
-| `Setări generale al congregației`      | Once the VO has configured the *Media setup* and *Meeting setup* sections of the [Settings]({{page.lang}}/#configuration) on his own computer, he can then use this button to enforce certain settings for all congregation sync users (for example, meeting days, media language, conversion settings, and so on). This means that the selected settings will be forcefully applied for all synced users every time they open M³.                                                       |
+| Setare                                 | Explicație                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Adresă web`                           | Adresa web a serverului WebDAV. Este necesar HTTP securizat (HTTPS). <br><br> ***Notă:** Butonul de adresă web, odată ce se dă click, va afișa o listă de furnizori WebDAV care au fost cunoscuți ca fiind compatibili cu M3 și care vor înlocui automat anumite setări pentru acești furnizori. <br><br> Această listă este furnizată ca o curtoazie și nu reprezintă în niciun caz o aprobare a unui anumit serviciu sau furnizor. Cel mai bun server este întotdeauna cel pe care îl deține...* |
+| `Nume de utilizator`                   | Nume de utilizator pentru serviciul WebDAV.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `Parolă`                               | Parola pentru serviciul WebDAV. <br><br> ***Notă:** Conform detaliilor din paginile lor respective de sprijin, pentru [Box](https://support.box.com/hc/en-us/articles/360043696414-WebDAV-with-Box) și [Koofr](https://koofr.eu/help/koofr_with_webdav/how-do-i-connect-a-service-to-koofr-through-webdav/) ar putea fi necesară o parolă specifică fiecărei aplicații, pentru a permite conexiuni WebDAV la serviciile lor.*                                                                                  |
+| `Configurare sincronizare congregație` | Acesta este folderul care va fi folosit pentru a sincroniza media pentru toți utilizatorii de sincronizare congregare. Poți tipa/lipi pe o traiectorie sau să folosești mouse-ul pentru a naviga la folderul țintă. <br><br> ***Notă:** Asigurați-vă că toți utilizatorii sincronizați introduc aceeași cale de dosare; altfel sincronizarea nu va funcționa conform așteptărilor.*                                                                                                                            |
+| `Setări generale al congregației`      | Odată ce OV a configurat secțiunile *Media setup* și *Întâlnire* din secțiunea [Setări]({{page.lang}}/#configuration) pe propriul calculator, el poate utiliza apoi acest buton pentru a impune anumite setări pentru toți utilizatorii de sincronizare a congregației (de exemplu, zile de întâlnire, limbaj media, setări de conversie etc. Aceasta înseamnă că setările selectate vor fi aplicate forțat pentru toți utilizatorii sincronizați de fiecare dată când deschid M3.                                         |
 
-### Using congregation sync to manage media
+### Utilizare sincronizare congregare pentru gestionarea media
 
-Once the congregation sync setup is complete, you're ready to start [Managing media]({{page.lang}}/#manage-media) for your congregation's technical AV support team.
+Odată ce configurarea sincronizării de congregare este completă, sunteți gata să porniți cu [Managing media]({{page.lang}}/#manage-media) pentru echipa de asistență tehnică AV a congregsului dvs.
 
-### Screenshots of congregation sync in action
+### Capturi de ecran sincronizare în acțiune
 
 {% include screenshots/congregation-sync.html lang=site.data.ro %}
