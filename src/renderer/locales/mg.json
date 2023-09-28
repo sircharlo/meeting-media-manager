@@ -44,7 +44,7 @@
   "errorGetCongMedia": "Nisy olana nitranga teo am-pakàna ny Sary/Video'ny fiangonana. Azafady, hamarino ny firafitry ny fandrindrana ny fiangonanao na mifandraisa amin'ny mpikarakara ny video conference.",
   "errorGetMwMedia": "Misy olana amin'ny fakàna ny Sary/Video amin'ny fivoriana andavanandro. Avereno indray azafady na miresaha amin'ny mpiandraikitrin'ny \"video conférence\".",
   "errorGetWeMedia": "Misy olana amin'ny fakàna ny Sary/Video amin'ny fivoriana faran'ny herinandro. Avereno indray azafady na miresaha amin'ny mpiandraikitrin'ny \"video conférence\".",
-  "errorInvalidPrefs": "An error occurred while loading your saved preferences. Please reconfigure all settings as needed before proceeding.",
+  "errorInvalidPrefs": "Nisy olana nitranga teo amin'ny fakana ny firafitrao. Avereno ovaina azafady ny firafitra rehetra.",
   "errorJwpubDbFetch": "An error occurred while attempting to fetch the following publication:",
   "errorJwpubMediaExtract": "An error occurred while extracting media from the following publication:",
   "errorMwbUnavailable": "The Meeting Workbook is not available in your selected language. Consider setting a fallback language to use whenever necessary.",
