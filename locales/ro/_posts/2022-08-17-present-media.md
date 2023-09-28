@@ -1,147 +1,147 @@
 ---
-tag: Usage
-title: Media Presentation mode
+tag: Utilizare
+title: Mod prezentare media
 ref: present-media
 ---
 
-### Using media presentation mode
+### Folosind modul de prezentare media
 
-The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
+Modurile de prezentare și de control media sunt concepute pentru simplitate și pentru a preveni greșelile în timpul reuniunilor.
 
-Once the option `Present media on an external monitor or in a separate window` is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
+Odată ce opțiunea `Prezentarea media pe un monitor extern sau într-o fereastră separată` este activată, ecranul de prezentare media va apărea automat pe ecranul extern dacă există, sau într-o fereastră separată, glisabilă și redimensionabilă în cazul în care nu a fost detectat niciun monitor extern.
 
-When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
+Când este în așteptare, ecranul de prezentare media va afișa imaginea de fundal care este configurată în setări. Dacă nici o imagine de fundal nu a fost configurată, atunci M3 va încerca automat să preia și să afișeze yeartextul.
 
-If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
+Dacă nici o imagine de fundal nu este configurată în setări şi yeartext nu a putut fi încărcat automat, un fundal negru va fi afişat când este în poziţie verticală.
 
-Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt D</kbd> (for external display).
+Modul controller media poate fi accesat făcând clic pe butonul ▶️ (play) pe ecranul principal al M3, sau folosind tastatura rapidă <kbd>Alt D</kbd> (pentru afişare externă).
 
-Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
+Odată ce ați introdus modul controler, ecranul de selecție a dosarelor vă va permite să selectați data pentru care doriți să afișați media. Dacă dosarul zilei curente există, acesta va fi apăsat automat. Odată ce este selectată o dată, încă poți schimba data selectată în orice moment făcând clic pe butonul de selectare a datei, în secțiunea de sus.
 
-### Presenting media
+### Prezentare media
 
-To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
+Pentru a reda media, apăsați butonul ▶️ (play) pentru fișierul pe care l-ați dori. Pentru a ascunde media, apăsați butonul ⏹️ (opriți). Dacă se doreşte, un videoclip poate fi răsucit sau accelerat în timpul întreruperii. Vă rugăm să rețineți că pentru videoclipuri; butonul de stop trebuie apăsat **de două ori** pentru a preveni oprirea accidentală şi prematură a unui videoclip în timp ce acesta este redat pentru congregare. Videoclipurile se vor opri automat când vor fi redate în întregime.
 
-### Extra Features
+### Caracteristici suplimentare
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+M3 are câteva caracteristici suplimentare care pot fi folosite pentru a îmbunătăți experiența de prezentare a mass-media.
 
-#### Present JW.org
+#### Prezent JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+Pentru a prezenta JW.org, puteți apăsa butonul <unk> (ellipsis) din partea de sus a ecranului și selectați `Open JW.org`. Acest lucru va deschide o nouă fereastră de control cu JW.org încărcat. Fereastra media va afișa și JW.org. Acum puteți utiliza fereastra controller pentru a naviga pe JW.org, iar fereastra media va afișa acțiunile dvs. Când ați terminat prezentând JW.org, puteți închide fereastra controller și să continuați cu modul normal de prezentare.
 
-#### Zoom and pan images
+#### Zoom și pan imagini
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+Când o imagine este afișată, poți derula roata mouse-ului în timp ce planezi peste previzualizarea imaginii pentru a mări și micșora. Alternativ, poți de asemenea să faci dublu clic pe previzualizarea imaginii pentru a mări imaginea. Dublu-clic va alterna între 1,5x, 2x, 3x, 4x și înapoi la o zoom de 1x. Poți, de asemenea, ține apăsată și trage imaginea în jurul imaginii.
 
-#### Sort the media list
+#### Sortează lista media
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+Lista media poate fi sortată făcând clic pe butonul de sortare din dreapta sus a ecranului. Elementele media vor avea un buton lângă ele care pot fi folosite pentru a glisa elementul media în sus sau în jos în listă. Cand sunteti multumit de comanda, puteti apasa butonul de sortare din nou pentru a bloca comanda.
 
-#### Add a last-minute song
+#### Adaugă o melodie de ultim minut
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+Dacă trebuie să adaugi o melodie de ultim minut în lista media, poți apăsa butonul `♫ +` (adaugă melodia) în partea de sus a ecranului. O listă verticală va apărea cu o listă cu toate melodiile regatului. Când selectaţi unul, va fi adăugat imediat în partea de sus a listei media şi poate fi redat instantaneu. Fie va viziona melodia de pe JW.org, fie va reda melodia de pe cache-ul local dacă a fost descărcat anterior.
 
-### Conducting hybrid meetings using a combination of M³, OBS Studio, and Zoom
+### Realizarea de reuniuni hibride utilizând o combinație de M3, OBS Studio și Zoom
 
-By far the simplest way to share media during hybrid meetings is by configuring OBS Studio, M³ and Zoom to work together.
+Cel mai simplu mod de a împărtăși mass-media în timpul întâlnirilor hibride este de departe configurarea OBS Studio, M3 și Zoom de a lucra împreună.
 
-#### Initial configuration: Kingdom Hall computer
+#### Configurare inițială: Sala regatului
 
-Set the external monitor's screen resolution to 1280x720, or something close to that.
+Setați rezoluția ecranului monitorului extern la 1280x720, sau ceva apropiat de acesta.
 
-Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
+Configurați ieșirea cardului de sunete pentru a merge la unul dintre mixerii de sunete, și amestecul de sunet al sunetului pentru a merge la sistemul de introducere a cardului sonor.
 
-#### Initial configuration: OBS Studio
+#### Configurare iniţială: OBS Studio
 
-Install OBS Studio, or download the portable version.
+Instalați OBS Studio sau descărcați versiunea portabilă.
 
-If using the portable version of OBS Studio, install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+Dacă utilizaţi versiunea portabilă a OBS Studio, instalaţi plugin-ul [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) , și dacă folosiți versiunea portabilă a OBS Studio, adăugați camera virtuală la Windows făcând clic pe scriptul de instalare furnizat.
 
-If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
+Dacă aveți OBS Studio v27 sau mai mare, trebuie să instalați plugin-ul [obs-websocket](https://github.com/obsproject/obs-websocket). În caz contrar este inclus şi obs-websocket-ul. Configurați un număr de port și o parolă pentru obs-websocket.
 
-In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
+În setările OBS, sub `General` > `System Tray`, activează toate casetele de selectare. În `Ieșire` > `Streaming`activați codificatorul de hardware, dacă este disponibil. Sub rezoluţia `Video` > `Rezoluţia de bază (Canvas)` şi Rezoluţia `de ieşire`alege `1280x720`, și sub `Filtru Downscale`, alege `Bilinear`.
 
-Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
+Configurați cel puțin 2 scene: una pentru ecranul media (`Captură de fereastră` sau `Afișează Captura` cu cursorul mouse-ului dezactivat și titlu/monitor corespunzător selectat), și unul pentru vizualizarea etapei (`Dispozitiv de Captură Video` cu camera KH selectată). De asemenea, puteţi adăuga o altă scenă specifică pentru imagini, unde fereastra media este vizibilă împreună cu podiumul într-un afişaj de imagine-în-imagine. Puteţi adăuga câte scene este necesar, cu camera ajustată, zoomed-in şi decupate după necesităţi (vedere lectură, dirijor şi cititor, vedere faţă de masă etc.).
 
-Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
+Activează filtrul `Scaling/Aspect` pe toată fereastra `Captura` sau `Captură` cu o Rezoluție `` din Rezoluția `(Canvas)` Acest lucru va asigura că fereastra media este întotdeauna extinsă la rezoluţia rezultatului camerei virtuale.
 
-Add a shortcut to OBS Studio, with the `--startvirtualcam` parameter, to the Startup folder of the Windows user profile, to ensure that OBS Studio gets started automatically when the user logs in.
+Adaugă o scurtătură la OBS Studio, cu parametrul `--startvirtualcam` , în folderul Startup al profilului de utilizator Windows, pentru a se asigura că OBS Studio este pornit automat când utilizatorul se autentifică.
 
-#### Initial configuration: Kingdom Hall Zoom
+#### Configurația inițială: Zoom în Sala Regatului
 
-Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
+Zoom trebuie configurat să folosească monitoare duble. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
 
-Set the default "microphone" to be sound booth mixer's combined output (so that everything that is heard over the Kingdom Hall sound system is transmitted over Zoom, including microphones and media) and the "camera" to be the virtual camera provided by OBS Studio.
+Setați "microfonul" implicit să fie ieșirea mixerului de sunet (astfel încât tot ce este auzit în sistemul de sunet al Regatului să fie transmis prin Zoom, inclusiv microfoanele și mass-media) și „camera” care vor fi camera virtuală furnizată de OBS Studio.
 
-#### Initial configuration: M³
+#### Configurația inițială: M3
 
-Enable the `Present media on an external monitor or in a separate window` option.
+Activați opțiunea `Prezentați media pe un monitor extern sau într-o fereastră` separată.
 
-Enable and configure OBS Studio compatibility mode, using the port and password information configured in the OBS Studio configuration step.
+Activaţi şi configuraţi modul de compatibilitate OBS Studio, folosind portul şi parola informaţii configurate în pasul de configurare OBS Studio.
 
-#### Starting the meeting
+#### Începerea şedinţei
 
-Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
+Începeţi şedinţa Zoom şi mutaţi fereastra secundară a şedinţei Zoom pe monitorul extern. Faceți-l pe tot ecranul, dacă doriți. Aici va fi afișat participanților la o întâlnire la distanță pentru a vedea congregația.
 
-Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
+Odată ce ședința Zoom este afișată pe monitorul extern, deschideți M3. Fereastra de prezentare media se va deschide automat deasupra Zoom pe monitorul extern. Sincronizaţi dacă este necesar şi introduceţi modul controller media făcând clic pe butonul ▶️ (play) pe ecranul principal al M3, sau <kbd>Alt D</kbd>.
 
-Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting. Make sure that "Original sound for musicians" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
+Activează feed-ul video de la Sala Regatului (<kbd>Alt V</kbd>), și să evidențieze feed-ul video din Sala regatului, dacă este necesar, astfel încât participanții să vadă etapa din Sala Regatului. Dă silențios fluxul audio la Sala Regatului în Zoom (<kbd>Alt A</kbd>). Nu ar trebui să fie necesară dezactivarea fluxului video sau audio din Zoom pe durata ședinței. Asiguraţi-vă că "Sunetul original pentru muzicieni" este activat în Zoom, pentru a asigura cea mai bună calitate audio pentru participanţii la întâlnirile de la distanţă.
 
-Start background music playback using the button on the bottom left, or <kbd>Alt K</kbd>.
+Pornește redarea de fundal folosind butonul din stânga jos, sau <kbd>Alt K</kbd>.
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom
+#### Difuzarea de părți în persoană din etapa înaltă a regatului prin Zoom
 
-No action necessary.
+Nicio acțiune necesară.
 
-Various camera angles/zoom can be chosen during the meeting by using the menu on the bottom of the M³ media playback control window; this menu will contain a list of all configured camera view scenes in OBS.
+În timpul întâlnirii pot fi alese diferite unghiuri de cameră/zoom folosind meniul din partea de jos a ferestrei de control a redării media M3; acest meniu va conține o listă cu toate scenele configurate de vizualizare a camerei, în OBS.
 
-#### Sharing media at the Kingdom Hall and over Zoom
+#### Partajează media la Sala Regatului și la Zoom
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+Găsiți fișierele media pe care doriți să le partajați în fereastra de control a redării M3 și apăsați butonul "redare".
 
-When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
+Cand ai terminat impartasiti media, apasati butonul "stop" din M3. Țineți cont că videoclipurile se opresc automat la finalizare.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor
+#### Afişează participanţii la Zoom de la distanţă pe monitorul din Sala Regatului
 
-Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+Apăsați butonul "ascundere/afișare fereastră de prezentare media" în colțul din dreapta jos al ecranului de control media M3, sau <kbd>Alt Z</kbd>, pentru a **ascunde** fereastra de prezentare media. Întâlnirea Zoom va fi vizibilă acum pe monitorul din Sala Regatului.
 
-> If the participant has media to show, follow the steps under the **Sharing media at the Kingdom Hall and over Zoom** subheading.
+> Dacă participantul are mass-media de arătat, urmează pașii de sub subrubrica **Partajare media la Sala Regatului și la Zoom**.
 
-Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
+Odată ce participantul și-a terminat partea sa, apăsaţi pe butonul "ascunde/arată fereastra de prezentare media" în colţul din dreapta jos al ferestrei de control a redării media M3, sau <kbd>Alt Z</kbd>, la **arată** fereastra de prezentare media. Monitorul din Sala Regatului va arăta acum yeartextul.
 
-### Conducting hybrid meetings using only M³ and Zoom
+### Realizarea de reuniuni hibride utilizând doar M3 și Zoom
 
-If you do not wish to use OBS Studio for any reason, the following suggestions will perhaps help you to set things up as simply as possible.
+Dacă nu doriţi să utilizaţi OBS Studio pentru orice motiv, următoarele sugestii vă vor ajuta probabil să stabiliți lucrurile cât mai simplu posibil.
 
-#### Initial configuration without OBS: Kingdom Hall computer
+#### Configuratie initiala fara OBS: Sala regatului
 
-Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
+La fel ca în secţiunea corespunzătoare de mai sus. Cu adăugarea scurtăturii globale de tastatură pentru Zoom pentru pornirea/oprirea partajării ecranului (<kbd>Alt S</kbd>). Camera foto va fi alimentată de camera foto de la camera din Regat.
 
-#### Initial configuration without OBS: M³
+#### Configurația inițială fără OBS: M3
 
-Enable the `Present media on an external monitor or in a separate window` option.
+Activați opțiunea `Prezentați media pe un monitor extern sau într-o fereastră` separată.
 
-#### Starting the meeting without OBS
+#### Începerea şedinţei fără OBS
 
-Same as corresponding section above.
+La fel ca în secţiunea corespunzătoare de mai sus.
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom without OBS
+#### Difuzarea pieselor în persoană din etapa de vârf a regatului de peste Zoom fără OBS
 
-Same as corresponding section above.
+La fel ca în secţiunea corespunzătoare de mai sus.
 
-#### Sharing media at the Kingdom Hall and over Zoom without OBS
+#### Partajează media la Sala Regatului și la Zoom fără OBS
 
-Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
+Începe să distribui în Zoom atingând <kbd>Alt S</kbd>. În fereastra de partajare Zoom care apare în sus, alegeți monitorul extern și activați ambele căsuțe în stânga jos (pentru optimizarea sunetului și a video). Acum textul yeartext va fi partajat prin Zoom.
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+Găsiți fișierele media pe care doriți să le partajați în fereastra de control a redării M3 și apăsați butonul "redare".
 
-When you're done sharing media, hit <kbd>Alt S</kbd> to end Zoom screen sharing.
+Cand ai terminat sa partajezi media, apasa <kbd>Alt S</kbd> pentru a pune capăt partajării ecranului Zoom.
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor without OBS
+#### Afişează participanţii la Zoom de la distanţă pe monitorul din Sala Regatului fără OBS
 
-Same as corresponding section above.
+La fel ca în secţiunea corespunzătoare de mai sus.
 
-### Screenshots of Presentation Mode
+### Capturi ecran în Modul Prezentare
 
 {% include screenshots/present-media.html lang=site.data.ro %}
