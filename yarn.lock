@@ -4603,24 +4603,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zoomus/websdk@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "@zoomus/websdk@npm:2.16.0"
+"@zoomus/websdk@npm:^2.17.0":
+  version: 2.17.0
+  resolution: "@zoomus/websdk@npm:2.17.0"
   dependencies:
     lodash: ^4.17.21
-    react: 16.13.1
-    react-dom: 16.13.1
+    react: 16.14.0
+    react-dom: 16.14.0
     react-redux: 7.2.9
-    redux: 3.7.2
+    redux: 4.2.1
     redux-thunk: 2.4.2
   peerDependencies:
     lodash: ^4.17.21
-    react: 16.13.1
-    react-dom: 16.13.1
+    react: 16.14.0
+    react-dom: 16.14.0
     react-redux: 7.2.9
-    redux: 3.7.2
+    redux: 4.2.1
     redux-thunk: 2.4.2
-  checksum: 9b56f30ed718a1c140ba64315851693121106d650aee556367eb12ef40f87c8e5757190f133de9ad1d95ddd1d58d822920b48cf91a595a3246b53a86013240bb
+  checksum: bf3e01208f009aba582789ad46062cd2f4388eb5df0262aa69e79aeb848cdddb0a46b989cd7e2a25811f260f2e43354ef0d26395359ffb7f6e4d3a0a04b5e6ad
   languageName: node
   linkType: hard
 
@@ -7533,16 +7533,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:26.2.2":
-  version: 26.2.2
-  resolution: "electron@npm:26.2.2"
+"electron@npm:26.2.3":
+  version: 26.2.3
+  resolution: "electron@npm:26.2.3"
   dependencies:
     "@electron/get": ^2.0.0
     "@types/node": ^18.11.18
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 4e2f642475454836256925be81995a9d28bb21bcdaabdb714c5dc36dbf3b5ad8d8214b64d9290c4b8b07b8f6b6914074c61915e1c104fc7e1e1600b2c6d75ff5
+  checksum: 154e03791a42055b706563215f3cb0c1863707d5aa22a9415f58ee7b3d3c1ae219e25868407cb9e098881ef6c2c50ad8e3646c8b0d066fc6d26d22d9d4a13124
   languageName: node
   linkType: hard
 
@@ -10947,13 +10947,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.2.1":
-  version: 4.17.21
-  resolution: "lodash-es@npm:4.17.21"
-  checksum: 05cbffad6e2adbb331a4e16fbd826e7faee403a1a04873b82b42c0f22090f280839f85b95393f487c1303c8a3d2a010048bf06151a6cbe03eee4d388fb0a12d2
-  languageName: node
-  linkType: hard
-
 "lodash._reinterpolate@npm:^3.0.0":
   version: 3.0.0
   resolution: "lodash._reinterpolate@npm:3.0.0"
@@ -11071,7 +11064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.15.0, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.5, lodash@npm:^4.2.1":
+"lodash@npm:^4.15.0, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.5":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -11336,7 +11329,7 @@ __metadata:
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
     "@xpda-dev/webpack-step": ^0.1.6
-    "@zoomus/websdk": ^2.16.0
+    "@zoomus/websdk": ^2.17.0
     chokidar: ^3.5.3
     consola: ^2.15.3
     core-js: ^3.32.2
@@ -11344,7 +11337,7 @@ __metadata:
     css-loader: ^5.2.7
     deepmerge: ^4.3.1
     dotenv: ^16.3.1
-    electron: 26.2.2
+    electron: 26.2.3
     electron-builder: 24.6.4
     electron-devtools-installer: ^3.2.0
     electron-store: ^8.1.0
@@ -14432,17 +14425,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:16.13.1":
-  version: 16.13.1
-  resolution: "react-dom@npm:16.13.1"
+"react-dom@npm:16.14.0":
+  version: 16.14.0
+  resolution: "react-dom@npm:16.14.0"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
     prop-types: ^15.6.2
     scheduler: ^0.19.1
   peerDependencies:
-    react: ^16.13.1
-  checksum: 5009f3ee9bca06d6d4b9cf92c832eca102c284e6d019e832179c8de3e353534571474c95b7ab975935b22823726710dcd73783596c11dd71304beb11c19281c5
+    react: ^16.14.0
+  checksum: 5a5c49da0f106b2655a69f96c622c347febcd10532db391c262b26aec225b235357d9da1834103457683482ab1b229af7a50f6927a6b70e53150275e31785544
   languageName: node
   linkType: hard
 
@@ -14481,14 +14474,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:16.13.1":
-  version: 16.13.1
-  resolution: "react@npm:16.13.1"
+"react@npm:16.14.0":
+  version: 16.14.0
+  resolution: "react@npm:16.14.0"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
     prop-types: ^15.6.2
-  checksum: 4508f4207caca6bef55736284cbf2ce18d2edfee4c1457fc0bb2086b34ed5bcf9b44acdb71e27574e73a5b5d4d093720b5b4ec0bf92bb89394ee3a0a7c42c2d4
+  checksum: 8484f3ecb13414526f2a7412190575fc134da785c02695eb92bb6028c930bfe1c238d7be2a125088fec663cc7cda0a3623373c46807cf2c281f49c34b79881ac
   languageName: node
   linkType: hard
 
@@ -14591,19 +14584,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux@npm:3.7.2":
-  version: 3.7.2
-  resolution: "redux@npm:3.7.2"
-  dependencies:
-    lodash: ^4.2.1
-    lodash-es: ^4.2.1
-    loose-envify: ^1.1.0
-    symbol-observable: ^1.0.3
-  checksum: c349b77e68d009bc530d3cb6252a6a3e43e20a6e52f9483a048b24cd2f266d9bfa6f0bbd4769d40fe36795e2f7a7a884c3ddc92c13e82efd3328890f94821091
-  languageName: node
-  linkType: hard
-
-"redux@npm:^4.0.0":
+"redux@npm:4.2.1, redux@npm:^4.0.0":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
@@ -16109,13 +16090,6 @@ __metadata:
   bin:
     svgo: bin/svgo
   checksum: 381ba14aa782e71ab7033227634a3041c11fa3e2769aeaf0df43a08a615de61925108e34f55af6e7c5146f4a3109e78deabb4fa9d687e36d45d1f848b4e23d17
-  languageName: node
-  linkType: hard
-
-"symbol-observable@npm:^1.0.3":
-  version: 1.2.0
-  resolution: "symbol-observable@npm:1.2.0"
-  checksum: 48ffbc22e3d75f9853b3ff2ae94a44d84f386415110aea5effc24d84c502e03a4a6b7a8f75ebaf7b585780bda34eb5d6da3121f826a6f93398429d30032971b6
   languageName: node
   linkType: hard
 
