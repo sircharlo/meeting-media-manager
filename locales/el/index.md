@@ -2,34 +2,34 @@
 permalink: /en/
 ---
   
-### What is M³?
+### Τι είναι Μ3?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+**Συνάντηση Media Manager**, ή **M3** για συντομία, είναι μια εφαρμογή για Windows, macOS και Linux, που αυτόματα κατεβάζει φωτογραφίες και βίντεο που θα εξεταστούν κατά τη διάρκεια συνεδριάσεων εκκλησίας των Μαρτύρων του Ιεχωβά, σε οποιαδήποτε γλώσσα βρεθεί στο JW. rg.
 
-It features support for managing custom and recurring media, an optional synchronization feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
+Διαθέτει υποστήριξη για τη διαχείριση προσαρμοσμένων και επαναλαμβανόμενων μέσων, ένα προαιρετικό χαρακτηριστικό συγχρονισμού για μέλη της ίδιας εκκλησίας, καθώς και υποστήριξη πολλαπλών συναθροίσεων ή/και ομάδων που χρησιμοποιούν τον ίδιο λογαριασμό υπολογιστή.
 
-<sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
+<sup>Σημείωση: Το Μ3 ήταν γνωστό ως JWMMF (JW Meeting Media Fetcher), αλλά μετονομάστηκε το Μάιο του 2022.</sup>
 
-### What can M³ do?
+### Τι μπορεί να κάνει Μ3?
 
-M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+M3 σας επιτρέπει να κάνετε εύκολη και αυτόματη λήψη, συγχρονισμό, κοινή χρήση και παρουσίαση όλων των μέσων συνάντησης.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+Για τις συναντήσεις συνάθροισης **υβριδικού** ή **αυτοπροσώπως** , ο ενοποιημένος τρόπος παρουσίασης μέσων έχει όλα τα χαρακτηριστικά που απαιτούνται για την απλούστευση του έργου του κοινού μέσου με το εκκλησίασμα, συμπεριλαμβανομένων:
 
-- Media thumbnails
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
-- OBS Studio integration
+- Μικρογραφίες πολυμέσων
+- Εύκολο στη χρήση κουμπιών παύσης/αναπαραγωγής/διακοπής για τη διαχείριση της αναπαραγωγής αρχείων πολυμέσων
+- Εύκολη αναπαραγωγή μουσικής υπόκρουσης, με αυτόματη στάση πριν από την έναρξη των τακτικών προγραμματισμένων συνεδριάσεων
+- Αυτόματη εξωτερική αναγνώριση και διαχείριση οθονών
+- Ενσωμάτωση στούντιο OBS
 
-As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature.
+Όσο για τις πλήρως **απομακρυσμένες** συναθροίσεις Zoom εκκλησίας, η ενσωματωμένη λειτουργία μετατροπής MP4 του M³ σας επιτρέπει να μοιραστείτε εύκολα αρχεία πολυμέσων όλων των τύπων, χρησιμοποιώντας εγγενή λειτουργία κοινής χρήσης MP4 του Zoom.
 
-### Does M³ work in my language?
+### Μήπως M3 εργασία στη γλώσσα μου?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
+**Ναι!** Τα μέσα για συναθροίσεις των Μαρτύρων του Ιεχωβά μπορούν να κατέβουν αυτόματα σε οποιαδήποτε από τις εκατοντάδες γλώσσες που είναι διαθέσιμες στο JW.org. Η λίστα των διαθέσιμων γλωσσών ενημερώνεται δυναμικά. Το μόνο που χρειάζεται να κάνετε είναι να επιλέξετε αυτό που θέλετε.
 
-In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Επιπλέον, το Μ3 έχει μεταφραστεί σε πολλές γλώσσες, από πολλούς εθελοντές. μπορείτε επομένως να ρυθμίσετε τη γλώσσα που θα θέλατε να εμφανίζεται στη διεπαφή M3.
 
-This app is made with love and a bit of spare time. Enjoy!
+Αυτή η εφαρμογή είναι φτιαγμένη με αγάπη και λίγο ελεύθερο χρόνο. Απολαύστε το!
 
-### Screenshots
+### Οθόνες
