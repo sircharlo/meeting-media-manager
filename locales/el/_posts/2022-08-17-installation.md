@@ -1,21 +1,21 @@
 ---
-tag: Configuration
-title: Installation
+tag: Διαμόρφωση
+title: Εγκατάσταση
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+Το Μ3 δεν απαιτεί δικαιώματα διαχειριστή για εγκατάσταση ή εκτέλεση. Για να εγκαταστήσετε M3, απλά [κατεβάστε το πιο πρόσφατο πρόγραμμα εγκατάστασης]({{site.github}}/releases/latest) και εκτελέστε το.
 
-| Operating System | File to download                           |
-| ---------------- | ------------------------------------------ |
-| Windows          | `meeting-media-manager-[VERSION].exe`      |
-| macOS            | `meeting-media-manager-[VERSION].dmg`      |
-| Linux            | `meeting-media-manager-[VERSION].AppImage` |
+| Λειτουργικό Σύστημα | Αρχείο για λήψη                            |
+| ------------------- | ------------------------------------------ |
+| Παράθυρα            | `meeting-media-manager-[VERSION].exe`      |
+| macOS               | `meeting-media-manager-[VERSION].dmg`      |
+| Linux               | `meeting-media-manager-[VERSION].AppImage` |
 
-### What's next?
+### Τι είναι το επόμενο?
 
-Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
+Ρυθμίστε την εφαρμογή χρησιμοποιώντας την οθόνη [Ρυθμίσεις]({{page.lang}}/#configuration).
 
-### Trouble installing?
+### Πρόβλημα εγκατάστασης?
 
 Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.
