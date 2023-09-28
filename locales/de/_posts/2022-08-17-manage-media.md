@@ -1,43 +1,43 @@
 ---
-tag: Usage
-title: Managing media
+tag: Auslastung
+title: Medien verwalten
 ref: manage-media
 ---
 
-The media management screen allows the user to add or remove media for any given meeting, manage recurring media, and even add special media for other dates on which no meeting is normally scheduled.
+Der Medien-Verwaltungsbildschirm erlaubt es dem Benutzer, Medien für ein Meeting hinzuzufügen oder zu entfernen Verwalten Sie wiederkehrende Medien und fügen Sie sogar spezielle Medien für andere Termine, zu denen normalerweise kein Meeting geplant ist.
 
-### Managing media for any particular day
+### Verwalten von Medien für einen bestimmten Tag
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+Um Medien für ein bestimmtes Meeting oder Tag zu verwalten, klicken Sie einfach auf die Kachel des Tages auf dem Hauptbildschirm von M3. Um Medien zu verwalten, die bei jedem Meeting wiederholt werden, klicken Sie auf die Wiederkehrende Medienkachel.
 
-### Adding media
+### Medien hinzufügen
 
-Here's how to **add** media from the media management screen.
+So fügen Sie **** Medien vom Media Management Bildschirm hinzu.
 
-| Option            | Erklärung                                                                       |
-| ----------------- | ------------------------------------------------------------------------------- |
-| `Type of upload`  | Choose from one of the 3 `media types` (see below).                             |
-| `Media to add`    | Depends on the `media type` chosen (see below).                                 |
-| `Filename prefix` | Up to 6 digits can be added before the media filename(s), to help with sorting. |
-| `Media list`      | This shows the currently planned media for the selected date tile.              |
+| Option              | Erklärung                                                                                          |
+| ------------------- | -------------------------------------------------------------------------------------------------- |
+| `Upload-Typ`        | Wählen Sie aus einem der 3 `Medientypen` (siehe unten).                                            |
+| `Medien hinzufügen` | Abhängig vom gewählten `Medientyp` (siehe unten).                                                  |
+| `Dateinamen-Präfix` | Bis zu 6 Ziffern können vor dem Dateinamen(n) hinzugefügt werden, um bei der Sortierung zu helfen. |
+| `Medienliste`       | Dies zeigt die aktuell geplanten Medien für die ausgewählte Datumsflippe.                          |
 
-In the `Media to add` field, you'll be presented with different options, depending on the media type selected.
+In den `-Medien, um ein Feld` hinzuzufügen, werden Ihnen verschiedene Optionen angezeigt, abhängig vom ausgewählten Medientyp.
 
-| `Media type` | The `Media to add` field                                                                                                                                                                                                                                                                                                                                                                    |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Lied`       | ... shows a menu with all Kingdom song videos from the *sjjm* series, in the media language. Choose this option for example to add a song for the public talk, or for circuit overseer visits. <br><br> The selected song will be automatically downloaded from JW.org, in the congregation or group's language, as configured in the [Settings]({{page.lang}}/#configuration). |
-| `JWPUB`      | ... allows you to browse to (or drag and drop) a JWPUB file. <br><br> You'll then be prompted to select the section, or chapter, from which you'd like to add media. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here.      |
-| `Eigene`     | ... allows you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                        |
-| `JW.ORG`     | ... allows you to select a video from the latest featured videos on JW.org.                                                                                                                                                                                                                                                                                                                 |
+| `Medientyp` | Die `Medien zum Hinzufügen des` Feldes                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Lied`      | ... zeigt ein Menü mit allen Kingdom Song Videos der *sjm* Serie in der Mediensprache. Wählen Sie diese Option, um zum Beispiel einen Song für den öffentlichen Vortrag oder für den Aufseher von Schaltungen hinzuzufügen. <br><br> Der ausgewählte Song wird automatisch von JW.org in der Kongregation oder der Gruppensprache heruntergeladen, wie in den [Einstellungen]({{page.lang}}/#configuration) konfiguriert.                                           |
+| `JWPUB`     | ... erlaubt es Ihnen, in eine JWPUB-Datei zu stöbern (oder zu ziehen und abzuziehen). <br><br> Sie werden dann aufgefordert, den Abschnitt oder das Kapitel auszuwählen, aus dem Sie Medien hinzufügen möchten. Dies fügt sowohl eingebettete als auch referenzierte Medien aus diesem Abschnitt in der JWPUB-Datei hinzu. <br><br> Ein Beispiel für eine häufig verwendete JWPUB-Datei ist die S-34, aber jede JWPUB-Datei kann hier verwendet werden. |
+| `Eigene`    | ... erlaubt es Ihnen, alle anderen Mediendatei(en) von Ihrem Computer zu durchsuchen (oder per Drag & Drop zu ziehen). <br><br> *Beachten Sie, dass alle PDF-und SVG-Dateien automatisch von M3 in hochauflösende Bilder umgewandelt werden.*                                                                                                                                                                                                                       |
+| `JW.ORG`    | ... erlaubt es Ihnen, ein Video aus den neuesten Videos auf JW.org auszuwählen.                                                                                                                                                                                                                                                                                                                                                                                                 |
 
-### Removing, hiding and showing media
+### Entfernen, verstecken und anzeigen von Medien
 
-To **remove**, **hide**, or **show** media, simply find the media file you don't want, and click on the relevant icon.
+Um **zu entfernen,**, ****verstecken oder **** Medien anzeigen finden Sie einfach die Mediendatei, die Sie nicht wollen, und klicken Sie auf das entsprechende Symbol.
 
-| A red 🟥 (delete) icon                                          | A ☑️ (checked checkbox) icon                                                                                                                                 | A 🔲 (unchecked checkbox) icon                                                                                                                                                |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The media file was added to that day's media by you or the VO. | The media file is referenced in the meeting's material. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file is referenced in the meeting's material. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
+| Ein rotes 🟥 (Löschen) Symbol                                           | Ein ☑️ (Checkbox) Symbol                                                                                                                                             | Ein 🔲 (deaktiviertes Kontrollkästchen) Symbol                                                                                                                                                              |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Die Mediendatei wurde von Ihnen oder der VO zu diesem Tag hinzugefügt. | Die Mediendatei wird im Sitzungsmaterial referenziert. <br><br> It *wird* von JW.org heruntergeladen oder aus der entsprechenden Publikation extrahiert. | Die Mediendatei wird im Sitzungsmaterial referenziert. <br><br> Es wurde von Ihnen oder dem VO versteckt, so dass es *nicht* heruntergeladen oder in die Medien des Meetings hinzugefügt wird. |
 
-### Screenshots of the media management screen
+### Screenshots von der Medienverwaltungsseite
 
 {% include screenshots/manage-media.html lang=site.data.de %}
