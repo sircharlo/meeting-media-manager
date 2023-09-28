@@ -1,38 +1,38 @@
 ---
-tag: Help
-title: Technical usage notes
+tag: Βοήθεια
+title: Τεχνικές σημειώσεις χρήσης
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+Η εφαρμογή θα πρέπει να λειτουργεί όπως είναι στους περισσότερους σύγχρονους υπολογιστές που χρησιμοποιούν Windows, Linux ή macOS.
 
-### Windows: Installation and first launch
+### Windows: Εγκατάσταση και πρώτη εκκίνηση
 
-On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+Ανοίγοντας το πρόγραμμα εγκατάστασης, μπορεί να λάβετε ένα [σφάλμα](assets/img/other/win-smartscreen.png) υποδεικνύοντας ότι το "Windows SmartScreen εμπόδισε μια άγνωστη εφαρμογή από την εκκίνηση". Αυτό οφείλεται στο ότι η εφαρμογή δεν έχει υψηλό αριθμό λήψεων και συνεπώς δεν είναι ρητά "αξιόπιστη" από τα Windows. Για να πάρετε γύρω από αυτό, απλά κάντε κλικ στο "Περισσότερες πληροφορίες", τότε "Run ούτως ή άλλως".
 
-### Linux: Installation and first launch
+### Linux: Εγκατάσταση και πρώτη εκκίνηση
 
-As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
+Σύμφωνα με την [επίσημη τεκμηρίωση AppImage](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), εάν η εφαρμογή αποτύχει να ανοίξει σωστά, επιβεβαιώστε την έξοδο της ακόλουθης εντολής:
 
 `sysctl kernel.unprivileged_userns_clone`
 
-If the output is `0`, then the AppImage will **not** run unless you run the following command, followed by a reboot:
+Αν η έξοδος είναι `0`, then the AppImage will **not** run unless you run the following command, followed by a reboot:
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Make sure you read up on [what this entails](https://lwn.net/Articles/673597/) before you do this.
+Βεβαιωθείτε ότι έχετε διαβάσει στο [τι συνεπάγεται αυτό](https://lwn.net/Articles/673597/) πριν το κάνετε αυτό.
 
-### macOS: Installation and first launch
+### macOS: Εγκατάσταση και πρώτη εκκίνηση
 
-If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or because "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
+Εάν κατά την εκκίνηση της εφαρμογής, λαμβάνετε μια προειδοποίηση ότι η εφαρμογή δεν μπορεί να ανοιχτεί, είτε επειδή "δεν λήφθηκε από το App store" ή επειδή "ο προγραμματιστής δεν μπορεί να επαληθευτεί", τότε αυτή η σελίδα υποστήριξης [Apple](https://support.apple.com/en-ca/HT202491) θα σας βοηθήσει να ξεπεράσετε αυτό.
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
+Εάν λάβετε ένα μήνυμα που υποδεικνύει ότι "δεν έχετε δικαίωμα να ανοίξετε την εφαρμογή", τότε δοκίμασε κάποιες λύσεις από την [αυτή τη σελίδα](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
 ### macOS: Auto-update
 
-Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for macOS users when an update is available:
+Σε αντίθεση με τα Windows και το Linux, η λειτουργία αυτόματης ενημέρωσης είναι **όχι** που υλοποιείται στο macOS και για τεχνικούς λόγους πιθανότατα δεν θα είναι ποτέ. Ωστόσο, ένα από τα δύο πράγματα θα συμβεί για τους χρήστες του macOS όταν είναι διαθέσιμη μια ενημέρωση:
 
-- M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
-- If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
+- M3 θα προσπαθήσει να κατεβάσετε το πακέτο ενημέρωσης και να το ανοίξετε αυτόματα, μετά την οποία ο χρήστης θα πρέπει να ολοκληρώσει χειροκίνητα την εγκατάσταση της ενημέρωσης M3 σύροντας και ρίχνοντας την ενημερωμένη εφαρμογή στο φάκελο Εφαρμογές τους. Στη συνέχεια, θα είναι σε θέση να ξεκινήσει το πρόσφατα ενημερωμένο M3 από το φάκελο Εφαρμογές τους ως συνήθως.
+- Εάν το προηγούμενο βήμα αποτύχει σε οποιοδήποτε στάδιο, M3 θα εμφανίσει μια επίμονη ειδοποίηση που δείχνει ότι μια ενημερωμένη έκδοση είναι διαθέσιμη, με ένα σύνδεσμο προς την ίδια την ενημέρωση. Μια ειδοποίηση κόκκινου παλμού θα εμφανιστεί επίσης στο κουμπί ρυθμίσεων στην κύρια οθόνη του M3. Ο αριθμός έκδοσης M3 στην οθόνη ρυθμίσεων θα μετατραπεί σε ένα κουμπί που, μόλις πατηθεί, ανοίγει αυτόματα τη σελίδα λήψης της τελευταίας έκδοσης.
