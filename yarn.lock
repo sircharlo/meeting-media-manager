@@ -3374,9 +3374,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/electron@npm:^4.10.0":
-  version: 4.11.0
-  resolution: "@sentry/electron@npm:4.11.0"
+"@sentry/electron@npm:^4.11.1":
+  version: 4.11.1
+  resolution: "@sentry/electron@npm:4.11.1"
   dependencies:
     "@sentry/browser": 7.68.0
     "@sentry/core": 7.68.0
@@ -3386,7 +3386,7 @@ __metadata:
     deepmerge: 4.3.0
     lru_map: ^0.3.3
     tslib: ^2.5.0
-  checksum: 82c1adbadef60d16d85a6bc2d66c19055f7b81c1305e5a70496c4844b01b9490a0daee78a2a07d055d05bae25e8d2ab332e8a550d0914817603342c5e108269c
+  checksum: 92b00075ca114638fd1786d17b6c2875ef39200f4d42c14df0945600adf67f47203f28ac9c7c6628b100300aa56890bac8edc7d5123aed93f452e2be7526024f
   languageName: node
   linkType: hard
 
@@ -11318,7 +11318,7 @@ __metadata:
     "@nuxtjs/vuetify": ^1.12.3
     "@panzoom/panzoom": ^4.5.1
     "@playwright/test": ^1.38.1
-    "@sentry/electron": ^4.10.0
+    "@sentry/electron": ^4.11.1
     "@sentry/vue": ^7.72.0
     "@sentry/webpack-plugin": ^1.20.1
     "@types/fluent-ffmpeg": ^2.1.22
