@@ -38,7 +38,7 @@ jobs:
           persist-credentials: false
       - name: 'Automated Version Bump'
         id: version-bump
-        uses: 'phips28/gh-action-bump-version@v10.0.1'
+        uses: 'phips28/gh-action-bump-version@v10.0.4'
         with:
           version-type:  prerelease
           preid: 'beta'
