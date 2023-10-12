@@ -26,7 +26,13 @@ Se till att du läser på [vad detta innebär](https://lwn.net/Articles/673597/)
 
 Om du när du startar appen får en varning om att appen inte kan öppnas, antingen för att "den inte laddades ner från App Store" eller för att "utvecklaren inte kan verifieras", så hjälper denna [Apples supportsida](https://support.apple.com/en-ca/HT202491) dig att komma förbi det.
 
-Om du får ett meddelande som indikerar att du "inte har behörighet att öppna programmet", försök med några lösningar från [denna sida](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
+If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), for example running the following command in `Terminal.app`:
+
+`codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
+
+### macOS: Issues with audio or microphone permissions in macOS Sonoma
+
+Since macOS Sonoma, some users might encounter an issue where M³ repeatedly gives an error message indicating that it needs access to the microphone. Executing the following command in `Terminal.app` has resolved the issue for some:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 

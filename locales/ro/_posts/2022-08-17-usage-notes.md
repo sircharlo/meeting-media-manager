@@ -26,7 +26,13 @@ Asigură-te că ai citit pe [ce implică](https://lwn.net/Articles/673597/) îna
 
 Dacă la lansarea aplicației, primiți un avertisment că aplicația nu poate fi deschisă, fie pentru că "nu a fost descărcat din magazinul de aplicații" sau pentru că "dezvoltatorul nu poate fi verificat", apoi acest [Pagina de suport Apple](https://support.apple.com/en-ca/HT202491) vă va ajuta să depășiți acest lucru.
 
-Dacă primiți un mesaj care indică faptul că „nu aveți permisiunea de a deschide aplicația”, apoi încercați niște soluții de la [această pagină](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860).
+If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), for example running the following command in `Terminal.app`:
+
+`codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
+
+### macOS: Issues with audio or microphone permissions in macOS Sonoma
+
+Since macOS Sonoma, some users might encounter an issue where M³ repeatedly gives an error message indicating that it needs access to the microphone. Executing the following command in `Terminal.app` has resolved the issue for some:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
