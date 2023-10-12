@@ -1468,13 +1468,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime-corejs3@npm:7.23.1":
-  version: 7.23.1
-  resolution: "@babel/runtime-corejs3@npm:7.23.1"
+"@babel/runtime-corejs3@npm:7.23.2":
+  version: 7.23.2
+  resolution: "@babel/runtime-corejs3@npm:7.23.2"
   dependencies:
     core-js-pure: ^3.30.2
     regenerator-runtime: ^0.14.0
-  checksum: 5d52b0cc8b5d243e67cf29c584d15acdc0c89b64de4a3fe1cb8a83b84b64a5621802e36931f93ca696cb637884abd11c8514615d890a4edf057ec4464f73915d
+  checksum: 922f25c47996a8af604cea82441e41be8b11910e96c662511e54120078f4c64258c045a28a311467a8f14a0c17f46a1f057f7c0501e567869a4343a6ce017962
   languageName: node
   linkType: hard
 
@@ -11303,7 +11303,7 @@ __metadata:
   resolution: "meeting-media-manager@workspace:."
   dependencies:
     "@babel/core": 7.23.0
-    "@babel/runtime-corejs3": 7.23.1
+    "@babel/runtime-corejs3": 7.23.2
     "@electron/asar": ^3.2.7
     "@fortawesome/fontawesome-svg-core": ^6.4.2
     "@fortawesome/free-regular-svg-icons": ^6.4.2
