@@ -24,15 +24,15 @@ Muista lukea [mitä tämä pitää sisällään](https://lwn.net/Articles/673597
 
 ### macOS: Asennus ja ensimmäinen käynnistys
 
-Jos saat sovelluksen käynnistämisen yhteydessä varoituksen, että sovellusta ei voi avata, joko siksi, että "se ei ole ladattu App Storesta" tai koska "kehittäjää ei voida vahvistaa", tämä [Applen tukisivu](https://support.apple.com/en-ca/HT202491) auttaa sinua pääsemään ohi että.
+Jos saat sovelluksen käynnistämisen yhteydessä varoituksen, että sovellusta ei voi avata, joko siksi, että "se ei ole ladattu App Storesta" tai koska "kehittäjää ei voida vahvistaa", tämä [Applen tukisivu](https://support.apple.com/en-ca/HT202491) auttaa ohittamaan virheen.
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), for example running the following command in `Terminal.app`:
+Jos saat viestin, joka ilmoittaa, että sinulla ei ole oikeutta avata sovellusta, kokeile joitain ratkaisuja osoitteesta [tästä](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), esimerkiksi käyttämällä seuraavaa komentoa `Terminal.app`:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Issues with audio or microphone permissions in macOS Sonoma
+### macOS: Ongelmat, jotka liittyvät ääni- tai mikrofonien käyttöoikeuksiin macOS Sonomassa
 
-Since macOS Sonoma, some users might encounter an issue where M³ repeatedly gives an error message indicating that it needs access to the microphone. Executing the following command in `Terminal.app` has resolved the issue for some:
+MacOS Sonomasta lähtien, jotkut käyttäjät saattavat kohdata ongelman, jossa M³ toistuvasti antaa virheviestin, joka osoittaa, että se tarvitsee pääsyn mikrofoniin. Seuraavan komennon suorittaminen `Terminal.app` on ratkaissut ongelman joillekin:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
