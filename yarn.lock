@@ -3973,13 +3973,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sql.js@npm:^1.4.5":
-  version: 1.4.5
-  resolution: "@types/sql.js@npm:1.4.5"
+"@types/sql.js@npm:^1.4.6":
+  version: 1.4.6
+  resolution: "@types/sql.js@npm:1.4.6"
   dependencies:
     "@types/emscripten": "*"
     "@types/node": "*"
-  checksum: 4fe63982273108e4c12e6a44f947e9e506c986b8e84a0b54c42de61920d857b0d19d8768edfd6aa603d88cbb7be39f9185d4e9d33bc46d0fac6bb96932654898
+  checksum: cdb90b884a8deaadcccad904216c84ec4bde72b25113c53a6d5844864f6b9db9bcf1f72bcf10e12757eaeaf01e84f67f74d8108862f8b52ab1c6fcd8222bfdf6
   languageName: node
   linkType: hard
 
@@ -11306,7 +11306,7 @@ __metadata:
     "@types/fluent-ffmpeg": ^2.1.23
     "@types/heic-convert": ^1.2.0
     "@types/lodash.clonedeep": ^4.5.8
-    "@types/sql.js": ^1.4.5
+    "@types/sql.js": ^1.4.6
     "@xpda-dev/core": ^0.1.6
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
