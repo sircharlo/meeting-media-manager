@@ -3699,10 +3699,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/heic-convert@npm:^1.2.0":
-  version: 1.2.1
-  resolution: "@types/heic-convert@npm:1.2.1"
-  checksum: d8819b0994ebd83924329afdcd92009382fabace0094ccfc58bd8a6fde83e84443fa98a309aae86b51ce16a2bd51d0b9b3d23f22d3b0a8c061848e2720a94f80
+"@types/heic-convert@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@types/heic-convert@npm:1.2.2"
+  checksum: 2489f500f9ebce822dad4f3dd80fb5a1d3990bd62bb10f765934e0c3fab921b2dbcf2f12910c9203768ac6f3cd98300d06ead63bf966669096b2cb17bf249ed2
   languageName: node
   linkType: hard
 
@@ -11304,7 +11304,7 @@ __metadata:
     "@sentry/vue": ^7.74.1
     "@sentry/webpack-plugin": ^1.20.1
     "@types/fluent-ffmpeg": ^2.1.23
-    "@types/heic-convert": ^1.2.0
+    "@types/heic-convert": ^1.2.2
     "@types/lodash.clonedeep": ^4.5.8
     "@types/sql.js": ^1.4.6
     "@xpda-dev/core": ^0.1.6
