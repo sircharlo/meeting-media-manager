@@ -18,4 +18,4 @@ ref: installation
 
 ### Πρόβλημα εγκατάστασης?
 
-Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.
+Ελέγξτε τις [Σημειώσεις τεχνικής χρήσης]({{page.lang}}/#usage-notes) για βοήθεια.
