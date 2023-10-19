@@ -78,7 +78,7 @@
     "@types/fluent-ffmpeg": "^2.1.23",
     "@types/heic-convert": "^1.2.2",
     "@types/lodash.clonedeep": "^4.5.8",
-    "@types/sql.js": "^1.4.6",
+    "@types/sql.js": "^1.4.7",
     "@xpda-dev/core": "^0.1.6",
     "@xpda-dev/electron-builder": "^0.2.1",
     "@xpda-dev/electron-launcher": "^0.3.0",
