@@ -79,4 +79,4 @@ See the [Congregation sync]({{page.lang}}/#congregation-sync) section for detail
 
 ### Screenshots of the settings screen
 
-{% include screenshots/configuration.html lang=site.data.en %}
+{% include screenshots/configuration.html lang=site.data.af %}

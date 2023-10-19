@@ -1,43 +1,43 @@
 {
   "lang": "ro",
   "name": "Română",
-  "language": "Language:",
-  "search": "Filter by keyword",
+  "language": "Limbă:",
+  "search": "Filtrează după cuvântul cheie",
   "shared": {
-    "explanation": "Explanation",
-    "option": "Option",
+    "explanation": "Explicație",
+    "option": "Opţiune",
     "optionsApp": "Configurarea aplicației",
     "optionsCongSync": "Configurare sincronizare congregație",
     "optionsMedia": "Configurare materiale media",
     "optionsMeetings": "Configurare întrunire",
     "password": "Parolă",
     "port": "Port",
-    "setting": "Setting"
+    "setting": "Setare"
   },
   "home": {
-    "expand": "Expand all articles",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
-    "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
+    "expand": "Extinde toate articolele",
+    "collapse": "Restrânge toate articolele",
+    "syncInProgress": "Întâlnire sincronizare media în curs",
+    "mainScreen": "Ecranul principal",
+    "chooseWeek": "Alege o săptămână",
     "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "musicPlaying": "Muzică pre- și post-întâlnire redare"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgAddSong": "Adăugarea unui cântec pentru o discuție publică",
+    "imgAddPic": "Adăugarea unei imagini adiționale",
+    "imgImportJWPUB": "Importă fișiere dintr-o secțiune într-un fișier JWPUB",
+    "imgPreviewJWPUB": "Previzualizarea fișierelor media dintr-un fișier JWPUB înainte de import",
+    "imgRename": "Redenumirea unui fişier media"
   },
   "present-media": {
-    "imgButton": "Blue play button to enter media controller mode",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgButton": "Buton albastru pentru a intra în modul controler media",
+    "imgSelectMeeting": "Selectarea unei întâlniri pentru care să fie afișate fișierele media",
+    "imgBG": "Fundal media implicit, cu yeartext generat automat",
+    "imgMediaList": "Lista fișierelor media care sunt gata să fie prezentate",
+    "imgStandby": "Prezentarea M3 media în modul standby",
+    "imgDisplayPic": "Afişare imagine",
+    "imgPlayVideo": "Redarea unui videoclip",
+    "imgVideoScrub": "Trecerea la o anumită perioadă într-un videoclip"
   }
 }

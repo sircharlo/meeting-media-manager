@@ -1,16 +1,16 @@
 {
-  "lang": "en",
-  "name": "English",
-  "language": "Language:",
+  "lang": "af",
+  "name": "Afrikaans",
+  "language": "Taal:",
   "search": "Filter by keyword",
   "shared": {
-    "explanation": "Explanation",
-    "option": "Option",
+    "explanation": "Verduideliking",
+    "option": "Opsie",
     "optionsApp": "Application setup",
     "optionsCongSync": "Congregation sync setup",
     "optionsMedia": "Media setup",
     "optionsMeetings": "Meeting setup",
-    "password": "Password",
+    "password": "Wagwoord",
     "port": "Port",
     "setting": "Setting"
   },
