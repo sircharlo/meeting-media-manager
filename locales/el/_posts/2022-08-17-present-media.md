@@ -144,4 +144,4 @@ ref: present-media
 
 ### Στιγμιότυπα της λειτουργίας παρουσίασης
 
-{% include screenshots/present-media.html lang=site.data.en %}
+{% include screenshots/present-media.html lang=site.data.el %}
