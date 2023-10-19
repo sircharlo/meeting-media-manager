@@ -41,6 +41,10 @@ defaults:
     values:
       lang: 'de'
   - scope:
+      path: 'locales/el/**/*'
+    values:
+      lang: 'el'
+  - scope:
       path: 'locales/en/**/*'
     values:
       lang: 'en'
