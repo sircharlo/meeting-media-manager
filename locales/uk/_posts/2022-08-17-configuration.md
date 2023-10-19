@@ -1,5 +1,5 @@
 ---
-tag: Налаштування
+tag: Конфігурація
 title: Налаштування
 ref: configuration
 ---
