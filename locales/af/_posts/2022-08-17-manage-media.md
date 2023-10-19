@@ -14,7 +14,7 @@ To manage media for a certain meeting or day, simply click on that day's tile on
 
 Here's how to **add** media from the media management screen.
 
-| Option            | Explanation                                                                     |
+| Opsie             | Verduideliking                                                                  |
 | ----------------- | ------------------------------------------------------------------------------- |
 | `Type of upload`  | Choose from one of the 3 `media types` (see below).                             |
 | `Media to add`    | Depends on the `media type` chosen (see below).                                 |
