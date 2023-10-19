@@ -1,4 +1,5 @@
 const DAYJS_LOCALES = [
+  'af',
   'de',
   'el',
   'en',
@@ -26,6 +27,13 @@ const DAYJS_LOCALES = [
 const STALE_LANGS = []
 
 const LOCALES = [
+  {
+    code: 'af',
+    iso: 'af-ZA',
+    file: 'af.json',
+    jw: 'AF',
+    name: 'Afrikaans (Afrikaans)',
+  },
   {
     code: 'de',
     iso: 'de-DE',
