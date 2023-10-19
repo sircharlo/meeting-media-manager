@@ -1,6 +1,6 @@
 ---
-tag: Help
-title: Technical usage notes
+tag: Hulp
+title: Tegniese verbruiks notas
 ref: usage-notes
 ---
 
