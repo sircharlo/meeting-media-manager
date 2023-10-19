@@ -26,13 +26,13 @@ ref: usage-notes
 
 Εάν κατά την εκκίνηση της εφαρμογής, λαμβάνετε μια προειδοποίηση ότι η εφαρμογή δεν μπορεί να ανοιχτεί, είτε επειδή "δεν λήφθηκε από το App store" ή επειδή "ο προγραμματιστής δεν μπορεί να επαληθευτεί", τότε αυτή η σελίδα υποστήριξης [Apple](https://support.apple.com/en-ca/HT202491) θα σας βοηθήσει να ξεπεράσετε αυτό.
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), for example running the following command in `Terminal.app`:
+Εάν λάβετε ένα μήνυμα που υποδεικνύει ότι "δεν έχετε δικαίωμα να ανοίξετε την εφαρμογή", τότε δοκιμάστε κάποιες λύσεις από [αυτή τη σελίδα](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), για παράδειγμα εκτελέστε την ακόλουθη εντολή στο `Terminal.app`:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Issues with audio or microphone permissions in macOS Sonoma
+### macOS: Θέματα με δικαιώματα ήχου ή μικροφώνου στο macOS Sonoma
 
-Since macOS Sonoma, some users might encounter an issue where M³ repeatedly gives an error message indicating that it needs access to the microphone. Executing the following command in `Terminal.app` has resolved the issue for some:
+Από το macOS Sonoma, ορισμένοι χρήστες μπορεί να αντιμετωπίσουν ένα πρόβλημα όπου το M³ επανειλημμένα δίνει ένα μήνυμα σφάλματος που δείχνει ότι χρειάζεται πρόσβαση στο μικρόφωνο. Η εκτέλεση της ακόλουθης εντολής στο `Terminal.app` έχει επιλύσει το πρόβλημα για κάποιους:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
