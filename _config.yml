@@ -37,6 +37,10 @@ defaults:
     values:
       output: false
   - scope:
+      path: 'locales/af/**/*'
+    values:
+      lang: 'af'
+  - scope:
       path: 'locales/de/**/*'
     values:
       lang: 'de'
