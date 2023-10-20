@@ -1,12 +1,12 @@
 ---
-tag: Usage
-title: Managing media
+tag: Gebruik
+title: Media bestuur
 ref: manage-media
 ---
 
-The media management screen allows the user to add or remove media for any given meeting, manage recurring media, and even add special media for other dates on which no meeting is normally scheduled.
+Die media bestuur skerm laat die gebruiker toe om media weg te neem of by te sit vir enige gegewe vergadering, herhalende media te bestuur en ook om spesiale media vir ander datums waarop daar nie vergaderings geskeduleer is by te voeg.
 
-### Managing media for any particular day
+### Bestuur van media vir enige gegewe dag
 
 To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
 
