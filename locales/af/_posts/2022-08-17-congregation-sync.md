@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: Congregation sync
+title: Gemeente sync
 ref: congregation-sync
 ---
 
