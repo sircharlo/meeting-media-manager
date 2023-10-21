@@ -1,5 +1,5 @@
 ---
-permalink: /en/
+permalink: /rmn-x-rmg/
 ---
   
 ### What is M³?
