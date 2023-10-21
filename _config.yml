@@ -93,6 +93,10 @@ defaults:
     values:
       lang: 'pt-PT'
   - scope:
+      path: 'locales/rmn-x-rmg/**/*'
+    values:
+      lang: 'rmn-x-rmg'
+  - scope:
       path: 'locales/ro/**/*'
     values:
       lang: 'ro'
