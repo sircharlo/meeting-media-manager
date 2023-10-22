@@ -1,5 +1,19 @@
 # Changelog
 
+## 23.10.0
+
+### New or improved features
+
+- New language: Afrikaans (thanks [@DickyBird69](https://github.com/DickyBird69)!)
+- New language: Greek (thanks [@jimrp](https://github.com/jimrp)!)
+- New language: Romany (Southern Greece) (thanks [@jimrp](https://github.com/jimrp)!)
+
+### Bug fixes
+
+- Correctly fetch some Watchtower footnotes
+- Correctly get Meeting Workbook headings when an uneven result is returned
+- Download media in correct order for some languages
+
 ## 23.8.1
 
 ### Bug fixes
