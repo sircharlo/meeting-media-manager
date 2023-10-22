@@ -22,6 +22,11 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: '@nuxtjs/i18n'
         update-types: ['version-update:semver-major']
+      - dependency-name: '@sentry/electron'
+        update-types:
+          ['version-update:semver-minor', 'version-update:semver-major']
+      - dependency-name: '@sentry/webpack-plugin'
+        update-types: ['version-update:semver-major']
       - dependency-name: 'css-loader'
         update-types: ['version-update:semver-major']
       - dependency-name: 'eslint-webpack-plugin'
