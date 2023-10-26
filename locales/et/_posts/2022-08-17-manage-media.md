@@ -4,39 +4,41 @@ title: Meedia haldamine
 ref: manage-media
 ---
 
-Meediumihalduse ekraan võimaldab kasutajal lisada või eemaldada meediat mis tahes koosoleku jaoks, hallata korduvaid meediat ja isegi lisada spetsiaalseid meediat muudeks kuupäevadeks, mil koosolekuid tavaliselt ei planeerita.
+Meediahalduse aken võimaldab kasutajal lisada või eemaldada meediat mis tahes koosoleku jaoks, hallata korduvaid meediat ja isegi lisada spetsiaalset meediat muudeks kuupäevadeks, mil koosolekuid tavaliselt ei planeerita.
 
-### Meedia haldamine konkreetse päeva jaoks
+### Meedia haldamine konkreetse koosoleku jaoks
 
 Meedia haldamiseks konkreetsel koosoolekul või päeval, vajuta lihtsalt selle päeva ruudule M³-e avaekraanil. Et hallata korduvkasutatavat meediat, vajuta Korduv meedia ruudule.
 
 ### Meeda lisamine
 
-Siit saate teada, kuidas **lisada** meediat meediahalduse ekraanilt.
+Siit saate teada, kuidas **lisada** meediat meediahalduse aknas.
 
-| Võimalus             | Selgitus                                                                       |
+| Valikud              | Selgitus                                                                       |
 | -------------------- | ------------------------------------------------------------------------------ |
 | `Üleslaadimise tüüp` | Valige üks kolmest `meedia tüübist` (vaata allpool).                           |
-| `Meedia lisamiseks`  | Oleneb valitud `meedia tüübist` (vt allpool).                                  |
+| `Lisa meediafailid`  | Oleneb valitud `meedia tüübist` (vt allpool).                                  |
 | `Failinime eesliide` | Meediafaili nime(de) ette saab sortimise hõlbustamiseks lisada kuni 6 numbrit. |
 | `Meedia nimekiri`    | See näitab valitud kuupäeva jaoks praegu kavandatud meediat.                   |
 
-Väljal `Meedia lisamiseks` kuvatakse teile sõltuvalt valitud meedia tüübist erinevad valikud.
+Väljal `Lisa meediafailid` kuvatakse teile sõltuvalt valitud meedia tüübist erinevad valikud.
 
-| `Meedia tüüp`       | Väli `Meedia lisamiseks`                                                                                                                                                                                                                                                                                                                                                             |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Laul`              | ... shows a menu with all Kingdom song videos from the *sjjm* series, in the media language. Vali see, kui soovid lisada avaliku kõne avalaulu või laule RÜ külastuseks. <br><br>Valitud laul laaditakse autmaatselt alla JW.org lehelt, seadistatud keeles, nii kuidas see on valitud [Seaded]({{page.lang}}/#configuration) lehel.                                     |
-| `JWPUB`             | ... allows you to browse to (or drag and drop) a JWPUB file. <br><br>Sellisel juhul palutakse sul valida, millisest osast, või peatükist sa soovid meediat lisada. This will add both embedded and referenced media from that section in the JWPUB file. <br><br> An example of a commonly used JWPUB file is the S-34, but any JWPUB file can be used here. |
-| `Kohandatud sätted` | ... allows you to browse to (or drag and drop) any other media file(s) from your computer. <br><br> *Note that all PDF and SVG files will automatically be converted into high-resolution images by M³.*                                                                                                                                                                 |
-| `JW.ORG`            | ... allows you to select a video from the latest featured videos on JW.org.                                                                                                                                                                                                                                                                                                          |
+... võimaldab sul valida (või lohistada) teisi meediafaile sinu arvutist. <br><br>*Pane tähele, et kõik PDF ja SVG failid muudetakse M³ rakenduses automaatselt kõrgeresolutsioonilisteks piltideks</td> </tr> 
 
-### Meediumi eemaldamine, peitmine ja näitamine
+</tbody> </table> 
 
-Meediumite **eemaldamiseks**, **peitmiseks** või **kuvamiseks** otsige lihtsalt üles meediumifail, mida te ei soovi, ja klõpsake vastaval ikoonil.
+
+
+### Meedia eemaldamine, peitmine ja näitamine
+
+Meedia **eemaldamiseks**, **peitmiseks** või **näitamiseks** otsige lihtsalt üles meediafail, mida te ei soovi, ja klõpsake vastaval ikoonil.
 
 | Punane 🟥 (kustutamise) ikoon                             | ☑️ (märgitud ruut) ikoon                                                                                                                                     | 🔲 (märkimata ruut) ikoon                                                                                                                                                     |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Meediafaili lisasite selle päeva meediasse teie või AVÜ. | The media file is referenced in the meeting's material. <br><br> It *will* be downloaded from JW.org or extracted from the relevant publication. | The media file is referenced in the meeting's material. <br><br> It was hidden by you or the VO, so it *will not* be downloaded or added to the meeting's media. |
+
+
+
 
 ### Meediumihalduskuva kuvatõmmised
 
