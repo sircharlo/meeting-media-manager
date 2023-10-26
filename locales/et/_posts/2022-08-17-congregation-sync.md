@@ -14,7 +14,7 @@ VO või tema määratud isik saab:
 
 All who are synced to the same congregation will then receive the exact same media when they click the *Update media folders* button.
 
-Pange tähele, et koguduse sünkroonimise funktsioon on täiesti valikuline.
+Pange tähele, et koguduse sünkroonimise funktsioon on valikuline.
 
 ### Kuidas see töötab
 
