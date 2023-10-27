@@ -73,7 +73,7 @@
   "errorWebdavTooManyRequests": "Serverile on saadetud liiga palju päringuid. Palun proovi hiljem uuesti.",
   "errorWUnavailable": "Vahitorni õppeväljaanne ei ole sinu keeles saadaval. Proovi määrata \"tagavara\" keel, mida sellisel juhul kasutada.",
   "errorYeartextNotFound": "Aastatekst selles keeles ei ole (veel) saadaval. Proovi määrata \"tagavara\" keel, mida sellisel juhul kasutada.",
-  "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
+  "excludeFootnotes": "Ära impordi meediat Vahitorni märkustest",
   "excludeLffImages": "Ära kuva <em> Mõttekas Elu</em> pilte, kui ei ole koguduse piibliuurimise osa",
   "excludeTh": "Ära arvesta <em>th</em> brošüürist kogu meediat",
   "fetchMedia": "Värskenda meediakaustu",
