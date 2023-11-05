@@ -330,6 +330,7 @@ const plugin: Plugin = (
           mmItem.NextParagraphOrdinal = result[0].TargetParagraphOrdinal
       }
     }
+    const mediaLang = $getPrefs('media.lang') as string
     const fallbackLang = $getPrefs('media.langFallback') as string
     try {
       // Get Video file
@@ -337,8 +338,6 @@ const plugin: Plugin = (
         mmItem.MimeType.includes('audio') ||
         mmItem.MimeType.includes('video')
       ) {
-        const mediaLang = $getPrefs('media.lang') as string
-
         let json = (
           await getMediaLinks(
             {
@@ -386,6 +385,25 @@ const plugin: Plugin = (
               } as MeetingFile),
               mmItem.FilePath
             )
+
+            // mmItem.Link is not always correct (e.x. treasure imgs for TPO)
+            // See https://github.com/sircharlo/meeting-media-manager/issues/2259
+            if (
+              lang &&
+              mmItem.Link &&
+              lang !== mediaLang &&
+              !existsSync(mmItem.LocalPath)
+            ) {
+              mmItem.LocalPath = join(
+                $pubPath({
+                  BeginParagraphOrdinal: 0,
+                  title: '',
+                  url: `url_${mediaLang}.jpg`,
+                  queryInfo: mmItem,
+                } as MeetingFile),
+                mmItem.FilePath
+              )
+            }
 
             if (lang && !mmItem.Link && !existsSync(mmItem.LocalPath)) {
               mmItem.LocalPath = join(

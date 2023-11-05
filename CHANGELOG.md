@@ -1,5 +1,11 @@
 # Changelog
 
+## 23.10.1
+
+### Bug fixes
+
+- Fix edge case where mwb images would not be fetched correctly
+
 ## 23.10.0
 
 ### New or improved features
