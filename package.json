@@ -97,7 +97,7 @@
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.7",
     "electron-window-state": "^5.0.3",
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-import-resolver-typescript": "^3.6.1",
