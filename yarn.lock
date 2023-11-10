@@ -3703,12 +3703,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.clonedeep@npm:^4.5.8":
-  version: 4.5.8
-  resolution: "@types/lodash.clonedeep@npm:4.5.8"
+"@types/lodash.clonedeep@npm:^4.5.9":
+  version: 4.5.9
+  resolution: "@types/lodash.clonedeep@npm:4.5.9"
   dependencies:
     "@types/lodash": "*"
-  checksum: 7779674a1a4458c14b4c4a90424c94e48f433d4e506a254854899df3099f9b6c33ba5c63324016f077372682c5add9c8729796519c95e4dd210f7205f8108b27
+  checksum: ef85512b7dce7a4f981a818ae44d11982907e1f26b5b26bedf0957c35e8591eb8e1d24fa31ca851d4b40e0a1ee88563853d762412691fe5f357e8335cead2325
   languageName: node
   linkType: hard
 
@@ -11248,7 +11248,7 @@ __metadata:
     "@sentry/webpack-plugin": ^1.20.1
     "@types/fluent-ffmpeg": ^2.1.23
     "@types/heic-convert": ^1.2.2
-    "@types/lodash.clonedeep": ^4.5.8
+    "@types/lodash.clonedeep": ^4.5.9
     "@types/sql.js": ^1.4.8
     "@xpda-dev/core": ^0.1.6
     "@xpda-dev/electron-builder": ^0.2.1
