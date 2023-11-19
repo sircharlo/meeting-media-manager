@@ -11295,7 +11295,7 @@ __metadata:
     nuxt-webfontloader: ^1.1.0
     obs-websocket-js: ^4.0.3
     obs-websocket-js-v5: "npm:obs-websocket-js@5.0.3"
-    pdfjs-dist: ^3.11.174
+    pdfjs-dist: ^4.0.189
     prettier: ^2.8.8
     sql.js: ^1.8.0
     ts-loader: ^8.4.0
@@ -12753,9 +12753,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pdfjs-dist@npm:^3.11.174":
-  version: 3.11.174
-  resolution: "pdfjs-dist@npm:3.11.174"
+"pdfjs-dist@npm:^4.0.189":
+  version: 4.0.189
+  resolution: "pdfjs-dist@npm:4.0.189"
   dependencies:
     canvas: ^2.11.2
     path2d-polyfill: ^2.0.1
@@ -12764,7 +12764,7 @@ __metadata:
       optional: true
     path2d-polyfill:
       optional: true
-  checksum: 62f5a64ca0b2dbc855701ebf9a65c3e48c3c9aa5d64c50eb42bb9ff50a326f3eddab7f2a134ef0398398b1ccff9d842935b9f31358c9103bdc71406632d1a7fa
+  checksum: eac2771084e6228eb8819969a25c839574efcb845b20db48eef74982a306ab5d39b141d495a166882b9e195de852531c6bf4061cbb253dc68cd41f3b14cd398c
   languageName: node
   linkType: hard
 
