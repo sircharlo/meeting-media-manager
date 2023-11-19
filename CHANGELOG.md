@@ -1,5 +1,16 @@
 # Changelog
 
+## 23.11.0
+
+### New or improved features
+
+- Preparations for the new Meeting Workbook format
+- Skip Bearing Witness media for Circuit Overseer visits
+
+### Bug fixes
+
+- Only save Meeting Workbook headings if they are actually present
+
 ## 23.10.1
 
 ### Bug fixes
