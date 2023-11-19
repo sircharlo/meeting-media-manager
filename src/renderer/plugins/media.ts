@@ -149,9 +149,9 @@ const plugin: Plugin = (
         ) {
           return true
         }
-        // Always include header image of Live Forever lesson
+        // Always include header image of Love People lesson
         else if (
-          extract.UniqueEnglishSymbol === 'lff' &&
+          extract.UniqueEnglishSymbol === 'lmd' &&
           mmItem.BeginParagraphOrdinal === 1
         ) {
           return true
@@ -206,22 +206,15 @@ const plugin: Plugin = (
     extracts.forEach((extract) => {
       let imagesOnly = false
       const excludeLffImages = $getPrefs('media.excludeLffImages')
-      if (extract.UniqueEnglishSymbol === 'lffi') {
+      if (
+        extract.UniqueEnglishSymbol === 'lffi' ||
+        extract.UniqueEnglishSymbol === 'lff'
+      ) {
         imagesOnly = true
-      } else if (extract.UniqueEnglishSymbol === 'lff') {
-        const match = extracts.find(
-          (e) =>
-            e.UniqueEnglishSymbol === 'lff' &&
-            e.BeginParagraphOrdinal !== extract.BeginParagraphOrdinal
-        )
-        imagesOnly =
-          !!match && extract.BeginParagraphOrdinal < match.BeginParagraphOrdinal
       }
 
       const skipCBS =
-        $isCoWeek(baseDate) &&
-        extract.UniqueEnglishSymbol === 'lff' &&
-        !imagesOnly
+        $isCoWeek(baseDate) && extract.UniqueEnglishSymbol === 'bt'
 
       if (!skipCBS && (!imagesOnly || !excludeLffImages)) {
         promises.push(extractMediaItems(extract, setProgress, imagesOnly))
@@ -1191,23 +1184,25 @@ const plugin: Plugin = (
         db,
         'SELECT FeatureTitle FROM Document WHERE Class = 10 ORDER BY FeatureTitle'
       ) as { FeatureTitle: string }[]
-      let livingTitle = living[0].FeatureTitle
+      let livingTitle = living[0]?.FeatureTitle
       if (living.length > 1) {
-        livingTitle = living[Math.floor(living.length / 2)].FeatureTitle
+        livingTitle = living[Math.floor(living.length / 2)]?.FeatureTitle
       }
 
-      try {
-        writeJsonSync(
-          join($pubPath(), 'mwb', 'headings.json'),
-          {
-            treasures: treasures.FeatureTitle,
-            apply: apply.FeatureTitle,
-            living: livingTitle,
-          },
-          { spaces: 2 }
-        )
-      } catch (error) {
-        $log.error(error)
+      if (treasures?.FeatureTitle && apply?.FeatureTitle && livingTitle) {
+        try {
+          writeJsonSync(
+            join($pubPath(), 'mwb', 'headings.json'),
+            {
+              treasures: treasures.FeatureTitle,
+              apply: apply.FeatureTitle,
+              living: livingTitle,
+            },
+            { spaces: 2 }
+          )
+        } catch (error) {
+          $log.error(error)
+        }
       }
 
       // Get document multimedia and add them to the media list
