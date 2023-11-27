@@ -1,0 +1,43 @@
+{
+  "lang": "tl",
+  "name": "Tagalog",
+  "language": "Language:",
+  "search": "Filter by keyword",
+  "shared": {
+    "explanation": "Explanation",
+    "option": "Option",
+    "optionsApp": "Application setup",
+    "optionsCongSync": "Congregation sync setup",
+    "optionsMedia": "Media setup",
+    "optionsMeetings": "Meeting setup",
+    "password": "Password",
+    "port": "Port",
+    "setting": "Setting"
+  },
+  "home": {
+    "expand": "Expand all articles",
+    "collapse": "Collapse all articles",
+    "syncInProgress": "Meeting media sync in progress",
+    "mainScreen": "Main screen",
+    "chooseWeek": "Choose a week",
+    "syncComplete": "Sync complete!",
+    "musicPlaying": "Pre- and post-meeting music playing"
+  },
+  "manage-media": {
+    "imgAddSong": "Adding a song for a public talk",
+    "imgAddPic": "Adding an additional picture",
+    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
+    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
+    "imgRename": "Renaming a media file"
+  },
+  "present-media": {
+    "imgButton": "Blue play button to enter media controller mode",
+    "imgSelectMeeting": "Selecting a meeting for which to display media",
+    "imgBG": "Default media background, with automatically generated yeartext",
+    "imgMediaList": "List of media that is ready to be presented",
+    "imgStandby": "M³ media presentation in standby mode",
+    "imgDisplayPic": "Displaying a picture",
+    "imgPlayVideo": "Playing a video",
+    "imgVideoScrub": "Moving to a specific time in a video"
+  }
+}
