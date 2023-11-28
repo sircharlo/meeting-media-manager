@@ -73,6 +73,10 @@ defaults:
     values:
       lang: 'hu'
   - scope:
+      path: 'locales/ilo/**/*'
+    values:
+      lang: 'ilo'
+  - scope:
       path: 'locales/it/**/*'
     values:
       lang: 'it'
@@ -116,6 +120,10 @@ defaults:
       path: 'locales/sv/**/*'
     values:
       lang: 'sv'
+  - scope:
+      path: 'locales/tl/**/*'
+    values:
+      lang: 'tl'
   - scope:
       path: 'locales/uk/**/*'
     values:
