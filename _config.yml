@@ -121,6 +121,10 @@ defaults:
     values:
       lang: 'sv'
   - scope:
+      path: 'locales/ta/**/*'
+    values:
+      lang: 'ta'
+  - scope:
       path: 'locales/tl/**/*'
     values:
       lang: 'tl'
