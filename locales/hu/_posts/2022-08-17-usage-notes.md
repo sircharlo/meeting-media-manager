@@ -8,7 +8,7 @@ Az alkalmazásnak változatlanul futnia kell a legtöbb modern, Windows, Linux v
 
 ### Windows: Telepítés és első lépések
 
-A telepítő megnyitásakor előfordulhat, hogy egy [hiba](assets/img/other/win-smartscreen.png) jelzi, hogy "A Windows SmartScreen megakadályozta egy fel nem ismert alkalmazás elindítását". Ennek oka, hogy az alkalmazás nem rendelkezik nagyszámú letöltéssel, és ezért a Windows nem "bízik meg" benne. Ennek megkerüléséhez egyszerűen kattintson a "További információk", majd a "Futtatás mindenképpen" gombra.
+A telepítő megnyitásakor előfordulhat, hogy egy [hibaüzenet](assets/img/other/win-smartscreen.png) jelenik meg arról, hogy "A Windows SmartScreen megakadályozta egy fel nem ismert alkalmazás elindítását". Ennek oka, hogy az alkalmazás nem rendelkezik nagyszámú letöltéssel, és ezért a Windows nem "bízik meg" benne. Ennek megkerüléséhez egyszerűen kattintson a "További információk", majd a "Futtatás mindenképpen" gombra.
 
 ### Linux: Telepítés és első lépések
 
