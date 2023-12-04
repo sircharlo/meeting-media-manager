@@ -3245,9 +3245,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/cli@npm:^1.75.1":
-  version: 1.75.2
-  resolution: "@sentry/cli@npm:1.75.2"
+"@sentry/cli@npm:^1.77.1":
+  version: 1.77.1
+  resolution: "@sentry/cli@npm:1.77.1"
   dependencies:
     https-proxy-agent: ^5.0.0
     mkdirp: ^0.5.5
@@ -3257,7 +3257,7 @@ __metadata:
     which: ^2.0.2
   bin:
     sentry-cli: bin/sentry-cli
-  checksum: a0f29b2766cc3054cf20741869ff6991c5543b36b355757babcee9e997182d8862caccc985a9cf360e59000a2be2adfae42d41e0f180e495329e5a41242620d7
+  checksum: 8b2604ece002ad5124af4a607bd5c208cde582164315b7028cdf82864eb67de3dfdab99ecee93d36d698e85f05d3a8c8082368659c499f9a3f711b8f55dffc79
   languageName: node
   linkType: hard
 
@@ -3384,13 +3384,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/webpack-plugin@npm:^1.20.1":
-  version: 1.20.1
-  resolution: "@sentry/webpack-plugin@npm:1.20.1"
+"@sentry/webpack-plugin@npm:^1.21.0":
+  version: 1.21.0
+  resolution: "@sentry/webpack-plugin@npm:1.21.0"
   dependencies:
-    "@sentry/cli": ^1.75.1
+    "@sentry/cli": ^1.77.1
     webpack-sources: ^2.0.0 || ^3.0.0
-  checksum: 2828c49f5447563682eec57f663cff7d1c59d35a19fce63a764b5308fa7c9f92c7ec4c4c072983dc0f0dcabddd07a10b32fe7ae8080ec161c8ab87db26fade9b
+  checksum: 218cdf40df735fc8c358833dbeb16121cf4b0cf61f10adc233561877d4149b5ed0ac3f8b0efcdf3bc66e94d506820e641b2327487e435caecad93e9465b3522a
   languageName: node
   linkType: hard
 
@@ -11245,7 +11245,7 @@ __metadata:
     "@playwright/test": ^1.39.0
     "@sentry/electron": ~4.11.1
     "@sentry/vue": ^7.80.0
-    "@sentry/webpack-plugin": ^1.20.1
+    "@sentry/webpack-plugin": ^1.21.0
     "@types/fluent-ffmpeg": ^2.1.23
     "@types/heic-convert": ^1.2.2
     "@types/lodash.clonedeep": ^4.5.9
