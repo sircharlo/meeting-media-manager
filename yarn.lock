@@ -3597,12 +3597,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fluent-ffmpeg@npm:^2.1.23":
-  version: 2.1.23
-  resolution: "@types/fluent-ffmpeg@npm:2.1.23"
+"@types/fluent-ffmpeg@npm:^2.1.24":
+  version: 2.1.24
+  resolution: "@types/fluent-ffmpeg@npm:2.1.24"
   dependencies:
     "@types/node": "*"
-  checksum: e7921b6762e638fdaca89d7f40d7a9b5de57f3b4deb96cb116952c07ee129b90e7c0f9d6fcb74e15618a17eb92f2ed2311ae4c9a189881b0dc7d120ece4ae616
+  checksum: c8438573dfc221bfd06a9c6c02f6061fac1ff1ae8abaf918f0b10182e2aebd25afdcea8f41d3ee0e4ae14784983e09ce7370666c68841a3544318fe847d5d00a
   languageName: node
   linkType: hard
 
@@ -11246,7 +11246,7 @@ __metadata:
     "@sentry/electron": ~4.11.1
     "@sentry/vue": ^7.80.0
     "@sentry/webpack-plugin": ^1.21.0
-    "@types/fluent-ffmpeg": ^2.1.23
+    "@types/fluent-ffmpeg": ^2.1.24
     "@types/heic-convert": ^1.2.2
     "@types/lodash.clonedeep": ^4.5.9
     "@types/sql.js": ^1.4.8
