@@ -1853,7 +1853,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/asar@npm:^3.2.1, @electron/asar@npm:^3.2.7":
+"@electron/asar@npm:^3.2.1":
   version: 3.2.7
   resolution: "@electron/asar@npm:3.2.7"
   dependencies:
@@ -1863,6 +1863,19 @@ __metadata:
   bin:
     asar: bin/asar.js
   checksum: bd47db31f93a4823e8da7fcff9ba610b293abf7af24e2844e1a3828844f0413bb39a4bf6353d0c7cf9ad23b4e5c147c07ca6f6eeb04e67e0579440c558f4370b
+  languageName: node
+  linkType: hard
+
+"@electron/asar@npm:^3.2.8":
+  version: 3.2.8
+  resolution: "@electron/asar@npm:3.2.8"
+  dependencies:
+    commander: ^5.0.0
+    glob: ^7.1.6
+    minimatch: ^3.0.4
+  bin:
+    asar: bin/asar.js
+  checksum: 878d3b9ad232e4e8bb179ed50ed81244481c5dfe667952545a841f3afd782479c1d7e353f8fdedac771e029927b0f31b0a05a41f34cfc7c3099a064733c6d50a
   languageName: node
   linkType: hard
 
@@ -11229,7 +11242,7 @@ __metadata:
   dependencies:
     "@babel/core": 7.23.2
     "@babel/runtime-corejs3": 7.23.5
-    "@electron/asar": ^3.2.7
+    "@electron/asar": ^3.2.8
     "@fortawesome/fontawesome-svg-core": ^6.4.2
     "@fortawesome/free-regular-svg-icons": ^6.4.2
     "@fortawesome/free-solid-svg-icons": ^6.4.2
