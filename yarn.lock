@@ -2905,18 +2905,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/typescript-build@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@nuxt/typescript-build@npm:3.0.1"
+"@nuxt/typescript-build@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@nuxt/typescript-build@npm:3.0.2"
   dependencies:
-    consola: ^2.15.3
+    consola: ^3.0.0
     defu: ^6.0.0
     fork-ts-checker-webpack-plugin: 6.5.3
     ts-loader: 8.4.0
   peerDependencies:
     "@nuxt/types": ">=2.13.1"
     typescript: 4.x || 5.x
-  checksum: 1af306f5423c318f25eaff80477ee1bf966b6dcb9ec3fff57f750296e751730bd4c6af8c899da0a5737d95095d32ca96c3d7653b897f94fb76c355dae9428913
+  checksum: 58a6b453686003e54ab216e2514503609e55ede4b70693a9deebba50bfbe1a1ab0832a16373c8205eb19c83e9bddfaf91d3d73cb05dae957616f56a28004c744
   languageName: node
   linkType: hard
 
@@ -6238,7 +6238,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"consola@npm:^3.2.3":
+"consola@npm:^3.0.0, consola@npm:^3.2.3":
   version: 3.2.3
   resolution: "consola@npm:3.2.3"
   checksum: 32ec70e177dd2385c42e38078958cc7397be91db21af90c6f9faa0b16168b49b1c61d689338604bbb2d64370b9347a35f42a9197663a913d3a405bb0ce728499
@@ -11235,7 +11235,7 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": ^6.4.2
     "@fortawesome/vue-fontawesome": latest-2
     "@nuxt/types": ^2.17.2
-    "@nuxt/typescript-build": ^3.0.1
+    "@nuxt/typescript-build": ^3.0.2
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
     "@nuxtjs/eslint-config-typescript": ^12.1.0
