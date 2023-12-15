@@ -327,7 +327,7 @@ export default defineComponent({
 
         // Get correct extension
         media.map((m) => {
-          if (!extname(m.Label ?? '')) {
+          if (!extname(m.Label ?? '') || (!this.$isImage(m.Label ?? '') && !this.$isVideo(m.Label ?? '') && !this.$isAudio(m.Label ?? ''))) {
             if (extname(m.FilePath ?? '')) {
               m.Label += extname(m.FilePath!)
             } else if (m.MimeType) {
