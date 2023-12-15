@@ -61,7 +61,7 @@
     "@electron/asar": "^3.2.8",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-regular-svg-icons": "^6.4.2",
-    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "latest-2",
     "@nuxt/types": "^2.17.2",
     "@nuxt/typescript-build": "^3.0.2",
