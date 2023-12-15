@@ -3902,13 +3902,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sql.js@npm:^1.4.8":
-  version: 1.4.8
-  resolution: "@types/sql.js@npm:1.4.8"
+"@types/sql.js@npm:^1.4.9":
+  version: 1.4.9
+  resolution: "@types/sql.js@npm:1.4.9"
   dependencies:
     "@types/emscripten": "*"
     "@types/node": "*"
-  checksum: b792ac6f7182979a4c79fa195a0e2a4f56434fa6693fd338d2ecab2fea31f83ba64bd35875fd696d02468d6e6cd1b74da21d1d57a9a7b29aef8837e9745a8c23
+  checksum: a233c787e11ae96c2447ccbf8c64cde9c2217806b82a8b36bb409b3240fe8b4dcf89007f12e9465340fd9d9d2ae8e3720ac9dcb46f67ce0f8f40a33fd4a0397e
   languageName: node
   linkType: hard
 
@@ -11262,7 +11262,7 @@ __metadata:
     "@types/fluent-ffmpeg": ^2.1.24
     "@types/heic-convert": ^1.2.2
     "@types/lodash.clonedeep": ^4.5.9
-    "@types/sql.js": ^1.4.8
+    "@types/sql.js": ^1.4.9
     "@xpda-dev/core": ^0.1.6
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
@@ -11310,7 +11310,7 @@ __metadata:
     obs-websocket-js-v5: "npm:obs-websocket-js@5.0.3"
     pdfjs-dist: ^3.11.174
     prettier: ^2.8.8
-    sql.js: ^1.8.0
+    sql.js: ^1.9.0
     ts-loader: ^8.4.0
     typescript: ^5.2.2
     upath: ^2.0.1
@@ -15595,10 +15595,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sql.js@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "sql.js@npm:1.8.0"
-  checksum: 4c16846815664ef95c4dc2ffbbef4cba5236ead0798c9f1fac11f66c194a0ac51862fe26980be55cef8738b12ebe9d12efe71262953773cdcb41fbef034b2320
+"sql.js@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "sql.js@npm:1.9.0"
+  checksum: 9851c2a8fc00802308c27a3f451fe92f1e65924efe62d4285f6781af56057513c40a3d604b0bf417b7b90b6faa365e29a4d4abc706160c4c3f7f9bbb97af672a
   languageName: node
   linkType: hard
 
