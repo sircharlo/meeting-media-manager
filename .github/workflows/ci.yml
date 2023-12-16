@@ -111,7 +111,7 @@ jobs:
           user_name: 'sircharlo'
           commit_message: 'chore: update screenshots'
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: test-results ${{ matrix.os }}
@@ -188,7 +188,7 @@ jobs:
           GH_TOKEN: ${{ secrets.github_token }}
         run: yarn run build -p onTagOrDraft
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: |
           !startsWith(github.event.head_commit.message, 'chore(release)')
         with:
