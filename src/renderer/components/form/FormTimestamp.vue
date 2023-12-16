@@ -142,12 +142,15 @@ export default defineComponent({
       return this.isTimestamp(this.min) ? this.getHours(this.min) : 0
     },
     minMinutes(): number {
+      if (+this.hours > this.minHours) return 0
       return this.isTimestamp(this.min) ? this.getMinutes(this.min) : 0
     },
     minSeconds(): number {
+      if (+this.minutes > this.minMinutes) return 0
       return this.isTimestamp(this.min) ? this.getSeconds(this.min) : 0
     },
     minMs(): number {
+      if (+this.seconds > this.minSeconds) return 0
       return this.isTimestamp(this.min) ? this.getMs(this.min) : 0
     },
     valid(): boolean {
