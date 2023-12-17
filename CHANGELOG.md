@@ -1,5 +1,17 @@
 # Changelog
 
+## 23.12.0
+
+### New or improved features
+
+- New language: Iloko / Ilokano (thanks [@bridenkenn](https://github.com/bridenkenn)!)
+- New language: Tagalog (thanks [@bridenkenn](https://github.com/bridenkenn)!)
+
+### Bug fixes
+
+- Correctly process JWL playlist items with special characters
+- Correctly validate video timestamp
+
 ## 23.11.0
 
 ### New or improved features
