@@ -12,6 +12,7 @@ const DAYJS_LOCALES = [
   'it',
   // 'mg', not yet supported by dayjs
   'nl',
+  // 'pag', not yet supported by dayjs
   'pt',
   'pt-br',
   'ro',
@@ -121,6 +122,14 @@ const LOCALES = [
     file: 'nl.json',
     jw: 'O',
     name: 'Nederlands (Dutch)',
+  },
+  {
+    code: 'pag',
+    iso: 'pag',
+    file: 'pag.json',
+    jw: 'PN',
+    dayjs: 'en',
+    name: 'Pangasinan (Pangasinan)',
   },
   {
     code: 'pt-pt',
