@@ -89,6 +89,10 @@ defaults:
     values:
       lang: 'nl'
   - scope:
+      path: 'locales/pag/**/*'
+    values:
+      lang: 'pag'
+  - scope:
       path: 'locales/pt/**/*'
     values:
       lang: 'pt-BR'
