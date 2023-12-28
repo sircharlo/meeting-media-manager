@@ -128,6 +128,7 @@ const LOCALES = [
     iso: 'pag',
     file: 'pag.json',
     jw: 'PN',
+    dayjs: 'en',
     name: 'Pangasinan (Pangasinan)',
   },
   {
