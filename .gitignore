@@ -38,3 +38,8 @@ src/**/pdf.worker*
 img
 playwright-report
 test-results
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
