@@ -1890,7 +1890,7 @@ const plugin: Plugin = (
                 format: mediaFormat.toUpperCase(),
                 lang: mediaLang,
               })) as VideoFile[]
-            ).filter((item) => extname(item.url) === `.${mediaFormat}`)
+            ).filter((item) => item.track <= NR_OF_KINGDOM_SONGS && extname(item.url) === `.${mediaFormat}`)
           : $findAll(
               join(
                 $pubPath(),
