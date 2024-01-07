@@ -1,5 +1,15 @@
 # Changelog
 
+## 24.1.0
+
+### New or improved features
+
+- New language: Pangasinan (thanks [@lorenpajarits](https://github.com/lorenpajarits)!)
+
+### Bug fixes
+
+- Exclude songs with described audio from background music playback
+
 ## 23.12.0
 
 ### New or improved features
