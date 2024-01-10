@@ -3227,6 +3227,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry-internal/feedback@npm:7.93.0":
+  version: 7.93.0
+  resolution: "@sentry-internal/feedback@npm:7.93.0"
+  dependencies:
+    "@sentry/core": 7.93.0
+    "@sentry/types": 7.93.0
+    "@sentry/utils": 7.93.0
+  checksum: 6a6aff87ce41c2882951e2ba70127dbc38b5c5c451736f4ef45edebf68c798b1b901c0ea412d2b4e2234fa39e4feeee5700fe3c46131ba0c01380fdb476396d1
+  languageName: node
+  linkType: hard
+
 "@sentry-internal/tracing@npm:7.68.0":
   version: 7.68.0
   resolution: "@sentry-internal/tracing@npm:7.68.0"
@@ -3403,7 +3414,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^7.80.0":
+"@sentry/vue@npm:^7.93.0":
   version: 7.93.0
   resolution: "@sentry/vue@npm:7.93.0"
   dependencies:
@@ -11211,7 +11222,7 @@ __metadata:
     "@panzoom/panzoom": ^4.5.1
     "@playwright/test": ^1.40.1
     "@sentry/electron": ~4.11.1
-    "@sentry/vue": ^7.80.0
+    "@sentry/vue": ^7.93.0
     "@sentry/webpack-plugin": ^1.21.0
     "@types/fluent-ffmpeg": ^2.1.24
     "@types/heic-convert": ^1.2.2
