@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { library, config } from '@fortawesome/fontawesome-svg-core'
+import { library, config, IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
   FontAwesomeIcon,
   FontAwesomeLayers,
@@ -7,7 +7,6 @@ import {
 import {
   faChevronLeft,
   faChevronRight,
-  faChevronDown,
   faSquareCheck,
   faCaretDown,
   faTimesCircle,
@@ -17,13 +16,12 @@ import { faSquare } from '@fortawesome/free-regular-svg-icons'
 // Font-Awesome
 config.autoAddCss = false
 library.add(
-  faChevronDown,
   faSquare,
-  faSquareCheck,
-  faChevronLeft,
-  faChevronRight,
-  faCaretDown,
-  faTimesCircle
+  faSquareCheck as IconDefinition,
+  faChevronLeft as IconDefinition,
+  faChevronRight as IconDefinition,
+  faCaretDown as IconDefinition,
+  faTimesCircle as IconDefinition
 )
 
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
