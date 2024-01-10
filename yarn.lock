@@ -1853,7 +1853,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/asar@npm:^3.2.1, @electron/asar@npm:^3.2.7":
+"@electron/asar@npm:^3.2.1":
   version: 3.2.7
   resolution: "@electron/asar@npm:3.2.7"
   dependencies:
@@ -1863,6 +1863,19 @@ __metadata:
   bin:
     asar: bin/asar.js
   checksum: bd47db31f93a4823e8da7fcff9ba610b293abf7af24e2844e1a3828844f0413bb39a4bf6353d0c7cf9ad23b4e5c147c07ca6f6eeb04e67e0579440c558f4370b
+  languageName: node
+  linkType: hard
+
+"@electron/asar@npm:^3.2.8":
+  version: 3.2.8
+  resolution: "@electron/asar@npm:3.2.8"
+  dependencies:
+    commander: ^5.0.0
+    glob: ^7.1.6
+    minimatch: ^3.0.4
+  bin:
+    asar: bin/asar.js
+  checksum: 878d3b9ad232e4e8bb179ed50ed81244481c5dfe667952545a841f3afd782479c1d7e353f8fdedac771e029927b0f31b0a05a41f34cfc7c3099a064733c6d50a
   languageName: node
   linkType: hard
 
@@ -1970,37 +1983,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-common-types@npm:6.4.2":
-  version: 6.4.2
-  resolution: "@fortawesome/fontawesome-common-types@npm:6.4.2"
-  checksum: 4a22932bd0cac65be1d35b739624f366b6c247b60eb5b8f66218957f54ce1cae56e2a20ea88789ede45d1e1c0c1014f160e01c1752122ec174ad0823e60f94bf
+"@fortawesome/fontawesome-common-types@npm:6.5.1":
+  version: 6.5.1
+  resolution: "@fortawesome/fontawesome-common-types@npm:6.5.1"
+  checksum: c597062de8903aae591b652aa03b9b7aaa66e8c71e5950dc34a8b2812851a7f4ad743fba7396bab87d787c5359bb121496769a165bd3399d039dc214434f6f0c
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-svg-core@npm:^6.4.2":
-  version: 6.4.2
-  resolution: "@fortawesome/fontawesome-svg-core@npm:6.4.2"
+"@fortawesome/fontawesome-svg-core@npm:^6.5.1":
+  version: 6.5.1
+  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.1"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.4.2
-  checksum: 0c0ecd9058883b128127e2b281c983ba6272be38a17577aaa2293ada58e9b1538357fe44430ded508d49ae3f5cc55aa720a0448d2b9d99689bb912d786f034e5
+    "@fortawesome/fontawesome-common-types": 6.5.1
+  checksum: e17f995abe215d288163b2cd009f935c7f96bc896ab4ea7a75de72789d52a1275bd112eeb60cadd63bb20017a05ed765232157079bfb7efda7347a5614e04ce1
   languageName: node
   linkType: hard
 
-"@fortawesome/free-regular-svg-icons@npm:^6.4.2":
-  version: 6.4.2
-  resolution: "@fortawesome/free-regular-svg-icons@npm:6.4.2"
+"@fortawesome/free-regular-svg-icons@npm:^6.5.1":
+  version: 6.5.1
+  resolution: "@fortawesome/free-regular-svg-icons@npm:6.5.1"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.4.2
-  checksum: fdb78fced6087f83b45fc1d73de874c69956aa07e7376b8f79b3b0b76e9f800d06c4586b5431acea4e8b5ebc40866f2c4e87fc02986cae7b066c1ea9d150d7e1
+    "@fortawesome/fontawesome-common-types": 6.5.1
+  checksum: c1809fae5f3bffff2f06d414f552e38acf385f79bb1b1a8e34b6b9c1138e9e6be7f8ed1503da0f72e225079138b8377f95f279d0079bb04ba8d3bfb3025ec512
   languageName: node
   linkType: hard
 
-"@fortawesome/free-solid-svg-icons@npm:^6.4.2":
-  version: 6.4.2
-  resolution: "@fortawesome/free-solid-svg-icons@npm:6.4.2"
+"@fortawesome/free-solid-svg-icons@npm:^6.5.1":
+  version: 6.5.1
+  resolution: "@fortawesome/free-solid-svg-icons@npm:6.5.1"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.4.2
-  checksum: 4a365004990d5b1c970fb30c11b284b0b807903d0ecb193eb9b5a5e41ea7c0b8fff5c60480c580a1e44535cf23c5d9c90cb698189741e40ea3e10ac66290709c
+    "@fortawesome/fontawesome-common-types": 6.5.1
+  checksum: c544b8389bab4ab375d172feeb334d4a591bd7c594acdcc546b5197f2bcc80be22be119a03994dbe7f13d133c11b41c471b62c92dd318fbe0378202c43c09d7d
   languageName: node
   linkType: hard
 
@@ -2918,18 +2931,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/typescript-build@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@nuxt/typescript-build@npm:3.0.1"
+"@nuxt/typescript-build@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@nuxt/typescript-build@npm:3.0.2"
   dependencies:
-    consola: ^2.15.3
+    consola: ^3.0.0
     defu: ^6.0.0
     fork-ts-checker-webpack-plugin: 6.5.3
     ts-loader: 8.4.0
   peerDependencies:
     "@nuxt/types": ">=2.13.1"
     typescript: 4.x || 5.x
-  checksum: 1af306f5423c318f25eaff80477ee1bf966b6dcb9ec3fff57f750296e751730bd4c6af8c899da0a5737d95095d32ca96c3d7653b897f94fb76c355dae9428913
+  checksum: 58a6b453686003e54ab216e2514503609e55ede4b70693a9deebba50bfbe1a1ab0832a16373c8205eb19c83e9bddfaf91d3d73cb05dae957616f56a28004c744
   languageName: node
   linkType: hard
 
@@ -3190,14 +3203,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.39.0":
-  version: 1.39.0
-  resolution: "@playwright/test@npm:1.39.0"
+"@playwright/test@npm:^1.40.1":
+  version: 1.40.1
+  resolution: "@playwright/test@npm:1.40.1"
   dependencies:
-    playwright: 1.39.0
+    playwright: 1.40.1
   bin:
     playwright: cli.js
-  checksum: e93e58fc1af4239f239b890374f066c9a758e2492d25e2c1a532f3f00782ab8e7706956a07540fd14882c74e75f5de36273621adce9b79afb8e36e6c15f1d539
+  checksum: ae094e6cb809365c0707ee2b184e42d2a2542569ada020d2d44ca5866066941262bd9a67af185f86c2fb0133c9b712ea8cb73e2959a289e4261c5fd17077283c
   languageName: node
   linkType: hard
 
@@ -3258,9 +3271,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/cli@npm:^1.75.1":
-  version: 1.75.2
-  resolution: "@sentry/cli@npm:1.75.2"
+"@sentry/cli@npm:^1.77.1":
+  version: 1.77.1
+  resolution: "@sentry/cli@npm:1.77.1"
   dependencies:
     https-proxy-agent: ^5.0.0
     mkdirp: ^0.5.5
@@ -3270,7 +3283,7 @@ __metadata:
     which: ^2.0.2
   bin:
     sentry-cli: bin/sentry-cli
-  checksum: a0f29b2766cc3054cf20741869ff6991c5543b36b355757babcee9e997182d8862caccc985a9cf360e59000a2be2adfae42d41e0f180e495329e5a41242620d7
+  checksum: 8b2604ece002ad5124af4a607bd5c208cde582164315b7028cdf82864eb67de3dfdab99ecee93d36d698e85f05d3a8c8082368659c499f9a3f711b8f55dffc79
   languageName: node
   linkType: hard
 
@@ -3397,13 +3410,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/webpack-plugin@npm:^1.20.1":
-  version: 1.20.1
-  resolution: "@sentry/webpack-plugin@npm:1.20.1"
+"@sentry/webpack-plugin@npm:^1.21.0":
+  version: 1.21.0
+  resolution: "@sentry/webpack-plugin@npm:1.21.0"
   dependencies:
-    "@sentry/cli": ^1.75.1
+    "@sentry/cli": ^1.77.1
     webpack-sources: ^2.0.0 || ^3.0.0
-  checksum: 2828c49f5447563682eec57f663cff7d1c59d35a19fce63a764b5308fa7c9f92c7ec4c4c072983dc0f0dcabddd07a10b32fe7ae8080ec161c8ab87db26fade9b
+  checksum: 218cdf40df735fc8c358833dbeb16121cf4b0cf61f10adc233561877d4149b5ed0ac3f8b0efcdf3bc66e94d506820e641b2327487e435caecad93e9465b3522a
   languageName: node
   linkType: hard
 
@@ -3610,12 +3623,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fluent-ffmpeg@npm:^2.1.23":
-  version: 2.1.23
-  resolution: "@types/fluent-ffmpeg@npm:2.1.23"
+"@types/fluent-ffmpeg@npm:^2.1.24":
+  version: 2.1.24
+  resolution: "@types/fluent-ffmpeg@npm:2.1.24"
   dependencies:
     "@types/node": "*"
-  checksum: e7921b6762e638fdaca89d7f40d7a9b5de57f3b4deb96cb116952c07ee129b90e7c0f9d6fcb74e15618a17eb92f2ed2311ae4c9a189881b0dc7d120ece4ae616
+  checksum: c8438573dfc221bfd06a9c6c02f6061fac1ff1ae8abaf918f0b10182e2aebd25afdcea8f41d3ee0e4ae14784983e09ce7370666c68841a3544318fe847d5d00a
   languageName: node
   linkType: hard
 
@@ -3902,13 +3915,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sql.js@npm:^1.4.8":
-  version: 1.4.8
-  resolution: "@types/sql.js@npm:1.4.8"
+"@types/sql.js@npm:^1.4.9":
+  version: 1.4.9
+  resolution: "@types/sql.js@npm:1.4.9"
   dependencies:
     "@types/emscripten": "*"
     "@types/node": "*"
-  checksum: b792ac6f7182979a4c79fa195a0e2a4f56434fa6693fd338d2ecab2fea31f83ba64bd35875fd696d02468d6e6cd1b74da21d1d57a9a7b29aef8837e9745a8c23
+  checksum: a233c787e11ae96c2447ccbf8c64cde9c2217806b82a8b36bb409b3240fe8b4dcf89007f12e9465340fd9d9d2ae8e3720ac9dcb46f67ce0f8f40a33fd4a0397e
   languageName: node
   linkType: hard
 
@@ -4521,9 +4534,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zoomus/websdk@npm:^2.17.0":
-  version: 2.17.0
-  resolution: "@zoomus/websdk@npm:2.17.0"
+"@zoomus/websdk@npm:^2.18.2":
+  version: 2.18.2
+  resolution: "@zoomus/websdk@npm:2.18.2"
   dependencies:
     lodash: ^4.17.21
     react: 16.14.0
@@ -4538,7 +4551,7 @@ __metadata:
     react-redux: 7.2.9
     redux: 4.2.1
     redux-thunk: 2.4.2
-  checksum: bf3e01208f009aba582789ad46062cd2f4388eb5df0262aa69e79aeb848cdddb0a46b989cd7e2a25811f260f2e43354ef0d26395359ffb7f6e4d3a0a04b5e6ad
+  checksum: 4d4d606a9cc5604d0c0d57121d26ea8444eb2eaca3e1be8ab0d375d04b0d6abb14534c3407eff3cb0e59b1f5cff5102bbadfb8dc237ca1b8558252f1bc9bd489
   languageName: node
   linkType: hard
 
@@ -6287,7 +6300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"consola@npm:^3.2.3":
+"consola@npm:^3.0.0, consola@npm:^3.2.3":
   version: 3.2.3
   resolution: "consola@npm:3.2.3"
   checksum: 32ec70e177dd2385c42e38078958cc7397be91db21af90c6f9faa0b16168b49b1c61d689338604bbb2d64370b9347a35f42a9197663a913d3a405bb0ce728499
@@ -8716,12 +8729,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.14.9":
-  version: 1.15.3
-  resolution: "follow-redirects@npm:1.15.3"
+  version: 1.15.4
+  resolution: "follow-redirects@npm:1.15.4"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 584da22ec5420c837bd096559ebfb8fe69d82512d5585004e36a3b4a6ef6d5905780e0c74508c7b72f907d1fa2b7bd339e613859e9c304d0dc96af2027fd0231
+  checksum: e178d1deff8b23d5d24ec3f7a94cde6e47d74d0dc649c35fc9857041267c12ec5d44650a0c5597ef83056ada9ea6ca0c30e7c4f97dbf07d035086be9e6a5b7b6
   languageName: node
   linkType: hard
 
@@ -11331,32 +11344,32 @@ __metadata:
   dependencies:
     "@babel/core": 7.23.2
     "@babel/runtime-corejs3": 7.23.5
-    "@electron/asar": ^3.2.7
-    "@fortawesome/fontawesome-svg-core": ^6.4.2
-    "@fortawesome/free-regular-svg-icons": ^6.4.2
-    "@fortawesome/free-solid-svg-icons": ^6.4.2
+    "@electron/asar": ^3.2.8
+    "@fortawesome/fontawesome-svg-core": ^6.5.1
+    "@fortawesome/free-regular-svg-icons": ^6.5.1
+    "@fortawesome/free-solid-svg-icons": ^6.5.1
     "@fortawesome/vue-fontawesome": latest-2
     "@nuxt/types": ^2.17.2
-    "@nuxt/typescript-build": ^3.0.1
+    "@nuxt/typescript-build": ^3.0.2
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
     "@nuxtjs/eslint-config-typescript": ^12.1.0
     "@nuxtjs/i18n": ^7.3.1
     "@nuxtjs/vuetify": ^1.12.3
     "@panzoom/panzoom": ^4.5.1
-    "@playwright/test": ^1.39.0
+    "@playwright/test": ^1.40.1
     "@sentry/electron": ~4.11.1
     "@sentry/vue": ^7.80.0
-    "@sentry/webpack-plugin": ^1.20.1
-    "@types/fluent-ffmpeg": ^2.1.23
+    "@sentry/webpack-plugin": ^1.21.0
+    "@types/fluent-ffmpeg": ^2.1.24
     "@types/heic-convert": ^1.2.2
     "@types/lodash.clonedeep": ^4.5.9
-    "@types/sql.js": ^1.4.8
+    "@types/sql.js": ^1.4.9
     "@xpda-dev/core": ^0.1.6
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
     "@xpda-dev/webpack-step": ^0.1.6
-    "@zoomus/websdk": ^2.17.0
+    "@zoomus/websdk": ^2.18.2
     chokidar: ^3.5.3
     consola: ^2.15.3
     core-js: ^3.33.2
@@ -11399,7 +11412,7 @@ __metadata:
     obs-websocket-js-v5: "npm:obs-websocket-js@5.0.3"
     pdfjs-dist: ^3.11.174
     prettier: ^2.8.8
-    sql.js: ^1.8.0
+    sql.js: ^1.9.0
     ts-loader: ^8.4.0
     typescript: ^5.2.2
     upath: ^2.0.1
@@ -13018,27 +13031,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.39.0":
-  version: 1.39.0
-  resolution: "playwright-core@npm:1.39.0"
+"playwright-core@npm:1.40.1":
+  version: 1.40.1
+  resolution: "playwright-core@npm:1.40.1"
   bin:
     playwright-core: cli.js
-  checksum: 556e78dee4f9890facf2af8249972e0d6e01a5ae98737b0f6b0166c660a95ffee4cb79350335b1ef96430a0ef01d3669daae9099fa46c8d403d11c623988238b
+  checksum: 84d92fb9b86e3c225b16b6886bf858eb5059b4e60fa1205ff23336e56a06dcb2eac62650992dede72f406c8e70a7b6a5303e511f9b4bc0b85022ede356a01ee0
   languageName: node
   linkType: hard
 
-"playwright@npm:1.39.0":
-  version: 1.39.0
-  resolution: "playwright@npm:1.39.0"
+"playwright@npm:1.40.1":
+  version: 1.40.1
+  resolution: "playwright@npm:1.40.1"
   dependencies:
     fsevents: 2.3.2
-    playwright-core: 1.39.0
+    playwright-core: 1.40.1
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 96d8ca5aa25465c1c5d554d0d6071981d55e22477800ff8f5d47a53ca75193d60ece2df538a01b7165b3277dd5493c67603a5acda713029df7fbd95ce2417bc9
+  checksum: 9e36791c1b4a649c104aa365fdd9d049924eeb518c5967c0e921aa38b9b00994aa6ee54784d6c2af194b3b494b6f69772673081ef53c6c4a4b2065af9955c4ba
   languageName: node
   linkType: hard
 
@@ -15742,10 +15755,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sql.js@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "sql.js@npm:1.8.0"
-  checksum: 4c16846815664ef95c4dc2ffbbef4cba5236ead0798c9f1fac11f66c194a0ac51862fe26980be55cef8738b12ebe9d12efe71262953773cdcb41fbef034b2320
+"sql.js@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "sql.js@npm:1.9.0"
+  checksum: 9851c2a8fc00802308c27a3f451fe92f1e65924efe62d4285f6781af56057513c40a3d604b0bf417b7b90b6faa365e29a4d4abc706160c4c3f7f9bbb97af672a
   languageName: node
   linkType: hard
 

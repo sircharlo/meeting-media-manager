@@ -8,9 +8,11 @@ const DAYJS_LOCALES = [
   'fi',
   'fr',
   'hu',
+  // 'ilo', not yet supported by dayjs
   'it',
   // 'mg', not yet supported by dayjs
   'nl',
+  // 'pag', not yet supported by dayjs
   'pt',
   'pt-br',
   'ro',
@@ -92,6 +94,14 @@ const LOCALES = [
     name: 'magyar (Hungarian)',
   },
   {
+    code: 'ilo',
+    iso: 'ilo-PH',
+    file: 'ilo.json',
+    jw: 'IL',
+    dayjs: 'en',
+    name: 'Iloko (Iloko)',
+  },
+  {
     code: 'it',
     iso: 'it-IT',
     file: 'it.json',
@@ -112,6 +122,14 @@ const LOCALES = [
     file: 'nl.json',
     jw: 'O',
     name: 'Nederlands (Dutch)',
+  },
+  {
+    code: 'pag',
+    iso: 'pag',
+    file: 'pag.json',
+    jw: 'PN',
+    dayjs: 'en',
+    name: 'Pangasinan (Pangasinan)',
   },
   {
     code: 'pt-pt',
