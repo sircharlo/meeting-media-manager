@@ -5,6 +5,7 @@ import {
   FontAwesomeLayers,
 } from '@fortawesome/vue-fontawesome'
 import {
+  faChevronDown,
   faChevronLeft,
   faChevronRight,
   faSquareCheck,
@@ -18,6 +19,7 @@ config.autoAddCss = false
 library.add(
   faSquare,
   faSquareCheck as IconDefinition,
+  faChevronDown as IconDefinition,
   faChevronLeft as IconDefinition,
   faChevronRight as IconDefinition,
   faCaretDown as IconDefinition,
