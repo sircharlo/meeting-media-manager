@@ -118,7 +118,7 @@
     "lodash.clonedeep": "^4.5.0",
     "minify-css-string": "^1.0.0",
     "minimatch": "^5.1.6",
-    "node-gyp": "^9.4.0",
+    "node-gyp": "^10.0.1",
     "nth-check": "^2.1.1",
     "nuxt": "^2.17.2",
     "nuxt-webfontloader": "^1.1.0",
