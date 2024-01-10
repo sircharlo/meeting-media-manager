@@ -9509,23 +9509,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"heic-convert@npm:^1.2.4":
-  version: 1.2.4
-  resolution: "heic-convert@npm:1.2.4"
+"heic-convert@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "heic-convert@npm:2.1.0"
   dependencies:
-    heic-decode: ^1.1.2
-    jpeg-js: ^0.4.1
-    pngjs: ^3.4.0
-  checksum: 02b893f93c1946a72ffb697e5d46942bdd41bc15b7894b1d2618aa5d64ba91e28a6f0ac081b66be73ab575b14698116a96651e4e6a5dfed3930fee45da8d1c8d
+    heic-decode: ^2.0.0
+    jpeg-js: ^0.4.4
+    pngjs: ^6.0.0
+  checksum: ada48d2165a91dfedc538bbea5beaa4e0b1b5ae8f52e2e8dad5bab1138ed19c6ad8f8920205579dff9b57c5635fe078fbfa3a8971a1647833233256b28d92098
   languageName: node
   linkType: hard
 
-"heic-decode@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "heic-decode@npm:1.1.2"
+"heic-decode@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "heic-decode@npm:2.0.0"
   dependencies:
-    libheif-js: ^1.10.0
-  checksum: 09c6d6aef4abc77aa50b35c980d43de1f3ec935890980c14d520ca6000ca762847f483c442a4d0a9d709cc450f17890aafd4b9ec66387708ae3682fcc1f65f17
+    libheif-js: ^1.17.1
+  checksum: f2cbfbc5e204258201027fea61cc1498a4c8e6c6ee2629c8e642af02d4e360367c0e0f7cd1f73b68ce02a7f7b04247695ed732f53ea618b17aeadbae292affac
   languageName: node
   linkType: hard
 
@@ -10492,7 +10492,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jpeg-js@npm:^0.4.1, jpeg-js@npm:^0.4.4":
+"jpeg-js@npm:^0.4.4":
   version: 0.4.4
   resolution: "jpeg-js@npm:0.4.4"
   checksum: bd7cb61aa8df40a9ee2c2106839c3df6054891e56cfc22c0ac581402e06c6295f962a4754b0b2ac50a401789131b1c6dc9df8d24400f1352168be1894833c590
@@ -10761,7 +10761,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libheif-js@npm:^1.10.0":
+"libheif-js@npm:^1.17.1":
   version: 1.17.1
   resolution: "libheif-js@npm:1.17.1"
   checksum: 8a7ba6cd3aebdbb720d7f2ba7a26ad5f4311459f376100fe1990cdab46e1a204cadc0accf163a9cc0d36c21d35395654b5881c930e3026212ba275f059be3965
@@ -11249,7 +11249,7 @@ __metadata:
     fs-extra: ^11.1.1
     fullname: ^4.0.1
     h264-mp4-encoder: ^1.0.12
-    heic-convert: ^1.2.4
+    heic-convert: ^2.1.0
     is-internet-available: ^3.1.0
     jimp: ^0.22.10
     jszip: ^3.10.1
@@ -12895,7 +12895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pngjs@npm:^3.0.0, pngjs@npm:^3.4.0":
+"pngjs@npm:^3.0.0":
   version: 3.4.0
   resolution: "pngjs@npm:3.4.0"
   checksum: 8bd40bd698abd16b72c97b85cb858c80894fbedc76277ce72a784aa441e14795d45d9856e97333ca469b34b67528860ffc8a7317ca6beea349b645366df00bcd
