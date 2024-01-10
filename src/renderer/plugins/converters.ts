@@ -17,7 +17,7 @@ import { XMLBuilder } from 'fast-xml-parser'
 import ffmpeg from 'fluent-ffmpeg'
 import { basename, changeExt, dirname, extname, join } from 'upath'
 import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api'
-import sizeOf from 'image-size'
+import { sync as imageSize } from 'probe-image-size'
 import {
   CHAR_AMP,
   CHAR_GT,
@@ -215,9 +215,9 @@ const plugin: Plugin = (
         join(
           dirname(mediaFile),
           basename(mediaFile, extname(mediaFile)) +
-            '-' +
-            pageNr.toString().padStart(2, '0') +
-            '.png'
+          '-' +
+          pageNr.toString().padStart(2, '0') +
+          '.png'
         ),
         Buffer.from(
           canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ''),
@@ -441,15 +441,15 @@ const plugin: Plugin = (
         } else {
           // Set video dimensions to image dimensions
           let convertedDimensions: number[] = []
-          const dimensions = sizeOf(file)
-          if (dimensions.orientation && dimensions.orientation >= 5) {
+          const dimensions = imageSize(readFileSync(file))
+          if (dimensions?.orientation && dimensions?.orientation >= 5) {
             ;[dimensions.width, dimensions.height] = [
               dimensions.height,
               dimensions.width,
             ]
           }
 
-          if (dimensions.width && dimensions.height) {
+          if (dimensions?.width && dimensions?.height) {
             let max = [undefined, Math.min(FULL_HD[1], dimensions.height)]
             if (
               FULL_HD[1] / FULL_HD[0] >
