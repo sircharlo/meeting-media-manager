@@ -6403,10 +6403,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3.33.2":
-  version: 3.33.2
-  resolution: "core-js@npm:3.33.2"
-  checksum: 71de081acbd060ff985afdcdf2552de4a00ab3ac4695c77f3535b72ddf4526920dcd0cb73e72e57c2ae16e384838a6d55790e138f0a19d60afcf851f89d0064d
+"core-js@npm:3.35.0":
+  version: 3.35.0
+  resolution: "core-js@npm:3.35.0"
+  checksum: 25c224aca3df012b98f08f13ccbd8171ef5852acd33fd5e58e106d27f5f0c97de2fdbc520f0b4364d26253caf2deb3e5d265310f57d2a66ae6cc922850e649f0
   languageName: node
   linkType: hard
 
@@ -11225,7 +11225,7 @@ __metadata:
     "@zoomus/websdk": ^2.18.2
     chokidar: ^3.5.3
     consola: ^2.15.3
-    core-js: ^3.33.2
+    core-js: ^3.35.0
     cross-env: ^7.0.3
     css-loader: ^5.2.7
     deepmerge: ^4.3.1
