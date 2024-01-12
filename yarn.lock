@@ -7990,7 +7990,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:^9.17.0, eslint-plugin-vue@npm:^9.18.1, eslint-plugin-vue@npm:^9.4.0, eslint-plugin-vue@npm:^9.7.0":
+"eslint-plugin-vue@npm:^9.17.0, eslint-plugin-vue@npm:^9.4.0, eslint-plugin-vue@npm:^9.7.0":
   version: 9.19.2
   resolution: "eslint-plugin-vue@npm:9.19.2"
   dependencies:
@@ -8004,6 +8004,23 @@ __metadata:
   peerDependencies:
     eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
   checksum: d1ebdafa833e236e8be7478f1db80d73bf3dd5a20090cbd2f3f618dd64ddd3d87a1e99043b119bd35eb98cc1f2643f358fb7da01dabd5ca9cf9a24682dbeb68d
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-vue@npm:^9.20.0":
+  version: 9.20.0
+  resolution: "eslint-plugin-vue@npm:9.20.0"
+  dependencies:
+    "@eslint-community/eslint-utils": ^4.4.0
+    natural-compare: ^1.4.0
+    nth-check: ^2.1.1
+    postcss-selector-parser: ^6.0.13
+    semver: ^7.5.4
+    vue-eslint-parser: ^9.4.0
+    xml-name-validator: ^4.0.0
+  peerDependencies:
+    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
+  checksum: c734152e358a704b247a2abd243e577fe8af3c04d7445f3af5e8e643d3e8729df937c144c0a6d3eeee58c6b9b0811bd87cbf62f1cfbc55bc563114a9af378e2c
   languageName: node
   linkType: hard
 
@@ -11240,7 +11257,7 @@ __metadata:
     eslint-friendly-formatter: ^4.0.1
     eslint-import-resolver-typescript: ^3.6.1
     eslint-plugin-nuxt: ^4.0.0
-    eslint-plugin-vue: ^9.18.1
+    eslint-plugin-vue: ^9.20.0
     eslint-webpack-plugin: ^2.7.0
     fast-glob: ^3.3.2
     fast-xml-parser: ^4.3.2
@@ -16911,7 +16928,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-eslint-parser@npm:^9.0.3, vue-eslint-parser@npm:^9.3.1":
+"vue-eslint-parser@npm:^9.0.3, vue-eslint-parser@npm:^9.3.1, vue-eslint-parser@npm:^9.4.0":
   version: 9.4.0
   resolution: "vue-eslint-parser@npm:9.4.0"
   dependencies:
