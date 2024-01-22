@@ -11300,7 +11300,7 @@ __metadata:
     pdfjs-dist: ^3.11.174
     prettier: ^2.8.8
     probe-image-size: ^7.2.3
-    sql.js: ^1.10.1
+    sql.js: ^1.10.2
     ts-loader: ^8.4.0
     typescript: ^5.2.2
     upath: ^2.0.1
@@ -15607,10 +15607,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sql.js@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "sql.js@npm:1.10.1"
-  checksum: 39ba7b7692eae8c35c3ed3298032db439984c8ac90e79071e31b73718982fbe37733e7b1f20ecf17a1d73fbfe27674c781443ebc5d2c91eee994b67feaeb87d3
+"sql.js@npm:^1.10.2":
+  version: 1.10.2
+  resolution: "sql.js@npm:1.10.2"
+  checksum: a6dae9bfbe75b6d9b0aee9eb7bf0791975f7fd0f63e8fca03adf571cc9ae96e7326bb96d2ffd2ae6237e972c8a401cba4e92162d9e6b6b5b19c828bffffaa959
   languageName: node
   linkType: hard
 
