@@ -1,8 +1,8 @@
 {
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.fixAll.markdownlint": true
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.markdownlint": "explicit"
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.ignoreWords": ["transform", "PDF", "TERMS", "shorthand"],
