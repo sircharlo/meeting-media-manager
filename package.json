@@ -80,7 +80,7 @@
     "@types/lodash.clonedeep": "^4.5.9",
     "@types/probe-image-size": "^7",
     "@types/sql.js": "^1.4.9",
-    "@xpda-dev/core": "^0.1.6",
+    "@xpda-dev/core": "^0.1.7",
     "@xpda-dev/electron-builder": "^0.2.1",
     "@xpda-dev/electron-launcher": "^0.3.0",
     "@xpda-dev/webpack-step": "^0.1.6",
