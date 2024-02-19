@@ -4620,14 +4620,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xpda-dev/core@npm:^0.1.6":
-  version: 0.1.6
-  resolution: "@xpda-dev/core@npm:0.1.6"
+"@xpda-dev/core@npm:^0.1.7":
+  version: 0.1.7
+  resolution: "@xpda-dev/core@npm:0.1.7"
   dependencies:
     chalk: ^2.4.2
     ora: ^3.2.0
     ps-tree: ^1.2.0
-  checksum: 559324fcf981e5af2ceaad9fe18aac9bb8e378c2cdac305393fb29d95428a39be43e90ec181a44bb29f7de9f1c0b48debd721547ab0f7a8d09964b2aa8fff95e
+  checksum: 17ccf6724e0ae94b8b8b5c5d47fab23d5127cd25f3cc069d114ebf711ac6bb89058e57b0a82a857f2bb34ddc2aa2332b9822f19eb0c3d2508ba2c323904ec7b0
   languageName: node
   linkType: hard
 
@@ -11358,7 +11358,7 @@ __metadata:
     "@types/lodash.clonedeep": ^4.5.9
     "@types/probe-image-size": ^7
     "@types/sql.js": ^1.4.9
-    "@xpda-dev/core": ^0.1.6
+    "@xpda-dev/core": ^0.1.7
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
     "@xpda-dev/webpack-step": ^0.1.6
