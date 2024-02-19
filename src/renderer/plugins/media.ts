@@ -1890,7 +1890,7 @@ const plugin: Plugin = (
                 format: mediaFormat.toUpperCase(),
                 lang: mediaLang,
               })) as VideoFile[]
-            ).filter((item) => extname(item.url) === `.${mediaFormat}`)
+            ).filter((item) => item.track <= NR_OF_KINGDOM_SONGS && extname(item.url) === `.${mediaFormat}`)
           : $findAll(
               join(
                 $pubPath(),
@@ -2020,7 +2020,7 @@ const plugin: Plugin = (
     const result = (await getMediaLinks({
       pubSymbol: store.state.media.songPub,
       format: 'MP4',
-    })) as VideoFile[]
+    })).filter((song) => song.track <= NR_OF_KINGDOM_SONGS) as VideoFile[]
 
     const fallbackLang = $getPrefs('media.langFallback') as string
 
