@@ -46,7 +46,7 @@
       </v-col>
     </v-row>
     <v-footer fixed style="justify-content: right">
-      <v-btn color="primary" @click="updatePrefs()">
+      <v-btn color="primary" :disabled="loading" @click="updatePrefs()">
         <font-awesome-icon :icon="faCheck" size="xl" />
       </v-btn>
     </v-footer>

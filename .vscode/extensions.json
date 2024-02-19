@@ -1,10 +1,10 @@
 {
   "recommendations": [
-    "aaron-bond.better-comments",
     "christian-kohler.path-intellisense",
     "davidanson.vscode-markdownlint",
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
+    "edwinhuish.better-comments-next",
     "esbenp.prettier-vscode",
     "octref.vetur",
     "streetsidesoftware.code-spell-checker",

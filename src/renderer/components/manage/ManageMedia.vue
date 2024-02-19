@@ -263,7 +263,7 @@ export default defineComponent({
         }
       })
 
-      if (!this.files[0].filepath) return
+      if (!this.files[0]?.filepath) return
       const ext = extname(this.files[0].filepath)
 
       // If one jwpub/jwlplaylist was dropped, set media type accordingly

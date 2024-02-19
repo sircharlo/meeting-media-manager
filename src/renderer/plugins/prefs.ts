@@ -647,13 +647,18 @@ const plugin: Plugin = ({ $sentry }, inject) => {
   })
 
   inject('setPrefs', (key: string, value: unknown) => {
-    store.set(key, value)
-    const prefs = readJsonSync(store.path, { throws: false }) as ElectronStore
-    $sentry.setContext('prefs', {
-      ...prefs,
-      obs: prefs.app?.obs,
-      zoom: prefs.app?.zoom,
-    })
+    try {
+      store.set(key, value)
+      const prefs = readJsonSync(store.path, { throws: false }) as ElectronStore
+      $sentry.setContext('prefs', {
+        ...prefs,
+        obs: prefs.app?.obs,
+        zoom: prefs.app?.zoom,
+      })
+    } catch (e) {
+      console.error(e)
+      $sentry.captureException(e)
+    }
   })
 
   inject('setAllPrefs', (settings: ElectronStore) => {
