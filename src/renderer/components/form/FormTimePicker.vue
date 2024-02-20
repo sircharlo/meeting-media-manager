@@ -32,7 +32,7 @@
       full-width
       :use-seconds="useSeconds"
       format="24hr"
-      @click:minute="$refs.dialog.save($attrs.value)"
+      @click:minute="$emit('input', $attrs.value);$refs.dialog.save($attrs.value)"
       @change="$emit('input', $event)"
     />
   </v-dialog>
