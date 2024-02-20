@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "24.1.1-beta.2",
+  "version": "24.1.1-beta.3",
   "description": "Meeting Media Manager",
   "keywords": [
     "M³",
@@ -80,7 +80,7 @@
     "@types/lodash.clonedeep": "^4.5.9",
     "@types/probe-image-size": "^7",
     "@types/sql.js": "^1.4.9",
-    "@xpda-dev/core": "^0.1.6",
+    "@xpda-dev/core": "^0.1.7",
     "@xpda-dev/electron-builder": "^0.2.1",
     "@xpda-dev/electron-launcher": "^0.3.0",
     "@xpda-dev/webpack-step": "^0.1.6",
@@ -96,7 +96,7 @@
     "electron-builder": "24.9.1",
     "electron-devtools-installer": "^3.2.0",
     "electron-store": "^8.1.0",
-    "electron-updater": "^6.1.7",
+    "electron-updater": "^6.1.9",
     "electron-window-state": "^5.0.3",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
