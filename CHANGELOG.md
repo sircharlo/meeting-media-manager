@@ -1,5 +1,14 @@
 # Changelog
 
+## 24.2.0
+
+### Bug fixes
+
+- Correctly sanitize filenames with an apostrophe
+- Correctly save time values when only changing the hour
+- Disabled save button while saving
+- Exclude songs with described audio from song picker
+
 ## 24.1.0
 
 ### New or improved features
