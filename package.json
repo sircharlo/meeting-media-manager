@@ -57,7 +57,7 @@
   "packageManager": "yarn@3.6.1",
   "devDependencies": {
     "@babel/core": "7.23.9",
-    "@babel/runtime-corejs3": "7.23.9",
+    "@babel/runtime-corejs3": "7.24.0",
     "@electron/asar": "^3.2.8",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
