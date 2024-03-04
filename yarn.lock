@@ -7597,9 +7597,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-updater@npm:^6.1.9":
-  version: 6.1.9
-  resolution: "electron-updater@npm:6.1.9"
+"electron-updater@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "electron-updater@npm:6.2.1"
   dependencies:
     builder-util-runtime: 9.2.4
     fs-extra: ^10.1.0
@@ -7609,7 +7609,7 @@ __metadata:
     lodash.isequal: ^4.5.0
     semver: ^7.3.8
     tiny-typed-emitter: ^2.1.0
-  checksum: b246da3a7bac2d68f51bf28deba11da364b3be73d051333697ec795990cb805109d1944beb9443a3437eccd4421b2a0583315b3087709f145188400193eab8fb
+  checksum: 92a064610a3c9df747dce9c3eccd69c48adb2c8b37b9d7c13d1c39f7e2a9ffaef4e909ab50e6973d557566bde6de7ec9c64e2cc3a2cdef18b3220c5d91333e1c
   languageName: node
   linkType: hard
 
@@ -11373,7 +11373,7 @@ __metadata:
     electron-builder: 24.12.0
     electron-devtools-installer: ^3.2.0
     electron-store: ^8.1.0
-    electron-updater: ^6.1.9
+    electron-updater: ^6.2.1
     electron-window-state: ^5.0.3
     eslint: ^8.57.0
     eslint-config-prettier: ^9.0.0
