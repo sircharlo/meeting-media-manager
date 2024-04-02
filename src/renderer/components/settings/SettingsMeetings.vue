@@ -169,7 +169,7 @@ import { defineComponent, PropType } from 'vue'
 import { extname, join } from 'upath'
 import { faDownload, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { MeetingPrefs, ElectronStore, VideoFile, ShortJWLang } from '~/types'
-import { NR_OF_KINGDOM_SONGS } from '~/constants/general'
+import { KINGDOM_SONGS_MAX } from '~/constants/general'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PREFS } = require('~/constants/prefs') as { PREFS: ElectronStore }
 export default defineComponent({
@@ -199,6 +199,9 @@ export default defineComponent({
   computed: {
     online(): boolean {
       return this.$store.state.stats.online
+    },
+    nrOfSongs(): number {
+      return this.$store.state.media.nrOfSongs
     },
     faMusic() {
       return faMusic
@@ -345,12 +348,12 @@ export default defineComponent({
         return (
           this.$findAll(
             join(pubPath, '..', this.prefs.media.lang, 'sjj', '**', '*.mp4')
-          ).length === NR_OF_KINGDOM_SONGS
+          ).length === this.nrOfSongs
         )
       } else {
         return (
           this.$findAll(join(pubPath, '..', 'E', 'sjjm', '**', '*.mp3'))
-            .length === NR_OF_KINGDOM_SONGS
+            .length === this.nrOfSongs
         )
       }
     },
@@ -375,7 +378,7 @@ export default defineComponent({
     },
     async downloadSong(song: VideoFile) {
       await this.$downloadIfRequired(song, this.setProgress)
-      this.setProgress(++this.processed, NR_OF_KINGDOM_SONGS, true)
+      this.setProgress(++this.processed, this.nrOfSongs, true)
     },
     async downloadShuffleMusic() {
       this.status = 'loading'
@@ -384,11 +387,15 @@ export default defineComponent({
         return
       }
       try {
-        const songs = (await this.$getMediaLinks({
-          pubSymbol: this.isSignLanguage ? 'sjj' : 'sjjm',
-          format: this.isSignLanguage ? 'MP4' : 'MP3',
-          lang: this.isSignLanguage ? this.prefs.media.lang : 'E',
-        })) as VideoFile[]
+        const songs = (
+          await this.$getMediaLinks({
+            pubSymbol: this.isSignLanguage ? 'sjj' : 'sjjm',
+            format: this.isSignLanguage ? 'MP4' : 'MP3',
+            lang: this.isSignLanguage ? this.prefs.media.lang : 'E',
+          })
+        ).filter((song) => song.track < KINGDOM_SONGS_MAX) as VideoFile[]
+
+        this.$store.commit('media/setNrOfSongs', songs.length)
 
         const promises: Promise<void>[] = []
 
