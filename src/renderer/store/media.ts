@@ -4,6 +4,7 @@ import { MediaStore, MeetingFile, ShortJWLang } from '~/types'
 
 const defaultState: MediaStore = {
   songPub: 'sjjm', // The song publication (sjj for sign language)
+  nrOfSongs: 158, // The number of songs in the song publication
   ffMpeg: false, // Whether FFmpeg has been initialized
   musicFadeOut: '', // The fade out time for shuffle music
   mediaLang: null, // The media language object
@@ -17,6 +18,9 @@ export const state = () => Object.assign({}, defaultState)
 export const mutations: MutationTree<MediaStore> = {
   setSongPub(state, pub: string) {
     state.songPub = pub
+  },
+  setNrOfSongs(state, nr: number) {
+    state.nrOfSongs = nr
   },
   setMediaLang(state, lang: ShortJWLang | null) {
     state.mediaLang = lang

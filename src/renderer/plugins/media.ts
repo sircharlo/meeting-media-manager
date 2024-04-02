@@ -17,9 +17,9 @@ import {
   THV_POSTER,
   JAN_2008,
   MAX_PREFIX_LENGTH,
-  NR_OF_KINGDOM_SONGS,
   BIBLE_READING_PAR_NR,
   FEB_2023,
+  KINGDOM_SONGS_MAX,
 } from './../constants/general'
 import {
   MediaFile,
@@ -1890,7 +1890,11 @@ const plugin: Plugin = (
                 format: mediaFormat.toUpperCase(),
                 lang: mediaLang,
               })) as VideoFile[]
-            ).filter((item) => item.track <= NR_OF_KINGDOM_SONGS && extname(item.url) === `.${mediaFormat}`)
+            ).filter(
+              (item) =>
+                item.track < KINGDOM_SONGS_MAX &&
+                extname(item.url) === `.${mediaFormat}`
+            )
           : $findAll(
               join(
                 $pubPath(),
@@ -2017,14 +2021,18 @@ const plugin: Plugin = (
   }
 
   inject('getSongs', async (): Promise<VideoFile[]> => {
-    const result = (await getMediaLinks({
-      pubSymbol: store.state.media.songPub,
-      format: 'MP4',
-    })).filter((song) => song.track <= NR_OF_KINGDOM_SONGS) as VideoFile[]
+    const result = (
+      await getMediaLinks({
+        pubSymbol: store.state.media.songPub,
+        format: 'MP4',
+      })
+    ).filter((song) => song.track < KINGDOM_SONGS_MAX) as VideoFile[]
+
+    store.commit('media/setNrOfSongs', result.length)
 
     const fallbackLang = $getPrefs('media.langFallback') as string
 
-    if (fallbackLang && result.length < NR_OF_KINGDOM_SONGS) {
+    if (fallbackLang && result.length < store.state.media.nrOfSongs) {
       const fallback = (await getMediaLinks({
         pubSymbol: store.state.media.songPub,
         format: 'MP4',
