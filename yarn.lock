@@ -8818,14 +8818,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:^4.3.5":
-  version: 4.3.5
-  resolution: "fast-xml-parser@npm:4.3.5"
+"fast-xml-parser@npm:^4.3.6":
+  version: 4.3.6
+  resolution: "fast-xml-parser@npm:4.3.6"
   dependencies:
     strnum: ^1.0.5
   bin:
     fxparser: src/cli/cli.js
-  checksum: 852064985ca56aa2078be02c92509a675408b57bb9862f696689301bf7df786f9ce9116b812b032c627979a4de5755f9cbfeecc4b90ed9d56be76deccd97c0c6
+  checksum: 12795c55f4564699c3cee13f7e892423244ac1125775e9b85bf948a1d4b65352da8f688d334bad530972288bb7ee0cf3d2605088d475123fce40d95003f045fa
   languageName: node
   linkType: hard
 
@@ -11597,7 +11597,7 @@ __metadata:
     eslint-plugin-vue: ^9.23.0
     eslint-webpack-plugin: ^2.7.0
     fast-glob: ^3.3.2
-    fast-xml-parser: ^4.3.5
+    fast-xml-parser: ^4.3.6
     fluent-ffmpeg: ^2.1.2
     fs-extra: ^11.1.1
     fullname: ^4.0.1
