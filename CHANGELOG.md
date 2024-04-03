@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.4.0
+
+## Bug fixes
+
+- Dynamically get the correct number of Kingdom Songs
+
 ## 24.2.0
 
 ### Bug fixes
