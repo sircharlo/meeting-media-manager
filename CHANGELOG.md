@@ -2,7 +2,7 @@
 
 ## 24.4.0
 
-## Bug fixes
+### Bug fixes
 
 - Dynamically get the correct number of Kingdom Songs
 
