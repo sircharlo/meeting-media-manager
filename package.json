@@ -124,7 +124,7 @@
     "nuxt-webfontloader": "^1.1.0",
     "obs-websocket-js": "^4.0.3",
     "obs-websocket-js-v5": "npm:obs-websocket-js@5.0.5",
-    "pdfjs-dist": "^3.11.174",
+    "pdfjs-dist": "^4.1.392",
     "prettier": "^2.8.8",
     "probe-image-size": "^7.2.3",
     "sql.js": "^1.10.3",
