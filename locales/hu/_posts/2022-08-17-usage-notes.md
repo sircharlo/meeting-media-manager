@@ -26,13 +26,13 @@ Mielőtt ezt megteszi, mindenképpen olvassa el, hogy [mivel jár ez](https://lw
 
 Ha az alkalmazás elindításakor figyelmeztetést kap, hogy az alkalmazás nem nyitható meg, mert "nem az App Store-ból lett letöltve", vagy mert "a fejlesztő nem ellenőrizhető", akkor ez az [Apple támogatási oldal](https://support.apple.com/en-ca/HT202491) segít, hogy túljusson ezen.
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), for example running the following command in `Terminal.app`:
+Ha azt az üzenetet kapja, hogy "nincs jogosultsága az alkalmazás megnyitásához", akkor próbáljon meg néhány megoldást [ezen az oldalon](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), például futtassa a következő parancsot a `Terminal.app` programban:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Issues with audio or microphone permissions in macOS Sonoma
+### macOS: Problémák az audio- vagy mikrofonengedélyekkel a macOS Sonoma rendszerben
 
-Since macOS Sonoma, some users might encounter an issue where M³ repeatedly gives an error message indicating that it needs access to the microphone. Executing the following command in `Terminal.app` has resolved the issue for some:
+A macOS Sonoma óta egyes felhasználók találkozhatnak egy olyan problémával, amikor az M³ ismétlődően olyan hibaüzenetet ad, amely azt jelzi, hogy hozzáférésre van szüksége a mikrofonhoz. A következő parancs végrehajtása a `Terminal.app` programban egyeseknél megoldotta a problémát:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
