@@ -38,7 +38,7 @@ A macOS Sonoma óta egyes felhasználók találkozhatnak egy olyan problémával
 
 ### macOS: Automatikus frissítés
 
-A Windowstól és a Linux-tól eltérően az automatikus frissítési funkció **nem** elérhető a macOS-en, és technikai okokból valószínűleg soha nem is lesz. A macOS-felhasználók esetében azonban két dolog fog történni, amikor a frissítés elérhetővé válik:
+A Windows és Linux rendszerekkel ellentétben az automatikus frissítés funkció **nincs** implementálva a macOS rendszeren, és technikai okokból valószínűleg soha nem is lesz. Ugyanakkor a macOS-t használók számára két dolog egyike fog történni, amikor a frissítés elérhetővé válik:
 
 - Az M³ megpróbálja letölteni a frissítőcsomagot, és automatikusan megnyitja azt, majd a felhasználónak kézzel kell befejeznie az M³ frissítés telepítését a frissített alkalmazásnak az Alkalmazások mappába történő húzásával. Ezután a szokásos módon elindíthatja az újonnan frissített M³ programot az Alkalmazások mappából.
 - Ha az előző lépés bármelyik szakaszában sikertelen, az M³ egy állandó értesítést jelenít meg, amely jelzi, hogy elérhető a frissítés, és hivatkozik magára a frissítésre. Az M³ főképernyőjének beállítások gombján egy piros, pulzáló értesítés is megjelenik. A beállítások képernyőn az M³ verziószám egy gombbá változik, amelyre kattintva automatikusan megnyílik a legújabb kiadás letöltési oldala.
