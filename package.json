@@ -73,7 +73,7 @@
     "@panzoom/panzoom": "^4.5.1",
     "@playwright/test": "^1.43.1",
     "@sentry/electron": "~4.11.1",
-    "@sentry/vue": "^7.112.1",
+    "@sentry/vue": "^8.4.0",
     "@sentry/webpack-plugin": "^1.21.0",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/heic-convert": "^1.2.3",
