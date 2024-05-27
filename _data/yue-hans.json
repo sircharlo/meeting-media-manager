@@ -1,43 +1,43 @@
 {
   "lang": "en",
   "name": "English",
-  "language": "Language:",
-  "search": "Filter by keyword",
+  "language": "语言：",
+  "search": "按关键字筛选",
   "shared": {
-    "explanation": "Explanation",
-    "option": "Option",
-    "optionsApp": "Application setup",
-    "optionsCongSync": "Congregation sync setup",
-    "optionsMedia": "Media setup",
-    "optionsMeetings": "Meeting setup",
-    "password": "Password",
-    "port": "Port",
-    "setting": "Setting"
+    "explanation": "说明",
+    "option": "选项",
+    "optionsApp": "应用设置",
+    "optionsCongSync": "会众同步设置",
+    "optionsMedia": "媒体设置",
+    "optionsMeetings": "聚会设置",
+    "password": "密码",
+    "port": "端口",
+    "setting": "设置"
   },
   "home": {
-    "expand": "Expand all articles",
-    "collapse": "Collapse all articles",
-    "syncInProgress": "Meeting media sync in progress",
-    "mainScreen": "Main screen",
-    "chooseWeek": "Choose a week",
-    "syncComplete": "Sync complete!",
-    "musicPlaying": "Pre- and post-meeting music playing"
+    "expand": "展开所有文章",
+    "collapse": "折叠所有文章",
+    "syncInProgress": "正在同步聚会媒体",
+    "mainScreen": "主屏幕",
+    "chooseWeek": "选择一个周",
+    "syncComplete": "同步已完成！",
+    "musicPlaying": "聚会前后音乐"
   },
   "manage-media": {
-    "imgAddSong": "Adding a song for a public talk",
-    "imgAddPic": "Adding an additional picture",
-    "imgImportJWPUB": "Importing media from a section in a JWPUB file",
-    "imgPreviewJWPUB": "Previewing media from a JWPUB file before importing",
-    "imgRename": "Renaming a media file"
+    "imgAddSong": "为公众演讲添加一个歌曲",
+    "imgAddPic": "添加附加图片",
+    "imgImportJWPUB": "从JWPUB文件中的一个部分导入媒体",
+    "imgPreviewJWPUB": "在导入前预览来自JWPUB文件的媒体",
+    "imgRename": "重命名媒体文件"
   },
   "present-media": {
-    "imgButton": "Blue play button to enter media controller mode",
-    "imgSelectMeeting": "Selecting a meeting for which to display media",
-    "imgBG": "Default media background, with automatically generated yeartext",
-    "imgMediaList": "List of media that is ready to be presented",
-    "imgStandby": "M³ media presentation in standby mode",
-    "imgDisplayPic": "Displaying a picture",
-    "imgPlayVideo": "Playing a video",
-    "imgVideoScrub": "Moving to a specific time in a video"
+    "imgButton": "进入媒体控制模式的蓝色播放按钮",
+    "imgSelectMeeting": "选择要播放媒体的聚会",
+    "imgBG": "默认媒体背景，自动生成全年经文",
+    "imgMediaList": "已准备就绪的媒体列表",
+    "imgStandby": "在准备模式中M³媒体播放",
+    "imgDisplayPic": "播放图片",
+    "imgPlayVideo": "播放视频",
+    "imgVideoScrub": "在视频中移动到指定时间"
   }
 }

@@ -4,32 +4,32 @@ permalink: /en/
   
 ### M³是什么？
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+**Meeting Media Manager**（简称**M³**）是Windows、 macOS 和 Linux 的应用。这款应用能从JW.org上自动下载将在耶和华见证会聚会时使用的任何语言版本的图片或视频。
 
-It features support for managing custom and recurring media, an optional synchronization feature for members of the same congregation, as well as support for multiple congregations and/or groups using the same computer account.
+它支持管理自定义和常用媒体，并带有同步功能，可与同一群会众里的成员分享。此外，它还具有支持使用同一计算机帐户的多个会众和/或小组的功能。
 
-<sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
+<sup>注：M³之前被称为JWMMF（JW Meeting Media Fetcher），但在2022年5月更名为现在的名称。</sup>
 
-### What can M³ do?
+### M³能做什么？
 
-M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+有了M³，您可以轻松自动地下载、同步、分享和播放所有聚会媒体。
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+对于**混合**或**面对面**的会众聚会，内在的媒体播放模式会帮助您简化与会众分享媒体所需的所有功能，包括：
 
-- Media thumbnails
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
-- OBS Studio integration
+- 媒体缩略图
+- 轻松使用暂停/播放/停止按钮来管理媒体文件的播放
+- 简单地播放背景音乐，也可在指定聚会开始时间之前自动停止
+- 自动外部屏幕的识别和管理
+- 支持OBS工作室
 
-As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature.
+至于**偏远**会众的Zoom聚会，M³ 内置的MP4转换功能使您能够使用Zoom的原生MP4共享功能轻松地分享所有类型的媒体文件。
 
-### Does M³ work in my language?
+### M³支持我的语言吗？
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
+**是！**耶和华见证人的聚会所需的媒体可以自动以JW.org提供的数百种语言下载。 可用语言列表将持续更新；您只需要做的就是选择您想要的语言。
 
-In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+此外，M³本身已被许多志愿者翻译成许多种语言； 因此，您可以设置您想要在M³中显示的语言。
 
-This app is made with love and a bit of spare time. Enjoy!
+这个应用是用爱心和一点业余时间制作的。 尽情享用吧！
 
-### Screenshots
+### 截图
