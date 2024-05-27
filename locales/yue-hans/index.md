@@ -2,7 +2,7 @@
 permalink: /en/
 ---
   
-### What is M³?
+### M³是什么？
 
 **Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
 
