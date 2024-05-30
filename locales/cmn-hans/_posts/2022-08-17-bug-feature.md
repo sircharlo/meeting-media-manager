@@ -1,13 +1,13 @@
 ---
-tag: Help
-title: Issues and feature requests
+tag: 帮助
+title: 问题和功能请求
 ref: bug-feature
 ---
 
-### How do I report an issue or bug I encountered?
+### 如何报告我遇到的问题或错误？
 
-If ever you run into any issues with M³, please use [GitHub Issues]({{site.github}}/issues) to report it. Bug fixes are issued on a regularly basis, usually monthly.
+如果你遇到了M³的任何问题，请使用[GitHub Issues]({{site.github}}/issues)报告它。 错误修正定期发布，通常每月一次发布。
 
-### How can I request new features?
+### 我怎样才能请求新功能？
 
-I'm open to suggestions! Please use [GitHub Discussions]({{site.github}}/discussions) to discuss potential new features.
+我愿意听取建议！ 请使用[GitHub Discussions]({{site.github}}/discussions)来讨论潜在的新功能。
