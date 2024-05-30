@@ -1,21 +1,21 @@
 ---
-tag: Configuration
-title: Installation
+tag: 设定
+title: 安装
 ref: installation
 ---
 
-M³ does not require administrative privileges to install or run. To install M³, simply [download the latest installer]({{site.github}}/releases/latest) and run it.
+M³的安装或运行不需要管理员权限。 要安装M³，只需要[下载最新安装程序包]({{site.github}}/releases/latest)并运行它即可。
 
-| Operating System | File to download                           |
-| ---------------- | ------------------------------------------ |
-| Windows          | `meeting-media-manager-[VERSION].exe`      |
-| macOS            | `meeting-media-manager-[VERSION].dmg`      |
-| Linux            | `meeting-media-manager-[VERSION].AppImage` |
+| 操作系统    | 要下载的文件                                     |
+| ------- | ------------------------------------------ |
+| Windows | `meeting-media-manager-[VERSION].exe`      |
+| MacOS   | `meeting-media-manager-[VERSION].dmg`      |
+| Linux   | `meeting-media-manager-[VERSION].AppImage` |
 
-### What's next?
+### 接下来呢？
 
-Configure the app using the [Settings]({{page.lang}}/#configuration) screen.
+使用[设置]({{page.lang}}/#configuration)页面配置应用程序。
 
-### Trouble installing?
+### 安装出错？
 
-Check the [Technical usage notes]({{page.lang}}/#usage-notes) for help.
+查看[技术注释]({{page.lang}}/#usage-notes)获取帮助。
