@@ -1,12 +1,12 @@
 ---
-tag: Usage
-title: Media Presentation mode
+tag: 使用
+title: 媒体播放模式
 ref: present-media
 ---
 
-### Using media presentation mode
+### 使用媒体播放模式
 
-The media presentation and controller modes are designed for simplicity and to prevent mistakes during meetings.
+媒体播放和控制模式的设计是为了简便和防止聚会时出现错误。
 
 Once the option `Present media on an external monitor or in a separate window` is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
 

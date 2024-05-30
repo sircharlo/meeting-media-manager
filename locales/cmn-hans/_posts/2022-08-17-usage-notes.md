@@ -1,44 +1,44 @@
 ---
-tag: Help
-title: Technical usage notes
+tag: 帮助
+title: 技术注释
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+这个应用应该像在运行Windows、Linux或 macOS的大多数现代计算机上一样运行。
 
-### Windows: Installation and first launch
+### Windows：安装和首次启动
 
-On opening the installer, you might get an [error](assets/img/other/win-smartscreen.png) indicating that "Windows SmartScreen prevented an unrecognized app from starting". This is due to the app not having a high number of downloads, and consequently not being explicitly "trusted" by Windows. To get around this, simply click on "More info", then "Run anyway".
+打开安装程序时，您可能会收到一条[错误](assets/img/other/win-smartscreen.png)消息，提示“Windows SmartScreen 阻止了一个未识别的应用启动”。 这是因为应用程序下载次数不多，Windows没有明确“信任”。 要绕过这个问题，请单击"更多信息"，然后"无论如何运行"。
 
-### Linux: Installation and first launch
+### Linux：安装和首次启动
 
-As per the [official AppImage documentation](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html), if the app fails to open properly, confirm the output of the following command:
+按照[官方 AppImage 文档](https://docs.appimage.org/user-guide/troubleshooting/electron-sandboxing.html)，如果应用未能正常打开, 确认以下命令的输出：
 
 `sysctl kernel.unprivileged_userns_clone`
 
-If the output is `0`, then the AppImage will **not** run unless you run the following command, followed by a reboot:
+如果输出是`0`，那么除非您运行以下命令并重新启动，否则 AppImage 将**无法**运行：
 
 `echo kernel.unprivileged_userns_clone = 1 | sudo tee /etc/sysctl.d/00-local-userns.conf`
 
-Make sure you read up on [what this entails](https://lwn.net/Articles/673597/) before you do this.
+请确保您已阅读[这意味着什么](https://lwn.net/Articles/673597/)。
 
-### macOS: Installation and first launch
+### macOS: 安装和首次启动
 
-If upon launching the app, you receive a warning that the app cannot be opened, either because "it was not downloaded from the App store" or because "the developer cannot be verified", then this [Apple support page](https://support.apple.com/en-ca/HT202491) will help you to get past that.
+如果在启动应用时您收到了一个警告，无法打开应用， 或者因为“它没有从应用商店下载”，或者因为“开发者无法验证”， 那么此 [Apple支持页](https://support.apple.com/en-ca/HT202491) 将帮助您过去。
 
-If you get a message indicating that you "do not have permission to open the application", then try some solutions from [this page](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860), for example running the following command in `Terminal.app`:
-
-`codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
-
-### macOS: Issues with audio or microphone permissions in macOS Sonoma
-
-Since macOS Sonoma, some users might encounter an issue where M³ repeatedly gives an error message indicating that it needs access to the microphone. Executing the following command in `Terminal.app` has resolved the issue for some:
+如果您收到一条消息，表明您“没有权限打开应用程序”，那么尝试从 [此页](https://stackoverflow.com/questions/64842819/cant-run-app-because-of-permission-in-big-sur/64895860)中的一些解决方案，例如在 `Terminal 中运行以下命令。`：
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
-### macOS: Auto-update
+### macOS: 在 macOS Sonoma 中具有音频或麦克风权限的问题
 
-Unlike Windows and Linux, auto-update functionality is **not** implemented on macOS, and for technical reasons probably never will be. However, one of two things will happen for macOS users when an update is available:
+由于macOS Sonoma，有些用户可能会遇到M³反复发出错误消息的问题，表明它需要访问麦克风。 在 `Terminal.app` 中执行以下命令能解决一些问题：
 
-- M³ will attempt to download the update package and open it automatically, after which the user will have to manually complete the installation of the M³ update by dragging and dropping the updated app to their Applications folder. Then, they will be able to launch the newly updated M³ from their Applications folder as usual.
-- If the previous step fails at any stage, M³ will display a persistent notification indicating that an update is available, with a link to the update itself. A red, pulsing notification will also be displayed on the settings button in the main screen of M³. The M³ version number in the settings screen will turn into a button that, once clicked, opens the latest release's download page automatically.
+`codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
+
+### macOS：自动更新
+
+不同于 Windows 和 Linux，自动更新功能在macOS上**没能实现**，出于技术原因，可能永远无法实现。 然而，当可用更新时，macOS 用户将发生两件事之一：
+
+- M³将尝试下载更新包并自动打开它，此后用户将需要手动完成M³更新，拖拽更新应用到应用程序文件夹中。 然后，他们将能够像以前一样从其应用程序文件夹中启动更新了的M³。
+- 如果前一步骤在任何阶段都失败， M³将显示一个持续的通知，说有一个可用的更新，并链接到更新。 一个红色的拉动通知也将显示在M³主屏幕上的设置按钮上。 设置界面中的M³版本号将会变成一个按钮，一旦点击，将自动打开最新版本的下载页面。
