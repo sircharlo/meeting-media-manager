@@ -8,140 +8,140 @@ ref: present-media
 
 媒体播放和控制模式的设计是为了简便和防止聚会时出现错误。
 
-Once the option `Present media on an external monitor or in a separate window` is enabled, the media presentation screen will automatically appear on the external monitor if present, or in a separate, draggable and resizable window if no external monitor was detected.
+一旦启用选项`在外部显示器或单独窗口中播放媒体`，如果有外部显示器，媒体播放屏幕将自动出现在外部显示器上；如果未检测到外部显示器，则会在一个可拖动和可调整大小的单独窗口中显示。
 
-When in standby, the media presentation screen will display the background image that is configured in the settings. If no background image has been configured, then M³ will attempt to automatically fetch and display the yeartext.
+当待机时，媒体播放屏幕将显示在设置中配置的背景图像。 如果没有配置背景图像，则M³会尝试自动获取和显示全年经文。
 
-If no background image is configured in the settings and the yeartext could not be loaded automatically, a black background will be displayed when on standby.
+如果在设置中没有配置背景图像，全年经文不能自动加载， 黑色背景将在待机时显示。
 
-Media controller mode can be accessed by clicking the ▶️ (play) button on the main screen of M³, or by using the keyboard shortcut <kbd>Alt D</kbd> (for external display).
+可以通过点击M³主屏幕上的▶️（播放）按钮，或使用键盘快捷键<kbd>Alt+D</kbd>（用于外部显示）进入媒体控制器模式。
 
-Once you have entered controller mode, the folder selection screen will allow you to select the date for which you'd like to display media. If the current day's folder exists, it will automatically be preselected. Once a date is selected, you can still change the selected date at any time by clicking on the date selection button, in the top section.
+一旦您进入控制模式，文件夹选择页面将允许您选择您想要播放媒体的日期。 如果当前日期的文件夹存在，它将自动预选。 一旦选择一个日期， 您仍然可以在任何时候点击日期选择按钮，在顶部更改选定日期。
 
-### Presenting media
+### 播放媒体
 
-To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
+要播放媒体，请按 ▶️ (播放) 按钮来播放您喜欢的文件。 要隐藏媒体，请按⏹️（停止）按钮。 如果需要，可以在视频暂停时倒带或快进。 请注意，对于视频，必须按**两次**停止按钮，以防在为会众播放时意外过早地停止视频。 视频在播放完毕后将自动停止。
 
-### Extra Features
+### 更多功能
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+M³ 具有一些额外功能，可用于提升媒体播放体验。
 
-#### Present JW.org
+#### 展示JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+若要显示JW.org，您可以按屏幕顶部的浏览器（椭圆）按钮，并选择 `打开JW.org`。 这将打开一个加载了JW.org 的新控制器窗口。 媒体窗口也将显示JW.org。 现在您可以使用控制器窗口来浏览JW.org，媒体窗口将显示您的操作。 当您结束JW.org展示时，您可以关闭控制器窗口，并继续使用正常的媒体播放模式。
 
-#### Zoom and pan images
+#### 缩放和平移图像
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+当显示图像时，您可以将鼠标悬停在图像预览上，滚动鼠标滚轮进行放大和缩小。 或者，您也可以双击图像预览进行放大。 双击将在 1.5x、2x、3x、4x 之间切换，并返回到 1x 缩放。 您还可以按住并拖动图像来在图像周围移动。
 
-#### Sort the media list
+#### 排序媒体列表
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+媒体列表可以通过点击屏幕右上角的排序按钮来排序。 媒体项目旁边会出现一个按钮，可用于将媒体项目在列表中向上或向下拖动。 当您满意排序后，可以再次点击排序按钮以锁定顺序。
 
-#### Add a last-minute song
+#### 临时添加歌曲
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+如果您需要在最后一刻将一首歌曲添加到媒体列表中，您可以点击屏幕顶部的 `♫ +`（添加歌曲）按钮。 会出现一个下拉菜单，列出所有王国诗歌。 当您选择其中一首歌时，它将立即添加到媒体列表的顶部，并可以立即播放。 它将从 JW.org 流式传输歌曲，或者如果之前已下载，则从本地缓存播放歌曲。
 
-### Conducting hybrid meetings using a combination of M³, OBS Studio, and Zoom
+### 使用 M³、OBS Studio 和 Zoom 结合进行混合会议
 
-By far the simplest way to share media during hybrid meetings is by configuring OBS Studio, M³ and Zoom to work together.
+迄今为止，在混合会议期间共享媒体的最简单方法是配置 OBS Studio、M³ 和 Zoom 以共同工作。
 
-#### Initial configuration: Kingdom Hall computer
+#### 初始配置：王国聚会所的计算机
 
-Set the external monitor's screen resolution to 1280x720, or something close to that.
+将外部显示器的屏幕分辨率设置为 1280x720，或与此相近的东西。
 
-Configure the computer sound card's output to go to one of the sound booth mixer's inputs, and the sound booth mixer's combined output to go to the computer's sound card input.
+配置计算机音响卡的输出转到音箱中的一个输入框。 和音响包混音器的合并输出转到计算机的声音卡输入。
 
-#### Initial configuration: OBS Studio
+#### 初始配置： OBS Studio
 
-Install OBS Studio, or download the portable version.
+安装 OBS Studio 或下载便携式版本。
 
-If using the portable version of OBS Studio, install the [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) plugin, and if using the portable version of OBS Studio, add the virtual camera to Windows by double-clicking the provided installation script.
+如果使用 OBS Studio 的便携式版本，请安装 [Virtualcam](https://obsproject.com/forum/resources/obs-virtualcam.949/) 插件。如果使用 OBS Studio 的便携式版本，通过双击提供的安装脚本，将虚拟相机添加到Windows。
 
-If you have OBS Studio v27 or older, you need to install the [obs-websocket](https://github.com/obsproject/obs-websocket) plugin. Otherwise obs-websocket is included. Configure a port number and password for obs-websocket.
+如果您有 OBS Studio v27 或更多，您需要安装 [obs-websocket](https://github.com/obsproject/obs-websocket) 插件。 否则将包含obs-websocket。 配置 obs-websocket 的端口号和密码。
 
-In the OBS settings, under `General` > `System Tray`, enable all checkboxes. Under `Output` > `Streaming`, enable a hardware encoder if available. Under `Video` > `Base (Canvas) Resolution` and `Output (Scaled) Resolution`, choose `1280x720`, and under `Downscale Filter`, choose `Bilinear`.
+在 OBS 设置中，在 `常规` > `系统托盘`下，启用所有复选框。 在 `下输出` > `串流`如果可用，请启用硬件编码器。 在`视频` > `基本 (画布) 分辨率` 和 `输出 (缩放) 分辨率`下，选择`1280x720`，在`降采样滤波器`下，选择`双线性`。
 
-Set up at least 2 scenes: one for the media display (`Window Capture` or `Display Capture` with the mouse cursor disabled and the appropriate window title/monitor selected), and one for the stage view (`Video Capture Device` with the KH camera selected). You can also add another scene specifically for pictures, where the media window is visible along with the podium in a picture-in-picture style display. You may add as many scenes as required, with the camera adjusted, zoomed-in and cropped as needed (lectern view, conductor and reader view, table view, etc.).
+设置至少 2 个场景：一个用于媒体显示（使用`窗口捕获`或`显示捕获`，关闭鼠标指针并选择适当的窗口标题/显示器），另一个用于舞台视图（使用`视频捕获设备`，选择聚会所摄像头）。 您还可以添加另一个专门用于图片的场景，媒体窗口和讲台一起在图片中显示。 您可以根据要求添加尽可能多的场景，并且相机已调整， 视需要放大和裁剪(讲座视图，导体和读取器视图，表视图等)。
 
-Enable the `Scaling/Aspect Ratio` filter on all `Window Capture` or `Display Capture` inputs, with a `Resolution` of `Base (Canvas) Resolution`. This will ensure that the media window is always scaled to the virtual camera's output resolution.
+对所有`窗口捕获`或`显示捕获`输入启用`缩放/宽高比`滤镜，分辨率设置为`基本 (画布) 分辨率`。 这将确保媒体窗口总是被缩放到虚拟摄像头的输出分辨率。
 
-Add a shortcut to OBS Studio, with the `--startvirtualcam` parameter, to the Startup folder of the Windows user profile, to ensure that OBS Studio gets started automatically when the user logs in.
+使用 `--startvirtualcam` 参数在 OBS Studio 添加快捷方式 到 Windows 用户配置文件的启动文件夹，以确保OBS Studio 在用户登录时自动启动。
 
-#### Initial configuration: Kingdom Hall Zoom
+#### 初始配置：王国聚会所的Zoom
 
-Zoom should be configured to use dual monitors. Enable global keyboard shortcuts for Zoom to mute/unmute the Kingdom Hall audio in Zoom (<kbd>Alt A</kbd>), and start/stop the Kingdom Hall video feed in Zoom (<kbd>Alt V</kbd>).
+Zoom应配置为使用双重显示器。 为 Zoom 启用全局键盘快捷键，用于在 Zoom 中静音/取消静音王国聚会所音频（<kbd>Alt A</kbd>），以及启动/停止 Zoom 中的王国聚会所视频源（<kbd>Alt V</kbd>）。
 
-Set the default "microphone" to be sound booth mixer's combined output (so that everything that is heard over the Kingdom Hall sound system is transmitted over Zoom, including microphones and media) and the "camera" to be the virtual camera provided by OBS Studio.
+将默认的“麦克风”设置为声音控制室混音器的混合输出（以便将传送到王国聚会所音响系统的所有内容都传输到 Zoom，包括麦克风和媒体），并将“摄像头”设置为 OBS Studio 提供的虚拟摄像头。
 
-#### Initial configuration: M³
+#### 初始配置：M³
 
-Enable the `Present media on an external monitor or in a separate window` option.
+启用`在外部显示器上或在单独窗口中播放媒体`选项。
 
-Enable and configure OBS Studio compatibility mode, using the port and password information configured in the OBS Studio configuration step.
+启用并配置 OBS Studio 兼容模式，使用在 OBS Studio 配置步骤中配置的端口和密码信息。
 
-#### Starting the meeting
+#### 开始聚会
 
-Start the Zoom meeting, and move the secondary Zoom meeting window to the external monitor. Make it fullscreen if desired. This is where any remote meeting participants will be displayed for the congregation to see.
+开始 Zoom 会议，并将辅助 Zoom 会议窗口移动到外部显示器。 如果需要，将其设为全屏。 这是任何远程会议参与者将显示给会众看到的地方。
 
-Once the Zoom meeting is being displayed on the external monitor, open M³. The media presentation window will automatically open on top of Zoom on the external monitor. Sync media if necessary, and enter media controller mode by clicking the ▶️ (play) button on the main screen of M³, or <kbd>Alt D</kbd>.
+一旦 Zoom 会议显示在外部显示器上，请打开 M³。 媒体展示窗口将自动显示在外部显示器上的 Zoom 之上。 如有必要，同步媒体，并通过点击 M³ 主屏幕上的 ▶️（播放）按钮，或<kbd>Alt D</kbd>进入媒体控制器模式。
 
-Enable the Kingdom Hall video feed (<kbd>Alt V</kbd>), and spotlight the Kingdom Hall video feed if necessary so that Zoom participants see the Kingdom Hall stage. Unmute the Kingdom Hall audio feed in Zoom (<kbd>Alt A</kbd>). It should not be necessary to disable the video or audio feed in Zoom for the duration of the meeting. Make sure that "Original sound for musicians" is enabled in Zoom, to ensure the best audio quality for remote meeting participants.
+启用王国聚会所视频源（<kbd>Alt V</kbd>），如有必要，突出显示王国聚会所视频源，以便 Zoom 参与者看到王国聚会所舞台。 取消静音 Zoom 中的王国聚会所音频 (<kbd>Alt A</kbd>)。 在会议期间不需要禁用 Zoom 中的视频或音频传输。 确保在 Zoom 中启用“音乐家的原始声音”，以确保远程会议参与者获得最佳的音频质量。
 
-Start background music playback using the button on the bottom left, or <kbd>Alt K</kbd>.
+使用底部左侧的按钮或<kbd>Alt K</kbd>开始背景音乐播放。
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom
+#### 通过 Zoom 在王国聚会所舞台上播放现场部分。
 
-No action necessary.
+无需操作。
 
-Various camera angles/zoom can be chosen during the meeting by using the menu on the bottom of the M³ media playback control window; this menu will contain a list of all configured camera view scenes in OBS.
+在会议期间，可以通过使用 M³ 媒体播放控制窗口底部的菜单来选择各种摄像机角度/缩放；该菜单将包含 OBS 中所有配置的摄像机视图场景的列表。
 
-#### Sharing media at the Kingdom Hall and over Zoom
+#### 在王国聚会所和通过 Zoom 分享媒体
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+在 M³ 媒体播放控制窗口中找到您想要分享的媒体，然后按下“播放”按钮。
 
-When you're done sharing media, press the "stop" button in M³. Note that videos automatically stop upon completion.
+当您完成分享媒体时，请在 M³ 中按下“停止”按钮。 请注意视频完成后自动停止。
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor
+#### 在王国聚会所屏幕上显示远程 Zoom 参与者
 
-Press the "hide/show media presentation window" button in the lower right corner of the M³ media controller screen, or <kbd>Alt Z</kbd>, to **hide** the media presentation window. The Zoom meeting will now be visible on the Kingdom Hall monitor.
+按下 M³ 媒体控制屏幕右下角的“隐藏/显示媒体展示窗口”按钮，或<kbd>Alt Z</kbd>，以**隐藏**媒体展示窗口。 现在，Zoom 会议将在王国聚会所监视器上可见。
 
-> If the participant has media to show, follow the steps under the **Sharing media at the Kingdom Hall and over Zoom** subheading.
+> 如果参与者有要展示的媒体，请按照**在王国聚会所和通过 Zoom 分享媒体**次标题下的步骤进行。
 
-Once the participant has finished their part, press the "hide/show media presentation window" button in the lower right corner of the M³ media playback control window, or <kbd>Alt Z</kbd>, to **show** the media presentation window. The Kingdom Hall monitor will now show the yeartext.
+一旦参与者完成了他们的部分，请按下 M³ 媒体播放控制窗口右下角的“隐藏/显示媒体展示窗口”按钮，或<kbd>Alt Z</kbd>，以**显示**媒体展示窗口。 现在，王国聚会所监视器将显示年度辞句。
 
-### Conducting hybrid meetings using only M³ and Zoom
+### 使用仅 M³ 和 Zoom 进行混合会议
 
-If you do not wish to use OBS Studio for any reason, the following suggestions will perhaps help you to set things up as simply as possible.
+如果出于任何原因您不想使用 OBS Studio，以下建议或许可以帮助您尽可能简单地设置事物。
 
-#### Initial configuration without OBS: Kingdom Hall computer
+#### 初步设置（不使用 OBS）：王国聚会所电脑
 
-Same as corresponding section above. With the addition of the global keyboard shortcut for Zoom for starting/stopping screen sharing (<kbd>Alt S</kbd>). The "camera" will be the camera feed from the Kingdom Hall camera.
+与上面的相应章节相同。 加上全局键盘快捷键用于 Zoom 的启动/停止屏幕共享（<kbd>Alt S</kbd>）。 “摄像头”将是来自王国聚会所摄像头的摄像头源。
 
-#### Initial configuration without OBS: M³
+#### 初步设置（不使用 OBS）：M³
 
-Enable the `Present media on an external monitor or in a separate window` option.
+启用`在外部显示器上或在单独窗口中播放媒体`选项。
 
-#### Starting the meeting without OBS
+#### 开始聚会（不使用 OBS）
 
-Same as corresponding section above.
+与上面的相应章节相同。
 
-#### Broadcasting in-person parts from the Kingdom Hall stage over Zoom without OBS
+#### 在 Zoom 中不使用 OBS 从王国聚会所舞台广播现场部分
 
-Same as corresponding section above.
+与上面的相应章节相同。
 
-#### Sharing media at the Kingdom Hall and over Zoom without OBS
+#### 在王国聚会所和通过 Zoom 分享媒体（不使用 OBS）
 
-Start sharing in Zoom by hitting <kbd>Alt S</kbd>. In the Zoom sharing window that pops up, choose the external monitor and enable both checkboxes on the bottom left (for sound and video optimization). The yeartext will now be shared over Zoom.
+点击 <kbd>Alt S</kbd> 开始Zoom共享。 在弹出的 Zoom 共享窗口中，选择外部显示器，并在左下角启用两个复选框（用于声音和视频优化）。 现在，全年经文将通过 Zoom 进行分享。
 
-Find the media you want to share in the M³ media playback control window, and press the "play" button.
+在 M³ 媒体播放控制窗口中找到您想要分享的媒体，然后按下“播放”按钮。
 
-When you're done sharing media, hit <kbd>Alt S</kbd> to end Zoom screen sharing.
+当您完成分享媒体时，按<kbd>Alt S</kbd>结束 Zoom 屏幕共享。
 
-#### Displaying remote Zoom participants on the Kingdom Hall monitor without OBS
+#### 在不使用 OBS 的情况下，在王国聚会所的屏幕上显示远程 Zoom 参与者
 
-Same as corresponding section above.
+与上面的相应章节相同。
 
-### Screenshots of Presentation Mode
+### 播放模式的截图
 
 {% include screenshots/present-media.html lang=site.data.en %}
