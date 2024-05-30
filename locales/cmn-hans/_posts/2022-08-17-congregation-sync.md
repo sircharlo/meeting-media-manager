@@ -35,10 +35,10 @@ M³的基础同步机制使用WebDAV 。 这意味着VO（或其监督下的某�
 | `会众同步文件夹` | 这是用于同步所有会众同步用户的媒体的文件夹。 您可以在路径中键入/粘贴，也可以使用鼠标导航到目标文件夹。 <br><br> ***注：**请确保所有会众同步用户输入相同的文件夹路径；否则同步将无法正常工作。*                                                                                                                                                         |
 | `会众同步设置`  | 一旦VO在他自己的电脑上配置了[设置]({{page.lang}}/#configuration)里面的*媒体设置*和*聚会设置*部分，他就可以使用这个按钮来强制对所有会众同步用户执行某些设置（例如，聚会日、媒体语言、转换设置等）。 这意味着每次打开M³时，所有同步用户都将被强制应用选定的设置。                                                                                                                         |
 
-### Using congregation sync to manage media
+### 使用会众同步管理媒体
 
-Once the congregation sync setup is complete, you're ready to start [Managing media]({{page.lang}}/#manage-media) for your congregation's technical AV support team.
+一旦会众同步设置完成，您已准备好为您会众的技术AV支援组开始[管理媒体]({{page.lang}}/#manage-media)。
 
-### Screenshots of congregation sync in action
+### 正在操作中的会众同步截图
 
 {% include screenshots/congregation-sync.html lang=site.data.en %}
