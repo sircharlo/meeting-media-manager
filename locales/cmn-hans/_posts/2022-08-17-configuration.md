@@ -79,4 +79,4 @@ ref: configuration
 
 ### 设置屏幕截图
 
-{% include screenshots/configuration.html lang=site.data.en %}
+{% include screenshots/configuration.html lang=site.data.cmn-hans %}
