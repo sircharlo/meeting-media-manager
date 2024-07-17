@@ -39,7 +39,7 @@ test.afterAll(async () => {
 
 test('render the presentation mode page correctly', async () => {
   test.slow()
-  if (platform() === 'win32') {
+  if (platform() !== 'linux') {
     test.skip()
   }
 
@@ -104,7 +104,7 @@ test('render the presentation mode page correctly', async () => {
 })
 
 test('play a video', async () => {
-  if (platform() === 'win32') {
+  if (platform() !== 'linux') {
     test.skip()
   }
 
@@ -114,7 +114,7 @@ test('play a video', async () => {
 })
 
 test('scrub a video', async () => {
-  if (platform() === 'win32') {
+  if (platform() !== 'linux') {
     test.skip()
   }
 
@@ -138,7 +138,7 @@ test('scrub a video', async () => {
 })
 
 test('stop a video', async () => {
-  if (platform() === 'win32') {
+  if (platform() !== 'linux') {
     test.skip()
   }
 
