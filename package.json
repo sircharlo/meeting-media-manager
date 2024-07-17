@@ -106,7 +106,7 @@
     "eslint-webpack-plugin": "^2.7.0",
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.3.6",
-    "fluent-ffmpeg": "^2.1.2",
+    "fluent-ffmpeg": "^2.1.3",
     "fs-extra": "^11.2.0",
     "fullname": "^4.0.1",
     "h264-mp4-encoder": "^1.0.12",
