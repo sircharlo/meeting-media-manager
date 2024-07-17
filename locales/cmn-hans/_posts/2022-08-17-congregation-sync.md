@@ -41,4 +41,4 @@ M³的基础同步机制使用WebDAV 。 这意味着VO（或其监督下的某�
 
 ### 正在操作中的会众同步截图
 
-{% include screenshots/congregation-sync.html lang=site.data.en %}
+{% include screenshots/congregation-sync.html lang=site.data.cmn-hans %}

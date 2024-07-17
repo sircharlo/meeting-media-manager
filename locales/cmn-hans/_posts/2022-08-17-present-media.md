@@ -144,4 +144,4 @@ Zoom应配置为使用双重显示器。 为 Zoom 启用全局键盘快捷键，
 
 ### 播放模式的截图
 
-{% include screenshots/present-media.html lang=site.data.en %}
+{% include screenshots/present-media.html lang=site.data.cmn-hans %}
