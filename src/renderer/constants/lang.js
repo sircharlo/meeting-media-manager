@@ -22,6 +22,7 @@ const DAYJS_LOCALES = [
   'sv',
   'tl-ph',
   'uk',
+  'zh-cn',
   // 'wes-x-pgw', // not yet supported by dayjs
   // 'rmn-x-rmg', // not yet supported by dayjs
 ]
@@ -36,6 +37,14 @@ const LOCALES = [
     file: 'af.json',
     jw: 'AF',
     name: 'Afrikaans (Afrikaans)',
+  },
+  {
+    code: 'cmn-hans',
+    iso: 'cmn-Hans-CN',
+    file: 'cmn-hans.json',
+    jw: 'CHS',
+    dayjs: 'zh-cn',
+    name: '中文简体（普通话） (Chinese Mandarin - Simplified)',
   },
   {
     code: 'de',
