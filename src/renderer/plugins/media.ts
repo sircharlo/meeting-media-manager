@@ -1120,8 +1120,10 @@ const plugin: Plugin = (
       `SELECT DocumentInternalLink.DocumentId AS SourceDocumentId, DocumentInternalLink.BeginParagraphOrdinal, Document.DocumentId FROM DocumentInternalLink INNER JOIN InternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId INNER JOIN Document ON InternalLink.MepsDocumentId = Document.MepsDocumentId WHERE DocumentInternalLink.DocumentId = ${ref.DocumentId} AND Document.Class <> 94`
     ) as MultiMediaExtractRef[]
 
-    internalRefs.forEach((ref) => {
-      promises.push(processInternalRefs(db, ref, date))
+    internalRefs.forEach((innerRef) => {
+      if (ref.DocumentId !== innerRef.DocumentId) {
+        promises.push(processInternalRefs(db, innerRef, date))
+      }
     })
 
     const refMedia = await getDocumentMultiMedia(db, ref.DocumentId)
