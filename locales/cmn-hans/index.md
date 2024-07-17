@@ -1,5 +1,5 @@
 ---
-permalink: /en/
+permalink: /cmn-hans/
 ---
   
 ### M³是什么？
