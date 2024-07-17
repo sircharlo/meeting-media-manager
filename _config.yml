@@ -41,6 +41,10 @@ defaults:
     values:
       lang: 'af'
   - scope:
+      path: 'locales/cmn-hans/**/*'
+    values:
+      lang: 'cmn-hans'
+  - scope:
       path: 'locales/de/**/*'
     values:
       lang: 'de'
