@@ -13,7 +13,6 @@
   "license": "AGPL-3.0-or-later",
   "author": {
     "name": "sircharlo",
-    "email": "sircharlo@gmail.com",
     "url": "https://github.com/sircharlo/"
   },
   "main": "./dist/main/index.js",

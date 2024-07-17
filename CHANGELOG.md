@@ -2,6 +2,10 @@
 
 ## 24.4.1
 
+### New or improved features
+
+- New language: Chinese Mandarin (Simplified) (thanks [@heymenshan](https://github.com/heymenshan)!)
+
 ### Bug fixes
 
 - Prevent recursively processing midweek meeting references
