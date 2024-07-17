@@ -3195,26 +3195,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/types@npm:^2.17.3":
-  version: 2.17.3
-  resolution: "@nuxt/types@npm:2.17.3"
+"@nuxt/types@npm:^2.18.1":
+  version: 2.18.1
+  resolution: "@nuxt/types@npm:2.18.1"
   dependencies:
     "@types/babel__core": 7.20.5
     "@types/compression": 1.7.5
     "@types/connect": 3.4.38
     "@types/etag": 1.8.3
     "@types/file-loader": 5.0.4
-    "@types/html-minifier": 4.0.5
+    "@types/html-minifier-terser": 7.0.2
     "@types/less": 3.0.6
     "@types/node": ^16
     "@types/optimize-css-assets-webpack-plugin": 5.0.8
     "@types/pug": 2.0.10
-    "@types/serve-static": 1.15.5
+    "@types/serve-static": 1.15.7
     "@types/terser-webpack-plugin": 4.2.1
     "@types/webpack": ^4.41.38
     "@types/webpack-bundle-analyzer": 3.9.5
     "@types/webpack-hot-middleware": 2.25.5
-  checksum: cef2879e8bd25c2996bf3a083477157b42fefd681e69aa77f7218c50065a827603ab5f86b19c6ea1e8f83882e471fe69b91f918843c67268aa87adf779e65479
+  checksum: f2ef78e0453bc3f6b2a84ec67dc2e89d687ae0303be0753d401e11e0736289c23ec89d39c1bec100f160570a4f7497654c7a510704c713783000e1507f89b15d
   languageName: node
   linkType: hard
 
@@ -3825,16 +3825,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/clean-css@npm:*":
-  version: 4.2.11
-  resolution: "@types/clean-css@npm:4.2.11"
-  dependencies:
-    "@types/node": "*"
-    source-map: ^0.6.0
-  checksum: 60889196e9da0f3c06d041aa070ec48fd99609e621ddda2a60d8e406f5f4066e2efd0eefa8e19fe28134cfe7f4dc98259a5d60f86f1209137778eb5b1a56c80f
-  languageName: node
-  linkType: hard
-
 "@types/compression@npm:1.7.5":
   version: 1.7.5
   resolution: "@types/compression@npm:1.7.5"
@@ -3963,21 +3953,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/html-minifier-terser@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@types/html-minifier-terser@npm:7.0.2"
+  checksum: 38a2f5fc1e40e3396dd87783098cf8e86ffa718b19dba25056b027d8c1e098fa9ce9dc8c8e65f8eb1ea47600c2cad72328e02f011a81683d984b70796c800125
+  languageName: node
+  linkType: hard
+
 "@types/html-minifier-terser@npm:^5.0.0":
   version: 5.1.2
   resolution: "@types/html-minifier-terser@npm:5.1.2"
   checksum: 4bca779c44d2aebe4cc4036c5db370abe7466249038e9c5996cb3c192debeff1c75b7a2ab78e5fd2a014ad24ebf0f357f9a174a4298540dc1e1317d43aa69cfa
-  languageName: node
-  linkType: hard
-
-"@types/html-minifier@npm:4.0.5":
-  version: 4.0.5
-  resolution: "@types/html-minifier@npm:4.0.5"
-  dependencies:
-    "@types/clean-css": "*"
-    "@types/relateurl": "*"
-    "@types/uglify-js": "*"
-  checksum: 5a40c0e80b10d560ed54d975b907b525c98826ac2bee1f00bcc343b1ac95172047416d5aaec86a657afd6e0db9705a52cff82b23ecf6f4c0b826b9868365f286
   languageName: node
   linkType: hard
 
@@ -4047,13 +4033,6 @@ __metadata:
   version: 4.17.0
   resolution: "@types/lodash@npm:4.17.0"
   checksum: 3f98c0b67a93994cbc3403d4fa9dbaf52b0b6bb7f07a764d73875c2dcd5ef91222621bd5bcf8eee7b417a74d175c2f7191b9f595f8603956fd06f0674c0cba93
-  languageName: node
-  linkType: hard
-
-"@types/mime@npm:*":
-  version: 3.0.4
-  resolution: "@types/mime@npm:3.0.4"
-  checksum: a6139c8e1f705ef2b064d072f6edc01f3c099023ad7c4fce2afc6c2bf0231888202adadbdb48643e8e20da0ce409481a49922e737eca52871b3dc08017455843
   languageName: node
   linkType: hard
 
@@ -4180,13 +4159,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/relateurl@npm:*":
-  version: 0.2.33
-  resolution: "@types/relateurl@npm:0.2.33"
-  checksum: a4b7876cc24da3eddc1202d9f57fb6cdd551ff3d884124365dd15012dde20c2b4c19eee9bcd3b17e7c43e8edbe82a33753a6c266e41e3761283d44e6234d47da
-  languageName: node
-  linkType: hard
-
 "@types/responselike@npm:^1.0.0":
   version: 1.0.3
   resolution: "@types/responselike@npm:1.0.3"
@@ -4213,7 +4185,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/serve-static@npm:*":
+"@types/serve-static@npm:*, @types/serve-static@npm:1.15.7":
   version: 1.15.7
   resolution: "@types/serve-static@npm:1.15.7"
   dependencies:
@@ -4221,17 +4193,6 @@ __metadata:
     "@types/node": "*"
     "@types/send": "*"
   checksum: bbbf00dbd84719da2250a462270dc68964006e8d62f41fe3741abd94504ba3688f420a49afb2b7478921a1544d3793183ffa097c5724167da777f4e0c7f1a7d6
-  languageName: node
-  linkType: hard
-
-"@types/serve-static@npm:1.15.5":
-  version: 1.15.5
-  resolution: "@types/serve-static@npm:1.15.5"
-  dependencies:
-    "@types/http-errors": "*"
-    "@types/mime": "*"
-    "@types/node": "*"
-  checksum: 0ff4b3703cf20ba89c9f9e345bc38417860a88e85863c8d6fe274a543220ab7f5f647d307c60a71bb57dc9559f0890a661e8dc771a6ec5ef195d91c8afc4a893
   languageName: node
   linkType: hard
 
@@ -11678,7 +11639,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": ^6.5.2
     "@fortawesome/free-solid-svg-icons": ^6.5.2
     "@fortawesome/vue-fontawesome": latest-2
-    "@nuxt/types": ^2.17.3
+    "@nuxt/types": ^2.18.1
     "@nuxt/typescript-build": ^3.0.2
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/dayjs": ^1.4.1
