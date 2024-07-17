@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.4.1
+
+### Bug fixes
+
+- Prevent recursively processing midweek meeting references
+
 ## 24.4.0
 
 ### Bug fixes
