@@ -40,4 +40,4 @@ ref: manage-media
 
 ### 媒体管理画面截图
 
-{% include screenshots/manage-media.html lang=site.data.en %}
+{% include screenshots/manage-media.html lang=site.data.cmn-hans %}
