@@ -19,7 +19,7 @@ let electronApp: ElectronApplication
 let page: Page
 
 test.beforeAll(async () => {
-  if (platform() === 'win32') {
+  if (platform() !== 'linux') {
     return
   }
 
@@ -27,7 +27,7 @@ test.beforeAll(async () => {
 })
 
 test.afterAll(async () => {
-  if (platform() === 'win32') {
+  if (platform() !== 'linux') {
     return
   }
 
