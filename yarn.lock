@@ -2284,12 +2284,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-svg-core@npm:^6.5.2":
-  version: 6.5.2
-  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.2"
+"@fortawesome/fontawesome-svg-core@npm:^6.6.0":
+  version: 6.6.0
+  resolution: "@fortawesome/fontawesome-svg-core@npm:6.6.0"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.5.2
-  checksum: f0c2a0800074c5bbc143631b9f3f818b94bd14b8590153058eecc9f548ae0ac78cfca61196880f9b3b79b5d5b5afdb140d05da75542da2087701614c9c043905
+    "@fortawesome/fontawesome-common-types": 6.6.0
+  checksum: 3eaf5d3a2f9d6b362a2d01889eadecb7fe3d86a5ba7c29b5d9653a00206d329aae78e18160d46009955fa80e40ab523a3b35032d45a52014ced15b9510c264c9
   languageName: node
   linkType: hard
 
@@ -11649,7 +11649,7 @@ __metadata:
     "@babel/core": 7.24.9
     "@babel/runtime-corejs3": 7.24.4
     "@electron/asar": ^3.2.9
-    "@fortawesome/fontawesome-svg-core": ^6.5.2
+    "@fortawesome/fontawesome-svg-core": ^6.6.0
     "@fortawesome/free-regular-svg-icons": ^6.5.2
     "@fortawesome/free-solid-svg-icons": ^6.6.0
     "@fortawesome/vue-fontawesome": latest-2
