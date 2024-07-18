@@ -58,7 +58,7 @@
     "@babel/core": "7.24.9",
     "@babel/runtime-corejs3": "7.24.4",
     "@electron/asar": "^3.2.9",
-    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "latest-2",
