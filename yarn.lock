@@ -4119,13 +4119,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/probe-image-size@npm:^7.2.4":
-  version: 7.2.4
-  resolution: "@types/probe-image-size@npm:7.2.4"
+"@types/probe-image-size@npm:^7.2.5":
+  version: 7.2.5
+  resolution: "@types/probe-image-size@npm:7.2.5"
   dependencies:
     "@types/needle": "*"
     "@types/node": "*"
-  checksum: 6157135ee5a838b292a45cb03d8d5d25b9f6595c58275d3b79b9ed235432a61b67768d2aa7150cf55cf0e8aa8ebdab5fa01f0f6ba140b9309b1b85413f4df5d9
+  checksum: 515c12e25b70e9d5be741888f5c01a37cf23fa5bea4a2fec8efef8a06ba49108dfd3d8d6bfa7b63ee0bf5b3859d81733a80d2b093be08459b1d1ec51404993bf
   languageName: node
   linkType: hard
 
@@ -11681,7 +11681,7 @@ __metadata:
     "@types/fluent-ffmpeg": ^2.1.24
     "@types/heic-convert": ^1.2.3
     "@types/lodash.clonedeep": ^4.5.9
-    "@types/probe-image-size": ^7.2.4
+    "@types/probe-image-size": ^7.2.5
     "@types/sql.js": ^1.4.9
     "@xpda-dev/core": ^0.1.7
     "@xpda-dev/electron-builder": ^0.2.1
