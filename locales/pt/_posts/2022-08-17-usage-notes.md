@@ -32,7 +32,7 @@ Se você receber uma mensagem indicando que você não tem permissão para abrir
 
 ### macOS: Problemas com permissões de áudio ou microfone no macOS Sonoma
 
-Since macOS Sonoma, some users might encounter an issue where M³ repeatedly gives an error message indicating that it needs access to the microphone. Executing the following command in `Terminal.app` has resolved the issue for some:
+Como o macOS Sonoma, alguns usuários podem encontrar um problema no qual o M³ fornece repetidamente uma mensagem de erro indicando que ele precisa de acesso ao microfone. Executar o seguinte comando no `Terminal.app` resolveu o problema para alguns:
 
 `codesign --force --deep --sign - "/path/to/Meeting Media Manager.app"`
 
