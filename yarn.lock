@@ -5883,6 +5883,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"builder-util-runtime@npm:9.2.5":
+  version: 9.2.5
+  resolution: "builder-util-runtime@npm:9.2.5"
+  dependencies:
+    debug: ^4.3.4
+    sax: ^1.2.4
+  checksum: 5853457a10c3dbbe9eb7f7e55dc0a4e7bb77a70659039f961c43c8e8ddd3f07374b445eec1ab2bbaf4e8248635c49122b2e3df30456e85eff06e5260219ed470
+  languageName: node
+  linkType: hard
+
 "builder-util@npm:24.13.1":
   version: 24.13.1
   resolution: "builder-util@npm:24.13.1"
@@ -7834,19 +7844,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-updater@npm:^6.1.8":
-  version: 6.2.1
-  resolution: "electron-updater@npm:6.2.1"
+"electron-updater@npm:^6.3.0":
+  version: 6.3.4
+  resolution: "electron-updater@npm:6.3.4"
   dependencies:
-    builder-util-runtime: 9.2.4
+    builder-util-runtime: 9.2.5
     fs-extra: ^10.1.0
     js-yaml: ^4.1.0
     lazy-val: ^1.0.5
     lodash.escaperegexp: ^4.1.2
     lodash.isequal: ^4.5.0
-    semver: ^7.3.8
+    semver: ^7.6.3
     tiny-typed-emitter: ^2.1.0
-  checksum: 92a064610a3c9df747dce9c3eccd69c48adb2c8b37b9d7c13d1c39f7e2a9ffaef4e909ab50e6973d557566bde6de7ec9c64e2cc3a2cdef18b3220c5d91333e1c
+  checksum: 25b2ea00e17f59861c17fe0e8c778f133c99278ac17782960122057e278609df4aabdc9cde07a03470c50bc5b6fd2421eefca2515516ba7ed9758377fd264890
   languageName: node
   linkType: hard
 
@@ -11710,7 +11720,7 @@ __metadata:
     electron-builder: 24.13.3
     electron-devtools-installer: ^3.2.0
     electron-store: ^8.2.0
-    electron-updater: ^6.1.8
+    electron-updater: ^6.3.0
     electron-window-state: ^5.0.3
     eslint: ^8.57.0
     eslint-config-prettier: ^9.1.0
@@ -15639,6 +15649,15 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 7427f05b70786c696640edc29fdd4bc33b2acf3bbe1740b955029044f80575fc664e1a512e4113c3af21e767154a94b4aa214bf6cd6e42a1f6dba5914e0b208c
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.6.3":
+  version: 7.6.3
+  resolution: "semver@npm:7.6.3"
+  bin:
+    semver: bin/semver.js
+  checksum: 4110ec5d015c9438f322257b1c51fe30276e5f766a3f64c09edd1d7ea7118ecbc3f379f3b69032bacf13116dc7abc4ad8ce0d7e2bd642e26b0d271b56b61a7d8
   languageName: node
   linkType: hard
 
