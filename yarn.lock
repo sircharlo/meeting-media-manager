@@ -11751,7 +11751,7 @@ __metadata:
     nuxt: ^2.17.3
     nuxt-webfontloader: ^1.1.0
     obs-websocket-js: ^4.0.3
-    obs-websocket-js-v5: "npm:obs-websocket-js@5.0.6"
+    obs-websocket-js-v5: "npm:obs-websocket-js@5.0.5"
     pdfjs-dist: ^3.11.174
     prettier: ^2.8.8
     probe-image-size: ^7.2.3
@@ -12719,9 +12719,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"obs-websocket-js-v5@npm:obs-websocket-js@5.0.6":
-  version: 5.0.6
-  resolution: "obs-websocket-js@npm:5.0.6"
+"obs-websocket-js-v5@npm:obs-websocket-js@5.0.5":
+  version: 5.0.5
+  resolution: "obs-websocket-js@npm:5.0.5"
   dependencies:
     "@msgpack/msgpack": ^2.7.1
     crypto-js: ^4.1.1
@@ -12730,7 +12730,7 @@ __metadata:
     isomorphic-ws: ^5.0.0
     type-fest: ^3.11.0
     ws: ^8.13.0
-  checksum: be29bb201e36c7851462bc2840e0176da6268639a3eb53092d2e26e38214292c5787308ab6cae80d1f2ce0cdbb1291d5948b48852f3aa318d7bd2874ca2a7e48
+  checksum: 0b3ea2b00fe8b83b94481847cb3d1e62fd6f403572e9081cbf16bceabe1825d9f3e37ffadae73743cb11aa69b7d5cbbdaaebd77c92e2df771c9cbde37f443e71
   languageName: node
   linkType: hard
 
