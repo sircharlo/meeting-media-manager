@@ -227,6 +227,7 @@ export default defineComponent({
       ] as {
         title: string
         icons: IconDefinition[]
+        disabled?: boolean
         action: () => void
       }[],
     }
@@ -284,11 +285,9 @@ export default defineComponent({
         }
       }
 
-      const jwBase = (this.$getPrefs('app.mirrorJW') as string | null) || 'https://www.jw.org'
-
       ipcRenderer.send(
         'openWebsite',
-        `${jwBase}/${this.$getPrefs('app.localAppLang')}/`
+        `https://www.jw.org/${this.$getPrefs('app.localAppLang')}/`
       )
     },
     refresh() {

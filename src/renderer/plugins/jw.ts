@@ -46,9 +46,7 @@ const plugin: Plugin = (
     let langs: ShortJWLang[] = []
     if (forceReload || !existsSync(langPath) || !recentlyUpdated) {
       try {
-        const jwBase =
-          ($getPrefs('app.mirrorJW') as string) || 'https://www.jw.org'
-        const result = await $axios.$get(`${jwBase}/en/languages`, {
+        const result = await $axios.$get('https://www.jw.org/en/languages', {
           adapter: require('axios/lib/adapters/http'),
         })
         $log.debug('Result from langs call:', result)
@@ -250,9 +248,8 @@ const plugin: Plugin = (
 
     $log.debug(`Checking availability of ${lang}`)
 
-    const jwBase = ($getPrefs('app.mirrorJW') as string) || 'https://www.jw.org'
     const url = (cat: string, filter: string, lang: string) =>
-      `${jwBase}/en/library/${cat}/json/filters/${filter}/?contentLanguageFilter=${lang}`
+      `https://www.jw.org/en/library/${cat}/json/filters/${filter}/?contentLanguageFilter=${lang}`
 
     try {
       const langObject = langs.find((l) => l.langcode === lang)
@@ -325,9 +322,7 @@ const plugin: Plugin = (
     if (force || !existsSync(ytPath)) {
       $log.debug('Fetching yeartext', wtlocale)
       try {
-        const wolBase =
-          ($getPrefs('app.mirrorWOL') as string) || 'https://www.wol.jw.org'
-        const result = await $axios.$get(`${wolBase}/wol/finder`, {
+        const result = await $axios.$get('https://www.wol.jw.org/wol/finder', {
           adapter: require('axios/lib/adapters/http'),
           params: {
             docid: `110${new Date().getFullYear()}800`,
@@ -374,20 +369,10 @@ const plugin: Plugin = (
   inject('getYearText', getYearText)
 
   async function getWtFonts(force = false) {
-    const cdnMirror = $getPrefs('app.mirrorCDN') as string
-    const wolMirror = $getPrefs('app.mirrorWOL') as string
     const fonts: string[] = []
-    fonts.push(
-      cdnMirror
-        ? WT_CLEARTEXT_FONT.replace('https://b.jw-cdn.org', cdnMirror)
-        : WT_CLEARTEXT_FONT
-    )
 
-    fonts.push(
-      wolMirror
-        ? JW_ICONS_FONT.replace('https://wol.jw.org', wolMirror)
-        : JW_ICONS_FONT
-    )
+    fonts.push(WT_CLEARTEXT_FONT)
+    fonts.push(JW_ICONS_FONT)
 
     const promises: Promise<void>[] = []
 

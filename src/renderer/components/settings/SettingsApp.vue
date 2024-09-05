@@ -333,30 +333,6 @@
         <span v-html="$t(`disable${option}`)" />
       </template>
     </form-input>
-    <form-input
-      id="app.mirrorJW"
-      v-model="app.mirrorJW"
-      :label="$t('mirrorJW')"
-      :locked="$isLocked('app.mirrorJW')"
-    />
-    <form-input
-      id="app.mirrorWOL"
-      v-model="app.mirrorWOL"
-      :label="$t('mirrorWOL')"
-      :locked="$isLocked('app.mirrorWOL')"
-    />
-    <form-input
-      id="app.mirrorCDN"
-      v-model="app.mirrorCDN"
-      :label="$t('mirrorCDN')"
-      :locked="$isLocked('app.mirrorCDN')"
-    />
-    <form-input
-      id="app.mirrorCloudfront"
-      v-model="app.mirrorCloudfront"
-      :label="$t('mirrorCloudfront')"
-      :locked="$isLocked('app.mirrorCloudfront')"
-    />
   </v-form>
 </template>
 <script lang="ts">
