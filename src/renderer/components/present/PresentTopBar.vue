@@ -227,6 +227,7 @@ export default defineComponent({
       ] as {
         title: string
         icons: IconDefinition[]
+        disabled?: boolean
         action: () => void
       }[],
     }

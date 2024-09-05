@@ -16,13 +16,13 @@ const plugin: Plugin = ({ $axios, $config }, inject) => {
 
   // Get media item
   const mediaItems = $axios.create({
-    baseURL: 'https://b.jw-cdn.org/apis/mediator/v1/media-items/',
+    baseURL: `https://b.jw-cdn.org/apis/mediator/v1/media-items/`,
   })
   inject('mediaItems', mediaItems)
 
   // Media categories
   const mediaCategories = $axios.create({
-    baseURL: 'https://b.jw-cdn.org/apis/mediator/v1/categories/',
+    baseURL: `https://b.jw-cdn.org/apis/mediator/v1/categories/`,
   })
 
   mediaCategories.onRequest((config) => {

@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "24.4.1",
+  "version": "24.4.2",
   "description": "Meeting Media Manager",
   "keywords": [
     "M³",
@@ -83,7 +83,7 @@
     "@xpda-dev/electron-builder": "^0.2.1",
     "@xpda-dev/electron-launcher": "^0.3.0",
     "@xpda-dev/webpack-step": "^0.1.6",
-    "@zoomus/websdk": "^2.18.3",
+    "@zoom/meetingsdk": "^3.8.5",
     "chokidar": "^3.6.0",
     "consola": "^2.15.3",
     "core-js": "^3.37.1",
@@ -133,7 +133,7 @@
     "vue": "^2.7.16",
     "vue-runtime-template-compiler": "^1.3.0",
     "vuedraggable": "^2.24.3",
-    "vuetify": "^2.7.1",
+    "vuetify": "^2.7.2",
     "vuetify-loader": "^1.9.2",
     "webdav": "^4.11.3",
     "webpack": "^4.47.0",

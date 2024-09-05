@@ -86,7 +86,7 @@ import {
   faRotateRight,
   faPodcast,
 } from '@fortawesome/free-solid-svg-icons'
-import { EmbeddedClient, Participant } from '@zoomus/websdk/embedded'
+import { EmbeddedClient, Participant } from '@zoom/meetingsdk/embedded'
 import { ObsPrefs } from '~/types'
 export default defineComponent({
   props: {

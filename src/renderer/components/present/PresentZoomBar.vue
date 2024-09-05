@@ -52,7 +52,7 @@
             aria-label="Mute Zoom participants"
             v-bind="attrs"
             v-on="on"
-            @click="$muteParticipants()"
+            @click="$muteParticipants(zoomSocket())"
           >
             <font-awesome-icon :icon="faMicrophoneSlash" size="lg" />
           </v-btn>
@@ -120,7 +120,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { ipcRenderer } from 'electron'
-import { Participant } from '@zoomus/websdk/embedded'
+import { Participant } from '@zoom/meetingsdk/embedded'
 import {
   faZ,
   faStop,

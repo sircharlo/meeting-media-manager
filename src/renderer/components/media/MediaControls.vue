@@ -20,6 +20,7 @@
               {{ $t('cancel') }}
             </v-btn>
             <v-btn
+              v-if="participant"
               color="primary"
               class="ml-2"
               :loading="renaming"
@@ -83,7 +84,7 @@
 import { defineComponent } from 'vue'
 import { basename, dirname, join } from 'upath'
 import { ipcRenderer } from 'electron'
-import { Participant } from '@zoomus/websdk/embedded'
+import { Participant } from '@zoom/meetingsdk/embedded'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'
 import { LocalFile } from '~/types'
@@ -241,18 +242,18 @@ export default defineComponent({
     atRename(participant: Participant) {
       this.saveRename = true
       this.participant = participant
-      this.newName = participant.displayName ?? ''
+      this.newName = participant.userName ?? ''
     },
     async rename(participant: Participant, name = '') {
       this.renaming = true
       await this.$renameParticipant(this.zoomSocket(), name, {
         id: participant.userId,
-        name: participant.displayName,
+        name: participant.userName,
       })
       if (this.saveRename) {
         const renames = this.$getPrefs('app.zoom.autoRename') as string[]
-        if (!renames.find((r) => r.split('=')[0] === participant.displayName)) {
-          renames.push(`${participant.displayName}=${name}`)
+        if (!renames.find((r) => r.split('=')[0] === participant.userName)) {
+          renames.push(`${participant.userName}=${name}`)
           this.$setPrefs('app.zoom.autoRename', renames)
         }
       }

@@ -86,10 +86,10 @@ module.exports = {
     // No dependencies
     '~/plugins/sentry',
     '~/plugins/externals',
-    '~/plugins/axios',
     '~/plugins/dayjs',
     '~/plugins/prefs',
     // Depends on prefs
+    '~/plugins/axios',
     '~/plugins/helpers',
     '~/plugins/logger',
     // Depends on logger
