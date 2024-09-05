@@ -322,7 +322,7 @@ const plugin: Plugin = (
     if (force || !existsSync(ytPath)) {
       $log.debug('Fetching yeartext', wtlocale)
       try {
-        const result = await $axios.$get('https://www.wol.jw.org/wol/finder', {
+        const result = await $axios.$get('https://wol.jw.org/wol/finder', {
           adapter: require('axios/lib/adapters/http'),
           params: {
             docid: `110${new Date().getFullYear()}800`,
@@ -369,10 +369,7 @@ const plugin: Plugin = (
   inject('getYearText', getYearText)
 
   async function getWtFonts(force = false) {
-    const fonts: string[] = []
-
-    fonts.push(WT_CLEARTEXT_FONT)
-    fonts.push(JW_ICONS_FONT)
+    const fonts = [WT_CLEARTEXT_FONT, JW_ICONS_FONT]
 
     const promises: Promise<void>[] = []
 
