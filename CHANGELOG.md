@@ -2,7 +2,7 @@
 
 ## 24.4.2
 
-### Bug fixes
+### Maintenance
 
 - Update Zoom SDK before the old one is deprecated
 
