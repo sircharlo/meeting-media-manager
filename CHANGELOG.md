@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.4.2
+
+### Bug fixes
+
+- Update Zoom SDK before the old one is deprecated
+
 ## 24.4.1
 
 ### New or improved features
