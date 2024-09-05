@@ -11,6 +11,9 @@ const PREFS = {
     disableHardwareAcceleration: false,
     localAppLang: null,
     localOutputPath: null,
+    mirrorJW: null,
+    mirrorCDN: null,
+    mirrorCloudfront: null,
     obs: {
       enable: false,
       port: null,

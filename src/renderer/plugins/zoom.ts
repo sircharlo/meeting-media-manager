@@ -4,7 +4,7 @@ import {
   EmbeddedClient,
   event_user_added,
   event_user_updated,
-} from '@zoomus/websdk/embedded'
+} from '@zoom/meetingsdk/embedded'
 import { ZoomPrefs } from '@/types'
 
 const plugin: Plugin = (

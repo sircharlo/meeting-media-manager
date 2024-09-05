@@ -53,7 +53,7 @@
 import { defineComponent } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { ipcRenderer } from 'electron'
-import zoomSDK, { EmbeddedClient, Participant } from '@zoomus/websdk/embedded'
+import zoomSDK, { EmbeddedClient, Participant } from '@zoom/meetingsdk/embedded'
 import { ObsPrefs, ZoomPrefs } from '~/types'
 import { MS_IN_SEC } from '~/constants/general'
 export default defineComponent({
@@ -112,7 +112,7 @@ export default defineComponent({
     allParticipants(): Participant[] {
       const participants = this.$store.state.zoom.participants as Participant[]
       return participants.filter(
-        (p) => !p.bHold && p.displayName !== this.$getPrefs('app.zoom.name')
+        (p) => !p.isHold && p.userName !== this.$getPrefs('app.zoom.name')
       )
     },
   },

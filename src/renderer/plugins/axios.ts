@@ -1,9 +1,11 @@
 import { Plugin } from '@nuxt/types'
 
-const plugin: Plugin = ({ $axios, $config }, inject) => {
+const plugin: Plugin = ({ $axios, $config, $getPrefs }, inject) => {
+  const baseCDN = $getPrefs('app.mirrorCDN') || 'https://b.jw-cdn.org'
+
   // Get media links from publication
   const pubMedia = $axios.create({
-    baseURL: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
+    baseURL: `${baseCDN}/apis/pub-media/GETPUBMEDIALINKS`,
   })
 
   pubMedia.onRequest((config) => {
@@ -16,13 +18,13 @@ const plugin: Plugin = ({ $axios, $config }, inject) => {
 
   // Get media item
   const mediaItems = $axios.create({
-    baseURL: 'https://b.jw-cdn.org/apis/mediator/v1/media-items/',
+    baseURL: `${baseCDN}/apis/mediator/v1/media-items/`,
   })
   inject('mediaItems', mediaItems)
 
   // Media categories
   const mediaCategories = $axios.create({
-    baseURL: 'https://b.jw-cdn.org/apis/mediator/v1/categories/',
+    baseURL: `${baseCDN}/apis/mediator/v1/categories/`,
   })
 
   mediaCategories.onRequest((config) => {

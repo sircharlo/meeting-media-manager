@@ -284,9 +284,11 @@ export default defineComponent({
         }
       }
 
+      const jwBase = (this.$getPrefs('app.mirrorJW') as string | null) || 'https://www.jw.org'
+
       ipcRenderer.send(
         'openWebsite',
-        `https://www.jw.org/${this.$getPrefs('app.localAppLang')}/`
+        `${jwBase}/${this.$getPrefs('app.localAppLang')}/`
       )
     },
     refresh() {

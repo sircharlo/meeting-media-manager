@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex'
-import zoomSDK, { EmbeddedClient, Participant } from '@zoomus/websdk/embedded'
+import zoomSDK, { EmbeddedClient, Participant } from '@zoom/meetingsdk/embedded'
 
 interface ZoomStore {
   client: typeof EmbeddedClient | null
