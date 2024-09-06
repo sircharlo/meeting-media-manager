@@ -33,7 +33,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "engines": {
-    "node": "^16.15.0",
+    "node": "^22.0.0",
     "yarn": "^3.2.3"
   },
   "os": [

@@ -147,5 +147,6 @@
     "zoomus",
     "русский",
     "українська"
-  ]
+  ],
+  "i18n-ally.localesPaths": ["src/renderer/locales"]
 }
