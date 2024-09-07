@@ -8,4 +8,4 @@ files:
   - source: /src/renderer/locales/en.json
     translation: /src/renderer/locales/%two_letters_code%.json
   - source: /new-strings/en-US.json
-    translation: /new-strings/%two_letters_code%
+    translation: /new-strings/%two_letters_code%.json
