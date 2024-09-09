@@ -8,28 +8,28 @@ permalink: /wes-x-pgw/
 
 With the application, you fit manage your own pictures and pictures wey we de use every week. You fit still copy the same settings for everybody wey dey your congregation. And for the same computer, you fit use-am for different-different congregations and groups.
 
-<sup>Note: M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.</sup>
+<sup>Important: Before-before, them call M³ JWMMF (JW Meeting Media Fetcher), but then them give-am new name for May 2022.</sup>
 
-### What can M³ do?
+### Wetin M³ fit do?
 
-M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+You fit use M³ for download, copy, share and show all picture and video wey una go need for una meeting.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+You go do meeting as **hybrid** or **in-person**? M³ get one mode for show pictures and videos. That one go make-am easy pass for you for show pictures and videos for the meeting. You fit use this things:
 
-- Media thumbnails
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
-- OBS Studio integration
+- Small pictures wey show wetin dey the pictures and videos
+- Simple buttons for pause/play/stop wey you fit use for control the videos and songs
+- Simple mode for background music before and after the meeting. E go stop before the meeting go start
+- M³ go detect external screens on e own
+- E work well with OBS Studio
 
-As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature.
+If the congregation meetings just dey **remote** for Zoom, M³ fit convert all pictures and videos for the MP4 format. That one make-am easy for Zoom to show all this pictures and videos.
 
-### Does M³ work in my language?
+### M³ go work for my own language?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you want.
+**Yes!** You fit download pictures and videos for Jehovah Witness meetings for any language wey dey JW.org – plenty-plenty language dey there. We go update the language list automatically; you just need for put the one wey you like.
 
-In addition, M³ itself has been translated into several languages, by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+E still get some volunteers wey translate the M³ application for some languages. Na so you fit put the language wey you like for the M³ windows.
 
-This app is made with love and a bit of spare time. Enjoy!
+We just use love and small free time make this app for una. Make una enjoy-am well-well!
 
-### Screenshots
+### How the app de look like

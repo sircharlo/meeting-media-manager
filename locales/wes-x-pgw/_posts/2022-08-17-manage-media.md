@@ -1,14 +1,14 @@
 ---
-tag: Usage
-title: Managing media
+tag: How you go use-am
+title: Manage pictures and videos
 ref: manage-media
 ---
 
-The media management screen allows the user to add or remove media for any given meeting, manage recurring media, and even add special media for other dates on which no meeting is normally scheduled.
+For the window for pictures and videos, you fit put or delete pictures and videos for any meeting. You fit still control pictures and videos wey una go use every time. And you fit add special pictures and videos for others dates where una no get normal meeting.
 
-### Managing media for any particular day
+### Manage pictures and videos for any date
 
-To manage media for a certain meeting or day, simply click on that day's tile on the main screen of M³. To manage media that be repeated at every meeting, click on the Recurring media tile.
+You want manage pictures and videos for some meeting or day? Just press the day for the M³ main window. To manage media that be repeated at every meeting, click on the Recurring media tile.
 
 ### Adding media
 
