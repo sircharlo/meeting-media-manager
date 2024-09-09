@@ -386,6 +386,7 @@ import {
   faEyeSlash,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
+// eslint-disable-next-line import/named
 import { defineComponent, PropOptions } from 'vue'
 import { SEC_IN_MIN } from '~/constants/general'
 enum FieldType {

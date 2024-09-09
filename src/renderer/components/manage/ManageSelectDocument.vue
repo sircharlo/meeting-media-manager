@@ -61,6 +61,7 @@ import { ipcRenderer } from 'electron'
 // eslint-disable-next-line import/named
 import { Database } from 'sql.js'
 import { extname, trimExt } from 'upath'
+// eslint-disable-next-line import/named
 import { defineComponent, PropType } from 'vue'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import { MultiMediaItem, VideoFile, LocalFile } from '~/types'

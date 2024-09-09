@@ -12,6 +12,7 @@
   </v-overlay>
 </template>
 <script lang="ts">
+// eslint-disable-next-line import/named
 import { PropOptions, defineComponent } from 'vue'
 import { faPause, faPersonRunning } from '@fortawesome/free-solid-svg-icons'
 import { MS_IN_SEC } from '~/constants/general'

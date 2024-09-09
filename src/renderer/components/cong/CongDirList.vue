@@ -29,6 +29,7 @@ import {
   faArrowRight,
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
+// eslint-disable-next-line import/named
 import { defineComponent, PropOptions } from 'vue'
 import { CongFile } from '~/types'
 export default defineComponent({

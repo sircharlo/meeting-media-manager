@@ -165,6 +165,7 @@
   </v-form>
 </template>
 <script lang="ts">
+// eslint-disable-next-line import/named
 import { defineComponent, PropType } from 'vue'
 import { extname, join } from 'upath'
 import { faDownload, faMusic } from '@fortawesome/free-solid-svg-icons'

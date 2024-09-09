@@ -219,6 +219,7 @@
   </div>
 </template>
 <script lang="ts">
+// eslint-disable-next-line import/named
 import { defineComponent, PropType } from 'vue'
 import { basename, join } from 'upath'
 import draggable from 'vuedraggable'

@@ -258,6 +258,7 @@
 import { pathToFileURL } from 'url'
 // eslint-disable-next-line import/named
 import { readFileSync, existsSync } from 'fs-extra'
+// eslint-disable-next-line import/named
 import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
 import { join, extname } from 'upath'

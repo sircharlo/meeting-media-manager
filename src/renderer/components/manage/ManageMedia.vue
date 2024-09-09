@@ -110,6 +110,7 @@
 import { readFileSync, statSync, writeJsonSync } from 'fs-extra'
 import { basename, join, changeExt, extname } from 'upath'
 import { ipcRenderer } from 'electron'
+// eslint-disable-next-line import/named
 import { defineComponent, PropType } from 'vue'
 import { MetaInfo } from 'vue-meta'
 import { WebDAVClient } from 'webdav/dist/web/types'

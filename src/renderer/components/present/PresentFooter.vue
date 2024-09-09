@@ -77,6 +77,7 @@
   </v-footer>
 </template>
 <script lang="ts">
+// eslint-disable-next-line import/named
 import { defineComponent, PropType } from 'vue'
 import { ipcRenderer } from 'electron'
 import {

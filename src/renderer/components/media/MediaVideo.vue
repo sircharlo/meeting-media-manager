@@ -116,6 +116,7 @@
 import { pathToFileURL } from 'url'
 import { Duration } from 'dayjs/plugin/duration'
 import { basename, changeExt } from 'upath'
+// eslint-disable-next-line import/named
 import { defineComponent, PropOptions } from 'vue'
 import { ipcRenderer } from 'electron'
 import {

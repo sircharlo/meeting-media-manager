@@ -1,3 +1,4 @@
+/* eslint-disable n/no-callback-literal */
 import { EventEmitter } from 'events'
 import { platform } from 'os'
 import {
@@ -111,7 +112,6 @@ export default class BrowserWinHandler {
   onCreated(callback: (win: BrowserWindow) => void) {
     if (this.browserWindow !== null) return callback(this.browserWindow)
     this._eventEmitter.once('created', () => {
-      // eslint-disable-next-line n/no-callback-literal
       callback(this.browserWindow as BrowserWindow)
     })
   }

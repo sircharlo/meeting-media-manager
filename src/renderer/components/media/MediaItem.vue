@@ -147,6 +147,7 @@ import { pathToFileURL } from 'url'
 import { existsSync, readJsonSync } from 'fs-extra'
 import { basename, changeExt, join } from 'upath'
 import { ipcRenderer } from 'electron'
+// eslint-disable-next-line import/named
 import { defineComponent, PropType } from 'vue'
 import Panzoom, { PanzoomObject } from '@panzoom/panzoom'
 // @ts-ignore: RuntimeTemplateCompiler implicitly has an 'any' type

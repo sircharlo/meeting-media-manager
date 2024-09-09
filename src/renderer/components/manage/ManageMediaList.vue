@@ -151,6 +151,7 @@
 <script lang="ts">
 import { pathToFileURL } from 'url'
 import { extname, join, trimExt } from 'upath'
+// eslint-disable-next-line import/named
 import { defineComponent, PropOptions } from 'vue'
 import { WebDAVClient, FileStat } from 'webdav/dist/web/types'
 import {

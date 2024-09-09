@@ -339,6 +339,7 @@
 import { platform } from 'os'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
+// eslint-disable-next-line import/named
 import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
