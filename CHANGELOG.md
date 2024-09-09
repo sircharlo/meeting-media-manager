@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.4.3
+
+### Maintenance
+
+- Show deprecation banner advising of new version
+
 ## 24.4.2
 
 ### Maintenance
