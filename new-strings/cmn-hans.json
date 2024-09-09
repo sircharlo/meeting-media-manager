@@ -207,7 +207,7 @@
   "obsImageScene": "在 OBS Studio 中显示图像的场景（可选）",
   "obsImageScene-explain": "一个场景可以在 OBS Studio 中配置，专门显示图像，例如图片中的图片风格。 如果留空，将使用默认媒体场景。",
   "obsMediaScene": "OBS Studio中的媒体窗口场景",
-  "obsMediaScene-explain": "OBS Studio中的场景将被用作Zoom参与者的顶级广播媒体。",
+  "obsMediaScene-explain": "The scene in OBS Studio that will be used to broadcast media to Zoom participants.",
   "obsPassword": "OBS Studio Websocket 密码",
   "obsPassword-explain": "在 OBS Studio 中在“工具 > WebSocket 服务器设置”下查找已配置的密码。",
   "obsPort": "OBS Studio Websocket 端口",
