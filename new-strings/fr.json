@@ -207,7 +207,7 @@
   "obsImageScene": "Scène média séparée facultative pour les images",
   "obsImageScene-explain": "Une scène peut être configurée dans OBS Studio spécifiquement pour afficher des images, par exemple en affichant l'image mais avec le podium en relief. Si ce champ est laissé vide, la scène média par défaut sera utilisée pour afficher les images.",
   "obsMediaScene": "Vue de la fenêtre de présentation des médias configurée dans OBS Studio",
-  "obsMediaScene-explain": "The scene in OBS Studio that will be used to broadcast media to Zoom participants.",
+  "obsMediaScene-explain": "La scène dans OBS Studio qui sera utilisée pour diffuser les médias aux participants sur Zoom.",
   "obsPassword": "Mot de passe pour Websocket dans OBS Studio",
   "obsPassword-explain": "Trouvez le mot de passe configuré dans OBS Studio dans Outils > Réglages du serveur WebSocket.",
   "obsPort": "Port pour Websocket dans OBS Studio",
