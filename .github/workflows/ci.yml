@@ -39,9 +39,9 @@ jobs:
 
       - name: Run linter
         run: yarn lint
-      - name: Cancel workflow
-        if: failure()
-        uses: andymckay/cancel-action@0.4
+      # - name: Cancel workflow
+      #   if: failure()
+      #   uses: andymckay/cancel-action@0.4
 
   test:
     runs-on: ${{ matrix.os }}
@@ -118,9 +118,9 @@ jobs:
           path: test-results/
           retention-days: 7
 
-      - name: Cancel workflow
-        if: failure()
-        uses: andymckay/cancel-action@0.4
+      # - name: Cancel workflow
+      #   if: failure()
+      #   uses: andymckay/cancel-action@0.4
 
   build:
     runs-on: ${{ matrix.os }}
