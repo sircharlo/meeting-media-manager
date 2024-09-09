@@ -39,7 +39,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.24.9, @babel/core@npm:^7.24.7":
+"@babel/core@npm:7.25.2":
+  version: 7.25.2
+  resolution: "@babel/core@npm:7.25.2"
+  dependencies:
+    "@ampproject/remapping": ^2.2.0
+    "@babel/code-frame": ^7.24.7
+    "@babel/generator": ^7.25.0
+    "@babel/helper-compilation-targets": ^7.25.2
+    "@babel/helper-module-transforms": ^7.25.2
+    "@babel/helpers": ^7.25.0
+    "@babel/parser": ^7.25.0
+    "@babel/template": ^7.25.0
+    "@babel/traverse": ^7.25.2
+    "@babel/types": ^7.25.2
+    convert-source-map: ^2.0.0
+    debug: ^4.1.0
+    gensync: ^1.0.0-beta.2
+    json5: ^2.2.3
+    semver: ^6.3.1
+  checksum: 9a1ef604a7eb62195f70f9370cec45472a08114e3934e3eaaedee8fd754edf0730e62347c7b4b5e67d743ce57b5bb8cf3b92459482ca94d06e06246ef021390a
+  languageName: node
+  linkType: hard
+
+"@babel/core@npm:^7.24.7":
   version: 7.24.9
   resolution: "@babel/core@npm:7.24.9"
   dependencies:
@@ -62,7 +85,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^7.24.9, @babel/generator@npm:^7.25.6":
+"@babel/generator@npm:^7.24.9, @babel/generator@npm:^7.25.0, @babel/generator@npm:^7.25.6":
   version: 7.25.6
   resolution: "@babel/generator@npm:7.25.6"
   dependencies:
@@ -171,7 +194,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-module-transforms@npm:^7.24.7, @babel/helper-module-transforms@npm:^7.24.8, @babel/helper-module-transforms@npm:^7.24.9, @babel/helper-module-transforms@npm:^7.25.0":
+"@babel/helper-module-transforms@npm:^7.24.7, @babel/helper-module-transforms@npm:^7.24.8, @babel/helper-module-transforms@npm:^7.24.9, @babel/helper-module-transforms@npm:^7.25.0, @babel/helper-module-transforms@npm:^7.25.2":
   version: 7.25.2
   resolution: "@babel/helper-module-transforms@npm:7.25.2"
   dependencies:
@@ -279,7 +302,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helpers@npm:^7.24.8":
+"@babel/helpers@npm:^7.24.8, @babel/helpers@npm:^7.25.0":
   version: 7.25.6
   resolution: "@babel/helpers@npm:7.25.6"
   dependencies:
@@ -1395,13 +1418,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime-corejs3@npm:7.24.8":
-  version: 7.24.8
-  resolution: "@babel/runtime-corejs3@npm:7.24.8"
+"@babel/runtime-corejs3@npm:7.25.6":
+  version: 7.25.6
+  resolution: "@babel/runtime-corejs3@npm:7.25.6"
   dependencies:
     core-js-pure: ^3.30.2
     regenerator-runtime: ^0.14.0
-  checksum: d23c4ecdef5d7ca3e0ed454a66b1c1d603ab9d3a884796fbf545156ac1909e134e4f303ff810930365508aeccc09fdd4cc26417db7a65619bac08e03ab27a7b0
+  checksum: 54d60c4eadfb58420dc88fb5bbba97910bb08bac316085ea74ee40584b56a9d9c1fb0f608862b8fef71c05837aaac9c2ed19504adfd72011f9740fe5d57733ae
   languageName: node
   linkType: hard
 
@@ -1440,7 +1463,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0, @babel/types@npm:^7.20.7, @babel/types@npm:^7.24.7, @babel/types@npm:^7.24.8, @babel/types@npm:^7.24.9, @babel/types@npm:^7.25.0, @babel/types@npm:^7.25.6, @babel/types@npm:^7.4.4":
+"@babel/types@npm:^7.0.0, @babel/types@npm:^7.20.7, @babel/types@npm:^7.24.7, @babel/types@npm:^7.24.8, @babel/types@npm:^7.24.9, @babel/types@npm:^7.25.0, @babel/types@npm:^7.25.2, @babel/types@npm:^7.25.6, @babel/types@npm:^7.4.4":
   version: 7.25.6
   resolution: "@babel/types@npm:7.25.6"
   dependencies:
@@ -2065,7 +2088,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/free-regular-svg-icons@npm:^6.5.2":
+"@fortawesome/free-regular-svg-icons@npm:^6.6.0":
   version: 6.6.0
   resolution: "@fortawesome/free-regular-svg-icons@npm:6.6.0"
   dependencies:
@@ -3289,7 +3312,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.45.3":
+"@playwright/test@npm:^1.47.0":
   version: 1.47.0
   resolution: "@playwright/test@npm:1.47.0"
   dependencies:
@@ -3744,7 +3767,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fluent-ffmpeg@npm:^2.1.24":
+"@types/fluent-ffmpeg@npm:^2.1.26":
   version: 2.1.26
   resolution: "@types/fluent-ffmpeg@npm:2.1.26"
   dependencies:
@@ -7620,7 +7643,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-updater@npm:^6.3.0":
+"electron-updater@npm:^6.3.4":
   version: 6.3.4
   resolution: "electron-updater@npm:6.3.4"
   dependencies:
@@ -7998,7 +8021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-typescript@npm:^3.6.0, eslint-import-resolver-typescript@npm:^3.6.1":
+"eslint-import-resolver-typescript@npm:^3.6.0, eslint-import-resolver-typescript@npm:^3.6.3":
   version: 3.6.3
   resolution: "eslint-import-resolver-typescript@npm:3.6.3"
   dependencies:
@@ -8165,7 +8188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:^9.17.0, eslint-plugin-vue@npm:^9.27.0, eslint-plugin-vue@npm:^9.4.0, eslint-plugin-vue@npm:^9.7.0":
+"eslint-plugin-vue@npm:^9.17.0, eslint-plugin-vue@npm:^9.28.0, eslint-plugin-vue@npm:^9.4.0, eslint-plugin-vue@npm:^9.7.0":
   version: 9.28.0
   resolution: "eslint-plugin-vue@npm:9.28.0"
   dependencies:
@@ -11409,11 +11432,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "meeting-media-manager@workspace:."
   dependencies:
-    "@babel/core": 7.24.9
-    "@babel/runtime-corejs3": 7.24.8
+    "@babel/core": 7.25.2
+    "@babel/runtime-corejs3": 7.25.6
     "@electron/asar": ^3.2.10
     "@fortawesome/fontawesome-svg-core": ^6.6.0
-    "@fortawesome/free-regular-svg-icons": ^6.5.2
+    "@fortawesome/free-regular-svg-icons": ^6.6.0
     "@fortawesome/free-solid-svg-icons": ^6.6.0
     "@fortawesome/vue-fontawesome": latest-2
     "@nuxt/types": ^2.18.1
@@ -11424,11 +11447,11 @@ __metadata:
     "@nuxtjs/i18n": ^7.3.1
     "@nuxtjs/vuetify": ^1.12.3
     "@panzoom/panzoom": ^4.5.1
-    "@playwright/test": ^1.45.3
+    "@playwright/test": ^1.47.0
     "@sentry/electron": ~4.11.1
     "@sentry/vue": ^7.112.1
     "@sentry/webpack-plugin": ^1.21.0
-    "@types/fluent-ffmpeg": ^2.1.24
+    "@types/fluent-ffmpeg": ^2.1.26
     "@types/heic-convert": ^1.2.3
     "@types/lodash.clonedeep": ^4.5.9
     "@types/probe-image-size": ^7.2.5
@@ -11440,7 +11463,7 @@ __metadata:
     "@zoom/meetingsdk": ^3.8.5
     chokidar: ^3.6.0
     consola: ^2.15.3
-    core-js: ^3.37.1
+    core-js: ^3.38.1
     cross-env: ^7.0.3
     css-loader: ^5.2.7
     deepmerge: ^4.3.1
@@ -11449,14 +11472,14 @@ __metadata:
     electron-builder: 24.13.3
     electron-devtools-installer: ^3.2.0
     electron-store: ^8.2.0
-    electron-updater: ^6.3.0
+    electron-updater: ^6.3.4
     electron-window-state: ^5.0.3
     eslint: ^8.57.0
     eslint-config-prettier: ^9.1.0
     eslint-friendly-formatter: ^4.0.1
-    eslint-import-resolver-typescript: ^3.6.1
+    eslint-import-resolver-typescript: ^3.6.3
     eslint-plugin-nuxt: ^4.0.0
-    eslint-plugin-vue: ^9.27.0
+    eslint-plugin-vue: ^9.28.0
     eslint-webpack-plugin: ^2.7.0
     fast-glob: ^3.3.2
     fast-xml-parser: ^4.5.0
@@ -11476,11 +11499,11 @@ __metadata:
     nuxt: ^2.17.3
     nuxt-webfontloader: ^1.1.0
     obs-websocket-js: ^4.0.3
-    obs-websocket-js-v5: "npm:obs-websocket-js@5.0.5"
+    obs-websocket-js-v5: "npm:obs-websocket-js@5.0.6"
     pdfjs-dist: ^3.11.174
     prettier: ^2.8.8
     probe-image-size: ^7.2.3
-    sql.js: ^1.10.3
+    sql.js: ^1.11.0
     ts-loader: ^8.4.0
     typescript: ^5.5.4
     upath: ^2.0.1
@@ -12408,9 +12431,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"obs-websocket-js-v5@npm:obs-websocket-js@5.0.5":
-  version: 5.0.5
-  resolution: "obs-websocket-js@npm:5.0.5"
+"obs-websocket-js-v5@npm:obs-websocket-js@5.0.6":
+  version: 5.0.6
+  resolution: "obs-websocket-js@npm:5.0.6"
   dependencies:
     "@msgpack/msgpack": ^2.7.1
     crypto-js: ^4.1.1
@@ -12419,7 +12442,7 @@ __metadata:
     isomorphic-ws: ^5.0.0
     type-fest: ^3.11.0
     ws: ^8.13.0
-  checksum: 0b3ea2b00fe8b83b94481847cb3d1e62fd6f403572e9081cbf16bceabe1825d9f3e37ffadae73743cb11aa69b7d5cbbdaaebd77c92e2df771c9cbde37f443e71
+  checksum: be29bb201e36c7851462bc2840e0176da6268639a3eb53092d2e26e38214292c5787308ab6cae80d1f2ce0cdbb1291d5948b48852f3aa318d7bd2874ca2a7e48
   languageName: node
   linkType: hard
 
@@ -15802,7 +15825,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sql.js@npm:^1.10.3":
+"sql.js@npm:^1.11.0":
   version: 1.11.0
   resolution: "sql.js@npm:1.11.0"
   checksum: 82a7934fd25112da162eab3c14a38d1e331f740c7e2f2f2e63657a0b90120d1292529272247d23ce1f22aa963d2ec8fb36f5a68cbd04ca292d20c2b4ca368296
