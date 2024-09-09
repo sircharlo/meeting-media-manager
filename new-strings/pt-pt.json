@@ -207,7 +207,7 @@
   "obsImageScene": "Cena para exibir imagens no OBS Studio [opcional]",
   "obsImageScene-explain": "Uma cena pode ser configurada no OBS Studio especificamente para exibir imagens, por exemplo, no estilo 'picture-in-picture'. Se isto for deixado em branco, será usada a cena de multimédia padrão.",
   "obsMediaScene": "Nome da cena de multimédia do OBS Studio",
-  "obsMediaScene-explain": "The scene in OBS Studio that will be used to broadcast media to Zoom participants.",
+  "obsMediaScene-explain": "A cena no OBS Studio que será usada para transmitir multimédia aos participantes do Zoom.",
   "obsPassword": "Senha de Websocket do OBS Studio",
   "obsPassword-explain": "Encontre a senha configurada em Ferramentas > Configurações do Servidor WebSocket no OBS Studio.",
   "obsPort": "Porta de Websocket do OBS Studio",
