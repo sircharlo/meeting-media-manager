@@ -1,5 +1,5 @@
 ---
-tag: Usage
+tag: How you go use-am
 title: Media Presentation mode
 ref: present-media
 ---
@@ -20,27 +20,27 @@ Once you have entered controller mode, the folder selection screen will allow yo
 
 ### Presenting media
 
-To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. A video can be rewound or fast-forwarded while paused, if desired. Please note that for videos, the stop button must be pressed **twice** to prevent accidentally and prematurely stopping a video while it is playing for the congregation. Videos will auto-stop when they have played in their entirety.
+To play media, press the ▶️ (play) button for the file you'd like. To hide the media, press the ⏹️ (stop) button. You fit reset or fast forward videos after you pause-am. Important: You go need to press the stop button **two times**, so you no go press-am by accident while the video still de run for the meeting. After videos don finish, them go stop on their own.
 
-### Extra Features
+### Extra Things
 
-M³ has a few extra features that can be used to enhance the media presentation experience.
+M³ get some extra things wey you fit use for show pictures and videos for better way.
 
-#### Present JW.org
+#### Show JW.org
 
-To present JW.org, you can press the ⋮ (ellipsis) button at the top of the screen, and select `Open JW.org`. This will open a new controller window with JW.org loaded. The media window will also display JW.org. Now you can use the controller window to navigate JW.org, and the media window will display your actions. When you are done presenting JW.org, you can close the controller window, and continue with the normal media presentation mode.
+You fit show JW.org when you press the ⋮ (ellipsis) button for the top. Then, press `Open JW.org`. The JW.org website go show for im own window. You go still see the same JW.org for the pictures window. Now you fit use the first window for show things for the website. The brothers and sisters go see wetin you do as them de look the pictures window. After you finish show things for JW.org, close the website window and then use the Mode for show pictures and videos.
 
-#### Zoom and pan images
+#### Zoom and push pictures
 
-When an image is being displayed, you can scroll the mouse wheel while hovering over the image preview to zoom in and out. Alternatively, you can also double click on the image preview to zoom in. Double clicking will alternate between 1.5x, 2x, 3x, 4x and back to 1x zoom. You can also hold and drag the image to pan around the image.
+When you show one pictures, you fit use the mouse wheel while the mouse dey ontop the preview. When you do that one, you go zoom the picture in and out. You fit still double click the preview for zoom in. As you de double click, you go switch between 1.5x, 2x, 3x, 4x and 1x zoom. You fit still drag the picture for push the part of the picture wey you want show.
 
-#### Sort the media list
+#### Sort the pictures and videos
 
-The media list can be sorted by clicking the sort button at the top right of the screen. The media items will have a button appear next to them that can be used to drag the media item up or down in the list. When you are satisfied with the order, you can click the sort button again to lock the order.
+You fit sort the pictures and videos when you de click the sort button for the top right. Every picture and video get one button wey you fit use for move the thing up or own. When you get the correct order, click the sort button again for lock-am.
 
-#### Add a last-minute song
+#### Put last-minute song
 
-If you need to add a last-minute song to the media list, you can press the `♫ +` (add song) button at the top of the screen. A dropdown will appear with a list of all the Kingdom songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
+You need for play one song last-minute? Press the `♫ +` (add song) button for the top of the screen. You go see one list with all the Kingdom Songs. When you select one, it will immediately be added to the top of the media list and it can be played instantly. It will either stream the song from JW.org, or play the song from the local cache if it was previously downloaded.
 
 ### Conducting hybrid meetings using a combination of M³, OBS Studio, and Zoom
 
