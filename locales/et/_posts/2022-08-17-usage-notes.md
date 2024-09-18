@@ -4,7 +4,7 @@ title: Tehnilised kasutusjuhised
 ref: usage-notes
 ---
 
-The app should run as is on most modern computers running Windows, Linux, or macOS.
+Rakendus peaks töötama enamikes kaasaegsetes Windowsi, Linuxi või Maci arvutites.
 
 ### Windows: Paigaldamine ja esimene käivitamine
 
