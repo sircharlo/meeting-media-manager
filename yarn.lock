@@ -4847,9 +4847,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zoom/meetingsdk@npm:^3.8.5":
-  version: 3.8.5
-  resolution: "@zoom/meetingsdk@npm:3.8.5"
+"@zoom/meetingsdk@npm:^3.8.10":
+  version: 3.8.10
+  resolution: "@zoom/meetingsdk@npm:3.8.10"
   dependencies:
     lodash: ^4.17.21
     react: 18.2.0
@@ -4864,7 +4864,7 @@ __metadata:
     react-redux: 8.1.2
     redux: 4.2.1
     redux-thunk: 2.4.2
-  checksum: 843972d51187f11f4a22ca3993091149cdc9ae91a1cee092893a247dbd17ac594b873d646526e14fdeda3c42324d52445693a766bc79b2a4e2a5f990abdf806b
+  checksum: 46c3ae9687d964f49cc0016fc38068d5d280b15fca1dae141185f8682ca92fa34bb3aee974a5ee28457f5f2d434782f8e47d69de77eb29e337aa8eb8bce8effe
   languageName: node
   linkType: hard
 
@@ -11712,7 +11712,7 @@ __metadata:
     "@xpda-dev/electron-builder": ^0.2.1
     "@xpda-dev/electron-launcher": ^0.3.0
     "@xpda-dev/webpack-step": ^0.1.6
-    "@zoom/meetingsdk": ^3.8.5
+    "@zoom/meetingsdk": ^3.8.10
     chokidar: ^3.6.0
     consola: ^2.15.3
     core-js: ^3.37.1
