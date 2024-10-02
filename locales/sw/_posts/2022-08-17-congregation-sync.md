@@ -1,6 +1,6 @@
 ---
 tag: Configuration
-title: Congregation sync
+title: Sawazisha media ya kutaniko
 ref: congregation-sync
 ---
 
