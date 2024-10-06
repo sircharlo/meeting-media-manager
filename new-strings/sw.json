@@ -16,7 +16,7 @@
   "applicationConfiguration": "Mpangilio wa mfumo",
   "applicationConfigurationDescription": "Badili hali na mwonekano wa mfumo ili ukufae",
   "are-you-sure": "Je, uko hakika?",
-  "are-you-sure-delete": "Je, uko hakika unataka kuuta faili hii \"{mediaToDelete}\"?",
+  "are-you-sure-delete": "Je, uko hakika unataka kufuta faili hii \"{mediaToDelete}\"?",
   "are-you-sure-delete-cache": "Je, uko hakika unataka kufuta faili zote zilizohifadhiwa?",
   "are-you-sure-delete-unused-cache": "Je, uko hakika unataka kufuta faili zisizotumika kutoka kwa hifadhi ya faili?",
   "are-you-sure-you-want-to-clear-the-cache": "Je, uko hakika unataka kufuta hifadhi ya faili?",
