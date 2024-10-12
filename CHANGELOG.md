@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.4.6
+
+### Bug Fixes
+
+- Correctly fetch media from public watchtowers
+
 ## 24.4.5
 
 ### Maintenance
