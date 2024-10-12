@@ -21,7 +21,7 @@ import { Plugin } from '@nuxt/types'
 import { FileStat, WebDAVClient } from 'webdav/dist/web/types'
 import JSZip from 'jszip'
 import { MeetingFile, ShortJWLang } from '~/types'
-import { MAX_BYTES_IN_FILENAME } from '~/constants/general'
+import { JAN_2008, MAX_BYTES_IN_FILENAME } from '~/constants/general'
 import { FALLBACK_SITE_LANGS } from '~/constants/lang'
 
 const plugin: Plugin = (
@@ -92,7 +92,7 @@ const plugin: Plugin = (
     if (!file) return pubPath
 
     // Get path for specific file
-    const pubFolder = (
+    let pubFolder = (
       file.pub ||
       file.queryInfo?.KeySymbol ||
       file.queryInfo?.MultiMeps ||
@@ -105,6 +105,17 @@ const plugin: Plugin = (
       file.queryInfo?.IssueTagNumber ||
       0
     ).toString()
+
+    // From 2008 onward the watchtower has a public and study release
+    if (
+      pubFolder === 'w' &&
+      issueFolder &&
+      parseInt(issueFolder) >= JAN_2008 &&
+      issueFolder.toString().slice(-2) === '01'
+    ) {
+      pubFolder = 'wp'
+    }
+
     const trackFolder = (file.track || file.queryInfo?.Track || 0).toString()
     return joinSafe(pubPath, pubFolder, issueFolder, trackFolder)
   })
