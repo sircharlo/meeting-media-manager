@@ -1,5 +1,5 @@
 ---
-permalink: /en/
+permalink: /am/
 ---
   
 ### What is M³?
