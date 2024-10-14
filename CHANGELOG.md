@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.4.7
+
+### Bug Fixes
+
+- Keep the highest found number of Kingdom songs
+
 ## 24.4.6
 
 ### Bug Fixes
