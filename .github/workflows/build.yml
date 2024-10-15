@@ -30,3 +30,4 @@ jobs:
       uses:  helaili/jekyll-action@v2
       with:
         build_only: ${{github.ref != 'refs/heads/docs'}}
+        token: ${{ secrets.GITHUB_TOKEN }}
