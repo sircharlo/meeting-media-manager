@@ -29,4 +29,4 @@ jobs:
     - name: Build jekyll site
       uses:  helaili/jekyll-action@v2
       with:
-        build_only: true
+        build_only: ${{github.ref != 'refs/heads/docs'}}
