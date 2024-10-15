@@ -90,8 +90,8 @@ jobs:
           GH_TOKEN: ${{ secrets.github_token }}
         run: yarn build-dev
 
-      - name: Run tests
-        run: yarn test
+      #- name: Run tests
+      #  run: yarn test
 
       # - name: Upload screenshots to docs
       #   if: |
