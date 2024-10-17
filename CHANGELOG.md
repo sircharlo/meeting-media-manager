@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.4.8
+
+### New or improved features
+
+- Option to disable checking for updates
+
 ## 24.4.7
 
 ### Bug Fixes
