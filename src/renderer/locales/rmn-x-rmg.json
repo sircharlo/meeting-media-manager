@@ -1,7 +1,7 @@
 {
   "all": "Σαρέ",
   "areYouSure": "Ισινέν σίγουροι;",
-  "autoPlayFirst": "Automatically play first media item",
+  "autoPlayFirst": "Κχελ αυτόματα ο πρώτος αρχείος πολυμέσων",
   "autoStartMusic": "Play background music automatically before meetings",
   "betaUpdates": "Enable beta updates for testing purposes <em>(Note: Do not enable this setting on the computer used to present media at the Kingdom Hall.)</em>",
   "browse": "Browse",
@@ -20,7 +20,6 @@
   "customCachePath": "Custom cache path (for publications, etc.)",
   "dark": "Dark",
   "delete": "Delete",
-  "disableUpdateCheck": "Disable checking for updates",
   "disableAutoUpdate": "Disable non-critical automatic app updates",
   "disableHardwareAcceleration": "Disable hardware acceleration <em>(Note: Only enable this setting if you are experiencing issues with media presentation. Changing this setting will cause M³ to restart.)</em>",
   "dontForgetToGetMedia": "Don't forget to update the media folders on the computer used to present media at congregation meetings!",
