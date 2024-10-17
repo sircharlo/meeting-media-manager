@@ -2,7 +2,7 @@
   "about": "About",
   "arrowDown": "down arrow",
   "arrowUp": "up arrow",
-  "backButtonTitle": "Back",
+  "backButtonTitle": "Zurück",
   "closeText": "to close",
   "darkModeSwitchLabel": "Appearance",
   "darkModeSwitchTitle": "Switch to dark theme",
@@ -23,8 +23,9 @@
   "reportIssue": "Report an issue",
   "resetButtonTitle": "Reset search",
   "returnToTopLabel": "Return to top",
-  "search": "Search",
+  "search": "Suche",
   "selectText": "to select",
   "sidebarMenuLabel": "Menu",
-  "title": "M³ documentation"
+  "title": "M³ documentation",
+  "usingAtAKingdomHall": "Using at a Kingdom Hall"
 }

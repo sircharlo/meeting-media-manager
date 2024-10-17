@@ -1,10 +1,8 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
-
 hero:
-  name: 'M³ documentation'
-  text: 'Help to set up and use Meeting Media Manager'
+  name: M³ documentation
+  text: Help to set up and use Meeting Media Manager
   image: /icon.png
   actions:
     - theme: brand
@@ -24,7 +22,7 @@ features:
     title: Media presenting
     details: Allows to easily share media during hybrid or in-person meetings.
   - icon: 🎵
-    title: Background music
+    title: Hintergrundmusik
     details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
   - icon: 🖥️
     title: External monitor support

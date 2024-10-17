@@ -1,0 +1,7 @@
+files:
+  - source: /src/i18n/en.json
+    translation: /src/i18n/%two_letters_code%.json
+  - source: /docs/src/en/**
+    translation: /docs/src/%two_letters_code%/%original_file_name%
+  - source: /docs/locales/en.json
+    translation: /docs/locales/%two_letters_code%.json

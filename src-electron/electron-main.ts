@@ -111,7 +111,7 @@ function createMediaWindow() {
 }
 
 function createWindow() {
-  if (platform === 'win32') app.setAppUserModelId(app.getName());
+  // if (platform === 'win32') app.setAppUserModelId(app.getName()); // this causes weirdness with the profile folder
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
     const parsedUrl = new URL(details.url);
     if (isValidHostname(parsedUrl.hostname)) {

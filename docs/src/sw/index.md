@@ -1,10 +1,8 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
-
 hero:
-  name: 'M³ documentation'
-  text: 'Help to set up and use Meeting Media Manager'
+  name: M³ documentation
+  text: Help to set up and use Meeting Media Manager
   image: /icon.png
   actions:
     - theme: brand
