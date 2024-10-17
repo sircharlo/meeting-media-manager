@@ -402,7 +402,7 @@ export default defineComponent({
       )
 
       ipcRenderer.send('toggleUpdateChannel', this.$getPrefs('app.betaUpdates'))
-      if (this.online) {
+      if (this.online && !this.$getPrefs('app.disableUpdateCheck')) {
         ipcRenderer.send('checkForUpdates')
       }
 

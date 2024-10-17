@@ -38,6 +38,7 @@ export interface AppPrefs {
   congregationName: string | null
   customCachePath: string | null
   disableAutoUpdate: boolean
+  disableUpdateCheck: boolean
   disableHardwareAcceleration: boolean
   localAppLang: string | null
   localOutputPath: string | null
