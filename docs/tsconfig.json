@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["DOM", "ESNext"],
+    "jsx": "preserve",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "types": ["vite/client", "vitepress"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "paths": {
+      "~": ["."],
+      "~~": ["./../"]
+    }
+  },
+  "include": [
+    ".vitepress/config.mts",
+    ".vitepress/theme/index.ts",
+    "./utils/*.ts",
+    "./src/**/*.md"
+  ],
+  "exclude": [
+    ".vitepress/dist",
+    ".vitepress/cache",
+    "node_modules",
+    "**/README.md"
+  ]
+}

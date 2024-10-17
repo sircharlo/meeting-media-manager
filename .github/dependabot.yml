@@ -1,45 +1,35 @@
 # To get started with Dependabot version updates, you'll need to specify which
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for all configuration options:
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
 updates:
-  - package-ecosystem: 'github-actions' # See documentation for possible values
-    directory: '/' # Location of package manifests
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: 'daily'
-  - package-ecosystem: 'npm' # See documentation for possible values
-    directory: '/' # Location of package manifests
+      interval: 'weekly'
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
       interval: 'daily'
     ignore:
-      - dependency-name: '@fortawesome/vue-fontawesome'
+      - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
-      - dependency-name: 'minimatch'
+      - dependency-name: '@typescript-eslint/*'
         update-types: ['version-update:semver-major']
-      - dependency-name: 'nuxt'
+      - dependency-name: 'eslint'
         update-types: ['version-update:semver-major']
-      - dependency-name: '@nuxtjs/i18n'
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@sentry/electron'
+      - dependency-name: 'typescript'
         update-types:
-          ['version-update:semver-minor', 'version-update:semver-major']
-      - dependency-name: '@sentry/webpack-plugin'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'css-loader'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'eslint-webpack-plugin'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'obs-websocket-js'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'ts-loader'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'vue'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'vue-router'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'vuex'
-        update-types: ['version-update:semver-major']
-      - dependency-name: 'webpack'
-        update-types: ['version-update:semver-major']
+          ['version-update:semver-major', 'version-update:semver-minor']
+    groups:
+      typescript-eslint:
+        applies-to: version-updates
+        patterns:
+          - '@typescript-eslint/*'
+      vueuse:
+        applies-to: version-updates
+        patterns:
+          - '@vueuse/*'
+    open-pull-requests-limit: 15

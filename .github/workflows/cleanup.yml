@@ -1,4 +1,4 @@
-name: Cleanup after merge
+name: Cleanup cache
 on:
   pull_request:
     types:

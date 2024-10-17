@@ -1,15 +1,15 @@
 {
   "recommendations": [
-    "christian-kohler.path-intellisense",
-    "davidanson.vscode-markdownlint",
     "dbaeumer.vscode-eslint",
-    "editorconfig.editorconfig",
-    "edwinhuish.better-comments-next",
     "esbenp.prettier-vscode",
+    "editorconfig.editorconfig",
+    "vue.volar",
+    "wayou.vscode-todo-highlight"
+  ],
+  "unwantedRecommendations": [
     "octref.vetur",
-    "streetsidesoftware.code-spell-checker",
-    "usernamehw.errorlens",
-    "visualstudioexptteam.vscodeintellicode",
-    "yzhang.markdown-all-in-one"
+    "hookyqr.beautify",
+    "dbaeumer.jshint",
+    "ms-vscode.vscode-typescript-tslint-plugin"
   ]
 }

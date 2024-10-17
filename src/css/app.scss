@@ -1,0 +1,545 @@
+// app global css in SCSS form
+
+.fitSnugly {
+  width: 100vw;
+  height: 100vh;
+}
+
+@font-face {
+  font-family: 'WT-ClearText-Bold';
+  src: url('https://b.jw-cdn.org/fonts/wt-clear-text/1.019/Wt-ClearText-Bold.woff2');
+}
+@font-face {
+  font-family: 'JW-Icons';
+  src: url('https://wol.jw.org/assets/fonts/jw-icons-external-1970474.woff');
+}
+
+@font-face {
+  font-family: 'NotoSerif';
+  src: url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@100..900&display=swap');
+}
+
+#yeartext {
+  font-family: 'WT-ClearText-Bold', 'NotoSerif', serif;
+  align-content: center;
+  text-align: center;
+  color: white !important;
+  font-size: 4vw;
+  line-height: 2vw;
+  font-weight: 800;
+  margin: auto;
+  bottom: 0;
+  right: 0;
+  letter-spacing: 0.05rem;
+}
+
+.themeScrp {
+  margin: 1em;
+}
+
+.themeScrp a {
+  color: white;
+  text-decoration: none;
+  outline: 0;
+  pointer-events: none;
+}
+
+#yeartextLogoContainer {
+  font-size: 16vh;
+  position: absolute;
+  bottom: 12vh;
+  right: 14vh;
+  color: black !important;
+  line-height: normal !important;
+  box-sizing: unset;
+  background: rgba(255, 255, 255, 0.2);
+  border: rgba(255, 255, 255, 0) 1.5vh solid;
+  height: 12vh;
+  width: 12vh;
+  overflow: hidden;
+  font-family: 'JW-Icons';
+
+  #yeartextLogo {
+    margin: -2.5vh -2vh;
+  }
+}
+
+body.body--light {
+  background: $primary-bg;
+
+  .q-drawer--left.q-drawer--bordered {
+    border-color: $accent-300;
+  }
+
+  .bg-accent-100 {
+    background-color: $accent-100;
+  }
+
+  .bg-accent-200 {
+    background-color: $accent-200;
+  }
+
+  .bg-accent-300 {
+    background-color: $accent-300;
+  }
+
+  .bg-accent-400 {
+    background-color: $accent-400;
+  }
+
+  .text-dark-grey {
+    color: $dark-grey;
+  }
+
+  .text-accent-300 {
+    color: $accent-300;
+  }
+
+  .text-accent-400 {
+    color: $accent-400;
+  }
+
+  .media-section {
+    background: white;
+    border-color: $accent-300;
+    border: 1px solid $accent-300;
+    // & .q-list {
+    //   & .q-item {
+    //     // margin-left: 0.25em;
+    //   }
+    // }
+
+    & .q-item.selected-to-drag {
+      background-color: $accent-200;
+    }
+  }
+
+  .bg-secondary-contrast {
+    background-color: $secondary-contrast;
+  }
+
+  .q-hoverable:hover > .q-focus-helper {
+    background-color: #87afff;
+    opacity: 0.15;
+  }
+}
+
+body.body--dark {
+  background: $primary-bg-dark;
+
+  .bg-accent-100 {
+    background-color: $accent-100-dark;
+  }
+
+  .bg-accent-200 {
+    background-color: $accent-100-dark;
+  }
+
+  .bg-accent-300 {
+    background-color: $accent-200-dark;
+  }
+
+  .bg-accent-400 {
+    background-color: $accent-200-dark;
+  }
+
+  .text-dark-grey {
+    color: $dark-grey-dark;
+  }
+
+  .text-secondary {
+    color: $secondary-contrast !important;
+  }
+
+  .media-section {
+    background: $dark;
+    border-color: $accent-100-dark;
+  }
+
+  .bg-secondary-contrast {
+    background-color: $secondary-contrast-dark;
+    color: $secondary-contrast;
+  }
+
+  .q-card {
+    box-shadow:
+      0 1px 5px $shadow,
+      0 2px 2px $shadow,
+      0 3px 1px -2px $shadow;
+  }
+
+  & .q-item.selected-to-drag {
+    background-color: $accent-200-dark  ;
+  }
+
+}
+
+.list-droppable {
+  min-height: 3em;
+}
+
+.q-banner {
+  margin-bottom: 1em;
+}
+
+.media-section {
+  padding-left: 1.25em;
+  border-radius: 0.5em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  position: relative;
+  border-radius: 0.75em;
+  margin-bottom: 1em;
+
+  &:before {
+    bottom: 0;
+    content: '';
+    margin-left: 0.6em;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 0.6em;
+    border-radius: 5em;
+    margin-top: 0.6em;
+    margin-bottom: 0.6em;
+  }
+
+  & .q-avatar {
+    border-radius: 4px;
+    padding-left: 0.5px;
+  }
+
+  &.tgw:before {
+    background: $treasures;
+  }
+
+  &.ayfm:before {
+    background: $apply;
+  }
+
+  &.lac:before {
+    background: $living;
+  }
+
+  &.wt:before {
+    background: $apply;
+  }
+
+  &.additional:before,
+  &.website:before {
+    background: $additional;
+  }
+
+  &.congregation:before {
+    background: $accent-200;
+  }
+
+  &.error:before {
+    background: $negative;
+  }
+
+  &.active:before {
+    background: $primary;
+  }
+}
+
+.media-section .q-avatar {
+  height: 32px;
+  width: 32px;
+  margin-right: 12px;
+}
+
+.jw-icon {
+  font-family: 'JW-Icons';
+
+  .q-avatar__content {
+    font-size: 22px;
+    line-height: 22px;
+  }
+}
+
+.text-tgw {
+  color: $treasures;
+}
+
+.text-ayfm {
+  color: $apply;
+}
+
+.text-lac {
+  color: $living;
+}
+
+.text-wt {
+  color: $apply;
+}
+
+.text-white-transparent {
+  color: $whiteTransparent;
+}
+
+.ellipsis-1-line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.text-current-page {
+  font-size: 90%;
+  margin-bottom: -5px;
+}
+
+.text-congregation {
+  font-size: 70%;
+  font-weight: 200;
+}
+
+.bg-white-transparent {
+  background: $whiteTransparent;
+}
+
+.q-btn {
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  // font-size: 14px;
+}
+
+.q-menu,
+.round-card {
+  border: 1px solid $accent-300;
+  box-shadow: 0px 8px 24px 0px $shadow;
+  font-size: 0.9em;
+}
+
+.super-rounded {
+  border-radius: 6em;
+}
+
+.round-card {
+  border-radius: 1em;
+}
+
+.card-title {
+  font-size: 1.1em;
+  text-transform: uppercase;
+  color: $grey;
+  margin-bottom: 1em;
+  font-weight: 500;
+}
+
+.card-section-title {
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 0.25em;
+}
+
+.duration-slider {
+  width: calc(100% - 207px);
+  bottom: -8px;
+  right: 16px;
+}
+
+.bg-semi-black {
+  background-color: $semi-black;
+}
+
+.text-spaced {
+  letter-spacing: 0.02em;
+}
+
+.text-semibold {
+  font-weight: 600;
+}
+
+.blue-bar::before {
+  background-color: $primary;
+  content: '';
+  display: block;
+  width: 6px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+
+.bg-semi-white-24 {
+  background: $semi-white-24;
+}
+
+.bg-tgw {
+  background: $treasures;
+}
+
+.text-tgw {
+  color: $treasures;
+}
+
+.bg-ayfm {
+  background: $apply;
+}
+
+.text-ayfm {
+  color: $apply;
+}
+
+.bg-lac {
+  background: $living;
+}
+
+.text-lac {
+  color: $living;
+}
+
+.bg-wt {
+  background: $apply;
+}
+
+.text-wt {
+  color: $apply;
+}
+
+.bg-additional,
+.bg-website {
+  background: $additional;
+}
+
+.text-additional,
+.text-website {
+  color: $additional;
+}
+
+.text-bigger {
+  font-size: 135%;
+}
+
+.q-expansion-item .q-focus-helper,
+.q-expansion-item .q-focus-helper::after,
+.q-expansion-item .q-focus-helper::before {
+  border-radius: 0.75em !important;
+}
+
+// .q-expansion-item__content > label:first-child::before,
+// .q-expansion-item__content > div:first-child::before {
+//   content: '';
+//   height: 1px;
+//   width: 100%;
+//   display: block;
+//   position: absolute;
+//   background: $accent-200;
+//   top: 0;
+//   left: 0;
+// }
+
+.q-field {
+  border-radius: $generic-border-radius;
+}
+
+.q-notifications__list--top {
+  margin-top: 4em;
+}
+
+.q-dialog,
+.q-card,
+.q-list,
+.q-notification,
+.q-time,
+.q-date {
+  user-select: none;
+  outline: none;
+}
+
+.q-dialog .q-card,
+.q-menu .q-card {
+  width: 400px;
+  max-height: 75vh;
+}
+
+.q-dialog .q-list,
+.q-menu .q-list {
+  width: 300px;
+}
+
+.q-dialog .large-overlay,
+.q-menu .large-overlay {
+  width: 80vw;
+  max-width: 80vw;
+}
+
+.dashed-border {
+  border: 2px dashed $primary;
+}
+
+a {
+  color: $primary;
+  cursor: pointer;
+}
+
+.action-island {
+  border-radius: 2em;
+  padding: 32px 16px;
+  transition: width 0.5s ease;
+  box-shadow: 0px 4px 24px 0px rgba(48, 117, 242, 0.4);
+}
+
+.media-tag {
+  min-width: 80px;
+  border-radius: 6px;
+}
+
+.media-tag .q-chip__content {
+  justify-content: center;
+}
+
+.q-menu .q-item__section--avatar,
+.q-drawer .q-item__section--avatar {
+  min-width: 40px;
+}
+
+.modal-confirm {
+  // font-size: 1.1em;
+  & .text-bigger {
+    font-size: 1.4em;
+  }
+}
+
+.time-duration {
+  font-size: 0.9em;
+  color: $accent-300;
+}
+
+.text-smaller {
+  font-size: 0.8em;
+}
+
+.text-caption {
+  letter-spacing: unset;
+}
+
+.q-drawer .disabled {
+  opacity: 1 !important;
+}
+
+.rounded-borders-lg {
+  border-radius: 12px;
+}
+
+.rounded-borders-sm {
+  border-radius: 4px;
+}
+
+.bg-error {
+  background-color: $error-semi-transparent;
+}
+
+.date-time-input * {
+  cursor: pointer;
+}
+
+.q-footer.fixed-bottom {
+  transform: translateX(-50%);
+  width: max-content;
+  background-color: transparent;
+}
