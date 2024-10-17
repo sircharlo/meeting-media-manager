@@ -15,6 +15,7 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: 'This discussion has automatically been closed due to inactivity.'
-          days-before-close: '14'
+          days-before-close: '30'
           close-unanswered: 'true'
           close-reason: 'OUTDATED'
+          verbose: 'true'
