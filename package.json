@@ -112,5 +112,5 @@
     "rebuild": "./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/better-sqlite3",
     "test": "echo \"No test specified\" && exit 0"
   },
-  "version": "24.10.6"
+  "version": "24.10.7"
 }
