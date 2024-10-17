@@ -28,4 +28,4 @@ In addition, M³ itself has been translated into several languages by many volun
 
 ## Where can I find help about downloading and using M³?
 
-Check out our [documentation website](https://www.github.com/sircharlo/meeting-media-manager) for help, guides and FAQs.
+Check out our [documentation website](https://sircharlo.github.io/meeting-media-manager) for help, guides and FAQs.
