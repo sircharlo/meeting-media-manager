@@ -44,6 +44,10 @@ const schema: Schema<ElectronStore> = {
         type: 'boolean',
         default: PREFS.app.disableAutoUpdate,
       },
+      disableUpdateCheck: {
+        type: 'boolean',
+        default: PREFS.app.disableUpdateCheck,
+      },
       disableHardwareAcceleration: {
         type: 'boolean',
         default: PREFS.app.disableHardwareAcceleration,

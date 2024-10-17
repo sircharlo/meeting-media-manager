@@ -339,7 +339,7 @@
 import { platform } from 'os'
 // eslint-disable-next-line import/named
 import { existsSync } from 'fs-extra'
-// eslint-disable-next-line import/named
+
 import { defineComponent, PropType } from 'vue'
 import { Dayjs } from 'dayjs'
 import { extname, join } from 'upath'
@@ -380,7 +380,7 @@ export default defineComponent({
         'QuitWhenDone',
         'div',
       ],
-      disableOptions: ['AutoUpdate', 'HardwareAcceleration'],
+      disableOptions: ['AutoUpdate', 'UpdateCheck', 'HardwareAcceleration'],
     }
   },
   computed: {
@@ -614,6 +614,13 @@ export default defineComponent({
     'app.disableAutoUpdate': {
       handler(val: boolean) {
         ipcRenderer.send('toggleAutoUpdate', !val)
+      },
+    },
+    'app.disableUpdateCheck': {
+      handler(val: boolean) {
+        if (!val) {
+          ipcRenderer.send('checkForUpdates')
+        }
       },
     },
     'app.disableHardwareAcceleration': {

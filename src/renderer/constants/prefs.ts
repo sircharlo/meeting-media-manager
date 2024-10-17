@@ -8,6 +8,7 @@ const PREFS = {
     congregationName: null,
     customCachePath: null,
     disableAutoUpdate: false,
+    disabledUpdateCheck: false,
     disableHardwareAcceleration: false,
     localAppLang: null,
     localOutputPath: null,
