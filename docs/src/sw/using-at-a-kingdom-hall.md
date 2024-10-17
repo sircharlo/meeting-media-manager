@@ -1,12 +1,12 @@
-# Using M³ at a Kingdom Hall
+# Kutumia M³ kwenye Mikutano
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Manager (M³) kwenye Jumba La Ufalme. Fuata hatua ili kuhakikisha usanidi mzuri wa kusimamia media wakati wa mikutano ya kutaniko.
 
-## 1. Download and install
+## 1. Pakua na sanikisha
 
-1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system (Windows, macOS, or Linux).
-3. Open the installer and follow the on-screen instructions to install M³.
+1. Tembelea [M³ ukurasa wa kupakua](https://github.com/sircharlo/meeting-media-manager/releases/latest)
+2. Pakua toleo linalofaa kwa mfumo wako wa kompyuta (Windows, macOS, au Linux).
+3. Fungua mfumo wa kupakua na ufuate maagizo ya kupakua M³ kwenye scrini.
 4. Launch M³.
 5. Go through the configuration wizard.
 
