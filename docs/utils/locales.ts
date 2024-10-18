@@ -132,7 +132,7 @@ export const mapThemeConfig = (
     {
       items: [
         {
-          link: GH_REPO_URL + '/blob/main/CHANGELOG.md',
+          link: GH_REPO_URL + '/blob/master/CHANGELOG.md',
           text: 'Changelog',
         },
         {
