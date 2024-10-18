@@ -24,6 +24,7 @@
   "are-you-sure-you-want-to-delete": "¿Está seguro de que desea eliminar?",
   "are-you-sure-you-want-to-delete-this-profile": "¿Está seguro de que desea eliminar el perfil {profileName}?",
   "areYouSure": "¿Está seguro?",
+  "auto-updates": "Automatic updates",
   "autoStartAtLogin": "Iniciar automáticamente M³ al encender la computadora",
   "autoStartAtLogin-explain": "M³ puede iniciarse automáticamente cuando se enciende la computadora.",
   "autoStartMusic": "Iniciar automáticamente la música de fondo antes de las reuniones",
