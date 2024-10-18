@@ -69,11 +69,16 @@ const isJwHostname = (hostname: string) => {
 };
 
 function createMediaWindow() {
+  const mediaWindowState = windowStateKeeper({
+    defaultHeight: 720,
+    defaultWidth: 1280,
+    file: 'media-window-state.json',
+  });
   const window = new BrowserWindow({
     alwaysOnTop: false,
     backgroundColor: 'black',
     frame: false,
-    height: 720,
+    height: mediaWindowState.height,
     icon: path.resolve(path.join(__dirname, 'icons', 'media-player.png')),
     minHeight: 110,
     minWidth: 195,
@@ -88,9 +93,9 @@ function createMediaWindow() {
       sandbox: false,
       webSecurity: false,
     },
-    width: 1280,
-    x: 50,
-    y: 50,
+    width: mediaWindowState.width,
+    x: mediaWindowState.x,
+    y: mediaWindowState.y,
   });
 
   window.setAspectRatio(16 / 9);
@@ -105,6 +110,10 @@ function createMediaWindow() {
 
   window.on('closed', () => {
     mediaWindow = null;
+  });
+
+  window.on('ready-to-show', () => {
+    mediaWindowState.manage(window);
   });
 
   return window;
