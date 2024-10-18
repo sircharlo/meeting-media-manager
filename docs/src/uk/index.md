@@ -1,36 +1,36 @@
 ---
-layout: home
+layout: головна
 hero:
-  name: M³ documentation
-  text: Help to set up and use Meeting Media Manager
+  name: Документація M³
+  text: Допомога у налаштуванні та використанні Meeting Media Manager
   image: /icon.png
   actions:
     - theme: brand
-      text: Install Meeting Media Manager
+      text: Установка Meeting Media Manager
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
-      text: Using at a Kingdom Hall
+      text: Використання в Залі Царства
       link: /using-at-a-kingdom-hall
     - theme: alt
-      text: About
+      text: Про програму
       link: /about
 features:
   - icon: 🚀
-    title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on JW.org.
+    title: Автозавантаження медіа
+    details: Автоматично завантажує зображення та відео для зібрань на будь-якій мові, доступній на JW.org.
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: Демонстрація медіа
+    details: Дозволяє легко показувати медіа під час гібридних або звичайних зібрань.
   - icon: 🎵
     title: Фонова музика
-    details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
+    details: Відтворює фонову музику автоматично. Зупиняє відтворення перед початком зібрання. Фонова музика може бути перезапущена в один клік після зібрання.
   - icon: 🖥️
-    title: External monitor support
-    details: Automatically detects and manages external monitors for smooth media presentations.
+    title: Підтримка зовнішніх моніторів
+    details: Автоматично виявляє і керує зовнішніми моніторами для плавної демонстрації медіа.
   - icon: 🌐
-    title: Multiple languages
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Декілька мов
+    details: Завантажуйте медіа для зібрань сотнями мов та використовуйте M³ на будь-якій з багатьох доступних мов.
   - icon: 🧩
-    title: OBS Studio Integration
-    details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
+    title: Інтеграція з OBS Studio
+    details: Інтеграція з OBS Studio для розширених можливостей керування та демонстрування медіа.
 ---
