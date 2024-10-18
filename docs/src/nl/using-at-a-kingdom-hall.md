@@ -17,57 +17,70 @@ Deze handleiding zal je begeleiden bij het downloaden, installeren en opzetten v
 Bij het starten van M³ wordt je gevraagd om de **weergavetaal** van je voorkeur te kiezen. Kies de taal die je wilt gebruiken voor de interface.
 
 :::tip Tip
-Dit is niet dezelfde taal als de taal waarin M³ media zal downloaden. The language for media downloads is configured in a later step.
+
+Dit is niet dezelfde taal als de taal waarin M³ media zal downloaden. De taal voor media downloads wordt in een latere stap ingesteld.
+
 :::
 
 ### Profieltype
 
-The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+De volgende stap is om een **profieltype** te kiezen. Voor een normale configuratie in een Koninkrijkszaal, kies **Regulier**. Dit zal veel functies configureren die vaak worden gebruikt voor gemeente vergaderingen.
 
-::: warning
+:::warning 2) Configuratiewizard
+
 You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+De **Andere** profielsoort wordt zelden gebruikt. **For normal use during congregation meetings, please choose _Regular_.**
 :::
 
-### Automatic congregation lookup
+:::
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+### Automatisch jouw gemeente opzoeken
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+M³ kan proberen om automatisch het vergaderschema, de taal en de opmaak van jouw gemeente te vinden.
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Om dit te doen, gebruik de **Zoek gemeente op** knop naast het gemeente naam veld en voer minimaal een deel van de gemeente naam en stad in.
+
+Zodra de juiste gemeente is gevonden en geselecteerd, zal M³ alle beschikbare informatie vooraf invullen, zoals **naam**, **gemeente taal**, en **vergaderdagen en tijden**.
 
 :::info Opmerking
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
+
+Deze zoektocht maakt gebruik van openbare gegevens op de officiële website van Jehovah's Getuigen.
+
 :::
 
-### Manual entry of congregation information
+### Handmatige invoer van gemeente informatie
 
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Als de geautomatiseerde zoekopdracht jouw gemeente niet heeft gevonden, kan je natuurlijk alsnog handmatig de vereiste informatie invoeren. De wizard geeft je de mogelijkheid om de **naam**, **gemeente taal** en **vergaderdagen en tijden van je gemeente te bekijken en/of in te voeren**.
 
-### Caching videos from the songbook
+### Video's van het liederenboek cachen
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Je krijgt ook de optie om **alle video's van het liederenboek te cachen**. Deze optie downloadt vooraf alle video's van de liederen en vermindert de tijd die het kost om media op te halen voor vergaderingen in de toekomst.
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
+- **Voordelen:** De media van de vergadering zal veel sneller beschikbaar zijn.
+- **Nadelen:** De grootte van de media cache zal aanzienlijk toenemen, ongeveer 5GB.
 
 :::tip Tip
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+
+Als jouw computer voldoende opslagruimte heeft, wordt aanbevolen om deze optie **in te schakelen** voor efficiëntie en prestaties.
+
 :::
 
-### OBS Studio Integration Configuration (Optional)
+### Configuratie OBS Studio integratie (optioneel)
 
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
+Als jouw gemeente **OBS Studio** gebruikt voor het uitzenden van hybride vergaderingen over Zoom, kan M³ automatisch met dat programma integreren. Tijdens het instellen kan je de integratie met OBS Studio configureren door het volgende in te voeren:
 
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
-  ::: tip Tip
-  If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
-  :::
+- **Poort:** Het poortnummer dat gebruikt wordt om verbinding te maken met de OBS Studio Websocket plugin.
+- **Wachtwoord:** Het wachtwoord dat gebruikt wordt om verbinding te maken met de OBS Studio Websocket plugin.
+- **Scènes:** De OBS scènes die gebruikt zullen worden tijdens het presenteren van media. Je hebt één scène nodig die het mediavenster of scherm toont, en één die het podium toont.
 
-## 3. Enjoy using M³
+:::tip Tip
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+::: tip Tip
+If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+
+:::
+
+## 3. Geniet van M³
+
+Zodra de installatie wizard is voltooid, is M³ klaar om te helpen met het beheer en het presenteren van media voor gemeente vergaderingen. Veel plezier met de app! :tada:
