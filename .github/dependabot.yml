@@ -11,12 +11,14 @@ updates:
       interval: 'weekly'
     commit-message:
       prefix: 'chore'
+      include: 'scope'
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
       interval: 'daily'
     commit-message:
       prefix: 'chore'
+      include: 'scope'
     ignore:
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
