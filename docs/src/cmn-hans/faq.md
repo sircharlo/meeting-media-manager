@@ -1,10 +1,10 @@
-# Frequently Asked Questions
+# 常见问题
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+\*\*不。\*\*此应用程序的运转方式酷似JW Library应用。 It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
 
-:::info Note
+:::info 备注
 The source code for this app is available for all to examine and verify what goes on under the hood.
 :::
 
