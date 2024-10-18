@@ -12,30 +12,30 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 
 ## :thinking: Este aplicativo infringe os Termos de Uso do JW.org?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\\&prefer=content) actually explicitly allow the kind of usage that we are making. Aqui está o trecho relevante desses termos (ênfase minha):
+**Não.** Os [Termos de Uso](https://www.jw.org/finder?docid=1011511\&prefer=content) na verdade permitem claramente o tipo de uso que estamos fazendo. Aqui está o trecho relevante desses termos (ênfase minha):
 
 > Você não pode:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Criar, com o objetivo de distribuir, qualquer software, aplicativo, ferramenta ou técnica que sirva especificamente para colecionar, copiar, baixar, extrair ou rastrear dados, HTML, imagens ou textos deste site. (Isso **não** proíbe a distribuição gratuita, sem fins comerciais, de aplicativos projetados para baixar arquivos eletrônicos como EPUB, PDF, MP3 e arquivos MP4 das áreas públicas deste site.)
 
-## :radioactive: How do I report an issue?
+## :radioactive: Como faço para reportar um problema?
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Envie um [issue](https://github.com/sircharlo/meeting-media-manager/issues) no repositório oficial do GitHub.
 
-## :new: How can I request a new feature or enhancement?
+## :new: Como posso solicitar um novo recurso ou melhoria?
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Por favor, abra uma [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) no repositório oficial do GitHub.
 
-## :handshake: How can I contribute some code?
+## :handshake: Como posso contribuir com algum código?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Por favor, consulte o [guia de contribuição](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) no repositório oficial do GitHub.
 
-## :x: Can I make a donation to the project?
+## :x: Posso fazer uma doação para o projeto?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Obrigado pelo seu interesse em apoiar o projeto! No entanto, com base em Mateus 10:8, doações **não** são aceitas e nunca serão. Este aplicativo foi feito com amor e um pouco de tempo livre. Aproveite! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Mateus 10:8
 
-"You received free, give free."
+"Vocês receberam de graça, portanto deem de graça."
 
 :::
