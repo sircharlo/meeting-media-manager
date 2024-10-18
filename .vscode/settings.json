@@ -6,6 +6,7 @@
   "editor.codeActionsOnSave": ["source.fixAll.eslint"],
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
   "typescript.tsdk": "node_modules/typescript/lib",
+  "vue.server.includeLanguages": ["vue", "markdown"],
   "cSpell.ignorePaths": [
     ".github/workflows/*",
     ".vscode/*",

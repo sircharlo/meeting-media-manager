@@ -19,6 +19,9 @@
       "~~": ["./../"]
     }
   },
+  "vueCompilerOptions": {
+    "vitePressExtensions": [".md"]
+  },
   "include": [
     ".vitepress/config.mts",
     ".vitepress/theme/index.ts",
