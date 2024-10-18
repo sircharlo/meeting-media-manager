@@ -1,6 +1,6 @@
 # Використання M³ в Залі Царства
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Цей посібник проведе вас через процес завантаження, встановлення та налаштування Meeting Media Manager (M³) у Залі Царства. Дотримуйтесь цих кроків, щоб забезпечити безперебійне налаштування для управління медіа під час зібрань.
 
 ## 1. Завантажте та встановіть
 
@@ -27,16 +27,15 @@ This guide will walk you through the process of downloading, installing, and set
 ::: warning
 You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
 
-Тип **Інший** рідко використовується. **For normal use during congregation meetings, please choose _Regular_.**
-:::
+Тип **Інший** рідко використовується. **Для звичайного використання під час зібрань збору, будь ласка, оберіть _Звичайний_.**:::
 
 ### Автоматичний пошук збору
 
 M³ може спробувати автоматично знайти графік завдань вашого збору, мову та відформатовану назву.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+Для цього скористайтеся кнопкою **Пошук збору** поруч із полем назви збору та введіть щонайменше частину назви збору та міста.
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Як тільки правильний збір буде знайдений і обраний, M³ автоматично заповнить усю доступну інформацію, таку як **назва** вашого збору, **мова зібрань**, а також **дні та час зібрань**.
 
 :::info Примітка
 Цей пошук використовує публічно доступні дані з офіційного сайту Свідків Єгови.
@@ -44,7 +43,7 @@ Once the correct congregation is found and selected, M³ will prefill all availa
 
 ### Ручний ввід інформації про збір
 
-Якщо автоматичний пошук не знайде вашого збору, то ви можете вручну ввести необхідну інформацію. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Якщо автоматичний пошук не знайде вашого збору, то ви можете вручну ввести необхідну інформацію. Майстер налаштування дозволить вам переглянути та/або ввести **назву** вашого збору, **мову зібрань** та **дні і час зібрань**.
 
 ### Кешування відео з пісенника
 
@@ -54,7 +53,7 @@ Once the correct congregation is found and selected, M³ will prefill all availa
 - **Мінуси:** Розмір медіа кешу значно збільшиться, приблизно на 5ГБ.
 
 :::tip Порада
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+Якщо у вашому Залі Царства достатньо місця для зберігання, рекомендується **увімкнути** цю опцію для підвищення ефективності та сприйнятої продуктивності.
 :::
 
 ### Конфігурація інтеграції OBS Studio (за бажанням)
@@ -63,9 +62,9 @@ If your Kingdom Hall has sufficient storage space, it’s recommended to **enabl
 
 - **Port:** Номер порту, що використовується для підключення до плагіну OBS Studio Websocket.
 - **Пароль:** Пароль, що використовується для підключення до модуля OBS Studio Websocket.
-- **Сцени:** Сцени OBS, які будуть використовуватися під час презентацій медіа. You'll need one scene that captures the media window or screen, and one that shows the stage.
-  ::: tip Tip
-  If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+- **Сцени:** Сцени OBS, які будуть використовуватися під час презентацій медіа. Вам потрібно буде створити одну сцену, яка захоплює вікно або екран медіа, і одну сцену, яка показує сцену Залу Царства.
+  ::: tip Порада
+  Якщо ваш збір регулярно проводить гібридні зібрання, **дуже** рекомендується увімкнути інтеграцію з OBS Studio.
   :::
 
 ## 3. Насолоджуйтесь використанням M³
