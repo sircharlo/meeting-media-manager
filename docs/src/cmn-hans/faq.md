@@ -16,22 +16,22 @@
 >
 > 본 웹사이트에서 데이터, HTML, 이미지, 텍스트를 수집, 복사, 다운로드, 추출, 산출, 스크래핑하기 위한 소프트웨어 응용 프로그램, 도구, 기법을 배포 목적으로 만드는 행위. (본 웹사이트의 일반 자료에서 EPUB, PDF, MP3, MP4 파일과 같은 전자 파일을 다운로드할 목적으로 고안된 비상업적 무료 응용 프로그램을 배포해서는 **안 된다**는 뜻은 아님)
 
-## :radioactive: How do I report an issue?
+## :radioactive: 如何报告问题？
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+请在官方的 GitHub 仓库上提交一个 [issue](https://github.com/sircharlo/meeting-media-manager/issues)。
 
-## :new: How can I request a new feature or enhancement?
+## :new: 如何请求新功能或优化功能？
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+请在官方的 GitHub 仓库打开 [discussion](https://github.com/sircharlo/meeting-media-manager/discussions)
 
-## :handshake: How can I contribute some code?
+## :handshake: 如何贡献一些代码？
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+请查看官方GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。
 
-## :x: Can I make a donation to the project?
+## :x: 如何为该项目做出捐献？
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+感谢您对支持该项目的兴趣！ 然而，本着马太福音10:8的精神，我们**不接受**捐款，永远不会接受。 这个应用程序是用爱心和花费一些时间制作的。 希望您喜欢！ :tada:
 
-:::tip :book: Matthew 10:8
-"You received free, give free."
+:::tip :book: 马太福音10:8
+“你们​免费​得​来，也​要​无偿​施与”
 :::
