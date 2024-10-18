@@ -7,7 +7,9 @@
 Het biedt ondersteuning voor het beheren van gewone en aangepaste vergadering media, en ondersteuning voor meerdere gemeenten en/of groepen met hetzelfde computeraccount.
 
 :::info Opmerking
+
 M³ stond bekend als JWMMF (JW Meeting Media Fetcher), maar werd hernoemd in mei 2022.
+
 :::
 
 ## Wat kan M³?
