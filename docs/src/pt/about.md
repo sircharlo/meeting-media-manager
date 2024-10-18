@@ -7,7 +7,9 @@
 Contém recursos de gerenciamento de mídia de reuniões regulares e personalizadas, além de suporte para múltiplas congregações e/ou grupos que utilizam a mesma conta.
 
 :::info Nota
+
 Nota: O M³ era conhecido como JWMMF (JW Meeting Media Fetcher), mas seu nome foi alterado em Maio de 2022.
+
 :::
 
 ## O que o M³ faz?
@@ -26,8 +28,8 @@ Em reuniões híbridas ou presenciais, o modo de exibição de mídias integrado
 
 Experimente hoje o M³ e veja por você mesmo o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.
 
-## Does M³ work in my language?
+## O M³ está disponível no meu idioma?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you need.
+**Sim!** Todas as mídias das reuniões podem ser baixadas automaticamente em qualquer uma das centenas de idiomas disponíveis no JW.org. A lista de idiomas disponíveis é sempre atualizada; tudo que você precisa fazer é selecionar qual você quer.
 
-In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Além disso, o M³ foi traduzido em vários idiomas, por muitos voluntários; você pode configurar o idioma que você gostaria de ser exibido na interface do M³.
