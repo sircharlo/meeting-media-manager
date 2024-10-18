@@ -1,37 +1,37 @@
-# Frequently Asked Questions
+# Часті питання
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Чи залежить ця програма від зовнішніх сайтів, джерел або "кураторів" для завантаження публікацій і медіа для зібрань?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Ні.** Додаток поводиться аналогічно як JW Library. Він завантажує публікації, медіа, та інший котент безпосередньо з офіційного вебсайту JW.org та його мережу доставки контенту. Додаток автоматично визначає, що потрібно завантажити, та коли раніше завантажений контент більше не є актуальним і повинен бути завантажений заново.
 
-:::info Note
-The source code for this app is available for all to examine and verify what goes on under the hood.
+:::info Примітка
+Вихідний код цього додатку доступний для всіх, щоб дослідити його і перевірити, що відбувається під капотом програми.
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Чи порушує ця програма умови використання JW.org?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis mine):
+**Ні.** [Умови використання](https://www.jw.org/finder?docid=1011511\&prefer=content) JW.org явно дозволяють тип використання яким ми користуємося. Ось відповідний фрагмент з цих умов (виділений акцент):
 
-> You may not:
+> Ви не можете:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Створювати з метою розповсюдження будь-яке програмне забезпечення, допоміжні програми та засоби програмного забезпечення, призначені для того, щоб збирати, копіювати, завантажувати, видобувати, витягувати або вибирати дані, HTML, зображення чи текст із цього сайту. (Це **не стосується** розповсюдження безкоштовних некомерційних програмних додатків, створених для завантаження електронних файлів, таких як EPUB, PDF, MP3 і MP4, доступних на цьому сайті для загалу.)
 
-## :radioactive: How do I report an issue?
+## :radioactive: Як мені повідомити про помилку?
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Будь ласка, сформуйте [issue](https://github.com/sircharlo/meeting-media-manager/issues) в офіційному GitHub репозиторії.
 
-## :new: How can I request a new feature or enhancement?
+## :new: Як я можу запропонувати нову функцію або покращення?
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Будь ласка, відкрийте [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) в офіційному репозиторії GitHub.
 
-## :handshake: How can I contribute some code?
+## :handshake: Як я можу зробити внесок в код?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Будь ласка, перегляньте [інструкцію](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) в офіційному GitHub репозиторії.
 
-## :x: Can I make a donation to the project?
+## :x: Чи можу я зробити пожертву на проект?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Дякуємо за вашу зацікавленість в підтримці проекту! Проте, згідно з духом з Матвія 10:8, пожертви **не приймаються** і ніколи не будуть. Цей додаток був створений з любовʼю та у наш вільний час. Будь ласка, насолоджуйтесь! :tada:
 
 :::tip :book: Matthew 10:8
-"You received free, give free."
+"Даром отримали – даром давайте."
 :::

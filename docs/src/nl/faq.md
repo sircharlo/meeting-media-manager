@@ -1,37 +1,37 @@
-# Frequently Asked Questions
+# Veelgestelde vragen
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Maakt deze applicatie gebruik van externe websites, bronnen of diensten om de publicaties en vergadering media te downloaden?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Nee**. De applicatie werkt hetzelfde als JW Library. De publicaties en media worden direct van de officiële JW.org website en zijn CDN gedownload. De app bepaalt automatisch wat er moet worden gedownload en wanneer eerder gedownloade inhoud niet meer up-to-date is en opnieuw moet worden gedownload.
 
-:::info Note
-The source code for this app is available for all to examine and verify what goes on under the hood.
+:::info Opmerking
+De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en controleren wat er onder de motorkap gebeurt.
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Gaat deze applicatie in tegen de gebruikersvoorwaarden van JW.org?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis mine):
+**Nee** De JW.org [Gebruiksvoorwaarden](https://www.jw.org/finder?docid=1011511\&prefer=content) staat expliciet het soort gebruik toe dat we maken. Hier is het relevante stukje van de gebruiksvoorwaarden (nadruk is niet origineel):
 
-> You may not:
+> Het is niet toegestaan:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> voor distributiedoeleinden software-applicaties, tools of technieken te ontwikkelen die specifiek worden gemaakt om gegevens, HTML, afbeeldingen of tekst van deze site te verzamelen, te kopiëren, te downloaden of te extraheren. (het is **wel** toegestaan om gratis, niet-commerciële sofware-applicaties te distribueren die ontwikkeld zijn om elektronische bestanden zoals EPUB, PDF, MP3 en MP4 te downloaden van openbare delen van deze site.)
 
-## :radioactive: How do I report an issue?
+## :radioactive: Hoe kan ik een probleem melden?
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Maak alsjeblieft een [issue](https://github.com/sircharlo/meeting-media-manager/issues) aan op de officiële GitHub repository.
 
-## :new: How can I request a new feature or enhancement?
+## :new: Hoe kan ik een nieuwe functie of verbetering aanvragen?
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Maak alsjeblieft een [discussie](https://github.com/sircharlo/meeting-media-manager/discussions) aan op de officiële GitHub repository.
 
-## :handshake: How can I contribute some code?
+## :handshake: Hoe kan ik wat code bijdragen?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Bekijk alsjeblieft de [handleiding om bij te dragen](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) op de officiële GitHub repository.
 
-## :x: Can I make a donation to the project?
+## :x: Kan ik doneren aan het project?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Bedankt voor je interesse in het ondersteunen van het project! Echter, in de geest van Mattheüs 10:8, worden donaties **niet** geaccepteerd en dat zal ook nooit veranderen. Deze applicatie is gemaakt met liefde en beetje vrije tijd. Geniet ervan! :tada:
 
-:::tip :book: Matthew 10:8
-"You received free, give free."
+:::tip :book: Mattheüs 10:8
+"Voor niets heb je gekregen, voor niets moet je geven."
 :::

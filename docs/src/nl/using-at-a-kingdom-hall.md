@@ -1,23 +1,23 @@
-# Using M³ at a Kingdom Hall
+# Gebruik M³ in de Koninkrijkszaal
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Deze handleiding zal je begeleiden bij het downloaden, installeren en opzetten van **Meeting Media Manager (M³)** in een koninkrijkszaal. Volg de stappen om te zorgen voor een soepele installatie voor het beheren van media tijdens gemeente vergaderingen.
 
-## 1. Download and install
+## 1. Downloaden en installeren
 
-1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system (Windows, macOS, or Linux).
-3. Open the installer and follow the on-screen instructions to install M³.
-4. Launch M³.
-5. Go through the configuration wizard.
+1. Bezoek de [M³ downloadpagina](https://github.com/sircharlo/meeting-media-manager/releases/latest)
+2. Download de juiste versie voor jouw besturingssysteem (Windows, macOS of Linux).
+3. Open het installatieprogramma en volg de instructies op het scherm om M³ te installeren.
+4. Open M³.
+5. Doorloop de configuratiewizard.
 
-## 2) Configuration wizard
+## 2) Configuratiewizard
 
-### App display language
+### Applicatie taal
 
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
+Bij het starten van M³ wordt je gevraagd om de **weergavetaal** van je voorkeur te kiezen. Kies de taal die je wilt gebruiken voor de interface.
 
 :::tip Tip
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+Dit is niet dezelfde taal als de taal waarin M³ media zal downloaden. The language for media downloads is configured in a later step.
 :::
 
 ### Profieltype
@@ -38,7 +38,7 @@ To do so, use the **Congregation Lookup** button next to the congregation name f
 
 Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
 
-:::info Note
+:::info Opmerking
 This lookup uses publicly available data from the official website of Jehovah's Witnesses.
 :::
 
