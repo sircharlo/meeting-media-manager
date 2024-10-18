@@ -16,20 +16,20 @@ Obs: M³ hette tidigare JWMMF (JW Meeting Media Fetcher), men döptes om i maj 2
 
 I korthet, med M³ kan du enkelt och automatiskt ladda ner, synkronisera, dela och presentera all mötesmedia.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+För **hybrid** eller **vanliga** församlingsmöten har det mediepresentationsläget alla funktioner som behövs för att förenkla uppgiften att dela media med församlingen, inklusive:
 
-- Media thumbnails
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
+- Mediaminiatyrer
+- Enkelt att använda pausa/spela upp/stoppa knappar för att hantera uppspelning av mediefiler
+- Enkel uppspelning av bakgrundsmusik, med automatiskt stopp innan mötet börjar
+- Automatisk igenkänning och hantering av extern bildskärm
 - OBS Studio integration
 
 <!-- As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature. -->
 
-Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.
+Prova M³ idag och se själv vad det kan göra! Det har aldrig varit enklare att presentera media på församlingsmöten.
 
-## Does M³ work in my language?
+## Fungerar M³ på mitt språk?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you need.
+**Ja!** Mediaför Jehovas vittnens möten kan laddas ner automatiskt på något av de hundratals språk som finns på JW.org. Listan över tillgängliga språk uppdateras dynamiskt, allt du behöver göra är att välja önskad språk.
 
-In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+I tillägg har M³ själv översatts till flera språk av många frivilliga; du kan därför välja det språk du vill att programmet M³ ska visas på.
