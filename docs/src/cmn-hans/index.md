@@ -2,35 +2,35 @@
 layout: home
 hero:
   name: M³文档
-  text: Help to set up and use Meeting Media Manager
+  text: 帮助设置和使用Meeting Media Manager
   image: /icon.png
   actions:
     - theme: brand
-      text: Install Meeting Media Manager
+      text: 安装Meeting Media Manager
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: 在王国聚会所使用
-      link: /using-at-a-kingdom-hall
+      link: /在王国聚会所使用
     - theme: alt
       text: 关于
-      link: /about
+      link: /关于
 features:
   - icon: 🚀
-    title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on JW.org.
+    title: 自动下载媒体
+    details: 自动下载JW.org上可用任何语言提供的会众聚会图片和录像。
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: 媒体播放
+    details: 帮助你在混合聚会或现场聚会中轻松分享媒体。
   - icon: 🎵
     title: 背景音乐
-    details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
+    details: 自动播放背景音乐。 在聚会开始前停止播放。 聚会接受后，轻松点击可以重启背景音乐。
   - icon: 🖥️
-    title: External monitor support
-    details: Automatically detects and manages external monitors for smooth media presentations.
+    title: 支持外部屏幕
+    details: 自动检测和管理外部显示器以顺利播放媒体节目。
   - icon: 🌐
-    title: Multiple languages
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: 多国语言
+    details: 下载数百种语言的聚会媒体，使用M3的接口，使用多种可用语言中的任何一种。
   - icon: 🧩
-    title: OBS Studio Integration
-    details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
+    title: 支持OBS工作室
+    details: 与OBS工作室集成以加强媒体管理和播放能力。
 ---
