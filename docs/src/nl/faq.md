@@ -1,16 +1,16 @@
-# Frequently Asked Questions
+# Veelgestelde vragen
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Maakt deze applicatie gebruik van externe websites, bronnen of diensten om de publicaties en vergadering media te downloaden?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Nee**. De applicatie werkt hetzelfde als JW Library. De publicaties en media worden direct van de officiële JW.org website en zijn CDN gedownload. De app bepaalt automatisch wat er moet worden gedownload en wanneer eerder gedownloade inhoud niet meer up-to-date is en opnieuw moet worden gedownload.
 
-:::info Note
-The source code for this app is available for all to examine and verify what goes on under the hood.
+:::info Opmerking
+De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en controleren wat er onder de motorkap gebeurt.
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Gaat deze applicatie in tegen de gebruikersvoorwaarden van JW.org?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis mine):
+**Nee** De JW.org [Gebruiksvoorwaarden](https://www.jw.org/finder?docid=1011511\&prefer=content) staat expliciet het soort gebruik toe dat we maken. Here is the relevant excerpt from those terms (emphasis mine):
 
 > You may not:
 >
