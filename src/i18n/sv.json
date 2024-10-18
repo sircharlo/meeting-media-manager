@@ -24,6 +24,7 @@
   "are-you-sure-you-want-to-delete": "Är du säker att du vill radera",
   "are-you-sure-you-want-to-delete-this-profile": "Är du säker på att du vill radera filen \"{profileName}\"?",
   "areYouSure": "Är du säker?",
+  "auto-updates": "Automatic updates",
   "autoStartAtLogin": "Starta automatiskt M³ vid datorstart",
   "autoStartAtLogin-explain": "M³ kan starta automatiskt när datorn startas.",
   "autoStartMusic": "Starta bakgrundsmusik automatiskt före möten",
