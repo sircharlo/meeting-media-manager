@@ -7,7 +7,9 @@
 它的功能是支持管理定期和自定义的聚会媒体，以及支持使用同一计算机帐户的多个会众和小组。
 
 :::info 备注
+
 M³之前被称为JWMMF（JW Meeting Media Fetcher），但在2022年5月更名为现在的名称。
+
 :::
 
 ## M³能做什么？
@@ -24,10 +26,10 @@ M³之前被称为JWMMF（JW Meeting Media Fetcher），但在2022年5月更名�
 
 <!-- As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature. -->
 
-今天给M3一次尝试，看看它能做些什么！ 在会众聚会上播放媒体的工作从来没有那么容易。
+今天给M3一次尝试，看看它能做些什么！ 在会众聚会上播放媒体的工作从来没有那么容易。 在会众聚会上播放媒体的工作从来没有那么容易。
 
 ## M³支持我的语言吗？
 
-\*\*是！\*\*耶和华见证人的聚会所需的媒体可以自动以JW.org提供的数百种语言下载。 可用语言列表将持续更新；您只需要做的就是选择您想要的语言。
+\*\*是！\*\*耶和华见证人的聚会所需的媒体可以自动以JW.org提供的数百种语言下载。 可用语言列表将持续更新；您只需要做的就是选择您想要的语言。 可用语言列表将持续更新；您只需要做的就是选择您想要的语言。
 
 此外，M³本身已被许多志愿者翻译成许多种语言； 因此，您可以设置您想要在M³中显示的语言。
