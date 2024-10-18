@@ -5,7 +5,9 @@
 **No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
 
 ::: info Note
+
 The source code for this app is available for all to examine and verify what goes on under the hood.
+
 :::
 
 ## :thinking: Does this app infringe the JW.org Terms of Use?
@@ -33,5 +35,7 @@ Please see the [contributing guide](https://github.com/sircharlo/meeting-media-m
 Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
 ::: tip :book: Matthew 10:8
+
 "You received free, give free."
+
 :::
