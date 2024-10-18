@@ -19,8 +19,8 @@ features:
     title: Automatic media downloads
     details: Automatically downloads pictures and videos for congregation meetings in any language available on JW.org.
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: Exibindo mídia
+    details: Permite compartilhar facilmente a mídia durante reuniões híbridas ou presenciais.
   - icon: 🎵
     title: Cânticos de fundo
     details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
@@ -28,9 +28,9 @@ features:
     title: External monitor support
     details: Automatically detects and manages external monitors for smooth media presentations.
   - icon: 🌐
-    title: Multiple languages
+    title: Vários idiomas
     details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
   - icon: 🧩
-    title: OBS Studio Integration
+    title: Integração com o OBS Studio
     details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
 ---

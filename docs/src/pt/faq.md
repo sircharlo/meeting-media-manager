@@ -1,18 +1,20 @@
-# Frequently Asked Questions
+# Perguntas frequentes
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Este aplicativo depende de sites externos, fontes ou pessoas para baixar publicações ou mídias?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Não.** O aplicativo se comporta de maneira semelhante ao JW Library. Ele baixa publicações e mídia diretamente do site oficial JW.org. O aplicativo determina automaticamente o que precisa ser baixado e se estiver desatualizado ele baixa novamente.
 
 :::info Nota
-The source code for this app is available for all to examine and verify what goes on under the hood.
+
+O código fonte para este aplicativo está disponível para todos examinarem e verificarem o que realmente ele faz.
+
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Este aplicativo infringe os Termos de Uso do JW.org?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis mine):
+**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\\&prefer=content) actually explicitly allow the kind of usage that we are making. Aqui está o trecho relevante desses termos (ênfase minha):
 
-> You may not:
+> Você não pode:
 >
 > Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
 
@@ -33,5 +35,7 @@ Please see the [contributing guide](https://github.com/sircharlo/meeting-media-m
 Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
 :::tip :book: Matthew 10:8
+
 "You received free, give free."
+
 :::

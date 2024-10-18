@@ -24,6 +24,7 @@
   "are-you-sure-you-want-to-delete": "是否确定想删除？",
   "are-you-sure-you-want-to-delete-this-profile": "您确定要删除 {profileName} Profile吗？",
   "areYouSure": "您确定吗？",
+  "auto-updates": "Automatic updates",
   "autoStartAtLogin": "计算机启动时自动启动M³",
   "autoStartAtLogin-explain": "M³可以在计算机启动时自动启动。",
   "autoStartMusic": "聚会前自动开始背景音乐",

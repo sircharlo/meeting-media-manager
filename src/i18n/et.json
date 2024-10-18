@@ -24,6 +24,7 @@
   "are-you-sure-you-want-to-delete": "Kas sa oled kindel, et soovid kustutada",
   "are-you-sure-you-want-to-delete-this-profile": "Kas sa oled kindel, et soovid kustutada profiili \"{profileName}\"?",
   "areYouSure": "Kas oled kindel?",
+  "auto-updates": "Automatic updates",
   "autoStartAtLogin": "Käivita M³ automaatselt kui arvuti käivitub",
   "autoStartAtLogin-explain": "M³ rakendus avaneb automaatselt, kui arvuti käivitub.",
   "autoStartMusic": "Alusta automaatselt taustamuusika mängimist enne koosolekuid",

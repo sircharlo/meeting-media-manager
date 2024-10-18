@@ -14,20 +14,25 @@
 
 ### 应用显示语言
 
-当首次启动 M³ 时，您将被提示选择您喜欢的 **显示语言** 。 选择您想要M³用于其接口的语言。
+当首次启动 M³ 时，您将被提示选择您喜欢的 **显示语言** 。 选择您想要M³用于其接口的语言。 选择您想要M³用于其接口的语言。
 
 :::tip 小贴士
-这不必与 M³ 下载媒体的语言相同。 媒体下载的语言是在稍后的步骤中配置的。
+
+这不必与 M³ 下载媒体的语言相同。 媒体下载的语言是在稍后的步骤中配置的。 媒体下载的语言是在稍后的步骤中配置的。
+
 :::
 
 ### 配置文件类型
 
 下一步是选择一个 **配置类型**。 在王国聚会所中定期设置，请选择**常规**。 这将配置许多常用于会众聚会的特征。
 
-::: warning
+:::warning 小贴士
+
 You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
 
 **其他**配置文件类型很少使用。 **为了正常使用会众聚会，请选择_常规_.**
+::: **For normal use during congregation meetings, please choose _Regular_.**
+
 :::
 
 ### 自动聚合查询
@@ -39,12 +44,14 @@ M3可以尝试自动找到您会众的的聚会安排、语言和格式化名称
 一旦找到并选择了正确的会众，M3将预置所有可用信息。 比如你的会众的 **名称**、 **聚会语言**、 **聚会日起和时间**。
 
 :::info 备注
+
 查找使用耶和华见证人官方网站提供的公开数据。
+
 :::
 
 ### 手动输入会众信息
 
-如果无法自动找到您的会众，您可以手动输入所需的信息。 向导将帮助您检查和输入您的会众的 **名称**、**会众语言**、**聚会日起和时间**。
+如果无法自动找到您的会众，您可以手动输入所需的信息。 向导将帮助您检查和输入您的会众的 **名称**、**会众语言**、**聚会日起和时间**。 向导将帮助您检查和输入您的会众的 **名称**、**会众语言**、**聚会日起和时间**。
 
 ### Caching videos from the songbook
 
@@ -54,7 +61,9 @@ You will also be given the option of **caching all videos from the songbook**. T
 - **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
 
 :::tip 小贴士
+
 If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+
 :::
 
 ### OBS Studio Integration Configuration (Optional)
@@ -64,9 +73,13 @@ If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Z
 - **Port:** The port number used to connect to the OBS Studio Websocket plugin.
 - **Password:** The password used to connect to the OBS Studio Websocket plugin.
 - **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
-  ::: tip Tip
-  If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
-  :::
+
+:::tip 小贴士
+
+::: tip Tip
+If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+
+:::
 
 ## 3. Enjoy using M³
 
