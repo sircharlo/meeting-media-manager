@@ -1,5 +1,20 @@
 # Changelog
 
+## 🎉 24.10.6 🚀
+
+### ✨ New User Interface
+
+We've completely revamped the app! Say goodbye to complicated workflows and hello to a **fresh, intuitive design**! The new interface makes everything **super easy** and enjoyable to use.
+
+### 🎥 Simplified Media Management
+
+Managing media is now **a breeze**! We've eliminated all those tricky steps like media prefixes and confusing option clicks. Now you can **drag and drop** with ease. Everything is designed to help **streamline tasks**, especially for audio-video attendants.
+
+### 🌟 Key Goals of this Update
+
+1. **Simplicity**: We've made the app as easy as possible to use.
+2. **Functionality**: Everything you need to **play and manage media** for meetings is included.
+
 ## 24.4.8
 
 ### New or improved features
