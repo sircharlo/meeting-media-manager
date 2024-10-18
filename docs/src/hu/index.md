@@ -1,36 +1,36 @@
 ---
 layout: home
 hero:
-  name: M³ documentation
-  text: Help to set up and use Meeting Media Manager
+  name: M³ dokumentáció
+  text: Súgó a Meeting Media Manager beállításához és használatához
   image: /icon.png
   actions:
     - theme: brand
-      text: Install Meeting Media Manager
+      text: A Meeting Media Manager telepítése
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
-      text: Using at a Kingdom Hall
+      text: Használat egy Királyság-teremben
       link: /using-at-a-kingdom-hall
     - theme: alt
-      text: About
+      text: A honlapról
       link: /about
 features:
   - icon: 🚀
-    title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on JW.org.
+    title: Automatikus médialetöltés
+    details: Automatikusan letölti a gyülekezeti összejövetelek kép- és videóanyagait a JW.org-on elérhető bármely nyelven.
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: Média megjelenítése
+    details: Lehetővé teszi a médiatartalom egyszerű megosztását a hibrid vagy személyes összejövetelek során.
   - icon: 🎵
-    title: Background music
-    details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
+    title: Háttérzene
+    details: Automatikusan lejátssza a háttérzenét. Leállítja a lejátszást az összejövetel kezdete előtt. A háttérzene egy kattintással újraindítható az összejövetel után.
   - icon: 🖥️
-    title: External monitor support
-    details: Automatically detects and manages external monitors for smooth media presentations.
+    title: Külső képernyők támogatása
+    details: Automatikusan felismeri és kezeli a külső kijelzőket a zökkenőmentes média-megjelenítésért.
   - icon: 🌐
-    title: Multiple languages
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Több nyelven
+    details: Töltse le az összejövetel anyagát több száz nyelven, és használja az M³ felületét a rendelkezésre álló számos nyelv bármelyikén.
   - icon: 🧩
-    title: OBS Studio Integration
-    details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
+    title: OBS Studio integráció
+    details: Integrálható az OBS Studióval a továbbfejlesztett médiakezelési és megjelenítési képességek érdekében.
 ---

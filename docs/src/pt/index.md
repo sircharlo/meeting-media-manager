@@ -6,10 +6,10 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: Instalando o Meeting Media Manager
+      text: Baixe e instale o Meeting Media Manager
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
-      text: Usando no Salão do Reino
+      text: Como usar no Salão do Reino
       link: /using-at-a-kingdom-hall
     - theme: alt
       text: Sobre
@@ -17,13 +17,13 @@ hero:
 features:
   - icon: 🚀
     title: Download automático de mídia
-    details: Baixa imagens e vídeos das reuniões da congregação em qualquer idioma disponível no JW.org.
+    details: Baixa imagens e vídeos das reuniões congregacionais em qualquer idioma disponível no JW.org.
   - icon: 🎦
     title: Exibição de mídia
     details: Permite compartilhar facilmente a mídia em reuniões híbridas ou presenciais.
   - icon: 🎵
     title: Cânticos de fundo
-    details: Reproduz cânticos de fundo automaticamente. Para a reprodução antes do início da reunião. Os cânticos de fundo podem ser iniciados com um clique após a reunião.
+    details: Reproduz cânticos de fundo automaticamente. É programado para parar os cânticos automaticamente antes do início da reunião. A reprodução dos cânticos de fundo pode ser iniciada com um clique após a reunião.
   - icon: 🖥️
     title: Suporte a telas externas
     details: TV´S, projetores e monitores são detectados automaticamente para exibição de mídia.
