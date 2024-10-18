@@ -29,7 +29,7 @@ features:
     details: TV´S, projetores e monitores são detectados automaticamente para exibição de mídia.
   - icon: 🌐
     title: Vários idiomas
-    details: Baixe as mídias das reuniões em vários idiomas e use o M³ em seu idioma ou em vários idiomas disponíveis.
+    details: Baixe as mídias das reuniões em vários idiomas. Use o M³ em seu idioma ou em vários disponíveis.
   - icon: 🧩
     title: Integração com o OBS Studio
     details: Com a integração ao OBS Studio você consegue compartilhar a mídia em reuniões híbridas facilmente para os que assistem pelo Zoom.
