@@ -1,73 +1,72 @@
-# Using M³ at a Kingdom Hall
+# Використання M³ в Залі Царства
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Цей посібник проведе вас через процес завантаження, встановлення та налаштування Meeting Media Manager (M³) у Залі Царства. Дотримуйтесь цих кроків, щоб забезпечити безперебійне налаштування для управління медіа під час зібрань.
 
-## 1. Download and install
+## 1. Завантажте та встановіть
 
-1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system (Windows, macOS, or Linux).
-3. Open the installer and follow the on-screen instructions to install M³.
-4. Launch M³.
-5. Go through the configuration wizard.
+1. Відвідайте [сторінку завантаження M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
+2. Завантажте відповідну версію для вашої операційної системи (Windows, macOS або Linux).
+3. Відкрийте інсталятор та дотримуйтесь екранних інструкцій для встановлення M³.
+4. Запустіть M³.
+5. Пройдіть через майстер настройки.
 
-## 2) Configuration wizard
+## 2) Майстер налаштування
 
-### App display language
+### Мова інтерфейсу
 
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
+При запуску M³ вперше, вам буде запропоновано вибрати бажану **мову відображення**. Виберіть мову, яку ви хочете, щоб M³ використовував для свого інтерфейсу.
 
-:::tip Tip
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+:::tip Порада
+Мова не повинна обов'язково співпадати з тією ж мовою, якою M³ буде завантажувати медіа. Мова для завантаження медіа буде налаштовуватись в подальшому кроці.
 :::
 
 ### Тип профілю
 
-The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+Наступний крок - вибрати **тип профілю**. Для звичайного налаштування в Залі Царства, оберіть **Звичайний**. Це налаштує багато функцій, які зазвичай використовуються для зібрань збору.
 
 ::: warning
 You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Тип **Інший** рідко використовується. **Для звичайного використання під час зібрань збору, будь ласка, оберіть _Звичайний_.**:::
+
+### Автоматичний пошук збору
+
+M³ може спробувати автоматично знайти графік завдань вашого збору, мову та відформатовану назву.
+
+Для цього скористайтеся кнопкою **Пошук збору** поруч із полем назви збору та введіть щонайменше частину назви збору та міста.
+
+Як тільки правильний збір буде знайдений і обраний, M³ автоматично заповнить усю доступну інформацію, таку як **назва** вашого збору, **мова зібрань**, а також **дні та час зібрань**.
+
+:::info Примітка
+Цей пошук використовує публічно доступні дані з офіційного сайту Свідків Єгови.
 :::
 
-### Automatic congregation lookup
+### Ручний ввід інформації про збір
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+Якщо автоматичний пошук не знайде вашого збору, то ви можете вручну ввести необхідну інформацію. Майстер налаштування дозволить вам переглянути та/або ввести **назву** вашого збору, **мову зібрань** та **дні і час зібрань**.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+### Кешування відео з пісенника
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Також вам буде доступна опція **кешування всіх відео з пісенника**. Ця функція попередньо завантажує всі відео з пісенника, зменшуючи час, необхідний для того, щоб завантажувати медіа для зібрань в майбутньому.
 
-:::info Note
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
+- **Плюси:** Медіафайли для зібрань будуть доступні набагато швидше.
+- **Мінуси:** Розмір медіа кешу значно збільшиться, приблизно на 5ГБ.
+
+:::tip Порада
+Якщо у вашому Залі Царства достатньо місця для зберігання, рекомендується **увімкнути** цю опцію для підвищення ефективності та сприйнятої продуктивності.
 :::
 
-### Manual entry of congregation information
+### Конфігурація інтеграції OBS Studio (за бажанням)
 
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Якщо в вашому Залі Царства використовується **OBS Studio** для трансляції гібридних зібрань в Zoom, M³ може автоматично інтегруватися з цією програмою. Під час встановлення ви можете налаштувати інтеграцію з OBS Studio, ввівши наступне:
 
-### Caching videos from the songbook
-
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
-
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
-
-:::tip Tip
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
-:::
-
-### OBS Studio Integration Configuration (Optional)
-
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
-
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
-  ::: tip Tip
-  If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+- **Port:** Номер порту, що використовується для підключення до плагіну OBS Studio Websocket.
+- **Пароль:** Пароль, що використовується для підключення до модуля OBS Studio Websocket.
+- **Сцени:** Сцени OBS, які будуть використовуватися під час презентацій медіа. Вам потрібно буде створити одну сцену, яка захоплює вікно або екран медіа, і одну сцену, яка показує сцену Залу Царства.
+  ::: tip Порада
+  Якщо ваш збір регулярно проводить гібридні зібрання, **дуже** рекомендується увімкнути інтеграцію з OBS Studio.
   :::
 
-## 3. Enjoy using M³
+## 3. Насолоджуйтесь використанням M³
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Як тільки майстер установки завершиться, M³ буде готовим допомогти керувати і демонструвати медіа на зібраннях. Насолоджуйтесь використання програми! :tada:
