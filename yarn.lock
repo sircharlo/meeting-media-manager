@@ -6579,9 +6579,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-perfectionist@npm:^3.8.0":
-  version: 3.9.0
-  resolution: "eslint-plugin-perfectionist@npm:3.9.0"
+"eslint-plugin-perfectionist@npm:^3.9.1":
+  version: 3.9.1
+  resolution: "eslint-plugin-perfectionist@npm:3.9.1"
   dependencies:
     "@typescript-eslint/types": "npm:^8.9.0"
     "@typescript-eslint/utils": "npm:^8.9.0"
@@ -6602,7 +6602,7 @@ __metadata:
       optional: true
     vue-eslint-parser:
       optional: true
-  checksum: 10c0/befafd9ecb8075362461da7dc07ecced0f44e34fceb821eb2734ca384983dc1062cc23788d1ba267788fd252a78f267302934b314f0f2012d3f4303bd13e775b
+  checksum: 10c0/ef4e4465a0a6c45d65375cdd823d133ad82e3fb576451afc802250f433797eec361abb35f2fb042496e8e35a87af7c5a7567efaa05e7fa4b72cda0060a1cc185
   languageName: node
   linkType: hard
 
@@ -9404,7 +9404,7 @@ __metadata:
     electron-window-state: "npm:^5.0.3"
     eslint: "npm:^8.57.1"
     eslint-config-prettier: "npm:^9.1.0"
-    eslint-plugin-perfectionist: "npm:^3.8.0"
+    eslint-plugin-perfectionist: "npm:^3.9.1"
     eslint-plugin-vue: "npm:^9.29.0"
     fs-extra: "npm:^11.2.0"
     globals: "npm:^15.11.0"
