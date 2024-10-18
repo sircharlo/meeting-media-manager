@@ -72,8 +72,11 @@ If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Z
 - **Port:** The port number used to connect to the OBS Studio Websocket plugin.
 - **Password:** The password used to connect to the OBS Studio Websocket plugin.
 - **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+
 ::: tip Tip
+
 If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+
 :::
 
 ## 3. Enjoy using M³
