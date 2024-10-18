@@ -20,15 +20,15 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 
 ## :radioactive: Hoe kan ik een probleem melden?
 
-Maak alsjeblieft een [discussie](https://github.com/sircharlo/meeting-media-manager/discussions) aan op de officiële GitHub repository.
+Maak alsjeblieft een [issue](https://github.com/sircharlo/meeting-media-manager/issues) aan op de officiële GitHub repository.
 
 ## :new: Hoe kan ik een nieuwe functie of verbetering aanvragen?
 
-Bekijk alsjeblieft de [handleiding om bij te dragen](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) op de officiële GitHub repository.
+Maak alsjeblieft een [discussie](https://github.com/sircharlo/meeting-media-manager/discussions) aan op de officiële GitHub repository.
 
 ## :handshake: Hoe kan ik wat code bijdragen?
 
-Maak alsjeblieft een [issue](https://github.com/sircharlo/meeting-media-manager/issues) aan op de officiële GitHub repository.
+Bekijk alsjeblieft de [handleiding om bij te dragen](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) op de officiële GitHub repository.
 
 ## :x: Kan ik doneren aan het project?
 
