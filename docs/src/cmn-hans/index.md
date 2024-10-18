@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: M³ documentation
+  name: M³文档
   text: Help to set up and use Meeting Media Manager
   image: /icon.png
   actions:
@@ -9,10 +9,10 @@ hero:
       text: Install Meeting Media Manager
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
-      text: Using at a Kingdom Hall
+      text: 在王国聚会所使用
       link: /using-at-a-kingdom-hall
     - theme: alt
-      text: About
+      text: 关于
       link: /about
 features:
   - icon: 🚀
