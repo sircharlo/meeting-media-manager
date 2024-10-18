@@ -13,11 +13,7 @@
     "strict": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "paths": {
-      "~": ["."],
-      "~~": ["./../"]
-    }
+    "skipLibCheck": true
   },
   "vueCompilerOptions": {
     "vitePressExtensions": [".md"]
