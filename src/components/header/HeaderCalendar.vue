@@ -19,11 +19,11 @@
   </q-btn>
   <q-btn v-if="selectedDate" color="white-transparent" unelevated>
     <q-icon
-      :class="{ 'q-mr-sm': $q.screen.gt.sm }"
+      :class="{ 'q-mr-sm': $q.screen.gt.xs }"
       name="mmm-import-media"
       size="xs"
     />
-    {{ $q.screen.gt.sm ? $t('import-media') : '' }}
+    {{ $q.screen.gt.xs ? $t('import-media') : '' }}
     <q-tooltip :delay="1000">
       {{ $t('import-media') }}
     </q-tooltip>
