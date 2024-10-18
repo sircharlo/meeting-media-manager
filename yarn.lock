@@ -2159,6 +2159,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/babel-plugin-component-annotate@npm:2.22.6":
+  version: 2.22.6
+  resolution: "@sentry/babel-plugin-component-annotate@npm:2.22.6"
+  checksum: 10c0/142f8a742c1c4bb04d8ef5809bcc8e7f00be1467ada4954103403340bb696c2ca19515891e4cbe11bd5671ef52dca3d7cb6b782d4f3d1444aaf9e5bb35c5c963
+  languageName: node
+  linkType: hard
+
 "@sentry/browser@npm:8.33.1":
   version: 8.33.1
   resolution: "@sentry/browser@npm:8.33.1"
@@ -2202,6 +2209,22 @@ __metadata:
     magic-string: "npm:0.30.8"
     unplugin: "npm:1.0.1"
   checksum: 10c0/4d208a36dd9395da026326571b64eaf0cc1b37caf56fb5569c0885c841bc46f42c8a0eb18113e74becab5e381e30026414e1cf5d4fd3099ee0fd3e966930f9ea
+  languageName: node
+  linkType: hard
+
+"@sentry/bundler-plugin-core@npm:2.22.6":
+  version: 2.22.6
+  resolution: "@sentry/bundler-plugin-core@npm:2.22.6"
+  dependencies:
+    "@babel/core": "npm:^7.18.5"
+    "@sentry/babel-plugin-component-annotate": "npm:2.22.6"
+    "@sentry/cli": "npm:^2.36.1"
+    dotenv: "npm:^16.3.1"
+    find-up: "npm:^5.0.0"
+    glob: "npm:^9.3.2"
+    magic-string: "npm:0.30.8"
+    unplugin: "npm:1.0.1"
+  checksum: 10c0/97d425a49182ed178c2d147ab48b5095394fcde5e3f94ca9dec21dcf0771269ecfebfb596e8ab41cda926591a4c2443a54616fd74b9e1c91a041add4b1ef187a
   languageName: node
   linkType: hard
 
@@ -2325,14 +2348,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/esbuild-plugin@npm:^2.22.5":
-  version: 2.22.5
-  resolution: "@sentry/esbuild-plugin@npm:2.22.5"
+"@sentry/esbuild-plugin@npm:^2.22.6":
+  version: 2.22.6
+  resolution: "@sentry/esbuild-plugin@npm:2.22.6"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:2.22.5"
+    "@sentry/bundler-plugin-core": "npm:2.22.6"
     unplugin: "npm:1.0.1"
     uuid: "npm:^9.0.0"
-  checksum: 10c0/b87bde92ecd5a74f7e9db8d4d7808e198c225b544da3bdd49cb9c5f3477a82c4c59ff838a14446efe13a5e3eef437fd9af459ceb0eb3bb695d4f97cca527b836
+  checksum: 10c0/115d8b4c42da904ca0db8e580988f180c9d98f7a60bbadba5d98a9d33883ed0c7195bb3e27adf83d99d1f2df3ad2a7998cd6c3f5db10798de8abdff7ade0db8e
   languageName: node
   linkType: hard
 
@@ -9356,7 +9379,7 @@ __metadata:
     "@quasar/extras": "npm:^1.16.12"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.6.0"
-    "@sentry/esbuild-plugin": "npm:^2.22.5"
+    "@sentry/esbuild-plugin": "npm:^2.22.6"
     "@sentry/vite-plugin": "npm:^2.22.5"
     "@sentry/vue": "npm:^8.34.0"
     "@types/adm-zip": "npm:^0.5.5"
