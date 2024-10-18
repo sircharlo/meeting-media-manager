@@ -378,7 +378,12 @@ import type { DNDPlugin } from '@formkit/drag-and-drop';
 import type { DocumentItem, DynamicMediaObject, TableItem } from 'src/types';
 
 // eslint-disable-next-line no-duplicate-imports
-import { animations, parents } from '@formkit/drag-and-drop';
+import {
+  animations,
+  multiDrag,
+  parents,
+  selections,
+} from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
@@ -625,12 +630,12 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
 
   return {
     setupNode(data) {
-      data.node.el.addEventListener('dragover', dragover);
-      data.node.el.addEventListener('dragend', dragend);
+      data.node.addEventListener('dragover', dragover);
+      data.node.addEventListener('dragend', dragend);
     },
     tearDownNode(data) {
-      data.node.el.removeEventListener('dragover', dragover);
-      data.node.el.removeEventListener('dragend', dragend);
+      data.node.removeEventListener('dragover', dragover);
+      data.node.removeEventListener('dragend', dragend);
     },
   };
 };
@@ -839,8 +844,7 @@ const [tgwList, sortableTgwMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    multiDrag: true,
-    plugins: [updateMediaSortPlugin, animations()],
+    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
     selectedClass: 'selected-to-drag',
   },
 );
@@ -849,8 +853,7 @@ const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    multiDrag: true,
-    plugins: [updateMediaSortPlugin, animations()],
+    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
     selectedClass: 'selected-to-drag',
   },
 );
@@ -859,8 +862,7 @@ const [lacList, sortableLacMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    multiDrag: true,
-    plugins: [updateMediaSortPlugin, animations()],
+    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
     selectedClass: 'selected-to-drag',
   },
 );
@@ -869,8 +871,7 @@ const [wtList, sortableWtMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    multiDrag: true,
-    plugins: [updateMediaSortPlugin, animations()],
+    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
     selectedClass: 'selected-to-drag',
   },
 );
@@ -879,8 +880,7 @@ const [additionalList, sortableAdditionalMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    multiDrag: true,
-    plugins: [updateMediaSortPlugin, animations()],
+    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
     selectedClass: 'selected-to-drag',
   },
 );
@@ -889,8 +889,7 @@ const [circuitOverseerList, sortableCircuitOverseerMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    multiDrag: true,
-    plugins: [updateMediaSortPlugin, animations()],
+    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
     selectedClass: 'selected-to-drag',
   },
 );
@@ -1202,13 +1201,15 @@ const openImportMenu = () => {
 };
 
 const dropActive = (event: DragEvent) => {
+  console.debug('dropActive', event);
   event.preventDefault();
-  // event.stopPropagation();
+  event.stopPropagation();
   if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
     dragging.value = true;
   }
 };
 const dropEnd = (event: DragEvent) => {
+  console.debug('dropEnd', event);
   event.preventDefault();
   event.stopPropagation();
   try {
