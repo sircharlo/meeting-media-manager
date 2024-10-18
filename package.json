@@ -1,9 +1,33 @@
 {
-  "author": "Olivier Savignac",
-  "browserslist": [
-    "Electron >= 32"
+  "name": "meeting-media-manager",
+  "version": "24.10.7",
+  "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
+  "keywords": [
+    "M³",
+    "jw",
+    "m3",
+    "meeting media manager"
   ],
+  "homepage": "https://sircharlo.github.io/meeting-media-manager/",
   "bugs": "https://github.com/sircharlo/meeting-media-manager/issues",
+  "license": "AGPL-3.0-or-later",
+  "author": "Olivier Savignac",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sircharlo/meeting-media-manager.git"
+  },
+  "scripts": {
+    "rebuild": "./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/better-sqlite3",
+    "icons": "node ./build/svg2font.js",
+    "dev": "quasar dev -m electron",
+    "build": "quasar build -m electron",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "lint": "eslint --ext .js,.ts,.vue ./",
+    "test": "echo \"No test specified\" && exit 0"
+  },
   "dependencies": {
     "@electron/remote": "^2.1.2",
     "@formkit/drag-and-drop": "^0.2.4",
@@ -37,7 +61,6 @@
     "vue-i18n": "^10.0.4",
     "vue-router": "^4.4.5"
   },
-  "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "devDependencies": {
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
     "@electron/rebuild": "^3.7.0",
@@ -72,45 +95,21 @@
     "vitepress": "^1.4.1",
     "vue-tsc": "^2.1.6"
   },
+  "resolutions": {
+    "canvas": "npm:empty-npm-package@1.0.0"
+  },
+  "browserslist": [
+    "Electron >= 32"
+  ],
   "engines": {
     "node": "^24 || ^22 || ^20",
     "yarn": ">= 4.5.10"
   },
-  "homepage": "https://sircharlo.github.io/meeting-media-manager/",
-  "keywords": [
-    "M³",
-    "jw",
-    "m3",
-    "meeting media manager"
-  ],
-  "license": "AGPL-3.0-or-later",
-  "name": "meeting-media-manager",
   "os": [
     "darwin",
     "linux",
     "win32"
   ],
-  "packageManager": "yarn@4.5.0",
   "private": true,
-  "productName": "Meeting Media Manager",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sircharlo/meeting-media-manager.git"
-  },
-  "resolutions": {
-    "canvas": "npm:empty-npm-package@1.0.0"
-  },
-  "scripts": {
-    "build": "quasar build -m electron",
-    "dev": "quasar dev -m electron",
-    "docs:build": "vitepress build docs",
-    "docs:dev": "vitepress dev docs",
-    "docs:preview": "vitepress preview docs",
-    "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
-    "icons": "node ./build/svg2font.js",
-    "lint": "eslint --ext .js,.ts,.vue ./",
-    "rebuild": "./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/better-sqlite3",
-    "test": "echo \"No test specified\" && exit 0"
-  },
-  "version": "24.10.7"
+  "packageManager": "yarn@4.5.0"
 }
