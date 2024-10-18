@@ -1,0 +1,24 @@
+title: 'New translation in <language>'
+labels: translations
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this translations form!
+  - type: textarea
+    id: language
+    attributes:
+      label: What language do you speak?
+      description: |
+        Try to include the native name, English name, JW code and lang code. 
+        For example: Nederlands (Dutch) - O/nl
+      placeholder: I would like to help translate M³ into ...
+      value: I would like to help translate M³ into ...
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: |
+        Anything else you'd like to add?

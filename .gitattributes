@@ -1,0 +1,42 @@
+# https://git-scm.com/docs/gitattributes
+#
+# A gitattributes file is a simple text file that gives attributes to path names.
+# Each line in gitattributes file is of form: pattern attr1 attr2 ...
+# That is, a pattern followed by an attributes list, separated by white spaces.
+# When the pattern matches the path in question, the attributes listed on the line are given to the path.
+# Each attribute can be in one of these states for a given path:
+# FIX CRLF always when developer has not set
+# Linux/Mac: git config --global core.autocrlf input
+# Windows: git config --global core.autocrlf true
+# Auto detect text files and perform LF normalization
+* text=auto
+* text eol=lf
+
+# Images as binary
+*.gif           binary
+*.png           binary
+*.ico           binary
+*.icns          binary
+*.xcf           binary
+
+# Other files as text for diff
+*.md            text
+*.js            text
+*.ts            text
+*.css           text
+*.scss          text
+*.vue           text
+*.yml           text
+.editorconfig   text
+.gitattributes  text
+.gitignore      text
+
+# Font files as not text for diff
+*.otf           -text diff
+*.ttf           -text diff
+*.eot           -text diff
+*.woff          -text diff
+*.woff2          -text diff
+
+# Don't try and merge these files
+yarn.lock       -diff

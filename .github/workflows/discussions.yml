@@ -1,7 +1,6 @@
 name: Close Stale Discussions
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: '0 0 * * *' # Runs every day at midnight UTC
 
@@ -10,12 +9,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run action
+      - name: Close stale Q&A discussions
         uses: steffen-karlsson/stalesweeper@v1.1.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: 'This discussion has automatically been closed due to inactivity.'
           days-before-close: '30'
           close-unanswered: 'true'
+          category: 'q-a'
+          close-reason: 'OUTDATED'
+          verbose: 'true'
+
+      - name: Close stale Ideas discussions
+        uses: steffen-karlsson/stalesweeper@v1.1.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'This discussion has automatically been closed due to inactivity.'
+          days-before-close: '30'
+          close-unanswered: 'true'
+          category: 'ideas'
           close-reason: 'OUTDATED'
           verbose: 'true'

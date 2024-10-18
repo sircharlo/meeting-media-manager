@@ -26,6 +26,13 @@ Give M³ a try today and see for yourself what it can do! Presenting media at co
 
 In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
+<!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
+<!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-END -->
+
 ## Where can I find help about downloading and using M³?
 
-Check out our [documentation website](https://sircharlo.github.io/meeting-media-manager) for help, guides and FAQs.
+Check out our [documentation website](https://sircharlo.github.io/meeting-media-manager/) for help, guides and FAQs.
+
+## Want to contribute?
+
+We welcome contributions of all kinds! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to contribute to M³.
