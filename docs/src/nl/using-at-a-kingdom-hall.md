@@ -26,12 +26,11 @@ Dit is niet dezelfde taal als de taal waarin M³ media zal downloaden. De taal v
 
 De volgende stap is om een **profieltype** te kiezen. Voor een normale configuratie in een Koninkrijkszaal, kies **Regulier**. Dit zal veel functies configureren die vaak worden gebruikt voor gemeente vergaderingen.
 
-:::warning 2) Configuratiewizard
+:::warning Waarschuwing
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Je moet alleen **Anders** kiezen als je een profiel aanmaakt waarvoor geen media automatisch moeten worden gedownload. Media zal handmatig moeten worden geïmporteerd voor gebruik in dit profiel. Dit type profiel wordt meestal gebruikt voor M³ tijdens theocratische scholen, kringen, congressen en andere speciale evenementen.
 
 De **Andere** profielsoort wordt zelden gebruikt. **For normal use during congregation meetings, please choose _Regular_.**
-:::
 
 :::
 
@@ -76,7 +75,6 @@ Als jouw gemeente **OBS Studio** gebruikt voor het uitzenden van hybride vergade
 
 :::tip Tip
 
-::: tip Tip
 If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
 
 :::
