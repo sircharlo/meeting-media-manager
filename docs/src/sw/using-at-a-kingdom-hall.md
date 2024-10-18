@@ -7,17 +7,17 @@ Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Man
 1. Tembelea [M³ ukurasa wa kupakua](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Pakua toleo linalofaa kwa mfumo wako wa kompyuta (Windows, macOS, au Linux).
 3. Fungua mfumo wa kupakua na ufuate maagizo ya kupakua M³ kwenye scrini.
-4. Launch M³.
-5. Go through the configuration wizard.
+4. Fungua M³.
+5. Pitia programu ya usanidi.
 
-## 2) Configuration wizard
+## 2) Programu ya usanidi
 
-### App display language
+### Lugha ya mfumo
 
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
+Unapofungua M³ kwa mara ya kwanza, utaulizwa kuhusu lugha ya mfumo unaotaka. Chagua lugha ya mfumo unaotaka kutumia kwenye mfumo wa M³.
 
-:::tip Tip
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+:::tip Kidokezo
+Hii sio lazima iwe lugha sawa na ile ambayo M³ itapakua media. Lugha ya upakuaji wa media imesanidiwa katika hatua ya baadaye.
 :::
 
 ### Profile type
@@ -53,7 +53,7 @@ You will also be given the option of **caching all videos from the songbook**. T
 - **Pros:** Meeting media will be available much faster.
 - **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
 
-:::tip Tip
+:::tip Kidokezo
 If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
 :::
 
