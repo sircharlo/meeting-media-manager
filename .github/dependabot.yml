@@ -9,10 +9,14 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    commit-message:
+      prefix: 'chore'
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
       interval: 'daily'
+    commit-message:
+      prefix: 'chore'
     ignore:
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']

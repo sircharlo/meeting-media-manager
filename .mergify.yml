@@ -1,13 +1,11 @@
 pull_request_rules:
   - name: Automatically merge Dependabot PRs
     conditions:
-      - or:
-          - and:
+      - and:
+          - or:
               - author = dependabot[bot]
-              - title ~= ^chore\(deps(?:-dev)*\). bump [^\s]+ from ([\d]+)\..+ to \1\.
-          - and:
               - author = github-actions[bot]
-              - title ~= Change version to
+          - title ~= ^chore\(deps(?:-dev)*\). bump [^\s]+ from ([\d]+)\..+ to \1\.
     actions:
       update:
       merge:
