@@ -116,7 +116,7 @@ export default defineConfig({
         'script',
         {},
         `
-        const initialVisit = localStorage.getItem('initialVisit') !== 'false'
+        const initialVisit = sessionStorage.getItem('initialVisit') !== 'false'
 
         if (initialVisit) {
           const langs = [${localeOptions.map((l) => `"${camelToKebabCase(l.value)}"`)}]
@@ -140,7 +140,7 @@ export default defineConfig({
           })
 
           if (match) {
-            localStorage.setItem('initialVisit', false);
+            sessionStorage.setItem('initialVisit', false);
             const parts = window.location.pathname.split('/');
             const isEnglish = parts.length === 3;
             const page = isEnglish ? parts[2] : parts[3]
