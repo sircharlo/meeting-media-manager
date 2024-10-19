@@ -28,9 +28,9 @@
 
 :::warning Увага
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Ви повинні вибрати **Інший** в тому випадку, якщо ви створюєте профіль, для якого не потрібно автоматично завантажувати жодних медіа. Медіафайли повинні будуть імпортовані вручну при використанні цього профілю. Цей тип профілю зазвичай корисний для використання M³ під час теократичних шкіл, конгресів, та інших спеціальних подій.
 
-Тип **Інший** рідко використовується. **For normal use during congregation meetings, please choose _Regular_.**
+Тип **Інший** використовується рідко. **Для звичайного використання під час зібрань збору, будь ласка, оберіть _Звичайний_.**
 
 :::
 
@@ -75,7 +75,7 @@ M³ може спробувати автоматично знайти графі
 
 :::tip Порада
 
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Якщо ваш збір регулярно проводить гібридні зібрання, **дуже** рекомендується увімкнути інтеграцію з OBS Studio.
 
 :::
 

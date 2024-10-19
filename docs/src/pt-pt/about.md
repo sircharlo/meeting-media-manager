@@ -1,35 +1,35 @@
-# About Meeting Media Manager (M³)
+# Sobre o Meeting Media Manager (M³)
 
-## What is this app?
+## O que é esta app?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+**Meeting Media Manager**, ou **M³** para abreviar, é uma app para Windows, macOS e Linux que descarrega automaticamente imagens e vídeos que serão utilizados durante as reuniões da congregação das Testemunhas de Jeová, em qualquer idioma disponível no JW.org.
 
-It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
+Possui suporte para gerir multimédia de reuniões regulares e personalizadas, além de suportar várias congregações e/ou grupos que utilizam a mesma conta de computador.
 
-:::info Note
+:::info Nota
 
-M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
+O M³ costumava ser conhecido como JWMMF (JW Meeting Media Fetcher), mas foi renomeado em maio de 2022.
 
 :::
 
-## What can M³ do?
+## O que o M³ pode fazer?
 
-In short, M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+Em resumo, o M³ permite descarregar, sincronizar, partilhar e apresentar facilmente toda a multimédia de reuniões de forma automática.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+Para reuniões de congregação **híbridas** ou **presenciais**, o modo de apresentação de multimédia integrado possui todas as funcionalidades necessárias para simplificar a tarefa de partilhar multimédia com a congregação, incluindo:
 
-- Media thumbnails
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
+- Miniaturas de multimédia
+- Botões de pausar/reproduzir/parar para gerir a reprodução de ficheiros multimédia
+- Fácil reprodução de música de fundo, que para automaticamente antes do início de reuniões regulares programadas
+- Gestão e reconhecimento automático de monitor externo
 - Integração com OBS Studio
 
 <!-- As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature. -->
 
-Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.
+Experimente o M³ hoje e veja por si mesmo o que ele pode fazer! Apresentar multimédia nas reuniões da congregação nunca foi tão fácil.
 
-## Does M³ work in my language?
+## O M³ funciona no meu idioma?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you need.
+\*\*Sim! A multimédia para reuniões de Testemunhas de Jeová pode ser descarregada automaticamente em qualquer um dos idiomas disponíveis no JW.org. A lista de idiomas disponíveis é atualizada dinamicamente; tudo o que precisa fazer é selecionar qual você precisa.
 
-In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Além disso, o M³ foi traduzido para várias línguas por muitos voluntários; portanto, você pode configurar o idioma que gostaria que fosse exibido na interface do M³.
