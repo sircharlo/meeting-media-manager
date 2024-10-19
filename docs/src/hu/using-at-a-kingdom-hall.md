@@ -22,7 +22,7 @@ Ez a nyelv nem kell, hogy megegyezzen azzal a nyelvvel, amelyen az M³ a médiat
 
 :::
 
-### Profile type
+### Profil típusa
 
 A következő lépés a **profil típusának** kiválasztása. A Királyság-teremben történő szokásos beállításhoz válassza a **Szokásos** lehetőséget. Ez számos, a gyülekezeti összejöveteleken általánosan használt funkciót fog beállítani.
 
