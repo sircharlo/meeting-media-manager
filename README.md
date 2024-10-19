@@ -25,7 +25,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 #### Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.
 
-<img width="1645" alt="Screenshot 2024-10-19 at 01 26 43" src="https://github.com/user-attachments/assets/8702b1bb-983f-4dc9-b8a4-db21a9578d83">
+![m3-preview](https://github.com/user-attachments/assets/e7055844-e0b1-4430-9526-38fed62aa446)
 
 ## Does M³ work in my language?
 
