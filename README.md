@@ -20,8 +20,8 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Automatic external monitor recognition and management
 - OBS Studio integration with automatic scene switching during media presentation
 - Presenting JW.org website on an external monitor 
-- Import JWPub, JWLPlaylist files, videos from JW.org, media for public talks (S-34) in a few clicks.
-- Custom videos, audios and even PDFs can be easily imported too! 
+- Import JWPUB files, JWLPLAYLIST files, videos from JW.org, and media for public talks from the S-34 in a few clicks.
+- Custom videos, pictures, audio files and even PDF files can be easily imported too! 
 
 #### Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.
 
