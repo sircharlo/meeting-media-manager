@@ -17,7 +17,7 @@
     "url": "https://github.com/sircharlo/meeting-media-manager.git"
   },
   "scripts": {
-    "rebuild": "./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/better-sqlite3",
+    "electron-rebuild": "./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/better-sqlite3",
     "icons": "node ./build/svg2font.js",
     "dev": "quasar dev -m electron",
     "build": "quasar build -m electron",
@@ -99,7 +99,7 @@
     "canvas": "npm:empty-npm-package@1.0.0"
   },
   "browserslist": [
-    "Electron >= 32"
+    "Electron >= 33"
   ],
   "engines": {
     "node": "^24 || ^22 || ^20",

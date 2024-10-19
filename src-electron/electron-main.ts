@@ -227,7 +227,9 @@ function createWindow() {
     y: mainWindowState.y,
   });
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate([]));
+  if (!process.env.DEBUGGING) {
+    Menu.setApplicationMenu(Menu.buildFromTemplate([]));
+  }
 
   enable(mainWindow.webContents);
   mainWindow.webContents.setUserAgent(

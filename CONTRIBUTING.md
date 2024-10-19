@@ -43,7 +43,7 @@ The following commands are used during the development of the application to tes
 yarn install
 
 # Rebuild native modules
-yarn rebuild
+yarn electron-rebuild
 
 # Generate icon font
 yarn icons
