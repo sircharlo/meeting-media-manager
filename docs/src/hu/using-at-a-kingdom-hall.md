@@ -36,36 +36,36 @@ Az **Egyéb** profiltípust ritkán kell használni. **A gyülekezeti összejöv
 
 ### Automatikus gyülekezetkeresés
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+Az M³ megpróbálhatja automatikusan megkeresni a gyülekezet összejöveteleinek időpontját, nyelvét és formázott nevét.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+Ehhez használja a **Gyülekezet keresése** gombot a gyülekezet neve mező mellett, és adja meg legalább részben a gyülekezet nevét és a várost.
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Ha megtalálta és kiválasztotta a megfelelő gyülekezetet, az M³ előre kitölti az összes rendelkezésre álló információt, például a gyülekezet **nevét**, **az összejövetelek nyelvét** és **az összejövetelek napját és időpontját**.
 
 :::info Note
 
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
+Ez a lekérdezés Jehova Tanúi hivatalos honlapjának nyilvánosan elérhető adatait használja.
 
 :::
 
-### Manual entry of congregation information
+### A gyülekezeti információk kézi bevitele
 
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Ha az automatikus keresés nem találta meg az Ön gyülekezetét, természetesen kézzel is megadhatja a szükséges adatokat. A varázsló lehetővé teszi, hogy felülvizsgálja és/vagy megadja a gyülekezet **nevét**, **az összejövetelek nyelvét**, valamint **az összejövetelek napját és időpontját**.
 
-### Caching videos from the songbook
+### Videók gyorsítótárazása az énekkönyvből
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Lehetősége lesz arra is, hogy **minden videót letöltsön az énekkönyvből**. Ez az opció előre letölti az összes zenei videót, csökkentve ezzel a jövőbeni összejövetelekhez szükséges médiatartalmak betöltésének idejét.
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
+- **Előnyök:** Az összejövetelekre szánt médiafájlok sokkal gyorsabban elérhetők lesznek.
+- **Hátrányok:** A média gyorsítótára jelentősen, körülbelül 5 Gb-tal megnő.
 
 :::tip Tipp
 
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+Ha a Királyság-terem számítógépe elegendő tárhellyel rendelkezik, akkor a hatékonyság és az érzékelhető teljesítmény növelése érdekében ajánlott **engedélyezni** ezt az opciót.
 
 :::
 
-### OBS Studio Integration Configuration (Optional)
+### OBS Studio integráció konfigurálása (opcionális)
 
 If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
 
@@ -79,6 +79,6 @@ If your congregation regularly conducts hybrid meetings, it's **highly** recomme
 
 :::
 
-## 3. Enjoy using M³
+## 3. Élvezze az M³ használatát
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Miután a beállítási varázslóval elkészült, az M³ készen áll arra, hogy segítsen a gyülekezeti összejövetelek médiaanyagainak kezelésében és megjelenítésében. Élvezze az alkalmazás használatát! :tada:
