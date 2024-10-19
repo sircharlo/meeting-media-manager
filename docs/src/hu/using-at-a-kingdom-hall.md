@@ -28,13 +28,13 @@ A következő lépés a **profil típusának** kiválasztása. A Királyság-ter
 
 :::warning Figyelem
 
-Csak akkor válassza a **Más** lehetőséget, ha olyan profilt hoz létre, amelyhez nem kell automatikusan médiatartalmakat letölteni. A médiaanyagokat manuálisan kell importálni az ezzel a profillal való használathoz. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Csak akkor válassza a **Más** lehetőséget, ha olyan profilt hoz létre, amelyhez nem kell automatikusan médiatartalmakat letölteni. A médiaanyagokat manuálisan kell importálni az ezzel a profillal való használathoz. Ez a fajta profil elsősorban arra szolgál, hogy az M³ programot teokratikus iskolákon, összejöveteleken, kongresszusokon és egyéb különleges eseményeken használják.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Az **Egyéb** profiltípust ritkán kell használni. **A gyülekezeti összejövetelek során történő normál használathoz válassza a _Szokásos_ opciót.**
 
 :::
 
-### Automatic congregation lookup
+### Automatikus gyülekezetkeresés
 
 M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
 
