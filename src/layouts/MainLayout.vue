@@ -61,6 +61,7 @@ import {
 } from 'src/helpers/date';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getLocalFontPath } from 'src/helpers/fonts';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
 import {
   registerAllCustomShortcuts,
@@ -388,10 +389,25 @@ bcClose.onmessage = (event) => {
   }
 };
 
+const loadJwIconsFont = async () => {
+  try {
+    const fontName = 'JW-Icons';
+    const fontFace = new FontFace(
+      fontName,
+      'url("' + (await getLocalFontPath(fontName)) + '")',
+    );
+    await fontFace.load();
+    document.fonts.add(fontFace);
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 onMounted(() => {
   document.title = 'Meeting Media Manager';
   if (!currentSettings.value) navigateToCongregationSelector();
   // add overflow hidden to body
   document.body.style.overflow = 'hidden';
+  loadJwIconsFont();
 });
 </script>

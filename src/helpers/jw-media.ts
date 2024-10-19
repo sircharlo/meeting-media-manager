@@ -1606,6 +1606,7 @@ export {
   addJwpubDocumentMediaToFiles,
   downloadAdditionalRemoteVideo,
   downloadBackgroundMusic,
+  downloadFile,
   downloadFileIfNeeded,
   downloadSongbookVideos,
   dynamicMediaMapper,

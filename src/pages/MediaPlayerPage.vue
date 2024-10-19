@@ -73,6 +73,7 @@ import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { fontUrls, getLocalFontPath } from 'src/helpers/fonts';
 import {
   isAudio,
   isImage,
@@ -82,7 +83,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -323,4 +324,29 @@ $q.iconMapFn = (iconName) => {
     };
   }
 };
+
+const setElementFont = async (fontName: string) => {
+  if (!fontName) return;
+  try {
+    const fontFace = new FontFace(
+      fontName,
+      'url("' + (await getLocalFontPath(fontName)) + '")',
+    );
+    await fontFace.load();
+    document.fonts.add(fontFace);
+  } catch (error) {
+    const fontFace = new FontFace(
+      fontName,
+      'url("' + fontUrls[fontName] + '")',
+    );
+    await fontFace.load();
+    document.fonts.add(fontFace);
+    errorCatcher(error);
+  }
+};
+
+onMounted(() => {
+  setElementFont('WT-ClearText-Bold');
+  setElementFont('JW-Icons');
+});
 </script>

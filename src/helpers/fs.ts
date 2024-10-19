@@ -24,6 +24,7 @@ const {
 } = electronApi;
 
 const getPublicationsPath = () => path.join(getUserDataPath(), 'Publications');
+const getFontsPath = () => path.join(getUserDataPath(), 'Fonts');
 
 const getAdditionalMediaPath = () =>
   path.join(getUserDataPath(), 'Additional Media');
@@ -344,6 +345,7 @@ export {
   getAdditionalMediaPath,
   getDurationFromMediaPath,
   getFileUrl,
+  getFontsPath,
   getMetadataFromMediaPath,
   getParentDirectory,
   getPublicationDirectory,
