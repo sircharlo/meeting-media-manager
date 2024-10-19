@@ -58,7 +58,7 @@ module.exports = configure(function (/* ctx */) {
       },
       sourcemap: true,
       // See: https://www.electronjs.org/docs/latest/tutorial/electron-timelines#timeline
-      target: { browser: ['chrome128'], node: 'node20' },
+      target: { browser: ['chrome130'], node: 'node20' },
       vitePlugins: [
         [
           '@intlify/vite-plugin-vue-i18n',

@@ -1,7 +1,7 @@
 import { enable, initialize } from '@electron/remote/main';
 import { init } from '@sentry/electron/main';
 import packageInfo from 'app/package.json';
-import { app, BrowserWindow, ipcMain, Menu, session } from 'electron';
+import { app, BrowserWindow, ipcMain, session } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import windowStateKeeper from 'electron-window-state';
 import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
@@ -227,7 +227,9 @@ function createWindow() {
     y: mainWindowState.y,
   });
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate([]));
+  if (!process.env.DEBUGGING && platform !== 'darwin') {
+    mainWindow.setMenuBarVisibility(false);
+  }
 
   enable(mainWindow.webContents);
   mainWindow.webContents.setUserAgent(

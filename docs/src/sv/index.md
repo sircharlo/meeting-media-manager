@@ -1,36 +1,36 @@
 ---
 layout: home
 hero:
-  name: M³ documentation
-  text: Help to set up and use Meeting Media Manager
+  name: M³ dokumentation
+  text: Hjälp för att komma igång med Meeting Media Manager
   image: /icon.png
   actions:
     - theme: brand
-      text: Install Meeting Media Manager
+      text: Installera Meeting Media Manager
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
-      text: Using at a Kingdom Hall
+      text: Använda i Rikets sal
       link: /using-at-a-kingdom-hall
     - theme: alt
-      text: About
+      text: Om
       link: /about
 features:
   - icon: 🚀
-    title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on JW.org.
+    title: Automatisk mediahämtning
+    details: Ladda automatiskt ner bilder och videor för församlingsmöten på alla språk som finns på JW.org.
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: Visa media
+    details: Gör det enkelt att dela media under hybrid- eller vanliga möten.
   - icon: 🎵
     title: Bakgrundsmusik
-    details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
+    details: Spelar bakgrundsmusik automatiskt. Stoppar uppspelning innan mötet börjar. Bakgrundsmusik kan startas om med ett klick efter mötet.
   - icon: 🖥️
-    title: External monitor support
-    details: Automatically detects and manages external monitors for smooth media presentations.
+    title: Stöd för extern bildskärm
+    details: Identifierar och hanterar automatiskt externa bildskärmar för smidiga mediepresentationer.
   - icon: 🌐
-    title: Multiple languages
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Flera språk
+    details: Ladda ner mötesmedia på hundratals språk och använd M³:s gränssnitt i något av de många tillgängliga språken.
   - icon: 🧩
-    title: OBS Studio Integration
-    details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
+    title: OBS Studio integration
+    details: Integrerar med OBS Studio för förbättrad mediehantering och presentationer.
 ---

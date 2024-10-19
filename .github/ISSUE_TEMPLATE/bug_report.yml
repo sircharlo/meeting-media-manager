@@ -49,7 +49,7 @@ body:
       label: Version
       description: |
         What version of M³ are you running?
-        You can find your version in the settings.
+        Click on the M³ logo in the top left corner of the app.
       placeholder: vXX.X.X
     validations:
       required: true
