@@ -15,6 +15,7 @@ const routes: RouteRecordRaw[] = [
     ],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-groups', title: 'titles.profileSelection' },
+    name: 'congregation-selector',
     path: '/congregation-selector',
   },
   {
@@ -23,6 +24,7 @@ const routes: RouteRecordRaw[] = [
     ],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-media', title: 'titles.meetingMedia' },
+    name: 'media-calendar',
     path: '/media-calendar/:typeOfLoad?',
   },
   {
@@ -31,6 +33,7 @@ const routes: RouteRecordRaw[] = [
     ],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-open-web', title: 'titles.presentWebsite' },
+    name: 'present-website',
     path: '/present-website',
   },
   {
@@ -39,18 +42,21 @@ const routes: RouteRecordRaw[] = [
     ],
     component: () => import('layouts/MediaPlayerLayout.vue'),
     meta: { title: 'titles.mediaPlayer' },
+    name: 'media-player',
     path: '/media-player',
   },
   {
     children: [{ component: () => import('pages/SetupWizard.vue'), path: '' }],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-configuration', title: 'setup-wizard' },
+    name: 'setup-wizard',
     path: '/setup-wizard',
   },
   {
     children: [{ component: () => import('pages/SettingsPage.vue'), path: '' }],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-settings', title: 'titles.settings' },
+    name: 'settings',
     path: '/settings/:setting?',
   },
 

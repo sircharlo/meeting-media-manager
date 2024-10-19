@@ -178,16 +178,16 @@ function createNewCongregation() {
   chooseCongregation(createCongregation(), true);
 }
 
-if (congregationCount.value === 0) {
-  createNewCongregation();
-} else if (congregationCount.value === 1 && isHomePage.value) {
-  chooseCongregation(Object.keys(congregations.value)[0]);
-} else if (!isHomePage.value) {
-  chooseCongregation('');
-}
-
 onMounted(() => {
   window.addEventListener('createNewCongregation', createNewCongregation);
+
+  if (congregationCount.value === 0) {
+    createNewCongregation();
+  } else if (congregationCount.value === 1 && isHomePage.value) {
+    chooseCongregation(Object.keys(congregations.value)[0]);
+  } else if (!isHomePage.value) {
+    chooseCongregation('');
+  }
 });
 
 onUnmounted(() => {

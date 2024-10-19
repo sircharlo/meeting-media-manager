@@ -27,9 +27,9 @@
     </q-item>
     <q-item
       v-ripple
+      :class="route.path.startsWith('/media-calendar') ? 'bg-accent-100 text-primary blue-bar ' : ''"
       :disable="!currentSettings || invalidSettings()"
-      :to="{ path: '/media-calendar', exact: true }"
-      active-class="bg-accent-100 text-primary blue-bar"
+      :to="{ path: '/media-calendar' }"
       clickable
     >
       <q-tooltip
@@ -53,7 +53,7 @@
       v-if="!$q.platform.is.mac"
       v-ripple
       :disable="!currentSettings || invalidSettings() || mediaPlaying"
-      :to="{ path: '/present-website', exact: true }"
+      :to="{ path: '/present-website' }"
       active-class="bg-accent-100 text-primary blue-bar"
       clickable
     >
@@ -73,7 +73,7 @@
     <q-item
       v-ripple
       :disable="mediaPlaying"
-      :to="{ path: '/congregation-selector', exact: true }"
+      :to="{ path: '/congregation-selector'}"
       active-class="bg-accent-100 text-primary blue-bar"
       clickable
     >
@@ -98,7 +98,7 @@
       :disable="
         !currentSettings || mediaPlaying || route.fullPath.includes('wizard')
       "
-      :to="{ path: '/settings', exact: true }"
+      :to="{ path: '/settings' }"
       active-class="bg-accent-100 text-primary blue-bar"
       clickable
     >
