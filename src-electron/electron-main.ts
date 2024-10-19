@@ -1,7 +1,7 @@
 import { enable, initialize } from '@electron/remote/main';
 import { init } from '@sentry/electron/main';
 import packageInfo from 'app/package.json';
-import { app, BrowserWindow, ipcMain, session } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, session } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import windowStateKeeper from 'electron-window-state';
 import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
@@ -226,6 +226,44 @@ function createWindow() {
     x: mainWindowState.x,
     y: mainWindowState.y,
   });
+
+  const template: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: 'Application',
+      submenu: [
+        {
+          label: 'About Application',
+          selector: 'orderFrontStandardAboutPanel:',
+        },
+        { type: 'separator' },
+        {
+          accelerator: platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
+          click: function () {
+            app.quit();
+          },
+          label: 'Quit',
+        },
+      ] as Electron.MenuItemConstructorOptions[],
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { accelerator: 'CmdOrCtrl+Z', label: 'Undo', selector: 'undo:' },
+        { accelerator: 'Shift+CmdOrCtrl+Z', label: 'Redo', selector: 'redo:' },
+        { type: 'separator' },
+        { accelerator: 'CmdOrCtrl+X', label: 'Cut', selector: 'cut:' },
+        { accelerator: 'CmdOrCtrl+C', label: 'Copy', selector: 'copy:' },
+        { accelerator: 'CmdOrCtrl+V', label: 'Paste', selector: 'paste:' },
+        {
+          accelerator: 'CmdOrCtrl+A',
+          label: 'Select All',
+          selector: 'selectAll:',
+        },
+      ] as Electron.MenuItemConstructorOptions[],
+    },
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   if (!process.env.DEBUGGING && platform !== 'darwin') {
     mainWindow.setMenuBarVisibility(false);
