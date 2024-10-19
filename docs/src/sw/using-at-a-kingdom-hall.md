@@ -18,7 +18,7 @@ Unapofungua M³ kwa mara ya kwanza, utaulizwa kuhusu lugha ya mfumo unaotaka. Ch
 
 :::tip Kidokezo
 
-Hii sio lazima iwe lugha sawa na ile ambayo M³ itapakua media. Lugha ya upakuaji wa media imesanidiwa katika hatua ya baadaye.
+Hii sio lazima iwe lugha sawa na ile ambayo M³ itapakua media. Lugha ya upakuaji wa media itasanidiwa katika hatua ya baadaye.
 
 :::
 
