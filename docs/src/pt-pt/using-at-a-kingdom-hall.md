@@ -52,16 +52,16 @@ Esta pesquisa utiliza dados disponíveis publicamente no site oficial das Testem
 
 Se a pesquisa automática não encontrou a sua congregação, é possível inserir manualmente as informações necessárias. O assistente permitirá que revise e/ou insira o **nome**, **idioma** das reuniões e os **dias e horários** das reuniões da sua congregação.
 
-### Armazenamento em cache de vídeos do cancioneiro
+### Armazenamento em cache dos cânticos (formato para reuniões)
 
-Também terá a opção de **armazenar em cache todos os vídeos do cancioneiro**. Esta opção pré-carrega todos os cânticos, reduzindo o tempo necessário para procurar multimédia para as reuniões no futuro.
+Também terá a opção de **armazenar em cache todos os cânticos**. Esta opção pré-carrega todos os cânticos, reduzindo o tempo necessário para procurar multimédia para as reuniões no futuro.
 
 - **Prós:** A multimédia da reunião estará disponível muito mais rapidamente.
 - **Contras:** O tamanho do cache de multimédia aumentará significativamente, em aproximadamente 5GB.
 
 :::tip Dica
 
-Se o seu Salão do Reino tiver espaço de armazenamento suficiente, é recomendável **ativar** esta opção para mais eficiência e melhor desempenho.
+Se o seu Salão do Reino tiver espaço de armazenamento suficiente, é recomendável **ativar** esta opção para um desempenho visivelmente mais eficiente.
 
 :::
 
