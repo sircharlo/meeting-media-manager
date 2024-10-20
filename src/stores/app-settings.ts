@@ -60,6 +60,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
           this.migrations = this.migrations.concat(
             LocalStorage.getItem('migrations') || [],
           );
+          this.migrations.push('firstRun');
           this.screenPreferences = LocalStorage.getItem(
             'screenPreferences',
           ) || { preferredScreenNumber: 0, preferWindowed: false };
