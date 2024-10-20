@@ -2,7 +2,7 @@
 
 ## 这个应用程序是什么？
 
-**Meeting Media Manager**（简称**M³**）是Windows、 macOS 和 Linux 的应用。这款应用能从JW.org上自动下载将在耶和华见证会聚会时使用的任何语言版本的图片或视频。
+**Meeting Media Manager**（简称**M³**）是Windows、macOS 和 Linux 的应用。这款应用能从JW.org上自动下载将在耶和华见证会聚会时使用的任何语言版本的图片或视频。
 
 它的功能是支持管理定期和自定义的聚会媒体，以及支持使用同一计算机帐户的多个会众和小组。
 
@@ -26,7 +26,7 @@ M³之前被称为JWMMF（JW Meeting Media Fetcher），但在2022年5月更名�
 
 <!-- As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature. -->
 
-今天给M3一次尝试，看看它能做些什么！ 在会众聚会上播放媒体的工作从来没有那么容易。 在会众聚会上播放媒体的工作从来没有那么容易。
+今天给M³一次尝试，看看它能做些什么！ 在会众聚会上播放媒体的工作从来没有那么容易。 在会众聚会上播放媒体的工作从来没有那么容易。
 
 ## M³支持我的语言吗？
 
