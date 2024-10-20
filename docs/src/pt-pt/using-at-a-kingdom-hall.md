@@ -1,14 +1,14 @@
 # Ao usar o M³ no Salão do Reino
 
-Este guia irá orientá-lo pelo processo de descarregar, instalar e configurar o **Meeting Media Manager (M³)** num Salão do Reino. Siga os passos para garantir uma configuração suave para a gestão de multimédia durante as reuniões congregacionais.
+Este guia irá orientá-lo pelo processo de descarregamento, instalação e configuração do **Meeting Media Manager (M³)** num Salão do Reino. Siga estes passos para garantir uma configuração sem falhas na gestão de multimédia durante as reuniões congregacionais.
 
 ## 1. Descarregar e instalar
 
 1. Visite a [página de download do M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Descarregue a versão apropriada para o seu sistema operativo (Windows, macOS ou Linux).
+2. Descarregue a versão adequada para o seu sistema operativo (Windows, macOS ou Linux).
 3. Abra o instalador e siga as instruções na tela para instalar o M³.
 4. Inicie o M³.
-5. Passe pelo assistente de configuração.
+5. Siga o assistente de configuração.
 
 ## 2) Assistente de configuração
 
