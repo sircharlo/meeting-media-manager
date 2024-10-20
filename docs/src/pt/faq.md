@@ -2,7 +2,7 @@
 
 ## :earth_americas: Este aplicativo depende de sites externos, fontes ou pessoas para baixar publicações ou mídias?
 
-**Não.** O aplicativo se comporta de maneira semelhante ao JW Library. Ele baixa publicações e mídia diretamente do site oficial JW.org. O aplicativo determina automaticamente o que precisa ser baixado e se estiver desatualizado ele baixa novamente.
+**Não.** O aplicativo se comporta de maneira semelhante ao JW Library. Ele baixa publicações e mídia diretamente do site oficial JW.org. O aplicativo determina automaticamente o que precisa ser baixado e se uma publicação ou mídia foi atualizada e precisa ser baixada novamente.
 
 :::info Nota
 
@@ -20,11 +20,11 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 
 ## :radioactive: Como faço para reportar um problema?
 
-Envie um [issue](https://github.com/sircharlo/meeting-media-manager/issues) no repositório oficial do GitHub.
+Envie um [problema](https://github.com/sircharlo/meeting-media-manager/issues) no repositório oficial do GitHub.
 
 ## :new: Como posso solicitar um novo recurso ou melhoria?
 
-Por favor, abra uma [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) no repositório oficial do GitHub.
+Por favor, abra uma [discussão](https://github.com/sircharlo/meeting-media-manager/discussions) no repositório oficial do GitHub.
 
 ## :handshake: Como posso contribuir com algum código?
 
