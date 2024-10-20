@@ -10,10 +10,10 @@ hero:
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Como usar no Salão do Reino
-      link: /using-at-a-kingdom-hall
+      link: /pt/using-at-a-kingdom-hall
     - theme: alt
       text: Sobre
-      link: /about
+      link: /pt/about
 features:
   - icon: 🚀
     title: Download automático de mídia

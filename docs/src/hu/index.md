@@ -10,10 +10,10 @@ hero:
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Használat egy Királyság-teremben
-      link: /using-at-a-kingdom-hall
+      link: /hu/using-at-a-kingdom-hall
     - theme: alt
       text: A honlapról
-      link: /about
+      link: /hu/about
 features:
   - icon: 🚀
     title: Automatikus médialetöltés
