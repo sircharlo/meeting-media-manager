@@ -1,4 +1,4 @@
-# 在王国聚会所使用M3
+# 在王国聚会所使用M³
 
 本指南将带你在王国聚会所下载、安装和设置\*\*Meeting Media Manager (M³)\*\*的过程。 遵循步骤以确保在聚会期间管理媒体的顺利设置。
 
@@ -28,20 +28,19 @@
 
 :::warning 小贴士
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+只有当您创建的配置不需要自动下载任何媒体内容时，您才应该选择**其他**。 在此配置中，媒体内容需要手动导入才能使用。 这种类型的配置主要用于在学校、分区及区域大会和其他特殊活动中使用M³。
 
-**其他**配置文件类型很少使用。 **为了正常使用会众聚会，请选择_常规_.**
-::: **For normal use during congregation meetings, please choose _Regular_.**
+**其他**配置类型很少使用。 **在会众聚会期间正常使用时，请选择_常规_。**
 
 :::
 
-### 自动聚合查询
+### 自动会众查询
 
-M3可以尝试自动找到您会众的的聚会安排、语言和格式化名称。
+M³可以尝试自动找到您会众的的聚会安排、语言和正式名称。
 
 要这样做，请使用聚合名称字段旁边的 **会众查询** 按钮并输入至少部分聚合名称和城市。
 
-一旦找到并选择了正确的会众，M3将预置所有可用信息。 比如你的会众的 **名称**、 **聚会语言**、 **聚会日起和时间**。
+一旦找到并选择了正确的会众，M³将预置所有可用信息。 比如你的会众的 **名称**、 **聚会语言**、 **聚会日起及时间**。
 
 :::info 备注
 
@@ -51,36 +50,35 @@ M3可以尝试自动找到您会众的的聚会安排、语言和格式化名称
 
 ### 手动输入会众信息
 
-如果无法自动找到您的会众，您可以手动输入所需的信息。 向导将帮助您检查和输入您的会众的 **名称**、**会众语言**、**聚会日起和时间**。 向导将帮助您检查和输入您的会众的 **名称**、**会众语言**、**聚会日起和时间**。
+如果无法自动找到您的会众，您可以手动输入所需的信息。 向导将帮助您检查和输入您的会众的 **名称**、**会众语言**、**聚会日起和时间**。
 
-### Caching videos from the songbook
+### 缓存歌本中的视频
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+您还可以选择**缓存歌本中的所有视频**。 此选项预先下载所有歌本视频，减少将来获取会议媒体所需的时间。
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
-
-:::tip 小贴士
-
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
-
-:::
-
-### OBS Studio Integration Configuration (Optional)
-
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
-
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- \*\*优点：\*\*聚会媒体加载速度更快。
+- \*\*缺点：\*\*媒体缓存大小将显著增加，约5GB。
 
 :::tip 小贴士
 
-::: tip Tip
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+如果您的王国聚会所有足够的存储空间，建议**启用**此选项以提高效率和使用体验。
 
 :::
 
-## 3. Enjoy using M³
+### OBS Studio集成配置（可选）
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+如果您的王国聚会所使用**OBS Studio**通过Zoom进行混合聚会直播，M³可以自动与该程序集成。 在设置过程中，您可以通过输入以下内容来配置与OBS Studio的集成：
+
+- \*\*端口：\*\*用于连接OBS Studio Websocket插件的端口号。
+- \*\*密码：\*\*用于连接OBS Studio Websocket插件的密码。
+- \*\*场景：\*\*在媒体播放期间将使用的OBS场景。 您需要一个场景来捕捉媒体窗口或屏幕，另一个场景来显示讲台。
+
+:::tip 小贴士
+
+如果您的会众定期举行混合会议，**强烈** 推荐您启用OBS Studio集成。
+
+:::
+
+## 3. 享受使用M³
+
+设置向导完成后，M³就可以帮助管理和播放会众聚会的媒体内容了。 享受使用M³！ :tada:

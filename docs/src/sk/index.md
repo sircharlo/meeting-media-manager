@@ -10,10 +10,10 @@ hero:
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Using at a Kingdom Hall
-      link: /using-at-a-kingdom-hall
+      link: /sk/using-at-a-kingdom-hall
     - theme: alt
       text: About
-      link: /about
+      link: /sk/about
 features:
   - icon: 🚀
     title: Automatic media downloads

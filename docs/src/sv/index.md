@@ -10,10 +10,10 @@ hero:
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Använda i Rikets sal
-      link: /using-at-a-kingdom-hall
+      link: /sv/using-at-a-kingdom-hall
     - theme: alt
       text: Om
-      link: /about
+      link: /sv/about
 features:
   - icon: 🚀
     title: Automatisk mediahämtning

@@ -12,23 +12,23 @@
 
 ## :thinking: 此应用是否违反了JW.org使用条款？
 
-\*\*不。\*\*JW.org[使用条款](https://www.jw.org/finder?docid=1011511\\&prefer=content)实际上明确允许我们正在做的用法。 以下是相关摘录（重要部分由我标明）： 以下是相关摘录（重要部分由我标明）：
+\*\*不。\*\*JW.org[使用条款](https://www.jw.org/finder?docid=1011511\\&prefer=content)实际上明确允许我们正在做的用法。 以下是相关摘录（重要部分由我标明）：
 
 > 你不得：
 >
-> 본 웹사이트에서 데이터, HTML, 이미지, 텍스트를 수집, 복사, 다운로드, 추출, 산출, 스크래핑하기 위한 소프트웨어 응용 프로그램, 도구, 기법을 배포 목적으로 만드는 행위. (본 웹사이트의 일반 자료에서 EPUB, PDF, MP3, MP4 파일과 같은 전자 파일을 다운로드할 목적으로 고안된 비상업적 무료 응용 프로그램을 배포해서는 **안 된다**는 뜻은 아님)
+> 从本网站收集、翻印、下载、撷取或采集数据、HTML、图像或文字，并制作应用程序、工具或技术，向公众分发 （**不限**本网站设计的非营利应用程序，提供大众免费下载电子档，如EPUB、PDF、MP3和MP4）。
 
 ## :radioactive: 如何报告问题？
 
-请在官方的 GitHub 仓库打开 [discussion](https://github.com/sircharlo/meeting-media-manager/discussions)
+请在官方的 GitHub 仓库上提交一个 [issue](https://github.com/sircharlo/meeting-media-manager/issues)。
 
 ## :new: 如何请求新功能或优化功能？
 
-请查看官方GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。
+请在官方的 GitHub 仓库打开 [discussion](https://github.com/sircharlo/meeting-media-manager/discussions)
 
 ## :handshake: 如何贡献一些代码？
 
-请在官方的 GitHub 仓库上提交一个 [issue](https://github.com/sircharlo/meeting-media-manager/issues)。
+请查看官方GitHub 仓库的[contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。
 
 ## :x: 如何为该项目做出捐献？
 

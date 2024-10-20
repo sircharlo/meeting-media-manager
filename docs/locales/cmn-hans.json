@@ -12,7 +12,7 @@
   "docFooterPrev": "上一页",
   "editLink": "在 Crowdin 上编辑此页面",
   "enter": "进入",
-  "esc": "跳转",
+  "esc": "ESC",
   "faq": "常见问题（FAQ）",
   "langMenuLabel": "更改语言",
   "lastUpdated": "更新于",
@@ -26,6 +26,6 @@
   "search": "搜索",
   "selectText": "选中",
   "sidebarMenuLabel": "菜单",
-  "title": "M³文档",
+  "title": "M³文库",
   "usingAtAKingdomHall": "在王国聚会所使用"
 }
