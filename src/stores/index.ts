@@ -1,6 +1,7 @@
 import type { Router } from 'vue-router';
 
 import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import { PiniaSharedState } from 'pinia-shared-state';
 import { store } from 'quasar/wrappers';
 
@@ -34,10 +35,12 @@ export default store((/* { ssrContext } */) => {
       enable: true,
       // If set to true this tab tries to immediately recover the shared state from another tab. Defaults to true.
       initialize: true,
-      // Enforce a type. One of native, idb, localstorage or node. Defaults to native.
+      // Enforce a type. One of native, idb, local storage or node. Defaults to native.
       type: 'native',
     }),
   );
+
+  pinia.use(piniaPluginPersistedstate);
 
   return pinia;
 });

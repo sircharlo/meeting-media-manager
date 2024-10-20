@@ -1,7 +1,7 @@
 import type { SettingsValues } from 'src/types';
 
 import { defineStore } from 'pinia';
-import { extend, LocalStorage, uid } from 'quasar';
+import { extend, uid } from 'quasar';
 import { defaultSettings } from 'src/defaults/settings';
 
 export const useCongregationSettingsStore = defineStore(
@@ -24,13 +24,10 @@ export const useCongregationSettingsStore = defineStore(
         return Object.keys(state.congregations)?.length;
       },
     },
-
+    persist: true,
     state: () => {
       return {
-        congregations: (LocalStorage.getItem('congregations') || {}) as Record<
-          string,
-          SettingsValues
-        >,
+        congregations: {} as Record<string, SettingsValues>,
       };
     },
   },

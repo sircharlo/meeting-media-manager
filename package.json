@@ -51,6 +51,7 @@
     "p-queue": "^8.0.1",
     "pdfjs-dist": "^4.7.76",
     "pinia": "^2.2.4",
+    "pinia-plugin-persistedstate": "^4.1.1",
     "pinia-shared-state": "^0.5.1",
     "pretty-bytes": "^6.1.1",
     "quasar": "^2.17.0",
@@ -111,5 +112,5 @@
     "win32"
   ],
   "private": true,
-  "packageManager": "yarn@4.5.0"
+  "packageManager": "yarn@4.5.1"
 }

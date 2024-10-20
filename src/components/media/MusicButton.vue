@@ -140,7 +140,7 @@ import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -270,7 +270,7 @@ const getNextSong = async () => {
           })
           .filter((song) => song !== null);
         if (timeBeforeMeetingStart > 0) {
-          const customSongList = [] as SongItem[];
+          const customSongList = ref([]) as Ref<SongItem[]>;
           if (selectedDaySongs.length) {
             songList.value.push(...selectedDaySongs);
             songList.value.reverse();
@@ -278,12 +278,16 @@ const getNextSong = async () => {
           if (songList.value.length) {
             while (musicDurationSoFar < timeBeforeMeetingStart) {
               const queuedSong = songList.value.shift() as SongItem;
+              if (!queuedSong) {
+                customSongList.value = songList.value;
+                break;
+              }
               songList.value.push(queuedSong);
-              customSongList.unshift(queuedSong);
+              customSongList.value.unshift(queuedSong);
               secsFromEnd = timeBeforeMeetingStart - musicDurationSoFar;
               musicDurationSoFar += queuedSong.duration as number;
             }
-            songList.value = customSongList;
+            songList.value = customSongList.value;
           }
         }
       } catch (error) {

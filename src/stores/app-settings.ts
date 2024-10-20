@@ -10,6 +10,7 @@ import {
   parsePrefsFile,
 } from 'src/helpers/migrations';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
+import { useJwStore } from 'src/stores/jw';
 
 const { fs, getAppDataPath, path } = electronApi;
 
@@ -19,6 +20,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
       try {
         let successfulMigration = true;
         const { congregations } = storeToRefs(useCongregationSettingsStore());
+        const jwStore = storeToRefs(useJwStore());
         if (type === 'firstRun') {
           const oldVersionPath = path.join(
             getAppDataPath(),
@@ -40,8 +42,29 @@ export const useAppSettingsStore = defineStore('app-settings', {
               }
             }
           }
+        } else if (type === 'localStorageToPiniaPersist') {
+          congregations.value = LocalStorage.getItem('congregations') || {};
+          jwStore.additionalMediaMaps.value =
+            LocalStorage.getItem('additionalMediaMaps') || {};
+          jwStore.customDurations.value =
+            LocalStorage.getItem('customDurations') || {};
+          jwStore.jwLanguages.value = LocalStorage.getItem('jwLanguages') || {
+            list: [],
+            updated: new Date(1900, 0, 1),
+          };
+          jwStore.jwSongs.value = LocalStorage.getItem('jwSongs') || {};
+          jwStore.lookupPeriod.value =
+            LocalStorage.getItem('lookupPeriod') || {};
+          jwStore.mediaSort.value = LocalStorage.getItem('mediaSort') || {};
+          jwStore.yeartexts.value = LocalStorage.getItem('yeartexts') || {};
+          this.migrations = this.migrations.concat(
+            LocalStorage.getItem('migrations') || [],
+          );
+          this.screenPreferences = LocalStorage.getItem(
+            'screenPreferences',
+          ) || { preferredScreenNumber: 0, preferWindowed: false };
         } else {
-          // future migrations will go here
+          // other migrations will go here
         }
         this.migrations.push(type);
         return successfulMigration;
@@ -52,11 +75,11 @@ export const useAppSettingsStore = defineStore('app-settings', {
     },
   },
   getters: {},
+  persist: true,
   state: () => {
     return {
-      migrations: (LocalStorage.getItem('migrations') || []) as string[],
-      screenPreferences: (LocalStorage.getItem('screenPreferences') ||
-        {}) as ScreenPreferences,
+      migrations: [] as string[],
+      screenPreferences: {} as ScreenPreferences,
     };
   },
 });

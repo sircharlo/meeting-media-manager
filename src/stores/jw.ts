@@ -8,7 +8,7 @@ import type {
 
 import { getLanguages, getYeartext } from 'boot/axios';
 import { defineStore, storeToRefs } from 'pinia';
-import { date, LocalStorage } from 'quasar';
+import { date } from 'quasar';
 import sanitizeHtml from 'sanitize-html';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -222,38 +222,31 @@ export const useJwStore = defineStore('jw-store', {
       }
     },
   },
+  persist: true,
   state: () => {
     return {
-      additionalMediaMaps: (LocalStorage.getItem('additionalMediaMaps') ||
-        {}) as Record<string, Record<string, DynamicMediaObject[]>>,
-      customDurations: (LocalStorage.getItem('customDurations') ||
-        {}) as Record<
+      additionalMediaMaps: {} as Record<
+        string,
+        Record<string, DynamicMediaObject[]>
+      >,
+      customDurations: {} as Record<
         string,
         Record<string, Record<string, { max: number; min: number }>>
       >,
-      jwLanguages: (LocalStorage.getItem('jwLanguages') || {
+      jwLanguages: {
         list: [],
         updated: oldDate,
-      }) as { list: JwLanguage[]; updated: Date },
-      jwSongs: (LocalStorage.getItem('jwSongs') || {}) as Record<
+      } as { list: JwLanguage[]; updated: Date },
+      jwSongs: {} as Record<
         string,
         {
           list: MediaLink[];
           updated: Date;
         }
       >,
-      lookupPeriod: (LocalStorage.getItem('lookupPeriod') || {}) as Record<
-        string,
-        DateInfo[]
-      >,
-      mediaSort: (LocalStorage.getItem('mediaSort') || {}) as Record<
-        string,
-        Record<string, string[]>
-      >,
-      yeartexts: (LocalStorage.getItem('yeartexts') || {}) as Record<
-        number,
-        Record<string, string>
-      >,
+      lookupPeriod: {} as Record<string, DateInfo[]>,
+      mediaSort: {} as Record<string, Record<string, string[]>>,
+      yeartexts: {} as Record<number, Record<string, string>>,
     };
   },
 });

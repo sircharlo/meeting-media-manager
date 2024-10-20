@@ -261,6 +261,8 @@ const setWindowPosition = (
   }
 };
 
+const getUserDataPath = () => app.getPath('userData');
+
 const moveMediaWindow = (
   targetScreenNumber?: number,
   windowedMode?: boolean,
@@ -274,11 +276,9 @@ const moveMediaWindow = (
     if (!mediaWindow || !mainWindow) return;
     if (targetScreenNumber === undefined || windowedMode === undefined) {
       try {
-        const screenPreferences = JSON.parse(
-          window.localStorage
-            .getItem('screenPreferences')
-            ?.replace('__q_objt|', '') ?? '{}', // This is a hack, we need to replace the string __q_objt| with an empty string due to Quasar's implementation of LocalStorage
-        ) as ScreenPreferences;
+        const screenPreferences =
+          JSON.parse(window.localStorage.getItem('app-settings') ?? '{}')
+            ?.screenPreferences || ({} as ScreenPreferences);
         targetScreenNumber = screenPreferences.preferredScreenNumber;
         windowedMode = screenPreferences.preferWindowed;
       } catch (err) {
@@ -541,9 +541,7 @@ const electronApi: ElectronApi = {
   getLocalPathFromFileObject: (fileObject: File) => {
     return webUtils.getPathForFile(fileObject);
   },
-  getUserDataPath: () => {
-    return app.getPath('userData');
-  },
+  getUserDataPath,
   getUserDesktopPath: () => {
     return app.getPath('desktop');
   },
@@ -613,6 +611,7 @@ const electronApi: ElectronApi = {
     }
   },
   registerShortcut,
+  // saveSettingsStoreToFile,
   setAutoStartAtLogin: (value: boolean) => {
     try {
       app.setLoginItemSettings({

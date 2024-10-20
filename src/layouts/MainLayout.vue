@@ -36,7 +36,7 @@
 <script setup lang="ts">
 // Packages
 import { storeToRefs } from 'pinia';
-import { Dark, LocalStorage, useQuasar } from 'quasar';
+import { Dark, useQuasar } from 'quasar';
 import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
@@ -69,10 +69,9 @@ import {
 } from 'src/helpers/keyboardShortcuts';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-
 // Stores
 import { useAppSettingsStore } from 'src/stores/app-settings';
-import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
+// import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
@@ -106,31 +105,28 @@ const router = useRouter();
 const { locale, t } = useI18n({ useScope: 'global' });
 
 // Store initializations
-const congregationSettings = useCongregationSettingsStore();
-congregationSettings.$subscribe((_, state) => {
-  LocalStorage.set('congregations', state.congregations);
-});
+// const congregationSettings = useCongregationSettingsStore();
+// congregationSettings.$subscribe((_, state) => {
+//   saveSettingsStoreToFile('congregations', state);
+// });
 
 const jwStore = useJwStore();
-jwStore.$subscribe((_, state) => {
-  LocalStorage.set('jwLanguages', state.jwLanguages);
-  LocalStorage.set('jwSongs', state.jwSongs);
-  LocalStorage.set('yeartexts', state.yeartexts);
-  LocalStorage.set('mediaSort', state.mediaSort);
-  LocalStorage.set('customDurations', state.customDurations);
-  LocalStorage.set('additionalMediaMaps', state.additionalMediaMaps);
-  LocalStorage.set('lookupPeriod', state.lookupPeriod);
-});
+// jwStore.$subscribe((_, state) => {
+//   saveSettingsStoreToFile('jw', state);
+// });
 
 const appSettings = useAppSettingsStore();
 
-appSettings.$subscribe((_, state) => {
-  LocalStorage.set('migrations', state.migrations);
-  LocalStorage.set('screenPreferences', state.screenPreferences);
-});
+// appSettings.$subscribe((_, state) => {
+//   saveSettingsStoreToFile('appSettings', state);
+// });
 
 const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
+
+if (!migrations.value?.includes('localStorageToPiniaPersist')) {
+  runMigration('localStorageToPiniaPersist');
+}
 
 if (!migrations.value?.includes('firstRun')) {
   const migrationResult = runMigration('firstRun');
@@ -266,6 +262,7 @@ const {
   getUserDesktopPath,
   path,
   readShortcutLink,
+  // saveSettingsStoreToFile,
   setAutoStartAtLogin,
   writeShortcutLink,
 } = electronApi;

@@ -49,6 +49,7 @@ export interface ElectronApi {
   pathToFileURL: (path: string) => string;
   readShortcutLink: (shortcutPath: string) => ShortcutDetails;
   registerShortcut: (shortcut: string, callback: () => void) => void;
+  // saveSettingsStoreToFile: (storeName: string, data: unknown) => void;
   setAutoStartAtLogin: (value: boolean) => void;
   setMediaWindowPosition: (x: number, y: number) => void;
   toggleMediaWindow: (action: string) => void;
