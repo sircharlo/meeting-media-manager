@@ -10,10 +10,10 @@ hero:
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: 在王国聚会所使用
-      link: /在王国聚会所使用
+      link: /cmn-hans/using-at-a-kingdom-hall
     - theme: alt
       text: 关于
-      link: /关于
+      link: /cmn-hans/about
 features:
   - icon: 🚀
     title: 自动下载媒体
