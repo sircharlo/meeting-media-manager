@@ -12,25 +12,25 @@ Este guia irá orientá-lo pelo processo de descarregamento, instalação e conf
 
 ## 2) Assistente de configuração
 
-### Idioma de exibição da app
+### Idioma de exibição da aplicação
 
-Ao iniciar o M³ pela primeira vez, será solicitado a escolha do seu **idioma de exibição** de preferência. Escolha o idioma que deseja que o M³ use para a sua interface.
+Ao iniciar o M³ pela primeira vez, será solicitado que escolha o seu **idioma de exibição** preferido. Escolha o idioma que deseja que o M³ utilize na sua interface.
 
 :::tip Dica
 
-Isto não precisa ser o mesmo idioma em que o M³ irá descarregar a multimédia. O idioma para os download de multimédia é configurado posteriormente.
+Este não precisa ser o mesmo idioma em que o M³ fará o download de multimédia. O idioma para esse efeito será configurado posteriormente.
 
 :::
 
 ### Tipo de perfil
 
-O próximo passo será escolher um **tipo de perfil**. Para uma configuração regular em um Salão do Reino, escolha **Regular**. Isto irá configurar várias funcionalidades que são normalmente utilizadas nas reuniões da congregação.
+O próximo passo será escolher um **tipo de perfil**. Para uma configuração regular num Salão do Reino, escolha **Regular**. Esta configuração irá ajustar várias funcionalidades que são frequentemente utilizadas nas reuniões congregacionais.
 
 :::warning Aviso
 
-Você deve escolher **Outro** apenas se estiver criando um perfil para o qual nenhum multimédia deve ser descarregada automaticamente. A multimédia terá que ser importada manualmente para ser usada neste perfil. Este tipo de perfil é utilizado principalmente para usar o M³ durante escolas teocráticas, assembleias, congressos e outros eventos especiais.
+Deve escolher apenas **Outro** se estiver a criar um perfil para o qual não deve ser feito o download automático de multimédia. A multimédia terá de ser importada manualmente para ser utilizada neste perfil. Este tipo de perfil é desenhado especificamente para usar o M³ durante escolas teocráticas, assembleias, congressos e outros eventos especiais.
 
-O tipo de perfil **Outro** é raramente utilizado. **Para uso normal durante as reuniões da congregação, escolha _Regular_.**
+O tipo de perfil **Outro** é raramente utilizado. **Para o uso comum, durante as reuniões congregacionais, escolha _Regular_.**
 
 :::
 
@@ -38,9 +38,9 @@ O tipo de perfil **Outro** é raramente utilizado. **Para uso normal durante as 
 
 O M³ pode tentar encontrar automaticamente o horário das reuniões, o idioma e o nome da sua congregação.
 
-Para fazer isso, use o botão **Pesquisa da Congregação** ao lado do campo do nome da congregação e insira pelo menos parte do nome e cidade da congregação.
+Para fazer isso, use o botão **Pesquisa da Congregação** ao lado do campo do nome da congregação e insira pelo menos uma parte do nome e cidade da congregação.
 
-Assim que a congregação correta for encontrada e selecionada, o M³ preencherá automaticamente todas as informações disponíveis, como o **nome** da sua congregação, **idioma** das reuniões e **dias e horários** das reuniões.
+Assim que a congregação correta for encontrada e selecionada, o M³ irá preencher automaticamente todas as informações disponíveis, como o **nome** da congregação, o **idioma** das reuniões e os **dias e horários** das reuniões.
 
 :::info Nota
 
@@ -50,7 +50,7 @@ Esta pesquisa utiliza dados disponíveis publicamente no site oficial das Testem
 
 ### Entrada manual das informações da congregação
 
-Se a pesquisa automática não encontrou a sua congregação, é possível pode inserir manualmente as informações necessárias. O assistente permitirá que revise e/ou insira o **nome**, **idioma** das reuniões e **dias e horários** das reuniões da sua congregação.
+Se a pesquisa automática não encontrou a sua congregação, é possível inserir manualmente as informações necessárias. O assistente permitirá que revise e/ou insira o **nome**, **idioma** das reuniões e os **dias e horários** das reuniões da sua congregação.
 
 ### Armazenamento em cache de vídeos do cancioneiro
 
