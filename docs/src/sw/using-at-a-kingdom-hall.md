@@ -24,7 +24,7 @@ Hii sio lazima iwe lugha sawa na ile ambayo M³ itapakua media. Lugha ya upakuaj
 
 ### Aina ya profile
 
-Hatua inayo fuata ni ya kuchagua **aina ya profaili**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+Hatua inayo fuata ni ya kuchagua **aina ya profaili**. Kwa ajili ya matumizi katika Jumba la Ufalme, chagua **Kawaida**. Hili litapanga mipangilio mingi ya kawaida ya matumizi katika mikutano.
 
 :::warning Warning
 
