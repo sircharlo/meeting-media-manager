@@ -22,7 +22,7 @@ Hii sio lazima iwe lugha sawa na ile ambayo M³ itapakua media. Lugha ya upakuaj
 
 :::
 
-### Profile type
+### Aina ya profile
 
 The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
 
