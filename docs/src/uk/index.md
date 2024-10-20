@@ -1,5 +1,5 @@
 ---
-layout: головна
+layout: home
 hero:
   name: Документація M³
   text: Допомога у налаштуванні та використанні Meeting Media Manager
@@ -10,10 +10,10 @@ hero:
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Використання в Залі Царства
-      link: /using-at-a-kingdom-hall
+      link: /uk/using-at-a-kingdom-hall
     - theme: alt
       text: Про програму
-      link: /about
+      link: /uk/about
 features:
   - icon: 🚀
     title: Автозавантаження медіа
