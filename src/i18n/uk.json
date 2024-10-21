@@ -55,6 +55,7 @@
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "Налаштуйте сцену в OBS Studio для відображення широкого плану сцени.",
   "configure-the-websocket-plugin-in-obs-studio-the-virtual-camera-plugin-is-also-required-so-make-sure-its-installed-and-configured-as-well": "Вам потрібно налаштувати плагін Websocket в OBS Studio. Також потрібен плагін Virtual Camera, тому переконайтеся, що він встановлений і налаштований.",
   "confirm": "Підтвердити",
+  "congratulations": "Congratulations!",
   "congregation-lookup": "Пошук збору",
   "congregation-lookup-explain": "Введіть ключові слова, такі як назва вашого збору, а також місто або район, у якому він розташований. Ця інформація буде використовуватися для спроби автоматичного отримання розкладу зібрань та мови.",
   "congregationMeetings": "Зібрання збору​",
