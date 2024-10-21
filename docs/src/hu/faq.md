@@ -24,7 +24,7 @@ Kérjük, jelentse be a [problémát](https://github.com/sircharlo/meeting-media
 
 ## :new: Hogyan kérhetek új funkciót vagy továbbfejlesztést?
 
-Kérjük, nyisson [megbeszélést] (https://github.com/sircharlo/meeting-media-manager/discussions) a hivatalos GitHub oldalon.
+Kérjük, nyisson [megbeszélést](https://github.com/sircharlo/meeting-media-manager/discussions) a hivatalos GitHub oldalon.
 
 ## :handshake: Hogyan tudok hozzájárulni a program kódjához?
 
@@ -32,10 +32,10 @@ Kérjük, tekintse meg a hivatalos GitHub-tárban található [hozzájárulási 
 
 ## :x: Adományozhatok a projekt számára?
 
-Köszönjük az érdeklődését, hogy támogatni szeretné a projektet! Azonban a Máté 10:8-al összhangban az adományokat **nem** fogadjuk el, és a jövőben sem fogjuk. Ez az alkalmazás szeretetből és egy kis szabadidővel készült. Please enjoy! :tada:
+Köszönjük az érdeklődését, hogy támogatni szeretné a projektet! Azonban a Máté 10:8-al összhangban az adományokat **nem** fogadjuk el, és a jövőben sem fogjuk. Ez az alkalmazás szeretetből és egy kis szabadidővel készült. Élvezze a használatát! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Máté 10:8
 
-"You received free, give free."
+"Ingyen kaptátok, ingyen adjátok!"
 
 :::
