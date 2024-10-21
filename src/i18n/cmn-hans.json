@@ -55,6 +55,7 @@
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "OBS Studio 中配置一个场景,显示舞台的全景。",
   "configure-the-websocket-plugin-in-obs-studio-the-virtual-camera-plugin-is-also-required-so-make-sure-its-installed-and-configured-as-well": "您需要在 OBS Studio 中配置Websocket 插件。 还需要虚拟摄像头插件，所以请确保它已安装并配置。",
   "confirm": "确认",
+  "congratulations": "Congratulations!",
   "congregation-lookup": "会众搜索",
   "congregation-lookup-explain": "输入关键词，如您的会众名称以及它所在的城市或地区。 这种信息将用于尝试自动检索聚会时间安排和语言。",
   "congregationMeetings": "会众聚会",
