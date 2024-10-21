@@ -6,7 +6,7 @@
   "closeText": "zapreti",
   "darkModeSwitchLabel": "Videz",
   "darkModeSwitchTitle": "Preklopi na temno temo",
-  "description": "Spletna stran z dokumentacijo za program Meeting Media Manager (M³).",
+  "description": "Spletna stran z dokumentacijo za Meeting Media Manager (M³).",
   "displayDetails": "Prikaži podroben seznam",
   "docFooterNext": "Naslednja stran",
   "docFooterPrev": "Prejšnja stran",
@@ -26,6 +26,6 @@
   "search": "Išči",
   "selectText": "izbrati",
   "sidebarMenuLabel": "Meni",
-  "title": "Dokumentacija M³",
+  "title": "Dokumentacija aplikacije M³",
   "usingAtAKingdomHall": "Za uporabo v kraljestveni dvorani"
 }
