@@ -14,6 +14,7 @@ import {
   globalShortcut,
   screen,
 } from '@electron/remote';
+import { captureMessage, setContext } from '@sentry/electron/renderer';
 import AdmZip from 'adm-zip';
 import * as sqlite3 from 'better-sqlite3';
 import {
@@ -212,12 +213,37 @@ const setWindowPosition = (
   noEvent?: boolean,
 ) => {
   try {
+    setContext('setWindowPosition', {
+      noEvent,
+      targetScreenNumber,
+      targetWindow,
+      windowedMode,
+    });
+    captureMessage('setWindowPosition start');
     if (!targetWindow) return;
     const allScreens = getAllScreens();
     const currentMediaScreenNumber = getWindowScreen(targetWindow);
     const targetScreen = allScreens[targetScreenNumber ?? 0];
+    setContext('setWindowPosition', {
+      currentMediaScreenNumber,
+      noEvent,
+      targetScreen,
+      targetScreenNumber,
+      targetWindow,
+      windowedMode,
+    });
+    captureMessage('setWindowPosition targetScreen');
     if (!targetScreen) return;
     const targetScreenBounds = targetScreen.bounds;
+    setContext('setWindowPosition', {
+      currentMediaScreenNumber,
+      noEvent,
+      targetScreenBounds,
+      targetScreenNumber,
+      targetWindow,
+      windowedMode,
+    });
+    captureMessage('setWindowPosition targetScreenBounds');
     if (!targetScreenBounds) return;
     if (windowedMode) {
       const newBounds = {
@@ -242,6 +268,17 @@ const setWindowPosition = (
         targetWindow.setBounds(newBounds);
       }
     } else {
+      setContext('setWindowPosition', {
+        currentMediaScreenNumber,
+        noEvent,
+        targetScreenBounds,
+        targetScreenNumber,
+        targetWindow,
+        targetWindowIsAlwaysOnTop: targetWindow.isAlwaysOnTop(),
+        targetWindowIsFullScreen: targetWindow.isFullScreen(),
+        windowedMode,
+      });
+      captureMessage('setWindowPosition targetScreenBounds');
       if (
         targetScreenNumber === currentMediaScreenNumber &&
         targetWindow.isAlwaysOnTop()
@@ -276,6 +313,14 @@ const moveMediaWindow = (
     const mainWindow = getMainWindow();
     const mediaWindow = getMediaWindow();
     if (!mediaWindow || !mainWindow) return;
+    setContext('moveMediaWindow', {
+      mainWindow,
+      mediaWindow,
+      noEvent,
+      targetScreenNumber,
+      windowedMode,
+    });
+    captureMessage('moveMediaWindow start');
     if (targetScreenNumber === undefined || windowedMode === undefined) {
       try {
         const screenPreferences =
@@ -287,6 +332,17 @@ const moveMediaWindow = (
         errorCatcher(err);
       }
     }
+    setContext('moveMediaWindow', {
+      mainWindow,
+      mediaWindow,
+      mediaWindowIsFullScreen: !mediaWindow.isFullScreen(),
+      noEvent,
+      targetScreenNumber,
+      windowedMode,
+    });
+    captureMessage(
+      'moveMediaWindow assign targetScreenNumber and windowedMode',
+    );
     if (otherScreens.length > 0) {
       if (windowedMode === undefined)
         windowedMode = !mediaWindow.isFullScreen();
@@ -305,6 +361,16 @@ const moveMediaWindow = (
       targetScreenNumber = 0;
       windowedMode = true;
     }
+    setContext('moveMediaWindow', {
+      mainWindow,
+      mediaWindow,
+      noEvent,
+      targetScreenNumber,
+      windowedMode,
+    });
+    captureMessage(
+      'moveMediaWindow before setWindowPosition(mediaWindow, targetScreenNumber, windowedMode, noEvent)',
+    );
     setWindowPosition(mediaWindow, targetScreenNumber, windowedMode, noEvent);
     window.dispatchEvent(new CustomEvent('screen-trigger-update'));
   } catch (err) {
