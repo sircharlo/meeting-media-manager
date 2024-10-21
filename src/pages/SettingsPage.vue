@@ -131,7 +131,7 @@
                   v-model="
                     currentSettings[settingId as keyof SettingsItems] as string
                   "
-                  :options="item.list"
+                  :list="item.list"
                   :rules="item.rules"
                   :use-input="settingId.toLowerCase().includes('lang')"
                 />

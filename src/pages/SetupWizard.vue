@@ -13,7 +13,7 @@
           <p>{{ $t('what-language-would-you-like-m-to-be-displayed-in') }}</p>
           <SelectInput
             v-model="currentSettings.localAppLang"
-            options="appLanguages"
+            list="appLanguages"
           />
           <!-- :label="$t('localAppLang')" -->
           <q-stepper-navigation class="q-gutter-sm">
@@ -114,7 +114,7 @@
           <p>{{ $t('in-what-language-should-media-be-downloaded') }}</p>
           <SelectInput
             v-model="currentSettings.lang"
-            options="jwLanguages"
+            list="jwLanguages"
             use-input
           />
           <!-- :label="$t('lang')" -->
@@ -171,7 +171,7 @@
           </p>
           <p class="text-subtitle2">{{ $t('midweek-meeting') }}</p>
           <p class="q-gutter-sm row">
-            <SelectInput v-model="currentSettings.mwDay" options="days" />
+            <SelectInput v-model="currentSettings.mwDay" list="days" />
             <!-- :label="$t('mwDay')" -->
             <TimeInput
               v-model="currentSettings.mwStartTime"
@@ -181,7 +181,7 @@
           </p>
           <p class="text-subtitle2">{{ $t('weekend-meeting') }}</p>
           <p class="q-gutter-sm row">
-            <SelectInput v-model="currentSettings.weDay" options="days" />
+            <SelectInput v-model="currentSettings.weDay" list="days" />
             <!-- :label="$t('weDay')" -->
             <TimeInput
               v-model="currentSettings.weStartTime"
@@ -457,7 +457,7 @@
           <p>{{ $t('once-the-scene-has-been-created-select-it-here') }}</p>
           <SelectInput
             v-model="currentSettings.obsCameraScene"
-            options="obsScenes"
+            list="obsScenes"
           />
           <!-- :label="$t('obsCameraScene')" -->
           <q-stepper-navigation class="q-gutter-sm">
@@ -485,7 +485,7 @@
           <p>{{ $t('once-the-scene-has-been-created-select-it-here') }}</p>
           <SelectInput
             v-model="currentSettings.obsMediaScene"
-            options="obsAllScenes"
+            list="obsAllScenes"
           />
           <!-- :label="$t('obsMediaScene')" -->
           <q-stepper-navigation class="q-gutter-sm">
