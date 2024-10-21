@@ -116,12 +116,18 @@ module.exports = configure(function (/* ctx */) {
           target: 'AppImage',
         },
         mac: {
+          entitlements: 'build/entitlements.mac.plist',
+          extendInfo: {
+            NSCameraUsageDescription:
+              "Camera access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's camera will never be accessed or used in any way by this app.",
+            NSMicrophoneUsageDescription:
+              "Microphone access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's microphone will never be accessed or used in any way by this app.",
+          },
           icon: 'icons/icon.icns',
-          // mergeASARs: false,
           publish: ['github'],
           target: {
             arch: ['universal'],
-            target: 'dmg',
+            target: 'default',
           },
         },
         nsis: {
