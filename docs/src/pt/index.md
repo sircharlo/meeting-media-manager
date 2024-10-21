@@ -23,7 +23,7 @@ features:
     details: Permite compartilhar facilmente a mídia em reuniões híbridas ou presenciais.
   - icon: 🎵
     title: Cânticos de fundo
-    details: Reproduz cânticos de fundo automaticamente. É programado para parar os cânticos automaticamente antes do início da reunião. A reprodução dos cânticos de fundo pode ser iniciada com um clique após a reunião.
+    details: Reproduz cânticos de fundo automaticamente. É programado para parar a reprodução dos cânticos automaticamente antes do início da reunião. A reprodução dos cânticos de fundo pode ser iniciada com um clique após a reunião.
   - icon: 🖥️
     title: Suporte a telas externas
     details: TV´S, projetores e monitores são detectados automaticamente para exibição de mídia.

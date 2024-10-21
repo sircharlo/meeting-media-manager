@@ -22,7 +22,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Easy-to-use pause/play/stop buttons to manage playback of media files
 - Easy background music playback, with automatic stop before the start of regularly scheduled meetings
 - Automatic external monitor recognition and management
-- OBS Studio integration
+- Utumiaji wa OBS na M3
 
 <!-- As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature. -->
 
