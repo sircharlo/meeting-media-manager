@@ -237,6 +237,11 @@ function createWindow() {
         },
         { type: 'separator' },
         {
+          accelerator: 'Alt+Shift+I',
+          click: () => mainWindow?.webContents.toggleDevTools(),
+          label: 'Open Developer Tools',
+        },
+        {
           accelerator: platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
           click: function () {
             app.quit();
