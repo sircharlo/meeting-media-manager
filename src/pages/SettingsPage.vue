@@ -61,7 +61,11 @@
             <q-item
               v-if="
                 (!item.depends ||
-                  currentSettings[item.depends as keyof SettingsItems]) &&
+                  (Array.isArray(item.depends)
+                    ? item.depends.every(
+                        (dep) => currentSettings[dep as keyof SettingsItems],
+                      )
+                    : currentSettings[item.depends as keyof SettingsItems])) &&
                 (!onlyShowInvalidSettings ||
                   !invalidSettingsLength ||
                   invalidSettings.includes(settingId as keyof SettingsItems))
@@ -99,6 +103,7 @@
                   "
                   :actions="item.actions"
                   :rules="item.rules"
+                  :setting-id="settingId"
                 />
                 <SliderInput
                   v-else-if="item.type === 'slider'"
@@ -133,6 +138,7 @@
                   "
                   :list="item.list"
                   :rules="item.rules"
+                  :setting-id="settingId"
                   :use-input="settingId.toLowerCase().includes('lang')"
                 />
                 <ShortcutInput

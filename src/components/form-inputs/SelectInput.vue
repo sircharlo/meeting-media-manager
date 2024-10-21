@@ -1,6 +1,7 @@
 <template>
   <q-select
     v-model="localValue"
+    :disable="customDisabled"
     :fill-input="useInput"
     :hide-selected="useInput"
     :options="listOptions"
@@ -46,6 +47,7 @@ const props = defineProps<{
   list?: string;
   modelValue?: string;
   rules?: SettingsItemRule[] | undefined;
+  settingId?: string;
   useInput?: boolean;
 }>();
 
@@ -58,9 +60,16 @@ watch(localValue, (newValue) => {
 const filteredJwLanguages = ref(jwLanguages.value?.list || []);
 const filteredLocaleAppLang = ref(localeOptions);
 const obsState = useObsStateStore();
-const { scenes } = storeToRefs(obsState);
+const { obsConnectionState, scenes } = storeToRefs(obsState);
 const { dateLocale } = useLocale();
 const { t } = useI18n();
+
+const customDisabled = computed(() => {
+  return (
+    props.settingId?.startsWith('obs') &&
+    obsConnectionState.value !== 'connected'
+  );
+});
 
 const filterFn = (
   val: string,

@@ -55,7 +55,7 @@ export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 
 export interface SettingsItem {
   actions?: SettingsItemAction[];
-  depends?: keyof SettingsValues;
+  depends?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   icon?: string;
   list?: string;
