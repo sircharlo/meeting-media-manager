@@ -738,7 +738,6 @@ watch(
       seenErrors.add(currentCongregation + errorVal);
     });
   },
-  { immediate: true },
 );
 
 const startDragging = () => {

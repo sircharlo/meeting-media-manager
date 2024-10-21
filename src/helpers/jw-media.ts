@@ -214,7 +214,7 @@ const fetchMedia = async () => {
       currentCongregation.value
     ]?.filter((day) => {
       return (
-        (day.meeting && !day.complete) ||
+        (day.meeting && (!day.complete || day.error)) ||
         day.dynamicMedia.some(
           (media) =>
             !media?.fileUrl || !fs.existsSync(fileUrlToPath(media?.fileUrl)),
@@ -222,6 +222,10 @@ const fetchMedia = async () => {
       );
     });
     if (meetingsToFetch.length === 0) return;
+    meetingsToFetch.forEach((day) => {
+      day.error = false;
+      day.complete = false;
+    });
     if (!queues.meetings[currentCongregation.value]) {
       queues.meetings[currentCongregation.value] = new PQueue({
         concurrency: 2,
