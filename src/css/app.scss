@@ -269,15 +269,6 @@ body.body--dark {
   color: $whiteTransparent;
 }
 
-.ellipsis-1-line {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-}
-
 .text-current-page {
   font-size: 90%;
   margin-bottom: -5px;

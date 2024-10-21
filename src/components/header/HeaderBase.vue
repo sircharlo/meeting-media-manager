@@ -18,17 +18,21 @@
           <q-icon :name="route.meta.icon as string" class="q-mr-md" size="md" />
         </div>
         <div class="col items-center">
-          <div class="row text-current-page ellipsis-1-line">
-            {{ $t(route.meta.title as string) }}
+          <div class="row text-current-page">
+            <div class="ellipsis">
+              {{ $t(route.meta.title as string) }}
+            </div>
           </div>
           <div
             v-if="!route.fullPath.includes('congregation-selector')"
-            class="row text-congregation ellipsis-1-line"
+            class="row text-congregation"
           >
-            {{
-              congregationSettings?.congregations?.[currentCongregation]
-                ?.congregationName
-            }}
+            <div class="ellipsis">
+              {{
+                congregationSettings?.congregations?.[currentCongregation]
+                  ?.congregationName
+              }}
+            </div>
           </div>
         </div>
       </div>
@@ -36,9 +40,13 @@
         <HeaderCongregation
           v-if="route.fullPath.includes('congregation-selector')"
         />
-        <HeaderCalendar v-else-if="route.fullPath.includes('/media-calendar')" />
+        <HeaderCalendar
+          v-else-if="route.fullPath.includes('/media-calendar')"
+        />
         <HeaderSettings v-else-if="route.fullPath.includes('/settings')" />
-        <HeaderWebsite v-else-if="route.fullPath.includes('/present-website')" />
+        <HeaderWebsite
+          v-else-if="route.fullPath.includes('/present-website')"
+        />
       </div>
     </div>
   </q-header>
