@@ -55,6 +55,7 @@
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "Configurez une scène dans OBS Studio pour afficher un plan large de l'estrade.",
   "configure-the-websocket-plugin-in-obs-studio-the-virtual-camera-plugin-is-also-required-so-make-sure-its-installed-and-configured-as-well": "Vous devrez configurer le plugin Websocket dans OBS Studio. Le plugin de caméra virtuelle est également requis, alors assurez-vous qu'il est installé et configuré.",
   "confirm": "Confirmer",
+  "congratulations": "Congratulations!",
   "congregation-lookup": "Recherche d'assemblée locale",
   "congregation-lookup-explain": "Entrez des mots-clés tels que le nom de votre assemblée locale ainsi que la ville ou la zone dans laquelle elle se trouve. Ces informations seront utilisées pour tenter de récupérer automatiquement l'horaire et la langue des réunions.",
   "congregationMeetings": "Réunions de l'assemblée locale",
