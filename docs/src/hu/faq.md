@@ -26,13 +26,13 @@ Kérjük, jelentse be a [problémát](https://github.com/sircharlo/meeting-media
 
 Kérjük, nyisson [megbeszélést] (https://github.com/sircharlo/meeting-media-manager/discussions) a hivatalos GitHub oldalon.
 
-## :handshake: How can I contribute some code?
+## :handshake: Hogyan tudok hozzájárulni a program kódjához?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Kérjük, tekintse meg a hivatalos GitHub-tárban található [hozzájárulási útmutatót](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md).
 
-## :x: Can I make a donation to the project?
+## :x: Adományozhatok a projekt számára?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Köszönjük az érdeklődését, hogy támogatni szeretné a projektet! Azonban a Máté 10:8-al összhangban az adományokat **nem** fogadjuk el, és a jövőben sem fogjuk. Ez az alkalmazás szeretetből és egy kis szabadidővel készült. Please enjoy! :tada:
 
 :::tip :book: Matthew 10:8
 
