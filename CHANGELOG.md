@@ -2,24 +2,39 @@
 
 ## 24.10.7
 
-### New or improved features
+### 🔧 Fixes & Enhancements
 
-- Remember media window position between sessions
-- Added developer console to allowed shortcuts
+- **fix**: Resolved a navigation style bug on initial load
+- **fix**: Moved the songbook cache setting to a better place in settings
+- **fix**: Truncate long OBS Studio scene titles
+- **fix**: Prevented issues with font caching that prevented icons from showing up in some cases where the app was offline
+- **fix**: Allowed copy-paste shortcuts to work seamlessly
+- **fix**: Import button label now displays correctly on menu buttons even with smaller windows
+- **fix**: Reverted Formkit drag-and-drop, fixing issues with file dropping into the app
+- **fix**: Minor grammar improvements and corrections in the UI
+- **fix**: Select menu values weren't displaying as expected in some cases
+- **fix**: The wrong application data directory was being used in some cases
+- **new**: Remember media window position between sessions
+- **new**: Added developer console to allowed shortcuts
 
-### Bug Fixes
+### 🛠️ Chores & Miscellaneous
 
-- Resolved a navigation style bug on initial load
-- Moved the songbook cache setting to a better place in settings
-- Truncate long OBS Studio scene titles
-- Prevented issues with font caching that prevented icons from showing up in some cases where the app was offline
-- Allowed copy-paste shortcuts to work seamlessly
-- Import button label now displays correctly on menu buttons even with smaller windows
-- Reverted Formkit drag-and-drop, fixing issues with file dropping into the app
-- Minor grammar improvements and corrections in the UI
-- Select menu values weren't displaying as expected in some cases
-- The wrong application data directory was being used in some cases
-- Fixed the issue creation link in the bug report template
+- **chore**: Updated Crowdin configuration file for better translation management
+- **chore**: Improved developer experience (DX) and updated target settings
+- **chore**: Fixed rebuild failing on Linux
+- **chore**: Re-added missing files from a previous build
+- **chore**: Migrated to a new and improved way to persist settings
+
+### 📝 Documentation & CI
+
+- **docs**: Fixed the issue creation link in the bug report template
+- **ci**: Updated Mergify configuration for automation improvements
+- **ci**: Updated Crowdin and other build-related YAML files
+- **chore**: Performed redirects on every session on docs website
+
+### 📄 Updated Files
+
+- Updated `README.md`
 
 ## 🎉 24.10.6 🚀
 
