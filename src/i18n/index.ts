@@ -60,12 +60,12 @@ localeOptions.push({
   label: 'Français',
   value: 'fr',
 }); // French
-// import hu from 'src/i18n/hu.json';
-// localeOptions.push({
-//   englishName: 'Hungarian',
-//   label: 'Magyar',
-//   value: 'hu',
-// }); // Hungarian
+import hu from 'src/i18n/hu.json';
+localeOptions.push({
+  englishName: 'Hungarian',
+  label: 'Magyar',
+  value: 'hu',
+}); // Hungarian
 // import ilo from 'src/i18n/ilo.json';
 // localeOptions.push({ englishName: 'Ilocano', label: 'Ilocano', value: 'ilo' }); // Ilocano
 import it from 'src/i18n/it.json';
@@ -179,7 +179,7 @@ export default {
   et,
   // fi,
   fr,
-  // hu,
+  hu,
   // ilo,
   it,
   // mg,
