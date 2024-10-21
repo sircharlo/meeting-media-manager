@@ -57,6 +57,9 @@ yarn build
 # Lint all JS/TS/Vue files
 yarn lint
 
+# Format all files
+yarn format
+
 # Run tests
 yarn test
 ```
@@ -96,4 +99,7 @@ yarn docs:preview
 
 # Lint all JS/TS/Vue files
 yarn lint
+
+# Format all files
+yarn format
 ```
