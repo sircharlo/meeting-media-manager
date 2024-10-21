@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
-import type { DynamicMediaObject } from 'src/types';
+// import type { DynamicMediaObject } from 'src/types';
 
-import { storeToRefs } from 'pinia';
+// import { storeToRefs } from 'pinia';
 // import { dateFromString, isInPast } from 'src/helpers/date';
-import { electronApi } from 'src/helpers/electron-api';
+// import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getAdditionalMediaPath, removeEmptyDirs } from 'src/helpers/fs';
-import { useJwStore } from 'src/stores/jw';
+// import { getAdditionalMediaPath, removeEmptyDirs } from 'src/helpers/fs';
+// import { useJwStore } from 'src/stores/jw';
 
-const { fileUrlToPath, fs, klawSync, path } = electronApi;
+// const { fileUrlToPath, fs, klawSync, path } = electronApi;
 
 const cleanLocalStorage = () => {
   // try {
@@ -22,41 +22,40 @@ const cleanLocalStorage = () => {
 
 const cleanAdditionalMediaFolder = () => {
   try {
-    const jwStore = useJwStore();
-    const { additionalMediaMaps } = storeToRefs(jwStore);
-    const additionalMediaPath = getAdditionalMediaPath();
-    if (!fs.existsSync(additionalMediaPath)) {
-      additionalMediaMaps.value = {};
-      return;
-    }
-    const flattenedFilePaths = (
-      data: Record<string, Record<string, DynamicMediaObject[]>>,
-    ) => {
-      return Object.values(data).flatMap((dateObj) =>
-        Object.values(dateObj).flatMap((files) =>
-          files.map((file) => path.resolve(fileUrlToPath(file.fileUrl))),
-        ),
-      );
-    };
-    // Check for files present on the filesystem that are not present in the additional media maps
-    const filesReferencedInAdditionalMediaMaps = flattenedFilePaths(
-      additionalMediaMaps.value,
-    );
-    const dirListing = klawSync(additionalMediaPath, { nodir: true }).map((f) =>
-      path.resolve(f.path),
-    );
-    for (const additionalMediaFilePath of dirListing) {
-      if (
-        !filesReferencedInAdditionalMediaMaps.includes(additionalMediaFilePath)
-      ) {
-        console.log(
-          'Removing orphaned file from filesystem:',
-          additionalMediaFilePath,
-        );
-        fs.rmSync(additionalMediaFilePath);
-      }
-    }
-
+    // const jwStore = useJwStore();
+    // const { additionalMediaMaps } = storeToRefs(jwStore);
+    // const additionalMediaPath = getAdditionalMediaPath();
+    // if (!fs.existsSync(additionalMediaPath)) {
+    //   additionalMediaMaps.value = {};
+    //   return;
+    // }
+    // const flattenedFilePaths = (
+    //   data: Record<string, Record<string, DynamicMediaObject[]>>,
+    // ) => {
+    //   return Object.values(data).flatMap((dateObj) =>
+    //     Object.values(dateObj).flatMap((files) =>
+    //       files.map((file) => path.resolve(fileUrlToPath(file.fileUrl))),
+    //     ),
+    //   );
+    // };
+    // // Check for files present on the filesystem that are not present in the additional media maps
+    // const filesReferencedInAdditionalMediaMaps = flattenedFilePaths(
+    //   additionalMediaMaps.value,
+    // );
+    // const dirListing = klawSync(additionalMediaPath, { nodir: true }).map((f) =>
+    //   path.resolve(f.path),
+    // );
+    // for (const additionalMediaFilePath of dirListing) {
+    //   if (
+    //     !filesReferencedInAdditionalMediaMaps.includes(additionalMediaFilePath)
+    //   ) {
+    //     console.log(
+    //       'Removing orphaned file from filesystem:',
+    //       additionalMediaFilePath,
+    //     );
+    //     fs.rmSync(additionalMediaFilePath);
+    //   }
+    // }
     // Check for files present in the additional media maps that are not present on the filesystem
     // for (const [congregation, additionalMediaMap] of Object.entries(
     //   additionalMediaMaps.value,
@@ -77,7 +76,7 @@ const cleanAdditionalMediaFolder = () => {
     //   //   }
     //   // }
     // }
-    removeEmptyDirs(additionalMediaPath);
+    // removeEmptyDirs(additionalMediaPath);
   } catch (error) {
     errorCatcher(error);
   }

@@ -16,7 +16,7 @@ import {
 } from '@electron/remote';
 import { captureMessage, setContext } from '@sentry/electron/renderer';
 import AdmZip from 'adm-zip';
-import * as sqlite3 from 'better-sqlite3';
+import BetterSqlite3 from 'better-sqlite3';
 import {
   contextBridge,
   ipcRenderer,
@@ -550,7 +550,7 @@ const electronApi: ElectronApi = {
 
       // while (attempts < maxAttempts) {
       //   if (isWritable(dbPath)) {
-      const db = sqlite3.default(dbPath, {
+      const db: BetterSqlite3.Database = new BetterSqlite3(dbPath, {
         fileMustExist: true,
         readonly: true,
       });
