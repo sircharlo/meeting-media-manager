@@ -1,41 +1,41 @@
-# Frequently Asked Questions
+# Foire aux questions
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Cette application dépend-elle de sites ou sources externes, ou d'une intervention humaine, pour télécharger les publications, médias et autre contenu pour les réunions ?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Non.** L'application M³ fonctionne de la même manière que l'application JW Library. Elle télécharge les publications, médias et autre contenu directement à partir du site JW.org officiel. L'application détermine automatiquement ce qui doit être téléchargé et quand le contenu précédemment téléchargé n'est plus à jour et devrait être re-téléchargé.
 
 :::info Note
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Le code source de cette application est disponible afin de donner à tous la possibilité de l'examiner et de vérifier ce qui se passe sous le capot.
 
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Cette application enfreint-elle les conditions d'utilisation de JW.org ?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis mine):
+**Non.** Les [conditions d'utilisation](https://www.jw.org/finder?docid=1011511\&prefer=content) autorisent en fait explicitement le type d'utilisation que nous faisons. Voici l'extrait pertinent de ces conditions :
 
-> You may not:
+> Il n’est pas permis de :
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Créer à des fins de diffusion des applications ou des techniques permettant de collecter, de copier, de télécharger, d’extraire des données, du HTML, des images ou du texte de ce site. (Cela n’interdit **pas** la diffusion d’applications gratuites et non commerciales conçues pour télécharger des fichiers électroniques depuis la partie publique du site, par exemple des fichiers EPUB, PDF, MP3 et MP4.)
 
-## :radioactive: How do I report an issue?
+## :radioactive: Comment signaler un problème ?
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Veuillez signaler le problème sur [GitHub](https://github.com/sircharlo/meeting-media-manager/issues).
 
-## :new: How can I request a new feature or enhancement?
+## :new: Comment puis-je demander une nouvelle fonctionnalité ou une amélioration ?
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Veuillez ouvrir un [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) sur GitHub.
 
-## :handshake: How can I contribute some code?
+## :handshake: Comment puis-je contribuer au code ?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Veuillez consulter le [guide de contribution](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) sur GitHub.
 
-## :x: Can I make a donation to the project?
+## :x: Puis-je faire un don pour soutenir le projet ?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Merci de votre intérêt à soutenir le projet! Cependant, dans l'esprit de Matthieu 10:8, les dons ne sont **pas** acceptés et ne le seront jamais. Cette appli a été faite avec amour et un peu de temps libre. Nous espérons que vous l'apprécierez ! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Matthieu 10:8
 
-"You received free, give free."
+"Vous avez reçu gratuitement, donnez gratuitement."
 
 :::
