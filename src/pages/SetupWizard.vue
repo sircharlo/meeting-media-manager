@@ -502,7 +502,7 @@
           :done="step > 300"
           :name="300"
           icon="mmm-congratulations"
-          :title="$('congratulations')"
+          :title="$t('congratulations')"
         >
           <!-- This icon is from the Material Design Icons collection -->
           <p class="text-subtitle1">{{ $t('m-is-now-ready-to-be-used') }}</p>
