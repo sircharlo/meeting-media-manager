@@ -1,35 +1,35 @@
-# About Meeting Media Manager (M³)
+# A Meeting Media Managerről (M³)
 
-## What is this app?
+## Mire való ez a szoftver?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+A **Meeting Media Manager**, vagy röviden **M³** egy Windows, macOS és Linux operációs rendszerekhez készült alkalmazás, amely automatikusan letölti a Jehova Tanúi gyülekezeti összejövetelein használatos képeket és videókat a JW.org-on található bármely nyelven.
 
-It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
+Támogatja a rendszeres és egyéni összejövetelek médiaanyagainak kezelését, és támogatja az azonos számítógépes fiókot használó több gyülekezet és/vagy csoport működését.
 
-:::info Note
+:::info Megjegyzés
 
-M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
+Az M³ korábban JWMMF (JW Meeting Media Fetcher) néven volt ismert, de 2022 májusában átnevezésre került.
 
 :::
 
-## What can M³ do?
+## Mit tud az M³?
 
-In short, M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+Röviden, az M³ lehetővé teszi, hogy egyszerűen és automatikusan letöltse, szinkronizálja, megossza és bemutassa az összes összejöveteli médiaanyagot.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+A **hibrid** vagy **személyes** gyülekezeti összejövetelekhez az integrált médiamegjelenítési mód minden olyan funkcióval rendelkezik, amely leegyszerűsíti a gyülekezettel való médiamegosztás feladatát, többek között:
 
-- Media thumbnails
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
+- Média miniatűrök
+- Könnyen használható szünet/lejátszás/stop gombok a médiafájlok lejátszásának kezeléséhez
+- Egyszerű háttérzene-lejátszás, automatikus leállítással a terv szerint ütemezett összejövetelek kezdete előtt
+- Automatikus külső monitorfelismerés és -kezelés
 - OBS Studio integráció
 
 <!-- As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature. -->
 
-Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.
+Tegye próbára az M³-t még ma, és győződjön meg róla, hogy mire képes! A médiatartalmak bemutatása a gyülekezeti összejöveteleken még soha nem volt ilyen egyszerű.
 
-## Does M³ work in my language?
+## Működik az M³ az én nyelvemen?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you need.
+**Igen!** Jehova Tanúi összejöveteleinek médiaanyagai automatikusan letölthetők a JW.org oldalon elérhető több száz nyelv bármelyikén. A rendelkezésre álló nyelvek listája dinamikusan frissül; Önnek csak ki kell választania, hogy melyikre van szüksége.
 
-In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Ráadásul magát az M³ programot is számos önkéntes fordította le több nyelvre; így Ön beállíthatja, hogy milyen nyelven szeretné, hogy az M³ felülete megjelenjen.

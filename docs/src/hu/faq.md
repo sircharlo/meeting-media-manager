@@ -1,38 +1,38 @@
-# Frequently Asked Questions
+# Gyakran Ismételt Kérdések
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Ez az alkalmazás külső webhelyektől, forrásoktól vagy "kurátoroktól" teszi függővé a kiadványok és az összejöveteli média letöltését?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Nem.** Az alkalmazás hasonlóan működik, mint a JW Library. Közvetlenül a JW.org hivatalos weboldaláról és annak tartalomszolgáltató hálózatáról tölti le a kiadványokat, a médiát és egyéb tartalmakat. Az alkalmazás automatikusan meghatározza, hogy mit kell letölteni, és hogy a korábban letöltött tartalom már nem aktuális, ezért azt újra le kell tölteni.
 
-:::info Note
+:::info Megjegyzés
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja és ellenőrizze, mi történik a motorháztető alatt.
 
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Ez az alkalmazás sérti a JW.org felhasználási feltételeit?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis mine):
+**Nem.** A JW.org [Felhasználási feltételek](https://www.jw.org/finder?docid=1011511\&prefer=content) kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Íme a vonatkozó részlet az említett feltételekből ( kiemelés tőlünk):
 
-> You may not:
+> Tilos:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Terjesztési céllal olyan szoftveralkalmazást készíteni, eszközt vagy módszert alkalmazni, amelynek célja kifejezetten a honlapon található adatok, HTML-állományok, képek vagy szövegek gyűjtése, másolása, kinyerése, lehalászása vagy letapogatása. (Ez a tilalom **nem** vonatkozik azon ingyenes, nem kereskedelmi célú alkalmazások terjesztésére, melyek célja elektronikus fájlok [pl. EPUB, PDF, MP3 és MP4 fájlok] letöltése a honlap nyilvánosan elérhető részéről.)
 
-## :radioactive: How do I report an issue?
+## :radioactive: Hogyan jelenthetek be egy problémát?
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Kérjük, jelentse be a [problémát](https://github.com/sircharlo/meeting-media-manager/issues) a hivatalos GitHub oldalon.
 
-## :new: How can I request a new feature or enhancement?
+## :new: Hogyan kérhetek új funkciót vagy továbbfejlesztést?
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Kérjük, nyisson [megbeszélést] (https://github.com/sircharlo/meeting-media-manager/discussions) a hivatalos GitHub oldalon.
 
-## :handshake: How can I contribute some code?
+## :handshake: Hogyan tudok hozzájárulni a program kódjához?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Kérjük, tekintse meg a hivatalos GitHub-tárban található [hozzájárulási útmutatót](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md).
 
-## :x: Can I make a donation to the project?
+## :x: Adományozhatok a projekt számára?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Köszönjük az érdeklődését, hogy támogatni szeretné a projektet! Azonban a Máté 10:8-al összhangban az adományokat **nem** fogadjuk el, és a jövőben sem fogjuk. Ez az alkalmazás szeretetből és egy kis szabadidővel készült. Please enjoy! :tada:
 
 :::tip :book: Matthew 10:8
 

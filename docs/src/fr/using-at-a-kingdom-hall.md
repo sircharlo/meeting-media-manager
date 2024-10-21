@@ -1,86 +1,84 @@
-# Using M³ at a Kingdom Hall
+# Utiliser M³ dans une salle du Royaume
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Ce guide vous guidera dans le processus de téléchargement, d'installation et de configuration de **Meeting Media Manager (M³)** dans une salle du Royaume. Suivez les étapes suivantes pour assurer une configuration optimale pour la gestion des médias pendant les réunions de l'assemblée locale.
 
-## 1. Download and install
+## 1. Téléchargement et installation
 
-1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system (Windows, macOS, or Linux).
-3. Open the installer and follow the on-screen instructions to install M³.
-4. Launch M³.
-5. Go through the configuration wizard.
+1. Visitez la [page de téléchargement de M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
+2. Téléchargez la version appropriée pour votre système d'exploitation (Windows, macOS ou Linux).
+3. Ouvrez le programme d'installation et suivez les instructions à l'écran pour installer M³.
+4. Lancez M³.
+5. Parcourez l'assistant de configuration.
 
-## 2) 2) Configuration wizard
+## 2) Assistant de configuration
 
-### App display language
+### Langue d'affichage
 
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
+Lors du premier lancement de M³, vous serez invité à choisir votre **langue d'affichage** désirée. Choisissez la langue que vous voulez que M³ utilise pour son interface.
 
-:::tip Tip
+:::tip Astuce
 
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+Ce n'est pas nécessairement la même langue que celle dans laquelle M³ va télécharger les médias. La langue pour les téléchargements de médias est configurée ultérieurement.
 
 :::
 
 ### Type de profil
 
-The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+L'étape suivante est de choisir un **type de profil**. Pour une installation régulière dans une salle du Royaume, choisissez **Régulier**. Cela configurera de nombreuses fonctionnalités qui sont couramment utilisées pour les réunions d'assemblées locales.
 
 :::warning Avertissement
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Vous ne devriez choisir **Autre** que si vous créez un profil pour lequel aucun média ne devrait être automatiquement téléchargé. Les médias devront être importés manuellement pour être utilisés dans ce profil. Ce type de profil est principalement utilisé pour utiliser M³ lors d'écoles théocratiques, des assemblées et d'autres événements spéciaux.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Le type de profil **Autre** est rarement utilisé. **Pour une utilisation normale lors des réunions d'assemblée locale, veuillez choisir _Régulier_.**
+
 :::
 
-:::
+### Recherche automatique d'assemblée locale
 
-### Automatic congregation lookup
+M³ peut tenter de trouver automatiquement le calendrier des réunions, la langue utilisée et le nom de votre assemblée locale.
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+Pour ce faire, utilisez le bouton **Recherche d'assemblée locale** à côté du champ de nom de l'assemblée. Entrez au moins une partie du nom et de la ville de l'assemblée.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
-
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Une fois que l'assemblée désirée est trouvée et sélectionnée, M³ préremplira toutes les informations disponibles, comme le **nom** de votre assemblée, la **langue des réunions**, et les **jours et heures des réunions**.
 
 :::info Note
 
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
+Cette recherche utilise des données publiques disponibles sur le site officiel des Témoins de Jéhovah.
 
 :::
 
-### Manual entry of congregation information
+### Saisie manuelle des informations de l'assemblée
 
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Si la recherche automatique n'a pas trouvé votre assemblée locale, vous pouvez bien sûr entrer manuellement les informations requises. L'assistant vous permettra de réviser et/ou d'entrer le **nom** de votre assemblée locale, la **langue des réunions**, et les **jours et heures des réunions**.
 
-### Caching videos from the songbook
+### Mise en cache des cantiques en format vidéo
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Vous aurez également la possibilité de **mettre en cache toutes les vidéos des cantiques**. Cette option pré-télécharge toutes les vidéos pour les cantiques, réduisant ainsi le temps nécessaire pour récupérer les médias pour les réunions à l'avenir.
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
+- **Avantages :** Les médias de réunion seront disponibles beaucoup plus rapidement.
+- **Désavantages :** La taille du cache multimédia augmentera significativement, d’environ 5 Go.
 
-:::tip Tip
+:::tip Astuce
 
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
-
-:::
-
-### OBS Studio Integration Configuration (Optional)
-
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
-
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
-
-:::tip Tip
-
-::: tip Tip
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Si l'ordinateur de votre salle de Royaume a suffisamment d'espace de stockage, il est recommandé **d'activer** cette option, question de performances.
 
 :::
 
-## 3. Enjoy using M³
+### Configuration de l’intégration avec OBS Studio (facultatif)
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Si votre salle de Royaume utilise **OBS Studio** pour diffuser les réunions sur Zoom, M³ peut automatiquement s'intégrer avec ce programme. Lors du paramétrage initial, vous pouvez configurer l'intégration avec OBS Studio en entrant ce qui suit :
+
+- **Port :** Le numéro de port utilisé pour se connecter au plugin Websocket d'OBS Studio.
+- **Mot de passe :** Le mot de passe utilisé pour se connecter au plugin Websocket d'OBS Studio.
+- **Scènes :** Les scènes de OBS Studio qui seront utilisées lors de présentations des médias. Vous aurez besoin d'une scène qui capture la fenêtre ou l'écran où les médias s'affichent, et d'une scène qui montre l'estrade.
+
+:::tip Astuce
+
+Si votre assemblée locale tient régulièrement des réunions hybrides, il est **fortement recommandé** d'activer l'intégration avec OBS Studio.
+
+:::
+
+## 3. Amusez-vous avec M³
+
+Une fois l'assistant d'installation terminé, M³ est prêt à vous aider à gérer et à présenter les médias pour les réunions d'assemblée locale. Profitez bien de l'application ! :tada:

@@ -42,7 +42,7 @@ Ehhez használja a **Gyülekezet keresése** gombot a gyülekezet neve mező mel
 
 Ha megtalálta és kiválasztotta a megfelelő gyülekezetet, az M³ előre kitölti az összes rendelkezésre álló információt, például a gyülekezet **nevét**, **az összejövetelek nyelvét** és **az összejövetelek napját és időpontját**.
 
-:::info Note
+:::info Megjegyzés
 
 Ez a lekérdezés Jehova Tanúi hivatalos honlapjának nyilvánosan elérhető adatait használja.
 
