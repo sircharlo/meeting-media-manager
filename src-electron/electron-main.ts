@@ -12,6 +12,8 @@ import { join } from 'upath';
 import pkg from '../package.json';
 import { errorCatcher } from './utils';
 
+const devMode = process.env.NODE_ENV === 'development';
+
 init({
   dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',
   release: packageInfo.version,
@@ -24,7 +26,7 @@ try {
   updatesDisabled = existsSync(
     path.join(
       app.getPath('appData'),
-      pkg.productName,
+      devMode ? 'Electron' : pkg.productName,
       'Global Preferences',
       'disable-updates',
     ),

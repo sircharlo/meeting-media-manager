@@ -124,8 +124,7 @@ const appSettings = useAppSettingsStore();
 const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
 
-import pkg from './../../package.json';
-if (!migrations.value?.includes('localStorageToPiniaPersist') || pkg.version === '24.10.7') {
+if (!migrations.value?.includes('localStorageToPiniaPersist')) {
   runMigration('localStorageToPiniaPersist');
 }
 

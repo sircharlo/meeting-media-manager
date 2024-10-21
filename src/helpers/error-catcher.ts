@@ -3,6 +3,8 @@ import type { SettingsValues } from 'src/types';
 import * as Sentry from '@sentry/vue';
 import { extend } from 'quasar';
 
+const devMode = process.env.NODE_ENV === 'development';
+
 const errorCatcher = async (originalError: Error | string | unknown) => {
   if (!originalError) return;
   const currentSettingsSnapshot = {} as SettingsValues;
@@ -18,7 +20,7 @@ const errorCatcher = async (originalError: Error | string | unknown) => {
   } catch (error) {
     console.error(error);
   }
-  if (process.env.NODE_ENV === 'production') {
+  if (!devMode) {
     if (Object.keys(currentSettingsSnapshot).length)
       Sentry.setContext('currentSettings', currentSettingsSnapshot);
     Sentry.captureException(originalError);
