@@ -129,9 +129,9 @@ const listOptions = computed(() => {
         });
     } else if (props.list === 'darkModes') {
       return [
-        { label: ref(t('automatic')), value: 'auto' },
-        { label: ref(t('dark')), value: true },
-        { label: ref(t('light')), value: false },
+        { label: t('automatic'), value: 'auto' },
+        { label: t('dark'), value: true },
+        { label: t('light'), value: false },
       ];
     } else if (props.list === 'resolutions') {
       return [
