@@ -107,7 +107,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         appId: 'sircharlo.meeting-media-manager',
         // eslint-disable-next-line no-template-curly-in-string
-        artifactName: 'meeting-media-manager-${version}.${ext}',
+        artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
