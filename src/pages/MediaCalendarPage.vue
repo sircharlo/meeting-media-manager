@@ -18,139 +18,151 @@
     @dragstart="dropActive"
     @drop="dropEnd"
   >
-    <div
-      v-if="
-        (currentSettings?.disableMediaFetching &&
-          sortableAdditionalMediaItems?.length < 1) ||
-        (!currentSettings?.disableMediaFetching &&
-          ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
-            !(
-              sortableAdditionalMediaItems?.length ||
-              sortableWtMediaItems?.length ||
-              sortableTgwMediaItems?.length ||
-              sortableAyfmMediaItems?.length ||
-              sortableLacMediaItems?.length ||
-              sortableCircuitOverseerMediaItems?.length
-            )))
-      "
-      class="col content-center q-py-xl"
-    >
+    <div class="col">
       <div
         v-if="
-          !currentSettings?.disableMediaFetching ||
-          sortableAdditionalMediaItems?.length < 1
+          selectedDateObject?.meeting === 'we' &&
+          selectedDateObject?.complete &&
+          !sortableAdditionalMediaItems?.length
         "
-        class="row justify-center"
+        class="row"
       >
-        <div class="col-6 text-center">
-          <div class="row items-center justify-center q-my-lg">
-            <q-spinner
-              v-if="
-                !currentSettings?.disableMediaFetching &&
-                selectedDateObject?.meeting &&
-                !selectedDateObject?.complete &&
-                !selectedDateObject?.error
-              "
-              color="primary"
-              size="lg"
-            />
-            <q-img
-              v-else
-              fit="contain"
-              src="images/no-media.svg"
-              style="max-height: 30vh"
-            />
-          </div>
-          <div
-            class="row items-center justify-center text-subtitle1 text-semibold"
-          >
-            {{
-              !selectedDate
-                ? $t('noDateSelected')
-                : !currentSettings?.disableMediaFetching &&
-                    selectedDateObject?.meeting &&
-                    !selectedDateObject?.error
-                  ? $t('please-wait')
-                  : $t('there-are-no-media-items-for-the-selected-date')
-            }}
-          </div>
-          <div class="row items-center justify-center text-center">
-            {{
-              !selectedDate
-                ? $t('select-a-date-to-begin')
-                : !currentSettings?.disableMediaFetching &&
-                    selectedDateObject?.meeting &&
-                    !selectedDateObject?.error
-                  ? $t('currently-loading')
-                  : $t(
-                      'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
-                    )
-            }}
-          </div>
+        <q-banner
+          class="bg-additional text-white full-width"
+          inline-actions
+          rounded
+        >
+          {{ $t('dont-forget-add-opening-song') }}
+          <template #avatar>
+            <q-avatar class="bg-white text-additional" size="lg">
+              <q-icon name="mmm-music-note" size="sm" />
+            </q-avatar>
+          </template>
+          <template #action>
+            <q-btn flat @click="addOpeningSong()">
+              {{ $t('add-an-opening-song') }}
+            </q-btn>
+          </template>
+        </q-banner>
+      </div>
+      <div
+        v-if="
+          selectedDateObject?.meeting &&
+          !sortableCircuitOverseerMediaItems?.length &&
+          coWeek
+        "
+        class="row"
+      >
+        <q-banner
+          class="bg-additional text-white full-width"
+          inline-actions
+          rounded
+        >
+          {{ $t('dont-forget-add-circuit-overseer-media') }}
+          <template #avatar>
+            <q-avatar class="bg-white text-additional jw-icon" size="lg">
+              
+            </q-avatar>
+          </template>
+          <template #action>
+            <q-btn flat @click="openImportMenu()">
+              {{ $t('add-missing-media') }}
+            </q-btn>
+          </template>
+        </q-banner>
+      </div>
+      <div
+        v-if="
+          (currentSettings?.disableMediaFetching &&
+            sortableAdditionalMediaItems?.length < 1) ||
+          (!currentSettings?.disableMediaFetching &&
+            ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
+              !(
+                sortableAdditionalMediaItems?.length ||
+                sortableWtMediaItems?.length ||
+                sortableTgwMediaItems?.length ||
+                sortableAyfmMediaItems?.length ||
+                sortableLacMediaItems?.length ||
+                sortableCircuitOverseerMediaItems?.length
+              )))
+        "
+        class="row"
+      >
+        <div class="col content-center q-py-xl">
           <div
             v-if="
-              currentSettings?.disableMediaFetching ||
-              !selectedDateObject?.meeting ||
-              selectedDateObject?.error
+              !currentSettings?.disableMediaFetching ||
+              sortableAdditionalMediaItems?.length < 1
             "
-            class="row items-center justify-center q-mt-lg q-gutter-md"
+            class="row justify-center"
           >
-            <q-btn color="primary" outline @click="goToNextDayWithMedia()">
-              <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
-              {{ $t('next-day-with-media') }}
-            </q-btn>
-            <q-btn color="primary" @click="openImportMenu()">
-              <q-icon class="q-mr-sm" name="mmm-import-media" size="xs" />
-              {{ $t('import-media') }}
-            </q-btn>
+            <div class="col-6 text-center">
+              <div class="row items-center justify-center q-my-lg">
+                <q-spinner
+                  v-if="
+                    !currentSettings?.disableMediaFetching &&
+                    selectedDateObject?.meeting &&
+                    !selectedDateObject?.complete &&
+                    !selectedDateObject?.error
+                  "
+                  color="primary"
+                  size="lg"
+                />
+                <q-img
+                  v-else
+                  fit="contain"
+                  src="images/no-media.svg"
+                  style="max-height: 30vh"
+                />
+              </div>
+              <div
+                class="row items-center justify-center text-subtitle1 text-semibold"
+              >
+                {{
+                  !selectedDate
+                    ? $t('noDateSelected')
+                    : !currentSettings?.disableMediaFetching &&
+                        selectedDateObject?.meeting &&
+                        !selectedDateObject?.error
+                      ? $t('please-wait')
+                      : $t('there-are-no-media-items-for-the-selected-date')
+                }}
+              </div>
+              <div class="row items-center justify-center text-center">
+                {{
+                  !selectedDate
+                    ? $t('select-a-date-to-begin')
+                    : !currentSettings?.disableMediaFetching &&
+                        selectedDateObject?.meeting &&
+                        !selectedDateObject?.error
+                      ? $t('currently-loading')
+                      : $t(
+                          'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
+                        )
+                }}
+              </div>
+              <div
+                v-if="
+                  currentSettings?.disableMediaFetching ||
+                  !selectedDateObject?.meeting ||
+                  selectedDateObject?.error
+                "
+                class="row items-center justify-center q-mt-lg q-gutter-md"
+              >
+                <q-btn color="primary" outline @click="goToNextDayWithMedia()">
+                  <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
+                  {{ $t('next-day-with-media') }}
+                </q-btn>
+                <q-btn color="primary" @click="openImportMenu()">
+                  <q-icon class="q-mr-sm" name="mmm-import-media" size="xs" />
+                  {{ $t('import-media') }}
+                </q-btn>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <q-banner
-      v-if="
-        selectedDateObject?.meeting === 'we' &&
-        selectedDateObject?.complete &&
-        !sortableAdditionalMediaItems?.length
-      "
-      class="bg-additional text-white"
-      inline-actions
-      rounded
-    >
-      {{ $t('dont-forget-add-opening-song') }}
-      <template #avatar>
-        <q-avatar class="bg-white text-additional" size="lg">
-          <q-icon name="mmm-music-note" size="sm" />
-        </q-avatar>
-      </template>
-      <template #action>
-        <q-btn flat @click="addOpeningSong()">
-          {{ $t('add-an-opening-song') }}
-        </q-btn>
-      </template>
-    </q-banner>
-    <q-banner
-      v-if="
-        selectedDateObject?.meeting &&
-        !sortableCircuitOverseerMediaItems?.length &&
-        coWeek
-      "
-      class="bg-additional text-white"
-      inline-actions
-      rounded
-    >
-      {{ $t('dont-forget-add-circuit-overseer-media') }}
-      <template #avatar>
-        <q-avatar class="bg-white text-additional jw-icon" size="lg">
-          
-        </q-avatar>
-      </template>
-      <template #action>
-        <q-btn flat @click="openImportMenu()">
-          {{ $t('add-missing-media') }}
-        </q-btn>
-      </template>
-    </q-banner>
     <q-list
       v-show="sortableAdditionalMediaItems?.length"
       class="media-section additional"
