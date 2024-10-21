@@ -10,7 +10,7 @@ import { getLanguages, getYeartext } from 'boot/axios';
 import { defineStore, storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import sanitizeHtml from 'sanitize-html';
-import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { findBestResolution, getPubMediaLinks } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -222,7 +222,26 @@ export const useJwStore = defineStore('jw-store', {
       }
     },
   },
-  persist: true,
+  persist: {
+    afterHydrate: (ctx) => {
+      // Convert date strings to Date objects in state
+      if (ctx.store.$state.jwLanguages.updated)
+        ctx.store.$state.jwLanguages.updated = dateFromString(
+          ctx.store.$state.jwLanguages.updated,
+        );
+      if (ctx.store.$state.jwSongs.updated)
+        ctx.store.$state.jwSongs.updated = dateFromString(
+          ctx.store.$state.jwSongs.updated,
+        );
+      Object.entries(
+        ctx.store.$state.lookupPeriod as Record<string, DateInfo[]>,
+      ).forEach(([, period]) => {
+        period.forEach((day: { date: Date | string }) => {
+          if (day.date) day.date = dateFromString(day.date);
+        });
+      });
+    },
+  },
   state: () => {
     return {
       additionalMediaMaps: {} as Record<

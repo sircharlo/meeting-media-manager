@@ -116,38 +116,9 @@
   },
   "i18n-ally.extract.autoDetect": true,
   "i18n-ally.extract.ignoredByFiles": {
-    "src\\components\\media\\MusicButton.vue": [
-      "musicPlaying ? musicRemainingTime : ''"
-    ],
-    "src\\pages\\MediaPlayerPage.vue": [""],
-    "src\\pages\\MediaCalendarPage.vue": [
-      "&\n                      customDurations[currentCongregation][selectedDate][\n                        media.uniqueId\n                      ].max) ||\n                      media.duration,\n                  )\n                }}\n              "
-    ],
-    "src\\layouts\\MainLayout.vue": [
-      "\n          {{\n            (!route.fullPath.includes('wizard') "
-    ],
     "src\\layouts\\MediaPlayerLayout.vue": ["Media Player Window"]
   },
-  "i18n-ally.extract.ignored": [
-    "&\n                    (customDurations[currentCongregation][selectedDate][\n                      media.uniqueId\n                    ].min > 0 ||\n                      customDurations[currentCongregation][selectedDate][\n                        media.uniqueId\n                      ].max ",
-    "&\n                    formatTime(\n                      customDurations[currentCongregation][selectedDate][\n                        media.uniqueId\n                      ].min,\n                    ) + ' - ') ||\n                    '') +\n                  formatTime(\n                    (customDurations[currentCongregation][selectedDate][\n                      media.uniqueId\n                    ] ",
-    "&\n                    formatTime(\n                      customDurations[currentCongregation][selectedDate][\n                        media.uniqueId\n                      ].min,\n                    ) + ' - ') ||\n                    '') +\n                  formatTime(\n                    (customDurations[currentCongregation][selectedDate][\n                      media.uniqueId\n                    ] ",
-    "\n                {{\n                  ((customDurations[currentCongregation][selectedDate][\n                    media.uniqueId\n                  ] ",
-    "\n                {{\n                  ((customDurations[currentCongregation][selectedDate][\n                    media.uniqueId\n                  ] ",
-    "< media.duration) ",
-    "< media.duration) ",
-    "&",
-    "bg-blue-2 text-grey-10",
-    " | ",
-    "SELECT * FROM Multimedia;",
-    "PRAGMA table_info(DocumentMultimedia);",
-    "SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;",
-    "\n          {{\n            (!route.fullPath.includes('wizard') ",
-    "&\n              currentSettings.congregationName) ||\n            $t('titles.profileSelection')\n          }}\n        ",
-    "&\n              currentSettings.congregationName) ||\n            $t('titles.profileSelection')\n          }}\n        ",
-    "&\n              currentSettings ",
-    "Meeting Media Manager"
-  ],
+  "i18n-ally.extract.ignored": ["Meeting Media Manager"],
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
   },

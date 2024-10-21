@@ -336,27 +336,6 @@ screen.on('display-removed', () => {
   moveMediaWindow();
 });
 
-// const isWritable = (filePath: fs.PathLike) => {
-//   let fileAccess = false;
-//   try {
-//     if (fs.existsSync(filePath)) {
-//       fs.closeSync(fs.openSync(filePath, 'r+'));
-//       fileAccess = true;
-//     }
-//   } catch (err) {
-//     errorCatcher('can not open file:' + filePath);
-//     errorCatcher(err);
-//   }
-//   return fileAccess;
-// };
-
-// function sleepSync(ms: number) {
-//   const start = Date.now();
-//   while (Date.now() - start < ms) {
-//     // Busy wait
-//   }
-// }
-
 const toggleMediaWindow = (action: string) => {
   const mediaWindow = getMediaWindow();
   if (!mediaWindow) return;

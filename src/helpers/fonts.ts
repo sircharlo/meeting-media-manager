@@ -30,7 +30,6 @@ const getLocalFontPath = async (fontName: string) => {
       fontPath,
     );
   }
-  console.debug('fs.existsSync(fontPath)', fs.existsSync(fontPath));
   return fontPath;
 };
 

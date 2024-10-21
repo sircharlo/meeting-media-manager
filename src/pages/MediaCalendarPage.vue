@@ -1201,7 +1201,6 @@ const openImportMenu = () => {
 };
 
 const dropActive = (event: DragEvent) => {
-  console.debug('dropActive', event);
   event.preventDefault();
   event.stopPropagation();
   if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
@@ -1209,7 +1208,6 @@ const dropActive = (event: DragEvent) => {
   }
 };
 const dropEnd = (event: DragEvent) => {
-  console.debug('dropEnd', event);
   event.preventDefault();
   event.stopPropagation();
   try {
