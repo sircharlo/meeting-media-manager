@@ -10,53 +10,72 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         component: () => import('pages/CongregationSelectorPage.vue'),
+        name: 'congregation-selector',
         path: '',
       },
     ],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-groups', title: 'titles.profileSelection' },
-    name: 'congregation-selector',
     path: '/congregation-selector',
   },
   {
     children: [
-      { component: () => import('pages/MediaCalendarPage.vue'), path: '' },
+      {
+        component: () => import('pages/MediaCalendarPage.vue'),
+        name: 'media-calendar',
+        path: '',
+      },
     ],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-media', title: 'titles.meetingMedia' },
-    name: 'media-calendar',
     path: '/media-calendar/:typeOfLoad?',
   },
   {
     children: [
-      { component: () => import('pages/PresentWebsite.vue'), path: '' },
+      {
+        component: () => import('pages/PresentWebsite.vue'),
+        name: 'present-website',
+        path: '',
+      },
     ],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-open-web', title: 'titles.presentWebsite' },
-    name: 'present-website',
     path: '/present-website',
   },
   {
     children: [
-      { component: () => import('pages/MediaPlayerPage.vue'), path: '' },
+      {
+        component: () => import('pages/MediaPlayerPage.vue'),
+        name: 'media-player',
+        path: '',
+      },
     ],
     component: () => import('layouts/MediaPlayerLayout.vue'),
     meta: { title: 'titles.mediaPlayer' },
-    name: 'media-player',
     path: '/media-player',
   },
   {
-    children: [{ component: () => import('pages/SetupWizard.vue'), path: '' }],
+    children: [
+      {
+        component: () => import('pages/SetupWizard.vue'),
+        name: 'setup-wizard',
+        path: '',
+      },
+    ],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-configuration', title: 'setup-wizard' },
-    name: 'setup-wizard',
     path: '/setup-wizard',
   },
   {
-    children: [{ component: () => import('pages/SettingsPage.vue'), path: '' }],
+    children: [
+      {
+        component: () => import('pages/SettingsPage.vue'),
+        name: 'settings',
+        path: '',
+      },
+    ],
     component: () => import('layouts/MainLayout.vue'),
     meta: { icon: 'mmm-settings', title: 'titles.settings' },
-    name: 'settings',
     path: '/settings/:setting?',
   },
 

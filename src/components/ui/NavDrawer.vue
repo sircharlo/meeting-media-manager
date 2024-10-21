@@ -27,7 +27,11 @@
     </q-item>
     <q-item
       v-ripple
-      :class="route.path.startsWith('/media-calendar') ? 'bg-accent-100 text-primary blue-bar ' : ''"
+      :class="
+        route.path.startsWith('/media-calendar')
+          ? 'bg-accent-100 text-primary blue-bar '
+          : ''
+      "
       :disable="!currentSettings || invalidSettings()"
       :to="{ path: '/media-calendar' }"
       clickable
@@ -73,7 +77,7 @@
     <q-item
       v-ripple
       :disable="mediaPlaying"
-      :to="{ path: '/congregation-selector'}"
+      :to="{ path: '/congregation-selector' }"
       active-class="bg-accent-100 text-primary blue-bar"
       clickable
     >
