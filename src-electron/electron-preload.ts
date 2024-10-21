@@ -30,6 +30,7 @@ import os from 'os';
 import { FULL_HD } from 'src/helpers/converters';
 import path from 'upath';
 
+import pkg from '../package.json';
 import { errorCatcher, throttle } from './utils';
 
 const getMainWindow = () =>
@@ -261,7 +262,8 @@ const setWindowPosition = (
   }
 };
 
-const getUserDataPath = () => app.getPath('userData');
+const getUserDataPath = () =>
+  path.join(app.getPath('appData'), pkg.productName);
 
 const moveMediaWindow = (
   targetScreenNumber?: number,

@@ -129,7 +129,7 @@ module.exports = configure(function (/* ctx */) {
           artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
           oneClick: false,
         },
-        productName: 'Meeting Media Manager',
+        productName: 'Meeting Media Manager', // don't delete this or the productName in package.json; needed for app directory name
         win: {
           // asar: false,
           icon: 'icons/icon.ico',

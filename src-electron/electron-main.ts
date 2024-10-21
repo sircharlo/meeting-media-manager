@@ -9,6 +9,7 @@ import os from 'os';
 import path from 'path';
 import { join } from 'upath';
 
+import pkg from '../package.json';
 import { errorCatcher } from './utils';
 
 init({
@@ -21,7 +22,12 @@ initialize();
 let updatesDisabled = false;
 try {
   updatesDisabled = existsSync(
-    path.join(app.getPath('userData'), 'Global Preferences', 'disable-updates'),
+    path.join(
+      app.getPath('appData'),
+      pkg.productName,
+      'Global Preferences',
+      'disable-updates',
+    ),
   );
 } catch (err) {
   console.error(err);
@@ -173,7 +179,8 @@ function createWindow() {
 
   try {
     const windowStateFilePath = join(
-      app.getPath('userData'),
+      app.getPath('appData'),
+      pkg.productName,
       'window-state.json',
     );
 
