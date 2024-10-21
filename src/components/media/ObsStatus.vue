@@ -94,7 +94,15 @@
             </div>
             <div class="row items-center q-col-gutter-sm q-mb-md">
               <template v-for="scene in additionalScenes" :key="scene">
-                <div class="col-4">
+                <div
+                  :class="
+                    additionalScenes.length === 1
+                      ? 'col-12'
+                      : additionalScenes.length === 2
+                        ? 'col-6'
+                        : 'col-4'
+                  "
+                >
                   <q-btn
                     :outline="scene !== currentScene"
                     class="full-width"
