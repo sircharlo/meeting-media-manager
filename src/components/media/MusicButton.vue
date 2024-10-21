@@ -119,7 +119,12 @@
       </q-card>
     </q-dialog>
   </q-btn>
-  <audio ref="musicPlayer" style="display: none" />
+  <audio
+    ref="musicPlayer"
+    style="display: none"
+    @ended="musicEnded"
+    @timeupdate="updateRemainingTime"
+  />
 </template>
 
 <script setup lang="ts">
@@ -359,45 +364,48 @@ async function playMusic() {
       .finally(() => {
         musicStarting.value = false;
       });
-    musicPlayer.value.onended = async () => {
-      if (!musicPlayer.value || !musicPlayerSource.value) return;
-      const { nextSongUrl } = await getNextSong();
-      if (!nextSongUrl) return;
-      musicPlayerSource.value.src = nextSongUrl;
-      musicPlayer.value.load();
-      musicPlayer.value.play().catch((error: Error) => {
-        if (
-          !error.message.includes('removed from the document') &&
-          !error.message.includes('new load request')
-        )
-          errorCatcher(error);
-      });
-    };
-    musicPlayer.value.ontimeupdate = () => {
-      try {
-        if (!musicPlayer.value) return;
-        const remainingTime = Math.floor(
-          musicPlayer.value.duration - musicPlayer.value.currentTime,
-        );
-        currentSongRemainingTime.value = formatTime(remainingTime);
-        const timeBeforeMeeting = remainingTimeBeforeMeetingStart();
-        if (timeBeforeMeeting > 0 && !musicStoppedAutomatically.value) {
-          timeRemainingBeforeMusicStop.value = timeBeforeMeeting - 60;
-          if (timeRemainingBeforeMusicStop.value <= 0 && !musicStopping.value) {
-            stopMusic();
-            musicStoppedAutomatically.value = true;
-          }
-        }
-      } catch (error) {
-        errorCatcher(error);
-      }
-    };
   } catch (error) {
     errorCatcher(error);
   } finally {
     musicStarting.value = false;
   }
 }
+
+const musicEnded = async () => {
+  if (!musicPlayer.value || !musicPlayerSource.value || musicStopping.value)
+    return;
+  const { nextSongUrl } = await getNextSong();
+  if (!nextSongUrl) return;
+  musicPlayerSource.value.src = nextSongUrl;
+  musicPlayer.value.load();
+  musicPlayer.value.play().catch((error: Error) => {
+    if (
+      !error.message.includes('removed from the document') &&
+      !error.message.includes('new load request')
+    )
+      errorCatcher(error);
+  });
+};
+
+const updateRemainingTime = () => {
+  try {
+    if (!musicPlayer.value) return;
+    const remainingTime = Math.floor(
+      musicPlayer.value.duration - musicPlayer.value.currentTime,
+    );
+    currentSongRemainingTime.value = formatTime(remainingTime);
+    const timeBeforeMeeting = remainingTimeBeforeMeetingStart();
+    if (timeBeforeMeeting > 0 && !musicStoppedAutomatically.value) {
+      timeRemainingBeforeMusicStop.value = timeBeforeMeeting - 60;
+      if (timeRemainingBeforeMusicStop.value <= 0 && !musicStopping.value) {
+        stopMusic();
+        musicStoppedAutomatically.value = true;
+      }
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
 
 const meetingDay = ref(false);
 
