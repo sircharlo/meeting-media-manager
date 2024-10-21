@@ -55,6 +55,7 @@
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "Konfigurera en scen i OBS Studio för att visa en stor scenbild.",
   "configure-the-websocket-plugin-in-obs-studio-the-virtual-camera-plugin-is-also-required-so-make-sure-its-installed-and-configured-as-well": "Du måste konfigurera Websocket plugin i OBS Studio. Virtual Camera plugin krävs också, så se till att den är installerad och konfigurerad.",
   "confirm": "Bekräfta",
+  "congratulations": "Congratulations!",
   "congregation-lookup": "Församlingssök",
   "congregation-lookup-explain": "Ange sökord såsom församlingens namn samt den stad eller det område där den är belägen. Denna information kommer att användas för att försöka automatiskt hämta mötesprogrammet och språk.",
   "congregationMeetings": "Församlingsmöten",
