@@ -72,13 +72,15 @@
                     class="q-mr-sm"
                     size="xs"
                   />
-                  {{
-                    scene === currentSettings?.obsCameraScene
-                      ? $t('speaker')
-                      : scene === currentSettings?.obsMediaScene
-                        ? $t('media-only')
-                        : $t('picture-in-picture')
-                  }}
+                  <div class="ellipsis">
+                    {{
+                      scene === currentSettings?.obsCameraScene
+                        ? $t('speaker')
+                        : scene === currentSettings?.obsMediaScene
+                          ? $t('media-only')
+                          : $t('picture-in-picture')
+                    }}
+                  </div>
                 </q-btn>
               </div>
             </template>
@@ -100,11 +102,13 @@
                     unelevated
                     @click="setObsScene(undefined, scene as string)"
                   >
-                    {{
-                      isUUID(scene)
-                        ? scenes.find((s) => s.sceneUuid === scene)?.sceneName
-                        : scene
-                    }}
+                    <div class="ellipsis">
+                      {{
+                        isUUID(scene)
+                          ? scenes.find((s) => s.sceneUuid === scene)?.sceneName
+                          : scene
+                      }}
+                    </div>
                   </q-btn>
                 </div>
               </template>
@@ -194,7 +198,8 @@ const obsConnect = async (setup?: boolean) => {
           break;
         }
       } catch (err) {
-        obsErrorHandler(err);
+        if (err instanceof OBSWebSocketError) obsErrorHandler(err);
+        else errorCatcher(err);
       } finally {
         attempt++;
         if (attempt < maxAttempts) {
