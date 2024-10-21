@@ -67,15 +67,15 @@ Ha a Királyság-terem számítógépe elegendő tárhellyel rendelkezik, akkor 
 
 ### OBS Studio integráció konfigurálása (opcionális)
 
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
+Ha az Ön Királyság-terme **OBS Studio**-t használ a hibrid összejövetelek Zoom-on keresztüli közvetítésére, akkor az M³ automatikusan integrálható ezzel a programmal. A beállítás során a következő adatok megadásával konfigurálhatja az OBS Studio integrációját:
 
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- **Port:** Az OBS Studio Websocket bővítményhez történő csatlakozáshoz használt portszám.
+- **Jelszó:** Az OBS Studio Websocket bővítményhez történő csatlakozáshoz használt jelszó.
+- **Jelenetek:** Az OBS jelenetek, amelyeket a média bemutatásakor fognak használni. Szüksége lesz egy jelenetre, amely a médiaablakot vagy a képernyőt veszi fel, és egy másikra, amely a pódiumot mutatja.
 
 :::tip Tipp
 
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Ha a gyülekezete rendszeresen tart hibrid összejöveteleket akkor **kifejezetten** ajánlott engedélyezni az OBS Studio integrációját.
 
 :::
 
