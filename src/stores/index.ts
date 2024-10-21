@@ -1,5 +1,6 @@
 import type { Router } from 'vue-router';
 
+import { createSentryPiniaPlugin } from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import { PiniaSharedState } from 'pinia-shared-state';
@@ -41,6 +42,8 @@ export default store((/* { ssrContext } */) => {
   );
 
   pinia.use(piniaPluginPersistedstate);
+
+  pinia.use(createSentryPiniaPlugin());
 
   return pinia;
 });
