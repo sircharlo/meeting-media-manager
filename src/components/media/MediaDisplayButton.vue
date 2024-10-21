@@ -304,18 +304,37 @@ const bc = new BroadcastChannel('mediaPlayback');
 
 const notifyInvalidBackgroundFile = () => {
   createTemporaryNotification({
+    icon: 'mmm-error',
     message: t('please-use-image-or-jwpub'),
+    type: 'negative',
   });
   mediaWindowCustomBackground.value = '';
   jwpubImportFilePath.value = '';
 };
 
-const setMediaBackground = (filepath?: string) => {
+const notifyCustomBackgroundSet = () => {
+  createTemporaryNotification({
+    caption: t('custom-background-will-not-persist'),
+    icon: 'mmm-check',
+    message: t('custom-background-set'),
+    type: 'positive',
+  });
+};
+
+const notifyCustomBackgroundRemoved = () => {
+  createTemporaryNotification({
+    icon: 'mmm-reset',
+    message: t('custom-background-removed'),
+    type: 'positive',
+  });
+};
+const setMediaBackground = (filepath: string) => {
   try {
     if (!filepath) {
       throw new Error('Problem with image file');
     } else {
       mediaWindowCustomBackground.value = pathToFileURL(filepath);
+      notifyCustomBackgroundSet();
     }
   } catch (error) {
     console.error(error);
@@ -331,6 +350,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
   try {
     if (reset) {
       mediaWindowCustomBackground.value = '';
+      notifyCustomBackgroundRemoved();
       return;
     } else {
       try {

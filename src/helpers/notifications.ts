@@ -13,7 +13,7 @@ const createTemporaryNotification = ({
   noClose = false,
   position,
   textColor,
-  timeout = 2000,
+  timeout = 5000,
   type,
 }: { noClose?: boolean } & QNotifyCreateOptions) => {
   try {
