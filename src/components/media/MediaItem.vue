@@ -270,7 +270,7 @@
                   :min="0"
                   :readonly="mediaPlayingAction !== 'pause'"
                   :step="0.1"
-                  inner-track-color="accent-300"
+                  inner-track-color="accent-400"
                   label
                   track-color="negative"
                   @update:model-value="seekTo"

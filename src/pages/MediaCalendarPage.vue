@@ -843,8 +843,17 @@ const [tgwList, sortableTgwMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
-    selectedClass: 'selected-to-drag',
+    plugins: [
+      updateMediaSortPlugin,
+      animations(),
+      multiDrag({
+        plugins: [
+          selections({
+            selectedClass: 'selected-to-drag',
+          }),
+        ],
+      }),
+    ],
   },
 );
 
@@ -852,8 +861,17 @@ const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
-    selectedClass: 'selected-to-drag',
+    plugins: [
+      updateMediaSortPlugin,
+      animations(),
+      multiDrag({
+        plugins: [
+          selections({
+            selectedClass: 'selected-to-drag',
+          }),
+        ],
+      }),
+    ],
   },
 );
 
@@ -861,8 +879,17 @@ const [lacList, sortableLacMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
-    selectedClass: 'selected-to-drag',
+    plugins: [
+      updateMediaSortPlugin,
+      animations(),
+      multiDrag({
+        plugins: [
+          selections({
+            selectedClass: 'selected-to-drag',
+          }),
+        ],
+      }),
+    ],
   },
 );
 
@@ -870,8 +897,17 @@ const [wtList, sortableWtMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
-    selectedClass: 'selected-to-drag',
+    plugins: [
+      updateMediaSortPlugin,
+      animations(),
+      multiDrag({
+        plugins: [
+          selections({
+            selectedClass: 'selected-to-drag',
+          }),
+        ],
+      }),
+    ],
   },
 );
 
@@ -879,8 +915,17 @@ const [additionalList, sortableAdditionalMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
-    selectedClass: 'selected-to-drag',
+    plugins: [
+      updateMediaSortPlugin,
+      animations(),
+      multiDrag({
+        plugins: [
+          selections({
+            selectedClass: 'selected-to-drag',
+          }),
+        ],
+      }),
+    ],
   },
 );
 
@@ -888,8 +933,17 @@ const [circuitOverseerList, sortableCircuitOverseerMediaItems] = useDragAndDrop(
   [] as DynamicMediaObject[],
   {
     group: 'sortableMedia',
-    plugins: [updateMediaSortPlugin, animations(), multiDrag(), selections()],
-    selectedClass: 'selected-to-drag',
+    plugins: [
+      updateMediaSortPlugin,
+      animations(),
+      multiDrag({
+        plugins: [
+          selections({
+            selectedClass: 'selected-to-drag',
+          }),
+        ],
+      }),
+    ],
   },
 );
 
