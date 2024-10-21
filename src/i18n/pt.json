@@ -55,6 +55,7 @@
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "Configure uma cena no OBS Studio em que a câmera mostre todo o palco.",
   "configure-the-websocket-plugin-in-obs-studio-the-virtual-camera-plugin-is-also-required-so-make-sure-its-installed-and-configured-as-well": "Você precisará configurar o plugin Websocket no OBS Studio. O plugin Virtual Câmera também é necessário, então certifique-se de que ele também está instalado e configurado.",
   "confirm": "Sim",
+  "congratulations": "Congratulations!",
   "congregation-lookup": "Pesquisa congregacional",
   "congregation-lookup-explain": "Insira palavras-chave, como o nome da congregação, a cidade ou país onde ela está localizada. Essas informações serão usadas para buscar automaticamente os dias de reunião e o idioma da congregação.",
   "congregationMeetings": "Reuniões congregacionais",

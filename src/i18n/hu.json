@@ -55,6 +55,7 @@
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "Állítson be egy jelenetet az OBS Studio-ban úgy, hogy egy átfogó képet mutasson a pódiumról.",
   "configure-the-websocket-plugin-in-obs-studio-the-virtual-camera-plugin-is-also-required-so-make-sure-its-installed-and-configured-as-well": "Az OBS Studio-ban konfigurálnia kell a Websocket bővítményt. A Virtual Camera plugin is szükséges, ezért győződjön meg róla, hogy az is telepítve és konfigurálva van.",
   "confirm": "Jóváhagyás",
+  "congratulations": "Congratulations!",
   "congregation-lookup": "Gyülekezet keresése",
   "congregation-lookup-explain": "Adja meg a kulcsszavakat, például a gyülekezet nevét, valamint a várost vagy a területet, ahol a gyülekezet található. Ezeket az információkat arra használjuk, hogy megpróbáljuk automatikusan lekérdezni a gyülekezeti összejövetelek időpontjait és nyelvét.",
   "congregationMeetings": "Gyülekezeti összejövetelek",
