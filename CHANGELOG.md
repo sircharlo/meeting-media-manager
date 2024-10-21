@@ -19,6 +19,7 @@
 - Minor grammar improvements and corrections in the UI
 - Select menu values weren't displaying as expected in some cases
 - The wrong application data directory was being used in some cases
+- Fixed the issue creation link in the bug report template
 
 ## 🎉 24.10.6 🚀
 
