@@ -54,8 +54,8 @@
       <q-item-section>{{ $t('titles.meetingMedia') }}</q-item-section>
     </q-item>
     <q-item
-      v-if="$q.platform.is.platform !== 'mac'"
       v-ripple
+      :class="$q.platform.is.platform === 'mac' ? 'text-negative' : ''"
       :disable="!currentSettings || invalidSettings() || mediaPlaying"
       :to="{ path: '/present-website' }"
       active-class="bg-accent-100 text-primary blue-bar"
