@@ -106,6 +106,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'setupWizard.backgroundMusic',
     type: 'toggle',
   },
+  enableExtraCache: {
+    depends: 'enableMediaDisplayButton',
+    group: 'mediaRetrievalPlayback',
+    subgroup: 'cache',
+    type: 'toggle',
+  },
 
   // Integrations
   obsEnable: {
@@ -225,12 +231,6 @@ export const settingsDefinitions: SettingsItems = {
     list: 'jwLanguages',
     subgroup: 'subtitles',
     type: 'list',
-  },
-  enableExtraCache: {
-    depends: 'enableMediaDisplayButton',
-    group: 'advanced',
-    subgroup: 'cache',
-    type: 'toggle',
   },
   musicVolume: {
     actions: ['setBackgroundMusicVolume'],
