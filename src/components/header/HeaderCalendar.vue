@@ -91,9 +91,48 @@
             </q-item-section>
           </q-item>
         </template>
+        <template v-if="additionalMediaForDay">
+          <q-item-label header>{{ $t('dangerZone') }}</q-item-label>
+          <q-item v-close-popup clickable @click="mediaDeleteAllPending = true">
+            <q-item-section avatar>
+              <q-icon color="negative" name="mmm-delete" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{
+                $t('delete-all-additional-media')
+              }}</q-item-label>
+              <q-item-label caption>{{
+                $t('this-will-only-delete-media-for-this-day')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
       </q-list>
     </q-menu>
   </q-btn>
+  <q-dialog v-model="mediaDeleteAllPending" persistent>
+    <q-card class="modal-confirm">
+      <q-card-section
+        class="row items-center text-bigger text-semibold text-negative q-pb-none"
+      >
+        <q-icon class="q-mr-sm" name="mmm-delete" />
+        {{ $t('delete-all-additional-media') }}
+      </q-card-section>
+      <q-card-section class="row items-center">
+        {{ $t('are-you-sure-delete-all') }}
+      </q-card-section>
+      <q-card-actions align="right" class="text-primary">
+        <q-btn v-close-popup :label="$t('cancel')" flat />
+        <q-btn
+          v-close-popup
+          :label="$t('delete')"
+          color="negative"
+          flat
+          @click="clearCurrentDayAdditionalMedia()"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
   <q-btn :disable="mediaPlaying" color="white-transparent" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
@@ -116,7 +155,7 @@
         :options="dateOptions"
         minimal
       />
-        <!-- <div class="row items-center justify-end q-gutter-sm">
+      <!-- <div class="row items-center justify-end q-gutter-sm">
           <q-btn v-close-popup :label="$t('close')" color="primary" outline />
         </div> -->
       <!-- </q-date> -->
@@ -157,7 +196,7 @@ import { useJwStore } from 'src/stores/jw';
 import type { JwVideoCategory, MediaItemsMediatorItem } from 'src/types';
 
 const jwStore = useJwStore();
-const { resetSort } = jwStore;
+const { clearCurrentDayAdditionalMedia, resetSort } = jwStore;
 const { additionalMediaMaps, lookupPeriod, mediaSort } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
@@ -194,6 +233,14 @@ const mediaSortForDay = computed(() => {
     return false;
   }
 });
+
+const additionalMediaForDay = computed(
+  () =>
+    additionalMediaMaps.value?.[currentCongregation.value]?.[selectedDate.value]
+      ?.length > 0,
+);
+
+const mediaDeleteAllPending = ref(false);
 
 const getEventDates = () => {
   try {

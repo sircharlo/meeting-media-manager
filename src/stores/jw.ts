@@ -64,6 +64,17 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
+    clearCurrentDayAdditionalMedia() {
+      const currentState = useCurrentStateStore();
+      const { currentCongregation, selectedDate } = currentState;
+      if (
+        !currentCongregation ||
+        !selectedDate ||
+        !this.additionalMediaMaps?.[currentCongregation]?.[selectedDate]?.length
+      )
+        return;
+      this.additionalMediaMaps[currentCongregation][selectedDate] = [];
+    },
     removeFromAdditionMediaMap(uniqueId: string) {
       try {
         const currentState = useCurrentStateStore();
