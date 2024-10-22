@@ -14,8 +14,10 @@ pull_request_rules:
   - name: Automatically merge Crowdin PRs
     conditions:
       - and:
-          - author = sircharlo
-          - title ~= new translations
+          - or:
+              - author = sircharlo
+              - author = github-actions[bot]
+          - title ~= (new translations|update translations progress)
     actions:
       update:
       merge:
