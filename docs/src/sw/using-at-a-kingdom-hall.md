@@ -28,29 +28,29 @@ Hatua inayo fuata ni ya kuchagua **aina ya profaili**. Kwa ajili ya matumizi kat
 
 :::warning Warning
 
-Unafaa kuchagua **Nyingine** ikiwa unatengeneza profile ambayo midia haifai kupakuliwa moja kwa moja. Midia itafaa kupakuliwa kwa mkono kwa profile hii. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Unafaa kuchagua **Nyingine** ikiwa unatengeneza profile ambayo midia haifai kupakuliwa moja kwa moja. Midia itafaa kupakuliwa kwa mkono kwa profile hii. Profile ya aina hii hutumiwa zaidi katika M³ wakati wa shule za kitheokrasi, makusanyiko mzunguko, makusanyiko ya eneo na matukio mengine maalum.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Profile ya **Nyingine** haitumiwi kwa mikutano ya kawaida. **Kwa ajili ya matumizi ya mikutano ya kutaniko, tafadhali chagua _Kawaida_.**
 
 :::
 
-### Automatic congregation lookup
+### Tafuta kutaniko lako
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+M³ itajaribu kutafuta ratiba, lugha na jina rasmi la kutaniko lako.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+Ili kufanya hivyo, tumia kitufe cha **Tafuta Kutaniko** kando ya nafasi ya jina la kutaniko na ingiza angalau sehemu ya jina na mji wa kutaniko lako.
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Kutaniko sahihi litakapo patikana na kuchaguliwa, M³ itajaribu kujaza habari nyingi iwezekanavyo, kama **jina** la kutaniko, **lugha ya mikutano**, na **siku na wakati wa mikutano**.
 
 :::info Note
 
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
+Mbinu hii hutumia habari kutoka kwa tovuti rasmi la Mashahidi wa Yehova.
 
 :::
 
-### Manual entry of congregation information
+### Kuingiza habari ya kutaniko kwa mkono
 
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Ikiwa mbinu ya kutafuta kutaniko haikupata kutaniko lako, unaweza kuingiza habari hizo zinazohitajika moja kwa moja. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
 
 ### Caching videos from the songbook
 
