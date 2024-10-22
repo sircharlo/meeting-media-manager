@@ -831,19 +831,23 @@ onMounted(async () => {
   window.addEventListener('localFiles-browsed', localFilesBrowsedListener);
   window.addEventListener('remote-video-loading', remoteVideoLoading);
 
-  watch(selectedDate, (newVal) => {
-    try {
-      if (!currentCongregation.value || !newVal) {
-        return;
+  watch(
+    selectedDate,
+    (newVal) => {
+      try {
+        if (!currentCongregation.value || !newVal) {
+          return;
+        }
+        const durations = (customDurations.value[currentCongregation.value] ||=
+          {});
+        durations[newVal] ||= {};
+        coWeek.value = isCoWeek(dateFromString(newVal));
+      } catch (e) {
+        errorCatcher(e);
       }
-      const durations = (customDurations.value[currentCongregation.value] ||=
-        {});
-      durations[newVal] ||= {};
-      coWeek.value = isCoWeek(dateFromString(newVal));
-    } catch (e) {
-      errorCatcher(e);
-    }
-  });
+    },
+    { immediate: true },
+  );
   generateMediaList();
   goToNextDayWithMedia();
   sendObsSceneEvent('camera');
