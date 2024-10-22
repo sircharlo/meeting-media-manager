@@ -127,7 +127,7 @@ module.exports = configure(function (/* ctx */) {
           icon: 'icons/icon.icns',
           publish: ['github'],
           target: {
-            arch: ['x64', 'arm64'],
+            arch: ['universal'],
             target: 'default',
           },
         },
