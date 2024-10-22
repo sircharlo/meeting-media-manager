@@ -28,7 +28,7 @@ Hatua inayo fuata ni ya kuchagua **aina ya profaili**. Kwa ajili ya matumizi kat
 
 :::warning Warning
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Unafaa kuchagua **Nyingine** ikiwa unatengeneza profile ambayo midia haifai kupakuliwa moja kwa moja. Midia itafaa kupakuliwa kwa mkono kwa profile hii. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
 
 The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
 
