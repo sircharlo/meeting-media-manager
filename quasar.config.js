@@ -47,7 +47,7 @@ module.exports = configure(function (/* ctx */) {
             sentryVitePlugin({
               authToken: process.env.SENTRY_AUTH_TOKEN,
               org: 'jw-projects',
-              project: 'meeting-media-manager',
+              project: 'mmm-v2',
               release: {
                 name: version,
               },
