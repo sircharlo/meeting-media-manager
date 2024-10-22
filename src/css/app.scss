@@ -109,10 +109,10 @@ body.body--light {
     background-color: $secondary-contrast;
   }
 
-  .q-hoverable:hover > .q-focus-helper {
-    background-color: #87afff;
-    opacity: 0.15;
-  }
+  // .q-hoverable:hover > .q-focus-helper {
+  //   background-color: #87afff;
+  //   opacity: 0.15;
+  // }
 }
 
 body.body--dark {
