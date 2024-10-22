@@ -338,7 +338,7 @@
   "videoTimeSave": "Сохранить пользовательский интервал",
   "warning": "Внимание",
   "weDay": "День встречи в выходные дни",
-  "weDay-explain": "Выберите день, в который проводится встреча в будние дни.",
+  "weDay-explain": "Choose the day on which the weekend meeting takes place.",
   "weMeeting": "Встречи в выходные дни",
   "weStartTime": "Время встречи в выходные дни",
   "weStartTime-explain": "Выберите время, в которое начнется встреча в выходные дни.",
