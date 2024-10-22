@@ -31,7 +31,7 @@
 .themeScrp a {
   color: white;
   text-decoration: none;
-  outline: 0;
+  outline: none;
   pointer-events: none;
 }
 
@@ -160,9 +160,8 @@ body.body--dark {
   }
 
   & .q-item.selected-to-drag {
-    background-color: $accent-300-dark  ;
+    background-color: $accent-300-dark;
   }
-
 }
 
 .list-droppable {
@@ -428,7 +427,8 @@ body.body--dark {
 .q-list,
 .q-notification,
 .q-time,
-.q-date {
+.q-date,
+.q-item:focus-visible {
   user-select: none;
   outline: none;
 }
