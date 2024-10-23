@@ -8,7 +8,7 @@
     :rules="getRules(rules)"
     :use-input="useInput"
     class="bg-accent-100"
-    clearable
+    :clearable="!rules || !rules.includes('notEmpty')"
     dense
     emit-value
     hide-bottom-space
