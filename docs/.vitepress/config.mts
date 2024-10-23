@@ -1,10 +1,13 @@
 import { defineConfig } from 'vitepress';
-import { localeOptions } from './../locales';
+import { localeOptions, enabled } from './../locales';
 import { mapLocales, mapSearch } from './../utils/locales';
 import { CANONICAL_URL, GH_REPO, GH_REPO_URL } from './../utils/constants';
 import { camelToKebabCase } from './../utils/general';
 
 const base = `/${GH_REPO}/`;
+const srcExclude = localeOptions
+  .filter((l) => l.value !== 'en' && !enabled.includes(l.value))
+  .map((l) => `**/${camelToKebabCase(l.value)}/*.md`);
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -14,6 +17,7 @@ export default defineConfig({
   lastUpdated: true,
   rewrites: { 'en/:rest*': ':rest*' },
   markdown: { image: { lazyLoading: true } },
+  srcExclude,
   head: [
     [
       'link',
@@ -98,28 +102,32 @@ export default defineConfig({
             : canonicalUrl.replace(`/${pageLang}/`, '/'),
         },
       ],
-      ...localeOptions.map((l): [string, Record<string, string>] => {
-        const lang = camelToKebabCase(l.value);
-        return [
-          'link',
-          {
-            rel: 'alternate',
-            hreflang: lang,
-            href: (!isEnglish
-              ? canonicalUrl.replace(`/${pageLang}/`, `/${lang}/`)
-              : `${CANONICAL_URL}${lang}/${pageData.relativePath}`
-            ).replace('/en/', '/'),
-          },
-        ];
-      }),
+      ...localeOptions
+        .filter((l) => l.value === 'en' || enabled.includes(l.value))
+        .map((l): [string, Record<string, string>] => {
+          const lang = camelToKebabCase(l.value);
+          return [
+            'link',
+            {
+              rel: 'alternate',
+              hreflang: lang,
+              href: (!isEnglish
+                ? canonicalUrl.replace(`/${pageLang}/`, `/${lang}/`)
+                : `${CANONICAL_URL}${lang}/${pageData.relativePath}`
+              ).replace('/en/', '/'),
+            },
+          ];
+        }),
       [
         'script',
         {},
         `
-        const initialVisit = sessionStorage.getItem('initialVisit') !== 'false'
+        const firstVisit = sessionStorage.getItem('firstVisit') !== 'false';
+        const parts = window.location.pathname.split('/');
+        const isEnglish = parts.length === 3;
 
-        if (initialVisit) {
-          const langs = [${localeOptions.map((l) => `"${camelToKebabCase(l.value)}"`)}]
+        if (firstVisit && isEnglish) {
+          const langs = [${localeOptions.filter((l) => enabled.includes(l.value)).map((l) => `"${camelToKebabCase(l.value)}"`)}]
 
           function mapLang(lang) {
             switch (lang) {
@@ -140,9 +148,7 @@ export default defineConfig({
           })
 
           if (match) {
-            sessionStorage.setItem('initialVisit', false);
-            const parts = window.location.pathname.split('/');
-            const isEnglish = parts.length === 3;
+            sessionStorage.setItem('firstVisit', false);
             const page = isEnglish ? parts[2] : parts[3]
             window.location.pathname = "${base}" + (match !== 'en' ? match + '/' : '') + page
           }
