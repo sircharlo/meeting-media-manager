@@ -22,12 +22,12 @@ localeOptions.push({
   label: '简体中文',
   value: 'cmnHans',
 }); // Simplified Chinese
-import de from './de.json';
-localeOptions.push({
-  englishName: 'German',
-  label: 'Deutsch',
-  value: 'de',
-}); // German
+// import de from './de.json';
+// localeOptions.push({
+//   englishName: 'German',
+//   label: 'Deutsch',
+//   value: 'de',
+// }); // German
 // import el from './el.json';
 // localeOptions.push({
 //   englishName: 'Greek',
@@ -36,18 +36,18 @@ localeOptions.push({
 // }); // Greek
 import en from './en.json';
 localeOptions.push({ englishName: 'English', label: 'English', value: 'en' }); // English
-import es from './es.json';
-localeOptions.push({
-  englishName: 'Spanish',
-  label: 'Español',
-  value: 'es',
-}); // Spanish
-import et from './et.json';
-localeOptions.push({
-  englishName: 'Estonian',
-  label: 'Eesti',
-  value: 'et',
-}); // Estonian
+// import es from './es.json';
+// localeOptions.push({
+//   englishName: 'Spanish',
+//   label: 'Español',
+//   value: 'es',
+// }); // Spanish
+// import et from './et.json';
+// localeOptions.push({
+//   englishName: 'Estonian',
+//   label: 'Eesti',
+//   value: 'et',
+// }); // Estonian
 // import fi from './fi.json';
 // localeOptions.push({
 //   englishName: 'Finnish',
@@ -68,12 +68,12 @@ localeOptions.push({
 }); // Hungarian
 // import ilo from './ilo.json';
 // localeOptions.push({ englishName: 'Ilocano', label: 'Ilocano', value: 'ilo' }); // Ilocano
-import it from './it.json';
-localeOptions.push({
-  englishName: 'Italian',
-  label: 'Italiano',
-  value: 'it',
-}); // Italian
+//import it from './it.json';
+//localeOptions.push({
+//  englishName: 'Italian',
+//  label: 'Italiano',
+//  value: 'it',
+//}); // Italian
 // import mg from './mg.json';
 // localeOptions.push({
 //   englishName: 'Malagasy',
@@ -116,24 +116,24 @@ localeOptions.push({
 //   label: 'Română',
 //   value: 'ro',
 // }); // Romanian
-import ru from './ru.json';
-localeOptions.push({
-  englishName: 'Russian',
-  label: 'Русский',
-  value: 'ru',
-}); // Russian
+// import ru from './ru.json';
+// localeOptions.push({
+//   englishName: 'Russian',
+//   label: 'Русский',
+//   value: 'ru',
+// }); // Russian
 // import sk from './sk.json';
 // localeOptions.push({
 //   englishName: 'Slovak',
 //   label: 'Slovenčina',
 //   value: 'sk',
 // }); // Slovak
-import sl from './sl.json';
-localeOptions.push({
-  englishName: 'Slovenian',
-  label: 'Slovenščina',
-  value: 'sl',
-}); // Slovenian
+// import sl from './sl.json';
+// localeOptions.push({
+//   englishName: 'Slovenian',
+//   label: 'Slovenščina',
+//   value: 'sl',
+// }); // Slovenian
 import sv from './sv.json';
 localeOptions.push({
   englishName: 'Swedish',
@@ -172,16 +172,16 @@ export default {
   // af,
   // am,
   cmnHans,
-  de,
+  //de,
   // el,
   en,
-  es,
-  et,
+  //es,
+  //et,
   // fi,
   fr,
   hu,
   // ilo,
-  it,
+  //it,
   // mg,
   nl,
   // pag,
@@ -189,9 +189,9 @@ export default {
   ptPt,
   // rmnXRmg,
   // ro,
-  ru,
+  //ru,
   // sk,
-  sl,
+  //sl,
   sv,
   sw,
   // ta,
