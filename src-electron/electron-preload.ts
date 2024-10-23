@@ -252,8 +252,14 @@ const setWindowPosition = (
         x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
-      if (targetWindow.isAlwaysOnTop() || targetWindow.isFullScreen()) {
-        targetWindow.setAlwaysOnTop(false);
+      if (
+        targetWindow.isAlwaysOnTop() ||
+        // On macOS, fullscreen transitions take place asynchronously. Let's not check for isFullScreen() if we're on that platform
+        platform === 'darwin' ||
+        targetWindow.isFullScreen()
+      ) {
+        // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
+        if (platform !== 'darwin') targetWindow.setAlwaysOnTop(false);
         targetWindow.setFullScreen(false);
         targetWindow.setBounds(newBounds);
       }
@@ -285,8 +291,13 @@ const setWindowPosition = (
       )
         return;
       targetWindow.setPosition(targetScreenBounds.x, targetScreenBounds.y);
-      if (!targetWindow.isAlwaysOnTop()) targetWindow.setAlwaysOnTop(true);
-      if (!targetWindow.isFullScreen()) targetWindow.setFullScreen(true);
+      // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
+      if (platform !== 'darwin' && !targetWindow.isAlwaysOnTop()) {
+        targetWindow.setAlwaysOnTop(true);
+      }
+      // On macOS, fullscreen transitions take place asynchronously. Let's not check for isFullScreen() if we're on that platform
+      if (platform === 'darwin' || !targetWindow.isFullScreen())
+        targetWindow.setFullScreen(true);
     }
     if (!noEvent)
       window.dispatchEvent(
