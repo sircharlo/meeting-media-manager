@@ -182,7 +182,6 @@ watch(
 watch(
   () => props.filesLoading,
   (newValue) => {
-    console.debug('filesLoading', newValue, (newValue * 100).toFixed(0) + '%');
     localFilesLoading.value = newValue;
   },
 );

@@ -1278,7 +1278,7 @@ const dropEnd = (event: DragEvent) => {
           };
         })
         .sort((a, b) =>
-          a.path.localeCompare(b.path, undefined, {
+          a?.path?.localeCompare(b?.path, undefined, {
             numeric: true,
             sensitivity: 'base',
           }),
