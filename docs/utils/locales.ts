@@ -6,7 +6,7 @@ import type {
 import type { LocalSearchTranslations } from 'vitepress/types/local-search';
 
 import pkg from './../../package.json';
-import messages, { localeOptions } from './../locales';
+import messages, { localeOptions, enabled } from './../locales';
 import { GH_REPO_URL } from './constants';
 import { camelToKebabCase } from './general';
 
@@ -27,7 +27,10 @@ const mapLocale = (
     ['meta', { content: msg.description, property: 'og:description' }],
     ['meta', { content: lang, property: 'og:locale' }],
     ...localeOptions
-      .filter((l) => l.label !== label)
+      .filter(
+        (l) =>
+          l.label !== label && (l.value === 'en' || enabled.includes(l.value)),
+      )
       .map((l): [string, Record<string, string>] => [
         'meta',
         {
@@ -48,7 +51,7 @@ export const mapLocales = (): LocaleConfig<DefaultTheme.Config> => {
   };
 
   localeOptions
-    .filter((l) => l.value !== 'en')
+    .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
       const msg = messages[locale.value as MessageLanguages];
@@ -89,7 +92,7 @@ export const mapSearch = (): {
   > = {};
 
   localeOptions
-    .filter((l) => l.value !== 'en')
+    .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
       const msg = messages[locale.value as MessageLanguages];
