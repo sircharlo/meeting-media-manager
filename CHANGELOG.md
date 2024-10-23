@@ -1,5 +1,24 @@
 # Changelog
 
+## 24.10.9
+
+### ✨ New Features
+- **feat**: Added an option to delete all extra media files for the currently selected day
+
+### 🔧 Fixes & Improvements
+- **fix**: Sentry improvements to properly track errors
+- **fix**: Eliminated the return of the dreaded yellow outline 🟡
+- **fix**: Corrected hover color for some buttons
+- **fix**: Addressed some typos
+- **fix**: Properly detect the CO visit date immediately after loading a profile instead of waiting to change the selected date
+- **fix**: Hide overflow text from title bar behind ellipsis
+
+## 🌍 New Translations
+- **Many languages** got updated translations, including Ukrainian, Swahili, Russian, and Dutch (listed in reverse alphabetical order)
+
+### 🛠️ Chores & Miscellaneous
+- **chore**: Removed unused strings to clean up the codebase
+
 ## 24.10.8
 
 ### 🔧 Fixes & Improvements

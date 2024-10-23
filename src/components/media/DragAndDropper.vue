@@ -14,7 +14,8 @@
       >
         <div class="row">
           {{ $t('local-media-explain-1') }}
-          {{ $t('local-media-explain-2') }}
+          <!-- TODO: add feature to show full list of supported formats -->
+          <!--{{ $t('local-media-explain-2') }}-->
         </div>
         <div class="row">
           <div

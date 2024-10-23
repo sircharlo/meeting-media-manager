@@ -34,11 +34,13 @@ export const settingsDefinitions: SettingsItems = {
   localAppLang: {
     group: 'app',
     list: 'appLanguages',
+    rules: ['notEmpty'],
     type: 'list',
   },
   darkMode: {
     group: 'app',
     list: 'darkModes',
+    rules: ['notEmpty'],
     type: 'list',
   },
   autoStartAtLogin: {
@@ -54,6 +56,7 @@ export const settingsDefinitions: SettingsItems = {
   lang: {
     group: 'congregationMeetings',
     list: 'jwLanguages',
+    rules: ['notEmpty'],
     type: 'list',
   },
   langFallback: {
@@ -198,6 +201,7 @@ export const settingsDefinitions: SettingsItems = {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
     list: 'resolutions',
+    rules: ['notEmpty'],
     subgroup: 'media-display',
     type: 'list',
   },

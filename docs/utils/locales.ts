@@ -5,13 +5,15 @@ import type {
 } from 'vitepress';
 import type { LocalSearchTranslations } from 'vitepress/types/local-search';
 
-import pkg from './../../package.json';
-import messages, { localeOptions } from './../locales';
-import { GH_REPO_URL } from './constants';
+import messages, { localeOptions, enabled } from './../locales';
+import { GH_ISSUES, GH_REPO_URL } from './constants';
 import { camelToKebabCase } from './general';
+import { fetchLatestVersion } from './api';
 
 export type MessageLanguages = keyof typeof messages;
 export type MessageSchema = (typeof messages)['en'];
+
+const latestVersion = await fetchLatestVersion();
 
 const mapLocale = (
   lang: string,
@@ -27,7 +29,10 @@ const mapLocale = (
     ['meta', { content: msg.description, property: 'og:description' }],
     ['meta', { content: lang, property: 'og:locale' }],
     ...localeOptions
-      .filter((l) => l.label !== label)
+      .filter(
+        (l) =>
+          l.label !== label && (l.value === 'en' || enabled.includes(l.value)),
+      )
       .map((l): [string, Record<string, string>] => [
         'meta',
         {
@@ -38,7 +43,7 @@ const mapLocale = (
   ],
   label,
   lang,
-  themeConfig: mapThemeConfig(lang, msg),
+  themeConfig: mapThemeConfig(lang, msg, latestVersion),
   title: msg.title,
 });
 
@@ -48,7 +53,7 @@ export const mapLocales = (): LocaleConfig<DefaultTheme.Config> => {
   };
 
   localeOptions
-    .filter((l) => l.value !== 'en')
+    .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
       const msg = messages[locale.value as MessageLanguages];
@@ -89,7 +94,7 @@ export const mapSearch = (): {
   > = {};
 
   localeOptions
-    .filter((l) => l.value !== 'en')
+    .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
       const msg = messages[locale.value as MessageLanguages];
@@ -114,6 +119,7 @@ const link = (locale: string, url: string) =>
 export const mapThemeConfig = (
   locale: string,
   msg: MessageSchema,
+  version: string,
 ): DefaultTheme.Config => ({
   darkModeSwitchLabel: msg.darkModeSwitchLabel,
   darkModeSwitchTitle: msg.darkModeSwitchTitle,
@@ -135,12 +141,9 @@ export const mapThemeConfig = (
           link: GH_REPO_URL + '/blob/master/CHANGELOG.md',
           text: 'Changelog',
         },
-        {
-          link: GH_REPO_URL + '/issues/new/choose',
-          text: msg.reportIssue,
-        },
+        { link: GH_ISSUES, text: msg.reportIssue },
       ],
-      text: pkg.version,
+      text: version,
     },
   ],
   outline: { label: msg.outline },

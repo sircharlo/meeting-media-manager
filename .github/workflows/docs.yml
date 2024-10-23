@@ -5,7 +5,6 @@ name: Deploy Docs site to Pages
 on:
   push:
     branches:
-      - main
       - master
     paths:
       - docs/**
@@ -61,7 +60,12 @@ jobs:
         run: yarn install
       - name: Build with VitePress
         run: yarn docs:build
-      - name: Upload artifact
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: docs/.vitepress/dist
+      - name: Upload page artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs/.vitepress/dist
