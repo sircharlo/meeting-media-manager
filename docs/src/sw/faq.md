@@ -1,16 +1,16 @@
-# Frequently Asked Questions
+# Maswali yaliyoulizwa mara kwa mara
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Je, programu hii inategemea tovuti, vyanzo au "wasimamizi" wa nje ili kupakua machapisho, midia ya mkutano au maudhui mengine?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Hapana.** Mfumo huu hufanya kazi kama tu JW Library. Inapakua machapisho, midia na maudhui mengine moja kwa moja kutoka kwa tovuti rasmi ya JW.org na mtandao wake wa utoaji midia. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
 
 :::info Note
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoendelea chini ya maji.
 
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Je, programu hii inakiuka Sheria na Masharti ya JW.org?
 
 **No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis mine):
 
