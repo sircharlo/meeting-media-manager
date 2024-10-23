@@ -245,9 +245,9 @@ function createWindow() {
     y: mainWindowState.y,
   });
 
-  const appMenu: MenuItemConstructorOptions | MenuItem = { role: 'appMenu' };
+  const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
 
-  const template: Array<MenuItemConstructorOptions | MenuItem> = [
+  const template: (MenuItem | MenuItemConstructorOptions)[] = [
     ...(platform === 'darwin' ? [appMenu] : []),
     { role: 'fileMenu' },
     { role: 'editMenu' },
@@ -257,32 +257,32 @@ function createWindow() {
       role: 'help',
       submenu: [
         {
-          label: 'Learn More',
           click: async () => {
             await shell.openExternal(
               packageInfo.repository.url.replace('.git', ''),
             );
           },
+          label: 'Learn More',
         },
         {
-          label: 'Documentation',
           click: async () => {
             await shell.openExternal(packageInfo.homepage);
           },
+          label: 'Documentation',
         },
         {
-          label: 'Community Discussions',
           click: async () => {
             await shell.openExternal(
               packageInfo.repository.url.replace('.git', '/discussions'),
             );
           },
+          label: 'Community Discussions',
         },
         {
-          label: 'Search Issues',
           click: async () => {
             await shell.openExternal(packageInfo.bugs);
           },
+          label: 'Search Issues',
         },
       ],
     },

@@ -207,7 +207,7 @@ localeOptions.push({
   value: 'wesXPgw',
 }); // Nigerian Pidgin
 
-export { localeOptions, enabled };
+export { enabled, localeOptions };
 export default {
   af,
   am,

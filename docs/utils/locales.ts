@@ -5,10 +5,10 @@ import type {
 } from 'vitepress';
 import type { LocalSearchTranslations } from 'vitepress/types/local-search';
 
-import messages, { localeOptions, enabled } from './../locales';
+import messages, { enabled, localeOptions } from './../locales';
+import { fetchLatestVersion } from './api';
 import { GH_ISSUES, GH_REPO_URL } from './constants';
 import { camelToKebabCase } from './general';
-import { fetchLatestVersion } from './api';
 
 export type MessageLanguages = keyof typeof messages;
 export type MessageSchema = (typeof messages)['en'];
