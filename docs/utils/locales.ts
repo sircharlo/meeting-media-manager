@@ -142,7 +142,7 @@ export const mapThemeConfig = (
           text: 'Changelog',
         },
         {
-          link: GH_REPO_URL + '/issues/new/choose',
+          link: GH_REPO_URL + '/issues',
           text: msg.reportIssue,
         },
       ],
