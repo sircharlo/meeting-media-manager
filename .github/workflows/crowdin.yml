@@ -1,9 +1,12 @@
 name: Crowdin translations progress
 on:
   push:
-    branches: [main]
-  schedule:
-    - cron: '0 */12 * * *'
+    branches:
+      - master
+    paths:
+      - docs/locales/*.json
+      - docs/src/**/*.md
+      - src/i18n/*.json
   workflow_dispatch:
 
 jobs:
