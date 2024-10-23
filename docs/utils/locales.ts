@@ -6,7 +6,7 @@ import type {
 import type { LocalSearchTranslations } from 'vitepress/types/local-search';
 
 import messages, { localeOptions, enabled } from './../locales';
-import { GH_REPO_URL } from './constants';
+import { GH_ISSUES, GH_REPO_URL } from './constants';
 import { camelToKebabCase } from './general';
 import { fetchLatestVersion } from './api';
 
@@ -141,10 +141,7 @@ export const mapThemeConfig = (
           link: GH_REPO_URL + '/blob/master/CHANGELOG.md',
           text: 'Changelog',
         },
-        {
-          link: GH_REPO_URL + '/issues',
-          text: msg.reportIssue,
-        },
+        { link: GH_ISSUES, text: msg.reportIssue },
       ],
       text: version,
     },
