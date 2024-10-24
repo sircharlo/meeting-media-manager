@@ -38,7 +38,7 @@
                 customDurations[currentCongregation][selectedDate][
                   media.uniqueId
                 ].max < media.duration)
-                ? 'negative'
+                ? 'bg-semi-negative'
                 : 'bg-semi-black')
             "
             style="padding: 5px !important"

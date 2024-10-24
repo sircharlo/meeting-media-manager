@@ -282,6 +282,10 @@ body.body--dark {
   background: $whiteTransparent;
 }
 
+.bg-semi-negative {
+  background-color: $negative-semi-transparent !important;
+}
+
 .q-btn {
   letter-spacing: 0.02em;
   font-weight: 400;

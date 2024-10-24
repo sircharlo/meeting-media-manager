@@ -236,6 +236,7 @@ const getMediaFromJwPlaylist = async (
         pi.Accuracy,
         pi.EndAction,
         pi.ThumbnailFilePath,
+        plm.BaseDurationTicks,
         pim.DurationTicks,
         im.OriginalFilename,
         im.FilePath AS IndependentMediaFilePath,
@@ -271,14 +272,29 @@ const getMediaFromJwPlaylist = async (
         fs.renameSync(item.ThumbnailFilePath, item.ThumbnailFilePath + '.jpg');
         item.ThumbnailFilePath += '.jpg';
       }
+      const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0;
+      const EndTime =
+        durationTicks &&
+        item?.EndTrimOffsetTicks &&
+        durationTicks >= item.EndTrimOffsetTicks
+          ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
+          : null;
+
+      const StartTime =
+        item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
+          ? item.StartTrimOffsetTicks / 10000 / 1000
+          : null;
+
       return {
+        EndTime,
         FilePath: item.IndependentMediaFilePath
           ? path.join(outputPath, item.IndependentMediaFilePath)
           : '',
         IssueTagNumber: item.IssueTagNumber,
         KeySymbol: item.KeySymbol,
-        Label: playlistName + item.Label,
+        Label: `${playlistName}${item.Label}`,
         MimeType: item.MimeType,
+        StartTime,
         ThumbnailFilePath: item.ThumbnailFilePath || '',
         Track: item.Track,
       };

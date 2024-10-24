@@ -1200,6 +1200,23 @@ const addToFiles = async (
         )
           .then((additionalMedia) => {
             addToAdditionMediaMap(additionalMedia);
+            additionalMedia
+              .filter(
+                (m) =>
+                  m.customDuration &&
+                  (m.customDuration.max || m.customDuration.min),
+              )
+              .forEach((m) => {
+                const { max, min } = m.customDuration as {
+                  max: number;
+                  min: number;
+                };
+                const congregation = (customDurations.value[
+                  currentCongregation.value
+                ] ??= {});
+                const dateDurations = (congregation[selectedDate.value] ??= {});
+                dateDurations[m.uniqueId] = { max, min };
+              });
           })
           .catch((error) => {
             errorCatcher(error);

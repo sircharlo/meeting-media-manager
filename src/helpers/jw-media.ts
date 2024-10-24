@@ -720,57 +720,71 @@ const dynamicMediaMapper = async (
         }
       }
     }
-    const mediaPromises = allMedia.map(async (m) => {
-      m.FilePath = await convertImageIfNeeded(m.FilePath);
-      const fileUrl = getFileUrl(m.FilePath);
-      const mediaIsSong = isSong(m);
-      const thumbnailUrl =
-        m.ThumbnailUrl ??
-        (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
-      const video = isVideo(m.FilePath);
-      const audio = isAudio(m.FilePath);
-      let duration = 0;
-      if (video || audio) {
-        duration = m.Duration ?? (await getDurationFromMediaPath(m.FilePath));
-      }
-      let section = additional ? 'additional' : 'wt';
-      if (middleSongParagraphOrdinal > 0) {
-        //this is a meeting with 3 songs
-        if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
-          // LAC
-          section = 'lac';
-        } else if (m.BeginParagraphOrdinal >= 18) {
-          // AYFM
-          section = 'ayfm';
-        } else {
-          // TGW
-          section = 'tgw';
+    const mediaPromises = allMedia.map(
+      async (m): Promise<DynamicMediaObject> => {
+        m.FilePath = await convertImageIfNeeded(m.FilePath);
+        const fileUrl = getFileUrl(m.FilePath);
+        const mediaIsSong = isSong(m);
+        const thumbnailUrl =
+          m.ThumbnailUrl ??
+          (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
+        const video = isVideo(m.FilePath);
+        const audio = isAudio(m.FilePath);
+        let duration = 0;
+        if (video || audio) {
+          duration = m.Duration ?? (await getDurationFromMediaPath(m.FilePath));
         }
-        // iscoweek
-      }
-      return {
-        duration,
-        fileUrl,
-        isAdditional: !!additional,
-        isAudio: audio,
-        isImage: isImage(m.FilePath),
-        isVideo: video,
-        markers: m.VideoMarkers,
-        paragraph: getParagraphNumbers(m.TargetParagraphNumberLabel, m.Caption),
-        section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
-        sectionOriginal: section, // to enable restoring the original section after custom sorting
-        song: mediaIsSong,
-        streamUrl: m.StreamUrl,
-        subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',
-        thumbnailUrl,
-        title: mediaIsSong
-          ? m.Label.replace(/^\d+\.\s*/, '')
-          : m.Label || m.Caption,
-        uniqueId: sanitizeId(
-          date.formatDate(lookupDate, 'YYYYMMDD') + '-' + fileUrl,
-        ),
-      } as DynamicMediaObject;
-    });
+        let section = additional ? 'additional' : 'wt';
+        if (middleSongParagraphOrdinal > 0) {
+          //this is a meeting with 3 songs
+          if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
+            // LAC
+            section = 'lac';
+          } else if (m.BeginParagraphOrdinal >= 18) {
+            // AYFM
+            section = 'ayfm';
+          } else {
+            // TGW
+            section = 'tgw';
+          }
+          // iscoweek
+        }
+        const customDuration =
+          m.EndTime || m.StartTime
+            ? {
+                max: m.EndTime ?? duration,
+                min: m.StartTime ?? 0,
+              }
+            : undefined;
+
+        return {
+          customDuration,
+          duration,
+          fileUrl,
+          isAdditional: !!additional,
+          isAudio: audio,
+          isImage: isImage(m.FilePath),
+          isVideo: video,
+          markers: m.VideoMarkers,
+          paragraph: getParagraphNumbers(
+            m.TargetParagraphNumberLabel,
+            m.Caption,
+          ),
+          section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
+          sectionOriginal: section, // to enable restoring the original section after custom sorting
+          song: mediaIsSong,
+          streamUrl: m.StreamUrl,
+          subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',
+          thumbnailUrl,
+          title: mediaIsSong
+            ? m.Label.replace(/^\d+\.\s*/, '')
+            : m.Label || m.Caption,
+          uniqueId: sanitizeId(
+            date.formatDate(lookupDate, 'YYYYMMDD') + '-' + fileUrl,
+          ),
+        };
+      },
+    );
     return Promise.all(mediaPromises);
   } catch (e) {
     errorCatcher(e);
