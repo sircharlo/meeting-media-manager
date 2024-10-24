@@ -256,7 +256,7 @@ const getNextSong = async () => {
       }
       try {
         const selectedDayMedia =
-          lookupPeriod.value[currentCongregation.value].find(
+          lookupPeriod.value[currentCongregation.value]?.find(
             (d) => date.getDateDiff(selectedDate.value, d.date, 'days') === 0,
           )?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
