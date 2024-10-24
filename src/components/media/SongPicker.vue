@@ -46,7 +46,11 @@
       </div>
       <div class="row">
         <div class="col">
-          <q-spinner v-if="loading || filteredSongs?.length === 0" color="primary" size="1.5em" />
+          <q-spinner
+            v-if="loading || filteredSongs?.length === 0"
+            color="primary"
+            size="1.5em"
+          />
           <q-btn
             v-else
             color="primary"
