@@ -23,9 +23,9 @@
       name="mmm-import-media"
       size="xs"
     />
-    {{ $q.screen.gt.xs ? $t('import-media') : '' }}
+    {{ $q.screen.gt.xs ? $t('add-extra-media') : '' }}
     <q-tooltip :delay="1000">
-      {{ $t('import-media') }}
+      {{ $t('add-extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]" class="top-menu">
       <q-list style="min-width: 100px">

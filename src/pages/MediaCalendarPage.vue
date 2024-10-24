@@ -155,7 +155,7 @@
                 </q-btn>
                 <q-btn color="primary" @click="openImportMenu()">
                   <q-icon class="q-mr-sm" name="mmm-import-media" size="xs" />
-                  {{ $t('import-media') }}
+                  {{ $t('add-extra-media') }}
                 </q-btn>
               </div>
             </div>

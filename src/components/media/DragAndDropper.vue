@@ -3,7 +3,7 @@
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
     >
-      <div class="text-h6 row">{{ $t('import-local-media') }}</div>
+      <div class="text-h6 row">{{ $t('add-extra-media') }}</div>
       <template
         v-if="
           localJwpubDocuments?.length === 0 ||

@@ -56,13 +56,15 @@
     <q-item
       v-if="$q.platform.is.platform !== 'mac'"
       v-ripple
-      :disable="!currentSettings || invalidSettings() || mediaPlaying"
-      :to="{ path: '/present-website' }"
+      :disable="!currentSettings || invalidSettings()"
+      :disabled="mediaPlaying"
+      :to="mediaPlaying ? undefined : { path: '/present-website' }"
       active-class="bg-accent-100 text-primary blue-bar"
       clickable
+      @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
-        v-if="miniState"
+        v-if="miniState && !mediaPlaying"
         :delay="1000"
         anchor="center right"
         self="center left"
@@ -76,13 +78,14 @@
     </q-item>
     <q-item
       v-ripple
-      :disable="mediaPlaying"
-      :to="{ path: '/congregation-selector' }"
+      :disabled="mediaPlaying"
+      :to="mediaPlaying ? undefined : { path: '/congregation-selector' }"
       active-class="bg-accent-100 text-primary blue-bar"
       clickable
+      @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
-        v-if="miniState"
+        v-if="miniState && !mediaPlaying"
         :delay="1000"
         anchor="center right"
         self="center left"
@@ -99,15 +102,15 @@
     <q-space />
     <q-item
       v-ripple
-      :disable="
-        !currentSettings || mediaPlaying || route.fullPath.includes('wizard')
-      "
-      :to="{ path: '/settings' }"
+      :disable="!currentSettings || route.fullPath.includes('wizard')"
+      :disabled="mediaPlaying"
+      :to="mediaPlaying ? undefined : { path: '/settings' }"
       active-class="bg-accent-100 text-primary blue-bar"
       clickable
+      @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
-        v-if="miniState"
+        v-if="miniState && !mediaPlaying"
         :delay="1000"
         anchor="center right"
         self="center left"
@@ -130,11 +133,12 @@
 // Packages
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;
@@ -155,4 +159,17 @@ watch(
     }
   },
 );
+
+const { t } = useI18n();
+
+const stopPlayingMediaFirst = () => {
+  if (mediaPlaying.value) {
+    createTemporaryNotification({
+      caption: ref(t('stop-playing-media-first')).value,
+      group: 'stop-playing-media',
+      icon: 'mmm-media',
+      message: ref(t('stop-playing-media-first-explain')).value,
+    });
+  }
+};
 </script>
