@@ -52,12 +52,12 @@ Ez a lekérdezés Jehova Tanúi hivatalos honlapjának nyilvánosan elérhető a
 
 Ha az automatikus keresés nem találta meg az Ön gyülekezetét, természetesen kézzel is megadhatja a szükséges adatokat. A varázsló lehetővé teszi, hogy felülvizsgálja és/vagy megadja a gyülekezet **nevét**, **az összejövetelek nyelvét**, valamint **az összejövetelek napját és időpontját**.
 
-### Videók gyorsítótárazása az énekkönyvből
+### Videók gyorsítótárazása az énekeskönyvből
 
-Lehetősége lesz arra is, hogy **minden videót letöltsön az énekkönyvből**. Ez az opció előre letölti az összes zenei videót, csökkentve ezzel a jövőbeni összejövetelekhez szükséges médiatartalmak betöltésének idejét.
+Lehetősége lesz arra is, hogy **minden videót letöltsön az énekeskönyvből**. Ez az opció előre letölti az összes zenei videót, csökkentve ezzel a jövőbeni összejövetelekhez szükséges médiatartalmak betöltési idejét.
 
 - **Előnyök:** Az összejövetelekre szánt médiafájlok sokkal gyorsabban elérhetők lesznek.
-- **Hátrányok:** A média gyorsítótára jelentősen, körülbelül 5 Gb-tal megnő.
+- **Hátrányok:** A média gyorsítótára jelentősen, körülbelül 5 GB-tal megnő.
 
 :::tip Tipp
 

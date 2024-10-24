@@ -1,5 +1,54 @@
 # Changelog
 
+## 24.10.9
+
+### ✨ New Features
+
+- **feat**: Added an option to delete all extra media files for the currently selected day
+
+### 🔧 Fixes & Improvements
+
+- **fix**: Sentry improvements to properly track errors
+- **fix**: Eliminated the return of the dreaded yellow outline 🟡
+- **fix**: Corrected hover color for some buttons
+- **fix**: Addressed some typos
+- **fix**: Properly detect the CO visit date immediately after loading a profile instead of waiting to change the selected date
+- **fix**: Hide overflow text from title bar behind ellipsis
+
+## 🌍 New Translations
+
+- **Many languages** got updated translations, including Ukrainian, Swahili, Russian, and Dutch (listed in reverse alphabetical order)
+
+### 🛠️ Chores & Miscellaneous
+
+- **chore**: Removed unused strings to clean up the codebase
+
+## 24.10.8
+
+### 🔧 Fixes & Improvements
+
+- **new**: Improved music stopping logic to prevent a new song from starting if one is already playing
+- **new**: Show feedback when setting and removing a custom background
+- **new**: Hide overflow from app title behind ellipsis for cleaner appearance
+- **new**: Show OBS Studio connection state on relevant fields in settings
+- **new**: Prevent configuring scenes if OBS Studio is not connected
+- **fix**: Properly retry errored-out meetings as needed
+- **fix**: Restored and improved highlight color for selected media
+- **fix**: Resolved layout glitch where banners and loaders sometimes conflicted
+- **fix**: Improved storing and retrieval of app settings and download history
+- **fix**: Corrected strings in app theme menu
+- **fix**: Made "congratulations" message translatable
+
+### 🌍 New Translations
+
+- **Hungarian**: Now supported with full translation 🎉
+- **Progress updates** on translations across multiple languages
+
+### 🛠️ Chores & Miscellaneous
+
+- **chore**: Added Pinia to Sentry for better state tracking
+- **chore**: Enable zip format for better macOS updates
+
 ## 24.10.7
 
 ### 🔧 Fixes & Enhancements

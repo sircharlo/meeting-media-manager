@@ -2981,7 +2981,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.16.12, @types/node@npm:^20.9.0":
+"@types/node@npm:^20.17.0":
+  version: 20.17.0
+  resolution: "@types/node@npm:20.17.0"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 10c0/ccab7800a679e11a47bb66dca2a6b944b6a0abaee0ef0972569c880c32e6399f3d4155e11df480bf18bf0e61f80db65b8b11bf08bd5ee4bf96fac01953c6ede1
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.9.0":
   version: 20.16.13
   resolution: "@types/node@npm:20.16.13"
   dependencies:
@@ -4244,14 +4253,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"better-sqlite3@npm:^11.4.0":
-  version: 11.4.0
-  resolution: "better-sqlite3@npm:11.4.0"
+"better-sqlite3@npm:^11.5.0":
+  version: 11.5.0
+  resolution: "better-sqlite3@npm:11.5.0"
   dependencies:
     bindings: "npm:^1.5.0"
     node-gyp: "npm:latest"
     prebuild-install: "npm:^7.1.1"
-  checksum: 10c0/3dac7284edda55ae650cb3d274da15812c558370907eb33293743867c614977c81cacda5ca66caf49bd9d33af5afd91251c54f13448d9a48fd36a8af5c5394a1
+  checksum: 10c0/c24200972e11f6f99c4e6538122bd7ec8b31b92b2fa095f4b595cc39fedf924cb0a93fd326f0900415eccdf634367f7bba2ba4eaa4d164edd7352f4cfaaaec51
   languageName: node
   linkType: hard
 
@@ -5934,16 +5943,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^33.0.1":
-  version: 33.0.1
-  resolution: "electron@npm:33.0.1"
+"electron@npm:^33.0.2":
+  version: 33.0.2
+  resolution: "electron@npm:33.0.2"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^20.9.0"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 10c0/cd5e5cef21df2d5e1ffc95cfe90397c984152db54ac1032deb97f1716f778d41f5fa7c83e42bc86ae3c509a6d45f578515a540b6453ebf818310cc303e95f083
+  checksum: 10c0/a7f8b810412e1cc5430edca1b07eeebe75d91d82405adb7ca83d585caf9d72893db7eba0eb88ddc2a0e7e013add1d464a2663afdc3542693d62e1aac5cbfa626
   languageName: node
   linkType: hard
 
@@ -9626,7 +9635,7 @@ __metadata:
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
     "@types/klaw-sync": "npm:^6.0.5"
-    "@types/node": "npm:^20.16.12"
+    "@types/node": "npm:^20.17.0"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2"
     "@typescript-eslint/eslint-plugin": "npm:^7.18.0"
@@ -9634,9 +9643,9 @@ __metadata:
     adm-zip: "npm:^0.5.16"
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.7"
-    better-sqlite3: "npm:^11.4.0"
+    better-sqlite3: "npm:^11.5.0"
     dompurify: "npm:^3.1.7"
-    electron: "npm:^33.0.1"
+    electron: "npm:^33.0.2"
     electron-builder: "npm:^25.1.8"
     electron-updater: "npm:^6.3.9"
     electron-window-state: "npm:^5.0.3"

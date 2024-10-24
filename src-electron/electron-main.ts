@@ -1,7 +1,16 @@
 import { enable, initialize } from '@electron/remote/main';
 import { init } from '@sentry/electron/main';
 import packageInfo from 'app/package.json';
-import { app, BrowserWindow, ipcMain, Menu, session } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  type MenuItem,
+  type MenuItemConstructorOptions,
+  session,
+  shell,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import windowStateKeeper from 'electron-window-state';
 import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
@@ -236,44 +245,46 @@ function createWindow() {
     y: mainWindowState.y,
   });
 
-  const template: Electron.MenuItemConstructorOptions[] = [
+  const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
+
+  const template: (MenuItem | MenuItemConstructorOptions)[] = [
+    ...(platform === 'darwin' ? [appMenu] : []),
+    { role: 'fileMenu' },
+    { role: 'editMenu' },
+    { role: 'viewMenu' },
+    { role: 'windowMenu' },
     {
-      label: 'Application',
+      role: 'help',
       submenu: [
         {
-          label: 'About Application',
-          selector: 'orderFrontStandardAboutPanel:',
-        },
-        { type: 'separator' },
-        {
-          accelerator: 'Alt+Shift+I',
-          click: () => mainWindow?.webContents.toggleDevTools(),
-          label: 'Open Developer Tools',
-        },
-        {
-          accelerator: platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
-          click: function () {
-            app.quit();
+          click: async () => {
+            await shell.openExternal(
+              packageInfo.repository.url.replace('.git', ''),
+            );
           },
-          label: 'Quit',
+          label: 'Learn More',
         },
-      ] as Electron.MenuItemConstructorOptions[],
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { accelerator: 'CmdOrCtrl+Z', label: 'Undo', selector: 'undo:' },
-        { accelerator: 'Shift+CmdOrCtrl+Z', label: 'Redo', selector: 'redo:' },
-        { type: 'separator' },
-        { accelerator: 'CmdOrCtrl+X', label: 'Cut', selector: 'cut:' },
-        { accelerator: 'CmdOrCtrl+C', label: 'Copy', selector: 'copy:' },
-        { accelerator: 'CmdOrCtrl+V', label: 'Paste', selector: 'paste:' },
         {
-          accelerator: 'CmdOrCtrl+A',
-          label: 'Select All',
-          selector: 'selectAll:',
+          click: async () => {
+            await shell.openExternal(packageInfo.homepage);
+          },
+          label: 'Documentation',
         },
-      ] as Electron.MenuItemConstructorOptions[],
+        {
+          click: async () => {
+            await shell.openExternal(
+              packageInfo.repository.url.replace('.git', '/discussions'),
+            );
+          },
+          label: 'Community Discussions',
+        },
+        {
+          click: async () => {
+            await shell.openExternal(packageInfo.bugs);
+          },
+          label: 'Search Issues',
+        },
+      ],
     },
   ];
 

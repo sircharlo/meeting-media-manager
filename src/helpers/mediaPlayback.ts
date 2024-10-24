@@ -52,12 +52,27 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
 
 const isImage = (filepath: string) => {
   return isFileOfType(filepath, [
-    '.png',
+    // APNG
+    '.apng',
+    // AVIF
+    '.avif',
+    // GIF
+    '.gif',
+    // JPEG
     '.jpg',
     '.jpeg',
-    '.gif',
-    '.bmp',
+    '.jfif',
+    '.pjpeg',
+    '.pjp',
+    // PNG
+    '.png',
+    // WebP
     '.webp',
+    // BMP
+    '.bmp',
+    // ICO
+    '.ico',
+    '.cur',
   ]);
 };
 

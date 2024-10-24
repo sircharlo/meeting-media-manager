@@ -499,7 +499,7 @@ const {
   path,
 } = electronApi;
 
-const filesLoading = ref(false);
+const filesLoading = ref(-1);
 
 watch(
   () => mediaPlayingUniqueId.value,
@@ -831,19 +831,23 @@ onMounted(async () => {
   window.addEventListener('localFiles-browsed', localFilesBrowsedListener);
   window.addEventListener('remote-video-loading', remoteVideoLoading);
 
-  watch(selectedDate, (newVal) => {
-    try {
-      if (!currentCongregation.value || !newVal) {
-        return;
+  watch(
+    selectedDate,
+    (newVal) => {
+      try {
+        if (!currentCongregation.value || !newVal) {
+          return;
+        }
+        const durations = (customDurations.value[currentCongregation.value] ||=
+          {});
+        durations[newVal] ||= {};
+        coWeek.value = isCoWeek(dateFromString(newVal));
+      } catch (e) {
+        errorCatcher(e);
       }
-      const durations = (customDurations.value[currentCongregation.value] ||=
-        {});
-      durations[newVal] ||= {};
-      coWeek.value = isCoWeek(dateFromString(newVal));
-    } catch (e) {
-      errorCatcher(e);
-    }
-  });
+    },
+    { immediate: true },
+  );
   generateMediaList();
   goToNextDayWithMedia();
   sendObsSceneEvent('camera');
@@ -1082,9 +1086,9 @@ const addToFiles = async (
   files: { filetype?: string; path: string }[] | FileList,
 ) => {
   if (!files) return;
-  filesLoading.value = true;
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < files.length; i++) {
+    filesLoading.value = i / files.length;
     let filepath = files[i]?.path;
     try {
       if (!filepath) continue;
@@ -1111,7 +1115,7 @@ const addToFiles = async (
       }
       filepath = await convertImageIfNeeded(filepath);
       if (isImage(filepath) || isVideo(filepath) || isAudio(filepath)) {
-        copyToDatedAdditionalMedia([filepath]);
+        await copyToDatedAdditionalMedia([filepath]);
       } else if (isPdf(filepath)) {
         const convertedImages = (
           await convertPdfToImages(filepath, getTempDirectory())
@@ -1185,8 +1189,6 @@ const addToFiles = async (
                   type: 'negative',
                 }),
               );
-          } else {
-            filesLoading.value = false;
           }
         }
         // jwpubImportLoading.value = false;
@@ -1201,10 +1203,6 @@ const addToFiles = async (
           })
           .catch((error) => {
             errorCatcher(error);
-          })
-          .finally(() => {
-            filesLoading.value = false;
-            dragging.value = false;
           });
       } else if (isArchive(filepath)) {
         const unzipDirectory = path.join(
@@ -1224,16 +1222,10 @@ const addToFiles = async (
               .then(() => fs.removeSync(unzipDirectory))
               .catch((error) => {
                 errorCatcher(error);
-              })
-              .finally(() => {
-                filesLoading.value = false;
-                dragging.value = false;
               });
           })
           .catch((error) => {
             errorCatcher(error);
-            filesLoading.value = false;
-            dragging.value = false;
           });
       } else {
         createTemporaryNotification({
@@ -1243,8 +1235,6 @@ const addToFiles = async (
           type: 'negative',
         });
       }
-      filesLoading.value = false;
-      dragging.value = false;
     } catch (error) {
       createTemporaryNotification({
         caption: filepath ? path.basename(filepath) : filepath,
@@ -1254,7 +1244,10 @@ const addToFiles = async (
       });
       errorCatcher(error);
     }
+    filesLoading.value = (i + 1) / files.length;
   }
+  dragging.value = false;
+  filesLoading.value = -1;
 };
 
 const addOpeningSong = () => {
@@ -1277,12 +1270,19 @@ const dropEnd = (event: DragEvent) => {
   event.stopPropagation();
   try {
     if (event.dataTransfer?.files.length) {
-      const droppedStuff = Array.from(event.dataTransfer.files).map((file) => {
-        return {
-          path: getLocalPathFromFileObject(file),
-          type: file.type,
-        };
-      });
+      const droppedStuff = Array.from(event.dataTransfer.files)
+        .map((file) => {
+          return {
+            path: getLocalPathFromFileObject(file),
+            type: file.type,
+          };
+        })
+        .sort((a, b) =>
+          a?.path?.localeCompare(b?.path, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+          }),
+        );
       let noLocalDroppedFiles =
         droppedStuff.filter((file) => file.path).length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {

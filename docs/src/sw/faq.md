@@ -1,41 +1,41 @@
-# Frequently Asked Questions
+# Maswali yaliyoulizwa mara kwa mara
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Je, programu hii inategemea tovuti, vyanzo au "wasimamizi" wa nje ili kupakua machapisho, midia ya mkutano au maudhui mengine?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Hapana.** Mfumo huu hufanya kazi kama tu JW Library. Inapakua machapisho, midia na maudhui mengine moja kwa moja kutoka kwa tovuti rasmi ya JW.org na mtandao wake wa utoaji midia. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
 
 :::info Note
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoendelea chini ya maji.
 
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Je, programu hii inakiuka Sheria na Masharti ya JW.org?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis mine):
+**Hapana.** JW.org [Sheria na Masharti](https://www.jw.org/finder?docid=1011511&prefer=content) huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu inayotoka kwa maneno hayo (kusisitiza):
 
-> You may not:
+> Haupaswi:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Kutengeneza programu za kompyuta, vifaa, au mbinu zenye kusudi la kukusanya, kunakili, kupakua, kupata (extract), kuvuna (harvest), au kutoa (scrape) habari (data), HTML, picha, au maandishi kutoka katika tovuti hii kwa kusudi la kusambaza. (Hii haitii ndani kusambaza programu za bure, zisizo za kibiashara zenye kusudi la kupakua faili za kielektoni kama vile, EPUB, PDF, MP3, AAC, MOBI, na faili za MP4 kutoka katika maeneo ya umma ya tovuti hii.)
 
-## :radioactive: How do I report an issue?
+## :radioactive: Je, ninaripotije tatizo?
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Tafadhali tuma [suala](https://github.com/sircharlo/meeting-media-manager/issues) kwenye hazina rasmi(repository) ya GitHub.
 
-## :new: How can I request a new feature or enhancement?
+## :new: Ninawezaje kuomba kipengele kipya au uboreshaji?
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Tafadhali fungua [majadiliano](https://github.com/sircharlo/meeting-media-manager/discussions) kwenye hazina rasmi ya GitHub.
 
-## :handshake: How can I contribute some code?
+## :handshake: Ninawezaje kusaidia kwenye code?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Tafadhali angalia [mwongozo wa kuchangia](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) kwenye hazina rasmi ya GitHub.
 
-## :x: Can I make a donation to the project?
+## :x: Je, ninaweza kutoa mchango kwa mradi?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Asante kwa nia yako ya kusaidia mradi! Hata hivyo, kwa kuzingatia Mathayo 10:8, michango **haikubaliki** na haitakubaliwa kamwe. Mfumo huu ulitengenezwa kwa upendo na wakati wetu wa ziada. Tafadhali furahia! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Mathayo 10:8
 
-"You received free, give free."
+"Mlipokea bure, toeni bure."
 
 :::

@@ -1,6 +1,7 @@
 <template>
   <q-select
     v-model="localValue"
+    :clearable="!rules || !rules.includes('notEmpty')"
     :disable="customDisabled"
     :fill-input="useInput"
     :hide-selected="useInput"
@@ -8,7 +9,6 @@
     :rules="getRules(rules)"
     :use-input="useInput"
     class="bg-accent-100"
-    clearable
     dense
     emit-value
     hide-bottom-space

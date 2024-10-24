@@ -7,33 +7,47 @@
       <template
         v-if="
           localJwpubDocuments?.length === 0 ||
-          localFilesLoading ||
+          localFilesLoading > -1 ||
           (!!localJwpubDb && jwpubLoading) ||
           !localJwpubDb
         "
       >
         <div class="row">
           {{ $t('local-media-explain-1') }}
-          {{ $t('local-media-explain-2') }}
+          <!-- TODO: add feature to show full list of supported formats -->
+          <!--{{ $t('local-media-explain-2') }}-->
         </div>
         <div class="row">
           <div
             class="col rounded-borders dashed-border items-center justify-center flex"
             style="height: 20vh"
           >
-            <div class="col-6">
-              <template
-                v-if="localFilesLoading || (!!localJwpubDb && jwpubLoading)"
+            <template
+              v-if="
+                (-1 < localFilesLoading && localFilesLoading < 1) ||
+                (!!localJwpubDb && jwpubLoading)
+              "
+            >
+              <q-linear-progress
+                :value="localFilesLoading"
+                class="full-height"
+                color="primary"
               >
-                <q-spinner color="primary" size="lg" />
-              </template>
-              <template v-else>
-                <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
-                {{ $t('drag-and-drop-or ') }}
-                <a @click="getLocalFiles()">{{ $t('browse for files') }}</a
-                >.
-              </template>
-            </div>
+                <div class="absolute-full flex flex-center">
+                  <q-badge
+                    :label="(localFilesLoading * 100).toFixed(0) + '%'"
+                    color="white"
+                    text-color="primary"
+                  />
+                </div>
+              </q-linear-progress>
+            </template>
+            <template v-else>
+              <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
+              {{ $t('drag-and-drop-or ') }}
+              <a @click="getLocalFiles()"> {{ $t('browse for files') }}</a
+              >.
+            </template>
           </div>
         </div>
       </template>
@@ -96,7 +110,6 @@
           @click="
             localJwpubDb = '';
             localValue = false;
-            localFilesLoading = false;
           "
           >{{ $t('cancel') }}</q-btn
         >
@@ -117,7 +130,7 @@ import { ref, watch } from 'vue';
 
 const { openFileDialog } = electronApi;
 const props = defineProps<{
-  filesLoading: boolean;
+  filesLoading: number;
   jwpubDb: string;
   jwpubDocuments: DocumentItem[] | null;
   modelValue: boolean;
