@@ -50,27 +50,27 @@ Mbinu hii hutumia habari kutoka kwa tovuti rasmi la Mashahidi wa Yehova.
 
 ### Kuingiza habari ya kutaniko kwa mkono
 
-Ikiwa mbinu ya kutafuta kutaniko haikupata kutaniko lako, unaweza kuingiza habari hizo zinazohitajika moja kwa moja. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Ikiwa mbinu ya kutafuta kutaniko haikupata kutaniko lako, unaweza kuingiza habari hizo zinazohitajika moja kwa moja. Programu itakuruhusu kukagua /au kuandika **jina** la kutaniko lako, **lugha ya mkutano**, na **siku na nyakati za mikutano**.
 
-### Caching videos from the songbook
+### Kupakua video kutoka kwa kitabu cha wimbo
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Pia utapewa uwezo wa **kupakua video zote kutoka kwa kitabu cha wimbo**. Chaguo hili hupakua mapema video zote za kitabu cha nyimbo, na hivyo kupunguza muda unaochukua ili kupakua midia kwa ajili ya mikutano katika siku zijazo.
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
+- **Faida:** Midia ya mkutano itapatikana kwa haraka zaidi.
+- **Hasara:** Kiwango cha nafasi inayotumiwa itaongezeka kwa kiwango kikubwa, huenda hata kwa 5GB.
 
 :::tip Kidokezo
 
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+Ikiwa mfumo wenu kwenu Jumba La Ufalme una nafasi, tunashauri kwamba **muwashe** chaguo hili ili kufanya utumiaji uwe rahisi.
 
 :::
 
-### OBS Studio Integration Configuration (Optional)
+### Usanidi wa Studio ya OBS (Si lazima)
 
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
+Ikiwa Jumba lenu La Ufalme linatumia **OBS Studio** kwa ajili ya upeperushaji wa mikutano kwenye Zoom, M³ inaweza kuunganshwa na programu hiyo. Kwenye uratibu, unaweza kusanidi OBS Studio kwa kuingiza yafuatayo:
 
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
+- **Port:** Nambari ya Port hutumiwa kuunganisha mfumo na OBS Studio kupitia Websocket plugin.
+- **Password:** Neno siri hutumiwa ili kuunganisha mfumo na OBS Studio kupitia Websocket plugin.
 - **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
 
 :::tip Kidokezo

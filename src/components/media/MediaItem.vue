@@ -703,9 +703,9 @@ const initiatePanzoom = (elemId: string) => {
       zoomReset(elemId);
     });
 
-    elem.addEventListener('wheel', function(e) {
-        if (!e.ctrlKey) return;
-        panzooms[elemId]?.zoomWithWheel(e);
+    elem.addEventListener('wheel', function (e) {
+      if (!e.ctrlKey) return;
+      panzooms[elemId]?.zoomWithWheel(e);
     });
 
     elem.addEventListener(

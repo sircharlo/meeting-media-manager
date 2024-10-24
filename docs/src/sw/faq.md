@@ -12,7 +12,7 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 ## :thinking: Je, programu hii inakiuka Sheria na Masharti ya JW.org?
 
-**Hapana.** JW.org [Sheria na Masharti](https://www.jw.org/finder?docid=1011511\&prefer=content) huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu inayotoka kwa maneno hayo (kusisitiza):
+**Hapana.** JW.org [Sheria na Masharti](https://www.jw.org/finder?docid=1011511&prefer=content) huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu inayotoka kwa maneno hayo (kusisitiza):
 
 > Haupaswi:
 >
