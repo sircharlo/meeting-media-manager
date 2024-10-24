@@ -9,6 +9,10 @@
   "cSpell.ignorePaths": [
     ".github/workflows/*",
     ".vscode/*",
+    "docs/locales/*.json",
+    "!docs/locales/en.json",
+    "docs/src/**/*",
+    "!docs/src/en/**/*",
     "node_modules",
     "src/i18n/*",
     "!src/i18n/en.json",
