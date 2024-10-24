@@ -75,7 +75,7 @@
                   <div class="ellipsis">
                     {{
                       scene === currentSettings?.obsCameraScene
-                        ? $t('speaker')
+                        ? $t('stage')
                         : scene === currentSettings?.obsMediaScene
                           ? $t('media-only')
                           : $t('picture-in-picture')
