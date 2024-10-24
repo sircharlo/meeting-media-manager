@@ -13,7 +13,7 @@
       size="xs"
     />
     {{ $q.screen.gt.sm ? $t('reset-sort-order') : '' }}
-    <q-tooltip :delay="1000">
+    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
       {{ $t('reset-sort-order') }}
     </q-tooltip>
   </q-btn>
@@ -23,9 +23,9 @@
       name="mmm-import-media"
       size="xs"
     />
-    {{ $q.screen.gt.xs ? $t('add-extra-media') : '' }}
-    <q-tooltip :delay="1000">
-      {{ $t('add-extra-media') }}
+    {{ $q.screen.gt.xs ? $t('extra-media') : '' }}
+    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+      {{ $t('extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]" class="top-menu">
       <q-list style="min-width: 100px">
