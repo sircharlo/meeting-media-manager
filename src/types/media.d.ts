@@ -59,3 +59,10 @@ export interface SongItem extends Item {
   duration?: number; // or the correct type for duration
   title?: string;
 }
+
+export interface VideoDuration {
+  duration: number;
+  ms: number;
+  seconds: number;
+  timeScale: number;
+}

@@ -50,62 +50,88 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
   }
 };
 
+const pureImageExtensions = [
+  // APNG
+  '.apng',
+  // AVIF
+  '.avif',
+  // GIF
+  '.gif',
+  // JPEG
+  '.jpg',
+  '.jpeg',
+  '.jfif',
+  '.pjpeg',
+  '.pjp',
+  // PNG
+  '.png',
+  // WebP
+  '.webp',
+  // BMP
+  '.bmp',
+  // ICO
+  '.ico',
+  '.cur',
+];
+
+const heicExtensions = ['.heic'];
+const svgExtensions = ['.svg'];
+
+const imageExtensions = [
+  ...pureImageExtensions,
+  ...heicExtensions,
+  ...svgExtensions,
+];
+
+const audioExtensions = ['.mp3', '.wav', '.ogg', '.flac'];
+const videoExtensions = ['.mp4', '.mov', '.mkv', '.avi', '.webm'];
+
+const pdfExtensions = ['.pdf'];
+const zipExtensions = ['.zip'];
+const jwpubExtensions = ['.jwpub'];
+const jwPlaylistExtensions = ['.jwlplaylist'];
+
+const otherExtensions = [
+  ...pdfExtensions,
+  ...zipExtensions,
+  ...jwpubExtensions,
+  ...jwPlaylistExtensions,
+];
+
 const isImage = (filepath: string) => {
-  return isFileOfType(filepath, [
-    // APNG
-    '.apng',
-    // AVIF
-    '.avif',
-    // GIF
-    '.gif',
-    // JPEG
-    '.jpg',
-    '.jpeg',
-    '.jfif',
-    '.pjpeg',
-    '.pjp',
-    // PNG
-    '.png',
-    // WebP
-    '.webp',
-    // BMP
-    '.bmp',
-    // ICO
-    '.ico',
-    '.cur',
-  ]);
+  return isFileOfType(filepath, pureImageExtensions);
 };
 
 const isHeic = (filepath: string) => {
-  return isFileOfType(filepath, ['.heic']);
+  return isFileOfType(filepath, heicExtensions);
 };
 
 const isSvg = (filepath: string) => {
-  return isFileOfType(filepath, ['.svg']);
+  return isFileOfType(filepath, svgExtensions);
 };
 
 const isVideo = (filepath: string) => {
-  return isFileOfType(filepath, ['.mp4', '.mov', '.mkv', '.avi', '.webm']);
+  return isFileOfType(filepath, videoExtensions);
 };
 
 const isAudio = (filepath: string) => {
-  return isFileOfType(filepath, ['.mp3', '.wav', '.ogg', '.flac']);
+  return isFileOfType(filepath, audioExtensions);
 };
 
 const isPdf = (filepath: string) => {
-  return isFileOfType(filepath, ['.pdf']);
+  return isFileOfType(filepath, pdfExtensions);
 };
 
 const isArchive = (filepath: string) => {
-  return isFileOfType(filepath, ['.zip']);
+  return isFileOfType(filepath, zipExtensions);
 };
 
 const isJwpub = (filepath: string) => {
-  return isFileOfType(filepath, ['.jwpub']);
+  return isFileOfType(filepath, jwpubExtensions);
 };
 
 const isJwPlaylist = (filepath: string) => {
-  return isFileOfType(filepath, ['.jwlplaylist']);
+  return isFileOfType(filepath, jwPlaylistExtensions);
 };
 
 const isSong = (multimediaItem: MultimediaItem) => {
@@ -384,6 +410,7 @@ const showMediaWindow = (state?: boolean) => {
 };
 
 export {
+  audioExtensions,
   convertHeicToJpg,
   convertImageIfNeeded,
   convertSvgToJpg,
@@ -391,9 +418,11 @@ export {
   findDb,
   formatTime,
   getMediaFromJwPlaylist,
+  imageExtensions,
   inferExtension,
   isArchive,
   isAudio,
+  isFileOfType,
   isHeic,
   isImage,
   isImageString,
@@ -404,5 +433,7 @@ export {
   isSong,
   isSvg,
   isVideo,
+  otherExtensions,
   showMediaWindow,
+  videoExtensions,
 };

@@ -14,6 +14,7 @@ import {
   globalShortcut,
   screen,
 } from '@electron/remote';
+import { videoDuration as getVideoDuration } from '@numairawan/video-duration';
 import { captureMessage, setContext } from '@sentry/electron/renderer';
 import AdmZip from 'adm-zip';
 import BetterSqlite3 from 'better-sqlite3';
@@ -603,6 +604,7 @@ const electronApi: ElectronApi = {
   getUserDesktopPath: () => {
     return app.getPath('desktop');
   },
+  getVideoDuration,
   isFileUrl,
   klawSync,
   moveMediaWindow,

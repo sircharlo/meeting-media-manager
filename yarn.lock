@@ -1171,6 +1171,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@numairawan/video-duration@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@numairawan/video-duration@npm:1.0.0"
+  dependencies:
+    axios: "npm:^1.6.0"
+    mime-types: "npm:^2.1.35"
+  checksum: 10c0/74a8e5c90ec4d394d5a8f0afae0d2cc85a04dbbd98fef18e0eab5af10c7ced3a9b7dcf6f081735a9a0cfcd1f81aed0fdb3d92e2f7ea377c6f9866e65a9f349cf
+  languageName: node
+  linkType: hard
+
 "@nuxt/kit@npm:^3.13.2":
   version: 3.13.2
   resolution: "@nuxt/kit@npm:3.13.2"
@@ -4213,7 +4223,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.7.7":
+"axios@npm:^1.6.0, axios@npm:^1.7.7":
   version: 1.7.7
   resolution: "axios@npm:1.7.7"
   dependencies:
@@ -9620,6 +9630,7 @@ __metadata:
     "@electron/remote": "npm:^2.1.2"
     "@formkit/drag-and-drop": "npm:^0.1.5"
     "@intlify/vite-plugin-vue-i18n": "npm:^7.0.0"
+    "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.5.1"
     "@quasar/app-vite": "npm:^1.10.2"
     "@quasar/cli": "npm:^2.4.1"
@@ -9804,7 +9815,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mime-types@npm:^2.1.12, mime-types@npm:~2.1.24, mime-types@npm:~2.1.34":
+"mime-types@npm:^2.1.12, mime-types@npm:^2.1.35, mime-types@npm:~2.1.24, mime-types@npm:~2.1.34":
   version: 2.1.35
   resolution: "mime-types@npm:2.1.35"
   dependencies:

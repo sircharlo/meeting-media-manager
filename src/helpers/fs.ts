@@ -1,13 +1,18 @@
 import type { PathLike } from 'fs-extra';
 import type { Item } from 'klaw-sync';
-import type { MultimediaItem, PublicationFetcher } from 'src/types';
+import type { IAudioMetadata } from 'music-metadata';
+import type {
+  MultimediaItem,
+  PublicationFetcher,
+  VideoDuration,
+} from 'src/types';
 
 import { Buffer } from 'buffer';
 import { storeToRefs } from 'pinia';
 import { FULL_HD } from 'src/helpers/converters';
 import { electronApi } from 'src/helpers/electron-api';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
-import { isImage, isVideo } from 'src/helpers/mediaPlayback';
+import { isFileOfType, isImage, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
@@ -16,6 +21,7 @@ const {
   fileUrlToPath,
   fs,
   getUserDataPath,
+  getVideoDuration,
   isFileUrl,
   klawSync,
   parseFile,
@@ -97,21 +103,35 @@ const getDurationFromMediaPath = async (mediaPath: string) => {
   return metadata?.format?.duration || 0;
 };
 
-const getMetadataFromMediaPath = async (mediaPath: string) => {
+const getMetadataFromMediaPath = async (
+  mediaPath: string,
+): Promise<IAudioMetadata> => {
   const defaultMetadata = {
     common: {
+      disk: { no: null, of: null },
+      movementIndex: { no: null, of: null },
       title: '',
+      track: { no: null, of: null },
     },
     format: {
       duration: 0,
+      tagTypes: [],
+      trackInfo: [],
     },
+    native: {},
+    quality: { warnings: [] },
   };
   try {
     mediaPath = fileUrlToPath(mediaPath);
-    if (!mediaPath) return defaultMetadata;
-    if (!mediaPath || !fs.existsSync(mediaPath)) return;
-    const metadata = await parseFile(mediaPath);
-    return metadata;
+    if (!mediaPath || !fs.existsSync(mediaPath)) return defaultMetadata;
+    if (isFileOfType(mediaPath, ['.mov'])) {
+      const videoDuration = (await getVideoDuration(
+        mediaPath,
+      )) as VideoDuration;
+      defaultMetadata.format.duration = videoDuration?.seconds || 0;
+      return defaultMetadata;
+    }
+    return await parseFile(mediaPath);
   } catch (error) {
     errorCatcher(mediaPath + ': ' + error);
     return defaultMetadata;
