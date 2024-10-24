@@ -162,7 +162,6 @@
         "npm:obs-websocket-js@^5.0.6",
         "npm:p-queue@^8.0.1",
         "npm:pdfjs-dist@^4.7.76",
-        "npm:pinia-plugin-persistedstate@^4.1.1",
         "npm:pinia-shared-state@^0.5.1",
         "npm:pinia@^2.2.4",
         "npm:postcss@^8.4.47",

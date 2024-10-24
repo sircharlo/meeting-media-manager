@@ -71,7 +71,7 @@ import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 // Stores
 import { useAppSettingsStore } from 'src/stores/app-settings';
-// import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
+import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
@@ -124,9 +124,17 @@ const appSettings = useAppSettingsStore();
 const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
 
+const { congregations } = storeToRefs(useCongregationSettingsStore());
+console.debug('congregations1', congregations.value);
 if (!migrations.value?.includes('localStorageToPiniaPersist')) {
   runMigration('localStorageToPiniaPersist');
 }
+console.debug('congregations2', congregations.value);
+
+if (!migrations.value?.includes('piniaPersistToUseLocalStorage')) {
+  runMigration('piniaPersistToUseLocalStorage');
+}
+console.debug('congregations3', congregations.value);
 
 if (!migrations.value?.includes('firstRun')) {
   const migrationResult = runMigration('firstRun');

@@ -6,11 +6,12 @@ import type {
   PublicationFetcher,
 } from 'src/types';
 
+import { useLocalStorage } from '@vueuse/core';
 import { getLanguages, getYeartext } from 'boot/axios';
 import { defineStore, storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import sanitizeHtml from 'sanitize-html';
-import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { findBestResolution, getPubMediaLinks } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -233,50 +234,45 @@ export const useJwStore = defineStore('jw-store', {
       }
     },
   },
-  persist: {
-    afterHydrate: (ctx) => {
-      // Convert date strings to Date objects in state
-      if (ctx.store.$state.jwLanguages.updated)
-        ctx.store.$state.jwLanguages.updated = dateFromString(
-          ctx.store.$state.jwLanguages.updated,
-        );
-      if (ctx.store.$state.jwSongs.updated)
-        ctx.store.$state.jwSongs.updated = dateFromString(
-          ctx.store.$state.jwSongs.updated,
-        );
-      Object.entries(
-        ctx.store.$state.lookupPeriod as Record<string, DateInfo[]>,
-      ).forEach(([, period]) => {
-        period.forEach((day: { date: Date | string }) => {
-          if (day.date) day.date = dateFromString(day.date);
-        });
-      });
-    },
-  },
   state: () => {
     return {
-      additionalMediaMaps: {} as Record<
-        string,
-        Record<string, DynamicMediaObject[]>
-      >,
-      customDurations: {} as Record<
-        string,
-        Record<string, Record<string, { max: number; min: number }>>
-      >,
-      jwLanguages: {
+      additionalMediaMaps: useLocalStorage(
+        'additionalMediaMaps',
+        {} as Record<string, Record<string, DynamicMediaObject[]>>,
+      ),
+      customDurations: useLocalStorage(
+        'customDurations',
+        {} as Record<
+          string,
+          Record<string, Record<string, { max: number; min: number }>>
+        >,
+      ),
+      jwLanguages: useLocalStorage('jwLanguages', {
         list: [],
         updated: oldDate,
-      } as { list: JwLanguage[]; updated: Date },
-      jwSongs: {} as Record<
-        string,
-        {
-          list: MediaLink[];
-          updated: Date;
-        }
-      >,
-      lookupPeriod: {} as Record<string, DateInfo[]>,
-      mediaSort: {} as Record<string, Record<string, string[]>>,
-      yeartexts: {} as Record<number, Record<string, string>>,
+      } as { list: JwLanguage[]; updated: Date }),
+      jwSongs: useLocalStorage(
+        'jwSongs',
+        {} as Record<
+          string,
+          {
+            list: MediaLink[];
+            updated: Date;
+          }
+        >,
+      ),
+      lookupPeriod: useLocalStorage(
+        'lookupPeriod',
+        {} as Record<string, DateInfo[]>,
+      ),
+      mediaSort: useLocalStorage(
+        'mediaSort',
+        {} as Record<string, Record<string, string[]>>,
+      ),
+      yeartexts: useLocalStorage(
+        'yeartexts',
+        {} as Record<number, Record<string, string>>,
+      ),
     };
   },
 });
