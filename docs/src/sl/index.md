@@ -1,36 +1,36 @@
 ---
 layout: home
 hero:
-  name: M³ documentation
-  text: Help to set up and use Meeting Media Manager
+  name: Dokumentacija M³
+  text: Pomoč pri nastavitvi in uporabi aplikacije Meeting Media Manager
   image: /icon.png
   actions:
     - theme: brand
-      text: Install Meeting Media Manager
+      text: Namesti Meeting Media Manager
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
-      text: Using at a Kingdom Hall
+      text: Za uporabo v kraljestveni dvorani
       link: /sl/using-at-a-kingdom-hall
     - theme: alt
-      text: About
+      text: O programu
       link: /sl/about
 features:
   - icon: 🚀
-    title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on JW.org.
+    title: Samodejno prenašanje multimedijske vsebine
+    details: Samodejno prenaša slike in videoposnetke za občinske shode v katerem koli jeziku, ki je na voljo na jw.org.
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: Predvajanje multimedijske vsebine
+    details: Omogoča enostavno predvajanje multimedijske vsebine med hibridnimi shodi ali shodi v živo.
   - icon: 🎵
     title: Glasba v ozadju
-    details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
+    details: Omogoča samodejno predvajanje glasbe v ozadju. Pred začetkom shoda jo neha predvajati. Glasbo v ozadju se lahko po shodu ponovno zažene z enim klikom.
   - icon: 🖥️
-    title: External monitor support
-    details: Automatically detects and manages external monitors for smooth media presentations.
+    title: Podpora za zunanji monitor
+    details: Samodejno zaznava in upravlja zunanje monitorje za nemoteno predvajanje multimedijske vsebine.
   - icon: 🌐
-    title: Multiple languages
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Več jezikov
+    details: Multimedijsko vsebino za shode je mogoče prenesti v več sto jezikih in uporabljati vmesnik M³ v katerem koli od številnih razpoložljivih jezikov.
   - icon: 🧩
-    title: OBS Studio Integration
-    details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
+    title: Povezava s programom OBS Studio
+    details: Povezava s programom OBS Studio za izboljšano upravljanje multimedijske vsebine in boljše možnosti predvajanja te vsebine.
 ---
