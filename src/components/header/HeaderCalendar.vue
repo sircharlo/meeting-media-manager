@@ -93,6 +93,17 @@
         </template>
         <template v-if="additionalMediaForDay">
           <q-item-label header>{{ $t('dangerZone') }}</q-item-label>
+          <q-item v-close-popup clickable @click="showCurrentDayHiddenMedia()">
+            <q-item-section avatar>
+              <q-icon color="primary" name="mmm-eye" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t('show-hidden-media') }}</q-item-label>
+              <q-item-label caption>{{
+                $t('show-hidden-media-explain')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item v-close-popup clickable @click="mediaDeleteAllPending = true">
             <q-item-section avatar>
               <q-icon color="negative" name="mmm-delete" />
@@ -196,7 +207,8 @@ import { useJwStore } from 'src/stores/jw';
 import type { JwVideoCategory, MediaItemsMediatorItem } from 'src/types';
 
 const jwStore = useJwStore();
-const { clearCurrentDayAdditionalMedia, resetSort } = jwStore;
+const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
+  jwStore;
 const { additionalMediaMaps, lookupPeriod, mediaSort } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();

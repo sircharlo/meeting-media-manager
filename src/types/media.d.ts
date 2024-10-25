@@ -7,6 +7,7 @@ export interface DynamicMediaObject {
   duration: number;
   fileUrl: string;
   footnote?: boolean;
+  hidden?: boolean;
   isAdditional?: boolean;
   isAudio: boolean;
   isImage: boolean;

@@ -21,6 +21,27 @@
     <div class="col">
       <div
         v-if="
+          [...sortableAdditionalMediaItems, ...sortableMediaItems].some(
+            (m) => m.hidden,
+          )
+        "
+        class="row"
+      >
+        <q-banner
+          class="bg-warning text-white full-width"
+          inline-actions
+          rounded
+        >
+          {{ $t('some-media-items-are-hidden') }}
+          <template #avatar>
+            <q-avatar class="bg-white text-warning" size="lg">
+              <q-icon name="mmm-file-hidden" size="sm" />
+            </q-avatar>
+          </template>
+        </q-banner>
+      </div>
+      <div
+        v-if="
           selectedDateObject?.meeting === 'we' &&
           selectedDateObject?.complete &&
           !sortableAdditionalMediaItems?.length
@@ -200,6 +221,7 @@
           :key="media.uniqueId"
           :list="sortableAdditionalMediaItems"
           :media="media"
+          @update:hidden="media.hidden = !!$event"
         />
       </q-list>
     </q-list>
@@ -224,6 +246,7 @@
           :key="media.uniqueId"
           :list="sortableTgwMediaItems"
           :media="media"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableTgwMediaItems.length === 0">
           <q-item>
@@ -260,6 +283,7 @@
           :key="media.uniqueId"
           :list="sortableAyfmMediaItems"
           :media="media"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableAyfmMediaItems.length === 0">
           <q-item>
@@ -296,6 +320,7 @@
           :key="media.uniqueId"
           :list="sortableLacMediaItems"
           :media="media"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableLacMediaItems.length === 0">
           <q-item>
@@ -327,6 +352,7 @@
           :key="media.uniqueId"
           :list="sortableWtMediaItems"
           :media="media"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableWtMediaItems.length === 0">
           <q-item>
@@ -360,6 +386,7 @@
           :key="media.uniqueId"
           :list="sortableCircuitOverseerMediaItems"
           :media="media"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableCircuitOverseerMediaItems.length === 0">
           <q-item>

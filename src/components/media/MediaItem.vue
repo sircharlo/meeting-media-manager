@@ -1,5 +1,5 @@
 <template>
-  <q-item class="items-center justify-center">
+  <q-item v-show="!media.hidden" class="items-center justify-center">
     <div class="q-pr-none rounded-borders">
       <div
         v-if="media.isAudio"
@@ -450,6 +450,25 @@
           </template>
         </div>
       </div>
+      <q-menu context-menu touch-position>
+        <q-list>
+          <q-item-label header>{{ media.title }}</q-item-label>
+          <q-item v-close-popup clickable @click="emit('update:hidden', true);">
+            <q-item-section>
+              <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
+              <q-item-label caption>{{
+                $t('hide-from-list-explain')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-close-popup clickable @click="mediaEditTitleDialog = true">
+            <q-item-section>
+              <q-item-label>{{ $t('rename') }}</q-item-label>
+              <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-menu>
     </div>
   </q-item>
   <q-dialog v-model="mediaEditTitleDialog">
@@ -577,6 +596,8 @@ const props = defineProps<{
   list: DynamicMediaObject[];
   media: DynamicMediaObject;
 }>();
+
+const emit = defineEmits(['update:hidden']);
 
 const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref('');
