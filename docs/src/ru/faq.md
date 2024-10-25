@@ -1,8 +1,8 @@
-# Frequently Asked Questions
+# Часто задаваемые вопросы
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Зависит ли это приложение от внешних сайтов, источников или "кураторов", чтобы загружать публикации, мультимедиа и других файлов для встреч?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Нет.** Приложение работает аналогично JW Library. Оно загружает публикации, мультимедиа и другие файлы непосредственно с официального сайта JW.org. Приложение автоматически определяет, что нужно скачать, и когда ранее загруженный контент устарел и если следует повторно скачать его.
 
 :::info Примечание
 
