@@ -9651,6 +9651,7 @@ __metadata:
     "@types/sanitize-html": "npm:^2"
     "@typescript-eslint/eslint-plugin": "npm:^7.18.0"
     "@typescript-eslint/parser": "npm:^7.18.0"
+    "@vueuse/core": "npm:^11.1.0"
     adm-zip: "npm:^0.5.16"
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.7"

@@ -180,13 +180,12 @@
 </template>
 <script setup lang="ts">
 // Packages
+import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, QMenu } from 'quasar';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-
+import { computed, ref } from 'vue';
 // Globals
 import { get } from 'src/boot/axios';
-
 // Composables
 import { useLocale } from 'src/composables/useLocale';
 
@@ -421,13 +420,6 @@ const openSongPicker = () => {
   chooseSong.value = true;
 };
 
-onMounted(() => {
-  window.addEventListener('openSongPicker', openSongPicker);
-  window.addEventListener('openImportMenu', openImportMenu);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('openSongPicker', openSongPicker);
-  window.removeEventListener('openImportMenu', openImportMenu);
-});
+useEventListener(window, 'openSongPicker', openSongPicker);
+useEventListener(window, 'openImportMenu', openImportMenu);
 </script>

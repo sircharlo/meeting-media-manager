@@ -131,6 +131,7 @@
 <script setup lang="ts">
 import type { JsonObject } from 'obs-websocket-js/node_modules/type-fest';
 
+import { useEventListener } from '@vueuse/core';
 import { OBSWebSocketError } from 'obs-websocket-js';
 import { storeToRefs } from 'pinia';
 import { obsWebSocket } from 'src/boot/globals';
@@ -329,10 +330,11 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   errorCatcher('OBS Error: Max retries reached. Could not fetch scene list.');
 };
 
+useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect);
+useEventListener(window, 'obsSceneEvent', setObsSceneListener);
+
 onMounted(() => {
   try {
-    window.addEventListener('obsConnectFromSettings', obsSettingsConnect);
-    window.addEventListener('obsSceneEvent', setObsSceneListener);
     obsWebSocket.on('ConnectionOpened', () => {
       obsConnectionState.value = 'connecting';
     });
@@ -362,8 +364,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   try {
-    window.removeEventListener('obsConnectFromSettings', obsSettingsConnect);
-    window.removeEventListener('obsSceneEvent', setObsSceneListener);
     obsWebSocket.removeAllListeners('ConnectionClosed');
     obsWebSocket.removeAllListeners('ConnectionError');
     obsWebSocket.removeAllListeners('ConnectionOpened');

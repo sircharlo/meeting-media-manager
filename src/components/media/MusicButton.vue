@@ -130,6 +130,7 @@
 <script setup lang="ts">
 import type { SongItem } from 'src/types';
 
+import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import { barStyle, thumbStyle } from 'src/boot/globals';
@@ -145,7 +146,7 @@ import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, onUnmounted, ref, type Ref, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -462,9 +463,9 @@ const setBackgroundMusicVolume = (volume: number) => {
   }
 };
 
-onMounted(() => {
-  window.addEventListener('toggleMusic', toggleMusicListener);
+useEventListener(window, 'toggleMusic', toggleMusicListener);
 
+onMounted(() => {
   const bc = new BroadcastChannel('volumeSetter');
   bc.onmessage = (event) => {
     setBackgroundMusicVolume(event?.data);
@@ -503,9 +504,5 @@ onMounted(() => {
       musicStoppedAutomatically.value = false;
     },
   );
-});
-
-onUnmounted(() => {
-  window.removeEventListener('toggleMusic', toggleMusicListener);
 });
 </script>

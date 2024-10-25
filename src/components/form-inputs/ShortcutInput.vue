@@ -40,7 +40,7 @@
         {{ $t('enter-a-key-combination-now-using-your-keyboard') }}
       </q-card-section>
       <q-card-section class="q-pt-none text-center row">
-        <template v-if="localValue.length > 0">
+        <template v-if="localValue?.length > 0">
           <template v-for="(key, index) in localValue.split('+')" :key="key">
             <div
               :class="
@@ -71,6 +71,7 @@
 <script setup lang="ts">
 import type { SettingsValues } from 'src/types';
 
+import { useEventListener } from '@vueuse/core';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getCurrentShortcuts,
@@ -138,7 +139,8 @@ const handleKeyPress = (event: KeyboardEvent) => {
   }
 };
 
-const startListening = () => window.addEventListener('keydown', handleKeyPress);
+const startListening = () =>
+  useEventListener(window, 'keydown', handleKeyPress);
 const stopListening = () =>
   window.removeEventListener('keydown', handleKeyPress);
 const shortcutPicker = ref(false);

@@ -116,6 +116,7 @@
 </template>
 
 <script setup lang="ts">
+import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -123,7 +124,7 @@ import { downloadSongbookVideos } from 'src/helpers/jw-media';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const { getDateLocale } = useLocale();
@@ -178,9 +179,9 @@ function createNewCongregation() {
   chooseCongregation(createCongregation(), true);
 }
 
-onMounted(() => {
-  window.addEventListener('createNewCongregation', createNewCongregation);
+useEventListener(window, 'createNewCongregation', createNewCongregation);
 
+onMounted(() => {
   if (congregationCount.value === 0) {
     createNewCongregation();
   } else if (congregationCount.value === 1 && isHomePage.value) {
@@ -188,9 +189,5 @@ onMounted(() => {
   } else if (!isHomePage.value) {
     chooseCongregation('');
   }
-});
-
-onUnmounted(() => {
-  window.removeEventListener('createNewCongregation', createNewCongregation);
 });
 </script>

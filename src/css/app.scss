@@ -66,6 +66,10 @@ body.body--light {
     background-color: $accent-100;
   }
 
+  .bg-accent-100-transparent {
+    background-color: $accent-100-transparent;
+  }
+
   .bg-accent-200 {
     background-color: $accent-200;
   }
@@ -120,6 +124,10 @@ body.body--dark {
 
   .bg-accent-100 {
     background-color: $accent-100-dark;
+  }
+
+  .bg-accent-100-transparent {
+    background-color: $accent-100-dark-transparent;
   }
 
   .bg-accent-200 {

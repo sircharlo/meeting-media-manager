@@ -9,12 +9,12 @@ import { errorCatcher } from './error-catcher';
 const { registerShortcut, unregisterShortcut } = electronApi;
 
 const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
-  // shortcutMediaNext: () => {
-  //   console.debug('shortcutMediaNext');
-  // },
-  // shortcutMediaPrevious: () => {
-  //   console.debug('shortcutMediaPrevious');
-  // },
+  shortcutMediaNext: () => {
+    window.dispatchEvent(new CustomEvent('shortcutMediaNext'));
+  },
+  shortcutMediaPrevious: () => {
+    window.dispatchEvent(new CustomEvent('shortcutMediaPrevious'));
+  },
   shortcutMediaWindow: () => {
     showMediaWindow();
   },

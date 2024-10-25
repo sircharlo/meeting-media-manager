@@ -253,6 +253,7 @@
 <script setup lang="ts">
 import type { MultimediaItem } from 'src/types';
 
+import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { barStyle, thumbStyle } from 'src/boot/globals';
 import { electronApi } from 'src/helpers/electron-api';
@@ -269,7 +270,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const {
@@ -461,13 +462,6 @@ const updateScreenMetrics = () => {
   }
 };
 
-onMounted(() => {
-  window.addEventListener('windowScreen-update', windowScreenListener);
-  window.addEventListener('screen-trigger-update', updateScreenMetrics);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('windowScreen-update', windowScreenListener);
-  window.removeEventListener('screen-trigger-update', updateScreenMetrics);
-});
+useEventListener(window, 'windowScreen-update', windowScreenListener);
+useEventListener(window, 'screen-trigger-update', updateScreenMetrics);
 </script>

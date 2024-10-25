@@ -1,5 +1,13 @@
 <template>
-  <q-item v-show="!media.hidden" class="items-center justify-center">
+  <q-item
+    v-show="!media.hidden"
+    :class="{
+      'items-center': true,
+      'justify-center': true,
+      'bg-accent-100-transparent': playState === 'current',
+      'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
+    }"
+  >
     <div class="q-pr-none rounded-borders">
       <div
         v-if="media.isAudio"
@@ -305,6 +313,7 @@
           >
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
+                ref="playButton"
                 :disable="mediaPlayingUrl !== '' && isVideo(mediaPlayingUrl)"
                 color="primary"
                 icon="mmm-play"
@@ -323,6 +332,7 @@
             </template>
             <template v-else>
               <q-btn
+                ref="playButton"
                 :disable="mediaPlayingUrl !== '' && isVideo(mediaPlayingUrl)"
                 color="primary"
                 icon="mmm-play-sign-language"
@@ -453,7 +463,7 @@
       <q-menu context-menu touch-position>
         <q-list>
           <q-item-label header>{{ media.title }}</q-item-label>
-          <q-item v-close-popup clickable @click="emit('update:hidden', true);">
+          <q-item v-close-popup clickable @click="emit('update:hidden', true)">
             <q-item-section>
               <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
               <q-item-label caption>{{
@@ -550,6 +560,7 @@ import Panzoom, {
   type PanzoomObject,
   type PanzoomOptions,
 } from '@panzoom/panzoom';
+import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -558,8 +569,13 @@ import { formatTime, isImage, isVideo } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+
+const element = ref<HTMLDivElement>();
+useEventListener(element, 'keydown', (e) => {
+  console.log(e.key);
+});
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, onUnmounted, ref } from 'vue';
+import { computed, onUnmounted, ref, type Ref } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -595,6 +611,7 @@ const mediaDeletePending = computed(() => !!mediaToDelete.value);
 const props = defineProps<{
   list: DynamicMediaObject[];
   media: DynamicMediaObject;
+  playState: string;
 }>();
 
 const emit = defineEmits(['update:hidden']);
@@ -731,20 +748,21 @@ const initiatePanzoom = (elemId: string) => {
       pinchAndPan: true,
     } as PanzoomOptions);
 
-    elem.addEventListener('dblclick', () => {
+    useEventListener(elem, 'dblclick', () => {
       zoomIn(elemId);
     });
 
-    elem.addEventListener('panzoomend', () => {
+    useEventListener(elem, 'panzoomend', () => {
       zoomReset(elemId);
     });
 
-    elem.addEventListener('wheel', function (e) {
+    useEventListener(elem, 'wheel', function (e) {
       if (!e.ctrlKey) return;
       panzooms[elemId]?.zoomWithWheel(e);
     });
 
-    elem.addEventListener(
+    useEventListener(
+      elem,
       'panzoomchange',
       (e: HTMLElementEventMap['panzoomchange']) => {
         mediaPlayingPanzoom.value = {
@@ -769,5 +787,15 @@ onUnmounted(() => {
   Object.keys(panzooms).forEach((key) => {
     destroyPanzoom(key);
   });
+});
+
+const playButton: Ref<HTMLButtonElement | undefined> = ref();
+
+useEventListener(window, 'shortcutMediaNext', () => {
+  if (playButton.value && props.playState === 'next') playButton.value.click();
+});
+useEventListener(window, 'shortcutMediaPrevious', () => {
+  if (playButton.value && props.playState === 'previous')
+    playButton.value.click();
 });
 </script>
