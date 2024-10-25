@@ -2991,12 +2991,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.17.0":
-  version: 20.17.0
-  resolution: "@types/node@npm:20.17.0"
+"@types/node@npm:^20.17.1":
+  version: 20.17.1
+  resolution: "@types/node@npm:20.17.1"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/ccab7800a679e11a47bb66dca2a6b944b6a0abaee0ef0972569c880c32e6399f3d4155e11df480bf18bf0e61f80db65b8b11bf08bd5ee4bf96fac01953c6ede1
+  checksum: 10c0/214cf1fffff9c80ae0d49d7dd1f04254215d49711276fff44ff6f61e36dc8d53520509a88add6955fe029b2259c87eaf284b43bc1236d4f4f06bd80c46f0e2b8
   languageName: node
   linkType: hard
 
@@ -9646,7 +9646,7 @@ __metadata:
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
     "@types/klaw-sync": "npm:^6.0.5"
-    "@types/node": "npm:^20.17.0"
+    "@types/node": "npm:^20.17.1"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2"
     "@typescript-eslint/eslint-plugin": "npm:^7.18.0"
@@ -9674,7 +9674,7 @@ __metadata:
     p-queue: "npm:^8.0.1"
     pdfjs-dist: "npm:^4.7.76"
     pinia: "npm:^2.2.4"
-    pinia-plugin-persistedstate: "npm:^4.1.1"
+    pinia-plugin-persistedstate: "npm:^4.1.2"
     pinia-shared-state: "npm:^0.5.1"
     postcss: "npm:^8.4.47"
     prettier: "npm:^3.3.3"
@@ -11108,9 +11108,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia-plugin-persistedstate@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "pinia-plugin-persistedstate@npm:4.1.1"
+"pinia-plugin-persistedstate@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "pinia-plugin-persistedstate@npm:4.1.2"
   dependencies:
     "@nuxt/kit": "npm:^3.13.2"
     deep-pick-omit: "npm:^1.2.1"
@@ -11124,7 +11124,7 @@ __metadata:
       optional: true
     pinia:
       optional: true
-  checksum: 10c0/0bfac69f964f676e67016f180b9c0ed919610be2b316053352c912c7aaed68a4e977917c6e64946ccdc80e1a2c4e0bd4ba04eb652d790cfce7462951b6e1d667
+  checksum: 10c0/8f17df36a7c529b49155de73ffdf7bd89ad03b7d0a1f632ff898a0c99723ed148695f90a4f5e41508f56ed8c0e58b0215e6841ed365e75fa71f560084065869a
   languageName: node
   linkType: hard
 
