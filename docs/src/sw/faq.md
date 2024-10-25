@@ -4,7 +4,7 @@
 
 **Hapana.** Mfumo huu hufanya kazi kama tu JW Library. Inapakua machapisho, midia na maudhui mengine moja kwa moja kutoka kwa tovuti rasmi ya JW.org na mtandao wake wa utoaji midia. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
 
-:::info Note
+:::info Kidokezo
 
 Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoendelea chini ya maji.
 
@@ -12,7 +12,7 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 ## :thinking: Je, programu hii inakiuka Sheria na Masharti ya JW.org?
 
-**Hapana.** JW.org [Sheria na Masharti](https://www.jw.org/finder?docid=1011511&prefer=content) huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu inayotoka kwa maneno hayo (kusisitiza):
+**Hapana.** JW.org [Sheria na Masharti](https://www.jw.org/finder?docid=1011511\&prefer=content) huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu inayotoka kwa maneno hayo (kusisitiza):
 
 > Haupaswi:
 >

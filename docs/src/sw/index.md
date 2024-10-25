@@ -1,36 +1,36 @@
 ---
 layout: home
 hero:
-  name: M³ documentation
-  text: Help to set up and use Meeting Media Manager
+  name: Nyaraka za M³
+  text: Usaidizi wa kusanidi na kutumia Meeting Media Manager
   image: /icon.png
   actions:
     - theme: brand
-      text: Install Meeting Media Manager
+      text: Pakua Meeting Media Manager
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
-      text: Using at a Kingdom Hall
+      text: Kutumia kwenye Mikutano
       link: /sw/using-at-a-kingdom-hall
     - theme: alt
-      text: About
+      text: Kuhusu
       link: /sw/about
 features:
   - icon: 🚀
-    title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on JW.org.
+    title: Upakuaji wa midia otomatiki
+    details: Hupakua kiotomatiki picha na video za mikutano ya kutaniko katika lugha yoyote inayopatikana kwenye JW.org.
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: Kuwasilisha midia
+    details: Inaruhusu kuonyesha midia kwa urahisi wakati wa mikutano ya mtandao au ya ana kwa ana.
   - icon: 🎵
-    title: Background music
-    details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
+    title: Muziki wa usuli
+    details: Hucheza muziki wa usuli moja kwa moja. Huacha kucheza kabla mikutano huanza. Muziki wa usuli unaweza kuanzishwa upya kwa mbofyo mmoja baada ya mkutano.
   - icon: 🖥️
-    title: External monitor support
-    details: Automatically detects and manages external monitors for smooth media presentations.
+    title: Usaidizi wa scrini ya nje
+    details: Hutambua na kudhibiti scrini za nje kiotomatiki kwa mawasilisho laini ya media.
   - icon: 🌐
-    title: Multiple languages
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Lugha mbalimbali
+    details: Pakua midia ya mkutano katika mamia ya lugha na utumie M³ katika lugha yoyote kati ya nyingi zinazopatikana.
   - icon: 🧩
-    title: OBS Studio Integration
-    details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
+    title: Utumiaji wa OBS na M3
+    details: Huunganishwa na Studio ya OBS kwa usimamizi ulioboreshwa wa midia na uwezo wa kuwasilisha.
 ---
