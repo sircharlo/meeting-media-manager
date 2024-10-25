@@ -10,7 +10,7 @@ This guide will walk you through the process of downloading, installing, and set
 4. Launch M³.
 5. Go through the configuration wizard.
 
-## 2) 2) Configuration wizard
+## 2) Помощник настройки
 
 ### App display language
 

@@ -28,7 +28,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.
 
-## Does M³ work in my language?
+## Работает ли M³ на моём языке?
 
 **Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you need.
 
