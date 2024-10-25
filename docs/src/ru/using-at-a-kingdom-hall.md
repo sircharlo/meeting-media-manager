@@ -43,7 +43,7 @@ To do so, use the **Congregation Lookup** button next to the congregation name f
 
 Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
 
-:::info Note
+:::info Примечание
 
 This lookup uses publicly available data from the official website of Jehovah's Witnesses.
 
