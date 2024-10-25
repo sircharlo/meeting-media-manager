@@ -1,22 +1,22 @@
-# About Meeting Media Manager (M³)
+# Kuhusu Meeting Media Manager (M³)
 
-## What is this app?
+## Huu ni mfumo upi?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+**Meeting Media Manager**, au **M³** kwa ufupi, ni mfumo kwa programu za Windows, macOS na Linux, ambayo hupakua kiotomatiki picha na video ambazo zitatumika kwenye mikutano ya kutaniko ya Mashahidi wa Yehova, kwa lugha yoyote kwenye JW.org.
 
-It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
+Inaangazia usaidizi wa kudhibiti midia ya kawaida na midia maalum ya mikutano, na usaidizi kwa makutaniko mengi na/au vikundi vinavyotumia akaunti moja ya kompyuta.
 
-:::info Note
+:::info Kidokezo
 
-M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
+M³ ilikuwa ikijulikana kama JWMMF (JW Meeting Media Fetcher), lakini ilibadilishwa jina mnamo Mei 2022.
 
 :::
 
-## What can M³ do?
+## M³ inaweza kukusaidia aje?
 
-In short, M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+Kwa ufupi, M³ hukuruhusu kupakua, kusawazisha, kushiriki na kuwasilisha midia kwa urahisi na kiotomatiki.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+Kwa **mikutano ya zoom na ana kwa ana** au **ana kwa ana pekee**, hali iliyojumuishwa ya uwasilishaji wa media ina vipengele vyote vinavyohitajika ili kurahisisha kazi ya kushiriki midia na kutaniko, ikiwamo:
 
 - Media thumbnails
 - Easy-to-use pause/play/stop buttons to manage playback of media files
