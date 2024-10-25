@@ -187,10 +187,19 @@
             <div class="row items-center">
               <div
                 v-if="media.paragraph"
-                class="q-pl-md q-pr-none col-shrink"
+                :class="{
+                  'q-pl-md': $q.screen.gt.xs,
+                  'q-pr-none': $q.screen.gt.xs,
+                  'col-shrink': $q.screen.gt.xs,
+                  'col-12': !$q.screen.gt.xs,
+                  'q-px-md': !$q.screen.gt.xs,
+                }"
                 side
               >
-                <q-chip :clickable="false" class="media-tag bg-accent-200">
+                <q-chip
+                  :clickable="false"
+                  class="media-tag bg-accent-200 full-width"
+                >
                   <q-icon
                     :name="
                       media.paragraph !== 9999
@@ -206,12 +215,18 @@
               </div>
               <div
                 v-else-if="media.song"
-                class="q-pl-md q-pr-none col-shrink"
+                :class="{
+                  'q-pl-md': $q.screen.gt.xs,
+                  'q-pr-none': $q.screen.gt.xs,
+                  'col-shrink': $q.screen.gt.xs,
+                  'col-12': !$q.screen.gt.xs,
+                  'q-px-md': !$q.screen.gt.xs,
+                }"
                 side
               >
                 <q-chip
                   :clickable="false"
-                  class="media-tag bg-accent-400"
+                  class="media-tag bg-accent-400 full-width"
                   text-color="white"
                 >
                   <q-icon class="q-mr-xs" name="mmm-music-note" />
