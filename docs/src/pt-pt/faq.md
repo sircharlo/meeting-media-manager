@@ -12,15 +12,15 @@ O código-fonte desta app está disponível para que todos possam examinar e ver
 
 ## :thinking: Este aplicativo infringe os Termos de Uso do JW.org?
 
-**Não.** O JW.org [Termos de Uso](https://www.jw.org/finder?docid=1011511&prefer=content) do JW.org permitem explicitamente o tipo de uso que estamos a fazer. Aqui está o trecho relevante desses termos (o nosso sublinhado):
+**Não.** Os [Termos de Uso](https://www.jw.org/finder?docid=1011511\\&prefer=content) do JW.org permitem explicitamente o tipo de uso que estamos a fazer. Aqui está o trecho relevante desses termos (ênfase nossa):
 
 > Você não pode:
 >
-> Criar para fins de distribuição quaisquer aplicações de software, ferramentas ou técnicas que sejam especificamente feitas para coletar, copiar, descarregar, extrair, recolher ou obter dados, HTML, imagens ou texto deste site. (Isto **não** proíbe a distribuição de aplicações gratuitas e não comerciais projetadas para descarregar ficheiros eletrónicos, como EPUB, PDF, MP3 e MP4, de áreas públicas deste site.)
+> Criar, com o objetivo de distribuir, qualquer software, aplicação, ferramenta ou técnica que sirva especificamente para recolher, copiar, descarregar, extrair ou rastrear dados, HTML, imagens ou textos deste site. (Isso **não** proíbe a distribuição gratuita, sem fins comerciais, de aplicações projetadas para descarregar ficheiros eletrónicos como EPUB, PDF, MP3 e ficheiros MP4 das áreas públicas deste site.)
 
 ## :radioactive: Como posso reportar um problema?
 
-Por favor, registe um [issue](https://github.com/sircharlo/meeting-media-manager/issues) no repositório oficial do GitHub.
+Por favor, registe um [problema](https://github.com/sircharlo/meeting-media-manager/issues) no repositório oficial do GitHub.
 
 ## :new: Como posso solicitar uma nova funcionalidade ou melhoria?
 
