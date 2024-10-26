@@ -60,7 +60,7 @@ const getMediaWindow = () =>
       !w.webContents.getURL().includes('https://'),
   );
 
-const bc = new BroadcastChannel('mediaPlayback');
+const webStreamBroadcastChannel = new BroadcastChannel('web-stream');
 let websiteWindow: Electron.CrossProcessExports.BrowserWindow | null = null;
 
 const zoomWebsiteWindow = (action: string) => {
@@ -156,11 +156,11 @@ const openWebsiteWindow = () => {
       } as Electron.Streams);
     },
   );
-  bc.postMessage({ webStream: true });
+  webStreamBroadcastChannel.postMessage(true);
 };
 
 const stopStream = () => {
-  bc.postMessage({ webStream: false });
+  webStreamBroadcastChannel.postMessage(false);
 };
 
 const getScreens = () =>

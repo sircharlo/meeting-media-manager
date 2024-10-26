@@ -3,7 +3,7 @@
     class="q-electron-drag vertical-middle overflow-hidden"
     padding
     style="align-content: center; height: 100vh"
-  >
+    >{{ webStreamData }}
     <q-resize-observer debounce="50" @resize="onResize" />
     <transition
       appear
@@ -70,6 +70,7 @@
 </template>
 <script setup lang="ts">
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
+import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -83,7 +84,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, watch } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -118,104 +119,146 @@ let mediaElement = ref<HTMLVideoElement | undefined>();
 const mediaImage = ref<HTMLImageElement | undefined>();
 const panzoomOptions = { animate: true, duration: 1000 };
 
-const bc = new BroadcastChannel('mediaPlayback');
-const mediaPlayingUrl = ref('');
-const mediaUniqueId = ref('');
-const mediaPlayerCustomBackground = ref('');
-const mediaPlayerSubtitlesUrl = ref('');
-const subtitlesVisible = ref(true);
-
 const videoStreaming = ref(false);
 
-bc.onmessage = (event) => {
-  try {
-    if ('webStream' in event.data) {
-      videoStreaming.value = !!event.data.webStream;
-      if (event.data.webStream) {
-        navigator.mediaDevices
-          .getDisplayMedia({
-            audio: false,
-            video: true,
-          })
-          .then(async (stream) => {
-            let timeouts = 0;
-            while (!mediaElement.value) {
-              await new Promise((resolve) => {
-                setTimeout(resolve, 100);
-              });
-              if (++timeouts > 10) break;
-            }
-            if (!mediaElement.value) return;
-            mediaElement.value.srcObject = stream;
-            mediaElement.value.play().catch((error: Error) => {
-              if (
-                !error.message.includes('removed from the document') &&
-                !error.message.includes('new load request')
-              )
-                errorCatcher(error);
-            });
-          })
-          .catch((e) => errorCatcher(e));
-      } else {
-        if (!mediaElement.value) return;
-        mediaElement.value.pause();
-        // .then(() => {
-        mediaElement.value.srcObject = null;
-        mediaPlayingAction.value = '';
-        // })
-      }
+const { data: mediaPlayerCustomBackground }: { data: Ref<string | undefined> } =
+  useBroadcastChannel({
+    name: 'custom-background',
+  });
+
+const { data: subtitlesVisible }: { data: Ref<boolean> } = useBroadcastChannel({
+  name: 'subtitles-visible',
+});
+subtitlesVisible.value = true;
+
+const { data: mediaPlayerSubtitlesUrl }: { data: Ref<string | undefined> } =
+  useBroadcastChannel({
+    name: 'subtitles-url',
+  });
+
+const { data: seekToData }: { data: Ref<number | undefined> } =
+  useBroadcastChannel({
+    name: 'seek-to',
+  });
+
+watch(
+  () => seekToData.value,
+  (newSeekTo) => {
+    if (mediaElement.value && newSeekTo) {
+      mediaElement.value.currentTime = newSeekTo;
     }
-    if ('seekTo' in event.data) {
-      if (mediaElement.value)
-        mediaElement.value.currentTime = event.data.seekTo;
+  },
+);
+
+const { data: mediaUniqueId }: { data: Ref<string> } = useBroadcastChannel({
+  name: 'unique-id',
+});
+
+const { data: mediaPlayingUrl }: { data: Ref<string> } = useBroadcastChannel({
+  name: 'media-url',
+});
+
+const { post: postCurrentTime } = useBroadcastChannel({
+  name: 'current-time',
+});
+
+const { data: mediaAction }: { data: Ref<string> } = useBroadcastChannel({
+  name: 'media-action',
+});
+
+watch(
+  () => mediaAction.value,
+  (newMediaAction) => {
+    console.log(newMediaAction);
+    if (!newMediaAction) return;
+    if (newMediaAction === 'pause') {
+      mediaElement.value?.pause();
+    } else if (newMediaAction === 'play') {
+      mediaElement.value?.play().catch((error: Error) => {
+        if (
+          !error.message.includes('removed from the document') &&
+          !error.message.includes('new load request')
+        )
+          errorCatcher(error);
+      });
     }
-    if ('customBackground' in event.data)
-      mediaPlayerCustomBackground.value = event.data.customBackground;
-    if ('subtitlesUrl' in event.data)
-      mediaPlayerSubtitlesUrl.value = event.data.subtitlesUrl;
-    if ('subtitlesVisible' in event.data)
-      subtitlesVisible.value = event.data.subtitlesVisible;
-    if ('uniqueId' in event.data) mediaUniqueId.value = event.data.uniqueId;
-    if ('url' in event.data) mediaPlayingUrl.value = event.data.url;
-    if ('action' in event.data) {
-      if (!mediaElement.value) return;
-      if (event.data.action === 'pause') {
-        mediaElement.value.pause();
-      } else if (event.data.action === 'play') {
-        mediaElement.value.play().catch((error: Error) => {
-          if (
-            !error.message.includes('removed from the document') &&
-            !error.message.includes('new load request')
-          )
-            errorCatcher(error);
-        });
-      }
-    }
-    if ('scale' in event.data || 'x' in event.data || 'y' in event.data) {
-      try {
-        if (!mediaElement.value) {
-          const imageElem = document.getElementById('mediaImage');
-          const width = imageElem?.clientWidth || 0;
-          const height = imageElem?.clientHeight || 0;
-          panzoom.value?.zoom(
-            (event.data?.scale ?? 1) as number,
+  },
+);
+
+const { data: panzoomState }: { data: Ref<Record<string, number>> } =
+  useBroadcastChannel({
+    name: 'panzoom',
+  });
+
+watch(
+  () => panzoomState.value,
+  (newPanzoomState) => {
+    try {
+      if (!mediaElement.value) {
+        const imageElem = document.getElementById('mediaImage');
+        const width = imageElem?.clientWidth || 0;
+        const height = imageElem?.clientHeight || 0;
+        panzoom.value?.zoom(
+          (newPanzoomState?.scale ?? 1) as number,
+          panzoomOptions,
+        );
+        if (width > 0 && height > 0)
+          panzoom.value?.pan(
+            ((newPanzoomState?.x ?? 0) as number) * width,
+            ((newPanzoomState?.y ?? 0) as number) * height,
             panzoomOptions,
           );
-          if (width > 0 && height > 0)
-            panzoom.value?.pan(
-              ((event.data?.x ?? 0) as number) * width,
-              ((event.data?.y ?? 0) as number) * height,
-              panzoomOptions,
-            );
-        }
-      } catch (error) {
-        errorCatcher(error);
       }
+    } catch (error) {
+      errorCatcher(error);
     }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
+  },
+  { deep: true },
+);
+
+const { data: webStreamData }: { data: Ref<boolean> } = useBroadcastChannel({
+  name: 'web-stream',
+});
+
+watch(
+  () => webStreamData.value,
+  (newWebStreamData) => {
+    videoStreaming.value = newWebStreamData;
+    if (newWebStreamData) {
+      navigator.mediaDevices
+        .getDisplayMedia({
+          audio: false,
+          video: true,
+        })
+        .then(async (stream) => {
+          let timeouts = 0;
+          while (!mediaElement.value) {
+            await new Promise((resolve) => {
+              setTimeout(resolve, 100);
+            });
+            if (++timeouts > 10) break;
+          }
+          if (!mediaElement.value) return;
+          mediaElement.value.srcObject = stream;
+          mediaElement.value.play().catch((error: Error) => {
+            if (
+              !error.message.includes('removed from the document') &&
+              !error.message.includes('new load request')
+            )
+              errorCatcher(error);
+          });
+        })
+        .catch((e) => errorCatcher(e));
+    } else {
+      if (!mediaElement.value) return;
+      mediaElement.value.pause();
+      // .then(() => {
+      mediaElement.value.srcObject = null;
+      mediaPlayingAction.value = '';
+      // })
+    }
+  },
+);
 
 watch(currentCongregation, (newCongregation) => {
   if (!newCongregation) showMediaWindow(false);
@@ -228,18 +271,18 @@ const playMedia = () => {
     }
 
     mediaElement.value.onended = () => {
-      bc.postMessage({ state: 'ended' });
+      const { post } = useBroadcastChannel({ name: 'media-state' });
+      post('ended');
     };
 
     mediaElement.value.onpause = () => {
-      const currentTime = mediaElement.value?.currentTime || 0;
-      bc.postMessage({ currentPosition: currentTime });
+      postCurrentTime(mediaElement.value?.currentTime || 0);
     };
 
     mediaElement.value.ontimeupdate = () => {
       try {
         const currentTime = mediaElement.value?.currentTime || 0;
-        bc.postMessage({ currentPosition: currentTime });
+        postCurrentTime(currentTime);
         if (
           customDurations?.value?.[currentCongregation.value]?.[
             selectedDate.value
@@ -249,7 +292,8 @@ const playMedia = () => {
             currentCongregation.value
           ]?.[selectedDate.value]?.[mediaUniqueId.value] ?? { max: 0 };
           if (currentTime >= customStartStop.max) {
-            bc.postMessage({ state: 'ended' });
+            const { post } = useBroadcastChannel({ name: 'media-state' });
+            post('ended');
           }
         }
       } catch (e) {

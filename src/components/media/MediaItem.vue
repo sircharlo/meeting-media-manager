@@ -560,7 +560,7 @@ import Panzoom, {
   type PanzoomObject,
   type PanzoomOptions,
 } from '@panzoom/panzoom';
-import { useEventListener } from '@vueuse/core';
+import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -588,8 +588,6 @@ const {
   mediaPlayingUrl,
   selectedDate,
 } = storeToRefs(currentState);
-
-const bc = new BroadcastChannel('mediaPlayback');
 
 const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
@@ -685,7 +683,8 @@ const resetMediaDuration = (media: DynamicMediaObject) => {
 };
 
 const seekTo = (newSeekTo: null | number) => {
-  if (newSeekTo !== null) bc.postMessage({ seekTo: newSeekTo });
+  const { post } = useBroadcastChannel({ name: 'seek-to' });
+  if (newSeekTo !== null) post(newSeekTo);
 };
 
 function zoomIn(elemId: string) {

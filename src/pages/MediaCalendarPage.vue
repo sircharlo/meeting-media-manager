@@ -430,7 +430,7 @@ import {
   selections,
 } from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
-import { useEventListener } from '@vueuse/core';
+import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
@@ -481,7 +481,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -538,7 +538,8 @@ const filesLoading = ref(-1);
 watch(
   () => mediaPlayingUniqueId.value,
   (newMediaUniqueId) => {
-    bc.postMessage({ uniqueId: newMediaUniqueId });
+    const { post } = useBroadcastChannel({ name: 'unique-id' });
+    post(newMediaUniqueId);
     if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
   },
 );
@@ -546,15 +547,16 @@ watch(
 watch(
   () => mediaPlayingAction.value,
   (newAction, oldAction) => {
-    if (newAction !== oldAction) bc.postMessage({ action: newAction });
+    const { post } = useBroadcastChannel({ name: 'media-action' });
+    if (newAction !== oldAction) post(newAction);
   },
 );
 
 watch(
   () => mediaPlayingSubtitlesUrl.value,
   (newSubtitlesUrl, oldSubtitlesUrl) => {
-    if (newSubtitlesUrl !== oldSubtitlesUrl)
-      bc.postMessage({ subtitlesUrl: newSubtitlesUrl });
+    const { post } = useBroadcastChannel({ name: 'subtitles-url' });
+    if (newSubtitlesUrl !== oldSubtitlesUrl) post(newSubtitlesUrl);
   },
 );
 
@@ -562,12 +564,11 @@ watch(
   () => mediaPlayingPanzoom.value,
   (newPanzoom, oldPanzoom) => {
     try {
-      if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom))
-        bc.postMessage({
-          scale: newPanzoom.scale,
-          x: newPanzoom.x,
-          y: newPanzoom.y,
-        });
+      const { post } = useBroadcastChannel({ name: 'panzoom' });
+      if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
+        newPanzoom = JSON.parse(JSON.stringify(newPanzoom));
+        post(newPanzoom);
+      }
     } catch (error) {
       errorCatcher(error);
     }
@@ -578,7 +579,8 @@ watch(
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl) bc.postMessage({ url: newUrl });
+    const { post } = useBroadcastChannel({ name: 'media-url' });
+    if (newUrl !== oldUrl) post(newUrl);
   },
 );
 
@@ -590,23 +592,33 @@ const datedAdditionalMediaMap = computed(() => {
   );
 });
 
-const bc = new BroadcastChannel('mediaPlayback');
-bc.onmessage = (event) => {
-  if (event.data?.state === 'ended') {
-    mediaPlayingCurrentPosition.value = 0;
-    // mediaPlayingSeekTo.value = 0;
-    mediaPlayingUrl.value = '';
-    mediaPlayingUniqueId.value = '';
-    mediaPlayingAction.value =
-      mediaPlayingAction.value === 'backgroundMusicPlay'
-        ? 'backgroundMusicCurrentEnded'
-        : '';
-  }
-  // if (event.data?.resetPanzoom) zoomReset(event.data.resetPanzoom, true);
-  if ('currentPosition' in event.data) {
-    mediaPlayingCurrentPosition.value = event.data.currentPosition;
-  }
-};
+const { data: mediaStateData } = useBroadcastChannel({ name: 'media-state' });
+
+watch(
+  () => mediaStateData.value,
+  (newMediaStateData) => {
+    if (newMediaStateData === 'ended') {
+      mediaPlayingCurrentPosition.value = 0;
+      mediaPlayingUrl.value = '';
+      mediaPlayingUniqueId.value = '';
+      mediaPlayingAction.value =
+        mediaPlayingAction.value === 'backgroundMusicPlay'
+          ? 'backgroundMusicCurrentEnded'
+          : '';
+    }
+  },
+);
+
+const { data: currentTimeData }: { data: Ref<number> } = useBroadcastChannel({
+  name: 'current-time',
+});
+
+watch(
+  () => currentTimeData.value,
+  (newCurrentTime) => {
+    mediaPlayingCurrentPosition.value = newCurrentTime;
+  },
+);
 
 const mapOrder =
   (sortOrder: string | string[] | undefined) =>

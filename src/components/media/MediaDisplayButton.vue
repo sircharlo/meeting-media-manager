@@ -253,7 +253,7 @@
 <script setup lang="ts">
 import type { MultimediaItem } from 'src/types';
 
-import { useEventListener } from '@vueuse/core';
+import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { barStyle, thumbStyle } from 'src/boot/globals';
 import { electronApi } from 'src/helpers/electron-api';
@@ -300,8 +300,6 @@ const jwpubImages = ref([] as MultimediaItem[]);
 const showCustomBackgroundPicker = computed(
   () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
 );
-
-const bc = new BroadcastChannel('mediaPlayback');
 
 const notifyInvalidBackgroundFile = () => {
   createTemporaryNotification({
@@ -423,7 +421,8 @@ watch(
 watch(
   () => mediaWindowCustomBackground.value,
   (newMediaBackground) => {
-    bc.postMessage({ customBackground: newMediaBackground });
+    const { post } = useBroadcastChannel({ name: 'custom-background' });
+    post(newMediaBackground);
   },
 );
 

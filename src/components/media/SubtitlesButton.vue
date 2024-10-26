@@ -15,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { ref, watch } from 'vue';
@@ -24,13 +25,11 @@ const { currentSettings } = storeToRefs(currentState);
 
 const subtitlesVisible = ref(true);
 
-const bc = new BroadcastChannel('mediaPlayback');
-
 watch(
   () => subtitlesVisible.value,
   (newSubtitlesVisible, oldSubtitlesVisible) => {
-    if (newSubtitlesVisible !== oldSubtitlesVisible)
-      bc.postMessage({ subtitlesVisible: newSubtitlesVisible });
+    const { post } = useBroadcastChannel({ name: 'subtitles-visible' });
+    if (newSubtitlesVisible !== oldSubtitlesVisible) post(newSubtitlesVisible);
   },
 );
 </script>

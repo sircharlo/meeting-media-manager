@@ -130,7 +130,7 @@
 <script setup lang="ts">
 import type { SongItem } from 'src/types';
 
-import { useEventListener } from '@vueuse/core';
+import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import { barStyle, thumbStyle } from 'src/boot/globals';
@@ -464,13 +464,17 @@ const setBackgroundMusicVolume = (volume: number) => {
 };
 
 useEventListener(window, 'toggleMusic', toggleMusicListener);
+const { data: volumeData } = useBroadcastChannel({ name: 'volume-setter' });
+watch(
+  () => volumeData.value,
+  (newVolume) => {
+    if (newVolume) {
+      setBackgroundMusicVolume(newVolume as number);
+    }
+  },
+);
 
 onMounted(() => {
-  const bc = new BroadcastChannel('volumeSetter');
-  bc.onmessage = (event) => {
-    setBackgroundMusicVolume(event?.data);
-  };
-
   watch(
     () => [selectedDateObject.value?.today, selectedDateObject.value?.meeting],
     ([newToday, newMeeting]) => {
