@@ -379,7 +379,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         const outputImg = canvas.toDataURL('image/png');
         const existingPath = path.parse(filepath);
-        const newPath = `${existingPath.dir}/${existingPath.name}.jpg`;
+        const newPath = `${existingPath.dir}/${existingPath.name}.png`;
         try {
           fs.writeFileSync(
             newPath,
