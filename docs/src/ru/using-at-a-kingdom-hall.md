@@ -2,12 +2,12 @@
 
 This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
 
-## 1. Download and install
+## 1. Скачивание и установка
 
-1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system (Windows, macOS, or Linux).
-3. Open the installer and follow the on-screen instructions to install M³.
-4. Launch M³.
+1. Посетите [страницу скачивания M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
+2. Скачайте подходящую версию для вашей операционной системы (Windows, macOS, or Linux).
+3. Откройте установщик и следуйте инструкциям установки M³.
+4. Запустите M³.
 5. Go through the configuration wizard.
 
 ## 2) Помощник настройки
