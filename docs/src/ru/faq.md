@@ -12,7 +12,7 @@ The source code for this app is available for all to examine and verify what goe
 
 ## :thinking: Нарушает ли это приложение условия использования JW.org?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511\\&prefer=content) actually explicitly allow the kind of usage that we are making. Вот соответствующая выдержка из этих условий:
+**Нет.** [Условия пользования](https://www.jw.org/finder?docid=1011511\\&prefer=content) JW.org разрешают тип пользования, которым мы занимаемся. Вот соответствующая выдержка из этих условий:
 
 > You may not:
 >
