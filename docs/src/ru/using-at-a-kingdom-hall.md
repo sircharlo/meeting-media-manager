@@ -83,4 +83,4 @@ If your congregation regularly conducts hybrid meetings, it's **highly** recomme
 
 ## 3. Enjoy using M³
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Приятного использования приложения! :tada:
