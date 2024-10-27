@@ -4,19 +4,19 @@ Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager
 
 ## 1. Prenesi in namesti
 
-1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system (Windows, macOS, or Linux).
-3. Open the installer and follow the on-screen instructions to install M³.
-4. Launch M³.
-5. Go through the configuration wizard.
+1. Obišči [spletno stran za prenos M³](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+2. Prenesi ustrezno različico za vaš operacijski sistem (Windows, macOS ali Linux).
+3. Odpri namestitveni program in sledi navodilom na zaslonu za namestitev programa M³.
+4. Zaženi M³.
+5. Sledi navodilom pomočnika za nastavitev.
 
-## 2) Configuration wizard
+## 2) Pomočnik za nastavitev
 
-### App display language
+### Jezik uporabniškega vmesnika
 
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
+Ob prvem zagonu programa M³ boš moral izbrati želeni **jezik uporabniškega vmesnika**. Izberi jezik, ki naj ga M³ uporablja za svoj vmesnik.
 
-:::tip Tip
+:::tip Namig
 
 This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
 
@@ -59,7 +59,7 @@ You will also be given the option of **caching all videos from the songbook**. T
 - **Pros:** Meeting media will be available much faster.
 - **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
 
-:::tip Tip
+:::tip Namig
 
 If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
 
@@ -73,7 +73,7 @@ If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Z
 - **Password:** The password used to connect to the OBS Studio Websocket plugin.
 - **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
 
-:::tip Tip
+:::tip Namig
 
 If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
 
