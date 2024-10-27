@@ -94,11 +94,10 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { electronApi } from 'src/helpers/electron-api';
 import { disableUpdates, enableUpdates, updatesDisabled } from 'src/helpers/fs';
 import { onMounted, ref, watch } from 'vue';
 
-const { getAppVersion, openExternal } = electronApi;
+const { getAppVersion, openExternal } = window.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 
