@@ -123,6 +123,26 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
+    showCurrentDayHiddenMedia() {
+      const currentState = useCurrentStateStore();
+      const { currentCongregation, selectedDate, selectedDateObject } =
+        currentState;
+      if (!currentCongregation || !selectedDateObject?.date || !selectedDate)
+        return;
+      this.lookupPeriod?.[currentCongregation]
+        ?.find(
+          (day) =>
+            date.getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
+        )
+        ?.dynamicMedia?.forEach((media) => {
+          media.hidden = false;
+        });
+      this.additionalMediaMaps?.[currentCongregation]?.[selectedDate]?.forEach(
+        (media) => {
+          media.hidden = false;
+        },
+      );
+    },
     async updateJwLanguages() {
       try {
         const now = new Date();

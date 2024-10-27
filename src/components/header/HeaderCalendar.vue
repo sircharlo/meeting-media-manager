@@ -13,7 +13,7 @@
       size="xs"
     />
     {{ $q.screen.gt.sm ? $t('reset-sort-order') : '' }}
-    <q-tooltip :delay="1000">
+    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
       {{ $t('reset-sort-order') }}
     </q-tooltip>
   </q-btn>
@@ -23,9 +23,9 @@
       name="mmm-import-media"
       size="xs"
     />
-    {{ $q.screen.gt.xs ? $t('import-media') : '' }}
-    <q-tooltip :delay="1000">
-      {{ $t('import-media') }}
+    {{ $q.screen.gt.xs ? $t('extra-media') : '' }}
+    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+      {{ $t('extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]" class="top-menu">
       <q-list style="min-width: 100px">
@@ -93,6 +93,17 @@
         </template>
         <template v-if="additionalMediaForDay">
           <q-item-label header>{{ $t('dangerZone') }}</q-item-label>
+          <q-item v-close-popup clickable @click="showCurrentDayHiddenMedia()">
+            <q-item-section avatar>
+              <q-icon color="primary" name="mmm-eye" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t('show-hidden-media') }}</q-item-label>
+              <q-item-label caption>{{
+                $t('show-hidden-media-explain')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item v-close-popup clickable @click="mediaDeleteAllPending = true">
             <q-item-section avatar>
               <q-icon color="negative" name="mmm-delete" />
@@ -169,13 +180,12 @@
 </template>
 <script setup lang="ts">
 // Packages
+import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, QMenu } from 'quasar';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-
+import { computed, ref } from 'vue';
 // Globals
 import { get } from 'src/boot/axios';
-
 // Composables
 import { useLocale } from 'src/composables/useLocale';
 
@@ -196,7 +206,8 @@ import { useJwStore } from 'src/stores/jw';
 import type { JwVideoCategory, MediaItemsMediatorItem } from 'src/types';
 
 const jwStore = useJwStore();
-const { clearCurrentDayAdditionalMedia, resetSort } = jwStore;
+const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
+  jwStore;
 const { additionalMediaMaps, lookupPeriod, mediaSort } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
@@ -409,13 +420,6 @@ const openSongPicker = () => {
   chooseSong.value = true;
 };
 
-onMounted(() => {
-  window.addEventListener('openSongPicker', openSongPicker);
-  window.addEventListener('openImportMenu', openImportMenu);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('openSongPicker', openSongPicker);
-  window.removeEventListener('openImportMenu', openImportMenu);
-});
+useEventListener(window, 'openSongPicker', openSongPicker);
+useEventListener(window, 'openImportMenu', openImportMenu);
 </script>

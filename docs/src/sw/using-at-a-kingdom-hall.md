@@ -26,7 +26,7 @@ Hii sio lazima iwe lugha sawa na ile ambayo M³ itapakua media. Lugha ya upakuaj
 
 Hatua inayo fuata ni ya kuchagua **aina ya profaili**. Kwa ajili ya matumizi katika Jumba la Ufalme, chagua **Kawaida**. Hili litapanga mipangilio mingi ya kawaida ya matumizi katika mikutano.
 
-:::warning Warning
+:::warning Onyo
 
 Unafaa kuchagua **Nyingine** ikiwa unatengeneza profile ambayo midia haifai kupakuliwa moja kwa moja. Midia itafaa kupakuliwa kwa mkono kwa profile hii. Profile ya aina hii hutumiwa zaidi katika M³ wakati wa shule za kitheokrasi, makusanyiko mzunguko, makusanyiko ya eneo na matukio mengine maalum.
 
@@ -42,7 +42,7 @@ Ili kufanya hivyo, tumia kitufe cha **Tafuta Kutaniko** kando ya nafasi ya jina 
 
 Kutaniko sahihi litakapo patikana na kuchaguliwa, M³ itajaribu kujaza habari nyingi iwezekanavyo, kama **jina** la kutaniko, **lugha ya mikutano**, na **siku na wakati wa mikutano**.
 
-:::info Note
+:::info Kidokezo
 
 Mbinu hii hutumia habari kutoka kwa tovuti rasmi la Mashahidi wa Yehova.
 
@@ -71,14 +71,14 @@ Ikiwa Jumba lenu La Ufalme linatumia **OBS Studio** kwa ajili ya upeperushaji wa
 
 - **Port:** Nambari ya Port hutumiwa kuunganisha mfumo na OBS Studio kupitia Websocket plugin.
 - **Password:** Neno siri hutumiwa ili kuunganisha mfumo na OBS Studio kupitia Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- **Scenes:** Scene za OBS itatumiwa wakati wa kuonyesha midia. Utahitaji scene moja inayoonyesha scrini ya midia, na moja inayoonyesha jukwaa.
 
 :::tip Kidokezo
 
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Ikiwa kutaniko lako hufanya mikutano pamoja na zoom, **inashauriwa** muunganishe OBS Studio.
 
 :::
 
-## 3. Enjoy using M³
+## 3. Furahia kutumia M³
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Uratibu wa programu unapokamilika, M³ iko tayari kukusaidia kupanga na kuonyesha midia kwenye mikutano ya kutaniko. Furahia kutumia programu hii! :tada:

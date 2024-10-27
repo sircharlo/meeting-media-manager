@@ -130,6 +130,7 @@
 <script setup lang="ts">
 import type { SongItem } from 'src/types';
 
+import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import { barStyle, thumbStyle } from 'src/boot/globals';
@@ -145,7 +146,7 @@ import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, onUnmounted, ref, type Ref, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -256,7 +257,7 @@ const getNextSong = async () => {
       }
       try {
         const selectedDayMedia =
-          lookupPeriod.value[currentCongregation.value].find(
+          lookupPeriod.value[currentCongregation.value]?.find(
             (d) => date.getDateDiff(selectedDate.value, d.date, 'days') === 0,
           )?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
@@ -462,14 +463,18 @@ const setBackgroundMusicVolume = (volume: number) => {
   }
 };
 
+useEventListener(window, 'toggleMusic', toggleMusicListener);
+const { data: volumeData } = useBroadcastChannel({ name: 'volume-setter' });
+watch(
+  () => volumeData.value,
+  (newVolume) => {
+    if (newVolume) {
+      setBackgroundMusicVolume(newVolume as number);
+    }
+  },
+);
+
 onMounted(() => {
-  window.addEventListener('toggleMusic', toggleMusicListener);
-
-  const bc = new BroadcastChannel('volumeSetter');
-  bc.onmessage = (event) => {
-    setBackgroundMusicVolume(event?.data);
-  };
-
   watch(
     () => [selectedDateObject.value?.today, selectedDateObject.value?.meeting],
     ([newToday, newMeeting]) => {
@@ -503,9 +508,5 @@ onMounted(() => {
       musicStoppedAutomatically.value = false;
     },
   );
-});
-
-onUnmounted(() => {
-  window.removeEventListener('toggleMusic', toggleMusicListener);
 });
 </script>

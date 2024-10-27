@@ -3,7 +3,7 @@
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
     >
-      <div class="text-h6 row">{{ $t('import-local-media') }}</div>
+      <div class="text-h6 row">{{ $t('add-extra-media') }}</div>
       <template
         v-if="
           localJwpubDocuments?.length === 0 ||
@@ -13,9 +13,32 @@
         "
       >
         <div class="row">
-          {{ $t('local-media-explain-1') }}
-          <!-- TODO: add feature to show full list of supported formats -->
-          <!--{{ $t('local-media-explain-2') }}-->
+          <p>{{ $t('local-media-explain-1') }}</p>
+          <a
+            >{{ $t('local-media-explain-2') }}
+            <q-tooltip
+              ><div class="row">
+                <strong>{{ $t('images:') }}</strong
+                >&nbsp;
+                {{ imageExtensions.sort().join(', ') }}
+              </div>
+              <div class="row">
+                <strong>{{ $t('videos:') }}</strong
+                >&nbsp;
+                {{ videoExtensions.sort().join(', ') }}
+              </div>
+              <div class="row">
+                <strong>{{ $t('audio:') }}</strong
+                >&nbsp;
+                {{ audioExtensions.sort().join(', ') }}
+              </div>
+              <div class="row">
+                <strong>{{ $t('other:') }}</strong
+                >&nbsp;
+                {{ otherExtensions.sort().join(', ') }}
+              </div>
+            </q-tooltip>
+          </a>
         </div>
         <div class="row">
           <div
@@ -44,7 +67,7 @@
             </template>
             <template v-else>
               <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
-              {{ $t('drag-and-drop-or ') }}
+              {{ $t('drag-and-drop-or ') }}&nbsp;
               <a @click="getLocalFiles()"> {{ $t('browse for files') }}</a
               >.
             </template>
@@ -125,6 +148,12 @@ import { barStyle, thumbStyle } from 'src/boot/globals';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
+import {
+  audioExtensions,
+  imageExtensions,
+  otherExtensions,
+  videoExtensions,
+} from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { ref, watch } from 'vue';
 

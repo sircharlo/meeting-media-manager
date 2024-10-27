@@ -21,6 +21,27 @@
     <div class="col">
       <div
         v-if="
+          [...sortableAdditionalMediaItems, ...sortableMediaItems].some(
+            (m) => m.hidden,
+          )
+        "
+        class="row"
+      >
+        <q-banner
+          class="bg-warning text-white full-width"
+          inline-actions
+          rounded
+        >
+          {{ $t('some-media-items-are-hidden') }}
+          <template #avatar>
+            <q-avatar class="bg-white text-warning" size="lg">
+              <q-icon name="mmm-file-hidden" size="sm" />
+            </q-avatar>
+          </template>
+        </q-banner>
+      </div>
+      <div
+        v-if="
           selectedDateObject?.meeting === 'we' &&
           selectedDateObject?.complete &&
           !sortableAdditionalMediaItems?.length
@@ -155,7 +176,7 @@
                 </q-btn>
                 <q-btn color="primary" @click="openImportMenu()">
                   <q-icon class="q-mr-sm" name="mmm-import-media" size="xs" />
-                  {{ $t('import-media') }}
+                  {{ $t('add-extra-media') }}
                 </q-btn>
               </div>
             </div>
@@ -200,6 +221,8 @@
           :key="media.uniqueId"
           :list="sortableAdditionalMediaItems"
           :media="media"
+          :play-state="playState(media.uniqueId)"
+          @update:hidden="media.hidden = !!$event"
         />
       </q-list>
     </q-list>
@@ -224,6 +247,8 @@
           :key="media.uniqueId"
           :list="sortableTgwMediaItems"
           :media="media"
+          :play-state="playState(media.uniqueId)"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableTgwMediaItems.length === 0">
           <q-item>
@@ -260,6 +285,8 @@
           :key="media.uniqueId"
           :list="sortableAyfmMediaItems"
           :media="media"
+          :play-state="playState(media.uniqueId)"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableAyfmMediaItems.length === 0">
           <q-item>
@@ -296,6 +323,8 @@
           :key="media.uniqueId"
           :list="sortableLacMediaItems"
           :media="media"
+          :play-state="playState(media.uniqueId)"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableLacMediaItems.length === 0">
           <q-item>
@@ -327,6 +356,8 @@
           :key="media.uniqueId"
           :list="sortableWtMediaItems"
           :media="media"
+          :play-state="playState(media.uniqueId)"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableWtMediaItems.length === 0">
           <q-item>
@@ -360,6 +391,8 @@
           :key="media.uniqueId"
           :list="sortableCircuitOverseerMediaItems"
           :media="media"
+          :play-state="playState(media.uniqueId)"
+          @update:hidden="media.hidden = !!$event"
         />
         <div v-if="sortableCircuitOverseerMediaItems.length === 0">
           <q-item>
@@ -397,6 +430,7 @@ import {
   selections,
 } from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
+import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
@@ -447,7 +481,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -504,22 +538,25 @@ const filesLoading = ref(-1);
 watch(
   () => mediaPlayingUniqueId.value,
   (newMediaUniqueId) => {
-    bc.postMessage({ uniqueId: newMediaUniqueId });
+    const { post } = useBroadcastChannel({ name: 'unique-id' });
+    post(newMediaUniqueId);
+    if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
   },
 );
 
 watch(
   () => mediaPlayingAction.value,
   (newAction, oldAction) => {
-    if (newAction !== oldAction) bc.postMessage({ action: newAction });
+    const { post } = useBroadcastChannel({ name: 'media-action' });
+    if (newAction !== oldAction) post(newAction);
   },
 );
 
 watch(
   () => mediaPlayingSubtitlesUrl.value,
   (newSubtitlesUrl, oldSubtitlesUrl) => {
-    if (newSubtitlesUrl !== oldSubtitlesUrl)
-      bc.postMessage({ subtitlesUrl: newSubtitlesUrl });
+    const { post } = useBroadcastChannel({ name: 'subtitles-url' });
+    if (newSubtitlesUrl !== oldSubtitlesUrl) post(newSubtitlesUrl);
   },
 );
 
@@ -527,12 +564,11 @@ watch(
   () => mediaPlayingPanzoom.value,
   (newPanzoom, oldPanzoom) => {
     try {
-      if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom))
-        bc.postMessage({
-          scale: newPanzoom.scale,
-          x: newPanzoom.x,
-          y: newPanzoom.y,
-        });
+      const { post } = useBroadcastChannel({ name: 'panzoom' });
+      if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
+        newPanzoom = JSON.parse(JSON.stringify(newPanzoom));
+        post(newPanzoom);
+      }
     } catch (error) {
       errorCatcher(error);
     }
@@ -543,7 +579,8 @@ watch(
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl) bc.postMessage({ url: newUrl });
+    const { post } = useBroadcastChannel({ name: 'media-url' });
+    if (newUrl !== oldUrl) post(newUrl);
   },
 );
 
@@ -555,23 +592,33 @@ const datedAdditionalMediaMap = computed(() => {
   );
 });
 
-const bc = new BroadcastChannel('mediaPlayback');
-bc.onmessage = (event) => {
-  if (event.data?.state === 'ended') {
-    mediaPlayingCurrentPosition.value = 0;
-    // mediaPlayingSeekTo.value = 0;
-    mediaPlayingUrl.value = '';
-    mediaPlayingUniqueId.value = '';
-    mediaPlayingAction.value =
-      mediaPlayingAction.value === 'backgroundMusicPlay'
-        ? 'backgroundMusicCurrentEnded'
-        : '';
-  }
-  // if (event.data?.resetPanzoom) zoomReset(event.data.resetPanzoom, true);
-  if ('currentPosition' in event.data) {
-    mediaPlayingCurrentPosition.value = event.data.currentPosition;
-  }
-};
+const { data: mediaStateData } = useBroadcastChannel({ name: 'media-state' });
+
+watch(
+  () => mediaStateData.value,
+  (newMediaStateData) => {
+    if (newMediaStateData === 'ended') {
+      mediaPlayingCurrentPosition.value = 0;
+      mediaPlayingUrl.value = '';
+      mediaPlayingUniqueId.value = '';
+      mediaPlayingAction.value =
+        mediaPlayingAction.value === 'backgroundMusicPlay'
+          ? 'backgroundMusicCurrentEnded'
+          : '';
+    }
+  },
+);
+
+const { data: currentTimeData }: { data: Ref<number> } = useBroadcastChannel({
+  name: 'current-time',
+});
+
+watch(
+  () => currentTimeData.value,
+  (newCurrentTime) => {
+    mediaPlayingCurrentPosition.value = newCurrentTime;
+  },
+);
 
 const mapOrder =
   (sortOrder: string | string[] | undefined) =>
@@ -642,8 +689,8 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
 
   return {
     setupNode(data) {
-      data.node.addEventListener('dragover', dragover);
-      data.node.addEventListener('dragend', dragend);
+      useEventListener(data.node, 'dragover', dragover);
+      useEventListener(data.node, 'dragend', dragend);
     },
     tearDownNode(data) {
       data.node.removeEventListener('dragover', dragover);
@@ -752,11 +799,6 @@ watch(
   },
 );
 
-const startDragging = () => {
-  resetDragging();
-  dragging.value = true;
-};
-
 const goToNextDayWithMedia = () => {
   try {
     if (
@@ -826,11 +868,26 @@ const checkCoDate = () => {
   }
 };
 
-onMounted(async () => {
-  window.addEventListener('draggingSomething', startDragging);
-  window.addEventListener('localFiles-browsed', localFilesBrowsedListener);
-  window.addEventListener('remote-video-loading', remoteVideoLoading);
+useEventListener(window, 'draggingSomething', () => {
+  resetDragging();
+  dragging.value = true;
+});
+useEventListener(window, 'localFiles-browsed', (event: CustomEventInit) => {
+  addToFiles(event.detail).catch((error) => {
+    errorCatcher(error);
+  });
+});
+useEventListener(window, 'remote-video-loading', (event: CustomEventInit) => {
+  addToAdditionMediaMapFromPath(event.detail.path, undefined, {
+    duration: event.detail.duration,
+    song: event.detail.song,
+    thumbnailUrl: event.detail.thumbnailUrl,
+    title: event.detail.title,
+    url: event.detail.url,
+  });
+});
 
+onMounted(async () => {
   watch(
     selectedDate,
     (newVal) => {
@@ -979,6 +1036,40 @@ watch(
   },
   { deep: true, immediate: true },
 );
+
+const sortedMediaIds = computed(() => {
+  return [
+    ...sortableAdditionalMediaItems.value,
+    ...sortableMediaItems.value,
+  ].map((m) => m.uniqueId);
+});
+
+const lastPlayedMediaUniqueId = ref<string>('');
+
+const nextMediaUniqueId = computed(() => {
+  if (!selectedDate.value) return '';
+  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds.value[0];
+  const index = sortedMediaIds.value.indexOf(lastPlayedMediaUniqueId.value);
+  if (index === -1) return sortedMediaIds.value[0];
+  return sortedMediaIds.value[
+    Math.min(index + 1, sortedMediaIds.value.length - 1)
+  ];
+});
+
+const previousMediaUniqueId = computed(() => {
+  if (!selectedDate.value) return '';
+  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds.value[0];
+  const index = sortedMediaIds.value.indexOf(lastPlayedMediaUniqueId.value);
+  if (index === -1) return sortedMediaIds.value[0];
+  return sortedMediaIds.value[Math.max(index - 1, 0)];
+});
+
+const playState = (id: string) => {
+  if (id === lastPlayedMediaUniqueId.value) return 'current';
+  if (id === nextMediaUniqueId.value) return 'next';
+  if (id === previousMediaUniqueId.value) return 'previous';
+  return 'unknown';
+};
 
 const copyToDatedAdditionalMedia = async (files: string[]) => {
   const datedAdditionalMediaDir = getDatedAdditionalMediaDirectory.value;
@@ -1200,6 +1291,23 @@ const addToFiles = async (
         )
           .then((additionalMedia) => {
             addToAdditionMediaMap(additionalMedia);
+            additionalMedia
+              .filter(
+                (m) =>
+                  m.customDuration &&
+                  (m.customDuration.max || m.customDuration.min),
+              )
+              .forEach((m) => {
+                const { max, min } = m.customDuration as {
+                  max: number;
+                  min: number;
+                };
+                const congregation = (customDurations.value[
+                  currentCongregation.value
+                ] ??= {});
+                const dateDurations = (congregation[selectedDate.value] ??= {});
+                dateDurations[m.uniqueId] = { max, min };
+              });
           })
           .catch((error) => {
             errorCatcher(error);
@@ -1318,26 +1426,4 @@ const resetDragging = () => {
   jwpubImportDb.value = '';
   jwpubImportDocuments.value = [];
 };
-
-const localFilesBrowsedListener = (event: CustomEventInit) => {
-  addToFiles(event.detail).catch((error) => {
-    errorCatcher(error);
-  });
-};
-
-const remoteVideoLoading = (event: CustomEventInit) => {
-  addToAdditionMediaMapFromPath(event.detail.path, undefined, {
-    duration: event.detail.duration,
-    song: event.detail.song,
-    thumbnailUrl: event.detail.thumbnailUrl,
-    title: event.detail.title,
-    url: event.detail.url,
-  });
-};
-
-onUnmounted(() => {
-  window.removeEventListener('draggingSomething', startDragging);
-  window.removeEventListener('localFiles-browsed', localFilesBrowsedListener);
-  window.removeEventListener('remote-video-loading', remoteVideoLoading);
-});
 </script>

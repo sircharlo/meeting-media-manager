@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import type { SettingsItemAction } from 'src/types';
 
+import { useBroadcastChannel } from '@vueuse/core';
 import { ref, watch } from 'vue';
 
 const emit = defineEmits(['update:modelValue']);
@@ -28,11 +29,12 @@ const props = defineProps<{
 
 const localValue = ref(props.modelValue);
 
+const { post } = useBroadcastChannel({ name: 'volume-setter' });
+
 watch(localValue, (newValue) => {
   emit('update:modelValue', newValue);
   if (props?.actions?.includes('setBackgroundMusicVolume')) {
-    const bc = new BroadcastChannel('volumeSetter');
-    bc.postMessage(newValue);
+    if (newValue !== undefined) post(newValue);
   }
 });
 

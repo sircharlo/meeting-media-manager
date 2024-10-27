@@ -24,6 +24,7 @@ export interface MultimediaItemsFetcher {
 
 export interface JwPlaylistItem {
   Accuracy: number;
+  BaseDurationTicks?: number;
   BookNumber: number;
   ChapterNumber: number;
   DocumentId: number;
@@ -63,6 +64,7 @@ export interface MultimediaItem {
   DocumentMultimediaId?: number;
   Duration?: number;
   EndParagraphOrdinal?: number;
+  EndTime?: number;
   FileName?: string;
   FilePath: string;
   Height?: null | number;
@@ -82,6 +84,7 @@ export interface MultimediaItem {
   Multimeps?: null | number;
   NextParagraphOrdinal?: number;
   SizeConstraint?: null | number;
+  StartTime?: number;
   StreamUrl?: string;
   SuppressZoom?: number;
   tableQuestionIsUsed?: boolean;
@@ -94,6 +97,7 @@ export interface MultimediaItem {
 }
 
 export interface VideoMarker {
+  BaseDurationTicks?: number;
   BeginTransitionDurationTicks: number;
   BeginTransitionFrameCount: number;
   Caption: string;

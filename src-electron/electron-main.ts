@@ -8,13 +8,11 @@ import {
   type MenuItemConstructorOptions,
   shell,
 } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import { existsSync } from 'fs-extra';
-import path from 'path';
 
 import './ipc';
 import './session';
 import { PLATFORM } from './constants';
+import { initUpdater } from './updater';
 import { errorCatcher } from './utils';
 import { createMainWindow } from './window-main';
 
@@ -24,7 +22,6 @@ initSentry({
 });
 
 initElectronRemote();
-
 initUpdater();
 createApplicationMenu();
 
@@ -39,14 +36,6 @@ app
   .whenReady()
   .then(createMainWindow)
   .catch((err) => errorCatcher(err));
-
-function initUpdater() {
-  const disabled = existsSync(
-    path.join(app.getPath('userData'), 'Global Preferences', 'disable-updates'),
-  );
-
-  if (!disabled) autoUpdater.checkForUpdatesAndNotify();
-}
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };

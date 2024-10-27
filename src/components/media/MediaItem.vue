@@ -1,5 +1,13 @@
 <template>
-  <q-item class="items-center justify-center">
+  <q-item
+    v-show="!media.hidden"
+    :class="{
+      'items-center': true,
+      'justify-center': true,
+      'bg-accent-100-transparent': playState === 'current',
+      'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
+    }"
+  >
     <div class="q-pr-none rounded-borders">
       <div
         v-if="media.isAudio"
@@ -38,7 +46,7 @@
                 customDurations[currentCongregation][selectedDate][
                   media.uniqueId
                 ].max < media.duration)
-                ? 'negative'
+                ? 'bg-semi-negative'
                 : 'bg-semi-black')
             "
             style="padding: 5px !important"
@@ -187,10 +195,19 @@
             <div class="row items-center">
               <div
                 v-if="media.paragraph"
-                class="q-pl-md q-pr-none col-shrink"
+                :class="{
+                  'q-pl-md': $q.screen.gt.xs,
+                  'q-pr-none': $q.screen.gt.xs,
+                  'col-shrink': $q.screen.gt.xs,
+                  'col-12': !$q.screen.gt.xs,
+                  'q-px-md': !$q.screen.gt.xs,
+                }"
                 side
               >
-                <q-chip :clickable="false" class="media-tag bg-accent-200">
+                <q-chip
+                  :clickable="false"
+                  class="media-tag bg-accent-200 full-width"
+                >
                   <q-icon
                     :name="
                       media.paragraph !== 9999
@@ -206,12 +223,18 @@
               </div>
               <div
                 v-else-if="media.song"
-                class="q-pl-md q-pr-none col-shrink"
+                :class="{
+                  'q-pl-md': $q.screen.gt.xs,
+                  'q-pr-none': $q.screen.gt.xs,
+                  'col-shrink': $q.screen.gt.xs,
+                  'col-12': !$q.screen.gt.xs,
+                  'q-px-md': !$q.screen.gt.xs,
+                }"
                 side
               >
                 <q-chip
                   :clickable="false"
-                  class="media-tag bg-accent-400"
+                  class="media-tag bg-accent-400 full-width"
                   text-color="white"
                 >
                   <q-icon class="q-mr-xs" name="mmm-music-note" />
@@ -290,6 +313,7 @@
           >
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
+                ref="playButton"
                 :disable="mediaPlayingUrl !== '' && isVideo(mediaPlayingUrl)"
                 color="primary"
                 icon="mmm-play"
@@ -308,6 +332,7 @@
             </template>
             <template v-else>
               <q-btn
+                ref="playButton"
                 :disable="mediaPlayingUrl !== '' && isVideo(mediaPlayingUrl)"
                 color="primary"
                 icon="mmm-play-sign-language"
@@ -435,6 +460,25 @@
           </template>
         </div>
       </div>
+      <q-menu context-menu touch-position>
+        <q-list>
+          <q-item-label header>{{ media.title }}</q-item-label>
+          <q-item v-close-popup clickable @click="emit('update:hidden', true)">
+            <q-item-section>
+              <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
+              <q-item-label caption>{{
+                $t('hide-from-list-explain')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-close-popup clickable @click="mediaEditTitleDialog = true">
+            <q-item-section>
+              <q-item-label>{{ $t('rename') }}</q-item-label>
+              <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-menu>
     </div>
   </q-item>
   <q-dialog v-model="mediaEditTitleDialog">
@@ -516,6 +560,7 @@ import Panzoom, {
   type PanzoomObject,
   type PanzoomOptions,
 } from '@panzoom/panzoom';
+import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -524,8 +569,13 @@ import { formatTime, isImage, isVideo } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+
+const element = ref<HTMLDivElement>();
+useEventListener(element, 'keydown', (e) => {
+  console.log(e.key);
+});
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, onUnmounted, ref } from 'vue';
+import { computed, onUnmounted, ref, type Ref } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -538,8 +588,6 @@ const {
   mediaPlayingUrl,
   selectedDate,
 } = storeToRefs(currentState);
-
-const bc = new BroadcastChannel('mediaPlayback');
 
 const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
@@ -561,7 +609,10 @@ const mediaDeletePending = computed(() => !!mediaToDelete.value);
 const props = defineProps<{
   list: DynamicMediaObject[];
   media: DynamicMediaObject;
+  playState: string;
 }>();
+
+const emit = defineEmits(['update:hidden']);
 
 const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref('');
@@ -631,8 +682,10 @@ const resetMediaDuration = (media: DynamicMediaObject) => {
   }
 };
 
+const { post } = useBroadcastChannel({ name: 'seek-to' });
+
 const seekTo = (newSeekTo: null | number) => {
-  if (newSeekTo !== null) bc.postMessage({ seekTo: newSeekTo });
+  if (newSeekTo !== null) post(newSeekTo);
 };
 
 function zoomIn(elemId: string) {
@@ -695,20 +748,21 @@ const initiatePanzoom = (elemId: string) => {
       pinchAndPan: true,
     } as PanzoomOptions);
 
-    elem.addEventListener('dblclick', () => {
+    useEventListener(elem, 'dblclick', () => {
       zoomIn(elemId);
     });
 
-    elem.addEventListener('panzoomend', () => {
+    useEventListener(elem, 'panzoomend', () => {
       zoomReset(elemId);
     });
 
-    elem.addEventListener('wheel', function (e) {
+    useEventListener(elem, 'wheel', function (e) {
       if (!e.ctrlKey) return;
       panzooms[elemId]?.zoomWithWheel(e);
     });
 
-    elem.addEventListener(
+    useEventListener(
+      elem,
       'panzoomchange',
       (e: HTMLElementEventMap['panzoomchange']) => {
         mediaPlayingPanzoom.value = {
@@ -733,5 +787,15 @@ onUnmounted(() => {
   Object.keys(panzooms).forEach((key) => {
     destroyPanzoom(key);
   });
+});
+
+const playButton: Ref<HTMLButtonElement | undefined> = ref();
+
+useEventListener(window, 'shortcutMediaNext', () => {
+  if (playButton.value && props.playState === 'next') playButton.value.click();
+});
+useEventListener(window, 'shortcutMediaPrevious', () => {
+  if (playButton.value && props.playState === 'previous')
+    playButton.value.click();
 });
 </script>

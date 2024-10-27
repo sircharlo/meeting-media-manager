@@ -7,6 +7,7 @@ export interface DynamicMediaObject {
   duration: number;
   fileUrl: string;
   footnote?: boolean;
+  hidden?: boolean;
   isAdditional?: boolean;
   isAudio: boolean;
   isImage: boolean;
@@ -58,4 +59,11 @@ export interface CacheFile {
 export interface SongItem extends Item {
   duration?: number; // or the correct type for duration
   title?: string;
+}
+
+export interface VideoDuration {
+  duration: number;
+  ms: number;
+  seconds: number;
+  timeScale: number;
 }

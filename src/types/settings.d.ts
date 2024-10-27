@@ -32,8 +32,8 @@ export interface SettingsValues {
   obsMediaScene: string;
   obsPassword: string;
   obsPort: string;
-  // shortcutMediaNext: string;
-  // shortcutMediaPrevious: string;
+  shortcutMediaNext: string;
+  shortcutMediaPrevious: string;
   shortcutMediaWindow: string;
   shortcutMusic: string;
   weDay: string;

@@ -14,6 +14,7 @@ import {
   globalShortcut,
   screen,
 } from '@electron/remote';
+import { videoDuration as getVideoDuration } from '@numairawan/video-duration';
 import { captureMessage, setContext } from '@sentry/electron/renderer';
 import AdmZip from 'adm-zip';
 import BetterSqlite3 from 'better-sqlite3';
@@ -59,7 +60,7 @@ const getMediaWindow = () =>
       !w.webContents.getURL().includes('https://'),
   );
 
-const bc = new BroadcastChannel('mediaPlayback');
+const webStreamBroadcastChannel = new BroadcastChannel('web-stream');
 let websiteWindow: Electron.CrossProcessExports.BrowserWindow | null = null;
 
 const zoomWebsiteWindow = (action: string) => {
@@ -155,11 +156,11 @@ const openWebsiteWindow = () => {
       } as Electron.Streams);
     },
   );
-  bc.postMessage({ webStream: true });
+  webStreamBroadcastChannel.postMessage(true);
 };
 
 const stopStream = () => {
-  bc.postMessage({ webStream: false });
+  webStreamBroadcastChannel.postMessage(false);
 };
 
 const getScreens = () =>
@@ -603,6 +604,7 @@ const electronApi: ElectronApi = {
   getUserDesktopPath: () => {
     return app.getPath('desktop');
   },
+  getVideoDuration,
   isFileUrl,
   klawSync,
   moveMediaWindow,

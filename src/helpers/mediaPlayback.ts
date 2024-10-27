@@ -50,62 +50,88 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
   }
 };
 
+const pureImageExtensions = [
+  // APNG
+  '.apng',
+  // AVIF
+  '.avif',
+  // GIF
+  '.gif',
+  // JPEG
+  '.jpg',
+  '.jpeg',
+  '.jfif',
+  '.pjpeg',
+  '.pjp',
+  // PNG
+  '.png',
+  // WebP
+  '.webp',
+  // BMP
+  '.bmp',
+  // ICO
+  '.ico',
+  '.cur',
+];
+
+const heicExtensions = ['.heic'];
+const svgExtensions = ['.svg'];
+
+const imageExtensions = [
+  ...pureImageExtensions,
+  ...heicExtensions,
+  ...svgExtensions,
+];
+
+const audioExtensions = ['.mp3', '.wav', '.ogg', '.flac'];
+const videoExtensions = ['.mp4', '.mov', '.mkv', '.avi', '.webm'];
+
+const pdfExtensions = ['.pdf'];
+const zipExtensions = ['.zip'];
+const jwpubExtensions = ['.jwpub'];
+const jwPlaylistExtensions = ['.jwlplaylist'];
+
+const otherExtensions = [
+  ...pdfExtensions,
+  ...zipExtensions,
+  ...jwpubExtensions,
+  ...jwPlaylistExtensions,
+];
+
 const isImage = (filepath: string) => {
-  return isFileOfType(filepath, [
-    // APNG
-    '.apng',
-    // AVIF
-    '.avif',
-    // GIF
-    '.gif',
-    // JPEG
-    '.jpg',
-    '.jpeg',
-    '.jfif',
-    '.pjpeg',
-    '.pjp',
-    // PNG
-    '.png',
-    // WebP
-    '.webp',
-    // BMP
-    '.bmp',
-    // ICO
-    '.ico',
-    '.cur',
-  ]);
+  return isFileOfType(filepath, pureImageExtensions);
 };
 
 const isHeic = (filepath: string) => {
-  return isFileOfType(filepath, ['.heic']);
+  return isFileOfType(filepath, heicExtensions);
 };
 
 const isSvg = (filepath: string) => {
-  return isFileOfType(filepath, ['.svg']);
+  return isFileOfType(filepath, svgExtensions);
 };
 
 const isVideo = (filepath: string) => {
-  return isFileOfType(filepath, ['.mp4', '.mov', '.mkv', '.avi', '.webm']);
+  return isFileOfType(filepath, videoExtensions);
 };
 
 const isAudio = (filepath: string) => {
-  return isFileOfType(filepath, ['.mp3', '.wav', '.ogg', '.flac']);
+  return isFileOfType(filepath, audioExtensions);
 };
 
 const isPdf = (filepath: string) => {
-  return isFileOfType(filepath, ['.pdf']);
+  return isFileOfType(filepath, pdfExtensions);
 };
 
 const isArchive = (filepath: string) => {
-  return isFileOfType(filepath, ['.zip']);
+  return isFileOfType(filepath, zipExtensions);
 };
 
 const isJwpub = (filepath: string) => {
-  return isFileOfType(filepath, ['.jwpub']);
+  return isFileOfType(filepath, jwpubExtensions);
 };
 
 const isJwPlaylist = (filepath: string) => {
-  return isFileOfType(filepath, ['.jwlplaylist']);
+  return isFileOfType(filepath, jwPlaylistExtensions);
 };
 
 const isSong = (multimediaItem: MultimediaItem) => {
@@ -210,6 +236,7 @@ const getMediaFromJwPlaylist = async (
         pi.Accuracy,
         pi.EndAction,
         pi.ThumbnailFilePath,
+        plm.BaseDurationTicks,
         pim.DurationTicks,
         im.OriginalFilename,
         im.FilePath AS IndependentMediaFilePath,
@@ -245,14 +272,29 @@ const getMediaFromJwPlaylist = async (
         fs.renameSync(item.ThumbnailFilePath, item.ThumbnailFilePath + '.jpg');
         item.ThumbnailFilePath += '.jpg';
       }
+      const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0;
+      const EndTime =
+        durationTicks &&
+        item?.EndTrimOffsetTicks &&
+        durationTicks >= item.EndTrimOffsetTicks
+          ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
+          : null;
+
+      const StartTime =
+        item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
+          ? item.StartTrimOffsetTicks / 10000 / 1000
+          : null;
+
       return {
+        EndTime,
         FilePath: item.IndependentMediaFilePath
           ? path.join(outputPath, item.IndependentMediaFilePath)
           : '',
         IssueTagNumber: item.IssueTagNumber,
         KeySymbol: item.KeySymbol,
-        Label: playlistName + item.Label,
+        Label: `${playlistName}${item.Label}`,
         MimeType: item.MimeType,
+        StartTime,
         ThumbnailFilePath: item.ThumbnailFilePath || '',
         Track: item.Track,
       };
@@ -337,7 +379,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         const outputImg = canvas.toDataURL('image/png');
         const existingPath = path.parse(filepath);
-        const newPath = `${existingPath.dir}/${existingPath.name}.jpg`;
+        const newPath = `${existingPath.dir}/${existingPath.name}.png`;
         try {
           fs.writeFileSync(
             newPath,
@@ -384,6 +426,7 @@ const showMediaWindow = (state?: boolean) => {
 };
 
 export {
+  audioExtensions,
   convertHeicToJpg,
   convertImageIfNeeded,
   convertSvgToJpg,
@@ -391,9 +434,11 @@ export {
   findDb,
   formatTime,
   getMediaFromJwPlaylist,
+  imageExtensions,
   inferExtension,
   isArchive,
   isAudio,
+  isFileOfType,
   isHeic,
   isImage,
   isImageString,
@@ -404,5 +449,7 @@ export {
   isSong,
   isSvg,
   isVideo,
+  otherExtensions,
   showMediaWindow,
+  videoExtensions,
 };

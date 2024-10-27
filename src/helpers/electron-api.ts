@@ -3,7 +3,7 @@ import type FsExtra from 'fs-extra';
 import type HeicConvert from 'heic-convert';
 import type KlawSync from 'klaw-sync';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
-import type { QueryResponseItem } from 'src/types';
+import type { QueryResponseItem, VideoDuration } from 'src/types';
 import type Path from 'upath';
 
 export interface ElectronFileFilter {
@@ -30,6 +30,7 @@ export interface ElectronApi {
   getLocalPathFromFileObject: (fileObject: File) => string;
   getUserDataPath: () => string;
   getUserDesktopPath: () => string;
+  getVideoDuration: (filePath: string) => VideoDuration;
   isFileUrl: (url: string) => boolean;
   klawSync: typeof KlawSync;
   moveMediaWindow: (
