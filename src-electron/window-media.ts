@@ -6,7 +6,7 @@ import path from 'path';
 import { PLATFORM } from './constants';
 import { createWindow } from './window-base';
 
-export let mediaWindow: BrowserWindow | undefined;
+export let mediaWindow: BrowserWindow | null = null;
 
 export function createMediaWindow() {
   // If the window is already open, just focus it
@@ -39,7 +39,7 @@ export function createMediaWindow() {
   if (PLATFORM !== 'darwin') mediaWindow.setMenuBarVisibility(false);
 
   mediaWindow.on('closed', () => {
-    mediaWindow = undefined;
+    mediaWindow = null;
   });
 }
 

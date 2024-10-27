@@ -1,15 +1,13 @@
-import type { ElectronIpcListenKey } from 'src/types';
-
 import pkg from 'app/package.json';
 import { app, type BrowserWindow } from 'electron';
 import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
 import { join } from 'upath';
 
 import { errorCatcher } from './utils';
-import { closeAllWindows, createWindow } from './window-base';
+import { closeAllWindows, createWindow, sendToWindow } from './window-base';
 import { createMediaWindow } from './window-media';
 
-export let mainWindow: BrowserWindow | undefined;
+export let mainWindow: BrowserWindow | null = null;
 export let authorizedClose = false;
 
 export function createMainWindow() {
@@ -34,12 +32,12 @@ export function createMainWindow() {
       closeAllWindows();
     } else {
       e.preventDefault();
-      sendToMainWindow('attemptedClose');
+      sendToWindow(mainWindow, 'attemptedClose');
     }
   });
 
   mainWindow.on('closed', () => {
-    mainWindow = undefined;
+    mainWindow = null;
   });
 
   createMediaWindow();
@@ -47,22 +45,6 @@ export function createMainWindow() {
 
 export function toggleAuthorizedClose(authorized: boolean) {
   authorizedClose = authorized;
-}
-
-export function sendToMainWindow(
-  channel: ElectronIpcListenKey,
-  ...args: unknown[]
-) {
-  mainWindow?.webContents.send(channel, ...args);
-}
-
-export function logToMainWindow(
-  msg: string,
-  ctx: Record<string, unknown> | string = {},
-  level: 'debug' | 'error' | 'info' | 'warn' = 'info',
-) {
-  if (level === 'debug' && !process.env.DEBUGGING) return;
-  sendToMainWindow('log', { ctx, level, msg });
 }
 
 // See: https://github.com/sircharlo/mmm-refactor/discussions/2#discussioncomment-10870709

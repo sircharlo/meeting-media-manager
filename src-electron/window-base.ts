@@ -1,3 +1,5 @@
+import type { ElectronIpcListenKey } from 'src/types';
+
 import { enable as enableElectronRemote } from '@electron/remote/main';
 import { BrowserWindow, type BrowserWindowConstructorOptions } from 'electron';
 import windowStateKeeper from 'electron-window-state';
@@ -81,6 +83,24 @@ export function createWindow(
   }
 
   return win;
+}
+
+export function sendToWindow(
+  win: BrowserWindow | null,
+  channel: ElectronIpcListenKey,
+  ...args: unknown[]
+) {
+  win?.webContents.send(channel, ...args);
+}
+
+export function logToWindow(
+  win: BrowserWindow | null,
+  msg: string,
+  ctx: Record<string, unknown> | string = {},
+  level: 'debug' | 'error' | 'info' | 'warn' = 'info',
+) {
+  if (level === 'debug' && !process.env.DEBUGGING) return;
+  sendToWindow(win, 'log', { ctx, level, msg });
 }
 
 export function closeAllWindows() {

@@ -14,11 +14,8 @@ import {
 } from 'electron';
 
 import { isSelf } from './utils';
-import {
-  logToMainWindow,
-  mainWindow,
-  toggleAuthorizedClose,
-} from './window-main';
+import { logToWindow } from './window-base';
+import { mainWindow, toggleAuthorizedClose } from './window-main';
 
 // IPC send/on
 
@@ -29,10 +26,15 @@ function handleIpcSend(
 ) {
   ipcMain.on(channel, (e, ...args) => {
     if (!isSelf(e.senderFrame.url)) {
-      logToMainWindow(`Blocked IPC send from ${e.senderFrame.url}`, {}, 'warn');
+      logToWindow(
+        mainWindow,
+        `Blocked IPC send from ${e.senderFrame.url}`,
+        {},
+        'warn',
+      );
       return;
     } else {
-      logToMainWindow('on', { args, channel }, 'debug');
+      logToWindow(mainWindow, 'on', { args, channel }, 'debug');
     }
     listener(e, ...args);
   });
@@ -70,14 +72,15 @@ function handleIpcInvoke<T = unknown>(
 ) {
   ipcMain.handle(channel, (e, ...args) => {
     if (!isSelf(e.senderFrame.url)) {
-      logToMainWindow(
+      logToWindow(
+        mainWindow,
         `Blocked IPC invoke from ${e.senderFrame.url}`,
         {},
         'warn',
       );
       return null;
     } else {
-      logToMainWindow('handle', { args, channel }, 'debug');
+      logToWindow(mainWindow, 'handle', { args, channel }, 'debug');
     }
     return listener(e, ...args);
   });
