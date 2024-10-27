@@ -418,10 +418,11 @@ watch(
   { immediate: true },
 );
 
+const { post } = useBroadcastChannel({ name: 'custom-background' });
+
 watch(
   () => mediaWindowCustomBackground.value,
   (newMediaBackground) => {
-    const { post } = useBroadcastChannel({ name: 'custom-background' });
     post(newMediaBackground);
   },
 );
