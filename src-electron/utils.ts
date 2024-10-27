@@ -1,40 +1,18 @@
 import { captureException } from '@sentry/browser';
 
-import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
+const devMode = process.env.NODE_ENV === 'development';
 
-export function isTrustedDomain(url: string): boolean {
-  const parsedUrl = new URL(url);
-  if (parsedUrl.protocol !== 'https:') return false;
-  return TRUSTED_DOMAINS.some((domain) => parsedUrl.hostname.endsWith(domain));
-}
-
-export function isJwDomain(url: string): boolean {
-  const parsedUrl = new URL(url);
-  if (parsedUrl.protocol !== 'https:') return false;
-  return JW_DOMAINS.some((domain) => parsedUrl.hostname.endsWith(domain));
-}
-
-export function isSelf(url: string): boolean {
-  const parsedUrl = new URL(url);
-  return (
-    (!!process.env.DEV && parsedUrl.origin === process.env.APP_URL) ||
-    (!process.env.DEV &&
-      parsedUrl.protocol === 'app:' &&
-      parsedUrl.host === 'app')
-  );
-}
-
-export function errorCatcher(error: Error | string | unknown) {
-  if (!IS_DEV) {
+const errorCatcher = (error: Error | string | unknown) => {
+  if (!devMode) {
     captureException(error);
   } else {
     console.error(error);
   }
-}
+};
 
 type Func<T extends unknown[], R> = (...args: T) => R;
 
-export function throttle<T extends unknown[], R = unknown>(
+function throttle<T extends unknown[], R = unknown>(
   fn: Func<T, R>,
   limit = 250,
 ): Func<T, R> {
@@ -53,3 +31,5 @@ export function throttle<T extends unknown[], R = unknown>(
     return result;
   };
 }
+
+export { errorCatcher, throttle };
