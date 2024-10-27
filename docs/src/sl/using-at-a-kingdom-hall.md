@@ -18,25 +18,25 @@ Ob prvem zagonu programa M³ boš moral izbrati želeni **jezik uporabniškega v
 
 :::tip Namig
 
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+Ni nujno, da je to isti jezik kot jezik, v katerem bo M³ prenesel multimedijsko vsebino. Jezik za prenos multimedijske vsebine boš nastavil v enem od naslednjih korakov.
 
 :::
 
 ### Vrsta profila
 
-The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+V naslednjem koraku je treba izbrati **vrsto profila**. Za običajno namestitev v kraljestveni dvorani izberi možnost **Običajno**. Tako boš nastavil številne funkcije, ki se običajno uporabljajo za občinske shode.
 
 :::warning Opozorilo
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Možnost **Drugo** izberi le, če ustvarjaš profil, pri katerem se multimedijska vsebina ne sme samodejno prenašati. Pri tem profilu bo treba multimedijsko vsebino uvoziti ročno. Ta vrsta profila se večinoma uporablja za uporabo M³ med teokratičnimi šolami, zbori, zborovanji in drugimi posebnimi dogodki.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Profil **Drugo** se redko uporablja. **Za običajno uporabo med občinskimi shodi izberi možnost _Običajno_.**
 
 :::
 
-### Automatic congregation lookup
+### Samodejno iskanje občine
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+M³ lahko poskuša samodejno poiskati urnik, jezik in ime vaših občinskih shodov.
 
 To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
 
