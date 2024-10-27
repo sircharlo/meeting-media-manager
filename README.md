@@ -49,6 +49,13 @@ In addition, M³ itself has been translated into several languages by many volun
 
 Check out our [documentation website](https://sircharlo.github.io/meeting-media-manager/) for help, guides and FAQs.
 
+## Does this app go against the jw.org Terms of Use?
+
+No, our use complies with the jw.org [Terms of Use](https://www.jw.org/en/terms-of-use/), which explicitly permit this type of usage. Here’s the relevant excerpt from those terms (emphasis added):
+
+> You may not:  
+> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+
 ## Want to contribute?
 
 We welcome contributions of all kinds! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to contribute to M³.
