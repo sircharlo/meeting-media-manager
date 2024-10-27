@@ -43,7 +43,29 @@ try {
 } catch (err) {
   console.error(err);
 }
-if (!updatesDisabled) autoUpdater.checkForUpdatesAndNotify();
+
+const triggerUpdateCheck = async (attempt = 1) => {
+  if (updatesDisabled) return;
+  try {
+    const { default: isOnline } = await import('is-online');
+    const online = await isOnline();
+    if (online) {
+      console.log('Checking for updates...');
+      autoUpdater.checkForUpdatesAndNotify();
+    } else {
+      if (attempt < 5) {
+        console.log('Offline, retrying update check in 5 seconds...');
+        setTimeout(() => triggerUpdateCheck(attempt + 1), 5000);
+      } else {
+        console.log('Unable to check for updates.');
+      }
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+triggerUpdateCheck();
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
