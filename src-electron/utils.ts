@@ -16,11 +16,13 @@ export function isJwDomain(url: string): boolean {
 
 export function isSelf(url: string): boolean {
   const parsedUrl = new URL(url);
+  const parsedAppUrl = new URL(process.env.APP_URL);
+
   return (
     (!!process.env.DEV && parsedUrl.origin === process.env.APP_URL) ||
     (!process.env.DEV &&
-      parsedUrl.protocol === 'app:' &&
-      parsedUrl.host === 'app')
+      parsedUrl.protocol === 'file:' &&
+      parsedUrl.pathname === parsedAppUrl.pathname)
   );
 }
 
