@@ -34,10 +34,12 @@
 </template>
 
 <script setup lang="ts">
+import type { ElectronIpcListenKey } from 'src/types';
+
 // Packages
 import { storeToRefs } from 'pinia';
 import { Dark, useQuasar } from 'quasar';
-import { onMounted, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -69,8 +71,10 @@ import {
 } from 'src/helpers/keyboardShortcuts';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+
 // Stores
 import { useAppSettingsStore } from 'src/stores/app-settings';
+
 // import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
@@ -400,11 +404,30 @@ const loadJwIconsFont = async () => {
   }
 };
 
+const initListeners = () => {
+  window.electronApi.onLog(({ ctx, level, msg }) => {
+    console[level](`[main] ${msg}`, ctx);
+  });
+};
+
+const removeListeners = () => {
+  const listeners: ElectronIpcListenKey[] = ['log'];
+
+  listeners.forEach((listener) => {
+    window.electronApi.removeListeners(listener);
+  });
+};
+
 onMounted(() => {
   document.title = 'Meeting Media Manager';
   if (!currentSettings.value) navigateToCongregationSelector();
   // add overflow hidden to body
   document.body.style.overflow = 'hidden';
   loadJwIconsFont();
+  initListeners();
+});
+
+onBeforeUnmount(() => {
+  removeListeners();
 });
 </script>

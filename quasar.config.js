@@ -187,6 +187,7 @@ module.exports = configure(function (/* ctx */) {
       extendPackageJson(pkg) {
         const requiredNonUiElectronDependencies = [
           '@electron/remote',
+          '@numairawan/video-duration',
           '@sentry/electron',
           'adm-zip',
           'better-sqlite3',

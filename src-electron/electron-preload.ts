@@ -4,7 +4,13 @@ import type * as PdfJs from 'pdfjs-dist';
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 import type { ElectronApi } from 'src/helpers/electron-api';
-import type { QueryResponseItem, ScreenPreferences } from 'src/types';
+import type {
+  ElectronIpcInvokeKey,
+  ElectronIpcListenKey,
+  ElectronIpcSendKey,
+  QueryResponseItem,
+  ScreenPreferences,
+} from 'src/types';
 import type Url from 'url';
 
 import {
@@ -13,6 +19,7 @@ import {
   dialog,
   globalShortcut,
   screen,
+  shell,
 } from '@electron/remote';
 import { videoDuration as getVideoDuration } from '@numairawan/video-duration';
 import { captureMessage, setContext } from '@sentry/electron/renderer';
@@ -21,10 +28,9 @@ import BetterSqlite3 from 'better-sqlite3';
 import {
   contextBridge,
   ipcRenderer,
-  shell,
   type ShortcutDetails,
   webUtils,
-} from 'electron';
+} from 'electron/renderer';
 import fs from 'fs-extra';
 import convert from 'heic-convert';
 import klawSync from 'klaw-sync';
@@ -34,6 +40,31 @@ import path from 'upath';
 
 import pkg from '../package.json';
 import { errorCatcher, throttle } from './utils';
+
+function invoke(channel: ElectronIpcInvokeKey, ...args: unknown[]) {
+  if (process.env.DEBUGGING) {
+    console.debug('[preload] invoke', { args, channel });
+  }
+  return ipcRenderer.invoke(channel, ...args);
+}
+
+function send(channel: ElectronIpcSendKey, ...args: unknown[]) {
+  if (process.env.DEBUGGING) {
+    console.debug('[preload] send', { args, channel });
+  }
+  ipcRenderer.send(channel, ...args);
+}
+
+function listen(
+  channel: ElectronIpcListenKey,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  callback: (args: any) => void,
+) {
+  if (process.env.DEBUGGING) {
+    console.debug('[preload] listen', { channel });
+  }
+  ipcRenderer.on(channel, (_e, args) => callback(args));
+}
 
 const getMainWindow = () =>
   BrowserWindow.getAllWindows().find(
@@ -451,12 +482,13 @@ const unregisterShortcut = (keySequence: string) => {
 };
 
 const bcClose = new BroadcastChannel('closeAttempts');
-ipcRenderer.on('attemptedClose', () => {
+
+listen('attemptedClose', () => {
   bcClose.postMessage({ attemptedClose: true });
 });
 
 bcClose.onmessage = (event) => {
-  if (event.data.authorizedClose) ipcRenderer.send('authorizedClose');
+  if (event.data.authorizedClose) send('authorizedClose');
 };
 
 const convertPdfToImages = async (
@@ -594,9 +626,7 @@ const electronApi: ElectronApi = {
   getAppDataPath: () => {
     return app.getPath('appData');
   },
-  getAppVersion: () => {
-    return app.getVersion();
-  },
+  getAppVersion: () => invoke('getVersion'),
   getLocalPathFromFileObject: (fileObject: File) => {
     return webUtils.getPathForFile(fileObject);
   },
@@ -609,9 +639,8 @@ const electronApi: ElectronApi = {
   klawSync,
   moveMediaWindow,
   navigateWebsiteWindow,
-  openExternalWebsite: (url: string) => {
-    shell.openExternal(url);
-  },
+  onLog: (callback) => listen('log', callback),
+  openExternal: (website) => send('openExternal', website),
   openFileDialog: async (single?: boolean, filter?: string[]) => {
     const mainWindow = getMainWindow();
     if (!mainWindow) return;
@@ -671,6 +700,7 @@ const electronApi: ElectronApi = {
     }
   },
   registerShortcut,
+  removeListeners: (channel) => ipcRenderer.removeAllListeners(channel),
   // saveSettingsStoreToFile,
   setAutoStartAtLogin: (value: boolean) => {
     try {

@@ -3,7 +3,12 @@ import type FsExtra from 'fs-extra';
 import type HeicConvert from 'heic-convert';
 import type KlawSync from 'klaw-sync';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
-import type { QueryResponseItem, VideoDuration } from 'src/types';
+import type {
+  ElectronIpcListenKey,
+  ExternalWebsite,
+  QueryResponseItem,
+  VideoDuration,
+} from 'src/types';
 import type Path from 'upath';
 
 export interface ElectronFileFilter {
@@ -26,7 +31,7 @@ export interface ElectronApi {
     type?: string,
   ) => ({ mainWindow?: boolean; mediaWindow?: boolean } & Electron.Display)[];
   getAppDataPath: () => string;
-  getAppVersion: () => string;
+  getAppVersion: () => Promise<string>;
   getLocalPathFromFileObject: (fileObject: File) => string;
   getUserDataPath: () => string;
   getUserDesktopPath: () => string;
@@ -39,7 +44,14 @@ export interface ElectronApi {
     noEvent?: boolean,
   ) => void;
   navigateWebsiteWindow: (action: string) => void;
-  openExternalWebsite: (url: string) => void;
+  onLog: (
+    callback: (args: {
+      ctx: Record<string, unknown>;
+      level: 'error' | 'info' | 'warn';
+      msg: string;
+    }) => void,
+  ) => void;
+  openExternal: (website: ExternalWebsite) => void;
   openFileDialog: (
     single?: boolean,
     filter?: string[],
@@ -50,6 +62,7 @@ export interface ElectronApi {
   pathToFileURL: (path: string) => string;
   readShortcutLink: (shortcutPath: string) => ShortcutDetails;
   registerShortcut: (shortcut: string, callback: () => void) => void;
+  removeListeners: (channel: ElectronIpcListenKey) => void;
   // saveSettingsStoreToFile: (storeName: string, data: unknown) => void;
   setAutoStartAtLogin: (value: boolean) => void;
   setMediaWindowPosition: (x: number, y: number) => void;

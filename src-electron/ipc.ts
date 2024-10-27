@@ -5,7 +5,13 @@ import type {
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
-import { app, ipcMain, shell } from 'electron';
+import {
+  app,
+  ipcMain,
+  type IpcMainEvent,
+  type IpcMainInvokeEvent,
+  shell,
+} from 'electron';
 
 import { isSelf } from './utils';
 import {
@@ -19,7 +25,7 @@ import {
 function handleIpcSend(
   channel: ElectronIpcSendKey,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  listener: (event: Electron.IpcMainEvent, ...args: any[]) => void,
+  listener: (event: IpcMainEvent, ...args: any[]) => void,
 ) {
   ipcMain.on(channel, (e, ...args) => {
     if (!isSelf(e.senderFrame.url)) {
@@ -57,7 +63,7 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
 function handleIpcInvoke<T = unknown>(
   channel: ElectronIpcInvokeKey,
   listener: (
-    event: Electron.IpcMainInvokeEvent,
+    event: IpcMainInvokeEvent,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...args: any[]
   ) => Promise<T>,
