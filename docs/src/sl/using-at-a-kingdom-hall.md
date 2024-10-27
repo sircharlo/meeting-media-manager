@@ -1,8 +1,8 @@
-# Using M³ at a Kingdom Hall
+# Uporaba M³ v kraljestveni dvorani
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager (M³)** v kraljestveni dvorani. Za nemoteno nastavitev aplikacije za upravljanje multimedijske vsebine med občinskimi shodi sledi spodnjim korakom.
 
-## 1. Download and install
+## 1. Prenesi in namesti
 
 1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Download the appropriate version for your operating system (Windows, macOS, or Linux).
