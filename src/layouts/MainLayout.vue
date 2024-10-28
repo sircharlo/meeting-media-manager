@@ -124,10 +124,6 @@ const appSettings = useAppSettingsStore();
 const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
 
-if (!migrations.value?.includes('localStorageToPiniaPersist')) {
-  runMigration('localStorageToPiniaPersist');
-}
-
 if (!migrations.value?.includes('firstRun')) {
   const migrationResult = runMigration('firstRun');
   if (migrationResult) {
@@ -139,6 +135,10 @@ if (!migrations.value?.includes('firstRun')) {
       type: 'positive',
     });
   }
+}
+
+if (!migrations.value?.includes('localStorageToPiniaPersist')) {
+  runMigration('localStorageToPiniaPersist');
 }
 
 const { updateJwLanguages } = jwStore;

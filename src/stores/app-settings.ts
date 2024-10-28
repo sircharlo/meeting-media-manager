@@ -55,7 +55,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
           congregationStore.$patch({
             congregations: parseJsonSafe<Record<string, SettingsValues>>(
               QuasarStorage.getItem('congregations'),
-              {},
+              congregationStore.congregations,
             ),
           });
 
@@ -64,34 +64,37 @@ export const useAppSettingsStore = defineStore('app-settings', {
           jwStore.$patch({
             additionalMediaMaps: parseJsonSafe<
               Record<string, Record<string, DynamicMediaObject[]>>
-            >(QuasarStorage.getItem('additionalMediaMaps'), {}),
+            >(
+              QuasarStorage.getItem('additionalMediaMaps'),
+              jwStore.additionalMediaMaps,
+            ),
             customDurations: parseJsonSafe<
               Record<
                 string,
                 Record<string, Record<string, { max: number; min: number }>>
               >
-            >(QuasarStorage.getItem('customDurations'), {}),
+            >(
+              QuasarStorage.getItem('customDurations'),
+              jwStore.customDurations,
+            ),
             jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
               QuasarStorage.getItem('jwLanguages'),
-              {
-                list: [],
-                updated: new Date(1900, 0, 1),
-              },
+              jwStore.jwLanguages,
             ),
             jwSongs: parseJsonSafe<
               Record<string, { list: MediaLink[]; updated: Date }>
-            >(QuasarStorage.getItem('jwSongs'), {}),
+            >(QuasarStorage.getItem('jwSongs'), jwStore.jwSongs),
             lookupPeriod: parseJsonSafe<Record<string, DateInfo[]>>(
               QuasarStorage.getItem('lookupPeriod'),
               {},
             ),
             mediaSort: parseJsonSafe<Record<string, Record<string, string[]>>>(
               QuasarStorage.getItem('mediaSort'),
-              {},
+              jwStore.mediaSort,
             ),
             yeartexts: parseJsonSafe<Record<number, Record<string, string>>>(
               QuasarStorage.getItem('yeartexts'),
-              {},
+              jwStore.yeartexts,
             ),
           });
 
@@ -110,7 +113,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
 
           this.screenPreferences = parseJsonSafe(
             QuasarStorage.getItem('screenPreferences'),
-            { preferredScreenNumber: 0, preferWindowed: false },
+            this.screenPreferences,
           );
           QuasarStorage.removeItem('screenPreferences');
         } else {
