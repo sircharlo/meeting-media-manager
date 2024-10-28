@@ -42,7 +42,7 @@ Za to klikni na gumb **Iskanje občine** poleg polja z imenom občine in vnesi v
 
 Ko boš našel in izbral pravo občino, bo M³ predizpolnil vse razpoložljive informacije, kot so **ime** vaše občine, **jezik shodov** ter **dnevi in ure shodov**.
 
-:::info Note
+:::info Opomba
 
 Iskalnik uporablja javno dostopne podatke z uradnega spletnega mesta Jehovovih prič.
 
@@ -71,14 +71,14 @@ Na voljo bo tudi možnost **predpomnjenja vseh videoposnetkov iz pesmarice**. Ta
 
 - **Port (vrata):** Številka vrat, ki se uporablja za povezavo z vtičnikom OBS Studio Websocket.
 - **Password (geslo):** Geslo, ki se uporablja za povezavo z vtičnikom OBS Studio Websocket.
-- **Scenes (prizori):** OBS-prizori, ki se bodo uporabljali med predstavitvijo multimedijske vsebine. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- **Scenes (prizori):** OBS-prizori, ki se bodo uporabljali med predstavitvijo multimedijske vsebine. Potrebujete en prizor, ki zajema multimedijsko okno ali zaslon, in en prizor, ki prikazuje oder.
 
 :::tip Namig
 
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Če v vaši občini redno potekajo hibridni shodi, je **zelo** priporočljivo, da omogočite povezavo s programom OBS Studio.
 
 :::
 
-## 3. Enjoy using M³
+## 3. Uživaj v uporabi M³
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Ko boš končal z nastavitvami, je M³ pripravljen za upravljanje in predstavljanje multimedijske vsebine na občinskih shodih. Uživaj v uporabi programa! :tada:
