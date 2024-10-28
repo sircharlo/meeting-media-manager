@@ -6,7 +6,7 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: Installeer M³
+      text: Install M³
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Gebruik in de Koninkrijkszaal

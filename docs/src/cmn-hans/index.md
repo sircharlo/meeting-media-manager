@@ -6,7 +6,7 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: 安装Meeting Media Manager
+      text: Install M³
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: 在王国聚会所使用
