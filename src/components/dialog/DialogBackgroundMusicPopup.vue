@@ -59,7 +59,9 @@
             <div class="row text-subtitle1 text-weight-medium">
               {{
                 musicPlaying || musicStarting
-                  ? musicRemainingTime
+                  ? musicRemainingTime.includes('music.')
+                    ? $t(musicRemainingTime)
+                    : musicRemainingTime
                   : $t('not-playing')
               }}
             </div>

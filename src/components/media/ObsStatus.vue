@@ -2,16 +2,24 @@
   <q-btn
     v-if="currentSettings.obsEnable"
     :color="
-      obsConnectionState === 'connected'
-        ? localObsPopup
-          ? 'white'
-          : 'white-transparent'
-        : obsConnectionState === 'disconnected'
-          ? 'negative'
-          : 'warning'
+      localObsPopup
+        ? 'white'
+        : obsConnectionState === 'connected'
+          ? 'white-transparent'
+          : obsConnectionState === 'disconnected'
+            ? 'negative'
+            : 'warning'
     "
     :disable="obsConnectionState !== 'connected'"
-    :outline="localObsPopup"
+    :text-color="
+      localObsPopup
+        ? obsConnectionState === 'connected'
+          ? 'primary'
+          : obsConnectionState === 'disconnected'
+            ? 'negative'
+            : 'warning'
+        : ''
+    "
     class="super-rounded"
     rounded
     unelevated

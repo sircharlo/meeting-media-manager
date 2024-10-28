@@ -2,14 +2,20 @@
   <q-btn
     v-if="currentSettings?.enableMusicButton"
     :color="
-      musicPlaying && musicStopping
-        ? 'negative'
-        : localMusicPopup
-          ? 'white'
-          : 'white-transparent'
+      localMusicPopup
+        ? 'white'
+        : !(musicPlaying && musicStopping)
+          ? 'white-transparent'
+          : 'negative'
     "
-    :outline="localMusicPopup"
     :style="musicPlaying ? 'min-width: 110px;' : ''"
+    :text-color="
+      localMusicPopup
+        ? !(musicPlaying && musicStopping)
+          ? 'primary'
+          : 'negative'
+        : ''
+    "
     class="super-rounded"
     no-caps
     rounded
@@ -18,7 +24,11 @@
   >
     <q-icon name="mmm-music-note" />
     <div v-if="musicPlaying || musicStarting" class="q-ml-sm">
-      {{ musicRemainingTime }}
+      {{
+        musicRemainingTime.includes('music.')
+          ? $t(musicRemainingTime)
+          : musicRemainingTime
+      }}
     </div>
 
     <q-tooltip v-if="!localMusicPopup" :delay="1000" :offset="[14, 22]">

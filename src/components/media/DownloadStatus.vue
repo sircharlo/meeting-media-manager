@@ -1,7 +1,11 @@
 <template>
   <q-btn
-    :color="!online ? 'negative' : localDownloadPopup ? 'white' : 'white-transparent'"
-    :outline="localDownloadPopup"
+    :color="
+      localDownloadPopup ? 'white' : online ? 'white-transparent' : 'negative'
+    "
+    :text-color="
+      localDownloadPopup ? (online ? 'primary' : 'negative') : ''
+    "
     class="super-rounded position-relative"
     rounded
     unelevated

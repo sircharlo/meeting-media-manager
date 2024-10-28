@@ -2,18 +2,20 @@
   <q-btn
     v-if="currentSettings?.enableMediaDisplayButton"
     :color="
-      !mediaWindowVisible
-        ? 'negative'
-        : localDisplayPopup
-          ? 'white'
-          : 'white-transparent'
+      localDisplayPopup
+        ? 'white'
+        : mediaWindowVisible
+          ? 'white-transparent'
+          : 'negative'
     "
     :icon="
       mediaWindowVisible
         ? 'mmm-media-display-active'
         : 'mmm-media-display-inactive'
     "
-    :outline="localDisplayPopup"
+    :text-color="
+      localDisplayPopup ? (mediaWindowVisible ? 'primary' : 'negative') : ''
+    "
     class="super-rounded"
     rounded
     unelevated
