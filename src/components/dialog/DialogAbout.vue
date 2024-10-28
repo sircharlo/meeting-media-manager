@@ -44,7 +44,7 @@
             no-caps
             outline
             target="_blank"
-            @click="openExternalWebsite(githubLink)"
+            @click="openExternal('repo')"
           >
             <div class="row q-gutter-x-md full-width items-center">
               <div class="col-shrink text-primary q-ml-none">
@@ -66,7 +66,7 @@
             no-caps
             outline
             target="_blank"
-            @click="openExternalWebsite(docsLink)"
+            @click="openExternal('docs')"
           >
             <div class="row q-gutter-x-md full-width items-center">
               <div class="col-shrink text-primary q-ml-none">
@@ -94,19 +94,24 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { electronApi } from 'src/helpers/electron-api';
 import { disableUpdates, enableUpdates, updatesDisabled } from 'src/helpers/fs';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
-const { getAppVersion, openExternalWebsite } = electronApi;
+const { getAppVersion, openExternal } = window.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 
-const appVersion = getAppVersion();
-const githubLink = 'https://github.com/sircharlo/meeting-media-manager';
-const docsLink = 'https://sircharlo.github.io/meeting-media-manager/';
+const appVersion = ref('');
 
 const updatesEnabled = ref(!updatesDisabled());
+
+const loadAppVersion = async () => {
+  appVersion.value = await getAppVersion();
+};
+
+onMounted(() => {
+  loadAppVersion();
+});
 
 watch(updatesEnabled, (newUpdatesEnabled) => {
   if (newUpdatesEnabled) {

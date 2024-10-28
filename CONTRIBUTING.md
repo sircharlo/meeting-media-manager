@@ -54,6 +54,9 @@ yarn dev
 # Build electron application for production
 yarn build
 
+# Build electron application for production with debugging enabled
+yarn build:debug
+
 # Lint all JS/TS/Vue files
 yarn lint
 

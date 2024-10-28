@@ -21,6 +21,7 @@
     "icons": "node ./build/svg2font.js",
     "dev": "quasar dev -m electron",
     "build": "quasar build -m electron",
+    "build:debug": "quasar build -m electron --debug",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
