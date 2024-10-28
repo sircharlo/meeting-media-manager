@@ -6,15 +6,11 @@ import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type {
   ElectronIpcListenKey,
   ExternalWebsite,
+  FileDialogFilter,
   QueryResponseItem,
   VideoDuration,
 } from 'src/types';
 import type Path from 'upath';
-
-export interface ElectronFileFilter {
-  extensions: string[];
-  name: string;
-}
 
 export interface ElectronApi {
   closeWebsiteWindow: () => void;
@@ -54,7 +50,7 @@ export interface ElectronApi {
   openExternal: (website: ExternalWebsite) => void;
   openFileDialog: (
     single?: boolean,
-    filter?: string[],
+    filter?: FileDialogFilter,
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
   openWebsiteWindow: () => void;
   parseFile: (filePath: string, options?: IOptions) => Promise<IAudioMetadata>;

@@ -1,5 +1,4 @@
 import type * as MusicMetadata from 'music-metadata';
-import type { IOptions } from 'music-metadata';
 import type * as PdfJs from 'pdfjs-dist';
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
@@ -11,7 +10,6 @@ import type {
   QueryResponseItem,
   ScreenPreferences,
 } from 'src/types';
-import type Url from 'url';
 
 import {
   app,
@@ -35,8 +33,10 @@ import fs from 'fs-extra';
 import convert from 'heic-convert';
 import klawSync from 'klaw-sync';
 import os from 'os';
+import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 import { FULL_HD } from 'src/constants/media';
 import path from 'upath';
+import url from 'url';
 
 import pkg from '../package.json';
 import { errorCatcher, throttle } from './utils';
@@ -573,7 +573,7 @@ const electronApi: ElectronApi = {
   closeWebsiteWindow,
   convert,
   convertPdfToImages,
-  decompress: async (inputZip: string, outputFolder: string) => {
+  decompress: async (inputZip, outputFolder) => {
     const zip = new AdmZip(inputZip);
     return new Promise<void>((resolve, reject) => {
       zip.extractAllToAsync(outputFolder, true, true, (error) => {
@@ -586,7 +586,7 @@ const electronApi: ElectronApi = {
       });
     });
   },
-  executeQuery: (dbPath: string, query: string): QueryResponseItem[] => {
+  executeQuery: (dbPath, query) => {
     try {
       // let attempts = 0;
       // const maxAttempts = 10;
@@ -614,11 +614,9 @@ const electronApi: ElectronApi = {
       return [];
     }
   },
-  fileUrlToPath: (fileurl: string) => {
+  fileUrlToPath: (fileurl) => {
     if (!fileurl) return '';
     if (!isFileUrl(fileurl)) return fileurl;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const url: typeof Url = require('node:url');
     return url.fileURLToPath(fileurl);
   },
   fs,
@@ -627,7 +625,7 @@ const electronApi: ElectronApi = {
     return app.getPath('appData');
   },
   getAppVersion: () => invoke('getVersion'),
-  getLocalPathFromFileObject: (fileObject: File) => {
+  getLocalPathFromFileObject: (fileObject) => {
     return webUtils.getPathForFile(fileObject);
   },
   getUserDataPath,
@@ -641,57 +639,45 @@ const electronApi: ElectronApi = {
   navigateWebsiteWindow,
   onLog: (callback) => listen('log', callback),
   openExternal: (website) => send('openExternal', website),
-  openFileDialog: async (single?: boolean, filter?: string[]) => {
+  openFileDialog: async (single, filter) => {
     const mainWindow = getMainWindow();
     if (!mainWindow) return;
 
-    const filesFilter: Electron.FileFilter[] = [
-      {
-        extensions: ['*'],
-        name: 'All files',
-      },
-    ];
+    const filters: Electron.FileFilter[] = [];
+
+    if (!filter) {
+      filters.push({ extensions: ['*'], name: 'All files' });
+    } else if (filter === 'jwpub+image') {
+      filters.push({
+        extensions: JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS),
+        name: 'JWPUB + Image',
+      });
+    }
+
     if (filter?.includes('jwpub')) {
-      filesFilter.push({
-        extensions: ['jwpub'],
-        name: 'JWPUB',
-      });
+      filters.push({ extensions: JWPUB_EXTENSIONS, name: 'JWPUB' });
     }
-    if (filter?.includes('images+jwpub')) {
-      filesFilter.push({
-        extensions: [
-          'jwpub',
-          'jpg',
-          'jpeg',
-          'png',
-          'gif',
-          'bmp',
-          'webp',
-          'heic',
-          'svg',
-        ],
-        name: 'Background image sources',
-      });
+    if (filter?.includes('image')) {
+      filters.push({ extensions: IMG_EXTENSIONS, name: 'Images' });
     }
+
     return dialog.showOpenDialog(mainWindow, {
-      filters: filesFilter,
+      filters,
       properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
     });
   },
   openWebsiteWindow,
-  parseFile: async (filePath: string, options?: IOptions) => {
+  parseFile: async (filePath, options) => {
     const musicMetadata: typeof MusicMetadata = await import('music-metadata');
     return musicMetadata.parseFile(filePath, options);
   },
   path,
-  pathToFileURL: (path: string) => {
+  pathToFileURL: (path) => {
     if (!path) return '';
     if (isFileUrl(path)) return path;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const url: typeof Url = require('node:url');
     return url.pathToFileURL(path).href;
   },
-  readShortcutLink: (path: string): ShortcutDetails => {
+  readShortcutLink: (path): ShortcutDetails => {
     try {
       return shell.readShortcutLink(path);
     } catch (error) {
@@ -702,7 +688,7 @@ const electronApi: ElectronApi = {
   registerShortcut,
   removeListeners: (channel) => ipcRenderer.removeAllListeners(channel),
   // saveSettingsStoreToFile,
-  setAutoStartAtLogin: (value: boolean) => {
+  setAutoStartAtLogin: (value) => {
     try {
       app.setLoginItemSettings({
         openAtLogin: value,
@@ -711,7 +697,7 @@ const electronApi: ElectronApi = {
       errorCatcher(error);
     }
   },
-  setMediaWindowPosition: (x: number, y: number) => {
+  setMediaWindowPosition: (x, y) => {
     try {
       const mediaWindow = getMediaWindow();
       if (mediaWindow) {
@@ -723,7 +709,7 @@ const electronApi: ElectronApi = {
   },
   toggleMediaWindow,
   unregisterShortcut,
-  writeShortcutLink: (path: string, details: ShortcutDetails) => {
+  writeShortcutLink: (path, details) => {
     try {
       shell.writeShortcutLink(path, 'update', details);
     } catch (error) {

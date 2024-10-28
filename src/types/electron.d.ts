@@ -8,3 +8,4 @@ export type ElectronIpcInvokeKey = 'getVersion';
 export type ElectronIpcListenKey = 'attemptedClose' | 'log';
 
 export type ExternalWebsite = 'docs' | 'repo';
+export type FileDialogFilter = 'image' | 'jwpub' | 'jwpub+image';
