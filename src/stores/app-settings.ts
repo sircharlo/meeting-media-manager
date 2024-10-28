@@ -1,7 +1,15 @@
-import type { OldAppConfig, ScreenPreferences } from 'src/types';
+import type {
+  DateInfo,
+  DynamicMediaObject,
+  JwLanguage,
+  MediaLink,
+  OldAppConfig,
+  ScreenPreferences,
+  SettingsValues,
+} from 'src/types';
 
 import { parseJsonSafe } from 'app/docs/utils/general';
-import { defineStore, storeToRefs } from 'pinia';
+import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage, uid } from 'quasar';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -20,8 +28,8 @@ export const useAppSettingsStore = defineStore('app-settings', {
     runMigration(type: string) {
       try {
         let successfulMigration = true;
-        const { congregations } = storeToRefs(useCongregationSettingsStore());
-        const jwStore = storeToRefs(useJwStore());
+        const congregationStore = useCongregationSettingsStore();
+        const jwStore = useJwStore();
         if (type === 'firstRun') {
           const oldVersionPath = path.join(
             getAppDataPath(),
@@ -37,61 +45,69 @@ export const useAppSettingsStore = defineStore('app-settings', {
                 );
                 const newPrefsObject = buildNewPrefsObject(oldPrefs);
                 const newCongId = uid();
-                congregations.value[newCongId] = newPrefsObject;
+                congregationStore.congregations[newCongId] = newPrefsObject;
               } catch (error) {
                 errorCatcher(error);
               }
             }
           }
         } else if (type === 'localStorageToPiniaPersist') {
-          congregations.value = parseJsonSafe(
-            QuasarStorage.getItem('congregations'),
-            {},
-          );
+          congregationStore.$patch({
+            congregations: parseJsonSafe<Record<string, SettingsValues>>(
+              QuasarStorage.getItem('congregations'),
+              {},
+            ),
+          });
+
           QuasarStorage.removeItem('congregations');
-          jwStore.additionalMediaMaps.value = parseJsonSafe(
-            QuasarStorage.getItem('additionalMediaMaps'),
-            {},
-          );
+
+          jwStore.$patch({
+            additionalMediaMaps: parseJsonSafe<
+              Record<string, Record<string, DynamicMediaObject[]>>
+            >(QuasarStorage.getItem('additionalMediaMaps'), {}),
+            customDurations: parseJsonSafe<
+              Record<
+                string,
+                Record<string, Record<string, { max: number; min: number }>>
+              >
+            >(QuasarStorage.getItem('customDurations'), {}),
+            jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
+              QuasarStorage.getItem('jwLanguages'),
+              {
+                list: [],
+                updated: new Date(1900, 0, 1),
+              },
+            ),
+            jwSongs: parseJsonSafe<
+              Record<string, { list: MediaLink[]; updated: Date }>
+            >(QuasarStorage.getItem('jwSongs'), {}),
+            lookupPeriod: parseJsonSafe<Record<string, DateInfo[]>>(
+              QuasarStorage.getItem('lookupPeriod'),
+              {},
+            ),
+            mediaSort: parseJsonSafe<Record<string, Record<string, string[]>>>(
+              QuasarStorage.getItem('mediaSort'),
+              {},
+            ),
+            yeartexts: parseJsonSafe<Record<number, Record<string, string>>>(
+              QuasarStorage.getItem('yeartexts'),
+              {},
+            ),
+          });
+
           QuasarStorage.removeItem('additionalMediaMaps');
-          jwStore.customDurations.value = parseJsonSafe(
-            QuasarStorage.getItem('customDurations'),
-            {},
-          );
           QuasarStorage.removeItem('customDurations');
-          jwStore.jwLanguages.value = parseJsonSafe(
-            QuasarStorage.getItem('jwLanguages'),
-            {
-              list: [],
-              updated: new Date(1900, 0, 1),
-            },
-          );
           QuasarStorage.removeItem('jwLanguages');
-          jwStore.jwSongs.value = parseJsonSafe(
-            QuasarStorage.getItem('jwSongs'),
-            {},
-          );
           QuasarStorage.removeItem('jwSongs');
-          jwStore.lookupPeriod.value = parseJsonSafe(
-            QuasarStorage.getItem('lookupPeriod'),
-            {},
-          );
           QuasarStorage.removeItem('lookupPeriod');
-          jwStore.mediaSort.value = parseJsonSafe(
-            QuasarStorage.getItem('mediaSort'),
-            {},
-          );
           QuasarStorage.removeItem('mediaSort');
-          jwStore.yeartexts.value = parseJsonSafe(
-            QuasarStorage.getItem('yeartexts'),
-            {},
-          );
           QuasarStorage.removeItem('yeartexts');
+
           this.migrations = this.migrations.concat(
             parseJsonSafe(QuasarStorage.getItem('migrations'), []),
           );
           QuasarStorage.removeItem('migrations');
-          // this.migrations.push('firstRun');
+
           this.screenPreferences = parseJsonSafe(
             QuasarStorage.getItem('screenPreferences'),
             { preferredScreenNumber: 0, preferWindowed: false },
