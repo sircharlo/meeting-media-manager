@@ -96,7 +96,7 @@
     "process": "^0.11.10",
     "typescript": "~5.5.4",
     "vitepress": "^1.4.1",
-    "vue-tsc": "^2.1.6"
+    "vue-tsc": "^2.1.8"
   },
   "resolutions": {
     "canvas": "npm:empty-npm-package@1.0.0"
