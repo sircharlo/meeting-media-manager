@@ -6,7 +6,7 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: Install M³
+      text: Namesti M³
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Za uporabo v kraljestveni dvorani
@@ -29,7 +29,7 @@ features:
     details: Samodejno zaznava in upravlja zunanje monitorje za nemoteno predvajanje multimedijske vsebine.
   - icon: 🌐
     title: Več jezikov
-    details: Multimedijsko vsebino za shode je mogoče prenesti v več sto jezikih in uporabljati vmesnik M³ v katerem koli od številnih razpoložljivih jezikov.
+    details: Multimedijsko vsebino za shode je mogoče prenesti v več sto jezikih in za jezik vmesnika M³ uporabiti katerega koli od številnih razpoložljivih jezikov.
   - icon: 🧩
     title: Povezava s programom OBS Studio
     details: Povezava s programom OBS Studio za izboljšano upravljanje multimedijske vsebine in boljše možnosti predvajanja te vsebine.
