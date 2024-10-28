@@ -20,22 +20,22 @@
               ><div class="row">
                 <strong>{{ $t('images:') }}</strong
                 >&nbsp;
-                {{ imageExtensions.sort().join(', ') }}
+                {{ IMG_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
                 <strong>{{ $t('videos:') }}</strong
                 >&nbsp;
-                {{ videoExtensions.sort().join(', ') }}
+                {{ VIDEO_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
                 <strong>{{ $t('audio:') }}</strong
                 >&nbsp;
-                {{ audioExtensions.sort().join(', ') }}
+                {{ AUDIO_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
                 <strong>{{ $t('other:') }}</strong
                 >&nbsp;
-                {{ otherExtensions.sort().join(', ') }}
+                {{ OTHER_EXTENSIONS.sort().join(', ') }}
               </div>
             </q-tooltip>
           </a>
@@ -145,15 +145,15 @@
 import type { DocumentItem } from 'src/types';
 
 import { barStyle, thumbStyle } from 'src/boot/globals';
+import {
+  AUDIO_EXTENSIONS,
+  IMG_EXTENSIONS,
+  OTHER_EXTENSIONS,
+  VIDEO_EXTENSIONS,
+} from 'src/constants/fs';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
-import {
-  audioExtensions,
-  imageExtensions,
-  otherExtensions,
-  videoExtensions,
-} from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { ref, watch } from 'vue';
 

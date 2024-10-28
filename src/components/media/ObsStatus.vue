@@ -51,7 +51,7 @@ const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
 const obsState = useObsStateStore();
-const { currentScene, obsConnectionState, obsMessage, scenes } =
+const { currentScene, obsConnectionState, obsMessage, previousScene, scenes } =
   storeToRefs(obsState);
 const { sceneExists } = obsState;
 
@@ -81,10 +81,20 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       const sceneList = await obsWebSocket?.call('GetSceneList');
       if (sceneList) {
         scenes.value = sceneList.scenes.reverse();
-        currentScene.value =
+        const current =
           configuredScenesAreAllUUIDs() && sceneList.currentProgramSceneUuid
             ? sceneList.currentProgramSceneUuid
             : sceneList.currentProgramSceneName;
+
+        currentScene.value = current;
+
+        if (
+          current !== currentSettings.value?.obsMediaScene &&
+          current !== currentSettings.value?.obsImageScene
+        ) {
+          previousScene.value = current;
+        }
+
         [
           currentSettings.value?.obsCameraScene,
           currentSettings.value?.obsMediaScene,
@@ -136,10 +146,19 @@ onMounted(() => {
     obsWebSocket.on(
       'CurrentProgramSceneChanged',
       (data: { sceneName: string; sceneUuid: string }) => {
-        currentScene.value =
+        const newScene =
           configuredScenesAreAllUUIDs() && data.sceneUuid
             ? data.sceneUuid
             : data.sceneName;
+
+        currentScene.value = newScene;
+
+        if (
+          newScene !== currentSettings.value?.obsMediaScene &&
+          newScene !== currentSettings.value?.obsImageScene
+        ) {
+          previousScene.value = newScene;
+        }
       },
     );
     obsWebSocket.on('Identified', async () => {

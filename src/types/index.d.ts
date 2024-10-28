@@ -1,5 +1,6 @@
 export * from './congregation-lookups';
 export * from './dates';
+export * from './general';
 export * from './languages';
 export * from './media';
 export * from './panzoom';

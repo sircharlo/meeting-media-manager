@@ -682,8 +682,9 @@ const resetMediaDuration = (media: DynamicMediaObject) => {
   }
 };
 
+const { post } = useBroadcastChannel({ name: 'seek-to' });
+
 const seekTo = (newSeekTo: null | number) => {
-  const { post } = useBroadcastChannel({ name: 'seek-to' });
   if (newSeekTo !== null) post(newSeekTo);
 };
 

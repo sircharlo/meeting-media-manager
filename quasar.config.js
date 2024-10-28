@@ -194,6 +194,7 @@ module.exports = configure(function (/* ctx */) {
           'electron-window-state',
           'fs-extra',
           'heic-convert',
+          'is-online',
           'klaw-sync',
           'music-metadata',
           'pdfjs-dist',

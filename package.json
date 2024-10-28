@@ -89,14 +89,14 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-perfectionist": "^3.9.1",
-    "eslint-plugin-vue": "^9.29.1",
+    "eslint-plugin-vue": "^9.30.0",
     "globals": "^15.11.0",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
     "process": "^0.11.10",
     "typescript": "~5.5.4",
     "vitepress": "^1.4.1",
-    "vue-tsc": "^2.1.6"
+    "vue-tsc": "^2.1.8"
   },
   "resolutions": {
     "canvas": "npm:empty-npm-package@1.0.0"
@@ -106,7 +106,7 @@
   ],
   "engines": {
     "node": "^24 || ^22 || ^20",
-    "yarn": ">= 4.5.10"
+    "yarn": ">= 4.5.1"
   },
   "os": [
     "darwin",

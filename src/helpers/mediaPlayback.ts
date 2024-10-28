@@ -7,8 +7,18 @@ import type {
 import { Buffer } from 'buffer';
 import mime from 'mime';
 import { storeToRefs } from 'pinia';
-import { format } from 'quasar';
-import { FULL_HD } from 'src/helpers/converters';
+import {
+  AUDIO_EXTENSIONS,
+  HEIC_EXTENSIONS,
+  JWL_PLAYLIST_EXTENSIONS,
+  JWPUB_EXTENSIONS,
+  PDF_EXTENSIONS,
+  PURE_IMG_EXTENSIONS,
+  SVG_EXTENSIONS,
+  VIDEO_EXTENSIONS,
+  ZIP_EXTENSIONS,
+} from 'src/constants/fs';
+import { FULL_HD } from 'src/constants/media';
 import { electronApi } from 'src/helpers/electron-api';
 import { getFileUrl, getTempDirectory } from 'src/helpers/fs';
 import {
@@ -21,7 +31,6 @@ import { errorCatcher } from './error-catcher';
 
 const { convert, decompress, executeQuery, fs, path, toggleMediaWindow } =
   electronApi;
-const { pad } = format;
 
 const formatTime = (time: number) => {
   try {
@@ -31,8 +40,8 @@ const formatTime = (time: number) => {
     const minutes = Math.floor((time % 3600) / 60);
     const seconds = Math.floor(time % 60);
     return hours > 0
-      ? `${hours}:${pad(minutes.toString(), 2, '0')}:${pad(seconds.toString(), 2)}`
-      : `${pad(minutes.toString(), 2, '0')}:${pad(seconds.toString(), 2)}`;
+      ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+      : `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   } catch (error) {
     errorCatcher(error);
     return '..:..';
@@ -42,7 +51,7 @@ const formatTime = (time: number) => {
 const isFileOfType = (filepath: string, validExtensions: string[]) => {
   try {
     if (!filepath) return false;
-    const fileExtension = path.parse(filepath).ext.toLowerCase();
+    const fileExtension = path.parse(filepath).ext.toLowerCase().slice(1);
     return validExtensions.includes(fileExtension);
   } catch (error) {
     errorCatcher(error);
@@ -50,88 +59,40 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
   }
 };
 
-const pureImageExtensions = [
-  // APNG
-  '.apng',
-  // AVIF
-  '.avif',
-  // GIF
-  '.gif',
-  // JPEG
-  '.jpg',
-  '.jpeg',
-  '.jfif',
-  '.pjpeg',
-  '.pjp',
-  // PNG
-  '.png',
-  // WebP
-  '.webp',
-  // BMP
-  '.bmp',
-  // ICO
-  '.ico',
-  '.cur',
-];
-
-const heicExtensions = ['.heic'];
-const svgExtensions = ['.svg'];
-
-const imageExtensions = [
-  ...pureImageExtensions,
-  ...heicExtensions,
-  ...svgExtensions,
-];
-
-const audioExtensions = ['.mp3', '.wav', '.ogg', '.flac'];
-const videoExtensions = ['.mp4', '.mov', '.mkv', '.avi', '.webm'];
-
-const pdfExtensions = ['.pdf'];
-const zipExtensions = ['.zip'];
-const jwpubExtensions = ['.jwpub'];
-const jwPlaylistExtensions = ['.jwlplaylist'];
-
-const otherExtensions = [
-  ...pdfExtensions,
-  ...zipExtensions,
-  ...jwpubExtensions,
-  ...jwPlaylistExtensions,
-];
-
 const isImage = (filepath: string) => {
-  return isFileOfType(filepath, pureImageExtensions);
+  return isFileOfType(filepath, PURE_IMG_EXTENSIONS);
 };
 
 const isHeic = (filepath: string) => {
-  return isFileOfType(filepath, heicExtensions);
+  return isFileOfType(filepath, HEIC_EXTENSIONS);
 };
 
 const isSvg = (filepath: string) => {
-  return isFileOfType(filepath, svgExtensions);
+  return isFileOfType(filepath, SVG_EXTENSIONS);
 };
 
 const isVideo = (filepath: string) => {
-  return isFileOfType(filepath, videoExtensions);
+  return isFileOfType(filepath, VIDEO_EXTENSIONS);
 };
 
 const isAudio = (filepath: string) => {
-  return isFileOfType(filepath, audioExtensions);
+  return isFileOfType(filepath, AUDIO_EXTENSIONS);
 };
 
 const isPdf = (filepath: string) => {
-  return isFileOfType(filepath, pdfExtensions);
+  return isFileOfType(filepath, PDF_EXTENSIONS);
 };
 
 const isArchive = (filepath: string) => {
-  return isFileOfType(filepath, zipExtensions);
+  return isFileOfType(filepath, ZIP_EXTENSIONS);
 };
 
 const isJwpub = (filepath: string) => {
-  return isFileOfType(filepath, jwpubExtensions);
+  return isFileOfType(filepath, JWPUB_EXTENSIONS);
 };
 
 const isJwPlaylist = (filepath: string) => {
-  return isFileOfType(filepath, jwPlaylistExtensions);
+  return isFileOfType(filepath, JWL_PLAYLIST_EXTENSIONS);
 };
 
 const isSong = (multimediaItem: MultimediaItem) => {
@@ -426,7 +387,6 @@ const showMediaWindow = (state?: boolean) => {
 };
 
 export {
-  audioExtensions,
   convertHeicToJpg,
   convertImageIfNeeded,
   convertSvgToJpg,
@@ -434,7 +394,6 @@ export {
   findDb,
   formatTime,
   getMediaFromJwPlaylist,
-  imageExtensions,
   inferExtension,
   isArchive,
   isAudio,
@@ -449,7 +408,5 @@ export {
   isSong,
   isSvg,
   isVideo,
-  otherExtensions,
   showMediaWindow,
-  videoExtensions,
 };

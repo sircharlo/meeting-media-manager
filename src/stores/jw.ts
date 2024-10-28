@@ -10,12 +10,13 @@ import { getLanguages, getYeartext } from 'boot/axios';
 import { defineStore, storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import sanitizeHtml from 'sanitize-html';
+import { MAX_SONGS } from 'src/constants/jw';
 import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { findBestResolution, getPubMediaLinks } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
-export const MAX_SONGS = 500;
+const { getDateDiff } = date;
 
 export function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
   return array.reduce((unique: T[], o: T) => {
@@ -132,7 +133,7 @@ export const useJwStore = defineStore('jw-store', {
       this.lookupPeriod?.[currentCongregation]
         ?.find(
           (day) =>
-            date.getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
+            getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
         )
         ?.dynamicMedia?.forEach((media) => {
           media.hidden = false;
@@ -146,7 +147,7 @@ export const useJwStore = defineStore('jw-store', {
     async updateJwLanguages() {
       try {
         const now = new Date();
-        const monthsSinceUpdated = date.getDateDiff(
+        const monthsSinceUpdated = getDateDiff(
           now,
           this.jwLanguages.updated,
           'months',
@@ -178,7 +179,7 @@ export const useJwStore = defineStore('jw-store', {
 
             // Check if the song list has been updated in the last month
             const now = new Date();
-            const monthsSinceUpdated = date.getDateDiff(
+            const monthsSinceUpdated = getDateDiff(
               now,
               this.jwSongs[langwritten].updated,
               'months',

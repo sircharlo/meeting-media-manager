@@ -10,6 +10,8 @@ import { getSpecificWeekday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
+const { getDateDiff } = date;
+
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
@@ -30,8 +32,7 @@ const coTuesdays = (lookupDate: string) => {
     if (!lookupDate) return false;
     return (
       new Date(lookupDate).getDay() === 2 &&
-      date.getDateDiff(lookupDate, getSpecificWeekday(new Date(), 0), 'days') >=
-        0
+      getDateDiff(lookupDate, getSpecificWeekday(new Date(), 0), 'days') >= 0
     );
   } catch (error) {
     errorCatcher(error);

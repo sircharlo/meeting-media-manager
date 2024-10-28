@@ -28,7 +28,8 @@ import { date } from 'quasar';
 import sanitize from 'sanitize-filename';
 import { get, urlWithParamsToString } from 'src/boot/axios';
 import { queues } from 'src/boot/globals';
-import mepslangs from 'src/defaults/mepslangs';
+import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
+import mepslangs from 'src/constants/mepslangs';
 import {
   dateFromString,
   getSpecificWeekday,
@@ -53,13 +54,13 @@ import {
   isVideo,
 } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { MAX_SONGS, useJwStore } from 'src/stores/jw';
+import { useJwStore } from 'src/stores/jw';
 
 import { errorCatcher } from './error-catcher';
 
+const { formatDate, subtractFromDate } = date;
+
 const { executeQuery, fileUrlToPath, fs, klawSync, path } = electronApi;
-const FEB_2023 = 20230200;
-const FOOTNOTE_TAR_PAR = 9999;
 
 const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
@@ -617,10 +618,10 @@ const getWtIssue = async (
   lastChance = false,
 ) => {
   try {
-    const issue = date.subtractFromDate(monday, {
+    const issue = subtractFromDate(monday, {
       days: weeksInPast * 7,
     });
-    const issueString = date.formatDate(issue, 'YYYYMM') + '00';
+    const issueString = formatDate(issue, 'YYYYMM') + '00';
     if (!langwritten) throw new Error('No language selected');
     const publication = {
       issue: issueString,
@@ -635,7 +636,7 @@ const getWtIssue = async (
     ) as DatedTextItem[];
     const weekNr = datedTexts
       ? datedTexts.findIndex((weekItem) => {
-          const mondayAsNumber = parseInt(date.formatDate(monday, 'YYYYMMDD'));
+          const mondayAsNumber = parseInt(formatDate(monday, 'YYYYMMDD'));
           return weekItem.FirstDateOffset === mondayAsNumber;
         })
       : -1;
@@ -780,7 +781,7 @@ const dynamicMediaMapper = async (
             ? m.Label.replace(/^\d+\.\s*/, '')
             : m.Label || m.Caption,
           uniqueId: sanitizeId(
-            date.formatDate(lookupDate, 'YYYYMMDD') + '-' + fileUrl,
+            formatDate(lookupDate, 'YYYYMMDD') + '-' + fileUrl,
           ),
         };
       },
@@ -1024,10 +1025,10 @@ const getMwMedia = async (lookupDate: Date) => {
     lookupDate = dateFromString(lookupDate);
     // if not monday, get the previous monday
     const monday = getSpecificWeekday(lookupDate, 0);
-    const issue = date.subtractFromDate(monday, {
+    const issue = subtractFromDate(monday, {
       months: (monday.getMonth() + 1) % 2 === 0 ? 1 : 0,
     });
-    const issueString = date.formatDate(issue, 'YYYYMM') + '00';
+    const issueString = formatDate(issue, 'YYYYMM') + '00';
     let publication = {} as PublicationFetcher;
     const getMwbIssue = async (langwritten: string) => {
       if (!langwritten) return '';
@@ -1050,7 +1051,7 @@ const getMwMedia = async (lookupDate: Date) => {
       (
         executeQuery(
           db,
-          `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${date.formatDate(
+          `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
             monday,
             'YYYYMMDD',
           )}`,

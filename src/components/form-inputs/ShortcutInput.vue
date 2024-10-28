@@ -71,7 +71,6 @@
 <script setup lang="ts">
 import type { SettingsValues } from 'src/types';
 
-import { useEventListener } from '@vueuse/core';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getCurrentShortcuts,
@@ -139,8 +138,7 @@ const handleKeyPress = (event: KeyboardEvent) => {
   }
 };
 
-const startListening = () =>
-  useEventListener(window, 'keydown', handleKeyPress);
+const startListening = () => window.addEventListener('keydown', handleKeyPress);
 const stopListening = () =>
   window.removeEventListener('keydown', handleKeyPress);
 const shortcutPicker = ref(false);

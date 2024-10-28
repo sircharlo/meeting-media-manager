@@ -9,7 +9,7 @@ import type {
 
 import { Buffer } from 'buffer';
 import { storeToRefs } from 'pinia';
-import { FULL_HD } from 'src/helpers/converters';
+import { FULL_HD } from 'src/constants/media';
 import { electronApi } from 'src/helpers/electron-api';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { isFileOfType, isImage, isVideo } from 'src/helpers/mediaPlayback';
@@ -124,7 +124,7 @@ const getMetadataFromMediaPath = async (
   try {
     mediaPath = fileUrlToPath(mediaPath);
     if (!mediaPath || !fs.existsSync(mediaPath)) return defaultMetadata;
-    if (isFileOfType(mediaPath, ['.mov'])) {
+    if (isFileOfType(mediaPath, ['mov'])) {
       const videoDuration = (await getVideoDuration(
         mediaPath,
       )) as VideoDuration;

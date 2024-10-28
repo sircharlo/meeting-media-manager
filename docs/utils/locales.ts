@@ -135,6 +135,7 @@ export const mapThemeConfig = (
   lightModeSwitchTitle: msg.lightModeSwitchTitle,
   nav: [
     { link: link(locale, 'about'), text: msg.about },
+    { link: link(locale, 'faq'), text: msg.faq },
     {
       items: [
         {

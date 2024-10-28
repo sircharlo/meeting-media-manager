@@ -8,7 +8,7 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: Install Meeting Media Manager
+      text: Install M³
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Using at a Kingdom Hall

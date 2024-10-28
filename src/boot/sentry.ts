@@ -5,14 +5,14 @@ import {
   vueIntegration,
 } from '@sentry/vue';
 import { boot } from 'quasar/wrappers';
+import { IS_DEV } from 'src/constants/general';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
 import packageInfo from '../../package.json';
-const devMode = process.env.NODE_ENV === 'development';
 
 export default boot(({ app, router }) => {
   try {
-    if (!devMode)
+    if (!IS_DEV)
       init(
         {
           // @ts-expect-error: app does not exist on Sentry renderer, but it does on Sentry vue

@@ -16,7 +16,7 @@ In order to help maintain this application, the following information will help 
 
 - [Git](https://git-scm.com/) ^2.45.2
 - [Node.js](https://nodejs.org/en/) ^20 || ^22 || ^24
-- [Yarn](https://yarnpkg.com/) ^4.5.0
+- [Yarn](https://yarnpkg.com/) ^4.5.1
 - [VS Code](https://code.visualstudio.com/) ^1.94.2
   - VS Code extensions: see [extensions.json](./.vscode/extensions.json)
 

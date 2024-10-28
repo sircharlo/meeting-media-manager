@@ -30,7 +30,7 @@ export interface ElectronApi {
   getLocalPathFromFileObject: (fileObject: File) => string;
   getUserDataPath: () => string;
   getUserDesktopPath: () => string;
-  getVideoDuration: (filePath: string) => VideoDuration;
+  getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   isFileUrl: (url: string) => boolean;
   klawSync: typeof KlawSync;
   moveMediaWindow: (

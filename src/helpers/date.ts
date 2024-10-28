@@ -2,18 +2,19 @@ import type { DateInfo, DynamicMediaObject } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { date, type DateLocale } from 'quasar';
+import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
 import { errorCatcher } from './error-catcher';
 
-const daysInFuture = 35;
+const { addToDate, buildDate, extractDate, formatDate, getDateDiff } = date;
 
 const dateFromString = (lookupDate?: Date | string | undefined) => {
   try {
     if (!lookupDate) {
       const now = new Date();
-      lookupDate = date.buildDate(
+      lookupDate = buildDate(
         {
           day: now.getDate(),
           hours: 0,
@@ -28,7 +29,7 @@ const dateFromString = (lookupDate?: Date | string | undefined) => {
     let dateBuilder;
     if (typeof lookupDate === 'string') {
       dateBuilder = new Date(lookupDate);
-      dateBuilder = date.buildDate(
+      dateBuilder = buildDate(
         {
           day: dateBuilder.getDate(),
           hours: 0,
@@ -42,7 +43,7 @@ const dateFromString = (lookupDate?: Date | string | undefined) => {
     } else {
       dateBuilder = lookupDate;
     }
-    const outputDate = date.buildDate(
+    const outputDate = buildDate(
       {
         day: dateBuilder.getDate(),
         hours: 0,
@@ -64,7 +65,7 @@ const isInPast = (lookupDate: Date) => {
   try {
     if (!lookupDate) return false;
     const now = dateFromString();
-    return date.getDateDiff(lookupDate, now, 'days') < 0;
+    return getDateDiff(lookupDate, now, 'days') < 0;
   } catch (error) {
     errorCatcher(error);
     return false;
@@ -179,9 +180,9 @@ function updateLookupPeriod(reset = false) {
     ]?.filter((day) => {
       return !isInPast(day.date);
     });
-    const futureDates = Array.from({ length: daysInFuture }, (_, i) => {
-      const dayDate = date.addToDate(
-        date.buildDate({ hour: 0, milliseconds: 0, minute: 0, second: 0 }),
+    const futureDates = Array.from({ length: DAYS_IN_FUTURE }, (_, i) => {
+      const dayDate = addToDate(
+        buildDate({ hour: 0, milliseconds: 0, minute: 0, second: 0 }),
         { day: i },
       );
       return {
@@ -198,8 +199,8 @@ function updateLookupPeriod(reset = false) {
       ...futureDates.filter(
         (day) =>
           !lookupPeriod.value[currentCongregation.value]
-            ?.map((d) => date.formatDate(d.date, 'YYYY/MM/DD'))
-            .includes(date.formatDate(day.date, 'YYYY/MM/DD')),
+            ?.map((d) => formatDate(d.date, 'YYYY/MM/DD'))
+            .includes(formatDate(day.date, 'YYYY/MM/DD')),
       ),
     );
     const todayDate = lookupPeriod.value[currentCongregation.value]?.find((d) =>
@@ -213,10 +214,8 @@ function updateLookupPeriod(reset = false) {
 
 const getLocalDate = (dateObj: Date | string, locale: DateLocale) => {
   const parsedDate =
-    typeof dateObj === 'string'
-      ? date.extractDate(dateObj, 'YYYY/MM/DD')
-      : dateObj;
-  return date.formatDate(parsedDate, 'D MMMM YYYY', locale);
+    typeof dateObj === 'string' ? extractDate(dateObj, 'YYYY/MM/DD') : dateObj;
+  return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
 
 const remainingTimeBeforeMeetingStart = () => {
@@ -234,7 +233,7 @@ const remainingTimeBeforeMeetingStart = () => {
       const [hours, minutes] = meetingStartTime.split(':').map(Number);
       const meetingStartDateTime = new Date(now);
       meetingStartDateTime.setHours(hours, minutes, 0, 0);
-      const dateDiff = date.getDateDiff(meetingStartDateTime, now, 'seconds');
+      const dateDiff = getDateDiff(meetingStartDateTime, now, 'seconds');
       return dateDiff;
     } else {
       return 0;
@@ -248,7 +247,6 @@ const remainingTimeBeforeMeetingStart = () => {
 export {
   dateFromString,
   datesAreSame,
-  daysInFuture,
   getLocalDate,
   getSpecificWeekday,
   isCoWeek,
