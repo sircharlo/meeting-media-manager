@@ -1041,8 +1041,8 @@ watch(
 
 const sortedMediaIds = computed(() => {
   return [
-    ...sortableAdditionalMediaItems.value,
-    ...sortableMediaItems.value,
+    ...sortableAdditionalMediaItems.value.filter((m) => !m.hidden),
+    ...sortableMediaItems.value.filter((m) => !m.hidden),
   ].map((m) => m.uniqueId);
 });
 
