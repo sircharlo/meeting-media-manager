@@ -124,7 +124,7 @@ const appSettings = useAppSettingsStore();
 const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
 
-const migrationsToRun = ['firstRun', 'localStorageToPiniaPersist'];
+const migrationsToRun = ['localStorageToPiniaPersist', 'firstRun'];
 
 migrationsToRun.forEach((migration) => {
   if (!migrations.value?.includes(migration)) {

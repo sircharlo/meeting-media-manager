@@ -51,6 +51,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
               }
             }
           }
+          this.migrations = ['firstRun'];
         } else if (type === 'localStorageToPiniaPersist') {
           congregationStore.$patch({
             congregations: parseJsonSafe<Record<string, SettingsValues>>(
