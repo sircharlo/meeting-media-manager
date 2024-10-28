@@ -1,42 +1,42 @@
-# Using M³ at a Kingdom Hall
+# Uporaba M³ v kraljestveni dvorani
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager (M³)** v kraljestveni dvorani. Za nemoteno nastavitev aplikacije za upravljanje multimedijske vsebine med občinskimi shodi sledi spodnjim korakom.
 
-## 1. Download and install
+## 1. Prenesi in namesti
 
-1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system (Windows, macOS, or Linux).
-3. Open the installer and follow the on-screen instructions to install M³.
-4. Launch M³.
-5. Go through the configuration wizard.
+1. Obišči [spletno stran za prenos M³](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+2. Prenesi ustrezno različico za vaš operacijski sistem (Windows, macOS ali Linux).
+3. Odpri namestitveni program in sledi navodilom na zaslonu za namestitev programa M³.
+4. Zaženi M³.
+5. Sledi navodilom pomočnika za nastavitev.
 
-## 2) Configuration wizard
+## 2) Pomočnik za nastavitev
 
-### App display language
+### Jezik uporabniškega vmesnika
 
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
+Ob prvem zagonu programa M³ boš moral izbrati želeni **jezik uporabniškega vmesnika**. Izberi jezik, ki naj ga M³ uporablja za svoj vmesnik.
 
-:::tip Tip
+:::tip Namig
 
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+Ni nujno, da je to isti jezik kot jezik, v katerem bo M³ prenesel multimedijsko vsebino. Jezik za prenos multimedijske vsebine boš nastavil v enem od naslednjih korakov.
 
 :::
 
 ### Vrsta profila
 
-The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+V naslednjem koraku je treba izbrati **vrsto profila**. Za običajno namestitev v kraljestveni dvorani izberi možnost **Običajno**. Tako boš nastavil številne funkcije, ki se običajno uporabljajo za občinske shode.
 
 :::warning Opozorilo
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Možnost **Drugo** izberi le, če ustvarjaš profil, pri katerem se multimedijska vsebina ne sme samodejno prenašati. Pri tem profilu bo treba multimedijsko vsebino uvoziti ročno. Ta vrsta profila se večinoma uporablja za uporabo M³ med teokratičnimi šolami, zbori, zborovanji in drugimi posebnimi dogodki.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Profil **Drugo** se redko uporablja. **Za običajno uporabo med občinskimi shodi izberi možnost _Običajno_.**
 
 :::
 
-### Automatic congregation lookup
+### Samodejno iskanje občine
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+M³ lahko poskuša samodejno poiskati urnik, jezik in ime vaših občinskih shodov.
 
 To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
 
@@ -59,7 +59,7 @@ You will also be given the option of **caching all videos from the songbook**. T
 - **Pros:** Meeting media will be available much faster.
 - **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
 
-:::tip Tip
+:::tip Namig
 
 If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
 
@@ -73,7 +73,7 @@ If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Z
 - **Password:** The password used to connect to the OBS Studio Websocket plugin.
 - **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
 
-:::tip Tip
+:::tip Namig
 
 If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
 
