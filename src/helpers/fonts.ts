@@ -1,17 +1,14 @@
+import type { FontName } from 'src/types';
+
+import { FONT_URLS } from 'src/constants/fonts';
+
 import { electronApi } from './electron-api';
 import { getFontsPath } from './fs';
 import { downloadFile } from './jw-media';
 
 const { fs, path } = electronApi;
 
-const fontUrls: Record<string, string> = {
-  'JW-Icons': 'https://wol.jw.org/assets/fonts/jw-icons-external-1970474.woff',
-  'WT-ClearText-Bold':
-    'https://b.jw-cdn.org/fonts/wt-clear-text/1.019/Wt-ClearText-Bold.woff2',
-  // 'NotoSerif': 'https://fonts.googleapis.com/css2?family=Noto+Serif:wght@100..900&display=swap',
-};
-
-const getLocalFontPath = async (fontName: string) => {
+const getLocalFontPath = async (fontName: FontName) => {
   const fontsDir = getFontsPath();
   const fontFileName = `${fontName}.woff2`;
   const fontPath = path.join(fontsDir, fontFileName);
@@ -19,13 +16,13 @@ const getLocalFontPath = async (fontName: string) => {
     await downloadFile({
       dir: fontsDir,
       filename: fontFileName,
-      url: fontUrls[fontName],
+      url: FONT_URLS[fontName],
     });
     console.log(
       'Downloaded',
       fontFileName,
       'from',
-      fontUrls[fontName],
+      FONT_URLS[fontName],
       'to',
       fontPath,
     );
@@ -33,4 +30,4 @@ const getLocalFontPath = async (fontName: string) => {
   return fontPath;
 };
 
-export { fontUrls, getLocalFontPath };
+export { getLocalFontPath };

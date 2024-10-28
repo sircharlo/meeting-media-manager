@@ -205,6 +205,8 @@ import { useJwStore } from 'src/stores/jw';
 // Types
 import type { JwVideoCategory, MediaItemsMediatorItem } from 'src/types';
 
+const { formatDate, getDateDiff, getMaxDate, getMinDate } = date;
+
 const jwStore = useJwStore();
 const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
   jwStore;
@@ -262,13 +264,13 @@ const getEventDates = () => {
       return [];
     const meetingDates = lookupPeriod.value[currentCongregation.value]
       ?.filter((day) => day.meeting)
-      .map((day) => date.formatDate(day.date, 'YYYY/MM/DD'));
+      .map((day) => formatDate(day.date, 'YYYY/MM/DD'));
     const additionalMedia =
       additionalMediaMaps.value[currentCongregation.value];
     const additionalMediaDates = additionalMedia
       ? Object.keys(additionalMedia)
           .filter((day) => additionalMedia[day].length > 0)
-          .map((day) => date.formatDate(day, 'YYYY/MM/DD'))
+          .map((day) => formatDate(day, 'YYYY/MM/DD'))
       : [];
     return meetingDates.concat(additionalMediaDates);
   } catch (error) {
@@ -283,8 +285,8 @@ const minDate = () => {
     const dateArray: Date[] = lookupPeriod.value[
       currentCongregation.value
     ]?.map((day) => day.date);
-    const minDate = date.getMinDate(dateArray[0], ...dateArray.slice(1));
-    return date.formatDate(minDate, 'YYYY/MM');
+    const minDate = getMinDate(dateArray[0], ...dateArray.slice(1));
+    return formatDate(minDate, 'YYYY/MM');
   } catch (error) {
     errorCatcher(error);
     return undefined;
@@ -297,8 +299,8 @@ const maxDate = () => {
     const dateArray: Date[] = lookupPeriod.value[
       currentCongregation.value
     ]?.map((day) => day.date);
-    const maxDate = date.getMaxDate(dateArray[0], ...dateArray.slice(1));
-    return date.formatDate(maxDate, 'YYYY/MM');
+    const maxDate = getMaxDate(dateArray[0], ...dateArray.slice(1));
+    return formatDate(maxDate, 'YYYY/MM');
   } catch (error) {
     errorCatcher(error);
     return undefined;
@@ -316,11 +318,11 @@ const dateOptions = (lookupDate: string) => {
     const dateArray: Date[] = lookupPeriod.value[
       currentCongregation.value
     ]?.map((day) => day.date);
-    const minDate = date.getMinDate(dateArray[0], ...dateArray.slice(1));
-    const maxDate = date.getMaxDate(dateArray[0], ...dateArray.slice(1));
+    const minDate = getMinDate(dateArray[0], ...dateArray.slice(1));
+    const maxDate = getMaxDate(dateArray[0], ...dateArray.slice(1));
     return (
-      date.getDateDiff(lookupDate, minDate, 'days') >= 0 &&
-      date.getDateDiff(lookupDate, maxDate, 'days') <= 0
+      getDateDiff(lookupDate, minDate, 'days') >= 0 &&
+      getDateDiff(lookupDate, maxDate, 'days') <= 0
     );
   } catch (error) {
     errorCatcher(error);
@@ -391,7 +393,7 @@ const getEventDayColor = (eventDate: string) => {
     if (!lookupPeriod.value || !currentCongregation.value)
       throw new Error('No congregation or lookup period');
     const lookupDate = lookupPeriod.value[currentCongregation.value]?.find(
-      (d) => date.getDateDiff(eventDate, d.date, 'days') === 0,
+      (d) => getDateDiff(eventDate, d.date, 'days') === 0,
     );
     if (lookupDate?.error) {
       return 'negative';
@@ -403,7 +405,7 @@ const getEventDayColor = (eventDate: string) => {
     if (additionalDates) {
       const isAdditional = Object.keys(additionalDates)
         .filter((day) => additionalDates[day].length > 0)
-        .map((day) => date.formatDate(day, 'YYYY/MM/DD'))
+        .map((day) => formatDate(day, 'YYYY/MM/DD'))
         .includes(eventDate);
       if (isAdditional) return 'additional';
     }

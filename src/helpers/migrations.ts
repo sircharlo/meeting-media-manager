@@ -1,7 +1,7 @@
 import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { extend } from 'quasar';
-import { defaultSettings } from 'src/defaults/settings';
+import { defaultSettings } from 'src/constants/settings';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 

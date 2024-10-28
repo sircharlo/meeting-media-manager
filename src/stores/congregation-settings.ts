@@ -2,7 +2,7 @@ import type { SettingsValues } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { extend, uid } from 'quasar';
-import { defaultSettings } from 'src/defaults/settings';
+import { defaultSettings } from 'src/constants/settings';
 
 export const useCongregationSettingsStore = defineStore(
   'congregation-settings',
