@@ -1,41 +1,41 @@
-# Frequently Asked Questions
+# Pogosta vprašanja
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
+## :earth_americas: Ali je ta program odvisen od zunanjih spletnih mest, virov ali „skrbnikov“ za prenašanje publikacij, multimedijske vsebine za shode ali drugih vsebin?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Ne.** Program se obnaša podobno kot JW Library. Publikacije, multimedijsko vsebino in drugo prenaša neposredno z uradnega spletnega mesta jw.org in njegovega omrežja za dostavo vsebin. Program samodejno ugotovi, kaj je treba prenesti in kdaj predhodno prenesena vsebina ni več posodobljena in jo je treba zato ponovno prenesti.
 
-:::info Note
+:::info Opomba
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo, kaj se dogaja pod pokrovom.
 
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Ali ta aplikacija krši Pogoje uporabe jw.org?
 
-**No.** The JW.org [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**Ne.** [Pogoji uporabe](https://www.jw.org/finder?docid=1011511\&prefer=content) na jw.org dejansko izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Tukaj je odlomek iz teh pogojev (poudarili mi):
 
-> You may not:
+> Ni vam dovoljeno:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> z namenom razširjanja razviti kakršne koli aplikacije programske opreme, orodja ali tehnike, ki je namensko narejena za zbiranje, kopiranje, prenašanje, izvlačenje, nabiranje ali luščenje podatkov, HTML-ja, slik ali besedila s tega spletnega mesta (to **ne** prepoveduje razširjanja brezplačnih, nekomercialnih aplikacij, ki so namenjene prenašanju elektronskih datotek, na primer datotek EPUB, PDF, MP3 in MP4, z javno dostopnih strani tega spletnega mesta)
 
-## :radioactive: How do I report an issue?
+## :radioactive: Kako prijavim težavo?
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+[Težavo](https://github.com/sircharlo/meeting-media-manager/issues) prijavi na uradni spletni strani GitHub repository.
 
-## :new: How can I request a new feature or enhancement?
+## :new: Kako lahko zaprosim za novo funkcijo ali izboljšavo?
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Na uradni spletni strani GitHub repository odpri [razpravo](https://github.com/sircharlo/meeting-media-manager/discussions).
 
-## :handshake: How can I contribute some code?
+## :handshake: Kako lahko prispevam k pisanju kode?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Oglej si [vodnik za prispevanje](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) na uradni spletni strani GitHub repository.
 
-## :x: Can I make a donation to the project?
+## :x: Ali lahko doniram za projekt?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Zahvaljujemo se ti za tvoje zanimanje za podporo projekta! Vendar v duhu tega, kar piše v Mateju 10:8, donacij **ne** sprejemamo in jih tudi nikoli ne bomo. Ta program je bil narejen z ljubeznijo in nekaj prostega časa. Uživaj v uporabi programa! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Matej 10:8
 
-"You received free, give free."
+"Zastonj ste prejeli, zastonj dajajte."
 
 :::
