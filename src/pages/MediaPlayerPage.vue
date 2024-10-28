@@ -69,12 +69,15 @@
   </q-page-container>
 </template>
 <script setup lang="ts">
+import type { FontName } from 'src/types';
+
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
 import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
+import { FONT_URLS } from 'src/constants/fonts';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { fontUrls, getLocalFontPath } from 'src/helpers/fonts';
+import { getLocalFontPath } from 'src/helpers/fonts';
 import {
   isAudio,
   isImage,
@@ -369,7 +372,7 @@ $q.iconMapFn = (iconName) => {
   }
 };
 
-const setElementFont = async (fontName: string) => {
+const setElementFont = async (fontName: FontName) => {
   if (!fontName) return;
   try {
     const fontFace = new FontFace(
@@ -381,7 +384,7 @@ const setElementFont = async (fontName: string) => {
   } catch (error) {
     const fontFace = new FontFace(
       fontName,
-      'url("' + fontUrls[fontName] + '")',
+      'url("' + FONT_URLS[fontName] + '")',
     );
     await fontFace.load();
     document.fonts.add(fontFace);
