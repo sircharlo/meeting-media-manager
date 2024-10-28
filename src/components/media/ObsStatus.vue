@@ -3,16 +3,19 @@
     v-if="currentSettings.obsEnable"
     :color="
       obsConnectionState === 'connected'
-        ? 'white-transparent'
+        ? localObsPopup
+          ? 'white'
+          : 'white-transparent'
         : obsConnectionState === 'disconnected'
           ? 'negative'
           : 'warning'
     "
     :disable="obsConnectionState !== 'connected'"
+    :outline="localObsPopup"
     class="super-rounded"
     rounded
     unelevated
-    @click="scenePicker = true"
+    @click="localObsPopup = !localObsPopup"
   >
     <q-icon size="sm">
       <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -21,274 +24,55 @@
         />
       </svg>
     </q-icon>
-    <q-tooltip v-if="!scenePicker" :delay="1000" :offset="[14, 22]">
+    <q-tooltip v-if="!localObsPopup" :delay="1000" :offset="[14, 22]">
       {{ $t(obsMessage ?? 'scene-selection') }}
     </q-tooltip>
-    <!-- <q-popup-proxy
-      :offset="[0, 8]"
-      @before-hide="scenePicker = false"
-      @before-show="scenePicker = true"
-      anchor="top middle"
-      class="round-card"
-      flat
-      self="bottom middle"
-    > -->
-    <q-dialog v-model="scenePicker" position="bottom">
-      <q-card flat style="min-width: 50vw">
-        <q-card-section>
-          <div class="card-title">
-            {{ $t('scene-selection') }}
-          </div>
-          <div>
-            <p class="card-section-title text-dark-grey">
-              {{ $t('main-scenes') }}
-            </p>
-          </div>
-          <div class="row items-center q-col-gutter-sm">
-            <template
-              v-for="scene in [
-                currentSettings?.obsCameraScene,
-                currentSettings?.obsMediaScene,
-                currentSettings?.obsImageScene,
-              ].filter(Boolean)"
-              :key="scene"
-            >
-              <div class="col">
-                <q-btn
-                  :color="sceneExists(scene) ? 'primary' : 'negative'"
-                  :outline="scene !== currentScene"
-                  class="full-width"
-                  unelevated
-                  @click="setObsScene(undefined, scene)"
-                >
-                  <q-icon
-                    :name="
-                      scene === currentSettings?.obsCameraScene
-                        ? 'mmm-lectern'
-                        : scene === currentSettings?.obsMediaScene
-                          ? 'mmm-stream-now'
-                          : 'mmm-picture-in-picture'
-                    "
-                    class="q-mr-sm"
-                    size="xs"
-                  />
-                  <div class="ellipsis">
-                    {{
-                      scene === currentSettings?.obsCameraScene
-                        ? $t('stage')
-                        : scene === currentSettings?.obsMediaScene
-                          ? $t('media-only')
-                          : $t('picture-in-picture')
-                    }}
-                  </div>
-                </q-btn>
-              </div>
-            </template>
-          </div>
-          <template v-if="additionalScenes.length > 0">
-            <q-separator class="bg-accent-200 q-my-md" />
-            <div>
-              <p class="card-section-title text-dark-grey">
-                {{ $t('additional-scenes') }}
-              </p>
-            </div>
-            <div class="row items-center q-col-gutter-sm q-mb-md">
-              <template v-for="scene in additionalScenes" :key="scene">
-                <div
-                  :class="
-                    additionalScenes.length === 1
-                      ? 'col-12'
-                      : additionalScenes.length === 2
-                        ? 'col-6'
-                        : 'col-4'
-                  "
-                >
-                  <q-btn
-                    :outline="scene !== currentScene"
-                    class="full-width"
-                    color="primary"
-                    unelevated
-                    @click="setObsScene(undefined, scene as string)"
-                  >
-                    <div class="ellipsis">
-                      {{
-                        isUUID(scene)
-                          ? scenes.find((s) => s.sceneUuid === scene)?.sceneName
-                          : scene
-                      }}
-                    </div>
-                  </q-btn>
-                </div>
-              </template>
-            </div>
-          </template>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </q-btn>
 </template>
 
 <script setup lang="ts">
-import type { JsonObject } from 'obs-websocket-js/node_modules/type-fest';
-
-import { useEventListener } from '@vueuse/core';
 import { OBSWebSocketError } from 'obs-websocket-js';
 import { storeToRefs } from 'pinia';
 import { obsWebSocket } from 'src/boot/globals';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { isImage } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { configuredScenesAreAllUUIDs, isUUID } from 'src/helpers/obs';
-import { portNumberValidator } from 'src/helpers/settings';
+import {
+  configuredScenesAreAllUUIDs,
+  obsCloseHandler,
+  obsConnect,
+  obsErrorHandler,
+} from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
-const { currentSettings, mediaPlayingUrl } = storeToRefs(currentState);
+const { currentSettings } = storeToRefs(currentState);
 
 const obsState = useObsStateStore();
-const {
-  additionalScenes,
-  currentScene,
-  currentSceneType,
-  obsConnectionState,
-  obsMessage,
-  scenes,
-} = storeToRefs(obsState);
+const { currentScene, obsConnectionState, obsMessage, scenes } =
+  storeToRefs(obsState);
+const { sceneExists } = obsState;
 
-const scenePicker = ref(false);
-const sleep = (ms: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+const props = defineProps<{
+  obs: boolean;
+}>();
 
-const obsCloseHandler = () => {
-  obsConnectionState.value = 'disconnected';
-  obsMessage.value = 'obs.disconnected';
-};
+const localObsPopup = ref(props.obs);
 
-const obsErrorHandler = (err: OBSWebSocketError) => {
-  obsMessage.value = 'obs.error';
-  if (err?.code && ![-1, 1001, 1006, 4009].includes(err.code))
-    errorCatcher(err);
-};
+const emit = defineEmits(['update:obs']);
 
-const obsConnect = async (setup?: boolean) => {
-  try {
-    if (!currentSettings.value?.obsEnable) {
-      await obsWebSocket?.disconnect();
-      return;
-    }
+watch(localObsPopup, (newValue) => {
+  emit('update:obs', newValue);
+});
 
-    const obsPort = (currentSettings.value?.obsPort as string) || '';
-    if (!portNumberValidator(obsPort)) return;
-
-    const obsPassword = (currentSettings.value?.obsPassword as string) || '';
-    if (obsPassword?.length === 0) return;
-
-    obsConnectionState.value = 'connecting';
-    obsMessage.value = 'obs.connecting';
-
-    let attempt = 0;
-    const maxAttempts = setup ? 1 : 12;
-    const timeBetweenAttempts = 5000;
-    while (attempt < maxAttempts && obsConnectionState.value !== 'connected') {
-      try {
-        const connection = await obsWebSocket?.connect(
-          'ws://127.0.0.1:' + obsPort,
-          obsPassword,
-        );
-        if (
-          connection?.negotiatedRpcVersion &&
-          connection?.obsWebSocketVersion
-        ) {
-          break;
-        }
-      } catch (err) {
-        if (err instanceof OBSWebSocketError) obsErrorHandler(err);
-        else errorCatcher(err);
-      } finally {
-        attempt++;
-        if (attempt < maxAttempts) {
-          await sleep(timeBetweenAttempts);
-        }
-      }
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
-const sceneExists = (sceneToCheck: string) => {
-  if (!scenes.value || !sceneToCheck) return false;
-  const matchScene = isUUID(sceneToCheck)
-    ? (scene: JsonObject) => scene.sceneUuid === sceneToCheck
-    : (scene: JsonObject) => scene.sceneName === sceneToCheck;
-  return scenes.value?.some(matchScene);
-};
-
-const { t } = useI18n();
-
-const notifySceneNotFound = () =>
-  createTemporaryNotification({
-    caption: t('scene-not-found-explain'),
-    group: 'scene-not-found',
-    icon: 'mmm-obs-studio',
-    message: t('scene-not-found'),
-    timeout: 10000,
-    type: 'negative',
-  });
-
-const setObsScene = async (
-  sceneType: 'camera' | 'media' | undefined,
-  desiredScene?: string,
-) => {
-  try {
-    if (!obsConnectionState.value?.startsWith('connect')) await obsConnect();
-    if (obsConnectionState.value !== 'connected') return;
-    let newProgramScene: string | undefined = desiredScene;
-    if (!desiredScene && sceneType) {
-      const mediaScene = currentSettings.value?.obsMediaScene as string;
-      const imageScene = currentSettings.value?.obsImageScene as string;
-      const cameraScene = currentSettings.value?.obsCameraScene as string;
-      newProgramScene = mediaScene;
-      if (isImage(mediaPlayingUrl.value) && imageScene)
-        newProgramScene = imageScene;
-      currentSceneType.value = sceneType;
-      if (sceneType === 'camera') newProgramScene = cameraScene;
-    }
-    if (newProgramScene) {
-      const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
-      const currentScenesAreUuids = configuredScenesAreAllUUIDs();
-
-      if (sceneExists(newProgramScene)) {
-        obsWebSocket?.call('SetCurrentProgramScene', {
-          ...(hasSceneUuid &&
-            currentScenesAreUuids && { sceneUuid: newProgramScene }),
-          ...((!hasSceneUuid || !currentScenesAreUuids) && {
-            sceneName: newProgramScene,
-          }),
-        });
-      } else {
-        notifySceneNotFound();
-      }
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
-const setObsSceneListener = (event: CustomEventInit) => {
-  try {
-    setObsScene(event.detail.scene);
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
-const obsSettingsConnect = () => obsConnect(true);
+watch(
+  () => props.obs,
+  (newValue) => {
+    localObsPopup.value = newValue;
+  },
+);
 
 const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   let attempts = 0;
@@ -330,8 +114,17 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   errorCatcher('OBS Error: Max retries reached. Could not fetch scene list.');
 };
 
-useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect);
-useEventListener(window, 'obsSceneEvent', setObsSceneListener);
+const { t } = useI18n();
+
+const notifySceneNotFound = () =>
+  createTemporaryNotification({
+    caption: t('scene-not-found-explain'),
+    group: 'scene-not-found',
+    icon: 'mmm-obs-studio',
+    message: t('scene-not-found'),
+    timeout: 10000,
+    type: 'negative',
+  });
 
 onMounted(() => {
   try {
@@ -357,6 +150,7 @@ onMounted(() => {
     obsWebSocket.on('SceneListChanged', (data) => {
       scenes.value = data.scenes;
     });
+    obsConnect();
   } catch (error) {
     errorCatcher(error);
   }

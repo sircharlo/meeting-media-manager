@@ -1,10 +1,11 @@
 <template>
   <q-btn
-    :color="!online ? 'negative' : 'white-transparent'"
+    :color="!online ? 'negative' : localDownloadPopup ? 'white' : 'white-transparent'"
+    :outline="localDownloadPopup"
     class="super-rounded position-relative"
     rounded
     unelevated
-    @click="localDownloadPopup = true"
+    @click="localDownloadPopup = !localDownloadPopup"
   >
     <q-icon
       :name="

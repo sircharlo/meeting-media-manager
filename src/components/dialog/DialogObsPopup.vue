@@ -1,0 +1,199 @@
+<template>
+  <q-menu
+    ref="displayPopup"
+    v-model="open"
+    :offset="[0, 8]"
+    anchor="top middle"
+    no-parent-event
+    self="bottom middle"
+    transition-hide="jump-down"
+    transition-show="jump-up"
+  >
+    <q-card flat style="min-width: 50vw">
+      <q-card-section>
+        <div class="card-title">
+          {{ $t('scene-selection') }}
+        </div>
+        <div>
+          <p class="card-section-title text-dark-grey">
+            {{ $t('main-scenes') }}
+          </p>
+        </div>
+        <div class="row items-center q-col-gutter-sm">
+          <template
+            v-for="scene in [
+              currentSettings?.obsCameraScene,
+              currentSettings?.obsMediaScene,
+              currentSettings?.obsImageScene,
+            ].filter(Boolean)"
+            :key="scene"
+          >
+            <div class="col">
+              <q-btn
+                :color="sceneExists(scene) ? 'primary' : 'negative'"
+                :outline="scene !== currentScene"
+                class="full-width"
+                unelevated
+                @click="setObsScene(undefined, scene)"
+              >
+                <q-icon
+                  :name="
+                    scene === currentSettings?.obsCameraScene
+                      ? 'mmm-lectern'
+                      : scene === currentSettings?.obsMediaScene
+                        ? 'mmm-stream-now'
+                        : 'mmm-picture-in-picture'
+                  "
+                  class="q-mr-sm"
+                  size="xs"
+                />
+                <div class="ellipsis">
+                  {{
+                    scene === currentSettings?.obsCameraScene
+                      ? $t('stage')
+                      : scene === currentSettings?.obsMediaScene
+                        ? $t('media-only')
+                        : $t('picture-in-picture')
+                  }}
+                </div>
+              </q-btn>
+            </div>
+          </template>
+        </div>
+        <template v-if="additionalScenes.length > 0">
+          <q-separator class="bg-accent-200 q-my-md" />
+          <div>
+            <p class="card-section-title text-dark-grey">
+              {{ $t('additional-scenes') }}
+            </p>
+          </div>
+          <div class="row items-center q-col-gutter-sm q-mb-md">
+            <template v-for="scene in additionalScenes" :key="scene">
+              <div
+                :class="
+                  additionalScenes.length === 1
+                    ? 'col-12'
+                    : additionalScenes.length === 2
+                      ? 'col-6'
+                      : 'col-4'
+                "
+              >
+                <q-btn
+                  :outline="scene !== currentScene"
+                  class="full-width"
+                  color="primary"
+                  unelevated
+                  @click="setObsScene(undefined, scene as string)"
+                >
+                  <div class="ellipsis">
+                    {{
+                      isUUID(scene)
+                        ? scenes.find((s) => s.sceneUuid === scene)?.sceneName
+                        : scene
+                    }}
+                  </div>
+                </q-btn>
+              </div>
+            </template>
+          </div>
+        </template>
+      </q-card-section>
+    </q-card>
+  </q-menu>
+</template>
+
+<script setup lang="ts">
+import { useEventListener } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { obsWebSocket } from 'src/boot/globals';
+import { errorCatcher } from 'src/helpers/error-catcher';
+import { isImage } from 'src/helpers/mediaPlayback';
+import { createTemporaryNotification } from 'src/helpers/notifications';
+import {
+  configuredScenesAreAllUUIDs,
+  isUUID,
+  obsConnect,
+} from 'src/helpers/obs';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { useObsStateStore } from 'src/stores/obs-state';
+import { useI18n } from 'vue-i18n';
+
+const open = defineModel<boolean>({ default: false });
+
+const currentState = useCurrentStateStore();
+const { currentSettings, mediaPlayingUrl } = storeToRefs(currentState);
+
+const obsState = useObsStateStore();
+const {
+  additionalScenes,
+  currentScene,
+  currentSceneType,
+  obsConnectionState,
+  scenes,
+} = storeToRefs(obsState);
+const { sceneExists } = obsState;
+const obsSettingsConnect = () => obsConnect(true);
+
+const { t } = useI18n();
+
+const notifySceneNotFound = () =>
+  createTemporaryNotification({
+    caption: t('scene-not-found-explain'),
+    group: 'scene-not-found',
+    icon: 'mmm-obs-studio',
+    message: t('scene-not-found'),
+    timeout: 10000,
+    type: 'negative',
+  });
+
+const setObsScene = async (
+  sceneType: 'camera' | 'media' | undefined,
+  desiredScene?: string,
+) => {
+  try {
+    if (!obsConnectionState.value?.startsWith('connect')) await obsConnect();
+    if (obsConnectionState.value !== 'connected') return;
+    let newProgramScene: string | undefined = desiredScene;
+    if (!desiredScene && sceneType) {
+      const mediaScene = currentSettings.value?.obsMediaScene as string;
+      const imageScene = currentSettings.value?.obsImageScene as string;
+      const cameraScene = currentSettings.value?.obsCameraScene as string;
+      newProgramScene = mediaScene;
+      if (isImage(mediaPlayingUrl.value) && imageScene)
+        newProgramScene = imageScene;
+      currentSceneType.value = sceneType;
+      if (sceneType === 'camera') newProgramScene = cameraScene;
+    }
+    if (newProgramScene) {
+      const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
+      const currentScenesAreUuids = configuredScenesAreAllUUIDs();
+
+      if (sceneExists(newProgramScene)) {
+        obsWebSocket?.call('SetCurrentProgramScene', {
+          ...(hasSceneUuid &&
+            currentScenesAreUuids && { sceneUuid: newProgramScene }),
+          ...((!hasSceneUuid || !currentScenesAreUuids) && {
+            sceneName: newProgramScene,
+          }),
+        });
+      } else {
+        notifySceneNotFound();
+      }
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+const setObsSceneListener = (event: CustomEventInit) => {
+  console.debug(event);
+  try {
+    setObsScene(event.detail.scene);
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect);
+useEventListener(window, 'obsSceneEvent', setObsSceneListener);
+</script>
