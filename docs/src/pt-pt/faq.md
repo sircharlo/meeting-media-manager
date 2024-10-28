@@ -12,7 +12,7 @@ O código-fonte desta app está disponível para que todos possam examinar e ver
 
 ## :thinking: Este aplicativo infringe os Termos de Uso do JW.org?
 
-**Não.** Os [Termos de Uso](https://www.jw.org/finder?docid=1011511\\&prefer=content) do JW.org permitem explicitamente o tipo de uso que estamos a fazer. Here is the relevant excerpt from those terms (emphasis added):
+**Não.** Os [Termos de Uso](https://www.jw.org/finder?docid=1011511\&prefer=content) do JW.org permitem explicitamente o tipo de uso que estamos a fazer. Here is the relevant excerpt from those terms (emphasis added):
 
 > Você não pode:
 >

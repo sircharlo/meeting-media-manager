@@ -12,7 +12,7 @@
 
 ## :thinking: Чи порушує ця програма умови використання JW.org?
 
-**Ні.** [Умови використання](https://www.jw.org/finder?docid=1011511\&prefer=content) JW.org явно дозволяють тип використання яким ми користуємося. Here is the relevant excerpt from those terms (emphasis added):
+**Ні.** [Умови використання](https://www.jw.org/finder?docid=1011511&prefer=content) JW.org явно дозволяють тип використання яким ми користуємося. Here is the relevant excerpt from those terms (emphasis added):
 
 > Ви не можете:
 >
