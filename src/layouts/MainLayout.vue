@@ -124,22 +124,23 @@ const appSettings = useAppSettingsStore();
 const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
 
-if (!migrations.value?.includes('firstRun')) {
-  const migrationResult = runMigration('firstRun');
-  if (migrationResult) {
-    createTemporaryNotification({
-      caption: t('successfully-migrated-from-the-previous-version'),
-      icon: 'mmm-info',
-      message: t('welcome-to-mmm'),
-      timeout: 15000,
-      type: 'positive',
-    });
-  }
-}
+const migrationsToRun = ['firstRun', 'localStorageToPiniaPersist'];
 
-if (!migrations.value?.includes('localStorageToPiniaPersist')) {
-  runMigration('localStorageToPiniaPersist');
-}
+migrationsToRun.forEach((migration) => {
+  if (!migrations.value?.includes(migration)) {
+    const success = runMigration(migration);
+
+    if (migration === 'firstRun' && success) {
+      createTemporaryNotification({
+        caption: t('successfully-migrated-from-the-previous-version'),
+        icon: 'mmm-info',
+        message: t('welcome-to-mmm'),
+        timeout: 15000,
+        type: 'positive',
+      });
+    }
+  }
+});
 
 const { updateJwLanguages } = jwStore;
 updateJwLanguages();
