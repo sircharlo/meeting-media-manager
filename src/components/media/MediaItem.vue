@@ -688,9 +688,19 @@ const seekTo = (newSeekTo: null | number) => {
   if (newSeekTo !== null) post(newSeekTo);
 };
 
-function zoomIn(elemId: string) {
+function zoomIn(elemId: string, click?: MouseEvent) {
   try {
-    panzooms[elemId]?.zoomIn();
+    if (!click?.clientX && !click?.clientY) {
+      panzooms[elemId]?.zoomIn();
+    } else {
+      panzooms[elemId]?.zoomToPoint(
+        (panzooms[elemId]?.getScale() || 1) * 1.25,
+        {
+          clientX: click?.clientX || 0,
+          clientY: click?.clientY || 0,
+        },
+      );
+    }
   } catch (error) {
     errorCatcher(error);
   }
@@ -748,8 +758,8 @@ const initiatePanzoom = (elemId: string) => {
       pinchAndPan: true,
     } as PanzoomOptions);
 
-    useEventListener(elem, 'dblclick', () => {
-      zoomIn(elemId);
+    useEventListener(elem, 'dblclick', (e) => {
+      zoomIn(elemId, e);
     });
 
     useEventListener(elem, 'panzoomend', () => {

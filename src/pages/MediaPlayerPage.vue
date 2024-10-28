@@ -112,7 +112,11 @@ const initiatePanzoom = () => {
   try {
     const imageElem = document.getElementById('mediaImage');
     if (!imageElem) return;
-    panzoom.value = Panzoom(imageElem);
+    panzoom.value = Panzoom(imageElem, {
+      animate: true,
+      maxScale: 5,
+      minScale: 1,
+    });
   } catch (error) {
     errorCatcher(error);
   }
