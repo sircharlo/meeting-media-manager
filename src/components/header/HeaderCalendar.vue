@@ -91,9 +91,14 @@
             </q-item-section>
           </q-item>
         </template>
-        <template v-if="additionalMediaForDay">
+        <template v-if="additionalMediaForDay || hiddenMediaForDay">
           <q-item-label header>{{ $t('dangerZone') }}</q-item-label>
-          <q-item v-close-popup clickable @click="showCurrentDayHiddenMedia()">
+          <q-item
+            v-if="hiddenMediaForDay"
+            v-close-popup
+            clickable
+            @click="showCurrentDayHiddenMedia()"
+          >
             <q-item-section avatar>
               <q-icon color="primary" name="mmm-eye" />
             </q-item-section>
@@ -104,7 +109,12 @@
               }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-close-popup clickable @click="mediaDeleteAllPending = true">
+          <q-item
+            v-if="additionalMediaForDay"
+            v-close-popup
+            clickable
+            @click="mediaDeleteAllPending = true"
+          >
             <q-item-section avatar>
               <q-icon color="negative" name="mmm-delete" />
             </q-item-section>
@@ -251,6 +261,12 @@ const additionalMediaForDay = computed(
   () =>
     additionalMediaMaps.value?.[currentCongregation.value]?.[selectedDate.value]
       ?.length > 0,
+);
+
+const hiddenMediaForDay = computed(() =>
+  lookupPeriod.value?.[currentCongregation.value]
+    .find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
+    ?.dynamicMedia?.some((media) => media.hidden),
 );
 
 const mediaDeleteAllPending = ref(false);

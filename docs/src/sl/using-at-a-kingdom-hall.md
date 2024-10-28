@@ -38,47 +38,47 @@ Profil **Drugo** se redko uporablja. **Za običajno uporabo med občinskimi shod
 
 M³ lahko poskuša samodejno poiskati urnik, jezik in ime vaših občinskih shodov.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+Za to klikni na gumb **Iskanje občine** poleg polja z imenom občine in vnesi vsaj del imena občine in mesto.
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Ko boš našel in izbral pravo občino, bo M³ predizpolnil vse razpoložljive informacije, kot so **ime** vaše občine, **jezik shodov** ter **dnevi in ure shodov**.
 
-:::info Note
+:::info Opomba
 
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
+Iskalnik uporablja javno dostopne podatke z uradnega spletnega mesta Jehovovih prič.
 
 :::
 
-### Manual entry of congregation information
+### Ročni vnos podatkov o občini
 
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Če s samodejnim iskanjem ni bilo mogoče najti vaše občine, lahko zahtevane podatke seveda vneseš ročno. Pomočnik za nastavitev ti bo omogočil, da pregledaš in/ali vneseš **ime** vaše občine, **jezik shodov** ter **dneve in ure shodov**.
 
-### Caching videos from the songbook
+### Predpomnjenje videoposnetkov iz pesmarice
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Na voljo bo tudi možnost **predpomnjenja vseh videoposnetkov iz pesmarice**. Ta možnost vnaprej prenese vse videoposnetke iz pesmarice in tako v prihodnje skrajša čas, potreben za prenašanje multimedijskih datotek za shode.
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
+- **Prednosti:** Multimedijska vsebina za shode bo na voljo veliko hitreje.
+- **Slabosti:** Velikost multimedijskega predpomnilnika se bo znatno povečala, in sicer za približno 5 GB.
 
 :::tip Namig
 
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+Če ima vaša kraljestvena dvorana dovolj prostora za shranjevanje, je priporočljivo, da to možnost **vključite** zaradi učinkovitosti in boljšega delovanja.
 
 :::
 
-### OBS Studio Integration Configuration (Optional)
+### Nastavitev povezave s programom OBS Studio (neobvezno)
 
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
+Če v vaši kraljestveni dvorani uporabljate **OBS Studio** za prenašanje hibridnih shodov prek Zooma, se lahko M³ samodejno poveže s tem programom. Med namestitvijo lahko nastaviš povezavo s programom OBS Studio tako, da vneseš naslednje podatke:
 
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- **Port (vrata):** Številka vrat, ki se uporablja za povezavo z vtičnikom OBS Studio Websocket.
+- **Password (geslo):** Geslo, ki se uporablja za povezavo z vtičnikom OBS Studio Websocket.
+- **Scenes (prizori):** OBS-prizori, ki se bodo uporabljali med predstavitvijo multimedijske vsebine. Potrebujete en prizor, ki zajema multimedijsko okno ali zaslon, in en prizor, ki prikazuje oder.
 
 :::tip Namig
 
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Če v vaši občini redno potekajo hibridni shodi, je **zelo** priporočljivo, da omogočite povezavo s programom OBS Studio.
 
 :::
 
-## 3. Enjoy using M³
+## 3. Uživaj v uporabi M³
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Ko boš končal z nastavitvami, je M³ pripravljen za upravljanje in predstavljanje multimedijske vsebine na občinskih shodih. Uživaj v uporabi programa! :tada:

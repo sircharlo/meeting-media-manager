@@ -11,6 +11,7 @@ import { settingsDefinitions } from 'src/constants/settings';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getAdditionalMediaPath } from 'src/helpers/fs';
+import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
 
@@ -132,6 +133,18 @@ export const useCurrentStateStore = defineStore('current-state', {
         state.mediaPlayingUrl !== '' || state.mediaPlayingAction === 'website'
       );
     },
+    musicRemainingTime(state) {
+      try {
+        if (state.musicStarting) return 'music.starting';
+        if (state.musicStopping) return 'music.stopping';
+        if (state.meetingDay && state.timeRemainingBeforeMusicStop > 0)
+          return formatTime(state.timeRemainingBeforeMusicStop);
+        return state.currentSongRemainingTime;
+      } catch (error) {
+        errorCatcher(error);
+        return '..:..';
+      }
+    },
     selectedDateObject(state) {
       const jwStore = useJwStore();
       const { lookupPeriod } = storeToRefs(jwStore);
@@ -145,6 +158,7 @@ export const useCurrentStateStore = defineStore('current-state', {
   state: () => {
     return {
       currentCongregation: '' as string,
+      currentSongRemainingTime: '..:..',
       downloadedFiles: {} as Record<
         string,
         DownloadedFile | Promise<DownloadedFile>
@@ -160,9 +174,14 @@ export const useCurrentStateStore = defineStore('current-state', {
       mediaPlayingUrl: '',
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
+      meetingDay: false,
+      musicPlaying: false,
+      musicStarting: false,
+      musicStopping: false,
       online: true,
       onlyShowInvalidSettings: false,
-      selectedDate: formatDate(new Date(), 'YYYY/MM/DD') as string,
+      selectedDate: date.formatDate(new Date(), 'YYYY/MM/DD') as string,
+      timeRemainingBeforeMusicStop: 0,
     };
   },
 });
