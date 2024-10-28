@@ -36,6 +36,7 @@ export const useObsStateStore = defineStore('obs-state', {
       currentSceneType: '' as 'camera' | 'media',
       obsConnectionState: 'notConnected',
       obsMessage: '',
+      previousScene: '',
       scenes: [] as JsonObject[],
     };
   },
