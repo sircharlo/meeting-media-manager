@@ -35,7 +35,7 @@ import fs from 'fs-extra';
 import convert from 'heic-convert';
 import klawSync from 'klaw-sync';
 import os from 'os';
-import { FULL_HD } from 'src/helpers/converters';
+import { FULL_HD } from 'src/constants/media';
 import path from 'upath';
 
 import pkg from '../package.json';

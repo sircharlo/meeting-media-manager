@@ -485,6 +485,8 @@ import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
+const { formatDate, getDateDiff } = date;
+
 const dragging = ref(false);
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
@@ -780,10 +782,10 @@ watch(
   () =>
     lookupPeriod.value[currentCongregation.value]
       ?.filter((d) => d.error)
-      .map((d) => date.formatDate(d.date, 'YYYY/MM/DD')),
+      .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
   (errorVals) => {
     errorVals?.forEach((errorVal) => {
-      const daysUntilError = date.getDateDiff(errorVal, new Date(), 'days');
+      const daysUntilError = getDateDiff(errorVal, new Date(), 'days');
       if (seenErrors.has(currentCongregation + errorVal) || daysUntilError > 7)
         return;
       createTemporaryNotification({
@@ -820,7 +822,7 @@ const goToNextDayWithMedia = () => {
       ]
         .filter(Boolean)
         .filter((mediaDate) => !isInPast(dateFromString(mediaDate)))
-        .map((mediaDate) => date.formatDate(mediaDate, 'YYYY/MM/DD'))
+        .map((mediaDate) => formatDate(mediaDate, 'YYYY/MM/DD'))
         .sort()[0];
     }
   } catch (e) {
@@ -839,7 +841,7 @@ const checkCoDate = () => {
     return;
   if (
     !currentSettings.value?.coWeek ||
-    date.getDateDiff(new Date(), currentSettings.value?.coWeek, 'months') > 2
+    getDateDiff(new Date(), currentSettings.value?.coWeek, 'months') > 2
   ) {
     createTemporaryNotification({
       actions: [
@@ -1100,7 +1102,7 @@ const copyToDatedAdditionalMedia = async (files: string[]) => {
       );
       datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
       const uniqueId = sanitizeId(
-        date.formatDate(selectedDate.value, 'YYYYMMDD') +
+        formatDate(selectedDate.value, 'YYYYMMDD') +
           '-' +
           getFileUrl(datedAdditionalMediaPath),
       );
@@ -1143,7 +1145,7 @@ const addToAdditionMediaMapFromPath = async (
     }
     if (!uniqueId) {
       uniqueId = sanitizeId(
-        date.formatDate(selectedDate.value, 'YYYYMMDD') +
+        formatDate(selectedDate.value, 'YYYYMMDD') +
           '-' +
           getFileUrl(additionalFilePath),
       );

@@ -1,11 +1,10 @@
-import * as Sentry from '@sentry/vue';
-
-const devMode = process.env.NODE_ENV === 'development';
+import { captureException } from '@sentry/vue';
+import { IS_DEV } from 'src/constants/general';
 
 const errorCatcher = async (originalError: Error | string | unknown) => {
   if (!originalError) return;
-  if (!devMode) {
-    Sentry.captureException(originalError);
+  if (!IS_DEV) {
+    captureException(originalError);
   } else {
     console.error(originalError);
   }

@@ -7,13 +7,14 @@ import type {
 
 import { defineStore, storeToRefs } from 'pinia';
 import { date } from 'quasar';
-import { settingsDefinitions } from 'src/defaults/settings';
+import { settingsDefinitions } from 'src/constants/settings';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getAdditionalMediaPath } from 'src/helpers/fs';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
 
+const { formatDate, getDateDiff } = date;
 const { fs, path } = electronApi;
 
 export const useCurrentStateStore = defineStore('current-state', {
@@ -108,10 +109,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       try {
         if (!state.selectedDate) return '';
         const additionalMediaPath = getAdditionalMediaPath();
-        const dateString = date.formatDate(
-          new Date(state.selectedDate),
-          'YYYYMMDD',
-        );
+        const dateString = formatDate(new Date(state.selectedDate), 'YYYYMMDD');
         const datedAdditionalMediaDirectory = path.join(
           additionalMediaPath,
           state.currentCongregation,
@@ -140,7 +138,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!lookupPeriod.value?.[state.currentCongregation]?.length)
         return {} as DateInfo;
       return (lookupPeriod.value?.[state.currentCongregation]?.find(
-        (day) => date.getDateDiff(day.date, state.selectedDate, 'days') === 0,
+        (day) => getDateDiff(day.date, state.selectedDate, 'days') === 0,
       ) || lookupPeriod.value[0]) as DateInfo;
     },
   },
@@ -164,7 +162,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       mediaWindowVisible: true,
       online: true,
       onlyShowInvalidSettings: false,
-      selectedDate: date.formatDate(new Date(), 'YYYY/MM/DD') as string,
+      selectedDate: formatDate(new Date(), 'YYYY/MM/DD') as string,
     };
   },
 });

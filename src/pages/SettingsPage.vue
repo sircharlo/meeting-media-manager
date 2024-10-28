@@ -169,7 +169,7 @@ import SliderInput from 'src/components/form-inputs/SliderInput.vue';
 import TextInput from 'src/components/form-inputs/TextInput.vue';
 import TimeInput from 'src/components/form-inputs/TimeInput.vue';
 import ToggleInput from 'src/components/form-inputs/ToggleInput.vue';
-import { settingsDefinitions, settingsGroups } from 'src/defaults/settings';
+import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';

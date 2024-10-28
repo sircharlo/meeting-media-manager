@@ -149,6 +149,8 @@ import { useJwStore } from 'src/stores/jw';
 import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+const { getDateDiff } = date;
+
 const { t } = useI18n();
 const { fileUrlToPath, parseFile, path } = electronApi;
 
@@ -258,7 +260,7 @@ const getNextSong = async () => {
       try {
         const selectedDayMedia =
           lookupPeriod.value[currentCongregation.value]?.find(
-            (d) => date.getDateDiff(selectedDate.value, d.date, 'days') === 0,
+            (d) => getDateDiff(selectedDate.value, d.date, 'days') === 0,
           )?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
         const selectedDaySongs: SongItem[] = selectedDayMedia
