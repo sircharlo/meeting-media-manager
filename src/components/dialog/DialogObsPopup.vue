@@ -129,6 +129,7 @@ const {
   currentScene,
   currentSceneType,
   obsConnectionState,
+  previousScene,
   scenes,
 } = storeToRefs(obsState);
 const { sceneExists } = obsState;
@@ -162,7 +163,8 @@ const setObsScene = async (
       if (isImage(mediaPlayingUrl.value) && imageScene)
         newProgramScene = imageScene;
       currentSceneType.value = sceneType;
-      if (sceneType === 'camera') newProgramScene = cameraScene;
+      if (sceneType === 'camera')
+        newProgramScene = previousScene.value || cameraScene;
     }
     if (newProgramScene) {
       const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
@@ -186,7 +188,6 @@ const setObsScene = async (
 };
 
 const setObsSceneListener = (event: CustomEventInit) => {
-  console.debug(event);
   try {
     setObsScene(event.detail.scene);
   } catch (error) {
