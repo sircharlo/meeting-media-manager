@@ -1,7 +1,8 @@
 import type { OldAppConfig, ScreenPreferences } from 'src/types';
 
+import { parseJsonSafe } from 'app/docs/utils/general';
 import { defineStore, storeToRefs } from 'pinia';
-import { LocalStorage, uid } from 'quasar';
+import { LocalStorage as QuasarStorage, uid } from 'quasar';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
@@ -43,37 +44,59 @@ export const useAppSettingsStore = defineStore('app-settings', {
             }
           }
         } else if (type === 'localStorageToPiniaPersist') {
-          congregations.value = LocalStorage.getItem('congregations') || {};
-          LocalStorage.removeItem('congregations');
-          jwStore.additionalMediaMaps.value =
-            LocalStorage.getItem('additionalMediaMaps') || {};
-          LocalStorage.removeItem('additionalMediaMaps');
-          jwStore.customDurations.value =
-            LocalStorage.getItem('customDurations') || {};
-          LocalStorage.removeItem('customDurations');
-          jwStore.jwLanguages.value = LocalStorage.getItem('jwLanguages') || {
-            list: [],
-            updated: new Date(1900, 0, 1),
-          };
-          LocalStorage.removeItem('jwLanguages');
-          jwStore.jwSongs.value = LocalStorage.getItem('jwSongs') || {};
-          LocalStorage.removeItem('jwSongs');
-          jwStore.lookupPeriod.value =
-            LocalStorage.getItem('lookupPeriod') || {};
-          LocalStorage.removeItem('lookupPeriod');
-          jwStore.mediaSort.value = LocalStorage.getItem('mediaSort') || {};
-          LocalStorage.removeItem('mediaSort');
-          jwStore.yeartexts.value = LocalStorage.getItem('yeartexts') || {};
-          LocalStorage.removeItem('yeartexts');
-          this.migrations = this.migrations.concat(
-            LocalStorage.getItem('migrations') || [],
+          congregations.value = parseJsonSafe(
+            QuasarStorage.getItem('congregations'),
+            {},
           );
-          LocalStorage.removeItem('migrations');
+          QuasarStorage.removeItem('congregations');
+          jwStore.additionalMediaMaps.value = parseJsonSafe(
+            QuasarStorage.getItem('additionalMediaMaps'),
+            {},
+          );
+          QuasarStorage.removeItem('additionalMediaMaps');
+          jwStore.customDurations.value = parseJsonSafe(
+            QuasarStorage.getItem('customDurations'),
+            {},
+          );
+          QuasarStorage.removeItem('customDurations');
+          jwStore.jwLanguages.value = parseJsonSafe(
+            QuasarStorage.getItem('jwLanguages'),
+            {
+              list: [],
+              updated: new Date(1900, 0, 1),
+            },
+          );
+          QuasarStorage.removeItem('jwLanguages');
+          jwStore.jwSongs.value = parseJsonSafe(
+            QuasarStorage.getItem('jwSongs'),
+            {},
+          );
+          QuasarStorage.removeItem('jwSongs');
+          jwStore.lookupPeriod.value = parseJsonSafe(
+            QuasarStorage.getItem('lookupPeriod'),
+            {},
+          );
+          QuasarStorage.removeItem('lookupPeriod');
+          jwStore.mediaSort.value = parseJsonSafe(
+            QuasarStorage.getItem('mediaSort'),
+            {},
+          );
+          QuasarStorage.removeItem('mediaSort');
+          jwStore.yeartexts.value = parseJsonSafe(
+            QuasarStorage.getItem('yeartexts'),
+            {},
+          );
+          QuasarStorage.removeItem('yeartexts');
+          this.migrations = this.migrations.concat(
+            parseJsonSafe(QuasarStorage.getItem('migrations'), []),
+          );
+          QuasarStorage.removeItem('migrations');
           // this.migrations.push('firstRun');
-          this.screenPreferences = LocalStorage.getItem(
-            'screenPreferences',
-          ) || { preferredScreenNumber: 0, preferWindowed: false };
-          LocalStorage.removeItem('screenPreferences');
+          this.screenPreferences = parseJsonSafe(
+            QuasarStorage.getItem('screenPreferences'),
+            { preferredScreenNumber: 0, preferWindowed: false },
+          );
+          QuasarStorage.removeItem('screenPreferences');
         } else {
           // other migrations will go here
         }
