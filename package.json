@@ -25,8 +25,9 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "format": "prettier \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore --write",
     "lint": "eslint --ext .js,.ts,.vue ./",
+    "type-check": "vue-tsc --noEmit -p tsconfig.vue-tsc.json",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
