@@ -12,7 +12,7 @@ Källkoden för denna app är tillgänglig för alla att undersöka och verifier
 
 ## :thinking: Bryter den här appen mot JW.orgs användarvillkor?
 
-**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Här är ett utdrag från dessa villkor (fetstilt av mig):
+**Nej.** JW.org [Användarvillkor](https://www.jw.org/finder?docid=1011511\&prefer=content) tillåter uttryckligen den typ av användning som vi gör. Här är ett utdrag från dessa villkor (fetstilt av mig):
 
 > Du får inte:
 >
@@ -20,15 +20,15 @@ Källkoden för denna app är tillgänglig för alla att undersöka och verifier
 
 ## :radioactive: Hur rapporterar jag ett problem?
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Vänligen skicka in en [issue](https://github.com/sircharlo/meeting-media-manager/issues) på det officiella GitHub-repository.
 
 ## :new: Hur kan jag önska en ny funktion eller förbättring?
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Vänligen öppna en [discussion](https://github.com/sircharlo/meeting-media-manager/diskussioner) på det officiella GitHub-repository.
 
 ## :handshake: Hur kan jag bidra med kodning?
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Se [contributing guide] (https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) på det officiella GitHub-repository.
 
 ## :x: Kan jag donera till projektet?
 
