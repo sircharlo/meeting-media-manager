@@ -56,6 +56,6 @@ Check out our [documentation website](https://sircharlo.github.io/meeting-media-
 > You may not:  
 > Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
 
-## Want to contribute some code?
+## Want to help improve M³?
 
-We welcome coding help of all kinds! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) file for instructions on how to contribute code to M³.
+We'd love that! Please [read how to help us](https://github.com/sircharlo/meeting-media-manager/discussions/2771) in the corresponding discussion.
