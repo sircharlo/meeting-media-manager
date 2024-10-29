@@ -73,7 +73,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
             >(QuasarStorage.getItem('customDurations'), {}),
             jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
               QuasarStorage.getItem('jwLanguages'),
-              { list: [], updated: new Date() },
+              { list: [], updated: new Date(0) },
             ),
             jwSongs: parseJsonSafe<
               Record<string, { list: MediaLink[]; updated: Date }>
