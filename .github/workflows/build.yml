@@ -127,7 +127,7 @@ jobs:
       - name: Lint files
         run: |
           yarn lint
-          yarn check-types
+          yarn type-check
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
 
       - name: Build and Publish Electron App
