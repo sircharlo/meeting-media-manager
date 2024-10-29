@@ -1,9 +1,7 @@
 import type { BrowserWindow } from 'electron';
-import type { ElectronIpcListenKey } from 'src/types';
 
 import path from 'path';
 
-import { PLATFORM } from './constants';
 import { createWindow } from './window-base';
 
 export let mediaWindow: BrowserWindow | null = null;
@@ -34,17 +32,7 @@ export function createMediaWindow() {
   // Force aspect ratio
   mediaWindow.setAspectRatio(16 / 9);
 
-  // Hide menu bar
-  if (PLATFORM !== 'darwin') mediaWindow.setMenuBarVisibility(false);
-
   mediaWindow.on('closed', () => {
     mediaWindow = null;
   });
-}
-
-export function sendToMediaWindow(
-  channel: ElectronIpcListenKey,
-  ...args: unknown[]
-) {
-  mediaWindow?.webContents.send(channel, ...args);
 }
