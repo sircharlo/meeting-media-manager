@@ -111,8 +111,7 @@
   ],
   "lint-staged": {
     "*.{js,ts,mjs,mts,vue}": [
-      "eslint --fix",
-      "yarn type-check"
+      "eslint --fix"
     ],
     "*.{js,ts,mjs,mts,vue,scss,html,md,json}": [
       "prettier --write --ignore-unknown --ignore-path .gitignore"

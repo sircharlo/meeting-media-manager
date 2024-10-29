@@ -1,1 +1,1 @@
-yarn lint-staged
+yarn type-check && yarn lint-staged

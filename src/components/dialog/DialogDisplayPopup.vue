@@ -273,7 +273,7 @@ const {
 const open = defineModel<boolean>({ default: false });
 
 const jwpubImportFilePath = ref('');
-const jwpubImages = ref([] as MultimediaItem[]);
+const jwpubImages = ref<MultimediaItem[]>([]);
 
 const showCustomBackgroundPicker = computed(
   () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
