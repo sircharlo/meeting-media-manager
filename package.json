@@ -108,6 +108,10 @@
   "browserslist": [
     "Electron >= 33"
   ],
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown",
+    "*.{js,ts,mjs,mts,vue}": "eslint --fix"
+  },
   "engines": {
     "node": "^24 || ^22 || ^20",
     "yarn": ">= 4.5.1"
