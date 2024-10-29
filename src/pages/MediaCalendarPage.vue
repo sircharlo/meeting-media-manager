@@ -913,6 +913,12 @@ onMounted(async () => {
   );
   generateMediaList();
   goToNextDayWithMedia();
+
+  // If no date with media is found, go to todays date
+  if (!selectedDate.value) {
+    selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
+  }
+
   sendObsSceneEvent('camera');
   fetchMedia();
   checkCoDate();
