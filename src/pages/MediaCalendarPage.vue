@@ -174,7 +174,11 @@
                   <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
                   {{ $t('next-day-with-media') }}
                 </q-btn>
-                <q-btn color="primary" @click="openImportMenu()">
+                <q-btn
+                  v-if="selectedDate"
+                  color="primary"
+                  @click="openImportMenu()"
+                >
                   <q-icon class="q-mr-sm" name="mmm-import-media" size="xs" />
                   {{ $t('add-extra-media') }}
                 </q-btn>
