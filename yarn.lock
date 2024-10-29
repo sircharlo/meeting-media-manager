@@ -2635,12 +2635,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/adm-zip@npm:^0.5.5":
-  version: 0.5.5
-  resolution: "@types/adm-zip@npm:0.5.5"
+"@types/adm-zip@npm:^0.5.6":
+  version: 0.5.6
+  resolution: "@types/adm-zip@npm:0.5.6"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/4976dc61e33534ecfb7eee87e8a587db06420a4eb9f34eee9425aece82e9fdd01ddd22677ff6430c582f4d9735c7d714c71adb8f149e3511bc189501b4113631
+  checksum: 10c0/b38160de2b821693fda78195819efc8961d957c3cd203473aa98209b1adbafceb458c9a48c199e8ce0d3085a9dbce55ffe649cf774f928ea600c03cc97afcad3
   languageName: node
   linkType: hard
 
@@ -9773,7 +9773,7 @@ __metadata:
     "@sentry/esbuild-plugin": "npm:^2.22.6"
     "@sentry/vite-plugin": "npm:^2.22.6"
     "@sentry/vue": "npm:^8.35.0"
-    "@types/adm-zip": "npm:^0.5.5"
+    "@types/adm-zip": "npm:^0.5.6"
     "@types/better-sqlite3": "npm:^7.6.11"
     "@types/dompurify": "npm:^3.0.5"
     "@types/fs-extra": "npm:^11.0.4"
