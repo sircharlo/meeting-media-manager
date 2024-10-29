@@ -24,7 +24,6 @@ export function createMediaWindow() {
       icon: path.resolve(path.join('icons', 'media-player.png')),
       minHeight: 110,
       minWidth: 195,
-      show: false,
       thickFrame: false,
       title: 'Media Window',
     },

@@ -32,6 +32,7 @@ export function createWindow(
     ),
     minHeight: 400,
     minWidth: 500,
+    show: false,
     title: 'Meeting Media Manager',
     width: windowState.width,
     x: windowState.x,
@@ -47,8 +48,11 @@ export function createWindow(
     },
   });
 
-  // Save the window state
-  windowState.manage(win);
+  win.on('ready-to-show', () => {
+    // Save the window state
+    windowState.manage(win);
+    if (name !== 'media') win.show();
+  });
 
   // Enable Electron remote
   enableElectronRemote(win.webContents);
