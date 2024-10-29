@@ -130,7 +130,9 @@ jobs:
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
 
       - name: Build and Publish Electron App
-        run: yarn build
+        run: |
+          yarn icons
+          yarn build
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
