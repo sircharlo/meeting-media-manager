@@ -29,7 +29,7 @@
     "lint": "eslint --ext .js,.ts,.mjs,.mts,.vue ./",
     "type-check": "vue-tsc --noEmit -p tsconfig.vue-tsc.json",
     "test": "echo \"No test specified\" && exit 0",
-    "prepare": "husky"
+    "prepare": "node .husky/install.mjs"
   },
   "dependencies": {
     "@electron/remote": "^2.1.2",

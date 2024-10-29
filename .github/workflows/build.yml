@@ -120,9 +120,7 @@ jobs:
       #   run: brew install pkg-config cairo pango libpng jpeg giflib
 
       - name: Install dependencies
-        run: |
-          npm set-script prepare ""
-          yarn install
+        run: yarn install
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
 
       - name: Lint files
