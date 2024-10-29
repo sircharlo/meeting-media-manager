@@ -1,5 +1,57 @@
 # Changelog
 
+## 24.10.10
+
+### ✨ New Features
+
+- **new**: Added keyboard shortcuts to navigate to the next/previous media item
+- **new**: Added a right-click menu to media items to hide media items and rename them
+- **new**: Trimmed video times are now respected in imported JWL playlists
+
+### 🎨 UI/UX
+
+- **fix**: Improved pan-zoom behavior on double-click of image preview and scaling
+- **fix**: Corrected pan-zoom maximum zoom
+- **fix**: Hide media item actions in extra media menu and show only when there’s extra/hidden media
+- **fix**: Full-screen windows on macOS can now be shared and controlled in Zoom correctly
+- **fix**: Added tooltip to list all supported extensions
+- **fix**: Improved button popups to show active states
+- **fix**: Enhanced drag-and-drop sorting algorithm
+- **fix**: Added a progress bar during imports
+- **fix**: Made chips for paragraphs/songs take full width on very small screen sizes
+- **fix**: Updated verbiage for imported media notifications
+- **fix**: Optimized application menu for a better user experience on macOS
+- **fix**: Added progress indicators and ensured a smoother user experience
+- **fix**: Fixed download spinner color when menu active
+- **fix**: Improved the navigation drawer color for active items in dark mode
+
+### 🛠️ Code Refactors and Improvements
+
+- **fix**: Dark mode setting was incorrectly detected as missing in some cases
+- **refactor**: Removed unused strings and formatted codebase for consistency
+- **fix**: Fixed typos, corrected errors, and improved linting throughout the codebase
+- **fix**: Properly support `.mov` files and all possible image types ([reference](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types))
+- **fix**: Optimized OBS integration by adding 'previous scene' restore functionality
+- **fix**: Resolved potential drag/drop issue when no path is found
+- **fix**: Disabled a Windows shortcut workaround that is no longer needed
+- **fix**: Improved migration logic, ensured safe parsing, and refactored migration to simplify the process
+- **refactor**: Implemented secure IPC communication for better application security
+- **refactor**: Made send and log functions generic for better reusability
+- **chore**: Ignored certain spellcheck (cspell) rules and fixed language order
+- **chore**: Bumped Pinia dependency and other dependencies
+
+### 📝 Documentation Updates
+
+- **docs**: Improved navigation in FAQs and other documentation pages
+- **docs**: Updated issue reporting link to point to the issue list
+- **docs**: Added steps for correctly fetching the latest version
+- **chore**: Updated Crowdin and docs configurations
+- **chore**: Updated `CONTRIBUTING.md` and added terms of use reference in the README
+
+### 📄 Updated Files
+
+- Updated `CHANGELOG.md` and cleaned up unused strings
+
 ## 24.10.9
 
 ### ✨ New Features
