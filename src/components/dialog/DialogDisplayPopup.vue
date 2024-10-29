@@ -275,11 +275,9 @@ const open = defineModel<boolean>({ default: false });
 const jwpubImportFilePath = ref('');
 const jwpubImages = ref([] as MultimediaItem[]);
 
-
 const showCustomBackgroundPicker = computed(
   () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
 );
-
 
 const chooseCustomBackground = async (reset?: boolean) => {
   try {
@@ -289,12 +287,9 @@ const chooseCustomBackground = async (reset?: boolean) => {
       return;
     } else {
       try {
-        const backgroundPicker = await openFileDialog(true, ['jwpub+image']);
-        if (
-          !backgroundPicker ||
-          backgroundPicker.canceled ||
-          backgroundPicker.filePaths?.length === 0
-        ) {
+        const backgroundPicker = await openFileDialog(true, 'jwpub+image');
+        if (backgroundPicker?.canceled) return;
+        if (!backgroundPicker || backgroundPicker.filePaths?.length === 0) {
           notifyInvalidBackgroundFile();
         } else {
           const filepath = backgroundPicker.filePaths[0];
