@@ -102,7 +102,8 @@ const { customDurations, yeartexts } = storeToRefs(jwStore);
 
 const yeartextHtml = computed(() => {
   const currentYear = new Date().getFullYear();
-  const yearText = yeartexts.value[currentYear]?.[currentSettings.value?.lang];
+  const yearText =
+    yeartexts.value[currentYear]?.[currentSettings.value?.lang || 'E'];
   return yearText ?? '';
 });
 

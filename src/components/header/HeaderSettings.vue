@@ -132,7 +132,7 @@ const frequentlyUsedDirectories = computed(() => {
       langwritten: string;
       pub: string;
     } = {
-      langwritten: currentSettings.value?.lang,
+      langwritten: currentSettings.value?.lang || 'E',
       pub,
     };
     if (issue === 0) {

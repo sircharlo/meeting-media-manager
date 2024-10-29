@@ -63,7 +63,7 @@
                 (!item.depends ||
                   (Array.isArray(item.depends)
                     ? item.depends.every(
-                        (dep) => currentSettings[dep as keyof SettingsItems],
+                        (dep) => currentSettings?.[dep as keyof SettingsItems],
                       )
                     : currentSettings[item.depends as keyof SettingsItems])) &&
                 (!onlyShowInvalidSettings ||

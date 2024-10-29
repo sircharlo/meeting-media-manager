@@ -69,7 +69,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       const { congregations } = storeToRefs(congregationSettingsStore);
       return Object.keys(congregations.value).length > 0
         ? congregations.value[state.currentCongregation]
-        : ({} as SettingsValues);
+        : null;
     },
     currentSongbook() {
       const notSignLanguageSongbook = {

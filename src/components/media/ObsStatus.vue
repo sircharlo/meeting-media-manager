@@ -1,6 +1,6 @@
 <template>
   <q-btn
-    v-if="currentSettings.obsEnable"
+    v-if="currentSettings?.obsEnable"
     :color="
       localObsPopup
         ? 'white'
@@ -102,7 +102,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
           currentSettings.value?.obsMediaScene,
           currentSettings.value?.obsImageScene,
         ]
-          .filter(Boolean)
+          .filter((s): s is string => !!s)
           .forEach((scene) => {
             if (!sceneExists(scene)) notifySceneNotFound();
           });

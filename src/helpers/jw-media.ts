@@ -530,7 +530,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
 
     const allExtractItems = [];
     for (const extract of extracts) {
-      extract.Lang = currentSettings.value?.lang;
+      extract.Lang = currentSettings.value?.lang || 'E';
       if (extract.Link) {
         try {
           const matches = extract.Link.match(/\/(.*)\//);
@@ -614,7 +614,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
 const getWtIssue = async (
   monday: Date,
   weeksInPast: number,
-  langwritten: string,
+  langwritten?: string,
   lastChance = false,
 ) => {
   try {
@@ -801,7 +801,11 @@ const getWeMedia = async (lookupDate: Date) => {
     lookupDate = dateFromString(lookupDate);
     const monday = getSpecificWeekday(lookupDate, 0);
 
-    const getIssue = async (monday: Date, lang: string, lastChance = false) => {
+    const getIssue = async (
+      monday: Date,
+      lang?: string,
+      lastChance = false,
+    ) => {
       let result = await getWtIssue(monday, 8, lang);
       if (result.db?.length === 0) {
         result = await getWtIssue(monday, 10, lang, lastChance);
@@ -950,7 +954,7 @@ const getWeMedia = async (lookupDate: Date) => {
         });
     } catch (e: unknown) {
       errorCatcher(e);
-      songLangs = songs.map(() => currentSettings.value?.lang);
+      songLangs = songs.map(() => currentSettings.value?.lang || 'E');
     }
     const mergedSongs = songs
       .map((song, index) => ({
@@ -1030,7 +1034,7 @@ const getMwMedia = async (lookupDate: Date) => {
     });
     const issueString = formatDate(issue, 'YYYYMM') + '00';
     let publication = {} as PublicationFetcher;
-    const getMwbIssue = async (langwritten: string) => {
+    const getMwbIssue = async (langwritten?: string) => {
       if (!langwritten) return '';
       publication = {
         issue: issueString,
@@ -1235,7 +1239,9 @@ export function findBestResolution(
     const { currentSettings } = storeToRefs(currentState);
     let bestItem = null;
     let bestHeight = 0;
-    const maxRes = parseInt(currentSettings.value?.maxRes?.replace(/\D/g, ''));
+    const maxRes = parseInt(
+      currentSettings.value?.maxRes?.replace(/\D/g, '') || '0',
+    );
     if (mediaLinks.some((m) => !m.subtitled))
       mediaLinks = mediaLinks.filter((m) => !m.subtitled) as MediaLink[];
     for (const mediaLink of mediaLinks) {

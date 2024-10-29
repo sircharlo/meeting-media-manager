@@ -11,7 +11,7 @@ export const useObsStateStore = defineStore('obs-state', {
       const matchScene = isUUID(sceneToCheck)
         ? (scene: JsonObject) => scene.sceneUuid === sceneToCheck
         : (scene: JsonObject) => scene.sceneName === sceneToCheck;
-      return this.scenes?.some(matchScene);
+      return this.scenes.some(matchScene);
     },
   },
   getters: {

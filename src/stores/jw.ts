@@ -230,8 +230,7 @@ export const useJwStore = defineStore('jw-store', {
     async updateYeartext(lang?: string) {
       try {
         const currentState = useCurrentStateStore();
-        const currentLang =
-          (currentState.currentSettings.lang as string) || (lang as string);
+        const currentLang = currentState.currentSettings?.lang || lang;
         if (!currentLang) return;
         const currentYear = new Date().getFullYear();
         this.yeartexts[currentYear] ??= {};

@@ -230,6 +230,7 @@ const remainingTimeBeforeMeetingStart = () => {
       const meetingStartTime = weMeeting
         ? currentSettings.value?.weStartTime
         : currentSettings.value?.mwStartTime;
+      if (!meetingStartTime) return 0;
       const [hours, minutes] = meetingStartTime.split(':').map(Number);
       const meetingStartDateTime = new Date(now);
       meetingStartDateTime.setHours(hours, minutes, 0, 0);

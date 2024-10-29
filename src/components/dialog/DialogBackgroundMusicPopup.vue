@@ -289,7 +289,7 @@ const getNextSong = async () => {
       let attempts = 0;
       while (songList.value.length < 10 && attempts < 10) {
         songList.value = getPublicationDirectoryContents(
-          { langwritten: currentSettings.value?.lang, pub: 'sjjm' },
+          { langwritten: currentSettings.value?.lang || 'E', pub: 'sjjm' },
           'mp3',
         ).sort(() => Math.random() - 0.5);
         if (songList.value.length >= 10) {

@@ -230,7 +230,10 @@ watch(
   ([newAppLang]) => {
     if (newAppLang) {
       if (newAppLang.includes('-')) newAppLang = newAppLang.split('-')[0];
-      if (!localeOptions?.map((option) => option.value).includes(newAppLang)) {
+      if (
+        currentSettings.value &&
+        !localeOptions?.map((option) => option.value).includes(newAppLang)
+      ) {
         currentSettings.value.localAppLang = 'en';
       } else {
         locale.value = newAppLang;
