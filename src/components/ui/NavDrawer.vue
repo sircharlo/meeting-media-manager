@@ -27,11 +27,7 @@
     </q-item>
     <q-item
       v-ripple
-      :class="
-        route.path.startsWith('/media-calendar')
-          ? 'bg-accent-100 text-primary blue-bar '
-          : ''
-      "
+      :class="route.path.startsWith('/media-calendar') ? navActiveClass : ''"
       :disable="!currentSettings || invalidSettings()"
       :to="{ path: '/media-calendar' }"
       clickable
@@ -56,10 +52,10 @@
     <q-item
       v-if="$q.platform.is.platform !== 'mac'"
       v-ripple
+      :active-class="navActiveClass"
       :disable="!currentSettings || invalidSettings()"
       :disabled="mediaPlaying"
       :to="mediaPlaying ? undefined : { path: '/present-website' }"
-      active-class="bg-accent-100 text-primary blue-bar"
       clickable
       @click="stopPlayingMediaFirst()"
     >
@@ -78,9 +74,9 @@
     </q-item>
     <q-item
       v-ripple
+      :active-class="navActiveClass"
       :disabled="mediaPlaying"
       :to="mediaPlaying ? undefined : { path: '/congregation-selector' }"
-      active-class="bg-accent-100 text-primary blue-bar"
       clickable
       @click="stopPlayingMediaFirst()"
     >
@@ -102,10 +98,10 @@
     <q-space />
     <q-item
       v-ripple
+      :active-class="navActiveClass"
       :disable="!currentSettings || route.fullPath.includes('wizard')"
       :disabled="mediaPlaying"
       :to="mediaPlaying ? undefined : { path: '/settings' }"
-      active-class="bg-accent-100 text-primary blue-bar"
       clickable
       @click="stopPlayingMediaFirst()"
     >
@@ -132,9 +128,9 @@
 <script setup lang="ts">
 // Packages
 import { storeToRefs } from 'pinia';
-import { useQuasar } from 'quasar';
+import { Dark, useQuasar } from 'quasar';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -148,6 +144,12 @@ const route = useRoute();
 
 const drawer = ref(true);
 const miniState = defineModel<boolean>({ required: true });
+
+const navActiveClass = computed(
+  () =>
+    (Dark.isActive ? 'bg-accent-400' : 'bg-accent-100') +
+    ' text-primary blue-bar',
+);
 
 const $q = useQuasar();
 
