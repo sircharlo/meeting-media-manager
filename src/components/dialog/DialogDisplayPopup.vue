@@ -327,7 +327,11 @@ const chooseCustomBackground = async (reset?: boolean) => {
           }
         }
       } catch (error) {
-        errorCatcher(error);
+        if (
+          error instanceof Error &&
+          !error.message.includes('Invalid file type')
+        )
+          errorCatcher(error);
         notifyInvalidBackgroundFile();
       }
     }
