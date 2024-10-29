@@ -1208,7 +1208,7 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
       track: publication.track?.toString() || '',
       txtCMSLang: 'E',
     };
-    const response = await get(urlWithParamsToString(url, params));
+    const response = await get<Publication>(urlWithParamsToString(url, params));
     if (!response) {
       downloadProgress.value[
         [
@@ -1224,10 +1224,10 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
         error: true,
       };
     }
-    return response as Publication;
+    return response;
   } catch (e) {
     errorCatcher(e);
-    return {} as Publication;
+    return null;
   }
 };
 
@@ -1258,7 +1258,7 @@ export function findBestResolution(
     return bestItem;
   } catch (e) {
     errorCatcher(e);
-    return mediaLinks.length > 0 ? mediaLinks[mediaLinks.length - 1] : [];
+    return mediaLinks.length > 0 ? mediaLinks[mediaLinks.length - 1] : null;
   }
 }
 
@@ -1295,11 +1295,11 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     if (!responseObject) return { FilePath: '' };
     if (!publication.fileformat)
       publication.fileformat = Object.keys(
-        (responseObject as Publication).files[publication.langwritten],
+        responseObject.files[publication.langwritten],
       )[0];
-    const mediaItemLinks = (responseObject as Publication).files[
-      publication.langwritten
-    ][publication.fileformat] as MediaLink[];
+    const mediaItemLinks = responseObject.files[publication.langwritten][
+      publication.fileformat
+    ] as MediaLink[];
     const bestItem = findBestResolution(mediaItemLinks) as MediaLink;
     if (!bestItem?.file?.url) {
       return { FilePath: '' };
@@ -1439,8 +1439,8 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
     if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
     else if (publication.fileformat?.toLowerCase().includes('mp3'))
       url += '_AUDIO';
-    const responseObject: MediaItemsMediator = await get(url);
-    if (responseObject?.media?.length > 0) {
+    const responseObject = await get<MediaItemsMediator>(url);
+    if (responseObject && responseObject.media.length > 0) {
       return {
         duration: responseObject.media[0].duration ?? undefined,
         subtitles:
@@ -1464,9 +1464,7 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
 const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
   try {
     const { downloadProgress } = storeToRefs(useCurrentStateStore());
-    const publicationInfo = (await getPubMediaLinks(
-      publication,
-    )) as Publication;
+    const publicationInfo = await getPubMediaLinks(publication);
     if (!publication.fileformat) return;
     if (!publicationInfo?.files) {
       downloadProgress.value[
@@ -1593,9 +1591,7 @@ const downloadJwpub = async (
         path: '',
       };
     };
-    const publicationInfo = (await getPubMediaLinks(
-      publication,
-    )) as Publication;
+    const publicationInfo = await getPubMediaLinks(publication);
     if (!publicationInfo?.files) {
       return handleDownloadError();
     }

@@ -351,11 +351,11 @@ const getJwVideos = async () => {
     if (!currentSettings.value) return;
     if (remoteVideosLoadingProgress.value < 1) {
       const getSubcategories = async (category: string) => {
-        return (await get(
+        return await get<JwVideoCategory>(
           `https://b.jw-cdn.org/apis/mediator/v1/categories/${
             currentSettings.value?.lang
           }/${category}?detailed=1&mediaLimit=0&clientType=www`,
-        )) as JwVideoCategory;
+        );
       };
       const subcategories: {
         key: string;
@@ -363,14 +363,14 @@ const getJwVideos = async () => {
       }[] = [{ key: 'LatestVideos', parentCategory: '' }];
       const subcategoriesRequest = await getSubcategories('VideoOnDemand');
       const subcategoriesFirstLevel =
-        subcategoriesRequest.category.subcategories.map((s) => s.key);
+        subcategoriesRequest?.category.subcategories.map((s) => s.key) || [];
       for (const subcategoryFirstLevel of subcategoriesFirstLevel) {
         subcategories.push(
-          ...(
+          ...((
             await getSubcategories(subcategoryFirstLevel)
-          ).category.subcategories.map((s) => {
+          )?.category.subcategories.map((s) => {
             return { key: s.key, parentCategory: subcategoryFirstLevel };
-          }),
+          }) || []),
         );
       }
       let index = 0;

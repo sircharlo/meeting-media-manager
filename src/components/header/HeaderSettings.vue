@@ -161,42 +161,36 @@ const confirmDeleteCacheFiles = (type: 'all' | 'smart') => {
 
 const unusedParentDirectories = computed(() => {
   try {
-    return cacheFiles.value.reduce(
-      (acc, file) => {
-        if (
-          !usedParentDirectories.value[file.parentPath] &&
-          !frequentlyUsedDirectories.value.has(file.parentPath) &&
-          !untouchableDirectories.value.has(file.parentPath)
-        ) {
-          if (acc[file.parentPath]) {
-            acc[file.parentPath] += file.size;
-          } else {
-            acc[file.parentPath] = file.size;
-          }
-        }
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
-  } catch (error) {
-    errorCatcher(error);
-    return {} as Record<string, number>;
-  }
-});
-
-const usedParentDirectories = computed(() => {
-  try {
-    return usedCacheFiles.value.reduce(
-      (acc, file) => {
+    return cacheFiles.value.reduce<Record<string, number>>((acc, file) => {
+      if (
+        !usedParentDirectories.value[file.parentPath] &&
+        !frequentlyUsedDirectories.value.has(file.parentPath) &&
+        !untouchableDirectories.value.has(file.parentPath)
+      ) {
         if (acc[file.parentPath]) {
           acc[file.parentPath] += file.size;
         } else {
           acc[file.parentPath] = file.size;
         }
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+      }
+      return acc;
+    }, {});
+  } catch (error) {
+    errorCatcher(error);
+    return {};
+  }
+});
+
+const usedParentDirectories = computed(() => {
+  try {
+    return usedCacheFiles.value.reduce<Record<string, number>>((acc, file) => {
+      if (acc[file.parentPath]) {
+        acc[file.parentPath] += file.size;
+      } else {
+        acc[file.parentPath] = file.size;
+      }
+      return acc;
+    }, {});
   } catch (error) {
     errorCatcher(error);
     return {};
@@ -222,7 +216,7 @@ const untouchableDirectories = computed(() => {
     ]);
   } catch (error) {
     errorCatcher(error);
-    return new Set() as Set<string>;
+    return new Set<string>();
   }
 });
 

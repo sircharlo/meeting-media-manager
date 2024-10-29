@@ -705,7 +705,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
   };
 };
 
-const sortableMediaItems = ref([] as DynamicMediaObject[]);
+const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
   const combinedMediaItems = datedAdditionalMediaMap.value.concat(

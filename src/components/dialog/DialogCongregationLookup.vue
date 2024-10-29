@@ -141,25 +141,23 @@ watch(open, (newOpen) => {
 const lookupCongregation = async () => {
   try {
     if (congregationName.value?.length > 2) {
-      await get(
+      await get<{ geoLocationList: GeoRecord[] }>(
         'https://apps.jw.org/api/public/meeting-search/weekly-meetings?includeSuggestions=true&keywords=' +
           encodeURIComponent(congregationName.value) +
           '&latitude=0&longitude=0&searchLanguageCode=',
       ).then((response) => {
-        results.value = ((response.geoLocationList as GeoRecord[]) || []).map(
-          (location) => {
-            const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
-              (l) => l.langcode === location.properties.languageCode,
-            );
-            if (!languageIsAlreadyGood) {
-              location.properties.languageCode =
-                congregationLookupLanguages.value.find(
-                  (l) => l.languageCode === location.properties.languageCode,
-                )?.writtenLanguageCode[0] || location.properties.languageCode;
-            }
-            return location;
-          },
-        );
+        results.value = (response?.geoLocationList || []).map((location) => {
+          const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
+            (l) => l.langcode === location.properties.languageCode,
+          );
+          if (!languageIsAlreadyGood) {
+            location.properties.languageCode =
+              congregationLookupLanguages.value.find(
+                (l) => l.languageCode === location.properties.languageCode,
+              )?.writtenLanguageCode[0] || location.properties.languageCode;
+          }
+          return location;
+        });
       });
     } else {
       results.value = [];
@@ -171,7 +169,9 @@ const lookupCongregation = async () => {
 };
 
 const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
-get('https://apps.jw.org/api/public/meeting-search/languages')
+get<CongregationLanguage[]>(
+  'https://apps.jw.org/api/public/meeting-search/languages',
+)
   .then((response) => {
     congregationLookupLanguages.value = response || [];
   })

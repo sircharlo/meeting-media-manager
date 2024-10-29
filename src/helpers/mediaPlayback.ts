@@ -179,10 +179,10 @@ const getMediaFromJwPlaylist = async (
     if (!dbFile) return [];
     let playlistName = '';
     try {
-      const playlistNameQuery = executeQuery(
+      const playlistNameQuery = executeQuery<PlaylistTagItem>(
         dbFile,
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
-      ) as PlaylistTagItem[];
+      );
       if (playlistNameQuery) playlistName = playlistNameQuery[0].Name + ' - ';
     } catch (error) {
       errorCatcher(error);

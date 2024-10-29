@@ -199,13 +199,13 @@ export const useJwStore = defineStore('jw-store', {
 
               const mediaItemLinks = (
                 pubMediaLinks.files[langwritten][fileformat] as MediaLink[]
-              ).filter((mediaLink: MediaLink) => mediaLink.track < MAX_SONGS);
-              const filteredMediaItemLinks = mediaItemLinks.reduce(
-                (acc: MediaLink[], mediaLink: MediaLink) => {
+              ).filter((mediaLink) => mediaLink.track < MAX_SONGS);
+              const filteredMediaItemLinks = mediaItemLinks.reduce<MediaLink[]>(
+                (acc, mediaLink) => {
                   if (!acc.some((m) => m.track === mediaLink.track)) {
                     const bestItem = findBestResolution(
                       mediaItemLinks.filter((m) => m.track === mediaLink.track),
-                    ) as MediaLink;
+                    ) as MediaLink | null;
                     if (bestItem) acc.push(bestItem);
                   }
                   return acc;
