@@ -27,8 +27,8 @@
       v-if="
         Object.values(downloadProgress).filter((item) => item.loaded).length > 0
       "
+      :color="localDownloadPopup ? 'white' : 'primary'"
       class="absolute"
-      color="primary"
       size="8px"
       style="top: 14"
     />
