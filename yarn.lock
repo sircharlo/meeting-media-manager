@@ -2991,21 +2991,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.17.1":
+"@types/node@npm:^20.17.1, @types/node@npm:^20.9.0":
   version: 20.17.1
   resolution: "@types/node@npm:20.17.1"
   dependencies:
     undici-types: "npm:~6.19.2"
   checksum: 10c0/214cf1fffff9c80ae0d49d7dd1f04254215d49711276fff44ff6f61e36dc8d53520509a88add6955fe029b2259c87eaf284b43bc1236d4f4f06bd80c46f0e2b8
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^20.9.0":
-  version: 20.16.13
-  resolution: "@types/node@npm:20.16.13"
-  dependencies:
-    undici-types: "npm:~6.19.2"
-  checksum: 10c0/7f4fd7176db0802c62e11ebbf7a66d0248e2dc8ec9153d9fc8bcb164d9aed581d91c407046c823c522e60d0babfdc24a1618dba7f2c6920ef1a24e1d416c9550
   languageName: node
   linkType: hard
 
