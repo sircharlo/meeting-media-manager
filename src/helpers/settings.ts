@@ -15,8 +15,8 @@ const { getDateDiff } = date;
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
-const requiredRule: ValidationRule = (val: string) =>
-  (val && val.length > 0) || '';
+const requiredRule: ValidationRule = (val: boolean | string) =>
+  (val?.toString() && val?.toString().length > 0) || '';
 
 export const portNumberValidator = (val: string) =>
   val &&

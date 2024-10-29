@@ -34,7 +34,7 @@ export const useCurrentStateStore = defineStore('current-state', {
             if (
               !congregations.value[congregation]?.[
                 settingsDefinitionId as keyof SettingsValues
-              ] &&
+              ]?.toString() &&
               (!settingsDefinition.rules?.includes('regular') ||
                 !congregations.value[congregation]?.disableMediaFetching)
             ) {

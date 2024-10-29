@@ -5,7 +5,7 @@ export interface SettingsValues {
   autoStartMusic: boolean;
   congregationName: string;
   coWeek: string;
-  darkMode: string;
+  darkMode: boolean | string;
   disableMediaFetching: boolean;
   // enablePp: boolean;
   enableExtraCache: boolean;
