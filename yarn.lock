@@ -2991,7 +2991,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.17.1, @types/node@npm:^20.9.0":
+"@types/node@npm:^20.17.2":
+  version: 20.17.2
+  resolution: "@types/node@npm:20.17.2"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 10c0/453ca052f9544ad66a9988ff881024588008795690c9ea7252e0594333ea11cec7d176a76c5e0f6b89ba42427c6e4684321427f9f515e8a9ba9a729f80c13054
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.9.0":
   version: 20.17.1
   resolution: "@types/node@npm:20.17.1"
   dependencies:
@@ -9779,7 +9788,7 @@ __metadata:
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
     "@types/klaw-sync": "npm:^6.0.5"
-    "@types/node": "npm:^20.17.1"
+    "@types/node": "npm:^20.17.2"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2"
     "@typescript-eslint/eslint-plugin": "npm:^7.18.0"
