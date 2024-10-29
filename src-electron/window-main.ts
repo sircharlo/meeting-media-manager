@@ -1,6 +1,6 @@
 import pkg from 'app/package.json';
 import { app, type BrowserWindow } from 'electron';
-import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
+import { existsSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { join } from 'upath';
 
 import { errorCatcher } from './utils';
@@ -57,9 +57,11 @@ function fixWindowSnapping() {
     );
 
     if (existsSync(windowStateFilePath)) {
-      const mainWindowState = JSON.parse(
-        readFileSync(windowStateFilePath, 'utf8'),
-      );
+      const mainWindowState = readJSONSync(windowStateFilePath, {
+        encoding: 'utf8',
+        throws: false,
+      });
+      if (!mainWindowState) return;
 
       const maximumThreshold = 30;
       const { displayBounds, height, width, x, y } = mainWindowState;
@@ -76,7 +78,7 @@ function fixWindowSnapping() {
       if (y < displayBounds.y && y > displayBounds.y - maximumThreshold)
         mainWindowState.y = displayBounds.y;
 
-      writeFileSync(windowStateFilePath, JSON.stringify(mainWindowState));
+      writeJSONSync(windowStateFilePath, mainWindowState);
     }
   } catch (error) {
     errorCatcher(error);

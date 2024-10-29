@@ -6,6 +6,7 @@ import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
 const { fs, klawSync, path } = electronApi;
+const { readJSONSync } = fs;
 
 const oldPrefsFilterFn = (item: { path: string }) => {
   try {
@@ -33,8 +34,7 @@ const getOldPrefsPaths = (oldPath: string) => {
 
 const parsePrefsFile = (path: string) => {
   try {
-    const content = fs.readFileSync(path, 'utf8');
-    return JSON.parse(content);
+    return readJSONSync(path, { encoding: 'utf8', throws: false }) || {};
   } catch (error) {
     errorCatcher(error);
     return {};
