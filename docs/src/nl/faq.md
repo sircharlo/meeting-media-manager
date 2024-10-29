@@ -12,7 +12,7 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 
 ## :thinking: Gaat deze applicatie in tegen de gebruikersvoorwaarden van JW.org?
 
-**Nee** De JW.org [Gebruiksvoorwaarden](https://www.jw.org/finder?docid=1011511\&prefer=content) staat expliciet het soort gebruik toe dat we maken. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > Het is niet toegestaan:
 >
@@ -20,15 +20,15 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 
 ## :radioactive: Hoe kan ik een probleem melden?
 
-Maak alsjeblieft een [issue](https://github.com/sircharlo/meeting-media-manager/issues) aan op de officiële GitHub repository.
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
 
 ## :new: Hoe kan ik een nieuwe functie of verbetering aanvragen?
 
-Maak alsjeblieft een [discussie](https://github.com/sircharlo/meeting-media-manager/discussions) aan op de officiële GitHub repository.
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
 
 ## :handshake: Hoe kan ik wat code bijdragen?
 
-Bekijk alsjeblieft de [handleiding om bij te dragen](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) op de officiële GitHub repository.
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
 
 ## :x: Kan ik doneren aan het project?
 
