@@ -36,9 +36,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
 ### Translation Progress
-
 <!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
-
 
 #### Available
 
