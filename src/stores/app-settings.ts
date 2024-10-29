@@ -55,7 +55,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
           congregationStore.$patch({
             congregations: parseJsonSafe<Record<string, SettingsValues>>(
               QuasarStorage.getItem('congregations'),
-              congregationStore.congregations,
+              {},
             ),
           });
 
@@ -64,22 +64,16 @@ export const useAppSettingsStore = defineStore('app-settings', {
           jwStore.$patch({
             additionalMediaMaps: parseJsonSafe<
               Record<string, Record<string, DynamicMediaObject[]>>
-            >(
-              QuasarStorage.getItem('additionalMediaMaps'),
-              jwStore.additionalMediaMaps,
-            ),
+            >(QuasarStorage.getItem('additionalMediaMaps'), {}),
             customDurations: parseJsonSafe<
               Record<
                 string,
                 Record<string, Record<string, { max: number; min: number }>>
               >
-            >(
-              QuasarStorage.getItem('customDurations'),
-              jwStore.customDurations,
-            ),
+            >(QuasarStorage.getItem('customDurations'), {}),
             jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
               QuasarStorage.getItem('jwLanguages'),
-              jwStore.jwLanguages,
+              { list: [], updated: new Date() },
             ),
             jwSongs: parseJsonSafe<
               Record<string, { list: MediaLink[]; updated: Date }>
@@ -90,11 +84,11 @@ export const useAppSettingsStore = defineStore('app-settings', {
             ),
             mediaSort: parseJsonSafe<Record<string, Record<string, string[]>>>(
               QuasarStorage.getItem('mediaSort'),
-              jwStore.mediaSort,
+              {},
             ),
             yeartexts: parseJsonSafe<Record<number, Record<string, string>>>(
               QuasarStorage.getItem('yeartexts'),
-              jwStore.yeartexts,
+              {},
             ),
           });
 
@@ -113,7 +107,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
 
           this.screenPreferences = parseJsonSafe(
             QuasarStorage.getItem('screenPreferences'),
-            this.screenPreferences,
+            { preferredScreenNumber: 0, preferWindowed: false },
           );
           QuasarStorage.removeItem('screenPreferences');
         } else {
