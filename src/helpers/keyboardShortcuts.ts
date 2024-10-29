@@ -12,8 +12,14 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   shortcutMediaNext: () => {
     window.dispatchEvent(new CustomEvent('shortcutMediaNext'));
   },
+  shortcutMediaPauseResume: () => {
+    window.dispatchEvent(new CustomEvent('shortcutMediaPauseResume'));
+  },
   shortcutMediaPrevious: () => {
     window.dispatchEvent(new CustomEvent('shortcutMediaPrevious'));
+  },
+  shortcutMediaStop: () => {
+    window.dispatchEvent(new CustomEvent('shortcutMediaStop'));
   },
   shortcutMediaWindow: () => {
     showMediaWindow();

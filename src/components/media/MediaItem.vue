@@ -429,6 +429,7 @@
               </q-btn>
               <q-btn
                 v-if="mediaPlayingAction === 'pause'"
+                ref="pauseResumeButton"
                 color="primary"
                 icon="mmm-play"
                 outline
@@ -440,6 +441,7 @@
                   media.isVideo &&
                   (mediaPlayingAction === 'play' || !mediaPlayingAction)
                 "
+                ref="pauseResumeButton"
                 color="negative"
                 icon="mmm-pause"
                 outline
@@ -448,6 +450,7 @@
               />
               <q-btn
                 v-if="mediaPlayingAction !== '' || mediaPlayingAction === ''"
+                ref="stopButton"
                 class="q-ml-sm"
                 color="negative"
                 icon="mmm-stop"
@@ -511,7 +514,13 @@
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
         <q-btn :label="$t('cancel')" flat @click="mediaToStop = ''" />
-        <q-btn :label="$t('stop')" color="negative" flat @click="stopMedia()" />
+        <q-btn
+          ref="stopButton"
+          :label="$t('stop')"
+          color="negative"
+          flat
+          @click="stopMedia()"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -800,6 +809,8 @@ onUnmounted(() => {
 });
 
 const playButton: Ref<HTMLButtonElement | undefined> = ref();
+const pauseResumeButton: Ref<HTMLButtonElement | undefined> = ref();
+const stopButton: Ref<HTMLButtonElement | undefined> = ref();
 
 useEventListener(window, 'shortcutMediaNext', () => {
   if (playButton.value && props.playState === 'next') playButton.value.click();
@@ -807,5 +818,13 @@ useEventListener(window, 'shortcutMediaNext', () => {
 useEventListener(window, 'shortcutMediaPrevious', () => {
   if (playButton.value && props.playState === 'previous')
     playButton.value.click();
+});
+useEventListener(window, 'shortcutMediaPauseResume', () => {
+  if (pauseResumeButton.value && props.playState === 'current')
+    pauseResumeButton.value.click();
+});
+useEventListener(window, 'shortcutMediaStop', () => {
+  if (stopButton.value && props.playState === 'current')
+    stopButton.value.click();
 });
 </script>

@@ -185,6 +185,18 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'keyboardShortcuts',
     type: 'shortcut',
   },
+  shortcutMediaPauseResume: {
+    depends: 'enableKeyboardShortcuts',
+    group: 'advanced',
+    subgroup: 'keyboardShortcuts',
+    type: 'shortcut',
+  },
+  shortcutMediaStop: {
+    depends: 'enableKeyboardShortcuts',
+    group: 'advanced',
+    subgroup: 'keyboardShortcuts',
+    type: 'shortcut',
+  },
   shortcutMusic: {
     depends: 'enableKeyboardShortcuts',
     group: 'advanced',
@@ -285,7 +297,9 @@ export const defaultSettings: SettingsValues = {
   obsPassword: '',
   obsPort: '',
   shortcutMediaNext: '',
+  shortcutMediaPauseResume: '',
   shortcutMediaPrevious: '',
+  shortcutMediaStop: '',
   shortcutMediaWindow: '',
   shortcutMusic: '',
   weDay: '',
