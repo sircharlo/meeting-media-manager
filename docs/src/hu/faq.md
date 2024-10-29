@@ -12,7 +12,7 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 ## :thinking: Ez az alkalmazás sérti a JW.org felhasználási feltételeit?
 
-**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > Tilos:
 >

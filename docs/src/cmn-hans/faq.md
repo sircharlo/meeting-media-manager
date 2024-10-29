@@ -12,7 +12,7 @@
 
 ## :thinking: 此应用是否违反了JW.org使用条款？
 
-**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. 以下是相关摘录（重要部分已标明）：
+**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. 以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >

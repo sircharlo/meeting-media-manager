@@ -12,7 +12,7 @@ Le code source de cette application est disponible afin de donner à tous la pos
 
 ## :thinking: Cette application enfreint-elle les conditions d'utilisation de JW.org ?
 
-**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Voici l'extrait pertinent de ces conditions :
+**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Voici l'extrait pertinent de ces conditions :
 
 > Il n’est pas permis de :
 >

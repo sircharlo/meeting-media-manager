@@ -27,65 +27,65 @@
           </template>
           <template v-else>
             <q-scroll-area
-              :bar-style="barStyle()" 
+              :bar-style="barStyle()"
               :thumb-style="thumbStyle()"
               style="height: 40vh; width: -webkit-fill-available"
             >
-            <template
-              v-for="statusObject in statusConfig"
-              :key="statusObject.status"
-            >
-              <p
-                v-if="hasStatus(downloadProgress, statusObject.status)"
-                class="card-section-title text-dark-grey q-mt-md"
-              >
-                {{ $t(statusObject.label) }}
-              </p>
               <template
-                v-for="(item, url) in filteredDownloads(
-                  downloadProgress,
-                  statusObject.status,
-                )"
-                :key="url"
+                v-for="statusObject in statusConfig"
+                :key="statusObject.status"
               >
-                <div class="row items-center q-py-sm">
-                  <div class="col text-weight-medium text-dark-grey">
-                    {{ url && path.basename(url as string) }}
+                <p
+                  v-if="hasStatus(downloadProgress, statusObject.status)"
+                  class="card-section-title text-dark-grey q-mt-md"
+                >
+                  {{ $t(statusObject.label) }}
+                </p>
+                <template
+                  v-for="(item, url) in filteredDownloads(
+                    downloadProgress,
+                    statusObject.status,
+                  )"
+                  :key="url"
+                >
+                  <div class="row items-center q-py-sm">
+                    <div class="col text-weight-medium text-dark-grey">
+                      {{ url && path.basename(url as string) }}
+                    </div>
+                    <div class="col-shrink">
+                      <q-icon
+                        v-if="statusObject.icon"
+                        :color="statusColor(statusObject.status)"
+                        :name="statusObject.icon"
+                        size="sm"
+                      >
+                        <q-tooltip v-if="statusObject.status === 'error'">
+                          {{ $t('errorDownloadingMeetingMedia') }}.
+                          {{ $t('tryConfiguringFallbackLanguage') }}.
+                        </q-tooltip>
+                      </q-icon>
+                      <q-circular-progress
+                        v-else-if="showProgress(item)"
+                        :thickness="0.3"
+                        :value="progressValue(item)"
+                        color="primary"
+                        size="sm"
+                      />
+                    </div>
                   </div>
-                  <div class="col-shrink">
-                    <q-icon
-                      v-if="statusObject.icon"
-                      :color="statusColor(statusObject.status)"
-                      :name="statusObject.icon"
-                      size="sm"
-                    >
-                      <q-tooltip v-if="statusObject.status === 'error'">
-                        {{ $t('errorDownloadingMeetingMedia') }}.
-                        {{ $t('tryConfiguringFallbackLanguage') }}.
-                      </q-tooltip>
-                    </q-icon>
-                    <q-circular-progress
-                      v-else-if="showProgress(item)"
-                      :thickness="0.3"
-                      :value="progressValue(item)"
-                      color="primary"
-                      size="sm"
-                    />
-                  </div>
-                </div>
-                <q-separator
-                  v-if="
-                    Object.keys(
-                      filteredDownloads(
-                        downloadProgress,
-                        statusObject.status,
-                      ) || {},
-                    )?.length > 1
-                  "
-                  class="bg-accent-200"
-                />
+                  <q-separator
+                    v-if="
+                      Object.keys(
+                        filteredDownloads(
+                          downloadProgress,
+                          statusObject.status,
+                        ) || {},
+                      )?.length > 1
+                    "
+                    class="bg-accent-200"
+                  />
+                </template>
               </template>
-            </template>
             </q-scroll-area>
           </template>
         </div>

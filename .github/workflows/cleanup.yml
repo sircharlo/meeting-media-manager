@@ -20,7 +20,7 @@ jobs:
       - name: Cleanup cache
         run: |
           gh extension install actions/gh-actions-cache
-          
+
           REPO=${{ github.server_url }}/${{ github.repository }}
           REF=${{ github.event.pull_request.number }}
           BRANCH=${{ inputs.branch || 'refs/pull/$REF/merge' }}

@@ -12,7 +12,7 @@ Källkoden för denna app är tillgänglig för alla att undersöka och verifier
 
 ## :thinking: Bryter den här appen mot JW.orgs användarvillkor?
 
-**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) actually explicitly allow the kind of usage that we are making. Här är ett utdrag från dessa villkor (fetstilt av mig):
+**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Här är ett utdrag från dessa villkor (fetstilt av mig):
 
 > Du får inte:
 >

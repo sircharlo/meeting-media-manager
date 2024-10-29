@@ -3,9 +3,7 @@
     :color="
       localDownloadPopup ? 'white' : online ? 'white-transparent' : 'negative'
     "
-    :text-color="
-      localDownloadPopup ? (online ? 'primary' : 'negative') : ''
-    "
+    :text-color="localDownloadPopup ? (online ? 'primary' : 'negative') : ''"
     class="super-rounded position-relative"
     rounded
     unelevated

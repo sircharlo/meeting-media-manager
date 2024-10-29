@@ -5,7 +5,6 @@ on:
 
 jobs:
   version_checker:
-
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -58,7 +57,6 @@ jobs:
         uses: r7kamura/bump-request@v0.5.0
         with:
           release_type: 'patch'
-
 
       # - name: Stop rest of actions since package.json version is the same
       #   if: steps.compare-versions.outputs.NEW_VERSION
