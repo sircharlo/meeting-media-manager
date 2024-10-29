@@ -94,10 +94,10 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       weDay: oldPrefs.meeting?.weDay?.toString() || '',
       weStartTime: oldPrefs.meeting?.weStartTime?.toString() || '',
     };
-    return newPrefsObject as SettingsValues;
+    return newPrefsObject;
   } catch (error) {
     errorCatcher(error);
-    return extend(true, {}, defaultSettings) as SettingsValues;
+    return extend<SettingsValues>(true, {}, defaultSettings);
   }
 };
 

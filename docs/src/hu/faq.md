@@ -12,7 +12,7 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 ## :thinking: Ez az alkalmazás sérti a JW.org felhasználási feltételeit?
 
-**Nem.** A JW.org [Felhasználási feltételek](https://www.jw.org/finder?docid=1011511&prefer=content) kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Here is the relevant excerpt from those terms (emphasis added):
+**Nem.** A [JW.org Felhasználási feltételek](https://www.jw.org/finder?docid=1011511&prefer=content) kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Here is the relevant excerpt from those terms (emphasis added):
 
 > Tilos:
 >
@@ -20,15 +20,15 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 ## :radioactive: Hogyan jelenthetek be egy problémát?
 
-Kérjük, jelentse be a [problémát](https://github.com/sircharlo/meeting-media-manager/issues) a hivatalos GitHub oldalon.
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
 
 ## :new: Hogyan kérhetek új funkciót vagy továbbfejlesztést?
 
-Kérjük, nyisson [megbeszélést](https://github.com/sircharlo/meeting-media-manager/discussions) a hivatalos GitHub oldalon.
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
 
 ## :handshake: Hogyan tudok hozzájárulni a program kódjához?
 
-Kérjük, tekintse meg a hivatalos GitHub-tárban található [hozzájárulási útmutatót](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md).
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
 
 ## :x: Adományozhatok a projekt számára?
 

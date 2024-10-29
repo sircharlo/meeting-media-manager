@@ -57,11 +57,14 @@ yarn build
 # Build electron application for production with debugging enabled
 yarn build:debug
 
+# Format all files
+yarn format
+
 # Lint all JS/TS/Vue files
 yarn lint
 
-# Format all files
-yarn format
+# Check for type errors
+yarn type-check
 
 # Run tests
 yarn test

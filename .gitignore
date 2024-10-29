@@ -54,5 +54,8 @@ yarn-error.log*
 docs/.vitepress/dist
 docs/.vitepress/cache
 
+# Output of 'yarn icons'
+src/css/mmm-icons.*
+
 # Custom dep helper script
 depChecker.js

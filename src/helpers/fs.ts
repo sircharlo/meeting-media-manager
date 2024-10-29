@@ -1,5 +1,4 @@
 import type { PathLike } from 'fs-extra';
-import type { Item } from 'klaw-sync';
 import type { IAudioMetadata } from 'music-metadata';
 import type {
   MultimediaItem,
@@ -85,7 +84,7 @@ const getPublicationDirectoryContents = (
       },
       nodir: true,
     });
-    return files as Item[];
+    return [...files];
   } catch (error) {
     errorCatcher(error);
     return [];

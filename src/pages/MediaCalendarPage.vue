@@ -174,7 +174,11 @@
                   <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
                   {{ $t('next-day-with-media') }}
                 </q-btn>
-                <q-btn color="primary" @click="openImportMenu()">
+                <q-btn
+                  v-if="selectedDate"
+                  color="primary"
+                  @click="openImportMenu()"
+                >
                   <q-icon class="q-mr-sm" name="mmm-import-media" size="xs" />
                   {{ $t('add-extra-media') }}
                 </q-btn>
@@ -701,7 +705,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
   };
 };
 
-const sortableMediaItems = ref([] as DynamicMediaObject[]);
+const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
   const combinedMediaItems = datedAdditionalMediaMap.value.concat(
@@ -909,6 +913,12 @@ onMounted(async () => {
   );
   generateMediaList();
   goToNextDayWithMedia();
+
+  // If no date with media is found, go to todays date
+  if (!selectedDate.value) {
+    selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
+  }
+
   sendObsSceneEvent('camera');
   fetchMedia();
   checkCoDate();

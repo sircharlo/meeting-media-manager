@@ -128,7 +128,7 @@ import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { onMounted, ref, type Ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
 
@@ -289,7 +289,7 @@ const getNextSong = async () => {
       let attempts = 0;
       while (songList.value.length < 10 && attempts < 10) {
         songList.value = getPublicationDirectoryContents(
-          { langwritten: currentSettings.value?.lang, pub: 'sjjm' },
+          { langwritten: currentSettings.value?.lang || 'E', pub: 'sjjm' },
           'mp3',
         ).sort(() => Math.random() - 0.5);
         if (songList.value.length >= 10) {
@@ -327,7 +327,7 @@ const getNextSong = async () => {
           })
           .filter((song) => song !== null);
         if (timeBeforeMeetingStart > 0) {
-          const customSongList = ref([]) as Ref<SongItem[]>;
+          let customSongList: SongItem[] = [];
           if (selectedDaySongs.length) {
             songList.value.push(...selectedDaySongs);
             songList.value.reverse();
@@ -336,15 +336,15 @@ const getNextSong = async () => {
             while (musicDurationSoFar < timeBeforeMeetingStart) {
               const queuedSong = songList.value.shift() as SongItem;
               if (!queuedSong) {
-                customSongList.value = songList.value;
+                customSongList = songList.value;
                 break;
               }
               songList.value.push(queuedSong);
-              customSongList.value.unshift(queuedSong);
+              customSongList.unshift(queuedSong);
               secsFromEnd = timeBeforeMeetingStart - musicDurationSoFar;
               musicDurationSoFar += queuedSong.duration as number;
             }
-            songList.value = customSongList.value;
+            songList.value = customSongList;
           }
         }
       } catch (error) {

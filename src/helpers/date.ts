@@ -180,21 +180,27 @@ function updateLookupPeriod(reset = false) {
     ]?.filter((day) => {
       return !isInPast(day.date);
     });
-    const futureDates = Array.from({ length: DAYS_IN_FUTURE }, (_, i) => {
-      const dayDate = addToDate(
-        buildDate({ hour: 0, milliseconds: 0, minute: 0, second: 0 }),
-        { day: i },
-      );
-      return {
-        date: dayDate as Date,
-        dynamicMedia: [] as DynamicMediaObject[],
-        meeting: isMwMeetingDay(dayDate)
-          ? 'mw'
-          : isWeMeetingDay(dayDate)
-            ? 'we'
-            : false,
-      };
-    }) as DateInfo[];
+    const futureDates: DateInfo[] = Array.from(
+      { length: DAYS_IN_FUTURE },
+      (_, i) => {
+        const dayDate = addToDate(
+          buildDate({ hour: 0, milliseconds: 0, minute: 0, second: 0 }),
+          { day: i },
+        );
+        return {
+          complete: false,
+          date: dayDate,
+          dynamicMedia: [] as DynamicMediaObject[],
+          error: false,
+          meeting: isMwMeetingDay(dayDate)
+            ? 'mw'
+            : isWeMeetingDay(dayDate)
+              ? 'we'
+              : false,
+          today: datesAreSame(dayDate, new Date()),
+        };
+      },
+    );
     lookupPeriod.value[currentCongregation.value].push(
       ...futureDates.filter(
         (day) =>
@@ -230,6 +236,7 @@ const remainingTimeBeforeMeetingStart = () => {
       const meetingStartTime = weMeeting
         ? currentSettings.value?.weStartTime
         : currentSettings.value?.mwStartTime;
+      if (!meetingStartTime) return 0;
       const [hours, minutes] = meetingStartTime.split(':').map(Number);
       const meetingStartDateTime = new Date(now);
       meetingStartDateTime.setHours(hours, minutes, 0, 0);

@@ -8,7 +8,7 @@ var options = {
   fontsOutput: 'src/css/',
   htmlOutput: false,
   jsOutput: false,
-  svgs: 'ui/icons/*.svg',
+  svgs: 'build/icons/*.svg',
   // Font loads the absolute path. If not set, the relative path will be automatically calculated based on `cssOutput` and `fontsOutput`.
   // cssFontPath: '',
   template: 'scss',

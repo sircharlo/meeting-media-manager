@@ -32,11 +32,11 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
 const getCurrentShortcuts = () => {
   try {
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
+    if (!currentState.currentSettings) return [];
     const shortcuts = [];
     for (const shortcutName of Object.keys(shortcutCallbacks)) {
       const shortcutVal =
-        currentSettings.value[shortcutName as keyof SettingsValues];
+        currentState.currentSettings[shortcutName as keyof SettingsValues];
       if (shortcutVal) shortcuts.push(shortcutVal);
     }
     return shortcuts;

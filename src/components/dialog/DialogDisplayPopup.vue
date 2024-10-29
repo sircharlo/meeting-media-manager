@@ -273,13 +273,11 @@ const {
 const open = defineModel<boolean>({ default: false });
 
 const jwpubImportFilePath = ref('');
-const jwpubImages = ref([] as MultimediaItem[]);
-
+const jwpubImages = ref<MultimediaItem[]>([]);
 
 const showCustomBackgroundPicker = computed(
   () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
 );
-
 
 const chooseCustomBackground = async (reset?: boolean) => {
   try {
@@ -289,12 +287,9 @@ const chooseCustomBackground = async (reset?: boolean) => {
       return;
     } else {
       try {
-        const backgroundPicker = await openFileDialog(true, ['jwpub+image']);
-        if (
-          !backgroundPicker ||
-          backgroundPicker.canceled ||
-          backgroundPicker.filePaths?.length === 0
-        ) {
+        const backgroundPicker = await openFileDialog(true, 'jwpub+image');
+        if (backgroundPicker?.canceled) return;
+        if (!backgroundPicker || backgroundPicker.filePaths?.length === 0) {
           notifyInvalidBackgroundFile();
         } else {
           const filepath = backgroundPicker.filePaths[0];
@@ -303,11 +298,9 @@ const chooseCustomBackground = async (reset?: boolean) => {
             const unzipDir = await decompressJwpub(filepath);
             const db = findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
-            jwpubImages.value = (
-              executeQuery(
-                db,
-                "SELECT * FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';",
-              ) as MultimediaItem[]
+            jwpubImages.value = executeQuery<MultimediaItem>(
+              db,
+              "SELECT * FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';",
             ).map((multimediaItem) => {
               return {
                 ...multimediaItem,

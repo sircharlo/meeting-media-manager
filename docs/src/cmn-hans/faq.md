@@ -12,7 +12,7 @@
 
 ## :thinking: 此应用是否违反了JW.org使用条款？
 
-\*\*不。\*\*JW.org[使用条款](https://www.jw.org/finder?docid=1011511\&prefer=content)实际上明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）：
+\*\*不。\*\*[JW.org使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)实际上明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
@@ -20,15 +20,15 @@
 
 ## :radioactive: 如何报告问题？
 
-请在官方的 GitHub 仓库上提交一个 [issue](https://github.com/sircharlo/meeting-media-manager/issues)。
+请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。
 
 ## :new: 如何请求新功能或优化功能？
 
-请在官方的 GitHub 仓库打开 [discussion](https://github.com/sircharlo/meeting-media-manager/discussions)
+请在官方的 GitHub 仓库 [打开讨论](https://github.com/sircharlo/meeting-media-manager/discussions)
 
 ## :handshake: 如何贡献一些代码？
 
-请查看官方GitHub 仓库的[contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。
+请查看官方GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。
 
 ## :x: 如何为该项目做出捐献？
 

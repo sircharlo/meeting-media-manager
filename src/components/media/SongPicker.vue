@@ -124,18 +124,18 @@ const addSong = async (songTrack: number) => {
   try {
     loading.value = true;
     if (songTrack) {
-      const songTrackItem = {
+      const songTrackItem: PublicationFetcher = {
         fileformat: 'MP4',
-        langwritten: currentSettings.value?.lang,
+        langwritten: currentSettings.value?.lang || 'E',
         pub: currentSongbook.value?.pub,
         track: songTrack,
-      } as PublicationFetcher;
+      };
       const [songTrackFiles, { thumbnail, title }] = await Promise.all([
         getPubMediaLinks(songTrackItem),
         getJwMediaInfo(songTrackItem),
       ]);
       downloadAdditionalRemoteVideo(
-        songTrackFiles?.files[currentSettings.value?.lang]['MP4'],
+        songTrackFiles?.files[currentSettings.value?.lang || 'E']['MP4'] || [],
         thumbnail,
         songTrack,
         title.replace(/^\d+\.\s*/, ''),

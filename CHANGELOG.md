@@ -1,4 +1,58 @@
+<!-- markdownlint-disable no-duplicate-heading -->
+
 # Changelog
+
+## 24.10.10
+
+### ✨ New Features
+
+- **new**: Added keyboard shortcuts to navigate to the next/previous media item
+- **new**: Added a right-click menu to media items to hide media items and rename them
+- **new**: Trimmed video times are now respected in imported JWL playlists
+
+### 🎨 UI/UX
+
+- **fix**: Improved pan-zoom behavior on double-click of image preview and scaling
+- **fix**: Corrected pan-zoom maximum zoom
+- **fix**: Hide media item actions in extra media menu and show only when there’s extra/hidden media
+- **fix**: Full-screen windows on macOS can now be shared and controlled in Zoom correctly
+- **fix**: Added tooltip to list all supported extensions
+- **fix**: Improved button popups to show active states
+- **fix**: Enhanced drag-and-drop sorting algorithm
+- **fix**: Added a progress bar during imports
+- **fix**: Made chips for paragraphs/songs take full width on very small screen sizes
+- **fix**: Updated verbiage for imported media notifications
+- **fix**: Optimized application menu for a better user experience on macOS
+- **fix**: Added progress indicators and ensured a smoother user experience
+- **fix**: Fixed download spinner color when menu active
+- **fix**: Improved the navigation drawer color for active items in dark mode
+
+### 🛠️ Code Refactors and Improvements
+
+- **fix**: Dark mode setting was incorrectly detected as missing in some cases
+- **refactor**: Removed unused strings and formatted codebase for consistency
+- **fix**: Fixed typos, corrected errors, and improved linting throughout the codebase
+- **fix**: Properly support `.mov` files and all possible image types ([reference](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types))
+- **fix**: Optimized OBS integration by adding 'previous scene' restore functionality
+- **fix**: Resolved potential drag/drop issue when no path is found
+- **fix**: Disabled a Windows shortcut workaround that is no longer needed
+- **fix**: Improved migration logic, ensured safe parsing, and refactored migration to simplify the process
+- **refactor**: Implemented secure IPC communication for better application security
+- **refactor**: Made send and log functions generic for better reusability
+- **chore**: Ignored certain spellcheck (cspell) rules and fixed language order
+- **chore**: Bumped Pinia dependency and other dependencies
+
+### 📝 Documentation Updates
+
+- **docs**: Improved navigation in FAQs and other documentation pages
+- **docs**: Updated issue reporting link to point to the issue list
+- **docs**: Added steps for correctly fetching the latest version
+- **chore**: Updated Crowdin and docs configurations
+- **chore**: Updated `CONTRIBUTING.md` and added terms of use reference in the README
+
+### 📄 Updated Files
+
+- Updated `CHANGELOG.md` and cleaned up unused strings
 
 ## 24.10.9
 
@@ -328,7 +382,7 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 
 ### New or improved features
 
-- 🚀 Zoom integration! Automate various Zoom actions, like toggling video/microphone/spotlight or allow to unmute (see [#1303](https://github.com/sircharlo/meeting-media-manager/pull/1303) for details). It's still a beta feature, so make sure you test it thoroughly before use during meetings. Also, always verify that the automation was executed successfully.
+- 🚀 Zoom integration! Automate various Zoom actions, like toggling video/microphone/spotlight or allow to un-mute (see [#1303](https://github.com/sircharlo/meeting-media-manager/pull/1303) for details). It's still a beta feature, so make sure you test it thoroughly before use during meetings. Also, always verify that the automation was executed successfully.
 - A new optional setting to configure a OBS Studio scene to be used for showing images (useful to show a picture-in-picture style overlay)
 - New language: Romanian (thanks [@baciucristian](https://github.com/baciucristian)!)
 - New prefix schema: `{heading number}-{part number}-{media number}`. Media for the _Treasures_ section starts with `01`, _Apply Yourselves_ starts with `02`, and _Living as Christians_ with `03`.

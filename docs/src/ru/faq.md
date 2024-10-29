@@ -12,7 +12,7 @@ The source code for this app is available for all to examine and verify what goe
 
 ## :thinking: Нарушает ли это приложение условия использования JW.org?
 
-**Нет.** [Условия пользования](https://www.jw.org/finder?docid=1011511\\&prefer=content) JW.org разрешают тип пользования, которым мы занимаемся. Here is the relevant excerpt from those terms (emphasis added):
+**Нет.** [Условия пользования JW.org](https://www.jw.org/finder?docid=1011511&prefer=content) разрешают тип пользования, которым мы занимаемся. Here is the relevant excerpt from those terms (emphasis added):
 
 > You may not:
 >
@@ -20,15 +20,15 @@ The source code for this app is available for all to examine and verify what goe
 
 ## :radioactive: How do I report an issue?
 
-Please file an [issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
 
 ## :new: Как я могу попросить о новой функции или улучшении?
 
-Please open a [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
 
 ## :handshake: Как я могу помочь с кодом?
 
-Please see the [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
 
 ## :x: Могу ли я сделать пожертвование проекту?
 

@@ -4,10 +4,10 @@ import OBSWebSocket from 'obs-websocket-js';
 import { Dark } from 'quasar';
 const obsWebSocket = new OBSWebSocket();
 
-const queues = {
-  downloads: {} as Record<string, PQueue>,
-  meetings: {} as Record<string, PQueue>,
-};
+const queues: {
+  downloads: Record<string, PQueue>;
+  meetings: Record<string, PQueue>;
+} = { downloads: {}, meetings: {} };
 
 const thumbStyle = () => {
   return {

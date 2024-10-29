@@ -15,7 +15,9 @@
           }}
         </div>
         <div v-if="s34mpDb || s34mpFile" class="col-grow text-caption">
-          <template v-if="s34mpDb && filteredPublicTalks.length > 0">
+          <template
+            v-if="s34mpDb && s34mpInfo && filteredPublicTalks.length > 0"
+          >
             {{ s34mpInfo.Year }}, v{{ s34mpInfo.VersionNumber }}
           </template>
           <q-spinner v-else color="primary" size="sm" />
@@ -114,7 +116,7 @@ const s34mpBasename = ref();
 const s34mpFile = ref();
 const s34mpDir = ref();
 const s34mpDb = ref();
-const s34mpInfo = ref({} as PublicationInfo);
+const s34mpInfo = ref<null | PublicationInfo>(null);
 
 const populatePublicTalks = () => {
   s34mpDb.value = findDb(s34mpDir.value);

@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "24.10.10",
+  "version": "24.10.11",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -25,8 +25,9 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
-    "lint": "eslint --ext .js,.ts,.vue ./",
+    "format": "prettier \"**/*\" --ignore-path .gitignore --ignore-unknown --write",
+    "lint": "eslint --ext .js,.ts,.mjs,.mts,.vue ./",
+    "type-check": "vue-tsc --noEmit -p tsconfig.vue-tsc.json",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
@@ -92,6 +93,8 @@
     "eslint-plugin-perfectionist": "^3.9.1",
     "eslint-plugin-vue": "^9.30.0",
     "globals": "^15.11.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
     "process": "^0.11.10",
@@ -105,6 +108,10 @@
   "browserslist": [
     "Electron >= 33"
   ],
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown",
+    "*.{js,ts,mjs,mts,vue}": "eslint --fix"
+  },
   "engines": {
     "node": "^24 || ^22 || ^20",
     "yarn": ">= 4.5.1"

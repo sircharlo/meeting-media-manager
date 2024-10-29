@@ -62,21 +62,22 @@ const getDateOptions = (options: SettingsItemOption[] | undefined) => {
 
 const getRules = (rules: SettingsItemRule[] | undefined) => {
   try {
-    const filteredRules = rules
-      ?.map((rule) => {
-        if (rule === 'notEmpty') {
-          return !rules.includes('regular') ||
-            !currentSettings.value?.disableMediaFetching
-            ? requiredRule
-            : undefined;
-        } else if (rule === 'portNumber') {
-          return portNumberRule;
-        } else {
-          return undefined;
-        }
-      })
-      .filter(Boolean);
-    return filteredRules as ValidationRule[];
+    const filteredRules: ValidationRule[] =
+      rules
+        ?.map((rule): undefined | ValidationRule => {
+          if (rule === 'notEmpty') {
+            return !rules.includes('regular') ||
+              !currentSettings.value?.disableMediaFetching
+              ? requiredRule
+              : undefined;
+          } else if (rule === 'portNumber') {
+            return portNumberRule;
+          } else {
+            return undefined;
+          }
+        })
+        .filter((r): r is ValidationRule => !!r) || [];
+    return filteredRules;
   } catch (error) {
     errorCatcher(error);
     return undefined;
@@ -138,4 +139,14 @@ const getTimeOptions = (options: SettingsItemOption[] | undefined) => {
   }
 };
 
-export { getActions, getDateOptions, getRules, getTimeOptions };
+const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
+  if (!json) return fallback;
+  try {
+    return typeof json === 'string' ? (JSON.parse(json) as T) : json;
+  } catch (e) {
+    console.error(e);
+    return fallback;
+  }
+};
+
+export { getActions, getDateOptions, getRules, getTimeOptions, parseJsonSafe };

@@ -12,7 +12,7 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 ## :thinking: Je, programu hii inakiuka Sheria na Masharti ya JW.org?
 
-**Hapana.** JW.org [Sheria na Masharti](https://www.jw.org/finder?docid=1011511\&prefer=content) huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
+**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
 
 > Haupaswi:
 >
@@ -20,15 +20,15 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 ## :radioactive: Je, ninaripotije tatizo?
 
-Tafadhali tuma [suala](https://github.com/sircharlo/meeting-media-manager/issues) kwenye hazina rasmi(repository) ya GitHub.
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
 
 ## :new: Ninawezaje kuomba kipengele kipya au uboreshaji?
 
-Tafadhali fungua [majadiliano](https://github.com/sircharlo/meeting-media-manager/discussions) kwenye hazina rasmi ya GitHub.
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
 
 ## :handshake: Ninawezaje kusaidia kwenye code?
 
-Tafadhali angalia [mwongozo wa kuchangia](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) kwenye hazina rasmi ya GitHub.
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
 
 ## :x: Je, ninaweza kutoa mchango kwa mradi?
 

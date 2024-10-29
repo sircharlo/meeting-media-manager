@@ -34,10 +34,10 @@ const configuredScenesAreAllUUIDs = () => {
     const currentState = useCurrentStateStore();
     const { currentSettings } = storeToRefs(currentState);
     const configuredScenes = [
-      currentSettings?.value?.obsCameraScene,
-      currentSettings?.value?.obsImageScene,
-      currentSettings?.value?.obsMediaScene,
-    ].filter(Boolean);
+      currentSettings.value?.obsCameraScene,
+      currentSettings.value?.obsImageScene,
+      currentSettings.value?.obsMediaScene,
+    ].filter((s): s is string => !!s);
     if (!configuredScenes.length) return true;
     return configuredScenes.every((scene) => isUUID(scene));
   } catch (error) {

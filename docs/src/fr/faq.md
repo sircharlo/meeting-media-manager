@@ -12,7 +12,7 @@ Le code source de cette application est disponible afin de donner à tous la pos
 
 ## :thinking: Cette application enfreint-elle les conditions d'utilisation de JW.org ?
 
-**Non.** Les [conditions d'utilisation](https://www.jw.org/finder?docid=1011511\&prefer=content) autorisent en fait explicitement le type d'utilisation que nous faisons. Voici l'extrait pertinent de ces conditions :
+**Non.** Les [conditions d'utilisation](https://www.jw.org/finder?docid=1011511&prefer=content) autorisent en fait explicitement le type d'utilisation que nous faisons. Voici l'extrait pertinent de ces conditions :
 
 > Il n’est pas permis de :
 >
@@ -20,15 +20,15 @@ Le code source de cette application est disponible afin de donner à tous la pos
 
 ## :radioactive: Comment signaler un problème ?
 
-Veuillez signaler le problème sur [GitHub](https://github.com/sircharlo/meeting-media-manager/issues).
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
 
 ## :new: Comment puis-je demander une nouvelle fonctionnalité ou une amélioration ?
 
-Veuillez ouvrir un [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) sur GitHub.
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
 
 ## :handshake: Comment puis-je contribuer au code ?
 
-Veuillez consulter le [guide de contribution](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) sur GitHub.
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
 
 ## :x: Puis-je faire un don pour soutenir le projet ?
 

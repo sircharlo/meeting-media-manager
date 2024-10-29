@@ -3,22 +3,25 @@ import type { JwLanguage } from 'src/types';
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-const get = async (url: string, params?: AxiosRequestConfig) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let returnVal: { data: any | undefined } = { data: undefined };
-  returnVal = await axios.get(url, { params }).catch((error) => {
-    if (
-      !(error instanceof AxiosError) ||
-      ![400, 404].includes(error.status ?? 0)
-    )
-      errorCatcher(error);
-    return { data: undefined };
-  });
-  return returnVal?.data ?? undefined;
+const get = async <T>(
+  url: string,
+  params?: AxiosRequestConfig,
+): Promise<null | T> => {
+  try {
+    const res = await axios.get<T>(url, { params });
+    return res.data;
+  } catch (e) {
+    if (!(e instanceof AxiosError) || ![400, 404].includes(e.status ?? 0)) {
+      errorCatcher(e);
+    }
+  }
+  return null;
 };
 
 const getLanguages = async (): Promise<JwLanguage[]> => {
-  const req = await get('https://www.jw.org/en/languages/');
+  const req = await get<{ languages: JwLanguage[] }>(
+    'https://www.jw.org/en/languages/',
+  );
   return req?.languages || [];
 };
 
@@ -40,7 +43,7 @@ const getYeartext = async (lang: string, year?: number) => {
     snip: 'yes',
     wtlocale: lang,
   };
-  return await get(urlWithParamsToString(url, params));
+  return await get<{ content: string }>(urlWithParamsToString(url, params));
 };
 
 export { get, getLanguages, getYeartext, urlWithParamsToString };

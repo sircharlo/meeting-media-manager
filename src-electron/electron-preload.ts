@@ -174,7 +174,7 @@ const openWebsiteWindow = () => {
   websiteWindow.loadURL('https://www.jw.org');
   websiteWindow.on('close', () => stopStream());
 
-  const source = {
+  const source: Electron.Video = {
     id: websiteWindow.getMediaSourceId(),
     name: websiteWindow.getTitle(),
   };
@@ -183,8 +183,8 @@ const openWebsiteWindow = () => {
     (request, callback) => {
       callback({
         audio: 'loopback',
-        video: source as Electron.Video,
-      } as Electron.Streams);
+        video: source,
+      });
     },
   );
   webStreamBroadcastChannel.postMessage(true);
@@ -586,7 +586,7 @@ const electronApi: ElectronApi = {
       });
     });
   },
-  executeQuery: (dbPath, query) => {
+  executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => {
     try {
       // let attempts = 0;
       // const maxAttempts = 10;
@@ -598,7 +598,7 @@ const electronApi: ElectronApi = {
         fileMustExist: true,
         readonly: true,
       });
-      return db.prepare(query).all() as QueryResponseItem[];
+      return db.prepare(query).all() as T[];
       //   }
       //   attempts++;
       //   sleepSync(delay);

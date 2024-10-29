@@ -12,7 +12,7 @@
 
 ## :thinking: Чи порушує ця програма умови використання JW.org?
 
-**Ні.** [Умови використання](https://www.jw.org/finder?docid=1011511&prefer=content) JW.org явно дозволяють тип використання яким ми користуємося. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > Ви не можете:
 >
@@ -20,15 +20,15 @@
 
 ## :new: Як я можу запропонувати нову функцію або покращення?
 
-Будь ласка, відкрийте [discussion](https://github.com/sircharlo/meeting-media-manager/discussions) в офіційному репозиторії GitHub.
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
 
 ## :handshake: Як я можу зробити внесок в код?
 
-Будь ласка, перегляньте [інструкцію](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) в офіційному GitHub репозиторії.
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
 
 ## :x: Чи можу я зробити пожертву на проект?
 
-Будь ласка, перегляньте [інструкцію](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) в офіційному GitHub репозиторії.
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
 
 ## :x: Чи можу я зробити пожертву на проект?
 

@@ -601,14 +601,14 @@ const {
 const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
 const { customDurations } = storeToRefs(jwStore);
-const hoveredBadges = ref({} as Record<string, boolean>);
+const hoveredBadges = ref<Record<string, boolean>>({});
 
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
 const { fileUrlToPath, fs, path } = electronApi;
 
-const mediaDurationPopups = ref({} as Record<string, boolean>);
+const mediaDurationPopups = ref<Record<string, boolean>>({});
 const panzooms: Record<string, PanzoomObject> = {};
 const mediaToStop = ref('');
 const mediaStopPending = computed(() => !!mediaToStop.value);

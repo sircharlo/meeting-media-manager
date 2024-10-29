@@ -12,7 +12,7 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 
 ## :thinking: Ali ta aplikacija krši Pogoje uporabe jw.org?
 
-**Ne.** [Pogoji uporabe](https://www.jw.org/finder?docid=1011511\&prefer=content) na jw.org dejansko izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Tukaj je odlomek iz teh pogojev (poudarili mi):
+**Ne.** [Pogoji uporabe na jw.org](https://www.jw.org/finder?docid=1011511&prefer=content) dejansko izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Tukaj je odlomek iz teh pogojev (poudarili mi):
 
 > Ni vam dovoljeno:
 >
@@ -20,15 +20,15 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 
 ## :radioactive: Kako prijavim težavo?
 
-[Težavo](https://github.com/sircharlo/meeting-media-manager/issues) prijavi na uradni spletni strani GitHub repository.
+[Težavo prijavi](https://github.com/sircharlo/meeting-media-manager/issues) na uradni spletni strani GitHub repository.
 
 ## :new: Kako lahko zaprosim za novo funkcijo ali izboljšavo?
 
-Na uradni spletni strani GitHub repository odpri [razpravo](https://github.com/sircharlo/meeting-media-manager/discussions).
+Na uradni spletni strani GitHub repository [odpri razpravo](https://github.com/sircharlo/meeting-media-manager/discussions).
 
 ## :handshake: Kako lahko prispevam k pisanju kode?
 
-Oglej si [vodnik za prispevanje](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) na uradni spletni strani GitHub repository.
+[Oglej si vodnik za prispevanje](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) na uradni spletni strani GitHub repository.
 
 ## :x: Ali lahko doniram za projekt?
 
