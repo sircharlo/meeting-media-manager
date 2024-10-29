@@ -6,7 +6,7 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: Install M³
+      text: Instalar o M³
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Ao usar no Salão do Reino
