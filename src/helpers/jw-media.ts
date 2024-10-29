@@ -211,17 +211,16 @@ const fetchMedia = async () => {
     )
       return;
     const { lookupPeriod } = storeToRefs(useJwStore());
-    const meetingsToFetch = lookupPeriod.value[
-      currentCongregation.value
-    ]?.filter((day) => {
-      return (
-        (day.meeting && (!day.complete || day.error)) ||
-        day.dynamicMedia.some(
-          (media) =>
-            !media?.fileUrl || !fs.existsSync(fileUrlToPath(media?.fileUrl)),
-        )
-      );
-    });
+    const meetingsToFetch =
+      lookupPeriod.value[currentCongregation.value]?.filter((day) => {
+        return (
+          (day.meeting && (!day.complete || day.error)) ||
+          day.dynamicMedia.some(
+            (media) =>
+              !media?.fileUrl || !fs.existsSync(fileUrlToPath(media?.fileUrl)),
+          )
+        );
+      }) || [];
     if (meetingsToFetch.length === 0) return;
     meetingsToFetch.forEach((day) => {
       day.error = false;

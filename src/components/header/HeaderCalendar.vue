@@ -265,7 +265,7 @@ const additionalMediaForDay = computed(
 
 const hiddenMediaForDay = computed(() =>
   lookupPeriod.value?.[currentCongregation.value]
-    .find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
+    ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
     ?.dynamicMedia?.some((media) => media.hidden),
 );
 
@@ -278,9 +278,10 @@ const getEventDates = () => {
       !currentCongregation.value
     )
       return [];
-    const meetingDates = lookupPeriod.value[currentCongregation.value]
-      ?.filter((day) => day.meeting)
-      .map((day) => formatDate(day.date, 'YYYY/MM/DD'));
+    const meetingDates =
+      lookupPeriod.value[currentCongregation.value]
+        ?.filter((day) => day.meeting)
+        .map((day) => formatDate(day.date, 'YYYY/MM/DD')) || [];
     const additionalMedia =
       additionalMediaMaps.value[currentCongregation.value];
     const additionalMediaDates = additionalMedia
