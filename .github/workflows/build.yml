@@ -121,6 +121,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          npm set-script prepare ""
           yarn install
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
 
