@@ -25,10 +25,11 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "format": "prettier \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore --write",
-    "lint": "eslint --ext .js,.ts,.vue ./",
+    "format": "prettier \"**/*.{js,ts,mjs,mts,vue,scss,html,md,json}\" --ignore-path .gitignore --write",
+    "lint": "eslint --ext .js,.ts,.mjs,.mts,.vue ./",
     "type-check": "vue-tsc --noEmit -p tsconfig.vue-tsc.json",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "prepare": "husky"
   },
   "dependencies": {
     "@electron/remote": "^2.1.2",
@@ -93,6 +94,8 @@
     "eslint-plugin-perfectionist": "^3.9.1",
     "eslint-plugin-vue": "^9.30.0",
     "globals": "^15.11.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
     "process": "^0.11.10",
@@ -106,6 +109,15 @@
   "browserslist": [
     "Electron >= 33"
   ],
+  "lint-staged": {
+    "*.{js,ts,mjs,mts,vue}": [
+      "eslint --fix",
+      "yarn type-check"
+    ],
+    "*.{js,ts,mjs,mts,vue,scss,html,md,json}": [
+      "prettier --write --ignore-unknown --ignore-path .gitignore"
+    ]
+  },
   "engines": {
     "node": "^24 || ^22 || ^20",
     "yarn": ">= 4.5.1"
