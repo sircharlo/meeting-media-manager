@@ -352,6 +352,7 @@ const getJwVideos = async () => {
     if (!currentSettings.value) return;
     if (remoteVideosLoadingProgress.value < 1) {
       const getSubcategories = async (category: string) => {
+        if (!category) return null;
         return await get<JwVideoCategory>(
           `https://b.jw-cdn.org/apis/mediator/v1/categories/${
             currentSettings.value?.lang
@@ -364,7 +365,7 @@ const getJwVideos = async () => {
       }[] = [{ key: 'LatestVideos', parentCategory: '' }];
       const subcategoriesRequest = await getSubcategories('VideoOnDemand');
       const subcategoriesFirstLevel =
-        subcategoriesRequest?.category.subcategories.map((s) => s.key) || [];
+        subcategoriesRequest?.category?.subcategories?.map((s) => s.key) || [];
       for (const subcategoryFirstLevel of subcategoriesFirstLevel) {
         subcategories.push(
           ...((
@@ -376,13 +377,14 @@ const getJwVideos = async () => {
       }
       let index = 0;
       for (const category of subcategories) {
+        if (!category?.key) continue;
         const request = (await get(
           `https://b.jw-cdn.org/apis/mediator/v1/categories/${
             currentSettings.value?.lang
           }/${category.key}?detailed=0&clientType=www`,
         )) as JwVideoCategory;
         remoteVideos.value = remoteVideos.value
-          .concat(request.category.media)
+          .concat(request?.category?.media || [])
           .reduce((accumulator: MediaItemsMediatorItem[], current) => {
             const guids = new Set(accumulator.map((item) => item.guid));
             if (!guids.has(current.guid)) {
