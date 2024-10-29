@@ -1,16 +1,16 @@
 # Contributing
 
-You are welcome to contribute to this project! If you want to do so, here you will find some useful information to get you started.
+You are welcome to contribute some code or to help translate this project! If you want to do so, here you will find some useful information to get you started.
 
 ## Help translate this application
 
-If any one of you would like to volunteer to become a M³ language moderator for a language you speak, please [sign into Crowdin](https://crowdin.com/project/meeting-media-manager) using your GitHub account, and then let us know by [creating a new discussion](https://github.com/sircharlo/meeting-media-manager/discussions/categories/translations) in the **Translations** category.
+If you would like to volunteer to become a M³ language moderator for a language you speak, please [sign in to Crowdin](https://crowdin.com/project/meeting-media-manager) using your GitHub account, and let us know by [creating a new discussion](https://github.com/sircharlo/meeting-media-manager/discussions/categories/translations) in the **Translations** category.
 
-As language moderator, you will get notified of changes to the English original strings, have a nice and easy to use interface to review existing as well as untranslated strings in your language, and submit new translations to the repo easily.
+As language moderator, you will get notified of changes to the English original strings. You will also have access to an easy-to-use interface to review existing and untranslated strings in your language, and submit new translations.
 
 ## Help maintain this application
 
-In order to help maintain this application, the following information will help you get started. If anything is unclear or you simply need more information, please feel free to make contact through [the discussion thread](https://github.com/sircharlo/meeting-media-manager/discussions).
+In order to help maintain this application, the following information will help you get started. If anything is unclear or you simply need more information, please feel free to make contact through [a discussion thread](https://github.com/sircharlo/meeting-media-manager/discussions).
 
 ### Developer Tools
 
@@ -79,9 +79,7 @@ The UI components are made from [Quasar](https://quasar.dev/docs) components.
 
 ### Release Procedure
 
-To release a new version of the application, you first create a draft release on GitHub. Then, you can change the [package.json](package.json) version to the desired version and commit the changes with the message `chore(release): vx.x.x` (e.g. `chore(release): v23.3.1`). Then, the build/release workflow will be executed and will fill the release draft with the new artifacts. After that, you can add a description of the release (features, bug fixes, etc.) and publish it.
-
-If a release contains a critical bug fix, you can add `[critical]` to the release title. This will override the `Disable non-critical automatic app updates` setting and will force all users to update.
+To release a new version of the application, a draft release must be created on GitHub. Then, the [package.json](package.json) version must be updated to the desired version and the changes committed with the message `chore(release): vx.x.x` (e.g. `chore(release): v26.3.1`). Afterwards, the build/release workflow will be executed automatically and will add the necessary executable files to the release draft. After adding a description of the release (features, bug fixes, etc.), it can now be published.
 
 ### Contribute to the documentation site
 
