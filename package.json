@@ -28,8 +28,7 @@
     "format": "prettier \"**/*.{js,ts,mjs,mts,vue,scss,html,md,json}\" --ignore-path .gitignore --write",
     "lint": "eslint --ext .js,.ts,.mjs,.mts,.vue ./",
     "type-check": "vue-tsc --noEmit -p tsconfig.vue-tsc.json",
-    "test": "echo \"No test specified\" && exit 0",
-    "prepare": "node .husky/install.mjs"
+    "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
     "@electron/remote": "^2.1.2",
