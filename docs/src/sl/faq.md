@@ -12,7 +12,7 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 
 ## :thinking: Ali ta aplikacija krši Pogoje uporabe jw.org?
 
-**Ne.** [Pogoji uporabe na jw.org](https://www.jw.org/finder?docid=1011511\&prefer=content) dejansko izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Tukaj je odlomek iz teh pogojev (poudarili mi):
+**Ne.** [Pogoji uporabe na jw.org](https://www.jw.org/finder?docid=1011511&prefer=content) dejansko izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Tukaj je odlomek iz teh pogojev (poudarili mi):
 
 > Ni vam dovoljeno:
 >

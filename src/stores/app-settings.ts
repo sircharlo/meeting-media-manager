@@ -8,7 +8,6 @@ import type {
   SettingsValues,
 } from 'src/types';
 
-import { parseJsonSafe } from 'app/docs/utils/general';
 import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage, uid } from 'quasar';
 import { electronApi } from 'src/helpers/electron-api';
@@ -18,6 +17,7 @@ import {
   getOldPrefsPaths,
   parsePrefsFile,
 } from 'src/helpers/migrations';
+import { parseJsonSafe } from 'src/helpers/settings';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
 

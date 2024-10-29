@@ -12,7 +12,7 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 
 ## :thinking: Gaat deze applicatie in tegen de gebruikersvoorwaarden van JW.org?
 
-**Nee** De [jw.org gebruiksvoorwaarden](https://www.jw.org/finder?docid=1011511\&prefer=content) staat expliciet het soort gebruik toe dat we maken. Hier is het relevante stukje van de gebruiksvoorwaarden (nadruk toegevoegd):
+**Nee** De [jw.org gebruiksvoorwaarden](https://www.jw.org/finder?docid=1011511&prefer=content) staat expliciet het soort gebruik toe dat we maken. Hier is het relevante stukje van de gebruiksvoorwaarden (nadruk toegevoegd):
 
 > Het is niet toegestaan:
 >

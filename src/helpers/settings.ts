@@ -139,4 +139,14 @@ const getTimeOptions = (options: SettingsItemOption[] | undefined) => {
   }
 };
 
-export { getActions, getDateOptions, getRules, getTimeOptions };
+const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
+  if (!json) return fallback;
+  try {
+    return typeof json === 'string' ? (JSON.parse(json) as T) : json;
+  } catch (e) {
+    console.error(e);
+    return fallback;
+  }
+};
+
+export { getActions, getDateOptions, getRules, getTimeOptions, parseJsonSafe };
