@@ -159,7 +159,7 @@
             </q-card>
           </q-dialog>
         </q-img>
-        <template v-if="mediaPlayingUrl === media.fileUrl && media.isImage">
+        <template v-if="media.isImage">
           <transition
             appear
             enter-active-class="animated fadeIn"
@@ -170,16 +170,25 @@
             <div
               class="absolute-bottom-right q-mr-xs q-mb-xs bg-semi-black row rounded-borders"
             >
+              <template v-if="mediaPanzoom?.scale !== 1">
+                <q-badge
+                  style="background: transparent; padding: 5px !important"
+                  @click="zoomReset(true)"
+                >
+                  <q-icon color="white" name="mmm-reset" />
+                </q-badge>
+                <q-separator class="bg-grey-8 q-my-xs" vertical />
+              </template>
               <q-badge
                 style="background: transparent; padding: 5px !important"
-                @click="zoomOut(media.uniqueId)"
+                @click="zoomOut()"
               >
                 <q-icon color="white" name="mmm-minus" />
               </q-badge>
               <q-separator class="bg-grey-8 q-my-xs" vertical />
               <q-badge
                 style="background: transparent; padding: 5px !important"
-                @click="zoomIn(media.uniqueId)"
+                @click="zoomIn()"
               >
                 <q-icon color="white" name="mmm-plus" />
               </q-badge>
@@ -324,9 +333,7 @@
                     : (media.streamUrl ?? media.fileUrl);
                   mediaPlayingUniqueId = media.uniqueId;
                   mediaPlayingSubtitlesUrl = media.subtitlesUrl ?? '';
-                  if (isImage(mediaPlayingUrl)) {
-                    initiatePanzoom(media.uniqueId);
-                  }
+                  if (mediaPanzoom) mediaPlayingPanzoom = mediaPanzoom;
                 "
               />
             </template>
@@ -578,13 +585,8 @@ import { formatTime, isImage, isVideo } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-
-const element = ref<HTMLDivElement>();
-useEventListener(element, 'keydown', (e) => {
-  console.log(e.key);
-});
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, onUnmounted, ref, type Ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -697,13 +699,13 @@ const seekTo = (newSeekTo: null | number) => {
   if (newSeekTo !== null) post(newSeekTo);
 };
 
-function zoomIn(elemId: string, click?: MouseEvent) {
+function zoomIn(click?: MouseEvent) {
   try {
     if (!click?.clientX && !click?.clientY) {
-      panzooms[elemId]?.zoomIn();
+      panzooms[props.media.uniqueId]?.zoomIn();
     } else {
-      panzooms[elemId]?.zoomToPoint(
-        (panzooms[elemId]?.getScale() || 1) * 1.25,
+      panzooms[props.media.uniqueId]?.zoomToPoint(
+        (panzooms[props.media.uniqueId]?.getScale() || 1) * 1.25,
         {
           clientX: click?.clientX || 0,
           clientY: click?.clientY || 0,
@@ -715,22 +717,21 @@ function zoomIn(elemId: string, click?: MouseEvent) {
   }
 }
 
-function zoomOut(elemId: string) {
+function zoomOut() {
   try {
-    panzooms[elemId]?.zoomOut();
-    zoomReset(elemId);
+    panzooms[props.media.uniqueId]?.zoomOut();
+    zoomReset();
   } catch (error) {
     errorCatcher(error);
   }
 }
 
-const zoomReset = (elemId: string, forced = false, animate = true) => {
-  if (panzooms[elemId]?.getScale() <= 1.25 || forced)
-    panzooms[elemId]?.reset({ animate });
+const zoomReset = (forced = false, animate = true) => {
+  if (panzooms[props.media.uniqueId]?.getScale() <= 1.25 || forced)
+    panzooms[props.media.uniqueId]?.reset({ animate });
 };
 
 function stopMedia() {
-  destroyPanzoom(mediaPlayingUniqueId.value);
   mediaPlayingAction.value = 'pause';
   mediaPlayingUrl.value = '';
   mediaPlayingUniqueId.value = '';
@@ -739,26 +740,33 @@ function stopMedia() {
   mediaToStop.value = '';
 }
 
-const destroyPanzoom = (elemId: string) => {
+const destroyPanzoom = () => {
   try {
-    if (!panzooms[elemId] || !elemId) return;
-    panzooms[elemId].resetStyle();
-    panzooms[elemId].reset({ animate: false });
-    panzooms[elemId].destroy();
+    if (!panzooms[props.media.uniqueId] || !props.media.uniqueId) return;
+    panzooms[props.media.uniqueId].resetStyle();
+    panzooms[props.media.uniqueId].reset({ animate: false });
+    panzooms[props.media.uniqueId].destroy();
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete panzooms[elemId];
+    delete panzooms[props.media.uniqueId];
   } catch (e) {
     errorCatcher(e);
   }
 };
 
-const initiatePanzoom = (elemId: string) => {
+const mediaPanzoom = ref<Record<string, number>>({
+  scale: 1,
+  x: 0,
+  y: 0,
+});
+
+const initiatePanzoom = () => {
   try {
-    const elem = document.getElementById(elemId);
+    if (!props.media.uniqueId || !isImage(props.media.fileUrl)) return;
+    const elem = document.getElementById(props.media.uniqueId);
     const width = elem?.clientWidth || 0;
     const height = elem?.clientHeight || 0;
     if (!elem) return;
-    panzooms[elemId] = Panzoom(elem, {
+    panzooms[props.media.uniqueId] = Panzoom(elem, {
       animate: true,
       contain: 'outside',
       maxScale: 5,
@@ -768,27 +776,29 @@ const initiatePanzoom = (elemId: string) => {
     } as PanzoomOptions);
 
     useEventListener(elem, 'dblclick', (e) => {
-      zoomIn(elemId, e);
+      zoomIn(e);
     });
 
     useEventListener(elem, 'panzoomend', () => {
-      zoomReset(elemId);
+      zoomReset();
     });
 
     useEventListener(elem, 'wheel', function (e) {
       if (!e.ctrlKey) return;
-      panzooms[elemId]?.zoomWithWheel(e);
+      panzooms[props.media.uniqueId]?.zoomWithWheel(e);
     });
 
     useEventListener(
       elem,
       'panzoomchange',
       (e: HTMLElementEventMap['panzoomchange']) => {
-        mediaPlayingPanzoom.value = {
+        mediaPanzoom.value = {
           scale: e.detail.scale,
           x: e.detail.x / (width ?? 1),
           y: e.detail.y / (height ?? 1),
         };
+        if (mediaPlayingUrl.value !== props.media.fileUrl) return;
+        mediaPlayingPanzoom.value = mediaPanzoom.value;
       },
     );
   } catch (error) {
@@ -802,10 +812,12 @@ function deleteMedia() {
   mediaToDelete.value = '';
 }
 
+onMounted(() => {
+  initiatePanzoom();
+});
+
 onUnmounted(() => {
-  Object.keys(panzooms).forEach((key) => {
-    destroyPanzoom(key);
-  });
+  destroyPanzoom();
 });
 
 const playButton: Ref<HTMLButtonElement | undefined> = ref();

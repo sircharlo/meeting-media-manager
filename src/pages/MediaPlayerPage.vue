@@ -118,6 +118,7 @@ const initiatePanzoom = () => {
       maxScale: 5,
       minScale: 1,
     });
+    setPanzoom(panzoomState.value, false);
   } catch (error) {
     errorCatcher(error);
   }
@@ -125,7 +126,6 @@ const initiatePanzoom = () => {
 
 let mediaElement = ref<HTMLVideoElement | undefined>();
 const mediaImage = ref<HTMLImageElement | undefined>();
-const panzoomOptions = { animate: true, duration: 1000 };
 
 const videoStreaming = ref(false);
 
@@ -177,7 +177,6 @@ const { data: mediaAction }: { data: Ref<string> } = useBroadcastChannel({
 watch(
   () => mediaAction.value,
   (newMediaAction) => {
-    console.log(newMediaAction);
     if (!newMediaAction) return;
     if (newMediaAction === 'pause') {
       mediaElement.value?.pause();
@@ -193,6 +192,28 @@ watch(
   },
 );
 
+const setPanzoom = (panzoomState: Record<string, number>, animate = true) => {
+  const panzoomOptions = { animate: !!animate, duration: 1000 };
+  try {
+    if (!mediaElement.value) {
+      const imageElem = document.getElementById('mediaImage');
+      const width = imageElem?.clientWidth || 0;
+      const height = imageElem?.clientHeight || 0;
+      panzoom.value?.zoom((panzoomState?.scale ?? 1) as number, panzoomOptions);
+      setTimeout(() => {
+        if (width > 0 && height > 0)
+          panzoom.value?.pan(
+            ((panzoomState?.x ?? 0) as number) * width,
+            ((panzoomState?.y ?? 0) as number) * height,
+            panzoomOptions,
+          );
+      });
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 const { data: panzoomState }: { data: Ref<Record<string, number>> } =
   useBroadcastChannel({
     name: 'panzoom',
@@ -201,25 +222,7 @@ const { data: panzoomState }: { data: Ref<Record<string, number>> } =
 watch(
   () => panzoomState.value,
   (newPanzoomState) => {
-    try {
-      if (!mediaElement.value) {
-        const imageElem = document.getElementById('mediaImage');
-        const width = imageElem?.clientWidth || 0;
-        const height = imageElem?.clientHeight || 0;
-        panzoom.value?.zoom(
-          (newPanzoomState?.scale ?? 1) as number,
-          panzoomOptions,
-        );
-        if (width > 0 && height > 0)
-          panzoom.value?.pan(
-            ((newPanzoomState?.x ?? 0) as number) * width,
-            ((newPanzoomState?.y ?? 0) as number) * height,
-            panzoomOptions,
-          );
-      }
-    } catch (error) {
-      errorCatcher(error);
-    }
+    setPanzoom(newPanzoomState);
   },
   { deep: true },
 );

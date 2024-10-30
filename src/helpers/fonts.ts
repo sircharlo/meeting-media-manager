@@ -18,14 +18,6 @@ const getLocalFontPath = async (fontName: FontName) => {
       filename: fontFileName,
       url: FONT_URLS[fontName],
     });
-    console.log(
-      'Downloaded',
-      fontFileName,
-      'from',
-      FONT_URLS[fontName],
-      'to',
-      fontPath,
-    );
   }
   return fontPath;
 };

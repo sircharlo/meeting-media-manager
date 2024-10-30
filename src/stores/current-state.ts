@@ -167,7 +167,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       extractedFiles: {} as Record<string, Promise<string>>,
       mediaPlayingAction: '',
       mediaPlayingCurrentPosition: 0,
-      mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },
+      mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 } as Record<string, number>,
       mediaPlayingSeekTo: 0,
       mediaPlayingSubtitlesUrl: '',
       mediaPlayingUniqueId: '',
