@@ -282,6 +282,8 @@
   "shortcutMediaPrevious": "Predvajaj prejšnjo multimedijsko datoteko",
   "shortcutMediaPrevious-explain": "Bližnjica za preskok na prejšnji videoposnetek ali sliko na seznamu. To ne deluje, če se trenutno predvaja videoposnetek.",
   "shortcutMediaStop": "Ustavi predvajanje multimedijske vsebine",
+  "obsQuickToggle": "Enable instant scene switcher",
+  "obsQuickToggle-explain": "When enabled, hovering over the OBS Studio button will open the scene switcher. This can be useful for quickly switching scenes in OBS Studio, especially if many scenes are configured.",
   "shortcutMediaStop-explain": "Bližnjica za zaustavitev videoposnetka, ki se trenutno predvaja, ali za skrivanje trenutno prikazane slike. To velja samo, če se multimedijska datoteka trenutno predvaja oziroma je prikazana na zaslonu.",
   "shortcutMediaWindow": "Skrij/prikaži multimedijsko okno",
   "shortcutMediaWindow-explain": "Bližnjica za hitro skrivanje ali prikaz multimedijskega okna.",
