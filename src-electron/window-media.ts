@@ -6,6 +6,9 @@ import { createWindow } from './window-base';
 
 export let mediaWindow: BrowserWindow | null = null;
 
+/**
+ * Creates the media window
+ */
 export function createMediaWindow() {
   // If the window is already open, just focus it
   if (mediaWindow && !mediaWindow.isDestroyed()) {

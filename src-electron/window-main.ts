@@ -6,6 +6,9 @@ import { createMediaWindow } from './window-media';
 export let mainWindow: BrowserWindow | null = null;
 export let authorizedClose = false;
 
+/**
+ * Creates the main window
+ */
 export function createMainWindow() {
   // If the window is already open, just focus it
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -36,6 +39,10 @@ export function createMainWindow() {
   createMediaWindow();
 }
 
+/**
+ * Toggles the authorizedClose state
+ * @param authorized Wether the window is authorized to close
+ */
 export function toggleAuthorizedClose(authorized: boolean) {
   authorizedClose = authorized;
 }

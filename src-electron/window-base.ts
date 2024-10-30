@@ -12,6 +12,14 @@ import path from 'path';
 import { PLATFORM } from './constants';
 import { StatefulBrowserWindow } from './window-state';
 
+/**
+ * Creates a new browser window
+ * @param name The name of the window
+ * @param options The options for the window
+ * @param defaultHeight The default height of the window
+ * @param defaultWidth The default width of the window
+ * @returns The created window
+ */
 export function createWindow(
   name: 'main' | 'media' | 'website' = 'main',
   options?: BrowserWindowConstructorOptions,
@@ -46,6 +54,7 @@ export function createWindow(
     },
   }).win;
 
+  // Show the window when it's ready
   win.on('ready-to-show', () => {
     if (name !== 'media') win.show();
   });
