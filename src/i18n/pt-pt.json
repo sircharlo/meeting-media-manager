@@ -282,6 +282,8 @@
   "shortcutMediaPrevious": "Reproduzir item de multimédia anterior",
   "shortcutMediaPrevious-explain": "Atalho para voltar ao vídeo ou imagem anterior na lista. Não tem efeito se um vídeo estiver a ser reproduzido no momento.",
   "shortcutMediaStop": "Parar multimédia",
+  "obsQuickToggle": "Enable instant scene switcher",
+  "obsQuickToggle-explain": "When enabled, hovering over the OBS Studio button will open the scene switcher. This can be useful for quickly switching scenes in OBS Studio, especially if many scenes are configured.",
   "shortcutMediaStop-explain": "Atalho para parar o vídeo em reprodução ou ocultar a imagem exibida. Só tem efeito se alguma multimédia estiver a ser exibida no momento.",
   "shortcutMediaWindow": "Ocultar/mostrar janela de multimédia",
   "shortcutMediaWindow-explain": "Atalho para esconder ou mostrar rapidamente a janela de multimédia.",
