@@ -620,26 +620,7 @@ const electronApi: ElectronApi = {
   registerShortcut: (keySequence, callback) =>
     invoke('registerShortcut', keySequence, callback),
   removeListeners: (channel) => ipcRenderer.removeAllListeners(channel),
-  // saveSettingsStoreToFile,
-  setAutoStartAtLogin: (value) => {
-    try {
-      app.setLoginItemSettings({
-        openAtLogin: value,
-      });
-    } catch (error) {
-      errorCatcher(error);
-    }
-  },
-  setMediaWindowPosition: (x, y) => {
-    try {
-      const mediaWindow = getMediaWindow();
-      if (mediaWindow) {
-        mediaWindow.setPosition(x, y);
-      }
-    } catch (error) {
-      errorCatcher(error);
-    }
-  },
+  setAutoStartAtLogin: (value) => send('toggleOpenAtLogin', value),
   toggleMediaWindow,
   unregisterShortcut: (keySequence) => send('unregisterShortcut', keySequence),
   zoomWebsiteWindow,
