@@ -112,6 +112,7 @@ const closeWebsiteWindow = () => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const openWebsiteWindow = () => {
   const mainWindow = getMainWindow();
   if (!mainWindow) return;
@@ -606,7 +607,10 @@ const electronApi: ElectronApi = {
   openExternal: (website) => send('openExternal', website),
   openFileDialog: async (single, filter) =>
     invoke('openFileDialog', single, filter),
-  openWebsiteWindow,
+  openWebsiteWindow: () => {
+    send('toggleWebsiteWindow', true);
+    webStreamBroadcastChannel.postMessage(true);
+  },
   parseFile: async (filePath, options) => {
     const musicMetadata: typeof MusicMetadata = await import('music-metadata');
     return musicMetadata.parseFile(filePath, options);

@@ -3,6 +3,7 @@ export type ElectronIpcSendKey =
   | 'authorizedClose'
   | 'openExternal'
   | 'toggleOpenAtLogin'
+  | 'toggleWebsiteWindow'
   | 'unregisterShortcut';
 
 // ipcMain.handle / ipcRenderer.invoke channels

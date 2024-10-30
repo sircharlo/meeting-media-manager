@@ -21,6 +21,7 @@ import { isSelf } from './../utils';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
+import { createWebsiteWindow } from './window/window-website';
 
 // IPC send/on
 
@@ -50,8 +51,14 @@ handleIpcSend('authorizedClose', () => {
   mainWindow?.close();
 });
 
-handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin) => {
+handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
   app.setLoginItemSettings({ openAtLogin });
+});
+
+handleIpcSend('toggleWebsiteWindow', (_e, show: boolean) => {
+  if (show) {
+    createWebsiteWindow();
+  }
 });
 
 handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {

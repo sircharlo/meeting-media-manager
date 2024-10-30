@@ -23,15 +23,11 @@ import { StatefulBrowserWindow } from './window-state';
 export function createWindow(
   name: 'main' | 'media' | 'website' = 'main',
   options?: BrowserWindowConstructorOptions,
-  defaultHeight = 600,
-  defaultWidth = 1000,
 ) {
   // Create the browser window
-  const win = new StatefulBrowserWindow({
+  const opts: BrowserWindowConstructorOptions = {
     backgroundColor: 'grey',
-    configFileName: `${name}-window-state.json`,
-    configFilePath: path.join(app.getPath('appData'), pkg.productName),
-    height: defaultHeight,
+    height: 600,
     icon: path.resolve(
       path.join(
         __dirname,
@@ -43,7 +39,7 @@ export function createWindow(
     minWidth: 500,
     show: false,
     title: 'Meeting Media Manager',
-    width: defaultWidth,
+    width: 1000,
     ...(options ?? {}),
     webPreferences: {
       backgroundThrottling: false,
@@ -53,7 +49,15 @@ export function createWindow(
       webSecurity: false,
       ...(options?.webPreferences ?? {}),
     },
-  }).win;
+  };
+  const win =
+    name !== 'website'
+      ? new StatefulBrowserWindow({
+          configFileName: `${name}-window-state.json`,
+          configFilePath: path.join(app.getPath('appData'), pkg.productName),
+          ...opts,
+        }).win
+      : new BrowserWindow(opts);
 
   // Show the window when it's ready
   win.on('ready-to-show', () => {
@@ -64,7 +68,7 @@ export function createWindow(
   enableElectronRemote(win.webContents);
 
   // Hide the menu bar
-  if (PLATFORM !== 'darwin' && (name === 'media' || !process.env.DEBUGGING)) {
+  if (PLATFORM !== 'darwin' && (name !== 'main' || !process.env.DEBUGGING)) {
     win.setMenuBarVisibility(false);
   }
 
