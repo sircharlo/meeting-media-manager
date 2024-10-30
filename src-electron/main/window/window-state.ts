@@ -249,6 +249,8 @@ export class StatefulBrowserWindow {
 
     const { height = 600, isMaximized, width = 800, x, y } = newOptions;
 
+    this.win.setBounds({ height, width, x, y });
+
     this.state = { height, isMaximized, width, x, y };
 
     this.fullStoreFileName = path.join(configFilePath, configFileName);
