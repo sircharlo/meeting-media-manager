@@ -282,6 +282,8 @@
   "shortcutMediaPrevious": "Spela föregående medieobjekt",
   "shortcutMediaPrevious-explain": "Genväg för att gå tillbaka till föregående video eller bild i listan. Gäller inte om en video spelas upp.",
   "shortcutMediaStop": "Stoppa media",
+  "obsQuickToggle": "Enable instant scene switcher",
+  "obsQuickToggle-explain": "When enabled, hovering over the OBS Studio button will open the scene switcher. This can be useful for quickly switching scenes in OBS Studio, especially if many scenes are configured.",
   "shortcutMediaStop-explain": "Genväg för att stoppa den aktuella uppspelningen eller dölja den aktuella bilden. Gäller endast om media visas.",
   "shortcutMediaWindow": "Dölj/visa mediafönster",
   "shortcutMediaWindow-explain": "Genväg för att snabbt dölja eller visa mediafönstret.",
