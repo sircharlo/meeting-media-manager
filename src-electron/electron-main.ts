@@ -35,7 +35,7 @@ app.on('activate', createMainWindow);
 app
   .whenReady()
   .then(createMainWindow)
-  .catch((err) => errorCatcher(err));
+  .catch((e) => errorCatcher(e));
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
