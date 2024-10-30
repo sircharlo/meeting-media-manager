@@ -161,40 +161,45 @@
           </q-dialog>
         </q-img>
         <template v-if="media.isImage">
-          <transition
+          <transition-group
             appear
             enter-active-class="animated fadeIn"
             leave-active-class="animated fadeOut"
             mode="out-in"
             name="fade"
           >
-            <div
-              class="absolute-bottom-right q-mr-xs q-mb-xs bg-semi-black row rounded-borders"
-            >
+            <div class="absolute-bottom-right q-mr-xs q-mb-xs row">
               <template v-if="mediaPanzoom?.scale > 1.01">
                 <q-badge
-                  style="background: transparent; padding: 5px !important"
+                  class="q-mr-xs"
+                  color="warning"
+                  style="padding: 5px !important"
                   @click="zoomReset(true)"
                 >
-                  <q-icon color="white" name="mmm-reset" />
+                  <q-icon color="white" name="mmm-refresh" />
+                </q-badge>
+              </template>
+              <div class="bg-semi-black row rounded-borders">
+                <q-badge
+                  :disabled="mediaPanzoom?.scale < 1.01"
+                  color="transparent"
+                  style="padding: 5px !important"
+                  @click="zoomOut()"
+                >
+                  <q-icon color="white" name="mmm-minus" />
                 </q-badge>
                 <q-separator class="bg-grey-8 q-my-xs" vertical />
-              </template>
-              <q-badge
-                style="background: transparent; padding: 5px !important"
-                @click="zoomOut()"
-              >
-                <q-icon color="white" name="mmm-minus" />
-              </q-badge>
-              <q-separator class="bg-grey-8 q-my-xs" vertical />
-              <q-badge
-                style="background: transparent; padding: 5px !important"
-                @click="zoomIn()"
-              >
-                <q-icon color="white" name="mmm-plus" />
-              </q-badge>
+                <q-badge
+                  :disabled="mediaPanzoom?.scale > 4.99"
+                  color="transparent"
+                  style="padding: 5px !important"
+                  @click="zoomIn()"
+                >
+                  <q-icon color="white" name="mmm-plus" />
+                </q-badge>
+              </div>
             </div>
-          </transition>
+          </transition-group>
         </template>
       </div>
     </div>
