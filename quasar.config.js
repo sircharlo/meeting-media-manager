@@ -180,7 +180,6 @@ module.exports = configure(function (/* ctx */) {
           'adm-zip',
           'better-sqlite3',
           'electron-updater',
-          'electron-window-state',
           'fs-extra',
           'heic-convert',
           'is-online',

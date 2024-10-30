@@ -1,10 +1,6 @@
-import pkg from 'app/package.json';
-import { app, type BrowserWindow } from 'electron';
-import { existsSync, readJSONSync, writeJSONSync } from 'fs-extra';
-import { join } from 'upath';
+import type { BrowserWindow } from 'electron';
 
-import { errorCatcher } from './utils';
-import { closeAllWindows, createWindow, sendToWindow } from './window-base';
+import { closeOtherWindows, createWindow, sendToWindow } from './window-base';
 import { createMediaWindow } from './window-media';
 
 export let mainWindow: BrowserWindow | null = null;
@@ -17,9 +13,6 @@ export function createMainWindow() {
     return;
   }
 
-  // Fix Window snapping issues in window state keeper
-  fixWindowSnapping();
-
   // Create the browser window
   mainWindow = createWindow('main');
 
@@ -28,8 +21,8 @@ export function createMainWindow() {
   );
 
   mainWindow.on('close', (e) => {
-    if (authorizedClose) {
-      closeAllWindows();
+    if (mainWindow && authorizedClose) {
+      closeOtherWindows(mainWindow);
     } else {
       e.preventDefault();
       sendToWindow(mainWindow, 'attemptedClose');
@@ -45,42 +38,4 @@ export function createMainWindow() {
 
 export function toggleAuthorizedClose(authorized: boolean) {
   authorizedClose = authorized;
-}
-
-// See: https://github.com/sircharlo/mmm-refactor/discussions/2#discussioncomment-10870709
-function fixWindowSnapping() {
-  try {
-    const windowStateFilePath = join(
-      app.getPath('appData'),
-      pkg.productName,
-      'window-state.json',
-    );
-
-    if (existsSync(windowStateFilePath)) {
-      const mainWindowState = readJSONSync(windowStateFilePath, {
-        encoding: 'utf8',
-        throws: false,
-      });
-      if (!mainWindowState) return;
-
-      const maximumThreshold = 30;
-      const { displayBounds, height, width, x, y } = mainWindowState;
-      const overflowX = x + width - displayBounds.width - displayBounds.x;
-      const overflowY = y + height - displayBounds.height - displayBounds.y;
-
-      if (0 < overflowX && overflowX < maximumThreshold)
-        mainWindowState.width -= overflowX;
-      if (0 < overflowY && overflowY < maximumThreshold)
-        mainWindowState.height -= overflowY;
-
-      if (x < displayBounds.x && x > displayBounds.x - maximumThreshold)
-        mainWindowState.x = displayBounds.x;
-      if (y < displayBounds.y && y > displayBounds.y - maximumThreshold)
-        mainWindowState.y = displayBounds.y;
-
-      writeJSONSync(windowStateFilePath, mainWindowState);
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
 }

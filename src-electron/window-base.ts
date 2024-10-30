@@ -1,11 +1,16 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
 import { enable as enableElectronRemote } from '@electron/remote/main';
-import { BrowserWindow, type BrowserWindowConstructorOptions } from 'electron';
-import windowStateKeeper from 'electron-window-state';
+import pkg from 'app/package.json';
+import {
+  app,
+  BrowserWindow,
+  type BrowserWindowConstructorOptions,
+} from 'electron';
 import path from 'path';
 
 import { PLATFORM } from './constants';
+import { StatefulBrowserWindow } from './window-state';
 
 export function createWindow(
   name: 'main' | 'media' | 'website' = 'main',
@@ -13,17 +18,12 @@ export function createWindow(
   defaultHeight = 600,
   defaultWidth = 1000,
 ) {
-  // Load the previous state with fallback to defaults
-  const windowState = windowStateKeeper({
-    defaultHeight,
-    defaultWidth,
-    file: `${name}-window-state.json`,
-  });
-
   // Create the browser window
-  const win = new BrowserWindow({
+  const win = new StatefulBrowserWindow({
     backgroundColor: 'grey',
-    height: windowState.height,
+    configFileName: `${name}-window-state.json`,
+    configFilePath: path.join(app.getPath('appData'), pkg.productName),
+    height: defaultHeight,
     icon: path.resolve(
       path.join(
         __dirname,
@@ -34,9 +34,7 @@ export function createWindow(
     minWidth: 500,
     show: false,
     title: 'Meeting Media Manager',
-    width: windowState.width,
-    x: windowState.x,
-    y: windowState.y,
+    width: defaultWidth,
     ...(options ?? {}),
     webPreferences: {
       backgroundThrottling: false,
@@ -46,11 +44,9 @@ export function createWindow(
       webSecurity: false,
       ...(options?.webPreferences ?? {}),
     },
-  });
+  }).win;
 
   win.on('ready-to-show', () => {
-    // Save the window state
-    windowState.manage(win);
     if (name !== 'media') win.show();
   });
 
@@ -106,9 +102,8 @@ export function logToWindow(
   if (level === 'debug' && !process.env.DEBUGGING) return;
   sendToWindow(win, 'log', { ctx, level, msg });
 }
-
-export function closeAllWindows() {
+export function closeOtherWindows(source: BrowserWindow) {
   BrowserWindow.getAllWindows().forEach((win) => {
-    win.close();
+    if (win !== source) win.close();
   });
 }

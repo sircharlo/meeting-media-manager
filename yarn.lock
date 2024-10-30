@@ -2991,21 +2991,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.17.2":
+"@types/node@npm:^20.17.2, @types/node@npm:^20.9.0":
   version: 20.17.2
   resolution: "@types/node@npm:20.17.2"
   dependencies:
     undici-types: "npm:~6.19.2"
   checksum: 10c0/453ca052f9544ad66a9988ff881024588008795690c9ea7252e0594333ea11cec7d176a76c5e0f6b89ba42427c6e4684321427f9f515e8a9ba9a729f80c13054
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^20.9.0":
-  version: 20.17.1
-  resolution: "@types/node@npm:20.17.1"
-  dependencies:
-    undici-types: "npm:~6.19.2"
-  checksum: 10c0/214cf1fffff9c80ae0d49d7dd1f04254215d49711276fff44ff6f61e36dc8d53520509a88add6955fe029b2259c87eaf284b43bc1236d4f4f06bd80c46f0e2b8
   languageName: node
   linkType: hard
 
@@ -5982,16 +5973,6 @@ __metadata:
     semver: "npm:^7.6.3"
     tiny-typed-emitter: "npm:^2.1.0"
   checksum: 10c0/e692e8d744ba311caf17bfdf59d469b3f331b8dcbb174786ed69bba52b630093e8cd7d48f04c10e28cd25ead9c0896d42c92a25525275daaf47681da0dfd2094
-  languageName: node
-  linkType: hard
-
-"electron-window-state@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "electron-window-state@npm:5.0.3"
-  dependencies:
-    jsonfile: "npm:^4.0.0"
-    mkdirp: "npm:^0.5.1"
-  checksum: 10c0/10d01f3bcb1e4024a61f9b7116a251b6caf3e21f9d5e50f1b842758d93161b40b790be2efdbeb65dbbb611f4e58c4107aa785a2dbcfdefa8a6b80ad4a8d914e2
   languageName: node
   linkType: hard
 
@@ -9802,7 +9783,6 @@ __metadata:
     electron: "npm:^33.0.2"
     electron-builder: "npm:^25.1.8"
     electron-updater: "npm:^6.3.9"
-    electron-window-state: "npm:^5.0.3"
     eslint: "npm:^8.57.1"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-perfectionist: "npm:^3.9.1"
@@ -10224,17 +10204,6 @@ __metadata:
   version: 0.5.3
   resolution: "mkdirp-classic@npm:0.5.3"
   checksum: 10c0/95371d831d196960ddc3833cc6907e6b8f67ac5501a6582f47dfae5eb0f092e9f8ce88e0d83afcae95d6e2b61a01741ba03714eeafb6f7a6e9dcc158ac85b168
-  languageName: node
-  linkType: hard
-
-"mkdirp@npm:^0.5.1":
-  version: 0.5.6
-  resolution: "mkdirp@npm:0.5.6"
-  dependencies:
-    minimist: "npm:^1.2.6"
-  bin:
-    mkdirp: bin/cmd.js
-  checksum: 10c0/e2e2be789218807b58abced04e7b49851d9e46e88a2f9539242cc8a92c9b5c3a0b9bab360bd3014e02a140fc4fbc58e31176c408b493f8a2a6f4986bd7527b01
   languageName: node
   linkType: hard
 
