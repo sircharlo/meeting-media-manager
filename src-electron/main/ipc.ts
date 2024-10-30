@@ -13,9 +13,9 @@ import {
   shell,
 } from 'electron';
 
-import { isSelf } from './utils';
-import { logToWindow } from './window-base';
-import { mainWindow, toggleAuthorizedClose } from './window-main';
+import { isSelf } from './../utils';
+import { logToWindow } from './window/window-base';
+import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 
 // IPC send/on
 

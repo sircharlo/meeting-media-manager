@@ -22,7 +22,7 @@ export function createMediaWindow() {
     {
       backgroundColor: 'black',
       frame: false,
-      icon: path.resolve(path.join('icons', 'media-player.png')),
+      icon: path.resolve(path.join(__dirname, 'icons', 'media-player.png')),
       minHeight: 110,
       minWidth: 195,
       thickFrame: false,

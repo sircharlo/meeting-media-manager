@@ -9,7 +9,7 @@ import {
 } from 'electron';
 import path from 'path';
 
-import { PLATFORM } from './constants';
+import { PLATFORM } from './../../constants';
 import { StatefulBrowserWindow } from './window-state';
 
 /**
@@ -35,7 +35,8 @@ export function createWindow(
     icon: path.resolve(
       path.join(
         __dirname,
-        `icons/icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`,
+        'icons',
+        `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`,
       ),
     ),
     minHeight: 400,

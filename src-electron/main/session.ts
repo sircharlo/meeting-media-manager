@@ -1,6 +1,6 @@
 import { app, session } from 'electron';
 
-import { isJwDomain, isTrustedDomain } from './utils';
+import { isJwDomain, isTrustedDomain } from './../utils';
 
 app.on('ready', () => {
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
