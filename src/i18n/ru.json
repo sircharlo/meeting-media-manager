@@ -282,6 +282,8 @@
   "shortcutMediaPrevious": "Воспроизвести предыдущий медиа файл",
   "shortcutMediaPrevious-explain": "Ярлык для перехода к предыдущему видео или изображению в списке. Не действует, если в данный момент воспроизводится видео.",
   "shortcutMediaStop": "Остановить воспроизведение",
+  "obsQuickToggle": "Enable instant scene switcher",
+  "obsQuickToggle-explain": "When enabled, hovering over the OBS Studio button will open the scene switcher. This can be useful for quickly switching scenes in OBS Studio, especially if many scenes are configured.",
   "shortcutMediaStop-explain": "Ярлык для остановки воспроизводимого видео или снятия отображаемого изображения. Не действует, если в данный момент никакой медиа файл не отображается.",
   "shortcutMediaWindow": "Скрыть/показать окно мультимедиа",
   "shortcutMediaWindow-explain": "Ярлык, чтобы быстро скрыть или показать окно медиа.",
