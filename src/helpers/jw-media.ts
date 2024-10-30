@@ -60,7 +60,14 @@ import { errorCatcher } from './error-catcher';
 
 const { formatDate, subtractFromDate } = date;
 
-const { executeQuery, fileUrlToPath, fs, klawSync, path } = electronApi;
+const {
+  downloadErrorIsExpected,
+  executeQuery,
+  fileUrlToPath,
+  fs,
+  klawSync,
+  path,
+} = electronApi;
 
 const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
@@ -176,8 +183,8 @@ const downloadFile = async ({ dir, filename, url }: FileDownloader) => {
       },
       responseType: 'arraybuffer',
     })
-    .catch((error: AxiosError) => {
-      errorCatcher(error);
+    .catch(async (error: AxiosError) => {
+      if (!(await downloadErrorIsExpected())) errorCatcher(error);
       downloadProgress.value[url] = {
         error: true,
       };

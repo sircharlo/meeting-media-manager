@@ -7,6 +7,7 @@ export type ElectronIpcSendKey =
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
+  | 'downloadErrorIsExpected'
   | 'getVersion'
   | 'openFileDialog'
   | 'registerShortcut';

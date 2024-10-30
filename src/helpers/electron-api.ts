@@ -20,6 +20,7 @@ export interface ElectronApi {
     outputFolder: string,
   ) => Promise<string[]>;
   decompress: (inputZip: string, outputFolder: string) => Promise<void>;
+  downloadErrorIsExpected: () => Promise<boolean>;
   executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => T[];
   fileUrlToPath: (url: string) => string;
   fs: typeof FsExtra;
