@@ -3,7 +3,7 @@
     class="q-electron-drag vertical-middle overflow-hidden"
     padding
     style="align-content: center; height: 100vh"
-    >{{ webStreamData }}
+  >
     <q-resize-observer debounce="50" @resize="onResize" />
     <transition
       appear
