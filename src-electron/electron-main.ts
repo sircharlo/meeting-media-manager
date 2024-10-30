@@ -9,12 +9,12 @@ import {
   shell,
 } from 'electron';
 
-import './ipc';
-import './session';
+import './main/ipc';
+import './main/session';
 import { PLATFORM } from './constants';
-import { initUpdater } from './updater';
+import { initUpdater } from './main/updater';
+import { createMainWindow } from './main/window/window-main';
 import { errorCatcher } from './utils';
-import { createMainWindow } from './window-main';
 
 initSentry({
   dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',

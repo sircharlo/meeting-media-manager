@@ -15,9 +15,8 @@ const { configure } = require('quasar/wrappers');
 const { mergeConfig } = require('vite'); // use mergeConfig helper to avoid overwriting the default config
 
 const { version } = require('./package.json');
-const devMode = process.env.NODE_ENV === 'development';
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -38,7 +37,7 @@ module.exports = configure(function (/* ctx */) {
             },
           },
         });
-        if (!devMode) {
+        if (ctx.prod && !ctx.debug) {
           viteConf.build = mergeConfig(viteConf.build, {
             sourcemap: true,
           });
@@ -131,7 +130,7 @@ module.exports = configure(function (/* ctx */) {
           publish: ['github'],
           target: [
             {
-              arch: ['x64', 'ia32'],
+              arch: ctx.debug ? undefined : ['x64', 'ia32'],
               target: 'nsis',
             },
           ],
@@ -139,7 +138,7 @@ module.exports = configure(function (/* ctx */) {
       },
       bundler: 'builder', // 'packager' or 'builder'
       extendElectronMainConf: (esbuildConf) => {
-        if (!devMode) {
+        if (ctx.prod && !ctx.debug) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
           esbuildConf.plugins.push(
@@ -156,7 +155,7 @@ module.exports = configure(function (/* ctx */) {
         }
       },
       extendElectronPreloadConf: (esbuildConf) => {
-        if (!devMode) {
+        if (ctx.prod && !ctx.debug) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
           esbuildConf.plugins.push(

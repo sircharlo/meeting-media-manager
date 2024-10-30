@@ -1,4 +1,3 @@
-import type { ShortcutDetails } from 'electron';
 import type FsExtra from 'fs-extra';
 import type HeicConvert from 'heic-convert';
 import type KlawSync from 'klaw-sync';
@@ -8,6 +7,7 @@ import type {
   ExternalWebsite,
   FileDialogFilter,
   QueryResponseItem,
+  SettingsValues,
   VideoDuration,
 } from 'src/types';
 import type Path from 'upath';
@@ -47,6 +47,9 @@ export interface ElectronApi {
       msg: string;
     }) => void,
   ) => void;
+  onShortcut: (
+    callback: (args: { shortcut: keyof SettingsValues }) => void,
+  ) => void;
   openExternal: (website: ExternalWebsite) => void;
   openFileDialog: (
     single?: boolean,
@@ -56,15 +59,12 @@ export interface ElectronApi {
   parseFile: (filePath: string, options?: IOptions) => Promise<IAudioMetadata>;
   path: typeof Path;
   pathToFileURL: (path: string) => string;
-  readShortcutLink: (shortcutPath: string) => ShortcutDetails;
-  registerShortcut: (shortcut: string, callback: () => void) => void;
+  registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
-  // saveSettingsStoreToFile: (storeName: string, data: unknown) => void;
   setAutoStartAtLogin: (value: boolean) => void;
   setMediaWindowPosition: (x: number, y: number) => void;
   toggleMediaWindow: (action: string) => void;
   unregisterShortcut: (shortcut: string) => void;
-  writeShortcutLink: (shortcutPath: string, details: ShortcutDetails) => void;
   zoomWebsiteWindow: (action: string) => void;
 }
 

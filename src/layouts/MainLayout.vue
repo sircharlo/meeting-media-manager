@@ -66,6 +66,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
 import {
+  executeShortcut,
   registerAllCustomShortcuts,
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
@@ -313,49 +314,6 @@ watch(
   },
 );
 
-// // Hack for Windows shortcut glitch, possibly related to https://github.com/electron-userland/electron-builder/issues/2435
-// try {
-//   if ($q.platform.is.platform === 'win') {
-//     for (const parentDir of [
-//       path.join(
-//         getAppDataPath(),
-//         'Microsoft',
-//         'Windows',
-//         'Start Menu',
-//         'Programs',
-//       ),
-//       getUserDesktopPath(),
-//     ]) {
-//       try {
-//         const shortcutPath = path.join(parentDir, 'Meeting Media Manager.lnk');
-//         if (fs.existsSync(shortcutPath)) {
-//           fs.copySync(
-//             shortcutPath,
-//             path.join(
-//               getUserDataPath(),
-//               'Meeting Media Manager - ' + path.basename(parentDir) + '.lnk',
-//             ),
-//           );
-//           const shortcut = readShortcutLink(shortcutPath);
-//           if (
-//             shortcut.target &&
-//             (shortcut.icon !== shortcut.target ||
-//               shortcut.cwd !== path.resolve(path.basename(shortcut.target)))
-//           ) {
-//             shortcut.cwd = path.resolve(path.basename(shortcut.target));
-//             shortcut.icon = shortcut.target;
-//             writeShortcutLink(shortcutPath, shortcut);
-//           }
-//         }
-//       } catch (error) {
-//         errorCatcher(error);
-//       }
-//     }
-//   }
-// } catch (error) {
-//   errorCatcher(error);
-// }
-
 cleanLocalStorage();
 cleanAdditionalMediaFolder();
 
@@ -412,10 +370,15 @@ const initListeners = () => {
   window.electronApi.onLog(({ ctx, level, msg }) => {
     console[level](`[main] ${msg}`, ctx);
   });
+
+  window.electronApi.onShortcut(({ shortcut }) => {
+    if (!currentSettings.value?.enableKeyboardShortcuts) return;
+    executeShortcut(shortcut);
+  });
 };
 
 const removeListeners = () => {
-  const listeners: ElectronIpcListenKey[] = ['log'];
+  const listeners: ElectronIpcListenKey[] = ['log', 'shortcut'];
 
   listeners.forEach((listener) => {
     window.electronApi.removeListeners(listener);

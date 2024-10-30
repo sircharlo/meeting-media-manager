@@ -2,20 +2,25 @@ import type {
   ElectronIpcInvokeKey,
   ElectronIpcSendKey,
   ExternalWebsite,
+  FileDialogFilter,
+  SettingsValues,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
 import {
   app,
+  dialog,
   ipcMain,
   type IpcMainEvent,
   type IpcMainInvokeEvent,
   shell,
 } from 'electron';
+import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 
-import { isSelf } from './utils';
-import { logToWindow } from './window-base';
-import { mainWindow, toggleAuthorizedClose } from './window-main';
+import { isSelf } from './../utils';
+import { registerShortcut, unregisterShortcut } from './shortcuts';
+import { logToWindow } from './window/window-base';
+import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 
 // IPC send/on
 
@@ -43,6 +48,10 @@ function handleIpcSend(
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
   mainWindow?.close();
+});
+
+handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {
+  unregisterShortcut(keySequence);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
@@ -89,3 +98,40 @@ function handleIpcInvoke<T = unknown>(
 handleIpcInvoke('getVersion', async () => {
   return app.getVersion();
 });
+
+handleIpcInvoke(
+  'registerShortcut',
+  async (_e, name: keyof SettingsValues, keySequence: string) => {
+    return registerShortcut(name, keySequence);
+  },
+);
+
+handleIpcInvoke(
+  'openFileDialog',
+  async (_e, single: boolean, filter: FileDialogFilter) => {
+    if (!mainWindow) return;
+
+    const filters: Electron.FileFilter[] = [];
+
+    if (!filter) {
+      filters.push({ extensions: ['*'], name: 'All files' });
+    } else if (filter === 'jwpub+image') {
+      filters.push({
+        extensions: JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS),
+        name: 'JWPUB + Images',
+      });
+    }
+
+    if (filter?.includes('jwpub')) {
+      filters.push({ extensions: JWPUB_EXTENSIONS, name: 'JWPUB' });
+    }
+    if (filter?.includes('image')) {
+      filters.push({ extensions: IMG_EXTENSIONS, name: 'Images' });
+    }
+
+    return dialog.showOpenDialog(mainWindow, {
+      filters,
+      properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
+    });
+  },
+);

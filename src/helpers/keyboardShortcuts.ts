@@ -29,6 +29,12 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   },
 };
 
+const executeShortcut = (shortcutName: keyof SettingsValues) => {
+  const callback = shortcutCallbacks[shortcutName];
+  if (callback) callback();
+  else console.warn('Unknown shortcut', shortcutName);
+};
+
 const getCurrentShortcuts = () => {
   try {
     const currentState = useCurrentStateStore();
@@ -68,7 +74,7 @@ const registerCustomShortcut = (
       return;
     if (!keySequence)
       keySequence = currentSettings.value[shortcutName] as string;
-    registerShortcut(keySequence, shortcutCallbacks[shortcutName]);
+    registerShortcut(shortcutName, keySequence);
   } catch (error) {
     errorCatcher(error);
   }
@@ -105,6 +111,7 @@ const unregisterAllCustomShortcuts = () => {
 };
 
 export {
+  executeShortcut,
   getCurrentShortcuts,
   isKeyCode,
   registerAllCustomShortcuts,

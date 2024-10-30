@@ -11,29 +11,16 @@ import type {
   ScreenPreferences,
 } from 'src/types';
 
-import {
-  app,
-  BrowserWindow,
-  dialog,
-  globalShortcut,
-  screen,
-  shell,
-} from '@electron/remote';
+import { app, BrowserWindow, globalShortcut, screen } from '@electron/remote';
 import { videoDuration as getVideoDuration } from '@numairawan/video-duration';
 import { captureMessage, setContext } from '@sentry/electron/renderer';
 import AdmZip from 'adm-zip';
 import BetterSqlite3 from 'better-sqlite3';
-import {
-  contextBridge,
-  ipcRenderer,
-  type ShortcutDetails,
-  webUtils,
-} from 'electron/renderer';
+import { contextBridge, ipcRenderer, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import convert from 'heic-convert';
 import klawSync from 'klaw-sync';
 import os from 'os';
-import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 import { FULL_HD } from 'src/constants/media';
 import path from 'upath';
 import url from 'url';
@@ -458,29 +445,6 @@ const toggleMediaWindow = (action: string) => {
   }
 };
 
-const registerShortcut = (keySequence: string, callback: () => void) => {
-  if (!keySequence) return;
-  try {
-    unregisterShortcut(keySequence);
-    const ret = globalShortcut.register(keySequence, callback);
-    if (!ret) {
-      errorCatcher('registration failed');
-    }
-  } catch (err) {
-    errorCatcher(err);
-  }
-};
-
-const unregisterShortcut = (keySequence: string) => {
-  if (!keySequence) return;
-  try {
-    if (globalShortcut.isRegistered(keySequence))
-      globalShortcut.unregister(keySequence);
-  } catch (err) {
-    errorCatcher(err);
-  }
-};
-
 const bcClose = new BroadcastChannel('closeAttempts');
 
 listen('attemptedClose', () => {
@@ -638,34 +602,10 @@ const electronApi: ElectronApi = {
   moveMediaWindow,
   navigateWebsiteWindow,
   onLog: (callback) => listen('log', callback),
+  onShortcut: (callback) => listen('shortcut', callback),
   openExternal: (website) => send('openExternal', website),
-  openFileDialog: async (single, filter) => {
-    const mainWindow = getMainWindow();
-    if (!mainWindow) return;
-
-    const filters: Electron.FileFilter[] = [];
-
-    if (!filter) {
-      filters.push({ extensions: ['*'], name: 'All files' });
-    } else if (filter === 'jwpub+image') {
-      filters.push({
-        extensions: JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS),
-        name: 'JWPUB + Image',
-      });
-    }
-
-    if (filter?.includes('jwpub')) {
-      filters.push({ extensions: JWPUB_EXTENSIONS, name: 'JWPUB' });
-    }
-    if (filter?.includes('image')) {
-      filters.push({ extensions: IMG_EXTENSIONS, name: 'Images' });
-    }
-
-    return dialog.showOpenDialog(mainWindow, {
-      filters,
-      properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
-    });
-  },
+  openFileDialog: async (single, filter) =>
+    invoke('openFileDialog', single, filter),
   openWebsiteWindow,
   parseFile: async (filePath, options) => {
     const musicMetadata: typeof MusicMetadata = await import('music-metadata');
@@ -677,15 +617,8 @@ const electronApi: ElectronApi = {
     if (isFileUrl(path)) return path;
     return url.pathToFileURL(path).href;
   },
-  readShortcutLink: (path): ShortcutDetails => {
-    try {
-      return shell.readShortcutLink(path);
-    } catch (error) {
-      errorCatcher(error);
-      return { target: '' };
-    }
-  },
-  registerShortcut,
+  registerShortcut: (keySequence, callback) =>
+    invoke('registerShortcut', keySequence, callback),
   removeListeners: (channel) => ipcRenderer.removeAllListeners(channel),
   // saveSettingsStoreToFile,
   setAutoStartAtLogin: (value) => {
@@ -708,14 +641,7 @@ const electronApi: ElectronApi = {
     }
   },
   toggleMediaWindow,
-  unregisterShortcut,
-  writeShortcutLink: (path, details) => {
-    try {
-      shell.writeShortcutLink(path, 'update', details);
-    } catch (error) {
-      errorCatcher(error);
-    }
-  },
+  unregisterShortcut: (keySequence) => send('unregisterShortcut', keySequence),
   zoomWebsiteWindow,
 };
 

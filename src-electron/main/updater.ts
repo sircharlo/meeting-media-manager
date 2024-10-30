@@ -3,7 +3,7 @@ import { autoUpdater } from 'electron-updater';
 import { existsSync } from 'fs-extra';
 import path from 'path';
 
-import { errorCatcher } from './utils';
+import { errorCatcher } from './../utils';
 
 export function initUpdater() {
   const disabled = existsSync(
