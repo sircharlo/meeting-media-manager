@@ -22,6 +22,7 @@
       >
         <q-img
           :id="media.uniqueId"
+          ref="mediaImage"
           :ratio="16 / 9"
           :src="
             thumbnailFromMetadata ||
@@ -170,7 +171,7 @@
             <div
               class="absolute-bottom-right q-mr-xs q-mb-xs bg-semi-black row rounded-borders"
             >
-              <template v-if="mediaPanzoom?.scale !== 1">
+              <template v-if="mediaPanzoom?.scale > 1.01">
                 <q-badge
                   style="background: transparent; padding: 5px !important"
                   @click="zoomReset(true)"
@@ -705,7 +706,7 @@ function zoomIn(click?: MouseEvent) {
       panzooms[props.media.uniqueId]?.zoomIn();
     } else {
       panzooms[props.media.uniqueId]?.zoomToPoint(
-        (panzooms[props.media.uniqueId]?.getScale() || 1) * 1.25,
+        (panzooms[props.media.uniqueId]?.getScale() || 1) * 1.35,
         {
           clientX: click?.clientX || 0,
           clientY: click?.clientY || 0,
@@ -759,14 +760,17 @@ const mediaPanzoom = ref<Record<string, number>>({
   y: 0,
 });
 
+const mediaImage = ref();
+
 const initiatePanzoom = () => {
   try {
-    if (!props.media.uniqueId || !isImage(props.media.fileUrl)) return;
-    const elem = document.getElementById(props.media.uniqueId);
-    const width = elem?.clientWidth || 0;
-    const height = elem?.clientHeight || 0;
-    if (!elem) return;
-    panzooms[props.media.uniqueId] = Panzoom(elem, {
+    if (
+      !props.media.uniqueId ||
+      !isImage(props.media.fileUrl) ||
+      !mediaImage.value?.$el
+    )
+      return;
+    panzooms[props.media.uniqueId] = Panzoom(mediaImage.value.$el, {
       animate: true,
       contain: 'outside',
       maxScale: 5,
@@ -775,27 +779,30 @@ const initiatePanzoom = () => {
       pinchAndPan: true,
     } as PanzoomOptions);
 
-    useEventListener(elem, 'dblclick', (e) => {
+    useEventListener(mediaImage.value, 'dblclick', (e) => {
       zoomIn(e);
     });
 
-    useEventListener(elem, 'panzoomend', () => {
+    useEventListener(mediaImage.value, 'panzoomend', () => {
       zoomReset();
     });
 
-    useEventListener(elem, 'wheel', function (e) {
+    useEventListener(mediaImage.value, 'wheel', function (e) {
       if (!e.ctrlKey) return;
       panzooms[props.media.uniqueId]?.zoomWithWheel(e);
     });
 
     useEventListener(
-      elem,
+      mediaImage.value,
       'panzoomchange',
       (e: HTMLElementEventMap['panzoomchange']) => {
+        const width = mediaImage.value?.$el?.clientWidth;
+        const height = mediaImage.value?.$el?.clientHeight;
+        if (!width || !height) return;
         mediaPanzoom.value = {
           scale: e.detail.scale,
-          x: e.detail.x / (width ?? 1),
-          y: e.detail.y / (height ?? 1),
+          x: e.detail.x / width,
+          y: e.detail.y / height,
         };
         if (mediaPlayingUrl.value !== props.media.fileUrl) return;
         mediaPlayingPanzoom.value = mediaPanzoom.value;
