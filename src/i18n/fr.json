@@ -282,6 +282,8 @@
   "shortcutMediaPrevious": "Lire l'élément média précédent",
   "shortcutMediaPrevious-explain": "Raccourci pour passer à la vidéo ou l'image précédente de la liste. Cela n'a aucun effet si une vidéo est en cours de lecture.",
   "shortcutMediaStop": "Arrêter la lecture",
+  "obsQuickToggle": "Enable instant scene switcher",
+  "obsQuickToggle-explain": "When enabled, hovering over the OBS Studio button will open the scene switcher. This can be useful for quickly switching scenes in OBS Studio, especially if many scenes are configured.",
   "shortcutMediaStop-explain": "Raccourci pour arrêter la lecture de la vidéo en cours ou masquer l'image affichée. Cela ne prend effet que si un média est actuellement affiché.",
   "shortcutMediaWindow": "Masquer/afficher la fenêtre des médias",
   "shortcutMediaWindow-explain": "Raccourci pour masquer ou afficher rapidement la fenêtre des médias.",
