@@ -62,7 +62,6 @@ export interface ElectronApi {
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;
-  setMediaWindowPosition: (x: number, y: number) => void;
   toggleMediaWindow: (action: string) => void;
   unregisterShortcut: (shortcut: string) => void;
   zoomWebsiteWindow: (action: string) => void;

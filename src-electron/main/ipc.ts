@@ -50,6 +50,10 @@ handleIpcSend('authorizedClose', () => {
   mainWindow?.close();
 });
 
+handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin) => {
+  app.setLoginItemSettings({ openAtLogin });
+});
+
 handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {
   unregisterShortcut(keySequence);
 });
