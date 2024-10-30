@@ -51,8 +51,12 @@ function hasBounds(state: State) {
 function getMaxBounds(bounds: State, boundsToCheck: Rectangle) {
   if (!bounds.x) bounds.x = 0;
   if (!bounds.y) bounds.y = 0;
+
+  // If x or y are out of bounds because of window snapping, move them back
   const x = Math.max(bounds.x, boundsToCheck.x);
   const y = Math.max(bounds.y, boundsToCheck.y);
+
+  // If the window overflows to the right or bottom, resize it
   const right = Math.min(
     bounds.x + bounds.width,
     boundsToCheck.x + boundsToCheck.width,
@@ -135,7 +139,7 @@ function refineOptionsAndState(
   try {
     savedState = readJsonSync(path.join(configFilePath, configFileName));
   } catch (e) {
-    // Don't care
+    // Don't care, use defaults
   }
 
   savedState = validateState(savedState);
