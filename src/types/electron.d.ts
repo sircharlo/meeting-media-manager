@@ -2,7 +2,7 @@
 export type ElectronIpcSendKey = 'authorizedClose' | 'openExternal';
 
 // ipcMain.handle / ipcRenderer.invoke channels
-export type ElectronIpcInvokeKey = 'getVersion';
+export type ElectronIpcInvokeKey = 'getVersion' | 'openFileDialog';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey = 'attemptedClose' | 'log';
