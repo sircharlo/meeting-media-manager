@@ -66,6 +66,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
 import {
+  executeShortcut,
   registerAllCustomShortcuts,
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
@@ -369,10 +370,15 @@ const initListeners = () => {
   window.electronApi.onLog(({ ctx, level, msg }) => {
     console[level](`[main] ${msg}`, ctx);
   });
+
+  window.electronApi.onShortcut(({ shortcut }) => {
+    if (!currentSettings.value?.enableKeyboardShortcuts) return;
+    executeShortcut(shortcut);
+  });
 };
 
 const removeListeners = () => {
-  const listeners: ElectronIpcListenKey[] = ['log'];
+  const listeners: ElectronIpcListenKey[] = ['log', 'shortcut'];
 
   listeners.forEach((listener) => {
     window.electronApi.removeListeners(listener);

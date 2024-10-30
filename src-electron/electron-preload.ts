@@ -445,29 +445,6 @@ const toggleMediaWindow = (action: string) => {
   }
 };
 
-const registerShortcut = (keySequence: string, callback: () => void) => {
-  if (!keySequence) return;
-  try {
-    unregisterShortcut(keySequence);
-    const ret = globalShortcut.register(keySequence, callback);
-    if (!ret) {
-      errorCatcher('registration failed');
-    }
-  } catch (err) {
-    errorCatcher(err);
-  }
-};
-
-const unregisterShortcut = (keySequence: string) => {
-  if (!keySequence) return;
-  try {
-    if (globalShortcut.isRegistered(keySequence))
-      globalShortcut.unregister(keySequence);
-  } catch (err) {
-    errorCatcher(err);
-  }
-};
-
 const bcClose = new BroadcastChannel('closeAttempts');
 
 listen('attemptedClose', () => {
@@ -625,6 +602,7 @@ const electronApi: ElectronApi = {
   moveMediaWindow,
   navigateWebsiteWindow,
   onLog: (callback) => listen('log', callback),
+  onShortcut: (callback) => listen('shortcut', callback),
   openExternal: (website) => send('openExternal', website),
   openFileDialog: async (single, filter) =>
     invoke('openFileDialog', single, filter),
@@ -639,7 +617,8 @@ const electronApi: ElectronApi = {
     if (isFileUrl(path)) return path;
     return url.pathToFileURL(path).href;
   },
-  registerShortcut,
+  registerShortcut: (keySequence, callback) =>
+    invoke('registerShortcut', keySequence, callback),
   removeListeners: (channel) => ipcRenderer.removeAllListeners(channel),
   // saveSettingsStoreToFile,
   setAutoStartAtLogin: (value) => {
@@ -662,7 +641,7 @@ const electronApi: ElectronApi = {
     }
   },
   toggleMediaWindow,
-  unregisterShortcut,
+  unregisterShortcut: (keySequence) => send('unregisterShortcut', keySequence),
   zoomWebsiteWindow,
 };
 

@@ -3,6 +3,7 @@ import type {
   ElectronIpcSendKey,
   ExternalWebsite,
   FileDialogFilter,
+  SettingsValues,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -17,6 +18,7 @@ import {
 import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 
 import { isSelf } from './../utils';
+import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 
@@ -46,6 +48,10 @@ function handleIpcSend(
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
   mainWindow?.close();
+});
+
+handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {
+  unregisterShortcut(keySequence);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
@@ -92,6 +98,13 @@ function handleIpcInvoke<T = unknown>(
 handleIpcInvoke('getVersion', async () => {
   return app.getVersion();
 });
+
+handleIpcInvoke(
+  'registerShortcut',
+  async (_e, name: keyof SettingsValues, keySequence: string) => {
+    return registerShortcut(name, keySequence);
+  },
+);
 
 handleIpcInvoke(
   'openFileDialog',

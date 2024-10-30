@@ -7,6 +7,7 @@ import type {
   ExternalWebsite,
   FileDialogFilter,
   QueryResponseItem,
+  SettingsValues,
   VideoDuration,
 } from 'src/types';
 import type Path from 'upath';
@@ -46,6 +47,9 @@ export interface ElectronApi {
       msg: string;
     }) => void,
   ) => void;
+  onShortcut: (
+    callback: (args: { shortcut: keyof SettingsValues }) => void,
+  ) => void;
   openExternal: (website: ExternalWebsite) => void;
   openFileDialog: (
     single?: boolean,
@@ -55,7 +59,7 @@ export interface ElectronApi {
   parseFile: (filePath: string, options?: IOptions) => Promise<IAudioMetadata>;
   path: typeof Path;
   pathToFileURL: (path: string) => string;
-  registerShortcut: (shortcut: string, callback: () => void) => void;
+  registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;
   setMediaWindowPosition: (x: number, y: number) => void;
