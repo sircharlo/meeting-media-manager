@@ -85,6 +85,7 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       obsMediaScene: oldPrefs.app?.obs?.mediaScene || '',
       obsPassword: oldPrefs.app?.obs?.password || '',
       obsPort: oldPrefs.app?.obs?.port?.toString() || '',
+      obsQuickToggle: false,
       shortcutMediaNext: oldPrefs.media?.ppForward || '',
       shortcutMediaPauseResume: '',
       shortcutMediaPrevious: oldPrefs.media?.ppBackward || '',

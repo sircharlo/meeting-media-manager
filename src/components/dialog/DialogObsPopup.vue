@@ -14,53 +14,71 @@
         <div class="card-title">
           {{ $t('scene-selection') }}
         </div>
-        <div>
+        <!-- <div>
           <p class="card-section-title text-dark-grey">
             {{ $t('main-scenes') }}
           </p>
-        </div>
+        </div> -->
         <div class="row items-center q-col-gutter-sm">
-          <template
-            v-for="scene in [
-              currentSettings?.obsCameraScene,
-              currentSettings?.obsMediaScene,
-              currentSettings?.obsImageScene,
-            ].filter(Boolean)"
-            :key="scene"
-          >
-            <div class="col">
+          <template v-for="scene in sceneList" :key="scene">
+            <div
+              :class="
+                'col-' +
+                (sceneList.length === 2
+                  ? 6
+                  : sceneList.length === 3
+                    ? 4
+                    : sceneList.length >= 4
+                      ? 3
+                      : 12)
+              "
+            >
               <q-btn
                 :color="sceneExists(scene) ? 'primary' : 'negative'"
+                :icon="
+                  scene === currentSettings?.obsCameraScene
+                    ? 'mmm-stage-scene'
+                    : scene === currentSettings?.obsMediaScene
+                      ? 'mmm-media-scene'
+                      : scene === currentSettings?.obsImageScene
+                        ? 'mmm-pip-scene'
+                        : sceneList.findIndex((s) => s === scene) +
+                              1 -
+                              baseScenesLength <=
+                            10
+                          ? 'mmm-numeric-' +
+                            (sceneList.findIndex((s) => s === scene) +
+                              1 -
+                              baseScenesLength) +
+                            '-box-outline'
+                          : 'play-box-outline'
+                "
                 :outline="scene !== currentScene"
                 class="full-width"
+                size="sm"
+                stack
                 unelevated
                 @click="setObsScene(undefined, scene)"
               >
-                <q-icon
-                  :name="
-                    scene === currentSettings?.obsCameraScene
-                      ? 'mmm-lectern'
-                      : scene === currentSettings?.obsMediaScene
-                        ? 'mmm-stream-now'
-                        : 'mmm-picture-in-picture'
-                  "
-                  class="q-mr-sm"
-                  size="xs"
-                />
-                <div class="ellipsis">
+                <div class="ellipsis full-width">
                   {{
                     scene === currentSettings?.obsCameraScene
                       ? $t('stage')
                       : scene === currentSettings?.obsMediaScene
                         ? $t('media-only')
-                        : $t('picture-in-picture')
+                        : scene === currentSettings?.obsImageScene
+                          ? $t('picture-in-picture')
+                          : isUUID(scene)
+                            ? scenes.find((s) => s.sceneUuid === scene)
+                                ?.sceneName
+                            : scene
                   }}
                 </div>
               </q-btn>
             </div>
           </template>
         </div>
-        <template v-if="additionalScenes.length > 0">
+        <!-- <template v-if="additionalScenes.length > 0">
           <q-separator class="bg-accent-200 q-my-md" />
           <div>
             <p class="card-section-title text-dark-grey">
@@ -96,7 +114,7 @@
               </div>
             </template>
           </div>
-        </template>
+        </template> -->
       </q-card-section>
     </q-card>
   </q-menu>
@@ -116,6 +134,7 @@ import {
 } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const open = defineModel<boolean>({ default: false });
@@ -194,6 +213,25 @@ const setObsSceneListener = (event: CustomEventInit) => {
     errorCatcher(error);
   }
 };
+
+const sceneList = computed(() =>
+  [
+    currentSettings.value?.obsCameraScene,
+    currentSettings.value?.obsMediaScene,
+    currentSettings.value?.obsImageScene,
+  ]
+    .concat(additionalScenes.value || [])
+    .filter(Boolean),
+);
+
+const baseScenesLength = computed(
+  () =>
+    [
+      currentSettings.value?.obsCameraScene,
+      currentSettings.value?.obsMediaScene,
+      currentSettings.value?.obsImageScene,
+    ].filter(Boolean).length,
+);
 
 useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect);
 useEventListener(window, 'obsSceneEvent', setObsSceneListener);
