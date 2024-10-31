@@ -115,6 +115,10 @@ export const useAppSettingsStore = defineStore('app-settings', {
             { preferredScreenNumber: 0, preferWindowed: false },
           );
           QuasarStorage.removeItem('screenPreferences');
+        } else if (type === 'addBaseUrl') {
+          for (const prefs of Object.values(congregationStore.congregations)) {
+            prefs.baseUrl = 'jw.org';
+          }
         } else {
           // other migrations will go here
         }

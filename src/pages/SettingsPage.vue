@@ -171,13 +171,10 @@ import TimeInput from 'src/components/form-inputs/TimeInput.vue';
 import ToggleInput from 'src/components/form-inputs/ToggleInput.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { setUrlVariables } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-
-setUrlVariables();
 
 const route = useRoute();
 
