@@ -2,7 +2,6 @@
   <q-input
     v-model="localValue"
     :error="customError"
-    :loading="customLoading"
     :rules="getRules(rules)"
     class="q-pb-none bg-accent-100 error"
     dense
@@ -47,15 +46,7 @@ const customError = computed(
 
 const customFailure = computed(() => {
   if (props.settingId?.startsWith('baseUrl')) {
-    return !urlVariables.value.base && !urlVariables.value?.mediator;
-  } else {
-    return false;
-  }
-});
-
-const customLoading = computed(() => {
-  if (props.settingId?.startsWith('baseUrl')) {
-    return !!urlVariables.value.base && !urlVariables.value?.mediator;
+    return !urlVariables.value?.mediator;
   } else {
     return false;
   }

@@ -264,7 +264,6 @@ export const settingsDefinitions: SettingsItems = {
     type: 'slider',
   },
   baseUrl: {
-    actions: ['baseUrlUpdate'],
     rules: ['notEmpty'],
     group: 'advanced',
     subgroup: 'dangerZone',

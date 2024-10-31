@@ -1634,72 +1634,65 @@ const downloadJwpub = async (
   }
 };
 
-const requestControllers: Record<string, AbortController> = {};
+const requestControllers: AbortController[] = [];
 
-const setUrlVariables = async () => {
+const setUrlVariables = async (baseUrl: string | undefined) => {
   const jwStore = useJwStore();
   const { urlVariables } = storeToRefs(jwStore);
 
-  const currentStateStore = useCurrentStateStore();
-  const { currentSettings } = storeToRefs(currentStateStore);
-
-  const resetUrlVariables = () => {
-    urlVariables.value.base = '';
+  const resetUrlVariables = (base = false) => {
+    if (base) urlVariables.value.base = '';
     urlVariables.value.mediator = '';
     urlVariables.value.pubMedia = '';
   };
 
+  if (!baseUrl) {
+    resetUrlVariables(true);
+    return;
+  }
+
   try {
-    if (currentSettings.value) {
-      if (!currentSettings.value.baseUrl) {
-        resetUrlVariables();
-        return;
-      }
+    resetUrlVariables();
+    urlVariables.value.base = baseUrl;
+    const homePageUrl = 'https://www.' + baseUrl + '/en';
 
-      if (urlVariables.value.base !== currentSettings.value.baseUrl) {
-        urlVariables.value.base = currentSettings.value.baseUrl;
-        const homePageUrl = 'https://' + urlVariables.value.base;
-        if (requestControllers[urlVariables.value.base]) {
-          return;
-        }
-        Object.entries(requestControllers).forEach(([_key, c]) => {
-          if (!c.signal.aborted && _key !== homePageUrl) c.abort();
-          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-          if (c.signal.aborted) delete requestControllers[_key];
-        });
-        requestControllers[urlVariables.value.base] = new AbortController();
-        const homePage = await axios
-          .get(homePageUrl, {
-            signal: requestControllers[urlVariables.value.base].signal,
-          })
-          .then((res) => res.data);
-        console.debug('homepage finished', homePageUrl);
+    requestControllers
+      .filter((c) => !c.signal.aborted)
+      .forEach((c) => c.abort());
+    const controller = new AbortController();
+    // delete all items in the array
+    requestControllers.splice(0);
+    requestControllers.push(controller);
+    const homePage = await axios
+      .get(homePageUrl, {
+        signal: controller.signal,
+      })
+      .then((res) => res.data);
+    console.debug('homepage finished', homePageUrl);
 
-        if (!homePage) {
-          resetUrlVariables();
-          return;
-        }
-
-        const $ = cheerio.load(homePage);
-        const div = $('div#pageConfig');
-        if (!div?.[0]?.attribs) {
-          resetUrlVariables();
-          return;
-        }
-
-        const attributes = { ...(div?.[0]?.attribs || {}) };
-
-        if (attributes['data-mediator_url'])
-          urlVariables.value.mediator = attributes['data-mediator_url'];
-        if (attributes['data-pubmedia_url'])
-          urlVariables.value.pubMedia = attributes['data-pubmedia_url'];
-      }
-    } else {
+    if (!homePage) {
       resetUrlVariables();
+      return;
     }
+
+    const $ = cheerio.load(homePage);
+    const div = $('div#pageConfig');
+    if (!div?.[0]?.attribs) {
+      resetUrlVariables();
+      return;
+    }
+
+    const attributes = { ...(div?.[0]?.attribs || {}) };
+
+    if (attributes['data-mediator_url'])
+      urlVariables.value.mediator = attributes['data-mediator_url'];
+    if (attributes['data-pubmedia_url'])
+      urlVariables.value.pubMedia = attributes['data-pubmedia_url'];
   } catch (e) {
     if (urlVariables.value?.base)
-      requestControllers[urlVariables.value.base]?.abort();
+      requestControllers
+        .filter((c) => !c.signal.aborted)
+        .forEach((c) => c.abort());
     errorCatcher(e);
     resetUrlVariables();
   }
