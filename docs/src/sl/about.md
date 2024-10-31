@@ -2,7 +2,7 @@
 
 ## Kaj je ta program?
 
-**Meeting Media Manager** ali na kratko **M³** je program za operacijske sisteme Windows, macOS in Linux, ki samodejno prenaša slike in videoposnetke, ki bodo obravnavani na shodih Jehovovih prič, v katerem koli jeziku, ki je na voljo na spletnem mestu jw.org.
+**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
 
 Omogoča upravljanje multimedijske vsebine za redne in posebne shode ter podporo za več občin in/ali skupin, ki uporabljajo isti računalniški račun.
 
@@ -30,6 +30,6 @@ Preizkusi M³ še danes in preveri, kaj vse zmore! Predvajanje multimedijske vse
 
 ## Ali M³ deluje v mojem jeziku?
 
-**Da!** Multimedijska vsebino za shode Jehovovih prič se lahko samodejno prenese v katerem koli od več sto jezikov, ki so na voljo na jw.org. Seznam razpoložljivih jezikov se nenehno posodablja, zato moraš le izbrati jezik, ki ga potrebuješ.
+**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on the official website of Jehovah's Witnesses. Seznam razpoložljivih jezikov se nenehno posodablja, zato moraš le izbrati jezik, ki ga potrebuješ.
 
 Poleg tega so številni prostovoljci tudi sam program M³ prevedli v več jezikov, zato lahko nastaviš jezik uporabniškega vmesnika programa M³.

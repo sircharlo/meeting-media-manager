@@ -2,7 +2,7 @@
 
 ## :earth_americas: Är den här appen beroende av externa sajter eller källor för att ladda ner publikationer och mötesmedia?
 
-**Nej.** Appen beter sig på samma sätt som JW Library. Den laddar ner publikationer och media direkt från den officiella JW.org webbplatsen. Appen bestämmer automatiskt vad som behöver laddas ner och när tidigare hämtat innehåll inte längre är uppdaterat och ska laddas ner.
+**Nej.** Appen beter sig på samma sätt som JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Appen bestämmer automatiskt vad som behöver laddas ner och när tidigare hämtat innehåll inte längre är uppdaterat och ska laddas ner.
 
 :::info Info
 
@@ -10,9 +10,9 @@ Källkoden för denna app är tillgänglig för alla att undersöka och verifier
 
 :::
 
-## :thinking: Bryter den här appen mot JW.orgs användarvillkor?
+## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
 
-**Nej.** JW.org [Användarvillkor](https://www.jw.org/finder?docid=1011511&prefer=content) tillåter uttryckligen den typ av användning som vi gör. Här är ett utdrag från dessa villkor (fetstilt av mig):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Här är ett utdrag från dessa villkor (fetstilt av mig):
 
 > Du får inte:
 >

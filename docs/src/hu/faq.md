@@ -2,7 +2,7 @@
 
 ## :earth_americas: Ez az alkalmazás külső webhelyektől, forrásoktól vagy "kurátoroktól" teszi függővé a kiadványok és az összejöveteli média letöltését?
 
-**Nem.** Az alkalmazás hasonlóan működik, mint a JW Library. Közvetlenül a JW.org hivatalos weboldaláról és annak tartalomszolgáltató hálózatáról tölti le a kiadványokat, a médiát és egyéb tartalmakat. Az alkalmazás automatikusan meghatározza, hogy mit kell letölteni, és hogy a korábban letöltött tartalom már nem aktuális, ezért azt újra le kell tölteni.
+**Nem.** Az alkalmazás hasonlóan működik, mint a JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Az alkalmazás automatikusan meghatározza, hogy mit kell letölteni, és hogy a korábban letöltött tartalom már nem aktuális, ezért azt újra le kell tölteni.
 
 :::info Megjegyzés
 
@@ -10,9 +10,9 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 :::
 
-## :thinking: Ez az alkalmazás sérti a JW.org felhasználási feltételeit?
+## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
 
-**Nem.** A [JW.org Felhasználási feltételek](https://www.jw.org/finder?docid=1011511&prefer=content) kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > Tilos:
 >
