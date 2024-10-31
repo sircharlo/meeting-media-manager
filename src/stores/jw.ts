@@ -47,7 +47,7 @@ interface Store {
     base: string,
     mediator: string,
     pubMedia: string,
-  },
+  };
   yeartexts: Record<number, Record<string, string>>;
 }
 

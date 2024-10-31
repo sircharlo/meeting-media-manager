@@ -64,7 +64,7 @@ import {
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
-import { downloadSongbookVideos } from 'src/helpers/jw-media';
+import { downloadSongbookVideos, setUrlVariables } from 'src/helpers/jw-media';
 import {
   executeShortcut,
   registerAllCustomShortcuts,
@@ -129,7 +129,11 @@ const appSettings = useAppSettingsStore();
 const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
 
-const migrationsToRun = ['localStorageToPiniaPersist', 'firstRun'];
+const migrationsToRun = [
+  'addBaseUrl',
+  'localStorageToPiniaPersist',
+  'firstRun',
+];
 
 migrationsToRun.forEach((migration) => {
   if (!migrations.value?.includes(migration)) {
@@ -240,6 +244,13 @@ watch(
         locale.value = newAppLang;
       }
     }
+  },
+);
+
+watch(
+  () => [currentSettings.value?.baseUrl],
+  ([newBaseUrl], [oldBaseUrl]) => {
+    if (newBaseUrl !== oldBaseUrl) setUrlVariables(newBaseUrl);
   },
 );
 
