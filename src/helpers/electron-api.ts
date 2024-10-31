@@ -6,6 +6,7 @@ import type {
   ElectronIpcListenKey,
   ExternalWebsite,
   FileDialogFilter,
+  NavigateWebsiteAction,
   QueryResponseItem,
   SettingsValues,
   VideoDuration,
@@ -40,7 +41,7 @@ export interface ElectronApi {
     windowedMode?: boolean,
     noEvent?: boolean,
   ) => void;
-  navigateWebsiteWindow: (action: string) => void;
+  navigateWebsiteWindow: (action: NavigateWebsiteAction) => void;
   onLog: (
     callback: (args: {
       ctx: Record<string, unknown>;
@@ -65,7 +66,7 @@ export interface ElectronApi {
   setAutoStartAtLogin: (value: boolean) => void;
   toggleMediaWindow: (action: string) => void;
   unregisterShortcut: (shortcut: string) => void;
-  zoomWebsiteWindow: (action: string) => void;
+  zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
 export const electronApi: ElectronApi = window.electronApi;

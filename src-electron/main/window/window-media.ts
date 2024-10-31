@@ -17,20 +17,17 @@ export function createMediaWindow() {
   }
 
   // Create the browser window
-  mediaWindow = createWindow(
-    'media',
-    {
-      backgroundColor: 'black',
-      frame: false,
-      icon: path.resolve(path.join(__dirname, 'icons', 'media-player.png')),
-      minHeight: 110,
-      minWidth: 195,
-      thickFrame: false,
-      title: 'Media Window',
-    },
-    720,
-    1280,
-  );
+  mediaWindow = createWindow('media', {
+    backgroundColor: 'black',
+    frame: false,
+    height: 720,
+    icon: path.resolve(path.join(__dirname, 'icons', 'media-player.png')),
+    minHeight: 110,
+    minWidth: 195,
+    thickFrame: false,
+    title: 'Media Window',
+    width: 1280,
+  });
 
   // Force aspect ratio
   mediaWindow.setAspectRatio(16 / 9);

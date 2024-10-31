@@ -249,7 +249,11 @@ export class StatefulBrowserWindow {
 
     const { height = 600, isMaximized, width = 800, x, y } = newOptions;
 
-    this.win.setBounds({ height, width, x, y });
+    try {
+      this.win.setBounds({ height, width, x, y });
+    } catch (e) {
+      // This fails when opening the website window for some reason
+    }
 
     this.state = { height, isMaximized, width, x, y };
 
