@@ -6,7 +6,7 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 export const useObsStateStore = defineStore('obs-state', {
   actions: {
-    sceneExists(sceneToCheck: string) {
+    sceneExists(sceneToCheck?: string) {
       if (!this.scenes || !sceneToCheck) return false;
       const matchScene = isUUID(sceneToCheck)
         ? (scene: JsonObject) => scene.sceneUuid === sceneToCheck
