@@ -88,11 +88,13 @@ const addJwpubDocumentMediaToFiles = async (
       addFullFilePathToMultimediaItem(multimediaItem, publication),
     );
     const errors = await processMissingMediaInfo(multimediaItems);
-    const dynamicMediaItems = await dynamicMediaMapper(
-      multimediaItems,
-      selectedDateObject.value?.date,
-      true,
-    );
+    const dynamicMediaItems = selectedDateObject.value
+      ? await dynamicMediaMapper(
+          multimediaItems,
+          selectedDateObject.value?.date,
+          true,
+        )
+      : [];
     addToAdditionMediaMap(dynamicMediaItems);
     if (errors?.length) return errors;
   } catch (e) {
@@ -303,19 +305,23 @@ const getDbFromJWPUB = async (publication: PublicationFetcher) => {
   }
 };
 
-const getPublicationInfoFromDb = (db: string) => {
+const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   try {
-    const publication = {} as PublicationFetcher;
-    const pubQuery = (
-      executeQuery(db, 'SELECT * FROM Publication') as PublicationItem[]
+    const pubQuery = executeQuery<PublicationItem>(
+      db,
+      'SELECT * FROM Publication',
     )[0];
-    publication.pub = pubQuery.UndatedSymbol;
-    publication.issue = pubQuery.IssueTagNumber;
-    publication.langwritten = mepslangs[pubQuery.MepsLanguageIndex];
-    return publication as PublicationFetcher;
+
+    const publication: PublicationFetcher = {
+      issue: pubQuery.IssueTagNumber,
+      langwritten: mepslangs[pubQuery.MepsLanguageIndex],
+      pub: pubQuery.UndatedSymbol,
+    };
+
+    return publication;
   } catch (error) {
     errorCatcher(error);
-    return { issue: '', langwritten: '', pub: '' } as PublicationFetcher;
+    return { issue: '', langwritten: '', pub: '' };
   }
 };
 
@@ -344,7 +350,7 @@ function addFullFilePathToMultimediaItem(
 const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
   try {
     if (!source.db) return [];
-    const multimediaMepsLangs = [] as MultimediaItem[];
+    const multimediaMepsLangs: MultimediaItem[] = [];
     for (const table of [
       'Multimedia',
       'DocumentMultimedia',
@@ -353,11 +359,9 @@ const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
       // exists
       try {
         const tableExists =
-          (
-            executeQuery(
-              source.db,
-              `SELECT * FROM sqlite_master WHERE type='table' AND name='${table}'`,
-            ) as TableItem[]
+          executeQuery<TableItem>(
+            source.db,
+            `SELECT * FROM sqlite_master WHERE type='table' AND name='${table}'`,
           )?.map((item) => item.name).length > 0;
         if (!tableExists) continue;
       } catch (error) {
@@ -365,10 +369,10 @@ const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
         errorCatcher(error);
         continue;
       }
-      const columnQueryResult = executeQuery(
+      const columnQueryResult = executeQuery<TableItem>(
         source.db,
         `PRAGMA table_info(${table})`,
-      ) as TableItem[];
+      );
 
       const columnMLIExists = columnQueryResult.some(
         (column) => column.name === 'MepsLanguageIndex',
@@ -379,10 +383,10 @@ const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
 
       if (columnKSExists && columnMLIExists)
         multimediaMepsLangs.push(
-          ...(executeQuery(
+          ...executeQuery<MultimediaItem>(
             source.db,
             `SELECT DISTINCT KeySymbol, Track, IssueTagNumber, MepsLanguageIndex from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
-          ) as MultimediaItem[]),
+          ),
         );
     }
     return multimediaMepsLangs;
@@ -397,10 +401,10 @@ const getMediaVideoMarkers = (
   mediaId: number,
 ) => {
   try {
-    const mediaVideoMarkers = executeQuery(
+    const mediaVideoMarkers = executeQuery<VideoMarker>(
       source.db,
       `SELECT * from VideoMarker WHERE MultimediaId = ${mediaId} ORDER by StartTimeTicks`,
-    ) as VideoMarker[];
+    );
     return mediaVideoMarkers;
   } catch (error) {
     errorCatcher(error);
@@ -413,41 +417,38 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
     if (!source.db) return [];
     const currentState = useCurrentStateStore();
     const { currentSettings } = storeToRefs(currentState);
-    const DocumentMultimediaTable = (
-      executeQuery(
-        source.db,
-        "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
-      ) as TableItem[]
+    const DocumentMultimediaTable = executeQuery<TableItem>(
+      source.db,
+      "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
     ).map((item) => item.name);
     const mmTable =
       DocumentMultimediaTable.length === 0
         ? 'Multimedia'
-        : (DocumentMultimediaTable[0] as string);
-    const columnQueryResult = executeQuery(
+        : DocumentMultimediaTable[0];
+    const columnQueryResult = executeQuery<TableItem>(
       source.db,
       `PRAGMA table_info(${mmTable})`,
-    ) as TableItem[];
+    );
 
     const ParagraphColumnsExist = columnQueryResult.some(
       (column) => column.name === 'BeginParagraphOrdinal',
     );
 
     const targetParNrExists =
-      (
-        executeQuery(source.db, "PRAGMA table_info('Question')") as TableItem[]
-      ).some((item) => item.name === 'TargetParagraphNumberLabel') &&
-      (
-        executeQuery(
-          source.db,
-          'SELECT COUNT(*) FROM Question',
-        ) as TableItemCount[]
+      executeQuery<TableItem>(source.db, "PRAGMA table_info('Question')").some(
+        (item) => item.name === 'TargetParagraphNumberLabel',
+      ) &&
+      executeQuery<TableItemCount>(
+        source.db,
+        'SELECT COUNT(*) FROM Question',
       )[0].count > 0;
 
-    const suppressZoomExists = (
-      executeQuery(source.db, "PRAGMA table_info('Multimedia')") as TableItem[]
+    const suppressZoomExists = executeQuery<TableItem>(
+      source.db,
+      "PRAGMA table_info('Multimedia')",
     )
       .map((item) => item.name)
-      .includes('SuppressZoom') as boolean;
+      .includes('SuppressZoom');
 
     // let select = 'SELECT Multimedia.DocumentId, Multimedia.MultimediaId, ';
     const select = 'SELECT * ';
@@ -493,10 +494,10 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
     if (suppressZoomExists) {
       where += ' AND Multimedia.SuppressZoom <> 1';
     }
-    const items = executeQuery(
+    const items = executeQuery<MultimediaItem>(
       source.db,
       `${select} ${from} ${where} ${groupAndSort}`,
-    ) as MultimediaItem[];
+    );
     return items;
   } catch (error) {
     errorCatcher(error);
@@ -508,7 +509,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
   try {
     const currentState = useCurrentStateStore();
     const { currentSettings } = storeToRefs(currentState);
-    const extracts = executeQuery(
+    const extracts = executeQuery<MultimediaExtractItem>(
       // ${currentSongbook.value?.pub === 'sjjm'
       //   ? "AND NOT UniqueEnglishSymbol = 'sjj' "
       //   : ''
@@ -530,7 +531,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         : ''
     }
       ORDER BY DocumentExtract.BeginParagraphOrdinal`,
-    ) as MultimediaExtractItem[];
+    );
 
     // AND NOT RefPublication.PublicationCategorySymbol = 'web'
     // To think about: should we add a toggle to enable/disable web publication multimedia?
@@ -637,10 +638,10 @@ const getWtIssue = async (
     };
     const db = await getDbFromJWPUB(publication);
     if (!db) throw new Error('No db file found: ' + issueString);
-    const datedTexts = executeQuery(
+    const datedTexts = executeQuery<DatedTextItem>(
       db,
       'SELECT * FROM DatedText',
-    ) as DatedTextItem[];
+    );
     const weekNr = datedTexts
       ? datedTexts.findIndex((weekItem) => {
           const mondayAsNumber = parseInt(formatDate(monday, 'YYYYMMDD'));
@@ -837,7 +838,7 @@ const getWeMedia = async (lookupDate: Date) => {
         media: [],
       };
     }
-    const videos = executeQuery(
+    const videos = executeQuery<MultimediaItem>(
       db,
       `SELECT *
          FROM DocumentMultimedia
@@ -852,7 +853,7 @@ const getWeMedia = async (lookupDate: Date) => {
            AND CategoryType = -1
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY DocumentParagraph.BeginPosition`,
-    ) as MultimediaItem[];
+    );
     const videosInParagraphs = videos.filter(
       (video) => !!video.TargetParagraphNumberLabel,
     );
@@ -860,10 +861,9 @@ const getWeMedia = async (lookupDate: Date) => {
       (video) => !video.TargetParagraphNumberLabel,
     );
 
-    const media = (
-      executeQuery(
-        db,
-        `SELECT *
+    const media = executeQuery<MultimediaItem>(
+      db,
+      `SELECT *
        FROM DocumentMultimedia
          INNER JOIN Multimedia
            ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
@@ -879,7 +879,6 @@ const getWeMedia = async (lookupDate: Date) => {
            AND (KeySymbol != '${currentSongbook.value?.pub}' OR KeySymbol IS NULL)
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY DocumentParagraph.BeginPosition`, // pictures
-      ) as MultimediaItem[]
     )
       .map((multimediaItem) =>
         addFullFilePathToMultimediaItem(multimediaItem, publication),
@@ -900,7 +899,7 @@ const getWeMedia = async (lookupDate: Date) => {
               v.TargetParagraphNumberLabel < FOOTNOTE_TAR_PAR
             );
           }),
-      ) as MultimediaItem[];
+      );
 
     const updatedMedia = media.map((item) => {
       if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
@@ -924,7 +923,7 @@ const getWeMedia = async (lookupDate: Date) => {
 
     // Watchtowers before Feb 2023 don't include songs in DocumentMultimedia
     if (+issueString < FEB_2023) {
-      songs = executeQuery(
+      songs = executeQuery<MultimediaItem>(
         db,
         `SELECT *
             FROM Multimedia
@@ -933,23 +932,21 @@ const getWeMedia = async (lookupDate: Date) => {
             WHERE DataType = 2
             ORDER BY BeginParagraphOrdinal
             LIMIT 2 OFFSET ${2 * weekNr}`,
-      ) as MultimediaItem[];
+      );
     } else {
       songs = videosNotInParagraphs.slice(0, 2); // after FEB_2023, the first two videos from DocumentMultimedia are the songs
     }
     let songLangs: string[] = [];
     try {
-      songLangs = (
-        executeQuery(
-          db,
-          `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
+      songLangs = executeQuery<MultimediaExtractItem>(
+        db,
+        `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
         FROM Extract
         INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId
         WHERE Extract.RefMepsDocumentClass = 31
         ORDER BY Extract.ExtractId
         LIMIT 2
         OFFSET ${2 * weekNr}`,
-        ) as MultimediaExtractItem[]
       )
         .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
         .map((item) => {
@@ -995,7 +992,7 @@ const getWeMedia = async (lookupDate: Date) => {
         if (mepsLang) media.AlternativeLanguage = mepsLang;
       }
       const videoMarkers = getMediaVideoMarkers(
-        { db, docId } as MultimediaItemsFetcher,
+        { db, docId },
         media.MultimediaId,
       );
       if (videoMarkers) media.VideoMarkers = videoMarkers;
@@ -1040,7 +1037,7 @@ const getMwMedia = async (lookupDate: Date) => {
       months: (monday.getMonth() + 1) % 2 === 0 ? 1 : 0,
     });
     const issueString = formatDate(issue, 'YYYYMM') + '00';
-    let publication = {} as PublicationFetcher;
+    let publication: PublicationFetcher;
     const getMwbIssue = async (langwritten?: string) => {
       if (!langwritten) return '';
       publication = {
@@ -1055,9 +1052,9 @@ const getMwMedia = async (lookupDate: Date) => {
     if (!db && currentSettings.value?.langFallback) {
       db = await getMwbIssue(currentSettings.value?.langFallback);
     }
-    if (!db) {
-      return { error: true, media: [] };
-    }
+
+    if (!db) return { error: true, media: [] };
+
     const docId =
       (
         executeQuery(
@@ -1077,7 +1074,7 @@ const getMwMedia = async (lookupDate: Date) => {
     const mms = getDocumentMultimediaItems({ db, docId }).map(
       (multimediaItem) => {
         const videoMarkers = getMediaVideoMarkers(
-          { db, docId } as MultimediaItemsFetcher,
+          { db, docId },
           multimediaItem.MultimediaId,
         );
         if (videoMarkers) multimediaItem.VideoMarkers = videoMarkers;
@@ -1241,6 +1238,13 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
   }
 };
 
+export function isMediaLink(
+  item: MediaItemsMediatorFile | MediaLink | null,
+): item is MediaLink {
+  if (!item) return false;
+  return !('progressiveDownloadURL' in item);
+}
+
 export function findBestResolution(
   mediaLinks: MediaItemsMediatorFile[] | MediaLink[],
 ) {
@@ -1252,16 +1256,19 @@ export function findBestResolution(
     const maxRes = parseInt(
       currentSettings.value?.maxRes?.replace(/\D/g, '') || '0',
     );
-    if (mediaLinks.some((m) => !m.subtitled))
-      mediaLinks = mediaLinks.filter((m) => !m.subtitled) as MediaLink[];
+
+    if (mediaLinks.some((m) => !m.subtitled)) {
+      mediaLinks = mediaLinks.filter((m) => !m.subtitled) as
+        | MediaItemsMediatorFile[]
+        | MediaLink[];
+    }
+
     for (const mediaLink of mediaLinks) {
       if (
         mediaLink.frameHeight <= maxRes &&
         mediaLink.frameHeight >= bestHeight
       ) {
-        bestItem = Object.hasOwn(mediaLink, 'progressiveDownloadURL')
-          ? (mediaLink as MediaItemsMediatorFile)
-          : (mediaLink as MediaLink);
+        bestItem = mediaLink;
         bestHeight = mediaLink.frameHeight;
       }
     }
@@ -1307,11 +1314,10 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
       publication.fileformat = Object.keys(
         responseObject.files[publication.langwritten],
       )[0];
-    const mediaItemLinks = responseObject.files[publication.langwritten][
-      publication.fileformat
-    ] as MediaLink[];
-    const bestItem = findBestResolution(mediaItemLinks) as MediaLink;
-    if (!bestItem?.file?.url) {
+    const mediaItemLinks =
+      responseObject.files[publication.langwritten][publication.fileformat];
+    const bestItem = findBestResolution(mediaItemLinks);
+    if (!isMediaLink(bestItem) || !bestItem?.file?.url) {
       return { FilePath: '' };
     }
     const jwMediaInfo = await getJwMediaInfo(publication);
@@ -1453,14 +1459,10 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
       url += '_AUDIO';
     const responseObject = await get<MediaItemsMediator>(url);
     if (responseObject && responseObject.media.length > 0) {
+      const best = findBestResolution(responseObject.media[0].files);
       return {
         duration: responseObject.media[0].duration ?? undefined,
-        subtitles:
-          (
-            findBestResolution(
-              responseObject.media[0].files,
-            ) as MediaItemsMediatorFile
-          )?.subtitles?.url ?? '',
+        subtitles: isMediaLink(best) ? '' : (best?.subtitles?.url ?? ''),
         thumbnail: getBestImageUrl(responseObject.media[0].images),
         title: responseObject.media[0].title,
       };
@@ -1494,24 +1496,24 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
       };
       return;
     }
-    const mediaLinks = (
-      publicationInfo.files[publication.langwritten][
-        publication.fileformat
-      ] as MediaLink[]
-    ).filter(
-      (mediaLink) =>
-        !publication.maxTrack || mediaLink.track < publication.maxTrack,
-    );
+    const mediaLinks = publicationInfo.files[publication.langwritten][
+      publication.fileformat
+    ]
+      .filter(isMediaLink)
+      .filter(
+        (mediaLink) =>
+          !publication.maxTrack || mediaLink.track < publication.maxTrack,
+      );
 
     const dir = getPublicationDirectory(publication);
-    const filteredMediaItemLinks = [] as MediaLink[];
+    const filteredMediaItemLinks: MediaLink[] = [];
     for (const mediaItemLink of mediaLinks) {
       const currentTrack = mediaItemLink.track;
       if (!filteredMediaItemLinks.some((m) => m.track === currentTrack)) {
         const bestItem = findBestResolution(
           mediaLinks.filter((m) => m.track === currentTrack),
-        ) as MediaLink;
-        if (bestItem) filteredMediaItemLinks.push(bestItem);
+        );
+        if (isMediaLink(bestItem)) filteredMediaItemLinks.push(bestItem);
       }
     }
     for (const mediaLink of filteredMediaItemLinks) {
@@ -1608,23 +1610,21 @@ const downloadJwpub = async (
       return handleDownloadError();
     }
     const mediaLinks =
-      (
-        publicationInfo.files[publication.langwritten][
-          publication.fileformat
-        ] as MediaLink[]
-      ).filter(
-        (mediaLink) =>
-          !publication.maxTrack || mediaLink.track < publication.maxTrack,
-      ) || [];
+      publicationInfo.files[publication.langwritten][publication.fileformat]
+        .filter(isMediaLink)
+        .filter(
+          (mediaLink) =>
+            !publication.maxTrack || mediaLink.track < publication.maxTrack,
+        ) || [];
     if (!mediaLinks.length) {
       return handleDownloadError();
     }
 
-    return (await downloadFileIfNeeded({
+    return await downloadFileIfNeeded({
       dir: getPublicationDirectory(publication),
       size: mediaLinks[0].filesize,
       url: mediaLinks[0].file.url,
-    })) as DownloadedFile;
+    });
   } catch (e) {
     errorCatcher(e);
     return {

@@ -23,6 +23,11 @@ import { useJwStore } from 'src/stores/jw';
 
 const { fs, getAppDataPath, path } = electronApi;
 
+interface Store {
+  migrations: string[];
+  screenPreferences: ScreenPreferences;
+}
+
 export const useAppSettingsStore = defineStore('app-settings', {
   actions: {
     runMigration(type: string) {
@@ -123,10 +128,10 @@ export const useAppSettingsStore = defineStore('app-settings', {
   },
   getters: {},
   persist: true,
-  state: () => {
+  state: (): Store => {
     return {
-      migrations: [] as string[],
-      screenPreferences: {} as ScreenPreferences,
+      migrations: [],
+      screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
     };
   },
 });

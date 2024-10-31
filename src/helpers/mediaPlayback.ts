@@ -187,7 +187,7 @@ const getMediaFromJwPlaylist = async (
     } catch (error) {
       errorCatcher(error);
     }
-    const playlistItems = executeQuery(
+    const playlistItems = executeQuery<JwPlaylistItem>(
       dbFile,
       `SELECT
         pi.PlaylistItemId,
@@ -223,43 +223,56 @@ const getMediaFromJwPlaylist = async (
         PlaylistItemLocationMap plm ON pi.PlaylistItemId = plm.PlaylistItemId
       LEFT JOIN
         Location l ON plm.LocationId = l.LocationId`,
-    ) as JwPlaylistItem[];
-    const playlistMediaItems = playlistItems.map((item) => {
-      item.ThumbnailFilePath = path.join(outputPath, item.ThumbnailFilePath);
-      if (
-        fs.existsSync(item.ThumbnailFilePath) &&
-        !item.ThumbnailFilePath.includes('.jpg')
-      ) {
-        fs.renameSync(item.ThumbnailFilePath, item.ThumbnailFilePath + '.jpg');
-        item.ThumbnailFilePath += '.jpg';
-      }
-      const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0;
-      const EndTime =
-        durationTicks &&
-        item?.EndTrimOffsetTicks &&
-        durationTicks >= item.EndTrimOffsetTicks
-          ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
-          : null;
+    );
+    const playlistMediaItems: MultimediaItem[] = playlistItems.map(
+      (item): MultimediaItem => {
+        item.ThumbnailFilePath = path.join(outputPath, item.ThumbnailFilePath);
+        if (
+          fs.existsSync(item.ThumbnailFilePath) &&
+          !item.ThumbnailFilePath.includes('.jpg')
+        ) {
+          fs.renameSync(
+            item.ThumbnailFilePath,
+            item.ThumbnailFilePath + '.jpg',
+          );
+          item.ThumbnailFilePath += '.jpg';
+        }
+        const durationTicks =
+          item?.BaseDurationTicks || item?.DurationTicks || 0;
+        const EndTime =
+          durationTicks &&
+          item?.EndTrimOffsetTicks &&
+          durationTicks >= item.EndTrimOffsetTicks
+            ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
+            : null;
 
-      const StartTime =
-        item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-          ? item.StartTrimOffsetTicks / 10000 / 1000
-          : null;
+        const StartTime =
+          item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
+            ? item.StartTrimOffsetTicks / 10000 / 1000
+            : null;
 
-      return {
-        EndTime,
-        FilePath: item.IndependentMediaFilePath
-          ? path.join(outputPath, item.IndependentMediaFilePath)
-          : '',
-        IssueTagNumber: item.IssueTagNumber,
-        KeySymbol: item.KeySymbol,
-        Label: `${playlistName}${item.Label}`,
-        MimeType: item.MimeType,
-        StartTime,
-        ThumbnailFilePath: item.ThumbnailFilePath || '',
-        Track: item.Track,
-      };
-    }) as MultimediaItem[];
+        return {
+          BeginParagraphOrdinal: 0,
+          Caption: '',
+          CategoryType: 0,
+          DocumentId: 0,
+          EndTime: EndTime ?? undefined,
+          FilePath: item.IndependentMediaFilePath
+            ? path.join(outputPath, item.IndependentMediaFilePath)
+            : '',
+          IssueTagNumber: item.IssueTagNumber,
+          KeySymbol: item.KeySymbol,
+          Label: `${playlistName}${item.Label}`,
+          MajorType: 0,
+          MimeType: item.MimeType,
+          MultimediaId: 0,
+          StartTime: StartTime ?? undefined,
+          TargetParagraphNumberLabel: 0,
+          ThumbnailFilePath: item.ThumbnailFilePath || '',
+          Track: item.Track,
+        };
+      },
+    );
 
     await processMissingMediaInfo(playlistMediaItems);
     const dynamicPlaylistMediaItems = await dynamicMediaMapper(

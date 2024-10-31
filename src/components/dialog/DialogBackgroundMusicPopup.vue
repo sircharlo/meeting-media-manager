@@ -334,7 +334,7 @@ const getNextSong = async () => {
           }
           if (songList.value.length) {
             while (musicDurationSoFar < timeBeforeMeetingStart) {
-              const queuedSong = songList.value.shift() as SongItem;
+              const queuedSong = songList.value.shift();
               if (!queuedSong) {
                 customSongList = songList.value;
                 break;
@@ -356,7 +356,13 @@ const getNextSong = async () => {
         nextSongUrl: '',
         secsFromEnd: 0,
       };
-    let nextSong = songList.value.shift() as SongItem;
+    let nextSong = songList.value.shift();
+    if (!nextSong) {
+      return {
+        nextSongUrl: '',
+        secsFromEnd: 0,
+      };
+    }
     songList.value.push(nextSong);
     try {
       const metadata = await parseMediaFile(nextSong.path);

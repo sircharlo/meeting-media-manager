@@ -199,6 +199,7 @@
                 : 'text-white bg-additional rounded-borders-sm'
             " -->
         <q-avatar
+          v-if="selectedDateObject"
           :size="isWeMeetingDay(selectedDateObject?.date) ? 'lg' : 'md'"
           class="text-white bg-additional jw-icon"
         >
@@ -209,7 +210,10 @@
             <q-icon name="mmm-additional-media" size="md" />
           </template>
         </q-avatar>
-        <div class="text-bold text-uppercase text-spaced">
+        <div
+          v-if="selectedDateObject"
+          class="text-bold text-uppercase text-spaced"
+        >
           {{
             $t(
               isWeMeetingDay(selectedDateObject?.date)
@@ -924,8 +928,8 @@ onMounted(async () => {
   checkCoDate();
 });
 
-const [tgwList, sortableTgwMediaItems] = useDragAndDrop(
-  [] as DynamicMediaObject[],
+const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
+  [],
   {
     group: 'sortableMedia',
     plugins: [
@@ -942,8 +946,8 @@ const [tgwList, sortableTgwMediaItems] = useDragAndDrop(
   },
 );
 
-const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop(
-  [] as DynamicMediaObject[],
+const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop<DynamicMediaObject>(
+  [],
   {
     group: 'sortableMedia',
     plugins: [
@@ -960,8 +964,8 @@ const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop(
   },
 );
 
-const [lacList, sortableLacMediaItems] = useDragAndDrop(
-  [] as DynamicMediaObject[],
+const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
+  [],
   {
     group: 'sortableMedia',
     plugins: [
@@ -978,27 +982,23 @@ const [lacList, sortableLacMediaItems] = useDragAndDrop(
   },
 );
 
-const [wtList, sortableWtMediaItems] = useDragAndDrop(
-  [] as DynamicMediaObject[],
-  {
-    group: 'sortableMedia',
-    plugins: [
-      updateMediaSortPlugin,
-      animations(),
-      multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
-      }),
-    ],
-  },
-);
+const [wtList, sortableWtMediaItems] = useDragAndDrop<DynamicMediaObject>([], {
+  group: 'sortableMedia',
+  plugins: [
+    updateMediaSortPlugin,
+    animations(),
+    multiDrag({
+      plugins: [
+        selections({
+          selectedClass: 'selected-to-drag',
+        }),
+      ],
+    }),
+  ],
+});
 
-const [additionalList, sortableAdditionalMediaItems] = useDragAndDrop(
-  [] as DynamicMediaObject[],
-  {
+const [additionalList, sortableAdditionalMediaItems] =
+  useDragAndDrop<DynamicMediaObject>([], {
     group: 'sortableMedia',
     plugins: [
       updateMediaSortPlugin,
@@ -1011,12 +1011,10 @@ const [additionalList, sortableAdditionalMediaItems] = useDragAndDrop(
         ],
       }),
     ],
-  },
-);
+  });
 
-const [circuitOverseerList, sortableCircuitOverseerMediaItems] = useDragAndDrop(
-  [] as DynamicMediaObject[],
-  {
+const [circuitOverseerList, sortableCircuitOverseerMediaItems] =
+  useDragAndDrop<DynamicMediaObject>([], {
     group: 'sortableMedia',
     plugins: [
       updateMediaSortPlugin,
@@ -1029,8 +1027,7 @@ const [circuitOverseerList, sortableCircuitOverseerMediaItems] = useDragAndDrop(
         ],
       }),
     ],
-  },
-);
+  });
 
 watch(
   () => sortableMediaItems.value,
@@ -1254,19 +1251,17 @@ const addToFiles = async (
           jwpubImportDb.value = '';
         } else {
           const documentMultimediaTableExists =
-            (
-              executeQuery(
-                db,
-                'PRAGMA table_info(DocumentMultimedia);',
-              ) as TableItem[]
+            executeQuery<TableItem>(
+              db,
+              'PRAGMA table_info(DocumentMultimedia);',
             ).length > 0;
           const mmTable = documentMultimediaTableExists
             ? 'DocumentMultimedia'
             : 'Multimedia';
-          jwpubImportDocuments.value = executeQuery(
+          jwpubImportDocuments.value = executeQuery<DocumentItem>(
             db,
             `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
-          ) as DocumentItem[];
+          );
           if (jwpubImportDocuments.value.length === 1) {
             const errors = await addJwpubDocumentMediaToFiles(
               jwpubImportDb.value,
@@ -1295,7 +1290,7 @@ const addToFiles = async (
           }
         }
         // jwpubImportLoading.value = false;
-      } else if (isJwPlaylist(filepath)) {
+      } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
         getMediaFromJwPlaylist(
           filepath,
           selectedDateObject.value?.date,
