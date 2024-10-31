@@ -265,6 +265,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   baseUrl: {
     actions: ['baseUrlUpdate'],
+    rules: ['notEmpty'],
     group: 'advanced',
     subgroup: 'dangerZone',
     type: 'text',

@@ -1634,16 +1634,7 @@ const downloadJwpub = async (
   }
 };
 
-const isValidTwoPartDomain = (urlString: string | undefined) => {
-  try {
-    if (!urlString) return false;
-    const url = new URL('https://' + urlString);
-    const parts = url.hostname.split('.');
-    return parts.length === 2;
-  } catch (error) {
-    return false;
-  }
-};
+const requestControllers: Record<string, AbortController> = {};
 
 const setUrlVariables = async () => {
   const jwStore = useJwStore();
@@ -1652,44 +1643,65 @@ const setUrlVariables = async () => {
   const currentStateStore = useCurrentStateStore();
   const { currentSettings } = storeToRefs(currentStateStore);
 
-  if (currentSettings.value) {
-    if (!currentSettings.value.baseUrl) {
-      currentSettings.value.baseUrl = 'jw.org';
-    }
-
-    if (!isValidTwoPartDomain(currentSettings.value.baseUrl)) {
-      //currentSettings.value.baseUrl = 'jw.org';
-    }
-  }
-
-  if (
-    currentSettings.value &&
-    isValidTwoPartDomain(currentSettings.value.baseUrl)
-  ) {
-    urlVariables.value.base = currentSettings.value.baseUrl;
-
-    const homePageUrl = 'https://' + urlVariables.value.base;
-
-    const homePage = (await axios
-      .get(homePageUrl)
-      .then((res) => res.data)
-      .catch(() => '')) as string;
-    if (!homePage) return;
-
-    const $ = cheerio.load(homePage);
-    const div = $('div#pageConfig');
-    if (!div?.[0]?.attribs) return;
-
-    const attributes = { ...(div?.[0]?.attribs || {}) };
-
-    if (attributes['data-mediator_url'])
-      urlVariables.value.mediator = attributes['data-mediator_url'];
-    if (attributes['data-pubmedia_url'])
-      urlVariables.value.pubMedia = attributes['data-pubmedia_url'];
-  } else {
+  const resetUrlVariables = () => {
     urlVariables.value.base = '';
     urlVariables.value.mediator = '';
     urlVariables.value.pubMedia = '';
+  };
+
+  try {
+    if (currentSettings.value) {
+      if (!currentSettings.value.baseUrl) {
+        resetUrlVariables();
+        return;
+      }
+
+      if (urlVariables.value.base !== currentSettings.value.baseUrl) {
+        urlVariables.value.base = currentSettings.value.baseUrl;
+        const homePageUrl = 'https://' + urlVariables.value.base;
+        if (requestControllers[urlVariables.value.base]) {
+          return;
+        }
+        Object.entries(requestControllers).forEach(([_key, c]) => {
+          if (!c.signal.aborted && _key !== homePageUrl) c.abort();
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+          if (c.signal.aborted) delete requestControllers[_key];
+        });
+        requestControllers[urlVariables.value.base] = new AbortController();
+        const homePage = await axios
+          .get(homePageUrl, {
+            signal: requestControllers[urlVariables.value.base].signal,
+          })
+          .then((res) => res.data);
+        console.debug('homepage finished', homePageUrl);
+
+        if (!homePage) {
+          resetUrlVariables();
+          return;
+        }
+
+        const $ = cheerio.load(homePage);
+        const div = $('div#pageConfig');
+        if (!div?.[0]?.attribs) {
+          resetUrlVariables();
+          return;
+        }
+
+        const attributes = { ...(div?.[0]?.attribs || {}) };
+
+        if (attributes['data-mediator_url'])
+          urlVariables.value.mediator = attributes['data-mediator_url'];
+        if (attributes['data-pubmedia_url'])
+          urlVariables.value.pubMedia = attributes['data-pubmedia_url'];
+      }
+    } else {
+      resetUrlVariables();
+    }
+  } catch (e) {
+    if (urlVariables.value?.base)
+      requestControllers[urlVariables.value.base]?.abort();
+    errorCatcher(e);
+    resetUrlVariables();
   }
 };
 
