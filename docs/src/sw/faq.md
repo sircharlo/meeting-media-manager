@@ -2,7 +2,7 @@
 
 ## :earth_americas: Je, programu hii inategemea tovuti, vyanzo au "wasimamizi" wa nje ili kupakua machapisho, midia ya mkutano au maudhui mengine?
 
-**Hapana.** Mfumo huu hufanya kazi kama tu JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
+**Hapana.** Mfumo huu hufanya kazi kama tu JW Library. Inapakua machapisho, midia na maudhui mengine moja kwa moja kutoka kwa tovuti rasmi ya Mashahidi wa Yehova na mtandao wake wa utoaji midia. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
 
 :::info Kidokezo
 
@@ -10,9 +10,9 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 :::
 
-## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
+## :thinking: Je, mfumo huu unakiuka sheria za utumiaji za tovuti rasmi ya Mashahidi wa Yehova?
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
+**Hapana.** [Sheria na Masharti](https://www.jw.org/finder?docid=1011511\&prefer=content) ya tovuti rasmi ya Mashahidi wa Yehova huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
 
 > Haupaswi:
 >
@@ -20,15 +20,15 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 ## :radioactive: Je, ninaripotije tatizo?
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Tafadhali [tuma suala](https://github.com/sircharlo/meeting-media-manager/issues) kwenye hazina rasmi(repository) ya GitHub.
 
 ## :new: Ninawezaje kuomba kipengele kipya au uboreshaji?
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Tafadhali [fungua majadiliano](https://github.com/sircharlo/meeting-media-manager/discussions) kwenye hazina rasmi ya GitHub.
 
 ## :handshake: Ninawezaje kusaidia kwenye code?
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Tafadhali [angalia mwongozo wa kuchangia](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) kwenye hazina rasmi ya GitHub.
 
 ## :x: Je, ninaweza kutoa mchango kwa mradi?
 
