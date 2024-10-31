@@ -18,7 +18,8 @@ const sendObsSceneEvent = (scene: string) => {
   );
 };
 
-const isUUID = (uuid: string) => {
+const isUUID = (uuid?: string) => {
+  if (!uuid) return false;
   try {
     const uuidRegex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
