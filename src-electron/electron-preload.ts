@@ -124,6 +124,8 @@ const openWebsiteWindow = () => {
     width: 1280,
   });
 
+  websiteWindow.setMenuBarVisibility(false);
+
   // websiteWindow.webContents.openDevTools();
   if (!websiteWindow) return;
 

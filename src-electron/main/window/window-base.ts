@@ -64,7 +64,7 @@ export function createWindow(
   enableElectronRemote(win.webContents);
 
   // Hide the menu bar
-  if (PLATFORM !== 'darwin' && (name === 'media' || !process.env.DEBUGGING)) {
+  if (PLATFORM !== 'darwin' && (name !== 'main' || !process.env.DEBUGGING)) {
     win.setMenuBarVisibility(false);
   }
 
