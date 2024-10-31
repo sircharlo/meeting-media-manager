@@ -5345,6 +5345,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"countries-and-timezones@npm:^3.7.2":
+  version: 3.7.2
+  resolution: "countries-and-timezones@npm:3.7.2"
+  checksum: 10c0/72f81bc341b9cd0d3d2f565433eb6f2d110c49157bedf1a55f9286e731fe1db56af431d0ca41de14a96a055267dea5b882e2e87f20000d3980e8c78fd09b3dcb
+  languageName: node
+  linkType: hard
+
 "crc-32@npm:^1.2.0":
   version: 1.2.2
   resolution: "crc-32@npm:1.2.2"
@@ -9779,6 +9786,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.7"
     better-sqlite3: "npm:^11.5.0"
+    countries-and-timezones: "npm:^3.7.2"
     dompurify: "npm:^3.1.7"
     electron: "npm:^33.0.2"
     electron-builder: "npm:^25.1.8"
