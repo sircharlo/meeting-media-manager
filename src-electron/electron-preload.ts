@@ -118,6 +118,7 @@ const openWebsiteWindow = () => {
 
   websiteWindow = new BrowserWindow({
     alwaysOnTop: true,
+    autoHideMenuBar: true,
     height: 720,
     title: 'Website Stream',
     useContentSize: true,
