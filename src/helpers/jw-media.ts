@@ -1637,10 +1637,10 @@ const isValidTwoPartDomain = (urlString: string | undefined) => {
 
 const setUrlVariables = async () => {
   const jwStore = useJwStore();
-  const { urlVariables } = storeToRefs(jwStore);
+  const { urlVariables } = jwStore;
 
   const currentStateStore = useCurrentStateStore();
-  const { currentSettings } = storeToRefs(currentStateStore);
+  const { currentSettings } = currentStateStore;
 
   if (currentSettings.value) {
     if (!currentSettings.value.baseUrl) {
