@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Upakuaji wa midia otomatiki
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    details: Hupakua kiotomatiki picha na video za mikutano ya kutaniko katika lugha yoyote inayopatikana kwenye tovuti rasmi ya Mashahidi wa Yehova.
   - icon: 🎦
     title: Kuwasilisha midia
     details: Inaruhusu kuonyesha midia kwa urahisi wakati wa mikutano ya mtandao au ya ana kwa ana.
