@@ -172,7 +172,8 @@ module.exports = configure(function (ctx) {
         }
       },
       extendPackageJson(pkg) {
-        const requiredNonUiElectronDependencies = [
+        // All dependencies required by the main and preload scripts need to be listed here
+        const electronDeps = [
           '@electron/remote',
           '@numairawan/video-duration',
           '@sentry/electron',
@@ -191,7 +192,7 @@ module.exports = configure(function (ctx) {
 
         // Remove unneeded dependencies from production build
         Object.keys(pkg.dependencies).forEach((dep) => {
-          if (!requiredNonUiElectronDependencies.includes(dep)) {
+          if (!electronDeps.includes(dep)) {
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete pkg.dependencies[dep];
           }
