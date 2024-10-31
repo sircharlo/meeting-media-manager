@@ -1,14 +1,13 @@
 import type { ElectronApi } from 'src/helpers/electron-api';
 import type { ScreenPreferences } from 'src/types';
 
-import { app, BrowserWindow, globalShortcut } from '@electron/remote';
+import { app } from '@electron/remote';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import klawSync from 'klaw-sync';
 import path from 'upath';
 
 import pkg from '../package.json';
-import { PLATFORM } from './constants';
 import { convertHeic, convertPdfToImages } from './preload/converters';
 import {
   decompress,
@@ -30,30 +29,6 @@ import {
 import { errorCatcher } from './utils';
 
 initWebsiteListeners();
-
-const getMainWindow = () =>
-  BrowserWindow.getAllWindows().find(
-    (w) =>
-      !w.webContents.getURL().includes('media-player') &&
-      !w.webContents.getURL().includes('https://'),
-  );
-
-if (PLATFORM === 'darwin') {
-  try {
-    globalShortcut.register('Command+Q', () => {
-      getMainWindow()?.close();
-    });
-  } catch (err) {
-    errorCatcher(err);
-  }
-}
-
-const getMediaWindow = () =>
-  BrowserWindow.getAllWindows().find(
-    (w) =>
-      w.webContents.getURL().includes('media-player') &&
-      !w.webContents.getURL().includes('https://'),
-  );
 
 const getUserDataPath = () =>
   path.join(app.getPath('appData'), pkg.productName);
@@ -98,23 +73,6 @@ const moveMediaWindow = (
   );
 };
 
-window.addEventListener('beforeunload', () => {
-  getMainWindow()?.removeAllListeners('move');
-});
-
-const toggleMediaWindow = (action: string) => {
-  const mediaWindow = getMediaWindow();
-  if (!mediaWindow) return;
-  if (action === 'show') {
-    moveMediaWindow();
-    if (!mediaWindow.isVisible()) {
-      mediaWindow.show();
-    }
-  } else if (action === 'hide') {
-    mediaWindow.hide();
-  }
-};
-
 const bcClose = new BroadcastChannel('closeAttempts');
 
 listen('attemptedClose', () => {
@@ -156,7 +114,7 @@ const electronApi: ElectronApi = {
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
-  toggleMediaWindow,
+  toggleMediaWindow: (s) => send('toggleMediaWindow', s),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
   zoomWebsiteWindow,
 };

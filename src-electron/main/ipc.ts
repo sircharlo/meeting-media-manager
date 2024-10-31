@@ -23,7 +23,7 @@ import { getAllScreens } from './screen';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
-import { moveMediaWindow } from './window/window-media';
+import { mediaWindow, moveMediaWindow } from './window/window-media';
 import {
   createWebsiteWindow,
   navigateWebsiteWindow,
@@ -53,6 +53,17 @@ function handleIpcSend(
     listener(e, ...args);
   });
 }
+
+handleIpcSend('toggleMediaWindow', (_e, show: boolean) => {
+  if (!mediaWindow) return;
+
+  if (show) {
+    moveMediaWindow();
+    if (!mediaWindow.isVisible()) mediaWindow.show();
+  } else {
+    mediaWindow.hide();
+  }
+});
 
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
