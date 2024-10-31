@@ -362,7 +362,7 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 ### Bug fixes
 
 - Fix global layout bug for input fields
-- Fix "select video from jw.org" feature not working in some use cases
+- Fix "select video from the official website of Jehovah's Witnesses" feature not working in some use cases
 
 ## 23.3.1
 
@@ -403,13 +403,13 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 - Added an option to enable beta updates
 - Improved the video custom start/end time feature
 - Ability to start playing the first media item a custom number of minutes and seconds before the meeting starts
-- When presenting JW.org, the website controller will now more accurately depict what is shown on the media window
+- When presenting the official website of Jehovah's Witnesses, the website controller will now more accurately depict what is shown on the media window
 - The circuit overseer date picker now allows selecting Tuesdays, and weeks will start on the correct day depending on the user's language
 - Several UX improvements
 
 ### Bug fixes
 
-- Activate OBS Studio media scene when presenting JW.org
+- Activate OBS Studio media scene when presenting the official website of Jehovah's Witnesses
 - Immediately toggle subtitles when toggled in settings
 - OBS Studio scene shortcuts won't change the scene while media is active
 - Show a warning when congregation server web address is invalid
@@ -419,9 +419,9 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 
 ### New or improved features
 
-- 🚀 Videos can now be added directly from JW.org! Useful, for example, to add Governing Body Update videos for presentation during midweek meetings
+- 🚀 Videos can now be added directly from the official website of Jehovah's Witnesses! Useful, for example, to add Governing Body Update videos for presentation during midweek meetings
 - 🚀 Added subheadings to presentation mode, simplifying navigation between meeting parts
-- Added a representation of the mouse cursor while presenting JW.org on the external monitors (still a beta feature)
+- Added a representation of the mouse cursor while presenting the official website of Jehovah's Witnesses on the external monitors (still a beta feature)
 - Option to automatically play the first media item a predetermined number of minutes before a meeting's start
 - Option to manually reconnect to OBS Studio while in presentation mode
 - Zooming and panning a picture will now be done more gradually on the external monitors, to avoid abrupt picture motion for the audience
@@ -431,7 +431,7 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 ### Bug fixes
 
 - Only try to create new directories on synchronization server once per save action
-- Prevent closing M³ when presenting JW.org
+- Prevent closing M³ when presenting the official website of Jehovah's Witnesses
 - When a directory is locked on synchronization server, show a friendly warning
 - System theme will now be used on the initial congregation selection screen
 
@@ -496,7 +496,7 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 - Delete/hide actions in congregation server are now only activated on corresponding button click, and not filename click
 - Fixed an issue where media from some JWPUB files wouldn't be imported properly in some edge cases
 - Fixed an issue where the wrong language for media would be used in some edge cases
-- Refresh languages from JW.org when they were not correctly fetched before
+- Refresh languages from the official website of Jehovah's Witnesses when they were not correctly fetched before
 - Set OBS Studio scene correctly when using keyboard shortcuts
 - Fixed an issue where the OBS Studio scene would sometimes be set to "nothing"
 - Clear download and cache statistics after every media sync

@@ -119,7 +119,7 @@ import { useJwStore } from 'src/stores/jw';
 import { ref, watch } from 'vue';
 
 const jwStore = useJwStore();
-const { jwLanguages } = storeToRefs(jwStore);
+const { jwLanguages, urlVariables } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
@@ -142,9 +142,7 @@ const lookupCongregation = async () => {
   try {
     if (congregationName.value?.length > 2) {
       await get<{ geoLocationList: GeoRecord[] }>(
-        'https://apps.jw.org/api/public/meeting-search/weekly-meetings?includeSuggestions=true&keywords=' +
-          encodeURIComponent(congregationName.value) +
-          '&latitude=0&longitude=0&searchLanguageCode=',
+        `https://apps.${urlVariables.value.base}/v1/api/public/meeting-search/weekly-meetings?includeSuggestions=true&keywords=${encodeURIComponent(congregationName.value)}&latitude=0&longitude=0&searchLanguageCode=`,
       ).then((response) => {
         results.value = (response?.geoLocationList || []).map((location) => {
           const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
@@ -170,7 +168,7 @@ const lookupCongregation = async () => {
 
 const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
 get<CongregationLanguage[]>(
-  'https://apps.jw.org/api/public/meeting-search/languages',
+  `https://apps.${urlVariables.value.base}/v1/api/public/meeting-search/languages`,
 )
   .then((response) => {
     congregationLookupLanguages.value = response || [];

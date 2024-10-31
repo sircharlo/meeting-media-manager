@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Автозагрузка медиа
-    details: Автоматически загружает изображения и видео для собраний на любом языке, доступном на JW.org.
+    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
     title: Представление медиа
     details: Позволяет легко обмениваться медиа файлами во время гибридных встреч или встреч в живую.

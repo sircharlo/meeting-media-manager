@@ -2,7 +2,7 @@
 
 ## :earth_americas: Cette application dépend-elle de sites ou sources externes, ou d'une intervention humaine, pour télécharger les publications, médias et autre contenu pour les réunions ?
 
-**Non.** L'application M³ fonctionne de la même manière que l'application JW Library. Elle télécharge les publications, médias et autre contenu directement à partir du site JW.org officiel. L'application détermine automatiquement ce qui doit être téléchargé et quand le contenu précédemment téléchargé n'est plus à jour et devrait être re-téléchargé.
+**Non.** L'application M³ fonctionne de la même manière que l'application JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. L'application détermine automatiquement ce qui doit être téléchargé et quand le contenu précédemment téléchargé n'est plus à jour et devrait être re-téléchargé.
 
 :::info Note
 
@@ -10,9 +10,9 @@ Le code source de cette application est disponible afin de donner à tous la pos
 
 :::
 
-## :thinking: Cette application enfreint-elle les conditions d'utilisation de JW.org ?
+## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
 
-**Non.** Les [conditions d'utilisation](https://www.jw.org/finder?docid=1011511&prefer=content) autorisent en fait explicitement le type d'utilisation que nous faisons. Voici l'extrait pertinent de ces conditions :
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Voici l'extrait pertinent de ces conditions :
 
 > Il n’est pas permis de :
 >

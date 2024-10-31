@@ -2,7 +2,7 @@
 
 ## :earth_americas: Maakt deze applicatie gebruik van externe websites, bronnen of diensten om de publicaties en vergadering media te downloaden?
 
-**Nee**. De applicatie werkt hetzelfde als JW Library. De publicaties en media worden direct van de officiële JW.org website en zijn CDN gedownload. De app bepaalt automatisch wat er moet worden gedownload en wanneer eerder gedownloade inhoud niet meer up-to-date is en opnieuw moet worden gedownload.
+**Nee**. De applicatie werkt hetzelfde als JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. De app bepaalt automatisch wat er moet worden gedownload en wanneer eerder gedownloade inhoud niet meer up-to-date is en opnieuw moet worden gedownload.
 
 :::info Opmerking
 
@@ -10,9 +10,9 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 
 :::
 
-## :thinking: Gaat deze applicatie in tegen de gebruikersvoorwaarden van JW.org?
+## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
 
-**Nee** De [jw.org gebruiksvoorwaarden](https://www.jw.org/finder?docid=1011511&prefer=content) staat expliciet het soort gebruik toe dat we maken. Hier is het relevante stukje van de gebruiksvoorwaarden (nadruk toegevoegd):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Hier is het relevante stukje van de gebruiksvoorwaarden (nadruk toegevoegd):
 
 > Het is niet toegestaan:
 >
