@@ -23,7 +23,6 @@ import type {
 import axios, { type AxiosError } from 'axios';
 import { Buffer } from 'buffer';
 import PQueue from 'p-queue';
-import { storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import sanitize from 'sanitize-filename';
 import { get, urlWithParamsToString } from 'src/boot/axios';
@@ -76,7 +75,6 @@ const addJwpubDocumentMediaToFiles = async (
   const jwStore = useJwStore();
   const { addToAdditionMediaMap } = jwStore;
   const currentStateStore = useCurrentStateStore();
-  const { selectedDateObject } = storeToRefs(currentStateStore);
   try {
     if (!dbPath) return;
     const publication = getPublicationInfoFromDb(dbPath);
@@ -87,10 +85,10 @@ const addJwpubDocumentMediaToFiles = async (
       addFullFilePathToMultimediaItem(multimediaItem, publication),
     );
     const errors = await processMissingMediaInfo(multimediaItems);
-    const dynamicMediaItems = selectedDateObject.value
+    const dynamicMediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
           multimediaItems,
-          selectedDateObject.value?.date,
+          currentStateStore.selectedDateObject?.date,
           true,
         )
       : [];
@@ -113,12 +111,12 @@ const downloadFileIfNeeded = async ({
       new: false,
       path: '',
     };
-  const { currentCongregation } = storeToRefs(useCurrentStateStore());
-  if (!queues.downloads[currentCongregation.value])
-    queues.downloads[currentCongregation.value] = new PQueue({
+  const currentStateStore = useCurrentStateStore();
+  if (!queues.downloads[currentStateStore.currentCongregation])
+    queues.downloads[currentStateStore.currentCongregation] = new PQueue({
       concurrency: 5,
     });
-  const queue = queues.downloads[currentCongregation.value];
+  const queue = queues.downloads[currentStateStore.currentCongregation];
   return (
     queue.add(
       async () => {
@@ -141,15 +139,15 @@ const downloadFileIfNeeded = async ({
             };
           }
         }
-        const { downloadedFiles } = storeToRefs(useCurrentStateStore());
-        if (!downloadedFiles.value[url])
-          downloadedFiles.value[url] = downloadFile({
+        const currentStateStore = useCurrentStateStore();
+        if (!currentStateStore.downloadedFiles[url])
+          currentStateStore.downloadedFiles[url] = downloadFile({
             dir,
             filename,
             size,
             url,
           });
-        return downloadedFiles.value[url];
+        return currentStateStore.downloadedFiles[url];
       },
       { priority: lowPriority ? 10 : 100 },
     ) as Promise<DownloadedFile>
@@ -171,14 +169,15 @@ const downloadFile = async ({ dir, filename, url }: FileDownloader) => {
   }
   if (!filename) filename = path.basename(url);
   filename = sanitize(filename);
-  const { downloadProgress } = storeToRefs(useCurrentStateStore());
+  const currentStateStore = useCurrentStateStore();
   const destinationPath = path.join(dir, filename);
   const downloadedDataRequest = await axios
     .get(url, {
       onDownloadProgress: (progressEvent) => {
-        const downloadDone = downloadProgress.value[url]?.complete || false;
+        const downloadDone =
+          currentStateStore.downloadProgress[url]?.complete || false;
         if (!downloadDone)
-          downloadProgress.value[url] = {
+          currentStateStore.downloadProgress[url] = {
             loaded: progressEvent.loaded,
             total: progressEvent.total || progressEvent.loaded,
           };
@@ -187,13 +186,13 @@ const downloadFile = async ({ dir, filename, url }: FileDownloader) => {
     })
     .catch(async (error: AxiosError) => {
       if (!(await downloadErrorIsExpected())) errorCatcher(error);
-      downloadProgress.value[url] = {
+      currentStateStore.downloadProgress[url] = {
         error: true,
       };
       return { data: '' };
     });
   const downloadedData = downloadedDataRequest.data;
-  downloadProgress.value[url] = {
+  currentStateStore.downloadProgress[url] = {
     complete: true,
   };
   if (!downloadedData) {
@@ -211,38 +210,41 @@ const downloadFile = async ({ dir, filename, url }: FileDownloader) => {
 };
 const fetchMedia = async () => {
   try {
-    const { currentCongregation, currentSettings } = storeToRefs(
-      useCurrentStateStore(),
-    );
+    const currentStateStore = useCurrentStateStore();
     if (
-      !currentCongregation.value ||
-      !!currentSettings.value?.disableMediaFetching
-    )
+      !currentStateStore.currentCongregation ||
+      !!currentStateStore.currentSettings?.disableMediaFetching
+    ) {
       return;
-    const { lookupPeriod } = storeToRefs(useJwStore());
+    }
+
+    const jwStore = useJwStore();
     const meetingsToFetch =
-      lookupPeriod.value[currentCongregation.value]?.filter((day) => {
-        return (
-          (day.meeting && (!day.complete || day.error)) ||
-          day.dynamicMedia.some(
-            (media) =>
-              !media?.fileUrl || !fs.existsSync(fileUrlToPath(media?.fileUrl)),
-          )
-        );
-      }) || [];
+      jwStore.lookupPeriod[currentStateStore.currentCongregation]?.filter(
+        (day) => {
+          return (
+            (day.meeting && (!day.complete || day.error)) ||
+            day.dynamicMedia.some(
+              (media) =>
+                !media?.fileUrl ||
+                !fs.existsSync(fileUrlToPath(media?.fileUrl)),
+            )
+          );
+        },
+      ) || [];
     if (meetingsToFetch.length === 0) return;
     meetingsToFetch.forEach((day) => {
       day.error = false;
       day.complete = false;
     });
-    if (!queues.meetings[currentCongregation.value]) {
-      queues.meetings[currentCongregation.value] = new PQueue({
+    if (!queues.meetings[currentStateStore.currentCongregation]) {
+      queues.meetings[currentStateStore.currentCongregation] = new PQueue({
         concurrency: 2,
       });
     } else {
-      queues.meetings[currentCongregation.value].start();
+      queues.meetings[currentStateStore.currentCongregation].start();
     }
-    const queue = queues.meetings[currentCongregation.value];
+    const queue = queues.meetings[currentStateStore.currentCongregation];
     for (const day of meetingsToFetch) {
       try {
         queue
@@ -414,8 +416,7 @@ const getMediaVideoMarkers = (
 const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
   try {
     if (!source.db) return [];
-    const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
+    const currentStateStore = useCurrentStateStore();
     const DocumentMultimediaTable = executeQuery<TableItem>(
       source.db,
       "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
@@ -468,7 +469,7 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
     const videoString =
       "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
     const imgString = `(Multimedia.MimeType LIKE '%image%' ${
-      currentSettings.value?.includePrinted
+      currentStateStore.currentSettings?.includePrinted
         ? ''
         : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
     } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
@@ -506,10 +507,9 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
 
 const getDocumentExtractItems = async (db: string, docId: number) => {
   try {
-    const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
+    const currentStateStore = useCurrentStateStore();
     const extracts = executeQuery<MultimediaExtractItem>(
-      // ${currentSongbook.value?.pub === 'sjjm'
+      // ${currentStateStore.currentSongbook?.pub === 'sjjm'
       //   ? "AND NOT UniqueEnglishSymbol = 'sjj' "
       //   : ''
       // }
@@ -525,7 +525,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
     AND NOT UniqueEnglishSymbol LIKE 'mwbr%'
     AND NOT UniqueEnglishSymbol = 'sjj'
     ${
-      currentSettings.value?.excludeTh
+      currentStateStore.currentSettings?.excludeTh
         ? "AND NOT UniqueEnglishSymbol = 'th' "
         : ''
     }
@@ -537,7 +537,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
 
     const allExtractItems = [];
     for (const extract of extracts) {
-      extract.Lang = currentSettings.value?.lang || 'E';
+      extract.Lang = currentStateStore.currentSettings?.lang || 'E';
       if (extract.Link) {
         try {
           const matches = extract.Link.match(/\/(.*)\//);
@@ -561,13 +561,13 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
       ) {
         symbol = 'wp';
       }
-      let extractLang = extract.Lang ?? currentSettings.value?.lang;
+      let extractLang = extract.Lang ?? currentStateStore.currentSettings?.lang;
       let extractDb = await getDbFromJWPUB({
         issue: extract.IssueTagNumber,
         langwritten: extractLang,
         pub: symbol,
       });
-      const langFallback = currentSettings.value?.langFallback;
+      const langFallback = currentStateStore.currentSettings?.langFallback;
       if (!extractDb && langFallback) {
         extractDb = await getDbFromJWPUB({
           issue: extract.IssueTagNumber,
@@ -802,9 +802,7 @@ const dynamicMediaMapper = async (
 
 const getWeMedia = async (lookupDate: Date) => {
   try {
-    const currentState = useCurrentStateStore();
-    const { currentSongbook } = storeToRefs(currentState);
-    const { currentSettings } = storeToRefs(currentState);
+    const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
     const monday = getSpecificWeekday(lookupDate, 0);
 
@@ -822,12 +820,12 @@ const getWeMedia = async (lookupDate: Date) => {
 
     let { db, docId, issueString, publication, weekNr } = await getIssue(
       monday,
-      currentSettings.value?.lang,
+      currentStateStore.currentSettings?.lang,
     );
-    if (db?.length === 0 && currentSettings.value?.langFallback) {
+    if (db?.length === 0 && currentStateStore.currentSettings?.langFallback) {
       ({ db, docId, issueString, publication, weekNr } = await getIssue(
         monday,
-        currentSettings.value?.langFallback,
+        currentStateStore.currentSettings?.langFallback,
         true,
       ));
     }
@@ -875,7 +873,7 @@ const getWeMedia = async (lookupDate: Date) => {
          WHERE DocumentMultimedia.DocumentId = ${docId}
            AND CategoryType <> 9
            AND CategoryType <> -1
-           AND (KeySymbol != '${currentSongbook.value?.pub}' OR KeySymbol IS NULL)
+           AND (KeySymbol != '${currentStateStore.currentSongbook?.pub}' OR KeySymbol IS NULL)
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY DocumentParagraph.BeginPosition`, // pictures
     )
@@ -894,7 +892,7 @@ const getWeMedia = async (lookupDate: Date) => {
           )
           .filter((v) => {
             return (
-              !currentSettings.value?.excludeFootnotes ||
+              !currentStateStore.currentSettings?.excludeFootnotes ||
               v.TargetParagraphNumberLabel < FOOTNOTE_TAR_PAR
             );
           }),
@@ -951,13 +949,15 @@ const getWeMedia = async (lookupDate: Date) => {
         .map((item) => {
           const match = item.Link.match(/\/(.*)\//);
           const langOverride = match ? match[1].split(':')[0] : '';
-          return langOverride === currentSettings.value?.lang
+          return langOverride === currentStateStore.currentSettings?.lang
             ? ''
             : langOverride;
         });
     } catch (e: unknown) {
       errorCatcher(e);
-      songLangs = songs.map(() => currentSettings.value?.lang || 'E');
+      songLangs = songs.map(
+        () => currentStateStore.currentSettings?.lang || 'E',
+      );
     }
     const mergedSongs = songs
       .map((song, index) => ({
@@ -978,7 +978,7 @@ const getWeMedia = async (lookupDate: Date) => {
     for (const media of allMedia) {
       const mediaKeySymbol =
         media.KeySymbol === 'sjjm'
-          ? currentSongbook.value?.pub
+          ? currentStateStore.currentSongbook?.pub
           : media.KeySymbol;
       const multimediaMepsLangItem = multimediaMepsLangs.find(
         (item) =>
@@ -1026,9 +1026,7 @@ function sanitizeId(id: string) {
 
 const getMwMedia = async (lookupDate: Date) => {
   try {
-    const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
-    const { currentSongbook } = storeToRefs(currentState);
+    const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
     // if not monday, get the previous monday
     const monday = getSpecificWeekday(lookupDate, 0);
@@ -1047,9 +1045,9 @@ const getMwMedia = async (lookupDate: Date) => {
       return await getDbFromJWPUB(publication);
     };
 
-    let db = await getMwbIssue(currentSettings.value?.lang);
-    if (!db && currentSettings.value?.langFallback) {
-      db = await getMwbIssue(currentSettings.value?.langFallback);
+    let db = await getMwbIssue(currentStateStore.currentSettings?.lang);
+    if (!db && currentStateStore.currentSettings?.langFallback) {
+      db = await getMwbIssue(currentStateStore.currentSettings?.langFallback);
     }
 
     if (!db) return { error: true, media: [] };
@@ -1103,7 +1101,7 @@ const getMwMedia = async (lookupDate: Date) => {
     for (const media of allMedia) {
       const mediaKeySymbol =
         media.KeySymbol === 'sjjm'
-          ? currentSongbook.value?.pub
+          ? currentStateStore.currentSongbook?.pub
           : media.KeySymbol;
       const multimediaMepsLangItem = multimediaMepsLangs.find(
         (item) =>
@@ -1130,8 +1128,7 @@ const getMwMedia = async (lookupDate: Date) => {
 
 async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
   try {
-    const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
+    const currentStateStore = useCurrentStateStore();
     const errors = [];
     for (const media of allMedia.filter(
       (m) =>
@@ -1142,8 +1139,8 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
       }
       const langsWritten = [
         media.AlternativeLanguage,
-        currentSettings.value?.lang,
-        currentSettings.value?.langFallback,
+        currentStateStore.currentSettings?.lang,
+        currentStateStore.currentSettings?.langFallback,
       ];
       for (const langwritten of langsWritten) {
         if (!langwritten) {
@@ -1191,14 +1188,12 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
 
 const getPubMediaLinks = async (publication: PublicationFetcher) => {
   try {
-    const { currentSongbook, downloadProgress } = storeToRefs(
-      useCurrentStateStore(),
-    );
+    const currentStateStore = useCurrentStateStore();
     const url = 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS';
     if (!publication.fileformat) publication.fileformat = '';
     if (publication.pub === 'sjjm') {
-      publication.pub = currentSongbook.value?.pub;
-      // publication.fileformat = currentSongbook.value?.fileformat;
+      publication.pub = currentStateStore.currentSongbook?.pub;
+      // publication.fileformat = currentStateStore.currentSongbook?.fileformat;
     }
     publication.fileformat = publication.fileformat.toUpperCase();
     const params = {
@@ -1213,7 +1208,7 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
     };
     const response = await get<Publication>(urlWithParamsToString(url, params));
     if (!response) {
-      downloadProgress.value[
+      currentStateStore.downloadProgress[
         [
           publication.pub,
           publication.langwritten,
@@ -1245,12 +1240,11 @@ export function findBestResolution(
   mediaLinks: MediaItemsMediatorFile[] | MediaLink[],
 ) {
   try {
-    const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
+    const currentStateStore = useCurrentStateStore();
     let bestItem = null;
     let bestHeight = 0;
     const maxRes = parseInt(
-      currentSettings.value?.maxRes?.replace(/\D/g, '') || '0',
+      currentStateStore.currentSettings?.maxRes?.replace(/\D/g, '') || '0',
     );
 
     if (mediaLinks.some((m) => !m.subtitled)) {
@@ -1322,9 +1316,9 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
       size: bestItem.filesize,
       url: bestItem.file.url,
     }).then(async (downloadedFile) => {
-      const { currentSettings } = storeToRefs(useCurrentStateStore());
+      const currentStateStore = useCurrentStateStore();
       for (const itemUrl of [
-        currentSettings.value?.enableSubtitles
+        currentStateStore.currentSettings?.enableSubtitles
           ? jwMediaInfo.subtitles
           : undefined,
         jwMediaInfo.thumbnail,
@@ -1366,8 +1360,7 @@ const downloadAdditionalRemoteVideo = async (
   title?: string,
 ) => {
   try {
-    const currentState = useCurrentStateStore();
-    const { getDatedAdditionalMediaDirectory } = storeToRefs(currentState);
+    const currentStateStore = useCurrentStateStore();
     const bestItem = findBestResolution(mediaItemLinks) as
       | MediaItemsMediatorFile
       | MediaLink;
@@ -1381,7 +1374,7 @@ const downloadAdditionalRemoteVideo = async (
           detail: {
             duration: bestItem.duration,
             path: path.join(
-              getDatedAdditionalMediaDirectory.value,
+              currentStateStore.getDatedAdditionalMediaDirectory,
               path.basename(bestItemUrl),
             ),
             song,
@@ -1392,7 +1385,7 @@ const downloadAdditionalRemoteVideo = async (
         }),
       );
       await downloadFileIfNeeded({
-        dir: getDatedAdditionalMediaDirectory.value,
+        dir: currentStateStore.getDatedAdditionalMediaDirectory,
         size: bestItem.filesize,
         url: bestItemUrl,
       });
@@ -1471,11 +1464,11 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
 
 const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
   try {
-    const { downloadProgress } = storeToRefs(useCurrentStateStore());
+    const currentStateStore = useCurrentStateStore();
     const publicationInfo = await getPubMediaLinks(publication);
     if (!publication.fileformat) return;
     if (!publicationInfo?.files) {
-      downloadProgress.value[
+      currentStateStore.downloadProgress[
         [
           publication.pub,
           publication.langwritten,
@@ -1531,20 +1524,18 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
 
 const downloadBackgroundMusic = () => {
   try {
-    const { currentSettings, currentSongbook } = storeToRefs(
-      useCurrentStateStore(),
-    );
+    const currentStateStore = useCurrentStateStore();
     if (
-      !currentSongbook.value ||
-      !currentSettings.value?.lang ||
-      !currentSettings.value?.enableMusicButton
+      !currentStateStore.currentSongbook ||
+      !currentStateStore.currentSettings?.lang ||
+      !currentStateStore.currentSettings?.enableMusicButton
     )
       return;
     downloadPubMediaFiles({
-      fileformat: currentSongbook.value?.fileformat,
-      langwritten: currentSettings.value?.lang,
+      fileformat: currentStateStore.currentSongbook?.fileformat,
+      langwritten: currentStateStore.currentSettings?.lang,
       maxTrack: MAX_SONGS,
-      pub: currentSongbook.value?.pub,
+      pub: currentStateStore.currentSongbook?.pub,
     });
   } catch (e) {
     errorCatcher(e);
@@ -1553,21 +1544,19 @@ const downloadBackgroundMusic = () => {
 
 const downloadSongbookVideos = () => {
   try {
-    const { currentSettings, currentSongbook } = storeToRefs(
-      useCurrentStateStore(),
-    );
+    const currentStateStore = useCurrentStateStore();
     if (
-      !currentSongbook.value ||
-      !currentSettings.value?.lang ||
-      !currentSettings.value?.enableExtraCache
+      !currentStateStore.currentSongbook ||
+      !currentStateStore.currentSettings?.lang ||
+      !currentStateStore.currentSettings?.enableExtraCache
     )
       return;
     downloadPubMediaFiles({
       fileformat: 'MP4',
       issue: 0,
-      langwritten: currentSettings.value?.lang,
+      langwritten: currentStateStore.currentSettings?.lang,
       maxTrack: MAX_SONGS,
-      pub: currentSongbook.value?.pub,
+      pub: currentStateStore.currentSongbook?.pub,
     });
   } catch (e) {
     errorCatcher(e);
@@ -1578,10 +1567,10 @@ const downloadJwpub = async (
   publication: PublicationFetcher,
 ): Promise<DownloadedFile> => {
   try {
-    const { downloadProgress } = storeToRefs(useCurrentStateStore());
+    const currentStateStore = useCurrentStateStore();
     publication.fileformat = 'JWPUB';
     const handleDownloadError = () => {
-      downloadProgress.value[
+      currentStateStore.downloadProgress[
         [
           publication.pub,
           publication.langwritten,

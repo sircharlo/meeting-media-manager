@@ -5,7 +5,7 @@ import type {
   SettingsValues,
 } from 'src/types';
 
-import { defineStore, storeToRefs } from 'pinia';
+import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { settingsDefinitions } from 'src/constants/settings';
 import { electronApi } from 'src/helpers/electron-api';
@@ -55,13 +55,13 @@ export const useCurrentStateStore = defineStore('current-state', {
         )) {
           if (settingsDefinition.rules?.includes('notEmpty')) {
             const congregationSettingsStore = useCongregationSettingsStore();
-            const { congregations } = storeToRefs(congregationSettingsStore);
             if (
-              !congregations.value[congregation]?.[
+              !congregationSettingsStore.congregations[congregation]?.[
                 settingsDefinitionId as keyof SettingsValues
               ]?.toString() &&
               (!settingsDefinition.rules?.includes('regular') ||
-                !congregations.value[congregation]?.disableMediaFetching)
+                !congregationSettingsStore.congregations[congregation]
+                  ?.disableMediaFetching)
             ) {
               invalidSettings.push(settingsDefinitionId);
             }
@@ -91,9 +91,8 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     currentSettings(state) {
       const congregationSettingsStore = useCongregationSettingsStore();
-      const { congregations } = storeToRefs(congregationSettingsStore);
-      return Object.keys(congregations.value).length > 0
-        ? congregations.value[state.currentCongregation]
+      return Object.keys(congregationSettingsStore.congregations).length > 0
+        ? congregationSettingsStore.congregations[state.currentCongregation]
         : null;
     },
     currentSongbook() {
@@ -109,11 +108,10 @@ export const useCurrentStateStore = defineStore('current-state', {
           signLanguage: true,
         };
         const jwStore = useJwStore();
-        const { jwLanguages } = storeToRefs(jwStore);
         const currentLanguage = this.currentSettings?.lang as string;
-        if (!currentLanguage || !jwLanguages.value)
+        if (!currentLanguage || !jwStore.jwLanguages)
           return notSignLanguageSongbook;
-        const currentLanguageIsSignLanguage = !!jwLanguages.value?.list?.find(
+        const currentLanguageIsSignLanguage = !!jwStore.jwLanguages?.list?.find(
           (l) => l.langcode === currentLanguage,
         )?.isSignLanguage;
         return currentLanguageIsSignLanguage
@@ -126,10 +124,9 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     currentSongs() {
       const jwStore = useJwStore();
-      const { jwSongs } = storeToRefs(jwStore);
       const currentLanguage = this.currentSettings?.lang as string;
       if (!currentLanguage) return [];
-      return jwSongs.value[currentLanguage]?.list || [];
+      return jwStore.jwSongs[currentLanguage]?.list || [];
     },
     getDatedAdditionalMediaDirectory(state) {
       try {
@@ -172,14 +169,13 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     selectedDateObject(state): DateInfo | null {
       const jwStore = useJwStore();
-      const { lookupPeriod } = storeToRefs(jwStore);
-      if (!lookupPeriod.value?.[state.currentCongregation]?.length) {
+      if (!jwStore.lookupPeriod?.[state.currentCongregation]?.length) {
         return null;
       }
       return (
-        lookupPeriod.value?.[state.currentCongregation]?.find(
+        jwStore.lookupPeriod?.[state.currentCongregation]?.find(
           (day) => getDateDiff(day.date, state.selectedDate, 'days') === 0,
-        ) || lookupPeriod.value[state.currentCongregation][0]
+        ) || jwStore.lookupPeriod[state.currentCongregation][0]
       );
     },
   },

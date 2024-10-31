@@ -6,7 +6,6 @@ import type {
 
 import { Buffer } from 'buffer';
 import mime from 'mime';
-import { storeToRefs } from 'pinia';
 import {
   AUDIO_EXTENSIONS,
   HEIC_EXTENSIONS,
@@ -150,16 +149,16 @@ const decompressJwpub = async (
   force = false,
 ) => {
   try {
-    const { extractedFiles } = storeToRefs(useCurrentStateStore());
+    const currentState = useCurrentStateStore();
     if (!isJwpub(jwpubPath)) return jwpubPath;
     if (!outputPath)
       outputPath = path.join(getTempDirectory(), path.basename(jwpubPath));
-    if (!extractedFiles.value[outputPath] || force)
-      extractedFiles.value[outputPath] = jwpubDecompressor(
+    if (!currentState.extractedFiles[outputPath] || force)
+      currentState.extractedFiles[outputPath] = jwpubDecompressor(
         jwpubPath,
         outputPath,
       );
-    return extractedFiles.value[outputPath];
+    return currentState.extractedFiles[outputPath];
   } catch (error) {
     errorCatcher(error);
     return jwpubPath;
@@ -388,11 +387,10 @@ const convertImageIfNeeded = async (filepath: string) => {
 const showMediaWindow = (state?: boolean) => {
   try {
     const currentState = useCurrentStateStore();
-    const { mediaWindowVisible } = storeToRefs(currentState);
     if (typeof state === 'undefined') {
-      state = !mediaWindowVisible.value;
+      state = !currentState.mediaWindowVisible;
     }
-    mediaWindowVisible.value = state;
+    currentState.mediaWindowVisible = state;
     toggleMediaWindow(state ? 'show' : 'hide');
   } catch (error) {
     errorCatcher(error);

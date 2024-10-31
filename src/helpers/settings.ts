@@ -4,7 +4,6 @@ import type {
   SettingsItemRule,
 } from 'src/types';
 
-import { storeToRefs } from 'pinia';
 import { date, type ValidationRule } from 'quasar';
 import { getSpecificWeekday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -13,7 +12,6 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 const { getDateDiff } = date;
 
 const currentState = useCurrentStateStore();
-const { currentSettings } = storeToRefs(currentState);
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
   (val?.toString() && val?.toString().length > 0) || '';
@@ -67,7 +65,7 @@ const getRules = (rules: SettingsItemRule[] | undefined) => {
         ?.map((rule): undefined | ValidationRule => {
           if (rule === 'notEmpty') {
             return !rules.includes('regular') ||
-              !currentSettings.value?.disableMediaFetching
+              !currentState.currentSettings?.disableMediaFetching
               ? requiredRule
               : undefined;
           } else if (rule === 'portNumber') {
