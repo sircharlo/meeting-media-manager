@@ -282,6 +282,8 @@
   "shortcutMediaPrevious": "Play previous media item",
   "shortcutMediaPrevious-explain": "Shortcut to skip to the previous video or picture in the list. This has no effect if a video is currently playing.",
   "shortcutMediaStop": "Peata meedia esitamine",
+  "obsQuickToggle": "Enable instant scene switcher",
+  "obsQuickToggle-explain": "When enabled, hovering over the OBS Studio button will open the scene switcher. This can be useful for quickly switching scenes in OBS Studio, especially if many scenes are configured.",
   "shortcutMediaStop-explain": "Shortcut to stop the currently playing video or hide the currently displayed picture. This only takes effect if media is currently being displayed.",
   "shortcutMediaWindow": "Hide/show media window",
   "shortcutMediaWindow-explain": "Otsetee meediaakna kiireks peitmiseks või kuvamiseks.",

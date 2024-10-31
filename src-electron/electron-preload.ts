@@ -551,6 +551,7 @@ const electronApi: ElectronApi = {
       });
     });
   },
+  downloadErrorIsExpected: () => invoke('downloadErrorIsExpected'),
   executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => {
     try {
       // let attempts = 0;

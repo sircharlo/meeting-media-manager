@@ -32,6 +32,7 @@ export interface SettingsValues {
   obsMediaScene: string;
   obsPassword: string;
   obsPort: string;
+  obsQuickToggle: boolean;
   shortcutMediaNext: string;
   shortcutMediaPauseResume: string;
   shortcutMediaPrevious: string;

@@ -24,6 +24,11 @@
     rounded
     unelevated
     @click="localObsPopup = !localObsPopup"
+    @mouseenter="
+      currentSettings?.obsQuickToggle && obsConnectionState === 'connected'
+        ? (localObsPopup = true)
+        : undefined
+    "
   >
     <q-icon name="mmm-obs-studio" />
     <q-tooltip v-if="!localObsPopup" :delay="1000" :offset="[14, 22]">

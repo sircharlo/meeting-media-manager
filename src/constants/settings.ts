@@ -159,7 +159,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'obsStudio',
     type: 'list',
   },
-
+  obsQuickToggle: {
+    depends: ['obsEnable', 'obsPort', 'obsPassword', 'obsMediaScene'],
+    group: 'integrations',
+    subgroup: 'obsStudio',
+    type: 'toggle',
+  },
   // Advanced
 
   enableKeyboardShortcuts: {
@@ -296,6 +301,7 @@ export const defaultSettings: SettingsValues = {
   obsMediaScene: '',
   obsPassword: '',
   obsPort: '',
+  obsQuickToggle: false,
   shortcutMediaNext: '',
   shortcutMediaPauseResume: '',
   shortcutMediaPrevious: '',
