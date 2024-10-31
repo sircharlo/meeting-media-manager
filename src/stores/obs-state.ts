@@ -4,6 +4,19 @@ import { defineStore } from 'pinia';
 import { configuredScenesAreAllUUIDs, isUUID } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
+interface Store {
+  currentScene: string;
+  currentSceneType: 'camera' | 'media';
+  obsConnectionState:
+    | 'connected'
+    | 'connecting'
+    | 'disconnected'
+    | 'notConnected';
+  obsMessage: string;
+  previousScene: string;
+  scenes: JsonObject[];
+}
+
 export const useObsStateStore = defineStore('obs-state', {
   actions: {
     sceneExists(sceneToCheck?: string) {
@@ -39,14 +52,14 @@ export const useObsStateStore = defineStore('obs-state', {
         );
     },
   },
-  state: () => {
+  state: (): Store => {
     return {
       currentScene: '',
-      currentSceneType: '' as 'camera' | 'media',
+      currentSceneType: 'camera',
       obsConnectionState: 'notConnected',
       obsMessage: '',
       previousScene: '',
-      scenes: [] as JsonObject[],
+      scenes: [],
     };
   },
 });

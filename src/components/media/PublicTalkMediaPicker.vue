@@ -121,14 +121,14 @@ const s34mpInfo = ref<null | PublicationInfo>(null);
 const populatePublicTalks = () => {
   s34mpDb.value = findDb(s34mpDir.value);
   if (!s34mpDb.value) return;
-  publicTalks.value = executeQuery(
+  publicTalks.value = executeQuery<DocumentItem>(
     s34mpDb.value,
     'SELECT DISTINCT Document.DocumentId, Title FROM Document INNER JOIN DocumentMultimedia ON Document.DocumentId = DocumentMultimedia.DocumentId',
-  ) as DocumentItem[];
-  const PublicationInfos = executeQuery(
+  );
+  const PublicationInfos = executeQuery<PublicationInfo>(
     s34mpDb.value,
     'SELECT DISTINCT VersionNumber, Year FROM Publication',
-  ) as PublicationInfo[];
+  );
   if (PublicationInfos.length) s34mpInfo.value = PublicationInfos[0];
 };
 

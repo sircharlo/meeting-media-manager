@@ -228,9 +228,9 @@ const moveMediaWindow = (
     captureMessage('moveMediaWindow start');
     if (targetScreenNumber === undefined || windowedMode === undefined) {
       try {
-        const screenPreferences =
+        const screenPreferences: Partial<ScreenPreferences> =
           JSON.parse(window.localStorage.getItem('app-settings') ?? '{}')
-            ?.screenPreferences || ({} as ScreenPreferences);
+            ?.screenPreferences || {};
         targetScreenNumber = screenPreferences.preferredScreenNumber;
         windowedMode = screenPreferences.preferWindowed;
       } catch (err) {

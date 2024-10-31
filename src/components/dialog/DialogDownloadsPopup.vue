@@ -114,14 +114,14 @@ const { downloadProgress } = storeToRefs(currentState);
 const filteredDownloads = (
   obj: DownloadProgressItems,
   status: 'complete' | 'error' | 'loaded',
-) =>
+): DownloadProgressItems =>
   Object.fromEntries(
     Object.entries(obj)
       .filter(([, item]) => item[status])
       .sort(([keyA], [keyB]) =>
         path.basename(keyA).localeCompare(path.basename(keyB)),
       ),
-  ) as DownloadProgressItems;
+  );
 
 const downloadPopup = ref<QMenu>();
 
