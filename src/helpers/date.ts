@@ -75,8 +75,10 @@ const getWeekDay = (lookupDate: Date) => {
   try {
     if (!lookupDate) return '0';
     const currentState = useCurrentStateStore();
-    if (!lookupDate)
+    if (!lookupDate) {
       lookupDate = currentState.selectedDateObject?.date || new Date();
+    }
+
     const dayNumber =
       lookupDate.getDay() === 0
         ? lookupDate.getDay() + 6
