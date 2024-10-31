@@ -30,7 +30,9 @@ app.on('window-all-closed', () => {
   if (PLATFORM !== 'darwin') app.quit();
 });
 
-app.on('activate', createMainWindow);
+app.on('activate', () => {
+  if (app.isReady()) createMainWindow;
+});
 
 app
   .whenReady()
