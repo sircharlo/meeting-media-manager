@@ -43,7 +43,11 @@ interface Store {
   jwSongs: Record<string, { list: MediaLink[]; updated: Date }>;
   lookupPeriod: Record<string, DateInfo[]>;
   mediaSort: Record<string, Record<string, string[]>>;
-  urlVariables: Record<string, string>;
+    urlVariables: {
+    base: string,
+    mediator: string,
+    pubMedia: string,
+  };
   yeartexts: Record<number, Record<string, string>>;
 }
 
