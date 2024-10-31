@@ -2,7 +2,7 @@
 
 ## :earth_americas: Зависит ли это приложение от внешних сайтов, источников или "кураторов", чтобы загружать публикации, мультимедиа и других файлов для встреч?
 
-**Нет.** Приложение работает аналогично JW Library. Оно загружает публикации, мультимедиа и другие файлы непосредственно с официального сайта JW.org. Приложение автоматически определяет, что нужно скачать, и когда ранее загруженный контент устарел и если следует повторно скачать его.
+**Нет.** Приложение работает аналогично JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Приложение автоматически определяет, что нужно скачать, и когда ранее загруженный контент устарел и если следует повторно скачать его.
 
 :::info Примечание
 
@@ -10,9 +10,9 @@ The source code for this app is available for all to examine and verify what goe
 
 :::
 
-## :thinking: Нарушает ли это приложение условия использования JW.org?
+## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
 
-**Нет.** [Условия пользования JW.org](https://www.jw.org/finder?docid=1011511&prefer=content) разрешают тип пользования, которым мы занимаемся. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > You may not:
 >

@@ -2,7 +2,7 @@
 
 ## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content?
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official JW.org website and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
 
 :::info Note
 
@@ -10,9 +10,9 @@ The source code for this app is available for all to examine and verify what goe
 
 :::
 
-## :thinking: Does this app infringe the JW.org Terms of Use?
+## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
 
-**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > You may not:
 >

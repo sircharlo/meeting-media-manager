@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Descarrega multimédia automaticamente
-    details: Imagens e vídeos utilizados nas reuniões congregacionais são descarregados automaticamente em qualquer idioma disponível no JW.org.
+    details: Imagens e vídeos utilizados nas reuniões congregacionais são descarregados automaticamente em qualquer idioma disponível no site oficial das Testemunhas de Jeová.
   - icon: 🎦
     title: Apresentação de multimédia
     details: Facilita a exibição de multimédia em reuniões híbridas ou presenciais.
