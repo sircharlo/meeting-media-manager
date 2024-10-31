@@ -1653,7 +1653,7 @@ const setUrlVariables = async () => {
     currentStateStore.currentSettings &&
     isValidTwoPartDomain(currentStateStore.currentSettings.baseUrl)
   ) {
-    jwStore.urlVariables.value.base = currentStateStore.currentSettings.baseUrl;
+    jwStore.urlVariables.base = currentStateStore.currentSettings.baseUrl;
 
     const homePageUrl = 'https://' + jwStore.urlVariables.base;
 
