@@ -1634,51 +1634,53 @@ const downloadJwpub = async (
   }
 };
 
-const isValidTwoPartDomain = (urlString: string | undefined) => {
-  try {
-    if (!urlString) return false;
-    const url = new URL('https://' + urlString);
-    const parts = url.hostname.split('.');
-    return parts.length === 2;
-  } catch (error) {
-    return false;
-  }
-};
+const requestControllers: AbortController[] = [];
 
-const setUrlVariables = async () => {
+const setUrlVariables = async (baseUrl: string | undefined) => {
   const jwStore = useJwStore();
   const { urlVariables } = storeToRefs(jwStore);
 
-  const currentStateStore = useCurrentStateStore();
-  const { currentSettings } = storeToRefs(currentStateStore);
+  const resetUrlVariables = (base = false) => {
+    if (base) urlVariables.value.base = '';
+    urlVariables.value.mediator = '';
+    urlVariables.value.pubMedia = '';
+  };
 
-  if (currentSettings.value) {
-    if (!currentSettings.value.baseUrl) {
-      currentSettings.value.baseUrl = 'jw.org';
-    }
-
-    if (!isValidTwoPartDomain(currentSettings.value.baseUrl)) {
-      //currentSettings.value.baseUrl = 'jw.org';
-    }
+  if (!baseUrl) {
+    resetUrlVariables(true);
+    return;
   }
 
-  if (
-    currentSettings.value &&
-    isValidTwoPartDomain(currentSettings.value.baseUrl)
-  ) {
-    urlVariables.value.base = currentSettings.value.baseUrl;
+  try {
+    resetUrlVariables();
+    urlVariables.value.base = baseUrl;
+    const homePageUrl = 'https://www.' + baseUrl + '/en';
 
-    const homePageUrl = 'https://' + urlVariables.value.base;
+    requestControllers
+      .filter((c) => !c.signal.aborted)
+      .forEach((c) => c.abort());
+    const controller = new AbortController();
+    // delete all items in the array
+    requestControllers.splice(0);
+    requestControllers.push(controller);
+    const homePage = await axios
+      .get(homePageUrl, {
+        signal: controller.signal,
+      })
+      .then((res) => res.data);
+    console.debug('homepage finished', homePageUrl);
 
-    const homePage = (await axios
-      .get(homePageUrl)
-      .then((res) => res.data)
-      .catch(() => '')) as string;
-    if (!homePage) return;
+    if (!homePage) {
+      resetUrlVariables();
+      return;
+    }
 
     const $ = cheerio.load(homePage);
     const div = $('div#pageConfig');
-    if (!div?.[0]?.attribs) return;
+    if (!div?.[0]?.attribs) {
+      resetUrlVariables();
+      return;
+    }
 
     const attributes = { ...(div?.[0]?.attribs || {}) };
 
@@ -1686,10 +1688,13 @@ const setUrlVariables = async () => {
       urlVariables.value.mediator = attributes['data-mediator_url'];
     if (attributes['data-pubmedia_url'])
       urlVariables.value.pubMedia = attributes['data-pubmedia_url'];
-  } else {
-    urlVariables.value.base = '';
-    urlVariables.value.mediator = '';
-    urlVariables.value.pubMedia = '';
+  } catch (e) {
+    if (urlVariables.value?.base)
+      requestControllers
+        .filter((c) => !c.signal.aborted)
+        .forEach((c) => c.abort());
+    errorCatcher(e);
+    resetUrlVariables();
   }
 };
 

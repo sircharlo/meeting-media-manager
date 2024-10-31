@@ -8,9 +8,15 @@ import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
  * @returns Wether the url is a trusted domain
  */
 export function isTrustedDomain(url: string): boolean {
-  const parsedUrl = new URL(url);
-  if (parsedUrl.protocol !== 'https:') return false;
-  return TRUSTED_DOMAINS.some((domain) => parsedUrl.hostname.endsWith(domain));
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.protocol !== 'https:') return false;
+    return TRUSTED_DOMAINS.some((domain) =>
+      parsedUrl.hostname.endsWith(domain),
+    );
+  } catch (e) {
+    return false;
+  }
 }
 
 /**

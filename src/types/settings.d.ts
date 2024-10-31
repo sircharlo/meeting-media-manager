@@ -53,10 +53,7 @@ export type SettingsItemType =
   | 'time'
   | 'toggle';
 
-export type SettingsItemAction =
-  | 'baseUrlUpdate'
-  | 'obsConnect'
-  | 'setBackgroundMusicVolume';
+export type SettingsItemAction = 'obsConnect' | 'setBackgroundMusicVolume';
 export type SettingsItemOption = 'coTuesdays' | 'meetingTime';
 export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 
