@@ -1,7 +1,9 @@
 import type { BrowserWindow } from 'electron';
 
+import { throttle } from 'app/src-electron/utils';
+
 import { closeOtherWindows, createWindow, sendToWindow } from './window-base';
-import { createMediaWindow } from './window-media';
+import { createMediaWindow, moveMediaWindow } from './window-media';
 
 export let mainWindow: BrowserWindow | null = null;
 export let authorizedClose = false;
@@ -22,6 +24,10 @@ export function createMainWindow() {
   mainWindow.webContents.setUserAgent(
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
   );
+
+  mainWindow.on('move', () => {
+    throttle(() => moveMediaWindow(), 100);
+  });
 
   mainWindow.on('close', (e) => {
     if (mainWindow && authorizedClose) {

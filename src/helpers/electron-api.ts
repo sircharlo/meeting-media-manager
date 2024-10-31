@@ -3,6 +3,7 @@ import type HeicConvert from 'heic-convert';
 import type KlawSync from 'klaw-sync';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type {
+  Display,
   ElectronIpcListenKey,
   ExternalWebsite,
   FileDialogFilter,
@@ -25,9 +26,7 @@ export interface ElectronApi {
   executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => T[];
   fileUrlToPath: (url: string) => string;
   fs: typeof FsExtra;
-  getAllScreens: (
-    type?: string,
-  ) => ({ mainWindow?: boolean; mediaWindow?: boolean } & Electron.Display)[];
+  getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => string;
   getAppVersion: () => Promise<string>;
   getLocalPathFromFileObject: (fileObject: File) => string;

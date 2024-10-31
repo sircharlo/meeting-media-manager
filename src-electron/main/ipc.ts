@@ -19,9 +19,11 @@ import {
 import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 
 import { isSelf } from './../utils';
+import { getAllScreens } from './screen';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
+import { moveMediaWindow } from './window/window-media';
 import {
   createWebsiteWindow,
   navigateWebsiteWindow,
@@ -81,6 +83,10 @@ handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {
   unregisterShortcut(keySequence);
 });
 
+handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen, noEvent) => {
+  moveMediaWindow(displayNr, fullscreen, noEvent);
+});
+
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
   let url: string | undefined;
 
@@ -124,6 +130,10 @@ function handleIpcInvoke<T = unknown>(
 
 handleIpcInvoke('getVersion', async () => {
   return app.getVersion();
+});
+
+handleIpcInvoke('getAllScreens', async () => {
+  return getAllScreens();
 });
 
 handleIpcInvoke('downloadErrorIsExpected', async () => {

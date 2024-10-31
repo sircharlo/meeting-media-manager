@@ -12,6 +12,7 @@ import {
 import './main/ipc';
 import './main/session';
 import { PLATFORM } from './constants';
+import { initScreenListeners } from './main/screen';
 import { initUpdater } from './main/updater';
 import { createMainWindow } from './main/window/window-main';
 import { errorCatcher } from './utils';
@@ -23,6 +24,7 @@ initSentry({
 
 initElectronRemote();
 initUpdater();
+initScreenListeners();
 createApplicationMenu();
 
 // MacOS default behavior is to keep the app running even after all windows are closed

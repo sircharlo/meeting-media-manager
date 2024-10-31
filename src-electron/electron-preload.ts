@@ -11,9 +11,8 @@ import type {
   ScreenPreferences,
 } from 'src/types';
 
-import { app, BrowserWindow, globalShortcut, screen } from '@electron/remote';
+import { app, BrowserWindow, globalShortcut } from '@electron/remote';
 import { videoDuration as getVideoDuration } from '@numairawan/video-duration';
-import { captureMessage, setContext } from '@sentry/electron/renderer';
 import AdmZip from 'adm-zip';
 import BetterSqlite3 from 'better-sqlite3';
 import { contextBridge, ipcRenderer, webUtils } from 'electron/renderer';
@@ -26,7 +25,7 @@ import path from 'upath';
 import url from 'url';
 
 import pkg from '../package.json';
-import { errorCatcher, throttle } from './utils';
+import { errorCatcher } from './utils';
 
 function invoke(channel: ElectronIpcInvokeKey, ...args: unknown[]) {
   if (process.env.DEBUGGING) {
@@ -86,255 +85,51 @@ const stopStream = () => {
 
 listen('websiteWindowClosed', stopStream);
 
-const getScreens = () =>
-  screen
-    .getAllDisplays()
-    .sort((a, b) => a.bounds.x + a.bounds.y - (b.bounds.x + b.bounds.y));
-
-const getAllScreens = () => {
-  const displays = getScreens();
-  const mainWindow = getMainWindow();
-  const mediaWindow = getMediaWindow();
-  if (mainWindow) {
-    try {
-      const mainWindowScreen = displays.find(
-        (display) =>
-          display.id === screen.getDisplayMatching(mainWindow.getBounds()).id,
-      ) as { mainWindow?: boolean } & Electron.Display;
-      if (mainWindowScreen) mainWindowScreen.mainWindow = true;
-    } catch (err) {
-      errorCatcher(err);
-    }
-  }
-  if (mediaWindow) {
-    try {
-      const mediaWindowScreen = displays.find(
-        (display) =>
-          display.id === screen.getDisplayMatching(mediaWindow.getBounds()).id,
-      ) as { mediaWindow?: boolean } & Electron.Display;
-      if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
-    } catch (err) {
-      errorCatcher(err);
-    }
-  }
-  return displays as ({
-    mainWindow?: boolean;
-    mediaWindow?: boolean;
-  } & Electron.Display)[];
-};
-
-const getWindowScreen = (window: Electron.BrowserWindow) => {
-  if (!window) return 0;
-  const allScreens = getAllScreens();
-  const windowDisplay = screen.getDisplayMatching(window.getBounds());
-  return allScreens.findIndex((display) => display.id === windowDisplay.id);
-};
-
-const setWindowPosition = (
-  targetWindow: Electron.BrowserWindow,
-  targetScreenNumber: number | undefined,
-  windowedMode = false,
-  noEvent?: boolean,
-) => {
-  try {
-    setContext('setWindowPosition', {
-      noEvent,
-      targetScreenNumber,
-      targetWindow,
-      windowedMode,
-    });
-    captureMessage('setWindowPosition start');
-    if (!targetWindow) return;
-    const allScreens = getAllScreens();
-    const currentMediaScreenNumber = getWindowScreen(targetWindow);
-    const targetScreen = allScreens[targetScreenNumber ?? 0];
-    setContext('setWindowPosition', {
-      currentMediaScreenNumber,
-      noEvent,
-      targetScreen,
-      targetScreenNumber,
-      targetWindow,
-      windowedMode,
-    });
-    captureMessage('setWindowPosition targetScreen');
-    if (!targetScreen) return;
-    const targetScreenBounds = targetScreen.bounds;
-    setContext('setWindowPosition', {
-      currentMediaScreenNumber,
-      noEvent,
-      targetScreenBounds,
-      targetScreenNumber,
-      targetWindow,
-      windowedMode,
-    });
-    captureMessage('setWindowPosition targetScreenBounds');
-    if (!targetScreenBounds) return;
-    if (windowedMode) {
-      const newBounds = {
-        height: 720,
-        width: 1280,
-        x: targetScreenBounds.x + 50,
-        y: targetScreenBounds.y + 50,
-      };
-      if (
-        targetWindow.isAlwaysOnTop() ||
-        // On macOS, fullscreen transitions take place asynchronously. Let's not check for isFullScreen() if we're on that platform
-        platform === 'darwin' ||
-        targetWindow.isFullScreen()
-      ) {
-        // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
-        if (platform !== 'darwin') targetWindow.setAlwaysOnTop(false);
-        targetWindow.setFullScreen(false);
-        targetWindow.setBounds(newBounds);
-      }
-      if (targetScreenNumber === currentMediaScreenNumber) return;
-      const currentBounds = targetWindow.getBounds();
-      if (
-        currentBounds.height !== newBounds.height ||
-        currentBounds.width !== newBounds.width ||
-        currentBounds.x !== newBounds.x ||
-        currentBounds.y !== newBounds.y
-      ) {
-        targetWindow.setBounds(newBounds);
-      }
-    } else {
-      setContext('setWindowPosition', {
-        currentMediaScreenNumber,
-        noEvent,
-        targetScreenBounds,
-        targetScreenNumber,
-        targetWindow,
-        targetWindowIsAlwaysOnTop: targetWindow.isAlwaysOnTop(),
-        targetWindowIsFullScreen: targetWindow.isFullScreen(),
-        windowedMode,
-      });
-      captureMessage('setWindowPosition targetScreenBounds');
-      if (
-        targetScreenNumber === currentMediaScreenNumber &&
-        targetWindow.isAlwaysOnTop()
-      )
-        return;
-      targetWindow.setPosition(targetScreenBounds.x, targetScreenBounds.y);
-      // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
-      if (platform !== 'darwin' && !targetWindow.isAlwaysOnTop()) {
-        targetWindow.setAlwaysOnTop(true);
-      }
-      // On macOS, fullscreen transitions take place asynchronously. Let's not check for isFullScreen() if we're on that platform
-      if (platform === 'darwin' || !targetWindow.isFullScreen())
-        targetWindow.setFullScreen(true);
-    }
-    if (!noEvent)
-      window.dispatchEvent(
-        new CustomEvent('windowScreen-update', {
-          detail: { targetScreenNumber, windowedMode },
-        }),
-      );
-  } catch (err) {
-    errorCatcher(err);
-  }
-};
-
 const getUserDataPath = () =>
   path.join(app.getPath('appData'), pkg.productName);
+
+listen('screenChange', () => {
+  window.dispatchEvent(new CustomEvent('screen-trigger-update'));
+});
+
+listen(
+  'screenPrefsChange',
+  ({ preferredScreenNumber, preferWindowed }: ScreenPreferences) => {
+    window.dispatchEvent(
+      new CustomEvent('windowScreen-update', {
+        detail: { preferredScreenNumber, preferWindowed },
+      }),
+    );
+  },
+);
 
 const moveMediaWindow = (
   targetScreenNumber?: number,
   windowedMode?: boolean,
   noEvent?: boolean,
 ) => {
-  try {
-    const allScreens = getAllScreens();
-    const otherScreens = allScreens.filter((screen) => !screen.mainWindow);
-    const mainWindow = getMainWindow();
-    const mediaWindow = getMediaWindow();
-    if (!mediaWindow || !mainWindow) return;
-    setContext('moveMediaWindow', {
-      mainWindow,
-      mediaWindow,
-      noEvent,
-      targetScreenNumber,
-      windowedMode,
-    });
-    captureMessage('moveMediaWindow start');
-    if (targetScreenNumber === undefined || windowedMode === undefined) {
-      try {
-        const screenPreferences =
-          JSON.parse(window.localStorage.getItem('app-settings') ?? '{}')
-            ?.screenPreferences || ({} as ScreenPreferences);
-        targetScreenNumber = screenPreferences.preferredScreenNumber;
-        windowedMode = screenPreferences.preferWindowed;
-      } catch (err) {
-        errorCatcher(err);
-      }
+  if (targetScreenNumber === undefined || windowedMode === undefined) {
+    try {
+      const screenPreferences =
+        JSON.parse(window.localStorage.getItem('app-settings') ?? '{}')
+          ?.screenPreferences || ({} as ScreenPreferences);
+      targetScreenNumber = screenPreferences.preferredScreenNumber;
+      windowedMode = screenPreferences.preferWindowed;
+    } catch (err) {
+      errorCatcher(err);
     }
-    setContext('moveMediaWindow', {
-      mainWindow,
-      mediaWindow,
-      mediaWindowIsFullScreen: !mediaWindow.isFullScreen(),
-      noEvent,
-      targetScreenNumber,
-      windowedMode,
-    });
-    captureMessage(
-      'moveMediaWindow assign targetScreenNumber and windowedMode',
-    );
-    if (otherScreens.length > 0) {
-      if (windowedMode === undefined)
-        windowedMode = !mediaWindow.isFullScreen();
-      if (targetScreenNumber === undefined || otherScreens.length >= 1) {
-        if (otherScreens.length === 1) {
-          targetScreenNumber = allScreens.findIndex((s) => !s.mainWindow);
-        } else {
-          const mainWindowScreen = allScreens.findIndex((s) => s.mainWindow);
-          targetScreenNumber =
-            targetScreenNumber !== mainWindowScreen
-              ? targetScreenNumber
-              : allScreens.findIndex((s) => !s.mainWindow);
-        }
-      }
-    } else {
-      targetScreenNumber = 0;
-      windowedMode = true;
-    }
-    setContext('moveMediaWindow', {
-      mainWindow,
-      mediaWindow,
-      noEvent,
-      targetScreenNumber,
-      windowedMode,
-    });
-    captureMessage(
-      'moveMediaWindow before setWindowPosition(mediaWindow, targetScreenNumber, windowedMode, noEvent)',
-    );
-    setWindowPosition(mediaWindow, targetScreenNumber, windowedMode, noEvent);
-    window.dispatchEvent(new CustomEvent('screen-trigger-update'));
-  } catch (err) {
-    errorCatcher(err);
   }
+
+  send(
+    'moveMediaWindow',
+    targetScreenNumber,
+    windowedMode === undefined ? undefined : !windowedMode,
+    noEvent,
+  );
 };
-
-const moveMediaWindowThrottled = throttle(() => moveMediaWindow(), 100);
-
-getMainWindow()?.on('move', moveMediaWindowThrottled);
 
 window.addEventListener('beforeunload', () => {
   getMainWindow()?.removeAllListeners('move');
-});
-
-screen.removeAllListeners('display-metrics-changed');
-screen.removeAllListeners('display-added');
-screen.removeAllListeners('display-removed');
-
-screen.on('display-metrics-changed', () => {
-  moveMediaWindow();
-});
-
-screen.on('display-added', () => {
-  moveMediaWindow();
-});
-
-screen.on('display-removed', () => {
-  moveMediaWindow();
 });
 
 const toggleMediaWindow = (action: string) => {
@@ -490,7 +285,7 @@ const electronApi: ElectronApi = {
     return url.fileURLToPath(fileurl);
   },
   fs,
-  getAllScreens,
+  getAllScreens: () => invoke('getAllScreens'),
   getAppDataPath: () => {
     return app.getPath('appData');
   },
