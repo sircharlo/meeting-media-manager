@@ -2,7 +2,7 @@
 
 ## Huu ni mfumo upi?
 
-**Meeting Media Manager**, au **M³** kwa ufupi, ni mfumo kwa programu za Windows, macOS na Linux, ambayo hupakua kiotomatiki picha na video ambazo zitatumika kwenye mikutano ya kutaniko ya Mashahidi wa Yehova, kwa lugha yoyote kwenye JW.org.
+**Meeting Media Manager**, au **M³** kwa ufupi, ni mfumo kwa programu za Windows, macOS na Linux, ambayo hupakua kiotomatiki picha na video ambazo zitatumika kwenye mikutano ya kutaniko ya Mashahidi wa Yehova, kwa lugha yoyote kwenye tovuti rasmi ya Mashahidi wa Yehova.
 
 Inaangazia usaidizi wa kudhibiti midia ya kawaida na midia maalum ya mikutano, na usaidizi kwa makutaniko mengi na/au vikundi vinavyotumia akaunti moja ya kompyuta.
 
@@ -30,6 +30,6 @@ Jaribu M³ leo ili ujionee kenye inaweza kufanya! Kuonyesha midia kwenye mikutan
 
 ## Je, M³ inafanya kazi kwa lugha yangu?
 
-**Ndio!** Midia kwa ajili ya mikutano ya Mashahidi wa Yehova inaweza kupakuliwa moja kwa moja kwa mamia ya lugha ambazo ziko kwenye tovuti ya JW.org. Orodha ya lugha zinazopatikana inasasishwa kwa ukawaida; unachohitaji kufanya ni kuchagua ni ipi unayohitaji.
+**Ndio!** Midia kwa ajili ya mikutano ya Mashahidi wa Yehova inaweza kupakuliwa moja kwa moja kwa mamia ya lugha ambazo ziko kwenye tovuti rasmi ya Mashahidi wa Yehova. Orodha ya lugha zinazopatikana inasasishwa kwa ukawaida; unachohitaji kufanya ni kuchagua ni ipi unayohitaji.
 
 Kwa kuongeza, M³ yenyewe imetafsiriwa katika lugha kadhaa na wajitoleaji wengi; kwa hivyo unaweza kusanidi lugha ambayo ungependa kuonyeshwa kwenye kiolesura/mwonekano wa M³.

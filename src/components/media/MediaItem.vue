@@ -161,7 +161,7 @@
           </q-dialog>
         </q-img>
         <template v-if="media.isImage">
-          <transition-group
+          <transition
             appear
             enter-active-class="animated fadeIn"
             leave-active-class="animated fadeOut"
@@ -199,7 +199,7 @@
                 </q-badge>
               </div>
             </div>
-          </transition-group>
+          </transition>
         </template>
       </div>
     </div>

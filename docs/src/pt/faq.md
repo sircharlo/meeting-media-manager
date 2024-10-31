@@ -2,7 +2,7 @@
 
 ## :earth_americas: Este aplicativo depende de sites externos, fontes ou pessoas para baixar publicações ou mídias?
 
-**Não.** O aplicativo se comporta de maneira semelhante ao JW Library. Ele baixa publicações e mídia diretamente do site oficial JW.org. O aplicativo determina automaticamente o que precisa ser baixado e se uma publicação ou mídia foi atualizada e precisa ser baixada novamente.
+**Não.** O aplicativo se comporta de maneira semelhante ao JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. O aplicativo determina automaticamente o que precisa ser baixado e se uma publicação ou mídia foi atualizada e precisa ser baixada novamente.
 
 :::info Nota
 
@@ -10,9 +10,9 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 
 :::
 
-## :thinking: Este aplicativo infringe os Termos de Uso do JW.org?
+## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
 
-**Não.** Os [Termos de Uso](https://www.jw.org/finder?docid=1011511&prefer=content) na verdade permitem claramente o tipo de uso que estamos fazendo. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > Você não pode:
 >

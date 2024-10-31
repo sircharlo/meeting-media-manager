@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Automatisk mediahämtning
-    details: Ladda automatiskt ner bilder och videor för församlingsmöten på alla språk som finns på JW.org.
+    details: Ladda automatiskt ner bilder och videor för församlingsmöten på alla språk som finns på Jehovas vittnens officiella hemsida.
   - icon: 🎦
     title: Visa media
     details: Gör det enkelt att dela media under hybrid- eller vanliga möten.

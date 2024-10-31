@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on JW.org.
+    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
     title: Media presenting
     details: Allows to easily share media during hybrid or in-person meetings.

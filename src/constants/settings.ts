@@ -263,6 +263,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'setupWizard.backgroundMusic',
     type: 'slider',
   },
+  baseUrl: {
+    actions: ['baseUrlUpdate'],
+    group: 'advanced',
+    subgroup: 'dangerZone',
+    type: 'text',
+  },
   disableMediaFetching: {
     group: 'advanced',
     subgroup: 'dangerZone',
@@ -274,6 +280,7 @@ export const settingsDefinitions: SettingsItems = {
 export const defaultSettings: SettingsValues = {
   autoStartAtLogin: false,
   autoStartMusic: true,
+  baseUrl: 'jw.org',
   congregationName: '',
   coWeek: '',
   darkMode: 'auto',

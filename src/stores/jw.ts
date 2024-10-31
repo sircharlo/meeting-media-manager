@@ -171,7 +171,7 @@ export const useJwStore = defineStore('jw-store', {
         );
         if (monthsSinceUpdated > 3 || !this.jwLanguages?.list?.length) {
           this.jwLanguages = {
-            list: await getLanguages(),
+            list: await getLanguages(this.urlVariables.base),
             updated: now,
           };
         }
@@ -254,7 +254,11 @@ export const useJwStore = defineStore('jw-store', {
         const currentYear = new Date().getFullYear();
         if (!this.yeartexts[currentYear]) this.yeartexts[currentYear] = {};
         if (!this.yeartexts[currentYear]?.[currentLang]) {
-          const yeartextRequest = await getYeartext(currentLang, currentYear);
+          const yeartextRequest = await getYeartext(
+            currentLang,
+            this.urlVariables.base,
+            currentYear,
+          );
           if (yeartextRequest?.content) {
             this.yeartexts[currentYear][currentLang] = sanitizeHtml(
               yeartextRequest.content,
@@ -296,6 +300,11 @@ export const useJwStore = defineStore('jw-store', {
       jwSongs: {},
       lookupPeriod: {},
       mediaSort: {},
+      urlVariables: {
+        base: 'jw.org',
+        mediator: 'https://b.jw-cdn.org/apis/mediator',
+        pubMedia: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
+      },
       yeartexts: {},
     };
   },

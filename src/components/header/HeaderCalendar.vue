@@ -220,7 +220,8 @@ const { formatDate, getDateDiff, getMaxDate, getMinDate } = date;
 const jwStore = useJwStore();
 const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
   jwStore;
-const { additionalMediaMaps, lookupPeriod, mediaSort } = storeToRefs(jwStore);
+const { additionalMediaMaps, lookupPeriod, mediaSort, urlVariables } =
+  storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
 
@@ -354,7 +355,7 @@ const getJwVideos = async () => {
       const getSubcategories = async (category: string) => {
         if (!category) return null;
         return await get<JwVideoCategory>(
-          `https://b.jw-cdn.org/apis/mediator/v1/categories/${
+          `${urlVariables.value.mediator}/v1/categories/${
             currentSettings.value?.lang
           }/${category}?detailed=1&mediaLimit=0&clientType=www`,
         );
@@ -379,7 +380,7 @@ const getJwVideos = async () => {
       for (const category of subcategories) {
         if (!category?.key) continue;
         const request = await get<JwVideoCategory>(
-          `https://b.jw-cdn.org/apis/mediator/v1/categories/${
+          `${urlVariables.value.mediator}/v1/categories/${
             currentSettings.value?.lang
           }/${category.key}?detailed=0&clientType=www`,
         );

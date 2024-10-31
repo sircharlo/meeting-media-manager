@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Automatikus médialetöltés
-    details: Automatikusan letölti a gyülekezeti összejövetelek kép- és videóanyagait a JW.org-on elérhető bármely nyelven.
+    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
     title: Média megjelenítése
     details: Lehetővé teszi a médiatartalom egyszerű megosztását a hibrid vagy személyes összejövetelek során.
