@@ -2,7 +2,7 @@
 
 ## :earth_americas: Je, programu hii inategemea tovuti, vyanzo au "wasimamizi" wa nje ili kupakua machapisho, midia ya mkutano au maudhui mengine?
 
-**Hapana.** Mfumo huu hufanya kazi kama tu JW Library. Inapakua machapisho, midia na maudhui mengine moja kwa moja kutoka kwa tovuti rasmi ya JW.org na mtandao wake wa utoaji midia. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
+**Hapana.** Mfumo huu hufanya kazi kama tu JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
 
 :::info Kidokezo
 
@@ -10,9 +10,9 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 :::
 
-## :thinking: Je, programu hii inakiuka Sheria na Masharti ya JW.org?
+## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
 
-**No.** The [JW.org Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) actually explicitly allow the kind of usage that we are making. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
 
 > Haupaswi:
 >
