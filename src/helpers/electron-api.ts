@@ -1,5 +1,5 @@
+import type { ConversionOptions } from 'app/src-electron/preload/converters';
 import type FsExtra from 'fs-extra';
-import type HeicConvert from 'heic-convert';
 import type KlawSync from 'klaw-sync';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type {
@@ -16,7 +16,7 @@ import type Path from 'upath';
 
 export interface ElectronApi {
   closeWebsiteWindow: () => void;
-  convert: typeof HeicConvert;
+  convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   convertPdfToImages: (
     pdfPath: string,
     outputFolder: string,
@@ -57,7 +57,10 @@ export interface ElectronApi {
     filter?: FileDialogFilter,
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
   openWebsiteWindow: () => void;
-  parseFile: (filePath: string, options?: IOptions) => Promise<IAudioMetadata>;
+  parseMediaFile: (
+    filePath: string,
+    options?: IOptions,
+  ) => Promise<IAudioMetadata>;
   path: typeof Path;
   pathToFileURL: (path: string) => string;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;

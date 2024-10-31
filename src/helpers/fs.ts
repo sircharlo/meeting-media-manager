@@ -1,10 +1,6 @@
 import type { PathLike } from 'fs-extra';
 import type { IAudioMetadata } from 'music-metadata';
-import type {
-  MultimediaItem,
-  PublicationFetcher,
-  VideoDuration,
-} from 'src/types';
+import type { MultimediaItem, PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { storeToRefs } from 'pinia';
@@ -23,7 +19,7 @@ const {
   getVideoDuration,
   isFileUrl,
   klawSync,
-  parseFile,
+  parseMediaFile,
   path,
   pathToFileURL,
 } = electronApi;
@@ -124,13 +120,11 @@ const getMetadataFromMediaPath = async (
     mediaPath = fileUrlToPath(mediaPath);
     if (!mediaPath || !fs.existsSync(mediaPath)) return defaultMetadata;
     if (isFileOfType(mediaPath, ['mov'])) {
-      const videoDuration = (await getVideoDuration(
-        mediaPath,
-      )) as VideoDuration;
+      const videoDuration = await getVideoDuration(mediaPath);
       defaultMetadata.format.duration = videoDuration?.seconds || 0;
       return defaultMetadata;
     }
-    return await parseFile(mediaPath);
+    return await parseMediaFile(mediaPath);
   } catch (error) {
     errorCatcher(mediaPath + ': ' + error);
     return defaultMetadata;
@@ -141,7 +135,7 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
   try {
     mediaPath = fileUrlToPath(mediaPath);
     if (!mediaPath || !fs.existsSync(mediaPath)) return '';
-    const metadata = await parseFile(mediaPath);
+    const metadata = await parseMediaFile(mediaPath);
     if (metadata?.common?.picture?.length) {
       return URL.createObjectURL(
         new Blob([metadata.common.picture[0].data], {
