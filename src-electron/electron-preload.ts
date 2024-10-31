@@ -119,11 +119,14 @@ const openWebsiteWindow = () => {
 
   websiteWindow = new BrowserWindow({
     alwaysOnTop: true,
+    autoHideMenuBar: true,
     height: 720,
     title: 'Website Stream',
     useContentSize: true,
     width: 1280,
   });
+
+  websiteWindow.setMenuBarVisibility(false);
 
   // websiteWindow.webContents.openDevTools();
   if (!websiteWindow) return;
