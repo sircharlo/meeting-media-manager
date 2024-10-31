@@ -29,7 +29,7 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
 
-const { convert, decompress, executeQuery, fs, path, toggleMediaWindow } =
+const { convertHeic, decompress, executeQuery, fs, path, toggleMediaWindow } =
   electronApi;
 
 const formatTime = (time: number) => {
@@ -293,7 +293,7 @@ const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;
   try {
     const buffer = fs.readFileSync(filepath);
-    const output = await convert({
+    const output = await convertHeic({
       buffer,
       format: 'JPEG',
     });

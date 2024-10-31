@@ -132,7 +132,7 @@ import { onMounted, ref, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
 
-const { fileUrlToPath, parseFile, path } = electronApi;
+const { fileUrlToPath, parseMediaFile, path } = electronApi;
 
 const currentState = useCurrentStateStore();
 const {
@@ -359,7 +359,7 @@ const getNextSong = async () => {
     let nextSong = songList.value.shift() as SongItem;
     songList.value.push(nextSong);
     try {
-      const metadata = await parseFile(nextSong.path);
+      const metadata = await parseMediaFile(nextSong.path);
       musicPlayingTitle.value =
         metadata.common.title ?? path.basename(nextSong.path);
     } catch (error) {
