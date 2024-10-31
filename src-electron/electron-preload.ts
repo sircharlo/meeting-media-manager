@@ -1,5 +1,4 @@
 import type { ElectronApi } from 'src/helpers/electron-api';
-import type { ScreenPreferences } from 'src/types';
 
 import { app } from '@electron/remote';
 import { contextBridge, webUtils } from 'electron/renderer';
@@ -8,6 +7,7 @@ import klawSync from 'klaw-sync';
 import path from 'upath';
 
 import pkg from '../package.json';
+import { initCloseListeners } from './preload/close';
 import { convertHeic, convertPdfToImages } from './preload/converters';
 import {
   decompress,
@@ -18,6 +18,7 @@ import {
   pathToFileURL,
 } from './preload/fs';
 import { invoke, listen, removeAllIpcListeners, send } from './preload/ipc';
+import { initScreenListeners, moveMediaWindow } from './preload/screen';
 import { executeQuery } from './preload/sqlite';
 import {
   closeWebsiteWindow,
@@ -26,62 +27,10 @@ import {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } from './preload/website';
-import { errorCatcher } from './utils';
 
+initCloseListeners();
+initScreenListeners();
 initWebsiteListeners();
-
-const getUserDataPath = () =>
-  path.join(app.getPath('appData'), pkg.productName);
-
-listen('screenChange', () => {
-  window.dispatchEvent(new CustomEvent('screen-trigger-update'));
-});
-
-listen(
-  'screenPrefsChange',
-  ({ preferredScreenNumber, preferWindowed }: ScreenPreferences) => {
-    window.dispatchEvent(
-      new CustomEvent('windowScreen-update', {
-        detail: { preferredScreenNumber, preferWindowed },
-      }),
-    );
-  },
-);
-
-const moveMediaWindow = (
-  targetScreenNumber?: number,
-  windowedMode?: boolean,
-  noEvent?: boolean,
-) => {
-  if (targetScreenNumber === undefined || windowedMode === undefined) {
-    try {
-      const screenPreferences =
-        JSON.parse(window.localStorage.getItem('app-settings') ?? '{}')
-          ?.screenPreferences || ({} as ScreenPreferences);
-      targetScreenNumber = screenPreferences.preferredScreenNumber;
-      windowedMode = screenPreferences.preferWindowed;
-    } catch (err) {
-      errorCatcher(err);
-    }
-  }
-
-  send(
-    'moveMediaWindow',
-    targetScreenNumber,
-    windowedMode === undefined ? undefined : !windowedMode,
-    noEvent,
-  );
-};
-
-const bcClose = new BroadcastChannel('closeAttempts');
-
-listen('attemptedClose', () => {
-  bcClose.postMessage({ attemptedClose: true });
-});
-
-bcClose.onmessage = (event) => {
-  if (event.data.authorizedClose) send('authorizedClose');
-};
 
 const electronApi: ElectronApi = {
   closeWebsiteWindow,
@@ -96,7 +45,7 @@ const electronApi: ElectronApi = {
   getAppDataPath: () => app.getPath('appData'),
   getAppVersion: () => invoke('getVersion'),
   getLocalPathFromFileObject: (fo) => webUtils.getPathForFile(fo),
-  getUserDataPath,
+  getUserDataPath: () => path.join(app.getPath('appData'), pkg.productName),
   getUserDesktopPath: () => app.getPath('desktop'),
   getVideoDuration,
   isFileUrl,
