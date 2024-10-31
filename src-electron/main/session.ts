@@ -33,6 +33,8 @@ app.on('ready', () => {
       if (
         referrer.hostname === url.hostname ||
         (url.hostname !== 'b.jw-cdn.org' && isJwDomain(details.referrer))
+        // TODO: Find a way to implement urlVariables here
+        // (url.hostname !== new URL(urlVariables.mediator).hostname && isJwDomain(details.referrer))
       ) {
         alterResponseHeaders = false;
       }

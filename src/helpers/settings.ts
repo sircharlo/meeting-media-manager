@@ -10,6 +10,8 @@ import { getSpecificWeekday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
+import { setUrlVariables } from './jw-media';
+
 const { getDateDiff } = date;
 
 const currentState = useCurrentStateStore();
@@ -92,6 +94,8 @@ const getActions = (actions: SettingsItemAction[] | undefined) => {
           return window.dispatchEvent(
             new CustomEvent('obsConnectFromSettings'),
           );
+        } else if (action === 'baseUrlUpdate') {
+          return setUrlVariables();
         } else {
           return undefined;
         }

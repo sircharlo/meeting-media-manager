@@ -6,7 +6,7 @@
 
 ## What is this app?
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on JW.org.
+**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
 
 It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
 
@@ -21,8 +21,8 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Easy background music playback, with automatic stop before the start of regularly scheduled meetings
 - Automatic external monitor recognition and management
 - OBS Studio integration with automatic scene switching during media presentation
-- Presenting JW.org website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from JW.org, and media for public talks from the S-34 in a few clicks.
+- Presenting the official website of Jehovah's Witnesses website on an external monitor
+- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 in a few clicks.
 - Custom videos, pictures, audio files and even PDF files can be easily imported too!
 
 **Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
@@ -31,14 +31,13 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 ## Does M³ work in my language?
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on JW.org. The list of available languages is dynamically updated; all you need to do is select which one you need.
+**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need.
 
 In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
 ### Translation Progress
 
 <!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
-
 
 #### Available
 
@@ -53,9 +52,9 @@ In addition, M³ itself has been translated into several languages by many volun
 
 Check out our [documentation website](https://sircharlo.github.io/meeting-media-manager/) for help, guides and FAQs.
 
-## Does this app go against the jw.org Terms of Use?
+## Does this app go against the Terms of Use of the official website of Jehovah's Witnesses?
 
-**No.** Our use complies with the jw.org [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content), which explicitly permit this type of usage. Here’s the relevant excerpt from those terms (emphasis added):
+**No.** Our use complies with the [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses, which explicitly permit this type of usage. Here’s the relevant excerpt from those terms (emphasis added):
 
 > You may not:  
 > Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)

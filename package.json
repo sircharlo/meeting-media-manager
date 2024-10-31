@@ -43,6 +43,7 @@
     "adm-zip": "^0.5.16",
     "axios": "^1.7.7",
     "better-sqlite3": "^11.5.0",
+    "cheerio": "^1.0.0",
     "countries-and-timezones": "^3.7.2",
     "dompurify": "^3.1.7",
     "electron-updater": "^6.3.9",

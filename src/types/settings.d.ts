@@ -3,6 +3,7 @@ import type { MessageSchema } from 'src/boot/i18n';
 export interface SettingsValues {
   autoStartAtLogin: boolean;
   autoStartMusic: boolean;
+  baseUrl: string;
   congregationName: string;
   coWeek: string;
   darkMode: boolean | string;
@@ -52,7 +53,10 @@ export type SettingsItemType =
   | 'time'
   | 'toggle';
 
-export type SettingsItemAction = 'obsConnect' | 'setBackgroundMusicVolume';
+export type SettingsItemAction =
+  | 'baseUrlUpdate'
+  | 'obsConnect'
+  | 'setBackgroundMusicVolume';
 export type SettingsItemOption = 'coTuesdays' | 'meetingTime';
 export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 

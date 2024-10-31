@@ -18,9 +18,10 @@ const get = async <T>(
   return null;
 };
 
-const getLanguages = async (): Promise<JwLanguage[]> => {
+const getLanguages = async (baseUrl?: string): Promise<JwLanguage[]> => {
+  if (!baseUrl) return [];
   const req = await get<{ languages: JwLanguage[] }>(
-    'https://www.jw.org/en/languages/',
+    `https://www.${baseUrl}/en/languages/`,
   );
   return req?.languages || [];
 };
@@ -35,8 +36,9 @@ const urlWithParamsToString = (url: string, params: object) => {
   return urlWithParams.toString();
 };
 
-const getYeartext = async (lang: string, year?: number) => {
-  const url = 'https://wol.jw.org/wol/finder';
+const getYeartext = async (lang: string, baseUrl: string, year?: number) => {
+  if (!baseUrl) return { content: '' };
+  const url = `https://wol.${baseUrl}/wol/finder`;
   const params = {
     docid: `110${year || new Date().getFullYear()}800`,
     format: 'json',
