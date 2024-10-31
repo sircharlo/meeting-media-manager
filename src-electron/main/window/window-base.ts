@@ -52,13 +52,13 @@ export function createWindow(
     },
   };
   const win =
-    name !== 'website'
-      ? new StatefulBrowserWindow({
+    name === 'website'
+      ? new BrowserWindow(opts)
+      : new StatefulBrowserWindow({
           configFileName: `${name}-window-state.json`,
           configFilePath: path.join(app.getPath('appData'), pkg.productName),
           ...opts,
-        }).win
-      : new BrowserWindow(opts);
+        }).win;
 
   // Show the window when it's ready
   win.on('ready-to-show', () => {
