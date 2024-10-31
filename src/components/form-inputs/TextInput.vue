@@ -9,8 +9,12 @@
     outlined
     spellcheck="false"
     v-bind="{ label: label || undefined }"
+    clearable
     style="width: 240px"
   >
+    <template v-if="settingId === 'baseUrl'" #prepend>
+      <div class="text-subtitle2 text-accent-300">https://www.</div>
+    </template>
     <template v-if="customSuccess" #append>
       <q-icon class="cursor-pointer" color="positive" name="mmm-check" />
     </template>

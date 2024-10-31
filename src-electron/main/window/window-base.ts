@@ -81,6 +81,8 @@ export function createWindow(
       break;
     case 'website':
       page = 'https://www.jw.org';
+      // TODO: Find a way to implement urlVariables here
+      // page = `https://${urlVariables.base}`;
       break;
   }
   win.loadURL(

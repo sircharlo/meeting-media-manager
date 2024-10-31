@@ -22,6 +22,7 @@ import type {
 
 import axios, { type AxiosError } from 'axios';
 import { Buffer } from 'buffer';
+import * as cheerio from 'cheerio';
 import PQueue from 'p-queue';
 import { storeToRefs } from 'pinia';
 import { date } from 'quasar';
@@ -1190,11 +1191,12 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
 }
 
 const getPubMediaLinks = async (publication: PublicationFetcher) => {
+  const jwStore = useJwStore();
+  const { urlVariables } = jwStore;
   try {
     const { currentSongbook, downloadProgress } = storeToRefs(
       useCurrentStateStore(),
     );
-    const url = 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS';
     if (!publication.fileformat) publication.fileformat = '';
     if (publication.pub === 'sjjm') {
       publication.pub = currentSongbook.value?.pub;
@@ -1211,7 +1213,9 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
       track: publication.track?.toString() || '',
       txtCMSLang: 'E',
     };
-    const response = await get<Publication>(urlWithParamsToString(url, params));
+    const response = await get<Publication>(
+      urlWithParamsToString(urlVariables.pubMedia, params),
+    );
     if (!response) {
       downloadProgress.value[
         [
@@ -1434,6 +1438,8 @@ function getBestImageUrl(images: ImageTypeSizes, minSize?: keyof ImageSizes) {
 }
 
 const getJwMediaInfo = async (publication: PublicationFetcher) => {
+  const jwStore = useJwStore();
+  const { urlVariables } = jwStore;
   const emptyResponse = {
     duration: 0,
     subtitles: '',
@@ -1441,7 +1447,7 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
     title: '',
   };
   try {
-    let url = 'https://b.jw-cdn.org/apis/mediator/v1/media-items/';
+    let url = `${urlVariables.mediator}/v1/media-items/`;
     url += publication.langwritten + '/';
     url += 'pub-' + publication.pub;
     let issue = publication.issue?.toString();
@@ -1628,6 +1634,65 @@ const downloadJwpub = async (
   }
 };
 
+const isValidTwoPartDomain = (urlString: string | undefined) => {
+  try {
+    if (!urlString) return false;
+    const url = new URL('https://' + urlString);
+    const parts = url.hostname.split('.');
+    return parts.length === 2;
+  } catch (error) {
+    return false;
+  }
+};
+
+const setUrlVariables = async () => {
+  const jwStore = useJwStore();
+  const { urlVariables } = storeToRefs(jwStore);
+
+  const currentStateStore = useCurrentStateStore();
+  const { currentSettings } = storeToRefs(currentStateStore);
+
+  if (currentSettings.value) {
+    if (!currentSettings.value.baseUrl) {
+      currentSettings.value.baseUrl = 'jw.org';
+    }
+
+    if (!isValidTwoPartDomain(currentSettings.value.baseUrl)) {
+      //currentSettings.value.baseUrl = 'jw.org';
+    }
+  }
+
+  if (
+    currentSettings.value &&
+    isValidTwoPartDomain(currentSettings.value.baseUrl)
+  ) {
+    urlVariables.value.base = currentSettings.value.baseUrl;
+
+    const homePageUrl = 'https://' + urlVariables.value.base;
+
+    const homePage = (await axios
+      .get(homePageUrl)
+      .then((res) => res.data)
+      .catch(() => '')) as string;
+    if (!homePage) return;
+
+    const $ = cheerio.load(homePage);
+    const div = $('div#pageConfig');
+    if (!div?.[0]?.attribs) return;
+
+    const attributes = { ...(div?.[0]?.attribs || {}) };
+
+    if (attributes['data-mediator_url'])
+      urlVariables.value.mediator = attributes['data-mediator_url'];
+    if (attributes['data-pubmedia_url'])
+      urlVariables.value.pubMedia = attributes['data-pubmedia_url'];
+  } else {
+    urlVariables.value.base = '';
+    urlVariables.value.mediator = '';
+    urlVariables.value.pubMedia = '';
+  }
+};
+
 export {
   addFullFilePathToMultimediaItem,
   addJwpubDocumentMediaToFiles,
@@ -1647,4 +1712,5 @@ export {
   getWeMedia,
   processMissingMediaInfo,
   sanitizeId,
+  setUrlVariables,
 };

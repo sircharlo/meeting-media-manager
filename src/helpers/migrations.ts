@@ -46,6 +46,7 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
     const newPrefsObject: SettingsValues = {
       autoStartAtLogin: oldPrefs.app?.autoRunAtBoot || false,
       autoStartMusic: oldPrefs.meeting?.autoStartMusic || true,
+      baseUrl: 'jw.org',
       congregationName: oldPrefs.app?.congregationName || '',
       coWeek: oldPrefs.meeting?.coWeek || '',
       darkMode: 'auto',
