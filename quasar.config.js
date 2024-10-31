@@ -178,6 +178,7 @@ module.exports = configure(function (ctx) {
           '@sentry/electron',
           'adm-zip',
           'better-sqlite3',
+          'countries-and-timezones',
           'electron-updater',
           'fs-extra',
           'heic-convert',
