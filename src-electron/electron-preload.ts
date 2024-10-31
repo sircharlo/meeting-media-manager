@@ -79,111 +79,12 @@ const getMediaWindow = () =>
   );
 
 const webStreamBroadcastChannel = new BroadcastChannel('web-stream');
-let websiteWindow: Electron.CrossProcessExports.BrowserWindow | null = null;
-
-const zoomWebsiteWindow = (action: string) => {
-  if (!websiteWindow) return;
-  if (action === 'in') {
-    websiteWindow.webContents.zoomFactor =
-      websiteWindow.webContents.getZoomFactor() + 0.2;
-  } else if (action === 'out') {
-    websiteWindow.webContents.zoomFactor =
-      websiteWindow.webContents.getZoomFactor() - 0.2;
-  }
-};
-
-const navigateWebsiteWindow = (action: string) => {
-  if (!websiteWindow) return;
-  if (action === 'back') {
-    websiteWindow.webContents.navigationHistory.goBack();
-  } else if (action === 'forward') {
-    websiteWindow.webContents.navigationHistory.goForward();
-  } else if (action === 'refresh') {
-    websiteWindow.webContents.reload();
-  }
-};
-
-const closeWebsiteWindow = () => {
-  const websiteWindow = BrowserWindow.getAllWindows().find((w) =>
-    w.webContents.getURL().includes('https://'),
-  );
-  if (websiteWindow && !websiteWindow.isDestroyed()) {
-    websiteWindow.close();
-  }
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const openWebsiteWindow = () => {
-  const mainWindow = getMainWindow();
-  if (!mainWindow) return;
-
-  websiteWindow = new BrowserWindow({
-    alwaysOnTop: true,
-    autoHideMenuBar: true,
-    height: 720,
-    title: 'Website Stream',
-    useContentSize: true,
-    width: 1280,
-  });
-
-  websiteWindow.setMenuBarVisibility(false);
-
-  // websiteWindow.webContents.openDevTools();
-  if (!websiteWindow) return;
-
-  websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
-  websiteWindow.webContents.on('zoom-changed', (event, zoomDirection) => {
-    if (!websiteWindow) return;
-    const currentZoom = websiteWindow.webContents.getZoomFactor();
-    if (zoomDirection === 'in') {
-      websiteWindow.webContents.setZoomFactor(currentZoom + 0.2);
-    } else if (zoomDirection === 'out') {
-      websiteWindow.webContents.zoomFactor = currentZoom - 0.2;
-    }
-  });
-  websiteWindow.webContents.setWindowOpenHandler((details) => {
-    // Prevent popups from opening new windows; open them in the main browser window instead
-    websiteWindow?.webContents.loadURL(details.url);
-    return { action: 'deny' };
-  });
-
-  const setAspectRatio = () => {
-    if (!websiteWindow) return;
-    // Compute the new aspect ratio that, when the frame is removed, results in a 16:9 aspect ratio for the content
-    const size = websiteWindow.getSize();
-    const contentSize = websiteWindow.getContentSize();
-    const frameSize = [size[0] - contentSize[0], size[1] - contentSize[1]];
-    const aspectRatio = 16 / 9;
-    const newAspectRatio =
-      (contentSize[0] + frameSize[0]) /
-      (contentSize[0] / aspectRatio + frameSize[1]);
-    websiteWindow.setAspectRatio(newAspectRatio);
-  };
-  setAspectRatio();
-  websiteWindow.on('resize', setAspectRatio);
-
-  websiteWindow.loadURL('https://www.jw.org');
-  websiteWindow.on('close', () => stopStream());
-
-  const source: Electron.Video = {
-    id: websiteWindow.getMediaSourceId(),
-    name: websiteWindow.getTitle(),
-  };
-
-  mainWindow.webContents.session.setDisplayMediaRequestHandler(
-    (request, callback) => {
-      callback({
-        audio: 'loopback',
-        video: source,
-      });
-    },
-  );
-  webStreamBroadcastChannel.postMessage(true);
-};
 
 const stopStream = () => {
   webStreamBroadcastChannel.postMessage(false);
 };
+
+listen('websiteWindowClosed', stopStream);
 
 const getScreens = () =>
   screen
@@ -538,7 +439,7 @@ const isFileUrl = (path: string) => {
 };
 
 const electronApi: ElectronApi = {
-  closeWebsiteWindow,
+  closeWebsiteWindow: () => send('toggleWebsiteWindow', false),
   convert,
   convertPdfToImages,
   decompress: async (inputZip, outputFolder) => {
@@ -605,7 +506,7 @@ const electronApi: ElectronApi = {
   isFileUrl,
   klawSync,
   moveMediaWindow,
-  navigateWebsiteWindow,
+  navigateWebsiteWindow: (action) => send('navigateWebsiteWindow', action),
   onLog: (callback) => listen('log', callback),
   onShortcut: (callback) => listen('shortcut', callback),
   openExternal: (website) => send('openExternal', website),
@@ -631,7 +532,7 @@ const electronApi: ElectronApi = {
   setAutoStartAtLogin: (value) => send('toggleOpenAtLogin', value),
   toggleMediaWindow,
   unregisterShortcut: (keySequence) => send('unregisterShortcut', keySequence),
-  zoomWebsiteWindow,
+  zoomWebsiteWindow: (direction) => send('zoomWebsiteWindow', direction),
 };
 
 contextBridge.exposeInMainWorld('electronApi', electronApi);

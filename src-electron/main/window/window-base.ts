@@ -26,6 +26,7 @@ export function createWindow(
 ) {
   // Create the browser window
   const opts: BrowserWindowConstructorOptions = {
+    autoHideMenuBar: true,
     backgroundColor: 'grey',
     height: 600,
     icon: path.resolve(

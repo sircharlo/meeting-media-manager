@@ -3,6 +3,7 @@ import type {
   ElectronIpcSendKey,
   ExternalWebsite,
   FileDialogFilter,
+  NavigateWebsiteAction,
   SettingsValues,
 } from 'src/types';
 
@@ -21,7 +22,12 @@ import { isSelf } from './../utils';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
-import { createWebsiteWindow } from './window/window-website';
+import {
+  createWebsiteWindow,
+  navigateWebsiteWindow,
+  websiteWindow,
+  zoomWebsiteWindow,
+} from './window/window-website';
 
 // IPC send/on
 
@@ -58,7 +64,17 @@ handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
 handleIpcSend('toggleWebsiteWindow', (_e, show: boolean) => {
   if (show) {
     createWebsiteWindow();
+  } else {
+    websiteWindow?.close();
   }
+});
+
+handleIpcSend('zoomWebsiteWindow', (_e, direction: 'in' | 'out') => {
+  zoomWebsiteWindow(direction);
+});
+
+handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
+  navigateWebsiteWindow(action);
 });
 
 handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {
