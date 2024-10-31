@@ -1637,28 +1637,25 @@ const isValidTwoPartDomain = (urlString: string | undefined) => {
 
 const setUrlVariables = async () => {
   const jwStore = useJwStore();
-  const { urlVariables } = jwStore;
-
   const currentStateStore = useCurrentStateStore();
-  const { currentSettings } = currentStateStore;
 
-  if (currentSettings.value) {
-    if (!currentSettings.value.baseUrl) {
-      currentSettings.value.baseUrl = 'jw.org';
+  if (currentStateStore.currentSettings) {
+    if (!currentStateStore.currentSettings.baseUrl) {
+      currentStateStore.currentSettings.baseUrl = 'jw.org';
     }
 
-    if (!isValidTwoPartDomain(currentSettings.value.baseUrl)) {
+    if (!isValidTwoPartDomain(currentStateStore.currentSettings.baseUrl)) {
       //currentSettings.value.baseUrl = 'jw.org';
     }
   }
 
   if (
-    currentSettings.value &&
-    isValidTwoPartDomain(currentSettings.value.baseUrl)
+    currentStateStore.currentSettings &&
+    isValidTwoPartDomain(currentStateStore.currentSettings.baseUrl)
   ) {
-    urlVariables.value.base = currentSettings.value.baseUrl;
+    jwStore.urlVariables.value.base = currentStateStore.currentSettings.baseUrl;
 
-    const homePageUrl = 'https://' + urlVariables.value.base;
+    const homePageUrl = 'https://' + jwStore.urlVariables.base;
 
     const homePage = (await axios
       .get(homePageUrl)
@@ -1673,13 +1670,13 @@ const setUrlVariables = async () => {
     const attributes = { ...(div?.[0]?.attribs || {}) };
 
     if (attributes['data-mediator_url'])
-      urlVariables.value.mediator = attributes['data-mediator_url'];
+      jwStore.urlVariables.mediator = attributes['data-mediator_url'];
     if (attributes['data-pubmedia_url'])
-      urlVariables.value.pubMedia = attributes['data-pubmedia_url'];
+      jwStore.urlVariables.pubMedia = attributes['data-pubmedia_url'];
   } else {
-    urlVariables.value.base = '';
-    urlVariables.value.mediator = '';
-    urlVariables.value.pubMedia = '';
+    jwStore.urlVariables.base = '';
+    jwStore.urlVariables.mediator = '';
+    jwStore.urlVariables.pubMedia = '';
   }
 };
 
