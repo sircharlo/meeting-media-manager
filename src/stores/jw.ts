@@ -13,7 +13,11 @@ import sanitizeHtml from 'sanitize-html';
 import { MAX_SONGS } from 'src/constants/jw';
 import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { findBestResolution, getPubMediaLinks } from 'src/helpers/jw-media';
+import {
+  findBestResolution,
+  getPubMediaLinks,
+  isMediaLink,
+} from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
 const { getDateDiff } = date;
@@ -29,12 +33,25 @@ export function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
 
 const oldDate = new Date(0);
 
+interface Store {
+  additionalMediaMaps: Record<string, Record<string, DynamicMediaObject[]>>;
+  customDurations: Record<
+    string,
+    Record<string, Record<string, { max: number; min: number }>>
+  >;
+  jwLanguages: { list: JwLanguage[]; updated: Date };
+  jwSongs: Record<string, { list: MediaLink[]; updated: Date }>;
+  lookupPeriod: Record<string, DateInfo[]>;
+  mediaSort: Record<string, Record<string, string[]>>;
+  yeartexts: Record<number, Record<string, string>>;
+}
+
 export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(mediaArray: DynamicMediaObject[]) {
       try {
-        if (!mediaArray.length) return;
         const currentState = useCurrentStateStore();
+        if (!mediaArray.length || !currentState.selectedDateObject) return;
         const coWeek = isCoWeek(currentState.selectedDateObject?.date);
         if (coWeek) {
           if (isMwMeetingDay(currentState.selectedDateObject?.date)) {
@@ -187,26 +204,28 @@ export const useJwStore = defineStore('jw-store', {
 
             // Fetch media links only if the song list hasn't been updated in over a month or if force is true
             if (monthsSinceUpdated > 1 || force) {
-              const songbook = {
+              const songbook: PublicationFetcher = {
                 fileformat,
                 langwritten,
                 pub: currentState.currentSongbook.pub,
-              } as PublicationFetcher;
+              };
               const pubMediaLinks = await getPubMediaLinks(songbook);
               if (!pubMediaLinks || !pubMediaLinks.files) {
                 continue;
               }
 
-              const mediaItemLinks = (
-                pubMediaLinks.files[langwritten][fileformat] as MediaLink[]
-              ).filter((mediaLink) => mediaLink.track < MAX_SONGS);
+              const mediaItemLinks = pubMediaLinks.files[langwritten][
+                fileformat
+              ]
+                .filter(isMediaLink)
+                .filter((mediaLink) => mediaLink.track < MAX_SONGS);
               const filteredMediaItemLinks = mediaItemLinks.reduce<MediaLink[]>(
                 (acc, mediaLink) => {
                   if (!acc.some((m) => m.track === mediaLink.track)) {
                     const bestItem = findBestResolution(
                       mediaItemLinks.filter((m) => m.track === mediaLink.track),
-                    ) as MediaLink | null;
-                    if (bestItem) acc.push(bestItem);
+                    );
+                    if (isMediaLink(bestItem)) acc.push(bestItem);
                   }
                   return acc;
                 },
@@ -255,48 +274,29 @@ export const useJwStore = defineStore('jw-store', {
   },
   persist: {
     afterHydrate: (ctx) => {
+      const state = ctx.store.$state as Store;
       // Convert date strings to Date objects in state
-      if (ctx.store.$state.jwLanguages.updated)
-        ctx.store.$state.jwLanguages.updated = dateFromString(
-          ctx.store.$state.jwLanguages.updated,
-        );
-      if (ctx.store.$state.jwSongs.updated)
-        ctx.store.$state.jwSongs.updated = dateFromString(
-          ctx.store.$state.jwSongs.updated,
-        );
-      Object.entries(
-        ctx.store.$state.lookupPeriod as Record<string, DateInfo[]>,
-      ).forEach(([, period]) => {
+      if (state.jwLanguages.updated)
+        state.jwLanguages.updated = dateFromString(state.jwLanguages.updated);
+      Object.values(state.jwSongs).forEach((lang) => {
+        lang.updated = dateFromString(lang.updated);
+      });
+      Object.entries(state.lookupPeriod).forEach(([, period]) => {
         period.forEach((day: { date: Date | string }) => {
           if (day.date) day.date = dateFromString(day.date);
         });
       });
     },
   },
-  state: () => {
+  state: (): Store => {
     return {
-      additionalMediaMaps: {} as Record<
-        string,
-        Record<string, DynamicMediaObject[]>
-      >,
-      customDurations: {} as Record<
-        string,
-        Record<string, Record<string, { max: number; min: number }>>
-      >,
-      jwLanguages: {
-        list: [],
-        updated: oldDate,
-      } as { list: JwLanguage[]; updated: Date },
-      jwSongs: {} as Record<
-        string,
-        {
-          list: MediaLink[];
-          updated: Date;
-        }
-      >,
-      lookupPeriod: {} as Record<string, DateInfo[]>,
-      mediaSort: {} as Record<string, Record<string, string[]>>,
-      yeartexts: {} as Record<number, Record<string, string>>,
+      additionalMediaMaps: {},
+      customDurations: {},
+      jwLanguages: { list: [], updated: oldDate },
+      jwSongs: {},
+      lookupPeriod: {},
+      mediaSort: {},
+      yeartexts: {},
     };
   },
 });

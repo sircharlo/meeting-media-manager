@@ -4,6 +4,10 @@ import { defineStore } from 'pinia';
 import { extend, uid } from 'quasar';
 import { defaultSettings } from 'src/constants/settings';
 
+interface Store {
+  congregations: Record<string, SettingsValues>;
+}
+
 export const useCongregationSettingsStore = defineStore(
   'congregation-settings',
   {
@@ -25,10 +29,8 @@ export const useCongregationSettingsStore = defineStore(
       },
     },
     persist: true,
-    state: () => {
-      return {
-        congregations: {} as Record<string, SettingsValues>,
-      };
+    state: (): Store => {
+      return { congregations: {} };
     },
   },
 );

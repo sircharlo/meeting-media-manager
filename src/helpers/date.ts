@@ -1,4 +1,4 @@
-import type { DateInfo, DynamicMediaObject } from 'src/types';
+import type { DateInfo } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { date, type DateLocale } from 'quasar';
@@ -182,7 +182,7 @@ function updateLookupPeriod(reset = false) {
     });
     const futureDates: DateInfo[] = Array.from(
       { length: DAYS_IN_FUTURE },
-      (_, i) => {
+      (_, i): DateInfo => {
         const dayDate = addToDate(
           buildDate({ hour: 0, milliseconds: 0, minute: 0, second: 0 }),
           { day: i },
@@ -190,7 +190,7 @@ function updateLookupPeriod(reset = false) {
         return {
           complete: false,
           date: dayDate,
-          dynamicMedia: [] as DynamicMediaObject[],
+          dynamicMedia: [],
           error: false,
           meeting: isMwMeetingDay(dayDate)
             ? 'mw'

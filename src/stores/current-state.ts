@@ -18,6 +18,31 @@ import { useJwStore } from 'src/stores/jw';
 const { formatDate, getDateDiff } = date;
 const { fs, path } = electronApi;
 
+interface Store {
+  currentCongregation: string;
+  currentSongRemainingTime: string;
+  downloadedFiles: Record<string, DownloadedFile | Promise<DownloadedFile>>;
+  downloadProgress: DownloadProgressItems;
+  extractedFiles: Record<string, Promise<string>>;
+  mediaPlayingAction: string;
+  mediaPlayingCurrentPosition: number;
+  mediaPlayingPanzoom: Record<string, number>;
+  mediaPlayingSeekTo: number;
+  mediaPlayingSubtitlesUrl: string;
+  mediaPlayingUniqueId: string;
+  mediaPlayingUrl: string;
+  mediaWindowCustomBackground: string;
+  mediaWindowVisible: boolean;
+  meetingDay: boolean;
+  musicPlaying: boolean;
+  musicStarting: boolean;
+  musicStopping: boolean;
+  online: boolean;
+  onlyShowInvalidSettings: boolean;
+  selectedDate: string;
+  timeRemainingBeforeMusicStop: number;
+}
+
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
     getInvalidSettings(congregation?: number | string) {
@@ -145,29 +170,29 @@ export const useCurrentStateStore = defineStore('current-state', {
         return '..:..';
       }
     },
-    selectedDateObject(state) {
+    selectedDateObject(state): DateInfo | null {
       const jwStore = useJwStore();
       const { lookupPeriod } = storeToRefs(jwStore);
-      if (!lookupPeriod.value?.[state.currentCongregation]?.length)
-        return {} as DateInfo;
-      return (lookupPeriod.value?.[state.currentCongregation]?.find(
-        (day) => getDateDiff(day.date, state.selectedDate, 'days') === 0,
-      ) || lookupPeriod.value[0]) as DateInfo;
+      if (!lookupPeriod.value?.[state.currentCongregation]?.length) {
+        return null;
+      }
+      return (
+        lookupPeriod.value?.[state.currentCongregation]?.find(
+          (day) => getDateDiff(day.date, state.selectedDate, 'days') === 0,
+        ) || lookupPeriod.value[state.currentCongregation][0]
+      );
     },
   },
-  state: () => {
+  state: (): Store => {
     return {
-      currentCongregation: '' as string,
+      currentCongregation: '',
       currentSongRemainingTime: '..:..',
-      downloadedFiles: {} as Record<
-        string,
-        DownloadedFile | Promise<DownloadedFile>
-      >,
-      downloadProgress: {} as DownloadProgressItems,
-      extractedFiles: {} as Record<string, Promise<string>>,
+      downloadedFiles: {},
+      downloadProgress: {},
+      extractedFiles: {},
       mediaPlayingAction: '',
       mediaPlayingCurrentPosition: 0,
-      mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 } as Record<string, number>,
+      mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },
       mediaPlayingSeekTo: 0,
       mediaPlayingSubtitlesUrl: '',
       mediaPlayingUniqueId: '',
@@ -180,7 +205,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       musicStopping: false,
       online: true,
       onlyShowInvalidSettings: false,
-      selectedDate: date.formatDate(new Date(), 'YYYY/MM/DD') as string,
+      selectedDate: date.formatDate(new Date(), 'YYYY/MM/DD'),
       timeRemainingBeforeMusicStop: 0,
     };
   },

@@ -775,14 +775,16 @@ const initiatePanzoom = () => {
       !mediaImage.value?.$el
     )
       return;
-    panzooms[props.media.uniqueId] = Panzoom(mediaImage.value.$el, {
+
+    const options: PanzoomOptions = {
       animate: true,
       contain: 'outside',
       maxScale: 5,
       minScale: 1,
       panOnlyWhenZoomed: true,
       pinchAndPan: true,
-    } as PanzoomOptions);
+    };
+    panzooms[props.media.uniqueId] = Panzoom(mediaImage.value.$el, options);
 
     useEventListener(mediaImage.value, 'dblclick', (e) => {
       zoomIn(e);

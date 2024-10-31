@@ -90,6 +90,7 @@ const obsConnect = async (setup?: boolean) => {
     let attempt = 0;
     const maxAttempts = setup ? 1 : 12;
     const timeBetweenAttempts = 5000;
+    // @ts-expect-error connecting and connected have no overlap
     while (attempt < maxAttempts && obsConnectionState.value !== 'connected') {
       try {
         const connection = await obsWebSocket?.connect(

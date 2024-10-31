@@ -378,11 +378,11 @@ const getJwVideos = async () => {
       let index = 0;
       for (const category of subcategories) {
         if (!category?.key) continue;
-        const request = (await get(
+        const request = await get<JwVideoCategory>(
           `https://b.jw-cdn.org/apis/mediator/v1/categories/${
             currentSettings.value?.lang
           }/${category.key}?detailed=0&clientType=www`,
-        )) as JwVideoCategory;
+        );
         remoteVideos.value = remoteVideos.value
           .concat(request?.category?.media || [])
           .reduce((accumulator: MediaItemsMediatorItem[], current) => {
