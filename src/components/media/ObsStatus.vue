@@ -2,7 +2,7 @@
   <q-btn
     v-if="currentSettings?.obsEnable"
     :color="
-      localObsPopup
+      obsPopup
         ? 'white'
         : obsConnectionState === 'connected'
           ? 'white-transparent'
@@ -12,7 +12,7 @@
     "
     :disable="obsConnectionState !== 'connected'"
     :text-color="
-      localObsPopup
+      obsPopup
         ? obsConnectionState === 'connected'
           ? 'primary'
           : obsConnectionState === 'disconnected'
@@ -23,15 +23,15 @@
     class="super-rounded"
     rounded
     unelevated
-    @click="localObsPopup = !localObsPopup"
+    @click="obsPopup = !obsPopup"
     @mouseenter="
       currentSettings?.obsQuickToggle && obsConnectionState === 'connected'
-        ? (localObsPopup = true)
+        ? (obsPopup = true)
         : undefined
     "
   >
     <q-icon name="mmm-obs-studio" />
-    <q-tooltip v-if="!localObsPopup" :delay="1000" :offset="[14, 22]">
+    <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
       {{ $t(obsMessage ?? 'scene-selection') }}
     </q-tooltip>
   </q-btn>
@@ -51,7 +51,7 @@ import {
 } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -62,24 +62,7 @@ const { currentScene, obsConnectionState, obsMessage, previousScene, scenes } =
   storeToRefs(obsState);
 const { sceneExists } = obsState;
 
-const props = defineProps<{
-  obs: boolean;
-}>();
-
-const localObsPopup = ref(props.obs);
-
-const emit = defineEmits(['update:obs']);
-
-watch(localObsPopup, (newValue) => {
-  emit('update:obs', newValue);
-});
-
-watch(
-  () => props.obs,
-  (newValue) => {
-    localObsPopup.value = newValue;
-  },
-);
+const obsPopup = defineModel<boolean>({ required: true });
 
 const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   let attempts = 0;

@@ -1,13 +1,11 @@
 <template>
   <q-btn
-    :color="
-      localDownloadPopup ? 'white' : online ? 'white-transparent' : 'negative'
-    "
-    :text-color="localDownloadPopup ? (online ? 'primary' : 'negative') : ''"
+    :color="downloadPopup ? 'white' : online ? 'white-transparent' : 'negative'"
+    :text-color="downloadPopup ? (online ? 'primary' : 'negative') : ''"
     class="super-rounded position-relative"
     rounded
     unelevated
-    @click="localDownloadPopup = !localDownloadPopup"
+    @click="downloadPopup = !downloadPopup"
   >
     <q-icon
       :name="
@@ -25,13 +23,13 @@
       v-if="
         Object.values(downloadProgress).filter((item) => item.loaded).length > 0
       "
-      :color="localDownloadPopup ? 'white' : 'primary'"
+      :color="downloadPopup ? 'white' : 'primary'"
       class="absolute"
       size="8px"
       style="top: 14"
     />
     <q-tooltip
-      v-if="!localDownloadPopup"
+      v-if="!downloadPopup"
       :delay="1000"
       :offset="[14, 22]"
       anchor="bottom left"
@@ -47,29 +45,12 @@ import isOnline from 'is-online';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { onMounted, ref, watch } from 'vue';
-
-const emit = defineEmits(['update:download']);
+import { onMounted } from 'vue';
 
 const currentState = useCurrentStateStore();
 const { downloadProgress, online } = storeToRefs(currentState);
 
-const props = defineProps<{
-  download: boolean;
-}>();
-
-const localDownloadPopup = ref(props.download);
-
-watch(localDownloadPopup, (newValue) => {
-  emit('update:download', newValue);
-});
-
-watch(
-  () => props.download,
-  (newValue) => {
-    localDownloadPopup.value = newValue;
-  },
-);
+const downloadPopup = defineModel<boolean>({ required: true });
 
 const updateOnline = async () => {
   try {

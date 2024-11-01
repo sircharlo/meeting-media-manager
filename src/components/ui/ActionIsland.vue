@@ -8,18 +8,12 @@
       size="xl"
     >
       <div class="flex q-gutter-x-md">
-        <DownloadStatus
-          :download="downloadPopup"
-          @update:download="downloadPopup = $event"
-        />
+        <DownloadStatus v-model="downloadPopup" />
         <q-separator class="bg-semi-white-24" vertical />
-        <MusicButton :music="musicPopup" @update:music="musicPopup = $event" />
+        <MusicButton v-model="musicPopup" />
         <SubtitlesButton />
-        <ObsStatus :obs="obsPopup" @update:obs="obsPopup = $event" />
-        <MediaDisplayButton
-          :display="displayPopup"
-          @update:display="displayPopup = $event"
-        />
+        <ObsStatus v-model="obsPopup" />
+        <MediaDisplayButton v-model="displayPopup" />
       </div>
       <DialogDownloadsPopup v-model="downloadPopup" />
       <DialogBackgroundMusicPopup v-model="musicPopup" />

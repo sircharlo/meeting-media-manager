@@ -2,7 +2,7 @@
   <q-btn
     v-if="currentSettings?.enableMusicButton"
     :color="
-      localMusicPopup
+      musicPopup
         ? 'white'
         : !(musicPlaying && musicStopping)
           ? 'white-transparent'
@@ -10,7 +10,7 @@
     "
     :style="musicPlaying ? 'min-width: 110px;' : ''"
     :text-color="
-      localMusicPopup
+      musicPopup
         ? !(musicPlaying && musicStopping)
           ? 'primary'
           : 'negative'
@@ -20,7 +20,7 @@
     no-caps
     rounded
     unelevated
-    @click="localMusicPopup = !localMusicPopup"
+    @click="musicPopup = !musicPopup"
   >
     <q-icon name="mmm-music-note" />
     <div v-if="musicPlaying || musicStarting" class="q-ml-sm">
@@ -31,7 +31,7 @@
       }}
     </div>
 
-    <q-tooltip v-if="!localMusicPopup" :delay="1000" :offset="[14, 22]">
+    <q-tooltip v-if="!musicPopup" :delay="1000" :offset="[14, 22]">
       {{ $t('setupWizard.backgroundMusic') }}
     </q-tooltip>
   </q-btn>
@@ -40,7 +40,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { ref, watch } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -51,22 +50,5 @@ const {
   musicStopping,
 } = storeToRefs(currentState);
 
-const props = defineProps<{
-  music: boolean;
-}>();
-
-const localMusicPopup = ref(props.music);
-
-const emit = defineEmits(['update:music']);
-
-watch(localMusicPopup, (newValue) => {
-  emit('update:music', newValue);
-});
-
-watch(
-  () => props.music,
-  (newValue) => {
-    localMusicPopup.value = newValue;
-  },
-);
+const musicPopup = defineModel<boolean>({ required: true });
 </script>

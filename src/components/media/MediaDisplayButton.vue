@@ -2,7 +2,7 @@
   <q-btn
     v-if="currentSettings?.enableMediaDisplayButton"
     :color="
-      localDisplayPopup
+      displayPopup
         ? 'white'
         : mediaWindowVisible
           ? 'white-transparent'
@@ -14,15 +14,15 @@
         : 'mmm-media-display-inactive'
     "
     :text-color="
-      localDisplayPopup ? (mediaWindowVisible ? 'primary' : 'negative') : ''
+      displayPopup ? (mediaWindowVisible ? 'primary' : 'negative') : ''
     "
     class="super-rounded"
     rounded
     unelevated
-    @click="localDisplayPopup = !localDisplayPopup"
+    @click="displayPopup = !displayPopup"
   >
     <q-tooltip
-      v-if="!localDisplayPopup"
+      v-if="!displayPopup"
       :delay="1000"
       :offset="[14, 22]"
       anchor="bottom left"
@@ -36,27 +36,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { ref, watch } from 'vue';
 
 const currentState = useCurrentStateStore();
 const { currentSettings, mediaWindowVisible } = storeToRefs(currentState);
 
-const props = defineProps<{
-  display: boolean;
-}>();
-
-const localDisplayPopup = ref(props.display);
-
-const emit = defineEmits(['update:display']);
-
-watch(localDisplayPopup, (newValue) => {
-  emit('update:display', newValue);
-});
-
-watch(
-  () => props.display,
-  (newValue) => {
-    localDisplayPopup.value = newValue;
-  },
-);
+const displayPopup = defineModel<boolean>({ required: true });
 </script>
