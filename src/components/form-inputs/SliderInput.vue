@@ -21,7 +21,6 @@ const props = defineProps<{
   actions?: SettingsItemAction[];
   max?: number;
   min?: number;
-  modelValue?: number;
   step?: number;
 }>();
 

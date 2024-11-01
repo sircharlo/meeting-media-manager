@@ -8,10 +8,9 @@ import type { SettingsItemAction } from 'src/types';
 import { getActions } from 'src/helpers/settings';
 import { watch } from 'vue';
 
-// Define props and emits
+// Define props
 const props = defineProps<{
   actions: SettingsItemAction[] | undefined;
-  modelValue: boolean;
 }>();
 
 const model = defineModel<boolean>({ required: true });
