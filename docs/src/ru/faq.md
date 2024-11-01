@@ -2,40 +2,40 @@
 
 ## :earth_americas: Зависит ли это приложение от внешних сайтов, источников или "кураторов", чтобы загружать публикации, мультимедиа и других файлов для встреч?
 
-**Нет.** Приложение работает аналогично JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Приложение автоматически определяет, что нужно скачать, и когда ранее загруженный контент устарел и если следует повторно скачать его.
+**Нет.** Приложение работает аналогично JW Library. Оно загружает публикации, мультимедиа и другие файлы непосредственно с официального сайта Свидетелей Иеговы. Приложение автоматически определяет, что нужно скачать, и когда ранее загруженный контент устарел и если следует повторно скачать его.
 
 :::info Примечание
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Исходный код этого приложения доступен для всех желающих, чтобы изучить и проверить, что происходит за кадром.
 
 :::
 
-## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
+## :thinking: Нарушает ли это приложение условия использования официального сайта Свидетелей Иеговы?
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**Нет.** [Условия пользования официального сайта Свидетелей Иеговы](https://www.jw.org/finder?docid=1011511\&prefer=content) разрешают тип пользования, которым мы занимаемся. Вот соответствующая выдержка из этих условий:
 
-> You may not:
+> Вы не можете:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> создавать с целью распространения какие бы то ни было компьютерные приложения, программы и методы, которые были специально разработаны для того, чтобы собирать, копировать, скачивать, извлекать данные, HTML, изображения или текст с этого сайта, а также осуществлять комплексный поиск, сбор и интеллектуальный анализ данных  (при этом **не запрещается** распространение бесплатных, некоммерческих приложений, разработанных для скачивания электронных файлов — например, файлов в формате EPUB, PDF, MP3 и MP4 — из общедоступного пространства этого сайта);
 
-## :radioactive: How do I report an issue?
+## :radioactive: Как мне сообщить о проблеме?
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+[Пожалуйста, сообщите о проблеме](https://github.com/sircharlo/meeting-media-manager/issues) в официальном репозитории GitHub.
 
 ## :new: Как я могу попросить о новой функции или улучшении?
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Пожалуйста, [откройте обсуждение](https://github.com/sircharlo/meeting-media-manager/discussions) в официальном репозитории GitHub.
 
 ## :handshake: Как я могу помочь с кодом?
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Пожалуйста, смотрите [руководство по внесению вкладов](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) в официальном репозитории GitHub.
 
 ## :x: Могу ли я сделать пожертвование проекту?
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. Это приложение было создано в наше свободное время с любовью. Пожалуйста, наслаждайтесь! :tada:
+Благодарим вас за желание поддержать проект! Однако, в соответствии с мыслью из Матфея 10:8, пожертвования **не принимаются** и никогда не будут приниматься. Это приложение было создано в наше свободное время с любовью. Пожалуйста, наслаждайтесь! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Матфея 10:8
 
-"You received free, give free."
+"Даром получили — даром давайте."
 
 :::

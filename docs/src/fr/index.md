@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Téléchargements automatiques des médias
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    details: Télécharge automatiquement les photos et les vidéos des réunions de l'assemblée locale dans n'importe quelle langue disponible sur le site officiel des Témoins de Jéhovah.
   - icon: 🎦
     title: Affichage des médias
     details: Permet d'afficher et de partager facilement les médias lors de réunions hybrides ou en présentiel.

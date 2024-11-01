@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Samodejno prenašanje multimedijske vsebine
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    details: Samodejno prenaša slike in videoposnetke za občinske shode v katerem koli jeziku, ki je na voljo na uradnem spletnem mestu Jehovovih prič.
   - icon: 🎦
     title: Predvajanje multimedijske vsebine
     details: Omogoča enostavno predvajanje multimedijske vsebine med hibridnimi shodi ali shodi v živo.
