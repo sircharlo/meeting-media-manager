@@ -1684,10 +1684,12 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
 
     const attributes = { ...(div?.[0]?.attribs || {}) };
 
-    if (attributes['data-mediator_url'])
+    if (attributes['data-mediator_url']) {
       urlVariables.value.mediator = attributes['data-mediator_url'];
-    if (attributes['data-pubmedia_url'])
+    }
+    if (attributes['data-pubmedia_url']) {
       urlVariables.value.pubMedia = attributes['data-pubmedia_url'];
+    }
   } catch (e) {
     if (urlVariables.value?.base)
       requestControllers
@@ -1695,6 +1697,8 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
         .forEach((c) => c.abort());
     errorCatcher(e);
     resetUrlVariables();
+  } finally {
+    window.electronApi.setUrlVariables(JSON.stringify(urlVariables.value));
   }
 };
 

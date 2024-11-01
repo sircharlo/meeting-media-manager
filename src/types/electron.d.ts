@@ -4,6 +4,7 @@ export type ElectronIpcSendKey =
   | 'moveMediaWindow'
   | 'navigateWebsiteWindow'
   | 'openExternal'
+  | 'setUrlVariables'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleWebsiteWindow'

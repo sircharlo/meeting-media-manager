@@ -22,6 +22,7 @@ import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 
 import { errorCatcher, isSelf } from './../utils';
 import { getAllScreens } from './screen';
+import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
@@ -67,6 +68,10 @@ handleIpcSend('toggleMediaWindow', (_e, show: boolean) => {
   }
 });
 
+handleIpcSend('setUrlVariables', (_e, variables: string) => {
+  setUrlVariables(JSON.parse(variables));
+});
+
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
   mainWindow?.close();
@@ -76,9 +81,9 @@ handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
   app.setLoginItemSettings({ openAtLogin });
 });
 
-handleIpcSend('toggleWebsiteWindow', (_e, show: boolean) => {
+handleIpcSend('toggleWebsiteWindow', (_e, show: boolean, lang?: string) => {
   if (show) {
-    createWebsiteWindow();
+    createWebsiteWindow(lang);
   } else {
     websiteWindow?.close();
   }
