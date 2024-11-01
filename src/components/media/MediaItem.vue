@@ -576,6 +576,7 @@
 </template>
 
 <script setup lang="ts">
+import type { QImg } from 'quasar';
 import type { DynamicMediaObject } from 'src/types';
 
 import Panzoom, {
@@ -764,7 +765,7 @@ const mediaPanzoom = ref<Record<string, number>>({
   y: 0,
 });
 
-const mediaImage = ref();
+const mediaImage = ref<QImg | undefined>();
 
 const initiatePanzoom = () => {
   try {
@@ -785,21 +786,21 @@ const initiatePanzoom = () => {
     };
     panzooms[props.media.uniqueId] = Panzoom(mediaImage.value.$el, options);
 
-    useEventListener(mediaImage.value, 'dblclick', (e) => {
+    useEventListener(mediaImage.value.$el, 'dblclick', (e) => {
       zoomIn(e);
     });
 
-    useEventListener(mediaImage.value, 'panzoomend', () => {
+    useEventListener(mediaImage.value.$el, 'panzoomend', () => {
       zoomReset();
     });
 
-    useEventListener(mediaImage.value, 'wheel', function (e) {
+    useEventListener(mediaImage.value.$el, 'wheel', function (e) {
       if (!e.ctrlKey) return;
       panzooms[props.media.uniqueId]?.zoomWithWheel(e);
     });
 
     useEventListener(
-      mediaImage.value,
+      mediaImage.value.$el,
       'panzoomchange',
       (e: HTMLElementEventMap['panzoomchange']) => {
         const width = mediaImage.value?.$el?.clientWidth;

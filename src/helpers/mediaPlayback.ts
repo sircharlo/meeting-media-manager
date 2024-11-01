@@ -285,9 +285,10 @@ const getMediaFromJwPlaylist = async (
   }
 };
 
-const findDb = (publicationDirectory: string) => {
+const findDb = (publicationDirectory?: string) => {
+  if (!publicationDirectory) return undefined;
   try {
-    if (!fs.existsSync(publicationDirectory)) return '';
+    if (!fs.existsSync(publicationDirectory)) return undefined;
     return fs
       .readdirSync(publicationDirectory)
       .map((filename) => path.join(publicationDirectory, filename))
@@ -296,7 +297,7 @@ const findDb = (publicationDirectory: string) => {
       });
   } catch (error) {
     errorCatcher(error);
-    return '';
+    return undefined;
   }
 };
 

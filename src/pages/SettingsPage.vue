@@ -98,6 +98,7 @@
 </template>
 
 <script setup lang="ts">
+import type { QForm } from 'quasar';
 import type {
   SettingsGroup,
   SettingsGroupKey,
@@ -126,7 +127,7 @@ const { updateYeartext } = jwStore;
 
 // Ref and reactive initializations
 const expansionState = ref<Partial<Record<SettingsGroupKey, boolean>>>({});
-const settingsFormDynamic = ref();
+const settingsFormDynamic = ref<QForm | undefined>();
 const settingsValid = ref(true);
 
 const settingsGroupsEntries = Object.entries(settingsGroups) as [
