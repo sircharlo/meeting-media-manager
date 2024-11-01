@@ -62,7 +62,10 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
-import { downloadSongbookVideos, setUrlVariables } from 'src/helpers/jw-media';
+import {
+  downloadSongbookVideos,
+  setUrlVariablesDebounced,
+} from 'src/helpers/jw-media';
 import {
   executeShortcut,
   registerAllCustomShortcuts,
@@ -245,7 +248,7 @@ whenever(
 watch(
   () => currentSettings.value?.baseUrl,
   (newBaseUrl, oldBaseUrl) => {
-    if (newBaseUrl !== oldBaseUrl) setUrlVariables(newBaseUrl);
+    if (newBaseUrl !== oldBaseUrl) setUrlVariablesDebounced(newBaseUrl);
   },
 );
 
