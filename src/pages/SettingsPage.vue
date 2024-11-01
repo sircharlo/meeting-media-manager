@@ -114,7 +114,7 @@ import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 // Store initializations
 const currentState = useCurrentStateStore();
@@ -167,21 +167,19 @@ const settingParam = useRouteParams<keyof SettingsValues | undefined>(
 // Lifecycle hooks
 onMounted(() => {
   validateSettingsLocal();
-  watch(
-    settingParam,
-    (setting) => {
-      if (!setting) return;
-      expansionState.value[settingsDefinitions[setting].group] = true;
-      setTimeout(() => {
-        if (!setting) return;
-        document
-          .getElementById(setting)
-          ?.scrollIntoView({ behavior: 'smooth' });
-      }, 500);
-    },
-    { immediate: true },
-  );
 });
+
+whenever(
+  settingParam,
+  (setting) => {
+    expansionState.value[settingsDefinitions[setting].group] = true;
+    setTimeout(() => {
+      if (!setting) return;
+      document.getElementById(setting)?.scrollIntoView({ behavior: 'smooth' });
+    }, 500);
+  },
+  { immediate: true },
+);
 
 whenever(
   () => currentSettings.value?.lang,

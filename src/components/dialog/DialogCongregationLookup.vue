@@ -109,6 +109,7 @@
 <script setup lang="ts">
 import type { CongregationLanguage, GeoRecord } from 'src/types';
 
+import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { get } from 'src/boot/axios';
 import { useLocale } from 'src/composables/useLocale';
@@ -116,7 +117,7 @@ import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const jwStore = useJwStore();
 const { jwLanguages, urlVariables } = storeToRefs(jwStore);
@@ -131,12 +132,10 @@ const open = defineModel<boolean>({ default: false });
 const congregationName = ref('');
 const results = ref<GeoRecord[]>([]);
 
-watch(open, (newOpen) => {
-  if (newOpen) {
-    congregationName.value = currentSettings.value?.congregationName || '';
-    results.value = [];
-    lookupCongregation();
-  }
+whenever(open, () => {
+  congregationName.value = currentSettings.value?.congregationName || '';
+  results.value = [];
+  lookupCongregation();
 });
 
 const lookupCongregation = async () => {

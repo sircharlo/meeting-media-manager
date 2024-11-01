@@ -30,12 +30,13 @@
 </template>
 
 <script setup lang="ts">
+import { whenever } from '@vueuse/core';
 import DownloadStatus from 'src/components/media/DownloadStatus.vue';
 import MediaDisplayButton from 'src/components/media/MediaDisplayButton.vue';
 import MusicButton from 'src/components/media/MusicButton.vue';
 import ObsStatus from 'src/components/media/ObsStatus.vue';
 import SubtitlesButton from 'src/components/media/SubtitlesButton.vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 import DialogBackgroundMusicPopup from '../dialog/DialogBackgroundMusicPopup.vue';
 import DialogDisplayPopup from '../dialog/DialogDisplayPopup.vue';
@@ -65,10 +66,8 @@ function setActivePopup(activePopup: PopupKey) {
 
 // Watch each popup and update the others when any one is set to true
 Object.keys(popups).forEach((popup) => {
-  watch(popups[popup as PopupKey], (newValue) => {
-    if (newValue) {
-      setActivePopup(popup as PopupKey);
-    }
+  whenever(popups[popup as PopupKey], () => {
+    setActivePopup(popup as PopupKey);
   });
 });
 </script>

@@ -539,6 +539,7 @@
 </template>
 
 <script setup lang="ts">
+import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import SelectInput from 'src/components/form-inputs/SelectInput.vue';
@@ -585,10 +586,10 @@ watch(
   },
 );
 
-watch(
+whenever(
   () => currentSettings.value?.lang,
-  (newLang) => {
-    if (newLang) updateYeartext();
+  () => {
+    updateYeartext();
   },
 );
 

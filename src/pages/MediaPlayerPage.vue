@@ -72,7 +72,7 @@
 import type { FontName } from 'src/types';
 
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
-import { useBroadcastChannel } from '@vueuse/core';
+import { useBroadcastChannel, whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { FONT_URLS } from 'src/constants/fonts';
@@ -180,10 +180,9 @@ const { data: mediaAction } = useBroadcastChannel<string, string>({
   name: 'media-action',
 });
 
-watch(
+whenever(
   () => mediaAction.value,
   (newMediaAction) => {
-    if (!newMediaAction) return;
     if (newMediaAction === 'pause') {
       mediaElement.value?.pause();
     } else if (newMediaAction === 'play') {

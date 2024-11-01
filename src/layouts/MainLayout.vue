@@ -36,17 +36,16 @@
 <script setup lang="ts">
 import type { ElectronIpcListenKey } from 'src/types';
 
+import { whenever } from '@vueuse/core';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-
 // Globals
 import { queues } from 'src/boot/globals';
 import { localeOptions } from 'src/i18n';
-
 // Components
 import HeaderBase from 'src/components/header/HeaderBase.vue';
 import ActionIsland from 'src/components/ui/ActionIsland.vue';
@@ -230,19 +229,17 @@ watch(
   { immediate: true },
 );
 
-watch(
-  () => [currentSettings.value?.localAppLang],
-  ([newAppLang]) => {
-    if (newAppLang) {
-      if (newAppLang.includes('-')) newAppLang = newAppLang.split('-')[0];
-      if (
-        currentSettings.value &&
-        !localeOptions?.map((option) => option.value).includes(newAppLang)
-      ) {
-        currentSettings.value.localAppLang = 'en';
-      } else {
-        locale.value = newAppLang;
-      }
+whenever(
+  () => currentSettings.value?.localAppLang,
+  (newAppLang) => {
+    if (newAppLang.includes('-')) newAppLang = newAppLang.split('-')[0];
+    if (
+      currentSettings.value &&
+      !localeOptions?.map((option) => option.value).includes(newAppLang)
+    ) {
+      currentSettings.value.localAppLang = 'en';
+    } else {
+      locale.value = newAppLang;
     }
   },
 );
@@ -292,8 +289,9 @@ watch(
         newEnableExtraCache &&
         oldEnableExtraCache !== undefined &&
         oldEnableExtraCache !== newEnableExtraCache
-      )
+      ) {
         downloadSongbookVideos();
+      }
     } catch (error) {
       errorCatcher(error);
     }
