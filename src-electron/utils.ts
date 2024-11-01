@@ -81,3 +81,17 @@ export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
     }
   };
 };
+
+// If ever we need to debounce a function in the main or preload processes
+//
+// export const debounce = <T>(func: (...args: T[]) => void, delay: number) => {
+//   let timeoutId: null | ReturnType<typeof setTimeout> = null;
+//   return (...args: T[]) => {
+//     if (timeoutId) {
+//       clearTimeout(timeoutId);
+//     }
+//     timeoutId = setTimeout(() => {
+//       func(...args);
+//     }, delay);
+//   };
+// };
