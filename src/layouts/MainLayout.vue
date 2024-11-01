@@ -61,7 +61,6 @@ import {
   remainingTimeBeforeMeetingStart,
   updateLookupPeriod,
 } from 'src/helpers/date';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
 import { downloadSongbookVideos, setUrlVariables } from 'src/helpers/jw-media';
@@ -275,17 +274,7 @@ watch(
   },
 );
 
-const {
-  // fs,
-  // getAppDataPath,
-  // getUserDataPath,
-  // getUserDesktopPath,
-  // path,
-  // readShortcutLink,
-  // saveSettingsStoreToFile,
-  setAutoStartAtLogin,
-  // writeShortcutLink,
-} = electronApi;
+const { setAutoStartAtLogin } = window.electronApi;
 
 watch(
   () => currentSettings.value?.autoStartAtLogin,

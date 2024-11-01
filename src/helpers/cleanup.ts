@@ -3,12 +3,11 @@
 
 // import { storeToRefs } from 'pinia';
 // import { dateFromString, isInPast } from 'src/helpers/date';
-// import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 // import { getAdditionalMediaPath, removeEmptyDirs } from 'src/helpers/fs';
 // import { useJwStore } from 'src/stores/jw';
 
-// const { fileUrlToPath, fs, readDirectory, path } = electronApi;
+// const { fileUrlToPath, fs, readDirectory, path } = window.electronApi;
 
 const cleanLocalStorage = () => {
   // try {

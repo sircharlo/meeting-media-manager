@@ -10,7 +10,6 @@ import type {
 
 import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage, uid } from 'quasar';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   buildNewPrefsObject,
@@ -21,7 +20,7 @@ import { parseJsonSafe } from 'src/helpers/settings';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
 
-const { fs, getAppDataPath, path } = electronApi;
+const { fs, getAppDataPath, path } = window.electronApi;
 
 interface Store {
   migrations: string[];

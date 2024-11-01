@@ -88,7 +88,6 @@ import { computed, ref } from 'vue';
 import DialogCacheClear from 'src/components/dialog/DialogCacheClear.vue';
 
 // Helpers
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getAdditionalMediaPath,
@@ -105,7 +104,7 @@ import { useJwStore } from 'src/stores/jw';
 // Types
 import type { CacheFile } from 'src/types';
 
-const { fs, pathToFileURL, readDirectory } = electronApi;
+const { fs, pathToFileURL, readDirectory } = window.electronApi;
 
 const jwStore = useJwStore();
 const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);

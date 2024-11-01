@@ -2,10 +2,9 @@ import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { extend } from 'quasar';
 import { defaultSettings } from 'src/constants/settings';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-const { fs, path, readDirectory } = electronApi;
+const { fs, path, readDirectory } = window.electronApi;
 const { readJSONSync } = fs;
 
 const oldPrefsFilterFn = (item: { path: string }) => {

@@ -151,13 +151,12 @@ import {
   OTHER_EXTENSIONS,
   VIDEO_EXTENSIONS,
 } from 'src/constants/fs';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { ref, watch } from 'vue';
 
-const { openFileDialog } = electronApi;
+const { openFileDialog } = window.electronApi;
 const props = defineProps<{
   filesLoading: number;
   jwpubDb: string;

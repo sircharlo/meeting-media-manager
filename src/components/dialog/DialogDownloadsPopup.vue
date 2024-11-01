@@ -100,11 +100,10 @@ import type { DownloadProgressItems } from 'src/types/media';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import { barStyle, thumbStyle } from 'src/boot/globals';
-import { electronApi } from 'src/helpers/electron-api';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { ref, watch } from 'vue';
 
-const { path } = electronApi;
+const { path } = window.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 

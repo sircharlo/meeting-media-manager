@@ -39,7 +39,6 @@ import { queues } from 'src/boot/globals';
 
 // Helpers
 import { updateLookupPeriod } from 'src/helpers/date';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { removeEmptyDirs } from 'src/helpers/fs';
 
@@ -57,7 +56,7 @@ const props = defineProps<{
   unusedParentDirectories: Record<string, number>;
 }>();
 
-const { fs } = electronApi;
+const { fs } = window.electronApi;
 
 const jwStore = useJwStore();
 const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);

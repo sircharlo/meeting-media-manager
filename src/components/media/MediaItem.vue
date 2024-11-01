@@ -584,7 +584,6 @@ import Panzoom, {
 } from '@panzoom/panzoom';
 import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { formatTime, isImage, isVideo } from 'src/helpers/mediaPlayback';
@@ -614,7 +613,7 @@ const hoveredBadges = ref<Record<string, boolean>>({});
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
-const { fileUrlToPath, fs, path } = electronApi;
+const { fileUrlToPath, fs, path } = window.electronApi;
 
 const mediaDurationPopups = ref<Record<string, boolean>>({});
 const panzooms: Record<string, PanzoomObject> = {};

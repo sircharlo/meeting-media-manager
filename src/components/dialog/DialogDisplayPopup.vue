@@ -229,7 +229,6 @@ import type { MultimediaItem } from 'src/types/sqlite';
 import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { barStyle, thumbStyle } from 'src/boot/globals';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempDirectory } from 'src/helpers/fs';
 import {
@@ -254,7 +253,7 @@ const {
   openFileDialog,
   path,
   pathToFileURL,
-} = electronApi;
+} = window.electronApi;
 
 const { t } = useI18n();
 

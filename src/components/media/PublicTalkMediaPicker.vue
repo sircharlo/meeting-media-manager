@@ -80,7 +80,6 @@ import type { DocumentItem, PublicationInfo } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { barStyle, thumbStyle } from 'src/boot/globals';
-import { electronApi } from 'src/helpers/electron-api';
 import { getPublicationsPath } from 'src/helpers/fs';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub, findDb } from 'src/helpers/mediaPlayback';
@@ -89,7 +88,7 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { executeQuery, fs, openFileDialog, path } = electronApi;
+const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
 const props = defineProps<{
   modelValue: boolean | null;

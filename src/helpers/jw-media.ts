@@ -37,7 +37,6 @@ import {
   isCoWeek,
   isMwMeetingDay,
 } from 'src/helpers/date';
-import { electronApi } from 'src/helpers/electron-api';
 import {
   getDurationFromMediaPath,
   getFileUrl,
@@ -68,7 +67,7 @@ const {
   fs,
   path,
   readDirectory,
-} = electronApi;
+} = window.electronApi;
 
 const addJwpubDocumentMediaToFiles = async (
   dbPath: string,

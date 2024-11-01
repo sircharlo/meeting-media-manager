@@ -5,7 +5,6 @@ import type { MultimediaItem, PublicationFetcher } from 'src/types';
 import { Buffer } from 'buffer';
 import { storeToRefs } from 'pinia';
 import { FULL_HD } from 'src/constants/media';
-import { electronApi } from 'src/helpers/electron-api';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { isFileOfType, isImage, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -22,7 +21,7 @@ const {
   path,
   pathToFileURL,
   readDirectory,
-} = electronApi;
+} = window.electronApi;
 
 const getPublicationsPath = () => path.join(getUserDataPath(), 'Publications');
 const getFontsPath = () => path.join(getUserDataPath(), 'Fonts');

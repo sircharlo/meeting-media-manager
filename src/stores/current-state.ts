@@ -8,7 +8,6 @@ import type {
 import { defineStore, storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import { settingsDefinitions } from 'src/constants/settings';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getAdditionalMediaPath } from 'src/helpers/fs';
 import { formatTime } from 'src/helpers/mediaPlayback';
@@ -16,7 +15,7 @@ import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
 
 const { formatDate, getDateDiff } = date;
-const { fs, path } = electronApi;
+const { fs, path } = window.electronApi;
 
 interface Store {
   currentCongregation: string;

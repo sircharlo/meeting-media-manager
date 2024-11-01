@@ -19,7 +19,6 @@ import {
   ZIP_EXTENSIONS,
 } from 'src/constants/fs';
 import { FULL_HD } from 'src/constants/media';
-import { electronApi } from 'src/helpers/electron-api';
 import { getFileUrl, getTempDirectory } from 'src/helpers/fs';
 import {
   dynamicMediaMapper,
@@ -30,7 +29,7 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { errorCatcher } from './error-catcher';
 
 const { convertHeic, decompress, executeQuery, fs, path, toggleMediaWindow } =
-  electronApi;
+  window.electronApi;
 
 const formatTime = (time: number) => {
   try {

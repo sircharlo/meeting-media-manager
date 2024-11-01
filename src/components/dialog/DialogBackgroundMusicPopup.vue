@@ -117,7 +117,6 @@ import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
 import { barStyle, thumbStyle } from 'src/boot/globals';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getFileUrl,
@@ -132,7 +131,7 @@ import { onMounted, ref, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
 
-const { fileUrlToPath, parseMediaFile, path } = electronApi;
+const { fileUrlToPath, parseMediaFile, path } = window.electronApi;
 
 const currentState = useCurrentStateStore();
 const {
