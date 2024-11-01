@@ -11,6 +11,7 @@ import {
 
 import './main/ipc';
 import { PLATFORM } from './constants';
+import { initScreenListeners } from './main/screen';
 import { initSessionListeners } from './main/session';
 import { initUpdater } from './main/updater';
 import { createMainWindow } from './main/window/window-main';
@@ -23,6 +24,7 @@ initSentry({
 
 initElectronRemote();
 initUpdater();
+initScreenListeners();
 createApplicationMenu();
 initSessionListeners();
 

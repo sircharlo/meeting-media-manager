@@ -21,10 +21,12 @@ import {
 import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 
 import { errorCatcher, isSelf } from './../utils';
+import { getAllScreens } from './screen';
 import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
+import { mediaWindow, moveMediaWindow } from './window/window-media';
 import {
   createWebsiteWindow,
   navigateWebsiteWindow,
@@ -54,6 +56,17 @@ function handleIpcSend(
     listener(e, ...args);
   });
 }
+
+handleIpcSend('toggleMediaWindow', (_e, show: boolean) => {
+  if (!mediaWindow) return;
+
+  if (show) {
+    moveMediaWindow();
+    if (!mediaWindow.isVisible()) mediaWindow.show();
+  } else {
+    mediaWindow.hide();
+  }
+});
 
 handleIpcSend('setUrlVariables', (_e, variables: string) => {
   setUrlVariables(JSON.parse(variables));
@@ -86,6 +99,10 @@ handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
 
 handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {
   unregisterShortcut(keySequence);
+});
+
+handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen, noEvent) => {
+  moveMediaWindow(displayNr, fullscreen, noEvent);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
@@ -131,6 +148,10 @@ function handleIpcInvoke<T = unknown>(
 
 handleIpcInvoke('getVersion', async () => {
   return app.getVersion();
+});
+
+handleIpcInvoke('getAllScreens', async () => {
+  return getAllScreens();
 });
 
 handleIpcInvoke('downloadErrorIsExpected', async () => {
