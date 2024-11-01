@@ -393,7 +393,7 @@ const showMediaWindow = (state?: boolean) => {
       state = !mediaWindowVisible.value;
     }
     mediaWindowVisible.value = state;
-    toggleMediaWindow(state ? 'show' : 'hide');
+    toggleMediaWindow(state);
   } catch (error) {
     errorCatcher(error);
   }

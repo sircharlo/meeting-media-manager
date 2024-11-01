@@ -1,19 +1,21 @@
 import type { Display } from 'src/types';
 
-import { type BrowserWindow, screen } from 'electron';
+import { app, type BrowserWindow, screen } from 'electron';
 
 import { errorCatcher } from '../utils';
 import { mainWindow } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
 
 export const initScreenListeners = () => {
-  screen.removeAllListeners('display-added');
-  screen.removeAllListeners('display-removed');
-  screen.removeAllListeners('display-metrics-changed');
+  app.on('ready', () => {
+    screen.removeAllListeners('display-added');
+    screen.removeAllListeners('display-removed');
+    screen.removeAllListeners('display-metrics-changed');
 
-  screen.on('display-added', () => moveMediaWindow());
-  screen.on('display-removed', () => moveMediaWindow());
-  screen.on('display-metrics-changed', () => moveMediaWindow());
+    screen.on('display-added', () => moveMediaWindow());
+    screen.on('display-removed', () => moveMediaWindow());
+    screen.on('display-metrics-changed', () => moveMediaWindow());
+  });
 };
 
 export const getAllScreens = (): Display[] => {

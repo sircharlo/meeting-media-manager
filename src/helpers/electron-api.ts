@@ -67,7 +67,7 @@ export interface ElectronApi {
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;
   setUrlVariables: (variables: string) => void;
-  toggleMediaWindow: (action: string) => void;
+  toggleMediaWindow: (show: boolean) => void;
   unregisterShortcut: (shortcut: string) => void;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
