@@ -22,7 +22,6 @@ import type {
 
 import axios, { type AxiosError } from 'axios';
 import { Buffer } from 'buffer';
-import * as cheerio from 'cheerio';
 import PQueue from 'p-queue';
 import { storeToRefs } from 'pinia';
 import { date } from 'quasar';
@@ -1674,7 +1673,8 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
       return;
     }
 
-    const $ = cheerio.load(homePage);
+    const { load } = await import('cheerio');
+    const $ = load(homePage);
     const div = $('div#pageConfig');
     if (!div?.[0]?.attribs) {
       resetUrlVariables();
