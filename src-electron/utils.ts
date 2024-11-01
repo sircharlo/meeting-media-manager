@@ -70,30 +70,14 @@ export function errorCatcher(error: Error | string | unknown) {
   }
 }
 
-type Func<T extends unknown[], R> = (...args: T) => R;
-
-/**
- * Throttles a function
- * @param fn The function to throttle
- * @param limit The limit in ms
- * @returns The throttled function
- */
-export function throttle<T extends unknown[], R = unknown>(
-  fn: Func<T, R>,
-  limit = 250,
-): Func<T, R> {
-  let wait = false;
-  let result: R;
-
-  return function (this: unknown, ...args: T): R {
-    if (!wait) {
-      wait = true;
-      setTimeout(() => {
-        wait = false;
-      }, limit);
-      result = fn.apply(this, args);
+export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
+  let prev = 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (...args: T[]) => {
+    const now = new Date().getTime();
+    if (now - prev > delay) {
+      prev = now;
+      return func(...args);
     }
-
-    return result;
   };
-}
+};

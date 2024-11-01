@@ -223,6 +223,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
+import type { Display } from 'src/types';
 import type { MultimediaItem } from 'src/types/sqlite';
 
 import { useBroadcastChannel, useEventListener } from '@vueuse/core';
@@ -242,7 +243,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const {
@@ -257,7 +258,7 @@ const {
 
 const { t } = useI18n();
 
-const screenList = ref(getAllScreens());
+const screenList = ref<Display[]>([]);
 
 const appSettings = useAppSettingsStore();
 const { screenPreferences } = storeToRefs(appSettings);
@@ -350,13 +351,17 @@ const windowScreenListener = (event: CustomEventInit) => {
   }
 };
 
-const updateScreenMetrics = () => {
+const fetchScreens = async () => {
   try {
-    screenList.value = getAllScreens();
+    screenList.value = await getAllScreens();
   } catch (error) {
     errorCatcher(error);
   }
 };
+
+onMounted(() => {
+  fetchScreens();
+});
 
 const notifyInvalidBackgroundFile = () => {
   createTemporaryNotification({
@@ -430,7 +435,7 @@ watch(
         newScreenPreferences.preferWindowed,
         true,
       );
-      screenList.value = getAllScreens();
+      fetchScreens();
     } catch (error) {
       errorCatcher(error + ': ' + JSON.stringify(newScreenPreferences));
     }
@@ -439,5 +444,5 @@ watch(
 );
 
 useEventListener(window, 'windowScreen-update', windowScreenListener);
-useEventListener(window, 'screen-trigger-update', updateScreenMetrics);
+useEventListener(window, 'screen-trigger-update', fetchScreens);
 </script>

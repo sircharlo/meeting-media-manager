@@ -391,7 +391,7 @@ const showMediaWindow = (state?: boolean) => {
       state = !currentState.mediaWindowVisible;
     }
     currentState.mediaWindowVisible = state;
-    toggleMediaWindow(state ? 'show' : 'hide');
+    toggleMediaWindow(state);
   } catch (error) {
     errorCatcher(error);
   }
