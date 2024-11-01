@@ -224,7 +224,7 @@ watch(currentSettings, (newSettings) => {
 watch(
   () => currentSettings.value?.darkMode,
   (newDarkMode) => {
-    if (!newDarkMode) return;
+    if (newDarkMode === undefined) return;
     $q.dark.set(newDarkMode);
   },
   { immediate: true },
