@@ -1043,7 +1043,7 @@ const [circuitOverseerList, sortableCircuitOverseerMediaItems] =
     ],
   });
 
-watch(
+watchImmediate(
   () => sortableMediaItems.value,
   (newVal) => {
     sortableTgwMediaItems.value = newVal.filter((m) => m.section === 'tgw');
@@ -1057,7 +1057,7 @@ watch(
       (m) => m.section === 'circuitOverseer',
     );
   },
-  { deep: true, immediate: true },
+  { deep: true },
 );
 
 const sortedMediaIds = computed(() => {

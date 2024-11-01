@@ -126,11 +126,12 @@
   </q-drawer>
 </template>
 <script setup lang="ts">
+import { whenever } from '@vueuse/core';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -152,12 +153,10 @@ const navActiveClass = computed(
     ' text-primary blue-bar',
 );
 
-watch(
-  () => $q?.screen?.lt?.sm,
-  (isNowExtraSmall) => {
-    if (isNowExtraSmall) {
-      miniState.value = true;
-    }
+whenever(
+  () => $q.screen.lt.sm,
+  () => {
+    miniState.value = true;
   },
 );
 

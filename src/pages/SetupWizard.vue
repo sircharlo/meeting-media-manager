@@ -539,7 +539,7 @@
 </template>
 
 <script setup lang="ts">
-import { whenever } from '@vueuse/core';
+import { watchImmediate, whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import SelectInput from 'src/components/form-inputs/SelectInput.vue';
@@ -593,14 +593,11 @@ whenever(
   },
 );
 
-watch(
+watchImmediate(
   () => regularProfile.value,
   (newRegularProfile) => {
     if (currentSettings.value)
       currentSettings.value.disableMediaFetching = !newRegularProfile;
-  },
-  {
-    immediate: true,
   },
 );
 

@@ -490,8 +490,9 @@ watch(
       !newMusicButtonEnabled ||
       !newCongregation ||
       oldCongregation !== newCongregation
-    )
+    ) {
       stopMusic();
+    }
     musicStoppedAutomatically.value = false;
   },
 );

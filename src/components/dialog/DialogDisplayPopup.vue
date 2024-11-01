@@ -431,7 +431,7 @@ watch(
   },
 );
 
-watch(
+watchImmediate(
   () => screenPreferences.value,
   (newScreenPreferences) => {
     try {
@@ -445,7 +445,7 @@ watch(
       errorCatcher(error + ': ' + JSON.stringify(newScreenPreferences));
     }
   },
-  { deep: true, immediate: true },
+  { deep: true },
 );
 
 useEventListener(window, 'windowScreen-update', windowScreenListener);

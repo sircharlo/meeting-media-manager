@@ -72,7 +72,7 @@
 import type { FontName } from 'src/types';
 
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
-import { useBroadcastChannel, whenever } from '@vueuse/core';
+import { useBroadcastChannel, watchDeep, whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { FONT_URLS } from 'src/constants/fonts';
@@ -155,10 +155,10 @@ const { data: seekToData } = useBroadcastChannel<
   name: 'seek-to',
 });
 
-watch(
+whenever(
   () => seekToData.value,
   (newSeekTo) => {
-    if (mediaElement.value && newSeekTo) {
+    if (mediaElement.value) {
       mediaElement.value.currentTime = newSeekTo;
     }
   },
@@ -226,12 +226,11 @@ const { data: panzoomState } = useBroadcastChannel<
   name: 'panzoom',
 });
 
-watch(
+watchDeep(
   () => panzoomState.value,
   (newPanzoomState) => {
     setPanzoom(newPanzoomState);
   },
-  { deep: true },
 );
 
 const { data: webStreamData } = useBroadcastChannel<boolean, boolean>({

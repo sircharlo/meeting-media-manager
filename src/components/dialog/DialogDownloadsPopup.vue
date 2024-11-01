@@ -98,10 +98,11 @@
 import type { QMenu } from 'quasar';
 import type { DownloadProgressItems } from 'src/types/media';
 
+import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const { path } = window.electronApi;
 
@@ -125,7 +126,7 @@ const filteredDownloads = (
 
 const downloadPopup = ref<QMenu>();
 
-watch(
+watchImmediate(
   () => filteredDownloads,
   () => {
     if (downloadPopup.value) {
@@ -137,7 +138,7 @@ watch(
       }, 2000);
     }
   },
-  { deep: true, immediate: true },
+  { deep: true },
 );
 
 const hasStatus = (

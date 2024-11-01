@@ -243,8 +243,8 @@ whenever(
 );
 
 watch(
-  () => [currentSettings.value?.baseUrl],
-  ([newBaseUrl], [oldBaseUrl]) => {
+  () => currentSettings.value?.baseUrl,
+  (newBaseUrl, oldBaseUrl) => {
     if (newBaseUrl !== oldBaseUrl) setUrlVariables(newBaseUrl);
   },
 );
