@@ -4906,7 +4906,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^4.0.0":
+"chokidar@npm:^4.0.0, chokidar@npm:^4.0.1":
   version: 4.0.1
   resolution: "chokidar@npm:4.0.1"
   dependencies:
@@ -9912,6 +9912,7 @@ __metadata:
     axios: "npm:^1.7.7"
     better-sqlite3: "npm:^11.5.0"
     cheerio: "npm:^1.0.0"
+    chokidar: "npm:^4.0.1"
     countries-and-timezones: "npm:^3.7.2"
     dompurify: "npm:^3.1.7"
     electron: "npm:^33.0.2"

@@ -9,6 +9,7 @@ import type {
 
 import { homepage, repository } from 'app/package.json';
 import get from 'axios';
+import { type FSWatcher, watch } from 'chokidar';
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
 import {
   app,
@@ -118,6 +119,24 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
   }
 
   if (url) shell.openExternal(url);
+});
+
+const watchers = new Set<FSWatcher>();
+
+handleIpcSend('unwatchFolders', () => {
+  // console.log(_e, path);
+  watchers.forEach((watcher) => {
+    watcher.close().then(() => watchers.delete(watcher));
+  });
+});
+
+handleIpcSend('watchFolder', (_e, path: string) => {
+  console.log(_e, path);
+  watchers.add(
+    watch(path).on('all', (event, path) => {
+      console.log(event, path);
+    }),
+  );
 });
 
 // IPC invoke/handle
