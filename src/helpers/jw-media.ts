@@ -1680,10 +1680,11 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
       jwStore.urlVariables.pubMedia = attributes['data-pubmedia_url'];
     }
   } catch (e) {
-    if (jwStore.urlVariables.base)
+    if (jwStore.urlVariables.base) {
       requestControllers
         .filter((c) => !c.signal.aborted)
         .forEach((c) => c.abort());
+    }
     errorCatcher(e);
     resetUrlVariables();
   } finally {
