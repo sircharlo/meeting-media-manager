@@ -488,7 +488,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, ref, type Ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -618,7 +618,7 @@ watch(
   },
 );
 
-const { data: currentTimeData }: { data: Ref<number> } = useBroadcastChannel({
+const { data: currentTimeData } = useBroadcastChannel<number, number>({
   name: 'current-time',
 });
 

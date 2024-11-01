@@ -591,7 +591,7 @@ import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -833,9 +833,9 @@ onUnmounted(() => {
   destroyPanzoom();
 });
 
-const playButton: Ref<HTMLButtonElement | undefined> = ref();
-const pauseResumeButton: Ref<HTMLButtonElement | undefined> = ref();
-const stopButton: Ref<HTMLButtonElement | undefined> = ref();
+const playButton = ref<HTMLButtonElement | undefined>();
+const pauseResumeButton = ref<HTMLButtonElement | undefined>();
+const stopButton = ref<HTMLButtonElement | undefined>();
 
 useEventListener(window, 'shortcutMediaNext', () => {
   if (playButton.value && props.playState === 'next') playButton.value.click();

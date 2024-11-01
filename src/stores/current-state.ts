@@ -2,6 +2,7 @@ import type {
   DateInfo,
   DownloadedFile,
   DownloadProgressItems,
+  MediaLink,
   SettingsValues,
 } from 'src/types';
 
@@ -40,6 +41,12 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
   timeRemainingBeforeMusicStop: number;
+}
+
+interface Songbook {
+  fileformat: 'mp3' | 'mp4';
+  pub: 'sjj' | 'sjjm';
+  signLanguage: boolean;
 }
 
 export const useCurrentStateStore = defineStore('current-state', {
@@ -85,34 +92,37 @@ export const useCurrentStateStore = defineStore('current-state', {
   },
 
   getters: {
-    congregationIsSelected(state) {
+    congregationIsSelected: (state) => {
       return state.currentCongregation;
     },
-    currentSettings(state) {
+    currentSettings: (state) => {
       const congregationSettingsStore = useCongregationSettingsStore();
       return Object.keys(congregationSettingsStore.congregations).length > 0
         ? congregationSettingsStore.congregations[state.currentCongregation]
         : null;
     },
-    currentSongbook() {
-      const notSignLanguageSongbook = {
+    currentSongbook(): Songbook {
+      const notSignLanguageSongbook: Songbook = {
         fileformat: 'mp3',
         pub: 'sjjm',
         signLanguage: false,
       };
       try {
-        const signLanguageSongbook = {
+        const signLanguageSongbook: Songbook = {
           fileformat: 'mp4',
           pub: 'sjj',
           signLanguage: true,
         };
         const jwStore = useJwStore();
-        const currentLanguage = this.currentSettings?.lang as string;
-        if (!currentLanguage || !jwStore.jwLanguages)
+        const currentLanguage = this.currentSettings?.lang;
+        if (!currentLanguage || !jwStore.jwLanguages) {
           return notSignLanguageSongbook;
-        const currentLanguageIsSignLanguage = !!jwStore.jwLanguages?.list?.find(
+        }
+
+        const currentLanguageIsSignLanguage = !!jwStore.jwLanguages.list?.find(
           (l) => l.langcode === currentLanguage,
         )?.isSignLanguage;
+
         return currentLanguageIsSignLanguage
           ? signLanguageSongbook
           : notSignLanguageSongbook;
@@ -121,13 +131,13 @@ export const useCurrentStateStore = defineStore('current-state', {
         return notSignLanguageSongbook;
       }
     },
-    currentSongs() {
+    currentSongs(): MediaLink[] {
       const jwStore = useJwStore();
       const currentLanguage = this.currentSettings?.lang as string;
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
-    getDatedAdditionalMediaDirectory(state) {
+    getDatedAdditionalMediaDirectory: (state) => {
       try {
         if (!state.selectedDate) return '';
         const additionalMediaPath = getAdditionalMediaPath();
@@ -144,17 +154,17 @@ export const useCurrentStateStore = defineStore('current-state', {
         return '';
       }
     },
-    mediaPaused(state) {
+    mediaPaused: (state) => {
       return (
         state.mediaPlayingUrl !== '' && state.mediaPlayingAction === 'pause'
       );
     },
-    mediaPlaying(state) {
+    mediaPlaying: (state) => {
       return (
         state.mediaPlayingUrl !== '' || state.mediaPlayingAction === 'website'
       );
     },
-    musicRemainingTime(state) {
+    musicRemainingTime: (state) => {
       try {
         if (state.musicStarting) return 'music.starting';
         if (state.musicStopping) return 'music.stopping';
@@ -166,7 +176,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         return '..:..';
       }
     },
-    selectedDateObject(state): DateInfo | null {
+    selectedDateObject: (state): DateInfo | null => {
       const jwStore = useJwStore();
       if (!jwStore.lookupPeriod?.[state.currentCongregation]?.length) {
         return null;

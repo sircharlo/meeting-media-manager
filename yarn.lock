@@ -3646,6 +3646,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vueuse/router@npm:^11.2.0":
+  version: 11.2.0
+  resolution: "@vueuse/router@npm:11.2.0"
+  dependencies:
+    "@vueuse/shared": "npm:11.2.0"
+    vue-demi: "npm:>=0.14.10"
+  peerDependencies:
+    vue-router: ">=4.0.0-rc.1"
+  checksum: 10c0/de7b69e9dc6c4148c7dc2c068a67f3c5664f4f67ff4d08f38dcd627001892171b07e64f20d03a1a335d159f9210faffb67a7670f8081083ba4f924ac1c5749bf
+  languageName: node
+  linkType: hard
+
 "@vueuse/shared@npm:11.1.0":
   version: 11.1.0
   resolution: "@vueuse/shared@npm:11.1.0"
@@ -9894,6 +9906,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^7.18.0"
     "@typescript-eslint/parser": "npm:^7.18.0"
     "@vueuse/core": "npm:^11.2.0"
+    "@vueuse/router": "npm:^11.2.0"
     adm-zip: "npm:^0.5.16"
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.7"

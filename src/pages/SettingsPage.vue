@@ -8,32 +8,30 @@
       novalidate
     >
       <template
-        v-for="[groupId, { name, description, icon }] in Object.entries(
-          settingsGroups,
-        )"
+        v-for="[groupId, { name, description, icon }] in settingsGroupsEntries"
         :key="groupId"
       >
         <q-expansion-item
           v-if="
             !invalidSettingsLength ||
             !onlyShowInvalidSettings ||
-            Object.entries(settingsDefinitions)
+            settingDefinitionEntries
               .filter(([settingId, item]) => item.group === groupId)
               .map(([settingId, _]) => settingId)
-              .some((settingId) =>
-                invalidSettings.includes(settingId as keyof SettingsItems),
-              )
+              .some((settingId) => invalidSettings.includes(settingId))
           "
-          v-model="expansionState[groupId as keyof SettingsItems]"
+          v-model="expansionState[groupId]"
           :caption="$t(description)"
           :icon="icon"
           :label="$t(name)"
           class="media-section text-subtitle2 text-weight-medium q-pr-md"
         >
           <template
-            v-for="([settingId, item], index) in Object.entries(
-              settingsDefinitions,
-            ).filter(([settingId, item]) => item.group === groupId)"
+            v-for="(
+              [settingId, item], index
+            ) in settingDefinitionEntries.filter(
+              ([settingId, item]) => item.group === groupId,
+            )"
             :key="settingId"
           >
             <template
@@ -41,7 +39,7 @@
                 item.subgroup &&
                 (index === 0 ||
                   item.subgroup !==
-                    Object.entries(settingsDefinitions).filter(
+                    settingDefinitionEntries.filter(
                       ([settingId, item]) => item.group === groupId,
                     )[index - 1]?.[1].subgroup)
               "
@@ -62,20 +60,16 @@
               v-if="
                 (!item.depends ||
                   (Array.isArray(item.depends)
-                    ? item.depends.every(
-                        (dep) => currentSettings?.[dep as keyof SettingsItems],
-                      )
-                    : currentSettings[item.depends as keyof SettingsItems])) &&
+                    ? item.depends.every((dep) => currentSettings?.[dep])
+                    : currentSettings[item.depends])) &&
                 (!onlyShowInvalidSettings ||
                   !invalidSettingsLength ||
-                  invalidSettings.includes(settingId as keyof SettingsItems))
+                  invalidSettings.includes(settingId))
               "
               :id="settingId"
               :class="{
-                'bg-error': invalidSettings.includes(
-                  settingId as keyof SettingsItems,
-                ),
-                'bg-accent-300': route.params.setting === settingId,
+                'bg-error': invalidSettings.includes(settingId),
+                'bg-accent-300': settingParam === settingId,
                 'q-mt-sm': index === 0,
                 'rounded-borders': true,
               }"
@@ -89,66 +83,11 @@
                 }}</q-item-label>
               </q-item-section>
               <q-item-section side style="align-items: end">
-                <ToggleInput
-                  v-if="item.type === 'toggle'"
-                  v-model="
-                    currentSettings[settingId as keyof SettingsItems] as boolean
-                  "
-                  :actions="item.actions"
-                />
-                <TextInput
-                  v-else-if="item.type === 'text'"
-                  v-model="
-                    currentSettings[settingId as keyof SettingsItems] as string
-                  "
-                  :actions="item.actions"
-                  :rules="item.rules"
+                <BaseInput
+                  v-model="currentSettings[settingId]"
+                  :item="item"
                   :setting-id="settingId"
                 />
-                <SliderInput
-                  v-else-if="item.type === 'slider'"
-                  v-model="
-                    currentSettings[settingId as keyof SettingsItems] as number
-                  "
-                  :actions="item.actions"
-                  :max="item.max"
-                  :min="item.min"
-                  :step="item.step"
-                />
-                <DateInput
-                  v-else-if="item.type === 'date'"
-                  v-model="
-                    currentSettings[settingId as keyof SettingsItems] as string
-                  "
-                  :options="item.options"
-                  :rules="item.rules"
-                />
-                <TimeInput
-                  v-else-if="item.type === 'time'"
-                  v-model="
-                    currentSettings[settingId as keyof SettingsItems] as string
-                  "
-                  :options="item.options"
-                  :rules="item.rules"
-                />
-                <SelectInput
-                  v-else-if="item.type === 'list'"
-                  v-model="
-                    currentSettings[settingId as keyof SettingsItems] as string
-                  "
-                  :list="item.list"
-                  :rules="item.rules"
-                  :setting-id="settingId"
-                  :use-input="settingId.toLowerCase().includes('lang')"
-                />
-                <ShortcutInput
-                  v-else-if="item.type === 'shortcut'"
-                  v-model="
-                    currentSettings[settingId as keyof SettingsItems] as string
-                  "
-                  :shortcut-name="settingId as keyof SettingsItems"
-                />
-                <pre v-else>{{ item }}</pre>
               </q-item-section>
             </q-item>
           </template>
@@ -159,24 +98,23 @@
 </template>
 
 <script setup lang="ts">
-import type { SettingsItems } from 'src/types';
+import type {
+  SettingsGroup,
+  SettingsGroupKey,
+  SettingsItem,
+  SettingsItems,
+  SettingsValues,
+} from 'src/types';
 
+import { whenever } from '@vueuse/core';
+import { useRouteParams } from '@vueuse/router';
 import { storeToRefs } from 'pinia';
-import DateInput from 'src/components/form-inputs/DateInput.vue';
-import SelectInput from 'src/components/form-inputs/SelectInput.vue';
-import ShortcutInput from 'src/components/form-inputs/ShortcutInput.vue';
-import SliderInput from 'src/components/form-inputs/SliderInput.vue';
-import TextInput from 'src/components/form-inputs/TextInput.vue';
-import TimeInput from 'src/components/form-inputs/TimeInput.vue';
-import ToggleInput from 'src/components/form-inputs/ToggleInput.vue';
+import BaseInput from 'src/components/form-inputs/BaseInput.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
 
 // Store initializations
 const currentState = useCurrentStateStore();
@@ -187,9 +125,19 @@ const jwStore = useJwStore();
 const { updateYeartext } = jwStore;
 
 // Ref and reactive initializations
-const expansionState = ref({} as { [key in keyof SettingsItems]: boolean });
+const expansionState = ref<Partial<Record<SettingsGroupKey, boolean>>>({});
 const settingsFormDynamic = ref();
 const settingsValid = ref(true);
+
+const settingsGroupsEntries = Object.entries(settingsGroups) as [
+  SettingsGroupKey,
+  SettingsGroup,
+][];
+
+const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
+  keyof SettingsItems,
+  SettingsItem,
+][];
 
 // Validation function
 const validateSettingsLocal = () => {
@@ -205,48 +153,39 @@ const validateSettingsLocal = () => {
         });
     }
     for (const invalidSetting of getInvalidSettings()) {
-      expansionState.value[
-        settingsDefinitions[invalidSetting as keyof SettingsItems]
-          .group as keyof SettingsItems
-      ] = true;
+      expansionState.value[settingsDefinitions[invalidSetting].group] = true;
     }
   } catch (error) {
     errorCatcher(error);
   }
 };
 
+const settingParam = useRouteParams<keyof SettingsValues | undefined>(
+  'setting',
+);
+
 // Lifecycle hooks
 onMounted(() => {
   validateSettingsLocal();
   watch(
-    () => route.params.setting,
-    (newWatchedSettings) => {
-      if (!newWatchedSettings) return;
-      if (!Array.isArray(newWatchedSettings))
-        newWatchedSettings = [newWatchedSettings];
-      newWatchedSettings.forEach((setting) => {
-        if (setting)
-          expansionState.value[
-            settingsDefinitions[setting as keyof SettingsItems]
-              .group as keyof SettingsItems
-          ] = true;
-      });
+    settingParam,
+    (setting) => {
+      if (!setting) return;
+      expansionState.value[settingsDefinitions[setting].group] = true;
       setTimeout(() => {
-        if (!newWatchedSettings[0]) return;
-        document.getElementById(newWatchedSettings[0])?.scrollIntoView({
-          behavior: 'smooth',
-        });
+        if (!setting) return;
+        document
+          .getElementById(setting)
+          ?.scrollIntoView({ behavior: 'smooth' });
       }, 500);
     },
     { immediate: true },
   );
 });
 
-watch(
+whenever(
   () => currentSettings.value?.lang,
-  (newLang) => {
-    if (newLang) updateYeartext();
-  },
+  () => updateYeartext(),
 );
 
 const invalidSettings = computed(() => getInvalidSettings());
