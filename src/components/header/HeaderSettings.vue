@@ -81,7 +81,6 @@
 // Packages
 import { storeToRefs } from 'pinia';
 import prettyBytes from 'pretty-bytes';
-import { QMenu } from 'quasar';
 import { computed, ref } from 'vue';
 
 // Components

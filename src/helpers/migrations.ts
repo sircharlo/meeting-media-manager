@@ -1,6 +1,5 @@
 import type { OldAppConfig, SettingsValues } from 'src/types';
 
-import { extend } from 'quasar';
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
@@ -98,7 +97,7 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
     return newPrefsObject;
   } catch (error) {
     errorCatcher(error);
-    return extend<SettingsValues>(true, {}, defaultSettings);
+    return Object.assign({}, defaultSettings);
   }
 };
 

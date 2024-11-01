@@ -95,10 +95,10 @@
 </template>
 
 <script setup lang="ts">
+import type { QMenu } from 'quasar';
 import type { DownloadProgressItems } from 'src/types/media';
 
 import { storeToRefs } from 'pinia';
-import { QMenu } from 'quasar';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { ref, watch } from 'vue';

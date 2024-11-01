@@ -192,7 +192,7 @@
 // Packages
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { date, QMenu } from 'quasar';
+import { date, type QMenu } from 'quasar';
 import { computed, ref } from 'vue';
 // Globals
 import { get } from 'src/boot/axios';

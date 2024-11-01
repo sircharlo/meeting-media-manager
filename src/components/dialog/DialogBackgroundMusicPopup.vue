@@ -131,6 +131,8 @@ import { onMounted, ref, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
 
+const { getDateDiff } = date;
+
 const { fileUrlToPath, parseMediaFile, path } = window.electronApi;
 
 const { barStyle, thumbStyle } = useScrollbar();
@@ -310,7 +312,7 @@ const getNextSong = async () => {
       try {
         const selectedDayMedia =
           lookupPeriod.value[currentCongregation.value]?.find(
-            (d) => date.getDateDiff(selectedDate.value, d.date, 'days') === 0,
+            (d) => getDateDiff(selectedDate.value, d.date, 'days') === 0,
           )?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
         const selectedDaySongs: SongItem[] = selectedDayMedia
