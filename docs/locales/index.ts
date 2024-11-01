@@ -6,11 +6,16 @@ const localeOptions: { englishName: string; label: string; value: string }[] =
 
 const enabled: string[] = [
   'cmnHans',
+  'de',
+  'es',
+  'et',
   'fr',
   'hu',
   'nl',
   'pt',
   'ptPt',
+  'ru',
+  'sl',
   'sv',
   'sw',
   'uk',

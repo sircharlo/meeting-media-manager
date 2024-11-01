@@ -79,12 +79,12 @@ localeOptions.push({
 
 // import ilo from 'src/i18n/ilo.json';
 // localeOptions.push({ englishName: 'Ilocano', label: 'Ilocano', value: 'ilo' }); // Ilocano
-import it from 'src/i18n/it.json';
-localeOptions.push({
-  englishName: 'Italian',
-  label: 'Italiano',
-  value: 'it',
-}); // Italian
+// import it from 'src/i18n/it.json';
+// localeOptions.push({
+//   englishName: 'Italian',
+//   label: 'Italiano',
+//   value: 'it',
+// }); // Italian
 
 // import mg from 'src/i18n/mg.json';
 // localeOptions.push({
