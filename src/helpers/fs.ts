@@ -18,10 +18,10 @@ const {
   getUserDataPath,
   getVideoDuration,
   isFileUrl,
-  klawSync,
   parseMediaFile,
   path,
   pathToFileURL,
+  readDirectory,
 } = electronApi;
 
 const getPublicationsPath = () => path.join(getUserDataPath(), 'Publications');
@@ -71,7 +71,7 @@ const getPublicationDirectoryContents = (
   try {
     const dir = getPublicationDirectory(publication);
     if (!fs.existsSync(dir)) return [];
-    const files = klawSync(dir, {
+    const files = readDirectory(dir, {
       filter: (file) => {
         if (!filter || !file.path) return true;
         return path
@@ -308,7 +308,7 @@ const isEmptyDir = (directory: PathLike) => {
 const removeEmptyDirs = (rootDir: string) => {
   try {
     if (!fs.existsSync(rootDir)) return;
-    const dirs = klawSync(rootDir, {
+    const dirs = readDirectory(rootDir, {
       depthLimit: -1,
       nodir: false,
       nofile: true,

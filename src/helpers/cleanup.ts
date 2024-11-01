@@ -8,7 +8,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 // import { getAdditionalMediaPath, removeEmptyDirs } from 'src/helpers/fs';
 // import { useJwStore } from 'src/stores/jw';
 
-// const { fileUrlToPath, fs, klawSync, path } = electronApi;
+// const { fileUrlToPath, fs, readDirectory, path } = electronApi;
 
 const cleanLocalStorage = () => {
   // try {
@@ -42,7 +42,7 @@ const cleanAdditionalMediaFolder = () => {
     // const filesReferencedInAdditionalMediaMaps = flattenedFilePaths(
     //   additionalMediaMaps.value,
     // );
-    // const dirListing = klawSync(additionalMediaPath, { nodir: true }).map((f) =>
+    // const dirListing = readDirectory(additionalMediaPath, { nodir: true }).map((f) =>
     //   path.resolve(f.path),
     // );
     // for (const additionalMediaFilePath of dirListing) {

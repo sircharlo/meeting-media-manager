@@ -105,7 +105,7 @@ import { useJwStore } from 'src/stores/jw';
 // Types
 import type { CacheFile } from 'src/types';
 
-const { fs, klawSync, pathToFileURL } = electronApi;
+const { fs, pathToFileURL, readDirectory } = electronApi;
 
 const jwStore = useJwStore();
 const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
@@ -276,7 +276,7 @@ const calculateCacheSize = async () => {
     ]);
     for (const cacheDir of cacheDirs) {
       cacheFiles.value.push(
-        ...klawSync(cacheDir, {
+        ...readDirectory(cacheDir, {
           nodir: true,
           nofile: false,
         }).map((file) => {

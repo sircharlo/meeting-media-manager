@@ -5,7 +5,7 @@ import { defaultSettings } from 'src/constants/settings';
 import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-const { fs, klawSync, path } = electronApi;
+const { fs, path, readDirectory } = electronApi;
 const { readJSONSync } = fs;
 
 const oldPrefsFilterFn = (item: { path: string }) => {
@@ -25,7 +25,7 @@ const oldPrefsFilterFn = (item: { path: string }) => {
 const getOldPrefsPaths = (oldPath: string) => {
   try {
     if (!oldPath) return [];
-    return klawSync(oldPath, { filter: oldPrefsFilterFn });
+    return readDirectory(oldPath, { filter: oldPrefsFilterFn });
   } catch (error) {
     errorCatcher(error);
     return [];

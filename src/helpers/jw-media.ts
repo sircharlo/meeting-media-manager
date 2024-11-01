@@ -66,8 +66,8 @@ const {
   executeQuery,
   fileUrlToPath,
   fs,
-  klawSync,
   path,
+  readDirectory,
 } = electronApi;
 
 const addJwpubDocumentMediaToFiles = async (
@@ -1285,7 +1285,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     const responseObject = await getPubMediaLinks(publication);
     if (!responseObject?.files) {
       if (!fs.existsSync(pubDir)) return { FilePath: '' }; // Publication not found
-      const files = klawSync(pubDir, {
+      const files = readDirectory(pubDir, {
         filter: (file) => {
           let match = true;
           const params = [publication.issue, publication.track, publication.pub]

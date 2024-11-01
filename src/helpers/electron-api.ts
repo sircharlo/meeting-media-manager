@@ -34,7 +34,6 @@ export interface ElectronApi {
   getUserDesktopPath: () => string;
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   isFileUrl: (url: string) => boolean;
-  klawSync: typeof KlawSync;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -63,6 +62,7 @@ export interface ElectronApi {
   ) => Promise<IAudioMetadata>;
   path: typeof Path;
   pathToFileURL: (path: string) => string;
+  readDirectory: typeof KlawSync;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;
