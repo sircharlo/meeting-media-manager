@@ -209,7 +209,7 @@ export default {
   fr,
   hu,
   // ilo,
-  it,
+  // it,
   // mg,
   nl,
   // pag,
