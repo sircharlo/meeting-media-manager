@@ -172,7 +172,7 @@ const { data: mediaPlayingUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
 });
 
-const { post: postCurrentTime } = useBroadcastChannel({
+const { post: postCurrentTime } = useBroadcastChannel<number, number>({
   name: 'current-time',
 });
 
@@ -290,7 +290,9 @@ const playMedia = () => {
     }
 
     mediaElement.value.onended = () => {
-      const { post } = useBroadcastChannel({ name: 'media-state' });
+      const { post } = useBroadcastChannel<'ended', 'ended'>({
+        name: 'media-state',
+      });
       post('ended');
     };
 
@@ -311,7 +313,9 @@ const playMedia = () => {
             currentCongregation.value
           ]?.[selectedDate.value]?.[mediaUniqueId.value] ?? { max: 0 };
           if (currentTime >= customStartStop.max) {
-            const { post } = useBroadcastChannel({ name: 'media-state' });
+            const { post } = useBroadcastChannel<'ended', 'ended'>({
+              name: 'media-state',
+            });
             post('ended');
           }
         }

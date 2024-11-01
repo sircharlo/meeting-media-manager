@@ -29,7 +29,7 @@ const props = defineProps<{
 
 const localValue = ref(props.modelValue);
 
-const { post } = useBroadcastChannel({ name: 'volume-setter' });
+const { post } = useBroadcastChannel<number, number>({ name: 'volume-setter' });
 
 watch(localValue, (newValue) => {
   emit('update:modelValue', newValue);

@@ -112,7 +112,7 @@
 <script setup lang="ts">
 import type { SongItem } from 'src/types/media';
 
-import { useBroadcastChannel, useEventListener } from '@vueuse/core';
+import { useBroadcastChannel, useEventListener, whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
 import { useScrollbar } from 'src/composables/useScrollbar';
@@ -447,13 +447,14 @@ const fadeToVolumeLevel = (targetVolume: number, fadeOutSeconds: number) => {
 };
 
 useEventListener(window, 'toggleMusic', toggleMusicListener);
-const { data: volumeData } = useBroadcastChannel({ name: 'volume-setter' });
-watch(
+const { data: volumeData } = useBroadcastChannel<number, number>({
+  name: 'volume-setter',
+});
+
+whenever(
   () => volumeData.value,
-  (newVolume) => {
-    if (newVolume) {
-      setBackgroundMusicVolume(newVolume as number);
-    }
+  (val) => {
+    setBackgroundMusicVolume(val);
   },
 );
 
