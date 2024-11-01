@@ -1,11 +1,10 @@
 import type { SettingsValues } from 'src/types';
 
-import { electronApi } from 'src/helpers/electron-api';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
-const { registerShortcut, unregisterShortcut } = electronApi;
+const { registerShortcut, unregisterShortcut } = window.electronApi;
 
 const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   shortcutMediaNext: () => {

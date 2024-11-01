@@ -22,7 +22,6 @@ import type {
 
 import axios, { type AxiosError } from 'axios';
 import { Buffer } from 'buffer';
-import * as cheerio from 'cheerio';
 import PQueue from 'p-queue';
 import { date } from 'quasar';
 import sanitize from 'sanitize-filename';
@@ -36,7 +35,6 @@ import {
   isCoWeek,
   isMwMeetingDay,
 } from 'src/helpers/date';
-import { electronApi } from 'src/helpers/electron-api';
 import {
   getDurationFromMediaPath,
   getFileUrl,
@@ -65,9 +63,9 @@ const {
   executeQuery,
   fileUrlToPath,
   fs,
-  klawSync,
   path,
-} = electronApi;
+  readDirectory,
+} = window.electronApi;
 
 const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
@@ -1280,7 +1278,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     const responseObject = await getPubMediaLinks(publication);
     if (!responseObject?.files) {
       if (!fs.existsSync(pubDir)) return { FilePath: '' }; // Publication not found
-      const files = klawSync(pubDir, {
+      const files = readDirectory(pubDir, {
         filter: (file) => {
           let match = true;
           const params = [publication.issue, publication.track, publication.pub]
@@ -1664,7 +1662,8 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
       return;
     }
 
-    const $ = cheerio.load(homePage);
+    const { load } = await import('cheerio');
+    const $ = load(homePage);
     const div = $('div#pageConfig');
     if (!div?.[0]?.attribs) {
       resetUrlVariables();

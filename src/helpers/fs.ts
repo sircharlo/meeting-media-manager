@@ -4,7 +4,6 @@ import type { MultimediaItem, PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { FULL_HD } from 'src/constants/media';
-import { electronApi } from 'src/helpers/electron-api';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { isFileOfType, isImage, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -17,11 +16,11 @@ const {
   getUserDataPath,
   getVideoDuration,
   isFileUrl,
-  klawSync,
   parseMediaFile,
   path,
   pathToFileURL,
-} = electronApi;
+  readDirectory,
+} = window.electronApi;
 
 const getPublicationsPath = () => path.join(getUserDataPath(), 'Publications');
 const getFontsPath = () => path.join(getUserDataPath(), 'Fonts');
@@ -70,7 +69,7 @@ const getPublicationDirectoryContents = (
   try {
     const dir = getPublicationDirectory(publication);
     if (!fs.existsSync(dir)) return [];
-    const files = klawSync(dir, {
+    const files = readDirectory(dir, {
       filter: (file) => {
         if (!filter || !file.path) return true;
         return path
@@ -306,7 +305,7 @@ const isEmptyDir = (directory: PathLike) => {
 const removeEmptyDirs = (rootDir: string) => {
   try {
     if (!fs.existsSync(rootDir)) return;
-    const dirs = klawSync(rootDir, {
+    const dirs = readDirectory(rootDir, {
       depthLimit: -1,
       nodir: false,
       nofile: true,

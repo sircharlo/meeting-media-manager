@@ -2,11 +2,10 @@ import type { FontName } from 'src/types';
 
 import { FONT_URLS } from 'src/constants/fonts';
 
-import { electronApi } from './electron-api';
 import { getFontsPath } from './fs';
 import { downloadFile } from './jw-media';
 
-const { fs, path } = electronApi;
+const { fs, path } = window.electronApi;
 
 const getLocalFontPath = async (fontName: FontName) => {
   const fontsDir = getFontsPath();

@@ -27,8 +27,8 @@
         </div>
         <q-scroll-area
           v-else
-          :bar-style="barStyle()"
-          :thumb-style="thumbStyle()"
+          :bar-style="barStyle"
+          :thumb-style="thumbStyle"
           style="height: 40vh; width: -webkit-fill-available"
         >
           <template v-for="song in filteredSongs" :key="song.url">
@@ -77,7 +77,7 @@
 import type { MediaLink, PublicationFetcher } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { barStyle, thumbStyle } from 'src/boot/globals';
+import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadAdditionalRemoteVideo,
@@ -96,6 +96,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue']);
 
 // Setup logic
+const { barStyle, thumbStyle } = useScrollbar();
 const currentState = useCurrentStateStore();
 const { currentSettings, currentSongbook, currentSongs } =
   storeToRefs(currentState);

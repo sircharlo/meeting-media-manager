@@ -1,9 +1,8 @@
-import type { ElectronApi } from 'src/helpers/electron-api';
+import type { ElectronApi } from 'src/types';
 
 import { app } from '@electron/remote';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
-import klawSync from 'klaw-sync';
 import path from 'upath';
 
 import pkg from '../package.json';
@@ -16,6 +15,7 @@ import {
   isFileUrl,
   parseMediaFile,
   pathToFileURL,
+  readDirectory,
 } from './preload/fs';
 import { invoke, listen, removeAllIpcListeners, send } from './preload/ipc';
 import { initScreenListeners, moveMediaWindow } from './preload/screen';
@@ -49,7 +49,6 @@ const electronApi: ElectronApi = {
   getUserDesktopPath: () => app.getPath('desktop'),
   getVideoDuration,
   isFileUrl,
-  klawSync,
   moveMediaWindow,
   navigateWebsiteWindow,
   onLog: (cb) => listen('log', cb),
@@ -60,6 +59,7 @@ const electronApi: ElectronApi = {
   parseMediaFile,
   path,
   pathToFileURL,
+  readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),

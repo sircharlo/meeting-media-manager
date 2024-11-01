@@ -60,9 +60,6 @@
 // Packages
 import { storeToRefs } from 'pinia';
 
-// Helpers
-import { electronApi } from 'src/helpers/electron-api';
-
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed } from 'vue';
@@ -73,7 +70,7 @@ const {
   navigateWebsiteWindow,
   openWebsiteWindow,
   zoomWebsiteWindow,
-} = electronApi;
+} = window.electronApi;
 
 const camelToKebabCase = (str: string) =>
   str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);

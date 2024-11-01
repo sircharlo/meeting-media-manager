@@ -27,8 +27,8 @@
           </template>
           <template v-else>
             <q-scroll-area
-              :bar-style="barStyle()"
-              :thumb-style="thumbStyle()"
+              :bar-style="barStyle"
+              :thumb-style="thumbStyle"
               style="height: 40vh; width: -webkit-fill-available"
             >
               <template
@@ -95,19 +95,19 @@
 </template>
 
 <script setup lang="ts">
+import type { QMenu } from 'quasar';
 import type { DownloadProgressItems } from 'src/types/media';
 
 import { storeToRefs } from 'pinia';
-import { QMenu } from 'quasar';
-import { barStyle, thumbStyle } from 'src/boot/globals';
-import { electronApi } from 'src/helpers/electron-api';
+import { useScrollbar } from 'src/composables/useScrollbar';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { ref, watch } from 'vue';
 
-const { path } = electronApi;
+const { path } = window.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 
+const { barStyle, thumbStyle } = useScrollbar();
 const currentState = useCurrentStateStore();
 const { downloadProgress } = storeToRefs(currentState);
 

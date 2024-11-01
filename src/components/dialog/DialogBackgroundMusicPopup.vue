@@ -34,8 +34,8 @@
                   {{ $t('upcoming-songs') }}
                 </p>
                 <q-scroll-area
-                  :bar-style="barStyle()"
-                  :thumb-style="thumbStyle()"
+                  :bar-style="barStyle"
+                  :thumb-style="thumbStyle"
                   style="height: 100px; max-width: 100%"
                 >
                   <template v-for="(song, i) in songList" :key="i">
@@ -115,9 +115,8 @@ import type { SongItem } from 'src/types/media';
 import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
-import { barStyle, thumbStyle } from 'src/boot/globals';
+import { useScrollbar } from 'src/composables/useScrollbar';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getFileUrl,
@@ -132,7 +131,11 @@ import { onMounted, ref, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
 
-const { fileUrlToPath, parseMediaFile, path } = electronApi;
+const { getDateDiff } = date;
+
+const { fileUrlToPath, parseMediaFile, path } = window.electronApi;
+
+const { barStyle, thumbStyle } = useScrollbar();
 
 const currentState = useCurrentStateStore();
 const {
@@ -309,7 +312,7 @@ const getNextSong = async () => {
       try {
         const selectedDayMedia =
           lookupPeriod.value[currentCongregation.value]?.find(
-            (d) => date.getDateDiff(selectedDate.value, d.date, 'days') === 0,
+            (d) => getDateDiff(selectedDate.value, d.date, 'days') === 0,
           )?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
         const selectedDaySongs: SongItem[] = selectedDayMedia

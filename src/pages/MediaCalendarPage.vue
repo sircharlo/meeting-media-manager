@@ -453,7 +453,6 @@ import {
   isInPast,
   isWeMeetingDay,
 } from 'src/helpers/date';
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getDurationFromMediaPath,
@@ -541,7 +540,7 @@ const {
   fs,
   getLocalPathFromFileObject,
   path,
-} = electronApi;
+} = window.electronApi;
 
 const filesLoading = ref(-1);
 

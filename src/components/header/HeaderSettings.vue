@@ -81,14 +81,12 @@
 // Packages
 import { storeToRefs } from 'pinia';
 import prettyBytes from 'pretty-bytes';
-import { QMenu } from 'quasar';
 import { computed, ref } from 'vue';
 
 // Components
 import DialogCacheClear from 'src/components/dialog/DialogCacheClear.vue';
 
 // Helpers
-import { electronApi } from 'src/helpers/electron-api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getAdditionalMediaPath,
@@ -105,7 +103,7 @@ import { useJwStore } from 'src/stores/jw';
 // Types
 import type { CacheFile } from 'src/types';
 
-const { fs, klawSync, pathToFileURL } = electronApi;
+const { fs, pathToFileURL, readDirectory } = window.electronApi;
 
 const jwStore = useJwStore();
 const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
@@ -276,7 +274,7 @@ const calculateCacheSize = async () => {
     ]);
     for (const cacheDir of cacheDirs) {
       cacheFiles.value.push(
-        ...klawSync(cacheDir, {
+        ...readDirectory(cacheDir, {
           nodir: true,
           nofile: false,
         }).map((file) => {
