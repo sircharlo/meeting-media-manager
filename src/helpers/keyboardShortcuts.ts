@@ -1,6 +1,5 @@
 import type { SettingsValues } from 'src/types';
 
-import { storeToRefs } from 'pinia';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
@@ -63,16 +62,15 @@ const registerCustomShortcut = (
 ) => {
   try {
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
     if (
       !shortcutCallbacks[shortcutName] ||
-      !currentSettings.value ||
-      !currentSettings.value[shortcutName] ||
-      !currentSettings.value?.enableKeyboardShortcuts
+      !currentState.currentSettings ||
+      !currentState.currentSettings[shortcutName] ||
+      !currentState.currentSettings?.enableKeyboardShortcuts
     )
       return;
     if (!keySequence)
-      keySequence = currentSettings.value[shortcutName] as string;
+      keySequence = currentState.currentSettings[shortcutName] as string;
     registerShortcut(shortcutName, keySequence);
   } catch (error) {
     errorCatcher(error);
@@ -82,8 +80,7 @@ const registerCustomShortcut = (
 const registerAllCustomShortcuts = () => {
   try {
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
-    if (!currentSettings.value) return;
+    if (!currentState.currentSettings) return;
     unregisterAllCustomShortcuts();
     for (const shortcutName of Object.keys(shortcutCallbacks)) {
       registerCustomShortcut(shortcutName as keyof SettingsValues);
@@ -96,13 +93,13 @@ const registerAllCustomShortcuts = () => {
 const unregisterAllCustomShortcuts = () => {
   try {
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
-    if (!currentSettings.value) return;
+    if (!currentState.currentSettings) return;
     for (const shortcutName of Object.keys(
       shortcutCallbacks,
     ) as (keyof SettingsValues)[]) {
-      if (!shortcutName || !currentSettings.value[shortcutName]) continue;
-      unregisterShortcut(currentSettings.value[shortcutName] as string);
+      if (!shortcutName || !currentState.currentSettings[shortcutName])
+        continue;
+      unregisterShortcut(currentState.currentSettings[shortcutName] as string);
     }
   } catch (error) {
     errorCatcher(error);

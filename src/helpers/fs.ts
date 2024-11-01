@@ -3,7 +3,6 @@ import type { IAudioMetadata } from 'music-metadata';
 import type { MultimediaItem, PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
-import { storeToRefs } from 'pinia';
 import { FULL_HD } from 'src/constants/media';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { isFileOfType, isImage, isVideo } from 'src/helpers/mediaPlayback';
@@ -249,20 +248,19 @@ const getSubtitlesUrl = async (
 ) => {
   try {
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
     let subtitlesUrl = '';
-    if (currentSettings.value?.enableSubtitles) {
+    if (currentState.currentSettings?.enableSubtitles) {
       if (
         isVideo(multimediaItem.FilePath) &&
         multimediaItem.KeySymbol &&
         multimediaItem.Track
       ) {
         let subtitlesPath = multimediaItem.FilePath.split('.')[0] + '.vtt';
-        const subtitleLang = currentSettings.value?.langSubtitles;
+        const subtitleLang = currentState.currentSettings?.langSubtitles;
         const subtitleFetcher: PublicationFetcher = {
           fileformat: 'mp4',
           issue: multimediaItem.IssueTagNumber,
-          langwritten: subtitleLang ?? currentSettings.value?.lang,
+          langwritten: subtitleLang ?? currentState.currentSettings?.lang,
           pub: multimediaItem.KeySymbol,
           track: multimediaItem.Track,
         };

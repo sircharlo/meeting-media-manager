@@ -1,6 +1,5 @@
 import type { DateInfo } from 'src/types';
 
-import { storeToRefs } from 'pinia';
 import { date, type DateLocale } from 'quasar';
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -76,8 +75,10 @@ const getWeekDay = (lookupDate: Date) => {
   try {
     if (!lookupDate) return '0';
     const currentState = useCurrentStateStore();
-    const { selectedDateObject } = storeToRefs(currentState);
-    if (!lookupDate) lookupDate = selectedDateObject.value?.date || new Date();
+    if (!lookupDate) {
+      lookupDate = currentState.selectedDateObject?.date || new Date();
+    }
+
     const dayNumber =
       lookupDate.getDay() === 0
         ? lookupDate.getDay() + 6
@@ -121,10 +122,9 @@ function isCoWeek(lookupDate: Date) {
     if (!lookupDate) return false;
     lookupDate = dateFromString(lookupDate);
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
-    const coWeekSet = !!currentSettings.value?.coWeek;
+    const coWeekSet = !!currentState.currentSettings?.coWeek;
     if (!coWeekSet) return false;
-    const coWeekTuesday = dateFromString(currentSettings.value?.coWeek);
+    const coWeekTuesday = dateFromString(currentState.currentSettings?.coWeek);
     const coMonday = getSpecificWeekday(coWeekTuesday, 0);
     const lookupWeekMonday = getSpecificWeekday(lookupDate, 0);
     return datesAreSame(coMonday, lookupWeekMonday);
@@ -139,13 +139,14 @@ const isMwMeetingDay = (lookupDate: Date) => {
     if (!lookupDate) return false;
     lookupDate = dateFromString(lookupDate);
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
     const coWeek = isCoWeek(lookupDate);
     if (coWeek) {
-      const coWeekTuesday = dateFromString(currentSettings.value?.coWeek);
+      const coWeekTuesday = dateFromString(
+        currentState.currentSettings?.coWeek,
+      );
       return datesAreSame(coWeekTuesday, lookupDate);
     } else {
-      return currentSettings.value?.mwDay === getWeekDay(lookupDate);
+      return currentState.currentSettings?.mwDay === getWeekDay(lookupDate);
     }
   } catch (error) {
     errorCatcher(error);
@@ -158,8 +159,7 @@ const isWeMeetingDay = (lookupDate: Date) => {
     if (!lookupDate) return false;
     lookupDate = dateFromString(lookupDate);
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
-    return currentSettings.value?.weDay === getWeekDay(lookupDate);
+    return currentState.currentSettings?.weDay === getWeekDay(lookupDate);
   } catch (error) {
     errorCatcher(error);
     return false;
@@ -169,17 +169,17 @@ const isWeMeetingDay = (lookupDate: Date) => {
 function updateLookupPeriod(reset = false) {
   try {
     const currentState = useCurrentStateStore();
-    const { currentCongregation } = storeToRefs(currentState);
-    if (!currentCongregation.value) return;
+    if (!currentState.currentCongregation) return;
     const jwStore = useJwStore();
-    const { lookupPeriod } = storeToRefs(jwStore);
-    if (!lookupPeriod.value[currentCongregation.value]?.length || reset)
-      lookupPeriod.value[currentCongregation.value] = [];
-    lookupPeriod.value[currentCongregation.value] = lookupPeriod.value[
-      currentCongregation.value
-    ]?.filter((day) => {
-      return !isInPast(day.date);
-    });
+    if (
+      !jwStore.lookupPeriod[currentState.currentCongregation]?.length ||
+      reset
+    )
+      jwStore.lookupPeriod[currentState.currentCongregation] = [];
+    jwStore.lookupPeriod[currentState.currentCongregation] =
+      jwStore.lookupPeriod[currentState.currentCongregation]?.filter((day) => {
+        return !isInPast(day.date);
+      });
     const futureDates: DateInfo[] = Array.from(
       { length: DAYS_IN_FUTURE },
       (_, i): DateInfo => {
@@ -201,17 +201,17 @@ function updateLookupPeriod(reset = false) {
         };
       },
     );
-    lookupPeriod.value[currentCongregation.value].push(
+    jwStore.lookupPeriod[currentState.currentCongregation].push(
       ...futureDates.filter(
         (day) =>
-          !lookupPeriod.value[currentCongregation.value]
+          !jwStore.lookupPeriod[currentState.currentCongregation]
             ?.map((d) => formatDate(d.date, 'YYYY/MM/DD'))
             .includes(formatDate(day.date, 'YYYY/MM/DD')),
       ),
     );
-    const todayDate = lookupPeriod.value[currentCongregation.value]?.find((d) =>
-      datesAreSame(new Date(d.date), new Date()),
-    );
+    const todayDate = jwStore.lookupPeriod[
+      currentState.currentCongregation
+    ]?.find((d) => datesAreSame(new Date(d.date), new Date()));
     if (todayDate) todayDate.today = true;
   } catch (error) {
     errorCatcher(error);
@@ -227,15 +227,15 @@ const getLocalDate = (dateObj: Date | string, locale: DateLocale) => {
 const remainingTimeBeforeMeetingStart = () => {
   try {
     const currentState = useCurrentStateStore();
-    const { currentSettings, selectedDateObject } = storeToRefs(currentState);
     const meetingDay =
-      !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting;
+      !!currentState.selectedDateObject?.today &&
+      !!currentState.selectedDateObject?.meeting;
     if (meetingDay) {
       const now = new Date();
-      const weMeeting = selectedDateObject.value?.meeting === 'we';
+      const weMeeting = currentState.selectedDateObject?.meeting === 'we';
       const meetingStartTime = weMeeting
-        ? currentSettings.value?.weStartTime
-        : currentSettings.value?.mwStartTime;
+        ? currentState.currentSettings?.weStartTime
+        : currentState.currentSettings?.mwStartTime;
       if (!meetingStartTime) return 0;
       const [hours, minutes] = meetingStartTime.split(':').map(Number);
       const meetingStartDateTime = new Date(now);

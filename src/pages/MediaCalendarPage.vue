@@ -547,36 +547,46 @@ const filesLoading = ref(-1);
 watch(
   () => mediaPlayingUniqueId.value,
   (newMediaUniqueId) => {
-    const { post } = useBroadcastChannel({ name: 'unique-id' });
+    const { post } = useBroadcastChannel<string, string>({ name: 'unique-id' });
     post(newMediaUniqueId);
     if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
   },
 );
 
+const { post: postMediaAction } = useBroadcastChannel<string, string>({
+  name: 'media-action',
+});
+
 watch(
   () => mediaPlayingAction.value,
   (newAction, oldAction) => {
-    const { post } = useBroadcastChannel({ name: 'media-action' });
-    if (newAction !== oldAction) post(newAction);
+    if (newAction !== oldAction) postMediaAction(newAction);
   },
 );
+
+const { post: postSubtitlesUrl } = useBroadcastChannel<string, string>({
+  name: 'subtitles-url',
+});
 
 watch(
   () => mediaPlayingSubtitlesUrl.value,
   (newSubtitlesUrl, oldSubtitlesUrl) => {
-    const { post } = useBroadcastChannel({ name: 'subtitles-url' });
-    if (newSubtitlesUrl !== oldSubtitlesUrl) post(newSubtitlesUrl);
+    if (newSubtitlesUrl !== oldSubtitlesUrl) postSubtitlesUrl(newSubtitlesUrl);
   },
 );
+
+const { post: postPanzoom } = useBroadcastChannel<
+  Record<string, number>,
+  Record<string, number>
+>({ name: 'panzoom' });
 
 watch(
   () => mediaPlayingPanzoom.value,
   (newPanzoom, oldPanzoom) => {
     try {
-      const { post } = useBroadcastChannel({ name: 'panzoom' });
       if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
         newPanzoom = JSON.parse(JSON.stringify(newPanzoom));
-        post(newPanzoom);
+        postPanzoom(newPanzoom);
       }
     } catch (error) {
       errorCatcher(error);
@@ -585,11 +595,14 @@ watch(
   { deep: true },
 );
 
+const { post: postMediaUrl } = useBroadcastChannel<string, string>({
+  name: 'media-url',
+});
+
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    const { post } = useBroadcastChannel({ name: 'media-url' });
-    if (newUrl !== oldUrl) post(newUrl);
+    if (newUrl !== oldUrl) postMediaUrl(newUrl);
   },
 );
 
@@ -601,7 +614,9 @@ const datedAdditionalMediaMap = computed(() => {
   );
 });
 
-const { data: mediaStateData } = useBroadcastChannel({ name: 'media-state' });
+const { data: mediaStateData } = useBroadcastChannel<'ended', 'ended'>({
+  name: 'media-state',
+});
 
 watch(
   () => mediaStateData.value,

@@ -25,7 +25,9 @@ const { currentSettings } = storeToRefs(currentState);
 
 const subtitlesVisible = ref(true);
 
-const { post } = useBroadcastChannel({ name: 'subtitles-visible' });
+const { post } = useBroadcastChannel<boolean, boolean>({
+  name: 'subtitles-visible',
+});
 
 watch(
   () => subtitlesVisible.value,

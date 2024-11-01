@@ -8,7 +8,7 @@ import type {
 } from 'src/types';
 
 import { getLanguages, getYeartext } from 'boot/axios';
-import { defineStore, storeToRefs } from 'pinia';
+import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
 import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
@@ -123,16 +123,16 @@ export const useJwStore = defineStore('jw-store', {
     resetSort() {
       try {
         const currentState = useCurrentStateStore();
-        const { currentCongregation, selectedDate, selectedDateObject } =
-          storeToRefs(currentState);
         if (
-          currentCongregation.value &&
-          selectedDate.value &&
-          this.mediaSort[currentCongregation.value]
+          currentState.currentCongregation &&
+          currentState.selectedDate &&
+          this.mediaSort[currentState.currentCongregation]
         ) {
-          this.mediaSort[currentCongregation.value][selectedDate.value] = [];
+          this.mediaSort[currentState.currentCongregation][
+            currentState.selectedDate
+          ] = [];
         }
-        (selectedDateObject.value?.dynamicMedia ?? [])
+        (currentState.selectedDateObject?.dynamicMedia ?? [])
           .filter((item) => item.sectionOriginal)
           .filter((item) => item.section !== item.sectionOriginal)
           .forEach((item) => {

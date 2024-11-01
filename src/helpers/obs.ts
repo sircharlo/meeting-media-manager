@@ -1,5 +1,4 @@
 import { OBSWebSocketError } from 'obs-websocket-js';
-import { storeToRefs } from 'pinia';
 import { obsWebSocket } from 'src/boot/globals';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -33,11 +32,10 @@ const isUUID = (uuid?: string) => {
 const configuredScenesAreAllUUIDs = () => {
   try {
     const currentState = useCurrentStateStore();
-    const { currentSettings } = storeToRefs(currentState);
     const configuredScenes = [
-      currentSettings.value?.obsCameraScene,
-      currentSettings.value?.obsImageScene,
-      currentSettings.value?.obsMediaScene,
+      currentState.currentSettings?.obsCameraScene,
+      currentState.currentSettings?.obsImageScene,
+      currentState.currentSettings?.obsMediaScene,
     ].filter((s): s is string => !!s);
     if (!configuredScenes.length) return true;
     return configuredScenes.every((scene) => isUUID(scene));
@@ -49,17 +47,15 @@ const configuredScenesAreAllUUIDs = () => {
 
 const obsErrorHandler = (err: OBSWebSocketError) => {
   const obsState = useObsStateStore();
-  const { obsMessage } = storeToRefs(obsState);
-  obsMessage.value = 'obs.error';
+  obsState.obsMessage = 'obs.error';
   if (err?.code && ![-1, 1001, 1006, 4009].includes(err.code))
     errorCatcher(err);
 };
 
 const obsCloseHandler = () => {
   const obsState = useObsStateStore();
-  const { obsConnectionState, obsMessage } = storeToRefs(obsState);
-  obsConnectionState.value = 'disconnected';
-  obsMessage.value = 'obs.disconnected';
+  obsState.obsConnectionState = 'disconnected';
+  obsState.obsMessage = 'obs.disconnected';
 };
 
 const sleep = (ms: number) =>
@@ -69,29 +65,31 @@ const sleep = (ms: number) =>
 
 const obsConnect = async (setup?: boolean) => {
   const currentState = useCurrentStateStore();
-  const { currentSettings } = storeToRefs(currentState);
   const obsState = useObsStateStore();
-  const { obsConnectionState, obsMessage } = storeToRefs(obsState);
   try {
-    if (!currentSettings.value?.obsEnable) {
+    if (!currentState.currentSettings?.obsEnable) {
       await obsWebSocket?.disconnect();
       return;
     }
 
-    const obsPort = (currentSettings.value?.obsPort as string) || '';
+    const obsPort = (currentState.currentSettings?.obsPort as string) || '';
     if (!portNumberValidator(obsPort)) return;
 
-    const obsPassword = (currentSettings.value?.obsPassword as string) || '';
+    const obsPassword =
+      (currentState.currentSettings?.obsPassword as string) || '';
     if (obsPassword?.length === 0) return;
 
-    obsConnectionState.value = 'connecting';
-    obsMessage.value = 'obs.connecting';
+    obsState.obsConnectionState = 'connecting';
+    obsState.obsMessage = 'obs.connecting';
 
     let attempt = 0;
     const maxAttempts = setup ? 1 : 12;
     const timeBetweenAttempts = 5000;
-    // @ts-expect-error connecting and connected have no overlap
-    while (attempt < maxAttempts && obsConnectionState.value !== 'connected') {
+    while (
+      attempt < maxAttempts &&
+      // @ts-expect-error connecting and connected have no overlap
+      obsState.obsConnectionState !== 'connected'
+    ) {
       try {
         const connection = await obsWebSocket?.connect(
           'ws://127.0.0.1:' + obsPort,
