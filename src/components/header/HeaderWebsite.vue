@@ -48,7 +48,7 @@
     color="white-transparent"
     unelevated
     @click="
-      openWebsiteWindow();
+      openWebsiteWindow(locale);
       mediaPlayingAction = 'website';
     "
   >
@@ -65,6 +65,8 @@ import { electronApi } from 'src/helpers/electron-api';
 
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const {
   closeWebsiteWindow,
@@ -72,6 +74,15 @@ const {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } = electronApi;
+
+const camelToKebabCase = (str: string) =>
+  str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+
+const i18n = useI18n();
+
+const locale = computed(() => {
+  return camelToKebabCase(i18n.locale.value);
+});
 
 const currentState = useCurrentStateStore();
 const { mediaPlaying, mediaPlayingAction } = storeToRefs(currentState);

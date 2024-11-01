@@ -1,6 +1,7 @@
 import { captureException } from '@sentry/browser';
 
 import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
+import { urlVariables } from './main/session';
 
 /**
  * Check if a given url is a trusted domain
@@ -11,9 +12,15 @@ export function isTrustedDomain(url: string): boolean {
   try {
     const parsedUrl = new URL(url);
     if (parsedUrl.protocol !== 'https:') return false;
-    return TRUSTED_DOMAINS.some((domain) =>
-      parsedUrl.hostname.endsWith(domain),
-    );
+    return TRUSTED_DOMAINS.concat(
+      [
+        urlVariables?.mediator,
+        urlVariables?.pubMedia,
+        urlVariables ? `https://www.${urlVariables.base}/` : undefined,
+      ]
+        .filter((d): d is string => !!d)
+        .map((d) => new URL(d).hostname),
+    ).some((domain) => parsedUrl.hostname.endsWith(domain));
   } catch (e) {
     return false;
   }
@@ -27,7 +34,11 @@ export function isTrustedDomain(url: string): boolean {
 export function isJwDomain(url: string): boolean {
   const parsedUrl = new URL(url);
   if (parsedUrl.protocol !== 'https:') return false;
-  return JW_DOMAINS.some((domain) => parsedUrl.hostname.endsWith(domain));
+  return JW_DOMAINS.concat(
+    [urlVariables?.base]
+      .filter((d): d is string => !!d)
+      .map((d) => new URL(`https://www.${d}/`).hostname),
+  ).some((domain) => parsedUrl.hostname.endsWith(domain));
 }
 
 /**

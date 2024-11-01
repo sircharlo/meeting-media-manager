@@ -361,6 +361,7 @@ const electronApi: ElectronApi = {
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
+  setUrlVariables: (v) => send('setUrlVariables', v),
   toggleMediaWindow,
   unregisterShortcut: (s) => send('unregisterShortcut', s),
   zoomWebsiteWindow,

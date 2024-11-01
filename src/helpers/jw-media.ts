@@ -1192,7 +1192,7 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
   const { urlVariables } = jwStore;
   try {
     const currentStateStore = useCurrentStateStore();
-    
+
     if (!publication.fileformat) publication.fileformat = '';
     if (publication.pub === 'sjjm') {
       publication.pub = currentStateStore.currentSongbook?.pub;
@@ -1673,10 +1673,12 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
 
     const attributes = { ...(div?.[0]?.attribs || {}) };
 
-    if (attributes['data-mediator_url'])
+    if (attributes['data-mediator_url']) {
       jwStore.urlVariables.mediator = attributes['data-mediator_url'];
-    if (attributes['data-pubmedia_url'])
+    }
+    if (attributes['data-pubmedia_url']) {
       jwStore.urlVariables.pubMedia = attributes['data-pubmedia_url'];
+    }
   } catch (e) {
     if (jwStore.urlVariables.base)
       requestControllers
@@ -1684,6 +1686,8 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
         .forEach((c) => c.abort());
     errorCatcher(e);
     resetUrlVariables();
+  } finally {
+    window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
   }
 };
 

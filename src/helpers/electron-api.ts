@@ -57,7 +57,7 @@ export interface ElectronApi {
     single?: boolean,
     filter?: FileDialogFilter,
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
-  openWebsiteWindow: () => void;
+  openWebsiteWindow: (lang?: string) => void;
   parseMediaFile: (
     filePath: string,
     options?: IOptions,
@@ -67,6 +67,7 @@ export interface ElectronApi {
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;
+  setUrlVariables: (variables: string) => void;
   toggleMediaWindow: (action: string) => void;
   unregisterShortcut: (shortcut: string) => void;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;

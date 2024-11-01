@@ -9,6 +9,7 @@ import {
 } from 'electron';
 import path from 'path';
 
+import { urlVariables } from '../session';
 import { PLATFORM } from './../../constants';
 import { StatefulBrowserWindow } from './window-state';
 
@@ -23,6 +24,7 @@ import { StatefulBrowserWindow } from './window-state';
 export function createWindow(
   name: 'main' | 'media' | 'website' = 'main',
   options?: BrowserWindowConstructorOptions,
+  lang = '',
 ) {
   // Create the browser window
   const opts: BrowserWindowConstructorOptions = {
@@ -80,9 +82,7 @@ export function createWindow(
       page = 'media-player';
       break;
     case 'website':
-      page = 'https://www.jw.org';
-      // TODO: Find a way to implement urlVariables here
-      // page = `https://${urlVariables.base}`;
+      page = `https://www.${urlVariables?.base || 'jw.org'}/${lang}`;
       break;
   }
   win.loadURL(
