@@ -68,9 +68,9 @@ handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
   app.setLoginItemSettings({ openAtLogin });
 });
 
-handleIpcSend('toggleWebsiteWindow', (_e, show: boolean) => {
+handleIpcSend('toggleWebsiteWindow', (_e, show: boolean, lang?: string) => {
   if (show) {
-    createWebsiteWindow();
+    createWebsiteWindow(lang);
   } else {
     websiteWindow?.close();
   }

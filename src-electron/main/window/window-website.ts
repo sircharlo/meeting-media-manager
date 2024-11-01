@@ -9,7 +9,7 @@ export let websiteWindow: BrowserWindow | null = null;
 /**
  * Creates the website window
  */
-export function createWebsiteWindow() {
+export function createWebsiteWindow(lang?: string) {
   // If the window is already open, just focus it
   if (websiteWindow && !websiteWindow.isDestroyed()) {
     websiteWindow.show();
@@ -17,14 +17,18 @@ export function createWebsiteWindow() {
   }
 
   // Create the browser window
-  websiteWindow = createWindow('website', {
-    alwaysOnTop: true,
-    height: 720,
-    show: true,
-    title: 'Website Stream',
-    useContentSize: true,
-    width: 1280,
-  });
+  websiteWindow = createWindow(
+    'website',
+    {
+      alwaysOnTop: true,
+      height: 720,
+      show: true,
+      title: 'Website Stream',
+      useContentSize: true,
+      width: 1280,
+    },
+    lang,
+  );
 
   websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
   websiteWindow.webContents.on('zoom-changed', (_, direction) => {

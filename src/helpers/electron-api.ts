@@ -57,7 +57,7 @@ export interface ElectronApi {
     single?: boolean,
     filter?: FileDialogFilter,
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
-  openWebsiteWindow: () => void;
+  openWebsiteWindow: (lang?: string) => void;
   parseMediaFile: (
     filePath: string,
     options?: IOptions,

@@ -10,8 +10,8 @@ export const initWebsiteListeners = () => {
   });
 };
 
-export const openWebsiteWindow = () => {
-  send('toggleWebsiteWindow', true);
+export const openWebsiteWindow = (lang?: string) => {
+  send('toggleWebsiteWindow', true, lang);
   webStreamBroadcastChannel.postMessage(true);
 };
 
