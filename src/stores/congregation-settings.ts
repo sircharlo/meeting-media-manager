@@ -24,7 +24,7 @@ export const useCongregationSettingsStore = defineStore(
       },
     },
     getters: {
-      congregationCount(state) {
+      congregationCount: (state) => {
         return Object.keys(state.congregations)?.length;
       },
     },
