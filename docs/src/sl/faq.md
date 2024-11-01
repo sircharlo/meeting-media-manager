@@ -2,7 +2,7 @@
 
 ## :earth_americas: Ali je ta program odvisen od zunanjih spletnih mest, virov ali „skrbnikov“ za prenašanje publikacij, multimedijske vsebine za shode ali drugih vsebin?
 
-**Ne.** Program se obnaša podobno kot JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Program samodejno ugotovi, kaj je treba prenesti in kdaj predhodno prenesena vsebina ni več posodobljena in jo je treba zato ponovno prenesti.
+**Ne.** Program se obnaša podobno kot JW Library. Publikacije, multimedijsko vsebino in drugo prenaša neposredno z uradnega spletnega mesta Jehovovih prič in njegovega omrežja za dostavo vsebin. Program samodejno ugotovi, kaj je treba prenesti in kdaj predhodno prenesena vsebina ni več posodobljena in jo je treba zato ponovno prenesti.
 
 :::info Opomba
 
@@ -10,9 +10,9 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 
 :::
 
-## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses?
+## :thinking: Ali ta program krši pogoje uporabe uradnega spletnega mesta Jehovovih prič?
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Tukaj je odlomek iz teh pogojev (poudarili mi):
+**Ne.** [Pogoji uporabe](https://www.jw.org/finder?docid=1011511\&prefer=content) uradnega spletnega mesta Jehovovih prič dejansko izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Navajamo odlomek iz teh pogojev (poudarili mi):
 
 > Ni vam dovoljeno:
 >
