@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import type { SettingsItemAction } from 'src/types';
 
-import { getActions } from 'src/helpers/settings';
+import { performActions } from 'src/helpers/settings';
 import { watch } from 'vue';
 
 // Define props
@@ -17,6 +17,6 @@ const model = defineModel<boolean>({ required: true });
 
 // Setup component
 watch(model, () => {
-  getActions(props.actions);
+  performActions(props.actions);
 });
 </script>

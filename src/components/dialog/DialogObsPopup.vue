@@ -221,7 +221,7 @@ const sceneList = computed(() =>
     currentSettings.value?.obsImageScene,
   ]
     .concat(additionalScenes.value || [])
-    .filter(Boolean),
+    .filter((s): s is string => !!s),
 );
 
 const baseScenesLength = computed(

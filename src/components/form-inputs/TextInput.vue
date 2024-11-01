@@ -27,7 +27,7 @@
 import type { SettingsItemAction, SettingsItemRule } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { getActions, getRules } from 'src/helpers/settings';
+import { getRules, performActions } from 'src/helpers/settings';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { computed, watch } from 'vue';
@@ -72,6 +72,6 @@ const props = defineProps<{
 const model = defineModel<null | string>({ required: true });
 
 watch(model, () => {
-  getActions(props.actions);
+  performActions(props.actions);
 });
 </script>

@@ -40,18 +40,17 @@ const coTuesdays = (lookupDate: string) => {
 
 const getDateOptions = (options: SettingsItemOption[] | undefined) => {
   try {
-    const filteredOptions = options
-      ?.map((option) => {
-        if (option === 'coTuesdays') {
-          return coTuesdays;
-        } else {
-          return undefined;
-        }
-      })
-      .filter(Boolean);
-    return filteredOptions && filteredOptions.length > 0
-      ? filteredOptions[0]
-      : undefined;
+    const filteredOptions =
+      options
+        ?.map((option) => {
+          if (option === 'coTuesdays') {
+            return coTuesdays;
+          } else {
+            return undefined;
+          }
+        })
+        .filter((fn): fn is (d: string) => boolean => !!fn) || [];
+    return filteredOptions.length > 0 ? filteredOptions[0] : undefined;
   } catch (error) {
     errorCatcher(error);
     return undefined;
@@ -82,23 +81,16 @@ const getRules = (rules: SettingsItemRule[] | undefined) => {
   }
 };
 
-const getActions = (actions: SettingsItemAction[] | undefined) => {
-  try {
-    return actions
-      ?.map(async (action) => {
-        if (action === 'obsConnect') {
-          return window.dispatchEvent(
-            new CustomEvent('obsConnectFromSettings'),
-          );
-        } else {
-          return undefined;
-        }
-      })
-      .filter(Boolean);
-  } catch (error) {
-    errorCatcher(error);
-    return undefined;
-  }
+const performActions = (actions: SettingsItemAction[] | undefined) => {
+  actions?.forEach((action) => {
+    try {
+      if (action === 'obsConnect') {
+        window.dispatchEvent(new CustomEvent('obsConnectFromSettings'));
+      }
+    } catch (error) {
+      errorCatcher(error);
+    }
+  });
 };
 
 const meetingTime = (hr: number, min: null | number) => {
@@ -126,7 +118,7 @@ const getTimeOptions = (options: SettingsItemOption[] | undefined) => {
           return undefined;
         }
       })
-      .filter(Boolean);
+      .filter((fn): fn is (hr: number, min: null | number) => boolean => !!fn);
     if (!filteredOptions) return undefined;
     return filteredOptions && filteredOptions.length > 0
       ? filteredOptions[0]
@@ -147,4 +139,10 @@ const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
   }
 };
 
-export { getActions, getDateOptions, getRules, getTimeOptions, parseJsonSafe };
+export {
+  getDateOptions,
+  getRules,
+  getTimeOptions,
+  parseJsonSafe,
+  performActions,
+};

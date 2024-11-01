@@ -39,9 +39,11 @@ export const useObsStateStore = defineStore('obs-state', {
               currentSettings?.obsMediaScene,
               currentSettings?.obsImageScene,
             ]
-              .filter(Boolean)
+              .filter((s): s is string => !!s)
               .includes(
-                (scene.sceneUuid as string) || (scene.sceneName as string),
+                scene.sceneUuid?.toString() ||
+                  scene.sceneName?.toString() ||
+                  '',
               ),
         )
         .map(

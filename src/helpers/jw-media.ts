@@ -1325,13 +1325,11 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
           ? jwMediaInfo.subtitles
           : undefined,
         jwMediaInfo.thumbnail,
-      ].filter(Boolean)) {
-        if (!itemUrl) continue;
+      ].filter((u): u is string => !!u)) {
         const itemFilename =
           path.basename(bestItem.file.url).split('.')[0] +
           path.extname(itemUrl);
         if (
-          itemUrl &&
           bestItem.file?.url &&
           (downloadedFile?.new ||
             !fs.existsSync(path.join(pubDir, itemFilename)))
