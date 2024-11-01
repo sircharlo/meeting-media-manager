@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: 自动下载媒体
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    details: 自动下载耶和华见证人官方网站上可用任何语言提供的会众聚会图片和录像。
   - icon: 🎦
     title: 媒体播放
     details: 帮助你在混合聚会或现场聚会中轻松分享媒体。
