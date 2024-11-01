@@ -116,12 +116,15 @@ export const useCurrentStateStore = defineStore('current-state', {
         };
         const jwStore = useJwStore();
         const { jwLanguages } = storeToRefs(jwStore);
-        const currentLanguage = this.currentSettings?.lang as string;
-        if (!currentLanguage || !jwLanguages.value)
+        const currentLanguage = this.currentSettings?.lang;
+        if (!currentLanguage || !jwLanguages.value) {
           return notSignLanguageSongbook;
+        }
+
         const currentLanguageIsSignLanguage = !!jwLanguages.value?.list?.find(
           (l) => l.langcode === currentLanguage,
         )?.isSignLanguage;
+
         return currentLanguageIsSignLanguage
           ? signLanguageSongbook
           : notSignLanguageSongbook;
