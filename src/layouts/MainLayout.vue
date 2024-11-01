@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import type { ElectronIpcListenKey } from 'src/types';
 
-import { watchImmediate, whenever } from '@vueuse/core';
+import { watchDebounced, watchImmediate, whenever } from '@vueuse/core';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
@@ -62,10 +62,7 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
-import {
-  downloadSongbookVideos,
-  setUrlVariablesDebounced,
-} from 'src/helpers/jw-media';
+import { downloadSongbookVideos, setUrlVariables } from 'src/helpers/jw-media';
 import {
   executeShortcut,
   registerAllCustomShortcuts,
@@ -245,11 +242,12 @@ whenever(
   },
 );
 
-watch(
+watchDebounced(
   () => currentSettings.value?.baseUrl,
   (newBaseUrl, oldBaseUrl) => {
-    if (newBaseUrl !== oldBaseUrl) setUrlVariablesDebounced(newBaseUrl);
+    if (newBaseUrl !== oldBaseUrl) setUrlVariables(newBaseUrl);
   },
+  { debounce: 100 },
 );
 
 watch(

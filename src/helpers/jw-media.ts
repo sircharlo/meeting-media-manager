@@ -23,7 +23,7 @@ import type {
 import axios, { type AxiosError } from 'axios';
 import { Buffer } from 'buffer';
 import PQueue from 'p-queue';
-import { date, debounce } from 'quasar';
+import { date } from 'quasar';
 import sanitize from 'sanitize-filename';
 import { get, urlWithParamsToString } from 'src/boot/axios';
 import { queues } from 'src/boot/globals';
@@ -1689,8 +1689,6 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
   }
 };
 
-const setUrlVariablesDebounced = debounce(setUrlVariables, 100);
-
 export {
   addFullFilePathToMultimediaItem,
   addJwpubDocumentMediaToFiles,
@@ -1710,5 +1708,5 @@ export {
   getWeMedia,
   processMissingMediaInfo,
   sanitizeId,
-  setUrlVariablesDebounced,
+  setUrlVariables,
 };
