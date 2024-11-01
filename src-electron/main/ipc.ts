@@ -21,6 +21,7 @@ import {
 import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 
 import { errorCatcher, isSelf } from './../utils';
+import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
@@ -53,6 +54,10 @@ function handleIpcSend(
     listener(e, ...args);
   });
 }
+
+handleIpcSend('setUrlVariables', (_e, variables: string) => {
+  setUrlVariables(JSON.parse(variables));
+});
 
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);

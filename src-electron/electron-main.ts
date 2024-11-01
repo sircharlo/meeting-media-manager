@@ -10,8 +10,8 @@ import {
 } from 'electron';
 
 import './main/ipc';
-import './main/session';
 import { PLATFORM } from './constants';
+import { initSessionListeners } from './main/session';
 import { initUpdater } from './main/updater';
 import { createMainWindow } from './main/window/window-main';
 import { errorCatcher } from './utils';
@@ -24,6 +24,7 @@ initSentry({
 initElectronRemote();
 initUpdater();
 createApplicationMenu();
+initSessionListeners();
 
 // MacOS default behavior is to keep the app running even after all windows are closed
 app.on('window-all-closed', () => {

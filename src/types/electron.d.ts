@@ -3,6 +3,7 @@ export type ElectronIpcSendKey =
   | 'authorizedClose'
   | 'navigateWebsiteWindow'
   | 'openExternal'
+  | 'setUrlVariables'
   | 'toggleOpenAtLogin'
   | 'toggleWebsiteWindow'
   | 'unregisterShortcut'
