@@ -438,7 +438,11 @@ import {
   selections,
 } from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
-import { useBroadcastChannel, useEventListener } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  useEventListener,
+  watchImmediate,
+} from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
@@ -911,24 +915,20 @@ useEventListener(window, 'remote-video-loading', (event: CustomEventInit) => {
   });
 });
 
+watchImmediate(selectedDate, (newVal) => {
+  try {
+    if (!currentCongregation.value || !newVal) {
+      return;
+    }
+    const durations = (customDurations.value[currentCongregation.value] ||= {});
+    durations[newVal] ||= {};
+    coWeek.value = isCoWeek(dateFromString(newVal));
+  } catch (e) {
+    errorCatcher(e);
+  }
+});
+
 onMounted(async () => {
-  watch(
-    selectedDate,
-    (newVal) => {
-      try {
-        if (!currentCongregation.value || !newVal) {
-          return;
-        }
-        const durations = (customDurations.value[currentCongregation.value] ||=
-          {});
-        durations[newVal] ||= {};
-        coWeek.value = isCoWeek(dateFromString(newVal));
-      } catch (e) {
-        errorCatcher(e);
-      }
-    },
-    { immediate: true },
-  );
   generateMediaList();
   goToNextDayWithMedia();
 

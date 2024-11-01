@@ -112,7 +112,12 @@
 <script setup lang="ts">
 import type { SongItem } from 'src/types/media';
 
-import { useBroadcastChannel, useEventListener, whenever } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  useEventListener,
+  watchImmediate,
+  whenever,
+} from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
 import { useScrollbar } from 'src/composables/useScrollbar';
@@ -127,7 +132,7 @@ import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
 
@@ -458,41 +463,38 @@ whenever(
   },
 );
 
-onMounted(() => {
-  watch(
-    () => [selectedDateObject.value?.today, selectedDateObject.value?.meeting],
-    ([newToday, newMeeting]) => {
-      try {
-        meetingDay.value = !!newToday && !!newMeeting;
-        if (
-          currentSettings.value?.enableMusicButton && // background music feature is enabled
-          currentSettings.value?.autoStartMusic && // auto-start music is enabled
-          meetingDay.value && // today is a meeting day
-          remainingTimeBeforeMeetingStart() > 90 && // meeting is starting in at least 90 seconds
-          remainingTimeBeforeMeetingStart() < 60 * 60 * 2 // meeting is starting in less than 2 hours
-        ) {
-          playMusic();
-        }
-      } catch (error) {
-        errorCatcher(error);
-      }
-    },
-    { immediate: true },
-  );
-
-  watch(
-    () => [currentSettings.value?.enableMusicButton, currentCongregation.value],
-    ([newMusicButtonEnabled, newCongregation], [, oldCongregation]) => {
+watchImmediate(
+  () => [selectedDateObject.value?.today, selectedDateObject.value?.meeting],
+  ([newToday, newMeeting]) => {
+    try {
+      meetingDay.value = !!newToday && !!newMeeting;
       if (
-        !newMusicButtonEnabled ||
-        !newCongregation ||
-        oldCongregation !== newCongregation
-      )
-        stopMusic();
-      musicStoppedAutomatically.value = false;
-    },
-  );
-});
+        currentSettings.value?.enableMusicButton && // background music feature is enabled
+        currentSettings.value?.autoStartMusic && // auto-start music is enabled
+        meetingDay.value && // today is a meeting day
+        remainingTimeBeforeMeetingStart() > 90 && // meeting is starting in at least 90 seconds
+        remainingTimeBeforeMeetingStart() < 60 * 60 * 2 // meeting is starting in less than 2 hours
+      ) {
+        playMusic();
+      }
+    } catch (error) {
+      errorCatcher(error);
+    }
+  },
+);
+
+watch(
+  () => [currentSettings.value?.enableMusicButton, currentCongregation.value],
+  ([newMusicButtonEnabled, newCongregation], [, oldCongregation]) => {
+    if (
+      !newMusicButtonEnabled ||
+      !newCongregation ||
+      oldCongregation !== newCongregation
+    )
+      stopMusic();
+    musicStoppedAutomatically.value = false;
+  },
+);
 
 watch(
   () => [mediaPlayingAction.value, mediaPlayingUrl.value],

@@ -226,7 +226,11 @@
 import type { Display } from 'src/types';
 import type { MultimediaItem } from 'src/types/sqlite';
 
-import { useBroadcastChannel, useEventListener } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  useEventListener,
+  watchImmediate,
+} from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -407,7 +411,7 @@ const setMediaBackground = (filepath: string) => {
   }
 };
 
-watch(
+watchImmediate(
   () => [
     currentSettings.value?.enableMediaDisplayButton,
     currentCongregation.value,
@@ -415,7 +419,6 @@ watch(
   ([newMediaDisplayEnabled, newCongregation]) => {
     showMediaWindow(!!newCongregation && !!newMediaDisplayEnabled);
   },
-  { immediate: true },
 );
 
 watch(

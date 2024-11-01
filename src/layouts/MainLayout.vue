@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import type { ElectronIpcListenKey } from 'src/types';
 
-import { whenever } from '@vueuse/core';
+import { watchImmediate, whenever } from '@vueuse/core';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
@@ -220,13 +220,11 @@ watch(currentSettings, (newSettings) => {
   if (!newSettings) navigateToCongregationSelector();
 });
 
-watch(
+watchImmediate(
   () => currentSettings.value?.darkMode,
   (newDarkMode) => {
-    if (newDarkMode === undefined) return;
-    $q.dark.set(newDarkMode);
+    $q.dark.set(newDarkMode ?? 'auto');
   },
-  { immediate: true },
 );
 
 whenever(
