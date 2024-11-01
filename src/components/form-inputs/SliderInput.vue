@@ -1,6 +1,6 @@
 <template>
   <q-slider
-    v-model="localValue"
+    v-model="model"
     :max="max"
     :min="min"
     :step="step"
@@ -15,9 +15,7 @@
 import type { SettingsItemAction } from 'src/types';
 
 import { useBroadcastChannel } from '@vueuse/core';
-import { ref, watch } from 'vue';
-
-const emit = defineEmits(['update:modelValue']);
+import { watch } from 'vue';
 
 const props = defineProps<{
   actions?: SettingsItemAction[];
@@ -27,21 +25,13 @@ const props = defineProps<{
   step?: number;
 }>();
 
-const localValue = ref(props.modelValue);
+const model = defineModel<number>({ required: true });
 
 const { post } = useBroadcastChannel<number, number>({ name: 'volume-setter' });
 
-watch(localValue, (newValue) => {
-  emit('update:modelValue', newValue);
-  if (props?.actions?.includes('setBackgroundMusicVolume')) {
+watch(model, (newValue) => {
+  if (props.actions?.includes('setBackgroundMusicVolume')) {
     if (newValue !== undefined) post(newValue);
   }
 });
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    localValue.value = newValue;
-  },
-);
 </script>

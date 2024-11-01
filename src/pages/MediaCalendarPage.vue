@@ -419,8 +419,8 @@
   </q-page>
   <DragAndDropper
     v-model="dragging"
+    v-model:jwpub-db="jwpubImportDb"
     :files-loading="filesLoading"
-    :jwpub-db="jwpubImportDb"
     :jwpub-documents="jwpubImportDocuments"
     @drop="dropEnd"
   />

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="localValue">
+  <q-dialog v-model="open">
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
     >
@@ -92,16 +92,10 @@ const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
 const { barStyle, thumbStyle } = useScrollbar();
 
-const props = defineProps<{
-  modelValue: boolean | null;
-}>();
-
-const emit = defineEmits(['update:modelValue']);
+const open = defineModel<boolean>({ required: true });
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
-
-const localValue = ref(props.modelValue);
 
 const filter = ref('');
 const publicTalks = ref<DocumentItem[]>([]);
@@ -143,7 +137,7 @@ const browse = async () => {
 };
 
 const dismissPopup = () => {
-  localValue.value = false;
+  open.value = false;
 };
 
 const { t } = useI18n();
@@ -169,19 +163,11 @@ const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   dismissPopup();
 };
 
-watch(localValue, (newValue) => {
-  emit('update:modelValue', newValue);
+watch(open, () => {
+  if (currentSettings.value?.lang) {
+    s34mpBasename.value = 'S-34mp_' + currentSettings.value?.lang + '_0';
+    s34mpDir.value = path.join(getPublicationsPath(), s34mpBasename.value);
+    populatePublicTalks();
+  }
 });
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    localValue.value = newValue;
-    if (currentSettings.value?.lang) {
-      s34mpBasename.value = 'S-34mp_' + currentSettings.value?.lang + '_0';
-      s34mpDir.value = path.join(getPublicationsPath(), s34mpBasename.value);
-      populatePublicTalks();
-    }
-  },
-);
 </script>

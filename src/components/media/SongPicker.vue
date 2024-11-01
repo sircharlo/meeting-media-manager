@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="localValue">
+  <q-dialog v-model="open">
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
     >
@@ -76,6 +76,7 @@
 <script setup lang="ts">
 import type { MediaLink, PublicationFetcher } from 'src/types';
 
+import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -86,14 +87,10 @@ import {
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
-// Define props and emits
-const props = defineProps<{
-  modelValue: boolean | null;
-}>();
-
-const emit = defineEmits(['update:modelValue']);
+// Define model
+const open = defineModel<boolean>({ required: true });
 
 // Setup logic
 const { barStyle, thumbStyle } = useScrollbar();
@@ -104,7 +101,6 @@ const { currentSettings, currentSongbook, currentSongs } =
 const jwStore = useJwStore();
 const { updateJwSongs } = jwStore;
 
-const localValue = ref(props.modelValue);
 const loading = ref(false);
 
 const filter = ref('');
@@ -117,7 +113,7 @@ const filteredSongs = computed((): MediaLink[] => {
 });
 
 const dismissPopup = () => {
-  localValue.value = false;
+  open.value = false;
   loading.value = false;
 };
 
@@ -149,15 +145,7 @@ const addSong = async (songTrack: number) => {
   }
 };
 
-watch(localValue, (newValue) => {
-  emit('update:modelValue', newValue);
-  if (newValue) updateJwSongs();
+whenever(open, () => {
+  updateJwSongs();
 });
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    localValue.value = newValue;
-  },
-);
 </script>

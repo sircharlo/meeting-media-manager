@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="localValue"
+    v-model="model"
     :rules="getRules(rules)"
     class="q-pb-none bg-accent-100 date-time-input"
     dense
@@ -20,7 +20,7 @@
       transition-show="scale"
     >
       <q-date
-        v-model="localValue"
+        v-model="model"
         :locale="dateLocale"
         :options="getDateOptions(options)"
         :rules="rules"
@@ -47,34 +47,19 @@ import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 
 import { useLocale } from 'src/composables/useLocale';
 import { getDateOptions, getRules } from 'src/helpers/settings';
-import { ref, watch } from 'vue';
 
 const { dateLocale } = useLocale();
 
-const emit = defineEmits(['update:modelValue']);
-
-const props = defineProps<{
+defineProps<{
   label?: null | string;
-  modelValue?: string;
   options?: SettingsItemOption[];
   rules?: SettingsItemRule[];
 }>();
 
-const localValue = ref(props.modelValue);
-
-watch(localValue, (newValue) => {
-  emit('update:modelValue', newValue);
-});
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    localValue.value = newValue;
-  },
-);
+const model = defineModel<null | string>({ required: true });
 
 const clearDate = () => {
-  localValue.value = '';
+  model.value = '';
 };
 
 const focusHandler = (evt: Event) => {

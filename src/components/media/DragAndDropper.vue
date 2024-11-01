@@ -1,15 +1,15 @@
 <template>
-  <q-dialog v-model="localValue">
+  <q-dialog v-model="open">
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
     >
       <div class="text-h6 row">{{ $t('add-extra-media') }}</div>
       <template
         v-if="
-          localJwpubDocuments?.length === 0 ||
-          localFilesLoading > -1 ||
-          (!!localJwpubDb && jwpubLoading) ||
-          !localJwpubDb
+          jwpubDocuments?.length === 0 ||
+          filesLoading > -1 ||
+          (!!jwpubDb && jwpubLoading) ||
+          !jwpubDb
         "
       >
         <div class="row">
@@ -47,18 +47,18 @@
           >
             <template
               v-if="
-                (-1 < localFilesLoading && localFilesLoading < 1) ||
-                (!!localJwpubDb && jwpubLoading)
+                (-1 < filesLoading && filesLoading < 1) ||
+                (!!jwpubDb && jwpubLoading)
               "
             >
               <q-linear-progress
-                :value="localFilesLoading"
+                :value="filesLoading"
                 class="full-height"
                 color="primary"
               >
                 <div class="absolute-full flex flex-center">
                   <q-badge
-                    :label="(localFilesLoading * 100).toFixed(0) + '%'"
+                    :label="(filesLoading * 100).toFixed(0) + '%'"
                     color="white"
                     text-color="primary"
                   />
@@ -86,16 +86,16 @@
           >
             <q-list>
               <q-item
-                v-for="jwpubImportDocument in localJwpubDocuments"
+                v-for="jwpubImportDocument in jwpubDocuments"
                 :key="jwpubImportDocument.DocumentId"
                 clickable
                 @click="
                   jwpubLoading = true;
                   addJwpubDocumentMediaToFiles(
-                    localJwpubDb,
+                    jwpubDb,
                     jwpubImportDocument,
                   ).then((errors) => {
-                    localValue = false;
+                    open = false;
                     jwpubLoading = false;
                     if (errors?.length)
                       errors.forEach((e) =>
@@ -131,11 +131,12 @@
           color="negative"
           flat
           @click="
-            localJwpubDb = '';
-            localValue = false;
+            jwpubDb = '';
+            open = false;
           "
-          >{{ $t('cancel') }}</q-btn
         >
+          {{ $t('cancel') }}
+        </q-btn>
       </div>
     </div>
   </q-dialog>
@@ -154,69 +155,20 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const { openFileDialog } = window.electronApi;
 const { barStyle, thumbStyle } = useScrollbar();
 
-const props = defineProps<{
+defineProps<{
   filesLoading: number;
-  jwpubDb: string;
-  jwpubDocuments: DocumentItem[] | null;
-  modelValue: boolean;
+  jwpubDocuments: DocumentItem[];
 }>();
 
-const emit = defineEmits([
-  'update:modelValue',
-  'update:jwpubDb',
-  'update:jwpubDocuments',
-]);
-
-const localValue = ref(props.modelValue);
-const localJwpubDb = ref(props.jwpubDb);
-const localJwpubDocuments = ref(props.jwpubDocuments);
-const localFilesLoading = ref(props.filesLoading);
 const jwpubLoading = ref(false);
 
-watch(localValue, (newValue) => {
-  emit('update:modelValue', newValue);
-});
-
-watch(localJwpubDb, (newValue) => {
-  emit('update:jwpubDb', newValue);
-});
-
-watch(localJwpubDocuments, (newValue) => {
-  emit('update:jwpubDocuments', newValue);
-});
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    localValue.value = newValue;
-  },
-);
-
-watch(
-  () => props.jwpubDb,
-  (newValue) => {
-    localJwpubDb.value = newValue;
-  },
-);
-
-watch(
-  () => props.jwpubDocuments,
-  (newValue) => {
-    localJwpubDocuments.value = newValue;
-  },
-);
-
-watch(
-  () => props.filesLoading,
-  (newValue) => {
-    localFilesLoading.value = newValue;
-  },
-);
+const open = defineModel<boolean>({ required: true });
+const jwpubDb = defineModel<string>('jwpubDb', { required: true });
 
 const getLocalFiles = async () => {
   openFileDialog()
@@ -232,7 +184,7 @@ const getLocalFiles = async () => {
           }),
         );
       }
-      localValue.value = false;
+      open.value = false;
     })
     .catch((error) => {
       errorCatcher(error);

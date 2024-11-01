@@ -1,6 +1,6 @@
 <template>
   <q-select
-    v-model="localValue"
+    v-model="model"
     :clearable="!rules || !rules.includes('notEmpty')"
     :disable="customDisabled"
     :fill-input="useInput"
@@ -34,28 +34,21 @@ import { getRules } from 'src/helpers/settings';
 import { localeOptions } from 'src/i18n';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const jwStore = useJwStore();
 const { jwLanguages } = storeToRefs(jwStore);
 
-const emit = defineEmits(['update:modelValue']);
-
 const props = defineProps<{
   label?: null | string;
   list?: string;
-  modelValue?: string;
   rules?: SettingsItemRule[] | undefined;
   settingId?: string;
   useInput?: boolean;
 }>();
 
-const localValue = ref(props.modelValue);
-
-watch(localValue, (newValue) => {
-  emit('update:modelValue', newValue);
-});
+const model = defineModel<null | string>({ required: true });
 
 const filteredJwLanguages = ref(jwLanguages.value?.list || []);
 const filteredLocaleAppLang = ref(localeOptions);
@@ -163,11 +156,4 @@ const listOptions = computed(() => {
     return [];
   }
 });
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    localValue.value = newValue;
-  },
-);
 </script>

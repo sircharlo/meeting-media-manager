@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="localValue"
+    v-model="model"
     :error="customError"
     :rules="getRules(rules)"
     class="q-pb-none bg-accent-100 error"
@@ -30,7 +30,7 @@ import { storeToRefs } from 'pinia';
 import { getActions, getRules } from 'src/helpers/settings';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 
 const obsState = useObsStateStore();
 const { obsConnectionState } = storeToRefs(obsState);
@@ -62,27 +62,16 @@ const customSuccess = computed(() => {
   }
 });
 
-const emit = defineEmits(['update:modelValue']);
-
 const props = defineProps<{
   actions?: SettingsItemAction[];
   label?: null | string;
-  modelValue?: string;
   rules?: SettingsItemRule[];
   settingId?: string;
 }>();
 
-const localValue = ref(props.modelValue);
+const model = defineModel<null | string>({ required: true });
 
-watch(localValue, (newValue) => {
-  emit('update:modelValue', newValue);
+watch(model, () => {
   getActions(props.actions);
 });
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    localValue.value = newValue;
-  },
-);
 </script>
