@@ -87,7 +87,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, ref, type Ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -129,25 +129,31 @@ const mediaImage = ref<HTMLImageElement | undefined>();
 
 const videoStreaming = ref(false);
 
-const { data: mediaPlayerCustomBackground }: { data: Ref<string | undefined> } =
-  useBroadcastChannel({
-    name: 'custom-background',
-  });
+const { data: mediaPlayerCustomBackground } = useBroadcastChannel<
+  string | undefined,
+  string | undefined
+>({
+  name: 'custom-background',
+});
 
-const { data: subtitlesVisible }: { data: Ref<boolean> } = useBroadcastChannel({
+const { data: subtitlesVisible } = useBroadcastChannel<boolean, boolean>({
   name: 'subtitles-visible',
 });
 subtitlesVisible.value = true;
 
-const { data: mediaPlayerSubtitlesUrl }: { data: Ref<string | undefined> } =
-  useBroadcastChannel({
-    name: 'subtitles-url',
-  });
+const { data: mediaPlayerSubtitlesUrl } = useBroadcastChannel<
+  string | undefined,
+  string | undefined
+>({
+  name: 'subtitles-url',
+});
 
-const { data: seekToData }: { data: Ref<number | undefined> } =
-  useBroadcastChannel({
-    name: 'seek-to',
-  });
+const { data: seekToData } = useBroadcastChannel<
+  number | undefined,
+  number | undefined
+>({
+  name: 'seek-to',
+});
 
 watch(
   () => seekToData.value,
@@ -158,11 +164,11 @@ watch(
   },
 );
 
-const { data: mediaUniqueId }: { data: Ref<string> } = useBroadcastChannel({
+const { data: mediaUniqueId } = useBroadcastChannel<string, string>({
   name: 'unique-id',
 });
 
-const { data: mediaPlayingUrl }: { data: Ref<string> } = useBroadcastChannel({
+const { data: mediaPlayingUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
 });
 
@@ -170,7 +176,7 @@ const { post: postCurrentTime } = useBroadcastChannel({
   name: 'current-time',
 });
 
-const { data: mediaAction }: { data: Ref<string> } = useBroadcastChannel({
+const { data: mediaAction } = useBroadcastChannel<string, string>({
   name: 'media-action',
 });
 
@@ -214,10 +220,12 @@ const setPanzoom = (panzoomState: Record<string, number>, animate = true) => {
   }
 };
 
-const { data: panzoomState }: { data: Ref<Record<string, number>> } =
-  useBroadcastChannel({
-    name: 'panzoom',
-  });
+const { data: panzoomState } = useBroadcastChannel<
+  Record<string, number>,
+  Record<string, number>
+>({
+  name: 'panzoom',
+});
 
 watch(
   () => panzoomState.value,
@@ -227,7 +235,7 @@ watch(
   { deep: true },
 );
 
-const { data: webStreamData }: { data: Ref<boolean> } = useBroadcastChannel({
+const { data: webStreamData } = useBroadcastChannel<boolean, boolean>({
   name: 'web-stream',
 });
 

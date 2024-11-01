@@ -40,6 +40,7 @@
     "@sentry/electron": "^5.7.0",
     "@sentry/vue": "^8.36.0",
     "@vueuse/core": "^11.2.0",
+    "@vueuse/router": "^11.2.0",
     "adm-zip": "^0.5.16",
     "axios": "^1.7.7",
     "better-sqlite3": "^11.5.0",
