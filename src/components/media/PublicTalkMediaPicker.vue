@@ -46,8 +46,8 @@
         </div>
         <div class="row">
           <q-scroll-area
-            :bar-style="barStyle()"
-            :thumb-style="thumbStyle()"
+            :bar-style="barStyle"
+            :thumb-style="thumbStyle"
             style="height: 30vh; width: -webkit-fill-available"
           >
             <template
@@ -79,7 +79,7 @@
 import type { DocumentItem, PublicationInfo } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { barStyle, thumbStyle } from 'src/boot/globals';
+import { useScrollbar } from 'src/composables/useScrollbar';
 import { getPublicationsPath } from 'src/helpers/fs';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub, findDb } from 'src/helpers/mediaPlayback';
@@ -89,6 +89,8 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
+
+const { barStyle, thumbStyle } = useScrollbar();
 
 const props = defineProps<{
   modelValue: boolean | null;

@@ -172,8 +172,8 @@
         {{ $t('select-a-custom-background') }}
       </div>
       <q-scroll-area
-        :bar-style="barStyle()"
-        :thumb-style="thumbStyle()"
+        :bar-style="barStyle"
+        :thumb-style="thumbStyle"
         style="height: 40vh; width: -webkit-fill-available"
       >
         <template
@@ -228,7 +228,7 @@ import type { MultimediaItem } from 'src/types/sqlite';
 
 import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { barStyle, thumbStyle } from 'src/boot/globals';
+import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempDirectory } from 'src/helpers/fs';
 import {
@@ -256,6 +256,7 @@ const {
 } = window.electronApi;
 
 const { t } = useI18n();
+const { barStyle, thumbStyle } = useScrollbar();
 
 const screenList = ref<Display[]>([]);
 

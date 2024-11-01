@@ -6,7 +6,7 @@ export interface SettingsValues {
   baseUrl: string;
   congregationName: string;
   coWeek: string;
-  darkMode: boolean | string;
+  darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
   // enablePp: boolean;
   enableExtraCache: boolean;

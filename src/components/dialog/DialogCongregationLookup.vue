@@ -23,8 +23,8 @@
       </div>
       <div class="row">
         <q-scroll-area
-          :bar-style="barStyle()"
-          :thumb-style="thumbStyle()"
+          :bar-style="barStyle"
+          :thumb-style="thumbStyle"
           style="height: 25vh; width: -webkit-fill-available"
         >
           <q-list class="full-width" padding separator>
@@ -111,8 +111,8 @@ import type { CongregationLanguage, GeoRecord } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { get } from 'src/boot/axios';
-import { barStyle, thumbStyle } from 'src/boot/globals';
 import { useLocale } from 'src/composables/useLocale';
+import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
@@ -125,6 +125,7 @@ const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
 const { dateLocale } = useLocale();
+const { barStyle, thumbStyle } = useScrollbar();
 
 const open = defineModel<boolean>({ default: false });
 const congregationName = ref('');

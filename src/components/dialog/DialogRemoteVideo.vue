@@ -40,8 +40,8 @@
       </div>
       <div class="row">
         <q-scroll-area
-          :bar-style="barStyle()"
-          :thumb-style="thumbStyle()"
+          :bar-style="barStyle"
+          :thumb-style="thumbStyle"
           style="width: 100vw; height: 40vh"
         >
           <div class="row q-col-gutter-md">
@@ -118,8 +118,8 @@
 // Packages
 import { computed, ref } from 'vue';
 
-// Globals
-import { barStyle, thumbStyle } from 'src/boot/globals';
+// Composables
+import { useScrollbar } from 'src/composables/useScrollbar';
 
 // Helpers
 import {
@@ -138,6 +138,9 @@ const props = defineProps<{
 }>();
 
 const open = defineModel<boolean>({ default: false });
+
+const { barStyle, thumbStyle } = useScrollbar();
+
 const remoteVideoFilter = ref('');
 const remoteVideosIncludeAudioDescription = ref(false);
 const hoveredRemoteVideo = ref('');

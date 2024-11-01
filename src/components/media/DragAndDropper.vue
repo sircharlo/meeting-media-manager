@@ -80,8 +80,8 @@
         </div>
         <div class="row">
           <q-scroll-area
-            :bar-style="barStyle()"
-            :thumb-style="thumbStyle()"
+            :bar-style="barStyle"
+            :thumb-style="thumbStyle"
             style="height: 40vh; width: -webkit-fill-available"
           >
             <q-list>
@@ -144,7 +144,7 @@
 <script setup lang="ts">
 import type { DocumentItem } from 'src/types';
 
-import { barStyle, thumbStyle } from 'src/boot/globals';
+import { useScrollbar } from 'src/composables/useScrollbar';
 import {
   AUDIO_EXTENSIONS,
   IMG_EXTENSIONS,
@@ -157,17 +157,21 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { ref, watch } from 'vue';
 
 const { openFileDialog } = window.electronApi;
+const { barStyle, thumbStyle } = useScrollbar();
+
 const props = defineProps<{
   filesLoading: number;
   jwpubDb: string;
   jwpubDocuments: DocumentItem[] | null;
   modelValue: boolean;
 }>();
+
 const emit = defineEmits([
   'update:modelValue',
   'update:jwpubDb',
   'update:jwpubDocuments',
 ]);
+
 const localValue = ref(props.modelValue);
 const localJwpubDb = ref(props.jwpubDb);
 const localJwpubDocuments = ref(props.jwpubDocuments);

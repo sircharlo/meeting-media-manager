@@ -10,7 +10,6 @@ import type {
 import { getLanguages, getYeartext } from 'boot/axios';
 import { defineStore, storeToRefs } from 'pinia';
 import { date } from 'quasar';
-import sanitizeHtml from 'sanitize-html';
 import { MAX_SONGS } from 'src/constants/jw';
 import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -262,12 +261,11 @@ export const useJwStore = defineStore('jw-store', {
             currentYear,
           );
           if (yeartextRequest?.content) {
+            const { default: sanitizeHtml } = await import('sanitize-html');
             this.yeartexts[currentYear][currentLang] = sanitizeHtml(
               yeartextRequest.content,
               {
-                allowedAttributes: {
-                  p: ['class'],
-                },
+                allowedAttributes: { p: ['class'] },
                 allowedTags: ['b', 'i', 'em', 'strong', 'p'],
               },
             );

@@ -128,7 +128,7 @@
 <script setup lang="ts">
 // Packages
 import { storeToRefs } from 'pinia';
-import { Dark, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -140,6 +140,7 @@ const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;
 const { currentSettings, mediaPlaying } = storeToRefs(currentState);
 
+const $q = useQuasar();
 const route = useRoute();
 
 const drawer = ref(true);
@@ -147,11 +148,9 @@ const miniState = defineModel<boolean>({ required: true });
 
 const navActiveClass = computed(
   () =>
-    (Dark.isActive ? 'bg-accent-400' : 'bg-accent-100') +
+    ($q.dark.isActive ? 'bg-accent-400' : 'bg-accent-100') +
     ' text-primary blue-bar',
 );
-
-const $q = useQuasar();
 
 watch(
   () => $q?.screen?.lt?.sm,

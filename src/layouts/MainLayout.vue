@@ -8,8 +8,8 @@
 
     <!-- Main content -->
     <q-scroll-area
-      :bar-style="barStyle()"
-      :thumb-style="thumbStyle()"
+      :bar-style="barStyle"
+      :thumb-style="thumbStyle"
       style="flex: 1 1 1px"
     >
       <q-page-container class="main-bg">
@@ -38,20 +38,20 @@ import type { ElectronIpcListenKey } from 'src/types';
 
 // Packages
 import { storeToRefs } from 'pinia';
-import { Dark, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 // Globals
-import { barStyle, queues, thumbStyle } from 'src/boot/globals';
+import { queues } from 'src/boot/globals';
 import { localeOptions } from 'src/i18n';
 
 // Components
 import HeaderBase from 'src/components/header/HeaderBase.vue';
 import ActionIsland from 'src/components/ui/ActionIsland.vue';
 import NavDrawer from 'src/components/ui/NavDrawer.vue';
-
+import { useScrollbar } from 'src/composables/useScrollbar';
 // Helpers
 import {
   cleanAdditionalMediaFolder,
@@ -71,13 +71,13 @@ import {
 } from 'src/helpers/keyboardShortcuts';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-
 // Stores
 import { useAppSettingsStore } from 'src/stores/app-settings';
-
 // import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+
+const { barStyle, thumbStyle } = useScrollbar();
 
 // Local state
 const miniState = ref(true);
@@ -224,7 +224,8 @@ watch(currentSettings, (newSettings) => {
 watch(
   () => currentSettings.value?.darkMode,
   (newDarkMode) => {
-    Dark.set(newDarkMode as 'auto' | boolean);
+    if (!newDarkMode) return;
+    $q.dark.set(newDarkMode);
   },
   { immediate: true },
 );
