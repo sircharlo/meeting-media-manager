@@ -151,7 +151,10 @@ const decompressJwpub = async (
     const currentState = useCurrentStateStore();
     if (!isJwpub(jwpubPath)) return jwpubPath;
     if (!outputPath)
-      outputPath = path.join(getTempDirectory(), path.basename(jwpubPath));
+      outputPath = path.join(
+        await getTempDirectory(),
+        path.basename(jwpubPath),
+      );
     if (!currentState.extractedFiles[outputPath] || force)
       currentState.extractedFiles[outputPath] = jwpubDecompressor(
         jwpubPath,
@@ -173,7 +176,7 @@ const getMediaFromJwPlaylist = async (
     if (!jwPlaylistPath) return [];
     const outputPath = path.join(destPath, path.basename(jwPlaylistPath));
     await decompress(jwPlaylistPath, outputPath);
-    const dbFile = findDb(outputPath);
+    const dbFile = await findDb(outputPath);
     if (!dbFile) return [];
     let playlistName = '';
     try {
@@ -222,14 +225,14 @@ const getMediaFromJwPlaylist = async (
       LEFT JOIN
         Location l ON plm.LocationId = l.LocationId`,
     );
-    const playlistMediaItems: MultimediaItem[] = playlistItems.map(
-      (item): MultimediaItem => {
+    const playlistMediaItems = await Promise.all(
+      playlistItems.map(async (item) => {
         item.ThumbnailFilePath = path.join(outputPath, item.ThumbnailFilePath);
         if (
-          fs.existsSync(item.ThumbnailFilePath) &&
+          (await fs.pathExists(item.ThumbnailFilePath)) &&
           !item.ThumbnailFilePath.includes('.jpg')
         ) {
-          fs.renameSync(
+          await fs.rename(
             item.ThumbnailFilePath,
             item.ThumbnailFilePath + '.jpg',
           );
@@ -269,7 +272,7 @@ const getMediaFromJwPlaylist = async (
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           Track: item.Track,
         };
-      },
+      }),
     );
 
     await processMissingMediaInfo(playlistMediaItems);
@@ -285,16 +288,14 @@ const getMediaFromJwPlaylist = async (
   }
 };
 
-const findDb = (publicationDirectory?: string) => {
+const findDb = async (publicationDirectory: string | undefined) => {
   if (!publicationDirectory) return undefined;
   try {
-    if (!fs.existsSync(publicationDirectory)) return undefined;
-    return fs
-      .readdirSync(publicationDirectory)
+    if (!(await fs.pathExists(publicationDirectory))) return undefined;
+    const files = await fs.readdir(publicationDirectory);
+    return files
       .map((filename) => path.join(publicationDirectory, filename))
-      .find((filename) => {
-        return filename.includes('.db');
-      });
+      .find((filename) => filename.includes('.db'));
   } catch (error) {
     errorCatcher(error);
     return undefined;
@@ -304,14 +305,14 @@ const findDb = (publicationDirectory?: string) => {
 const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;
   try {
-    const buffer = fs.readFileSync(filepath);
+    const buffer = await fs.readFile(filepath);
     const output = await convertHeic({
       buffer,
       format: 'JPEG',
     });
     const existingPath = path.parse(filepath);
     const newPath = `${existingPath.dir}/${existingPath.name}.jpg`;
-    fs.writeFileSync(newPath, Buffer.from(output));
+    await fs.writeFile(newPath, Buffer.from(output));
     return newPath;
   } catch (error) {
     errorCatcher(error);
@@ -333,7 +334,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
     img.src = getFileUrl(filepath);
 
     return new Promise((resolve, reject) => {
-      img.onload = function () {
+      img.onload = async function () {
         const canvasH = canvas.height,
           canvasW = canvas.width;
         const imgH = img.naturalHeight || canvasH,
@@ -354,7 +355,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         const existingPath = path.parse(filepath);
         const newPath = `${existingPath.dir}/${existingPath.name}.png`;
         try {
-          fs.writeFileSync(
+          await fs.writeFile(
             newPath,
             Buffer.from(outputImg.split(',')[1], 'base64'),
           );

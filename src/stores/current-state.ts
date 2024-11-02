@@ -137,7 +137,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
-    getDatedAdditionalMediaDirectory: (state) => {
+    getDatedAdditionalMediaDirectory: async (state) => {
       try {
         if (!state.selectedDate) return '';
         const additionalMediaPath = getAdditionalMediaPath();
@@ -147,7 +147,7 @@ export const useCurrentStateStore = defineStore('current-state', {
           state.currentCongregation,
           dateString,
         );
-        fs.ensureDirSync(datedAdditionalMediaDirectory);
+        await fs.ensureDir(datedAdditionalMediaDirectory);
         return datedAdditionalMediaDirectory;
       } catch (error) {
         errorCatcher(error);

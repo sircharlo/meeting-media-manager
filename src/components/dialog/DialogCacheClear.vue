@@ -77,7 +77,7 @@ const cancelDeleteCacheFiles = () => {
   deletingCacheFiles.value = false;
 };
 
-const deleteCacheFiles = (type: '' | 'all' | 'smart') => {
+const deleteCacheFiles = async (type = '') => {
   try {
     deletingCacheFiles.value = true;
     const filepathsToDelete =
@@ -86,14 +86,14 @@ const deleteCacheFiles = (type: '' | 'all' | 'smart') => {
         : props.cacheFiles.map((f) => f.path);
     for (const filepath of filepathsToDelete) {
       try {
-        fs.rmSync(filepath, { recursive: true });
+        fs.remove(filepath);
       } catch (error) {
         errorCatcher(error);
       }
       additionalMediaMaps.value = {};
     }
     for (const untouchableDirectory of props.untouchableDirectories) {
-      removeEmptyDirs(untouchableDirectory);
+      await removeEmptyDirs(untouchableDirectory);
     }
     queues.downloads[currentCongregation.value]?.clear();
     queues.downloads[currentCongregation.value] = new PQueue({

@@ -1,3 +1,4 @@
+import type { Item } from 'klaw';
 import type {
   DatedTextItem,
   DocumentItem,
@@ -80,9 +81,13 @@ const addJwpubDocumentMediaToFiles = async (
     const multimediaItems = getDocumentMultimediaItems({
       db: dbPath,
       docId: document.DocumentId,
-    }).map((multimediaItem) =>
-      addFullFilePathToMultimediaItem(multimediaItem, publication),
-    );
+    });
+    for (let i = 0; i < multimediaItems.length; i++) {
+      multimediaItems[i] = await addFullFilePathToMultimediaItem(
+        multimediaItems[i],
+        publication,
+      );
+    }
     const errors = await processMissingMediaInfo(multimediaItems);
     const dynamicMediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
@@ -119,7 +124,7 @@ const downloadFileIfNeeded = async ({
   return (
     queue.add(
       async () => {
-        fs.ensureDirSync(dir);
+        await fs.ensureDir(dir);
         if (!filename) filename = path.basename(url);
         filename = sanitize(filename);
         const destinationPath = path.join(dir, filename);
@@ -128,8 +133,8 @@ const downloadFileIfNeeded = async ({
           (await axios({ method: 'HEAD', url })
             .then((response) => +response.headers['content-length'] || 0)
             .catch(() => 0));
-        if (fs.existsSync(destinationPath)) {
-          const stat = fs.statSync(destinationPath);
+        if (await fs.exists(destinationPath)) {
+          const stat = await fs.stat(destinationPath);
           const localSize = stat.size;
           if (localSize === remoteSize) {
             return {
@@ -200,8 +205,8 @@ const downloadFile = async ({ dir, filename, url }: FileDownloader) => {
       path: destinationPath,
     };
   }
-  fs.ensureDirSync(dir);
-  fs.writeFileSync(destinationPath, Buffer.from(downloadedData));
+  await fs.ensureDir(dir);
+  await fs.writeFile(destinationPath, Buffer.from(downloadedData));
   return {
     new: true,
     path: destinationPath,
@@ -218,19 +223,32 @@ const fetchMedia = async () => {
     }
 
     const jwStore = useJwStore();
-    const meetingsToFetch =
-      jwStore.lookupPeriod[currentStateStore.currentCongregation]?.filter(
-        (day) => {
-          return (
-            (day.meeting && (!day.complete || day.error)) ||
-            day.dynamicMedia.some(
-              (media) =>
-                !media?.fileUrl ||
-                !fs.existsSync(fileUrlToPath(media?.fileUrl)),
-            )
-          );
-        },
-      ) || [];
+    const meetingsToFetch = (
+      await Promise.all(
+        jwStore.lookupPeriod[currentStateStore.currentCongregation]?.map(
+          async (day) => {
+            const hasIncompleteOrErrorMeeting =
+              day.meeting && (!day.complete || day.error);
+
+            const hasMissingMediaFile = await Promise.all(
+              day.dynamicMedia.map(async (media) => {
+                if (!media?.fileUrl) return true;
+                const fileExists = await fs.pathExists(
+                  fileUrlToPath(media.fileUrl),
+                );
+                return !fileExists;
+              }),
+            );
+
+            return hasIncompleteOrErrorMeeting ||
+              hasMissingMediaFile.includes(true)
+              ? day
+              : null;
+          },
+        ) || [],
+      )
+    ).filter((day) => !!day);
+
     if (meetingsToFetch.length === 0) return;
     meetingsToFetch.forEach((day) => {
       day.error = false;
@@ -289,7 +307,7 @@ const getDbFromJWPUB = async (publication: PublicationFetcher) => {
   try {
     const jwpub = await downloadJwpub(publication);
     if (jwpub.error) return null;
-    const publicationDirectory = getPublicationDirectory(publication);
+    const publicationDirectory = await getPublicationDirectory(publication);
     if (jwpub.new || !findDb(publicationDirectory)) {
       await decompressJwpub(jwpub.path, publicationDirectory);
     }
@@ -325,21 +343,24 @@ const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   }
 };
 
-function addFullFilePathToMultimediaItem(
+async function addFullFilePathToMultimediaItem(
   multimediaItem: MultimediaItem,
   publication: PublicationFetcher,
 ) {
   try {
+    const fullFilePath = multimediaItem.FilePath
+      ? path.join(
+          await getPublicationDirectory(publication),
+          multimediaItem.FilePath,
+        )
+      : undefined;
+    console.log({
+      ...multimediaItem,
+      ...(fullFilePath ? { FilePath: fullFilePath } : {}),
+    });
     return {
       ...multimediaItem,
-      ...(multimediaItem.FilePath
-        ? {
-            FilePath: path.join(
-              getPublicationDirectory(publication),
-              multimediaItem.FilePath,
-            ),
-          }
-        : {}),
+      ...(fullFilePath ? { FilePath: fullFilePath } : {}),
     };
   } catch (error) {
     errorCatcher(error);
@@ -593,21 +614,23 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         ...(extract.RefEndParagraphOrdinal
           ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
           : {}),
-      })
-        .map((extractItem) => {
-          return {
-            ...extractItem,
-            BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
-            EndParagraphOrdinal: extract.EndParagraphOrdinal,
-          };
-        })
-        .map((extractItem) =>
-          addFullFilePathToMultimediaItem(extractItem, {
+      }).map((extractItem) => {
+        return {
+          ...extractItem,
+          BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
+          EndParagraphOrdinal: extract.EndParagraphOrdinal,
+        };
+      }) as MultimediaItem[];
+      for (let i = 0; i < extractItems.length; i++) {
+        extractItems[i] = await addFullFilePathToMultimediaItem(
+          extractItems[i],
+          {
             issue: extract.IssueTagNumber,
             langwritten: extractLang,
             pub: symbol,
-          }),
+          },
         );
+      }
       allExtractItems.push(...extractItems);
     }
     return allExtractItems;
@@ -857,7 +880,7 @@ const getWeMedia = async (lookupDate: Date) => {
       (video) => !video.TargetParagraphNumberLabel,
     );
 
-    const media = executeQuery<MultimediaItem>(
+    const mediaWithoutVideos = executeQuery<MultimediaItem>(
       db,
       `SELECT *
        FROM DocumentMultimedia
@@ -875,27 +898,29 @@ const getWeMedia = async (lookupDate: Date) => {
            AND (KeySymbol != '${currentStateStore.currentSongbook?.pub}' OR KeySymbol IS NULL)
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY DocumentParagraph.BeginPosition`, // pictures
-    )
-      .map((multimediaItem) =>
-        addFullFilePathToMultimediaItem(multimediaItem, publication),
-      )
-      .concat(videosInParagraphs)
-      .concat(
-        // exclude the first two videos if wt is after FEB_2023, since these are the songs
-        videosNotInParagraphs
-          .slice(+issueString < FEB_2023 ? 0 : 2)
-          .map((mediaObj) =>
-            mediaObj.TargetParagraphNumberLabel === null
-              ? { ...mediaObj, TargetParagraphNumberLabel: FOOTNOTE_TAR_PAR } // assign special number so we know videos are referenced by a footnote
-              : mediaObj,
-          )
-          .filter((v) => {
-            return (
-              !currentStateStore.currentSettings?.excludeFootnotes ||
-              v.TargetParagraphNumberLabel < FOOTNOTE_TAR_PAR
-            );
-          }),
+    );
+    for (let i = 0; i < mediaWithoutVideos.length; i++) {
+      mediaWithoutVideos[i] = await addFullFilePathToMultimediaItem(
+        mediaWithoutVideos[i],
+        publication,
       );
+    }
+    const media = mediaWithoutVideos.concat(videosInParagraphs).concat(
+      // exclude the first two videos if wt is after FEB_2023, since these are the songs
+      videosNotInParagraphs
+        .slice(+issueString < FEB_2023 ? 0 : 2)
+        .map((mediaObj) =>
+          mediaObj.TargetParagraphNumberLabel === null
+            ? { ...mediaObj, TargetParagraphNumberLabel: FOOTNOTE_TAR_PAR } // assign special number so we know videos are referenced by a footnote
+            : mediaObj,
+        )
+        .filter((v) => {
+          return (
+            !currentStateStore.currentSettings?.excludeFootnotes ||
+            v.TargetParagraphNumberLabel < FOOTNOTE_TAR_PAR
+          );
+        }),
+    );
 
     const updatedMedia = media.map((item) => {
       if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
@@ -1033,14 +1058,16 @@ const getMwMedia = async (lookupDate: Date) => {
       months: (monday.getMonth() + 1) % 2 === 0 ? 1 : 0,
     });
     const issueString = formatDate(issue, 'YYYYMM') + '00';
-    let publication: PublicationFetcher;
+    const publication: PublicationFetcher = {
+      issue: issueString,
+      langwritten: '',
+      pub: '',
+    };
     const getMwbIssue = async (langwritten?: string) => {
       if (!langwritten) return '';
-      publication = {
-        issue: issueString,
-        langwritten,
-        pub: 'mwb',
-      };
+      publication.issue = issueString;
+      publication.langwritten = langwritten;
+      publication.pub = 'mwb';
       return await getDbFromJWPUB(publication);
     };
 
@@ -1067,16 +1094,19 @@ const getMwMedia = async (lookupDate: Date) => {
         'No document id found for ' + monday + ' ' + issueString + ' ' + db,
       );
 
-    const mms = getDocumentMultimediaItems({ db, docId }).map(
-      (multimediaItem) => {
-        const videoMarkers = getMediaVideoMarkers(
-          { db, docId },
-          multimediaItem.MultimediaId,
-        );
-        if (videoMarkers) multimediaItem.VideoMarkers = videoMarkers;
-        return addFullFilePathToMultimediaItem(multimediaItem, publication);
-      },
-    );
+    const mms = getDocumentMultimediaItems({ db, docId });
+    for (let i = 0; i < mms.length; i++) {
+      const multimediaItem = mms[i];
+      const videoMarkers = getMediaVideoMarkers(
+        { db, docId },
+        multimediaItem.MultimediaId,
+      );
+      if (videoMarkers) multimediaItem.VideoMarkers = videoMarkers;
+      mms[i] = await addFullFilePathToMultimediaItem(
+        multimediaItem,
+        publication,
+      );
+    }
 
     // To think about: Enabling InternalLink lookups: is this needed?
     // const internalLinkMedia = getInternalLinkItems({ db, docId }).map(
@@ -1129,22 +1159,32 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
-    for (const media of allMedia.filter(
-      (m) =>
-        m.KeySymbol && (!m.Label || !m.FilePath || !fs.existsSync(m.FilePath)),
-    )) {
-      if (!media.KeySymbol) {
-        continue;
+
+    const mediaExistenceChecks = allMedia.map(async (m) => {
+      if (m.KeySymbol && (!m.Label || !m.FilePath)) {
+        const exists = await fs.pathExists(m.FilePath);
+        return { exists, media: m };
       }
+      return null;
+    });
+
+    const mediaChecksResults = await Promise.all(mediaExistenceChecks);
+
+    const mediaToProcess = mediaChecksResults.filter(
+      (result) => result && !result.exists,
+    ) as { exists: boolean; media: MultimediaItem }[];
+
+    for (const { media } of mediaToProcess) {
       const langsWritten = [
         media.AlternativeLanguage,
         currentStateStore.currentSettings?.lang,
         currentStateStore.currentSettings?.langFallback,
       ];
       for (const langwritten of langsWritten) {
-        if (!langwritten) {
+        if (!langwritten || !media.KeySymbol) {
           continue;
         }
+
         const publicationFetcher = {
           fileformat: media.MimeType?.includes('audio') ? 'MP3' : 'MP4',
           issue: media.IssueTagNumber,
@@ -1154,7 +1194,7 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
             media.Track > 0 && { track: media.Track }),
         };
         try {
-          if (!media.FilePath || !fs.existsSync(media.FilePath)) {
+          if (!media.FilePath || !(await fs.pathExists(media.FilePath))) {
             const { FilePath, StreamDuration, StreamThumbnailUrl, StreamUrl } =
               await downloadMissingMedia(publicationFetcher);
             media.FilePath = FilePath ?? media.FilePath;
@@ -1274,31 +1314,45 @@ export function findBestResolution(
 
 const downloadMissingMedia = async (publication: PublicationFetcher) => {
   try {
-    const pubDir = getPublicationDirectory(publication);
+    const pubDir = await getPublicationDirectory(publication);
     const responseObject = await getPubMediaLinks(publication);
     if (!responseObject?.files) {
-      if (!fs.existsSync(pubDir)) return { FilePath: '' }; // Publication not found
-      const files = readDirectory(pubDir, {
-        filter: (file) => {
-          let match = true;
-          const params = [publication.issue, publication.track, publication.pub]
-            .filter((i) => i !== undefined)
-            .map((i) => i?.toString()) as string[];
-          for (const test of params) {
-            if (!file.path || !path.basename(file.path).includes(test))
+      if (!(await fs.exists(pubDir))) return { FilePath: '' };
+      const files: Item[] = [];
+      await new Promise((resolve, reject) => {
+        readDirectory(pubDir)
+          .on('data', (file) => {
+            if (file.stats.isDirectory()) return;
+            let match = true;
+            const params = [
+              publication.issue,
+              publication.track,
+              publication.pub,
+            ]
+              .filter((i) => i !== undefined)
+              .map((i) => i?.toString()) as string[];
+            for (const test of params) {
+              if (!file.path || !path.basename(file.path).includes(test)) {
+                match = false;
+                break;
+              }
+            }
+            if (
+              match &&
+              publication.fileformat &&
+              !path
+                .extname(file.path)
+                .toLowerCase()
+                .includes(publication.fileformat?.toLowerCase())
+            ) {
               match = false;
-          }
-          if (
-            !publication.fileformat ||
-            !path
-              .extname(file.path)
-              .toLowerCase()
-              .includes(publication.fileformat?.toLowerCase())
-          )
-            match = false;
-          return match;
-        },
-        nodir: true,
+            }
+            if (match) {
+              files.push(file);
+            }
+          })
+          .on('end', resolve)
+          .on('error', reject);
       });
       return files.length > 0 ? { FilePath: files[0].path } : { FilePath: '' };
     }
@@ -1332,7 +1386,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
         if (
           bestItem.file?.url &&
           (downloadedFile?.new ||
-            !fs.existsSync(path.join(pubDir, itemFilename)))
+            !(await fs.exists(path.join(pubDir, itemFilename))))
         ) {
           await downloadFileIfNeeded({
             dir: pubDir,
@@ -1375,7 +1429,7 @@ const downloadAdditionalRemoteVideo = async (
           detail: {
             duration: bestItem.duration,
             path: path.join(
-              currentStateStore.getDatedAdditionalMediaDirectory,
+              await currentStateStore.getDatedAdditionalMediaDirectory,
               path.basename(bestItemUrl),
             ),
             song,
@@ -1386,7 +1440,7 @@ const downloadAdditionalRemoteVideo = async (
         }),
       );
       await downloadFileIfNeeded({
-        dir: currentStateStore.getDatedAdditionalMediaDirectory,
+        dir: await currentStateStore.getDatedAdditionalMediaDirectory,
         size: bestItem.filesize,
         url: bestItemUrl,
       });
@@ -1495,7 +1549,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
           !publication.maxTrack || mediaLink.track < publication.maxTrack,
       );
 
-    const dir = getPublicationDirectory(publication);
+    const dir = await getPublicationDirectory(publication);
     const filteredMediaItemLinks: MediaLink[] = [];
     for (const mediaItemLink of mediaLinks) {
       const currentTrack = mediaItemLink.track;
@@ -1607,7 +1661,7 @@ const downloadJwpub = async (
     }
 
     return await downloadFileIfNeeded({
-      dir: getPublicationDirectory(publication),
+      dir: await getPublicationDirectory(publication),
       size: mediaLinks[0].filesize,
       url: mediaLinks[0].file.url,
     });
@@ -1690,7 +1744,6 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
 };
 
 export {
-  addFullFilePathToMultimediaItem,
   addJwpubDocumentMediaToFiles,
   downloadAdditionalRemoteVideo,
   downloadBackgroundMusic,

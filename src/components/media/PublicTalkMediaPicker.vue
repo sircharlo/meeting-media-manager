@@ -113,8 +113,8 @@ const s34mpDir = ref<string | undefined>();
 const s34mpDb = ref<string | undefined>();
 const s34mpInfo = ref<null | PublicationInfo>(null);
 
-const populatePublicTalks = () => {
-  s34mpDb.value = findDb(s34mpDir.value);
+const populatePublicTalks = async () => {
+  s34mpDb.value = await findDb(s34mpDir.value);
   if (!s34mpDb.value) return;
   publicTalks.value = executeQuery<DocumentItem>(
     s34mpDb.value,
@@ -131,7 +131,7 @@ const browse = async () => {
   const s34mpFileSelection = await openFileDialog(true, 'jwpub');
   if (!s34mpFileSelection || !s34mpFileSelection.filePaths.length) return;
   s34mpFile.value = s34mpFileSelection.filePaths[0];
-  if (s34mpDir.value) fs.ensureDirSync(s34mpDir.value);
+  if (s34mpDir.value) await fs.ensureDir(s34mpDir.value);
   await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
   populatePublicTalks();
 };

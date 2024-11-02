@@ -1,4 +1,4 @@
-import type { Item } from 'klaw-sync';
+import type { Item } from 'klaw';
 
 import type { VideoMarker } from './sqlite';
 

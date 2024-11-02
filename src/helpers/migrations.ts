@@ -1,10 +1,11 @@
+import type { Item } from 'klaw';
 import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
 const { fs, path, readDirectory } = window.electronApi;
-const { readJSONSync } = fs;
+const { readJSON } = fs;
 
 const oldPrefsFilterFn = (item: { path: string }) => {
   try {
@@ -20,19 +21,33 @@ const oldPrefsFilterFn = (item: { path: string }) => {
   }
 };
 
-const getOldPrefsPaths = (oldPath: string) => {
+const getOldPrefsPaths = async (oldPath: string) => {
   try {
     if (!oldPath) return [];
-    return readDirectory(oldPath, { filter: oldPrefsFilterFn });
+    const files: Item[] = [];
+    await new Promise((resolve, reject) => {
+      readDirectory(oldPath)
+        .on('data', (file) => {
+          if (oldPrefsFilterFn(file)) {
+            files.push(file);
+          }
+        })
+        .on('end', resolve)
+        .on('error', reject);
+    });
+
+    return files;
   } catch (error) {
     errorCatcher(error);
     return [];
   }
 };
 
-const parsePrefsFile = (path: string) => {
+const parsePrefsFile: (path: string) => Promise<OldAppConfig> = async (
+  path: string,
+) => {
   try {
-    return readJSONSync(path, { encoding: 'utf8', throws: false }) || {};
+    return (await readJSON(path, { encoding: 'utf8', throws: false })) || {};
   } catch (error) {
     errorCatcher(error);
     return {};

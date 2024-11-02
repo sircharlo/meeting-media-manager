@@ -1,15 +1,14 @@
 import { app } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import { existsSync } from 'fs-extra';
+import { exists } from 'fs-extra';
 import path from 'path';
 
 import { errorCatcher } from './../utils';
 
-export function initUpdater() {
-  const disabled = existsSync(
+export async function initUpdater() {
+  const disabled = await exists(
     path.join(app.getPath('userData'), 'Global Preferences', 'disable-updates'),
   );
-
   if (!disabled) triggerUpdateCheck();
 }
 

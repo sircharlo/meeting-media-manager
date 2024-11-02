@@ -133,21 +133,22 @@ const migrationsToRun = [
   'firstRun',
 ];
 
-migrationsToRun.forEach((migration) => {
-  if (!migrations.value?.includes(migration)) {
-    const success = runMigration(migration);
-
-    if (migration === 'firstRun' && success) {
-      createTemporaryNotification({
-        caption: t('successfully-migrated-from-the-previous-version'),
-        icon: 'mmm-info',
-        message: t('welcome-to-mmm'),
-        timeout: 15000,
-        type: 'positive',
-      });
+(async () => {
+  for (const migration of migrationsToRun) {
+    if (!migrations.value?.includes(migration)) {
+      const success = await runMigration(migration);
+      if (migration === 'firstRun' && success) {
+        createTemporaryNotification({
+          caption: t('successfully-migrated-from-the-previous-version'),
+          icon: 'mmm-info',
+          message: t('welcome-to-mmm'),
+          timeout: 15000,
+          type: 'positive',
+        });
+      }
     }
   }
-});
+})();
 
 const { updateJwLanguages } = jwStore;
 updateJwLanguages();

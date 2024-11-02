@@ -1,6 +1,6 @@
 import type { ConversionOptions } from 'app/src-electron/preload/converters';
 import type FsExtra from 'fs-extra';
-import type KlawSync from 'klaw-sync';
+import type Klaw from 'klaw';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type {
   QueryResponseItem,
@@ -57,7 +57,7 @@ export interface ElectronApi {
   ) => Promise<IAudioMetadata>;
   path: typeof Path;
   pathToFileURL: (path: string) => string;
-  readDirectory: typeof KlawSync;
+  readDirectory: typeof Klaw;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;

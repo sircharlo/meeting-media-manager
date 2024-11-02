@@ -1,4 +1,5 @@
 import type { PathLike } from 'fs-extra';
+import type { Item } from 'klaw';
 import type { IAudioMetadata } from 'music-metadata';
 import type { MultimediaItem, PublicationFetcher } from 'src/types';
 
@@ -28,19 +29,20 @@ const getFontsPath = () => path.join(getUserDataPath(), 'Fonts');
 const getAdditionalMediaPath = () =>
   path.join(getUserDataPath(), 'Additional Media');
 
-const getTempDirectory = () => {
+const getTempDirectory = async () => {
   const tempDirectory = path.join(getUserDataPath(), 'Temp');
-  fs.ensureDirSync(tempDirectory);
+  await fs.ensureDir(tempDirectory);
   return tempDirectory;
 };
 
-const getPublicationDirectory = (
+const getPublicationDirectory = async (
   publication: PublicationFetcher,
   noIssue = false,
 ) => {
   try {
+    const publicationsPath = await getPublicationsPath();
     const dir = path.join(
-      getPublicationsPath(),
+      publicationsPath,
       publication.pub +
         '_' +
         publication.langwritten +
@@ -48,7 +50,7 @@ const getPublicationDirectory = (
           ? '_' + publication.issue.toString()
           : ''),
     );
-    fs.ensureDirSync(dir);
+    await fs.ensureDir(dir);
     return dir;
   } catch (error) {
     errorCatcher(error);
@@ -62,23 +64,35 @@ const getParentDirectory = (filepath: string) => {
   return path.dirname(filepath);
 };
 
-const getPublicationDirectoryContents = (
+const getPublicationDirectoryContents = async (
   publication: PublicationFetcher,
   filter?: string,
 ) => {
   try {
-    const dir = getPublicationDirectory(publication);
-    if (!fs.existsSync(dir)) return [];
-    const files = readDirectory(dir, {
-      filter: (file) => {
-        if (!filter || !file.path) return true;
-        return path
-          .basename(file.path.toLowerCase())
-          .includes(filter.toLowerCase());
-      },
-      nodir: true,
+    const dir = await getPublicationDirectory(publication);
+    if (!(await fs.exists(dir))) {
+      return [];
+    }
+
+    const files: Item[] = [];
+    await new Promise((resolve, reject) => {
+      readDirectory(dir)
+        .on('data', (file) => {
+          if (file.stats.isDirectory()) return;
+          if (!filter || !file.path) {
+            files.push(file);
+          } else if (
+            path
+              .basename(file.path.toLowerCase())
+              .includes(filter.toLowerCase())
+          ) {
+            files.push(file);
+          }
+        })
+        .on('end', resolve)
+        .on('error', reject);
     });
-    return [...files];
+    return files;
   } catch (error) {
     errorCatcher(error);
     return [];
@@ -86,8 +100,10 @@ const getPublicationDirectoryContents = (
 };
 
 const getFileUrl = (path: string) => {
+  console.debug('getFileUrl', path);
   if (!path) return '';
   if (isFileUrl(path)) return path;
+  console.debug('pathToFileURL', pathToFileURL(path));
   return pathToFileURL(path);
 };
 
@@ -116,7 +132,7 @@ const getMetadataFromMediaPath = async (
   };
   try {
     mediaPath = fileUrlToPath(mediaPath);
-    if (!mediaPath || !fs.existsSync(mediaPath)) return defaultMetadata;
+    if (!mediaPath || !(await fs.exists(mediaPath))) return defaultMetadata;
     if (isFileOfType(mediaPath, ['mov'])) {
       const videoDuration = await getVideoDuration(mediaPath);
       defaultMetadata.format.duration = videoDuration?.seconds || 0;
@@ -132,7 +148,7 @@ const getMetadataFromMediaPath = async (
 const getThumbnailFromMetadata = async (mediaPath: string) => {
   try {
     mediaPath = fileUrlToPath(mediaPath);
-    if (!mediaPath || !fs.existsSync(mediaPath)) return '';
+    if (!mediaPath || !(await fs.exists(mediaPath))) return '';
     const metadata = await parseMediaFile(mediaPath);
     if (metadata?.common?.picture?.length) {
       return URL.createObjectURL(
@@ -149,87 +165,93 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
   }
 };
 
-const getThumbnailFromVideoPath: (
+const getThumbnailFromVideoPath = async (
   videoPath: string,
   thumbnailPath: string,
-) => Promise<string> = (videoPath: string, thumbnailPath: string) => {
+): Promise<string> => {
+  if (!videoPath) {
+    throw new Error('Invalid video path');
+  }
+
+  const videoFileUrl = videoPath;
+  videoPath = fileUrlToPath(videoPath);
+  thumbnailPath = fileUrlToPath(thumbnailPath);
+
+  if (!(await fs.pathExists(videoPath))) {
+    throw new Error('Video file does not exist');
+  }
+
+  const url = await getThumbnailFromMetadata(videoFileUrl);
+  if (url) {
+    return url;
+  }
+
   return new Promise((resolve, reject) => {
-    if (!videoPath) {
-      reject();
-      return;
-    }
-    const videoFileUrl = videoPath;
-    videoPath = fileUrlToPath(videoPath);
-    thumbnailPath = fileUrlToPath(thumbnailPath);
-    if (!fs.existsSync(videoPath)) {
-      reject();
-      return;
-    }
+    const videoRef = document.createElement('video');
+    videoRef.src = getFileUrl(videoPath);
+    videoRef.load();
 
-    getThumbnailFromMetadata(videoFileUrl).then((url) => {
-      if (url) {
-        resolve(url);
-      } else {
-        const videoRef = document.createElement('video');
-        videoRef.src = getFileUrl(videoPath);
-        videoRef.load();
+    videoRef.addEventListener('loadeddata', () => {
+      videoRef.addEventListener(
+        'seeked',
+        async () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = FULL_HD.width;
+          canvas.height = FULL_HD.height;
 
-        videoRef.addEventListener('loadeddata', () => {
-          videoRef.addEventListener(
-            'seeked',
-            () => {
-              const canvas = document.createElement('canvas');
-              canvas.width = FULL_HD.width;
-              canvas.height = FULL_HD.height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
+            const imageUrl = canvas.toDataURL('image/jpeg');
+            try {
+              // Save image asynchronously
+              await fs.writeFile(
+                thumbnailPath,
+                Buffer.from(imageUrl.split(',')[1], 'base64'),
+              );
 
-              const ctx = canvas.getContext('2d');
-              if (ctx) {
-                ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
-                const imageUrl = canvas.toDataURL('image/jpeg');
-                // save to file
-                fs.writeFileSync(
-                  thumbnailPath,
-                  Buffer.from(imageUrl.split(',')[1], 'base64'),
-                );
+              // Cleanup
+              canvas.remove();
+              videoRef.remove();
+              resolve(thumbnailPath);
+            } catch (error) {
+              // Cleanup in case of error
+              canvas.remove();
+              videoRef.remove();
+              reject(error);
+            }
+          } else {
+            // Cleanup in case of error
+            canvas.remove();
+            videoRef.remove();
+            reject(new Error('Failed to get canvas context'));
+          }
+        },
+        { once: true },
+      );
 
-                // Cleanup
-                canvas.remove();
-                videoRef.remove();
+      videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
+    });
 
-                resolve(thumbnailPath);
-              } else {
-                // Cleanup in case of error
-                canvas.remove();
-                videoRef.remove();
-                reject(new Error('Failed to get canvas context'));
-              }
-            },
-            { once: true },
-          );
-          videoRef.currentTime = 5;
-        });
-
-        videoRef.addEventListener('error', (err) => {
-          // Cleanup in case of error
-          videoRef.remove();
-          reject(
-            new Error('Error loading video: ' + err.message + ' ' + videoPath),
-          );
-        });
-      }
+    videoRef.addEventListener('error', (err) => {
+      // Cleanup in case of error
+      videoRef.remove();
+      reject(
+        new Error('Error loading video: ' + err.message + ' ' + videoPath),
+      );
     });
   });
 };
 
 const getThumbnailUrl = async (filepath: string, forceRefresh?: boolean) => {
   try {
-    if (!filepath || !fs.existsSync(fileUrlToPath(filepath))) return '';
+    if (!filepath || !(await fs.exists(fileUrlToPath(filepath)))) return '';
     let thumbnailUrl = '';
     if (isImage(filepath)) {
       thumbnailUrl = getFileUrl(filepath);
     } else if (isVideo(filepath)) {
       const thumbnailPath = filepath.split('.')[0] + '.jpg';
-      if (fs.existsSync(thumbnailPath)) {
+      if (await fs.exists(thumbnailPath)) {
         thumbnailUrl = getFileUrl(thumbnailPath);
       } else {
         thumbnailUrl = await getThumbnailFromVideoPath(filepath, thumbnailPath);
@@ -271,14 +293,14 @@ const getSubtitlesUrl = async (
             'Duration mismatch: ' + JSON.stringify(subtitleFetcher),
           );
         const subtitlesFilename = path.basename(subtitles);
-        const subDirectory = getPublicationDirectory(subtitleFetcher);
+        const subDirectory = await getPublicationDirectory(subtitleFetcher);
         await downloadFileIfNeeded({
           dir: subDirectory,
           filename: subtitlesFilename,
           url: subtitles,
         });
         subtitlesPath = path.join(subDirectory, subtitlesFilename);
-        if (fs.existsSync(subtitlesPath)) {
+        if (await fs.exists(subtitlesPath)) {
           subtitlesUrl = getFileUrl(subtitlesPath);
         } else {
           subtitlesUrl = '';
@@ -294,30 +316,37 @@ const getSubtitlesUrl = async (
   }
 };
 
-const isEmptyDir = (directory: PathLike) => {
+const isEmptyDir = async (directory: PathLike) => {
   try {
-    return fs.readdirSync(directory).length === 0;
+    const files = await fs.readdir(directory);
+    return files.length === 0;
   } catch (error) {
     errorCatcher(error);
     return false;
   }
 };
-const removeEmptyDirs = (rootDir: string) => {
+
+const removeEmptyDirs = async (rootDir: string) => {
   try {
-    if (!fs.existsSync(rootDir)) return;
-    const dirs = readDirectory(rootDir, {
-      depthLimit: -1,
-      nodir: false,
-      nofile: true,
-    })
-      .map((item) => item.path)
-      .sort((a, b) => b.length - a.length);
-    dirs.forEach((dir) => {
-      if (isEmptyDir(dir)) {
-        console.log(`Removing empty directory: ${dir}`);
-        fs.rmdirSync(dir);
-      }
+    if (!(await fs.pathExists(rootDir))) return;
+    const dirs: string[] = [];
+    await new Promise((resolve, reject) => {
+      readDirectory(rootDir, { depthLimit: -1 })
+        .on('data', (item) => {
+          if (item.stats.isDirectory()) {
+            dirs.push(item.path);
+          }
+        })
+        .on('end', resolve)
+        .on('error', reject);
     });
+    dirs.sort((a, b) => b.length - a.length);
+    for (const dir of dirs) {
+      if (await isEmptyDir(dir)) {
+        console.log(`Removing empty directory: ${dir}`);
+        await fs.remove(dir);
+      }
+    }
   } catch (error) {
     errorCatcher(error);
   }
@@ -329,20 +358,20 @@ const disableUpdatesPath = path.join(
   'disable-updates',
 );
 
-const updatesDisabled = () => fs.existsSync(disableUpdatesPath);
+const updatesDisabled = () => fs.exists(disableUpdatesPath);
 
-const disableUpdates = () => {
+const disableUpdates = async () => {
   try {
-    fs.ensureFileSync(disableUpdatesPath);
-    fs.writeFileSync(disableUpdatesPath, 'true');
+    await fs.ensureFile(disableUpdatesPath);
+    await fs.writeFile(disableUpdatesPath, 'true');
   } catch (error) {
     errorCatcher(error);
   }
 };
 
-const enableUpdates = () => {
+const enableUpdates = async () => {
   try {
-    fs.removeSync(disableUpdatesPath);
+    await fs.remove(disableUpdatesPath);
   } catch (error) {
     errorCatcher(error);
   }
