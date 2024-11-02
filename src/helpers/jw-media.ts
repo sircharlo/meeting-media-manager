@@ -354,10 +354,6 @@ async function addFullFilePathToMultimediaItem(
           multimediaItem.FilePath,
         )
       : undefined;
-    console.log({
-      ...multimediaItem,
-      ...(fullFilePath ? { FilePath: fullFilePath } : {}),
-    });
     return {
       ...multimediaItem,
       ...(fullFilePath ? { FilePath: fullFilePath } : {}),
@@ -731,6 +727,7 @@ const dynamicMediaMapper = async (
   lookupDate: Date,
   additional?: boolean,
 ): Promise<DynamicMediaObject[]> => {
+  const { currentSettings } = useCurrentStateStore();
   try {
     let middleSongParagraphOrdinal = 0;
     if (!additional) {
@@ -762,7 +759,26 @@ const dynamicMediaMapper = async (
         const audio = isAudio(m.FilePath);
         let duration = 0;
         if (video || audio) {
-          duration = m.Duration ?? (await getDurationFromMediaPath(m.FilePath));
+          if (m.Duration) {
+            duration = m.Duration;
+          } else if (await fs.exists(m.FilePath)) {
+            duration = await getDurationFromMediaPath(m.FilePath);
+          }
+          if (duration === 0 && m.KeySymbol) {
+            const lang = currentSettings?.lang || currentSettings?.langFallback;
+            if (lang) {
+              duration =
+                (
+                  await getJwMediaInfo({
+                    langwritten: lang,
+                    pub: m.KeySymbol,
+                    ...(m.Track && { track: m.Track }),
+                    ...(m.IssueTagNumber && { issue: m.IssueTagNumber }),
+                    fileformat: video ? 'mp4' : 'mp3',
+                  })
+                )?.duration || 0;
+            }
+          }
         }
         let section = additional ? 'additional' : 'wt';
         if (middleSongParagraphOrdinal > 0) {
@@ -1707,8 +1723,6 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
         signal: controller.signal,
       })
       .then((res) => res.data);
-    console.debug('homepage finished', homePageUrl);
-
     if (!homePage) {
       resetUrlVariables();
       return;

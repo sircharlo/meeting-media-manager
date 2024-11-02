@@ -100,10 +100,8 @@ const getPublicationDirectoryContents = async (
 };
 
 const getFileUrl = (path: string) => {
-  console.debug('getFileUrl', path);
   if (!path) return '';
   if (isFileUrl(path)) return path;
-  console.debug('pathToFileURL', pathToFileURL(path));
   return pathToFileURL(path);
 };
 
