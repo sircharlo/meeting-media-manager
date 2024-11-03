@@ -609,13 +609,18 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         ...(extract.RefEndParagraphOrdinal
           ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
           : {}),
-      }).map((extractItem) => {
-        return {
-          ...extractItem,
-          BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
-          EndParagraphOrdinal: extract.EndParagraphOrdinal,
-        };
-      }) as MultimediaItem[];
+      })
+        .map((extractItem) => {
+          return {
+            ...extractItem,
+            BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
+            EndParagraphOrdinal: extract.EndParagraphOrdinal,
+          };
+        })
+        .filter(
+          (extractItem) =>
+            !(symbol === 'lmd' && extractItem.FilePath.includes('mp4')),
+        ) as MultimediaItem[];
       for (let i = 0; i < extractItems.length; i++) {
         extractItems[i] = await addFullFilePathToMultimediaItem(
           extractItems[i],
@@ -1176,7 +1181,7 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
     const errors = [];
 
     const mediaExistenceChecks = allMedia.map(async (m) => {
-      if (m.KeySymbol && (!m.Label || !m.FilePath)) {
+      if ((m.KeySymbol || m.MepsDocumentId) && (!m.Label || !m.FilePath)) {
         const exists = await fs.pathExists(m.FilePath);
         return { exists, media: m };
       }
@@ -1196,11 +1201,12 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
         currentStateStore.currentSettings?.langFallback,
       ];
       for (const langwritten of langsWritten) {
-        if (!langwritten || !media.KeySymbol) {
+        if (!langwritten || !(media.KeySymbol || media.MepsDocumentId)) {
           continue;
         }
 
-        const publicationFetcher = {
+        const publicationFetcher: PublicationFetcher = {
+          docid: media.MepsDocumentId,
           fileformat: media.MimeType?.includes('audio') ? 'MP3' : 'MP4',
           issue: media.IssueTagNumber,
           langwritten,
@@ -1254,11 +1260,12 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
     publication.fileformat = publication.fileformat.toUpperCase();
     const params = {
       alllangs: '0',
+      docid: !publication.pub ? publication.docid : '',
       fileformat: publication.fileformat,
       issue: publication.issue?.toString() || '',
       langwritten: publication.langwritten,
       output: 'json',
-      pub: publication.pub,
+      pub: publication.pub || '',
       track: publication.track?.toString() || '',
       txtCMSLang: 'E',
     };
@@ -1268,6 +1275,7 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
     if (!response) {
       currentStateStore.downloadProgress[
         [
+          publication.docid,
           publication.pub,
           publication.langwritten,
           publication.issue,
@@ -1340,7 +1348,12 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
         const fileExtension = path.extname(filePath).toLowerCase();
 
         let match = true;
-        const params = [publication.issue, publication.track, publication.pub]
+        const params = [
+          publication.issue,
+          publication.track,
+          publication.pub,
+          publication.docid,
+        ]
           .filter((i) => i !== undefined)
           .map((i) => i?.toString()) as string[];
 

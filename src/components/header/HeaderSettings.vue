@@ -151,6 +151,7 @@ const loadFrequentlyUsedDirectories = async () => {
     await getDirectory('it', 0), // Insight
     await getDirectory('lff', 0), // Enjoy Life Forever
     await getDirectory('lmd', 0), // Love People
+    await getDirectory('lmdv', 0), // Love People Videos
   ];
 
   frequentlyUsedDirectories.value = new Set(directories.filter(Boolean));

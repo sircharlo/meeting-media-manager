@@ -41,7 +41,7 @@ const getPublicationDirectory = async (
     const publicationsPath = await getPublicationsPath();
     const dir = path.join(
       publicationsPath,
-      publication.pub +
+      (publication.pub || publication.docid) +
         '_' +
         publication.langwritten +
         (publication.issue !== undefined && !noIssue
