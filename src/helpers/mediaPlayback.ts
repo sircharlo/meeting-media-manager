@@ -27,8 +27,15 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
 
-const { convertHeic, decompress, executeQuery, fs, path, toggleMediaWindow } =
-  window.electronApi;
+const {
+  convertHeic,
+  decompress,
+  executeQuery,
+  fs,
+  path,
+  readdir,
+  toggleMediaWindow,
+} = window.electronApi;
 
 const formatTime = (time: number) => {
   try {
@@ -292,9 +299,9 @@ const findDb = async (publicationDirectory: string | undefined) => {
   if (!publicationDirectory) return undefined;
   try {
     if (!(await fs.pathExists(publicationDirectory))) return undefined;
-    const files = await fs.readdir(publicationDirectory);
+    const files = await readdir(publicationDirectory);
     return files
-      .map((filename) => path.join(publicationDirectory, filename))
+      .map((file) => path.join(publicationDirectory, file.name))
       .find((filename) => filename.includes('.db'));
   } catch (error) {
     errorCatcher(error);

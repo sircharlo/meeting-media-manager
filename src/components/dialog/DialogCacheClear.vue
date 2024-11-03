@@ -7,14 +7,14 @@
         <q-icon class="q-mr-sm" name="mmm-delete" />
         {{ $t('clear-cache') }}
       </q-card-section>
-      <q-card-section v-if="cacheClearType === 'all'" class="row items-center">
-        {{ $t('are-you-sure-delete-cache') }}
-      </q-card-section>
-      <q-card-section
-        v-else-if="cacheClearType === 'smart'"
-        class="row items-center"
-      >
-        {{ $t('are-you-sure-delete-unused-cache') }}
+      <q-card-section class="row items-center">
+        {{
+          $t(
+            cacheClearType === 'all'
+              ? 'are-you-sure-delete-cache'
+              : 'are-you-sure-delete-unused-cache',
+          )
+        }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
         <q-btn :label="$t('cancel')" flat @click="open = false" />
@@ -84,6 +84,7 @@ const deleteCacheFiles = async (type = '') => {
       type === 'smart'
         ? Object.keys(props.unusedParentDirectories)
         : props.cacheFiles.map((f) => f.path);
+    console.debug('deleteCacheFiles', filepathsToDelete);
     for (const filepath of filepathsToDelete) {
       try {
         fs.remove(filepath);

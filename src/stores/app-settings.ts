@@ -44,9 +44,8 @@ export const useAppSettingsStore = defineStore('app-settings', {
             await Promise.all(
               oldPrefsPaths.map(async (oldPrefsPath) => {
                 try {
-                  const oldPrefs: OldAppConfig = await parsePrefsFile(
-                    oldPrefsPath.path,
-                  );
+                  const oldPrefs: OldAppConfig =
+                    await parsePrefsFile(oldPrefsPath);
                   const newPrefsObject = buildNewPrefsObject(oldPrefs);
                   const newCongId = uid();
                   congregationStore.congregations[newCongId] = newPrefsObject;

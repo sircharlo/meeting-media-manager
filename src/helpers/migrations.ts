@@ -1,42 +1,27 @@
-import type { Item } from 'klaw';
 import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-const { fs, path, readDirectory } = window.electronApi;
+const { fs, path, readdir } = window.electronApi;
 const { readJSON } = fs;
-
-const oldPrefsFilterFn = (item: { path: string }) => {
-  try {
-    if (!item?.path) return false;
-    const oldPrefsFilterFnBasename = path.basename(item.path);
-    return (
-      oldPrefsFilterFnBasename.startsWith('prefs') &&
-      oldPrefsFilterFnBasename.endsWith('.json')
-    );
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
-};
 
 const getOldPrefsPaths = async (oldPath: string) => {
   try {
     if (!oldPath) return [];
-    const files: Item[] = [];
-    await new Promise((resolve, reject) => {
-      readDirectory(oldPath)
-        .on('data', (file) => {
-          if (oldPrefsFilterFn(file)) {
-            files.push(file);
-          }
-        })
-        .on('end', resolve)
-        .on('error', reject);
-    });
-
-    return files;
+    const filePaths: string[] = [];
+    const items = await readdir(oldPath);
+    for (const item of items) {
+      const filePath = path.join(oldPath, item.name);
+      if (
+        item.isFile &&
+        path.basename(filePath).startsWith('prefs') &&
+        path.basename(filePath).endsWith('.json')
+      ) {
+        filePaths.push(filePath);
+      }
+    }
+    return filePaths;
   } catch (error) {
     errorCatcher(error);
     return [];

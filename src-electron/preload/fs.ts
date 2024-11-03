@@ -1,12 +1,9 @@
 import type { IOptions } from 'music-metadata';
 import type { VideoDuration } from 'src/types';
 
-import klaw from 'klaw';
 import url from 'url';
 
 import { errorCatcher } from '../utils';
-
-export const readDirectory = klaw;
 
 export const decompress = async (inputZip: string, outputFolder: string) => {
   const { default: AdmZip } = await import('adm-zip');

@@ -103,7 +103,7 @@ import { useJwStore } from 'src/stores/jw';
 // Types
 import type { CacheFile } from 'src/types';
 
-const { fs, pathToFileURL, readDirectory } = window.electronApi;
+const { fs, path, pathToFileURL, readdir } = window.electronApi;
 
 const jwStore = useJwStore();
 const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
@@ -235,7 +235,7 @@ watchEffect(() => {
 
 const unusedCacheFoldersSize = computed(() => {
   try {
-    if (!cacheFiles.value.length) return '...';
+    if (!cacheFiles.value.length) return prettyBytes(0);
     const size = Object.values(unusedParentDirectories.value).reduce(
       (a, b) => a + b,
       0,
@@ -249,7 +249,7 @@ const unusedCacheFoldersSize = computed(() => {
 
 const allCacheFilesSize = computed(() => {
   try {
-    if (!cacheFiles.value.length) return '...';
+    if (!cacheFiles.value.length) return prettyBytes(0);
     return prettyBytes(
       cacheFiles.value.reduce((size, cacheFile) => size + cacheFile.size, 0),
     );
@@ -280,31 +280,27 @@ const mediaFileParentDirectories = new Set([
 ]);
 
 const getCacheFiles = async (cacheDirs: string[]) => {
+  console.log('getCacheFiles', cacheDirs);
   const files: CacheFile[] = [];
-
   for (const cacheDir of cacheDirs) {
-    await new Promise<void>((resolve, reject) => {
-      const items: CacheFile[] = [];
-      readDirectory(cacheDir)
-        .on('data', (item) => {
-          if (item.stats.isDirectory()) return;
-          const fileParentDirectory = getParentDirectory(item.path);
-          const fileParentDirectoryUrl = pathToFileURL(fileParentDirectory);
-          items.push({
+    try {
+      const items = await readdir(cacheDir, true, true);
+      for (const item of items) {
+        const filePath = path.join(item.parentPath, item.name);
+        if (item.isFile) {
+          const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
+          files.push({
             orphaned: !mediaFileParentDirectories.has(fileParentDirectoryUrl),
-            parentPath: fileParentDirectory,
-            path: item.path,
-            size: item.stats.size,
+            parentPath: item.parentPath,
+            path: filePath,
+            size: item.size || 0,
           });
-        })
-        .on('end', () => {
-          files.push(...items);
-          resolve();
-        })
-        .on('error', reject);
-    });
+        }
+      }
+    } catch (error) {
+      errorCatcher(error);
+    }
   }
-
   return files;
 };
 

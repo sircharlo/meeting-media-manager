@@ -15,7 +15,7 @@ import {
   isFileUrl,
   parseMediaFile,
   pathToFileURL,
-  readDirectory,
+  // readDirectory,
 } from './preload/fs';
 import { invoke, listen, removeAllIpcListeners, send } from './preload/ipc';
 import { initScreenListeners, moveMediaWindow } from './preload/screen';
@@ -59,7 +59,8 @@ const electronApi: ElectronApi = {
   parseMediaFile,
   path,
   pathToFileURL,
-  readDirectory,
+  readdir: (p, withSizes, recursive) =>
+    invoke('readdir', p, withSizes, recursive),
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),

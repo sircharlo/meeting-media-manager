@@ -544,6 +544,7 @@ const {
   fs,
   getLocalPathFromFileObject,
   path,
+  readdir,
 } = window.electronApi;
 
 const filesLoading = ref(-1);
@@ -1342,7 +1343,7 @@ const addToFiles = async (
         decompress(filepath, unzipDirectory)
           .then(async () => {
             try {
-              const files = await fs.readdir(unzipDirectory);
+              const files = await readdir(unzipDirectory);
               const filePaths = files.map((file) => ({
                 path: path.join(unzipDirectory, file),
               }));

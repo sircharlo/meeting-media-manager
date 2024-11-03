@@ -1,4 +1,3 @@
-import type { Item } from 'klaw';
 import type {
   DatedTextItem,
   DocumentItem,
@@ -65,7 +64,7 @@ const {
   fileUrlToPath,
   fs,
   path,
-  readDirectory,
+  readdir,
 } = window.electronApi;
 
 const addJwpubDocumentMediaToFiles = async (
@@ -1333,44 +1332,37 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     const pubDir = await getPublicationDirectory(publication);
     const responseObject = await getPubMediaLinks(publication);
     if (!responseObject?.files) {
-      if (!(await fs.exists(pubDir))) return { FilePath: '' };
-      const files: Item[] = [];
-      await new Promise((resolve, reject) => {
-        readDirectory(pubDir)
-          .on('data', (file) => {
-            if (file.stats.isDirectory()) return;
-            let match = true;
-            const params = [
-              publication.issue,
-              publication.track,
-              publication.pub,
-            ]
-              .filter((i) => i !== undefined)
-              .map((i) => i?.toString()) as string[];
-            for (const test of params) {
-              if (!file.path || !path.basename(file.path).includes(test)) {
-                match = false;
-                break;
-              }
-            }
-            if (
-              match &&
-              publication.fileformat &&
-              !path
-                .extname(file.path)
-                .toLowerCase()
-                .includes(publication.fileformat?.toLowerCase())
-            ) {
-              match = false;
-            }
-            if (match) {
-              files.push(file);
-            }
-          })
-          .on('end', resolve)
-          .on('error', reject);
-      });
-      return files.length > 0 ? { FilePath: files[0].path } : { FilePath: '' };
+      if (!(await fs.pathExists(pubDir))) return { FilePath: '' };
+      const files: string[] = [];
+      const items = (await readdir(pubDir)).filter((item) => item.isFile);
+      for (const item of items) {
+        const filePath = path.join(pubDir, item.name);
+        const fileExtension = path.extname(filePath).toLowerCase();
+
+        let match = true;
+        const params = [publication.issue, publication.track, publication.pub]
+          .filter((i) => i !== undefined)
+          .map((i) => i?.toString()) as string[];
+
+        for (const test of params) {
+          if (!item.name || !path.basename(item.name).includes(test)) {
+            match = false;
+            break;
+          }
+        }
+        if (
+          match &&
+          publication.fileformat &&
+          !fileExtension.includes(publication.fileformat.toLowerCase())
+        ) {
+          match = false;
+        }
+
+        if (match) {
+          files.push(filePath);
+        }
+      }
+      return files.length > 0 ? { FilePath: files[0] } : { FilePath: '' };
     }
     if (!responseObject) return { FilePath: '' };
     if (!publication.fileformat)

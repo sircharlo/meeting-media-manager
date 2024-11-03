@@ -1,7 +1,5 @@
-import type { PathLike } from 'fs-extra';
-import type { Item } from 'klaw';
 import type { IAudioMetadata } from 'music-metadata';
-import type { MultimediaItem, PublicationFetcher } from 'src/types';
+import type { MultimediaItem, PublicationFetcher, SongItem } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { FULL_HD } from 'src/constants/media';
@@ -20,7 +18,7 @@ const {
   parseMediaFile,
   path,
   pathToFileURL,
-  readDirectory,
+  readdir,
 } = window.electronApi;
 
 const getPublicationsPath = () => path.join(getUserDataPath(), 'Publications');
@@ -70,28 +68,22 @@ const getPublicationDirectoryContents = async (
 ) => {
   try {
     const dir = await getPublicationDirectory(publication);
-    if (!(await fs.exists(dir))) {
+    if (!(await fs.pathExists(dir))) {
       return [];
     }
-
-    const files: Item[] = [];
-    await new Promise((resolve, reject) => {
-      readDirectory(dir)
-        .on('data', (file) => {
-          if (file.stats.isDirectory()) return;
-          if (!filter || !file.path) {
-            files.push(file);
-          } else if (
-            path
-              .basename(file.path.toLowerCase())
-              .includes(filter.toLowerCase())
-          ) {
-            files.push(file);
-          }
-        })
-        .on('end', resolve)
-        .on('error', reject);
-    });
+    const files: SongItem[] = [];
+    const items = (await readdir(dir)).filter((item) => item.name);
+    for (const item of items) {
+      const filePath = path.join(dir, item.name);
+      if (item.isFile) {
+        if (
+          !filter ||
+          path.basename(item.name.toLowerCase()).includes(filter.toLowerCase())
+        ) {
+          files.push({ path: filePath });
+        }
+      }
+    }
     return files;
   } catch (error) {
     errorCatcher(error);
@@ -314,9 +306,9 @@ const getSubtitlesUrl = async (
   }
 };
 
-const isEmptyDir = async (directory: PathLike) => {
+const isEmptyDir = async (directory: string) => {
   try {
-    const files = await fs.readdir(directory);
+    const files = await readdir(directory);
     return files.length === 0;
   } catch (error) {
     errorCatcher(error);
@@ -327,18 +319,10 @@ const isEmptyDir = async (directory: PathLike) => {
 const removeEmptyDirs = async (rootDir: string) => {
   try {
     if (!(await fs.pathExists(rootDir))) return;
-    const dirs: string[] = [];
-    await new Promise((resolve, reject) => {
-      readDirectory(rootDir, { depthLimit: -1 })
-        .on('data', (item) => {
-          if (item.stats.isDirectory()) {
-            dirs.push(item.path);
-          }
-        })
-        .on('end', resolve)
-        .on('error', reject);
-    });
-    dirs.sort((a, b) => b.length - a.length);
+    const dirs = (await readdir(rootDir))
+      .filter((item) => item.isDirectory)
+      .map((item) => path.join(rootDir, item.name))
+      .sort((a, b) => b.length - a.length);
     for (const dir of dirs) {
       if (await isEmptyDir(dir)) {
         console.log(`Removing empty directory: ${dir}`);
