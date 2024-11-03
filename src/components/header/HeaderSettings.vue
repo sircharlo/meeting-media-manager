@@ -123,8 +123,6 @@ const cacheClearConfirmPopup = ref(false);
 const cacheClearType = ref<'' | 'all' | 'smart'>('');
 const cacheFiles = ref<CacheFile[]>([]);
 
-// Assuming currentSettings and currentSongbook are defined elsewhere
-
 const frequentlyUsedDirectories = ref(new Set());
 
 const loadFrequentlyUsedDirectories = async () => {

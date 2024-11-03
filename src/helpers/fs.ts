@@ -1,5 +1,5 @@
 import type { IAudioMetadata } from 'music-metadata';
-import type { MultimediaItem, PublicationFetcher, SongItem } from 'src/types';
+import type { MultimediaItem, PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { FULL_HD } from 'src/constants/media';
@@ -68,23 +68,15 @@ const getPublicationDirectoryContents = async (
 ) => {
   try {
     const dir = await getPublicationDirectory(publication);
-    if (!(await fs.pathExists(dir))) {
-      return [];
-    }
-    const files: SongItem[] = [];
-    const items = (await readdir(dir)).filter((item) => item.name);
-    for (const item of items) {
-      const filePath = path.join(dir, item.name);
-      if (item.isFile) {
-        if (
-          !filter ||
-          path.basename(item.name.toLowerCase()).includes(filter.toLowerCase())
-        ) {
-          files.push({ path: filePath });
-        }
-      }
-    }
-    return files;
+    if (!(await fs.pathExists(dir))) return [];
+    const items = await readdir(dir);
+    return items
+      .filter(
+        (item) =>
+          item.isFile &&
+          (!filter || item.name.toLowerCase().includes(filter.toLowerCase())),
+      )
+      .map((item) => ({ path: path.join(dir, item.name) }));
   } catch (error) {
     errorCatcher(error);
     return [];

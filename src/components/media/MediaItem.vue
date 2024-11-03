@@ -636,9 +636,6 @@ const setMediaPlaying = async (
     : (media.streamUrl ?? media.fileUrl);
   mediaPlayingUniqueId.value = media.uniqueId;
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
-  /*
-
-  */
 };
 
 resetMediaTitle();

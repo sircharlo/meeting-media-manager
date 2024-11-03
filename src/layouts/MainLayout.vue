@@ -62,7 +62,11 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
-import { downloadSongbookVideos, setUrlVariables } from 'src/helpers/jw-media';
+import {
+  downloadBackgroundMusic,
+  downloadSongbookVideos,
+  setUrlVariables,
+} from 'src/helpers/jw-media';
 import {
   executeShortcut,
   registerAllCustomShortcuts,
@@ -176,6 +180,7 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       downloadProgress.value = {};
       updateLookupPeriod();
       registerAllCustomShortcuts();
+      downloadBackgroundMusic();
       if (queues.meetings[newCongregation]) {
         queues.meetings[newCongregation].start();
       }
