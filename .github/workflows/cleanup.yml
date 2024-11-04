@@ -24,7 +24,7 @@ jobs:
 
           REPO=${{ github.server_url }}/${{ github.repository }}
           REF=${{ github.event.pull_request.number }}
-          DELETED=${{ github.event.ref || 'Empty' }}
+          DELETED=${{ github.event.ref || github.action_ref || github.head_ref || 'Empty' }}
           BRANCH=${{ inputs.branch || 'refs/pull/$REF/merge' }}
 
           echo "Fetching list of cache key"
