@@ -147,4 +147,4 @@ jobs:
             dist/electron/Packaged/*.exe
             dist/electron/Packaged/*.dmg
             dist/electron/Packaged/*.AppImage
-            dist/electron/Packaged/**/Info.plist
+            dist/electron/Packaged/**/Contents/Info.plist
