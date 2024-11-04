@@ -10,6 +10,7 @@ export interface SettingsValues {
   disableMediaFetching: boolean;
   // enablePp: boolean;
   enableExtraCache: boolean;
+  enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
   // disableHardwareAcceleration: boolean;
   enableMediaDisplayButton: boolean;
@@ -17,6 +18,7 @@ export interface SettingsValues {
   enableSubtitles: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
+  folderToWatch: string;
   hideMediaLogo: boolean;
   includePrinted: boolean;
   lang: string;

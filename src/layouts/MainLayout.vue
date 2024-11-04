@@ -62,6 +62,7 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
+import { watchExternalFolder } from 'src/helpers/fs';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
@@ -315,6 +316,13 @@ watch(
     if (newEnableKeyboardShortcuts) {
       registerAllCustomShortcuts();
     }
+  },
+);
+
+watchImmediate(
+  () => currentSettings.value?.folderToWatch,
+  (newFolderToWatch) => {
+    watchExternalFolder(newFolderToWatch);
   },
 );
 

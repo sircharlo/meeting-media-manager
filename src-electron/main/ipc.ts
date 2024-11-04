@@ -10,7 +10,7 @@ import type {
 
 import { homepage, productName, repository } from 'app/package.json';
 import get from 'axios';
-import { type FSWatcher, watch } from 'chokidar';
+import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
 import {
   app,
@@ -22,7 +22,7 @@ import {
 } from 'electron';
 import { type Dirent, exists, readdir, stat } from 'fs-extra';
 import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
-import { join } from 'upath';
+import { basename, dirname, join, toUnix } from 'upath';
 
 import { errorCatcher, isSelf } from './../utils';
 import { getAllScreens } from './screen';
@@ -133,10 +133,26 @@ handleIpcSend('unwatchFolders', () => {
   });
 });
 
-handleIpcSend('watchFolder', (_e, path: string) => {
-  console.log(_e, path);
+const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
+
+handleIpcSend('watchFolder', (_e, folderPath: string) => {
+  console.log(_e, folderPath);
   watchers.add(
-    watch(path).on('all', (event, path) => {
+    filesystemWatch(folderPath, {
+      ignored: (fp, stats) => {
+        try {
+          if (toUnix(folderPath) === fp) return false; // Don't ignore the root folder itself
+          if (!stats) return false; // Don't ignore anything if no stats are available
+          const dirPath = toUnix(stats.isDirectory() ? fp : dirname(fp)); // If this isn't a directory, get the parent directory
+          const dirOfNote = basename(dirPath); // Get the name of the directory
+          return !datePattern.test(dirOfNote); // Ignore files in a directory whose name doesn't match YYYY-MM-DD
+        } catch (error) {
+          errorCatcher(error);
+          return true;
+        }
+      },
+      ignorePermissionErrors: true,
+    }).on('all', (event, path) => {
       console.log(event, path);
     }),
   );
