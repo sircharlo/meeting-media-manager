@@ -1,3 +1,5 @@
+import type { Item } from 'klaw-sync';
+
 import type { VideoMarker } from './sqlite';
 
 export interface DynamicMediaObject {
@@ -54,9 +56,8 @@ export interface CacheFile {
   size: number;
 }
 
-export interface SongItem {
+export interface SongItem extends Item {
   duration?: number; // or the correct type for duration
-  path: string;
   title?: string;
 }
 

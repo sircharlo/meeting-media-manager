@@ -265,17 +265,9 @@ const additionalMediaForDay = computed(
 );
 
 const hiddenMediaForDay = computed(() =>
-  (
-    lookupPeriod.value?.[currentCongregation.value]?.find(
-      (day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value,
-    )?.dynamicMedia || []
-  )
-    .concat(
-      additionalMediaMaps.value?.[currentCongregation.value]?.[
-        selectedDate.value
-      ] || [],
-    )
-    .some((media) => media.hidden),
+  lookupPeriod.value?.[currentCongregation.value]
+    ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
+    ?.dynamicMedia?.some((media) => media.hidden),
 );
 
 const mediaDeleteAllPending = ref(false);

@@ -27,15 +27,8 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
 
-const {
-  convertHeic,
-  decompress,
-  executeQuery,
-  fs,
-  path,
-  readdir,
-  toggleMediaWindow,
-} = window.electronApi;
+const { convertHeic, decompress, executeQuery, fs, path, toggleMediaWindow } =
+  window.electronApi;
 
 const formatTime = (time: number) => {
   try {
@@ -158,10 +151,7 @@ const decompressJwpub = async (
     const currentState = useCurrentStateStore();
     if (!isJwpub(jwpubPath)) return jwpubPath;
     if (!outputPath)
-      outputPath = path.join(
-        await getTempDirectory(),
-        path.basename(jwpubPath),
-      );
+      outputPath = path.join(getTempDirectory(), path.basename(jwpubPath));
     if (!currentState.extractedFiles[outputPath] || force)
       currentState.extractedFiles[outputPath] = jwpubDecompressor(
         jwpubPath,
@@ -183,7 +173,7 @@ const getMediaFromJwPlaylist = async (
     if (!jwPlaylistPath) return [];
     const outputPath = path.join(destPath, path.basename(jwPlaylistPath));
     await decompress(jwPlaylistPath, outputPath);
-    const dbFile = await findDb(outputPath);
+    const dbFile = findDb(outputPath);
     if (!dbFile) return [];
     let playlistName = '';
     try {
@@ -232,14 +222,14 @@ const getMediaFromJwPlaylist = async (
       LEFT JOIN
         Location l ON plm.LocationId = l.LocationId`,
     );
-    const playlistMediaItems = await Promise.all(
-      playlistItems.map(async (item) => {
+    const playlistMediaItems: MultimediaItem[] = playlistItems.map(
+      (item): MultimediaItem => {
         item.ThumbnailFilePath = path.join(outputPath, item.ThumbnailFilePath);
         if (
-          (await fs.pathExists(item.ThumbnailFilePath)) &&
+          fs.existsSync(item.ThumbnailFilePath) &&
           !item.ThumbnailFilePath.includes('.jpg')
         ) {
-          await fs.rename(
+          fs.renameSync(
             item.ThumbnailFilePath,
             item.ThumbnailFilePath + '.jpg',
           );
@@ -279,7 +269,7 @@ const getMediaFromJwPlaylist = async (
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           Track: item.Track,
         };
-      }),
+      },
     );
 
     await processMissingMediaInfo(playlistMediaItems);
@@ -295,14 +285,16 @@ const getMediaFromJwPlaylist = async (
   }
 };
 
-const findDb = async (publicationDirectory: string | undefined) => {
+const findDb = (publicationDirectory?: string) => {
   if (!publicationDirectory) return undefined;
   try {
-    if (!(await fs.pathExists(publicationDirectory))) return undefined;
-    const files = await readdir(publicationDirectory);
-    return files
-      .map((file) => path.join(publicationDirectory, file.name))
-      .find((filename) => filename.includes('.db'));
+    if (!fs.existsSync(publicationDirectory)) return undefined;
+    return fs
+      .readdirSync(publicationDirectory)
+      .map((filename) => path.join(publicationDirectory, filename))
+      .find((filename) => {
+        return filename.includes('.db');
+      });
   } catch (error) {
     errorCatcher(error);
     return undefined;
@@ -312,14 +304,14 @@ const findDb = async (publicationDirectory: string | undefined) => {
 const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;
   try {
-    const buffer = await fs.readFile(filepath);
+    const buffer = fs.readFileSync(filepath);
     const output = await convertHeic({
       buffer,
       format: 'JPEG',
     });
     const existingPath = path.parse(filepath);
     const newPath = `${existingPath.dir}/${existingPath.name}.jpg`;
-    await fs.writeFile(newPath, Buffer.from(output));
+    fs.writeFileSync(newPath, Buffer.from(output));
     return newPath;
   } catch (error) {
     errorCatcher(error);
@@ -341,7 +333,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
     img.src = getFileUrl(filepath);
 
     return new Promise((resolve, reject) => {
-      img.onload = async function () {
+      img.onload = function () {
         const canvasH = canvas.height,
           canvasW = canvas.width;
         const imgH = img.naturalHeight || canvasH,
@@ -362,7 +354,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         const existingPath = path.parse(filepath);
         const newPath = `${existingPath.dir}/${existingPath.name}.png`;
         try {
-          await fs.writeFile(
+          fs.writeFileSync(
             newPath,
             Buffer.from(outputImg.split(',')[1], 'base64'),
           );

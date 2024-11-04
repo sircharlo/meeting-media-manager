@@ -2,7 +2,6 @@ import type { UrlVariables } from 'src/types';
 
 import { app, session } from 'electron';
 
-//import { JW_DOMAINS, TRUSTED_DOMAINS } from '../constants';
 import { isJwDomain, isTrustedDomain } from './../utils';
 
 export let urlVariables: undefined | UrlVariables;
@@ -30,28 +29,6 @@ export const initSessionListeners = () => {
     );
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-      if (!details.responseHeaders) details.responseHeaders = {};
-
-      // Define a Content Security Policy
-      // See: https://www.electronjs.org/docs/latest/tutorial/security#7-define-a-content-security-policy
-      /*const dynamicDomains: string[] = TRUSTED_DOMAINS.map(
-        (d) => `https://*.${d}`,
-      )
-        .concat(JW_DOMAINS.map((d) => `https://*.${d}`))
-        .concat(
-          [
-            urlVariables?.mediator,
-            urlVariables?.pubMedia,
-            urlVariables?.base ? `https://${urlVariables.base}` : undefined,
-          ]
-            .filter((d): d is string => !!d)
-            .map((d) => `https://*.${new URL(d).hostname}`),
-        );*/
-
-      details.responseHeaders['Content-Security-Policy'] = [
-        "base-uri 'none'; object-src 'none'; default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' file: https:; connect-src 'self' https:; font-src 'self' file: https:; media-src 'self' file: https:; prefetch-src 'self' file: https:; worker-src: blob: file: 'self'",
-      ];
-
       if (!details.responseHeaders || !isTrustedDomain(details.url)) {
         callback({ responseHeaders: details.responseHeaders });
         return;

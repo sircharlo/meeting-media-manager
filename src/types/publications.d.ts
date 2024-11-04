@@ -121,12 +121,11 @@ export interface Publication {
 }
 
 export interface PublicationFetcher {
-  docid?: null | number | undefined;
   fileformat?: string;
   issue?: number | string;
   langwritten: string;
   maxTrack?: number;
-  pub?: null | string | undefined;
+  pub: string;
   track?: number;
 }
 

@@ -1,8 +1,8 @@
 import type { ConversionOptions } from 'app/src-electron/preload/converters';
-import type { default as FsExtra } from 'fs-extra';
+import type FsExtra from 'fs-extra';
+import type KlawSync from 'klaw-sync';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type {
-  FileItem,
   QueryResponseItem,
   SettingsValues,
   VideoDuration,
@@ -22,10 +22,11 @@ export interface ElectronApi {
   fileUrlToPath: (url: string) => string;
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
-  getAppDataPath: () => Promise<string>;
+  getAppDataPath: () => string;
   getAppVersion: () => Promise<string>;
   getLocalPathFromFileObject: (fileObject: File) => string;
-  getUserDataPath: () => Promise<string>;
+  getUserDataPath: () => string;
+  getUserDesktopPath: () => string;
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   isFileUrl: (url: string) => boolean;
   moveMediaWindow: (
@@ -56,11 +57,7 @@ export interface ElectronApi {
   ) => Promise<IAudioMetadata>;
   path: typeof Path;
   pathToFileURL: (path: string) => string;
-  readdir: (
-    path: string,
-    withSizes?: boolean,
-    recursive?: boolean,
-  ) => Promise<FileItem[]>;
+  readDirectory: typeof KlawSync;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;
@@ -91,11 +88,8 @@ export type ElectronIpcSendKey =
 export type ElectronIpcInvokeKey =
   | 'downloadErrorIsExpected'
   | 'getAllScreens'
-  | 'getAppPath'
-  | 'getUserDataPath'
   | 'getVersion'
   | 'openFileDialog'
-  | 'readdir'
   | 'registerShortcut';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels

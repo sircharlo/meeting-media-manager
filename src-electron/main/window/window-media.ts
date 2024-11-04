@@ -1,5 +1,6 @@
 import type { BrowserWindow } from 'electron';
 
+import { captureMessage, setContext } from '@sentry/browser';
 import { PLATFORM } from 'app/src-electron/constants';
 import { errorCatcher } from 'app/src-electron/utils';
 import path from 'path';
@@ -54,6 +55,16 @@ export const moveMediaWindow = (
 
     if (!mediaWindow || !mainWindow) return;
 
+    setContext('moveMediaWindow', {
+      displayNr,
+      fullscreen,
+      mainWindow,
+      mediaWindow,
+      mediaWindowIsFullScreen: !mediaWindow.isFullScreen(),
+      noEvent,
+    });
+    captureMessage('moveMediaWindow start');
+
     if (otherScreens.length > 0) {
       fullscreen = fullscreen ?? mediaWindow.isFullScreen();
 
@@ -73,6 +84,15 @@ export const moveMediaWindow = (
       fullscreen = false;
     }
 
+    setContext('moveMediaWindow', {
+      displayNr,
+      fullscreen,
+      mainWindow,
+      mediaWindow,
+      noEvent,
+    });
+    captureMessage('moveMediaWindow before setWindowPosition()');
+
     setWindowPosition(displayNr, fullscreen, noEvent);
     sendToWindow(mainWindow, 'screenChange');
   } catch (e) {
@@ -86,19 +106,51 @@ const setWindowPosition = (
   noEvent?: boolean,
 ) => {
   try {
+    setContext('setWindowPosition', { displayNr, fullscreen, noEvent });
+    captureMessage('setWindowPosition start');
+
     if (!mediaWindow) return;
 
     const screens = getAllScreens();
     const currentDisplayNr = getWindowScreen(mediaWindow);
     const targetDisplay = screens[displayNr ?? 0];
 
+    setContext('setWindowPosition', {
+      currentDisplayNr,
+      displayNr,
+      fullscreen,
+      noEvent,
+      targetDisplay,
+    });
+    captureMessage('setWindowPosition targetDisplay');
+
     if (!targetDisplay) return;
 
     const targetScreenBounds = targetDisplay.bounds;
 
+    setContext('setWindowPosition', {
+      currentDisplayNr,
+      displayNr,
+      fullscreen,
+      noEvent,
+      targetScreenBounds,
+    });
+    captureMessage('setWindowPosition targetScreenBounds');
+
     if (!targetScreenBounds) return;
 
     if (fullscreen) {
+      setContext('setWindowPosition', {
+        currentDisplayNr,
+        displayNr,
+        fullscreen,
+        noEvent,
+        targetScreenBounds,
+        targetWindowIsAlwaysOnTop: mediaWindow.isAlwaysOnTop(),
+        targetWindowIsFullScreen: mediaWindow.isFullScreen(),
+      });
+      captureMessage('setWindowPosition targetScreenBounds');
+
       if (displayNr === currentDisplayNr && mediaWindow.isAlwaysOnTop()) return;
 
       mediaWindow.setPosition(targetScreenBounds.x, targetScreenBounds.y);

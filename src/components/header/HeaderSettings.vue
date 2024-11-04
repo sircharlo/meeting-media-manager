@@ -81,7 +81,7 @@
 // Packages
 import { storeToRefs } from 'pinia';
 import prettyBytes from 'pretty-bytes';
-import { computed, ref, type Ref, watchEffect } from 'vue';
+import { computed, ref } from 'vue';
 
 // Components
 import DialogCacheClear from 'src/components/dialog/DialogCacheClear.vue';
@@ -103,7 +103,7 @@ import { useJwStore } from 'src/stores/jw';
 // Types
 import type { CacheFile } from 'src/types';
 
-const { fs, path, pathToFileURL, readdir } = window.electronApi;
+const { fs, pathToFileURL, readDirectory } = window.electronApi;
 
 const jwStore = useJwStore();
 const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
@@ -123,10 +123,8 @@ const cacheClearConfirmPopup = ref(false);
 const cacheClearType = ref<'' | 'all' | 'smart'>('');
 const cacheFiles = ref<CacheFile[]>([]);
 
-const frequentlyUsedDirectories = ref(new Set());
-
-const loadFrequentlyUsedDirectories = async () => {
-  const getDirectory = async (pub: string, issue?: number) => {
+const frequentlyUsedDirectories = computed(() => {
+  const getDirectory = (pub: string, issue?: number) => {
     const directoryParams: {
       issue?: number;
       langwritten: string;
@@ -139,25 +137,20 @@ const loadFrequentlyUsedDirectories = async () => {
       directoryParams.issue = issue;
     }
     return currentSettings.value
-      ? await getPublicationDirectory(directoryParams)
+      ? getPublicationDirectory(directoryParams)
       : '';
   };
 
   const directories = [
-    currentSongbook.value ? await getDirectory(currentSongbook.value.pub) : '', // Background music
-    currentSongbook.value
-      ? await getDirectory(currentSongbook.value.pub, 0)
-      : '', // Songbook videos
-    await getDirectory('it', 0), // Insight
-    await getDirectory('lff', 0), // Enjoy Life Forever
-    await getDirectory('lmd', 0), // Love People
-    await getDirectory('lmdv', 0), // Love People Videos
+    currentSongbook.value ? getDirectory(currentSongbook.value.pub) : '', // Background music
+    currentSongbook.value ? getDirectory(currentSongbook.value.pub, 0) : '', // Songbook videos
+    getDirectory('it', 0), // Insight
+    getDirectory('lff', 0), // Enjoy Life Forever
+    getDirectory('lmd', 0), // Love People
   ];
 
-  frequentlyUsedDirectories.value = new Set(directories.filter(Boolean));
-};
-
-loadFrequentlyUsedDirectories();
+  return new Set(directories.filter(Boolean));
+});
 
 const confirmDeleteCacheFiles = (type: 'all' | 'smart') => {
   cacheClearType.value = type;
@@ -212,29 +205,22 @@ const usedCacheFiles = computed(() => {
   }
 });
 
-const untouchableDirectories: Ref<Set<string>> = ref(new Set());
-
-const fetchUntouchableDirectories = async () => {
+const untouchableDirectories = computed(() => {
   try {
-    const tempDirectory = await getTempDirectory();
-    untouchableDirectories.value = new Set([
-      await getAdditionalMediaPath(),
-      await getPublicationsPath(),
-      tempDirectory,
-    ]) as Set<string>;
+    return new Set([
+      getAdditionalMediaPath(),
+      getPublicationsPath(),
+      getTempDirectory(),
+    ]);
   } catch (error) {
     errorCatcher(error);
-    untouchableDirectories.value = new Set(); // Reset to empty set on error
+    return new Set<string>();
   }
-};
-
-watchEffect(() => {
-  fetchUntouchableDirectories();
 });
 
 const unusedCacheFoldersSize = computed(() => {
   try {
-    if (!cacheFiles.value.length) return prettyBytes(0);
+    if (!cacheFiles.value.length) return '...';
     const size = Object.values(unusedParentDirectories.value).reduce(
       (a, b) => a + b,
       0,
@@ -248,7 +234,7 @@ const unusedCacheFoldersSize = computed(() => {
 
 const allCacheFilesSize = computed(() => {
   try {
-    if (!cacheFiles.value.length) return prettyBytes(0);
+    if (!cacheFiles.value.length) return '...';
     return prettyBytes(
       cacheFiles.value.reduce((size, cacheFile) => size + cacheFile.size, 0),
     );
@@ -258,66 +244,53 @@ const allCacheFilesSize = computed(() => {
   }
 });
 
-const lookupPeriodsCollections = Object.values(lookupPeriod.value).flatMap(
-  (congregationLookupPeriods) =>
-    congregationLookupPeriods.flatMap(
-      (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
-    ),
-);
-const additionalMediaCollections = Object.values(
-  additionalMediaMaps.value,
-).flatMap((congregationAdditionalMediaMap) =>
-  Object.values(congregationAdditionalMediaMap).flat(),
-);
-const mediaFileParentDirectories = new Set([
-  ...additionalMediaCollections.map((media) =>
-    pathToFileURL(getParentDirectory(media.fileUrl)),
-  ),
-  ...lookupPeriodsCollections.map((media) =>
-    pathToFileURL(getParentDirectory(media.fileUrl)),
-  ),
-]);
-
-const getCacheFiles = async (cacheDirs: string[]) => {
-  console.log('getCacheFiles', cacheDirs);
-  const files: CacheFile[] = [];
-  for (const cacheDir of cacheDirs) {
-    try {
-      const items = await readdir(cacheDir, true, true);
-      for (const item of items) {
-        const filePath = path.join(item.parentPath, item.name);
-        if (item.isFile) {
-          const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
-          files.push({
-            orphaned: !mediaFileParentDirectories.has(fileParentDirectoryUrl),
-            parentPath: item.parentPath,
-            path: filePath,
-            size: item.size || 0,
-          });
-        }
-      }
-    } catch (error) {
-      errorCatcher(error);
-    }
-  }
-  return files;
-};
-
 const calculateCacheSize = async () => {
   calculatingCacheSize.value = true;
   cacheFiles.value = [];
   try {
-    const dirs = [
-      await getAdditionalMediaPath(),
-      await getTempDirectory(),
-      await getPublicationsPath(),
-    ];
-    const cacheDirs = (
-      await Promise.all(
-        dirs.map(async (dir) => ((await fs.pathExists(dir)) ? dir : null)),
-      )
-    ).filter((s) => typeof s === 'string');
-    cacheFiles.value = await getCacheFiles(cacheDirs);
+    const cacheDirs = [
+      getAdditionalMediaPath(),
+      getTempDirectory(),
+      getPublicationsPath(),
+    ].filter((dir) => fs.existsSync(dir));
+    const lookupPeriodsCollections = Object.values(lookupPeriod.value).flatMap(
+      (congregationLookupPeriods) =>
+        congregationLookupPeriods.flatMap(
+          (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
+        ),
+    );
+    const additionalMediaCollections = Object.values(
+      additionalMediaMaps.value,
+    ).flatMap((congregationAdditionalMediaMap) =>
+      Object.values(congregationAdditionalMediaMap).flat(),
+    );
+    const mediaFileParentDirectories = new Set([
+      ...additionalMediaCollections.map((media) =>
+        pathToFileURL(getParentDirectory(media.fileUrl)),
+      ),
+      ...lookupPeriodsCollections.map((media) =>
+        pathToFileURL(getParentDirectory(media.fileUrl)),
+      ),
+    ]);
+    for (const cacheDir of cacheDirs) {
+      cacheFiles.value.push(
+        ...readDirectory(cacheDir, {
+          nodir: true,
+          nofile: false,
+        }).map((file) => {
+          const fileParentDirectory = getParentDirectory(file.path);
+          const fileParentDirectoryUrl = pathToFileURL(fileParentDirectory);
+
+          return {
+            directory: false,
+            orphaned: !mediaFileParentDirectories.has(fileParentDirectoryUrl), // Not referenced on any date
+            parentPath: fileParentDirectory,
+            path: file.path,
+            size: file.stats.size,
+          };
+        }),
+      );
+    }
   } catch (error) {
     errorCatcher(error);
   }

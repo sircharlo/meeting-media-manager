@@ -16,7 +16,7 @@ export function isTrustedDomain(url: string): boolean {
       [
         urlVariables?.mediator,
         urlVariables?.pubMedia,
-        urlVariables?.base ? `https://www.${urlVariables.base}/` : undefined,
+        urlVariables ? `https://www.${urlVariables.base}/` : undefined,
       ]
         .filter((d): d is string => !!d)
         .map((d) => new URL(d).hostname),

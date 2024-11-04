@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Automatisch media downloaden
-    details: Download automatisch foto's en video's voor gemeente vergaderingen in elke taal die beschikbaar is op de officiële website van Jehovah's Getuigen.
+    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
     title: Media presenteren
     details: Maakt het mogelijk om gemakkelijk media te delen tijdens hybride en fysieke vergaderingen.

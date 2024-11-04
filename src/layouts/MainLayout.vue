@@ -62,11 +62,7 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
-import {
-  downloadBackgroundMusic,
-  downloadSongbookVideos,
-  setUrlVariables,
-} from 'src/helpers/jw-media';
+import { downloadSongbookVideos, setUrlVariables } from 'src/helpers/jw-media';
 import {
   executeShortcut,
   registerAllCustomShortcuts,
@@ -132,27 +128,26 @@ const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
 
 const migrationsToRun = [
+  'addBaseUrl',
   'localStorageToPiniaPersist',
   'firstRun',
-  'addBaseUrlToAllCongregations',
 ];
 
-(async () => {
-  for (const migration of migrationsToRun) {
-    if (!migrations.value?.includes(migration)) {
-      const success = await runMigration(migration);
-      if (migration === 'firstRun' && success) {
-        createTemporaryNotification({
-          caption: t('successfully-migrated-from-the-previous-version'),
-          icon: 'mmm-info',
-          message: t('welcome-to-mmm'),
-          timeout: 15000,
-          type: 'positive',
-        });
-      }
+migrationsToRun.forEach((migration) => {
+  if (!migrations.value?.includes(migration)) {
+    const success = runMigration(migration);
+
+    if (migration === 'firstRun' && success) {
+      createTemporaryNotification({
+        caption: t('successfully-migrated-from-the-previous-version'),
+        icon: 'mmm-info',
+        message: t('welcome-to-mmm'),
+        timeout: 15000,
+        type: 'positive',
+      });
     }
   }
-})();
+});
 
 const { updateJwLanguages } = jwStore;
 updateJwLanguages();
@@ -180,7 +175,6 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       downloadProgress.value = {};
       updateLookupPeriod();
       registerAllCustomShortcuts();
-      downloadBackgroundMusic();
       if (queues.meetings[newCongregation]) {
         queues.meetings[newCongregation].start();
       }

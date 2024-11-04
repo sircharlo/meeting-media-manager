@@ -10,54 +10,28 @@ This guide will walk you through the process of downloading, installing, and set
 4. Запустите M³.
 5. Go through the configuration wizard.
 
-### Additional steps for macOS Users
-
-Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
-
-First, run the following two commands in Terminal (modify the path to M³ as needed):
-
-```bash
-codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
-sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
-```
-
-:::tip Explanation
-
-These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
-
-:::
-
-If you are still unable to launch M³ after entering the two commands, please try the following:
-
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
-
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
-
-## 2. Помощник настройки
+## 2) Помощник настройки
 
 ### App display language
 
 When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
 
-:::tip Подсказка
+:::tip Tip
 
-Это не обязательно должен быть языком, на котором M³ будет загружать медиа. Язык для мультимедийных загрузок настроен на более позднем этапе.
+This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
 
 :::
 
 ### Тип профиля
 
-Следующий шаг - выбрать **тип профиля**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
 
 :::warning Внимание
 
-Вы должны выбрать **Другой** только в том случае, если вы создаете профиль, для которого медиафайлы не должны быть автоматически загружены. Медиа необходимо будет вручную импортировать для использования в этом профиле. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
 
 The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+:::
 
 :::
 
@@ -71,7 +45,7 @@ Once the correct congregation is found and selected, M³ will prefill all availa
 
 :::info Примечание
 
-В этой справке используются общедоступные данные официального сайта Свидетелей Иеговы.
+This lookup uses publicly available data from the official website of Jehovah's Witnesses.
 
 :::
 
@@ -86,7 +60,7 @@ You will also be given the option of **caching all videos from the songbook**. T
 - **Pros:** Meeting media will be available much faster.
 - **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
 
-:::tip Подсказка
+:::tip Tip
 
 If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
 
@@ -96,16 +70,17 @@ If your Kingdom Hall has sufficient storage space, it’s recommended to **enabl
 
 If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
 
-- **Порт:** Номер порта, используемый для подключения к плагину Websocket.
-- **Пароль:** Пароль, используемый для подключения к плагину Websocket.
-- **Сцены:** Сцены OBS, которые будут использоваться во время презентаций. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
+- **Password:** The password used to connect to the OBS Studio Websocket plugin.
+- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
 
-:::tip Подсказка
+:::tip Tip
 
+::: tip Tip
 If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
 
 :::
 
-## 3. Наслаждайтесь использованием M³
+## 3. Enjoy using M³
 
 Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Приятного использования приложения! :tada:

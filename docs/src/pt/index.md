@@ -6,7 +6,7 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: Baixa imagens e vídeos das reuniões congregacionais em qualquer idioma disponível no JW.org.
+      text: Install M³
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Como usar no Salão do Reino
@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Download automático de mídia
-    details: Baixa imagens e vídeos das reuniões congregacionais em qualquer idioma disponível no JW.org
+    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
     title: Exibição de mídia
     details: Permite compartilhar facilmente a mídia em reuniões híbridas ou presenciais.

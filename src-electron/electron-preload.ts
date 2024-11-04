@@ -1,9 +1,11 @@
 import type { ElectronApi } from 'src/types';
 
+import { app } from '@electron/remote';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import path from 'upath';
 
+import pkg from '../package.json';
 import { initCloseListeners } from './preload/close';
 import { convertHeic, convertPdfToImages } from './preload/converters';
 import {
@@ -13,7 +15,7 @@ import {
   isFileUrl,
   parseMediaFile,
   pathToFileURL,
-  // readDirectory,
+  readDirectory,
 } from './preload/fs';
 import { invoke, listen, removeAllIpcListeners, send } from './preload/ipc';
 import { initScreenListeners, moveMediaWindow } from './preload/screen';
@@ -40,10 +42,11 @@ const electronApi: ElectronApi = {
   fileUrlToPath,
   fs,
   getAllScreens: () => invoke('getAllScreens'),
-  getAppDataPath: () => invoke('getAppPath'),
+  getAppDataPath: () => app.getPath('appData'),
   getAppVersion: () => invoke('getVersion'),
   getLocalPathFromFileObject: (fo) => webUtils.getPathForFile(fo),
-  getUserDataPath: () => invoke('getUserDataPath'),
+  getUserDataPath: () => path.join(app.getPath('appData'), pkg.productName),
+  getUserDesktopPath: () => app.getPath('desktop'),
   getVideoDuration,
   isFileUrl,
   moveMediaWindow,
@@ -56,8 +59,7 @@ const electronApi: ElectronApi = {
   parseMediaFile,
   path,
   pathToFileURL,
-  readdir: (p, withSizes, recursive) =>
-    invoke('readdir', p, withSizes, recursive),
+  readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),

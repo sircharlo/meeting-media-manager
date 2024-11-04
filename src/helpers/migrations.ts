@@ -3,36 +3,36 @@ import type { OldAppConfig, SettingsValues } from 'src/types';
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-const { fs, path, readdir } = window.electronApi;
-const { readJSON } = fs;
+const { fs, path, readDirectory } = window.electronApi;
+const { readJSONSync } = fs;
 
-const getOldPrefsPaths = async (oldPath: string) => {
+const oldPrefsFilterFn = (item: { path: string }) => {
+  try {
+    if (!item?.path) return false;
+    const oldPrefsFilterFnBasename = path.basename(item.path);
+    return (
+      oldPrefsFilterFnBasename.startsWith('prefs') &&
+      oldPrefsFilterFnBasename.endsWith('.json')
+    );
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+const getOldPrefsPaths = (oldPath: string) => {
   try {
     if (!oldPath) return [];
-    const filePaths: string[] = [];
-    const items = await readdir(oldPath);
-    for (const item of items) {
-      const filePath = path.join(oldPath, item.name);
-      if (
-        item.isFile &&
-        path.basename(filePath).startsWith('prefs') &&
-        path.basename(filePath).endsWith('.json')
-      ) {
-        filePaths.push(filePath);
-      }
-    }
-    return filePaths;
+    return readDirectory(oldPath, { filter: oldPrefsFilterFn });
   } catch (error) {
     errorCatcher(error);
     return [];
   }
 };
 
-const parsePrefsFile: (path: string) => Promise<OldAppConfig> = async (
-  path: string,
-) => {
+const parsePrefsFile = (path: string) => {
   try {
-    return (await readJSON(path, { encoding: 'utf8', throws: false })) || {};
+    return readJSONSync(path, { encoding: 'utf8', throws: false }) || {};
   } catch (error) {
     errorCatcher(error);
     return {};

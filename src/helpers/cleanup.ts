@@ -52,7 +52,7 @@ const cleanAdditionalMediaFolder = () => {
     //       'Removing orphaned file from filesystem:',
     //       additionalMediaFilePath,
     //     );
-    //     await fs.remove(additionalMediaFilePath);
+    //     fs.rmSync(additionalMediaFilePath);
     //   }
     // }
     // Check for files present in the additional media maps that are not present on the filesystem

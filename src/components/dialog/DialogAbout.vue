@@ -103,7 +103,7 @@ const open = defineModel<boolean>({ default: false });
 
 const appVersion = ref('');
 
-const updatesEnabled = ref(!(await updatesDisabled()));
+const updatesEnabled = ref(!updatesDisabled());
 
 const loadAppVersion = async () => {
   appVersion.value = await getAppVersion();

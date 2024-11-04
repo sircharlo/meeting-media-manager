@@ -301,7 +301,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
           if (isJwpub(filepath)) {
             jwpubImportFilePath.value = filepath;
             const unzipDir = await decompressJwpub(filepath);
-            const db = await findDb(unzipDir);
+            const db = findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
             jwpubImages.value = executeQuery<MultimediaItem>(
               db,
@@ -316,12 +316,12 @@ const chooseCustomBackground = async (reset?: boolean) => {
               notifyInvalidBackgroundFile();
             }
           } else {
-            const tempDirectory = await getTempDirectory();
+            const tempDirectory = getTempDirectory();
             const tempFilepath = path.join(
               tempDirectory,
               path.basename(filepath),
             );
-            await fs.copyFile(filepath, tempFilepath);
+            fs.copyFileSync(filepath, tempFilepath);
             const workingTempFilepath =
               await convertImageIfNeeded(tempFilepath);
             if (isImage(workingTempFilepath)) {

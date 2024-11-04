@@ -188,11 +188,8 @@ whenever(
     } else if (newMediaAction === 'play') {
       mediaElement.value?.play().catch((error: Error) => {
         if (
-          !(
-            error.message.includes('removed from the document') ||
-            error.message.includes('new load request') ||
-            error.message.includes('interrupted by a call to pause')
-          )
+          !error.message.includes('removed from the document') &&
+          !error.message.includes('new load request')
         )
           errorCatcher(error);
       });
@@ -262,11 +259,8 @@ watch(
           mediaElement.value.srcObject = stream;
           mediaElement.value.play().catch((error: Error) => {
             if (
-              !(
-                error.message.includes('removed from the document') ||
-                error.message.includes('new load request') ||
-                error.message.includes('interrupted by a call to pause')
-              )
+              !error.message.includes('removed from the document') &&
+              !error.message.includes('new load request')
             )
               errorCatcher(error);
           });
