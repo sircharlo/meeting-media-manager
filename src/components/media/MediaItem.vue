@@ -31,8 +31,8 @@
           fit="contain"
           width="150px"
           @error="imageLoadingError"
-          @mouseleave="hoveredBadges[media.uniqueId] = false"
-          @mouseover="hoveredBadges[media.uniqueId] = true"
+          @mouseenter="setHoveredBadge(media.uniqueId, true)"
+          @mouseleave="setHoveredBadge(media.uniqueId, false)"
         >
           <q-badge
             v-if="media.isVideo"
@@ -160,20 +160,24 @@
             </q-card>
           </q-dialog>
         </q-img>
-        <template v-if="media.isImage">
-          <transition
-            appear
-            enter-active-class="animated fadeIn"
-            leave-active-class="animated fadeOut"
-            mode="out-in"
-            name="fade"
-          >
-            <div class="absolute-bottom-right q-mr-xs q-mb-xs row">
+        <transition
+          appear
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+          mode="out-in"
+          name="fade"
+        >
+          <template v-if="media.isImage && hoveredBadges[media.uniqueId]">
+            <div
+              class="absolute-bottom-right q-mr-xs q-mb-xs row"
+              @mouseenter="setHoveredBadge(media.uniqueId, true)"
+              @mouseleave="setHoveredBadge(media.uniqueId, false)"
+            >
               <template v-if="mediaPanzoom?.scale > 1.01">
                 <q-badge
                   class="q-mr-xs"
                   color="warning"
-                  style="padding: 5px !important"
+                  style="padding: 5px !important; cursor: pointer"
                   @click="zoomReset(true)"
                 >
                   <q-icon color="white" name="mmm-refresh" />
@@ -183,7 +187,7 @@
                 <q-badge
                   :disabled="mediaPanzoom?.scale < 1.01"
                   color="transparent"
-                  style="padding: 5px !important"
+                  style="padding: 5px !important; cursor: pointer"
                   @click="zoomOut()"
                 >
                   <q-icon color="white" name="mmm-minus" />
@@ -192,15 +196,15 @@
                 <q-badge
                   :disabled="mediaPanzoom?.scale > 4.99"
                   color="transparent"
-                  style="padding: 5px !important"
+                  style="padding: 5px !important; cursor: pointer"
                   @click="zoomIn()"
                 >
                   <q-icon color="white" name="mmm-plus" />
                 </q-badge>
               </div>
             </div>
-          </transition>
-        </template>
+          </template>
+        </transition>
       </div>
     </div>
     <div class="row" style="flex-grow: 1; align-content: center">
@@ -525,7 +529,6 @@
 </template>
 
 <script setup lang="ts">
-import type { QImg } from 'quasar';
 import type { DynamicMediaObject, VideoMarker } from 'src/types';
 
 import Panzoom, {
@@ -534,6 +537,7 @@ import Panzoom, {
 } from '@panzoom/panzoom';
 import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import { debounce, type QImg } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { formatTime, isImage, isVideo } from 'src/helpers/mediaPlayback';
@@ -559,6 +563,10 @@ const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
 const { customDurations } = storeToRefs(jwStore);
 const hoveredBadges = ref<Record<string, boolean>>({});
+
+const setHoveredBadge = debounce((key: string, value: boolean) => {
+  hoveredBadges.value[key] = value;
+}, 300);
 
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
