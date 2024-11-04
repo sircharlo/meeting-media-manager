@@ -7,14 +7,14 @@
         <q-icon class="q-mr-sm" name="mmm-delete" />
         {{ $t('clear-cache') }}
       </q-card-section>
-      <q-card-section v-if="cacheClearType === 'all'" class="row items-center">
-        {{ $t('are-you-sure-delete-cache') }}
-      </q-card-section>
-      <q-card-section
-        v-else-if="cacheClearType === 'smart'"
-        class="row items-center"
-      >
-        {{ $t('are-you-sure-delete-unused-cache') }}
+      <q-card-section class="row items-center">
+        {{
+          $t(
+            cacheClearType === 'all'
+              ? 'are-you-sure-delete-cache'
+              : 'are-you-sure-delete-unused-cache',
+          )
+        }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
         <q-btn :label="$t('cancel')" flat @click="open = false" />
@@ -77,23 +77,24 @@ const cancelDeleteCacheFiles = () => {
   deletingCacheFiles.value = false;
 };
 
-const deleteCacheFiles = (type: '' | 'all' | 'smart') => {
+const deleteCacheFiles = async (type = '') => {
   try {
     deletingCacheFiles.value = true;
     const filepathsToDelete =
       type === 'smart'
         ? Object.keys(props.unusedParentDirectories)
         : props.cacheFiles.map((f) => f.path);
+    console.debug('deleteCacheFiles', filepathsToDelete);
     for (const filepath of filepathsToDelete) {
       try {
-        fs.rmSync(filepath, { recursive: true });
+        fs.remove(filepath);
       } catch (error) {
         errorCatcher(error);
       }
       additionalMediaMaps.value = {};
     }
     for (const untouchableDirectory of props.untouchableDirectories) {
-      removeEmptyDirs(untouchableDirectory);
+      await removeEmptyDirs(untouchableDirectory);
     }
     queues.downloads[currentCongregation.value]?.clear();
     queues.downloads[currentCongregation.value] = new PQueue({

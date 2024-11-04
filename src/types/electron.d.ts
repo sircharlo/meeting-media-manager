@@ -1,8 +1,8 @@
 import type { ConversionOptions } from 'app/src-electron/preload/converters';
-import type FsExtra from 'fs-extra';
-import type KlawSync from 'klaw-sync';
+import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type {
+  FileItem,
   QueryResponseItem,
   SettingsValues,
   VideoDuration,
@@ -57,7 +57,11 @@ export interface ElectronApi {
   ) => Promise<IAudioMetadata>;
   path: typeof Path;
   pathToFileURL: (path: string) => string;
-  readDirectory: typeof KlawSync;
+  readdir: (
+    path: string,
+    withSizes?: boolean,
+    recursive?: boolean,
+  ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;
@@ -86,6 +90,7 @@ export type ElectronIpcInvokeKey =
   | 'getAllScreens'
   | 'getVersion'
   | 'openFileDialog'
+  | 'readdir'
   | 'registerShortcut';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels

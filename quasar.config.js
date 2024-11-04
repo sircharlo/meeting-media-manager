@@ -184,7 +184,6 @@ module.exports = configure(function (ctx) {
           'fs-extra',
           'heic-convert',
           'is-online',
-          'klaw-sync',
           'music-metadata',
           'pdfjs-dist',
           'upath',

@@ -11,7 +11,7 @@ const getLocalFontPath = async (fontName: FontName) => {
   const fontsDir = getFontsPath();
   const fontFileName = `${fontName}.woff2`;
   const fontPath = path.join(fontsDir, fontFileName);
-  if (!fs.existsSync(fontPath)) {
+  if (!(await fs.exists(fontPath))) {
     await downloadFile({
       dir: fontsDir,
       filename: fontFileName,

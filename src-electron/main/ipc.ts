@@ -3,6 +3,7 @@ import type {
   ElectronIpcSendKey,
   ExternalWebsite,
   FileDialogFilter,
+  FileItem,
   NavigateWebsiteAction,
   SettingsValues,
 } from 'src/types';
@@ -18,7 +19,9 @@ import {
   type IpcMainInvokeEvent,
   shell,
 } from 'electron';
+import { type Dirent, exists, readdir, stat } from 'fs-extra';
 import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
+import { join } from 'upath';
 
 import { errorCatcher, isSelf } from './../utils';
 import { getAllScreens } from './screen';
@@ -237,6 +240,42 @@ handleIpcInvoke(
   'registerShortcut',
   async (_e, name: keyof SettingsValues, keySequence: string) => {
     return registerShortcut(name, keySequence);
+  },
+);
+
+handleIpcInvoke(
+  'readdir',
+  async (_e, dir: string, withSizes?: boolean, recursive?: boolean) => {
+    async function readDirRecursive(directory: string): Promise<FileItem[]> {
+      const dirents: Dirent[] = await readdir(directory, {
+        withFileTypes: true,
+      });
+      const dirItems: FileItem[] = [];
+      for (const dirent of dirents) {
+        const fullPath = join(directory, dirent.name);
+        const fileItem: FileItem = {
+          isDirectory: dirent.isDirectory(),
+          isFile: dirent.isFile(),
+          name: dirent.name,
+          parentPath: directory,
+          ...(withSizes &&
+            dirent.isFile() && { size: (await stat(fullPath)).size }),
+        };
+        dirItems.push(fileItem);
+        if (recursive && dirent.isDirectory()) {
+          const subDirItems = await readDirRecursive(fullPath);
+          dirItems.push(...subDirItems);
+        }
+      }
+      return dirItems;
+    }
+    try {
+      if (!(await exists(dir))) return [];
+      return await readDirRecursive(dir);
+    } catch (error) {
+      errorCatcher(error);
+      return [];
+    }
   },
 );
 
