@@ -5,10 +5,14 @@ on:
     branches:
       - master
     paths-ignore:
+      - '.vscode/**'
       - 'docs/**'
+      - '**/*.md'
   pull_request:
     paths-ignore:
+      - '.vscode/**'
       - 'docs/**'
+      - '**/*.md'
   workflow_dispatch:
 
 jobs:
