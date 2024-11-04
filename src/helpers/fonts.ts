@@ -8,7 +8,7 @@ import { downloadFile } from './jw-media';
 const { fs, path } = window.electronApi;
 
 const getLocalFontPath = async (fontName: FontName) => {
-  const fontsDir = getFontsPath();
+  const fontsDir = await getFontsPath();
   const fontFileName = `${fontName}.woff2`;
   const fontPath = path.join(fontsDir, fontFileName);
   if (!(await fs.exists(fontPath))) {

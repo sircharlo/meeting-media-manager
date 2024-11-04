@@ -21,14 +21,15 @@ const {
   readdir,
 } = window.electronApi;
 
-const getPublicationsPath = () => path.join(getUserDataPath(), 'Publications');
-const getFontsPath = () => path.join(getUserDataPath(), 'Fonts');
+const getPublicationsPath = async () =>
+  path.join(await getUserDataPath(), 'Publications');
+const getFontsPath = async () => path.join(await getUserDataPath(), 'Fonts');
 
-const getAdditionalMediaPath = () =>
-  path.join(getUserDataPath(), 'Additional Media');
+const getAdditionalMediaPath = async () =>
+  path.join(await getUserDataPath(), 'Additional Media');
 
 const getTempDirectory = async () => {
-  const tempDirectory = path.join(getUserDataPath(), 'Temp');
+  const tempDirectory = path.join(await getUserDataPath(), 'Temp');
   await fs.ensureDir(tempDirectory);
   return tempDirectory;
 };
@@ -326,18 +327,15 @@ const removeEmptyDirs = async (rootDir: string) => {
   }
 };
 
-const disableUpdatesPath = path.join(
-  getUserDataPath(),
-  'Global Preferences',
-  'disable-updates',
-);
+const disableUpdatesPath = async () =>
+  path.join(await getUserDataPath(), 'Global Preferences', 'disable-updates');
 
-const updatesDisabled = () => fs.exists(disableUpdatesPath);
+const updatesDisabled = async () => fs.exists(await disableUpdatesPath());
 
 const disableUpdates = async () => {
   try {
-    await fs.ensureFile(disableUpdatesPath);
-    await fs.writeFile(disableUpdatesPath, 'true');
+    await fs.ensureFile(await disableUpdatesPath());
+    await fs.writeFile(await disableUpdatesPath(), 'true');
   } catch (error) {
     errorCatcher(error);
   }
@@ -345,7 +343,7 @@ const disableUpdates = async () => {
 
 const enableUpdates = async () => {
   try {
-    await fs.remove(disableUpdatesPath);
+    await fs.remove(await disableUpdatesPath());
   } catch (error) {
     errorCatcher(error);
   }
@@ -353,7 +351,6 @@ const enableUpdates = async () => {
 
 export {
   disableUpdates,
-  disableUpdatesPath,
   enableUpdates,
   getAdditionalMediaPath,
   getDurationFromMediaPath,

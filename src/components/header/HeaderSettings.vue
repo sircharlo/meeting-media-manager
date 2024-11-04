@@ -218,8 +218,8 @@ const fetchUntouchableDirectories = async () => {
   try {
     const tempDirectory = await getTempDirectory();
     untouchableDirectories.value = new Set([
-      getAdditionalMediaPath(),
-      getPublicationsPath(),
+      await getAdditionalMediaPath(),
+      await getPublicationsPath(),
       tempDirectory,
     ]) as Set<string>;
   } catch (error) {
@@ -308,9 +308,9 @@ const calculateCacheSize = async () => {
   cacheFiles.value = [];
   try {
     const dirs = [
-      getAdditionalMediaPath(),
+      await getAdditionalMediaPath(),
       await getTempDirectory(),
-      getPublicationsPath(),
+      await getPublicationsPath(),
     ];
     const cacheDirs = (
       await Promise.all(
