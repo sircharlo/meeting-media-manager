@@ -1136,7 +1136,6 @@ const copyToDatedAdditionalMedia = async (files: string[]) => {
         await fs.copy(filepathToCopy, datedAdditionalMediaPath);
       await addToAdditionMediaMapFromPath(datedAdditionalMediaPath, uniqueId);
     } catch (error) {
-      errorCatcher(filepathToCopy);
       errorCatcher(error);
     }
   }

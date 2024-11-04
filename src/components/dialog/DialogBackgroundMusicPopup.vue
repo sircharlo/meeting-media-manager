@@ -227,8 +227,11 @@ async function playMusic() {
       })
       .catch((error: Error) => {
         if (
-          !error.message.includes('removed from the document') &&
-          !error.message.includes('new load request')
+          !(
+            error.message.includes('removed from the document') ||
+            error.message.includes('new load request') ||
+            error.message.includes('interrupted by a call to pause')
+          )
         )
           errorCatcher(error);
       })
@@ -261,8 +264,11 @@ const musicEnded = async () => {
   musicPlayer.value.load();
   musicPlayer.value.play().catch((error: Error) => {
     if (
-      !error.message.includes('removed from the document') &&
-      !error.message.includes('new load request')
+      !(
+        error.message.includes('removed from the document') ||
+        error.message.includes('new load request') ||
+        error.message.includes('interrupted by a call to pause')
+      )
     )
       errorCatcher(error);
   });
