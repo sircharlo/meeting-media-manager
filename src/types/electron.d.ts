@@ -67,6 +67,8 @@ export interface ElectronApi {
   setUrlVariables: (variables: string) => void;
   toggleMediaWindow: (show: boolean) => void;
   unregisterShortcut: (shortcut: string) => void;
+  unwatchFolders: () => void;
+  watchFolder: (path: string) => void;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
@@ -81,6 +83,8 @@ export type ElectronIpcSendKey =
   | 'toggleOpenAtLogin'
   | 'toggleWebsiteWindow'
   | 'unregisterShortcut'
+  | 'unwatchFolders'
+  | 'watchFolder'
   | 'zoomWebsiteWindow';
 
 // ipcMain.handle / ipcRenderer.invoke channels

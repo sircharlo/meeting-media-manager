@@ -174,6 +174,7 @@ module.exports = configure(function (ctx) {
           '@sentry/electron',
           'adm-zip',
           'better-sqlite3',
+          'chokidar',
           'countries-and-timezones',
           'electron-updater',
           'fs-extra',
