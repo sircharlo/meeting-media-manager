@@ -163,11 +163,16 @@ const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   dismissPopup();
 };
 
+const setS34mp = async () => {
+  s34mpBasename.value = 'S-34mp_' + currentSettings.value?.lang + '_0';
+  s34mpDir.value = path.join(await getPublicationsPath(), s34mpBasename.value);
+};
+
 watch(open, () => {
   if (currentSettings.value?.lang) {
-    s34mpBasename.value = 'S-34mp_' + currentSettings.value?.lang + '_0';
-    s34mpDir.value = path.join(getPublicationsPath(), s34mpBasename.value);
-    populatePublicTalks();
+    setS34mp().then(() => {
+      populatePublicTalks();
+    });
   }
 });
 </script>

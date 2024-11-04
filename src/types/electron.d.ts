@@ -22,11 +22,10 @@ export interface ElectronApi {
   fileUrlToPath: (url: string) => string;
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
-  getAppDataPath: () => string;
+  getAppDataPath: () => Promise<string>;
   getAppVersion: () => Promise<string>;
   getLocalPathFromFileObject: (fileObject: File) => string;
-  getUserDataPath: () => string;
-  getUserDesktopPath: () => string;
+  getUserDataPath: () => Promise<string>;
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   isFileUrl: (url: string) => boolean;
   moveMediaWindow: (
@@ -88,6 +87,8 @@ export type ElectronIpcSendKey =
 export type ElectronIpcInvokeKey =
   | 'downloadErrorIsExpected'
   | 'getAllScreens'
+  | 'getAppPath'
+  | 'getUserDataPath'
   | 'getVersion'
   | 'openFileDialog'
   | 'readdir'

@@ -54,7 +54,7 @@ export const useCurrentStateStore = defineStore('current-state', {
     async getDatedAdditionalMediaDirectory() {
       try {
         if (!this.selectedDate) return '';
-        const additionalMediaPath = getAdditionalMediaPath();
+        const additionalMediaPath = await getAdditionalMediaPath();
         const dateString = formatDate(new Date(this.selectedDate), 'YYYYMMDD');
         const datedAdditionalMediaDirectory = path.join(
           additionalMediaPath,

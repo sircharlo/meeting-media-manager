@@ -170,7 +170,6 @@ module.exports = configure(function (ctx) {
       extendPackageJson(pkg) {
         // All dependencies required by the main and preload scripts need to be listed here
         const electronDeps = [
-          '@electron/remote',
           '@numairawan/video-duration',
           '@sentry/electron',
           'adm-zip',

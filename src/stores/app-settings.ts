@@ -36,7 +36,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
         const jwStore = useJwStore();
         if (type === 'firstRun') {
           const oldVersionPath = path.join(
-            getAppDataPath(),
+            await getAppDataPath(),
             'meeting-media-manager',
           );
           if (await fs.exists(oldVersionPath)) {
