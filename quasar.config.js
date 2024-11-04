@@ -119,7 +119,7 @@ module.exports = configure(function (ctx) {
           icon: 'icons/icon.icns',
           minimumSystemVersion: '10.15',
           publish: ['github'],
-          target: { arch: ['universal'], target: 'default' },
+          target: { target: 'dmg' },
         },
         nsis: { oneClick: false },
         productName: 'Meeting Media Manager', // don't delete this or the productName in package.json; needed for app directory name
