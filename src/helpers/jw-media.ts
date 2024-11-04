@@ -1303,7 +1303,7 @@ export function isMediaLink(
 }
 
 export function findBestResolution(
-  mediaLinks: MediaItemsMediatorFile[] | MediaLink[],
+  mediaLinks?: MediaItemsMediatorFile[] | MediaLink[],
 ) {
   try {
     if (!mediaLinks?.length) return null;
@@ -1333,7 +1333,7 @@ export function findBestResolution(
     return bestItem;
   } catch (e) {
     errorCatcher(e);
-    return mediaLinks?.length > 0 ? mediaLinks?.[mediaLinks?.length - 1] : null;
+    return mediaLinks?.length ? mediaLinks[mediaLinks.length - 1] : null;
   }
 }
 
@@ -1439,9 +1439,7 @@ const downloadAdditionalRemoteVideo = async (
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
-    const bestItem = findBestResolution(mediaItemLinks) as
-      | MediaItemsMediatorFile
-      | MediaLink;
+    const bestItem = findBestResolution(mediaItemLinks);
     if (bestItem) {
       const bestItemUrl =
         'progressiveDownloadURL' in bestItem
