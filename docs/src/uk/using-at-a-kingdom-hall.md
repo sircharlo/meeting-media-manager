@@ -10,9 +10,9 @@
 4. Запустіть M³.
 5. Пройдіть через майстер настройки.
 
-### Additional steps for macOS Users
+### Додаткові кроки для користувачів macOS
 
-Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
+Через заходи безпеки Apple, необхідні додаткові кроки для запуску M³ на сучасних macOS системах.
 
 First, run the following two commands in Terminal (modify the path to M³ as needed):
 
@@ -21,7 +21,7 @@ codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explanation
+:::tip Пояснення
 
 These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
 
@@ -29,13 +29,13 @@ These commands do two things that will prevent M³ from being detected as a mali
 
 If you are still unable to launch M³ after entering the two commands, please try the following:
 
-1. Open the macOS system **Privacy & Security** settings.
+1. Відкрийте налаштування macOS системи **Конфіденційність та безпека**.
 2. Find the entry for M³ and click the button to **Open Anyway**.
 3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+4. Ще одне попередження з’явиться, де вам потрібно буде автентифікуватись для запуску додатку.
+5. M³ тепер повинен успішно запуститися.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Ми зробимо все можливе, щоб допомогти.
 
 ## 2. Майстер налаштування
 

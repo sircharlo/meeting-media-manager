@@ -10,32 +10,32 @@ Denna guide kommer att gå igenom processen för nedladdning och installation av
 4. Starta M³.
 5. Gå igenom konfigurationsguiden.
 
-### Additional steps for macOS Users
+### Ytterligare steg för macOS användare
 
-Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
+På grund av Apples säkerhetsåtgärder krävs ytterligare några steg för att köra M³ på moderna macOS-system.
 
-First, run the following two commands in Terminal (modify the path to M³ as needed):
+Kör först följande två kommandon i Terminal (ändra sökvägen till M³ efter behov):
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explanation
+:::tip Förklaring
 
-These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
+Dessa kommandon gör två saker som hindrar M³ från att upptäckas som ett skadligt program på ditt system: den första signerar programmets kod lokalt, och den andra tar bort karantänflaggan från applikationen. Karantänsflaggan används för att varna användare om program som har laddats ner från internet.
 
 :::
 
-If you are still unable to launch M³ after entering the two commands, please try the following:
+Om du fortfarande inte kan starta M³ efter att du har angett de två kommandona kan du prova följande:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+1. Öppna macOS systemet **Sekretess och säkerhet** inställningar.
+2. Hitta posten för M³ och klicka på knappen till **Öppna ändå**.
+3. Du kommer då att bli varnad igen, och ges rådet att inte "öppna detta om du inte är säker på att det är från en pålitlig källa". Klicka **Öppna ändå**.
+4. En annan varning visas, där du måste autentisera för att starta appen.
+5. M³ bör nu kunna startas.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+Om du fortfarande har problem efter att ha följt alla dessa steg, vänligen [öppna en Issue på GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Vi kommer att göra vårt bästa för att hjälpa till.
 
 ## 2. Konfigurationsguide
 
