@@ -9,7 +9,7 @@ import {
 import path from 'path';
 
 import { urlVariables } from '../session';
-import { PLATFORM } from './../../constants';
+import { IS_DEV, PLATFORM } from './../../constants';
 import { StatefulBrowserWindow } from './window-state';
 
 /**
@@ -45,13 +45,12 @@ export function createWindow(
     ...(options ?? {}),
     webPreferences: {
       backgroundThrottling: false,
-      nodeIntegration: true,
       preload:
         name === 'website'
           ? undefined
           : path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
       sandbox: false,
-      webSecurity: false,
+      webSecurity: !IS_DEV,
       ...(options?.webPreferences ?? {}),
     },
   };
