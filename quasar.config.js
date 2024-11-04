@@ -95,7 +95,6 @@ module.exports = configure(function (ctx) {
         appId: 'sircharlo.meeting-media-manager',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
-        buildDependenciesFromSource: false,
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -113,26 +112,16 @@ module.exports = configure(function (ctx) {
           },
           icon: 'icons/icon.icns',
           publish: ['github'],
-          target: {
-            arch: ['universal'],
-            target: 'default',
-          },
+          target: { arch: ['universal'], target: 'default' },
         },
-        nsis: {
-          // eslint-disable-next-line no-template-curly-in-string
-          artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
-          oneClick: false,
-        },
+        nsis: { oneClick: false },
         productName: 'Meeting Media Manager', // don't delete this or the productName in package.json; needed for app directory name
         win: {
           // asar: false,
           icon: 'icons/icon.ico',
           publish: ['github'],
           target: [
-            {
-              arch: ctx.debug ? undefined : ['x64', 'ia32'],
-              target: 'nsis',
-            },
+            { arch: ctx.debug ? undefined : ['x64', 'ia32'], target: 'nsis' },
           ],
         },
       },
