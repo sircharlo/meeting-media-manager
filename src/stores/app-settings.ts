@@ -121,10 +121,12 @@ export const useAppSettingsStore = defineStore('app-settings', {
             { preferredScreenNumber: 0, preferWindowed: false },
           );
           QuasarStorage.removeItem('screenPreferences');
-        } else if (type === 'addBaseUrl') {
-          for (const prefs of Object.values(congregationStore.congregations)) {
-            prefs.baseUrl = 'jw.org';
-          }
+        } else if (type === 'addBaseUrlToAllCongregations') {
+          congregationStore.$patch((state) => {
+            Object.values(state.congregations).forEach((prefs) => {
+              prefs.baseUrl = 'jw.org';
+            });
+          });
         } else {
           // Other migrations can be added here
         }

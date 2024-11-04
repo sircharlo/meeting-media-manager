@@ -10,18 +10,18 @@ Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Man
 4. Fungua M³.
 5. Pitia programu ya usanidi.
 
-### Additional steps for macOS Users
+### Hatua za ziada za watumiaji wa macOS
 
-Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
+Kutokana na hatua za usalama za mfumo wa Apple, hatua za ziada zitahitajika ili kutumia M³ kwenye mifumo za hivi karibuni za macOS.
 
-First, run the following two commands in Terminal (modify the path to M³ as needed):
+Kwanza, wasilisha amri hizi mbili kwenye Terminal (rekebisha njia ya M³ inavyohitajika):
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explanation
+:::tip Maelezo
 
 These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
 

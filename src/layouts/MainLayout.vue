@@ -132,9 +132,9 @@ const { migrations } = storeToRefs(appSettings);
 const { runMigration } = appSettings;
 
 const migrationsToRun = [
-  'addBaseUrl',
   'localStorageToPiniaPersist',
   'firstRun',
+  'addBaseUrlToAllCongregations',
 ];
 
 (async () => {
