@@ -23,13 +23,13 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::tip Maelezo
 
-These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
+Amri hizi hufanya vitu viwili ambazo huzuia M³ kutoonekana kama mfumo hatari kwenye kompyuta yako: ya kwanza husaini code ya programu ndani ya mfumo wako, na ya pili hutoa bendera ya quarantine kutoka kwenye mfumo. Bendera hiyo ya quarantine hujulisha watu kuhusu mifumo au programu zinazopakuliwa kutoka kwa intaneti.
 
 :::
 
-If you are still unable to launch M³ after entering the two commands, please try the following:
+Ikiwa bado huwezi kuwasha M³ baada ya kuweka amri hizo mbili, tafadhali jaribu:
 
-1. Open the macOS system **Privacy & Security** settings.
+1. Kufungua mipangilio ya **Privacy & Security** kwenye mfumo wako wa macOS.
 2. Find the entry for M³ and click the button to **Open Anyway**.
 3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
 4. Another warning will appear, where you’ll need to authenticate to launch the app.
