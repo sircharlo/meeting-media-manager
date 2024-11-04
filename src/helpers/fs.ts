@@ -349,6 +349,17 @@ const enableUpdates = async () => {
   }
 };
 
+const watchExternalFolder = (folder: string) => {
+  if (!fs.existsSync(folder)) return;
+  try {
+    fs.accessSync(folder, fs.constants.R_OK);
+    window.electronApi.unwatchFolders();
+    window.electronApi.watchFolder(folder);
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 export {
   disableUpdates,
   enableUpdates,
@@ -366,4 +377,5 @@ export {
   getThumbnailUrl,
   removeEmptyDirs,
   updatesDisabled,
+  watchExternalFolder,
 };

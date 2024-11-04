@@ -64,6 +64,8 @@ const electronApi: ElectronApi = {
   setUrlVariables: (v) => send('setUrlVariables', v),
   toggleMediaWindow: (s) => send('toggleMediaWindow', s),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
+  unwatchFolders: () => send('unwatchFolders'),
+  watchFolder: (p) => send('watchFolder', p),
   zoomWebsiteWindow,
 };
 
