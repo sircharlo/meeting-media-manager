@@ -9817,7 +9817,7 @@ __metadata:
     music-metadata: "npm:^10.5.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.0.1"
-    pdfjs-dist: "npm:^4.7.76"
+    pdfjs-dist: "npm:^4.8.69"
     pinia: "npm:^2.2.6"
     pinia-plugin-persistedstate: "npm:^4.1.2"
     pinia-shared-state: "npm:^0.5.1"
@@ -11173,18 +11173,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pdfjs-dist@npm:^4.7.76":
-  version: 4.7.76
-  resolution: "pdfjs-dist@npm:4.7.76"
+"pdfjs-dist@npm:^4.8.69":
+  version: 4.8.69
+  resolution: "pdfjs-dist@npm:4.8.69"
   dependencies:
-    canvas: "npm:^2.11.2"
+    canvas: "npm:^3.0.0-rc2"
     path2d: "npm:^0.2.1"
   dependenciesMeta:
     canvas:
       optional: true
     path2d:
       optional: true
-  checksum: 10c0/7646efd90ededa9be1dad00468806d2b74790480caa84a7e431eacb75a755224d57303a59a9a10179775e13cbb62acc2305b6ffa04809c61f638eee0c816ccac
+  checksum: 10c0/dc297f2a36aa36834a2892cb78c3cafc7ac01753a2e7c4316a1f6e8c1d337a52a3bfbf7fdff7aaba615893b53f2d06a0efc2176525592b4d7b51021279c101be
   languageName: node
   linkType: hard
 
