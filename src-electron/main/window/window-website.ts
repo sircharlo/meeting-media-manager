@@ -1,5 +1,8 @@
-import type { BrowserWindow, Video } from 'electron';
 import type { NavigateWebsiteAction } from 'src/types';
+
+import { PLATFORM } from 'app/src-electron/constants';
+import { errorCatcher } from 'app/src-electron/utils';
+import { type BrowserWindow, systemPreferences, type Video } from 'electron';
 
 import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
@@ -9,11 +12,20 @@ export let websiteWindow: BrowserWindow | null = null;
 /**
  * Creates the website window
  */
-export function createWebsiteWindow(lang?: string) {
+export async function createWebsiteWindow(lang?: string) {
   // If the window is already open, just focus it
   if (websiteWindow && !websiteWindow.isDestroyed()) {
     websiteWindow.show();
     return;
+  }
+
+  if (PLATFORM === 'darwin') {
+    try {
+      await systemPreferences.askForMediaAccess('camera');
+      await systemPreferences.askForMediaAccess('microphone');
+    } catch (e) {
+      errorCatcher(e);
+    }
   }
 
   // Create the browser window

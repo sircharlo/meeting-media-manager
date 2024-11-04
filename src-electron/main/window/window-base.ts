@@ -1,6 +1,5 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
-import { enable as enableElectronRemote } from '@electron/remote/main';
 import pkg from 'app/package.json';
 import {
   app,
@@ -10,7 +9,7 @@ import {
 import path from 'path';
 
 import { urlVariables } from '../session';
-import { PLATFORM } from './../../constants';
+import { IS_DEV, PLATFORM } from './../../constants';
 import { StatefulBrowserWindow } from './window-state';
 
 /**
@@ -46,13 +45,12 @@ export function createWindow(
     ...(options ?? {}),
     webPreferences: {
       backgroundThrottling: false,
-      nodeIntegration: true,
       preload:
         name === 'website'
           ? undefined
           : path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
       sandbox: false,
-      webSecurity: false,
+      webSecurity: !IS_DEV,
       ...(options?.webPreferences ?? {}),
     },
   };
@@ -69,9 +67,6 @@ export function createWindow(
   win.on('ready-to-show', () => {
     if (name !== 'media') win.show();
   });
-
-  // Enable Electron remote
-  enableElectronRemote(win.webContents);
 
   // Hide the menu bar
   if (PLATFORM !== 'darwin' && (name !== 'main' || !process.env.DEBUGGING)) {

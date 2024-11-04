@@ -333,14 +333,7 @@
                 color="primary"
                 icon="mmm-play"
                 rounded
-                @click="
-                  mediaPlayingUrl = fs.existsSync(fileUrlToPath(media.fileUrl))
-                    ? media.fileUrl
-                    : (media.streamUrl ?? media.fileUrl);
-                  mediaPlayingUniqueId = media.uniqueId;
-                  mediaPlayingSubtitlesUrl = media.subtitlesUrl ?? '';
-                  if (mediaPanzoom) mediaPlayingPanzoom = mediaPanzoom;
-                "
+                @click="setMediaPlaying(media)"
               />
             </template>
             <template v-else>
@@ -354,22 +347,7 @@
               >
                 <q-menu>
                   <q-list style="min-width: 100px">
-                    <q-item
-                      clickable
-                      @click="
-                        delete customDurations?.[currentCongregation]?.[
-                          selectedDate
-                        ]?.[media.uniqueId];
-                        mediaPlayingUrl = fs.existsSync(
-                          fileUrlToPath(media.fileUrl),
-                        )
-                          ? media.fileUrl
-                          : (media.streamUrl ?? media.fileUrl);
-                        mediaPlayingUniqueId = media.uniqueId;
-                        mediaPlayingSubtitlesUrl = media.subtitlesUrl ?? '';
-                        mediaPlayingAction = 'play';
-                      "
-                    >
+                    <q-item clickable @click="setMediaPlaying(media, true)">
                       <q-item-section>{{ $t('entireFile') }}</q-item-section>
                     </q-item>
                     <q-separator />
@@ -377,36 +355,7 @@
                       v-for="marker in media.markers"
                       :key="marker.VideoMarkerId"
                       clickable
-                      @click="
-                        customDurations[currentCongregation] ??= {};
-                        customDurations[currentCongregation][selectedDate] ??=
-                          {};
-                        customDurations[currentCongregation][selectedDate][
-                          media.uniqueId
-                        ] ??= {
-                          min: 0,
-                          max: media.duration,
-                        };
-                        customDurations[currentCongregation][selectedDate][
-                          media.uniqueId
-                        ].min = marker.StartTimeTicks / 10000 / 1000;
-                        customDurations[currentCongregation][selectedDate][
-                          media.uniqueId
-                        ].max =
-                          (marker.StartTimeTicks +
-                            marker.DurationTicks -
-                            marker.EndTransitionDurationTicks) /
-                          10000 /
-                          1000;
-                        mediaPlayingUrl = fs.existsSync(
-                          fileUrlToPath(media.fileUrl),
-                        )
-                          ? media.fileUrl
-                          : (media.streamUrl ?? media.fileUrl);
-                        mediaPlayingUniqueId = media.uniqueId;
-                        mediaPlayingSubtitlesUrl = media.subtitlesUrl ?? '';
-                        mediaPlayingAction = 'play';
-                      "
+                      @click="setMediaPlaying(media, true, marker)"
                     >
                       <q-item-section>{{ marker.Label }}</q-item-section>
                     </q-item>
@@ -577,7 +526,7 @@
 
 <script setup lang="ts">
 import type { QImg } from 'quasar';
-import type { DynamicMediaObject } from 'src/types';
+import type { DynamicMediaObject, VideoMarker } from 'src/types';
 
 import Panzoom, {
   type PanzoomObject,
@@ -644,6 +593,51 @@ const resetMediaTitle = () => {
   }
 };
 
+const setMediaPlaying = async (
+  media: DynamicMediaObject,
+  signLanguage = false,
+  marker?: VideoMarker,
+) => {
+  if (signLanguage) {
+    if (marker) {
+      customDurations.value[currentCongregation.value] ??= {};
+      customDurations.value[currentCongregation.value][selectedDate.value] ??=
+        {};
+      customDurations.value[currentCongregation.value][selectedDate.value][
+        media.uniqueId
+      ] ??= {
+        max: media.duration,
+        min: 0,
+      };
+      customDurations.value[currentCongregation.value][selectedDate.value][
+        media.uniqueId
+      ].min = marker.StartTimeTicks / 10000 / 1000;
+      customDurations.value[currentCongregation.value][selectedDate.value][
+        media.uniqueId
+      ].max =
+        (marker.StartTimeTicks +
+          marker.DurationTicks -
+          marker.EndTransitionDurationTicks) /
+        10000 /
+        1000;
+    } else {
+      delete customDurations.value?.[currentCongregation.value]?.[
+        selectedDate.value
+      ]?.[media.uniqueId];
+      mediaPlayingAction.value = 'play';
+    }
+  } else {
+    if (mediaPanzoom.value) mediaPlayingPanzoom.value = mediaPanzoom.value;
+  }
+  const filePath = fileUrlToPath(media.fileUrl);
+  const fileExists = await fs.pathExists(filePath);
+  mediaPlayingUrl.value = fileExists
+    ? media.fileUrl
+    : (media.streamUrl ?? media.fileUrl);
+  mediaPlayingUniqueId.value = media.uniqueId;
+  mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
+};
+
 resetMediaTitle();
 
 const thumbnailFromMetadata = ref('');
@@ -652,18 +646,19 @@ const imageLoadingError = () => {
   findThumbnailUrl();
 };
 
-function findThumbnailUrl() {
+async function findThumbnailUrl() {
   if (!thumbnailFromMetadata.value) {
-    setTimeout(() => {
-      if (fs.existsSync(fileUrlToPath(props.media.fileUrl))) {
-        getThumbnailUrl(props.media.fileUrl).then((thumbnailUrl) => {
-          if (!thumbnailFromMetadata.value) {
-            thumbnailFromMetadata.value = thumbnailUrl;
-          }
-          if (!thumbnailFromMetadata.value) {
-            findThumbnailUrl();
-          }
-        });
+    setTimeout(async () => {
+      const filePath = fileUrlToPath(props.media.fileUrl);
+      const fileExists = await fs.pathExists(filePath);
+      if (fileExists) {
+        const thumbnailUrl = await getThumbnailUrl(props.media.fileUrl);
+        if (!thumbnailFromMetadata.value) {
+          thumbnailFromMetadata.value = thumbnailUrl;
+        }
+        if (!thumbnailFromMetadata.value) {
+          findThumbnailUrl();
+        }
       }
     }, 2000);
   }

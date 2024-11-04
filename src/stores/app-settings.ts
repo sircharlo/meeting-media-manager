@@ -29,31 +29,33 @@ interface Store {
 
 export const useAppSettingsStore = defineStore('app-settings', {
   actions: {
-    runMigration(type: string) {
+    async runMigration(type: string) {
       try {
         let successfulMigration = true;
         const congregationStore = useCongregationSettingsStore();
         const jwStore = useJwStore();
         if (type === 'firstRun') {
           const oldVersionPath = path.join(
-            getAppDataPath(),
+            await getAppDataPath(),
             'meeting-media-manager',
           );
-          if (!fs.existsSync(oldVersionPath)) {
-            successfulMigration = false;
+          if (await fs.exists(oldVersionPath)) {
+            const oldPrefsPaths = await getOldPrefsPaths(oldVersionPath);
+            await Promise.all(
+              oldPrefsPaths.map(async (oldPrefsPath) => {
+                try {
+                  const oldPrefs: OldAppConfig =
+                    await parsePrefsFile(oldPrefsPath);
+                  const newPrefsObject = buildNewPrefsObject(oldPrefs);
+                  const newCongId = uid();
+                  congregationStore.congregations[newCongId] = newPrefsObject;
+                } catch (error) {
+                  errorCatcher(error);
+                }
+              }),
+            );
           } else {
-            for (const oldPrefsPath of getOldPrefsPaths(oldVersionPath)) {
-              try {
-                const oldPrefs: OldAppConfig = parsePrefsFile(
-                  oldPrefsPath.path,
-                );
-                const newPrefsObject = buildNewPrefsObject(oldPrefs);
-                const newCongId = uid();
-                congregationStore.congregations[newCongId] = newPrefsObject;
-              } catch (error) {
-                errorCatcher(error);
-              }
-            }
+            successfulMigration = false;
           }
         } else if (type === 'localStorageToPiniaPersist') {
           congregationStore.$patch({
@@ -96,13 +98,18 @@ export const useAppSettingsStore = defineStore('app-settings', {
             ),
           });
 
-          QuasarStorage.removeItem('additionalMediaMaps');
-          QuasarStorage.removeItem('customDurations');
-          QuasarStorage.removeItem('jwLanguages');
-          QuasarStorage.removeItem('jwSongs');
-          QuasarStorage.removeItem('lookupPeriod');
-          QuasarStorage.removeItem('mediaSort');
-          QuasarStorage.removeItem('yeartexts');
+          // Remove migrated items from localStorage
+          [
+            'additionalMediaMaps',
+            'customDurations',
+            'jwLanguages',
+            'jwSongs',
+            'lookupPeriod',
+            'mediaSort',
+            'yeartexts',
+          ].forEach((item) => {
+            QuasarStorage.removeItem(item);
+          });
 
           this.migrations = this.migrations.concat(
             parseJsonSafe(QuasarStorage.getItem('migrations'), []),
@@ -114,12 +121,14 @@ export const useAppSettingsStore = defineStore('app-settings', {
             { preferredScreenNumber: 0, preferWindowed: false },
           );
           QuasarStorage.removeItem('screenPreferences');
-        } else if (type === 'addBaseUrl') {
-          for (const prefs of Object.values(congregationStore.congregations)) {
-            prefs.baseUrl = 'jw.org';
-          }
+        } else if (type === 'addBaseUrlToAllCongregations') {
+          congregationStore.$patch((state) => {
+            Object.values(state.congregations).forEach((prefs) => {
+              prefs.baseUrl = 'jw.org';
+            });
+          });
         } else {
-          // other migrations will go here
+          // Other migrations can be added here
         }
         this.migrations.push(type);
         return successfulMigration;

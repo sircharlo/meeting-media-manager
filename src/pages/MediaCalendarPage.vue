@@ -525,7 +525,6 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
-  getDatedAdditionalMediaDirectory,
   mediaPaused,
   mediaPlaying,
   mediaPlayingAction,
@@ -537,6 +536,7 @@ const {
   selectedDate,
   selectedDateObject,
 } = storeToRefs(currentState);
+const { getDatedAdditionalMediaDirectory } = currentState;
 const {
   convertPdfToImages,
   decompress,
@@ -544,6 +544,7 @@ const {
   fs,
   getLocalPathFromFileObject,
   path,
+  readdir,
 } = window.electronApi;
 
 const filesLoading = ref(-1);
@@ -1095,9 +1096,7 @@ const playState = (id: string) => {
 };
 
 const copyToDatedAdditionalMedia = async (files: string[]) => {
-  const datedAdditionalMediaDir = getDatedAdditionalMediaDirectory.value;
-  fs.ensureDirSync(datedAdditionalMediaDir);
-
+  const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
   const trimFilepathAsNeeded = (filepath: string) => {
     let filepathSize = new Blob([filepath]).size;
     while (filepathSize > 230) {
@@ -1116,7 +1115,7 @@ const copyToDatedAdditionalMedia = async (files: string[]) => {
   };
   for (const filepathToCopy of files) {
     try {
-      if (!filepathToCopy || !fs.existsSync(filepathToCopy)) continue;
+      if (!filepathToCopy || !(await fs.exists(filepathToCopy))) continue;
       let datedAdditionalMediaPath = path.join(
         datedAdditionalMediaDir,
         path.basename(filepathToCopy),
@@ -1127,17 +1126,16 @@ const copyToDatedAdditionalMedia = async (files: string[]) => {
           '-' +
           getFileUrl(datedAdditionalMediaPath),
       );
-      if (fs.existsSync(datedAdditionalMediaPath)) {
+      if (await fs.exists(datedAdditionalMediaPath)) {
         if (filepathToCopy !== datedAdditionalMediaPath) {
-          fs.removeSync(datedAdditionalMediaPath);
+          await fs.remove(datedAdditionalMediaPath);
           removeFromAdditionMediaMap(uniqueId);
         }
       }
       if (filepathToCopy !== datedAdditionalMediaPath)
-        fs.copySync(filepathToCopy, datedAdditionalMediaPath);
+        await fs.copy(filepathToCopy, datedAdditionalMediaPath);
       await addToAdditionMediaMapFromPath(datedAdditionalMediaPath, uniqueId);
     } catch (error) {
-      errorCatcher(filepathToCopy);
       errorCatcher(error);
     }
   }
@@ -1211,7 +1209,7 @@ const addToFiles = async (
         const baseFileName = path.basename(new URL(filepath).pathname);
         filepath = (
           await downloadFileIfNeeded({
-            dir: getTempDirectory(),
+            dir: await getTempDirectory(),
             filename: inferExtension(
               baseFileName,
               (files[i] as { filetype?: string }).filetype,
@@ -1223,8 +1221,8 @@ const addToFiles = async (
         const [preamble, data] = filepath.split(';base64,');
         const ext = preamble.split('/')[1];
         const tempFilename = uid() + '.' + ext;
-        const tempFilepath = path.join(getTempDirectory(), tempFilename);
-        fs.writeFileSync(tempFilepath, Buffer.from(data, 'base64'));
+        const tempFilepath = path.join(await getTempDirectory(), tempFilename);
+        await fs.writeFile(tempFilepath, Buffer.from(data, 'base64'));
         filepath = tempFilepath;
       }
       filepath = await convertImageIfNeeded(filepath);
@@ -1232,7 +1230,7 @@ const addToFiles = async (
         await copyToDatedAdditionalMedia([filepath]);
       } else if (isPdf(filepath)) {
         const convertedImages = (
-          await convertPdfToImages(filepath, getTempDirectory())
+          await convertPdfToImages(filepath, await getTempDirectory())
         ).map((path) => {
           return { path };
         });
@@ -1241,17 +1239,17 @@ const addToFiles = async (
         // TODO: only decompress the db in memory using adm-zip, to get the publication info
         const tempUnzipDir = await decompressJwpub(filepath);
         console.log(tempUnzipDir);
-        const tempDb = findDb(tempUnzipDir);
+        const tempDb = await findDb(tempUnzipDir);
         console.log(tempDb);
         if (!tempDb) return;
         const publication = getPublicationInfoFromDb(tempDb);
         console.log(publication);
-        const publicationDirectory = getPublicationDirectory(publication);
+        const publicationDirectory = await getPublicationDirectory(publication);
         console.log(publicationDirectory);
         if (!publicationDirectory) return;
         const unzipDir = await decompressJwpub(filepath, publicationDirectory);
         console.log(unzipDir);
-        const db = findDb(unzipDir);
+        const db = await findDb(unzipDir);
         console.log(db);
         if (!db) return;
         jwpubImportDb.value = db;
@@ -1308,7 +1306,7 @@ const addToFiles = async (
         getMediaFromJwPlaylist(
           filepath,
           selectedDateObject.value?.date,
-          getDatedAdditionalMediaDirectory.value,
+          await getDatedAdditionalMediaDirectory(),
         )
           .then((additionalMedia) => {
             addToAdditionMediaMap(additionalMedia);
@@ -1335,23 +1333,23 @@ const addToFiles = async (
           });
       } else if (isArchive(filepath)) {
         const unzipDirectory = path.join(
-          getTempDirectory(),
+          await getTempDirectory(),
           path.basename(filepath),
         );
-        if (fs.existsSync(unzipDirectory)) fs.removeSync(unzipDirectory);
+        await fs.remove(unzipDirectory);
         decompress(filepath, unzipDirectory)
-          .then(() => {
-            addToFiles(
-              fs.readdirSync(unzipDirectory).map((file) => {
-                return {
-                  path: path.join(unzipDirectory, file),
-                };
-              }),
-            )
-              .then(() => fs.removeSync(unzipDirectory))
-              .catch((error) => {
-                errorCatcher(error);
-              });
+          .then(async () => {
+            try {
+              const files = await readdir(unzipDirectory);
+              const filePaths = files.map((file) => ({
+                path: path.join(unzipDirectory, file),
+              }));
+
+              await addToFiles(filePaths);
+              await fs.remove(unzipDirectory);
+            } catch (error) {
+              errorCatcher(error);
+            }
           })
           .catch((error) => {
             errorCatcher(error);

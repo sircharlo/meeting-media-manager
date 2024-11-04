@@ -51,6 +51,23 @@ interface Songbook {
 
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
+    async getDatedAdditionalMediaDirectory() {
+      try {
+        if (!this.selectedDate) return '';
+        const additionalMediaPath = await getAdditionalMediaPath();
+        const dateString = formatDate(new Date(this.selectedDate), 'YYYYMMDD');
+        const datedAdditionalMediaDirectory = path.join(
+          additionalMediaPath,
+          this.currentCongregation,
+          dateString,
+        );
+        await fs.ensureDir(datedAdditionalMediaDirectory);
+        return datedAdditionalMediaDirectory;
+      } catch (error) {
+        errorCatcher(error);
+        return '';
+      }
+    },
     getInvalidSettings(congregation?: number | string) {
       try {
         if (!congregation) congregation = this.currentCongregation;
@@ -90,7 +107,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       return this.getInvalidSettings(this.currentCongregation).length > 0;
     },
   },
-
   getters: {
     congregationIsSelected: (state) => {
       return state.currentCongregation;
@@ -136,23 +152,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       const currentLanguage = this.currentSettings?.lang as string;
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
-    },
-    getDatedAdditionalMediaDirectory: (state) => {
-      try {
-        if (!state.selectedDate) return '';
-        const additionalMediaPath = getAdditionalMediaPath();
-        const dateString = formatDate(new Date(state.selectedDate), 'YYYYMMDD');
-        const datedAdditionalMediaDirectory = path.join(
-          additionalMediaPath,
-          state.currentCongregation,
-          dateString,
-        );
-        fs.ensureDirSync(datedAdditionalMediaDirectory);
-        return datedAdditionalMediaDirectory;
-      } catch (error) {
-        errorCatcher(error);
-        return '';
-      }
     },
     mediaPaused: (state) => {
       return (

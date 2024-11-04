@@ -3,11 +3,12 @@ import type {
   ElectronIpcSendKey,
   ExternalWebsite,
   FileDialogFilter,
+  FileItem,
   NavigateWebsiteAction,
   SettingsValues,
 } from 'src/types';
 
-import { homepage, repository } from 'app/package.json';
+import { homepage, productName, repository } from 'app/package.json';
 import get from 'axios';
 import { type FSWatcher, watch } from 'chokidar';
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
@@ -19,7 +20,9 @@ import {
   type IpcMainInvokeEvent,
   shell,
 } from 'electron';
+import { type Dirent, exists, readdir, stat } from 'fs-extra';
 import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
+import { join } from 'upath';
 
 import { errorCatcher, isSelf } from './../utils';
 import { getAllScreens } from './screen';
@@ -165,13 +168,86 @@ function handleIpcInvoke<T = unknown>(
   });
 }
 
-handleIpcInvoke('getVersion', async () => {
-  return app.getVersion();
-});
+handleIpcInvoke('getVersion', async () => app.getVersion());
+handleIpcInvoke('getAppPath', async () => app.getAppPath());
+handleIpcInvoke('getUserDataPath', async () =>
+  join(app.getPath('appData'), productName),
+);
 
-handleIpcInvoke('getAllScreens', async () => {
-  return getAllScreens();
-});
+handleIpcInvoke('getAllScreens', async () => getAllScreens());
+
+handleIpcInvoke(
+  'registerShortcut',
+  async (_e, name: keyof SettingsValues, keySequence: string) => {
+    return registerShortcut(name, keySequence);
+  },
+);
+
+handleIpcInvoke(
+  'readdir',
+  async (_e, dir: string, withSizes?: boolean, recursive?: boolean) => {
+    async function readDirRecursive(directory: string): Promise<FileItem[]> {
+      const dirents: Dirent[] = await readdir(directory, {
+        withFileTypes: true,
+      });
+      const dirItems: FileItem[] = [];
+      for (const dirent of dirents) {
+        const fullPath = join(directory, dirent.name);
+        const fileItem: FileItem = {
+          isDirectory: dirent.isDirectory(),
+          isFile: dirent.isFile(),
+          name: dirent.name,
+          parentPath: directory,
+          ...(withSizes &&
+            dirent.isFile() && { size: (await stat(fullPath)).size }),
+        };
+        dirItems.push(fileItem);
+        if (recursive && dirent.isDirectory()) {
+          const subDirItems = await readDirRecursive(fullPath);
+          dirItems.push(...subDirItems);
+        }
+      }
+      return dirItems;
+    }
+    try {
+      if (!(await exists(dir))) return [];
+      return await readDirRecursive(dir);
+    } catch (error) {
+      errorCatcher(error);
+      return [];
+    }
+  },
+);
+
+handleIpcInvoke(
+  'openFileDialog',
+  async (_e, single: boolean, filter: FileDialogFilter) => {
+    if (!mainWindow) return;
+
+    const filters: Electron.FileFilter[] = [];
+
+    if (!filter) {
+      filters.push({ extensions: ['*'], name: 'All files' });
+    } else if (filter === 'jwpub+image') {
+      filters.push({
+        extensions: JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS),
+        name: 'JWPUB + Images',
+      });
+    }
+
+    if (filter?.includes('jwpub')) {
+      filters.push({ extensions: JWPUB_EXTENSIONS, name: 'JWPUB' });
+    }
+    if (filter?.includes('image')) {
+      filters.push({ extensions: IMG_EXTENSIONS, name: 'Images' });
+    }
+
+    return dialog.showOpenDialog(mainWindow, {
+      filters,
+      properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
+    });
+  },
+);
 
 handleIpcInvoke('downloadErrorIsExpected', async () => {
   try {
@@ -251,40 +327,3 @@ handleIpcInvoke('downloadErrorIsExpected', async () => {
     return false;
   }
 });
-
-handleIpcInvoke(
-  'registerShortcut',
-  async (_e, name: keyof SettingsValues, keySequence: string) => {
-    return registerShortcut(name, keySequence);
-  },
-);
-
-handleIpcInvoke(
-  'openFileDialog',
-  async (_e, single: boolean, filter: FileDialogFilter) => {
-    if (!mainWindow) return;
-
-    const filters: Electron.FileFilter[] = [];
-
-    if (!filter) {
-      filters.push({ extensions: ['*'], name: 'All files' });
-    } else if (filter === 'jwpub+image') {
-      filters.push({
-        extensions: JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS),
-        name: 'JWPUB + Images',
-      });
-    }
-
-    if (filter?.includes('jwpub')) {
-      filters.push({ extensions: JWPUB_EXTENSIONS, name: 'JWPUB' });
-    }
-    if (filter?.includes('image')) {
-      filters.push({ extensions: IMG_EXTENSIONS, name: 'Images' });
-    }
-
-    return dialog.showOpenDialog(mainWindow, {
-      filters,
-      properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
-    });
-  },
-);

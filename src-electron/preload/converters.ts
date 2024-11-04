@@ -2,7 +2,7 @@ import type * as PdfJs from 'pdfjs-dist';
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
-import { ensureDirSync, writeFileSync } from 'fs-extra';
+import { ensureDir, writeFile } from 'fs-extra';
 import { FULL_HD } from 'src/constants/media';
 import { basename, join } from 'upath';
 
@@ -79,9 +79,9 @@ export const convertPdfToImages = async (
         data.push(pngData);
 
         const base64Data = pngData.replace(/^data:image\/png;base64,/, '');
-        ensureDirSync(outputFolder);
+        await ensureDir(outputFolder);
         const outputPath = join(outputFolder, `${basename(pdfPath)}_${i}.png`);
-        writeFileSync(outputPath, base64Data, 'base64');
+        await writeFile(outputPath, base64Data, 'base64');
         outputImages.push(outputPath);
       } catch (e) {
         errorCatcher(e);

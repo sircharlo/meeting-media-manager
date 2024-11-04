@@ -95,7 +95,6 @@ module.exports = configure(function (ctx) {
         appId: 'sircharlo.meeting-media-manager',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
-        buildDependenciesFromSource: false,
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -104,35 +103,32 @@ module.exports = configure(function (ctx) {
           target: 'AppImage',
         },
         mac: {
-          entitlements: 'build/entitlements.mac.plist',
           extendInfo: {
+            //'com.apple.security.cs.allow-jit': true,
+            //'com.apple.security.cs.allow-unsigned-executable-memory': true,
+            //'com.apple.security.cs.disable-library-validation': true,
+            'com.apple.security.device.audio-input': true,
+            'com.apple.security.device.camera': true,
+            'com.apple.security.device.microphone': true,
             NSCameraUsageDescription:
               "Camera access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's camera will never be accessed or used in any way by this app.",
             NSMicrophoneUsageDescription:
               "Microphone access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's microphone will never be accessed or used in any way by this app.",
           },
+          //hardenedRuntime: false,
           icon: 'icons/icon.icns',
+          minimumSystemVersion: '10.15',
           publish: ['github'],
-          target: {
-            arch: ['universal'],
-            target: 'default',
-          },
+          target: { arch: ['universal'], target: 'default' },
         },
-        nsis: {
-          // eslint-disable-next-line no-template-curly-in-string
-          artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
-          oneClick: false,
-        },
+        nsis: { oneClick: false },
         productName: 'Meeting Media Manager', // don't delete this or the productName in package.json; needed for app directory name
         win: {
           // asar: false,
           icon: 'icons/icon.ico',
           publish: ['github'],
           target: [
-            {
-              arch: ctx.debug ? undefined : ['x64', 'ia32'],
-              target: 'nsis',
-            },
+            { arch: ctx.debug ? undefined : ['x64', 'ia32'], target: 'nsis' },
           ],
         },
       },
@@ -174,7 +170,6 @@ module.exports = configure(function (ctx) {
       extendPackageJson(pkg) {
         // All dependencies required by the main and preload scripts need to be listed here
         const electronDeps = [
-          '@electron/remote',
           '@numairawan/video-duration',
           '@sentry/electron',
           'adm-zip',
@@ -185,7 +180,6 @@ module.exports = configure(function (ctx) {
           'fs-extra',
           'heic-convert',
           'is-online',
-          'klaw-sync',
           'music-metadata',
           'pdfjs-dist',
           'upath',

@@ -1,4 +1,3 @@
-import { initialize as initElectronRemote } from '@electron/remote/main';
 import { init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, repository, version } from 'app/package.json';
 import {
@@ -10,6 +9,7 @@ import {
 } from 'electron';
 
 import './main/ipc';
+import './main/security';
 import { PLATFORM } from './constants';
 import { initScreenListeners } from './main/screen';
 import { initSessionListeners } from './main/session';
@@ -22,7 +22,6 @@ initSentry({
   release: version,
 });
 
-initElectronRemote();
 initUpdater();
 initScreenListeners();
 createApplicationMenu();
