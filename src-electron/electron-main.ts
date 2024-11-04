@@ -9,6 +9,7 @@ import {
 } from 'electron';
 
 import './main/ipc';
+import './main/security';
 import { PLATFORM } from './constants';
 import { initScreenListeners } from './main/screen';
 import { initSessionListeners } from './main/session';
