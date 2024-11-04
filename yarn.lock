@@ -9821,7 +9821,7 @@ __metadata:
     sanitize-html: "npm:^2.13.1"
     typescript: "npm:~5.5.4"
     upath: "npm:^2.0.1"
-    vitepress: "npm:^1.4.3"
+    vitepress: "npm:^1.4.5"
     vue: "npm:^3.5.12"
     vue-i18n: "npm:^10.0.4"
     vue-router: "npm:^4.4.5"
@@ -14122,9 +14122,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:^1.4.3":
-  version: 1.4.3
-  resolution: "vitepress@npm:1.4.3"
+"vitepress@npm:^1.4.5":
+  version: 1.4.5
+  resolution: "vitepress@npm:1.4.5"
   dependencies:
     "@docsearch/css": "npm:^3.6.2"
     "@docsearch/js": "npm:^3.6.2"
@@ -14153,7 +14153,7 @@ __metadata:
       optional: true
   bin:
     vitepress: bin/vitepress.js
-  checksum: 10c0/75ddaeab4aca36df36c8ad507097331e4c987b16e8a5be2ff1c11c4b97b6d9e2fd74cbac3997289038e980b43026b3dc641af8154df22b3633744c7129f56fa1
+  checksum: 10c0/f5aeb951183f66cb1a8bc22e9fa022df3c8ccc14acaf95eaeeb0fd81f34ba8d231fd5badebe4933e383aded3c739142e4abad08712e2d6e88a2056423bcd0e3a
   languageName: node
   linkType: hard
 
