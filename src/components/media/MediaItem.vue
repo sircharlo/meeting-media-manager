@@ -747,6 +747,7 @@ function stopMedia() {
   mediaPlayingCurrentPosition.value = 0;
   mediaPlayingAction.value = '';
   mediaToStop.value = '';
+  zoomReset(true);
 }
 
 const destroyPanzoom = () => {
