@@ -50,6 +50,7 @@
       <q-item-section>{{ $t('titles.meetingMedia') }}</q-item-section>
     </q-item>
     <q-item
+      v-if="!$q.platform.is.mac"
       v-ripple
       :active-class="navActiveClass"
       :disable="!currentSettings || invalidSettings()"
