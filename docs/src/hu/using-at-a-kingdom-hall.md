@@ -10,7 +10,34 @@ Ez az útmutató végigvezeti Önt a **Meeting Media Manager (M³)** letöltés�
 4. Indítsa el az M³ programot.
 5. Menjen végig a konfigurációs varázslón.
 
-## 2) Konfigurációs varázsló
+### Additional steps for macOS Users
+
+Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
+
+First, run the following two commands in Terminal (modify the path to M³ as needed):
+
+```bash
+codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
+sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
+```
+
+:::tip Explanation
+
+These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
+
+:::
+
+If you are still unable to launch M³ after entering the two commands, please try the following:
+
+1. Open the macOS system **Privacy & Security** settings.
+2. Find the entry for M³ and click the button to **Open Anyway**.
+3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
+4. Another warning will appear, where you’ll need to authenticate to launch the app.
+5. M³ should now launch successfully.
+
+If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+
+## 2. Konfigurációs varázsló
 
 ### Az alkalmazás megjelenítési nyelve
 
