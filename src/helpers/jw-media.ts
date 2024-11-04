@@ -1306,6 +1306,8 @@ export function findBestResolution(
   mediaLinks: MediaItemsMediatorFile[] | MediaLink[],
 ) {
   try {
+    if (!mediaLinks?.length) return null;
+
     const currentStateStore = useCurrentStateStore();
     let bestItem = null;
     let bestHeight = 0;
@@ -1331,7 +1333,7 @@ export function findBestResolution(
     return bestItem;
   } catch (e) {
     errorCatcher(e);
-    return mediaLinks.length > 0 ? mediaLinks[mediaLinks.length - 1] : null;
+    return mediaLinks?.length > 0 ? mediaLinks?.[mediaLinks?.length - 1] : null;
   }
 }
 
