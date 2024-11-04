@@ -117,6 +117,7 @@ module.exports = configure(function (ctx) {
           },
           hardenedRuntime: false,
           icon: 'icons/icon.icns',
+          minimumSystemVersion: '10.15',
           publish: ['github'],
           target: { arch: ['universal'], target: 'default' },
         },
