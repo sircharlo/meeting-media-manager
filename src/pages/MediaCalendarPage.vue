@@ -525,7 +525,6 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
-  getDatedAdditionalMediaDirectory,
   mediaPaused,
   mediaPlaying,
   mediaPlayingAction,
@@ -537,6 +536,7 @@ const {
   selectedDate,
   selectedDateObject,
 } = storeToRefs(currentState);
+const { getDatedAdditionalMediaDirectory } = currentState;
 const {
   convertPdfToImages,
   decompress,
@@ -1096,9 +1096,7 @@ const playState = (id: string) => {
 };
 
 const copyToDatedAdditionalMedia = async (files: string[]) => {
-  const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory.value;
-  await fs.ensureDir(datedAdditionalMediaDir);
-
+  const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
   const trimFilepathAsNeeded = (filepath: string) => {
     let filepathSize = new Blob([filepath]).size;
     while (filepathSize > 230) {
@@ -1309,7 +1307,7 @@ const addToFiles = async (
         getMediaFromJwPlaylist(
           filepath,
           selectedDateObject.value?.date,
-          await getDatedAdditionalMediaDirectory.value,
+          await getDatedAdditionalMediaDirectory(),
         )
           .then((additionalMedia) => {
             addToAdditionMediaMap(additionalMedia);

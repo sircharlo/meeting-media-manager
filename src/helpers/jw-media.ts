@@ -1450,7 +1450,7 @@ const downloadAdditionalRemoteVideo = async (
           detail: {
             duration: bestItem.duration,
             path: path.join(
-              await currentStateStore.getDatedAdditionalMediaDirectory,
+              await currentStateStore.getDatedAdditionalMediaDirectory(),
               path.basename(bestItemUrl),
             ),
             song,
@@ -1461,7 +1461,7 @@ const downloadAdditionalRemoteVideo = async (
         }),
       );
       await downloadFileIfNeeded({
-        dir: await currentStateStore.getDatedAdditionalMediaDirectory,
+        dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
         size: bestItem.filesize,
         url: bestItemUrl,
       });
