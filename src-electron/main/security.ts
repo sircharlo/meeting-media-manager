@@ -9,12 +9,12 @@ app.on('ready', () => {
   // See: https://www.electronjs.org/docs/latest/tutorial/security#5-handle-session-permission-requests-from-remote-content
   session.defaultSession.setPermissionRequestHandler(
     (webContents, permission, callback) => {
-      if (!isSelf(webContents.getURL())) {
+      const url = webContents.getURL();
+      if (!isSelf(url) && !isTrustedDomain(url)) {
         logToWindow(
           mainWindow,
           'Blocked permission request from untrusted domain',
-          webContents.getURL(),
-          'warn',
+          url,
         );
         return callback(false);
       }
@@ -46,7 +46,7 @@ app.on('web-contents-created', (_event, contents) => {
     webPreferences.nodeIntegration = false;
 
     // Verify URL being loaded
-    if (!isTrustedDomain(params.src)) {
+    if (!isSelf(params.src) && !isTrustedDomain(params.src)) {
       event.preventDefault();
       logToWindow(
         mainWindow,
