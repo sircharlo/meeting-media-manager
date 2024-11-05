@@ -50,6 +50,7 @@ const electronApi: ElectronApi = {
   navigateWebsiteWindow,
   onLog: (cb) => listen('log', cb),
   onShortcut: (cb) => listen('shortcut', cb),
+  onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   openExternal: (w) => send('openExternal', w),
   openFileDialog: (s, f) => invoke('openFileDialog', s, f),
   openWebsiteWindow,

@@ -44,6 +44,13 @@ export interface ElectronApi {
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
+  onWatchFolderUpdate: (
+    callback: (args: {
+      changedPath: string;
+      day: string;
+      event: string;
+    }) => void,
+  ) => void;
   openExternal: (website: ExternalWebsite) => void;
   openFileDialog: (
     single?: boolean,
@@ -105,6 +112,7 @@ export type ElectronIpcListenKey =
   | 'screenChange'
   | 'screenPrefsChange'
   | 'shortcut'
+  | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 
 export type ExternalWebsite = 'docs' | 'repo';

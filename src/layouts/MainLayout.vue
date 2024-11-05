@@ -167,6 +167,7 @@ const {
   online,
   selectedDate,
   selectedDateObject,
+  watchFolderMedia,
 } = storeToRefs(currentState);
 
 watch(currentCongregation, (newCongregation, oldCongregation) => {
@@ -326,6 +327,30 @@ watchImmediate(
   },
 );
 
+const updateWatchFolderRef = ({
+  changedPath,
+  day,
+  event,
+}: Record<string, string>) => {
+  console.log(
+    'updateWatchFolderRef',
+    currentSettings.value?.folderToWatch,
+    event,
+    day,
+    changedPath,
+  );
+  if (event === 'addDir' || event === 'unlinkDir') {
+    watchFolderMedia.value[day] = [];
+  } else if (event === 'add') {
+    watchFolderMedia.value[day] ??= [];
+    watchFolderMedia.value[day].push(changedPath);
+  } else if (event === 'unlink') {
+    watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
+      (path) => path !== changedPath,
+    );
+  }
+};
+
 cleanLocalStorage();
 cleanAdditionalMediaFolder();
 
@@ -386,6 +411,10 @@ const initListeners = () => {
   window.electronApi.onShortcut(({ shortcut }) => {
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
     executeShortcut(shortcut);
+  });
+
+  window.electronApi.onWatchFolderUpdate(({ changedPath, day, event }) => {
+    updateWatchFolderRef({ changedPath, day, event });
   });
 };
 

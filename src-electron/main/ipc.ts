@@ -20,7 +20,7 @@ import {
   type IpcMainInvokeEvent,
   shell,
 } from 'electron';
-import { type Dirent, exists, readdir, stat } from 'fs-extra';
+import { type Dirent, exists, readdir, stat, type Stats } from 'fs-extra';
 import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
 import { basename, dirname, join, toUnix } from 'upath';
 
@@ -28,7 +28,7 @@ import { errorCatcher, isSelf } from './../utils';
 import { getAllScreens } from './screen';
 import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
-import { logToWindow } from './window/window-base';
+import { logToWindow, sendToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
 import {
@@ -139,7 +139,8 @@ handleIpcSend('watchFolder', (_e, folderPath: string) => {
   console.log(_e, folderPath);
   watchers.add(
     filesystemWatch(folderPath, {
-      ignored: (fp, stats) => {
+      atomic: false,
+      ignored: (fp: string, stats?: Stats) => {
         try {
           if (toUnix(folderPath) === fp) return false; // Don't ignore the root folder itself
           if (!stats) return false; // Don't ignore anything if no stats are available
@@ -152,8 +153,25 @@ handleIpcSend('watchFolder', (_e, folderPath: string) => {
         }
       },
       ignorePermissionErrors: true,
-    }).on('all', (event, path) => {
-      console.log(event, path);
+    }).on('all', (event, changedPath, stats) => {
+      try {
+        console.log(event, changedPath, stats);
+        if (!changedPath || (!stats && !event.includes('unlink'))) return; // Don't do anything if no stats are available or if no path is available
+        const dirPath = toUnix(
+          stats?.isDirectory() || event === 'unlinkDir'
+            ? changedPath
+            : dirname(changedPath),
+        ); // If this isn't a directory, get the parent directory
+        const dirOfNote = basename(dirPath); // Get the name of the directory
+        sendToWindow(mainWindow, 'watchFolderUpdate', {
+          changedPath,
+          day: dirOfNote,
+          event,
+        });
+      } catch (error) {
+        errorCatcher(error);
+        return true;
+      }
     }),
   );
 });

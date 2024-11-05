@@ -18,6 +18,8 @@
     @dragstart="dropActive"
     @drop="dropEnd"
   >
+    {{ date.formatDate(selectedDate, 'YYYY-MM-DD') }}
+    {{ watchFolderMedia[date.formatDate(selectedDate, 'YYYY-MM-DD')] }}
     <div class="col">
       <div
         v-if="
@@ -535,6 +537,7 @@ const {
   mediaPlayingUrl,
   selectedDate,
   selectedDateObject,
+  watchFolderMedia,
 } = storeToRefs(currentState);
 const { getDatedAdditionalMediaDirectory } = currentState;
 const {
