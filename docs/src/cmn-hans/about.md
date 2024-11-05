@@ -1,6 +1,6 @@
-# 关于Meeting Media Manager (M³)
+# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-## 这个应用程序是什么？
+## What is this app? {#what-is-this-app}
 
 **Meeting Media Manager**或**M3**简而言之，是Windows、 macOS 和 Linux的应用。 自动下载将在耶和华见证人聚会期间考虑的，在耶和华见证人的官方网站上能找到的任何语言的图片和录像。
 
@@ -12,7 +12,7 @@ M³之前被称为JWMMF（JW Meeting Media Fetcher），但在2022年5月更名�
 
 :::
 
-## M³能做什么？
+## M³能做什么？ {#what-can-m3-do}
 
 简单来说，有了M³，您可以轻松自动地下载、同步、分享和播放所有聚会媒体。
 
@@ -28,7 +28,7 @@ M³之前被称为JWMMF（JW Meeting Media Fetcher），但在2022年5月更名�
 
 今天给M³一次尝试，看看它能做些什么！ 在会众聚会上播放媒体的工作从来没有那么容易。 在会众聚会上播放媒体的工作从来没有那么容易。
 
-## M³支持我的语言吗？
+## M³支持我的语言吗？ {#does-m3-work-in-my-language}
 
 \*\*是！\*\*耶和华见证人的聚会所需的媒体可以自动以耶和华见证人的官方网站提供的数百种语言下载。 可用语言列表将持续更新；您只需要做的就是选择您想要的语言。 可用语言列表将持续更新；您只需要做的就是选择您想要的语言。
 
