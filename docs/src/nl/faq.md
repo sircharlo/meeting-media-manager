@@ -1,6 +1,6 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Veelgestelde vragen {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Maakt deze applicatie gebruik van externe websites, bronnen of diensten om de publicaties en vergadering media te downloaden? {#external-dependencies}
 
 **Nee**. De applicatie werkt hetzelfde als JW Library. De publicaties en media worden direct van de officiële website van Jehovah's Getuigen en zijn CDN gedownload. De app bepaalt automatisch wat er moet worden gedownload en wanneer eerder gedownloade inhoud niet meer up-to-date is en opnieuw moet worden gedownload.
 

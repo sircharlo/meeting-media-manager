@@ -1,6 +1,6 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# O programu Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-## What is this app? {#what-is-this-app}
+## Kaj je ta program? {#what-is-this-app}
 
 **Meeting Media Manager** ali na kratko **M³** je program za operacijske sisteme Windows, macOS in Linux, ki samodejno prenaša slike in videoposnetke, ki bodo obravnavani na shodih Jehovovih prič, v katerem koli jeziku, ki je na voljo na uradnem spletnem mestu Jehovovih prič.
 
