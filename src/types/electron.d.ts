@@ -1,4 +1,5 @@
 import type { ConversionOptions } from 'app/src-electron/preload/converters';
+import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type {
@@ -16,7 +17,7 @@ export interface ElectronApi {
     pdfPath: string,
     outputFolder: string,
   ) => Promise<string[]>;
-  decompress: (inputZip: string, outputFolder: string) => Promise<void>;
+  decompress: typeof decompress;
   downloadErrorIsExpected: () => Promise<boolean>;
   executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => T[];
   fileUrlToPath: (url: string) => string;

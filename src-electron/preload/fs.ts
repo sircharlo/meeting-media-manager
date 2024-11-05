@@ -5,22 +5,6 @@ import url from 'url';
 
 import { errorCatcher } from '../utils';
 
-export const decompress = async (inputZip: string, outputFolder: string) => {
-  const { default: AdmZip } = await import('adm-zip');
-
-  const zip = new AdmZip(inputZip);
-  return new Promise<void>((resolve, reject) => {
-    zip.extractAllToAsync(outputFolder, true, true, (error) => {
-      if (error) {
-        errorCatcher(error);
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
-};
-
 export const getVideoDuration = async (
   filePath: string,
 ): Promise<VideoDuration> => {

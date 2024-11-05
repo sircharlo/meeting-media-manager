@@ -1,5 +1,6 @@
 import type { ElectronApi } from 'src/types';
 
+import decompress from 'decompress';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import path from 'upath';
@@ -7,7 +8,6 @@ import path from 'upath';
 import { initCloseListeners } from './preload/close';
 import { convertHeic, convertPdfToImages } from './preload/converters';
 import {
-  decompress,
   fileUrlToPath,
   getVideoDuration,
   isFileUrl,
