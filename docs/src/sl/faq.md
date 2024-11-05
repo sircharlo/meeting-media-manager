@@ -1,6 +1,6 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Pogosto zastavljena vprašanja {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Ali je ta program odvisen od zunanjih spletnih mest, virov ali „skrbnikov“ za prenašanje publikacij, multimedijske vsebine za shode ali drugih vsebin? {#external-dependencies}
 
 **Ne.** Program se obnaša podobno kot JW Library. Publikacije, multimedijsko vsebino in drugo prenaša neposredno z uradnega spletnega mesta Jehovovih prič in njegovega omrežja za dostavo vsebin. Program samodejno ugotovi, kaj je treba prenesti in kdaj predhodno prenesena vsebina ni več posodobljena in jo je treba zato ponovno prenesti.
 

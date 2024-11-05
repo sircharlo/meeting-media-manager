@@ -1,8 +1,8 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Використання M³ в Залі Царства {#using-m3-at-a-kingdom-hall}
 
 Цей посібник проведе вас через процес завантаження, встановлення та налаштування Meeting Media Manager (M³) у Залі Царства. Дотримуйтесь цих кроків, щоб забезпечити безперебійне налаштування для управління медіа під час зібрань.
 
-## 1. Download and install {#download-and-install}
+## 1. Завантажити та встановити {#download-and-install}
 
 1. Відвідайте [сторінку завантаження M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Завантажте відповідну версію для вашої операційної системи (Windows, macOS або Linux).
@@ -10,7 +10,7 @@
 4. Запустіть M³.
 5. Пройдіть через майстер настройки.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Додаткові кроки для користувачів macOS {#additional-steps-for-macos-users}
 
 Через заходи безпеки Apple, необхідні додаткові кроки для запуску M³ на сучасних macOS системах.
 
@@ -37,9 +37,9 @@ If you are still unable to launch M³ after entering the two commands, please tr
 
 If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Ми зробимо все можливе, щоб допомогти.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Майстер налаштування {#configuration-wizard}
 
-### App display language {#app-display-language}
+### Мова інтерфейсу додатку {#app-display-language}
 
 При запуску M³ вперше, вам буде запропоновано вибрати бажану **мову відображення**. Виберіть мову, яку ви хочете, щоб M³ використовував для свого інтерфейсу.
 
@@ -49,7 +49,7 @@ If you still have issues after following all these steps, please [open an issue 
 
 :::
 
-### Profile type {#profile-type}
+### Тип профілю {#profile-type}
 
 Наступний крок - вибрати **тип профілю**. Для звичайного налаштування в Залі Царства, оберіть **Звичайний**. Це налаштує багато функцій, які зазвичай використовуються для зібрань збору.
 
@@ -61,7 +61,7 @@ If you still have issues after following all these steps, please [open an issue 
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Автоматичний пошук збору {#automatic-congregation-lookup}
 
 M³ може спробувати автоматично знайти графік завдань вашого збору, мову та відформатовану назву.
 
@@ -79,7 +79,7 @@ M³ може спробувати автоматично знайти графі
 
 Якщо автоматичний пошук не знайде вашого збору, то ви можете вручну ввести необхідну інформацію. Майстер налаштування дозволить вам переглянути та/або ввести **назву** вашого збору, **мову зібрань** та **дні і час зібрань**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Кешування відео з пісненника {#caching-videos-from-the-songbook}
 
 Також вам буде доступна опція **кешування всіх відео з пісенника**. Ця функція попередньо завантажує всі відео з пісенника, зменшуючи час, необхідний для того, щоб завантажувати медіа для зібрань в майбутньому.
 
@@ -92,7 +92,7 @@ M³ може спробувати автоматично знайти графі
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### Налаштування інтеграції OBS Studio (опціонально) {#obs-studio-integration-configuration}
 
 Якщо в вашому Залі Царства використовується **OBS Studio** для трансляції гібридних зібрань в Zoom, M³ може автоматично інтегруватися з цією програмою. Під час встановлення ви можете налаштувати інтеграцію з OBS Studio, ввівши наступне:
 
@@ -106,6 +106,6 @@ M³ може спробувати автоматично знайти графі
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Насолоджуйтеся використанням M³ {#enjoy-using-m3}
 
 Як тільки майстер установки завершиться, M³ буде готовим допомогти керувати і демонструвати медіа на зібраннях. Насолоджуйтесь використання програми! :tada:
