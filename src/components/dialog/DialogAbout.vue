@@ -103,14 +103,19 @@ const open = defineModel<boolean>({ default: false });
 
 const appVersion = ref('');
 
-const updatesEnabled = ref(!(await updatesDisabled()));
+const updatesEnabled = ref(true);
 
 const loadAppVersion = async () => {
   appVersion.value = await getAppVersion();
 };
 
+const getUpdatesEnabled = async () => {
+  updatesEnabled.value = !(await updatesDisabled());
+};
+
 onMounted(() => {
   loadAppVersion();
+  getUpdatesEnabled();
 });
 
 watch(updatesEnabled, (newUpdatesEnabled) => {
