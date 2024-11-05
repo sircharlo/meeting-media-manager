@@ -62,11 +62,12 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLocalFontPath } from 'src/helpers/fonts';
-import { watchExternalFolder } from 'src/helpers/fs';
+import { getFileUrl, watchExternalFolder } from 'src/helpers/fs';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
   setUrlVariables,
+  watchedItemMapper,
 } from 'src/helpers/jw-media';
 import {
   executeShortcut,
@@ -327,7 +328,7 @@ watchImmediate(
   },
 );
 
-const updateWatchFolderRef = ({
+const updateWatchFolderRef = async ({
   changedPath,
   day,
   event,
@@ -343,10 +344,11 @@ const updateWatchFolderRef = ({
     watchFolderMedia.value[day] = [];
   } else if (event === 'add') {
     watchFolderMedia.value[day] ??= [];
-    watchFolderMedia.value[day].push(changedPath);
+    const watchedItemMap = await watchedItemMapper(day, changedPath);
+    if (watchedItemMap) watchFolderMedia.value[day].push(watchedItemMap);
   } else if (event === 'unlink') {
     watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
-      (path) => path !== changedPath,
+      (dM) => dM.fileUrl !== getFileUrl(changedPath),
     );
   }
 };

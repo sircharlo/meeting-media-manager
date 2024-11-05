@@ -143,7 +143,7 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
       return '';
     }
   } catch (error) {
-    errorCatcher(mediaPath + ': ' + error);
+    if (!mediaPath?.toLowerCase().endsWith('.mov')) errorCatcher(error);
     return '';
   }
 };
