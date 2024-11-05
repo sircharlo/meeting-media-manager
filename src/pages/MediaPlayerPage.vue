@@ -246,10 +246,7 @@ watch(
     videoStreaming.value = newWebStreamData;
     if (newWebStreamData) {
       navigator.mediaDevices
-        .getDisplayMedia({
-          audio: false,
-          video: true,
-        })
+        .getDisplayMedia({ audio: false, video: true })
         .then(async (stream) => {
           let timeouts = 0;
           while (!mediaElement.value) {
@@ -275,10 +272,8 @@ watch(
     } else {
       if (!mediaElement.value) return;
       mediaElement.value.pause();
-      // .then(() => {
       mediaElement.value.srcObject = null;
       mediaPlayingAction.value = '';
-      // })
     }
   },
 );
