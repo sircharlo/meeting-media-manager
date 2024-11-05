@@ -18,8 +18,6 @@
     @dragstart="dropActive"
     @drop="dropEnd"
   >
-    {{ date.formatDate(selectedDate, 'YYYY-MM-DD') }}
-    {{ watchFolderMedia[date.formatDate(selectedDate, 'YYYY-MM-DD')] }}
     <div class="col">
       <div
         v-if="
@@ -238,7 +236,7 @@
     </q-list>
     <q-list
       v-show="
-        selectedDateObject?.complete &&
+        (!selectedDateObject?.meeting || selectedDateObject?.complete) &&
         (sortableTgwMediaItems.length ||
           sortableAyfmMediaItems.length ||
           sortableLacMediaItems.length)
@@ -276,7 +274,7 @@
     </q-list>
     <q-list
       v-show="
-        selectedDateObject?.complete &&
+        (!selectedDateObject?.meeting || selectedDateObject?.complete) &&
         (sortableTgwMediaItems.length ||
           sortableAyfmMediaItems.length ||
           sortableLacMediaItems.length)
@@ -314,7 +312,7 @@
     </q-list>
     <q-list
       v-show="
-        selectedDateObject?.complete &&
+        (!selectedDateObject?.meeting || selectedDateObject?.complete) &&
         (sortableTgwMediaItems.length ||
           sortableAyfmMediaItems.length ||
           sortableLacMediaItems.length)
@@ -351,7 +349,10 @@
       </q-list>
     </q-list>
     <q-list
-      v-show="selectedDateObject?.complete && sortableWtMediaItems.length"
+      v-show="
+        (!selectedDateObject?.meeting || selectedDateObject?.complete) &&
+        sortableWtMediaItems.length
+      "
       class="media-section wt"
     >
       <q-item class="text-wt items-center">
@@ -384,7 +385,9 @@
       </q-list>
     </q-list>
     <q-list
-      v-show="selectedDateObject?.complete && coWeek"
+      v-show="
+        (!selectedDateObject?.meeting || selectedDateObject?.complete) && coWeek
+      "
       class="media-section additional"
     >
       <q-item class="text-additional items-center">
@@ -521,8 +524,13 @@ const router = useRouter();
 
 const jwStore = useJwStore();
 const { addToAdditionMediaMap, removeFromAdditionMediaMap } = jwStore;
-const { additionalMediaMaps, customDurations, lookupPeriod, mediaSort } =
-  storeToRefs(jwStore);
+const {
+  additionalMediaMaps,
+  customDurations,
+  lookupPeriod,
+  mediaSort,
+  watchedMediaSections,
+} = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
@@ -684,6 +692,18 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
         item.section = section;
       }
     });
+    (watchFolderMedia.value?.[selectedDate.value] ?? []).forEach((item) => {
+      if (item.uniqueId === id) {
+        watchedMediaSections.value[currentCongregation.value] ??= {};
+        watchedMediaSections.value[currentCongregation.value][
+          selectedDate.value
+        ] ??= {};
+        watchedMediaSections.value[currentCongregation.value][
+          selectedDate.value
+        ][id] = section;
+        if (item.section !== section) item.section = section;
+      }
+    });
   };
   function dragover() {
     for (const media of sortableAdditionalMediaItems.value) {
@@ -707,8 +727,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
   }
 
   function dragend() {
-    if (!mediaSort.value[currentCongregation.value])
-      mediaSort.value[currentCongregation.value] = {};
+    mediaSort.value[currentCongregation.value] ??= {};
     mediaSort.value[currentCongregation.value][selectedDate.value] = [
       ...sortableAdditionalMediaItems.value,
       ...sortableTgwMediaItems.value,
@@ -737,14 +756,10 @@ const generateMediaList = () => {
   const combinedMediaItems = [
     ...datedAdditionalMediaMap.value,
     ...(selectedDateObject.value?.dynamicMedia ?? []),
-    ...(watchFolderMedia.value?.[
-      date.formatDate(selectedDate.value || new Date(0), 'YYYY-MM-DD')
-    ] ?? []),
+    ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
   ];
   if (combinedMediaItems && currentCongregation.value) {
-    if (!mediaSort.value[currentCongregation.value]) {
-      mediaSort.value[currentCongregation.value] = {};
-    }
+    mediaSort.value[currentCongregation.value] ??= {};
     const seenFileUrls = new Set();
     sortableMediaItems.value = combinedMediaItems
       .sort(
@@ -769,9 +784,7 @@ watch(
     selectedDateObject.value?.date,
     datedAdditionalMediaMap.value?.length,
     selectedDateObject.value?.dynamicMedia?.length,
-    watchFolderMedia.value?.[
-      date.formatDate(selectedDate.value || new Date(0), 'YYYY-MM-DD')
-    ]?.length,
+    watchFolderMedia.value?.[selectedDate.value]?.length,
   ],
   (
     [

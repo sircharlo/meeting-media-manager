@@ -44,6 +44,7 @@ interface Store {
   lookupPeriod: Record<string, DateInfo[]>;
   mediaSort: Record<string, Record<string, string[]>>;
   urlVariables: UrlVariables;
+  watchedMediaSections: Record<string, Record<string, Record<string, string>>>;
   yeartexts: Record<number, Record<string, string>>;
 }
 
@@ -305,6 +306,7 @@ export const useJwStore = defineStore('jw-store', {
         mediator: 'https://b.jw-cdn.org/apis/mediator',
         pubMedia: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
       },
+      watchedMediaSections: {},
       yeartexts: {},
     };
   },

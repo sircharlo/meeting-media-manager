@@ -863,7 +863,16 @@ const watchedItemMapper: (
       ? await getDurationFromMediaPath(watchedItemPath)
       : 0;
 
-  const section = 'additional';
+  const uniqueId = sanitizeId(
+    formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
+  );
+
+  const jwStore = useJwStore();
+  const currentStateStore = useCurrentStateStore();
+  const section =
+    jwStore.watchedMediaSections?.[currentStateStore.currentCongregation]?.[
+      currentStateStore.selectedDate
+    ]?.[uniqueId] || 'additional';
 
   const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
 
@@ -877,7 +886,7 @@ const watchedItemMapper: (
     sectionOriginal: section, // to enable restoring the original section after custom sorting
     thumbnailUrl,
     title: path.basename(watchedItemPath),
-    uniqueId: sanitizeId(formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl),
+    uniqueId,
   };
 };
 

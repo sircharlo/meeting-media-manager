@@ -333,13 +333,7 @@ const updateWatchFolderRef = async ({
   day,
   event,
 }: Record<string, string>) => {
-  console.log(
-    'updateWatchFolderRef',
-    currentSettings.value?.folderToWatch,
-    event,
-    day,
-    changedPath,
-  );
+  day = day.replace(/-/g, '/');
   if (event === 'addDir' || event === 'unlinkDir') {
     watchFolderMedia.value[day] = [];
   } else if (event === 'add') {
