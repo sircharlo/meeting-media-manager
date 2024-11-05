@@ -1,8 +1,8 @@
-# Utiliser M³ dans une salle du Royaume
+# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
 Ce guide vous guidera dans le processus de téléchargement, d'installation et de configuration de **Meeting Media Manager (M³)** dans une salle du Royaume. Suivez les étapes suivantes pour assurer une configuration optimale pour la gestion des médias pendant les réunions de l'assemblée locale.
 
-## 1. Téléchargement et installation
+## 1. Download and install {#download-and-install}
 
 1. Visitez la [page de téléchargement de M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Téléchargez la version appropriée pour votre système d'exploitation (Windows, macOS ou Linux).
@@ -10,7 +10,7 @@ Ce guide vous guidera dans le processus de téléchargement, d'installation et d
 4. Lancez M³.
 5. Parcourez l'assistant de configuration.
 
-### Additional steps for macOS Users
+### Additional steps for macOS Users {#additional-steps-for-macos-users}
 
 Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
 
@@ -37,9 +37,9 @@ If you are still unable to launch M³ after entering the two commands, please tr
 
 If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
 
-## 2. Assistant de configuration
+## 2. Configuration wizard {#configuration-wizard}
 
-### Langue d'affichage
+### App display language {#app-display-language}
 
 Lors du premier lancement de M³, vous serez invité à choisir votre **langue d'affichage** désirée. Choisissez la langue que vous voulez que M³ utilise pour son interface.
 
@@ -49,7 +49,7 @@ Ce n'est pas nécessairement la même langue que celle dans laquelle M³ va tél
 
 :::
 
-### Type de profil
+### Profile type {#profile-type}
 
 L'étape suivante est de choisir un **type de profil**. Pour une installation régulière dans une salle du Royaume, choisissez **Régulier**. Cela configurera de nombreuses fonctionnalités qui sont couramment utilisées pour les réunions d'assemblées locales.
 
@@ -61,7 +61,7 @@ Le type de profil **Autre** est rarement utilisé. **Pour une utilisation normal
 
 :::
 
-### Recherche automatique d'assemblée locale
+### Automatic congregation lookup {#automatic-congregation-lookup}
 
 M³ peut tenter de trouver automatiquement le calendrier des réunions, la langue utilisée et le nom de votre assemblée locale.
 
@@ -75,11 +75,11 @@ Cette recherche utilise des données publiques disponibles sur le site officiel 
 
 :::
 
-### Saisie manuelle des informations de l'assemblée
+### Manual entry of congregation information {#manual-entry-of-congregation-information}
 
 Si la recherche automatique n'a pas trouvé votre assemblée locale, vous pouvez bien sûr entrer manuellement les informations requises. L'assistant vous permettra de réviser et/ou d'entrer le **nom** de votre assemblée locale, la **langue des réunions**, et les **jours et heures des réunions**.
 
-### Mise en cache des cantiques en format vidéo
+### Caching videos from the songbook {#caching-videos-from-the-songbook}
 
 Vous aurez également la possibilité de **mettre en cache toutes les vidéos des cantiques**. Cette option pré-télécharge toutes les vidéos pour les cantiques, réduisant ainsi le temps nécessaire pour récupérer les médias pour les réunions à l'avenir.
 
@@ -92,7 +92,7 @@ Si l'ordinateur de votre salle de Royaume a suffisamment d'espace de stockage, i
 
 :::
 
-### Configuration de l’intégration avec OBS Studio (facultatif)
+### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
 
 Si votre salle de Royaume utilise **OBS Studio** pour diffuser les réunions sur Zoom, M³ peut automatiquement s'intégrer avec ce programme. Lors du paramétrage initial, vous pouvez configurer l'intégration avec OBS Studio en entrant ce qui suit :
 
@@ -106,6 +106,6 @@ Si votre assemblée locale tient régulièrement des réunions hybrides, il est 
 
 :::
 
-## 3. Amusez-vous avec M³
+## 3. Enjoy using M³ {#enjoy-using-m3}
 
 Une fois l'assistant d'installation terminé, M³ est prêt à vous aider à gérer et à présenter les médias pour les réunions d'assemblée locale. Profitez bien de l'application ! :tada:

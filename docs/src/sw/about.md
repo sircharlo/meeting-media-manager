@@ -1,6 +1,6 @@
-# Kuhusu Meeting Media Manager (M³)
+# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-## Huu ni mfumo upi?
+## What is this app? {#what-is-this-app}
 
 **Meeting Media Manager**, au **M³** kwa ufupi, ni mfumo kwa programu za Windows, macOS na Linux, ambayo hupakua kiotomatiki picha na video ambazo zitatumika kwenye mikutano ya kutaniko ya Mashahidi wa Yehova, kwa lugha yoyote kwenye tovuti rasmi ya Mashahidi wa Yehova.
 
@@ -12,7 +12,7 @@ M³ ilikuwa ikijulikana kama JWMMF (JW Meeting Media Fetcher), lakini ilibadilis
 
 :::
 
-## M³ inaweza kukusaidia aje?
+## M³ inaweza kukusaidia aje? {#what-can-m3-do}
 
 Kwa ufupi, M³ hukuruhusu kupakua, kusawazisha, kushiriki na kuwasilisha midia kwa urahisi na kiotomatiki.
 
@@ -28,7 +28,7 @@ Kwa **mikutano ya zoom na ana kwa ana** au **ana kwa ana pekee**, hali iliyojumu
 
 Jaribu M³ leo ili ujionee kenye inaweza kufanya! Kuonyesha midia kwenye mikutano ya kutaniko haijawai kuwa rahisi hivi.
 
-## Je, M³ inafanya kazi kwa lugha yangu?
+## Je, M³ inafanya kazi kwa lugha yangu? {#does-m3-work-in-my-language}
 
 **Ndio!** Midia kwa ajili ya mikutano ya Mashahidi wa Yehova inaweza kupakuliwa moja kwa moja kwa mamia ya lugha ambazo ziko kwenye tovuti rasmi ya Mashahidi wa Yehova. Orodha ya lugha zinazopatikana inasasishwa kwa ukawaida; unachohitaji kufanya ni kuchagua ni ipi unayohitaji.
 

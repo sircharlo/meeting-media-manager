@@ -31,7 +31,9 @@ const urlWithParamsToString = (url: string, params: object) => {
   if (!params) return url;
   const urlWithParams = new URL(url);
   for (const [key, value] of Object.entries(params)) {
-    urlWithParams.searchParams.append(key, value);
+    if (value) {
+      urlWithParams.searchParams.append(key, value);
+    }
   }
   return urlWithParams.toString();
 };
