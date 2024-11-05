@@ -734,9 +734,13 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
 const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
-  const combinedMediaItems = datedAdditionalMediaMap.value.concat(
-    selectedDateObject.value?.dynamicMedia ?? [],
-  );
+  const combinedMediaItems = [
+    ...datedAdditionalMediaMap.value,
+    ...(selectedDateObject.value?.dynamicMedia ?? []),
+    ...(watchFolderMedia.value?.[
+      date.formatDate(selectedDate.value || new Date(0), 'YYYY-MM-DD')
+    ] ?? []),
+  ];
   if (combinedMediaItems && currentCongregation.value) {
     if (!mediaSort.value[currentCongregation.value]) {
       mediaSort.value[currentCongregation.value] = {};
@@ -765,16 +769,30 @@ watch(
     selectedDateObject.value?.date,
     datedAdditionalMediaMap.value?.length,
     selectedDateObject.value?.dynamicMedia?.length,
+    watchFolderMedia.value?.[
+      date.formatDate(selectedDate.value || new Date(0), 'YYYY-MM-DD')
+    ]?.length,
   ],
   (
-    [newSelectedDate, newAdditionalMediaListLength, newDynamicMediaListLength],
-    [oldSelectedDate, oldAdditionalMediaListLength, oldDynamicMediaListLength],
+    [
+      newSelectedDate,
+      newAdditionalMediaListLength,
+      newDynamicMediaListLength,
+      newWatchFolderMediaLength,
+    ],
+    [
+      oldSelectedDate,
+      oldAdditionalMediaListLength,
+      oldDynamicMediaListLength,
+      oldWatchFolderMediaLength,
+    ],
   ) => {
     try {
       if (
         newSelectedDate !== oldSelectedDate ||
         newAdditionalMediaListLength !== oldAdditionalMediaListLength ||
-        newDynamicMediaListLength !== oldDynamicMediaListLength
+        newDynamicMediaListLength !== oldDynamicMediaListLength ||
+        newWatchFolderMediaLength !== oldWatchFolderMediaLength
       ) {
         generateMediaList();
       }

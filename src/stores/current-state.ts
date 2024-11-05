@@ -2,7 +2,7 @@ import type {
   DateInfo,
   DownloadedFile,
   DownloadProgressItems,
-  // DynamicMediaObject,
+  DynamicMediaObject,
   MediaLink,
   SettingsValues,
 } from 'src/types';
@@ -42,7 +42,7 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
   timeRemainingBeforeMusicStop: number;
-  watchFolderMedia: Record<string, string[]>; // TODO: make DynamicMediaObject[]
+  watchFolderMedia: Record<string, DynamicMediaObject[]>;
 }
 
 interface Songbook {

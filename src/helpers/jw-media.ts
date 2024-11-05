@@ -842,6 +842,45 @@ const dynamicMediaMapper = async (
   }
 };
 
+const watchedItemMapper: (
+  parentDate: Date | string,
+  watchedItemPath: string,
+) => Promise<DynamicMediaObject | undefined> = async (
+  parentDate,
+  watchedItemPath,
+) => {
+  if (!parentDate || !watchedItemPath) return undefined;
+
+  parentDate = dateFromString(parentDate);
+  const fileUrl = getFileUrl(watchedItemPath);
+
+  const video = isVideo(watchedItemPath);
+  const audio = isAudio(watchedItemPath);
+  const image = isImage(watchedItemPath);
+
+  const duration =
+    (video || audio) && (await fs.exists(watchedItemPath))
+      ? await getDurationFromMediaPath(watchedItemPath)
+      : 0;
+
+  const section = 'additional';
+
+  const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
+
+  return {
+    duration,
+    fileUrl,
+    isAudio: audio,
+    isImage: image,
+    isVideo: video,
+    section,
+    sectionOriginal: section, // to enable restoring the original section after custom sorting
+    thumbnailUrl,
+    title: path.basename(watchedItemPath),
+    uniqueId: sanitizeId(formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl),
+  };
+};
+
 const getWeMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -1781,4 +1820,5 @@ export {
   processMissingMediaInfo,
   sanitizeId,
   setUrlVariables,
+  watchedItemMapper,
 };
