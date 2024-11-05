@@ -1,8 +1,8 @@
-# Uporaba M³ v kraljestveni dvorani
+# Uporaba M³ v kraljestveni dvorani {#using-m3-at-a-kingdom-hall}
 
 Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager (M³)** v kraljestveni dvorani. Za nemoteno nastavitev aplikacije za upravljanje multimedijske vsebine med občinskimi shodi sledi spodnjim korakom.
 
-## 1. Prenesi in namesti
+## 1. Prenesi in namesti {#download-and-install}
 
 1. Obišči [spletno stran za prenos M³](https://github.com/sircharlo/meeting-media-manager/releases/latest).
 2. Prenesi ustrezno različico za vaš operacijski sistem (Windows, macOS ali Linux).
@@ -10,36 +10,36 @@ Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager
 4. Zaženi M³.
 5. Sledi navodilom pomočnika za nastavitev.
 
-### Additional steps for macOS Users
+### Dodatni koraki za uporabnike macOS {#additional-steps-for-macos-users}
 
-Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
+Zaradi Applovih varnostnih ukrepov je za zagon M³ na sodobnih sistemih macOS potrebnih nekaj dodatnih korakov.
 
-First, run the following two commands in Terminal (modify the path to M³ as needed):
+Najprej v terminalu zaženi naslednja dva ukaza (po potrebi spremeni pot do M³):
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explanation
+:::tip Pojasnilo
 
-These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
+Ta ukaza naredita dve stvari, ki preprečujeta, da bi bil program M³ v tvojem sistemu zaznan kot zlonamerna aplikacija: prvi lokalno podpiše kodo aplikacije, drugi pa odstrani zastavico karantene iz aplikacije. Zastava karantene se uporablja za to, da uporabnike opozari na aplikacije, ki so bile prenesene z interneta.
 
 :::
 
-If you are still unable to launch M³ after entering the two commands, please try the following:
+Če po vnosu teh dveh ukazov še vedno ne moreš zagnati programa M³, poskusi z naslednjim:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+1. Odpri sistemske nastavitve macOS **Privacy & Security**.
+2. Poišči vnos za M³ in klikni na gumb **Open Anyway**.
+3. Nato te bo sistem znova opozoril in ti svetoval, da „tega ne odpiraj, če nisi prepričan, da gre za zaupanja vreden vir“. Klikni na **Open Anyway**.
+4. Prikazalo se bo še eno opozorilo, v katerem boš moral za zagon aplikacije dokazati avtentičnost.
+5. M³ bi se moral zdaj uspešno zagnati.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+Če imaš po vseh teh korakih še vedno težave, prosimo [prijavi težavo na GitHubu](https://github.com/sircharlo/meeting-media-manager/issues/new). Pomagali ti bomo po svojih najboljših močeh.
 
-## 2. Pomočnik za nastavitev
+## 2. Pomočnik za nastavitev {#configuration-wizard}
 
-### Jezik uporabniškega vmesnika
+### Jezik uporabniškega vmesnika {#app-display-language}
 
 Ob prvem zagonu programa M³ boš moral izbrati želeni **jezik uporabniškega vmesnika**. Izberi jezik, ki naj ga M³ uporablja za svoj vmesnik.
 
@@ -49,7 +49,7 @@ Ni nujno, da je to isti jezik kot jezik, v katerem bo M³ prenesel multimedijsko
 
 :::
 
-### Vrsta profila
+### Vrsta profila {#profile-type}
 
 V naslednjem koraku je treba izbrati **vrsto profila**. Za običajno namestitev v kraljestveni dvorani izberi možnost **Običajno**. Tako boš nastavil številne funkcije, ki se običajno uporabljajo za občinske shode.
 
@@ -61,7 +61,7 @@ Profil **Drugo** se redko uporablja. **Za običajno uporabo med občinskimi shod
 
 :::
 
-### Samodejno iskanje občine
+### Samodejno iskanje občine {#automatic-congregation-lookup}
 
 M³ lahko poskuša samodejno poiskati urnik, jezik in ime vaših občinskih shodov.
 
@@ -75,11 +75,11 @@ Iskalnik uporablja javno dostopne podatke z uradnega spletnega mesta Jehovovih p
 
 :::
 
-### Ročni vnos podatkov o občini
+### Ročni vnos podatkov o občini {#manual-entry-of-congregation-information}
 
 Če s samodejnim iskanjem ni bilo mogoče najti vaše občine, lahko zahtevane podatke seveda vneseš ročno. Pomočnik za nastavitev ti bo omogočil, da pregledaš in/ali vneseš **ime** vaše občine, **jezik shodov** ter **dneve in ure shodov**.
 
-### Predpomnjenje videoposnetkov iz pesmarice
+### Predpomnjenje videoposnetkov iz pesmarice {#caching-videos-from-the-songbook}
 
 Na voljo bo tudi možnost **predpomnjenja vseh videoposnetkov iz pesmarice**. Ta možnost vnaprej prenese vse videoposnetke iz pesmarice in tako v prihodnje skrajša čas, potreben za prenašanje multimedijskih datotek za shode.
 
@@ -92,7 +92,7 @@ Na voljo bo tudi možnost **predpomnjenja vseh videoposnetkov iz pesmarice**. Ta
 
 :::
 
-### Nastavitev povezave s programom OBS Studio (neobvezno)
+### Nastavitev povezave s programom OBS Studio (neobvezno) {#obs-studio-integration-configuration}
 
 Če v vaši kraljestveni dvorani uporabljate **OBS Studio** za prenašanje hibridnih shodov prek Zooma, se lahko M³ samodejno poveže s tem programom. Med namestitvijo lahko nastaviš povezavo s programom OBS Studio tako, da vneseš naslednje podatke:
 
@@ -106,6 +106,6 @@ Na voljo bo tudi možnost **predpomnjenja vseh videoposnetkov iz pesmarice**. Ta
 
 :::
 
-## 3. Uživaj v uporabi M³
+## 3. Uživaj v uporabi M³ {#enjoy-using-m3}
 
 Ko boš končal z nastavitvami, je M³ pripravljen za upravljanje in predstavljanje multimedijske vsebine na občinskih shodih. Uživaj v uporabi programa! :tada:
