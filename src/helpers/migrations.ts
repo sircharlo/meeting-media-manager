@@ -50,7 +50,7 @@ const buildNewPrefsObject = (oldPrefs: Partial<OldAppConfig>) => {
       darkMode: 'auto',
       disableMediaFetching: oldPrefs.meeting?.specialCong || false,
       enableExtraCache: false,
-      enableFolderWatcher: !!oldPrefs.app?.localOutputPath,
+      enableFolderWatcher: false,
       enableKeyboardShortcuts:
         oldPrefs.media?.mediaWinShortcut ||
         oldPrefs.media?.ppBackward ||
@@ -66,7 +66,7 @@ const buildNewPrefsObject = (oldPrefs: Partial<OldAppConfig>) => {
       enableSubtitles: oldPrefs.media?.enableSubtitles || false,
       excludeFootnotes: oldPrefs.media?.excludeFootnotes || false,
       excludeTh: oldPrefs.media?.excludeTh || true,
-      folderToWatch: oldPrefs.app?.localOutputPath || '',
+      folderToWatch: '',
       hideMediaLogo: oldPrefs.media?.hideMediaLogo || false,
       includePrinted: oldPrefs.media?.includePrinted || true,
       lang: oldPrefs.media?.lang || '',
