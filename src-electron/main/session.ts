@@ -30,39 +30,24 @@ export const initSessionListeners = () => {
     );
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-      if (!details.responseHeaders) details.responseHeaders = {};
-
       // Define a Content Security Policy
       // See: https://www.electronjs.org/docs/latest/tutorial/security#7-define-a-content-security-policy
-      /*const safeDomains: string[] = TRUSTED_DOMAINS.map(
-        (d) => `https://*.${d}`,
-      )
-        .concat(JW_DOMAINS.map((d) => `https://*.${d}`))
-        .concat(
-          [
-            urlVariables?.mediator,
-            urlVariables?.pubMedia,
-            urlVariables?.base ? `https://${urlVariables.base}` : undefined,
-          ]
-            .filter((d): d is string => !!d)
-            .map((d) => `https://*.${new URL(d).hostname}`),
-        );*/
-
-      const csp: Record<string, string> = {
-        'base-uri': "'none'", // TODO: Replace https: with jwDomains + urlVariables.base
-        'connect-src': "'self' https: ws:", // TODO: Replace https: with safeDomains + Sentry + other api call domains
-        'default-src': "'self'",
-        'font-src': "'self' https: file: data:", // TODO: Replace https: with safeDomains + google fonts
-        'frame-src': "'self' https:", // TODO: Replace https: with dynamicDOmains
-        'img-src': "'self' https: file: data:", // TODO: Replace https: with safeDomains
-        'media-src': "'self' https: file: data:", // TODO: Replace https: with safeDomains
-        'object-src': "'none'",
-        'script-src': "'self' https: 'unsafe-inline' 'unsafe-eval'", // TODO: Replace https: with safeDomains
-        'style-src': "'self' https: 'unsafe-inline'", // TODO: Replace https: with safeDomains
-        'worker-src': "'self' blob:",
-      };
-
       if (isSelf(details.url)) {
+        const csp: Record<string, string> = {
+          'base-uri': "'none'",
+          'connect-src': "'self' https: ws:",
+          'default-src': "'self'",
+          'font-src': "'self' https: file: data:",
+          'frame-src': "'self' https:",
+          'img-src': "'self' https: file: data:",
+          'media-src': "'self' https: file: data:",
+          'object-src': "'none'",
+          'script-src': "'self' https: 'unsafe-inline' 'unsafe-eval'",
+          'style-src': "'self' https: 'unsafe-inline'",
+          'worker-src': "'self' blob:",
+        };
+
+        if (!details.responseHeaders) details.responseHeaders = {};
         details.responseHeaders['Content-Security-Policy'] = [
           Object.entries(csp)
             .map(([key, value]) => `${key} ${value}`)
