@@ -253,7 +253,7 @@ watchDebounced(
   (newBaseUrl, oldBaseUrl) => {
     if (newBaseUrl !== oldBaseUrl) setUrlVariables(newBaseUrl);
   },
-  { debounce: 100 },
+  { debounce: 500 },
 );
 
 watch(
