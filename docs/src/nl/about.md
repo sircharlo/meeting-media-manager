@@ -1,6 +1,6 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Over Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-## What is this app? {#what-is-this-app}
+## Wat is dit voor app? {#what-is-this-app}
 
 **Meeting Media Manager**, of **M³** verkort, is een applicatie voor Windows, macOS en Linux, die automatisch de nodige plaatjes en filmpjes download voor vergaderingen van Jehovah's Getuigen, in elke taal die op de officiële website van Jehovah's Getuigen beschikbaar is.
 
