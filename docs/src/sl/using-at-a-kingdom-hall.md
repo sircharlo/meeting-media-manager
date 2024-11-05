@@ -1,8 +1,8 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Uporaba M³ v kraljestveni dvorani {#using-m3-at-a-kingdom-hall}
 
 Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager (M³)** v kraljestveni dvorani. Za nemoteno nastavitev aplikacije za upravljanje multimedijske vsebine med občinskimi shodi sledi spodnjim korakom.
 
-## 1. Download and install {#download-and-install}
+## 1. Prenesi in namesti {#download-and-install}
 
 1. Obišči [spletno stran za prenos M³](https://github.com/sircharlo/meeting-media-manager/releases/latest).
 2. Prenesi ustrezno različico za vaš operacijski sistem (Windows, macOS ali Linux).
@@ -10,7 +10,7 @@ Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager
 4. Zaženi M³.
 5. Sledi navodilom pomočnika za nastavitev.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Dodatni koraki za uporabnike macOS {#additional-steps-for-macos-users}
 
 Zaradi Applovih varnostnih ukrepov je za zagon M³ na sodobnih sistemih macOS potrebnih nekaj dodatnih korakov.
 
@@ -37,9 +37,9 @@ Ta ukaza naredita dve stvari, ki preprečujeta, da bi bil program M³ v tvojem s
 
 Če imaš po vseh teh korakih še vedno težave, prosimo [prijavi težavo na GitHubu](https://github.com/sircharlo/meeting-media-manager/issues/new). Pomagali ti bomo po svojih najboljših močeh.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Pomočnik za nastavitev {#configuration-wizard}
 
-### App display language {#app-display-language}
+### Jezik uporabniškega vmesnika {#app-display-language}
 
 Ob prvem zagonu programa M³ boš moral izbrati želeni **jezik uporabniškega vmesnika**. Izberi jezik, ki naj ga M³ uporablja za svoj vmesnik.
 
@@ -49,7 +49,7 @@ Ni nujno, da je to isti jezik kot jezik, v katerem bo M³ prenesel multimedijsko
 
 :::
 
-### Profile type {#profile-type}
+### Vrsta profila {#profile-type}
 
 V naslednjem koraku je treba izbrati **vrsto profila**. Za običajno namestitev v kraljestveni dvorani izberi možnost **Običajno**. Tako boš nastavil številne funkcije, ki se običajno uporabljajo za občinske shode.
 
@@ -61,7 +61,7 @@ Profil **Drugo** se redko uporablja. **Za običajno uporabo med občinskimi shod
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Samodejno iskanje občine {#automatic-congregation-lookup}
 
 M³ lahko poskuša samodejno poiskati urnik, jezik in ime vaših občinskih shodov.
 
@@ -75,11 +75,11 @@ Iskalnik uporablja javno dostopne podatke z uradnega spletnega mesta Jehovovih p
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Ročni vnos podatkov o občini {#manual-entry-of-congregation-information}
 
 Če s samodejnim iskanjem ni bilo mogoče najti vaše občine, lahko zahtevane podatke seveda vneseš ročno. Pomočnik za nastavitev ti bo omogočil, da pregledaš in/ali vneseš **ime** vaše občine, **jezik shodov** ter **dneve in ure shodov**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Predpomnjenje videoposnetkov iz pesmarice {#caching-videos-from-the-songbook}
 
 Na voljo bo tudi možnost **predpomnjenja vseh videoposnetkov iz pesmarice**. Ta možnost vnaprej prenese vse videoposnetke iz pesmarice in tako v prihodnje skrajša čas, potreben za prenašanje multimedijskih datotek za shode.
 
@@ -92,7 +92,7 @@ Na voljo bo tudi možnost **predpomnjenja vseh videoposnetkov iz pesmarice**. Ta
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### Nastavitev povezave s programom OBS Studio (neobvezno) {#obs-studio-integration-configuration}
 
 Če v vaši kraljestveni dvorani uporabljate **OBS Studio** za prenašanje hibridnih shodov prek Zooma, se lahko M³ samodejno poveže s tem programom. Med namestitvijo lahko nastaviš povezavo s programom OBS Studio tako, da vneseš naslednje podatke:
 
@@ -106,6 +106,6 @@ Na voljo bo tudi možnost **predpomnjenja vseh videoposnetkov iz pesmarice**. Ta
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Uživaj v uporabi M³ {#enjoy-using-m3}
 
 Ko boš končal z nastavitvami, je M³ pripravljen za upravljanje in predstavljanje multimedijske vsebine na občinskih shodih. Uživaj v uporabi programa! :tada:
