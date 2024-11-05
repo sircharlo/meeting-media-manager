@@ -16,7 +16,7 @@ export function isTrustedDomain(url: string): boolean {
       [
         urlVariables?.mediator,
         urlVariables?.pubMedia,
-        urlVariables?.base ? `https://www.${urlVariables.base}/` : undefined,
+        urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
       ]
         .filter((d): d is string => !!d)
         .map((d) => new URL(d).hostname),
@@ -37,7 +37,7 @@ export function isJwDomain(url: string): boolean {
   return JW_DOMAINS.concat(
     [urlVariables?.base]
       .filter((d): d is string => !!d)
-      .map((d) => new URL(`https://www.${d}/`).hostname),
+      .map((d) => new URL(`https://${d}/`).hostname),
   ).some((domain) => parsedUrl.hostname.endsWith(domain));
 }
 

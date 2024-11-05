@@ -3,7 +3,7 @@ import type { UrlVariables } from 'src/types';
 import { app, session } from 'electron';
 
 //import { JW_DOMAINS, TRUSTED_DOMAINS } from '../constants';
-import { isJwDomain, isTrustedDomain } from './../utils';
+import { isJwDomain, isSelf, isTrustedDomain } from './../utils';
 
 export let urlVariables: undefined | UrlVariables;
 
@@ -30,27 +30,30 @@ export const initSessionListeners = () => {
     );
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-      if (!details.responseHeaders) details.responseHeaders = {};
-
       // Define a Content Security Policy
       // See: https://www.electronjs.org/docs/latest/tutorial/security#7-define-a-content-security-policy
-      /*const dynamicDomains: string[] = TRUSTED_DOMAINS.map(
-        (d) => `https://*.${d}`,
-      )
-        .concat(JW_DOMAINS.map((d) => `https://*.${d}`))
-        .concat(
-          [
-            urlVariables?.mediator,
-            urlVariables?.pubMedia,
-            urlVariables?.base ? `https://${urlVariables.base}` : undefined,
-          ]
-            .filter((d): d is string => !!d)
-            .map((d) => `https://*.${new URL(d).hostname}`),
-        );*/
+      if (isSelf(details.url)) {
+        const csp: Record<string, string> = {
+          'base-uri': "'none'",
+          'connect-src': "'self' https: ws:",
+          'default-src': "'self'",
+          'font-src': "'self' https: file: data:",
+          'frame-src': "'self' https:",
+          'img-src': "'self' https: file: data:",
+          'media-src': "'self' https: file: data:",
+          'object-src': "'none'",
+          'script-src': "'self' https: 'unsafe-inline' 'unsafe-eval'",
+          'style-src': "'self' https: 'unsafe-inline'",
+          'worker-src': "'self' blob:",
+        };
 
-      details.responseHeaders['Content-Security-Policy'] = [
-        "default-src 'self'; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; img-src 'self' file: https:; connect-src 'self' ws: https:; font-src 'self' file: https: data:; media-src 'self' file: https:; worker-src 'self' blob: file:;",
-      ];
+        if (!details.responseHeaders) details.responseHeaders = {};
+        details.responseHeaders['Content-Security-Policy'] = [
+          Object.entries(csp)
+            .map(([key, value]) => `${key} ${value}`)
+            .join('; '),
+        ];
+      }
 
       if (!details.responseHeaders || !isTrustedDomain(details.url)) {
         callback({ responseHeaders: details.responseHeaders });
