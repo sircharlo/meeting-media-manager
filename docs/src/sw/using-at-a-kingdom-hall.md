@@ -30,12 +30,12 @@ Amri hizi hufanya vitu viwili ambazo huzuia M³ kutoonekana kama mfumo hatari kw
 Ikiwa bado huwezi kuwasha M³ baada ya kuweka amri hizo mbili, tafadhali jaribu:
 
 1. Kufungua mipangilio ya **Privacy & Security** kwenye mfumo wako wa macOS.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+2. Tafuta ingizo(entry) la M³ na ubofye kitufe **Open Anyway**.
+3. Kisha utaonywa tena, na kupewa ushauri wa "kutofungua hii isipokuwa una hakika kuwa imetoka kwa chanzo cha kuaminika." Bonyeza **Open Anyway**.
+4. Onyo lingine litaonekana, ambapo utahitaji kuthibitisha ili kuzindua programu.
+5. M³ sasa inapaswa kuzindua kwa mafanikio.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+Ikiwa bado ukona tatizo hata baada ya kufuata hatua hizo, tafadhali [fungua tatizo(issue) kwenye Github](https://github.com/sircharlo/meeting-media-manager/issues/new). Tutafanya yote tuwezayo kukusaidia.
 
 ## 2. Programu ya usanidi
 
