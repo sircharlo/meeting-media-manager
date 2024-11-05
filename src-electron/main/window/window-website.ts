@@ -21,8 +21,13 @@ export async function createWebsiteWindow(lang?: string) {
 
   if (PLATFORM === 'darwin') {
     try {
-      await systemPreferences.askForMediaAccess('camera');
-      await systemPreferences.askForMediaAccess('microphone');
+      if (systemPreferences.getMediaAccessStatus('camera') !== 'granted') {
+        await systemPreferences.askForMediaAccess('camera');
+      }
+
+      if (systemPreferences.getMediaAccessStatus('microphone') !== 'granted') {
+        await systemPreferences.askForMediaAccess('microphone');
+      }
     } catch (e) {
       errorCatcher(e);
     }
