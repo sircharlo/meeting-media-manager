@@ -1,8 +1,8 @@
-# Gebruik M³ in de Koninkrijkszaal
+# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
 Deze handleiding zal je begeleiden bij het downloaden, installeren en opzetten van **Meeting Media Manager (M³)** in een koninkrijkszaal. Volg de stappen om te zorgen voor een soepele installatie voor het beheren van media tijdens gemeente vergaderingen.
 
-## 1. Downloaden en installeren
+## 1. Download and install {#download-and-install}
 
 1. Bezoek de [M³ downloadpagina](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Download de juiste versie voor jouw besturingssysteem (Windows, macOS of Linux).
@@ -10,7 +10,7 @@ Deze handleiding zal je begeleiden bij het downloaden, installeren en opzetten v
 4. Open M³.
 5. Doorloop de configuratiewizard.
 
-### Extra stappen voor MacOS gebruikers
+### Additional steps for macOS Users {#additional-steps-for-macos-users}
 
 Vanwege de beveiligingsmaatregelen van Apple zijn er enkele aanvullende stappen nodig om M³ te draaien op moderne macOS systemen.
 
@@ -37,9 +37,9 @@ Als je M³ nog steeds niet kunt starten na het uitvoeren van de twee commando's,
 
 Als je nog steeds problemen hebt na het volgen van al deze stappen, [open dan een issue op GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We zullen ons best doen om te helpen.
 
-## 2. Configuratiewizard
+## 2. Configuration wizard {#configuration-wizard}
 
-### Applicatie taal
+### App display language {#app-display-language}
 
 Bij het starten van M³ wordt je gevraagd om de **weergavetaal** van je voorkeur te kiezen. Kies de taal die je wilt gebruiken voor de interface.
 
@@ -49,7 +49,7 @@ Dit is niet dezelfde taal als de taal waarin M³ media zal downloaden. De taal v
 
 :::
 
-### Profieltype
+### Profile type {#profile-type}
 
 De volgende stap is om een **profieltype** te kiezen. Voor een normale configuratie in een Koninkrijkszaal, kies **Regulier**. Dit zal veel functies configureren die vaak worden gebruikt voor gemeente vergaderingen.
 
@@ -61,7 +61,7 @@ De **Andere** profielsoort wordt zelden gebruikt. **For normal use during congre
 
 :::
 
-### Automatisch jouw gemeente opzoeken
+### Automatic congregation lookup {#automatic-congregation-lookup}
 
 M³ kan proberen om automatisch het vergaderschema, de taal en de opmaak van jouw gemeente te vinden.
 
@@ -75,11 +75,11 @@ Deze zoektocht maakt gebruik van openbare gegevens op de officiële website van 
 
 :::
 
-### Handmatige invoer van gemeente informatie
+### Manual entry of congregation information {#manual-entry-of-congregation-information}
 
 Als de geautomatiseerde zoekopdracht jouw gemeente niet heeft gevonden, kan je natuurlijk alsnog handmatig de vereiste informatie invoeren. De wizard geeft je de mogelijkheid om de **naam**, **gemeente taal** en **vergaderdagen en tijden van je gemeente te bekijken en/of in te voeren**.
 
-### Video's van het liederenboek cachen
+### Caching videos from the songbook {#caching-videos-from-the-songbook}
 
 Je krijgt ook de optie om **alle video's van het liederenboek te cachen**. Deze optie downloadt vooraf alle video's van de liederen en vermindert de tijd die het kost om media op te halen voor vergaderingen in de toekomst.
 
@@ -92,7 +92,7 @@ Als jouw computer voldoende opslagruimte heeft, wordt aanbevolen om deze optie *
 
 :::
 
-### Configuratie OBS Studio integratie (optioneel)
+### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
 
 Als jouw gemeente **OBS Studio** gebruikt voor het uitzenden van hybride vergaderingen over Zoom, kan M³ automatisch met dat programma integreren. Tijdens het instellen kan je de integratie met OBS Studio configureren door het volgende in te voeren:
 
@@ -106,6 +106,6 @@ If your congregation regularly conducts hybrid meetings, it's **highly** recomme
 
 :::
 
-## 3. Geniet van M³
+## 3. Enjoy using M³ {#enjoy-using-m3}
 
 Zodra de installatie wizard is voltooid, is M³ klaar om te helpen met het beheer en het presenteren van media voor gemeente vergaderingen. Veel plezier met de app! :tada:
