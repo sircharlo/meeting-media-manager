@@ -9,10 +9,28 @@ app.on('ready', () => {
   // See: https://www.electronjs.org/docs/latest/tutorial/security#5-handle-session-permission-requests-from-remote-content
   session.defaultSession.setPermissionRequestHandler(
     (webContents, permission, callback) => {
-      if (!isTrustedDomain(webContents.getURL())) return callback(false);
+      const url = webContents.getURL();
+      if (!isSelf(url) && !isTrustedDomain(url)) {
+        logToWindow(
+          mainWindow,
+          'Blocked permission request from untrusted domain',
+          url,
+        );
+        return callback(false);
+      }
 
-      const allowed: (typeof permission)[] = [];
-      if (allowed.includes(permission)) callback(true);
+      const allowed: (typeof permission)[] = ['media', 'notifications'];
+      if (allowed.includes(permission)) {
+        callback(true);
+      } else {
+        logToWindow(
+          mainWindow,
+          'Blocked permission request:',
+          permission,
+          'warn',
+        );
+        callback(false);
+      }
     },
   );
 });
@@ -28,7 +46,7 @@ app.on('web-contents-created', (_event, contents) => {
     webPreferences.nodeIntegration = false;
 
     // Verify URL being loaded
-    if (!isTrustedDomain(params.src)) {
+    if (!isSelf(params.src) && !isTrustedDomain(params.src)) {
       event.preventDefault();
       logToWindow(
         mainWindow,
@@ -42,7 +60,7 @@ app.on('web-contents-created', (_event, contents) => {
   // Disable or limit navigation
   // See: https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
   contents.on('will-navigate', (event, navigationUrl) => {
-    if (!isSelf(navigationUrl)) {
+    if (!isSelf(navigationUrl) && !isTrustedDomain(navigationUrl)) {
       event.preventDefault();
       logToWindow(mainWindow, 'Blocked navigation to:', navigationUrl, 'warn');
     }
@@ -56,6 +74,8 @@ app.on('web-contents-created', (_event, contents) => {
         shell.openExternal(url);
       });
     }
+
+    logToWindow(mainWindow, 'Blocked new window creation to:', url, 'warn');
 
     return { action: 'deny' };
   });

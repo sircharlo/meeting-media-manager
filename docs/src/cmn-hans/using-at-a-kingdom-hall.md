@@ -10,32 +10,32 @@
 4. 启动 M³。
 5. 通过配置向导。
 
-### Additional steps for macOS Users
+### macOS 用户的附加步骤
 
-Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
+由于苹果的安全措施，还需要采取一些其他步骤来在近期macOS系统上运行M3。
 
-First, run the following two commands in Terminal (modify the path to M³ as needed):
+首先，在终端中运行以下两个命令(按照需要，修改M3的路径)：
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explanation
+:::tip 说明
 
-These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
+这些命令做了两件事，防止您的系统被检测到 M3 作为恶意应用程序：第一个命令在本地标记应用程序的代码。 第二种办法取消了申请中的检疫标志。 检疫标志用来警告用户已经从因特网下载过的应用程序。
 
 :::
 
-If you are still unable to launch M³ after entering the two commands, please try the following:
+如果您在进入两个命令后仍然无法启动 M3，请尝试以下操作：
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+1. 打开 macOS 系统 **隐私与安全** 设置。
+2. 查找M3的条目，然后点击按钮**随时打开**。
+3. 然后您将再次被警告，并且建议您“除非您确定它来自一个可信的来源，请不要打开” 点击 **继续打开** 。
+4. 将出现另一个警告，您需要在哪里进行身份验证才能启动应用程序。
+5. M3现在应该成功启动。
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+如果您在关注所有这些步骤后仍然有问题，请[在GitHub上打开一个问题](https://github.com/sircharlo/meeting-media-manager/issues/new)。 我们会尽力提供帮助。
 
 ## 2. 配置向导
 
