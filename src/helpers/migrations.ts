@@ -39,7 +39,7 @@ const parsePrefsFile: (path: string) => Promise<OldAppConfig> = async (
   }
 };
 
-const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
+const buildNewPrefsObject = (oldPrefs: Partial<OldAppConfig>) => {
   try {
     const newPrefsObject: SettingsValues = {
       autoStartAtLogin: oldPrefs.app?.autoRunAtBoot || false,
@@ -50,6 +50,7 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       darkMode: 'auto',
       disableMediaFetching: oldPrefs.meeting?.specialCong || false,
       enableExtraCache: false,
+      enableFolderWatcher: !!oldPrefs.app?.localOutputPath,
       enableKeyboardShortcuts:
         oldPrefs.media?.mediaWinShortcut ||
         oldPrefs.media?.ppBackward ||
@@ -65,6 +66,7 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       enableSubtitles: oldPrefs.media?.enableSubtitles || false,
       excludeFootnotes: oldPrefs.media?.excludeFootnotes || false,
       excludeTh: oldPrefs.media?.excludeTh || true,
+      folderToWatch: oldPrefs.app?.localOutputPath || '',
       hideMediaLogo: oldPrefs.media?.hideMediaLogo || false,
       includePrinted: oldPrefs.media?.includePrinted || true,
       lang: oldPrefs.media?.lang || '',
