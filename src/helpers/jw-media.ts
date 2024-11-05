@@ -843,7 +843,7 @@ const dynamicMediaMapper = async (
 };
 
 const watchedItemMapper: (
-  parentDate: Date | string,
+  parentDate: string,
   watchedItemPath: string,
 ) => Promise<DynamicMediaObject | undefined> = async (
   parentDate,
@@ -851,7 +851,6 @@ const watchedItemMapper: (
 ) => {
   if (!parentDate || !watchedItemPath) return undefined;
 
-  parentDate = dateFromString(parentDate);
   const fileUrl = getFileUrl(watchedItemPath);
 
   const video = isVideo(watchedItemPath);
@@ -871,7 +870,7 @@ const watchedItemMapper: (
   const currentStateStore = useCurrentStateStore();
   const section =
     jwStore.watchedMediaSections?.[currentStateStore.currentCongregation]?.[
-      currentStateStore.selectedDate
+      parentDate
     ]?.[uniqueId] || 'additional';
 
   const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
