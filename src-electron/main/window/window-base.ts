@@ -49,7 +49,7 @@ export function createWindow(
         name === 'website'
           ? undefined
           : path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
-      sandbox: false,
+      sandbox: name === 'website',
       webSecurity: !IS_DEV,
       ...(options?.webPreferences ?? {}),
     },
@@ -84,7 +84,9 @@ export function createWindow(
       break;
   }
   win.loadURL(
-    page.startsWith('https') ? page : process.env.APP_URL + `#${page}`,
+    page.startsWith('https')
+      ? page
+      : process.env.APP_URL + `?page=${page}` + `#${page}`,
   );
 
   // Devtools

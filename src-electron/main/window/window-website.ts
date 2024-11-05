@@ -1,10 +1,11 @@
 import type { NavigateWebsiteAction } from 'src/types';
 
+import { captureMessage } from '@sentry/browser';
 import { PLATFORM } from 'app/src-electron/constants';
 import { errorCatcher } from 'app/src-electron/utils';
 import { type BrowserWindow, systemPreferences, type Video } from 'electron';
 
-import { createWindow, sendToWindow } from './window-base';
+import { createWindow, logToWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 
 export let websiteWindow: BrowserWindow | null = null;
@@ -21,12 +22,26 @@ export async function createWebsiteWindow(lang?: string) {
 
   if (PLATFORM === 'darwin') {
     try {
-      if (systemPreferences.getMediaAccessStatus('camera') !== 'granted') {
-        await systemPreferences.askForMediaAccess('camera');
+      const cameraAccess = systemPreferences.getMediaAccessStatus('camera');
+      captureMessage(`Camera access: ${cameraAccess}`);
+      if (cameraAccess !== 'granted') {
+        logToWindow(mainWindow, 'No camera access', cameraAccess, 'error');
+        if (PLATFORM === 'darwin') {
+          const cameraResult =
+            await systemPreferences.askForMediaAccess('camera');
+          captureMessage(`Camera result: ${cameraResult}`);
+        }
       }
 
-      if (systemPreferences.getMediaAccessStatus('microphone') !== 'granted') {
-        await systemPreferences.askForMediaAccess('microphone');
+      const micAccess = systemPreferences.getMediaAccessStatus('microphone');
+      captureMessage(`Mic access: ${micAccess}`);
+      if (micAccess !== 'granted') {
+        logToWindow(mainWindow, 'No microphone access', micAccess, 'error');
+        if (PLATFORM === 'darwin') {
+          const micResult =
+            await systemPreferences.askForMediaAccess('microphone');
+          captureMessage(`Mic result: ${micResult}`);
+        }
       }
     } catch (e) {
       errorCatcher(e);

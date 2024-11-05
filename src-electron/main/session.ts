@@ -49,7 +49,7 @@ export const initSessionListeners = () => {
         );*/
 
       details.responseHeaders['Content-Security-Policy'] = [
-        "default-src 'self'; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; img-src 'self' file: https:; connect-src 'self' ws: https:; font-src 'self' file: https: data:; media-src 'self' file: https:; worker-src 'self' blob: file:;",
+        "default-src 'self'; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; img-src 'self' file: https:; connect-src 'self' ws: https:; font-src 'self' file: https: data:; media-src 'self' file: https: data:; worker-src 'self' blob: file:;",
       ];
 
       if (!details.responseHeaders || !isTrustedDomain(details.url)) {
