@@ -419,7 +419,11 @@ const initListeners = () => {
 };
 
 const removeListeners = () => {
-  const listeners: ElectronIpcListenKey[] = ['log', 'shortcut'];
+  const listeners: ElectronIpcListenKey[] = [
+    'log',
+    'shortcut',
+    'watchFolderUpdate',
+  ];
 
   listeners.forEach((listener) => {
     window.electronApi.removeListeners(listener);
