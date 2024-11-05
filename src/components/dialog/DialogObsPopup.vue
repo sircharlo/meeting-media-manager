@@ -197,6 +197,7 @@ const setObsScene = async (
             sceneName: newProgramScene,
           }),
         });
+        open.value = false;
       } else {
         notifySceneNotFound();
       }

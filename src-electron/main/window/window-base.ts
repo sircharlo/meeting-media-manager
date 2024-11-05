@@ -74,17 +74,17 @@ export function createWindow(
   }
 
   // Load the app
-  let page = 'initial-congregation-selector';
+  let page = '/congregation-selector';
   switch (name) {
     case 'media':
-      page = 'media-player';
+      page = '/media-player';
       break;
     case 'website':
       page = `https://www.${urlVariables?.base || 'jw.org'}/${lang}`;
       break;
   }
   win.loadURL(
-    page.startsWith('https') ? page : process.env.APP_URL + `?page=${page}`,
+    page.startsWith('https') ? page : process.env.APP_URL + `#${page}`,
   );
 
   // Devtools
