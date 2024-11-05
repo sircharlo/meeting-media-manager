@@ -774,6 +774,7 @@ const dynamicMediaMapper = async (
               duration =
                 (
                   await getJwMediaInfo({
+                    docid: m.MepsDocumentId,
                     langwritten: lang,
                     pub: m.KeySymbol,
                     ...(m.Track && { track: m.Track }),
@@ -1258,19 +1259,22 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
       // publication.fileformat = currentStateStore.currentSongbook?.fileformat;
     }
     publication.fileformat = publication.fileformat.toUpperCase();
-    const params = {
-      alllangs: '0',
-      docid: !publication.pub ? publication.docid : '',
-      fileformat: publication.fileformat,
-      issue: publication.issue?.toString() || '',
-      langwritten: publication.langwritten,
-      output: 'json',
-      pub: publication.pub || '',
-      track: publication.track?.toString() || '',
-      txtCMSLang: 'E',
-    };
+    const params = publication.docid
+      ? { docid: publication.docid }
+      : {
+          fileformat: publication.fileformat,
+          issue: publication.issue?.toString() || undefined,
+          pub: publication.pub || undefined,
+          track: publication.track?.toString() || undefined,
+        };
     const response = await get<Publication>(
-      urlWithParamsToString(urlVariables.pubMedia, params),
+      urlWithParamsToString(urlVariables.pubMedia, {
+        ...params,
+        alllangs: '0',
+        langwritten: publication.langwritten,
+        output: 'json',
+        txtCMSLang: 'E',
+      }),
     );
     if (!response) {
       currentStateStore.downloadProgress[
@@ -1514,11 +1518,16 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
   try {
     let url = `${urlVariables.mediator}/v1/media-items/`;
     url += publication.langwritten + '/';
-    url += 'pub-' + publication.pub;
-    let issue = publication.issue?.toString();
-    if (issue && issue.endsWith('00')) issue = issue.slice(0, -2);
-    if (issue && issue !== '0') url += '_' + issue;
-    if (publication.track) url += '_' + publication.track;
+    if (publication.docid) {
+      url += `docid-${publication.docid}_1`;
+    } else {
+      url += 'pub-' + publication.pub;
+      let issue = publication.issue?.toString();
+      if (issue && issue.endsWith('00')) issue = issue.slice(0, -2);
+      if (issue && issue !== '0') url += '_' + issue;
+      if (publication.track) url += '_' + publication.track;
+    }
+
     if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
     else if (publication.fileformat?.toLowerCase().includes('mp3'))
       url += '_AUDIO';
