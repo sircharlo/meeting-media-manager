@@ -83,7 +83,7 @@ export async function createWebsiteWindow(lang?: string) {
 
   mainWindow?.webContents.session.setDisplayMediaRequestHandler(
     (_, callback) => {
-      callback({ audio: 'loopback', video });
+      callback({ video });
     },
   );
 
