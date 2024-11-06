@@ -9,7 +9,7 @@
     outlined
     style="width: 240px"
     v-bind="{ label: label || undefined }"
-    @focus="focusHandler($event)"
+    @focus="focusHandler"
   >
     <template #append>
       <q-icon name="mmm-calendar-month" size="xs" />

@@ -122,11 +122,13 @@ export const useAppSettingsStore = defineStore('app-settings', {
           );
           QuasarStorage.removeItem('screenPreferences');
         } else if (type === 'addBaseUrlToAllCongregations') {
-          congregationStore.$patch((state) => {
-            Object.values(state.congregations).forEach((prefs) => {
-              prefs.baseUrl = 'jw.org';
-            });
+          const updatedCongregations: Record<string, SettingsValues> =
+            JSON.parse(JSON.stringify(congregationStore.congregations));
+
+          Object.values(updatedCongregations).forEach((cong) => {
+            cong.baseUrl = 'jw.org';
           });
+          congregationStore.congregations = updatedCongregations;
         } else {
           // Other migrations can be added here
         }

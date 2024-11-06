@@ -8,7 +8,7 @@ import type {
   SettingsValues,
 } from 'src/types';
 
-import { homepage, productName, repository } from 'app/package.json';
+import { homepage, repository } from 'app/package.json';
 import get from 'axios';
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
@@ -21,10 +21,14 @@ import {
   shell,
 } from 'electron';
 import { type Dirent, exists, readdir, stat, type Stats } from 'fs-extra';
-import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
+import {
+  IMG_EXTENSIONS,
+  JWPUB_EXTENSIONS,
+  PDF_EXTENSIONS,
+} from 'src/constants/fs';
 import { basename, dirname, join, toUnix } from 'upath';
 
-import { errorCatcher, isSelf } from './../utils';
+import { errorCatcher, getUserDataPath, isSelf } from './../utils';
 import { getAllScreens } from './screen';
 import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
@@ -204,9 +208,7 @@ function handleIpcInvoke<T = unknown>(
 
 handleIpcInvoke('getVersion', async () => app.getVersion());
 handleIpcInvoke('getAppPath', async () => app.getAppPath());
-handleIpcInvoke('getUserDataPath', async () =>
-  join(app.getPath('appData'), productName),
-);
+handleIpcInvoke('getUserDataPath', async () => getUserDataPath());
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
 
@@ -262,7 +264,17 @@ handleIpcInvoke(
 
     if (!filter) {
       filters.push({ extensions: ['*'], name: 'All files' });
-    } else if (filter === 'jwpub+image') {
+    }
+
+    if (filter?.includes('jwpub+image+pdf')) {
+      filters.push({
+        extensions:
+          JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS).concat(PDF_EXTENSIONS),
+        name: 'JWPUB + Images + PDF',
+      });
+    }
+
+    if (filter?.includes('jwpub+image')) {
       filters.push({
         extensions: JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS),
         name: 'JWPUB + Images',

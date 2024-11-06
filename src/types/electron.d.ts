@@ -26,6 +26,7 @@ export interface ElectronApi {
   getAppDataPath: () => Promise<string>;
   getAppVersion: () => Promise<string>;
   getLocalPathFromFileObject: (fileObject: File) => string;
+  getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getUserDataPath: () => Promise<string>;
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   isFileUrl: (url: string) => boolean;
@@ -118,7 +119,12 @@ export type ElectronIpcListenKey =
 
 export type ExternalWebsite = 'docs' | 'repo';
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
-export type FileDialogFilter = 'image' | 'jwpub' | 'jwpub+image';
+export type FileDialogFilter =
+  | 'image'
+  | 'image+pdf'
+  | 'jwpub'
+  | 'jwpub+image'
+  | 'jwpub+image+pdf';
 export type Display = {
   mainWindow?: boolean;
   mediaWindow?: boolean;

@@ -6,7 +6,7 @@ import {
   screen,
 } from 'electron';
 import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra';
-import path from 'path';
+import { dirname, join } from 'path';
 
 interface ExtraOptions {
   /** The name of file. Defaults to `window-state.json`. */
@@ -137,7 +137,7 @@ function refineOptionsAndState(
   let savedState: null | State = null;
 
   try {
-    savedState = readJsonSync(path.join(configFilePath, configFileName));
+    savedState = readJsonSync(join(configFilePath, configFileName));
   } catch (e) {
     // Don't care, use defaults
   }
@@ -187,7 +187,7 @@ export class StatefulBrowserWindow {
 
   private saveState = () => {
     try {
-      ensureDirSync(path.dirname(this.fullStoreFileName));
+      ensureDirSync(dirname(this.fullStoreFileName));
       writeJsonSync(this.fullStoreFileName, this.state);
     } catch (e) {
       console.error(e);
@@ -257,7 +257,7 @@ export class StatefulBrowserWindow {
 
     this.state = { height, isMaximized, width, x, y };
 
-    this.fullStoreFileName = path.join(configFilePath, configFileName);
+    this.fullStoreFileName = join(configFilePath, configFileName);
 
     this.manage(supportMaximize);
   }

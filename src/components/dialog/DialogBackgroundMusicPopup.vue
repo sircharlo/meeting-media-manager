@@ -358,7 +358,7 @@ const getNextSong = async () => {
               songList.value.push(queuedSong);
               customSongList.unshift(queuedSong);
               secsFromEnd = timeBeforeMeetingStart - musicDurationSoFar;
-              musicDurationSoFar += queuedSong.duration as number;
+              musicDurationSoFar += queuedSong.duration ?? 0;
             }
             songList.value = customSongList;
           }

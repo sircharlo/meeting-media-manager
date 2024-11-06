@@ -6,7 +6,7 @@ import {
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
-import path from 'path';
+import { join, resolve } from 'path';
 
 import { urlVariables } from '../session';
 import { IS_DEV, PLATFORM } from './../../constants';
@@ -30,12 +30,8 @@ export function createWindow(
     autoHideMenuBar: true,
     backgroundColor: 'grey',
     height: 600,
-    icon: path.resolve(
-      path.join(
-        __dirname,
-        'icons',
-        `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`,
-      ),
+    icon: resolve(
+      join(__dirname, 'icons', `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`),
     ),
     minHeight: 400,
     minWidth: 500,
@@ -48,7 +44,7 @@ export function createWindow(
       preload:
         name === 'website'
           ? undefined
-          : path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+          : resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
       sandbox: name === 'website',
       webSecurity: !IS_DEV,
       ...(options?.webPreferences ?? {}),
@@ -59,7 +55,7 @@ export function createWindow(
       ? new BrowserWindow(opts)
       : new StatefulBrowserWindow({
           configFileName: `${name}-window-state.json`,
-          configFilePath: path.join(app.getPath('appData'), pkg.productName),
+          configFilePath: join(app.getPath('appData'), pkg.productName),
           ...opts,
         }).win;
 
@@ -74,19 +70,17 @@ export function createWindow(
   }
 
   // Load the app
-  let page = '/congregation-selector';
+  let page = 'initial-congregation-selector';
   switch (name) {
     case 'media':
-      page = '/media-player';
+      page = 'media-player';
       break;
     case 'website':
       page = `https://www.${urlVariables?.base || 'jw.org'}/${lang}`;
       break;
   }
   win.loadURL(
-    page.startsWith('https')
-      ? page
-      : process.env.APP_URL + `?page=${page}` + `#${page}`,
+    page.startsWith('https') ? page : process.env.APP_URL + `?page=${page}`, //+ `#${page}`,
   );
 
   // Devtools
@@ -120,7 +114,12 @@ export function logToWindow(
   sendToWindow(win, 'log', { ctx, level, msg });
 }
 export function closeOtherWindows(source: BrowserWindow) {
-  BrowserWindow.getAllWindows().forEach((win) => {
-    if (win !== source) win.close();
-  });
+  try {
+    const windows = BrowserWindow.getAllWindows();
+    for (const win of windows) {
+      if (win !== source) win.close();
+    }
+  } catch (e) {
+    console.error(e);
+  }
 }
