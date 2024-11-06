@@ -1,7 +1,14 @@
 import { captureException } from '@sentry/browser';
+import { productName } from 'app/package.json';
+import { app } from 'electron';
+import { join } from 'path';
 
 import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
 import { urlVariables } from './main/session';
+
+export function getUserDataPath() {
+  return join(app.getPath('appData'), productName);
+}
 
 /**
  * Check if a given url is a trusted domain
@@ -46,7 +53,8 @@ export function isJwDomain(url: string): boolean {
  * @param url The url to check
  * @returns Wether the url is the same as the current app url
  */
-export function isSelf(url: string): boolean {
+export function isSelf(url?: string): boolean {
+  if (!url) return false;
   const parsedUrl = new URL(url);
   const parsedAppUrl = new URL(process.env.APP_URL);
 

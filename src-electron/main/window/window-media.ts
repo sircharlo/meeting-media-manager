@@ -2,7 +2,7 @@ import type { BrowserWindow } from 'electron';
 
 import { PLATFORM } from 'app/src-electron/constants';
 import { errorCatcher } from 'app/src-electron/utils';
-import path from 'path';
+import { join, resolve } from 'path';
 
 import type { ScreenPreferences } from './../../../src/types/settings.d';
 
@@ -27,7 +27,7 @@ export function createMediaWindow() {
     backgroundColor: 'black',
     frame: false,
     height: 720,
-    icon: path.resolve(path.join(__dirname, 'icons', 'media-player.png')),
+    icon: resolve(join(__dirname, 'icons', 'media-player.png')),
     minHeight: 110,
     minWidth: 195,
     thickFrame: false,

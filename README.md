@@ -54,7 +54,7 @@ Check out our [documentation website](https://sircharlo.github.io/meeting-media-
 
 ## Does this app go against the Terms of Use of the official website of Jehovah's Witnesses?
 
-**No.** Our use complies with the [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses, which explicitly permit this type of usage. Here’s the relevant excerpt from those terms (emphasis added):
+**No.** Our use complies with the [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses, which explicitly permit this type of usage. Here’s the relevant excerpt from those terms (emphasis added):
 
 > You may not:  
 > Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)

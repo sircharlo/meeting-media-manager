@@ -7,13 +7,13 @@ import { errorCatcher } from '../utils';
 export const executeQuery = <T = QueryResponseItem>(
   dbPath: string,
   query: string,
-) => {
+): T[] => {
   try {
     const db: BetterSqlite3.Database = new BetterSqlite3(dbPath, {
       fileMustExist: true,
       readonly: true,
     });
-    return db.prepare(query).all() as T[];
+    return db.prepare<unknown[], T>(query).all();
   } catch (e) {
     errorCatcher(e);
     errorCatcher(query + '\n' + dbPath);
