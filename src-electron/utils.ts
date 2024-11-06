@@ -1,7 +1,14 @@
 import { captureException } from '@sentry/browser';
+import { productName } from 'app/package.json';
+import { app } from 'electron';
+import { join } from 'path';
 
 import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
 import { urlVariables } from './main/session';
+
+export function getUserDataPath() {
+  return join(app.getPath('appData'), productName);
+}
 
 /**
  * Check if a given url is a trusted domain

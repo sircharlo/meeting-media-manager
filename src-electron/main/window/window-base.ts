@@ -6,7 +6,7 @@ import {
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
-import path from 'path';
+import { join, resolve } from 'path';
 
 import { urlVariables } from '../session';
 import { IS_DEV, PLATFORM } from './../../constants';
@@ -30,12 +30,8 @@ export function createWindow(
     autoHideMenuBar: true,
     backgroundColor: 'grey',
     height: 600,
-    icon: path.resolve(
-      path.join(
-        __dirname,
-        'icons',
-        `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`,
-      ),
+    icon: resolve(
+      join(__dirname, 'icons', `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`),
     ),
     minHeight: 400,
     minWidth: 500,
@@ -48,7 +44,7 @@ export function createWindow(
       preload:
         name === 'website'
           ? undefined
-          : path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+          : resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
       sandbox: name === 'website',
       webSecurity: !IS_DEV,
       ...(options?.webPreferences ?? {}),
@@ -59,7 +55,7 @@ export function createWindow(
       ? new BrowserWindow(opts)
       : new StatefulBrowserWindow({
           configFileName: `${name}-window-state.json`,
-          configFilePath: path.join(app.getPath('appData'), pkg.productName),
+          configFilePath: join(app.getPath('appData'), pkg.productName),
           ...opts,
         }).win;
 
