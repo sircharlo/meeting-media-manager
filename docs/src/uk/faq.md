@@ -12,7 +12,7 @@
 
 ## :thinking: Чи цей додаток порушує Умови Використання офіційного сайту Свідків Єгови? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > Ви не можете:
 >

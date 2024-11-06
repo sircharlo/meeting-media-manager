@@ -12,7 +12,7 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 
 ## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > Você não pode:
 >
