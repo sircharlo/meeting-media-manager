@@ -5,6 +5,8 @@ on:
       - 'yarn.lock'
   delete:
   pull_request:
+    paths:
+      - 'yarn.lock'
     types:
       - closed
   workflow_dispatch:
