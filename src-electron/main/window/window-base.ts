@@ -5,11 +5,13 @@ import {
   app,
   BrowserWindow,
   type BrowserWindowConstructorOptions,
+  screen,
 } from 'electron';
 import { join, resolve } from 'path';
 
 import { urlVariables } from '../session';
 import { IS_DEV, PLATFORM } from './../../constants';
+import { mainWindow } from './window-main';
 import { StatefulBrowserWindow } from './window-state';
 
 /**
@@ -25,11 +27,12 @@ export function createWindow(
   options?: BrowserWindowConstructorOptions,
   lang = '',
 ) {
+  const defaultSize = { height: 600, width: 1000 };
   // Create the browser window
   const opts: BrowserWindowConstructorOptions = {
     autoHideMenuBar: true,
     backgroundColor: 'grey',
-    height: 600,
+    height: defaultSize.height,
     icon: resolve(
       join(__dirname, 'icons', `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`),
     ),
@@ -37,7 +40,7 @@ export function createWindow(
     minWidth: 500,
     show: false,
     title: 'Meeting Media Manager',
-    width: 1000,
+    width: defaultSize.width,
     ...(options ?? {}),
     webPreferences: {
       backgroundThrottling: false,
@@ -58,6 +61,14 @@ export function createWindow(
           configFilePath: join(app.getPath('appData'), pkg.productName),
           ...opts,
         }).win;
+
+  if (name === 'website' && mainWindow) {
+    const mainWindowScreen = screen.getDisplayMatching(mainWindow.getBounds());
+    mainWindowScreen.workArea.width = defaultSize.width;
+    mainWindowScreen.workArea.height = defaultSize.height;
+    win.setBounds(mainWindowScreen.workArea);
+    win.center();
+  }
 
   // Show the window when it's ready
   win.on('ready-to-show', () => {
