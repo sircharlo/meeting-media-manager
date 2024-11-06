@@ -20,7 +20,11 @@ import {
   shell,
 } from 'electron';
 import { type Dirent, exists, readdir, stat } from 'fs-extra';
-import { IMG_EXTENSIONS, JWPUB_EXTENSIONS } from 'src/constants/fs';
+import {
+  IMG_EXTENSIONS,
+  JWPUB_EXTENSIONS,
+  PDF_EXTENSIONS,
+} from 'src/constants/fs';
 import { join } from 'upath';
 
 import { errorCatcher, isSelf } from './../utils';
@@ -209,7 +213,17 @@ handleIpcInvoke(
 
     if (!filter) {
       filters.push({ extensions: ['*'], name: 'All files' });
-    } else if (filter === 'jwpub+image') {
+    }
+
+    if (filter?.includes('jwpub+image+pdf')) {
+      filters.push({
+        extensions:
+          JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS).concat(PDF_EXTENSIONS),
+        name: 'JWPUB + Images + PDF',
+      });
+    }
+
+    if (filter?.includes('jwpub+image')) {
       filters.push({
         extensions: JWPUB_EXTENSIONS.concat(IMG_EXTENSIONS),
         name: 'JWPUB + Images',

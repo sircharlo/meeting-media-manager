@@ -5,7 +5,11 @@ import fs from 'fs-extra';
 import path from 'upath';
 
 import { initCloseListeners } from './preload/close';
-import { convertHeic, convertPdfToImages } from './preload/converters';
+import {
+  convertHeic,
+  convertPdfToImages,
+  getNrOfPdfPages,
+} from './preload/converters';
 import {
   decompress,
   fileUrlToPath,
@@ -43,6 +47,7 @@ const electronApi: ElectronApi = {
   getAppDataPath: () => invoke('getAppPath'),
   getAppVersion: () => invoke('getVersion'),
   getLocalPathFromFileObject: (fo) => webUtils.getPathForFile(fo),
+  getNrOfPdfPages,
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   isFileUrl,

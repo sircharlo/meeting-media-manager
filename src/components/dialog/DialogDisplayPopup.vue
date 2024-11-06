@@ -292,7 +292,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
       return;
     } else {
       try {
-        const backgroundPicker = await openFileDialog(true, 'jwpub+image');
+        const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
         if (backgroundPicker?.canceled) return;
         if (!backgroundPicker || backgroundPicker.filePaths?.length === 0) {
           notifyInvalidBackgroundFile();

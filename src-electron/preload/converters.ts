@@ -29,6 +29,24 @@ export const convertHeic = async (image: ConversionOptions) => {
   return convert(image);
 };
 
+export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
+  console.log('getNrOfPdfPages', pdfPath);
+  try {
+    const { getDocument } = (await import(
+      'pdfjs-dist/webpack.mjs'
+    )) as typeof PdfJs;
+
+    const loadingTask = getDocument(pdfPath);
+    console.log('loadingTask', loadingTask);
+    const pdfDocument = await loadingTask.promise;
+    console.log('pdfDocument', pdfDocument);
+    return pdfDocument.numPages;
+  } catch (e) {
+    errorCatcher(e);
+    return 0;
+  }
+};
+
 export const convertPdfToImages = async (
   pdfPath: string,
   outputFolder: string,

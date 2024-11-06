@@ -44,7 +44,7 @@ export const initSessionListeners = () => {
           'object-src': "'none'",
           'script-src': "'self' https: 'unsafe-inline' 'unsafe-eval'",
           'style-src': "'self' https: 'unsafe-inline'",
-          'worker-src': "'self' blob:",
+          'worker-src': "'self' file: blob:",
         };
 
         if (!details.responseHeaders) details.responseHeaders = {};
