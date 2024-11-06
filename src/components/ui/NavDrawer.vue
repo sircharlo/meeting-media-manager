@@ -29,8 +29,10 @@
       v-ripple
       :class="route.path.startsWith('/media-calendar') ? navActiveClass : ''"
       :disable="!currentSettings || invalidSettings()"
-      :to="{ path: '/media-calendar' }"
+      :disabled="mediaPlaying || undefined"
+      :to="mediaPlaying ? undefined : { path: '/media-calendar' }"
       clickable
+      @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
         v-if="miniState"
@@ -51,7 +53,7 @@
     </q-item>
     <q-item
       v-ripple
-      :active-class="navActiveClass"
+      :class="route.path.startsWith('/present-website') ? navActiveClass : ''"
       :disable="!currentSettings || invalidSettings()"
       :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/present-website' }"
@@ -73,7 +75,9 @@
     </q-item>
     <q-item
       v-ripple
-      :active-class="navActiveClass"
+      :class="
+        route.path.startsWith('/congregation-selector') ? navActiveClass : ''
+      "
       :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/congregation-selector' }"
       clickable
@@ -97,7 +101,7 @@
     <q-space />
     <q-item
       v-ripple
-      :active-class="navActiveClass"
+      :class="route.path.startsWith('/settings') ? navActiveClass : ''"
       :disable="!currentSettings || route.fullPath.includes('wizard')"
       :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/settings' }"

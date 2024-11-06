@@ -80,7 +80,7 @@
           <div class="col-grow">
             <q-btn
               v-if="!musicPlaying"
-              :disabled="mediaPlaying || musicStarting"
+              :disable="mediaPlaying || musicStarting"
               class="full-width"
               color="primary"
               unelevated
@@ -89,7 +89,7 @@
             >
             <q-btn
               v-else
-              :disabled="musicStopping"
+              :disable="musicStopping"
               class="full-width"
               color="primary"
               unelevated
@@ -456,6 +456,8 @@ const fadeToVolumeLevel = (targetVolume: number, fadeOutSeconds: number) => {
     requestAnimationFrame(updateVolume);
   } catch (error) {
     errorCatcher(error);
+    // musicPlaying.value = musicPlayer.value.volume > 0;
+    // musicStopping.value = musicPlayer.value.volume === 0;
   }
 };
 
