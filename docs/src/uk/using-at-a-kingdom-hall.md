@@ -5,7 +5,15 @@
 ## 1. Завантажити та встановити {#download-and-install}
 
 1. Відвідайте [сторінку завантаження M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Завантажте відповідну версію для вашої операційної системи (Windows, macOS або Linux).
+2. Download the appropriate version for your operating system:
+   - **Windows:**
+     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
+     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+   - **macOS:**
+     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
+     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+   - **Linux:**
+     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
 3. Відкрийте інсталятор та дотримуйтесь екранних інструкцій для встановлення M³.
 4. Запустіть M³.
 5. Пройдіть через майстер настройки.
