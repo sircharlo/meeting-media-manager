@@ -189,15 +189,13 @@
       </div>
     </div>
     <q-list
-      v-show="sortableAdditionalMediaItems?.length"
+      v-show="
+        sortableAdditionalMediaItems?.length ||
+        (selectedDateObject && isWeMeetingDay(selectedDateObject?.date))
+      "
       class="media-section additional"
     >
       <q-item class="text-additional items-center">
-        <!-- :class="
-              isWeMeetingDay(selectedDateObject?.date)
-                ? 'bg-white text-additional jw-icon'
-                : 'text-white bg-additional rounded-borders-sm'
-            " -->
         <q-avatar
           v-if="selectedDateObject"
           :size="isWeMeetingDay(selectedDateObject?.date) ? 'lg' : 'md'"
@@ -232,6 +230,24 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
         />
+        <div
+          v-if="
+            !sortableAdditionalMediaItems?.length &&
+            selectedDateObject &&
+            isWeMeetingDay(selectedDateObject?.date)
+          "
+        >
+          <q-item>
+            <q-item-section
+              class="align-center text-secondary text-grey text-subtitle2"
+            >
+              <div>
+                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
+                {{ $t('no-media-files-for-section') }}
+              </div>
+            </q-item-section>
+          </q-item>
+        </div>
       </q-list>
     </q-list>
     <q-list
