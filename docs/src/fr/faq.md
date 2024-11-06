@@ -1,6 +1,6 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Foire aux questions {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Cette application dépend-elle de sites ou sources externes, ou d'une intervention humaine, pour télécharger les publications, médias et autre contenu pour les réunions ? {#external-dependencies}
 
 **Non.** L'application M³ fonctionne de la même manière que l'application JW Library. Elle télécharge les publications, médias et autre contenu directement à partir du site officiel des Témoins de Jéhovah. L'application détermine automatiquement ce qui doit être téléchargé et quand le contenu précédemment téléchargé n'est plus à jour et devrait être re-téléchargé.
 
