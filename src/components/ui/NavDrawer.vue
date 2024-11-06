@@ -53,7 +53,7 @@
       v-ripple
       :active-class="navActiveClass"
       :disable="!currentSettings || invalidSettings()"
-      :disabled="mediaPlaying"
+      :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/present-website' }"
       clickable
       @click="stopPlayingMediaFirst()"
@@ -74,7 +74,7 @@
     <q-item
       v-ripple
       :active-class="navActiveClass"
-      :disabled="mediaPlaying"
+      :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/congregation-selector' }"
       clickable
       @click="stopPlayingMediaFirst()"
@@ -99,7 +99,7 @@
       v-ripple
       :active-class="navActiveClass"
       :disable="!currentSettings || route.fullPath.includes('wizard')"
-      :disabled="mediaPlaying"
+      :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/settings' }"
       clickable
       @click="stopPlayingMediaFirst()"
