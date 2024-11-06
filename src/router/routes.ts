@@ -6,7 +6,18 @@ const routes: RouteRecordRaw[] = [
     path: '/',
   },
   {
-    alias: ['/initial-congregation-selector'],
+    children: [
+      {
+        component: () => import('pages/CongregationSelectorPage.vue'),
+        name: 'initial-congregation-selector',
+        path: '',
+      },
+    ],
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { icon: 'mmm-groups', title: 'titles.profileSelection' },
+    path: '/initial-congregation-selector',
+  },
+  {
     children: [
       {
         component: () => import('pages/CongregationSelectorPage.vue'),

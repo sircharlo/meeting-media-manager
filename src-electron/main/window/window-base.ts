@@ -74,7 +74,7 @@ export function createWindow(
   }
 
   // Load the app
-  let page = '/congregation-selector';
+  let page = '/initial-congregation-selector';
   switch (name) {
     case 'media':
       page = '/media-player';

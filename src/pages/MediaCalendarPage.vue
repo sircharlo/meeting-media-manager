@@ -1360,6 +1360,7 @@ const addToFiles = async (
             ] ??= {});
             const dateDurations = (congregation[selectedDate.value] ??= {});
             dateDurations[m.uniqueId] = { max, min };
+          });
       } else if (isArchive(filepath)) {
         const unzipDirectory = path.join(
           await getTempDirectory(),
