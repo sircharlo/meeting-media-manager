@@ -50,7 +50,6 @@ export const convertPdfToImages = async (
 ): Promise<string[]> => {
   const outputImages: string[] = [];
   try {
-    const data = [];
     const { getDocument } = await import('pdfjs-dist/webpack.mjs');
 
     const loadingTask = getDocument(pdfPath);
@@ -89,7 +88,6 @@ export const convertPdfToImages = async (
         await renderTask.promise;
 
         const pngData = canvas.toDataURL('image/png');
-        data.push(pngData);
 
         const base64Data = pngData.replace(/^data:image\/png;base64,/, '');
         await ensureDir(outputFolder);
