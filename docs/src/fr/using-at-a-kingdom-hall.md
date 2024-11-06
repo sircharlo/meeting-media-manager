@@ -1,45 +1,53 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Utilisation de M³ dans une salle du Royaume {#using-m3-at-a-kingdom-hall}
 
 Ce guide vous guidera dans le processus de téléchargement, d'installation et de configuration de **Meeting Media Manager (M³)** dans une salle du Royaume. Suivez les étapes suivantes pour assurer une configuration optimale pour la gestion des médias pendant les réunions de l'assemblée locale.
 
-## 1. Download and install {#download-and-install}
+## 1. Téléchargement et installation {#download-and-install}
 
 1. Visitez la [page de téléchargement de M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Téléchargez la version appropriée pour votre système d'exploitation (Windows, macOS ou Linux).
+2. Download the appropriate version for your operating system:
+   - **Windows:**
+     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
+     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+   - **macOS:**
+     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
+     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+   - **Linux:**
+     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
 3. Ouvrez le programme d'installation et suivez les instructions à l'écran pour installer M³.
 4. Lancez M³.
 5. Parcourez l'assistant de configuration.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Étapes supplémentaires pour les utilisateurs de macOS {#additional-steps-for-macos-users}
 
-Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
+En raison des mesures de sécurité mises en place par Apple, quelques étapes supplémentaires sont nécessaires pour exécuter M³ sur des systèmes macOS modernes.
 
-First, run the following two commands in Terminal (modify the path to M³ as needed):
+Tout d'abord, exécutez les deux commandes suivantes dans Terminal (modifiez le chemin vers M³ si nécessaire):
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explanation
+:::tip Explication
 
-These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
+Ces commandes font deux choses qui empêcheront la détection de M³ comme une application malveillante sur votre système : la première signe le code de l'application, et le deuxième supprime l'indicateur de quarantaine de l'application. L'indicateur de quarantaine est utilisé pour avertir un utilisateur qu'une application a été téléchargée à partir d'Internet.
 
 :::
 
-If you are still unable to launch M³ after entering the two commands, please try the following:
+Si vous ne parvenez toujours pas à lancer M³ après avoir entré les deux commandes, essayez ce qui suit :
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+1. Ouvrez les paramètres système de macOS à la section **Confidentialité et sécurité**.
+2. Trouvez M³ et cliquez sur le bouton pour **Ouvrir quand même**.
+3. Vous serez alors à nouveau averti et conseillé de ne pas « l'ouvrir à moins que vous ne soyez certain qu'elle provient d'une source digne de confiance ». Cliquez sur **Ouvrir quand même**.
+4. Une autre alerte apparaîtra où vous devrez vous authentifier pour lancer l'application.
+5. M³ devrait maintenant se lancer avec succès.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+Si vous avez toujours des problèmes après avoir suivi toutes ces étapes, veuillez [ouvrir un ticket sur GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Nous ferons de notre mieux pour vous aider.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Assistant de configuration {#configuration-wizard}
 
-### App display language {#app-display-language}
+### Langue d'affichage de l'application {#app-display-language}
 
 Lors du premier lancement de M³, vous serez invité à choisir votre **langue d'affichage** désirée. Choisissez la langue que vous voulez que M³ utilise pour son interface.
 
@@ -49,7 +57,7 @@ Ce n'est pas nécessairement la même langue que celle dans laquelle M³ va tél
 
 :::
 
-### Profile type {#profile-type}
+### Type de profil {#profile-type}
 
 L'étape suivante est de choisir un **type de profil**. Pour une installation régulière dans une salle du Royaume, choisissez **Régulier**. Cela configurera de nombreuses fonctionnalités qui sont couramment utilisées pour les réunions d'assemblées locales.
 
@@ -61,7 +69,7 @@ Le type de profil **Autre** est rarement utilisé. **Pour une utilisation normal
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Recherche automatique d'assemblée locale {#automatic-congregation-lookup}
 
 M³ peut tenter de trouver automatiquement le calendrier des réunions, la langue utilisée et le nom de votre assemblée locale.
 
@@ -75,11 +83,11 @@ Cette recherche utilise des données publiques disponibles sur le site officiel 
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Saisie manuelle des informations de l'assemblée locale {#manual-entry-of-congregation-information}
 
 Si la recherche automatique n'a pas trouvé votre assemblée locale, vous pouvez bien sûr entrer manuellement les informations requises. L'assistant vous permettra de réviser et/ou d'entrer le **nom** de votre assemblée locale, la **langue des réunions**, et les **jours et heures des réunions**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Mise en cache des vidéos pour cantiques {#caching-videos-from-the-songbook}
 
 Vous aurez également la possibilité de **mettre en cache toutes les vidéos des cantiques**. Cette option pré-télécharge toutes les vidéos pour les cantiques, réduisant ainsi le temps nécessaire pour récupérer les médias pour les réunions à l'avenir.
 
@@ -92,7 +100,7 @@ Si l'ordinateur de votre salle de Royaume a suffisamment d'espace de stockage, i
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### Configuration de l’intégration avec OBS Studio (facultatif) {#obs-studio-integration-configuration}
 
 Si votre salle de Royaume utilise **OBS Studio** pour diffuser les réunions sur Zoom, M³ peut automatiquement s'intégrer avec ce programme. Lors du paramétrage initial, vous pouvez configurer l'intégration avec OBS Studio en entrant ce qui suit :
 
@@ -106,6 +114,6 @@ Si votre assemblée locale tient régulièrement des réunions hybrides, il est 
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Amusez-vous avec M³ {#enjoy-using-m3}
 
 Une fois l'assistant d'installation terminé, M³ est prêt à vous aider à gérer et à présenter les médias pour les réunions d'assemblée locale. Profitez bien de l'application ! :tada:

@@ -10,7 +10,6 @@ import { fetchLatestVersion } from './api';
 import { GH_ISSUES, GH_REPO_URL } from './constants';
 import { camelToKebabCase } from './general';
 
-export type MessageLanguages = keyof typeof messages;
 export type MessageSchema = (typeof messages)['en'];
 
 const latestVersion = await fetchLatestVersion();
@@ -56,7 +55,7 @@ export const mapLocales = (): LocaleConfig<DefaultTheme.Config> => {
     .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
-      const msg = messages[locale.value as MessageLanguages];
+      const msg = messages[locale.value];
       locales[lang] = mapLocale(lang, locale.label, msg);
     });
 
@@ -97,10 +96,8 @@ export const mapSearch = (): {
     .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
-      const msg = messages[locale.value as MessageLanguages];
-      locales[lang] = {
-        translations: mapSearchTranslations(msg),
-      };
+      const msg = messages[locale.value];
+      locales[lang] = { translations: mapSearchTranslations(msg) };
     });
 
   return {

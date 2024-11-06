@@ -5,10 +5,18 @@ Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager
 ## 1. Prenesi in namesti {#download-and-install}
 
 1. Obišči [spletno stran za prenos M³](https://github.com/sircharlo/meeting-media-manager/releases/latest).
-2. Prenesi ustrezno različico za vaš operacijski sistem (Windows, macOS ali Linux).
+2. Download the appropriate version for your operating system:
+   - **Windows:**
+     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
+     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+   - **macOS:**
+     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
+     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+   - **Linux:**
+     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
 3. Odpri namestitveni program in sledi navodilom na zaslonu za namestitev programa M³.
 4. Zaženi M³.
-5. Sledi navodilom pomočnika za nastavitev.
+5. Sledi navodilom čarovnika za nastavitev.
 
 ### Dodatni koraki za uporabnike macOS {#additional-steps-for-macos-users}
 
@@ -37,7 +45,7 @@ Ta ukaza naredita dve stvari, ki preprečujeta, da bi bil program M³ v tvojem s
 
 Če imaš po vseh teh korakih še vedno težave, prosimo [prijavi težavo na GitHubu](https://github.com/sircharlo/meeting-media-manager/issues/new). Pomagali ti bomo po svojih najboljših močeh.
 
-## 2. Pomočnik za nastavitev {#configuration-wizard}
+## 2. Čarovnik za nastavitev {#configuration-wizard}
 
 ### Jezik uporabniškega vmesnika {#app-display-language}
 
@@ -77,7 +85,7 @@ Iskalnik uporablja javno dostopne podatke z uradnega spletnega mesta Jehovovih p
 
 ### Ročni vnos podatkov o občini {#manual-entry-of-congregation-information}
 
-Če s samodejnim iskanjem ni bilo mogoče najti vaše občine, lahko zahtevane podatke seveda vneseš ročno. Pomočnik za nastavitev ti bo omogočil, da pregledaš in/ali vneseš **ime** vaše občine, **jezik shodov** ter **dneve in ure shodov**.
+Če s samodejnim iskanjem ni bilo mogoče najti vaše občine, lahko zahtevane podatke seveda vneseš ročno. Čarovnik za nastavitev ti bo omogočil, da pregledaš in/ali vneseš **ime** vaše občine, **jezik shodov** ter **dneve in ure shodov**.
 
 ### Predpomnjenje videoposnetkov iz pesmarice {#caching-videos-from-the-songbook}
 

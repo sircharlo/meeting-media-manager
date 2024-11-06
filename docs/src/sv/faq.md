@@ -1,6 +1,6 @@
-# Vanliga frågor {#frequently-asked-questions}
+# Frequently Asked Questions {#frequently-asked-questions}
 
-## :earth_americas: Är den här appen beroende av externa sajter eller källor för att ladda ner publikationer och mötesmedia? {#external-dependencies}
+## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
 
 **Nej.** Appen beter sig på samma sätt som JW Library. Den laddar ner publikationer och media direkt från Jehovas vittnens officiella hemsida. Appen bestämmer automatiskt vad som behöver laddas ner och när tidigare hämtat innehåll inte längre är uppdaterat och ska laddas ner.
 

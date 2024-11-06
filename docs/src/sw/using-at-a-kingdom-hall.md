@@ -5,7 +5,15 @@ Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Man
 ## 1. Download and install {#download-and-install}
 
 1. Tembelea [M³ ukurasa wa kupakua](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Pakua toleo linalofaa kwa mfumo wako wa kompyuta (Windows, macOS, au Linux).
+2. Download the appropriate version for your operating system:
+   - **Windows:**
+     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
+     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+   - **macOS:**
+     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
+     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+   - **Linux:**
+     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
 3. Fungua mfumo wa kupakua na ufuate maagizo ya kupakua M³ kwenye scrini.
 4. Fungua M³.
 5. Pitia programu ya usanidi.
