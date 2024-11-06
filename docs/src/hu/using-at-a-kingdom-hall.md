@@ -5,7 +5,15 @@ Ez az útmutató végigvezeti Önt a **Meeting Media Manager (M³)** letöltés�
 ## 1. Download and install {#download-and-install}
 
 1. Látogasson el az [M³ letöltési oldalra](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Töltse le az operációs rendszerének megfelelő verziót (Windows, macOS vagy Linux).
+2. Download the appropriate version for your operating system:
+   - **Windows:**
+     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
+     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+   - **macOS:**
+     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
+     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+   - **Linux:**
+     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
 3. Nyissa meg a telepítőt, és kövesse a képernyőn megjelenő utasításokat az M³ telepítéséhez.
 4. Indítsa el az M³ programot.
 5. Menjen végig a konfigurációs varázslón.

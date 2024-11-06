@@ -5,7 +5,15 @@ Deze handleiding zal je begeleiden bij het downloaden, installeren en opzetten v
 ## 1. Download en installeer {#download-and-install}
 
 1. Bezoek de [M³ downloadpagina](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download de juiste versie voor jouw besturingssysteem (Windows, macOS of Linux).
+2. Download the appropriate version for your operating system:
+   - **Windows:**
+     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
+     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+   - **macOS:**
+     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
+     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+   - **Linux:**
+     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
 3. Open het installatieprogramma en volg de instructies op het scherm om M³ te installeren.
 4. Open M³.
 5. Doorloop de configuratiewizard.

@@ -8,7 +8,7 @@ import type {
   SettingsValues,
 } from 'src/types';
 
-import { homepage, productName, repository } from 'app/package.json';
+import { homepage, repository } from 'app/package.json';
 import get from 'axios';
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
 import {
@@ -27,7 +27,7 @@ import {
 } from 'src/constants/fs';
 import { join } from 'upath';
 
-import { errorCatcher, isSelf } from './../utils';
+import { errorCatcher, getUserDataPath, isSelf } from './../utils';
 import { getAllScreens } from './screen';
 import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
@@ -155,9 +155,7 @@ function handleIpcInvoke<T = unknown>(
 
 handleIpcInvoke('getVersion', async () => app.getVersion());
 handleIpcInvoke('getAppPath', async () => app.getAppPath());
-handleIpcInvoke('getUserDataPath', async () =>
-  join(app.getPath('appData'), productName),
-);
+handleIpcInvoke('getUserDataPath', async () => getUserDataPath());
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
 
