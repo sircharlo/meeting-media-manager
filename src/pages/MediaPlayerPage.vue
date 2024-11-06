@@ -207,12 +207,12 @@ const setPanzoom = (panzoomState: Record<string, number>, animate = true) => {
       const imageElem = document.getElementById('mediaImage');
       const width = imageElem?.clientWidth || 0;
       const height = imageElem?.clientHeight || 0;
-      panzoom.value?.zoom((panzoomState?.scale ?? 1) as number, panzoomOptions);
+      panzoom.value?.zoom(panzoomState?.scale ?? 1, panzoomOptions);
       setTimeout(() => {
         if (width > 0 && height > 0)
           panzoom.value?.pan(
-            ((panzoomState?.x ?? 0) as number) * width,
-            ((panzoomState?.y ?? 0) as number) * height,
+            (panzoomState?.x ?? 0) * width,
+            (panzoomState?.y ?? 0) * height,
             panzoomOptions,
           );
       });

@@ -29,9 +29,11 @@ import { errorCatcher } from './error-catcher';
 
 const {
   convertHeic,
+  convertPdfToImages,
   decompress,
   executeQuery,
   fs,
+  getNrOfPdfPages,
   path,
   readdir,
   toggleMediaWindow,
@@ -115,9 +117,11 @@ const isSong = (multimediaItem: MultimediaItem) => {
   return multimediaItem.Track.toString();
 };
 
-const isRemoteUrl = (url: string) => {
-  if (!url) return false;
-  return url.startsWith('http://') || url.startsWith('https://');
+const isRemoteFile = (
+  file: { filetype?: string; path: string } | File,
+): file is { filetype?: string; path: string } => {
+  if (!file.path) return false;
+  return file.path.startsWith('http://') || file.path.startsWith('https://');
 };
 
 const inferExtension = (filename: string, filetype?: string) => {
@@ -195,7 +199,9 @@ const getMediaFromJwPlaylist = async (
         dbFile,
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
       );
-      if (playlistNameQuery) playlistName = playlistNameQuery[0].Name + ' - ';
+      if (playlistNameQuery.length) {
+        playlistName = playlistNameQuery[0].Name + ' - ';
+      }
     } catch (error) {
       errorCatcher(error);
     }
@@ -236,7 +242,7 @@ const getMediaFromJwPlaylist = async (
       LEFT JOIN
         Location l ON plm.LocationId = l.LocationId`,
     );
-    const playlistMediaItems = await Promise.all(
+    const playlistMediaItems: MultimediaItem[] = await Promise.all(
       playlistItems.map(async (item) => {
         item.ThumbnailFilePath = path.join(outputPath, item.ThumbnailFilePath);
         if (
@@ -263,7 +269,7 @@ const getMediaFromJwPlaylist = async (
             ? item.StartTrimOffsetTicks / 10000 / 1000
             : null;
 
-        return {
+        const returnItem: MultimediaItem = {
           BeginParagraphOrdinal: 0,
           Caption: '',
           CategoryType: 0,
@@ -283,6 +289,7 @@ const getMediaFromJwPlaylist = async (
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           Track: item.Track,
         };
+        return returnItem;
       }),
     );
 
@@ -387,13 +394,27 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
 };
 
 const convertImageIfNeeded = async (filepath: string) => {
+  console.log('isconvertImageIfNeededPdf', {
+    filepath,
+    isPdf: isPdf(filepath),
+  });
   if (isHeic(filepath)) {
     return await convertHeicToJpg(filepath);
   } else if (isSvg(filepath)) {
     return await convertSvgToJpg(filepath);
-  } else {
-    return filepath;
+  } else if (isPdf(filepath)) {
+    const nrOfPages = await getNrOfPdfPages(filepath);
+    console.log('nrOfPages', nrOfPages);
+    if (nrOfPages === 1) {
+      const converted = await convertPdfToImages(
+        filepath,
+        await getTempDirectory(),
+      );
+      console.log('converted', converted);
+      return converted[0] || filepath;
+    }
   }
+  return filepath;
 };
 
 const showMediaWindow = (state?: boolean) => {
@@ -427,7 +448,7 @@ export {
   isJwPlaylist,
   isJwpub,
   isPdf,
-  isRemoteUrl,
+  isRemoteFile,
   isSong,
   isSvg,
   isVideo,

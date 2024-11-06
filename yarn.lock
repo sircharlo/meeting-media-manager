@@ -865,6 +865,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@iconify-json/simple-icons@npm:^1.2.10":
+  version: 1.2.11
+  resolution: "@iconify-json/simple-icons@npm:1.2.11"
+  dependencies:
+    "@iconify/types": "npm:*"
+  checksum: 10c0/8612cdfe3f9c1b64793c4feff53f82fa195ed677e9796d321eee42e980bef73b17c89fca0b4a34bf3b803e9bf89c3750e203a54a2f6856deb814332d85bbd554
+  languageName: node
+  linkType: hard
+
+"@iconify/types@npm:*":
+  version: 2.0.0
+  resolution: "@iconify/types@npm:2.0.0"
+  checksum: 10c0/65a3be43500c7ccacf360e136d00e1717f050b7b91da644e94370256ac66f582d59212bdb30d00788aab4fc078262e91c95b805d1808d654b72f6d2072a7e4b2
+  languageName: node
+  linkType: hard
+
 "@intlify/bundle-utils@npm:^3.1.2":
   version: 3.4.0
   resolution: "@intlify/bundle-utils@npm:3.4.0"
@@ -1916,7 +1932,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/extras@npm:^1.16.12":
+"@quasar/extras@npm:^1.16.13":
   version: 1.16.13
   resolution: "@quasar/extras@npm:1.16.13"
   checksum: 10c0/6a43e0bb079e2609aba6faa30a313f9f1823ea58c8ce8bc5d0b1b9661398c0466b74f47a057760fab8d4c22973f910e73f5064f7dbd573ae97f926d33f325ff8
@@ -2507,7 +2523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^8.37.0":
+"@sentry/vue@npm:^8.37.1":
   version: 8.37.1
   resolution: "@sentry/vue@npm:8.37.1"
   dependencies:
@@ -6071,7 +6087,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^33.0.2":
+"electron@npm:^33.1.0":
   version: 33.1.0
   resolution: "electron@npm:33.1.0"
   dependencies:
@@ -9910,12 +9926,12 @@ __metadata:
     "@panzoom/panzoom": "npm:^4.5.1"
     "@quasar/app-vite": "npm:^1.10.2"
     "@quasar/cli": "npm:^2.4.1"
-    "@quasar/extras": "npm:^1.16.12"
+    "@quasar/extras": "npm:^1.16.13"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.7.0"
     "@sentry/esbuild-plugin": "npm:^2.22.6"
     "@sentry/vite-plugin": "npm:^2.22.6"
-    "@sentry/vue": "npm:^8.36.0"
+    "@sentry/vue": "npm:^8.37.1"
     "@types/better-sqlite3": "npm:^7.6.11"
     "@types/decompress": "npm:^4"
     "@types/dompurify": "npm:^3.0.5"
@@ -9936,7 +9952,7 @@ __metadata:
     countries-and-timezones: "npm:^3.7.2"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.1.7"
-    electron: "npm:^33.0.2"
+    electron: "npm:^33.1.0"
     electron-builder: "npm:^25.1.8"
     electron-updater: "npm:^6.3.9"
     eslint: "npm:^8.57.1"
@@ -9960,12 +9976,12 @@ __metadata:
     prettier: "npm:^3.3.3"
     pretty-bytes: "npm:^6.1.1"
     process: "npm:^0.11.10"
-    quasar: "npm:^2.17.1"
+    quasar: "npm:^2.17.2"
     sanitize-filename: "npm:^1.6.3"
     sanitize-html: "npm:^2.13.1"
     typescript: "npm:~5.5.4"
     upath: "npm:^2.0.1"
-    vitepress: "npm:^1.4.5"
+    vitepress: "npm:^1.5.0"
     vue: "npm:^3.5.12"
     vue-i18n: "npm:^10.0.4"
     vue-router: "npm:^4.4.5"
@@ -11846,7 +11862,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.17.1":
+"quasar@npm:^2.17.2":
   version: 2.17.2
   resolution: "quasar@npm:2.17.2"
   checksum: 10c0/d521b651f50db580e10c0972549317026d76db0bc66e64e503561e9efb0b56e12d465c0376f36e132c976da861658cd753fbdd1c09632d5fa52067375e15a15b
@@ -14342,12 +14358,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:^1.4.5":
-  version: 1.4.5
-  resolution: "vitepress@npm:1.4.5"
+"vitepress@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "vitepress@npm:1.5.0"
   dependencies:
     "@docsearch/css": "npm:^3.6.2"
     "@docsearch/js": "npm:^3.6.2"
+    "@iconify-json/simple-icons": "npm:^1.2.10"
     "@shikijs/core": "npm:^1.22.2"
     "@shikijs/transformers": "npm:^1.22.2"
     "@shikijs/types": "npm:^1.22.2"
@@ -14373,7 +14390,7 @@ __metadata:
       optional: true
   bin:
     vitepress: bin/vitepress.js
-  checksum: 10c0/f5aeb951183f66cb1a8bc22e9fa022df3c8ccc14acaf95eaeeb0fd81f34ba8d231fd5badebe4933e383aded3c739142e4abad08712e2d6e88a2056423bcd0e3a
+  checksum: 10c0/815acfb43db1716da78ebe2329ada1465df981c3264bfdf2b0412b49737cdd0ace900e928bd3091599730892e9107ad7fbb2c6e9f6a43a84f4a5096f1faa3cde
   languageName: node
   linkType: hard
 

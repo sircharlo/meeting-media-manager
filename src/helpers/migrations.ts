@@ -39,7 +39,7 @@ const parsePrefsFile: (path: string) => Promise<OldAppConfig> = async (
   }
 };
 
-const buildNewPrefsObject = (oldPrefs: Partial<OldAppConfig>) => {
+const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
   try {
     const newPrefsObject: SettingsValues = {
       autoStartAtLogin: oldPrefs.app?.autoRunAtBoot || false,

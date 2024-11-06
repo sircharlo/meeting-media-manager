@@ -4,6 +4,8 @@ import type {
   DownloadProgressItems,
   DynamicMediaObject,
   MediaLink,
+  SettingsItem,
+  SettingsItems,
   SettingsValues,
 } from 'src/types';
 
@@ -51,6 +53,11 @@ interface Songbook {
   signLanguage: boolean;
 }
 
+const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
+  keyof SettingsItems,
+  SettingsItem,
+][];
+
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
     async getDatedAdditionalMediaDirectory() {
@@ -70,19 +77,22 @@ export const useCurrentStateStore = defineStore('current-state', {
         return '';
       }
     },
-    getInvalidSettings(congregation?: number | string) {
+    getInvalidSettings(
+      congregation?: number | string,
+    ): (keyof SettingsValues)[] {
       try {
         if (!congregation) congregation = this.currentCongregation;
         if (!congregation) return [];
-        const invalidSettings = [];
-        for (const [settingsDefinitionId, settingsDefinition] of Object.entries(
-          settingsDefinitions,
-        )) {
+        const invalidSettings: (keyof SettingsValues)[] = [];
+        for (const [
+          settingsDefinitionId,
+          settingsDefinition,
+        ] of settingDefinitionEntries) {
           if (settingsDefinition.rules?.includes('notEmpty')) {
             const congregationSettingsStore = useCongregationSettingsStore();
             if (
               !congregationSettingsStore.congregations[congregation]?.[
-                settingsDefinitionId as keyof SettingsValues
+                settingsDefinitionId
               ]?.toString() &&
               (!settingsDefinition.rules?.includes('regular') ||
                 !congregationSettingsStore.congregations[congregation]
@@ -92,7 +102,7 @@ export const useCurrentStateStore = defineStore('current-state', {
             }
           }
         }
-        return invalidSettings as (keyof SettingsValues)[];
+        return invalidSettings;
       } catch (error) {
         errorCatcher(error);
         return [];
@@ -151,7 +161,7 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     currentSongs(): MediaLink[] {
       const jwStore = useJwStore();
-      const currentLanguage = this.currentSettings?.lang as string;
+      const currentLanguage = this.currentSettings?.lang;
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
