@@ -1195,6 +1195,8 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
 
     for (const { media } of mediaToProcess) {
       const langsWritten = [
+        media.MepsLanguageIndex !== undefined &&
+          mepslangs[media.MepsLanguageIndex],
         media.AlternativeLanguage,
         currentStateStore.currentSettings?.lang,
         currentStateStore.currentSettings?.langFallback,

@@ -238,7 +238,7 @@ const getMediaFromJwPlaylist = async (
       LEFT JOIN
         Location l ON plm.LocationId = l.LocationId`,
     );
-    const playlistMediaItems = await Promise.all(
+    const playlistMediaItems: MultimediaItem[] = await Promise.all(
       playlistItems.map(async (item) => {
         item.ThumbnailFilePath = path.join(outputPath, item.ThumbnailFilePath);
         if (
@@ -265,7 +265,7 @@ const getMediaFromJwPlaylist = async (
             ? item.StartTrimOffsetTicks / 10000 / 1000
             : null;
 
-        return {
+        const returnItem: MultimediaItem = {
           BeginParagraphOrdinal: 0,
           Caption: '',
           CategoryType: 0,
@@ -278,6 +278,7 @@ const getMediaFromJwPlaylist = async (
           KeySymbol: item.KeySymbol,
           Label: `${playlistName}${item.Label}`,
           MajorType: 0,
+          MepsLanguageIndex: item.MepsLanguage,
           MimeType: item.MimeType,
           MultimediaId: 0,
           StartTime: StartTime ?? undefined,
@@ -285,6 +286,7 @@ const getMediaFromJwPlaylist = async (
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           Track: item.Track,
         };
+        return returnItem;
       }),
     );
 
