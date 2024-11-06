@@ -1,0 +1,47 @@
+[
+  {
+    "id": "some-unique-id-1",
+    "message": "This is an info message",
+    "type": "info",
+    "persistent": false,
+    "minVersion": "24.11.0",
+    "maxVersion": "25.0.0",
+    "platform": ["win32"]
+  },
+  {
+    "id": "some-unique-id-2",
+    "message": "This is a macos info message",
+    "type": "info",
+    "persistent": false,
+    "minVersion": "24.11.0",
+    "maxVersion": "25.0.0",
+    "platform": ["macos"]
+  },
+  {
+    "id": "some-unique-id-3",
+    "message": "This is a warning message for a specific version",
+    "type": "warning",
+    "persistent": true,
+    "minVersion": "25.0.0",
+    "maxVersion": "25.0.0",
+    "platform": ["win32"]
+  },
+  {
+    "id": "some-unique-id-3",
+    "message": "This is a warning message",
+    "type": "warning",
+    "persistent": false,
+    "minVersion": null,
+    "maxVersion": "25.0.0",
+    "platform": ["win32"]
+  },
+  {
+    "id": "some-unique-id-4",
+    "message": "This is a persistent error message",
+    "type": "error",
+    "persistent": true,
+    "minVersion": null,
+    "maxVersion": null,
+    "platform": null
+  }
+]
