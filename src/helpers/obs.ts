@@ -72,11 +72,10 @@ const obsConnect = async (setup?: boolean) => {
       return;
     }
 
-    const obsPort = (currentState.currentSettings?.obsPort as string) || '';
+    const obsPort = currentState.currentSettings?.obsPort || '';
     if (!portNumberValidator(obsPort)) return;
 
-    const obsPassword =
-      (currentState.currentSettings?.obsPassword as string) || '';
+    const obsPassword = currentState.currentSettings?.obsPassword || '';
     if (obsPassword?.length === 0) return;
 
     obsState.obsConnectionState = 'connecting';

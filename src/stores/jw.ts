@@ -192,7 +192,7 @@ export const useJwStore = defineStore('jw-store', {
         }
         for (const fileformat of ['MP4', 'MP3']) {
           try {
-            const langwritten = currentState.currentSettings.lang as string;
+            const langwritten = currentState.currentSettings.lang;
             this.jwSongs[langwritten] ??= { list: [], updated: oldDate };
 
             // Check if the song list has been updated in the last month

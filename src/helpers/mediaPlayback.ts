@@ -113,9 +113,11 @@ const isSong = (multimediaItem: MultimediaItem) => {
   return multimediaItem.Track.toString();
 };
 
-const isRemoteUrl = (url: string) => {
-  if (!url) return false;
-  return url.startsWith('http://') || url.startsWith('https://');
+const isRemoteFile = (
+  file: { filetype?: string; path: string } | File,
+): file is { filetype?: string; path: string } => {
+  if (!file.path) return false;
+  return file.path.startsWith('http://') || file.path.startsWith('https://');
 };
 
 const inferExtension = (filename: string, filetype?: string) => {
@@ -441,7 +443,7 @@ export {
   isJwPlaylist,
   isJwpub,
   isPdf,
-  isRemoteUrl,
+  isRemoteFile,
   isSong,
   isSvg,
   isVideo,
