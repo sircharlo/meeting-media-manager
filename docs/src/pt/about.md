@@ -1,6 +1,6 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Sobre o Meeting Media Manager (M³)
 
-## What is this app? {#what-is-this-app}
+## O que é esse aplicativo?
 
 **Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
 
@@ -12,7 +12,7 @@ Nota: O M³ era conhecido como JWMMF (JW Meeting Media Fetcher), mas seu nome fo
 
 :::
 
-## O que o M³ faz? {#what-can-m3-do}
+## O que o M³ faz?
 
 O M³ permite que você baixe e exiba todas as mídias da reunião de forma simples.
 
@@ -28,7 +28,7 @@ Em reuniões híbridas ou presenciais, o modo de exibição de mídias integrado
 
 Experimente hoje o M³ e veja por você mesmo o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.
 
-## O M³ está disponível no meu idioma? {#does-m3-work-in-my-language}
+## O M³ está disponível no meu idioma?
 
 **Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on the official website of Jehovah's Witnesses. A lista de idiomas disponíveis é sempre atualizada; tudo que você precisa fazer é selecionar qual você quer.
 

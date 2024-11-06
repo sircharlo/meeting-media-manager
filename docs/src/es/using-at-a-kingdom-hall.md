@@ -1,8 +1,8 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Using M³ at a Kingdom Hall
 
 This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
 
-## 1. Download and install {#download-and-install}
+## 1. Download and install
 
 1. Visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Download the appropriate version for your operating system:
@@ -18,7 +18,7 @@ This guide will walk you through the process of downloading, installing, and set
 4. Launch M³.
 5. Go through the configuration wizard.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Additional steps for macOS Users
 
 Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
 
@@ -45,9 +45,9 @@ If you are still unable to launch M³ after entering the two commands, please tr
 
 If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. 2. Configuration wizard
 
-### App display language {#app-display-language}
+### App display language
 
 When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
 
@@ -57,7 +57,7 @@ This is does not have to be the same language as the one in which M³ will downl
 
 :::
 
-### Profile type {#profile-type}
+### Tipo de perfil
 
 The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
 
@@ -70,7 +70,7 @@ The **Other** profile type is rarely used. **For normal use during congregation 
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Automatic congregation lookup
 
 M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
 
@@ -84,11 +84,11 @@ This lookup uses publicly available data from the official website of Jehovah's 
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Manual entry of congregation information
 
 If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Caching videos from the songbook
 
 You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
 
@@ -101,7 +101,7 @@ If your Kingdom Hall has sufficient storage space, it’s recommended to **enabl
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### OBS Studio Integration Configuration (Optional)
 
 If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
 
@@ -116,6 +116,6 @@ If your congregation regularly conducts hybrid meetings, it's **highly** recomme
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Enjoy using M³
 
 Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:

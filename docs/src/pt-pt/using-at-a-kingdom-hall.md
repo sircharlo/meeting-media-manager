@@ -1,8 +1,8 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Ao usar o M³ no Salão do Reino
 
 Este guia irá orientá-lo pelo processo de descarregamento, instalação e configuração do **Meeting Media Manager (M³)** num Salão do Reino. Siga estes passos para garantir uma configuração sem falhas na gestão de multimédia durante as reuniões congregacionais.
 
-## 1. Download and install {#download-and-install}
+## 1. Descarregar e instalar
 
 1. Visite a [página de download do M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Download the appropriate version for your operating system:
@@ -18,7 +18,7 @@ Este guia irá orientá-lo pelo processo de descarregamento, instalação e conf
 4. Inicie o M³.
 5. Siga o assistente de configuração.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Additional steps for macOS Users
 
 Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
 
@@ -45,9 +45,9 @@ If you are still unable to launch M³ after entering the two commands, please tr
 
 If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Assistente de configuração
 
-### App display language {#app-display-language}
+### Idioma de exibição da aplicação
 
 Ao iniciar o M³ pela primeira vez, será solicitado que escolha o seu **idioma de exibição** preferido. Escolha o idioma que deseja que o M³ utilize na sua interface.
 
@@ -57,7 +57,7 @@ Este não precisa ser o mesmo idioma em que o M³ fará o download de multimédi
 
 :::
 
-### Profile type {#profile-type}
+### Tipo de perfil
 
 O próximo passo será escolher um **tipo de perfil**. Para uma configuração regular num Salão do Reino, escolha **Regular**. Esta configuração irá ajustar várias funcionalidades que são frequentemente utilizadas nas reuniões congregacionais.
 
@@ -69,7 +69,7 @@ O tipo de perfil **Outro** é raramente utilizado. **Para o uso comum, durante a
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Pesquisa automática da congregação
 
 O M³ pode tentar encontrar automaticamente o horário das reuniões, o idioma e o nome da sua congregação.
 
@@ -83,11 +83,11 @@ Esta pesquisa utiliza dados disponíveis publicamente no site oficial das Testem
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Entrada manual das informações da congregação
 
 Se a pesquisa automática não encontrou a sua congregação, é possível inserir manualmente as informações necessárias. O assistente permitirá que revise e/ou insira o **nome**, **idioma** das reuniões e os **dias e horários** das reuniões da sua congregação.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Armazenamento em cache dos cânticos (formato para reuniões)
 
 Também terá a opção de **armazenar em cache todos os cânticos**. Esta opção pré-carrega todos os cânticos, reduzindo o tempo necessário para procurar multimédia para as reuniões no futuro.
 
@@ -100,7 +100,7 @@ Se o seu Salão do Reino tiver espaço de armazenamento suficiente, é recomend�
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### Configuração de Integração do OBS Studio (Opcional)
 
 Se o seu Salão do Reino usar **OBS Studio** para transmitir reuniões híbridas pelo Zoom (isto é, reuniões em que existem pessoas a assistir por videoconferência), o M³ pode integrar-se automaticamente com esse programa. Durante a configuração, é possível configurar a integração com o OBS Studio inserindo o seguinte:
 
@@ -114,6 +114,6 @@ Se a sua congregação realiza regularmente reuniões híbridas, é **altamente*
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Aproveite ao usar o M³
 
 Assim que o assistente de configuração estiver concluído, o M³ estará pronto para auxiliar na gestão e apresentação de multimédia nas reuniões congregacionais. Aproveite ao usar a app! :tada:

@@ -12,7 +12,7 @@ M³ était auparavant connu sous le nom de JWMMF (JW Meeting Media Fetcher), mai
 
 :::
 
-## Que peut faire M³ ? {#what-can-m3-do}
+## Que peut faire M³ ?
 
 En bref, M³ vous permet de télécharger, synchroniser, partager et présenter tous les médias pour les réunions, facilement et automatiquement.
 
@@ -28,7 +28,7 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en présentiel**, le
 
 Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.
 
-## Est-ce que M³ fonctionne dans ma langue ? {#does-m3-work-in-my-language}
+## Est-ce que M³ fonctionne dans ma langue ?
 
 **Oui !** Les médias pour les réunions des Témoins de Jéhovah peuvent être téléchargés automatiquement dans n'importe laquelle des centaines de langues disponibles sur le site officiel des Témoins de Jéhovah. La liste des langues disponibles est mise à jour automatiquement ; il vous suffit de sélectionner celle dont vous avez besoin.
 

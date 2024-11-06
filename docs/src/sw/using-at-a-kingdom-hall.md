@@ -1,8 +1,8 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Kutumia M³ kwenye Mikutano
 
 Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Manager (M³) kwenye Jumba La Ufalme. Fuata hatua ili kuhakikisha usanidi mzuri wa kusimamia media wakati wa mikutano ya kutaniko.
 
-## 1. Download and install {#download-and-install}
+## 1. Pakua na sanikisha
 
 1. Tembelea [M³ ukurasa wa kupakua](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Download the appropriate version for your operating system:
@@ -18,7 +18,7 @@ Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Man
 4. Fungua M³.
 5. Pitia programu ya usanidi.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Hatua za ziada za watumiaji wa macOS
 
 Kutokana na hatua za usalama za mfumo wa Apple, hatua za ziada zitahitajika ili kutumia M³ kwenye mifumo za hivi karibuni za macOS.
 
@@ -45,9 +45,9 @@ Ikiwa bado huwezi kuwasha M³ baada ya kuweka amri hizo mbili, tafadhali jaribu:
 
 Ikiwa bado ukona tatizo hata baada ya kufuata hatua hizo, tafadhali [fungua tatizo(issue) kwenye Github](https://github.com/sircharlo/meeting-media-manager/issues/new). Tutafanya yote tuwezayo kukusaidia.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Programu ya usanidi
 
-### App display language {#app-display-language}
+### Lugha ya mfumo
 
 Unapofungua M³ kwa mara ya kwanza, utaulizwa kuhusu lugha ya mfumo unaotaka. Chagua lugha ya mfumo unaotaka kutumia kwenye mfumo wa M³.
 
@@ -57,7 +57,7 @@ Hii sio lazima iwe lugha sawa na ile ambayo M³ itapakua media. Lugha ya upakuaj
 
 :::
 
-### Profile type {#profile-type}
+### Aina ya profile
 
 Hatua inayo fuata ni ya kuchagua **aina ya profaili**. Kwa ajili ya matumizi katika Jumba la Ufalme, chagua **Kawaida**. Hili litapanga mipangilio mingi ya kawaida ya matumizi katika mikutano.
 
@@ -69,7 +69,7 @@ Profile ya **Nyingine** haitumiwi kwa mikutano ya kawaida. **Kwa ajili ya matumi
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Tafuta kutaniko lako
 
 M³ itajaribu kutafuta ratiba, lugha na jina rasmi la kutaniko lako.
 
@@ -83,11 +83,11 @@ Mbinu hii hutumia habari kutoka kwa tovuti rasmi la Mashahidi wa Yehova.
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Kuingiza habari ya kutaniko kwa mkono
 
 Ikiwa mbinu ya kutafuta kutaniko haikupata kutaniko lako, unaweza kuingiza habari hizo zinazohitajika moja kwa moja. Programu itakuruhusu kukagua /au kuandika **jina** la kutaniko lako, **lugha ya mkutano**, na **siku na nyakati za mikutano**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Kupakua video kutoka kwa kitabu cha wimbo
 
 Pia utapewa uwezo wa **kupakua video zote kutoka kwa kitabu cha wimbo**. Chaguo hili hupakua mapema video zote za kitabu cha nyimbo, na hivyo kupunguza muda unaochukua ili kupakua midia kwa ajili ya mikutano katika siku zijazo.
 
@@ -100,7 +100,7 @@ Ikiwa mfumo wenu kwenu Jumba La Ufalme una nafasi, tunashauri kwamba **muwashe**
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### Usanidi wa Studio ya OBS (Si lazima)
 
 Ikiwa Jumba lenu La Ufalme linatumia **OBS Studio** kwa ajili ya upeperushaji wa mikutano kwenye Zoom, M³ inaweza kuunganshwa na programu hiyo. Kwenye uratibu, unaweza kusanidi OBS Studio kwa kuingiza yafuatayo:
 
@@ -114,6 +114,6 @@ Ikiwa kutaniko lako hufanya mikutano pamoja na zoom, **inashauriwa** muunganishe
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Furahia kutumia M³
 
 Uratibu wa programu unapokamilika, M³ iko tayari kukusaidia kupanga na kuonyesha midia kwenye mikutano ya kutaniko. Furahia kutumia programu hii! :tada:

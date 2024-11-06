@@ -6,7 +6,7 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: Instalar M³
+      text: Baixa imagens e vídeos das reuniões congregacionais em qualquer idioma disponível no JW.org.
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: alt
       text: Como usar no Salão do Reino

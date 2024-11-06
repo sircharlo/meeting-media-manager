@@ -1,8 +1,8 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Az M³ használata egy Királyság-teremben
 
 Ez az útmutató végigvezeti Önt a **Meeting Media Manager (M³)** letöltésének, telepítésének és beállításának folyamatán egy Királyság-teremben. Kövesse ezeket a lépéseket, hogy zökkenőmentesen tudja a médiaanyagokat kezelni a gyülekezeti összejövetelek során.
 
-## 1. Download and install {#download-and-install}
+## 1. Letöltés és telepítés
 
 1. Látogasson el az [M³ letöltési oldalra](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Download the appropriate version for your operating system:
@@ -18,7 +18,7 @@ Ez az útmutató végigvezeti Önt a **Meeting Media Manager (M³)** letöltés�
 4. Indítsa el az M³ programot.
 5. Menjen végig a konfigurációs varázslón.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Additional steps for macOS Users
 
 Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
 
@@ -45,9 +45,9 @@ If you are still unable to launch M³ after entering the two commands, please tr
 
 If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Konfigurációs varázsló
 
-### App display language {#app-display-language}
+### Az alkalmazás megjelenítési nyelve
 
 Az M³ első indításakor a rendszer kéri, hogy válassza ki a kívánt **megjelenítési nyelvet**. Válassza ki azt a nyelvet, amelyet az M³ felületén kíván használni.
 
@@ -57,7 +57,7 @@ Ez a nyelv nem kell, hogy megegyezzen azzal a nyelvvel, amelyen az M³ a médiat
 
 :::
 
-### Profile type {#profile-type}
+### Profil típusa
 
 A következő lépés a **profil típusának** kiválasztása. A Királyság-teremben történő szokásos beállításhoz válassza a **Szokásos** lehetőséget. Ez számos, a gyülekezeti összejöveteleken általánosan használt funkciót fog beállítani.
 
@@ -69,7 +69,7 @@ Az **Egyéb** profiltípust ritkán kell használni. **A gyülekezeti összejöv
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Automatikus gyülekezetkeresés
 
 Az M³ megpróbálhatja automatikusan megkeresni a gyülekezet összejöveteleinek időpontját, nyelvét és formázott nevét.
 
@@ -83,11 +83,11 @@ Ez a lekérdezés Jehova Tanúi hivatalos honlapjának nyilvánosan elérhető a
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### A gyülekezeti információk kézi bevitele
 
 Ha az automatikus keresés nem találta meg az Ön gyülekezetét, természetesen kézzel is megadhatja a szükséges adatokat. A varázsló lehetővé teszi, hogy felülvizsgálja és/vagy megadja a gyülekezet **nevét**, **az összejövetelek nyelvét**, valamint **az összejövetelek napját és időpontját**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Videók gyorsítótárazása az énekeskönyvből
 
 Lehetősége lesz arra is, hogy **minden videót letöltsön az énekeskönyvből**. Ez az opció előre letölti az összes zenei videót, csökkentve ezzel a jövőbeni összejövetelekhez szükséges médiatartalmak betöltési idejét.
 
@@ -100,7 +100,7 @@ Ha a Királyság-terem számítógépe elegendő tárhellyel rendelkezik, akkor 
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### OBS Studio integráció konfigurálása (opcionális)
 
 Ha az Ön Királyság-terme **OBS Studio**-t használ a hibrid összejövetelek Zoom-on keresztüli közvetítésére, akkor az M³ automatikusan integrálható ezzel a programmal. A beállítás során a következő adatok megadásával konfigurálhatja az OBS Studio integrációját:
 
@@ -114,6 +114,6 @@ Ha a gyülekezete rendszeresen tart hibrid összejöveteleket akkor **kifejezett
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Élvezze az M³ használatát
 
 Miután a beállítási varázslóval elkészült, az M³ készen áll arra, hogy segítsen a gyülekezeti összejövetelek médiaanyagainak kezelésében és megjelenítésében. Élvezze az alkalmazás használatát! :tada:

@@ -1,6 +1,6 @@
-# O programu Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# O programu Meeting Media Manager (M³)
 
-## Kaj je ta program? {#what-is-this-app}
+## Kaj je ta program?
 
 **Meeting Media Manager** ali na kratko **M³** je program za operacijske sisteme Windows, macOS in Linux, ki samodejno prenaša slike in videoposnetke, ki bodo obravnavani na shodih Jehovovih prič, v katerem koli jeziku, ki je na voljo na uradnem spletnem mestu Jehovovih prič.
 
@@ -12,7 +12,7 @@ M³ je bil znan kot JWMMF (JW Meeting Media Fetcher), vendar je bil maja 2022 pr
 
 :::
 
-## Kaj zmore M³? {#what-can-m3-do}
+## Kaj zmore M³?
 
 Na kratko, M³ omogoča enostavno in samodejno prenašanje, sinhroniziranje, souporabo in predstavitev multimedijske vsebine za vse shode.
 
@@ -28,7 +28,7 @@ Za **hibridne** občinske shode ali za shode **v živo** ima integrirani način 
 
 Preizkusi M³ še danes in preveri, kaj vse zmore! Predvajanje multimedijske vsebine na občinskih shodih ni bilo še nikoli tako enostavno.
 
-## Ali M³ deluje v mojem jeziku? {#does-m3-work-in-my-language}
+## Ali M³ deluje v mojem jeziku?
 
 **Da!** Multimedijska vsebino za shode Jehovovih prič se lahko samodejno prenese v katerem koli od več sto jezikov, ki so na voljo na uradnem spletnem mestu Jehovovih prič. Seznam razpoložljivih jezikov se nenehno posodablja, zato moraš le izbrati jezik, ki ga potrebuješ.
 

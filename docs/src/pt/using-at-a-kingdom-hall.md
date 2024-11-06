@@ -1,8 +1,8 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Usando o M³ no Salão do Reino
 
 Este guia irá orientá-lo no processo de download, instalação e configuração do **Meeting Media Manager (M³)** em um Salão do Reino. Siga os passos para garantir uma configuração eficiente no gerenciamento de mídia durante as reuniões da congregação.
 
-## 1. Download and install {#download-and-install}
+## 1. Baixar e instalar
 
 1. Visite a [página de download do M³.](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Download the appropriate version for your operating system:
@@ -18,7 +18,7 @@ Este guia irá orientá-lo no processo de download, instalação e configuraçã
 4. Abra o M³.
 5. Siga as instruções do assistente de configuração.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Additional steps for macOS Users
 
 Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
 
@@ -45,9 +45,9 @@ If you are still unable to launch M³ after entering the two commands, please tr
 
 If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Assistente de configuração
 
-### App display language {#app-display-language}
+### Idioma de exibição do aplicativo
 
 Ao abrir o M³ pela primeira vez, será solicitado que você escolha o **idioma de exibição** da sua preferência. Escolha o idioma que você deseja que o M³ use na interface.
 
@@ -57,7 +57,7 @@ Esse idioma não precisa ser o mesmo que o M³ utilizará para baixar mídias. O
 
 :::
 
-### Profile type {#profile-type}
+### Tipo de perfil
 
 O próximo passo é escolher um **tipo de perfil**. Para uma configuração padrão em um Salão do Reino, escolha **Regular**. Isso configurará muitos recursos que são frequentemente utilizados nas reuniões da congregação.
 
@@ -69,7 +69,7 @@ O tipo de perfil **outro** é raramente usado. **Para uso normal durante as reun
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Pesquisa automática de congregação
 
 O M³ pode encontrar automaticamente o horário das reuniões, o idioma e o nome da sua congregação.
 
@@ -83,11 +83,11 @@ Esta pesquisa utiliza dados disponíveis publicamente no site oficial das Testem
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Inserir manualmente as informações da congregação
 
 Se a busca automatizada não encontrar sua congregação, você pode, é claro, inserir manualmente as informações necessárias. O assistente permitirá que você revise e/ou insira o **nome** da sua congregação, o **idioma das reuniões** e os **dias e horários das reuniões**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Armazenamento temporário dos cânticos em vídeo
 
 Você também terá a opção de **armazenar temporariamente todos os cânticos em vídeo**. Esta opção faz download de todos os cânticos em vídeo, o que ajuda ao não ter que baixá-los toda vez.
 
@@ -100,7 +100,7 @@ Se o seu computador tiver espaço de armazenamento suficiente, é recomendável 
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### Configuração da integração com o OBS Studio (Opcional)
 
 Se você usa o **OBS Studio** para transmitir reuniões híbridas pelo Zoom, o M³ pode se integrar automaticamente a esse programa. Durante a configuração, você pode configurar a integração com o OBS Studio inserindo o seguinte:
 
@@ -114,6 +114,6 @@ Se a sua congregação realiza reuniões híbridas regularmente, é **altamente*
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Aproveite o M³
 
 Uma vez que o assistente de configuração seja concluído, o M³ estará pronto para exibir as mídias nas reuniões congregacionais. Aproveite o aplicativo! :tada:
