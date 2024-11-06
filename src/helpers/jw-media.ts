@@ -329,6 +329,8 @@ const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
       'SELECT * FROM Publication',
     )[0];
 
+    if (!pubQuery) return { issue: '', langwritten: '', pub: '' };
+
     const publication: PublicationFetcher = {
       issue: pubQuery.IssueTagNumber,
       langwritten: mepslangs[pubQuery.MepsLanguageIndex],
@@ -378,7 +380,7 @@ const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
           executeQuery<TableItem>(
             source.db,
             `SELECT * FROM sqlite_master WHERE type='table' AND name='${table}'`,
-          )?.map((item) => item.name).length > 0;
+          ).length > 0;
         if (!tableExists) continue;
       } catch (error) {
         errorCatcher(source.db + ' - ' + table);
@@ -453,10 +455,10 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       executeQuery<TableItem>(source.db, "PRAGMA table_info('Question')").some(
         (item) => item.name === 'TargetParagraphNumberLabel',
       ) &&
-      executeQuery<TableItemCount>(
+      !!executeQuery<TableItemCount>(
         source.db,
         'SELECT COUNT(*) FROM Question',
-      )[0].count > 0;
+      )[0]?.count;
 
     const suppressZoomExists = executeQuery<TableItem>(
       source.db,
@@ -557,7 +559,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         try {
           const matches = extract.Link.match(/\/(.*)\//);
           if (matches && matches.length > 0) {
-            extract.Lang = (matches.pop() as string).split(':')[0];
+            extract.Lang = matches.pop()?.split(':')[0] || '';
           }
         } catch (e: unknown) {
           errorCatcher(e);
@@ -610,7 +612,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
           ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
           : {}),
       })
-        .map((extractItem) => {
+        .map((extractItem): MultimediaItem => {
           return {
             ...extractItem,
             BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
@@ -620,7 +622,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         .filter(
           (extractItem) =>
             !(symbol === 'lmd' && extractItem.FilePath.includes('mp4')),
-        ) as MultimediaItem[];
+        );
       for (let i = 0; i < extractItems.length; i++) {
         extractItems[i] = await addFullFilePathToMultimediaItem(
           extractItems[i],
@@ -672,11 +674,9 @@ const getWtIssue = async (
     if (weekNr === -1) {
       throw new Error('No week found in following w: ' + issueString);
     }
-    const docId = (
-      executeQuery(
-        db,
-        `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
-      ) as { DocumentId: number }[]
+    const docId = executeQuery<{ DocumentId: number }>(
+      db,
+      `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
     )[0]?.DocumentId;
     return { db, docId, issueString, publication, weekNr };
   } catch (e) {
@@ -1146,14 +1146,12 @@ const getMwMedia = async (lookupDate: Date) => {
     if (!db) return { error: true, media: [] };
 
     const docId =
-      (
-        executeQuery(
-          db,
-          `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
-            monday,
-            'YYYYMMDD',
-          )}`,
-        ) as { DocumentId: number }[]
+      executeQuery<{ DocumentId: number }>(
+        db,
+        `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
+          monday,
+          'YYYYMMDD',
+        )}`,
       )[0]?.DocumentId ?? -1;
 
     if (docId < 0)
@@ -1238,11 +1236,14 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
     const mediaChecksResults = await Promise.all(mediaExistenceChecks);
 
     const mediaToProcess = mediaChecksResults.filter(
-      (result) => result && !result.exists,
-    ) as { exists: boolean; media: MultimediaItem }[];
+      (result): result is { exists: false; media: MultimediaItem } =>
+        !!result && !result.exists,
+    );
 
     for (const { media } of mediaToProcess) {
       const langsWritten = [
+        media.MepsLanguageIndex !== undefined &&
+          mepslangs[media.MepsLanguageIndex],
         media.AlternativeLanguage,
         currentStateStore.currentSettings?.lang,
         currentStateStore.currentSettings?.langFallback,
@@ -1403,8 +1404,8 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
           publication.pub,
           publication.docid,
         ]
-          .filter((i) => i !== undefined)
-          .map((i) => i?.toString()) as string[];
+          .filter((i) => i !== undefined && i !== null)
+          .map((i) => i.toString());
 
         for (const test of params) {
           if (!item.name || !path.basename(item.name).includes(test)) {

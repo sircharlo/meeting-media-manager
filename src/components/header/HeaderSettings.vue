@@ -221,7 +221,7 @@ const fetchUntouchableDirectories = async () => {
       await getAdditionalMediaPath(),
       await getPublicationsPath(),
       tempDirectory,
-    ]) as Set<string>;
+    ]);
   } catch (error) {
     errorCatcher(error);
     untouchableDirectories.value = new Set(); // Reset to empty set on error

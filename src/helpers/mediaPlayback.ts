@@ -282,6 +282,7 @@ const getMediaFromJwPlaylist = async (
           KeySymbol: item.KeySymbol,
           Label: `${playlistName}${item.Label}`,
           MajorType: 0,
+          MepsLanguageIndex: item.MepsLanguage,
           MimeType: item.MimeType,
           MultimediaId: 0,
           StartTime: StartTime ?? undefined,
