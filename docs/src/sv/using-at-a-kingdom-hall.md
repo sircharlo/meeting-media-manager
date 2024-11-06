@@ -1,16 +1,25 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Att använda M³ i Rikets sal {#using-m3-at-a-kingdom-hall}
 
 Denna guide kommer att gå igenom processen för nedladdning och installation av **Meeting Media Manager (M³)** i Rikets sal. Följ stegen för att säkerställa en smidig installation för att hantera media.
 
-## 1. Download and install {#download-and-install}
+## 1. Ladda ner och installera {#download-and-install}
 
 1. Besök [M³ nedladdningssida](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Ladda ner lämplig version för ditt operativsystem (Windows, macOS eller Linux).
+
+2. Ladda ner lämplig version för ditt operativsystem:
+   - **Windows:**
+     - För de flesta Windows-system, ladda ner `meeting-media-manager-[VERSION]-x64.exe`.
+     - För äldre 32-bitars Windows-system, ladda ner `meeting-media-manager-[VERSION]-ia32.exe`.
+   - **macOS:**
+     - **M-serien (Apple Silicon)**: Ladda ner `meeting-media-manager-[VERSION]-arm64.dmg`.
+     - **Intel-baserad Mac**: Ladda ner `meeting-media-manager-[VERSION]-x64.dmg`.
+   - **Linux:**
+     - Ladda ner `meeting-media-manager-[VERSION]-x86_64.AppImage`.
 3. Öppna installationsprogrammet och följ instruktionerna på skärmen för att installera M³.
 4. Starta M³.
 5. Gå igenom konfigurationsguiden.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Ytterligare steg för macOS användare {#additional-steps-for-macos-users}
 
 På grund av Apples säkerhetsåtgärder krävs ytterligare några steg för att köra M³ på moderna macOS-system.
 
@@ -37,9 +46,9 @@ Om du fortfarande inte kan starta M³ efter att du har angett de två kommandona
 
 Om du fortfarande har problem efter att ha följt alla dessa steg, vänligen [öppna en Issue på GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Vi kommer att göra vårt bästa för att hjälpa till.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Konfigurationsguide {#configuration-wizard}
 
-### App display language {#app-display-language}
+### Appens visningsspråk {#app-display-language}
 
 När du startar M³ för första gången blir du ombedd att välja ditt **visningsspråk**. Välj vilket språk du vill att M³ ska använda för sitt gränssnitt.
 
@@ -49,7 +58,7 @@ Detta behöver inte vara samma språk som det M³ kommer att ladda ner media på
 
 :::
 
-### Profile type {#profile-type}
+### Profiltyp {#profile-type}
 
 Nästa steg är att välja en **profiltyp**. För en vanlig installation i Rikets sal, välj **vanlig**. Detta kommer att konfigurera många funktioner som ofta används för församlingsmöten.
 
@@ -61,7 +70,7 @@ Profiltypen **Annat** används sällan. **För normal användning, vänligen vä
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Automatisk församlingssökning {#automatic-congregation-lookup}
 
 M³ kan försöka att automatiskt hitta församlingens mötesschema, språk och namn.
 
@@ -75,11 +84,11 @@ Denna sökning använder allmänt tillgängliga data från Jehovas vittnens offi
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Manuell inmatning av församlingsinformation {#manual-entry-of-congregation-information}
 
 Om den automatiska sökningen inte hittade din församling kan du naturligtvis manuellt ange informationen. Guiden ger dig möjlighet att granska och/eller ange församlingens **namn**, **mötesspråk**, och **mötesdagar och tider**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Cacha videor från sångboken{#caching-videos-from-the-songbook}
 
 Du kommer också att få möjlighet att **cacha alla videor från sångboken**. Det här alternativet hämtar ner alla sångboksvideor, vilket minskar den tid det tar att hämta media för möten i framtiden.
 
@@ -92,7 +101,7 @@ Om din Rikets sal har tillräckligt med lagringsutrymme rekommenderas att **akti
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### OBS Studio Integration konfiguration (valfritt) {#obs-studio-integration-configuration}
 
 Om din Rikets sal använder **OBS Studio** för att sända hybridmöten över Zoom kan M³ automatiskt integreras med det programmet. Under installationen kan du konfigurera OBS Studio genom att ange följande:
 
@@ -106,6 +115,6 @@ Om din församling regelbundet använder hybridmöten rekommenderas **varmt** at
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Njut av M³ {#enjoy-using-m3}
 
 När installationsguiden är klar är M³ redo att hjälpa till att hantera och presentera media för församlingens möten. Lycka till med appen! :tada:

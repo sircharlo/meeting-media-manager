@@ -33,7 +33,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (app.isReady()) createMainWindow;
+  if (app.isReady()) createMainWindow();
 });
 
 app

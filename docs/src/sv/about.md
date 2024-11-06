@@ -1,6 +1,6 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Om Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-## What is this app? {#what-is-this-app}
+## Vad är det för app? {#what-is-this-app}
 
 **Meeting Media Manager** eller förkortat **M³**, är en app för Windows, macOS och Linux, som automatiskt laddar ner bilder och videor som ska användas under Jehovas vittnens församlingsmöten, på alla språk som finns på Jehovas vittnens officiella hemsida.
 
