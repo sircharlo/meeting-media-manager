@@ -5,7 +5,15 @@ Denna guide kommer att gå igenom processen för nedladdning och installation av
 ## 1. Download and install {#download-and-install}
 
 1. Besök [M³ nedladdningssida](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Ladda ner lämplig version för ditt operativsystem (Windows, macOS eller Linux).
+2. Download the appropriate version for your operating system:
+   - **Windows:**
+     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
+     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+   - **macOS:**
+     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
+     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+   - **Linux:**
+     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
 3. Öppna installationsprogrammet och följ instruktionerna på skärmen för att installera M³.
 4. Starta M³.
 5. Gå igenom konfigurationsguiden.
