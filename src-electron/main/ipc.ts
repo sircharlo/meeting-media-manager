@@ -45,10 +45,10 @@ function handleIpcSend(
   listener: (event: IpcMainEvent, ...args: any[]) => void,
 ) {
   ipcMain.on(channel, (e, ...args) => {
-    if (!isSelf(e.senderFrame.url)) {
+    if (!isSelf(e.senderFrame?.url)) {
       logToWindow(
         mainWindow,
-        `Blocked IPC send from ${e.senderFrame.url}`,
+        `Blocked IPC send from ${e.senderFrame?.url}`,
         {},
         'warn',
       );
@@ -134,10 +134,10 @@ function handleIpcInvoke<T = unknown>(
   ) => Promise<T>,
 ) {
   ipcMain.handle(channel, (e, ...args) => {
-    if (!isSelf(e.senderFrame.url)) {
+    if (!isSelf(e.senderFrame?.url)) {
       logToWindow(
         mainWindow,
-        `Blocked IPC invoke from ${e.senderFrame.url}`,
+        `Blocked IPC invoke from ${e.senderFrame?.url}`,
         {},
         'warn',
       );
