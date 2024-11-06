@@ -1,4 +1,3 @@
-import type * as PdfJs from 'pdfjs-dist';
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
@@ -32,9 +31,7 @@ export const convertHeic = async (image: ConversionOptions) => {
 export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
   console.log('getNrOfPdfPages', pdfPath);
   try {
-    const { getDocument } = (await import(
-      'pdfjs-dist/webpack.mjs'
-    )) as typeof PdfJs;
+    const { getDocument } = await import('pdfjs-dist/webpack.mjs');
 
     const loadingTask = getDocument(pdfPath);
     console.log('loadingTask', loadingTask);
@@ -54,9 +51,7 @@ export const convertPdfToImages = async (
   const outputImages: string[] = [];
   try {
     const data = [];
-    const { getDocument } = (await import(
-      'pdfjs-dist/webpack.mjs'
-    )) as typeof PdfJs;
+    const { getDocument } = await import('pdfjs-dist/webpack.mjs');
 
     const loadingTask = getDocument(pdfPath);
     const pdfDocument = await loadingTask.promise;
