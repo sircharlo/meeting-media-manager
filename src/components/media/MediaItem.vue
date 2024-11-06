@@ -505,11 +505,8 @@
               props.list.find((m) => m.uniqueId === mediaToDelete)?.title ||
               (props.list.find((m) => m.uniqueId === mediaToDelete)?.fileUrl
                 ? path.basename(
-                    (
-                      props.list.find(
-                        (m) => m.uniqueId === mediaToDelete,
-                      ) as any
-                    ).fileUrl,
+                    props.list.find((m) => m.uniqueId === mediaToDelete)!
+                      .fileUrl,
                   )
                 : ''),
           })

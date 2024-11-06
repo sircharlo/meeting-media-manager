@@ -15,12 +15,17 @@
       <q-separator class="bg-semi-white-24 q-ml-none" inset vertical />
       <div class="col q-ml-md flex items-center">
         <div class="col-shrink items-center">
-          <q-icon :name="route.meta.icon as string" class="q-mr-md" size="md" />
+          <q-icon
+            v-if="route.meta.icon"
+            :name="route.meta.icon.toString()"
+            class="q-mr-md"
+            size="md"
+          />
         </div>
         <div class="col items-center">
           <div class="row text-current-page">
-            <div class="ellipsis">
-              {{ $t(route.meta.title as string) }}
+            <div v-if="route.meta.title" class="ellipsis">
+              {{ $t(route.meta.title.toString()) }}
             </div>
           </div>
           <div

@@ -1,10 +1,44 @@
-const localeOptions: { englishName: string; label: string; value: string }[] =
-  [];
+export type LanguageValue =
+  | 'af'
+  | 'am'
+  | 'cmnHans'
+  | 'de'
+  | 'el'
+  | 'en'
+  | 'es'
+  | 'et'
+  | 'fi'
+  | 'fr'
+  | 'hu'
+  | 'ilo'
+  | 'it'
+  | 'mg'
+  | 'nl'
+  | 'pag'
+  | 'pt'
+  | 'ptPt'
+  | 'rmnXRmg'
+  | 'ro'
+  | 'ru'
+  | 'sk'
+  | 'sl'
+  | 'sv'
+  | 'sw'
+  | 'ta'
+  | 'tl'
+  | 'uk'
+  | 'wesXPgw';
+
+const localeOptions: {
+  englishName: string;
+  label: string;
+  value: LanguageValue;
+}[] = [];
 
 // As a sort of rule, let's only enable a language once it's reached a threshold of 50% translated in Crowdin.
 // Modify this file along with src/i18n/index.ts to enable a language both on the docs website and in the app.
 
-const enabled: string[] = [
+const enabled: LanguageValue[] = [
   'cmnHans',
   'de',
   'es',
@@ -213,7 +247,7 @@ localeOptions.push({
 }); // Nigerian Pidgin
 
 export { enabled, localeOptions };
-export default {
+const messages: Record<LanguageValue, typeof en> = {
   af,
   am,
   cmnHans,
@@ -244,3 +278,5 @@ export default {
   uk,
   wesXPgw,
 };
+
+export default messages;

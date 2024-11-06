@@ -28,7 +28,7 @@ export const useObsStateStore = defineStore('obs-state', {
     },
   },
   getters: {
-    additionalScenes: (state) => {
+    additionalScenes: (state): string[] => {
       const currentState = useCurrentStateStore();
       const { currentSettings } = currentState;
       return state.scenes
@@ -46,12 +46,12 @@ export const useObsStateStore = defineStore('obs-state', {
                   '',
               ),
         )
-        .map(
-          (scene) =>
-            (configuredScenesAreAllUUIDs() && scene.sceneUuid
-              ? scene.sceneUuid
-              : scene.sceneName) as string,
-        );
+        .map((scene): string =>
+          configuredScenesAreAllUUIDs() && scene.sceneUuid
+            ? scene.sceneUuid.toString()
+            : scene.sceneName?.toString() || '',
+        )
+        .filter(Boolean);
     },
   },
   state: (): Store => {

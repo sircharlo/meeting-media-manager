@@ -101,7 +101,7 @@
                   class="full-width"
                   color="primary"
                   unelevated
-                  @click="setObsScene(undefined, scene as string)"
+                  @click="setObsScene(undefined, scene)"
                 >
                   <div class="ellipsis">
                     {{
@@ -175,9 +175,9 @@ const setObsScene = async (
     if (obsConnectionState.value !== 'connected') return;
     let newProgramScene: string | undefined = desiredScene;
     if (!desiredScene && sceneType) {
-      const mediaScene = currentSettings.value?.obsMediaScene as string;
-      const imageScene = currentSettings.value?.obsImageScene as string;
-      const cameraScene = currentSettings.value?.obsCameraScene as string;
+      const mediaScene = currentSettings.value?.obsMediaScene;
+      const imageScene = currentSettings.value?.obsImageScene;
+      const cameraScene = currentSettings.value?.obsCameraScene;
       newProgramScene = mediaScene;
       if (isImage(mediaPlayingUrl.value) && imageScene)
         newProgramScene = imageScene;

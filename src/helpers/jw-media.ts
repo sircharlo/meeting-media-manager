@@ -559,7 +559,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         try {
           const matches = extract.Link.match(/\/(.*)\//);
           if (matches && matches.length > 0) {
-            extract.Lang = (matches.pop() as string).split(':')[0];
+            extract.Lang = matches.pop()?.split(':')[0] || '';
           }
         } catch (e: unknown) {
           errorCatcher(e);
@@ -612,7 +612,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
           ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
           : {}),
       })
-        .map((extractItem) => {
+        .map((extractItem): MultimediaItem => {
           return {
             ...extractItem,
             BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
@@ -622,7 +622,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         .filter(
           (extractItem) =>
             !(symbol === 'lmd' && extractItem.FilePath.includes('mp4')),
-        ) as MultimediaItem[];
+        );
       for (let i = 0; i < extractItems.length; i++) {
         extractItems[i] = await addFullFilePathToMultimediaItem(
           extractItems[i],
@@ -1189,8 +1189,9 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
     const mediaChecksResults = await Promise.all(mediaExistenceChecks);
 
     const mediaToProcess = mediaChecksResults.filter(
-      (result) => result && !result.exists,
-    ) as { exists: boolean; media: MultimediaItem }[];
+      (result): result is { exists: false; media: MultimediaItem } =>
+        !!result && !result.exists,
+    );
 
     for (const { media } of mediaToProcess) {
       const langsWritten = [
@@ -1354,8 +1355,8 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
           publication.pub,
           publication.docid,
         ]
-          .filter((i) => i !== undefined)
-          .map((i) => i?.toString()) as string[];
+          .filter((i) => i !== undefined && i !== null)
+          .map((i) => i.toString());
 
         for (const test of params) {
           if (!item.name || !path.basename(item.name).includes(test)) {

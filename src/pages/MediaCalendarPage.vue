@@ -485,7 +485,7 @@ import {
   isJwPlaylist,
   isJwpub,
   isPdf,
-  isRemoteUrl,
+  isRemoteFile,
   isVideo,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -1201,19 +1201,17 @@ const addToFiles = async (
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < files.length; i++) {
     filesLoading.value = i / files.length;
-    let filepath = files[i]?.path;
+    const file = files[i];
+    let filepath = file?.path;
     try {
       if (!filepath) continue;
       // Check if file is remote URL; if so, download it
-      if (isRemoteUrl(filepath)) {
+      if (isRemoteFile(file)) {
         const baseFileName = path.basename(new URL(filepath).pathname);
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempDirectory(),
-            filename: inferExtension(
-              baseFileName,
-              (files[i] as { filetype?: string }).filetype,
-            ),
+            filename: inferExtension(baseFileName, file.filetype),
             url: filepath,
           })
         ).path;
@@ -1317,10 +1315,7 @@ const addToFiles = async (
                   (m.customDuration.max || m.customDuration.min),
               )
               .forEach((m) => {
-                const { max, min } = m.customDuration as {
-                  max: number;
-                  min: number;
-                };
+                const { max, min } = m.customDuration ?? { max: 0, min: 0 };
                 const congregation = (customDurations.value[
                   currentCongregation.value
                 ] ??= {});

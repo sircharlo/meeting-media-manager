@@ -50,7 +50,7 @@
                 >
                   <div class="row items-center q-py-sm">
                     <div class="col text-weight-medium text-dark-grey">
-                      {{ url && path.basename(url as string) }}
+                      {{ url && path.basename(url) }}
                     </div>
                     <div class="col-shrink">
                       <q-icon
@@ -155,9 +155,13 @@ const showProgress = (item: { loaded?: number; total?: number }) =>
 const statusColor = (status: string) =>
   status === 'complete' ? 'positive' : 'negative';
 
-const statusConfig = [
+const statusConfig: {
+  icon: string;
+  label: string;
+  status: 'complete' | 'error' | 'loaded';
+}[] = [
   { icon: '', label: 'inProgress', status: 'loaded' },
   { icon: 'mmm-error', label: 'errors', status: 'error' },
   { icon: 'mmm-cloud-done', label: 'complete', status: 'complete' },
-] as { icon: string; label: string; status: 'complete' | 'error' | 'loaded' }[];
+];
 </script>
