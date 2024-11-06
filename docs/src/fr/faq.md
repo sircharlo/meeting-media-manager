@@ -10,7 +10,7 @@ Le code source de cette application est disponible afin de donner à tous la pos
 
 :::
 
-## :thinking: Cette application enfreint-elle les conditions d'utilisation du site officiel des Témoins de Jéhovah ?
+## :thinking: Cette application enfreint-elle les conditions d'utilisation du site officiel des Témoins de Jéhovah ? {#terms-of-use}
 
 **Non.** Les [conditions d'utilisation](https://www.jw.org/finder?docid=1011511&prefer=content) du site officiel des Témoins de Jéhovah autorisent en fait explicitement le type d'utilisation que nous faisons. Voici l'extrait pertinent de ces conditions :
 
@@ -18,19 +18,19 @@ Le code source de cette application est disponible afin de donner à tous la pos
 >
 > Créer à des fins de diffusion des applications ou des techniques permettant de collecter, de copier, de télécharger, d’extraire des données, du HTML, des images ou du texte de ce site. (Cela n’interdit **pas** la diffusion d’applications gratuites et non commerciales conçues pour télécharger des fichiers électroniques depuis la partie publique du site, par exemple des fichiers EPUB, PDF, MP3 et MP4.)
 
-## :radioactive: Comment signaler un problème ?
+## :radioactive: Comment signaler un problème ? {#how-do-i-report-an-issue}
 
 Veuillez [signaler le problème sur GitHub](https://github.com/sircharlo/meeting-media-manager/issues).
 
-## :new: Comment puis-je demander une nouvelle fonctionnalité ou une amélioration ?
+## :new: Comment puis-je demander une nouvelle fonctionnalité ou une amélioration ? {#how-can-i-request-a-new-feature-or-enhancement}
 
 Veuillez [ouvrir une discussion](https://github.com/sircharlo/meeting-media-manager/discussions) sur GitHub.
 
-## :handshake: Comment puis-je contribuer au code ?
+## :handshake: Comment puis-je contribuer au code ? {#how-can-i-contribute-some-code}
 
 Veuillez [consulter le guide de contribution](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) sur GitHub.
 
-## :x: Puis-je faire un don pour soutenir le projet ?
+## :x: Puis-je faire un don pour soutenir le projet ? {#can-i-make-a-donation-to-the-project}
 
 Merci de votre intérêt à soutenir le projet! Cependant, dans l'esprit de Matthieu 10:8, les dons ne sont **pas** acceptés et ne le seront jamais. Cette appli a été faite avec amour et un peu de temps libre. Nous espérons que vous l'apprécierez ! :tada:
 

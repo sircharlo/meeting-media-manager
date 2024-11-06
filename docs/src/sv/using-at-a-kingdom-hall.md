@@ -1,8 +1,8 @@
-# Använda M³ i Rikets sal
+# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
 Denna guide kommer att gå igenom processen för nedladdning och installation av **Meeting Media Manager (M³)** i Rikets sal. Följ stegen för att säkerställa en smidig installation för att hantera media.
 
-## 1. Ladda ner och installera
+## 1. Download and install {#download-and-install}
 
 1. Besök [M³ nedladdningssida](https://github.com/sircharlo/meeting-media-manager/releases/latest)
 2. Download the appropriate version for your operating system:
@@ -18,7 +18,7 @@ Denna guide kommer att gå igenom processen för nedladdning och installation av
 4. Starta M³.
 5. Gå igenom konfigurationsguiden.
 
-### Ytterligare steg för macOS användare
+### Additional steps for macOS Users {#additional-steps-for-macos-users}
 
 På grund av Apples säkerhetsåtgärder krävs ytterligare några steg för att köra M³ på moderna macOS-system.
 
@@ -45,9 +45,9 @@ Om du fortfarande inte kan starta M³ efter att du har angett de två kommandona
 
 Om du fortfarande har problem efter att ha följt alla dessa steg, vänligen [öppna en Issue på GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Vi kommer att göra vårt bästa för att hjälpa till.
 
-## 2. Konfigurationsguide
+## 2. Configuration wizard {#configuration-wizard}
 
-### Programspråk
+### App display language {#app-display-language}
 
 När du startar M³ för första gången blir du ombedd att välja ditt **visningsspråk**. Välj vilket språk du vill att M³ ska använda för sitt gränssnitt.
 
@@ -57,7 +57,7 @@ Detta behöver inte vara samma språk som det M³ kommer att ladda ner media på
 
 :::
 
-### Profiltyp
+### Profile type {#profile-type}
 
 Nästa steg är att välja en **profiltyp**. För en vanlig installation i Rikets sal, välj **vanlig**. Detta kommer att konfigurera många funktioner som ofta används för församlingsmöten.
 
@@ -69,7 +69,7 @@ Profiltypen **Annat** används sällan. **För normal användning, vänligen vä
 
 :::
 
-### Automatisk församlingssökning
+### Automatic congregation lookup {#automatic-congregation-lookup}
 
 M³ kan försöka att automatiskt hitta församlingens mötesschema, språk och namn.
 
@@ -83,11 +83,11 @@ Denna sökning använder allmänt tillgängliga data från Jehovas vittnens offi
 
 :::
 
-### Manuell inmatning av församlingsinformation
+### Manual entry of congregation information {#manual-entry-of-congregation-information}
 
 Om den automatiska sökningen inte hittade din församling kan du naturligtvis manuellt ange informationen. Guiden ger dig möjlighet att granska och/eller ange församlingens **namn**, **mötesspråk**, och **mötesdagar och tider**.
 
-### Cachning av videor från sångboken
+### Caching videos from the songbook {#caching-videos-from-the-songbook}
 
 Du kommer också att få möjlighet att **cacha alla videor från sångboken**. Det här alternativet hämtar ner alla sångboksvideor, vilket minskar den tid det tar att hämta media för möten i framtiden.
 
@@ -100,7 +100,7 @@ Om din Rikets sal har tillräckligt med lagringsutrymme rekommenderas att **akti
 
 :::
 
-### OBS Studio Integration (valfritt)
+### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
 
 Om din Rikets sal använder **OBS Studio** för att sända hybridmöten över Zoom kan M³ automatiskt integreras med det programmet. Under installationen kan du konfigurera OBS Studio genom att ange följande:
 
@@ -114,6 +114,6 @@ Om din församling regelbundet använder hybridmöten rekommenderas **varmt** at
 
 :::
 
-## 3. Njut av M³
+## 3. Enjoy using M³ {#enjoy-using-m3}
 
 När installationsguiden är klar är M³ redo att hjälpa till att hantera och presentera media för församlingens möten. Lycka till med appen! :tada:
