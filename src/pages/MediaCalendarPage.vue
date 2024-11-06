@@ -425,8 +425,9 @@
   <DragAndDropper
     v-model="dragging"
     v-model:jwpub-db="jwpubImportDb"
-    :files-loading="filesLoading"
+    :current-file="currentFile"
     :jwpub-documents="jwpubImportDocuments"
+    :total-files="totalFiles"
     @drop="dropEnd"
   />
 </template>
@@ -558,7 +559,8 @@ const {
   readdir,
 } = window.electronApi;
 
-const filesLoading = ref(-1);
+const totalFiles = ref(0);
+const currentFile = ref(0);
 
 watch(
   () => mediaPlayingUniqueId.value,
@@ -1232,10 +1234,11 @@ const addToFiles = async (
   files: { filetype?: string; path: string }[] | FileList,
 ) => {
   if (!files) return;
+  totalFiles.value = files.length;
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < files.length; i++) {
-    filesLoading.value = i / files.length;
-    let filepath = files[i]?.path;
+    const file = files[i];
+    let filepath = file?.path;
     try {
       if (!filepath) continue;
       // Check if file is remote URL; if so, download it
@@ -1335,59 +1338,43 @@ const addToFiles = async (
               );
           }
         }
-        // jwpubImportLoading.value = false;
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
-        getMediaFromJwPlaylist(
+        const additionalMedia = await getMediaFromJwPlaylist(
           filepath,
           selectedDateObject.value?.date,
           await getDatedAdditionalMediaDirectory(),
-        )
-          .then((additionalMedia) => {
-            addToAdditionMediaMap(additionalMedia);
-            additionalMedia
-              .filter(
-                (m) =>
-                  m.customDuration &&
-                  (m.customDuration.max || m.customDuration.min),
-              )
-              .forEach((m) => {
-                const { max, min } = m.customDuration as {
-                  max: number;
-                  min: number;
-                };
-                const congregation = (customDurations.value[
-                  currentCongregation.value
-                ] ??= {});
-                const dateDurations = (congregation[selectedDate.value] ??= {});
-                dateDurations[m.uniqueId] = { max, min };
-              });
-          })
-          .catch((error) => {
-            errorCatcher(error);
-          });
+        ).catch((error) => {
+          throw error;
+        });
+        addToAdditionMediaMap(additionalMedia);
+        additionalMedia
+          .filter(
+            (m) =>
+              m.customDuration &&
+              (m.customDuration.max || m.customDuration.min),
+          )
+          .forEach((m) => {
+            const { max, min } = m.customDuration ?? { max: 0, min: 0 };
+            const congregation = (customDurations.value[
+              currentCongregation.value
+            ] ??= {});
+            const dateDurations = (congregation[selectedDate.value] ??= {});
+            dateDurations[m.uniqueId] = { max, min };
       } else if (isArchive(filepath)) {
         const unzipDirectory = path.join(
           await getTempDirectory(),
           path.basename(filepath),
         );
         await fs.remove(unzipDirectory);
-        decompress(filepath, unzipDirectory)
-          .then(async () => {
-            try {
-              const files = await readdir(unzipDirectory);
-              const filePaths = files.map((file) => ({
-                path: path.join(unzipDirectory, file),
-              }));
-
-              await addToFiles(filePaths);
-              await fs.remove(unzipDirectory);
-            } catch (error) {
-              errorCatcher(error);
-            }
-          })
-          .catch((error) => {
-            errorCatcher(error);
-          });
+        await decompress(filepath, unzipDirectory).catch((error) => {
+          throw error;
+        });
+        const files = await readdir(unzipDirectory);
+        const filePaths = files.map((file) => ({
+          path: path.join(unzipDirectory, file),
+        }));
+        await addToFiles(filePaths);
+        await fs.remove(unzipDirectory);
       } else {
         createTemporaryNotification({
           caption: filepath ? path.basename(filepath) : filepath,
@@ -1405,10 +1392,9 @@ const addToFiles = async (
       });
       errorCatcher(error);
     }
-    filesLoading.value = (i + 1) / files.length;
+    currentFile.value = i + 1;
   }
-  dragging.value = false;
-  filesLoading.value = -1;
+  resetDragging();
 };
 
 const addOpeningSong = () => {
@@ -1478,5 +1464,7 @@ const resetDragging = () => {
   dragging.value = false;
   jwpubImportDb.value = '';
   jwpubImportDocuments.value = [];
+  currentFile.value = 0;
+  totalFiles.value = 0;
 };
 </script>

@@ -185,7 +185,7 @@
               </template>
               <div class="bg-semi-black row rounded-borders">
                 <q-badge
-                  :disabled="mediaPanzoom?.scale < 1.01"
+                  :disabled="mediaPanzoom?.scale < 1.01 || undefined"
                   color="transparent"
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomOut()"
@@ -194,7 +194,7 @@
                 </q-badge>
                 <q-separator class="bg-grey-8 q-my-xs" vertical />
                 <q-badge
-                  :disabled="mediaPanzoom?.scale > 4.99"
+                  :disabled="mediaPanzoom?.scale > 4.99 || undefined"
                   color="transparent"
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomIn()"

@@ -89,7 +89,7 @@
             >
             <q-btn
               v-else
-              :disable="musicStopping"
+              :disabled="musicStopping"
               class="full-width"
               color="primary"
               unelevated
