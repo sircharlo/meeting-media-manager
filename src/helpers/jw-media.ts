@@ -329,6 +329,8 @@ const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
       'SELECT * FROM Publication',
     )[0];
 
+    if (!pubQuery) return { issue: '', langwritten: '', pub: '' };
+
     const publication: PublicationFetcher = {
       issue: pubQuery.IssueTagNumber,
       langwritten: mepslangs[pubQuery.MepsLanguageIndex],
@@ -378,7 +380,7 @@ const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
           executeQuery<TableItem>(
             source.db,
             `SELECT * FROM sqlite_master WHERE type='table' AND name='${table}'`,
-          )?.map((item) => item.name).length > 0;
+          ).length > 0;
         if (!tableExists) continue;
       } catch (error) {
         errorCatcher(source.db + ' - ' + table);
@@ -453,10 +455,10 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       executeQuery<TableItem>(source.db, "PRAGMA table_info('Question')").some(
         (item) => item.name === 'TargetParagraphNumberLabel',
       ) &&
-      executeQuery<TableItemCount>(
+      !!executeQuery<TableItemCount>(
         source.db,
         'SELECT COUNT(*) FROM Question',
-      )[0].count > 0;
+      )[0]?.count;
 
     const suppressZoomExists = executeQuery<TableItem>(
       source.db,
@@ -672,11 +674,9 @@ const getWtIssue = async (
     if (weekNr === -1) {
       throw new Error('No week found in following w: ' + issueString);
     }
-    const docId = (
-      executeQuery(
-        db,
-        `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
-      ) as { DocumentId: number }[]
+    const docId = executeQuery<{ DocumentId: number }>(
+      db,
+      `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
     )[0]?.DocumentId;
     return { db, docId, issueString, publication, weekNr };
   } catch (e) {
@@ -1099,14 +1099,12 @@ const getMwMedia = async (lookupDate: Date) => {
     if (!db) return { error: true, media: [] };
 
     const docId =
-      (
-        executeQuery(
-          db,
-          `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
-            monday,
-            'YYYYMMDD',
-          )}`,
-        ) as { DocumentId: number }[]
+      executeQuery<{ DocumentId: number }>(
+        db,
+        `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
+          monday,
+          'YYYYMMDD',
+        )}`,
       )[0]?.DocumentId ?? -1;
 
     if (docId < 0)

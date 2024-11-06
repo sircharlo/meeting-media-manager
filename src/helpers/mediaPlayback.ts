@@ -191,7 +191,9 @@ const getMediaFromJwPlaylist = async (
         dbFile,
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
       );
-      if (playlistNameQuery) playlistName = playlistNameQuery[0].Name + ' - ';
+      if (playlistNameQuery.length) {
+        playlistName = playlistNameQuery[0].Name + ' - ';
+      }
     } catch (error) {
       errorCatcher(error);
     }
