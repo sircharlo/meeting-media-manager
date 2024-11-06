@@ -114,7 +114,12 @@ export function logToWindow(
   sendToWindow(win, 'log', { ctx, level, msg });
 }
 export function closeOtherWindows(source: BrowserWindow) {
-  BrowserWindow.getAllWindows().forEach((win) => {
-    if (win !== source) win.close();
-  });
+  try {
+    const windows = BrowserWindow.getAllWindows();
+    for (const win of windows) {
+      if (win !== source) win.close();
+    }
+  } catch (e) {
+    console.error(e);
+  }
 }
