@@ -7,7 +7,7 @@
       <template
         v-if="
           jwpubDocuments?.length === 0 ||
-          filesLoading > -1 ||
+          totalFiles ||
           (!!jwpubDb && jwpubLoading) ||
           !jwpubDb
         "
@@ -45,20 +45,19 @@
             class="col rounded-borders dashed-border items-center justify-center flex"
             style="height: 20vh"
           >
-            <template
-              v-if="
-                (-1 < filesLoading && filesLoading < 1) ||
-                (!!jwpubDb && jwpubLoading)
-              "
-            >
+            <template v-if="totalFiles || (!!jwpubDb && jwpubLoading)">
               <q-linear-progress
-                :value="filesLoading"
+                :indeterminate="totalFiles === 1"
+                :value="percentValue"
                 class="full-height"
                 color="primary"
               >
-                <div class="absolute-full flex flex-center">
+                <div
+                  v-if="totalFiles > 1"
+                  class="absolute-full flex flex-center"
+                >
                   <q-badge
-                    :label="(filesLoading * 100).toFixed(0) + '%'"
+                    :label="(percentValue * 100).toFixed(0) + '%'"
                     color="white"
                     text-color="primary"
                   />
@@ -155,20 +154,27 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const { openFileDialog } = window.electronApi;
 const { barStyle, thumbStyle } = useScrollbar();
 
-defineProps<{
-  filesLoading: number;
+const props = defineProps<{
+  currentFile: number;
   jwpubDocuments: DocumentItem[];
+  totalFiles: number;
 }>();
 
 const jwpubLoading = ref(false);
 
 const open = defineModel<boolean>({ required: true });
 const jwpubDb = defineModel<string>('jwpubDb', { required: true });
+
+const percentValue = computed(() => {
+  return props.currentFile && props.totalFiles
+    ? props.currentFile / props.totalFiles
+    : 0;
+});
 
 const getLocalFiles = async () => {
   openFileDialog()
