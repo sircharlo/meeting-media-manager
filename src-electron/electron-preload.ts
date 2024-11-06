@@ -53,6 +53,7 @@ const electronApi: ElectronApi = {
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   openExternal: (w) => send('openExternal', w),
   openFileDialog: (s, f) => invoke('openFileDialog', s, f),
+  openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,
   parseMediaFile,
   path,

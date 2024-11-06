@@ -351,6 +351,8 @@ const enableUpdates = async () => {
 
 const watchExternalFolder = async (folder?: string) => {
   try {
+    const currentState = useCurrentStateStore();
+    currentState.watchFolderMedia = {};
     window.electronApi.unwatchFolders();
     if (folder) window.electronApi.watchFolder(folder);
   } catch (error) {

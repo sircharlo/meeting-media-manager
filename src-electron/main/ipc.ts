@@ -46,7 +46,7 @@ function handleIpcSend(
   listener: (event: IpcMainEvent, ...args: any[]) => void,
 ) {
   ipcMain.on(channel, (e, ...args) => {
-    if (!isSelf(e.senderFrame.url)) {
+    if (e.senderFrame && !isSelf(e.senderFrame.url)) {
       logToWindow(
         mainWindow,
         `Blocked IPC send from ${e.senderFrame.url}`,
@@ -187,7 +187,7 @@ function handleIpcInvoke<T = unknown>(
   ) => Promise<T>,
 ) {
   ipcMain.handle(channel, (e, ...args) => {
-    if (!isSelf(e.senderFrame.url)) {
+    if (e.senderFrame && !isSelf(e.senderFrame.url)) {
       logToWindow(
         mainWindow,
         `Blocked IPC invoke from ${e.senderFrame.url}`,
@@ -282,6 +282,13 @@ handleIpcInvoke(
     });
   },
 );
+
+handleIpcInvoke('openFolderDialog', async () => {
+  if (!mainWindow) return;
+  return dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+  });
+});
 
 handleIpcInvoke('downloadErrorIsExpected', async () => {
   try {

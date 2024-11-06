@@ -125,7 +125,7 @@ export const settingsDefinitions: SettingsItems = {
     depends: ['enableFolderWatcher', 'enableMediaDisplayButton'],
     group: 'mediaRetrievalPlayback',
     subgroup: 'folderWatcher',
-    type: 'text',
+    type: 'path',
   },
 
   // Integrations

@@ -322,9 +322,14 @@ watch(
 );
 
 watchImmediate(
-  () => currentSettings.value?.folderToWatch,
-  (newFolderToWatch) => {
-    watchExternalFolder(newFolderToWatch);
+  () => [
+    currentSettings.value?.folderToWatch,
+    currentSettings.value?.enableFolderWatcher,
+  ],
+  ([newFolderToWatch, newEnableFolderWatcher]) => {
+    watchExternalFolder(
+      newEnableFolderWatcher ? (newFolderToWatch as string) : undefined,
+    );
   },
 );
 

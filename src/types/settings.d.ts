@@ -49,6 +49,7 @@ export interface SettingsValues {
 export type SettingsItemType =
   | 'date'
   | 'list'
+  | 'path'
   | 'shortcut'
   | 'slider'
   | 'text'
