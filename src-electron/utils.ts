@@ -46,7 +46,8 @@ export function isJwDomain(url: string): boolean {
  * @param url The url to check
  * @returns Wether the url is the same as the current app url
  */
-export function isSelf(url: string): boolean {
+export function isSelf(url?: string): boolean {
+  if (!url) return false;
   const parsedUrl = new URL(url);
   const parsedAppUrl = new URL(process.env.APP_URL);
 
