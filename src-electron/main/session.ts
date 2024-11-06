@@ -39,7 +39,7 @@ export const initSessionListeners = () => {
           'default-src': "'self'",
           'font-src': "'self' https: file: data:",
           'frame-src': "'self' https:",
-          'img-src': "'self' https: file: data:",
+          'img-src': "'self' https: file: data: blob:",
           'media-src': "'self' https: file: data:",
           'object-src': "'none'",
           'script-src': "'self' https: 'unsafe-inline' 'unsafe-eval'",
