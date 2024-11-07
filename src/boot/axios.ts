@@ -1,4 +1,4 @@
-import type { JwLanguage } from 'src/types';
+import type { Announcement, JwLanguage } from 'src/types';
 
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -16,6 +16,14 @@ const get = async <T>(
     }
   }
   return null;
+};
+
+const getAnnouncements = async (): Promise<Announcement[]> => {
+  if (!process.env.repository) return [];
+  const req = await get<Announcement[]>(
+    `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/announcements.json`,
+  );
+  return req || [];
 };
 
 const getLanguages = async (baseUrl?: string): Promise<JwLanguage[]> => {
@@ -50,4 +58,10 @@ const getYeartext = async (lang: string, baseUrl: string, year?: number) => {
   return await get<{ content: string }>(urlWithParamsToString(url, params));
 };
 
-export { get, getLanguages, getYeartext, urlWithParamsToString };
+export {
+  get,
+  getAnnouncements,
+  getLanguages,
+  getYeartext,
+  urlWithParamsToString,
+};

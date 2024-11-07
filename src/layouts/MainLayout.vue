@@ -13,6 +13,7 @@
       style="flex: 1 1 1px"
     >
       <q-page-container class="main-bg">
+        <AnnouncementBanner />
         <router-view />
       </q-page-container>
     </q-scroll-area>
@@ -49,6 +50,7 @@ import { localeOptions } from 'src/i18n';
 // Components
 import HeaderBase from 'src/components/header/HeaderBase.vue';
 import ActionIsland from 'src/components/ui/ActionIsland.vue';
+import AnnouncementBanner from 'src/components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'src/components/ui/NavDrawer.vue';
 import { useScrollbar } from 'src/composables/useScrollbar';
 // Helpers

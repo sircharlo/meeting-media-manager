@@ -4,3 +4,16 @@ export interface UrlVariables {
   mediator: string;
   pubMedia: string;
 }
+
+export type AnnouncementAction = 'docs' | 'update';
+
+export interface Announcement {
+  actions?: AnnouncementAction[];
+  id: string;
+  maxVersion?: string;
+  message: string;
+  minVersion?: string;
+  persistent?: boolean;
+  platform?: ('linux' | 'mac' | 'win')[];
+  type?: 'error' | 'info' | 'warning';
+}
