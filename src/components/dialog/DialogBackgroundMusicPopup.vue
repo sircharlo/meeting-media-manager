@@ -10,17 +10,17 @@
     transition-show="jump-up"
   >
     <q-card flat>
-      <q-card-section>
-        <div class="card-title">
+      <q-card-section class="q-px-none">
+        <div class="card-title q-px-md">
           {{ $t('setupWizard.backgroundMusic') }}
         </div>
         <q-slide-transition>
           <div v-if="musicPlaying">
             <div>
-              <p class="card-section-title text-dark-grey">
+              <p class="card-section-title text-dark-grey q-px-md">
                 {{ $t('current-song') }}
               </p>
-              <div class="row q-my-sm">
+              <div class="row q-my-sm q-px-md">
                 <div class="col text-weight-medium">
                   {{ musicPlayingTitle }}
                 </div>
@@ -30,7 +30,7 @@
               </div>
               <q-separator class="bg-accent-200 q-mb-md" />
               <div>
-                <p class="card-section-title text-dark-grey">
+                <p class="card-section-title text-dark-grey q-px-md">
                   {{ $t('upcoming-songs') }}
                 </p>
                 <q-scroll-area
@@ -39,7 +39,7 @@
                   style="height: 100px; max-width: 100%"
                 >
                   <template v-for="(song, i) in songList" :key="i">
-                    <div class="row q-my-sm">
+                    <div class="row q-my-sm q-px-md">
                       <div class="col text-weight-medium">
                         {{ song.title }}
                       </div>
@@ -54,7 +54,7 @@
             <q-separator class="bg-accent-200 q-mb-md" />
           </div>
         </q-slide-transition>
-        <div class="row items-center">
+        <div class="row items-center q-px-md">
           <div class="col">
             <div class="row text-subtitle1 text-weight-medium">
               {{
