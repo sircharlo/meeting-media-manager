@@ -24,7 +24,6 @@ export const useCongregationSettingsStore = defineStore(
         delete this.congregations[id];
       },
       dismissAnnouncement(congId: string, id: string) {
-        console.log('dismissAnnouncement', congId, id);
         if (!id || !congId) return;
         if (!this.announcements[congId]) {
           this.announcements[congId] = [];
