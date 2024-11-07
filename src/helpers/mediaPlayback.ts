@@ -67,11 +67,7 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
 };
 
 const isImage = (filepath: string) => {
-  return isFileOfType(filepath, [
-    ...PURE_IMG_EXTENSIONS,
-    ...HEIC_EXTENSIONS,
-    ...SVG_EXTENSIONS,
-  ]);
+  return isFileOfType(filepath, PURE_IMG_EXTENSIONS);
 };
 
 const isHeic = (filepath: string) => {

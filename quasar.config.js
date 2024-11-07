@@ -175,6 +175,7 @@ module.exports = configure(function (ctx) {
           'axios',
           'better-sqlite3',
           'chokidar',
+          'decompress',
           'countries-and-timezones',
           'electron-updater',
           'fs-extra',

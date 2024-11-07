@@ -861,13 +861,14 @@ const watchedItemMapper: (
 
   const fileUrl = getFileUrl(watchedItemPath);
 
-  const video = isVideo(watchedItemPath);
-  const audio = isAudio(watchedItemPath);
-  const image = isImage(watchedItemPath);
+  const convertedPath = await convertImageIfNeeded(watchedItemPath);
+  const video = isVideo(convertedPath);
+  const audio = isAudio(convertedPath);
+  const image = isImage(convertedPath);
 
   const duration =
-    (video || audio) && (await fs.exists(watchedItemPath))
-      ? await getDurationFromMediaPath(watchedItemPath)
+    (video || audio) && (await fs.exists(convertedPath))
+      ? await getDurationFromMediaPath(convertedPath)
       : 0;
 
   const uniqueId = sanitizeId(
@@ -881,7 +882,7 @@ const watchedItemMapper: (
       parentDate
     ]?.[uniqueId] || 'additional';
 
-  const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
+  const thumbnailUrl = await getThumbnailUrl(convertedPath);
 
   return {
     duration,
