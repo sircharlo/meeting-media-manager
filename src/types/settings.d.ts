@@ -1,7 +1,7 @@
 import type { MessageSchema } from 'src/boot/i18n';
 import type { RESOLUTIONS } from 'src/constants/settings';
 
-import type { JwLangCode } from './lang';
+import type { JwLangCode } from './jw/lang';
 
 export type MaxRes = (typeof RESOLUTIONS)[number];
 
