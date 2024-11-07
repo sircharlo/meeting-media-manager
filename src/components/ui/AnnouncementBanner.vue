@@ -19,6 +19,12 @@
         @click="openExternal('docs')"
       />
       <q-btn
+        v-if="announcement.actions?.includes('repo')"
+        :label="t('github-repo')"
+        flat
+        @click="openExternal('repo')"
+      />
+      <q-btn
         v-if="announcement.actions?.includes('update')"
         :label="t('update')"
         flat

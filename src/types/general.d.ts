@@ -5,7 +5,7 @@ export interface UrlVariables {
   pubMedia: string;
 }
 
-export type AnnouncementAction = 'docs' | 'update';
+export type AnnouncementAction = 'docs' | 'repo' | 'update';
 
 export interface Announcement {
   actions?: AnnouncementAction[];
