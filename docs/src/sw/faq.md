@@ -1,6 +1,6 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Maswali yanayoulizwa mara kwa mara {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Je, programu hii inategemea tovuti, vyanzo au "wasimamizi" wa nje ili kupakua machapisho, midia ya mkutano au maudhui mengine? {#external-dependencies}
 
 **Hapana.** Mfumo huu hufanya kazi kama tu JW Library. Inapakua machapisho, midia na maudhui mengine moja kwa moja kutoka kwa tovuti rasmi ya Mashahidi wa Yehova na mtandao wake wa utoaji midia. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
 
