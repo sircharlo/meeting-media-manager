@@ -70,8 +70,8 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       hideMediaLogo: oldPrefs.media?.hideMediaLogo || false,
       includePrinted: oldPrefs.media?.includePrinted || true,
       lang: oldPrefs.media?.lang || '',
-      langFallback: oldPrefs.media?.langFallback || '',
-      langSubtitles: oldPrefs.media?.langSubs || '',
+      langFallback: oldPrefs.media?.langFallback || null,
+      langSubtitles: oldPrefs.media?.langSubs || null,
       localAppLang:
         (oldPrefs.app?.localAppLang?.includes('-')
           ? oldPrefs.app?.localAppLang.split('-')[0]

@@ -1,6 +1,6 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Kuhusu Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-## What is this app? {#what-is-this-app}
+## Programu hii ni nini? {#what-is-this-app}
 
 **Meeting Media Manager**, au **M³** kwa ufupi, ni mfumo kwa programu za Windows, macOS na Linux, ambayo hupakua kiotomatiki picha na video ambazo zitatumika kwenye mikutano ya kutaniko ya Mashahidi wa Yehova, kwa lugha yoyote kwenye tovuti rasmi ya Mashahidi wa Yehova.
 

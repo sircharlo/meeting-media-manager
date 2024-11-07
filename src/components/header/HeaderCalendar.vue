@@ -194,8 +194,7 @@ import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
 import { computed, ref } from 'vue';
-// Globals
-import { get } from 'src/boot/axios';
+
 // Composables
 import { useLocale } from 'src/composables/useLocale';
 
@@ -205,6 +204,7 @@ import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vu
 import SongPicker from 'src/components/media/SongPicker.vue';
 
 // Helpers
+import { fetch } from 'src/helpers/api';
 import { getLocalDate } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
@@ -362,7 +362,7 @@ const getJwVideos = async () => {
     if (remoteVideosLoadingProgress.value < 1) {
       const getSubcategories = async (category: string) => {
         if (!category) return null;
-        return await get<JwVideoCategory>(
+        return await fetch<JwVideoCategory>(
           `${urlVariables.value.mediator}/v1/categories/${
             currentSettings.value?.lang
           }/${category}?detailed=1&mediaLimit=0&clientType=www`,
@@ -387,7 +387,7 @@ const getJwVideos = async () => {
       let index = 0;
       for (const category of subcategories) {
         if (!category?.key) continue;
-        const request = await get<JwVideoCategory>(
+        const request = await fetch<JwVideoCategory>(
           `${urlVariables.value.mediator}/v1/categories/${
             currentSettings.value?.lang
           }/${category.key}?detailed=0&clientType=www`,

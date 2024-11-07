@@ -30,23 +30,23 @@
               </template>
               <template
                 v-else-if="
-                  parseInt(congregations[id]?.mwDay) >= 0 &&
-                  parseInt(congregations[id]?.weDay) >= 0
+                  parseInt(congregations[id]?.mwDay ?? '') >= 0 &&
+                  parseInt(congregations[id]?.weDay ?? '') >= 0
                 "
               >
                 {{
                   getDateLocale(congregations[id].localAppLang).days[
-                    parseInt(congregations[id]?.mwDay) === 6
+                    parseInt(congregations[id]?.mwDay ?? '') === 6
                       ? 0
-                      : parseInt(congregations[id]?.mwDay) + 1
+                      : parseInt(congregations[id]?.mwDay ?? '') + 1
                   ]
                 }}
                 {{ congregations[id]?.mwStartTime }} |
                 {{
                   getDateLocale(congregations[id].localAppLang).days[
-                    parseInt(congregations[id]?.weDay) === 6
+                    parseInt(congregations[id]?.weDay ?? '') === 6
                       ? 0
-                      : parseInt(congregations[id]?.weDay) + 1
+                      : parseInt(congregations[id]?.weDay ?? '') + 1
                   ]
                 }}
                 {{ congregations[id]?.weStartTime }}

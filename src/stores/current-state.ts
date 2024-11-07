@@ -48,7 +48,7 @@ interface Store {
 }
 
 interface Songbook {
-  fileformat: 'mp3' | 'mp4';
+  fileformat: 'MP3' | 'MP4';
   pub: 'sjj' | 'sjjm';
   signLanguage: boolean;
 }
@@ -131,13 +131,13 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     currentSongbook(): Songbook {
       const notSignLanguageSongbook: Songbook = {
-        fileformat: 'mp3',
+        fileformat: 'MP3',
         pub: 'sjjm',
         signLanguage: false,
       };
       try {
         const signLanguageSongbook: Songbook = {
-          fileformat: 'mp4',
+          fileformat: 'MP4',
           pub: 'sjj',
           signLanguage: true,
         };

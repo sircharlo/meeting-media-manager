@@ -1,3 +1,5 @@
+import type { JwLangCode } from './lang';
+
 export interface MediaLink {
   bitRate: number;
   booknum: number;
@@ -31,8 +33,8 @@ export interface MediaLink {
       mepsParagraphId: number;
       startTime: string;
     }[];
-    mepsLanguageSpoken: string;
-    mepsLanguageWritten: string;
+    mepsLanguageSpoken: JwLangCode;
+    mepsLanguageWritten: JwLangCode;
     type: string;
   };
   mimetype: string;
@@ -70,7 +72,7 @@ export interface MediaItemsMediatorFile {
 }
 
 export interface MediaItemsMediatorItem {
-  availableLanguages: string[];
+  availableLanguages: JwLangCode[];
   description: string;
   duration: number;
   durationFormattedHHMM: string;
@@ -93,20 +95,33 @@ export interface MediaItemsMediator {
   media: MediaItemsMediatorItem[];
 }
 
+export interface PublicationFiles {
+  BRL?: MediaItemsMediatorFile[] | MediaLink[];
+  DAISY?: MediaItemsMediatorFile[] | MediaLink[];
+  EPUB?: MediaItemsMediatorFile[] | MediaLink[];
+  JWPUB?: MediaItemsMediatorFile[] | MediaLink[];
+  MP3?: MediaItemsMediatorFile[] | MediaLink[];
+  MP4?: MediaItemsMediatorFile[] | MediaLink[];
+  PDF?: MediaItemsMediatorFile[] | MediaLink[];
+  RTF?: MediaItemsMediatorFile[] | MediaLink[];
+}
+
 export interface Publication {
   booknum: null | number;
   fileformat: string[];
-  files: Record<string, Record<string, MediaItemsMediatorFile[] | MediaLink[]>>;
+  files: Partial<Record<JwLangCode, PublicationFiles>>;
   formattedDate: string;
   issue: string;
-  languages: Record<
-    string,
-    {
-      direction: string;
-      locale: string;
-      name: string;
-      script: string;
-    }
+  languages: Partial<
+    Record<
+      JwLangCode,
+      {
+        direction: 'ltr' | 'rtl';
+        locale: string;
+        name: string;
+        script: string;
+      }
+    >
   >;
   parentPubName: string;
   pub: string;
@@ -122,9 +137,9 @@ export interface Publication {
 
 export interface PublicationFetcher {
   docid?: null | number | undefined;
-  fileformat?: string;
+  fileformat?: keyof PublicationFiles;
   issue?: number | string;
-  langwritten: string;
+  langwritten: '' | JwLangCode;
   maxTrack?: number;
   pub?: null | string | undefined;
   track?: number;

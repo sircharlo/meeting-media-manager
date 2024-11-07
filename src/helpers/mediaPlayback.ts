@@ -325,10 +325,7 @@ const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;
   try {
     const buffer = await fs.readFile(filepath);
-    const output = await convertHeic({
-      buffer,
-      format: 'JPEG',
-    });
+    const output = await convertHeic({ buffer, format: 'JPEG' });
     const existingPath = path.parse(filepath);
     const newPath = `${existingPath.dir}/${existingPath.name}.jpg`;
     await fs.writeFile(newPath, Buffer.from(output));
@@ -395,23 +392,17 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
 };
 
 const convertImageIfNeeded = async (filepath: string) => {
-  console.log('isconvertImageIfNeededPdf', {
-    filepath,
-    isPdf: isPdf(filepath),
-  });
   if (isHeic(filepath)) {
     return await convertHeicToJpg(filepath);
   } else if (isSvg(filepath)) {
     return await convertSvgToJpg(filepath);
   } else if (isPdf(filepath)) {
     const nrOfPages = await getNrOfPdfPages(filepath);
-    console.log('nrOfPages', nrOfPages);
     if (nrOfPages === 1) {
       const converted = await convertPdfToImages(
         filepath,
         await getTempDirectory(),
       );
-      console.log('converted', converted);
       return converted[0] || filepath;
     }
   }

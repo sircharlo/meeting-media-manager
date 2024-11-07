@@ -119,7 +119,7 @@ export type ElectronIpcListenKey =
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 
-export type ExternalWebsite = 'docs' | 'repo';
+export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
 export type FileDialogFilter =
   | 'image'

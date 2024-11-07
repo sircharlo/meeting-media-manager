@@ -1,6 +1,6 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Maswali yanayoulizwa mara kwa mara {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Je, programu hii inategemea tovuti, vyanzo au "wasimamizi" wa nje ili kupakua machapisho, midia ya mkutano au maudhui mengine? {#external-dependencies}
 
 **Hapana.** Mfumo huu hufanya kazi kama tu JW Library. Inapakua machapisho, midia na maudhui mengine moja kwa moja kutoka kwa tovuti rasmi ya Mashahidi wa Yehova na mtandao wake wa utoaji midia. Programu huamua kiotomatiki kinachohitaji kupakuliwa na wakati midia iliyopakuliwa hapo awali si ya kisasa na inapaswa kupakuliwa tena.
 
@@ -12,7 +12,7 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 ## :thinking: Je, mfumo huu unakiuka sheria za utumiaji za tovuti rasmi ya Mashahidi wa Yehova? {#terms-of-use}
 
-**Hapana.** [Sheria na Masharti](https://www.jw.org/finder?docid=1011511\&prefer=content) ya tovuti rasmi ya Mashahidi wa Yehova huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
+**Hapana.** [Sheria na Masharti](https://www.jw.org/finder?docid=1011511&prefer=content) ya tovuti rasmi ya Mashahidi wa Yehova huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
 
 > Haupaswi:
 >

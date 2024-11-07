@@ -1,3 +1,5 @@
+import type { JwLangCode } from './lang';
+
 export interface DatedTextItem {
   BeginParagraphOrdinal: number;
   Caption: string;
@@ -49,7 +51,7 @@ export interface JwPlaylistItem {
 }
 
 export interface MultimediaItem {
-  AlternativeLanguage?: string;
+  AlternativeLanguage?: JwLangCode;
   BeginParagraphOrdinal: number;
   BeginPosition?: number;
   Caption: string;
@@ -122,7 +124,7 @@ export interface MultimediaExtractItem {
   EndParagraphOrdinal: number;
   FilePath?: string;
   IssueTagNumber: string;
-  Lang: string;
+  Lang: JwLangCode;
   Link: string;
   RefBeginParagraphOrdinal: null | number;
   RefEndParagraphOrdinal: null | number;

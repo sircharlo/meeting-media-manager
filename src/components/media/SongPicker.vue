@@ -132,7 +132,8 @@ const addSong = async (songTrack: number) => {
         getJwMediaInfo(songTrackItem),
       ]);
       downloadAdditionalRemoteVideo(
-        songTrackFiles?.files[currentSettings.value?.lang || 'E']['MP4'] || [],
+        songTrackFiles?.files[currentSettings.value?.lang || 'E']?.['MP4'] ||
+          [],
         thumbnail,
         songTrack,
         title.replace(/^\d+\.\s*/, ''),
