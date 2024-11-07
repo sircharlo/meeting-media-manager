@@ -1,4 +1,4 @@
-import type { Announcement, JwLanguageResult } from 'src/types';
+import type { Announcement, JwLanguageResult, Release } from 'src/types';
 
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -65,7 +65,7 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
 
 export const fetchLatestVersion = async () => {
   if (!process.env.repository) return;
-  const url = `${process.env.repository}/releases/latest`;
-  const result = await fetch(url);
-  console.log('result', result);
+  const url = `${process.env.repository.replace('github.com', 'api.github.com/repos')}/releases`;
+  const result = await fetch<Release[]>(url, { params: { per_page: 1 } });
+  return result?.[0]?.tag_name.slice(1);
 };

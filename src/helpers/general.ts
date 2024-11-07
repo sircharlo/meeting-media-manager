@@ -1,4 +1,4 @@
-const parseVersion = (version: string) => {
+export const parseVersion = (version: string) => {
   const [major, minor, patch] = version.split('.').map((v) => parseInt(v, 10));
   return { major, minor, patch };
 };

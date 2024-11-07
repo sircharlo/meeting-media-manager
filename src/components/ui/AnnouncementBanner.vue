@@ -37,8 +37,8 @@
 import type { Announcement } from 'src/types';
 
 import { useQuasar } from 'quasar';
-import { fetchAnnouncements } from 'src/helpers/api';
-import { isVersionValid } from 'src/helpers/general';
+import { fetchAnnouncements, fetchLatestVersion } from 'src/helpers/api';
+import { isVersionValid, parseVersion } from 'src/helpers/general';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, onMounted, ref } from 'vue';
@@ -59,7 +59,7 @@ const loadAppVersion = async () => {
 };
 
 const loadLatestVersion = async () => {
-  latestVersion.value = '';
+  latestVersion.value = (await fetchLatestVersion()) || '';
 };
 
 onMounted(() => {
@@ -95,28 +95,45 @@ const loadAnnouncements = async () => {
   announcements.value = await fetchAnnouncements();
 };
 
+const newUpdateAnnouncement = computed((): Announcement => {
+  const { major, minor, patch } = parseVersion(latestVersion.value || '0.0.0');
+  return {
+    actions: ['update'],
+    id: 'new-update',
+    maxVersion: `${major}.${patch ? minor : minor - 1}.${patch ? patch - 1 : 99}`,
+    message: 'update-available',
+    persistent: true,
+    platform: ['mac'],
+  };
+});
+
 const activeAnnouncements = computed(() => {
-  return announcements.value.filter((a) => {
-    if (!currentStateStore.currentCongregation) return false;
-    if (a.persistent && dismissed.value.has(a.id)) return false;
-    if (a.platform && !a.platform.some((p) => $q.platform.is.platform === p)) {
-      return false;
-    }
+  return announcements.value
+    .concat([newUpdateAnnouncement.value])
+    .filter((a) => {
+      if (!currentStateStore.currentCongregation) return false;
+      if (a.persistent && dismissed.value.has(a.id)) return false;
+      if (
+        a.platform &&
+        !a.platform.some((p) => $q.platform.is.platform === p)
+      ) {
+        return false;
+      }
 
-    if (
-      !a.persistent &&
-      congregationStore.announcements[
-        currentStateStore.currentCongregation
-      ]?.includes(a.id)
-    ) {
-      return false;
-    }
+      if (
+        !a.persistent &&
+        congregationStore.announcements[
+          currentStateStore.currentCongregation
+        ]?.includes(a.id)
+      ) {
+        return false;
+      }
 
-    if (version.value) {
-      return isVersionValid(version.value, a.minVersion, a.maxVersion);
-    } else {
-      return true;
-    }
-  });
+      if (version.value) {
+        return isVersionValid(version.value, a.minVersion, a.maxVersion);
+      } else {
+        return true;
+      }
+    });
 });
 </script>

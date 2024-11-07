@@ -3,6 +3,7 @@ export * from './dates';
 export * from './electron';
 export * from './fs';
 export * from './general';
+export * from './github';
 export * from './lang';
 export * from './media';
 export * from './panzoom';
