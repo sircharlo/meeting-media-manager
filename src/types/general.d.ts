@@ -4,3 +4,8 @@ export interface UrlVariables {
   mediator: string;
   pubMedia: string;
 }
+
+export interface CacheList<T = unknown> {
+  list: T[];
+  updated: Date;
+}
