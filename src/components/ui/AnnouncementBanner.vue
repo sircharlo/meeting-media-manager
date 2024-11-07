@@ -37,7 +37,7 @@
 import type { Announcement } from 'src/types';
 
 import { useQuasar } from 'quasar';
-import { getAnnouncements } from 'src/boot/axios';
+import { fetchAnnouncements } from 'src/helpers/api';
 import { isVersionValid } from 'src/helpers/general';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -86,7 +86,7 @@ const bgColor = (type?: 'error' | 'info' | 'warning') => {
 const announcements = ref<Announcement[]>([]);
 
 const loadAnnouncements = async () => {
-  announcements.value = await getAnnouncements();
+  announcements.value = await fetchAnnouncements();
 };
 
 const activeAnnouncements = computed(() => {

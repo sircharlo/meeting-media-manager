@@ -1,5 +1,14 @@
 import type { SettingsGroups, SettingsItems, SettingsValues } from 'src/types';
 
+// Enum Types
+export const RESOLUTIONS = [
+  '240p',
+  '360p',
+  '480p',
+  '720p',
+  //'1080p'
+] as const;
+
 /* eslint-disable perfectionist/sort-objects */
 export const settingsGroups: SettingsGroups = {
   app: {
@@ -281,8 +290,8 @@ export const defaultSettings: SettingsValues = {
   autoStartAtLogin: false,
   autoStartMusic: true,
   baseUrl: 'jw.org',
-  congregationName: '',
-  coWeek: '',
+  congregationName: null,
+  coWeek: null,
   darkMode: 'auto',
   disableMediaFetching: false,
   enableExtraCache: false,
@@ -295,26 +304,26 @@ export const defaultSettings: SettingsValues = {
   hideMediaLogo: false,
   includePrinted: true,
   lang: 'E',
-  langFallback: '',
-  langSubtitles: '',
+  langFallback: null,
+  langSubtitles: null,
   localAppLang: 'en',
   maxRes: '720p',
   musicVolume: 100,
-  mwDay: '',
-  mwStartTime: '',
-  obsCameraScene: '',
+  mwDay: null,
+  mwStartTime: null,
+  obsCameraScene: null,
   obsEnable: false,
-  obsImageScene: '',
-  obsMediaScene: '',
-  obsPassword: '',
-  obsPort: '',
+  obsImageScene: null,
+  obsMediaScene: null,
+  obsPassword: null,
+  obsPort: null,
   obsQuickToggle: false,
-  shortcutMediaNext: '',
-  shortcutMediaPauseResume: '',
-  shortcutMediaPrevious: '',
-  shortcutMediaStop: '',
-  shortcutMediaWindow: '',
-  shortcutMusic: '',
-  weDay: '',
-  weStartTime: '',
+  shortcutMediaNext: null,
+  shortcutMediaPauseResume: null,
+  shortcutMediaPrevious: null,
+  shortcutMediaStop: null,
+  shortcutMediaWindow: null,
+  shortcutMusic: null,
+  weDay: null,
+  weStartTime: null,
 };

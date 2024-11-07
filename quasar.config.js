@@ -25,7 +25,7 @@ module.exports = configure(function (ctx) {
     animations: ['fadeIn', 'fadeOut'],
 
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['sentry', 'i18n', 'axios', 'globals'],
+    boot: ['sentry', 'i18n', 'globals'],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
@@ -175,6 +175,7 @@ module.exports = configure(function (ctx) {
           '@numairawan/video-duration',
           '@sentry/electron',
           'adm-zip',
+          'axios',
           'better-sqlite3',
           'countries-and-timezones',
           'electron-updater',

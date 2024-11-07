@@ -28,6 +28,7 @@ import type { SettingsItemRule } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { RESOLUTIONS } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { configuredScenesAreAllUUIDs } from 'src/helpers/obs';
 import { getRules } from 'src/helpers/settings';
@@ -127,12 +128,7 @@ const listOptions = computed(() => {
         { label: t('light'), value: false },
       ];
     } else if (props.list === 'resolutions') {
-      return [
-        { label: '240p', value: '240p' },
-        { label: '360p', value: '360p' },
-        { label: '480p', value: '480p' },
-        { label: '720p', value: '720p' },
-      ];
+      return RESOLUTIONS.map((r) => ({ label: r, value: r }));
     } else if (props.list === 'days') {
       return Array.from({ length: 7 }, (_, i) => ({
         label: dateLocale.value.days[i === 6 ? 0 : i + 1],

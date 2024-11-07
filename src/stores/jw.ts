@@ -1,16 +1,18 @@
 import type {
   DateInfo,
   DynamicMediaObject,
+  JwLangCode,
   JwLanguage,
   MediaLink,
   PublicationFetcher,
+  PublicationFiles,
   UrlVariables,
 } from 'src/types';
 
-import { getLanguages, getYeartext } from 'boot/axios';
 import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
+import { fetchJwLanguages, fetchYeartext } from 'src/helpers/api';
 import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
@@ -40,11 +42,11 @@ interface Store {
     Record<string, Record<string, { max: number; min: number }>>
   >;
   jwLanguages: { list: JwLanguage[]; updated: Date };
-  jwSongs: Record<string, { list: MediaLink[]; updated: Date }>;
+  jwSongs: Partial<Record<JwLangCode, { list: MediaLink[]; updated: Date }>>;
   lookupPeriod: Record<string, DateInfo[]>;
   mediaSort: Record<string, Record<string, string[]>>;
   urlVariables: UrlVariables;
-  yeartexts: Record<number, Record<string, string>>;
+  yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -171,10 +173,10 @@ export const useJwStore = defineStore('jw-store', {
           'months',
         );
         if (monthsSinceUpdated > 3 || !this.jwLanguages?.list?.length) {
-          this.jwLanguages = {
-            list: await getLanguages(this.urlVariables.base),
-            updated: now,
-          };
+          const result = await fetchJwLanguages(this.urlVariables.base);
+          if (result) {
+            this.jwLanguages = { list: result, updated: now };
+          }
         }
       } catch (e) {
         errorCatcher(e);
@@ -190,7 +192,8 @@ export const useJwStore = defineStore('jw-store', {
           errorCatcher('No current settings or songbook defined');
           return;
         }
-        for (const fileformat of ['MP4', 'MP3']) {
+        const formats: (keyof PublicationFiles)[] = ['MP4', 'MP3'];
+        for (const fileformat of formats) {
           try {
             const langwritten = currentState.currentSettings.lang;
             this.jwSongs[langwritten] ??= { list: [], updated: oldDate };
@@ -215,9 +218,9 @@ export const useJwStore = defineStore('jw-store', {
                 continue;
               }
 
-              const mediaItemLinks = pubMediaLinks.files[langwritten][
-                fileformat
-              ]
+              const mediaItemLinks = (
+                pubMediaLinks.files[langwritten]?.[fileformat] || []
+              )
                 .filter(isMediaLink)
                 .filter((mediaLink) => mediaLink.track < MAX_SONGS);
               const filteredMediaItemLinks = mediaItemLinks.reduce<MediaLink[]>(
@@ -247,7 +250,7 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(error);
       }
     },
-    async updateYeartext(lang?: string) {
+    async updateYeartext(lang?: JwLangCode) {
       try {
         const currentState = useCurrentStateStore();
         const currentLang = currentState.currentSettings?.lang || lang;
@@ -255,20 +258,16 @@ export const useJwStore = defineStore('jw-store', {
         const currentYear = new Date().getFullYear();
         if (!this.yeartexts[currentYear]) this.yeartexts[currentYear] = {};
         if (!this.yeartexts[currentYear]?.[currentLang]) {
-          const yeartextRequest = await getYeartext(
+          const yeartext = await fetchYeartext(
             currentLang,
             this.urlVariables.base,
-            currentYear,
           );
-          if (yeartextRequest?.content) {
+          if (yeartext) {
             const { default: sanitizeHtml } = await import('sanitize-html');
-            this.yeartexts[currentYear][currentLang] = sanitizeHtml(
-              yeartextRequest.content,
-              {
-                allowedAttributes: { p: ['class'] },
-                allowedTags: ['b', 'i', 'em', 'strong', 'p'],
-              },
-            );
+            this.yeartexts[currentYear][currentLang] = sanitizeHtml(yeartext, {
+              allowedAttributes: { p: ['class'] },
+              allowedTags: ['b', 'i', 'em', 'strong', 'p'],
+            });
           }
         }
       } catch (error) {
