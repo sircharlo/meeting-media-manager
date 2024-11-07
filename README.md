@@ -53,6 +53,19 @@ In addition, M³ itself has been translated into several languages by many volun
 
 Check out our [documentation website](https://sircharlo.github.io/meeting-media-manager/) for help, guides and FAQs.
 
+## Additional steps for macOS users to open the app without errors
+
+If M³ won’t open and shows a message like _“The app is damaged and can't be opened”_ or _“The app is damaged and can't be opened. You should move it to the Trash”_ try these commands in Terminal (adjust the path as needed):
+
+```bash
+codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
+sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
+```
+
+If issues persist, go to **System Settings → Privacy & Security**, find M³, and select **Open Anyway**.
+
+For more details, please refer to our [documentation website](https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#additional-steps-for-macos-users).
+
 ## Does this app go against the Terms of Use of the official website of Jehovah's Witnesses?
 
 **No.** Our use complies with the [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses, which explicitly permit this type of usage. Here’s the relevant excerpt from those terms (emphasis added):
@@ -62,4 +75,4 @@ Check out our [documentation website](https://sircharlo.github.io/meeting-media-
 
 ## Want to help improve M³?
 
-We'd love that! Please [read how to help us](https://github.com/sircharlo/meeting-media-manager/discussions/2771) in the corresponding discussion.
+We'd love that! Please read [how to help us](https://github.com/sircharlo/meeting-media-manager/discussions/2771) in the corresponding discussion.
