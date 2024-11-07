@@ -1,5 +1,6 @@
 <template>
   <q-btn
+    :label="model || t('choose-a-folder')"
     :no-caps="!!model"
     color="primary"
     hide-bottom-space
@@ -7,11 +8,7 @@
     outline
     style="max-width: 240px"
     @click="showFolderPicker"
-  >
-    <span class="ellipsis">
-      {{ model || t('choose-a-folder') }}
-    </span>
-  </q-btn>
+  />
 </template>
 
 <script setup lang="ts">
