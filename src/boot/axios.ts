@@ -23,7 +23,7 @@ const getAnnouncements = async (): Promise<Announcement[]> => {
   const req = await get<Announcement[]>(
     `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/announcements.json`,
   );
-  return req || [];
+  return req?.filter((a) => !!a.id && !!a.message) || [];
 };
 
 const getLanguages = async (baseUrl?: string): Promise<JwLanguage[]> => {

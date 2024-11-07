@@ -1,5 +1,6 @@
 [
   {
+    "explain": "This is an example announcement that won't ever be shown because of the maxVersion value. The *Explain properties are just for this example. To use the default value, either don't specify the property or set it to null",
     "id": "a-unique-id",
     "idExplain": "A unique identifier for the announcement (required).",
     "message": "This is an announcement message",
