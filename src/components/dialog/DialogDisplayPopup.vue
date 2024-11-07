@@ -223,8 +223,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import type { Display } from 'src/types';
-import type { MultimediaItem } from 'src/types/sqlite';
+import type { Display, MultimediaItem } from 'src/types';
 
 import {
   useBroadcastChannel,
