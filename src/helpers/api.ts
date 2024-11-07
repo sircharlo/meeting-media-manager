@@ -63,7 +63,7 @@ export const fetchYeartext = async (wtlocale: JwLangCode, base?: string) => {
 
 export const fetchAnnouncements = async (): Promise<Announcement[]> => {
   if (!process.env.repository) return [];
-  const result = await fetch<Announcement[]>(
+  const result = await fetchJson<Announcement[]>(
     `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/announcements.json`,
   );
   return result?.filter((a) => !!a.id && !!a.message) || [];
@@ -72,6 +72,9 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
 export const fetchLatestVersion = async () => {
   if (!process.env.repository) return;
   const url = `${process.env.repository.replace('github.com', 'api.github.com/repos')}/releases`;
-  const result = await fetch<Release[]>(url, { params: { per_page: 1 } });
+  const result = await fetchJson<Release[]>(
+    url,
+    new URLSearchParams({ per_page: '1' }),
+  );
   return result?.[0]?.tag_name.slice(1);
 };
