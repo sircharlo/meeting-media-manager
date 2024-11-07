@@ -1,6 +1,5 @@
 <template>
   <q-btn
-    :label="model || $t('choose-a-folder')"
     :no-caps="!!model"
     color="primary"
     hide-bottom-space
@@ -8,14 +7,20 @@
     outline
     style="max-width: 240px"
     @click="showFolderPicker"
-  />
+  >
+    <span class="ellipsis">
+      {{ model || t('choose-a-folder') }}
+    </span>
+  </q-btn>
 </template>
 
 <script setup lang="ts">
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { useI18n } from 'vue-i18n';
 
 const { openFolderDialog } = window.electronApi;
 
+const { t } = useI18n();
 const model = defineModel<null | string>({ required: true });
 
 const showFolderPicker = async () => {
