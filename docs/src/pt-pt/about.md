@@ -1,6 +1,6 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Sobre o Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-## What is this app? {#what-is-this-app}
+## O que é esta aplicação? {#what-is-this-app}
 
 **Meeting Media Manager**, ou **M³** para abreviar, é uma app para Windows, macOS e Linux que descarrega automaticamente imagens e vídeos que serão utilizados durante as reuniões congregacionais das Testemunhas de Jeová, em qualquer idioma disponível no site oficial das Testemunhas de Jeová.
 
