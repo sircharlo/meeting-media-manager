@@ -23,8 +23,8 @@
     "message": "This is a warning message for a specific version",
     "type": "warning",
     "persistent": true,
-    "minVersion": "25.0.0",
-    "maxVersion": "25.0.0",
+    "minVersion": "24.11.1",
+    "maxVersion": "24.11.1",
     "platform": ["win"],
     "actions": ["update"]
   },
