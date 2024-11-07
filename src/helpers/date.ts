@@ -1,4 +1,4 @@
-import type { DateInfo } from 'src/types';
+import type { CacheList, DateInfo } from 'src/types';
 
 import { date, type DateLocale } from 'quasar';
 import { DAYS_IN_FUTURE } from 'src/constants/date';
@@ -58,6 +58,20 @@ const dateFromString = (lookupDate?: Date | string | undefined) => {
     errorCatcher(error);
     return new Date();
   }
+};
+
+/**
+ * Checks if a caches list should be updated
+ * @param list The cache list to check
+ * @param months How many months should pass before updating
+ * @returns Wether the list should be updated
+ */
+const shouldUpdateList = (list: CacheList | undefined, months: number) => {
+  if (!list) return true;
+  return (
+    !list.list.length ||
+    getDateDiff(new Date(), list.updated, 'months') > months
+  );
 };
 
 const isInPast = (lookupDate: Date) => {
@@ -124,7 +138,9 @@ function isCoWeek(lookupDate: Date) {
     const currentState = useCurrentStateStore();
     const coWeekSet = !!currentState.currentSettings?.coWeek;
     if (!coWeekSet) return false;
-    const coWeekTuesday = dateFromString(currentState.currentSettings?.coWeek);
+    const coWeekTuesday = dateFromString(
+      currentState.currentSettings?.coWeek ?? undefined,
+    );
     const coMonday = getSpecificWeekday(coWeekTuesday, 0);
     const lookupWeekMonday = getSpecificWeekday(lookupDate, 0);
     return datesAreSame(coMonday, lookupWeekMonday);
@@ -142,7 +158,7 @@ const isMwMeetingDay = (lookupDate: Date) => {
     const coWeek = isCoWeek(lookupDate);
     if (coWeek) {
       const coWeekTuesday = dateFromString(
-        currentState.currentSettings?.coWeek,
+        currentState.currentSettings?.coWeek ?? undefined,
       );
       return datesAreSame(coWeekTuesday, lookupDate);
     } else {
@@ -261,5 +277,6 @@ export {
   isMwMeetingDay,
   isWeMeetingDay,
   remainingTimeBeforeMeetingStart,
+  shouldUpdateList,
   updateLookupPeriod,
 };

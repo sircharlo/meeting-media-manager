@@ -113,6 +113,7 @@ import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { useScrollbar } from 'src/composables/useScrollbar';
+import { fetch } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { get } from 'src/helpers/fetch';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -141,7 +142,7 @@ whenever(open, () => {
 const lookupCongregation = async () => {
   try {
     if (congregationName.value?.length > 2) {
-      await get<{ geoLocationList: GeoRecord[] }>(
+      await fetch<{ geoLocationList: GeoRecord[] }>(
         `https://apps.${urlVariables.value.base}/api/public/meeting-search/weekly-meetings?includeSuggestions=true&keywords=${encodeURIComponent(congregationName.value)}&latitude=0&longitude=0&searchLanguageCode=`,
       ).then((response) => {
         results.value = (response?.geoLocationList || []).map((location) => {
@@ -167,7 +168,7 @@ const lookupCongregation = async () => {
 };
 
 const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
-get<CongregationLanguage[]>(
+fetch<CongregationLanguage[]>(
   `https://apps.${urlVariables.value.base}/api/public/meeting-search/languages`,
 )
   .then((response) => {
@@ -190,8 +191,8 @@ const selectCongregation = (congregation: GeoRecord) => {
         jwLanguages.value?.list.find(
           (l) => l.langcode === properties.languageCode,
         )?.langcode || '';
-      currentSettings.value.lang = resolvedLangCode;
-      currentSettings.value.langSubtitles = resolvedLangCode;
+      currentSettings.value.lang = resolvedLangCode || 'E';
+      currentSettings.value.langSubtitles = resolvedLangCode || null;
     }
 
     // Midweek day & time

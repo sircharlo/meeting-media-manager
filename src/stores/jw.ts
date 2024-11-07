@@ -1,16 +1,25 @@
 import type {
+  CacheList,
   DateInfo,
   DynamicMediaObject,
+  JwLangCode,
   JwLanguage,
   MediaLink,
   PublicationFetcher,
+  PublicationFiles,
   UrlVariables,
 } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
-import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { fetchJwLanguages, fetchYeartext } from 'src/helpers/api';
+import {
+  dateFromString,
+  isCoWeek,
+  isMwMeetingDay,
+  shouldUpdateList,
+} from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLanguages, getYeartext } from 'src/helpers/fetch';
 import {
@@ -39,12 +48,12 @@ interface Store {
     string,
     Record<string, Record<string, { max: number; min: number }>>
   >;
-  jwLanguages: { list: JwLanguage[]; updated: Date };
-  jwSongs: Record<string, { list: MediaLink[]; updated: Date }>;
+  jwLanguages: CacheList<JwLanguage>;
+  jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Record<string, DateInfo[]>;
   mediaSort: Record<string, Record<string, string[]>>;
   urlVariables: UrlVariables;
-  yeartexts: Record<number, Record<string, string>>;
+  yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -164,17 +173,11 @@ export const useJwStore = defineStore('jw-store', {
     },
     async updateJwLanguages() {
       try {
-        const now = new Date();
-        const monthsSinceUpdated = getDateDiff(
-          now,
-          this.jwLanguages.updated,
-          'months',
-        );
-        if (monthsSinceUpdated > 3 || !this.jwLanguages?.list?.length) {
-          this.jwLanguages = {
-            list: await getLanguages(this.urlVariables.base),
-            updated: now,
-          };
+        if (shouldUpdateList(this.jwLanguages, 3)) {
+          const result = await fetchJwLanguages(this.urlVariables.base);
+          if (result) {
+            this.jwLanguages = { list: result, updated: new Date() };
+          }
         }
       } catch (e) {
         errorCatcher(e);
@@ -190,7 +193,8 @@ export const useJwStore = defineStore('jw-store', {
           errorCatcher('No current settings or songbook defined');
           return;
         }
-        for (const fileformat of ['MP4', 'MP3']) {
+        const formats: (keyof PublicationFiles)[] = ['MP4', 'MP3'];
+        for (const fileformat of formats) {
           try {
             const langwritten = currentState.currentSettings.lang;
             this.jwSongs[langwritten] ??= { list: [], updated: oldDate };
@@ -215,9 +219,9 @@ export const useJwStore = defineStore('jw-store', {
                 continue;
               }
 
-              const mediaItemLinks = pubMediaLinks.files[langwritten][
-                fileformat
-              ]
+              const mediaItemLinks = (
+                pubMediaLinks.files[langwritten]?.[fileformat] || []
+              )
                 .filter(isMediaLink)
                 .filter((mediaLink) => mediaLink.track < MAX_SONGS);
               const filteredMediaItemLinks = mediaItemLinks.reduce<MediaLink[]>(
@@ -247,33 +251,65 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(error);
       }
     },
-    async updateYeartext(lang?: string) {
+    async updateYeartext() {
       try {
         const currentState = useCurrentStateStore();
-        const currentLang = currentState.currentSettings?.lang || lang;
-        if (!currentLang) return;
-        const currentYear = new Date().getFullYear();
-        if (!this.yeartexts[currentYear]) this.yeartexts[currentYear] = {};
-        if (!this.yeartexts[currentYear]?.[currentLang]) {
-          const yeartextRequest = await getYeartext(
-            currentLang,
-            this.urlVariables.base,
-            currentYear,
-          );
-          if (yeartextRequest?.content) {
-            const { default: sanitizeHtml } = await import('sanitize-html');
-            this.yeartexts[currentYear][currentLang] = sanitizeHtml(
-              yeartextRequest.content,
-              {
+        if (!currentState.currentSettings) return;
+
+        const year = new Date().getFullYear();
+        const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =
+          [];
+
+        const langs = new Set<JwLangCode>([
+          currentState.currentSettings.lang,
+          'E',
+        ]);
+
+        if (currentState.currentSettings.langFallback) {
+          langs.add(currentState.currentSettings.langFallback);
+        }
+
+        langs.forEach((lang) => {
+          if (!this.yeartexts[year]?.[lang]) {
+            promises.push(fetchYeartext(lang, this.urlVariables.base));
+          }
+        });
+
+        const results = await Promise.allSettled(promises);
+
+        for (const result of results) {
+          if (result.status === 'fulfilled') {
+            const { wtlocale, yeartext } = result.value;
+            if (yeartext) {
+              if (!this.yeartexts[year]) {
+                this.yeartexts[year] = {};
+              }
+              const { default: sanitizeHtml } = await import('sanitize-html');
+
+              this.yeartexts[year][wtlocale] = sanitizeHtml(yeartext, {
                 allowedAttributes: { p: ['class'] },
                 allowedTags: ['b', 'i', 'em', 'strong', 'p'],
-              },
-            );
+              });
+            }
           }
         }
       } catch (error) {
         errorCatcher(error);
       }
+    },
+  },
+  getters: {
+    yeartext: (state) => {
+      const year = new Date().getFullYear();
+      if (!state.yeartexts[year]) return;
+      const { currentSettings } = useCurrentStateStore();
+      if (!currentSettings) return;
+      const primary = state.yeartexts[year][currentSettings.lang];
+      const fallback = currentSettings.langFallback
+        ? state.yeartexts[year][currentSettings.langFallback]
+        : '';
+      const english = state.yeartexts[year]['E'];
+      return primary || fallback || english;
     },
   },
   persist: {

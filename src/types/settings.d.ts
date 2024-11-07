@@ -1,11 +1,16 @@
 import type { MessageSchema } from 'src/boot/i18n';
+import type { RESOLUTIONS } from 'src/constants/settings';
+
+import type { JwLangCode } from './jw/lang';
+
+export type MaxRes = (typeof RESOLUTIONS)[number];
 
 export interface SettingsValues {
   autoStartAtLogin: boolean;
   autoStartMusic: boolean;
   baseUrl: string;
-  congregationName: string;
-  coWeek: string;
+  congregationName: null | string;
+  coWeek: null | string;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
   // enablePp: boolean;
@@ -19,29 +24,29 @@ export interface SettingsValues {
   excludeTh: boolean;
   hideMediaLogo: boolean;
   includePrinted: boolean;
-  lang: string;
-  langFallback: string;
-  langSubtitles: string;
+  lang: JwLangCode;
+  langFallback: JwLangCode | null;
+  langSubtitles: JwLangCode | null;
   localAppLang: string;
-  maxRes: string;
+  maxRes: MaxRes;
   musicVolume: number;
-  mwDay: string;
-  mwStartTime: string;
-  obsCameraScene: string;
+  mwDay: null | string;
+  mwStartTime: null | string;
+  obsCameraScene: null | string;
   obsEnable: boolean;
-  obsImageScene: string;
-  obsMediaScene: string;
-  obsPassword: string;
-  obsPort: string;
+  obsImageScene: null | string;
+  obsMediaScene: null | string;
+  obsPassword: null | string;
+  obsPort: null | string;
   obsQuickToggle: boolean;
-  shortcutMediaNext: string;
-  shortcutMediaPauseResume: string;
-  shortcutMediaPrevious: string;
-  shortcutMediaStop: string;
-  shortcutMediaWindow: string;
-  shortcutMusic: string;
-  weDay: string;
-  weStartTime: string;
+  shortcutMediaNext: null | string;
+  shortcutMediaPauseResume: null | string;
+  shortcutMediaPrevious: null | string;
+  shortcutMediaStop: null | string;
+  shortcutMediaWindow: null | string;
+  shortcutMusic: null | string;
+  weDay: null | string;
+  weStartTime: null | string;
 }
 
 export type SettingsItemType =
@@ -161,11 +166,11 @@ export interface OldAppConfig {
     hideWinAfterMedia: boolean;
     includePrinted: boolean;
     keepOriginalsAfterConversion: boolean;
-    lang: string;
-    langFallback: null | string;
-    langSubs: null | string;
+    lang: JwLangCode;
+    langFallback: JwLangCode | null;
+    langSubs: JwLangCode | null;
     langUpdatedLast: string;
-    maxRes: string;
+    maxRes: MaxRes;
     mediaWinShortcut: string;
     ppBackward: null | string;
     ppForward: null | string;

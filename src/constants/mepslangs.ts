@@ -1,5 +1,7 @@
+import type { JwLangCode } from 'src/types';
+
 // https://github.com/livrasand/Reviw/wiki/Anexo-2:-N%C3%BAmero-de-%C3%ADndice-de-idioma-en-la-tabla-MepsLanguage
-const mepslangs: Record<number, string> = {
+const mepslangs: Record<number, JwLangCode> = {
   0: 'E',
   1: 'S',
   2: 'X',

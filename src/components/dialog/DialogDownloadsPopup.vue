@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
-import type { DownloadProgressItems } from 'src/types/media';
+import type { DownloadProgressItems } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';

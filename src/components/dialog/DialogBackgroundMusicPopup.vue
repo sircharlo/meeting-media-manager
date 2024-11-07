@@ -110,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SongItem } from 'src/types/media';
+import type { SongItem } from 'src/types';
 
 import {
   useBroadcastChannel,

@@ -101,7 +101,7 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
 // Types
-import type { CacheFile } from 'src/types';
+import type { CacheFile, JwLangCode } from 'src/types';
 
 const { fs, path, pathToFileURL, readdir } = window.electronApi;
 
@@ -129,7 +129,7 @@ const loadFrequentlyUsedDirectories = async () => {
   const getDirectory = async (pub: string, issue?: number) => {
     const directoryParams: {
       issue?: number;
-      langwritten: string;
+      langwritten: JwLangCode;
       pub: string;
     } = {
       langwritten: currentSettings.value?.lang || 'E',

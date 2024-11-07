@@ -178,12 +178,12 @@ const setObsScene = async (
       const mediaScene = currentSettings.value?.obsMediaScene;
       const imageScene = currentSettings.value?.obsImageScene;
       const cameraScene = currentSettings.value?.obsCameraScene;
-      newProgramScene = mediaScene;
+      newProgramScene = mediaScene ?? undefined;
       if (isImage(mediaPlayingUrl.value) && imageScene)
         newProgramScene = imageScene;
       currentSceneType.value = sceneType;
       if (sceneType === 'camera')
-        newProgramScene = previousScene.value || cameraScene;
+        newProgramScene = (previousScene.value || cameraScene) ?? undefined;
     }
     if (newProgramScene) {
       const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);

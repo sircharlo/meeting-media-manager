@@ -263,7 +263,7 @@ const getSubtitlesUrl = async (
         let subtitlesPath = multimediaItem.FilePath.split('.')[0] + '.vtt';
         const subtitleLang = currentState.currentSettings?.langSubtitles;
         const subtitleFetcher: PublicationFetcher = {
-          fileformat: 'mp4',
+          fileformat: 'MP4',
           issue: multimediaItem.IssueTagNumber,
           langwritten: subtitleLang ?? currentState.currentSettings?.lang,
           pub: multimediaItem.KeySymbol,
