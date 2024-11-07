@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": "a-unique-id",
+    "idExplain": "A unique identifier for the announcement (required).",
+    "message": "This is an announcement message",
+    "messageExplain": "A hardcoded message or an i18n key for translation (required).",
+    "type": "warning",
+    "typeExplain": "info, warning or error. Defaults to info.",
+    "platform": ["linux", "mac", "win"],
+    "platformExplain": "Platforms to target. Defaults to all platforms.",
+    "minVersion": "24.11.1",
+    "minVersionExplain": "Minimum target version for the announcement. Defaults to all versions.",
+    "maxVersion": "0.0.0",
+    "maxVersionExplain": "Maximum target version for the announcement. Defaults to all versions.",
+    "persistent": true,
+    "persistentExplain": "If true, show at every startup. If false, show once per congregation. Defaults to false.",
+    "actions": ["docs", "repo", "update"],
+    "actionsExplain": "Action buttons to show. Defaults to no actions."
+  }
+]
