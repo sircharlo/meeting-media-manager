@@ -39,7 +39,6 @@ In addition, M³ itself has been translated into several languages by many volun
 
 <!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
 
-
 #### Available
 
 <table><tr><td align="center" valign="top"><img width="30px" height="30px" title="Dutch" alt="Dutch" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/nl.png"></div><div align="center" valign="top">100%</td><td align="center" valign="top"><img width="30px" height="30px" title="Swahili" alt="Swahili" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sw.png"></div><div align="center" valign="top">100%</td><td align="center" valign="top"><img width="30px" height="30px" title="Swedish" alt="Swedish" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sv-SE.png"></div><div align="center" valign="top">98%</td><td align="center" valign="top"><img width="30px" height="30px" title="French" alt="French" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/fr.png"></div><div align="center" valign="top">97%</td><td align="center" valign="top"><img width="30px" height="30px" title="Slovenian" alt="Slovenian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sl.png"></div><div align="center" valign="top">97%</td></tr><tr><td align="center" valign="top"><img width="30px" height="30px" title="Chinese Simplified" alt="Chinese Simplified" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/zh-CN.png"></div><div align="center" valign="top">95%</td><td align="center" valign="top"><img width="30px" height="30px" title="Portuguese" alt="Portuguese" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/pt-PT.png"></div><div align="center" valign="top">90%</td><td align="center" valign="top"><img width="30px" height="30px" title="Ukrainian" alt="Ukrainian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/uk.png"></div><div align="center" valign="top">90%</td><td align="center" valign="top"><img width="30px" height="30px" title="Portuguese, Brazilian" alt="Portuguese, Brazilian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/pt-BR.png"></div><div align="center" valign="top">87%</td><td align="center" valign="top"><img width="30px" height="30px" title="Russian" alt="Russian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/ru.png"></div><div align="center" valign="top">81%</td></tr><tr><td align="center" valign="top"><img width="30px" height="30px" title="Hungarian" alt="Hungarian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/hu.png"></div><div align="center" valign="top">74%</td><td align="center" valign="top"><img width="30px" height="30px" title="Estonian" alt="Estonian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/et.png"></div><div align="center" valign="top">63%</td></table>
@@ -55,14 +54,14 @@ Check out our [documentation website](https://sircharlo.github.io/meeting-media-
 
 ## Additional steps for macOS users to open the app without errors
 
-If M³ won’t open and shows a message like _“The app is damaged and can't be opened”_ or _“The app is damaged and can't be opened. You should move it to the Trash”_ try these commands in Terminal (adjust the path as needed):
+If M³ won't open and displays an error like _“The app is damaged and can't be opened”_ or _“The app is damaged and can't be opened. You should move it to the Trash”_, follow these steps in Terminal (adjust the path as needed):
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-If issues persist, go to **System Settings → Privacy & Security**, find M³, and select **Open Anyway**.
+If issues persist, go to **System Settings → Privacy & Security**, locate M³, and click **Open Anyway**.
 
 For more details, please refer to our [documentation website](https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#additional-steps-for-macos-users).
 
