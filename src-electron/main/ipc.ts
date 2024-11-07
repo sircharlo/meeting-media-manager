@@ -8,7 +8,7 @@ import type {
   SettingsValues,
 } from 'src/types';
 
-import { homepage, repository } from 'app/package.json';
+import { homepage, repository, version } from 'app/package.json';
 import get from 'axios';
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
 import {
@@ -27,6 +27,7 @@ import {
 } from 'src/constants/fs';
 import { join } from 'upath';
 
+import { IS_DEV } from '../constants';
 import { errorCatcher, getUserDataPath, isSelf } from './../utils';
 import { getAllScreens } from './screen';
 import { setUrlVariables } from './session';
@@ -119,6 +120,9 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
     case 'docs':
       url = homepage;
       break;
+    case 'latestRelease':
+      url = repository.url.replace('.git', '/releases/latest');
+      break;
     case 'repo':
       url = repository.url.replace('.git', '');
       break;
@@ -153,7 +157,9 @@ function handleIpcInvoke<T = unknown>(
   });
 }
 
-handleIpcInvoke('getVersion', async () => app.getVersion());
+handleIpcInvoke('getVersion', async () =>
+  IS_DEV ? version : app.getVersion(),
+);
 handleIpcInvoke('getAppPath', async () => app.getAppPath());
 handleIpcInvoke('getUserDataPath', async () => getUserDataPath());
 
