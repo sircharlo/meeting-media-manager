@@ -195,7 +195,7 @@ import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
 import { computed, ref } from 'vue';
 // Globals
-import { get } from 'src/boot/axios';
+import { get } from 'src/helpers/fetch';
 // Composables
 import { useLocale } from 'src/composables/useLocale';
 

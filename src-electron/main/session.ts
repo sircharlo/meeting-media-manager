@@ -20,9 +20,10 @@ export const initSessionListeners = () => {
           const baseUrl = `${url.protocol}//${url.hostname}`;
           details.requestHeaders['Referer'] = baseUrl;
           details.requestHeaders['Origin'] = baseUrl;
-          details.requestHeaders['User-Agent'] = details.requestHeaders[
-            'User-Agent'
-          ].replace('Electron', '');
+          if (details.requestHeaders['User-Agent'])
+            details.requestHeaders['User-Agent'] = details.requestHeaders[
+              'User-Agent'
+            ].replace('Electron', '');
         }
 
         callback({ requestHeaders: details.requestHeaders });

@@ -7,12 +7,12 @@ import type {
   UrlVariables,
 } from 'src/types';
 
-import { getLanguages, getYeartext } from 'boot/axios';
 import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
 import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getLanguages, getYeartext } from 'src/helpers/fetch';
 import {
   findBestResolution,
   getPubMediaLinks,

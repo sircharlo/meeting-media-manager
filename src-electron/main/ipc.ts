@@ -9,7 +9,6 @@ import type {
 } from 'src/types';
 
 import { homepage, repository, version } from 'app/package.json';
-import get from 'axios';
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
 import {
   app,
@@ -19,20 +18,22 @@ import {
   type IpcMainInvokeEvent,
   shell,
 } from 'electron';
-import { type Dirent, exists, readdir, stat } from 'fs-extra';
+import { ElectronDownloadManager } from 'electron-dl-manager';
+import { type Dirent, ensureDir, exists, readdir, stat } from 'fs-extra';
 import {
   IMG_EXTENSIONS,
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/fs';
-import { join } from 'upath';
+import { get } from 'src/helpers/fetch';
+import { basename, join } from 'upath';
 
 import { IS_DEV } from '../constants';
 import { errorCatcher, getUserDataPath, isSelf } from './../utils';
 import { getAllScreens } from './screen';
 import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
-import { logToWindow } from './window/window-base';
+import { logToWindow, sendToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
 import {
@@ -204,6 +205,73 @@ handleIpcInvoke(
     } catch (error) {
       errorCatcher(error);
       return [];
+    }
+  },
+);
+
+const manager = new ElectronDownloadManager();
+const downloadIdMap = new Map<string, string>();
+
+handleIpcInvoke(
+  'downloadFile',
+  async (_e, url: string, saveDir: string, destFilename?: string) => {
+    if (!mainWindow || !url || !saveDir) return null;
+    try {
+      await ensureDir(saveDir);
+
+      if (!destFilename) destFilename = basename(url);
+
+      if (downloadIdMap.has(url + saveDir)) {
+        return downloadIdMap.get(url + saveDir);
+      }
+
+      const downloadId = await manager.download({
+        callbacks: {
+          onDownloadCancelled: ({ id }) => {
+            sendToWindow(mainWindow, 'downloadCancelled', { id });
+          },
+          onDownloadCompleted: async ({ id, item }) => {
+            sendToWindow(mainWindow, 'downloadCompleted', {
+              filePath: item.getSavePath(),
+              id,
+            });
+          },
+          onDownloadProgress: async ({ id, item, percentCompleted }) => {
+            sendToWindow(mainWindow, 'downloadProgress', {
+              bytesReceived: item.getReceivedBytes(),
+              id,
+              percentCompleted,
+            });
+          },
+          onDownloadStarted: async ({ id, item, resolvedFilename }) => {
+            sendToWindow(mainWindow, 'downloadStarted', {
+              filename: resolvedFilename,
+              id,
+              totalBytes: item.getTotalBytes(),
+            });
+          },
+          onError: (err, downloadData) => {
+            errorCatcher(err);
+            if (downloadData) {
+              sendToWindow(mainWindow, 'downloadError', {
+                id: downloadData.id,
+              });
+            }
+          },
+        },
+        directory: saveDir,
+        saveAsFilename: destFilename,
+        url,
+        window: mainWindow,
+      });
+
+      // manager.pauseDownload(downloadId); // eventually we can implement pause/resume if needed
+
+      downloadIdMap.set(url + saveDir, downloadId);
+      return downloadId;
+    } catch (error) {
+      errorCatcher(error);
+      return null;
     }
   },
 );

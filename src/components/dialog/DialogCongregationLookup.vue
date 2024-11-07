@@ -111,10 +111,10 @@ import type { CongregationLanguage, GeoRecord } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { get } from 'src/boot/axios';
 import { useLocale } from 'src/composables/useLocale';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { get } from 'src/helpers/fetch';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { ref } from 'vue';

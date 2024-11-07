@@ -1,17 +1,24 @@
 import type { JwLanguage } from 'src/types';
 
-import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
 const get = async <T>(
   url: string,
-  params?: AxiosRequestConfig,
+  params?: Record<string, object>,
 ): Promise<null | T> => {
   try {
-    const res = await axios.get<T>(url, { params });
-    return res.data;
+    const urlWithParams = urlWithParamsToString(url, params);
+    const response = await fetch(urlWithParams);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch: ${response.status} ${response.statusText}`,
+      );
+    }
+    const data: T = await response.json();
+    return data;
   } catch (e) {
-    if (!(e instanceof AxiosError) || ![400, 404].includes(e.status ?? 0)) {
+    if (!(e instanceof Error) || ![400, 404].includes(Number(e.message))) {
       errorCatcher(e);
     }
   }
@@ -26,7 +33,7 @@ const getLanguages = async (baseUrl?: string): Promise<JwLanguage[]> => {
   return req?.languages || [];
 };
 
-const urlWithParamsToString = (url: string, params: object) => {
+const urlWithParamsToString = (url: string, params?: object) => {
   if (!url) return '';
   if (!params) return url;
   const urlWithParams = new URL(url);
