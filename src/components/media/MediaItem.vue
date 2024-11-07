@@ -225,6 +225,7 @@
               >
                 <q-chip
                   :clickable="false"
+                  :ripple="false"
                   class="media-tag bg-accent-200 full-width"
                 >
                   <q-icon
@@ -253,6 +254,7 @@
               >
                 <q-chip
                   :clickable="false"
+                  :ripple="false"
                   class="media-tag bg-accent-400 full-width"
                   text-color="white"
                 >

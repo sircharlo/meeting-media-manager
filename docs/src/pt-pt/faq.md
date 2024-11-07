@@ -1,6 +1,6 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Perguntas Frequentes {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Esta aplicação depende de sites externos, fontes ou "curadores" para descarregar publicações, multimédia de reuniões ou outros conteúdos? {#external-dependencies}
 
 **Não.** A app comporta-se de forma semelhante ao JW Library. Descarrega publicações e multimédia diretamente do site oficial das Testemunhas de Jeová e da sua rede de distribuição de conteúdos. A app determina automaticamente o que precisa ser descarregado e quando o conteúdo anteriormente descarregado já não está atualizado e deve ser descarregado novamente.
 
