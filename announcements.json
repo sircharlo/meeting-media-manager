@@ -16,16 +16,16 @@
     "persistent": false,
     "minVersion": "24.11.0",
     "maxVersion": "25.0.0",
-    "platform": ["macos"]
+    "platform": ["mac"]
   },
   {
     "id": "some-unique-id-3",
     "message": "This is a warning message for a specific version",
     "type": "warning",
     "persistent": true,
-    "minVersion": "25.0.0",
-    "maxVersion": "25.0.0",
-    "platform": ["win32"],
+    "minVersion": "24.11.1",
+    "maxVersion": "24.11.1",
+    "platform": ["win"],
     "actions": ["update"]
   },
   {
@@ -35,7 +35,7 @@
     "persistent": false,
     "minVersion": null,
     "maxVersion": "25.0.0",
-    "platform": ["win32"]
+    "platform": ["win"]
   },
   {
     "id": "some-unique-id-4",
