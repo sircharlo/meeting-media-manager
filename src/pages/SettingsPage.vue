@@ -115,7 +115,7 @@ import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 // Store initializations
 const currentState = useCurrentStateStore();
@@ -182,8 +182,11 @@ whenever(
   { immediate: true },
 );
 
-whenever(
-  () => currentSettings.value?.lang,
+watch(
+  [
+    () => currentSettings.value?.lang,
+    () => currentSettings?.value?.langFallback,
+  ],
   () => updateYeartext(),
 );
 

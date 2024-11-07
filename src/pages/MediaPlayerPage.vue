@@ -56,7 +56,7 @@
         </template>
         <template v-else>
           <!-- eslint-disable next-line vue/no-v-html -->
-          <div id="yeartext" class="q-pa-md center" v-html="yeartextHtml" />
+          <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
           <div
             v-if="!currentSettings?.hideMediaLogo"
             id="yeartextLogoContainer"
@@ -98,14 +98,9 @@ const {
 } = storeToRefs(currentState);
 
 const jwStore = useJwStore();
-const { customDurations, yeartexts } = storeToRefs(jwStore);
+const { customDurations } = storeToRefs(jwStore);
 
-const yeartextHtml = computed(() => {
-  const currentYear = new Date().getFullYear();
-  const yearText =
-    yeartexts.value[currentYear]?.[currentSettings.value?.lang || 'E'];
-  return yearText ?? '';
-});
+const yeartext = computed(() => jwStore.yeartext);
 
 const panzoom = ref<PanzoomObject | undefined>();
 

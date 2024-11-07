@@ -1,4 +1,5 @@
 import type {
+  CacheList,
   DateInfo,
   DynamicMediaObject,
   JwLangCode,
@@ -13,7 +14,12 @@ import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
 import { fetchJwLanguages, fetchYeartext } from 'src/helpers/api';
-import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import {
+  dateFromString,
+  isCoWeek,
+  isMwMeetingDay,
+  shouldUpdateList,
+} from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   findBestResolution,
@@ -41,8 +47,8 @@ interface Store {
     string,
     Record<string, Record<string, { max: number; min: number }>>
   >;
-  jwLanguages: { list: JwLanguage[]; updated: Date };
-  jwSongs: Partial<Record<JwLangCode, { list: MediaLink[]; updated: Date }>>;
+  jwLanguages: CacheList<JwLanguage>;
+  jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Record<string, DateInfo[]>;
   mediaSort: Record<string, Record<string, string[]>>;
   urlVariables: UrlVariables;
@@ -167,16 +173,10 @@ export const useJwStore = defineStore('jw-store', {
     },
     async updateJwLanguages() {
       try {
-        const now = new Date();
-        const monthsSinceUpdated = getDateDiff(
-          now,
-          this.jwLanguages.updated,
-          'months',
-        );
-        if (monthsSinceUpdated > 3 || !this.jwLanguages?.list?.length) {
+        if (shouldUpdateList(this.jwLanguages, 3)) {
           const result = await fetchJwLanguages(this.urlVariables.base);
           if (result) {
-            this.jwLanguages = { list: result, updated: now };
+            this.jwLanguages = { list: result, updated: new Date() };
           }
         }
       } catch (e) {
@@ -251,29 +251,65 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(error);
       }
     },
-    async updateYeartext(lang?: JwLangCode) {
+    async updateYeartext() {
       try {
         const currentState = useCurrentStateStore();
-        const currentLang = currentState.currentSettings?.lang || lang;
-        if (!currentLang) return;
-        const currentYear = new Date().getFullYear();
-        if (!this.yeartexts[currentYear]) this.yeartexts[currentYear] = {};
-        if (!this.yeartexts[currentYear]?.[currentLang]) {
-          const yeartext = await fetchYeartext(
-            currentLang,
-            this.urlVariables.base,
-          );
-          if (yeartext) {
-            const { default: sanitizeHtml } = await import('sanitize-html');
-            this.yeartexts[currentYear][currentLang] = sanitizeHtml(yeartext, {
-              allowedAttributes: { p: ['class'] },
-              allowedTags: ['b', 'i', 'em', 'strong', 'p'],
-            });
+        if (!currentState.currentSettings) return;
+
+        const year = new Date().getFullYear();
+        const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =
+          [];
+
+        const langs = new Set<JwLangCode>([
+          currentState.currentSettings.lang,
+          'E',
+        ]);
+
+        if (currentState.currentSettings.langFallback) {
+          langs.add(currentState.currentSettings.langFallback);
+        }
+
+        langs.forEach((lang) => {
+          if (!this.yeartexts[year]?.[lang]) {
+            promises.push(fetchYeartext(lang, this.urlVariables.base));
+          }
+        });
+
+        const results = await Promise.allSettled(promises);
+
+        for (const result of results) {
+          if (result.status === 'fulfilled') {
+            const { wtlocale, yeartext } = result.value;
+            if (yeartext) {
+              if (!this.yeartexts[year]) {
+                this.yeartexts[year] = {};
+              }
+              const { default: sanitizeHtml } = await import('sanitize-html');
+
+              this.yeartexts[year][wtlocale] = sanitizeHtml(yeartext, {
+                allowedAttributes: { p: ['class'] },
+                allowedTags: ['b', 'i', 'em', 'strong', 'p'],
+              });
+            }
           }
         }
       } catch (error) {
         errorCatcher(error);
       }
+    },
+  },
+  getters: {
+    yeartext: (state) => {
+      const year = new Date().getFullYear();
+      if (!state.yeartexts[year]) return;
+      const { currentSettings } = useCurrentStateStore();
+      if (!currentSettings) return;
+      const primary = state.yeartexts[year][currentSettings.lang];
+      const fallback = currentSettings.langFallback
+        ? state.yeartexts[year][currentSettings.langFallback]
+        : '';
+      const english = state.yeartexts[year]['E'];
+      return primary || fallback || english;
     },
   },
   persist: {
