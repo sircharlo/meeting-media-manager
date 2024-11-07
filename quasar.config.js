@@ -174,6 +174,7 @@ module.exports = configure(function (ctx) {
           'adm-zip',
           'better-sqlite3',
           'countries-and-timezones',
+          'electron-dl-manager',
           'electron-updater',
           'fs-extra',
           'heic-convert',
