@@ -113,6 +113,7 @@
 import type { SongItem } from 'src/types';
 
 import {
+  tryOnMounted,
   useBroadcastChannel,
   useEventListener,
   watchImmediate,
@@ -473,25 +474,27 @@ whenever(
   },
 );
 
-watchImmediate(
-  () => [selectedDateObject.value?.today, selectedDateObject.value?.meeting],
-  ([newToday, newMeeting]) => {
-    try {
-      meetingDay.value = !!newToday && !!newMeeting;
-      if (
-        currentSettings.value?.enableMusicButton && // background music feature is enabled
-        currentSettings.value?.autoStartMusic && // auto-start music is enabled
-        meetingDay.value && // today is a meeting day
-        remainingTimeBeforeMeetingStart() > 90 && // meeting is starting in at least 90 seconds
-        remainingTimeBeforeMeetingStart() < 60 * 60 * 2 // meeting is starting in less than 2 hours
-      ) {
-        playMusic();
+tryOnMounted(() => {
+  watchImmediate(
+    () => [selectedDateObject.value?.today, selectedDateObject.value?.meeting],
+    ([newToday, newMeeting]) => {
+      try {
+        meetingDay.value = !!newToday && !!newMeeting;
+        if (
+          currentSettings.value?.enableMusicButton && // background music feature is enabled
+          currentSettings.value?.autoStartMusic && // auto-start music is enabled
+          meetingDay.value && // today is a meeting day
+          remainingTimeBeforeMeetingStart() > 90 && // meeting is starting in at least 90 seconds
+          remainingTimeBeforeMeetingStart() < 60 * 60 * 2 // meeting is starting in less than 2 hours
+        ) {
+          playMusic();
+        }
+      } catch (error) {
+        errorCatcher(error);
       }
-    } catch (error) {
-      errorCatcher(error);
-    }
-  },
-);
+    },
+  );
+});
 
 watch(
   () => [currentSettings.value?.enableMusicButton, currentCongregation.value],
