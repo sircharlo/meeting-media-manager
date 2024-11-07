@@ -224,6 +224,7 @@ handleIpcInvoke(
       if (downloadIdMap.has(url + saveDir)) {
         return downloadIdMap.get(url + saveDir);
       }
+      downloadIdMap.set(url + saveDir, 'awaiting download ID');
 
       const downloadId = await manager.download({
         callbacks: {
