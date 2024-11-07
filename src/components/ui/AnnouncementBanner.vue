@@ -52,13 +52,19 @@ const congregationStore = useCongregationSettingsStore();
 const { getAppVersion, openExternal } = window.electronApi;
 
 const version = ref('');
+const latestVersion = ref('');
 
 const loadAppVersion = async () => {
   version.value = await getAppVersion();
 };
 
+const loadLatestVersion = async () => {
+  latestVersion.value = '';
+};
+
 onMounted(() => {
   loadAppVersion();
+  loadLatestVersion();
   loadAnnouncements();
 });
 

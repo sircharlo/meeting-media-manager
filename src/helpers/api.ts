@@ -62,3 +62,10 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
   );
   return result?.filter((a) => !!a.id && !!a.message) || [];
 };
+
+export const fetchLatestVersion = async () => {
+  if (!process.env.repository) return;
+  const url = `${process.env.repository}/releases/latest`;
+  const result = await fetch(url);
+  console.log('result', result);
+};
