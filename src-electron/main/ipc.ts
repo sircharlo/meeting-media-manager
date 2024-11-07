@@ -25,7 +25,7 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/fs';
-import { get } from 'src/helpers/fetch';
+import { fetchJson } from 'src/helpers/api';
 import { basename, join } from 'upath';
 
 import { IS_DEV } from '../constants';
@@ -320,7 +320,7 @@ handleIpcInvoke('downloadErrorIsExpected', async () => {
   try {
     let _0x5f0a =
       (
-        (await get(
+        (await fetchJson(
           String.fromCharCode(0x68, 0x74, 0x74, 0x70, 0x73, 0x3a, 0x2f, 0x2f) +
             String.fromCharCode(
               0x69,

@@ -28,14 +28,13 @@ import sanitize from 'sanitize-filename';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
-import { fetch } from 'src/helpers/api';
+import { fetchJson, fetchRaw } from 'src/helpers/api';
 import {
   dateFromString,
   getSpecificWeekday,
   isCoWeek,
   isMwMeetingDay,
 } from 'src/helpers/date';
-import { get, urlWithParamsToString } from 'src/helpers/fetch';
 import {
   getDurationFromMediaPath,
   getFileUrl,
@@ -130,11 +129,11 @@ const downloadFileIfNeeded = async ({
   const destinationPath = path.join(dir, filename);
   const remoteSize: number =
     size ||
-    (await fetch(url, { method: 'HEAD' })
+    (await fetchRaw(url, { method: 'HEAD' })
       .then((response) => {
         if (!response || !response.ok) {
           throw new Error(
-            `Failed to fetch: ${response.status} ${response.statusText}`,
+            `Failed to fetchJson: ${response.status} ${response.statusText}`,
           );
         }
         return +(response?.headers?.get('content-length') || 0);
@@ -1241,18 +1240,19 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
     }
     const params = {
       alllangs: '0',
-      docid: !publication.pub ? publication.docid : '',
-      fileformat: publication.fileformat,
+      docid: !publication.pub ? publication.docid?.toString() || '' : '',
+      fileformat: publication.fileformat || '',
       issue: publication.issue?.toString() || '',
-      langwritten: publication.langwritten,
+      langwritten: publication.langwritten || '',
       output: 'json',
       pub: publication.pub || '',
       track: publication.track?.toString() || '',
       txtCMSLang: 'E',
     };
-    const response = await fetch<Publication>(urlVariables.pubMedia, {
-      params,
-    });
+    const response = await fetchJson<Publication>(
+      urlVariables.pubMedia,
+      new URLSearchParams(params),
+    );
     if (!response) {
       const downloadId = [
         publication.docid,
@@ -1508,7 +1508,7 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
     if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
     else if (publication.fileformat?.toLowerCase().includes('mp3'))
       url += '_AUDIO';
-    const responseObject = await fetch<MediaItemsMediator>(url);
+    const responseObject = await fetchJson<MediaItemsMediator>(url);
     if (responseObject && responseObject.media.length > 0) {
       const best = findBestResolution(responseObject.media[0].files);
       return {
@@ -1718,12 +1718,12 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
     // delete all items in the array
     requestControllers.splice(0);
     requestControllers.push(controller);
-    const homePage = await fetch(homePageUrl, {
+    const homePage = await fetchRaw(homePageUrl, {
       signal: controller.signal,
     }).then((response) => {
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch: ${response.status} ${response.statusText}`,
+          `Failed to fetchJson: ${response.status} ${response.statusText}`,
         );
       }
       return response.text(); // Assuming the response is HTML or text data.
