@@ -6,7 +6,8 @@
     "persistent": false,
     "minVersion": "24.11.0",
     "maxVersion": "25.0.0",
-    "platform": ["win32"]
+    "platform": ["win32"],
+    "actions": ["docs"]
   },
   {
     "id": "some-unique-id-2",
@@ -24,11 +25,12 @@
     "persistent": true,
     "minVersion": "25.0.0",
     "maxVersion": "25.0.0",
-    "platform": ["win32"]
+    "platform": ["win32"],
+    "actions": ["update"]
   },
   {
     "id": "some-unique-id-3",
-    "message": "This is a warning message",
+    "message": "app-issues",
     "type": "warning",
     "persistent": false,
     "minVersion": null,
