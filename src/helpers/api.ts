@@ -1,4 +1,9 @@
-import type { JwLangCode, JwLanguageResult } from 'src/types';
+import type {
+  Announcement,
+  JwLangCode,
+  JwLanguageResult,
+  Release,
+} from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 
@@ -54,4 +59,19 @@ export const fetchYeartext = async (wtlocale: JwLangCode, base?: string) => {
   );
 
   return { wtlocale, yeartext: result?.content };
+};
+
+export const fetchAnnouncements = async (): Promise<Announcement[]> => {
+  if (!process.env.repository) return [];
+  const result = await fetch<Announcement[]>(
+    `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/announcements.json`,
+  );
+  return result?.filter((a) => !!a.id && !!a.message) || [];
+};
+
+export const fetchLatestVersion = async () => {
+  if (!process.env.repository) return;
+  const url = `${process.env.repository.replace('github.com', 'api.github.com/repos')}/releases`;
+  const result = await fetch<Release[]>(url, { params: { per_page: 1 } });
+  return result?.[0]?.tag_name.slice(1);
 };
