@@ -25,10 +25,10 @@ import { Buffer } from 'buffer';
 import PQueue from 'p-queue';
 import { date } from 'quasar';
 import sanitize from 'sanitize-filename';
-import { get, urlWithParamsToString } from 'src/boot/axios';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
+import { fetch } from 'src/helpers/api';
 import {
   dateFromString,
   getSpecificWeekday,
@@ -1270,9 +1270,9 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
       track: publication.track?.toString() || '',
       txtCMSLang: 'E',
     };
-    const response = await get<Publication>(
-      urlWithParamsToString(urlVariables.pubMedia, params),
-    );
+    const response = await fetch<Publication>(urlVariables.pubMedia, {
+      params,
+    });
     if (!response) {
       currentStateStore.downloadProgress[
         [
@@ -1523,7 +1523,7 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
     if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
     else if (publication.fileformat?.toLowerCase().includes('mp3'))
       url += '_AUDIO';
-    const responseObject = await get<MediaItemsMediator>(url);
+    const responseObject = await fetch<MediaItemsMediator>(url);
     if (responseObject && responseObject.media.length > 0) {
       const best = findBestResolution(responseObject.media[0].files);
       return {

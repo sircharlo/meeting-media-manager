@@ -7,10 +7,10 @@ import type {
   UrlVariables,
 } from 'src/types';
 
-import { getLanguages, getYeartext } from 'boot/axios';
 import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
+import { fetchJwLanguages, fetchYeartext } from 'src/helpers/api';
 import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
@@ -171,10 +171,10 @@ export const useJwStore = defineStore('jw-store', {
           'months',
         );
         if (monthsSinceUpdated > 3 || !this.jwLanguages?.list?.length) {
-          this.jwLanguages = {
-            list: await getLanguages(this.urlVariables.base),
-            updated: now,
-          };
+          const result = await fetchJwLanguages(this.urlVariables.base);
+          if (result) {
+            this.jwLanguages = { list: result, updated: now };
+          }
         }
       } catch (e) {
         errorCatcher(e);
@@ -255,20 +255,16 @@ export const useJwStore = defineStore('jw-store', {
         const currentYear = new Date().getFullYear();
         if (!this.yeartexts[currentYear]) this.yeartexts[currentYear] = {};
         if (!this.yeartexts[currentYear]?.[currentLang]) {
-          const yeartextRequest = await getYeartext(
+          const yeartext = await fetchYeartext(
             currentLang,
             this.urlVariables.base,
-            currentYear,
           );
-          if (yeartextRequest?.content) {
+          if (yeartext) {
             const { default: sanitizeHtml } = await import('sanitize-html');
-            this.yeartexts[currentYear][currentLang] = sanitizeHtml(
-              yeartextRequest.content,
-              {
-                allowedAttributes: { p: ['class'] },
-                allowedTags: ['b', 'i', 'em', 'strong', 'p'],
-              },
-            );
+            this.yeartexts[currentYear][currentLang] = sanitizeHtml(yeartext, {
+              allowedAttributes: { p: ['class'] },
+              allowedTags: ['b', 'i', 'em', 'strong', 'p'],
+            });
           }
         }
       } catch (error) {

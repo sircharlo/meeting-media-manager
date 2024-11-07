@@ -1,4 +1,7 @@
 import type { MessageSchema } from 'src/boot/i18n';
+import type { RESOLUTIONS } from 'src/constants/settings';
+
+export type MaxRes = (typeof RESOLUTIONS)[number];
 
 export interface SettingsValues {
   autoStartAtLogin: boolean;
@@ -23,7 +26,7 @@ export interface SettingsValues {
   langFallback: string;
   langSubtitles: string;
   localAppLang: string;
-  maxRes: string;
+  maxRes: MaxRes;
   musicVolume: number;
   mwDay: string;
   mwStartTime: string;

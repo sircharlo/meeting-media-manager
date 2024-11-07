@@ -172,6 +172,7 @@ module.exports = configure(function (ctx) {
           '@numairawan/video-duration',
           '@sentry/electron',
           'adm-zip',
+          'axios',
           'better-sqlite3',
           'countries-and-timezones',
           'electron-updater',
