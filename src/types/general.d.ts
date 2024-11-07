@@ -17,3 +17,8 @@ export interface Announcement {
   platform?: ('linux' | 'mac' | 'win')[];
   type?: 'error' | 'info' | 'warning';
 }
+
+export interface CacheList<T = unknown> {
+  list: T[];
+  updated: Date;
+}

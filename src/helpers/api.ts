@@ -1,4 +1,9 @@
-import type { Announcement, JwLanguageResult, Release } from 'src/types';
+import type {
+  Announcement,
+  JwLangCode,
+  JwLanguageResult,
+  Release,
+} from 'src/types';
 
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -40,8 +45,8 @@ interface YeartextResult {
   url: string;
 }
 
-export const fetchYeartext = async (wtlocale: string, base?: string) => {
-  if (!base) return;
+export const fetchYeartext = async (wtlocale: JwLangCode, base?: string) => {
+  if (!base) return { wtlocale };
   const url = `https://wol.${base}/wol/finder`;
   const result = await fetch<YeartextResult>(url, {
     params: {
@@ -52,7 +57,7 @@ export const fetchYeartext = async (wtlocale: string, base?: string) => {
     },
   });
 
-  return result?.content;
+  return { wtlocale, yeartext: result?.content };
 };
 
 export const fetchAnnouncements = async (): Promise<Announcement[]> => {

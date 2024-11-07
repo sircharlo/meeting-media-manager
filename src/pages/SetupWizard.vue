@@ -539,7 +539,7 @@
 </template>
 
 <script setup lang="ts">
-import { watchImmediate, whenever } from '@vueuse/core';
+import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import SelectInput from 'src/components/form-inputs/SelectInput.vue';
@@ -586,11 +586,12 @@ watch(
   },
 );
 
-whenever(
-  () => currentSettings.value?.lang,
-  () => {
-    updateYeartext();
-  },
+watch(
+  [
+    () => currentSettings.value?.lang,
+    () => currentSettings?.value?.langFallback,
+  ],
+  () => updateYeartext(),
 );
 
 watchImmediate(
