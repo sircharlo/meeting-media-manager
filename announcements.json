@@ -6,7 +6,7 @@
     "persistent": false,
     "minVersion": "24.11.0",
     "maxVersion": "25.0.0",
-    "platform": ["win32"],
+    "platform": ["win"],
     "actions": ["docs"]
   },
   {
@@ -35,7 +35,8 @@
     "persistent": false,
     "minVersion": null,
     "maxVersion": "25.0.0",
-    "platform": ["win"]
+    "platform": ["win"],
+    "actions": ["repo"]
   },
   {
     "id": "some-unique-id-4",
