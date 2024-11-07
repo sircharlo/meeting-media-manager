@@ -6,6 +6,7 @@ import type {
   FileDownloader,
   ImageSizes,
   ImageTypeSizes,
+  JwLangCode,
   MediaItemsMediator,
   MediaItemsMediatorFile,
   MediaLink,
@@ -14,6 +15,7 @@ import type {
   MultimediaItemsFetcher,
   Publication,
   PublicationFetcher,
+  PublicationFiles,
   PublicationItem,
   TableItem,
   TableItemCount,
@@ -559,7 +561,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         try {
           const matches = extract.Link.match(/\/(.*)\//);
           if (matches && matches.length > 0) {
-            extract.Lang = matches.pop()?.split(':')[0] || '';
+            extract.Lang = (matches.pop()?.split(':')[0] || '') as JwLangCode;
           }
         } catch (e: unknown) {
           errorCatcher(e);
@@ -645,9 +647,15 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
 const getWtIssue = async (
   monday: Date,
   weeksInPast: number,
-  langwritten?: string,
+  langwritten?: JwLangCode,
   lastChance = false,
-) => {
+): Promise<{
+  db: string;
+  docId: number;
+  issueString: string;
+  publication: PublicationFetcher;
+  weekNr: number;
+}> => {
   try {
     const issue = subtractFromDate(monday, {
       days: weeksInPast * 7,
@@ -778,7 +786,7 @@ const dynamicMediaMapper = async (
                     pub: m.KeySymbol,
                     ...(m.Track && { track: m.Track }),
                     ...(m.IssueTagNumber && { issue: m.IssueTagNumber }),
-                    fileformat: video ? 'mp4' : 'mp3',
+                    fileformat: video ? 'MP4' : 'MP3',
                   })
                 )?.duration || 0;
             }
@@ -850,7 +858,7 @@ const getWeMedia = async (lookupDate: Date) => {
 
     const getIssue = async (
       monday: Date,
-      lang?: string,
+      lang?: JwLangCode,
       lastChance = false,
     ) => {
       let result = await getWtIssue(monday, 8, lang);
@@ -1083,7 +1091,7 @@ const getMwMedia = async (lookupDate: Date) => {
       langwritten: '',
       pub: '',
     };
-    const getMwbIssue = async (langwritten?: string) => {
+    const getMwbIssue = async (langwritten?: JwLangCode) => {
       if (!langwritten) return '';
       publication.issue = issueString;
       publication.langwritten = langwritten;
@@ -1253,12 +1261,10 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
   try {
     const currentStateStore = useCurrentStateStore();
 
-    if (!publication.fileformat) publication.fileformat = '';
     if (publication.pub === 'sjjm') {
       publication.pub = currentStateStore.currentSongbook?.pub;
       // publication.fileformat = currentStateStore.currentSongbook?.fileformat;
     }
-    publication.fileformat = publication.fileformat.toUpperCase();
     const params = {
       alllangs: '0',
       docid: !publication.pub ? publication.docid : '',
@@ -1381,12 +1387,17 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
       return files.length > 0 ? { FilePath: files[0] } : { FilePath: '' };
     }
     if (!responseObject) return { FilePath: '' };
-    if (!publication.fileformat)
+    if (!publication.fileformat && publication.langwritten) {
       publication.fileformat = Object.keys(
-        responseObject.files[publication.langwritten],
-      )[0];
+        responseObject.files[publication.langwritten] || {},
+      )[0] as keyof PublicationFiles;
+    }
     const mediaItemLinks =
-      responseObject.files[publication.langwritten][publication.fileformat];
+      publication.langwritten && publication.fileformat
+        ? responseObject.files[publication.langwritten]?.[
+            publication.fileformat
+          ] || []
+        : [];
     const bestItem = findBestResolution(mediaItemLinks);
     if (!isMediaLink(bestItem) || !bestItem?.file?.url) {
       return { FilePath: '' };
@@ -1562,9 +1573,13 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
       };
       return;
     }
-    const mediaLinks = publicationInfo.files[publication.langwritten][
-      publication.fileformat
-    ]
+    const mediaLinks = (
+      publication.langwritten
+        ? publicationInfo.files[publication.langwritten]?.[
+            publication.fileformat
+          ] || []
+        : []
+    )
       .filter(isMediaLink)
       .filter(
         (mediaLink) =>
@@ -1672,7 +1687,12 @@ const downloadJwpub = async (
       return handleDownloadError();
     }
     const mediaLinks =
-      publicationInfo.files[publication.langwritten][publication.fileformat]
+      (publication.langwritten
+        ? publicationInfo.files[publication.langwritten]?.[
+            publication.fileformat
+          ] || []
+        : []
+      )
         .filter(isMediaLink)
         .filter(
           (mediaLink) =>

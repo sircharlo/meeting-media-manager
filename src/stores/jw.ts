@@ -1,9 +1,11 @@
 import type {
   DateInfo,
   DynamicMediaObject,
+  JwLangCode,
   JwLanguage,
   MediaLink,
   PublicationFetcher,
+  PublicationFiles,
   UrlVariables,
 } from 'src/types';
 
@@ -40,11 +42,11 @@ interface Store {
     Record<string, Record<string, { max: number; min: number }>>
   >;
   jwLanguages: { list: JwLanguage[]; updated: Date };
-  jwSongs: Record<string, { list: MediaLink[]; updated: Date }>;
+  jwSongs: Partial<Record<JwLangCode, { list: MediaLink[]; updated: Date }>>;
   lookupPeriod: Record<string, DateInfo[]>;
   mediaSort: Record<string, Record<string, string[]>>;
   urlVariables: UrlVariables;
-  yeartexts: Record<number, Record<string, string>>;
+  yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -190,7 +192,8 @@ export const useJwStore = defineStore('jw-store', {
           errorCatcher('No current settings or songbook defined');
           return;
         }
-        for (const fileformat of ['MP4', 'MP3']) {
+        const formats: (keyof PublicationFiles)[] = ['MP4', 'MP3'];
+        for (const fileformat of formats) {
           try {
             const langwritten = currentState.currentSettings.lang;
             this.jwSongs[langwritten] ??= { list: [], updated: oldDate };
@@ -215,9 +218,9 @@ export const useJwStore = defineStore('jw-store', {
                 continue;
               }
 
-              const mediaItemLinks = pubMediaLinks.files[langwritten][
-                fileformat
-              ]
+              const mediaItemLinks = (
+                pubMediaLinks.files[langwritten]?.[fileformat] || []
+              )
                 .filter(isMediaLink)
                 .filter((mediaLink) => mediaLink.track < MAX_SONGS);
               const filteredMediaItemLinks = mediaItemLinks.reduce<MediaLink[]>(
@@ -247,7 +250,7 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(error);
       }
     },
-    async updateYeartext(lang?: string) {
+    async updateYeartext(lang?: JwLangCode) {
       try {
         const currentState = useCurrentStateStore();
         const currentLang = currentState.currentSettings?.lang || lang;

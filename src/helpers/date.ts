@@ -124,7 +124,9 @@ function isCoWeek(lookupDate: Date) {
     const currentState = useCurrentStateStore();
     const coWeekSet = !!currentState.currentSettings?.coWeek;
     if (!coWeekSet) return false;
-    const coWeekTuesday = dateFromString(currentState.currentSettings?.coWeek);
+    const coWeekTuesday = dateFromString(
+      currentState.currentSettings?.coWeek ?? undefined,
+    );
     const coMonday = getSpecificWeekday(coWeekTuesday, 0);
     const lookupWeekMonday = getSpecificWeekday(lookupDate, 0);
     return datesAreSame(coMonday, lookupWeekMonday);
@@ -142,7 +144,7 @@ const isMwMeetingDay = (lookupDate: Date) => {
     const coWeek = isCoWeek(lookupDate);
     if (coWeek) {
       const coWeekTuesday = dateFromString(
-        currentState.currentSettings?.coWeek,
+        currentState.currentSettings?.coWeek ?? undefined,
       );
       return datesAreSame(coWeekTuesday, lookupDate);
     } else {

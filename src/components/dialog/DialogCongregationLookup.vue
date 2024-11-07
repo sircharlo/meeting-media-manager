@@ -190,8 +190,8 @@ const selectCongregation = (congregation: GeoRecord) => {
         jwLanguages.value?.list.find(
           (l) => l.langcode === properties.languageCode,
         )?.langcode || '';
-      currentSettings.value.lang = resolvedLangCode;
-      currentSettings.value.langSubtitles = resolvedLangCode;
+      currentSettings.value.lang = resolvedLangCode || 'E';
+      currentSettings.value.langSubtitles = resolvedLangCode || null;
     }
 
     // Midweek day & time
