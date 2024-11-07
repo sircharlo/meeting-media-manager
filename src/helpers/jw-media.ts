@@ -22,8 +22,6 @@ import type {
   VideoMarker,
 } from 'src/types';
 
-import axios, { type AxiosError } from 'axios';
-import { Buffer } from 'buffer';
 import PQueue from 'p-queue';
 import { date } from 'quasar';
 import sanitize from 'sanitize-filename';
@@ -37,6 +35,7 @@ import {
   isCoWeek,
   isMwMeetingDay,
 } from 'src/helpers/date';
+import { get, urlWithParamsToString } from 'src/helpers/fetch';
 import {
   getDurationFromMediaPath,
   getFileUrl,
@@ -61,7 +60,7 @@ import { errorCatcher } from './error-catcher';
 const { formatDate, subtractFromDate } = date;
 
 const {
-  downloadErrorIsExpected,
+  // downloadErrorIsExpected,
   executeQuery,
   fileUrlToPath,
   fs,
@@ -107,7 +106,7 @@ const addJwpubDocumentMediaToFiles = async (
 const downloadFileIfNeeded = async ({
   dir,
   filename,
-  lowPriority = false,
+  // lowPriority = false,
   size,
   url,
 }: FileDownloader): Promise<DownloadedFile> => {
@@ -117,102 +116,77 @@ const downloadFileIfNeeded = async ({
       path: '',
     };
   const currentStateStore = useCurrentStateStore();
-  if (!queues.downloads[currentStateStore.currentCongregation])
-    queues.downloads[currentStateStore.currentCongregation] = new PQueue({
-      concurrency: 5,
-    });
-  const queue = queues.downloads[currentStateStore.currentCongregation];
-  return (
-    queue.add(
-      async () => {
-        await fs.ensureDir(dir);
-        if (!filename) filename = path.basename(url);
-        filename = sanitize(filename);
-        const destinationPath = path.join(dir, filename);
-        const remoteSize: number =
-          size ||
-          (await axios({ method: 'HEAD', url })
-            .then((response) => +response.headers['content-length'] || 0)
-            .catch(() => 0));
-        if (await fs.exists(destinationPath)) {
-          const stat = await fs.stat(destinationPath);
-          const localSize = stat.size;
-          if (localSize === remoteSize) {
-            return {
-              new: false,
-              path: destinationPath,
-            };
-          }
-        }
-        const currentStateStore = useCurrentStateStore();
-        if (!currentStateStore.downloadedFiles[url])
-          currentStateStore.downloadedFiles[url] = downloadFile({
-            dir,
-            filename,
-            size,
-            url,
-          });
-        return currentStateStore.downloadedFiles[url];
-      },
-      { priority: lowPriority ? 10 : 100 },
-    ) as Promise<DownloadedFile>
-  ).catch((error) => {
-    errorCatcher(error);
-    return {
-      new: false,
-      path: '',
-    };
-  });
-};
-
-const downloadFile = async ({ dir, filename, url }: FileDownloader) => {
-  if (!url) {
-    return {
-      error: true,
-      path: '',
-    };
-  }
+  // if (!queues.downloads[currentStateStore.currentCongregation])
+  //   queues.downloads[currentStateStore.currentCongregation] = new PQueue({
+  //     concurrency: 5,
+  //   });
+  // const queue = queues.downloads[currentStateStore.currentCongregation];
+  // return (
+  // queue.add(
+  // async () => {
+  await fs.ensureDir(dir);
   if (!filename) filename = path.basename(url);
   filename = sanitize(filename);
-  const currentStateStore = useCurrentStateStore();
   const destinationPath = path.join(dir, filename);
-  const downloadedDataRequest = await axios
-    .get(url, {
-      onDownloadProgress: (progressEvent) => {
-        const downloadDone =
-          currentStateStore.downloadProgress[url]?.complete || false;
-        if (!downloadDone)
-          currentStateStore.downloadProgress[url] = {
-            loaded: progressEvent.loaded,
-            total: progressEvent.total || progressEvent.loaded,
-          };
-      },
-      responseType: 'arraybuffer',
-    })
-    .catch(async (error: AxiosError) => {
-      if (!(await downloadErrorIsExpected())) errorCatcher(error);
-      currentStateStore.downloadProgress[url] = {
-        error: true,
+  const remoteSize: number =
+    size ||
+    (await fetch(url, { method: 'HEAD' })
+      .then((response) => {
+        if (!response || !response.ok) {
+          throw new Error(
+            `Failed to fetch: ${response.status} ${response.statusText}`,
+          );
+        }
+        return +(response?.headers?.get('content-length') || 0);
+      })
+      .catch(() => 0));
+  if (await fs.exists(destinationPath)) {
+    const stat = await fs.stat(destinationPath);
+    const localSize = stat.size;
+    if (localSize === remoteSize) {
+      return {
+        new: false,
+        path: destinationPath,
       };
-      return { data: '' };
-    });
-  const downloadedData = downloadedDataRequest.data;
-  currentStateStore.downloadProgress[url] = {
-    complete: true,
-  };
-  if (!downloadedData) {
-    return {
-      error: true,
-      path: destinationPath,
-    };
+    }
   }
-  await fs.ensureDir(dir);
-  await fs.writeFile(destinationPath, Buffer.from(downloadedData));
-  return {
-    new: true,
-    path: destinationPath,
-  };
+  const downloadId = await window.electronApi.downloadFile(url, dir, filename);
+  console.log('downloadId', downloadId, filename);
+  // await until currentStateStore.downloadProgress[downloadId].complete === true
+  const result = await new Promise<DownloadedFile>((resolve) => {
+    const interval = setInterval(() => {
+      if (!downloadId) {
+        clearInterval(interval);
+        resolve({
+          error: true,
+          path: destinationPath,
+        });
+      }
+      const progress =
+        downloadId && currentStateStore.downloadProgress[downloadId];
+      if (progress && progress.complete) {
+        clearInterval(interval);
+        resolve({
+          new: true,
+          path: destinationPath,
+        });
+      }
+    }, 100); // Check every 100ms
+  });
+  console.log('downloadFileIfNeeded', downloadId, filename, result);
+  return result;
+  //   },
+  //   { priority: lowPriority ? 10 : 100 },
+  // ) as Promise<DownloadedFile>
+  // ).catch((error) => {
+  //   errorCatcher(error);
+  //   return {
+  //     new: false,
+  //     path: '',
+  //   };
+  // });
 };
+
 const fetchMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -1280,19 +1254,19 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
       params,
     });
     if (!response) {
-      currentStateStore.downloadProgress[
-        [
-          publication.docid,
-          publication.pub,
-          publication.langwritten,
-          publication.issue,
-          publication.track,
-          publication.fileformat,
-        ]
-          .filter(Boolean)
-          .join('_')
-      ] = {
+      const downloadId = [
+        publication.docid,
+        publication.pub,
+        publication.langwritten,
+        publication.issue,
+        publication.track,
+        publication.fileformat,
+      ]
+        .filter(Boolean)
+        .join('_');
+      currentStateStore.downloadProgress[downloadId] = {
         error: true,
+        filename: downloadId,
       };
     }
     return response;
@@ -1558,18 +1532,18 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     const publicationInfo = await getPubMediaLinks(publication);
     if (!publication.fileformat) return;
     if (!publicationInfo?.files) {
-      currentStateStore.downloadProgress[
-        [
-          publication.pub,
-          publication.langwritten,
-          publication.issue,
-          publication.track,
-          publication.fileformat,
-        ]
-          .filter(Boolean)
-          .join('_')
-      ] = {
+      const downloadId = [
+        publication.pub,
+        publication.langwritten,
+        publication.issue,
+        publication.track,
+        publication.fileformat,
+      ]
+        .filter(Boolean)
+        .join('_');
+      currentStateStore.downloadProgress[downloadId] = {
         error: true,
+        filename: downloadId,
       };
       return;
     }
@@ -1664,18 +1638,18 @@ const downloadJwpub = async (
     const currentStateStore = useCurrentStateStore();
     publication.fileformat = 'JWPUB';
     const handleDownloadError = () => {
-      currentStateStore.downloadProgress[
-        [
-          publication.pub,
-          publication.langwritten,
-          publication.issue,
-          publication.track,
-          publication.fileformat,
-        ]
-          .filter(Boolean)
-          .join('_')
-      ] = {
+      const downloadId = [
+        publication.pub,
+        publication.langwritten,
+        publication.issue,
+        publication.track,
+        publication.fileformat,
+      ]
+        .filter(Boolean)
+        .join('_');
+      currentStateStore.downloadProgress[downloadId] = {
         error: true,
+        filename: downloadId,
       };
       return {
         new: false,
@@ -1744,11 +1718,16 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
     // delete all items in the array
     requestControllers.splice(0);
     requestControllers.push(controller);
-    const homePage = await axios
-      .get(homePageUrl, {
-        signal: controller.signal,
-      })
-      .then((res) => res.data);
+    const homePage = await fetch(homePageUrl, {
+      signal: controller.signal,
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch: ${response.status} ${response.statusText}`,
+        );
+      }
+      return response.text(); // Assuming the response is HTML or text data.
+    });
     if (!homePage) {
       resetUrlVariables();
       return;
@@ -1787,7 +1766,6 @@ export {
   addJwpubDocumentMediaToFiles,
   downloadAdditionalRemoteVideo,
   downloadBackgroundMusic,
-  downloadFile,
   downloadFileIfNeeded,
   downloadSongbookVideos,
   dynamicMediaMapper,

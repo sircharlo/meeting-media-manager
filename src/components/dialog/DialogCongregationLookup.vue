@@ -115,6 +115,7 @@ import { useLocale } from 'src/composables/useLocale';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import { fetch } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { get } from 'src/helpers/fetch';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { ref } from 'vue';

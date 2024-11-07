@@ -42,15 +42,16 @@
                   {{ $t(statusObject.label) }}
                 </p>
                 <template
-                  v-for="(item, url) in filteredDownloads(
+                  v-for="(item, id) in filteredDownloads(
                     downloadProgress,
                     statusObject.status,
                   )"
-                  :key="url"
+                  :key="id"
                 >
+                  <pre>{{ id }}: {{ item }}</pre>
                   <div class="row items-center q-py-sm">
                     <div class="col text-weight-medium text-dark-grey">
-                      {{ url && path.basename(url) }}
+                      {{ item.filename && path.basename(item.filename) }}
                     </div>
                     <div class="col-shrink">
                       <q-icon
@@ -119,8 +120,10 @@ const filteredDownloads = (
   Object.fromEntries(
     Object.entries(obj)
       .filter(([, item]) => item[status])
-      .sort(([keyA], [keyB]) =>
-        path.basename(keyA).localeCompare(path.basename(keyB)),
+      .sort(([, itemA], [, itemB]) =>
+        path
+          .basename(itemA.filename)
+          .localeCompare(path.basename(itemB.filename)),
       ),
   );
 

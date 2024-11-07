@@ -21,6 +21,7 @@ import {
   shouldUpdateList,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getLanguages, getYeartext } from 'src/helpers/fetch';
 import {
   findBestResolution,
   getPubMediaLinks,

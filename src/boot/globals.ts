@@ -4,8 +4,8 @@ import OBSWebSocket from 'obs-websocket-js';
 const obsWebSocket = new OBSWebSocket();
 
 const queues: {
-  downloads: Record<string, PQueue>;
+  // downloads: Record<string, PQueue>;
   meetings: Record<string, PQueue>;
-} = { downloads: {}, meetings: {} };
+} = { /*downloads: {}, */ meetings: {} };
 
 export { obsWebSocket, queues };

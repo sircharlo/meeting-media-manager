@@ -33,6 +33,7 @@ export type DownloadProgressItems = Record<
   {
     complete?: boolean;
     error?: boolean;
+    filename: string;
     loaded?: number;
     total?: number;
   }
