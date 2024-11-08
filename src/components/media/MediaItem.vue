@@ -314,6 +314,9 @@
                   :min="0"
                   :readonly="mediaPlayingAction !== 'pause'"
                   :step="0.1"
+                  :thumb-size="
+                    mediaPlayingAction === 'pause' ? undefined : '0px'
+                  "
                   inner-track-color="accent-400"
                   label
                   track-color="negative"
