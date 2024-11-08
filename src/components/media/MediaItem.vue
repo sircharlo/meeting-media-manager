@@ -309,13 +309,21 @@
                       media.uniqueId
                     ]?.min ?? 0
                   "
-                  :label-value="formatTime(mediaPlayingCurrentPosition)"
+                  :label-always="mediaPlayingAction === 'pause'"
+                  :label-color="
+                    mediaPlayingAction === 'pause' ? undefined : 'accent-400'
+                  "
+                  :label-value="
+                    mediaPlayingAction === 'pause'
+                      ? formatTime(mediaPlayingCurrentPosition)
+                      : $t('pause-to-adjust-time')
+                  "
                   :max="media.duration"
                   :min="0"
                   :readonly="mediaPlayingAction !== 'pause'"
                   :step="0.1"
                   :thumb-size="
-                    mediaPlayingAction === 'pause' ? undefined : '0px'
+                    mediaPlayingAction === 'pause' ? undefined : '10px'
                   "
                   inner-track-color="accent-400"
                   label
