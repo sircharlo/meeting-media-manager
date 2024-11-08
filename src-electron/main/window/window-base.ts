@@ -96,7 +96,7 @@ export function createWindow(
 
   // Devtools
   if (process.env.DEBUGGING) {
-    win.webContents.openDevTools();
+    if (name === 'main') win.webContents.openDevTools();
   } else {
     // Prevent devtools from being opened in production
     win.webContents.on('devtools-opened', () => {

@@ -474,16 +474,21 @@ whenever(
 );
 
 watchImmediate(
-  () => [selectedDateObject.value?.today, selectedDateObject.value?.meeting],
+  () => [
+    selectedDateObject.value?.today,
+    selectedDateObject.value?.meeting,
+    musicPlayer.value,
+  ],
   ([newToday, newMeeting]) => {
     try {
       meetingDay.value = !!newToday && !!newMeeting;
+      const remainingTime = remainingTimeBeforeMeetingStart();
       if (
         currentSettings.value?.enableMusicButton && // background music feature is enabled
         currentSettings.value?.autoStartMusic && // auto-start music is enabled
         meetingDay.value && // today is a meeting day
-        remainingTimeBeforeMeetingStart() > 90 && // meeting is starting in at least 90 seconds
-        remainingTimeBeforeMeetingStart() < 60 * 60 * 2 // meeting is starting in less than 2 hours
+        remainingTime > 90 && // meeting is starting in at least 90 seconds
+        remainingTime < 60 * 60 * 2 // meeting is starting in less than 2 hours
       ) {
         playMusic();
       }

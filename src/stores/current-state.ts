@@ -27,7 +27,7 @@ interface Store {
   downloadedFiles: Record<string, DownloadedFile | Promise<DownloadedFile>>;
   downloadProgress: DownloadProgressItems;
   extractedFiles: Record<string, Promise<string>>;
-  mediaPlayingAction: string;
+  mediaPlayingAction: '' | 'pause' | 'play' | 'website';
   mediaPlayingCurrentPosition: number;
   mediaPlayingPanzoom: Record<string, number>;
   mediaPlayingSeekTo: number;

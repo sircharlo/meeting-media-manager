@@ -659,10 +659,7 @@ watch(
       mediaPlayingCurrentPosition.value = 0;
       mediaPlayingUrl.value = '';
       mediaPlayingUniqueId.value = '';
-      mediaPlayingAction.value =
-        mediaPlayingAction.value === 'backgroundMusicPlay'
-          ? 'backgroundMusicCurrentEnded'
-          : '';
+      mediaPlayingAction.value = '';
     }
   },
 );
@@ -981,7 +978,7 @@ watchImmediate(selectedDate, (newVal) => {
   }
 });
 
-onMounted(async () => {
+onMounted(() => {
   generateMediaList();
   goToNextDayWithMedia();
 

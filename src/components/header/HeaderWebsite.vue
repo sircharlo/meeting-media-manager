@@ -59,10 +59,10 @@
 <script setup lang="ts">
 // Packages
 import { storeToRefs } from 'pinia';
-
+import { sendObsSceneEvent } from 'src/helpers/obs';
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const {
@@ -83,4 +83,12 @@ const locale = computed(() => {
 
 const currentState = useCurrentStateStore();
 const { mediaPlaying, mediaPlayingAction } = storeToRefs(currentState);
+
+watch(mediaPlayingAction, (newValue, oldValue) => {
+  if (newValue === 'website') {
+    sendObsSceneEvent('media');
+  } else if (oldValue === 'website') {
+    sendObsSceneEvent('camera');
+  }
+});
 </script>
