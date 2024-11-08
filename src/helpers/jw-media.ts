@@ -1748,7 +1748,8 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
       .get(homePageUrl, {
         signal: controller.signal,
       })
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .catch(() => null);
     if (!homePage) {
       resetUrlVariables();
       return;

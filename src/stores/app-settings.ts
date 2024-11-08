@@ -41,7 +41,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
           );
           if (await fs.exists(oldVersionPath)) {
             const oldPrefsPaths = await getOldPrefsPaths(oldVersionPath);
-            await Promise.all(
+            await Promise.allSettled(
               oldPrefsPaths.map(async (oldPrefsPath) => {
                 try {
                   const oldPrefs: OldAppConfig =
