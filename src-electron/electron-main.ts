@@ -1,5 +1,10 @@
+import { captureMessage } from '@sentry/browser';
 import { init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, repository, version } from 'app/package.json';
+
+import './main/ipc';
+import './main/security';
+
 import {
   app,
   Menu,
@@ -8,8 +13,6 @@ import {
   shell,
 } from 'electron';
 
-import './main/ipc';
-import './main/security';
 import { PLATFORM } from './constants';
 import { initScreenListeners } from './main/screen';
 import { initSessionListeners } from './main/session';
@@ -33,7 +36,11 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (app.isReady()) createMainWindow();
+  captureMessage('App activated');
+  app
+    .whenReady()
+    .then(createMainWindow)
+    .catch((e) => errorCatcher(e));
 });
 
 app

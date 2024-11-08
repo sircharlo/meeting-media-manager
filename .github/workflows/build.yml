@@ -148,10 +148,10 @@ jobs:
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
         uses: actions/upload-artifact@v4
         with:
-          name: package-${{ matrix.os }}
+          name: M³ test build for ${{ matrix.os == 'macos-13' && 'Intel-based MacOS' || matrix.os == 'macos-latest' && 'M-series (Apple Silicon) MacOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}
           path: |
             dist/electron/Packaged/*.exe
             dist/electron/Packaged/*.dmg
-            dist/electron/**/*.zip
+            dist/electron/Packaged/*.zip
             dist/electron/Packaged/*.AppImage
             dist/electron/Packaged/*/*/Contents/Info.plist
