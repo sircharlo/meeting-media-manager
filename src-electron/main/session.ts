@@ -20,10 +20,11 @@ export const initSessionListeners = () => {
           const baseUrl = `${url.protocol}//${url.hostname}`;
           details.requestHeaders['Referer'] = baseUrl;
           details.requestHeaders['Origin'] = baseUrl;
-          if (details.requestHeaders['User-Agent'])
+          if (details.requestHeaders['User-Agent']) {
             details.requestHeaders['User-Agent'] = details.requestHeaders[
               'User-Agent'
             ].replace('Electron', '');
+          }
         }
 
         callback({ requestHeaders: details.requestHeaders });
@@ -73,6 +74,9 @@ export const initSessionListeners = () => {
           (url.hostname !==
             new URL(urlVariables?.mediator || 'https://www.b.jw-cdn.org/')
               .hostname &&
+            url.hostname !== `apps.${urlVariables?.base || 'jw.org'}` &&
+            url.hostname !== `donate.${urlVariables?.base || 'jw.org'}` &&
+            url.hostname !== `hub.${urlVariables?.base || 'jw.org'}` &&
             isJwDomain(details.referrer))
         ) {
           alterResponseHeaders = false;
@@ -85,9 +89,11 @@ export const initSessionListeners = () => {
           !details.responseHeaders['access-control-allow-origin'].includes('*')
         ) {
           details.responseHeaders['access-control-allow-headers'] = [
-            'Content-Type,Authorization,X-Client-ID',
+            'Content-Type,Authorization,X-Client-ID,clientreferrer,x-client-version,x-requested-with',
           ];
-          details.responseHeaders['access-control-allow-origin'] = ['*'];
+          details.responseHeaders['access-control-allow-origin'] = [
+            details.referrer ? new URL(details.referrer).origin : '*',
+          ];
           details.responseHeaders['access-control-allow-credentials'] = [
             'true',
           ];
