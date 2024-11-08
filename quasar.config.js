@@ -122,7 +122,7 @@ module.exports = configure(function (ctx) {
           icon: 'icons/icon.icns',
           minimumSystemVersion: '10.15',
           publish: ['github'],
-          target: { target: 'dmg' },
+          target: { target: 'default' },
         },
         nsis: { oneClick: false },
         productName: 'Meeting Media Manager',
