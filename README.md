@@ -55,7 +55,7 @@ Check out our [documentation website](https://sircharlo.github.io/meeting-media-
 
 ## Additional steps for macOS users to open the app without errors
 
-If M³ won't open and displays an error like _“The app is damaged and can't be opened”_ or _“The app is damaged and can't be opened. You should move it to the Trash”_, follow these steps in Terminal (adjust the path as needed):
+If M³ won't open and displays an error like _“The app is damaged and can't be opened”_ or _“The app is damaged and can't be opened. You should move it to the Trash”_, you can try to resolve this by running the following commands in Terminal, one by one (adjust the path as needed):
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
