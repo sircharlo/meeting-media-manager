@@ -191,7 +191,9 @@
     <q-list
       v-show="
         sortableAdditionalMediaItems?.length ||
-        (selectedDateObject && isWeMeetingDay(selectedDateObject?.date))
+        (selectedDateObject &&
+          selectedDateObject.complete &&
+          isWeMeetingDay(selectedDateObject?.date))
       "
       class="media-section additional"
     >
