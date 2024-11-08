@@ -354,5 +354,6 @@
   "yeartext": "Річний вірш",
   "yes": "Так",
   "zoom-in": "Приблизити",
-  "zoom-out": "Віддалити"
+  "zoom-out": "Віддалити",
+  "pause-to-adjust-time": "To enable scrubbing, the video must be paused"
 }
