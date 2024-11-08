@@ -152,5 +152,6 @@ jobs:
           path: |
             dist/electron/Packaged/*.exe
             dist/electron/Packaged/*.dmg
+            dist/electron/**/*.zip
             dist/electron/Packaged/*.AppImage
             dist/electron/Packaged/*/*/Contents/Info.plist

@@ -118,7 +118,7 @@ export function sendToWindow(
 export function logToWindow(
   win: BrowserWindow | null,
   msg: string,
-  ctx: Record<string, unknown> | string = {},
+  ctx: boolean | number | Record<string, unknown> | string = {},
   level: 'debug' | 'error' | 'info' | 'warn' = 'info',
 ) {
   if (level === 'debug' && !process.env.DEBUGGING) return;
