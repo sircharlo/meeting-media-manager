@@ -197,8 +197,10 @@ async function playMusic() {
       !currentSettings.value?.enableMusicButton ||
       musicPlaying.value ||
       !musicPlayer.value
-    )
+    ) {
       return;
+    }
+
     musicStarting.value = true;
     downloadBackgroundMusic();
     songList.value = [];
@@ -208,7 +210,7 @@ async function playMusic() {
     const { duration, nextSongUrl, secsFromEnd } = await getNextSong();
     if (!nextSongUrl) return;
     musicPlayerSource.value.src = nextSongUrl;
-    musicPlayer.value.load();
+    musicPlayer.value?.load();
     const startTime = duration ? duration - secsFromEnd : 0;
     musicPlayer.value.currentTime = startTime;
     musicPlayer.value
@@ -256,12 +258,14 @@ function stopMusic() {
 }
 
 const musicEnded = async () => {
-  if (!musicPlayer.value || !musicPlayerSource.value || musicStopping.value)
+  if (!musicPlayer.value || !musicPlayerSource.value || musicStopping.value) {
     return;
+  }
+
   const { nextSongUrl } = await getNextSong();
   if (!nextSongUrl) return;
   musicPlayerSource.value.src = nextSongUrl;
-  musicPlayer.value.load();
+  musicPlayer.value?.load();
   musicPlayer.value.play().catch((error: Error) => {
     if (
       !(
@@ -269,8 +273,9 @@ const musicEnded = async () => {
         error.message.includes('new load request') ||
         error.message.includes('interrupted by a call to pause')
       )
-    )
+    ) {
       errorCatcher(error);
+    }
   });
 };
 

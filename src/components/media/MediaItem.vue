@@ -608,6 +608,7 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
+  if (isImage(mediaPlayingUrl.value)) stopMedia(true);
   if (signLanguage) {
     if (marker) {
       customDurations.value[currentCongregation.value] ??= {};
@@ -742,14 +743,14 @@ const zoomReset = (forced = false, animate = true) => {
     panzooms[props.media.uniqueId]?.reset({ animate });
 };
 
-function stopMedia() {
+function stopMedia(forOtherMediaItem = false) {
   mediaPlayingAction.value = 'pause';
   mediaPlayingUrl.value = '';
   mediaPlayingUniqueId.value = '';
   mediaPlayingCurrentPosition.value = 0;
   mediaPlayingAction.value = '';
   mediaToStop.value = '';
-  zoomReset(true);
+  if (!forOtherMediaItem) zoomReset(true);
 }
 
 const destroyPanzoom = () => {

@@ -1720,14 +1720,12 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
     requestControllers.push(controller);
     const homePage = await fetchRaw(homePageUrl, {
       signal: controller.signal,
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetchJson: ${response.status} ${response.statusText}`,
-        );
-      }
-      return response.text(); // Assuming the response is HTML or text data.
-    });
+    })
+      .then((response) => {
+        if (!response.ok) return null;
+        return response.text();
+      })
+      .catch(() => null);
     if (!homePage) {
       resetUrlVariables();
       return;
