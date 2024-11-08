@@ -7,8 +7,8 @@
     <q-resize-observer debounce="50" @resize="onResize" />
     <transition
       appear
-      enter-active-class="animated fadeIn"
-      leave-active-class="animated fadeOut"
+      enter-active-class="animated fadeIn slow"
+      leave-active-class="animated fadeOut slow"
       mode="out-in"
       name="fade"
     >
