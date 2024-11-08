@@ -25,9 +25,14 @@ export const fetch = async <T>(
     return response.data;
   } catch (e) {
     if (e instanceof AxiosError) {
-      if (![400, 404].includes(e.response?.status || 0)) {
+      if (![400, 404].includes(e.status || 0)) {
         console.debug({ config, url });
-        console.debug({ request: e.request, response: e.response });
+        console.debug({
+          message: e.message,
+          request: e.request,
+          response: e.response,
+          status: e.status,
+        });
         errorCatcher(e);
       }
     } else {
