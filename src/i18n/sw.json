@@ -354,5 +354,6 @@
   "yeartext": "Andiko la Mwaka",
   "yes": "Ndio",
   "zoom-in": "Vuta karibu",
-  "zoom-out": "Kuza nje"
+  "zoom-out": "Kuza nje",
+  "pause-to-adjust-time": "To enable scrubbing, the video must be paused"
 }

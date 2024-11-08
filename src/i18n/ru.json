@@ -354,5 +354,6 @@
   "yeartext": "Годовой текст",
   "yes": "Да",
   "zoom-in": "Увеличить",
-  "zoom-out": "Уменьшить"
+  "zoom-out": "Уменьшить",
+  "pause-to-adjust-time": "To enable scrubbing, the video must be paused"
 }

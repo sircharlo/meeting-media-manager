@@ -78,7 +78,7 @@
   "delete-all-additional-media": "Excluir todas as mídias adicionadas",
   "delete-media": "Excluir mídia",
   "disableMediaFetching": "Usar o M³ em conjunto com o JW Library",
-  "disableMediaFetching-explain": "Com essa opção ativada, o M³ não irá baixar as mídias automaticamente. Nesse caso, o JW Library pode ser usado para exibir a mídia padrão das reuniões e o M³ pode ser usado para exibir outras mídias adicionadas manualmente. O M³ oferece recursos práticos, como adicionar documentos PDF e aplicar Zoom em imagens. Essa opção deve ser mantida desativada em quase todos os casos.",
+  "disableMediaFetching-explain": "Com essa opção ativada, o M³ não irá baixar as mídias automaticamente. Nesse caso, o JW Library pode ser usado para exibir a mídia padrão das reuniões e o M³ pode ser usado para exibir outras mídias adicionadas manualmente. O M³ oferece recursos práticos, como adicionar documentos PDF e aplicar zoom em imagens. Essa opção deve ser mantida desativada em quase todos os casos.",
   "dismiss": "Ignorar",
   "display": "Tela",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Vocês usam um programa chamado OBS Studio?",
@@ -354,5 +354,6 @@
   "yeartext": "Texto do ano",
   "yes": "Sim",
   "zoom-in": "Aumentar o zoom",
-  "zoom-out": "Diminuir o zoom"
+  "zoom-out": "Diminuir o zoom",
+  "pause-to-adjust-time": "Para poder saltar, o vídeo deve estar pausado"
 }

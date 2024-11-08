@@ -354,5 +354,6 @@
   "yeartext": "Jahrestext",
   "yes": "Ja",
   "zoom-in": "Hineinzoomen",
-  "zoom-out": "Herauszoomen"
+  "zoom-out": "Herauszoomen",
+  "pause-to-adjust-time": "To enable scrubbing, the video must be paused"
 }

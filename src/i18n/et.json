@@ -354,5 +354,6 @@
   "yeartext": "Aastatekst",
   "yes": "Jah",
   "zoom-in": "Suurenda",
-  "zoom-out": "Vaata kaugemalt"
+  "zoom-out": "Vaata kaugemalt",
+  "pause-to-adjust-time": "To enable scrubbing, the video must be paused"
 }
