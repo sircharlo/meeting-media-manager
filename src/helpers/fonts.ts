@@ -21,7 +21,6 @@ const getLocalFontPath = async (fontName: FontName) => {
       if (headReq.ok) {
         const remoteSize = headReq.headers.get('content-length');
         const localSize = (await fs.stat(fontPath)).size;
-        console.log({ localSize, remoteSize });
         mustDownload = remoteSize ? parseInt(remoteSize) !== localSize : true;
       } else {
         mustDownload = true;

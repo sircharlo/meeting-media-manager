@@ -84,7 +84,6 @@ const deleteCacheFiles = async (type = '') => {
       type === 'smart'
         ? Object.keys(props.unusedParentDirectories)
         : props.cacheFiles.map((f) => f.path);
-    console.debug('deleteCacheFiles', filepathsToDelete);
     for (const filepath of filepathsToDelete) {
       try {
         fs.remove(filepath);

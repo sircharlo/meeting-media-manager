@@ -384,7 +384,6 @@ const initListeners = () => {
   });
 
   window.electronApi.onDownloadStarted((args) => {
-    console.debug('[main] onDownloadStarted', args);
     downloadProgress.value[args.id] = {
       filename: args.filename,
       total: args.totalBytes,
@@ -392,13 +391,11 @@ const initListeners = () => {
   });
 
   window.electronApi.onDownloadCancelled((args) => {
-    console.debug('[main] onDownloadCancelled', args);
     if (downloadProgress.value[args.id])
       downloadProgress.value[args.id].error = true;
   });
 
   window.electronApi.onDownloadCompleted((args) => {
-    console.debug('[main] onDownloadCompleted', args);
     if (downloadProgress.value[args.id]) {
       downloadProgress.value[args.id].complete = true;
       delete downloadProgress.value[args.id].loaded;
@@ -406,13 +403,11 @@ const initListeners = () => {
   });
 
   window.electronApi.onDownloadError((args) => {
-    console.debug('[main] onDownloadError', args);
     if (downloadProgress.value[args.id])
       downloadProgress.value[args.id].error = true;
   });
 
   window.electronApi.onDownloadProgress((args) => {
-    // console.debug('[main] onDownloadProgress', args);
     if (downloadProgress.value[args.id]) {
       downloadProgress.value[args.id].loaded = args.bytesReceived;
     }
