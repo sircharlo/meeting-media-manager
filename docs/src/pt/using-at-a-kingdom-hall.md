@@ -69,7 +69,7 @@ O tipo de perfil **outro** é raramente usado. **Para uso normal durante as reun
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Pesquisa automática de congregação {#automatic-congregation-lookup}
 
 O M³ pode encontrar automaticamente o horário das reuniões, o idioma e o nome da sua congregação.
 
@@ -83,7 +83,7 @@ Esta pesquisa utiliza dados disponíveis publicamente no site oficial das Testem
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Entrada manual de informações da congregação {#manual-entry-of-congregation-information}
 
 Se a busca automatizada não encontrar sua congregação, você pode, é claro, inserir manualmente as informações necessárias. O assistente permitirá que você revise e/ou insira o **nome** da sua congregação, o **idioma das reuniões** e os **dias e horários das reuniões**.
 
