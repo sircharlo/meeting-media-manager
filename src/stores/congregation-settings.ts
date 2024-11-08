@@ -5,6 +5,7 @@ import { uid } from 'quasar';
 import { defaultSettings } from 'src/constants/settings';
 
 interface Store {
+  announcements: Record<string, string[]>;
   congregations: Record<string, SettingsValues>;
 }
 
@@ -22,6 +23,13 @@ export const useCongregationSettingsStore = defineStore(
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete this.congregations[id];
       },
+      dismissAnnouncement(congId: string, id: string) {
+        if (!id || !congId) return;
+        if (!this.announcements[congId]) {
+          this.announcements[congId] = [];
+        }
+        this.announcements[congId].push(id);
+      },
     },
     getters: {
       congregationCount: (state) => {
@@ -30,7 +38,7 @@ export const useCongregationSettingsStore = defineStore(
     },
     persist: true,
     state: (): Store => {
-      return { congregations: {} };
+      return { announcements: {}, congregations: {} };
     },
   },
 );

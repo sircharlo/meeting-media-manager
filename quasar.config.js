@@ -14,7 +14,7 @@ const path = require('path');
 const { configure } = require('quasar/wrappers');
 const { mergeConfig } = require('vite'); // use mergeConfig helper to avoid overwriting the default config
 
-const { version } = require('./package.json');
+const { repository, version } = require('./package.json');
 
 module.exports = configure(function (ctx) {
   return {
@@ -29,6 +29,9 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
+      env: {
+        repository: repository.url.replace('.git', ''),
+      },
       extendViteConf(viteConf) {
         viteConf.optimizeDeps = mergeConfig(viteConf, {
           esbuildOptions: {

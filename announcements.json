@@ -1,50 +1,21 @@
 [
   {
-    "id": "some-unique-id-1",
-    "message": "This is an info message",
-    "type": "info",
-    "persistent": false,
-    "minVersion": "24.11.0",
-    "maxVersion": "25.0.0",
-    "platform": ["win"],
-    "actions": ["docs"]
-  },
-  {
-    "id": "some-unique-id-2",
-    "message": "This is a macos info message",
-    "type": "info",
-    "persistent": false,
-    "minVersion": "24.11.0",
-    "maxVersion": "25.0.0",
-    "platform": ["mac"]
-  },
-  {
-    "id": "some-unique-id-3",
-    "message": "This is a warning message for a specific version",
+    "explain": "This is an example announcement that won't ever be shown because of the maxVersion value. The *Explain properties are just for this example. To use the default value, either don't specify the property or set it to null.",
+    "id": "a-unique-id",
+    "idExplain": "A unique identifier for the announcement (required).",
+    "message": "This is an announcement message",
+    "messageExplain": "A hardcoded message or an i18n key for translation (required).",
     "type": "warning",
-    "persistent": true,
+    "typeExplain": "info, warning or error. Defaults to info.",
+    "platform": ["linux", "mac", "win"],
+    "platformExplain": "Platforms to target. Defaults to all platforms.",
     "minVersion": "24.11.1",
-    "maxVersion": "24.11.1",
-    "platform": ["win"],
-    "actions": ["update"]
-  },
-  {
-    "id": "some-unique-id-3",
-    "message": "app-issues",
-    "type": "warning",
-    "persistent": false,
-    "minVersion": null,
-    "maxVersion": "25.0.0",
-    "platform": ["win"],
-    "actions": ["repo"]
-  },
-  {
-    "id": "some-unique-id-4",
-    "message": "This is a persistent error message",
-    "type": "error",
+    "minVersionExplain": "Minimum target version for the announcement. Defaults to all versions.",
+    "maxVersion": "0.0.0",
+    "maxVersionExplain": "Maximum target version for the announcement. Defaults to all versions.",
     "persistent": true,
-    "minVersion": null,
-    "maxVersion": null,
-    "platform": null
+    "persistentExplain": "If true, show at every startup. If false, show once per congregation. Defaults to false.",
+    "actions": ["docs", "repo", "update"],
+    "actionsExplain": "Action buttons to show. Defaults to no actions."
   }
 ]
