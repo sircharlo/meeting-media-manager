@@ -96,7 +96,7 @@ export function createWindow(
 
   // Devtools
   if (process.env.DEBUGGING) {
-    if (name === 'main') win.webContents.openDevTools();
+    win.webContents.openDevTools(); // I like having dev tools open for all windows in dev
   } else {
     // Prevent devtools from being opened in production
     win.webContents.on('devtools-opened', () => {
