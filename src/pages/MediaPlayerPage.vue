@@ -277,6 +277,10 @@ watch(currentCongregation, (newCongregation) => {
   if (!newCongregation) showMediaWindow(false);
 });
 
+const { post: postMediaState } = useBroadcastChannel<'ended', 'ended'>({
+  name: 'media-state',
+});
+
 const playMedia = () => {
   try {
     if (!mediaElement.value) {
@@ -284,10 +288,7 @@ const playMedia = () => {
     }
 
     mediaElement.value.onended = () => {
-      const { post } = useBroadcastChannel<'ended', 'ended'>({
-        name: 'media-state',
-      });
-      post('ended');
+      postMediaState('ended');
     };
 
     mediaElement.value.onpause = () => {
@@ -307,10 +308,7 @@ const playMedia = () => {
             currentCongregation.value
           ]?.[selectedDate.value]?.[mediaUniqueId.value] ?? { max: 0 };
           if (currentTime >= customStartStop.max) {
-            const { post } = useBroadcastChannel<'ended', 'ended'>({
-              name: 'media-state',
-            });
-            post('ended');
+            postMediaState('ended');
           }
         }
       } catch (e) {

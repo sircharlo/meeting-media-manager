@@ -648,7 +648,10 @@ const datedAdditionalMediaMap = computed(() => {
   );
 });
 
-const { data: mediaStateData } = useBroadcastChannel<'ended', 'ended'>({
+const { data: mediaStateData } = useBroadcastChannel<
+  'ended' | null,
+  'ended' | null
+>({
   name: 'media-state',
 });
 
@@ -661,6 +664,7 @@ watch(
       mediaPlayingUniqueId.value = '';
       mediaPlayingAction.value = '';
     }
+    mediaStateData.value = null;
   },
 );
 
