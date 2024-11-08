@@ -77,8 +77,6 @@ import {
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 // Stores
-import { useAppSettingsStore } from 'src/stores/app-settings';
-// import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
@@ -123,38 +121,6 @@ const jwStore = useJwStore();
 // jwStore.$subscribe((_, state) => {
 //   saveSettingsStoreToFile('jw', state);
 // });
-
-const appSettings = useAppSettingsStore();
-
-// appSettings.$subscribe((_, state) => {
-//   saveSettingsStoreToFile('appSettings', state);
-// });
-
-const { migrations } = storeToRefs(appSettings);
-const { runMigration } = appSettings;
-
-const migrationsToRun = [
-  'localStorageToPiniaPersist',
-  'firstRun',
-  'addBaseUrlToAllCongregations',
-];
-
-(async () => {
-  for (const migration of migrationsToRun) {
-    if (!migrations.value?.includes(migration)) {
-      const success = await runMigration(migration);
-      if (migration === 'firstRun' && success) {
-        createTemporaryNotification({
-          caption: t('successfully-migrated-from-the-previous-version'),
-          icon: 'mmm-info',
-          message: t('welcome-to-mmm'),
-          timeout: 15000,
-          type: 'positive',
-        });
-      }
-    }
-  }
-})();
 
 const { updateJwLanguages } = jwStore;
 updateJwLanguages();

@@ -114,7 +114,7 @@ export type ElectronIpcInvokeKey =
   | 'downloadErrorIsExpected'
   | 'downloadFile'
   | 'getAllScreens'
-  | 'getAppPath'
+  | 'getAppDataPath'
   | 'getUserDataPath'
   | 'getVersion'
   | 'openFileDialog'
