@@ -65,9 +65,7 @@ If issues persist, please refer to our [documentation website](https://sircharlo
 
 ## Does this app go against the Terms of Use of the official website of Jehovah's Witnesses?
 
-**No.** Our use complies with the [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses.
-
-For more details, please refer to our [documentation website](https://sircharlo.github.io/meeting-media-manager/faq#terms-of-use).
+**No.** Our use complies with the [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses. For more details, please refer to our [documentation website](https://sircharlo.github.io/meeting-media-manager/faq#terms-of-use).
 
 ## Want to help improve M³?
 
