@@ -210,66 +210,121 @@ handleIpcInvoke(
 );
 
 const manager = new ElectronDownloadManager();
-const downloadIdMap = new Map<string, string>();
+interface DownloadQueueItem {
+  destFilename: string;
+  saveDir: string;
+  url: string;
+}
+
+const downloadQueue: DownloadQueueItem[] = [];
+const lowPriorityQueue: DownloadQueueItem[] = [];
+const activeDownloadIds: string[] = [];
+const maxActiveDownloads = 5;
+
+async function processQueue() {
+  if (!mainWindow) return null;
+  // If max active downloads reached, wait for a slot
+  while (activeDownloadIds.length >= maxActiveDownloads) {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    });
+  }
+
+  let download: DownloadQueueItem | undefined;
+
+  if (downloadQueue.length > 0) {
+    download = downloadQueue.shift();
+  } else if (lowPriorityQueue.length > 0) {
+    download = lowPriorityQueue.shift();
+  } else {
+    return; // No downloads to process
+  }
+
+  if (!download) return;
+  const { destFilename, saveDir, url } = download;
+  activeDownloadIds.push(url + saveDir);
+
+  // Start the download
+  const downloadId = await manager.download({
+    callbacks: {
+      onDownloadCancelled: ({ id }) => {
+        sendToWindow(mainWindow, 'downloadCancelled', { id });
+        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+        processQueue(); // Process next download
+      },
+      onDownloadCompleted: async ({ item }) => {
+        sendToWindow(mainWindow, 'downloadCompleted', {
+          filePath: item.getSavePath(),
+          id: url + saveDir,
+        });
+        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+        processQueue(); // Process next download
+      },
+      onDownloadProgress: async ({ item, percentCompleted }) => {
+        sendToWindow(mainWindow, 'downloadProgress', {
+          bytesReceived: item.getReceivedBytes(),
+          id: url + saveDir,
+          percentCompleted,
+        });
+      },
+      onDownloadStarted: async ({ item, resolvedFilename }) => {
+        sendToWindow(mainWindow, 'downloadStarted', {
+          filename: resolvedFilename,
+          id: url + saveDir,
+          totalBytes: item.getTotalBytes(),
+        });
+      },
+      onError: (err, downloadData) => {
+        errorCatcher(err);
+        if (downloadData) {
+          sendToWindow(mainWindow, 'downloadError', {
+            id: downloadData.id,
+          });
+        }
+        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+        processQueue(); // Process next download
+      },
+    },
+    directory: saveDir,
+    saveAsFilename: destFilename,
+    url,
+    window: mainWindow,
+  });
+  return downloadId;
+}
 
 handleIpcInvoke(
   'downloadFile',
-  async (_e, url: string, saveDir: string, destFilename?: string) => {
+  async (
+    _e,
+    url: string,
+    saveDir: string,
+    destFilename?: string,
+    lowPriority = false,
+  ) => {
     if (!mainWindow || !url || !saveDir) return null;
     try {
       await ensureDir(saveDir);
 
       if (!destFilename) destFilename = basename(url);
 
-      if (downloadIdMap.has(url + saveDir)) {
-        return downloadIdMap.get(url + saveDir);
+      const fileToDownload = { destFilename, saveDir, url };
+
+      if (!activeDownloadIds.includes(url + saveDir)) {
+        if (lowPriority) {
+          lowPriorityQueue.push(fileToDownload);
+        } else {
+          downloadQueue.push(fileToDownload);
+        }
+
+        if (
+          downloadQueue.length + activeDownloadIds.length <
+          maxActiveDownloads
+        ) {
+          processQueue();
+        }
       }
-      downloadIdMap.set(url + saveDir, 'awaiting download ID');
-
-      const downloadId = await manager.download({
-        callbacks: {
-          onDownloadCancelled: ({ id }) => {
-            sendToWindow(mainWindow, 'downloadCancelled', { id });
-          },
-          onDownloadCompleted: async ({ id, item }) => {
-            sendToWindow(mainWindow, 'downloadCompleted', {
-              filePath: item.getSavePath(),
-              id,
-            });
-          },
-          onDownloadProgress: async ({ id, item, percentCompleted }) => {
-            sendToWindow(mainWindow, 'downloadProgress', {
-              bytesReceived: item.getReceivedBytes(),
-              id,
-              percentCompleted,
-            });
-          },
-          onDownloadStarted: async ({ id, item, resolvedFilename }) => {
-            sendToWindow(mainWindow, 'downloadStarted', {
-              filename: resolvedFilename,
-              id,
-              totalBytes: item.getTotalBytes(),
-            });
-          },
-          onError: (err, downloadData) => {
-            errorCatcher(err);
-            if (downloadData) {
-              sendToWindow(mainWindow, 'downloadError', {
-                id: downloadData.id,
-              });
-            }
-          },
-        },
-        directory: saveDir,
-        saveAsFilename: destFilename,
-        url,
-        window: mainWindow,
-      });
-
-      // manager.pauseDownload(downloadId); // eventually we can implement pause/resume if needed
-
-      downloadIdMap.set(url + saveDir, downloadId);
-      return downloadId;
+      return url + saveDir;
     } catch (error) {
       errorCatcher(error);
       return null;

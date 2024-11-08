@@ -40,7 +40,7 @@ const electronApi: ElectronApi = {
   convertPdfToImages,
   decompress,
   downloadErrorIsExpected: () => invoke('downloadErrorIsExpected'),
-  downloadFile: (u, d, n) => invoke('downloadFile', u, d, n),
+  downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
   fileUrlToPath,
   fs,

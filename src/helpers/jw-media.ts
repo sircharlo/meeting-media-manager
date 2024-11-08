@@ -105,7 +105,7 @@ const addJwpubDocumentMediaToFiles = async (
 const downloadFileIfNeeded = async ({
   dir,
   filename,
-  // lowPriority = false,
+  lowPriority = false,
   size,
   url,
 }: FileDownloader): Promise<DownloadedFile> => {
@@ -115,14 +115,6 @@ const downloadFileIfNeeded = async ({
       path: '',
     };
   const currentStateStore = useCurrentStateStore();
-  // if (!queues.downloads[currentStateStore.currentCongregation])
-  //   queues.downloads[currentStateStore.currentCongregation] = new PQueue({
-  //     concurrency: 5,
-  //   });
-  // const queue = queues.downloads[currentStateStore.currentCongregation];
-  // return (
-  // queue.add(
-  // async () => {
   await fs.ensureDir(dir);
   if (!filename) filename = path.basename(url);
   filename = sanitize(filename);
@@ -149,9 +141,13 @@ const downloadFileIfNeeded = async ({
       };
     }
   }
-  const downloadId = await window.electronApi.downloadFile(url, dir, filename);
-  console.log('downloadId', downloadId, filename);
-  // await until currentStateStore.downloadProgress[downloadId].complete === true
+  const downloadId = await window.electronApi.downloadFile(
+    url,
+    dir,
+    filename,
+    lowPriority,
+  );
+
   const result = await new Promise<DownloadedFile>((resolve) => {
     const interval = setInterval(() => {
       if (!downloadId) {
@@ -160,30 +156,18 @@ const downloadFileIfNeeded = async ({
           error: true,
           path: destinationPath,
         });
+        return;
       }
-      const progress =
-        downloadId && currentStateStore.downloadProgress[downloadId];
-      if (progress && progress.complete) {
+      if (currentStateStore.downloadProgress[downloadId]?.complete) {
         clearInterval(interval);
         resolve({
           new: true,
           path: destinationPath,
         });
       }
-    }, 100); // Check every 100ms
+    }, 500); // Check every 500ms
   });
-  console.log('downloadFileIfNeeded', downloadId, filename, result);
   return result;
-  //   },
-  //   { priority: lowPriority ? 10 : 100 },
-  // ) as Promise<DownloadedFile>
-  // ).catch((error) => {
-  //   errorCatcher(error);
-  //   return {
-  //     new: false,
-  //     path: '',
-  //   };
-  // });
 };
 
 const fetchMedia = async () => {
@@ -282,10 +266,10 @@ const getDbFromJWPUB = async (publication: PublicationFetcher) => {
     const jwpub = await downloadJwpub(publication);
     if (jwpub.error) return null;
     const publicationDirectory = await getPublicationDirectory(publication);
-    if (jwpub.new || !findDb(publicationDirectory)) {
+    if (jwpub.new || !(await findDb(publicationDirectory))) {
       await decompressJwpub(jwpub.path, publicationDirectory);
     }
-    const dbFile = findDb(publicationDirectory);
+    const dbFile = await findDb(publicationDirectory);
     if (!dbFile) {
       return null;
     } else {
@@ -1377,34 +1361,33 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
       return { FilePath: '' };
     }
     const jwMediaInfo = await getJwMediaInfo(publication);
-    downloadFileIfNeeded({
+    const downloadedFile = await downloadFileIfNeeded({
       dir: pubDir,
       size: bestItem.filesize,
       url: bestItem.file.url,
-    }).then(async (downloadedFile) => {
-      const currentStateStore = useCurrentStateStore();
-      for (const itemUrl of [
-        currentStateStore.currentSettings?.enableSubtitles
-          ? jwMediaInfo.subtitles
-          : undefined,
-        jwMediaInfo.thumbnail,
-      ].filter((u): u is string => !!u)) {
-        const itemFilename =
-          path.basename(bestItem.file.url).split('.')[0] +
-          path.extname(itemUrl);
-        if (
-          bestItem.file?.url &&
-          (downloadedFile?.new ||
-            !(await fs.exists(path.join(pubDir, itemFilename))))
-        ) {
-          await downloadFileIfNeeded({
-            dir: pubDir,
-            filename: itemFilename,
-            url: itemUrl,
-          });
-        }
-      }
     });
+    const currentStateStore = useCurrentStateStore();
+    for (const itemUrl of [
+      currentStateStore.currentSettings?.enableSubtitles
+        ? jwMediaInfo.subtitles
+        : undefined,
+      jwMediaInfo.thumbnail,
+    ].filter((u): u is string => !!u)) {
+      const itemFilename =
+        path.basename(bestItem.file.url).split('.')[0] + path.extname(itemUrl);
+      if (
+        bestItem.file?.url &&
+        (downloadedFile?.new ||
+          !(await fs.exists(path.join(pubDir, itemFilename))))
+      ) {
+        await downloadFileIfNeeded({
+          dir: pubDir,
+          filename: itemFilename,
+          lowPriority: true,
+          url: itemUrl,
+        });
+      }
+    }
     return {
       FilePath: path.join(pubDir, path.basename(bestItem.file.url)),
       StreamDuration: bestItem.duration,

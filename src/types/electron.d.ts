@@ -22,6 +22,7 @@ export interface ElectronApi {
     url: string,
     saveDir: string,
     destFilename?: string,
+    lowPriority?: boolean,
   ) => Promise<null | string>;
   executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => T[];
   fileUrlToPath: (url: string) => string;
