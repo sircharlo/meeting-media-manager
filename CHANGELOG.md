@@ -2,6 +2,45 @@
 
 # Changelog
 
+## 24.11.0
+
+### ✨ New Features
+
+- **feat**: Presenting the website is now supported on macOS 🚀
+- **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- **feat**: Added support for setting the web address from which media should be downloaded 🚀
+- **feat**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- **feat**: Expanded documentation website to support more languages
+
+### 🔧 Fixes & Improvements
+
+- **fix**: Intel Mac systems are now supported! 🚀
+- **fix**: Various UI adjustments, such as image zoom reset icon visibility
+- **fix**: Corrected issues in media handling, including hidden media visibility, JW video categories, and background music updates on profile change
+- **fix**: Image zoom now resets when media is stopped
+- **fix**: Enhanced date handling—fallback to today’s date for "Other" profiles, and hide the import button if no date selection was made
+- **fix**: Corrected window state logic for macOS, including the system menu bar
+- **fix**: Correct handling of undefined `mediaLinks`, nullable settings and other variable values in various functions
+
+### 🛠️ Refactors & Chores
+
+- **refactor**: Switched to asynchronous file handling and removed synchronous file system calls, greatly improving responsiveness
+- **refactor**: Reorganized preload files for better modularity and IPC handling, and removed `electron/remote` dependency
+- **refactor**: Consolidated imports, optimized Quasar components, and improved type safety across the codebase
+- **chore**: Improved stability with enhanced security by disabling Node integration and enabling web security
+- **chore**: Documented codebase, improved `Info.plist` handling on macOS, and added minimum macOS version requirement
+- **chore**: Added Prettier formatting, code comments, and improved `lint-staged` configuration for better code consistency
+
+### 📄 Documentation Updates
+
+- **docs**: Enhanced FAQ link texts and navigation for clarity
+- **docs**: Updated `README` to better guide contributors and included terms of use references
+
+### ⚙️ CI/CD Enhancements
+
+- **ci**: Updated Husky configurations for pre-commit and pre-push checks, fixed type checks, and enhanced build scripts for x64 and ARM64 on macOS
+- **ci**: Refined artifact uploads and improved documentation generation
+
 ## 24.10.10
 
 ### ✨ New Features

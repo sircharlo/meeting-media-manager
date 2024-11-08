@@ -41,15 +41,16 @@ export const useObsStateStore = defineStore('obs-state', {
             ]
               .filter((s): s is string => !!s)
               .includes(
-                scene.sceneUuid?.toString() ||
-                  scene.sceneName?.toString() ||
-                  '',
+                (configuredScenesAreAllUUIDs() && scene.sceneUuid
+                  ? scene.sceneUuid.toString()
+                  : scene.sceneName?.toString()) || '',
               ),
         )
-        .map((scene): string =>
-          configuredScenesAreAllUUIDs() && scene.sceneUuid
-            ? scene.sceneUuid.toString()
-            : scene.sceneName?.toString() || '',
+        .map(
+          (scene): string =>
+            (configuredScenesAreAllUUIDs() && scene.sceneUuid
+              ? scene.sceneUuid.toString()
+              : scene.sceneName?.toString()) || '',
         )
         .filter(Boolean);
     },
