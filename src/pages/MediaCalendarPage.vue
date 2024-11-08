@@ -944,7 +944,7 @@ watchImmediate(selectedDate, (newVal) => {
   }
 });
 
-onMounted(async () => {
+onMounted(() => {
   generateMediaList();
   goToNextDayWithMedia();
 
