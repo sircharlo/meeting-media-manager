@@ -121,13 +121,21 @@ import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
+import { createTemporaryNotification } from 'src/helpers/notifications';
+import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 const { getDateLocale } = useLocale();
+
+const appSettings = useAppSettingsStore();
+
+const { migrations } = storeToRefs(appSettings);
+const { runMigration } = appSettings;
 
 const congregationSettings = useCongregationSettingsStore();
 const currentState = useCurrentStateStore();
@@ -145,15 +153,19 @@ const deletePending = computed(() => {
 });
 const hoveredCongregation = ref<number | string>('');
 
+const { t } = useI18n({ useScope: 'global' });
+
 function chooseCongregation(
   congregation: number | string,
   initialLoad?: boolean,
 ) {
   try {
+    console.log('chooseCongregation', congregation);
     const invalidSettings = setCongregation(congregation);
     if (congregation) {
       updateYeartext();
       downloadSongbookVideos();
+      console.log('initialLoad', initialLoad);
       if (initialLoad) {
         // if (initialLoad || invalidSettings)
         router.push('/setup-wizard');
@@ -181,7 +193,8 @@ function createNewCongregation() {
 
 useEventListener(window, 'createNewCongregation', createNewCongregation);
 
-onMounted(() => {
+const autoSelectCongregation = () => {
+  console.log('congregationCount', congregationCount.value);
   if (congregationCount.value === 0) {
     createNewCongregation();
   } else if (congregationCount.value === 1 && isHomePage.value) {
@@ -189,5 +202,31 @@ onMounted(() => {
   } else if (!isHomePage.value) {
     chooseCongregation('');
   }
+};
+
+const runMigrations = async () => {
+  const migrationsToRun = [
+    'firstRun',
+    'localStorageToPiniaPersist',
+    'addBaseUrlToAllCongregations',
+  ];
+
+  for (const migration of migrationsToRun) {
+    if (!migrations.value?.includes(migration)) {
+      const success = await runMigration(migration);
+      if (migration === 'firstRun' && success) {
+        createTemporaryNotification({
+          caption: t('successfully-migrated-from-the-previous-version'),
+          icon: 'mmm-info',
+          message: t('welcome-to-mmm'),
+          timeout: 15000,
+          type: 'positive',
+        });
+      }
+    }
+  }
+};
+onMounted(() => {
+  runMigrations().then(autoSelectCongregation);
 });
 </script>

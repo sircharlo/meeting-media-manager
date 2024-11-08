@@ -160,7 +160,7 @@ function handleIpcInvoke<T = unknown>(
 handleIpcInvoke('getVersion', async () =>
   IS_DEV ? version : app.getVersion(),
 );
-handleIpcInvoke('getAppPath', async () => app.getAppPath());
+handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => getUserDataPath());
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());

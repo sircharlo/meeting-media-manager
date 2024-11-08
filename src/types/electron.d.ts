@@ -88,7 +88,7 @@ export type ElectronIpcSendKey =
 export type ElectronIpcInvokeKey =
   | 'downloadErrorIsExpected'
   | 'getAllScreens'
-  | 'getAppPath'
+  | 'getAppDataPath'
   | 'getUserDataPath'
   | 'getVersion'
   | 'openFileDialog'
