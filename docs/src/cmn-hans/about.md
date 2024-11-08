@@ -1,6 +1,6 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# 当你点击此窗口右上角的按钮时，会打开一个新窗口，展示耶和华见证人的官方网站。你在此窗口中看到的内容将会镜像到媒体窗口中。
 
-## What is this app? {#what-is-this-app}
+## 这个应用程序是什么？ {#what-is-this-app}
 
 **Meeting Media Manager**或**M3**简而言之，是Windows、 macOS 和 Linux的应用。 自动下载将在耶和华见证人聚会期间考虑的，在耶和华见证人的官方网站上能找到的任何语言的图片和录像。
 

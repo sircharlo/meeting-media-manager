@@ -1,24 +1,24 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# 在王国聚会所使用M³ {#using-m3-at-a-kingdom-hall}
 
 本指南将带你在王国聚会所下载、安装和设置\*\*Meeting Media Manager (M³)\*\*的过程。 遵循步骤以确保在聚会期间管理媒体的顺利设置。
 
-## 1. Download and install {#download-and-install}
+## 1. 下载并安装 {#download-and-install}
 
 1. 访问 [M³下载页面](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system:
+2. 下载您操作系统的适当版本：
    - **Windows:**
-     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
-     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
-   - **macOS:**
-     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
-     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+     - 对于大多数Windows系统，下载 `meeting-media-manager-[VERSION]-x64.exe` 。
+     - 对于较旧的32位Windows系统，请下载 `meeting-media-manager-[VERSION]-ia32.exe` 。
+   - **MacOS:**
+     - **M系列(Apple Silicon)**: 下载 `meeting-media-manager-[VERSION]-arm64.dmg`。
+     - **Intel系列 Mac**：下载 `meeting-media-manager-[VERSION]-x64.dmg`。
    - **Linux:**
-     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
+     - 下载 `meeting-media-manager-[VERSION]-x86_64.AppImage` 。
 3. 打开安装程序并按照屏幕上的说明安装M³。
 4. 启动 M³。
 5. 通过配置向导。
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### macOS 用户的附加步骤 {#additional-steps-for-macos-users}
 
 由于苹果的安全措施，还需要采取一些其他步骤来在近期macOS系统上运行M3。
 
@@ -45,9 +45,9 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 如果您在关注所有这些步骤后仍然有问题，请[在GitHub上打开一个问题](https://github.com/sircharlo/meeting-media-manager/issues/new)。 我们会尽力提供帮助。
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. 配置向导 {#configuration-wizard}
 
-### App display language {#app-display-language}
+### 应用显示语言 {#app-display-language}
 
 当首次启动 M³ 时，您将被提示选择您喜欢的 **显示语言** 。 选择您想要M³用于其接口的语言。 选择您想要M³用于其接口的语言。
 
@@ -57,7 +57,7 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::
 
-### Profile type {#profile-type}
+### 配置文件类型 {#profile-type}
 
 下一步是选择一个 **配置类型**。 在王国聚会所中定期设置，请选择**常规**。 这将配置许多常用于会众聚会的特征。
 
@@ -65,11 +65,11 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 只有当您创建的配置不需要自动下载任何媒体内容时，您才应该选择**其他**。 在此配置中，媒体内容需要手动导入才能使用。 这种类型的配置主要用于在学校、分区及区域大会和其他特殊活动中使用M³。
 
-**其他**配置类型很少使用。 **在会众聚会期间正常使用时，请选择_常规_。**
+**其他**配置类型很少使用。 **在会众聚会期间正常使用时，请选择*常规*。**
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### 会众自动查询 {#automatic-congregation-lookup}
 
 M³可以尝试自动找到您会众的的聚会安排、语言和正式名称。
 
@@ -83,11 +83,11 @@ M³可以尝试自动找到您会众的的聚会安排、语言和正式名称�
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### 会众信息的手动输入 {#manual-entry-of-congregation-information}
 
 如果无法自动找到您的会众，您可以手动输入所需的信息。 向导将帮助您检查和输入您的会众的 **名称**、**会众语言**、**聚会日起和时间**。
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### 正在从歌曲中缓存视频 {#caching-videos-from-the-songbook}
 
 您还可以选择**缓存歌本中的所有视频**。 此选项预先下载所有歌本视频，减少将来获取会议媒体所需的时间。
 
@@ -100,7 +100,7 @@ M³可以尝试自动找到您会众的的聚会安排、语言和正式名称�
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### OBS 工作室集成配置 (可选) {#obs-studio-integration-configuration}
 
 如果您的王国聚会所使用**OBS Studio**通过Zoom进行混合聚会直播，M³可以自动与该程序集成。 在设置过程中，您可以通过输入以下内容来配置与OBS Studio的集成：
 
@@ -114,6 +114,6 @@ M³可以尝试自动找到您会众的的聚会安排、语言和正式名称�
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. 享受使用 M³ {#enjoy-using-m3}
 
 设置向导完成后，M³就可以帮助管理和播放会众聚会的媒体内容了。 享受使用M³！ :tada:
