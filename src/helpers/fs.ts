@@ -280,6 +280,7 @@ const getSubtitlesUrl = async (
         await downloadFileIfNeeded({
           dir: subDirectory,
           filename: subtitlesFilename,
+          lowPriority: true,
           url: subtitles,
         });
         subtitlesPath = path.join(subDirectory, subtitlesFilename);

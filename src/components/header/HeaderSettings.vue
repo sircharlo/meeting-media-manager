@@ -279,7 +279,6 @@ const mediaFileParentDirectories = new Set([
 ]);
 
 const getCacheFiles = async (cacheDirs: string[]) => {
-  console.log('getCacheFiles', cacheDirs);
   const files: CacheFile[] = [];
   for (const cacheDir of cacheDirs) {
     try {

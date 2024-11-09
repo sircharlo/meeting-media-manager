@@ -30,12 +30,12 @@
 </template>
 <script setup lang="ts">
 // Packages
-import PQueue from 'p-queue';
+// import PQueue from 'p-queue';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
 // Globals
-import { queues } from 'src/boot/globals';
+// import { queues } from 'src/boot/globals';
 
 // Helpers
 import { updateLookupPeriod } from 'src/helpers/date';
@@ -84,7 +84,6 @@ const deleteCacheFiles = async (type = '') => {
       type === 'smart'
         ? Object.keys(props.unusedParentDirectories)
         : props.cacheFiles.map((f) => f.path);
-    console.debug('deleteCacheFiles', filepathsToDelete);
     for (const filepath of filepathsToDelete) {
       try {
         fs.remove(filepath);
@@ -96,10 +95,10 @@ const deleteCacheFiles = async (type = '') => {
     for (const untouchableDirectory of props.untouchableDirectories) {
       await removeEmptyDirs(untouchableDirectory);
     }
-    queues.downloads[currentCongregation.value]?.clear();
-    queues.downloads[currentCongregation.value] = new PQueue({
-      concurrency: 5,
-    });
+    // queues.downloads[currentCongregation.value]?.clear();
+    // queues.downloads[currentCongregation.value] = new PQueue({
+    //   concurrency: 5,
+    // });
     if (type === 'all') {
       lookupPeriod.value[currentCongregation.value] = [];
       updateLookupPeriod();

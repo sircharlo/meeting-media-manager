@@ -144,7 +144,6 @@
         "npm:@vueuse/router@^11.2.0",
         "npm:adm-zip@^0.5.16",
         "npm:autoprefixer@^10.4.20",
-        "npm:axios@^1.7.7",
         "npm:better-sqlite3@^11.5.0",
         "npm:cheerio@^1.0.0",
         "npm:countries-and-timezones@^3.7.2",

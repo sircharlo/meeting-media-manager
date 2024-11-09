@@ -163,15 +163,15 @@ watch(online, (isNowOnline) => {
     const congregation = currentCongregation.value;
     if (!congregation) return;
 
-    const { downloads, meetings } = queues;
-    const downloadQueue = downloads[congregation];
+    const { /*downloads,*/ meetings } = queues;
+    // const downloadQueue = downloads[congregation];
     const meetingQueue = meetings[congregation];
 
     if (isNowOnline) {
-      downloadQueue?.start();
+      // downloadQueue?.start();
       meetingQueue?.start();
     } else {
-      downloadQueue?.pause();
+      // downloadQueue?.pause();
       meetingQueue?.pause();
     }
   } catch (error) {
@@ -217,9 +217,10 @@ whenever(
 );
 
 watchDebounced(
-  () => currentSettings.value?.baseUrl,
-  (newBaseUrl, oldBaseUrl) => {
-    if (newBaseUrl !== oldBaseUrl) setUrlVariables(newBaseUrl);
+  () => [currentSettings.value?.baseUrl, currentCongregation.value],
+  ([newBaseUrl, newCongregation], [oldBaseUrl, oldCongregation]) => {
+    if (newBaseUrl !== oldBaseUrl && newCongregation === oldCongregation)
+      setUrlVariables(newBaseUrl);
   },
   { debounce: 500 },
 );
@@ -347,10 +348,48 @@ const initListeners = () => {
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
     executeShortcut(shortcut);
   });
+
+  window.electronApi.onDownloadStarted((args) => {
+    downloadProgress.value[args.id] = {
+      filename: args.filename,
+      total: args.totalBytes,
+    };
+  });
+
+  window.electronApi.onDownloadCancelled((args) => {
+    if (downloadProgress.value[args.id])
+      downloadProgress.value[args.id].error = true;
+  });
+
+  window.electronApi.onDownloadCompleted((args) => {
+    if (downloadProgress.value[args.id]) {
+      downloadProgress.value[args.id].complete = true;
+      delete downloadProgress.value[args.id].loaded;
+    }
+  });
+
+  window.electronApi.onDownloadError((args) => {
+    if (downloadProgress.value[args.id])
+      downloadProgress.value[args.id].error = true;
+  });
+
+  window.electronApi.onDownloadProgress((args) => {
+    if (downloadProgress.value[args.id]) {
+      downloadProgress.value[args.id].loaded = args.bytesReceived;
+    }
+  });
 };
 
 const removeListeners = () => {
-  const listeners: ElectronIpcListenKey[] = ['log', 'shortcut'];
+  const listeners: ElectronIpcListenKey[] = [
+    'log',
+    'shortcut',
+    'downloadStarted',
+    'downloadCancelled',
+    'downloadCompleted',
+    'downloadError',
+    'downloadProgress',
+  ];
 
   listeners.forEach((listener) => {
     window.electronApi.removeListeners(listener);
