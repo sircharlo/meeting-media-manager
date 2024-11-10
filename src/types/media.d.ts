@@ -1,5 +1,13 @@
 import type { VideoMarker } from './jw/sqlite';
 
+export type MediaSection =
+  | 'additional'
+  | 'ayfm'
+  | 'circuitOverseer'
+  | 'lac'
+  | 'tgw'
+  | 'wt';
+
 export interface DynamicMediaObject {
   customDuration?: { max: number; min: number };
   duration: number;
@@ -12,8 +20,8 @@ export interface DynamicMediaObject {
   isVideo: boolean;
   markers?: VideoMarker[];
   paragraph?: number | string;
-  section: string;
-  sectionOriginal: string;
+  section: MediaSection;
+  sectionOriginal: MediaSection;
   song?: boolean | string;
   streamUrl?: string;
   subtitlesUrl?: string;
