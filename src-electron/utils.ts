@@ -1,12 +1,16 @@
 import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/types/utils/prepareEvent';
 
 import { captureException } from '@sentry/browser';
-import { productName } from 'app/package.json';
+import { productName, version } from 'app/package.json';
 import { app } from 'electron';
 import { join } from 'path';
 
 import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
 import { urlVariables } from './main/session';
+
+export function getAppVersion() {
+  return IS_DEV ? version : app.getVersion();
+}
 
 export function getUserDataPath() {
   return join(app.getPath('appData'), productName);

@@ -7,7 +7,7 @@ import type {
   SettingsValues,
 } from 'src/types';
 
-import { homepage, repository, version } from 'app/package.json';
+import { homepage, repository } from 'app/package.json';
 import {
   app,
   ipcMain,
@@ -16,8 +16,7 @@ import {
   shell,
 } from 'electron';
 
-import { IS_DEV } from '../constants';
-import { getUserDataPath, isSelf } from './../utils';
+import { getAppVersion, getUserDataPath, isSelf } from './../utils';
 import { downloadFile, isDownloadErrorExpected } from './downloads';
 import { openFileDialog, readDirectory } from './fs';
 import { getAllScreens } from './screen';
@@ -148,9 +147,7 @@ function handleIpcInvoke<T = unknown>(
   });
 }
 
-handleIpcInvoke('getVersion', async () =>
-  IS_DEV ? version : app.getVersion(),
-);
+handleIpcInvoke('getVersion', async () => getAppVersion());
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => getUserDataPath());
 

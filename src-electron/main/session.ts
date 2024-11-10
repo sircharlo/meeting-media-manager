@@ -3,7 +3,7 @@ import type { UrlVariables } from 'src/types';
 import { app, session } from 'electron';
 
 //import { JW_DOMAINS, TRUSTED_DOMAINS } from '../constants';
-import { isJwDomain, isSelf, isTrustedDomain } from './../utils';
+import { getAppVersion, isJwDomain, isSelf, isTrustedDomain } from './../utils';
 
 export let urlVariables: undefined | UrlVariables;
 
@@ -44,6 +44,7 @@ export const initSessionListeners = () => {
           'img-src': "'self' https: file: data: blob:",
           'media-src': "'self' https: file: data:",
           'object-src': "'none'",
+          'report-uri': `https://o1401005.ingest.us.sentry.io/api/4507449197920256/security/?sentry_key=0f2ab1c7ddfb118d25704c85957b8188&sentry_environment=${process.env.NODE_ENV}&sentry_release=${getAppVersion()}`,
           'script-src': "'self' https: 'unsafe-inline' 'unsafe-eval'",
           'style-src': "'self' https: 'unsafe-inline'",
           'worker-src': "'self' file: blob:",
