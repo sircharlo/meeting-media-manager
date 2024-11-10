@@ -64,7 +64,7 @@ export async function downloadFile(
 }
 
 async function processQueue() {
-  if (!mainWindow) return null;
+  if (!mainWindow || cancelAll) return null;
   // If max active downloads reached, wait for a slot
   while (activeDownloadIds.length >= maxActiveDownloads) {
     if (cancelAll) return;
