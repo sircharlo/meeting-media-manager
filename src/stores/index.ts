@@ -49,8 +49,9 @@ export default store((/* { ssrContext } */) => {
         // Transform the state to remove unneeded information that only takes up space
         const transformedState = {
           ...state,
-          jwLanguages: 'removed from state before Sentry upload',
-          jwSongs: 'removed from state before Sentry upload',
+          jwLanguages: 'FILTERED',
+          jwSongs: 'FILTERED',
+          yeartexts: 'FILTERED',
         };
         return transformedState;
       },

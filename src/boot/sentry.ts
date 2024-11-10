@@ -26,7 +26,7 @@ export default boot(({ app, router }) => {
           ],
           release: version,
           replaysOnErrorSampleRate: 1.0,
-          replaysSessionSampleRate: 0.1,
+          replaysSessionSampleRate: 0,
           tracesSampleRate: 1.0,
         },
         initVue,
