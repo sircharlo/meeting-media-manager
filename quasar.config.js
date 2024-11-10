@@ -175,7 +175,6 @@ module.exports = configure(function (ctx) {
           '@numairawan/video-duration',
           '@sentry/electron',
           '@sentry/vue',
-          'adm-zip',
           'better-sqlite3',
           'chokidar',
           'decompress',

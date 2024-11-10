@@ -41,7 +41,6 @@
     "@sentry/vue": "^8.37.1",
     "@vueuse/core": "^11.2.0",
     "@vueuse/router": "^11.2.0",
-    "adm-zip": "^0.5.16",
     "better-sqlite3": "^11.5.0",
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.1",
