@@ -617,8 +617,8 @@ watch(
 );
 
 const { post: postPanzoom } = useBroadcastChannel<
-  Record<string, number>,
-  Record<string, number>
+  Partial<Record<string, number>>,
+  Partial<Record<string, number>>
 >({ name: 'panzoom' });
 
 watch(
@@ -756,7 +756,8 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
 
   function dragend() {
     mediaSort.value[currentCongregation.value] ??= {};
-    mediaSort.value[currentCongregation.value][selectedDate.value] = [
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    mediaSort.value[currentCongregation.value]![selectedDate.value] = [
       ...sortableAdditionalMediaItems.value,
       ...sortableTgwMediaItems.value,
       ...sortableAyfmMediaItems.value,
@@ -793,7 +794,9 @@ const generateMediaList = () => {
       .sort(
         mapOrder(
           selectedDate.value
-            ? mediaSort.value[currentCongregation.value][selectedDate.value]
+            ? mediaSort.value[currentCongregation.value]?.[
+                selectedDate.value
+              ] || []
             : [],
         ),
       )
@@ -905,8 +908,8 @@ const goToNextDayWithMedia = () => {
           additionalMediaMaps.value?.[currentCongregation.value] || {},
         ).filter(
           (day) =>
-            additionalMediaMaps.value?.[currentCongregation.value][day].length >
-            0,
+            (additionalMediaMaps.value?.[currentCongregation.value]?.[day]
+              ?.length || 0) > 0,
         ),
       ]
         .filter(Boolean)

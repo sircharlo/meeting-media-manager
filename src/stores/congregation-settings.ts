@@ -5,8 +5,8 @@ import { uid } from 'quasar';
 import { defaultSettings } from 'src/constants/settings';
 
 interface Store {
-  announcements: Record<string, string[]>;
-  congregations: Record<string, SettingsValues>;
+  announcements: Partial<Record<string, string[]>>;
+  congregations: Partial<Record<string, SettingsValues>>;
 }
 
 export const useCongregationSettingsStore = defineStore(

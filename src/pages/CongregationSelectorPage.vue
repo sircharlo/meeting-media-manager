@@ -35,7 +35,7 @@
                 "
               >
                 {{
-                  getDateLocale(congregations[id].localAppLang).days[
+                  getDateLocale(congregations[id]?.localAppLang).days[
                     parseInt(congregations[id]?.mwDay ?? '') === 6
                       ? 0
                       : parseInt(congregations[id]?.mwDay ?? '') + 1
@@ -43,7 +43,7 @@
                 }}
                 {{ congregations[id]?.mwStartTime }} |
                 {{
-                  getDateLocale(congregations[id].localAppLang).days[
+                  getDateLocale(congregations[id]?.localAppLang).days[
                     parseInt(congregations[id]?.weDay ?? '') === 6
                       ? 0
                       : parseInt(congregations[id]?.weDay ?? '') + 1

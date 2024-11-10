@@ -41,12 +41,12 @@
               (customDurations[currentCongregation]?.[selectedDate]?.[
                 media.uniqueId
               ] &&
-              (customDurations[currentCongregation][selectedDate][
+              ((customDurations[currentCongregation]?.[selectedDate]?.[
                 media.uniqueId
-              ].min > 0 ||
-                customDurations[currentCongregation][selectedDate][
+              ]?.min ?? 0) > 0 ||
+                (customDurations[currentCongregation]?.[selectedDate]?.[
                   media.uniqueId
-                ].max < media.duration)
+                ]?.max ?? media.duration) < media.duration)
                 ? 'bg-semi-negative'
                 : 'bg-semi-black')
             "
@@ -69,16 +69,16 @@
               customDurations[currentCongregation]?.[selectedDate]?.[
                 media.uniqueId
               ] &&
-              (customDurations[currentCongregation][selectedDate][
+              ((customDurations[currentCongregation]?.[selectedDate]?.[
                 media.uniqueId
-              ].min > 0 ||
-                customDurations[currentCongregation][selectedDate][
+              ].min ?? 0) > 0 ||
+                (customDurations[currentCongregation]?.[selectedDate]?.[
                   media.uniqueId
-                ].max < media.duration)
+                ]?.max ?? media.duration) < media.duration)
                 ? formatTime(
-                    customDurations[currentCongregation][selectedDate][
+                    customDurations[currentCongregation]?.[selectedDate]?.[
                       media.uniqueId
-                    ].min,
+                    ]?.min ?? 0,
                   ) + ' - '
                 : ''
             }}
@@ -113,7 +113,7 @@
                   <div class="col">
                     <q-range
                       v-model="
-                        customDurations[currentCongregation][selectedDate][
+                        customDurations[currentCongregation]![selectedDate]![
                           media.uniqueId
                         ]
                       "
@@ -121,7 +121,7 @@
                         formatTime(
                           customDurations[currentCongregation]?.[
                             selectedDate
-                          ]?.[media.uniqueId]?.min,
+                          ]?.[media.uniqueId]?.min ?? 0,
                         )
                       "
                       :max="media.duration"
@@ -130,7 +130,7 @@
                         formatTime(
                           customDurations[currentCongregation]?.[
                             selectedDate
-                          ]?.[media.uniqueId]?.max,
+                          ]?.[media.uniqueId]?.max ?? media.duration,
                         )
                       "
                       :step="0.1"
@@ -620,18 +620,22 @@ const setMediaPlaying = async (
   if (signLanguage) {
     if (marker) {
       customDurations.value[currentCongregation.value] ??= {};
-      customDurations.value[currentCongregation.value][selectedDate.value] ??=
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      customDurations.value[currentCongregation.value]![selectedDate.value] ??=
         {};
-      customDurations.value[currentCongregation.value][selectedDate.value][
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      customDurations.value[currentCongregation.value]![selectedDate.value]![
         media.uniqueId
       ] ??= {
         max: media.duration,
         min: 0,
       };
-      customDurations.value[currentCongregation.value][selectedDate.value][
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      customDurations.value[currentCongregation.value]![selectedDate.value]![
         media.uniqueId
       ].min = marker.StartTimeTicks / 10000 / 1000;
-      customDurations.value[currentCongregation.value][selectedDate.value][
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      customDurations.value[currentCongregation.value]![selectedDate.value]![
         media.uniqueId
       ].max =
         (marker.StartTimeTicks +
@@ -689,8 +693,11 @@ const showMediaDurationPopup = (media: DynamicMediaObject) => {
   try {
     if (!currentCongregation.value) return;
     customDurations.value[currentCongregation.value] ??= {};
-    customDurations.value[currentCongregation.value][selectedDate.value] ??= {};
-    customDurations.value[currentCongregation.value][selectedDate.value][
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    customDurations.value[currentCongregation.value]![selectedDate.value] ??=
+      {};
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    customDurations.value[currentCongregation.value]![selectedDate.value]![
       media.uniqueId
     ] ??= {
       max: media.duration,
