@@ -123,7 +123,7 @@ const getMetadataFromMediaPath = async (
     }
     return await parseMediaFile(mediaPath);
   } catch (error) {
-    errorCatcher(mediaPath + ': ' + error);
+    errorCatcher(error, { contexts: { vars: { mediaPath } } });
     return defaultMetadata;
   }
 };
@@ -143,7 +143,7 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
       return '';
     }
   } catch (error) {
-    errorCatcher(mediaPath + ': ' + error);
+    errorCatcher(error, { contexts: { vars: { mediaPath } } });
     return '';
   }
 };

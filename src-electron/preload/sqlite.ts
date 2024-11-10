@@ -15,8 +15,7 @@ export const executeQuery = <T = QueryResponseItem>(
     });
     return db.prepare<unknown[], T>(query).all();
   } catch (e) {
-    errorCatcher(e);
-    errorCatcher(query + '\n' + dbPath);
+    errorCatcher(e, { contexts: { db: { path: dbPath, query } } });
     return [];
   }
 };

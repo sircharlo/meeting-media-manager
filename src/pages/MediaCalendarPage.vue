@@ -1210,8 +1210,7 @@ const addToAdditionMediaMapFromPath = async (
       },
     ]);
   } catch (error) {
-    errorCatcher(additionalFilePath);
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { vars: { additionalFilePath, stream } } });
   }
 };
 

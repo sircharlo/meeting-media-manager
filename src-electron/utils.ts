@@ -1,3 +1,5 @@
+import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/types/utils/prepareEvent';
+
 import { captureException } from '@sentry/browser';
 import { productName } from 'app/package.json';
 import { app } from 'electron';
@@ -70,9 +72,12 @@ export function isSelf(url?: string): boolean {
  * Logs an error to the console or to Sentry
  * @param error The error to log
  */
-export function errorCatcher(error: Error | string | unknown) {
+export function errorCatcher(
+  error: Error | string | unknown,
+  context?: ExclusiveEventHintOrCaptureContext,
+) {
   if (!IS_DEV) {
-    captureException(error);
+    captureException(error, context);
   } else {
     console.error(error);
   }

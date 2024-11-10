@@ -342,8 +342,7 @@ const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
           ).length > 0;
         if (!tableExists) continue;
       } catch (error) {
-        errorCatcher(source.db + ' - ' + table);
-        errorCatcher(error);
+        errorCatcher(error, { contexts: { db: { source: source.db, table } } });
         continue;
       }
       const columnQueryResult = executeQuery<TableItem>(
