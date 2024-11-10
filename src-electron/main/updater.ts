@@ -5,6 +5,10 @@ import { join } from 'path';
 import { errorCatcher, getUserDataPath } from './../utils';
 
 export async function initUpdater() {
+  autoUpdater.on('error', (error, message) => {
+    errorCatcher(error, { contexts: { updater: { message } } });
+  });
+
   const disabled = await exists(
     join(getUserDataPath(), 'Global Preferences', 'disable-updates'),
   );
