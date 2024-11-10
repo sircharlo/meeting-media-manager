@@ -79,7 +79,7 @@
   "delete-media": "Izbriši multimedijsko vsebino",
   "disableMediaFetching": "Uporabi M³ kot aplikacijo, ki dopolnjuje JW Library",
   "disableMediaFetching-explain": "Če boš to omogočil, boš onemogočil samodejno prenašanje multimedijske vsebine v M³. V tem primeru se lahko JW Library uporablja za predvajanje običajne multimedijske vsebine za shode, M³ pa za predvajanje druge, ročno dodane multimedijske vsebine. M³ ima veliko praktičnih funkcij, kot so dodajanje dokumentov PDF ter povečevanje in pomikanje slik. Upoštevaj, da mora biti ta možnost v skoraj vseh primerih onemogočena.",
-  "dismiss": "Dismiss",
+  "dismiss": "Opusti",
   "display": "Zaslon",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Ali vaša kraljestvena dvorana uporablja program, imenovan OBS Studio?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "To bo močno poenostavilo in olajšalo deljenje multimedijske vsebine med hibridnimi shodi.",
@@ -119,7 +119,7 @@
   "filetypeNotSupported": "Ta vrsta datoteke še ni podprta",
   "footnote": "Podčrtna opomba",
   "forward": "Naprej",
-  "from-jw-org": "From our website",
+  "from-jw-org": "Z našega spletnega mesta",
   "from-local-computer": "Z vaše naprave",
   "from-songbook": "Iz naše pesmarice",
   "full-screen": "Celozaslonski način",
@@ -326,7 +326,7 @@
   "tryConfiguringFallbackLanguage": "V nastavitvah poskusi izbrati alternativni jezik",
   "until-meeting-starts": "Do začetka shoda",
   "upcoming-songs": "Prihodnje pesmi",
-  "update": "Update",
+  "update": "Posodobitev",
   "update-available": "A new version of M³ is available! We recommend updating to receive the latest features, bug fixes, and security updates.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Uporabi gumb 'Dodaj dodatno multimedijsko vsebino', če želiš dodati multimedijsko vsebino za ta datum, ali pa izberi drug datum in si oglej multimedijsko vsebino za tisti dan.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "S spodnjim drsnikom prilagodi začetek in konec predvajanja videoposnetka. To je uporabno za predvajanje samo določenih delov videoposnetka.",
@@ -354,5 +354,6 @@
   "yeartext": "Letni stavek",
   "yes": "Da",
   "zoom-in": "Približaj",
-  "zoom-out": "Pomanjšaj"
+  "zoom-out": "Pomanjšaj",
+  "pause-to-adjust-time": "To enable scrubbing, the video must be paused"
 }

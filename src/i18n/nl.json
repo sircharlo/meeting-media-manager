@@ -79,7 +79,7 @@
   "delete-media": "Verwijder media",
   "disableMediaFetching": "Gebruik M³ als aanvulling op JW Library",
   "disableMediaFetching-explain": "Dit inschakelen, schakelt het automatisch ophalen van media uit. In dit geval kan JW Library gebruikt worden om de gewone vergadering media te tonen en M³ om extra media te tonen. M³ heeft veel praktische features, zoals het importeren van PDF's en het inzoomen van plaatjes. Wees ervan bewust dat deze instellingen in bijna alle gevallen uit moet staan.",
-  "dismiss": "Dismiss",
+  "dismiss": "Sluiten",
   "display": "Weergave",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Gebruikt jouw gemeente het programma OBS Studio?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "Dit zal het delen van media tijdens hybride vergaderingen vereenvoudigen en vergemakkelijken.",
@@ -326,8 +326,8 @@
   "tryConfiguringFallbackLanguage": "Probeer een tweede media taal te configureren in de instellingen",
   "until-meeting-starts": "Tot vergadering begint",
   "upcoming-songs": "Aankomende liederen",
-  "update": "Update",
-  "update-available": "A new version of M³ is available! We recommend updating to receive the latest features, bug fixes, and security updates.",
+  "update": "Bijwerken",
+  "update-available": "Er is een nieuwe versie van M³ beschikbaar! We raden aan te updaten om de nieuwste functies, bug fixes, en beveiligingsupdates te ontvangen.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Gebruik de Importeer knop om media toe te voegen voor deze datum of selecteer een andere datum om die media te bekijken.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Gebruik de schuifregelaar hieronder om de start- en eindtijd van dit media-item aan te passen. Dit is handig voor het afspelen van slechts bepaalde delen van een video.",
   "user-guide": "Gebruikershandleiding",
@@ -354,5 +354,6 @@
   "yeartext": "Jaartekst",
   "yes": "Ja",
   "zoom-in": "Inzoomen",
-  "zoom-out": "Uitzoomen"
+  "zoom-out": "Uitzoomen",
+  "pause-to-adjust-time": "Om terug en door te spoelen, moet de video worden gepauzeerd"
 }

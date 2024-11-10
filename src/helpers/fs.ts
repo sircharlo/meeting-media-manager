@@ -123,7 +123,7 @@ const getMetadataFromMediaPath = async (
     }
     return await parseMediaFile(mediaPath);
   } catch (error) {
-    errorCatcher(mediaPath + ': ' + error);
+    errorCatcher(error, { contexts: { vars: { mediaPath } } });
     return defaultMetadata;
   }
 };
@@ -143,7 +143,9 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
       return '';
     }
   } catch (error) {
-    if (!mediaPath?.toLowerCase().endsWith('.mov')) errorCatcher(error);
+    if (!mediaPath?.toLowerCase().endsWith('.mov')) {
+      errorCatcher(error, { contexts: { vars: { mediaPath } } });
+    }
     return '';
   }
 };
@@ -280,6 +282,7 @@ const getSubtitlesUrl = async (
         await downloadFileIfNeeded({
           dir: subDirectory,
           filename: subtitlesFilename,
+          lowPriority: true,
           url: subtitles,
         });
         subtitlesPath = path.join(subDirectory, subtitlesFilename);

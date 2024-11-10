@@ -10,13 +10,13 @@
     transition-show="jump-up"
   >
     <q-card flat>
-      <q-card-section>
-        <div class="card-title">
+      <q-card-section class="q-px-none">
+        <div class="card-title q-px-md">
           {{ $t('media-sync') }}
         </div>
         <div>
           <template v-if="Object.values(downloadProgress).length === 0">
-            <div class="row items-center">
+            <div class="row items-center q-px-md">
               <div class="col text-weight-medium text-dark-grey">
                 {{ $t('noDownloadsInProgress') }}
               </div>
@@ -37,20 +37,17 @@
               >
                 <p
                   v-if="hasStatus(downloadProgress, statusObject.status)"
-                  class="card-section-title text-dark-grey q-mt-md"
+                  class="card-section-title text-dark-grey q-mt-md q-px-md"
                 >
                   {{ $t(statusObject.label) }}
                 </p>
                 <template
-                  v-for="(item, url) in filteredDownloads(
-                    downloadProgress,
-                    statusObject.status,
-                  )"
-                  :key="url"
+                  v-for="(item, id) in filteredDownloads(statusObject.status)"
+                  :key="id"
                 >
-                  <div class="row items-center q-py-sm">
+                  <div class="row items-center q-py-sm q-px-md">
                     <div class="col text-weight-medium text-dark-grey">
-                      {{ url && path.basename(url) }}
+                      {{ item.filename && path.basename(item.filename) }}
                     </div>
                     <div class="col-shrink">
                       <q-icon
@@ -75,12 +72,8 @@
                   </div>
                   <q-separator
                     v-if="
-                      Object.keys(
-                        filteredDownloads(
-                          downloadProgress,
-                          statusObject.status,
-                        ) || {},
-                      )?.length > 1
+                      Object.keys(filteredDownloads(statusObject.status) || {})
+                        ?.length > 1
                     "
                     class="bg-accent-200"
                   />
@@ -112,17 +105,11 @@ const { barStyle, thumbStyle } = useScrollbar();
 const currentState = useCurrentStateStore();
 const { downloadProgress } = storeToRefs(currentState);
 
-const filteredDownloads = (
-  obj: DownloadProgressItems,
-  status: 'complete' | 'error' | 'loaded',
-): DownloadProgressItems =>
-  Object.fromEntries(
-    Object.entries(obj)
-      .filter(([, item]) => item[status])
-      .sort(([keyA], [keyB]) =>
-        path.basename(keyA).localeCompare(path.basename(keyB)),
-      ),
-  );
+const filteredDownloads = (status: 'complete' | 'error' | 'loaded') =>
+  Object.entries(downloadProgress.value || {})
+    .filter(([, item]) => item[status])
+    .sort((a, b) => a[1].filename.localeCompare(b[1].filename))
+    .map(([, item]) => item);
 
 const downloadPopup = ref<QMenu>();
 

@@ -1,53 +1,53 @@
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Usando o M³ em um Salão do Reino {#using-m3-at-a-kingdom-hall}
 
 Este guia irá orientá-lo no processo de download, instalação e configuração do **Meeting Media Manager (M³)** em um Salão do Reino. Siga os passos para garantir uma configuração eficiente no gerenciamento de mídia durante as reuniões da congregação.
 
-## 1. Download and install {#download-and-install}
+## 1. Baixar e instalar {#download-and-install}
 
 1. Visite a [página de download do M³.](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system:
-   - **Windows:**
-     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
-     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
-   - **macOS:**
-     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
-     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+2. Baixe a versão adequada para o seu sistema operacional:
+   - **Windows**
+     - Para a maioria dos sistemas Windows, baixe `meeting-media-manager-[VERSÃO]-x64.exe`.
+     - Para sistemas Windows mais antigos de 32 bits, baixe `meeting-media-manager-[VERSÃO]-ia32.exe`.
+   - **macOS**
+     - **M-series (Apple Silicon)**: baixe `meeting-media-manager-[VERSÃO]-arm64.dmg`.
+     - **Macs com processador Intel**: baixe `meeting-media-manager-[VERSÃO]-x64.dmg`.
    - **Linux:**
-     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
+     - Baixe `meeting-media-manager-[VERSÃO]-x86_64.AppImage`.
 3. Abra o instalador e siga as instruções na tela para instalar o M³.
 4. Abra o M³.
 5. Siga as instruções do assistente de configuração.
 
-### Additional steps for macOS Users {#additional-steps-for-macos-users}
+### Passos adicionais para usuários de macOS {#additional-steps-for-macos-users}
 
-Due to Apple's security measures, a few additional steps are required to run M³ on modern macOS systems.
+Devido às medidas de segurança da Apple, alguns passos adicionais são necessários para executar o M³ em sistemas macOS modernos.
 
-First, run the following two commands in Terminal (modify the path to M³ as needed):
+Primeiro, execute os seguintes dois comandos no Terminal (modifique o caminho para o M³ conforme necessário):
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explanation
+:::tip Explicação
 
-These commands do two things that will prevent M³ from being detected as a malicious application on your system: the first one signs the application's code locally, and the second one removes the quarantine flag from the application. The quarantine flag is used to warn users about applications that have been downloaded from the internet.
+Esses comandos fazem duas coisas que evitarão que o M³ seja detectado como um aplicativo malicioso em seu sistema: o primeiro assina o código do aplicativo localmente, e o segundo remove a flag de quarentena do aplicativo. A flag de quarentena é usada para alertar os usuários sobre aplicativos que foram baixados da internet.
 
 :::
 
-If you are still unable to launch M³ after entering the two commands, please try the following:
+Se você ainda não conseguir executar o M³ depois de digitar os dois comandos, por favor, tente o seguinte:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
+1. Abra as configurações de **Privacidade e Segurança** do macOS.
+2. Encontre a entrada para o M³ e clique no botão para **Abrir assim mesmo**.
+3. Você será avisado novamente e receberá a recomendação de não "abrir isto, a menos que tenha certeza de que é de uma fonte confiável." Clique em **Abrir assim mesmo**.
+4. Outra advertência aparecerá, onde você precisará autenticar para iniciar o aplicativo.
 5. M³ should now launch successfully.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+Se você ainda tiver problemas após seguir todos esses passos, por favor, [abra uma issue no GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Faremos o nosso melhor para ajudar.
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Assistente de configuração {#configuration-wizard}
 
-### App display language {#app-display-language}
+### Idioma de exibição do aplicativo {#app-display-language}
 
 Ao abrir o M³ pela primeira vez, será solicitado que você escolha o **idioma de exibição** da sua preferência. Escolha o idioma que você deseja que o M³ use na interface.
 
@@ -57,7 +57,7 @@ Esse idioma não precisa ser o mesmo que o M³ utilizará para baixar mídias. O
 
 :::
 
-### Profile type {#profile-type}
+### Tipo de perfil {#profile-type}
 
 O próximo passo é escolher um **tipo de perfil**. Para uma configuração padrão em um Salão do Reino, escolha **Regular**. Isso configurará muitos recursos que são frequentemente utilizados nas reuniões da congregação.
 
@@ -69,7 +69,7 @@ O tipo de perfil **outro** é raramente usado. **Para uso normal durante as reun
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Pesquisa automática de congregação {#automatic-congregation-lookup}
 
 O M³ pode encontrar automaticamente o horário das reuniões, o idioma e o nome da sua congregação.
 
@@ -83,7 +83,7 @@ Esta pesquisa utiliza dados disponíveis publicamente no site oficial das Testem
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Entrada manual de informações da congregação {#manual-entry-of-congregation-information}
 
 Se a busca automatizada não encontrar sua congregação, você pode, é claro, inserir manualmente as informações necessárias. O assistente permitirá que você revise e/ou insira o **nome** da sua congregação, o **idioma das reuniões** e os **dias e horários das reuniões**.
 

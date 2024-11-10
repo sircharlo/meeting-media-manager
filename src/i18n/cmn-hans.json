@@ -354,5 +354,6 @@
   "yeartext": "全年经文",
   "yes": "是",
   "zoom-in": "放大",
-  "zoom-out": "缩小"
+  "zoom-out": "缩小",
+  "pause-to-adjust-time": "要启用时间轴拖动，必须先暂停视频。"
 }

@@ -21,8 +21,11 @@ import { createMainWindow } from './main/window/window-main';
 import { errorCatcher } from './utils';
 
 initSentry({
+  debug: true,
   dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',
+  environment: process.env.NODE_ENV,
   release: version,
+  tracesSampleRate: 1.0,
 });
 
 initUpdater();

@@ -21,6 +21,7 @@
     >
       <q-date
         v-model="model"
+        :first-day-of-week="1"
         :locale="dateLocale"
         :options="getDateOptions(options)"
         :rules="rules"

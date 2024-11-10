@@ -191,7 +191,9 @@
     <q-list
       v-show="
         sortableAdditionalMediaItems?.length ||
-        (selectedDateObject && isWeMeetingDay(selectedDateObject?.date))
+        (selectedDateObject &&
+          selectedDateObject.complete &&
+          isWeMeetingDay(selectedDateObject?.date))
       "
       class="media-section additional"
     >
@@ -1242,8 +1244,7 @@ const addToAdditionMediaMapFromPath = async (
       },
     ]);
   } catch (error) {
-    errorCatcher(additionalFilePath);
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { vars: { additionalFilePath, stream } } });
   }
 };
 
@@ -1386,7 +1387,7 @@ const addToFiles = async (
         });
         const files = await readdir(unzipDirectory);
         const filePaths = files.map((file) => ({
-          path: path.join(unzipDirectory, file),
+          path: path.join(unzipDirectory, file.name),
         }));
         await addToFiles(filePaths);
         await fs.remove(unzipDirectory);
@@ -1431,7 +1432,7 @@ const dropEnd = (event: DragEvent) => {
   event.preventDefault();
   event.stopPropagation();
   try {
-    if (event.dataTransfer?.files.length) {
+    if (event.dataTransfer?.files?.length) {
       const droppedStuff = Array.from(event.dataTransfer.files)
         .map((file) => {
           return {

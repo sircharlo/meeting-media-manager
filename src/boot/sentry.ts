@@ -8,7 +8,7 @@ import { boot } from 'quasar/wrappers';
 import { IS_DEV } from 'src/constants/general';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-import packageInfo from '../../package.json';
+import { version } from '../../package.json';
 
 export default boot(({ app, router }) => {
   try {
@@ -24,9 +24,9 @@ export default boot(({ app, router }) => {
             browserTracingIntegration({ router }),
             replayIntegration(),
           ],
-          release: packageInfo.version,
+          release: version,
           replaysOnErrorSampleRate: 1.0,
-          replaysSessionSampleRate: 0.1,
+          replaysSessionSampleRate: 0,
           tracesSampleRate: 1.0,
         },
         initVue,

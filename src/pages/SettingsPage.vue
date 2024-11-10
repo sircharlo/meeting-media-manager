@@ -123,7 +123,7 @@ const { currentSettings, onlyShowInvalidSettings } = storeToRefs(currentState);
 const { getInvalidSettings } = currentState;
 
 const jwStore = useJwStore();
-const { updateYeartext } = jwStore;
+const { updateJwLanguages, updateYeartext } = jwStore;
 
 // Ref and reactive initializations
 const expansionState = ref<Partial<Record<SettingsGroupKey, boolean>>>({});
@@ -167,6 +167,7 @@ const settingParam = useRouteParams<keyof SettingsValues | undefined>(
 
 // Lifecycle hooks
 onMounted(() => {
+  updateJwLanguages();
   validateSettingsLocal();
 });
 

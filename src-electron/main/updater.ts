@@ -5,6 +5,10 @@ import { join } from 'path';
 import { errorCatcher, getUserDataPath } from './../utils';
 
 export async function initUpdater() {
+  autoUpdater.on('error', (error, message) => {
+    errorCatcher(error, { contexts: { updater: { message } } });
+  });
+
   const disabled = await exists(
     join(getUserDataPath(), 'Global Preferences', 'disable-updates'),
   );
@@ -16,7 +20,7 @@ const triggerUpdateCheck = async (attempt = 1) => {
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();
     if (online) {
-      autoUpdater.checkForUpdatesAndNotify();
+      await autoUpdater.checkForUpdatesAndNotify();
     } else {
       if (attempt < 5) {
         setTimeout(() => triggerUpdateCheck(attempt + 1), 5000);

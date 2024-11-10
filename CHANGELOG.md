@@ -2,6 +2,50 @@
 
 # Changelog
 
+## 24.11.1
+
+### User Interface
+
+- Fixed issue where **music button** didn't automatically start music in some cases
+- New **Announcements** feature to be used when needed (for updates, etc.)
+- Refined **public talk section** to stay visible during WE meetings
+- Centered **website window** on the primary screen
+- Improved **tooltip** for media scrubber to show information about scrubbing
+- Fixed **nav drawer** display quirks
+
+### Media and Scene Management
+
+- Added **Instant Scene Picker** toggle in settings and improved scene switching when presenting websites
+- Fixed **JW Playlist Import** to respect languages specified in playlist
+- Resolved issues with **Hidden Media** and **Additional Media** visibility in the menu
+
+### Download and File Management
+
+- Switched to **Electron's Built-in Download** methods, replacing Axios for improved performance
+- Enhanced **File Dialog Filters**
+- Optimized **Drag-and-Drop Import** to show informative progress bars whenever appropriate
+- Addressed **Sorting** issues with downloads
+
+### macOS and System Improvements
+
+- Added feature to **notify macOS users of new versions** when available
+- Updated **macOS build artifacts** for better distribution
+- Improved **Window State** handling for full-screen windows on macOS
+- Added debug statements and debug options for **macOS**
+
+### Behind the Scenes
+
+- Removed **Axios** and **Synchronous FS Calls** to greatly improve performance
+- Enhanced **Code Documentation** for better readability and maintenance
+- Added **Type Checking** for better code stability and optimized **Type Imports**
+- Addressed **Sentry** issues and removed redundant log output
+
+### Miscellaneous Improvements
+
+- Cleaned up **Console Logs** and reduced redundant messages
+- Updated **Contributing Guidelines** and **Readme**
+- Improved **Download Error Handling** to avoid unnecessary warnings on expected failures
+
 ## 24.11.0
 
 ### ✨ New Features

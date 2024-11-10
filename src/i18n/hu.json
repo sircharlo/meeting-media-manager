@@ -354,5 +354,6 @@
   "yeartext": "Éviszöveg",
   "yes": "Igen",
   "zoom-in": "Nagyítás",
-  "zoom-out": "Kicsinyítés"
+  "zoom-out": "Kicsinyítés",
+  "pause-to-adjust-time": "To enable scrubbing, the video must be paused"
 }

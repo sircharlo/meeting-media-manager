@@ -79,8 +79,6 @@ import {
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 // Stores
-import { useAppSettingsStore } from 'src/stores/app-settings';
-// import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
@@ -126,38 +124,6 @@ const jwStore = useJwStore();
 //   saveSettingsStoreToFile('jw', state);
 // });
 
-const appSettings = useAppSettingsStore();
-
-// appSettings.$subscribe((_, state) => {
-//   saveSettingsStoreToFile('appSettings', state);
-// });
-
-const { migrations } = storeToRefs(appSettings);
-const { runMigration } = appSettings;
-
-const migrationsToRun = [
-  'localStorageToPiniaPersist',
-  'firstRun',
-  'addBaseUrlToAllCongregations',
-];
-
-(async () => {
-  for (const migration of migrationsToRun) {
-    if (!migrations.value?.includes(migration)) {
-      const success = await runMigration(migration);
-      if (migration === 'firstRun' && success) {
-        createTemporaryNotification({
-          caption: t('successfully-migrated-from-the-previous-version'),
-          icon: 'mmm-info',
-          message: t('welcome-to-mmm'),
-          timeout: 15000,
-          type: 'positive',
-        });
-      }
-    }
-  }
-})();
-
 const { updateJwLanguages } = jwStore;
 updateJwLanguages();
 
@@ -200,15 +166,15 @@ watch(online, (isNowOnline) => {
     const congregation = currentCongregation.value;
     if (!congregation) return;
 
-    const { downloads, meetings } = queues;
-    const downloadQueue = downloads[congregation];
+    const { /*downloads,*/ meetings } = queues;
+    // const downloadQueue = downloads[congregation];
     const meetingQueue = meetings[congregation];
 
     if (isNowOnline) {
-      downloadQueue?.start();
+      // downloadQueue?.start();
       meetingQueue?.start();
     } else {
-      downloadQueue?.pause();
+      // downloadQueue?.pause();
       meetingQueue?.pause();
     }
   } catch (error) {
@@ -254,9 +220,10 @@ whenever(
 );
 
 watchDebounced(
-  () => currentSettings.value?.baseUrl,
-  (newBaseUrl, oldBaseUrl) => {
-    if (newBaseUrl !== oldBaseUrl) setUrlVariables(newBaseUrl);
+  () => [currentSettings.value?.baseUrl, currentCongregation.value],
+  ([newBaseUrl, newCongregation], [oldBaseUrl, oldCongregation]) => {
+    if (newBaseUrl !== oldBaseUrl && newCongregation === oldCongregation)
+      setUrlVariables(newBaseUrl);
   },
   { debounce: 500 },
 );
@@ -419,6 +386,36 @@ const initListeners = () => {
   window.electronApi.onWatchFolderUpdate(({ changedPath, day, event }) => {
     updateWatchFolderRef({ changedPath, day, event });
   });
+
+  window.electronApi.onDownloadStarted((args) => {
+    downloadProgress.value[args.id] = {
+      filename: args.filename,
+      total: args.totalBytes,
+    };
+  });
+
+  window.electronApi.onDownloadCancelled((args) => {
+    if (downloadProgress.value[args.id])
+      downloadProgress.value[args.id].error = true;
+  });
+
+  window.electronApi.onDownloadCompleted((args) => {
+    if (downloadProgress.value[args.id]) {
+      downloadProgress.value[args.id].complete = true;
+      delete downloadProgress.value[args.id].loaded;
+    }
+  });
+
+  window.electronApi.onDownloadError((args) => {
+    if (downloadProgress.value[args.id])
+      downloadProgress.value[args.id].error = true;
+  });
+
+  window.electronApi.onDownloadProgress((args) => {
+    if (downloadProgress.value[args.id]) {
+      downloadProgress.value[args.id].loaded = args.bytesReceived;
+    }
+  });
 };
 
 const removeListeners = () => {
@@ -426,6 +423,11 @@ const removeListeners = () => {
     'log',
     'shortcut',
     'watchFolderUpdate',
+    'downloadStarted',
+    'downloadCancelled',
+    'downloadCompleted',
+    'downloadError',
+    'downloadProgress',
   ];
 
   listeners.forEach((listener) => {

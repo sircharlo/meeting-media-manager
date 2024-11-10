@@ -43,7 +43,20 @@ export default store((/* { ssrContext } */) => {
 
   pinia.use(piniaPluginPersistedstate);
 
-  pinia.use(createSentryPiniaPlugin());
+  pinia.use(
+    createSentryPiniaPlugin({
+      stateTransformer: (state) => {
+        // Transform the state to remove unneeded information that only takes up space
+        const transformedState = {
+          ...state,
+          jwLanguages: 'FILTERED',
+          jwSongs: 'FILTERED',
+          yeartexts: 'FILTERED',
+        };
+        return transformedState;
+      },
+    }),
+  );
 
   return pinia;
 });

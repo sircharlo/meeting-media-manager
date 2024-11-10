@@ -22,7 +22,7 @@ export const isFileUrl = (path: string) => {
   try {
     return path.startsWith('file://');
   } catch (err) {
-    errorCatcher(err + ': ' + path);
+    errorCatcher(err, { contexts: { vars: { path } } });
     return false;
   }
 };

@@ -19,6 +19,12 @@ export interface ElectronApi {
   ) => Promise<string[]>;
   decompress: typeof decompress;
   downloadErrorIsExpected: () => Promise<boolean>;
+  downloadFile: (
+    url: string,
+    saveDir: string,
+    destFilename?: string,
+    lowPriority?: boolean,
+  ) => Promise<null | string>;
   executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => T[];
   fileUrlToPath: (url: string) => string;
   fs: typeof FsExtra;
@@ -36,6 +42,25 @@ export interface ElectronApi {
     noEvent?: boolean,
   ) => void;
   navigateWebsiteWindow: (action: NavigateWebsiteAction) => void;
+  onDownloadCancelled: (callback: (args: { id: string }) => void) => void;
+  onDownloadCompleted: (
+    callback: (args: { filePath: string; id: string }) => void,
+  ) => void;
+  onDownloadError: (callback: (args: { id: string }) => void) => void;
+  onDownloadProgress: (
+    callback: (args: {
+      bytesReceived: number;
+      id: string;
+      percentCompleted: number;
+    }) => void,
+  ) => void;
+  onDownloadStarted: (
+    callback: (args: {
+      filename: string;
+      id: string;
+      totalBytes: number;
+    }) => void,
+  ) => void;
   onLog: (
     callback: (args: {
       ctx: Record<string, unknown>;
@@ -100,8 +125,9 @@ export type ElectronIpcSendKey =
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
   | 'downloadErrorIsExpected'
+  | 'downloadFile'
   | 'getAllScreens'
-  | 'getAppPath'
+  | 'getAppDataPath'
   | 'getUserDataPath'
   | 'getVersion'
   | 'openFileDialog'
@@ -112,6 +138,11 @@ export type ElectronIpcInvokeKey =
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
   | 'attemptedClose'
+  | 'downloadCancelled'
+  | 'downloadCompleted'
+  | 'downloadError'
+  | 'downloadProgress'
+  | 'downloadStarted'
   | 'log'
   | 'screenChange'
   | 'screenPrefsChange'
