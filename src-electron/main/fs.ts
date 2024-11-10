@@ -1,16 +1,25 @@
 import type { FileDialogFilter, FileItem } from 'src/types';
 
+import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { dialog } from 'electron';
-import { type Dirent, exists, readdir, stat } from 'fs-extra';
+import { type Dirent, exists, readdir, stat, type Stats } from 'fs-extra';
 import {
   IMG_EXTENSIONS,
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/fs';
-import { join } from 'upath';
+import { basename, dirname, join, toUnix } from 'upath';
 
 import { errorCatcher } from '../utils';
+import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
+
+export async function openFolderDialog() {
+  if (!mainWindow) return;
+  return dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+  });
+}
 
 export async function openFileDialog(
   single: boolean,
@@ -50,6 +59,56 @@ export async function openFileDialog(
     filters,
     properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
   });
+}
+
+const watchers = new Set<FSWatcher>();
+const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
+
+export async function unwatchFolders() {
+  // console.log(_e, path);
+  watchers.forEach((watcher) => {
+    watcher.close().then(() => watchers.delete(watcher));
+  });
+}
+
+export async function watchFolder(folderPath: string) {
+  watchers.add(
+    filesystemWatch(folderPath, {
+      atomic: false,
+      ignored: (fp: string, stats?: Stats) => {
+        try {
+          if (toUnix(folderPath) === fp) return false; // Don't ignore the root folder itself
+          if (!stats) return false; // Don't ignore anything if no stats are available
+          const dirPath = toUnix(stats.isDirectory() ? fp : dirname(fp)); // If this isn't a directory, get the parent directory
+          const dirOfNote = basename(dirPath); // Get the name of the directory
+          return !datePattern.test(dirOfNote); // Ignore files in a directory whose name doesn't match YYYY-MM-DD
+        } catch (error) {
+          errorCatcher(error);
+          return true;
+        }
+      },
+      ignorePermissionErrors: true,
+    }).on('all', (event, changedPath, stats) => {
+      try {
+        console.log(event, changedPath);
+        if (!changedPath || (!stats && !event.includes('unlink'))) return; // Don't do anything if no stats are available or if no path is available
+        const dirPath = toUnix(
+          stats?.isDirectory() || event === 'unlinkDir'
+            ? changedPath
+            : dirname(changedPath),
+        ); // If this isn't a directory, get the parent directory
+        const dirOfNote = basename(dirPath); // Get the name of the directory
+        sendToWindow(mainWindow, 'watchFolderUpdate', {
+          changedPath,
+          day: dirOfNote,
+          event,
+        });
+      } catch (error) {
+        errorCatcher(error);
+        return true;
+      }
+    }),
+  );
 }
 
 export async function readDirectory(
