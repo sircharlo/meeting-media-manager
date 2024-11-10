@@ -5,6 +5,7 @@ import type {
   JwLangCode,
   JwLanguage,
   MediaLink,
+  MediaSection,
   PublicationFetcher,
   PublicationFiles,
   UrlVariables,
@@ -52,7 +53,9 @@ interface Store {
   lookupPeriod: Record<string, DateInfo[]>;
   mediaSort: Record<string, Record<string, string[]>>;
   urlVariables: UrlVariables;
-  watchedMediaSections: Record<string, Record<string, Record<string, string>>>;
+  watchedMediaSections: Partial<
+    Record<string, Partial<Record<string, Record<string, MediaSection>>>>
+  >;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 

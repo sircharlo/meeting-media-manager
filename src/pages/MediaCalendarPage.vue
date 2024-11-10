@@ -721,12 +721,14 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
     (watchFolderMedia.value?.[selectedDate.value] ?? []).forEach((item) => {
       if (item.uniqueId === id) {
         watchedMediaSections.value[currentCongregation.value] ??= {};
-        watchedMediaSections.value[currentCongregation.value][
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        watchedMediaSections.value[currentCongregation.value]![
           selectedDate.value
         ] ??= {};
-        watchedMediaSections.value[currentCongregation.value][
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        watchedMediaSections.value[currentCongregation.value]![
           selectedDate.value
-        ][id] = section;
+        ]![id] = section;
         if (item.section !== section) item.section = section;
       }
     });
