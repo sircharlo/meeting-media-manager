@@ -184,18 +184,16 @@ const isWeMeetingDay = (lookupDate: Date) => {
 
 function updateLookupPeriod(reset = false) {
   try {
-    const currentState = useCurrentStateStore();
-    if (!currentState.currentCongregation) return;
-    const jwStore = useJwStore();
-    if (
-      !jwStore.lookupPeriod[currentState.currentCongregation]?.length ||
-      reset
-    )
-      jwStore.lookupPeriod[currentState.currentCongregation] = [];
-    jwStore.lookupPeriod[currentState.currentCongregation] =
-      jwStore.lookupPeriod[currentState.currentCongregation]?.filter((day) => {
-        return !isInPast(day.date);
-      });
+    const { currentCongregation } = useCurrentStateStore();
+    if (!currentCongregation) return;
+    const { lookupPeriod } = useJwStore();
+    if (!lookupPeriod[currentCongregation]?.length || reset)
+      lookupPeriod[currentCongregation] = [];
+    lookupPeriod[currentCongregation] = lookupPeriod[
+      currentCongregation
+    ]?.filter((day) => {
+      return !isInPast(day.date);
+    });
     const futureDates: DateInfo[] = Array.from(
       { length: DAYS_IN_FUTURE },
       (_, i): DateInfo => {
@@ -217,17 +215,17 @@ function updateLookupPeriod(reset = false) {
         };
       },
     );
-    jwStore.lookupPeriod[currentState.currentCongregation].push(
+    lookupPeriod[currentCongregation].push(
       ...futureDates.filter(
         (day) =>
-          !jwStore.lookupPeriod[currentState.currentCongregation]
+          !lookupPeriod[currentCongregation]
             ?.map((d) => formatDate(d.date, 'YYYY/MM/DD'))
             .includes(formatDate(day.date, 'YYYY/MM/DD')),
       ),
     );
-    const todayDate = jwStore.lookupPeriod[
-      currentState.currentCongregation
-    ]?.find((d) => datesAreSame(new Date(d.date), new Date()));
+    const todayDate = lookupPeriod[currentCongregation]?.find((d) =>
+      datesAreSame(new Date(d.date), new Date()),
+    );
     if (todayDate) todayDate.today = true;
   } catch (error) {
     errorCatcher(error);

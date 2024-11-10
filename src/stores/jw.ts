@@ -42,15 +42,19 @@ export function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
 const oldDate = new Date(0);
 
 interface Store {
-  additionalMediaMaps: Record<string, Record<string, DynamicMediaObject[]>>;
-  customDurations: Record<
-    string,
-    Record<string, Record<string, { max: number; min: number }>>
+  additionalMediaMaps: Partial<
+    Record<string, Partial<Record<string, DynamicMediaObject[]>>>
+  >;
+  customDurations: Partial<
+    Record<
+      string,
+      Partial<Record<string, Record<string, { max: number; min: number }>>>
+    >
   >;
   jwLanguages: CacheList<JwLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
-  lookupPeriod: Record<string, DateInfo[]>;
-  mediaSort: Record<string, Record<string, string[]>>;
+  lookupPeriod: Partial<Record<string, DateInfo[]>>;
+  mediaSort: Partial<Record<string, Partial<Record<string, string[]>>>>;
   urlVariables: UrlVariables;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
@@ -59,34 +63,26 @@ export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(mediaArray: DynamicMediaObject[]) {
       try {
-        const currentState = useCurrentStateStore();
-        if (!mediaArray.length || !currentState.selectedDateObject) return;
-        const coWeek = isCoWeek(currentState.selectedDateObject?.date);
+        const { currentCongregation, selectedDate, selectedDateObject } =
+          useCurrentStateStore();
+        if (!mediaArray.length || !selectedDateObject) return;
+        const coWeek = isCoWeek(selectedDateObject?.date);
         if (coWeek) {
-          if (isMwMeetingDay(currentState.selectedDateObject?.date)) {
+          if (isMwMeetingDay(selectedDateObject?.date)) {
             mediaArray.forEach((media) => {
               media.section = 'circuitOverseer';
               media.sectionOriginal = 'circuitOverseer';
             });
           }
         }
-        if (!this.additionalMediaMaps[currentState.currentCongregation])
-          this.additionalMediaMaps[currentState.currentCongregation] = {};
-        if (
-          !this.additionalMediaMaps[currentState.currentCongregation][
-            currentState.selectedDate
-          ]
-        )
-          this.additionalMediaMaps[currentState.currentCongregation][
-            currentState.selectedDate
-          ] = [];
+        if (!this.additionalMediaMaps[currentCongregation])
+          this.additionalMediaMaps[currentCongregation] = {};
+        if (!this.additionalMediaMaps[currentCongregation][selectedDate])
+          this.additionalMediaMaps[currentCongregation][selectedDate] = [];
         const currentArray =
-          this.additionalMediaMaps[currentState.currentCongregation][
-            currentState.selectedDate
-          ];
-        this.additionalMediaMaps[currentState.currentCongregation][
-          currentState.selectedDate
-        ] = uniqueById([...currentArray, ...mediaArray]);
+          this.additionalMediaMaps[currentCongregation][selectedDate];
+        this.additionalMediaMaps[currentCongregation][selectedDate] =
+          uniqueById([...currentArray, ...mediaArray]);
       } catch (e) {
         errorCatcher(e);
       }
@@ -104,25 +100,19 @@ export const useJwStore = defineStore('jw-store', {
     },
     removeFromAdditionMediaMap(uniqueId: string) {
       try {
-        const currentState = useCurrentStateStore();
+        const { currentCongregation, selectedDate } = useCurrentStateStore();
         if (
           uniqueId &&
-          currentState.currentCongregation &&
-          currentState.selectedDate &&
-          this.additionalMediaMaps[currentState.currentCongregation] &&
-          this.additionalMediaMaps[currentState.currentCongregation][
-            currentState.selectedDate
-          ]
+          currentCongregation &&
+          selectedDate &&
+          this.additionalMediaMaps[currentCongregation]?.[selectedDate]
         ) {
           const currentArray =
-            this.additionalMediaMaps[currentState.currentCongregation][
-              currentState.selectedDate
-            ];
-          this.additionalMediaMaps[currentState.currentCongregation][
-            currentState.selectedDate
-          ] = uniqueById(
-            currentArray.filter((media) => media.uniqueId !== uniqueId),
-          );
+            this.additionalMediaMaps[currentCongregation][selectedDate];
+          this.additionalMediaMaps[currentCongregation][selectedDate] =
+            uniqueById(
+              currentArray.filter((media) => media.uniqueId !== uniqueId),
+            );
         }
       } catch (e) {
         errorCatcher(e);
@@ -130,17 +120,16 @@ export const useJwStore = defineStore('jw-store', {
     },
     resetSort() {
       try {
-        const currentState = useCurrentStateStore();
+        const { currentCongregation, selectedDate, selectedDateObject } =
+          useCurrentStateStore();
         if (
-          currentState.currentCongregation &&
-          currentState.selectedDate &&
-          this.mediaSort[currentState.currentCongregation]
+          currentCongregation &&
+          selectedDate &&
+          this.mediaSort[currentCongregation]
         ) {
-          this.mediaSort[currentState.currentCongregation][
-            currentState.selectedDate
-          ] = [];
+          this.mediaSort[currentCongregation][selectedDate] = [];
         }
-        (currentState.selectedDateObject?.dynamicMedia ?? [])
+        (selectedDateObject?.dynamicMedia ?? [])
           .filter((item) => item.sectionOriginal)
           .filter((item) => item.section !== item.sectionOriginal)
           .forEach((item) => {
@@ -321,7 +310,7 @@ export const useJwStore = defineStore('jw-store', {
         lang.updated = dateFromString(lang.updated);
       });
       Object.entries(state.lookupPeriod).forEach(([, period]) => {
-        period.forEach((day: { date: Date | string }) => {
+        period?.forEach((day: { date: Date | string }) => {
           if (day.date) day.date = dateFromString(day.date);
         });
       });

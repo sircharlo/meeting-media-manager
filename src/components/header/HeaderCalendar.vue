@@ -250,8 +250,8 @@ const mediaSortForDay = computed(() => {
     return false;
   try {
     return (
-      mediaSort.value?.[currentCongregation.value]?.[selectedDate.value]
-        ?.length > 0
+      (mediaSort.value?.[currentCongregation.value]?.[selectedDate.value]
+        ?.length || 0) > 0
     );
   } catch (error) {
     errorCatcher(error);
@@ -261,8 +261,9 @@ const mediaSortForDay = computed(() => {
 
 const additionalMediaForDay = computed(
   () =>
-    additionalMediaMaps.value?.[currentCongregation.value]?.[selectedDate.value]
-      ?.length > 0,
+    (additionalMediaMaps.value?.[currentCongregation.value]?.[
+      selectedDate.value
+    ]?.length || 0) > 0,
 );
 
 const hiddenMediaForDay = computed(() =>
@@ -296,7 +297,7 @@ const getEventDates = () => {
       additionalMediaMaps.value[currentCongregation.value];
     const additionalMediaDates = additionalMedia
       ? Object.keys(additionalMedia)
-          .filter((day) => additionalMedia[day].length > 0)
+          .filter((day) => (additionalMedia[day]?.length || 0) > 0)
           .map((day) => formatDate(day, 'YYYY/MM/DD'))
       : [];
     return meetingDates.concat(additionalMediaDates);
@@ -309,9 +310,9 @@ const getEventDates = () => {
 const minDate = () => {
   try {
     if (!lookupPeriod.value || !currentCongregation.value) return undefined;
-    const dateArray: Date[] = lookupPeriod.value[
-      currentCongregation.value
-    ]?.map((day) => day.date);
+    const dateArray: Date[] =
+      lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
+      [];
     const minDate = getMinDate(dateArray[0], ...dateArray.slice(1));
     return formatDate(minDate, 'YYYY/MM');
   } catch (error) {
@@ -323,9 +324,9 @@ const minDate = () => {
 const maxDate = () => {
   try {
     if (!lookupPeriod.value || !currentCongregation.value) return undefined;
-    const dateArray: Date[] = lookupPeriod.value[
-      currentCongregation.value
-    ]?.map((day) => day.date);
+    const dateArray: Date[] =
+      lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
+      [];
     const maxDate = getMaxDate(dateArray[0], ...dateArray.slice(1));
     return formatDate(maxDate, 'YYYY/MM');
   } catch (error) {
@@ -342,9 +343,9 @@ const openImportMenu = () => {
 const dateOptions = (lookupDate: string) => {
   try {
     if (!lookupPeriod.value || !lookupPeriod.value) return true;
-    const dateArray: Date[] = lookupPeriod.value[
-      currentCongregation.value
-    ]?.map((day) => day.date);
+    const dateArray: Date[] =
+      lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
+      [];
     const minDate = getMinDate(dateArray[0], ...dateArray.slice(1));
     const maxDate = getMaxDate(dateArray[0], ...dateArray.slice(1));
     return (
@@ -433,7 +434,7 @@ const getEventDayColor = (eventDate: string) => {
       additionalMediaMaps.value[currentCongregation.value];
     if (additionalDates) {
       const isAdditional = Object.keys(additionalDates)
-        .filter((day) => additionalDates[day].length > 0)
+        .filter((day) => (additionalDates[day]?.length || 0) > 0)
         .map((day) => formatDate(day, 'YYYY/MM/DD'))
         .includes(eventDate);
       if (isAdditional) return 'additional';

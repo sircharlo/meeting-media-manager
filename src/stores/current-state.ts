@@ -23,12 +23,14 @@ const { fs, path } = window.electronApi;
 interface Store {
   currentCongregation: string;
   currentSongRemainingTime: string;
-  downloadedFiles: Record<string, DownloadedFile | Promise<DownloadedFile>>;
+  downloadedFiles: Partial<
+    Record<string, DownloadedFile | Promise<DownloadedFile>>
+  >;
   downloadProgress: DownloadProgressItems;
-  extractedFiles: Record<string, Promise<string>>;
+  extractedFiles: Partial<Record<string, Promise<string>>>;
   mediaPlayingAction: '' | 'pause' | 'play' | 'website';
   mediaPlayingCurrentPosition: number;
-  mediaPlayingPanzoom: Record<string, number>;
+  mediaPlayingPanzoom: Partial<Record<string, number>>;
   mediaPlayingSeekTo: number;
   mediaPlayingSubtitlesUrl: string;
   mediaPlayingUniqueId: string;
@@ -193,7 +195,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       return (
         jwStore.lookupPeriod?.[state.currentCongregation]?.find(
           (day) => getDateDiff(day.date, state.selectedDate, 'days') === 0,
-        ) || jwStore.lookupPeriod[state.currentCongregation][0]
+        ) ||
+        jwStore.lookupPeriod[state.currentCongregation]?.[0] ||
+        null
       );
     },
   },

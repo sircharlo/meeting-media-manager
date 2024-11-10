@@ -260,21 +260,21 @@ const allCacheFilesSize = computed(() => {
 
 const lookupPeriodsCollections = Object.values(lookupPeriod.value).flatMap(
   (congregationLookupPeriods) =>
-    congregationLookupPeriods.flatMap(
+    congregationLookupPeriods?.flatMap(
       (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
     ),
 );
 const additionalMediaCollections = Object.values(
   additionalMediaMaps.value,
 ).flatMap((congregationAdditionalMediaMap) =>
-  Object.values(congregationAdditionalMediaMap).flat(),
+  Object.values(congregationAdditionalMediaMap || {}).flat(),
 );
 const mediaFileParentDirectories = new Set([
   ...additionalMediaCollections.map((media) =>
-    pathToFileURL(getParentDirectory(media.fileUrl)),
+    media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
   ),
   ...lookupPeriodsCollections.map((media) =>
-    pathToFileURL(getParentDirectory(media.fileUrl)),
+    media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
   ),
 ]);
 

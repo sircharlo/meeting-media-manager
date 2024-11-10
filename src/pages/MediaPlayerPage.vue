@@ -304,10 +304,11 @@ const playMedia = () => {
             selectedDate.value
           ]?.[mediaUniqueId.value]
         ) {
-          const customStartStop = customDurations?.value?.[
-            currentCongregation.value
-          ]?.[selectedDate.value]?.[mediaUniqueId.value] ?? { max: 0 };
-          if (currentTime >= customStartStop.max) {
+          const customStop =
+            customDurations?.value?.[currentCongregation.value]?.[
+              selectedDate.value
+            ]?.[mediaUniqueId.value]?.max;
+          if (customStop && currentTime >= customStop) {
             postMediaState('ended');
           }
         }
@@ -315,17 +316,11 @@ const playMedia = () => {
         errorCatcher(e);
       }
     };
-    let customStartStop = { max: 0, min: 0 };
-    if (
+    const customStart =
       customDurations?.value?.[currentCongregation.value]?.[
         selectedDate.value
-      ]?.[mediaUniqueId.value]
-    ) {
-      customStartStop = customDurations?.value?.[currentCongregation.value]?.[
-        selectedDate.value
-      ]?.[mediaUniqueId.value] ?? { min: 0 };
-    }
-    mediaElement.value.currentTime = customStartStop.min;
+      ]?.[mediaUniqueId.value]?.min ?? 0;
+    mediaElement.value.currentTime = customStart;
     mediaElement.value.play().catch((error: Error) => {
       if (
         !(
