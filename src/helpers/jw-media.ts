@@ -10,6 +10,7 @@ import type {
   MediaItemsMediator,
   MediaItemsMediatorFile,
   MediaLink,
+  MediaSection,
   MultimediaExtractItem,
   MultimediaItem,
   MultimediaItemsFetcher,
@@ -748,7 +749,7 @@ const dynamicMediaMapper = async (
             }
           }
         }
-        let section = additional ? 'additional' : 'wt';
+        let section: MediaSection = additional ? 'additional' : 'wt';
         if (middleSongParagraphOrdinal > 0) {
           //this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {

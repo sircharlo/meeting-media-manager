@@ -447,7 +447,12 @@
 
 <script setup lang="ts">
 import type { DNDPlugin } from '@formkit/drag-and-drop';
-import type { DocumentItem, DynamicMediaObject, TableItem } from 'src/types';
+import type {
+  DocumentItem,
+  DynamicMediaObject,
+  MediaSection,
+  TableItem,
+} from 'src/types';
 
 // eslint-disable-next-line no-duplicate-imports
 import {
@@ -687,7 +692,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
   const parentData = parents.get(parent);
   if (!parentData) return;
 
-  const updateMediaSection = (id: string, section: string) => {
+  const updateMediaSection = (id: string, section: MediaSection) => {
     (selectedDateObject.value?.dynamicMedia ?? []).forEach((item) => {
       if (item.uniqueId === id && item.section !== section) {
         item.section = section;
