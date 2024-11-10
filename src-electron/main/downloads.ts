@@ -19,6 +19,14 @@ const downloadQueue: DownloadQueueItem[] = [];
 const lowPriorityQueue: DownloadQueueItem[] = [];
 const activeDownloadIds: string[] = [];
 const maxActiveDownloads = 5;
+let cancelAll = false;
+
+export async function cancelAllDownloads() {
+  cancelAll = true;
+  activeDownloadIds.forEach((id) => {
+    manager.cancelDownload(id);
+  });
+}
 
 export async function downloadFile(
   url: string,
@@ -59,6 +67,7 @@ async function processQueue() {
   if (!mainWindow) return null;
   // If max active downloads reached, wait for a slot
   while (activeDownloadIds.length >= maxActiveDownloads) {
+    if (cancelAll) return;
     await new Promise((resolve) => {
       setTimeout(resolve, 1000);
     });

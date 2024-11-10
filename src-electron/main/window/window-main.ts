@@ -4,6 +4,7 @@ import { captureMessage } from '@sentry/browser';
 import { PLATFORM } from 'app/src-electron/constants';
 import { throttle } from 'app/src-electron/utils';
 
+import { cancelAllDownloads } from '../downloads';
 import { closeOtherWindows, createWindow, sendToWindow } from './window-base';
 import { createMediaWindow, moveMediaWindow } from './window-media';
 
@@ -39,6 +40,7 @@ export function createMainWindow() {
 
   mainWindow.on('close', (e) => {
     if (mainWindow && authorizedClose) {
+      cancelAllDownloads();
       closeOtherWindows(mainWindow);
     } else {
       e.preventDefault();
