@@ -174,6 +174,7 @@ module.exports = configure(function (ctx) {
         const electronDeps = [
           '@numairawan/video-duration',
           '@sentry/electron',
+          '@sentry/vue',
           'adm-zip',
           'better-sqlite3',
           'countries-and-timezones',
@@ -190,6 +191,7 @@ module.exports = configure(function (ctx) {
         // Remove unneeded dependencies from production build
         Object.keys(pkg.dependencies).forEach((dep) => {
           if (!electronDeps.includes(dep)) {
+            console.log(`Removing dependency: ${dep}`);
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete pkg.dependencies[dep];
           }
