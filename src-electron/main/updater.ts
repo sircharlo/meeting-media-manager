@@ -20,7 +20,7 @@ const triggerUpdateCheck = async (attempt = 1) => {
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();
     if (online) {
-      autoUpdater.checkForUpdatesAndNotify();
+      await autoUpdater.checkForUpdatesAndNotify();
     } else {
       if (attempt < 5) {
         setTimeout(() => triggerUpdateCheck(attempt + 1), 5000);
