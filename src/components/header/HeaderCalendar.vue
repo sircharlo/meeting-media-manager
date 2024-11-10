@@ -170,6 +170,7 @@
         v-model="selectedDate"
         :event-color="getEventDayColor"
         :events="getEventDates()"
+        :first-day-of-week="1"
         :locale="dateLocale"
         :navigation-max-year-month="maxDate()"
         :navigation-min-year-month="minDate()"
