@@ -343,7 +343,9 @@ const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
           ).length > 0;
         if (!tableExists) continue;
       } catch (error) {
-        errorCatcher(error, { contexts: { db: { source: source.db, table } } });
+        errorCatcher(error, {
+          contexts: { fn: { name: 'getMultimediaMepsLangs', source, table } },
+        });
         continue;
       }
       const columnQueryResult = executeQuery<TableItem>(
@@ -427,16 +429,16 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       .includes('SuppressZoom');
 
     // let select = 'SELECT Multimedia.DocumentId, Multimedia.MultimediaId, ';
-    const select = 'SELECT * ';
-    let from = 'FROM Multimedia ';
+    const select = 'SELECT *';
+    let from = 'FROM Multimedia';
     if (mmTable === 'DocumentMultimedia') {
       from +=
-        'INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId ';
-      from += `INNER JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex `;
+        ' INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId';
+      from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex`;
     }
-    from += `INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId `;
+    from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
 
-    let where = ` WHERE ${
+    let where = `WHERE ${
       source.docId || source.docId === 0
         ? `Document.DocumentId = ${source.docId}`
         : `Document.MepsDocumentId = ${source.mepsId}`
@@ -444,7 +446,7 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
 
     const videoString =
       "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
-    const imgString = `(Multimedia.MimeType LIKE '%image%' ${
+    const imgString = `(Multimedia.MimeType LIKE '%image%'${
       currentStateStore.currentSettings?.includePrinted
         ? ''
         : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
@@ -461,11 +463,11 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
     }
 
     const groupAndSort = ParagraphColumnsExist
-      ? ' GROUP BY Multimedia.MultimediaId ORDER BY DocumentParagraph.BeginPosition'
+      ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentParagraph.BeginPosition'
       : '';
 
     if (targetParNrExists && ParagraphColumnsExist) {
-      from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal `;
+      from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`;
     }
     if (suppressZoomExists) {
       where += ' AND Multimedia.SuppressZoom <> 1';
@@ -1776,6 +1778,10 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
     }
     if (attributes['data-pubmedia_url']) {
       jwStore.urlVariables.pubMedia = attributes['data-pubmedia_url'];
+    }
+
+    if (!jwStore.urlVariables.mediator || !jwStore.urlVariables.pubMedia) {
+      resetUrlVariables();
     }
   } catch (e) {
     if (jwStore.urlVariables.base) {

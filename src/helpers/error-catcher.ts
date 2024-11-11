@@ -12,6 +12,7 @@ const errorCatcher = async (
     captureException(originalError, context);
   } else {
     console.error(originalError);
+    console.warn('context', context);
   }
 };
 

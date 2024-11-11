@@ -85,26 +85,28 @@ export const useCurrentStateStore = defineStore('current-state', {
       try {
         if (!congregation) congregation = this.currentCongregation;
         if (!congregation) return [];
-        const invalidSettings: (keyof SettingsValues)[] = [];
+        const invalidSettings = new Set<keyof SettingsValues>();
+        const { urlVariables } = useJwStore();
+        const congregationSettingsStore = useCongregationSettingsStore();
         for (const [
           settingsDefinitionId,
           settingsDefinition,
         ] of settingDefinitionEntries) {
           if (settingsDefinition.rules?.includes('notEmpty')) {
-            const congregationSettingsStore = useCongregationSettingsStore();
             if (
-              !congregationSettingsStore.congregations[congregation]?.[
+              (settingsDefinitionId === 'baseUrl' && !urlVariables?.mediator) ||
+              (!congregationSettingsStore.congregations[congregation]?.[
                 settingsDefinitionId
               ]?.toString() &&
-              (!settingsDefinition.rules?.includes('regular') ||
-                !congregationSettingsStore.congregations[congregation]
-                  ?.disableMediaFetching)
+                (!settingsDefinition.rules?.includes('regular') ||
+                  !congregationSettingsStore.congregations[congregation]
+                    ?.disableMediaFetching))
             ) {
-              invalidSettings.push(settingsDefinitionId);
+              invalidSettings.add(settingsDefinitionId);
             }
           }
         }
-        return invalidSettings;
+        return [...invalidSettings];
       } catch (error) {
         errorCatcher(error);
         return [];

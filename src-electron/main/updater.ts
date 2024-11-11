@@ -6,7 +6,7 @@ import { errorCatcher, getUserDataPath } from './../utils';
 
 export async function initUpdater() {
   autoUpdater.on('error', (error, message) => {
-    errorCatcher(error, { contexts: { updater: { message } } });
+    errorCatcher(error, { contexts: { fn: { message, name: 'initUpdater' } } });
   });
 
   const disabled = await exists(
@@ -27,6 +27,6 @@ const triggerUpdateCheck = async (attempt = 1) => {
       }
     }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'triggerUpdateCheck' } } });
   }
 };

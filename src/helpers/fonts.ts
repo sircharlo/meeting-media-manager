@@ -1,21 +1,44 @@
 import type { FontName } from 'src/types';
 
 import { Buffer } from 'buffer';
-import { FONT_URLS } from 'src/constants/fonts';
+import { useJwStore } from 'src/stores/jw';
 
+import { fetchRaw } from './api';
 import { errorCatcher } from './error-catcher';
 import { getFontsPath } from './fs';
 
 const { fs, path } = window.electronApi;
+
+export const setElementFont = async (fontName: FontName) => {
+  if (!fontName) return;
+
+  try {
+    const fontFace = new FontFace(
+      fontName,
+      'url("' + (await getLocalFontPath(fontName)) + '")',
+    );
+    await fontFace.load();
+    document.fonts.add(fontFace);
+  } catch (error) {
+    const fontFace = new FontFace(
+      fontName,
+      'url("' + useJwStore().fontUrls[fontName] + '")',
+    );
+    await fontFace.load();
+    document.fonts.add(fontFace);
+    errorCatcher(error);
+  }
+};
 
 const getLocalFontPath = async (fontName: FontName) => {
   const fontsDir = await getFontsPath();
   const fontFileName = `${fontName}.woff2`;
   const fontPath = path.join(fontsDir, fontFileName);
   let mustDownload = false;
+  const fontUrls = useJwStore().fontUrls;
   try {
     if (await fs.exists(fontPath)) {
-      const headReq = await fetch(FONT_URLS[fontName], {
+      const headReq = await fetchRaw(fontUrls[fontName], {
         method: 'HEAD',
       });
       if (headReq.ok) {
@@ -34,7 +57,7 @@ const getLocalFontPath = async (fontName: FontName) => {
   }
   if (mustDownload) {
     await fs.ensureDir(fontsDir);
-    const response = await fetch(FONT_URLS[fontName], {
+    const response = await fetchRaw(fontUrls[fontName], {
       method: 'GET',
     });
     if (!response.ok) {
@@ -46,5 +69,3 @@ const getLocalFontPath = async (fontName: FontName) => {
   }
   return fontPath;
 };
-
-export { getLocalFontPath };

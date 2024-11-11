@@ -1254,7 +1254,16 @@ const addToAdditionMediaMapFromPath = async (
       },
     ]);
   } catch (error) {
-    errorCatcher(error, { contexts: { vars: { additionalFilePath, stream } } });
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          additionalFilePath,
+          name: 'addToAdditionMediaMapFromPath',
+          stream,
+          uniqueId,
+        },
+      },
+    });
   }
 };
 

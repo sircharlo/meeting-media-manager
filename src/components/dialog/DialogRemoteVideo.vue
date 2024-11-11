@@ -108,7 +108,7 @@
           />
         </div>
         <div class="col text-right">
-          <q-btn v-close-popup color="negative" flat>{{ $t('cancel') }}</q-btn>
+          <q-btn v-close-popup :label="$t('cancel')" color="negative" flat />
         </div>
       </div>
     </div>

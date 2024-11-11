@@ -69,15 +69,17 @@
   </q-page-container>
 </template>
 <script setup lang="ts">
-import type { FontName } from 'src/types';
-
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
-import { useBroadcastChannel, watchDeep, whenever } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  watchDeep,
+  watchImmediate,
+  whenever,
+} from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
-import { FONT_URLS } from 'src/constants/fonts';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getLocalFontPath } from 'src/helpers/fonts';
+import { setElementFont } from 'src/helpers/fonts';
 import {
   isAudio,
   isImage,
@@ -87,7 +89,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -379,28 +381,11 @@ $q.iconMapFn = (iconName) => {
   }
 };
 
-const setElementFont = async (fontName: FontName) => {
-  if (!fontName) return;
-  try {
-    const fontFace = new FontFace(
-      fontName,
-      'url("' + (await getLocalFontPath(fontName)) + '")',
-    );
-    await fontFace.load();
-    document.fonts.add(fontFace);
-  } catch (error) {
-    const fontFace = new FontFace(
-      fontName,
-      'url("' + FONT_URLS[fontName] + '")',
-    );
-    await fontFace.load();
-    document.fonts.add(fontFace);
-    errorCatcher(error);
-  }
-};
-
-onMounted(() => {
-  setElementFont('WT-ClearText-Bold');
-  setElementFont('JW-Icons');
-});
+watchImmediate(
+  () => jwStore.urlVariables,
+  () => {
+    setElementFont('WT-ClearText-Bold');
+    setElementFont('JW-Icons');
+  },
+);
 </script>
