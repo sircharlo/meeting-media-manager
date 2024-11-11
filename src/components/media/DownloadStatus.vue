@@ -56,7 +56,7 @@ const updateOnline = async () => {
   try {
     online.value = await isOnline();
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'updateOnline' } } });
   }
 };
 

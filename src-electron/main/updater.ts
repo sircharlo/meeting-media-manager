@@ -27,6 +27,6 @@ const triggerUpdateCheck = async (attempt = 1) => {
       }
     }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'triggerUpdateCheck' } } });
   }
 };
