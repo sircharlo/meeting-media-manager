@@ -2,6 +2,7 @@ import type {
   CacheList,
   DateInfo,
   DynamicMediaObject,
+  FontName,
   JwLangCode,
   JwLanguage,
   MediaLink,
@@ -287,7 +288,7 @@ export const useJwStore = defineStore('jw-store', {
     },
   },
   getters: {
-    fontUrls: (state) => {
+    fontUrls: (state): Record<FontName, string> => {
       const { urlVariables } = state;
       const mediatorBaseUrl = urlVariables.mediator
         ? new URL(urlVariables.mediator).hostname
