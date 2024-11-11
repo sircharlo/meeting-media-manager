@@ -4,7 +4,12 @@ import type { MultimediaItem, PublicationFetcher } from 'src/types';
 import { Buffer } from 'buffer';
 import { FULL_HD } from 'src/constants/media';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
-import { isFileOfType, isImage, isVideo } from 'src/helpers/mediaPlayback';
+import {
+  isAudio,
+  isFileOfType,
+  isImage,
+  isVideo,
+} from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
@@ -238,7 +243,7 @@ const getThumbnailUrl = async (filepath: string, forceRefresh?: boolean) => {
     let thumbnailUrl = '';
     if (isImage(filepath)) {
       thumbnailUrl = getFileUrl(filepath);
-    } else if (isVideo(filepath)) {
+    } else if (isVideo(filepath) || isAudio(filepath)) {
       const thumbnailPath = filepath.split('.')[0] + '.jpg';
       if (await fs.exists(thumbnailPath)) {
         thumbnailUrl = getFileUrl(thumbnailPath);

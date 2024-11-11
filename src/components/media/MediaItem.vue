@@ -10,14 +10,6 @@
   >
     <div class="q-pr-none rounded-borders">
       <div
-        v-if="media.isAudio"
-        class="bg-grey-9 rounded-borders text-white flex"
-        style="width: 150px; height: 84px"
-      >
-        <q-icon name="mmm-music-note" size="lg" />
-      </div>
-      <div
-        v-else
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
       >
         <q-img
@@ -35,7 +27,7 @@
           @mouseleave="setHoveredBadge(media.uniqueId, false)"
         >
           <q-badge
-            v-if="media.isVideo"
+            v-if="media.isVideo || media.isAudio"
             :class="
               'q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm ' +
               (customDurations[currentCongregation]?.[selectedDate]?.[
@@ -60,7 +52,9 @@
                   media.uniqueId
                 ]
                   ? 'mmm-edit'
-                  : 'mmm-play'
+                  : props.media.isAudio
+                    ? 'mmm-music-note'
+                    : 'mmm-play'
               "
               class="q-mr-xs"
               color="white"
@@ -293,7 +287,7 @@
               <div
                 v-if="
                   [media.fileUrl, media.streamUrl].includes(mediaPlayingUrl) &&
-                  media.isVideo
+                  (media.isVideo || media.isAudio)
                 "
                 class="absolute duration-slider"
               >
@@ -346,7 +340,10 @@
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
-                :disable="mediaPlayingUrl !== '' && isVideo(mediaPlayingUrl)"
+                :disable="
+                  mediaPlayingUrl !== '' &&
+                  (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
+                "
                 color="primary"
                 icon="mmm-play"
                 rounded
@@ -356,7 +353,10 @@
             <template v-else>
               <q-btn
                 ref="playButton"
-                :disable="mediaPlayingUrl !== '' && isVideo(mediaPlayingUrl)"
+                :disable="
+                  mediaPlayingUrl !== '' &&
+                  (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
+                "
                 color="primary"
                 icon="mmm-play-sign-language"
                 push
@@ -417,7 +417,7 @@
               />
               <q-btn
                 v-else-if="
-                  media.isVideo &&
+                  (media.isVideo || media.isAudio) &&
                   (mediaPlayingAction === 'play' || !mediaPlayingAction)
                 "
                 ref="pauseResumeButton"
@@ -550,7 +550,12 @@ import { storeToRefs } from 'pinia';
 import { debounce, type QImg } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
-import { formatTime, isImage, isVideo } from 'src/helpers/mediaPlayback';
+import {
+  formatTime,
+  isAudio,
+  isImage,
+  isVideo,
+} from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
@@ -687,7 +692,8 @@ async function findThumbnailUrl() {
   }
 }
 
-if (props.media.isVideo && !props.media.thumbnailUrl) findThumbnailUrl();
+if ((props.media.isVideo || props.media.isAudio) && !props.media.thumbnailUrl)
+  findThumbnailUrl();
 
 const showMediaDurationPopup = (media: DynamicMediaObject) => {
   try {
