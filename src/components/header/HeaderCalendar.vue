@@ -1,5 +1,5 @@
 <template>
-  <SongPicker v-model="chooseSong" />
+  <SongPicker v-model="chooseSong" :section="section" />
   <PublicTalkMediaPicker v-model="publicTalkMediaPopup" />
   <q-btn
     :disable="mediaPlaying || !mediaSortForDay"
@@ -17,7 +17,12 @@
       {{ $t('reset-sort-order') }}
     </q-tooltip>
   </q-btn>
-  <q-btn v-if="selectedDate" color="white-transparent" unelevated>
+  <q-btn
+    v-if="selectedDate"
+    color="white-transparent"
+    unelevated
+    @click="section = undefined"
+  >
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
       name="mmm-import-media"
@@ -81,7 +86,7 @@
           ]"
           :key="name"
         >
-          <q-item v-close-popup clickable @click="dragging">
+          <q-item v-close-popup clickable @click="openDragAndDropper">
             <q-item-section avatar>
               <q-icon :name="icon" color="primary" />
             </q-item-section>
@@ -187,6 +192,7 @@
     v-model="remoteVideoPopup"
     :remote-videos="remoteVideos"
     :remote-videos-loading-progress="remoteVideosLoadingProgress"
+    :section="section"
   />
 </template>
 <script setup lang="ts">
@@ -214,7 +220,11 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
 // Types
-import type { JwVideoCategory, MediaItemsMediatorItem } from 'src/types';
+import type {
+  JwVideoCategory,
+  MediaItemsMediatorItem,
+  MediaSection,
+} from 'src/types';
 
 const { formatDate, getDateDiff, getMaxDate, getMinDate } = date;
 
@@ -235,14 +245,19 @@ const {
   selectedDate,
 } = storeToRefs(currentState);
 
+const section = ref<MediaSection | undefined>();
 const publicTalkMediaPopup = ref(false);
 const datePickerActive = ref(false);
 const remoteVideoPopup = ref(false);
 const remoteVideosLoadingProgress = ref(0);
 const remoteVideos = ref<MediaItemsMediatorItem[]>([]);
 
-const dragging = () => {
-  window.dispatchEvent(new Event('draggingSomething'));
+const openDragAndDropper = () => {
+  window.dispatchEvent(
+    new CustomEvent('openDragAndDropper', {
+      detail: { section: section.value },
+    }),
+  );
 };
 
 const mediaSortForDay = computed(() => {
@@ -336,7 +351,8 @@ const maxDate = () => {
 };
 
 const importMenu = ref<QMenu | undefined>();
-const openImportMenu = () => {
+const openImportMenu = (newSection?: MediaSection) => {
+  section.value = newSection;
   importMenu.value?.show();
 };
 
@@ -448,10 +464,15 @@ const getEventDayColor = (eventDate: string) => {
 
 const chooseSong = ref(false);
 
-const openSongPicker = () => {
+const openSongPicker = (newSection?: MediaSection) => {
+  section.value = newSection;
   chooseSong.value = true;
 };
 
-useEventListener(window, 'openSongPicker', openSongPicker);
-useEventListener(window, 'openImportMenu', openImportMenu);
+useEventListener<CustomEvent>(window, 'openSongPicker', (e) =>
+  openSongPicker(e.detail?.section),
+);
+useEventListener<CustomEvent>(window, 'openImportMenu', (e) =>
+  openImportMenu(e.detail?.section),
+);
 </script>

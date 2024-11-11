@@ -42,32 +42,6 @@
       </div>
       <div
         v-if="
-          selectedDateObject?.meeting === 'we' &&
-          selectedDateObject?.complete &&
-          !sortableAdditionalMediaItems?.length
-        "
-        class="row"
-      >
-        <q-banner
-          class="bg-additional text-white full-width"
-          inline-actions
-          rounded
-        >
-          {{ $t('dont-forget-add-opening-song') }}
-          <template #avatar>
-            <q-avatar class="bg-white text-additional" size="lg">
-              <q-icon name="mmm-music-note" size="sm" />
-            </q-avatar>
-          </template>
-          <template #action>
-            <q-btn flat @click="addOpeningSong()">
-              {{ $t('add-an-opening-song') }}
-            </q-btn>
-          </template>
-        </q-banner>
-      </div>
-      <div
-        v-if="
           selectedDateObject?.meeting &&
           !sortableCircuitOverseerMediaItems?.length &&
           coWeek
@@ -86,7 +60,7 @@
             </q-avatar>
           </template>
           <template #action>
-            <q-btn flat @click="openImportMenu()">
+            <q-btn flat @click="openImportMenu('circuitOverseer')">
               {{ $t('add-missing-media') }}
             </q-btn>
           </template>
@@ -197,31 +171,45 @@
       "
       class="media-section additional"
     >
-      <q-item class="text-additional items-center">
+      <q-item v-if="selectedDateObject" class="text-additional items-center">
         <q-avatar
-          v-if="selectedDateObject"
-          :size="isWeMeetingDay(selectedDateObject?.date) ? 'lg' : 'md'"
+          :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'"
           class="text-white bg-additional jw-icon"
         >
-          <template v-if="isWeMeetingDay(selectedDateObject?.date)">
+          <template v-if="isWeMeetingDay(selectedDateObject.date)">
             
           </template>
           <template v-else>
             <q-icon name="mmm-additional-media" size="md" />
           </template>
         </q-avatar>
-        <div
-          v-if="selectedDateObject"
-          class="text-bold text-uppercase text-spaced"
+        <q-item-section
+          class="text-bold text-uppercase text-spaced row justify-between"
         >
           {{
             $t(
-              isWeMeetingDay(selectedDateObject?.date)
+              isWeMeetingDay(selectedDateObject.date)
                 ? 'public-talk'
                 : 'imported-media',
             )
           }}
-        </div>
+        </q-item-section>
+        <q-item-section
+          v-if="
+            isWeMeetingDay(selectedDateObject.date) &&
+            !sortableAdditionalMediaItems.length
+          "
+          side
+        >
+          <q-btn
+            color="additional"
+            flat
+            icon="mmm-music-note"
+            @click="addSong('additional')"
+          >
+            {{ $t('add-an-opening-song') }}
+          </q-btn>
+        </q-item-section>
       </q-item>
       <q-list ref="additionalList" class="list-droppable">
         <MediaItem
@@ -243,9 +231,9 @@
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
             >
-              <div>
+              <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ $t('no-media-files-for-section') }}
+                <span>{{ $t('dont-forget-add-opening-song') }}</span>
               </div>
             </q-item-section>
           </q-item>
@@ -254,10 +242,7 @@
     </q-list>
     <q-list
       v-show="
-        selectedDateObject?.complete &&
-        (sortableTgwMediaItems.length ||
-          sortableAyfmMediaItems.length ||
-          sortableLacMediaItems.length)
+        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
       "
       class="media-section tgw"
     >
@@ -276,12 +261,12 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
         />
-        <div v-if="sortableTgwMediaItems.length === 0">
+        <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
             >
-              <div>
+              <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
                 {{ $t('no-media-files-for-section') }}
               </div>
@@ -292,10 +277,7 @@
     </q-list>
     <q-list
       v-show="
-        selectedDateObject?.complete &&
-        (sortableTgwMediaItems.length ||
-          sortableAyfmMediaItems.length ||
-          sortableLacMediaItems.length)
+        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
       "
       class="media-section ayfm"
     >
@@ -314,7 +296,9 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
         />
-        <div v-if="sortableAyfmMediaItems.length === 0">
+        <div
+          v-if="sortableAyfmMediaItems.filter((m) => !m.hidden).length === 0"
+        >
           <q-item>
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
@@ -330,18 +314,24 @@
     </q-list>
     <q-list
       v-show="
-        selectedDateObject?.complete &&
-        (sortableTgwMediaItems.length ||
-          sortableAyfmMediaItems.length ||
-          sortableLacMediaItems.length)
+        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
       "
       class="media-section lac"
     >
       <q-item class="text-lac items-center">
         <q-avatar class="text-white bg-lac jw-icon" size="lg"></q-avatar>
-        <div class="text-bold text-uppercase text-spaced">
+        <q-item-section class="text-bold text-uppercase text-spaced">
           {{ $t('lac') }}
-        </div>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn
+            :label="$t('add-extra-media')"
+            color="lac"
+            flat
+            icon="mmm-import-media"
+            @click="openImportMenu('lac')"
+          />
+        </q-item-section>
       </q-item>
       <q-list ref="lacList" class="list-droppable">
         <MediaItem
@@ -352,7 +342,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
         />
-        <div v-if="sortableLacMediaItems.length === 0">
+        <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
@@ -367,7 +357,9 @@
       </q-list>
     </q-list>
     <q-list
-      v-show="selectedDateObject?.complete && sortableWtMediaItems.length"
+      v-show="
+        selectedDateObject?.complete && isWeMeetingDay(selectedDateObject?.date)
+      "
       class="media-section wt"
     >
       <q-item class="text-wt items-center">
@@ -385,7 +377,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
         />
-        <div v-if="sortableWtMediaItems.length === 0">
+        <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
@@ -404,12 +396,35 @@
       class="media-section additional"
     >
       <q-item class="text-additional items-center">
-        <q-avatar class="text-white bg-additional jw-icon" size="lg"
-          ></q-avatar
-        >
-        <div class="text-bold text-uppercase text-spaced">
+        <q-avatar class="text-white bg-additional jw-icon" size="lg">
+          
+        </q-avatar>
+        <q-item-section class="text-bold text-uppercase text-spaced">
           {{ $t('co') }}
-        </div>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn
+            :icon="
+              sortableCircuitOverseerMediaItems.length
+                ? 'mmm-import-media'
+                : 'mmm-music-note'
+            "
+            :label="
+              $t(
+                sortableCircuitOverseerMediaItems.length
+                  ? 'add-extra-media'
+                  : 'add-a-concluding-song',
+              )
+            "
+            color="additional"
+            flat
+            @click="
+              sortableCircuitOverseerMediaItems.length
+                ? openImportMenu('circuitOverseer')
+                : addSong('circuitOverseer')
+            "
+          />
+        </q-item-section>
       </q-item>
       <q-list ref="circuitOverseerList" class="list-droppable">
         <MediaItem
@@ -425,9 +440,9 @@
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
             >
-              <div>
+              <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ $t('no-media-files-for-section') }}
+                <span>{{ $t('dont-forget-add-circuit-overseer-media') }}</span>
               </div>
             </q-item-section>
           </q-item>
@@ -440,6 +455,7 @@
     v-model:jwpub-db="jwpubImportDb"
     :current-file="currentFile"
     :jwpub-documents="jwpubImportDocuments"
+    :section="sectionToAddTo"
     :total-files="totalFiles"
     @drop="dropEnd"
   />
@@ -479,6 +495,7 @@ import {
   getLocalDate,
   isCoWeek,
   isInPast,
+  isMwMeetingDay,
   isWeMeetingDay,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -927,23 +944,32 @@ const checkCoDate = () => {
   }
 };
 
-useEventListener(window, 'draggingSomething', () => {
+const sectionToAddTo = ref<MediaSection | undefined>();
+
+useEventListener<CustomEvent>(window, 'openDragAndDropper', (e) => {
   resetDragging();
+  sectionToAddTo.value = e.detail.section;
   dragging.value = true;
 });
-useEventListener(window, 'localFiles-browsed', (event: CustomEventInit) => {
-  addToFiles(event.detail).catch((error) => {
+useEventListener<CustomEvent>(window, 'localFiles-browsed', (event) => {
+  sectionToAddTo.value = event.detail?.section;
+  addToFiles(event.detail?.files ?? []).catch((error) => {
     errorCatcher(error);
   });
 });
-useEventListener(window, 'remote-video-loading', (event: CustomEventInit) => {
-  addToAdditionMediaMapFromPath(event.detail.path, undefined, {
-    duration: event.detail.duration,
-    song: event.detail.song,
-    thumbnailUrl: event.detail.thumbnailUrl,
-    title: event.detail.title,
-    url: event.detail.url,
-  });
+useEventListener<CustomEvent>(window, 'remote-video-loading', (event) => {
+  addToAdditionMediaMapFromPath(
+    event.detail.path,
+    event.detail.section,
+    undefined,
+    {
+      duration: event.detail.duration,
+      song: event.detail.song,
+      thumbnailUrl: event.detail.thumbnailUrl,
+      title: event.detail.title,
+      url: event.detail.url,
+    },
+  );
 });
 
 watchImmediate(selectedDate, (newVal) => {
@@ -1125,7 +1151,10 @@ const playState = (id: string) => {
   return 'unknown';
 };
 
-const copyToDatedAdditionalMedia = async (files: string[]) => {
+const copyToDatedAdditionalMedia = async (
+  files: string[],
+  section?: MediaSection,
+) => {
   const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
   const trimFilepathAsNeeded = (filepath: string) => {
     let filepathSize = new Blob([filepath]).size;
@@ -1164,7 +1193,11 @@ const copyToDatedAdditionalMedia = async (files: string[]) => {
       }
       if (filepathToCopy !== datedAdditionalMediaPath)
         await fs.copy(filepathToCopy, datedAdditionalMediaPath);
-      await addToAdditionMediaMapFromPath(datedAdditionalMediaPath, uniqueId);
+      await addToAdditionMediaMapFromPath(
+        datedAdditionalMediaPath,
+        section,
+        uniqueId,
+      );
     } catch (error) {
       errorCatcher(error);
     }
@@ -1173,6 +1206,7 @@ const copyToDatedAdditionalMedia = async (files: string[]) => {
 
 const addToAdditionMediaMapFromPath = async (
   additionalFilePath: string,
+  section: MediaSection = 'additional',
   uniqueId?: string,
   stream?: {
     duration: number;
@@ -1207,8 +1241,8 @@ const addToAdditionMediaMapFromPath = async (
         isAudio: isAudioFile,
         isImage: isImage(additionalFilePath),
         isVideo: isVideoFile,
-        section: 'additional',
-        sectionOriginal: 'additional',
+        section,
+        sectionOriginal: section,
         song: stream?.song,
         streamUrl: stream?.url,
         thumbnailUrl:
@@ -1254,7 +1288,7 @@ const addToFiles = async (
       }
       filepath = await convertImageIfNeeded(filepath);
       if (isImage(filepath) || isVideo(filepath) || isAudio(filepath)) {
-        await copyToDatedAdditionalMedia([filepath]);
+        await copyToDatedAdditionalMedia([filepath], sectionToAddTo.value);
       } else if (isPdf(filepath)) {
         const convertedImages = (
           await convertPdfToImages(filepath, await getTempDirectory())
@@ -1305,6 +1339,7 @@ const addToFiles = async (
             const errors = await addJwpubDocumentMediaToFiles(
               jwpubImportDb.value,
               jwpubImportDocuments.value[0],
+              sectionToAddTo.value,
             );
             jwpubImportDb.value = '';
             jwpubImportDocuments.value = [];
@@ -1336,7 +1371,7 @@ const addToFiles = async (
         ).catch((error) => {
           throw error;
         });
-        addToAdditionMediaMap(additionalMedia);
+        addToAdditionMediaMap(additionalMedia, sectionToAddTo.value);
         additionalMedia
           .filter(
             (m) =>
@@ -1388,12 +1423,18 @@ const addToFiles = async (
   resetDragging();
 };
 
-const addOpeningSong = () => {
-  window.dispatchEvent(new CustomEvent('openSongPicker'));
+const addSong = (section?: MediaSection) => {
+  console.log('addSong');
+  window.dispatchEvent(
+    new CustomEvent('openSongPicker', { detail: { section } }),
+  );
 };
 
-const openImportMenu = () => {
-  window.dispatchEvent(new CustomEvent('openImportMenu'));
+const openImportMenu = (section?: MediaSection) => {
+  console.log('openImportMenu');
+  window.dispatchEvent(
+    new CustomEvent('openImportMenu', { detail: { section } }),
+  );
 };
 
 const dropActive = (event: DragEvent) => {
@@ -1457,5 +1498,6 @@ const resetDragging = () => {
   jwpubImportDocuments.value = [];
   currentFile.value = 0;
   totalFiles.value = 0;
+  sectionToAddTo.value = undefined;
 };
 </script>

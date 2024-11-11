@@ -142,7 +142,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DocumentItem } from 'src/types';
+import type { DocumentItem, MediaSection } from 'src/types';
 
 import { useScrollbar } from 'src/composables/useScrollbar';
 import {
@@ -162,6 +162,7 @@ const { barStyle, thumbStyle } = useScrollbar();
 const props = defineProps<{
   currentFile: number;
   jwpubDocuments: DocumentItem[];
+  section?: MediaSection;
   totalFiles: number;
 }>();
 
@@ -182,11 +183,14 @@ const getLocalFiles = async () => {
       if (result && result.filePaths.length > 0) {
         window.dispatchEvent(
           new CustomEvent('localFiles-browsed', {
-            detail: result.filePaths.map((path) => {
-              return {
-                path,
-              };
-            }),
+            detail: {
+              files: result.filePaths.map((path) => {
+                return {
+                  path,
+                };
+              }),
+              section: props.section,
+            },
           }),
         );
       }

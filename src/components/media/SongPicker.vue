@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MediaLink, PublicationFetcher } from 'src/types';
+import type { MediaLink, MediaSection, PublicationFetcher } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
@@ -88,6 +88,10 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, ref } from 'vue';
+
+const props = defineProps<{
+  section?: MediaSection;
+}>();
 
 // Define model
 const open = defineModel<boolean>({ required: true });
@@ -137,6 +141,7 @@ const addSong = async (songTrack: number) => {
         thumbnail,
         songTrack,
         title.replace(/^\d+\.\s*/, ''),
+        props.section,
       );
     }
   } catch (error) {

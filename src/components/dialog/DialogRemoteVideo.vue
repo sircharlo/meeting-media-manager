@@ -62,6 +62,7 @@
                       getBestImageUrl(video.images, 'md'),
                       false,
                       video.title,
+                      section,
                     );
                     open = false;
                   "
@@ -129,12 +130,13 @@ import {
 import { formatTime } from 'src/helpers/mediaPlayback';
 
 // Types
-import type { MediaItemsMediatorItem } from 'src/types';
+import type { MediaItemsMediatorItem, MediaSection } from 'src/types';
 
 // Props
 const props = defineProps<{
   remoteVideos: MediaItemsMediatorItem[];
   remoteVideosLoadingProgress: number;
+  section?: MediaSection;
 }>();
 
 const open = defineModel<boolean>({ default: false });
