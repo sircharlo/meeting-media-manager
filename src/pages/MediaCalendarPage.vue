@@ -387,7 +387,7 @@
               $t(
                 sortableCircuitOverseerMediaItems.length
                   ? 'add-extra-media'
-                  : 'add-a-concluding-song',
+                  : 'add-a-closing-song',
               )
             "
             color="additional"
