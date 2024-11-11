@@ -432,7 +432,7 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
     if (mmTable === 'DocumentMultimedia') {
       from +=
         'INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId ';
-      from += `INNER JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex `;
+      from += `LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex `;
     }
     from += `INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId `;
 

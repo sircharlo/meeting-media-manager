@@ -13,7 +13,9 @@ export const executeQuery = <T = QueryResponseItem>(
       fileMustExist: true,
       readonly: true,
     });
-    return db.prepare<unknown[], T>(query).all();
+    const result = db.prepare<unknown[], T>(query).all();
+    console.debug('executeQuery', { dbPath, query, result });
+    return result;
   } catch (e) {
     errorCatcher(e, { contexts: { db: { path: dbPath, query } } });
     return [];
