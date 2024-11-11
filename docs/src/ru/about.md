@@ -1,6 +1,6 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# О Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-## What is this app? {#what-is-this-app}
+## Что это за приложение? {#what-is-this-app}
 
 **Meeting Media Manager**, или **M³**, это приложение для Windows, macOS и Linux, которая автоматически загружает изображения и видео, которые будут рассматриваться во время встреч собрания Свидетелей Иеговы на любом языке, доступном на официальном сайте Свидетелей Иеговы.
 
