@@ -23,10 +23,12 @@ export const fetchJson = async <T>(
     if (response.ok) {
       return response.json();
     } else if (![400, 404].includes(response.status)) {
-      errorCatcher(response);
+      errorCatcher(response, {
+        contexts: { fn: { name: 'fetchJson', params, url } },
+      });
     }
   } catch (e) {
-    errorCatcher(e);
+    errorCatcher(e, { contexts: { fn: { name: 'fetchJson', params, url } } });
   }
   return null;
 };

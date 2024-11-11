@@ -431,7 +431,7 @@ watch(
 );
 
 watchImmediate(
-  () => screenPreferences.value,
+  screenPreferences,
   (newScreenPreferences) => {
     try {
       moveMediaWindow(
@@ -441,7 +441,11 @@ watchImmediate(
       );
       fetchScreens();
     } catch (error) {
-      errorCatcher(error + ': ' + JSON.stringify(newScreenPreferences));
+      errorCatcher(error, {
+        contexts: {
+          fn: { name: 'ScreenPreferencesWatcher', newScreenPreferences },
+        },
+      });
     }
   },
   { deep: true },

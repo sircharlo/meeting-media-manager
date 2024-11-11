@@ -17,7 +17,9 @@ export const executeQuery = <T = QueryResponseItem>(
     console.debug('executeQuery', { dbPath, query, result });
     return result;
   } catch (e) {
-    errorCatcher(e, { contexts: { db: { path: dbPath, query } } });
+    errorCatcher(e, {
+      contexts: { fn: { name: 'executeQuery', path: dbPath, query } },
+    });
     return [];
   }
 };

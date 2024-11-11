@@ -38,7 +38,7 @@ export const isFileUrl = (path: string) => {
   try {
     return path.startsWith('file://');
   } catch (err) {
-    errorCatcher(err, { contexts: { vars: { path } } });
+    errorCatcher(err, { contexts: { fn: { name: 'isFileUrl', path } } });
     return false;
   }
 };
