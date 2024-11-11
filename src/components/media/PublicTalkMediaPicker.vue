@@ -67,9 +67,12 @@
         </div>
       </template>
       <div class="row justify-end">
-        <q-btn color="negative" flat @click="dismissPopup">
-          {{ $t('cancel') }}
-        </q-btn>
+        <q-btn
+          :label="$t('cancel')"
+          color="negative"
+          flat
+          @click="dismissPopup"
+        />
       </div>
     </div>
   </q-dialog>

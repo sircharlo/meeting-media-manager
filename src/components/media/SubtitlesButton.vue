@@ -8,9 +8,9 @@
     unelevated
     @click="subtitlesVisible = !subtitlesVisible"
   >
-    <q-tooltip :delay="1000" :offset="[14, 22]">{{
-      $t('subtitles')
-    }}</q-tooltip>
+    <q-tooltip :delay="1000" :offset="[14, 22]">
+      {{ $t('subtitles') }}
+    </q-tooltip>
   </q-btn>
 </template>
 

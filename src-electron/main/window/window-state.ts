@@ -1,3 +1,4 @@
+import { errorCatcher } from 'app/src-electron/utils';
 import {
   app,
   BrowserWindow,
@@ -190,7 +191,7 @@ export class StatefulBrowserWindow {
       ensureDirSync(dirname(this.fullStoreFileName));
       writeJsonSync(this.fullStoreFileName, this.state);
     } catch (e) {
-      console.error(e);
+      errorCatcher(e);
     }
   };
 
@@ -230,7 +231,7 @@ export class StatefulBrowserWindow {
       this.state.displayBounds = display.bounds;
       this.state.displayScaleFactor = display.scaleFactor;
     } catch (e) {
-      console.error(e);
+      errorCatcher(e);
     }
   };
 

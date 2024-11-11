@@ -64,9 +64,12 @@
           />
         </div>
         <div class="col text-right">
-          <q-btn color="negative" flat @click="dismissPopup">{{
-            $t('cancel')
-          }}</q-btn>
+          <q-btn
+            :label="$t('cancel')"
+            color="negative"
+            flat
+            @click="dismissPopup"
+          />
         </div>
       </div>
     </div>

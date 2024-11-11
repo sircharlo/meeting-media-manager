@@ -345,7 +345,9 @@ const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
           ).length > 0;
         if (!tableExists) continue;
       } catch (error) {
-        errorCatcher(error, { contexts: { db: { source: source.db, table } } });
+        errorCatcher(error, {
+          contexts: { fn: { name: 'getMultimediaMepsLangs', source, table } },
+        });
         continue;
       }
       const columnQueryResult = executeQuery<TableItem>(
@@ -1735,6 +1737,10 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
     }
     if (attributes['data-pubmedia_url']) {
       jwStore.urlVariables.pubMedia = attributes['data-pubmedia_url'];
+    }
+
+    if (!jwStore.urlVariables.mediator || !jwStore.urlVariables.pubMedia) {
+      resetUrlVariables();
     }
   } catch (e) {
     if (jwStore.urlVariables.base) {

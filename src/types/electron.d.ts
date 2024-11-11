@@ -10,6 +10,7 @@ import type {
 import type Path from 'upath';
 
 export interface ElectronApi {
+  askForMediaAccess: () => void;
   closeWebsiteWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   convertPdfToImages: (
@@ -98,6 +99,7 @@ export interface ElectronApi {
 
 // ipcMain.on / ipcRenderer.send channels
 export type ElectronIpcSendKey =
+  | 'askForMediaAccess'
   | 'authorizedClose'
   | 'moveMediaWindow'
   | 'navigateWebsiteWindow'

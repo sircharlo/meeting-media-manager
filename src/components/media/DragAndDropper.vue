@@ -127,15 +127,14 @@
       </template>
       <div class="row justify-end">
         <q-btn
+          :label="$t('cancel')"
           color="negative"
           flat
           @click="
             jwpubDb = '';
             open = false;
           "
-        >
-          {{ $t('cancel') }}
-        </q-btn>
+        />
       </div>
     </div>
   </q-dialog>

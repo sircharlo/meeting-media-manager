@@ -14,9 +14,16 @@ import {
   type IpcMainEvent,
   type IpcMainInvokeEvent,
   shell,
+  systemPreferences,
 } from 'electron';
 
-import { getAppVersion, getUserDataPath, isSelf } from './../utils';
+import { PLATFORM } from '../constants';
+import {
+  errorCatcher,
+  getAppVersion,
+  getUserDataPath,
+  isSelf,
+} from './../utils';
 import { downloadFile, isDownloadErrorExpected } from './downloads';
 import { openFileDialog, readDirectory } from './fs';
 import { getAllScreens } from './screen';
@@ -63,6 +70,24 @@ handleIpcSend('toggleMediaWindow', (_e, show: boolean) => {
     if (!mediaWindow.isVisible()) mediaWindow.show();
   } else {
     mediaWindow.hide();
+  }
+});
+
+handleIpcSend('askForMediaAccess', async () => {
+  if (PLATFORM !== 'darwin') return;
+  const types = ['camera', 'microphone'] as const;
+
+  for (const type of types) {
+    try {
+      const access = systemPreferences.getMediaAccessStatus(type);
+      if (access !== 'granted') {
+        logToWindow(mainWindow, `No ${type} access`, access, 'error');
+        const result = await systemPreferences.askForMediaAccess(type);
+        logToWindow(mainWindow, `${type} result:`, result, 'debug');
+      }
+    } catch (e) {
+      errorCatcher(e);
+    }
   }
 });
 
