@@ -71,6 +71,7 @@ const {
 const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
   document: DocumentItem,
+  section?: MediaSection,
 ) => {
   const jwStore = useJwStore();
   const { addToAdditionMediaMap } = jwStore;
@@ -94,9 +95,10 @@ const addJwpubDocumentMediaToFiles = async (
           multimediaItems,
           currentStateStore.selectedDateObject?.date,
           true,
+          section,
         )
       : [];
-    addToAdditionMediaMap(dynamicMediaItems);
+    addToAdditionMediaMap(dynamicMediaItems, section);
     if (errors?.length) return errors;
   } catch (e) {
     errorCatcher(e);
@@ -697,14 +699,16 @@ const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
   additional?: boolean,
+  additionalSection: MediaSection = 'additional',
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
     let middleSongParagraphOrdinal = 0;
     if (!additional) {
       const songs = allMedia.filter((m) => isSong(m));
-      if (songs.length === 3)
+      if (songs.length === 3) {
         middleSongParagraphOrdinal = songs[1].BeginParagraphOrdinal;
+      }
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
         const lastParagraphOrdinal =
@@ -751,7 +755,7 @@ const dynamicMediaMapper = async (
             }
           }
         }
-        let section: MediaSection = additional ? 'additional' : 'wt';
+        let section: MediaSection = additional ? additionalSection : 'wt';
         if (middleSongParagraphOrdinal > 0) {
           //this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
@@ -1407,6 +1411,7 @@ const downloadAdditionalRemoteVideo = async (
   thumbnailUrl?: string,
   song: boolean | number | string = false,
   title?: string,
+  section?: MediaSection,
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -1424,6 +1429,7 @@ const downloadAdditionalRemoteVideo = async (
               await currentStateStore.getDatedAdditionalMediaDirectory(),
               path.basename(bestItemUrl),
             ),
+            section,
             song,
             thumbnailUrl: thumbnailUrl || '',
             title,

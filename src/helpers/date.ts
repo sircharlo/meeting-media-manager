@@ -265,9 +265,19 @@ const remainingTimeBeforeMeetingStart = () => {
   }
 };
 
+const friendlyDayToJsDay = (day: number) => {
+  try {
+    return day === 6 ? 0 : parseInt(day.toString()) + 1;
+  } catch (error) {
+    errorCatcher(error);
+    return 0;
+  }
+};
+
 export {
   dateFromString,
   datesAreSame,
+  friendlyDayToJsDay,
   getLocalDate,
   getSpecificWeekday,
   isCoWeek,
