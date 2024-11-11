@@ -207,7 +207,7 @@
             >
               <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{ $t('dont-forget-add-opening-song') }}</span>
+                <span>{{ $t('dont-forget-add-missing-media') }}</span>
               </div>
             </q-item-section>
           </q-item>
@@ -416,7 +416,7 @@
             >
               <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{ $t('dont-forget-add-circuit-overseer-media') }}</span>
+                <span>{{ $t('dont-forget-add-missing-media') }}</span>
               </div>
             </q-item-section>
           </q-item>
