@@ -42,32 +42,6 @@
       </div>
       <div
         v-if="
-          selectedDateObject?.meeting &&
-          !sortableCircuitOverseerMediaItems?.length &&
-          coWeek
-        "
-        class="row"
-      >
-        <q-banner
-          class="bg-additional text-white full-width"
-          inline-actions
-          rounded
-        >
-          {{ $t('dont-forget-add-circuit-overseer-media') }}
-          <template #avatar>
-            <q-avatar class="bg-white text-additional jw-icon" size="lg">
-              
-            </q-avatar>
-          </template>
-          <template #action>
-            <q-btn flat @click="openImportMenu('circuitOverseer')">
-              {{ $t('add-missing-media') }}
-            </q-btn>
-          </template>
-        </q-banner>
-      </div>
-      <div
-        v-if="
           (currentSettings?.disableMediaFetching &&
             sortableAdditionalMediaItems?.length < 1) ||
           (!currentSettings?.disableMediaFetching &&
