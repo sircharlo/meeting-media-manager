@@ -28,3 +28,10 @@
     </q-list>
   </q-page>
 </template>
+<script setup lang="ts">
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  window.electronApi.askForMediaAccess();
+});
+</script>
