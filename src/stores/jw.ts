@@ -66,7 +66,10 @@ interface Store {
 
 export const useJwStore = defineStore('jw-store', {
   actions: {
-    addToAdditionMediaMap(mediaArray: DynamicMediaObject[]) {
+    addToAdditionMediaMap(
+      mediaArray: DynamicMediaObject[],
+      section?: MediaSection,
+    ) {
       try {
         const { currentCongregation, selectedDate, selectedDateObject } =
           useCurrentStateStore();
@@ -75,8 +78,8 @@ export const useJwStore = defineStore('jw-store', {
         if (coWeek) {
           if (isMwMeetingDay(selectedDateObject?.date)) {
             mediaArray.forEach((media) => {
-              media.section = 'circuitOverseer';
-              media.sectionOriginal = 'circuitOverseer';
+              media.section = section || 'circuitOverseer';
+              media.sectionOriginal = section || 'circuitOverseer';
             });
           }
         }

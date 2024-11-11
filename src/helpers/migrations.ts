@@ -66,6 +66,7 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       enableSubtitles: oldPrefs.media?.enableSubtitles || false,
       excludeFootnotes: oldPrefs.media?.excludeFootnotes || false,
       excludeTh: oldPrefs.media?.excludeTh || true,
+      firstDayOfWeek: 0,
       folderToWatch: '',
       hideMediaLogo: oldPrefs.media?.hideMediaLogo || false,
       includePrinted: oldPrefs.media?.includePrinted || true,

@@ -21,7 +21,9 @@
     >
       <q-date
         v-model="model"
-        :first-day-of-week="1"
+        :first-day-of-week="
+          friendlyDayToJsDay(currentSettings?.firstDayOfWeek || 7)
+        "
         :locale="dateLocale"
         :options="getDateOptions(options)"
         :rules="rules"
@@ -46,8 +48,14 @@
 <script setup lang="ts">
 import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 
+import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { friendlyDayToJsDay } from 'src/helpers/date';
 import { getDateOptions, getRules } from 'src/helpers/settings';
+import { useCurrentStateStore } from 'src/stores/current-state';
+
+const currentState = useCurrentStateStore();
+const { currentSettings } = storeToRefs(currentState);
 
 const { dateLocale } = useLocale();
 

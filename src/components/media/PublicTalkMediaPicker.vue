@@ -79,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DocumentItem, PublicationInfo } from 'src/types';
+import type { DocumentItem, MediaSection, PublicationInfo } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useScrollbar } from 'src/composables/useScrollbar';
@@ -94,6 +94,10 @@ import { useI18n } from 'vue-i18n';
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
 const { barStyle, thumbStyle } = useScrollbar();
+
+const props = defineProps<{
+  section?: MediaSection;
+}>();
 
 const open = defineModel<boolean>({ required: true });
 
@@ -147,22 +151,25 @@ const { t } = useI18n();
 
 const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   if (!s34mpDb.value || !publicTalkDocId) return;
-  addJwpubDocumentMediaToFiles(s34mpDb.value, publicTalkDocId).then(
-    (errors) => {
-      if (errors?.length)
-        errors.forEach((e) =>
-          createTemporaryNotification({
-            caption: [e.pub, e.issue, e.track, e.langwritten, e.fileformat]
-              .filter(Boolean)
-              .join('_'),
-            icon: 'mmm-error',
-            message: t('file-not-available'),
-            timeout: 15000,
-            type: 'negative',
-          }),
-        );
-    },
-  );
+  addJwpubDocumentMediaToFiles(
+    s34mpDb.value,
+    publicTalkDocId,
+    props.section,
+  ).then((errors) => {
+    if (errors?.length) {
+      errors.forEach((e) =>
+        createTemporaryNotification({
+          caption: [e.pub, e.issue, e.track, e.langwritten, e.fileformat]
+            .filter(Boolean)
+            .join('_'),
+          icon: 'mmm-error',
+          message: t('file-not-available'),
+          timeout: 15000,
+          type: 'negative',
+        }),
+      );
+    }
+  });
   dismissPopup();
 };
 
