@@ -1,5 +1,6 @@
 import type { ElectronApi } from 'src/types';
 
+import decompress from 'decompress';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import path from 'upath';
@@ -11,7 +12,6 @@ import {
   getNrOfPdfPages,
 } from './preload/converters';
 import {
-  decompress,
   fileUrlToPath,
   getVideoDuration,
   isFileUrl,
@@ -62,8 +62,10 @@ const electronApi: ElectronApi = {
   onDownloadStarted: (cb) => listen('downloadStarted', cb),
   onLog: (cb) => listen('log', cb),
   onShortcut: (cb) => listen('shortcut', cb),
+  onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   openExternal: (w) => send('openExternal', w),
   openFileDialog: (s, f) => invoke('openFileDialog', s, f),
+  openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,
   parseMediaFile,
   path,
@@ -76,6 +78,8 @@ const electronApi: ElectronApi = {
   setUrlVariables: (v) => send('setUrlVariables', v),
   toggleMediaWindow: (s) => send('toggleMediaWindow', s),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
+  unwatchFolders: () => send('unwatchFolders'),
+  watchFolder: (p) => send('watchFolder', p),
   zoomWebsiteWindow,
 };
 

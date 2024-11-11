@@ -533,8 +533,13 @@ const router = useRouter();
 
 const jwStore = useJwStore();
 const { addToAdditionMediaMap, removeFromAdditionMediaMap } = jwStore;
-const { additionalMediaMaps, customDurations, lookupPeriod, mediaSort } =
-  storeToRefs(jwStore);
+const {
+  additionalMediaMaps,
+  customDurations,
+  lookupPeriod,
+  mediaSort,
+  watchedMediaSections,
+} = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
@@ -549,6 +554,7 @@ const {
   mediaPlayingUrl,
   selectedDate,
   selectedDateObject,
+  watchFolderMedia,
 } = storeToRefs(currentState);
 const { getDatedAdditionalMediaDirectory } = currentState;
 const {
@@ -697,6 +703,20 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
         item.section = section;
       }
     });
+    (watchFolderMedia.value?.[selectedDate.value] ?? []).forEach((item) => {
+      if (item.uniqueId === id) {
+        watchedMediaSections.value[currentCongregation.value] ??= {};
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        watchedMediaSections.value[currentCongregation.value]![
+          selectedDate.value
+        ] ??= {};
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        watchedMediaSections.value[currentCongregation.value]![
+          selectedDate.value
+        ]![id] = section;
+        if (item.section !== section) item.section = section;
+      }
+    });
   };
   function dragover() {
     for (const media of sortableAdditionalMediaItems.value) {
@@ -720,9 +740,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
   }
 
   function dragend() {
-    if (!mediaSort.value[currentCongregation.value]) {
-      mediaSort.value[currentCongregation.value] = {};
-    }
+    mediaSort.value[currentCongregation.value] ??= {};
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     mediaSort.value[currentCongregation.value]![selectedDate.value] = [
       ...sortableAdditionalMediaItems.value,
@@ -749,13 +767,13 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
 const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
-  const combinedMediaItems = datedAdditionalMediaMap.value.concat(
-    selectedDateObject.value?.dynamicMedia ?? [],
-  );
+  const combinedMediaItems = [
+    ...datedAdditionalMediaMap.value,
+    ...(selectedDateObject.value?.dynamicMedia ?? []),
+    ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
+  ];
   if (combinedMediaItems && currentCongregation.value) {
-    if (!mediaSort.value[currentCongregation.value]) {
-      mediaSort.value[currentCongregation.value] = {};
-    }
+    mediaSort.value[currentCongregation.value] ??= {};
     const seenFileUrls = new Set();
     sortableMediaItems.value = combinedMediaItems
       .sort(
@@ -782,16 +800,28 @@ watch(
     selectedDateObject.value?.date,
     datedAdditionalMediaMap.value?.length,
     selectedDateObject.value?.dynamicMedia?.length,
+    watchFolderMedia.value?.[selectedDate.value]?.length,
   ],
   (
-    [newSelectedDate, newAdditionalMediaListLength, newDynamicMediaListLength],
-    [oldSelectedDate, oldAdditionalMediaListLength, oldDynamicMediaListLength],
+    [
+      newSelectedDate,
+      newAdditionalMediaListLength,
+      newDynamicMediaListLength,
+      newWatchFolderMediaLength,
+    ],
+    [
+      oldSelectedDate,
+      oldAdditionalMediaListLength,
+      oldDynamicMediaListLength,
+      oldWatchFolderMediaLength,
+    ],
   ) => {
     try {
       if (
         newSelectedDate !== oldSelectedDate ||
         newAdditionalMediaListLength !== oldAdditionalMediaListLength ||
-        newDynamicMediaListLength !== oldDynamicMediaListLength
+        newDynamicMediaListLength !== oldDynamicMediaListLength ||
+        newWatchFolderMediaLength !== oldWatchFolderMediaLength
       ) {
         generateMediaList();
       }

@@ -2,6 +2,7 @@ import type {
   DateInfo,
   DownloadedFile,
   DownloadProgressItems,
+  DynamicMediaObject,
   MediaLink,
   SettingsItem,
   SettingsItems,
@@ -45,6 +46,7 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
   timeRemainingBeforeMusicStop: number;
+  watchFolderMedia: Record<string, DynamicMediaObject[]>;
 }
 
 interface Songbook {
@@ -227,6 +229,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       onlyShowInvalidSettings: false,
       selectedDate: date.formatDate(new Date(), 'YYYY/MM/DD'),
       timeRemainingBeforeMusicStop: 0,
+      watchFolderMedia: {},
     };
   },
 });

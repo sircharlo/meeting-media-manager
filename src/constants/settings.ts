@@ -129,6 +129,18 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'cache',
     type: 'toggle',
   },
+  enableFolderWatcher: {
+    depends: 'enableMediaDisplayButton',
+    group: 'mediaRetrievalPlayback',
+    subgroup: 'folderWatcher',
+    type: 'toggle',
+  },
+  folderToWatch: {
+    depends: ['enableFolderWatcher', 'enableMediaDisplayButton'],
+    group: 'mediaRetrievalPlayback',
+    subgroup: 'folderWatcher',
+    type: 'path',
+  },
 
   // Integrations
   obsEnable: {
@@ -300,6 +312,7 @@ export const defaultSettings: SettingsValues = {
   darkMode: 'auto',
   disableMediaFetching: false,
   enableExtraCache: false,
+  enableFolderWatcher: false,
   enableKeyboardShortcuts: false,
   enableMediaDisplayButton: false,
   enableMusicButton: true,
@@ -307,6 +320,7 @@ export const defaultSettings: SettingsValues = {
   excludeFootnotes: false,
   excludeTh: true,
   firstDayOfWeek: 0,
+  folderToWatch: '',
   hideMediaLogo: false,
   includePrinted: true,
   lang: 'E',

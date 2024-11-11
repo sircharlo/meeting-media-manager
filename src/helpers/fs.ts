@@ -145,9 +145,11 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
       return '';
     }
   } catch (error) {
-    errorCatcher(error, {
-      contexts: { fn: { mediaPath, name: 'getThumbnailFromMetadata' } },
-    });
+    if (!mediaPath?.toLowerCase().endsWith('.mov')) {
+      errorCatcher(error, {
+        contexts: { fn: { mediaPath, name: 'getThumbnailFromMetadata' } },
+      });
+    }
     return '';
   }
 };
@@ -354,6 +356,17 @@ const enableUpdates = async () => {
   }
 };
 
+const watchExternalFolder = async (folder?: string) => {
+  try {
+    const currentState = useCurrentStateStore();
+    currentState.watchFolderMedia = {};
+    window.electronApi.unwatchFolders();
+    if (folder) window.electronApi.watchFolder(folder);
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 export {
   disableUpdates,
   enableUpdates,
@@ -371,4 +384,5 @@ export {
   getThumbnailUrl,
   removeEmptyDirs,
   updatesDisabled,
+  watchExternalFolder,
 };

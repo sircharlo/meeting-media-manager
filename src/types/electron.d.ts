@@ -1,4 +1,5 @@
 import type { ConversionOptions } from 'app/src-electron/preload/converters';
+import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type {
@@ -17,7 +18,7 @@ export interface ElectronApi {
     pdfPath: string,
     outputFolder: string,
   ) => Promise<string[]>;
-  decompress: (inputZip: string, outputFolder: string) => Promise<void>;
+  decompress: typeof decompress;
   downloadErrorIsExpected: () => Promise<boolean>;
   downloadFile: (
     url: string,
@@ -71,11 +72,19 @@ export interface ElectronApi {
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
+  onWatchFolderUpdate: (
+    callback: (args: {
+      changedPath: string;
+      day: string;
+      event: string;
+    }) => void,
+  ) => void;
   openExternal: (website: ExternalWebsite) => void;
   openFileDialog: (
     single?: boolean,
     filter?: FileDialogFilter,
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
+  openFolderDialog: () => Promise<Electron.OpenDialogReturnValue | undefined>;
   openWebsiteWindow: (lang?: string) => void;
   parseMediaFile: (
     filePath: string,
@@ -94,6 +103,8 @@ export interface ElectronApi {
   setUrlVariables: (variables: string) => void;
   toggleMediaWindow: (show: boolean) => void;
   unregisterShortcut: (shortcut: string) => void;
+  unwatchFolders: () => void;
+  watchFolder: (path: string) => void;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
@@ -109,6 +120,8 @@ export type ElectronIpcSendKey =
   | 'toggleOpenAtLogin'
   | 'toggleWebsiteWindow'
   | 'unregisterShortcut'
+  | 'unwatchFolders'
+  | 'watchFolder'
   | 'zoomWebsiteWindow';
 
 // ipcMain.handle / ipcRenderer.invoke channels
@@ -120,6 +133,7 @@ export type ElectronIpcInvokeKey =
   | 'getUserDataPath'
   | 'getVersion'
   | 'openFileDialog'
+  | 'openFolderDialog'
   | 'readdir'
   | 'registerShortcut';
 
@@ -135,6 +149,7 @@ export type ElectronIpcListenKey =
   | 'screenChange'
   | 'screenPrefsChange'
   | 'shortcut'
+  | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';

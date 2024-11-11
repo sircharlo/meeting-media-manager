@@ -11,6 +11,7 @@
     :rules="item.rules"
     :setting-id="settingId"
   />
+  <FolderInput v-else-if="item.type === 'path'" v-model="model" />
   <SliderInput
     v-else-if="item.type === 'slider'"
     v-model="model"
@@ -50,6 +51,7 @@
 import type { SettingsItem, SettingsValues } from 'src/types';
 
 import DateInput from 'src/components/form-inputs/DateInput.vue';
+import FolderInput from 'src/components/form-inputs/FolderInput.vue';
 import SelectInput from 'src/components/form-inputs/SelectInput.vue';
 import ShortcutInput from 'src/components/form-inputs/ShortcutInput.vue';
 import SliderInput from 'src/components/form-inputs/SliderInput.vue';

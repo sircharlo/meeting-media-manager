@@ -25,7 +25,13 @@ import {
   isSelf,
 } from './../utils';
 import { downloadFile, isDownloadErrorExpected } from './downloads';
-import { openFileDialog, readDirectory } from './fs';
+import {
+  openFileDialog,
+  openFolderDialog,
+  readDirectory,
+  unwatchFolders,
+  watchFolder,
+} from './fs';
 import { getAllScreens } from './screen';
 import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
@@ -146,6 +152,11 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
   if (url) shell.openExternal(url);
 });
 
+handleIpcSend('unwatchFolders', () => unwatchFolders());
+handleIpcSend('watchFolder', (_e, folderPath: string) =>
+  watchFolder(folderPath),
+);
+
 // IPC invoke/handle
 
 function handleIpcInvoke<T = unknown>(
@@ -206,6 +217,8 @@ handleIpcInvoke(
   async (_e, single: boolean, filter: FileDialogFilter) =>
     openFileDialog(single, filter),
 );
+
+handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
 
 handleIpcInvoke('downloadErrorIsExpected', async () =>
   isDownloadErrorExpected(),

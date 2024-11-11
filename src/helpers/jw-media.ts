@@ -813,6 +813,60 @@ const dynamicMediaMapper = async (
   }
 };
 
+const watchedItemMapper: (
+  parentDate: string,
+  watchedItemPath: string,
+) => Promise<DynamicMediaObject | undefined> = async (
+  parentDate,
+  watchedItemPath,
+) => {
+  try {
+    if (!parentDate || !watchedItemPath) return undefined;
+
+    const fileUrl = getFileUrl(watchedItemPath);
+
+    const video = isVideo(watchedItemPath);
+    const audio = isAudio(watchedItemPath);
+    const image = isImage(watchedItemPath);
+
+    if (!(video || audio || image)) return undefined;
+
+    const duration =
+      (video || audio) && (await fs.exists(watchedItemPath))
+        ? await getDurationFromMediaPath(watchedItemPath)
+        : 0;
+
+    const uniqueId = sanitizeId(
+      formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
+    );
+
+    const jwStore = useJwStore();
+    const currentStateStore = useCurrentStateStore();
+    const section =
+      jwStore.watchedMediaSections?.[currentStateStore.currentCongregation]?.[
+        parentDate
+      ]?.[uniqueId] || 'additional';
+
+    const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
+
+    return {
+      duration,
+      fileUrl,
+      isAudio: audio,
+      isImage: image,
+      isVideo: video,
+      section,
+      sectionOriginal: section, // to enable restoring the original section after custom sorting
+      thumbnailUrl,
+      title: path.basename(watchedItemPath),
+      uniqueId,
+    };
+  } catch (e) {
+    errorCatcher(e);
+    return undefined;
+  }
+};
+
 const getWeMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -1773,4 +1827,5 @@ export {
   processMissingMediaInfo,
   sanitizeId,
   setUrlVariables,
+  watchedItemMapper,
 };

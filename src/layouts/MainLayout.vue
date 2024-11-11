@@ -64,10 +64,12 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
+import { getFileUrl, watchExternalFolder } from 'src/helpers/fs';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
   setUrlVariables,
+  watchedItemMapper,
 } from 'src/helpers/jw-media';
 import {
   executeShortcut,
@@ -134,6 +136,7 @@ const {
   online,
   selectedDate,
   selectedDateObject,
+  watchFolderMedia,
 } = storeToRefs(currentState);
 
 watch(currentCongregation, (newCongregation, oldCongregation) => {
@@ -289,6 +292,41 @@ watch(
   },
 );
 
+watchImmediate(
+  () => [
+    currentSettings.value?.folderToWatch,
+    currentSettings.value?.enableFolderWatcher,
+  ],
+  ([newFolderToWatch, newEnableFolderWatcher]) => {
+    watchExternalFolder(
+      newEnableFolderWatcher ? (newFolderToWatch as string) : undefined,
+    );
+  },
+);
+
+const updateWatchFolderRef = async ({
+  changedPath,
+  day,
+  event,
+}: Record<string, string>) => {
+  try {
+    day = day.replace(/-/g, '/');
+    if (event === 'addDir' || event === 'unlinkDir') {
+      watchFolderMedia.value[day] = [];
+    } else if (event === 'add') {
+      watchFolderMedia.value[day] ??= [];
+      const watchedItemMap = await watchedItemMapper(day, changedPath);
+      if (watchedItemMap) watchFolderMedia.value[day].push(watchedItemMap);
+    } else if (event === 'unlink') {
+      watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
+        (dM) => dM.fileUrl !== getFileUrl(changedPath),
+      );
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 cleanLocalStorage();
 cleanAdditionalMediaFolder();
 
@@ -337,6 +375,10 @@ const initListeners = () => {
     executeShortcut(shortcut);
   });
 
+  window.electronApi.onWatchFolderUpdate(({ changedPath, day, event }) => {
+    updateWatchFolderRef({ changedPath, day, event });
+  });
+
   window.electronApi.onDownloadStarted((args) => {
     downloadProgress.value[args.id] = {
       filename: args.filename,
@@ -372,6 +414,7 @@ const removeListeners = () => {
   const listeners: ElectronIpcListenKey[] = [
     'log',
     'shortcut',
+    'watchFolderUpdate',
     'downloadStarted',
     'downloadCancelled',
     'downloadCompleted',

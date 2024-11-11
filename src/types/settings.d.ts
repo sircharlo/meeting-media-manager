@@ -15,6 +15,7 @@ export interface SettingsValues {
   disableMediaFetching: boolean;
   // enablePp: boolean;
   enableExtraCache: boolean;
+  enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
   // disableHardwareAcceleration: boolean;
   enableMediaDisplayButton: boolean;
@@ -23,6 +24,7 @@ export interface SettingsValues {
   excludeFootnotes: boolean;
   excludeTh: boolean;
   firstDayOfWeek: number;
+  folderToWatch: string;
   hideMediaLogo: boolean;
   includePrinted: boolean;
   lang: JwLangCode;
@@ -53,6 +55,7 @@ export interface SettingsValues {
 export type SettingsItemType =
   | 'date'
   | 'list'
+  | 'path'
   | 'shortcut'
   | 'slider'
   | 'text'
