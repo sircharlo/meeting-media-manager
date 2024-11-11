@@ -52,6 +52,11 @@ export const settingsDefinitions: SettingsItems = {
     rules: ['notEmpty'],
     type: 'list',
   },
+  firstDayOfWeek: {
+    group: 'app',
+    list: 'days',
+    type: 'list',
+  },
   autoStartAtLogin: {
     group: 'app',
     type: 'toggle',
@@ -301,6 +306,7 @@ export const defaultSettings: SettingsValues = {
   enableSubtitles: false,
   excludeFootnotes: false,
   excludeTh: true,
+  firstDayOfWeek: 0,
   hideMediaLogo: false,
   includePrinted: true,
   lang: 'E',

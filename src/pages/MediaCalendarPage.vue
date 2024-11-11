@@ -177,7 +177,6 @@
         >
           <q-btn
             color="additional"
-            flat
             icon="mmm-music-note"
             @click="addSong('additional')"
           >
@@ -378,6 +377,7 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
+            :flat="!!sortableCircuitOverseerMediaItems.length"
             :icon="
               sortableCircuitOverseerMediaItems.length
                 ? 'mmm-import-media'
@@ -391,7 +391,6 @@
               )
             "
             color="additional"
-            flat
             @click="
               sortableCircuitOverseerMediaItems.length
                 ? openImportMenu('circuitOverseer')

@@ -22,6 +22,7 @@ export interface SettingsValues {
   enableSubtitles: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
+  firstDayOfWeek: number;
   hideMediaLogo: boolean;
   includePrinted: boolean;
   lang: JwLangCode;

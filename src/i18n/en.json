@@ -116,6 +116,8 @@
   "file-not-available": "The file is not available at this time. Please try again later, or add the file manually if you have it on your device.",
   "fileProcessError": "There was an error processing this file",
   "filetypeNotSupported": "This file type is not yet supported",
+  "firstDayOfWeek": "First day of the week",
+  "firstDayOfWeek-explain": "Select which day of the week should be displayed first in a calendar week.",
   "footnote": "Footnote",
   "forward": "Forward",
   "from-jw-org": "From our website",

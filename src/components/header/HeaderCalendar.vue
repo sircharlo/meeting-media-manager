@@ -175,7 +175,9 @@
         v-model="selectedDate"
         :event-color="getEventDayColor"
         :events="getEventDates()"
-        :first-day-of-week="1"
+        :first-day-of-week="
+          friendlyDayToJsDay(currentSettings?.firstDayOfWeek || 7)
+        "
         :locale="dateLocale"
         :navigation-max-year-month="maxDate()"
         :navigation-min-year-month="minDate()"
@@ -212,7 +214,7 @@ import SongPicker from 'src/components/media/SongPicker.vue';
 
 // Helpers
 import { fetchJson } from 'src/helpers/api';
-import { getLocalDate } from 'src/helpers/date';
+import { friendlyDayToJsDay, getLocalDate } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
 // Stores
