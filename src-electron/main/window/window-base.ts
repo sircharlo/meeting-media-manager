@@ -1,6 +1,7 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
 import pkg from 'app/package.json';
+import { errorCatcher } from 'app/src-electron/utils';
 import {
   app,
   BrowserWindow,
@@ -131,6 +132,6 @@ export function closeOtherWindows(source: BrowserWindow) {
       if (win !== source) win.close();
     }
   } catch (e) {
-    console.error(e);
+    errorCatcher(e);
   }
 }

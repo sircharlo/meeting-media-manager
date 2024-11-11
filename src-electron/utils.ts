@@ -84,6 +84,7 @@ export function errorCatcher(
     captureException(error, context);
   } else {
     console.error(error);
+    console.warn('context', context);
   }
 }
 

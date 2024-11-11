@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SettingsItemRule } from 'src/types';
+import type { SettingsItemRule, SettingsValues } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
@@ -45,7 +45,7 @@ const props = defineProps<{
   label?: null | string;
   list?: string;
   rules?: SettingsItemRule[] | undefined;
-  settingId?: string;
+  settingId?: keyof SettingsValues;
   useInput?: boolean;
 }>();
 

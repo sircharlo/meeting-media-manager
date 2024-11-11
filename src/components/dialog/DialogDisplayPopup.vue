@@ -401,7 +401,7 @@ const setMediaBackground = (filepath: string) => {
       notifyCustomBackgroundSet();
     }
   } catch (error) {
-    console.error(error);
+    errorCatcher(error);
     if (filepath) notifyInvalidBackgroundFile();
     mediaWindowCustomBackground.value = '';
   } finally {

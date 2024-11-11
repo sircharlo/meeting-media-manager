@@ -24,7 +24,11 @@
 </template>
 
 <script setup lang="ts">
-import type { SettingsItemAction, SettingsItemRule } from 'src/types';
+import type {
+  SettingsItemAction,
+  SettingsItemRule,
+  SettingsValues,
+} from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { getRules, performActions } from 'src/helpers/settings';
@@ -45,7 +49,7 @@ const customError = computed(
 );
 
 const customFailure = computed(() => {
-  if (props.settingId?.startsWith('baseUrl')) {
+  if (props.settingId === 'baseUrl') {
     return !urlVariables.value?.mediator;
   } else {
     return false;
@@ -55,7 +59,7 @@ const customFailure = computed(() => {
 const customSuccess = computed(() => {
   if (props.settingId?.startsWith('obs')) {
     return obsConnectionState.value === 'connected';
-  } else if (props.settingId?.startsWith('baseUrl')) {
+  } else if (props.settingId === 'baseUrl') {
     return !!urlVariables.value?.base && !!urlVariables.value?.mediator;
   } else {
     return false;
@@ -66,7 +70,7 @@ const props = defineProps<{
   actions?: SettingsItemAction[];
   label?: null | string;
   rules?: SettingsItemRule[];
-  settingId?: string;
+  settingId?: keyof SettingsValues;
 }>();
 
 const model = defineModel<null | string>({ required: true });

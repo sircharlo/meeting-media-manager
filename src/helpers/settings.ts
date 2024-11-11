@@ -74,7 +74,7 @@ const getRules = (rules: SettingsItemRule[] | undefined) => {
           }
         })
         .filter((r): r is ValidationRule => !!r) || [];
-    return filteredRules;
+    return filteredRules.length ? filteredRules : undefined;
   } catch (error) {
     errorCatcher(error);
     return undefined;
@@ -134,7 +134,7 @@ const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
   try {
     return typeof json === 'string' ? (JSON.parse(json) as T) : json;
   } catch (e) {
-    console.error(e);
+    errorCatcher(e);
     return fallback;
   }
 };

@@ -9,6 +9,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchRaw = async (url: string, init?: RequestInit) => {
+  console.debug('fetchRaw', { init, url });
   return fetch(url, init);
 };
 
@@ -17,18 +18,33 @@ export const fetchJson = async <T>(
   params?: URLSearchParams,
 ): Promise<null | T> => {
   try {
+    if (!url) return null;
     const response = await fetchRaw(
       `${url}?${params ? params.toString() : ''}`,
     );
     if (response.ok) {
-      return response.json();
+      return await response.json();
     } else if (![400, 404].includes(response.status)) {
       errorCatcher(response, {
-        contexts: { fn: { name: 'fetchJson', params, url } },
+        contexts: {
+          fn: {
+            name: 'fetchJson',
+            params: Object.fromEntries(params || []),
+            url,
+          },
+        },
       });
     }
   } catch (e) {
-    errorCatcher(e, { contexts: { fn: { name: 'fetchJson', params, url } } });
+    errorCatcher(e, {
+      contexts: {
+        fn: {
+          name: 'fetchJson',
+          params: Object.fromEntries(params || []),
+          url,
+        },
+      },
+    });
   }
   return null;
 };

@@ -63,7 +63,7 @@ import {
   updateLookupPeriod,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getLocalFontPath } from 'src/helpers/fonts';
+import { setElementFont } from 'src/helpers/fonts';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
@@ -218,9 +218,11 @@ whenever(
 
 watchDebounced(
   () => [currentSettings.value?.baseUrl, currentCongregation.value],
-  ([newBaseUrl, newCongregation], [oldBaseUrl, oldCongregation]) => {
-    if (newBaseUrl !== oldBaseUrl && newCongregation === oldCongregation)
-      setUrlVariables(newBaseUrl);
+  async ([newBaseUrl, newCongregation], [oldBaseUrl, oldCongregation]) => {
+    if (newBaseUrl !== oldBaseUrl && newCongregation === oldCongregation) {
+      await setUrlVariables(newBaseUrl);
+      setElementFont('JW-Icons');
+    }
   },
   { debounce: 500 },
 );
@@ -325,20 +327,6 @@ bcClose.onmessage = (event) => {
   }
 };
 
-const loadJwIconsFont = async () => {
-  try {
-    const fontName = 'JW-Icons';
-    const fontFace = new FontFace(
-      fontName,
-      'url("' + (await getLocalFontPath(fontName)) + '")',
-    );
-    await fontFace.load();
-    document.fonts.add(fontFace);
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
 const initListeners = () => {
   window.electronApi.onLog(({ ctx, level, msg }) => {
     console[level](`[main] ${msg}`, ctx);
@@ -401,7 +389,7 @@ onMounted(() => {
   if (!currentSettings.value) navigateToCongregationSelector();
   // add overflow hidden to body
   document.body.style.overflow = 'hidden';
-  loadJwIconsFont();
+  setElementFont('JW-Icons');
   initListeners();
 });
 

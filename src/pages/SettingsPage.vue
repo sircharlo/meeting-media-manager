@@ -26,71 +26,73 @@
           :label="$t(name)"
           class="media-section text-subtitle2 text-weight-medium q-pr-md"
         >
-          <template
-            v-for="(
-              [settingId, item], index
-            ) in settingDefinitionEntries.filter(
-              ([settingId, item]) => item.group === groupId,
-            )"
-            :key="settingId"
-          >
+          <div>
             <template
-              v-if="
-                item.subgroup &&
-                (index === 0 ||
-                  item.subgroup !==
-                    settingDefinitionEntries.filter(
-                      ([settingId, item]) => item.group === groupId,
-                    )[index - 1]?.[1].subgroup)
-              "
+              v-for="(
+                [settingId, item], index
+              ) in settingDefinitionEntries.filter(
+                ([settingId, item]) => item.group === groupId,
+              )"
+              :key="settingId"
             >
-              <q-separator class="bg-accent-200" spaced />
-              <q-item-label
-                class="q-pl-xl q-ml-lg text-accent-400 text-uppercase"
-                header
-                >{{ $t(item.subgroup) }}</q-item-label
+              <template
+                v-if="
+                  item.subgroup &&
+                  (index === 0 ||
+                    item.subgroup !==
+                      settingDefinitionEntries.filter(
+                        ([settingId, item]) => item.group === groupId,
+                      )[index - 1]?.[1].subgroup)
+                "
               >
+                <q-separator class="bg-accent-200" spaced />
+                <q-item-label
+                  class="q-pl-xl q-ml-lg text-accent-400 text-uppercase"
+                  header
+                  >{{ $t(item.subgroup) }}</q-item-label
+                >
+              </template>
+              <q-separator
+                v-if="index === 0 && !item.subgroup"
+                class="bg-accent-200"
+                spaced
+              />
+              <q-item
+                v-if="
+                  (!item.depends ||
+                    (Array.isArray(item.depends)
+                      ? item.depends.every((dep) => currentSettings?.[dep])
+                      : currentSettings[item.depends])) &&
+                  (!onlyShowInvalidSettings ||
+                    !invalidSettingsLength ||
+                    invalidSettings.includes(settingId))
+                "
+                :id="settingId"
+                :class="{
+                  'bg-error': invalidSettings.includes(settingId),
+                  'bg-accent-300': settingParam === settingId,
+                  'q-mt-sm': index === 0,
+                  'rounded-borders': true,
+                }"
+                :inset-level="1"
+                tag="label"
+              >
+                <q-item-section>
+                  <q-item-label>{{ $t(settingId) }}</q-item-label>
+                  <q-item-label caption>{{
+                    $t(settingId + '-explain')
+                  }}</q-item-label>
+                </q-item-section>
+                <q-item-section side style="align-items: end">
+                  <BaseInput
+                    v-model="currentSettings[settingId]"
+                    :item="item"
+                    :setting-id="settingId"
+                  />
+                </q-item-section>
+              </q-item>
             </template>
-            <q-separator
-              v-if="index === 0 && !item.subgroup"
-              class="bg-accent-200"
-              spaced
-            />
-            <q-item
-              v-if="
-                (!item.depends ||
-                  (Array.isArray(item.depends)
-                    ? item.depends.every((dep) => currentSettings?.[dep])
-                    : currentSettings[item.depends])) &&
-                (!onlyShowInvalidSettings ||
-                  !invalidSettingsLength ||
-                  invalidSettings.includes(settingId))
-              "
-              :id="settingId"
-              :class="{
-                'bg-error': invalidSettings.includes(settingId),
-                'bg-accent-300': settingParam === settingId,
-                'q-mt-sm': index === 0,
-                'rounded-borders': true,
-              }"
-              :inset-level="1"
-              tag="label"
-            >
-              <q-item-section>
-                <q-item-label>{{ $t(settingId) }}</q-item-label>
-                <q-item-label caption>{{
-                  $t(settingId + '-explain')
-                }}</q-item-label>
-              </q-item-section>
-              <q-item-section side style="align-items: end">
-                <BaseInput
-                  v-model="currentSettings[settingId]"
-                  :item="item"
-                  :setting-id="settingId"
-                />
-              </q-item-section>
-            </q-item>
-          </template>
+          </div>
         </q-expansion-item>
       </template>
     </q-form>
@@ -169,6 +171,13 @@ const settingParam = useRouteParams<keyof SettingsValues | undefined>(
 onMounted(() => {
   updateJwLanguages();
   validateSettingsLocal();
+
+  if (invalidSettings.value.length === 1) {
+    setTimeout(() => {
+      const el = document.getElementById(invalidSettings.value[0]);
+      el?.scrollIntoView({ behavior: 'smooth' });
+    }, 500);
+  }
 });
 
 whenever(
@@ -177,7 +186,8 @@ whenever(
     expansionState.value[settingsDefinitions[setting].group] = true;
     setTimeout(() => {
       if (!setting) return;
-      document.getElementById(setting)?.scrollIntoView({ behavior: 'smooth' });
+      const el = document.getElementById(setting);
+      el?.scrollIntoView({ behavior: 'smooth' });
     }, 500);
   },
   { immediate: true },
