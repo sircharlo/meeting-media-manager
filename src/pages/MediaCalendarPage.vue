@@ -365,9 +365,7 @@
       </q-list>
     </q-list>
     <q-list
-      v-show="
-        (!selectedDateObject?.meeting || selectedDateObject?.complete) && coWeek
-      "
+      v-show="selectedDateObject?.complete && coWeek"
       class="media-section additional"
     >
       <q-item class="text-additional items-center">

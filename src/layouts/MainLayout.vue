@@ -309,17 +309,21 @@ const updateWatchFolderRef = async ({
   day,
   event,
 }: Record<string, string>) => {
-  day = day.replace(/-/g, '/');
-  if (event === 'addDir' || event === 'unlinkDir') {
-    watchFolderMedia.value[day] = [];
-  } else if (event === 'add') {
-    watchFolderMedia.value[day] ??= [];
-    const watchedItemMap = await watchedItemMapper(day, changedPath);
-    if (watchedItemMap) watchFolderMedia.value[day].push(watchedItemMap);
-  } else if (event === 'unlink') {
-    watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
-      (dM) => dM.fileUrl !== getFileUrl(changedPath),
-    );
+  try {
+    day = day.replace(/-/g, '/');
+    if (event === 'addDir' || event === 'unlinkDir') {
+      watchFolderMedia.value[day] = [];
+    } else if (event === 'add') {
+      watchFolderMedia.value[day] ??= [];
+      const watchedItemMap = await watchedItemMapper(day, changedPath);
+      if (watchedItemMap) watchFolderMedia.value[day].push(watchedItemMap);
+    } else if (event === 'unlink') {
+      watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
+        (dM) => dM.fileUrl !== getFileUrl(changedPath),
+      );
+    }
+  } catch (error) {
+    errorCatcher(error);
   }
 };
 

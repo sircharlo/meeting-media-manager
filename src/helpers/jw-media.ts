@@ -828,6 +828,8 @@ const watchedItemMapper: (
   const audio = isAudio(watchedItemPath);
   const image = isImage(watchedItemPath);
 
+  if (!(video || audio || image)) return undefined;
+
   const duration =
     (video || audio) && (await fs.exists(watchedItemPath))
       ? await getDurationFromMediaPath(watchedItemPath)
