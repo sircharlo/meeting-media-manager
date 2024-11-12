@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
-    "@electron/rebuild": "^3.7.0",
+    "@electron/rebuild": "^3.7.1",
     "@intlify/vite-plugin-vue-i18n": "^7.0.0",
     "@quasar/app-vite": "^1.10.2",
     "@rollup/plugin-inject": "^5.0.5",
