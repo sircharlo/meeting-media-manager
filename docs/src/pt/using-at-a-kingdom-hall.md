@@ -41,7 +41,7 @@ Se você ainda não conseguir executar o M³ depois de digitar os dois comandos,
 2. Encontre a entrada para o M³ e clique no botão para **Abrir assim mesmo**.
 3. Você será avisado novamente e receberá a recomendação de não "abrir isto, a menos que tenha certeza de que é de uma fonte confiável." Clique em **Abrir assim mesmo**.
 4. Outra advertência aparecerá, onde você precisará autenticar para iniciar o aplicativo.
-5. M³ should now launch successfully.
+5. O M³ agora deve iniciar com sucesso.
 
 Se você ainda tiver problemas após seguir todos esses passos, por favor, [abra uma issue no GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Faremos o nosso melhor para ajudar.
 
@@ -87,7 +87,7 @@ Esta pesquisa utiliza dados disponíveis publicamente no site oficial das Testem
 
 Se a busca automatizada não encontrar sua congregação, você pode, é claro, inserir manualmente as informações necessárias. O assistente permitirá que você revise e/ou insira o **nome** da sua congregação, o **idioma das reuniões** e os **dias e horários das reuniões**.
 
-### Armazenando em cache os vídeos do cancioneiro {#caching-videos-from-the-songbook}
+### Armazenando em cache dos vídeos dos cânticos {#caching-videos-from-the-songbook}
 
 Você também terá a opção de **armazenar temporariamente todos os cânticos em vídeo**. Esta opção faz download de todos os cânticos em vídeo, o que ajuda ao não ter que baixá-los toda vez.
 
@@ -114,6 +114,6 @@ Se a sua congregação realiza reuniões híbridas regularmente, é **altamente*
 
 :::
 
-## 3. Aproveite usando o M³ {#enjoy-using-m3}
+## 3. Aproveite o uso do M³ {#enjoy-using-m3}
 
 Uma vez que o assistente de configuração seja concluído, o M³ estará pronto para exibir as mídias nas reuniões congregacionais. Aproveite o aplicativo! :tada:
