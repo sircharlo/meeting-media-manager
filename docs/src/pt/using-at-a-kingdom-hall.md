@@ -87,7 +87,7 @@ Esta pesquisa utiliza dados disponíveis publicamente no site oficial das Testem
 
 Se a busca automatizada não encontrar sua congregação, você pode, é claro, inserir manualmente as informações necessárias. O assistente permitirá que você revise e/ou insira o **nome** da sua congregação, o **idioma das reuniões** e os **dias e horários das reuniões**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Armazenando em cache os vídeos do cancioneiro {#caching-videos-from-the-songbook}
 
 Você também terá a opção de **armazenar temporariamente todos os cânticos em vídeo**. Esta opção faz download de todos os cânticos em vídeo, o que ajuda ao não ter que baixá-los toda vez.
 
@@ -100,7 +100,7 @@ Se o seu computador tiver espaço de armazenamento suficiente, é recomendável 
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### Configuração de Integração com OBS Studio (Opcional) {#obs-studio-integration-configuration}
 
 Se você usa o **OBS Studio** para transmitir reuniões híbridas pelo Zoom, o M³ pode se integrar automaticamente a esse programa. Durante a configuração, você pode configurar a integração com o OBS Studio inserindo o seguinte:
 
@@ -114,6 +114,6 @@ Se a sua congregação realiza reuniões híbridas regularmente, é **altamente*
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Aproveite usando o M³ {#enjoy-using-m3}
 
 Uma vez que o assistente de configuração seja concluído, o M³ estará pronto para exibir as mídias nas reuniões congregacionais. Aproveite o aplicativo! :tada:
