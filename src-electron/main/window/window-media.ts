@@ -1,10 +1,9 @@
 import type { BrowserWindow } from 'electron';
+import type { ScreenPreferences } from 'src/types';
 
 import { PLATFORM } from 'app/src-electron/constants';
 import { errorCatcher } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
-
-import type { ScreenPreferences } from './../../../src/types/settings.d';
 
 import { getAllScreens, getWindowScreen } from '../screen';
 import { createWindow, sendToWindow } from './window-base';

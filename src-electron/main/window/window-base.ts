@@ -1,6 +1,7 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
 import pkg from 'app/package.json';
+import { IS_DEV, PLATFORM } from 'app/src-electron/constants';
 import { errorCatcher } from 'app/src-electron/utils';
 import {
   app,
@@ -11,7 +12,6 @@ import {
 import { join, resolve } from 'path';
 
 import { urlVariables } from '../session';
-import { IS_DEV, PLATFORM } from './../../constants';
 import { mainWindow } from './window-main';
 import { StatefulBrowserWindow } from './window-state';
 

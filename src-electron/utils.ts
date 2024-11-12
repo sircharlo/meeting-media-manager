@@ -72,6 +72,47 @@ export function isSelf(url?: string): boolean {
   );
 }
 
+export const fetchRaw = async (url: string, init?: RequestInit) => {
+  console.debug('fetchRaw', { init, url });
+  return fetch(url, init);
+};
+
+export const fetchJson = async <T>(
+  url: string,
+  params?: URLSearchParams,
+): Promise<null | T> => {
+  try {
+    if (!url) return null;
+    const response = await fetchRaw(
+      `${url}?${params ? params.toString() : ''}`,
+    );
+    if (response.ok) {
+      return await response.json();
+    } else if (![400, 404].includes(response.status)) {
+      errorCatcher(response, {
+        contexts: {
+          fn: {
+            name: 'fetchJson',
+            params: Object.fromEntries(params || []),
+            url,
+          },
+        },
+      });
+    }
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: {
+        fn: {
+          name: 'fetchJson',
+          params: Object.fromEntries(params || []),
+          url,
+        },
+      },
+    });
+  }
+  return null;
+};
+
 /**
  * Logs an error to the console or to Sentry
  * @param error The error to log

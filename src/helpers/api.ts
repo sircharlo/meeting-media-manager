@@ -7,7 +7,6 @@ import type {
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchRaw = async (url: string, init?: RequestInit) => {
   console.debug('fetchRaw', { init, url });
   return fetch(url, init);

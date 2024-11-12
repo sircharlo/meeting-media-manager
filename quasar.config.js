@@ -174,7 +174,6 @@ module.exports = configure(function (ctx) {
         const electronDeps = [
           '@numairawan/video-duration',
           '@sentry/electron',
-          '@sentry/vue',
           'better-sqlite3',
           'chokidar',
           'decompress',

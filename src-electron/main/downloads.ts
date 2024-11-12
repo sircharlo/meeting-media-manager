@@ -1,10 +1,9 @@
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
 import { ElectronDownloadManager } from 'electron-dl-manager';
 import { ensureDir } from 'fs-extra';
-import { fetchJson } from 'src/helpers/api';
 import { basename } from 'upath';
 
-import { errorCatcher } from './../utils';
+import { errorCatcher, fetchJson } from './../utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 
