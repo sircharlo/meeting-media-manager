@@ -1,0 +1,37 @@
+title: '[Question]: <title>'
+labels: ['question']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this question form! Please change the title of this discussion to reflect your question and fill out the fields below.
+  - type: textarea
+    id: question
+    attributes:
+      label: What is your question?
+      description: A clear and concise question that you want to ask.
+      placeholder: What? Why? How? When? Where? Who?
+    validations:
+      required: true
+  - type: textarea
+    id: related-problem
+    attributes:
+      label: Is your question related to a problem?
+      description: Please describe.
+      placeholder: I'm always frustrated when ...
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context or screenshots about your question here.
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmations
+      options:
+        - label: I confirm that I have read the documentation website.
+          required: true
+        - label: I confirm that I have read the existing discussions to make sure my question is not a duplicate.
+          required: true

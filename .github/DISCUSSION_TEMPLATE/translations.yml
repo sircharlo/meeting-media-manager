@@ -4,7 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this translations form!
+        Thanks for taking the time to fill out this translations form! Please change the title of this discussion to reflect your question and fill out the fields below.
   - type: textarea
     id: language
     attributes:
@@ -20,5 +20,4 @@ body:
     id: additional-context
     attributes:
       label: Additional context
-      description: |
-        Anything else you'd like to add?
+      description: Anything else you'd like to add?
