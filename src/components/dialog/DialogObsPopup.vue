@@ -1,6 +1,5 @@
 <template>
   <q-menu
-    ref="displayPopup"
     v-model="open"
     :offset="[0, 8]"
     anchor="top middle"

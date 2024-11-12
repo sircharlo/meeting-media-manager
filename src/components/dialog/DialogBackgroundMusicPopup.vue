@@ -132,7 +132,7 @@ import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { ref, watch } from 'vue';
+import { ref, useTemplateRef, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
 
@@ -163,7 +163,7 @@ const {
 const jwStore = useJwStore();
 const { lookupPeriod } = storeToRefs(jwStore);
 
-const musicPlayer = ref<HTMLAudioElement>();
+const musicPlayer = useTemplateRef('musicPlayer');
 const musicPlayerSource = ref<HTMLSourceElement>(
   document.createElement('source'),
 );
@@ -189,7 +189,7 @@ const toggleMusicListener = () => {
   }
 };
 
-const musicPopup = ref<QMenu>();
+const musicPopup = useTemplateRef<QMenu>('musicPopup');
 
 async function playMusic() {
   try {

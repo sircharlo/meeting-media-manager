@@ -95,7 +95,7 @@ import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { ref } from 'vue';
+import { useTemplateRef } from 'vue';
 
 const { path } = window.electronApi;
 
@@ -111,7 +111,7 @@ const filteredDownloads = (status: 'complete' | 'error' | 'loaded') =>
     .sort((a, b) => a[1].filename.localeCompare(b[1].filename))
     .map(([, item]) => item);
 
-const downloadPopup = ref<QMenu>();
+const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
 
 watchImmediate(
   () => filteredDownloads,

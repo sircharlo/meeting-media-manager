@@ -117,7 +117,7 @@ import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 
 // Store initializations
 const currentState = useCurrentStateStore();
@@ -129,7 +129,7 @@ const { updateJwLanguages, updateYeartext } = jwStore;
 
 // Ref and reactive initializations
 const expansionState = ref<Partial<Record<SettingsGroupKey, boolean>>>({});
-const settingsFormDynamic = ref<QForm | undefined>();
+const settingsFormDynamic = useTemplateRef<QForm>('settingsFormDynamic');
 const settingsValid = ref(true);
 
 const settingsGroupsEntries = Object.entries(settingsGroups) as [

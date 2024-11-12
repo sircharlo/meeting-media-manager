@@ -202,7 +202,7 @@
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 
 // Composables
 import { useLocale } from 'src/composables/useLocale';
@@ -352,7 +352,7 @@ const maxDate = () => {
   }
 };
 
-const importMenu = ref<QMenu | undefined>();
+const importMenu = useTemplateRef<QMenu>('importMenu');
 const openImportMenu = (newSection?: MediaSection) => {
   section.value = newSection;
   importMenu.value?.show();

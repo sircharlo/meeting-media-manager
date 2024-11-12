@@ -547,7 +547,7 @@ import Panzoom, {
 } from '@panzoom/panzoom';
 import { useBroadcastChannel, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { debounce, type QImg } from 'quasar';
+import { debounce, type QBtn, type QImg } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import {
@@ -560,7 +560,7 @@ import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -793,7 +793,7 @@ const mediaPanzoom = ref<Record<string, number>>({
   y: 0,
 });
 
-const mediaImage = ref<QImg | undefined>();
+const mediaImage = useTemplateRef<QImg>('mediaImage');
 
 const initiatePanzoom = () => {
   try {
@@ -862,9 +862,9 @@ onUnmounted(() => {
   destroyPanzoom();
 });
 
-const playButton = ref<HTMLButtonElement | undefined>();
-const pauseResumeButton = ref<HTMLButtonElement | undefined>();
-const stopButton = ref<HTMLButtonElement | undefined>();
+const playButton = useTemplateRef<QBtn>('playButton');
+const pauseResumeButton = useTemplateRef<QBtn>('pauseResumeButton');
+const stopButton = useTemplateRef<QBtn>('stopButton');
 
 useEventListener(window, 'shortcutMediaNext', () => {
   if (playButton.value && props.playState === 'next') playButton.value.click();

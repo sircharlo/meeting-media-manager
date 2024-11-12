@@ -15,7 +15,6 @@
       <q-img
         v-if="isImage(mediaPlayingUrl)"
         id="mediaImage"
-        ref="mediaImage"
         :src="mediaPlayingUrl"
         class="fitSnugly"
         fit="contain"
@@ -29,7 +28,7 @@
         preload="metadata"
         @animationstart="playMedia()"
       >
-        <source ref="mediaElementSource" :src="mediaPlayingUrl" />
+        <source :src="mediaPlayingUrl" />
         <track
           v-if="mediaPlayerSubtitlesUrl && subtitlesVisible"
           :src="mediaPlayerSubtitlesUrl"
@@ -44,7 +43,7 @@
           style="display: none"
           @loadedmetadata="playMedia()"
         >
-          <source ref="mediaElementSource" :src="mediaPlayingUrl" />
+          <source :src="mediaPlayingUrl" />
         </audio>
         <template v-if="mediaPlayerCustomBackground">
           <q-img
@@ -89,7 +88,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 
 const currentState = useCurrentStateStore();
 const {
@@ -121,8 +120,9 @@ const initiatePanzoom = () => {
   }
 };
 
-let mediaElement = ref<HTMLVideoElement | undefined>();
-const mediaImage = ref<HTMLImageElement | undefined>();
+let mediaElement = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
+  'mediaElement',
+);
 
 const videoStreaming = ref(false);
 
