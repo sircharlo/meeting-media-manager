@@ -143,6 +143,13 @@ export const useJwStore = defineStore('jw-store', {
           .forEach((item) => {
             item.section = item.sectionOriginal;
           });
+
+        (this.additionalMediaMaps[currentCongregation]?.[selectedDate] ?? [])
+          .filter((item) => item.sectionOriginal)
+          .filter((item) => item.section !== item.sectionOriginal)
+          .forEach((item) => {
+            item.section = item.sectionOriginal;
+          });
       } catch (e) {
         errorCatcher(e);
       }
