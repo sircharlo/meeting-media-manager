@@ -6,9 +6,9 @@ Need help installing or using Meeting Media Manager (M³)? This document provide
 
 Please seek support in the following ways:
 
-1. :book: [**Read the documentation**](https://sircharlo.github.io/meeting-media-manager/) for the project to see if you can figure it out on your own. The documentation is the best place to start when you have questions about how to use the project. If you find a bug in the documentation, please open an issue or submit a pull request to fix it.
+1. :book: [**Read the M³ documentation**](https://sircharlo.github.io/meeting-media-manager/) to see if you can figure it out on your own. The documentation is the best place to start when you have questions about how to use M³. If you find a bug in the documentation, please open an issue or submit a pull request to fix it.
 
-2. :bulb: **Search for answers and ask questions on GitHub.** This is the most appropriate place for debugging issues specific to your use of the project, or figuring out how to use the project in a specific way. You can do so by searching through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues?q=is%3Aissue) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions?discussions_q=) to see if someone else has already asked the same question.
+2. :bulb: **Search for answers and ask questions on GitHub.** This is the most appropriate place for debugging issues specific to your use of M³, or figuring out how to use M³ in a specific way. You can do so by searching through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues?q=is%3Aissue) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions?discussions_q=) to see if someone else has already asked the same question.
 
 3. :memo: As a **last resort**, you may [open an issue](https://github.com/sircharlo/meeting-media-manager/issues/new/choose) to report a problem or [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions/new/choose) to ask a question. However, please clearly explain what you are trying to do, and list what you have already attempted to solve the problem.
 
