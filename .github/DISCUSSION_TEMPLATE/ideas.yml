@@ -41,5 +41,7 @@ body:
       options:
         - label: I confirm that I have read the documentation website.
           required: true
-        - label: I confirm that I have read the existing discussions to make sure my idea is not a duplicate.
+        - label: I confirm that I have searched through the existing issues to make sure my idea is not a duplicate.
+          required: true
+        - label: I confirm that I have searched through the existing discussions to make sure my idea is not a duplicate.
           required: true

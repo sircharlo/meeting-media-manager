@@ -39,3 +39,14 @@ body:
     attributes:
       label: Additional context
       description: Add any other context or screenshots about the feature request here.
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmations
+      options:
+        - label: I confirm that I have read the documentation website.
+          required: true
+        - label: I confirm that I have searched through the existing issues to make sure my feature request is not a duplicate.
+          required: true
+        - label: I confirm that I have searched through the existing discussions to make sure my feature request is not a duplicate.
+          required: true
