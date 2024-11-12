@@ -1,6 +1,5 @@
 import type { ElectronApi } from 'src/types';
 
-import decompress from 'decompress';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import path from 'upath';
@@ -9,6 +8,7 @@ import { initCloseListeners } from './preload/close';
 import {
   convertHeic,
   convertPdfToImages,
+  decompress,
   getNrOfPdfPages,
 } from './preload/converters';
 import {
