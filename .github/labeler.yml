@@ -1,0 +1,22 @@
+bug:
+  - head-branch: ['^fix', 'fix']
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/dependabot.yml', 'yarn.lock']
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ['docs/**/*', '**/*.md']
+enhancement:
+  - head-branch: ['^feat', 'feat']
+github_actions:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/workflows/**/*', '.github/*.yml']
+javascript:
+  - changed-files:
+      - any-glob-to-any-file: ['yarn.lock']
+translations:
+  - changed-files:
+      - any-glob-to-any-file:
+          ['docs/locales/**/*', 'docs/src/**/*', 'src/i18n/**/*']
+      - all-globs-to-all-files:
+          ['!docs/locales/en.json', '!docs/src/en/**/*', '!src/i18n/en.json']
