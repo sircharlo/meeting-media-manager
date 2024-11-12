@@ -140,10 +140,22 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
     mediaPath = fileUrlToPath(mediaPath);
     if (!mediaPath || !(await fs.exists(mediaPath))) return '';
     const metadata = await parseMediaFile(mediaPath);
-    if (metadata?.common?.picture?.length) {
+    const thumbnailData = metadata?.common?.picture?.[0]?.data || null;
+    const thumbnailFormat = metadata?.common?.picture?.[0]?.format || null;
+    if (thumbnailData?.length && thumbnailFormat) {
+      try {
+        const thumbnailPath = path.join(
+          path.dirname(mediaPath),
+          `${path.basename(mediaPath, path.extname(mediaPath))}.${thumbnailFormat.split('/')[1]}`,
+        );
+        await fs.writeFile(thumbnailPath, thumbnailData);
+        return getFileUrl(thumbnailPath);
+      } catch (error) {
+        errorCatcher(error);
+      }
       return URL.createObjectURL(
-        new Blob([metadata.common.picture[0].data], {
-          type: metadata.common.picture[0].format,
+        new Blob([thumbnailData], {
+          type: thumbnailFormat,
         }),
       );
     } else {

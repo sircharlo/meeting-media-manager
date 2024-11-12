@@ -675,21 +675,21 @@ const imageLoadingError = () => {
 };
 
 async function findThumbnailUrl() {
-  if (!thumbnailFromMetadata.value) {
-    setTimeout(async () => {
-      const filePath = fileUrlToPath(props.media.fileUrl);
-      const fileExists = await fs.pathExists(filePath);
-      if (fileExists) {
-        const thumbnailUrl = await getThumbnailUrl(props.media.fileUrl);
-        if (!thumbnailFromMetadata.value) {
-          thumbnailFromMetadata.value = thumbnailUrl;
-        }
-        if (!thumbnailFromMetadata.value) {
-          findThumbnailUrl();
-        }
+  const runThumbnailCheck = async () => {
+    const filePath = fileUrlToPath(props.media.fileUrl);
+    const fileExists = await fs.pathExists(filePath);
+    if (fileExists) {
+      const thumbnailUrl = await getThumbnailUrl(props.media.fileUrl);
+      if (!thumbnailFromMetadata.value) {
+        thumbnailFromMetadata.value = thumbnailUrl;
       }
-    }, 2000);
-  }
+      if (!thumbnailFromMetadata.value) {
+        setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds if still not set
+      }
+    }
+  };
+  // Run immediately
+  await runThumbnailCheck();
 }
 
 if ((props.media.isVideo || props.media.isAudio) && !props.media.thumbnailUrl)
