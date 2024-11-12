@@ -138,15 +138,19 @@ export const useJwStore = defineStore('jw-store', {
           this.mediaSort[currentCongregation][selectedDate] = [];
         }
         (selectedDateObject?.dynamicMedia ?? [])
-          .filter((item) => item.sectionOriginal)
-          .filter((item) => item.section !== item.sectionOriginal)
+          .filter(
+            (item) =>
+              item.sectionOriginal && item.section !== item.sectionOriginal,
+          )
           .forEach((item) => {
             item.section = item.sectionOriginal;
           });
 
         (this.additionalMediaMaps[currentCongregation]?.[selectedDate] ?? [])
-          .filter((item) => item.sectionOriginal)
-          .filter((item) => item.section !== item.sectionOriginal)
+          .filter(
+            (item) =>
+              item.sectionOriginal && item.section !== item.sectionOriginal,
+          )
           .forEach((item) => {
             item.section = item.sectionOriginal;
           });
