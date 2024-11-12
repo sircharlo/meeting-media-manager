@@ -144,12 +144,22 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
     const thumbnailFormat = metadata?.common?.picture?.[0]?.format || null;
     if (thumbnailData?.length && thumbnailFormat) {
       try {
-        const thumbnailPath = path.join(
-          path.dirname(mediaPath),
-          `${path.basename(mediaPath, path.extname(mediaPath))}.${thumbnailFormat.split('/')[1]}`,
-        );
-        await fs.writeFile(thumbnailPath, thumbnailData);
-        return getFileUrl(thumbnailPath);
+        const parentDir = path.dirname(mediaPath);
+
+        const currentState = useCurrentStateStore();
+        const watcherEnabled =
+          currentState.currentSettings?.enableFolderWatcher || false;
+        const watchDir = currentState.currentSettings?.folderToWatch
+          ? path.resolve(currentState.currentSettings?.folderToWatch)
+          : null;
+        if (!watcherEnabled || !watchDir || !parentDir.startsWith(watchDir)) {
+          const thumbnailPath = path.join(
+            path.dirname(mediaPath),
+            `${path.basename(mediaPath, path.extname(mediaPath))}.${thumbnailFormat.split('/')[1]}`,
+          );
+          await fs.writeFile(thumbnailPath, thumbnailData);
+          return getFileUrl(thumbnailPath);
+        }
       } catch (error) {
         errorCatcher(error);
       }
