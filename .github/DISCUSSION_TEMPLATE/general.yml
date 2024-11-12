@@ -10,7 +10,7 @@ body:
          - If you have an idea or suggestion, please [use the "Ideas" category](https://github.com/sircharlo/meeting-media-manager/discussions/new?category=ideas). 
          - If you have a problem, please [create an issue](https://github.com/sircharlo/meeting-media-manager/issues/new/choose).
 
-        If you want to discuss something else, you're in the right place! Please fill out the fields below.
+        If you want to discuss something else, you're in the right place! Please fill out the title and the fields below.
   - type: textarea
     id: discussion
     attributes:
