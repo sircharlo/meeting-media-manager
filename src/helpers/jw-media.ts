@@ -856,7 +856,7 @@ const watchedItemMapper: (
       isImage: image,
       isVideo: video,
       section,
-      sectionOriginal: section, // to enable restoring the original section after custom sorting
+      sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
       thumbnailUrl,
       title: path.basename(watchedItemPath),
       uniqueId,
