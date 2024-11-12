@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Download automático de mídia
-    details: Baixa imagens e vídeos das reuniões congregacionais em qualquer idioma disponível no JW.org
+    details: Baixa automaticamente imagens e vídeos para reuniões da congregação em qualquer idioma disponível no site oficial das Testemunhas de Jeová.
   - icon: 🎦
     title: Exibição de mídia
     details: Permite compartilhar facilmente a mídia em reuniões híbridas ou presenciais.
