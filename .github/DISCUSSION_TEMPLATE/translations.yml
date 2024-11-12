@@ -4,7 +4,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this translations form! Please change the title of this discussion to reflect your question and fill out the fields below.
+        ### Please read the following:
+        Thanks for taking the time to fill out this translations form!
+        Please change the title of this discussion to reflect your language and fill out the fields below.
   - type: textarea
     id: language
     attributes:
