@@ -1,8 +1,8 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Perguntas Frequentes {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Este aplicativo depende de sites, fontes ou "curadores" externos para baixar publicações, mídias de reuniões ou outros conteúdos? {#external-dependencies}
 
-**Não.** O aplicativo se comporta de maneira semelhante ao JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. O aplicativo determina automaticamente o que precisa ser baixado e se uma publicação ou mídia foi atualizada e precisa ser baixada novamente.
+**Não.** O aplicativo se comporta de maneira semelhante ao JW Library. Ele baixa publicações, mídias e outros conteúdos diretamente do site oficial das Testemunhas de Jeová e sua rede de entrega de conteúdo. O aplicativo determina automaticamente o que precisa ser baixado e se uma publicação ou mídia foi atualizada e precisa ser baixada novamente.
 
 :::info Nota
 
@@ -10,9 +10,10 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 
 :::
 
-## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
+## :thinking: Este aplicativo infringe os Termos de Uso do site oficial das Testemunhas de Jeová? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**Não.** Os [Termos de Uso](https://www.jw.org/finder?docid=1011511\&prefer=content) do site oficial das Testemunhas de Jeová na verdade permitem explicitamente o tipo de uso que estamos fazendo.
+Aqui está o trecho relevante desses termos (ênfase adicionada):
 
 > Você não pode:
 >
@@ -20,15 +21,15 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 
 ## :radioactive: Como faço para reportar um problema? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Por favor, [registre uma issue](https://github.com/sircharlo/meeting-media-manager/issues) no repositório oficial do GitHub.
 
 ## :new: Como posso solicitar um novo recurso ou melhoria? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Por favor, [abra uma discussão](https://github.com/sircharlo/meeting-media-manager/discussions) no repositório oficial do GitHub.
 
 ## :handshake: Como posso contribuir com algum código? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Por favor, [veja o guia de contribuições](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) no repositório oficial do GitHub.
 
 ## :x: Posso fazer uma doação para o projeto? {#can-i-make-a-donation-to-the-project}
 
