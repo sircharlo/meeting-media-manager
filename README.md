@@ -55,7 +55,7 @@ In addition, M³ itself has been translated into several languages by many volun
 
 ## Where can I find help about downloading and using M³?
 
-Check out our [SUPPORT.md](https://github.com/sircharlo/meeting-media-manager/blob/master/SUPPORT.md) file for guidance.
+Check out our [SUPPORT.md](https://github.com/sircharlo/meeting-media-manager/blob/master/SUPPORT.md) file for guidance or go directly to our [documentation website](https://sircharlo.github.io/meeting-media-manager/).
 
 ## Additional steps for macOS users to open the app without errors
 
