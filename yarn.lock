@@ -9985,7 +9985,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     better-sqlite3: "npm:^11.5.0"
     cheerio: "npm:^1.0.0"
-    chokidar: "npm:^4.0.1"
+    chokidar: "npm:^4.0.0"
     countries-and-timezones: "npm:^3.7.2"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.0"

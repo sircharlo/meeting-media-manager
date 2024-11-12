@@ -1,5 +1,6 @@
 # About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
+
 ## What is this app? {#what-is-this-app}
 
 **Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
