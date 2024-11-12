@@ -10,7 +10,7 @@ Please seek support in the following ways:
 
 2. :bulb: **Search for answers and ask questions on GitHub.** This is the most appropriate place for debugging issues specific to your use of the project, or figuring out how to use the project in a specific way. You can do so by searching through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues?q=is%3Aissue) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions?discussions_q=) to see if someone else has already asked the same question.
 
-3. :memo: As a **last resort**, you may [open an issue](https://github.com/sircharlo/meeting-media-manager/issues/new/choose) on GitHub to ask for help. However, please clearly explain what you are trying to do, and list what you have already attempted to solve the problem.
+3. :memo: As a **last resort**, you may [open an issue](https://github.com/sircharlo/meeting-media-manager/issues/new/choose) to report a problem or [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions/new/choose) to ask a question. However, please clearly explain what you are trying to do, and list what you have already attempted to solve the problem.
 
 ## What NOT to do
 
