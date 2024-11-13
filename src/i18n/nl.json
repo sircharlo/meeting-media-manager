@@ -240,6 +240,8 @@
   "obsQuickToggle": "Schakel directe scène wisselaar in",
   "obsQuickToggle-explain": "Wanneer ingeschakeld, zal het openen zodra je op de OBS Studio knop staat. Dit kan handig zijn voor het snel wisselen van scènes in OBS Studio, vooral als veel scènes zijn geconfigureerd.",
   "obsStudio": "OBS Studio",
+  "obsSwitchSceneAfterMedia": "Delay scene changes when playing media",
+  "obsSwitchSceneAfterMedia-explain": "When enabled, OBS Studio will defer scene changes until after any currently playing media has finished. Note: enabling this option will also remove media and image scenes from the scene switcher.",
   "once-the-scene-has-been-created-select-it-here": "Selecteer de scène hier zodra hij is aangemaakt.",
   "only-show-settings-that-are-not-valid": "Alleen instellingen weergeven die niet geldig zijn",
   "oops-nothing-here": "Oeps. Niets hier...",

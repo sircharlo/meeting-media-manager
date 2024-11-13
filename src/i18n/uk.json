@@ -240,6 +240,8 @@
   "obsQuickToggle": "Увімкнути миттєве перемикання сцен",
   "obsQuickToggle-explain": "Коли ввімкнено, наведення курсору на кнопку OBS Studio відкриє перемикач сцен. Це може бути корисно для швидкого перемикання сцен в OBS Studio, особливо якщо налаштовано багато сцен.",
   "obsStudio": "OBS Studio",
+  "obsSwitchSceneAfterMedia": "Delay scene changes when playing media",
+  "obsSwitchSceneAfterMedia-explain": "When enabled, OBS Studio will defer scene changes until after any currently playing media has finished. Note: enabling this option will also remove media and image scenes from the scene switcher.",
   "once-the-scene-has-been-created-select-it-here": "Після створення сцени, оберіть її тут.",
   "only-show-settings-that-are-not-valid": "Показувати тільки налаштування, що є недійсними",
   "oops-nothing-here": "Ой. Тут нічого немає...",
