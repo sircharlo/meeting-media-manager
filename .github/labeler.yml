@@ -15,8 +15,13 @@ javascript:
   - changed-files:
       - any-glob-to-any-file: ['yarn.lock']
 translations:
-  - changed-files:
-      - any-glob-to-any-file:
-          ['docs/locales/**/*', 'docs/src/**/*', 'src/i18n/**/*']
-      - all-globs-to-all-files:
-          ['!docs/locales/en.json', '!docs/src/en/**/*', '!src/i18n/en.json']
+  - all:
+      - changed-files:
+          - any-glob-to-any-file:
+              ['docs/locales/**/*', 'docs/src/**/*', 'src/i18n/**/*']
+          - all-globs-to-all-files:
+              [
+                '!docs/locales/en.json',
+                '!docs/src/en/**/*',
+                '!src/i18n/en.json',
+              ]
