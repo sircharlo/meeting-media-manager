@@ -1,7 +1,5 @@
 import type { BrowserWindow } from 'electron';
 
-import { captureMessage } from '@sentry/browser';
-import { PLATFORM } from 'app/src-electron/constants';
 import { throttle } from 'app/src-electron/utils';
 
 import { cancelAllDownloads } from '../downloads';
@@ -15,11 +13,6 @@ export let authorizedClose = false;
  * Creates the main window
  */
 export function createMainWindow() {
-  if (PLATFORM === 'darwin') {
-    captureMessage(`main window ${!!mainWindow}`);
-    captureMessage(`Destroyed ${mainWindow?.isDestroyed()}`);
-  }
-
   // If the window is already open, just focus it
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.show();
