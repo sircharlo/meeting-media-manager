@@ -161,7 +161,6 @@ export default defineConfig({
   themeConfig: {
     externalLinkIcon: true,
     logo: '/icon.png',
-    outline: { level: 'deep' },
     search: mapSearch(),
     socialLinks: [{ icon: 'github', link: GH_REPO_URL, ariaLabel: 'GitHub' }],
   },

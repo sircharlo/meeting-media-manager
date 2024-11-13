@@ -18,24 +18,40 @@ Este guia irá orientá-lo no processo de download, instalação e configuraçã
 4. Abra o M³.
 5. Siga as instruções do assistente de configuração.
 
-### Passos adicionais para usuários de macOS {#additional-steps-for-macos-users}
+### macOS only: Additional installation steps {#additional-steps-for-macos-users}
 
-Devido às medidas de segurança da Apple, alguns passos adicionais são necessários para executar o M³ em sistemas macOS modernos.
+:::warning 2) Configuration wizard
 
-Primeiro, execute os seguintes dois comandos no Terminal (modifique o caminho para o M³ conforme necessário):
+This section only applies to macOS users.
+
+:::
+
+Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+
+Run the following two commands in Terminal, modifying the path to M³ as needed:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explicação
+:::warning Aviso
 
-Esses comandos fazem duas coisas que evitarão que o M³ seja detectado como um aplicativo malicioso em seu sistema: o primeiro assina o código do aplicativo localmente, e o segundo remove a flag de quarentena do aplicativo. A flag de quarentena é usada para alertar os usuários sobre aplicativos que foram baixados da internet.
+As a macOS user, you will need to follow these steps every time you install or update M³.
 
 :::
 
-Se você ainda não conseguir executar o M³ depois de digitar os dois comandos, por favor, tente o seguinte:
+:::info Explicação
+
+The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+
+The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+
+:::
+
+#### Alternative method {#alternative-method-for-macos-users}
+
+If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
 
 1. Abra as configurações de **Privacidade e Segurança** do macOS.
 2. Encontre a entrada para o M³ e clique no botão para **Abrir assim mesmo**.
@@ -44,6 +60,33 @@ Se você ainda não conseguir executar o M³ depois de digitar os dois comandos,
 5. O M³ agora deve iniciar com sucesso.
 
 Se você ainda tiver problemas após seguir todos esses passos, por favor, [abra uma issue no GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Faremos o nosso melhor para ajudar.
+
+### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+
+:::warning Aviso
+
+This section only applies to macOS users.
+
+:::
+
+Some macOS users have reported that website presentation no longer works after installing updates to M³.
+
+If the media window is black when presenting the website after updating M³, try the following steps:
+
+1. Abra as configurações de **Privacidade e Segurança** do macOS.
+2. Go to **Screen Recording**.
+3. Select M³ in the list.
+4. Click the `-` (minus) button to remove it.
+5. Click the `+` (plus) button and select M³ from the Applications folder.
+6. You may be prompted to relaunch M³ to apply the change.
+
+After these steps, screen sharing should function as expected once again.
+
+:::tip Dica
+
+These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+
+:::
 
 ## 2. Assistente de configuração {#configuration-wizard}
 
@@ -61,7 +104,7 @@ Esse idioma não precisa ser o mesmo que o M³ utilizará para baixar mídias. O
 
 O próximo passo é escolher um **tipo de perfil**. Para uma configuração padrão em um Salão do Reino, escolha **Regular**. Isso configurará muitos recursos que são frequentemente utilizados nas reuniões da congregação.
 
-:::warning 2) Configuration wizard
+:::warning Aviso
 
 Você deve escolher **Outro** apenas se estiver criando um perfil para o qual nenhuma mídia deve ser baixada automaticamente. As mídias terão de ser importadas manualmente para serem utilizadas neste perfil. Esse tipo de perfil é utilizado principalmente para usar o M³ durante escolas teocráticas, assembleias, congressos e outros eventos especiais.
 
