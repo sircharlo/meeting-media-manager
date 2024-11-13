@@ -9,7 +9,23 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 
 export const fetchRaw = async (url: string, init?: RequestInit) => {
   console.debug('fetchRaw', { init, url });
-  return fetch(url, init);
+  try {
+    return fetch(url, init);
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: {
+        fn: {
+          name: 'src/helpers/api fetchRaw',
+          params: init,
+          url,
+        },
+      },
+    });
+    return {
+      ok: false,
+      status: 400,
+    } as Response;
+  }
 };
 
 export const fetchJson = async <T>(

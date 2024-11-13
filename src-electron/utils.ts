@@ -6,6 +6,7 @@ import { app, systemPreferences } from 'electron';
 import { join } from 'path';
 
 import { IS_DEV, JW_DOMAINS, PLATFORM, TRUSTED_DOMAINS } from './constants';
+import { isDownloadErrorExpected } from './main/downloads';
 import { urlVariables } from './main/session';
 import { logToWindow } from './main/window/window-base';
 import { mainWindow } from './main/window/window-main';
@@ -94,7 +95,24 @@ export function isSelf(url?: string): boolean {
 
 export const fetchRaw = async (url: string, init?: RequestInit) => {
   console.debug('fetchRaw', { init, url });
-  return fetch(url, init);
+  try {
+    return fetch(url, init);
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: {
+        fn: {
+          isDownloadErrorExpected: isDownloadErrorExpected(),
+          name: 'src-electron/utils fetchRaw',
+          params: init,
+          url,
+        },
+      },
+    });
+    return {
+      ok: false,
+      status: 400,
+    } as Response;
+  }
 };
 
 export const fetchJson = async <T>(

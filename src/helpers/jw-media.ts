@@ -59,14 +59,7 @@ import { errorCatcher } from './error-catcher';
 
 const { formatDate, subtractFromDate } = date;
 
-const {
-  // downloadErrorIsExpected,
-  executeQuery,
-  fileUrlToPath,
-  fs,
-  path,
-  readdir,
-} = window.electronApi;
+const { executeQuery, fileUrlToPath, fs, path, readdir } = window.electronApi;
 
 const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
