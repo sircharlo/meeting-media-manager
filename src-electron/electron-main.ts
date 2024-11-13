@@ -1,4 +1,3 @@
-import { captureMessage } from '@sentry/browser';
 import { init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, repository, version } from 'app/package.json';
 
@@ -39,7 +38,6 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  captureMessage('App activated');
   app
     .whenReady()
     .then(createMainWindow)
