@@ -3,6 +3,7 @@
     v-model="model"
     :clearable="!rules || !rules.includes('notEmpty')"
     :disable="customDisabled"
+    :disabled="customDisabled"
     :fill-input="useInput"
     :hide-selected="useInput"
     :options="listOptions"
@@ -60,8 +61,9 @@ const { t } = useI18n();
 
 const customDisabled = computed(() => {
   return (
-    props.settingId?.startsWith('obs') &&
-    obsConnectionState.value !== 'connected'
+    (props.settingId?.startsWith('obs') &&
+      obsConnectionState.value !== 'connected') ||
+    undefined
   );
 });
 
