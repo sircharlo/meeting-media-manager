@@ -222,7 +222,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import type { Display, MultimediaItem } from 'src/types';
+import type { Display, MultimediaItem, ScreenPreferences } from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -255,6 +255,7 @@ const {
   openFileDialog,
   path,
   pathToFileURL,
+  setScreenPreferences,
 } = window.electronApi;
 
 const { t } = useI18n();
@@ -343,11 +344,9 @@ const chooseCustomBackground = async (reset?: boolean) => {
   }
 };
 
-const windowScreenListener = (event: CustomEventInit) => {
+const windowScreenListener = (event: CustomEvent<ScreenPreferences>) => {
   try {
-    screenPreferences.value.preferredScreenNumber =
-      event.detail.targetScreenNumber;
-    screenPreferences.value.preferWindowed = event.detail.windowedMode;
+    screenPreferences.value = event.detail;
   } catch (error) {
     errorCatcher(error);
   }
@@ -433,6 +432,7 @@ watchImmediate(
   screenPreferences,
   (newScreenPreferences) => {
     try {
+      setScreenPreferences(JSON.stringify(newScreenPreferences));
       moveMediaWindow(
         newScreenPreferences.preferredScreenNumber,
         newScreenPreferences.preferWindowed,

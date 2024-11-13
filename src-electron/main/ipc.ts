@@ -32,7 +32,7 @@ import {
   unwatchFolders,
   watchFolder,
 } from './fs';
-import { getAllScreens } from './screen';
+import { getAllScreens, setScreenPreferences } from './screen';
 import { setUrlVariables } from './session';
 import { registerShortcut, unregisterShortcut } from './shortcuts';
 import { logToWindow } from './window/window-base';
@@ -99,6 +99,10 @@ handleIpcSend('askForMediaAccess', async () => {
 
 handleIpcSend('setUrlVariables', (_e, variables: string) => {
   setUrlVariables(JSON.parse(variables));
+});
+
+handleIpcSend('setScreenPreferences', (_e, prefs: string) => {
+  setScreenPreferences(JSON.parse(prefs));
 });
 
 handleIpcSend('authorizedClose', () => {

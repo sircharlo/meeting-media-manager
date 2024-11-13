@@ -100,6 +100,7 @@ export interface ElectronApi {
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   setAutoStartAtLogin: (value: boolean) => void;
+  setScreenPreferences: (screenPreferences: string) => void;
   setUrlVariables: (variables: string) => void;
   toggleMediaWindow: (show: boolean) => void;
   unregisterShortcut: (shortcut: string) => void;
@@ -115,6 +116,7 @@ export type ElectronIpcSendKey =
   | 'moveMediaWindow'
   | 'navigateWebsiteWindow'
   | 'openExternal'
+  | 'setScreenPreferences'
   | 'setUrlVariables'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'

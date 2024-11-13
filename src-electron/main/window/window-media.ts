@@ -5,7 +5,7 @@ import { PLATFORM } from 'app/src-electron/constants';
 import { errorCatcher } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
 
-import { getAllScreens, getWindowScreen } from '../screen';
+import { getAllScreens, getWindowScreen, screenPreferences } from '../screen';
 import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 
@@ -44,7 +44,7 @@ export function createMediaWindow() {
 
 export const moveMediaWindow = (
   displayNr?: number,
-  fullscreen = true,
+  fullscreen?: boolean,
   noEvent?: boolean,
 ) => {
   try {
@@ -52,6 +52,11 @@ export const moveMediaWindow = (
     const otherScreens = allScreens.filter((screen) => !screen.mainWindow);
 
     if (!mediaWindow || !mainWindow) return;
+
+    if (displayNr === undefined || fullscreen === undefined) {
+      displayNr = screenPreferences.preferredScreenNumber;
+      fullscreen = !screenPreferences.preferWindowed;
+    }
 
     if (otherScreens.length > 0) {
       fullscreen = fullscreen ?? mediaWindow.isFullScreen();

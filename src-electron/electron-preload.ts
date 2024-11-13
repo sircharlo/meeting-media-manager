@@ -20,7 +20,7 @@ import {
   // readDirectory,
 } from './preload/fs';
 import { invoke, listen, removeAllIpcListeners, send } from './preload/ipc';
-import { initScreenListeners, moveMediaWindow } from './preload/screen';
+import { initScreenListeners } from './preload/screen';
 import { executeQuery } from './preload/sqlite';
 import {
   closeWebsiteWindow,
@@ -53,7 +53,8 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   isFileUrl,
-  moveMediaWindow,
+  moveMediaWindow: (t, w, ne) =>
+    send('moveMediaWindow', t, w === undefined ? undefined : !w, ne),
   navigateWebsiteWindow,
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
   onDownloadCompleted: (cb) => listen('downloadCompleted', cb),
@@ -75,6 +76,7 @@ const electronApi: ElectronApi = {
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
+  setScreenPreferences: (s) => send('setScreenPreferences', s),
   setUrlVariables: (v) => send('setUrlVariables', v),
   toggleMediaWindow: (s) => send('toggleMediaWindow', s),
   unregisterShortcut: (s) => send('unregisterShortcut', s),

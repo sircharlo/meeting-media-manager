@@ -1,10 +1,19 @@
-import type { Display } from 'src/types';
+import type { Display, ScreenPreferences } from 'src/types';
 
 import { app, type BrowserWindow, screen } from 'electron';
 
 import { errorCatcher } from '../utils';
 import { mainWindow } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
+
+export let screenPreferences: ScreenPreferences = {
+  preferredScreenNumber: 0,
+  preferWindowed: false,
+};
+
+export const setScreenPreferences = (prefs: ScreenPreferences) => {
+  screenPreferences = prefs;
+};
 
 export const initScreenListeners = () => {
   app.on('ready', () => {
