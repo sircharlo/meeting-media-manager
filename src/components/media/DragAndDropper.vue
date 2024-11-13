@@ -125,13 +125,11 @@
       </template>
       <div class="row justify-end">
         <q-btn
+          v-close-popup
           :label="$t('cancel')"
           color="negative"
           flat
-          @click="
-            jwpubDb = '';
-            open = false;
-          "
+          @click="jwpubDb = ''"
         />
       </div>
     </div>
@@ -190,7 +188,6 @@ const getLocalFiles = async () => {
           }),
         );
       }
-      open.value = false;
     })
     .catch((error) => {
       errorCatcher(error);
