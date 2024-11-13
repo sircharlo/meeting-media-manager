@@ -262,6 +262,7 @@ const getThumbnailFromVideoPath = async (
 const getThumbnailUrl = async (filepath: string, forceRefresh?: boolean) => {
   try {
     if (!filepath || !(await fs.exists(fileUrlToPath(filepath)))) return '';
+    filepath = fileUrlToPath(filepath);
     let thumbnailUrl = '';
     if (isImage(filepath)) {
       thumbnailUrl = getFileUrl(filepath);
