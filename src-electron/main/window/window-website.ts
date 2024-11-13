@@ -29,7 +29,7 @@ export async function createWebsiteWindow(lang?: string) {
       height: 720,
       show: true,
       title: 'Website Stream',
-      useContentSize: true,
+      useContentSize: PLATFORM !== 'darwin',
       width: 1280,
     },
     lang,
