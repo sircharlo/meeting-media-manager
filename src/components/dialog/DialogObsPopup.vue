@@ -52,7 +52,12 @@
                             '-box-outline'
                           : 'play-box-outline'
                 "
-                :outline="scene !== currentScene"
+                :outline="
+                  scene !==
+                  (currentSettings?.obsSwitchSceneAfterMedia
+                    ? previousScene
+                    : currentScene)
+                "
                 class="full-width"
                 size="sm"
                 stack
@@ -182,8 +187,15 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
       }
       currentSceneType.value = sceneType;
       if (sceneType === 'camera') {
-        newProgramScene = (previousScene.value || cameraScene) ?? undefined;
+        newProgramScene = previousScene.value || cameraScene || undefined;
       }
+    } else if (
+      desiredScene &&
+      currentSceneType.value === 'media' &&
+      currentSettings.value?.obsSwitchSceneAfterMedia
+    ) {
+      previousScene.value = desiredScene;
+      newProgramScene = undefined;
     }
     if (newProgramScene) {
       const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
@@ -216,22 +228,31 @@ const setObsSceneListener = (event: CustomEvent<{ scene: ObsSceneType }>) => {
 };
 
 const sceneList = computed(() =>
-  [
-    currentSettings.value?.obsCameraScene,
-    currentSettings.value?.obsMediaScene,
-    currentSettings.value?.obsImageScene,
-  ]
+  [currentSettings.value?.obsCameraScene]
+    .concat(
+      currentSettings.value?.obsSwitchSceneAfterMedia
+        ? []
+        : [
+            currentSettings.value?.obsMediaScene,
+            currentSettings.value?.obsImageScene,
+          ],
+    )
     .concat(additionalScenes.value || [])
     .filter((s): s is string => !!s),
 );
 
 const baseScenesLength = computed(
   () =>
-    [
-      currentSettings.value?.obsCameraScene,
-      currentSettings.value?.obsMediaScene,
-      currentSettings.value?.obsImageScene,
-    ].filter(Boolean).length,
+    [currentSettings.value?.obsCameraScene]
+      .concat(
+        currentSettings.value?.obsSwitchSceneAfterMedia
+          ? []
+          : [
+              currentSettings.value?.obsMediaScene,
+              currentSettings.value?.obsImageScene,
+            ],
+      )
+      .filter(Boolean).length,
 );
 
 useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect);
