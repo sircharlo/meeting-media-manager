@@ -74,11 +74,11 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 Если окно мультимедиа черное при представлении веб-сайта после обновления M³, попробуйте следующие шаги:
 
 1. Откройте настройки системы macOS **Приватность и безопасность**.
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+2. Перейдите в раздел **Запись экрана**.
+3. Выберите M³ в списке.
+4. Нажмите кнопку `-` (минус), чтобы удалить его.
+5. Нажмите кнопку `+` (плюс) и выберите M³ из папки Приложения.
+6. Для применения изменений, может появиться предложение перезапустить M³.
 
 После выполнения этих действий презентация сайта должна снова работать как положено.
 
@@ -130,9 +130,9 @@ M³ может попытаться автоматически найти рас
 
 Если автоматический поиск не нашел вашего собрания, вы, конечно, можете вручную ввести необходимую информацию. Мастер позволит вам просмотреть и/или ввести **название** вашего собрания, **язык встреч**, а также **дни и время проведения встреч**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Кэширование видео из песенника {#caching-videos-from-the-songbook}
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Вам также будет предоставлена возможность **сохранения всех видео из песенника**. Эта опция предварительно загружает все видео из песенника, что сокращает время загрузки медиа файлов для будущих встреч.
 
 - **Плюс:** Медиа встречи будут доступны намного быстрее.
 - **Минус:** Размер кэша мультимедиа значительно увеличится, примерно на 5 Гб.
@@ -159,4 +159,4 @@ You will also be given the option of **caching all videos from the songbook**. T
 
 ## 3. Наслаждайтесь использованием M³ {#enjoy-using-m3}
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Приятного использования приложения! :tada:
+После завершения работы мастера настройки M³ готово к работе по управлению и представлению мультимедийных материалов на встречах собрания. Приятного использования приложения! :tada:
