@@ -624,25 +624,18 @@ const setMediaPlaying = async (
   if (isImage(mediaPlayingUrl.value)) stopMedia(true);
   if (signLanguage) {
     if (marker) {
-      customDurations.value[currentCongregation.value] ??= {};
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      customDurations.value[currentCongregation.value]![selectedDate.value] ??=
-        {};
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      customDurations.value[currentCongregation.value]![selectedDate.value]![
-        media.uniqueId
-      ] ??= {
+      const currentCong = currentCongregation.value;
+      const currentDate = selectedDate.value;
+
+      customDurations.value[currentCong] ??= {};
+      customDurations.value[currentCong][currentDate] ??= {};
+      customDurations.value[currentCong][currentDate][media.uniqueId] ??= {
         max: media.duration,
         min: 0,
       };
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      customDurations.value[currentCongregation.value]![selectedDate.value]![
-        media.uniqueId
-      ].min = marker.StartTimeTicks / 10000 / 1000;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      customDurations.value[currentCongregation.value]![selectedDate.value]![
-        media.uniqueId
-      ].max =
+      customDurations.value[currentCong][currentDate][media.uniqueId].min =
+        marker.StartTimeTicks / 10000 / 1000;
+      customDurations.value[currentCong][currentDate][media.uniqueId].max =
         (marker.StartTimeTicks +
           marker.DurationTicks -
           marker.EndTransitionDurationTicks) /
@@ -697,15 +690,13 @@ if ((props.media.isVideo || props.media.isAudio) && !props.media.thumbnailUrl)
 
 const showMediaDurationPopup = (media: DynamicMediaObject) => {
   try {
-    if (!currentCongregation.value) return;
-    customDurations.value[currentCongregation.value] ??= {};
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    customDurations.value[currentCongregation.value]![selectedDate.value] ??=
-      {};
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    customDurations.value[currentCongregation.value]![selectedDate.value]![
-      media.uniqueId
-    ] ??= {
+    const currentCong = currentCongregation.value;
+    if (!currentCong) return;
+    const currentDate = selectedDate.value;
+
+    customDurations.value[currentCong] ??= {};
+    customDurations.value[currentCong][currentDate] ??= {};
+    customDurations.value[currentCong][currentDate][media.uniqueId] ??= {
       max: media.duration,
       min: 0,
     };

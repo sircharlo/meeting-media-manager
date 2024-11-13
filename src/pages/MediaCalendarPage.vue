@@ -694,26 +694,21 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
         item.section = section;
       }
     });
-    (
-      additionalMediaMaps.value[currentCongregation.value]?.[
-        selectedDate.value
-      ] ?? []
-    ).forEach((item) => {
-      if (item.uniqueId === id && item.section !== section) {
-        item.section = section;
-      }
-    });
-    (watchFolderMedia.value?.[selectedDate.value] ?? []).forEach((item) => {
+
+    const currentCong = currentCongregation.value;
+    const currentDate = selectedDate.value;
+    (additionalMediaMaps.value[currentCong]?.[currentDate] ?? []).forEach(
+      (item) => {
+        if (item.uniqueId === id && item.section !== section) {
+          item.section = section;
+        }
+      },
+    );
+    (watchFolderMedia.value?.[currentDate] ?? []).forEach((item) => {
       if (item.uniqueId === id) {
-        watchedMediaSections.value[currentCongregation.value] ??= {};
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        watchedMediaSections.value[currentCongregation.value]![
-          selectedDate.value
-        ] ??= {};
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        watchedMediaSections.value[currentCongregation.value]![
-          selectedDate.value
-        ]![id] = section;
+        watchedMediaSections.value[currentCong] ??= {};
+        watchedMediaSections.value[currentCong][currentDate] ??= {};
+        watchedMediaSections.value[currentCong][currentDate][id] = section;
         if (item.section !== section) item.section = section;
       }
     });
@@ -740,9 +735,9 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
   }
 
   function dragend() {
-    mediaSort.value[currentCongregation.value] ??= {};
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    mediaSort.value[currentCongregation.value]![selectedDate.value] = [
+    const currentCong = currentCongregation.value;
+    mediaSort.value[currentCong] ??= {};
+    mediaSort.value[currentCong][selectedDate.value] = [
       ...sortableAdditionalMediaItems.value,
       ...sortableTgwMediaItems.value,
       ...sortableAyfmMediaItems.value,
