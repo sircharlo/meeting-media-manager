@@ -1446,7 +1446,6 @@ const addToFiles = async (
     }
     currentFile.value = i + 1;
   }
-  resetDragging();
 };
 
 const addSong = (section?: MediaSection) => {
