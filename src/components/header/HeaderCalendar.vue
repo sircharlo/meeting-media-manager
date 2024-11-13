@@ -256,7 +256,7 @@ const remoteVideos = ref<MediaItemsMediatorItem[]>([]);
 
 const openDragAndDropper = () => {
   window.dispatchEvent(
-    new CustomEvent('openDragAndDropper', {
+    new CustomEvent<{ section?: MediaSection }>('openDragAndDropper', {
       detail: { section: section.value },
     }),
   );
@@ -471,10 +471,14 @@ const openSongPicker = (newSection?: MediaSection) => {
   chooseSong.value = true;
 };
 
-useEventListener<CustomEvent>(window, 'openSongPicker', (e) =>
-  openSongPicker(e.detail?.section),
+useEventListener<CustomEvent<{ section?: MediaSection }>>(
+  window,
+  'openSongPicker',
+  (e) => openSongPicker(e.detail?.section),
 );
-useEventListener<CustomEvent>(window, 'openImportMenu', (e) =>
-  openImportMenu(e.detail?.section),
+useEventListener<CustomEvent<{ section?: MediaSection }>>(
+  window,
+  'openImportMenu',
+  (e) => openImportMenu(e.detail?.section),
 );
 </script>

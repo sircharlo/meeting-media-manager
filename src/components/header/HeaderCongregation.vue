@@ -9,6 +9,6 @@
 </template>
 <script setup lang="ts">
 const createNewCongregation = () => {
-  window.dispatchEvent(new CustomEvent('createNewCongregation'));
+  window.dispatchEvent(new CustomEvent<undefined>('createNewCongregation'));
 };
 </script>

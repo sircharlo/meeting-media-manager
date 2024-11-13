@@ -949,25 +949,44 @@ const checkCoDate = () => {
 
 const sectionToAddTo = ref<MediaSection | undefined>();
 
-useEventListener<CustomEvent>(window, 'openDragAndDropper', (e) => {
-  resetDragging();
-  sectionToAddTo.value = e.detail.section;
-  dragging.value = true;
-});
-useEventListener<CustomEvent>(window, 'localFiles-browsed', (event) => {
+useEventListener<CustomEvent<{ section?: MediaSection }>>(
+  window,
+  'openDragAndDropper',
+  (e) => {
+    resetDragging();
+    sectionToAddTo.value = e.detail.section;
+    dragging.value = true;
+  },
+);
+useEventListener<
+  CustomEvent<{
+    files: { path: string }[];
+    section?: MediaSection;
+  }>
+>(window, 'localFiles-browsed', (event) => {
   sectionToAddTo.value = event.detail?.section;
   addToFiles(event.detail?.files ?? []).catch((error) => {
     errorCatcher(error);
   });
 });
-useEventListener<CustomEvent>(window, 'remote-video-loading', (event) => {
+useEventListener<
+  CustomEvent<{
+    duration: number;
+    path: string;
+    section?: MediaSection;
+    song: boolean | number | string;
+    thumbnailUrl: string;
+    title?: string;
+    url: string;
+  }>
+>(window, 'remote-video-loading', (event) => {
   addToAdditionMediaMapFromPath(
     event.detail.path,
     event.detail.section,
     undefined,
     {
       duration: event.detail.duration,
-      song: event.detail.song,
+      song: event.detail.song?.toString(),
       thumbnailUrl: event.detail.thumbnailUrl,
       title: event.detail.title,
       url: event.detail.url,
@@ -1438,14 +1457,17 @@ const addToFiles = async (
 const addSong = (section?: MediaSection) => {
   console.log('addSong');
   window.dispatchEvent(
-    new CustomEvent('openSongPicker', { detail: { section } }),
+    new CustomEvent<{ section?: MediaSection }>('openSongPicker', {
+      detail: { section },
+    }),
   );
 };
 
 const openImportMenu = (section?: MediaSection) => {
-  console.log('openImportMenu');
   window.dispatchEvent(
-    new CustomEvent('openImportMenu', { detail: { section } }),
+    new CustomEvent<{ section?: MediaSection }>('openImportMenu', {
+      detail: { section },
+    }),
   );
 };
 

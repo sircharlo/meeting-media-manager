@@ -1476,7 +1476,15 @@ const downloadAdditionalRemoteVideo = async (
           ? bestItem.progressiveDownloadURL
           : bestItem.file.url;
       window.dispatchEvent(
-        new CustomEvent('remote-video-loading', {
+        new CustomEvent<{
+          duration: number;
+          path: string;
+          section?: MediaSection;
+          song: boolean | number | string;
+          thumbnailUrl: string;
+          title?: string;
+          url: string;
+        }>('remote-video-loading', {
           detail: {
             duration: bestItem.duration,
             path: path.join(

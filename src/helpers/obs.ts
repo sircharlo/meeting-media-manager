@@ -1,3 +1,5 @@
+import type { ObsSceneType } from 'src/types';
+
 import { OBSWebSocketError } from 'obs-websocket-js';
 import { obsWebSocket } from 'src/boot/globals';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -6,13 +8,11 @@ import { useObsStateStore } from 'src/stores/obs-state';
 
 import { portNumberValidator } from './settings';
 
-const sendObsSceneEvent = (scene: string) => {
+const sendObsSceneEvent = (scene: ObsSceneType) => {
   if (!scene) return;
   window.dispatchEvent(
-    new CustomEvent('obsSceneEvent', {
-      detail: {
-        scene,
-      },
+    new CustomEvent<{ scene: ObsSceneType }>('obsSceneEvent', {
+      detail: { scene },
     }),
   );
 };

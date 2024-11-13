@@ -120,6 +120,8 @@
 </template>
 
 <script setup lang="ts">
+import type { ObsSceneType } from 'src/types';
+
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { obsWebSocket } from 'src/boot/globals';
@@ -165,10 +167,7 @@ const notifySceneNotFound = () =>
     type: 'negative',
   });
 
-const setObsScene = async (
-  sceneType: 'camera' | 'media' | undefined,
-  desiredScene?: string,
-) => {
+const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
   try {
     if (!obsConnectionState.value?.startsWith('connect')) await obsConnect();
     if (obsConnectionState.value !== 'connected') return;
@@ -178,11 +177,13 @@ const setObsScene = async (
       const imageScene = currentSettings.value?.obsImageScene;
       const cameraScene = currentSettings.value?.obsCameraScene;
       newProgramScene = mediaScene ?? undefined;
-      if (isImage(mediaPlayingUrl.value) && imageScene)
+      if (isImage(mediaPlayingUrl.value) && imageScene) {
         newProgramScene = imageScene;
+      }
       currentSceneType.value = sceneType;
-      if (sceneType === 'camera')
+      if (sceneType === 'camera') {
         newProgramScene = (previousScene.value || cameraScene) ?? undefined;
+      }
     }
     if (newProgramScene) {
       const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
@@ -206,7 +207,7 @@ const setObsScene = async (
   }
 };
 
-const setObsSceneListener = (event: CustomEventInit) => {
+const setObsSceneListener = (event: CustomEvent<{ scene: ObsSceneType }>) => {
   try {
     setObsScene(event.detail.scene);
   } catch (error) {

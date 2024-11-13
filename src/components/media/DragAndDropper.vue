@@ -181,13 +181,12 @@ const getLocalFiles = async () => {
     .then((result) => {
       if (result && result.filePaths.length > 0) {
         window.dispatchEvent(
-          new CustomEvent('localFiles-browsed', {
+          new CustomEvent<{
+            files: { path: string }[];
+            section?: MediaSection;
+          }>('localFiles-browsed', {
             detail: {
-              files: result.filePaths.map((path) => {
-                return {
-                  path,
-                };
-              }),
+              files: result.filePaths.map((path) => ({ path })),
               section: props.section,
             },
           }),

@@ -8,22 +8,24 @@ const { registerShortcut, unregisterShortcut } = window.electronApi;
 
 const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   shortcutMediaNext: () => {
-    window.dispatchEvent(new CustomEvent('shortcutMediaNext'));
+    window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
   },
   shortcutMediaPauseResume: () => {
-    window.dispatchEvent(new CustomEvent('shortcutMediaPauseResume'));
+    window.dispatchEvent(
+      new CustomEvent<undefined>('shortcutMediaPauseResume'),
+    );
   },
   shortcutMediaPrevious: () => {
-    window.dispatchEvent(new CustomEvent('shortcutMediaPrevious'));
+    window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaPrevious'));
   },
   shortcutMediaStop: () => {
-    window.dispatchEvent(new CustomEvent('shortcutMediaStop'));
+    window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaStop'));
   },
   shortcutMediaWindow: () => {
     showMediaWindow();
   },
   shortcutMusic: () => {
-    window.dispatchEvent(new CustomEvent('toggleMusic'));
+    window.dispatchEvent(new CustomEvent<undefined>('toggleMusic'));
   },
 };
 

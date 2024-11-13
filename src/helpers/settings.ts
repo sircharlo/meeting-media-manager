@@ -85,7 +85,9 @@ const performActions = (actions: SettingsItemAction[] | undefined) => {
   actions?.forEach((action) => {
     try {
       if (action === 'obsConnect') {
-        window.dispatchEvent(new CustomEvent('obsConnectFromSettings'));
+        window.dispatchEvent(
+          new CustomEvent<undefined>('obsConnectFromSettings'),
+        );
       }
     } catch (error) {
       errorCatcher(error);

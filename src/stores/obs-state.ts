@@ -1,4 +1,5 @@
 import type { JsonObject } from 'obs-websocket-js/node_modules/type-fest';
+import type { ObsConnectionState, ObsSceneType } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { configuredScenesAreAllUUIDs, isUUID } from 'src/helpers/obs';
@@ -6,12 +7,8 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 interface Store {
   currentScene: string;
-  currentSceneType: 'camera' | 'media';
-  obsConnectionState:
-    | 'connected'
-    | 'connecting'
-    | 'disconnected'
-    | 'notConnected';
+  currentSceneType: ObsSceneType;
+  obsConnectionState: ObsConnectionState;
   obsMessage: string;
   previousScene: string;
   scenes: JsonObject[];
