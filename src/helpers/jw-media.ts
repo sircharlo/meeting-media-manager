@@ -1198,7 +1198,8 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
 
     const mediaExistenceChecks = allMedia.map(async (m) => {
       if (m.KeySymbol || m.MepsDocumentId) {
-        const exists = !!m.FilePath && (await fs.pathExists(m.FilePath));
+        const exists =
+          !!m.StreamUrl || (!!m.FilePath && (await fs.pathExists(m.FilePath)));
         return { exists, media: m };
       }
       return null;
@@ -1545,10 +1546,14 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
   try {
     let url = `${urlVariables.mediator}/v1/media-items/`;
     url += publication.langwritten + '/';
-    url += 'pub-' + publication.pub;
-    let issue = publication.issue?.toString();
-    if (issue && issue.endsWith('00')) issue = issue.slice(0, -2);
-    if (issue && issue !== '0') url += '_' + issue;
+    if (publication.docid) {
+      url += 'docid-' + publication.docid;
+    } else {
+      url += 'pub-' + publication.pub;
+      let issue = publication.issue?.toString();
+      if (issue && issue.endsWith('00')) issue = issue.slice(0, -2);
+      if (issue && issue !== '0') url += '_' + issue;
+    }
     if (publication.track) url += '_' + publication.track;
     if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
     else if (publication.fileformat?.toLowerCase().includes('mp3'))
