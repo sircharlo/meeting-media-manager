@@ -18,17 +18,17 @@ Denna guide kommer att gå igenom processen för nedladdning och installation av
 4. Starta M³.
 5. Gå igenom konfigurationsguiden.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### macOS endast: Ytterligare installationssteg {#additional-steps-for-macos-users}
 
 :::warning Varning
 
-This section only applies to macOS users.
+Detta avsnitt gäller endast macOS-användare.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+På grund av Apples säkerhetsåtgärder krävs ytterligare några steg för att använda M³ på moderna macOS-system.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+Kör först följande två kommandon i Terminal, ändra sökvägen till M³ efter behov:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -37,21 +37,21 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning Varning
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+Som macOS-användare måste du följa dessa steg varje gång du installerar eller uppdaterar M³.
 
 :::
 
 :::info Förklaring
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+Det första kommandot _signerar programmets kod_. Detta krävs för att förhindra att M³ tas som ett illasinnat program från en okänd utvecklare.
 
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+Det andra kommandot _tar bort karantänflaggan_ från programmet. Karantänsflaggan används för att varna användare om program som har laddats ned från internet.
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+#### Alternativ metod {#alternative-method-for-macos-users}
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+Om du fortfarande inte kan starta M³ efter att du har angett de två kommandona kan du prova följande:
 
 1. Öppna macOS systemet **Sekretess och säkerhet** inställningar.
 2. Hitta posten för M³ och klicka på knappen till **Öppna ändå**.
@@ -61,30 +61,30 @@ If you are still unable to launch M³ after entering the two commands from the p
 
 Om du fortfarande har problem efter att ha följt alla dessa steg, vänligen [öppna en Issue på GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Vi kommer att göra vårt bästa för att hjälpa till.
 
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+### macOS endast: Återaktivera webbpresentation efter uppdateringar {#screen-sharing-issues}
 
 :::warning Varning
 
-This section only applies to macOS users.
+Detta avsnitt gäller endast macOS-användare.
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+Vissa macOS användare har rapporterat att webbplatsens presentation inte längre fungerar efter att ha installerat uppdateringar till M³.
 
-If the media window is black when presenting the website after updating M³, try the following steps:
+Om mediafönstret är svart när du presenterar webbplatsen efter att ha uppdaterat M³, prova följande steg:
 
 1. Öppna macOS systemet **Sekretess och säkerhet** inställningar.
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+2. Gå till **Skärminspelning**.
+3. Välj M³ i listan.
+4. Klicka på `-` (minus) knappen för att ta bort den.
+5. Klicka på `+` (plus) knappen och välj M³ från mappen Program.
+6. Du kan bli ombedd att starta om M³ för att tillämpa ändringen.
 
-After these steps, screen sharing should function as expected once again.
+Efter dessa steg bör skärmdelning fungera som vanligt igen.
 
 :::tip Tips
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+Dessa steg är valfria och kan hoppas över om du inte planerar att använda webbplatsens presentationsfunktion. Å andra sidan, om du planerar att använda webbplatsen presentationsfunktionen, det rekommenderas att följa dessa steg efter varje uppdatering för att säkerställa att funktionen fungerar som förväntat.
 
 :::
 
