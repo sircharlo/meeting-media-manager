@@ -2,11 +2,13 @@ import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/type
 
 import { captureException } from '@sentry/browser';
 import { productName, version } from 'app/package.json';
-import { app } from 'electron';
+import { app, systemPreferences } from 'electron';
 import { join } from 'path';
 
-import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
+import { IS_DEV, JW_DOMAINS, PLATFORM, TRUSTED_DOMAINS } from './constants';
 import { urlVariables } from './main/session';
+import { logToWindow } from './main/window/window-base';
+import { mainWindow } from './main/window/window-main';
 
 export function getAppVersion() {
   return IS_DEV ? version : app.getVersion();
@@ -14,6 +16,24 @@ export function getAppVersion() {
 
 export function getUserDataPath() {
   return join(app.getPath('appData'), productName);
+}
+
+export async function askForMediaAccess() {
+  if (PLATFORM !== 'darwin') return;
+  const types = ['camera', 'microphone'] as const;
+
+  for (const type of types) {
+    try {
+      const access = systemPreferences.getMediaAccessStatus(type);
+      if (access !== 'granted') {
+        logToWindow(mainWindow, `No ${type} access`, access, 'error');
+        const result = await systemPreferences.askForMediaAccess(type);
+        logToWindow(mainWindow, `${type} result:`, result, 'debug');
+      }
+    } catch (e) {
+      errorCatcher(e);
+    }
+  }
 }
 
 /**

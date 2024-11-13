@@ -1,10 +1,10 @@
+import type { BrowserWindow, Video } from 'electron';
 import type { NavigateWebsiteAction } from 'src/types';
 
 import { PLATFORM } from 'app/src-electron/constants';
-import { errorCatcher } from 'app/src-electron/utils';
-import { type BrowserWindow, systemPreferences, type Video } from 'electron';
+import { askForMediaAccess } from 'app/src-electron/utils';
 
-import { createWindow, logToWindow, sendToWindow } from './window-base';
+import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 
 export let websiteWindow: BrowserWindow | null = null;
@@ -19,31 +19,7 @@ export async function createWebsiteWindow(lang?: string) {
     return;
   }
 
-  if (PLATFORM === 'darwin') {
-    try {
-      const cameraAccess = systemPreferences.getMediaAccessStatus('camera');
-      if (cameraAccess !== 'granted') {
-        logToWindow(mainWindow, 'No camera access', cameraAccess, 'error');
-        if (PLATFORM === 'darwin') {
-          const cameraResult =
-            await systemPreferences.askForMediaAccess('camera');
-          logToWindow(mainWindow, 'Camera result:', cameraResult, 'debug');
-        }
-      }
-
-      const micAccess = systemPreferences.getMediaAccessStatus('microphone');
-      if (micAccess !== 'granted') {
-        logToWindow(mainWindow, 'No microphone access', micAccess, 'error');
-        if (PLATFORM === 'darwin') {
-          const micResult =
-            await systemPreferences.askForMediaAccess('microphone');
-          logToWindow(mainWindow, 'Mic result:', micResult, 'debug');
-        }
-      }
-    } catch (e) {
-      errorCatcher(e);
-    }
-  }
+  askForMediaAccess();
 
   // Create the browser window
   websiteWindow = createWindow(

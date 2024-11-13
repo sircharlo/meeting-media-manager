@@ -14,12 +14,10 @@ import {
   type IpcMainEvent,
   type IpcMainInvokeEvent,
   shell,
-  systemPreferences,
 } from 'electron';
 
-import { PLATFORM } from '../constants';
 import {
-  errorCatcher,
+  askForMediaAccess,
   getAppVersion,
   getUserDataPath,
   isSelf,
@@ -79,23 +77,7 @@ handleIpcSend('toggleMediaWindow', (_e, show: boolean) => {
   }
 });
 
-handleIpcSend('askForMediaAccess', async () => {
-  if (PLATFORM !== 'darwin') return;
-  const types = ['camera', 'microphone'] as const;
-
-  for (const type of types) {
-    try {
-      const access = systemPreferences.getMediaAccessStatus(type);
-      if (access !== 'granted') {
-        logToWindow(mainWindow, `No ${type} access`, access, 'error');
-        const result = await systemPreferences.askForMediaAccess(type);
-        logToWindow(mainWindow, `${type} result:`, result, 'debug');
-      }
-    } catch (e) {
-      errorCatcher(e);
-    }
-  }
-});
+handleIpcSend('askForMediaAccess', askForMediaAccess);
 
 handleIpcSend('setUrlVariables', (_e, variables: string) => {
   setUrlVariables(JSON.parse(variables));
