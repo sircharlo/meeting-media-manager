@@ -45,13 +45,13 @@ Como usuário do macOS, você precisará seguir esses passos sempre que instalar
 
 O primeiro comando _assina o código do aplicativo_. Isso é necessário para evitar que o M³ seja detectado como um aplicativo malicioso de um desenvolvedor desconhecido.
 
-O segundo comando _remove a bandeira de quarentena_ do aplicativo. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+O segundo comando _remove a bandeira de quarentena_ do aplicativo. A bandeira de quarentena é usada para avisar os usuários sobre aplicativos potencialmente maliciosos que foram baixados da internet.
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+#### Método alternativo {#alternative-method-for-macos-users}
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+Se você ainda não conseguir abrir o M³ após inserir os dois comandos da seção anterior, tente o seguinte:
 
 1. Abra as configurações de **Privacidade e Segurança** do macOS.
 2. Encontre a entrada para o M³ e clique no botão para **Abrir assim mesmo**.
@@ -61,7 +61,7 @@ If you are still unable to launch M³ after entering the two commands from the p
 
 Se você ainda tiver problemas após seguir todos esses passos, por favor, [abra uma issue no GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Faremos o nosso melhor para ajudar.
 
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+### Somente macOS: Reativando a apresentação de site após atualizações {#screen-sharing-issues}
 
 :::warning Aviso
 
@@ -69,7 +69,7 @@ Esta seção se aplica apenas a usuários de macOS.
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+Alguns usuários do macOS relataram que a apresentação do site não funciona mais após instalar atualizações do M³.
 
 If the media window is black when presenting the website after updating M³, try the following steps:
 
