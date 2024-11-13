@@ -18,24 +18,40 @@ Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager
 4. Zaženi M³.
 5. Sledi navodilom čarovnika za nastavitev.
 
-### Dodatni koraki za uporabnike macOS {#additional-steps-for-macos-users}
+### macOS only: Additional installation steps {#additional-steps-for-macos-users}
 
-Zaradi Applovih varnostnih ukrepov je za zagon M³ na sodobnih sistemih macOS potrebnih nekaj dodatnih korakov.
+:::warning Opozorilo
 
-Najprej v terminalu zaženi naslednja dva ukaza (po potrebi spremeni pot do M³):
+This section only applies to macOS users.
+
+:::
+
+Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+
+Run the following two commands in Terminal, modifying the path to M³ as needed:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Pojasnilo
+:::warning Opozorilo
 
-Ta ukaza naredita dve stvari, ki preprečujeta, da bi bil program M³ v tvojem sistemu zaznan kot zlonamerna aplikacija: prvi lokalno podpiše kodo aplikacije, drugi pa odstrani zastavico karantene iz aplikacije. Zastava karantene se uporablja za to, da uporabnike opozari na aplikacije, ki so bile prenesene z interneta.
+As a macOS user, you will need to follow these steps every time you install or update M³.
 
 :::
 
-Če po vnosu teh dveh ukazov še vedno ne moreš zagnati programa M³, poskusi z naslednjim:
+:::info Pojasnilo
+
+The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+
+The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+
+:::
+
+#### Alternative method {#alternative-method-for-macos-users}
+
+If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
 
 1. Odpri sistemske nastavitve macOS **Privacy & Security**.
 2. Poišči vnos za M³ in klikni na gumb **Open Anyway**.
@@ -44,6 +60,33 @@ Ta ukaza naredita dve stvari, ki preprečujeta, da bi bil program M³ v tvojem s
 5. M³ bi se moral zdaj uspešno zagnati.
 
 Če imaš po vseh teh korakih še vedno težave, prosimo [prijavi težavo na GitHubu](https://github.com/sircharlo/meeting-media-manager/issues/new). Pomagali ti bomo po svojih najboljših močeh.
+
+### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+
+:::warning Opozorilo
+
+This section only applies to macOS users.
+
+:::
+
+Some macOS users have reported that website presentation no longer works after installing updates to M³.
+
+If the media window is black when presenting the website after updating M³, try the following steps:
+
+1. Odpri sistemske nastavitve macOS **Privacy & Security**.
+2. Go to **Screen Recording**.
+3. Select M³ in the list.
+4. Click the `-` (minus) button to remove it.
+5. Click the `+` (plus) button and select M³ from the Applications folder.
+6. You may be prompted to relaunch M³ to apply the change.
+
+After these steps, screen sharing should function as expected once again.
+
+:::tip Namig
+
+These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+
+:::
 
 ## 2. Čarovnik za nastavitev {#configuration-wizard}
 
