@@ -745,6 +745,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
       ...sortableWtMediaItems.value,
       ...sortableCircuitOverseerMediaItems.value,
     ].map((item: DynamicMediaObject) => item.uniqueId);
+    generateMediaList();
   }
 
   return {
