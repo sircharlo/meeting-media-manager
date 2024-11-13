@@ -89,14 +89,14 @@ async function processQueue() {
   // Start the download
   const downloadId = await manager.download({
     callbacks: {
-      onDownloadCancelled: ({ id }) => {
+      onDownloadCancelled: async ({ id }) => {
         errorCatcher(url, {
           contexts: {
             fn: {
               name: 'src-electron/downloads processQueue onDownloadCancelled',
               params: {
                 directory: saveDir,
-                isDownloadErrorExpected: isDownloadErrorExpected(),
+                isDownloadErrorExpected: await isDownloadErrorExpected(),
                 saveAsFilename: destFilename,
                 window: mainWindow?.id,
               },
@@ -131,14 +131,14 @@ async function processQueue() {
           totalBytes: item.getTotalBytes(),
         });
       },
-      onError: (err, downloadData) => {
+      onError: async (err, downloadData) => {
         errorCatcher(err, {
           contexts: {
             fn: {
               name: 'src-electron/downloads processQueue onError',
               params: {
                 directory: saveDir,
-                isDownloadErrorExpected: isDownloadErrorExpected(),
+                isDownloadErrorExpected: await isDownloadErrorExpected(),
                 saveAsFilename: destFilename,
                 window: mainWindow?.id,
               },

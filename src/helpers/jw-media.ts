@@ -1436,7 +1436,6 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
         await downloadFileIfNeeded({
           dir: pubDir,
           filename: itemFilename,
-          lowPriority: true,
           url: itemUrl,
         });
       }
