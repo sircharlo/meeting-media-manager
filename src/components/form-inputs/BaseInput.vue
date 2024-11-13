@@ -3,6 +3,7 @@
     v-if="item.type === 'toggle'"
     v-model="model"
     :actions="item.actions"
+    :setting-id="settingId"
   />
   <TextInput
     v-else-if="item.type === 'text'"
