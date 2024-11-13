@@ -160,12 +160,10 @@ function chooseCongregation(
   initialLoad?: boolean,
 ) {
   try {
-    console.log('chooseCongregation', congregation);
     const invalidSettings = setCongregation(congregation);
     if (congregation) {
       updateYeartext();
       downloadSongbookVideos();
-      console.log('initialLoad', initialLoad);
       if (initialLoad) {
         // if (initialLoad || invalidSettings)
         router.push('/setup-wizard');
@@ -194,7 +192,6 @@ function createNewCongregation() {
 useEventListener(window, 'createNewCongregation', createNewCongregation);
 
 const autoSelectCongregation = () => {
-  console.log('congregationCount', congregationCount.value);
   if (congregationCount.value === 0) {
     createNewCongregation();
   } else if (congregationCount.value === 1 && isHomePage.value) {
