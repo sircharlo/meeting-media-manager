@@ -18,24 +18,40 @@ Ce guide vous guidera dans le processus de téléchargement, d'installation et d
 4. Lancez M³.
 5. Parcourez l'assistant de configuration.
 
-### Étapes supplémentaires pour les utilisateurs de macOS {#additional-steps-for-macos-users}
+### macOS only: Additional installation steps {#additional-steps-for-macos-users}
 
-En raison des mesures de sécurité mises en place par Apple, quelques étapes supplémentaires sont nécessaires pour exécuter M³ sur des systèmes macOS modernes.
+:::warning Avertissement
 
-Tout d'abord, exécutez les deux commandes suivantes dans Terminal (modifiez le chemin vers M³ si nécessaire):
+This section only applies to macOS users.
+
+:::
+
+Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+
+Run the following two commands in Terminal, modifying the path to M³ as needed:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Explication
+:::warning Avertissement
 
-Ces commandes font deux choses qui empêcheront la détection de M³ comme une application malveillante sur votre système : la première signe le code de l'application, et le deuxième supprime l'indicateur de quarantaine de l'application. L'indicateur de quarantaine est utilisé pour avertir un utilisateur qu'une application a été téléchargée à partir d'Internet.
+As a macOS user, you will need to follow these steps every time you install or update M³.
 
 :::
 
-Si vous ne parvenez toujours pas à lancer M³ après avoir entré les deux commandes, essayez ce qui suit :
+:::info Explication
+
+The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+
+The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+
+:::
+
+#### Alternative method {#alternative-method-for-macos-users}
+
+If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
 
 1. Ouvrez les paramètres système de macOS à la section **Confidentialité et sécurité**.
 2. Trouvez M³ et cliquez sur le bouton pour **Ouvrir quand même**.
@@ -44,6 +60,33 @@ Si vous ne parvenez toujours pas à lancer M³ après avoir entré les deux comm
 5. M³ devrait maintenant se lancer avec succès.
 
 Si vous avez toujours des problèmes après avoir suivi toutes ces étapes, veuillez [ouvrir un ticket sur GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Nous ferons de notre mieux pour vous aider.
+
+### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+
+:::warning Avertissement
+
+This section only applies to macOS users.
+
+:::
+
+Some macOS users have reported that website presentation no longer works after installing updates to M³.
+
+If the media window is black when presenting the website after updating M³, try the following steps:
+
+1. Ouvrez les paramètres système de macOS à la section **Confidentialité et sécurité**.
+2. Go to **Screen Recording**.
+3. Select M³ in the list.
+4. Click the `-` (minus) button to remove it.
+5. Click the `+` (plus) button and select M³ from the Applications folder.
+6. You may be prompted to relaunch M³ to apply the change.
+
+After these steps, screen sharing should function as expected once again.
+
+:::tip Astuce
+
+These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+
+:::
 
 ## 2. Assistant de configuration {#configuration-wizard}
 
