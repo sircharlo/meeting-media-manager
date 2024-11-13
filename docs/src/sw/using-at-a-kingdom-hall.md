@@ -18,24 +18,40 @@ Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Man
 4. Fungua M³.
 5. Pitia programu ya usanidi.
 
-### Hatua za ziada kwa watumiaji wa macOS {#additional-steps-for-macos-users}
+### macOS only: Additional installation steps {#additional-steps-for-macos-users}
 
-Kutokana na hatua za usalama za mfumo wa Apple, hatua za ziada zitahitajika ili kutumia M³ kwenye mifumo za hivi karibuni za macOS.
+:::warning Onyo
 
-Kwanza, wasilisha amri hizi mbili kwenye Terminal (rekebisha njia ya M³ inavyohitajika):
+This section only applies to macOS users.
+
+:::
+
+Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+
+Run the following two commands in Terminal, modifying the path to M³ as needed:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip Maelezo
+:::warning Onyo
 
-Amri hizi hufanya vitu viwili ambazo huzuia M³ kutoonekana kama mfumo hatari kwenye kompyuta yako: ya kwanza husaini code ya programu ndani ya mfumo wako, na ya pili hutoa bendera ya quarantine kutoka kwenye mfumo. Bendera hiyo ya quarantine hujulisha watu kuhusu mifumo au programu zinazopakuliwa kutoka kwa intaneti.
+As a macOS user, you will need to follow these steps every time you install or update M³.
 
 :::
 
-Ikiwa bado huwezi kuwasha M³ baada ya kuweka amri hizo mbili, tafadhali jaribu:
+:::info Maelezo
+
+The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+
+The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+
+:::
+
+#### Alternative method {#alternative-method-for-macos-users}
+
+If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
 
 1. Kufungua mipangilio ya **Privacy & Security** kwenye mfumo wako wa macOS.
 2. Tafuta ingizo(entry) la M³ na ubofye kitufe **Open Anyway**.
@@ -44,6 +60,33 @@ Ikiwa bado huwezi kuwasha M³ baada ya kuweka amri hizo mbili, tafadhali jaribu:
 5. M³ sasa inapaswa kuzindua kwa mafanikio.
 
 Ikiwa bado ukona tatizo hata baada ya kufuata hatua hizo, tafadhali [fungua tatizo(issue) kwenye Github](https://github.com/sircharlo/meeting-media-manager/issues/new). Tutafanya yote tuwezayo kukusaidia.
+
+### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+
+:::warning Onyo
+
+This section only applies to macOS users.
+
+:::
+
+Some macOS users have reported that website presentation no longer works after installing updates to M³.
+
+If the media window is black when presenting the website after updating M³, try the following steps:
+
+1. Kufungua mipangilio ya **Privacy & Security** kwenye mfumo wako wa macOS.
+2. Go to **Screen Recording**.
+3. Select M³ in the list.
+4. Click the `-` (minus) button to remove it.
+5. Click the `+` (plus) button and select M³ from the Applications folder.
+6. You may be prompted to relaunch M³ to apply the change.
+
+After these steps, screen sharing should function as expected once again.
+
+:::tip Kidokezo
+
+These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+
+:::
 
 ## 2. Programu ya Usanidi {#configuration-wizard}
 
