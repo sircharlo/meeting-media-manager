@@ -18,24 +18,40 @@
 4. 启动 M³。
 5. 通过配置向导。
 
-### macOS 用户的附加步骤 {#additional-steps-for-macos-users}
+### macOS only: Additional installation steps {#additional-steps-for-macos-users}
 
-由于苹果的安全措施，还需要采取一些其他步骤来在近期macOS系统上运行M3。
+:::warning 小贴士
 
-首先，在终端中运行以下两个命令(按照需要，修改M3的路径)：
+This section only applies to macOS users.
+
+:::
+
+Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+
+Run the following two commands in Terminal, modifying the path to M³ as needed:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::tip 说明
+:::warning 提示
 
-这些命令做了两件事，防止您的系统被检测到 M3 作为恶意应用程序：第一个命令在本地标记应用程序的代码。 第二种办法取消了申请中的检疫标志。 检疫标志用来警告用户已经从因特网下载过的应用程序。
+As a macOS user, you will need to follow these steps every time you install or update M³.
 
 :::
 
-如果您在进入两个命令后仍然无法启动 M3，请尝试以下操作：
+:::info 说明
+
+The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+
+The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+
+:::
+
+#### Alternative method {#alternative-method-for-macos-users}
+
+If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
 
 1. 打开 macOS 系统 **隐私与安全** 设置。
 2. 查找M3的条目，然后点击按钮**随时打开**。
@@ -44,6 +60,33 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 5. M3现在应该成功启动。
 
 如果您在关注所有这些步骤后仍然有问题，请[在GitHub上打开一个问题](https://github.com/sircharlo/meeting-media-manager/issues/new)。 我们会尽力提供帮助。
+
+### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+
+:::warning 提示
+
+This section only applies to macOS users.
+
+:::
+
+Some macOS users have reported that website presentation no longer works after installing updates to M³.
+
+If the media window is black when presenting the website after updating M³, try the following steps:
+
+1. 打开 macOS 系统 **隐私与安全** 设置。
+2. Go to **Screen Recording**.
+3. Select M³ in the list.
+4. Click the `-` (minus) button to remove it.
+5. Click the `+` (plus) button and select M³ from the Applications folder.
+6. You may be prompted to relaunch M³ to apply the change.
+
+After these steps, screen sharing should function as expected once again.
+
+:::tip 小贴士
+
+These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+
+:::
 
 ## 2. 配置向导 {#configuration-wizard}
 
@@ -61,11 +104,11 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 下一步是选择一个 **配置类型**。 在王国聚会所中定期设置，请选择**常规**。 这将配置许多常用于会众聚会的特征。
 
-:::warning 小贴士
+:::warning 提示
 
 只有当您创建的配置不需要自动下载任何媒体内容时，您才应该选择**其他**。 在此配置中，媒体内容需要手动导入才能使用。 这种类型的配置主要用于在学校、分区及区域大会和其他特殊活动中使用M³。
 
-**其他**配置类型很少使用。 **在会众聚会期间正常使用时，请选择*常规*。**
+**其他**配置类型很少使用。 **在会众聚会期间正常使用时，请选择_常规_。**
 
 :::
 
