@@ -7,14 +7,9 @@ export const initScreenListeners = () => {
     window.dispatchEvent(new CustomEvent<undefined>('screen-trigger-update'));
   });
 
-  listen(
-    'screenPrefsChange',
-    ({ preferredScreenNumber, preferWindowed }: ScreenPreferences) => {
-      window.dispatchEvent(
-        new CustomEvent<ScreenPreferences>('windowScreen-update', {
-          detail: { preferredScreenNumber, preferWindowed },
-        }),
-      );
-    },
-  );
+  listen('screenPrefsChange', (detail: ScreenPreferences) => {
+    window.dispatchEvent(
+      new CustomEvent<ScreenPreferences>('windowScreen-update', { detail }),
+    );
+  });
 };
