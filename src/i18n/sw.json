@@ -240,6 +240,8 @@
   "obsQuickToggle": "Washa kibadilishaji cha scene",
   "obsQuickToggle-explain": "Ikiwezeshwa, kuelea juu ya kitufe cha OBS Studio kutafungua kibadilishaji cha scene. Hii inaweza kuwa muhimu kwa kubadili kwa haraka scene katika Studio ya OBS, hasa ikiwa scene nyingi zimesanidiwa.",
   "obsStudio": "OBS Studio",
+  "obsSwitchSceneAfterMedia": "Delay scene changes when playing media",
+  "obsSwitchSceneAfterMedia-explain": "When enabled, OBS Studio will defer scene changes until after any currently playing media has finished. Note: enabling this option will also remove media and image scenes from the scene switcher.",
   "once-the-scene-has-been-created-select-it-here": "Iwapo scene imetengenezwa, ichague hapa.",
   "only-show-settings-that-are-not-valid": "Onyesha mipangilio ambayo haiko sawa",
   "oops-nothing-here": "Lo! Hakuna kitu hapa...",
