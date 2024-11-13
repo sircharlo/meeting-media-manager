@@ -144,7 +144,7 @@ export const mapThemeConfig = (
       text: version,
     },
   ],
-  outline: { label: msg.outline },
+  outline: { label: msg.outline, level: 'deep' },
   returnToTopLabel: msg.returnToTopLabel,
   sidebar: [
     { link: link(locale, 'about'), text: msg.about },
