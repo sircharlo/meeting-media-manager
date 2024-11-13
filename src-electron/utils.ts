@@ -101,7 +101,7 @@ export const fetchRaw = async (url: string, init?: RequestInit) => {
     errorCatcher(e, {
       contexts: {
         fn: {
-          isDownloadErrorExpected: isDownloadErrorExpected(),
+          isDownloadErrorExpected: await isDownloadErrorExpected(),
           name: 'src-electron/utils fetchRaw',
           params: init,
           url,

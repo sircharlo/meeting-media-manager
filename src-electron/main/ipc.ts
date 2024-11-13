@@ -206,6 +206,6 @@ handleIpcInvoke(
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
 
-handleIpcInvoke('downloadErrorIsExpected', async () =>
-  isDownloadErrorExpected(),
-);
+handleIpcInvoke('downloadErrorIsExpected', async () => {
+  return await isDownloadErrorExpected();
+});
