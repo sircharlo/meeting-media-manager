@@ -18,17 +18,17 @@ Este guia irá orientá-lo no processo de download, instalação e configuraçã
 4. Abra o M³.
 5. Siga as instruções do assistente de configuração.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### Somente para macOS: etapas adicionais de instalação {#additional-steps-for-macos-users}
 
 :::warning 2) Configuration wizard
 
-This section only applies to macOS users.
+Esta seção se aplica apenas a usuários de macOS.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Devido às medidas de segurança da Apple, alguns passos adicionais são necessários para executar o aplicativo M³ instalado em sistemas macOS modernos.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+Execute os seguintes dois comandos no Terminal, modificando o caminho para o M³ conforme necessário:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -37,15 +37,15 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning Aviso
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+Como usuário do macOS, você precisará seguir esses passos sempre que instalar ou atualizar o M³.
 
 :::
 
 :::info Explicação
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+O primeiro comando _assina o código do aplicativo_. Isso é necessário para evitar que o M³ seja detectado como um aplicativo malicioso de um desenvolvedor desconhecido.
 
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+O segundo comando _remove a bandeira de quarentena_ do aplicativo. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
 
 :::
 
@@ -65,7 +65,7 @@ Se você ainda tiver problemas após seguir todos esses passos, por favor, [abra
 
 :::warning Aviso
 
-This section only applies to macOS users.
+Esta seção se aplica apenas a usuários de macOS.
 
 :::
 
