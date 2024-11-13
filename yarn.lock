@@ -2739,7 +2739,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/decompress@npm:^4":
+"@types/decompress@npm:^4.2.7":
   version: 4.2.7
   resolution: "@types/decompress@npm:4.2.7"
   dependencies:
@@ -9971,7 +9971,7 @@ __metadata:
     "@sentry/vite-plugin": "npm:^2.22.6"
     "@sentry/vue": "npm:^8.38.0"
     "@types/better-sqlite3": "npm:^7.6.11"
-    "@types/decompress": "npm:^4"
+    "@types/decompress": "npm:^4.2.7"
     "@types/dompurify": "npm:^3.0.5"
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
@@ -11625,18 +11625,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.3.11, postcss@npm:^8.4.13, postcss@npm:^8.4.43, postcss@npm:^8.4.47":
-  version: 8.4.48
-  resolution: "postcss@npm:8.4.48"
-  dependencies:
-    nanoid: "npm:^3.3.7"
-    picocolors: "npm:^1.1.1"
-    source-map-js: "npm:^1.2.1"
-  checksum: 10c0/d586361fda12fc7ab5650ce9b5763fc61d6ea2cecac9da98fceea6a3f27e42ed34db830582411bc06743492d9bb414c52b0c81da65440682d244d692da2f928a
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.4.49":
+"postcss@npm:^8.3.11, postcss@npm:^8.4.13, postcss@npm:^8.4.43, postcss@npm:^8.4.47, postcss@npm:^8.4.49":
   version: 8.4.49
   resolution: "postcss@npm:8.4.49"
   dependencies:
