@@ -1197,8 +1197,8 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
     const errors = [];
 
     const mediaExistenceChecks = allMedia.map(async (m) => {
-      if ((m.KeySymbol || m.MepsDocumentId) && (!m.Label || !m.FilePath)) {
-        const exists = await fs.pathExists(m.FilePath);
+      if (m.KeySymbol || m.MepsDocumentId) {
+        const exists = !!m.FilePath && (await fs.pathExists(m.FilePath));
         return { exists, media: m };
       }
       return null;

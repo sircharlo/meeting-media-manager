@@ -1329,11 +1329,33 @@ const addToFiles = async (
         });
         await addToFiles(convertedImages);
       } else if (isJwpub(filepath)) {
-        // TODO: only decompress the db in memory using adm-zip, to get the publication info
-        const tempUnzipDir = await decompressJwpub(filepath);
-        const tempDb = await findDb(tempUnzipDir);
-        if (!tempDb) return;
-        const publication = getPublicationInfoFromDb(tempDb);
+        // First, only decompress the db in memory to get the publication info and derive the destination path
+        const tempJwpubContents = await decompress(filepath);
+        const tempContentFile = tempJwpubContents.find((tempJwpubContent) =>
+          tempJwpubContent.path.endsWith('contents'),
+        );
+        if (!tempContentFile) return;
+        const tempDir = await getTempDirectory();
+        if (!tempDir) return;
+        await fs.ensureDir(tempDir);
+        const tempFilePath = path.join(
+          tempDir,
+          path.basename(filepath) + '-contents',
+        );
+        await fs.writeFile(tempFilePath, tempContentFile.data);
+        const tempJwpubFileContents = await decompress(tempFilePath);
+        const tempDbFile = tempJwpubFileContents.find((tempJwpubFileContent) =>
+          tempJwpubFileContent.path.endsWith('.db'),
+        );
+        if (!tempDbFile) return;
+        const tempDbFilePath = path.join(
+          await getTempDirectory(),
+          path.basename(filepath) + '.db',
+        );
+        await fs.writeFile(tempDbFilePath, tempDbFile.data);
+        fs.remove(tempFilePath);
+        if (!(await fs.exists(tempDbFilePath))) return;
+        const publication = getPublicationInfoFromDb(tempDbFilePath);
         const publicationDirectory = await getPublicationDirectory(publication);
         if (!publicationDirectory) return;
         const unzipDir = await decompressJwpub(filepath, publicationDirectory);
@@ -1387,6 +1409,7 @@ const addToFiles = async (
                   type: 'negative',
                 }),
               );
+            resetDragging();
           }
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
