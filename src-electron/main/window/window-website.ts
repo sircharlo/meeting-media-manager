@@ -70,8 +70,12 @@ export async function createWebsiteWindow(lang?: string) {
     return { action: 'deny' };
   });
 
-  setAspectRatio();
-  websiteWindow.on('resize', setAspectRatio);
+  if (PLATFORM === 'darwin') {
+    websiteWindow.setAspectRatio(16 / 9);
+  } else {
+    setAspectRatio();
+    websiteWindow.on('resize', setAspectRatio);
+  }
 
   const video: Video = {
     id: websiteWindow.getMediaSourceId(),
