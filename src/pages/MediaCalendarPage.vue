@@ -1177,11 +1177,16 @@ const copyToDatedAdditionalMedia = async (
   const trimFilepathAsNeeded = (filepath: string) => {
     let filepathSize = new Blob([filepath]).size;
     while (filepathSize > 230) {
-      const overBy = filepathSize - 230;
+      const uniqueId =
+        '_' +
+        Math.floor(Math.random() * Date.now())
+          .toString(16)
+          .slice(0, 4);
+      const overBy = filepathSize - 230 + uniqueId.length;
       const baseName = path
         .basename(filepath)
         .slice(0, -path.extname(filepath).length);
-      const newBaseName = baseName.slice(0, -overBy);
+      const newBaseName = baseName.slice(0, -overBy) + uniqueId;
       filepath = path.join(
         datedAdditionalMediaDir,
         newBaseName + path.extname(filepath),
@@ -1326,19 +1331,13 @@ const addToFiles = async (
       } else if (isJwpub(filepath)) {
         // TODO: only decompress the db in memory using adm-zip, to get the publication info
         const tempUnzipDir = await decompressJwpub(filepath);
-        console.log(tempUnzipDir);
         const tempDb = await findDb(tempUnzipDir);
-        console.log(tempDb);
         if (!tempDb) return;
         const publication = getPublicationInfoFromDb(tempDb);
-        console.log(publication);
         const publicationDirectory = await getPublicationDirectory(publication);
-        console.log(publicationDirectory);
         if (!publicationDirectory) return;
         const unzipDir = await decompressJwpub(filepath, publicationDirectory);
-        console.log(unzipDir);
         const db = await findDb(unzipDir);
-        console.log(db);
         if (!db) return;
         jwpubImportDb.value = db;
         if (executeQuery(db, 'SELECT * FROM Multimedia;').length === 0) {
@@ -1451,7 +1450,6 @@ const addToFiles = async (
 };
 
 const addSong = (section?: MediaSection) => {
-  console.log('addSong');
   window.dispatchEvent(
     new CustomEvent<{ section?: MediaSection }>('openSongPicker', {
       detail: { section },
