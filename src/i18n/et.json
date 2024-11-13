@@ -240,6 +240,8 @@
   "obsQuickToggle": "Luba kiire stseenide vahetamine",
   "obsQuickToggle-explain": "Kui on lubatud, siis peatudes hiirega OBS Studio nupul, avaneb stseeni vahetamise aken. See on kasulik kiireks stseeni vahetamiseks OBS Studios, kui on erinevad stseenid seadistatud.",
   "obsStudio": "OBS Studio",
+  "obsSwitchSceneAfterMedia": "Delay scene changes when playing media",
+  "obsSwitchSceneAfterMedia-explain": "When enabled, OBS Studio will defer scene changes until after any currently playing media has finished. Note: enabling this option will also remove media and image scenes from the scene switcher.",
   "once-the-scene-has-been-created-select-it-here": "Kui stseen on loodud, valige see siin.",
   "only-show-settings-that-are-not-valid": "Näitab ainult neid seadeid, mis ei ole kehtivad",
   "oops-nothing-here": "Ups. Siin pole midagi...",

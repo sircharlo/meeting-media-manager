@@ -240,6 +240,8 @@
   "obsQuickToggle": "Enable instant scene switcher",
   "obsQuickToggle-explain": "When enabled, hovering over the OBS Studio button will open the scene switcher. This can be useful for quickly switching scenes in OBS Studio, especially if many scenes are configured.",
   "obsStudio": "OBS Studio",
+  "obsSwitchSceneAfterMedia": "Delay scene changes when playing media",
+  "obsSwitchSceneAfterMedia-explain": "When enabled, OBS Studio will defer scene changes until after any currently playing media has finished. Note: enabling this option will also remove media and image scenes from the scene switcher.",
   "once-the-scene-has-been-created-select-it-here": "Una volta creata la scena, selezionala qui.",
   "only-show-settings-that-are-not-valid": "Mostra solo le impostazioni che non sono valide",
   "oops-nothing-here": "Oops. Niente qui...",

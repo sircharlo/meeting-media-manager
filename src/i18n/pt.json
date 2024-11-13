@@ -240,6 +240,8 @@
   "obsQuickToggle": "Habilitar popup de visualização de cena",
   "obsQuickToggle-explain": "Se essa opção estiver habilitada, um popup do seletor de cena do OBS irá abrir ao passar o mouse em cima do botão. Isso pode ser útil para mudar rapidamente de uma cena para outra do OBS Studio, especialmente se muitas cenas forem configuradas.",
   "obsStudio": "OBS Studio",
+  "obsSwitchSceneAfterMedia": "Delay scene changes when playing media",
+  "obsSwitchSceneAfterMedia-explain": "When enabled, OBS Studio will defer scene changes until after any currently playing media has finished. Note: enabling this option will also remove media and image scenes from the scene switcher.",
   "once-the-scene-has-been-created-select-it-here": "Após criar a cena, selecione-a aqui.",
   "only-show-settings-that-are-not-valid": "Mostrar apenas configurações que não são válidas",
   "oops-nothing-here": "Oops. Nada aqui...",
