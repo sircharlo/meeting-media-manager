@@ -16,7 +16,11 @@ import { PLATFORM } from './constants';
 import { initScreenListeners } from './main/screen';
 import { initSessionListeners } from './main/session';
 import { initUpdater } from './main/updater';
-import { createMainWindow } from './main/window/window-main';
+import {
+  createMainWindow,
+  mainWindow,
+  toggleAuthorizedClose,
+} from './main/window/window-main';
 import { errorCatcher } from './utils';
 
 initSentry({
@@ -35,6 +39,13 @@ initSessionListeners();
 // macOS default behavior is to keep the app running even after all windows are closed
 app.on('window-all-closed', () => {
   if (PLATFORM !== 'darwin') app.quit();
+});
+
+app.on('before-quit', () => {
+  if (PLATFORM === 'darwin') {
+    toggleAuthorizedClose(true);
+    mainWindow?.close();
+  }
 });
 
 app.on('activate', () => {
