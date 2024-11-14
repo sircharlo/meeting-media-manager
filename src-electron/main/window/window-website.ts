@@ -36,7 +36,6 @@ export async function createWebsiteWindow(lang?: string) {
   );
 
   websiteWindow.center();
-  websiteWindow.setAspectRatio(16 / 9);
 
   websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
   websiteWindow.webContents.on('zoom-changed', (_, direction) => {
@@ -50,7 +49,10 @@ export async function createWebsiteWindow(lang?: string) {
   });
 
   if (PLATFORM === 'darwin') {
-    // Don't force aspect ratio since it's not working as expected on macOS
+    websiteWindow.setAspectRatio(16 / 9, {
+      height: websiteWindow.getSize()[1] - websiteWindow.getContentSize()[1],
+      width: 0,
+    });
   } else {
     setAspectRatio();
     websiteWindow.on('resize', setAspectRatio);
