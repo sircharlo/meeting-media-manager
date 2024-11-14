@@ -3,15 +3,65 @@
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
     >
-      <div class="text-h6 row">{{ $t('add-extra-media') }}</div>
-      <template
-        v-if="
-          jwpubDocuments?.length === 0 ||
-          totalFiles ||
-          (!!jwpubDb && jwpubLoading) ||
-          !jwpubDb
-        "
-      >
+      <div class="text-h6 row">
+        {{
+          $t(
+            jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)
+              ? 'choose-a-document-for-import'
+              : 'add-extra-media',
+          )
+        }}
+      </div>
+      <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
+        <div class="row">
+          <q-scroll-area
+            :bar-style="barStyle"
+            :thumb-style="thumbStyle"
+            style="height: 40vh; width: -webkit-fill-available"
+          >
+            <q-list class="full-width">
+              <q-item
+                v-for="jwpubImportDocument in jwpubDocuments"
+                :key="jwpubImportDocument.DocumentId"
+                clickable
+                @click="
+                  jwpubLoading = true;
+                  addJwpubDocumentMediaToFiles(
+                    jwpubDb,
+                    jwpubImportDocument,
+                  ).then((errors) => {
+                    open = false;
+                    jwpubLoading = false;
+                    if (errors?.length)
+                      errors.forEach((e) =>
+                        createTemporaryNotification({
+                          message: [
+                            e.pub,
+                            e.issue,
+                            e.track,
+                            e.langwritten,
+                            e.fileformat,
+                          ]
+                            .filter(Boolean)
+                            .join('_'),
+                          icon: 'mmm-error',
+                          caption: $t('file-not-available'),
+                          type: 'negative',
+                          timeout: 15000,
+                        }),
+                      );
+                  });
+                "
+              >
+                <q-item-section class="no-wrap">
+                  {{ jwpubImportDocument.Title }}
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-scroll-area>
+        </div>
+      </template>
+      <template v-else>
         <div class="row">
           <p>{{ $t('local-media-explain-1') }}</p>
           <a
@@ -73,67 +123,13 @@
           </div>
         </div>
       </template>
-      <template v-else>
-        <div class="row">
-          {{ $t('choose-a-document-for-import') }}
-        </div>
-        <div class="row">
-          <q-scroll-area
-            :bar-style="barStyle"
-            :thumb-style="thumbStyle"
-            style="height: 40vh; width: -webkit-fill-available"
-          >
-            <q-list>
-              <q-item
-                v-for="jwpubImportDocument in jwpubDocuments"
-                :key="jwpubImportDocument.DocumentId"
-                clickable
-                @click="
-                  jwpubLoading = true;
-                  addJwpubDocumentMediaToFiles(
-                    jwpubDb,
-                    jwpubImportDocument,
-                  ).then((errors) => {
-                    open = false;
-                    jwpubLoading = false;
-                    if (errors?.length)
-                      errors.forEach((e) =>
-                        createTemporaryNotification({
-                          message: [
-                            e.pub,
-                            e.issue,
-                            e.track,
-                            e.langwritten,
-                            e.fileformat,
-                          ]
-                            .filter(Boolean)
-                            .join('_'),
-                          icon: 'mmm-error',
-                          caption: $t('file-not-available'),
-                          type: 'negative',
-                          timeout: 15000,
-                        }),
-                      );
-                  });
-                "
-              >
-                <q-item-section>
-                  {{ jwpubImportDocument.Title }}
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-scroll-area>
-        </div>
-      </template>
       <div class="row justify-end">
         <q-btn
+          v-close-popup
           :label="$t('cancel')"
           color="negative"
           flat
-          @click="
-            jwpubDb = '';
-            open = false;
-          "
+          @click="jwpubDb = ''"
         />
       </div>
     </div>
@@ -192,7 +188,6 @@ const getLocalFiles = async () => {
           }),
         );
       }
-      open.value = false;
     })
     .catch((error) => {
       errorCatcher(error);

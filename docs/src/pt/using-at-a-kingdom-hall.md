@@ -18,17 +18,17 @@ Este guia irá orientá-lo no processo de download, instalação e configuraçã
 4. Abra o M³.
 5. Siga as instruções do assistente de configuração.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### Somente macOS: etapas adicionais de instalação {#additional-steps-for-macos-users}
 
 :::warning 2) Configuration wizard
 
-This section only applies to macOS users.
+Esta seção se aplica apenas a usuários de macOS.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Devido às medidas de segurança da Apple, alguns passos adicionais são necessários para executar o aplicativo M³ instalado em sistemas macOS modernos.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+Execute os seguintes dois comandos no Terminal, modificando o caminho para o M³ conforme necessário:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -37,21 +37,21 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning Aviso
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+Como usuário do macOS, você precisará seguir esses passos sempre que instalar ou atualizar o M³.
 
 :::
 
 :::info Explicação
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+O primeiro comando _assina o código do aplicativo_. Isso é necessário para evitar que o M³ seja detectado como um aplicativo malicioso de um desenvolvedor desconhecido.
 
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+O segundo comando _remove a flag de quarentena_ do aplicativo. A flag de quarentena é usada para avisar os usuários sobre aplicativos potencialmente maliciosos que foram baixados da internet.
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+#### Método alternativo {#alternative-method-for-macos-users}
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+Se você ainda não conseguir abrir o M³ após inserir os dois comandos da seção anterior, tente o seguinte:
 
 1. Abra as configurações de **Privacidade e Segurança** do macOS.
 2. Encontre a entrada para o M³ e clique no botão para **Abrir assim mesmo**.
@@ -61,30 +61,30 @@ If you are still unable to launch M³ after entering the two commands from the p
 
 Se você ainda tiver problemas após seguir todos esses passos, por favor, [abra uma issue no GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Faremos o nosso melhor para ajudar.
 
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+### Somente macOS: Reativando a apresentação do site após atualizações {#screen-sharing-issues}
 
 :::warning Aviso
 
-This section only applies to macOS users.
+Esta seção se aplica apenas a usuários de macOS.
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+Alguns usuários do macOS relataram que a apresentação do site não funciona mais após instalar atualizações do M³.
 
-If the media window is black when presenting the website after updating M³, try the following steps:
+Se a janela de mídia estiver preta quando apresentar o site após atualizar o M³, tente os seguintes passos:
 
 1. Abra as configurações de **Privacidade e Segurança** do macOS.
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+2. Vá para **Gravação de tela**.
+3. Selecione o M³ na lista.
+4. Clique no botão `-` (menos) para removê-lo.
+5. Clique no botão `+` (mais) e selecione o M³ na pasta de aplicativos.
+6. Você pode ser solicitado para reiniciar o M³ para aplicar a alteração.
 
-After these steps, screen sharing should function as expected once again.
+Após esses passos, o compartilhamento de tela deve funcionar como esperado novamente.
 
 :::tip Dica
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+Estas etapas são opcionais e podem ser ignoradas se você não planeja usar o recurso de apresentação do site. Por outro lado, se você planeja usar o recurso de apresentação do site, é recomendado seguir esses passos após cada atualização para garantir que o recurso funcione como esperado.
 
 :::
 
