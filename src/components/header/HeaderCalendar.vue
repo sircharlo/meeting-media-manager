@@ -243,6 +243,7 @@ const {
   mediaPlaying,
   online,
   selectedDate,
+  watchFolderMedia,
 } = storeToRefs(currentState);
 
 const section = ref<MediaSection | undefined>();
@@ -292,6 +293,7 @@ const hiddenMediaForDay = computed(() =>
         selectedDate.value
       ] || [],
     )
+    .concat(watchFolderMedia.value?.[selectedDate.value] || [])
     .some((media) => media.hidden),
 );
 
