@@ -39,29 +39,56 @@ export async function createWebsiteWindow(lang?: string) {
 
   websiteWindow.webContents.on('did-finish-load', () => {
     websiteWindow?.webContents.insertCSS(`
-    .cursor {
-      position: fixed;
-      border-radius: 50%;
-      transform: translateX(-50%) translateY(-50%);
-      pointer-events: none;
-      left: -100px;
-      top: 50%;
-      background-color: transparent;
-      z-index: 10000;
-      border: 2px solid red;
-      height: 30px;
-      width: 30px;
-    }`);
+      .cursor {
+        position: fixed;
+        border-radius: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        pointer-events: none;
+        left: -100px;
+        top: 50%;
+        background-color: transparent;
+        z-index: 10000;
+        border: 5px solid rgba(255, 0, 0, 0.8);
+        height: 50px;
+        width: 50px;
+        transition: transform 0.25s ease-out, background-color 0.25s ease-out;
+      }
+  
+      .cursor-clicked {
+        transform: translateX(-50%) translateY(-50%) scale(1.5);
+        background-color: rgba(255, 0, 0, 0.8);
+      }
+    `);
+
     websiteWindow?.webContents.executeJavaScript(`
-    const cursor = document.createElement('div');
-    cursor.className = 'cursor';
-    document.body.appendChild(cursor);
-    const onMouseMove = (e) => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    };
-    document.body.removeEventListener('mousemove', onMouseMove);
-    document.body.addEventListener('mousemove', onMouseMove);`);
+      const cursor = document.createElement('div');
+      cursor.className = 'cursor';
+      document.body.appendChild(cursor);
+  
+      const onMouseMove = (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+      };
+  
+      const onMouseDown = () => {
+        cursor.classList.add('cursor-clicked');
+      };
+  
+      const onMouseUp = () => {
+        setTimeout(() => {
+          cursor.classList.remove('cursor-clicked');
+        }, 250);
+      };
+      
+      document.body.removeEventListener('mousemove', onMouseMove);
+      document.body.addEventListener('mousemove', onMouseMove);
+  
+      document.body.removeEventListener('mousedown', onMouseDown);
+      document.body.addEventListener('mousedown', onMouseDown);
+
+      document.body.removeEventListener('mouseup', onMouseUp);
+      document.body.addEventListener('mouseup', onMouseUp);
+    `);
   });
 
   websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
