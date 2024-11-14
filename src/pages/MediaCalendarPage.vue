@@ -1342,6 +1342,7 @@ const addToFiles = async (
         ).map((path) => {
           return { path };
         });
+        resetDragging();
         await addToFiles(convertedImages);
       } else if (isJwpub(filepath)) {
         // First, only decompress the db in memory to get the publication info and derive the destination path
