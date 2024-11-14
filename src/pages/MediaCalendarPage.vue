@@ -1268,25 +1268,28 @@ const addToAdditionMediaMapFromPath = async (
           getFileUrl(additionalFilePath),
       );
     }
-    addToAdditionMediaMap([
-      {
-        duration,
-        fileUrl: getFileUrl(additionalFilePath),
-        isAdditional: true,
-        isAudio: isAudioFile,
-        isImage: isImage(additionalFilePath),
-        isVideo: isVideoFile,
-        section,
-        sectionOriginal: section,
-        song: stream?.song,
-        streamUrl: stream?.url,
-        thumbnailUrl:
-          stream?.thumbnailUrl ??
-          (await getThumbnailUrl(additionalFilePath, true)),
-        title: stream?.title ?? path.basename(additionalFilePath),
-        uniqueId,
-      },
-    ]);
+    addToAdditionMediaMap(
+      [
+        {
+          duration,
+          fileUrl: getFileUrl(additionalFilePath),
+          isAdditional: true,
+          isAudio: isAudioFile,
+          isImage: isImage(additionalFilePath),
+          isVideo: isVideoFile,
+          section,
+          sectionOriginal: section,
+          song: stream?.song,
+          streamUrl: stream?.url,
+          thumbnailUrl:
+            stream?.thumbnailUrl ??
+            (await getThumbnailUrl(additionalFilePath, true)),
+          title: stream?.title ?? path.basename(additionalFilePath),
+          uniqueId,
+        },
+      ],
+      section,
+    );
   } catch (error) {
     errorCatcher(error, {
       contexts: {
