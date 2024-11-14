@@ -32,7 +32,7 @@ initScreenListeners();
 createApplicationMenu();
 initSessionListeners();
 
-// MacOS default behavior is to keep the app running even after all windows are closed
+// macOS default behavior is to keep the app running even after all windows are closed
 app.on('window-all-closed', () => {
   if (PLATFORM !== 'darwin') app.quit();
 });
