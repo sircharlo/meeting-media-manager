@@ -47,7 +47,7 @@ export async function createWebsiteWindow(lang?: string) {
   });
 
   if (PLATFORM === 'darwin') {
-    websiteWindow.setAspectRatio(16 / 9);
+    // Don't force aspect ratio since it's not working as expected on macOS
   } else {
     setAspectRatio();
     websiteWindow.on('resize', setAspectRatio);
