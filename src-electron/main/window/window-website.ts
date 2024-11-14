@@ -35,6 +35,33 @@ export async function createWebsiteWindow(lang?: string) {
     lang,
   );
 
+  websiteWindow.webContents.on('did-finish-load', () => {
+    websiteWindow?.webContents.insertCSS(`
+    .cursor {
+      position: fixed;
+      border-radius: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      pointer-events: none;
+      left: -100px;
+      top: 50%;
+      background-color: transparent;
+      z-index: 10000;
+      border: 2px solid red;
+      height: 30px;
+      width: 30px;
+    }`);
+    websiteWindow?.webContents.executeJavaScript(`
+    const cursor = document.createElement('div');
+    cursor.className = 'cursor';
+    document.body.appendChild(cursor);
+    const onMouseMove = (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    };
+    document.body.removeEventListener('mousemove', onMouseMove);
+    document.body.addEventListener('mousemove', onMouseMove);`);
+  });
+
   websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
   websiteWindow.webContents.on('zoom-changed', (_, direction) => {
     zoomWebsiteWindow(direction);
