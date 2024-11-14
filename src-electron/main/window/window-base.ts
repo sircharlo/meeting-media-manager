@@ -1,6 +1,5 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
-import pkg from 'app/package.json';
 import { IS_DEV, PLATFORM } from 'app/src-electron/constants';
 import { errorCatcher } from 'app/src-electron/utils';
 import {
@@ -57,7 +56,7 @@ export function createWindow(
       ? new BrowserWindow(opts)
       : new StatefulBrowserWindow({
           configFileName: `${name}-window-state.json`,
-          configFilePath: join(app.getPath('appData'), pkg.productName),
+          configFilePath: app.getPath('userData'),
           ...opts,
         }).win;
 

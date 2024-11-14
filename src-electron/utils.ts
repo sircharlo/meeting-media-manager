@@ -1,9 +1,8 @@
 import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/types/utils/prepareEvent';
 
 import { captureException } from '@sentry/browser';
-import { productName, version } from 'app/package.json';
+import { version } from 'app/package.json';
 import { app, systemPreferences } from 'electron';
-import { join } from 'path';
 
 import { IS_DEV, JW_DOMAINS, PLATFORM, TRUSTED_DOMAINS } from './constants';
 import { isDownloadErrorExpected } from './main/downloads';
@@ -13,10 +12,6 @@ import { mainWindow } from './main/window/window-main';
 
 export function getAppVersion() {
   return IS_DEV ? version : app.getVersion();
-}
-
-export function getUserDataPath() {
-  return join(app.getPath('appData'), productName);
 }
 
 export async function askForMediaAccess() {
